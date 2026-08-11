@@ -17,6 +17,8 @@ import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitc
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
 import { LayoutDashboard } from 'lucide-react';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { PRODUCT_ONE_LINER } from '@/lib/seo';
 
 const FOOTER_LINKS = [
   { href: '/features', label: 'Features' },
@@ -113,6 +115,7 @@ export default function HomePage() {
 
   return (
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
+      <PageJsonLd path="/" name="XROGA AI" description={PRODUCT_ONE_LINER} />
       <div
         className="xv-hc-bg-image"
         style={{ backgroundImage: 'url("/backgrounds/xroga-deep-work-bg.webp")' }}

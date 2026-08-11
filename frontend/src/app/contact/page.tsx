@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { LegalPageShell } from '@/components/legal/LegalPageShell';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Contact',
@@ -13,7 +14,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function ContactPage() {
   return (
-    <LegalPageShell title="Contact">
+    <><PageJsonLd path="/contact" name="Contact XROGA AI" description="Official XROGA AI product, billing, account, and partnership contact information." type="ContactPage" /><LegalPageShell title="Contact">
       <p className="text-[var(--muted)]">
         Reach the Xroga team for product questions, billing (Lemon Squeezy), account help, or partnership
         inquiries. We respond during Pakistan business hours.
@@ -89,6 +90,6 @@ export default function ContactPage() {
           </li>
         </ul>
       </section>
-    </LegalPageShell>
+    </LegalPageShell></>
   );
 }

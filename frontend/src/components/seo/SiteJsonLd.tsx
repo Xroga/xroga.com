@@ -1,22 +1,22 @@
 import {
+  buildFounderJsonLd,
   buildOrganizationJsonLd,
+  buildSoftwareApplicationJsonLd,
   buildWebSiteJsonLd,
-  buildSiteNavigationJsonLd,
-  buildFaqJsonLd,
 } from '@/lib/seo';
 
 export function SiteJsonLd() {
   const org = buildOrganizationJsonLd();
+  const founder = buildFounderJsonLd();
   const site = buildWebSiteJsonLd();
-  const nav = buildSiteNavigationJsonLd();
-  const faq = buildFaqJsonLd();
+  const software = buildSoftwareApplicationJsonLd();
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(founder) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(site) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(nav) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(software) }} />
     </>
   );
 }

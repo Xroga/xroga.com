@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { buildMetadata, SITE_URL } from '@/lib/seo';
+import { buildMetadata } from '@/lib/seo';
 import { INTEGRATION_CATEGORIES, INTEGRATIONS } from '@/lib/integrations';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Integrations — GitHub, Vercel & Secure API Keys',
@@ -17,14 +18,6 @@ export const metadata: Metadata = buildMetadata({
   ],
 });
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Xroga AI Integrations',
-  description: `${INTEGRATIONS.length}+ integrations for Xroga AI`,
-  url: `${SITE_URL}/integrations`,
-};
-
 export default function IntegrationsSeoPage() {
   const topIntegrations = INTEGRATIONS.filter((i) =>
     ['github', 'vercel', 'netlify', 'stripe', 'slack', 'openai', 'google', 'supabase', 'aws', 'notion'].some(
@@ -34,7 +27,12 @@ export default function IntegrationsSeoPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <PageJsonLd
+        path="/integrations"
+        name="XROGA AI integrations"
+        description="Connect GitHub, Vercel, and supported provider credentials to authorized XROGA AI workflows."
+        type="CollectionPage"
+      />
       <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
         <header className="border-b border-[var(--card-border)] px-4 sm:px-8 py-6">
           <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4">

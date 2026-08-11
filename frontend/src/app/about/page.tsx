@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check, CircleDot, GitBranch, Hammer, Rocket, Search, ShieldCheck } from 'lucide-react';
-import { buildMetadata, SITE_URL } from '@/lib/seo';
+import { buildMetadata } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { AboutArt } from '@/components/about/AboutArt';
@@ -19,6 +19,7 @@ import {
   ABOUT_WHAT_IS,
 } from '@/lib/aboutContent';
 import '@/styles/about.css';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
@@ -39,22 +40,13 @@ const NAV = [
 ] as const;
 
 export default function AboutPage() {
-  const organisationLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: COMPANY_CONTACT.legalName,
-    url: `${SITE_URL}/about`,
-    email: COMPANY_CONTACT.email,
-    telephone: COMPANY_CONTACT.phoneDisplay,
-    sameAs: [ABOUT_SOCIALS.x, ABOUT_SOCIALS.github],
-    founder: { '@type': 'Person', name: ABOUT_FOUNDER.name, jobTitle: ABOUT_FOUNDER.role },
-  };
-
   return (
     <div className="ab-root">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationLd).replace(/</g, '\\u003c') }}
+      <PageJsonLd
+        path="/about"
+        name="About XROGA AI"
+        description={COMPANY_CONTACT.productDescription}
+        type="AboutPage"
       />
 
       {/* --------------------------------------------------------- navigation */}
@@ -229,7 +221,7 @@ export default function AboutPage() {
         </section>
 
         {/* ---------------------------------------------------------- founder */}
-        <section className="ab-section" aria-labelledby="ab-founder-heading">
+        <section className="ab-section" id="founder" aria-labelledby="ab-founder-heading">
           <div className="ab-shell">
             <div className="ab-founder">
               <AboutArt

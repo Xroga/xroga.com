@@ -1,5 +1,6 @@
 import { PricingPageClient } from '@/components/pricing/PricingPageClient';
 import { buildMetadata } from '@/lib/seo';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 export const metadata = buildMetadata({
   title: 'Pricing — One Xroga AI Plan',
@@ -15,5 +16,5 @@ export const metadata = buildMetadata({
 });
 
 export default function PricingPage() {
-  return <PricingPageClient />;
+  return <><PageJsonLd path="/pricing" name="XROGA AI pricing" description="XROGA AI plan, billing period, current capacity, and eligibility information." /><PricingPageClient /></>;
 }

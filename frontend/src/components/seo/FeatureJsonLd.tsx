@@ -1,5 +1,5 @@
 import type { FeatureSeoPage } from '@/lib/featureSeo';
-import { SITE_NAME, SITE_URL } from '@/lib/seo';
+import { ORGANIZATION_ID, SITE_URL, SOFTWARE_ID, WEBSITE_ID } from '@/lib/seo';
 
 export function FeatureJsonLd({ page }: { page: FeatureSeoPage }) {
   const url = `${SITE_URL}/features/${page.slug}`;
@@ -7,16 +7,13 @@ export function FeatureJsonLd({ page }: { page: FeatureSeoPage }) {
   const webPage = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
+    '@id': `${url}#webpage`,
     name: page.headline,
     description: page.description,
     url,
-    isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
-    about: {
-      '@type': 'SoftwareApplication',
-      name: SITE_NAME,
-      applicationCategory: 'DeveloperApplication',
-      operatingSystem: 'Web',
-    },
+    isPartOf: { '@id': WEBSITE_ID },
+    about: { '@id': SOFTWARE_ID },
+    publisher: { '@id': ORGANIZATION_ID },
   };
 
   const faq =
