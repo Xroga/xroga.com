@@ -159,42 +159,37 @@ test('booking: the price breakdown is arithmetic, not a fixed figure', async ({ 
   await expect.poll(async () => Number((await total.innerText()).replace(/[^0-9]/g, ''))).toBeGreaterThan(shortStay);
 });
 
-test('mobile app: tabs, search, saving and settings all work', async ({ page }) => {
+test('mobile app: Athlyra hydration, workout, progress, coach, and profile flows work', async ({ page }) => {
   await page.goto(preview('android-app'));
 
-  // The no-shipped-release statement must be present and unambiguous.
-  await expect(page.getByText(/not a shipped release/i)).toBeVisible();
-  await expect(page.getByText(/no apk has been built/i)).toBeVisible();
+  await expect(page.getByText(/interactive product preview/i)).toBeVisible();
+  await expect(page.getByText(/no apk or store release is claimed/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Move with intent.' })).toBeVisible();
 
-  const items = page.locator('.fb-item');
-  const total = await items.count();
-  expect(total).toBeGreaterThan(0);
+  const hydration = page.locator('.at-water i');
+  const before = await hydration.getAttribute('style');
+  await page.getByRole('button', { name: '+ 250 ml' }).click();
+  await expect.poll(() => hydration.getAttribute('style')).not.toBe(before);
 
-  // Category filter narrows the list.
-  await page.getByRole('button', { name: 'Birds', exact: true }).click();
-  await expect.poll(async () => items.count()).toBeLessThan(total);
-  await page.getByRole('button', { name: 'All', exact: true }).click();
+  await page.getByRole('button', { name: 'Start workout' }).click();
+  await expect(page.getByRole('heading', { name: 'Push + Core' })).toBeVisible();
+  const setsBefore = Number(await page.locator('.at-session > div span').first().locator('b').innerText());
+  await page.getByRole('button', { name: 'Log set' }).click();
+  await expect(page.locator('.at-session > div span').first().locator('b')).toHaveText(String(setsBefore + 1));
 
-  // Saved starts empty, then reflects a save made from the detail sheet.
-  await page.getByRole('button', { name: 'Saved', exact: true }).click();
-  await expect(page.getByText(/nothing saved yet/i)).toBeVisible();
+  await page.getByRole('button', { name: 'Finish workout' }).click();
+  await expect(page.getByRole('heading', { name: 'Progress' })).toBeVisible();
+  await page.getByRole('button', { name: '3 months' }).click();
+  await expect(page.getByRole('button', { name: '3 months' })).toHaveAttribute('aria-pressed', 'true');
 
-  await page.getByRole('button', { name: 'Browse', exact: true }).click();
-  await items.first().click();
-  const sheet = page.getByRole('dialog');
-  await expect(sheet).toBeVisible();
-  await sheet.getByRole('button', { name: 'Save', exact: true }).click();
-  await sheet.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.getByRole('button', { name: 'Coach', exact: true }).click();
+  await expect(page.getByText(/does not call a live model/i)).toBeVisible();
+  await page.getByRole('button', { name: 'Plan my next workout' }).click();
+  await expect(page.locator('.at-message.assistant')).toHaveCount(2);
 
-  await page.getByRole('button', { name: 'Saved', exact: true }).click();
-  await expect(page.locator('.fb-count-pill')).toHaveText('1');
-
-  // A settings switch is a real control and toggles.
-  await page.getByRole('button', { name: 'Settings' }).click();
-  const toggle = page.getByRole('switch', { name: /larger text/i });
-  await expect(toggle).toHaveAttribute('aria-checked', 'false');
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('button', { name: 'You', exact: true }).click();
+  await expect(page.getByText('Demo Athlete')).toBeVisible();
+  await expect(page.getByText('Supabase sync')).toBeVisible();
 });
 
 test('ai saas: streams a real-provider response through the public server route', async ({ page }) => {
