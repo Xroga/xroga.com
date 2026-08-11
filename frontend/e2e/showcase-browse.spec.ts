@@ -14,7 +14,7 @@ test('the spotlight runs the real product, interactively', async ({ page }) => {
   const frame = page.frameLocator('iframe').first();
 
   // The frame boots a full application, so allow for a busy machine.
-  await expect(frame.getByRole('heading', { level: 1 })).toContainText(/digital products/i, { timeout: 20_000 });
+  await expect(frame.getByRole('heading', { level: 1 })).toContainText(/design.*build.*ship/i, { timeout: 20_000 });
 
   // Interactive means interactive: the product's own FAQ responds inside the frame.
   const faq = frame.getByRole('button', { name: /do you work with existing codebases/i });
@@ -27,12 +27,12 @@ test('the spotlight runs the real product, interactively', async ({ page }) => {
 test('the product switcher changes which product is previewed', async ({ page }) => {
   await page.goto('/showcase');
   await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText(
-    /digital products/i,
+    /design.*build.*ship/i,
     { timeout: 20_000 },
   );
 
   await page.getByRole('tab', { name: 'Playable Web Game' }).click();
-  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText('Driftline', {
+  await expect(page.frameLocator('iframe').first().getByRole('heading', { level: 1 })).toContainText(/RIFT\s*BREAKER/, {
     timeout: 20_000,
   });
 });

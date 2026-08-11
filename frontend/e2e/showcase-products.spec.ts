@@ -38,8 +38,8 @@ test('every product renders its own heading with no page errors', async ({ page 
 test('product headings are not repainted by the host app stylesheet', async ({ page }) => {
   await page.goto(preview('playable-web-game'));
   const contrast = await page.evaluate(() => {
-    const heading = document.querySelector('.dl-overlay-title');
-    const panel = document.querySelector('.dl-canvas-wrap');
+    const heading = document.querySelector('.nr-menu h1');
+    const panel = document.querySelector('.nr-stage');
     if (!heading || !panel) return null;
     const parse = (value: string) => (value.match(/\d+/g) ?? []).slice(0, 3).map(Number);
     const luminance = (rgb: number[]) =>
@@ -232,16 +232,16 @@ test('ai saas: clearly states the provider credential stays server-side', async 
 test('web game: the loop runs, scores, and persists a best score', async ({ page }) => {
   await page.goto(preview('playable-web-game'));
 
-  await expect(page.getByRole('heading', { name: 'Driftline', level: 1 })).toBeVisible();
-  await page.getByRole('button', { name: /start game/i }).click();
+  await expect(page.getByRole('heading', { name: /RIFT\s*BREAKER/, level: 1 })).toBeVisible();
+  await page.getByRole('button', { name: /start mission/i }).click();
 
   // Score must actually climb while the loop runs.
-  const score = page.locator('.dl-hud-item').first().locator('.dl-hud-value');
+  const score = page.locator('.nr-score');
   await expect.poll(async () => Number(await score.innerText()), { timeout: 8000 }).toBeGreaterThan(0);
 
   // Pause genuinely freezes the score. Scoped to the control bar, because the
   // pause overlay renders its own Resume button too.
-  const controls = page.locator('.dl-controls');
+  const controls = page.locator('.nr-controls');
   await controls.getByRole('button', { name: 'Pause' }).click();
   const paused = Number(await score.innerText());
   await page.waitForTimeout(900);
@@ -253,7 +253,7 @@ test('web game: the loop runs, scores, and persists a best score', async ({ page
   // Crashing writes a best score that survives a reload.
   await page.evaluate(() => window.localStorage.setItem('xroga_showcase_game_best_v1', '4242'));
   await page.reload();
-  await expect(page.locator('.dl-hud-value--best')).toHaveText('4242');
+  await expect(page.locator('.nr-status b')).toContainText('4,242');
 });
 
 test('no product states a fabricated customer, revenue, rating or download figure', async ({ page }) => {

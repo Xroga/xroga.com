@@ -1,642 +1,283 @@
 'use client';
 
-/**
- * Showcase product: Playable Web Game.
- *
- * An original arcade game — the player pilots a craft down a narrowing corridor,
- * collecting cells and avoiding drifting blocks. Everything is original geometry
- * drawn to a canvas: no copyrighted characters, artwork, music, or game titles, and
- * no third-party assets of any kind.
- *
- * The loop is real: requestAnimationFrame with delta timing, AABB collision, rising
- * difficulty, pause/resume, and a best score persisted on the device.
- */
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { productReset, readLocal, writeLocal } from './shared';
 
-const BRAND = {
-  name: 'Driftline',
-  ink: '#07070f',
-  panel: '#12121f',
-  border: '#26263c',
-  muted: '#9a9ab8',
-  accent: '#22d3ee',
-  accentWarm: '#f472b6',
-} as const;
-
+const W = 960;
+const H = 540;
 const BEST_KEY = 'xroga_showcase_game_best_v1';
-const SOUND_KEY = 'xroga_showcase_game_sound_v1';
+const PROGRESS_KEY = 'xroga_rift_progress_v1';
 
-/**
- * Tones are synthesised with WebAudio rather than shipped as audio files, so the
- * template carries no third-party or licensed sound assets.
- *
- * The context is created lazily on the first deliberate sound, because browsers
- * refuse to start audio before a user gesture.
- */
-class TonePlayer {
-  private ctx: AudioContext | null = null;
+type Screen = 'menu' | 'playing' | 'paused' | 'complete' | 'failed';
+type RiftPhase = 'cyan' | 'magenta';
+type Point = { x: number; y: number };
+type Enemy = Point & { hp: number; kind: 'sentinel' | 'guardian'; cooldown: number };
+type Bullet = Point & { vx: number; vy: number; hostile: boolean };
+type Core = Point & { collected: boolean };
 
-  play(frequency: number, seconds: number, type: OscillatorType = 'sine') {
-    try {
-      if (!this.ctx) {
-        const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        if (!Ctor) return;
-        this.ctx = new Ctor();
-      }
-      const ctx = this.ctx;
-      if (ctx.state === 'suspended') void ctx.resume();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = type;
-      osc.frequency.value = frequency;
-      // Short envelope so repeated tones never click or stack into noise.
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + seconds);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + seconds);
-    } catch {
-      /* Audio is optional; a blocked context must never break the game loop. */
-    }
-  }
+const LEVELS = [
+  { name: 'Vault Breach', objective: 'Recover 3 Rift Cores', cores: 3, enemies: 2, phase: false, boss: false },
+  { name: 'Laser Grid', objective: 'Recover 4 cores through the security grid', cores: 4, enemies: 3, phase: false, boss: false },
+  { name: 'Sentinel Forge', objective: 'Destroy 6 sentinels', cores: 0, enemies: 6, phase: false, boss: false },
+  { name: 'Split Reality', objective: 'Phase-shift and recover 3 cores', cores: 3, enemies: 4, phase: true, boss: false },
+  { name: 'The Guardian', objective: 'Defeat the Neon Guardian', cores: 0, enemies: 0, phase: true, boss: true },
+] as const;
 
-  close() {
-    try {
-      void this.ctx?.close();
-    } catch {
-      /* ignore */
-    }
-    this.ctx = null;
-  }
-}
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
-/** Logical play field; the canvas is scaled to fit its container. */
-const WORLD = { width: 480, height: 720 };
-const CRAFT = { width: 26, height: 30 };
-
-interface Block {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  vx: number;
-}
-
-interface Cell {
-  x: number;
-  y: number;
-  taken: boolean;
-}
-
-type Phase = 'ready' | 'playing' | 'paused' | 'over';
-
-function overlaps(ax: number, ay: number, aw: number, ah: number, bx: number, by: number, bw: number, bh: number) {
-  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+function makeLevel(level: number) {
+  const config = LEVELS[level];
+  const cores: Core[] = Array.from({ length: config.cores }, (_, i) => ({
+    x: 190 + ((i * 211 + level * 73) % 610),
+    y: 120 + ((i * 137 + level * 91) % 300),
+    collected: false,
+  }));
+  const enemies: Enemy[] = Array.from({ length: config.enemies }, (_, i) => ({
+    x: 300 + ((i * 173 + level * 47) % 540),
+    y: 100 + ((i * 109 + level * 61) % 330),
+    hp: 2,
+    kind: 'sentinel' as const,
+    cooldown: 0.7 + i * 0.12,
+  }));
+  if (config.boss) enemies.push({ x: 760, y: 270, hp: 18, kind: 'guardian', cooldown: 0.4 });
+  return { player: { x: 90, y: H / 2 }, cores, enemies, bullets: [] as Bullet[], hp: 100, elapsed: 0, dash: 1 };
 }
 
 export function WebGame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [phase, setPhase] = useState<Phase>('ready');
+  const [screen, setScreen] = useState<Screen>('menu');
+  const [level, setLevel] = useState(0);
+  const [riftPhase, setRiftPhase] = useState<RiftPhase>('cyan');
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
-  const [collected, setCollected] = useState(0);
-  const [soundOn, setSoundOn] = useState(false);
-  const tones = useRef<TonePlayer | null>(null);
-  const soundRef = useRef(false);
-
-  // Mutable game state lives in a ref so the animation loop never re-subscribes.
-  const game = useRef({
-    craftX: WORLD.width / 2 - CRAFT.width / 2,
-    targetX: WORLD.width / 2 - CRAFT.width / 2,
-    blocks: [] as Block[],
-    cells: [] as Cell[],
-    elapsed: 0,
-    spawnTimer: 0,
-    cellTimer: 0,
-    speed: 190,
-    score: 0,
-    collected: 0,
-    left: false,
-    right: false,
-  });
+  const [unlocked, setUnlocked] = useState(1);
+  const [hud, setHud] = useState({ hp: 100, current: 0, target: 3, dash: 100 });
+  const game = useRef(makeLevel(0));
+  const keys = useRef(new Set<string>());
+  const screenRef = useRef<Screen>('menu');
+  const levelRef = useRef(0);
+  const phaseRef = useRef<RiftPhase>('cyan');
+  const scoreRef = useRef(0);
+  const lastHud = useRef(0);
 
   useEffect(() => {
-    setBest(readLocal<number>(BEST_KEY, 0));
-    const saved = readLocal<boolean>(SOUND_KEY, false);
-    setSoundOn(saved);
-    soundRef.current = saved;
-    tones.current = new TonePlayer();
-    return () => tones.current?.close();
+    setBest(Number(readLocal(BEST_KEY, '0')) || 0);
+    setUnlocked(clamp(Number(readLocal(PROGRESS_KEY, '1')) || 1, 1, LEVELS.length));
   }, []);
 
-  /** Read through a ref so the game loop never restarts when sound is toggled. */
-  const beep = useCallback((frequency: number, seconds: number, type: OscillatorType = 'sine') => {
-    if (!soundRef.current) return;
-    tones.current?.play(frequency, seconds, type);
+  const setGameScreen = useCallback((next: Screen) => {
+    screenRef.current = next;
+    setScreen(next);
   }, []);
 
-  const toggleSound = useCallback(() => {
-    setSoundOn((on) => {
-      const next = !on;
-      soundRef.current = next;
-      writeLocal(SOUND_KEY, next);
-      // Confirm the change audibly, so enabling sound gives immediate feedback.
-      if (next) tones.current?.play(660, 0.08);
-      return next;
-    });
+  const beginLevel = useCallback((nextLevel: number) => {
+    levelRef.current = nextLevel;
+    setLevel(nextLevel);
+    game.current = makeLevel(nextLevel);
+    scoreRef.current = nextLevel === 0 ? 0 : scoreRef.current;
+    if (nextLevel === 0) setScore(0);
+    phaseRef.current = 'cyan';
+    setRiftPhase('cyan');
+    const config = LEVELS[nextLevel];
+    setHud({ hp: 100, current: 0, target: config.cores || (config.boss ? 1 : config.enemies), dash: 100 });
+    setGameScreen('playing');
+  }, [setGameScreen]);
+
+  const togglePhase = useCallback(() => {
+    if (!LEVELS[levelRef.current].phase || screenRef.current !== 'playing') return;
+    const next = phaseRef.current === 'cyan' ? 'magenta' : 'cyan';
+    phaseRef.current = next;
+    setRiftPhase(next);
   }, []);
 
-  const reset = useCallback(() => {
+  const dash = useCallback(() => {
     const state = game.current;
-    state.craftX = WORLD.width / 2 - CRAFT.width / 2;
-    state.targetX = state.craftX;
-    state.blocks = [];
-    state.cells = [];
-    state.elapsed = 0;
-    state.spawnTimer = 0;
-    state.cellTimer = 0;
-    state.speed = 190;
-    state.score = 0;
-    state.collected = 0;
-    setScore(0);
-    setCollected(0);
+    if (screenRef.current !== 'playing' || state.dash < 1) return;
+    const dx = (keys.current.has('d') || keys.current.has('arrowright') ? 1 : 0) - (keys.current.has('a') || keys.current.has('arrowleft') ? 1 : 0);
+    const dy = (keys.current.has('s') || keys.current.has('arrowdown') ? 1 : 0) - (keys.current.has('w') || keys.current.has('arrowup') ? 1 : 0);
+    state.player.x = clamp(state.player.x + (dx || 1) * 105, 34, W - 34);
+    state.player.y = clamp(state.player.y + dy * 105, 34, H - 34);
+    state.dash = 0;
   }, []);
 
-  const start = useCallback(() => {
-    reset();
-    setPhase('playing');
-  }, [reset]);
-
-  const endRun = useCallback(() => {
-    const finalScore = Math.floor(game.current.score);
-    setPhase('over');
-    beep(150, 0.35, 'sawtooth');
-    setBest((prev) => {
-      if (finalScore <= prev) return prev;
-      writeLocal(BEST_KEY, finalScore);
-      return finalScore;
-    });
-  }, [beep]);
-
-  /* ------------------------------------------------------------- controls */
+  const fire = useCallback(() => {
+    const state = game.current;
+    if (screenRef.current !== 'playing') return;
+    const target = [...state.enemies].sort((a, b) => distance(state.player, a) - distance(state.player, b))[0];
+    const angle = target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : 0;
+    state.bullets.push({ x: state.player.x, y: state.player.y, vx: Math.cos(angle) * 560, vy: Math.sin(angle) * 560, hostile: false });
+  }, []);
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
-      const key = event.key;
-      if (key === 'ArrowLeft' || key === 'a' || key === 'A') {
-        game.current.left = true;
-        event.preventDefault();
-      } else if (key === 'ArrowRight' || key === 'd' || key === 'D') {
-        game.current.right = true;
-        event.preventDefault();
-      } else if (key === ' ' || key === 'Enter') {
-        event.preventDefault();
-        setPhase((current) => {
-          if (current === 'playing') return 'paused';
-          if (current === 'paused') return 'playing';
-          return current;
-        });
-        if (phase === 'ready' || phase === 'over') start();
-      } else if (key === 'p' || key === 'P') {
-        setPhase((current) => (current === 'playing' ? 'paused' : current === 'paused' ? 'playing' : current));
-      }
+      const key = event.key.toLowerCase();
+      if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'shift'].includes(key)) event.preventDefault();
+      keys.current.add(key);
+      if (key === 'f') fire();
+      if (key === 'q') togglePhase();
+      if (key === ' ' || key === 'shift') dash();
+      if (key === 'escape' && screenRef.current === 'playing') setGameScreen('paused');
+      else if (key === 'escape' && screenRef.current === 'paused') setGameScreen('playing');
     };
-    const up = (event: KeyboardEvent) => {
-      const key = event.key;
-      if (key === 'ArrowLeft' || key === 'a' || key === 'A') game.current.left = false;
-      if (key === 'ArrowRight' || key === 'd' || key === 'D') game.current.right = false;
-    };
-    window.addEventListener('keydown', down);
+    const up = (event: KeyboardEvent) => keys.current.delete(event.key.toLowerCase());
+    window.addEventListener('keydown', down, { passive: false });
     window.addEventListener('keyup', up);
-    return () => {
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-    };
-  }, [phase, start]);
-
-  /** Pointer and touch steering: the craft eases toward where you press. */
-  const steerTo = useCallback((clientX: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const ratio = (clientX - rect.left) / rect.width;
-    game.current.targetX = Math.max(0, Math.min(WORLD.width - CRAFT.width, ratio * WORLD.width - CRAFT.width / 2));
-  }, []);
-
-  /* ------------------------------------------------------------- the loop */
+    return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); };
+  }, [dash, fire, setGameScreen, togglePhase]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+    let frame = 0;
+    let previous = performance.now();
 
-    let raf = 0;
-    let last = performance.now();
-    let stopped = false;
-
-    const draw = () => {
+    const render = () => {
       const state = game.current;
-      const { width: W, height: H } = WORLD;
+      const currentLevel = LEVELS[levelRef.current];
+      ctx.fillStyle = '#03070d'; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(46,242,255,.075)'; ctx.lineWidth = 1;
+      for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      const glow = ctx.createRadialGradient(state.player.x, state.player.y, 0, state.player.x, state.player.y, 170);
+      glow.addColorStop(0, phaseRef.current === 'cyan' ? 'rgba(25,228,255,.13)' : 'rgba(255,48,212,.13)'); glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
 
-      // Backdrop with a moving starfield-style rule set (original, procedural).
-      ctx.fillStyle = BRAND.ink;
-      ctx.fillRect(0, 0, W, H);
-
-      const laneInset = Math.min(120, state.elapsed * 6);
-      ctx.strokeStyle = 'rgba(34,211,238,0.16)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(laneInset, 0);
-      ctx.lineTo(laneInset, H);
-      ctx.moveTo(W - laneInset, 0);
-      ctx.lineTo(W - laneInset, H);
-      ctx.stroke();
-
-      ctx.fillStyle = 'rgba(255,255,255,0.09)';
-      for (let i = 0; i < 26; i += 1) {
-        const y = (i * 137 + state.elapsed * 60) % H;
-        const x = (i * 79) % W;
-        ctx.fillRect(x, y, 2, 8);
+      if (currentLevel.phase) {
+        ctx.save(); ctx.setLineDash([14, 10]); ctx.lineWidth = 5;
+        ctx.strokeStyle = phaseRef.current === 'cyan' ? 'rgba(255,48,212,.32)' : 'rgba(25,228,255,.32)';
+        ctx.strokeRect(390, 55, 115, 430); ctx.restore();
       }
-
-      // Cells
-      for (const cell of state.cells) {
-        if (cell.taken) continue;
-        ctx.beginPath();
-        ctx.arc(cell.x, cell.y, 7, 0, Math.PI * 2);
-        ctx.fillStyle = BRAND.accentWarm;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cell.x, cell.y, 12, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(244,114,182,0.38)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+      if (levelRef.current === 1) {
+        ctx.strokeStyle = 'rgba(255,65,92,.6)'; ctx.lineWidth = 3;
+        const laserY = 80 + ((state.elapsed * 90) % 380);
+        ctx.beginPath(); ctx.moveTo(250, laserY); ctx.lineTo(700, laserY); ctx.stroke();
       }
-
-      // Blocks
-      for (const block of state.blocks) {
-        ctx.fillStyle = '#2b2b45';
-        ctx.fillRect(block.x, block.y, block.w, block.h);
-        ctx.strokeStyle = 'rgba(148,163,184,0.5)';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(block.x + 0.75, block.y + 0.75, block.w - 1.5, block.h - 1.5);
+      for (const core of state.cores) if (!core.collected) {
+        ctx.save(); ctx.translate(core.x, core.y); ctx.rotate(state.elapsed * 1.8); ctx.shadowBlur = 18; ctx.shadowColor = '#ffd84d';
+        ctx.strokeStyle = '#ffd84d'; ctx.lineWidth = 4; ctx.strokeRect(-10, -10, 20, 20); ctx.restore();
       }
-
-      // Craft: a simple original triangle-and-fins shape.
-      const cx = state.craftX;
-      const cy = H - 92;
-      ctx.fillStyle = BRAND.accent;
-      ctx.beginPath();
-      ctx.moveTo(cx + CRAFT.width / 2, cy);
-      ctx.lineTo(cx + CRAFT.width, cy + CRAFT.height);
-      ctx.lineTo(cx + CRAFT.width / 2, cy + CRAFT.height - 7);
-      ctx.lineTo(cx, cy + CRAFT.height);
-      ctx.closePath();
-      ctx.fill();
-
-      // Thrust flicker, only while actually moving forward.
-      if (phase === 'playing') {
-        ctx.fillStyle = 'rgba(34,211,238,0.5)';
-        const flame = 6 + Math.random() * 7;
-        ctx.beginPath();
-        ctx.moveTo(cx + CRAFT.width / 2 - 4, cy + CRAFT.height - 6);
-        ctx.lineTo(cx + CRAFT.width / 2, cy + CRAFT.height - 6 + flame);
-        ctx.lineTo(cx + CRAFT.width / 2 + 4, cy + CRAFT.height - 6);
-        ctx.closePath();
-        ctx.fill();
+      for (const enemy of state.enemies) {
+        ctx.save(); ctx.translate(enemy.x, enemy.y); ctx.shadowBlur = enemy.kind === 'guardian' ? 28 : 15; ctx.shadowColor = '#ff305f';
+        ctx.strokeStyle = enemy.kind === 'guardian' ? '#ffcf47' : '#ff305f'; ctx.lineWidth = enemy.kind === 'guardian' ? 7 : 4;
+        const size = enemy.kind === 'guardian' ? 38 : 18; ctx.rotate(state.elapsed * (enemy.kind === 'guardian' ? -.35 : .8));
+        ctx.strokeRect(-size, -size, size * 2, size * 2); ctx.restore();
       }
+      for (const bullet of state.bullets) {
+        ctx.fillStyle = bullet.hostile ? '#ff305f' : '#eaffff'; ctx.shadowBlur = 12; ctx.shadowColor = ctx.fillStyle;
+        ctx.beginPath(); ctx.arc(bullet.x, bullet.y, bullet.hostile ? 5 : 4, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      }
+      ctx.save(); ctx.translate(state.player.x, state.player.y); ctx.shadowBlur = 24; ctx.shadowColor = phaseRef.current === 'cyan' ? '#19e4ff' : '#ff30d4';
+      ctx.fillStyle = phaseRef.current === 'cyan' ? '#19e4ff' : '#ff30d4';
+      ctx.beginPath(); ctx.moveTo(20, 0); ctx.lineTo(-15, -13); ctx.lineTo(-8, 0); ctx.lineTo(-15, 13); ctx.closePath(); ctx.fill(); ctx.restore();
     };
 
-    const step = (now: number) => {
-      if (stopped) return;
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
+    const finishLevel = () => {
+      const nextUnlocked = clamp(Math.max(unlocked, levelRef.current + 2), 1, LEVELS.length);
+      setUnlocked(nextUnlocked); writeLocal(PROGRESS_KEY, String(nextUnlocked));
+      const finalScore = Math.round(scoreRef.current);
+      if (finalScore > Number(readLocal(BEST_KEY, '0'))) { writeLocal(BEST_KEY, String(finalScore)); setBest(finalScore); }
+      setGameScreen('complete');
+    };
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - previous) / 1000, 0.035); previous = now;
       const state = game.current;
+      if (screenRef.current === 'playing') {
+        state.elapsed += dt; state.dash = Math.min(1, state.dash + dt * 0.42);
+        let dx = 0, dy = 0;
+        if (keys.current.has('a') || keys.current.has('arrowleft')) dx--;
+        if (keys.current.has('d') || keys.current.has('arrowright')) dx++;
+        if (keys.current.has('w') || keys.current.has('arrowup')) dy--;
+        if (keys.current.has('s') || keys.current.has('arrowdown')) dy++;
+        const magnitude = Math.hypot(dx, dy) || 1;
+        state.player.x = clamp(state.player.x + dx / magnitude * 230 * dt, 25, W - 25);
+        state.player.y = clamp(state.player.y + dy / magnitude * 230 * dt, 25, H - 25);
+        scoreRef.current += dt * 10;
 
-      if (phase === 'playing') {
-        state.elapsed += dt;
-        state.speed = 190 + state.elapsed * 11;
-
-        // Steering: keys nudge the target, pointer sets it directly.
-        if (state.left) state.targetX -= 420 * dt;
-        if (state.right) state.targetX += 420 * dt;
-        state.targetX = Math.max(0, Math.min(WORLD.width - CRAFT.width, state.targetX));
-        state.craftX += (state.targetX - state.craftX) * Math.min(1, dt * 14);
-
-        // Spawn blocks, faster over time.
-        state.spawnTimer -= dt;
-        if (state.spawnTimer <= 0) {
-          state.spawnTimer = Math.max(0.34, 0.95 - state.elapsed * 0.02);
-          const w = 44 + Math.random() * 92;
-          state.blocks.push({
-            x: Math.random() * (WORLD.width - w),
-            y: -40,
-            w,
-            h: 20 + Math.random() * 16,
-            vx: (Math.random() - 0.5) * 60,
-          });
+        for (const core of state.cores) if (!core.collected && distance(state.player, core) < 28) {
+          core.collected = true; scoreRef.current += 250;
         }
-
-        // Spawn collectables.
-        state.cellTimer -= dt;
-        if (state.cellTimer <= 0) {
-          state.cellTimer = 1.5 + Math.random();
-          state.cells.push({ x: 24 + Math.random() * (WORLD.width - 48), y: -20, taken: false });
-        }
-
-        // Advance and cull.
-        for (const block of state.blocks) {
-          block.y += state.speed * dt;
-          block.x += block.vx * dt;
-          if (block.x < 0 || block.x + block.w > WORLD.width) block.vx *= -1;
-        }
-        for (const cell of state.cells) cell.y += state.speed * dt;
-        state.blocks = state.blocks.filter((b) => b.y < WORLD.height + 60);
-        state.cells = state.cells.filter((c) => c.y < WORLD.height + 40 && !c.taken);
-
-        // Distance score.
-        state.score += dt * 14;
-
-        const craftY = WORLD.height - 92;
-
-        // Collect
-        for (const cell of state.cells) {
-          if (cell.taken) continue;
-          if (overlaps(state.craftX, craftY, CRAFT.width, CRAFT.height, cell.x - 8, cell.y - 8, 16, 16)) {
-            cell.taken = true;
-            state.score += 25;
-            state.collected += 1;
-            setCollected(state.collected);
-            beep(880, 0.09, 'triangle');
+        for (const enemy of state.enemies) {
+          const angle = Math.atan2(state.player.y - enemy.y, state.player.x - enemy.x);
+          if (enemy.kind === 'sentinel') { enemy.x += Math.cos(angle) * 23 * dt; enemy.y += Math.sin(angle) * 23 * dt; }
+          enemy.cooldown -= dt;
+          if (enemy.cooldown <= 0) {
+            state.bullets.push({ x: enemy.x, y: enemy.y, vx: Math.cos(angle) * 155, vy: Math.sin(angle) * 155, hostile: true });
+            enemy.cooldown = enemy.kind === 'guardian' ? .38 : 1.35;
           }
         }
-
-        // Collide
-        for (const block of state.blocks) {
-          if (overlaps(state.craftX, craftY, CRAFT.width, CRAFT.height, block.x, block.y, block.w, block.h)) {
-            endRun();
-            break;
+        for (const bullet of state.bullets) {
+          bullet.x += bullet.vx * dt; bullet.y += bullet.vy * dt;
+          if (bullet.hostile && distance(bullet, state.player) < 17) { bullet.x = -99; state.hp -= 12; }
+          if (!bullet.hostile) for (const enemy of state.enemies) if (distance(bullet, enemy) < (enemy.kind === 'guardian' ? 45 : 24)) {
+            bullet.x = -99; enemy.hp--; if (enemy.hp <= 0) scoreRef.current += enemy.kind === 'guardian' ? 2000 : 300;
           }
         }
-
-        setScore(Math.floor(state.score));
+        state.bullets = state.bullets.filter(b => b.x > -20 && b.x < W + 20 && b.y > -20 && b.y < H + 20);
+        state.enemies = state.enemies.filter(enemy => enemy.hp > 0);
+        const config = LEVELS[levelRef.current];
+        const current = config.cores ? state.cores.filter(core => core.collected).length : (config.boss ? (state.enemies.length ? 0 : 1) : config.enemies - state.enemies.length);
+        if (state.hp <= 0) setGameScreen('failed');
+        else if (current >= (config.cores || (config.boss ? 1 : config.enemies))) finishLevel();
+        if (now - lastHud.current > 120) {
+          lastHud.current = now; setScore(Math.round(scoreRef.current));
+          setHud({ hp: Math.max(0, state.hp), current, target: config.cores || (config.boss ? 1 : config.enemies), dash: Math.round(state.dash * 100) });
+        }
       }
-
-      draw();
-      raf = requestAnimationFrame(step);
+      render(); frame = requestAnimationFrame(tick);
     };
+    render(); frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [setGameScreen, unlocked]);
 
-    raf = requestAnimationFrame(step);
-    return () => {
-      stopped = true;
-      cancelAnimationFrame(raf);
-    };
-  }, [phase, endRun, beep]);
+  const hold = (key: string, active: boolean) => active ? keys.current.add(key) : keys.current.delete(key);
+  const continueMission = () => level < LEVELS.length - 1 ? beginLevel(level + 1) : setGameScreen('menu');
 
   return (
-    <div className="dl-root">
+    <div className="nr-root" style={{ minHeight: '100svh' }}>
       <style>{CSS}</style>
+      <main className="nr-shell">
+        <header className="nr-topbar">
+          <div className="nr-brand"><span className="nr-brand-mark">NR</span><span>NEON RIFT // VAULT PROTOCOL</span></div>
+          <div className="nr-status"><span className="nr-live" /> SYSTEM ONLINE <b>BEST {best.toLocaleString()}</b></div>
+        </header>
 
-      <header className="dl-header">
-        <span className="dl-brand">
-          <span className="dl-brand-mark" aria-hidden>
-            ◆
-          </span>
-          {BRAND.name}
-        </span>
-        <p className="dl-tagline">An original arcade game built for the Xroga AI Showcase.</p>
-      </header>
+        <section className="nr-stage" aria-label="Riftbreaker game">
+          <canvas ref={canvasRef} className="nr-canvas" width={W} height={H} aria-label="Neon Vault game field" />
+          {screen !== 'menu' && <div className="nr-hud" aria-live="polite">
+            <span>LVL <b>{String(level + 1).padStart(2, '0')}</b></span><span>PHASE <b className={`nr-${riftPhase}`}>{riftPhase}</b></span>
+            <span>HP <b>{Math.round(hud.hp)}%</b></span><span>SCORE <b className="nr-score">{score.toLocaleString()}</b></span>
+            <span>OBJECTIVE <b>{hud.current}/{hud.target}</b></span>
+          </div>}
 
-      <main className="dl-main">
-        <div className="dl-stage">
-          <div className="dl-hud">
-            <div className="dl-hud-item">
-              <span className="dl-hud-label">Score</span>
-              <span className="dl-hud-value" role="status" aria-live="off">
-                {score}
-              </span>
-            </div>
-            <div className="dl-hud-item">
-              <span className="dl-hud-label">Cells</span>
-              <span className="dl-hud-value">{collected}</span>
-            </div>
-            <div className="dl-hud-item">
-              <span className="dl-hud-label">Best</span>
-              <span className="dl-hud-value dl-hud-value--best">{best}</span>
-            </div>
-          </div>
+          {screen === 'menu' && <div className="nr-overlay nr-menu">
+            <p className="nr-kicker">A NEON VAULT OPERATIVE SIMULATION</p>
+            <h1><span>RIFT</span>BREAKER</h1>
+            <p className="nr-subtitle">Breach the vault. Recover unstable cores. Shift between realities and survive the Guardian.</p>
+            <div className="nr-actions"><button type="button" className="nr-primary" onClick={() => beginLevel(0)}>Start mission</button>{unlocked > 1 && <button type="button" onClick={() => beginLevel(unlocked - 1)}>Continue · Level {unlocked}</button>}</div>
+            <div className="nr-instructions"><article><b>01 // RECOVER</b><span>Collect every Rift Core</span></article><article><b>02 // FIGHT</b><span>Fire at sentinels and evade</span></article><article><b>03 // PHASE</b><span>Switch realities to pass walls</span></article></div>
+            <div className="nr-missions">{LEVELS.map((mission, index) => <button key={mission.name} type="button" disabled={index + 1 > unlocked} onClick={() => beginLevel(index)}><small>0{index + 1}</small><span>{mission.name}</span>{index + 1 > unlocked ? 'LOCKED' : 'READY'}</button>)}</div>
+          </div>}
+          {screen === 'paused' && <div className="nr-overlay nr-dialog"><p className="nr-kicker">SIMULATION SUSPENDED</p><h2>PAUSED</h2><button className="nr-primary" type="button" onClick={() => setGameScreen('playing')}>Resume</button><button type="button" onClick={() => setGameScreen('menu')}>Return to missions</button></div>}
+          {(screen === 'complete' || screen === 'failed') && <div className="nr-overlay nr-dialog"><p className="nr-kicker">{screen === 'complete' ? 'OBJECTIVE SECURED' : 'SIGNAL LOST'}</p><h2>{screen === 'complete' ? 'MISSION COMPLETE' : 'OPERATIVE DOWN'}</h2><p>Score <strong>{score.toLocaleString()}</strong></p><button className="nr-primary" type="button" onClick={screen === 'complete' ? continueMission : () => beginLevel(level)}>{screen === 'complete' && level < LEVELS.length - 1 ? 'Next mission' : screen === 'failed' ? 'Retry mission' : 'Mission select'}</button><button type="button" onClick={() => setGameScreen('menu')}>Mission select</button></div>}
+        </section>
 
-          <div
-            className="dl-canvas-wrap"
-            onPointerDown={(event) => {
-              if (phase === 'ready' || phase === 'over') start();
-              steerTo(event.clientX);
-            }}
-            onPointerMove={(event) => {
-              if (event.buttons > 0) steerTo(event.clientX);
-            }}
-            onTouchStart={(event) => {
-              if (phase === 'ready' || phase === 'over') start();
-              if (event.touches[0]) steerTo(event.touches[0].clientX);
-            }}
-            onTouchMove={(event) => {
-              if (event.touches[0]) steerTo(event.touches[0].clientX);
-            }}
-          >
-            <canvas ref={canvasRef} width={WORLD.width} height={WORLD.height} className="dl-canvas" aria-label="Game field" role="img" />
-
-            {phase !== 'playing' && (
-              <div className="dl-overlay">
-                {phase === 'ready' && (
-                  <>
-                    <h1 className="dl-overlay-title">{BRAND.name}</h1>
-                    <p className="dl-overlay-body">
-                      Steer down the corridor, gather cells, and avoid the blocks. The corridor narrows and everything
-                      speeds up the longer you survive.
-                    </p>
-                    <button type="button" className="dl-btn" onClick={start}>
-                      Start game
-                    </button>
-                  </>
-                )}
-                {phase === 'paused' && (
-                  <>
-                    <h2 className="dl-overlay-title">Paused</h2>
-                    <button type="button" className="dl-btn" onClick={() => setPhase('playing')}>
-                      Resume
-                    </button>
-                  </>
-                )}
-                {phase === 'over' && (
-                  <>
-                    <h2 className="dl-overlay-title">Run over</h2>
-                    <p className="dl-overlay-score">
-                      {score} <span>points</span>
-                    </p>
-                    <p className="dl-overlay-body">
-                      {score >= best && score > 0 ? 'A new personal best on this device.' : `Your best on this device is ${best}.`}
-                    </p>
-                    <button type="button" className="dl-btn" onClick={start}>
-                      Play again
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="dl-controls">
-            <button
-              type="button"
-              className="dl-pad"
-              aria-label="Steer left"
-              onPointerDown={() => {
-                game.current.left = true;
-              }}
-              onPointerUp={() => {
-                game.current.left = false;
-              }}
-              onPointerLeave={() => {
-                game.current.left = false;
-              }}
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              className="dl-btn dl-btn--ghost"
-              onClick={() => setPhase((p) => (p === 'playing' ? 'paused' : p === 'paused' ? 'playing' : p))}
-              disabled={phase === 'ready' || phase === 'over'}
-            >
-              {phase === 'paused' ? 'Resume' : 'Pause'}
-            </button>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={soundOn}
-              aria-label="Sound"
-              title={soundOn ? 'Sound on' : 'Sound off'}
-              className={`dl-pad dl-pad--sound${soundOn ? ' dl-pad--on' : ''}`}
-              onClick={toggleSound}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" />
-                {soundOn ? (
-                  <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                ) : (
-                  <path d="M15.5 9.5l5 5M20.5 9.5l-5 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                )}
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="dl-pad"
-              aria-label="Steer right"
-              onPointerDown={() => {
-                game.current.right = true;
-              }}
-              onPointerUp={() => {
-                game.current.right = false;
-              }}
-              onPointerLeave={() => {
-                game.current.right = false;
-              }}
-            >
-              →
-            </button>
-          </div>
-
-          <p className="dl-help">
-            Arrow keys or <kbd>A</kbd>/<kbd>D</kbd> to steer · <kbd>P</kbd> to pause · or drag anywhere on the field.
-            Sound is off by default and synthesised, not sampled. Your best score is saved on this device only.
-          </p>
+        <div className="nr-objective"><span>MISSION {level + 1}</span><b>{LEVELS[level].name}</b><p>{LEVELS[level].objective}</p><div><i style={{ width: `${hud.dash}%` }} /></div></div>
+        <div className="nr-controls" aria-label="Game controls">
+          <div className="nr-dpad"><button aria-label="Move left" onPointerDown={() => hold('a', true)} onPointerUp={() => hold('a', false)} onPointerLeave={() => hold('a', false)}>←</button><button aria-label="Move up" onPointerDown={() => hold('w', true)} onPointerUp={() => hold('w', false)} onPointerLeave={() => hold('w', false)}>↑</button><button aria-label="Move down" onPointerDown={() => hold('s', true)} onPointerUp={() => hold('s', false)} onPointerLeave={() => hold('s', false)}>↓</button><button aria-label="Move right" onPointerDown={() => hold('d', true)} onPointerUp={() => hold('d', false)} onPointerLeave={() => hold('d', false)}>→</button></div>
+          <button type="button" onClick={fire}>FIRE <kbd>F</kbd></button><button type="button" onClick={togglePhase} disabled={!LEVELS[level].phase}>PHASE <kbd>Q</kbd></button><button type="button" onClick={dash}>DASH <kbd>⇧</kbd></button><button type="button" onClick={() => setGameScreen(screen === 'paused' ? 'playing' : 'paused')} disabled={screen !== 'playing' && screen !== 'paused'}>{screen === 'paused' ? 'Resume' : 'Pause'}</button>
         </div>
+        <p className="nr-help">WASD / ARROWS TO MOVE · MOUSE OR F TO FIRE · Q TO PHASE · SHIFT / SPACE TO DASH · ESC TO PAUSE</p>
       </main>
     </div>
   );
 }
 
 const CSS = `
-${productReset('.dl-root')}
-.dl-root {
-  --ink: ${BRAND.ink};
-  --panel: ${BRAND.panel};
-  --border: ${BRAND.border};
-  --muted: ${BRAND.muted};
-  --accent: ${BRAND.accent};
-  --accent-warm: ${BRAND.accentWarm};
-  min-height: 100%; background: radial-gradient(120% 80% at 50% 0%, #16162a 0%, var(--ink) 62%);
-  color: #f2f2fa; line-height: 1.5;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.dl-root *, .dl-root *::before, .dl-root *::after { box-sizing: border-box; }
-.dl-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-.dl-header { padding: 22px 20px 6px; text-align: center; }
-.dl-brand { display: inline-flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 750; letter-spacing: 0.01em; }
-.dl-brand-mark { color: var(--accent); font-size: 13px; }
-.dl-tagline { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
-
-.dl-main { display: grid; place-items: center; padding: 14px 16px 34px; }
-.dl-stage { width: 100%; max-width: 480px; }
-
-.dl-hud { display: flex; gap: 10px; margin-bottom: 12px; }
-.dl-hud-item {
-  flex: 1; display: grid; gap: 2px; padding: 9px 12px;
-  border: 1px solid var(--border); border-radius: 11px; background: var(--panel);
-}
-.dl-hud-label { font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.dl-hud-value { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.dl-hud-value--best { color: var(--accent-warm); }
-
-.dl-canvas-wrap {
-  position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 16px;
-  background: var(--ink); touch-action: none; cursor: crosshair;
-  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8);
-}
-.dl-canvas { display: block; width: 100%; height: auto; }
-
-.dl-overlay {
-  position: absolute; inset: 0; display: grid; place-content: center; gap: 12px;
-  padding: 28px; text-align: center; background: rgba(7,7,15,0.86); backdrop-filter: blur(3px);
-}
-.dl-overlay-title { margin: 0; font-size: clamp(24px, 6vw, 34px); font-weight: 800; letter-spacing: -0.03em; }
-.dl-overlay-body { margin: 0 auto; max-width: 32ch; font-size: 13.5px; line-height: 1.6; color: var(--muted); }
-.dl-overlay-score { margin: 0; font-size: 42px; font-weight: 800; letter-spacing: -0.04em; color: var(--accent); }
-.dl-overlay-score span { font-size: 14px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
-
-.dl-btn {
-  justify-self: center; padding: 11px 24px; border: 0; border-radius: 999px;
-  background: var(--accent); color: #04121a; font-size: 14px; font-weight: 750; cursor: pointer; font-family: inherit;
-  transition: transform 140ms ease, filter 140ms ease;
-}
-.dl-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
-.dl-btn--ghost { background: var(--panel); color: #f2f2fa; border: 1px solid var(--border); }
-.dl-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-.dl-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
-.dl-pad {
-  display: grid; place-items: center; width: 62px; height: 44px;
-  border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
-  color: #f2f2fa; font-size: 19px; cursor: pointer; font-family: inherit; touch-action: none;
-}
-.dl-pad:active { background: #1d1d31; }
-.dl-pad--sound { width: 46px; color: var(--muted); }
-.dl-pad--on { color: var(--accent); border-color: rgba(34,211,238,0.45); }
-
-.dl-help { margin: 14px 0 0; text-align: center; font-size: 11.5px; line-height: 1.6; color: var(--muted); }
-.dl-help kbd {
-  padding: 1px 5px; border: 1px solid var(--border); border-radius: 5px;
-  background: var(--panel); font-size: 10.5px; font-family: ui-monospace, monospace;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dl-root *, .dl-root *::before, .dl-root *::after { transition-duration: 0.001ms !important; }
-  .dl-btn:hover { transform: none; }
-}
+${productReset('.nr-root')}
+.nr-root{--cyan:#19e4ff;--mag:#ff30d4;--gold:#ffd84d;--red:#ff305f;min-height:100%;background:#03070d;color:#e9fbff;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;line-height:1.4;-webkit-font-smoothing:antialiased}.nr-root *{box-sizing:border-box}.nr-root button{font:inherit}.nr-root :focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.nr-shell{width:min(1180px,100%);margin:auto;padding:18px}.nr-topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;border:1px solid #14303a;border-bottom:0;background:#071016;font-size:11px;letter-spacing:.08em}.nr-brand{display:flex;align-items:center;gap:10px;font-weight:800}.nr-brand-mark{display:grid;place-items:center;width:30px;height:24px;border:1px solid var(--cyan);color:var(--cyan);box-shadow:inset 0 0 14px #19e4ff33}.nr-status{display:flex;align-items:center;gap:9px;color:#7d9ba3}.nr-status b{color:var(--gold);margin-left:8px}.nr-live{width:7px;height:7px;border-radius:50%;background:#4cff88;box-shadow:0 0 12px #4cff88}.nr-stage{position:relative;overflow:hidden;border:1px solid #14303a;background:#03070d;box-shadow:0 30px 80px #000}.nr-canvas{display:block;width:100%;aspect-ratio:16/9}.nr-hud{position:absolute;inset:12px 14px auto;z-index:3;display:flex;gap:8px;pointer-events:none}.nr-hud span{padding:6px 9px;border:1px solid #173945;background:#041016dc;color:#648b95;font-size:9px;letter-spacing:.08em}.nr-hud b{color:#e9fbff}.nr-hud .nr-cyan{color:var(--cyan)}.nr-hud .nr-magenta{color:var(--mag)}.nr-overlay{position:absolute;inset:0;z-index:4;display:grid;place-content:center;text-align:center;padding:38px;background:radial-gradient(circle at center,#071a22e8,#02060bfa)}.nr-kicker{margin:0 0 10px;color:var(--cyan);font-size:10px;letter-spacing:.24em}.nr-menu h1{margin:0;font:900 clamp(48px,9vw,105px)/.8 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;letter-spacing:-.04em;text-shadow:5px 0 0 #ff30d455}.nr-menu h1 span{display:block;color:transparent;-webkit-text-stroke:1px var(--cyan);font-size:.52em;letter-spacing:.35em}.nr-subtitle{max-width:600px;margin:22px auto;color:#87a6ae;font-size:12px}.nr-actions{display:flex;justify-content:center;gap:10px}.nr-root button{border:1px solid #23434c;background:#08151c;color:#bcd3d8;padding:10px 15px;cursor:pointer;text-transform:uppercase;font-size:10px;letter-spacing:.08em}.nr-root button:hover{border-color:var(--cyan);color:#fff}.nr-root button:disabled{opacity:.35;cursor:not-allowed}.nr-root .nr-primary{background:var(--cyan);border-color:var(--cyan);color:#001015;font-weight:900;box-shadow:0 0 24px #19e4ff33}.nr-instructions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(660px,100%);margin:22px auto 10px}.nr-instructions article{display:grid;gap:4px;padding:10px;border:1px solid #132d35;background:#07101699;text-align:left}.nr-instructions b{color:var(--cyan);font-size:9px}.nr-instructions span{font-size:9px;color:#718d94}.nr-missions{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:min(780px,100%);margin:auto}.nr-missions button{display:grid;gap:2px;padding:8px}.nr-missions small{color:var(--cyan)}.nr-missions span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}.nr-dialog{gap:12px}.nr-dialog h2{margin:0;font:900 clamp(32px,6vw,68px)/1 Impact,sans-serif;letter-spacing:.04em}.nr-dialog p{margin:0;color:#7f9ba2}.nr-dialog strong{color:var(--gold)}.nr-dialog button{justify-self:center;min-width:190px}.nr-objective{display:grid;grid-template-columns:auto auto 1fr 150px;align-items:center;gap:14px;padding:11px 14px;border:1px solid #14303a;border-top:0;background:#071016;font-size:10px}.nr-objective>span{color:var(--cyan)}.nr-objective>b{color:#fff}.nr-objective>p{margin:0;color:#76939a}.nr-objective>div{height:4px;background:#10252c}.nr-objective i{display:block;height:100%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}.nr-controls{display:flex;justify-content:center;align-items:center;gap:8px;padding:13px}.nr-controls kbd{margin-left:8px;color:var(--cyan)}.nr-dpad{display:flex;gap:3px}.nr-dpad button{padding:10px 12px}.nr-help{text-align:center;margin:0;color:#4f6b73;font-size:9px;letter-spacing:.08em}.nr-controls button:last-child{min-width:78px}
+@media(max-width:720px){.nr-shell{padding:0}.nr-topbar{font-size:8px}.nr-status{font-size:0}.nr-status b{font-size:8px}.nr-hud{inset:6px;gap:3px;flex-wrap:wrap}.nr-hud span{font-size:7px;padding:4px 5px}.nr-overlay{padding:18px}.nr-menu h1{font-size:52px}.nr-subtitle{font-size:9px;margin:12px auto}.nr-instructions{display:none}.nr-missions{grid-template-columns:repeat(5,1fr);margin-top:13px}.nr-missions button{font-size:0;padding:7px 3px}.nr-missions small{font-size:9px}.nr-missions span{display:none}.nr-objective{grid-template-columns:auto 1fr auto;padding:8px;font-size:8px}.nr-objective>p{display:none}.nr-objective>div{width:70px}.nr-controls{flex-wrap:wrap;padding:8px 4px}.nr-controls button{padding:9px 10px;font-size:8px}.nr-dpad{order:2;width:100%;justify-content:center}.nr-help{display:none}}
+@media(prefers-reduced-motion:reduce){.nr-root *{scroll-behavior:auto!important;transition:none!important}}
 `;
