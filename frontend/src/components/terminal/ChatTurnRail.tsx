@@ -85,9 +85,10 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
                     onFocus={() => setHoveredId(turn.id)}
                     onClick={() => onJump(turn.id)}
                     className={cn(
-                      'group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors',
+                      'xv-chat-turn-row group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors',
+                      active && 'xv-chat-turn-row--active',
                       active
-                        ? 'bg-[var(--accent)]/12 text-[var(--accent)]'
+                        ? 'font-semibold'
                         : 'text-[var(--muted)] hover:bg-white/5 hover:text-[var(--foreground)]'
                     )}
                     aria-label={`Jump to: ${clip(turn.label, 80)}`}
@@ -102,10 +103,8 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
                     </span>
                     <span
                       className={cn(
-                        'h-0.5 shrink-0 rounded-full transition-all',
-                        active
-                          ? 'w-5 bg-[var(--accent)]'
-                          : 'w-2.5 bg-[var(--muted)]/40 group-hover:w-4 group-hover:bg-[var(--accent)]/55'
+                        'xv-chat-turn-row-tick shrink-0 rounded-full',
+                        active && 'xv-chat-turn-row-tick--active'
                       )}
                     />
                   </button>
@@ -127,10 +126,8 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
                 title={clip(turn.label, 60)}
                 aria-label={`Jump to prompt ${clip(turn.label, 40)}`}
                 className={cn(
-                  'rounded-full transition-all duration-200',
-                  active
-                    ? 'h-[3px] w-[18px] bg-[#4a9dff] shadow-[0_0_6px_rgba(74,157,255,0.45)]'
-                    : 'h-[2px] w-[10px] bg-[var(--muted)]/35 hover:w-[14px] hover:bg-[#4a9dff]/50'
+                  'xv-chat-turn-tick rounded-full',
+                  active && 'xv-chat-turn-tick--active'
                 )}
               />
             );

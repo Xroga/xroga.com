@@ -3164,6 +3164,9 @@ body.theme-gray * {
   }
 
   .xv-chat-turn-rail {
+    --xv-turn-blue: #7fc4ff;
+    --xv-turn-blue-hover: #1559c5;
+    --xv-turn-blue-glow: rgba(61, 153, 255, 0.32);
     position: sticky;
     top: 3.5rem;
     align-self: flex-start;
@@ -3202,6 +3205,71 @@ body.theme-gray * {
   }
   .xv-chat-turn-collapsed {
     cursor: default;
+  }
+  .xv-chat-turn-tick,
+  .xv-chat-turn-row-tick {
+    height: 2px;
+    width: 10px;
+    background: var(--xv-turn-blue);
+    opacity: 0.72;
+    transition:
+      width 160ms ease,
+      height 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      opacity 160ms ease;
+  }
+  .xv-chat-turn-tick:hover,
+  .xv-chat-turn-tick:focus-visible {
+    width: 18px;
+    height: 3px;
+    background: var(--xv-turn-blue-hover);
+    box-shadow: 0 0 8px var(--xv-turn-blue-glow);
+    opacity: 1;
+    outline: none;
+  }
+  .xv-chat-turn-tick--active {
+    width: 20px;
+    height: 3px;
+    opacity: 1;
+    box-shadow: 0 0 7px var(--xv-turn-blue-glow);
+  }
+  .xv-chat-turn-row {
+    color: var(--muted);
+  }
+  .xv-chat-turn-row:hover,
+  .xv-chat-turn-row:focus-visible,
+  .xv-chat-turn-row--active {
+    color: var(--xv-turn-blue-hover);
+  }
+  .xv-chat-turn-row--active {
+    background: color-mix(in srgb, var(--xv-turn-blue) 14%, transparent);
+  }
+  .xv-chat-turn-row:focus-visible {
+    outline: 1px solid color-mix(in srgb, var(--xv-turn-blue-hover) 58%, transparent);
+    outline-offset: -1px;
+  }
+  .xv-chat-turn-row-tick {
+    width: 11px;
+  }
+  .xv-chat-turn-row:hover .xv-chat-turn-row-tick,
+  .xv-chat-turn-row:focus-visible .xv-chat-turn-row-tick {
+    width: 18px;
+    height: 3px;
+    background: var(--xv-turn-blue-hover);
+    opacity: 1;
+  }
+  .xv-chat-turn-row-tick--active {
+    width: 20px;
+    height: 3px;
+    opacity: 1;
+    box-shadow: 0 0 7px var(--xv-turn-blue-glow);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .xv-chat-turn-tick,
+    .xv-chat-turn-row-tick {
+      transition: none;
+    }
   }
   .xv-terminal-header {
     -webkit-backdrop-filter: blur(16px);
