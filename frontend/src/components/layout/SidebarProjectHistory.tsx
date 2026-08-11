@@ -54,6 +54,8 @@ type RepoFolder = {
   sessions: RepoSession[];
 };
 
+type RepoFilter = 'latest' | 'oldest' | 'all' | 'current';
+
 function repoLabel(full: string): string {
   if (!full.includes('/')) return full;
   return full.split('/')[1] || full;
@@ -69,8 +71,9 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
-  /** Default off so every used repo stays visible; filter trims to recent when toggled. */
-  const [filterRecent, setFilterRecent] = useState(false);
+  const [repoFilter, setRepoFilter] = useState<RepoFilter>('latest');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -340,10 +343,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           .slice(0, 24),
       }));
 
-    // Newest activity first; currently selected repo stays at the top.
+    // Activity filters operate on real terminal timestamps. The active repository
+    // stays pinned only in the normal latest/all views; Oldest remains a truthful
+    // chronological sort and Current is an explicit one-repository view.
     foldersList.sort((a, b) => {
-      if (selectedRepo && a.key === selectedRepo) return -1;
-      if (selectedRepo && b.key === selectedRepo) return 1;
       const aT = Math.max(
         0,
         ...a.sessions.map((s) => Date.parse(s.updatedAt) || 0)
@@ -352,12 +355,25 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         0,
         ...b.sessions.map((s) => Date.parse(s.updatedAt) || 0)
       );
+      if (repoFilter === 'oldest') return aT - bT;
+      if (selectedRepo && a.key === selectedRepo) return -1;
+      if (selectedRepo && b.key === selectedRepo) return 1;
       return bT - aT;
     });
 
-    if (filterRecent) foldersList = foldersList.slice(0, 40);
+    if (repoFilter === 'latest') foldersList = foldersList.slice(0, 12);
+    if (repoFilter === 'current') foldersList = foldersList.filter((folder) => folder.key === selectedRepo);
     return foldersList;
-  }, [entries, cloudSessions, filterRecent, selectedRepo]);
+  }, [entries, cloudSessions, repoFilter, selectedRepo]);
+
+  useEffect(() => {
+    if (!filterOpen) return;
+    const close = (event: PointerEvent) => {
+      if (!filterRef.current?.contains(event.target as Node)) setFilterOpen(false);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [filterOpen]);
 
   useEffect(() => {
     setOpenFolders((prev) => {
@@ -502,21 +518,46 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
   return (
     <div className="mt-2 mb-1 px-1.5">
-      <div className="flex items-center justify-between gap-1 px-1.5 mb-1.5">
+      <div className="relative flex items-center justify-between gap-1 px-1.5 mb-1.5">
         <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
           Repositories
         </span>
-        <button
-          type="button"
-          title={filterRecent ? 'Showing recent used repos' : 'Show all used repos'}
-          onClick={() => setFilterRecent((v) => !v)}
-          className={cn(
-            'p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5',
-            filterRecent && 'text-[var(--accent)]'
-          )}
-        >
-          <Filter className="h-3 w-3" />
-        </button>
+        <div ref={filterRef} className="relative">
+          <button
+            type="button"
+            title="Filter repositories"
+            aria-label="Filter repositories"
+            aria-haspopup="menu"
+            aria-expanded={filterOpen}
+            onClick={() => setFilterOpen((value) => !value)}
+            className={cn('xv-repo-filter-trigger', repoFilter !== 'latest' && 'is-active')}
+          >
+            <Filter className="h-3 w-3" aria-hidden="true" />
+          </button>
+          {filterOpen ? (
+            <div className="xv-repo-filter-menu" role="menu" aria-label="Repository order">
+              <div className="xv-repo-filter-head"><b>Repository view</b><span>Sort saved workspaces</span></div>
+              {([
+                ['latest', 'Latest activity', 'Most recently used first'],
+                ['oldest', 'Oldest activity', 'Earliest saved work first'],
+                ['all', 'All repositories', 'Every repository, newest first'],
+                ['current', 'Current repository', 'Only the selected workspace'],
+              ] as const).map(([value, label, description]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={repoFilter === value}
+                  onClick={() => { setRepoFilter(value); setFilterOpen(false); }}
+                  className={cn('xv-repo-filter-option', repoFilter === value && 'is-active')}
+                >
+                  <i aria-hidden="true" />
+                  <span><b>{label}</b><small>{description}</small></span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {folders.length === 0 ? (

@@ -385,13 +385,13 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       className={cn(
         'flex items-center text-[10px] font-mono text-[var(--foreground)]',
         compact
-          ? 'xv-repo-chip gap-1.5 w-max max-w-full min-w-0 overflow-x-auto scrollbar-hide'
+          ? 'xv-repo-chip xv-repo-chip--compact gap-1.5 w-full max-w-full min-w-0 overflow-hidden'
           : 'gap-2 overflow-x-auto scrollbar-hide',
         !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
       )}
     >
       {/* Explicit product intent — avoids patching the wrong app */}
-      <div className="flex items-center gap-1 shrink-0">
+      <div className={cn('flex items-center gap-1 shrink-0', compact && 'xv-repo-intent')}>
         <button
           type="button"
           title={
@@ -434,10 +434,10 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         </button>
       </div>
 
-      <div className="relative shrink-0">
+      <div className={cn('relative shrink-0', compact && 'xv-repo-identity')}>
         {repoLocked && selectedRepo ? (
           <span className={plainTextClass}>
-            <span className="truncate max-w-[140px] sm:max-w-[220px]">{selectedRepo}</span>
+            <span className="xv-repo-name truncate max-w-[140px] sm:max-w-[220px]">{selectedRepo}</span>
           </span>
         ) : (
           <>
@@ -454,7 +454,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
               }}
               className={textTriggerClass}
             >
-              <span className="truncate max-w-[140px] sm:max-w-[220px]">
+              <span className="xv-repo-name truncate max-w-[140px] sm:max-w-[220px]">
                 {selectedRepo ?? 'Select repository'}
               </span>
               <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform', open === 'repo' && 'rotate-180')} />
@@ -484,9 +484,9 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
 
       {selectedRepo ? (
         <>
-          <span className="text-[var(--muted)] opacity-40">/</span>
+          <span className="xv-repo-slash text-[var(--muted)] opacity-40">/</span>
 
-          <div className="relative shrink-0">
+          <div className={cn('relative shrink-0', compact && 'xv-repo-branch')}>
             {repoLocked ? (
               <span className={plainTextClass}>
                 {loadingBranches ? <Loader2 className="w-3 h-3 animate-spin" /> : selectedBranch}
@@ -544,7 +544,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
          * never be what publishes a repository — here both states are chosen, visible,
          * and labelled.
          */
-        <div className="flex items-center gap-1 shrink-0" role="group" aria-label="Visibility for the repository Xroga will create">
+        <div className={cn('flex items-center gap-1 shrink-0', compact && 'xv-repo-visibility')} role="group" aria-label="Visibility for the repository Xroga will create">
           {(['private', 'public'] as const).map((value) => (
             <button
               key={value}
@@ -575,7 +575,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       )}
 
       {(analyzing || repoSummary) && selectedRepo && (
-        <span className="text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[360px] shrink-0" title={repoSummary ?? undefined}>
+        <span className={cn('text-[9px] text-[var(--muted)] truncate max-w-[200px] sm:max-w-[360px] shrink-0', compact && 'xv-repo-analysis')} title={repoSummary ?? undefined}>
           {analyzing ? (
             <span className="inline-flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />

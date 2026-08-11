@@ -402,7 +402,7 @@ export function Sidebar({ displayName }: SidebarProps) {
         )}
       >
         <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'gap-2')}>
-          <HoverTip label="Xroga AI" description="Workspace home" block className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
+          <HoverTip label="Xroga AI" description="Workspace home" block={navExpanded} className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
             <Logo
               href={logoHref}
               height={navExpanded ? 50 : 34}
@@ -412,7 +412,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             />
           </HoverTip>
           {navExpanded ? (
-            <div className="ml-auto flex shrink-0 items-center gap-0.5">
+            <div className="xv-sidebar-header-actions ml-auto flex shrink-0 items-center">
               <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
                 <button
                   type="button"
@@ -428,7 +428,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
-                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                  className="xv-sidebar-head-icon"
                   aria-label="Search"
                 >
                   <Search className="w-3.5 h-3.5" />

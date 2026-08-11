@@ -241,7 +241,7 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
     slug: 'booking-platform',
     name: 'Booking Platform',
     category: 'Booking',
-    shortDescription: 'Availability search, reservations, and a transparent price breakdown.',
+    shortDescription: 'Curated stays with smart matching, live filters, favourites, and transparent booking math.',
     longDescription:
       'A reservation flow where date and guest selection drive real availability rules — capacity, minimum stay, and blocked check-in weekdays. The price breakdown is computed from the actual stay length with cleaning, service fee, and tax lines, and a three-step confirmation validates before it will advance. No payment is collected at any point.',
     capabilities: [
@@ -252,7 +252,7 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
       'Confirmation state that never claims a payment',
     ],
     technologies: ['Next.js', 'React', 'TypeScript'],
-    templateVersion: '1.0.0',
+    templateVersion: '2.0.0',
     status: 'live',
     featured: false,
     mobileApp: false,

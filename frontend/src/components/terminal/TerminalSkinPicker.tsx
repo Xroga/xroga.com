@@ -72,6 +72,10 @@ export function TerminalSkinPicker() {
 
       {open && (
         <div className="xv-skin-menu" role="menu" aria-label="Terminal skin">
+          <div className="xv-skin-menu-head">
+            <span>Terminal appearance</span>
+            <small>Choose a modern console palette</small>
+          </div>
           <button
             type="button"
             role="menuitemradio"
