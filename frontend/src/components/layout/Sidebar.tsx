@@ -32,7 +32,11 @@ import { SidebarProjectHistory } from './SidebarProjectHistory';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
-import { useThemeStore } from '@/store/useThemeStore';
+import {
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+  useThemeStore,
+} from '@/store/useThemeStore';
 import { useAppStore } from '@/store/useAppStore';
 import { clearUserScopedCaches } from '@/lib/userScopedCache';
 import { createClient } from '@/lib/supabase/client';
@@ -241,26 +245,45 @@ export function Sidebar({ displayName }: SidebarProps) {
     return () => document.body.classList.remove('mobile-sidebar-open');
   }, [mobileOpen]);
 
-  function startResize(e: React.MouseEvent) {
+  function startResize(e: React.PointerEvent<HTMLDivElement>) {
     e.preventDefault();
     const startX = e.clientX;
     const startW = sidebarWidth;
-    function onMove(ev: MouseEvent) {
+    document.body.classList.add('xv-sidebar-resizing');
+
+    function onMove(ev: PointerEvent) {
       setSidebarWidth(startW + (ev.clientX - startX));
     }
     function onUp() {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
+      document.body.classList.remove('xv-sidebar-resizing');
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
     }
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp, { once: true });
+  }
+
+  function resizeWithKeyboard(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setSidebarWidth(sidebarWidth - 12);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setSidebarWidth(sidebarWidth + 12);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setSidebarWidth(SIDEBAR_MIN_WIDTH);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setSidebarWidth(SIDEBAR_MAX_WIDTH);
+    }
   }
 
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
   const asideWidth: number | string = effectiveSidebarOpen
     ? hydrated
       ? sidebarWidth
-      : 'var(--xv-boot-sidebar-width, 256px)'
+      : 'var(--xv-boot-sidebar-width, 248px)'
     : 64;
   const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
@@ -388,6 +411,17 @@ export function Sidebar({ displayName }: SidebarProps) {
           </HoverTip>
           {navExpanded ? (
             <div className="ml-auto flex shrink-0 items-center gap-0.5">
+              <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="xv-new-terminal-compact"
+                  aria-label="New Terminal"
+                >
+                  <MessageCirclePlus className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>New</span>
+                </button>
+              </HoverTip>
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button
                   type="button"
@@ -406,17 +440,6 @@ export function Sidebar({ displayName }: SidebarProps) {
           ) : null}
         </div>
 
-        {navExpanded ? (
-          <button
-            type="button"
-            onClick={handleNewChat}
-            className="xv-new-chat-btn mt-2 flex w-full items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-bold"
-            title="New Terminal"
-          >
-            <MessageCirclePlus className="w-3.5 h-3.5" />
-            <span>New Terminal</span>
-          </button>
-        ) : null}
       </div>
 
       {navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
@@ -478,14 +501,6 @@ export function Sidebar({ displayName }: SidebarProps) {
       </SidebarNavScroller> : <div className="flex-1" aria-hidden="true" />}
 
       {navExpanded ? bottomSection : null}
-      {effectiveSidebarOpen && (
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          onMouseDown={startResize}
-          className="hidden lg:block absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-[var(--accent)]/30 z-50"
-        />
-      )}
     </>
   );
 
@@ -535,6 +550,22 @@ export function Sidebar({ displayName }: SidebarProps) {
         >
           {sidebarInner}
         </aside>
+        {effectiveSidebarOpen ? (
+          <div
+            role="separator"
+            aria-label="Resize sidebar"
+            aria-orientation="vertical"
+            aria-valuemin={SIDEBAR_MIN_WIDTH}
+            aria-valuemax={SIDEBAR_MAX_WIDTH}
+            aria-valuenow={sidebarWidth}
+            tabIndex={0}
+            onPointerDown={startResize}
+            onKeyDown={resizeWithKeyboard}
+            className="xv-sidebar-resize-handle hidden lg:flex"
+          >
+            <span aria-hidden="true" />
+          </div>
+        ) : null}
         <button
           type="button"
           onClick={() => {

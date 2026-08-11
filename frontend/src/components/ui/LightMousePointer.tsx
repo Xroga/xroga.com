@@ -41,6 +41,11 @@ export function LightMousePointer() {
     const onMove = (event: PointerEvent) => {
       if (event.pointerType && event.pointerType !== 'mouse') return;
       positionRef.current = { x: event.clientX, y: event.clientY };
+      const node = pointerRef.current;
+      const target = event.target as Element | null;
+      if (node) {
+        node.dataset.mode = target?.closest?.('.xv-sidebar-resize-handle') ? 'resize' : 'pointer';
+      }
       if (frameRef.current == null) frameRef.current = window.requestAnimationFrame(paint);
     };
     const onDown = () => {
@@ -68,23 +73,29 @@ export function LightMousePointer() {
 
   if (!enabled) return null;
   return (
-    <div ref={pointerRef} className="xv-light-pointer" data-visible="false" aria-hidden="true">
+    <div ref={pointerRef} className="xv-light-pointer" data-visible="false" data-mode="pointer" aria-hidden="true">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <g className="xv-light-pointer__rays" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-          <path d="M9 4V2" />
-          <path d="M5 5L3.5 3.5" />
-          <path d="M4 9H2" />
-          <path d="M5 13L3.5 14.5" />
-          <path d="M14.5 3.5L13 5" />
+        <g className="xv-light-pointer__default">
+          <g className="xv-light-pointer__rays" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M9 4V2" />
+            <path d="M5 5L3.5 3.5" />
+            <path d="M4 9H2" />
+            <path d="M5 13L3.5 14.5" />
+            <path d="M14.5 3.5L13 5" />
+          </g>
+          <path
+            className="xv-light-pointer__body"
+            d="M12.669 8.358 17.697 10.326c2.9 1.134 4.35 1.702 4.302 2.602-.048.9-1.562 1.313-4.588 2.138-.901.246-1.352.369-1.664.681-.312.312-.435.763-.681 1.664-.826 3.027-1.238 4.54-2.138 4.588-.9.048-1.468-1.402-2.602-4.302l-1.968-5.028c-1.188-3.036-1.782-4.554-1.013-5.324.77-.769 2.288-.175 5.324 1.013Z"
+            fill="var(--card)"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
         </g>
-        <path
-          className="xv-light-pointer__body"
-          d="M12.669 8.358 17.697 10.326c2.9 1.134 4.35 1.702 4.302 2.602-.048.9-1.562 1.313-4.588 2.138-.901.246-1.352.369-1.664.681-.312.312-.435.763-.681 1.664-.826 3.027-1.238 4.54-2.138 4.588-.9.048-1.468-1.402-2.602-4.302l-1.968-5.028c-1.188-3.036-1.782-4.554-1.013-5.324.77-.769 2.288-.175 5.324 1.013Z"
-          fill="var(--card)"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinejoin="round"
-        />
+        <g className="xv-light-pointer__resize" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="6" width="18" height="12" rx="6" fill="var(--card)" />
+          <path d="m8 9-3 3 3 3M16 9l3 3-3 3M6 12h12" />
+        </g>
       </svg>
     </div>
   );

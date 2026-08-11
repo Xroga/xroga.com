@@ -302,6 +302,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(welcomeBox!.y).toBeLessThan(80);
   const terminalHeader = page.getByTestId('terminal-identity-header');
   await expect(terminalHeader).toHaveCSS('position', 'sticky');
+  await expect(page.locator('.xv-terminal-body')).toHaveCSS('overflow-y', 'auto');
   await expect(terminalHeader.getByRole('button', { name: 'Workspace' })).toBeVisible();
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
@@ -317,17 +318,21 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(composerInput).toBeVisible();
 
   const desktopSidebar = page.locator('.xv-sidebar-root');
+  await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
+  await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
     'src',
-    /Green-Minimalist-Summer-Big-Sale/,
+    /\/brand\/xroga-home-workspace\.png/,
   );
   const expandedLogoBox = await desktopSidebar.getByRole('img', { name: 'Xroga' }).boundingBox();
   expect(expandedLogoBox).not.toBeNull();
   expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(96);
   await page.getByRole('button', { name: 'Close sidebar' }).click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
-  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute('src', /xrogaai\.png/);
+  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute('src', /\/brand\/xroga-mark\.png/);
+  await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toHaveCount(0);
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
   await page.getByRole('button', { name: 'Open sidebar' }).click();

@@ -55,7 +55,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const widthPx = effectiveSidebarOpen
     ? hydrated
       ? `${sidebarWidth}px`
-      : 'var(--xv-boot-sidebar-width, 256px)'
+      : 'var(--xv-boot-sidebar-width, 248px)'
     : '64px';
 
   // Keep the terminal skin aligned with the shell theme — but only while the skin is

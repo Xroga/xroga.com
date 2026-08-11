@@ -21,10 +21,9 @@ export const MOBILE_BG = '/backgrounds/bg-desktop-1-infinity.webp';
 /** Homepage + workspace header only (not sidebar). */
 export const HEADER_LOGO_URL = '/brand/xroga-home-workspace.png';
 export const HOMEPAGE_LOGO_URL = '/brand/xroga-home-workspace.png';
-/** User-supplied sidebar brand assets: wordmark when open, compact mark when folded. */
-export const SIDEBAR_FULL_LOGO_URL =
-  'https://i.postimg.cc/pLxrn9yP/Green-Minimalist-Summer-Big-Sale-Medium-Banner-10-removebg-preview-(1).png';
-export const SIDEBAR_LOGO_URL = 'https://i.postimg.cc/9Mfm1jdK/xrogaai.png';
+/** Local copies avoid a third-party image host delaying or partially painting shell chrome. */
+export const SIDEBAR_FULL_LOGO_URL = '/brand/xroga-home-workspace.png';
+export const SIDEBAR_LOGO_URL = '/brand/xroga-mark.png';
 export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
 
 export type TerminalSkin =

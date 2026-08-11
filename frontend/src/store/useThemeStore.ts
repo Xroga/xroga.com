@@ -17,6 +17,10 @@ import {
 } from '@/lib/theme';
 import { recoverCorruptStorage } from '@/lib/storageRecovery';
 
+export const SIDEBAR_MIN_WIDTH = 224;
+export const SIDEBAR_MAX_WIDTH = 380;
+export const SIDEBAR_DEFAULT_WIDTH = 248;
+
 if (typeof window !== 'undefined') {
   recoverCorruptStorage();
 }
@@ -73,7 +77,7 @@ export const useThemeStore = create<ThemeState>()(
       theme: 'white',
       sidebarOpen: true,
       sidebarPinned: true,
-      sidebarWidth: 256,
+      sidebarWidth: SIDEBAR_DEFAULT_WIDTH,
       customDesktopBg: null,
       customMobileBg: null,
       slideshowEnabled: false,
@@ -102,7 +106,7 @@ export const useThemeStore = create<ThemeState>()(
         }),
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
-        set({ sidebarWidth: Math.min(420, Math.max(200, sidebarWidth)) }),
+        set({ sidebarWidth: Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, sidebarWidth)) }),
       toggleSidebar: () =>
         set((s) => {
           if (s.sidebarOpen) {
@@ -187,8 +191,8 @@ export const useThemeStore = create<ThemeState>()(
           sidebarOpen: state.sidebarOpen !== false,
           sidebarWidth:
             typeof state.sidebarWidth === 'number' && Number.isFinite(state.sidebarWidth)
-              ? Math.min(420, Math.max(200, state.sidebarWidth))
-              : 256,
+              ? Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, state.sidebarWidth))
+              : SIDEBAR_DEFAULT_WIDTH,
           accent: ['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))
             ? state.accent
             : 'blue',
@@ -236,7 +240,10 @@ export const useThemeStore = create<ThemeState>()(
             }
             state.slideshowEnabled = false;
             state.sidebarOpen = state.sidebarOpen !== false;
-            state.sidebarWidth = Math.min(420, Math.max(200, Number(state.sidebarWidth) || 256));
+            state.sidebarWidth = Math.min(
+              SIDEBAR_MAX_WIDTH,
+              Math.max(SIDEBAR_MIN_WIDTH, Number(state.sidebarWidth) || SIDEBAR_DEFAULT_WIDTH),
+            );
             if (!['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))) state.accent = 'blue';
             if (!['modern', 'classic', 'mono'].includes(String(state.fontPreference))) state.fontPreference = 'modern';
             if (!['comfortable', 'compact'].includes(String(state.density))) state.density = 'comfortable';

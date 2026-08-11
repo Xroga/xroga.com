@@ -270,6 +270,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       <div
         className={cn(
           'xv-terminal-window rounded-xl relative border w-full min-w-0',
+          compact ? 'xv-terminal-window--compact' : 'xv-terminal-window--scrolling',
           isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
           !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
           compact ? '' : 'w-full'
@@ -323,7 +324,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           )}
         </div>
 
-        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-hidden rounded-b-xl">
+        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-y-auto overflow-x-hidden rounded-b-xl">
           {messages.length === 0 && sessionRestoring && (
             <div className="xv-term-empty" role="status" aria-live="polite" data-testid="terminal-restoring">
               <p className="xv-term-emptyline">

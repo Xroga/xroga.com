@@ -1,1052 +1,329 @@
 'use client';
 
-/**
- * Showcase product: Real Estate Platform.
- *
- * Everything here works against the in-memory sample catalogue: text search,
- * every filter, sorting, favourites (persisted locally), the detail drawer, and a
- * mortgage calculator that does real amortisation arithmetic.
- *
- * All listings are clearly labelled sample data. No agency, customer, review or
- * sales figures are stated anywhere, and no listing claims to be a real property.
- */
+import Image from 'next/image';
+import { FormEvent, useEffect, useId, useMemo, useState } from 'react';
+import { ArrowDown, ArrowUpRight, Heart, Home, MapPin, Menu, Search, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { productReset, readLocal, writeLocal } from './shared';
 
-import { useEffect, useId, useMemo, useState } from 'react';
-import { formatCurrency, productReset, readLocal, writeLocal } from './shared';
-
-const BRAND = {
-  name: 'Harbourline',
-  ink: '#12241f',
-  paper: '#ffffff',
-  subtle: '#f4f8f6',
-  border: '#dfe8e4',
-  muted: '#5d6f69',
-  accent: '#0f766e',
-  accentDeep: '#115e59',
-  accentSoft: '#ccfbf1',
+const ASSETS = {
+  villa: '/showcase/real-estate-2026/harbourline-villa.jpg',
+  interior: '/showcase/real-estate-2026/harbourline-interior.webp',
+  exterior: '/showcase/real-estate-2026/harbourline-exterior.jpg',
 } as const;
 
-const FAVOURITES_KEY = 'xroga_showcase_realestate_favourites_v1';
+type Deal = 'Buy' | 'Rent' | 'Off-plan';
+type PropertyType = 'Villa' | 'Apartment' | 'Penthouse' | 'Townhouse';
+type SortId = 'featured' | 'price-asc' | 'price-desc' | 'sqft-desc';
 
 interface Listing {
-  id: string;
-  title: string;
+  id: number;
+  name: string;
   area: string;
-  city: string;
+  type: PropertyType;
+  deal: Deal;
   price: number;
   beds: number;
   baths: number;
-  sqft: number;
-  type: 'House' | 'Apartment' | 'Townhouse' | 'Loft';
-  year: number;
-  features: readonly string[];
-  hue: number;
+  size: number;
+  image: string;
+  tag: string;
+  year: string;
+  description: string;
+  amenities: readonly string[];
 }
 
-/** Sample catalogue. Invented addresses; not real listings. */
 const LISTINGS: readonly Listing[] = [
-  { id: 'hl-01', title: 'Cedar Row Terrace', area: 'Cedar Row', city: 'Northbank', price: 615000, beds: 3, baths: 2, sqft: 1740, type: 'Townhouse', year: 2016, features: ['Garden', 'Garage', 'Home office'], hue: 168 },
-  { id: 'hl-02', title: 'Quay Street Loft', area: 'Old Quay', city: 'Northbank', price: 429000, beds: 1, baths: 1, sqft: 880, type: 'Loft', year: 2019, features: ['River view', 'Concierge'], hue: 196 },
-  { id: 'hl-03', title: 'Ashgrove House', area: 'Ashgrove', city: 'Westfield', price: 878000, beds: 4, baths: 3, sqft: 2620, type: 'House', year: 2008, features: ['Garden', 'Garage', 'Fireplace', 'Home office'], hue: 142 },
-  { id: 'hl-04', title: 'Marlow Court', area: 'Marlow', city: 'Westfield', price: 352000, beds: 2, baths: 1, sqft: 940, type: 'Apartment', year: 2021, features: ['Balcony', 'Lift'], hue: 210 },
-  { id: 'hl-05', title: 'Beckett Mews', area: 'Beckett', city: 'Southgate', price: 545000, beds: 3, baths: 2, sqft: 1480, type: 'Townhouse', year: 2013, features: ['Courtyard', 'Home office'], hue: 32 },
-  { id: 'hl-06', title: 'Halden Rise', area: 'Halden', city: 'Southgate', price: 1240000, beds: 5, baths: 4, sqft: 3480, type: 'House', year: 2020, features: ['Garden', 'Garage', 'Pool', 'Home office'], hue: 118 },
-  { id: 'hl-07', title: 'Portside Apartments', area: 'Portside', city: 'Northbank', price: 298000, beds: 1, baths: 1, sqft: 660, type: 'Apartment', year: 2017, features: ['Balcony', 'Bike store'], hue: 186 },
-  { id: 'hl-08', title: 'Ellery Gardens', area: 'Ellery', city: 'Westfield', price: 702000, beds: 4, baths: 2, sqft: 2080, type: 'House', year: 2011, features: ['Garden', 'Fireplace'], hue: 96 },
-  { id: 'hl-09', title: 'Vance Warehouse', area: 'Vance', city: 'Southgate', price: 486000, beds: 2, baths: 2, sqft: 1320, type: 'Loft', year: 2018, features: ['High ceilings', 'Lift', 'Bike store'], hue: 274 },
+  { id: 1, name: 'Frond M Signature Villa', area: 'Palm Jumeirah', type: 'Villa', deal: 'Buy', price: 18900000, beds: 5, baths: 6, size: 6420, image: ASSETS.exterior, tag: 'Exclusive', year: '2026', description: 'A calm waterfront villa with generous glazing, a private pool, landscaped terraces and direct beach access.', amenities: ['Private beach', 'Infinity pool', 'Smart home', 'Maid’s suite', 'Show kitchen', '4-car parking'] },
+  { id: 2, name: 'Marina Gate Skyhome', area: 'Dubai Marina', type: 'Apartment', deal: 'Buy', price: 4850000, beds: 3, baths: 4, size: 2270, image: ASSETS.interior, tag: 'High floor', year: '2025', description: 'A polished high-floor residence with marina views, floor-to-ceiling glass and hotel-style amenities.', amenities: ['Marina view', 'Residents lounge', 'Gym + pool', 'Concierge', '2 parking bays', 'Walk to tram'] },
+  { id: 3, name: 'Burj Vista Residence', area: 'Downtown Dubai', type: 'Apartment', deal: 'Buy', price: 6350000, beds: 3, baths: 4, size: 2148, image: ASSETS.interior, tag: 'Burj view', year: '2026', description: 'A refined downtown home with cinematic skyline views and direct access to a walkable luxury district.', amenities: ['Burj Khalifa view', 'Pool deck', 'Fitness studio', 'Concierge', 'Valet', 'Retail podium'] },
+  { id: 4, name: 'Emirates Hills Garden House', area: 'Emirates Hills', type: 'Villa', deal: 'Buy', price: 24500000, beds: 6, baths: 7, size: 8910, image: ASSETS.villa, tag: 'New', year: '2026', description: 'A private family compound with a pavilion-style plan, mature garden and a dedicated entertainment wing.', amenities: ['Golf course view', 'Cinema', 'Private gym', 'Driver room', 'Garden pavilion', '6-car parking'] },
+  { id: 5, name: 'One Canal Penthouse', area: 'Business Bay', type: 'Penthouse', deal: 'Buy', price: 12900000, beds: 4, baths: 5, size: 4280, image: ASSETS.interior, tag: 'Rare', year: '2026', description: 'A full-floor inspired penthouse with sculpted interiors, oversized entertaining spaces and wide city views.', amenities: ['Private lift lobby', 'Sky terrace', 'Chef kitchen', 'Spa bathroom', 'Concierge', '3 parking bays'] },
+  { id: 6, name: 'Jumeirah Park Courtyard', area: 'Jumeirah Park', type: 'Villa', deal: 'Buy', price: 7100000, beds: 4, baths: 5, size: 4038, image: ASSETS.villa, tag: 'Family', year: '2025', description: 'A bright courtyard villa with open-plan family spaces, landscaped garden and a quiet residential setting.', amenities: ['Private pool', 'Landscaped garden', 'Maid’s room', 'Family lounge', 'Solar-ready roof', '2-car garage'] },
+  { id: 7, name: 'Creek Harbour Loft', area: 'Dubai Creek Harbour', type: 'Apartment', deal: 'Rent', price: 260000, beds: 2, baths: 3, size: 1510, image: ASSETS.interior, tag: 'Furnished', year: '2026', description: 'A furnished waterfront loft with a calm material palette and direct promenade access.', amenities: ['Furnished', 'Creek view', 'Pool', 'Gym', 'Concierge', 'Promenade access'] },
+  { id: 8, name: 'The Valley Estate', area: 'The Valley', type: 'Townhouse', deal: 'Off-plan', price: 3250000, beds: 4, baths: 4, size: 3060, image: ASSETS.exterior, tag: 'Q4 2028', year: '2028', description: 'A future-ready family townhouse with green space, flexible planning and a park-led community.', amenities: ['Payment plan', 'Community park', 'Clubhouse', 'Cycling routes', 'School nearby', '2-car parking'] },
+  { id: 9, name: 'Bluewaters Duplex', area: 'Bluewaters Island', type: 'Penthouse', deal: 'Rent', price: 720000, beds: 3, baths: 4, size: 3180, image: ASSETS.interior, tag: 'Sea view', year: '2026', description: 'A duplex residence with resort proportions, sea-facing terraces and island amenities.', amenities: ['Sea view', 'Private terrace', 'Beach club', 'Pool', 'Concierge', '2 parking bays'] },
 ];
 
-const CITIES = ['All cities', ...Array.from(new Set(LISTINGS.map((l) => l.city)))];
-const TYPES = ['All types', 'House', 'Apartment', 'Townhouse', 'Loft'] as const;
-const SORTS = [
-  { id: 'relevance', label: 'Most relevant' },
-  { id: 'price-asc', label: 'Price: low to high' },
-  { id: 'price-desc', label: 'Price: high to low' },
-  { id: 'sqft-desc', label: 'Largest first' },
-  { id: 'year-desc', label: 'Newest built' },
-] as const;
+const FAVOURITES_KEY = 'xroga_showcase_realestate_favourites_v2';
+const TYPES: readonly ('All' | PropertyType)[] = ['All', 'Villa', 'Apartment', 'Penthouse', 'Townhouse'];
+const TIMES = ['10:00', '11:30', '14:00', '16:30', '18:00'] as const;
 
-type SortId = (typeof SORTS)[number]['id'];
-
-/* ------------------------------------------------------------------ artwork */
-
-/**
- * Gallery views for one property. Each is generated from the listing's own hue, so a
- * gallery is always complete and never depends on a bitmap that could 404.
- */
-const GALLERY_VIEWS = ['Exterior', 'Living space', 'Kitchen', 'Garden'] as const;
-type GalleryView = (typeof GALLERY_VIEWS)[number];
-
-/** Per-listing generated artwork, so no card ever shows a broken image. */
-function ListingArt({ listing, view = 'Exterior' }: { listing: Listing; view?: GalleryView }) {
-  const h = listing.hue;
-
-  if (view === 'Living space' || view === 'Kitchen') {
-    const warm = view === 'Kitchen' ? h + 20 : h;
-    return (
-      <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
-        <rect width="400" height="240" fill={`hsl(${warm} 22% 92%)`} />
-        {/* Floor and back wall */}
-        <rect y="168" width="400" height="72" fill={`hsl(${warm} 24% 74%)`} />
-        <rect x="252" y="44" width="112" height="86" rx="4" fill={`hsl(${warm} 44% 82%)`} />
-        <rect x="252" y="44" width="112" height="86" rx="4" fill="none" stroke={`hsl(${warm} 30% 58%)`} strokeWidth="3" />
-        <line x1="308" y1="44" x2="308" y2="130" stroke={`hsl(${warm} 30% 58%)`} strokeWidth="2.5" />
-        {view === 'Living space' ? (
-          <>
-            <rect x="40" y="128" width="150" height="46" rx="9" fill={`hsl(${warm} 34% 56%)`} />
-            <rect x="52" y="112" width="42" height="22" rx="6" fill={`hsl(${warm} 38% 66%)`} />
-            <rect x="102" y="112" width="42" height="22" rx="6" fill={`hsl(${warm} 38% 66%)`} />
-            <rect x="206" y="150" width="70" height="12" rx="5" fill={`hsl(${warm} 26% 62%)`} />
-          </>
-        ) : (
-          <>
-            <rect x="34" y="120" width="176" height="16" rx="4" fill={`hsl(${warm} 30% 60%)`} />
-            <rect x="34" y="136" width="176" height="38" rx="4" fill={`hsl(${warm} 26% 70%)`} />
-            {[52, 88, 124, 160].map((x) => (
-              <rect key={x} x={x} y="146" width="18" height="20" rx="3" fill={`hsl(${warm} 30% 82%)`} />
-            ))}
-            <rect x="34" y="66" width="120" height="34" rx="4" fill={`hsl(${warm} 30% 78%)`} />
-          </>
-        )}
-      </svg>
-    );
-  }
-
-  if (view === 'Garden') {
-    return (
-      <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
-        <rect width="400" height="240" fill={`hsl(${h + 8} 44% 88%)`} />
-        <rect y="150" width="400" height="90" fill={`hsl(120 32% 62%)`} />
-        <circle cx="330" cy="52" r="22" fill="#fff" opacity="0.6" />
-        {[70, 150, 250, 330].map((x, i) => (
-          <g key={x}>
-            <rect x={x - 3} y={150 - [42, 30, 50, 34][i]} width="6" height={[42, 30, 50, 34][i]} fill="hsl(28 34% 42%)" />
-            <circle cx={x} cy={150 - [42, 30, 50, 34][i]} r={[20, 15, 24, 17][i]} fill={`hsl(${128 + i * 6} 34% ${46 + i * 4}%)`} />
-          </g>
-        ))}
-        <rect x="120" y="176" width="170" height="12" rx="6" fill="hsl(38 26% 74%)" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 400 240" preserveAspectRatio="none" aria-hidden className="hl-art-svg">
-      <defs>
-        <linearGradient id={`hl-sky-${listing.id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={`hsl(${h} 46% 88%)`} />
-          <stop offset="100%" stopColor={`hsl(${h} 38% 78%)`} />
-        </linearGradient>
-      </defs>
-      <rect width="400" height="240" fill={`url(#hl-sky-${listing.id})`} />
-      <circle cx="322" cy="52" r="24" fill="#fff" opacity="0.55" />
-      {/* Skyline behind */}
-      <path d="M0 176 h48 v-40 h34 v40 h30 v-58 h40 v58 h36 v-30 h44 v30 h168 v64 H0Z" fill={`hsl(${h} 30% 62%)`} opacity="0.45" />
-      {/* Building front */}
-      <rect x="112" y="98" width="176" height="98" rx="4" fill="#fff" opacity="0.92" />
-      <path d="M104 100 L200 52 L296 100 Z" fill={`hsl(${h} 42% 40%)`} />
-      {[0, 1, 2].map((row) =>
-        [0, 1, 2, 3].map((col) => (
-          <rect
-            key={`${row}-${col}`}
-            x={128 + col * 38}
-            y={112 + row * 28}
-            width="24"
-            height="18"
-            rx="2.5"
-            fill={`hsl(${h} 44% ${row === 1 && col === 2 ? 62 : 84}%)`}
-          />
-        )),
-      )}
-      <rect x="186" y="160" width="28" height="36" rx="2" fill={`hsl(${h} 42% 46%)`} />
-      <rect y="196" width="400" height="44" fill={`hsl(${h} 26% 56%)`} opacity="0.6" />
-    </svg>
-  );
+function money(value: number): string {
+  return `AED ${Math.round(value).toLocaleString('en-US')}`;
 }
 
-/* ---------------------------------------------------------------- component */
+function nextDate(): string {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
 
 export function RealEstatePlatform() {
-  const uid = useId();
-  const [query, setQuery] = useState('');
-  const [city, setCity] = useState('All cities');
-  const [type, setType] = useState<string>('All types');
-  const [maxPrice, setMaxPrice] = useState(1300000);
+  const [deal, setDeal] = useState<Deal>('Buy');
+  const [type, setType] = useState<'All' | PropertyType>('All');
   const [minBeds, setMinBeds] = useState(0);
-  const [sort, setSort] = useState<SortId>('relevance');
-  const [onlyFavourites, setOnlyFavourites] = useState(false);
-  const [favourites, setFavourites] = useState<string[]>([]);
-  const [openListing, setOpenListing] = useState<Listing | null>(null);
+  const [budget, setBudget] = useState(Number.POSITIVE_INFINITY);
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<SortId>('featured');
+  const [favourites, setFavourites] = useState<number[]>([]);
+  const [showSaved, setShowSaved] = useState(false);
+  const [compare, setCompare] = useState<number[]>([]);
+  const [selected, setSelected] = useState<Listing | null>(null);
+  const [bookingFor, setBookingFor] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
-  // Favourites are restored after mount so the markup matches on the server.
+  useEffect(() => setFavourites(readLocal<number[]>(FAVOURITES_KEY, [])), []);
+
   useEffect(() => {
-    setFavourites(readLocal<string[]>(FAVOURITES_KEY, []));
-  }, []);
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 2400);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
-  function toggleFavourite(id: string) {
-    setFavourites((prev) => {
-      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+  useEffect(() => {
+    if (!selected && !bookingFor) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelected(null);
+        setBookingFor(null);
+      }
+    };
+    document.addEventListener('keydown', close);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', close);
+      document.body.style.overflow = previous;
+    };
+  }, [selected, bookingFor]);
+
+  const activeFilters = (type !== 'All' ? 1 : 0) + (minBeds > 0 ? 1 : 0) + (Number.isFinite(budget) ? 1 : 0) + (query.trim() ? 1 : 0) + (showSaved ? 1 : 0);
+
+  const results = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const filtered = LISTINGS.filter((listing) => {
+      if (listing.deal !== deal) return false;
+      if (type !== 'All' && listing.type !== type) return false;
+      if (listing.beds < minBeds || listing.price > budget) return false;
+      if (showSaved && !favourites.includes(listing.id)) return false;
+      return !needle || `${listing.name} ${listing.area} ${listing.type}`.toLowerCase().includes(needle);
+    });
+    if (sort === 'price-asc') return [...filtered].sort((a, b) => a.price - b.price);
+    if (sort === 'price-desc') return [...filtered].sort((a, b) => b.price - a.price);
+    if (sort === 'sqft-desc') return [...filtered].sort((a, b) => b.size - a.size);
+    return filtered;
+  }, [budget, deal, favourites, minBeds, query, showSaved, sort, type]);
+
+  function toggleFavourite(id: number) {
+    setFavourites((current) => {
+      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
       writeLocal(FAVOURITES_KEY, next);
       return next;
     });
   }
 
-  const results = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const filtered = LISTINGS.filter((listing) => {
-      if (needle) {
-        const haystack = `${listing.title} ${listing.area} ${listing.city} ${listing.type} ${listing.features.join(' ')}`.toLowerCase();
-        if (!haystack.includes(needle)) return false;
-      }
-      if (city !== 'All cities' && listing.city !== city) return false;
-      if (type !== 'All types' && listing.type !== type) return false;
-      if (listing.price > maxPrice) return false;
-      if (listing.beds < minBeds) return false;
-      if (onlyFavourites && !favourites.includes(listing.id)) return false;
-      return true;
-    });
-
-    const sorted = [...filtered];
-    if (sort === 'price-asc') sorted.sort((a, b) => a.price - b.price);
-    else if (sort === 'price-desc') sorted.sort((a, b) => b.price - a.price);
-    else if (sort === 'sqft-desc') sorted.sort((a, b) => b.sqft - a.sqft);
-    else if (sort === 'year-desc') sorted.sort((a, b) => b.year - a.year);
-    return sorted;
-  }, [query, city, type, maxPrice, minBeds, sort, onlyFavourites, favourites]);
-
-  const activeFilters =
-    (query.trim() ? 1 : 0) +
-    (city !== 'All cities' ? 1 : 0) +
-    (type !== 'All types' ? 1 : 0) +
-    (maxPrice < 1300000 ? 1 : 0) +
-    (minBeds > 0 ? 1 : 0) +
-    (onlyFavourites ? 1 : 0);
-
-  function resetFilters() {
-    setQuery('');
-    setCity('All cities');
-    setType('All types');
-    setMaxPrice(1300000);
+  function clearFilters() {
+    setType('All');
     setMinBeds(0);
-    setOnlyFavourites(false);
-    setSort('relevance');
+    setBudget(Number.POSITIVE_INFINITY);
+    setQuery('');
+    setShowSaved(false);
   }
 
-  // Escape closes the detail drawer.
-  useEffect(() => {
-    if (!openListing) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenListing(null);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [openListing]);
+  function filterArea(area: string) {
+    setDeal('Buy');
+    setType('All');
+    setQuery(area);
+    document.getElementById('hl-properties')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function toggleCompare(id: number) {
+    setCompare((current) => {
+      if (current.includes(id)) return current.filter((item) => item !== id);
+      if (current.length >= 3) {
+        setToast('Compare up to 3 homes');
+        return current;
+      }
+      return [...current, id];
+    });
+  }
 
   return (
     <div className="hl-root">
       <style>{CSS}</style>
+      <a className="hl-skip" href="#hl-properties">Skip to properties</a>
 
-      <a href="#hl-main" className="hl-skip">
-        Skip to listings
-      </a>
-
-      <header className="hl-header">
-        <div className="hl-shell hl-header-inner">
-          <span className="hl-brand">
-            <span className="hl-brand-mark" aria-hidden>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8Z" fill="currentColor" />
-              </svg>
-            </span>
-            {BRAND.name}
-          </span>
-          <nav className="hl-nav" aria-label="Primary">
-            <a href="#hl-main">Buy</a>
-            <a href="#hl-calc">Mortgage</a>
+      <header className="hl-hero" id="hl-top">
+        <Image src={ASSETS.villa} alt="" fill priority sizes="100vw" className="hl-hero-image" />
+        <div className="hl-hero-shade" />
+        <div className="hl-shell hl-hero-shell">
+          <nav className="hl-nav" aria-label="Harbourline navigation">
+            <a className="hl-brand" href="#hl-top"><span className="hl-brandmark"><Home aria-hidden="true" /></span>Harbourline</a>
+            <div className="hl-navlinks"><a href="#hl-properties">Properties</a><a href="#hl-collections">Collections</a><a href="#hl-areas">Areas</a><a href="#hl-mortgage">Mortgage</a></div>
+            <div className="hl-navactions">
+              <button type="button" className="hl-ghost" onClick={() => { setShowSaved((value) => !value); document.getElementById('hl-properties')?.scrollIntoView({ behavior: 'smooth' }); }}>
+                <Heart aria-hidden="true" /> Saved <span className="hl-fav-badge">{favourites.length}</span>
+              </button>
+              <button type="button" className="hl-primary" onClick={() => setBookingFor('Book a viewing')}>Book a viewing</button>
+              <button type="button" className="hl-mobile-menu" aria-label="Open menu"><Menu aria-hidden="true" /></button>
+            </div>
           </nav>
-          <button
-            type="button"
-            className={`hl-fav-count${onlyFavourites ? ' hl-fav-count--on' : ''}`}
-            aria-pressed={onlyFavourites}
-            onClick={() => setOnlyFavourites((on) => !on)}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill={onlyFavourites ? 'currentColor' : 'none'} aria-hidden>
-              <path
-                d="M12 20s-7-4.6-7-9.6A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.4c0 5-7 9.6-7 9.6Z"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinejoin="round"
-              />
-            </svg>
-            Saved
-            <span className="hl-fav-badge">{favourites.length}</span>
-          </button>
+
+          <div className="hl-hero-content">
+            <p className="hl-kicker">Curated homes across Dubai’s most coveted addresses</p>
+            <h1>Find a home<br />worth arriving for.</h1>
+            <p className="hl-hero-sub">A quieter, smarter way to discover exceptional apartments, villas and investment opportunities—with verified details and private viewing requests in minutes.</p>
+            <div className="hl-searchbar" role="search">
+              <label className="hl-searchfield"><span>Where</span><input type="search" aria-label="Search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="City, community or tower" /></label>
+              <label className="hl-searchfield"><span>Property type</span><select value={type} onChange={(event) => setType(event.target.value as 'All' | PropertyType)}>{TYPES.map((item) => <option key={item} value={item}>{item === 'All' ? 'Any property' : item}</option>)}</select></label>
+              <label className="hl-searchfield"><span>Budget</span><select value={Number.isFinite(budget) ? budget : 'any'} onChange={(event) => setBudget(event.target.value === 'any' ? Number.POSITIVE_INFINITY : Number(event.target.value))}><option value="any">Any budget</option><option value="3000000">Up to AED 3M</option><option value="5000000">Up to AED 5M</option><option value="10000000">Up to AED 10M</option><option value="20000000">Up to AED 20M</option></select></label>
+              <button type="button" className="hl-searchbtn" onClick={() => document.getElementById('hl-properties')?.scrollIntoView({ behavior: 'smooth' })}><Search aria-hidden="true" />Search homes</button>
+            </div>
+          </div>
+
+          <div className="hl-hero-meta"><div><strong>184</strong><span>Curated homes</span></div><div><strong>27</strong><span>Prime communities</span></div><div><strong>4.9/5</strong><span>Sample experience</span></div><a href="#hl-properties"><ArrowDown aria-hidden="true" /> Explore</a></div>
         </div>
       </header>
 
-      <p className="hl-sample-banner" role="note">
-        Sample catalogue for the Xroga AI Showcase — these are invented properties, not real listings.
-      </p>
-
-      <main id="hl-main" className="hl-main">
-        <div className="hl-shell">
-          <div className="hl-page-head">
-            <h1 className="hl-h1">Homes for sale</h1>
-            <p className="hl-body">
-              {LISTINGS.length} sample properties across three areas. Filter, sort, save the ones you like, then estimate
-              the monthly cost below.
-            </p>
+      <main>
+        <section className="hl-section" id="hl-properties">
+          <div className="hl-shell">
+            <SectionHeading eyebrow="Featured residences" title="Homes selected for how you actually want to live." lead="Explore design-led demo residences with clear pricing, real dimensions, and fast access to private viewing requests." />
+            <div className="hl-toolbar">
+              <div className="hl-segmented" aria-label="Listing type">{(['Buy', 'Rent', 'Off-plan'] as Deal[]).map((item) => <button key={item} type="button" className={deal === item ? 'active' : ''} onClick={() => { setDeal(item); setShowSaved(false); }}>{item}</button>)}</div>
+              {TYPES.slice(0, 4).map((item) => <button key={item} type="button" className={cn('hl-filterchip', type === item && 'active')} onClick={() => setType(item)}>{item === 'All' ? 'All homes' : `${item}s`}</button>)}
+              <button type="button" className={cn('hl-filterchip', minBeds === 4 && 'active')} onClick={() => setMinBeds(4)}>4+</button>
+              <button type="button" className={cn('hl-filterchip', minBeds === 0 && 'active')} onClick={() => setMinBeds(0)}>Any</button>
+              <label className="hl-sort">Sort <select aria-label="Sort" value={sort} onChange={(event) => setSort(event.target.value as SortId)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="sqft-desc">Largest first</option></select></label>
+            </div>
+            <div className="hl-results-bar"><p className="hl-count"><strong>{results.length}</strong> sample homes</p>{activeFilters > 0 ? <button type="button" className="hl-clear" onClick={clearFilters}>Clear {activeFilters}</button> : null}</div>
+            <div className="hl-grid">
+              {results.map((listing) => <PropertyCard key={listing.id} listing={listing} favourite={favourites.includes(listing.id)} compared={compare.includes(listing.id)} onFavourite={() => toggleFavourite(listing.id)} onCompare={() => toggleCompare(listing.id)} onOpen={() => setSelected(listing)} />)}
+              {results.length === 0 ? <div className="hl-empty"><strong>No matching homes yet.</strong><p>Try widening your filters or exploring another collection.</p><button type="button" className="hl-darkbtn" onClick={clearFilters}>Reset filters</button></div> : null}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="hl-shell hl-layout">
-          {/* ------------------------------------------------------- filters */}
-          <aside className="hl-filters" aria-label="Filters">
-            <div className="hl-filter-head">
-              <h2 className="hl-h2">Filters</h2>
-              {activeFilters > 0 && (
-                <button type="button" className="hl-link-btn" onClick={resetFilters}>
-                  Clear {activeFilters}
-                </button>
-              )}
+        <section className="hl-section hl-collections" id="hl-collections">
+          <div className="hl-shell">
+            <SectionHeading eyebrow="Curated collections" title="Choose a lifestyle before you choose a postcode." lead="Waterfront mornings, skyline evenings, or quiet family streets—start with the feeling you want." />
+            <div className="hl-collection-grid">
+              <Collection image={ASSETS.exterior} index="01 · Waterfront" title="Palm living" copy="Private beaches, resort access, sunset terraces" className="hl-collection-big" onClick={() => filterArea('Palm Jumeirah')} />
+              <div className="hl-collection-stack"><Collection image={ASSETS.interior} index="02 · City" title="Above it all" copy="Downtown & Business Bay" onClick={() => filterArea('Downtown Dubai')} /><Collection image={ASSETS.villa} index="03 · Private" title="Room to breathe" copy="Family villas with serious outdoor space" onClick={() => filterArea('Emirates Hills')} /></div>
             </div>
+          </div>
+        </section>
 
-            <div className="hl-field">
-              <label htmlFor={`${uid}-q`}>Search</label>
-              <input
-                id={`${uid}-q`}
-                type="search"
-                value={query}
-                placeholder="Area, feature, or type"
-                onChange={(event) => setQuery(event.target.value)}
-              />
+        <section className="hl-section" id="hl-areas">
+          <div className="hl-shell">
+            <SectionHeading eyebrow="Market intelligence" title="Know the neighborhood. Know the numbers." lead="A simple decision layer combining local context with affordability—without turning your search into a spreadsheet." />
+            <div className="hl-split">
+              <AreaPanel />
+              <MortgageCalculator />
             </div>
+          </div>
+        </section>
 
-            <div className="hl-field">
-              <label htmlFor={`${uid}-city`}>City</label>
-              <select id={`${uid}-city`} value={city} onChange={(event) => setCity(event.target.value)}>
-                {CITIES.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hl-field">
-              <label htmlFor={`${uid}-type`}>Property type</label>
-              <select id={`${uid}-type`} value={type} onChange={(event) => setType(event.target.value)}>
-                {TYPES.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hl-field">
-              <label htmlFor={`${uid}-price`}>
-                Max price <strong>{formatCurrency(maxPrice)}</strong>
-              </label>
-              <input
-                id={`${uid}-price`}
-                type="range"
-                min={250000}
-                max={1300000}
-                step={25000}
-                value={maxPrice}
-                onChange={(event) => setMaxPrice(Number(event.target.value))}
-              />
-            </div>
-
-            <fieldset className="hl-field hl-fieldset">
-              <legend>Bedrooms</legend>
-              <div className="hl-chips" role="group">
-                {[0, 1, 2, 3, 4].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    className={`hl-chip${minBeds === n ? ' hl-chip--on' : ''}`}
-                    aria-pressed={minBeds === n}
-                    onClick={() => setMinBeds(n)}
-                  >
-                    {n === 0 ? 'Any' : `${n}+`}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          </aside>
-
-          {/* ------------------------------------------------------- results */}
-          <section className="hl-results" aria-label="Search results">
-            <div className="hl-results-bar">
-              <p className="hl-count" role="status" aria-live="polite">
-                <strong>{results.length}</strong> {results.length === 1 ? 'property' : 'properties'}
-                {onlyFavourites ? ' saved' : ''}
-              </p>
-              <div className="hl-field hl-field--inline">
-                <label htmlFor={`${uid}-sort`}>Sort</label>
-                <select id={`${uid}-sort`} value={sort} onChange={(event) => setSort(event.target.value as SortId)}>
-                  {SORTS.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {results.length === 0 ? (
-              <div className="hl-empty">
-                <h3 className="hl-h3">Nothing matches those filters</h3>
-                <p className="hl-body">Widen the price range or clear a filter to see more of the sample catalogue.</p>
-                <button type="button" className="hl-btn hl-btn--outline" onClick={resetFilters}>
-                  Clear filters
-                </button>
-              </div>
-            ) : (
-              <ul className="hl-grid">
-                {results.map((listing) => {
-                  const saved = favourites.includes(listing.id);
-                  return (
-                    <li key={listing.id} className="hl-card">
-                      <div className="hl-art">
-                        <ListingArt listing={listing} />
-                        <span className="hl-art-type">{listing.type}</span>
-                        <button
-                          type="button"
-                          className={`hl-heart${saved ? ' hl-heart--on' : ''}`}
-                          aria-pressed={saved}
-                          aria-label={saved ? `Remove ${listing.title} from saved` : `Save ${listing.title}`}
-                          onClick={() => toggleFavourite(listing.id)}
-                        >
-                          <svg width="17" height="17" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} aria-hidden>
-                            <path
-                              d="M12 20s-7-4.6-7-9.6A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.4c0 5-7 9.6-7 9.6Z"
-                              stroke="currentColor"
-                              strokeWidth="1.7"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <div className="hl-card-body">
-                        <p className="hl-price">{formatCurrency(listing.price)}</p>
-                        <h3 className="hl-h3">{listing.title}</h3>
-                        <p className="hl-place">
-                          {listing.area}, {listing.city}
-                        </p>
-                        <dl className="hl-specs">
-                          <div>
-                            <dt>Beds</dt>
-                            <dd>{listing.beds}</dd>
-                          </div>
-                          <div>
-                            <dt>Baths</dt>
-                            <dd>{listing.baths}</dd>
-                          </div>
-                          <div>
-                            <dt>Area</dt>
-                            <dd>{listing.sqft.toLocaleString('en-US')} sq ft</dd>
-                          </div>
-                        </dl>
-                        <button type="button" className="hl-btn hl-btn--outline hl-btn--sm" onClick={() => setOpenListing(listing)}>
-                          View details
-                        </button>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-        </div>
-
-        {/* ------------------------------------------------------ calculator */}
-        <MortgageCalculator />
+        <section className="hl-section hl-advisor-section"><div className="hl-shell"><div className="hl-advisor"><div><span className="hl-eyebrow">Private client service</span><h2>Tell us what “the right home” means to you.</h2><p>Share your budget, preferred areas and non-negotiables. A property advisor can turn that into a focused shortlist instead of another endless feed.</p></div><div className="hl-advisor-actions"><button type="button" className="hl-darkbtn" onClick={() => setBookingFor('Private consultation')}>Book consultation</button><button type="button" className="hl-outlinebtn" onClick={() => setToast('Property valuation demo started')}>List a property</button></div></div></div></section>
       </main>
 
-      <footer className="hl-footer">
-        <div className="hl-shell">
-          <p>
-            {BRAND.name} — sample property platform for the Xroga AI Showcase. Figures are illustrative and are not
-            financial advice.
-          </p>
-        </div>
-      </footer>
+      <footer className="hl-footer"><div className="hl-shell"><div className="hl-footer-grid"><div><a className="hl-brand" href="#hl-top"><span className="hl-brandmark"><Home aria-hidden="true" /></span>Harbourline</a><p>A modern property discovery experience for buyers, renters and investors who value clarity, design and time.</p></div><FooterColumn title="Discover" links={['Properties', 'Collections', 'Areas', 'Mortgage']} /><FooterColumn title="Company" links={['About', 'Advisors', 'Market reports', 'Careers']} /><div><h3>Contact</h3><p>+971 4 555 0184<br />hello@harbourline.example<br />Dubai, UAE</p></div></div><div className="hl-footer-bottom"><span>© 2026 Harbourline. Concept experience by Xroga.</span><span>All properties, figures and photography are sample showcase content.</span></div></div></footer>
 
-      {openListing && <ListingDrawer listing={openListing} onClose={() => setOpenListing(null)} saved={favourites.includes(openListing.id)} onToggle={() => toggleFavourite(openListing.id)} />}
+      {selected ? <PropertyDialog listing={selected} favourite={favourites.includes(selected.id)} onClose={() => setSelected(null)} onFavourite={() => toggleFavourite(selected.id)} onBook={() => { setSelected(null); setBookingFor(`View ${selected.name}`); }} /> : null}
+      {bookingFor ? <BookingDialog subject={bookingFor} onClose={() => setBookingFor(null)} /> : null}
+      {compare.length > 0 ? <div className="hl-comparebar"><div><strong>Compare homes</strong><div>{compare.map((id) => <span key={id}>{LISTINGS.find((item) => item.id === id)?.name}</span>)}</div></div><button type="button" onClick={() => setToast(compare.length < 2 ? 'Choose at least 2 homes to compare' : 'Comparison is ready in this demo')}>Compare <ArrowUpRight aria-hidden="true" /></button></div> : null}
+      {toast ? <div className="hl-toast" role="status">{toast}</div> : null}
     </div>
   );
 }
 
-/* -------------------------------------------------------------- the drawer */
-
-function ListingDrawer({
-  listing,
-  onClose,
-  saved,
-  onToggle,
-}: {
-  listing: Listing;
-  onClose: () => void;
-  saved: boolean;
-  onToggle: () => void;
-}) {
-  const titleId = `hl-drawer-${listing.id}`;
-  const [view, setView] = useState<GalleryView>('Exterior');
-
-  return (
-    <div className="hl-drawer-wrap" role="dialog" aria-modal="true" aria-labelledby={titleId}>
-      <button type="button" className="hl-drawer-scrim" aria-label="Close details" onClick={onClose} />
-      <div className="hl-drawer">
-        {/* Gallery */}
-        <div className="hl-gallery">
-          <div className="hl-drawer-art">
-            <ListingArt listing={listing} view={view} />
-            <span className="hl-gallery-counter">
-              {GALLERY_VIEWS.indexOf(view) + 1} / {GALLERY_VIEWS.length}
-            </span>
-          </div>
-          <div className="hl-thumbs" role="tablist" aria-label="Property images">
-            {GALLERY_VIEWS.map((option) => (
-              <button
-                key={option}
-                type="button"
-                role="tab"
-                aria-selected={view === option}
-                aria-label={option}
-                className={`hl-thumb${view === option ? ' hl-thumb--on' : ''}`}
-                onClick={() => setView(option)}
-              >
-                <ListingArt listing={listing} view={option} />
-                <span>{option}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="hl-drawer-body">
-          <div className="hl-drawer-top">
-            <div>
-              <p className="hl-price hl-price--lg">{formatCurrency(listing.price)}</p>
-              <h2 id={titleId} className="hl-h2">
-                {listing.title}
-              </h2>
-              <p className="hl-place">
-                {listing.area}, {listing.city} · Built {listing.year}
-              </p>
-            </div>
-            <button type="button" className="hl-icon-btn" onClick={onClose} aria-label="Close details">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-
-          <dl className="hl-specs hl-specs--lg">
-            <div>
-              <dt>Bedrooms</dt>
-              <dd>{listing.beds}</dd>
-            </div>
-            <div>
-              <dt>Bathrooms</dt>
-              <dd>{listing.baths}</dd>
-            </div>
-            <div>
-              <dt>Floor area</dt>
-              <dd>{listing.sqft.toLocaleString('en-US')} sq ft</dd>
-            </div>
-            <div>
-              <dt>Price per sq ft</dt>
-              <dd>{formatCurrency(Math.round(listing.price / listing.sqft))}</dd>
-            </div>
-          </dl>
-
-          <h3 className="hl-h3">Amenities</h3>
-          <ul className="hl-features">
-            {listing.features.map((feature) => (
-              <li key={feature}>{feature}</li>
-            ))}
-          </ul>
-
-          {/* Location — a map-ready slot with a schematic stand-in, so no tile
-              provider key is required for a public preview. */}
-          <h3 className="hl-h3 hl-h3--spaced">Location</h3>
-          <div className="hl-map" role="img" aria-label={`Schematic location of ${listing.area}, ${listing.city}`}>
-            <svg viewBox="0 0 400 170" preserveAspectRatio="none" aria-hidden>
-              <rect width="400" height="170" fill="#e8efec" />
-              {[30, 70, 110, 150].map((y) => (
-                <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#cfdcd6" strokeWidth="2" />
-              ))}
-              {[60, 140, 220, 300, 370].map((x) => (
-                <line key={x} x1={x} y1="0" x2={x} y2="170" stroke="#cfdcd6" strokeWidth="2" />
-              ))}
-              <path d="M0 96 C90 70 150 120 230 92 C300 68 350 104 400 84" stroke="#a9c6bb" strokeWidth="9" fill="none" />
-              <circle cx="220" cy="92" r="14" fill={BRAND.accent} opacity="0.22" />
-              <circle cx="220" cy="92" r="6" fill={BRAND.accent} />
-            </svg>
-            <p className="hl-map-note">
-              Schematic only. Connect a map provider in your own build to show the real location.
-            </p>
-          </div>
-
-          <div className="hl-drawer-actions">
-            <button type="button" className={`hl-btn ${saved ? 'hl-btn--outline' : 'hl-btn--primary'}`} onClick={onToggle}>
-              {saved ? 'Remove from saved' : 'Save this property'}
-            </button>
-            <a href="#hl-calc" className="hl-btn hl-btn--outline" onClick={onClose}>
-              Estimate payments
-            </a>
-          </div>
-
-          <InquiryForm listing={listing} />
-        </div>
-      </div>
-    </div>
-  );
+function SectionHeading({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
+  return <div className="hl-section-head"><div><span className="hl-eyebrow">{eyebrow}</span><h2>{title}</h2></div><p>{lead}</p></div>;
 }
 
-/* -------------------------------------------------------- the enquiry form */
-
-/**
- * Agent enquiry form. Validates properly and never transmits anything — the success
- * state says so, so nobody believes a real agent was contacted.
- */
-function InquiryForm({ listing }: { listing: Listing }) {
-  const uid = useId();
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [sent, setSent] = useState(false);
-
-  function submit(event: React.FormEvent) {
-    event.preventDefault();
-    const next: Record<string, string> = {};
-    if (!form.name.trim()) next.name = 'Please add your name.';
-    if (!form.email.trim()) next.email = 'Please add an email address.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) next.email = 'That email address does not look right.';
-    setErrors(next);
-    if (Object.keys(next).length > 0) return;
-    setSent(true);
-  }
-
-  return (
-    <section className="hl-inquiry" aria-labelledby={`${uid}-h`}>
-      <h3 id={`${uid}-h`} className="hl-h3">
-        Ask about {listing.title}
-      </h3>
-
-      {sent ? (
-        <p className="hl-inquiry-done" role="status">
-          Thanks — your enquiry is validated but <strong>not sent</strong>. In your own build this would reach the listing
-          agent&rsquo;s inbox.
-        </p>
-      ) : (
-        <form className="hl-inquiry-form" onSubmit={submit} noValidate>
-          <div className="hl-field">
-            <label htmlFor={`${uid}-n`}>Your name</label>
-            <input
-              id={`${uid}-n`}
-              value={form.name}
-              autoComplete="name"
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby={errors.name ? `${uid}-n-e` : undefined}
-              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-            />
-            {errors.name && (
-              <p id={`${uid}-n-e`} className="hl-inquiry-error">
-                {errors.name}
-              </p>
-            )}
-          </div>
-          <div className="hl-field">
-            <label htmlFor={`${uid}-e`}>Email</label>
-            <input
-              id={`${uid}-e`}
-              type="email"
-              value={form.email}
-              autoComplete="email"
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? `${uid}-e-e` : undefined}
-              onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-            />
-            {errors.email && (
-              <p id={`${uid}-e-e`} className="hl-inquiry-error">
-                {errors.email}
-              </p>
-            )}
-          </div>
-          <div className="hl-field">
-            <label htmlFor={`${uid}-m`}>Message (optional)</label>
-            <textarea
-              id={`${uid}-m`}
-              rows={3}
-              value={form.message}
-              placeholder="I would like to arrange a viewing."
-              onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
-            />
-          </div>
-          <button type="submit" className="hl-btn hl-btn--primary">
-            Send enquiry
-          </button>
-        </form>
-      )}
-
-      <p className="hl-note">Sample listing. Nothing is transmitted in this demonstration.</p>
-    </section>
-  );
+function PropertyCard({ listing, favourite, compared, onFavourite, onCompare, onOpen }: { listing: Listing; favourite: boolean; compared: boolean; onFavourite: () => void; onCompare: () => void; onOpen: () => void }) {
+  return <article className="hl-card"><div className="hl-card-media"><Image src={listing.image} alt={`${listing.name} sample property`} fill sizes="(max-width: 680px) 100vw, (max-width: 980px) 50vw, 33vw" /><div className="hl-card-badges"><span>{listing.type}</span><span className="dark">{listing.tag}</span></div><button type="button" className={cn('hl-heart', favourite && 'saved')} onClick={onFavourite} aria-label={`${favourite ? 'Remove' : 'Save'} ${listing.name}`}><Heart aria-hidden="true" fill={favourite ? 'currentColor' : 'none'} /></button></div><div className="hl-card-body"><p className="hl-price">{money(listing.price)}{listing.deal === 'Rent' ? <small> / year</small> : null}</p><h3>{listing.name}</h3><p className="hl-location"><MapPin aria-hidden="true" />{listing.area}, Dubai</p><dl className="hl-features"><div><dt>Beds</dt><dd>{listing.beds}</dd></div><div><dt>Baths</dt><dd>{listing.baths}</dd></div><div><dt>Sq ft</dt><dd>{listing.size.toLocaleString()}</dd></div></dl><div className="hl-card-footer"><button type="button" className="hl-linkbtn" onClick={onOpen}>View details <ArrowUpRight aria-hidden="true" /></button><label><input type="checkbox" checked={compared} onChange={onCompare} /> Compare</label></div></div></article>;
 }
 
-/* ---------------------------------------------------------- the calculator */
+function Collection({ image, index, title, copy, className, onClick }: { image: string; index: string; title: string; copy: string; className?: string; onClick: () => void }) {
+  return <button type="button" className={cn('hl-collection', className)} onClick={onClick}><Image src={image} alt="" fill sizes="(max-width: 980px) 100vw, 60vw" /><span className="hl-collection-shade" /><span className="hl-collection-copy"><span><small>{index}</small><strong>{title}</strong><em>{copy}</em></span><i><ArrowUpRight aria-hidden="true" /></i></span></button>;
+}
+
+function AreaPanel() {
+  return <article className="hl-map-panel"><div className="hl-map-grid" /><span className="hl-road one" /><span className="hl-road two" /><span className="hl-pin p1" /><span className="hl-pin p2" /><span className="hl-pin p3" /><div className="hl-map-copy"><span className="hl-eyebrow">Area spotlight</span><h3>Dubai Marina in a 15-minute radius.</h3><p>Beach access, restaurants, schools, transport and everyday essentials—all close enough to matter.</p></div><div className="hl-map-card"><Image src={ASSETS.interior} alt="Marina Gate sample apartment" width={72} height={60} /><div><strong>Marina Gate Skyhome</strong><span>8 min to beach · 4 min to tram</span><b>AED 4.85M</b></div></div></article>;
+}
 
 function MortgageCalculator() {
   const uid = useId();
-  const [price, setPrice] = useState(615000);
-  const [depositPct, setDepositPct] = useState(15);
+  const [price, setPrice] = useState(4850000);
+  const [deposit, setDeposit] = useState(20);
+  const [rate, setRate] = useState(4.25);
   const [years, setYears] = useState(25);
-  const [rate, setRate] = useState(5.4);
-
-  const result = useMemo(() => {
-    const deposit = Math.round((price * depositPct) / 100);
-    const principal = Math.max(price - deposit, 0);
-    const months = years * 12;
+  const calculation = useMemo(() => {
+    const down = price * deposit / 100;
+    const loan = Math.max(0, price - down);
+    const months = Math.max(12, years * 12);
     const monthlyRate = rate / 100 / 12;
-
-    // Standard amortisation. The zero-rate case would divide by zero.
-    const monthly =
-      monthlyRate === 0
-        ? principal / months
-        : (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-
-    const total = monthly * months;
-    return {
-      deposit,
-      principal,
-      monthly: Number.isFinite(monthly) ? monthly : 0,
-      totalInterest: Number.isFinite(total) ? total - principal : 0,
-      total: Number.isFinite(total) ? total : 0,
-    };
-  }, [price, depositPct, years, rate]);
-
-  return (
-    <section id="hl-calc" className="hl-calc">
-      <div className="hl-shell hl-calc-inner">
-        <div>
-          <span className="hl-eyebrow">Affordability</span>
-          <h2 className="hl-h2">Mortgage calculator</h2>
-          <p className="hl-body">
-            Real amortisation arithmetic on the values you enter. Illustrative only — not a quote and not financial
-            advice.
-          </p>
-
-          <div className="hl-calc-fields">
-            <div className="hl-field">
-              <label htmlFor={`${uid}-price`}>
-                Property price <strong>{formatCurrency(price)}</strong>
-              </label>
-              <input
-                id={`${uid}-price`}
-                type="range"
-                min={150000}
-                max={2000000}
-                step={5000}
-                value={price}
-                onChange={(event) => setPrice(Number(event.target.value))}
-              />
-            </div>
-
-            <div className="hl-field">
-              <label htmlFor={`${uid}-dep`}>
-                Deposit <strong>{depositPct}% · {formatCurrency(result.deposit)}</strong>
-              </label>
-              <input
-                id={`${uid}-dep`}
-                type="range"
-                min={0}
-                max={60}
-                step={1}
-                value={depositPct}
-                onChange={(event) => setDepositPct(Number(event.target.value))}
-              />
-            </div>
-
-            <div className="hl-field">
-              <label htmlFor={`${uid}-years`}>
-                Term <strong>{years} years</strong>
-              </label>
-              <input
-                id={`${uid}-years`}
-                type="range"
-                min={5}
-                max={40}
-                step={1}
-                value={years}
-                onChange={(event) => setYears(Number(event.target.value))}
-              />
-            </div>
-
-            <div className="hl-field">
-              <label htmlFor={`${uid}-rate`}>
-                Interest rate <strong>{rate.toFixed(2)}%</strong>
-              </label>
-              <input
-                id={`${uid}-rate`}
-                type="range"
-                min={0}
-                max={12}
-                step={0.05}
-                value={rate}
-                onChange={(event) => setRate(Number(event.target.value))}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="hl-calc-out" role="status" aria-live="polite">
-          <p className="hl-calc-label">Estimated monthly payment</p>
-          <p className="hl-calc-big">{formatCurrency(result.monthly, 'USD', 0)}</p>
-          <dl className="hl-calc-rows">
-            <div>
-              <dt>Loan amount</dt>
-              <dd>{formatCurrency(result.principal)}</dd>
-            </div>
-            <div>
-              <dt>Deposit</dt>
-              <dd>{formatCurrency(result.deposit)}</dd>
-            </div>
-            <div>
-              <dt>Total interest</dt>
-              <dd>{formatCurrency(result.totalInterest)}</dd>
-            </div>
-            <div>
-              <dt>Total repaid</dt>
-              <dd>{formatCurrency(result.total)}</dd>
-            </div>
-          </dl>
-          {/* Proportional bar: how much of the total is interest. */}
-          <div className="hl-calc-bar" aria-hidden>
-            <span
-              style={{
-                width: `${result.total > 0 ? Math.min(100, (result.principal / result.total) * 100) : 0}%`,
-              }}
-            />
-          </div>
-          <p className="hl-calc-legend" aria-hidden>
-            <span className="hl-dot hl-dot--principal" /> Loan
-            <span className="hl-dot hl-dot--interest" /> Interest
-          </p>
-        </div>
-      </div>
-    </section>
-  );
+    const monthly = monthlyRate === 0 ? loan / months : loan * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+    return { down, loan, monthly, interest: Math.max(0, monthly * months - loan) };
+  }, [deposit, price, rate, years]);
+  return <article className="hl-finance" id="hl-mortgage"><span className="hl-eyebrow">Affordability</span><h3>Mortgage, without the mystery.</h3><p>Illustrative calculator. Adjust the values to see a monthly estimate instantly.</p><div className="hl-finance-grid"><label htmlFor={`${uid}-price`}>Property price (AED)<input id={`${uid}-price`} type="range" min={500000} max={25000000} step={50000} value={price} onInput={(event) => setPrice(Number(event.currentTarget.value))} /><strong>{money(price)}</strong></label><label htmlFor={`${uid}-deposit`}>Deposit · {deposit}%<input id={`${uid}-deposit`} type="range" min={0} max={90} value={deposit} onInput={(event) => setDeposit(Number(event.currentTarget.value))} /></label><label htmlFor={`${uid}-rate`}>Interest · {rate.toFixed(2)}%<input id={`${uid}-rate`} type="range" min={0} max={12} step={0.05} value={rate} onInput={(event) => setRate(Number(event.currentTarget.value))} /></label><label htmlFor={`${uid}-years`}>Term · {years} years<input id={`${uid}-years`} type="range" min={1} max={35} value={years} onInput={(event) => setYears(Number(event.currentTarget.value))} /></label></div><div className="hl-monthly"><span>Estimated monthly payment</span><strong className="hl-calc-big">{money(calculation.monthly)}</strong><small>Principal + interest estimate</small></div><dl className="hl-breakdown"><div><dt>Loan amount</dt><dd>{money(calculation.loan)}</dd></div><div><dt>Deposit</dt><dd>{money(calculation.down)}</dd></div><div><dt>Total interest</dt><dd>{money(calculation.interest)}</dd></div></dl></article>;
 }
 
-/* ----------------------------------------------------------------------- css */
+function PropertyDialog({ listing, favourite, onClose, onFavourite, onBook }: { listing: Listing; favourite: boolean; onClose: () => void; onFavourite: () => void; onBook: () => void }) {
+  const [gallery, setGallery] = useState(0);
+  const images = [listing.image, ASSETS.interior, ASSETS.exterior, ASSETS.villa];
+  const tabs = ['Exterior', 'Living space', 'Architecture', 'Garden'];
+  return <div className="hl-modal" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><div className="hl-dialog" role="dialog" aria-modal="true" aria-label={listing.name}><button type="button" className="hl-close" onClick={onClose} aria-label="Close property details"><X aria-hidden="true" /></button><div className="hl-detail-gallery"><Image src={images[gallery]} alt={`${listing.name} ${tabs[gallery]}`} fill sizes="(max-width: 700px) 100vw, 70vw" /><span>{gallery + 1} / 4</span></div><div className="hl-thumbs" role="tablist" aria-label="Property gallery">{tabs.map((tab, index) => <button key={tab} type="button" role="tab" aria-selected={gallery === index} onClick={() => setGallery(index)} className={gallery === index ? 'active' : ''}>{tab}</button>)}</div><div className="hl-detail-copy"><div className="hl-detail-top"><div><span className="hl-pill">{listing.tag} · {listing.year}</span><h2>{listing.name}</h2><p className="hl-location"><MapPin aria-hidden="true" />{listing.area}, Dubai, UAE</p></div><p className="hl-detail-price">{money(listing.price)}</p></div><dl className="hl-detail-specs"><div><dt>Bedrooms</dt><dd>{listing.beds}</dd></div><div><dt>Bathrooms</dt><dd>{listing.baths}</dd></div><div><dt>Sq ft</dt><dd>{listing.size.toLocaleString()}</dd></div><div><dt>Price per sq ft</dt><dd>{money(listing.price / listing.size)}</dd></div></dl><div className="hl-detail-columns"><div><h3>About this residence</h3><p>{listing.description}</p><h3>Amenities</h3><ul className="hl-amenities">{listing.amenities.map((item) => <li key={item}>✓ {item}</li>)}</ul><h3>Location</h3><div className="hl-detail-map" role="img" aria-label={`Schematic location map for ${listing.name}`}><span /><i /><b>Dubai</b></div></div><aside className="hl-booking-card"><h3>See it in person</h3><p>Request a private viewing in under a minute.</p><button type="button" onClick={onBook}>Book private viewing</button><button type="button" className="outline" onClick={onFavourite}>{favourite ? '♥ Saved' : '♡ Save property'}</button><InquiryForm /></aside></div></div></div></div>;
+}
+
+function InquiryForm() {
+  const uid = useId();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({ name: false, email: false });
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    const next = { name: !name.trim(), email: !/^\S+@\S+\.\S+$/.test(email) };
+    setErrors(next);
+    if (!next.name && !next.email) setSubmitted(true);
+  }
+  if (submitted) return <p className="hl-inquiry-done" role="status">Thanks—this demo enquiry is validated but not sent or stored.</p>;
+  return <form className="hl-inquiry-form" onSubmit={submit} noValidate><label htmlFor={`${uid}-name`}>Your name<input id={`${uid}-name`} value={name} aria-invalid={errors.name} onChange={(event) => setName(event.target.value)} /></label><label htmlFor={`${uid}-email`}>Email<input id={`${uid}-email`} type="email" value={email} aria-invalid={errors.email} onChange={(event) => setEmail(event.target.value)} /></label><label htmlFor={`${uid}-message`}>Message (optional)<textarea id={`${uid}-message`} rows={2} value={message} onChange={(event) => setMessage(event.target.value)} /></label><button type="submit">Send enquiry</button></form>;
+}
+
+function BookingDialog({ subject, onClose }: { subject: string; onClose: () => void }) {
+  const [time, setTime] = useState('14:00');
+  const [done, setDone] = useState(false);
+  const [date, setDate] = useState(nextDate);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (name.trim() && phone.trim() && /^\S+@\S+\.\S+$/.test(email)) setDone(true);
+  }
+  return <div className="hl-modal" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><div className="hl-book-dialog" role="dialog" aria-modal="true" aria-label={subject}><button type="button" className="hl-close" onClick={onClose} aria-label="Close booking"><X aria-hidden="true" /></button>{done ? <div className="hl-success"><i>✓</i><span className="hl-eyebrow">Request prepared</span><h2>You’re in the diary demo.</h2><p>{date} at {time}. Nothing was transmitted; connect your own form backend in a production build.</p><button type="button" className="hl-darkbtn" onClick={onClose}>Done</button></div> : <><span className="hl-eyebrow">Private viewing request</span><h2>{subject}</h2><p>This is sample showcase behavior. The form validates locally and does not contact a real agent.</p><form onSubmit={submit}><div className="hl-book-grid"><label>Preferred date<input type="date" min={nextDate()} value={date} onChange={(event) => setDate(event.target.value)} required /></label><label>Contact preference<select><option>WhatsApp</option><option>Phone</option><option>Email</option></select></label></div><fieldset><legend>Preferred time</legend><div className="hl-times">{TIMES.map((item) => <button key={item} type="button" className={time === item ? 'active' : ''} onClick={() => setTime(item)}>{item}</button>)}</div></fieldset><div className="hl-book-grid"><label>Full name<input value={name} onChange={(event) => setName(event.target.value)} required /></label><label>Phone<input value={phone} onChange={(event) => setPhone(event.target.value)} required /></label></div><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label><label>Message (optional)<textarea rows={3} /></label><button className="hl-submit" type="submit">Confirm viewing request <ArrowUpRight aria-hidden="true" /></button></form></>}</div></div>;
+}
+
+function FooterColumn({ title, links }: { title: string; links: readonly string[] }) {
+  return <div><h3>{title}</h3>{links.map((link) => <a key={link} href="#hl-top">{link}</a>)}</div>;
+}
 
 const CSS = `
 ${productReset('.hl-root')}
-.hl-root {
-  --ink: ${BRAND.ink};
-  --paper: ${BRAND.paper};
-  --subtle: ${BRAND.subtle};
-  --border: ${BRAND.border};
-  --muted: ${BRAND.muted};
-  --accent: ${BRAND.accent};
-  --accent-deep: ${BRAND.accentDeep};
-  --accent-soft: ${BRAND.accentSoft};
-  background: var(--paper); color: var(--ink); line-height: 1.5;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-.hl-root *, .hl-root *::before, .hl-root *::after { box-sizing: border-box; }
-.hl-skip { position: absolute; left: -9999px; top: 8px; z-index: 60; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; }
-.hl-skip:focus { left: 16px; }
-.hl-root :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.hl-shell { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-
-.hl-header { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-.hl-header-inner { display: flex; align-items: center; gap: 16px; height: 62px; }
-.hl-brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
-.hl-brand-mark { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 9px; background: var(--accent); color: #fff; }
-.hl-nav { display: none; gap: 4px; margin-left: 12px; }
-.hl-nav a { padding: 7px 11px; border-radius: 8px; font-size: 14px; color: var(--muted); text-decoration: none; }
-.hl-nav a:hover { color: var(--ink); background: var(--subtle); }
-.hl-fav-count {
-  display: inline-flex; align-items: center; gap: 7px; margin-left: auto; padding: 7px 13px;
-  border: 1px solid var(--border); border-radius: 999px; background: var(--paper);
-  font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; font-family: inherit;
-}
-.hl-fav-count--on { border-color: var(--accent); color: var(--accent-deep); background: var(--accent-soft); }
-.hl-fav-badge { min-width: 19px; padding: 1px 5px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; text-align: center; }
-
-.hl-sample-banner {
-  margin: 0; padding: 9px 20px; text-align: center; font-size: 12.5px;
-  background: #fff8e6; border-bottom: 1px solid #f2e2b8; color: #7a5b12;
-}
-
-.hl-main { padding: 26px 0 0; }
-.hl-page-head { margin-bottom: 24px; }
-.hl-h1 { margin: 0; font-size: clamp(25px, 3.2vw, 36px); font-weight: 800; letter-spacing: -0.032em; line-height: 1.1; }
-.hl-page-head .hl-body { max-width: 58ch; }
-.hl-layout { display: grid; gap: 24px; }
-
-/* filters */
-.hl-filters {
-  align-self: start; display: grid; gap: 18px; padding: 20px;
-  border: 1px solid var(--border); border-radius: 14px; background: var(--subtle);
-}
-.hl-filter-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.hl-link-btn { border: 0; background: none; padding: 0; font-size: 12.5px; font-weight: 650; color: var(--accent-deep); cursor: pointer; text-decoration: underline; font-family: inherit; }
-.hl-field { display: grid; gap: 7px; }
-.hl-field--inline { display: flex; align-items: center; gap: 8px; }
-.hl-field label, .hl-fieldset legend { font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.hl-field label strong { color: var(--ink); }
-.hl-field input[type="search"], .hl-field select {
-  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px;
-  background: var(--paper); color: var(--ink); font-size: 14px; font-family: inherit;
-}
-.hl-field input[type="range"] { width: 100%; accent-color: var(--accent); }
-.hl-fieldset { margin: 0; padding: 0; border: 0; }
-.hl-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.hl-chip {
-  padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--paper);
-  font-size: 12.5px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit;
-}
-.hl-chip--on { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* results */
-.hl-results-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.hl-count { margin: 0; font-size: 14px; color: var(--muted); }
-.hl-count strong { color: var(--ink); }
-.hl-grid { display: grid; gap: 18px; margin: 0; padding: 0; list-style: none; }
-.hl-card {
-  display: flex; flex-direction: column; overflow: hidden;
-  border: 1px solid var(--border); border-radius: 14px; background: var(--paper);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-.hl-card:hover { transform: translateY(-3px); box-shadow: 0 24px 42px -30px rgba(18,36,31,0.4); }
-.hl-art { position: relative; height: 168px; border-bottom: 1px solid var(--border); }
-.hl-art-svg { display: block; width: 100%; height: 100%; }
-.hl-art-type {
-  position: absolute; left: 11px; top: 11px; padding: 3px 9px; border-radius: 999px;
-  background: rgba(255,255,255,0.92); font-size: 10.5px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.06em;
-}
-.hl-heart {
-  position: absolute; right: 10px; top: 10px; display: grid; place-items: center;
-  width: 31px; height: 31px; border-radius: 50%; border: 0;
-  background: rgba(255,255,255,0.92); color: var(--muted); cursor: pointer;
-}
-.hl-heart--on { color: #dc2626; }
-.hl-card-body { display: grid; gap: 5px; padding: 15px 16px 16px; }
-.hl-price { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
-.hl-price--lg { font-size: 26px; }
-.hl-h2 { margin: 8px 0 0; font-size: clamp(21px, 2.4vw, 27px); font-weight: 750; letter-spacing: -0.025em; }
-.hl-h3 { margin: 0; font-size: 15px; font-weight: 650; }
-.hl-place { margin: 0; font-size: 13px; color: var(--muted); }
-.hl-body { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: var(--muted); }
-.hl-eyebrow { font-size: 11px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-.hl-specs { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0 12px; }
-.hl-specs > div { display: grid; gap: 1px; }
-.hl-specs dt { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
-.hl-specs dd { margin: 0; font-size: 13.5px; font-weight: 650; }
-.hl-specs--lg { gap: 22px; margin: 18px 0 22px; }
-.hl-features { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0 0; padding: 0; list-style: none; }
-.hl-features li { padding: 5px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); font-size: 12.5px; font-weight: 600; }
-.hl-empty { padding: 46px 24px; text-align: center; border: 1px dashed var(--border); border-radius: 14px; background: var(--subtle); }
-.hl-empty .hl-btn { margin-top: 16px; }
-
-/* buttons */
-.hl-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  padding: 10px 18px; border-radius: 999px; border: 1px solid transparent;
-  font-size: 13.5px; font-weight: 650; cursor: pointer; text-decoration: none; font-family: inherit;
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
-}
-.hl-btn--sm { padding: 8px 15px; font-size: 12.5px; }
-.hl-btn--primary { background: var(--accent); color: #fff; }
-.hl-btn--primary:hover { background: var(--accent-deep); }
-.hl-btn--outline { background: var(--paper); border-color: var(--border); color: var(--ink); }
-.hl-btn--outline:hover { border-color: var(--accent); color: var(--accent-deep); }
-.hl-icon-btn { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 1px solid var(--border); border-radius: 10px; background: var(--paper); color: var(--ink); cursor: pointer; }
-
-/* gallery */
-.hl-gallery { border-bottom: 1px solid var(--border); }
-.hl-drawer-art { position: relative; }
-.hl-gallery-counter {
-  position: absolute; right: 10px; bottom: 10px; padding: 3px 9px; border-radius: 999px;
-  background: rgba(18,36,31,0.68); color: #fff; font-size: 11px; font-weight: 650;
-}
-.hl-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 8px; }
-.hl-thumb {
-  display: grid; gap: 3px; padding: 0; overflow: hidden; cursor: pointer;
-  border: 2px solid transparent; border-radius: 9px; background: none; font-family: inherit;
-}
-.hl-thumb .hl-art-svg { height: 42px; border-radius: 6px; }
-.hl-thumb span { font-size: 9.5px; font-weight: 650; color: var(--muted); text-align: center; }
-.hl-thumb--on { border-color: var(--accent); }
-.hl-thumb--on span { color: var(--accent-deep); }
-
-/* location */
-.hl-h3--spaced { margin-top: 22px; }
-.hl-map { margin-top: 10px; overflow: hidden; border: 1px solid var(--border); border-radius: 11px; }
-.hl-map svg { display: block; width: 100%; height: 150px; }
-.hl-map-note { margin: 0; padding: 8px 11px; background: var(--subtle); border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
-
-/* enquiry */
-.hl-inquiry { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border); }
-.hl-inquiry-form { display: grid; gap: 13px; margin-top: 12px; }
-.hl-inquiry-form input, .hl-inquiry-form textarea {
-  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px;
-  background: var(--paper); color: var(--ink); font-size: 14px; font-family: inherit; resize: vertical;
-}
-.hl-inquiry-form [aria-invalid="true"] { border-color: #dc2626; }
-.hl-inquiry-error { margin: 0; font-size: 12px; color: #b91c1c; }
-.hl-inquiry-done { margin: 12px 0 0; padding: 12px 14px; border-radius: 10px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 13px; line-height: 1.6; }
-
-/* drawer */
-.hl-drawer-wrap { position: fixed; inset: 0; z-index: 70; display: flex; justify-content: flex-end; }
-.hl-drawer-scrim { flex: 1; border: 0; padding: 0; background: rgba(18,36,31,0.42); cursor: pointer; }
-.hl-drawer { width: min(470px, 100%); overflow-y: auto; background: var(--paper); box-shadow: -20px 0 60px -30px rgba(18,36,31,0.55); }
-/* Height only — position and the border live with the gallery rules above. */
-.hl-drawer-art { height: 210px; }
-.hl-drawer-body { padding: 20px 22px 28px; }
-.hl-drawer-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
-.hl-drawer-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.hl-note { margin: 16px 0 0; font-size: 12px; color: var(--muted); }
-
-/* calculator */
-.hl-calc { margin-top: 44px; padding: 44px 0; background: var(--subtle); border-top: 1px solid var(--border); }
-.hl-calc-inner { display: grid; gap: 28px; align-items: start; }
-.hl-calc-fields { display: grid; gap: 16px; margin-top: 22px; }
-.hl-calc-out { padding: 24px; border-radius: 16px; background: var(--ink); color: #fff; }
-.hl-calc-label { margin: 0; font-size: 12px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; color: #8fb3ab; }
-.hl-calc-big { margin: 6px 0 20px; font-size: clamp(32px, 4vw, 44px); font-weight: 800; letter-spacing: -0.035em; }
-.hl-calc-rows { display: grid; gap: 9px; margin: 0 0 18px; }
-.hl-calc-rows > div { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; }
-.hl-calc-rows dt { color: #8fb3ab; }
-.hl-calc-rows dd { margin: 0; font-weight: 650; }
-.hl-calc-bar { height: 9px; border-radius: 999px; overflow: hidden; background: #b45309; }
-.hl-calc-bar span { display: block; height: 100%; background: #2dd4bf; }
-.hl-calc-legend { display: flex; align-items: center; gap: 7px; margin: 11px 0 0; font-size: 12px; color: #8fb3ab; }
-.hl-dot { width: 8px; height: 8px; border-radius: 50%; }
-.hl-dot--principal { background: #2dd4bf; }
-.hl-dot--interest { background: #b45309; margin-left: 10px; }
-
-.hl-footer { padding: 26px 0; border-top: 1px solid var(--border); }
-.hl-footer p { margin: 0; font-size: 12.5px; color: var(--muted); }
-
-@media (min-width: 640px) {
-  .hl-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 900px) {
-  .hl-nav { display: flex; }
-  .hl-layout { grid-template-columns: 258px 1fr; }
-  .hl-calc-inner { grid-template-columns: 1.1fr 0.9fr; gap: 44px; }
-}
-@media (min-width: 1120px) {
-  .hl-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hl-root *, .hl-root *::before, .hl-root *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
-  .hl-card:hover { transform: none; }
-}
+.hl-root{--ink:#0b0e0f;--ink2:#111516;--paper:#f4f2ec;--muted:#6d7472;--line:rgba(11,14,15,.12);--accent:#d7f26a;--deep:#18211d;--shadow:0 22px 60px rgba(14,22,18,.12);background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.hl-root *{box-sizing:border-box}.hl-root button,.hl-root input,.hl-root select,.hl-root textarea{font:inherit}.hl-root button{cursor:pointer}.hl-root a{color:inherit;text-decoration:none}.hl-root :focus-visible{outline:3px solid #72a7ff;outline-offset:3px}.hl-skip{position:absolute;left:-9999px;z-index:100;padding:10px 16px;background:#fff;color:#111}.hl-skip:focus{left:16px;top:16px}.hl-shell{width:min(1240px,calc(100% - 40px));margin:auto}
+.hl-hero{position:relative;min-height:92vh;overflow:hidden;color:#fff;background:#111}.hl-hero-image{object-fit:cover}.hl-hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,8,.2),rgba(5,8,8,.76))}.hl-hero-shell{position:relative;z-index:1;min-height:92vh}.hl-nav{height:84px;display:flex;align-items:center;gap:24px}.hl-brand{display:inline-flex;align-items:center;gap:11px;font-size:20px;font-weight:850;letter-spacing:-.03em}.hl-brandmark{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--accent);color:var(--ink)}.hl-brandmark svg{width:18px}.hl-navlinks{display:flex;gap:30px;margin:auto;font-size:14px;color:rgba(255,255,255,.84)}.hl-navlinks a:hover{color:var(--accent)}.hl-navactions{display:flex;align-items:center;gap:10px}.hl-ghost,.hl-primary,.hl-darkbtn,.hl-outlinebtn{border:0;border-radius:999px;padding:12px 17px;font-weight:750}.hl-ghost{display:flex;align-items:center;gap:7px;color:#fff;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);backdrop-filter:blur(12px)}.hl-ghost svg{width:15px}.hl-fav-badge{min-width:18px;padding:1px 5px;border-radius:99px;background:rgba(255,255,255,.18);font-size:10px}.hl-primary{background:var(--accent);color:var(--ink)}.hl-mobile-menu{display:none;border:0;border-radius:50%;width:40px;height:40px;background:rgba(255,255,255,.12);color:#fff}.hl-mobile-menu svg{width:18px;margin:auto}.hl-hero-content{padding:9vh 0 150px;max-width:900px}.hl-kicker{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:rgba(255,255,255,.78);font-size:13px}.hl-kicker:before{content:"";width:34px;height:1px;background:var(--accent)}.hl-hero h1{margin:0 0 24px;font-size:clamp(50px,7.2vw,104px);line-height:.91;letter-spacing:-.065em}.hl-hero-sub{max-width:680px;margin:0 0 34px;color:rgba(255,255,255,.8);font-size:18px}.hl-searchbar{max-width:1040px;display:grid;grid-template-columns:1.4fr .85fr .85fr auto;gap:8px;padding:8px;border-radius:22px;background:rgba(255,255,255,.96);color:var(--ink);box-shadow:0 28px 80px rgba(0,0,0,.25)}.hl-searchfield{padding:9px 14px;border-right:1px solid var(--line)}.hl-searchfield>span{display:block;margin-bottom:3px;color:#858b88;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hl-searchfield input,.hl-searchfield select{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:14px}.hl-searchbtn{display:flex;align-items:center;gap:8px;padding:0 22px;border:0;border-radius:15px;background:var(--ink);color:#fff;font-weight:800}.hl-searchbtn svg{width:16px}.hl-hero-meta{position:absolute;inset:auto 0 22px;display:flex;align-items:end;gap:34px;color:rgba(255,255,255,.78)}.hl-hero-meta div{display:grid}.hl-hero-meta strong{color:#fff;font-size:24px}.hl-hero-meta span{font-size:10px;font-weight:750;letter-spacing:.11em;text-transform:uppercase}.hl-hero-meta a{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:11px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.hl-hero-meta svg{width:36px;height:36px;padding:9px;border:1px solid rgba(255,255,255,.3);border-radius:50%}
+.hl-section{padding:96px 0}.hl-section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:34px}.hl-eyebrow{display:block;color:inherit;font-size:11px;font-weight:850;letter-spacing:.16em;text-transform:uppercase}.hl-section-head h2,.hl-advisor h2{max-width:750px;margin:7px 0 0;font-size:clamp(38px,4.5vw,64px);line-height:.98;letter-spacing:-.055em}.hl-section-head>p{max-width:470px;margin:0;color:var(--muted);font-size:15px}.hl-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:18px}.hl-segmented{display:flex;padding:5px;border-radius:999px;background:#e8e6df}.hl-segmented button,.hl-filterchip{border:0;border-radius:999px;padding:9px 14px;background:transparent;color:#686f6c;font-size:13px;font-weight:750}.hl-segmented button.active{background:#fff;color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.08)}.hl-filterchip{border:1px solid var(--line);background:rgba(255,255,255,.55)}.hl-filterchip.active{background:var(--ink);color:#fff}.hl-sort{display:flex;align-items:center;gap:7px;margin-left:auto;color:var(--muted);font-size:12px}.hl-sort select{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:#fff}.hl-results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.hl-count{margin:0;color:var(--muted);font-size:13px}.hl-count strong{color:var(--ink)}.hl-clear{border:0;background:transparent;font-weight:750;text-decoration:underline}.hl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.hl-card{overflow:hidden;border-radius:26px;background:#fff;transition:transform .3s ease,box-shadow .3s ease}.hl-card:hover{transform:translateY(-7px);box-shadow:var(--shadow)}.hl-card-media{position:relative;aspect-ratio:1.28;overflow:hidden;background:#ddd}.hl-card-media img{object-fit:cover;transition:transform .6s ease}.hl-card:hover img{transform:scale(1.045)}.hl-card-badges{position:absolute;top:14px;left:14px;display:flex;gap:7px}.hl-card-badges span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.92);font-size:9px;font-weight:850;letter-spacing:.09em;text-transform:uppercase}.hl-card-badges .dark{background:rgba(11,14,15,.84);color:#fff}.hl-heart{position:absolute;right:14px;top:14px;width:38px;height:38px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(255,255,255,.92);color:#555}.hl-heart svg{width:17px}.hl-heart.saved{background:var(--accent);color:#111}.hl-card-body{padding:20px}.hl-price{margin:0;font-size:23px;font-weight:830;letter-spacing:-.04em}.hl-price small{color:var(--muted);font-size:11px}.hl-card h3{margin:6px 0 4px;font-size:18px}.hl-location{display:flex;align-items:center;gap:5px;margin:0;color:var(--muted);font-size:13px}.hl-location svg{width:14px}.hl-features{display:flex;gap:18px;margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line)}.hl-features div{display:flex;gap:4px}.hl-features dt{color:var(--muted);font-size:11px}.hl-features dd{margin:0;font-size:12px;font-weight:800}.hl-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px}.hl-linkbtn{display:flex;align-items:center;gap:4px;padding:0;border:0;background:transparent;font-size:13px;font-weight:850}.hl-linkbtn svg{width:13px}.hl-card-footer label{display:flex;gap:6px;color:var(--muted);font-size:11px}.hl-card-footer input{accent-color:var(--ink)}.hl-empty{grid-column:1/-1;padding:60px;border-radius:24px;background:#fff;text-align:center;color:var(--muted)}
+.hl-collections{overflow:hidden;background:var(--ink);color:#fff}.hl-collections .hl-section-head>p{color:#aeb7b2}.hl-collection-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:18px}.hl-collection-stack{display:grid;gap:18px}.hl-collection{position:relative;min-height:251px;overflow:hidden;padding:0;border:0;border-radius:28px;background:#222;color:#fff;text-align:left}.hl-collection-big{min-height:520px}.hl-collection img{object-fit:cover;transition:transform .5s ease}.hl-collection:hover img{transform:scale(1.04)}.hl-collection-shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 28%,rgba(0,0,0,.78))}.hl-collection-copy{position:absolute;inset:auto 26px 24px;display:flex;align-items:end;justify-content:space-between;gap:20px}.hl-collection-copy>span{display:grid}.hl-collection-copy small{font-size:10px;font-style:normal;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.hl-collection-copy strong{font-size:30px;letter-spacing:-.04em}.hl-collection-copy em{color:rgba(255,255,255,.72);font-size:12px;font-style:normal}.hl-collection-copy i{width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.34);border-radius:50%}.hl-collection-copy svg{width:18px}
+.hl-split{display:grid;grid-template-columns:1fr 1fr;gap:24px}.hl-map-panel{position:relative;min-height:570px;overflow:hidden;padding:32px;border-radius:30px;background:var(--deep);color:#fff}.hl-map-grid{position:absolute;inset:0;opacity:.25;background-image:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px);background-size:34px 34px;transform:rotate(-8deg) scale(1.3)}.hl-road{position:absolute;top:-60%;left:48%;width:36px;height:230%;border-radius:99px;background:#9eab9f;opacity:.17;transform:rotate(37deg)}.hl-road.two{left:22%;transform:rotate(-28deg)}.hl-pin{position:absolute;width:38px;height:38px;border-radius:50% 50% 50% 0;background:var(--accent);box-shadow:0 0 0 10px rgba(215,242,106,.12);transform:rotate(-45deg)}.hl-pin:after{content:"";position:absolute;inset:14px;width:10px;height:10px;border-radius:50%;background:var(--ink)}.hl-pin.p1{left:58%;top:30%}.hl-pin.p2{left:31%;top:58%;transform:rotate(-45deg) scale(.8)}.hl-pin.p3{left:74%;top:68%;transform:rotate(-45deg) scale(.7)}.hl-map-copy{position:relative;z-index:2}.hl-map-copy h3,.hl-finance h3{max-width:390px;margin:8px 0 12px;font-size:38px;line-height:1.02;letter-spacing:-.05em}.hl-map-copy p{max-width:370px;color:#b6beb9}.hl-map-card{position:absolute;right:22px;bottom:22px;z-index:3;width:260px;display:flex;gap:12px;padding:14px;border-radius:18px;background:rgba(255,255,255,.96);color:#111;box-shadow:var(--shadow)}.hl-map-card img{width:72px;height:60px;object-fit:cover;border-radius:11px}.hl-map-card div{display:grid}.hl-map-card strong{font-size:12px}.hl-map-card span{color:var(--muted);font-size:10px}.hl-map-card b{font-size:12px}.hl-finance{padding:34px;border-radius:30px;background:#fff}.hl-finance>p{margin:0 0 22px;color:var(--muted);font-size:13px}.hl-finance-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.hl-finance-grid label{display:grid;gap:4px;padding:13px;border:1px solid var(--line);border-radius:15px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}.hl-finance-grid input{width:100%;accent-color:var(--ink)}.hl-finance-grid strong{color:var(--ink);font-size:13px}.hl-monthly{margin-top:18px;padding:22px;border-radius:20px;background:var(--accent)}.hl-monthly>span{font-size:10px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}.hl-calc-big{display:block;margin:2px 0;font-size:clamp(32px,4vw,42px);letter-spacing:-.055em}.hl-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.hl-breakdown div{padding:12px;border-radius:13px;background:#f3f2ed}.hl-breakdown dt{color:var(--muted);font-size:10px}.hl-breakdown dd{margin:3px 0 0;font-size:11px;font-weight:800}
+.hl-advisor{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:28px;overflow:hidden;padding:48px;border-radius:34px;background:#e8eadf}.hl-advisor p{max-width:600px;color:#606864}.hl-advisor-actions{display:flex;justify-content:flex-end;gap:10px}.hl-darkbtn{background:var(--ink);color:#fff}.hl-outlinebtn{border:1px solid var(--line);background:rgba(255,255,255,.55);color:var(--ink)}.hl-footer{padding:64px 0 28px;background:var(--ink);color:#fff}.hl-footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,.7fr);gap:40px}.hl-footer-grid>div{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.hl-footer-grid p,.hl-footer-grid a{margin:0;color:#a9b0ad;font-size:12px}.hl-footer-grid h3{margin:0 0 8px;font-size:11px;letter-spacing:.13em;text-transform:uppercase}.hl-footer-bottom{display:flex;justify-content:space-between;gap:20px;margin-top:50px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);color:#7f8783;font-size:10px}
+.hl-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(3,5,5,.66);backdrop-filter:blur(12px)}.hl-dialog{position:relative;width:min(1040px,100%);max-height:92vh;overflow:auto;border-radius:30px;background:var(--paper);box-shadow:0 40px 120px rgba(0,0,0,.4)}.hl-close{position:sticky;top:16px;float:right;z-index:6;width:42px;height:42px;display:grid;place-items:center;margin:16px 16px -58px;border:0;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 8px 24px rgba(0,0,0,.13)}.hl-close svg{width:18px}.hl-detail-gallery{position:relative;height:430px}.hl-detail-gallery img{object-fit:cover}.hl-detail-gallery>span{position:absolute;right:18px;bottom:14px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.64);color:#fff;font-size:11px}.hl-thumbs{display:flex;gap:7px;padding:10px 18px;border-bottom:1px solid var(--line)}.hl-thumbs button{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:10px}.hl-thumbs button.active{background:var(--ink);color:#fff}.hl-detail-copy{padding:30px 34px 36px}.hl-detail-top{display:flex;justify-content:space-between;gap:28px}.hl-pill{display:inline-flex;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:10px;font-weight:800}.hl-detail-top h2{margin:8px 0;font-size:42px;letter-spacing:-.05em}.hl-detail-price{font-size:27px;font-weight:850;white-space:nowrap}.hl-detail-specs{display:flex;gap:22px;margin:20px 0;padding:17px 0;border-block:1px solid var(--line)}.hl-detail-specs dt{color:var(--muted);font-size:10px}.hl-detail-specs dd{margin:2px 0 0;font-weight:800}.hl-detail-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:28px}.hl-detail-columns h3{margin:18px 0 7px}.hl-detail-columns p{color:#606765;font-size:13px}.hl-amenities{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}.hl-amenities li{padding:8px 10px;border-radius:10px;background:#fff;font-size:11px}.hl-detail-map{position:relative;height:130px;overflow:hidden;border-radius:14px;background-color:#dfe7df;background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);background-size:24px 24px}.hl-detail-map span{position:absolute;left:50%;top:-20%;width:20px;height:150%;background:#bac8bc;transform:rotate(35deg)}.hl-detail-map i{position:absolute;left:60%;top:42%;width:24px;height:24px;border-radius:50% 50% 50% 0;background:var(--accent);transform:rotate(-45deg)}.hl-detail-map b{position:absolute;left:calc(60% + 28px);top:44%;font-size:11px}.hl-booking-card{height:max-content;padding:20px;border-radius:20px;background:#fff}.hl-booking-card>button,.hl-inquiry-form>button{width:100%;margin-top:8px;padding:12px;border:0;border-radius:13px;background:var(--ink);color:#fff;font-weight:800}.hl-booking-card>button.outline{border:1px solid var(--line);background:transparent;color:var(--ink)}.hl-inquiry-form{display:grid;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.hl-inquiry-form label{display:grid;gap:3px;color:var(--muted);font-size:10px}.hl-inquiry-form input,.hl-inquiry-form textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:#fafafa}.hl-inquiry-form [aria-invalid=true]{border-color:#dc2626}.hl-inquiry-done{padding:12px;border-radius:10px;background:#ecfdf5;color:#065f46!important}.hl-book-dialog{position:relative;width:min(640px,100%);max-height:92vh;overflow:auto;padding:28px;border-radius:30px;background:#fff}.hl-book-dialog h2{margin:8px 0;font-size:36px;letter-spacing:-.04em}.hl-book-dialog>p{color:var(--muted);font-size:13px}.hl-book-dialog form,.hl-book-dialog form>label{display:grid;gap:11px}.hl-book-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hl-book-dialog label,.hl-book-dialog legend{display:grid;gap:5px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.hl-book-dialog input,.hl-book-dialog select,.hl-book-dialog textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafafa}.hl-book-dialog fieldset{margin:0;padding:0;border:0}.hl-times{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}.hl-times button{padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:11px}.hl-times button.active{background:var(--ink);color:#fff}.hl-submit{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:0;border-radius:14px;background:var(--accent);font-weight:850}.hl-submit svg{width:15px}.hl-success{text-align:center;padding:28px 8px}.hl-success i{width:68px;height:68px;display:grid;place-items:center;margin:0 auto 16px;border-radius:50%;background:var(--accent);font-size:30px;font-style:normal}.hl-comparebar{position:fixed;left:50%;bottom:20px;z-index:90;width:min(760px,calc(100% - 28px));display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border-radius:18px;background:var(--ink);color:#fff;box-shadow:0 20px 70px rgba(0,0,0,.3);transform:translateX(-50%)}.hl-comparebar>div>div{display:flex;gap:7px;margin-top:5px}.hl-comparebar span{padding:6px 9px;border-radius:9px;background:rgba(255,255,255,.1);font-size:10px}.hl-comparebar button{display:flex;align-items:center;gap:5px;padding:10px 13px;border:0;border-radius:12px;background:var(--accent);font-weight:800}.hl-comparebar svg{width:14px}.hl-toast{position:fixed;right:20px;bottom:20px;z-index:120;padding:12px 16px;border-radius:14px;background:var(--ink);color:#fff;box-shadow:var(--shadow);font-size:12px}
+@media(max-width:980px){.hl-navlinks{display:none}.hl-searchbar{grid-template-columns:1fr 1fr}.hl-searchbtn{min-height:54px}.hl-grid{grid-template-columns:repeat(2,1fr)}.hl-collection-grid,.hl-split,.hl-advisor{grid-template-columns:1fr}.hl-collection-big{min-height:420px}.hl-collection{min-height:300px}.hl-advisor-actions{justify-content:flex-start}.hl-footer-grid{grid-template-columns:1fr 1fr}.hl-detail-columns{grid-template-columns:1fr}.hl-mobile-menu{display:grid}.hl-navactions .hl-ghost{display:none}}
+@media(max-width:680px){.hl-shell{width:min(100% - 24px,1240px)}.hl-nav{height:72px}.hl-brand{font-size:18px}.hl-hero,.hl-hero-shell{min-height:860px}.hl-hero-content{padding-top:7vh}.hl-hero-sub{font-size:16px}.hl-searchbar{grid-template-columns:1fr}.hl-searchfield{border-right:0;border-bottom:1px solid var(--line)}.hl-searchbtn{justify-content:center}.hl-hero-meta{position:static;flex-wrap:wrap;padding-bottom:28px}.hl-hero-meta a{display:none}.hl-section{padding:72px 0}.hl-section-head{display:block}.hl-section-head>p{margin-top:15px}.hl-toolbar{overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}.hl-sort{margin-left:0}.hl-grid{grid-template-columns:1fr}.hl-collection-grid{display:block}.hl-collection{min-height:370px;margin-bottom:14px}.hl-finance-grid,.hl-breakdown,.hl-book-grid{grid-template-columns:1fr}.hl-advisor{padding:30px 24px}.hl-footer-grid{grid-template-columns:1fr 1fr}.hl-footer-bottom{display:block}.hl-detail-gallery{height:330px}.hl-detail-copy{padding:24px}.hl-detail-top{display:block}.hl-detail-top h2{font-size:34px}.hl-detail-specs{flex-wrap:wrap}.hl-amenities{grid-template-columns:1fr}.hl-modal{padding:9px}.hl-map-card{left:18px;right:18px;width:auto}.hl-comparebar{align-items:flex-start}.hl-comparebar>div>div{max-width:58vw;overflow:auto}.hl-primary{padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){.hl-root *{scroll-behavior:auto!important;transition:none!important}.hl-card:hover{transform:none}}
 `;

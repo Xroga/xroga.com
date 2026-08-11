@@ -263,6 +263,7 @@
   /* Wrapper only reserves layout width — all visuals belong to the panel. */
   background: transparent;
   border: 0;
+  container-type: inline-size;
 }
 .xv-sidebar-floating {
   position: sticky;
@@ -276,6 +277,24 @@
   box-shadow: var(--shadow-elevated);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+.xv-sidebar-root.is-collapsed .xv-sidebar-floating {
+  top: var(--xv-sidebar-inset);
+  width: 48px;
+  height: 50px;
+  margin-inline-start: var(--xv-sidebar-inset);
+  overflow: visible;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.xv-sidebar-root.is-collapsed .xv-sidebar-brand {
+  padding: 8px 7px;
+  border-bottom: 0 !important;
+  background: transparent;
 }
 .xv-sidebar-floating--mobile {
   top: calc(var(--xv-sidebar-inset) + env(safe-area-inset-top));
