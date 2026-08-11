@@ -82,28 +82,63 @@ Rules:
 - Honour the language, framework and architecture the brief states.
 - Write only the file you are asked for.`;
 
-/** Paths that would escape the repository or address git internals. */
+/**
+ * Paths that would escape the repository, address git internals, or are malformed.
+ *
+ * The malformed case is not hypothetical. Production run `68cd1d4f` had GLM return a
+ * manifest containing `package.` and `tsconfig.` — the `.json` extension dropped, and only
+ * from the JSON files. Every other extension survived, so this is what a model does to a
+ * path ending in the same word as the format it was asked to emit.
+ *
+ * The cost of accepting it was the whole run. `package.` matches no runtime adapter's
+ * manifest name, so `detectComposition` found zero components, planning produced zero
+ * validation commands, and the run died at validation reporting "nothing was executed" —
+ * after seventeen paid file-generation calls had already produced seventeen real files that
+ * could never be validated or published.
+ *
+ * Rejecting the path here costs one manifest call and moves to the next model. A trailing
+ * dot is unambiguous: no legitimate file is named `package.`, so this needs no guessing
+ * about what was intended. Repairing it to `package.json` would be inference, and inferring
+ * a filename is how a run publishes a file nobody asked for.
+ */
 function safePath(path: unknown): path is string {
   if (typeof path !== 'string') return false;
   const trimmed = path.trim().replace(/\\/g, '/');
   if (!trimmed || trimmed.startsWith('/') || /^[a-zA-Z]:\//.test(trimmed)) return false;
   const segments = trimmed.split('/');
-  return !segments.some((segment) => segment === '..' || segment === '.git' || segment === '');
+  if (segments.some((segment) => segment === '..' || segment === '.git' || segment === '')) {
+    return false;
+  }
+  // A segment that ends in a dot has lost its extension. Checked per segment rather than on
+  // the whole path so `src/app./page.tsx` is caught too, not just a trailing basename.
+  return !segments.some((segment) => segment.endsWith('.'));
 }
 
+/**
+ * Parses a file plan, rejecting the whole plan if any path is unusable.
+ *
+ * Rejecting rather than filtering is the correction production forced. A filter silently
+ * drops the offending entry and generates the rest, so a plan containing `package.` becomes
+ * a Next.js project with no manifest — which builds nothing, validates nothing and is
+ * indistinguishable from a model that simply forgot the file. The same argument applies to
+ * a traversal path: dropping `../../etc/passwd` and continuing means the run proceeds with
+ * a file list a model did not intend and nobody reviewed.
+ *
+ * An empty result means "this model's plan is unusable, try the next one", which is exactly
+ * what the fallback chain in `completeWithFallback` is for. One wasted manifest call is a
+ * far better outcome than seventeen wasted file calls followed by an unvalidatable project.
+ */
 export function parseFilePlan(text: string): readonly PlannedFile[] {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const raw = (fenced ? fenced[1] : text).trim();
   try {
     const parsed = JSON.parse(raw) as { files?: Array<{ path?: unknown; purpose?: unknown }> };
-    if (!Array.isArray(parsed.files)) return [];
-    return parsed.files
-      .filter((entry) => safePath(entry?.path))
-      .slice(0, MAX_PLANNED_FILES)
-      .map((entry) => ({
-        path: String(entry.path).trim().replace(/\\/g, '/'),
-        purpose: typeof entry.purpose === 'string' ? entry.purpose : '',
-      }));
+    if (!Array.isArray(parsed.files) || !parsed.files.length) return [];
+    if (!parsed.files.every((entry) => safePath(entry?.path))) return [];
+    return parsed.files.slice(0, MAX_PLANNED_FILES).map((entry) => ({
+      path: String(entry.path).trim().replace(/\\/g, '/'),
+      purpose: typeof entry.purpose === 'string' ? entry.purpose : '',
+    }));
   } catch {
     return [];
   }
