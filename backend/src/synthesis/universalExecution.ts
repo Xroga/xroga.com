@@ -30,7 +30,13 @@ import { compileAcceptanceCriteria } from './acceptanceCompiler.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { detectComposition } from './runtime/registry.js';
 import type { Owner, UniversalStore } from './universalPersistence.js';
-import { runImplementationAsCanonicalTask, runValidationAsCanonicalTask } from './universalCanonicalTasks.js';
+import {
+  runImplementationAsCanonicalTask,
+  runPublishAsCanonicalTask,
+  runRepairAsCanonicalTask,
+  runReviewAsCanonicalTask,
+  runValidationAsCanonicalTask,
+} from './universalCanonicalTasks.js';
 import type { CanonicalExecutionState, ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
 import type { ModelId } from '../ai/models.js';
 
@@ -160,6 +166,17 @@ export async function executeUniversalRun(input: {
     selectedModel: ModelId | null;
     provider: string | null;
     fallbackModels: readonly ModelId[];
+  };
+  /**
+   * Routing chosen for review, recorded on the review task.
+   *
+   * Separate from implementation because §46 prefers a different model for review when a
+   * healthy alternative exists — recording them from one field would make it impossible to
+   * tell afterwards whether the reviewer was actually independent.
+   */
+  reviewRouting?: {
+    selectedModel: ModelId | null;
+    provider: string | null;
   };
   signal?: AbortSignal;
 }): Promise<UniversalExecutionResult> {
@@ -333,12 +350,39 @@ export async function executeUniversalRun(input: {
 
   if (!report.passed && input.adapters.repair) {
     const failures = report.failures.map((failure) => `${failure.validation.command.command}: ${failure.stderr.slice(0, 200)}`);
-    const repaired = await input.adapters.repair({ plan: validationPlan, failures, files });
+    // Repair as a canonical task. Bounded by the node's retry policy rather than by a
+    // counter here, so a model that is not converging stops instead of burning budget.
+    const repairOutcome = implementationState
+      ? await runRepairAsCanonicalTask({
+          state: implementationState,
+          objective: `Repair ${failures.length} validation failure(s)`,
+          selectedModel: input.implementationRouting?.selectedModel ?? null,
+          provider: input.implementationRouting?.provider ?? null,
+          failureCount: failures.length,
+          repair: () => input.adapters.repair!({ plan: validationPlan, failures, files }),
+          store: input.executionStore,
+          signal: input.signal,
+        })
+      : { files: await input.adapters.repair({ plan: validationPlan, failures, files }), task: null };
+    const repaired = repairOutcome.files;
     if (repaired) {
       files = repaired;
       record('repair', 'bounded repair applied', `${failures.length} failure(s) addressed`);
       const rerunPlan = planUniversalRun({ prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId });
-      report = await runValidationPlan(rerunPlan, input.adapters.runValidation);
+      // §9 requires the repair to rerun the validation it was given. Deterministic
+      // revalidation is what decides whether the repair worked — not the model's belief
+      // that it fixed the failure.
+      report = implementationState
+        ? (
+            await runValidationAsCanonicalTask({
+              state: implementationState,
+              objective: `Revalidate after repair`,
+              validate: () => runValidationPlan(rerunPlan, input.adapters.runValidation),
+              store: input.executionStore,
+              signal: input.signal,
+            })
+          ).report
+        : await runValidationPlan(rerunPlan, input.adapters.runValidation);
       record('validation', `revalidation tier ${report.tierReached}`, report.blocker ?? 'revalidated after repair');
     }
   }
@@ -349,7 +393,17 @@ export async function executeUniversalRun(input: {
   }
 
   // ── Review over the complete diff ──────────────────────────────────────────
-  const review = await input.adapters.review(files);
+  const review = implementationState
+    ? await runReviewAsCanonicalTask({
+        state: implementationState,
+        objective: `Review the complete diff for ${plan.spec.title}`,
+        selectedModel: input.reviewRouting?.selectedModel ?? null,
+        provider: input.reviewRouting?.provider ?? null,
+        review: () => input.adapters.review(files),
+        store: input.executionStore,
+        signal: input.signal,
+      })
+    : await input.adapters.review(files);
   record('review', review.approved ? 'review approved' : 'review found blocking issues',
     review.findings.join('; ') || 'no findings');
 
@@ -362,10 +416,23 @@ export async function executeUniversalRun(input: {
   // ── Commit ─────────────────────────────────────────────────────────────────
   const claim = mayClaimVerified(validationPlan, report);
   mutationBegan = true;
-  const { commitSha } = await input.adapters.commit(
-    files,
-    input.commitMessage ?? `feat: ${plan.spec.title}`,
-  );
+  // Publication as a canonical task. The Command 1 atomic writer still performs the write —
+  // no second GitHub writer exists and none is created — but the run now records the commit
+  // as task evidence, and a writer returning no sha fails the task rather than completing a
+  // run with nothing published.
+  const message = input.commitMessage ?? `feat: ${plan.spec.title}`;
+  const { commitSha } = implementationState
+    ? await runPublishAsCanonicalTask({
+        state: implementationState,
+        objective: `Publish ${files.length} file(s)`,
+        repository: input.owner.projectId,
+        baseBranch: implementationState.selectedBranch,
+        startingCommitSha: implementationState.startingCommitSha,
+        publish: () => input.adapters.commit(files, message),
+        store: input.executionStore,
+        signal: input.signal,
+      })
+    : await input.adapters.commit(files, message);
   record('commit', 'exact commit produced', commitSha);
   record('complete', 'verification claim', claim.reason);
 
