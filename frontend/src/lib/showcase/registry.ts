@@ -131,25 +131,25 @@ export const SHOWCASE_TEMPLATES: readonly ShowcaseTemplate[] = [
     slug: 'modern-business-website',
     name: 'Modern Business Website',
     category: 'Website',
-    shortDescription: 'A premium marketing site for an agency, startup, or consultancy.',
+    shortDescription: 'A dark editorial 2026 marketing site for an agency, startup, or consultancy.',
     longDescription:
-      'A complete, responsive marketing website with a modern hero, services, portfolio, process, pricing, FAQ, and a validated contact form. Every section is editable and driven by brand tokens, so changing colours, copy, and structure does not require rebuilding the page.',
+      'A complete, responsive editorial marketing website with a dimensional hero, bento services, large product mockups, process, pricing, FAQ, and a validated demo contact form. Every section is editable and driven by local brand tokens.',
     capabilities: [
       'Responsive navigation with mobile menu',
       'Services, portfolio, and process sections',
       'Pricing packages and FAQ',
       'Contact form with validation and success state',
-      'Brand tokens for colours and type',
+      'Reduced-motion-safe reveals and interactions',
     ],
     technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
-    templateVersion: '1.0.0',
+    templateVersion: '2.0.0',
     status: 'live',
     featured: true,
     mobileApp: false,
     accent: '#c2f04a',
-    demoDataNotice: 'Testimonials and portfolio entries are sample content.',
+    demoDataNotice: 'Company, project outcomes, testimonials, and pricing are illustrative sample content.',
     defaultBuildPrompt:
-      'Customize the Modern Business Website template into a production marketing site. Preserve the responsive navigation, services, portfolio, process, pricing, FAQ, and the validated contact form.',
+      'Customize the Modern Business Website template into a production marketing site. Preserve the dark editorial direction, responsive navigation, bento services, product mockups, process, pricing, FAQ, reduced-motion support, and the validated contact form.',
     guidedQuestions: [
       {
         id: 'purpose',

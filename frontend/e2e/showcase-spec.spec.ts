@@ -59,6 +59,23 @@ test('the interactive product still loads on the showcase page itself', async ({
 
 /* ------------------------------------------------------------- new features */
 
+test('modern business: the 2026 editorial redesign and truthful demo form work', async ({ page }) => {
+  await page.goto('/showcase/modern-business-website/preview');
+
+  await expect(page.getByRole('heading', { name: /design\. build\. ship\./i })).toBeVisible();
+  await expect(page.getByText('Illustrative demo').first()).toBeVisible();
+  await expect(page.getByText(/sample testimonials for the showcase/i)).toBeVisible();
+
+  const form = page.locator('.mb26-contact-form');
+  await form.getByRole('button', { name: /send enquiry/i }).click();
+  await expect(form.locator('[aria-invalid="true"]')).toHaveCount(3);
+  await form.getByLabel('Name').fill('Sample Person');
+  await form.getByLabel('Work email').fill('person@example.com');
+  await form.getByLabel('What do you need?').fill('A new product marketing website.');
+  await form.getByRole('button', { name: /send enquiry/i }).click();
+  await expect(form.getByRole('status')).toContainText(/not sent or stored/i);
+});
+
 test('real estate: the gallery switches views and the enquiry form validates', async ({ page }) => {
   await page.goto('/showcase/real-estate-platform/preview');
   await page.getByRole('button', { name: 'View details' }).first().click();

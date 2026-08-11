@@ -21,7 +21,7 @@ import sharp from 'sharp';
 const BASE = process.env.SHOWCASE_BASE_URL ?? 'http://127.0.0.1:3000';
 const OUT_DIR = path.join(process.cwd(), 'public', 'showcase', 'thumbnails');
 
-const SLUGS = [
+const ALL_SLUGS = [
   'modern-business-website',
   'real-estate-platform',
   'booking-platform',
@@ -29,6 +29,11 @@ const SLUGS = [
   'ai-saas-chatbot',
   'playable-web-game',
 ];
+const requestedSlug = process.env.SHOWCASE_SLUG?.trim();
+if (requestedSlug && !ALL_SLUGS.includes(requestedSlug)) {
+  throw new Error(`Unknown SHOWCASE_SLUG: ${requestedSlug}`);
+}
+const SLUGS = requestedSlug ? [requestedSlug] : ALL_SLUGS;
 
 /** Capture size, then the width the stored WebP is resized to. */
 const VIEWS = [
