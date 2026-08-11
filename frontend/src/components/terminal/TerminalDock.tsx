@@ -100,18 +100,17 @@ export function TerminalDock() {
         )}
       >
         {chatbarHidden ? (
-          /* Collapsed. A single slim bar rather than nothing at all — a composer that
-             vanishes with no way back reads as a bug, and this is also the affordance
-             that brings it back on touch, where the toolbar toggle may be scrolled
-             out of view. */
+          /* Keep only a small restore affordance in the former composer area. The
+             transcript gets the rest of the height back while touch users still have
+             an obvious way to reopen the full composer. */
           <button
             type="button"
             onClick={() => setChatbarHidden(false)}
             className="xv-chatbar-restore"
             title="Show the chatbar"
+            aria-label="Show the chatbar"
           >
-            <PanelBottomOpen className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Show chatbar</span>
+            <PanelBottomOpen className="h-4 w-4" aria-hidden="true" />
           </button>
         ) : (
           <div className="flex items-end gap-3">

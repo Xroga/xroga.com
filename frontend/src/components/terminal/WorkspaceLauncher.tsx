@@ -1,18 +1,16 @@
 'use client';
 
-import { PanelRightOpen, PanelBottomClose, PanelBottomOpen } from 'lucide-react';
+import { PanelRightClose, PanelRightOpen, PanelBottomClose, PanelBottomOpen } from 'lucide-react';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
 
 /**
- * The toolbar that sits above the terminal, aligned to its right edge.
+ * Compact workspace and composer controls owned by the terminal title bar.
  *
- * This replaces a pill fixed to the middle of the viewport's right edge. Fixing it
- * there meant it floated over whatever the user was reading, sat nowhere near the
- * thing it opens, and on narrow screens overlapped the content entirely. It is a
- * normal button in the flow now — right-aligned so it reads as belonging to the
- * terminal below it, with a labelled icon rather than bare rotated text.
+ * Keeping them in the header prevents a detached toolbar row from floating between
+ * the workspace content and the terminal window. The chat control stays icon-only;
+ * Workspace remains labelled wherever the title bar has room.
  */
 export function WorkspaceLauncher({ className }: { className?: string }) {
   const workspaceOpen = useProjectWorkspaceStore((s) => s.workspaceOpen);
@@ -40,17 +38,20 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
         )}
       </button>
 
-      {!workspaceOpen && (
-        <button
-          type="button"
-          onClick={() => setWorkspaceOpen(true)}
-          className="xv-ws-launch"
-          title="Open the project workspace"
-        >
+      <button
+        type="button"
+        onClick={() => setWorkspaceOpen(!workspaceOpen)}
+        className="xv-ws-launch"
+        title={workspaceOpen ? 'Close the project workspace' : 'Open the project workspace'}
+        aria-pressed={workspaceOpen}
+      >
+        {workspaceOpen ? (
+          <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
+        ) : (
           <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Workspace</span>
-        </button>
-      )}
+        )}
+        <span>Workspace</span>
+      </button>
     </div>
   );
 }

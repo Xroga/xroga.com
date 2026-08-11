@@ -56,7 +56,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
     ? hydrated
       ? `${sidebarWidth}px`
       : 'var(--xv-boot-sidebar-width, 256px)'
-    : '0px';
+    : '72px';
 
   // Keep the terminal skin aligned with the shell theme — but only while the skin is
   // still tracking it. This effect used to run unconditionally, which meant any skin

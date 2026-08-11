@@ -47,6 +47,7 @@ import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox'
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 import { AnimatedNavIcon, type NavIconMotion } from './AnimatedNavIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -262,7 +263,7 @@ export function Sidebar({ displayName }: SidebarProps) {
     ? hydrated
       ? sidebarWidth
       : 'var(--xv-boot-sidebar-width, 256px)'
-    : 0;
+    : 72;
   const asideWidthCss = typeof asideWidth === 'number' ? `${asideWidth}px` : asideWidth;
   const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
@@ -400,40 +401,79 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const sidebarInner = (
     <>
-      <div className="px-2 py-1.5 sm:py-2 border-b border-[var(--card-border)] flex items-center gap-1 min-h-[44px] sm:min-h-[48px] shrink-0">
-        <HoverTip label="Xroga AI" description="Dashboard home" block className="shrink min-w-0">
-          <Logo href={logoHref} height={navExpanded ? 28 : 22} variant="sidebar" onClick={handleNavClick} />
-        </HoverTip>
+      <div
+        className={cn(
+          'xv-sidebar-brand border-b border-[var(--card-border)] shrink-0',
+          navExpanded ? 'px-2 py-2' : 'flex flex-col items-center gap-1 px-1 py-2',
+        )}
+      >
+        <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'justify-center')}>
+          <HoverTip label="Xroga AI" description="Workspace home" block className="shrink min-w-0">
+            <Logo
+              href={logoHref}
+              height={30}
+              variant={navExpanded ? 'sidebarFull' : 'sidebar'}
+              className={cn(navExpanded ? 'max-w-[132px]' : '!h-[30px] !w-[30px]')}
+              onClick={handleNavClick}
+            />
+          </HoverTip>
+          {navExpanded ? (
+            <div className="ml-auto flex shrink-0 items-center gap-0.5">
+              <HoverTip label="Search" description="Search projects, chats, and commands.">
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(true)}
+                  className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                  aria-label="Search"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+              </HoverTip>
+              <HoverTip label="Theme" description="Choose the workspace theme.">
+                <ThemeToggle />
+              </HoverTip>
+              {isMobile && mobileOpen ? <ModalCloseButton onClick={closeMobile} /> : null}
+            </div>
+          ) : null}
+        </div>
+
         {navExpanded ? (
           <button
             type="button"
             onClick={handleNewChat}
-            className="xv-new-chat-btn flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold shrink-0"
+            className="xv-new-chat-btn mt-2 flex w-full items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-[10px] font-bold"
             title="New Terminal"
           >
             <MessageCirclePlus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">New Terminal</span>
+            <span>New Terminal</span>
           </button>
         ) : (
-          <SidebarTip label="New Terminal" description="Start a fresh workspace session.">
-            <button type="button" onClick={handleNewChat} className="xv-sidebar-icon-link !w-8 !h-8 !mx-0">
-              <MessageCirclePlus className="w-4 h-4" />
-            </button>
-          </SidebarTip>
+          <>
+            <SidebarTip label="New Terminal" description="Start a fresh workspace session.">
+              <button
+                type="button"
+                onClick={handleNewChat}
+                className="xv-sidebar-icon-link !w-8 !h-8 !mx-0"
+                aria-label="New Terminal"
+              >
+                <MessageCirclePlus className="w-4 h-4" />
+              </button>
+            </SidebarTip>
+            <HoverTip label="Search" description="Search projects, chats, and commands.">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
+                aria-label="Search"
+              >
+                <Search className="w-3.5 h-3.5" />
+              </button>
+            </HoverTip>
+            <HoverTip label="Theme" description="Choose the workspace theme.">
+              <ThemeToggle placement="right-start" />
+            </HoverTip>
+          </>
         )}
-        <div className={cn('flex items-center gap-0.5 shrink-0 ml-auto', !navExpanded && 'flex-col ml-0')}>
-          <HoverTip label="Search" description="Search projects, chats, and commands.">
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5 transition-colors"
-              aria-label="Search"
-            >
-              <Search className="w-3.5 h-3.5" />
-            </button>
-          </HoverTip>
-          {isMobile && mobileOpen && <ModalCloseButton onClick={closeMobile} />}
-        </div>
       </div>
 
       <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
@@ -571,7 +611,7 @@ export function Sidebar({ displayName }: SidebarProps) {
         className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
         aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         // Track the inset panel's right edge, not the reserved column's edge.
-        style={{ left: effectiveSidebarOpen ? `calc(${asideWidthCss} - var(--xv-sidebar-inset))` : 0 }}
+        style={{ left: `calc(${asideWidthCss} - var(--xv-sidebar-inset))` }}
       >
         {effectiveSidebarOpen ? (
           <PanelLeftClose className="w-3.5 h-3.5" />
@@ -583,8 +623,7 @@ export function Sidebar({ displayName }: SidebarProps) {
       <div className="xv-sidebar-root hidden lg:block shrink-0" style={{ width: asideWidth }}>
         <aside
           className={cn(
-            'xv-sidebar-floating xv-sidebar-hover relative z-40 shrink-0 overflow-hidden transition-[opacity] duration-200',
-            effectiveSidebarOpen ? 'flex flex-col opacity-100' : 'pointer-events-none opacity-0'
+            'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
           )}
         >
           {sidebarInner}

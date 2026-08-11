@@ -30,6 +30,7 @@ import { TerminalLiveActivity } from './TerminalLiveActivity';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
 import { api } from '@/lib/api';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
 
 const AGENT_STYLES: Record<string, string> = {
@@ -302,7 +303,8 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
           {isIncognito ? (
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="xv-terminal-header-tools flex items-center gap-1 shrink-0">
+              <WorkspaceLauncher />
               <TerminalSkinPicker />
               <button
                 type="button"

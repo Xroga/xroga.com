@@ -3829,8 +3829,8 @@ body.theme-gray * {
   }
 
   .xv-terminal-dock-inner {
-    margin-top: 0.75rem;
-    padding-top: 1rem;
+    margin-top: 0;
+    padding-top: 0.5rem;
     border-top: 1px solid transparent;
     background: transparent;
   }
@@ -6329,6 +6329,10 @@ body.theme-gray .xv-rp-loader {
   border-radius: 0.75rem 0.75rem 0 0;
 }
 
+.xv-terminal-header-tools {
+  margin-left: auto;
+}
+
 /* The message pane is the terminal scroll section. Keeping its window wrapper
    overflow-visible lets the title bar remain attached to the scroll viewport;
    overflow clipping on a rounded parent silently disables sticky positioning in
@@ -6614,18 +6618,33 @@ body.theme-gray .xv-rp-loader {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.6rem;
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+  padding: 0;
+  border-radius: 50%;
   border: 1px solid var(--border-subtle, var(--card-border));
   background: color-mix(in srgb, var(--surface-raised, var(--card)) 92%, transparent);
   backdrop-filter: blur(10px);
-  font-size: 0.72rem;
-  font-weight: 600;
   color: var(--text-secondary, var(--muted));
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--background) 32%, transparent);
 }
 .xv-chatbar-restore:hover { color: var(--text-primary, var(--foreground)); }
+
+@media (max-width: 639px) {
+  .xv-terminal-header {
+    gap: 0.35rem;
+    padding-inline: 0.5rem;
+  }
+  .xv-terminal-header-tools .xv-ws-launch span {
+    display: none;
+  }
+  .xv-terminal-header-tools .xv-ws-launch:not(.xv-ws-launch--icon) {
+    width: 28px;
+    padding: 0;
+    justify-content: center;
+  }
+}
 
 .xv-ws-fold {
   border: 1px solid var(--border-subtle, var(--card-border));
