@@ -42,5 +42,34 @@
     "Configure optional Resend or Brevo credentials before enabling email campaigns",
     "Review existing Supabase advisor notices recorded in external-actions.md"
   ],
-  "updatedAt": "2026-07-27T13:35:00+05:00"
+  "updatedAt": "2026-08-11T08:56:15.486320Z",
+  "agentIntelligence": {
+    "status": "agent_intelligence_incomplete",
+    "derivedBy": "backend/src/operations/completionGate.ts#deriveAgentIntelligenceStatus",
+    "note": "Derived from the eight conditions in AGENT_INTELLIGENCE_CONDITIONS, never assigned. The status schema is extended rather than a new success string invented outside the completion system.",
+    "satisfied": [
+      "rolesEnforced",
+      "providerIsolationEnforced",
+      "canonicalTasksExecute",
+      "incrementalImplementation",
+      "measuredRoutingEvidence",
+      "capabilityMaturityDerived"
+    ],
+    "outstanding": [
+      "liveRunProducedCommit",
+      "rolloutReturnedToSafeMode"
+    ],
+    "outstandingReason": "No universal run has produced a commit. Both remaining conditions depend on the Command 2 M19 owner-authenticated build, recorded as external_owner_action_pending."
+  },
+  "operationsGrowthReconciliation": {
+    "reconciledAt": "2026-08-11T08:56:15.486280Z",
+    "reconciledAgainstSha": "afb8f88eb7a90b47900d83919eeaf8580df326b0",
+    "suiteEvidence": {
+      "operations": "60/60 passing on afb8f88",
+      "growth": "10/10 passing on afb8f88"
+    },
+    "meaning": "Current executable evidence that the Command 3 agent-intelligence work did not break historical Operations or Growth. This is regression evidence at suite level.",
+    "limitation": "Per-requirement re-verification was NOT performed. The 80 ledger entries retain the 'verified' status established at PR #354, and their evidence fields are file and endpoint references rather than executable checks. Claiming eighty individual re-verifications from one suite run would be the fabricated evidence this command forbids; the suites prove the code still works, not that each requirement was re-examined against current production state.",
+    "correctClassificationOfLedger": "verified_but_stale_evidence pending per-requirement refresh"
+  }
 }
