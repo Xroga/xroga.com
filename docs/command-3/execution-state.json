@@ -42,7 +42,7 @@
     "Configure optional Resend or Brevo credentials before enabling email campaigns",
     "Review existing Supabase advisor notices recorded in external-actions.md"
   ],
-  "updatedAt": "2026-08-11T09:17:21Z",
+  "updatedAt": "2026-08-11T14:52:00Z",
   "agentIntelligence": {
     "status": "agent_intelligence_incomplete",
     "derivedBy": "backend/src/operations/completionGate.ts#deriveAgentIntelligenceStatus",
@@ -63,7 +63,7 @@
     "evidenceByCondition": {
       "rolesEnforced": "backend/src/ai/engineeringRoles.ts + engineeringRoles.test.ts — fifteen roles, four holding mutation tools; the research role holds no repository tool at all",
       "providerIsolationEnforced": "backend/src/ai/providerPolicy.ts + providerCostTiers.ts — allowlist selection, fixed family/transport bindings, and (PR #501) research models carry no coding prior and no coding claim in their role strings",
-      "canonicalTasksExecute": "backend/src/ai/engineeringTasks.ts — request_understanding and repository_analysis run through ExecutionScheduler with content-addressed evidence; unhandled classes are recorded blocked rather than completed",
+      "canonicalTasksExecute": "backend/src/synthesis/universalCanonicalTasks.ts (PRs #506, #508, #509) — implementation, validation, repair, review and publish all execute through ExecutionScheduler on one shared canonical state, each handler performing the real operation. Previously only request_understanding and repository_analysis ran as canonical tasks.",
       "incrementalImplementation": "backend/src/synthesis/incrementalImplementation.ts, wired at universalEntrypoint.ts:194 — manifest call then one call per file, replacing whole-project JSON generation",
       "measuredRoutingEvidence": "backend/src/ai/benchmarkLedger.ts (PR #498) — per-model, per-role aggregation feeding chooseCostAware and capability maturity",
       "capabilityMaturityDerived": "backend/src/ai/capabilityMaturity.ts — eight gates, no assignable state; benchmark evidence can satisfy only two of them"
@@ -92,14 +92,39 @@
         "number": 502,
         "sha": "d30b1b6c318fe88d6ecb30d5d1c385ca80397f0e",
         "summary": "Migration map reconciled: two EXTEND items closed, and the stale claim that universalEntrypoint still does whole-project generation corrected"
+      },
+      {
+        "number": 506,
+        "sha": "94ce5ee32e87bc89b058dd83790ed747d3a334dd",
+        "summary": "Implementation runs as a persisted scheduler task with sha256 evidence over the real generated files"
+      },
+      {
+        "number": 508,
+        "sha": "389956132961f86735957a128354af781936236d",
+        "summary": "Validation runs as a persisted scheduler task carrying no model; every command persisted with its exit code"
+      },
+      {
+        "number": 509,
+        "sha": "60e7c8cc1902c998e860b03c1a090951d77fad5c",
+        "summary": "Repair, review and publish run as persisted scheduler tasks; publish carries no model and fails without a commit sha"
+      },
+      {
+        "number": 510,
+        "sha": "222fab646cf72f804beb501c03be1bb344f8825e",
+        "summary": "Reject a file plan whose paths are malformed, diagnosed from production run 68cd1d4f"
+      },
+      {
+        "number": 511,
+        "sha": "3f84b672d70b6e79ef1931d167e7caeb8027896e",
+        "summary": "Bounded benchmark runner: selects, caps, executes and records into model_benchmark_runs. Built, not run."
       }
     ],
-    "suiteAt": "1613 backend tests passing, 0 failing, on d30b1b6"
+    "suiteAt": "1692 backend tests passing, 0 failing"
   },
   "knownNotBuilt": {
     "note": "Recorded so a reader does not infer these exist from the components that support them. Each is a real gap, not a deferred cleanup.",
-    "benchmarkRunner": "modelBenchmarks defines and scores the suite, benchmarkLedger aggregates it, and chooseCostAware consumes it — but nothing executes the suite against live providers. The ledger is therefore empty in production, and cost-aware routing falls back to priors until it is populated.",
-    "schedulerImplementationHandlers": "Implementation, validation, review and publish still run as inline pipeline code rather than canonical tasks. Handlers were deliberately not added for architecture or task_planning: no real upstream artifact exists for them, so a handler would hash a plan and record it as architecture work — the unearned evidence engineeringTasks.ts exists to prevent.",
+    "benchmarkRunner": "BUILT but NOT RUN (PR #511). backend/src/ai/benchmarkRunner.ts selects, caps, executes and records cases into model_benchmark_runs. No case has been executed against a live provider — that spends budget nobody authorised — so model_benchmark_runs still has 0 rows, the ledger is still empty, and cost-aware routing still falls back to priors. The runner's tests prove its caps, ordering, stop conditions and isolation rule; they prove nothing about any model's capability.",
+    "schedulerImplementationHandlers": "CLOSED by PRs #506, #508, #509. Implementation, validation, repair, review and publish now run as canonical scheduler tasks. Request understanding, spec, architecture and task planning still run inside planUniversalRun: they produce real artifacts but are not scheduler tasks, and handlers were deliberately not added for them because hashing a plan and recording it as architecture work is the unearned evidence engineeringTasks.ts exists to prevent.",
     "fineTuningSubmission": "learningData.ts enforces the section 26 consent gate, but no interface transmits data to a provider. The gate sits ahead of the capability it guards, which is the correct order."
   },
   "operationsGrowthReconciliation": {
@@ -112,5 +137,27 @@
     "meaning": "Current executable evidence that the Command 3 agent-intelligence work did not break historical Operations or Growth. This is regression evidence at suite level.",
     "limitation": "Per-requirement re-verification was NOT performed. The 80 ledger entries retain the 'verified' status established at PR #354, and their evidence fields are file and endpoint references rather than executable checks. Claiming eighty individual re-verifications from one suite run would be the fabricated evidence this command forbids; the suites prove the code still works, not that each requirement was re-examined against current production state.",
     "correctClassificationOfLedger": "verified_but_stale_evidence pending per-requirement refresh"
+  },
+  "m19Diagnosis": {
+    "investigatedAt": "2026-08-11",
+    "method": "Read production swarm_runs and universal_runs directly rather than trusting the stale blocker text.",
+    "universalRunsRows": 0,
+    "testProject": {
+      "id": "92246b8c-d1e0-43c7-a293-34b40caa3c95",
+      "repository": "Xroga/command-2-m19-verification",
+      "allowlisted": true
+    },
+    "mostRecentUniversalRun": {
+      "runId": "68cd1d4f-0a46-43fa-9cce-1418c6e8fa88",
+      "at": "2026-08-11T12:54:06Z",
+      "outcome": "failed",
+      "phaseReached": "validation",
+      "whatWorked": "Routing selected glm_5_2 and confirmed the project is allowlisted. Spec, architecture, security controls and acceptance criteria all completed. Incremental implementation generated 17 real files.",
+      "whatFailed": "The manifest contained 'package.' and 'tsconfig.' with the .json extension dropped — and only from the JSON files; every other extension in the same manifest was correct. 'package.' matches no runtime adapter manifest name, so detectComposition found zero components, planning produced zero validation commands, and the run died at validation reporting 'nothing was executed and no tier was reached'.",
+      "cost": "Six minutes and eighteen paid model calls to reach a dead end.",
+      "fix": "PR #510 rejects a malformed plan after one manifest call instead of after seventeen file calls."
+    },
+    "notVerified": "api.xroga.com is unreachable from the engineering container (proxy 403), so no /health, /ready or deployed-SHA evidence was collected. Deployment was not inferred from a green deploy job.",
+    "remainingOwnerAction": "One authenticated build submitted against the allowlisted test project, after PR #510 is deployed."
   }
 }
