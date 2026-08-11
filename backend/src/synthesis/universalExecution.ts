@@ -30,6 +30,9 @@ import { compileAcceptanceCriteria } from './acceptanceCompiler.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { detectComposition } from './runtime/registry.js';
 import type { Owner, UniversalStore } from './universalPersistence.js';
+import { runImplementationAsCanonicalTask } from './universalCanonicalTasks.js';
+import type { ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
+import type { ModelId } from '../ai/models.js';
 
 export const UNIVERSAL_EXECUTION_SCHEMA_VERSION = '1.0.0' as const;
 
@@ -144,6 +147,21 @@ export async function executeUniversalRun(input: {
   adapters: ExecutionAdapters;
   store?: UniversalStore;
   commitMessage?: string;
+  /**
+   * Where the canonical task graph is persisted.
+   *
+   * Optional so existing callers and tests are unchanged; an in-memory store is used when
+   * absent, which still enforces the scheduler's completion rule but does not survive the
+   * process. Production passes the durable store.
+   */
+  executionStore?: ExecutionStateStore;
+  /** Routing actually chosen for implementation, recorded on the canonical task. */
+  implementationRouting?: {
+    selectedModel: ModelId | null;
+    provider: string | null;
+    fallbackModels: readonly ModelId[];
+  };
+  signal?: AbortSignal;
 }): Promise<UniversalExecutionResult> {
   const evidence: ExecutionEvidenceRecord[] = [];
   const existingFiles = input.existingFiles ?? [];
@@ -208,9 +226,40 @@ export async function executeUniversalRun(input: {
   }
 
   // ── Implementation ─────────────────────────────────────────────────────────
+  // Executed as a canonical persisted task rather than as a direct adapter call. The
+  // adapter still does the work — this is a migration of *where* it runs, not of what it
+  // does — but the scheduler now owns the completion decision, so implementation cannot be
+  // recorded as done unless it produced a usable file set and evidence bound to it.
+  //
+  // The throw is preserved deliberately. The catch below already decides between a legacy
+  // fallback and outright failure, and changing that here would turn a runtime migration
+  // into a behaviour change.
   let files: readonly ProjectFile[];
+  let implementationTask: ExecutableTaskNode | null = null;
   try {
-    files = await input.adapters.implement({ plan, securityControls, existingFiles });
+    const canonical = await runImplementationAsCanonicalTask({
+      projectId: input.owner.projectId,
+      runId: input.runId,
+      existingFiles,
+      task: {
+        objective: `Implement ${plan.spec.title}`,
+        selectedModel: input.implementationRouting?.selectedModel ?? null,
+        provider: input.implementationRouting?.provider ?? null,
+        fallbackModels: input.implementationRouting?.fallbackModels ?? [],
+        contextReferences: [
+          'product specification',
+          'architecture plan',
+          `${securityControls.length} security control(s)`,
+          `${existingFiles.length} existing file(s)`,
+        ],
+        allowedFiles: existingFiles.map((file) => file.path),
+      },
+      implement: () => input.adapters.implement({ plan, securityControls, existingFiles }),
+      store: input.executionStore,
+      signal: input.signal,
+    });
+    files = canonical.files;
+    implementationTask = canonical.task;
   } catch (error) {
     // Still before any write, so a fallback is at least conceivable — but only if legacy
     // could build the same product.
@@ -229,6 +278,18 @@ export async function executeUniversalRun(input: {
     return fail('failed', 'implementation', 'the implementation step produced no files', plan);
   }
   record('implementation', `${files.length} file(s) generated`, files.map((file) => file.path).slice(0, 20).join(', '));
+  // States plainly that implementation ran as a canonical task, and names the evidence the
+  // scheduler required before it would complete. Without this the run's own evidence would
+  // not distinguish a canonical execution from the direct adapter call it replaced.
+  if (implementationTask) {
+    record(
+      'implementation',
+      `canonical task ${implementationTask.id} completed`,
+      `role=implementation model=${implementationTask.selectedModel ?? 'unrouted'} ` +
+        `attempts=${implementationTask.attempts} ` +
+        `evidence=${implementationTask.evidence.map((item) => item.identifier ?? item.kind).join(', ')}`,
+    );
+  }
 
   // From here the composition is derived from what was actually generated rather than from
   // the plan, because the plan is a prediction and the files are a fact.

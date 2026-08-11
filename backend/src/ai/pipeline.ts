@@ -1210,6 +1210,10 @@ export async function runBuildPipeline(opts: {
     userId: opts.userId,
     projectId: resolvedProjectId,
     prompt: userFacingPrompt,
+    // The same store the engineering task pass uses, so the canonical implementation task
+    // is persisted alongside the rest of the run's task graph rather than in a second
+    // in-memory state that dies with the process.
+    executionStore,
     commit:
       universalTargetRepo && universalToken
         ? atomicGitHubCommit({
