@@ -19,8 +19,9 @@ P3 post-launch.
 | 2 · False completion | 7 | 1 | 1 | 0 |
 | 4 · Repository integrity | 14 | 2 | 2 | 0 |
 | 9 · Secret isolation | 6 | 1 | 1 | 0 |
+| 13 · Operations plan binding | 6 | 2 | 2 | 0 |
 
-Areas 3, 5–8, 10–14 are **not yet probed** in this slice. They are listed at the end as
+Areas 3, 5–8, 10–12 and 14 are **not yet probed**. They are listed at the end as
 explicitly unproven rather than omitted.
 
 ---
@@ -193,6 +194,72 @@ has not been re-probed adversarially here.
 
 ---
 
+## AREA 13 — Operations action plan binding
+
+Invariant: *an approval, and a deduplication key, must distinguish plans that differ.*
+
+| Scenario | Expected safe behaviour | Test type | Result before | Fix | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| Budget / case count / heavy flag / benchmark ids changed | Different digest | Unit | Passed | — | — |
+| Plans differing only in a `url`/`key`/`token`/`password` parameter | Different digest | Unit | **FAILED — identical** | Hash unredacted, canonically ordered | **P1** |
+| Same plan, different key order | Identical digest | Unit | **FAILED — differed** | Sort keys | **P2** |
+| Digest contents | Discloses no value | Unit | Passed | — | — |
+| Action type / target / version changed | Different digest | Unit | Passed | — | — |
+| Redaction of stored/displayed parameters | Unchanged | Unit | Passed | — | — |
+
+### P1 — Digest collision across redaction-pattern parameters
+
+**Failure.** `actionPlanDigest` hashed `redactOperationsValue(parameters)`. Redaction replaces
+the value of any key matching `url|key|token|secret|connection|password|authorization|cookie`
+with the constant `[REDACTED]`, so two materially different plans hashed identically.
+
+**Reproduction.** `digest({url:'https://safe.example.com'})` and
+`digest({url:'https://attacker.example.com'})` both returned `0bb9c6b4185b…`.
+
+**Correction to an earlier claim.** I first reported this as a P0 approval bypass. That was
+wrong, and verifying it rather than asserting it is what showed why: in `executeAction` both
+`approvedPlanDigest` and `currentPlanDigest` read the *same stored column*
+(`operations_actions.action_plan_digest`, written once at creation). Two reads of one value
+cannot disagree, so the collision does **not** yield an approval bypass on that path today.
+The severity is P1, not P0.
+
+**What the collision does reach.** `recordAutomationSignal` recomputes the digest from a live
+signal and uses it as `trigger_digest`, the automation deduplication key. Two distinct
+signals differing only in a redacted attribute produce the same digest, the second is
+classified `duplicate`, and its action is **silently dropped** — a real automation-loss path
+requiring no attacker, only two legitimate signals that differ in a URL.
+
+**Residual risk this also closes.** The digest is the designated plan-binding artefact and
+`approvalIsValid` documents it as such. The obvious future change — recomputing it from the
+request to detect plan tampering between approval and execution — would have turned the
+collision into a genuine bypass. Fixing it now means that change stays safe.
+
+**Root cause.** Two needs conflated in one function. Redaction exists so secrets are not
+*persisted or displayed*; a digest exists to *distinguish* plans, which requires seeing what
+differs. Using the redacted form for both meant the digest could not tell apart the plans it
+was responsible for binding.
+
+**Fix.** Hash the parameters as given. SHA-256 is one-way, so the stored artefact is 64 hex
+characters either way and nothing is disclosed. Storage and display are untouched:
+`execution_plan`, audit rows and evidence still hold the redacted form, and a test asserts
+that half did not regress.
+
+**Also fixed (P2).** Key order changed the digest, so the same plan submitted with keys in a
+different order failed to match its own approval. Parameters are now canonically sorted.
+
+**Regression test.** AREA 13, six tests.
+
+**Now proven.** Distinct plans produce distinct digests, identical plans produce identical
+ones regardless of key order, and no value is recoverable from a digest.
+**Still unproven.** End-to-end approval flow against a live database — no Supabase instance
+is reachable from the engineering container, so `approveAction`/`executeAction` were read and
+reasoned about, not executed.
+
+**Rollback.** Restore `redactOperationsValue` inside `actionPlanDigest` and drop
+`canonicalParameters`. Note this would invalidate digests stored between the two states.
+
+---
+
 ## AREA 9 — Secret isolation
 
 Invariant: *ZERO control-plane secret exposure.* All tests use synthetic canaries against a
@@ -253,7 +320,7 @@ yet; no claim is made about them in either direction.
 | 10 · Budget / quota abuse | Not probed |
 | 11 · Context and repository scale | Not probed |
 | 12 · Product-understanding regression | Covered by the existing `#518` suites; not re-probed adversarially |
-| 13 · Benchmark approval security | Covered by the `#520` suites; not re-probed adversarially |
+| 13 · Benchmark approval security | Plan-binding probed (above); live approval flow needs a database |
 | 14 · Deployment / rollout safety | Not probed |
 
 **Live-environment limits.** No provider credential is configured in the engineering
