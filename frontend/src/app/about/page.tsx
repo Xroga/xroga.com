@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Check, CircleDot, GitBranch, Hammer, Rocket, Search, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Check, CircleDot, GitBranch, Hammer, Rocket, Search, ShieldCheck, Telescope } from 'lucide-react';
 import { buildMetadata } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
@@ -20,6 +20,7 @@ import {
 } from '@/lib/aboutContent';
 import '@/styles/about.css';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { Logo } from '@/components/layout/Logo';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
@@ -29,7 +30,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const STAGE_ICONS = { understand: Search, build: Hammer, verify: ShieldCheck, publish: Rocket } as const;
-const CAPABILITY_ICONS = { build: Hammer, verify: ShieldCheck, publish: GitBranch } as const;
+const CAPABILITY_ICONS = { build: Hammer, verify: ShieldCheck, publish: GitBranch, research: Telescope } as const;
 
 const NAV = [
   { href: '/features', label: 'Product', current: false },
@@ -53,10 +54,7 @@ export default function AboutPage() {
       <header className="ab-nav">
         <div className="ab-shell ab-nav-inner">
           <Link href="/" className="ab-logo">
-            <span className="ab-logo-mark" aria-hidden>
-              X
-            </span>
-            Xroga AI
+            <Logo href={null} variant="homepage" height={36} />
           </Link>
 
           <nav className="ab-nav-links" aria-label="Primary">
@@ -115,7 +113,7 @@ export default function AboutPage() {
         <section className="ab-section" aria-labelledby="ab-what-heading">
           <div className="ab-shell">
             <div className="ab-panel ab-panel--dark">
-              <p className="ab-eyebrow ab-eyebrow--light">WHAT IS XROGA?</p>
+              <p className="ab-eyebrow ab-eyebrow--light">THE REAL SHIP LOOP</p>
               <h2 id="ab-what-heading" className="ab-h2 ab-h2--light">
                 {ABOUT_WHAT_IS.heading}
               </h2>
@@ -174,10 +172,11 @@ export default function AboutPage() {
         {/* ------------------------------------------------------ capabilities */}
         <section className="ab-section" aria-labelledby="ab-cap-heading">
           <div className="ab-shell">
-            <p className="ab-eyebrow">CAPABILITIES</p>
+            <p className="ab-eyebrow">WHAT WE SHIP</p>
             <h2 id="ab-cap-heading" className="ab-h2">
-              What Xroga actually does.
+              Coding agent that ships. <em>Same repo, forever.</em>
             </h2>
+            <p className="ab-lede">Xroga AI connects prompt → brief → code → QA → your GitHub → your Vercel. Edit, update, and delete without starting over.</p>
 
             <div className="ab-cards">
               {ABOUT_CAPABILITIES.map((capability) => {
@@ -334,10 +333,7 @@ export default function AboutPage() {
         <div className="ab-shell ab-footer-inner">
           <div>
             <Link href="/" className="ab-logo">
-              <span className="ab-logo-mark" aria-hidden>
-                X
-              </span>
-              Xroga AI
+              <Logo href={null} variant="homepage" height={36} />
             </Link>
             <p className="ab-footer-note">
               © {new Date().getFullYear()} {COMPANY_CONTACT.legalName}. Built in {COMPANY_CONTACT.region}.

@@ -147,7 +147,7 @@ export function HomepageShowcase() {
           </ul>
           <div className="xv-showcase-actions">
             <Link href={`/showcase/${template.slug}`}>Use this template <ArrowRight aria-hidden="true" /></Link>
-            <Link href={`/showcase/${template.slug}/preview`}>Preview live <ArrowUpRight aria-hidden="true" /></Link>
+            <Link href={`/showcase/${template.slug}/preview`}>Full preview <ArrowUpRight aria-hidden="true" /></Link>
           </div>
         </article>
 
