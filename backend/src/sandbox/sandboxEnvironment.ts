@@ -70,6 +70,24 @@ export function isForbiddenSandboxVariable(name: string): boolean {
 }
 
 /**
+ * Whether a caller-supplied value is one of this process's own credentials.
+ *
+ * Compares against the values of every forbidden-named variable the control plane holds,
+ * so relabelling a secret does not launder it. Short values are ignored: a credential is
+ * never four characters, and comparing against them would refuse legitimate extras like
+ * `production` whenever some unrelated secret happened to equal them.
+ */
+function valueMatchesAServerSecret(value: string, source: NodeJS.ProcessEnv): boolean {
+  if (typeof value !== 'string' || value.length < 8) return false;
+  for (const [name, held] of Object.entries(source)) {
+    if (!held || held.length < 8) continue;
+    if (!isForbiddenSandboxVariable(name)) continue;
+    if (held === value) return true;
+  }
+  return false;
+}
+
+/**
  * Builds the complete environment for a sandboxed process.
  *
  * `source` defaults to `process.env` because that is where PATH and HOME legitimately
@@ -92,6 +110,13 @@ export function buildSandboxEnvironment(
 
   for (const [name, value] of Object.entries(extra)) {
     if (isForbiddenSandboxVariable(name)) throw new ForbiddenSandboxVariableError(name);
+    // Screening the name is not enough on its own. The name check assumes a leak arrives
+    // labelled as what it is, and the case this file was written to guard against — "a
+    // future caller passing something derived from config" — is precisely the one where it
+    // does not: `{ API_BASE: process.env.SUPABASE_SERVICE_ROLE_KEY }` passes every name
+    // rule and hands a build the service role. So the value is compared against what the
+    // control plane actually holds, and a match is refused whatever it is called.
+    if (valueMatchesAServerSecret(value, source)) throw new ForbiddenSandboxVariableError(name);
     env[name] = value;
   }
 

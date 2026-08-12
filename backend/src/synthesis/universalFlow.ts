@@ -305,8 +305,20 @@ export function mayClaimVerified(plan: UniversalRunPlan, report: ValidationRepor
   }
   // A run with no test command has proven the code compiles and nothing more. §18 counts
   // a green run over zero tests as a failure, and this is where that is enforced.
+  //
+  // Optional commands cannot supply this evidence. An optional command is by definition one
+  // whose failure does not fail the run, so a passing one proves nothing binding — counting
+  // it here would let a best-effort test step satisfy the very rule that exists to stop a
+  // build being called verified without tests. No adapter emits an optional test command
+  // today, so this is a latent path rather than a live one; it is closed here because the
+  // first adapter to add "tests are optional when no test directory exists" would open it
+  // silently, and nothing downstream would report the difference.
   const ranTests = report.executed.some(
-    (entry) => entry.validation.phase === 'test' && entry.exitCode === 0,
+    (entry) =>
+      entry.validation.phase === 'test' &&
+      entry.exitCode === 0 &&
+      !entry.skipped &&
+      !entry.validation.command.optional,
   );
   if (!ranTests) {
     return { verified: false, reason: 'no test command ran, so passing proves only that the toolchain executed' };
