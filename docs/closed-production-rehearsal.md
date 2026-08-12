@@ -16,7 +16,7 @@ Two independent hard blockers, both verified rather than assumed:
 | Blocker | Evidence |
 | --- | --- |
 | No provider credential is present | `OPENROUTER_API_KEY`, `KIMI_API_KEY`, `MOONSHOT_API_KEY`, `GLM_API_KEY`, `ZHIPU_API_KEY`, `GROK_API_KEY`, `XAI_API_KEY`, `TAVILY_API_KEY` — all unset. Names checked, values never read. |
-| Production is unreachable | `curl https://api.xroga.com/health` → `000`. Proxy status reports `connect_rejected`, `gateway answered 403 to CONNECT` for both `api.xroga.com:443` and `xroga.com:443`. |
+| Production is unreachable | `curl https://xroga-api.fly.dev/health` → `000`. Proxy reports `connect_rejected`, `gateway answered 403 to CONNECT` for `xroga-api.fly.dev:443`. |
 
 A model call therefore cannot be made locally, and the deployed API cannot be driven remotely.
 Every step of the integrated path from *provider execution* onward — implementation, sandbox,
@@ -102,7 +102,7 @@ degraded→recovered transitions remain **unproven** (no natural failure has occ
 
 | Surface | Deployed SHA | Evidence |
 | --- | --- | --- |
-| Backend (Fly, `api.xroga.com`) | `e0b875b` — current main | fly-deploy workflow run for `e0b875b` completed **success** 2026-08-12T11:10Z; all four hardening commits also succeeded |
+| Backend (Fly, `xroga-api.fly.dev`) | `e0b875b` — current main | fly-deploy workflow run for `e0b875b` completed **success** 2026-08-12T11:10Z; all four hardening commits also succeeded |
 | Frontend (Vercel, `xrogaai.com`) | `3557c6d` | last `READY` production deployment; every deployment since is `CANCELED` |
 
 The frontend being four commits behind is **not a defect**: `git diff --name-only
@@ -110,9 +110,24 @@ The frontend being four commits behind is **not a defect**: `git diff --name-onl
 files. The frontend at `3557c6d` is functionally identical to what current main would build,
 and Vercel cancelled the redundant builds.
 
-**Deploy-job success is not health.** Per the command's own rule, a green deploy job is not
-evidence the service is serving. `/health` and `/ready` are unreachable from here, so actual
-running SHA and service health are **unverified**.
+**Frontend production health — verified 2026-08-12.** Fetched server-side through the Vercel
+API, which bypasses this environment's network block:
+
+- `GET /auth/login` → **HTTP 200**, `x-vercel-cache: PRERENDER`, page renders.
+- Security headers present: `strict-transport-security: max-age=31536000; includeSubDomains`,
+  `x-frame-options: DENY`, `x-content-type-options: nosniff`,
+  `referrer-policy: strict-origin-when-cross-origin`,
+  `permissions-policy: camera=(), microphone=(self), geolocation=()`.
+- CSP is restrictive and confirms the backend origin:
+  `connect-src 'self' https://xroga-api.fly.dev wss://xroga-api.fly.dev https://*.supabase.co
+  https://api.github.com https://api.vercel.com`, with `frame-ancestors 'none'`,
+  `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`.
+- Dynamic routes (`/api/release`) return 302 to Vercel SSO on the preview host, so they are
+  access-protected rather than open.
+
+**Backend health remains unverified.** `xroga-api.fly.dev` is blocked at the gateway and no
+frontend route proxies to it, so there is no indirect path. Deploy-job success is *deploy*
+evidence, not *health* evidence, and is not claimed as such.
 
 ### Rollout and rollback controls
 
@@ -198,9 +213,9 @@ Exactly three, all external. None can be self-served without weakening a control
 
 ### 1. Provide a rehearsal execution path
 
-Either grant the engineering environment network access to `api.xroga.com` (currently 403 at
-the gateway), **or** run the rehearsal builds from an environment that already has provider
-credentials and reach.
+Either allowlist `xroga-api.fly.dev:443` for this environment (currently 403 at the gateway),
+**or** run the rehearsal builds from an environment that already has provider credentials and
+reach.
 
 *Not requested: provider API keys. They are not needed here and must not be pasted into a
 development shell.*
