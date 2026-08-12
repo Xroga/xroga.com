@@ -41,6 +41,7 @@ import {
   type UniversalRunPlan,
   type ValidationReport,
 } from '../synthesis/universalFlow.js';
+import { actionPlanDigest, redactOperationsValue } from '../operations/operationsEngine.js';
 
 // ---------------------------------------------------------------------------
 // AREA 1 — provider transport isolation
@@ -206,6 +207,84 @@ test('AREA 2 — a refused plan cannot be verified even with a green report', ()
     validationReport({ executed: [executedCommand('test', 0)] as never }),
   );
   assert.equal(claim.verified, false);
+});
+
+// ---------------------------------------------------------------------------
+// AREA 13 — Operations action plan binding
+//
+// Invariant: an approval, and a deduplication key, must distinguish plans that differ.
+// ---------------------------------------------------------------------------
+
+const PLAN_BASE = {
+  actionType: 'run_model_benchmark',
+  projectId: 'project-1',
+  environmentId: null,
+  targetType: 'model_benchmark',
+  targetId: 'target-1',
+  targetVersion: 1,
+  idempotencyKey: 'k',
+  confirmed: true,
+} as const;
+
+const digestOf = (parameters: Record<string, unknown>) =>
+  actionPlanDigest({ ...PLAN_BASE, parameters } as never);
+
+test('AREA 13 — plans differing in a benchmark spend parameter get different digests', () => {
+  assert.notEqual(digestOf({ maximumCostUsd: 2 }), digestOf({ maximumCostUsd: 500 }));
+  assert.notEqual(digestOf({ maximumCases: 1 }), digestOf({ maximumCases: 6 }));
+  assert.notEqual(digestOf({ includeHeavy: false }), digestOf({ includeHeavy: true }));
+  assert.notEqual(digestOf({ benchmarkIds: ['a'] }), digestOf({ benchmarkIds: ['b'] }));
+  assert.notEqual(digestOf({ models: ['kimi_k3'] }), digestOf({ models: ['kimi_k3', 'glm_5_2'] }));
+});
+
+test('AREA 13 — plans differing only in a redaction-pattern key get different digests', () => {
+  // The digest previously hashed the *redacted* parameters, so every value under a key
+  // matching url|key|token|secret|connection|password collapsed to the constant
+  // "[REDACTED]" and distinct plans hashed identically.
+  assert.notEqual(digestOf({ url: 'https://safe.example.com' }), digestOf({ url: 'https://attacker.example.com' }));
+  assert.notEqual(digestOf({ apiKey: 'aaaa' }), digestOf({ apiKey: 'bbbb' }));
+  assert.notEqual(digestOf({ connectionString: 'db-a' }), digestOf({ connectionString: 'db-b' }));
+  assert.notEqual(digestOf({ sessionToken: 'one' }), digestOf({ sessionToken: 'two' }));
+  assert.notEqual(digestOf({ nested: { password: 'a' } }), digestOf({ nested: { password: 'b' } }));
+});
+
+test('AREA 13 — an unchanged plan digests identically regardless of key order', () => {
+  // Otherwise an approval fails to match a plan nobody edited, and the binding becomes a
+  // function of JSON insertion order rather than of content.
+  assert.equal(
+    digestOf({ maximumCases: 2, maximumCostUsd: 1, benchmarkIds: ['a'] }),
+    digestOf({ benchmarkIds: ['a'], maximumCostUsd: 1, maximumCases: 2 }),
+  );
+});
+
+test('AREA 13 — the digest still discloses nothing about the values it covers', () => {
+  const digest = digestOf({ apiKey: 'super-secret-value-9f3a' });
+  assert.match(digest, /^[0-9a-f]{64}$/);
+  assert.ok(!digest.includes('super-secret-value-9f3a'));
+});
+
+test('AREA 13 — the action type and target remain part of the binding', () => {
+  const parameters = { maximumCases: 1 };
+  assert.notEqual(
+    actionPlanDigest({ ...PLAN_BASE, parameters } as never),
+    actionPlanDigest({ ...PLAN_BASE, actionType: 'rollback_release', parameters } as never),
+  );
+  assert.notEqual(
+    actionPlanDigest({ ...PLAN_BASE, parameters } as never),
+    actionPlanDigest({ ...PLAN_BASE, targetId: 'target-2', parameters } as never),
+  );
+  assert.notEqual(
+    actionPlanDigest({ ...PLAN_BASE, parameters } as never),
+    actionPlanDigest({ ...PLAN_BASE, targetVersion: 2, parameters } as never),
+  );
+});
+
+test('AREA 13 — redaction still applies to what gets stored and displayed', () => {
+  // The fix separates two concerns that were conflated; this asserts the other half did not
+  // regress, since that is what keeps secrets out of action rows, audit and evidence.
+  const redacted = redactOperationsValue({ apiKey: 'super-secret-value', note: 'safe' }) as Record<string, unknown>;
+  assert.equal(redacted.apiKey, '[REDACTED]');
+  assert.equal(redacted.note, 'safe');
 });
 
 // ---------------------------------------------------------------------------

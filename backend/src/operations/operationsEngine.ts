@@ -52,6 +52,24 @@ export function redactOperationsValue(value: unknown): unknown {
   return value;
 }
 
+/**
+ * The exact plan an approval is bound to.
+ *
+ * Hashes the parameters as given. It previously hashed `redactOperationsValue(parameters)`,
+ * which silently defeated the binding: redaction replaces the value of any key matching
+ * `url|key|token|secret|connection|password|…` with the constant `[REDACTED]`, so two
+ * materially different plans produced an identical digest. An approver could approve
+ * `{ url: 'https://safe.example.com' }` and the requester execute
+ * `{ url: 'https://attacker.example.com' }` — `approvalIsValid` compares digests, saw them
+ * match, and authorised it. That is an approval-bypass in the mechanism whose entire purpose
+ * is four-eyes control.
+ *
+ * The two needs were conflated. Redaction exists so secrets are not *persisted or displayed*
+ * — `execution_plan` and every audit and evidence row still store the redacted form, and
+ * that is unchanged. A digest exists to *distinguish* plans, which requires seeing what
+ * differs. A SHA-256 is one-way, so hashing the raw value discloses nothing: the stored
+ * artefact is 64 hex characters either way.
+ */
 export function actionPlanDigest(request: SafeActionRequest): string {
   const canonical = JSON.stringify({
     actionType: request.actionType,
@@ -60,9 +78,29 @@ export function actionPlanDigest(request: SafeActionRequest): string {
     targetType: request.targetType,
     targetId: request.targetId,
     targetVersion: request.targetVersion,
-    parameters: redactOperationsValue(request.parameters ?? {}),
+    parameters: canonicalParameters(request.parameters ?? {}),
   });
   return createHash('sha256').update(canonical).digest('hex');
+}
+
+/**
+ * Parameters in a stable order, so a digest depends on content rather than key order.
+ *
+ * `JSON.stringify` preserves insertion order, which means the same plan submitted with its
+ * keys in a different order would previously have produced a different digest — an approval
+ * that fails to match for a plan nobody changed. Sorting makes the binding depend only on
+ * what the plan says.
+ */
+function canonicalParameters(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalParameters);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([key, item]) => [key, canonicalParameters(item)]),
+    );
+  }
+  return value;
 }
 
 export function initialActionStatus(definition: ActionDefinition, confirmed: boolean): ActionStatus {
