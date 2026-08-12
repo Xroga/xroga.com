@@ -19,49 +19,37 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 import { cn } from '@/lib/utils';
+import { TechnologyMarquee } from '@/components/homepage/TechnologyMarquee';
 
 const categoryIcons = [Monitor, ShoppingBag, CalendarDays, Smartphone, Sparkles, Gamepad2] as const;
 
 export function HomepageShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
-  const frameRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isInView, setIsInView] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const template = SHOWCASE_TEMPLATES[activeIndex];
   const previous = SHOWCASE_TEMPLATES[(activeIndex - 1 + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length];
   const next = SHOWCASE_TEMPLATES[(activeIndex + 1) % SHOWCASE_TEMPLATES.length];
 
   useEffect(() => {
-    const updateFromScroll = () => {
-      frameRef.current = null;
-      const section = sectionRef.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      const travel = Math.max(1, section.offsetHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -rect.top / travel));
-      setActiveIndex(Math.min(SHOWCASE_TEMPLATES.length - 1, Math.floor(progress * SHOWCASE_TEMPLATES.length)));
-    };
-    const onScroll = () => {
-      if (frameRef.current !== null) return;
-      frameRef.current = window.requestAnimationFrame(updateFromScroll);
-    };
-    updateFromScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
-    };
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting), { threshold: 0.35 });
+    observer.observe(section);
+    return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isInView || isPaused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % SHOWCASE_TEMPLATES.length);
+    }, 3600);
+    return () => window.clearInterval(timer);
+  }, [isInView, isPaused]);
+
   const selectTemplate = useCallback((index: number) => {
-    const section = sectionRef.current;
     setActiveIndex(index);
-    if (!section) return;
-    const travel = Math.max(1, section.offsetHeight - window.innerHeight);
-    const top = window.scrollY + section.getBoundingClientRect().top;
-    const position = top + travel * ((index + 0.5) / SHOWCASE_TEMPLATES.length);
-    window.scrollTo({ top: position, behavior: 'smooth' });
   }, []);
 
   const step = (direction: -1 | 1) => {
@@ -69,16 +57,27 @@ export function HomepageShowcase() {
   };
 
   return (
-    <section ref={sectionRef} className="xv-showcase-scroll" aria-labelledby="showcase-home-heading">
+    <section
+      ref={sectionRef}
+      className="xv-showcase-scroll"
+      aria-labelledby="showcase-home-heading"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsPaused(false);
+      }}
+    >
       <div className="xv-showcase-stage">
         <div className="xv-showcase-grid" aria-hidden="true" />
         <header className="xv-showcase-heading">
           <p className="xv-showcase-kicker"><span /> BUILT WITH XROGA AI <span /></p>
-          <h2 id="showcase-home-heading">See what you can <em>build.</em></h2>
+          <h2 id="showcase-home-heading"><span>See what you</span><span><i>can</i> <em>build.</em></span></h2>
           <p className="xv-showcase-subtitle">Start from something powerful.</p>
           <p className="xv-showcase-copy">
             Explore complete Xroga products across web, marketplaces, booking, mobile, AI, and games—then make one yours.
           </p>
+          <TechnologyMarquee compact />
         </header>
 
         <div className="xv-showcase-visual" style={{ '--showcase-accent': template.accent } as React.CSSProperties}>
@@ -152,11 +151,6 @@ export function HomepageShowcase() {
           </div>
         </article>
 
-        <div className="xv-showcase-stack" aria-label="Technology stack">
-          <span>BUILT WITH MODERN STACK</span>
-          <div>{template.technologies.map((technology) => <b key={technology}>{technology}</b>)}</div>
-        </div>
-
         <div className="xv-showcase-proof" aria-label="Template qualities">
           <span><Monitor aria-hidden="true" /><b>Responsive</b><small>Desktop to mobile</small></span>
           <span><WandSparkles aria-hidden="true" /><b>Xroga-ready</b><small>Make every detail yours</small></span>
@@ -165,7 +159,7 @@ export function HomepageShowcase() {
         </div>
 
         <div className="xv-showcase-progress" aria-hidden="true">
-          {SHOWCASE_TEMPLATES.map((item, index) => <i key={item.id} className={index === activeIndex ? 'is-active' : undefined} />)}
+          {SHOWCASE_TEMPLATES.map((item, index) => <i key={item.id} className={index === activeIndex ? 'is-active' : undefined}><span /></i>)}
         </div>
       </div>
     </section>
