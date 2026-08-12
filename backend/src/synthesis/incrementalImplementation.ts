@@ -115,6 +115,15 @@ function safePath(path: unknown): path is string {
 }
 
 /**
+ * Unicode format characters — bidi overrides, zero-width joiners.
+ *
+ * Named here as well as in the mutation planner because the two answer different questions
+ * at different costs: this one stops the plan before generation is paid for, that one is the
+ * boundary that must never be crossed.
+ */
+const INVISIBLE_IN_PATH = /\p{Cf}/u;
+
+/**
  * Parses a file plan, rejecting the whole plan if any path is unusable.
  *
  * Rejecting rather than filtering is the correction production forced. A filter silently
@@ -135,10 +144,32 @@ export function parseFilePlan(text: string): readonly PlannedFile[] {
     const parsed = JSON.parse(raw) as { files?: Array<{ path?: unknown; purpose?: unknown }> };
     if (!Array.isArray(parsed.files) || !parsed.files.length) return [];
     if (!parsed.files.every((entry) => safePath(entry?.path))) return [];
-    return parsed.files.slice(0, MAX_PLANNED_FILES).map((entry) => ({
+    const planned = parsed.files.slice(0, MAX_PLANNED_FILES).map((entry) => ({
       path: String(entry.path).trim().replace(/\\/g, '/'),
       purpose: typeof entry.purpose === 'string' ? entry.purpose : '',
     }));
+
+    // Refuse the plan before paying to fill it in.
+    //
+    // Each defect below is one the atomic writer already refuses, so a plan carrying it
+    // cannot reach a commit — it can only reach the end of generation and fail there, after
+    // one model call per file has been bought. Rejecting here cannot turn a build that would
+    // have succeeded into one that fails; it only moves an inevitable failure earlier, which
+    // is the difference between a wasted manifest call and a wasted project.
+    //
+    // Whole-plan rejection rather than dropping the offending entry, matching the `every`
+    // check above: silently building a different file set than the model planned produces a
+    // project nobody designed, and hides that the model emitted something invalid.
+    if (planned.some((entry) => INVISIBLE_IN_PATH.test(entry.path))) return [];
+    const seen = new Set<string>();
+    for (const entry of planned) {
+      // Case-folded, because git keeps `A.ts` and `a.ts` apart and macOS and Windows
+      // checkouts cannot.
+      const folded = entry.path.toLowerCase();
+      if (seen.has(folded)) return [];
+      seen.add(folded);
+    }
+    return planned;
   } catch {
     return [];
   }

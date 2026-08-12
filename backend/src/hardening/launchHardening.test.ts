@@ -42,6 +42,7 @@ import {
   type ValidationReport,
 } from '../synthesis/universalFlow.js';
 import { actionPlanDigest, redactOperationsValue } from '../operations/operationsEngine.js';
+import { parseFilePlan } from '../synthesis/incrementalImplementation.js';
 import {
   ExecutionScheduler,
   InMemoryExecutionStateStore,
@@ -213,6 +214,39 @@ test('AREA 2 — a refused plan cannot be verified even with a green report', ()
     validationReport({ executed: [executedCommand('test', 0)] as never }),
   );
   assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — a file plan is refused whole rather than partly built', () => {
+  // Each defect here is one the atomic writer already refuses, so a plan carrying it can
+  // only reach the end of generation and fail there — after one paid model call per file.
+  // Whole-plan rejection matches the existing rule: silently building a different file set
+  // than the model planned produces a project nobody designed.
+  const plan = (files: unknown) => parseFilePlan(JSON.stringify({ files }));
+
+  assert.equal(plan([{ path: 'a\u202Eb.ts', purpose: 'x' }]).length, 0, 'invisible path accepted');
+  assert.equal(plan([{ path: 'a.ts', purpose: 'x' }, { path: 'a.ts', purpose: 'y' }]).length, 0, 'duplicate accepted');
+  assert.equal(plan([{ path: 'A.ts', purpose: 'x' }, { path: 'a.ts', purpose: 'y' }]).length, 0, 'case collision accepted');
+  assert.equal(plan([{ path: '../../etc/passwd', purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ path: '/etc/passwd', purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ path: '.git/config', purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ path: 'package.', purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ path: '', purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ purpose: 'x' }]).length, 0);
+  assert.equal(plan([{ path: 123, purpose: 'x' }]).length, 0);
+});
+
+test('AREA 2 — a valid plan still parses, including through a markdown fence', () => {
+  const clean = parseFilePlan('{"files":[{"path":"src/a.ts","purpose":"x"},{"path":"src/b.ts","purpose":"y"}]}');
+  assert.deepEqual(clean.map((entry) => entry.path), ['src/a.ts', 'src/b.ts']);
+
+  const fenced = parseFilePlan('```json\n{"files":[{"path":"a.ts","purpose":"x"}]}\n```');
+  assert.deepEqual(fenced.map((entry) => entry.path), ['a.ts']);
+});
+
+test('AREA 2 — unparseable model output yields no plan rather than a guess', () => {
+  for (const text of ['', '   ', 'Sure! I will build you an app.', '{files: [}', '{"files":[]}']) {
+    assert.equal(parseFilePlan(text).length, 0, `"${text.slice(0, 20)}" produced a plan`);
+  }
 });
 
 // ---------------------------------------------------------------------------

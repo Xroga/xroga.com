@@ -16,7 +16,7 @@ P3 post-launch.
 | Area | Scenarios probed | Defects found | Fixed | Open |
 | --- | --- | --- | --- | --- |
 | 1 · Provider transport isolation | 6 | 1 | 1 | 0 |
-| 2 · False completion | 7 | 1 | 1 | 0 |
+| 2 · Malformed output / false completion | 10 | 4 | 4 | 0 |
 | 4 · Repository integrity | 14 | 2 | 2 | 0 |
 | 5 · Cancellation | 5 | 2 | 2 | 0 |
 | 9 · Secret isolation | 6 | 1 | 1 | 0 |
@@ -195,6 +195,40 @@ has not been re-probed adversarially here.
 
 ---
 
+### P2 — A file plan carrying a defect the writer refuses was still paid for
+
+**Failure.** `parseFilePlan` accepted plans containing an invisible-character path, duplicate
+paths, or two paths differing only by case.
+
+**Reproduction.** `{"files":[{"path":"a.ts"},{"path":"a.ts"}]}` returned two entries;
+`A.ts` + `a.ts` returned two; `a\u202Eb.ts` returned one.
+
+**Root cause.** Path safety was checked per entry (traversal, absolute, `.git`, trailing dot)
+but never across the plan as a set, and the invisible-character class was only closed at the
+publish boundary.
+
+**Why it costs money rather than safety.** Every one of these is refused by the atomic writer
+after the AREA 4 fixes, so none could reach a commit. What they could reach is the *end of
+generation* — one paid model call per file — before failing. Rejecting them at plan time
+cannot turn a succeeding build into a failing one, because the build was always going to
+fail; it only moves the failure from after seventeen calls to after one.
+
+**Fix.** The plan is refused whole, matching the existing `every(safePath)` rule. Dropping
+just the offending entry would generate a file set the model did not plan and nobody
+reviewed.
+
+**Regression test.** AREA 2, three tests — the refusals, a valid plan still parsing (including
+through a markdown fence), and unparseable output yielding no plan rather than a guess.
+
+**Now proven.** A plan that cannot be published cannot be paid for in full.
+**Still unproven.** Truncation mid-plan, and per-file generation failures partway through a
+plan, are covered by existing `#510`/`#513` suites but were not re-probed here.
+
+**Rollback.** Remove the `INVISIBLE_IN_PATH` and case-folded duplicate checks in
+`parseFilePlan`.
+
+---
+
 ## AREA 5 — Cancellation
 
 Invariant: *ZERO false completion after cancellation; no paid call outlives a cancel.*
@@ -365,7 +399,7 @@ yet; no claim is made about them in either direction.
 
 | Area | Status |
 | --- | --- |
-| 2 · Malformed AI output | Not probed |
+
 | 3 · Sandbox / process limits (CPU, memory, timeout, output, cleanup) | Not probed |
 | 5 · Cancellation | Probed (above); pause/resume and restart recovery still unprobed |
 | 6 · Persistence / database failure semantics | Not probed |
