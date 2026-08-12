@@ -29,6 +29,9 @@
   --hc-font-sans: var(--font-remixa), var(--font-goga), system-ui, sans-serif;
   color: var(--hc-ink);
   background: var(--hc-bg);
+  /* Animated marquee tracks are intentionally wider than the viewport. Keep that
+     internal motion from contributing a fractional page-level scroll width. */
+  overflow-x: clip;
 }
 
 /* Static deep-work wallpaper — no background animation */
