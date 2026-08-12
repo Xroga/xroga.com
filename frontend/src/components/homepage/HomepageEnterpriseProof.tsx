@@ -5,7 +5,6 @@ import {
   Activity,
   ArrowUpRight,
   ChartNoAxesColumnIncreasing,
-  Code2,
   FileText,
   LockKeyhole,
   Network,
@@ -14,6 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import { XROGA_MODEL_FULL } from '@/lib/brand';
+import { TechnologyMarquee } from './TechnologyMarquee';
 
 const CONCEPTS = [
   { Icon: Activity, position: 'state', label: 'State', copy: 'Understand status and context.', code: '01' },
@@ -47,18 +47,6 @@ const CAPABILITIES = [
     title: 'Outcome-first workflow',
     body: 'Understand → implement → validate → repair → push or publish when authorised.',
   },
-] as const;
-
-const STACK = [
-  ['⚛', 'React'],
-  ['N', 'Next.js'],
-  ['TS', 'TypeScript'],
-  ['JS', 'Node.js'],
-  ['RN', 'React Native'],
-  ['PY', 'Python'],
-  ['≈', 'Tailwind CSS'],
-  ['PG', 'PostgreSQL'],
-  ['S', 'Supabase'],
 ] as const;
 
 function InfinitySystem() {
@@ -171,13 +159,7 @@ export function HomepageEnterpriseProof() {
           ))}
         </ol>
 
-        <div className="xv-er-stack" aria-label="Built with modern technology">
-          <span className="xv-er-stack-title"><Code2 aria-hidden="true" /><b>BUILT WITH<br />MODERN TECHNOLOGY</b></span>
-          <div className="xv-er-stack-list">
-            {STACK.map(([mark, label]) => <span key={label}><i>{mark}</i>{label}</span>)}
-            <span><i>+</i>&amp; more</span>
-          </div>
-        </div>
+        <TechnologyMarquee />
       </div>
     </section>
   );
