@@ -139,6 +139,21 @@ const MAX_PATH_LENGTH = 400;
 /** Unicode category Cc: U+0000-U+001F and U+007F-U+009F. Never valid in a git path. */
 const CONTROL_CHARACTER = /\p{Cc}/u;
 
+/**
+ * Unicode category Cf: bidirectional overrides, zero-width joiners, invisible marks.
+ *
+ * Cc alone let these through, and they are the more dangerous half. A path carrying
+ * U+202E RIGHT-TO-LEFT OVERRIDE renders as a different path than the one committed — the
+ * Trojan Source problem (CVE-2021-42574) applied to filenames rather than source lines: a
+ * reviewer approves `README.md` and the tree receives something else. Zero-width joiners
+ * are the quieter version, producing two paths that render identically and are distinct
+ * to git, so one silently shadows the other in a listing.
+ *
+ * No legitimate repository path needs a formatting control, so this is a flat refusal
+ * rather than a normalisation — rewriting the path would hide that a model emitted one.
+ */
+const FORMAT_CHARACTER = /\p{Cf}/u;
+
 
 /**
  * Rejects anything that is not a plain repository-relative file path.
@@ -168,6 +183,16 @@ export function validateRepositoryPath(raw: string, label = 'path'): string {
   }
   if (CONTROL_CHARACTER.test(path)) {
     throw new MutationPlanError('invalid_path', `The ${label} contains a control character.`, path);
+  }
+  if (FORMAT_CHARACTER.test(path)) {
+    throw new MutationPlanError(
+      'invalid_path',
+      `The ${label} contains an invisible formatting character, so the path that would be ` +
+        'committed is not the path it displays as.',
+      // Escaped rather than echoed: reporting the raw path would reproduce the override in
+      // whatever reads the error, which is the attack itself.
+      JSON.stringify(path),
+    );
   }
   if (path.startsWith('/')) {
     throw new MutationPlanError('invalid_path', `The ${label} must be repository-relative, not absolute.`, path);
@@ -254,6 +279,46 @@ export function planMutation(tree: StartingTree, requests: readonly MutationRequ
   const removals = new Map<string, MutationKind>();
   const manifest: MutationManifestItem[] = [];
 
+  /**
+   * Paths that differ only by case, indexed by their lowercase form.
+   *
+   * git distinguishes `README.md` from `readme.md`; macOS and Windows checkouts do not.
+   * A tree holding both is valid to git and unrepresentable on a developer's disk, where
+   * one silently overwrites the other and `git status` reports a permanent phantom
+   * modification. That is repository corruption produced entirely by a commit git accepted,
+   * so it has to be refused when the tree is planned rather than discovered on checkout.
+   *
+   * Paths this plan removes are excluded from the seed, so recasing a file — deleting
+   * `README.md` and creating `readme.md` — stays possible. Collected up front rather than
+   * as operations are walked, because otherwise the same plan would be accepted or refused
+   * depending on whether the delete happened to be listed before the create.
+   */
+  const removedByPlan = new Set<string>();
+  for (const request of requests) {
+    if (request.kind === 'delete') removedByPlan.add(request.path.trim());
+    if (request.kind === 'rename') removedByPlan.add(request.from.trim());
+  }
+
+  const foldedPaths = new Map<string, string>();
+  for (const existing of starting.keys()) {
+    if (!removedByPlan.has(existing)) foldedPaths.set(existing.toLowerCase(), existing);
+  }
+
+  const claimCaseFold = (path: string) => {
+    const folded = path.toLowerCase();
+    const collidesWith = foldedPaths.get(folded);
+    if (collidesWith && collidesWith !== path) {
+      throw new MutationPlanError(
+        'duplicate_output_path',
+        `"${path}" differs from "${collidesWith}" only by capitalisation. A tree holding both ` +
+          'cannot be checked out on a case-insensitive filesystem, where one would overwrite ' +
+          'the other.',
+        path,
+      );
+    }
+    foldedPaths.set(folded, path);
+  };
+
   const claimOutput = (path: string, output: PlannedOutput, kind: MutationKind) => {
     if (outputs.has(path)) {
       throw new MutationPlanError(
@@ -262,6 +327,7 @@ export function planMutation(tree: StartingTree, requests: readonly MutationRequ
         path,
       );
     }
+    claimCaseFold(path);
     if (removals.has(path)) {
       throw new MutationPlanError(
         'conflicting_operations',

@@ -6,6 +6,7 @@ import {
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
+import { ProviderPolicyError, requiredCodingTransport } from './providerPolicy.js';
 import { withTemperatureFallback } from './temperatureCompat.js';
 
 export type ContentPart =
@@ -88,6 +89,27 @@ function openRouterHeaders(): Record<string, string> {
 export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
   const def = MODELS[modelId];
   const apiModel = configuredApiModel(modelId);
+
+  // §7's transport binding, enforced rather than described.
+  //
+  // `providerPolicy` has always named the transport each coding model must use, and until
+  // now nothing consulted it: `requiredCodingTransport` had no caller outside its own test,
+  // so the binding held only because `MODELS` happened to agree with it. Editing one
+  // `provider` field in the registry was enough to send a coding model's prompts — a user's
+  // proprietary source — to a different vendor under a different key, silently and with no
+  // test failing.
+  //
+  // Checked here because this is the single point where a model id becomes a destination
+  // and a credential. A check at any routing site above would leave this one reachable.
+  const requiredTransport = requiredCodingTransport(modelId);
+  if (requiredTransport && def.provider !== requiredTransport) {
+    throw new ProviderPolicyError(
+      `${modelId} must reach its provider over ${requiredTransport}, but the model registry ` +
+        `resolves it to ${def.provider}. Refusing the call: routing a coding model through an ` +
+        'unapproved transport would send prompts and source code to a vendor the policy does ' +
+        'not permit for that model.',
+    );
+  }
 
   if (def.provider === 'openrouter') {
     const orKey = credentialOverride?.trim() || getSecret('OPENROUTER_API_KEY');
