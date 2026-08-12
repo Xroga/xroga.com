@@ -11,7 +11,6 @@ import {
   MessageSquarePlus,
   Link2,
   Settings,
-  Menu,
   PanelLeftClose,
   PanelLeft,
   Search,
@@ -532,19 +531,37 @@ export function Sidebar({ displayName }: SidebarProps) {
     <>
       <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
-      <button
-        type="button"
+      <header
         className={cn(
-          'xv-mobile-menu-btn lg:hidden fixed top-[max(0.75rem,env(safe-area-inset-top))] left-3 p-2.5 rounded-xl glass-panel shadow-lg z-[80]',
-          mobileOpen && 'opacity-0 pointer-events-none',
+          'xv-mobile-workspace-header lg:hidden',
+          mobileOpen && 'is-drawer-open',
           terminalFullscreen && 'hidden',
         )}
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open menu"
-        aria-expanded={mobileOpen}
+        aria-label="Workspace header"
       >
-        <Menu className="w-5 h-5" />
-      </button>
+        <Logo
+          href={logoHref}
+          height={40}
+          variant="sidebarFull"
+          className="xv-mobile-workspace-logo"
+        />
+        <div className="xv-mobile-workspace-actions" aria-label="Workspace shortcuts">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open sidebar"
+            aria-expanded={mobileOpen}
+          >
+            <PanelLeft className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+            <Search className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <button type="button" onClick={handleNewChat} aria-label="New Terminal">
+            <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      </header>
 
       {isMobile &&
         mobileOpen &&

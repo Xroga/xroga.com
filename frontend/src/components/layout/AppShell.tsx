@@ -106,7 +106,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                   !isDashboard && 'xv-main-scroll-under-header',
                   incognito && isDashboard ? 'p-2 sm:p-4 lg:p-6 bg-transparent' : 'p-3 sm:p-6 lg:p-8',
                   'pb-24 lg:pb-8',
-                  isDashboard && 'pb-[min(260px,calc(38vh+env(safe-area-inset-bottom)))] lg:pb-[240px]'
+                  isDashboard && 'xv-workspace-main pb-[min(260px,calc(38vh+env(safe-area-inset-bottom)))] lg:pb-[240px]'
                 )}
               >
                 {children}
