@@ -3372,13 +3372,13 @@ body.theme-gray * {
   .xv-chatbar-composer::-webkit-scrollbar { width: 8px; }
   .xv-chatbar-composer::-webkit-scrollbar-track {
     margin-block: 7px;
-    border-radius: 999px;
+    border-radius: 11px;
     background: color-mix(in srgb, var(--foreground) 5%, transparent);
   }
   .xv-chatbar-composer::-webkit-scrollbar-thumb {
     min-height: 38px;
     border: 2px solid transparent;
-    border-radius: 999px;
+    border-radius: 8px;
     background: linear-gradient(180deg,
       color-mix(in srgb, var(--accent) 72%, #8ed7ff),
       color-mix(in srgb, var(--accent) 82%, #2458c7));

@@ -130,6 +130,13 @@ const navItems: NavEntry[] = [
     tip: 'Operations, growth, and publishing.',
     children: [
       {
+        href: '/dashboard/publish',
+        motion: 'launch' as const,
+        label: 'Publish',
+        icon: Rocket,
+        tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
+      },
+      {
         href: '/dashboard/operations',
         motion: 'pulse' as const,
         label: 'Operations',
@@ -142,13 +149,6 @@ const navItems: NavEntry[] = [
         label: 'Growth',
         icon: TrendingUp,
         tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
-      },
-      {
-        href: '/dashboard/publish',
-        motion: 'launch' as const,
-        label: 'Publish',
-        icon: Rocket,
-        tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
       },
     ],
   },

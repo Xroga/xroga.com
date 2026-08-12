@@ -57,16 +57,14 @@ export const ABOUT_HERO = {
 } as const;
 
 export const ABOUT_WHAT_IS = {
-  heading: 'Xroga is not a single chatbot.',
+  heading: 'Durable work. Verified outcomes.',
   paragraphs: [
-    'Xroga is an execution system for software creation. It coordinates repository understanding, implementation, research, testing, review, and deployment through accounts the user authorizes.',
-    'Instead of stopping at suggestions, Xroga works through the product lifecycle and returns either verified progress or a precise blocker.',
+    'Workspace activity comes from real backend run events. A build is complete only after its required validation, and publishing is reported only with provider evidence.',
   ],
   stages: [
-    { id: 'understand', title: 'Understand', body: 'Read the existing repository and the outcome you described.' },
-    { id: 'build', title: 'Build', body: 'Apply focused changes and leave unrelated working code intact.' },
-    { id: 'verify', title: 'Verify', body: 'Run the applicable checks before anything is reported complete.' },
-    { id: 'publish', title: 'Publish', body: 'Push and deploy through providers you have authorized.' },
+    { id: 'understand', title: 'Understand and implement', body: 'Inspect the current repository, change the controlled project state, and preserve unrelated code.' },
+    { id: 'verify', title: 'Validate and repair', body: 'Run applicable checks, classify real failures, and target the responsible files.' },
+    { id: 'publish', title: 'Push and publish with evidence', body: 'Show the remote commit and deployment result, or the exact external setup still required.' },
   ] satisfies AboutStage[],
 } as const;
 
@@ -91,18 +89,23 @@ export const ABOUT_STEPS: AboutStep[] = [
 export const ABOUT_CAPABILITIES: AboutCapability[] = [
   {
     id: 'build',
-    title: 'Build',
-    body: 'Generate and improve websites, applications, dashboards, and browser experiences.',
+    title: 'Converter → Builder → Ship',
+    body: 'Understand the outcome · implement focused changes · verify · push the sticky GitHub repo · publish with evidence.',
   },
   {
     id: 'verify',
-    title: 'Verify',
-    body: 'Run checks, inspect implementation quality, and surface exact blockers rather than vague failures.',
+    title: 'Automatic capability routing',
+    body: 'Black Hole V∞ brings frontier coding depth, long-context repositories, and live research without a vendor model picker.',
   },
   {
     id: 'publish',
-    title: 'Publish',
-    body: "Push approved code to GitHub and deploy through the user's connected Vercel account.",
+    title: 'GitHub push · Vercel live',
+    body: 'Preview in Workspace, push the sticky repository, and go live on your domain while ownership stays yours.',
+  },
+  {
+    id: 'research',
+    title: 'Research that ships',
+    body: 'Gather live sources when needed, then turn findings into code in the same connected product flow.',
   },
 ];
 

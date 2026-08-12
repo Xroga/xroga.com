@@ -118,7 +118,7 @@ export default function HomePage() {
       <PageJsonLd path="/" name="XROGA AI" description={PRODUCT_ONE_LINER} />
       <div
         className="xv-hc-bg-image"
-        style={{ backgroundImage: 'url("/backgrounds/xroga-deep-work-bg.webp")' }}
+        style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }}
         aria-hidden
       />
 

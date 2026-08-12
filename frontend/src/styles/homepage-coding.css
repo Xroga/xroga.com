@@ -4189,6 +4189,72 @@ body.theme-white .xv-home-coding .xv-er-orbit-lines,body.theme-beige .xv-home-co
   }
 }
 
+/* 2026 compact marketing pass: preserve the theme canvas and let content lead. */
+.xv-home-coding .xv-showcase-grid,
+.xv-home-coding .xv-se-grid,
+.xv-home-coding .xv-er-field,
+.xv-home-coding .xv-er-stage-lines,
+.xv-home-coding .xv-hc-ship-grid-bg,
+.xv-home-coding .xv-hc-ent-console-grid { display: none; }
+
+.xv-home-coding .xv-showcase-scroll { padding-block: clamp(3.5rem,6vw,5.5rem); }
+.xv-home-coding .xv-showcase-kicker {
+  color: var(--hc-ink);
+  font-size: clamp(.68rem,.9vw,.82rem);
+  letter-spacing: .22em;
+}
+.xv-home-coding .xv-showcase-heading h2 {
+  font-size: clamp(2.25rem,4.25vw,4rem);
+  line-height: .94;
+  letter-spacing: -.055em;
+}
+.xv-home-coding .xv-showcase-visual {
+  height: clamp(22rem,39vw,35rem);
+  margin-top: clamp(1.6rem,3vw,2.5rem);
+}
+.xv-home-coding .xv-showcase-dock {
+  max-width: min(94vw,52rem);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.xv-home-coding .xv-showcase-dock button { flex: 0 0 auto; }
+
+.xv-home-coding .xv-se-heading { max-width: 58rem; margin-bottom: clamp(2rem,3.5vw,3rem); }
+.xv-home-coding .xv-se-heading h2 { font-size: clamp(2.15rem,4.15vw,3.85rem); letter-spacing: -.055em; }
+
+.xv-home-coding .xv-er { padding-block: clamp(3.5rem,6vw,5.25rem); }
+.xv-home-coding .xv-er-stage { min-height: 30rem; }
+.xv-home-coding .xv-er-heading { margin-top: 1.25rem; }
+.xv-home-coding .xv-er-heading h2 { font-size: clamp(2rem,3.7vw,3.35rem); }
+.xv-home-coding .xv-er-heading>div { margin-top: .7rem; }
+.xv-home-coding .xv-er-concepts { inset: 13.5rem 0 auto; }
+.xv-home-coding .xv-er-concept.is-evidence,
+.xv-home-coding .xv-er-concept.is-blockers { top: 6.6rem; }
+.xv-home-coding .xv-er-core { height: 15.5rem; }
+.xv-home-coding .xv-er-capabilities { gap: .75rem; margin-top: -.55rem; }
+.xv-home-coding .xv-er-capabilities li,
+.xv-home-coding .xv-er-capabilities li:nth-child(n) { min-height: 9.5rem; margin-top: 0; padding: 1.1rem; }
+.xv-home-coding .xv-er-cap-icon { width: 2.7rem; height: 2.7rem; }
+
+@media(max-width:780px){
+  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(2.1rem,9vw,3.25rem); }
+  .xv-home-coding .xv-showcase-visual { height: clamp(18rem,62vw,27rem); }
+  .xv-home-coding .xv-se-heading h2 { font-size: clamp(2.1rem,9vw,3.25rem); }
+  .xv-home-coding .xv-er-stage { min-height: 39rem; }
+  .xv-home-coding .xv-er-heading h2 { font-size: clamp(1.9rem,8vw,2.8rem); }
+  .xv-home-coding .xv-er-concepts { inset: 19.5rem .9rem auto; }
+  .xv-home-coding .xv-er-core { height: 14rem; }
+}
+@media(max-width:560px){
+  .xv-home-coding .xv-showcase-scroll { padding-block: 3.25rem; }
+  .xv-home-coding .xv-showcase-kicker { font-size: .6rem; }
+  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(2rem,11vw,2.8rem); }
+  .xv-home-coding .xv-showcase-visual { height: 15.5rem; }
+  .xv-home-coding .xv-er-stage { min-height: 37rem; }
+  .xv-home-coding .xv-er-concepts { inset: 18.7rem .7rem auto; }
+  .xv-home-coding .xv-er-capabilities { gap: .65rem; }
+}
+
 @keyframes xv-hc-bh-icon-bob {
   0%,
   100% {
