@@ -36,6 +36,11 @@ import {
   validateRepositoryPath,
   type StartingTree,
 } from '../services/integrations/githubMutationPlan.js';
+import {
+  mayClaimVerified,
+  type UniversalRunPlan,
+  type ValidationReport,
+} from '../synthesis/universalFlow.js';
 
 // ---------------------------------------------------------------------------
 // AREA 1 — provider transport isolation
@@ -105,6 +110,102 @@ test('AREA 1 — an unrecognised model is refused by default rather than inherit
   // able to code merely because nothing denied it.
   assert.equal(isCodingModel('some_new_model_2027'), false);
   assert.throws(() => assertCodingModel('some_new_model_2027', 'implementation'), ProviderPolicyError);
+});
+
+// ---------------------------------------------------------------------------
+// AREA 2 — false completion
+//
+// Invariant: ZERO publication when validation is failed or unexecuted.
+// ---------------------------------------------------------------------------
+
+const PLANNED = {
+  status: 'planned',
+  blockers: [],
+  validations: [{}],
+  spec: {},
+  architecture: {},
+  acceptance: [],
+} as unknown as UniversalRunPlan;
+
+function validationReport(overrides: Partial<ValidationReport>): ValidationReport {
+  return {
+    executed: [],
+    passed: true,
+    failures: [],
+    tierReached: 'sandbox',
+    blocker: null,
+    ...overrides,
+  } as ValidationReport;
+}
+
+function executedCommand(phase: string, exitCode: number, optional = false) {
+  return {
+    validation: {
+      phase,
+      command: { command: 'npm', args: [], optional },
+      componentRoot: '',
+      adapterId: 'node',
+      sandboxImage: null,
+    },
+    exitCode,
+    stdout: '',
+    stderr: '',
+    skipped: false,
+  };
+}
+
+test('AREA 2 — a run that executed nothing cannot claim verification', () => {
+  const claim = mayClaimVerified(PLANNED, validationReport({ tierReached: 'none', passed: true }));
+  assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — a build that compiled but never ran tests cannot claim verification', () => {
+  const claim = mayClaimVerified(
+    PLANNED,
+    validationReport({ executed: [executedCommand('build', 0)] as never }),
+  );
+  assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — an optional test command cannot supply the tests-ran evidence', () => {
+  // An optional command is one whose failure does not fail the run, so a passing one proves
+  // nothing binding. Counting it would let a best-effort test step satisfy the rule that
+  // exists to stop a build being called verified without tests.
+  const claim = mayClaimVerified(
+    PLANNED,
+    validationReport({ executed: [executedCommand('test', 0, true)] as never }),
+  );
+  assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — a skipped test command cannot supply the tests-ran evidence either', () => {
+  const skipped = { ...executedCommand('test', 0), skipped: true };
+  const claim = mayClaimVerified(PLANNED, validationReport({ executed: [skipped] as never }));
+  assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — a real passing test run is still accepted, so the gate is not a blanket refusal', () => {
+  const claim = mayClaimVerified(
+    PLANNED,
+    validationReport({ executed: [executedCommand('test', 0), executedCommand('build', 0)] as never }),
+  );
+  assert.equal(claim.verified, true);
+});
+
+test('AREA 2 — outstanding blockers defeat an otherwise green run', () => {
+  const claim = mayClaimVerified(
+    { ...PLANNED, blockers: ['unresolved security finding'] } as UniversalRunPlan,
+    validationReport({ executed: [executedCommand('test', 0)] as never }),
+  );
+  assert.equal(claim.verified, false);
+});
+
+test('AREA 2 — a refused plan cannot be verified even with a green report', () => {
+  const claim = mayClaimVerified(
+    { ...PLANNED, status: 'refused_no_surface' } as UniversalRunPlan,
+    validationReport({ executed: [executedCommand('test', 0)] as never }),
+  );
+  assert.equal(claim.verified, false);
 });
 
 // ---------------------------------------------------------------------------

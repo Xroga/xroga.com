@@ -16,10 +16,11 @@ P3 post-launch.
 | Area | Scenarios probed | Defects found | Fixed | Open |
 | --- | --- | --- | --- | --- |
 | 1 · Provider transport isolation | 6 | 1 | 1 | 0 |
+| 2 · False completion | 7 | 1 | 1 | 0 |
 | 4 · Repository integrity | 14 | 2 | 2 | 0 |
 | 9 · Secret isolation | 6 | 1 | 1 | 0 |
 
-Areas 2, 3, 5–8, 10–14 are **not yet probed** in this slice. They are listed at the end as
+Areas 3, 5–8, 10–14 are **not yet probed** in this slice. They are listed at the end as
 explicitly unproven rather than omitted.
 
 ---
@@ -142,6 +143,53 @@ recasing still working in all three forms.
 filenames) are not folded. Recorded as **P2**.
 
 **Rollback.** Remove `claimCaseFold` and its seed.
+
+---
+
+## AREA 2 — False completion
+
+Invariant: *ZERO publication when validation is failed or unexecuted.*
+
+| Scenario | Expected safe behaviour | Test type | Result before | Fix | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| Nothing executed, report claims passed | Refused | Unit | Passed | — | — |
+| Build ran, no tests | Refused | Unit | Passed | — | — |
+| **Optional** test command exited 0 | Refused | Unit | **FAILED — verified** | Exclude optional/skipped | **P2 (latent)** |
+| Skipped test command | Refused | Unit | Passed | Also excluded | — |
+| Real passing test run | Accepted | Unit | Passed | — | — |
+| Outstanding plan blockers, all green | Refused | Unit | Passed | — | — |
+| Refused plan with a green report | Refused | Unit | Passed | — | — |
+
+### P2 (latent) — an optional test command satisfied the tests-ran gate
+
+**Failure.** `mayClaimVerified` enforces §18 — a green run over zero tests is a failure — by
+checking that some `test`-phase command exited 0. The check did not exclude commands marked
+`optional`.
+
+**Reproduction.** A report whose only `test` entry is `{ optional: true, exitCode: 0 }`
+returned `verified: true`.
+
+**Root cause.** An optional command is by definition one whose failure does not fail the run,
+so a passing one is not binding evidence. Counting it lets a best-effort test step satisfy
+the exact rule that exists to stop a build being called verified without tests.
+
+**Reachability — stated honestly.** No runtime adapter emits an optional `test` command
+today; every current `optional: true` is a formatter, linter, or packaging step. This is a
+**latent** path, not a live one, and is classified P2 rather than P1 for that reason. It is
+closed because the first adapter to add "tests are optional when no test directory exists"
+would open it silently, and nothing downstream would report the difference.
+
+**Fix.** `ranTests` now requires a non-optional, non-skipped `test` command that exited 0.
+
+**Regression test.** AREA 2, four tests covering optional, skipped, the real passing case
+(so the gate is not a blanket refusal), and the surrounding blocker rules.
+
+**Now proven.** Only a binding test execution can satisfy the completion gate.
+**Still unproven.** The scheduler-level dependency graph — that publish is structurally
+unreachable from a failed validation — is asserted by the existing `#508`/`#509` suites but
+has not been re-probed adversarially here.
+
+**Rollback.** Restore the previous two-clause `ranTests` predicate.
 
 ---
 
