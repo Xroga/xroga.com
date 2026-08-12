@@ -21,8 +21,11 @@ P3 post-launch.
 | 5 · Cancellation | 5 | 2 | 2 | 0 |
 | 9 · Secret isolation | 6 | 1 | 1 | 0 |
 | 13 · Operations plan binding | 6 | 2 | 2 | 0 |
+| 8 · Tenant isolation (live DB) | 5 | 0 | — | 0 |
+| 10 · Quota / budget authority (live DB) | 3 | 0 | — | 0 |
+| 6 · Persistence idempotency (live DB) | 8 | 0 | — | 0 |
 
-Areas 3, 6–8, 10–12 and 14 are **not yet probed**. They are listed at the end as
+Areas 3, 7, 11, 12 and 14 are **not yet probed**. They are listed at the end as
 explicitly unproven rather than omitted.
 
 ---
@@ -389,6 +392,147 @@ caught by equality. Recorded as **P2** — a substring scan over every extra wou
 prohibitively noisy.
 
 **Rollback.** Remove `valueMatchesAServerSecret` and its call.
+
+---
+
+## Live production verification — 2026-08-12
+
+Project `nzenxdfumxrnsmybazmo` (xroga-ai, ACTIVE_HEALTHY). **Read-only throughout.** Every
+query below addresses catalogue tables (`pg_class`, `pg_policies`, `pg_proc`, `pg_index`) or
+row counts — no customer row was read, no branch was created (branches are billable), and
+nothing was written.
+
+**Why there is no CI test for this section.** I wrote one, found it dishonest, and removed
+it. It called an `exec_sql` RPC to read the catalogue; that RPC does not exist in this
+project, so the function returned early and the test passed *without checking anything* — a
+green that proves nothing, which is the exact failure this whole document exists to remove.
+PostgREST cannot read `pg_class` without a purpose-built RPC, and adding one to production
+schema is a mutation nobody asked for. So this section is a recorded point-in-time
+verification with the exact queries, not an enforced invariant. Treated as **P2**: the
+verification is real, its continued truth is not automatically guarded.
+
+### AREA 8 — Tenant isolation
+
+| Check | Result |
+| --- | --- |
+| Public tables with RLS **disabled** | **0 of 97** |
+| Public tables with RLS enabled | 97 |
+| Policies granting `USING (true)` to a non-service role | **0** |
+| SELECT/UPDATE/DELETE policies not referencing caller identity | 7, all reviewed and legitimate |
+| INSERT policies | all scope `with_check` to `auth.uid()` |
+
+```sql
+select count(*) filter (where not c.relrowsecurity) as rls_disabled
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname='public' and c.relkind='r';   -- 0
+```
+
+**The mechanism, which matters more than the count.** 97-of-97 is not the result of migration
+discipline. The database carries an event trigger:
+
+```sql
+select evtname, evtevent, evtenabled, p.proname
+from pg_event_trigger e join pg_proc p on p.oid = e.evtfoid;
+-- ensure_rls | ddl_command_end | O | rls_auto_enable
+```
+
+`ensure_rls` fires on every `ddl_command_end` and enables RLS on new tables automatically, so
+the guarantee covers tables created outside `supabase/migrations/` entirely — a manual
+`CREATE TABLE` in the dashboard is caught too. `rls_auto_enable()` is `service_role`-only with
+a pinned `search_path` (hardened in `20260727_command3a_function_hardening.sql`).
+
+This is a structural control rather than a convention, which is why the count is perfect
+rather than merely high. **It is also the single point of failure to watch:** if `ensure_rls`
+is ever dropped or disabled, the guarantee disappears silently and no repository test would
+notice. That check belongs in an operational readiness probe, not in the unit suite.
+
+**Reading this correctly.** 55 tables report `rls_enabled_no_policy` in the security advisor.
+That lint is INFO, not ERROR, and the reason matters: RLS enabled with no policy is
+**deny-all** for `anon` and `authenticated`. It is fail-closed, not open. Those tables are
+reachable only by `service_role`, which bypasses RLS — so tenant isolation for them rests
+entirely on backend application code (`OperationsService.access()` and equivalents), not on
+the database. That is a legitimate architecture, and it means the RLS result above proves
+*there is no direct PostgREST path to tenant data*; it does not by itself prove the backend
+scopes correctly. The backend half is covered by the `command3-auth` e2e test, which asserts
+cross-tenant API denial and passes in CI.
+
+The 7 identity-free policies are: public forum reads on `community_posts`/`community_comments`
+gated on `not is_hidden` (intentionally public), one admin-gated delete, and four
+`auth.role() = 'service_role'` policies.
+
+**Now proven.** No public table is reachable unauthenticated; no policy grants unscoped
+access. **Still unproven.** Backend-side tenant scoping for the 55 service-role-only tables
+beyond what the existing e2e covers.
+
+### AREA 10 — Quota and budget authority
+
+Every `SECURITY DEFINER` function that moves money or quota is executable by `service_role`
+**only** — `anon` and `authenticated` cannot call any of them:
+
+`reserve_xroga_provider_budget`, `settle_xroga_provider_budget`,
+`release_xroga_provider_budget`, `increment_user_token_usage`, `insert_ai_usage_ledger`,
+`set_user_ai_plan_budget`, `set_xroga_usage_pacing`, `activate_xroga_paid_cycle`,
+`activate_xroga_launch_promotion`, `merge_user_model_usage`.
+
+All pin `search_path`. Two advisor warnings were checked and are **not** privilege paths:
+
+- `xroga_unlocked_entitlement_micro_usd` — flagged for a mutable `search_path`, but it is
+  `SECURITY INVOKER` (not DEFINER) and executable by neither `anon` nor `authenticated`.
+  Classified **P3**, informational.
+- `current_community_role` — `SECURITY DEFINER` callable by `authenticated`, but its
+  `search_path` is pinned and it returns only the caller's own role via `auth.uid()`; `anon`
+  cannot execute it. It exists to be called from RLS policies. **No action.**
+
+**Now proven.** Quota and budget accounting cannot be driven directly by a signed-in user.
+
+### AREA 6 — Persistence idempotency
+
+| Table | Uniqueness | Protects |
+| --- | --- | --- |
+| `operations_actions` | UNIQUE(user_id, idempotency_key) | retry cannot duplicate an action |
+| `operations_action_approvals` | UNIQUE(action_id, required_role) | approvals cannot stack per role |
+| `operations_automation_runs` | UNIQUE(rule_id, trigger_digest) | duplicate signal suppression |
+| `xroga_provider_reservations` | UNIQUE(user_id, idempotency_key) | retry cannot double-spend budget |
+| `model_provider_health` | PK(model_id) | one row per model |
+| `execution_runs` | PK(run_id) | one canonical state per run |
+
+**This corroborates the AREA 13 fix.** `operations_automation_runs` carries a *unique
+constraint* on `(rule_id, trigger_digest)`. Before #522, two legitimate signals differing only
+in a redaction-pattern attribute produced the same digest — so the second did not merely get
+classified `duplicate`, it collided with a hard database constraint. The severity assessment
+in AREA 13 stands; this is the mechanism by which the signal was lost.
+
+`model_benchmark_runs` has no natural unique key, which is **correct** — repeated measurement
+over time is the point of the table.
+
+### Live state reconciliation
+
+| Table | Rows | Meaning |
+| --- | --- | --- |
+| `model_benchmark_runs` | **0** | no live benchmark has ever run; #520's gate is unexercised |
+| `operations_actions` | **0** | no Operations action has ever been created in production |
+| `operations_action_approvals` | **0** | the approval flow has never been exercised live |
+| `model_provider_health` | 3 | durability **proven working** from real activity |
+| `execution_runs` | 60 | canonical execution state persisting |
+| `universal_runs` | 0 | universal path gated off (see rollout below) |
+| `production_releases` | 0 | no M19 release evidence recorded |
+
+**Provider health, real data.** `kimi_k3`, `glm_5_2` and `deepseek_v4_flash` are all
+`healthy`, 1 success / 0 failures each, with measured latencies of 57 795 ms, 9 469 ms and
+2 054 ms; most recent write 2026-08-11 22:51 UTC. No Grok row exists, consistent with
+research-only policy. The durable provider-health path works in production.
+
+**Rollout state.** `universal_runs` is empty because `UNIVERSAL_AGENT_ENABLED` defaults to
+off. Universal execution is **not** broadly rolled out, which is the required conservative
+state.
+
+**Live benchmark status.** Zero rows, zero actions, zero approvals. No benchmark has been
+run and no approval has been requested. This is the exact owner blocker: a `release_manager`
+must create and a second identity approve a `run_model_benchmark` action. Not bypassed, and
+no credential was requested.
+
+**M19 status.** `production_releases` is empty; no release evidence exists to verify. M19
+remains owner-blocked on the same authenticated action.
 
 ---
 
