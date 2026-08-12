@@ -42,6 +42,12 @@ import {
   type ValidationReport,
 } from '../synthesis/universalFlow.js';
 import { actionPlanDigest, redactOperationsValue } from '../operations/operationsEngine.js';
+import {
+  ExecutionScheduler,
+  InMemoryExecutionStateStore,
+  createCanonicalExecutionState,
+  type ExecutableTaskNode,
+} from '../ai/executionRuntime.js';
 
 // ---------------------------------------------------------------------------
 // AREA 1 — provider transport isolation
@@ -207,6 +213,105 @@ test('AREA 2 — a refused plan cannot be verified even with a green report', ()
     validationReport({ executed: [executedCommand('test', 0)] as never }),
   );
   assert.equal(claim.verified, false);
+});
+
+// ---------------------------------------------------------------------------
+// AREA 5 — cancellation
+//
+// Invariant: ZERO false completion after cancellation; no paid call outlives a cancel.
+// ---------------------------------------------------------------------------
+
+function taskNode(id: string, operationType: string, allowedFiles: string[] = []): ExecutableTaskNode {
+  return {
+    id, objective: id, operationType, requiredCapabilities: [], selectedRuntime: null,
+    selectedProvider: null, selectedModel: null, requiredContextReferences: [], allowedFiles,
+    expectedOutputSchema: {}, dependencies: [], riskLevel: 'low', timeoutMs: 60_000,
+    retryPolicy: { maximumAttempts: 1, initialBackoffMs: 0, maximumBackoffMs: 0 }, budget: {},
+    validationMethod: [], evidenceRequirements: [], fallbackRoutes: [], status: 'ready',
+    attempts: 0, evidence: [],
+  };
+}
+
+const someEvidence = [{ id: 'e1', kind: 'probe', summary: 'ok', timestamp: '2026-01-01T00:00:00Z' }];
+
+test('AREA 5 — cancelling a run aborts the model call already in flight', async () => {
+  // The loop checked `signal.aborted` between passes, so a cancel stopped the *next* task
+  // while the running one continued and was billed.
+  const controller = new AbortController();
+  let handlerSawAbort = false;
+  const state = createCanonicalExecutionState({ projectId: 'p', tasks: [taskNode('t1', 'model_call')] });
+
+  await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state, {
+    model_call: async (_task, _state, signal) => {
+      controller.abort();
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      handlerSawAbort = signal.aborted;
+      return { output: {}, evidence: someEvidence, validated: true };
+    },
+  }, controller.signal);
+
+  assert.equal(handlerSawAbort, true, 'the cancellation never reached the running handler');
+});
+
+test('AREA 5 — a task cancelled in flight is not recorded as completed', async () => {
+  // An abort races the call it interrupts, so the handler may still resolve successfully.
+  // The status must reflect the cancel rather than the resolved value.
+  const controller = new AbortController();
+  const state = createCanonicalExecutionState({ projectId: 'p', tasks: [taskNode('t1', 'model_call')] });
+
+  const result = await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state, {
+    model_call: async () => {
+      controller.abort();
+      return { output: { looksFine: true }, evidence: someEvidence, validated: true };
+    },
+  }, controller.signal);
+
+  assert.equal(result.tasks[0]!.status, 'cancelled');
+});
+
+test('AREA 5 — an in-flight publish is allowed to finish', async () => {
+  // Aborting the atomic writer partway leaves a commit that may or may not have moved the
+  // ref, and publish is maximumAttempts:1 so a half-known outcome is never retried.
+  const controller = new AbortController();
+  let publishSawAbort = true;
+  const state = createCanonicalExecutionState({ projectId: 'p', tasks: [taskNode('t1', 'github_publishing')] });
+
+  const result = await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state, {
+    github_publishing: async (_task, _state, signal) => {
+      controller.abort();
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      publishSawAbort = signal.aborted;
+      return { output: { commitSha: 'abc123' }, evidence: someEvidence, validated: true };
+    },
+  }, controller.signal);
+
+  assert.equal(publishSawAbort, false, 'the atomic writer was interrupted mid-publish');
+  assert.equal(result.tasks[0]!.status, 'completed');
+});
+
+test('AREA 5 — a run cancelled before it starts dispatches nothing', async () => {
+  const controller = new AbortController();
+  controller.abort();
+  let dispatched = false;
+  const state = createCanonicalExecutionState({ projectId: 'p', tasks: [taskNode('t1', 'model_call')] });
+
+  const result = await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state, {
+    model_call: async () => {
+      dispatched = true;
+      return { output: {}, evidence: someEvidence, validated: true };
+    },
+  }, controller.signal);
+
+  assert.equal(dispatched, false, 'a cancelled run still spent a provider call');
+  assert.equal(result.tasks[0]!.status, 'cancelled');
+});
+
+test('AREA 5 — an uncancelled run is unaffected', async () => {
+  const state = createCanonicalExecutionState({ projectId: 'p', tasks: [taskNode('t1', 'model_call')] });
+  const result = await new ExecutionScheduler(new InMemoryExecutionStateStore()).run(state, {
+    model_call: async () => ({ output: {}, evidence: someEvidence, validated: true }),
+  });
+  assert.equal(result.tasks[0]!.status, 'completed');
 });
 
 // ---------------------------------------------------------------------------
