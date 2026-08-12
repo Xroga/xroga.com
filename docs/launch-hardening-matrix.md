@@ -16,12 +16,13 @@ P3 post-launch.
 | Area | Scenarios probed | Defects found | Fixed | Open |
 | --- | --- | --- | --- | --- |
 | 1 · Provider transport isolation | 6 | 1 | 1 | 0 |
-| 2 · False completion | 7 | 1 | 1 | 0 |
+| 2 · Malformed output / false completion | 10 | 4 | 4 | 0 |
 | 4 · Repository integrity | 14 | 2 | 2 | 0 |
+| 5 · Cancellation | 5 | 2 | 2 | 0 |
 | 9 · Secret isolation | 6 | 1 | 1 | 0 |
 | 13 · Operations plan binding | 6 | 2 | 2 | 0 |
 
-Areas 3, 5–8, 10–12 and 14 are **not yet probed**. They are listed at the end as
+Areas 3, 6–8, 10–12 and 14 are **not yet probed**. They are listed at the end as
 explicitly unproven rather than omitted.
 
 ---
@@ -194,6 +195,93 @@ has not been re-probed adversarially here.
 
 ---
 
+### P2 — A file plan carrying a defect the writer refuses was still paid for
+
+**Failure.** `parseFilePlan` accepted plans containing an invisible-character path, duplicate
+paths, or two paths differing only by case.
+
+**Reproduction.** `{"files":[{"path":"a.ts"},{"path":"a.ts"}]}` returned two entries;
+`A.ts` + `a.ts` returned two; `a\u202Eb.ts` returned one.
+
+**Root cause.** Path safety was checked per entry (traversal, absolute, `.git`, trailing dot)
+but never across the plan as a set, and the invisible-character class was only closed at the
+publish boundary.
+
+**Why it costs money rather than safety.** Every one of these is refused by the atomic writer
+after the AREA 4 fixes, so none could reach a commit. What they could reach is the *end of
+generation* — one paid model call per file — before failing. Rejecting them at plan time
+cannot turn a succeeding build into a failing one, because the build was always going to
+fail; it only moves the failure from after seventeen calls to after one.
+
+**Fix.** The plan is refused whole, matching the existing `every(safePath)` rule. Dropping
+just the offending entry would generate a file set the model did not plan and nobody
+reviewed.
+
+**Regression test.** AREA 2, three tests — the refusals, a valid plan still parsing (including
+through a markdown fence), and unparseable output yielding no plan rather than a guess.
+
+**Now proven.** A plan that cannot be published cannot be paid for in full.
+**Still unproven.** Truncation mid-plan, and per-file generation failures partway through a
+plan, are covered by existing `#510`/`#513` suites but were not re-probed here.
+
+**Rollback.** Remove the `INVISIBLE_IN_PATH` and case-folded duplicate checks in
+`parseFilePlan`.
+
+---
+
+## AREA 5 — Cancellation
+
+Invariant: *ZERO false completion after cancellation; no paid call outlives a cancel.*
+
+| Scenario | Expected safe behaviour | Test type | Result before | Fix | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| Cancel during a model call | Handler observes the abort | Unit | **FAILED — call continued** | Link run signal to task controller | **P1** |
+| Cancelled task that still resolved | Recorded `cancelled`, not `completed` | Unit | **FAILED — completed** | Correct status in `finally` | **P1** |
+| Cancel during a publish | Writer allowed to finish; `completed` | Unit | n/a | `isUninterruptibleOperation` | — |
+| Cancel before the run starts | Nothing dispatched | Unit | Passed | — | — |
+| Uncancelled run | Unaffected | Unit | Passed | — | — |
+
+### P1 — Cancellation never reached work already in flight
+
+**Failure.** `ExecutionScheduler.run` accepted an `AbortSignal` and checked `signal.aborted`
+only at the top of its scheduling loop. `execute()` was never given the signal at all; the
+per-task `AbortController` was aborted solely by that task's timeout.
+
+**Reproduction.** A handler that aborts the run signal mid-call then inspects its own
+`signal.aborted` saw `false`, and its task finished as `completed`.
+
+**Root cause.** Cancelling stopped the *next* task while the running one continued to
+completion — so a model call kept going and was billed after the user cancelled, and its task
+could then be marked `completed` from work nobody wanted. The signal existed and simply never
+arrived where the money was being spent.
+
+**Fix.** The run signal is forwarded into `execute()` and linked to the per-task controller,
+with the listener removed in `finally` so a long run does not accumulate them. Because an
+abort races the call it interrupts, a handler may still resolve successfully; the status is
+therefore corrected to `cancelled` in `finally` rather than trusted from the result.
+
+**The deliberate exception, and a bug found while writing it.** An in-flight publish is
+allowed to finish: aborting the atomic writer partway leaves a commit that may or may not have
+moved the ref, and publish is `maximumAttempts: 1` precisely so a half-known outcome is never
+retried blindly. The first implementation reused `isMutationOperation` for this — and the
+probe showed it did not work, because the publish task carries
+`operationType: 'github_publishing'` with an empty `allowedFiles` and is therefore **not** a
+mutation by that predicate. Reusing it would have left the atomic writer interruptible, the
+single case the exception exists to protect. `isUninterruptibleOperation` is now a separate
+predicate answering a separate question.
+
+**Regression test.** AREA 5, five tests including both sides of the publish exception.
+
+**Now proven.** A cancel reaches in-flight interruptible work, no cancelled task reads as
+completed, and the atomic writer is never interrupted.
+**Still unproven.** Pause/resume, restart recovery, and cancellation during provider fallback
+inside `implementIncrementally` (which has its own call loop below the scheduler).
+
+**Rollback.** Drop the `runSignal` parameter, the listener, and the `finally` status
+correction.
+
+---
+
 ## AREA 13 — Operations action plan binding
 
 Invariant: *an approval, and a deduplication key, must distinguish plans that differ.*
@@ -311,9 +399,9 @@ yet; no claim is made about them in either direction.
 
 | Area | Status |
 | --- | --- |
-| 2 · Malformed AI output | Not probed |
+
 | 3 · Sandbox / process limits (CPU, memory, timeout, output, cleanup) | Not probed |
-| 5 · Cancellation and recovery | Not probed |
+| 5 · Cancellation | Probed (above); pause/resume and restart recovery still unprobed |
 | 6 · Persistence / database failure semantics | Not probed |
 | 7 · Concurrency | Not probed |
 | 8 · Tenant isolation | Not probed |

@@ -342,6 +342,34 @@ export class CanonicalMutationService {
 
 export type TaskHandler = (task: ExecutableTaskNode, state: CanonicalExecutionState, signal: AbortSignal) => Promise<{ output: unknown; evidence: ExecutionEvidence[]; validated: boolean }>;
 
+/**
+ * Whether a task writes something that must not be interrupted partway through.
+ *
+ * One definition, used by the scheduler's batching, its retry rule, and its cancellation
+ * rule. The same expression was previously written out at each site, so the three could
+ * disagree about what counts as a mutation without anything failing.
+ */
+function isMutationOperation(task: ExecutableTaskNode): boolean {
+  return task.allowedFiles.length > 0 && /mutat|implement|patch|write|delete|rename/i.test(task.operationType);
+}
+
+/**
+ * Whether a task must be allowed to finish once it has started.
+ *
+ * A separate question from `isMutationOperation`, and the difference is not academic: the
+ * publish task carries `operationType: 'github_publishing'` and an empty `allowedFiles`, so
+ * it is *not* a mutation by that predicate. Reusing it here would have left the atomic
+ * GitHub writer interruptible — the single case this rule exists to protect.
+ *
+ * Aborting a publish partway leaves a commit that may or may not have moved the ref, and the
+ * publish node is `maximumAttempts: 1` precisely so a half-known outcome is never retried
+ * blindly. Paying for the remainder of one bounded write is cheaper than not knowing what
+ * the repository contains.
+ */
+function isUninterruptibleOperation(task: ExecutableTaskNode): boolean {
+  return isMutationOperation(task) || /publish|commit|deploy/i.test(task.operationType);
+}
+
 export class ExecutionScheduler {
   private readonly providerCalls = new Map<string, Promise<ReturnType<TaskHandler> extends Promise<infer T> ? T : never>>();
   constructor(private readonly store: ExecutionStateStore, private readonly onEvent?: (event: ExecutionEvent) => void) {}
@@ -363,19 +391,39 @@ export class ExecutionScheduler {
       await this.persist(state);
       const ready = state.tasks.filter((task) => task.status === 'ready');
       if (!ready.length) break;
-      const safe = ready.filter((task) => !task.allowedFiles.length || !/mutat|implement|patch|write|delete|rename/i.test(task.operationType));
+      const safe = ready.filter((task) => !isMutationOperation(task));
       const mutation = ready.find((task) => !safe.includes(task));
       const batch = safe.length ? safe : mutation ? [mutation] : [];
-      await Promise.all(batch.map((task) => this.execute(task, state, handlers[task.operationType])));
+      await Promise.all(batch.map((task) => this.execute(task, state, handlers[task.operationType], signal)));
     }
     return state;
   }
 
-  private async execute(task: ExecutableTaskNode, state: CanonicalExecutionState, handler?: TaskHandler): Promise<void> {
+  private async execute(task: ExecutableTaskNode, state: CanonicalExecutionState, handler?: TaskHandler, runSignal?: AbortSignal): Promise<void> {
     if (!handler) { task.status = 'blocked'; task.blocker = `no handler for ${task.operationType}`; await this.persist(state); return; }
     task.status = 'running'; task.startedAt = new Date().toISOString(); task.attempts += 1; await this.persist(state);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), task.timeoutMs);
+
+    // The run's cancellation has to reach the work, not just the loop that schedules it.
+    //
+    // The loop checks `signal.aborted` between passes, so cancelling used to stop the *next*
+    // task while the one already running continued to completion — a model call kept going
+    // and was billed after the user cancelled, and its task could then be marked `completed`
+    // from work nobody wanted. The signal existed and simply never arrived where the money
+    // was being spent.
+    //
+    // A mutation in flight is the deliberate exception. Aborting the atomic writer partway
+    // through leaves a commit that may or may not have moved the ref, and the publish node
+    // is `maximumAttempts: 1` precisely so a half-known outcome is never retried blindly.
+    // Paying for the remainder of one bounded write is cheaper than not knowing what the
+    // repository contains.
+    const interruptible = !isUninterruptibleOperation(task);
+    const abortOnRunCancel = () => controller.abort();
+    if (interruptible && runSignal) {
+      if (runSignal.aborted) controller.abort();
+      else runSignal.addEventListener('abort', abortOnRunCancel, { once: true });
+    }
     let terminal = true;
     try {
       const dedupeKey = `${state.runId}:${task.id}:${task.selectedProvider ?? ''}:${task.selectedModel ?? ''}:${task.attempts}`;
@@ -398,7 +446,7 @@ export class ExecutionScheduler {
       }
     } catch (error) {
       task.blocker = redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
-      const mutation = task.allowedFiles.length > 0 && /mutat|implement|patch|write|delete|rename/i.test(task.operationType);
+      const mutation = isMutationOperation(task);
       if (!mutation && task.attempts < task.retryPolicy.maximumAttempts) {
         task.status = 'waiting_for_provider';
         await this.persist(state);
@@ -409,6 +457,14 @@ export class ExecutionScheduler {
       } else task.status = 'failed';
     } finally {
       clearTimeout(timeout);
+      runSignal?.removeEventListener('abort', abortOnRunCancel);
+      // A cancelled run must not leave a task reading as though it finished its work. The
+      // handler may still have resolved — an abort races the call it interrupts — so the
+      // status is corrected here rather than trusted from the result.
+      if (interruptible && runSignal?.aborted && task.status !== 'failed') {
+        task.status = 'cancelled';
+        task.blocker = 'the run was cancelled while this task was in flight';
+      }
       if (terminal) task.completedAt = new Date().toISOString();
       await this.persist(state);
     }
