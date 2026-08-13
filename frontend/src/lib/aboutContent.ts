@@ -48,7 +48,7 @@ export const ABOUT_SOCIALS = {
 
 export const ABOUT_HERO = {
   eyebrow: 'ABOUT XROGA AI',
-  headline: 'Pakistan-built AI that owns the whole ship loop.',
+  headline: 'Independent AI that owns the whole ship loop.',
   body:
     'Describe the product you want. Xroga coordinates the code, validation, deployment, and repository updates required to turn that idea into working software.',
   primaryCta: { label: 'Start building', href: '/auth/signup' },

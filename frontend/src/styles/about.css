@@ -1,9 +1,8 @@
 /**
  * About page.
  *
- * This page owns its palette deliberately — it is a public marketing surface with a
- * fixed editorial identity, not an app surface that should follow the workspace theme.
- * The values come from the supplied brand spec.
+ * The About surface follows the same four theme-aware atmospheric canvas as the
+ * homepage, while keeping its editorial content tokens local.
  */
 
 .ab-root {
@@ -19,9 +18,9 @@
   --ab-radius: 24px;
   --ab-radius-lg: 28px;
 
-  background:
-    radial-gradient(circle at 50% 12%, color-mix(in srgb, var(--ab-blue) 10%, transparent), transparent 30%),
-    var(--ab-bg);
+  position: relative;
+  isolation: isolate;
+  background: transparent;
   color: var(--ab-ink);
   font-family: var(--font-geist-sans, var(--font-ui, ui-sans-serif)), system-ui, -apple-system, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -32,7 +31,7 @@
   --hc-bg: var(--ab-bg);
   --hc-ink: var(--ab-ink);
   --hc-muted: var(--ab-ink-2);
-  background: var(--ab-bg);
+  background: transparent;
 }
 .ab-product-systems .xv-se-section { padding-top: clamp(54px, 7vw, 92px); }
 .ab-product-systems .xv-er { padding-bottom: clamp(60px, 8vw, 104px); }

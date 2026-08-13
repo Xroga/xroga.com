@@ -24,6 +24,7 @@ import { Logo } from '@/components/layout/Logo';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import '@/styles/homepage-coding.css';
+import { MarketingFooter } from '@/components/layout/MarketingFooter';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
@@ -83,7 +84,7 @@ export default function AboutPage() {
         <section className="ab-section ab-hero">
           <div className="ab-shell ab-hero-grid">
             <div>
-              <div className="ab-origin-badge"><span>PK</span> Pakistan-built independent AI coding agent</div>
+              <div className="ab-origin-badge"><span>AI</span> Independent AI coding agent</div>
               <p className="ab-eyebrow">{ABOUT_HERO.eyebrow}</p>
               <h1 className="ab-h1">{ABOUT_HERO.headline}</h1>
               <p className="ab-lede">{ABOUT_HERO.body}</p>
@@ -306,29 +307,7 @@ export default function AboutPage() {
         </section>
       </main>
 
-      {/* ------------------------------------------------------------- footer */}
-      <footer className="ab-footer">
-        <div className="ab-shell ab-footer-inner">
-          <div>
-            <Link href="/" className="ab-logo">
-              <Logo href={null} variant="homepage" height={36} />
-            </Link>
-            <p className="ab-footer-note">
-              © {new Date().getFullYear()} {COMPANY_CONTACT.legalName}. Built in {COMPANY_CONTACT.region}.
-            </p>
-          </div>
-
-          <nav className="ab-footer-links" aria-label="Footer">
-            <Link href="/features">Product</Link>
-            <Link href="/pricing">Pricing</Link>
-            <Link href="/docs">Docs</Link>
-            <Link href="/showcase">Showcase</Link>
-            <Link href="/community">Community</Link>
-            <Link href="/terms">Terms</Link>
-            <Link href="/privacy">Privacy</Link>
-          </nav>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

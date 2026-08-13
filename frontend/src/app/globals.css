@@ -178,6 +178,51 @@ body.theme-beige {
   --focus-ring-color: var(--accent);
 }
 
+/* Public marketing pages share the homepage's atmospheric canvas. App, auth,
+   admin, workspace, and standalone showcase previews never receive this class. */
+body.xv-public-theme {
+  min-height: 100%;
+  background-color: var(--surface-page);
+  background-image: url('/backgrounds/xroga-light-clouds-bg.png');
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+body.theme-beige.xv-public-theme {
+  background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg.webp');
+}
+
+body.theme-gray.xv-public-theme {
+  background-image: url('/backgrounds/xroga-gray-code-city-bg.webp');
+}
+
+body.theme-black.xv-public-theme {
+  background-image: url('/backgrounds/xroga-black-clouds-bg.webp');
+}
+
+body.xv-public-theme > main,
+body.xv-public-theme > .ab-root,
+body.xv-public-theme > .xv-home-coding,
+body.xv-public-theme > .xv-cb-root,
+body.xv-public-theme > .xv-gc-root {
+  background-color: transparent !important;
+}
+
+@media (max-width: 640px) {
+  body.xv-public-theme {
+    background-image: url('/backgrounds/xroga-light-clouds-bg-mobile.webp');
+    background-attachment: scroll;
+  }
+  body.theme-beige.xv-public-theme {
+    background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg-mobile.webp');
+  }
+  body.theme-gray.xv-public-theme {
+    background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
+  }
+}
+
 body.theme-beige .glass-panel,
 body.theme-beige .glass-panel-strong,
 body.theme-beige .xv-sidebar-root > div {
