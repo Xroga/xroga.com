@@ -80,7 +80,6 @@ export default function HomePage() {
   }, []);
 
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
-  const primaryLabel = loggedIn ? 'Open Workspace' : 'Start Building';
 
   return (
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
@@ -146,37 +145,6 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
-          <section className="xv-hc-outcome-panel" aria-label="From outcome to verified delivery">
-            <div className="xv-hc-outcome-copy">
-              <span className="xv-hc-outcome-kicker">OUTCOME → EVIDENCE</span>
-              <p className="xv-hc-sub">
-                Describe the outcome. Xroga inspects your project, implements focused changes, runs applicable checks,
-                and can push or publish through accounts you authorise—with evidence or the exact blocker.
-              </p>
-
-              <div className="xv-hc-ctas">
-                <button
-                  type="button"
-                  onClick={() => router.push(primaryHref)}
-                  className="xv-hc-btn-primary xv-hc-outcome-primary"
-                >
-                  {primaryLabel}
-                </button>
-                <a href="#ship-loop" className="xv-hc-btn-ghost xv-hc-outcome-secondary">
-                  See how it ships
-                </a>
-              </div>
-            </div>
-
-            <div className="xv-hc-outcome-map" aria-hidden="true">
-              <span className="xv-hc-outcome-orbit xv-hc-outcome-orbit--outer" />
-              <span className="xv-hc-outcome-orbit xv-hc-outcome-orbit--inner" />
-              <span className="xv-hc-outcome-node xv-hc-outcome-node--one" />
-              <span className="xv-hc-outcome-node xv-hc-outcome-node--two" />
-              <span className="xv-hc-outcome-node xv-hc-outcome-node--three" />
-              <span className="xv-hc-outcome-sequence">01 · BUILD · TEST · SHIP · VERIFY</span>
-            </div>
-          </section>
         </div>
       </section>
 
@@ -224,13 +192,10 @@ export default function HomePage() {
       <section className="xv-hc-mid-cta" aria-label="Start building">
         <div className="xv-hc-mid-cta-inner">
           <div className="xv-hc-mid-cta-copy">
-            <span>YOUR NEXT PRODUCT · YOUR REPOSITORY · YOUR FUTURE</span>
             <h2>Build what belongs<br /><em>to you.</em></h2>
-            <p>Start from a prompt. Own the repo. Ship on your domain—and keep improving without starting over.</p>
           </div>
           <div className="xv-hc-mid-cta-actions">
-            <small>READY FOR A REAL BUILD?</small>
-            <button type="button" onClick={() => router.push(primaryHref)}>{primaryLabel} <ArrowRight aria-hidden="true" /></button>
+            <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
             <Link href="/contact">Contact</Link>
           </div>
         </div>
