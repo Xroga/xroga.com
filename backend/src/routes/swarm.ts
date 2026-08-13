@@ -18,6 +18,8 @@ import {
   listRunsForUserAsync,
   saveConversation,
   persistConversationOnly,
+  requestRunCancellation,
+  isRunCancellationRequested,
 } from '../ai/runStore.js';
 
 const router = Router();
@@ -99,6 +101,19 @@ router.post('/execute', async (req: AuthRequest, res) => {
 
   const ac = new AbortController();
   activeBuildControllers.set(runId, ac);
+  let cancellationCheckActive = false;
+  const cancellationWatch = setInterval(() => {
+    if (ac.signal.aborted || cancellationCheckActive) return;
+    cancellationCheckActive = true;
+    void isRunCancellationRequested(runId)
+      .then((cancelled) => {
+        if (cancelled && !ac.signal.aborted) ac.abort();
+      })
+      .finally(() => {
+        cancellationCheckActive = false;
+      });
+  }, 1_500);
+  cancellationWatch.unref?.();
   const detachDisconnectHandlers = bindBuildStreamDisconnect(req, res, () => {
     streamConnected = false;
     clearInterval(keepalive);
@@ -258,6 +273,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
     }
   } finally {
     clearInterval(keepalive);
+    clearInterval(cancellationWatch);
     detachDisconnectHandlers();
     activeBuildControllers.delete(runId);
   }
@@ -326,15 +342,13 @@ router.post('/runs/:runId/cancel', async (req: AuthRequest, res) => {
     return res.json({ cancelled: false, status: run.status });
   }
 
+  const cancelled = await requestRunCancellation(runId, req.userId);
   const controller = activeBuildControllers.get(runId);
-  if (!controller) {
-    return res.status(409).json({
-      error: 'Run is persisted but not active on this worker',
-      code: 'RUN_NOT_ACTIVE',
-    });
-  }
-  controller.abort();
-  res.json({ cancelled: true, status: 'cancelling' });
+  controller?.abort();
+  res.json({
+    cancelled: cancelled || Boolean(controller),
+    status: cancelled || controller ? 'cancelled' : run.status,
+  });
 });
 
 async function saveConversationHandler(req: AuthRequest, res: import('express').Response) {
