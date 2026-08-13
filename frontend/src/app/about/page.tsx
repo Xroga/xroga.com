@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Check, CircleDot, GitBranch, Hammer, Rocket, Search, ShieldCheck, Telescope } from 'lucide-react';
+import { ArrowRight, Check, CircleDot, GitBranch, Hammer, ShieldCheck, Telescope } from 'lucide-react';
 import { buildMetadata } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
@@ -16,11 +16,13 @@ import {
   ABOUT_HERO,
   ABOUT_SOCIALS,
   ABOUT_STEPS,
-  ABOUT_WHAT_IS,
 } from '@/lib/aboutContent';
 import '@/styles/about.css';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { Logo } from '@/components/layout/Logo';
+import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
+import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
+import '@/styles/homepage-coding.css';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About Xroga AI & CEO Muhammad Ibrahim',
@@ -29,7 +31,6 @@ export const metadata: Metadata = buildMetadata({
   keywords: ['about Xroga', 'Muhammad Ibrahim CEO', 'Pakistan AI founder', 'Xroga mission'],
 });
 
-const STAGE_ICONS = { understand: Search, build: Hammer, verify: ShieldCheck, publish: Rocket } as const;
 const CAPABILITY_ICONS = { build: Hammer, verify: ShieldCheck, publish: GitBranch, research: Telescope } as const;
 
 const NAV = [
@@ -109,37 +110,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* -------------------------------------------------------- what is it */}
-        <section className="ab-section" aria-labelledby="ab-what-heading">
-          <div className="ab-shell">
-            <div className="ab-panel ab-panel--dark">
-              <p className="ab-eyebrow ab-eyebrow--light">THE REAL SHIP LOOP</p>
-              <h2 id="ab-what-heading" className="ab-h2 ab-h2--light">
-                {ABOUT_WHAT_IS.heading}
-              </h2>
-              {ABOUT_WHAT_IS.paragraphs.map((paragraph) => (
-                <p key={paragraph} className="ab-body ab-body--light">
-                  {paragraph}
-                </p>
-              ))}
-
-              <ol className="ab-flow" aria-label="How work moves through Xroga">
-                {ABOUT_WHAT_IS.stages.map((stage) => {
-                  const Icon = STAGE_ICONS[stage.id as keyof typeof STAGE_ICONS];
-                  return (
-                    <li key={stage.id} className="ab-flow-item">
-                      <span className="ab-flow-icon" aria-hidden>
-                        <Icon className="ab-icon-sm" />
-                      </span>
-                      <h3 className="ab-flow-title">{stage.title}</h3>
-                      <p className="ab-flow-body">{stage.body}</p>
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
-          </div>
-        </section>
+        {/* The full product loop belongs near the top of About. Keeping it in the
+            same themed system as the homepage makes the brand and release obvious. */}
+        <div className="xv-home-coding ab-product-systems" id="real-ship-loop">
+          <HomepageShipStack />
+          <HomepageEnterpriseProof />
+        </div>
 
         {/* ---------------------------------------------------- how it works */}
         <section className="ab-section" id="how-it-works" aria-labelledby="ab-how-heading">

@@ -44,6 +44,11 @@ const securityHeaders = [
   { key: 'Content-Security-Policy', value: csp("'none'") },
 ];
 
+const freshMarketingHeaders = [
+  ...securityHeaders,
+  { key: 'Cache-Control', value: 'no-store, max-age=0' },
+];
+
 /**
  * Showcase product previews are the one surface we frame ourselves: the cards and
  * the device preview embed the real route so they can never advertise something the
@@ -63,7 +68,7 @@ const framableSecurityHeaders = [
 // Exactly one rule must match any given path, so the catch-all excludes the
 // preview paths rather than relying on header-override ordering.
 const PREVIEW_SOURCE = '/showcase/:slug/preview';
-const NON_PREVIEW_SOURCE = '/((?!showcase/[^/]+/preview$).*)';
+const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$)).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -78,6 +83,8 @@ const nextConfig = {
   },
   async headers() {
     return [
+      { source: '/', headers: freshMarketingHeaders },
+      { source: '/about', headers: freshMarketingHeaders },
       { source: PREVIEW_SOURCE, headers: framableSecurityHeaders },
       { source: NON_PREVIEW_SOURCE, headers: securityHeaders },
     ];
