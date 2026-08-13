@@ -27,6 +27,15 @@
   -webkit-font-smoothing: antialiased;
   line-height: 1.55;
 }
+
+.ab-product-systems {
+  --hc-bg: var(--ab-bg);
+  --hc-ink: var(--ab-ink);
+  --hc-muted: var(--ab-ink-2);
+  background: var(--ab-bg);
+}
+.ab-product-systems .xv-se-section { padding-top: clamp(54px, 7vw, 92px); }
+.ab-product-systems .xv-er { padding-bottom: clamp(60px, 8vw, 104px); }
 .ab-root *,
 .ab-root *::before,
 .ab-root *::after { box-sizing: border-box; }

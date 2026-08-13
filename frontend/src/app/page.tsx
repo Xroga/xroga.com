@@ -34,25 +34,6 @@ const FOOTER_LINKS = [
   { href: '/auth/signup', label: 'Sign Up' },
 ];
 
-const AI_FEATURES = [
-  {
-    title: 'Converter → Builder → Ship',
-    body: 'Understand the outcome · implement focused changes · verify · push the sticky GitHub repo · publish with evidence.',
-  },
-  {
-    title: 'Automatic capability routing',
-    body: 'Black Hole V∞: frontier coding depth, long-context repos, live web+X research — no vendor model picker.',
-  },
-  {
-    title: 'GitHub push · Vercel live',
-    body: 'Preview in Workspace, auto-push the sticky repo, go live on your domain — ownership stays yours.',
-  },
-  {
-    title: 'Research that ships',
-    body: 'Gather live sources when needed, then turn findings into code in the same flow — never a fake research step.',
-  },
-];
-
 const HERO_BUILD_WORDS = [
   'Websites',
   'SaaS apps',
@@ -212,65 +193,6 @@ export default function HomePage() {
       </section>
 
       <HomepageShowcase />
-
-      <section className="xv-hc-section" aria-labelledby="coding-heading">
-        <div className="xv-hc-section-inner">
-          <p className="xv-hc-pixel-kicker" id="coding-heading">
-            CODING
-          </p>
-          <h2 className="xv-hc-section-title">
-            Build better products. <em>Swarm for your repo.</em> One continuous loop.
-          </h2>
-          <p className="xv-hc-section-copy">
-            Watch Xroga Workspace ship across every category — web, Chrome, desktop, Android, iOS,
-            debug, crypto, and updates — prompt → code → GitHub → live.
-          </p>
-          <div className="xv-hc-mark" aria-hidden />
-        </div>
-      </section>
-
-      <section className="xv-hc-features" id="ship-loop" aria-labelledby="ship-loop-heading">
-        <div className="xv-hc-features-inner">
-          <span className="xv-hc-features-label">THE REAL SHIP LOOP</span>
-          <div className="xv-hc-features-grid">
-            <div>
-              <h2 className="xv-hc-features-headline" id="ship-loop-heading">Durable work. <em>Verified outcomes.</em></h2>
-              <p className="xv-hc-features-lead">Workspace activity comes from real backend run events. A build is complete only after its required validation, and publishing is reported only with provider evidence.</p>
-            </div>
-            <ul className="xv-hc-feature-list">
-              <li><strong>Understand and implement</strong><span>Inspect the current repository, change the controlled project state, and preserve unrelated code.</span></li>
-              <li><strong>Validate and repair</strong><span>Run applicable checks, classify real failures, and target the responsible files.</span></li>
-              <li><strong>Push and publish with evidence</strong><span>Show the remote commit and deployment result, or the exact external setup still required.</span></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="xv-hc-features" aria-labelledby="features-heading">
-        <div className="xv-hc-features-inner">
-          <span className="xv-hc-features-label">WHAT WE SHIP</span>
-          <div className="xv-hc-features-grid">
-            <div>
-              <h2 className="xv-hc-features-headline" id="features-heading">
-                Coding agent that ships. <em>Same repo, forever.</em>
-              </h2>
-              <p className="xv-hc-features-lead">
-                Xroga AI connects the product loop: prompt → brief → code → QA → your
-                GitHub → your Vercel. Edit, update, and delete without starting over — no coding
-                knowledge required to start.
-              </p>
-            </div>
-            <ul className="xv-hc-feature-list">
-              {AI_FEATURES.map((f) => (
-                <li key={f.title}>
-                  <strong>{f.title}</strong>
-                  <span>{f.body}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
 
       <HomepageShipStack />
 
