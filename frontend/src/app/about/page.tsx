@@ -5,6 +5,7 @@ import { buildMetadata } from '@/lib/seo';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { AboutArt } from '@/components/about/AboutArt';
+import { AboutProductVisual } from '@/components/about/AboutProductVisual';
 import { AboutFaq } from '@/components/about/AboutFaq';
 import {
   ABOUT_ART,
@@ -82,6 +83,7 @@ export default function AboutPage() {
         <section className="ab-section ab-hero">
           <div className="ab-shell ab-hero-grid">
             <div>
+              <div className="ab-origin-badge"><span>PK</span> Pakistan-built independent AI coding agent</div>
               <p className="ab-eyebrow">{ABOUT_HERO.eyebrow}</p>
               <h1 className="ab-h1">{ABOUT_HERO.headline}</h1>
               <p className="ab-lede">{ABOUT_HERO.body}</p>
@@ -106,7 +108,7 @@ export default function AboutPage() {
               </ul>
             </div>
 
-            <AboutArt src={ABOUT_ART.hero} alt="Xroga's voxel builder character working at a laptop" priority />
+            <AboutProductVisual variant="hero" />
           </div>
         </section>
 
@@ -120,7 +122,7 @@ export default function AboutPage() {
         {/* ---------------------------------------------------- how it works */}
         <section className="ab-section" id="how-it-works" aria-labelledby="ab-how-heading">
           <div className="ab-shell ab-split">
-            <AboutArt src={ABOUT_ART.workflow} alt="Xroga's workflow illustrated as connected building blocks" />
+            <AboutProductVisual variant="workflow" />
 
             <div>
               <p className="ab-eyebrow">HOW XROGA WORKS</p>
@@ -174,7 +176,7 @@ export default function AboutPage() {
         {/* -------------------------------------------------- built for execution */}
         <section className="ab-section" aria-labelledby="ab-exec-heading">
           <div className="ab-shell ab-split">
-            <AboutArt src={ABOUT_ART.verify} alt="Xroga verifying a build before publishing it" />
+            <AboutProductVisual variant="verify" />
 
             <div>
               <p className="ab-eyebrow">BUILT FOR EXECUTION</p>

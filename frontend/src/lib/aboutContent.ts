@@ -38,7 +38,7 @@ export const ABOUT_ART = {
   hero: '/about/xroga-voxel-hero.png',
   workflow: '/about/xroga-voxel-workflow.png',
   verify: '/about/xroga-voxel-verify.png',
-  founder: '/about/muhammad-ibrahim-founder-3d.png',
+  founder: '/about/muhammad-ibrahim-founder-hd-v2.png',
 } as const;
 
 export const ABOUT_SOCIALS = {
@@ -48,7 +48,7 @@ export const ABOUT_SOCIALS = {
 
 export const ABOUT_HERO = {
   eyebrow: 'ABOUT XROGA AI',
-  headline: 'AI that builds, verifies, and ships.',
+  headline: 'Pakistan-built AI that owns the whole ship loop.',
   body:
     'Describe the product you want. Xroga coordinates the code, validation, deployment, and repository updates required to turn that idea into working software.',
   primaryCta: { label: 'Start building', href: '/auth/signup' },
@@ -128,7 +128,8 @@ export const ABOUT_FOUNDER = {
   role: 'Founder & CEO',
   paragraphs: [
     'Xroga was founded around a simple conviction: useful AI should not only answer questions—it should execute carefully, verify its work, and remain accountable to the user.',
-    'Behind Xroga is a growing team of engineers, designers, and AI researchers working to make advanced software execution accessible, honest, and affordable.',
+    'Behind Xroga today is Muhammad Ibrahim, its solo founder and CEO. With faith in Allah and persistence through every setback, he is building an independent AI coding agent from Pakistan for people who want to turn ideas into owned software.',
+    'The journey has used modern coding agents as engineering partners: Cursor in the early build, paid GPT tools for turning product ideas into code, Claude for deep implementation work, and Codex in the current workflow. The tools changed as capability and usage limits changed; Ibrahim remained responsible for the product direction, decisions, and outcome.',
   ],
 } as const;
 
