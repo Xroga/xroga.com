@@ -72,7 +72,7 @@ export function HomepageShowcase() {
         <div className="xv-showcase-grid" aria-hidden="true" />
         <header className="xv-showcase-heading">
           <p className="xv-showcase-kicker"><span /> BUILT WITH XROGA AI <span /></p>
-          <h2 id="showcase-home-heading"><span>See what you</span><span><i>can</i> <em>build.</em></span></h2>
+          <h2 id="showcase-home-heading"><span>See what you</span><span><em>build.</em></span></h2>
           <p className="xv-showcase-subtitle">Start from something powerful.</p>
           <p className="xv-showcase-copy">
             Explore complete Xroga products across web, marketplaces, booking, mobile, AI, and games—then make one yours.
