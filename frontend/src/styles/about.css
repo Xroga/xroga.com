@@ -47,7 +47,7 @@
 
 .ab-portrait-wrap { position: relative; min-height: 590px; }
 .ab-portrait-wrap::before { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg,var(--ab-panel),transparent 22%),linear-gradient(0deg,rgba(0,0,0,.12),transparent 42%); content: ''; pointer-events: none; }
-.ab-portrait { object-fit: cover; object-position: 52% 20%; filter: contrast(1.03); }
+.ab-portrait { object-fit: cover; object-position: 50% 20%; filter: contrast(1.03); }
 .ab-founder-card { position: absolute; z-index: 3; right: 32px; bottom: 32px; width: min(310px,calc(100% - 64px)); padding: 22px 68px 22px 22px; border: 1px solid rgba(255,255,255,.22); border-radius: 18px; background: rgba(18,18,20,.74); color: white; backdrop-filter: blur(18px); box-shadow: 0 24px 55px rgba(0,0,0,.28); }
 .ab-founder-card span { display: block; color: rgba(255,255,255,.55); font-size: .68rem; }
 .ab-founder-card strong { display: block; margin-top: 5px; font-size: 1.05rem; }
