@@ -1,15 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Mail } from 'lucide-react';
+import { Logo } from '@/components/layout/Logo';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
-
-function XrogaVectorMark({ className = '' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" role="img" aria-label="Xroga X logo">
-      <path d="M12 11h15l5 8 5-8h15L40.5 31.8 53 53H38l-6-9.5L26 53H11l12.6-21.2L12 11Z" fill="currentColor" />
-      <path d="m25.4 25.1 6.6 10.5 6.6-10.5L32 14.8l-6.6 10.3Z" fill="currentColor" opacity=".58" />
-    </svg>
-  );
-}
 
 const FOOTER_GROUPS = [
   {
@@ -45,8 +38,7 @@ export function MarketingFooter() {
       <div className="xv-marketing-footer__stage">
         <section className="xv-marketing-footer__brand-card" aria-label="Xroga AI">
           <div className="xv-marketing-footer__brand-lockup">
-            <span className="xv-marketing-footer__mini-mark"><XrogaVectorMark /></span>
-            <strong>Xroga AI</strong>
+            <Logo href="/" variant="homepage" height={42} className="xv-marketing-footer__full-logo" />
           </div>
           <p>
             Software execution,<br />powered by <em>AI.</em>
@@ -61,7 +53,7 @@ export function MarketingFooter() {
 
         <section className="xv-marketing-footer__main-card">
           <div className="xv-marketing-footer__floating-mark" aria-hidden="true">
-            <XrogaVectorMark />
+            <Image src="/brand/xroga-mark-192.png" width={92} height={92} alt="" />
           </div>
 
           <nav className="xv-marketing-footer__nav" aria-label="Footer navigation">

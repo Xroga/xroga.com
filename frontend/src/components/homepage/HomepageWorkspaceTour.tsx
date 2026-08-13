@@ -10,7 +10,6 @@ import {
   Code2,
   Eye,
   FolderGit2,
-  Infinity as InfinityIcon,
   KeyRound,
   PanelLeftClose,
   Plug,
@@ -135,13 +134,12 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
 
       <div className="xv-connection-dock" aria-label="Xroga integrations">
         <div className="xv-connection-dock__orbit">
-          <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><InfinityIcon aria-hidden="true" /></Link>
+          <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-mark-192.png" alt="Xroga" width={74} height={74} /></Link>
           {CONNECTIONS.map((item, index) => {
             const logo = item.id === 'byok' ? null : getIntegrationLogo(item.id, item.name);
             return <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{logo ? <Image src={logo} alt={`${item.name} logo`} width={27} height={27} unoptimized /> : <KeyRound aria-label="Bring your own API key" />}{item.tone === 'soon' && <small>Soon</small>}</div>;
           })}
         </div>
-        <p><strong>Connect your stack.</strong><span>GitHub · Vercel · Supabase · Brevo · Cloudflare · Lemon Squeezy · BYOK</span></p>
       </div>
     </section>
   );

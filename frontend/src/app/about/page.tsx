@@ -144,7 +144,7 @@ export default function AboutPage() {
           <div className="ab-shell">
             <div className="ab-mission-card">
               <div>
-                <p className="ab-kicker">THE MISSION</p>
+                <p className="ab-kicker ab-mission-kicker"><Sparkles aria-hidden="true" /> THE MISSION</p>
                 <h2 id="mission-heading">Your idea should not stop at <em>“I can’t code.”</em></h2>
               </div>
               <div className="ab-mission-copy">
