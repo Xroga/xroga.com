@@ -193,12 +193,14 @@ export default function HomePage() {
       {/* Community and Share Feedback moved out of the hero so it stays focused on the
           product and its primary action. Both keep the same behaviour: Community links
           to the existing page, and Share Feedback opens the existing modal. */}
-      <section className="xv-hc-section" aria-labelledby="community-support-heading">
+      <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
+        <div className="xv-hc-community-scrim" aria-hidden="true" />
         <div className="xv-hc-section-inner">
           <p className="xv-hc-pixel-kicker">COMMUNITY &amp; SUPPORT</p>
           <h2 className="xv-hc-section-title" id="community-support-heading">
             Build alongside <em>other builders.</em>
           </h2>
+          <p className="xv-hc-community-motto">Freedom to build. Fellows who understand the journey.</p>
           <p className="xv-hc-section-copy">
             Share what you shipped, report a bug, or request a feature. Feedback goes straight to the people building
             Xroga.
@@ -221,13 +223,13 @@ export default function HomePage() {
 
       <section className="xv-hc-mid-cta" aria-label="Start building">
         <div className="xv-hc-mid-cta-inner">
-          <div className="xv-hc-mid-cta-mark" aria-hidden="true"><Logo href={null} variant="sidebar" height={42} /></div>
           <div className="xv-hc-mid-cta-copy">
-            <span>YOUR NEXT PRODUCT STARTS HERE</span>
-            <h2>Ready when <em>you are.</em></h2>
-            <p>Start from a prompt. Own the repo. Ship on your domain.</p>
+            <span>YOUR NEXT PRODUCT · YOUR REPOSITORY · YOUR FUTURE</span>
+            <h2>Build what belongs<br /><em>to you.</em></h2>
+            <p>Start from a prompt. Own the repo. Ship on your domain—and keep improving without starting over.</p>
           </div>
           <div className="xv-hc-mid-cta-actions">
+            <small>READY FOR A REAL BUILD?</small>
             <button type="button" onClick={() => router.push(primaryHref)}>{primaryLabel} <ArrowRight aria-hidden="true" /></button>
             <Link href="/contact">Contact</Link>
           </div>
