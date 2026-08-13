@@ -19,20 +19,7 @@ import { useCompanionStore } from '@/store/useCompanionStore';
 import { LayoutDashboard } from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
-
-const FOOTER_LINKS = [
-  { href: '/features', label: 'Features' },
-  { href: '/community', label: 'Community' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/crypto-builder', label: 'Crypto Builder' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/terms', label: 'Terms' },
-  { href: '/privacy', label: 'Privacy' },
-  { href: '/refund', label: 'Refund' },
-  { href: '/auth/signup', label: 'Sign Up' },
-];
+import { MarketingFooter } from '@/components/layout/MarketingFooter';
 
 const HERO_BUILD_WORDS = [
   'Websites',
@@ -250,20 +237,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="xv-hc-footer">
-        <nav aria-label="Footer">
-          {FOOTER_LINKS.map(({ href, label }) => (
-            <Link key={href} href={href}>
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <p className="xv-hc-footer-meta">
-          XROGA AI · <a href="mailto:hello@xroga.com">hello@xroga.com</a> ·{' '}
-          <Link href="/contact">Contact</Link> · <Link href="/terms">Terms</Link> ·{' '}
-          <Link href="/privacy">Privacy</Link> · <Link href="/refund">Refund</Link>
-        </p>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

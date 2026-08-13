@@ -12,6 +12,7 @@ import { recoverCorruptStorage } from '@/lib/storageRecovery';
 import { CompanionProvider } from '@/components/companion/CompanionProvider';
 import { CompanionGlobalDock } from '@/components/companion/CompanionSurfaces';
 import { LightMousePointer } from '@/components/ui/LightMousePointer';
+import { PublicThemeBackground } from '@/components/layout/PublicThemeBackground';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -24,6 +25,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeProvider>
+      <PublicThemeBackground />
       <LanguageProvider>
         <CompanionProvider>
           <CurrencyDetector />
