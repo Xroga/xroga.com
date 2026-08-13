@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { ArrowUpRight, Mail, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
 
 const FOOTER_GROUPS = [
   {
@@ -33,36 +34,55 @@ const FOOTER_GROUPS = [
 export function MarketingFooter() {
   return (
     <footer className="xv-marketing-footer">
-      <div className="xv-marketing-footer__frame">
-        <div className="xv-marketing-footer__lead">
-          <div className="xv-marketing-footer__brand">
-            <Logo href="/" variant="homepage" height={44} />
-            <span className="xv-marketing-footer__status"><i /> Product loop online</span>
+      <div className="xv-marketing-footer__stage">
+        <section className="xv-marketing-footer__brand-card" aria-label="Xroga AI">
+          <div className="xv-marketing-footer__brand-lockup">
+            <span className="xv-marketing-footer__mini-mark">X</span>
+            <strong>Xroga AI</strong>
           </div>
-          <p className="xv-marketing-footer__headline">
-            Your idea. Your code.<br /><em>One continuous ship loop.</em>
+          <p>
+            Software execution,<br />powered by <em>AI.</em>
           </p>
-          <Link href="/auth/signup" className="xv-marketing-footer__cta">
-            <Sparkles aria-hidden="true" /> Start building <ArrowUpRight aria-hidden="true" />
-          </Link>
-        </div>
+          <div className="xv-marketing-footer__social-row">
+            <span>Stay in touch</span>
+            <a href="mailto:hello@xroga.com" aria-label="Email Xroga"><Mail aria-hidden="true" /></a>
+            <a href="https://x.com/Xroga_AI" target="_blank" rel="noreferrer" aria-label="Xroga on X">𝕏</a>
+            <a href="https://github.com/Xroga/xroga.com" target="_blank" rel="noreferrer" aria-label="Xroga on GitHub"><GitHubIcon aria-hidden="true" /></a>
+          </div>
+        </section>
 
-        <nav className="xv-marketing-footer__nav" aria-label="Footer navigation">
-          {FOOTER_GROUPS.map((group) => (
-            <section key={group.title} aria-labelledby={`footer-${group.title.toLowerCase()}`}>
-              <h2 id={`footer-${group.title.toLowerCase()}`}>{group.title}</h2>
-              {group.links.map((link) => (
-                <Link key={link.href} href={link.href}>{link.label}</Link>
-              ))}
-            </section>
-          ))}
-        </nav>
+        <section className="xv-marketing-footer__main-card">
+          <div className="xv-marketing-footer__floating-mark" aria-hidden="true">
+            <Logo href={null} variant="sidebar" height={72} />
+          </div>
 
-        <div className="xv-marketing-footer__base">
-          <p>© {new Date().getFullYear()} XROGA AI. Build with evidence. Ship with ownership.</p>
-          <a href="mailto:hello@xroga.com"><Mail aria-hidden="true" /> hello@xroga.com</a>
-          <span>Independent AI coding agent</span>
-        </div>
+          <nav className="xv-marketing-footer__nav" aria-label="Footer navigation">
+            {FOOTER_GROUPS.map((group) => (
+              <section key={group.title} aria-labelledby={`footer-${group.title.toLowerCase()}`}>
+                <h2 id={`footer-${group.title.toLowerCase()}`}>{group.title}</h2>
+                {group.links.map((link) => (
+                  <Link key={link.href} href={link.href}>{link.label}</Link>
+                ))}
+              </section>
+            ))}
+          </nav>
+
+          <div className="xv-marketing-footer__subscribe">
+            <p><span>AI moves fast.</span>Stay ahead with Xroga.</p>
+            <form action="/auth/signup" method="get">
+              <label className="sr-only" htmlFor="footer-email">Email address</label>
+              <input id="footer-email" name="email" type="email" autoComplete="email" placeholder="Enter email address" required />
+              <button type="submit">Join Xroga <ArrowRight aria-hidden="true" /></button>
+            </form>
+          </div>
+
+          <div className="xv-marketing-footer__base">
+            <p>© {new Date().getFullYear()} XROGA AI. All rights reserved.</p>
+            <span>Build with evidence. Ship with ownership.</span>
+          </div>
+        </section>
+
+        <Link href="/" className="xv-marketing-footer__wordmark" aria-label="Xroga home">XROGA</Link>
       </div>
     </footer>
   );
