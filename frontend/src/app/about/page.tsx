@@ -1,46 +1,36 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Check, CircleDot, GitBranch, Hammer, ShieldCheck, Telescope } from 'lucide-react';
-import { buildMetadata } from '@/lib/seo';
-import { COMPANY_CONTACT } from '@/lib/companyContact';
-import { GitHubIcon } from '@/components/icons/GitHubIcon';
-import { AboutArt } from '@/components/about/AboutArt';
-import { AboutProductVisual } from '@/components/about/AboutProductVisual';
-import { AboutFaq } from '@/components/about/AboutFaq';
-import {
-  ABOUT_ART,
-  ABOUT_CAPABILITIES,
-  ABOUT_EXECUTION,
-  ABOUT_FAQS,
-  ABOUT_FINAL_CTA,
-  ABOUT_FOUNDER,
-  ABOUT_HERO,
-  ABOUT_SOCIALS,
-  ABOUT_STEPS,
-} from '@/lib/aboutContent';
-import '@/styles/about.css';
-import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { ArrowRight, Bot, Clapperboard, Code2, Globe2, Lightbulb, Rocket, ShoppingBag, Sparkles } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
-import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
-import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
-import '@/styles/homepage-coding.css';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
+import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { COMPANY_CONTACT } from '@/lib/companyContact';
+import { buildMetadata } from '@/lib/seo';
+import '@/styles/homepage-coding.css';
+import '@/styles/about.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'About Xroga AI & CEO Muhammad Ibrahim',
-  description: COMPANY_CONTACT.productDescription,
+  title: 'About Xroga AI & Founder Muhammad Ibrahim',
+  description:
+    'Meet Muhammad Ibrahim, the solo founder building Xroga AI to help people turn ambitious ideas into real, owned software.',
   path: '/about',
-  keywords: ['about Xroga', 'Muhammad Ibrahim CEO', 'Pakistan AI founder', 'Xroga mission'],
+  keywords: ['about Xroga AI', 'Muhammad Ibrahim founder', 'AI coding agent founder', 'Xroga story'],
 });
 
-const CAPABILITY_ICONS = { build: Hammer, verify: ShieldCheck, publish: GitBranch, research: Telescope } as const;
+const JOURNEY = [
+  { icon: Globe2, label: '5+ years online', title: 'Learning by doing', body: 'E-commerce, dropshipping, YouTube Shorts, long-form video, outreach, client acquisition, and the everyday work of building on the internet.' },
+  { icon: Code2, label: 'Agency chapter', title: 'Xroga before the product', body: 'Xroga began as a web agency: finding clients, booking projects, and manually delivering websites, AI voice agents, chatbots, and related digital services.' },
+  { icon: Bot, label: '2 years in AI', title: 'The automation pivot', body: 'Modern paid AI tools made a bigger idea possible: stop repeating service work and build a system that can turn a person’s idea into working software.' },
+  { icon: Rocket, label: 'Now', title: 'Xroga AI', body: 'An independent AI coding product being built to help people describe an outcome, create the product, verify it, and keep ownership of the result.' },
+] as const;
 
-const NAV = [
-  { href: '/features', label: 'Product', current: false },
-  { href: '#how-it-works', label: 'How it works', current: false },
-  { href: '/about', label: 'About', current: true },
-  { href: '#faq', label: 'FAQ', current: false },
-  { href: '/contact', label: 'Contact', current: false },
+const PATH = [
+  { icon: ShoppingBag, text: 'Dropshipping' },
+  { icon: Clapperboard, text: 'Content & YouTube' },
+  { icon: Globe2, text: 'Web agency' },
+  { icon: Bot, text: 'AI agents' },
+  { icon: Sparkles, text: 'Xroga AI' },
 ] as const;
 
 export default function AboutPage() {
@@ -48,259 +38,122 @@ export default function AboutPage() {
     <div className="ab-root">
       <PageJsonLd
         path="/about"
-        name="About XROGA AI"
-        description={COMPANY_CONTACT.productDescription}
+        name="About Xroga AI and Muhammad Ibrahim"
+        description="The founder story, journey, mission, and future ambition behind Xroga AI."
         type="AboutPage"
       />
 
-      {/* --------------------------------------------------------- navigation */}
       <header className="ab-nav">
         <div className="ab-shell ab-nav-inner">
-          <Link href="/" className="ab-logo">
-            <Logo href={null} variant="homepage" height={36} />
-          </Link>
-
-          <nav className="ab-nav-links" aria-label="Primary">
-            {NAV.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                aria-current={item.current ? 'page' : undefined}
-                className={item.current ? 'is-current' : undefined}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <Logo href="/" variant="homepage" height={36} />
+          <nav className="ab-nav-links" aria-label="About page navigation">
+            <Link href="/">Home</Link>
+            <Link href="/about" aria-current="page">About</Link>
+            <Link href="#story">Story</Link>
+            <Link href="#mission">Mission</Link>
+            <Link href="/contact">Contact</Link>
           </nav>
-
-          <Link href="/auth/signup" className="ab-btn ab-btn--primary ab-btn--sm">
-            Get Started
-          </Link>
+          <Link href="/auth/signup" className="ab-nav-cta">Start a project</Link>
         </div>
       </header>
 
       <main>
-        {/* ------------------------------------------------------------- hero */}
-        <section className="ab-section ab-hero">
-          <div className="ab-shell ab-hero-grid">
-            <div>
-              <div className="ab-origin-badge"><span>AI</span> Independent AI coding agent</div>
-              <p className="ab-eyebrow">{ABOUT_HERO.eyebrow}</p>
-              <h1 className="ab-h1">{ABOUT_HERO.headline}</h1>
-              <p className="ab-lede">{ABOUT_HERO.body}</p>
-
-              <div className="ab-cta-row">
-                <Link href={ABOUT_HERO.primaryCta.href} className="ab-btn ab-btn--primary">
-                  {ABOUT_HERO.primaryCta.label}
-                  <ArrowRight className="ab-icon-sm" aria-hidden="true" />
-                </Link>
-                <Link href={ABOUT_HERO.secondaryCta.href} className="ab-btn ab-btn--ghost">
-                  {ABOUT_HERO.secondaryCta.label}
-                </Link>
+        <section className="ab-hero" aria-labelledby="about-title">
+          <div className="ab-shell">
+            <div className="ab-hero-card">
+              <div className="ab-hero-copy">
+                <p className="ab-kicker">XROGA AI · FOUNDER STORY</p>
+                <h1 id="about-title">Ideas deserve<br /><em>a way into reality.</em></h1>
+                <p className="ab-hero-lede">
+                  Xroga AI is being built for people who can see the product clearly—even when they do not yet know how to code it.
+                </p>
+                <div className="ab-actions">
+                  <Link href="/auth/signup" className="ab-button ab-button--dark">Build your idea <ArrowRight aria-hidden="true" /></Link>
+                  <Link href="#story" className="ab-button ab-button--light">Read the story</Link>
+                </div>
+                <dl className="ab-stats">
+                  <div><dt>2 years</dt><dd>Building with AI</dd></div>
+                  <div><dt>5+ years</dt><dd>Working online</dd></div>
+                  <div><dt>1 founder</dt><dd>One ambitious mission</dd></div>
+                </dl>
               </div>
 
-              <ul className="ab-trust" aria-label="What Xroga connects to">
-                {ABOUT_HERO.trustLine.map((item) => (
-                  <li key={item}>
-                    <CircleDot className="ab-icon-xs" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <div className="ab-portrait-wrap">
+                <Image
+                  src="/about/muhammad-ibrahim-editorial-v3.png"
+                  alt="Muhammad Ibrahim, founder and CEO of Xroga AI"
+                  fill
+                  priority
+                  sizes="(max-width: 820px) 100vw, 48vw"
+                  className="ab-portrait"
+                />
+                <div className="ab-founder-card">
+                  <span>Founder & CEO</span>
+                  <strong>Muhammad Ibrahim</strong>
+                  <p>Building the product he once wished existed.</p>
+                  <Link href="/contact" aria-label="Contact Muhammad Ibrahim"><ArrowRight aria-hidden="true" /></Link>
+                </div>
+              </div>
             </div>
 
-            <AboutProductVisual variant="hero" />
-          </div>
-        </section>
-
-        {/* The full product loop belongs near the top of About. Keeping it in the
-            same themed system as the homepage makes the brand and release obvious. */}
-        <div className="xv-home-coding ab-product-systems" id="real-ship-loop">
-          <HomepageShipStack />
-          <HomepageEnterpriseProof />
-        </div>
-
-        {/* ---------------------------------------------------- how it works */}
-        <section className="ab-section" id="how-it-works" aria-labelledby="ab-how-heading">
-          <div className="ab-shell ab-split">
-            <AboutProductVisual variant="workflow" />
-
-            <div>
-              <p className="ab-eyebrow">HOW XROGA WORKS</p>
-              <h2 id="ab-how-heading" className="ab-h2">
-                Three steps, no guesswork.
-              </h2>
-
-              <ol className="ab-steps">
-                {ABOUT_STEPS.map((step) => (
-                  <li key={step.number} className="ab-step ab-reveal">
-                    <span className="ab-step-num" aria-hidden>
-                      {step.number}
-                    </span>
-                    <div>
-                      <h3 className="ab-step-title">{step.title}</h3>
-                      <p className="ab-body">{step.body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+            <div className="ab-path" aria-label="The path to Xroga AI">
+              {PATH.map(({ icon: Icon, text }, index) => (
+                <div key={text} className={index === PATH.length - 1 ? 'is-current' : undefined}>
+                  <Icon aria-hidden="true" /><span>{text}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* ------------------------------------------------------ capabilities */}
-        <section className="ab-section" aria-labelledby="ab-cap-heading">
+        <section className="ab-story" id="story" aria-labelledby="story-heading">
           <div className="ab-shell">
-            <p className="ab-eyebrow">WHAT WE SHIP</p>
-            <h2 id="ab-cap-heading" className="ab-h2">
-              Coding agent that ships. <em>Same repo, forever.</em>
-            </h2>
-            <p className="ab-lede">Xroga AI connects prompt → brief → code → QA → your GitHub → your Vercel. Edit, update, and delete without starting over.</p>
-
-            <div className="ab-cards">
-              {ABOUT_CAPABILITIES.map((capability) => {
-                const Icon = CAPABILITY_ICONS[capability.id as keyof typeof CAPABILITY_ICONS];
-                return (
-                  <article key={capability.id} className="ab-card ab-reveal">
-                    <span className="ab-card-icon" aria-hidden>
-                      <Icon className="ab-icon-sm" />
-                    </span>
-                    <h3 className="ab-card-title">{capability.title}</h3>
-                    <p className="ab-body">{capability.body}</p>
-                  </article>
-                );
-              })}
+            <div className="ab-section-heading">
+              <p className="ab-kicker">THE ROAD HERE</p>
+              <h2 id="story-heading">Not an overnight story.<br /><em>A useful one.</em></h2>
+              <p>Every earlier chapter taught Ibrahim something Xroga needs today: how people buy, how clients explain problems, how products are delivered, and where automation can remove the hardest barriers.</p>
+            </div>
+            <div className="ab-journey-grid">
+              {JOURNEY.map(({ icon: Icon, label, title, body }, index) => (
+                <article key={title} className="ab-journey-card">
+                  <div className="ab-journey-top"><span>0{index + 1}</span><Icon aria-hidden="true" /></div>
+                  <small>{label}</small>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* -------------------------------------------------- built for execution */}
-        <section className="ab-section" aria-labelledby="ab-exec-heading">
-          <div className="ab-shell ab-split">
-            <AboutProductVisual variant="verify" />
-
+        <section className="ab-founder-note" aria-labelledby="founder-note-heading">
+          <div className="ab-shell ab-founder-note-grid">
+            <div className="ab-note-mark" aria-hidden="true"><Lightbulb /></div>
             <div>
-              <p className="ab-eyebrow">BUILT FOR EXECUTION</p>
-              <h2 id="ab-exec-heading" className="ab-h2">
-                {ABOUT_EXECUTION.heading}
-              </h2>
-              <p className="ab-lede">{ABOUT_EXECUTION.body}</p>
-
-              <ul className="ab-checklist">
-                {ABOUT_EXECUTION.checklist.map((item) => (
-                  <li key={item}>
-                    <Check className="ab-icon-sm ab-check" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <p className="ab-kicker">FOUNDER’S NOTE</p>
+              <h2 id="founder-note-heading">“I am not a high-end coder. I am an idea-led founder who learned how to direct modern AI into building real products.”</h2>
+            </div>
+            <div className="ab-note-copy">
+              <p>Today, Xroga is built by Ibrahim as a solo founder—with faith in Allah, persistence, basic coding knowledge, strong product ideas, and paid modern AI coding tools doing much of the implementation and engineering work under his direction.</p>
+              <p>The tools are collaborators, not the founder. Ibrahim remains responsible for the vision, decisions, product standard, and outcome. A larger team becomes the next chapter when Xroga is funded and ready to scale responsibly.</p>
             </div>
           </div>
         </section>
 
-        {/* ---------------------------------------------------------- founder */}
-        <section className="ab-section" id="founder" aria-labelledby="ab-founder-heading">
+        <section className="ab-mission" id="mission" aria-labelledby="mission-heading">
           <div className="ab-shell">
-            <div className="ab-founder">
-              <AboutArt
-                src={ABOUT_ART.founder}
-                alt={`${ABOUT_FOUNDER.name}, founder of Xroga AI`}
-                className="ab-founder-art"
-              />
-
+            <div className="ab-mission-card">
               <div>
-                <p className="ab-eyebrow">FOUNDER</p>
-                <h2 id="ab-founder-heading" className="ab-h2">
-                  {ABOUT_FOUNDER.name}
-                </h2>
-                <p className="ab-founder-role">{ABOUT_FOUNDER.role}</p>
-                {ABOUT_FOUNDER.paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="ab-body">
-                    {paragraph}
-                  </p>
-                ))}
-
-                <div className="ab-founder-links">
-                  <a href={ABOUT_SOCIALS.x} target="_blank" rel="noreferrer noopener" className="ab-chip-link">
-                    {/* X ships no lucide glyph; the wordmark carries the label. */}
-                    <span aria-hidden className="ab-x-mark">
-                      X
-                    </span>
-                    Xroga on X
-                  </a>
-                  <a href={ABOUT_SOCIALS.github} target="_blank" rel="noreferrer noopener" className="ab-chip-link">
-                    <GitHubIcon className="ab-icon-sm" />
-                    GitHub
-                  </a>
-                </div>
+                <p className="ab-kicker">THE MISSION</p>
+                <h2 id="mission-heading">Your idea should not stop at <em>“I can’t code.”</em></h2>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ---------------------------------------------------------- contact */}
-        <section className="ab-section" aria-labelledby="ab-contact-heading">
-          <div className="ab-shell">
-            <div className="ab-contact">
-              <div>
-                <h2 id="ab-contact-heading" className="ab-h3">
-                  Talk to us
-                </h2>
-                <p className="ab-body">Real people read these.</p>
-              </div>
-
-              <dl className="ab-contact-rows">
-                <div>
-                  <dt>Email</dt>
-                  <dd>
-                    <a href={`mailto:${COMPANY_CONTACT.email}`}>{COMPANY_CONTACT.email}</a>
-                  </dd>
+              <div className="ab-mission-copy">
+                <p>Millions of people understand the problem they want to solve, but do not have the technical knowledge, money, or team to turn it into software. Xroga’s goal is simple: help them turn that dream project into reality.</p>
+                <p>With future funding, Xroga will hire a focused team, deepen the product, and pursue capabilities that even today’s largest AI builders have not imagined. The ambition is deliberately big; the work starts one verified product at a time.</p>
+                <div className="ab-actions">
+                  <Link href="/auth/signup" className="ab-button ab-button--blue">Bring your idea <ArrowRight aria-hidden="true" /></Link>
+                  <a href={`mailto:${COMPANY_CONTACT.email}`} className="ab-button ab-button--outline">Talk to Ibrahim</a>
                 </div>
-                <div>
-                  <dt>Phone</dt>
-                  <dd>
-                    <a href={`tel:${COMPANY_CONTACT.phoneTel}`}>{COMPANY_CONTACT.phoneDisplay}</a>
-                  </dd>
-                </div>
-              </dl>
-
-              <nav className="ab-contact-links" aria-label="Company and legal">
-                <Link href="/contact">Contact</Link>
-                <Link href="/terms">Terms</Link>
-                <Link href="/privacy">Privacy</Link>
-                <Link href="/refund">Refund Policy</Link>
-              </nav>
-            </div>
-          </div>
-        </section>
-
-        {/* -------------------------------------------------------------- faq */}
-        <section className="ab-section" id="faq" aria-labelledby="ab-faq-heading">
-          <div className="ab-shell ab-shell--narrow">
-            <p className="ab-eyebrow">FAQ</p>
-            <h2 id="ab-faq-heading" className="ab-h2">
-              Questions worth answering.
-            </h2>
-            <AboutFaq items={ABOUT_FAQS} />
-          </div>
-        </section>
-
-        {/* -------------------------------------------------------- final cta */}
-        <section className="ab-section" aria-labelledby="ab-cta-heading">
-          <div className="ab-shell">
-            <div className="ab-panel ab-panel--dark ab-final">
-              <h2 id="ab-cta-heading" className="ab-h2 ab-h2--light">
-                {ABOUT_FINAL_CTA.headline}
-              </h2>
-              <p className="ab-body ab-body--light">{ABOUT_FINAL_CTA.body}</p>
-              <div className="ab-cta-row">
-                <Link href={ABOUT_FINAL_CTA.primary.href} className="ab-btn ab-btn--primary">
-                  {ABOUT_FINAL_CTA.primary.label}
-                  <ArrowRight className="ab-icon-sm" aria-hidden="true" />
-                </Link>
-                <Link href={ABOUT_FINAL_CTA.secondary.href} className="ab-btn ab-btn--onDark">
-                  {ABOUT_FINAL_CTA.secondary.label}
-                </Link>
               </div>
             </div>
           </div>
