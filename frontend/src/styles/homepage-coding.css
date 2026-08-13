@@ -3660,7 +3660,8 @@ body.theme-white .xv-home-coding .xv-hc-provider-logo--github,body.theme-white .
 .xv-home-coding .xv-se-surface-label svg { width: .75rem; color: var(--hc-blue); }
 .xv-home-coding .xv-se-surface-label span { margin-left: auto; }
 .xv-home-coding .xv-se-prompt label { display: block; margin: .85rem 0 .5rem; color: var(--hc-ink); font-size: .72rem; font-weight: 680; }
-.xv-home-coding .xv-se-prompt-copy { min-height: 6rem; padding: .7rem; border-left: 1px solid var(--hc-blue); background: var(--se-inset); color: var(--hc-ink); font-family: var(--hc-font-mono); font-size: .68rem; line-height: 1.55; }
+.xv-home-coding .xv-se-prompt-copy { width: 100%; min-height: 6rem; resize: vertical; padding: .7rem; border: 0; border-left: 1px solid var(--hc-blue); outline: 0; background: var(--se-inset); color: var(--hc-ink); font-family: var(--hc-font-mono); font-size: .68rem; line-height: 1.55; }
+.xv-home-coding .xv-se-prompt-copy:focus { border-left-width: 2px; box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--hc-blue) 22%,transparent); }
 .xv-home-coding .xv-se-prompt-copy::after { display: inline-block; width: 1px; height: .8rem; margin-left: 2px; background: var(--hc-blue); content: ''; vertical-align: -.1rem; animation: xv-se-cursor .8s step-end 6; }
 @keyframes xv-se-cursor { 50%{opacity:0} }
 .xv-home-coding .xv-se-prompt-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: .8rem; }
@@ -3668,6 +3669,10 @@ body.theme-white .xv-home-coding .xv-hc-provider-logo--github,body.theme-white .
 .xv-home-coding .xv-se-prompt-foot > span i { width: .35rem; height: .35rem; border-radius: 50%; background: #74c986; }
 .xv-home-coding .xv-se-prompt button { display: flex; align-items: center; gap: .3rem; padding: .45rem .65rem; border: 1px solid color-mix(in srgb,var(--hc-blue) 70%,var(--hc-border)); border-radius: .35rem; background: var(--hc-blue); color: var(--hc-action-text); font-size: .65rem; font-weight: 720; }
 .xv-home-coding .xv-se-prompt button svg { width: .8rem; }
+.xv-home-coding .xv-se-demo-controls { display: flex; align-items: center; gap: .3rem; }
+.xv-home-coding .xv-se-demo-controls button { min-width: 1.9rem; min-height: 1.9rem; justify-content: center; padding: .38rem; cursor: pointer; transition: transform .16s ease,filter .16s ease; }
+.xv-home-coding .xv-se-demo-controls button:last-child { padding-inline: .65rem; }
+.xv-home-coding .xv-se-demo-controls button:hover { filter: brightness(1.12); transform: translateY(-1px); }
 .xv-home-coding .xv-se-prompt button:focus-visible,.xv-home-coding .xv-se-deploy a:focus-visible { outline: 2px solid var(--hc-blue); outline-offset: 3px; }
 
 .xv-home-coding .xv-se-engine { top: 1.4rem; left: 31%; width: 39%; overflow: hidden; border-color: color-mix(in srgb,var(--hc-blue) 55%,var(--hc-border)); border-radius: .9rem; box-shadow: 0 24px 64px var(--hc-shadow), 0 0 25px color-mix(in srgb,var(--hc-blue) 7%,transparent), inset 0 1px 0 color-mix(in srgb,var(--hc-ink) 8%,transparent); }
@@ -3679,6 +3684,8 @@ body.theme-white .xv-home-coding .xv-hc-provider-logo--github,body.theme-white .
 .xv-home-coding .xv-se-engine-brand small { margin-top: .12rem; color: var(--hc-muted); font-family: var(--hc-font-mono); font-size: .45rem; letter-spacing: .08em; }
 .xv-home-coding .xv-se-engine-status { display: flex; align-items: center; gap: .4rem; color: var(--hc-blue); font-family: var(--hc-font-mono); font-size: .55rem; }
 .xv-home-coding .xv-se-engine-status i { width: .38rem; height: .38rem; border-radius: 50%; background: var(--hc-blue); animation: xv-se-led 1.4s 5; }
+.xv-home-coding .xv-se-engine-status.is-ready { color: #74c986; }
+.xv-home-coding .xv-se-engine-status.is-ready i { background: #74c986; }
 @keyframes xv-se-led { 50%{opacity:.35} }
 .xv-home-coding .xv-se-engine-task { padding: 1.1rem 1rem .9rem; }
 .xv-home-coding .xv-se-engine-task small { color: var(--hc-muted); font-family: var(--hc-font-mono); font-size: .48rem; letter-spacing: .1em; }
@@ -3734,6 +3741,8 @@ body.theme-white .xv-home-coding .xv-hc-provider-logo--github,body.theme-white .
 .xv-home-coding .xv-se-live-row b { color: var(--hc-ink); font-family: var(--hc-font-mono); font-size: .56rem; text-transform: uppercase; }
 .xv-home-coding .xv-se-live-row small { margin-top: .1rem; color: var(--hc-muted); font-size: .52rem; }
 .xv-home-coding .xv-se-live-row > i { width: .37rem; height: .37rem; border-radius: 50%; background: var(--hc-blue); }
+.xv-home-coding .xv-se-live-row.is-current { margin-inline: -.4rem; padding-inline: .4rem; background: color-mix(in srgb,var(--hc-blue) 7%,transparent); }
+.xv-home-coding .xv-se-live-row.is-current > i { box-shadow: 0 0 12px currentColor; animation: xv-se-led 1.4s infinite; }
 .xv-home-coding .xv-se-live-row.is-green > svg { color: #74c986; }
 .xv-home-coding .xv-se-live-row.is-green > i { background: #74c986; }
 .xv-home-coding .xv-se-live-row.is-amber > svg { color: #d3a951; }
@@ -3760,6 +3769,7 @@ body.theme-white .xv-home-coding .xv-hc-provider-logo--github,body.theme-white .
 .xv-home-coding .xv-se-loop-legend ol { display: flex; align-items: center; justify-content: center; gap: .45rem; margin: .45rem 0 0; padding: 0; list-style: none; }
 .xv-home-coding .xv-se-loop-legend li { display: flex; align-items: center; gap: .45rem; color: var(--hc-muted); font-family: var(--hc-font-mono); font-size: .48rem; }
 .xv-home-coding .xv-se-loop-legend li:not(:last-child)::after { color: var(--hc-blue); content: '→'; }
+.xv-home-coding .xv-se-loop-legend li.is-active { color: var(--hc-blue); text-shadow: 0 0 12px color-mix(in srgb,var(--hc-blue) 45%,transparent); }
 
 .xv-home-coding .xv-se-ownership { position: absolute; z-index: 2; right: 5%; bottom: 1.75rem; left: 5%; display: grid; grid-template-columns: 1.2fr 2fr auto; align-items: center; gap: 1.25rem; padding: 1.1rem 0; border-block: 1px solid var(--hc-border); opacity: 0; transform: translateY(10px); }
 .xv-home-coding .xv-se-section.is-active .xv-se-ownership { animation: xv-se-enter .5s 3.8s forwards; }
@@ -4207,7 +4217,7 @@ body.theme-white .xv-home-coding .xv-er-orbit-lines,body.theme-beige .xv-home-co
   letter-spacing: .22em;
 }
 .xv-home-coding .xv-showcase-heading h2 {
-  font-size: clamp(2.25rem,4.25vw,4rem);
+  font-size: clamp(2.05rem,3.55vw,3.35rem);
   line-height: .94;
   letter-spacing: -.055em;
 }
@@ -4223,7 +4233,7 @@ body.theme-white .xv-home-coding .xv-er-orbit-lines,body.theme-beige .xv-home-co
 .xv-home-coding .xv-showcase-dock button { flex: 0 0 auto; }
 
 .xv-home-coding .xv-se-heading { max-width: 58rem; margin-bottom: clamp(2rem,3.5vw,3rem); }
-.xv-home-coding .xv-se-heading h2 { font-size: clamp(2.15rem,4.15vw,3.85rem); letter-spacing: -.055em; }
+.xv-home-coding .xv-se-heading h2 { font-size: clamp(2rem,3.55vw,3.3rem); letter-spacing: -.055em; }
 
 .xv-home-coding .xv-er { padding-block: clamp(3.5rem,6vw,5.25rem); }
 .xv-home-coding .xv-er-stage { min-height: 30rem; }
@@ -4240,9 +4250,9 @@ body.theme-white .xv-home-coding .xv-er-orbit-lines,body.theme-beige .xv-home-co
 .xv-home-coding .xv-er-cap-icon { width: 2.7rem; height: 2.7rem; }
 
 @media(max-width:780px){
-  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(2.1rem,9vw,3.25rem); }
+  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(1.95rem,8vw,2.8rem); }
   .xv-home-coding .xv-showcase-visual { height: clamp(18rem,62vw,27rem); }
-  .xv-home-coding .xv-se-heading h2 { font-size: clamp(2.1rem,9vw,3.25rem); }
+  .xv-home-coding .xv-se-heading h2 { font-size: clamp(1.95rem,8vw,2.8rem); }
   .xv-home-coding .xv-er-stage { min-height: 39rem; }
   .xv-home-coding .xv-er-heading h2 { font-size: clamp(1.9rem,8vw,2.8rem); }
   .xv-home-coding .xv-er-concepts { inset: 19.5rem .9rem auto; }
@@ -4251,7 +4261,7 @@ body.theme-white .xv-home-coding .xv-er-orbit-lines,body.theme-beige .xv-home-co
 @media(max-width:560px){
   .xv-home-coding .xv-showcase-scroll { padding-block: 3.25rem; }
   .xv-home-coding .xv-showcase-kicker { font-size: .6rem; }
-  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(2rem,11vw,2.8rem); }
+  .xv-home-coding .xv-showcase-heading h2 { font-size: clamp(1.85rem,10vw,2.55rem); }
   .xv-home-coding .xv-showcase-visual { height: 15.5rem; }
   .xv-home-coding .xv-er-stage { min-height: 37rem; }
   .xv-home-coding .xv-er-concepts { inset: 18.7rem .7rem auto; }
