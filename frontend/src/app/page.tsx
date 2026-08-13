@@ -20,6 +20,7 @@ import { LayoutDashboard } from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
+import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 
 const HERO_BUILD_WORDS = [
   'Websites',
@@ -178,6 +179,8 @@ export default function HomePage() {
           </section>
         </div>
       </section>
+
+      <HomepageWorkspaceTour loggedIn={loggedIn} />
 
       <HomepageShowcase />
 
