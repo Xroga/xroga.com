@@ -38,7 +38,7 @@ export const ABOUT_ART = {
   hero: '/about/xroga-voxel-hero.png',
   workflow: '/about/xroga-voxel-workflow.png',
   verify: '/about/xroga-voxel-verify.png',
-  founder: '/about/xroga-voxel-founder.png',
+  founder: '/about/muhammad-ibrahim-founder-3d.png',
 } as const;
 
 export const ABOUT_SOCIALS = {

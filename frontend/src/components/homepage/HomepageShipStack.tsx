@@ -11,6 +11,9 @@ import {
   Folder,
   KeyRound,
   LockKeyhole,
+  Pause,
+  Play,
+  RotateCcw,
   Search,
   ShieldCheck,
   TestTube2,
@@ -57,6 +60,10 @@ function ProviderLogo({ name }: { name: 'github' | 'vercel' }) {
 export function HomepageShipStack() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isActive, setIsActive] = useState(false);
+  const [idea, setIdea] = useState('Build a customer analytics platform with authentication, subscriptions, analytics and admin controls.');
+  const [activeIdea, setActiveIdea] = useState('Build a customer analytics platform');
+  const [progress, setProgress] = useState(8);
+  const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -66,6 +73,7 @@ export function HomepageShipStack() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsActive(true);
+          setIsRunning(true);
           observer.disconnect();
         }
       },
@@ -75,6 +83,40 @@ export function HomepageShipStack() {
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!isRunning || !isActive || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      setProgress((current) => {
+        if (current >= 100) return 0;
+        return Math.min(100, current + 4);
+      });
+    }, 850);
+    return () => window.clearInterval(timer);
+  }, [isActive, isRunning]);
+
+  const activeTask = Math.min(Math.floor(progress / 25), ACTIVITY.length - 1);
+  const activePhase = Math.min(Math.floor(progress / 17), TIMELINE.length - 1);
+  const complete = progress >= 100;
+  const liveDetails = [
+    progress > 20 ? 'Current documentation indexed' : 'Reading current documentation',
+    progress > 68 ? 'Patch prepared · Tests 14/14' : 'Preparing focused repository patch',
+    progress > 82 ? 'Secrets checked · Policy passed' : 'Scanning permissions and credentials',
+    complete ? 'Publish evidence confirmed' : 'Authorization remains with the customer',
+  ];
+
+  const startBuild = () => {
+    const cleanIdea = idea.trim();
+    if (!cleanIdea) return;
+    setActiveIdea(cleanIdea.replace(/[.!?]+$/, ''));
+    setProgress(4);
+    setIsRunning(true);
+  };
+
+  const resetBuild = () => {
+    setProgress(0);
+    setIsRunning(false);
+  };
 
   return (
     <section
@@ -111,15 +153,17 @@ export function HomepageShipStack() {
             <circle className="xv-se-signal xv-se-signal--two" r="4" cx="0" cy="0" />
           </svg>
 
-          <form className="xv-se-prompt" onSubmit={(event) => event.preventDefault()} aria-label="Example Xroga prompt">
+          <form className="xv-se-prompt" onSubmit={(event) => { event.preventDefault(); startBuild(); }} aria-label="Interactive Xroga product-loop demo">
             <div className="xv-se-surface-label"><CircleDot /> IDEA INPUT <span>01</span></div>
             <label htmlFor="xroga-engine-prompt">What should Xroga build?</label>
-            <div id="xroga-engine-prompt" role="textbox" aria-readonly="true" className="xv-se-prompt-copy">
-              Build a customer analytics platform with authentication, subscriptions, analytics and admin controls.
-            </div>
+            <textarea id="xroga-engine-prompt" className="xv-se-prompt-copy" value={idea} onChange={(event) => setIdea(event.target.value)} rows={4} />
             <div className="xv-se-prompt-foot">
-              <span><i /> Idea captured</span>
-              <button type="submit" aria-label="Build example product">Build <ChevronRight /></button>
+              <span><i /> {isRunning ? 'Loop running' : complete ? 'Build ready' : 'Idea captured'}</span>
+              <span className="xv-se-demo-controls">
+                <button type="button" onClick={() => setIsRunning((value) => !value)} aria-label={isRunning ? 'Pause product-loop demo' : 'Resume product-loop demo'}>{isRunning ? <Pause /> : <Play />}</button>
+                <button type="button" onClick={resetBuild} aria-label="Reset product-loop demo"><RotateCcw /></button>
+                <button type="submit" aria-label="Run product-loop demo">Build <ChevronRight /></button>
+              </span>
             </div>
           </form>
 
@@ -129,26 +173,28 @@ export function HomepageShipStack() {
                 <Image src="/brand/xroga-mark.png" width={32} height={32} alt="Xroga" />
                 <span><b>XROGA ENGINE</b><small>CONNECTED PRODUCT LOOP</small></span>
               </span>
-              <span className="xv-se-engine-status"><i /> <b>BUILDING</b></span>
+              <span className={`xv-se-engine-status${complete ? ' is-ready' : ''}`}><i /> <b>{complete ? 'READY' : isRunning ? 'BUILDING' : 'PAUSED'}</b></span>
             </header>
             <div className="xv-se-engine-task">
               <small>CURRENT TASK</small>
-              <h3>Build customer analytics platform</h3>
-              <span>Runtime 06 · Customer-owned workspace</span>
+              <h3>{activeIdea}</h3>
+              <span>Runtime 06 · Interactive customer-owned workspace demo</span>
             </div>
             <ol className="xv-se-activity">
-              {ACTIVITY.map((item, index) => (
-                <li key={item.label} className={`is-${item.state}`}>
-                  <span>{item.state === 'done' ? <Check /> : index + 1}</span>
+              {ACTIVITY.map((item, index) => {
+                const state = complete || index < activeTask ? 'done' : index === activeTask ? 'active' : 'queued';
+                return (
+                <li key={item.label} className={`is-${state}`}>
+                  <span>{state === 'done' ? <Check /> : index + 1}</span>
                   <b>{item.label}</b>
-                  <small>{item.state === 'done' ? 'Complete' : item.state === 'active' ? 'In progress' : 'Queued'}</small>
+                  <small>{state === 'done' ? 'Complete' : state === 'active' ? (isRunning ? 'In progress' : 'Paused') : 'Queued'}</small>
                 </li>
-              ))}
+              )})}
             </ol>
             <footer>
               <span className="xv-se-stream"><i /><i /><i /><i /><i /><i /><i /></span>
-              <span className="xv-se-engine-phase"><b>VALIDATING</b><small>policy · tests · ownership</small></span>
-              <strong>68%</strong>
+              <span className="xv-se-engine-phase"><b>{complete ? 'VERIFIED' : progress > 64 ? 'VALIDATING' : 'IMPLEMENTING'}</b><small>policy · tests · ownership</small></span>
+              <strong>{progress}%</strong>
             </footer>
           </article>
 
@@ -157,7 +203,7 @@ export function HomepageShipStack() {
               <span><ProviderLogo name="github" /><b>github / xroga / client-product</b></span>
               <small>PRIVATE <LockKeyhole /></small>
             </header>
-            <div className="xv-se-repo-state"><i /><span><b>GITHUB CONNECTED</b><small>Repository belongs to customer</small></span><Check /></div>
+            <div className="xv-se-repo-state"><i /><span><b>GITHUB CONNECTED</b><small>{progress > 72 ? 'Changes synchronized to customer repo' : 'Repository belongs to customer'}</small></span><Check /></div>
             <ul>
               {REPOSITORY_FILES.map((file) => (
                 <li key={file.name}>
@@ -169,34 +215,34 @@ export function HomepageShipStack() {
             <footer>
               <Image src="/brand/xroga-mark.png" width={18} height={18} alt="" />
               <span><b>Xroga AI</b><small>initial production build</small></span>
-              <code>a1b2c3d</code>
+              <code>{progress > 72 ? 'f4c9e21' : 'a1b2c3d'}</code>
             </footer>
           </article>
 
           <div className="xv-se-live" aria-label="Live build, research, security, and control states">
             <div className="xv-se-live-head"><span>LIVE SYSTEM STATES</span><small>04 · 05 · 06</small></div>
-            {LIVE_STATES.map(({ label, detail, Icon, tone }) => (
-              <div key={label} className={`xv-se-live-row is-${tone}`}>
-                <Icon /><span><b>{label}</b><small>{detail}</small></span><i />
+            {LIVE_STATES.map(({ label, Icon, tone }, index) => (
+              <div key={label} className={`xv-se-live-row is-${tone}${index === Math.min(activePhase, LIVE_STATES.length - 1) ? ' is-current' : ''}`}>
+                <Icon /><span><b>{label}</b><small>{liveDetails[index]}</small></span><i />
               </div>
             ))}
           </div>
 
           <article className="xv-se-deploy" aria-label="Vercel production deployment">
-            <header><span><ProviderLogo name="vercel" /><b>VERCEL</b></span><small><i /> PRODUCTION</small></header>
-            <div className="xv-se-deploy-title"><small>Deployment</small><h3>Production</h3><span><i /> Ready</span></div>
+            <header><span><ProviderLogo name="vercel" /><b>VERCEL</b></span><small><i /> {complete ? 'PRODUCTION' : 'PREVIEW'}</small></header>
+            <div className="xv-se-deploy-title"><small>Deployment</small><h3>{complete ? 'Production' : 'Preview build'}</h3><span><i /> {complete ? 'Ready' : `${progress}% prepared`}</span></div>
             <dl>
               <div><dt>URL</dt><dd>client-product.vercel.app</dd></div>
-              <div><dt>Commit</dt><dd><code>a1b2c3d</code></dd></div>
+              <div><dt>Commit</dt><dd><code>{progress > 72 ? 'f4c9e21' : 'pending'}</code></dd></div>
               <div><dt>Domain</dt><dd>example.com</dd></div>
             </dl>
-            <a href="https://vercel.com" target="_blank" rel="noreferrer">View deployment <ArrowUpRight /></a>
+            <a href="/workspace">Open Xroga Workspace <ArrowUpRight /></a>
           </article>
 
           <div className="xv-se-loop-legend" aria-label="Continuous product loop phases">
             <span>CONTINUOUS PRODUCT LOOP</span>
             <ol>
-              {LOOP_PHASES.map((phase) => <li key={phase}>{phase}</li>)}
+              {LOOP_PHASES.map((phase, index) => <li key={phase} className={index === activePhase ? 'is-active' : undefined}>{phase}</li>)}
             </ol>
           </div>
 
@@ -213,7 +259,7 @@ export function HomepageShipStack() {
 
         <nav className="xv-se-timeline" aria-label="Product lifecycle timeline">
           {TIMELINE.map((phase, index) => (
-            <span key={phase} className={index === 3 ? 'is-active' : ''}><i>{String(index + 1).padStart(2, '0')}</i>{phase}</span>
+            <span key={phase} className={index === activePhase ? 'is-active' : ''}><i>{String(index + 1).padStart(2, '0')}</i>{phase}</span>
           ))}
         </nav>
       </div>

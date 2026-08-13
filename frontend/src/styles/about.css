@@ -307,7 +307,9 @@
   border-radius: var(--ab-radius-lg);
   background: var(--ab-card);
 }
-.ab-founder-art { aspect-ratio: 1 / 1; }
+.ab-founder-art { aspect-ratio: 1 / 1; overflow: hidden; border-color: color-mix(in srgb, var(--ab-electric) 45%, var(--ab-border)); box-shadow: 0 24px 65px rgba(0, 86, 255, .16), inset 0 1px 0 rgba(255,255,255,.12); }
+.ab-founder-art .ab-art-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; }
+.ab-founder-art::after { position: absolute; inset: auto 8% 0; height: 1px; background: linear-gradient(90deg,transparent,var(--ab-electric),transparent); content: ''; box-shadow: 0 0 18px var(--ab-electric); }
 .ab-founder-role { margin: 8px 0 0; font-size: 0.95rem; font-weight: 600; color: var(--ab-electric); }
 .ab-founder-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 .ab-chip-link {
