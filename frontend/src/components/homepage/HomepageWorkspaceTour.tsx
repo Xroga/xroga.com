@@ -5,17 +5,25 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
+  Bitcoin,
   Check,
+  ChevronDown,
   Cloud,
   Code2,
+  Compass,
   Eye,
   FolderGit2,
+  GitBranch,
   KeyRound,
+  LayoutDashboard,
   PanelLeftClose,
+  PanelLeftOpen,
   Plug,
   Plus,
   Rocket,
   Search,
+  Settings,
+  SlidersHorizontal,
   TerminalSquare,
 } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
@@ -50,8 +58,11 @@ function WorkspaceView() {
       <div className="xv-wt-connect-banner"><Cloud aria-hidden="true" /><strong>Connect Vercel</strong><span>Deploy on your own project and domain.</span><small>1/4</small><button type="button">Connect</button></div>
       <div className="xv-wt-template-row"><span>›</span><b>Start from a Xroga build</b><small>TEMPLATES</small></div>
       <div className="xv-wt-terminal">
-        <div className="xv-wt-terminal-bar"><i /><i /><i /><code>xroga@swarm</code><span>~/workspace</span></div>
-        <div className="xv-wt-terminal-body"><p><b>xroga@swarm:~ $</b> Ask Xroga to build or change your product.<span className="xv-wt-caret" /></p></div>
+        <div className="xv-wt-terminal-bar"><i /><i /><i /><code>xroga@swarm</code><span>~/workspace</span><button type="button">Workspace</button><button type="button">Graphite</button></div>
+        <div className="xv-wt-terminal-body">
+          <p><b>xroga@swarm:~ $</b> Ask Xroga to build or change your product.<span className="xv-wt-caret" /></p>
+          <small>Files, validation, repository updates, and preview evidence appear here while Xroga works.</small>
+        </div>
       </div>
     </div>
   );
@@ -94,6 +105,8 @@ function PreviewView() {
 export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
   const [active, setActive] = useState<TourTab>('workspace');
   const [paused, setPaused] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [repoExpanded, setRepoExpanded] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -109,12 +122,24 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
 
   return (
     <section className="xv-wt" aria-label="Interactive Xroga workspace tour">
-      <div className="xv-wt-window" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
+      <div className={`xv-wt-window${collapsed ? ' is-collapsed' : ''}`} onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
         <aside className="xv-wt-sidebar">
-          <div className="xv-wt-sidebar-head"><Logo href="/" variant="homepage" height={32} /><div><button type="button" aria-label="Collapse sidebar"><PanelLeftClose /></button><button type="button" aria-label="Search workspace"><Search /></button><button type="button" aria-label="New terminal"><Plus /></button></div></div>
+          <div className="xv-wt-sidebar-head"><Logo href="/" variant={collapsed ? 'sidebar' : 'homepage'} height={collapsed ? 36 : 32} /><div><button type="button" aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}</button><button type="button" aria-label="Search workspace" onClick={() => setActive('repos')}><Search /></button><button type="button" aria-label="New terminal" onClick={() => setActive('workspace')}><Plus /></button></div></div>
           <nav aria-label="Workspace tour sections">
-            {TOUR_TABS.map((tab) => { const Icon = tab.icon; return <button key={tab.id} type="button" className={active === tab.id ? 'is-active' : ''} onClick={() => setActive(tab.id)}><Icon aria-hidden="true" />{tab.label}</button>; })}
+            <button type="button" className={active === 'workspace' ? 'is-active' : ''} onClick={() => setActive('workspace')}><TerminalSquare aria-hidden="true" /><span>Workspace</span></button>
+            <Link href={loggedIn ? '/dashboard' : '/auth/signup'}><LayoutDashboard aria-hidden="true" /><span>Dashboard</span></Link>
+            <Link href="/crypto-builder"><Bitcoin aria-hidden="true" /><span>Crypto Builder</span></Link>
+            <button type="button" className={active === 'repos' ? 'is-active' : ''} onClick={() => setActive('repos')}><FolderGit2 aria-hidden="true" /><span>Repositories</span></button>
+            <button type="button" className={active === 'integrations' ? 'is-active' : ''} onClick={() => setActive('integrations')}><Plug aria-hidden="true" /><span>Integrations</span></button>
+            <Link href={loggedIn ? '/dashboard/publish' : '/auth/signup'}><Rocket aria-hidden="true" /><span>Launch &amp; Growth</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
+            <Link href="/showcase"><Compass aria-hidden="true" /><span>Explore</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
+            <Link href={loggedIn ? '/settings' : '/auth/signup'}><Settings aria-hidden="true" /><span>Settings</span></Link>
           </nav>
+          <section className="xv-wt-repo-history" aria-label="Saved repositories">
+            <header><b>REPOSITORIES</b><button type="button" aria-label="Filter repositories" onClick={() => setActive('repos')}><SlidersHorizontal /></button></header>
+            <button type="button" onClick={() => setRepoExpanded((value) => !value)}><ChevronDown className={repoExpanded ? '' : 'is-folded'} /><FolderGit2 /><strong>client-product</strong><small>6</small></button>
+            {repoExpanded && <div>{['#1 terminal', '#2 terminal', '#3 terminal'].map((terminal, index) => <button type="button" key={terminal} onClick={() => setActive('workspace')}><span>{terminal}</span><GitBranch /><small>{index === 0 ? 'now' : `${index + 1}d`}</small></button>)}</div>}
+          </section>
           <Link href={loggedIn ? '/workspace' : '/auth/signup'}><span>X</span><b>Xroga<small>Launch Promotion</small></b><Rocket /></Link>
         </aside>
 
