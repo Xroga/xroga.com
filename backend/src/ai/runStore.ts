@@ -256,6 +256,72 @@ export async function getRunAsync(runId: string): Promise<SwarmRunRecord | null>
 }
 
 /**
+ * Persist an explicit user cancellation independently of the worker that owns the
+ * live provider stream. Production runs on more than one process, so an in-memory
+ * AbortController alone cannot be the source of truth for Stop.
+ */
+export async function requestRunCancellation(
+  runId: string,
+  userId: string,
+): Promise<boolean> {
+  const hot = runs.get(runId);
+  if (hot && hot.userId !== userId) return false;
+
+  const cancelledAt = new Date().toISOString();
+  const cancelledOutput = {
+    type: 'error',
+    error: 'Build stopped.',
+    code: 'BUILD_CANCELLED',
+  };
+
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('swarm_runs')
+      .update({
+        status: 'cancelled',
+        output: cancelledOutput,
+        completed_at: cancelledAt,
+      })
+      .eq('id', runId)
+      .eq('user_id', userId)
+      .eq('status', 'running')
+      .select('id');
+    if (error) throw new Error(`Platform cancellation write failed: ${error.message}`);
+    if (!data?.length) return false;
+  } else if (!hot) {
+    return false;
+  }
+
+  if (hot?.status === 'running') {
+    hot.status = 'cancelled';
+    hot.output = cancelledOutput;
+    hot.completed_at = cancelledAt;
+    hot.iteration_count += 1;
+    runs.set(runId, hot);
+  }
+  return true;
+}
+
+/** Read the durable cancellation flag without accepting a potentially stale hot row. */
+export async function isRunCancellationRequested(runId: string): Promise<boolean> {
+  const hot = runs.get(runId);
+  if (hot?.status === 'cancelled') return true;
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('swarm_runs')
+      .select('status')
+      .eq('id', runId)
+      .maybeSingle();
+    return !error && data?.status === 'cancelled';
+  } catch {
+    return false;
+  }
+}
+
+/**
  * The runs this process is currently holding.
  *
  * Used by the shutdown handler: a deploy kills the process, and anything still

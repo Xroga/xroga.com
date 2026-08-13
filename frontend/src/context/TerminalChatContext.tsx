@@ -72,6 +72,7 @@ import {
 import {
   addPendingBuildJob,
   attachPendingBuildRun,
+  loadPendingBuildJobs,
   reconcilePendingBuildTranscript,
   removePendingBuildJob,
   updatePendingBuildSequence,
@@ -488,6 +489,46 @@ export function TerminalChatProvider({
   );
 
   useBuildCompletionAlerts();
+
+  // Restore the visible build shell synchronously from durable local identity. The
+  // network poll still supplies authoritative events/output, but users should never
+  // see an empty terminal or a dead Stop button during that first request after reload.
+  useEffect(() => {
+    if (incognito) return;
+    const pending = loadPendingBuildJobs().find((job) => Boolean(job.runId));
+    if (!pending?.runId) return;
+    activeRunIdRef.current = pending.runId;
+    setMessages((current) => reconcilePendingBuildTranscript(current, pending));
+    setHeavyLoading(true);
+    setHeavyBuildActive(true);
+    heavyBuildActiveRef.current = true;
+    heavyJobActiveRef.current = true;
+    setHeavyAssistantId(pending.assistantMessageId);
+    setSwarmRunning(true);
+    setSwarmStatusLabel('Reconnecting');
+    setPipelineMessage('Restoring your active build…');
+  }, [incognito, setSwarmRunning]);
+
+  useEffect(() => {
+    if (!heavyBuildActive) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== 'hidden') return;
+      toast('Xroga is still building safely in the background. Return anytime to reconnect.', {
+        icon: '↻',
+        duration: 5000,
+      });
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [heavyBuildActive]);
 
   useEffect(() => {
     if (incognito) {
@@ -930,8 +971,25 @@ export function TerminalChatProvider({
 
   const stop = useCallback(() => {
     interruptRef.current = true;
-    const runId = activeRunIdRef.current;
-    if (runId) void api.swarm.cancelRun(runId).catch(() => {});
+    const runId =
+      activeRunIdRef.current ??
+      loadPendingBuildJobs().find((job) => Boolean(job.runId))?.runId ??
+      null;
+    if (runId) {
+      activeRunIdRef.current = runId;
+      setSwarmStatusLabel('Stopping');
+      setPipelineMessage('Stopping this build safely…');
+      void api.swarm.cancelRun(runId).then((result) => {
+        if (result.cancelled || result.status === 'cancelled') {
+          toast.success('Build stopped.');
+        }
+      }).catch((error) => {
+        interruptRef.current = false;
+        toast.error((error as Error).message || 'Could not stop this build. Please try again.');
+      });
+    } else {
+      toast.error('Restoring the build connection. Try Stop again in a moment.');
+    }
     // Stop aborts the focused stream; never kill a light reply silent to a build stop preference —
     // prefer aborting heavy when active, else light.
     if (heavyBuildActiveRef.current && abortRef.current) {
