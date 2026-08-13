@@ -80,7 +80,7 @@ export default function AboutPage() {
 
               <div className="ab-portrait-wrap">
                 <Image
-                  src="/about/muhammad-ibrahim-editorial-v4.png"
+                  src="/about/muhammad-ibrahim-striped-editorial.png"
                   alt="Muhammad Ibrahim, founder and CEO of Xroga AI"
                   fill
                   priority

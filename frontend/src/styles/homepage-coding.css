@@ -918,8 +918,8 @@
   background-size: 36px 36px;
   pointer-events: none;
 }
-.xv-marketing-footer__brand-lockup { position:relative;z-index:1;display:flex;align-items:center;min-height:44px;filter:brightness(0) invert(1) drop-shadow(0 3px 12px rgba(0,0,0,.2)) }
-.xv-marketing-footer__full-logo { width:151px!important }
+.xv-marketing-footer__brand-lockup { position:relative;z-index:1;display:flex;align-items:center;min-height:58px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.22)) }
+.xv-marketing-footer__full-logo { width:220px!important;height:58px!important }
 .xv-marketing-footer__brand-card > p { position: relative; z-index: 1; margin: auto 0 1.4rem; font-size: clamp(1.35rem, 2.5vw, 2.1rem); font-weight: 740; line-height: 1.02; letter-spacing: -.045em; }
 .xv-marketing-footer__brand-card > p em { font-family: var(--font-source-serif), Georgia, serif; font-weight: 500; }
 .xv-marketing-footer__social-row { position: relative; z-index: 1; display: flex; align-items: center; gap: .5rem; }
@@ -943,8 +943,8 @@
   top: -48px;
   right: clamp(1.5rem, 6vw, 4.5rem);
   display: grid;
-  width: 104px;
-  height: 104px;
+  width: 118px;
+  height: 118px;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--accent) 55%, white);
   border-radius: 27px;
@@ -952,7 +952,7 @@
   box-shadow: 0 20px 36px color-mix(in srgb, var(--accent) 38%, transparent), inset 0 2px 0 rgba(255,255,255,.68);
   transform: rotate(-8deg);
 }
-.xv-marketing-footer__floating-mark > img { width:72%;height:72%;object-fit:contain;filter:drop-shadow(0 7px 7px rgba(0,20,80,.28)) }
+.xv-marketing-footer__floating-mark > img { width:88%;height:88%;object-fit:contain;filter:drop-shadow(0 7px 7px rgba(0,20,80,.28)) }
 .xv-marketing-footer__nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; padding-top: .25rem; }
 .xv-marketing-footer__nav section { display: grid; align-content: start; gap: .64rem; }
 .xv-marketing-footer__nav h2 { margin: 0 0 .45rem; color: var(--text-muted); font: italic 500 1rem/1 var(--font-source-serif), Georgia, serif; }
@@ -992,17 +992,19 @@
 }
 @media (max-width: 680px) {
   .xv-marketing-footer { padding-inline: .65rem; }
-  .xv-marketing-footer__stage { grid-template-columns: 1fr; gap: .65rem; padding-bottom: 7rem; }
+  .xv-marketing-footer__stage { grid-template-columns: 1fr; gap: .65rem; padding-bottom: 0; }
   .xv-marketing-footer__brand-card, .xv-marketing-footer__main-card { min-height: auto; border-radius: 20px; }
   .xv-marketing-footer__brand-card { min-height: 280px; }
-  .xv-marketing-footer__floating-mark { top: -34px; right: 1.1rem; width: 76px; height: 76px; border-radius: 21px; }
-  .xv-marketing-footer__floating-mark > img { width:68%;height:68%; }
+  .xv-marketing-footer__floating-mark { top: -42px; right: 1.1rem; width: 92px; height: 92px; border-radius: 24px; }
+  .xv-marketing-footer__floating-mark > img { width:90%;height:90%; }
   .xv-marketing-footer__main-card { padding-top: 3.8rem; }
   .xv-marketing-footer__nav { gap: .75rem; }
   .xv-marketing-footer__nav a { font-size: .76rem; }
-  .xv-marketing-footer__wordmark { left:4%;right:4%;bottom:.5rem;font-size:22vw;letter-spacing:-.055em }
+  .xv-marketing-footer__wordmark { position:relative;left:auto;right:auto;bottom:auto;z-index:2;display:block;grid-column:1;margin:.7rem auto 0;width:100%;font-size:21vw;line-height:.82;letter-spacing:-.045em;color:color-mix(in srgb,var(--text-primary) 18%,transparent);filter:drop-shadow(0 8px 16px color-mix(in srgb,var(--text-primary) 13%,transparent)) }
 }
 @media (max-width: 420px) {
+  .xv-marketing-footer__full-logo { width:190px!important;height:52px!important }
+  .xv-marketing-footer__wordmark { font-size:20vw;letter-spacing:-.035em }
   .xv-marketing-footer__nav { grid-template-columns: repeat(2, 1fr); }
   .xv-marketing-footer__subscribe form { align-items: stretch; flex-direction: column; }
   .xv-marketing-footer__subscribe button { justify-content: center; }
