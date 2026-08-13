@@ -2,267 +2,79 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import {
-  ArrowUpRight,
-  Check,
-  ChevronRight,
-  CircleDot,
-  FileCode2,
-  Folder,
-  KeyRound,
-  LockKeyhole,
-  Pause,
-  Play,
-  RotateCcw,
-  Search,
-  ShieldCheck,
-  TestTube2,
-} from 'lucide-react';
+import { Check, ChevronRight, CirclePause, CirclePlay, Code2, Eye, FileCode2, Folder, GitCommit, KeyRound, Mic, Paperclip, RefreshCw, Rocket, Send, ShieldCheck, TestTube2 } from 'lucide-react';
+import { GitHubIcon } from '@/components/icons/GitHubIcon';
 
-const ACTIVITY = [
-  { label: 'Creating authentication', state: 'done' },
-  { label: 'Setting up database', state: 'done' },
-  { label: 'Adding billing', state: 'active' },
-  { label: 'Running tests', state: 'queued' },
+const STAGES = [
+  { id: 'prompt', label: 'Prompt', detail: 'Describe the outcome' },
+  { id: 'build', label: 'Build', detail: 'Xroga executes' },
+  { id: 'validate', label: 'Validate', detail: 'Checks and repair' },
+  { id: 'github', label: 'GitHub', detail: 'Code is pushed' },
+  { id: 'preview', label: 'Preview', detail: 'Review the result' },
 ] as const;
 
-const REPOSITORY_FILES = [
-  { name: 'app', type: 'folder' },
-  { name: 'components', type: 'folder' },
-  { name: 'lib', type: 'folder' },
-  { name: 'tests', type: 'folder' },
-  { name: '.env.example', type: 'file' },
-  { name: 'README.md', type: 'file' },
-] as const;
+type Stage = (typeof STAGES)[number]['id'];
 
-const LIVE_STATES = [
-  { label: 'Research', detail: 'Reading current documentation', Icon: Search, tone: 'blue' },
-  { label: 'Iterate', detail: 'Patch prepared · Tests 14/14', Icon: TestTube2, tone: 'green' },
-  { label: 'Security', detail: 'Secrets encrypted · Customer credentials', Icon: ShieldCheck, tone: 'green' },
-  { label: 'Control', detail: 'Awaiting authorization before publish', Icon: KeyRound, tone: 'amber' },
-] as const;
+const PROMPT = 'Build a customer analytics platform with authentication, subscriptions, analytics, and admin controls.';
 
-const LOOP_PHASES = ['Understand', 'Build', 'Validate', 'Deploy', 'Observe', 'Improve'] as const;
-const TIMELINE = ['Plan', 'Build', 'Validate', 'Deploy', 'Operate', 'Evolve'] as const;
+function PromptScene({ typed }: { typed: number }) {
+  return <div className="xv-loop-chat"><header><Image src="/brand/xroga-mark.png" width={28} height={28} alt="Xroga" /><span><b>New product</b><small>Black Hole V∞</small></span></header><div className="xv-loop-chat-space"><p>{PROMPT.slice(0, typed)}<i /></p></div><footer><button type="button" aria-label="Attach files"><Paperclip /></button><button type="button">Integrations <span /></button><button type="button" aria-label="Voice input"><Mic /></button><button type="button" aria-label="Send prompt" className="is-send"><Send /></button></footer></div>;
+}
 
-function ProviderLogo({ name }: { name: 'github' | 'vercel' }) {
-  return (
-    <Image
-      src={`/brand/logos/${name}.svg`}
-      width={20}
-      height={20}
-      alt={`${name === 'github' ? 'GitHub' : 'Vercel'} logo`}
-      className={`xv-se-provider xv-se-provider--${name}`}
-    />
-  );
+function BuildScene() {
+  return <div className="xv-loop-terminal"><header><i /><i /><i /><code>xroga@swarm</code><span>~/workspace</span></header><div><p><b>you</b> {PROMPT}</p><p className="is-done">● planner: Product brief created</p><p className="is-done">● builder: Writing authentication and dashboard files</p><p>● builder: Implementing subscriptions and analytics…</p><p className="is-muted">components/Analytics.tsx · 84 lines</p><span className="xv-loop-terminal-progress"><i /></span></div></div>;
+}
+
+function ValidateScene() {
+  return <div className="xv-loop-validation"><header><ShieldCheck /><div><small>XROGA / VALIDATION</small><h3>Making “done” mean verified.</h3></div><b>3/4</b></header><ul><li className="is-done"><Code2 /><span><b>TypeScript</b><small>No type errors</small></span><Check /></li><li className="is-done"><TestTube2 /><span><b>Tests</b><small>18 tests passed</small></span><Check /></li><li className="is-done"><ShieldCheck /><span><b>Security</b><small>No exposed secrets</small></span><Check /></li><li className="is-live"><RefreshCw /><span><b>Production build</b><small>Optimizing output…</small></span><i /></li></ul></div>;
+}
+
+function GitHubScene() {
+  return <div className="xv-loop-repo"><header><Image src="/brand/logos/github.svg" width={24} height={24} alt="GitHub" /><span><b>Xroga / customer-analytics</b><small>private · main</small></span><em>CONNECTED</em></header><div className="xv-loop-repo-body"><ul>{['app','components','lib','tests'].map(file=><li key={file}><Folder /><span>{file}</span><ChevronRight /></li>)}<li><FileCode2 /><span>README.md</span><ChevronRight /></li></ul><div className="xv-loop-commit"><GitCommit /><small>XROGA-GENERATED COMMIT</small><h3>Build customer analytics platform</h3><code>f4c9e21</code><p><Check /> Pushed to your repository</p></div></div></div>;
+}
+
+function PreviewScene() {
+  return <div className="xv-loop-preview"><nav><button type="button"><Code2 /> Code</button><button type="button" className="is-active"><Eye /> Preview</button><button type="button"><Rocket /> Deploy</button></nav><div className="xv-loop-product"><aside><strong>Pulse</strong>{['Overview','Customers','Revenue','Reports'].map(x=><span key={x}>{x}</span>)}</aside><main><header><span><small>Monthly revenue</small><b>$48,290</b></span><button type="button">Export report</button></header><div className="xv-loop-chart"><i /><i /><i /><i /><i /><i /><i /></div><footer><span><b>1,842</b><small>Active customers</small></span><span><b>12.8%</b><small>Conversion</small></span><span><b>+24%</b><small>Growth</small></span></footer></main></div><p><Check /> Preview generated from verified repository state</p></div>;
 }
 
 export function HomepageShipStack() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [idea, setIdea] = useState('Build a customer analytics platform with authentication, subscriptions, analytics and admin controls.');
-  const [activeIdea, setActiveIdea] = useState('Build a customer analytics platform');
-  const [progress, setProgress] = useState(8);
-  const [isRunning, setIsRunning] = useState(false);
+  const [stageIndex, setStageIndex] = useState(0);
+  const [typed, setTyped] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const stage = STAGES[stageIndex].id as Stage;
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsActive(true);
-          setIsRunning(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.14 },
-    );
-
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setEntered(true); setPlaying(true); } }, { threshold: .32 });
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (!isRunning || !isActive || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => {
-      setProgress((current) => {
-        if (current >= 100) return 0;
-        return Math.min(100, current + 4);
-      });
-    }, 850);
-    return () => window.clearInterval(timer);
-  }, [isActive, isRunning]);
+    if (!playing || !entered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (stageIndex === 0 && typed < PROMPT.length) {
+      const typing = window.setTimeout(() => setTyped(value => Math.min(PROMPT.length, value + 2)), 34);
+      return () => window.clearTimeout(typing);
+    }
+    const timer = window.setTimeout(() => setStageIndex(value => (value + 1) % STAGES.length), stageIndex === 0 ? 1100 : 3600);
+    return () => window.clearTimeout(timer);
+  }, [entered, playing, stageIndex, typed]);
 
-  const activeTask = Math.min(Math.floor(progress / 25), ACTIVITY.length - 1);
-  const activePhase = Math.min(Math.floor(progress / 17), TIMELINE.length - 1);
-  const complete = progress >= 100;
-  const liveDetails = [
-    progress > 20 ? 'Current documentation indexed' : 'Reading current documentation',
-    progress > 68 ? 'Patch prepared · Tests 14/14' : 'Preparing focused repository patch',
-    progress > 82 ? 'Secrets checked · Policy passed' : 'Scanning permissions and credentials',
-    complete ? 'Publish evidence confirmed' : 'Authorization remains with the customer',
-  ];
+  const selectStage = (index: number) => { setStageIndex(index); if (index === 0) setTyped(PROMPT.length); };
+  const replay = () => { setStageIndex(0); setTyped(0); setPlaying(true); };
 
-  const startBuild = () => {
-    const cleanIdea = idea.trim();
-    if (!cleanIdea) return;
-    setActiveIdea(cleanIdea.replace(/[.!?]+$/, ''));
-    setProgress(4);
-    setIsRunning(true);
-  };
-
-  const resetBuild = () => {
-    setProgress(0);
-    setIsRunning(false);
-  };
-
-  return (
-    <section
-      ref={sectionRef}
-      className={`xv-se-section${isActive ? ' is-active' : ''}`}
-      aria-labelledby="ship-heading"
-    >
-      <div className="xv-se-grid" aria-hidden="true" />
-      <div className="xv-se-inner">
-        <div className="xv-se-topline">
-          <p className="xv-se-kicker"><i /> SHIP STACK</p>
-          <span className="xv-se-loop-note"><i /> 6 steps. One loop. You own it.</span>
-        </div>
-
-        <header className="xv-se-heading">
-          <h2 id="ship-heading">
-            From prompt to <span><em>production</em> ownership<i>.</i></span>
-          </h2>
-          <p>
-            Xroga helps you own the code and where it runs. We wire your GitHub, deploy on Vercel,
-            and keep everything continuously updated — in your control.
-          </p>
-        </header>
-
-        <div className="xv-se-system" aria-label="The Xroga ownership engine connected product loop">
-          <svg className="xv-se-connections" viewBox="0 0 1200 850" preserveAspectRatio="none" aria-hidden="true">
-            <path className="xv-se-path" d="M288 164 H374" />
-            <path className="xv-se-path" d="M610 326 V370 C610 398 560 408 510 418 L385 450" />
-            <path className="xv-se-path" d="M390 555 H486" />
-            <path className="xv-se-path" d="M755 560 H898" />
-            <path className="xv-se-path" d="M1012 658 V724 H943" />
-            <path className="xv-se-path xv-se-path--loop" d="M958 769 H1123 V246 C1123 190 1076 161 1017 161 H827" />
-            <circle className="xv-se-signal xv-se-signal--one" r="4" cx="0" cy="0" />
-            <circle className="xv-se-signal xv-se-signal--two" r="4" cx="0" cy="0" />
-          </svg>
-
-          <form className="xv-se-prompt" onSubmit={(event) => { event.preventDefault(); startBuild(); }} aria-label="Interactive Xroga product-loop demo">
-            <div className="xv-se-surface-label"><CircleDot /> IDEA INPUT <span>01</span></div>
-            <label htmlFor="xroga-engine-prompt">What should Xroga build?</label>
-            <textarea id="xroga-engine-prompt" className="xv-se-prompt-copy" value={idea} onChange={(event) => setIdea(event.target.value)} rows={4} />
-            <div className="xv-se-prompt-foot">
-              <span><i /> {isRunning ? 'Loop running' : complete ? 'Build ready' : 'Idea captured'}</span>
-              <span className="xv-se-demo-controls">
-                <button type="button" onClick={() => setIsRunning((value) => !value)} aria-label={isRunning ? 'Pause product-loop demo' : 'Resume product-loop demo'}>{isRunning ? <Pause /> : <Play />}</button>
-                <button type="button" onClick={resetBuild} aria-label="Reset product-loop demo"><RotateCcw /></button>
-                <button type="submit" aria-label="Run product-loop demo">Build <ChevronRight /></button>
-              </span>
-            </div>
-          </form>
-
-          <article className="xv-se-engine" aria-label="Xroga Engine building a customer analytics platform">
-            <header>
-              <span className="xv-se-engine-brand">
-                <Image src="/brand/xroga-mark.png" width={32} height={32} alt="Xroga" />
-                <span><b>XROGA ENGINE</b><small>CONNECTED PRODUCT LOOP</small></span>
-              </span>
-              <span className={`xv-se-engine-status${complete ? ' is-ready' : ''}`}><i /> <b>{complete ? 'READY' : isRunning ? 'BUILDING' : 'PAUSED'}</b></span>
-            </header>
-            <div className="xv-se-engine-task">
-              <small>CURRENT TASK</small>
-              <h3>{activeIdea}</h3>
-              <span>Runtime 06 · Interactive customer-owned workspace demo</span>
-            </div>
-            <ol className="xv-se-activity">
-              {ACTIVITY.map((item, index) => {
-                const state = complete || index < activeTask ? 'done' : index === activeTask ? 'active' : 'queued';
-                return (
-                <li key={item.label} className={`is-${state}`}>
-                  <span>{state === 'done' ? <Check /> : index + 1}</span>
-                  <b>{item.label}</b>
-                  <small>{state === 'done' ? 'Complete' : state === 'active' ? (isRunning ? 'In progress' : 'Paused') : 'Queued'}</small>
-                </li>
-              )})}
-            </ol>
-            <footer>
-              <span className="xv-se-stream"><i /><i /><i /><i /><i /><i /><i /></span>
-              <span className="xv-se-engine-phase"><b>{complete ? 'VERIFIED' : progress > 64 ? 'VALIDATING' : 'IMPLEMENTING'}</b><small>policy · tests · ownership</small></span>
-              <strong>{progress}%</strong>
-            </footer>
-          </article>
-
-          <article className="xv-se-repo" aria-label="Customer-owned GitHub repository">
-            <header>
-              <span><ProviderLogo name="github" /><b>github / xroga / client-product</b></span>
-              <small>PRIVATE <LockKeyhole /></small>
-            </header>
-            <div className="xv-se-repo-state"><i /><span><b>GITHUB CONNECTED</b><small>{progress > 72 ? 'Changes synchronized to customer repo' : 'Repository belongs to customer'}</small></span><Check /></div>
-            <ul>
-              {REPOSITORY_FILES.map((file) => (
-                <li key={file.name}>
-                  {file.type === 'folder' ? <Folder /> : <FileCode2 />}
-                  <span>{file.name}</span><ChevronRight />
-                </li>
-              ))}
-            </ul>
-            <footer>
-              <Image src="/brand/xroga-mark.png" width={18} height={18} alt="" />
-              <span><b>Xroga AI</b><small>initial production build</small></span>
-              <code>{progress > 72 ? 'f4c9e21' : 'a1b2c3d'}</code>
-            </footer>
-          </article>
-
-          <div className="xv-se-live" aria-label="Live build, research, security, and control states">
-            <div className="xv-se-live-head"><span>LIVE SYSTEM STATES</span><small>04 · 05 · 06</small></div>
-            {LIVE_STATES.map(({ label, Icon, tone }, index) => (
-              <div key={label} className={`xv-se-live-row is-${tone}${index === Math.min(activePhase, LIVE_STATES.length - 1) ? ' is-current' : ''}`}>
-                <Icon /><span><b>{label}</b><small>{liveDetails[index]}</small></span><i />
-              </div>
-            ))}
-          </div>
-
-          <article className="xv-se-deploy" aria-label="Vercel production deployment">
-            <header><span><ProviderLogo name="vercel" /><b>VERCEL</b></span><small><i /> {complete ? 'PRODUCTION' : 'PREVIEW'}</small></header>
-            <div className="xv-se-deploy-title"><small>Deployment</small><h3>{complete ? 'Production' : 'Preview build'}</h3><span><i /> {complete ? 'Ready' : `${progress}% prepared`}</span></div>
-            <dl>
-              <div><dt>URL</dt><dd>client-product.vercel.app</dd></div>
-              <div><dt>Commit</dt><dd><code>{progress > 72 ? 'f4c9e21' : 'pending'}</code></dd></div>
-              <div><dt>Domain</dt><dd>example.com</dd></div>
-            </dl>
-            <a href="/workspace">Open Xroga Workspace <ArrowUpRight /></a>
-          </article>
-
-          <div className="xv-se-loop-legend" aria-label="Continuous product loop phases">
-            <span>CONTINUOUS PRODUCT LOOP</span>
-            <ol>
-              {LOOP_PHASES.map((phase, index) => <li key={phase} className={index === activePhase ? 'is-active' : undefined}>{phase}</li>)}
-            </ol>
-          </div>
-
-          <footer className="xv-se-ownership">
-            <div className="xv-se-ownership-title"><small>OWNERSHIP CONFIRMED</small><h3>YOU OWN THE PRODUCT.</h3></div>
-            <dl>
-              <div><dt>Your code</dt><dd>GitHub repository</dd></div>
-              <div><dt>Your deploy</dt><dd>Vercel + your domain</dd></div>
-              <div><dt>Your data</dt><dd>Secrets and infrastructure</dd></div>
-            </dl>
-            <p><Image src="/brand/xroga-mark.png" width={24} height={24} alt="Xroga" /> <span><b>Xroga ships it.</b> You own it.</span></p>
-          </footer>
-        </div>
-
-        <nav className="xv-se-timeline" aria-label="Product lifecycle timeline">
-          {TIMELINE.map((phase, index) => (
-            <span key={phase} className={index === activePhase ? 'is-active' : ''}><i>{String(index + 1).padStart(2, '0')}</i>{phase}</span>
-          ))}
-        </nav>
+  return <section ref={sectionRef} className="xv-real-loop" id="ship-loop" aria-labelledby="ship-heading">
+    <div className="xv-real-loop__inner">
+      <header className="xv-real-loop__heading"><p><i /> THE XROGA SHIP LOOP</p><h2 id="ship-heading">From prompt to <em>ownership.</em></h2><span>Watch one product move through the same visible states: describe, build, verify, push, and preview.</span></header>
+      <div className="xv-real-loop__stage" aria-live="polite">
+        <div className="xv-real-loop__stagebar"><span><Image src="/brand/xroga-mark.png" width={26} height={26} alt="" /><b>{STAGES[stageIndex].label}</b><small>{STAGES[stageIndex].detail}</small></span><div><button type="button" onClick={()=>setPlaying(value=>!value)} aria-label={playing?'Pause animation':'Play animation'}>{playing?<CirclePause />:<CirclePlay />}</button><button type="button" onClick={replay} aria-label="Replay animation"><RefreshCw /></button></div></div>
+        <div className={`xv-real-loop__scene is-${stage}`} key={stage}>{stage==='prompt'&&<PromptScene typed={typed}/>} {stage==='build'&&<BuildScene/>} {stage==='validate'&&<ValidateScene/>} {stage==='github'&&<GitHubScene/>} {stage==='preview'&&<PreviewScene/>}</div>
       </div>
-    </section>
-  );
+      <nav className="xv-real-loop__rail" aria-label="Build animation stages">{STAGES.map((item,index)=><button key={item.id} type="button" onClick={()=>selectStage(index)} className={index===stageIndex?'is-active':index<stageIndex?'is-done':''}><i>{index<stageIndex?<Check />:String(index+1).padStart(2,'0')}</i><span><b>{item.label}</b><small>{item.detail}</small></span></button>)}</nav>
+      <footer className="xv-real-loop__ownership"><span><GitHubIcon /> Your repository</span><span><KeyRound /> Your credentials</span><span><Rocket /> Your deployment</span><b>You own the product.</b></footer>
+    </div>
+  </section>;
 }
