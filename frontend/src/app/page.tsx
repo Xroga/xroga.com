@@ -16,7 +16,7 @@ import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
-import { LayoutDashboard } from 'lucide-react';
+import { ArrowRight, LayoutDashboard } from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
@@ -221,21 +221,15 @@ export default function HomePage() {
 
       <section className="xv-hc-mid-cta" aria-label="Start building">
         <div className="xv-hc-mid-cta-inner">
-          <h2 className="xv-hc-section-title">Ready when you are.</h2>
-          <p className="xv-hc-section-copy">
-            Start from a prompt. Own the repo. Ship on your domain.
-          </p>
-          <div className="xv-hc-ctas">
-            <button
-              type="button"
-              onClick={() => router.push(primaryHref)}
-              className="xv-hc-btn-primary"
-            >
-              {primaryLabel}
-            </button>
-            <Link href="/contact" className="xv-hc-btn-ghost">
-              Contact
-            </Link>
+          <div className="xv-hc-mid-cta-mark" aria-hidden="true"><Logo href={null} variant="sidebar" height={42} /></div>
+          <div className="xv-hc-mid-cta-copy">
+            <span>YOUR NEXT PRODUCT STARTS HERE</span>
+            <h2>Ready when <em>you are.</em></h2>
+            <p>Start from a prompt. Own the repo. Ship on your domain.</p>
+          </div>
+          <div className="xv-hc-mid-cta-actions">
+            <button type="button" onClick={() => router.push(primaryHref)}>{primaryLabel} <ArrowRight aria-hidden="true" /></button>
+            <Link href="/contact">Contact</Link>
           </div>
         </div>
       </section>
