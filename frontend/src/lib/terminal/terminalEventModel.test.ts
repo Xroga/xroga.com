@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { EMPTY_RUN_STATE, type TerminalEvent } from './terminalEvent';
 import { adaptTerminalEvent } from './terminalEventAdapter';
 import { terminalRunReducer } from './terminalRunReducer';
-import { containsSecret, redactTerminalText } from './terminalRedaction';
+import { containsSecret, neutralizeProviderIdentity, redactTerminalText } from './terminalRedaction';
 
 const CTX = { fromSeq: 0, now: 1_000 };
 
@@ -184,6 +184,14 @@ test('ordinary output is left untouched', () => {
     '42 tests passed in 3.1s',
   ]) {
     assert.equal(redactTerminalText(line), line);
+  }
+});
+
+test('public terminal text uses only the Black Hole identity for upstream models', () => {
+  for (const name of ['Kimi K3', 'DeepSeek V3', 'Gemini 2.5', 'Claude 4', 'GPT-5', 'OpenRouter']) {
+    const output = neutralizeProviderIdentity(`Waiting for ${name} to finish the task`);
+    assert.doesNotMatch(output, new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+    assert.match(output, /Black Hole ∞/);
   }
 });
 

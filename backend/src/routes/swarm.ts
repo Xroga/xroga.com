@@ -8,6 +8,7 @@ import { bindBuildStreamDisconnect } from '../lib/buildStreamLifecycle.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
 import { notifyBuildComplete, notifyBuildFailed } from '../services/notificationService.js';
 import { isValidClientRunId } from '../lib/clientRunId.js';
+import { publicAiPayload, publicAiText } from '../lib/publicAiIdentity.js';
 import {
   failRun,
   getRun,
@@ -66,17 +67,17 @@ router.post('/execute', async (req: AuthRequest, res) => {
         attachments,
       });
       const { route: _internalRoute, ...publicResult } = result;
-      return res.json(publicResult);
+      return res.json(publicAiPayload(publicResult));
     } catch (err) {
       const e = err as Error & { code?: string };
       if (e.code === 'OUT_OF_TOKENS' || e.code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE') {
         return res.status(402).json({
-          error: e.message,
+          error: publicAiText(e.message),
           code: 'OUT_OF_ACTIONS',
           paymentLink: '/pricing',
         });
       }
-      return res.status(500).json({ error: e.message || 'Build failed' });
+      return res.status(500).json({ error: publicAiText(e.message || 'Build failed') });
     }
   }
 
@@ -145,12 +146,12 @@ router.post('/execute', async (req: AuthRequest, res) => {
         if (streamConnected && !res.writableEnded) {
           sendSSE(res, {
             event: 'progress',
-            data: { ...event, ...(recorded ? { sequence: recorded.sequence } : {}) },
+            data: publicAiPayload({ ...event, ...(recorded ? { sequence: recorded.sequence } : {}) }),
           });
         }
       },
       onDelta: (delta) => {
-        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'delta', data: { delta } });
+        if (streamConnected && !res.writableEnded) sendSSE(res, { event: 'delta', data: { delta: publicAiText(delta) } });
       },
       onCodeReady: (output) => {
         if (streamConnected && !res.writableEnded) {
@@ -159,7 +160,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
             data: {
               success: true,
               shipPending: true,
-              output: slimOutputForSse(output),
+              output: publicAiPayload(slimOutputForSse(output)),
             },
           });
         }
@@ -220,7 +221,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
           runId: result.runId,
           success: result.success,
           featureCategory: result.featureCategory,
-          output: slimOutputForSse(output),
+          output: publicAiPayload(slimOutputForSse(output)),
           tokenUsage: result.tokenUsage,
           followUps: result.followUps,
         },
@@ -263,7 +264,7 @@ router.post('/execute', async (req: AuthRequest, res) => {
       sendSSE(res, {
         event: 'error',
         data: {
-          error: e.message || 'Build failed',
+          error: publicAiText(e.message || 'Build failed'),
           code,
           nextUnlockAt,
           paymentLink: code === 'OUT_OF_ACTIONS' || code === 'MODEL_CAP_REACHED' ? '/pricing' : undefined,
@@ -319,14 +320,14 @@ router.get('/runs/:runId', async (req: AuthRequest, res) => {
     id: run.id,
     prompt: run.prompt,
     status: run.status,
-    output: run.output,
+    output: publicAiPayload(run.output),
     featureCategory: run.featureCategory,
     tokenUsage: run.tokenUsage,
     created_at: run.created_at,
     completed_at: run.completed_at,
     iteration_count: run.iteration_count,
-    messages: run.messages ?? [],
-    events: run.events.filter((event) => event.sequence > afterSequence),
+    messages: publicAiPayload(run.messages ?? []),
+    events: publicAiPayload(run.events.filter((event) => event.sequence > afterSequence)),
     lastSequence: run.lastSequence,
   });
 });

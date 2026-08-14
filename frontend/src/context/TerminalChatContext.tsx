@@ -2766,8 +2766,7 @@ export function TerminalChatProvider({
                   };
                   if (o.type === 'image' && o.imageUrl) {
                     const alt = (o.prompt ?? 'Generated image').slice(0, 80);
-                    const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
-                    return `![${alt}](${o.imageUrl})${provider}`;
+                    return `![${alt}](${o.imageUrl})`;
                   }
                   return null;
                 })()

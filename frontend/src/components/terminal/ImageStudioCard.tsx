@@ -227,9 +227,9 @@ export function ImageStudioCard({
   const previewSrc = activeVariant?.imageUrl ?? defaultSrc;
 
   const activeIndex = Math.max(0, visibleVariants.findIndex((v) => v.imageUrl === activeUrl));
-  const carouselSlides = visibleVariants.map((v) => ({
+  const carouselSlides = visibleVariants.map((v, index) => ({
     imageUrl: v.imageUrl,
-    label: v.variantLabel ?? v.provider,
+    label: `Variant ${index + 1}`,
   }));
 
   const gridVariants = useMemo(
