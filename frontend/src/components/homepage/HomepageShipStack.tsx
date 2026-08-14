@@ -72,8 +72,8 @@ export function HomepageShipStack() {
       <div className="xv-real-loop__stage" aria-live="polite">
         <div className="xv-real-loop__stagebar"><span><Image src="/brand/xroga-mark.png" width={26} height={26} alt="" /><b>{STAGES[stageIndex].label}</b><small>{STAGES[stageIndex].detail}</small></span><div><button type="button" onClick={()=>setPlaying(value=>!value)} aria-label={playing?'Pause animation':'Play animation'}>{playing?<CirclePause />:<CirclePlay />}</button><button type="button" onClick={replay} aria-label="Replay animation"><RefreshCw /></button></div></div>
         <div className={`xv-real-loop__scene is-${stage}`} key={stage}>{stage==='prompt'&&<PromptScene typed={typed}/>} {stage==='build'&&<BuildScene/>} {stage==='validate'&&<ValidateScene/>} {stage==='github'&&<GitHubScene/>} {stage==='preview'&&<PreviewScene/>}</div>
+        <nav className="xv-real-loop__rail" aria-label="Build animation stages">{STAGES.map((item,index)=><button key={item.id} type="button" onClick={()=>selectStage(index)} className={index===stageIndex?'is-active':index<stageIndex?'is-done':''}><i>{index<stageIndex?<Check />:String(index+1).padStart(2,'0')}</i><span><b>{item.label}</b><small>{item.detail}</small></span></button>)}</nav>
       </div>
-      <nav className="xv-real-loop__rail" aria-label="Build animation stages">{STAGES.map((item,index)=><button key={item.id} type="button" onClick={()=>selectStage(index)} className={index===stageIndex?'is-active':index<stageIndex?'is-done':''}><i>{index<stageIndex?<Check />:String(index+1).padStart(2,'0')}</i><span><b>{item.label}</b><small>{item.detail}</small></span></button>)}</nav>
       <footer className="xv-real-loop__ownership"><span><GitHubIcon /> Your repository</span><span><KeyRound /> Your credentials</span><span><Rocket /> Your deployment</span><b>You own the product.</b></footer>
     </div>
   </section>;
