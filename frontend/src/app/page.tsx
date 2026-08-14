@@ -20,7 +20,7 @@ import { ArrowRight, LayoutDashboard } from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
-import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
+import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 
 const HERO_BUILD_WORDS = [
   'Websites',
@@ -194,6 +194,7 @@ export default function HomePage() {
           <div className="xv-hc-mid-cta-copy">
             <h2>Build what belongs<br /><em>to you.</em></h2>
           </div>
+          <HomepageIntegrationOrbit loggedIn={loggedIn} />
           <div className="xv-hc-mid-cta-actions">
             <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
           </div>

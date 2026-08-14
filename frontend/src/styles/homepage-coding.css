@@ -5849,3 +5849,66 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2 em{color:#fff!i
   .xv-home-coding .xv-er-stage::before,
   .xv-home-coding .xv-hc-mid-cta-actions button{animation:none!important}
 }
+
+/* Compact community frame and one ownership card shared with the integration orbit. */
+.xv-home-coding .xv-hc-community{
+  width:min(1180px,calc(100% - clamp(1.5rem,6vw,6rem)));
+  min-height:clamp(440px,48vw,610px);
+  margin:clamp(2rem,5vw,4rem) auto;
+  padding:clamp(1.5rem,4vw,3rem);
+  border-radius:clamp(20px,2.5vw,32px);
+  background-position:center 48%;
+}
+.xv-home-coding .xv-hc-community .xv-hc-section-inner{width:min(720px,100%)}
+.xv-home-coding .xv-hc-community .xv-hc-section-title{font-size:clamp(2.35rem,5.3vw,4.85rem)}
+
+.xv-home-coding .xv-hc-mid-cta{padding-inline:clamp(.75rem,4vw,3rem)}
+.xv-home-coding .xv-hc-mid-cta-inner{
+  grid-template-columns:minmax(0,1fr) 290px;
+  grid-template-rows:auto auto;
+  grid-template-areas:"copy orbit" "copy actions";
+  align-items:center;
+  column-gap:clamp(1.5rem,4vw,4rem);
+  row-gap:.3rem;
+  width:min(1180px,100%);
+  max-width:1180px;
+  min-height:360px;
+  padding:clamp(2rem,5vw,4rem);
+}
+.xv-home-coding .xv-hc-mid-cta-copy{grid-area:copy}
+body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
+  margin:0;
+  font-family:var(--hc-font-serif);
+  font-size:clamp(3.5rem,7vw,6.5rem);
+  font-weight:480;
+  line-height:.82;
+  letter-spacing:-.065em;
+}
+.xv-home-coding .xv-hc-mid-cta-inner>.xv-connection-dock{
+  grid-area:orbit;
+  width:290px;
+  margin:0;
+  padding:0;
+  align-self:end;
+  justify-self:center;
+}
+.xv-home-coding .xv-hc-mid-cta-inner .xv-connection-dock__orbit{width:250px;height:170px;transform:scale(.86)}
+.xv-home-coding .xv-hc-mid-cta-actions{grid-area:actions;align-self:start;justify-self:stretch;width:100%;min-width:0}
+.xv-home-coding .xv-hc-mid-cta-actions button{min-width:0;box-sizing:border-box}
+
+@media(max-width:700px){
+  .xv-home-coding .xv-hc-community{width:calc(100% - 1rem);min-height:480px;margin:1.5rem auto;padding:1rem;background-position:54% center}
+  .xv-home-coding .xv-hc-community .xv-hc-section-title{font-size:clamp(2.15rem,12vw,3.65rem)}
+  .xv-home-coding .xv-hc-mid-cta-inner{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    grid-template-areas:"copy" "orbit" "actions";
+    min-height:0;
+    padding:2rem 1.1rem;
+    text-align:center;
+  }
+  .xv-home-coding .xv-hc-mid-cta-inner>.xv-connection-dock{width:100%;align-self:center}
+  .xv-home-coding .xv-hc-mid-cta-inner .xv-connection-dock__orbit{transform:scale(.78)}
+  .xv-home-coding .xv-hc-mid-cta-actions{width:min(280px,100%);justify-self:center}
+  body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{font-size:clamp(3rem,16vw,4.8rem)}
+}

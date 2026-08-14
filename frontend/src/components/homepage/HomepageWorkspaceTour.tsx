@@ -138,6 +138,20 @@ function WorkspaceDock({ active, onChange }: { active: DockTab; onChange: (tab: 
   );
 }
 
+export function HomepageIntegrationOrbit({ loggedIn }: { loggedIn: boolean }) {
+  return (
+    <div className="xv-connection-dock" aria-label="Xroga integrations">
+      <div className="xv-connection-dock__orbit">
+        <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-mark-192.png" alt="Xroga" width={74} height={74} /></Link>
+        {CONNECTIONS.map((item, index) => {
+          const logo = item.id === 'byok' ? null : getIntegrationLogo(item.id, item.name);
+          return <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{logo ? <Image src={logo} alt={`${item.name} logo`} width={27} height={27} unoptimized /> : <KeyRound aria-label="Bring your own API key" />}{item.tone === 'soon' ? <small>Soon</small> : null}</div>;
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
   const [active, setActive] = useState<TourTab>('workspace');
   const [dockTab, setDockTab] = useState<DockTab>('Preview');
@@ -189,15 +203,6 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
       </div>
 
       <div className="xv-wt-dots" aria-label="Workspace panel shortcuts">{DOCK_TABS.map((tab) => <button key={tab} type="button" aria-label={`Show ${tab}`} className={dockTab === tab ? 'is-active' : ''} onClick={() => setDockTab(tab)} />)}</div>
-      <div className="xv-connection-dock" aria-label="Xroga integrations">
-        <div className="xv-connection-dock__orbit">
-          <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-mark-192.png" alt="Xroga" width={74} height={74} /></Link>
-          {CONNECTIONS.map((item, index) => {
-            const logo = item.id === 'byok' ? null : getIntegrationLogo(item.id, item.name);
-            return <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{logo ? <Image src={logo} alt={`${item.name} logo`} width={27} height={27} unoptimized /> : <KeyRound aria-label="Bring your own API key" />}{item.tone === 'soon' ? <small>Soon</small> : null}</div>;
-          })}
-        </div>
-      </div>
     </section>
   );
 }
