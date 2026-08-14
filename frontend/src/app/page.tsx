@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
@@ -16,7 +16,18 @@ import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
-import { ArrowRight, LayoutDashboard } from 'lucide-react';
+import {
+  ArrowRight,
+  Bug,
+  Gauge,
+  Globe2,
+  LayoutDashboard,
+  LayoutTemplate,
+  MonitorCog,
+  PanelsTopLeft,
+  Puzzle,
+  Smartphone,
+} from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
@@ -24,17 +35,16 @@ import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/ho
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 
 const HERO_BUILD_WORDS = [
-  'Websites',
-  'SaaS apps',
-  'Chrome extensions',
-  'Desktop software',
-  'Android apps',
-  'iOS apps',
-  'Mobile apps',
-  'Debug errors',
-  'Landing pages',
-  'Dashboards',
-  'Your stack',
+  { label: 'Websites', icon: Globe2, start: '#2f8cff', end: '#65e7ff' },
+  { label: 'SaaS apps', icon: PanelsTopLeft, start: '#7657ff', end: '#d98cff' },
+  { label: 'Chrome extensions', icon: Puzzle, start: '#18a8ff', end: '#6f7cff' },
+  { label: 'Desktop software', icon: MonitorCog, start: '#367cff', end: '#73f1d0' },
+  { label: 'Android apps', icon: Smartphone, start: '#17bd8d', end: '#9ee65d' },
+  { label: 'iOS apps', icon: Smartphone, start: '#7188ff', end: '#d8e4ff' },
+  { label: 'Mobile apps', icon: Smartphone, start: '#ff6fcf', end: '#7a8cff' },
+  { label: 'Debug errors', icon: Bug, start: '#ff766f', end: '#ffbe55' },
+  { label: 'Landing pages', icon: LayoutTemplate, start: '#1da5ff', end: '#b5e8ff' },
+  { label: 'Dashboards', icon: Gauge, start: '#31b8ff', end: '#72f2b7' },
 ] as const;
 
 export default function HomePage() {
@@ -81,6 +91,8 @@ export default function HomePage() {
   }, []);
 
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
+  const activeBuildWord = HERO_BUILD_WORDS[buildWordIdx];
+  const ActiveBuildIcon = activeBuildWord.icon;
 
   return (
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
@@ -135,8 +147,17 @@ export default function HomePage() {
               AI That <span className="xv-hc-headline-em">Builds & Ships</span>
             </p>
             <p className="xv-hc-headline-rotator" aria-live="polite">
-              <span key={HERO_BUILD_WORDS[buildWordIdx]} className="xv-hc-headline-word">
-                {HERO_BUILD_WORDS[buildWordIdx]}
+              <span
+                key={activeBuildWord.label}
+                className="xv-hc-headline-word"
+                style={{
+                  '--hero-word-start': activeBuildWord.start,
+                  '--hero-word-end': activeBuildWord.end,
+                } as CSSProperties}
+              >
+                <span className="xv-hc-headline-word__icon" aria-hidden="true"><ActiveBuildIcon /></span>
+                <span className="xv-hc-headline-word__label">{activeBuildWord.label}</span>
+                <i aria-hidden="true" />
               </span>
             </p>
           </div>
