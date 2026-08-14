@@ -147,17 +147,17 @@ export function HomepageEnterpriseProof() {
           </div>
 
           <InfinitySystem />
-        </div>
 
-        <ol className="xv-er-capabilities">
-          {CAPABILITIES.map(({ Icon, code, title, body }) => (
-            <li key={title}>
-              <span className="xv-er-cap-icon"><Icon aria-hidden="true" /></span>
-              <div><small>{code}</small><h3>{title}</h3><p>{body}</p></div>
-              <ArrowUpRight className="xv-er-cap-arrow" aria-hidden="true" />
-            </li>
-          ))}
-        </ol>
+          <ol className="xv-er-capabilities" aria-label="Xroga execution capabilities">
+            {CAPABILITIES.map(({ Icon, code, title, body }) => (
+              <li key={title}>
+                <span className="xv-er-cap-icon"><Icon aria-hidden="true" /></span>
+                <div><small>{code}</small><h3>{title}</h3><p>{body}</p></div>
+                <ArrowUpRight className="xv-er-cap-arrow" aria-hidden="true" />
+              </li>
+            ))}
+          </ol>
+        </div>
 
         <TechnologyMarquee />
       </div>
