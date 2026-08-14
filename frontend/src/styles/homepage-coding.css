@@ -5500,3 +5500,29 @@ body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
 @keyframes xv-free-cta-pulse{50%{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,255,255,.22)}}@keyframes xv-free-cta-shine{0%,55%{left:-35%}100%{left:125%}}
 @media(max-width:700px){.xv-home-coding .xv-hc-community{width:calc(100% - 1.1rem);min-height:620px;padding:1rem;border-radius:22px;background-position:52% center}.xv-home-coding .xv-hc-community .xv-hc-section-inner{padding:1.25rem;border-radius:18px}.xv-home-coding .xv-hc-mid-cta-inner{min-height:330px;grid-template-columns:1fr;align-items:center;text-align:center}.xv-home-coding .xv-hc-mid-cta-actions{grid-column:1;width:100%;grid-template-columns:1fr}.xv-home-coding .xv-hc-mid-cta-actions button{min-width:0}}
 @media(prefers-reduced-motion:reduce){.xv-home-coding .xv-hc-mid-cta-actions button,.xv-home-coding .xv-hc-mid-cta-actions button::before{animation:none!important}}
+
+/* Preview imagery, compact workspace mobile layout, and fully visible footer branding. */
+.xv-home-coding .xv-wt-preview-canvas{position:relative;min-height:390px;display:block;overflow:hidden;background:#090d14}
+.xv-home-coding .xv-wt-preview-image{object-fit:cover;object-position:top center;filter:saturate(.92) contrast(1.04)}
+.xv-home-coding .xv-wt-preview-canvas::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 58%,rgba(1,5,12,.92));pointer-events:none}
+.xv-home-coding .xv-wt-preview-caption{position:absolute;z-index:2;left:1rem;right:1rem;bottom:1rem;display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border:1px solid rgba(255,255,255,.15);border-radius:13px;background:rgba(3,8,17,.72);color:#fff;text-align:left;backdrop-filter:blur(14px)}
+.xv-home-coding .xv-wt-preview-canvas>.xv-wt-preview-caption{width:auto!important}
+.xv-home-coding .xv-wt-preview-caption>div:first-child{width:38px!important;flex:none}.xv-home-coding .xv-wt-preview-caption>div:last-child{display:grid;gap:.15rem}.xv-home-coding .xv-wt-preview-caption p{margin:0;color:#b6becb;font-size:.65rem}
+.xv-marketing-footer__floating-mark{top:14px;right:14px;width:92px;height:92px;border-radius:23px;transform:rotate(-6deg)}
+.xv-marketing-footer__main-card{overflow:hidden}
+.xv-marketing-footer__wordmark{color:color-mix(in srgb,var(--text-primary) 24%,transparent);letter-spacing:-.055em}
+@media(max-width:480px){
+  .xv-home-coding .xv-wt-window{width:100%;min-height:auto}
+  .xv-home-coding .xv-wt-main>header{min-height:52px;padding:.45rem .6rem;gap:.35rem}
+  .xv-home-coding .xv-wt-main>header>button{min-height:34px;padding:0 .55rem;font-size:.6rem}
+  .xv-home-coding .xv-wt-canvas{min-height:350px;padding:.55rem}
+  .xv-home-coding .xv-wt-workspace-view{gap:.65rem}
+  .xv-home-coding .xv-wt-greeting>b{margin-top:.35rem}.xv-home-coding .xv-wt-workspace-view>p{font-size:.9rem}
+  .xv-home-coding .xv-wt-workspace-view>.xv-wt-terminal{min-height:205px}.xv-home-coding .xv-wt-workspace-view .xv-wt-terminal-body{min-height:160px;padding:.85rem .65rem}
+  .xv-home-coding .xv-wt-terminal-bar{gap:.3rem;padding:.65rem .55rem}.xv-home-coding .xv-wt-terminal-bar button{padding:.28rem .35rem;font-size:.48rem}
+  .xv-home-coding .xv-wt-composer{padding:.45rem}.xv-home-coding .xv-wt-composer .xv-hc-prompt-shell{padding:.55rem;border-radius:14px}.xv-home-coding .xv-wt-composer .xv-hc-prompt-input{min-height:2.2rem;max-height:4rem;font-size:.72rem}.xv-home-coding .xv-wt-composer .xv-hc-prompt-typewriter{font-size:.7rem}.xv-home-coding .xv-wt-composer .xv-hc-prompt-footer{margin-top:.35rem;padding-top:.4rem}
+  .xv-home-coding .xv-wt-preview-canvas{min-height:300px}.xv-home-coding .xv-wt-preview-caption{left:.55rem;right:.55rem;bottom:.55rem}
+  .xv-marketing-footer__floating-mark{top:12px;right:12px;width:70px;height:70px;border-radius:19px}
+  .xv-marketing-footer__main-card{padding-top:5.7rem}
+  .xv-marketing-footer__wordmark{width:calc(100% - .4rem);padding:0;margin:.9rem .2rem 0;font-size:16.5vw;line-height:1;letter-spacing:-.035em;overflow:visible;color:color-mix(in srgb,var(--text-primary) 28%,transparent)}
+}
