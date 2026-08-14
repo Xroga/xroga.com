@@ -146,6 +146,8 @@ test('a heartbeat reaches the terminal with its elapsed time intact', () => {
   );
   assert.equal(rows.length, 1);
   assert.match(rows[0].text, /1m 1s/);
+  assert.doesNotMatch(rows[0].text, /Kimi/i);
+  assert.match(rows[0].text, /Black Hole ∞/);
 });
 
 test('keepalives still produce nothing — the fix must not resurrect fake activity', () => {

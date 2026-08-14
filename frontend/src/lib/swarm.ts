@@ -27,8 +27,7 @@ export function swarmOutputToText(output: unknown): string {
   }
   if (o.type === 'image' && o.imageUrl) {
     const alt = (o.prompt ?? 'Generated image').slice(0, 80);
-    const provider = o.provider ? `\n\n*Generated via ${o.provider}*` : '';
-    return `![${alt}](${o.imageUrl})${provider}`;
+    return `![${alt}](${o.imageUrl})`;
   }
   if (o.type === 'video_studio' && o.streamingUrl) {
     const title = (o as { title?: string }).title ?? 'Your video';

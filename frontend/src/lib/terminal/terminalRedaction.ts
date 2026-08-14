@@ -59,6 +59,25 @@ const PATTERNS: readonly RegExp[] = [
 export const REDACTION_MASK = '[redacted]';
 
 /**
+ * Provider and upstream model identities are an internal routing detail. Public
+ * terminal text always presents the single Xroga Black Hole identity instead.
+ * This is intentionally separate from credential redaction: names are not
+ * secrets, but exposing them would make the public product contract depend on
+ * whichever route happened to serve one request.
+ */
+const INTERNAL_MODEL_NAMES: readonly RegExp[] = [
+  /\b(?:kimi(?:\s+k?\d+(?:\.\d+)?)?|moonshot|deepseek(?:[-\s](?:v?\d+(?:\.\d+)*|r\d+|coder))?|gemini(?:[-\s](?:\d+(?:\.\d+)*|pro|flash)(?:[-\s][a-z0-9.]+)?)?|glm(?:[-\s]\d+(?:\.\d+)*)?|claude(?:[-\s](?:\d+(?:\.\d+)*|opus|sonnet|haiku)(?:[-\s][a-z0-9.]+)?)?|gpt(?:[-\s]\d+(?:\.\d+)*(?:[-\s][a-z0-9.]+)?)?|openai|anthropic|openrouter|groq)\b/gi,
+];
+
+export function neutralizeProviderIdentity(value: string): string {
+  if (!value) return value;
+  return INTERNAL_MODEL_NAMES.reduce(
+    (text, pattern) => text.replace(pattern, 'Black Hole ∞'),
+    value,
+  );
+}
+
+/**
  * Masks credential-shaped substrings. Preserves the surrounding text so the row
  * still reads as a sentence — replacing the whole line would hide the operation
  * that produced it, which is the information the terminal exists to show.
@@ -76,7 +95,7 @@ export function redactTerminalText(value: string): string {
       return named ? `${named[1]}=${REDACTION_MASK}` : REDACTION_MASK;
     });
   }
-  return out;
+  return neutralizeProviderIdentity(out);
 }
 
 /** True when redaction would change the input. Used by tests and assertions. */

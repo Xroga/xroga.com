@@ -92,14 +92,14 @@ export function VariantThumbGrid({
                 type="button"
                 onClick={() => onEdit(v.imageUrl)}
                 className="absolute inset-0 flex items-center justify-center p-0.5"
-                aria-label={`Edit ${v.variantLabel ?? v.provider ?? 'variant'}`}
+                aria-label={`Edit variant ${i + 1}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={v.imageUrl} alt="" className="max-h-full max-w-full object-contain" />
               </button>
 
               <span className="absolute top-0 left-0 right-0 text-[6px] font-medium text-white/90 bg-black/45 px-1 py-0.5 truncate pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                {v.variantLabel ?? v.provider}
+                Variant {i + 1}
               </span>
 
               <div className="absolute bottom-0 inset-x-0 flex items-center justify-center gap-0.5 bg-black/55 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">

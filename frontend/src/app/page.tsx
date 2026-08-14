@@ -21,6 +21,7 @@ import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
+import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 
 const HERO_BUILD_WORDS = [
   'Websites',
@@ -147,6 +148,8 @@ export default function HomePage() {
 
         </div>
       </section>
+
+      <XrogaIntelligenceSection />
 
       <HomepageWorkspaceTour loggedIn={loggedIn} />
 
