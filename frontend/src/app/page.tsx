@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
@@ -35,16 +35,16 @@ import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/ho
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 
 const HERO_BUILD_WORDS = [
-  { label: 'Websites', icon: Globe2, start: '#2f8cff', end: '#65e7ff' },
-  { label: 'SaaS apps', icon: PanelsTopLeft, start: '#7657ff', end: '#d98cff' },
-  { label: 'Chrome extensions', icon: Puzzle, start: '#18a8ff', end: '#6f7cff' },
-  { label: 'Desktop software', icon: MonitorCog, start: '#367cff', end: '#73f1d0' },
-  { label: 'Android apps', icon: Smartphone, start: '#17bd8d', end: '#9ee65d' },
-  { label: 'iOS apps', icon: Smartphone, start: '#7188ff', end: '#d8e4ff' },
-  { label: 'Mobile apps', icon: Smartphone, start: '#ff6fcf', end: '#7a8cff' },
-  { label: 'Debug errors', icon: Bug, start: '#ff766f', end: '#ffbe55' },
-  { label: 'Landing pages', icon: LayoutTemplate, start: '#1da5ff', end: '#b5e8ff' },
-  { label: 'Dashboards', icon: Gauge, start: '#31b8ff', end: '#72f2b7' },
+  { label: 'Websites', icon: Globe2 },
+  { label: 'SaaS apps', icon: PanelsTopLeft },
+  { label: 'Chrome extensions', icon: Puzzle },
+  { label: 'Desktop software', icon: MonitorCog },
+  { label: 'Android apps', icon: Smartphone },
+  { label: 'iOS apps', icon: Smartphone },
+  { label: 'Mobile apps', icon: Smartphone },
+  { label: 'Debug errors', icon: Bug },
+  { label: 'Landing pages', icon: LayoutTemplate },
+  { label: 'Dashboards', icon: Gauge },
 ] as const;
 
 export default function HomePage() {
@@ -144,19 +144,16 @@ export default function HomePage() {
 
           <div className="xv-hc-headline-block">
             <p className="xv-hc-headline">
-              AI That <span className="xv-hc-headline-em">Builds & Ships</span>
+              AI Agentic <span className="xv-hc-headline-em">Builds &amp; Ships</span>
             </p>
             <p className="xv-hc-headline-rotator" aria-live="polite">
               <span
                 key={activeBuildWord.label}
                 className="xv-hc-headline-word"
-                style={{
-                  '--hero-word-start': activeBuildWord.start,
-                  '--hero-word-end': activeBuildWord.end,
-                } as CSSProperties}
               >
                 <span className="xv-hc-headline-word__icon" aria-hidden="true"><ActiveBuildIcon /></span>
                 <span className="xv-hc-headline-word__label">{activeBuildWord.label}</span>
+                <span className="xv-hc-headline-word__meta" aria-hidden="true">BUILD TARGET</span>
                 <i aria-hidden="true" />
               </span>
             </p>

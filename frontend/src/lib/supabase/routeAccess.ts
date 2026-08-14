@@ -11,6 +11,7 @@ const PUBLIC_PREFIXES = [
   '/research',
   '/crypto-builder',
   '/game-builder',
+  '/video',
   '/ai-coding-agent',
   '/ai-app-builder',
   '/ai-website-builder',

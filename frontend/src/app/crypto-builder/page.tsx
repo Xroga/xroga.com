@@ -1,17 +1,26 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import {
+  ArrowRight,
+  Bitcoin,
+  Bot,
+  Braces,
+  ChartNoAxesCombined,
+  CheckCircle2,
+  ExternalLink,
+  GitBranch,
+  Landmark,
+  Radar,
+  Rocket,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Trophy,
+  WalletCards,
+} from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { OreBlock, PixelGlyph } from '@/components/crypto-builder/PixelArt';
-import { VoxelBackdrop, VoxelRidges } from '@/components/crypto-builder/VoxelBackdrop';
-import {
-  BUILD_KINDS,
-  HERO_COINS,
-  HERO_SPLASH,
-  PLACEHOLDERS,
-  PROMPT_SUGGESTIONS,
-  STAGES,
-} from '@/lib/cryptoBuilderContent';
+import { BUILD_KINDS, PLACEHOLDERS, PROMPT_SUGGESTIONS, STAGES } from '@/lib/cryptoBuilderContent';
 import { HACKATHON_SOURCES, WINNING_PATTERNS } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
 import '@/styles/homepage-coding.css';
@@ -19,291 +28,115 @@ import '@/styles/crypto-builder.css';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Crypto Builder for Web3 Apps and AI Agents',
-  description:
-    'Build AI crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, analytics dashboards, and hackathon projects with XROGA AI.',
+  description: 'Build AI crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, analytics dashboards, and hackathon projects with XROGA AI.',
   path: '/crypto-builder',
-  keywords: [
-    'crypto builder',
-    'AI crypto agent builder',
-    'Web3 app builder',
-    'DeFi dashboard builder',
-    'DAO tooling',
-    'on-chain monitoring agent',
-    'crypto hackathon project',
-  ],
+  keywords: ['crypto builder', 'AI crypto agent builder', 'Web3 app builder', 'DeFi dashboard builder', 'DAO tooling', 'on-chain monitoring agent', 'crypto hackathon project'],
 });
+
+const BUILD_ICONS = [Bot, Braces, ChartNoAxesCombined, Landmark, WalletCards, Radar, ChartNoAxesCombined, Trophy];
+const STAGE_ICONS = [Search, Braces, ShieldCheck, Rocket];
 
 export default function CryptoBuilderPage() {
   const softwareLd = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Xroga Crypto Builder',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Web',
-    url: 'https://xroga.com/crypto-builder',
-    description:
-      'Build AI crypto agents, Web3 applications, DeFi and DAO tools, on-chain monitoring, analytics products, and hackathon projects with Xroga AI.',
+    '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'Xroga Crypto Builder',
+    applicationCategory: 'DeveloperApplication', operatingSystem: 'Web', url: 'https://xroga.com/crypto-builder',
+    description: 'Build AI crypto agents, Web3 applications, DeFi and DAO tools, on-chain monitoring, analytics products, and hackathon projects with XROGA AI.',
   };
 
   return (
     <main className="xv-cb-root">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c') }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c') }} />
 
-      <VoxelBackdrop />
-
-      {/* ----------------------------------------------------- header: a hotbar */}
       <header className="xv-cb-header">
         <div className="xv-cb-shell xv-cb-header-inner">
-          <Logo href="/" height={34} />
-          <nav className="xv-cb-nav" aria-label="Crypto Builder">
-            <Link href="/research/web3-hackathon-winning-patterns" className="xv-cb-slot">
-              <PixelGlyph name="book" size={14} />
-              <span>Research</span>
-            </Link>
-            <Link href="/docs/hackathon-workflows" className="xv-cb-slot">
-              <PixelGlyph name="pick" size={14} />
-              <span>Guide</span>
-            </Link>
-            <Link href="/showcase" className="xv-cb-slot">
-              <PixelGlyph name="gem" size={14} />
-              <span>Showcase</span>
-            </Link>
-            <Link href="/auth/signup" className="xv-cb-btn xv-cb-btn--primary xv-cb-btn--sm">
-              Start building
-            </Link>
+          <Logo href="/" variant="homepage" height={44} />
+          <nav className="xv-cb-nav" aria-label="Crypto Builder navigation">
+            <a href="#capabilities">Capabilities</a><a href="#workflow">Workflow</a><a href="#research">Research</a>
+            <Link href="/auth/signup" className="xv-cb-button xv-cb-button--primary">Start building <ArrowRight /></Link>
           </nav>
         </div>
       </header>
 
-      {/* ------------------------------------------------------------- hero */}
       <section className="xv-cb-hero">
-        <div className="xv-cb-shell xv-cb-hero-inner">
-          <p className="xv-cb-kicker">
-            <PixelGlyph name="pick" size={12} />
-            XROGA CRYPTO BUILDER
-          </p>
-
-          <div className="xv-cb-title-wrap">
-            <h1 className="xv-cb-h1">
-              Build crypto that <em>actually runs.</em>
-            </h1>
-            {/* The yellow line off the corner of the Minecraft title screen. It only
-                ever claims something about how the page works. */}
-            <span className="xv-cb-splash" aria-hidden="true">
-              {HERO_SPLASH}
-            </span>
+        <div className="xv-cb-hero-rail" aria-hidden="true"><span>CRYPTO / WEB3</span><span>BUILD / VERIFY / SHIP</span></div>
+        <div className="xv-cb-shell xv-cb-hero-grid">
+          <div className="xv-cb-hero-copy">
+            <p className="xv-cb-kicker"><Sparkles /> XROGA CRYPTO BUILDER</p>
+            <h1>Build the next<br /><em>on-chain idea.</em></h1>
+            <p>Turn a crypto brief into a repository-aware product: research, implementation, validation, GitHub delivery, and authorised publishing in one controlled loop.</p>
+            <div className="xv-cb-actions">
+              <Link href="/auth/signup" className="xv-cb-button xv-cb-button--primary">Build with Xroga <ArrowRight /></Link>
+              <Link href="/research/web3-hackathon-winning-patterns" className="xv-cb-button">Read the research</Link>
+            </div>
+            <dl className="xv-cb-stats"><div><dt>01</dt><dd>Your repository</dd></div><div><dt>02</dt><dd>Real validation</dd></div><div><dt>03</dt><dd>Provider evidence</dd></div></dl>
           </div>
 
-          <p className="xv-cb-lede">
-            Describe the crypto product, agent, application, or hackathon project you want to build, and Xroga will
-            continue the task inside the real workspace — inspecting your repository, implementing focused changes, running
-            applicable checks, and publishing through accounts you authorise.
-          </p>
-
-          <div className="xv-cb-coins" aria-hidden="true">
-            {HERO_COINS.map((coin, index) => (
-              <span key={coin.glyph} className="xv-cb-coin" data-ore={coin.ore} style={{ animationDelay: `${index * -0.9}s` }}>
-                <PixelGlyph name={coin.glyph} size={22} />
-              </span>
-            ))}
+          <div className="xv-cb-forge" aria-label="Crypto product build preview">
+            <div className="xv-cb-forge-top"><span><i /> BUILD SESSION</span><b>LIVE WORKSPACE</b></div>
+            <div className="xv-cb-orbit" aria-hidden="true">
+              <span className="xv-cb-orbit-ring" /><span className="xv-cb-orbit-ring xv-cb-orbit-ring--two" />
+              <span className="xv-cb-orbit-core"><Bitcoin /></span>
+              <span className="xv-cb-token xv-cb-token--one">Ξ</span><span className="xv-cb-token xv-cb-token--two">◎</span><span className="xv-cb-token xv-cb-token--three">◇</span>
+            </div>
+            <div className="xv-cb-build-card">
+              <span className="xv-cb-micro">CURRENT BUILD / 0048</span>
+              <strong>On-chain intelligence dashboard</strong>
+              <div className="xv-cb-progress"><i /></div>
+              <ul><li><CheckCircle2 /> Repository understood</li><li><CheckCircle2 /> Contract reads connected</li><li><span className="xv-cb-pulse" /> Running validation</li></ul>
+            </div>
           </div>
-
-          <div className="xv-cb-chat">
-            <HomepageChatBar
-              placeholders={PLACEHOLDERS}
-              suggestions={PROMPT_SUGGESTIONS}
-              ariaLabel="Describe the crypto product or AI agent you want to build"
-              fallbackPrompt="Build a crypto product with Xroga AI"
-            />
-          </div>
-
-          <p className="xv-cb-hero-note">
-            Xroga does not guarantee prizes, funding, listings, trading performance, token value, or security outcomes. It
-            reports evidence, a real failure, or the exact external setup still required.
-          </p>
         </div>
-
-        <VoxelRidges />
       </section>
 
-      {/* ----------------------------------------- what you can build: ore blocks */}
-      <section className="xv-cb-section" aria-labelledby="cb-build-heading">
+      <section className="xv-cb-prompt-section" aria-label="Start a crypto build">
         <div className="xv-cb-shell">
-          <p className="xv-cb-eyebrow">Not only hackathons</p>
-          <h2 id="cb-build-heading" className="xv-cb-h2">
-            What you can build here
-          </h2>
-          <p className="xv-cb-section-copy">
-            Crypto hackathons remain a first-class use case. They are one of several.
-          </p>
+          <div className="xv-cb-prompt-label"><span>YOUR BRIEF</span><b>Describe the outcome. Xroga handles the build loop.</b></div>
+          <HomepageChatBar placeholders={PLACEHOLDERS} suggestions={PROMPT_SUGGESTIONS} ariaLabel="Describe the crypto product or AI agent you want to build" fallbackPrompt="Build a crypto product with Xroga AI" />
+          <p className="xv-cb-legal">Xroga does not guarantee prizes, funding, listings, trading performance, token value, or security outcomes. It reports evidence, a real failure, or the exact external setup still required.</p>
+        </div>
+      </section>
 
-          <div className="xv-cb-cards">
-            {BUILD_KINDS.map(({ title, body, ore, glyph, tag }, index) => (
-              <article key={title} className="xv-cb-card" data-ore={ore}>
-                <div className="xv-cb-card-top">
-                  <span className="xv-cb-block">
-                    <OreBlock variant={index} size={52} />
-                    <span className="xv-cb-block-glyph">
-                      <PixelGlyph name={glyph} size={20} />
-                    </span>
-                  </span>
-                  <span className="xv-cb-tag">{tag}</span>
-                </div>
-                <h3 className="xv-cb-card-title">{title}</h3>
-                <p className="xv-cb-card-body">{body}</p>
+      <section className="xv-cb-section" id="capabilities" aria-labelledby="cb-capabilities">
+        <div className="xv-cb-shell">
+          <div className="xv-cb-section-heading"><p>CAPABILITIES / 01</p><h2 id="cb-capabilities">One builder.<br /><em>Many crypto surfaces.</em></h2><span>From focused utilities to complete Web3 products, every build stays tied to code you own.</span></div>
+          <div className="xv-cb-card-grid">
+            {BUILD_KINDS.map((item, index) => { const Icon = BUILD_ICONS[index]; return (
+              <article className="xv-cb-card" key={item.title}>
+                <div><span>0{index + 1}</span><Icon /></div><small>{item.tag}</small><h3>{item.title}</h3><p>{item.body}</p>
               </article>
-            ))}
+            ); })}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------- the loop: a crafting bench */}
-      <section className="xv-cb-section xv-cb-section--tint" aria-labelledby="cb-loop-heading">
+      <section className="xv-cb-section xv-cb-section--blue" id="workflow" aria-labelledby="cb-workflow">
         <div className="xv-cb-shell">
-          <p className="xv-cb-eyebrow">A controlled build loop</p>
-          <h2 id="cb-loop-heading" className="xv-cb-h2">
-            Research → repository → verified result
-          </h2>
-
-          <ol className="xv-cb-stages">
-            {STAGES.map(({ title, body, glyph, ore }, index) => (
-              <li key={title} className="xv-cb-stage" data-ore={ore}>
-                <div className="xv-cb-stage-top">
-                  <span className="xv-cb-slotframe">
-                    <PixelGlyph name={glyph} size={22} />
-                  </span>
-                  <span className="xv-cb-stage-num">0{index + 1}</span>
-                </div>
-                <h3 className="xv-cb-card-title">{title}</h3>
-                <p className="xv-cb-card-body">{body}</p>
-                {index < STAGES.length - 1 && (
-                  <span className="xv-cb-craft-arrow" aria-hidden="true">
-                    <PixelGlyph name="arrow" size={16} />
-                  </span>
-                )}
-              </li>
-            ))}
+          <div className="xv-cb-section-heading xv-cb-section-heading--light"><p>CONTROLLED LOOP / 02</p><h2 id="cb-workflow">From protocol brief<br /><em>to verified code.</em></h2></div>
+          <ol className="xv-cb-workflow">
+            {STAGES.map((stage, index) => { const Icon = STAGE_ICONS[index]; return <li key={stage.title}><span><Icon /></span><small>0{index + 1}</small><h3>{stage.title}</h3><p>{stage.body}</p></li>; })}
           </ol>
+          <div className="xv-cb-proof-strip"><GitBranch /><span><b>Your GitHub</b> — one sticky repository</span><i /><ShieldCheck /><span><b>Validation</b> — checks before claims</span><i /><Rocket /><span><b>Publish</b> — only through accounts you authorise</span></div>
         </div>
       </section>
 
-      {/* ------------------------------------------- ecosystems: an inventory row */}
-      <section className="xv-cb-section" aria-labelledby="cb-eco-heading">
+      <section className="xv-cb-section" id="research" aria-labelledby="cb-research">
         <div className="xv-cb-shell">
-          <p className="xv-cb-eyebrow">Official ecosystem map</p>
-          <h2 id="cb-eco-heading" className="xv-cb-h2">
-            Public hackathon ecosystems and organisers
-          </h2>
-
-          <div className="xv-cb-disclaimer" role="note">
-            <PixelGlyph name="shield" size={16} />
-            <p>
-              Xroga is not affiliated with or endorsed by the organizations shown unless explicitly stated. Their names
-              and resources are displayed for informational purposes so builders can prepare projects for public crypto
-              hackathons.
-            </p>
+          <div className="xv-cb-section-heading"><p>OFFICIAL SOURCES / 03</p><h2 id="cb-research">Research the ecosystem.<br /><em>Build against the rules.</em></h2><span>Xroga is not affiliated with or endorsed by the organizations shown unless explicitly stated.</span></div>
+          <div className="xv-cb-source-grid">
+            {HACKATHON_SOURCES.map((source, index) => <a key={source.name} href={source.url} target="_blank" rel="noreferrer noopener"><small>{String(index + 1).padStart(2, '0')}</small><h3>{source.name}</h3><p>{source.note}</p><span>Official source <ExternalLink /></span></a>)}
           </div>
-
-          <ul className="xv-cb-eco-list">
-            {HACKATHON_SOURCES.map((source, index) => (
-              <li key={source.name}>
-                <a href={source.url} target="_blank" rel="noreferrer noopener" className="xv-cb-eco-card">
-                  {/* A generic pixel token, not the organiser's mark — the page must
-                      not read as if these logos were licensed for it. */}
-                  <span className="xv-cb-eco-slot" aria-hidden="true">
-                    <PixelGlyph name={ECO_GLYPHS[index % ECO_GLYPHS.length]} size={20} />
-                  </span>
-                  <span className="xv-cb-eco-role">{source.role}</span>
-                  <span className="xv-cb-eco-name">{source.name}</span>
-                  <span className="xv-cb-eco-note">{source.note}</span>
-                  {/* No prize figure is shown: this repository holds no verified current
-                      amount, and inventing one would be worse than sending a builder to
-                      the organiser's own page. */}
-                  <span className="xv-cb-eco-cta">
-                    Check official event details
-                    <PixelGlyph name="arrow" size={12} />
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <p className="xv-cb-fineprint">
-            Prize pools, tracks, grants, bounties, eligibility, and claim processes are set by each organiser and change
-            between events. Verify the current rules and eligibility directly with the organiser before you build. Xroga
-            does not control, administer, or guarantee any reward, and cannot guarantee eligibility or that funds can be
-            claimed or withdrawn.
-          </p>
+          <p className="xv-cb-legal">Prize pools, tracks, grants, bounties, eligibility, and claim processes are set by each organiser and change between events. Verify current rules directly with the organiser before you build.</p>
         </div>
       </section>
 
-      {/* ------------------------------------------- patterns: advancement plaques */}
-      <section className="xv-cb-section xv-cb-section--tint" aria-labelledby="cb-patterns-heading">
-        <div className="xv-cb-shell">
-          <p className="xv-cb-eyebrow">Repeated in official criteria</p>
-          <h2 id="cb-patterns-heading" className="xv-cb-h2">
-            What judging pages keep asking for
-          </h2>
-          <p className="xv-cb-section-copy">
-            These practices improve eligibility and clarity. They do not guarantee winning, and event-specific rules
-            always take precedence.
-          </p>
-
-          <div className="xv-cb-pattern-list">
-            {WINNING_PATTERNS.map((pattern, index) => (
-              <article key={pattern.name} className="xv-cb-advancement" data-ore={ADVANCEMENT_ORES[index % ADVANCEMENT_ORES.length]}>
-                <span className="xv-cb-slotframe xv-cb-slotframe--sm">
-                  <PixelGlyph name={ADVANCEMENT_GLYPHS[index % ADVANCEMENT_GLYPHS.length]} size={18} />
-                </span>
-                <div>
-                  <h3 className="xv-cb-card-title">{pattern.name}</h3>
-                  <p className="xv-cb-card-body">{pattern.evidence}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+      <section className="xv-cb-section xv-cb-patterns" aria-labelledby="cb-patterns">
+        <div className="xv-cb-shell xv-cb-pattern-layout">
+          <div className="xv-cb-section-heading"><p>JUDGING SIGNALS / 04</p><h2 id="cb-patterns">What strong submissions<br /><em>make visible.</em></h2></div>
+          <div>{WINNING_PATTERNS.map((pattern, index) => <article key={pattern.name}><span>0{index + 1}</span><div><h3>{pattern.name}</h3><p>{pattern.evidence}</p></div></article>)}</div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------- cta: a lit portal */}
-      <section className="xv-cb-section" aria-labelledby="cb-cta-heading">
-        <div className="xv-cb-shell">
-          <div className="xv-cb-cta">
-            <div className="xv-cb-portal" aria-hidden="true">
-              <span className="xv-cb-portal-core">
-                <PixelGlyph name="pick" size={30} />
-              </span>
-            </div>
-            <div>
-              <h2 id="cb-cta-heading" className="xv-cb-h2">
-                Bring the brief and one honest outcome.
-              </h2>
-              <p className="xv-cb-section-copy">
-                A protocol doc, an event page, or a plain description. Xroga researches, plans, implements, validates, and
-                prepares publishing through accounts you authorise.
-              </p>
-            </div>
-            <div className="xv-cb-cta-actions">
-              <Link href="/auth/signup" className="xv-cb-btn xv-cb-btn--primary">
-                Open Xroga
-                <PixelGlyph name="arrow" size={14} />
-              </Link>
-              <Link href="/showcase" className="xv-cb-btn xv-cb-btn--ghost">
-                <PixelGlyph name="rocket" size={14} />
-                See what Xroga builds
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="xv-cb-cta"><div className="xv-cb-shell"><div><p>YOUR CODE. YOUR PRODUCT.</p><h2>Bring the idea.<br /><em>Leave with evidence.</em></h2></div><Link href="/auth/signup" className="xv-cb-button xv-cb-button--light">Open Xroga <ArrowRight /></Link></div></section>
     </main>
   );
 }
-
-/** Cycled so a long inventory row is not the same tile repeated twelve times. */
-const ECO_GLYPHS = ['gem', 'link', 'coin', 'bolt', 'net', 'btc'] as const;
-const ADVANCEMENT_GLYPHS = ['book', 'rocket', 'net', 'eye', 'braces', 'chart', 'branch'] as const;
-const ADVANCEMENT_ORES = ['gold', 'diamond', 'emerald', 'amethyst', 'redstone', 'lapis', 'copper'] as const;
