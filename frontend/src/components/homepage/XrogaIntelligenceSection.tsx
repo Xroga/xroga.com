@@ -1,12 +1,15 @@
 import {
   Braces,
+  BrainCircuit,
   Code2,
   FileText,
   Files,
+  Gauge,
   Image as ImageIcon,
   LayoutTemplate,
   Network,
   Sparkles,
+  Zap,
   Wrench,
 } from 'lucide-react';
 import type { CSSProperties } from 'react';
@@ -23,18 +26,8 @@ const capabilities = [
 
 export function XrogaIntelligenceSection() {
   return (
-    <section className="xv-intelligence" aria-labelledby="xv-intelligence-title">
+    <section className="xv-intelligence" aria-label="Black Hole Infinity intelligence capabilities">
       <div className="xv-intelligence__inner">
-        <header className="xv-intelligence__intro">
-          <p className="xv-intelligence__kicker"><Sparkles aria-hidden="true" /> XROGA INTELLIGENCE</p>
-          <h2 id="xv-intelligence-title">Meet <em>Black Hole ∞</em></h2>
-          <p>
-            One evolving intelligence system built to reason deeply, understand widely, and execute complex work
-            across text, code, visuals, and workflows.
-          </p>
-          <strong>One model. Infinite evolution.</strong>
-        </header>
-
         <div className="xv-intelligence__grid">
           <article className="xv-intelligence-card xv-intelligence-card--large xv-intelligence-card--rays">
             <div className="xv-intelligence-card__copy">
@@ -57,11 +50,12 @@ export function XrogaIntelligenceSection() {
               <h3>Adaptive Intelligence <em>Depth.</em></h3>
               <p>Black Hole ∞ applies the right level of reasoning automatically, from a quick answer to a long build.</p>
             </div>
-            <div className="xv-depth-rail" aria-label="Conceptual adaptive intelligence depth from fast to deep">
-              <div><b>FAST</b><small>Direct tasks</small></div>
-              <div className="is-active"><b>BALANCED</b><small>Everyday builds</small></div>
-              <div><b>DEEP</b><small>Complex systems</small></div>
-              <span aria-hidden="true" />
+            <div className="xv-depth-rail" aria-label="Automatic intelligence depth routing from fast to deep">
+              <header><i aria-hidden="true" /><span>AUTO DEPTH ROUTER</span><small>LIVE</small></header>
+              <div><Zap aria-hidden="true" /><span><b>FAST</b><small>Direct tasks</small></span><i aria-hidden="true" /></div>
+              <div><Gauge aria-hidden="true" /><span><b>BALANCED</b><small>Everyday builds</small></span><i aria-hidden="true" /></div>
+              <div><BrainCircuit aria-hidden="true" /><span><b>DEEP</b><small>Complex systems</small></span><i aria-hidden="true" /></div>
+              <em aria-hidden="true" />
             </div>
           </article>
 
