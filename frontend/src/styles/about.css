@@ -44,7 +44,7 @@
 .ab-stats div { display: grid; gap: 3px; }
 .ab-stats dt { font-family: var(--font-source-serif),Georgia,serif; font-size: clamp(1.8rem,3vw,2.5rem); font-weight: 650; letter-spacing: -.05em; }
 .ab-stats dd { margin: 0; color: var(--ab-muted); font-size: .76rem; }
-.ab-founder-summary{margin:auto 0 0}.ab-founder-summary .ab-stats{margin:0}.ab-founder-card--stats{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:min(360px,100%);margin-top:22px;border-left:1px solid rgba(255,255,255,.22);border-radius:15px}
+.ab-founder-summary{display:grid;gap:22px;margin:auto 0 0;padding-top:34px}.ab-founder-summary .ab-stats{margin:0;padding-top:0}
 
 .ab-portrait-wrap { position: relative; min-height: 590px; }
 .ab-portrait-wrap::before { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg,var(--ab-panel),transparent 22%),linear-gradient(0deg,rgba(0,0,0,.12),transparent 42%); content: ''; pointer-events: none; }
@@ -55,6 +55,7 @@
 .ab-founder-card p { margin:5px 0 0;color:rgba(255,255,255,.7);font-size:.63rem;line-height:1.35 }
 .ab-founder-card a { position:absolute;right:10px;bottom:10px;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:white;color:#111 }
 .ab-founder-card svg { width: 18px; }
+.ab-founder-summary > .ab-founder-card--stats { position:relative;inset:auto;justify-self:start;width:296px;max-width:100%;margin:0;border-left:1px solid rgba(255,255,255,.22);border-radius:15px }
 
 .ab-path { display: grid; grid-template-columns: repeat(5,1fr); margin-top: 26px; border: 1px solid var(--ab-line); border-radius: 18px; background: color-mix(in srgb,var(--ab-card) 74%,transparent); backdrop-filter: blur(16px); }
 .ab-path div { min-height: 68px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--ab-muted); font-size: .78rem; font-weight: 750; }
@@ -126,7 +127,7 @@ body.theme-white .ab-root { --ab-bg:#f4f5f7;--ab-panel:#e7e8eb;--ab-card:rgba(25
   .ab-hero h1 { font-size: clamp(3rem,16vw,4.6rem); }
   .ab-stats { display: grid; grid-template-columns: 1fr 1fr; padding-top: 42px; }
   .ab-portrait-wrap { min-height: 520px; }
-  .ab-founder-card--stats { left:auto;right:auto;top:auto;bottom:auto;width:100%;max-width:360px;margin-top:22px }
+  .ab-founder-summary .ab-founder-card--stats { position:relative;inset:auto;width:100%;max-width:296px;margin:0 }
   .ab-path { grid-template-columns: 1fr; }
   .ab-path div { min-height: 54px; justify-content: flex-start; padding-inline: 20px; }
   .ab-path div + div { border-left: 0; border-top: 1px solid var(--ab-line); }
