@@ -56,15 +56,12 @@ export function HomepageFaqSection() {
   return (
     <section className="xv-hc-faq" aria-labelledby="faq-heading">
       <div className="xv-hc-faq-inner">
-        <p className="xv-hc-pixel-kicker" id="faq-heading">
-          FAQ
-        </p>
-        <h2 className="xv-hc-section-title">
-          Straight answers. <em>No hype.</em>
-        </h2>
-        <p className="xv-hc-section-copy">
-          What Xroga is, what one prompt can do, and how billing works — before you start.
-        </p>
+        <header className="xv-hc-faq-heading">
+          <p className="xv-hc-pixel-kicker" id="faq-heading">FAQ · BEFORE YOU BUILD</p>
+          <h2 className="xv-hc-section-title">Straight answers.<br /><em>No hype.</em></h2>
+          <p className="xv-hc-section-copy">What Xroga is, what one prompt can do, and how billing works — before you start.</p>
+          <span>11 honest answers</span>
+        </header>
 
         <div className="xv-hc-faq-list">
           {FAQS.map((item, i) => {
@@ -72,7 +69,7 @@ export function HomepageFaqSection() {
             const btnId = `${baseId}-btn-${i}`;
             const isOpen = open === i;
             return (
-              <div key={item.q} className="xv-hc-faq-item">
+              <div key={item.q} className={`xv-hc-faq-item${isOpen ? ' is-open' : ''}`}>
                 <h3>
                   <button
                     type="button"
@@ -82,6 +79,7 @@ export function HomepageFaqSection() {
                     className="xv-hc-faq-q"
                     onClick={() => setOpen(isOpen ? null : i)}
                   >
+                    <span className="xv-hc-faq-index">{String(i + 1).padStart(2, '0')}</span>
                     <span>{item.q}</span>
                     <span className="xv-hc-faq-icon" aria-hidden>
                       {isOpen ? '−' : '+'}

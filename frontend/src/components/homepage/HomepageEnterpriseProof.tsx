@@ -13,7 +13,6 @@ import {
   Users,
 } from 'lucide-react';
 import { XROGA_MODEL_FULL } from '@/lib/brand';
-import { TechnologyMarquee } from './TechnologyMarquee';
 
 const CONCEPTS = [
   { Icon: Activity, position: 'state', label: 'State', copy: 'Understand status and context.', code: '01' },
@@ -158,8 +157,6 @@ export function HomepageEnterpriseProof() {
             ))}
           </ol>
         </div>
-
-        <TechnologyMarquee />
       </div>
     </section>
   );
