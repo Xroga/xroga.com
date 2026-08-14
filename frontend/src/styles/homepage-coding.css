@@ -399,34 +399,33 @@
 }
 
 .xv-home-coding .xv-hc-headline-word {
-  --hero-word-start: #2f8cff;
-  --hero-word-end: #65e7ff;
   position: relative;
   isolation: isolate;
   display: inline-grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: .62rem;
-  min-width: min(23rem, 88vw);
-  padding: .55rem 1rem .62rem .65rem;
-  border: 1px solid color-mix(in srgb,var(--hero-word-start) 42%,var(--hc-border));
-  border-radius: 999px;
-  background:linear-gradient(115deg,color-mix(in srgb,var(--hero-word-start) 15%,var(--hc-surface)),color-mix(in srgb,var(--hero-word-end) 9%,var(--hc-surface)));
-  box-shadow:0 14px 38px color-mix(in srgb,var(--hero-word-start) 16%,transparent),inset 0 1px 0 rgba(255,255,255,.28);
+  gap: .72rem;
+  min-width: min(26rem, 90vw);
+  padding: .62rem .8rem .68rem;
+  border: 1px solid color-mix(in srgb,var(--hc-ink) 18%,transparent);
+  border-radius: .75rem;
+  background:color-mix(in srgb,var(--hc-surface) 92%,transparent);
+  box-shadow:0 14px 36px rgba(2,13,31,.11),inset 0 1px 0 rgba(255,255,255,.2);
   font-family: var(--hc-font-sans);
   font-weight: 700;
-  font-size: clamp(1.1rem, 3vw, 1.7rem);
+  font-size: clamp(1.05rem, 2.6vw, 1.55rem);
   letter-spacing: -0.025em;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   animation: xv-hc-word-swap .72s cubic-bezier(.2,.8,.2,1) both;
 }
-.xv-home-coding .xv-hc-headline-word::before{content:"";position:absolute;z-index:-1;inset:7px;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--hero-word-start) 10%,transparent),transparent 42%,color-mix(in srgb,var(--hero-word-end) 12%,transparent));filter:blur(8px)}
-.xv-home-coding .xv-hc-headline-word__icon{display:grid;width:2.25rem;height:2.25rem;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--hero-word-start),var(--hero-word-end));color:#fff;box-shadow:0 8px 22px color-mix(in srgb,var(--hero-word-start) 38%,transparent);animation:xv-hc-word-icon .72s cubic-bezier(.2,.8,.2,1) both}
+.xv-home-coding .xv-hc-headline-word::before{content:"";position:absolute;z-index:-1;inset:0;border-radius:inherit;background:linear-gradient(90deg,color-mix(in srgb,var(--hc-blue) 8%,transparent),transparent 42%)}
+.xv-home-coding .xv-hc-headline-word__icon{display:grid;width:2.3rem;height:2.3rem;place-items:center;border:1px solid color-mix(in srgb,var(--hc-blue) 42%,transparent);border-radius:.55rem;background:color-mix(in srgb,var(--hc-blue) 11%,var(--hc-surface));color:var(--hc-blue);box-shadow:inset 0 1px 0 rgba(255,255,255,.18);animation:xv-hc-word-icon .72s cubic-bezier(.2,.8,.2,1) both}
 .xv-home-coding .xv-hc-headline-word__icon svg{width:1.05rem;height:1.05rem}
-.xv-home-coding .xv-hc-headline-word__label{background:linear-gradient(90deg,var(--hero-word-start),var(--hero-word-end));background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 8px 26px color-mix(in srgb,var(--hero-word-start) 20%,transparent)}
-.xv-home-coding .xv-hc-headline-word>i{position:absolute;left:3.4rem;right:1rem;bottom:.36rem;height:2px;overflow:hidden;border-radius:99px;background:color-mix(in srgb,var(--hero-word-start) 18%,transparent)}
-.xv-home-coding .xv-hc-headline-word>i::after{content:"";display:block;width:38%;height:100%;border-radius:inherit;background:linear-gradient(90deg,transparent,var(--hero-word-end),transparent);animation:xv-hc-word-scan 1.7s ease-in-out infinite}
+.xv-home-coding .xv-hc-headline-word__label{color:var(--hc-ink);text-shadow:none}
+.xv-home-coding .xv-hc-headline-word__meta{color:var(--hc-muted);font:750 .42rem var(--hc-font-pixel);letter-spacing:.08em}
+.xv-home-coding .xv-hc-headline-word>i{position:absolute;left:.8rem;right:.8rem;bottom:.28rem;height:1px;overflow:hidden;background:color-mix(in srgb,var(--hc-blue) 16%,transparent)}
+.xv-home-coding .xv-hc-headline-word>i::after{content:"";display:block;width:30%;height:100%;background:linear-gradient(90deg,transparent,var(--hc-blue),transparent);animation:xv-hc-word-scan 1.7s ease-in-out infinite}
 
 .xv-home-coding .xv-hc-surface-chips {
   display: flex;
