@@ -36,7 +36,7 @@ export function XrogaIntelligenceSection() {
         </header>
 
         <div className="xv-intelligence__grid">
-          <article className="xv-intelligence-card xv-intelligence-card--large">
+          <article className="xv-intelligence-card xv-intelligence-card--large xv-intelligence-card--rays">
             <div className="xv-intelligence-card__copy">
               <span>01 · UNIFIED INTELLIGENCE</span>
               <h3>One Model. <em>Infinite Evolution.</em></h3>
@@ -51,7 +51,7 @@ export function XrogaIntelligenceSection() {
             </div>
           </article>
 
-          <article className="xv-intelligence-card xv-intelligence-card--large">
+          <article className="xv-intelligence-card xv-intelligence-card--large xv-intelligence-card--glass">
             <div className="xv-intelligence-card__copy">
               <span>02 · ADAPTIVE COMPUTE</span>
               <h3>Adaptive Intelligence <em>Depth.</em></h3>
@@ -65,7 +65,7 @@ export function XrogaIntelligenceSection() {
             </div>
           </article>
 
-          <article className="xv-intelligence-card">
+          <article className="xv-intelligence-card xv-intelligence-card--cyan">
             <div className="xv-intelligence-card__icon"><Braces aria-hidden="true" /></div>
             <span>03 · LONG CONTEXT</span>
             <h3>1M+ Context Understanding</h3>
@@ -77,7 +77,7 @@ export function XrogaIntelligenceSection() {
             </div>
           </article>
 
-          <article className="xv-intelligence-card">
+          <article className="xv-intelligence-card xv-intelligence-card--editorial">
             <div className="xv-intelligence-card__icon"><LayoutTemplate aria-hidden="true" /></div>
             <span>04 · NATIVE INPUTS</span>
             <h3>Multimodal &amp; Code Native</h3>
@@ -90,7 +90,7 @@ export function XrogaIntelligenceSection() {
             </div>
           </article>
 
-          <article className="xv-intelligence-card">
+          <article className="xv-intelligence-card xv-intelligence-card--horizon">
             <div className="xv-intelligence-card__icon"><Network aria-hidden="true" /></div>
             <span>05 · EXECUTION SYSTEM</span>
             <h3>Agentic Execution</h3>
