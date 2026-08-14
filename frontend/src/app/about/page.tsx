@@ -71,11 +71,19 @@ export default function AboutPage() {
                   <Link href="/auth/signup" className="ab-button ab-button--dark">Build your idea <ArrowRight aria-hidden="true" /></Link>
                   <Link href="#story" className="ab-button ab-button--light">Read the story</Link>
                 </div>
-                <dl className="ab-stats">
-                  <div><dt>2 years</dt><dd>Building with AI</dd></div>
-                  <div><dt>5+ years</dt><dd>Working online</dd></div>
-                  <div><dt>1 founder</dt><dd>One ambitious mission</dd></div>
-                </dl>
+                <div className="ab-founder-summary">
+                  <dl className="ab-stats">
+                    <div><dt>2 years</dt><dd>Building with AI</dd></div>
+                    <div><dt>5+ years</dt><dd>Working online</dd></div>
+                    <div><dt>1 founder</dt><dd>One ambitious mission</dd></div>
+                  </dl>
+                  <div className="ab-founder-card ab-founder-card--stats">
+                    <span>Founder &amp; CEO</span>
+                    <strong>Muhammad Ibrahim</strong>
+                    <p>Building the product he once wished existed.</p>
+                    <Link href="/contact" aria-label="Contact Muhammad Ibrahim"><ArrowRight aria-hidden="true" /></Link>
+                  </div>
+                </div>
               </div>
 
               <div className="ab-portrait-wrap">
@@ -87,12 +95,6 @@ export default function AboutPage() {
                   sizes="(max-width: 820px) 100vw, 48vw"
                   className="ab-portrait"
                 />
-                <div className="ab-founder-card">
-                  <span>Founder & CEO</span>
-                  <strong>Muhammad Ibrahim</strong>
-                  <p>Building the product he once wished existed.</p>
-                  <Link href="/contact" aria-label="Contact Muhammad Ibrahim"><ArrowRight aria-hidden="true" /></Link>
-                </div>
               </div>
             </div>
 

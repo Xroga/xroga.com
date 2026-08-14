@@ -97,7 +97,16 @@ function PreviewView() {
     <div className="xv-wt-preview-view">
       <nav><button type="button"><FolderGit2 /> Files</button><button type="button"><Code2 /> Code</button><button type="button" className="is-active"><Eye /> Preview</button><button type="button"><Rocket /> Deploy</button></nav>
       <div className="xv-wt-preview-tabs"><button type="button">MOBILE</button><button type="button">TABLET</button><button type="button" className="is-active">DESKTOP</button></div>
-      <div className="xv-wt-preview-canvas"><Logo href={null} variant="sidebar" height={52} /><strong>Your generated product appears here.</strong><p>Build, review, resize, and publish without leaving the workspace.</p></div>
+      <div className="xv-wt-preview-canvas">
+        <Image
+          src="/showcase/thumbnails/ai-saas-chatbot-desktop-2026-08-12.webp"
+          alt="Generated AI product preview inside the Xroga workspace"
+          fill
+          sizes="(max-width: 760px) 92vw, 760px"
+          className="xv-wt-preview-image"
+        />
+        <div className="xv-wt-preview-caption"><Logo href={null} variant="sidebar" height={38} /><div><strong>Generated product preview</strong><p>Review the real interface before publishing.</p></div></div>
+      </div>
     </div>
   );
 }
