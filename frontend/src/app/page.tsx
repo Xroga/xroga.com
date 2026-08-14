@@ -196,7 +196,6 @@ export default function HomePage() {
           </div>
           <div className="xv-hc-mid-cta-actions">
             <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
-            <Link href="/contact">Contact</Link>
           </div>
         </div>
       </section>
