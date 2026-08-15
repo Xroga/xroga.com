@@ -2,6 +2,11 @@ import { randomUUID } from 'crypto';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
+import {
+  researchThroughBlackHole,
+  selectBuildModel,
+  selectRepairModel as selectRepairModelThroughBlackHole,
+} from './black-hole/productionBridge.js';
 import { decideConversion } from './black-hole/converterPolicy.js';
 import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
@@ -174,7 +179,7 @@ import {
 import {
   fallbackOrderForModel,
   createIntelligentRoutePlan,
-  selectRepairModel,
+  selectRepairModel as legacySelectRepairModel,
 } from './intelligentRouter.js';
 import { normalizeProviderError, recordModelValidation } from './providerRuntime.js';
 import { classifyFailure } from '../lib/recoveryPlanner.js';
@@ -818,8 +823,28 @@ export async function runChatPipeline(opts: {
   let research: ResearchBundle | null = null;
   let researchBlock = '';
   if (route.useResearch) {
-    research = await gatherResearch(opts.prompt, opts.userId);
-    researchBlock = formatResearchForPrompt(research);
+    // Item 5 — the chat research path, same staged treatment as the build path.
+    // Held in a container rather than a bare `let`: TypeScript narrows a binding only ever
+    // assigned inside a closure to `never`, which then propagates into the response type.
+    const chatLegacyHolder: { bundle: ResearchBundle | null } = { bundle: null };
+    const chatOutcome = await researchThroughBlackHole(
+      { userId: opts.userId, query: opts.prompt },
+      async () => {
+        const bundle = await gatherResearch(opts.prompt, opts.userId);
+        chatLegacyHolder.bundle = bundle;
+        return {
+          evidence: formatResearchForPrompt(bundle),
+          sourceCount: bundle.sources.length,
+        };
+      },
+    );
+    research = chatLegacyHolder.bundle;
+    researchBlock =
+      chatOutcome.source === 'black_hole'
+        ? chatOutcome.evidence
+        : formatResearchForPrompt(
+            chatLegacyHolder.bundle ?? { query: '', summary: '', sources: [], provider: 'none' },
+          );
     if (!researchBlock) research = null;
   }
 
@@ -1449,6 +1474,8 @@ export async function runBuildPipeline(opts: {
       swarmActivity: 'Xroga Live · web + X',
       swarmTodos: todos('research'),
     });
+    const legacyHolder: { bundle: ResearchBundle | null } = { bundle: null };
+    let blackHoleEvidence = '';
     research = await withProgressHeartbeat(
       {
         everyMs: 12_000,
@@ -1461,9 +1488,37 @@ export async function runBuildPipeline(opts: {
             swarmTodos: todos('research'),
           }),
       },
-      () => gatherResearch(opts.prompt, opts.userId),
+      async () => {
+        // Item 5 — research routes through the canonical layer when its stage is enabled.
+        // The legacy gatherResearch remains the fallback, so the evidence a build sees is
+        // never worse than before: an unavailable Black Hole route yields the old answer.
+        const outcome = await researchThroughBlackHole(
+          {
+            userId: opts.userId,
+            conversationId: opts.runId ?? null,
+            projectId: opts.projectId ?? null,
+            query: opts.prompt,
+            signal: opts.signal,
+          },
+          async () => {
+            const legacyBundle = await gatherResearch(opts.prompt, opts.userId);
+            legacyHolder.bundle = legacyBundle;
+            return {
+              evidence: formatResearchForPrompt(legacyBundle),
+              sourceCount: legacyBundle.sources.length,
+            };
+          },
+        );
+        blackHoleEvidence = outcome.source === 'black_hole' ? outcome.evidence : '';
+        return legacyHolder.bundle ?? {
+          query: opts.prompt,
+          summary: '',
+          sources: [],
+          provider: 'none' as const,
+        };
+      },
     );
-    researchBlock = formatResearchForPrompt(research);
+    researchBlock = blackHoleEvidence || formatResearchForPrompt(research);
     if (!researchBlock) {
       // Do not fake a research step when nothing came back
       research = null;
@@ -1801,8 +1856,25 @@ export async function runBuildPipeline(opts: {
       swarmTodos: todos('build'),
     });
 
+  // Item 6 — production build model selection moves behind the canonical router.
+  //
+  // `route.builder` came from a keyword table with hard-coded model names. The bridge computes
+  // the Black Hole answer alongside it, records the comparison for shadow mode, and returns
+  // whichever the current cutover stage says to use. With the flag unset this is `route.builder`
+  // unchanged, so the build path behaves exactly as before.
+  const buildSelection = selectBuildModel({
+    userId: opts.userId,
+    conversationId: opts.runId ?? null,
+    projectId: opts.projectId ?? null,
+    prompt: opts.prompt,
+    legacyModel: route.builder,
+    repositoryFileCount: prior.files?.length,
+    previousFailures: 0,
+  });
+  trace.setMeta({ buildRoute: { source: buildSelection.source, reason: buildSelection.reason } });
+
   let result = await callBuilderStream(
-    route.builder,
+    buildSelection.modelId,
     [
       { role: 'system', content: BUILDER_SYSTEM },
       { role: 'user', content: builderUser },
@@ -1842,7 +1914,7 @@ export async function runBuildPipeline(opts: {
     status: 'model_active',
     message: 'Implementation route active',
     swarmStatusLabel: 'Building',
-    swarmActivity: result.modelId === route.builder ? 'Primary route' : 'Compatible fallback',
+    swarmActivity: result.modelId === buildSelection.modelId ? 'Primary route' : 'Compatible fallback',
     swarmTodos: todos('build'),
   });
 
@@ -2380,10 +2452,25 @@ export async function runBuildPipeline(opts: {
 
       const failureText = [...qa.issues, ...compile.issues].join('\n');
       const repairCategory = classifyFailure(failureText);
-      const repairModel = selectRepairModel(repairCategory, [result.modelId]) ?? route.builder;
+      // Item 7 — repairs route through the canonical layer, which classifies the failure and
+      // bounds the scope. The legacy selection remains the fallback so a stage rollback
+      // restores the previous behaviour exactly.
+      const repairSelection = selectRepairModelThroughBlackHole({
+        userId: opts.userId,
+        conversationId: opts.runId ?? null,
+        projectId: opts.projectId ?? null,
+        failureMessage: failureText,
+        prompt: opts.prompt,
+        attempt: 1,
+        exclude: [result.modelId],
+        legacyModel: legacySelectRepairModel(repairCategory, [result.modelId]) ?? buildSelection.modelId,
+      });
+      const repairModel = repairSelection.modelId;
       trace.setMeta({
         repairRoute: {
           category: repairCategory,
+          scope: repairSelection.scope,
+          source: repairSelection.source,
           modelChanged: repairModel !== result.modelId,
           evidenceItems: qa.issues.length + compile.issues.length,
         },

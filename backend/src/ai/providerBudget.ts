@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { MODELS, type ModelId } from './models.js';
+import { MODELS, requirePricing, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
 
@@ -60,9 +60,9 @@ export function estimateProviderReservationMicroUsd(input: {
   maximumOutputTokens: number;
   billingTolerance?: number;
 }): number {
-  const model = MODELS[input.modelId];
-  const inputCost = (Math.max(0, input.estimatedInputTokens) * model.inputUsdPer1M);
-  const outputCost = (Math.max(0, input.maximumOutputTokens) * model.outputUsdPer1M);
+  const price = requirePricing(input.modelId);
+  const inputCost = (Math.max(0, input.estimatedInputTokens) * price.inputUsdPer1M);
+  const outputCost = (Math.max(0, input.maximumOutputTokens) * price.outputUsdPer1M);
   const tolerance = Math.max(1, input.billingTolerance ?? 1.2);
   // Rates are USD per one million tokens; multiplying by one converts USD to micro-USD.
   return Math.max(1_000, asSafeInteger((inputCost + outputCost) * tolerance));
@@ -75,11 +75,11 @@ export function actualProviderCostMicroUsd(input: {
   outputTokens: number;
   reasoningTokens?: number;
 }): number {
-  const model = MODELS[input.modelId];
+  const price = requirePricing(input.modelId);
   const billableInput = Math.max(0, input.inputTokens - (input.cachedInputTokens ?? 0));
   const billableOutput = Math.max(0, input.outputTokens + (input.reasoningTokens ?? 0));
   return asSafeInteger(
-    billableInput * model.inputUsdPer1M + billableOutput * model.outputUsdPer1M,
+    billableInput * price.inputUsdPer1M + billableOutput * price.outputUsdPer1M,
   );
 }
 

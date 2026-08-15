@@ -200,7 +200,14 @@ function hostTitle(url: string): string {
   }
 }
 
-async function tavilySearch(query: string, apiKey: string): Promise<ResearchBundle> {
+/**
+ * Exported so the canonical Black Hole research router can drive the same transport.
+ *
+ * Exported rather than reimplemented: this function already handles the response shape, the
+ * URL validation and the timeout. A second Tavily client in the new layer would be one more
+ * place for the SSRF guard `validateResearchUrl` provides to be forgotten.
+ */
+export async function tavilySearch(query: string, apiKey: string): Promise<ResearchBundle> {
   const res = await fetch('https://api.tavily.com/search', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -233,7 +240,8 @@ async function tavilySearch(query: string, apiKey: string): Promise<ResearchBund
   };
 }
 
-async function searxngSearch(query: string): Promise<ResearchBundle> {
+/** Exported for the canonical research router — see `tavilySearch` above. */
+export async function searxngSearch(query: string): Promise<ResearchBundle> {
   const base = (process.env.SEARXNG_URL || 'https://searx.be').replace(/\/$/, '');
   validateResearchUrl(base);
   const url = `${base}/search?q=${encodeURIComponent(query)}&format=json`;

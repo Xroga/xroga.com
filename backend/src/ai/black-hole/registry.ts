@@ -44,6 +44,7 @@ import {
   isResearchModel,
 } from '../providerPolicy.js';
 import { codingTierFor, modelAvailability, type ModelAvailability } from '../providerCostTiers.js';
+import { MODELS, resolveModelSpec, type ModelId } from '../models.js';
 
 /** The real transports Black Hole ∞ speaks. Named per provider, never per model family. */
 export type BlackHoleProvider = 'moonshot' | 'glm_official' | 'openrouter' | 'xai';
@@ -103,6 +104,10 @@ export interface BlackHoleModelDefinition {
   readonly credentialEnv: string;
   readonly capabilities: BlackHoleCapabilities;
   readonly authority: BlackHoleAuthority;
+  /**
+   * Fallback only. `blackHoleModel()` overrides this from `models.ts`, which owns the fact.
+   * Kept so the shape stays total for a model the catalogue does not yet carry.
+   */
   readonly contextWindow: number;
   readonly costClass: BlackHoleCostClass;
   readonly preferredRoles: readonly string[];
@@ -291,8 +296,37 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
 
 const BY_ID = new Map(BLACK_HOLE_MODELS.map((model) => [model.id, model]));
 
-export function blackHoleModel(id: string): BlackHoleModelDefinition | null {
-  return BY_ID.get(id) ?? null;
+/**
+ * The canonical entry for a model, with the *factual* fields taken from `models.ts`.
+ *
+ * The registry below still owns capability and authority — those are Xroga policy, not
+ * provider specifications. But `contextWindow` and `capabilities.vision` are provider facts,
+ * and this registry used to hard-code its own copies of both. The K3 vision claim here said
+ * `true` while `modelCapabilityRegistry` said `false`, and the router — correctly requiring
+ * agreement before sending an image anywhere — produced no route at all.
+ *
+ * Deriving removes the disagreement rather than picking a winner. When an operator verifies
+ * K3 vision with Moonshot and sets `KIMI_VISION_ENABLED`, both registries change together
+ * because there is only one of them now.
+ */
+export function blackHoleModel(
+  id: string,
+  env: NodeJS.ProcessEnv = process.env,
+): BlackHoleModelDefinition | null {
+  const base = BY_ID.get(id);
+  if (!base) return null;
+  const spec = resolveModelSpec(id as ModelId, env);
+  const def = MODELS[id as ModelId];
+  if (!def) return base;
+  return {
+    ...base,
+    contextWindow: spec?.contextWindow ?? base.contextWindow,
+    capabilities: {
+      ...base.capabilities,
+      // Provider fact, single source. False until an operator has verified it.
+      vision: spec ? spec.supportsImages : false,
+    },
+  };
 }
 
 /**
@@ -306,10 +340,10 @@ export function providerModelIdentifier(
   id: string,
   env: NodeJS.ProcessEnv = process.env,
 ): string | null {
-  const model = BY_ID.get(id);
-  if (!model) return null;
-  const override = model.providerModelEnv ? env[model.providerModelEnv]?.trim() : '';
-  return override || model.providerModel;
+  if (!BY_ID.has(id)) return null;
+  // Delegates rather than re-implementing the override rule, so the identifier this registry
+  // reports and the one the transport actually sends cannot diverge.
+  return resolveModelSpec(id as ModelId, env)?.apiModel ?? null;
 }
 
 /**
@@ -323,10 +357,16 @@ export function blackHoleAvailability(
   id: string,
   env: NodeJS.ProcessEnv = process.env,
 ): ModelAvailability {
-  const model = BY_ID.get(id);
-  if (!model) return 'unknown_model';
-  if (codingTierFor(id)) return modelAvailability(id, env);
-  return providerModelIdentifier(id, env) ? 'available' : 'not_configured';
+  if (!BY_ID.has(id)) return 'unknown_model';
+  // `resolveModelSpec` is the authority: it requires an identifier, verified pricing *and* a
+  // context window. A model missing any of the three is not callable, and reporting it as
+  // available would put it into a chain that fails at the first request.
+  if (resolveModelSpec(id as ModelId, env)) return 'available';
+  // Unresolved means not callable, full stop. Deferring to `modelAvailability` here would
+  // report "available" for a model that has only its identifier set — that function answers a
+  // narrower question (is the identifier gate satisfied) and answering the broader one with it
+  // is what would put an unpriced model at the head of a chain.
+  return 'not_configured';
 }
 
 /**

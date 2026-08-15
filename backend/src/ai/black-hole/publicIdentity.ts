@@ -62,6 +62,9 @@ export const FORBIDDEN_REASONING_KEYS: readonly string[] = [
 
 /** §31's personas. Retained for admin and migration compatibility, never for users. */
 export const MODEL_PERSONAS: readonly string[] = [
+  // Order matters: longer names first, so "Xroga Apex Efficient" is reported as itself rather
+  // than as a match on the "Xroga Apex" prefix.
+  'Xroga Apex Efficient',
   'Xroga Apex',
   'Xroga Horizon',
   'Xroga Forge',
@@ -212,6 +215,86 @@ export function findPublicIdentityLeaks(payload: unknown): IdentityLeak[] {
 
   walk(payload, '$');
   return leaks;
+}
+
+/**
+ * The public projection of an execution plan.
+ *
+ * `/api/capabilities/plan` returned the raw planner output, which carries `selectedModel`,
+ * `fallbackModels`, `primaryModel` and `reviewerModel` — four of the exact fields §30 forbids,
+ * on an ordinary authenticated user route rather than an admin one.
+ *
+ * Projecting rather than deleting keeps the endpoint useful. A caller asking what Xroga will do
+ * with their request wants the shape of the work — how many steps, what each one is for, what
+ * is blocked — and none of that requires naming a vendor's model.
+ */
+export interface PublicPlanStep {
+  readonly id: string;
+  readonly purpose: string;
+  readonly dependsOn: readonly string[];
+  readonly status: string;
+  readonly blocker?: string;
+  /** Which public tier will serve this step, never which model. */
+  readonly tier: string;
+  readonly review: boolean;
+}
+
+export interface PublicPlan {
+  readonly status: string;
+  readonly intelligence: string;
+  readonly mode: PublicMode;
+  readonly researchRequired: boolean;
+  readonly steps: readonly PublicPlanStep[];
+  readonly blockers: readonly string[];
+  readonly capabilities: readonly string[];
+}
+
+export type PublicMode = 'auto' | 'fast' | 'deep';
+
+/** Internal routing modes mapped to the three §7 permits exposing. */
+export function publicModeFor(internal: string | undefined): PublicMode {
+  if (internal === 'cost') return 'fast';
+  if (internal === 'intelligence') return 'deep';
+  return 'auto';
+}
+
+/**
+ * Which public tier a task class belongs to.
+ *
+ * Deliberately coarse. The tiers are the same four the usage dashboard publishes, so a user
+ * sees one vocabulary across the product rather than two that almost match.
+ */
+export function publicTierFor(taskClass: string): string {
+  if (/research|documentation_lookup|api_discovery/.test(taskClass)) return 'Live Research';
+  if (/large_context|repository_analysis|migration|long_horizon/.test(taskClass)) {
+    return 'Long-Context Engineering';
+  }
+  if (/architecture|security|review|reasoning|debugging/.test(taskClass)) return 'Flagship Reasoning';
+  return 'High-Volume Execution';
+}
+
+/**
+ * A blocker message safe to publish.
+ *
+ * Internal blockers name the models they checked — `providerResolver` produces
+ * "Provider checks failed — kimi_k3: not configured; glm_5_2: not configured" — which is
+ * exactly right for an operator and forbidden for a user.
+ *
+ * The user-actionable content survives the translation. "Capacity is unavailable" is what they
+ * can act on; which four vendors were tried is not, and publishing it would tell them nothing
+ * they could use while telling a competitor the whole fleet.
+ *
+ * Returns the original when it is already clean, so ordinary blockers keep their specificity.
+ */
+export function publicBlocker(message: string): string {
+  if (!findPublicIdentityLeaks(message).length) return message;
+  if (/not configured|no usable provider|no registered provider/i.test(message)) {
+    return 'Intelligence capacity is not currently available for this request.';
+  }
+  if (/health|unavailable|circuit/i.test(message)) {
+    return 'Intelligence capacity is temporarily degraded for this request.';
+  }
+  return 'This request cannot be routed right now.';
 }
 
 export class PublicIdentityLeakError extends Error {

@@ -61,7 +61,7 @@ const REGISTRY: RuntimeModelCapability[] = [
 /** Records what the gateway asked of the provider, and answers successfully. */
 function recordingProvider(): { complete: ProviderComplete; calls: ModelId[] } {
   const calls: ModelId[] = [];
-  const complete: ProviderComplete = async (modelId, messages) => {
+  const complete: ProviderComplete = async ({ modelId, messages }) => {
     calls.push(modelId);
     return {
       text: 'the answer',
@@ -169,7 +169,7 @@ test('the newest user turn is what gets classified', async () => {
 
 test('a provider failure moves to the next model in the chain', async () => {
   const calls: ModelId[] = [];
-  const complete: ProviderComplete = async (modelId, messages) => {
+  const complete: ProviderComplete = async ({ modelId }) => {
     calls.push(modelId);
     if (calls.length === 1) throw new Error('provider 500');
     return {
@@ -187,7 +187,7 @@ test('a provider failure moves to the next model in the chain', async () => {
 test('an exhausted chain fails rather than widening authority', async () => {
   // §8's closing rule, at the point it would actually be violated.
   const attempted: ModelId[] = [];
-  const complete: ProviderComplete = async (modelId) => {
+  const complete: ProviderComplete = async ({ modelId }) => {
     attempted.push(modelId);
     throw new Error('provider down');
   };
@@ -210,7 +210,7 @@ test('a cancelled request stops immediately rather than walking the chain', asyn
   // Walking on after cancellation spends budget on work already known to be unwanted.
   const controller = new AbortController();
   const attempted: ModelId[] = [];
-  const complete: ProviderComplete = async (modelId) => {
+  const complete: ProviderComplete = async ({ modelId }) => {
     attempted.push(modelId);
     controller.abort();
     throw new Error('aborted');
@@ -238,7 +238,7 @@ test('no route at all is reported as a routing error, not an empty answer', asyn
 
 test('planned context reaches the provider, and dropped segments are reported', async () => {
   let received: string = '';
-  const complete: ProviderComplete = async (modelId, messages) => {
+  const complete: ProviderComplete = async ({ modelId, messages }) => {
     received = messages.map((message) => String(message.content)).join('\n');
     return {
       text: 'ok', finishReason: 'stop', modelId, apiModel: modelId, provider: 'test',
@@ -263,7 +263,7 @@ test('planned context reaches the provider, and dropped segments are reported', 
 
 test('a system message from the caller is preserved', async () => {
   let roles: string[] = [];
-  const complete: ProviderComplete = async (modelId, messages) => {
+  const complete: ProviderComplete = async ({ modelId, messages }) => {
     roles = messages.map((message) => message.role);
     return {
       text: 'ok', finishReason: 'stop', modelId, apiModel: modelId, provider: 'test',

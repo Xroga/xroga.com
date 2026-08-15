@@ -80,10 +80,16 @@ const STARTING_CHAINS: Record<RouteFamily, readonly string[]> = {
   reasoning: ['deepseek_v4_pro', 'kimi_k3', 'glm_5_2'],
   coding: ['kimi_k2_7', 'glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
   long_horizon: ['glm_5_2', 'kimi_k3', 'kimi_k2_7', 'deepseek_v4_pro'],
-  // §8: "K3 → only another genuinely supported visual route". There is no second route with
-  // both vision and write authority, so this chain is one long by fact rather than by policy.
-  // `visionCapableCandidates` below is what keeps it honest if that ever changes.
-  vision: ['kimi_k3'],
+  // §8: "K3 → only another genuinely supported visual route".
+  //
+  // The Grok models are exactly that for *reading* an image: they genuinely accept one, and
+  // they hold `inspectMedia` authority. They are safe to list because the authority filter
+  // removes them the moment the task also needs to write — so "describe this screenshot"
+  // reaches a working route, while "implement this mockup" never reaches a research model.
+  //
+  // Listing them is what stops an image request producing no route at all when K3's vision
+  // support has not been verified by an operator.
+  vision: ['kimi_k3', 'grok_4_5', 'grok_4_3'],
   research: ['grok_4_5', 'grok_4_3'],
 };
 
@@ -164,16 +170,16 @@ export function routeFamilyFor(analysis: TaskAnalysis): RouteFamily {
 /**
  * Models that can genuinely accept an image.
  *
- * Two registries answer this and they do not agree: the Black Hole registry declares
- * `kimi_k3.capabilities.vision === true`, while `modelCapabilityRegistry` derives
- * `supports.images` from `id.startsWith('grok')`. Agreement is required here rather than
- * picking a winner, because the failure mode of trusting the optimistic one is sending an
- * image to a model that cannot read it and receiving a confident answer about nothing.
+ * This used to reconcile two disagreeing registries. It no longer has to: `models.ts` owns
+ * modality, `modelCapabilityRegistry` reads it, and the Black Hole registry derives it. The
+ * function survives as the place that would catch a regression reintroducing a second claim.
  */
 function visionCapableCandidates(registry: readonly RuntimeModelCapability[]): Set<string> {
   const capable = new Set<string>();
   for (const model of BLACK_HOLE_MODELS) {
-    if (!model.capabilities.vision) continue;
+    // Both registries now derive image support from `models.ts`, so this is a single fact
+    // read twice rather than two claims that can disagree. The intersection is kept because
+    // it costs nothing and it is the assertion that would catch a future divergence.
     const runtime = registry.find((entry) => entry.id === model.id);
     if (runtime?.supports.images) capable.add(model.id);
   }

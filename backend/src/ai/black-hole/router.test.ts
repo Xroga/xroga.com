@@ -208,21 +208,41 @@ test('a request that researches and then builds is routed as engineering', () =>
 // §8 vision — no invented visual route
 // ---------------------------------------------------------------------------
 
-test('an image request is refused by any model without confirmed vision support', () => {
-  // Two registries disagree about K3's vision support, so the router requires both to agree.
-  // Trusting the optimistic one sends an image to a model that cannot read it and returns a
-  // confident answer about nothing.
+test('a read-only image request reaches a genuinely vision-capable route', () => {
+  // The point of the registry unification: an image request must not produce an empty chain
+  // merely because K3's vision support has not been verified by an operator. The research
+  // models genuinely accept images and hold inspectMedia authority, so they serve this.
   const result = route({
     prompt: 'what is in this screenshot',
     attachments: [{ mediaType: 'image/png' }],
   });
-  for (const entry of result.excluded) {
-    if (entry.modelId === 'kimi_k3') {
-      assert.match(entry.reason, /no confirmed vision support/);
-    }
+  assert.ok(result.chain.length > 0, 'an image request must reach some capable route');
+  for (const modelId of result.chain) {
+    const runtime = REGISTRY.find((entry) => entry.id === modelId)!;
+    assert.equal(runtime.supports.images, true, `${modelId} cannot actually read an image`);
   }
-  // The vision chain is K3 alone; with vision unconfirmed there is no second route invented.
-  assert.deepEqual(result.chain, []);
+});
+
+test('a model without confirmed vision support is excluded by name and reason', () => {
+  // Sending an image to a model that cannot read one returns a confident answer about nothing.
+  const result = route({
+    prompt: 'what is in this screenshot',
+    attachments: [{ mediaType: 'image/png' }],
+  });
+  const k3 = result.excluded.find((entry) => entry.modelId === 'kimi_k3');
+  assert.ok(k3, 'K3 heads the vision chain and must be accounted for');
+  assert.match(k3!.reason, /no confirmed vision support/);
+});
+
+test('an image request that must also write files finds no route rather than a research model', () => {
+  // The authority filter is what makes listing the research models in the vision chain safe:
+  // "describe this screenshot" reaches them, "implement this mockup" never does.
+  const result = route({
+    prompt: 'build this screen from the mockup',
+    attachments: [{ mediaType: 'image/png' }],
+    repositoryMutationRequested: true,
+  });
+  assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
 });
 
 test('a confirmed vision model is used when the registries agree', () => {

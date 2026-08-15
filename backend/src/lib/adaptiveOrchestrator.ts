@@ -38,6 +38,7 @@ export interface AdaptiveExecutionPlan {
 }
 
 const MODEL_FALLBACKS: Record<ModelId, ModelId[]> = {
+  kimi_k2_7: ['glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
   kimi_k3: ['glm_5_2', 'deepseek_v4_pro', 'grok_4_3'],
   glm_5_2: ['kimi_k3', 'grok_4_3', 'deepseek_v4_pro'],
   deepseek_v4_pro: ['kimi_k3', 'glm_5_2', 'deepseek_v4_flash'],
