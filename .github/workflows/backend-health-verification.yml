@@ -1,0 +1,48 @@
+name: Backend health verification
+
+# Read-only reachability and health evidence for the launch gate.
+#
+# The engineering environment cannot reach xroga-api.fly.dev — its egress gateway
+# answers 403 to CONNECT — so backend /health and /ready could not be verified from
+# there. A GitHub-hosted runner has ordinary internet egress and can, which makes
+# this the smallest legitimate vantage point that closes that evidence gap.
+#
+# Deliberately read-only: two GETs and no credentials. It holds no secret, takes no
+# input, mutates nothing, and cannot start a build or spend provider budget. Anything
+# that writes belongs in a separate workflow with its own controls.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-health-verification
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: GET /health
+        run: |
+          set -o pipefail
+          code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 \
+            https://xroga-api.fly.dev/health)
+          echo "status=$code"
+          echo "--- body (first 2000 bytes) ---"
+          head -c 2000 /tmp/health.json || true
+          echo
+          test "$code" -ge 200 && test "$code" -lt 300
+
+      - name: GET /ready
+        run: |
+          set -o pipefail
+          code=$(curl -sS -o /tmp/ready.json -w '%{http_code}' --max-time 30 \
+            https://xroga-api.fly.dev/ready)
+          echo "status=$code"
+          echo "--- body (first 2000 bytes) ---"
+          head -c 2000 /tmp/ready.json || true
+          echo
+          test "$code" -ge 200 && test "$code" -lt 300
