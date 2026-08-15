@@ -2,7 +2,7 @@
 
 Branch `claude/xroga-ai-updates-j24vhq`, on top of Part 1 (`0965bf6`, PR #563).
 
-Backend: **2034/2034 tests pass**, typecheck and build clean.
+Backend: **2044/2044 tests pass**, typecheck and build clean.
 
 Everything below is verified by tests against injected fakes. **Nothing here is live
 verified.** This environment has no provider credentials and `xroga-api.fly.dev` is refused at
@@ -109,8 +109,9 @@ so no UI change was required.
 **Not implemented:** §32 structured output repair loop, §33/§34 cost and compute economics
 (partially covered — `costUsd` and `executionBudget` exist), §37 full cancellation propagation
 to sandbox and browser (the gateway and agent loop honour cancellation; downstream does not yet
-uniformly), §40 legacy deletion (correctly blocked — §40's conditions require zero production
-callers, which cannot be true while §27 is undone), §41–§45 verification.
+uniformly), §40 legacy deletion (correctly blocked — its own conditions require zero production
+callers, and the build, research and repair stages still call models directly), §41–§45
+verification.
 
 **§13 Tavily OAuth was not implemented.** Per-user authorization uses the existing encrypted
 user-integration infrastructure, which already carries `tavily`, so authorization is never
@@ -122,8 +123,9 @@ technically compatible. The five connection states are modelled and routed on.
 
 In order:
 
-1. Decide the quota dashboard question (§34), then migrate the three persona callers.
-2. Wire `pipeline.ts` behind the gateway at `shadow` stage and observe real routing decisions.
+1. Set `BLACK_HOLE_CUTOVER_STAGE=shadow` in production and watch the converter decisions on
+   real traffic. Nothing user-visible changes at that stage.
+2. Move the build, research and repair stages behind the gateway the same way, one at a time.
 3. Supply a verified K2.7 identifier and `models.ts` entry, or accept GLM as the coding head.
 4. Resolve the K3 vision disagreement against the real provider contract.
 5. Run §41's representative builds from an environment with provider credentials — this is the
