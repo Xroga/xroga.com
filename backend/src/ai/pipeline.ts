@@ -1,5 +1,10 @@
 import { randomUUID } from 'crypto';
 import { convertUserRequest } from './converter.js';
+import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
+import { readCutoverPlan } from './black-hole/cutover.js';
+import { decideConversion } from './black-hole/converterPolicy.js';
+import { analyzeTask } from './black-hole/taskClass.js';
+import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import {
   buildVisionUserContent,
@@ -587,7 +592,9 @@ async function callBuilderStream(
       const code = (lastErr as Error & { code?: string }).code;
       const failure = classifyBuilderFailure(lastErr);
       opts.onAttemptFailure?.({
-        model: MODELS[modelId].label,
+        // §30/§31: this field reached the client. Which model failed is recorded in the
+        // run trace for operators; the public field carries the one public identity.
+        model: BLACK_HOLE_PUBLIC_NAME,
         failure,
         startedAt: attemptStartedAt,
         firstTokenAt: null,
@@ -1571,20 +1578,54 @@ export async function runBuildPipeline(opts: {
     swarmTodos: todos('convert'),
   });
 
-  await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
-  const converted = await convertUserRequest(
-    opts.userId,
-    isUpdate
-      ? `INCREMENTAL UPDATE to existing project "${prior.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches (or Delete File). Do not re-analyze the whole repo: ${opts.prompt}`
-      : opts.prompt,
-    researchBlock || undefined,
-  );
-  usage = await recordUsage(
-    opts.userId,
-    'deepseek_v4_flash',
-    converted.inputTokens,
-    converted.outputTokens,
-  );
+  // Part 2 §18/§27 — the first production responsibility moved behind Black Hole.
+  //
+  // The converter previously ran unconditionally: a model call on every build that rewrote
+  // requests which were frequently already unambiguous. `decideConversion` answers whether the
+  // call is justified, and normalizes deterministically when it is not.
+  //
+  // Gated on the §39 cutover plan, which defaults to `legacy_only`. With the flag unset this
+  // block behaves exactly as before — the migration ships dark and is turned on deliberately,
+  // which is the whole point of §39's staged rollout.
+  const converterRequest = isUpdate
+    ? `INCREMENTAL UPDATE to existing project "${prior.projectName || 'current site'}". Apply only this change using SEARCH/REPLACE patches (or Delete File). Do not re-analyze the whole repo: ${opts.prompt}`
+    : opts.prompt;
+
+  const blackHolePlan = readCutoverPlan();
+  const conversionAnalysis = analyzeTask({
+    prompt: opts.prompt,
+    projectId: opts.projectId ?? null,
+    repositoryMutationRequested: true,
+  });
+  const conversionDecision = decideConversion({
+    prompt: converterRequest,
+    analysis: conversionAnalysis,
+    complexity: assessBlackHoleComplexity({ prompt: converterRequest, analysis: conversionAnalysis }),
+    researchBlock: researchBlock || undefined,
+  });
+  const skipConverter = blackHolePlan.runsBlackHole && !conversionDecision.convert;
+
+  let converted: { instruction: string; inputTokens: number; outputTokens: number };
+  if (skipConverter) {
+    converted = {
+      instruction: conversionDecision.normalizedInstruction,
+      inputTokens: 0,
+      outputTokens: 0,
+    };
+  } else {
+    await assertCanUseModel(opts.userId, 'deepseek_v4_flash');
+    converted = await convertUserRequest(
+      opts.userId,
+      converterRequest,
+      researchBlock || undefined,
+    );
+    usage = await recordUsage(
+      opts.userId,
+      'deepseek_v4_flash',
+      converted.inputTokens,
+      converted.outputTokens,
+    );
+  }
 
   // Architect agent — concrete file plan (real multi-agent stage).
   // Simple static landings use a deterministic plan (no extra OpenRouter wait).
@@ -1783,7 +1824,9 @@ export async function runBuildPipeline(opts: {
         emit({
           agent: 'builder',
           status: 'awaiting_model',
-          message: heartbeatMessage(`${MODELS[model].label} to return code`, elapsedMs),
+          // §31: the model persona was user-visible here. The user does not act differently
+          // on which model is slow, and naming it publishes fleet composition.
+          message: heartbeatMessage(`${BLACK_HOLE_PUBLIC_NAME} to return code`, elapsedMs),
           swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
           swarmTodos: todos('build'),
         }),

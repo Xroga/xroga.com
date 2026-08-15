@@ -168,3 +168,36 @@ test('a disabled builder refuses rather than reporting an empty build', () => {
   assert.match(error.message, /LEGACY_WHOLE_PROJECT_BUILDER_ENABLED/);
   assert.match(error.message, /refused rather than reported as empty/);
 });
+
+test('a Black Hole run cannot share a run with either existing implementer', () => {
+  // Part 2 §26: never let a legacy builder and a Black Hole builder mutate the same run. The
+  // universal + black_hole pair matters just as much — that is the collision the migration
+  // itself could introduce, and it is the one nobody would think to look for.
+  for (const other of ['legacy', 'universal'] as const) {
+    assert.throws(
+      () =>
+        assertSingleImplementer([
+          { runId: 'run-1', implementer: 'black_hole' },
+          { runId: 'run-1', implementer: other },
+        ]),
+      (error: unknown) => {
+        assert.ok(error instanceof ImplementationConflictError);
+        // The message names who collided, so a production report is actionable without
+        // reconstructing the run.
+        assert.match(error.message, /black_hole/);
+        assert.match(error.message, new RegExp(other));
+        return true;
+      },
+      `black_hole + ${other} was allowed`,
+    );
+  }
+});
+
+test('a Black Hole run alone is not a conflict', () => {
+  assert.doesNotThrow(() =>
+    assertSingleImplementer([
+      { runId: 'run-1', implementer: 'black_hole' },
+      { runId: 'run-2', implementer: 'legacy' },
+    ]),
+  );
+});

@@ -61,10 +61,21 @@ export class LegacyBuilderDisabledError extends Error {
   }
 }
 
+/**
+ * The implementers that can claim a run.
+ *
+ * `black_hole` joins the two originals for Part 2 §26, which requires that a legacy builder and
+ * a Black Hole builder never mutate the same run. Adding it here rather than special-casing it
+ * at the call site means the existing conflict check covers the new pair for free — and, more
+ * usefully, covers the `universal` + `black_hole` pair too, which is the collision the
+ * migration itself could introduce.
+ */
+export type Implementer = 'universal' | 'legacy' | 'black_hole';
+
 export interface ImplementationClaim {
   readonly runId: string;
   /** Which implementer is claiming this run. */
-  readonly implementer: 'universal' | 'legacy';
+  readonly implementer: Implementer;
 }
 
 /**
@@ -88,7 +99,7 @@ export function assertSingleImplementer(claims: readonly ImplementationClaim[]):
   for (const [runId, implementers] of byRun) {
     if (implementers.size > 1) {
       throw new ImplementationConflictError(
-        `Run ${runId} was claimed by both the universal and legacy implementers. ` +
+        `Run ${runId} was claimed by more than one implementer (${[...implementers].sort().join(', ')}). ` +
           'One run has exactly one implementer; two would let the second overwrite work the ' +
           'first had already validated and published, leaving the run evidence describing neither.',
       );

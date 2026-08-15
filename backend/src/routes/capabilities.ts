@@ -6,7 +6,7 @@ import type { StorageProviderId, StorageProviderState } from '../lib/storageSele
 import type { ProviderCandidate } from '../lib/providerResolver.js';
 import type { ModelId } from '../ai/models.js';
 import { createIntelligentRoutePlan } from '../ai/intelligentRouter.js';
-import { safeModelDiagnostics } from '../ai/modelCapabilityRegistry.js';
+import { publicIntelligenceHealth } from '../ai/modelCapabilityRegistry.js';
 import type { RoutingMode } from '../ai/routerConfig.js';
 
 const router = Router();
@@ -79,9 +79,7 @@ router.get('/', (_req, res) => {
   res.json({
     generatedAt: new Date().toISOString(),
     capabilities: getCapabilityRegistry(),
-    routerDiagnostics: {
-      models: safeModelDiagnostics(),
-    },
+    intelligence: publicIntelligenceHealth(),
   });
 });
 

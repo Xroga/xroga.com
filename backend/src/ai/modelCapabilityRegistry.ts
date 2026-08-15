@@ -149,6 +149,33 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
   });
 }
 
+/**
+ * Aggregate health for the public capabilities route.
+ *
+ * Part 2 §30: `safeModelDiagnostics()` publishes a per-model row carrying the model persona,
+ * and it was reachable on the public `GET /capabilities` endpoint. Even with the persona
+ * removed, a per-model list tells a caller how many models the platform runs and how each is
+ * behaving, which is fleet composition rather than service health.
+ *
+ * A public caller needs one thing: is the intelligence system able to serve me. That is what
+ * this returns. `safeModelDiagnostics()` is retained below for admin and operational use,
+ * where §30 explicitly permits provider detail.
+ */
+export function publicIntelligenceHealth(): {
+  status: 'operational' | 'degraded' | 'unavailable';
+} {
+  const registry = getRuntimeModelRegistry();
+  const usable = registry.filter(
+    (model) => model.configured && model.enabled && model.health.status !== 'circuit_open',
+  );
+  if (!usable.length) return { status: 'unavailable' };
+  // Degraded rather than operational when anything usable is unhealthy: a user seeing slow or
+  // failing requests should find a status that matches, not a green light that contradicts it.
+  const anyDegraded = usable.some((model) => model.health.status === 'degraded');
+  return { status: anyDegraded ? 'degraded' : 'operational' };
+}
+
+/** Admin and operational diagnostics. Not for public routes — see `publicIntelligenceHealth`. */
 export function safeModelDiagnostics() {
   return getRuntimeModelRegistry().map((model) => ({
     label: MODELS[model.id].label,
