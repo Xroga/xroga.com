@@ -105,8 +105,8 @@ describe('modelBudgetRemaining + usage snapshot fields', () => {
     planTier: 'spark',
     byModel: [
       {
-        role: 'kimi_k3',
-        label: 'Xroga Apex',
+        id: 'flagship',
+        label: 'Flagship Reasoning',
         inputUsed: 100,
         outputUsed: 50,
         inputLimit: 400_000,

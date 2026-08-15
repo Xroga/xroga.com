@@ -66,26 +66,33 @@ invoke a deploy tool — which is what stops a research request from acquiring w
 
 ## D. Open items, stated plainly
 
-**§27 pipeline migration is not done.** `pipeline.ts` still owns its own AI calls. The gateway,
-router and cutover flag exist and are tested, but no production caller has been switched. This
-is the largest remaining piece of Part 2.
+**§27 first production responsibility migrated.** `pipeline.ts` now delegates the converter
+decision to Black Hole, gated on the §39 cutover plan. The converter previously ran
+unconditionally — a model call on every build, rewriting requests that were frequently already
+unambiguous. With `BLACK_HOLE_CUTOVER_STAGE` unset the block behaves exactly as before, so the
+migration ships dark and is turned on deliberately. Tests cover both states and the rollback.
 
-**§30/§31 persona callers are not migrated.** The audit found raw provider names do *not* reach
-any route. The personas do, in three places:
+Remaining under §27: the build, research and repair stages still own their own model calls.
 
-- `ai/quota.ts` — `byModel[].label` / `.tagline` on the dashboard payload
-- `routes/capabilities.ts` — via `safeModelDiagnostics()`
-- `ai/pipeline.ts` — attempt-failure `model` field (line ~590) and progress heartbeats (~1786)
+**§30/§31 persona callers migrated.** All three surfaces the audit found are closed:
 
-The guard and the public replacement are in place; the callers are not switched. **This needs a
-product decision rather than a mechanical edit.** The quota dashboard's whole structure is
-per-model pools, and §34 asks to move away from rigid per-model allocations toward one user
-compute budget. Replacing six persona labels with six identical "Black Hole ∞" strings would
-satisfy §31 and leave a dashboard showing six indistinguishable rows. The right fix is probably
-to collapse the pools into a single compute budget — which is §34's work, not §31's.
+- `ai/quota.ts` — the dashboard published the raw model ids as `role` *and* the personas as
+  `label`. Both are gone. Pools are now capability tiers: `flagship` / "Flagship Reasoning",
+  `long_context` / "Long-Context Engineering", `high_volume` / "High-Volume Execution",
+  `live_research` / "Live Research". Tiers rather than four repetitions of "Black Hole ∞",
+  because the reason a user opens that screen is to see which kind of work spent their budget —
+  four identical rows would satisfy the rule and destroy the feature. `role` stays internal as
+  the key usage accumulates under; `POOL_PUBLIC_ID_BY_ROLE` translates.
+- `routes/capabilities.ts` — the public route published a per-model health row each carrying a
+  persona. Even without the persona, a per-model list is fleet composition rather than service
+  health, so the public route now returns an aggregate status only.
+  `safeModelDiagnostics()` is retained for admin use, where §30 permits provider detail.
+- `ai/pipeline.ts` — the attempt-failure `model` field and the build heartbeat both carried
+  personas; both now carry the one public identity. Which model failed is still recorded in the
+  run trace for operators.
 
-Frontend impact is low: `byModel` is typed in `frontend/src/lib/api.ts` but no component
-currently renders it.
+Frontend impact: `byModel` is typed in `frontend/src/lib/api.ts` but no component renders it,
+so no UI change was required.
 
 **§38 public capabilities are not proven end-to-end.** Two are known not to work today:
 

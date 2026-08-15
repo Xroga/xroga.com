@@ -181,27 +181,59 @@ export function scaleFactorForBudget(apiBudgetUsd: number): number {
 }
 
 /** Dashboard-friendly rollup (DeepSeek Pro+Flash combined, Grok 4.5+4.3 combined). */
+/**
+ * Public capability tiers for the usage dashboard.
+ *
+ * Part 2 §30/§31: the dashboard previously published both the raw model ids (`kimi_k3`,
+ * `grok`) as `role` and the model personas ("Xroga Apex", "Xroga Live / Lens") as `label`.
+ * Both are forbidden on a public surface — the ids name the vendor's model directly and the
+ * personas map one-to-one onto it.
+ *
+ * They are replaced by capability tiers rather than by a single "Black Hole ∞" repeated four
+ * times. A dashboard of four identical rows satisfies the privacy rule and destroys the
+ * feature: the reason a user looks at this screen is to see *which kind of work* consumed
+ * their budget. "Long-Context Engineering" answers that; "Black Hole ∞" four times does not.
+ *
+ * `role` stays on the internal object because it is the key usage is accumulated under.
+ * `publicId` is what leaves the process.
+ */
+/**
+ * Internal pool role → the public capability-tier key published in its place.
+ *
+ * Exported so the few internal lookups that still need to find a pool by model can translate,
+ * rather than each re-deriving the mapping and drifting from this one.
+ */
+export const POOL_PUBLIC_ID_BY_ROLE: Record<string, string> = {
+  kimi_k3: 'flagship',
+  glm_5_2: 'long_context',
+  deepseek_v4: 'high_volume',
+  grok: 'live_research',
+};
+
 export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_USD) {
   const scale = scaleFactorForBudget(apiBudgetUsd);
   return [
     {
       role: 'kimi_k3',
-      label: MODELS.kimi_k3.label,
-      tagline: MODELS.kimi_k3.tagline,
+      publicId: 'flagship',
+      label: 'Flagship Reasoning',
+      tagline: 'Deep reasoning, architecture and difficult builds',
       totalLimit: Math.round(MODELS.kimi_k3.monthlyTokens * scale),
       budgetUsd: Math.round(MODELS.kimi_k3.budgetUsd * scale * 100) / 100,
     },
     {
       role: 'glm_5_2',
-      label: MODELS.glm_5_2.label,
-      tagline: MODELS.glm_5_2.tagline,
+      publicId: 'long_context',
+      label: 'Long-Context Engineering',
+      tagline: 'Large repositories and long-horizon work',
       totalLimit: Math.round(MODELS.glm_5_2.monthlyTokens * scale),
       budgetUsd: Math.round(MODELS.glm_5_2.budgetUsd * scale * 100) / 100,
     },
     {
       role: 'deepseek_v4',
-      label: 'Xroga Forge / Pulse',
-      tagline: 'Volume workhorse',
+      publicId: 'high_volume',
+      label: 'High-Volume Execution',
+      tagline: 'Fast iteration and everyday builds',
       totalLimit: Math.round(
         (MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens) * scale,
       ),
@@ -212,8 +244,9 @@ export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_
     },
     {
       role: 'grok',
-      label: 'Xroga Live / Lens',
-      tagline: 'Real-time + document backup',
+      publicId: 'live_research',
+      label: 'Live Research',
+      tagline: 'Current web and social intelligence',
       totalLimit: Math.round(
         (MODELS.grok_4_5.monthlyTokens + MODELS.grok_4_3.monthlyTokens) * scale,
       ),

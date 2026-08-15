@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '../config/supabase.js';
 import {
   MODELS,
+  POOL_PUBLIC_ID_BY_ROLE,
   costUsdForTokens,
   dashboardModelPools,
   type ModelId,
@@ -30,7 +31,8 @@ export interface UsageSnapshot {
   percentCreditUsed: number;
   planTier: string;
   byModel: Array<{
-    role: string;
+    /** Capability-tier key. Never the model id — see `dashboardModelPools`. */
+    id: string;
     label: string;
     tagline?: string;
     inputUsed: number;
@@ -106,7 +108,9 @@ function buildSnapshot(opts: {
     const spent = roundUsd(opts.modelUsed[p.role]?.cost ?? 0);
     const totalModelUsed = usedIn + usedOut;
     return {
-      role: p.role,
+      // §30: `role` carried the raw model id and is deliberately not published. `publicId` is
+      // a stable capability-tier key a client can key off without learning the vendor.
+      id: p.publicId,
       label: p.label,
       tagline: p.tagline,
       inputUsed: usedIn,
@@ -398,8 +402,11 @@ export function modelBudgetRemaining(
   usage: UsageSnapshot,
   modelId: ModelId,
 ): { tokensRemaining: number; creditRemainingUsd: number } {
+  // The snapshot is keyed by public capability tier now, so the internal role is translated
+  // rather than compared directly.
   const poolRole = poolRoleFor(modelId);
-  const pool = usage.byModel.find((m) => m.role === poolRole);
+  const publicId = POOL_PUBLIC_ID_BY_ROLE[poolRole] ?? poolRole;
+  const pool = usage.byModel.find((m) => m.id === publicId);
   if (!pool) {
     const def = MODELS[modelId];
     return {
