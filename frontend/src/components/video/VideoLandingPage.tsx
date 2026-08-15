@@ -8,7 +8,6 @@ import {
   BarChart3,
   CalendarDays,
   Check,
-  CheckCircle2,
   ChevronRight,
   Compass,
   FileText,
@@ -22,7 +21,6 @@ import {
   Play,
   Scissors,
   Search,
-  Send,
   Shapes,
   Sparkles,
   TrendingUp,
@@ -40,30 +38,15 @@ type Template = {
   prompt: string;
 };
 
-const MEDIA = [
-  '/backgrounds/bg-desktop-1-infinity.webp',
-  '/backgrounds/bg-desktop-2-earth.webp',
-  '/backgrounds/bg-desktop-4-blackhole-nebula.webp',
-  '/backgrounds/xroga-beige-ai-islands-bg.webp',
-  '/backgrounds/xroga-beige-sculpted-data-bg.webp',
-  '/backgrounds/xroga-beige-mars-pyramids-code-bg.webp',
-  '/backgrounds/xroga-black-clouds-bg.webp',
-] as const;
-
-const NAV_ITEMS = [
-  [Home, 'Home', 'top'],
-  [Compass, 'Explore', 'explore'],
-  [Sparkles, 'Create', 'composer'],
-  [Folder, 'Projects', 'storyboard'],
-  [Workflow, 'Workflow', 'workflow'],
-  [LayoutGrid, 'Templates', 'explore'],
-] as const;
-
-const TOOL_ITEMS = [
-  [Scissors, 'Editor', 'editor'],
-  [ImageIcon, 'Assets', 'explore'],
-  [Shapes, 'Brand Kit', 'package'],
-] as const;
+const MEDIA = {
+  infinity: '/backgrounds/bg-desktop-1-infinity.webp',
+  earth: '/backgrounds/bg-desktop-2-earth.webp',
+  blackhole: '/backgrounds/bg-desktop-4-blackhole-nebula.webp',
+  islands: '/backgrounds/xroga-beige-ai-islands-bg.webp',
+  data: '/backgrounds/xroga-beige-sculpted-data-bg.webp',
+  mars: '/backgrounds/xroga-beige-mars-pyramids-code-bg.webp',
+  clouds: '/backgrounds/xroga-black-clouds-bg.webp',
+} as const;
 
 const CREATION_TABS = [
   'Videos',
@@ -81,54 +64,69 @@ const INPUT_TABS = [
   'Script to Video',
 ] as const;
 
+const NAV_ITEMS = [
+  [Home, 'Home', 'top'],
+  [Compass, 'Explore', 'explore'],
+  [Sparkles, 'Create', 'composer'],
+  [Folder, 'Projects', 'storyboard'],
+  [Workflow, 'Workflow', 'workflow'],
+  [LayoutGrid, 'Templates', 'explore'],
+] as const;
+
+const TOOL_ITEMS = [
+  [Scissors, 'Editor', 'editor'],
+  [ImageIcon, 'Assets', 'explore'],
+  [Shapes, 'Brand Kit', 'package'],
+] as const;
+
 const TEMPLATES: Template[] = [
   {
-    title: 'Future Cities Documentary',
-    meta: 'YouTube · 16:9 · Long-form',
+    title: 'Future Cities',
+    meta: 'DOCUMENTARY · 16:9',
     category: 'Videos',
-    image: MEDIA[0],
+    image: MEDIA.infinity,
     prompt:
-      'Create a cinematic documentary about cities of the future with a powerful opening hook, atmospheric narration, chapter structure, and premium futuristic visuals.',
+      'Create a cinematic documentary about the cities of 2050 with a powerful opening hook, atmospheric narration, strong visual continuity, and chapter structure.',
   },
   {
-    title: 'Space Signal Story',
-    meta: 'Story · 16:9 · Cinematic',
+    title: 'Signal From Space',
+    meta: 'STORY · 16:9',
     category: 'Stories',
-    image: MEDIA[2],
+    image: MEDIA.blackhole,
     prompt:
-      'Create a cinematic story about a mysterious signal arriving from deep space. Build suspense across connected scenes and finish with a powerful visual reveal.',
+      'Create a cinematic story about a mysterious signal reaching Earth from deep space. Build suspense across connected scenes and end with a visual reveal.',
   },
   {
-    title: 'Vertical Adventure',
-    meta: 'Short · 9:16 · 45 sec',
+    title: 'World Above Clouds',
+    meta: 'SHORT · 9:16',
     category: 'Shorts',
-    image: MEDIA[3],
+    image: MEDIA.islands,
     prompt:
-      'Create a 45-second vertical adventure about discovering floating islands above the clouds with fast pacing and a memorable final shot.',
+      'Create a fast cinematic vertical story about discovering a civilization floating above the clouds.',
   },
   {
-    title: 'Technology Explained',
-    meta: 'Explainer · 16:9 · 5 min',
+    title: 'Intelligence Explained',
+    meta: 'EXPLAINER · 16:9',
     category: 'Videos',
-    image: MEDIA[4],
+    image: MEDIA.data,
     prompt:
-      'Create a five-minute technology explainer using cinematic visual storytelling, clear narration, elegant transitions, and strong visual examples.',
+      'Create a premium technology explainer using cinematic imagery, simple narration, and elegant visual transitions.',
   },
   {
-    title: 'Lost Civilization',
-    meta: 'Film · 16:9 · Story',
+    title: 'Lost Mars Civilization',
+    meta: 'FILM · 16:9',
     category: 'Film',
-    image: MEDIA[5],
+    image: MEDIA.mars,
     prompt:
-      'Create a cinematic film concept about explorers discovering evidence of a lost civilization on Mars. Maintain visual continuity throughout the production.',
+      'Create a cinematic film concept about explorers discovering evidence of an ancient civilization on Mars.',
   },
   {
-    title: 'Product Launch Film',
-    meta: 'Ad · 16:9 · 30 sec',
+    title: 'Product Launch',
+    meta: 'AD · 16:9',
     category: 'Ads',
-    image: MEDIA[6],
+    image: MEDIA.clouds,
     prompt:
-      'Create a premium 30-second product launch film with dramatic lighting, precise pacing, cinematic shots, and luxury commercial direction.',
+      'Create a premium 30-second launch film with dramatic lighting, precision camera movement, and luxury advertising direction.',
   },
 ];
 
@@ -136,65 +134,65 @@ const WORKFLOW = [
   {
     label: 'Idea',
     description:
-      'Turn a rough thought into a clear creative direction.',
+      'Turn one rough thought into a clear creative direction.',
     chips: ['PROMPT', 'GOAL', 'FORMAT'],
-    action: 'composer',
+    destination: 'composer',
   },
   {
     label: 'Research',
     description:
-      'Build visual context around topic, audience, environment, and direction.',
+      'Build the visual world, references, audience context, and creative angle.',
     chips: ['CONTEXT', 'VISUALS', 'ANGLE'],
-    action: 'composer',
+    destination: 'explore',
   },
   {
     label: 'Script',
     description:
-      'Shape the hook, structure, narration, dialogue, and scene beats.',
+      'Shape the hook, narration, story structure, dialogue, and scene beats.',
     chips: ['HOOK', 'NARRATION', 'SCENES'],
-    action: 'storyboard',
+    destination: 'storyboard',
   },
   {
     label: 'Storyboard',
     description:
-      'Plan shots, framing, timing, movement, and visual continuity.',
+      'Plan every visual beat, camera direction, scene duration, and transition.',
     chips: ['SHOTS', 'CAMERA', 'TIMING'],
-    action: 'storyboard',
+    destination: 'storyboard',
   },
   {
     label: 'Generate',
     description:
-      'Transform planned scenes into visual outputs while keeping the project connected.',
-    chips: ['SCENES', 'VISUALS', 'CONTINUITY'],
-    action: 'storyboard',
+      'Produce connected scene visuals while maintaining one creative direction.',
+    chips: ['GENERATE', 'SCENES', 'CONTEXT'],
+    destination: 'storyboard',
   },
   {
     label: 'Edit',
     description:
-      'Refine pacing, sequence, voice, captions, music, and the final cut.',
+      'Assemble the cut, narration, captions, music, timing, and scene order.',
     chips: ['TIMELINE', 'VOICE', 'MUSIC'],
-    action: 'editor',
+    destination: 'editor',
   },
   {
     label: 'Package',
     description:
-      'Prepare thumbnails, titles, descriptions, chapters, and presentation.',
+      'Create thumbnail concepts, titles, chapters, descriptions, and presentation.',
     chips: ['THUMBNAIL', 'TITLE', 'SEO'],
-    action: 'package',
+    destination: 'package',
   },
   {
     label: 'Publish',
     description:
-      'Adapt one production across formats and prepare a release plan.',
+      'Adapt the production into multiple formats and prepare its release.',
     chips: ['16:9', '9:16', '4:5'],
-    action: 'package',
+    destination: 'package',
   },
   {
     label: 'Grow',
     description:
-      'Compare creative variants and learn which direction performs best.',
+      'Compare creative variants and learn which direction performs strongest.',
     chips: ['CTR', 'RETENTION', 'ITERATE'],
-    action: 'package',
+    destination: 'package',
   },
 ] as const;
 
@@ -205,25 +203,14 @@ const PHASES = [
   'Preparing creative workflow',
 ] as const;
 
-const STORYBOARD_FRAMES = [
-  ['01', 'Opening', 'Wide reveal', MEDIA[2]],
-  ['02', 'Discovery', 'Slow orbit', MEDIA[0]],
-  ['03', 'Conflict', 'Push in', MEDIA[6]],
-  ['04', 'Reveal', 'Crane up', MEDIA[1]],
-  ['05', 'World', 'Aerial shot', MEDIA[3]],
-  ['06', 'Detail', 'Macro move', MEDIA[4]],
-] as const;
-
 function scrollToSection(id: string) {
-  document
-    .getElementById(id)
-    ?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+  document.getElementById(id)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
 }
 
-function WorkflowImage({
+function MediaImage({
   src,
   alt = '',
 }: {
@@ -235,543 +222,521 @@ function WorkflowImage({
       src={src}
       alt={alt}
       fill
-      quality={64}
-      sizes="(max-width: 720px) 70vw, 260px"
+      quality={65}
+      sizes="(max-width: 720px) 80vw, 320px"
     />
   );
 }
 
-function WorkflowStageVisual({
-  stage,
-}: {
-  stage: number;
-}) {
-  if (stage === 0) {
-    return (
-      <div className="xv-stage-view xv-stage-idea">
-        <div className="xv-stage-prompt">
-          <header>
-            <Sparkles />
-            <span>
-              <small>CREATIVE IDEA</small>
-              <b>Future Cities: Life in 2050</b>
-            </span>
-          </header>
-
-          <p>
-            Create a cinematic documentary that
-            opens above a city designed for a world
-            that does not exist yet.
-          </p>
-
-          <div>
-            <span>CINEMATIC</span>
-            <span>16:9</span>
-            <span>DOCUMENTARY</span>
-          </div>
-        </div>
-
-        <div className="xv-stage-image-stack">
-          {[MEDIA[0], MEDIA[1], MEDIA[3]].map(
-            (image, index) => (
-              <article key={image}>
-                <WorkflowImage src={image} />
-
-                <span>
-                  DIRECTION {index + 1}
-                </span>
-              </article>
-            ),
-          )}
-        </div>
-
-        <div className="xv-stage-status">
+function IdeaVisual() {
+  return (
+    <div className="xv-flow-screen xv-flow-idea">
+      <div className="xv-idea-prompt">
+        <header>
           <Sparkles />
-          Black Hole V∞ is turning the idea
-          into visual directions
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 1) {
-    return (
-      <div className="xv-stage-view xv-stage-research">
-        <header className="xv-stage-mini-head">
           <span>
-            <small>VISUAL RESEARCH</small>
-            <b>Building the creative world</b>
+            <small>CREATIVE IDEA</small>
+            <b>Life inside the cities of 2050</b>
           </span>
-
-          <strong>4 directions found</strong>
         </header>
 
-        <div className="xv-research-grid">
-          {[
-            [MEDIA[1], 'MEGACITY', 'Environment'],
-            [MEDIA[4], 'SYSTEMS', 'Technology'],
-            [MEDIA[3], 'HABITAT', 'Architecture'],
-            [MEDIA[5], 'SCALE', 'World building'],
-          ].map(([image, title, type]) => (
-            <article key={title}>
-              <WorkflowImage src={image} />
+        <p>
+          Create a cinematic documentary that opens above a
+          city designed around people, intelligence, and
+          autonomous infrastructure.
+        </p>
 
-              <div>
-                <small>{type}</small>
-                <b>{title}</b>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="xv-stage-processing">
-          <span>
-            <i />
-            Understanding visual language
-          </span>
-
-          <span>
-            <CheckCircle2 />
-            Direction map prepared
-          </span>
-
-          <span>
-            <CheckCircle2 />
-            References connected
-          </span>
-        </div>
+        <footer>
+          <span>CINEMATIC</span>
+          <span>DOCUMENTARY</span>
+          <span>16:9</span>
+        </footer>
       </div>
-    );
-  }
 
-  if (stage === 2) {
-    return (
-      <div className="xv-stage-view xv-stage-script">
-        <div className="xv-script-sheet">
-          <header>
-            <FileText />
+      <div className="xv-idea-images">
+        <article className="is-large">
+          <MediaImage src={MEDIA.infinity} />
+          <span>PRIMARY DIRECTION</span>
+        </article>
 
-            <span>
-              <small>MASTER SCRIPT</small>
-              <b>Future Cities — Draft 01</b>
-            </span>
+        <article>
+          <MediaImage src={MEDIA.earth} />
+          <span>WORLD</span>
+        </article>
 
-            <em>03:42</em>
-          </header>
-
-          <div className="xv-script-lines">
-            <span>
-              <b>00:00</b>
-              “Imagine waking up inside a city
-              designed around you.”
-            </span>
-
-            <span>
-              <b>00:08</b>
-              “No traffic lights. No wasted
-              energy. No fixed streets.”
-            </span>
-
-            <span className="is-active">
-              <b>00:17</b>
-              “The city itself becomes an
-              intelligent system.”
-            </span>
-
-            <span>
-              <b>00:28</b>
-              “And this future may be closer
-              than we think.”
-            </span>
-          </div>
-        </div>
-
-        <div className="xv-script-visuals">
-          {[MEDIA[0], MEDIA[4], MEDIA[1]].map(
-            (image, index) => (
-              <article key={image}>
-                <WorkflowImage src={image} />
-
-                <span>
-                  SCENE {String(index + 1).padStart(2, '0')}
-                </span>
-              </article>
-            ),
-          )}
-        </div>
+        <article>
+          <MediaImage src={MEDIA.data} />
+          <span>TECHNOLOGY</span>
+        </article>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  if (stage === 3) {
-    return (
-      <div className="xv-stage-view xv-stage-storyboard">
-        <header className="xv-stage-mini-head">
-          <span>
-            <small>STORYBOARD</small>
-            <b>6 planned visual beats</b>
-          </span>
-
-          <strong>32.7 sec preview</strong>
-        </header>
-
-        <div className="xv-stage-story-grid">
-          {STORYBOARD_FRAMES.map(
-            ([number, title, camera, image]) => (
-              <article key={number}>
-                <div>
-                  <WorkflowImage src={image} />
-
-                  <span>
-                    {number}
-                  </span>
-                </div>
-
-                <b>{title}</b>
-                <small>{camera}</small>
-              </article>
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 4) {
-    return (
-      <div className="xv-stage-view xv-stage-generate">
-        <header className="xv-stage-mini-head">
-          <span>
-            <small>VISUAL GENERATION</small>
-            <b>Producing connected scene outputs</b>
-          </span>
-
-          <strong className="is-live">
-            <i />
-            PREVIEW
-          </strong>
-        </header>
-
-        <div className="xv-generation-grid">
-          <article className="is-ready">
-            <div>
-              <WorkflowImage src={MEDIA[2]} />
-              <span>
-                <Check />
-              </span>
-            </div>
-
-            <footer>
-              <span>
-                <small>SCENE 01</small>
-                <b>Opening world</b>
-              </span>
-
-              <em>READY</em>
-            </footer>
-          </article>
-
-          <article className="is-ready">
-            <div>
-              <WorkflowImage src={MEDIA[0]} />
-
-              <span>
-                <Check />
-              </span>
-            </div>
-
-            <footer>
-              <span>
-                <small>SCENE 02</small>
-                <b>Future district</b>
-              </span>
-
-              <em>READY</em>
-            </footer>
-          </article>
-
-          <article className="is-generating">
-            <div>
-              <WorkflowImage src={MEDIA[1]} />
-
-              <div className="xv-generating-overlay">
-                <Sparkles />
-                <b>Generating visual</b>
-                <span>72%</span>
-              </div>
-            </div>
-
-            <footer>
-              <span>
-                <small>SCENE 03</small>
-                <b>City intelligence</b>
-              </span>
-
-              <em>72%</em>
-            </footer>
-
-            <i className="xv-generation-progress">
-              <span />
-            </i>
-          </article>
-
-          <article className="is-queued">
-            <div>
-              <WorkflowImage src={MEDIA[4]} />
-
-              <div className="xv-queued-overlay">
-                <span>04</span>
-                <b>Queued</b>
-              </div>
-            </div>
-
-            <footer>
-              <span>
-                <small>SCENE 04</small>
-                <b>System reveal</b>
-              </span>
-
-              <em>QUEUE</em>
-            </footer>
-          </article>
-        </div>
-
-        <div className="xv-generation-footer">
-          <span>
-            <Sparkles />
-            Black Hole V∞
-          </span>
-
-          <i />
-
-          <span>
-            Scene continuity
-          </span>
-
-          <i />
-
-          <span>
-            Visual direction
-          </span>
-
-          <i />
-
-          <span>
-            Production output
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 5) {
-    return (
-      <div className="xv-stage-view xv-stage-edit">
-        <div className="xv-edit-preview">
-          <WorkflowImage src={MEDIA[1]} />
-
-          <button type="button" aria-label="Preview concept">
-            <Play />
-          </button>
-
-          <div>
-            <span>SCENE 04</span>
-            <b>Future Cities — Master Cut</b>
-          </div>
-        </div>
-
-        <div className="xv-mini-editor">
-          <header>
-            <small>00:00</small>
-            <small>00:10</small>
-            <small>00:20</small>
-            <small>00:30</small>
-          </header>
-
-          <div>
-            <b>VIDEO</b>
-            <span className="video-track">
-              <i />
-              <i />
-              <i />
-              <i />
-            </span>
-          </div>
-
-          <div>
-            <b>VOICE</b>
-            <span className="voice-track">
-              <i />
-            </span>
-          </div>
-
-          <div>
-            <b>MUSIC</b>
-            <span className="music-track">
-              <i />
-            </span>
-          </div>
-        </div>
-
-        <div className="xv-edit-strip">
-          {[MEDIA[2], MEDIA[0], MEDIA[6], MEDIA[1]].map(
-            (image, index) => (
-              <article key={`${image}-${index}`}>
-                <WorkflowImage src={image} />
-                <span>{index + 1}</span>
-              </article>
-            ),
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 6) {
-    return (
-      <div className="xv-stage-view xv-stage-package">
-        <header className="xv-stage-mini-head">
-          <span>
-            <small>PACKAGING</small>
-            <b>Thumbnail concepts generated</b>
-          </span>
-
-          <strong>3 variations</strong>
-        </header>
-
-        <div className="xv-thumbnail-grid">
-          {[
-            [
-              MEDIA[0],
-              'THE CITIES OF 2050',
-              'Concept A',
-            ],
-            [
-              MEDIA[1],
-              'INSIDE THE FUTURE',
-              'Concept B',
-            ],
-            [
-              MEDIA[4],
-              'THIS CHANGES CITIES',
-              'Concept C',
-            ],
-          ].map(([image, title, label]) => (
-            <article key={label}>
-              <div>
-                <WorkflowImage src={image} />
-
-                <strong>{title}</strong>
-              </div>
-
-              <footer>
-                <span>{label}</span>
-                <b>THUMBNAIL</b>
-              </footer>
-            </article>
-          ))}
-        </div>
-
-        <div className="xv-title-options">
-          <span>
-            <b>01</b>
-            The Cities That Will Define 2050
-          </span>
-
-          <span>
-            <b>02</b>
-            Inside Tomorrow&apos;s Smartest Cities
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 7) {
-    return (
-      <div className="xv-stage-view xv-stage-publish">
-        <div className="xv-master-output">
-          <div>
-            <WorkflowImage src={MEDIA[0]} />
-          </div>
-
-          <span>
-            <small>MASTER</small>
-            <b>YouTube Film</b>
-            <em>16:9</em>
-          </span>
-        </div>
-
-        <ArrowRight className="xv-publish-arrow" />
-
-        <div className="xv-format-grid">
-          {[
-            ['Short', '9:16', MEDIA[0]],
-            ['Reel', '9:16', MEDIA[1]],
-            ['Feed', '4:5', MEDIA[4]],
-            ['Square', '1:1', MEDIA[3]],
-          ].map(([title, ratio, image]) => (
-            <article key={title}>
-              <div>
-                <WorkflowImage src={image} />
-              </div>
-
-              <span>
-                <b>{title}</b>
-                <small>{ratio}</small>
-              </span>
-            </article>
-          ))}
-        </div>
-
-        <div className="xv-publish-status">
-          <Send />
-          One production adapted for every format
-        </div>
-      </div>
-    );
-  }
+function ResearchVisual() {
+  const items = [
+    [MEDIA.earth, 'ENVIRONMENT', 'Future megacity'],
+    [MEDIA.data, 'TECHNOLOGY', 'Connected systems'],
+    [MEDIA.islands, 'ARCHITECTURE', 'New habitats'],
+    [MEDIA.mars, 'WORLD BUILDING', 'Scale & atmosphere'],
+  ];
 
   return (
-    <div className="xv-stage-view xv-stage-grow">
-      <header className="xv-stage-mini-head">
+    <div className="xv-flow-screen">
+      <header className="xv-flow-toolbar">
         <span>
-          <small>GROWTH WORKSPACE · DEMO DATA</small>
-          <b>Compare creative directions</b>
+          <small>VISUAL RESEARCH</small>
+          <b>Building the creative world</b>
         </span>
 
-        <strong>
-          <TrendingUp />
-          Improving
-        </strong>
+        <em>4 DIRECTIONS</em>
       </header>
 
-      <div className="xv-growth-visuals">
+      <div className="xv-research-board">
+        {items.map(([image, type, title]) => (
+          <article key={title}>
+            <MediaImage src={image} />
+
+            <div>
+              <small>{type}</small>
+              <b>{title}</b>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <footer className="xv-flow-status">
+        <span>
+          <i />
+          Understanding visual language
+        </span>
+
+        <span>
+          <Check />
+          References connected
+        </span>
+
+        <span>
+          <Check />
+          Direction prepared
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+function ScriptVisual() {
+  return (
+    <div className="xv-flow-screen xv-script-layout">
+      <section className="xv-script-paper">
+        <header>
+          <FileText />
+
+          <span>
+            <small>MASTER SCRIPT</small>
+            <b>Future Cities — Draft 01</b>
+          </span>
+
+          <em>03:42</em>
+        </header>
+
+        <div className="xv-script-lines">
+          <p>
+            <b>00:00</b>
+            “Imagine waking up inside a city designed around
+            you.”
+          </p>
+
+          <p>
+            <b>00:08</b>
+            “No traffic lights. No wasted energy. No fixed
+            streets.”
+          </p>
+
+          <p className="is-active">
+            <b>00:17</b>
+            “The city itself becomes an intelligent system.”
+          </p>
+
+          <p>
+            <b>00:28</b>
+            “And that future may be closer than we think.”
+          </p>
+        </div>
+      </section>
+
+      <aside className="xv-script-scenes">
+        {[MEDIA.infinity, MEDIA.data, MEDIA.earth].map(
+          (image, index) => (
+            <article key={image}>
+              <MediaImage src={image} />
+
+              <span>
+                SCENE {String(index + 1).padStart(2, '0')}
+              </span>
+            </article>
+          ),
+        )}
+      </aside>
+    </div>
+  );
+}
+
+function StoryboardVisual() {
+  const frames = [
+    ['01', MEDIA.blackhole, 'Opening', 'Wide reveal'],
+    ['02', MEDIA.infinity, 'Discovery', 'Slow orbit'],
+    ['03', MEDIA.clouds, 'Conflict', 'Push in'],
+    ['04', MEDIA.earth, 'Reveal', 'Crane up'],
+    ['05', MEDIA.islands, 'World', 'Aerial'],
+    ['06', MEDIA.data, 'Detail', 'Macro'],
+  ];
+
+  return (
+    <div className="xv-flow-screen">
+      <header className="xv-flow-toolbar">
+        <span>
+          <small>STORYBOARD</small>
+          <b>Six connected visual beats</b>
+        </span>
+
+        <em>32.7 SEC PREVIEW</em>
+      </header>
+
+      <div className="xv-flow-storyboard">
+        {frames.map(([number, image, title, camera]) => (
+          <article key={number}>
+            <div>
+              <MediaImage src={image} />
+              <span>{number}</span>
+            </div>
+
+            <b>{title}</b>
+            <small>{camera}</small>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GenerateVisual() {
+  return (
+    <div className="xv-flow-screen">
+      <header className="xv-flow-toolbar">
+        <span>
+          <small>VISUAL GENERATION</small>
+          <b>Producing connected scene outputs</b>
+        </span>
+
+        <em className="xv-live">
+          <i />
+          PREVIEW
+        </em>
+      </header>
+
+      <div className="xv-generation-board">
+        <article>
+          <div>
+            <MediaImage src={MEDIA.blackhole} />
+            <span className="xv-ready-icon">
+              <Check />
+            </span>
+          </div>
+
+          <footer>
+            <span>
+              <small>SCENE 01</small>
+              <b>Opening world</b>
+            </span>
+
+            <em>READY</em>
+          </footer>
+        </article>
+
+        <article>
+          <div>
+            <MediaImage src={MEDIA.infinity} />
+            <span className="xv-ready-icon">
+              <Check />
+            </span>
+          </div>
+
+          <footer>
+            <span>
+              <small>SCENE 02</small>
+              <b>Future district</b>
+            </span>
+
+            <em>READY</em>
+          </footer>
+        </article>
+
+        <article className="is-generating">
+          <div>
+            <MediaImage src={MEDIA.earth} />
+
+            <div className="xv-generation-overlay">
+              <Sparkles />
+              <b>Generating scene</b>
+              <strong>72%</strong>
+            </div>
+          </div>
+
+          <footer>
+            <span>
+              <small>SCENE 03</small>
+              <b>City intelligence</b>
+            </span>
+
+            <em>72%</em>
+          </footer>
+
+          <i className="xv-progress">
+            <span />
+          </i>
+        </article>
+
+        <article className="is-queued">
+          <div>
+            <MediaImage src={MEDIA.data} />
+
+            <div className="xv-queue-overlay">
+              <span>04</span>
+              <b>QUEUED</b>
+            </div>
+          </div>
+
+          <footer>
+            <span>
+              <small>SCENE 04</small>
+              <b>System reveal</b>
+            </span>
+
+            <em>QUEUE</em>
+          </footer>
+        </article>
+      </div>
+
+      <footer className="xv-generation-status">
+        <span>
+          <Sparkles />
+          Black Hole V∞
+        </span>
+
+        <i />
+
+        <span>Scene continuity</span>
+
+        <i />
+
+        <span>Visual direction</span>
+
+        <i />
+
+        <span>Production output</span>
+      </footer>
+    </div>
+  );
+}
+
+function EditVisual() {
+  return (
+    <div className="xv-flow-screen xv-edit-flow">
+      <section className="xv-edit-player">
+        <MediaImage src={MEDIA.earth} />
+
+        <button type="button" aria-label="Preview concept">
+          <Play />
+        </button>
+
+        <footer>
+          <small>SCENE 04 · REVEAL</small>
+          <b>Future Cities — Master Cut</b>
+        </footer>
+      </section>
+
+      <section className="xv-edit-timeline">
+        <header>
+          <span>00:00</span>
+          <span>00:10</span>
+          <span>00:20</span>
+          <span>00:30</span>
+        </header>
+
+        <div>
+          <b>VIDEO</b>
+          <span className="xv-edit-video">
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+        </div>
+
+        <div>
+          <b>VOICE</b>
+          <span className="xv-edit-voice">
+            <i />
+          </span>
+        </div>
+
+        <div>
+          <b>MUSIC</b>
+          <span className="xv-edit-music">
+            <i />
+          </span>
+        </div>
+      </section>
+
+      <section className="xv-edit-scenes">
         {[
-          [MEDIA[0], 'Variant A', '6.8%', '63%'],
-          [MEDIA[1], 'Variant B', '5.1%', '54%'],
-          [MEDIA[4], 'Variant C', '4.6%', '49%'],
-        ].map(
+          MEDIA.blackhole,
+          MEDIA.infinity,
+          MEDIA.clouds,
+          MEDIA.earth,
+        ].map((image, index) => (
+          <article key={`${image}-${index}`}>
+            <MediaImage src={image} />
+            <span>{index + 1}</span>
+          </article>
+        ))}
+      </section>
+    </div>
+  );
+}
+
+function PackageVisual() {
+  const items = [
+    [MEDIA.infinity, 'THE CITIES OF 2050', 'CONCEPT A'],
+    [MEDIA.earth, 'INSIDE THE FUTURE', 'CONCEPT B'],
+    [MEDIA.data, 'THIS CHANGES CITIES', 'CONCEPT C'],
+  ];
+
+  return (
+    <div className="xv-flow-screen">
+      <header className="xv-flow-toolbar">
+        <span>
+          <small>PACKAGING</small>
+          <b>Thumbnail and title directions</b>
+        </span>
+
+        <em>3 VARIATIONS</em>
+      </header>
+
+      <div className="xv-package-board">
+        {items.map(([image, title, label]) => (
+          <article key={label}>
+            <div>
+              <MediaImage src={image} />
+              <strong>{title}</strong>
+            </div>
+
+            <footer>
+              <span>{label}</span>
+              <b>THUMBNAIL</b>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      <div className="xv-title-board">
+        <span>
+          <b>01</b>
+          The Cities That Will Define 2050
+        </span>
+
+        <span>
+          <b>02</b>
+          Inside Tomorrow&apos;s Smartest Cities
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function PublishVisual() {
+  return (
+    <div className="xv-flow-screen xv-publish-flow">
+      <section className="xv-master-format">
+        <div>
+          <MediaImage src={MEDIA.infinity} />
+        </div>
+
+        <footer>
+          <span>
+            <small>MASTER</small>
+            <b>Main Film</b>
+          </span>
+
+          <em>16:9</em>
+        </footer>
+      </section>
+
+      <ArrowRight className="xv-publish-arrow" />
+
+      <section className="xv-format-outputs">
+        {[
+          ['Short', '9:16', MEDIA.infinity],
+          ['Reel', '9:16', MEDIA.earth],
+          ['Feed', '4:5', MEDIA.data],
+          ['Square', '1:1', MEDIA.islands],
+        ].map(([title, ratio, image]) => (
+          <article key={title}>
+            <div>
+              <MediaImage src={image} />
+            </div>
+
+            <footer>
+              <b>{title}</b>
+              <small>{ratio}</small>
+            </footer>
+          </article>
+        ))}
+      </section>
+
+      <footer className="xv-publish-note">
+        One production adapted across every format
+      </footer>
+    </div>
+  );
+}
+
+function GrowVisual() {
+  const variants = [
+    [MEDIA.infinity, 'Variant A', '6.8%', '63%'],
+    [MEDIA.earth, 'Variant B', '5.1%', '54%'],
+    [MEDIA.data, 'Variant C', '4.6%', '49%'],
+  ];
+
+  return (
+    <div className="xv-flow-screen">
+      <header className="xv-flow-toolbar">
+        <span>
+          <small>GROWTH · DEMO DATA</small>
+          <b>Compare creative variants</b>
+        </span>
+
+        <em>
+          <TrendingUp />
+          IMPROVING
+        </em>
+      </header>
+
+      <div className="xv-grow-board">
+        {variants.map(
           ([image, title, ctr, retention], index) => (
             <article
               key={title}
-              className={
-                index === 0
-                  ? 'is-best'
-                  : ''
-              }
+              className={index === 0 ? 'is-best' : ''}
             >
               <div>
-                <WorkflowImage src={image} />
+                <MediaImage src={image} />
 
-                {index === 0 ? (
-                  <span>BEST</span>
-                ) : null}
+                {index === 0 ? <span>BEST</span> : null}
               </div>
 
-              <header>
-                <b>{title}</b>
-              </header>
+              <b>{title}</b>
 
               <footer>
                 <span>
@@ -789,88 +754,76 @@ function WorkflowStageVisual({
         )}
       </div>
 
-      <div className="xv-growth-insight">
+      <div className="xv-growth-note">
         <BarChart3 />
 
         <span>
           <b>Preview insight</b>
-          The brighter establishing frame creates
-          the strongest opening direction.
+          The brighter opening visual creates the strongest
+          direction in this demo.
         </span>
       </div>
     </div>
   );
 }
 
+function WorkflowVisual({ stage }: { stage: number }) {
+  switch (stage) {
+    case 0:
+      return <IdeaVisual />;
+    case 1:
+      return <ResearchVisual />;
+    case 2:
+      return <ScriptVisual />;
+    case 3:
+      return <StoryboardVisual />;
+    case 4:
+      return <GenerateVisual />;
+    case 5:
+      return <EditVisual />;
+    case 6:
+      return <PackageVisual />;
+    case 7:
+      return <PublishVisual />;
+    default:
+      return <GrowVisual />;
+  }
+}
+
 export function VideoLandingPage() {
-  const [mobileNavOpen, setMobileNavOpen] =
-    useState(false);
-
-  const [
-    activeCreationTab,
-    setActiveCreationTab,
-  ] =
-    useState<
-      (typeof CREATION_TABS)[number]
-    >('Videos');
-
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [activeCreationTab, setActiveCreationTab] =
+    useState<(typeof CREATION_TABS)[number]>('Videos');
   const [activeInputTab, setActiveInputTab] =
-    useState<(typeof INPUT_TABS)[number]>(
-      'Text to Video',
-    );
-
-  const [activeWorkflow, setActiveWorkflow] =
-    useState(4);
-
-  const [searchOpen, setSearchOpen] =
-    useState(false);
-
-  const [searchQuery, setSearchQuery] =
-    useState('');
-
-  const [prompt, setPrompt] = useState(
-    TEMPLATES[0].prompt,
-  );
-
-  const [format, setFormat] =
-    useState('YouTube');
-
-  const [duration, setDuration] =
-    useState('Auto');
-
-  const [ratio, setRatio] =
-    useState('16:9');
-
-  const [style, setStyle] =
-    useState('Cinematic');
-
-  const [mode, setMode] =
-    useState('Director');
-
+    useState<(typeof INPUT_TABS)[number]>('Text to Video');
+  const [activeWorkflow, setActiveWorkflow] = useState(4);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [prompt, setPrompt] = useState(TEMPLATES[0].prompt);
+  const [format, setFormat] = useState('YouTube');
+  const [duration, setDuration] = useState('Auto');
+  const [ratio, setRatio] = useState('16:9');
+  const [style, setStyle] = useState('Cinematic');
+  const [mode, setMode] = useState('Director');
   const [previewPhase, setPreviewPhase] =
     useState<number | null>(null);
-
-  const [previewDone, setPreviewDone] =
-    useState(false);
+  const [previewDone, setPreviewDone] = useState(false);
 
   const visibleTemplates = useMemo(() => {
-    const q = searchQuery
-      .trim()
-      .toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
 
     return TEMPLATES.filter((template) => {
-      const tabMatches =
+      const categoryMatches =
         activeCreationTab === 'Videos' ||
-        template.category ===
-          activeCreationTab;
+        template.category === activeCreationTab;
 
       const searchMatches =
-        !q ||
-        `${template.title} ${template.meta} ${template.category}`
+        !query ||
+        `${template.title} ${template.meta}`
           .toLowerCase()
-          .includes(q);
+          .includes(query);
 
-      return tabMatches && searchMatches;
+      return categoryMatches && searchMatches;
     });
   }, [activeCreationTab, searchQuery]);
 
@@ -879,50 +832,24 @@ export function VideoLandingPage() {
     scrollToSection(id);
   };
 
-  const applyTemplate = (
-    template: Template,
-  ) => {
+  const applyTemplate = (template: Template) => {
     setPrompt(template.prompt);
     setActiveInputTab('Text to Video');
     scrollToSection('composer');
   };
 
   const runPreview = () => {
-    if (
-      previewPhase !== null &&
-      !previewDone
-    ) {
+    if (previewPhase !== null && !previewDone) {
       return;
     }
 
     setPreviewDone(false);
     setPreviewPhase(0);
 
-    window.setTimeout(
-      () => setPreviewPhase(1),
-      450,
-    );
-
-    window.setTimeout(
-      () => setPreviewPhase(2),
-      900,
-    );
-
-    window.setTimeout(
-      () => setPreviewPhase(3),
-      1350,
-    );
-
-    window.setTimeout(
-      () => setPreviewDone(true),
-      1800,
-    );
-  };
-
-  const openWorkflowPreview = () => {
-    goTo(
-      WORKFLOW[activeWorkflow].action,
-    );
+    window.setTimeout(() => setPreviewPhase(1), 400);
+    window.setTimeout(() => setPreviewPhase(2), 800);
+    window.setTimeout(() => setPreviewPhase(3), 1200);
+    window.setTimeout(() => setPreviewDone(true), 1650);
   };
 
   return (
@@ -930,83 +857,58 @@ export function VideoLandingPage() {
       <div className="xv-shell">
         <aside
           className={`xv-sidebar ${
-            mobileNavOpen
-              ? 'is-open'
-              : ''
+            mobileNavOpen ? 'is-open' : ''
           }`}
-          aria-label="Xroga Video navigation"
         >
-          <div className="xv-logo-lockup">
-            <Logo
-              href={null}
-              variant="homepage"
-              height={30}
-            />
-
+          <div className="xv-brand">
+            <Logo href={null} variant="homepage" height={30} />
             <i />
             <strong>Video</strong>
           </div>
 
           <button
-            className="xv-sidebar-close"
             type="button"
-            onClick={() =>
-              setMobileNavOpen(false)
-            }
+            className="xv-sidebar-close"
+            onClick={() => setMobileNavOpen(false)}
             aria-label="Close menu"
           >
             <X />
           </button>
 
-          <nav className="xv-sidebar-nav">
-            {NAV_ITEMS.map(
-              ([Icon, label, id], index) => (
-                <button
-                  type="button"
-                  key={label}
-                  className={
-                    index === 0
-                      ? 'is-active'
-                      : ''
-                  }
-                  onClick={() => goTo(id)}
-                >
-                  <Icon />
-                  <span>{label}</span>
-
-                  {label === 'Create' ? (
-                    <small>SOON</small>
-                  ) : null}
-                </button>
-              ),
-            )}
+          <nav className="xv-side-nav">
+            {NAV_ITEMS.map(([Icon, label, id]) => (
+              <button
+                type="button"
+                key={label}
+                onClick={() => goTo(id)}
+              >
+                <Icon />
+                <span>{label}</span>
+              </button>
+            ))}
           </nav>
 
-          <div className="xv-sidebar-group">
-            <b>CREATIVE TOOLS</b>
+          <div className="xv-side-group">
+            <small>CREATIVE TOOLS</small>
 
-            {TOOL_ITEMS.map(
-              ([Icon, label, id]) => (
-                <button
-                  type="button"
-                  key={label}
-                  onClick={() => goTo(id)}
-                >
-                  <Icon />
-                  <span>{label}</span>
-                </button>
-              ),
-            )}
+            {TOOL_ITEMS.map(([Icon, label, id]) => (
+              <button
+                type="button"
+                key={label}
+                onClick={() => goTo(id)}
+              >
+                <Icon />
+                <span>{label}</span>
+              </button>
+            ))}
           </div>
 
-          <div className="xv-sidebar-group">
-            <b>SUPPORT</b>
+          <div className="xv-side-group">
+            <small>SUPPORT</small>
 
             <button
               type="button"
-              onClick={() =>
-                goTo('workflow')
-              }
+              onClick={() => goTo('workflow')}
             >
               <HelpCircle />
               <span>How It Works</span>
@@ -1018,110 +920,81 @@ export function VideoLandingPage() {
             </Link>
           </div>
 
-          <div className="xv-sidebar-journey">
-            <b>HOW XROGA CREATES</b>
+          <div className="xv-side-workflow">
+            <small>HOW XROGA CREATES</small>
 
-            {WORKFLOW.map(
-              (item, index) => (
-                <button
-                  type="button"
-                  key={item.label}
-                  className={
-                    index ===
-                    activeWorkflow
-                      ? 'is-current'
-                      : ''
-                  }
-                  onClick={() => {
-                    setActiveWorkflow(index);
-                    goTo('workflow');
-                  }}
-                >
-                  <span>
-                    {String(
-                      index + 1,
-                    ).padStart(2, '0')}
-                  </span>
+            {WORKFLOW.map((item, index) => (
+              <button
+                type="button"
+                key={item.label}
+                className={
+                  activeWorkflow === index ? 'is-active' : ''
+                }
+                onClick={() => {
+                  setActiveWorkflow(index);
+                  goTo('workflow');
+                }}
+              >
+                <span>
+                  {String(index + 1).padStart(2, '0')}
+                </span>
 
-                  <strong>
-                    {item.label}
-                  </strong>
-                </button>
-              ),
-            )}
+                <b>{item.label}</b>
+              </button>
+            ))}
           </div>
         </aside>
 
         {mobileNavOpen ? (
           <button
-            className="xv-nav-backdrop"
             type="button"
+            className="xv-backdrop"
+            onClick={() => setMobileNavOpen(false)}
             aria-label="Close navigation"
-            onClick={() =>
-              setMobileNavOpen(false)
-            }
           />
         ) : null}
 
         <section className="xv-main">
           <header className="xv-topbar">
             <button
-              className="xv-menu-button"
               type="button"
-              onClick={() =>
-                setMobileNavOpen(true)
-              }
+              className="xv-menu"
+              onClick={() => setMobileNavOpen(true)}
               aria-label="Open menu"
             >
               <Menu />
             </button>
 
-            <nav
-              className="xv-category-tabs"
-              aria-label="Creation categories"
-            >
-              {CREATION_TABS.map(
-                (tab) => (
-                  <button
-                    type="button"
-                    key={tab}
-                    className={
-                      activeCreationTab ===
-                      tab
-                        ? 'is-active'
-                        : ''
-                    }
-                    onClick={() => {
-                      setActiveCreationTab(
-                        tab,
-                      );
-
-                      scrollToSection(
-                        'explore',
-                      );
-                    }}
-                  >
-                    {tab}
-                  </button>
-                ),
-              )}
+            <nav className="xv-top-tabs">
+              {CREATION_TABS.map((tab) => (
+                <button
+                  type="button"
+                  key={tab}
+                  className={
+                    activeCreationTab === tab ? 'is-active' : ''
+                  }
+                  onClick={() => {
+                    setActiveCreationTab(tab);
+                    scrollToSection('explore');
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
             </nav>
 
             <div className="xv-top-actions">
               {searchOpen ? (
-                <label className="xv-search-field">
+                <label className="xv-search">
                   <Search />
 
                   <input
                     autoFocus
                     value={searchQuery}
-                    onChange={(event) =>
-                      setSearchQuery(
-                        event.target.value,
-                      )
-                    }
                     placeholder="Search concepts"
-                    aria-label="Search concepts"
+                    onChange={(event) =>
+                      setSearchQuery(event.target.value)
+                    }
                   />
 
                   <button
@@ -1130,35 +1003,26 @@ export function VideoLandingPage() {
                       setSearchOpen(false);
                       setSearchQuery('');
                     }}
-                    aria-label="Close search"
                   >
                     <X />
                   </button>
                 </label>
               ) : (
                 <button
-                  className="xv-icon-button"
                   type="button"
+                  className="xv-search-button"
                   onClick={() => {
                     setSearchOpen(true);
-                    scrollToSection(
-                      'explore',
-                    );
+                    scrollToSection('explore');
                   }}
-                  aria-label="Search concepts"
                 >
                   <Search />
                 </button>
               )}
 
-              <span className="xv-coming-soon">
-                COMING SOON
-              </span>
+              <span className="xv-soon">COMING SOON</span>
 
-              <Link
-                className="xv-early-button"
-                href="/auth/signup"
-              >
+              <Link href="/auth/signup" className="xv-early">
                 Join Early Access
                 <ArrowRight />
               </Link>
@@ -1166,53 +1030,42 @@ export function VideoLandingPage() {
           </header>
 
           <div className="xv-content">
-            <section
-              className="xv-hero"
-              aria-labelledby="xv-title"
-            >
+            <section className="xv-hero">
               <Image
-                src={MEDIA[2]}
-                alt="Cinematic Xroga Video concept"
+                src={MEDIA.blackhole}
+                alt="Xroga Video cinematic workspace preview"
                 fill
                 priority
                 quality={72}
-                sizes="(max-width: 1100px) 100vw, 1200px"
+                sizes="(max-width: 1000px) 100vw, 1300px"
               />
 
-              <div className="xv-hero-overlay" />
+              <div className="xv-hero-shade" />
 
               <div className="xv-hero-copy">
-                <div className="xv-kicker">
+                <div className="xv-tags">
                   <span>PRODUCT PREVIEW</span>
-                  <span>
-                    AI VIDEO WORKSPACE
-                  </span>
+                  <span>AI VIDEO WORKSPACE</span>
                 </div>
 
-                <h1 id="xv-title">
-                  Turn one idea into
+                <h1>
+                  One idea.
                   <br />
-
-                  <em>
-                    a complete production.
-                  </em>
+                  <em>Complete production.</em>
                 </h1>
 
                 <p>
-                  Research. Write. Direct.
-                  Generate. Edit. Package.
-                  Publish. Grow.
+                  Research. Script. Storyboard. Generate.
+                  Edit. Package. Publish. Grow.
                 </p>
 
                 <small>
-                  One connected workspace
-                  designed for short-form,
-                  long-form, ads, stories,
-                  documentaries, and
-                  cinematic production.
+                  A cinematic AI video creation workspace
+                  designed around the complete production,
+                  not just one generated clip.
                 </small>
 
-                <div className="xv-hero-actions">
+                <div className="xv-hero-buttons">
                   <Link href="/auth/signup">
                     Join Early Access
                     <ArrowRight />
@@ -1220,9 +1073,7 @@ export function VideoLandingPage() {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      goTo('composer')
-                    }
+                    onClick={() => goTo('composer')}
                   >
                     Explore Workspace
                     <ChevronRight />
@@ -1230,88 +1081,58 @@ export function VideoLandingPage() {
                 </div>
               </div>
 
-              <aside className="xv-hero-intelligence">
+              <aside className="xv-vinfinity-card">
                 <Sparkles />
 
-                <b>BLACK HOLE V∞</b>
+                <small>BLACK HOLE V∞</small>
+
+                <b>
+                  Intelligence across the whole production.
+                </b>
 
                 <p>
-                  The intelligence behind
-                  your production.
+                  Goal → Story → Scenes → Edit → Release
                 </p>
-
-                <ul>
-                  <li>
-                    Understands the goal
-                  </li>
-                  <li>
-                    Plans the story
-                  </li>
-                  <li>
-                    Keeps creative context
-                  </li>
-                  <li>
-                    Coordinates the workflow
-                  </li>
-                </ul>
               </aside>
             </section>
 
-            <section
-              className="xv-composer"
-              id="composer"
-            >
-              <div className="xv-composer-tabs">
-                {INPUT_TABS.map(
-                  (tab) => (
-                    <button
-                      type="button"
-                      key={tab}
-                      className={
-                        activeInputTab ===
-                        tab
-                          ? 'is-active'
-                          : ''
-                      }
-                      onClick={() =>
-                        setActiveInputTab(
-                          tab,
-                        )
-                      }
-                    >
-                      {tab}
-                    </button>
-                  ),
-                )}
-              </div>
+            <section className="xv-composer" id="composer">
+              <nav>
+                {INPUT_TABS.map((tab) => (
+                  <button
+                    type="button"
+                    key={tab}
+                    className={
+                      activeInputTab === tab ? 'is-active' : ''
+                    }
+                    onClick={() => setActiveInputTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </nav>
 
-              <div className="xv-composer-body">
-                <div className="xv-prompt-panel">
-                  <label htmlFor="xv-prompt">
-                    What do you want to
-                    create?
+              <div className="xv-composer-layout">
+                <div className="xv-prompt">
+                  <label htmlFor="xv-video-prompt">
+                    What do you want to create?
                   </label>
 
                   <textarea
-                    id="xv-prompt"
+                    id="xv-video-prompt"
                     value={prompt}
                     onChange={(event) =>
-                      setPrompt(
-                        event.target.value,
-                      )
+                      setPrompt(event.target.value)
                     }
                   />
 
-                  <div className="xv-select-row">
+                  <div className="xv-settings">
                     <label>
-                      <span>Format</span>
-
+                      <span>FORMAT</span>
                       <select
                         value={format}
                         onChange={(event) =>
-                          setFormat(
-                            event.target.value,
-                          )
+                          setFormat(event.target.value)
                         }
                       >
                         <option>YouTube</option>
@@ -1319,19 +1140,15 @@ export function VideoLandingPage() {
                         <option>Reel</option>
                         <option>Ad</option>
                         <option>Film</option>
-                        <option>Auto</option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Duration</span>
-
+                      <span>DURATION</span>
                       <select
                         value={duration}
                         onChange={(event) =>
-                          setDuration(
-                            event.target.value,
-                          )
+                          setDuration(event.target.value)
                         }
                       >
                         <option>Auto</option>
@@ -1339,19 +1156,15 @@ export function VideoLandingPage() {
                         <option>1 min</option>
                         <option>3 min</option>
                         <option>10 min</option>
-                        <option>30 min</option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Ratio</span>
-
+                      <span>RATIO</span>
                       <select
                         value={ratio}
                         onChange={(event) =>
-                          setRatio(
-                            event.target.value,
-                          )
+                          setRatio(event.target.value)
                         }
                       >
                         <option>16:9</option>
@@ -1362,41 +1175,26 @@ export function VideoLandingPage() {
                     </label>
 
                     <label>
-                      <span>Style</span>
-
+                      <span>STYLE</span>
                       <select
                         value={style}
                         onChange={(event) =>
-                          setStyle(
-                            event.target.value,
-                          )
+                          setStyle(event.target.value)
                         }
                       >
-                        <option>
-                          Cinematic
-                        </option>
-                        <option>
-                          Documentary
-                        </option>
-                        <option>
-                          Animated
-                        </option>
-                        <option>
-                          Commercial
-                        </option>
-                        <option>Story</option>
+                        <option>Cinematic</option>
+                        <option>Documentary</option>
+                        <option>Animated</option>
+                        <option>Commercial</option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Mode</span>
-
+                      <span>MODE</span>
                       <select
                         value={mode}
                         onChange={(event) =>
-                          setMode(
-                            event.target.value,
-                          )
+                          setMode(event.target.value)
                         }
                       >
                         <option>Quick</option>
@@ -1406,18 +1204,13 @@ export function VideoLandingPage() {
                     </label>
 
                     <button
-                      className="xv-create-button"
                       type="button"
                       onClick={runPreview}
                       disabled={
-                        previewPhase !==
-                          null &&
-                        !previewDone
+                        previewPhase !== null && !previewDone
                       }
                     >
-                      {previewPhase !==
-                        null &&
-                      !previewDone
+                      {previewPhase !== null && !previewDone
                         ? 'Preparing…'
                         : 'Create Video'}
 
@@ -1426,154 +1219,104 @@ export function VideoLandingPage() {
                   </div>
                 </div>
 
-                <aside className="xv-preview-panel">
+                <aside className="xv-composer-status">
                   <header>
                     <Sparkles />
 
-                    <div>
+                    <span>
                       <b>BLACK HOLE V∞</b>
-                      <small>
-                        Preview only · no AI
-                        request
-                      </small>
-                    </div>
+                      <small>INTERACTIVE PREVIEW</small>
+                    </span>
                   </header>
 
                   {previewPhase === null ? (
                     <p>
-                      Choose your input and
-                      settings, then press
-                      Create Video to preview
-                      the planned workflow.
+                      Preview how Xroga plans a production.
+                      No live AI request is sent.
                     </p>
                   ) : (
                     <div className="xv-phase-list">
-                      {PHASES.map(
-                        (phase, index) => (
-                          <span
-                            key={phase}
-                            className={
-                              index <=
-                              previewPhase
-                                ? 'is-active'
-                                : ''
-                            }
-                          >
-                            {index <
-                              previewPhase ||
-                            previewDone ? (
-                              <Check />
-                            ) : (
-                              <i />
-                            )}
+                      {PHASES.map((phase, index) => (
+                        <span
+                          key={phase}
+                          className={
+                            index <= previewPhase
+                              ? 'is-active'
+                              : ''
+                          }
+                        >
+                          {index < previewPhase || previewDone ? (
+                            <Check />
+                          ) : (
+                            <i />
+                          )}
 
-                            {phase}
-                          </span>
-                        ),
-                      )}
+                          {phase}
+                        </span>
+                      ))}
                     </div>
                   )}
 
                   {previewDone ? (
-                    <div className="xv-preview-ready">
-                      <b>
-                        Xroga Video is coming
-                        soon.
-                      </b>
-
-                      <small>
-                        Live generation is not
-                        enabled in this
-                        product preview.
-                      </small>
-
-                      <Link href="/auth/signup">
-                        Join Early Access
-                        <ArrowRight />
-                      </Link>
-                    </div>
+                    <Link href="/auth/signup">
+                      Join Early Access
+                      <ArrowRight />
+                    </Link>
                   ) : null}
                 </aside>
               </div>
             </section>
 
-            <section
-              className="xv-section"
-              id="explore"
-            >
-              <header className="xv-section-head">
+            <section className="xv-panel" id="explore">
+              <header className="xv-panel-head">
                 <div>
                   <small>EXPLORE</small>
-                  <h2>
-                    What you can create
-                  </h2>
+                  <h2>What you can create</h2>
                 </div>
 
                 <p>
-                  Select a concept to load
-                  it directly into the
-                  composer.
+                  Select a visual concept to load its prompt.
                 </p>
               </header>
 
               {visibleTemplates.length ? (
                 <div className="xv-template-grid">
-                  {visibleTemplates.map(
-                    (template) => (
-                      <button
-                        className="xv-template-card"
-                        type="button"
-                        key={
-                          template.title
-                        }
-                        onClick={() =>
-                          applyTemplate(
-                            template,
-                          )
-                        }
-                      >
-                        <span className="xv-template-image">
-                          <Image
-                            src={
-                              template.image
-                            }
-                            alt=""
-                            fill
-                            quality={66}
-                            sizes="(max-width: 720px) 76vw, (max-width: 1200px) 34vw, 240px"
-                          />
+                  {visibleTemplates.map((template) => (
+                    <button
+                      type="button"
+                      className="xv-template"
+                      key={template.title}
+                      onClick={() => applyTemplate(template)}
+                    >
+                      <div>
+                        <Image
+                          src={template.image}
+                          alt=""
+                          fill
+                          quality={64}
+                          sizes="(max-width: 700px) 78vw, 300px"
+                        />
+                      </div>
+
+                      <footer>
+                        <small>{template.meta}</small>
+                        <b>{template.title}</b>
+
+                        <span>
+                          Use concept
+                          <ArrowRight />
                         </span>
-
-                        <span className="xv-template-copy">
-                          <small>
-                            {template.meta}
-                          </small>
-
-                          <b>
-                            {
-                              template.title
-                            }
-                          </b>
-
-                          <em>
-                            Use concept
-                            <ArrowRight />
-                          </em>
-                        </span>
-                      </button>
-                    ),
-                  )}
+                      </footer>
+                    </button>
+                  ))}
                 </div>
               ) : (
-                <div className="xv-empty-state">
-                  No concepts match this
-                  search.
+                <div className="xv-empty">
+                  No matching concepts.
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setSearchQuery('')
-                    }
+                    onClick={() => setSearchQuery('')}
                   >
                     Clear search
                   </button>
@@ -1582,502 +1325,299 @@ export function VideoLandingPage() {
             </section>
 
             <section
-              className="xv-section xv-workflow-section"
+              className="xv-panel xv-workflow"
               id="workflow"
             >
-              <header className="xv-section-head">
+              <header className="xv-panel-head">
                 <div>
                   <small>WORKFLOW</small>
-
                   <h2>
-                    One connected production
-                    journey
+                    Watch one production move through Xroga
                   </h2>
                 </div>
 
                 <p>
-                  Select a stage and watch
-                  the product preview change
-                  with it.
+                  Every stage now changes the visual workspace.
                 </p>
               </header>
 
-              <div className="xv-workflow-tabs">
-                {WORKFLOW.map(
-                  (item, index) => (
-                    <button
-                      type="button"
-                      key={item.label}
-                      className={
-                        activeWorkflow ===
-                        index
-                          ? 'is-active'
-                          : ''
-                      }
-                      onClick={() =>
-                        setActiveWorkflow(
-                          index,
-                        )
-                      }
-                    >
-                      <span>
-                        {String(
-                          index + 1,
-                        ).padStart(
-                          2,
-                          '0',
-                        )}
-                      </span>
+              <nav className="xv-workflow-tabs">
+                {WORKFLOW.map((item, index) => (
+                  <button
+                    type="button"
+                    key={item.label}
+                    className={
+                      activeWorkflow === index ? 'is-active' : ''
+                    }
+                    onClick={() => setActiveWorkflow(index)}
+                  >
+                    <span>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
 
-                      {item.label}
-                    </button>
-                  ),
-                )}
-              </div>
+                    <b>{item.label}</b>
+                  </button>
+                ))}
+              </nav>
 
-              <div className="xv-workflow-card xv-workflow-card-rich">
-                <div className="xv-workflow-copy-rich">
+              <div className="xv-workflow-layout">
+                <aside className="xv-workflow-info">
                   <small>
                     STEP{' '}
-                    {String(
-                      activeWorkflow + 1,
-                    ).padStart(2, '0')}
+                    {String(activeWorkflow + 1).padStart(2, '0')}
                   </small>
 
-                  <h3>
-                    {
-                      WORKFLOW[
-                        activeWorkflow
-                      ].label
-                    }
-                  </h3>
+                  <h3>{WORKFLOW[activeWorkflow].label}</h3>
 
                   <p>
-                    {
-                      WORKFLOW[
-                        activeWorkflow
-                      ].description
-                    }
+                    {WORKFLOW[activeWorkflow].description}
                   </p>
 
-                  <div className="xv-step-pills">
-                    {WORKFLOW[
-                      activeWorkflow
-                    ].chips.map((chip) => (
-                      <span key={chip}>
-                        {chip}
-                      </span>
-                    ))}
+                  <div>
+                    {WORKFLOW[activeWorkflow].chips.map(
+                      (chip) => (
+                        <span key={chip}>{chip}</span>
+                      ),
+                    )}
                   </div>
 
-                  <div className="xv-step-state">
+                  <section>
                     <Sparkles />
 
                     <span>
-                      <b>
-                        Black Hole V∞
-                      </b>
-
+                      <b>Black Hole V∞</b>
                       <small>
-                        Maintaining context
-                        across this stage
+                        Creative context remains connected
                       </small>
                     </span>
-                  </div>
+                  </section>
 
                   <button
                     type="button"
-                    onClick={
-                      openWorkflowPreview
+                    onClick={() =>
+                      goTo(
+                        WORKFLOW[activeWorkflow].destination,
+                      )
                     }
                   >
                     Open related preview
                     <ArrowRight />
                   </button>
-                </div>
+                </aside>
 
-                <div className="xv-workflow-graphic xv-stage-canvas">
-                  <WorkflowStageVisual
-                    stage={activeWorkflow}
-                  />
+                <div className="xv-workflow-visual">
+                  <WorkflowVisual stage={activeWorkflow} />
                 </div>
               </div>
             </section>
 
-            <section
-              className="xv-section"
-              id="storyboard"
-            >
-              <header className="xv-section-head">
+            <section className="xv-panel" id="storyboard">
+              <header className="xv-panel-head">
                 <div>
                   <small>STORYBOARD</small>
-
-                  <h2>
-                    See the production
-                    before the final cut
-                  </h2>
+                  <h2>See the film before the final cut</h2>
                 </div>
 
                 <p>
-                  Scene imagery, shot
-                  direction, duration, and
-                  continuity in one view.
+                  Shot direction and generated-looking
+                  visuals stay connected scene by scene.
                 </p>
               </header>
 
-              <div className="xv-storyboard-grid">
-                {STORYBOARD_FRAMES.slice(
-                  0,
-                  4,
-                ).map(
-                  ([
-                    number,
-                    title,
-                    camera,
-                    image,
-                  ]) => (
-                    <article
-                      key={number}
-                    >
-                      <div>
-                        <Image
-                          src={image}
-                          alt={`${title} storyboard concept`}
-                          fill
-                          quality={64}
-                          sizes="(max-width: 720px) 74vw, 240px"
-                        />
-                      </div>
+              <div className="xv-main-storyboard">
+                {[
+                  ['01', MEDIA.blackhole, 'Opening'],
+                  ['02', MEDIA.infinity, 'Discovery'],
+                  ['03', MEDIA.clouds, 'Conflict'],
+                  ['04', MEDIA.earth, 'Reveal'],
+                ].map(([number, image, title]) => (
+                  <article key={number}>
+                    <div>
+                      <MediaImage src={image} />
+                    </div>
 
-                      <header>
-                        <span>
-                          SCENE {number}
-                        </span>
+                    <header>
+                      <small>SCENE {number}</small>
+                      <span>6.2 sec</span>
+                    </header>
 
-                        <small>
-                          {camera}
-                        </small>
-                      </header>
-
-                      <b>{title}</b>
-
-                      <p>
-                        Generated visual
-                        direction preview
-                      </p>
-                    </article>
-                  ),
-                )}
+                    <b>{title}</b>
+                    <p>Cinematic visual direction</p>
+                  </article>
+                ))}
               </div>
             </section>
 
-            <section
-              className="xv-section"
-              id="editor"
-            >
-              <header className="xv-section-head">
+            <section className="xv-panel" id="editor">
+              <header className="xv-panel-head">
                 <div>
-                  <small>
-                    DIRECTOR + EDITOR
-                  </small>
-
-                  <h2>
-                    Shape every scene inside
-                    one project
-                  </h2>
+                  <small>DIRECTOR + EDITOR</small>
+                  <h2>Shape the production visually</h2>
                 </div>
 
                 <p>
-                  Concept editing surface for
-                  scene order, voice, music,
-                  captions, and pacing.
+                  Scene control, preview, and timeline in one
+                  workspace.
                 </p>
               </header>
 
-              <div className="xv-editor-layout">
-                <div className="xv-editor-stage">
-                  <Image
-                    src={MEDIA[1]}
-                    alt="Xroga Video editor concept"
-                    fill
-                    quality={68}
-                    sizes="(max-width: 900px) 100vw, 760px"
-                  />
+              <div className="xv-main-editor">
+                <div className="xv-main-player">
+                  <MediaImage src={MEDIA.earth} />
 
-                  <div>
-                    <small>
-                      SCENE 04 · REVEAL
-                    </small>
+                  <button type="button" aria-label="Preview">
+                    <Play />
+                  </button>
 
-                    <b>
-                      Future Cities — Master
-                      Cut
-                    </b>
-                  </div>
+                  <footer>
+                    <small>SCENE 04</small>
+                    <b>Future Cities — Master Cut</b>
+                  </footer>
                 </div>
 
-                <aside className="xv-editor-inspector">
-                  <b>SCENE SETTINGS</b>
-
+                <aside>
                   {[
-                    [
-                      'Camera',
-                      'Orbital push',
-                    ],
-                    [
-                      'Lighting',
-                      'Blue hour',
-                    ],
-                    [
-                      'Voice',
-                      'Narrator A',
-                    ],
-                    [
-                      'Style',
-                      'Cinematic',
-                    ],
-                    [
-                      'Captions',
-                      'Enabled',
-                    ],
-                    [
-                      'Duration',
-                      '8.0 sec',
-                    ],
-                  ].map(
-                    ([label, value]) => (
-                      <button
-                        type="button"
-                        key={label}
-                      >
-                        <span>
-                          {label}
-                        </span>
-
-                        <strong>
-                          {value}
-                        </strong>
-
-                        <ChevronRight />
-                      </button>
-                    ),
-                  )}
+                    ['Camera', 'Slow orbit'],
+                    ['Lighting', 'Blue hour'],
+                    ['Voice', 'Narrator A'],
+                    ['Style', 'Cinematic'],
+                    ['Captions', 'Enabled'],
+                    ['Duration', '8.0 sec'],
+                  ].map(([key, value]) => (
+                    <button type="button" key={key}>
+                      <span>{key}</span>
+                      <b>{value}</b>
+                      <ChevronRight />
+                    </button>
+                  ))}
                 </aside>
               </div>
 
-              <div className="xv-timeline-scroll">
-                <div className="xv-timeline">
-                  <div className="xv-ruler">
-                    <span>00:00</span>
-                    <span>00:10</span>
-                    <span>00:20</span>
-                    <span>00:30</span>
-                    <span>00:40</span>
-                  </div>
+              <div className="xv-main-timeline">
+                <header>
+                  <span>00:00</span>
+                  <span>00:10</span>
+                  <span>00:20</span>
+                  <span>00:30</span>
+                  <span>00:40</span>
+                </header>
 
-                  <div className="xv-track">
-                    <b>VIDEO</b>
+                <div>
+                  <b>VIDEO</b>
 
-                    <span className="video">
-                      <i />
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                  </div>
+                  <span className="video">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </div>
 
-                  <div className="xv-track">
-                    <b>VOICE</b>
+                <div>
+                  <b>VOICE</b>
+                  <span className="voice">
+                    <i />
+                  </span>
+                </div>
 
-                    <span className="voice">
-                      <i />
-                    </span>
-                  </div>
-
-                  <div className="xv-track">
-                    <b>CAPTIONS</b>
-
-                    <span className="captions">
-                      <i>Opening</i>
-                      <i>Future cities</i>
-                      <i>Reveal</i>
-                    </span>
-                  </div>
-
-                  <div className="xv-track">
-                    <b>MUSIC</b>
-
-                    <span className="music">
-                      <i />
-                    </span>
-                  </div>
+                <div>
+                  <b>MUSIC</b>
+                  <span className="music">
+                    <i />
+                  </span>
                 </div>
               </div>
             </section>
 
-            <section className="xv-section xv-intelligence">
-              <div className="xv-intelligence-mark">
+            <section className="xv-panel xv-blackhole">
+              <div className="xv-orb">
                 <span />
                 <i />
                 <Sparkles />
               </div>
 
-              <div className="xv-intelligence-copy">
-                <small>
-                  BLACK HOLE V∞
-                </small>
+              <div>
+                <small>BLACK HOLE V∞</small>
 
                 <h2>
-                  One intelligence across
-                  the production.
+                  One intelligence across the production.
                 </h2>
 
                 <p>
-                  Understand the goal, plan
-                  the work, maintain creative
-                  context, and coordinate the
-                  experience without exposing
-                  infrastructure complexity.
+                  Understand the goal, plan the production,
+                  maintain creative context, and coordinate
+                  the entire workflow.
                 </p>
               </div>
 
-              <div className="xv-intelligence-points">
+              <section>
                 {[
-                  [
-                    'UNDERSTAND',
-                    'Goal, audience, direction',
-                  ],
-                  [
-                    'PLAN',
-                    'Structure, scenes, assets',
-                  ],
-                  [
-                    'CONNECT',
-                    'Creative continuity',
-                  ],
-                  [
-                    'OPTIMIZE',
-                    'Format and packaging',
-                  ],
-                ].map(
-                  ([title, body]) => (
-                    <article
-                      key={title}
-                    >
-                      <b>{title}</b>
-                      <span>{body}</span>
-                    </article>
-                  ),
-                )}
-              </div>
+                  ['UNDERSTAND', 'Goal & direction'],
+                  ['PLAN', 'Story & scenes'],
+                  ['CONNECT', 'Creative continuity'],
+                  ['OPTIMIZE', 'Format & release'],
+                ].map(([title, body]) => (
+                  <article key={title}>
+                    <b>{title}</b>
+                    <span>{body}</span>
+                  </article>
+                ))}
+              </section>
             </section>
 
-            <section
-              className="xv-section"
-              id="package"
-            >
-              <header className="xv-section-head">
+            <section className="xv-panel" id="package">
+              <header className="xv-panel-head">
                 <div>
-                  <small>
-                    FINISH + RELEASE
-                  </small>
-
-                  <h2>
-                    Create once. Prepare
-                    every format.
-                  </h2>
+                  <small>FINISH + RELEASE</small>
+                  <h2>Create once. Prepare everywhere.</h2>
                 </div>
 
                 <p>
-                  Packaging, publishing, and
-                  performance concepts inside
-                  the same production.
+                  Packaging, distribution, and performance
+                  previews.
                 </p>
               </header>
 
               <div className="xv-release-grid">
-                <article className="xv-release-card">
+                <article>
                   <Package />
-
                   <small>PACKAGE</small>
+                  <b>Thumbnail + titles</b>
 
-                  <b>
-                    Thumbnail, titles,
-                    chapters
-                  </b>
-
-                  <p>
-                    The Cities That Will
-                    Define 2050
-                  </p>
-
-                  <p>
-                    Inside Tomorrow&apos;s
-                    Smartest Cities
-                  </p>
-                </article>
-
-                <article className="xv-release-card">
-                  <CalendarDays />
-
-                  <small>
-                    PUBLISH · PLANNED
-                  </small>
-
-                  <b>
-                    One project, multiple
-                    releases
-                  </b>
-
-                  <div className="xv-calendar-mini">
-                    <span>
-                      MON
-                      <b>Main video</b>
-                    </span>
-
-                    <span>
-                      WED
-                      <b>Reel</b>
-                    </span>
-
-                    <span>
-                      FRI
-                      <b>Short</b>
-                    </span>
+                  <div className="xv-release-image">
+                    <MediaImage src={MEDIA.infinity} />
                   </div>
                 </article>
 
-                <article className="xv-release-card">
+                <article>
+                  <CalendarDays />
+                  <small>PUBLISH · PLANNED</small>
+                  <b>Multiple formats</b>
+
+                  <div className="xv-format-mini">
+                    <span>16:9</span>
+                    <span>9:16</span>
+                    <span>4:5</span>
+                    <span>1:1</span>
+                  </div>
+                </article>
+
+                <article>
                   <BarChart3 />
+                  <small>GROW · DEMO DATA</small>
+                  <b>Creative learning</b>
 
-                  <small>
-                    GROW · DEMO DATA
-                  </small>
-
-                  <b>
-                    Learn what performs
-                  </b>
-
-                  <div className="xv-metrics">
+                  <div className="xv-demo-metrics">
                     <span>
                       <small>CTR</small>
                       <b>6.8%</b>
                     </span>
 
                     <span>
-                      <small>
-                        Retention
-                      </small>
+                      <small>RETENTION</small>
                       <b>63%</b>
                     </span>
                   </div>
-
-                  <p className="xv-insight">
-                    <TrendingUp />
-
-                    Stronger opening visual
-                    direction detected.
-                  </p>
                 </article>
               </div>
             </section>
@@ -2087,24 +1627,17 @@ export function VideoLandingPage() {
                 <Sparkles />
 
                 <span>
-                  <small>
-                    XROGA VIDEO IS IN
-                    DEVELOPMENT
-                  </small>
+                  <small>XROGA VIDEO IS IN DEVELOPMENT</small>
 
                   <h2>
-                    This is an interactive
-                    product preview.
+                    An interactive preview of the future
+                    workspace.
                   </h2>
 
                   <p>
-                    The imagery demonstrates
-                    how the future workflow
-                    could move from idea to
-                    generated scenes, editing,
-                    packaging, publishing,
-                    and growth. Live AI video
-                    generation is not enabled.
+                    Live generation is not enabled yet.
+                    Visual states demonstrate how Xroga Video
+                    is intended to work.
                   </p>
                 </span>
               </div>
@@ -2116,26 +1649,14 @@ export function VideoLandingPage() {
             </section>
 
             <footer className="xv-footer">
-              <span>
-                © 2026 XROGA AI
-              </span>
+              <span>© 2026 XROGA AI</span>
 
-              <b>
-                One idea. Complete production.
-              </b>
+              <b>One idea. Complete production.</b>
 
               <div>
-                <Link href="/privacy">
-                  Privacy
-                </Link>
-
-                <Link href="/terms">
-                  Terms
-                </Link>
-
-                <Link href="/contact">
-                  Contact
-                </Link>
+                <Link href="/privacy">Privacy</Link>
+                <Link href="/terms">Terms</Link>
+                <Link href="/contact">Contact</Link>
               </div>
             </footer>
           </div>
