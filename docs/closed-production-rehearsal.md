@@ -125,9 +125,33 @@ API, which bypasses this environment's network block:
 - Dynamic routes (`/api/release`) return 302 to Vercel SSO on the preview host, so they are
   access-protected rather than open.
 
-**Backend health remains unverified.** `xroga-api.fly.dev` is blocked at the gateway and no
-frontend route proxies to it, so there is no indirect path. Deploy-job success is *deploy*
-evidence, not *health* evidence, and is not claimed as such.
+**Backend health — VERIFIED 2026-08-15.** Closed via
+`.github/workflows/backend-health-verification.yml`, dispatched on `main`
+(run 31875637969, conclusion `success`). A GitHub-hosted runner has ordinary internet egress
+and reaches `xroga-api.fly.dev`, which the engineering environment cannot.
+
+```
+GET /health -> 200
+{"status":"ok","service":"xroga-api","version":"3.0.0-ai-swarm",
+ "release":"aad05c39c53e66c6330b446214709f7252e8a048",
+ "capabilities":["chat","build","github","deployment"],
+ "timestamp":"2026-08-15T08:54:35.232Z"}
+
+GET /ready  -> 200
+{"status":"ready","service":"xroga-api",
+ "release":"aad05c39c53e66c6330b446214709f7252e8a048",
+ "timestamp":"2026-08-15T08:54:35.872Z"}
+```
+
+**Deployed SHA verified against the repository**, not inferred from a green deploy job.
+`aad05c39` is a real commit (`Merge pull request #560`). `git diff --name-only
+aad05c39..origin/main` returns exactly one file — the health workflow added above — and
+**zero `backend/` files**. The deployed backend is therefore functionally identical to current
+main.
+
+The engineering environment's own inability to reach the host is recorded as
+`engineering_environment_network_restriction`; it is a property of that sandbox, not of
+production.
 
 ### Rollout and rollback controls
 
@@ -210,6 +234,38 @@ Every row's end-to-end column is empty for the same single reason: no rehearsal 
 ## Remaining owner actions
 
 Exactly three, all external. None can be self-served without weakening a control.
+
+### 0. Why M19 cannot be automated — a structural finding, not a missing tool
+
+Investigated after establishing that GitHub Actions *can* reach the backend. The remaining
+blocker is not network and not credentials; it is Xroga's own security model, working as
+designed.
+
+Publication requires the requesting **user's own** GitHub OAuth grant:
+
+```
+pipeline.ts:1206    getGitHubToken(opts.userId)          // per user
+githubAuth.ts:30    .from('user_integrations')           // per-user OAuth grant
+universalCommit.ts  replaces refusingCommit "only when a repository
+                    is genuinely connected"
+```
+
+The existing CI identity pattern (`command3-auth.spec.ts:240`) creates **ephemeral fixture
+users** via `admin.auth.admin.createUser` and deletes them afterwards. Such a user has no
+`user_integrations` row, so the atomic writer refuses, so no commit exists, so M19 is
+incomplete by definition.
+
+Every route around this is one the launch command forbids, and each for a good reason:
+
+| Workaround | Why it is refused |
+| --- | --- |
+| Copy the owner's GitHub token onto a fixture user | Credential sharing; the token is the owner's, not the platform's |
+| Reassign the M19 project to a CI identity | "Do not mutate ownership merely to make the test pass" |
+| Bypass the connection check for a verification path | Removes the control that stops Xroga writing to repositories a user never authorised |
+
+So M19 needs a session that already holds a GitHub grant — the owner's. This is the correct
+outcome: a coding agent that could publish to a user's repository without that user's own
+authorisation would be a defect, not a feature.
 
 ### 1. Provide a rehearsal execution path
 

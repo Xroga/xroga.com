@@ -663,7 +663,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Security' }).click();
   await page.getByRole('button', { name: 'Sign out' }).first().click();
-  await expect.poll(() => new URL(page.url()).pathname).toBe('/');
+  // Sign-out navigates to "/", and the middleware then redirects an unauthenticated visitor
+  // on to /auth/login. Both are correct post-logout locations, and which one a poll observes
+  // is a race the test cannot control: when the redirect wins, "/" is never visible and the
+  // 5s poll expires against a page that is already in the right place. Observed failing
+  // twice in CI on commits touching no frontend file, and passing on a re-run of the
+  // identical commit.
+  //
+  // Accepting either location does not weaken the check. What proves logout worked is the
+  // next two lines — a protected route must bounce to the login page, and the session
+  // endpoint must answer 401 unauthenticated — and neither is relaxed.
+  await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/(auth\/login)?$/);
   await page.goto('/dashboard/operations');
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
