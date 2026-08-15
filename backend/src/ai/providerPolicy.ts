@@ -31,13 +31,43 @@
 
 import type { ModelId } from './models.js';
 
-/** Providers permitted to perform software-engineering work, with their required transport. */
+/**
+ * Providers permitted to perform software-engineering work, with their required transport.
+ *
+ * Keyed by logical model id rather than by `ModelId`, because a coding model can be known to
+ * policy before it is callable. `kimi_k2_7` is exactly that case: `providerCostTiers` gates it
+ * on a verified provider identifier that has not been supplied, so it has no `MODELS` entry
+ * and no verified pricing, and inventing either would be worse than leaving it absent.
+ *
+ * It still belongs here. Policy decides *where a model's traffic may go*, and that question
+ * has an answer — Moonshot — long before the model can be called. Omitting it would leave the
+ * one coding model most likely to be enabled next as the only one with no transport binding,
+ * which is precisely the unenforced-binding shape this module exists to prevent.
+ *
+ * `MODEL_ID_TRANSPORT_COVERAGE` below keeps the compile-time typo protection that the previous
+ * `satisfies Partial<Record<ModelId, string>>` provided for every entry that *is* a `ModelId`.
+ */
 export const CODING_MODEL_TRANSPORT = {
   kimi_k3: 'moonshot',
   glm_5_2: 'zhipu',
   deepseek_v4_pro: 'openrouter',
   deepseek_v4_flash: 'openrouter',
-} as const satisfies Partial<Record<ModelId, string>>;
+  kimi_k2_7: 'moonshot',
+} as const satisfies Record<string, string>;
+
+/**
+ * Compile-time proof that every runtime model above is spelled like a real `ModelId`.
+ *
+ * Unused at runtime and deliberately so: its only job is to fail the build if one of these
+ * keys is ever mistyped, which the widened `satisfies` above no longer catches on its own.
+ */
+const MODEL_ID_TRANSPORT_COVERAGE: Partial<Record<ModelId, string>> = {
+  kimi_k3: CODING_MODEL_TRANSPORT.kimi_k3,
+  glm_5_2: CODING_MODEL_TRANSPORT.glm_5_2,
+  deepseek_v4_pro: CODING_MODEL_TRANSPORT.deepseek_v4_pro,
+  deepseek_v4_flash: CODING_MODEL_TRANSPORT.deepseek_v4_flash,
+};
+void MODEL_ID_TRANSPORT_COVERAGE;
 
 export type CodingModelId = keyof typeof CODING_MODEL_TRANSPORT;
 
