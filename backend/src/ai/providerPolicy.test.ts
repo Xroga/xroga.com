@@ -28,12 +28,27 @@ import { capabilityCandidates } from '../synthesis/universalEntrypoint.js';
  */
 
 test('only Moonshot, Zhipu and OpenRouter models may perform coding', () => {
+  // `kimi_k2_7` is policy-known before it is callable: `providerCostTiers` gates it on a
+  // verified provider identifier that has not been supplied, so it has no `MODELS` entry.
+  // Policy still binds its transport, because where a model's traffic may go is answerable
+  // long before the model can be called — and leaving the next model to be enabled as the
+  // only one without a transport binding is the failure mode this module prevents.
   assert.deepEqual(Object.keys(CODING_MODEL_TRANSPORT).sort(), [
     'deepseek_v4_flash',
     'deepseek_v4_pro',
     'glm_5_2',
+    'kimi_k2_7',
     'kimi_k3',
   ]);
+});
+
+test('every coding model, callable or gated, is bound to a Moonshot/Zhipu/OpenRouter transport', () => {
+  for (const transport of Object.values(CODING_MODEL_TRANSPORT)) {
+    assert.ok(
+      ['moonshot', 'zhipu', 'openrouter'].includes(transport),
+      `${transport} is not an approved coding transport`,
+    );
+  }
 });
 
 test('each coding family uses its mandated transport', () => {

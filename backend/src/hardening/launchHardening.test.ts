@@ -42,6 +42,7 @@ import {
   type ValidationReport,
 } from '../synthesis/universalFlow.js';
 import { actionPlanDigest, redactOperationsValue } from '../operations/operationsEngine.js';
+import { modelAvailability } from '../ai/providerCostTiers.js';
 import { parseFilePlan } from '../synthesis/incrementalImplementation.js';
 import {
   ExecutionScheduler,
@@ -61,11 +62,20 @@ test('AREA 1 — the model registry and the transport policy agree', () => {
   // starts refusing real traffic, which is the correct direction but needs to be visible
   // here rather than discovered as a production outage.
   for (const [modelId, transport] of Object.entries(CODING_MODEL_TRANSPORT)) {
-    assert.equal(
-      MODELS[modelId as keyof typeof MODELS]?.provider,
-      transport,
-      `${modelId} must be registered against ${transport}`,
-    );
+    const runtime = MODELS[modelId as keyof typeof MODELS];
+    if (!runtime) {
+      // Policy may know a coding model before it is callable. Such a model has no runtime
+      // entry to agree with, so there is nothing to compare — but the skip is only safe if
+      // the model is genuinely configuration-gated. Asserting that here stops a real missing
+      // registry entry from being waved through as "not callable yet".
+      assert.equal(
+        modelAvailability(modelId, {} as NodeJS.ProcessEnv),
+        'not_configured',
+        `${modelId} has no runtime registry entry and is not configuration-gated`,
+      );
+      continue;
+    }
+    assert.equal(runtime.provider, transport, `${modelId} must be registered against ${transport}`);
   }
   for (const [modelId, transport] of Object.entries(RESEARCH_MODEL_TRANSPORT)) {
     assert.equal(MODELS[modelId as keyof typeof MODELS]?.provider, transport);
@@ -88,7 +98,11 @@ test('AREA 1 — a coding model whose registry entry drifts to another transport
 
 test('AREA 1 — every coding model is checked, not just the one that regressed', () => {
   for (const modelId of Object.keys(CODING_MODEL_TRANSPORT) as (keyof typeof MODELS)[]) {
-    const definition = MODELS[modelId] as unknown as { provider: string };
+    const definition = MODELS[modelId] as unknown as { provider: string } | undefined;
+    // A configuration-gated model has no runtime entry to drift, and `resolveEndpoint` cannot
+    // be reached for one. It is covered instead by the agreement test above, which proves it
+    // is gated rather than merely missing.
+    if (!definition) continue;
     const original = definition.provider;
     definition.provider = original === 'openrouter' ? 'moonshot' : 'openrouter';
     try {
