@@ -7,30 +7,25 @@ import {
   ArrowRight,
   BarChart3,
   CalendarDays,
-  Captions,
   Check,
   ChevronRight,
-  Clapperboard,
   Compass,
-  Film,
   Folder,
   HelpCircle,
   Home,
   Image as ImageIcon,
-  Layers3,
   LayoutGrid,
   Menu,
-  Mic2,
   Package,
   Scissors,
   Search,
   Shapes,
   Sparkles,
   TrendingUp,
-  WandSparkles,
   Workflow,
   X,
 } from 'lucide-react';
+
 import { Logo } from '@/components/layout/Logo';
 
 type Template = {
@@ -172,7 +167,10 @@ const PHASES = [
 function scrollToSection(id: string) {
   document
     .getElementById(id)
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    ?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
 }
 
 export function VideoLandingPage() {
@@ -197,11 +195,16 @@ export function VideoLandingPage() {
   const [style, setStyle] = useState('Cinematic');
   const [mode, setMode] = useState('Director');
 
-  const [previewPhase, setPreviewPhase] = useState<number | null>(null);
-  const [previewDone, setPreviewDone] = useState(false);
+  const [previewPhase, setPreviewPhase] =
+    useState<number | null>(null);
+
+  const [previewDone, setPreviewDone] =
+    useState(false);
 
   const visibleTemplates = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const q = searchQuery
+      .trim()
+      .toLowerCase();
 
     return TEMPLATES.filter((template) => {
       const tabMatches =
@@ -223,28 +226,54 @@ export function VideoLandingPage() {
     scrollToSection(id);
   };
 
-  const useTemplate = (template: Template) => {
+  const applyTemplate = (
+    template: Template,
+  ) => {
     setPrompt(template.prompt);
     setActiveInputTab('Text to Video');
     scrollToSection('composer');
   };
 
   const runPreview = () => {
-    if (previewPhase !== null && !previewDone) return;
+    if (
+      previewPhase !== null &&
+      !previewDone
+    ) {
+      return;
+    }
 
     setPreviewDone(false);
     setPreviewPhase(0);
 
-    window.setTimeout(() => setPreviewPhase(1), 450);
-    window.setTimeout(() => setPreviewPhase(2), 900);
-    window.setTimeout(() => setPreviewPhase(3), 1350);
-    window.setTimeout(() => setPreviewDone(true), 1800);
+    window.setTimeout(
+      () => setPreviewPhase(1),
+      450,
+    );
+
+    window.setTimeout(
+      () => setPreviewPhase(2),
+      900,
+    );
+
+    window.setTimeout(
+      () => setPreviewPhase(3),
+      1350,
+    );
+
+    window.setTimeout(
+      () => setPreviewDone(true),
+      1800,
+    );
   };
 
   const openWorkflowPreview = () => {
-    const label = WORKFLOW[activeWorkflow][0];
+    const label =
+      WORKFLOW[activeWorkflow][0];
 
-    if (label === 'Storyboard' || label === 'Generate') {
+    if (
+      label === 'Storyboard' ||
+      label === 'Generate'
+    ) {
       goTo('storyboard');
       return;
     }
@@ -267,10 +296,17 @@ export function VideoLandingPage() {
   };
 
   return (
-    <main className="xv-page" id="top">
+    <main
+      className="xv-page"
+      id="top"
+    >
       <div className="xv-shell">
         <aside
-          className={`xv-sidebar ${mobileNavOpen ? 'is-open' : ''}`}
+          className={`xv-sidebar ${
+            mobileNavOpen
+              ? 'is-open'
+              : ''
+          }`}
           aria-label="Xroga Video navigation"
         >
           <div className="xv-logo-lockup">
@@ -282,89 +318,160 @@ export function VideoLandingPage() {
 
             <i />
 
-            <strong>Video</strong>
+            <strong>
+              Video
+            </strong>
           </div>
 
           <button
             className="xv-sidebar-close"
             type="button"
-            onClick={() => setMobileNavOpen(false)}
+            onClick={() =>
+              setMobileNavOpen(false)
+            }
             aria-label="Close menu"
           >
             <X />
           </button>
 
           <nav className="xv-sidebar-nav">
-            {NAV_ITEMS.map(([Icon, label, id], index) => (
-              <button
-                type="button"
-                key={label}
-                className={index === 0 ? 'is-active' : ''}
-                onClick={() => goTo(id)}
-              >
-                <Icon />
+            {NAV_ITEMS.map(
+              (
+                [
+                  Icon,
+                  label,
+                  id,
+                ],
+                index,
+              ) => (
+                <button
+                  type="button"
+                  key={label}
+                  className={
+                    index === 0
+                      ? 'is-active'
+                      : ''
+                  }
+                  onClick={() =>
+                    goTo(id)
+                  }
+                >
+                  <Icon />
 
-                <span>{label}</span>
+                  <span>
+                    {label}
+                  </span>
 
-                {label === 'Create' ? <small>SOON</small> : null}
-              </button>
-            ))}
+                  {label ===
+                  'Create' ? (
+                    <small>
+                      SOON
+                    </small>
+                  ) : null}
+                </button>
+              ),
+            )}
           </nav>
 
           <div className="xv-sidebar-group">
-            <b>CREATIVE TOOLS</b>
+            <b>
+              CREATIVE TOOLS
+            </b>
 
-            {TOOL_ITEMS.map(([Icon, label, id]) => (
-              <button
-                type="button"
-                key={label}
-                onClick={() => goTo(id)}
-              >
-                <Icon />
-                <span>{label}</span>
-              </button>
-            ))}
+            {TOOL_ITEMS.map(
+              ([
+                Icon,
+                label,
+                id,
+              ]) => (
+                <button
+                  type="button"
+                  key={label}
+                  onClick={() =>
+                    goTo(id)
+                  }
+                >
+                  <Icon />
+
+                  <span>
+                    {label}
+                  </span>
+                </button>
+              ),
+            )}
           </div>
 
           <div className="xv-sidebar-group">
-            <b>SUPPORT</b>
+            <b>
+              SUPPORT
+            </b>
 
             <button
               type="button"
-              onClick={() => goTo('workflow')}
+              onClick={() =>
+                goTo('workflow')
+              }
             >
               <HelpCircle />
-              <span>How It Works</span>
+
+              <span>
+                How It Works
+              </span>
             </button>
 
             <Link href="/auth/signup">
               <Sparkles />
-              <span>Early Access</span>
+
+              <span>
+                Early Access
+              </span>
             </Link>
           </div>
 
           <div className="xv-sidebar-journey">
-            <b>HOW XROGA CREATES</b>
+            <b>
+              HOW XROGA CREATES
+            </b>
 
-            {WORKFLOW.map(([label], index) => (
-              <button
-                type="button"
-                key={label}
-                className={
-                  index === activeWorkflow ? 'is-current' : ''
-                }
-                onClick={() => {
-                  setActiveWorkflow(index);
-                  goTo('workflow');
-                }}
-              >
-                <span>
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+            {WORKFLOW.map(
+              (
+                [label],
+                index,
+              ) => (
+                <button
+                  type="button"
+                  key={label}
+                  className={
+                    index ===
+                    activeWorkflow
+                      ? 'is-current'
+                      : ''
+                  }
+                  onClick={() => {
+                    setActiveWorkflow(
+                      index,
+                    );
 
-                <strong>{label}</strong>
-              </button>
-            ))}
+                    goTo(
+                      'workflow',
+                    );
+                  }}
+                >
+                  <span>
+                    {String(
+                      index + 1,
+                    ).padStart(
+                      2,
+                      '0',
+                    )}
+                  </span>
+
+                  <strong>
+                    {label}
+                  </strong>
+                </button>
+              ),
+            )}
           </div>
         </aside>
 
@@ -373,7 +480,9 @@ export function VideoLandingPage() {
             className="xv-nav-backdrop"
             type="button"
             aria-label="Close navigation"
-            onClick={() => setMobileNavOpen(false)}
+            onClick={() =>
+              setMobileNavOpen(false)
+            }
           />
         ) : null}
 
@@ -382,7 +491,9 @@ export function VideoLandingPage() {
             <button
               className="xv-menu-button"
               type="button"
-              onClick={() => setMobileNavOpen(true)}
+              onClick={() =>
+                setMobileNavOpen(true)
+              }
               aria-label="Open menu"
             >
               <Menu />
@@ -392,23 +503,31 @@ export function VideoLandingPage() {
               className="xv-category-tabs"
               aria-label="Creation categories"
             >
-              {CREATION_TABS.map((tab) => (
-                <button
-                  type="button"
-                  key={tab}
-                  className={
-                    activeCreationTab === tab
-                      ? 'is-active'
-                      : ''
-                  }
-                  onClick={() => {
-                    setActiveCreationTab(tab);
-                    scrollToSection('explore');
-                  }}
-                >
-                  {tab}
-                </button>
-              ))}
+              {CREATION_TABS.map(
+                (tab) => (
+                  <button
+                    type="button"
+                    key={tab}
+                    className={
+                      activeCreationTab ===
+                      tab
+                        ? 'is-active'
+                        : ''
+                    }
+                    onClick={() => {
+                      setActiveCreationTab(
+                        tab,
+                      );
+
+                      scrollToSection(
+                        'explore',
+                      );
+                    }}
+                  >
+                    {tab}
+                  </button>
+                ),
+              )}
             </nav>
 
             <div className="xv-top-actions">
@@ -418,9 +537,17 @@ export function VideoLandingPage() {
 
                   <input
                     autoFocus
-                    value={searchQuery}
-                    onChange={(event) =>
-                      setSearchQuery(event.target.value)
+                    value={
+                      searchQuery
+                    }
+                    onChange={(
+                      event,
+                    ) =>
+                      setSearchQuery(
+                        event
+                          .target
+                          .value,
+                      )
                     }
                     placeholder="Search concepts"
                     aria-label="Search concepts"
@@ -429,8 +556,13 @@ export function VideoLandingPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setSearchOpen(false);
-                      setSearchQuery('');
+                      setSearchOpen(
+                        false,
+                      );
+
+                      setSearchQuery(
+                        '',
+                      );
                     }}
                     aria-label="Close search"
                   >
@@ -442,8 +574,13 @@ export function VideoLandingPage() {
                   className="xv-icon-button"
                   type="button"
                   onClick={() => {
-                    setSearchOpen(true);
-                    scrollToSection('explore');
+                    setSearchOpen(
+                      true,
+                    );
+
+                    scrollToSection(
+                      'explore',
+                    );
                   }}
                   aria-label="Search concepts"
                 >
@@ -460,6 +597,7 @@ export function VideoLandingPage() {
                 href="/auth/signup"
               >
                 Join Early Access
+
                 <ArrowRight />
               </Link>
             </div>
@@ -483,39 +621,58 @@ export function VideoLandingPage() {
 
               <div className="xv-hero-copy">
                 <div className="xv-kicker">
-                  <span>PRODUCT PREVIEW</span>
-                  <span>AI VIDEO WORKSPACE</span>
+                  <span>
+                    PRODUCT PREVIEW
+                  </span>
+
+                  <span>
+                    AI VIDEO WORKSPACE
+                  </span>
                 </div>
 
                 <h1 id="xv-title">
                   Turn one idea into
                   <br />
-                  <em>a complete production.</em>
+
+                  <em>
+                    a complete production.
+                  </em>
                 </h1>
 
                 <p>
-                  Research. Write. Direct. Generate. Edit.
-                  Package. Publish. Grow.
+                  Research. Write.
+                  Direct. Generate.
+                  Edit. Package.
+                  Publish. Grow.
                 </p>
 
                 <small>
-                  Xroga Video is being designed as one
-                  connected workspace for short-form,
-                  long-form, ads, stories, and cinematic
-                  production.
+                  Xroga Video is being
+                  designed as one
+                  connected workspace
+                  for short-form,
+                  long-form, ads,
+                  stories, and
+                  cinematic production.
                 </small>
 
                 <div className="xv-hero-actions">
                   <Link href="/auth/signup">
                     Join Early Access
+
                     <ArrowRight />
                   </Link>
 
                   <button
                     type="button"
-                    onClick={() => goTo('composer')}
+                    onClick={() =>
+                      goTo(
+                        'composer',
+                      )
+                    }
                   >
                     Explore Workspace
+
                     <ChevronRight />
                   </button>
                 </div>
@@ -524,17 +681,35 @@ export function VideoLandingPage() {
               <aside className="xv-hero-intelligence">
                 <Sparkles />
 
-                <b>BLACK HOLE V∞</b>
+                <b>
+                  BLACK HOLE V∞
+                </b>
 
                 <p>
-                  The intelligence behind your production.
+                  The intelligence
+                  behind your
+                  production.
                 </p>
 
                 <ul>
-                  <li>Understands the goal</li>
-                  <li>Plans the story</li>
-                  <li>Keeps creative context</li>
-                  <li>Coordinates the workflow</li>
+                  <li>
+                    Understands the
+                    goal
+                  </li>
+
+                  <li>
+                    Plans the story
+                  </li>
+
+                  <li>
+                    Keeps creative
+                    context
+                  </li>
+
+                  <li>
+                    Coordinates the
+                    workflow
+                  </li>
                 </ul>
               </aside>
             </section>
@@ -544,131 +719,258 @@ export function VideoLandingPage() {
               id="composer"
             >
               <div className="xv-composer-tabs">
-                {INPUT_TABS.map((tab) => (
-                  <button
-                    type="button"
-                    key={tab}
-                    className={
-                      activeInputTab === tab
-                        ? 'is-active'
-                        : ''
-                    }
-                    onClick={() => setActiveInputTab(tab)}
-                  >
-                    {tab}
-                  </button>
-                ))}
+                {INPUT_TABS.map(
+                  (tab) => (
+                    <button
+                      type="button"
+                      key={tab}
+                      className={
+                        activeInputTab ===
+                        tab
+                          ? 'is-active'
+                          : ''
+                      }
+                      onClick={() =>
+                        setActiveInputTab(
+                          tab,
+                        )
+                      }
+                    >
+                      {tab}
+                    </button>
+                  ),
+                )}
               </div>
 
               <div className="xv-composer-body">
                 <div className="xv-prompt-panel">
                   <label htmlFor="xv-prompt">
-                    What do you want to create?
+                    What do you want
+                    to create?
                   </label>
 
                   <textarea
                     id="xv-prompt"
                     value={prompt}
-                    onChange={(event) =>
-                      setPrompt(event.target.value)
+                    onChange={(
+                      event,
+                    ) =>
+                      setPrompt(
+                        event
+                          .target
+                          .value,
+                      )
                     }
                   />
 
                   <div className="xv-select-row">
                     <label>
-                      <span>Format</span>
+                      <span>
+                        Format
+                      </span>
 
                       <select
                         value={format}
-                        onChange={(event) =>
-                          setFormat(event.target.value)
+                        onChange={(
+                          event,
+                        ) =>
+                          setFormat(
+                            event
+                              .target
+                              .value,
+                          )
                         }
                       >
-                        <option>YouTube</option>
-                        <option>Short</option>
-                        <option>Reel</option>
-                        <option>Ad</option>
-                        <option>Film</option>
-                        <option>Auto</option>
+                        <option>
+                          YouTube
+                        </option>
+
+                        <option>
+                          Short
+                        </option>
+
+                        <option>
+                          Reel
+                        </option>
+
+                        <option>
+                          Ad
+                        </option>
+
+                        <option>
+                          Film
+                        </option>
+
+                        <option>
+                          Auto
+                        </option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Duration</span>
+                      <span>
+                        Duration
+                      </span>
 
                       <select
-                        value={duration}
-                        onChange={(event) =>
-                          setDuration(event.target.value)
+                        value={
+                          duration
+                        }
+                        onChange={(
+                          event,
+                        ) =>
+                          setDuration(
+                            event
+                              .target
+                              .value,
+                          )
                         }
                       >
-                        <option>Auto</option>
-                        <option>30 sec</option>
-                        <option>1 min</option>
-                        <option>3 min</option>
-                        <option>10 min</option>
-                        <option>30 min</option>
+                        <option>
+                          Auto
+                        </option>
+
+                        <option>
+                          30 sec
+                        </option>
+
+                        <option>
+                          1 min
+                        </option>
+
+                        <option>
+                          3 min
+                        </option>
+
+                        <option>
+                          10 min
+                        </option>
+
+                        <option>
+                          30 min
+                        </option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Ratio</span>
+                      <span>
+                        Ratio
+                      </span>
 
                       <select
                         value={ratio}
-                        onChange={(event) =>
-                          setRatio(event.target.value)
+                        onChange={(
+                          event,
+                        ) =>
+                          setRatio(
+                            event
+                              .target
+                              .value,
+                          )
                         }
                       >
-                        <option>16:9</option>
-                        <option>9:16</option>
-                        <option>1:1</option>
-                        <option>4:5</option>
+                        <option>
+                          16:9
+                        </option>
+
+                        <option>
+                          9:16
+                        </option>
+
+                        <option>
+                          1:1
+                        </option>
+
+                        <option>
+                          4:5
+                        </option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Style</span>
+                      <span>
+                        Style
+                      </span>
 
                       <select
                         value={style}
-                        onChange={(event) =>
-                          setStyle(event.target.value)
+                        onChange={(
+                          event,
+                        ) =>
+                          setStyle(
+                            event
+                              .target
+                              .value,
+                          )
                         }
                       >
-                        <option>Cinematic</option>
-                        <option>Documentary</option>
-                        <option>Animated</option>
-                        <option>Commercial</option>
-                        <option>Story</option>
+                        <option>
+                          Cinematic
+                        </option>
+
+                        <option>
+                          Documentary
+                        </option>
+
+                        <option>
+                          Animated
+                        </option>
+
+                        <option>
+                          Commercial
+                        </option>
+
+                        <option>
+                          Story
+                        </option>
                       </select>
                     </label>
 
                     <label>
-                      <span>Mode</span>
+                      <span>
+                        Mode
+                      </span>
 
                       <select
                         value={mode}
-                        onChange={(event) =>
-                          setMode(event.target.value)
+                        onChange={(
+                          event,
+                        ) =>
+                          setMode(
+                            event
+                              .target
+                              .value,
+                          )
                         }
                       >
-                        <option>Quick</option>
-                        <option>Director</option>
-                        <option>Growth</option>
+                        <option>
+                          Quick
+                        </option>
+
+                        <option>
+                          Director
+                        </option>
+
+                        <option>
+                          Growth
+                        </option>
                       </select>
                     </label>
 
                     <button
                       className="xv-create-button"
                       type="button"
-                      onClick={runPreview}
+                      onClick={
+                        runPreview
+                      }
                       disabled={
-                        previewPhase !== null &&
+                        previewPhase !==
+                          null &&
                         !previewDone
                       }
                     >
-                      {previewPhase !== null &&
+                      {previewPhase !==
+                        null &&
                       !previewDone
                         ? 'Preparing…'
                         : 'Create Video'}
@@ -683,56 +985,77 @@ export function VideoLandingPage() {
                     <Sparkles />
 
                     <div>
-                      <b>BLACK HOLE V∞</b>
+                      <b>
+                        BLACK HOLE V∞
+                      </b>
+
                       <small>
-                        Preview only · no AI request
+                        Preview only ·
+                        no AI request
                       </small>
                     </div>
                   </header>
 
-                  {previewPhase === null ? (
+                  {previewPhase ===
+                  null ? (
                     <p>
-                      Choose your input and settings,
-                      then press Create Video to preview
-                      the planned workflow.
+                      Choose your
+                      input and
+                      settings, then
+                      press Create
+                      Video to preview
+                      the planned
+                      workflow.
                     </p>
                   ) : (
                     <div className="xv-phase-list">
-                      {PHASES.map((phase, index) => (
-                        <span
-                          key={phase}
-                          className={
-                            index <= previewPhase
-                              ? 'is-active'
-                              : ''
-                          }
-                        >
-                          {index < previewPhase ||
-                          previewDone ? (
-                            <Check />
-                          ) : (
-                            <i />
-                          )}
+                      {PHASES.map(
+                        (
+                          phase,
+                          index,
+                        ) => (
+                          <span
+                            key={
+                              phase
+                            }
+                            className={
+                              index <=
+                              previewPhase
+                                ? 'is-active'
+                                : ''
+                            }
+                          >
+                            {index <
+                              previewPhase ||
+                            previewDone ? (
+                              <Check />
+                            ) : (
+                              <i />
+                            )}
 
-                          {phase}
-                        </span>
-                      ))}
+                            {phase}
+                          </span>
+                        ),
+                      )}
                     </div>
                   )}
 
                   {previewDone ? (
                     <div className="xv-preview-ready">
                       <b>
-                        Xroga Video is coming soon.
+                        Xroga Video is
+                        coming soon.
                       </b>
 
                       <small>
-                        Live generation is not enabled on
-                        this preview.
+                        Live generation
+                        is not enabled
+                        on this preview.
                       </small>
 
                       <Link href="/auth/signup">
                         Join Early Access
+
                         <ArrowRight />
                       </Link>
                     </div>
@@ -747,57 +1070,88 @@ export function VideoLandingPage() {
             >
               <header className="xv-section-head">
                 <div>
-                  <small>EXPLORE</small>
-                  <h2>What you can create</h2>
+                  <small>
+                    EXPLORE
+                  </small>
+
+                  <h2>
+                    What you can
+                    create
+                  </h2>
                 </div>
 
                 <p>
-                  Select a concept to load it directly into
-                  the composer.
+                  Select a concept to
+                  load it directly
+                  into the composer.
                 </p>
               </header>
 
               {visibleTemplates.length ? (
                 <div className="xv-template-grid">
-                  {visibleTemplates.map((template) => (
-                    <button
-                      className="xv-template-card"
-                      type="button"
-                      key={template.title}
-                      onClick={() =>
-                        useTemplate(template)
-                      }
-                    >
-                      <span className="xv-template-image">
-                        <Image
-                          src={template.image}
-                          alt=""
-                          fill
-                          quality={68}
-                          sizes="(max-width: 720px) 76vw, (max-width: 1200px) 34vw, 240px"
-                        />
-                      </span>
+                  {visibleTemplates.map(
+                    (template) => (
+                      <button
+                        className="xv-template-card"
+                        type="button"
+                        key={
+                          template.title
+                        }
+                        onClick={() =>
+                          applyTemplate(
+                            template,
+                          )
+                        }
+                      >
+                        <span className="xv-template-image">
+                          <Image
+                            src={
+                              template.image
+                            }
+                            alt=""
+                            fill
+                            quality={
+                              68
+                            }
+                            sizes="(max-width: 720px) 76vw, (max-width: 1200px) 34vw, 240px"
+                          />
+                        </span>
 
-                      <span className="xv-template-copy">
-                        <small>{template.meta}</small>
+                        <span className="xv-template-copy">
+                          <small>
+                            {
+                              template.meta
+                            }
+                          </small>
 
-                        <b>{template.title}</b>
+                          <b>
+                            {
+                              template.title
+                            }
+                          </b>
 
-                        <em>
-                          Use concept
-                          <ArrowRight />
-                        </em>
-                      </span>
-                    </button>
-                  ))}
+                          <em>
+                            Use concept
+
+                            <ArrowRight />
+                          </em>
+                        </span>
+                      </button>
+                    ),
+                  )}
                 </div>
               ) : (
                 <div className="xv-empty-state">
-                  No concepts match this search.
+                  No concepts match
+                  this search.
 
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
+                    onClick={() =>
+                      setSearchQuery(
+                        '',
+                      )
+                    }
                   >
                     Clear search
                   </button>
@@ -811,44 +1165,60 @@ export function VideoLandingPage() {
             >
               <header className="xv-section-head">
                 <div>
-                  <small>WORKFLOW</small>
+                  <small>
+                    WORKFLOW
+                  </small>
 
                   <h2>
-                    One connected production journey
+                    One connected
+                    production journey
                   </h2>
                 </div>
 
                 <p>
-                  Click any stage to see what that part of
-                  the future workspace is designed to
-                  handle.
+                  Click any stage to
+                  see what that part
+                  of the future
+                  workspace is
+                  designed to handle.
                 </p>
               </header>
 
               <div className="xv-workflow-tabs">
-                {WORKFLOW.map(([label], index) => (
-                  <button
-                    type="button"
-                    key={label}
-                    className={
-                      activeWorkflow === index
-                        ? 'is-active'
-                        : ''
-                    }
-                    onClick={() =>
-                      setActiveWorkflow(index)
-                    }
-                  >
-                    <span>
-                      {String(index + 1).padStart(
-                        2,
-                        '0',
-                      )}
-                    </span>
+                {WORKFLOW.map(
+                  (
+                    [label],
+                    index,
+                  ) => (
+                    <button
+                      type="button"
+                      key={label}
+                      className={
+                        activeWorkflow ===
+                        index
+                          ? 'is-active'
+                          : ''
+                      }
+                      onClick={() =>
+                        setActiveWorkflow(
+                          index,
+                        )
+                      }
+                    >
+                      <span>
+                        {String(
+                          index +
+                            1,
+                        ).padStart(
+                          2,
+                          '0',
+                        )}
+                      </span>
 
-                    {label}
-                  </button>
-                ))}
+                      {label}
+                    </button>
+                  ),
+                )}
               </div>
 
               <div className="xv-workflow-card">
@@ -856,29 +1226,46 @@ export function VideoLandingPage() {
                   <small>
                     STEP{' '}
                     {String(
-                      activeWorkflow + 1,
-                    ).padStart(2, '0')}
+                      activeWorkflow +
+                        1,
+                    ).padStart(
+                      2,
+                      '0',
+                    )}
                   </small>
 
                   <h3>
-                    {WORKFLOW[activeWorkflow][0]}
+                    {
+                      WORKFLOW[
+                        activeWorkflow
+                      ][0]
+                    }
                   </h3>
 
                   <p>
-                    {WORKFLOW[activeWorkflow][1]}
+                    {
+                      WORKFLOW[
+                        activeWorkflow
+                      ][1]
+                    }
                   </p>
 
                   <button
                     type="button"
-                    onClick={openWorkflowPreview}
+                    onClick={
+                      openWorkflowPreview
+                    }
                   >
-                    Open related preview
+                    Open related
+                    preview
+
                     <ArrowRight />
                   </button>
                 </div>
 
                 <div className="xv-workflow-graphic">
                   <span />
+
                   <span />
 
                   <i>
@@ -886,7 +1273,11 @@ export function VideoLandingPage() {
                   </i>
 
                   <b>
-                    {WORKFLOW[activeWorkflow][0]}
+                    {
+                      WORKFLOW[
+                        activeWorkflow
+                      ][0]
+                    }
                   </b>
                 </div>
               </div>
@@ -898,23 +1289,35 @@ export function VideoLandingPage() {
             >
               <header className="xv-section-head">
                 <div>
-                  <small>STORYBOARD</small>
+                  <small>
+                    STORYBOARD
+                  </small>
 
                   <h2>
-                    Plan every scene before production
+                    Plan every scene
+                    before production
                   </h2>
                 </div>
 
                 <p>
-                  Concept UI showing shot order, duration,
-                  and visual continuity.
+                  Concept UI showing
+                  shot order,
+                  duration, and
+                  visual continuity.
                 </p>
               </header>
 
               <div className="xv-storyboard-grid">
                 {SCENES.map(
-                  ([number, title, time, image]) => (
-                    <article key={number}>
+                  ([
+                    number,
+                    title,
+                    time,
+                    image,
+                  ]) => (
+                    <article
+                      key={number}
+                    >
                       <div>
                         <Image
                           src={image}
@@ -927,20 +1330,28 @@ export function VideoLandingPage() {
 
                       <header>
                         <span>
-                          SCENE {number}
+                          SCENE{' '}
+                          {number}
                         </span>
 
-                        <small>{time}</small>
+                        <small>
+                          {time}
+                        </small>
                       </header>
 
-                      <b>{title}</b>
+                      <b>
+                        {title}
+                      </b>
 
                       <p>
-                        {number === '01'
+                        {number ===
+                        '01'
                           ? 'Wide establishing reveal'
-                          : number === '02'
+                          : number ===
+                              '02'
                             ? 'Slow camera orbit'
-                            : number === '03'
+                            : number ===
+                                '03'
                               ? 'Tighter dramatic push'
                               : 'Final crane reveal'}
                       </p>
@@ -957,18 +1368,22 @@ export function VideoLandingPage() {
               <header className="xv-section-head">
                 <div>
                   <small>
-                    DIRECTOR + EDITOR PREVIEW
+                    DIRECTOR + EDITOR
+                    PREVIEW
                   </small>
 
                   <h2>
-                    Creative control without leaving the
-                    project
+                    Creative control
+                    without leaving
+                    the project
                   </h2>
                 </div>
 
                 <p>
-                  A lighter concept editor designed to stay
-                  fast on desktop and mobile.
+                  A lighter concept
+                  editor designed to
+                  stay fast on
+                  desktop and mobile.
                 </p>
               </header>
 
@@ -984,40 +1399,68 @@ export function VideoLandingPage() {
 
                   <div>
                     <small>
-                      SCENE 04 · REVEAL
+                      SCENE 04 ·
+                      REVEAL
                     </small>
 
                     <b>
-                      Future Cities — master cut
+                      Future Cities —
+                      master cut
                     </b>
                   </div>
                 </div>
 
                 <aside className="xv-editor-inspector">
-                  <b>SCENE SETTINGS</b>
+                  <b>
+                    SCENE SETTINGS
+                  </b>
 
                   {[
                     [
                       'Camera',
                       'Slow orbital push',
                     ],
-                    ['Lighting', 'Blue hour'],
-                    ['Voice', 'Narrator A'],
-                    ['Style', 'Cinematic'],
-                    ['Captions', 'Enabled'],
-                    ['Duration', '8.0 sec'],
-                  ].map(([label, value]) => (
-                    <button
-                      type="button"
-                      key={label}
-                    >
-                      <span>{label}</span>
+                    [
+                      'Lighting',
+                      'Blue hour',
+                    ],
+                    [
+                      'Voice',
+                      'Narrator A',
+                    ],
+                    [
+                      'Style',
+                      'Cinematic',
+                    ],
+                    [
+                      'Captions',
+                      'Enabled',
+                    ],
+                    [
+                      'Duration',
+                      '8.0 sec',
+                    ],
+                  ].map(
+                    ([
+                      label,
+                      value,
+                    ]) => (
+                      <button
+                        type="button"
+                        key={label}
+                      >
+                        <span>
+                          {label}
+                        </span>
 
-                      <strong>{value}</strong>
+                        <strong>
+                          {value}
+                        </strong>
 
-                      <ChevronRight />
-                    </button>
-                  ))}
+                        <ChevronRight />
+                      </button>
+                    ),
+                  )}
                 </aside>
               </div>
 
@@ -1027,15 +1470,31 @@ export function VideoLandingPage() {
               >
                 <div className="xv-timeline">
                   <div className="xv-ruler">
-                    <span>00:00</span>
-                    <span>00:10</span>
-                    <span>00:20</span>
-                    <span>00:30</span>
-                    <span>00:40</span>
+                    <span>
+                      00:00
+                    </span>
+
+                    <span>
+                      00:10
+                    </span>
+
+                    <span>
+                      00:20
+                    </span>
+
+                    <span>
+                      00:30
+                    </span>
+
+                    <span>
+                      00:40
+                    </span>
                   </div>
 
                   <div className="xv-track">
-                    <b>VIDEO</b>
+                    <b>
+                      VIDEO
+                    </b>
 
                     <span className="video">
                       <i />
@@ -1046,7 +1505,9 @@ export function VideoLandingPage() {
                   </div>
 
                   <div className="xv-track">
-                    <b>VOICE</b>
+                    <b>
+                      VOICE
+                    </b>
 
                     <span className="voice">
                       <i />
@@ -1054,17 +1515,29 @@ export function VideoLandingPage() {
                   </div>
 
                   <div className="xv-track">
-                    <b>CAPTIONS</b>
+                    <b>
+                      CAPTIONS
+                    </b>
 
                     <span className="captions">
-                      <i>Opening hook</i>
-                      <i>Future cities</i>
-                      <i>The reveal</i>
+                      <i>
+                        Opening hook
+                      </i>
+
+                      <i>
+                        Future cities
+                      </i>
+
+                      <i>
+                        The reveal
+                      </i>
                     </span>
                   </div>
 
                   <div className="xv-track">
-                    <b>MUSIC</b>
+                    <b>
+                      MUSIC
+                    </b>
 
                     <span className="music">
                       <i />
@@ -1077,22 +1550,35 @@ export function VideoLandingPage() {
             <section className="xv-section xv-intelligence">
               <div className="xv-intelligence-mark">
                 <span />
+
                 <i />
+
                 <Sparkles />
               </div>
 
               <div className="xv-intelligence-copy">
-                <small>BLACK HOLE V∞</small>
+                <small>
+                  BLACK HOLE V∞
+                </small>
 
                 <h2>
-                  One intelligence across the production.
+                  One intelligence
+                  across the
+                  production.
                 </h2>
 
                 <p>
-                  Xroga keeps the underlying complexity
-                  behind one creative interface: understand
-                  the goal, plan the work, maintain
-                  context, and prepare the final output.
+                  Xroga keeps the
+                  underlying
+                  complexity behind
+                  one creative
+                  interface:
+                  understand the
+                  goal, plan the
+                  work, maintain
+                  context, and
+                  prepare the final
+                  output.
                 </p>
               </div>
 
@@ -1114,12 +1600,24 @@ export function VideoLandingPage() {
                     'OPTIMIZE',
                     'Format, packaging, release',
                   ],
-                ].map(([title, body]) => (
-                  <article key={title}>
-                    <b>{title}</b>
-                    <span>{body}</span>
-                  </article>
-                ))}
+                ].map(
+                  ([
+                    title,
+                    body,
+                  ]) => (
+                    <article
+                      key={title}
+                    >
+                      <b>
+                        {title}
+                      </b>
+
+                      <span>
+                        {body}
+                      </span>
+                    </article>
+                  ),
+                )}
               </div>
             </section>
 
@@ -1129,17 +1627,24 @@ export function VideoLandingPage() {
             >
               <header className="xv-section-head">
                 <div>
-                  <small>FINISH + RELEASE</small>
+                  <small>
+                    FINISH + RELEASE
+                  </small>
 
                   <h2>
-                    Create once. Prepare every format.
+                    Create once.
+                    Prepare every
+                    format.
                   </h2>
                 </div>
 
                 <p>
-                  Packaging, publishing, and growth
-                  concepts remain clearly marked as
-                  planned or demo data.
+                  Packaging,
+                  publishing, and
+                  growth concepts
+                  remain clearly
+                  marked as planned
+                  or demo data.
                 </p>
               </header>
 
@@ -1147,18 +1652,25 @@ export function VideoLandingPage() {
                 <article className="xv-release-card">
                   <Package />
 
-                  <small>PACKAGE</small>
+                  <small>
+                    PACKAGE
+                  </small>
 
                   <b>
-                    Titles, thumbnail, chapters
+                    Titles,
+                    thumbnail,
+                    chapters
                   </b>
 
                   <p>
-                    The Cities That Will Define 2050
+                    The Cities That
+                    Will Define 2050
                   </p>
 
                   <p>
-                    Inside Tomorrow&apos;s Smartest Cities
+                    Inside
+                    Tomorrow&apos;s
+                    Smartest Cities
                   </p>
                 </article>
 
@@ -1166,27 +1678,39 @@ export function VideoLandingPage() {
                   <CalendarDays />
 
                   <small>
-                    PUBLISH · PLANNED
+                    PUBLISH ·
+                    PLANNED
                   </small>
 
                   <b>
-                    One project, multiple releases
+                    One project,
+                    multiple
+                    releases
                   </b>
 
                   <div className="xv-calendar-mini">
                     <span>
                       MON
-                      <b>Main video</b>
+
+                      <b>
+                        Main video
+                      </b>
                     </span>
 
                     <span>
                       WED
-                      <b>Reel</b>
+
+                      <b>
+                        Reel
+                      </b>
                     </span>
 
                     <span>
                       FRI
-                      <b>Short</b>
+
+                      <b>
+                        Short
+                      </b>
                     </span>
                   </div>
                 </article>
@@ -1198,24 +1722,40 @@ export function VideoLandingPage() {
                     GROW · DEMO DATA
                   </small>
 
-                  <b>Learn what performs</b>
+                  <b>
+                    Learn what
+                    performs
+                  </b>
 
                   <div className="xv-metrics">
                     <span>
-                      <small>CTR</small>
-                      <b>6.8%</b>
+                      <small>
+                        CTR
+                      </small>
+
+                      <b>
+                        6.8%
+                      </b>
                     </span>
 
                     <span>
-                      <small>Retention</small>
-                      <b>63%</b>
+                      <small>
+                        Retention
+                      </small>
+
+                      <b>
+                        63%
+                      </b>
                     </span>
                   </div>
 
                   <p className="xv-insight">
                     <TrendingUp />
-                    Move the strongest visual earlier in
-                    the opening hook.
+
+                    Move the
+                    strongest visual
+                    earlier in the
+                    opening hook.
                   </p>
                 </article>
               </div>
@@ -1227,33 +1767,47 @@ export function VideoLandingPage() {
 
                 <span>
                   <small>
-                    XROGA VIDEO IS IN DEVELOPMENT
+                    XROGA VIDEO IS IN
+                    DEVELOPMENT
                   </small>
 
                   <h2>
-                    This is an interactive product preview.
+                    This is an
+                    interactive
+                    product preview.
                   </h2>
 
                   <p>
-                    Live AI video generation is not enabled
-                    here. Explore the planned creation,
-                    storyboard, editing, packaging,
-                    publishing, and growth experience.
+                    Live AI video
+                    generation is not
+                    enabled here.
+                    Explore the
+                    planned creation,
+                    storyboard,
+                    editing,
+                    packaging,
+                    publishing, and
+                    growth
+                    experience.
                   </p>
                 </span>
               </div>
 
               <Link href="/auth/signup">
                 Join Early Access
+
                 <ArrowRight />
               </Link>
             </section>
 
             <footer className="xv-footer">
-              <span>© 2026 XROGA AI</span>
+              <span>
+                © 2026 XROGA AI
+              </span>
 
               <b>
-                One idea. Complete production.
+                One idea. Complete
+                production.
               </b>
 
               <div>
