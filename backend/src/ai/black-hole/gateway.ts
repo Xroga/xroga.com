@@ -47,13 +47,9 @@ import {
   type ConversationTurn,
   type MemoryItem,
 } from './contextPlan.js';
-import {
-  chatCompletion,
-  estimateTokens,
-  type ChatMessage,
-  type ChatResult,
-} from '../openaiCompat.js';
-import { MODELS, type ModelId } from '../models.js';
+import { estimateTokens, type ChatMessage, type ChatResult } from '../openaiCompat.js';
+import { providerAdapter, type AdapterRequest } from './providerAdapter.js';
+import { resolveModelSpec, type ModelId } from '../models.js';
 import type { RuntimeModelCapability } from '../modelCapabilityRegistry.js';
 
 export type { PublicMode } from './router.js';
@@ -78,7 +74,14 @@ export interface BlackHoleRequest {
   readonly projectId?: string | null;
 
   readonly messages: readonly BlackHoleMessage[];
-  readonly attachments?: readonly TaskAttachment[];
+  /**
+   * Attachments, carrying enough for the adapter to actually send them.
+   *
+   * `TaskAttachment` (media type and name) is what classification needs; the adapter needs the
+   * payload too. Keeping one type with an optional `url` avoids the caller assembling the same
+   * list twice and the two copies disagreeing about what was attached.
+   */
+  readonly attachments?: readonly (TaskAttachment & { url?: string })[];
 
   readonly mode?: PublicMode;
 
@@ -164,6 +167,14 @@ export class BlackHoleRoutingError extends Error {
   }
 }
 
+export class BlackHoleCancelledError extends Error {
+  readonly code = 'BLACK_HOLE_CANCELLED' as const;
+  constructor(message: string) {
+    super(message);
+    this.name = 'BlackHoleCancelledError';
+  }
+}
+
 export class BlackHoleExhaustedError extends Error {
   readonly code = 'BLACK_HOLE_CHAIN_EXHAUSTED' as const;
   constructor(message: string, readonly lastError: unknown) {
@@ -183,13 +194,10 @@ const DEFAULT_MAX_OUTPUT_TOKENS = 4_096;
  * reconfigured at runtime by anything that can import the module, which is a worse trade for
  * the same benefit.
  */
-export type ProviderComplete = (
-  modelId: ModelId,
-  messages: ChatMessage[],
-  opts: { maxTokens?: number; signal?: AbortSignal; json?: boolean },
-) => Promise<ChatResult>;
+export type ProviderComplete = (request: AdapterRequest) => Promise<ChatResult>;
 
 export interface GatewayDependencies {
+  /** The provider adapter. The gateway never sees a URL, a credential or a base path. */
   readonly complete: ProviderComplete;
   /**
    * Runtime model registry override.
@@ -219,11 +227,14 @@ function toConversation(messages: readonly BlackHoleMessage[]): ConversationTurn
 }
 
 function costUsd(modelId: string, inputTokens: number, outputTokens: number): number {
-  const def = MODELS[modelId as ModelId];
-  if (!def) return 0;
+  // Only ever called for a model the router selected, which means it resolved — but the guard
+  // stays, because reporting a cost of zero for an unpriced model is how an unpriced model
+  // becomes invisible in the telemetry that would otherwise reveal it.
+  const spec = resolveModelSpec(modelId as ModelId);
+  if (!spec) return 0;
   return (
-    (inputTokens / 1_000_000) * def.inputUsdPer1M +
-    (outputTokens / 1_000_000) * def.outputUsdPer1M
+    (inputTokens / 1_000_000) * spec.inputUsdPer1M +
+    (outputTokens / 1_000_000) * spec.outputUsdPer1M
   );
 }
 
@@ -327,18 +338,31 @@ export async function generateWith(
     { role: 'user' as const, content: prompt },
   ];
 
+  const sendableAttachments = (request.attachments ?? [])
+    .filter((file): file is TaskAttachment & { url: string } => typeof file.url === 'string')
+    .map((file) => ({ mediaType: file.mediaType, url: file.url, name: file.name }));
+
   const attempted: string[] = [];
   let current: string | null = route.selected;
   let result: ChatResult | null = null;
   let lastError: unknown = null;
 
   while (current) {
+    // Checked before each attempt, not only after a failure: a cancellation that arrives while
+    // the first model is answering must not be followed by a second model's worth of spend.
+    if (request.signal?.aborted) {
+      throw new BlackHoleCancelledError('The request was cancelled before completing.');
+    }
     attempted.push(current);
     try {
-      result = await deps.complete(current as ModelId, messages, {
+      result = await deps.complete({
+        modelId: current as ModelId,
+        messages,
+        attachments: sendableAttachments,
         maxTokens: request.executionBudget?.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
         signal: request.signal,
         json: request.responseSchema !== undefined,
+        env: deps.env,
       });
       break;
     } catch (error) {
@@ -410,7 +434,7 @@ export async function generateWith(
 
 /** The production gateway, bound to the real provider adapter. §1's `blackHole.generate({…})`. */
 export function generate(request: BlackHoleRequest): Promise<BlackHoleResponse> {
-  return generateWith({ complete: chatCompletion }, request);
+  return generateWith({ complete: (call) => providerAdapter.complete(call) }, request);
 }
 
 export const blackHole = { generate };

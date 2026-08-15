@@ -130,10 +130,24 @@ test('K2.7 reports not_configured rather than guessing a provider slug', () => {
   assert.equal(blackHoleAvailability('kimi_k2_7', env), 'not_configured');
 });
 
-test('K2.7 becomes available once an operator supplies the verified identifier', () => {
+test('an identifier alone does not make K2.7 available', () => {
+  // Routing needs more than a name. A model with no verified price cannot be costed, and a
+  // model with no verified context window cannot be given a context plan — both would have to
+  // be guessed at the moment of use, which is exactly what this registry exists to prevent.
   const env = { KIMI_COST_EFFICIENT_MODEL_ID: 'kimi-k2.7-code-verified' } as NodeJS.ProcessEnv;
+  assert.equal(blackHoleAvailability('kimi_k2_7', env), 'not_configured');
+});
+
+test('K2.7 becomes available once an operator supplies every verified fact', () => {
+  const env = {
+    KIMI_COST_EFFICIENT_MODEL_ID: 'kimi-k2.7-code-verified',
+    KIMI_COST_EFFICIENT_INPUT_USD_PER_1M: '0.6',
+    KIMI_COST_EFFICIENT_OUTPUT_USD_PER_1M: '2.5',
+    KIMI_COST_EFFICIENT_CONTEXT_WINDOW: '262144',
+  } as unknown as NodeJS.ProcessEnv;
   assert.equal(providerModelIdentifier('kimi_k2_7', env), 'kimi-k2.7-code-verified');
   assert.equal(blackHoleAvailability('kimi_k2_7', env), 'available');
+  assert.equal(blackHoleModel('kimi_k2_7', env)!.contextWindow, 262_144);
 });
 
 test('a configured model still honours an environment override', () => {

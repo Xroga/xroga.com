@@ -1,6 +1,6 @@
 import { getSecret } from '../config/envSecrets.js';
 import { isCodingModel } from './providerPolicy.js';
-import { MODELS, type ModelId } from './models.js';
+import { MODELS, resolveModelSpec, type ModelId } from './models.js';
 import { getModelRuntimeHealth, type ModelRuntimeHealth } from './providerRuntime.js';
 import { getRouterAdminConfig } from './routerConfig.js';
 import { configuredApiModel } from './openaiCompat.js';
@@ -61,6 +61,10 @@ export interface RuntimeModelCapability {
  * if the filter were ever removed is not a prior worth keeping.
  */
 const UNVERIFIED_PRIOR_STRENGTHS: Record<ModelId, Record<ModelCapability, number>> = {
+  // K2.7 is the intended normal implementation route (§6). Its priors sit just under K3 for
+  // coding and well under it for architecture: a cost-efficient coding model is not a
+  // flagship reasoner, and giving it flagship priors would win it routes it should not.
+  kimi_k2_7: { coding: 9, repository_analysis: 8, architecture: 6, research: 3, review: 7, debugging: 8, security_review: 6, ui_generation: 7, structured_output: 8, tool_calls: 8, streaming: 9 },
   kimi_k3: { coding: 9, repository_analysis: 10, architecture: 10, research: 5, review: 9, debugging: 8, security_review: 8, ui_generation: 8, structured_output: 8, tool_calls: 8, streaming: 9 },
   glm_5_2: { coding: 9, repository_analysis: 9, architecture: 8, research: 4, review: 8, debugging: 9, security_review: 7, ui_generation: 7, structured_output: 9, tool_calls: 8, streaming: 9 },
   deepseek_v4_pro: { coding: 8, repository_analysis: 7, architecture: 6, research: 3, review: 7, debugging: 9, security_review: 6, ui_generation: 8, structured_output: 9, tool_calls: 7, streaming: 9 },
@@ -81,9 +85,10 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<ModelId, Record<ModelCapability, number
  * is still research, and `providerPolicy` refuses either of them for engineering work.
  */
 const FALLBACKS: Record<ModelId, ModelId[]> = {
-  kimi_k3: ['glm_5_2', 'deepseek_v4_pro', 'deepseek_v4_flash'],
-  glm_5_2: ['kimi_k3', 'deepseek_v4_pro', 'deepseek_v4_flash'],
-  deepseek_v4_pro: ['glm_5_2', 'deepseek_v4_flash', 'kimi_k3'],
+  kimi_k2_7: ['glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
+  kimi_k3: ['glm_5_2', 'kimi_k2_7', 'deepseek_v4_pro', 'deepseek_v4_flash'],
+  glm_5_2: ['kimi_k2_7', 'kimi_k3', 'deepseek_v4_pro', 'deepseek_v4_flash'],
+  deepseek_v4_pro: ['glm_5_2', 'kimi_k2_7', 'deepseek_v4_flash', 'kimi_k3'],
   deepseek_v4_flash: ['deepseek_v4_pro', 'glm_5_2', 'kimi_k3'],
   grok_4_5: ['grok_4_3'],
   grok_4_3: ['grok_4_5'],
@@ -96,24 +101,41 @@ function configured(id: ModelId): boolean {
     : Boolean(getSecret(def.secretKey));
 }
 
+/**
+ * The runtime view of every *callable* model.
+ *
+ * Two things changed here when `models.ts` became the canonical owner of model facts.
+ *
+ * First, a model that is registered but not fully configured is omitted rather than listed
+ * with invented numbers. `resolveModelSpec` returns null for it, and a router cannot rank what
+ * it cannot see — which is the correct outcome, and the reason `kimi_k2_7` simply does not
+ * appear until an operator supplies its identifier, pricing and context window.
+ *
+ * Second, transport, pricing, context and image support are read from the resolved spec rather
+ * than restated. The previous `images: id.startsWith('grok')` was a heuristic presented as a
+ * fact, and it disagreed with the Black Hole registry's separate claim about K3 — which is how
+ * image requests ended up with no route at all.
+ */
 export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
   const admin = getRouterAdminConfig();
-  return (Object.keys(MODELS) as ModelId[]).map((id) => {
+  return (Object.keys(MODELS) as ModelId[]).flatMap((id) => {
     const def = MODELS[id];
+    const spec = resolveModelSpec(id);
+    if (!spec) return [];
     const health = getModelRuntimeHealth(id);
-    return {
+    return [{
       id,
-      provider: def.provider,
-      apiModel: configuredApiModel(id),
+      provider: spec.provider,
+      apiModel: spec.apiModel,
       configured: configured(id),
       credentialSource: configured(id) ? 'platform' : 'none',
       enabled: admin.allowedModels.includes(id) && admin.enabledProviders.includes(def.provider),
       health,
-      contextWindow: def.contextWindow,
-      maximumSafeRequestTokens: Math.floor(def.contextWindow * 0.8),
+      contextWindow: spec.contextWindow,
+      maximumSafeRequestTokens: Math.floor(spec.contextWindow * 0.8),
       typicalLatency: id.includes('flash') ? 'fast' : id.includes('kimi') ? 'slow' : 'medium',
-      inputUsdPer1M: def.inputUsdPer1M,
-      outputUsdPer1M: def.outputUsdPer1M,
+      inputUsdPer1M: spec.inputUsdPer1M,
+      outputUsdPer1M: spec.outputUsdPer1M,
       configuredMonthlyBudgetUsd:
         admin.providerBudgetUsd[def.provider] ?? def.budgetUsd,
       strengths: UNVERIFIED_PRIOR_STRENGTHS[id],
@@ -140,12 +162,13 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
       ].filter((fallback) => (isCodingModel(id) ? isCodingModel(fallback) : true)),
       supports: {
         text: true,
-        images: id.startsWith('grok'),
+        // Read from the canonical catalogue, not guessed from the id.
+        images: spec.supportsImages,
         structuredOutput: UNVERIFIED_PRIOR_STRENGTHS[id].structured_output >= 7,
         toolCalls: UNVERIFIED_PRIOR_STRENGTHS[id].tool_calls >= 7,
         streaming: true,
       },
-    };
+    }];
   });
 }
 

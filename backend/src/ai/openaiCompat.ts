@@ -3,6 +3,8 @@ import { getSecret } from '../config/envSecrets.js';
 import {
   MODELS,
   OPENROUTER_BASE_URL,
+  modelConfigurationIssues,
+  resolveModelSpec,
   type ModelId,
 } from './models.js';
 import { recordModelExecution } from './providerRuntime.js';
@@ -58,17 +60,24 @@ export function requireNonEmptyModelText(text: string, modelId: ModelId): string
   throw error;
 }
 
-const MODEL_ID_ENV: Record<ModelId, string> = {
-  kimi_k3: 'KIMI_MODEL_ID',
-  glm_5_2: 'GLM_MODEL_ID',
-  deepseek_v4_pro: 'DEEPSEEK_PRO_MODEL_ID',
-  deepseek_v4_flash: 'DEEPSEEK_FLASH_MODEL_ID',
-  grok_4_5: 'GROK_PRIMARY_MODEL_ID',
-  grok_4_3: 'GROK_REVIEW_MODEL_ID',
-};
+/**
+ * The provider identifier to send.
+ *
+ * The env-var table that used to live here is gone: `models.ts` now owns `modelIdEnv` per
+ * model, so the mapping cannot drift from the catalogue it describes. A model that is not
+ * fully configured has no identifier to return, and saying so is the honest answer —
+ * `resolveEndpoint` below turns it into a refusal rather than a call to an empty model name.
+ */
+export function configuredApiModel(modelId: ModelId): string | null {
+  return resolveModelSpec(modelId)?.apiModel ?? null;
+}
 
-export function configuredApiModel(modelId: ModelId): string {
-  return process.env[MODEL_ID_ENV[modelId]]?.trim() || MODELS[modelId].apiModel;
+export class ModelNotConfiguredError extends Error {
+  readonly code = 'MODEL_NOT_CONFIGURED' as const;
+  constructor(message: string) {
+    super(message);
+    this.name = 'ModelNotConfiguredError';
+  }
 }
 
 function openRouterHeaders(): Record<string, string> {
@@ -88,7 +97,6 @@ function openRouterHeaders(): Record<string, string> {
  */
 export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
   const def = MODELS[modelId];
-  const apiModel = configuredApiModel(modelId);
 
   // §7's transport binding, enforced rather than described.
   //
@@ -110,6 +118,23 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
         'not permit for that model.',
     );
   }
+
+  // Configuration is checked *after* the transport policy, deliberately.
+  //
+  // A model can be both misconfigured and mis-transported. If the configuration guard ran
+  // first, that model would report "not configured" and the transport violation would never
+  // be reached — a security invariant silently skipped because of an unrelated operational
+  // gap. The policy check needs only the registry's `provider` field, so it can and should
+  // run unconditionally.
+  const spec = resolveModelSpec(modelId);
+  if (!spec) {
+    const issues = modelConfigurationIssues(modelId).join(', ');
+    throw new ModelNotConfiguredError(
+      `${modelId} is registered but not configured (${issues}). ` +
+        'Supply the operator configuration for it, or route to a configured model.',
+    );
+  }
+  const apiModel = spec.apiModel;
 
   if (def.provider === 'openrouter') {
     const orKey = credentialOverride?.trim() || getSecret('OPENROUTER_API_KEY');

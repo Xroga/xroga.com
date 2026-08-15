@@ -7,6 +7,13 @@ import type { ProviderCandidate } from '../lib/providerResolver.js';
 import type { ModelId } from '../ai/models.js';
 import { createIntelligentRoutePlan } from '../ai/intelligentRouter.js';
 import { publicIntelligenceHealth } from '../ai/modelCapabilityRegistry.js';
+import {
+  BLACK_HOLE_PUBLIC_NAME,
+  publicBlocker,
+  publicModeFor,
+  publicTierFor,
+  type PublicPlan,
+} from '../ai/black-hole/publicIdentity.js';
 import type { RoutingMode } from '../ai/routerConfig.js';
 
 const router = Router();
@@ -117,7 +124,30 @@ router.post('/plan', (req, res) => {
     repositoryFileCount,
     affectedFileCount,
   });
-  res.json({ ...adaptive, routerPlan });
+  // Item 9 — the raw planner output carried `selectedModel`, `fallbackModels`, `primaryModel`
+  // and `reviewerModel`. Four of the exact fields §30 forbids, on an ordinary authenticated
+  // user route. Projected to public concepts instead; operators keep the detail in the
+  // server-side trace and the admin diagnostics.
+  const publicPlan: PublicPlan = {
+    status: adaptive.status,
+    intelligence: BLACK_HOLE_PUBLIC_NAME,
+    mode: publicModeFor(routerPlan.mode),
+    researchRequired: adaptive.route.research,
+    steps: routerPlan.subtasks.map((task) => ({
+      id: task.id,
+      purpose: task.objective,
+      dependsOn: task.dependsOn,
+      status: task.blocker ? 'blocked' : 'ready',
+      blocker: task.blocker,
+      tier: publicTierFor(task.taskClass),
+      review: task.taskClass.includes('review'),
+    })),
+    // Internal blockers name the models they checked, which is right for an operator and
+    // forbidden for a user. The actionable content — capacity unavailable — survives.
+    blockers: [...new Set([...adaptive.blockers, ...routerPlan.blockers])].map(publicBlocker),
+    capabilities: adaptive.capabilities.map((capability) => capability.id),
+  };
+  res.json(publicPlan);
 });
 
 export default router;

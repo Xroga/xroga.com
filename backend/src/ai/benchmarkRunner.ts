@@ -144,7 +144,7 @@ export function estimateCaseCostUsd(benchmarkCase: BenchmarkCase): number {
   const inputTokens = 20_000 * weightFactor;
   const outputTokens = 16_000 * weightFactor;
   return (
-    (inputTokens / 1_000_000) * model.inputUsdPer1M + (outputTokens / 1_000_000) * model.outputUsdPer1M
+    (inputTokens / 1_000_000) * (model.inputUsdPer1M ?? 0) + (outputTokens / 1_000_000) * (model.outputUsdPer1M ?? 0)
   );
 }
 
@@ -304,8 +304,8 @@ export async function runBenchmarks(input: {
 
     const model = MODELS[benchmarkCase.modelId];
     const costUsd = outcome
-      ? (outcome.inputTokens / 1_000_000) * model.inputUsdPer1M +
-        (outcome.outputTokens / 1_000_000) * model.outputUsdPer1M
+      ? (outcome.inputTokens / 1_000_000) * (model.inputUsdPer1M ?? 0) +
+        (outcome.outputTokens / 1_000_000) * (model.outputUsdPer1M ?? 0)
       : estimateCaseCostUsd(benchmarkCase);
 
     const result: BenchmarkResult = {
