@@ -2,37 +2,43 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ArrowRight,
+  BarChart3,
   Bitcoin,
   Blocks,
   Bot,
   Braces,
-  ChartNoAxesCombined,
   CheckCircle2,
+  Code2,
   ExternalLink,
   GitBranch,
-  Landmark,
+  Globe2,
+  Layers3,
+  Moon,
   Network,
   Radar,
   Rocket,
   Search,
   ShieldCheck,
   Sparkles,
-  Trophy,
-  WalletCards,
+  Sun,
+  Workflow,
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
+
 import {
   BUILD_KINDS,
   PLACEHOLDERS,
   PROMPT_SUGGESTIONS,
   STAGES,
 } from '@/lib/cryptoBuilderContent';
+
 import {
   HACKATHON_SOURCES,
   WINNING_PATTERNS,
 } from '@/lib/hackathonResearch';
+
 import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
@@ -41,35 +47,105 @@ import '@/styles/crypto-builder.css';
 export const metadata: Metadata = buildMetadata({
   title: 'Crypto Builder for Web3 Apps and AI Agents',
   description:
-    'Build AI crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, analytics dashboards, and hackathon projects with XROGA AI.',
+    'Build AI crypto agents, Web3 apps, DeFi tools, DAO products, on-chain analytics, monitoring systems and hackathon projects with XROGA AI.',
   path: '/crypto-builder',
   keywords: [
     'crypto builder',
     'AI crypto agent builder',
-    'Web3 app builder',
-    'DeFi dashboard builder',
-    'DAO tooling',
-    'on-chain monitoring agent',
-    'crypto hackathon project',
+    'Web3 builder',
+    'DeFi app builder',
+    'smart contract builder',
+    'on-chain analytics',
+    'crypto hackathon builder',
+    'AI Web3 development',
   ],
 });
 
 const BUILD_ICONS = [
   Bot,
   Braces,
-  ChartNoAxesCombined,
-  Landmark,
-  WalletCards,
+  BarChart3,
+  Blocks,
+  Network,
   Radar,
-  ChartNoAxesCombined,
-  Trophy,
+  Code2,
+  Rocket,
 ];
 
 const STAGE_ICONS = [
   Search,
-  Braces,
+  Code2,
   ShieldCheck,
   Rocket,
+];
+
+const SOURCE_LOGOS: Record<
+  (typeof HACKATHON_SOURCES)[number]['name'],
+  string
+> = {
+  'OKX Web3': 'https://web3.okx.com/favicon.ico',
+  ETHGlobal: 'https://ethglobal.com/favicon.ico',
+  Solana: 'https://solana.com/favicon.ico',
+  Chainlink: 'https://chain.link/favicon.ico',
+  Polygon: 'https://polygon.technology/favicon.ico',
+  Avalanche: 'https://build.avax.network/favicon.ico',
+  'BNB Chain': 'https://www.bnbchain.org/favicon.ico',
+  Aptos: 'https://aptos.dev/favicon.ico',
+  Sui: 'https://docs.sui.io/favicon.ico',
+  Devpost: 'https://devpost.com/favicon.ico',
+  DoraHacks: 'https://dorahacks.io/favicon.ico',
+  Mantle: 'https://www.mantle.xyz/favicon.ico',
+};
+
+const FEATURE_CARDS = [
+  {
+    icon: Bot,
+    title: 'AI Crypto Agents',
+    copy:
+      'Build agents for research, monitoring, analysis, automation and crypto workflows.',
+  },
+  {
+    icon: Blocks,
+    title: 'DeFi Applications',
+    copy:
+      'Build dashboards, protocol interfaces, staking tools and on-chain products.',
+  },
+  {
+    icon: Network,
+    title: 'Web3 Platforms',
+    copy:
+      'Create blockchain-connected products with real application architecture.',
+  },
+  {
+    icon: Radar,
+    title: 'On-chain Monitoring',
+    copy:
+      'Track addresses, contracts, events, protocol state and important activity.',
+  },
+  {
+    icon: Workflow,
+    title: 'DAO Tools',
+    copy:
+      'Build governance, voting, treasury and community coordination products.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Analytics Dashboards',
+    copy:
+      'Turn blockchain and market information into clear product intelligence.',
+  },
+  {
+    icon: Code2,
+    title: 'Smart Contract Apps',
+    copy:
+      'Build interfaces and systems that interact with contracts you control.',
+  },
+  {
+    icon: Rocket,
+    title: 'Hackathon Projects',
+    copy:
+      'Move from official rules to a working, inspectable technical submission.',
+  },
 ];
 
 export default function CryptoBuilderPage() {
@@ -81,7 +157,7 @@ export default function CryptoBuilderPage() {
     operatingSystem: 'Web',
     url: 'https://xroga.com/crypto-builder',
     description:
-      'Build AI crypto agents, Web3 applications, DeFi and DAO tools, on-chain monitoring, analytics products, and hackathon projects with XROGA AI.',
+      'Build AI crypto agents, Web3 applications, DeFi products, on-chain analytics and hackathon projects with Xroga AI.',
   };
 
   return (
@@ -96,36 +172,60 @@ export default function CryptoBuilderPage() {
         }}
       />
 
+      {/* ======================================================
+          CSS-ONLY DAY / NIGHT TOGGLE
+
+          Keeping this page as a Server Component means your
+          existing metadata architecture stays intact.
+      ====================================================== */}
+
+      <input
+        type="checkbox"
+        id="xcb-theme-toggle"
+        className="xcb-theme-checkbox"
+        aria-label="Toggle light and dark appearance"
+      />
+
       <div
-        className="xcb-background-rings"
+        className="xcb-site-background"
         aria-hidden="true"
-      >
-        <span />
-        <span />
-        <span />
-      </div>
+      />
 
-      <div className="xcb-frame">
-        {/* =====================================================
-            HEADER
-        ===================================================== */}
+      <div
+        className="xcb-ambient xcb-ambient--one"
+        aria-hidden="true"
+      />
 
-        <header className="xcb-header">
-          <div className="xcb-brand">
+      <div
+        className="xcb-ambient xcb-ambient--two"
+        aria-hidden="true"
+      />
+
+      <div className="xcb-page-shell">
+        {/* ====================================================
+            FLOATING NAVIGATION
+        ==================================================== */}
+
+        <header className="xcb-navbar">
+          <Link
+            href="/"
+            className="xcb-navbar-brand"
+            aria-label="Xroga home"
+          >
             <Logo
-              href="/"
+              href={null}
               variant="homepage"
-              height={32}
+              height={40}
             />
 
-            <span className="xcb-product-name">
+            <span>
               Crypto Builder
             </span>
-          </div>
+          </Link>
 
           <nav
-            className="xcb-nav"
-            aria-label="Crypto Builder navigation"
+            className="xcb-navbar-links"
+            aria-label="Crypto Builder"
           >
             <a href="#builder">
               Builder
@@ -136,250 +236,336 @@ export default function CryptoBuilderPage() {
             </a>
 
             <a href="#workflow">
-              Workflow
+              How it works
             </a>
 
             <a href="#research">
               Research
             </a>
+
+            <Link href="/community">
+              Community
+            </Link>
+
+            <Link href="/docs">
+              Docs
+            </Link>
           </nav>
 
-          <div className="xcb-header-actions">
+          <div className="xcb-navbar-actions">
             <a
+              className="xcb-nav-search"
               href="#research"
-              className="xcb-icon-button"
-              aria-label="Explore research"
+              aria-label="Research sources"
             >
               <Search />
             </a>
 
-            <span
-              className="xcb-status-dot"
-              title="Crypto Builder"
-            />
+            <label
+              htmlFor="xcb-theme-toggle"
+              className="xcb-theme-switch"
+              aria-label="Toggle day and night mode"
+            >
+              <span className="xcb-theme-sun">
+                <Sun />
+              </span>
+
+              <i />
+
+              <span className="xcb-theme-moon">
+                <Moon />
+              </span>
+            </label>
+
+            <Link
+              href="/auth/login"
+              className="xcb-signin"
+            >
+              Sign in
+            </Link>
 
             <Link
               href="/auth/signup"
-              className="xcb-button xcb-button--primary xcb-header-button"
+              className="xcb-gradient-button"
             >
-              Start building
+              Get started
             </Link>
           </div>
         </header>
 
-        {/* =====================================================
+        {/* ====================================================
             HERO
-        ===================================================== */}
+        ==================================================== */}
 
         <section
           className="xcb-hero"
           id="builder"
         >
           <div className="xcb-hero-copy">
-            <p className="xcb-eyebrow">
-              <Sparkles />
-              BUILD CRYPTO
-            </p>
+            <div className="xcb-hero-tags">
+              <span>
+                <Sparkles />
+                AI POWER
+              </span>
+
+              <span>
+                <Network />
+                WEB3 READY
+              </span>
+
+              <span>
+                <Rocket />
+                BUILD & DEPLOY
+              </span>
+            </div>
 
             <h1>
-              One place to build
+              Build the next
+              <br />
+
+              generation of
               <br />
 
               <strong>
-                crypto products
-              </strong>
-
-              <br />
-
-              from brief to
-              <br />
-
-              <strong>
-                verified code.
+                Crypto Products
               </strong>
             </h1>
 
-            <p className="xcb-hero-description">
-              Research the ecosystem, build the product,
-              validate what can be validated, and deliver
-              through accounts you authorise.
+            <p>
+              Turn ideas into real Web3 products. Build AI
+              crypto agents, DeFi apps, analytics products,
+              monitoring systems and more with Xroga AI.
             </p>
 
+            <div className="xcb-hero-loop">
+              <span>
+                Research
+              </span>
+
+              <i />
+
+              <span>
+                Build
+              </span>
+
+              <i />
+
+              <span>
+                Verify
+              </span>
+
+              <i />
+
+              <span>
+                Deploy
+              </span>
+            </div>
+
             <div className="xcb-hero-actions">
-              <Link
-                href="/auth/signup"
-                className="xcb-button xcb-button--light"
+              <a
+                href="#prompt"
+                className="xcb-gradient-button xcb-gradient-button--large"
               >
                 Start building
                 <ArrowRight />
-              </Link>
+              </a>
 
               <a
-                href="#prompt"
-                className="xcb-round-action"
-                aria-label="Open builder prompt"
+                href="#workflow"
+                className="xcb-secondary-button"
               >
-                <ArrowRight />
+                <span className="xcb-play-button">
+                  <ArrowRight />
+                </span>
+
+                See how it works
               </a>
             </div>
 
-            <div className="xcb-supported">
-              <span>Built for</span>
-
+            <div className="xcb-hero-proof">
               <div>
-                <i>
-                  <Bitcoin />
-                </i>
-
-                <i>
-                  <Blocks />
-                </i>
-
-                <i>
-                  <Network />
-                </i>
-
-                <i>
-                  <Bot />
-                </i>
+                <ShieldCheck />
               </div>
+
+              <span>
+                <b>
+                  Evidence before claims
+                </b>
+
+                Xroga reports what was verified, what
+                failed and what still requires external
+                setup.
+              </span>
             </div>
           </div>
 
-          {/* ===================================================
-              CENTER 3D VISUAL
-          =================================================== */}
+          {/* ==================================================
+              AI-GENERATED HERO VISUAL
+          ================================================== */}
 
-          <div
-            className="xcb-visual"
-            aria-hidden="true"
-          >
-            <div className="xcb-visual-beam" />
+          <div className="xcb-hero-art">
+            <div
+              className="xcb-generated-image"
+              aria-hidden="true"
+            />
 
-            <div className="xcb-floating-gem">
-              <div className="xcb-gem-face">
-                <Bitcoin />
+            <div
+              className="xcb-art-glow"
+              aria-hidden="true"
+            />
+
+            <div className="xcb-floating-token xcb-token--btc">
+              <Bitcoin />
+            </div>
+
+            <div className="xcb-floating-token xcb-token--code">
+              <Braces />
+            </div>
+
+            <div className="xcb-floating-token xcb-token--network">
+              <Network />
+            </div>
+
+            <div className="xcb-hero-core">
+              <div className="xcb-core-orbit xcb-core-orbit--outer" />
+
+              <div className="xcb-core-orbit xcb-core-orbit--inner" />
+
+              <div className="xcb-core-cube">
+                <span>
+                  <Logo
+                    href={null}
+                    variant="homepage"
+                    height={54}
+                  />
+                </span>
               </div>
             </div>
 
-            <span className="xcb-particle xcb-particle--one" />
-            <span className="xcb-particle xcb-particle--two" />
-            <span className="xcb-particle xcb-particle--three" />
-            <span className="xcb-particle xcb-particle--four" />
+            <div className="xcb-art-caption">
+              <Sparkles />
 
-            <div className="xcb-cube-shadow" />
-
-            <div className="xcb-cube">
-              <div className="xcb-cube-face xcb-cube-front">
-                <Blocks />
-              </div>
-
-              <div className="xcb-cube-face xcb-cube-right" />
-
-              <div className="xcb-cube-face xcb-cube-top" />
-            </div>
-
-            <div className="xcb-pedestal">
-              <span />
-              <i />
-            </div>
-
-            <div className="xcb-visual-label">
               <span>
-                BLACK HOLE V∞
+                <small>
+                  BLACK HOLE V∞
+                </small>
+
+                <b>
+                  Crypto build intelligence
+                </b>
+              </span>
+            </div>
+          </div>
+
+          {/* ==================================================
+              HERO FACT PANEL — NO FAKE METRICS
+          ================================================== */}
+
+          <aside className="xcb-hero-rail">
+            <article>
+              <span className="xcb-rail-icon">
+                <Search />
               </span>
 
-              <b>
-                Crypto build intelligence
-              </b>
-            </div>
-          </div>
+              <div>
+                <strong>
+                  Research
+                </strong>
 
-          {/* ===================================================
-              RIGHT FACTS
-          =================================================== */}
-
-          <aside className="xcb-hero-facts">
-            <article>
-              <strong>
-                01
-              </strong>
-
-              <p>
-                <b>
-                  Sticky repository
-                </b>
-
-                One codebase stays in focus through the
-                build.
-              </p>
+                <p>
+                  Start from current official ecosystem
+                  information.
+                </p>
+              </div>
             </article>
 
             <article>
-              <strong>
-                04
-              </strong>
+              <span className="xcb-rail-icon">
+                <Code2 />
+              </span>
 
-              <p>
-                <b>
-                  Controlled stages
-                </b>
+              <div>
+                <strong>
+                  Build
+                </strong>
 
-                Research, build, verify, and deliver.
-              </p>
+                <p>
+                  Work against one focused project and
+                  repository.
+                </p>
+              </div>
             </article>
 
             <article>
-              <strong>
-                GitHub
-              </strong>
+              <span className="xcb-rail-icon">
+                <ShieldCheck />
+              </span>
 
-              <p>
-                <b>
-                  Code you own
-                </b>
+              <div>
+                <strong>
+                  Verify
+                </strong>
 
-                Delivery remains tied to your repository.
-              </p>
+                <p>
+                  Check what can actually be validated
+                  before presenting it as working.
+                </p>
+              </div>
             </article>
 
             <article>
-              <strong>
-                Evidence
-              </strong>
+              <span className="xcb-rail-icon">
+                <Rocket />
+              </span>
 
-              <p>
-                <b>
-                  Validate before claims
-                </b>
+              <div>
+                <strong>
+                  Deploy
+                </strong>
 
-                Xroga reports evidence, failures, or setup
-                still required.
-              </p>
+                <p>
+                  Deliver through accounts and services
+                  you authorise.
+                </p>
+              </div>
             </article>
           </aside>
         </section>
 
-        {/* =====================================================
-            PROMPT
-        ===================================================== */}
+        {/* ====================================================
+            PROMPT BUILDER
+        ==================================================== */}
 
         <section
-          className="xcb-prompt-section"
+          className="xcb-builder"
           id="prompt"
         >
-          <div className="xcb-section-label">
-            <span>
-              YOUR BRIEF
-            </span>
-
-            <p>
-              Describe the product. Xroga carries the build
-              loop forward.
-            </p>
+          <div className="xcb-builder-decoration xcb-builder-decoration--left">
+            <span />
+            <i />
           </div>
 
-          <div className="xcb-prompt-wrap">
+          <div className="xcb-builder-decoration xcb-builder-decoration--right">
+            <span />
+            <i />
+          </div>
+
+          <div className="xcb-builder-heading">
+            <Sparkles />
+
+            <span>
+              <h2>
+                Describe what you want to build
+              </h2>
+
+              <p>
+                Just describe the idea in plain English.
+                Xroga carries the build workflow forward.
+              </p>
+            </span>
+          </div>
+
+          <div className="xcb-chat-wrapper">
             <HomepageChatBar
               placeholders={PLACEHOLDERS}
               suggestions={PROMPT_SUGGESTIONS}
@@ -389,266 +575,314 @@ export default function CryptoBuilderPage() {
             />
           </div>
 
-          <p className="xcb-disclaimer">
-            Xroga does not guarantee prizes, funding,
-            listings, trading performance, token value, or
-            security outcomes. It reports evidence, a real
-            failure, or the exact external setup still
-            required.
-          </p>
+          <div className="xcb-builder-chips">
+            <span>
+              DeFi Dashboard
+            </span>
+
+            <span>
+              Trading Automation
+            </span>
+
+            <span>
+              NFT Platform
+            </span>
+
+            <span>
+              AI Agent
+            </span>
+
+            <span>
+              DAO Tool
+            </span>
+
+            <span>
+              On-chain Monitor
+            </span>
+          </div>
         </section>
 
-        {/* =====================================================
+        {/* ====================================================
             CAPABILITIES
-        ===================================================== */}
+        ==================================================== */}
 
         <section
           className="xcb-section"
           id="capabilities"
         >
-          <header className="xcb-section-header">
-            <div>
-              <p>
-                CAPABILITIES / 01
-              </p>
+          <header className="xcb-section-header xcb-section-header--center">
+            <p>
+              WHAT YOU CAN BUILD
+            </p>
 
-              <h2>
-                Build across the
-                <br />
+            <h2>
+              Endless possibilities,
+              <br />
 
-                <strong>
-                  crypto stack.
-                </strong>
-              </h2>
-            </div>
+              <strong>
+                one crypto workspace.
+              </strong>
+            </h2>
 
             <span>
               From focused automation to complete Web3
-              products, every build remains attached to a
-              real project and repository.
+              applications, Xroga keeps the work attached
+              to a real product.
             </span>
           </header>
 
           <div className="xcb-capability-grid">
-            {BUILD_KINDS.map((item, index) => {
-              const Icon =
-                BUILD_ICONS[index] ?? Bot;
+            {FEATURE_CARDS.map((item) => {
+              const Icon = item.icon;
 
               return (
                 <article
-                  className="xcb-capability"
+                  className="xcb-capability-card"
                   key={item.title}
                 >
-                  <header>
-                    <span>
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-
+                  <div className="xcb-capability-icon">
                     <Icon />
-                  </header>
-
-                  <div className="xcb-capability-orbit">
-                    <i />
-                    <span />
                   </div>
 
-                  <footer>
-                    <small>
-                      {item.tag}
-                    </small>
-
+                  <span>
                     <h3>
                       {item.title}
                     </h3>
 
                     <p>
-                      {item.body}
+                      {item.copy}
                     </p>
-                  </footer>
+                  </span>
                 </article>
               );
             })}
           </div>
         </section>
 
-        {/* =====================================================
-            WORKFLOW
-        ===================================================== */}
-
-        <section
-          className="xcb-section xcb-workflow-section"
-          id="workflow"
-        >
-          <header className="xcb-section-header">
-            <div>
-              <p>
-                CONTROLLED LOOP / 02
-              </p>
-
-              <h2>
-                From protocol brief
-                <br />
-
-                <strong>
-                  to verified code.
-                </strong>
-              </h2>
-            </div>
-
-            <span>
-              The builder separates research, implementation,
-              validation, and delivery so progress remains
-              inspectable.
-            </span>
-          </header>
-
-          <div className="xcb-workflow-layout">
-            <ol className="xcb-workflow-list">
-              {STAGES.map((stage, index) => {
-                const Icon =
-                  STAGE_ICONS[index] ?? Search;
-
-                return (
-                  <li key={stage.title}>
-                    <div className="xcb-workflow-number">
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    <span className="xcb-workflow-icon">
-                      <Icon />
-                    </span>
-
-                    <div>
-                      <h3>
-                        {stage.title}
-                      </h3>
-
-                      <p>
-                        {stage.body}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-
-            <div className="xcb-build-console">
-              <header>
-                <span>
-                  <i />
-                  BUILD SESSION
-                </span>
-
-                <b>
-                  XROGA CRYPTO
-                </b>
-              </header>
-
-              <div className="xcb-console-body">
-                <div className="xcb-console-orbit">
-                  <span className="xcb-console-ring xcb-console-ring--one" />
-                  <span className="xcb-console-ring xcb-console-ring--two" />
-
-                  <div>
-                    <Bitcoin />
-                  </div>
-
-                  <i className="xcb-console-node xcb-console-node--one">
-                    <Braces />
-                  </i>
-
-                  <i className="xcb-console-node xcb-console-node--two">
-                    <GitBranch />
-                  </i>
-
-                  <i className="xcb-console-node xcb-console-node--three">
-                    <ShieldCheck />
-                  </i>
-                </div>
-
-                <section className="xcb-session-card">
-                  <small>
-                    CURRENT BUILD / PREVIEW
-                  </small>
-
-                  <h3>
-                    On-chain intelligence dashboard
-                  </h3>
-
-                  <div className="xcb-session-progress">
-                    <i />
-                  </div>
-
-                  <ul>
-                    <li>
-                      <CheckCircle2 />
-                      Repository understood
-                    </li>
-
-                    <li>
-                      <CheckCircle2 />
-                      Contract reads connected
-                    </li>
-
-                    <li>
-                      <span className="xcb-live-dot" />
-                      Validation in progress
-                    </li>
-                  </ul>
-                </section>
-              </div>
-            </div>
-          </div>
-
-          <div className="xcb-proof-row">
-            <span>
-              <GitBranch />
-
-              <b>
-                Your GitHub
-              </b>
-
-              sticky repository
-            </span>
-
-            <i />
-
-            <span>
-              <ShieldCheck />
-
-              <b>
-                Validation
-              </b>
-
-              checks before claims
-            </span>
-
-            <i />
-
-            <span>
-              <Rocket />
-
-              <b>
-                Publish
-              </b>
-
-              authorised accounts only
-            </span>
-          </div>
-        </section>
-
-        {/* =====================================================
-            RESEARCH
-        ===================================================== */}
+        {/* ====================================================
+            FOUR-STEP WORKFLOW
+        ==================================================== */}
 
         <section
           className="xcb-section"
+          id="workflow"
+        >
+          <header className="xcb-section-header xcb-section-header--center">
+            <p>
+              HOW IT WORKS
+            </p>
+
+            <h2>
+              From idea to
+              <br />
+
+              <strong>
+                working evidence.
+              </strong>
+            </h2>
+
+            <span>
+              Separate research, implementation,
+              validation and delivery so every important
+              step stays inspectable.
+            </span>
+          </header>
+
+          <div className="xcb-workflow-grid">
+            {STAGES.map((stage, index) => {
+              const Icon =
+                STAGE_ICONS[index] ?? Search;
+
+              return (
+                <article key={stage.title}>
+                  <header>
+                    <div className="xcb-workflow-icon">
+                      <Icon />
+                    </div>
+
+                    <small>
+                      0{index + 1}
+                    </small>
+                  </header>
+
+                  <h3>
+                    {stage.title}
+                  </h3>
+
+                  <p>
+                    {stage.body}
+                  </p>
+
+                  {index < STAGES.length - 1 ? (
+                    <div
+                      className="xcb-workflow-connector"
+                      aria-hidden="true"
+                    >
+                      <i />
+                      <span />
+                      <i />
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ====================================================
+            BUILD SESSION / BLACK HOLE
+        ==================================================== */}
+
+        <section className="xcb-build-session">
+          <div className="xcb-session-visual">
+            <span className="xcb-session-ring xcb-session-ring--one" />
+            <span className="xcb-session-ring xcb-session-ring--two" />
+            <span className="xcb-session-ring xcb-session-ring--three" />
+
+            <div className="xcb-session-core">
+              <Sparkles />
+            </div>
+
+            <i className="xcb-session-node xcb-session-node--one">
+              <GitBranch />
+            </i>
+
+            <i className="xcb-session-node xcb-session-node--two">
+              <Braces />
+            </i>
+
+            <i className="xcb-session-node xcb-session-node--three">
+              <ShieldCheck />
+            </i>
+          </div>
+
+          <div className="xcb-session-copy">
+            <p>
+              BLACK HOLE V∞
+            </p>
+
+            <h2>
+              One intelligence across
+              <br />
+
+              <strong>
+                the entire build.
+              </strong>
+            </h2>
+
+            <span>
+              Understand the project, maintain context,
+              coordinate research, build work and
+              verification, then keep the final result
+              attached to the same project.
+            </span>
+
+            <div className="xcb-session-list">
+              <article>
+                <CheckCircle2 />
+
+                <span>
+                  <b>
+                    Understand
+                  </b>
+
+                  Goal, project and repository
+                </span>
+              </article>
+
+              <article>
+                <CheckCircle2 />
+
+                <span>
+                  <b>
+                    Plan
+                  </b>
+
+                  Product and technical direction
+                </span>
+              </article>
+
+              <article>
+                <CheckCircle2 />
+
+                <span>
+                  <b>
+                    Connect
+                  </b>
+
+                  Context across the build
+                </span>
+              </article>
+
+              <article>
+                <CheckCircle2 />
+
+                <span>
+                  <b>
+                    Verify
+                  </b>
+
+                  Evidence before claims
+                </span>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================
+            OFFICIAL ECOSYSTEM STRIP
+        ==================================================== */}
+
+        <section className="xcb-ecosystem">
+          <header>
+            <p>
+              OFFICIAL SOURCES WE REFERENCE
+            </p>
+
+            <span>
+              Not partnerships or endorsements.
+            </span>
+          </header>
+
+          <div>
+            {HACKATHON_SOURCES.slice(0, 10).map(
+              (source) => (
+                <a
+                  key={source.name}
+                  href={source.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title={source.name}
+                >
+                  <span
+                    className="xcb-source-logo-small"
+                    style={{
+                      backgroundImage: `url("${SOURCE_LOGOS[source.name]}")`,
+                    }}
+                    aria-hidden="true"
+                  />
+
+                  <b>
+                    {source.name}
+                  </b>
+                </a>
+              ),
+            )}
+          </div>
+        </section>
+
+        {/* ====================================================
+            OFFICIAL RESEARCH
+        ==================================================== */}
+
+        <section
+          className="xcb-section xcb-research"
           id="research"
         >
-          <header className="xcb-section-header">
+          <header className="xcb-research-heading">
             <div>
               <p>
-                OFFICIAL SOURCES / 03
+                OFFICIAL SOURCES
               </p>
 
               <h2>
@@ -668,14 +902,15 @@ export default function CryptoBuilderPage() {
             </span>
           </header>
 
-          <div className="xcb-source-grid">
+          <div className="xcb-research-grid">
             {HACKATHON_SOURCES.map(
               (source, index) => (
                 <a
+                  key={source.name}
                   href={source.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  key={source.name}
+                  className="xcb-research-card"
                 >
                   <header>
                     <small>
@@ -688,31 +923,37 @@ export default function CryptoBuilderPage() {
                     <ExternalLink />
                   </header>
 
-                  <div className="xcb-source-symbol">
-                    <span />
-                    <i />
-                  </div>
+                  <div className="xcb-research-brand">
+                    <span
+                      className="xcb-source-logo"
+                      style={{
+                        backgroundImage: `url("${SOURCE_LOGOS[source.name]}")`,
+                      }}
+                      aria-hidden="true"
+                    />
 
-                  <footer>
                     <h3>
                       {source.name}
                     </h3>
+                  </div>
 
-                    <p>
-                      {source.note}
-                    </p>
+                  <p>
+                    {source.note}
+                  </p>
 
+                  <footer>
                     <span>
                       Official source
-                      <ArrowRight />
                     </span>
+
+                    <ArrowRight />
                   </footer>
                 </a>
               ),
             )}
           </div>
 
-          <p className="xcb-disclaimer">
+          <p className="xcb-research-disclaimer">
             Prize pools, tracks, grants, bounties,
             eligibility, and claim processes are set by
             each organiser and change between events.
@@ -721,30 +962,31 @@ export default function CryptoBuilderPage() {
           </p>
         </section>
 
-        {/* =====================================================
-            WINNING PATTERNS
-        ===================================================== */}
+        {/* ====================================================
+            JUDGING SIGNALS
+        ==================================================== */}
 
-        <section className="xcb-section xcb-pattern-section">
-          <header className="xcb-section-header">
+        <section className="xcb-section">
+          <header className="xcb-research-heading">
             <div>
               <p>
-                JUDGING SIGNALS / 04
+                BUILD EVIDENCE
               </p>
 
               <h2>
-                Make the important
+                Make important work
                 <br />
 
                 <strong>
-                  evidence visible.
+                  easy to inspect.
                 </strong>
               </h2>
             </div>
 
             <span>
-              Strong technical submissions make working
-              behaviour and proof easy to inspect.
+              Strong submissions make working behaviour,
+              integration depth and technical evidence
+              visible.
             </span>
           </header>
 
@@ -752,14 +994,14 @@ export default function CryptoBuilderPage() {
             {WINNING_PATTERNS.map(
               (pattern, index) => (
                 <article key={pattern.name}>
-                  <span>
+                  <small>
                     {String(index + 1).padStart(
                       2,
                       '0',
                     )}
-                  </span>
+                  </small>
 
-                  <div>
+                  <span>
                     <h3>
                       {pattern.name}
                     </h3>
@@ -767,7 +1009,7 @@ export default function CryptoBuilderPage() {
                     <p>
                       {pattern.evidence}
                     </p>
-                  </div>
+                  </span>
 
                   <ArrowRight />
                 </article>
@@ -776,34 +1018,151 @@ export default function CryptoBuilderPage() {
           </div>
         </section>
 
-        {/* =====================================================
-            CTA
-        ===================================================== */}
+        {/* ====================================================
+            FINAL CTA — NO TESTIMONIALS
+        ==================================================== */}
 
         <section className="xcb-final">
-          <div>
+          <div
+            className="xcb-final-ai-art"
+            aria-hidden="true"
+          />
+
+          <div className="xcb-final-copy">
             <p>
-              YOUR CODE. YOUR PRODUCT.
+              READY TO BUILD?
             </p>
 
             <h2>
-              Bring the idea.
+              Build what belongs
               <br />
 
               <strong>
-                Leave with evidence.
+                to you.
               </strong>
             </h2>
+
+            <span>
+              Start with the idea. Keep the code, evidence
+              and project connected through the entire
+              build.
+            </span>
+
+            <div>
+              <Link
+                href="/auth/signup"
+                className="xcb-gradient-button xcb-gradient-button--large"
+              >
+                Start building now
+                <ArrowRight />
+              </Link>
+
+              <a
+                href="#research"
+                className="xcb-secondary-button"
+              >
+                Explore research
+              </a>
+            </div>
           </div>
 
-          <Link
-            href="/auth/signup"
-            className="xcb-button xcb-button--light"
-          >
-            Open Xroga
-            <ArrowRight />
-          </Link>
+          <aside className="xcb-final-proof">
+            <article>
+              <GitBranch />
+
+              <span>
+                <b>
+                  Your repository
+                </b>
+
+                Sticky project context
+              </span>
+            </article>
+
+            <article>
+              <ShieldCheck />
+
+              <span>
+                <b>
+                  Verification
+                </b>
+
+                Evidence before claims
+              </span>
+            </article>
+
+            <article>
+              <Globe2 />
+
+              <span>
+                <b>
+                  Official research
+                </b>
+
+                Direct organiser sources
+              </span>
+            </article>
+
+            <article>
+              <Rocket />
+
+              <span>
+                <b>
+                  Delivery
+                </b>
+
+                Accounts you authorise
+              </span>
+            </article>
+          </aside>
         </section>
+
+        {/* ====================================================
+            FOOTER
+        ==================================================== */}
+
+        <footer className="xcb-footer">
+          <Link
+            href="/"
+            className="xcb-footer-brand"
+          >
+            <Logo
+              href={null}
+              variant="homepage"
+              height={34}
+            />
+
+            <b>
+              XROGA
+            </b>
+          </Link>
+
+          <span>
+            © 2026 XROGA AI
+          </span>
+
+          <nav>
+            <Link href="/privacy">
+              Privacy
+            </Link>
+
+            <Link href="/terms">
+              Terms
+            </Link>
+
+            <Link href="/docs">
+              Docs
+            </Link>
+
+            <Link href="/community">
+              Community
+            </Link>
+
+            <Link href="/contact">
+              Contact
+            </Link>
+          </nav>
+        </footer>
       </div>
     </main>
   );
