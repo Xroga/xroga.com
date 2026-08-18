@@ -26,7 +26,7 @@ type GalleryItem = {
 
 const GALLERY: GalleryItem[] = [
   {
-    src: '/image-landing/examples/example-01.png',
+    src: 'https://i.postimg.cc/VvVnJvWp/example-01.png',
     title: 'Studio Glow',
     category: 'Portrait',
     ratio: '4:5',
@@ -35,7 +35,7 @@ const GALLERY: GalleryItem[] = [
     className: 'xi-gallery-card--tall',
   },
   {
-    src: '/image-landing/examples/example-02.png',
+    src: 'https://i.postimg.cc/636vznHF/image.png',
     title: 'Duality',
     category: 'Portrait',
     ratio: '4:5',
@@ -43,7 +43,7 @@ const GALLERY: GalleryItem[] = [
       'Cinematic male portrait with dramatic split lighting, warm orange on one side and cool blue on the other, black turtleneck, deep background, sharp eyes, premium editorial photography.',
   },
   {
-    src: '/image-landing/examples/example-06.png',
+    src: 'https://i.postimg.cc/MpkfNhP4/image.png',
     title: 'Shattered Identity',
     category: 'Concept',
     ratio: '4:5',
@@ -52,7 +52,7 @@ const GALLERY: GalleryItem[] = [
     className: 'xi-gallery-card--wide',
   },
   {
-    src: '/image-landing/examples/example-07.png',
+    src: 'https://i.postimg.cc/nL2ssMFx/image.png',
     title: 'The Strategist',
     category: 'Editorial',
     ratio: '4:5',
@@ -60,7 +60,7 @@ const GALLERY: GalleryItem[] = [
       'Low-angle editorial fashion portrait through a reflective glass table, subject holding a silver chess piece while black and silver chess pieces float around them, clean gray studio, strategic mood.',
   },
   {
-    src: '/image-landing/examples/example-11.png',
+    src: 'https://i.postimg.cc/TYbpVtdc/image.png',
     title: 'Crimson Character',
     category: '3D',
     ratio: '1:1',
@@ -68,7 +68,7 @@ const GALLERY: GalleryItem[] = [
       'Cinematic low-angle 3D character portrait, refined modern glasses, deep crimson rim lighting, obsidian background, volumetric light, highly detailed facial geometry, premium animated-film realism.',
   },
   {
-    src: '/image-landing/examples/example-12.png',
+    src: 'https://i.postimg.cc/vZLTjD6g/image.png',
     title: 'Macro Cinema',
     category: 'Photography',
     ratio: '4:5',
@@ -77,7 +77,7 @@ const GALLERY: GalleryItem[] = [
     className: 'xi-gallery-card--tall',
   },
   {
-    src: '/image-landing/examples/example-13.png',
+    src: 'https://i.postimg.cc/VvVnJvWp/example-01.png',
     title: 'Candy Lens',
     category: 'Surreal',
     ratio: '9:16',
@@ -85,7 +85,7 @@ const GALLERY: GalleryItem[] = [
       'Playful surreal fisheye photo from inside a glass bowl filled with pink cotton candy and clear ice, bright blue straw, glossy reflections, blue sky, whimsical editorial photography.',
   },
   {
-    src: '/image-landing/examples/example-14.png',
+    src: 'https://i.postimg.cc/636vznHF/image.png',
     title: 'Expressive 3D',
     category: '3D',
     ratio: '4:5',
@@ -93,7 +93,7 @@ const GALLERY: GalleryItem[] = [
       'Minimal 3D avatar portrait on a white background, oversized expressive green eyes, black glasses, playful surprised expression, soft studio illumination, refined stylized character design.',
   },
   {
-    src: '/image-landing/examples/example-15.png',
+    src: 'https://i.postimg.cc/J0vH1g1t/image.png',
     title: 'Rimlight',
     category: 'Portrait',
     ratio: '9:16',
@@ -102,7 +102,7 @@ const GALLERY: GalleryItem[] = [
     className: 'xi-gallery-card--wide',
   },
   {
-    src: '/image-landing/examples/example-16.png',
+    src: 'https://i.postimg.cc/MpkfNhP4/image.png',
     title: 'Motion Editorial',
     category: 'Fashion',
     ratio: '9:16',
@@ -112,13 +112,13 @@ const GALLERY: GalleryItem[] = [
 ];
 
 const HERO_CARDS = [
-  '/image-landing/examples/example-04.png',
-  '/image-landing/examples/example-02.png',
-  '/image-landing/examples/example-01.png',
-  '/image-landing/examples/example-12.png',
-  '/image-landing/examples/example-13.png',
-  '/image-landing/examples/example-15.png',
-  '/image-landing/examples/example-10.png',
+  'https://i.postimg.cc/J0vH1g1t/image.png',
+  'https://i.postimg.cc/636vznHF/image.png',
+  'https://i.postimg.cc/VvVnJvWp/example-01.png',
+  'https://i.postimg.cc/vZLTjD6g/image.png',
+  'https://i.postimg.cc/VvVnJvWp/example-01.png',
+  'https://i.postimg.cc/J0vH1g1t/image.png',
+  'https://i.postimg.cc/ZnG0kdcY/image.png',
 ] as const;
 
 const FILTERS = ['Featured', 'Portrait', 'Editorial', '3D', 'Surreal', 'Photography', 'Fashion'] as const;
