@@ -140,7 +140,7 @@ export function ImageLandingPage() {
     return GALLERY.filter((item) => item.category === filter);
   }, [filter]);
 
-  function usePrompt(text: string) {
+  function applyPrompt(text: string) {
     setPrompt(text);
     window.requestAnimationFrame(() => scrollTo('generator'));
   }
@@ -359,7 +359,7 @@ export function ImageLandingPage() {
                 <Image src={item.src} alt={item.title} fill sizes="(max-width: 720px) 50vw, 33vw" />
                 <div className="xi-gallery-card__shade" />
                 <span className="xi-gallery-card__category">{item.category}</span>
-                <button type="button" onClick={() => usePrompt(item.prompt)}>
+                <button type="button" onClick={() => applyPrompt(item.prompt)}>
                   <Plus /> Use prompt
                 </button>
               </div>
@@ -384,7 +384,7 @@ export function ImageLandingPage() {
 
         <div className="xi-light-cards">
           {[GALLERY[7], GALLERY[1], GALLERY[6], GALLERY[9]].map((item, index) => (
-            <button key={item.title} type="button" onClick={() => usePrompt(item.prompt)} className={`xi-light-card xi-light-card--${index + 1}`}>
+            <button key={item.title} type="button" onClick={() => applyPrompt(item.prompt)} className={`xi-light-card xi-light-card--${index + 1}`}>
               <Image src={item.src} alt={item.title} fill sizes="(max-width: 720px) 70vw, 260px" />
               <span>{item.title}</span>
             </button>
