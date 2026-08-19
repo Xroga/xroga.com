@@ -4,6 +4,8 @@ import { TerminalBuildReport } from './TerminalBuildReport';
 import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
 import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
+import { isRenderableArtifact } from '@/lib/engineeringArtifact';
+import { EngineeringArtifactView } from './EngineeringArtifactView';
 
 export function FeatureOutputView({
   output,
@@ -21,6 +23,13 @@ export function FeatureOutputView({
   void _onPreviewUpdate;
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
+
+  // Engineering results are checked first. They were previously unrecognised entirely — this
+  // component fell off the end of its branch list and rendered nothing for a run that had
+  // produced real files and a real commit.
+  if (isRenderableArtifact(output)) {
+    return <EngineeringArtifactView artifact={output} />;
+  }
 
   if (o.type === 'video_studio' || o.type === 'video_job_pending') {
     return (
