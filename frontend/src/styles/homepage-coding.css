@@ -1,3 +1,429 @@
+/* ==========================================================
+   XROGA HERO — COMPACT DYNAMIC BUILD TARGET
+   Small typography / object icon / restrained movement
+   ========================================================== */
+
+.xv-home-coding .xv-hc-target-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 3.4rem;
+
+  margin-top: 0.15rem;
+  margin-bottom: 0;
+
+  overflow: hidden;
+}
+
+
+/* ----------------------------------------------------------
+   MOVING WORD + OBJECT
+   ---------------------------------------------------------- */
+
+.xv-home-coding .xv-hc-target {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.65rem;
+
+  white-space: nowrap;
+
+  animation:
+    xv-hc-target-compact-cycle 2800ms
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+
+  will-change: transform, opacity;
+}
+
+
+/* ----------------------------------------------------------
+   TEXT
+   ---------------------------------------------------------- */
+
+.xv-home-coding .xv-hc-target-label {
+  position: relative;
+  z-index: 2;
+
+  font-family: var(--hc-font-sans);
+
+  font-size: clamp(1.35rem, 2.8vw, 2.15rem);
+  font-weight: 540;
+
+  line-height: 1;
+
+  letter-spacing: -0.035em;
+
+  color: var(--hc-ink);
+
+  text-shadow: none;
+}
+
+
+/* ----------------------------------------------------------
+   OBJECT BASE
+   ---------------------------------------------------------- */
+
+.xv-home-coding .xv-hc-target-shape {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  width: 2.15rem;
+  height: 2.15rem;
+
+  color: var(--hc-blue);
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--hc-blue) 28%,
+      transparent
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.62),
+      color-mix(
+        in srgb,
+        var(--hc-blue) 7%,
+        transparent
+      )
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),
+    0 3px 10px
+    color-mix(
+      in srgb,
+      var(--hc-blue) 8%,
+      transparent
+    );
+
+  overflow: hidden;
+
+  animation: none;
+}
+
+
+/* actual Lucide icon */
+
+.xv-home-coding .xv-hc-target-shape__icon {
+  position: relative;
+  z-index: 2;
+
+  width: 0.95rem;
+  height: 0.95rem;
+
+  stroke-width: 1.7;
+}
+
+
+/* remove exaggerated glass glow */
+
+.xv-home-coding .xv-hc-target-shape__glow {
+  display: none;
+}
+
+
+/* ==========================================================
+   INDIVIDUAL OBJECT SHAPES
+   ========================================================== */
+
+
+/* Websites */
+
+.xv-home-coding .xv-hc-target-shape--slash {
+  width: 2.4rem;
+  height: 1.55rem;
+
+  border-radius: 5px;
+
+  transform: skewX(-18deg);
+}
+
+.xv-home-coding
+.xv-hc-target-shape--slash
+.xv-hc-target-shape__icon {
+  transform: skewX(18deg);
+}
+
+
+/* SaaS */
+
+.xv-home-coding .xv-hc-target-shape--capsule {
+  width: 2.85rem;
+  height: 1.65rem;
+
+  border-radius: 999px;
+}
+
+
+/* Chrome extension */
+
+.xv-home-coding .xv-hc-target-shape--diamond {
+  width: 1.85rem;
+  height: 1.85rem;
+
+  border-radius: 5px;
+
+  transform: rotate(45deg);
+}
+
+.xv-home-coding
+.xv-hc-target-shape--diamond
+.xv-hc-target-shape__icon {
+  width: 0.8rem;
+  height: 0.8rem;
+
+  transform: rotate(-45deg);
+}
+
+
+/* Desktop */
+
+.xv-home-coding .xv-hc-target-shape--square {
+  border-radius: 6px;
+}
+
+
+/* Android */
+
+.xv-home-coding .xv-hc-target-shape--orb {
+  border-radius: 999px;
+
+  background:
+    radial-gradient(
+      circle at 35% 28%,
+      rgba(255,255,255,.85),
+      transparent 30%
+    ),
+    color-mix(
+      in srgb,
+      var(--hc-blue) 10%,
+      var(--hc-surface)
+    );
+
+  box-shadow:
+    inset -3px -3px 8px
+    color-mix(
+      in srgb,
+      var(--hc-blue) 8%,
+      transparent
+    );
+}
+
+
+/* iOS */
+
+.xv-home-coding .xv-hc-target-shape--ring {
+  border-radius: 999px;
+
+  background: transparent;
+
+  border:
+    1.5px solid
+    color-mix(
+      in srgb,
+      var(--hc-blue) 42%,
+      transparent
+    );
+
+  box-shadow: none;
+}
+
+
+/* Mobile */
+
+.xv-home-coding .xv-hc-target-shape--pill {
+  width: 1.55rem;
+  height: 2.25rem;
+
+  border-radius: 999px;
+}
+
+
+/* Debug */
+
+.xv-home-coding .xv-hc-target-shape--hex {
+  border-radius: 0;
+
+  clip-path:
+    polygon(
+      25% 5%,
+      75% 5%,
+      100% 50%,
+      75% 95%,
+      25% 95%,
+      0 50%
+    );
+}
+
+
+/* Landing page */
+
+.xv-home-coding .xv-hc-target-shape--beam {
+  width: 2.5rem;
+  height: 0.35rem;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--hc-blue),
+      transparent
+    );
+
+  box-shadow: none;
+}
+
+.xv-home-coding
+.xv-hc-target-shape--beam
+.xv-hc-target-shape__icon {
+  display: none;
+}
+
+
+/* Dashboard */
+
+.xv-home-coding .xv-hc-target-shape--soft-square {
+  border-radius: 28%;
+}
+
+
+/* ----------------------------------------------------------
+   REMOVE OLD MOTION TRAIL
+   ---------------------------------------------------------- */
+
+.xv-home-coding .xv-hc-target-trail {
+  display: none;
+}
+
+
+/* ==========================================================
+   MOTION
+   Very small left → right transition.
+   No blur.
+   No bounce.
+   No scaling.
+   ========================================================== */
+
+@keyframes xv-hc-target-compact-cycle {
+
+  0% {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+
+  9% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  82% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  92% {
+    opacity: 0.65;
+    transform: translateX(8px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 640px) {
+
+  .xv-home-coding .xv-hc-target-stage {
+    min-height: 3rem;
+
+    margin-top: 0.05rem;
+  }
+
+  .xv-home-coding .xv-hc-target {
+    gap: 0.5rem;
+  }
+
+  .xv-home-coding .xv-hc-target-label {
+    font-size: clamp(1.2rem, 5.8vw, 1.65rem);
+
+    letter-spacing: -0.025em;
+  }
+
+  .xv-home-coding .xv-hc-target-shape {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .xv-home-coding .xv-hc-target-shape__icon {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .xv-home-coding .xv-hc-target-shape--capsule {
+    width: 2.4rem;
+    height: 1.45rem;
+  }
+
+  .xv-home-coding .xv-hc-target-shape--slash {
+    width: 2rem;
+    height: 1.35rem;
+  }
+
+  .xv-home-coding .xv-hc-target-shape--pill {
+    width: 1.35rem;
+    height: 1.95rem;
+  }
+
+  .xv-home-coding .xv-hc-target-shape--beam {
+    width: 2rem;
+    height: 0.3rem;
+  }
+
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .xv-home-coding .xv-hc-target {
+    animation: none !important;
+
+    opacity: 1;
+    transform: none;
+  }
+
+}
+
 /* Xroga homepage — dark coding SaaS vibe (arrow grid, pixel + editorial serif) */
 
 /**

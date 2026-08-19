@@ -35,16 +35,16 @@ import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/ho
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 
 const HERO_BUILD_WORDS = [
-  { label: 'Websites', icon: Globe2 },
-  { label: 'SaaS apps', icon: PanelsTopLeft },
-  { label: 'Chrome extensions', icon: Puzzle },
-  { label: 'Desktop software', icon: MonitorCog },
-  { label: 'Android apps', icon: Smartphone },
-  { label: 'iOS apps', icon: Smartphone },
-  { label: 'Mobile apps', icon: Smartphone },
-  { label: 'Debug errors', icon: Bug },
-  { label: 'Landing pages', icon: LayoutTemplate },
-  { label: 'Dashboards', icon: Gauge },
+  { label: 'Websites', icon: Globe2, shape: 'slash' },
+  { label: 'SaaS apps', icon: PanelsTopLeft, shape: 'capsule' },
+  { label: 'Chrome extensions', icon: Puzzle, shape: 'diamond' },
+  { label: 'Desktop software', icon: MonitorCog, shape: 'square' },
+  { label: 'Android apps', icon: Smartphone, shape: 'orb' },
+  { label: 'iOS apps', icon: Smartphone, shape: 'ring' },
+  { label: 'Mobile apps', icon: Smartphone, shape: 'pill' },
+  { label: 'Debug errors', icon: Bug, shape: 'hex' },
+  { label: 'Landing pages', icon: LayoutTemplate, shape: 'beam' },
+  { label: 'Dashboards', icon: Gauge, shape: 'soft-square' },
 ] as const;
 
 export default function HomePage() {
@@ -84,11 +84,12 @@ export default function HomePage() {
   }, [hydrateCompanion]);
 
   useEffect(() => {
-    const t = window.setInterval(() => {
-      setBuildWordIdx((i) => (i + 1) % HERO_BUILD_WORDS.length);
-    }, 2400);
-    return () => window.clearInterval(t);
-  }, []);
+  const t = window.setInterval(() => {
+    setBuildWordIdx((i) => (i + 1) % HERO_BUILD_WORDS.length);
+  }, 2800);
+
+  return () => window.clearInterval(t);
+}, []);
 
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
   const activeBuildWord = HERO_BUILD_WORDS[buildWordIdx];
@@ -146,17 +147,33 @@ export default function HomePage() {
             <p className="xv-hc-headline">
               AI Agentic <span className="xv-hc-headline-em">Builds &amp; Ships</span>
             </p>
-            <p className="xv-hc-headline-rotator" aria-live="polite">
-              <span
-                key={activeBuildWord.label}
-                className="xv-hc-headline-word"
-              >
-                <span className="xv-hc-headline-word__icon" aria-hidden="true"><ActiveBuildIcon /></span>
-                <span className="xv-hc-headline-word__label">{activeBuildWord.label}</span>
-                <span className="xv-hc-headline-word__meta" aria-hidden="true">BUILD TARGET</span>
-                <i aria-hidden="true" />
-              </span>
-            </p>
+            <div
+  className="xv-hc-target-stage"
+  aria-live="polite"
+>
+  <div
+    key={activeBuildWord.label}
+    className="xv-hc-target"
+  >
+    <span
+      className={`xv-hc-target-shape xv-hc-target-shape--${activeBuildWord.shape}`}
+      aria-hidden="true"
+    >
+      <span className="xv-hc-target-shape__glow" />
+
+      <ActiveBuildIcon className="xv-hc-target-shape__icon" />
+    </span>
+
+    <span className="xv-hc-target-label">
+      {activeBuildWord.label}
+    </span>
+
+    <span
+      className="xv-hc-target-trail"
+      aria-hidden="true"
+    />
+  </div>
+</div>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">

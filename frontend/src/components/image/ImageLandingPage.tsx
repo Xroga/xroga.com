@@ -180,6 +180,8 @@ export function ImageLandingPage() {
             className="xi-menu-button"
             type="button"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="xroga-image-mobile-menu"
             onClick={() => setMobileOpen((value) => !value)}
           >
             {mobileOpen ? <X /> : <Menu />}
@@ -187,7 +189,7 @@ export function ImageLandingPage() {
         </div>
 
         {mobileOpen ? (
-          <div className="xi-mobile-menu">
+          <div className="xi-mobile-menu" id="xroga-image-mobile-menu">
             <button type="button" onClick={() => { setMobileOpen(false); scrollTo('generator'); }}>Generate</button>
             <button type="button" onClick={() => { setMobileOpen(false); scrollTo('gallery'); }}>Explore</button>
             <button type="button" onClick={() => { setMobileOpen(false); scrollTo('studio'); }}>Styles</button>
