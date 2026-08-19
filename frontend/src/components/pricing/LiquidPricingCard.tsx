@@ -31,9 +31,17 @@ export function LiquidPricingCard({
       {/* TOP VISUAL AREA */}
       <div className={styles.visualPanel} aria-hidden="true">
         <div className={styles.visualSky} />
-        <div className={styles.visualCloud visualCloudOne} />
-        <div className={styles.visualCloud visualCloudTwo} />
-        <div className={styles.visualCloud visualCloudThree} />
+       <div
+  className={`${styles.visualCloud} ${styles.visualCloudOne}`}
+/>
+
+<div
+  className={`${styles.visualCloud} ${styles.visualCloudTwo}`}
+/>
+
+<div
+  className={`${styles.visualCloud} ${styles.visualCloudThree}`}
+/>
         <div className={styles.visualGlowLeft} />
         <div className={styles.visualGlowRight} />
         <div className={styles.visualCenterMist} />
