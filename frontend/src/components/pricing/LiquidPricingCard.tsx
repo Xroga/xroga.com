@@ -10,7 +10,7 @@ interface LiquidPricingCardProps {
   priceSuffix?: string;
   billingText?: string;
   features: string[];
-  note?: string;
+note?: ReactNode;
   action: ReactNode;
 }
 
