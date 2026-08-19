@@ -26,11 +26,45 @@ export function LiquidPricingCard({
 }: LiquidPricingCardProps) {
   return (
     <article className={styles.card}>
-      <div className={styles.topGlow} aria-hidden="true" />
-      <div className={styles.bottomSky} aria-hidden="true" />
-      <div className={styles.buttonGlow} aria-hidden="true" />
       <div className={styles.noise} aria-hidden="true" />
 
+      {/* TOP VISUAL AREA */}
+      <div className={styles.visualPanel} aria-hidden="true">
+        <div className={styles.visualSky} />
+        <div className={styles.visualCloud visualCloudOne} />
+        <div className={styles.visualCloud visualCloudTwo} />
+        <div className={styles.visualCloud visualCloudThree} />
+        <div className={styles.visualGlowLeft} />
+        <div className={styles.visualGlowRight} />
+        <div className={styles.visualCenterMist} />
+
+        <div className={styles.visualTopRow}>
+          <span>All Features</span>
+          <span>Premium</span>
+        </div>
+
+        <div className={styles.visualMiddleIcon}>
+          <div className={styles.visualIconCircle}>
+            <span className={styles.visualIconDot} />
+          </div>
+        </div>
+
+        <div className={styles.visualBottomRow}>
+          <div>
+            <p className={styles.visualLabel}>Build</p>
+            <h3 className={styles.visualValue}>Faster</h3>
+          </div>
+
+          <div className={styles.visualDivider} />
+
+          <div className={styles.visualRightBlock}>
+            <p className={styles.visualLabel}>Ship</p>
+            <h3 className={styles.visualValue}>Smarter</h3>
+          </div>
+        </div>
+      </div>
+
+      {/* CONTENT */}
       <div className={styles.content}>
         <div className={styles.headerBlock}>
           <p className={styles.badge}>{badge}</p>
