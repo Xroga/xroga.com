@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import Link from "next/link";
 import styles from "./cybersecurity.module.css";
 
 type IconProps = {
@@ -128,11 +129,15 @@ export default function CybersecurityLanding() {
   );
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvasElement = canvasRef.current;
+    if (!canvasElement) return;
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const drawingContext = canvasElement.getContext("2d");
+    if (!drawingContext) return;
+
+    // Preserve non-null types inside nested callbacks such as resize() and draw().
+    const canvas: HTMLCanvasElement = canvasElement;
+    const context: CanvasRenderingContext2D = drawingContext;
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -307,10 +312,10 @@ export default function CybersecurityLanding() {
       <div className={styles.scanlines} aria-hidden="true" />
 
       <header className={styles.siteHeader}>
-        <a className={styles.brand} href="/" aria-label="Xroga home">
+        <Link className={styles.brand} href="/" aria-label="Xroga home">
           <XrogaMark />
           <span>XROGA</span>
-        </a>
+        </Link>
 
         <nav className={styles.desktopNav} aria-label="Cybersecurity navigation">
           <a href="#vision">Vision</a>
@@ -320,10 +325,10 @@ export default function CybersecurityLanding() {
         </nav>
 
         <div className={styles.headerActions}>
-          <a className={styles.backLink} href="/">
+          <Link className={styles.backLink} href="/">
             Main site
             <ArrowUpRightIcon size={14} />
-          </a>
+          </Link>
           <button
             className={styles.menuButton}
             type="button"
@@ -345,7 +350,7 @@ export default function CybersecurityLanding() {
           <a href="#capabilities" onClick={closeMenu}>Capabilities</a>
           <a href="#architecture" onClick={closeMenu}>Architecture</a>
           <a href="#roadmap" onClick={closeMenu}>2027</a>
-          <a href="/" onClick={closeMenu}>Main Xroga site</a>
+          <Link href="/" onClick={closeMenu}>Main Xroga site</Link>
         </div>
       </header>
 
@@ -654,7 +659,7 @@ export default function CybersecurityLanding() {
             <div>
               <span>2027</span>
               <strong>Target launch window</strong>
-              <p>Planned introduction of Xroga's cybersecurity initiative.</p>
+              <p>Planned introduction of Xroga&apos;s cybersecurity initiative.</p>
             </div>
           </div>
         </div>
@@ -675,9 +680,9 @@ export default function CybersecurityLanding() {
               evidence and help humans move faster.
             </p>
             <div className={styles.ctaActions}>
-              <a className={styles.primaryButton} href="/">
+              <Link className={styles.primaryButton} href="/">
                 Explore Xroga <ArrowUpRightIcon size={16} />
-              </a>
+              </Link>
               <a className={styles.secondaryButton} href="#vision">
                 Read the vision
               </a>
@@ -687,10 +692,10 @@ export default function CybersecurityLanding() {
       </section>
 
       <footer className={styles.footer}>
-        <a className={styles.footerBrand} href="/">
+        <Link className={styles.footerBrand} href="/">
           <XrogaMark />
           <span>XROGA</span>
-        </a>
+        </Link>
         <p>AI-native cybersecurity direction · Target 2027</p>
         <p>© {new Date().getFullYear()} Xroga. All rights reserved.</p>
       </footer>
