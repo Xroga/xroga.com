@@ -76,6 +76,38 @@ export interface InSandboxBrowserRequest {
    * subsystem can have, so the port is named rather than assumed.
    */
   readonly port?: number;
+  /**
+   * The Playwright version to install inside the sandbox, or null to rely on the image alone.
+   *
+   * The official Playwright image ships **browsers and their system libraries**, not the npm
+   * package — so the collector has browsers it cannot drive. The driver has to be installed at
+   * run time, and its version must match the browser builds baked into the image exactly, or
+   * Playwright looks for a revision that is not there.
+   *
+   * Deriving it from the image tag is what guarantees that: one string decides both, so they
+   * cannot drift apart the way two separately-maintained constants would.
+   */
+  readonly playwrightVersion?: string | null;
+}
+
+/** Where the run-time Playwright install lands. Outside the project, so it is never committed. */
+export const PLAYWRIGHT_PREFIX = '/tmp/xroga-pw';
+export const PLAYWRIGHT_MODULE_ROOT = `${PLAYWRIGHT_PREFIX}/node_modules`;
+
+/** The browser path the official Playwright image bakes in. */
+export const IMAGE_BROWSERS_PATH = '/ms-playwright';
+
+/**
+ * The Playwright version an image reference promises.
+ *
+ * `mcr.microsoft.com/playwright:v1.62.0-noble` → `1.62.0`. Returns null for a reference that
+ * names no version, because installing a guessed version against unknown browser builds is how
+ * "Executable doesn't exist" happens at the worst possible moment.
+ */
+export function playwrightVersionFromImage(image: string | undefined | null): string | null {
+  if (!image) return null;
+  const match = image.match(/:v?(\d+\.\d+\.\d+)/);
+  return match?.[1] ?? null;
 }
 
 /**
@@ -365,6 +397,16 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
     ? 'npm install --no-audit --no-fund --ignore-scripts >/tmp/xroga_install_$$.log 2>&1 || { echo "install failed"; tail -c 4000 /tmp/xroga_install_$$.log; exit 90; }\n'
     : '';
 
+  // The driver, installed at run time to match the image's browser builds exactly.
+  //
+  // A soft failure on purpose: if the registry is unreachable the collector still tries every
+  // other resolution path and, failing those, reports `browser_unavailable` — which is an honest
+  // gap in evidence. Aborting here would turn a missing driver into "the application did not
+  // start", blaming generated code for our own missing dependency.
+  const driverStep = request.playwrightVersion
+    ? `npm install --no-save --no-audit --no-fund --prefix ${PLAYWRIGHT_PREFIX} playwright-core@${request.playwrightVersion} >/tmp/xroga_pw_$$.log 2>&1 || { echo "playwright-core install failed"; tail -c 2000 /tmp/xroga_pw_$$.log; }\n`
+    : '';
+
   const script =
     'set -u\n' +
     // Per-run paths. `/tmp/app.log` was shared across runs on a host that runs more than one,
@@ -387,6 +429,7 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
     'cleanup() { if [ -f "$PID_FILE" ]; then APP_PGID=$(cat "$PID_FILE" 2>/dev/null || echo ""); if [ -n "$APP_PGID" ]; then kill -TERM "-$APP_PGID" 2>/dev/null || kill -TERM "$APP_PGID" 2>/dev/null || true; sleep 1; kill -KILL "-$APP_PGID" 2>/dev/null || kill -KILL "$APP_PGID" 2>/dev/null || true; fi; fi; rm -f "$PID_FILE" "$APP_LOG"; }\n' +
     'trap cleanup EXIT INT TERM HUP\n' +
     installStep +
+    driverStep +
     // `exec` so the recorded pid *is* the server's process group leader, with no wrapper shell
     // left between the group and the process that must die.
     'setsid /bin/sh -c \'echo $$ > "$1"; exec npm run "$0"\' "$XROGA_START_SCRIPT" "$PID_FILE" >"$APP_LOG" 2>&1 &\n' +

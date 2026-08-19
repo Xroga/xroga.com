@@ -10,6 +10,7 @@ import {
   collectorSource,
   extractAppLog,
   parseCollectorOutput,
+  playwrightVersionFromImage,
   type InSandboxBrowserRequest,
 } from './inSandboxBrowser.js';
 
@@ -121,4 +122,31 @@ test('the application log is extracted and bounded', () => {
   const log = extractAppLog(`result\n---XROGA_APP_LOG---\n${'x'.repeat(9_000)}`);
   assert.ok(log.length <= 4_000);
   assert.equal(extractAppLog('no marker here'), '');
+});
+
+test('the driver version is derived from the image tag, never guessed', () => {
+  // One string decides both the browser builds and the driver that drives them. Two constants
+  // would drift, and the symptom is Playwright hunting a browser revision that is not there.
+  assert.equal(playwrightVersionFromImage('mcr.microsoft.com/playwright:v1.62.0-noble'), '1.62.0');
+  assert.equal(playwrightVersionFromImage('mcr.microsoft.com/playwright:1.62.0-jammy'), '1.62.0');
+  // An image naming no version yields null rather than a guess.
+  assert.equal(playwrightVersionFromImage('mcr.microsoft.com/playwright:latest'), null);
+  assert.equal(playwrightVersionFromImage(undefined), null);
+});
+
+test('a versioned image installs the matching driver inside the sandbox', () => {
+  // The official image ships browsers and system libraries, not the npm package — so without
+  // this the collector has browsers it cannot drive, and reports browser_unavailable inside the
+  // very image provisioned to give it a browser.
+  const script = buildSandboxCommand(request({ playwrightVersion: '1.62.0' })).args[1]!;
+  assert.match(script, /playwright-core@1\.62\.0/);
+  assert.match(script, /--prefix \/tmp\/xroga-pw/);
+  // Soft failure: a missing driver must degrade to browser_unavailable, not to a false
+  // accusation that the generated application failed to start.
+  assert.equal(/playwright-core install failed"; tail -c 2000 [^\n]*; \}/.test(script), true);
+});
+
+test('an unversioned image installs nothing rather than a guessed version', () => {
+  const script = buildSandboxCommand(request({ playwrightVersion: null })).args[1]!;
+  assert.equal(script.includes('playwright-core@'), false);
 });

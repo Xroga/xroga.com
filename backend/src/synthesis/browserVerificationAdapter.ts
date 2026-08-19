@@ -36,8 +36,11 @@ import type { SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
 import type { ViewportEvidence } from './browserVerification.js';
 import {
   DEFAULT_PORT,
+  IMAGE_BROWSERS_PATH,
+  PLAYWRIGHT_MODULE_ROOT,
   buildSandboxCommand,
   collectorFile,
+  playwrightVersionFromImage,
   extractAppLog,
   parseCollectorOutput,
 } from './inSandboxBrowser.js';
@@ -267,6 +270,9 @@ async function runInSandbox(input: {
     // anyway would demand registry access it does not need and fail closed without it.
     install: declaresDependencies(input.files),
     port: input.port,
+    // Derived from the image reference, so the driver and the browser builds it drives are
+    // decided by one string and cannot drift apart.
+    playwrightVersion: playwrightVersionFromImage(process.env.XROGA_SANDBOX_BROWSER_IMAGE),
   };
 
   let result: { exitCode: number | null; stdout: string; stderr: string; timedOut: boolean };
@@ -289,6 +295,12 @@ async function runInSandbox(input: {
         // The serve script the project declared. Passed in the environment rather than as a
         // positional parameter so it is never interpolated into the shell script body.
         XROGA_START_SCRIPT: input.startScript,
+        // Where the run-time driver install lands, searched first by the collector.
+        XROGA_PLAYWRIGHT_ROOT: PLAYWRIGHT_MODULE_ROOT,
+        // The browser path the official image bakes in. Set explicitly because the sandbox
+        // environment is built from scratch rather than inherited, so the image's own ENV is
+        // not something to rely on.
+        PLAYWRIGHT_BROWSERS_PATH: IMAGE_BROWSERS_PATH,
       }),
       signal: input.signal,
     });
