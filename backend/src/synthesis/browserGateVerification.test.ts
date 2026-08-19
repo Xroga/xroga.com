@@ -119,6 +119,19 @@ describe('a browser gate that executed decides the claim', () => {
     // The exact observation survives to the caller, not a summary of it.
     assert.match(result.browserVerification?.findings?.join(' ') ?? '', /cart\.map is not a function/);
   });
+
+  it('publishing order: a page observed to be broken is never committed at all', async () => {
+    // Stronger than "not marked verified". The gate sits before review and commit, so code the
+    // browser watched throw does not reach the repository — there is nothing to represent as
+    // verified later, and one authority decides completion.
+    let committed = false;
+    const result = await run(webApp, failingGate(), {
+      repair: async () => null,
+      commit: async () => { committed = true; return { commitSha: 'abc123def456' }; },
+    });
+    assert.equal(committed, false, 'a broken page was published');
+    assert.equal(result.commitSha, null);
+  });
 });
 
 // ---------------------------------------------------------------------------
