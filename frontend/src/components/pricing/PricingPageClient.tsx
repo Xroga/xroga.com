@@ -184,7 +184,17 @@ export function PricingPageClient() {
               'Advanced dashboard analytics',
               'AI-powered product workflows',
             ]}
-            note="Need higher limits?"
+           note={
+  <>
+    Need higher limits?{' '}
+    <a
+      href="mailto:hello@xroga.com"
+      className="font-semibold text-black hover:underline"
+    >
+      hello@xroga.com
+    </a>
+  </>
+}
             action={
               !loggedIn ? (
                 <button
