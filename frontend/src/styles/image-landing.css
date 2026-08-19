@@ -881,3 +881,368 @@
     font-size: clamp(27px, 8.7vw, 38px);
   }
 }
+
+/* =========================================================
+   XROGA IMAGE — FINAL NEUTRAL EDITORIAL THEME
+   Purpose:
+   - Prevent the global Xroga cloud/background from bleeding through.
+   - Use only black, white, graphite gray and warm beige.
+   - Remove the heavy black fade/effect between sections.
+   ========================================================= */
+
+.xi-page {
+  position: relative;
+  isolation: isolate;
+  z-index: 0;
+  background: #f2efe8 !important;
+  color: #111214;
+}
+
+/* HERO — solid black editorial stage, no cloud/sky bleed-through */
+.xi-hero {
+  background: #080809 !important;
+  color: #f7f6f2;
+}
+
+.xi-hero__aura,
+.xi-hero__fade,
+.xi-noise {
+  display: none !important;
+}
+
+.xi-header {
+  background: transparent;
+}
+
+.xi-nav {
+  border-color: rgba(255,255,255,.10);
+  background: #151516;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.xi-nav a,
+.xi-nav button {
+  color: #bdbdbb;
+}
+
+.xi-nav a:hover,
+.xi-nav button:hover {
+  color: #fff;
+  background: #242426;
+}
+
+.xi-login {
+  color: #d7d6d2;
+}
+
+.xi-start {
+  color: #111;
+  background: #f4f1ea;
+  box-shadow: none;
+}
+
+.xi-eyebrow {
+  border-color: rgba(255,255,255,.12);
+  color: #d9d6cf;
+  background: #111112;
+}
+
+.xi-eyebrow svg {
+  color: #d8d0c4;
+}
+
+.xi-eyebrow span {
+  color: #777775;
+}
+
+.xi-hero-title {
+  color: #f7f5f1;
+}
+
+.xi-hero-title__line strong {
+  color: #d7cdbf;
+}
+
+.xi-hero-title__object {
+  border-color: rgba(255,255,255,.28);
+  background: #1a1a1a;
+  box-shadow: none;
+}
+
+.xi-hero__lead {
+  color: #969490;
+}
+
+.xi-composer {
+  border-color: #323235;
+  background: #151517;
+  box-shadow: 0 18px 46px rgba(0,0,0,.28);
+  backdrop-filter: none;
+}
+
+.xi-composer:focus-within {
+  border-color: #746f68;
+  box-shadow: 0 18px 46px rgba(0,0,0,.30);
+}
+
+.xi-composer__glow {
+  display: none;
+}
+
+.xi-tool {
+  border-color: #303033;
+  color: #b3b2ae;
+  background: #1b1b1d;
+}
+
+.xi-generate {
+  border-color: #d9d2c8;
+  color: #111;
+  background: #e3ddd3;
+  box-shadow: none;
+}
+
+.xi-suggestions button {
+  color: #777671;
+}
+
+.xi-suggestions button:hover {
+  color: #d7d3cc;
+}
+
+.xi-hero__floating,
+.xi-hero-card {
+  box-shadow: none;
+}
+
+.xi-hero-card::after {
+  background: linear-gradient(to bottom, transparent 72%, rgba(0,0,0,.22));
+}
+
+/* PROOF STRIP — warm beige */
+.xi-proof {
+  width: min(1180px, calc(100% - 48px));
+  color: #5f5b55;
+  border-top-color: #d6d0c7;
+  background: #e9e4db;
+  box-shadow: 0 0 0 100vmax #e9e4db;
+  clip-path: inset(0 -100vmax);
+}
+
+.xi-proof i {
+  background: #aaa49a;
+}
+
+/* GALLERY — warm white */
+.xi-gallery-section {
+  color: #151515;
+  background: #f8f7f3;
+  box-shadow: 0 0 0 100vmax #f8f7f3;
+  clip-path: inset(0 -100vmax);
+}
+
+.xi-gallery-section .xi-kicker {
+  color: #76716a;
+}
+
+.xi-section-heading > p {
+  color: #706d67;
+}
+
+.xi-filter-row button {
+  border-color: #d8d4cd;
+  color: #66625d;
+  background: #efede7;
+}
+
+.xi-filter-row button.is-active {
+  color: #fff;
+  background: #171718;
+  border-color: #171718;
+}
+
+.xi-gallery-card__image {
+  border-color: #d8d4cd;
+  background: #e3dfd7;
+}
+
+.xi-gallery-card__shade {
+  background: linear-gradient(to bottom, transparent 66%, rgba(0,0,0,.22));
+  opacity: .24;
+}
+
+.xi-gallery-card:hover .xi-gallery-card__shade {
+  opacity: .38;
+}
+
+.xi-gallery-card:hover .xi-gallery-card__image img {
+  filter: brightness(.94);
+}
+
+.xi-gallery-card__category {
+  border-color: rgba(255,255,255,.55);
+  color: #fff;
+  background: rgba(18,18,18,.58);
+  backdrop-filter: none;
+}
+
+.xi-gallery-card__image > button {
+  color: #111;
+  background: #f5f2eb;
+}
+
+.xi-gallery-card h3 {
+  color: #181818;
+}
+
+.xi-gallery-card footer p,
+.xi-gallery-card footer > span {
+  color: #726f69;
+}
+
+/* BEIGE EDITORIAL BREAK — flat color, no glowing gradient */
+.xi-light-break {
+  color: #141414;
+  background: #ddd4c6 !important;
+}
+
+.xi-light-break__heading p,
+.xi-light-break .xi-kicker {
+  color: #6d675f;
+}
+
+.xi-light-card {
+  border-color: #f7f5ef;
+  background: #d7d1c8;
+  box-shadow: 0 18px 42px rgba(60,55,48,.12);
+}
+
+.xi-light-card::after {
+  background: linear-gradient(to bottom, transparent 72%, rgba(0,0,0,.24));
+}
+
+/* PRODUCT/STUDIO — soft gray section */
+.xi-product-section {
+  color: #171717;
+  background: #d9d9d6;
+  box-shadow: 0 0 0 100vmax #d9d9d6;
+  clip-path: inset(0 -100vmax);
+}
+
+.xi-product-copy > p {
+  color: #656562;
+}
+
+.xi-product-points {
+  border-top-color: #bcbcb8;
+}
+
+.xi-product-points article {
+  border-bottom-color: #bcbcb8;
+}
+
+.xi-product-points article > span {
+  color: #777773;
+}
+
+.xi-product-points h3 {
+  color: #181818;
+}
+
+.xi-product-points p {
+  color: #666663;
+}
+
+.xi-text-cta {
+  color: #111;
+}
+
+/* Keep the actual creative workspace dark graphite inside the gray section */
+.xi-studio-mockup {
+  border-color: #303033;
+  background: #101011;
+  box-shadow: 0 22px 60px rgba(0,0,0,.16);
+}
+
+.xi-studio-mockup__bar {
+  background: #18181a;
+}
+
+.xi-studio-mockup__body aside {
+  background: #121213;
+}
+
+.xi-studio-prompt {
+  background: #19191b;
+}
+
+.xi-studio-grid article {
+  background: #1a1a1b;
+}
+
+/* FINAL CTA — beige/white, not a giant black panel */
+.xi-final-cta {
+  color: #131313;
+  border-color: #d3cec5;
+  background: #eee9e1 !important;
+  box-shadow: none;
+}
+
+.xi-final-cta::before,
+.xi-final-cta::after {
+  display: none;
+}
+
+.xi-final-cta > span,
+.xi-final-cta p {
+  color: #716c64;
+}
+
+.xi-final-cta > span svg {
+  color: #59544e;
+}
+
+.xi-final-cta > button {
+  color: #fff;
+  background: #171718;
+}
+
+/* FOOTER — clean warm white */
+.xi-footer {
+  color: #171717;
+  border-top-color: #d6d2cb;
+  background: #f8f7f3;
+  box-shadow: 0 0 0 100vmax #f8f7f3;
+  clip-path: inset(0 -100vmax);
+}
+
+.xi-footer__top > p,
+.xi-footer a,
+.xi-footer__bottom {
+  color: #706d67;
+}
+
+.xi-footer a:hover {
+  color: #111;
+}
+
+.xi-footer__bottom {
+  border-top-color: #ddd9d1;
+}
+
+/* Mobile menu stays neutral and opaque */
+@media (max-width: 820px) {
+  .xi-menu-button {
+    border-color: #313133;
+    color: #f7f5f1;
+    background: #151516;
+  }
+
+  .xi-mobile-menu {
+    border-color: #313133;
+    background: #151516;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+}
