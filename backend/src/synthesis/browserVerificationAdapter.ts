@@ -6,40 +6,113 @@
  * universal path now genuinely asks "does this application work in a browser?" on every web
  * build.
  *
- * ## What it does today, stated plainly
+ * ## What it does
  *
- * It evaluates every precondition and, when they are met, drives a real browser. When they are
- * not, it returns `not_checked` carrying the specific reason — which contributes nothing to
+ * It evaluates every precondition and, when they are met, **runs the application and a real
+ * browser inside one sandbox execution** and judges what came back. When a precondition is not
+ * met it returns `not_checked` carrying the specific reason — which contributes nothing to
  * `verified` and is surfaced to the user.
  *
- * On the current production deployment the precondition that fails is the sandbox. Three facts
- * combine:
+ * The browser runs *inside* the sandbox, beside the application, hitting `localhost`. That is
+ * not an implementation convenience: the Fly Machines provider declares no `services` block and
+ * allocates no IP, so a generated application is unreachable from anywhere for its entire life,
+ * and reaching it from a browser on the API host would mean exposing it. Sending the browser to
+ * the application preserves that isolation property exactly, and fits the one-shot
+ * `SandboxRuntime.execute()` contract without changing it. See `inSandboxBrowser.ts`.
  *
- *   - `selectSandboxProvider()` reports `runtime_unavailable` unless an operator configures a
- *     provider; `fly.api.toml` configures none.
- *   - The Fly Machines provider declares no `services` block and allocates no IP, so a
- *     generated application is unreachable from anywhere for its entire life — a deliberate,
- *     tested isolation property. A browser on the API host cannot reach it.
- *   - `SandboxRuntime.execute()` is one-shot: it runs a command to completion. There is no
- *     long-lived process handle to hold a dev server open against.
+ * ## Each precondition reports its own reason, and none of them passes
  *
- * The consequence is that a browser must eventually run *inside* the sandbox next to the
- * application, hitting `localhost`. That needs a sandbox image carrying a browser; the current
- * one is `node:20-alpine`, which has none. Until that exists this adapter reports
- * `sandbox_unavailable` — honestly, on every web build — rather than quietly passing.
- *
- * That is the difference between "not wired" and "wired and truthful about what it can see".
+ * `not_a_web_project` means the gate does not apply — a CLI tool owes no browser evidence.
+ * Everything else means the check was owed and did not happen, and
+ * `browserGateBlocksVerification()` refuses a verified claim for all of them. The two states are
+ * modelled separately because conflating them breaks the system in one direction or the other:
+ * every non-web build blocked, or every unobserved web build called verified.
  */
 
 import type { ProjectFile } from '../ai/patches.js';
-import { probeSandbox } from '../sandbox/sandboxRuntime.js';
-import { browserAvailable } from './playwrightDriver.js';
+import { executeSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
+import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
+import type { SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
+import type { ViewportEvidence } from './browserVerification.js';
+import {
+  DEFAULT_PORT,
+  buildSandboxCommand,
+  collectorFile,
+  extractAppLog,
+  parseCollectorOutput,
+} from './inSandboxBrowser.js';
 import {
   assessWebVerifiability,
   compileBrowserChecks,
+  gateFromEvidence,
   notChecked,
+  type CompiledBrowserChecks,
+  type NotCheckedReason,
   type WebGateResult,
 } from './webVerificationGate.js';
+
+/**
+ * Ceilings for the whole verification.
+ *
+ * Generous because a cold sandbox installs dependencies and builds before anything can be
+ * observed, and stingy timeouts would report "the app did not start" for projects that were
+ * merely slow — a false accusation against the generated code.
+ */
+const TOTAL_TIMEOUT_MS = 480_000;
+const SERVER_TIMEOUT_MS = 120_000;
+
+/** The one call into the sandbox, as a seam so the logic is testable without a real runtime. */
+export type SandboxExecutor = (request: {
+  files: readonly ProjectFile[];
+  command: string;
+  args: readonly string[];
+  timeoutMs: number;
+  networkPolicy: SandboxNetworkPolicy;
+  environment: Record<string, string>;
+  signal?: AbortSignal;
+}) => Promise<{ exitCode: number | null; stdout: string; stderr: string; timedOut: boolean }>;
+
+/**
+ * Whether the configured sandbox image can host a browser.
+ *
+ * This asks about the *image*, not this host. The browser runs inside the sandbox beside the
+ * application, so Playwright on the API host is irrelevant — probing here for a local Chromium
+ * would report `browser_unavailable` on every production deployment and short-circuit before the
+ * sandbox ever ran, which is precisely the placeholder behaviour this change removes.
+ *
+ * It cannot be probed, only declared: the only way to learn whether an image carries a browser
+ * is to run it, which is what the collector does. So an operator names a verification-capable
+ * image, and until they do this reports honestly that no browser is available. Defaulting to
+ * *true* here would be fabricating provider capability — the collector would then start a full
+ * install and build before failing, and blame the generated application for the missing image.
+ */
+export function sandboxImageSupportsBrowser(env: NodeJS.ProcessEnv = process.env): Promise<boolean> {
+  const declared = env.XROGA_SANDBOX_BROWSER_IMAGE?.trim();
+  return Promise.resolve(Boolean(declared));
+}
+
+/** The real executor: straight through the existing Command 1 boundary, widening nothing. */
+const executeSandboxDefault: SandboxExecutor = async (request) => {
+  const result = await executeSandboxed({
+    files: [...request.files],
+    command: request.command,
+    args: [...request.args],
+    timeoutMs: request.timeoutMs,
+    networkPolicy: request.networkPolicy,
+    environment: request.environment,
+    // The verification-capable image, for this execution only. Ordinary validation stages keep
+    // running in the small default image.
+    ...(process.env.XROGA_SANDBOX_BROWSER_IMAGE?.trim()
+      ? { image: process.env.XROGA_SANDBOX_BROWSER_IMAGE.trim() }
+      : {}),
+  });
+  return {
+    exitCode: result.exitCode,
+    stdout: result.stdout,
+    stderr: result.stderr,
+    timedOut: result.timedOut,
+  };
+};
 
 export interface BrowserVerifyInput {
   readonly files: readonly ProjectFile[];
@@ -54,6 +127,18 @@ export interface BrowserVerificationAdapterOptions {
   readonly sandboxAvailable?: () => Promise<boolean>;
   /** Injected in tests. Defaults to the real Playwright probe. */
   readonly browserPresent?: () => Promise<boolean>;
+  /** Injected in tests. Defaults to the real sandbox execution. */
+  readonly execute?: SandboxExecutor;
+  /**
+   * The port the application is asked to listen on. Defaults to 3000.
+   *
+   * Overridden only where several verifications share a host — inside a sandbox nothing else is
+   * listening, which is the property that makes the default safe.
+   */
+  readonly port?: number;
+  /** Ceilings, overridable so tests need not wait out production-sized timeouts. */
+  readonly totalTimeoutMs?: number;
+  readonly serverTimeoutMs?: number;
 }
 
 /**
@@ -68,7 +153,8 @@ export function browserVerificationAdapter(
 ): (input: BrowserVerifyInput) => Promise<WebGateResult> {
   const sandboxAvailable =
     options.sandboxAvailable ?? (async () => (await probeSandbox()).available);
-  const browserPresent = options.browserPresent ?? browserAvailable;
+  const browserPresent = options.browserPresent ?? sandboxImageSupportsBrowser;
+  const executeInSandbox = options.execute ?? executeSandboxDefault;
 
   return async (input: BrowserVerifyInput): Promise<WebGateResult> => {
     const compiled = compileBrowserChecks(options.acceptanceCriteria ?? []);
@@ -104,26 +190,159 @@ export function browserVerificationAdapter(
       );
     }
 
-    // 4. Is there a browser? Reported separately from the sandbox because the fix differs: one
-    //    is a provider to configure, the other is an image to build.
+    // 4. Can the sandbox image host a browser? Reported separately from the sandbox itself
+    //    because the fix differs: one is a provider to configure, the other an image to deploy.
     if (!(await browserPresent())) {
       return notChecked(
         'browser_unavailable',
-        'No browser is available in the execution environment, so the running application was not observed.',
+        'The configured sandbox image does not provide a browser (set XROGA_SANDBOX_BROWSER_IMAGE ' +
+          'to a verification-capable image), so the running application was not observed.',
         compiled.notChecked,
       );
     }
 
-    // 5. Every precondition met. Starting the application inside the sandbox and driving a
-    //    browser against it from inside that same sandbox is the remaining work — see
-    //    `docs/production-browser-verification.md`. Reaching this branch on a deployment whose
-    //    sandbox cannot host a browser would be a misconfiguration, and it reports as one
-    //    rather than silently passing.
+    // 5. Every precondition is met: start the application inside the sandbox, drive a browser
+    //    against it from inside that same sandbox, and judge what came back.
+    return runInSandbox({
+      files: input.files,
+      startScript: verifiability.startScript,
+      compiled,
+      buildPassed: input.buildPassed,
+      testsPassed: input.testsPassed,
+      execute: executeInSandbox,
+      port: options.port ?? DEFAULT_PORT,
+      totalTimeoutMs: options.totalTimeoutMs ?? TOTAL_TIMEOUT_MS,
+      serverTimeoutMs: options.serverTimeoutMs ?? SERVER_TIMEOUT_MS,
+      signal: input.signal,
+    });
+  };
+}
+
+/** Whether the project declares anything to install. */
+function declaresDependencies(files: readonly ProjectFile[]): boolean {
+  const pkg = files.find((file) => file.path === 'package.json');
+  if (!pkg) return false;
+  try {
+    const parsed = JSON.parse(pkg.content) as {
+      dependencies?: Record<string, unknown>;
+      devDependencies?: Record<string, unknown>;
+    };
+    return (
+      Object.keys(parsed.dependencies ?? {}).length > 0 ||
+      Object.keys(parsed.devDependencies ?? {}).length > 0
+    );
+  } catch {
+    // An unparsable manifest is the project's problem to report elsewhere; installing is the
+    // safer assumption, since the alternative is a missing-module error blamed on the app.
+    return true;
+  }
+}
+
+/**
+ * The in-sandbox execution itself.
+ *
+ * Separated from the precondition checks so the interesting half can be tested against a fake
+ * `execute` without a real sandbox, and so this function reads as what it is: materialize,
+ * run one command, parse, judge.
+ */
+async function runInSandbox(input: {
+  files: readonly ProjectFile[];
+  startScript: string;
+  compiled: CompiledBrowserChecks;
+  buildPassed: boolean;
+  testsPassed: boolean | null;
+  execute: SandboxExecutor;
+  port: number;
+  totalTimeoutMs: number;
+  serverTimeoutMs: number;
+  signal?: AbortSignal;
+}): Promise<WebGateResult> {
+  const request = {
+    startScript: input.startScript,
+    domExpectations: input.compiled.domExpectations,
+    interactions: input.compiled.interactions,
+    totalTimeoutMs: input.totalTimeoutMs,
+    serverTimeoutMs: input.serverTimeoutMs,
+    // A project that declares no dependencies has nothing to install, and running `npm install`
+    // anyway would demand registry access it does not need and fail closed without it.
+    install: declaresDependencies(input.files),
+    port: input.port,
+  };
+
+  let result: { exitCode: number | null; stdout: string; stderr: string; timedOut: boolean };
+  try {
+    const { command, args } = buildSandboxCommand(request);
+    result = await input.execute({
+      // The collector travels with the project through the existing `files` mechanism. No new
+      // transport into the sandbox is introduced.
+      files: [...input.files, collectorFile(request)],
+      command,
+      args,
+      timeoutMs: input.totalTimeoutMs,
+      // Installing dependencies needs the registry and nothing more. This is the same policy
+      // the existing install validation stage runs under, not a widening of it.
+      networkPolicy: 'registry-only',
+      environment: buildSandboxEnvironment({
+        PORT: String(input.port),
+        CI: '1',
+        NODE_ENV: 'development',
+        // The serve script the project declared. Passed in the environment rather than as a
+        // positional parameter so it is never interpolated into the shell script body.
+        XROGA_START_SCRIPT: input.startScript,
+      }),
+      signal: input.signal,
+    });
+  } catch (error) {
+    // `SandboxUnavailableError` and anything else the runtime throws. A sandbox that refused is
+    // a gap in evidence, never a pass.
+    return notChecked(
+      'sandbox_unavailable',
+      `The isolation runtime did not run the verification: ${error instanceof Error ? error.message : String(error)}`,
+      input.compiled.notChecked,
+    );
+  }
+
+  if (input.signal?.aborted) {
+    return notChecked('cancelled', 'The run was cancelled during browser verification.', input.compiled.notChecked);
+  }
+
+  const payload = parseCollectorOutput(result.stdout);
+  const appLog = extractAppLog(result.stdout);
+
+  if (!payload) {
+    // No structured result at all — distinct from a result that says the check failed. Blaming
+    // the generated application for our own harness failing to report would be a lie about
+    // whose defect it is.
+    const detail = result.timedOut
+      ? 'Browser verification exceeded its time limit before producing a result.'
+      : `The verification command produced no result (exit ${result.exitCode ?? 'unknown'}).`;
     return notChecked(
       'application_did_not_start',
-      'The isolation runtime reports availability but cannot yet host a browser alongside the ' +
-        'generated application, so no browser evidence was collected.',
-      compiled.notChecked,
+      `${detail}${appLog ? ` Application log: ${appLog.slice(0, 800)}` : ''}`,
+      input.compiled.notChecked,
     );
-  };
+  }
+
+  if (!payload.ok) {
+    const reason: NotCheckedReason =
+      payload.reason === 'browser_unavailable' ? 'browser_unavailable' : 'application_did_not_start';
+    return notChecked(
+      reason,
+      `${payload.detail ?? 'Browser verification did not complete.'}${appLog ? ` Application log: ${appLog.slice(0, 800)}` : ''}`,
+      input.compiled.notChecked,
+    );
+  }
+
+  // The observations are in. Every judgement about what they mean happens here, on the host,
+  // in the same `decideWebVerification` the unit tests cover — the collector decides nothing.
+  return gateFromEvidence({
+    url: payload.url ?? `http://127.0.0.1:${input.port}/`,
+    filesProduced: input.files.length,
+    buildPassed: input.buildPassed,
+    testsPassed: input.testsPassed,
+    serverStarted: true,
+    serverLog: appLog,
+    viewports: (payload.viewports ?? []) as ViewportEvidence[],
+    criteriaNotChecked: input.compiled.notChecked,
+  });
 }

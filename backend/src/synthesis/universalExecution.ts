@@ -39,7 +39,12 @@ import {
 } from './universalCanonicalTasks.js';
 import type { CanonicalExecutionState, ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
 import type { ModelId } from '../ai/models.js';
-import type { WebGateResult } from './webVerificationGate.js';
+import {
+  browserGateBlockerReason,
+  browserVerificationSummary,
+  type WebGateResult,
+} from './webVerificationGate.js';
+import type { ArtifactBrowserVerification } from '../ai/engineeringArtifact.js';
 
 export const UNIVERSAL_EXECUTION_SCHEMA_VERSION = '1.0.0' as const;
 
@@ -74,6 +79,14 @@ export interface UniversalExecutionResult {
   readonly mutationBegan: boolean;
   readonly verified: boolean;
   readonly reason: string;
+  /**
+   * Bounded browser evidence, when a browser gate ran or explicitly declined to.
+   *
+   * Absent on runs with no browser surface at all. Present — carrying `not_checked` and the
+   * reason — whenever the gate was consulted, because "we could not look" is a fact the user
+   * needs, and dropping it here is what let the artifact stay silent about it.
+   */
+  readonly browserVerification?: ArtifactBrowserVerification;
 }
 
 /** What the caller supplies to actually do the work. Keeps this module free of I/O. */
@@ -201,6 +214,12 @@ export async function executeUniversalRun(input: {
   const record = (phase: ExecutionPhase, statement: string, detail: string) =>
     evidence.push({ phase, statement, detail });
 
+  // Hoisted above `fail` on purpose: every failure path from the browser gate onward then
+  // carries the browser evidence automatically, instead of each call site having to remember
+  // to pass it. Forgetting one would silently drop the evidence for exactly the runs where a
+  // user most needs it.
+  let browserGate: WebGateResult | null = null;
+
   const fail = (
     outcome: ExecutionOutcome,
     phase: ExecutionPhase,
@@ -211,6 +230,7 @@ export async function executeUniversalRun(input: {
   ): UniversalExecutionResult => ({
     outcome, phaseReached: phase, plan, securityControls: [], files,
     commitSha: null, evidence, blockers, mutationBegan, verified: false, reason,
+    ...(browserGate ? { browserVerification: browserVerificationSummary(browserGate) } : {}),
   });
 
   // ── Routing ────────────────────────────────────────────────────────────────
@@ -430,7 +450,6 @@ export async function executeUniversalRun(input: {
   // is followed by a fresh browser check — never the pre-repair verdict, which describes code
   // that no longer exists. Retries stay bounded by the canonical task's own policy; no counter
   // is introduced here, because the scheduler owns that.
-  let browserGate: WebGateResult | null = null;
   if (input.adapters.browserVerify) {
     browserGate = await input.adapters.browserVerify({
       files,
@@ -503,6 +522,11 @@ export async function executeUniversalRun(input: {
     }
   }
 
+  // A required-but-unexecuted browser check does not stop the run here, and deliberately so:
+  // the work is real, it passed every deterministic check, and discarding it would help nobody.
+  // What it must never do is reach the end of this function and be called verified. That is
+  // enforced at the claim below, not by an early return.
+
   // ── Review over the complete diff ──────────────────────────────────────────
   const review = implementationState
     ? await runReviewAsCanonicalTask({
@@ -525,7 +549,17 @@ export async function executeUniversalRun(input: {
   }
 
   // ── Commit ─────────────────────────────────────────────────────────────────
+  //
+  // The verified claim is the deterministic claim *and* the browser gate, when the browser gate
+  // applies. Before this, `mayClaimVerified` was consulted alone, so a web project whose browser
+  // check returned `not_checked` — no sandbox, no browser, app never started — still reported
+  // `verified: true`. Compiling is not working, and "we could not look" is not "we looked".
+  //
+  // `not_a_web_project` is the one reason that does not veto: a CLI tool has no browser surface,
+  // and its own deterministic validation is the whole of its evidence.
   const claim = mayClaimVerified(validationPlan, report);
+  const browserBlocker = browserGate ? browserGateBlockerReason(browserGate) : null;
+  const verified = claim.verified && browserBlocker === null;
   mutationBegan = true;
   // Publication as a canonical task. The Command 1 atomic writer still performs the write —
   // no second GitHub writer exists and none is created — but the run now records the commit
@@ -545,14 +579,21 @@ export async function executeUniversalRun(input: {
       })
     : await input.adapters.commit(files, message);
   record('commit', 'exact commit produced', commitSha);
-  record('complete', 'verification claim', claim.reason);
+  record('complete', 'verification claim', browserBlocker ?? claim.reason);
 
   return {
     outcome: 'completed', phaseReached: 'complete', plan: validationPlan, securityControls,
-    files, commitSha, evidence, blockers: [], mutationBegan: true,
+    files, commitSha, evidence,
+    // The commit is preserved and reported, but it is reported *unverified* with the exact
+    // reason. `artifactStatusFor` turns `completed` + `verified: false` into a **blocked**
+    // artifact, so the user sees the work that exists and the evidence that is missing —
+    // never a verified badge over an unobserved page.
+    blockers: browserBlocker ? [browserBlocker] : [],
+    mutationBegan: true,
     // The claim comes from the evidence, not from having reached the end of the function.
-    verified: claim.verified,
-    reason: claim.reason,
+    verified,
+    reason: browserBlocker ?? claim.reason,
+    ...(browserGate ? { browserVerification: browserVerificationSummary(browserGate) } : {}),
   };
 }
 

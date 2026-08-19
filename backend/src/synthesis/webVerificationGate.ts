@@ -32,6 +32,7 @@ import {
   type WebVerificationVerdict,
 } from './browserVerification.js';
 import type { DomExpectation, InteractionExpectation } from './playwrightDriver.js';
+import type { ArtifactBrowserVerification } from '../ai/engineeringArtifact.js';
 
 export type NotCheckedReason =
   | 'not_a_web_project'
@@ -260,4 +261,95 @@ export function gateFromEvidence(input: {
  */
 export function gatePermitsVerified(result: WebGateResult): boolean {
   return result.status === 'passed';
+}
+
+/**
+ * NOT APPLICABLE and NOT EXECUTED are different states, and collapsing them breaks the system
+ * in one direction or the other.
+ *
+ * A CLI tool has no browser surface. It owes no browser evidence, and demanding some would
+ * block every correctly-validated non-web build — so `not_a_web_project` means the gate simply
+ * does not apply, and the existing deterministic verification stands on its own.
+ *
+ * Every *other* reason describes a project that a browser could have judged, where we did not
+ * manage to look: no serve script, no sandbox, no browser, the app never started, the run was
+ * cancelled. Those are missing evidence about a project that needed it. Treating them as
+ * inapplicable would restore precisely the defect this subsystem exists to prevent — a web
+ * project called verified because nobody checked it.
+ */
+export type BrowserVerificationApplicability = 'required' | 'not_applicable';
+
+export function browserVerificationApplicability(
+  result: WebGateResult,
+): BrowserVerificationApplicability {
+  // `passed` and `failed` carry no reason because the check ran — for those, it plainly applied.
+  return result.notCheckedReason === 'not_a_web_project' ? 'not_applicable' : 'required';
+}
+
+/**
+ * Whether this gate must veto a verified claim.
+ *
+ * The one predicate the final verification decision consults. Written as "blocks" rather than
+ * "permits" so the safe answer is the default: anything that is required and did not reach
+ * `passed` — failed, or any flavour of not-executed — vetoes.
+ */
+export function browserGateBlocksVerification(result: WebGateResult): boolean {
+  return browserVerificationApplicability(result) === 'required' && result.status !== 'passed';
+}
+
+/**
+ * Why the run cannot be called verified, in the user's terms.
+ *
+ * Returns null when the gate does not block, so a caller can use it directly as a blocker.
+ */
+export function browserGateBlockerReason(result: WebGateResult): string | null {
+  if (!browserGateBlocksVerification(result)) return null;
+  if (result.status === 'failed') {
+    return result.blocker ?? 'The application failed browser verification.';
+  }
+  return (
+    result.blocker ??
+    'Browser verification did not run for this web project, so it is reported unverified rather than verified.'
+  );
+}
+
+// ---------------------------------------------------------------------------
+// The artifact summary — bounded, structured, no blobs
+// ---------------------------------------------------------------------------
+
+/** Caps. This travels over SSE and is persisted in the run record. */
+const MAX_ARTIFACT_FINDINGS = 10;
+const MAX_ARTIFACT_FINDING_CHARS = 400;
+const MAX_ARTIFACT_CRITERIA = 10;
+
+/**
+ * The structured evidence the engineering artifact carries.
+ *
+ * Deliberately lossy. The run record is not a log store: screenshots travel as *paths*, findings
+ * are capped and clipped, and full browser logs and traces never enter it at all. A summary that
+ * inlined them would work in testing and blow up the first time a real application logged a
+ * stack trace in a loop.
+ *
+ * What survives the trimming is the part a person acts on: whether it passed, why not, and the
+ * exact first lines of what the browser actually observed.
+ */
+export function browserVerificationSummary(result: WebGateResult): ArtifactBrowserVerification {
+  const findings = (result.verdict?.findings ?? [])
+    .slice(0, MAX_ARTIFACT_FINDINGS)
+    .map((finding) =>
+      finding.summary.length > MAX_ARTIFACT_FINDING_CHARS
+        ? `${finding.summary.slice(0, MAX_ARTIFACT_FINDING_CHARS)}…`
+        : finding.summary,
+    );
+
+  return {
+    status: result.status,
+    url: result.url,
+    notCheckedReason: result.notCheckedReason,
+    blocker: result.blocker,
+    passedChecks: result.verdict?.passedRungs ?? [],
+    findings,
+    criteriaNotChecked: result.criteriaNotChecked.slice(0, MAX_ARTIFACT_CRITERIA),
+    screenshots: result.screenshots,
+  };
 }

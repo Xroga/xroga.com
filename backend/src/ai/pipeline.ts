@@ -1291,6 +1291,11 @@ export async function runBuildPipeline(opts: {
           files: result.files.map((file) => file.path),
           evidence: result.evidence,
           repository: universalCommit.record,
+        }, {
+          // The last hop of the browser-evidence chain. Without this the execution result
+          // carried the verdict and the artifact silently dropped it, so a user was told
+          // "blocked" with no way to see that the reason was an unobserved page.
+          ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         }),
         universal: true,
         outcome: result.outcome,
@@ -1301,6 +1306,7 @@ export async function runBuildPipeline(opts: {
         commitSha: result.commitSha,
         files: result.files.map((file) => file.path),
         evidence: result.evidence,
+        ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         routing,
         // Observed from the write itself, not reconstructed. Present only when the run
         // actually committed, so its absence on a completed run is itself a signal.

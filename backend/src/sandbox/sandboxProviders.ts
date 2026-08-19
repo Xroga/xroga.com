@@ -88,7 +88,10 @@ export class ContainerSandboxRuntime implements SandboxRuntime {
   async execute(request: SandboxExecutionRequest): Promise<SandboxExecutionResult> {
     const availability = await this.probe();
     if (!availability.available) throw new SandboxUnavailableError(availability);
-    return runIsolated(this.binary, this.image, request);
+    // A per-request image overrides the provider default. Every isolation flag in
+    // `buildContainerArgs` is unchanged by it — the image says what is inside the box, not how
+    // tightly the box is closed.
+    return runIsolated(this.binary, request.image?.trim() || this.image, request);
   }
 }
 
