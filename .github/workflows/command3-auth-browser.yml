@@ -12,7 +12,10 @@ jobs:
   authenticated-browser:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Headroom for a cold browser cache. The tests themselves finish in well under a minute; the
+    # variable cost is the first download, and a job cancelled during it yields no evidence
+    # either way.
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -73,6 +76,23 @@ jobs:
           npm ci --prefix frontend --workspaces=false
       - run: npm run build --prefix backend --workspaces=false
       - run: npm run build --prefix frontend --workspaces=false
+      # Browser binaries are ~300MB and were re-downloaded on every run. That normally costs a
+      # minute or two, but it is a CDN transfer on the critical path of a 20-minute job: two runs
+      # of this workflow spent 18+ minutes here and were cancelled mid-download, so the
+      # authentication test never executed at all. A cancelled run proves nothing about
+      # authentication, which makes this a reliability defect in the check itself.
+      #
+      # The cache key is the lockfile, so a Playwright upgrade fetches fresh binaries rather than
+      # driving a browser the driver was not built against.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      # Left unconditional on purpose: with the cache warm, Playwright sees the binaries and
+      # skips the download, while `--with-deps` still installs the system libraries, which are
+      # part of the runner rather than the cache. Skipping this on a cache hit would trade a slow
+      # job for a browser that cannot start.
       - run: npx playwright install --with-deps chromium
       - name: Start isolated application
         shell: bash
