@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   ENGINEERING_ARTIFACT_TYPE,
   SUPPORTED_ARTIFACT_VERSION,
+  browserVerificationLine,
   engineeringArtifactToText,
   isEngineeringArtifact,
   isRenderableArtifact,
@@ -108,7 +109,7 @@ test('the text output stays bounded for a large file manifest', () => {
   const many = artifact({
     files: Array.from({ length: 400 }, (_, index) => ({ path: `src/generated/file-${index}.ts` })),
     fileCount: 400,
-  });
+});
   const text = engineeringArtifactToText(many);
   assert.ok(text.length < 3_000, `text was ${text.length} chars`);
   assert.match(text, /and 380 more/);
@@ -125,7 +126,7 @@ test('an artifact with nothing to report still says something honest', () => {
     commitSha: null,
     verificationEvidence: [],
     nextAction: null,
-  });
+});
   const text = engineeringArtifactToText(bare);
   assert.match(text, /Did not produce changes/);
   assert.notEqual(text.trim(), '');
@@ -140,4 +141,78 @@ test('existing output types still render as before', () => {
   assert.equal(swarmOutputToText({ type: 'landing_page' }), '');
   assert.equal(swarmOutputToText({ message: 'a message' }), 'a message');
   assert.equal(swarmOutputToText({ type: 'something_unknown' }), 'Swarm task complete.');
+});
+
+// ---------------------------------------------------------------------------
+// Browser verification rendering
+// ---------------------------------------------------------------------------
+
+  const base = {
+    type: 'engineering_artifact' as const,
+    artifactVersion: 1,
+    summary: 'Blocked at complete. 2 files were produced, but browser verification did not run.',
+    status: 'blocked' as const,
+    verified: false,
+    outcome: 'completed',
+    phaseReached: 'complete',
+    reason: 'browser verification did not run',
+    blockers: [],
+    files: [{ path: 'a.tsx' }],
+    fileCount: 1,
+    repository: null,
+    commitSha: 'abc1234',
+    verificationEvidence: [],
+    preview: null,
+    nextAction: null,
+  };
+
+test('browser verification: states the reason a check did not run, in the user\'s words', () => {
+    const line = browserVerificationLine({
+      status: 'not_checked',
+      notCheckedReason: 'sandbox_unavailable',
+    });
+    assert.equal(line, 'Browser verification: not completed — no isolated environment was available to run it in');
+    // The one word it must never contain.
+    assert.ok(!/passed|verified/i.test(line ?? ''));
+});
+
+test('browser verification: says nothing for a project a browser could not judge anyway', () => {
+    assert.equal(
+      browserVerificationLine({ status: 'not_checked', notCheckedReason: 'not_a_web_project' }),
+      null,
+    );
+});
+
+test('browser verification: carries the exact finding when the page failed', () => {
+    const line = browserVerificationLine({
+      status: 'failed',
+      findings: ['Uncaught page error: TypeError: cart.map is not a function'],
+    });
+    assert.match(line ?? '', /cart\.map is not a function/);
+});
+
+test('browser verification: reports a pass plainly', () => {
+    assert.equal(browserVerificationLine({ status: 'passed' }), 'Browser verification: passed');
+});
+
+test('browser verification: renders nothing at all for an artifact from a backend that never sent the field', () => {
+    assert.equal(browserVerificationLine(undefined), null);
+});
+
+test('browser verification: puts the reason and the unchecked criteria into the text form', () => {
+    const text = engineeringArtifactToText({
+      ...base,
+      browserVerification: {
+        status: 'not_checked',
+        notCheckedReason: 'browser_unavailable',
+        criteriaNotChecked: ['The design should feel premium'],
+      },
+    });
+    assert.match(text, /not completed — no browser was available/);
+    assert.match(text, /Acceptance criteria not checked:/);
+    assert.match(text, /The design should feel premium/);
+});
+
+test('browser verification: an unknown future status is ignored rather than guessed at', () => {
+    assert.equal(browserVerificationLine({ status: 'something_new' }), null);
 });

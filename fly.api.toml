@@ -17,6 +17,24 @@ primary_region = 'iad'
   LEMONSQUEEZY_STORE_ID = '217480'
   LEMONSQUEEZY_PRODUCT_SPARK = '1231656'
 
+  # Isolation for generated code. Neither value is a secret; the token that authorises them is
+  # staged separately as a Fly secret (see .github/workflows/fly-deploy.yml).
+  #
+  # The app MUST NOT be this one. `FlyMachineSandboxRuntime` refuses a self-targeting
+  # configuration outright, because such a machine would boot perfectly and inherit every
+  # production secret this API holds.
+  XROGA_SANDBOX_FLY_APP = 'xroga-sandbox'
+
+  # Browser verification runs Chromium inside the sandbox, beside the generated application.
+  # Version-locked to the Playwright pinned in this repository (1.62.0) — browser builds are
+  # tied to an exact Playwright version, and glibc because Playwright does not support Chromium
+  # on the musl base the ordinary validation stages use.
+  #
+  # Applied per execution, so ordinary validation still runs in the small default image.
+  # Unsetting this disables browser verification safely: it reports `browser_unavailable`, which
+  # never counts as a pass.
+  XROGA_SANDBOX_BROWSER_IMAGE = 'mcr.microsoft.com/playwright:v1.62.0-noble'
+
 [processes]
   app = 'node dist/index.js'
 

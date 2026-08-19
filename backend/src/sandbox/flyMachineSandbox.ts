@@ -337,7 +337,9 @@ export class FlyMachineSandboxRuntime implements SandboxRuntime {
     return {
       region: this.region,
       config: {
-        image: this.image,
+        // Per-request image for browser verification; the provider default otherwise. No
+        // `services` block is added for it, so the machine remains unreachable either way.
+        image: request.image?.trim() || this.image,
         // The machine's own deadline. When this sleep ends the init process exits and
         // `auto_destroy` disposes of the machine — the one cleanup that still happens if
         // this API process is killed mid-execution.

@@ -1,6 +1,6 @@
 'use client';
 
-import type { EngineeringArtifact } from '@/lib/engineeringArtifact';
+import { browserVerificationLine, type EngineeringArtifact } from '@/lib/engineeringArtifact';
 
 /**
  * Renders a real engineering result.
@@ -12,6 +12,10 @@ import type { EngineeringArtifact } from '@/lib/engineeringArtifact';
  * and the commit — because those exist and the user needs to know they exist.
  */
 export function EngineeringArtifactView({ artifact }: { artifact: EngineeringArtifact }) {
+  // Same single source as the text form, so the two surfaces cannot disagree about whether a
+  // page was ever looked at.
+  const browserLine = browserVerificationLine(artifact.browserVerification);
+  const uncheckedCriteria = artifact.browserVerification?.criteriaNotChecked ?? [];
   const tone =
     artifact.status === 'verified'
       ? { border: 'border-emerald-500/40', text: 'text-emerald-400', label: 'Verified' }
@@ -111,6 +115,37 @@ export function EngineeringArtifactView({ artifact }: { artifact: EngineeringArt
             {artifact.verificationEvidence.map((item, index) => (
               <li key={index} className="text-[11px] text-[var(--foreground)]/70">
                 <span className="text-[var(--muted)]">{item.phase}</span> — {item.statement}
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+
+      {browserLine ? (
+        <p className="mt-2 text-xs">
+          <span
+            className={
+              artifact.browserVerification?.status === 'passed'
+                ? 'text-[var(--foreground)]/70'
+                : // Not styled as an error: "we could not look" is not the app being broken.
+                  // It is missing evidence, and it reads as missing evidence.
+                  'text-[var(--muted)]'
+            }
+          >
+            {browserLine}
+          </span>
+        </p>
+      ) : null}
+
+      {uncheckedCriteria.length > 0 ? (
+        <details className="mt-2">
+          <summary className="cursor-pointer text-xs text-[var(--muted)]">
+            Acceptance criteria not checked ({uncheckedCriteria.length})
+          </summary>
+          <ul className="mt-1 space-y-0.5">
+            {uncheckedCriteria.map((criterion, index) => (
+              <li key={index} className="text-[11px] text-[var(--foreground)]/70">
+                {criterion}
               </li>
             ))}
           </ul>

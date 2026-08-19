@@ -62,6 +62,29 @@ export interface ArtifactVerification {
   readonly detail: string;
 }
 
+/**
+ * Browser verification evidence, when a web project was checked.
+ *
+ * Added in artifactVersion 1 as an *optional* field rather than a version bump. A v1 consumer
+ * that has never heard of it ignores it and renders exactly as before; a newer one shows it.
+ * Bumping the version would make every existing renderer decline the artifact entirely, which
+ * would reintroduce the blank-result defect PR #567 just fixed.
+ */
+export interface ArtifactBrowserVerification {
+  /** 'passed' | 'failed' | 'not_checked'. Never collapse not_checked into passed. */
+  readonly status: string;
+  readonly url?: string | null;
+  /** Present when the check did not run — the specific reason, for the user. */
+  readonly notCheckedReason?: string | null;
+  readonly blocker?: string | null;
+  /** Rungs that actually passed: build, http, dom, page_errors, … */
+  readonly passedChecks?: readonly string[];
+  readonly findings?: readonly string[];
+  /** Acceptance criteria that were never executed. Never counted as satisfied. */
+  readonly criteriaNotChecked?: readonly string[];
+  readonly screenshots?: readonly string[];
+}
+
 export interface ArtifactPreview {
   readonly url?: string | null;
   readonly verified?: boolean;
@@ -104,6 +127,8 @@ export type EngineeringArtifact = {
 
   /** What the user can usefully do next. Empty when there is nothing honest to suggest. */
   readonly nextAction: string | null;
+  /** Optional; absent on runs with no browser surface. See `ArtifactBrowserVerification`. */
+  readonly browserVerification?: ArtifactBrowserVerification;
 };
 
 /** The shape `pipeline.ts` already produces for a universal run. */
@@ -203,6 +228,7 @@ export function artifactNextAction(status: ArtifactStatus, phaseReached: string,
 export function buildEngineeringArtifact(output: UniversalOutputLike, extras: {
   previewUrl?: string | null;
   previewVerified?: boolean;
+  browserVerification?: ArtifactBrowserVerification;
 } = {}): EngineeringArtifact {
   const outcome = asString(output.outcome, 'unknown');
   const phaseReached = asString(output.phaseReached, 'unknown');
@@ -287,6 +313,7 @@ export function buildEngineeringArtifact(output: UniversalOutputLike, extras: {
         ? { url: extras.previewUrl ?? null, verified: extras.previewVerified === true }
         : null,
     nextAction: artifactNextAction(status, phaseReached, commitSha),
+    ...(extras.browserVerification ? { browserVerification: extras.browserVerification } : {}),
   };
 }
 

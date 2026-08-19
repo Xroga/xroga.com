@@ -36,6 +36,18 @@ export interface SandboxExecutionRequest {
    */
   environment: Record<string, string>;
   limits: SandboxLimits;
+  /**
+   * An image for this execution only, overriding the provider's default.
+   *
+   * Exists for browser verification, which needs an image carrying Chromium and its system
+   * libraries — far larger than the `node:20-alpine` the ordinary validation stages run in.
+   * Per-request rather than per-provider so a typecheck does not pay to pull a browser image,
+   * and so no second provider has to be registered to change one field.
+   *
+   * A provider that cannot honour it ignores it, which is safe: the collector inside reports
+   * `browser_unavailable` when no browser is resolvable, rather than the run assuming one.
+   */
+  image?: string;
 }
 
 export interface SandboxExecutionResult {
