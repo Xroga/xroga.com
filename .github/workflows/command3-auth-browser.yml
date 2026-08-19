@@ -12,10 +12,12 @@ jobs:
   authenticated-browser:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    # Headroom for a cold browser cache. The tests themselves finish in well under a minute; the
-    # variable cost is the first download, and a job cancelled during it yields no evidence
-    # either way.
-    timeout-minutes: 30
+    # Headroom for a cold browser cache. The tests themselves finish in well under a minute, and
+    # a warm run takes about three; the variable cost is entirely the first download, which the
+    # Playwright CDN has served anywhere between 68 seconds and over 28 minutes on the same day.
+    # A job cancelled mid-download yields no evidence either way, so the ceiling is sized to let
+    # that download finish once and seed the cache rather than to bound a healthy run.
+    timeout-minutes: 45
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -84,8 +86,15 @@ jobs:
       #
       # The cache key is the lockfile, so a Playwright upgrade fetches fresh binaries rather than
       # driving a browser the driver was not built against.
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
+      #
+      # Restore and save are separate on purpose. `actions/cache` saves only in a *post* step,
+      # which is skipped when a job is cancelled — so a download that never finishes inside the
+      # budget can never populate the cache that would have prevented the next download. Three
+      # consecutive runs died that way. Saving immediately after the install means one completed
+      # download is kept, whatever happens to the rest of the job.
+      - name: Restore Playwright browsers
+        id: playwright-cache
+        uses: actions/cache/restore@v4
         with:
           path: ~/.cache/ms-playwright
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
@@ -94,6 +103,13 @@ jobs:
       # part of the runner rather than the cache. Skipping this on a cache hit would trade a slow
       # job for a browser that cannot start.
       - run: npx playwright install --with-deps chromium
+
+      - name: Save Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Start isolated application
         shell: bash
         run: |
