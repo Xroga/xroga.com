@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { convertUserRequest } from './converter.js';
 import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
+import { buildEngineeringArtifact } from './engineeringArtifact.js';
 import {
   researchThroughBlackHole,
   selectBuildModel,
@@ -1273,6 +1274,24 @@ export async function runBuildPipeline(opts: {
     });
     const universalSuccess = result.outcome === 'completed' && result.verified;
     const universalOutput: Record<string, unknown> = {
+        // The typed artifact contract. Every frontend renderer keys off `type`, and this
+        // object previously had none — so a run that produced real files and a real commit
+        // rendered as nothing, with the text falling through to "Swarm task complete."
+        //
+        // Spread first so the descriptive fields below remain readable in the record and in
+        // logs; `type` and `artifactVersion` come from the artifact and are not overwritten,
+        // because none of the legacy keys share those names.
+        ...buildEngineeringArtifact({
+          outcome: result.outcome,
+          phaseReached: result.phaseReached,
+          verified: result.verified,
+          reason: result.reason,
+          blockers: result.blockers,
+          commitSha: result.commitSha,
+          files: result.files.map((file) => file.path),
+          evidence: result.evidence,
+          repository: universalCommit.record,
+        }),
         universal: true,
         outcome: result.outcome,
         phaseReached: result.phaseReached,

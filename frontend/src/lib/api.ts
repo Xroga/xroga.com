@@ -7,6 +7,7 @@ import {
   type SwarmCompleteEvent,
   type SwarmProgressEvent,
 } from '@/lib/swarm';
+import { engineeringArtifactToText, isRenderableArtifact } from '@/lib/engineeringArtifact';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -200,10 +201,25 @@ async function waitForPersistedSwarmRun(
     }
     if (run.status === 'cancelled') throw new DOMException('Aborted', 'AbortError');
     if (run.status === 'error') {
-      // The persisted row now carries the real reason code (and, for a capacity
-      // cap, when it lifts) instead of the generic BUILD_FAILED every failure used
-      // to be flattened to — this is exactly the path a dropped SSE stream lands
-      // on, so losing that distinction here defeats the point of persisting it.
+      // A blocked engineering run is delivered, not thrown.
+      //
+      // `completeRun(..., { success: false })` stores the full artifact — blockers, the file
+      // manifest, evidence, often a real commit SHA — and marks the row `error`. Throwing here
+      // discarded all of it and showed "The persisted build failed." That is the *recovery*
+      // path, which is exactly where a dropped SSE stream lands, so the richer the run the
+      // more this cost. A blocked result is a real result and the user needs to see it.
+      if (isRenderableArtifact(run.output)) {
+        return deliverSwarmComplete({
+          runId,
+          success: false,
+          featureCategory: run.featureCategory,
+          output: run.output,
+          tokenUsage: run.tokenUsage,
+        }, options, currentText) || engineeringArtifactToText(run.output);
+      }
+      // No artifact: the run failed before producing one. The persisted row still carries the
+      // real reason code instead of the generic BUILD_FAILED every failure used to be
+      // flattened to, and losing that distinction here defeats the point of persisting it.
       const output = run.output as { error?: string; code?: string; nextUnlockAt?: string | null } | null;
       throw new ApiError(output?.error ?? 'The persisted build failed.', 500, {
         code: output?.code ?? 'BUILD_FAILED',
@@ -217,7 +233,11 @@ async function waitForPersistedSwarmRun(
       featureCategory: run.featureCategory,
       output: run.output,
       tokenUsage: run.tokenUsage,
-    }, options, currentText) || 'Swarm task complete.';
+      // An engineering artifact always has text; the generic sentence is only ever reached
+      // for outputs that genuinely carry nothing to say.
+    }, options, currentText) || (isRenderableArtifact(run.output)
+      ? engineeringArtifactToText(run.output)
+      : 'Swarm task complete.');
   }
   throw new ApiError('The build is still running, but reconnect timed out. You can safely return later.', 504, {
     code: 'RUN_STILL_ACTIVE',
