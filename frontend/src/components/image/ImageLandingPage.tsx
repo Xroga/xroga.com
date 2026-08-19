@@ -102,7 +102,7 @@ const GALLERY: GalleryItem[] = [
     className: 'xi-gallery-card--wide',
   },
   {
-    src: 'https://i.postimg.cc/MpkfNhP4/image.png',
+    src: 'https://i.postimg.cc/h47D0PWs/image.png',
     title: 'Motion Editorial',
     category: 'Fashion',
     ratio: '9:16',
@@ -113,11 +113,11 @@ const GALLERY: GalleryItem[] = [
 
 const HERO_CARDS = [
   'https://i.postimg.cc/J0vH1g1t/image.png',
-  'https://i.postimg.cc/636vznHF/image.png',
+  'https://i.postimg.cc/Prpt2XgD/image.png',
   'https://i.postimg.cc/VvVnJvWp/example-01.png',
   'https://i.postimg.cc/vZLTjD6g/image.png',
-  'https://i.postimg.cc/VvVnJvWp/example-01.png',
-  'https://i.postimg.cc/J0vH1g1t/image.png',
+  'https://i.postimg.cc/X7mvbGfL/image.png',
+  'https://i.postimg.cc/g2Kk6S9T/image.png',
   'https://i.postimg.cc/ZnG0kdcY/image.png',
 ] as const;
 
