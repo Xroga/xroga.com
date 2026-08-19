@@ -25,6 +25,7 @@
  */
 
 import { configureFlyMachineSandboxProvider, probeSandbox, selectSandboxProvider } from '../sandbox/sandboxRuntime.js';
+import { setSandboxProvidersForTesting } from '../sandbox/sandboxProviders.js';
 import { browserVerificationAdapter } from '../synthesis/browserVerificationAdapter.js';
 import type { WebGateResult } from '../synthesis/webVerificationGate.js';
 import { gatePermitsVerified } from '../synthesis/webVerificationGate.js';
@@ -136,6 +137,18 @@ async function main(): Promise<void> {
     console.error('[verify] Fly Machine provider did not register.');
     process.exit(2);
   }
+
+  // Reproduce the production host's condition: no container runtime.
+  //
+  // The Fly provider is registered as a *fallback*, behind Docker and Podman, and correctly so —
+  // a container can drop capabilities and mount its root read-only, which a Fly Machine cannot.
+  // It wins only where there is no container runtime, which is exactly the production API host.
+  // A GitHub runner has Docker, so without this the selection picks Docker and this script
+  // verifies the wrong path entirely — which is what the first run of it did.
+  //
+  // This narrows the registry to the provider under test. It does not fabricate availability:
+  // the Fly provider is still probed before use and still refuses if it cannot isolate.
+  setSandboxProvidersForTesting([fly]);
 
   const availability = await probeSandbox();
   const { runtime } = await selectSandboxProvider();
