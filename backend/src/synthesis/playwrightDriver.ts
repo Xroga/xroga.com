@@ -90,25 +90,32 @@ function clip(text: string, max = MAX_TEXT): string {
  * module load would make this file unimportable wherever they are — including production, where
  * everything else in the verification chain still needs to be constructible in order to report
  * honestly that the check could not run.
+ *
+ * The specifiers are held in a variable rather than written as literals on purpose. The API image
+ * compiles `backend/src` against `backend/package.json` alone, where Playwright is absent, and a
+ * literal specifier is resolved by `tsc` at compile time — so a literal turns an optional runtime
+ * dependency into a hard build failure. A computed specifier is resolved only by Node, at the
+ * moment the call is actually made, which is exactly the semantics this function wants.
  */
-async function loadChromium(): Promise<{
+const CHROMIUM_MODULES = ['playwright', '@playwright/test'] as const;
+
+type ChromiumLauncher = {
   launch: (options: Record<string, unknown>) => Promise<PlaywrightBrowser>;
-} | null> {
-  try {
-    const mod = (await import('playwright')) as unknown as {
-      chromium?: { launch: (options: Record<string, unknown>) => Promise<PlaywrightBrowser> };
-    };
-    return mod.chromium ?? null;
-  } catch {
+};
+
+async function loadChromium(): Promise<ChromiumLauncher | null> {
+  for (const specifier of CHROMIUM_MODULES) {
     try {
-      const mod = (await import('@playwright/test')) as unknown as {
-        chromium?: { launch: (options: Record<string, unknown>) => Promise<PlaywrightBrowser> };
+      const mod = (await import(specifier as string)) as {
+        chromium?: ChromiumLauncher;
       };
-      return mod.chromium ?? null;
+      if (mod.chromium) return mod.chromium;
     } catch {
-      return null;
+      // Not installed here, or installed without browsers. Try the next, then give up quietly:
+      // the caller's whole job is to report "no browser" as a first-class outcome.
     }
   }
+  return null;
 }
 
 // Minimal structural types. Depending on Playwright's own types would make this module fail to

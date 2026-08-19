@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createServer, type Server } from 'node:http';
+import { readFileSync } from 'node:fs';
 
 import {
   DESKTOP_VIEWPORT,
@@ -20,6 +21,20 @@ import { decideWebVerification } from './browserVerification.js';
  * It skips — loudly, in the test name — when no browser binary is present, because a silent
  * skip is how an integration test comes to prove nothing while still reporting green.
  */
+
+test('the driver imports Playwright through a computed specifier, never a literal', () => {
+  // The API image compiles `backend/src` against `backend/package.json`, which does not list
+  // Playwright. `tsc` resolves *literal* import specifiers at compile time, so a literal here
+  // turns an optional runtime dependency into a hard production build failure — which is exactly
+  // how this broke once. A computed specifier is resolved only by Node, only when called.
+  const source = readFileSync(new URL('./playwrightDriver.ts', import.meta.url), 'utf8');
+  assert.equal(
+    /import\s*\(\s*['"`](?:playwright|@playwright\/test)['"`]\s*\)/.test(source),
+    false,
+    'a literal Playwright import specifier will fail the production backend build',
+  );
+  assert.match(source, /import\s*\(\s*specifier/, 'the specifier must stay computed');
+});
 
 /** A page that works: expected heading, no errors. */
 const HEALTHY = `<!doctype html><html><head><title>Fixture</title></head>
