@@ -3,6 +3,7 @@
  */
 
 import { getSupabaseAdmin } from '../config/supabase.js';
+import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
 
@@ -130,12 +131,22 @@ export function failRun(
   const rec = runs.get(runId);
   if (!rec) return null;
   rec.status = status;
-  rec.output = {
-    type: 'error',
+  // Preserve an engineering artifact that already exists on this record.
+  //
+  // This used to assign unconditionally, which destroyed the result of any run that produced
+  // files and a commit and then threw late — the artifact was written, then overwritten by a
+  // bare error object, on both the live and the recovery path. The failure is real and must be
+  // recorded; the evidence of what was actually built is what the user needs alongside it, and
+  // discarding it makes a late failure indistinguishable from a run that did nothing.
+  const existingArtifact = isEngineeringArtifact(rec.output) ? rec.output : null;
+  const failure = {
     error: error.slice(0, 1000),
     code: status === 'cancelled' ? 'BUILD_CANCELLED' : (extra.code ?? 'BUILD_FAILED'),
     ...(extra.nextUnlockAt ? { nextUnlockAt: extra.nextUnlockAt } : {}),
   };
+  rec.output = existingArtifact
+    ? { ...existingArtifact, ...failure }
+    : { type: 'error', ...failure };
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
   runs.set(runId, rec);
