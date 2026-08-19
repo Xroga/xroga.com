@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { Logo } from "@/components/layout/Logo";
 import styles from "./cybersecurity.module.css";
 
 type IconProps = {
@@ -312,10 +313,9 @@ export default function CybersecurityLanding() {
       <div className={styles.scanlines} aria-hidden="true" />
 
       <header className={styles.siteHeader}>
-        <Link className={styles.brand} href="/" aria-label="Xroga home">
-          <XrogaMark />
-          <span>XROGA</span>
-        </Link>
+        <div className={styles.brand}>
+          <Logo href="/" variant="homepage" height={42} />
+        </div>
 
         <nav className={styles.desktopNav} aria-label="Cybersecurity navigation">
           <a href="#vision">Vision</a>
@@ -610,7 +610,7 @@ export default function CybersecurityLanding() {
             </div>
             <div className={styles.diagramCore}>
               <div className={styles.coreOrb}>
-                <XrogaMark />
+                <Logo href={null} variant="sidebar" height={32} />
               </div>
               <div>
                 <span>XROGA AI</span>
@@ -692,32 +692,13 @@ export default function CybersecurityLanding() {
       </section>
 
       <footer className={styles.footer}>
-        <Link className={styles.footerBrand} href="/">
-          <XrogaMark />
-          <span>XROGA</span>
-        </Link>
+        <div className={styles.footerBrand}>
+          <Logo href="/" variant="homepage" height={38} />
+        </div>
         <p>AI-native cybersecurity direction · Target 2027</p>
         <p>© {new Date().getFullYear()} Xroga. All rights reserved.</p>
       </footer>
     </main>
-  );
-}
-
-function XrogaMark({ size = 22, className = "" }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path d="M5 4L12 11L19 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M5 20L12 13L19 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M4 5L11 12L4 19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M20 5L13 12L20 19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
   );
 }
 
