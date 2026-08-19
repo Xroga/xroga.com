@@ -213,9 +213,21 @@ export function ImageLandingPage() {
         <div className="xi-hero__content">
           <div className="xi-eyebrow"><Sparkles /> XROGA IMAGE <span>AI CREATIVE STUDIO</span></div>
 
-          <h1>
-            Turn words into
-            <span> stunning images.</span>
+          <h1 className="xi-hero-title" aria-label="Change words into stunning AI images">
+            <span className="xi-hero-title__line">CHANGE WORDS INTO</span>
+            <span className="xi-hero-title__line xi-hero-title__line--second">
+              <strong>STUNNING</strong>
+              <span className="xi-hero-title__object" aria-hidden="true">
+                <Image
+                  src="https://i.postimg.cc/VvVnJvWp/example-01.png"
+                  alt=""
+                  fill
+                  sizes="64px"
+                  priority
+                />
+              </span>
+              <span>AI IMAGES!</span>
+            </span>
           </h1>
 
           <p className="xi-hero__lead">
