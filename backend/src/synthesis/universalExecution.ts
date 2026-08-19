@@ -39,6 +39,7 @@ import {
 } from './universalCanonicalTasks.js';
 import type { CanonicalExecutionState, ExecutableTaskNode, ExecutionStateStore } from '../ai/executionRuntime.js';
 import type { ModelId } from '../ai/models.js';
+import type { WebGateResult } from './webVerificationGate.js';
 
 export const UNIVERSAL_EXECUTION_SCHEMA_VERSION = '1.0.0' as const;
 
@@ -91,6 +92,19 @@ export interface ExecutionAdapters {
   readonly commit: (files: readonly ProjectFile[], message: string) => Promise<{ commitSha: string }>;
   /** Optional bounded repair between validation attempts. */
   readonly repair?: (input: { plan: UniversalRunPlan; failures: readonly string[]; files: readonly ProjectFile[] }) => Promise<readonly ProjectFile[] | null>;
+  /**
+   * Optional browser verification for web projects.
+   *
+   * Optional because the check cannot run everywhere — no sandbox, no browser, or a project
+   * that declares no way to serve itself. An absent adapter yields `not_checked`, which is a
+   * gap in evidence and never a pass. See `webVerificationGate`.
+   */
+  readonly browserVerify?: (input: {
+    files: readonly ProjectFile[];
+    buildPassed: boolean;
+    testsPassed: boolean | null;
+    signal?: AbortSignal;
+  }) => Promise<WebGateResult>;
 }
 
 /**
@@ -404,6 +418,89 @@ export async function executeUniversalRun(input: {
   if (!report.passed) {
     return fail('failed', 'validation', report.blocker ?? 'validation failed', validationPlan,
       report.blocker ? [report.blocker] : [], files);
+  }
+
+  // ── Browser verification, feeding the same bounded repair ──────────────────
+  //
+  // This is the gate that stops a web project being called verified because it compiled. It
+  // runs *after* deterministic validation passes, because a project that does not build cannot
+  // be served and its browser evidence would be a pile of correlated noise.
+  //
+  // A failure here goes into the same `input.adapters.repair` the validation failures use, and
+  // is followed by a fresh browser check — never the pre-repair verdict, which describes code
+  // that no longer exists. Retries stay bounded by the canonical task's own policy; no counter
+  // is introduced here, because the scheduler owns that.
+  let browserGate: WebGateResult | null = null;
+  if (input.adapters.browserVerify) {
+    browserGate = await input.adapters.browserVerify({
+      files,
+      buildPassed: report.passed,
+      testsPassed: report.executed.some((entry) => /test/i.test(entry.validation.command.purpose))
+        ? !report.failures.some((entry) => /test/i.test(entry.validation.command.purpose))
+        : null,
+      signal: input.signal,
+    });
+    record(
+      'validation',
+      `browser verification ${browserGate.status}`,
+      browserGate.blocker ?? browserGate.notCheckedReason ?? 'browser checks passed',
+    );
+
+    if (browserGate.status === 'failed' && input.adapters.repair) {
+      // The exact observations — stacks, failing URLs, the missing selector — not a summary.
+      // A repairer told "browser validation failed" changes something plausible; one told
+      // `TypeError: cart.map is not a function at src/Cart.tsx:42` changes the line that threw.
+      const browserFailures = browserGate.evidenceForRepair
+        ? [browserGate.evidenceForRepair]
+        : [browserGate.blocker ?? 'browser verification failed'];
+      const repairOutcome = implementationState
+        ? await runRepairAsCanonicalTask({
+            state: implementationState,
+            objective: `Repair browser verification failure`,
+            selectedModel: input.implementationRouting?.selectedModel ?? null,
+            provider: input.implementationRouting?.provider ?? null,
+            failureCount: browserFailures.length,
+            repair: () => input.adapters.repair!({ plan: validationPlan, failures: browserFailures, files }),
+            store: input.executionStore,
+            signal: input.signal,
+          })
+        : { files: await input.adapters.repair({ plan: validationPlan, failures: browserFailures, files }), task: null };
+
+      if (repairOutcome.files) {
+        files = repairOutcome.files;
+        record('repair', 'browser repair applied', `${browserFailures.length} browser failure(s) addressed`);
+
+        // Deterministic validation first — a browser fix that breaks the build is not a fix.
+        const rerunPlan = planUniversalRun({ prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId });
+        report = await runValidationPlan(rerunPlan, input.adapters.runValidation);
+        record('validation', `revalidation after browser repair`, report.blocker ?? 'revalidated');
+
+        if (report.passed) {
+          // Fresh browser evidence for the repaired file set. Reusing the pre-repair verdict
+          // here would let changed code inherit a verdict about code that no longer exists.
+          browserGate = await input.adapters.browserVerify({
+            files,
+            buildPassed: report.passed,
+            testsPassed: null,
+            signal: input.signal,
+          });
+          record(
+            'validation',
+            `browser re-verification ${browserGate.status}`,
+            browserGate.blocker ?? 'browser checks passed after repair',
+          );
+        }
+      }
+    }
+
+    if (!report.passed) {
+      return fail('failed', 'validation', report.blocker ?? 'validation failed after browser repair',
+        validationPlan, report.blocker ? [report.blocker] : [], files);
+    }
+    if (browserGate.status === 'failed') {
+      return fail('blocked', 'validation', browserGate.blocker ?? 'browser verification failed',
+        validationPlan, browserGate.verdict?.findings.map((finding) => finding.summary) ?? [], files);
+    }
   }
 
   // ── Review over the complete diff ──────────────────────────────────────────
