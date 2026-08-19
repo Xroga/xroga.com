@@ -1,0 +1,144 @@
+name: Fly sandbox browser verification
+
+# Proves that browser verification actually works where production will run it: a disposable
+# Fly Machine in the sandbox app, using the pinned Playwright image.
+#
+# It runs on this branch as well as on main, deliberately. A `workflow_dispatch`-only workflow
+# cannot be dispatched until it exists on the default branch — which would mean merging the
+# change before the evidence for merging it exists. Running on push closes that circle.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feat/xroga-production-browser-verification'
+    paths:
+      - 'backend/src/synthesis/**'
+      - 'backend/src/sandbox/**'
+      - 'backend/src/scripts/verifyFlySandboxBrowser.ts'
+      - 'fly.api.toml'
+      - '.github/workflows/fly-sandbox-browser-verification.yml'
+
+concurrency:
+  group: fly-sandbox-browser-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Where XROGA_SANDBOX_FLY_TOKEN lives. Without this the job has no isolation credential and
+    # reports honestly rather than pretending.
+    environment: Production
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Pinned to an immutable commit, matching the deploy workflow.
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+        with:
+          version: 0.4.49
+
+      # Read from fly.api.toml rather than restated here, so the verified configuration is the
+      # deployed configuration and the two cannot drift apart.
+      - name: Read sandbox configuration from fly.api.toml
+        id: config
+        run: |
+          set -euo pipefail
+          app=$(grep -E "^\s*XROGA_SANDBOX_FLY_APP\s*=" fly.api.toml | head -1 | sed -E "s/.*=\s*'([^']*)'.*/\1/")
+          image=$(grep -E "^\s*XROGA_SANDBOX_BROWSER_IMAGE\s*=" fly.api.toml | head -1 | sed -E "s/.*=\s*'([^']*)'.*/\1/")
+          if [ -z "$app" ] || [ -z "$image" ]; then
+            echo "::error::fly.api.toml does not declare XROGA_SANDBOX_FLY_APP and XROGA_SANDBOX_BROWSER_IMAGE."
+            exit 1
+          fi
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "sandbox app: $app"
+          echo "browser image: $image"
+
+      - name: Refuse a self-targeting configuration
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.config.outputs.app }}" = "xroga-api" ]; then
+            echo "::error::The sandbox app must not be the API's own app — such a machine would inherit every production secret."
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Confirm the isolation credential is present
+        env:
+          XROGA_SANDBOX_FLY_TOKEN: ${{ secrets.XROGA_SANDBOX_FLY_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${XROGA_SANDBOX_FLY_TOKEN:-}" ]; then
+            echo "::error::XROGA_SANDBOX_FLY_TOKEN is not set on the Production environment. Add it under Settings → Environments → Production → Environment secrets."
+            exit 1
+          fi
+          # Presence only. The value is never printed, logged, or length-reported.
+          echo "isolation credential present"
+
+      # The real thing: a generated application and Chromium inside one Fly Machine.
+      - name: Real Fly sandbox browser verification
+        env:
+          XROGA_SANDBOX_FLY_APP: ${{ steps.config.outputs.app }}
+          XROGA_SANDBOX_BROWSER_IMAGE: ${{ steps.config.outputs.image }}
+          XROGA_SANDBOX_FLY_TOKEN: ${{ secrets.XROGA_SANDBOX_FLY_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx tsx backend/src/scripts/verifyFlySandboxBrowser.ts > sandbox-verification.json
+          echo "--- evidence ---"
+          cat sandbox-verification.json
+
+      # Isolation, asserted against Fly itself rather than inferred from our own code.
+      - name: Assert the sandbox app has no public IP
+        env:
+          FLY_API_TOKEN: ${{ secrets.XROGA_SANDBOX_FLY_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl ips list -a "${{ steps.config.outputs.app }}" --json > sandbox-ips.json
+          cat sandbox-ips.json
+          count=$(node -e "const v=require('./sandbox-ips.json'); console.log(Array.isArray(v)?v.length:0)")
+          if [ "$count" != "0" ]; then
+            echo "::error::The sandbox app has ${count} allocated IP address(es). A generated application must be unreachable from the internet."
+            exit 1
+          fi
+          echo "no public IP allocated"
+
+      - name: Assert no sandbox machine outlived the run
+        env:
+          FLY_API_TOKEN: ${{ secrets.XROGA_SANDBOX_FLY_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Machines are destroyed after each execution, and `auto_destroy` is the backstop if
+          # this process dies mid-run. A survivor is both a cost leak and a containment failure.
+          for attempt in 1 2 3 4 5 6; do
+            flyctl machines list -a "${{ steps.config.outputs.app }}" --json > sandbox-machines.json || echo '[]' > sandbox-machines.json
+            count=$(node -e "const v=require('./sandbox-machines.json'); console.log(Array.isArray(v)?v.length:0)")
+            if [ "$count" = "0" ]; then
+              echo "no sandbox machine remains"
+              exit 0
+            fi
+            echo "still ${count} machine(s) present; waiting for destruction (attempt ${attempt}/6)"
+            sleep 10
+          done
+          cat sandbox-machines.json
+          echo "::error::Sandbox machines outlived the verification run."
+          exit 1
+
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: fly-sandbox-verification-${{ github.sha }}
+          path: |
+            sandbox-verification.json
+            sandbox-ips.json
+            sandbox-machines.json
+          if-no-files-found: warn
+          retention-days: 30

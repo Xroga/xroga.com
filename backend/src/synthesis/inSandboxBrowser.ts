@@ -116,15 +116,47 @@ function emit(payload) {
   process.stdout.write('\\n' + CONFIG.begin + JSON.stringify(payload) + CONFIG.end + '\\n');
 }
 
+/** Global install roots. The official Playwright image installs the package globally. */
+const MODULE_ROOTS = [
+  process.env.XROGA_PLAYWRIGHT_ROOT,
+  '/usr/lib/node_modules',
+  '/usr/local/lib/node_modules',
+  '/usr/local/share/npm-global/lib/node_modules',
+].filter(Boolean);
+
 async function loadChromium() {
-  // The image must provide Playwright resolvable to Node. Both names are tried because the
-  // official image and a project-local install do not agree on which one is present.
-  for (const name of ['playwright', 'playwright-core']) {
+  const names = ['playwright', 'playwright-core'];
+
+  // A bare specifier resolves by walking *up* from the script, so it finds a project-local
+  // install and nothing else. The official Playwright image installs the package **globally**,
+  // which is not on that path at all — so a bare import alone would report "no browser" inside
+  // the very image built to provide one. The global roots are searched explicitly, and
+  // require.resolve is used rather than guessing at filenames, because the package entry
+  // point is the package's business, not ours.
+  for (const name of names) {
     try {
       const mod = await import(name);
-      if (mod.chromium) return mod.chromium;
+      const chromium = mod.chromium || (mod.default && mod.default.chromium);
+      if (chromium) return chromium;
     } catch {}
   }
+
+  try {
+    const { createRequire } = await import('node:module');
+    const { pathToFileURL } = await import('node:url');
+    const require = createRequire(import.meta.url);
+    for (const name of names) {
+      try {
+        const resolved = require.resolve(name, { paths: MODULE_ROOTS });
+        // The global package may be CommonJS, in which case the namespace carries it on
+        // "default". Both shapes are accepted rather than assuming one.
+        const mod = await import(pathToFileURL(resolved).href);
+        const chromium = mod.chromium || (mod.default && mod.default.chromium);
+        if (chromium) return chromium;
+      } catch {}
+    }
+  } catch {}
+
   return null;
 }
 
