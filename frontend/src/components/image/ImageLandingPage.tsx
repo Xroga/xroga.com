@@ -404,70 +404,33 @@ export function ImageLandingPage() {
         </div>
       </section>
 
-      <section className="xi-product-section">
-        <div className="xi-product-copy">
-          <span className="xi-kicker">XROGA IMAGE WORKSPACE</span>
-          <h2>Create, refine and remix in one visual studio.</h2>
-          <p>
-            Move from a rough sentence to a controlled creative direction. Keep the prompt,
-            reference, model, style and variations connected instead of jumping between tools.
-          </p>
+      <section className="xi-image-action-section" aria-labelledby="xi-image-action-title">
+        <div className="xi-image-action-card">
+          <div className="xi-image-action-card__grid" aria-hidden="true" />
 
-          <div className="xi-product-points">
-            <article><span>01</span><div><h3>Generate from language</h3><p>Natural prompts with scene, camera, mood and visual direction.</p></div></article>
-            <article><span>02</span><div><h3>Guide with references</h3><p>Add an image to steer composition, identity, color or visual tone.</p></div></article>
-            <article><span>03</span><div><h3>Refine the direction</h3><p>Reuse prompts, switch aspect ratios and explore connected variations.</p></div></article>
+          <div className="xi-image-action-card__copy">
+            <span className="xi-image-action-card__eyebrow">04 · IMAGE CREATION</span>
+            <h2 id="xi-image-action-title">
+              Your next image starts
+              <em>with one sentence.</em>
+            </h2>
+            <p>Write the idea. Set the direction. Generate the visual.</p>
+
+            <button type="button" onClick={() => scrollTo('generator')}>
+              Create an image <ArrowRight />
+            </button>
           </div>
 
-          <button className="xi-text-cta" type="button" onClick={() => scrollTo('generator')}>
-            Start creating <ArrowRight />
-          </button>
-        </div>
+          <div className="xi-image-action-card__system" aria-hidden="true">
+            <div className="xi-image-action-card__orbit xi-image-action-card__orbit--outer" />
+            <div className="xi-image-action-card__orbit xi-image-action-card__orbit--inner" />
+            <div className="xi-image-action-card__core">∞</div>
 
-        <div className="xi-studio-mockup" aria-label="Xroga Image product preview">
-          <div className="xi-studio-mockup__bar">
-            <div className="xi-studio-mockup__dots"><i /><i /><i /></div>
-            <span>xroga.com/image</span>
-            <em>CREATIVE STUDIO</em>
-          </div>
-
-          <div className="xi-studio-mockup__body">
-            <aside>
-              <b><Sparkles /> Xroga Image</b>
-              <button className="is-active" type="button">Generate</button>
-              <button type="button">History</button>
-              <button type="button">Collections</button>
-              <span>TOOLS</span>
-              <button type="button">Edit image</button>
-              <button type="button">Upscale</button>
-            </aside>
-
-            <section>
-              <div className="xi-studio-prompt">
-                <span>Prompt</span>
-                <p>Cinematic portrait with strong backlight, warm red accents, realistic skin, luxury editorial photography.</p>
-                <div><i>4:5</i><i>Cinematic</i><i>Photoreal</i><button type="button"><WandSparkles /> Generate</button></div>
-              </div>
-
-              <div className="xi-studio-grid">
-                {[GALLERY[0], GALLERY[1], GALLERY[5], GALLERY[8]].map((item, index) => (
-                  <article key={item.title} className={index === 0 ? 'is-selected' : ''}>
-                    <Image src={item.src} alt="" fill sizes="220px" />
-                    <span>0{index + 1}</span>
-                  </article>
-                ))}
-              </div>
-            </section>
+            <span className="xi-image-action-card__step xi-image-action-card__step--write">Write</span>
+            <span className="xi-image-action-card__step xi-image-action-card__step--direct">Direct</span>
+            <span className="xi-image-action-card__step xi-image-action-card__step--generate">Generate</span>
           </div>
         </div>
-      </section>
-
-      <section className="xi-final-cta">
-        <div className="xi-final-cta__glow" />
-        <span><Sparkles /> XROGA IMAGE</span>
-        <h2>Your next image starts<br />with one sentence.</h2>
-        <p>Write the idea. Set the direction. Generate the visual.</p>
-        <button type="button" onClick={() => scrollTo('generator')}>Create an image <ArrowRight /></button>
       </section>
 
       <footer className="xi-footer">
