@@ -1,3 +1,4 @@
+```
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
@@ -24,16 +25,12 @@ import {
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
-import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import {
-  BUILD_KINDS,
-  PLACEHOLDERS,
-  PROMPT_SUGGESTIONS,
-} from '@/lib/cryptoBuilderContent';
+import { BUILD_KINDS } from '@/lib/cryptoBuilderContent';
 import { HACKATHON_SOURCES } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
+import { CryptoPromptBar } from './CryptoPromptBar';
 import styles from './crypto.module.css';
 
 export const metadata: Metadata = buildMetadata({
@@ -260,18 +257,7 @@ export default function CryptoPage() {
           </a>
 
           <div className={styles.heroConsole} id="builder">
-            <div className={styles.consoleHead}>
-              <span>XROGA AI · CRYPTO</span>
-              <small>repository-aware builder</small>
-            </div>
-
-            <HomepageChatBar
-              placeholders={PLACEHOLDERS}
-              suggestions={PROMPT_SUGGESTIONS}
-              ariaLabel="Describe the crypto product or AI agent you want to build"
-              fallbackPrompt="Build a crypto product with Xroga AI"
-              className={styles.promptBar}
-            />
+            <CryptoPromptBar />
           </div>
 
           <div className={styles.stackLabel}>RESEARCH FROM OFFICIAL ECOSYSTEM SOURCES</div>
@@ -651,3 +637,4 @@ export default function CryptoPage() {
     </main>
   );
 }
+```
