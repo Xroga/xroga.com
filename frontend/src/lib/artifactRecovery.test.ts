@@ -7,6 +7,7 @@ import {
   type EngineeringArtifact,
 } from './engineeringArtifact';
 import { swarmOutputToText } from './swarm';
+import { isRecoverableBuildOutput } from './recoveredBuildOutput';
 
 /**
  * The six behaviours that must hold for this change to be safe to merge.
@@ -53,8 +54,12 @@ function recover(run: { status: string; output: unknown }):
   | { delivered: true; text: string; output: unknown }
   | { delivered: false; error: string } {
   if (run.status === 'error') {
-    if (isRenderableArtifact(run.output)) {
-      return { delivered: true, text: engineeringArtifactToText(run.output), output: run.output };
+    if (isRecoverableBuildOutput(run.output)) {
+      return {
+        delivered: true,
+        text: isRenderableArtifact(run.output) ? engineeringArtifactToText(run.output) : '',
+        output: run.output,
+      };
     }
     const output = run.output as { error?: string } | null;
     return { delivered: false, error: output?.error ?? 'The persisted build failed.' };
@@ -168,6 +173,26 @@ test('landing_page, chat, image and unknown outputs are untouched', () => {
     swarmOutputToText({ type: 'image', imageUrl: 'https://x/y.png', prompt: 'a cat' }),
     /!\[a cat\]\(https:\/\/x\/y\.png\)/,
   );
+});
+
+test('a persisted error run carrying generated landing source delivers it instead of going blank', () => {
+  const output = {
+    type: 'landing_page',
+    projectName: 'Orbit Coffee',
+    html: '<!doctype html><html><body><main>Orbit Coffee</main></body></html>',
+    css: 'body { color: #fff; }',
+    js: '',
+    shipBlockers: ['Vercel authorization is required'],
+  };
+  const result = recover({ status: 'error', output });
+  assert.equal(result.delivered, true);
+  assert.equal(result.delivered && result.output, output);
+});
+
+test('a placeholder landing output without generated source remains a real failure', () => {
+  assert.equal(isRecoverableBuildOutput({ type: 'landing_page' }), false);
+  const result = recover({ status: 'error', output: { type: 'landing_page', error: 'No source' } });
+  assert.equal(result.delivered, false);
 });
 
 test('a successful non-engineering run still recovers as before', () => {
