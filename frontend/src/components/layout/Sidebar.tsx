@@ -22,7 +22,6 @@ import {
   TrendingUp,
   FolderGit2,
   LayoutTemplate,
-  Bitcoin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
