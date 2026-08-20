@@ -101,13 +101,7 @@ const navItems: NavEntry[] = [
     icon: LayoutDashboard,
     tip: 'Recent activity, billing, plan, and usage.',
   },
-  {
-    href: '/crypto-builder',
-    motion: 'pulse' as const,
-    label: 'Crypto Builder',
-    icon: Bitcoin,
-    tip: 'Build crypto agents, Web3 apps, DeFi and DAO tools, on-chain monitoring, and hackathon projects.',
-  },
+  
   {
     href: '/dashboard/projects',
     motion: 'flip' as const,
