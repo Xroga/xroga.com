@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildScaffoldForPrompt, detectScaffoldKind } from '../services/projectScaffold.js';
+import {
+  applyDeterministicStaticUpdate,
+  buildScaffoldForPrompt,
+  detectScaffoldKind,
+} from '../services/projectScaffold.js';
 
 /**
  * The deterministic scaffold fallback.
@@ -137,4 +141,57 @@ test('the scaffold contains no model commentary or placeholder markers', () => {
       assert.doesNotMatch(file.content, /^I (cannot|can't|am unable)/im, file.path);
     }
   }
+});
+
+test('the Orbit Coffee recovery scaffold satisfies the explicit initial prompt', () => {
+  const prompt = `Build a modern one-page coffee shop website called Orbit Coffee.
+Use a dark premium visual style.
+The hero heading must say exactly 'Coffee for curious minds'.
+Include three product cards and a bright 'Order now' button.
+Make it responsive and runnable as a real web app.`;
+  const { files } = buildScaffoldForPrompt({ prompt, projectName: 'orbit-coffee' });
+  const html = files.find((file) => file.path === 'index.html')?.content ?? '';
+  const css = files.find((file) => file.path === 'styles.css')?.content ?? '';
+
+  assert.match(html, /Coffee for curious minds/);
+  assert.match(html, />Order now<\/a>/);
+  assert.equal((html.match(/class="product-card"/g) ?? []).length, 3);
+  assert.match(html, /Orbit Coffee/);
+  assert.match(css, /--bg: #0b0d10/);
+  assert.match(css, /@media \(min-width: 720px\)/);
+});
+
+test('a recognised static follow-up safely updates the existing deterministic project', () => {
+  const initial = buildScaffoldForPrompt({
+    prompt:
+      "Build a one-page coffee website called Orbit Coffee with three product cards and an 'Order now' button.",
+    projectName: 'orbit-coffee',
+  }).files;
+  const updated = applyDeterministicStaticUpdate(
+    initial,
+    `Update Orbit Coffee:
+add a new section titled 'Roasted this week',
+add a fourth product card called 'Eclipse Blend',
+and change the main button text from 'Order now' to 'Explore the menu'.
+Keep the existing visual style.`,
+  );
+
+  assert.ok(updated, 'recognised update was not applied');
+  const html = updated!.find((file) => file.path === 'index.html')?.content ?? '';
+  assert.match(html, /Roasted this week/);
+  assert.match(html, /Eclipse Blend/);
+  assert.match(html, />Explore the menu<\/a>/);
+  assert.doesNotMatch(html, />Order now<\/a>/);
+  assert.equal((html.match(/class="product-card"/g) ?? []).length, 4);
+});
+
+test('deterministic updates refuse arbitrary customer code or ambiguous edits', () => {
+  const foreign = [{ path: 'index.html', content: '<main>Customer code</main>' }];
+  assert.equal(applyDeterministicStaticUpdate(foreign, "change 'a' to 'b'"), null);
+
+  const generated = buildScaffoldForPrompt({
+    prompt: 'Build a simple website',
+    projectName: 'safe-site',
+  }).files;
+  assert.equal(applyDeterministicStaticUpdate(generated, 'make it better'), null);
 });

@@ -9,7 +9,10 @@ import { buildChromeExtensionScaffold } from './scaffolds/chromeExtensionScaffol
 import { buildElectronScaffold } from './scaffolds/electronScaffold.js';
 
 export { detectScaffoldKind, type ScaffoldKind } from './scaffolds/detectScaffold.js';
-export { buildDeterministicSite } from './scaffolds/deterministicSite.js';
+export {
+  applyDeterministicStaticUpdate,
+  buildDeterministicSite,
+} from './scaffolds/deterministicSite.js';
 import { buildDeterministicSite } from './scaffolds/deterministicSite.js';
 
 /**

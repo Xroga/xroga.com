@@ -17,6 +17,7 @@ import {
   chatCompletionStream,
   estimateMessageTokens,
   type ChatMessage,
+  type ChatResult,
 } from './openaiCompat.js';
 import { requireBuildArtifacts } from './buildOutputValidation.js';
 import { selectShipBlockerMessage } from './compileBlockerMessage.js';
@@ -105,6 +106,7 @@ import {
   getUserProviderKey,
 } from '../services/integrations/userProviderKeys.js';
 import {
+  applyDeterministicStaticUpdate,
   buildScaffoldForPrompt,
   detectScaffoldKind,
   mergeScaffoldWithGenerated,
@@ -496,6 +498,8 @@ async function callBuilderStream(
     credentialOverrides?: Partial<Record<ModelId, string>>;
     validateResponse?: (result: Awaited<ReturnType<typeof chatCompletionStream>>) => void;
     budget?: Partial<BuilderAttemptBudget>;
+    /** Bound the provider fan-out for low-cost flows such as a simple static site. */
+    maxAttempts?: number;
     onAttemptFailure?: (record: BuilderAttemptRecord) => void;
     /**
      * Called periodically while an attempt is still waiting on the provider. Purely
@@ -517,9 +521,11 @@ async function callBuilderStream(
   },
 ): Promise<Awaited<ReturnType<typeof chatCompletionStream>>> {
   const healthAwareOrder = fallbackOrderForModel(preferred);
-  const order = healthAwareOrder.length
+  const candidates = healthAwareOrder.length
     ? healthAwareOrder
     : [preferred, ...BUILDER_FALLBACKS.filter((m) => m !== preferred)];
+  const maxAttempts = Math.max(1, opts.maxAttempts ?? candidates.length);
+  const order = candidates.slice(0, maxAttempts);
   let lastErr: Error | null = null;
   for (const modelId of order) {
     const attemptStartedAt = Date.now();
@@ -1715,22 +1721,28 @@ export async function runBuildPipeline(opts: {
     !isUpdate &&
     scaffoldForArchitect === 'static' &&
     (route.kind === 'build_volume' ||
-      /\b(landing\s*page|simple\s+(web|site|app)|static\s+site)\b/i.test(userFacingPrompt));
+      /\b(landing\s*page|one[ -]?page\s+(?:web)?site|simple\s+(web|site|app)|static\s+site)\b/i.test(
+        userFacingPrompt,
+      ));
+  const deterministicStaticUpdate = isUpdate
+    ? applyDeterministicStaticUpdate(prior.files, userFacingPrompt)
+    : null;
+  const resilientStaticPath = simpleStaticFastPath || Boolean(deterministicStaticUpdate);
 
   emit({
     agent: 'architect',
     status: 'planning',
-    message: simpleStaticFastPath
+    message: resilientStaticPath
       ? 'Architect using static landing plan (fast path)…'
       : 'Architect planning file tree…',
     swarmStatusLabel: 'Architect',
-    swarmActivity: simpleStaticFastPath ? 'Static fast path' : 'File plan',
+    swarmActivity: resilientStaticPath ? 'Static fast path' : 'File plan',
     swarmTodos: todos('architect'),
   });
   let architectBlock = '';
   let architectPlanSummary: { stack: string; files: string[]; notes: string[] } | undefined;
   try {
-    if (simpleStaticFastPath) {
+    if (resilientStaticPath) {
       const plan = {
         stack: 'static',
         files: [
@@ -1898,38 +1910,93 @@ export async function runBuildPipeline(opts: {
   });
   trace.setMeta({ buildRoute: { source: buildSelection.source, reason: buildSelection.reason } });
 
-  let result = await callBuilderStream(
-    buildSelection.modelId,
-    [
-      { role: 'system', content: BUILDER_SYSTEM },
-      { role: 'user', content: builderUser },
-    ],
-    {
-      userId: opts.userId,
-      maxTokens: 16384,
-      temperature: isUpdate ? 0.3 : 0.45,
-      onDelta: opts.onDelta,
-      onStreamDelta: (delta) => {
-        for (const event of narrator.push(delta)) narrate(event);
+  let deterministicFiles: ProjectFile[] = [];
+  let usedDeterministicScaffold = false;
+  let result: ChatResult;
+  try {
+    result = await callBuilderStream(
+      buildSelection.modelId,
+      [
+        { role: 'system', content: BUILDER_SYSTEM },
+        { role: 'user', content: builderUser },
+      ],
+      {
+        userId: opts.userId,
+        maxTokens: resilientStaticPath ? 8192 : 16384,
+        temperature: isUpdate ? 0.3 : 0.45,
+        onDelta: opts.onDelta,
+        onStreamDelta: (delta) => {
+          for (const event of narrator.push(delta)) narrate(event);
+        },
+        signal: opts.signal,
+        onModelFallback: (from, to) => {
+          emitModelSwitch(from, to);
+        },
+        credentialOverrides,
+        // A simple static product has a complete local generator. One bounded AI
+        // attempt preserves the richer path without multiplying a silent provider's
+        // 60-second deadline across the entire fleet.
+        maxAttempts: resilientStaticPath ? 1 : undefined,
+        budget: resilientStaticPath
+          ? { firstTokenMs: 25_000, generationMs: 120_000, maxOutputChars: 600_000 }
+          : undefined,
+        onWaiting: ({ elapsedMs, model }) =>
+          emit({
+            agent: 'builder',
+            status: 'awaiting_model',
+            // §31: the model persona was user-visible here. The user does not act differently
+            // on which model is slow, and naming it publishes fleet composition.
+            message: heartbeatMessage(`${BLACK_HOLE_PUBLIC_NAME} to return code`, elapsedMs),
+            swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
+            swarmTodos: todos('build'),
+          }),
+        validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
       },
-      signal: opts.signal,
-      onModelFallback: (from, to) => {
-        emitModelSwitch(from, to);
+    );
+  } catch (error) {
+    const failure = classifyBuilderFailure(error);
+    if (!isRetryableBuilderFailure(failure)) {
+      throw error;
+    }
+
+    if (isUpdate) {
+      deterministicFiles = deterministicStaticUpdate ?? [];
+    } else if (scaffoldForArchitect === 'static') {
+      deterministicFiles = buildScaffoldForPrompt({
+        prompt: userFacingPrompt,
+        projectName: projectNameFromPrompt(userFacingPrompt),
+      }).files;
+    }
+    usedDeterministicScaffold = deterministicFiles.length > 0;
+    if (!usedDeterministicScaffold) throw error;
+
+    // This object records the attempted route while stating the actual local source.
+    // It carries zero usage and is never counted as a successful model validation.
+    result = {
+      text: '',
+      modelId: buildSelection.modelId,
+      apiModel: 'deterministic-static-v1',
+      provider: 'xroga-local',
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+    };
+    trace.setMeta({
+      deterministicScaffold: {
+        used: true,
+        reason: failure,
+        files: deterministicFiles.map((file) => file.path),
       },
-      credentialOverrides,
-      onWaiting: ({ elapsedMs, model }) =>
-        emit({
-          agent: 'builder',
-          status: 'awaiting_model',
-          // §31: the model persona was user-visible here. The user does not act differently
-          // on which model is slow, and naming it publishes fleet composition.
-          message: heartbeatMessage(`${BLACK_HOLE_PUBLIC_NAME} to return code`, elapsedMs),
-          swarmStatusLabel: isUpdate ? 'Patching' : 'Building',
-          swarmTodos: todos('build'),
-        }),
-      validateResponse: (completion) => requireBuildArtifacts(completion.text, isUpdate),
-    },
-  );
+    });
+    emit({
+      agent: 'builder',
+      status: 'scaffolding',
+      message: 'AI route was unavailable — continuing with Xroga’s local project generator',
+      swarmStatusLabel: 'Building',
+      swarmActivity: 'Resilient static generator',
+      swarmTodos: todos('build'),
+    });
+  }
   // A response cut short leaves a fence open; reporting the partial file is the
   // evidence that it was truncated.
   for (const event of narrator.finish()) narrate(event);
@@ -1943,10 +2010,12 @@ export async function runBuildPipeline(opts: {
     swarmTodos: todos('build'),
   });
 
-  usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+  if (!usedDeterministicScaffold) {
+    usage = await recordUsage(opts.userId, result.modelId, result.inputTokens, result.outputTokens);
+  }
 
   // Resolve output files: patches first, then full files, then classic site
-  let nextFiles: ProjectFile[] = [];
+  let nextFiles: ProjectFile[] = deterministicFiles;
   let previousFiles: ProjectFile[] = prior.files;
   let usedPatches = false;
   let deletedPaths: string[] = [];
@@ -2174,7 +2243,6 @@ export async function runBuildPipeline(opts: {
    * that the existing install/repair and shipping stages can carry the rest of the
    * way. These are real files written to the workspace, never a fake preview.
    */
-  let usedDeterministicScaffold = false;
   if (!isUpdate && !nextFiles.length) {
     const scaffoldKind = detectScaffoldKind(userFacingPrompt);
     const { files: scaffoldFiles } = buildScaffoldForPrompt({
@@ -2447,7 +2515,9 @@ export async function runBuildPipeline(opts: {
     });
   }
   trace.setMeta({ compile: { ok: compile.ok, skipped: compile.skipped, issues: compile.issues } });
-  recordModelValidation(result.modelId, qa.ok && (compile.ok || compile.skipped));
+  if (!usedDeterministicScaffold) {
+    recordModelValidation(result.modelId, qa.ok && (compile.ok || compile.skipped));
+  }
 
   const compileNeedsCodeRepair = validationFailureNeedsCodeRepair(compile);
 
@@ -2653,7 +2723,7 @@ export async function runBuildPipeline(opts: {
     buildOk: compile.ok,
     reviewOk: qa.ok,
     requiredCapabilities: intelligentPlan.classification.requiredCapabilities,
-    provider: MODELS[result.modelId].provider,
+    provider: usedDeterministicScaffold ? 'xroga-local' : MODELS[result.modelId].provider,
     repairLoops,
     modelSwitches,
     recoverySucceeded:
