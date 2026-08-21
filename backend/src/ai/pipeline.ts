@@ -421,6 +421,18 @@ function mergeFileMaps(base: ProjectFile[], overlay: ProjectFile[]): ProjectFile
   return [...map.entries()].map(([path, content]) => ({ path, content }));
 }
 
+/** A cached tree is authoritative only when GitHub says it represents this exact head. */
+export function projectMemoryMatchesRemoteHead(
+  memoryCommitSha: string | undefined,
+  remoteHeadSha: string | undefined,
+): boolean {
+  return Boolean(
+    memoryCommitSha &&
+      remoteHeadSha &&
+      memoryCommitSha.toLowerCase() === remoteHeadSha.toLowerCase(),
+  );
+}
+
 async function hydratePriorFiles(
   userId: string,
   meta?: BuildClientMeta,
@@ -433,8 +445,59 @@ async function hydratePriorFiles(
   const branch = meta?.githubTargetBranch || 'main';
   const repo = meta?.githubTargetRepo ?? null;
 
-  // 1) Hot + DB memory — no GitHub re-read when snapshot exists
+  // A selected GitHub repository is the authority for its own source tree. Project
+  // memory can contain a validated snapshot from a run that stopped before push;
+  // treating that snapshot as committed source made a genuinely empty repository
+  // appear to contain six files on the next terminal. Always reconcile the remote
+  // first. A read failure stops the build instead of turning an unknown repository
+  // into an empty one and risking a destructive "new" build.
   const mem = await getProjectMemoryAsync(userId, repo, branch);
+  if (repo?.includes('/')) {
+    try {
+      const remote = await inspectConnectedRepositoryState(userId, repo, branch);
+      if (remote.status === 'empty') {
+        return { files: [], fromMemory: false };
+      }
+      if (remote.status === 'unavailable') {
+        throw new Error(remote.reason);
+      }
+      if (
+        mem?.files?.length &&
+        projectMemoryMatchesRemoteHead(mem.commitSha, remote.headSha)
+      ) {
+        return {
+          files: mem.files,
+          projectName: mem.projectName || meta?.priorSite?.projectName,
+          fromMemory: true,
+          aiSummary: mem.aiSummary,
+        };
+      }
+      const focused = await fetchGitHubFilesByPaths(userId, repo, UPDATE_HYDRATE_PATHS, branch);
+      const files = focused.length ? focused : await fetchBuildFilesFromGitHub(userId, repo, branch);
+      setProjectMemory({
+        userId,
+        repo,
+        branch,
+        projectName: mem?.projectName || meta?.priorSite?.projectName,
+        files,
+        commitSha: remote.headSha,
+        aiSummary: mem?.aiSummary,
+        aiSummaryModel: mem?.aiSummaryModel,
+      });
+      return {
+        files,
+        projectName: mem?.projectName || meta?.priorSite?.projectName,
+        fromMemory: false,
+        aiSummary: mem?.aiSummary,
+      };
+    } catch (err) {
+      const safe = normalizeProviderError(err).safeMessage;
+      throw new Error(`Could not read the selected GitHub repository: ${safe}`);
+    }
+  }
+
+  // Local-only products may use their durable snapshot because there is no remote
+  // source of truth to reconcile.
   if (mem?.files?.length) {
     return {
       files: mem.files,
@@ -444,7 +507,8 @@ async function hydratePriorFiles(
     };
   }
 
-  // 2) Client priorSite (workspace preview) — cheap, no GitHub
+  // Client priorSite is valid only for a local product. A selected repository must
+  // never be shadowed by browser state.
   if (meta?.priorSite?.html?.trim()) {
     const files = landingFilesFromOutput(
       meta.priorSite.html,
@@ -466,22 +530,6 @@ async function hydratePriorFiles(
     };
   }
 
-  // 3) GitHub — hydrate classic + Next/Expo paths so patches match the live repo
-  if (repo?.includes('/')) {
-    try {
-      const files = await fetchGitHubFilesByPaths(userId, repo, UPDATE_HYDRATE_PATHS, branch);
-      if (!files.length) {
-        const full = await fetchBuildFilesFromGitHub(userId, repo, branch);
-        if (!full.length) return { files: [], fromMemory: false };
-        setProjectMemory({ userId, repo, branch, files: full });
-        return { files: full, fromMemory: false };
-      }
-      setProjectMemory({ userId, repo, branch, files });
-      return { files, fromMemory: false };
-    } catch (err) {
-      console.warn('[pipeline] fetch prior from GitHub failed:', (err as Error).message);
-    }
-  }
   return { files: [], fromMemory: false };
 }
 
