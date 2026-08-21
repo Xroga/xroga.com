@@ -1,14 +1,18 @@
 /** Shared Vercel OAuth / token connect helpers for Integrations + deploy buttons. */
 
-import { api } from '@/lib/api';
 import {
   clearOAuthResult,
   subscribeOAuthResults,
   type OAuthResultPayload,
-} from '@/lib/oauthPopupResult';
+} from './oauthPopupResult';
 
 export const VERCEL_INTEGRATIONS_PATH =
   '/dashboard/integrations?focus=vercel&vercel=setup#ship-setup';
+
+interface VercelOAuthDependencies {
+  resolveUrl?: () => Promise<{ url: string; oauthConfigured: boolean }>;
+  navigateSameTab?: (url: string) => void;
+}
 
 /** True when authorize failed because PKCE/session table is missing or DB bootstrap failed. */
 export function isVercelSessionStoreError(message?: string): boolean {
@@ -30,7 +34,7 @@ export function goToVercelIntegrations(opts?: { error?: string }): void {
   window.location.assign(VERCEL_INTEGRATIONS_PATH);
 }
 
-export async function openVercelOAuthPopup(): Promise<{
+export async function openVercelOAuthPopup(deps: VercelOAuthDependencies = {}): Promise<{
   opened: boolean;
   /** true when a real popup window was opened; false when we fell back to same-tab */
   popup: boolean;
@@ -41,8 +45,18 @@ export async function openVercelOAuthPopup(): Promise<{
 }> {
   try {
     clearOAuthResult();
-    // Resolve authorize URL BEFORE opening any window — never leave a blank popup on failure
-    const res = await api.vercel.oauthUrl();
+    const resolveUrl =
+      deps.resolveUrl ??
+      (async () => {
+        const { api } = await import('./api');
+        return api.vercel.oauthUrl();
+      });
+    const navigateSameTab =
+      deps.navigateSameTab ?? ((url: string) => window.location.assign(url));
+
+    // The callback supports no opener. Staying in this tab avoids popup blockers
+    // and embedded browsers that accept a popup but never surface it to the user.
+    const res = await resolveUrl();
     const { url, oauthConfigured } = res;
     if (!url || !oauthConfigured) {
       return {
@@ -55,30 +69,8 @@ export async function openVercelOAuthPopup(): Promise<{
       };
     }
 
-    const popup = window.open(
-      'about:blank',
-      'xroga-vercel-oauth',
-      'width=600,height=720,scrollbars=yes,resizable=yes',
-    );
-    if (!popup) {
-      window.location.href = url;
-      return { opened: true, popup: false, oauthConfigured: true };
-    }
-
-    try {
-      popup.location.href = url;
-      popup.focus();
-    } catch {
-      try {
-        popup.close();
-      } catch {
-        /* ignore */
-      }
-      window.location.href = url;
-      return { opened: true, popup: false, oauthConfigured: true };
-    }
-
-    return { opened: true, popup: true, oauthConfigured: true };
+    navigateSameTab(url);
+    return { opened: true, popup: false, oauthConfigured: true };
   } catch (err) {
     const raw = (err as Error).message || '';
     const network =
@@ -159,6 +151,7 @@ export function listenVercelOAuthMessages(
   poll = window.setInterval(() => {
     void (async () => {
       try {
+        const { api } = await import('./api');
         const status = await api.vercel.status();
         if (status.connected) {
           finishOk(status.username);
