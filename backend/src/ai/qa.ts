@@ -328,7 +328,11 @@ export async function reviewBuildOutput(
       // so a build whose LLM review never happened could still be reported as reviewed.
       return {
         ...emptyFail,
-        issues: [...new Set([...issues, `The reviewer could not be reached for batch ${index + 1} of ${batches.length} — treated as not reviewed.`])].slice(0, 12),
+        issues: [...new Set([
+          ...issues,
+          'QA unavailable',
+          `The reviewer could not be reached for batch ${index + 1} of ${batches.length} — treated as not reviewed.`,
+        ])].slice(0, 12),
         fixHints: [...new Set([...fixHints, 'Retry the review.'])].slice(0, 12),
         inputTokens,
         outputTokens,

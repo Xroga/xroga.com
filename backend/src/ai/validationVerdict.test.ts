@@ -132,6 +132,16 @@ test('a skipped compile — a static site — is a pass', () => {
 
 test('a reviewer outage is recognised as an outage, not as review findings', () => {
   assert.equal(qaWasUnavailable({ ok: false, issues: ['QA unavailable'] }), true);
+  assert.equal(
+    qaWasUnavailable({
+      ok: false,
+      issues: [
+        'QA unavailable',
+        'The reviewer could not be reached for batch 1 of 1 — treated as not reviewed.',
+      ],
+    }),
+    true,
+  );
   assert.equal(qaWasUnavailable({ ok: true, issues: [] }), false);
   assert.equal(
     qaWasUnavailable({ ok: false, issues: ['Hero section is missing the requested dark theme'] }),

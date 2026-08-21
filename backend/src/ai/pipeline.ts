@@ -155,7 +155,7 @@ import {
 } from './projectMemory.js';
 import { summarizeRepoForUpdates } from './repoSummarize.js';
 import { scanProjectFiles, redactCriticalSecrets } from './securityScan.js';
-import { staticValidateProject } from './staticValidate.js';
+import { pruneUnusedEmptyAssets, staticValidateProject } from './staticValidate.js';
 import {
   compileValidateProject,
   productionValidationAllowsDeployment,
@@ -2252,6 +2252,12 @@ export async function runBuildPipeline(opts: {
 
   const isNonWebProduct = isNonWebFrameworkScaffold(productScaffoldKind);
 
+  // A complete standalone HTML response may be followed by zero-byte classic asset
+  // fences. They are not part of the runnable product unless the HTML references them.
+  // Remove only unreferenced placeholders before preview, QA, persistence and shipping;
+  // referenced empty assets remain present and continue to fail structural validation.
+  if (!isUpdate) nextFiles = pruneUnusedEmptyAssets(nextFiles);
+
   previousFiles = prior.files.length ? prior.files : landingFilesFromOutput('', '', '');
 
   // Deliver code to the client IMMEDIATELY — do not wait for QA/GitHub/Vercel.
@@ -2559,6 +2565,8 @@ export async function runBuildPipeline(opts: {
           }
         }
       }
+
+      if (!isUpdate) nextFiles = pruneUnusedEmptyAssets(nextFiles);
 
       const reQaSite = filesToSite(nextFiles);
       qa = await reviewBuildOutput({

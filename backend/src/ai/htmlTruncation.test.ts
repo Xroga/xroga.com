@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { htmlLooksTruncated, htmlTagBalance } from './htmlTruncation.js';
-import { emptyReferencedAssets, staticValidateProject } from './staticValidate.js';
+import {
+  emptyReferencedAssets,
+  pruneUnusedEmptyAssets,
+  staticValidateProject,
+} from './staticValidate.js';
 
 /**
  * Cover for the dental-clinic run, `85681d10`.
@@ -131,6 +135,57 @@ test('an empty file nothing links is not a shipping problem', () => {
     { path: 'unused.css', content: '' },
   ];
   assert.deepEqual(emptyReferencedAssets(files), []);
+});
+
+test('a standalone page ignores and prunes unused classic placeholder assets', () => {
+  const standaloneHtml = COMPLETE_PAGE
+    .replace(
+      '  <link rel="stylesheet" href="styles.css">\n',
+      '  <style>body { margin: 0 }</style>\n',
+    )
+    .replace(
+      '  <script src="script.js"></script>',
+      '  <script>document.title = document.title;</script>',
+    );
+  const files = [
+    { path: 'index.html', content: standaloneHtml },
+    { path: 'styles.css', content: '' },
+    { path: 'script.js', content: '' },
+    { path: 'README.md', content: '# Standalone app' },
+  ];
+
+  const result = staticValidateProject(files);
+  assert.equal(result.ok, true, result.issues.join('; '));
+  assert.ok(!result.issues.some((issue) => /^Empty file: (styles\.css|script\.js)$/.test(issue)));
+  assert.deepEqual(
+    pruneUnusedEmptyAssets(files).map((file) => file.path),
+    ['index.html', 'README.md'],
+  );
+});
+
+test('referenced empty assets are never pruned and still block shipping', () => {
+  const html = COMPLETE_PAGE.replace(
+    '</head>',
+    '<link rel="stylesheet" href="styles.css"></head>',
+  ).replace('</body>', '<script src="script.js"></script></body>');
+  const files = [
+    { path: 'index.html', content: html },
+    { path: 'styles.css', content: '' },
+    { path: 'script.js', content: '' },
+  ];
+
+  assert.deepEqual(pruneUnusedEmptyAssets(files), files);
+  assert.equal(staticValidateProject(files).ok, false);
+});
+
+test('an empty framework script is never mistaken for a disposable classic placeholder', () => {
+  const files = [
+    { path: 'index.html', content: COMPLETE_PAGE },
+    { path: 'main.js', content: '' },
+  ];
+
+  assert.deepEqual(pruneUnusedEmptyAssets(files), files);
+  assert.ok(staticValidateProject(files).issues.includes('Empty file: main.js'));
 });
 
 test('a referenced file with real content is fine', () => {

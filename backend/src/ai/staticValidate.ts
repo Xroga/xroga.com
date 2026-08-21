@@ -42,6 +42,37 @@ export function emptyReferencedAssets(files: ProjectFile[]): string[] {
     .map((f) => f.path);
 }
 
+/**
+ * Remove zero-byte CSS/JS placeholders that no HTML document loads.
+ *
+ * Some builder responses contain a complete, standalone `index.html` followed by
+ * empty classic `styles.css` and `script.js` fences. Keeping those files makes the
+ * independent reviewer report defects that do not exist in the runnable product.
+ * Referenced assets are deliberately preserved so `emptyReferencedAssets` can keep
+ * blocking a page that promises CSS or JavaScript it does not contain.
+ */
+export function pruneUnusedEmptyAssets(files: ProjectFile[]): ProjectFile[] {
+  const html = files
+    .filter((f) => /\.html$/i.test(f.path))
+    .map((f) => f.content)
+    .join('\n');
+  if (!html.trim()) return files;
+
+  const referenced = new Set(emptyReferencedAssets(files));
+  return files.filter(
+    (f) =>
+      !(
+        isClassicOptionalAsset(f.path) &&
+        !f.content?.trim() &&
+        !referenced.has(f.path)
+      ),
+  );
+}
+
+function isClassicOptionalAsset(path: string): boolean {
+  return path === 'styles.css' || path === 'script.js';
+}
+
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -147,8 +178,20 @@ export function staticValidateProject(files: ProjectFile[]): StaticValidateResul
     }
   }
 
+  const referencedEmptyAssets = new Set(emptyReferencedAssets(files));
+  const hasHtmlDocument = files.some((f) => /\.html$/i.test(f.path) && f.content.trim());
+
   for (const f of files) {
-    if (!f.content?.trim() && /\.(tsx?|jsx?|html|css|json)$/i.test(f.path)) {
+    const unusedEmptyWebAsset =
+      hasHtmlDocument &&
+      isClassicOptionalAsset(f.path) &&
+      !f.content?.trim() &&
+      !referencedEmptyAssets.has(f.path);
+    if (
+      !unusedEmptyWebAsset &&
+      !f.content?.trim() &&
+      /\.(tsx?|jsx?|html|css|json)$/i.test(f.path)
+    ) {
       issues.push(`Empty file: ${f.path}`);
       fixHints.push(`Fill ${f.path} or delete it`);
     }
@@ -175,9 +218,9 @@ export function staticValidateProject(files: ProjectFile[]): StaticValidateResul
         /missing|not valid|nothing to preview|Empty file: (app\/page|index\.html|package\.json|manifest\.json|main\.js|app\.json)/i.test(
           i,
         ) || /manifest_version must be 3|^Truncated document:/i.test(i),
-    ) || emptyReferencedAssets(files).length > 0;
+    ) || referencedEmptyAssets.size > 0;
 
-  for (const path of emptyReferencedAssets(files)) {
+  for (const path of referencedEmptyAssets) {
     fixHints.push(`Write ${path} or remove the reference to it from the page`);
   }
 

@@ -56,7 +56,18 @@ export interface QaSummary {
 export function qaWasUnavailable(qa: QaSummary): boolean {
   if (qa.ok) return false;
   const real = qa.issues.filter((issue) => issue.trim().length > 0);
-  return real.length > 0 && real.every((issue) => /^QA unavailable$/i.test(issue.trim()));
+  return (
+    real.length > 0 &&
+    real.every((issue) => {
+      const message = issue.trim();
+      return (
+        /^QA unavailable$/i.test(message) ||
+        /^The reviewer could not be reached for batch \d+ of \d+ — treated as not reviewed\.$/i.test(
+          message,
+        )
+      );
+    })
+  );
 }
 
 /**
