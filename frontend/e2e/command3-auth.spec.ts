@@ -520,15 +520,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
-  // The menu is an extension of the composer, not a popup near it: its bottom edge
-  // must overlap the composer's top edge rather than float above it.
-  const composerSurface = canonicalComposer.locator('.xv-chatbar-solid');
-  const menuBox = (await actionsMenu.boundingBox())!;
-  const composerBox = (await composerSurface.boundingBox())!;
-  expect(composerBox.y - (menuBox.y + menuBox.height)).toBeLessThanOrEqual(0);
-  expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
-  expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
-
+  // The menu's attachment geometry is asserted once, earlier in this test. What is
+  // checked here is its contents and the Integrations flow.
   await actionsMenu.getByRole('button', { name: /Integrations/ }).click();
   await expect(page.getByRole('dialog', { name: 'Integrations' })).toBeVisible();
   await page.getByRole('button', { name: 'Close integrations' }).click();

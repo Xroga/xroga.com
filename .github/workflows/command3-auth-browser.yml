@@ -71,6 +71,23 @@ jobs:
           npm ci --workspaces=false
           npm ci --prefix backend --workspaces=false
           npm ci --prefix frontend --workspaces=false
+      # A spec that does not parse is currently only discovered *after* two production
+      # builds and a browser download — several minutes to learn that a file has a
+      # syntax error. `--list` compiles every spec and runs none of them, so it reports
+      # the same class of failure in seconds. Added because a duplicate `const`
+      # declaration reached this workflow and cost two full runs before being seen.
+      #
+      # The placeholder values exist only so the spec's module-level Supabase client can
+      # be constructed while compiling. No request is made and no real secret is needed,
+      # which is why they are set here rather than inherited from the job.
+      - name: Compile the browser specs
+        working-directory: frontend
+        env:
+          SUPABASE_URL: https://placeholder.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: placeholder-compile-only
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-compile-only
+        run: node ../node_modules/@playwright/test/cli.js test e2e/ --list > /dev/null
       - run: npm run build --prefix backend --workspaces=false
       - run: npm run build --prefix frontend --workspaces=false
       - run: npx playwright install --with-deps chromium
