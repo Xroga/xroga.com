@@ -423,6 +423,10 @@ export function Sidebar({ displayName }: SidebarProps) {
                   <span>New</span>
                 </button>
               </HoverTip>
+              {/* Decorative only. The three controls, their order and their handlers are
+                  untouched; these hairlines just divide them the way a segmented control
+                  divides its segments. */}
+              <span className="xv-toolbar-sep" aria-hidden="true" />
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button
                   type="button"
@@ -433,6 +437,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                   <Search className="w-3.5 h-3.5" />
                 </button>
               </HoverTip>
+              <span className="xv-toolbar-sep" aria-hidden="true" />
               <HoverTip label="Theme" description="Choose the workspace theme.">
                 <ThemeToggle />
               </HoverTip>

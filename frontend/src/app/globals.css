@@ -8655,3 +8655,200 @@ body.theme-white .xv-cba-trigger:hover:not(:disabled) {
 @media (prefers-reduced-motion: reduce) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) { transition: none; }
 }
+
+/* ============================================================================
+   THE SIDEBAR'S THREE-ICON TOOLBAR
+   ============================================================================
+
+   New terminal · Search · Theme. Same three controls, same order, same handlers —
+   only the card around them changed, from a flat translucent pill to a compact
+   elevated surface with hairline separators.
+
+   Every colour comes from four variables resolved by the theme class the app already
+   puts on `<body>` (`ThemeProvider`, pre-applied by the storage bootstrap script so
+   there is no flash on first paint). There is no second theme system here, no
+   detection inside the component, and no state: the toolbar re-reads these the moment
+   the body class changes, and the transitions below carry it across.
+
+   The variables are declared on `body` first so an unstyled or not-yet-classed body
+   still renders the dark card rather than an unpainted one.
+   ============================================================================ */
+
+body,
+body.theme-black {
+  --toolbar-bg-top: #171716;
+  --toolbar-bg-bottom: #0d0d0d;
+  --toolbar-border: rgba(255, 255, 255, 0.08);
+  --toolbar-icon: #a7a7a2;
+  --toolbar-icon-hover: #f5f2ea;
+  --toolbar-separator: rgba(255, 255, 255, 0.08);
+  --toolbar-hover: rgba(255, 255, 255, 0.055);
+  --toolbar-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.theme-gray {
+  --toolbar-bg-top: #353535;
+  --toolbar-bg-bottom: #292929;
+  --toolbar-border: rgba(255, 255, 255, 0.1);
+  --toolbar-icon: #c2c2c0;
+  --toolbar-icon-hover: #ffffff;
+  --toolbar-separator: rgba(255, 255, 255, 0.1);
+  --toolbar-hover: rgba(255, 255, 255, 0.07);
+  --toolbar-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+body.theme-white {
+  --toolbar-bg-top: #ffffff;
+  --toolbar-bg-bottom: #f5f5f3;
+  --toolbar-border: rgba(20, 20, 20, 0.1);
+  --toolbar-icon: #656565;
+  --toolbar-icon-hover: #151515;
+  --toolbar-separator: rgba(20, 20, 20, 0.09);
+  --toolbar-hover: rgba(20, 20, 20, 0.055);
+  --toolbar-shadow:
+    0 10px 30px rgba(20, 20, 20, 0.1),
+    0 2px 8px rgba(20, 20, 20, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+body.theme-beige {
+  --toolbar-bg-top: #f1ede4;
+  --toolbar-bg-bottom: #e8e2d7;
+  --toolbar-border: rgba(70, 60, 45, 0.11);
+  --toolbar-icon: #777066;
+  --toolbar-icon-hover: #28241f;
+  --toolbar-separator: rgba(70, 60, 45, 0.1);
+  --toolbar-hover: rgba(70, 60, 45, 0.055);
+  --toolbar-shadow:
+    0 10px 30px rgba(65, 55, 40, 0.12),
+    0 2px 8px rgba(65, 55, 40, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+/* ---- the card ------------------------------------------------------------- */
+
+.xv-sidebar-header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  padding: 4px 8px;
+  gap: 0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--toolbar-bg-top), var(--toolbar-bg-bottom));
+  border: 1px solid var(--toolbar-border);
+  box-shadow: var(--toolbar-shadow);
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+/* ---- the three controls --------------------------------------------------- */
+
+.xv-sidebar-header-actions .xv-new-terminal-compact,
+.xv-sidebar-header-actions .xv-sidebar-head-icon,
+.xv-sidebar-header-actions .xv-theme-toggle {
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--toolbar-icon);
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    transform 120ms ease;
+}
+.xv-sidebar-header-actions .xv-new-terminal-compact:hover,
+.xv-sidebar-header-actions .xv-new-terminal-compact:focus-visible,
+.xv-sidebar-header-actions .xv-sidebar-head-icon:hover,
+.xv-sidebar-header-actions .xv-sidebar-head-icon:focus-visible,
+.xv-sidebar-header-actions .xv-theme-toggle:hover,
+.xv-sidebar-header-actions .xv-theme-toggle:focus-visible {
+  color: var(--toolbar-icon-hover);
+  background: var(--toolbar-hover);
+  /* The accent tint the New control used to carry is dropped inside the card: one
+     permanently coloured icon among three is a selected state, and none of these
+     three is ever selected. */
+  border-color: transparent;
+  outline: none;
+}
+.xv-sidebar-header-actions .xv-new-terminal-compact:active,
+.xv-sidebar-header-actions .xv-sidebar-head-icon:active,
+.xv-sidebar-header-actions .xv-theme-toggle:active {
+  transform: scale(0.96);
+}
+
+/* ---- separators ----------------------------------------------------------- */
+
+.xv-toolbar-sep {
+  width: 1px;
+  height: 22px;
+  margin: 0 2px;
+  flex-shrink: 0;
+  background: var(--toolbar-separator);
+  transition: background 220ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-sidebar-header-actions,
+  .xv-sidebar-header-actions .xv-new-terminal-compact,
+  .xv-sidebar-header-actions .xv-sidebar-head-icon,
+  .xv-sidebar-header-actions .xv-theme-toggle,
+  .xv-toolbar-sep {
+    transition: none;
+  }
+  .xv-sidebar-header-actions .xv-new-terminal-compact:active,
+  .xv-sidebar-header-actions .xv-sidebar-head-icon:active,
+  .xv-sidebar-header-actions .xv-theme-toggle:active {
+    transform: none;
+  }
+}
+
+/* The theme control ships its own chrome for use elsewhere in the app: a `glass-panel`
+   surface and a blue `--accent` glyph. Inside the toolbar all three icons must read as
+   one set, so the card supplies the surface and the glyph inherits the toolbar's icon
+   colour. Only the appearance is neutralised — the control is untouched. */
+.xv-sidebar-header-actions .xv-theme-toggle {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.xv-sidebar-header-actions .xv-new-terminal-compact svg,
+.xv-sidebar-header-actions .xv-sidebar-head-icon svg,
+.xv-sidebar-header-actions .xv-theme-toggle svg {
+  color: inherit;
+}
+
+/* Specificity, not preference: the theme control carries `glass-panel`, whose
+   `background` shorthand paints `--card` behind the glyph. At equal weight that read
+   as a permanently selected third icon — the one thing this toolbar must never show,
+   since none of the three is ever "on". Matching the element by tag as well outranks
+   it without an `!important` that a future caller could not undo. */
+.xv-sidebar-header-actions button.xv-theme-toggle,
+.xv-sidebar-header-actions button.xv-sidebar-head-icon,
+.xv-sidebar-header-actions button.xv-new-terminal-compact {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--toolbar-icon);
+}
+.xv-sidebar-header-actions button.xv-theme-toggle:hover,
+.xv-sidebar-header-actions button.xv-theme-toggle:focus-visible,
+.xv-sidebar-header-actions button.xv-sidebar-head-icon:hover,
+.xv-sidebar-header-actions button.xv-sidebar-head-icon:focus-visible,
+.xv-sidebar-header-actions button.xv-new-terminal-compact:hover,
+.xv-sidebar-header-actions button.xv-new-terminal-compact:focus-visible {
+  background: var(--toolbar-hover);
+  color: var(--toolbar-icon-hover);
+}
