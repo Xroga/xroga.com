@@ -25,6 +25,7 @@ export function ChatBarActionsMenu({
   onInsert,
   onAddFiles,
   onOpenConnectors,
+  onOpenIntegrations,
   connectorsNeedingAttention = 0,
   disabled,
   className,
@@ -33,6 +34,12 @@ export function ChatBarActionsMenu({
   onInsert: (text: string) => void;
   onAddFiles?: () => void;
   onOpenConnectors?: () => void;
+  /**
+   * Opens the integrations surface. This used to be a pill sitting beside the `+`,
+   * which read as a second, competing entry point to the same dialog; it is a menu
+   * row now, and the pill is gone.
+   */
+  onOpenIntegrations?: () => void;
   /** Drives the "n needs reconnection" note. 0 means everything is connected. */
   connectorsNeedingAttention?: number;
   disabled?: boolean;
@@ -78,11 +85,16 @@ export function ChatBarActionsMenu({
   }
 
   return (
-    <div ref={rootRef} className={cn('relative shrink-0', className)}>
+    /* Deliberately not a positioning context. The menu is anchored to the composer
+       surface itself so it can sit flush against its top edge with no gap; anchoring
+       it here would pin it to a 28px button in the middle of the composer's bottom
+       row, which is what made it read as a detached popup. */
+    <div ref={rootRef} className={cn('xv-cba-root shrink-0', className)}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={disabled}
+        data-open={open ? 'true' : 'false'}
         className="xv-cba-trigger"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -171,6 +183,27 @@ export function ChatBarActionsMenu({
                   <i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i>
                 </span>
               </button>
+
+              {onOpenIntegrations && (
+                <>
+                  <div className="xv-cba-sep" role="separator" />
+                  <button
+                    type="button"
+                    className="xv-cba-item"
+                    onClick={() => {
+                      onOpenIntegrations();
+                      setOpen(false);
+                    }}
+                  >
+                    <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    <span className="xv-cba-item__text">
+                      <b>Integrations</b>
+                      <i>GitHub, Vercel, and the rest of your authorised accounts</i>
+                    </span>
+                    {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
+                  </button>
+                </>
+              )}
 
               {/* The user sees exactly what gets attached. A prompt silently rewritten
                   behind the composer is the failure mode this avoids. */}

@@ -79,7 +79,7 @@ export function UserPromptBubble({ content }: { content: string }) {
 
   return (
     <div className="inline-block max-w-full text-left">
-      <span className="inline-block max-w-full px-3 py-2 rounded-xl bg-gradient-to-br from-[#006aff]/15 to-slate-500/10 border border-[var(--card-border)]/50 shadow-sm">
+      <span className="xv-user-bubble">
         <span className="opacity-60 mr-2">&gt;</span>
         <span className={cn(!expanded && long && 'line-clamp-3')}>{safe}</span>
       </span>

@@ -45,9 +45,35 @@ const AGENT_STYLES: Record<string, string> = {
 interface SwarmMessageLogProps {
   compact?: boolean;
   incognito?: boolean;
+  /**
+   * Render only the transcript, with no window frame and no title bar.
+   *
+   * The workspace shell owns both of those now — it is one application window whose
+   * toolbar must stay put while the history scrolls beneath it, which a title bar
+   * living inside the scrolling component cannot do. The standalone usages (the
+   * compact project view, the incognito room) still render their own frame.
+   */
+  chromeless?: boolean;
 }
 
-export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogProps) {
+/**
+ * The element that actually scrolls the transcript.
+ *
+ * Resolved rather than assumed because the transcript appears in three places with
+ * three different scrolling surfaces: inside the workspace shell's terminal pane, and
+ * on ordinary pages where the page itself scrolls. Getting this wrong does not throw —
+ * it silently disables "jump to latest" and the read-position tracking, so it is worth
+ * naming in one place.
+ */
+function transcriptScrollRoot(): HTMLElement {
+  return (
+    document.querySelector<HTMLElement>('.xv-terminal-scroll') ??
+    document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
+    document.documentElement
+  );
+}
+
+export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
   const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
@@ -107,10 +133,7 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
   }, [messages.length, setShowJumpToLatest]);
 
   useEffect(() => {
-    const scrollEl =
-      document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
-      document.querySelector<HTMLElement>('.xv-fullscreen-overlay .overflow-y-auto') ??
-      document.documentElement;
+    const scrollEl = transcriptScrollRoot();
 
     const onScroll = () => {
       const atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 140;
@@ -176,10 +199,10 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
       return;
     }
 
-    const scrollRoot =
-      document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto') ??
-      document.querySelector<HTMLElement>('.xv-fullscreen-overlay .overflow-y-auto') ??
-      null;
+    const root = transcriptScrollRoot();
+    // `IntersectionObserver` needs `null` for the viewport; passing the documentElement
+    // is not the same thing and quietly reports nothing.
+    const scrollRoot = root === document.documentElement ? null : root;
 
     const ratios = new Map<string, number>();
 
@@ -269,17 +292,27 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
     <>
       <div
         className={cn(
-          'xv-terminal-window rounded-xl relative border w-full min-w-0',
-          compact ? 'xv-terminal-window--compact' : 'xv-terminal-window--scrolling',
-          isIncognito ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md' : `terminal-skin-${terminalSkin}`,
-          !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
-          compact ? '' : 'w-full'
+          'xv-terminal-window relative w-full min-w-0',
+          // Chromeless means the workspace shell already supplies the frame, the skin
+          // and the scanline overlay. Repeating them here would draw a card inside a
+          // card and stack the overlay twice.
+          chromeless
+            ? 'xv-terminal-window--flush'
+            : [
+                'rounded-xl border',
+                compact ? 'xv-terminal-window--compact' : 'xv-terminal-window--scrolling',
+                isIncognito
+                  ? 'terminal-skin-dark border-white/15 bg-[#3a3a40]/80 backdrop-blur-md'
+                  : `terminal-skin-${terminalSkin}`,
+                !isIncognito && (terminalSkin === 'dark' || terminalSkin === 'amoled') ? 'scanlines' : '',
+              ]
         )}
       >
         {/* Window chrome. The pane's own surface, not the page card's — a terminal
             whose title bar is tinted by the page reads as a widget rather than as a
             console, which is the substance of the "doesn't look like a terminal"
             complaint this replaces. */}
+        {chromeless ? null : (
         <div className="xv-terminal-header" data-testid="terminal-identity-header">
           <span className="xv-term-lights" aria-hidden="true">
             <i />
@@ -323,8 +356,14 @@ export function SwarmMessageLog({ compact, incognito = false }: SwarmMessageLogP
             </div>
           )}
         </div>
+        )}
 
-        <div className="xv-terminal-body px-4 py-3 space-y-3 font-coding text-[13px] overflow-visible rounded-b-xl">
+        <div
+          className={cn(
+            'xv-terminal-body space-y-3 font-coding text-[13px]',
+            chromeless ? 'xv-terminal-body--flush' : 'px-4 py-3 overflow-visible rounded-b-xl'
+          )}
+        >
           {messages.length === 0 && sessionRestoring && (
             <div className="xv-term-empty" role="status" aria-live="polite" data-testid="terminal-restoring">
               <p className="xv-term-emptyline">

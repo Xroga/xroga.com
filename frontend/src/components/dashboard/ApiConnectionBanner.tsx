@@ -30,7 +30,10 @@ export function ApiConnectionBanner() {
   if (!issue) return null;
 
   return (
-    <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 flex gap-3 text-sm text-amber-100">
+    /* `text-amber-100` is a near-white cream: legible on a dark surface, invisible on a
+       light one, so this warning silently disappeared under the light skins. The darker
+       amber reads on both. */
+    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex gap-3 text-sm text-amber-500">
       <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400" />
       <p>{issue}</p>
     </div>

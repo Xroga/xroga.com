@@ -81,12 +81,24 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
         <TerminalScrollProvider>
           <IncognitoFullscreenBackground />
           <div
-            className="flex min-h-screen terminal-layout overflow-x-hidden"
+            className={cn(
+              'flex terminal-layout overflow-x-hidden',
+              // The workspace shell is measured against the viewport, so the column it
+              // lives in must be exactly one viewport tall rather than "at least" —
+              // `min-height` lets a tall child stretch the page, which is the same
+              // failure as letting the page scroll.
+              isDashboard ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'
+            )}
             style={{ '--sidebar-width': widthPx } as React.CSSProperties}
             data-testid="workspace-shell"
           >
             <Sidebar displayName={displayName} email={email} />
-            <div className="xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full min-h-screen overflow-x-hidden relative z-[2]">
+            <div
+              className={cn(
+                'xv-main-column flex-1 flex flex-col w-full min-w-0 max-w-full overflow-x-hidden relative z-[2]',
+                isDashboard ? 'h-full min-h-0' : 'min-h-screen'
+              )}
+            >
               {!isDashboard ? (
                 <header
                   className="xv-site-header xv-site-header-transparent absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3"
@@ -100,13 +112,22 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 </header>
               ) : null}
 
+              {/* The workspace is the one route that owns its whole viewport: it renders a
+                  desktop-application shell that must keep its rounded corners no matter how
+                  far the transcript is scrolled. Letting `main` scroll would make the page
+                  the scrolling surface, and the shell would ride up out of its inset and
+                  read as a full-bleed square. So here `main` only clips, and the terminal
+                  pane inside the shell owns the scrollbar. Every other route keeps the
+                  padded, page-scrolling behaviour it already had. */}
               <main
                 className={cn(
-                  'flex-1 overflow-y-auto overflow-x-hidden relative z-[1]',
-                  !isDashboard && 'xv-main-scroll-under-header',
-                  incognito && isDashboard ? 'p-2 sm:p-4 lg:p-6 bg-transparent' : 'p-3 sm:p-6 lg:p-8',
-                  'pb-24 lg:pb-8',
-                  isDashboard && 'xv-workspace-main pb-[min(260px,calc(38vh+env(safe-area-inset-bottom)))] lg:pb-[240px]'
+                  'relative z-[1]',
+                  isDashboard
+                    ? 'xv-workspace-main flex-1 min-h-0 overflow-hidden'
+                    : [
+                        'flex-1 overflow-y-auto overflow-x-hidden xv-main-scroll-under-header',
+                        'p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8',
+                      ]
                 )}
               >
                 {children}
