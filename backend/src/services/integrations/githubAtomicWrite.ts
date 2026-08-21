@@ -343,7 +343,7 @@ export async function writeAtomically(
   );
 
   // Everything above produced unreferenced git objects. This is the only irreversible call.
-  const update = empty
+  const update: RefUpdateOutcome = empty
     ? await stage('ref_update', `Could not create branch "${target.branch}"`, async () => ({
         ok: await api.createRef(target.branch, commitSha),
       }))
