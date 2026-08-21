@@ -1,9 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+
+import type {
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+} from 'react';
+
 import { cn } from '@/lib/utils';
-import { GradientStartButton } from '@/components/ui/Uiverse';
-import type { ReactNode, InputHTMLAttributes } from 'react';
 
 export function AuthModernCard({
   title,
@@ -15,23 +20,79 @@ export function AuthModernCard({
   children: ReactNode;
 }) {
   return (
-    <div className="xv-auth-modern-card w-full">
-      {subtitle && (
-        <p className="xv-auth-modern-subtitle text-center text-xs font-medium mb-4">{subtitle}</p>
-      )}
-      <h1 className="xv-auth-gradient-title text-center text-2xl sm:text-[1.65rem] font-extrabold mb-1">
-        {title}
-      </h1>
+    <div className="w-full">
+      <header className="mb-7">
+        <h1
+          className="
+            text-[2rem]
+            font-bold
+            leading-[1.06]
+            tracking-[-0.035em]
+            text-[var(--auth-text)]
+            sm:text-[2.35rem]
+          "
+        >
+          {title}
+        </h1>
+
+        {subtitle ? (
+          <p
+            className="
+              mt-2
+              max-w-md
+              text-sm
+              leading-relaxed
+              text-[var(--auth-muted)]
+            "
+          >
+            {subtitle}
+          </p>
+        ) : null}
+      </header>
+
       {children}
     </div>
   );
 }
 
-export function AuthModernQuote({ text, author, compact }: { text: string; author: string; compact?: boolean }) {
+export function AuthModernQuote({
+  text,
+  author,
+  compact,
+}: {
+  text: string;
+  author: string;
+  compact?: boolean;
+}) {
   return (
-    <blockquote className={cn('xv-auth-modern-quote px-3 py-2 rounded-xl text-center', compact ? 'my-3' : 'my-5')}>
-      <p className={cn('italic text-slate-600 leading-relaxed', compact ? 'text-xs' : 'text-sm')}>&ldquo;{text}&rdquo;</p>
-      <footer className="text-[10px] mt-1 font-semibold xv-auth-gradient-text not-italic">— {author}</footer>
+    <blockquote
+      className={cn(
+        'rounded-2xl',
+        'border border-[var(--auth-border)]',
+        'bg-[var(--auth-soft)]',
+        'px-4 py-3',
+        compact ? 'mb-4' : 'mb-6'
+      )}
+    >
+      <p
+        className={cn(
+          'leading-relaxed text-[var(--auth-muted)]',
+          compact ? 'text-xs' : 'text-sm'
+        )}
+      >
+        &ldquo;{text}&rdquo;
+      </p>
+
+      <footer
+        className="
+          mt-1.5
+          text-[11px]
+          font-semibold
+          text-[#006aff]
+        "
+      >
+        — {author}
+      </footer>
     </blockquote>
   );
 }
@@ -43,10 +104,20 @@ export function AuthModernInput({
   return (
     <input
       className={cn(
-        'xv-auth-modern-input w-full h-12 px-4 rounded-xl text-sm text-slate-800',
-        'bg-white/90 border border-sky-100 shadow-[0_4px_14px_rgba(0,106,255,0.08)]',
-        'placeholder:text-slate-400 focus:outline-none focus:border-[#006aff]/50 focus:ring-2 focus:ring-[#006aff]/20',
-        'transition-all',
+        'h-12 w-full',
+        'rounded-xl',
+        'border border-[var(--auth-border)]',
+        'bg-[var(--auth-input)]',
+        'px-3.5',
+        'text-sm',
+        'text-[var(--auth-text)]',
+        'outline-none',
+        'placeholder:text-[var(--auth-muted)]',
+        'transition-all duration-200',
+        'hover:border-[var(--auth-border-strong)]',
+        'focus:border-[#006aff]/70',
+        'focus:ring-4',
+        'focus:ring-[#006aff]/10',
         className
       )}
       {...props}
@@ -54,25 +125,26 @@ export function AuthModernInput({
   );
 }
 
-export function AuthModernLabel({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
+export function AuthModernLabel({
+  children,
+  htmlFor,
+}: {
+  children: ReactNode;
+  htmlFor?: string;
+}) {
   return (
-    <label htmlFor={htmlFor} className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">{children}</label>
-  );
-}
-
-export function AuthStepDots({ step, total = 2 }: { step: number; total?: number }) {
-  return (
-    <div className="flex justify-center gap-2 my-5">
-      {Array.from({ length: total }, (_, i) => i + 1).map((s) => (
-        <span
-          key={s}
-          className={cn(
-            'h-1.5 rounded-full transition-all duration-300',
-            step === s ? 'w-10 bg-gradient-to-r from-[#006aff] to-[#60a5fa]' : 'w-4 bg-slate-200'
-          )}
-        />
-      ))}
-    </div>
+    <label
+      htmlFor={htmlFor}
+      className="
+        mb-1.5
+        block
+        text-[12px]
+        font-semibold
+        text-[var(--auth-text)]
+      "
+    >
+      {children}
+    </label>
   );
 }
 
@@ -90,14 +162,140 @@ export function AuthGradientButton({
   className?: string;
 }) {
   return (
-    <GradientStartButton
+    <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={cn('xv-auth-gradient-btn w-full text-sm font-bold', className)}
+      className={cn(
+        'relative',
+        'flex h-12 w-full',
+        'items-center justify-center',
+        'overflow-hidden',
+        'rounded-xl',
+        'bg-[#006aff]',
+        'px-4',
+        'text-sm font-bold text-white',
+        'shadow-[0_10px_28px_rgba(0,106,255,0.23)]',
+        'transition-all duration-200',
+        'hover:-translate-y-[1px]',
+        'hover:bg-[#075fe1]',
+        'hover:shadow-[0_14px_34px_rgba(0,106,255,0.30)]',
+        'active:translate-y-0',
+        'disabled:cursor-not-allowed',
+        'disabled:opacity-55',
+        className
+      )}
     >
       {children}
-    </GradientStartButton>
+    </button>
+  );
+}
+
+export function AuthSocialButton({
+  children,
+  disabled,
+  onClick,
+  className,
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  onClick?: () => void | Promise<void>;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        'flex h-12 w-full',
+        'items-center justify-center',
+        'gap-2.5',
+        'rounded-xl',
+        'border border-[var(--auth-border)]',
+        'bg-[var(--auth-input)]',
+        'px-4',
+        'text-sm',
+        'font-semibold',
+        'text-[var(--auth-text)]',
+        'transition-all duration-200',
+        'hover:border-[var(--auth-border-strong)]',
+        'hover:bg-[var(--auth-input-hover)]',
+        'disabled:cursor-not-allowed',
+        'disabled:opacity-55',
+        className
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function AuthDivider({
+  text = 'or continue with email',
+}: {
+  text?: string;
+}) {
+  return (
+    <div className="relative my-5">
+      <div className="absolute inset-0 flex items-center">
+        <span
+          className="
+            w-full
+            border-t
+            border-[var(--auth-border)]
+          "
+        />
+      </div>
+
+      <div
+        className="
+          relative
+          flex
+          justify-center
+          text-[10px]
+          uppercase
+          tracking-[0.13em]
+        "
+      >
+        <span
+          className="
+            bg-[var(--auth-panel)]
+            px-3
+            text-[var(--auth-muted)]
+          "
+        >
+          {text}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export function AuthStepDots({
+  step,
+  total = 2,
+}: {
+  step: number;
+  total?: number;
+}) {
+  return (
+    <div className="my-5 flex justify-center gap-2">
+      {Array.from(
+        { length: total },
+        (_, index) => index + 1
+      ).map((item) => (
+        <span
+          key={item}
+          className={cn(
+            'h-1.5 rounded-full transition-all duration-300',
+            step === item
+              ? 'w-10 bg-[#006aff]'
+              : 'w-4 bg-[var(--auth-soft)]'
+          )}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -109,7 +307,19 @@ export function AuthFooterLink({
   href: string;
 }) {
   return (
-    <Link href={href} className="xv-auth-footer-link inline-flex items-center gap-1 text-sm font-medium">
+    <Link
+      href={href}
+      className="
+        inline-flex
+        items-center
+        gap-1
+        text-sm
+        font-semibold
+        text-[#006aff]
+        transition-opacity
+        hover:opacity-75
+      "
+    >
       {children}
     </Link>
   );
@@ -125,9 +335,25 @@ export function AuthSwitchText({
   href: string;
 }) {
   return (
-    <p className="text-center text-sm text-slate-500 mt-6">
+    <p
+      className="
+        mt-6
+        text-center
+        text-sm
+        text-[var(--auth-muted)]
+      "
+    >
       {prompt}{' '}
-      <Link href={href} className="xv-auth-gradient-text font-semibold hover:opacity-80 transition-opacity">
+
+      <Link
+        href={href}
+        className="
+          font-semibold
+          text-[#006aff]
+          transition-opacity
+          hover:opacity-75
+        "
+      >
         {linkText}
       </Link>
     </p>
@@ -136,10 +362,37 @@ export function AuthSwitchText({
 
 export function AuthBackHome() {
   return (
-    <p className="text-center mt-5">
-      <Link href="/" className="xv-auth-back-link text-xs font-medium inline-flex items-center gap-1.5">
-        <span aria-hidden>←</span> Back to homepage
+    <p className="mt-5 text-center">
+      <Link
+        href="/"
+        className="
+          text-xs
+          font-medium
+          text-[var(--auth-muted)]
+          transition-colors
+          hover:text-[var(--auth-text)]
+        "
+      >
+        ← Back to Xroga
       </Link>
     </p>
+  );
+}
+
+export function AuthPlainButton({
+  children,
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      className={cn(
+        'text-[var(--auth-text)]',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
