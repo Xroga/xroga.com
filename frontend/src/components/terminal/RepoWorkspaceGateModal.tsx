@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { GitBranch, X } from 'lucide-react';
 import { api, type GitHubRepo } from '@/lib/api';
+import { openGitHubOAuthPopup } from '@/lib/githubConnect';
 import { saveSelectedRepoContext } from '@/lib/repoContext';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
@@ -61,13 +62,14 @@ export function RepoWorkspaceGateModal({
     setConnecting(true);
     setError(null);
     try {
-      const { url } = await api.github.oauthUrl();
-      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=700,scrollbars=yes');
-      if (!popup) {
-        setError('Allow popups to connect GitHub.');
+      const result = await openGitHubOAuthPopup();
+      if (!result.opened) {
+        setError(result.error || 'Could not start GitHub authorization.');
         setConnecting(false);
         return;
       }
+      const popup = result.popup;
+      if (!popup) return;
       const poll = setInterval(async () => {
         try {
           const status = await api.github.status();
