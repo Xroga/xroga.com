@@ -21,21 +21,17 @@ export function MessageSuggestionChips({ suggestions, onSelect, className }: Mes
 
   return (
     <div className={cn('mt-2 xv-suggestions-enter', className)}>
-      <p className="text-[9px] font-semibold uppercase tracking-wider text-[var(--muted)] mb-1 flex items-center gap-1">
-        <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+      <p className="xv-suggest-label">
+        <Sparkles className="w-3 h-3" />
         Suggested next steps
       </p>
-      <div className="flex flex-wrap gap-1">
+      <div className="xv-suggest-row">
         {all.map((item) => (
           <button
             key={item.key}
             type="button"
             onClick={() => onSelect(item.text)}
-            className={cn(
-              'text-[9px] px-2 py-0.5 rounded-full border font-medium transition-colors',
-              item.tone === 'next' && 'border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--foreground)]',
-              item.tone === 'refine' && 'border-[var(--card-border)] bg-[var(--background)]/50 text-[var(--foreground)]/85'
-            )}
+            className={cn('xv-suggest-chip', item.tone === 'next' && 'is-next')}
           >
             {item.label}
           </button>

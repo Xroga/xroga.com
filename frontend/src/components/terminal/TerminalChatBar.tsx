@@ -27,7 +27,6 @@ import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
 import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/chatMemory';
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
-import { Blocks } from 'lucide-react';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 
 const MIN_INPUT_H = 32;
@@ -491,12 +490,17 @@ export function TerminalChatBar() {
               hideUpload
               leadingExtras={
                 !incognito ? (
-                  <div className="flex items-center gap-1.5">
                   <ChatBarActionsMenu
                     className="shrink-0"
                     disabled={loading}
                     onAddFiles={() => fileRef.current?.click()}
                     onOpenConnectors={() => {
+                      dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
+                      setIntegrationsOpen(true);
+                    }}
+                    /* Same dialog the removed pill opened, same event dispatched — the
+                       trigger moved into the menu, the behaviour did not change. */
+                    onOpenIntegrations={() => {
                       dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
                       setIntegrationsOpen(true);
                     }}
@@ -510,23 +514,6 @@ export function TerminalChatBar() {
                       window.setTimeout(() => textareaRef.current?.focus(), 20);
                     }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
-                      setIntegrationsOpen(true);
-                    }}
-                    className="xv-chatbar-integration-btn"
-                    aria-label="Add integration"
-                    title="Add integration"
-                  >
-                    <Blocks className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Integrations</span>
-                    {[githubConnected, vercelConnected].filter((connected) => !connected).length > 0 ? (
-                      <i aria-hidden="true" />
-                    ) : null}
-                  </button>
-                  </div>
                 ) : null
               }
               onTranscript={(text) => {

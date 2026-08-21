@@ -69,8 +69,8 @@ function PreviewPane({ viewport, nonce = 0 }: { viewport: 'mobile' | 'tablet' | 
 
   if (!sandboxDoc && !useLive) {
     return (
-      <div className="flex h-full items-center justify-center text-xs text-[var(--muted)] p-6 text-center">
-        No preview yet — submit a build prompt to generate the app.
+      <div className="xv-preview-empty">
+        <p>No preview yet — submit a build prompt to generate the app.</p>
       </div>
     );
   }
@@ -98,7 +98,21 @@ function PreviewPane({ viewport, nonce = 0 }: { viewport: 'mobile' | 'tablet' | 
   );
 }
 
-export function DevWorkspacePanel({ className }: { className?: string }) {
+export function DevWorkspacePanel({
+  className,
+  flush = false,
+}: {
+  className?: string;
+  /**
+   * Render as an internal pane of the workspace shell rather than as a card.
+   *
+   * The shell already draws one border and one radius around everything; a panel that
+   * keeps its own is the "second floating card" this exists to stop being. In flush
+   * mode the panel is divided from the terminal by a hairline and a little depth, and
+   * nothing else.
+   */
+  flush?: boolean;
+}) {
   const hydrated = useHydrated();
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const workspaceOpen = hydrated && workspaceOpenRaw;
@@ -151,23 +165,22 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        'xv-dev-workspace flex flex-col border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl overflow-hidden min-h-[360px]',
+        'xv-dev-workspace flex flex-col overflow-hidden',
+        flush && !expanded
+          ? 'xv-workspace-panel min-h-0'
+          : 'border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl min-h-[360px]',
         expanded && 'fixed inset-3 z-[180] min-h-0 rounded-2xl',
         className
       )}
     >
-      <header className="flex items-center gap-1 border-b border-[var(--card-border)]/50 px-2 py-1.5 overflow-x-auto">
+      <header className="xv-ws-tabs">
         {TABS.map(({ id, label, Icon }) => (
           <button
             key={id}
             type="button"
             onClick={() => setActiveTab(id)}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] font-semibold shrink-0',
-              activeTab === id
-                ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/5'
-            )}
+            className={cn('xv-ws-tab', activeTab === id && 'is-active')}
+            aria-current={activeTab === id ? 'page' : undefined}
           >
             <Icon className="h-3 w-3" />
             {label}
@@ -383,10 +396,8 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
                   key={v}
                   type="button"
                   onClick={() => setViewport(v)}
-                  className={cn(
-                    'px-2 py-1 rounded text-[10px] font-bold uppercase',
-                    viewport === v ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'text-[var(--muted)]'
-                  )}
+                  className={cn('xv-ws-device', viewport === v && 'is-active')}
+                  aria-pressed={viewport === v}
                 >
                   {v}
                 </button>
@@ -498,10 +509,8 @@ export function DevWorkspacePanel({ className }: { className?: string }) {
                 key={v}
                 type="button"
                 onClick={() => setViewport(v)}
-                className={cn(
-                  'px-2 py-1 rounded text-[10px] font-bold uppercase',
-                  viewport === v ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'text-[var(--muted)]'
-                )}
+                className={cn('xv-ws-device', viewport === v && 'is-active')}
+                aria-pressed={viewport === v}
               >
                 {v}
               </button>
