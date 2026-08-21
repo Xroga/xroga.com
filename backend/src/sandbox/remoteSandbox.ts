@@ -257,6 +257,9 @@ export class RemoteSandboxRuntime implements SandboxRuntime {
           networkPolicy: request.networkPolicy,
           environment: request.environment,
           limits: request.limits,
+          // Forwarded so a worker that supports per-execution images can honour it. A worker
+          // that ignores the field is safe: the collector reports `browser_unavailable`.
+          ...(request.image ? { image: request.image } : {}),
         }),
       });
 

@@ -44,3 +44,6 @@ next-env.d.ts
 
 # Claude Code
 CLAUDE.local.md
+
+# Transient workspace for the in-sandbox browser verification integration test
+.tmp-insandbox-tests/

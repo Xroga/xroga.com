@@ -18,6 +18,16 @@ let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProj
 
 test.setTimeout(180_000);
 
+/**
+ * How long an authentication transition may take before it is a real failure.
+ *
+ * Bounded, not disabled: a login that never completes still fails the test. The number is sized
+ * for a live Supabase round trip plus a client-side redirect on a cold CI runner, which the
+ * default 5s expectation could not cover — so the test failed on latency and called it a broken
+ * login. The whole run is still capped by `test.setTimeout` above.
+ */
+const AUTH_TRANSITION_TIMEOUT_MS = 30_000;
+
 async function browserSession(page: import('@playwright/test').Page): Promise<{ status: number; authenticated: boolean }> {
   return page.evaluate(async () => {
     const response = await fetch('/api/session', { cache: 'no-store' });
@@ -277,7 +287,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.getByLabel('Email').fill(ownerEmail);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page).toHaveURL(/\/(workspace|dashboard)/);
+  // A real Supabase sign-in is a network round trip followed by a client-side redirect. The
+  // default 5s expectation left no room for either, so a slow-but-correct login was reported as
+  // a login failure — the assertion was measuring CI latency, not authentication.
+  //
+  // Still exactly the same requirement: the browser must end up on an authenticated route.
+  // Nothing is relaxed about *what* is proven, only about how long the proof may take.
+  await expect(page).toHaveURL(/\/(workspace|dashboard)/, { timeout: AUTH_TRANSITION_TIMEOUT_MS });
   const firstSession = await browserSession(page);
   expect(firstSession).toEqual({ status: 200, authenticated: true });
   await page.reload();
@@ -731,21 +747,28 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const techwear = page.getByRole('radio', { name: 'Techwear' });
   await techwear.click();
   await expect(techwear).toHaveAttribute('aria-checked', 'true');
-  let companionProfilePersistence: 'verified_local_pr' | 'verified_server' = 'verified_local_pr';
-  // PR checks intentionally dry-run migrations. The production launch workflow
-  // runs after main applies the migration and independently verifies durable state.
-  if (launchBillingApiUrl) {
-    await expect.poll(async () => {
-      const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
-      expect(storedProfile.error).toBeNull();
-      return (storedProfile.data?.companion_preferences as { costume?: string } | null)?.costume;
-    }, {
-      message: 'companion preferences did not reach durable profile storage',
-      timeout: 15_000,
-      intervals: [500, 1_000, 2_000],
-    }).toBe('techwear');
-    companionProfilePersistence = 'verified_server';
-  }
+  // Durable persistence is confirmed before the reload, on every run.
+  //
+  // This wait used to be gated behind `launchBillingApiUrl`, which is a *billing* variable and
+  // unset on pull requests — so PR runs reloaded the page immediately and asserted that the
+  // preference survived, while skipping the only step that establishes it had been saved. The
+  // preference is written by a debounced `PATCH /api/profile`, so whether the reload observed it
+  // depended on whether that request happened to land first. That is the race, and it is not a
+  // property of the application: it is the test declining to wait for the thing it then asserts.
+  //
+  // The column has been in `profiles` since the July migrations, so this reads real durable
+  // state on pull requests exactly as it does after a release. Nothing is stubbed and no
+  // CI-only persistence path exists — a preference that never reaches Postgres fails here.
+  await expect.poll(async () => {
+    const storedProfile = await admin.from('profiles').select('companion_preferences').eq('id', ownerId).single();
+    expect(storedProfile.error).toBeNull();
+    return (storedProfile.data?.companion_preferences as { costume?: string } | null)?.costume;
+  }, {
+    message: 'companion preferences did not reach durable profile storage',
+    timeout: 30_000,
+    intervals: [500, 1_000, 2_000, 3_000],
+  }).toBe('techwear');
+  const companionProfilePersistence: 'verified_server' = 'verified_server';
   await page.reload();
   await page.getByRole('tab', { name: 'Skins & Costumes' }).click();
   await expect(page.getByRole('radio', { name: 'Techwear' })).toHaveAttribute('aria-checked', 'true');

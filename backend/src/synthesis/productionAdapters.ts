@@ -1,3 +1,4 @@
+import { browserVerificationAdapter } from './browserVerificationAdapter.js';
 /**
  * The real adapters behind the enabled universal path.
  *
@@ -157,6 +158,11 @@ export function productionAdapters(input: {
       }),
 
     runValidation: sandboxValidationRunner(),
+
+    // The production caller for browser verification. Every web build now asks whether the
+    // application actually works in a browser; when a precondition is missing it reports
+    // `not_checked` with the reason rather than letting the gap read as a pass.
+    browserVerify: browserVerificationAdapter({ acceptanceCriteria: input.acceptanceCriteria }),
 
     review: async (files) => {
       try {

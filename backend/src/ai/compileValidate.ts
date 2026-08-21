@@ -20,6 +20,7 @@ import type { ProjectFile } from './patches.js';
 import { buildSandboxEnvironment } from '../sandbox/sandboxEnvironment.js';
 import { executeSandboxed, probeSandbox } from '../sandbox/sandboxRuntime.js';
 import { SandboxUnavailableError, type SandboxNetworkPolicy } from '../sandbox/sandboxTypes.js';
+import { buildCompileCommand, parseCompileResult } from './compileCommand.js';
 
 export interface CompileValidateResult {
   ok: boolean;
@@ -133,6 +134,7 @@ async function runCmd(
   timeoutMs: number,
   files: ProjectFile[],
   networkPolicy: SandboxNetworkPolicy,
+  extraEnvironment?: Record<string, string>,
 ): Promise<{ code: number | null; stdout: string; stderr: string; timedOut: boolean }> {
   const result = await executeSandboxed({
     files,
@@ -141,7 +143,7 @@ async function runCmd(
     timeoutMs,
     networkPolicy,
     // Never `process.env`. The allowlist is the boundary; see sandboxEnvironment.
-    environment: buildSandboxEnvironment({ XROGA_SANDBOX_WORKDIR: cwd }),
+    environment: buildSandboxEnvironment({ XROGA_SANDBOX_WORKDIR: cwd, ...(extraEnvironment ?? {}) }),
   });
   return {
     code: result.exitCode,
@@ -265,79 +267,109 @@ export async function compileValidateProject(
       );
     }
 
-    // The only stage permitted to reach the network, and only the registry.
-    const install = await runCmd('npm', INSTALL_ARGS, dir, INSTALL_MS, limited, 'registry-only');
-    log += `npm install:\n${install.stdout}\n${install.stderr}\n`;
-    if (install.timedOut) {
-      issues.push('npm install timed out');
+    // Install, typecheck and build as ONE sandbox execution.
+    //
+    // These were three separate `runCmd` calls, and each `runCmd` is its own
+    // `executeSandboxed`. That only works if executions share a filesystem, and they do not:
+    // the contract is one-shot, and the Fly provider gives each execution a fresh disposable
+    // microVM holding the project's source and nothing else. The `node_modules` from the
+    // install execution therefore did not exist for the typecheck execution — local `tsc`
+    // missing, `npx` fallback with no network under a `none` policy, exit **127**, reported to
+    // the user as "TypeScript errors remain". Production run
+    // 2e559410-f9b5-4146-8c61-5447f0683426: 28 files generated, install clean, no type errors,
+    // blocked from shipping anyway.
+    //
+    // One execution makes the dependency between the stages real rather than assumed. See
+    // `compileCommand.ts` for why the network denial after install is preserved.
+    const requiredBuild = requiredProductionBuild(limited);
+    const { command: compileCmd, args: compileArgs } = buildCompileCommand({
+      installArgs: INSTALL_ARGS,
+      typecheck: true,
+      buildScript: requiredBuild ? 'build' : null,
+    });
+    const combined = await runCmd(
+      compileCmd,
+      compileArgs,
+      dir,
+      INSTALL_MS + TSC_MS + BUILD_MS,
+      limited,
+      // The registry is needed by install. Everything after it drops the network from inside
+      // the sandbox, so the typecheck and build keep the denial they had as separate stages.
+      'registry-only',
+      requiredBuild ? { XROGA_COMPILE_BUILD_SCRIPT: 'build' } : undefined,
+    );
+    log += `compile (install + typecheck + build):\n${combined.stdout}\n${combined.stderr}\n`;
+
+    const payload = parseCompileResult(combined.stdout);
+
+    if (combined.timedOut) {
+      issues.push('compile timed out');
       return {
         ok: false,
         skipped: false,
-        installOk: false,
+        installOk: payload?.installCode === 0,
         issues,
         logTail: log.slice(-6000),
         durationMs: Date.now() - started,
       };
     }
-    if (install.code !== 0) {
-      issues.push(`npm install failed (exit ${install.code})`);
-      // Still try tsc if node_modules partially exists
+
+    if (!payload) {
+      // No structured result at all. That is our harness failing to report, not evidence about
+      // the generated code, and it must never be phrased as a TypeScript failure.
+      issues.push('compile did not report a result');
+      return {
+        ok: false,
+        skipped: true,
+        reason: 'the compile stage produced no structured result, so the code was not judged',
+        issues,
+        logTail: log.slice(-6000),
+        durationMs: Date.now() - started,
+      };
     }
 
     if (opts?.signal?.aborted) {
       return {
         ok: false,
         skipped: false,
-        installOk: install.code === 0,
+        installOk: payload.installCode === 0,
         issues: ['Compile cancelled after install'],
         logTail: log.slice(-6000),
         durationMs: Date.now() - started,
       };
     }
 
-    // Prefer local binary from npm install; fall back to npx
-    let tscResult = await runCmd(
-      join(dir, 'node_modules', '.bin', 'tsc'),
-      ['--noEmit', '--pretty', 'false'],
-      dir,
-      TSC_MS,
-      limited,
-      'none',
-    );
-    if (tscResult.code !== 0 && /ENOENT|not found|spawn/i.test(tscResult.stderr)) {
-      tscResult = await runCmd('npx', ['tsc', '--noEmit', '--pretty', 'false'], dir, TSC_MS, limited, 'none');
-    }
+    const installOk = payload.installCode === 0;
+    if (!installOk) issues.push(`npm install failed (exit ${payload.installCode ?? 'unknown'})`);
 
-    log += `tsc:\n${tscResult.stdout}\n${tscResult.stderr}\n`;
-    if (tscResult.timedOut) {
-      issues.push('tsc --noEmit timed out');
-    } else if (tscResult.code !== 0) {
-      const errLines = (tscResult.stdout + '\n' + tscResult.stderr)
+    // A typecheck that never ran is an infrastructure gap, not a type error. Keeping the two
+    // apart is the whole point: the old path collapsed them and blamed the user's code.
+    const tscOk = payload.tscRan && payload.tscCode === 0;
+    if (!payload.tscRan) {
+      issues.push('typecheck did not run: no TypeScript compiler was available after install');
+    } else if (payload.tscCode !== 0) {
+      const errLines = combined.stdout
         .split('\n')
-        .filter((l) => /error TS\d+/i.test(l) || /error/i.test(l))
+        .filter((line) => /error TS\d+/i.test(line))
         .slice(0, 8);
       if (errLines.length) issues.push(...errLines);
-      else issues.push(`tsc failed (exit ${tscResult.code})`);
+      else issues.push(`tsc failed (exit ${payload.tscCode})`);
     }
 
-    const installOk = install.code === 0 && !install.timedOut;
-    const tscOk = tscResult.code === 0 && !tscResult.timedOut;
-    // Soft-pass install failures that are registry flakes if tsc somehow ok — rare
-    const requiredBuild = requiredProductionBuild(limited);
     let buildOk: boolean | undefined;
     let buildExitCode: number | null | undefined;
-    if (installOk && tscOk && requiredBuild) {
-      const buildResult = await runCmd(requiredBuild.command, requiredBuild.args, dir, BUILD_MS, limited, 'none');
-      buildExitCode = buildResult.code;
-      buildOk = buildResult.code === 0 && !buildResult.timedOut;
-      log += `production build (${requiredBuild.command} ${requiredBuild.args.join(' ')}):\n${buildResult.stdout}\n${buildResult.stderr}\n`;
-      if (buildResult.timedOut) issues.push('production build timed out');
-      else if (!buildOk) issues.push(`production build failed (exit ${buildResult.code})`);
-    } else if (requiredBuild) {
-      buildOk = false;
-      buildExitCode = null;
-      issues.push('production build blocked by install or typecheck failure');
+    if (requiredBuild) {
+      if (payload.buildRan) {
+        buildExitCode = payload.buildCode;
+        buildOk = payload.buildCode === 0;
+        if (!buildOk) issues.push(`production build failed (exit ${payload.buildCode ?? 'unknown'})`);
+      } else {
+        buildOk = false;
+        buildExitCode = null;
+        issues.push('production build blocked by install or typecheck failure');
+      }
     }
+
     const ok = installOk && tscOk && (!requiredBuild || buildOk === true);
 
     return {

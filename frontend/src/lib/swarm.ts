@@ -1,3 +1,4 @@
+import { engineeringArtifactToText, isRenderableArtifact } from './engineeringArtifact';
 /** Extract human-readable text from a Swarm output payload. */
 export function swarmOutputToText(output: unknown): string {
   if (!output || typeof output !== 'object') {
@@ -16,6 +17,11 @@ export function swarmOutputToText(output: unknown): string {
     pdfUrl?: string;
   };
 
+  // Checked before `o.message`, because an engineering artifact carrying an incidental
+  // message field must still produce the full result rather than one line of it.
+  if (isRenderableArtifact(output)) {
+    return engineeringArtifactToText(output);
+  }
   if (o.type === 'chat' && typeof o.content === 'string') {
     return o.content;
   }
