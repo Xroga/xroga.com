@@ -309,7 +309,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const welcomeBox = (await page.getByTestId('workspace-welcome').boundingBox())!;
   expect(welcomeBox).not.toBeNull();
   expect(welcomeBox.y).toBeGreaterThanOrEqual(shellBox.y);
-  expect(welcomeBox.y - shellBox.y).toBeLessThan(140);
+  // Tolerance, not slack: the API-connection banner sits above the greeting and only
+  // renders when the API is unreachable, so the exact offset depends on conditional
+  // content this assertion is not about. What it proves either way is that the
+  // greeting begins at the top of the transcript rather than somewhere down it.
+  expect(welcomeBox.y - shellBox.y).toBeLessThan(200);
 
   // The title bar is real window chrome: a sibling of the panes, not a sticky element
   // compensating for page padding. It must not scroll with the history.
@@ -502,17 +506,35 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(canonicalComposer.locator('.xv-chatbar-toolbar')).toHaveCount(0);
   const composerActions = canonicalComposer.getByRole('button', { name: 'More composer actions' });
   await expect(composerActions).toBeVisible();
-  const addIntegration = canonicalComposer.getByRole('button', { name: 'Add integration' });
-  await expect(addIntegration).toBeVisible();
   await expect(canonicalComposer.getByRole('button', { name: 'Upload files' })).toHaveCount(0);
-  await addIntegration.click();
-  await expect(page.getByRole('dialog', { name: 'Integrations' })).toBeVisible();
-  await page.getByRole('button', { name: 'Close integrations' }).click();
+  // Integrations lives inside the `+` menu now. The detached pill beside the trigger
+  // was a second entry point to the same dialog, so it is gone — but what it opened
+  // is still asserted here, from its new home.
+  await expect(canonicalComposer.getByRole('button', { name: 'Add integration' })).toHaveCount(0);
   await composerActions.click();
   const actionsMenu = canonicalComposer.getByRole('dialog', { name: 'Composer actions' });
   await expect(actionsMenu.getByRole('button', { name: /Add files or photos/ })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: 'Slash commands' })).toBeVisible();
   await expect(actionsMenu.getByRole('button', { name: /Connectors/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Plan before build/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Debug an error/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Skills/ })).toBeVisible();
+  await expect(actionsMenu.getByRole('button', { name: /Rules/ })).toBeVisible();
+  // The menu is an extension of the composer, not a popup near it: its bottom edge
+  // must overlap the composer's top edge rather than float above it.
+  const composerSurface = canonicalComposer.locator('.xv-chatbar-solid');
+  const menuBox = (await actionsMenu.boundingBox())!;
+  const composerBox = (await composerSurface.boundingBox())!;
+  expect(composerBox.y - (menuBox.y + menuBox.height)).toBeLessThanOrEqual(0);
+  expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
+  expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
+
+  await actionsMenu.getByRole('button', { name: /Integrations/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Integrations' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close integrations' }).click();
+
+  await composerActions.click();
+  await expect(actionsMenu).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(actionsMenu).toHaveCount(0);
   await expect(canonicalComposer.getByRole('button', { name: 'Send prompt' })).toBeVisible();

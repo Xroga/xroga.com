@@ -7060,33 +7060,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 }
 .xv-ws-launch--icon { padding: 0; width: 28px; justify-content: center; }
 
-.xv-chatbar-integration-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  height: 28px;
-  padding: 0 0.6rem;
-  border-radius: 0.55rem;
-  border: 1px solid var(--border-subtle, var(--card-border));
-  background: color-mix(in srgb, var(--surface-raised, var(--card)) 90%, transparent);
-  color: var(--text-secondary, var(--muted));
-  font-size: 0.68rem;
-  font-weight: 650;
-  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
-}
-.xv-chatbar-integration-btn:hover {
-  color: var(--text-primary, var(--foreground));
-  border-color: var(--accent);
-}
-.xv-chatbar-integration-btn i {
-  width: 5px;
-  height: 5px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
-}
 
 .xv-chatbar-restore {
   display: flex;
@@ -7118,8 +7091,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
     padding: 0;
     justify-content: center;
   }
-  .xv-chatbar-integration-btn span { display: none; }
-  .xv-chatbar-integration-btn { width: 28px; padding: 0; }
 }
 
 .xv-ws-fold {
