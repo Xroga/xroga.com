@@ -297,13 +297,52 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // pushing the actual build controls down this page.
   await expect(page.getByTestId('workspace-site-header')).toHaveCount(0);
   await expect(page.getByText('Continue where you left off', { exact: true })).toHaveCount(0);
-  const welcomeBox = await page.getByTestId('workspace-welcome').boundingBox();
+  // The workspace is one application window inset from the browser edges, and the
+  // greeting is the first thing inside its terminal pane. It used to sit above a
+  // terminal *card* on a scrolling page; the assertion that it began near the top of
+  // the viewport is replaced by the stronger one, that it begins near the top of the
+  // window that now owns the whole canvas.
+  const shell = page.getByTestId('workspace-window');
+  await expect(shell).toBeVisible();
+  const shellBox = (await shell.boundingBox())!;
+  expect(shellBox).not.toBeNull();
+  const welcomeBox = (await page.getByTestId('workspace-welcome').boundingBox())!;
   expect(welcomeBox).not.toBeNull();
-  expect(welcomeBox!.y).toBeLessThan(80);
+  expect(welcomeBox.y).toBeGreaterThanOrEqual(shellBox.y);
+  expect(welcomeBox.y - shellBox.y).toBeLessThan(140);
+
+  // The title bar is real window chrome: a sibling of the panes, not a sticky element
+  // compensating for page padding. It must not scroll with the history.
   const terminalHeader = page.getByTestId('terminal-identity-header');
-  await expect(terminalHeader).toHaveCSS('position', 'sticky');
-  await expect(terminalHeader).toHaveCSS('top', '-32px');
-  await expect(page.locator('.xv-terminal-body')).toHaveCSS('overflow-y', 'visible');
+  await expect(terminalHeader).not.toHaveCSS('position', 'sticky');
+  const headerBefore = (await terminalHeader.boundingBox())!;
+
+  // Exactly one element scrolls, and it is inside the shell. This is the whole point
+  // of the architecture: at *any* scroll depth the window keeps its inset and its
+  // rounded corners, because the window itself never moves.
+  const transcript = page.getByTestId('terminal-scroll');
+  await expect(transcript).toHaveCSS('overflow-y', 'auto');
+  await expect(shell).toHaveCSS('overflow', 'hidden');
+  await expect(shell).toHaveCSS('border-radius', '16px');
+
+  for (const offset of [100, 500, 1000, 10_000]) {
+    await transcript.evaluate((el, top) => { el.scrollTop = top; }, offset);
+    const scrolled = await page.evaluate(() => ({
+      page: document.scrollingElement!.scrollHeight - document.scrollingElement!.clientHeight,
+      horizontal: document.documentElement.scrollWidth - window.innerWidth,
+    }));
+    expect(scrolled.page, `the page scrolled at offset ${offset}`).toBe(0);
+    expect(scrolled.horizontal, `horizontal overflow at offset ${offset}`).toBeLessThanOrEqual(0);
+    const shellNow = (await shell.boundingBox())!;
+    expect(shellNow.y, `the shell moved at offset ${offset}`).toBeCloseTo(shellBox.y, 0);
+    expect(shellNow.x, `the shell moved at offset ${offset}`).toBeCloseTo(shellBox.x, 0);
+    expect(shellBox.y, 'the shell lost its inset from the browser edge').toBeGreaterThan(0);
+    await expect(shell).toHaveCSS('border-radius', '16px');
+    const headerNow = (await terminalHeader.boundingBox())!;
+    expect(headerNow.y, `the title bar scrolled away at offset ${offset}`).toBeCloseTo(headerBefore.y, 0);
+  }
+  await transcript.evaluate((el) => { el.scrollTop = 0; });
+
   await expect(terminalHeader.getByRole('button', { name: 'Workspace' })).toBeVisible();
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
@@ -317,6 +356,42 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(restoreBox!.height).toBeLessThanOrEqual(40);
   await restoreChatbar.click();
   await expect(composerInput).toBeVisible();
+
+  // The `+` menu is an upward extension of the composer, not a popup near it. The
+  // proof is geometric: its bottom edge must overlap the composer's top edge, so the
+  // two share a border rather than being separated by a visible gap.
+  const composerSurface = terminalDock.locator('.xv-chatbar-solid');
+  await terminalDock.locator('.xv-cba-trigger').first().click();
+  const plusMenu = page.locator('.xv-cba-menu');
+  await expect(plusMenu).toBeVisible();
+  const menuBox = (await plusMenu.boundingBox())!;
+  const composerBox = (await composerSurface.boundingBox())!;
+  expect(composerBox.y - (menuBox.y + menuBox.height)).toBeLessThanOrEqual(0);
+  expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
+  expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
+
+  // Every action survived the redesign, Integrations among them — and the detached
+  // Integrations pill that used to duplicate it is gone.
+  for (const action of [
+    'Add files or photos',
+    'Slash commands',
+    'Connectors',
+    'Plan before build',
+    'Debug an error',
+    'Skills',
+    'Rules',
+    'Integrations',
+  ]) {
+    await expect(plusMenu.getByText(action, { exact: true })).toBeVisible();
+  }
+  await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
+
+  // Escape still closes it, and opening it never moved the window.
+  await page.keyboard.press('Escape');
+  await expect(plusMenu).toHaveCount(0);
+  const shellAfterMenu = (await shell.boundingBox())!;
+  expect(shellAfterMenu.y).toBeCloseTo(shellBox.y, 0);
+  expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);
 
   const desktopSidebar = page.locator('.xv-sidebar-root');
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();

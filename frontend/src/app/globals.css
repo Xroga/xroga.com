@@ -7870,3 +7870,788 @@ body.theme-beige {
   color: var(--text-muted, var(--muted));
   white-space: nowrap;
 }
+
+/* ============================================================================
+   THE WORKSPACE APPLICATION SHELL
+   ============================================================================
+
+   One window, two internal panes.
+
+   What this replaces: the terminal and the project workspace were two independent
+   rounded cards laid out on a scrolling page. Opening the workspace mounted a second
+   card beside the first, so the workspace read as "another panel appeared" rather than
+   "the window split". And because the *page* was the scrolling surface, a long
+   transcript pushed the terminal card past the viewport — the inset disappeared, the
+   corners squared off, and the application became a full-bleed rectangle. That is the
+   bug this section exists to make structurally impossible, not merely to hide.
+
+   The invariant: the shell is exactly as tall as its stage and never scrolls. Only
+   `.xv-terminal-scroll` (and each workspace tab's own body) scrolls. There is no scroll
+   offset at which the shell can lose its radius, because the shell does not move.
+
+   These rules are deliberately unlayered. The terminal skins live in `@layer utilities`
+   and set `background`/`border` directly, and an unlayered rule outranks any layered one
+   regardless of specificity — so the shell's own quiet border wins over the skin's
+   bright one without an `!important` arms race.
+   ============================================================================ */
+
+/* ---- the stage: breathing room around the application -------------------- */
+
+.xv-app-stage {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  /* The ground behind the window. Barely a gradient — just enough separation for the
+     rounded silhouette to be legible against it. A stronger one would read as a
+     backdrop rather than as the desk the window sits on. */
+  background:
+    radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.05), transparent 38%),
+    #020304;
+}
+
+@media (min-width: 640px) {
+  .xv-app-stage { padding: 10px 12px 12px; }
+}
+@media (min-width: 1024px) {
+  .xv-app-stage { padding: 12px 14px 14px; }
+}
+
+/* Fullscreen is the one state that gives the inset up, because that is what the
+   control means. Everything else about the architecture is unchanged. */
+.xv-app-stage--fullscreen { padding: 0; }
+.xv-app-stage--fullscreen .xv-workspace-shell {
+  border-radius: 0;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ---- the shell ------------------------------------------------------------ */
+
+.xv-workspace-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #08090b;
+  /* Almost invisible on purpose. A card outline here is what made two panes read as
+     two documents; the shape should be carried by the shadow and the ground. */
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+@media (max-width: 639px) {
+  .xv-workspace-shell { border-radius: 12px; }
+}
+
+/* Light skins still need a readable ground; the shell takes the skin's surface rather
+   than forcing a dark one, and only the border and shadow stay the shell's own. */
+.terminal-skin-light.xv-workspace-shell,
+.terminal-skin-light-grid.xv-workspace-shell,
+.terminal-skin-paper.xv-workspace-shell {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.09);
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.xv-workspace-shell--incognito {
+  background: #17181c;
+  border-color: rgba(255, 255, 255, 0.075);
+}
+
+/* ---- the title bar: one continuous application toolbar -------------------- */
+
+.xv-workspace-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 42px;
+  background: var(--term-chrome, #0b0d12);
+  /* A hairline, not a rule. The toolbar and the body are the same surface at two
+     brightnesses; the line only says where one ends. */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+.terminal-skin-light .xv-workspace-header,
+.terminal-skin-light-grid .xv-workspace-header,
+.terminal-skin-paper .xv-workspace-header {
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+.xv-workspace-header-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* The only divider in the toolbar. Controls are separated by space and surface,
+   not by giving each one an outline. */
+.xv-header-sep {
+  width: 1px;
+  height: 16px;
+  margin-inline: 0.15rem;
+  background: rgba(255, 255, 255, 0.075);
+}
+.terminal-skin-light .xv-header-sep,
+.terminal-skin-light-grid .xv-header-sep,
+.terminal-skin-paper .xv-header-sep { background: rgba(15, 23, 42, 0.1); }
+
+/* ---- the body: two internal panes ---------------------------------------- */
+
+.xv-workspace-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  transition: grid-template-columns 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1024px) {
+  .xv-workspace-body[data-workspace-open='true'] {
+    grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr);
+  }
+}
+
+/* Phones and small tablets get one pane at a time. Two 180px columns is not a split
+   view, it is two unusable columns — so when the workspace is open on a narrow screen
+   it takes the shell and the terminal steps aside. */
+@media (max-width: 1023px) {
+  .xv-workspace-body[data-workspace-open='true'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .xv-workspace-body[data-workspace-open='true'] .xv-terminal-panel {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-workspace-body { transition: none; }
+}
+
+/* ---- the terminal pane ---------------------------------------------------- */
+
+.xv-terminal-panel {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  /* Clips its own content. This is what keeps the transcript inside the window's
+     rounded corners instead of painting over them. */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* THE scrolling element. Not the body, not the shell, not the panel. */
+.xv-terminal-scroll {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 18px 14px 24px;
+  /* Room for the composer, which is fixed over the bottom of the shell. Without it the
+     last few lines of a build report sit permanently behind the chatbar. */
+  padding-bottom: calc(var(--xv-chatbar-height, 112px) + 28px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
+}
+
+@media (min-width: 1024px) {
+  .xv-terminal-scroll {
+    padding: 28px 22px 36px;
+    padding-bottom: calc(var(--xv-chatbar-height, 112px) + 36px);
+  }
+}
+
+.xv-terminal-scroll::-webkit-scrollbar { width: 6px; }
+.xv-terminal-scroll::-webkit-scrollbar-track { background: transparent; }
+.xv-terminal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+.xv-terminal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+.terminal-skin-light .xv-terminal-scroll,
+.terminal-skin-light-grid .xv-terminal-scroll,
+.terminal-skin-paper .xv-terminal-scroll {
+  scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
+}
+.terminal-skin-light .xv-terminal-scroll::-webkit-scrollbar-thumb,
+.terminal-skin-light-grid .xv-terminal-scroll::-webkit-scrollbar-thumb,
+.terminal-skin-paper .xv-terminal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.16);
+}
+
+/* The transcript inside the shell carries no frame of its own: the shell is the frame. */
+.xv-terminal-window--flush {
+  display: block;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.xv-terminal-body--flush {
+  padding: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* ---- the workspace pane --------------------------------------------------- */
+
+.xv-workspace-panel {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+  /* Divided by a hairline and a little depth. Not bordered — a border on all four
+     sides is precisely what makes it look like a second card. */
+  border-left: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow: -16px 0 42px rgba(0, 0, 0, 0.16);
+  animation: xv-workspace-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.terminal-skin-light .xv-workspace-panel,
+.terminal-skin-light-grid .xv-workspace-panel,
+.terminal-skin-paper .xv-workspace-panel {
+  border-left-color: rgba(15, 23, 42, 0.08);
+  box-shadow: -16px 0 42px rgba(15, 23, 42, 0.06);
+}
+
+@media (max-width: 1023px) {
+  .xv-workspace-panel { border-left: 0; box-shadow: none; }
+}
+
+/* Ambient depth, not a glow. It should be findable only by covering it up. */
+.xv-workspace-panel::before {
+  content: '';
+  position: absolute;
+  inset: auto;
+  top: 8%;
+  left: 10%;
+  width: 75%;
+  height: 65%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(40, 105, 255, 0.08) 0%,
+    rgba(30, 75, 180, 0.03) 45%,
+    transparent 72%
+  );
+  filter: blur(46px);
+}
+
+@keyframes xv-workspace-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-workspace-panel { animation: none; }
+}
+
+/* ---- workspace navigation ------------------------------------------------- */
+
+.xv-ws-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex-shrink: 0;
+  padding: 0.3rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+.xv-ws-tabs::-webkit-scrollbar { display: none; }
+
+.xv-ws-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 140ms ease, background 140ms ease;
+}
+.xv-ws-tab:hover {
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.03);
+}
+.xv-ws-tab.is-active { color: #2f7cff; }
+/* A 2px mark under the label, rather than an outline around every tab. */
+.xv-ws-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #2f7cff;
+}
+.terminal-skin-light .xv-ws-tab,
+.terminal-skin-light-grid .xv-ws-tab,
+.terminal-skin-paper .xv-ws-tab { color: rgba(15, 23, 42, 0.5); }
+.terminal-skin-light .xv-ws-tab:hover,
+.terminal-skin-light-grid .xv-ws-tab:hover,
+.terminal-skin-paper .xv-ws-tab:hover {
+  color: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.04);
+}
+
+/* ---- device switcher ------------------------------------------------------ */
+
+.xv-ws-device {
+  position: relative;
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.35rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.42);
+  transition: color 140ms ease;
+}
+.xv-ws-device:hover { color: rgba(255, 255, 255, 0.72); }
+.xv-ws-device.is-active { color: #2f7cff; }
+.xv-ws-device.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0.45rem;
+  right: 0.45rem;
+  bottom: -1px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: #2f7cff;
+}
+.terminal-skin-light .xv-ws-device,
+.terminal-skin-light-grid .xv-ws-device,
+.terminal-skin-paper .xv-ws-device { color: rgba(15, 23, 42, 0.45); }
+
+/* ---- preview empty state -------------------------------------------------- */
+
+.xv-preview-empty {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+.xv-preview-empty p {
+  margin: 0;
+  max-width: 30ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.38);
+}
+.terminal-skin-light .xv-preview-empty p,
+.terminal-skin-light-grid .xv-preview-empty p,
+.terminal-skin-paper .xv-preview-empty p { color: rgba(15, 23, 42, 0.45); }
+
+/* ---- the Workspace button: filled states, not an outline ------------------ */
+
+.xv-ws-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.55rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+.xv-ws-launch:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+}
+.xv-ws-launch[aria-pressed='true'] {
+  background: rgba(255, 255, 255, 0.075);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 5px 16px rgba(0, 0, 0, 0.18);
+}
+.xv-ws-launch--icon {
+  width: 28px;
+  padding: 0;
+  justify-content: center;
+}
+.terminal-skin-light .xv-ws-launch,
+.terminal-skin-light-grid .xv-ws-launch,
+.terminal-skin-paper .xv-ws-launch { color: rgba(15, 23, 42, 0.55); }
+.terminal-skin-light .xv-ws-launch:hover,
+.terminal-skin-light-grid .xv-ws-launch:hover,
+.terminal-skin-paper .xv-ws-launch:hover {
+  background: rgba(15, 23, 42, 0.05);
+  color: rgba(15, 23, 42, 0.85);
+}
+.terminal-skin-light .xv-ws-launch[aria-pressed='true'],
+.terminal-skin-light-grid .xv-ws-launch[aria-pressed='true'],
+.terminal-skin-paper .xv-ws-launch[aria-pressed='true'] {
+  background: rgba(15, 23, 42, 0.075);
+  color: rgba(15, 23, 42, 0.95);
+}
+
+/* ============================================================================
+   TERMINAL TYPOGRAPHY
+   ============================================================================
+   Build output was rendering at page-heading scale — "Build finished without a
+   preview" arrived as a 28px bold line, which is how a marketing page announces a
+   product, not how a console reports an event. The hierarchy below is a terminal's:
+   one modest title, quiet secondary text, and body copy sized to be read for minutes
+   at a time rather than glanced at.
+   ============================================================================ */
+
+.xv-terminal-scroll .xv-response-text {
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+.xv-terminal-scroll .xv-response-text p { font-size: 14px; line-height: 1.65; }
+.xv-terminal-scroll .xv-response-text h1,
+.xv-terminal-scroll .xv-response-text h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+.xv-terminal-scroll .xv-response-text h3,
+.xv-terminal-scroll .xv-response-text h4 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.xv-terminal-scroll .xv-response-text h1 + p,
+.xv-terminal-scroll .xv-response-text h2 + p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.48);
+}
+.terminal-skin-light .xv-terminal-scroll .xv-response-text h1 + p,
+.terminal-skin-light .xv-terminal-scroll .xv-response-text h2 + p,
+.terminal-skin-light-grid .xv-terminal-scroll .xv-response-text h1 + p,
+.terminal-skin-paper .xv-terminal-scroll .xv-response-text h1 + p {
+  color: rgba(15, 23, 42, 0.55);
+}
+
+/* ---- user prompt bubbles -------------------------------------------------- */
+
+.xv-user-bubble {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  /* Was a blue gradient with a lit outline, which gave every prompt the visual weight
+     of a call to action. A prompt is a quiet record of what was asked. */
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  font-size: 13px;
+  line-height: 1.55;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.group:focus-within .xv-user-bubble,
+.xv-user-bubble:hover {
+  border-color: rgba(47, 124, 255, 0.32);
+  background: rgba(255, 255, 255, 0.06);
+}
+.terminal-skin-light .xv-user-bubble,
+.terminal-skin-light-grid .xv-user-bubble,
+.terminal-skin-paper .xv-user-bubble {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.09);
+}
+
+/* ---- suggested next steps ------------------------------------------------- */
+
+.xv-suggest-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.35rem;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.38);
+}
+.xv-suggest-label svg { color: #2f7cff; }
+.xv-suggest-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.xv-suggest-chip {
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.72);
+  transition: background 140ms ease, color 140ms ease;
+}
+.xv-suggest-chip:hover {
+  background: rgba(255, 255, 255, 0.065);
+  color: rgba(255, 255, 255, 0.95);
+}
+/* The one accent: a follow-up the model proposed, marked without an outline. */
+.xv-suggest-chip.is-next { color: rgba(160, 195, 255, 0.9); }
+.xv-suggest-chip.is-next:hover { color: #cbdcff; }
+.terminal-skin-light .xv-suggest-chip,
+.terminal-skin-light-grid .xv-suggest-chip,
+.terminal-skin-paper .xv-suggest-chip {
+  background: rgba(15, 23, 42, 0.035);
+  border-color: rgba(15, 23, 42, 0.08);
+  color: rgba(15, 23, 42, 0.72);
+}
+.terminal-skin-light .xv-suggest-label,
+.terminal-skin-light-grid .xv-suggest-label,
+.terminal-skin-paper .xv-suggest-label { color: rgba(15, 23, 42, 0.45); }
+
+/* ============================================================================
+   THE CHAT COMPOSER, AND THE `+` MENU ATTACHED TO IT
+   ============================================================================
+
+   The composer is fixed over the bottom of the shell, so it is inset to the same
+   gutter the stage uses — otherwise it sits on the browser edge while the window it
+   belongs to floats above it.
+
+   The menu is the substantive change. It was a floating card 8px above a 28px button
+   in the middle of the composer's bottom row: an unrelated popup that happened to
+   appear nearby. It is now anchored to the composer surface itself and overlaps its
+   top border by exactly 1px, so the two share an edge and read as one object — an
+   action panel that grew out of the chatbar.
+   ============================================================================ */
+
+/* ---- the dock, inset to match the shell ---------------------------------- */
+
+.xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+  padding-inline: 14px;
+  /* Clears the shell's bottom corner. The context strip under the composer is the
+     lowest thing on the screen, and at 14px its text sat on the curve. */
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+@media (max-width: 639px) {
+  .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+    padding-inline: 8px;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---- the composer surface ------------------------------------------------- */
+
+.xv-terminal-dock .xv-chatbar-solid {
+  position: relative;
+  background: rgba(12, 13, 15, 0.96) !important;
+  border: 1px solid rgba(90, 145, 255, 0.16) !important;
+  border-radius: 14px !important;
+  backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+/* It stays elevated because it is the one thing on the screen you act with — but the
+   elevation comes from the surface and a soft shadow, not from a lit outline. */
+.xv-terminal-dock .xv-chatbar-solid:focus-within {
+  border-color: rgba(47, 124, 255, 0.48) !important;
+  box-shadow:
+    0 0 0 3px rgba(47, 124, 255, 0.065),
+    0 14px 36px rgba(0, 0, 0, 0.26) !important;
+}
+body.theme-white .xv-terminal-dock .xv-chatbar-solid {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* The composer is the menu's positioning context. `ChatBarInputRow` is `relative` for
+   the homepage bar's sake, so it is stood down only inside the dock — otherwise the
+   menu would anchor to the button row and open *inside* the composer. */
+.xv-terminal-dock .xv-chatbar-row-modern { position: static; }
+.xv-cba-root { position: static; }
+
+/* ---- the menu ------------------------------------------------------------- */
+
+.xv-cba-menu {
+  position: absolute;
+  left: 0;
+  /* The single line that does the work. 100% is the composer's top edge; the extra
+     pixel makes the two borders overlap instead of stacking into a double rule. */
+  bottom: calc(100% - 1px);
+  margin: 0;
+  z-index: 80;
+  /* Never wider than the composer it is attached to — a menu whose corner sticks out
+     past the bar's edge stops reading as part of it. */
+  width: min(360px, 100%);
+  max-height: min(520px, calc(100dvh - 150px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 7px;
+  background: #0b0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  /* Rounded where it meets air, nearly square where it meets the composer. */
+  border-radius: 14px 14px 6px 6px;
+  box-shadow:
+    0 -18px 50px rgba(0, 0, 0, 0.38),
+    0 8px 30px rgba(0, 0, 0, 0.24);
+  transform-origin: bottom left;
+  animation: xv-cba-grow 150ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
+}
+body.theme-white .xv-cba-menu {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+/* Grows upward out of the bar. No bounce, no dramatic scale — it is an extension of
+   a surface that is already there, not an arrival. */
+@keyframes xv-cba-grow {
+  from { opacity: 0; transform: translateY(5px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-cba-menu { animation: none; }
+}
+
+.xv-cba-menu::-webkit-scrollbar { width: 6px; }
+.xv-cba-menu::-webkit-scrollbar-track { background: transparent; }
+.xv-cba-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+/* ---- menu rows ------------------------------------------------------------ */
+
+.xv-cba-item {
+  min-height: 46px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: rgba(255, 255, 255, 0.86);
+  border: 0;
+  transition: background 120ms ease, color 120ms ease;
+}
+.xv-cba-item:hover {
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.98);
+}
+.xv-cba-item svg { margin-top: 0; color: #2f7cff; }
+.xv-cba-item__text b {
+  font-size: 14px;
+  font-weight: 550;
+  color: rgba(255, 255, 255, 0.9);
+}
+.xv-cba-item__text i {
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.43);
+}
+body.theme-white .xv-cba-item { color: rgba(15, 23, 42, 0.86); }
+body.theme-white .xv-cba-item:hover { background: rgba(15, 23, 42, 0.05); }
+body.theme-white .xv-cba-item__text b { color: rgba(15, 23, 42, 0.9); }
+body.theme-white .xv-cba-item__text i { color: rgba(15, 23, 42, 0.5); }
+
+.xv-cba-sep {
+  height: 1px;
+  margin: 6px 4px;
+  background: rgba(255, 255, 255, 0.06);
+}
+body.theme-white .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
+
+/* Metadata, not another button. */
+.xv-cba-kbd {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+body.theme-white .xv-cba-kbd {
+  color: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+/* The chevron on Connectors sits hard right, after the hint. */
+.xv-cba-item > svg:last-child { margin-left: auto; }
+.xv-cba-hint + svg { margin-left: 0.4rem; }
+
+/* Marks integrations needing attention without adding a second colour. */
+.xv-cba-flag {
+  margin-left: auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2f7cff;
+  flex-shrink: 0;
+}
+
+/* ---- the trigger ---------------------------------------------------------- */
+
+.xv-cba-trigger {
+  border: 0;
+  background: transparent;
+}
+.xv-cba-trigger:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.9);
+}
+.xv-cba-trigger[data-open='true'] {
+  background: rgba(47, 124, 255, 0.11);
+  color: #3b82ff;
+}
+body.theme-white .xv-cba-trigger:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.05);
+  color: rgba(15, 23, 42, 0.9);
+}
+
+/* The composer tracks the terminal pane's real edges (published by `DashboardView`
+   from the element itself, because the split animates). Falling back to the sidebar
+   width means a render before the first measurement still lands in the right place
+   rather than jumping. */
+.xv-terminal-dock:not(.xv-terminal-dock--fullscreen) {
+  left: var(--xv-pane-left, 0px);
+  right: var(--xv-pane-right, 0px);
+  transition: left 280ms cubic-bezier(0.22, 1, 0.36, 1),
+              right 280ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 300ms ease,
+              bottom 300ms ease;
+}
+/* The measured edges already account for the pane, so the old reservation for an open
+   workspace would subtract the same width twice. */
+.xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+  padding-right: 14px;
+}
+@media (max-width: 639px) {
+  .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+    padding-right: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) { transition: none; }
+}
