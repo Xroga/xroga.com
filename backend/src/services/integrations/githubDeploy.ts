@@ -459,6 +459,7 @@ interface ConnectedRepositoryPushOptions {
   deletePaths: string[];
   runId?: string;
   directWriteAuthorized: boolean;
+  allowEmptyBootstrap: boolean;
 }
 
 /**
@@ -485,6 +486,24 @@ async function pushToConnectedRepository(
 ): Promise<AtomicWriteRecord> {
   const api = await atomicWriteApiFor(token, owner, repo);
   const defaultBranch = await getDefaultBranch(token, owner, repo);
+
+  // Selecting a genuinely empty repository for New Product authorizes exactly one
+  // parentless initial commit. Recheck emptiness here and again inside writeAtomically;
+  // this permission is never carried into the existing-branch path below.
+  if (options.allowEmptyBootstrap && (await api.isRepositoryEmpty())) {
+    return writeAtomically(
+      api,
+      { owner, repo },
+      {
+        branch: options.requestedBranch,
+        mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
+        message,
+        defaultBranch: defaultBranch || options.requestedBranch,
+        directWriteAuthorized: true,
+        allowEmptyBootstrap: true,
+      },
+    );
+  }
 
   const needsAuthorization = await branchWriteNeedsAuthorization(
     api,
@@ -615,6 +634,8 @@ export interface GitHubPushOptions {
   runId?: string;
   /** Explicit approval to commit straight to a default or protected branch. */
   directWriteAuthorized?: boolean;
+  /** New Product may initialise a selected repository only when it is still empty. */
+  allowEmptyBootstrap?: boolean;
   /** Visibility for a repository this call creates. Private unless explicitly public. */
   visibility?: RepositoryVisibility;
 }
@@ -651,6 +672,7 @@ export async function pushBuildToGitHub(
       deletePaths: opts.deletePaths ?? [],
       runId: opts.runId,
       directWriteAuthorized: opts.directWriteAuthorized === true,
+      allowEmptyBootstrap: opts.allowEmptyBootstrap === true,
     });
 
     invalidateRepoAnalysis(userId, selectedRepo);

@@ -3207,6 +3207,9 @@ export async function runBuildPipeline(opts: {
         // Lets the write open `xroga/<run-id>` with a pull request when the target branch
         // is protected, instead of failing the build or committing without approval.
         runId,
+        // New Product + an explicitly selected repository may create its first
+        // parentless commit only if GitHub still proves it empty at write time.
+        allowEmptyBootstrap: !isUpdate && prior.files.length === 0,
         visibility: meta?.githubVisibility ?? 'private',
       });
       githubRepoUrl = pushed.htmlUrl;

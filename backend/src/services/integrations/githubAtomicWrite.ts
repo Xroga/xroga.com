@@ -45,7 +45,7 @@ import {
   type ResolvedTreeEntry,
 } from './githubMutationPlan.js';
 import type { StartingTree } from './githubMutationPlan.js';
-import { readStartingTree, type TreeApi } from './githubTreeSnapshot.js';
+import { emptyStartingTree, readStartingTree, type TreeApi } from './githubTreeSnapshot.js';
 import {
   authorizeBranchWrite,
   BranchAuthorizationError,
@@ -175,6 +175,8 @@ export interface AtomicWriteRequest {
    * Never inferred — see `githubBranchAuthorization`.
    */
   directWriteAuthorized?: boolean;
+  /** Authorizes creating the first branch in a repository proven empty at write time. */
+  allowEmptyBootstrap?: boolean;
 }
 
 /** The criterion-2 record: everything needed to audit or reproduce the write. */
@@ -255,26 +257,23 @@ export async function writeAtomically(
   identity: { owner: string; repo: string },
   request: AtomicWriteRequest,
 ): Promise<AtomicWriteRecord> {
-  // Policy for a repository with no commits at all.
-  //
-  // GitHub's Git Data API returns 409 for an empty repository and the documentation points
-  // at the Contents API to initialise one. Doing that here would mean a one-file commit
-  // followed by the real multi-file commit — a window in which the repository is publicly
-  // a fragment of what was asked for. So: repositories Xroga creates are initialised at
-  // creation (`auto_init: true`), which means they are never empty and always take this
-  // path. A repository created elsewhere and left truly empty is refused, by name, with
-  // an instruction the user can act on. It is a narrower product than a silent bootstrap
-  // and a much smaller one than a half-written repository.
+  // An empty repository can still be initialised atomically through Git Data: create all
+  // blobs, one root tree and one parentless commit, then make that commit visible with a
+  // single create-ref call. The Contents API is not involved, so there is never a public
+  // one-file intermediate state. This is allowed only when the caller carries explicit
+  // direct-write authorization for the selected empty repository.
   const empty = await stage('branch_resolution', 'Could not determine repository state', () =>
     api.isRepositoryEmpty(),
   );
-  if (empty) {
+  if (
+    empty &&
+    !(request.directWriteAuthorized === true && request.allowEmptyBootstrap === true)
+  ) {
     throw new AtomicWriteError(
       'branch_resolution',
       'atomic_bootstrap_required',
-      `${identity.owner}/${identity.repo} has no commits yet. Writing to it would require ` +
-        'initialising it one file at a time, which would publish the repository in a ' +
-        'half-written state. Add any first commit (a README is enough) and run this again.',
+      `${identity.owner}/${identity.repo} has no commits yet. Initialising its first branch ` +
+        'requires explicit authorization for this selected repository.',
     );
   }
 
@@ -299,20 +298,24 @@ export async function writeAtomically(
     throw error;
   }
 
-  const target: ResolvedWriteTarget = await stage(
-    'branch_resolution',
-    `Could not resolve branch "${request.branch}"`,
-    () =>
-      resolveExactWritableBranch(api, request.branch, {
-        createFromSha: request.createBranchFromSha ?? null,
-      }),
-  );
+  const target: ResolvedWriteTarget = empty
+    ? { branch: request.branch, sha: '', created: true }
+    : await stage(
+        'branch_resolution',
+        `Could not resolve branch "${request.branch}"`,
+        () =>
+          resolveExactWritableBranch(api, request.branch, {
+            createFromSha: request.createBranchFromSha ?? null,
+          }),
+      );
 
-  const startingHeadSha = target.sha;
+  const startingHeadSha = empty ? null : target.sha;
 
-  const startingTree = await stage('tree_snapshot', 'Could not read the repository contents', () =>
-    readStartingTree(api, startingHeadSha),
-  );
+  const startingTree = empty
+    ? emptyStartingTree()
+    : await stage('tree_snapshot', 'Could not read the repository contents', () =>
+        readStartingTree(api, target.sha),
+      );
 
   const plan = await stage('planning', 'The requested changes were rejected', async () => {
     const mutations =
@@ -322,7 +325,7 @@ export async function writeAtomically(
 
   const proposal: MutationProposal = {
     branch: target.branch,
-    plannedFromSha: startingHeadSha,
+    plannedFromSha: startingHeadSha ?? '',
     observedHeadSha: null,
     manifest: plan.manifest,
     preservedPaths: plan.preservedPaths,
@@ -340,9 +343,13 @@ export async function writeAtomically(
   );
 
   // Everything above produced unreferenced git objects. This is the only irreversible call.
-  const update = await stage('ref_update', `Could not update branch "${target.branch}"`, () =>
-    api.updateRef(target.branch, commitSha),
-  );
+  const update = empty
+    ? await stage('ref_update', `Could not create branch "${target.branch}"`, async () => ({
+        ok: await api.createRef(target.branch, commitSha),
+      }))
+    : await stage('ref_update', `Could not update branch "${target.branch}"`, () =>
+        api.updateRef(target.branch, commitSha),
+      );
 
   if (!update.ok) {
     if (update.conflict) {
@@ -358,10 +365,22 @@ export async function writeAtomically(
         },
       );
     }
+    const observed = empty ? await api.getRef(target.branch).catch(() => null) : null;
+    if (empty && observed) {
+      throw new AtomicWriteError(
+        'ref_update',
+        'concurrent_head_movement',
+        `Branch "${target.branch}" was created while this build was running. Nothing was overwritten.`,
+        {
+          branchUnchanged: true,
+          proposal: { ...proposal, observedHeadSha: observed.sha },
+        },
+      );
+    }
     throw new AtomicWriteError(
       'ref_update',
       'stage_failed',
-      `Branch "${target.branch}" was not updated${update.detail ? `: ${update.detail}` : '.'} ` +
+      `Branch "${target.branch}" was not ${empty ? 'created' : 'updated'}${update.detail ? `: ${update.detail}` : '.'} ` +
         'Nothing was written.',
       { branchUnchanged: true, proposal },
     );

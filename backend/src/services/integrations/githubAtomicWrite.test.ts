@@ -623,11 +623,53 @@ test('a run branch writes without authorization, which is the whole point of usi
 
 // --- the empty-repository policy ---------------------------------------------------
 
-test('a truly empty repository is refused by name rather than bootstrapped file by file', async () => {
-  // Policy: repositories Xroga creates are initialised at creation, so they are never
-  // empty. An externally-created empty one gets a refusal the user can act on, because
-  // the alternative — a one-file Contents commit followed by the real one — publishes the
-  // repository in a state that was never asked for.
+test('an explicitly authorized empty repository is bootstrapped with one parentless commit and one ref', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo);
+
+  const record = await writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+    branch: 'main',
+    mutations: syncMutations([['index.html', 'v1'], ['README.md', '# Blank']]),
+    message: 'initial build',
+    ...AUTHORIZED,
+    allowEmptyBootstrap: true,
+  });
+
+  assert.equal(record.startingHeadSha, null);
+  assert.equal(record.startingTreeSha, '');
+  assert.equal(record.branchCreated, true);
+  assert.equal(record.verified, true);
+  assert.equal(api.commitCount, 1);
+  assert.equal(api.refUpdateCount, 0, 'bootstrap creates a ref instead of patching one');
+  assert.equal(repo.commits[record.resultingCommitSha]?.parent, null);
+  assert.equal(repo.branches.main, record.resultingCommitSha);
+  assert.equal(api.calls.filter((call) => call === 'createRef:main').length, 1);
+  assertNoContentsApiSurface(api);
+});
+
+test('an empty repository without explicit authorization still creates no git objects', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo);
+
+  await assert.rejects(
+    writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+      branch: 'main',
+      mutations: syncMutations([['index.html', 'v1']]),
+      message: 'build',
+      defaultBranch: 'main',
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AtomicWriteError);
+      assert.equal(error.reason, 'atomic_bootstrap_required');
+      return true;
+    },
+  );
+
+  assert.equal(api.blobCount, 0);
+  assert.deepEqual(api.calls, ['isRepositoryEmpty']);
+});
+
+test('generic direct-write approval cannot bootstrap an empty repository without the narrow bootstrap grant', async () => {
   const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
   const api = makeFake(repo);
 
@@ -641,14 +683,12 @@ test('a truly empty repository is refused by name rather than bootstrapped file 
     (error: unknown) => {
       assert.ok(error instanceof AtomicWriteError);
       assert.equal(error.reason, 'atomic_bootstrap_required');
-      assert.match(error.message, /acme\/blank has no commits yet/);
-      assert.match(error.message, /README is enough/);
       return true;
     },
   );
 
   assert.equal(api.blobCount, 0);
-  assert.deepEqual(api.calls, ['isRepositoryEmpty'], 'the check comes first, before anything else');
+  assert.deepEqual(api.calls, ['isRepositoryEmpty']);
 });
 
 // --- planning refusals abort before any upload -------------------------------------
