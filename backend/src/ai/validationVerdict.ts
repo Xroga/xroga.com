@@ -64,7 +64,15 @@ export function qaWasUnavailable(qa: QaSummary): boolean {
         /^QA unavailable$/i.test(message) ||
         /^The reviewer could not be reached for batch \d+ of \d+ — treated as not reviewed\.$/i.test(
           message,
-        )
+        ) ||
+        /^The reviewer returned nothing — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer response was not a JSON object — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer response could not be parsed — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer returned no verdict — a missing status is not a pass\.$/i.test(message) ||
+        /^The reviewer verdict was .+ which is not a boolean — treated as not passed\.$/i.test(
+          message,
+        ) ||
+        /^The reviewer did not pass the build\.$/i.test(message)
       );
     })
   );

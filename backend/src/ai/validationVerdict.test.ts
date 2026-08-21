@@ -154,6 +154,41 @@ test('a reviewer outage is recognised as an outage, not as review findings', () 
   );
 });
 
+test('malformed reviewer output is unverified infrastructure, never a code finding', () => {
+  for (const issue of [
+    'The reviewer returned nothing — treated as not reviewed.',
+    'The reviewer response was not a JSON object — treated as not reviewed.',
+    'The reviewer response could not be parsed — treated as not reviewed.',
+    'The reviewer returned no verdict — a missing status is not a pass.',
+    'The reviewer verdict was "yes", which is not a boolean — treated as not passed.',
+    'The reviewer did not pass the build.',
+  ]) {
+    assert.equal(qaWasUnavailable({ ok: false, issues: [issue] }), true, issue);
+    assert.equal(
+      classifyValidation({
+        compile: compileResult({ skipped: true, reason: 'No package.json — static project' }),
+        qa: { ok: false, issues: [issue] },
+        structureOk: true,
+      }).verdict,
+      'not_verified',
+      issue,
+    );
+  }
+});
+
+test('a malformed reviewer response mixed with a real finding still blocks', () => {
+  assert.equal(
+    qaWasUnavailable({
+      ok: false,
+      issues: [
+        'The reviewer response could not be parsed — treated as not reviewed.',
+        'The order button is missing.',
+      ],
+    }),
+    false,
+  );
+});
+
 test('real review findings still block the ship', () => {
   const { verdict } = classifyValidation({
     compile: compileResult(),
