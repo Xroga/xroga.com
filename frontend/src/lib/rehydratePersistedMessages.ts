@@ -82,14 +82,20 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
         // Xroga already owns a scoped endpoint that reads those exact GitHub files.
         // Recovering them here restores Preview without another model call and without
         // treating the repository read as proof of an unobserved deployment.
+        const recoveryRepo =
+          typeof fo.githubRepoName === 'string' && fo.githubRepoName.includes('/')
+            ? fo.githubRepoName
+            : typeof msg.githubRepoName === 'string' && msg.githubRepoName.includes('/')
+              ? msg.githubRepoName
+              : '';
         if (
           !(typeof fo.html === 'string' && fo.html.trim()) &&
-          typeof fo.githubRepoName === 'string' &&
-          fo.githubRepoName.includes('/')
+          recoveryRepo
         ) {
           try {
-            const repositoryBuild = await api.github.getBuildFiles(fo.githubRepoName);
+            const repositoryBuild = await api.github.getBuildFiles(recoveryRepo);
             if (repositoryBuild.html.trim()) {
+              fo.githubRepoName = recoveryRepo;
               fo.html = repositoryBuild.html;
               fo.css = repositoryBuild.css;
               fo.js = repositoryBuild.js;
