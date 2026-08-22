@@ -8948,10 +8948,10 @@ body.theme-beige {
 
 /* ---- one surface for both panels ------------------------------------------ */
 
-body.theme-black { --app-panel: #000000; --app-panel-border: rgba(255, 255, 255, 0.055); }
-body.theme-gray { --app-panel: #2a2a2a; --app-panel-border: rgba(255, 255, 255, 0.07); }
-body.theme-white { --app-panel: #ffffff; --app-panel-border: rgba(15, 23, 42, 0.09); }
-body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.11); }
+body.theme-black { --app-panel: #000000; --app-panel-border: rgba(255, 255, 255, 0.14); }
+body.theme-gray { --app-panel: #2a2a2a; --app-panel-border: rgba(255, 255, 255, 0.14); }
+body.theme-white { --app-panel: #ffffff; --app-panel-border: rgba(15, 23, 42, 0.14); }
+body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.18); }
 
 /* The brand row and the profile row drew their own dividers against the old
    near-white surface; on the shared one they read as seams across a single panel. */
@@ -8975,31 +8975,33 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
   min-width: 0;
 }
 
-/* ---- no seam between the two panels --------------------------------------- */
+/* ---- one edge, shared by both panels -------------------------------------- */
 
-/* With the ground, the sidebar and the workspace all one colour, the only thing
-   still dividing them was their own edges — and there were two of them, in two
-   different colours. Between the panels sat the sidebar's right border and the
-   shell's left border: on Beige rgba(70,60,45,0.11) against rgba(15,23,42,0.09),
-   and on Black a barely-there rgba(255,255,255,0.055) against a much heavier
-   rgba(163,163,163,0.32). Two lines, neither matching the other or the surface
-   behind them.
+/* Between the panels sat two borders in two different colours: on Beige
+   rgba(70,60,45,0.11) against rgba(15,23,42,0.09), and on Black a barely-there
+   rgba(255,255,255,0.055) against a much heavier rgba(163,163,163,0.32) that the
+   terminal skin supplied. Two lines that matched neither each other nor the
+   surface behind them.
 
-   Both keep their width so nothing reflows, and lose their colour. The shadows go
-   with them: each spilled a soft gradient into the same gap, which is the same
-   seam drawn slowly.
+   The first fix removed both, which also removed the window's outline entirely and
+   left the application with no shape at all. The defect was never that the panels
+   had edges — it was that they had *different* edges. So both now take the one
+   `--app-panel-border` their base rules already reference, and that value is set
+   per theme strongly enough to actually read.
 
-   `!important` and a tripled class are not decoration. The heavier of the two
-   lines came from the terminal skin, and three separate rules give the shell a
-   border — `.terminal-skin-dark`, an `!important` pair at .28, and a themed
-   `!important` at .32. A normal declaration cannot beat an important one at any
-   specificity, and among important declarations `body.theme-black
-   .terminal-skin-dark` scores (0,2,1); a doubled class scores (0,2,0) and loses.
-   Tripling it scores (0,3,0), which is the smallest selector that reliably wins
-   against all three without editing rules that other skins share. */
+   The shadows stay off: each spilled a soft gradient into the gap between the
+   panels, which is the same mismatch drawn slowly. The border alone carries the
+   shape.
+
+   `!important` and a tripled class are not decoration. Three rules give the shell
+   a border, two of them `!important`, and the strongest — `body.theme-black
+   .terminal-skin-dark` — scores (0,2,1). A normal declaration cannot beat an
+   important one at any specificity, and a doubled class scores (0,2,0) and loses:
+   that was the first attempt here, and it looked correct on the light themes while
+   changing nothing on the dark ones. Three classes score (0,3,0) and win. */
 .xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
 .xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
 .xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
-  border-color: transparent !important;
+  border-color: var(--app-panel-border) !important;
   box-shadow: none !important;
 }
