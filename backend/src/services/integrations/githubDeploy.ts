@@ -487,9 +487,10 @@ async function pushToConnectedRepository(
   const api = await atomicWriteApiFor(token, owner, repo);
   const defaultBranch = await getDefaultBranch(token, owner, repo);
 
-  // Selecting a genuinely empty repository for New Product authorizes exactly one
-  // parentless initial commit. Recheck emptiness here and again inside writeAtomically;
-  // this permission is never carried into the existing-branch path below.
+  // Selecting a genuinely empty repository for New Product authorizes GitHub's required
+  // neutral initialization commit followed by exactly one atomic product commit. Recheck
+  // emptiness here and again inside writeAtomically; this permission is never carried
+  // into the existing-branch path below.
   if (options.allowEmptyBootstrap && (await api.isRepositoryEmpty())) {
     return writeAtomically(
       api,

@@ -48,6 +48,8 @@ interface FakeOptions {
   /** Make verification read back a different commit than the one that was written. */
   verificationSha?: string;
   omitPullRequestSupport?: boolean;
+  /** Another writer initializes the branch while our initializer is attempted. */
+  bootstrapRaceSha?: string;
 }
 
 interface FakeApi extends AtomicWriteApi {
@@ -57,6 +59,8 @@ interface FakeApi extends AtomicWriteApi {
   treeCount: number;
   commitCount: number;
   refUpdateCount: number;
+  initializationCount: number;
+  initializedPath: string | null;
   lastTreeEntries: Array<{ path: string; sha: string | null; mode: string }>;
   pullRequests: Array<{ head: string; base: string }>;
 }
@@ -80,8 +84,36 @@ function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
     treeCount: 0,
     commitCount: 0,
     refUpdateCount: 0,
+    initializationCount: 0,
+    initializedPath: null,
     lastTreeEntries: [],
     pullRequests: [],
+
+    async initializeEmptyRepository(input) {
+      calls.push(`initializeEmptyRepository:${input.path}`);
+      boom('repository_initialization');
+      if (options.bootstrapRaceSha) {
+        repo.branches[input.branch] = options.bootstrapRaceSha;
+        throw new Error('409 repository is no longer empty');
+      }
+      api.initializationCount += 1;
+      api.initializedPath = input.path;
+      const blobSha = nextId('bootstrap-blob');
+      const treeSha = nextId('bootstrap-tree');
+      const commitSha = nextId('bootstrap-commit');
+      repo.trees[treeSha] = {
+        sha: treeSha,
+        tree: [{ path: input.path, sha: blobSha, mode: '100644', type: 'blob' }],
+      };
+      repo.commits[commitSha] = {
+        tree: treeSha,
+        parent: null,
+        message: input.message,
+      };
+      repo.branches[input.branch] = commitSha;
+      repo.empty = false;
+      return { commitSha };
+    },
 
     async isRepositoryEmpty() {
       calls.push('isRepositoryEmpty');
@@ -623,7 +655,7 @@ test('a run branch writes without authorization, which is the whole point of usi
 
 // --- the empty-repository policy ---------------------------------------------------
 
-test('an explicitly authorized empty repository is bootstrapped with one parentless commit and one ref', async () => {
+test('an explicitly authorized empty repository gets a neutral initializer then one atomic product commit', async () => {
   const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
   const api = makeFake(repo);
 
@@ -636,14 +668,27 @@ test('an explicitly authorized empty repository is bootstrapped with one parentl
   });
 
   assert.equal(record.startingHeadSha, null);
-  assert.equal(record.startingTreeSha, '');
+  assert.match(record.startingTreeSha, /^bootstrap-tree-/);
   assert.equal(record.branchCreated, true);
   assert.equal(record.verified, true);
+  assert.match(record.bootstrapCommitSha ?? '', /^bootstrap-commit-/);
+  assert.equal(record.bootstrapPath, '.xroga/bootstrap');
+  assert.equal(api.initializationCount, 1);
   assert.equal(api.commitCount, 1);
-  assert.equal(api.refUpdateCount, 0, 'bootstrap creates a ref instead of patching one');
-  assert.equal(repo.commits[record.resultingCommitSha]?.parent, null);
+  assert.equal(api.refUpdateCount, 1, 'the complete product lands through one ref update');
+  assert.equal(repo.commits[record.resultingCommitSha]?.parent, record.bootstrapCommitSha);
   assert.equal(repo.branches.main, record.resultingCommitSha);
-  assert.equal(api.calls.filter((call) => call === 'createRef:main').length, 1);
+  assert.equal(api.calls.filter((call) => call === 'createRef:main').length, 0);
+  assert.ok(api.lastTreeEntries.some((entry) => entry.path === '.xroga/bootstrap' && entry.sha === null));
+  const resultingTreeSha = repo.commits[record.resultingCommitSha]?.tree;
+  assert.ok(resultingTreeSha);
+  const resultingTree = repo.trees[resultingTreeSha];
+  assert.ok(resultingTree);
+  assert.ok(resultingTree.tree);
+  assert.equal(
+    resultingTree.tree.some((entry) => entry.path === '.xroga/bootstrap'),
+    false,
+  );
   assertNoContentsApiSurface(api);
 });
 
@@ -666,6 +711,7 @@ test('an empty repository without explicit authorization still creates no git ob
   );
 
   assert.equal(api.blobCount, 0);
+  assert.equal(api.initializationCount, 0);
   assert.deepEqual(api.calls, ['isRepositoryEmpty']);
 });
 
@@ -688,7 +734,97 @@ test('generic direct-write approval cannot bootstrap an empty repository without
   );
 
   assert.equal(api.blobCount, 0);
+  assert.equal(api.initializationCount, 0);
   assert.deepEqual(api.calls, ['isRepositoryEmpty']);
+});
+
+test('an invalid empty-repository plan never creates the neutral initializer', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo);
+
+  await assert.rejects(
+    writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+      branch: 'main',
+      mutations: [{ kind: 'create', path: '../escape.ts', content: 'x' }],
+      message: 'build',
+      ...AUTHORIZED,
+      allowEmptyBootstrap: true,
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AtomicWriteError);
+      assert.equal(error.stage, 'planning');
+      assert.equal(error.branchUnchanged, true);
+      return true;
+    },
+  );
+
+  assert.equal(api.initializationCount, 0);
+  assert.equal(api.blobCount, 0);
+});
+
+test('an empty repository cannot be initialized on a branch other than its recorded default', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo);
+
+  await assert.rejects(
+    writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+      branch: 'feature/first-build',
+      defaultBranch: 'main',
+      mutations: syncMutations([['index.html', 'v1']]),
+      message: 'build',
+      directWriteAuthorized: true,
+      allowEmptyBootstrap: true,
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AtomicWriteError);
+      assert.equal(error.reason, 'atomic_bootstrap_required');
+      return true;
+    },
+  );
+
+  assert.equal(api.initializationCount, 0);
+  assert.equal(api.blobCount, 0);
+});
+
+test('a product failure after initialization truthfully reports that only the marker landed', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo, { failAt: 'blob_creation' });
+
+  const error = await writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+    branch: 'main',
+    mutations: syncMutations([['index.html', 'v1']]),
+    message: 'build',
+    ...AUTHORIZED,
+    allowEmptyBootstrap: true,
+  }).catch((caught: unknown) => caught);
+
+  assert.ok(error instanceof AtomicWriteError);
+  assert.equal(error.stage, 'blob_creation');
+  assert.equal(error.branchUnchanged, false);
+  assert.match(error.message, /initialized, but the product commit did not land/i);
+  assert.equal(api.initializationCount, 1);
+  assert.match(repo.branches.main ?? '', /^bootstrap-commit-/);
+  assert.equal(api.commitCount, 0);
+});
+
+test('a race during empty-repository initialization refuses to write the product', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo, { bootstrapRaceSha: 'commit-racer' });
+
+  const error = await writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+    branch: 'main',
+    mutations: syncMutations([['index.html', 'v1']]),
+    message: 'build',
+    ...AUTHORIZED,
+    allowEmptyBootstrap: true,
+  }).catch((caught: unknown) => caught);
+
+  assert.ok(error instanceof AtomicWriteError);
+  assert.equal(error.reason, 'concurrent_head_movement');
+  assert.equal(error.branchUnchanged, false);
+  assert.equal(error.proposal?.observedHeadSha, 'commit-racer');
+  assert.equal(api.blobCount, 0);
+  assert.equal(api.commitCount, 0);
 });
 
 // --- planning refusals abort before any upload -------------------------------------
@@ -765,4 +901,14 @@ test('every failure reason has a sanitised description that says nothing was wri
     assert.ok(message.length > 10, `${stage}/${reason}`);
     assert.doesNotMatch(message, /Bearer |gho_|ghp_|injected/, `${stage}/${reason}`);
   }
+});
+
+test('a post-bootstrap failure never claims the repository was unchanged', () => {
+  const message = describeAtomicWriteFailure(
+    new AtomicWriteError('blob_creation', 'stage_failed', 'raw detail', {
+      branchUnchanged: false,
+    }),
+  );
+  assert.match(message, /repository was initialized/i);
+  assert.doesNotMatch(message, /nothing was written/i);
 });

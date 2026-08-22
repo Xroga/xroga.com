@@ -61,6 +61,33 @@ export function makeAtomicWriteApi(
   const base = `/repos/${owner}/${repo}`;
 
   return {
+    async initializeEmptyRepository(input) {
+      const encodedPath = input.path.split('/').map(encodeURIComponent).join('/');
+      const identity = options.commitIdentity;
+      const res = await ghFetch(token, `${base}/contents/${encodedPath}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: input.message,
+          content: Buffer.from(input.content, 'utf8').toString('base64'),
+          branch: input.branch,
+          ...(identity
+            ? {
+                author: identity.author,
+                committer: identity.committer,
+              }
+            : {}),
+        }),
+      });
+      if (!res.ok) throw await failure(res, 'GitHub repository initialization');
+      const data = (await res.json()) as { commit?: { sha?: string } };
+      const commitSha = data.commit?.sha;
+      if (typeof commitSha !== 'string') {
+        throw new Error('GitHub initialized the repository without returning a commit id.');
+      }
+      return { commitSha };
+    },
+
     async getRef(branch: string) {
       const res = await ghFetch(token, `${base}/git/ref/heads/${ref(branch)}`);
       if (!res.ok) return null;

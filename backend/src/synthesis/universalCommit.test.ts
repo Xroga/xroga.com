@@ -67,6 +67,10 @@ function makeFake(options: FakeOptions = {}): Fake {
     treeEntriesWritten: [],
     refUpdates: 0,
 
+    async initializeEmptyRepository() {
+      throw new Error('not used by this non-empty repository fake');
+    },
+
     async isRepositoryEmpty() {
       return false;
     },
