@@ -4,14 +4,14 @@ import { loadLandingBuild, saveLandingBuild } from '@/lib/landingBuildStorage';
 import { rehydrateMessagesWithMedia } from '@/lib/messageRehydration';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 import type { SwarmRunSummary } from '@/lib/api';
+import { recoverLegacyLandingRun } from '@/lib/legacyLandingRunRecovery';
 
 function isLandingOutput(output: unknown): output is Record<string, unknown> {
   return Boolean(output && typeof output === 'object' && (output as { type?: string }).type === 'landing_page');
 }
 
-function normalizePrompt(value: unknown): string {
-  return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
-}
+const normalizePrompt = (value: unknown) =>
+  typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 
 function legacyPromptCandidates(
   messages: ChatMessage[],
@@ -25,36 +25,6 @@ function legacyPromptCandidates(
     break;
   }
   return [...new Set(candidates.filter(Boolean))];
-}
-
-export async function recoverLegacyLandingRun(
-  history: SwarmRunSummary[],
-  promptCandidates: string[],
-  getRun: (runId: string) => Promise<SwarmRunSummary> = (runId) => api.swarm.getRun(runId)
-): Promise<SwarmRunSummary | null> {
-  const wanted = new Set(promptCandidates);
-  const matching = history
-    .filter((run) => wanted.has(normalizePrompt(run.prompt)))
-    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-
-  // A prompt may have failed once and later succeeded. Inspect matching runs newest
-  // first and accept only an authoritative landing artifact with real HTML.
-  for (const summary of matching) {
-    try {
-      const run = await getRun(summary.id);
-      if (
-        isLandingOutput(run.output) &&
-        typeof run.output.html === 'string' &&
-        run.output.html.trim()
-      ) {
-        return run;
-      }
-    } catch {
-      // Continue to an older matching run. One unavailable row must not block a
-      // recoverable artifact produced by a later retry of the same prompt.
-    }
-  }
-  return null;
 }
 
 /** Restore media URLs + landing page html/css/js after reload. */
@@ -99,7 +69,8 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
         ) {
           const legacyRun = await recoverLegacyLandingRun(
             await historyPromise,
-            legacyPromptCandidates(withMedia, messageIndex, fo)
+            legacyPromptCandidates(withMedia, messageIndex, fo),
+            (runId) => api.swarm.getRun(runId)
           );
           if (legacyRun && isLandingOutput(legacyRun.output)) {
             Object.assign(fo, legacyRun.output, { artifactRunId: legacyRun.id });

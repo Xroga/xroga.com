@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import type { SwarmRunSummary } from '@/lib/api';
-import { recoverLegacyLandingRun } from './rehydratePersistedMessages';
+import type { SwarmRunSummary } from './api';
+import { recoverLegacyLandingRun } from './legacyLandingRunRecovery';
 
 function summary(id: string, prompt: string, createdAt: string): SwarmRunSummary {
   return {
