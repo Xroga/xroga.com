@@ -170,7 +170,9 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
             <nav aria-label="Workspace tour sections">
               <button type="button" className={active === 'workspace' ? 'is-active' : ''} onClick={() => setActive('workspace')}><TerminalSquare /><span>Workspace</span></button>
               <Link href={loggedIn ? '/dashboard' : '/auth/signup'}><LayoutDashboard /><span>Dashboard</span></Link>
-              <Link href="/crypto-builder"><Bitcoin /><span>Crypto Builder</span></Link>
+              {/* `/crypto-builder` has never been a route — the page is `/crypto`. The old
+                  href 404'd here and on every other surface that copied it. */}
+              <Link href="/crypto"><Bitcoin /><span>Crypto Builder</span></Link>
               <button type="button" className={active === 'repos' ? 'is-active' : ''} onClick={() => setActive('repos')}><FolderGit2 /><span>Repositories</span></button>
               <button type="button" className={active === 'integrations' ? 'is-active' : ''} onClick={() => setActive('integrations')}><Plug /><span>Integrations</span></button>
               <Link href={loggedIn ? '/dashboard/publish' : '/auth/signup'}><Rocket /><span>Launch &amp; Growth</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
