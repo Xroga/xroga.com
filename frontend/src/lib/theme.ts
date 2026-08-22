@@ -81,12 +81,25 @@ export const TERMINAL_SKINS: readonly TerminalSkinSpec[] = [
 
 export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = TERMINAL_SKINS.map((skin) => skin.id);
 
-/** What `auto` resolves to. Dark on every theme — see the note above. */
+/**
+ * What `auto` resolves to.
+ *
+ * Every theme used to resolve to `dark`, which meant "auto" did not track anything:
+ * switching the page to White or Beige left a black terminal sitting in the middle of
+ * a light application, and the theme control appeared to do nothing to the largest
+ * surface on the screen. Each theme now resolves to the skin that belongs with it —
+ * Daylight for White, Parchment for the warm Beige page, Graphite for Gray, and Xroga
+ * Dark for Black, where a slightly lifted surface reads as a window against the black
+ * page rather than merging into it.
+ *
+ * This is only the *auto* resolution. Picking a skin by hand still sets
+ * `terminalSkinAuto` false, and nothing here overrides that choice again.
+ */
 export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
-  white: 'dark',
-  beige: 'dark',
+  white: 'light',
+  beige: 'solar',
   black: 'dark',
-  gray: 'dark',
+  gray: 'gray',
 };
 
 export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = TERMINAL_SKINS.reduce(

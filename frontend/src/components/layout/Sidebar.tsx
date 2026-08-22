@@ -472,20 +472,26 @@ export function Sidebar({ displayName }: SidebarProps) {
               {navItems.map((entry) =>
                 isGroup(entry) ? (
                   <div key={entry.id} className="xv-nav-group">
-                    <button
-                      type="button"
-                      onClick={() => toggleGroup(entry.id)}
-                      className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
-                      aria-expanded={isGroupOpen(entry)}
-                      title={entry.tip}
-                    >
-                      <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
-                      <span>{entry.label}</span>
-                      <ChevronDown
-                        className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
-                        aria-hidden="true"
-                      />
-                    </button>
+                    {/* The two group headers were the only rows in the nav without a
+                        styled tip — they carried a native `title`, which appears after
+                        a much longer delay, in the browser's own chrome, and looks
+                        like nothing else in the sidebar. Every row explains itself the
+                        same way now. */}
+                    <SidebarTip label={entry.label} description={entry.tip}>
+                      <button
+                        type="button"
+                        onClick={() => toggleGroup(entry.id)}
+                        className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
+                        aria-expanded={isGroupOpen(entry)}
+                      >
+                        <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
+                        <span>{entry.label}</span>
+                        <ChevronDown
+                          className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    </SidebarTip>
                     {isGroupOpen(entry) && (
                       <div className="xv-nav-group__items">
                         {entry.children.map((child) => (
