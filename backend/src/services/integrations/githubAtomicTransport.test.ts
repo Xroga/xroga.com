@@ -56,3 +56,40 @@ test('empty repository initialization rejects a response without a commit id', a
     /without returning a commit id/i,
   );
 });
+
+test('repository emptiness is based on commit existence, not rounded repository size', async () => {
+  const calls: string[] = [];
+  const api = makeAtomicWriteApi(
+    async (_token, path) => {
+      calls.push(path);
+      return new Response(JSON.stringify([{ sha: 'bootstrap-sha' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    'token',
+    'Xroga',
+    'bootstrap-only',
+  );
+
+  assert.equal(await api.isRepositoryEmpty(), false);
+  assert.deepEqual(calls, ['/repos/Xroga/bootstrap-only/commits?per_page=1']);
+});
+
+test('GitHub empty-repository response is recognized without guessing other failures', async () => {
+  const emptyApi = makeAtomicWriteApi(
+    async () => new Response(JSON.stringify({ message: 'Git Repository is empty.' }), { status: 409 }),
+    'token',
+    'Xroga',
+    'blank',
+  );
+  assert.equal(await emptyApi.isRepositoryEmpty(), true);
+
+  const inaccessibleApi = makeAtomicWriteApi(
+    async () => new Response(JSON.stringify({ message: 'Forbidden' }), { status: 403 }),
+    'token',
+    'Xroga',
+    'private',
+  );
+  await assert.rejects(inaccessibleApi.isRepositoryEmpty(), /state lookup failed \(403\)/i);
+});

@@ -15,10 +15,10 @@
  *   retried the write through the Contents API — overwriting the very commit the check
  *   existed to protect.
  *
- * - `isRepositoryEmpty` answers from `size`, and treats an unreadable repository as *not*
- *   empty. Guessing "empty" would route an unreadable repository down the bootstrap
- *   refusal path with a misleading reason; letting it continue produces the real error from
- *   the branch lookup instead.
+ * - `isRepositoryEmpty` asks GitHub for the repository's newest commit. Repository `size`
+ *   cannot be used here: GitHub rounds tiny repositories to zero, so a repository containing
+ *   only Xroga's bootstrap marker may still report `size: 0`. GitHub answers 409 only for a
+ *   genuinely empty Git repository. Other failures are surfaced instead of being guessed.
  */
 
 import type {
@@ -192,10 +192,14 @@ export function makeAtomicWriteApi(
     },
 
     async isRepositoryEmpty() {
-      const res = await ghFetch(token, base);
-      if (!res.ok) return false;
-      const data = (await res.json()) as { size?: number };
-      return (data.size ?? 0) === 0;
+      const res = await ghFetch(token, `${base}/commits?per_page=1`);
+      if (res.status === 409) return true;
+      if (!res.ok) throw await failure(res, 'GitHub repository state lookup');
+      const commits = (await res.json()) as unknown;
+      if (!Array.isArray(commits)) {
+        throw new Error('GitHub repository state lookup returned an invalid commit list.');
+      }
+      return commits.length === 0;
     },
 
     async isBranchProtected(branch: string) {
