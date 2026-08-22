@@ -394,7 +394,11 @@ export function Sidebar({ displayName }: SidebarProps) {
         )}
       >
         <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'gap-2')}>
-          <HoverTip label="Xroga AI" description="Workspace home" block={navExpanded} className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
+          {/* Not `block`: that makes the tip wrapper `w-full`, so the logo claimed the
+              whole brand row and the utility card — which is `ml-auto` and cannot
+              shrink — was laid on top of it. The mark showed through behind the first
+              icon. Sized to its content, the logo gives way instead. */}
+          <HoverTip label="Xroga AI" description="Workspace home" className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
             <Logo
               href={logoHref}
               height={navExpanded ? 50 : 34}
