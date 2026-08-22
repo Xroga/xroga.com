@@ -12,6 +12,7 @@ test('landing snapshots keep authoritative recovery and shipping evidence', () =
       featureOutput: {
         type: 'landing_page',
         artifactRunId: 'run-b',
+        repositorySourceRecovered: true,
         html: '<main>large generated source</main>',
         css: 'body { color: white; }',
         js: 'console.log("built")',
@@ -32,6 +33,7 @@ test('landing snapshots keep authoritative recovery and shipping evidence', () =
   assert.equal(output.css, '');
   assert.equal(output.js, '');
   assert.equal(output.artifactRunId, 'run-b');
+  assert.equal(output.repositorySourceRecovered, true);
   assert.equal(output.githubPushConfirmed, true);
   assert.equal(output.githubRepoName, 'Xroga/orbit-coffee');
   assert.equal(output.githubBranch, 'xroga/run-b');
@@ -41,4 +43,3 @@ test('landing snapshots keep authoritative recovery and shipping evidence', () =
   assert.deepEqual(output.shipBlockers, ['Connect Vercel']);
   assert.deepEqual(output.changesSummary, ['Added Eclipse Blend']);
 });
-

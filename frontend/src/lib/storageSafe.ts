@@ -21,6 +21,7 @@ function slimLandingOutput(output: unknown): unknown {
   return {
     type: 'landing_page',
     artifactRunId: o.artifactRunId,
+    repositorySourceRecovered: o.repositorySourceRecovered,
     deployUrl: o.deployUrl ?? '',
     deployVerified: o.deployVerified,
     vercelPreviewUrl: o.vercelPreviewUrl,

@@ -77,6 +77,30 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
           }
         }
 
+        // Older compact snapshots can predate artifactRunId entirely. The selected
+        // customer repository is still an authoritative source for static builds, and
+        // Xroga already owns a scoped endpoint that reads those exact GitHub files.
+        // Recovering them here restores Preview without another model call and without
+        // treating the repository read as proof of an unobserved deployment.
+        if (
+          !(typeof fo.html === 'string' && fo.html.trim()) &&
+          typeof fo.githubRepoName === 'string' &&
+          fo.githubRepoName.includes('/')
+        ) {
+          try {
+            const repositoryBuild = await api.github.getBuildFiles(fo.githubRepoName);
+            if (repositoryBuild.html.trim()) {
+              fo.html = repositoryBuild.html;
+              fo.css = repositoryBuild.css;
+              fo.js = repositoryBuild.js;
+              fo.repositorySourceRecovered = true;
+            }
+          } catch {
+            // The durable run lookup may still recover this on a later reload. Keep the
+            // compact truthful state when GitHub is temporarily unavailable.
+          }
+        }
+
         if (
           !(typeof fo.html === 'string' && fo.html.trim()) &&
           typeof fo.artifactRunId === 'string' &&
@@ -102,6 +126,15 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
             // Keep the compact persisted outcome. The UI remains truthful even when
             // the network is offline; a later restore can retry authoritative recovery.
           }
+        }
+
+        if (!hasHtml && typeof fo.html === 'string' && fo.html.trim()) {
+          await saveLandingBuild({
+            messageId: msg.id,
+            html: fo.html,
+            css: String(fo.css ?? ''),
+            js: String(fo.js ?? ''),
+          });
         }
 
         const content =
