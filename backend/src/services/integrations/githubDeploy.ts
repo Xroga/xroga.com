@@ -39,7 +39,11 @@ import {
   deriveFileSyncMutations,
   MutationPlanError,
 } from './githubMutationPlan.js';
-import { describeTreeSnapshotFailure, TreeSnapshotError } from './githubTreeSnapshot.js';
+import {
+  describeTreeSnapshotFailure,
+  readStartingTree,
+  TreeSnapshotError,
+} from './githubTreeSnapshot.js';
 import {
   authorizeBranchWrite,
   BranchAuthorizationError,
@@ -76,6 +80,26 @@ export type ConnectedRepositoryState =
   | { status: 'empty'; branch: string }
   | { status: 'head'; branch: string; headSha: string }
   | { status: 'unavailable'; branch: string; reason: string };
+
+/**
+ * The neutral marker is not product source. GitHub rounds very small repositories to
+ * `size: 0`, but that number alone cannot distinguish the marker from a tiny real project.
+ * Only this exact tree is safe to resume as a source-empty product repository.
+ */
+export function isNeutralXrogaBootstrapTree(
+  entries: Array<{ path: string; type: string }>,
+): boolean {
+  const blobs = entries.filter((entry) => entry.type === 'blob');
+  return (
+    blobs.length === 1 &&
+    blobs[0]?.path === '.xroga/bootstrap' &&
+    entries.every(
+      (entry) =>
+        (entry.path === '.xroga' && entry.type === 'tree') ||
+        (entry.path === '.xroga/bootstrap' && entry.type === 'blob'),
+    )
+  );
+}
 
 export interface DeployPipelineResult {
   github: GitHubPushResult;
@@ -189,6 +213,31 @@ export async function inspectConnectedRepositoryState(
   const headSha = ref.object?.sha;
   if (!headSha || !/^[0-9a-f]{7,40}$/i.test(headSha)) {
     return { status: 'unavailable', branch, reason: 'GitHub returned an invalid branch head' };
+  }
+
+  // A bootstrap-only repository has a real head, so the branch lookup above correctly
+  // proves it is not a genuinely empty Git repository. It still has no product source to
+  // hydrate. Inspect the exact tree before treating it as source-empty; arbitrary tiny
+  // repositories must remain authoritative and must never be overwritten as new builds.
+  if ((repository.size ?? 0) === 0) {
+    try {
+      const api = makeAtomicWriteApi(
+        ghFetch,
+        integration.access_token,
+        owner,
+        repo,
+      );
+      const snapshot = await readStartingTree(api, headSha);
+      if (isNeutralXrogaBootstrapTree(snapshot.entries)) {
+        return { status: 'empty', branch };
+      }
+    } catch (error) {
+      const reason =
+        error instanceof TreeSnapshotError
+          ? describeTreeSnapshotFailure(error)
+          : 'GitHub could not verify the bootstrap repository tree';
+      return { status: 'unavailable', branch, reason };
+    }
   }
   return { status: 'head', branch, headSha };
 }
