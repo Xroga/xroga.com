@@ -21,6 +21,11 @@ import { AiAppBuilderHeader } from './AiAppBuilderHeader';
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
 import type { CapabilityPageData } from '@/lib/capabilityPages';
+// The workspace tour is styled by the homepage sheet, and 41 of its rules are scoped
+// under `.xv-home-coding`. Reusing the real component means reproducing the environment
+// it was built for — importing the sheet and giving it that ancestor class — rather than
+// drawing a lookalike dashboard that could drift away from the product.
+import '@/styles/homepage-coding.css';
 import '@/styles/ai-app-builder-landing.css';
 
 /**
@@ -85,7 +90,6 @@ export function AiAppBuilderLanding({ data }: { data: CapabilityPageData }) {
             fill
             priority
             sizes="100vw"
-            quality={82}
           />
         </div>
         <div className="xab-hero__scrim" aria-hidden="true" />
@@ -163,7 +167,7 @@ export function AiAppBuilderLanding({ data }: { data: CapabilityPageData }) {
               component the homepage uses, so the preview cannot drift away from the
               product it is advertising. */}
           <ScrollReveal delay={120}>
-            <div className="xab-preview">
+            <div className="xab-preview xv-home-coding">
               <HomepageWorkspaceTour loggedIn={false} />
             </div>
           </ScrollReveal>
@@ -311,7 +315,6 @@ export function AiAppBuilderLanding({ data }: { data: CapabilityPageData }) {
             fill
             loading="lazy"
             sizes="100vw"
-            quality={78}
           />
         </div>
 
