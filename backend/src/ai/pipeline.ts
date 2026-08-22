@@ -235,6 +235,15 @@ export interface PipelineProgress {
    * the same legacy build, and only this distinguishes them.
    */
   projectIdPresent?: boolean;
+  /** Non-secret provenance for repository hydration, persisted for recovery evidence. */
+  repositoryTarget?: string | null;
+  repositorySource?:
+    | 'github-empty'
+    | 'github-cache'
+    | 'github-api'
+    | 'local-memory'
+    | 'local-browser'
+    | 'none';
 }
 
 /** Map pipeline agents → Workspace collaboration chip phases (0–8). */
@@ -442,6 +451,13 @@ async function hydratePriorFiles(
   projectName?: string;
   fromMemory: boolean;
   aiSummary?: string;
+  source:
+    | 'github-empty'
+    | 'github-cache'
+    | 'github-api'
+    | 'local-memory'
+    | 'local-browser'
+    | 'none';
 }> {
   const branch = meta?.githubTargetBranch || 'main';
   const repo = meta?.githubTargetRepo ?? null;
@@ -457,7 +473,7 @@ async function hydratePriorFiles(
     try {
       const remote = await inspectConnectedRepositoryState(userId, repo, branch);
       if (remote.status === 'empty') {
-        return { files: [], fromMemory: false };
+        return { files: [], fromMemory: false, source: 'github-empty' };
       }
       if (remote.status === 'unavailable') {
         throw new Error(remote.reason);
@@ -471,6 +487,7 @@ async function hydratePriorFiles(
           projectName: mem.projectName || meta?.priorSite?.projectName,
           fromMemory: true,
           aiSummary: mem.aiSummary,
+          source: 'github-cache',
         };
       }
       const focused = await fetchGitHubFilesByPaths(userId, repo, UPDATE_HYDRATE_PATHS, branch);
@@ -490,6 +507,7 @@ async function hydratePriorFiles(
         projectName: mem?.projectName || meta?.priorSite?.projectName,
         fromMemory: false,
         aiSummary: mem?.aiSummary,
+        source: 'github-api',
       };
     } catch (err) {
       const safe = normalizeProviderError(err).safeMessage;
@@ -505,6 +523,7 @@ async function hydratePriorFiles(
       projectName: mem.projectName || meta?.priorSite?.projectName,
       fromMemory: true,
       aiSummary: mem.aiSummary,
+      source: 'local-memory',
     };
   }
 
@@ -528,10 +547,11 @@ async function hydratePriorFiles(
       projectName: meta.priorSite.projectName,
       fromMemory: false,
       aiSummary: undefined,
+      source: 'local-browser',
     };
   }
 
-  return { files: [], fromMemory: false };
+  return { files: [], fromMemory: false, source: 'none' };
 }
 
 async function callBuilderStream(
@@ -1086,6 +1106,8 @@ export async function runBuildPipeline(opts: {
   emit({
     ...startupProgress('hydrated', { fileCount: prior.files.length }),
     swarmTodos: todosForBuild('route', 'omit'),
+    repositoryTarget: meta?.githubTargetRepo ?? null,
+    repositorySource: prior.source,
   });
   emit({ ...startupProgress('route'), swarmTodos: todosForBuild('route', 'omit') });
   const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
