@@ -14,6 +14,7 @@ const PUBLIC_PREFIXES = [
   '/video',
   '/ai-coding-agent',
   '/ai-app-builder',
+  '/software',
   '/ai-website-builder',
   '/build-saas-with-ai',
   '/github-ai-coding-agent',
