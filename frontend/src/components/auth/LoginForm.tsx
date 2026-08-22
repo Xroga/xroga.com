@@ -65,9 +65,10 @@ export function LoginForm() {
   const [
     error,
     setError,
-  ] = useState<
-    string | null
-  >(null);
+  ] =
+    useState<string | null>(
+      null
+    );
 
   const [
     loading,
@@ -128,13 +129,18 @@ export function LoginForm() {
         )
       );
     } finally {
-      setLoading(false);
+      setLoading(
+        false
+      );
     }
   }
 
   async function handleGitHub() {
     setError(null);
-    setOauthLoading(true);
+
+    setOauthLoading(
+      true
+    );
 
     try {
       await requireGitHubProvider();
@@ -185,7 +191,9 @@ export function LoginForm() {
         data.url
       );
     } catch (err) {
-      setOauthLoading(false);
+      setOauthLoading(
+        false
+      );
 
       setError(
         safeAuthError(
@@ -199,7 +207,7 @@ export function LoginForm() {
   return (
     <AuthModernCard
       title="Welcome back"
-      subtitle="Sign in and continue building with Xroga."
+      subtitle="Sign in to continue creating, building, and shipping with Xroga."
     >
       <AuthSocialButton
         onClick={
@@ -230,7 +238,7 @@ export function LoginForm() {
           handleSubmit
         }
         className="
-          space-y-3
+          space-y-4
         "
       >
         <div>
@@ -243,18 +251,19 @@ export function LoginForm() {
           <AuthModernInput
             id="login-email"
             type="email"
-            placeholder="you@example.com"
-            value={email}
+            value={
+              email
+            }
             onChange={(
               event
             ) =>
               setEmail(
-                event.target
-                  .value
+                event.target.value
               )
             }
             required
             autoComplete="email"
+            placeholder="you@example.com"
           />
         </div>
 
@@ -268,7 +277,6 @@ export function LoginForm() {
           <AuthModernInput
             id="login-password"
             type="password"
-            placeholder="Enter your password"
             value={
               password
             }
@@ -276,12 +284,12 @@ export function LoginForm() {
               event
             ) =>
               setPassword(
-                event.target
-                  .value
+                event.target.value
               )
             }
             required
             autoComplete="current-password"
+            placeholder="Enter your password"
           />
         </div>
 
@@ -293,10 +301,10 @@ export function LoginForm() {
               border
               border-red-500/20
               bg-red-500/10
-              px-3
-              py-2.5
+              px-4
+              py-3
               text-center
-              text-xs
+              text-[13px]
               text-red-500
             "
           >
