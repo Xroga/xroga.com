@@ -34,9 +34,13 @@ test.afterAll(async () => {
 
 async function signIn(page: Page, path: string) {
   await page.goto(`/auth/login?next=${encodeURIComponent(path)}`);
-  await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  // Scoped to the sign-in form: `AuthShell` renders the signup and login panels side by
+  // side above 1280px, so the page carries two fields labelled "Email" and an unscoped
+  // lookup matches both.
+  const loginForm = page.locator('form', { has: page.locator('#login-email') });
+  await loginForm.getByLabel('Email').fill(email);
+  await loginForm.getByLabel('Password').fill(password);
+  await loginForm.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(new RegExp(path.replace(/[/?]/g, '\\$&')));
 }
 

@@ -284,9 +284,17 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(webRelease.body.release).toBe(expectedWebRelease);
     expect(apiRelease.release).toBe(expectedRelease);
   }
-  await page.getByLabel('Email').fill(ownerEmail);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  // Scoped to the sign-in form rather than the page. `AuthShell` now renders the signup
+  // and login panels side by side above 1280px, so `/auth/login` legitimately has two
+  // fields labelled "Email" and two labelled "Password"; an unscoped `getByLabel` matches
+  // both and fails on strict mode before it ever gets to typing. Scoping is more precise
+  // about which form is under test, not less: this test signs in, so it drives the
+  // sign-in form.
+  const loginForm = page.locator('form', { has: page.locator('#login-email') });
+  await expect(loginForm).toHaveCount(1);
+  await loginForm.getByLabel('Email').fill(ownerEmail);
+  await loginForm.getByLabel('Password').fill(password);
+  await loginForm.getByRole('button', { name: 'Sign in' }).click();
   // A real Supabase sign-in is a network round trip followed by a client-side redirect. The
   // default 5s expectation left no room for either, so a slow-but-correct login was reported as
   // a login failure — the assertion was measuring CI latency, not authentication.
