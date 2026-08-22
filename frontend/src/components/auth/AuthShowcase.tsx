@@ -44,56 +44,70 @@ const AUTH_SLIDES = [
   },
 ] as const;
 
-const ROTATION_INTERVAL = 7000;
+const ROTATION_INTERVAL =
+  7000;
 
 export function AuthShowcase() {
-  const [activeIndex, setActiveIndex] =
-    useState(0);
+  const [
+    activeIndex,
+    setActiveIndex,
+  ] = useState(0);
 
-  const [paused, setPaused] =
-    useState(false);
+  const [
+    paused,
+    setPaused,
+  ] = useState(false);
 
   const reducedMotion =
     useThemeStore(
-      (state) => state.reducedMotion
+      (state) =>
+        state.reducedMotion
     );
 
-  const goTo = useCallback(
-    (index: number) => {
-      const total =
-        AUTH_SLIDES.length;
+  const goTo =
+    useCallback(
+      (
+        nextIndex: number
+      ) => {
+        const total =
+          AUTH_SLIDES.length;
 
-      setActiveIndex(
-        ((index % total) + total) %
-          total
-      );
-    },
-    []
-  );
+        setActiveIndex(
+          (
+            (
+              nextIndex %
+              total
+            ) +
+            total
+          ) %
+            total
+        );
+      },
+      []
+    );
 
   /*
-   * Preload every slide immediately.
-   *
-   * All images also stay mounted below,
-   * preventing blank frames between slides.
+   * Preload every image.
    */
   useEffect(() => {
-    const preloaded =
-      AUTH_SLIDES.map((slide) => {
-        const image =
-          new window.Image();
+    const images =
+      AUTH_SLIDES.map(
+        (slide) => {
+          const image =
+            new window.Image();
 
-        image.src =
-          slide.src;
+          image.src =
+            slide.src;
 
-        image.decoding =
-          'async';
+          image.decoding =
+            'async';
 
-        return image;
-      });
+          return image;
+        }
+      );
 
     return () => {
-      preloaded.forEach(
+      images.forEach(
         (image) => {
           image.onload =
             null;
@@ -105,6 +119,9 @@ export function AuthShowcase() {
     };
   }, []);
 
+  /*
+   * Automatic carousel.
+   */
   useEffect(() => {
     if (
       paused ||
@@ -118,7 +135,10 @@ export function AuthShowcase() {
         () => {
           setActiveIndex(
             (current) =>
-              (current + 1) %
+              (
+                current +
+                1
+              ) %
               AUTH_SLIDES.length
           );
         },
@@ -147,16 +167,23 @@ export function AuthShowcase() {
       className="
         group
         relative
+
         h-full
         w-full
+
         overflow-hidden
-        rounded-[26px]
+
+        bg-transparent
       "
     >
       {AUTH_SLIDES.map(
-        (slide, index) => {
+        (
+          slide,
+          index
+        ) => {
           const active =
-            index === activeIndex;
+            index ===
+            activeIndex;
 
           return (
             <img
@@ -169,57 +196,83 @@ export function AuthShowcase() {
               alt={
                 slide.alt
               }
+
               draggable={
                 false
               }
+
               loading="eager"
               decoding="async"
+
               aria-hidden={
                 !active
               }
+
               className={[
+                /*
+                 * There is NO background layer.
+                 *
+                 * Only the actual image exists.
+                 */
                 'absolute inset-0',
+
+                'block',
 
                 'h-full w-full',
 
                 /*
-                 * Image card is square,
-                 * matching the artwork.
-                 *
-                 * Therefore object-cover fills
-                 * the card without ugly side
-                 * backgrounds and without
-                 * significantly cropping the
-                 * original square artwork.
+                 * Fill the complete left side.
                  */
-                'object-cover object-center',
+                'object-cover',
+
+                /*
+                 * Bias upward slightly so
+                 * the Xroga logo stays visible.
+                 */
+                'object-[center_42%]',
 
                 'select-none',
 
                 'transition-opacity',
+
                 'duration-700',
+
                 'ease-out',
 
                 active
                   ? 'z-10 opacity-100'
                   : 'pointer-events-none z-0 opacity-0',
-              ].join(' ')}
+              ].join(
+                ' '
+              )}
             />
           );
         }
       )}
 
+      {/*
+        Only a very subtle seam on
+        the right where image meets form.
+
+        This is NOT a background.
+      */}
       <div
         aria-hidden
         className="
           pointer-events-none
+
           absolute
-          inset-0
+          inset-y-0
+          right-0
+
           z-[15]
-          rounded-[26px]
-          ring-1
-          ring-inset
-          ring-white/20
+
+          hidden
+          w-px
+
+          bg-white/10
+
+          lg:block
         "
       />
 
@@ -228,13 +281,15 @@ export function AuthShowcase() {
         aria-label="Previous image"
         onClick={() =>
           goTo(
-            activeIndex - 1
+            activeIndex -
+              1
           )
         }
         className="
           absolute
           left-4
           top-1/2
+
           z-20
 
           grid
@@ -242,6 +297,7 @@ export function AuthShowcase() {
           w-11
 
           -translate-y-1/2
+
           place-items-center
 
           rounded-full
@@ -250,11 +306,13 @@ export function AuthShowcase() {
           border-white/20
 
           bg-black/45
+
           text-white
 
           opacity-0
 
           shadow-lg
+
           backdrop-blur-xl
 
           transition-all
@@ -263,16 +321,23 @@ export function AuthShowcase() {
           group-hover:opacity-100
 
           hover:scale-105
+
           hover:bg-black/65
 
           focus-visible:opacity-100
+
           focus-visible:outline-none
+
           focus-visible:ring-2
+
           focus-visible:ring-white/50
         "
       >
         <ChevronLeft
-          className="h-5 w-5"
+          className="
+            h-5
+            w-5
+          "
         />
       </button>
 
@@ -281,13 +346,15 @@ export function AuthShowcase() {
         aria-label="Next image"
         onClick={() =>
           goTo(
-            activeIndex + 1
+            activeIndex +
+              1
           )
         }
         className="
           absolute
           right-4
           top-1/2
+
           z-20
 
           grid
@@ -295,6 +362,7 @@ export function AuthShowcase() {
           w-11
 
           -translate-y-1/2
+
           place-items-center
 
           rounded-full
@@ -303,11 +371,13 @@ export function AuthShowcase() {
           border-white/20
 
           bg-black/45
+
           text-white
 
           opacity-0
 
           shadow-lg
+
           backdrop-blur-xl
 
           transition-all
@@ -316,16 +386,23 @@ export function AuthShowcase() {
           group-hover:opacity-100
 
           hover:scale-105
+
           hover:bg-black/65
 
           focus-visible:opacity-100
+
           focus-visible:outline-none
+
           focus-visible:ring-2
+
           focus-visible:ring-white/50
         "
       >
         <ChevronRight
-          className="h-5 w-5"
+          className="
+            h-5
+            w-5
+          "
         />
       </button>
     </section>
