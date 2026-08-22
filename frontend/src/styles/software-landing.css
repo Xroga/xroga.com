@@ -207,25 +207,47 @@
 
 .xsw-eyebrow svg { width: 13px; height: 13px; }
 
+/* The hero heading takes the editorial serif rather than the UI sans. Anthropic's
+   own Styrene and Tiempos are licensed faces and are deliberately not shipped; this
+   is the bundled Newsreader/Source Serif pair globals.css already nominates for that
+   voice.
+
+   The face variables are named directly instead of going through `--font-claude`.
+   That token is declared on `:root`, but the next/font variables it is built from are
+   only defined on `<body>` and below, so on `html` it substitutes to nothing, becomes
+   guaranteed-invalid, and every descendant inherits the empty value — measurably, not
+   in theory. Naming the variables here resolves them where they actually exist.
+
+   The sans settings do not transfer either: -0.035em is tight enough to jam a serif's
+   thick-thin transitions, and 700 makes one heavy rather than confident, so the
+   tracking opens and the weight drops. */
 .xsw-h1 {
   max-width: 20ch;
   margin: 1.5rem 0 0;
   color: #fff;
-  font-size: clamp(2.4rem, 5vw, 4.6rem);
-  font-weight: 700;
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.5rem, 5.2vw, 4.8rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.018em;
   text-wrap: balance;
 }
 
 /* Solid blue, never a gradient. */
 .xsw-accent { color: var(--xsw-bright); }
 
+/* The supporting line follows the headline into the serif, a size down and lighter,
+   which is what keeps the pair reading as one editorial block instead of a serif
+   headline sitting on an unrelated UI paragraph. One rule, not two: a second
+   `.xsw-hero__lede` block later in the file would silently win on any property
+   both of them set. */
 .xsw-hero__lede {
   max-width: 58ch;
   margin: 1.4rem 0 0;
   color: rgba(255, 255, 255, 0.76);
-  font-size: clamp(1rem, 1.1vw, 1.1rem);
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
+  font-weight: 400;
   line-height: 1.6;
 }
 
