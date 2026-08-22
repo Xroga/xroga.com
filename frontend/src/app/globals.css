@@ -7868,6 +7868,45 @@ body.theme-beige {
 
 /* ---- the stage: breathing room around the application -------------------- */
 
+/* ---- the desk each theme puts the window on --------------------------------
+   Chosen against the skin each theme resolves to, so the window always reads as a
+   raised object rather than merging into its background: darker than the surface on
+   the light themes, and a shade above pure black on the dark ones where there is no
+   room to go down. The blue is present only where it is invisible; on a light desk
+   the same tint reads as a stain. */
+body.theme-black {
+  --composer-surface: rgba(12, 13, 15, 0.96);
+  --composer-border: rgba(90, 145, 255, 0.16);
+  --menu-surface: #0b0c0e;
+  --menu-border: rgba(255, 255, 255, 0.07);
+  --stage-ground: #000000;
+  --stage-glow: radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.06), transparent 38%);
+}
+body.theme-gray {
+  --composer-surface: rgba(32, 32, 35, 0.96);
+  --composer-border: rgba(255, 255, 255, 0.12);
+  --menu-surface: #212124;
+  --menu-border: rgba(255, 255, 255, 0.09);
+  --stage-ground: #121316;
+  --stage-glow: radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.05), transparent 38%);
+}
+body.theme-white {
+  --composer-surface: rgba(255, 255, 255, 0.97);
+  --composer-border: rgba(15, 23, 42, 0.1);
+  --menu-surface: #ffffff;
+  --menu-border: rgba(15, 23, 42, 0.1);
+  --stage-ground: #eceef2;
+  --stage-glow: none;
+}
+body.theme-beige {
+  --composer-surface: rgba(253, 250, 244, 0.97);
+  --composer-border: rgba(70, 60, 45, 0.14);
+  --menu-surface: #fdfaf4;
+  --menu-border: rgba(70, 60, 45, 0.12);
+  --stage-ground: #efe8d9;
+  --stage-glow: none;
+}
+
 .xv-app-stage {
   width: 100%;
   height: 100%;
@@ -7876,10 +7915,14 @@ body.theme-beige {
   box-sizing: border-box;
   /* The ground behind the window. Barely a gradient — just enough separation for the
      rounded silhouette to be legible against it. A stronger one would read as a
-     backdrop rather than as the desk the window sits on. */
+     backdrop rather than as the desk the window sits on.
+     Both values come from the theme: this shipped hardcoded near-black, so the White
+     and Beige pages kept a black desk under a light window and the theme control
+     looked broken on the largest surface on screen. */
   background:
-    radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.05), transparent 38%),
-    #020304;
+    var(--stage-glow, none),
+    var(--stage-ground, #020304);
+  transition: background-color 220ms ease;
 }
 
 @media (min-width: 640px) {
@@ -7900,6 +7943,14 @@ body.theme-beige {
 
 /* ---- the shell ------------------------------------------------------------ */
 
+/* The shell takes its surface from the active terminal skin. It carried a hardcoded
+   `#08090b` here, which outranked the skins' own layered rules and rendered Parchment
+   as near-black under a cream desk — the theme control appeared to do nothing. The
+   fallback below applies only when no skin class is present at all. */
+.xv-workspace-shell:not([class*='terminal-skin-']) {
+  background: var(--surface-page, #08090b);
+}
+
 .xv-workspace-shell {
   position: relative;
   width: 100%;
@@ -7910,7 +7961,6 @@ body.theme-beige {
   border-radius: 16px;
   overflow: hidden;
   isolation: isolate;
-  background: #08090b;
   /* Almost invisible on purpose. A card outline here is what made two panes read as
      two documents; the shape should be carried by the shadow and the ground. */
   border: 1px solid rgba(255, 255, 255, 0.055);
@@ -7925,10 +7975,13 @@ body.theme-beige {
 
 /* Light skins still need a readable ground; the shell takes the skin's surface rather
    than forcing a dark one, and only the border and shadow stay the shell's own. */
+/* The light skins keep their own surface — Daylight is white, Parchment is cream, and
+   forcing one colour on all three would erase the difference between them. Only the
+   border and the shadow are restated, because a dark hairline and a black drop shadow
+   are what stop reading as depth on a light desk. */
 .terminal-skin-light.xv-workspace-shell,
 .terminal-skin-light-grid.xv-workspace-shell,
-.terminal-skin-paper.xv-workspace-shell {
-  background: #ffffff;
+.terminal-skin-solar.xv-workspace-shell {
   border-color: rgba(15, 23, 42, 0.09);
   box-shadow:
     0 24px 70px rgba(15, 23, 42, 0.14),
@@ -7956,7 +8009,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-workspace-header,
 .terminal-skin-light-grid .xv-workspace-header,
-.terminal-skin-paper .xv-workspace-header {
+.terminal-skin-solar .xv-workspace-header {
   border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
@@ -7978,7 +8031,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-header-sep,
 .terminal-skin-light-grid .xv-header-sep,
-.terminal-skin-paper .xv-header-sep { background: rgba(15, 23, 42, 0.1); }
+.terminal-skin-solar .xv-header-sep { background: rgba(15, 23, 42, 0.1); }
 
 /* ---- the body: two internal panes ---------------------------------------- */
 
@@ -8058,12 +8111,12 @@ body.theme-beige {
 
 .terminal-skin-light .xv-terminal-scroll,
 .terminal-skin-light-grid .xv-terminal-scroll,
-.terminal-skin-paper .xv-terminal-scroll {
+.terminal-skin-solar .xv-terminal-scroll {
   scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
 }
 .terminal-skin-light .xv-terminal-scroll::-webkit-scrollbar-thumb,
 .terminal-skin-light-grid .xv-terminal-scroll::-webkit-scrollbar-thumb,
-.terminal-skin-paper .xv-terminal-scroll::-webkit-scrollbar-thumb {
+.terminal-skin-solar .xv-terminal-scroll::-webkit-scrollbar-thumb {
   background: rgba(15, 23, 42, 0.16);
 }
 
@@ -8098,7 +8151,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-workspace-panel,
 .terminal-skin-light-grid .xv-workspace-panel,
-.terminal-skin-paper .xv-workspace-panel {
+.terminal-skin-solar .xv-workspace-panel {
   border-left-color: rgba(15, 23, 42, 0.08);
   box-shadow: -16px 0 42px rgba(15, 23, 42, 0.06);
 }
@@ -8180,10 +8233,10 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-tab,
 .terminal-skin-light-grid .xv-ws-tab,
-.terminal-skin-paper .xv-ws-tab { color: rgba(15, 23, 42, 0.5); }
+.terminal-skin-solar .xv-ws-tab { color: rgba(15, 23, 42, 0.5); }
 .terminal-skin-light .xv-ws-tab:hover,
 .terminal-skin-light-grid .xv-ws-tab:hover,
-.terminal-skin-paper .xv-ws-tab:hover {
+.terminal-skin-solar .xv-ws-tab:hover {
   color: rgba(15, 23, 42, 0.85);
   background: rgba(15, 23, 42, 0.04);
 }
@@ -8215,7 +8268,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-device,
 .terminal-skin-light-grid .xv-ws-device,
-.terminal-skin-paper .xv-ws-device { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-ws-device { color: rgba(15, 23, 42, 0.45); }
 
 /* ---- preview empty state -------------------------------------------------- */
 
@@ -8237,7 +8290,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-preview-empty p,
 .terminal-skin-light-grid .xv-preview-empty p,
-.terminal-skin-paper .xv-preview-empty p { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-preview-empty p { color: rgba(15, 23, 42, 0.45); }
 
 /* ---- the Workspace button: filled states, not an outline ------------------ */
 
@@ -8273,16 +8326,16 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-launch,
 .terminal-skin-light-grid .xv-ws-launch,
-.terminal-skin-paper .xv-ws-launch { color: rgba(15, 23, 42, 0.55); }
+.terminal-skin-solar .xv-ws-launch { color: rgba(15, 23, 42, 0.55); }
 .terminal-skin-light .xv-ws-launch:hover,
 .terminal-skin-light-grid .xv-ws-launch:hover,
-.terminal-skin-paper .xv-ws-launch:hover {
+.terminal-skin-solar .xv-ws-launch:hover {
   background: rgba(15, 23, 42, 0.05);
   color: rgba(15, 23, 42, 0.85);
 }
 .terminal-skin-light .xv-ws-launch[aria-pressed='true'],
 .terminal-skin-light-grid .xv-ws-launch[aria-pressed='true'],
-.terminal-skin-paper .xv-ws-launch[aria-pressed='true'] {
+.terminal-skin-solar .xv-ws-launch[aria-pressed='true'] {
   background: rgba(15, 23, 42, 0.075);
   color: rgba(15, 23, 42, 0.95);
 }
@@ -8325,7 +8378,7 @@ body.theme-beige {
 .terminal-skin-light .xv-terminal-scroll .xv-response-text h1 + p,
 .terminal-skin-light .xv-terminal-scroll .xv-response-text h2 + p,
 .terminal-skin-light-grid .xv-terminal-scroll .xv-response-text h1 + p,
-.terminal-skin-paper .xv-terminal-scroll .xv-response-text h1 + p {
+.terminal-skin-solar .xv-terminal-scroll .xv-response-text h1 + p {
   color: rgba(15, 23, 42, 0.55);
 }
 
@@ -8351,7 +8404,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-user-bubble,
 .terminal-skin-light-grid .xv-user-bubble,
-.terminal-skin-paper .xv-user-bubble {
+.terminal-skin-solar .xv-user-bubble {
   background: rgba(15, 23, 42, 0.04);
   border-color: rgba(15, 23, 42, 0.09);
 }
@@ -8390,14 +8443,14 @@ body.theme-beige {
 .xv-suggest-chip.is-next:hover { color: #cbdcff; }
 .terminal-skin-light .xv-suggest-chip,
 .terminal-skin-light-grid .xv-suggest-chip,
-.terminal-skin-paper .xv-suggest-chip {
+.terminal-skin-solar .xv-suggest-chip {
   background: rgba(15, 23, 42, 0.035);
   border-color: rgba(15, 23, 42, 0.08);
   color: rgba(15, 23, 42, 0.72);
 }
 .terminal-skin-light .xv-suggest-label,
 .terminal-skin-light-grid .xv-suggest-label,
-.terminal-skin-paper .xv-suggest-label { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-suggest-label { color: rgba(15, 23, 42, 0.45); }
 
 /* ============================================================================
    THE CHAT COMPOSER, AND THE `+` MENU ATTACHED TO IT
@@ -8433,8 +8486,8 @@ body.theme-beige {
 
 .xv-terminal-dock .xv-chatbar-solid {
   position: relative;
-  background: rgba(12, 13, 15, 0.96) !important;
-  border: 1px solid rgba(90, 145, 255, 0.16) !important;
+  background: var(--composer-surface) !important;
+  border: 1px solid var(--composer-border) !important;
   border-radius: 14px !important;
   backdrop-filter: blur(16px);
   box-shadow:
@@ -8450,10 +8503,7 @@ body.theme-beige {
     0 0 0 3px rgba(47, 124, 255, 0.065),
     0 14px 36px rgba(0, 0, 0, 0.26) !important;
 }
-body.theme-white .xv-terminal-dock .xv-chatbar-solid {
-  background: rgba(255, 255, 255, 0.97) !important;
-  border-color: rgba(15, 23, 42, 0.1) !important;
-}
+
 
 /* The composer is the menu's positioning context. `ChatBarInputRow` is `relative` for
    the homepage bar's sake, so it is stood down only inside the dock — otherwise the
@@ -8478,8 +8528,8 @@ body.theme-white .xv-terminal-dock .xv-chatbar-solid {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 7px;
-  background: #0b0c0e;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--menu-surface);
+  border: 1px solid var(--menu-border);
   /* Rounded where it meets air, nearly square where it meets the composer. */
   border-radius: 14px 14px 6px 6px;
   box-shadow:
@@ -8490,10 +8540,7 @@ body.theme-white .xv-terminal-dock .xv-chatbar-solid {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
 }
-body.theme-white .xv-cba-menu {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-}
+
 
 /* Grows upward out of the bar. No bounce, no dramatic scale — it is an extension of
    a surface that is already there, not an arrival. */
@@ -8540,17 +8587,24 @@ body.theme-white .xv-cba-menu {
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.43);
 }
-body.theme-white .xv-cba-item { color: rgba(15, 23, 42, 0.86); }
-body.theme-white .xv-cba-item:hover { background: rgba(15, 23, 42, 0.05); }
-body.theme-white .xv-cba-item__text b { color: rgba(15, 23, 42, 0.9); }
-body.theme-white .xv-cba-item__text i { color: rgba(15, 23, 42, 0.5); }
+/* Beige is a light theme too. These were written for White alone, so on the cream
+   Parchment surface the menu rendered white-on-white and read as empty. */
+body.theme-white .xv-cba-item,
+body.theme-beige .xv-cba-item { color: rgba(15, 23, 42, 0.86); }
+body.theme-white .xv-cba-item:hover,
+body.theme-beige .xv-cba-item:hover { background: rgba(15, 23, 42, 0.05); }
+body.theme-white .xv-cba-item__text b,
+body.theme-beige .xv-cba-item__text b { color: rgba(15, 23, 42, 0.9); }
+body.theme-white .xv-cba-item__text i,
+body.theme-beige .xv-cba-item__text i { color: rgba(15, 23, 42, 0.5); }
 
 .xv-cba-sep {
   height: 1px;
   margin: 6px 4px;
   background: rgba(255, 255, 255, 0.06);
 }
-body.theme-white .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
+body.theme-white .xv-cba-sep,
+body.theme-beige .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
 
 /* Metadata, not another button. */
 .xv-cba-kbd {
@@ -8562,7 +8616,8 @@ body.theme-white .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
   border-radius: 5px;
   padding: 2px 5px;
 }
-body.theme-white .xv-cba-kbd {
+body.theme-white .xv-cba-kbd,
+body.theme-beige .xv-cba-kbd {
   color: rgba(15, 23, 42, 0.5);
   background: rgba(15, 23, 42, 0.04);
   border-color: rgba(15, 23, 42, 0.08);
@@ -8596,7 +8651,8 @@ body.theme-white .xv-cba-kbd {
   background: rgba(47, 124, 255, 0.11);
   color: #3b82ff;
 }
-body.theme-white .xv-cba-trigger:hover:not(:disabled) {
+body.theme-white .xv-cba-trigger:hover:not(:disabled),
+body.theme-beige .xv-cba-trigger:hover:not(:disabled) {
   background: rgba(15, 23, 42, 0.05);
   color: rgba(15, 23, 42, 0.9);
 }
