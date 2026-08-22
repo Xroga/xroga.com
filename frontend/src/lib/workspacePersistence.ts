@@ -8,6 +8,7 @@ import {
   saveWorkspaceToIndexedDB,
 } from '@/lib/workspaceSessionStorage';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
+import { getSelectedRepoContext } from '@/lib/repoContext';
 
 const KEY = 'xroga_workspace_session';
 
@@ -79,6 +80,7 @@ export interface WorkspaceSession {
   selectedLabel?: string;
   source?: WorkspaceSource;
   jumpMessageId?: string;
+  githubRepoName?: string;
   updatedAt: string;
 }
 
@@ -131,7 +133,11 @@ export async function loadWorkspaceSessionHydrated(): Promise<WorkspaceSession |
 
     merged.messages = sanitizeChatMessages(merged.messages);
     const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
-    merged.messages = await rehydratePersistedMessages(merged.messages);
+    const repositoryName =
+      merged.githubRepoName?.includes('/')
+        ? merged.githubRepoName
+        : getSelectedRepoContext()?.repo;
+    merged.messages = await rehydratePersistedMessages(merged.messages, repositoryName);
     return merged;
   } catch (err) {
     console.warn('[workspace] hydrate failed, clearing session:', (err as Error).message);
@@ -146,6 +152,10 @@ export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'
 
   const payload: WorkspaceSession = {
     ...session,
+    githubRepoName:
+      session.githubRepoName?.includes('/')
+        ? session.githubRepoName
+        : getSelectedRepoContext()?.repo,
     messages: messagesForStorage(slimLandingForStorage(session.messages)),
     updatedAt: new Date().toISOString(),
   };

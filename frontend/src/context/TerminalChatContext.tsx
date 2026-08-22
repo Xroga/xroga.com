@@ -82,6 +82,8 @@ import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
+import { recoveredLandingWorkspaceBuild } from '@/lib/recoveredBuildOutput';
+import { swarmOutputToText } from '@/lib/swarm';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -223,6 +225,7 @@ interface TerminalChatContextValue {
     selectedLabel?: string;
     source?: WorkspaceSource;
     jumpMessageId?: string;
+    githubRepoName?: string;
   }) => Promise<void>;
   /** Load an isolated prompt+response thread into terminal (new terminal from AI Media) */
   loadIsolatedThread: (messages: ChatMessage[], prompt: string, jumpMessageId?: string) => void;
@@ -396,7 +399,7 @@ export function TerminalChatProvider({
   queueRef.current = promptQueue;
 
   useBackgroundBuildJobs(
-    ({ assistantMessageId, userMessageId, userPrompt, startedAt, output }) => {
+    ({ assistantMessageId, userMessageId, userPrompt, startedAt, output, runStatus }) => {
       setMessages((messages) =>
         reconcilePendingBuildTranscript(messages, {
           assistantMessageId,
@@ -412,11 +415,28 @@ export function TerminalChatProvider({
       heavyJobActiveRef.current = false;
       setHeavyAssistantId(null);
       setSwarmRunning(false);
-      toast.success('Your XROGA project is complete!');
+      const recoveredLanding = output.type === 'landing_page';
+      if (recoveredLanding) {
+        void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
+          const ws = useProjectWorkspaceStore.getState();
+          const payload = recoveredLandingWorkspaceBuild(output, ws, getSelectedRepoContext());
+          if (payload) ws.applyBuild(payload);
+        });
+      }
+      if (runStatus === 'error') {
+        toast('Your XROGA build was restored with shipping or validation evidence.');
+      } else {
+        toast.success('Your XROGA project is complete!');
+      }
+      const renderAsFeature = recoveredLanding || output.type === 'engineering_artifact';
       setMessages((m) =>
         m.map((msg) =>
           msg.id === assistantMessageId
-            ? { ...msg, content: '', featureOutput: { ...output, type: 'landing_page' } }
+            ? {
+                ...msg,
+                content: renderAsFeature ? '' : swarmOutputToText(output),
+                featureOutput: renderAsFeature ? output : undefined,
+              }
             : msg
         )
       );
@@ -755,6 +775,7 @@ export function TerminalChatProvider({
       selectedLabel?: string;
       source?: WorkspaceSource;
       jumpMessageId?: string;
+      githubRepoName?: string;
     }) => {
       if (incognito) return;
       restoringRef.current = true;
@@ -785,7 +806,7 @@ export function TerminalChatProvider({
 
       setSessionId(opts.sessionId);
       const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
-      const hydrated = await rehydratePersistedMessages(opts.messages);
+      const hydrated = await rehydratePersistedMessages(opts.messages, opts.githubRepoName);
       setMessages(hydrated);
       setPrompt(opts.prompt);
       completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
@@ -798,6 +819,7 @@ export function TerminalChatProvider({
         selectedLabel: opts.selectedLabel ?? opts.prompt.slice(0, 40),
         source: opts.source ?? 'dashboard',
         jumpMessageId: opts.jumpMessageId,
+        githubRepoName: opts.githubRepoName,
       });
       persistReadyRef.current = true;
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));
@@ -979,26 +1001,41 @@ export function TerminalChatProvider({
       activeRunIdRef.current = runId;
       setSwarmStatusLabel('Stopping');
       setPipelineMessage('Stopping this build safely…');
-      void api.swarm.cancelRun(runId).then((result) => {
-        if (result.cancelled || result.status === 'cancelled') {
+      void api.swarm
+        .cancelRun(runId)
+        .then((result) => {
+          if (!result.cancelled && result.status !== 'cancelled') {
+            throw new Error('The build is still running. Please try Stop again.');
+          }
+          // The durable run is the source of truth. Only end the local stream after the
+          // server confirms cancellation; otherwise a failed POST made the UI look stopped
+          // while paid work continued remotely.
+          if (heavyBuildActiveRef.current && abortRef.current) {
+            abortRef.current.abort();
+          } else {
+            lightAbortRef.current?.abort();
+            abortRef.current?.abort();
+          }
+          setHeavyLoading(false);
+          setHeavyBuildActive(false);
+          heavyBuildActiveRef.current = false;
+          heavyJobActiveRef.current = false;
+          setHeavyAssistantId(null);
+          setSwarmRunning(false);
+          setPipelineMessage('Build stopped. Progress already written remains saved.');
           toast.success('Build stopped.');
-        }
-      }).catch((error) => {
-        interruptRef.current = false;
-        toast.error((error as Error).message || 'Could not stop this build. Please try again.');
-      });
+        })
+        .catch((error) => {
+          interruptRef.current = false;
+          setSwarmStatusLabel('Running');
+          setPipelineMessage('The build is still running — Stop was not confirmed.');
+          toast.error((error as Error).message || 'Could not stop this build. Please try again.');
+        });
     } else {
+      interruptRef.current = false;
       toast.error('Restoring the build connection. Try Stop again in a moment.');
     }
-    // Stop aborts the focused stream; never kill a light reply silent to a build stop preference —
-    // prefer aborting heavy when active, else light.
-    if (heavyBuildActiveRef.current && abortRef.current) {
-      abortRef.current.abort();
-      return;
-    }
-    lightAbortRef.current?.abort();
-    abortRef.current?.abort();
-  }, []);
+  }, [setSwarmRunning]);
 
   const retryStoppedBuild = useCallback(async (assistantMessageId: string) => {
     const msg = messages.find((m) => m.id === assistantMessageId && m.buildStopped);
@@ -2204,7 +2241,12 @@ export function TerminalChatProvider({
                   ? {
                       ...msg,
                       content: '',
-                      featureOutput: { ...output, shipPending: true, type: 'landing_page' },
+                      featureOutput: {
+                        ...output,
+                        artifactRunId: (preview as { runId?: string }).runId,
+                        shipPending: true,
+                        type: 'landing_page',
+                      },
                     }
                   : msg
               )
@@ -2384,10 +2426,18 @@ export function TerminalChatProvider({
             }
             if (output?.type === 'landing_page') {
               const landingHtml = String((output as { html?: string }).html ?? '').trim();
+              const generatedFiles = Array.isArray(
+                (output as { generatedFiles?: unknown }).generatedFiles,
+              )
+                ? (output as { generatedFiles: unknown[] }).generatedFiles
+                : [];
               const hasRenderableLanding =
                 landingHtml.length > 40 ||
                 Boolean((output as { deployUrl?: string }).deployUrl) ||
-                Boolean((output as { githubRepoUrl?: string }).githubRepoUrl);
+                Boolean((output as { githubRepoUrl?: string }).githubRepoUrl) ||
+                generatedFiles.some(
+                  (path) => typeof path === 'string' && path.trim().length > 0,
+                );
               if (!hasRenderableLanding) {
                 // Empty landing payload after spend — never leave a blank "No response" bubble
                 const failMsg =
@@ -2578,6 +2628,7 @@ export function TerminalChatProvider({
                         featureOutput: {
                           ...prev,
                           ...output,
+                          artifactRunId: (complete as { runId?: string }).runId,
                           html: (output as { html?: string }).html ?? prev.html,
                           css: (output as { css?: string }).css ?? prev.css,
                           js: (output as { js?: string }).js ?? prev.js,
@@ -2620,6 +2671,50 @@ export function TerminalChatProvider({
                   if (runIdReuse) {
                     void api.swarm.saveConversation(runIdReuse, updated).catch(() => {});
                   }
+                  // Persist the final authoritative landing snapshot before any sidebar
+                  // refresh or hard reload can restore the earlier ship-pending version.
+                  saveWorkspaceSession({
+                    prompt: displayPrompt,
+                    messages: updated,
+                    sessionId: sessionIdRef.current,
+                  });
+                  saveTerminalHistorySession({
+                    sessionId: sessionIdRef.current,
+                    prompt: displayPrompt,
+                    messages: updated,
+                    status: 'complete',
+                    forceRepo: outRepo,
+                    forceBranch:
+                      (output as { githubBranch?: string }).githubBranch ||
+                      repoContext?.branch ||
+                      'main',
+                  });
+                  if (anchorId) {
+                    const anchor = updated.find((message) => message.id === anchorId);
+                    const anchorOutput = anchor?.featureOutput as
+                      | { html?: string; css?: string; js?: string }
+                      | undefined;
+                    if (anchorOutput?.html?.trim()) {
+                      void import('@/lib/landingBuildStorage').then(({ saveLandingBuild }) =>
+                        saveLandingBuild({
+                          messageId: anchorId!,
+                          html: anchorOutput.html!,
+                          css: anchorOutput.css ?? '',
+                          js: anchorOutput.js ?? '',
+                        }),
+                      );
+                    }
+                  }
+                  void import('@/lib/syncRepoTerminalSessions').then(
+                    ({ ensureLiveTerminalUnderSelectedRepo }) => {
+                      ensureLiveTerminalUnderSelectedRepo({
+                        sessionId: sessionIdRef.current,
+                        messages: updated,
+                        prompt: displayPrompt,
+                        flushCloud: true,
+                      });
+                    },
+                  );
                   return updated;
                 }
                 const updated = m.map((msg) =>
@@ -2630,6 +2725,7 @@ export function TerminalChatProvider({
                         // Terminal report via FeatureOutputView (no card chrome)
                         featureOutput: {
                           ...output,
+                          artifactRunId: (complete as { runId?: string }).runId,
                           type: 'landing_page',
                           isUpdate: false,
                           changesSummary:

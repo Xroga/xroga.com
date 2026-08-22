@@ -497,6 +497,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       selectedLabel: n ? cloudTerminalLabel(n) : entry.title,
       source: 'projects',
       jumpMessageId: entry.messages[entry.messages.length - 1]?.id,
+      githubRepoName: entry.githubRepoName,
     });
     router.push('/workspace');
     toast.success(n ? `Opened ${cloudTerminalLabel(n)}` : 'Restored your previous terminal');

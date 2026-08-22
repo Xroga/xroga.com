@@ -39,7 +39,12 @@ interface SetProjectMemoryInput {
   files: ProjectFile[];
   aiSummary?: string;
   aiSummaryModel?: string;
-  commitSha?: string;
+  /**
+   * Omitted preserves the previous acknowledgement. `null` explicitly records an
+   * uncommitted snapshot. Generated files must never inherit the base commit SHA:
+   * that would make local-only work appear to be the contents of the remote head.
+   */
+  commitSha?: string | null;
 }
 
 const store = new Map<string, ProjectMemory>();
@@ -227,6 +232,15 @@ export async function getProjectMemoryAsync(
   return db;
 }
 
+export function resolveProjectMemoryCommitSha(
+  inputCommitSha: string | null | undefined,
+  previousCommitSha: string | undefined,
+  wasProvided: boolean,
+): string | undefined {
+  if (!wasProvided) return previousCommitSha;
+  return inputCommitSha ?? undefined;
+}
+
 function setProjectMemoryHot(input: SetProjectMemoryInput): ProjectMemory {
   const repo = input.repo?.includes('/') ? input.repo : null;
   const branch = input.branch || 'main';
@@ -241,7 +255,11 @@ function setProjectMemoryHot(input: SetProjectMemoryInput): ProjectMemory {
     paths: files.map((f) => f.path),
     aiSummary: input.aiSummary ?? prev?.aiSummary,
     aiSummaryModel: input.aiSummaryModel ?? prev?.aiSummaryModel,
-    commitSha: input.commitSha ?? prev?.commitSha,
+    commitSha: resolveProjectMemoryCommitSha(
+      input.commitSha,
+      prev?.commitSha,
+      Object.prototype.hasOwnProperty.call(input, 'commitSha'),
+    ),
     updatedAt: Date.now(),
     hits: (prev?.hits ?? 0) + 1,
   };

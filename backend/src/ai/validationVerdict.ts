@@ -56,7 +56,26 @@ export interface QaSummary {
 export function qaWasUnavailable(qa: QaSummary): boolean {
   if (qa.ok) return false;
   const real = qa.issues.filter((issue) => issue.trim().length > 0);
-  return real.length > 0 && real.every((issue) => /^QA unavailable$/i.test(issue.trim()));
+  return (
+    real.length > 0 &&
+    real.every((issue) => {
+      const message = issue.trim();
+      return (
+        /^QA unavailable$/i.test(message) ||
+        /^The reviewer could not be reached for batch \d+ of \d+ — treated as not reviewed\.$/i.test(
+          message,
+        ) ||
+        /^The reviewer returned nothing — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer response was not a JSON object — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer response could not be parsed — treated as not reviewed\.$/i.test(message) ||
+        /^The reviewer returned no verdict — a missing status is not a pass\.$/i.test(message) ||
+        /^The reviewer verdict was .+ which is not a boolean — treated as not passed\.$/i.test(
+          message,
+        ) ||
+        /^The reviewer did not pass the build\.$/i.test(message)
+      );
+    })
+  );
 }
 
 /**
@@ -77,7 +96,11 @@ export function classifyValidation(input: {
 
   const compileOk = productionValidationAllowsDeployment(input.compile);
   if (!compileOk) {
-    if (input.compile.sandboxUnavailable) {
+    if (input.compile.harnessUnavailable) {
+      unverifiedReasons.push(
+        'the isolated build harness did not return a verdict, so the code was not judged',
+      );
+    } else if (input.compile.sandboxUnavailable) {
       // Nothing was executed, so nothing is known about the code. Reporting this as a
       // defect would blame the user's product for our missing isolation runtime — the
       // same mistake that once discarded a working build over an npm timeout.

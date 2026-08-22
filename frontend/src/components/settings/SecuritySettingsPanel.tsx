@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SettingsCard, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
+import { clearUserScopedCaches } from '@/lib/userScopedCache';
+import { useAppStore } from '@/store/useAppStore';
 
 export function SecuritySettingsPanel() {
   const [newPassword, setNewPassword] = useState('');
@@ -138,6 +140,8 @@ export function SecuritySettingsPanel() {
     setSigningOut(true);
     try {
       const supabase = createClient();
+      clearUserScopedCaches();
+      useAppStore.getState().setProfile(null);
       await supabase.auth.signOut();
       // Hard navigation, not router.push + router.refresh: the refresh re-renders the
       // *current* /settings route, whose shell layout now sees no user and fires its own

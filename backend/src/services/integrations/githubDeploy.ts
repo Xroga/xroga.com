@@ -39,7 +39,11 @@ import {
   deriveFileSyncMutations,
   MutationPlanError,
 } from './githubMutationPlan.js';
-import { describeTreeSnapshotFailure, TreeSnapshotError } from './githubTreeSnapshot.js';
+import {
+  describeTreeSnapshotFailure,
+  readStartingTree,
+  TreeSnapshotError,
+} from './githubTreeSnapshot.js';
 import {
   authorizeBranchWrite,
   BranchAuthorizationError,
@@ -76,6 +80,26 @@ export type ConnectedRepositoryState =
   | { status: 'empty'; branch: string }
   | { status: 'head'; branch: string; headSha: string }
   | { status: 'unavailable'; branch: string; reason: string };
+
+/**
+ * The neutral marker is not product source. GitHub rounds very small repositories to
+ * `size: 0`, but that number alone cannot distinguish the marker from a tiny real project.
+ * Only this exact tree is safe to resume as a source-empty product repository.
+ */
+export function isNeutralXrogaBootstrapTree(
+  entries: Array<{ path: string; type: string }>,
+): boolean {
+  const blobs = entries.filter((entry) => entry.type === 'blob');
+  return (
+    blobs.length === 1 &&
+    blobs[0]?.path === '.xroga/bootstrap' &&
+    entries.every(
+      (entry) =>
+        (entry.path === '.xroga' && entry.type === 'tree') ||
+        (entry.path === '.xroga/bootstrap' && entry.type === 'blob'),
+    )
+  );
+}
 
 export interface DeployPipelineResult {
   github: GitHubPushResult;
@@ -189,6 +213,34 @@ export async function inspectConnectedRepositoryState(
   const headSha = ref.object?.sha;
   if (!headSha || !/^[0-9a-f]{7,40}$/i.test(headSha)) {
     return { status: 'unavailable', branch, reason: 'GitHub returned an invalid branch head' };
+  }
+
+  // A bootstrap-only repository has a real head, so the branch lookup above correctly
+  // proves it is not a genuinely empty Git repository. It still has no product source to
+  // hydrate. Inspect the exact tree before treating it as source-empty; arbitrary tiny
+  // repositories must remain authoritative and must never be overwritten as new builds.
+  // GitHub's repository `size` is an asynchronously-computed, rounded hint. The same
+  // one-byte bootstrap marker has been observed above multiple size thresholds after
+  // propagation. Always inspect the exact head tree before cached project memory is
+  // trusted. A real repository of any size remains a `head`; only the exact neutral
+  // tree below is classified as source-empty.
+  try {
+    const api = makeAtomicWriteApi(
+      ghFetch,
+      integration.access_token,
+      owner,
+      repo,
+    );
+    const snapshot = await readStartingTree(api, headSha);
+    if (isNeutralXrogaBootstrapTree(snapshot.entries)) {
+      return { status: 'empty', branch };
+    }
+  } catch (error) {
+    const reason =
+      error instanceof TreeSnapshotError
+        ? describeTreeSnapshotFailure(error.reason)
+        : 'GitHub could not verify the repository tree';
+    return { status: 'unavailable', branch, reason };
   }
   return { status: 'head', branch, headSha };
 }
@@ -459,6 +511,7 @@ interface ConnectedRepositoryPushOptions {
   deletePaths: string[];
   runId?: string;
   directWriteAuthorized: boolean;
+  allowEmptyBootstrap: boolean;
 }
 
 /**
@@ -485,6 +538,25 @@ async function pushToConnectedRepository(
 ): Promise<AtomicWriteRecord> {
   const api = await atomicWriteApiFor(token, owner, repo);
   const defaultBranch = await getDefaultBranch(token, owner, repo);
+
+  // Selecting a genuinely empty repository for New Product authorizes GitHub's required
+  // neutral initialization commit followed by exactly one atomic product commit. Recheck
+  // emptiness here and again inside writeAtomically; this permission is never carried
+  // into the existing-branch path below.
+  if (options.allowEmptyBootstrap && (await api.isRepositoryEmpty())) {
+    return writeAtomically(
+      api,
+      { owner, repo },
+      {
+        branch: options.requestedBranch,
+        mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
+        message,
+        defaultBranch: defaultBranch || options.requestedBranch,
+        directWriteAuthorized: true,
+        allowEmptyBootstrap: true,
+      },
+    );
+  }
 
   const needsAuthorization = await branchWriteNeedsAuthorization(
     api,
@@ -615,6 +687,8 @@ export interface GitHubPushOptions {
   runId?: string;
   /** Explicit approval to commit straight to a default or protected branch. */
   directWriteAuthorized?: boolean;
+  /** New Product may initialise a selected repository only when it is still empty. */
+  allowEmptyBootstrap?: boolean;
   /** Visibility for a repository this call creates. Private unless explicitly public. */
   visibility?: RepositoryVisibility;
 }
@@ -651,6 +725,7 @@ export async function pushBuildToGitHub(
       deletePaths: opts.deletePaths ?? [],
       runId: opts.runId,
       directWriteAuthorized: opts.directWriteAuthorized === true,
+      allowEmptyBootstrap: opts.allowEmptyBootstrap === true,
     });
 
     invalidateRepoAnalysis(userId, selectedRepo);

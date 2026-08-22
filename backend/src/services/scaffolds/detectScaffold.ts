@@ -58,6 +58,19 @@ export function detectScaffoldKind(prompt: string): ScaffoldKind {
   return 'static';
 }
 
+/**
+ * True for a presentation-only one-page product that should keep one authoritative
+ * HTML/CSS/JS source for preview, GitHub, and Vercel. Descriptive words between
+ * "one-page" and "website" are allowed (for example "one-page coffee shop website").
+ * Requests for framework/backend capabilities are excluded by detectScaffoldKind.
+ */
+export function isSimpleStaticBuildPrompt(prompt: string): boolean {
+  if (detectScaffoldKind(prompt) !== 'static') return false;
+  return /\b(?:landing\s*page|one[ -]?page(?:\s+[\w-]+){0,5}\s+(?:web)?site|simple\s+(?:web|site|app)|static\s+site)\b/i.test(
+    prompt,
+  );
+}
+
 export function isMobileBuildPrompt(prompt: string): boolean {
   return detectScaffoldKind(prompt) === 'expo';
 }

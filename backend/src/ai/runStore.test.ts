@@ -6,10 +6,39 @@ import {
   createRun,
   getRun,
   isRunCancellationRequested,
+  mergeRunHistory,
   requestRunCancellation,
+  type SwarmRunRecord,
 } from './runStore.js';
 
+function runRecord(id: string, createdAt: string, prompt: string): SwarmRunRecord {
+  return {
+    id,
+    userId: 'user-1',
+    prompt,
+    status: 'complete',
+    output: null,
+    created_at: createdAt,
+    completed_at: createdAt,
+    iteration_count: 1,
+    events: [],
+    lastSequence: 0,
+  };
+}
+
 describe('swarm run event replay', () => {
+  it('merges a partial hot cache with durable history and prefers live state', () => {
+    const older = runRecord('older', '2026-08-20T10:00:00.000Z', 'older build');
+    const persistedNewest = runRecord('newest', '2026-08-22T10:00:00.000Z', 'persisted');
+    const hotNewest = { ...persistedNewest, prompt: 'live state', status: 'running' as const };
+
+    const merged = mergeRunHistory([older, persistedNewest], [hotNewest], 30);
+
+    assert.deepEqual(merged.map((run) => run.id), ['newest', 'older']);
+    assert.equal(merged[0]?.prompt, 'live state');
+    assert.equal(merged[0]?.status, 'running');
+  });
+
   it('assigns stable monotonic sequences and supports after-sequence replay', () => {
     const runId = randomUUID();
     createRun(randomUUID(), 'test build', runId);

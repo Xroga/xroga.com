@@ -201,6 +201,7 @@ test('fail-closed: a provider failure is not a pass', async () => {
     },
   });
   assert.equal(result.ok, false, 'an unreachable reviewer must not pass the build');
+  assert.ok(result.issues.includes('QA unavailable'));
   assert.ok(result.issues.some((i) => /could not be reached/i.test(i)));
 });
 

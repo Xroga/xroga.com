@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, Loader2, Code2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api, type GitHubStatus } from '@/lib/api';
+import { openGitHubOAuthPopup } from '@/lib/githubConnect';
 import { dispatchGitHubConnected } from '@/lib/githubEvents';
 
 type RepoStrategy = 'auto' | 'monorepo' | 'manual';
@@ -50,25 +51,11 @@ export function GitHubConnect() {
   async function handleConnect() {
     setConnecting(true);
     try {
-      const { url } = await api.github.oauthUrl();
-      if (!url) {
-        toast.error('GitHub OAuth not configured');
-        setConnecting(false);
-        return;
-      }
-      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=720,scrollbars=yes');
-      if (!popup) {
-        window.location.href = url;
-        return;
-      }
-      try {
-        popup.focus();
-      } catch {
-        /* ignore */
-      }
-      setConnecting(false);
+      const result = await openGitHubOAuthPopup();
+      if (!result.opened) toast.error(result.error || 'Could not start GitHub authorization');
     } catch (e) {
       toast.error((e as Error).message);
+    } finally {
       setConnecting(false);
     }
   }

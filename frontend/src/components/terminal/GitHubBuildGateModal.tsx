@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { X, GitBranch } from 'lucide-react';
 import { api } from '@/lib/api';
+import { openGitHubOAuthPopup } from '@/lib/githubConnect';
 
 interface GitHubBuildGateModalProps {
   open: boolean;
@@ -53,13 +54,14 @@ export function GitHubBuildGateModal({ open, onClose, onConnected }: GitHubBuild
     setConnecting(true);
     setError(null);
     try {
-      const { url } = await api.github.oauthUrl();
-      const popup = window.open(url, 'xroga-github-oauth', 'width=600,height=700,scrollbars=yes');
-      if (!popup) {
-        setError('Allow popups to connect GitHub, or use Integrations in Settings.');
+      const result = await openGitHubOAuthPopup();
+      if (!result.opened) {
+        setError(result.error || 'Could not start GitHub authorization.');
         setConnecting(false);
         return;
       }
+      const popup = result.popup;
+      if (!popup) return;
 
       pollRef.current = setInterval(async () => {
         try {
