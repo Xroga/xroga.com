@@ -234,7 +234,7 @@ export async function inspectConnectedRepositoryState(
     } catch (error) {
       const reason =
         error instanceof TreeSnapshotError
-          ? describeTreeSnapshotFailure(error)
+          ? describeTreeSnapshotFailure(error.reason)
           : 'GitHub could not verify the bootstrap repository tree';
       return { status: 'unavailable', branch, reason };
     }
