@@ -32,6 +32,7 @@ import { SoftwareFeatureTabs } from './SoftwareFeatureTabs';
 // the ancestor class below is necessary but not sufficient on its own.
 import '@/styles/homepage-coding.css';
 import '@/styles/software-landing.css';
+import { SOFTWARE_ART as ART } from '@/lib/softwareArt';
 
 /**
  * /software — the Xroga Software World landing page.
@@ -51,7 +52,6 @@ import '@/styles/software-landing.css';
  * demonstration rather than presented as a customer's code.
  */
 
-const ART = '/software';
 
 const FOOTER_GROUPS = [
   {
@@ -104,7 +104,7 @@ export function SoftwareLanding() {
       {/* ---------------------------------------------------------------- hero */}
       <section className="xsw-hero">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-hero.webp`} alt="" fill priority sizes="100vw" quality={82} />
+          <Image src={ART.hero} alt="" fill priority sizes="100vw" quality={82} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -138,7 +138,7 @@ export function SoftwareLanding() {
       {/* ------------------------------------------------------------- problem */}
       <section className="xsw-problem" aria-labelledby="xsw-problem-heading">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-problem.webp`} alt="" fill loading="lazy" sizes="100vw" quality={76} />
+          <Image src={ART.problem} alt="" fill loading="lazy" sizes="100vw" quality={76} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -177,7 +177,7 @@ export function SoftwareLanding() {
       {/* ------------------------------------------------------------ ai field */}
       <section className="xsw-field" aria-labelledby="xsw-field-heading">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-ai-field.webp`} alt="" fill loading="lazy" sizes="100vw" quality={82} />
+          <Image src={ART.aiField} alt="" fill loading="lazy" sizes="100vw" quality={82} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -210,7 +210,7 @@ export function SoftwareLanding() {
       {/* --------------------------------------------------------------- build */}
       <section className="xsw-build" aria-labelledby="xsw-build-heading">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-build.webp`} alt="" fill loading="lazy" sizes="100vw" quality={80} />
+          <Image src={ART.build} alt="" fill loading="lazy" sizes="100vw" quality={80} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -296,7 +296,7 @@ export function SoftwareLanding() {
       {/* ---------------------------------------------------------- repository */}
       <section className="xsw-repo" aria-labelledby="xsw-repo-heading">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-repository.webp`} alt="" fill loading="lazy" sizes="100vw" quality={78} />
+          <Image src={ART.repository} alt="" fill loading="lazy" sizes="100vw" quality={78} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -391,7 +391,7 @@ export function SoftwareLanding() {
       {/* ----------------------------------------------------------------- cta */}
       <section className="xsw-cta" aria-labelledby="xsw-cta-heading">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-cta.webp`} alt="" fill loading="lazy" sizes="100vw" quality={80} />
+          <Image src={ART.cta} alt="" fill loading="lazy" sizes="100vw" quality={80} />
         </div>
         <div className="xsw-scrim" aria-hidden="true" />
 
@@ -415,7 +415,7 @@ export function SoftwareLanding() {
       {/* -------------------------------------------------------------- footer */}
       <footer className="xsw-footer">
         <div className="xsw-media" aria-hidden="true">
-          <Image src={`${ART}/software-footer.webp`} alt="" fill loading="lazy" sizes="100vw" quality={78} />
+          <Image src={ART.footer} alt="" fill loading="lazy" sizes="100vw" quality={78} />
         </div>
 
         <div className="xsw-footer__card">
