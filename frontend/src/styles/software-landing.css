@@ -136,8 +136,7 @@
   padding: 0.7rem;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 18px;
-  background: rgba(6, 10, 20, 0.94);
-  backdrop-filter: blur(18px);
+  background: rgba(6, 10, 20, 0.96);
 }
 
 .xsw-drawer[data-open='true'] { display: block; }
@@ -163,8 +162,15 @@
 
 /* ------------------------------------------------------------------ hero */
 
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
 .xsw-hero {
   position: relative;
+  background: #04122c;
   display: flex;
   flex-direction: column;
   min-height: min(880px, 100svh);
@@ -178,8 +184,8 @@
 
 .xsw-hero .xsw-scrim {
   background:
-    radial-gradient(ellipse 62% 48% at 50% 40%, rgba(2, 8, 20, 0.55), transparent 72%),
-    linear-gradient(180deg, rgba(2, 8, 20, 0.68) 0%, rgba(2, 8, 20, 0.2) 34%, rgba(2, 8, 20, 0.42) 76%, #04122c 100%);
+    radial-gradient(ellipse 58% 44% at 50% 42%, rgba(2, 8, 20, 0.26), transparent 74%),
+    linear-gradient(180deg, rgba(2, 8, 20, 0.34) 0%, transparent 26%, transparent 68%, #04122c 100%);
 }
 
 .xsw-hero__body {
@@ -267,8 +273,7 @@
   padding: 1rem 1rem 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 20px;
-  background: rgba(8, 12, 20, 0.66);
-  backdrop-filter: blur(20px);
+  background: rgba(8, 12, 20, 0.78);
   box-shadow: 0 30px 80px rgba(2, 6, 20, 0.5);
   text-align: left;
   transition: border-color 200ms ease, transform 200ms ease;
@@ -361,13 +366,15 @@
   color: #fff;
 }
 
-.xsw-problem .xsw-media img { object-position: center; opacity: 0.85; }
+.xsw-problem .xsw-media img { object-position: center; }
 
-/* Strong overlay: this artwork is texture behind type, nothing more. */
+/* The artwork is the subject here, not texture behind type. The veil is only deep
+   enough at the edges to seam into the neighbouring sections; the centre, where the
+   image actually reads, is left alone and the copy leans on its text-shadow instead. */
 .xsw-problem .xsw-scrim {
   background:
-    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(4, 6, 12, 0.55), transparent 75%),
-    linear-gradient(180deg, #04060c 0%, rgba(4, 6, 12, 0.72) 30%, rgba(4, 6, 12, 0.82) 70%, #04060c 100%);
+    radial-gradient(ellipse 66% 56% at 50% 42%, rgba(4, 6, 12, 0.22), transparent 78%),
+    linear-gradient(180deg, #04060c 0%, rgba(4, 6, 12, 0.24) 22%, rgba(4, 6, 12, 0.3) 76%, #04060c 100%);
 }
 
 .xsw-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -445,8 +452,15 @@
 
 /* -------------------------------------------------------------- ai field */
 
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
 .xsw-field {
   position: relative;
+  background: #031029;
   padding-block: 7rem 8rem;
   isolation: isolate;
   color: #fff;
@@ -456,7 +470,7 @@
 
 /* Minimal overlay — this image carries its own colour transition. */
 .xsw-field .xsw-scrim {
-  background: linear-gradient(180deg, rgba(3, 16, 44, 0.5) 0%, transparent 30%, transparent 70%, rgba(255, 255, 255, 0.35) 100%);
+  background: linear-gradient(180deg, rgba(3, 16, 44, 0.26) 0%, transparent 24%, transparent 76%, rgba(255, 255, 255, 0.22) 100%);
 }
 
 .xsw-field .xsw-h2 { color: #fff; max-width: 20ch; }
@@ -479,9 +493,9 @@
 /* --------------------------------------------------------------- build */
 
 .xsw-build { position: relative; padding-block: 6.5rem; isolation: isolate; background: #fff; }
-.xsw-build .xsw-media img { object-position: center 40%; opacity: 0.9; }
+.xsw-build .xsw-media img { object-position: center 40%; }
 .xsw-build .xsw-scrim {
-  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.6) 22%, rgba(255, 255, 255, 0.65) 78%, #fff 100%);
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.44) 20%, rgba(255, 255, 255, 0.5) 80%, #fff 100%);
 }
 
 .xsw-split {
@@ -598,7 +612,7 @@
 .xsw-card--feature .xsw-media img { opacity: 1; }
 .xsw-card--feature .xsw-scrim {
   z-index: 0;
-  background: linear-gradient(180deg, transparent 46%, rgba(6, 9, 16, 0.78) 74%, #06090f 100%);
+  background: linear-gradient(180deg, transparent 52%, rgba(6, 9, 16, 0.62) 78%, #06090f 100%);
 }
 .xsw-card--feature::after { opacity: 0.34; }
 
@@ -608,8 +622,8 @@
 .xsw-repo .xsw-media img { object-position: center; }
 .xsw-repo .xsw-scrim {
   background:
-    radial-gradient(ellipse 60% 60% at 30% 50%, rgba(4, 7, 14, 0.62), transparent 74%),
-    linear-gradient(180deg, #04070e 0%, rgba(4, 7, 14, 0.62) 26%, rgba(4, 7, 14, 0.74) 74%, #04070e 100%);
+    radial-gradient(ellipse 56% 56% at 30% 50%, rgba(4, 7, 14, 0.26), transparent 78%),
+    linear-gradient(180deg, #04070e 0%, rgba(4, 7, 14, 0.22) 22%, rgba(4, 7, 14, 0.3) 78%, #04070e 100%);
 }
 
 .xsw-repo .xsw-h2 { color: #fff; }
@@ -618,8 +632,7 @@
 .xsw-panel {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 22px;
-  background: rgba(9, 13, 22, 0.82);
-  backdrop-filter: blur(14px);
+  background: rgba(9, 13, 22, 0.9);
   overflow: hidden;
 }
 
@@ -732,8 +745,15 @@
 
 /* ---------------------------------------------------------------- cta */
 
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
 .xsw-cta {
   position: relative;
+  background: #02091c;
   padding-block: 8rem;
   isolation: isolate;
   color: #fff;
@@ -744,8 +764,8 @@
 
 .xsw-cta .xsw-scrim {
   background:
-    radial-gradient(ellipse 55% 45% at 50% 50%, rgba(2, 10, 30, 0.42), transparent 74%),
-    linear-gradient(180deg, rgba(2, 9, 28, 0.6) 0%, rgba(2, 9, 28, 0.12) 42%, rgba(2, 9, 28, 0.5) 100%);
+    radial-gradient(ellipse 52% 42% at 50% 50%, rgba(2, 10, 30, 0.2), transparent 78%),
+    linear-gradient(180deg, rgba(2, 9, 28, 0.32) 0%, transparent 40%, rgba(2, 9, 28, 0.26) 100%);
 }
 
 .xsw-cta .xsw-h2 { color: #fff; max-width: 18ch; margin-inline: auto; }
@@ -875,4 +895,37 @@
   /* The hero's light bands sit low; on a tall narrow crop, favour them. */
   .xsw-hero .xsw-media img { object-position: 56% 66%; }
   .xsw-field .xsw-media img { object-position: 50% 78%; }
+}
+
+/* ==========================================================================
+   Legibility over artwork
+
+   The section scrims were carrying two jobs at once: seaming each section into
+   the next, and keeping white type readable over whatever was behind it. They
+   were sized for the second job, which is why the images were being buried.
+
+   The scrims now only do the seaming. Contrast for the type comes from a shadow
+   on the type itself, which darkens the few hundred pixels behind each glyph
+   instead of veiling the whole image to protect them.
+   ========================================================================== */
+
+.xsw-hero .xsw-h1,
+.xsw-hero .xsw-hero__lede,
+.xsw-hero .xsw-hero__foot,
+.xsw-problem .xsw-h2,
+.xsw-field .xsw-h2,
+.xsw-field__lede,
+.xsw-repo .xsw-h2,
+.xsw-repo .xsw-lede,
+.xsw-cta .xsw-h2,
+.xsw-cta__lede {
+  text-shadow: 0 1px 2px rgba(2, 6, 18, 0.55), 0 2px 18px rgba(2, 6, 18, 0.42);
+}
+
+/* The eyebrow and pill sit on their own surfaces, so they need a real ground
+   rather than a shadow — a translucent chip over a now-visible image reads as
+   dirt on the artwork. */
+.xsw-hero .xsw-eyebrow,
+.xsw-problem .xsw-pill {
+  background: rgba(6, 10, 20, 0.72);
 }
