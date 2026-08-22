@@ -2238,7 +2238,12 @@ export function TerminalChatProvider({
                   ? {
                       ...msg,
                       content: '',
-                      featureOutput: { ...output, shipPending: true, type: 'landing_page' },
+                      featureOutput: {
+                        ...output,
+                        artifactRunId: (preview as { runId?: string }).runId,
+                        shipPending: true,
+                        type: 'landing_page',
+                      },
                     }
                   : msg
               )
@@ -2620,6 +2625,7 @@ export function TerminalChatProvider({
                         featureOutput: {
                           ...prev,
                           ...output,
+                          artifactRunId: (complete as { runId?: string }).runId,
                           html: (output as { html?: string }).html ?? prev.html,
                           css: (output as { css?: string }).css ?? prev.css,
                           js: (output as { js?: string }).js ?? prev.js,
@@ -2662,6 +2668,50 @@ export function TerminalChatProvider({
                   if (runIdReuse) {
                     void api.swarm.saveConversation(runIdReuse, updated).catch(() => {});
                   }
+                  // Persist the final authoritative landing snapshot before any sidebar
+                  // refresh or hard reload can restore the earlier ship-pending version.
+                  saveWorkspaceSession({
+                    prompt: displayPrompt,
+                    messages: updated,
+                    sessionId: sessionIdRef.current,
+                  });
+                  saveTerminalHistorySession({
+                    sessionId: sessionIdRef.current,
+                    prompt: displayPrompt,
+                    messages: updated,
+                    status: 'complete',
+                    forceRepo: outRepo,
+                    forceBranch:
+                      (output as { githubBranch?: string }).githubBranch ||
+                      repoContext?.branch ||
+                      'main',
+                  });
+                  if (anchorId) {
+                    const anchor = updated.find((message) => message.id === anchorId);
+                    const anchorOutput = anchor?.featureOutput as
+                      | { html?: string; css?: string; js?: string }
+                      | undefined;
+                    if (anchorOutput?.html?.trim()) {
+                      void import('@/lib/landingBuildStorage').then(({ saveLandingBuild }) =>
+                        saveLandingBuild({
+                          messageId: anchorId!,
+                          html: anchorOutput.html!,
+                          css: anchorOutput.css ?? '',
+                          js: anchorOutput.js ?? '',
+                        }),
+                      );
+                    }
+                  }
+                  void import('@/lib/syncRepoTerminalSessions').then(
+                    ({ ensureLiveTerminalUnderSelectedRepo }) => {
+                      ensureLiveTerminalUnderSelectedRepo({
+                        sessionId: sessionIdRef.current,
+                        messages: updated,
+                        prompt: displayPrompt,
+                        flushCloud: true,
+                      });
+                    },
+                  );
                   return updated;
                 }
                 const updated = m.map((msg) =>
@@ -2672,6 +2722,7 @@ export function TerminalChatProvider({
                         // Terminal report via FeatureOutputView (no card chrome)
                         featureOutput: {
                           ...output,
+                          artifactRunId: (complete as { runId?: string }).runId,
                           type: 'landing_page',
                           isUpdate: false,
                           changesSummary:
