@@ -21,16 +21,16 @@ export function AuthModernCard({
 }) {
   return (
     <div className="w-full">
-      <header className="mb-4">
+      <header className="mb-6">
         <h1
           className="
-            text-[1.85rem]
+            text-[2rem]
             font-bold
-            leading-[1.05]
-            tracking-[-0.035em]
+            leading-[1.04]
+            tracking-[-0.04em]
             text-[var(--auth-text)]
 
-            sm:text-[2.1rem]
+            sm:text-[2.35rem]
           "
         >
           {title}
@@ -39,13 +39,11 @@ export function AuthModernCard({
         {subtitle ? (
           <p
             className="
-              mt-1.5
-              max-w-md
-              text-[13px]
-              leading-relaxed
+              mt-2
+              max-w-[520px]
+              text-[14px]
+              leading-[1.55]
               text-[var(--auth-muted)]
-
-              sm:text-sm
             "
           >
             {subtitle}
@@ -70,19 +68,26 @@ export function AuthModernQuote({
   return (
     <blockquote
       className={cn(
-        'rounded-xl',
-        'border border-[var(--auth-border)]',
+        'rounded-2xl',
+
+        'border',
+        'border-[var(--auth-border)]',
+
         'bg-[var(--auth-soft)]',
-        'px-3.5 py-2.5',
+
+        'px-4',
+        'py-3',
+
         compact
-          ? 'mb-3'
-          : 'mb-5'
+          ? 'mb-4'
+          : 'mb-6'
       )}
     >
       <p
         className={cn(
           'leading-relaxed',
           'text-[var(--auth-muted)]',
+
           compact
             ? 'text-xs'
             : 'text-sm'
@@ -93,8 +98,8 @@ export function AuthModernQuote({
 
       <footer
         className="
-          mt-1
-          text-[10px]
+          mt-1.5
+          text-[11px]
           font-semibold
           text-[#006aff]
         "
@@ -112,20 +117,42 @@ export function AuthModernInput({
   return (
     <input
       className={cn(
-        'h-10.5 w-full',
-        'rounded-xl',
-        'border border-[var(--auth-border)]',
+        /*
+         * Use an explicit valid Tailwind
+         * arbitrary height.
+         *
+         * Do not use h-10.5.
+         */
+        'h-[48px]',
+        'w-full',
+
+        'rounded-[14px]',
+
+        'border',
+        'border-[var(--auth-border)]',
+
         'bg-[var(--auth-input)]',
-        'px-3.5',
-        'text-sm',
+
+        'px-4',
+
+        'text-[14px]',
+        'font-medium',
+
         'text-[var(--auth-text)]',
+
         'outline-none',
+
+        'placeholder:font-normal',
         'placeholder:text-[var(--auth-muted)]',
-        'transition-all duration-200',
+
+        'transition-all',
+        'duration-200',
 
         'hover:border-[var(--auth-border-strong)]',
 
-        'focus:border-[#006aff]',
+        'focus:border-[#006aff]/70',
+        'focus:bg-[var(--auth-input-hover)]',
+
         'focus:ring-4',
         'focus:ring-[#006aff]/10',
 
@@ -147,10 +174,11 @@ export function AuthModernLabel({
     <label
       htmlFor={htmlFor}
       className="
-        mb-1
+        mb-1.5
         block
-        text-[11px]
+        text-[12px]
         font-semibold
+        tracking-[-0.01em]
         text-[var(--auth-text)]
       "
     >
@@ -178,25 +206,36 @@ export function AuthGradientButton({
       type={type}
       className={cn(
         'relative',
-        'flex h-10.5 w-full',
-        'items-center justify-center',
+
+        'flex',
+        'h-[48px]',
+        'w-full',
+
+        'items-center',
+        'justify-center',
+
         'overflow-hidden',
-        'rounded-xl',
+
+        'rounded-[14px]',
 
         'bg-[#006aff]',
+
         'px-4',
 
-        'text-sm',
+        'text-[14px]',
         'font-bold',
+
         'text-white',
 
-        'shadow-[0_8px_24px_rgba(0,106,255,0.22)]',
+        'shadow-[0_10px_30px_rgba(0,106,255,0.22)]',
 
-        'transition-all duration-200',
+        'transition-all',
+        'duration-200',
 
         'hover:-translate-y-[1px]',
         'hover:bg-[#075fe1]',
-        'hover:shadow-[0_11px_30px_rgba(0,106,255,0.30)]',
+
+        'hover:shadow-[0_14px_36px_rgba(0,106,255,0.30)]',
 
         'active:translate-y-0',
 
@@ -229,11 +268,17 @@ export function AuthSocialButton({
     <button
       type="button"
       className={cn(
-        'flex h-10.5 w-full',
-        'items-center justify-center',
+        'flex',
+
+        'h-[48px]',
+        'w-full',
+
+        'items-center',
+        'justify-center',
+
         'gap-2.5',
 
-        'rounded-xl',
+        'rounded-[14px]',
 
         'border',
         'border-[var(--auth-border)]',
@@ -242,13 +287,20 @@ export function AuthSocialButton({
 
         'px-4',
 
-        'text-sm',
+        'text-[14px]',
         'font-semibold',
+
         'text-[var(--auth-text)]',
 
-        'transition-all duration-200',
+        'shadow-[0_2px_8px_rgba(0,0,0,0.025)]',
+
+        'transition-all',
+        'duration-200',
+
+        'hover:-translate-y-[1px]',
 
         'hover:border-[var(--auth-border-strong)]',
+
         'hover:bg-[var(--auth-input-hover)]',
 
         'disabled:cursor-not-allowed',
@@ -269,7 +321,7 @@ export function AuthDivider({
   text?: string;
 }) {
   return (
-    <div className="relative my-3">
+    <div className="relative my-4">
       <div
         className="
           absolute
@@ -292,14 +344,15 @@ export function AuthDivider({
           relative
           flex
           justify-center
-          text-[9px]
+          text-[10px]
+          font-medium
           uppercase
-          tracking-[0.13em]
+          tracking-[0.15em]
         "
       >
         <span
           className="
-            bg-[var(--auth-panel)]
+            bg-[var(--auth-card)]
             px-3
             text-[var(--auth-muted)]
           "
@@ -383,9 +436,9 @@ export function AuthSwitchText({
   return (
     <p
       className="
-        mt-3
+        mt-4
         text-center
-        text-[12px]
+        text-[13px]
         text-[var(--auth-muted)]
       "
     >
