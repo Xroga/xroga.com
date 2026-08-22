@@ -427,7 +427,19 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   );
   const expandedLogoBox = await desktopSidebar.getByRole('img', { name: 'Xroga' }).boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(96);
+  // The old floor here was 96px — the wordmark's full natural width. That only held while
+  // the logo was allowed to overflow the brand row: it rendered at 100px, ran underneath
+  // the utility card, and showed through behind the first icon. A floor of 96 now *requires*
+  // that defect, so it is replaced by the two things it was standing in for.
+  //
+  // First, that this is the wide wordmark and not the square rail mark, which is what the
+  // width was really distinguishing (the collapsed mark is 34x34).
+  expect(expandedLogoBox!.width).toBeGreaterThan(expandedLogoBox!.height);
+  expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(60);
+  // Second, that it stays out from under the toolbar — the actual reported defect, which
+  // the width floor never checked in either direction.
+  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
+  expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x);
   await page.getByRole('button', { name: 'Close sidebar' }).click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Same next/image encoding as the expanded-sidebar assertion above.

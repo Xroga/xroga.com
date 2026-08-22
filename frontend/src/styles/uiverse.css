@@ -256,8 +256,11 @@
    of chrome. The outer .xv-sidebar-root still reserves the full column width in
    the shell's flex row, so insetting the panel shifts nothing in main content. */
 :root {
-  --xv-sidebar-inset: 0.5rem;
-  --xv-sidebar-radius: 1rem;
+  /* Both measured from the application's one gutter (declared in globals.css), so the
+     sidebar and the workspace stage cannot drift to different insets — which is what
+     left their tops and bottoms six pixels apart. */
+  --xv-sidebar-inset: var(--xv-app-gutter, 8px);
+  --xv-sidebar-radius: var(--xv-app-radius, 16px);
 }
 .xv-sidebar-root {
   /* Wrapper only reserves layout width — all visuals belong to the panel. */
@@ -271,12 +274,13 @@
   height: calc(100vh - (var(--xv-sidebar-inset) * 2));
   width: calc(100% - (var(--xv-sidebar-inset) * 2));
   margin-inline-start: var(--xv-sidebar-inset);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--app-panel-border, var(--border-subtle));
   border-radius: var(--xv-sidebar-radius);
-  background: var(--surface-raised);
+  /* The same surface the workspace shows. This was `--surface-raised`, which on Beige
+     is a near-white against the workspace's cream — two different whites side by side
+     in one window. The blur went with it: an opaque panel has nothing to blur. */
+  background: var(--app-panel, var(--surface-raised));
   box-shadow: var(--shadow-elevated);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 .xv-sidebar-root.is-collapsed .xv-sidebar-floating {
   top: var(--xv-sidebar-inset);
@@ -301,12 +305,10 @@
   top: calc(var(--xv-sidebar-inset) + env(safe-area-inset-top));
   left: var(--xv-sidebar-inset);
   bottom: calc(var(--xv-sidebar-inset) + env(safe-area-inset-bottom));
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--app-panel-border, var(--border-subtle));
   border-radius: var(--xv-sidebar-radius);
-  background: var(--surface-raised);
+  background: var(--app-panel, var(--surface-raised));
   box-shadow: var(--shadow-elevated);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 /* ── Sidebar nav (no blue pill background) ── */
