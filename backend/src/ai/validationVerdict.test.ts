@@ -154,6 +154,22 @@ test('a reviewer outage is recognised as an outage, not as review findings', () 
   );
 });
 
+test('a missing structured harness result is not misreported as a code defect', () => {
+  const { verdict, unverifiedReasons } = classifyValidation({
+    compile: compileResult({
+      ok: false,
+      skipped: true,
+      harnessUnavailable: true,
+      reason: 'the compile stage produced no structured result, so the code was not judged',
+      issues: ['compile did not report a result'],
+    }),
+    qa: OK_QA,
+    structureOk: true,
+  });
+  assert.equal(verdict, 'not_verified');
+  assert.match(unverifiedReasons.join(' '), /harness|not judged/i);
+});
+
 test('malformed reviewer output is unverified infrastructure, never a code finding', () => {
   for (const issue of [
     'The reviewer returned nothing — treated as not reviewed.',

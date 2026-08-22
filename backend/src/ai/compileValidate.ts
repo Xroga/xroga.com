@@ -40,6 +40,12 @@ export interface CompileValidateResult {
    * must report this as "not verified", never as a defect.
    */
   sandboxUnavailable?: boolean;
+  /**
+   * True when the isolated validator ran but its result channel failed to return a
+   * structured verdict. This is evidence about Xroga's harness, not the generated
+   * project, so it must be reported as not verified rather than as a code defect.
+   */
+  harnessUnavailable?: boolean;
 }
 
 const MAX_FILES = 80;
@@ -321,6 +327,7 @@ export async function compileValidateProject(
       return {
         ok: false,
         skipped: true,
+        harnessUnavailable: true,
         reason: 'the compile stage produced no structured result, so the code was not judged',
         issues,
         logTail: log.slice(-6000),

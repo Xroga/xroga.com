@@ -8,7 +8,11 @@ import { buildNextjsScaffold } from './scaffolds/nextjsScaffold.js';
 import { buildChromeExtensionScaffold } from './scaffolds/chromeExtensionScaffold.js';
 import { buildElectronScaffold } from './scaffolds/electronScaffold.js';
 
-export { detectScaffoldKind, type ScaffoldKind } from './scaffolds/detectScaffold.js';
+export {
+  detectScaffoldKind,
+  isSimpleStaticBuildPrompt,
+  type ScaffoldKind,
+} from './scaffolds/detectScaffold.js';
 export {
   applyDeterministicStaticUpdate,
   buildDeterministicSite,

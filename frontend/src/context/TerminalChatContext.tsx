@@ -2418,10 +2418,18 @@ export function TerminalChatProvider({
             }
             if (output?.type === 'landing_page') {
               const landingHtml = String((output as { html?: string }).html ?? '').trim();
+              const generatedFiles = Array.isArray(
+                (output as { generatedFiles?: unknown }).generatedFiles,
+              )
+                ? (output as { generatedFiles: unknown[] }).generatedFiles
+                : [];
               const hasRenderableLanding =
                 landingHtml.length > 40 ||
                 Boolean((output as { deployUrl?: string }).deployUrl) ||
-                Boolean((output as { githubRepoUrl?: string }).githubRepoUrl);
+                Boolean((output as { githubRepoUrl?: string }).githubRepoUrl) ||
+                generatedFiles.some(
+                  (path) => typeof path === 'string' && path.trim().length > 0,
+                );
               if (!hasRenderableLanding) {
                 // Empty landing payload after spend — never leave a blank "No response" bubble
                 const failMsg =

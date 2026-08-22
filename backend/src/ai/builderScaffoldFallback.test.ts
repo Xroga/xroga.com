@@ -4,6 +4,7 @@ import {
   applyDeterministicStaticUpdate,
   buildScaffoldForPrompt,
   detectScaffoldKind,
+  isSimpleStaticBuildPrompt,
 } from '../services/projectScaffold.js';
 
 /**
@@ -159,6 +160,21 @@ Make it responsive and runnable as a real web app.`;
   assert.match(html, /Orbit Coffee/);
   assert.match(css, /--bg: #0b0d10/);
   assert.match(css, /@media \(min-width: 720px\)/);
+});
+
+test('the exact Orbit Coffee prompt uses the previewable static fast path', () => {
+  const prompt = `Build a modern one-page coffee shop website called Orbit Coffee.
+Use a dark premium visual style.
+The hero heading must say exactly 'Coffee for curious minds'.
+Include three product cards and a bright 'Order now' button.
+Make it responsive and runnable as a real web app.`;
+  assert.equal(detectScaffoldKind(prompt), 'static');
+  assert.equal(isSimpleStaticBuildPrompt(prompt), true);
+});
+
+test('static fast-path detection excludes full-stack and authenticated products', () => {
+  assert.equal(isSimpleStaticBuildPrompt('Build a one-page SaaS app with authentication'), false);
+  assert.equal(isSimpleStaticBuildPrompt('Build a one-page website with a database backend'), false);
 });
 
 test('a recognised static follow-up safely updates the existing deterministic project', () => {

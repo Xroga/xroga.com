@@ -140,14 +140,21 @@ export function staticValidateProject(files: ProjectFile[]): StaticValidateResul
         if (
           !has(files, 'app/page.tsx') &&
           !has(files, 'pages/index.tsx') &&
-          !has(files, 'app/page.jsx')
+          !has(files, 'app/page.jsx') &&
+          !has(files, 'pages/index.jsx') &&
+          !has(files, 'app/page.js') &&
+          !has(files, 'pages/index.js')
         ) {
-          issues.push('Next.js project missing app/page.tsx (or pages/index.tsx)');
-          fixHints.push('Add app/page.tsx as the home route');
+          issues.push('Next.js project missing an app/page or pages/index entry');
+          fixHints.push('Add an app/page or pages/index home route');
         }
-        if (!has(files, 'app/layout.tsx') && !has(files, 'app/layout.jsx')) {
-          issues.push('Next.js App Router missing app/layout.tsx');
-          fixHints.push('Add app/layout.tsx wrapping children');
+        if (
+          !has(files, 'app/layout.tsx') &&
+          !has(files, 'app/layout.jsx') &&
+          !has(files, 'app/layout.js')
+        ) {
+          issues.push('Next.js App Router missing app/layout');
+          fixHints.push('Add an app/layout file wrapping children');
         }
         if (!pkg.scripts?.build) {
           issues.push('package.json missing "build" script');

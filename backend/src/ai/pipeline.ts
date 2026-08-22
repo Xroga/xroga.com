@@ -109,6 +109,7 @@ import {
   applyDeterministicStaticUpdate,
   buildScaffoldForPrompt,
   detectScaffoldKind,
+  isSimpleStaticBuildPrompt,
   mergeScaffoldWithGenerated,
 } from '../services/projectScaffold.js';
 import {
@@ -1768,10 +1769,7 @@ export async function runBuildPipeline(opts: {
   const simpleStaticFastPath =
     !isUpdate &&
     scaffoldForArchitect === 'static' &&
-    (route.kind === 'build_volume' ||
-      /\b(landing\s*page|one[ -]?page\s+(?:web)?site|simple\s+(web|site|app)|static\s+site)\b/i.test(
-        userFacingPrompt,
-      ));
+    (route.kind === 'build_volume' || isSimpleStaticBuildPrompt(userFacingPrompt));
   const deterministicStaticUpdate = isUpdate
     ? applyDeterministicStaticUpdate(prior.files, userFacingPrompt)
     : null;
@@ -3875,7 +3873,9 @@ export async function runBuildPipeline(opts: {
     emit({
       agent: 'deploy',
       status: 'deploy_skipped',
-      message: 'Code is on GitHub — connect Vercel to auto-deploy to your domain',
+      message: githubPushConfirmed
+        ? 'Code is on GitHub — connect Vercel to auto-deploy to your domain'
+        : 'Connect Vercel to deploy this build to your domain',
       swarmStatusLabel: 'Need Vercel',
       swarmActivity: 'Authorize Vercel',
       swarmTodos: todos('deploy').map((t) =>
