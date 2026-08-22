@@ -21,10 +21,6 @@ type AuthThemeStyle =
 
     '--auth-shell': string;
 
-    '--auth-panel': string;
-
-    '--auth-card': string;
-
     '--auth-border': string;
 
     '--auth-border-strong': string;
@@ -40,8 +36,6 @@ type AuthThemeStyle =
     '--auth-soft': string;
 
     '--auth-shadow': string;
-
-    '--auth-card-shadow': string;
   };
 
 const AUTH_THEME_STYLES: Record<
@@ -50,16 +44,10 @@ const AUTH_THEME_STYLES: Record<
 > = {
   white: {
     '--auth-page':
-      '#eef0f3',
+      '#f3f3f1',
 
     '--auth-shell':
       '#ffffff',
-
-    '--auth-panel':
-      '#f8f8f7',
-
-    '--auth-card':
-      'rgba(255,255,255,0.94)',
 
     '--auth-border':
       'rgba(15,23,42,0.10)',
@@ -71,10 +59,10 @@ const AUTH_THEME_STYLES: Record<
       '#111318',
 
     '--auth-muted':
-      '#717784',
+      '#727782',
 
     '--auth-input':
-      '#f8f8f7',
+      '#f7f7f5',
 
     '--auth-input-hover':
       '#ffffff',
@@ -83,10 +71,7 @@ const AUTH_THEME_STYLES: Record<
       'rgba(15,23,42,0.045)',
 
     '--auth-shadow':
-      '0 28px 80px rgba(30,41,59,0.12), 0 8px 24px rgba(30,41,59,0.05)',
-
-    '--auth-card-shadow':
-      '0 18px 50px rgba(30,41,59,0.07), 0 3px 12px rgba(30,41,59,0.04)',
+      '0 30px 90px rgba(30,41,59,0.12)',
   },
 
   beige: {
@@ -94,13 +79,7 @@ const AUTH_THEME_STYLES: Record<
       '#eee9df',
 
     '--auth-shell':
-      '#fbf8f1',
-
-    '--auth-panel':
-      '#f7f2e9',
-
-    '--auth-card':
-      'rgba(255,252,246,0.96)',
+      '#fbf7ef',
 
     '--auth-border':
       'rgba(86,68,45,0.13)',
@@ -115,19 +94,16 @@ const AUTH_THEME_STYLES: Record<
       '#786d60',
 
     '--auth-input':
-      '#f7f1e7',
+      '#f4eee4',
 
     '--auth-input-hover':
-      '#fffaf3',
+      '#fffaf2',
 
     '--auth-soft':
       'rgba(86,68,45,0.055)',
 
     '--auth-shadow':
-      '0 28px 80px rgba(73,58,40,0.13), 0 8px 24px rgba(73,58,40,0.06)',
-
-    '--auth-card-shadow':
-      '0 18px 48px rgba(73,58,40,0.08), 0 3px 12px rgba(73,58,40,0.04)',
+      '0 30px 90px rgba(73,58,40,0.13)',
   },
 
   gray: {
@@ -135,13 +111,7 @@ const AUTH_THEME_STYLES: Record<
       '#111214',
 
     '--auth-shell':
-      '#18191c',
-
-    '--auth-panel':
-      '#151619',
-
-    '--auth-card':
-      'rgba(30,31,35,0.96)',
+      '#1a1b1e',
 
     '--auth-border':
       'rgba(255,255,255,0.09)',
@@ -156,19 +126,16 @@ const AUTH_THEME_STYLES: Record<
       '#a1a4aa',
 
     '--auth-input':
-      '#15161a',
+      '#141518',
 
     '--auth-input-hover':
-      '#1d1e22',
+      '#202125',
 
     '--auth-soft':
       'rgba(255,255,255,0.05)',
 
     '--auth-shadow':
-      '0 32px 90px rgba(0,0,0,0.44), 0 9px 26px rgba(0,0,0,0.26)',
-
-    '--auth-card-shadow':
-      '0 20px 55px rgba(0,0,0,0.26), 0 4px 14px rgba(0,0,0,0.18)',
+      '0 34px 100px rgba(0,0,0,0.44)',
   },
 
   black: {
@@ -176,13 +143,7 @@ const AUTH_THEME_STYLES: Record<
       '#000000',
 
     '--auth-shell':
-      '#08090b',
-
-    '--auth-panel':
-      '#050608',
-
-    '--auth-card':
-      'rgba(12,13,15,0.97)',
+      '#090a0c',
 
     '--auth-border':
       'rgba(255,255,255,0.09)',
@@ -197,7 +158,7 @@ const AUTH_THEME_STYLES: Record<
       '#989ba2',
 
     '--auth-input':
-      '#07080a',
+      '#050608',
 
     '--auth-input-hover':
       '#101114',
@@ -206,25 +167,18 @@ const AUTH_THEME_STYLES: Record<
       'rgba(255,255,255,0.045)',
 
     '--auth-shadow':
-      '0 34px 100px rgba(0,0,0,0.70), 0 10px 30px rgba(0,0,0,0.42)',
-
-    '--auth-card-shadow':
-      '0 22px 60px rgba(0,0,0,0.45), 0 4px 16px rgba(0,0,0,0.30)',
+      '0 36px 110px rgba(0,0,0,0.70)',
   },
 };
 
-function resolveAuthTheme(
+function resolveTheme(
   theme: string
 ): AuthTheme {
   if (
-    theme ===
-      'white' ||
-    theme ===
-      'beige' ||
-    theme ===
-      'gray' ||
-    theme ===
-      'black'
+    theme === 'white' ||
+    theme === 'beige' ||
+    theme === 'gray' ||
+    theme === 'black'
   ) {
     return theme;
   }
@@ -238,15 +192,15 @@ export function AuthShell({
   children: ReactNode;
   subtitle?: string;
 }) {
-  const storedTheme =
+  const currentTheme =
     useThemeStore(
       (state) =>
         state.theme
     );
 
   const theme =
-    resolveAuthTheme(
-      storedTheme
+    resolveTheme(
+      currentTheme
     );
 
   return (
@@ -260,123 +214,123 @@ export function AuthShell({
         ]
       }
       className="
+        flex
+        min-h-[100dvh]
+        items-center
+        justify-center
+
         bg-[var(--auth-page)]
+
+        p-3
+
         text-[var(--auth-text)]
+
         transition-colors
         duration-300
 
         lg:h-[100dvh]
         lg:overflow-hidden
-        lg:p-3
-
-        max-lg:min-h-[100dvh]
-        max-lg:p-3
       "
     >
+      {/*
+        ONE SINGLE AUTH CARD.
+
+        There is no separate card around
+        the signup/signin form.
+      */}
       <div
         className="
-          mx-auto
-          grid
+          flex
           w-full
           max-w-[1580px]
           overflow-hidden
+
           rounded-[32px]
+
           border
           border-[var(--auth-border)]
+
           bg-[var(--auth-shell)]
+
           shadow-[var(--auth-shadow)]
 
-          lg:h-full
-          lg:grid-cols-[minmax(0,1.08fr)_minmax(560px,0.92fr)]
+          max-lg:flex-col
 
-          max-lg:min-h-[calc(100dvh-24px)]
-          max-lg:grid-cols-1
+          lg:h-[calc(100dvh-24px)]
         "
       >
         {/*
-          IMAGE SIDE
+          DESKTOP IMAGE COLUMN
+
+          Outer wrapper width equals the
+          auth card height.
+
+          Because the image artwork is
+          square, the actual image card
+          becomes square too.
         */}
         <div
           className="
-            min-h-0
-            min-w-0
+            shrink-0
+
+            p-3
+
+            max-lg:h-auto
+            max-lg:w-full
 
             lg:h-full
-            lg:p-3
-
-            max-lg:h-[500px]
-            max-lg:p-2.5
+            lg:w-[calc(100dvh-24px)]
+            lg:max-w-[56%]
           "
         >
-          <AuthShowcase />
+          <div
+            className="
+              aspect-square
+              h-auto
+              w-full
+              max-h-full
+            "
+          >
+            <AuthShowcase />
+          </div>
         </div>
 
         {/*
-          FORM SIDE
+          SIGNUP / SIGNIN SIDE
+
+          NO additional card.
+          NO border.
+          NO different panel background.
+          NO gradient.
+
+          It is simply part of the same
+          outer auth card.
         */}
         <section
           className="
-            relative
             flex
             min-h-0
             min-w-0
+            flex-1
+
             items-center
             justify-center
-            bg-[var(--auth-panel)]
+
             px-6
-            py-5
-            transition-colors
-            duration-300
+            py-7
 
-            lg:h-full
+            sm:px-8
 
-            xl:px-10
+            lg:px-10
+            lg:py-6
 
-            max-lg:px-5
-            max-lg:py-8
+            xl:px-14
           "
         >
           <div
-            aria-hidden
             className="
-              pointer-events-none
-              absolute
-              inset-0
-            "
-            style={{
-              background:
-                `
-                radial-gradient(
-                  circle at 88% 7%,
-                  rgba(0,106,255,0.09),
-                  transparent 26%
-                )
-                `,
-            }}
-          />
-
-          {/*
-            This is now a REAL modern auth card.
-
-            Before, the form was floating naked in
-            the huge right-side surface, which made
-            every control look small and distributed.
-          */}
-          <div
-            className="
-              relative
-              z-10
               w-full
-              max-w-[610px]
-              rounded-[28px]
-              border
-              border-[var(--auth-border)]
-              bg-[var(--auth-card)]
-              p-6
-              shadow-[var(--auth-card-shadow)]
-              backdrop-blur-xl
-
-              sm:p-7
+              max-w-[620px]
             "
           >
             {children}
