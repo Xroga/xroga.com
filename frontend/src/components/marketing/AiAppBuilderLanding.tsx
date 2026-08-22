@@ -9,7 +9,6 @@ import {
   KeyRound,
   Mail,
   ShieldCheck,
-  Sparkles,
   Wand2,
 } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
@@ -45,6 +44,19 @@ import '@/styles/ai-app-builder-landing.css';
  * anywhere on this page, and the capability data's limitation copy is reproduced in
  * full rather than softened.
  */
+
+/**
+ * The hero background.
+ *
+ * Swap this one constant to change the hero image — drop the file in
+ * `frontend/public/backgrounds/` and point this at it. Nothing else needs to move:
+ * the scrim, the type shadow and the crop are all independent of which image is used.
+ *
+ * Currently the Black Hole nebula, which is on-brand and flows into the blue section
+ * below. The approved direction is a violet/pink dusk landscape; that artwork has to be
+ * one Xroga owns or has licensed, so it is not taken from the reference site.
+ */
+const HERO_IMAGE = '/backgrounds/bg-desktop-4-blackhole-nebula.webp';
 
 const FOOTER_GROUPS = [
   {
@@ -85,7 +97,7 @@ export function AiAppBuilderLanding({ data }: { data: CapabilityPageData }) {
       <section className="xab-hero">
         <div className="xab-hero__media" aria-hidden="true">
           <Image
-            src="/backgrounds/bg-desktop-4-blackhole-nebula.webp"
+            src={HERO_IMAGE}
             alt=""
             fill
             priority
@@ -96,32 +108,16 @@ export function AiAppBuilderLanding({ data }: { data: CapabilityPageData }) {
 
         <AiAppBuilderHeader />
 
+        {/* Stripped to the reference's three elements: one line of type, the prompt, and
+            a quiet line beneath. The eyebrow capsule, the supporting paragraph and the
+            pair of buttons are gone — the reference earns its calm by having the image
+            carry the page and the prompt be the only thing asking to be used. */}
         <div className="xab-shell xab-hero__body">
-          <p className="xab-eyebrow">
-            <Sparkles aria-hidden="true" />
-            AI App Builder
-          </p>
-
           <h1 className="xab-hero__title">
-            Describe your app.
-            <br />
-            <span className="xab-accent">Xroga builds it.</span>
+            Describe an app. <span className="xab-accent">Xroga builds it.</span>
           </h1>
 
-          <p className="xab-hero__lede">
-            From a product outcome to a working application you can read — planned, built,
-            tested, and prepared for deployment, with the code in your own repository.
-          </p>
-
           <AiAppBuilderPrompt />
-
-          <div className="xab-hero__actions">
-            <Link href="/auth/signup" className="xab-cta xab-cta--lg">Start building</Link>
-            <Link href="/showcase" className="xab-textlink">
-              Explore what people build
-              <ArrowRight aria-hidden="true" />
-            </Link>
-          </div>
 
           {/* The reference puts a customer logo wall here. Xroga has no verified
               customer list to show, so this stays a product statement. */}

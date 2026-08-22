@@ -190,7 +190,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: min(920px, 100svh);
+  min-height: min(860px, 100svh);
   padding-block: 8.5rem 5.5rem;
   isolation: isolate;
 }
@@ -244,14 +244,18 @@
 
 .xab-eyebrow svg { width: 14px; height: 14px; }
 
+/* Smaller and lighter than a conventional SaaS hero. The reference's headline sits
+   *inside* the picture rather than shouting over it: one line, medium weight, enough
+   size to lead but not enough to flatten the image behind it. */
 .xab-hero__title {
-  max-width: 18ch;
-  margin: 1.6rem 0 0;
+  max-width: 26ch;
+  margin: 0;
   color: #ffffff;
-  font-size: clamp(2.9rem, 6vw, 6.2rem);
-  font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-shadow: 0 2px 24px rgba(4, 8, 20, 0.45);
   text-wrap: balance;
 }
 
@@ -270,8 +274,8 @@
 /* Prompt card ------------------------------------------------------------- */
 
 .xab-prompt {
-  width: min(760px, 100%);
-  margin-top: 2.6rem;
+  width: min(700px, 100%);
+  margin-top: 2.1rem;
   padding: 1.1rem 1.1rem 0.85rem;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 22px;
@@ -385,7 +389,7 @@
 .xab-textlink:hover svg { transform: translateX(3px); }
 
 .xab-hero__note {
-  margin: 3rem 0 0;
+  margin: 4.5rem 0 0;
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.78rem;
   letter-spacing: 0.12em;
@@ -1076,7 +1080,7 @@
 
 @media (max-width: 560px) {
   .xab-page { --xab-shell: min(1360px, 100% - 2.25rem); }
-  .xab-hero__title { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+  .xab-hero__title { font-size: clamp(1.9rem, 8.5vw, 2.5rem); }
   .xab-prompt { padding: 0.9rem; border-radius: 18px; }
   .xab-prompt__row { flex-wrap: wrap; }
   .xab-prompt__send { margin-left: auto; }
