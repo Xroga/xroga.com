@@ -292,8 +292,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // sign-in form.
   const loginForm = page.locator('form', { has: page.locator('#login-email') });
   await expect(loginForm).toHaveCount(1);
-  await loginForm.getByLabel('Email').fill(ownerEmail);
-  await loginForm.getByLabel('Password').fill(password);
+  // Addressed by id rather than by label. Scoping to the form is not enough on its own:
+  // the field's own reveal toggle carries `aria-label="Show password"`, which contains
+  // "Password", so `getByLabel('Password')` matches the input *and* the button — two
+  // elements inside one form. `exact: true` does not rescue it either, because the label
+  // text is JSX-formatted and carries surrounding whitespace. The ids are unambiguous and
+  // are already what identifies this form.
+  await loginForm.locator('#login-email').fill(ownerEmail);
+  await loginForm.locator('#login-password').fill(password);
   await loginForm.getByRole('button', { name: 'Sign in' }).click();
   // A real Supabase sign-in is a network round trip followed by a client-side redirect. The
   // default 5s expectation left no room for either, so a slow-but-correct login was reported as

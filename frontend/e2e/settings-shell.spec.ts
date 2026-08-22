@@ -38,8 +38,10 @@ async function signIn(page: Page, path: string) {
   // side above 1280px, so the page carries two fields labelled "Email" and an unscoped
   // lookup matches both.
   const loginForm = page.locator('form', { has: page.locator('#login-email') });
-  await loginForm.getByLabel('Email').fill(email);
-  await loginForm.getByLabel('Password').fill(password);
+  // By id: the password field's reveal toggle is `aria-label="Show password"`, so a label
+  // lookup matches the input and the button both.
+  await loginForm.locator('#login-email').fill(email);
+  await loginForm.locator('#login-password').fill(password);
   await loginForm.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(new RegExp(path.replace(/[/?]/g, '\\$&')));
 }
