@@ -257,17 +257,44 @@ function seamRule(): string {
   return CSS.slice(at, CSS.indexOf('}', open) + 1);
 }
 
-test('neither panel draws an edge into the gap between them', () => {
+test('both panels draw the same edge, from one variable', () => {
   // Two borders met in that gap, in two colours that matched neither each other nor
-  // the surface behind them. Both keep their width — removing it would reflow the
-  // layout — and lose their colour, and the shadows go too: each spilled a gradient
-  // into the same gap, which is the same seam drawn slowly.
+  // the surface behind them.
+  //
+  // This first asserted `border-color: transparent` — removing both. That did end the
+  // mismatch, and it also removed the window's outline entirely and left the
+  // application with no shape at all. The defect was never that the panels had edges,
+  // it was that they had *different* edges, so the contract is a shared source rather
+  // than an absence: one variable that both read. A literal here would be the original
+  // bug in one panel's clothing.
   const rule = seamRule();
   assert.notEqual(rule, '', 'the seam rule is gone');
-  assert.match(rule, /border-color:\s*transparent\s*!important/);
+  assert.match(rule, /border-color:\s*var\(--app-panel-border\)\s*!important/);
+  assert.equal(
+    /border-color:[^;]*(#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\()/i.test(rule),
+    false,
+    'a panel edge is a literal again, so the two can drift apart',
+  );
+  // The shadows stay off: each spilled a soft gradient into the same gap, which is
+  // the same mismatch drawn slowly.
   assert.match(rule, /box-shadow:\s*none\s*!important/);
   for (const selector of ['.xv-sidebar-floating', '.xv-sidebar-floating--mobile']) {
-    assert.ok(rule.includes(selector), `${selector} still draws its own edge`);
+    assert.ok(rule.includes(selector), `${selector} is not covered by the shared edge`);
+  }
+});
+
+test('the shared edge is strong enough to see against a matching ground', () => {
+  // The old values were tuned for a panel sitting on a *contrasting* desk. Against a
+  // ground that now equals the panel exactly, Black's rgba(255,255,255,0.055) is
+  // invisible — which is how removing the borders went unnoticed as "flat" rather
+  // than "broken". A floor keeps the outline legible without pinning an exact tone.
+  for (const theme of THEMES) {
+    const value = themeVars(theme).get('--app-panel-border')!;
+    const alpha = Number(value.match(/,\s*([\d.]+)\s*\)$/)?.[1] ?? '1');
+    assert.ok(
+      alpha >= 0.12,
+      `theme-${theme} draws its frame at ${alpha} alpha, too faint to read against its own ground`,
+    );
   }
 });
 

@@ -284,9 +284,23 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(webRelease.body.release).toBe(expectedWebRelease);
     expect(apiRelease.release).toBe(expectedRelease);
   }
-  await page.getByLabel('Email').fill(ownerEmail);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  // Scoped to the sign-in form rather than the page. `AuthShell` now renders the signup
+  // and login panels side by side above 1280px, so `/auth/login` legitimately has two
+  // fields labelled "Email" and two labelled "Password"; an unscoped `getByLabel` matches
+  // both and fails on strict mode before it ever gets to typing. Scoping is more precise
+  // about which form is under test, not less: this test signs in, so it drives the
+  // sign-in form.
+  const loginForm = page.locator('form', { has: page.locator('#login-email') });
+  await expect(loginForm).toHaveCount(1);
+  // Addressed by id rather than by label. Scoping to the form is not enough on its own:
+  // the field's own reveal toggle carries `aria-label="Show password"`, which contains
+  // "Password", so `getByLabel('Password')` matches the input *and* the button — two
+  // elements inside one form. `exact: true` does not rescue it either, because the label
+  // text is JSX-formatted and carries surrounding whitespace. The ids are unambiguous and
+  // are already what identifies this form.
+  await loginForm.locator('#login-email').fill(ownerEmail);
+  await loginForm.locator('#login-password').fill(password);
+  await loginForm.getByRole('button', { name: 'Sign in' }).click();
   // A real Supabase sign-in is a network round trip followed by a client-side redirect. The
   // default 5s expectation left no room for either, so a slow-but-correct login was reported as
   // a login failure — the assertion was measuring CI latency, not authentication.
