@@ -244,3 +244,50 @@ test('the collapsed controls carry no surface of their own', () => {
   assert.match(body, /border:\s*0/);
   assert.match(body, /box-shadow:\s*none/);
 });
+
+// ---------------------------------------------------------------------------
+// No seam where the two panels meet
+// ---------------------------------------------------------------------------
+
+/** The seam rule, by the selector that has to keep winning. */
+function seamRule(): string {
+  const at = CSS.indexOf('.xv-workspace-shell.xv-workspace-shell');
+  if (at === -1) return '';
+  const open = CSS.indexOf('{', at);
+  return CSS.slice(at, CSS.indexOf('}', open) + 1);
+}
+
+test('neither panel draws an edge into the gap between them', () => {
+  // Two borders met in that gap, in two colours that matched neither each other nor
+  // the surface behind them. Both keep their width — removing it would reflow the
+  // layout — and lose their colour, and the shadows go too: each spilled a gradient
+  // into the same gap, which is the same seam drawn slowly.
+  const rule = seamRule();
+  assert.notEqual(rule, '', 'the seam rule is gone');
+  assert.match(rule, /border-color:\s*transparent\s*!important/);
+  assert.match(rule, /box-shadow:\s*none\s*!important/);
+  for (const selector of ['.xv-sidebar-floating', '.xv-sidebar-floating--mobile']) {
+    assert.ok(rule.includes(selector), `${selector} still draws its own edge`);
+  }
+});
+
+test('the seam rule outranks the terminal skin that sets the shell border', () => {
+  // This is the part that silently regresses. Three rules give the shell a border,
+  // two of them `!important`, and the strongest — `body.theme-black
+  // .terminal-skin-dark` — scores (0,2,1). A normal declaration loses to an
+  // important one at any specificity, and a doubled class scores (0,2,0) and loses
+  // too: that exact selector was the first attempt here and changed nothing on the
+  // dark themes while looking correct on the light ones. Three classes score (0,3,0)
+  // and win. Anything less silently restores the heavier of the two lines.
+  const rule = seamRule();
+  const head = rule.slice(0, rule.indexOf('{'));
+  for (const compound of head.split(',')) {
+    const name = compound.trim().split('.')[1];
+    if (!name) continue;
+    const repeats = compound.trim().split('.').filter((part) => part === name).length;
+    assert.ok(
+      repeats >= 3,
+      `"${compound.trim()}" repeats .${name} ${repeats}x — not enough to outrank the skin's important border`,
+    );
+  }
+});

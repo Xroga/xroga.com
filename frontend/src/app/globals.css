@@ -8974,3 +8974,32 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
   max-width: 100%;
   min-width: 0;
 }
+
+/* ---- no seam between the two panels --------------------------------------- */
+
+/* With the ground, the sidebar and the workspace all one colour, the only thing
+   still dividing them was their own edges — and there were two of them, in two
+   different colours. Between the panels sat the sidebar's right border and the
+   shell's left border: on Beige rgba(70,60,45,0.11) against rgba(15,23,42,0.09),
+   and on Black a barely-there rgba(255,255,255,0.055) against a much heavier
+   rgba(163,163,163,0.32). Two lines, neither matching the other or the surface
+   behind them.
+
+   Both keep their width so nothing reflows, and lose their colour. The shadows go
+   with them: each spilled a soft gradient into the same gap, which is the same
+   seam drawn slowly.
+
+   `!important` and a tripled class are not decoration. The heavier of the two
+   lines came from the terminal skin, and three separate rules give the shell a
+   border — `.terminal-skin-dark`, an `!important` pair at .28, and a themed
+   `!important` at .32. A normal declaration cannot beat an important one at any
+   specificity, and among important declarations `body.theme-black
+   .terminal-skin-dark` scores (0,2,1); a doubled class scores (0,2,0) and loses.
+   Tripling it scores (0,3,0), which is the smallest selector that reliably wins
+   against all three without editing rules that other skins share. */
+.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
+.xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
+.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
