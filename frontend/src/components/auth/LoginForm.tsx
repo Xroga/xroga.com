@@ -1,6 +1,16 @@
 'use client';
 
 import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Sparkles,
+} from 'lucide-react';
+
+import {
+  type FormEvent,
   useState,
 } from 'react';
 
@@ -43,12 +53,8 @@ export function LoginForm() {
     );
 
   const nextPath =
-    requestedNext?.startsWith(
-      '/'
-    ) &&
-    !requestedNext.startsWith(
-      '//'
-    )
+    requestedNext?.startsWith('/') &&
+    !requestedNext.startsWith('//')
       ? requestedNext
       : '/workspace';
 
@@ -61,6 +67,11 @@ export function LoginForm() {
     password,
     setPassword,
   ] = useState('');
+
+  const [
+    showPassword,
+    setShowPassword,
+  ] = useState(false);
 
   const [
     error,
@@ -81,7 +92,7 @@ export function LoginForm() {
   ] = useState(false);
 
   async function handleSubmit(
-    event: React.FormEvent
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -206,8 +217,22 @@ export function LoginForm() {
 
   return (
     <AuthModernCard
-      title="Welcome back"
-      subtitle="Sign in to continue creating, building, and shipping with Xroga."
+      compact
+      eyebrow={
+        <>
+          <Sparkles
+            className="
+              h-3.5
+              w-3.5
+              text-[#006aff]
+            "
+          />
+
+          Welcome back
+        </>
+      }
+      title="Sign in to Xroga"
+      subtitle="Continue creating, building and shipping from your workspace."
     >
       <AuthSocialButton
         onClick={
@@ -220,8 +245,8 @@ export function LoginForm() {
       >
         <GitHubIcon
           className="
-            h-5
-            w-5
+            h-[18px]
+            w-[18px]
             shrink-0
           "
         />
@@ -238,7 +263,7 @@ export function LoginForm() {
           handleSubmit
         }
         className="
-          space-y-4
+          space-y-3.5
         "
       >
         <div>
@@ -251,9 +276,16 @@ export function LoginForm() {
           <AuthModernInput
             id="login-email"
             type="email"
-            value={
-              email
+            icon={
+              <Mail
+                className="
+                  h-4
+                  w-4
+                "
+              />
             }
+            placeholder="you@example.com"
+            value={email}
             onChange={(
               event
             ) =>
@@ -263,7 +295,6 @@ export function LoginForm() {
             }
             required
             autoComplete="email"
-            placeholder="you@example.com"
           />
         </div>
 
@@ -276,10 +307,69 @@ export function LoginForm() {
 
           <AuthModernInput
             id="login-password"
-            type="password"
-            value={
-              password
+            type={
+              showPassword
+                ? 'text'
+                : 'password'
             }
+            icon={
+              <LockKeyhole
+                className="
+                  h-4
+                  w-4
+                "
+              />
+            }
+            endAdornment={
+              <button
+                type="button"
+                aria-label={
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                }
+                onClick={() =>
+                  setShowPassword(
+                    (value) =>
+                      !value
+                  )
+                }
+                className="
+                  grid
+                  h-7
+                  w-7
+
+                  place-items-center
+
+                  rounded-lg
+
+                  text-[var(--auth-muted)]
+
+                  transition-colors
+
+                  hover:bg-[var(--auth-soft)]
+                  hover:text-[var(--auth-text)]
+                "
+              >
+                {showPassword ? (
+                  <EyeOff
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                ) : (
+                  <Eye
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                )}
+              </button>
+            }
+            placeholder="Enter your password"
+            value={password}
             onChange={(
               event
             ) =>
@@ -289,7 +379,6 @@ export function LoginForm() {
             }
             required
             autoComplete="current-password"
-            placeholder="Enter your password"
           />
         </div>
 
@@ -298,13 +387,18 @@ export function LoginForm() {
             role="alert"
             className="
               rounded-xl
+
               border
               border-red-500/20
+
               bg-red-500/10
-              px-4
-              py-3
-              text-center
-              text-[13px]
+
+              px-3.5
+              py-2.5
+
+              text-[11px]
+              leading-relaxed
+
               text-red-500
             "
           >
@@ -322,6 +416,19 @@ export function LoginForm() {
           {loading
             ? 'Signing in…'
             : 'Sign in'}
+
+          {!loading ? (
+            <ArrowRight
+              className="
+                h-4
+                w-4
+
+                transition-transform
+
+                group-hover:translate-x-0.5
+              "
+            />
+          ) : null}
         </AuthGradientButton>
       </form>
 
