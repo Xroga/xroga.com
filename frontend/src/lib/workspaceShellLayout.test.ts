@@ -130,7 +130,16 @@ test('the terminal pane owns the scrollbar, and the shell and panel only clip', 
 
 test('the workspace route stops the page from scrolling at all', () => {
   // `min-h-screen` lets a tall child stretch the page; `h-[100dvh]` cannot.
-  assert.match(SHELL, /isDashboard \? 'h-\[100dvh\] max-h-\[100dvh\] overflow-hidden' : 'min-h-screen'/);
+  //
+  // Read from the dashboard branch rather than from one exact source line: the previous
+  // form matched the whole ternary verbatim, so adding a class to that branch broke the
+  // assertion while the containment it guards was untouched. What matters is that the
+  // dashboard fixes its height and clips, and that the other routes still scroll.
+  const dashboardBranch = SHELL.slice(SHELL.indexOf('isDashboard'), SHELL.indexOf("'min-h-screen'"));
+  for (const cls of ['h-[100dvh]', 'max-h-[100dvh]', 'overflow-hidden']) {
+    assert.ok(dashboardBranch.includes(cls), `the workspace column lost ${cls} and the page can scroll again`);
+  }
+  assert.match(SHELL, /'min-h-screen'/, 'the non-dashboard routes stopped scrolling');
   assert.match(SHELL, /'xv-workspace-main flex-1 min-h-0 overflow-hidden'/);
 });
 

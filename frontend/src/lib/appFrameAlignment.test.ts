@@ -26,6 +26,7 @@ const CSS = read('../app/globals.css');
 const UIVERSE = read('../styles/uiverse.css');
 const LOGO = read('../components/layout/Logo.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
+const APPSHELL = read('../components/layout/AppShell.tsx');
 
 const THEMES = ['black', 'gray', 'white', 'beige'] as const;
 
@@ -167,4 +168,79 @@ test('the toolbar holds its width while the logo shrinks', () => {
     shrink || /\.xv-sidebar-header-actions \{\s*margin-left: auto;\s*flex-shrink: 0;/.test(CSS),
     'the toolbar can shrink, so its controls will squash instead of the logo giving way',
   );
+});
+
+// ---------------------------------------------------------------------------
+// One surface for the whole page, not just the two panels
+// ---------------------------------------------------------------------------
+
+test('every theme grounds the page in the shared panel surface', () => {
+  // The desk behind the window carried a shade of its own — #efe8d9 under a #fdf6e3
+  // workspace — so the page showed three near-misses at once instead of one theme.
+  // Checked as a reference, not as a matching literal: a table that repeated the
+  // panel's hex four times would drift again the first time one of them changed.
+  for (const theme of THEMES) {
+    const ground = themeVars(theme).get('--stage-ground');
+    assert.equal(
+      ground,
+      'var(--app-panel)',
+      `theme-${theme} grounds the page in ${ground} rather than the shared surface`,
+    );
+  }
+});
+
+test('the ground carries no glow that would tint it off the panel', () => {
+  // A radial wash over the ground is a colour the panel does not have, which is the
+  // same mismatch by another name.
+  for (const theme of THEMES) {
+    assert.equal(themeVars(theme).get('--stage-glow'), 'none', `theme-${theme} tints its ground`);
+  }
+});
+
+test('the page behind the sidebar column is painted, and from the same variable', () => {
+  // The stage starts where the sidebar column ends, so it never covered the strip
+  // beside it — that strip showed the marketing page's background through the app.
+  assert.match(CSS, /\.xv-app-ground \{[^}]*background:\s*var\(--app-panel\)/);
+  assert.match(
+    APPSHELL,
+    /isDashboard[\s\S]{0,200}'xv-app-ground/,
+    'the workspace no longer applies the ground class',
+  );
+});
+
+// ---------------------------------------------------------------------------
+// The collapsed rail stays inside its own column
+// ---------------------------------------------------------------------------
+
+test('the collapsed rail is bounded by its column instead of sizing to its content', () => {
+  // `width: max-content` let the rail grow to fit a horizontal row of controls, so at
+  // 64px wide it ran to 154px and the toolbar sat on top of the workspace.
+  const rule = ruleBody(UIVERSE, '.xv-sidebar-root.is-collapsed .xv-sidebar-floating');
+  assert.notEqual(rule, '', 'the collapsed rail rule is gone');
+  assert.equal(
+    /width:\s*max-content/.test(rule),
+    false,
+    'the collapsed rail sizes to its content again and will overflow its column',
+  );
+  assert.match(rule, /width:\s*calc\(100% - \(var\(--xv-sidebar-inset\)/);
+});
+
+test('the collapsed controls stack under the logo rather than beside it', () => {
+  const rule = CSS.slice(CSS.indexOf('.xv-sidebar-collapsed-actions {'));
+  const body = rule.slice(rule.indexOf('{') + 1, rule.indexOf('}'));
+  assert.match(body, /flex-direction:\s*column/, 'the collapsed controls are laid out in a row again');
+  // The markup has to agree — the CSS column is defeated by a `flex items-center` row.
+  assert.match(
+    SIDEBAR,
+    /navExpanded \? 'w-full gap-2' : 'flex-col gap-2'/,
+    'the collapsed brand row lays the logo and controls out side by side again',
+  );
+});
+
+test('the collapsed controls carry no surface of their own', () => {
+  const rule = CSS.slice(CSS.indexOf('.xv-sidebar-collapsed-actions {'));
+  const body = rule.slice(rule.indexOf('{') + 1, rule.indexOf('}'));
+  assert.match(body, /background:\s*transparent/, 'the floating pill came back');
+  assert.match(body, /border:\s*0/);
+  assert.match(body, /box-shadow:\s*none/);
 });

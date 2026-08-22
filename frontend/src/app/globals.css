@@ -2876,15 +2876,19 @@ body.theme-gray * {
     background: color-mix(in srgb, var(--accent) 17%, transparent);
   }
 
+  /* Stacked, and carrying no surface of its own. As a floating pill it was a second
+     card competing with the logo in a 64px rail; against a ground that now matches
+     every other panel it has nothing to sit on top of. */
   .xv-sidebar-collapsed-actions {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 3px;
-    border: 1px solid var(--card-border);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--card) 94%, transparent);
-    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
   .xv-sidebar-collapsed-actions button {
     display: inline-flex;
@@ -7879,23 +7883,28 @@ body.theme-black {
   --composer-border: rgba(90, 145, 255, 0.16);
   --menu-surface: #0b0c0e;
   --menu-border: rgba(255, 255, 255, 0.07);
-  --stage-ground: #000000;
-  --stage-glow: radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.06), transparent 38%);
+  /* One surface for the whole application. The desk behind the window used to be a
+     shade of its own, so the page showed three colours at once — the ground, the
+     sidebar and the workspace — and the theme read as three near-misses rather than
+     one choice. Both now resolve to --app-panel, so they cannot drift apart. The
+     window's silhouette comes from its border instead of a step in tone. */
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
 }
 body.theme-gray {
   --composer-surface: rgba(32, 32, 35, 0.96);
   --composer-border: rgba(255, 255, 255, 0.12);
   --menu-surface: #212124;
   --menu-border: rgba(255, 255, 255, 0.09);
-  --stage-ground: #121316;
-  --stage-glow: radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.05), transparent 38%);
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
 }
 body.theme-white {
   --composer-surface: rgba(255, 255, 255, 0.97);
   --composer-border: rgba(15, 23, 42, 0.1);
   --menu-surface: #ffffff;
   --menu-border: rgba(15, 23, 42, 0.1);
-  --stage-ground: #eceef2;
+  --stage-ground: var(--app-panel);
   --stage-glow: none;
 }
 body.theme-beige {
@@ -7903,7 +7912,7 @@ body.theme-beige {
   --composer-border: rgba(70, 60, 45, 0.14);
   --menu-surface: #fdfaf4;
   --menu-border: rgba(70, 60, 45, 0.12);
-  --stage-ground: #efe8d9;
+  --stage-ground: var(--app-panel);
   --stage-glow: none;
 }
 
@@ -8927,6 +8936,15 @@ body.theme-beige {
   padding: var(--xv-app-gutter);
 }
 .xv-app-stage--fullscreen { padding: 0; }
+
+/* The page behind the whole application, not just the workspace column. The stage
+   starts where the sidebar's column ends, so without this the 64px strip beside a
+   collapsed sidebar kept the marketing page's own background — a different colour
+   from the theme, and the one visible in the gap. */
+.xv-app-ground {
+  background: var(--app-panel);
+  transition: background-color 220ms ease;
+}
 
 /* ---- one surface for both panels ------------------------------------------ */
 

@@ -237,10 +237,16 @@ test('the three controls, their order and their handlers are untouched', () => {
   assert.equal(/<span>(?!New<)/.test(toolbar.replace(/<span className="xv-toolbar-sep"[^/]*\/>/g, '')), false);
 });
 
-test('the collapsed sidebar toolbar is a different control and was left alone', () => {
+test('the collapsed sidebar toolbar stays a separate control from the expanded card', () => {
   // Indented inside a `@layer` block, so matched directly rather than through `block`.
   const collapsed = CSS.match(/\.xv-sidebar-collapsed-actions \{([^}]*)\}/)?.[1] ?? '';
   assert.notEqual(collapsed, '', 'the collapsed rail is gone');
-  assert.match(collapsed, /border-radius:\s*999px/, 'the collapsed rail was restyled too');
+
+  // This used to also require `border-radius: 999px` — the pill it was drawn as while
+  // the expanded card was being restyled around it, when leaving it alone was the point.
+  // The collapsed rail has since been asked for in its own right: stacked under the logo
+  // and carrying no surface at all, because in a 64px column a floating pill was a second
+  // card that could not fit. `appFrameAlignment.test.ts` holds it to that shape now.
+  // What still belongs here is the separation — the two controls must not share a palette.
   assert.equal(/--toolbar-/.test(collapsed), false, 'the collapsed rail was pulled into the new palette');
 });

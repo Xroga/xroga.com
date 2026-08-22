@@ -284,8 +284,11 @@
 }
 .xv-sidebar-root.is-collapsed .xv-sidebar-floating {
   top: var(--xv-sidebar-inset);
-  width: max-content;
-  height: 52px;
+  /* `max-content` let the rail size to a horizontal row of controls, which is how the
+     collapsed toolbar ended up wider than its own column and lying over the workspace.
+     Bounded to the column, the controls stack instead of escaping. */
+  width: calc(100% - (var(--xv-sidebar-inset) * 2));
+  height: max-content;
   margin-inline-start: var(--xv-sidebar-inset);
   overflow: visible;
   border: 0;
@@ -296,8 +299,8 @@
   -webkit-backdrop-filter: none;
 }
 .xv-sidebar-root.is-collapsed .xv-sidebar-brand {
-  width: max-content;
-  padding: 8px;
+  width: 100%;
+  padding: 8px 0;
   border-bottom: 0 !important;
   background: transparent;
 }

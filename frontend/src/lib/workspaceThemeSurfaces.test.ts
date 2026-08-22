@@ -48,6 +48,19 @@ function themeVars(theme: string): Map<string, string> {
 
 const SURFACE_TOKENS = ['--stage-ground', '--composer-surface', '--composer-border', '--menu-surface'] as const;
 
+/**
+ * The tokens that still hold a colour of their own, per theme.
+ *
+ * `--stage-ground` no longer does. The page behind the application was a shade apart
+ * from the panels on it, so the theme read as three near-misses at once; it now
+ * resolves to `--app-panel` in every theme. The two tests below ask "is this colour
+ * different from the other themes' / light enough for a light theme", and neither
+ * question can be asked of a reference — `var(--app-panel)` is deliberately the same
+ * four times, and its value lives on a different token. `appFrameAlignment.test.ts`
+ * is what holds it to the shared surface now.
+ */
+const COLOURED_TOKENS = SURFACE_TOKENS.filter((token) => token !== '--stage-ground');
+
 // ---------------------------------------------------------------------------
 // Every themed surface is declared for every theme
 // ---------------------------------------------------------------------------
@@ -64,7 +77,7 @@ test('all four themes declare every workspace surface', () => {
 test('the surfaces genuinely differ between themes, rather than being one palette', () => {
   // The defect was every theme sharing one dark value. A table that declares the token
   // four times with the same colour is the same bug wearing a variable.
-  for (const token of SURFACE_TOKENS) {
+  for (const token of COLOURED_TOKENS) {
     const values = THEMES.map((theme) => themeVars(theme).get(token));
     assert.equal(
       new Set(values).size,
@@ -87,7 +100,7 @@ test('the light themes get light surfaces and the dark themes get dark ones', ()
     return rgb ? (Number(rgb[0]) + Number(rgb[1]) + Number(rgb[2])) / 3 : Number.NaN;
   };
 
-  for (const token of ['--stage-ground', '--composer-surface', '--menu-surface'] as const) {
+  for (const token of ['--composer-surface', '--menu-surface'] as const) {
     for (const theme of LIGHT_THEMES) {
       const value = themeVars(theme).get(token)!;
       assert.ok(brightness(value) > 180, `theme-${theme} ${token} is ${value}, too dark for a light theme`);
