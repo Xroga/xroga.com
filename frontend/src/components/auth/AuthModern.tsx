@@ -41,8 +41,10 @@ export function AuthModernCard({
             className="
               mt-2
               max-w-[520px]
+
               text-[14px]
               leading-[1.55]
+
               text-[var(--auth-muted)]
             "
           >
@@ -69,15 +71,9 @@ export function AuthModernQuote({
     <blockquote
       className={cn(
         'rounded-2xl',
-
-        'border',
-        'border-[var(--auth-border)]',
-
+        'border border-[var(--auth-border)]',
         'bg-[var(--auth-soft)]',
-
-        'px-4',
-        'py-3',
-
+        'px-4 py-3',
         compact
           ? 'mb-4'
           : 'mb-6'
@@ -87,7 +83,6 @@ export function AuthModernQuote({
         className={cn(
           'leading-relaxed',
           'text-[var(--auth-muted)]',
-
           compact
             ? 'text-xs'
             : 'text-sm'
@@ -117,12 +112,6 @@ export function AuthModernInput({
   return (
     <input
       className={cn(
-        /*
-         * Use an explicit valid Tailwind
-         * arbitrary height.
-         *
-         * Do not use h-10.5.
-         */
         'h-[48px]',
         'w-full',
 
@@ -151,6 +140,7 @@ export function AuthModernInput({
         'hover:border-[var(--auth-border-strong)]',
 
         'focus:border-[#006aff]/70',
+
         'focus:bg-[var(--auth-input-hover)]',
 
         'focus:ring-4',
@@ -176,9 +166,12 @@ export function AuthModernLabel({
       className="
         mb-1.5
         block
+
         text-[12px]
         font-semibold
+
         tracking-[-0.01em]
+
         text-[var(--auth-text)]
       "
     >
@@ -205,16 +198,12 @@ export function AuthGradientButton({
     <button
       type={type}
       className={cn(
-        'relative',
-
         'flex',
         'h-[48px]',
         'w-full',
 
         'items-center',
         'justify-center',
-
-        'overflow-hidden',
 
         'rounded-[14px]',
 
@@ -224,10 +213,9 @@ export function AuthGradientButton({
 
         'text-[14px]',
         'font-bold',
-
         'text-white',
 
-        'shadow-[0_10px_30px_rgba(0,106,255,0.22)]',
+        'shadow-[0_10px_28px_rgba(0,106,255,0.22)]',
 
         'transition-all',
         'duration-200',
@@ -235,7 +223,7 @@ export function AuthGradientButton({
         'hover:-translate-y-[1px]',
         'hover:bg-[#075fe1]',
 
-        'hover:shadow-[0_14px_36px_rgba(0,106,255,0.30)]',
+        'hover:shadow-[0_14px_34px_rgba(0,106,255,0.30)]',
 
         'active:translate-y-0',
 
@@ -269,7 +257,6 @@ export function AuthSocialButton({
       type="button"
       className={cn(
         'flex',
-
         'h-[48px]',
         'w-full',
 
@@ -291,8 +278,6 @@ export function AuthSocialButton({
         'font-semibold',
 
         'text-[var(--auth-text)]',
-
-        'shadow-[0_2px_8px_rgba(0,0,0,0.025)]',
 
         'transition-all',
         'duration-200',
@@ -326,6 +311,7 @@ export function AuthDivider({
         className="
           absolute
           inset-0
+
           flex
           items-center
         "
@@ -333,6 +319,7 @@ export function AuthDivider({
         <span
           className="
             w-full
+
             border-t
             border-[var(--auth-border)]
           "
@@ -342,18 +329,24 @@ export function AuthDivider({
       <div
         className="
           relative
+
           flex
           justify-center
+
           text-[10px]
           font-medium
+
           uppercase
+
           tracking-[0.15em]
         "
       >
         <span
           className="
-            bg-[var(--auth-card)]
+            bg-[var(--auth-shell)]
+
             px-3
+
             text-[var(--auth-muted)]
           "
         >
@@ -411,11 +404,16 @@ export function AuthFooterLink({
       className="
         inline-flex
         items-center
+
         gap-1
+
         text-sm
         font-semibold
+
         text-[#006aff]
+
         transition-opacity
+
         hover:opacity-75
       "
     >
@@ -437,8 +435,11 @@ export function AuthSwitchText({
     <p
       className="
         mt-4
+
         text-center
+
         text-[13px]
+
         text-[var(--auth-muted)]
       "
     >
@@ -448,8 +449,11 @@ export function AuthSwitchText({
         href={href}
         className="
           font-semibold
+
           text-[#006aff]
+
           transition-opacity
+
           hover:opacity-75
         "
       >
