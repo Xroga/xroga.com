@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import {
+  useState,
+} from 'react';
+
 import {
   useRouter,
   useSearchParams,
@@ -28,28 +31,53 @@ import {
 } from './AuthModern';
 
 export function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router =
+    useRouter();
 
-  const requestedNext = searchParams.get('next');
+  const searchParams =
+    useSearchParams();
+
+  const requestedNext =
+    searchParams.get(
+      'next'
+    );
 
   const nextPath =
-    requestedNext?.startsWith('/') &&
-    !requestedNext.startsWith('//')
+    requestedNext?.startsWith(
+      '/'
+    ) &&
+    !requestedNext.startsWith(
+      '//'
+    )
       ? requestedNext
       : '/workspace';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [
+    email,
+    setEmail,
+  ] = useState('');
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [
+    password,
+    setPassword,
+  ] = useState('');
 
-  const [loading, setLoading] =
-    useState(false);
+  const [
+    error,
+    setError,
+  ] = useState<
+    string | null
+  >(null);
 
-  const [oauthLoading, setOauthLoading] =
-    useState(false);
+  const [
+    loading,
+    setLoading,
+  ] = useState(false);
+
+  const [
+    oauthLoading,
+    setOauthLoading,
+  ] = useState(false);
 
   async function handleSubmit(
     event: React.FormEvent
@@ -60,15 +88,23 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const {
+        error:
+          signInError,
+      } =
+        await supabase.auth.signInWithPassword(
+          {
+            email,
+            password,
+          }
+        );
 
-      if (signInError) {
+      if (
+        signInError
+      ) {
         setError(
           safeAuthError(
             signInError,
@@ -79,7 +115,10 @@ export function LoginForm() {
         return;
       }
 
-      router.push(nextPath);
+      router.push(
+        nextPath
+      );
+
       router.refresh();
     } catch (err) {
       setError(
@@ -100,34 +139,51 @@ export function LoginForm() {
     try {
       await requireGitHubProvider();
 
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { data, error: oauthError } =
+      const {
+        data,
+        error:
+          oauthError,
+      } =
         await withAuthTimeout(
-          supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-              redirectTo:
-                `${window.location.origin}` +
-                `/auth/callback?next=${encodeURIComponent(
-                  nextPath
-                )}`,
-              skipBrowserRedirect: true,
-            },
-          })
+          supabase.auth.signInWithOAuth(
+            {
+              provider:
+                'github',
+
+              options: {
+                redirectTo:
+                  `${window.location.origin}` +
+                  `/auth/callback?next=${encodeURIComponent(
+                    nextPath
+                  )}`,
+
+                skipBrowserRedirect:
+                  true,
+              },
+            }
+          )
         );
 
-      if (oauthError) {
+      if (
+        oauthError
+      ) {
         throw oauthError;
       }
 
-      if (!data.url) {
+      if (
+        !data.url
+      ) {
         throw new Error(
           'OAuth provider did not return a redirect URL'
         );
       }
 
-      window.location.assign(data.url);
+      window.location.assign(
+        data.url
+      );
     } catch (err) {
       setOauthLoading(false);
 
@@ -146,10 +202,21 @@ export function LoginForm() {
       subtitle="Sign in and continue building with Xroga."
     >
       <AuthSocialButton
-        onClick={handleGitHub}
-        disabled={oauthLoading || loading}
+        onClick={
+          handleGitHub
+        }
+        disabled={
+          oauthLoading ||
+          loading
+        }
       >
-        <GitHubIcon className="h-5 w-5 shrink-0" />
+        <GitHubIcon
+          className="
+            h-5
+            w-5
+            shrink-0
+          "
+        />
 
         {oauthLoading
           ? 'Connecting…'
@@ -159,11 +226,17 @@ export function LoginForm() {
       <AuthDivider />
 
       <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
+        onSubmit={
+          handleSubmit
+        }
+        className="
+          space-y-3
+        "
       >
         <div>
-          <AuthModernLabel htmlFor="login-email">
+          <AuthModernLabel
+            htmlFor="login-email"
+          >
             Email address
           </AuthModernLabel>
 
@@ -172,8 +245,13 @@ export function LoginForm() {
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(event) =>
-              setEmail(event.target.value)
+            onChange={(
+              event
+            ) =>
+              setEmail(
+                event.target
+                  .value
+              )
             }
             required
             autoComplete="email"
@@ -181,7 +259,9 @@ export function LoginForm() {
         </div>
 
         <div>
-          <AuthModernLabel htmlFor="login-password">
+          <AuthModernLabel
+            htmlFor="login-password"
+          >
             Password
           </AuthModernLabel>
 
@@ -189,9 +269,16 @@ export function LoginForm() {
             id="login-password"
             type="password"
             placeholder="Enter your password"
-            value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
+            value={
+              password
+            }
+            onChange={(
+              event
+            ) =>
+              setPassword(
+                event.target
+                  .value
+              )
             }
             required
             autoComplete="current-password"
@@ -205,11 +292,11 @@ export function LoginForm() {
               rounded-xl
               border
               border-red-500/20
-              bg-red-500/8
-              px-3.5
-              py-3
+              bg-red-500/10
+              px-3
+              py-2.5
               text-center
-              text-sm
+              text-xs
               text-red-500
             "
           >
@@ -219,7 +306,10 @@ export function LoginForm() {
 
         <AuthGradientButton
           type="submit"
-          disabled={loading || oauthLoading}
+          disabled={
+            loading ||
+            oauthLoading
+          }
         >
           {loading
             ? 'Signing in…'
