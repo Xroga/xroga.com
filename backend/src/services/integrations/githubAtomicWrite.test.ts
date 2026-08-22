@@ -50,6 +50,8 @@ interface FakeOptions {
   omitPullRequestSupport?: boolean;
   /** Another writer initializes the branch while our initializer is attempted. */
   bootstrapRaceSha?: string;
+  /** Number of post-initialization ref reads that return null before GitHub catches up. */
+  bootstrapVisibilityDelayReads?: number;
 }
 
 interface FakeApi extends AtomicWriteApi {
@@ -73,6 +75,7 @@ function nextId(kind: string): string {
 
 function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
   const calls: string[] = [];
+  let bootstrapVisibilityReadsRemaining = 0;
   const boom = (stage: AtomicWriteStage) => {
     if (options.failAt === stage) throw new Error(`injected ${stage} failure`);
   };
@@ -112,6 +115,7 @@ function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
       };
       repo.branches[input.branch] = commitSha;
       repo.empty = false;
+      bootstrapVisibilityReadsRemaining = options.bootstrapVisibilityDelayReads ?? 0;
       return { commitSha };
     },
 
@@ -128,6 +132,10 @@ function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
 
     async getRef(branch) {
       calls.push(`getRef:${branch}`);
+      if (bootstrapVisibilityReadsRemaining > 0) {
+        bootstrapVisibilityReadsRemaining -= 1;
+        return null;
+      }
       return repo.branches[branch] ? { sha: repo.branches[branch] } : null;
     },
 
@@ -690,6 +698,27 @@ test('an explicitly authorized empty repository gets a neutral initializer then 
     false,
   );
   assertNoContentsApiSurface(api);
+});
+
+test('an eventually visible bootstrap ref is not mistaken for a concurrent writer', async () => {
+  const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
+  const api = makeFake(repo, { bootstrapVisibilityDelayReads: 2 });
+
+  const record = await writeAtomically(api, { owner: 'acme', repo: 'blank' }, {
+    branch: 'main',
+    mutations: syncMutations([['index.html', 'v1']]),
+    message: 'initial build',
+    ...AUTHORIZED,
+    allowEmptyBootstrap: true,
+  });
+
+  assert.equal(record.verified, true);
+  assert.equal(repo.branches.main, record.resultingCommitSha);
+  assert.equal(
+    api.calls.filter((call) => call === 'getRef:main').length,
+    3 + 1,
+    'two missing bootstrap reads, one visible bootstrap read, and final verification',
+  );
 });
 
 test('an empty repository without explicit authorization still creates no git objects', async () => {

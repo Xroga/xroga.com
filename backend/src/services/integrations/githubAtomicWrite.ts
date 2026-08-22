@@ -266,6 +266,25 @@ async function uploadBlobs(
 }
 
 /**
+ * GitHub's Contents API can acknowledge the first commit before the new branch ref is
+ * readable through the Git Data API. A missing ref during that short propagation window
+ * is not a concurrent writer. Retry only the missing observation; a different SHA is a
+ * real race and is returned immediately.
+ */
+async function observeInitializedHead(
+  api: AtomicWriteApi,
+  branch: string,
+): Promise<{ sha: string } | null> {
+  const delaysMs = [0, 150, 300, 600, 1_200, 2_400];
+  for (const delayMs of delaysMs) {
+    if (delayMs > 0) await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
+    const observed = await api.getRef(branch);
+    if (observed) return observed;
+  }
+  return null;
+}
+
+/**
  * Applies a set of mutations to a branch, atomically or not at all.
  *
  * @throws {AtomicWriteError} on any stage failure. Except for `verification`, every
@@ -398,7 +417,7 @@ export async function writeAtomically(
     const observed = await stage(
       'repository_initialization',
       `Could not verify initialization of branch "${request.branch}"`,
-      () => api.getRef(request.branch),
+      () => observeInitializedHead(api, request.branch),
       false,
     );
     if (!observed || observed.sha !== bootstrapCommitSha) {
