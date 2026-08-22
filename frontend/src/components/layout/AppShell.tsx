@@ -87,7 +87,13 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
               // lives in must be exactly one viewport tall rather than "at least" —
               // `min-height` lets a tall child stretch the page, which is the same
               // failure as letting the page scroll.
-              isDashboard ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'
+              // `xv-app-ground` paints the page behind the whole application. The stage
+              // only covers the workspace column, so the strip beside it — the sidebar's
+              // column — showed the marketing page's own background instead of the
+              // selected theme.
+              isDashboard
+                ? 'xv-app-ground h-[100dvh] max-h-[100dvh] overflow-hidden'
+                : 'min-h-screen'
             )}
             style={{ '--sidebar-width': widthPx } as React.CSSProperties}
             data-testid="workspace-shell"

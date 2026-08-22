@@ -390,10 +390,14 @@ export function Sidebar({ displayName }: SidebarProps) {
       <div
         className={cn(
           'xv-sidebar-brand border-b border-[var(--card-border)] shrink-0',
-          navExpanded ? 'px-2 py-2' : 'flex items-center gap-2 px-2 py-2',
+          navExpanded ? 'px-2 py-2' : 'flex flex-col items-center gap-2 px-2 py-2',
         )}
       >
-        <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'gap-2')}>
+        {/* Collapsed, the rail is 64px wide and the logo alone is 34 of them. Laid out
+            as a row the three controls had nowhere to go but sideways, so they spilled
+            out of the rail and sat on top of the workspace. Stacked under the logo they
+            stay inside the column at any height. */}
+        <div className={cn('flex items-center', navExpanded ? 'w-full gap-2' : 'flex-col gap-2')}>
           {/* Not `block`: that makes the tip wrapper `w-full`, so the logo claimed the
               whole brand row and the utility card — which is `ml-auto` and cannot
               shrink — was laid on top of it. The mark showed through behind the first
