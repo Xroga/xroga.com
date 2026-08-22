@@ -362,6 +362,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
             selectedLabel: best.title,
             source: 'projects',
             jumpMessageId: best.messages[best.messages.length - 1]?.id,
+            githubRepoName: best.githubRepoName,
           });
         }
       } catch {

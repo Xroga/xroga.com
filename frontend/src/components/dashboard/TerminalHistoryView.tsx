@@ -194,6 +194,7 @@ export function TerminalHistoryView() {
       selectedLabel: resolved.title,
       source: 'dashboard',
       jumpMessageId: resolved.messages[resolved.messages.length - 1]?.id,
+      githubRepoName: resolved.githubRepoName,
     });
     router.push('/workspace');
   }

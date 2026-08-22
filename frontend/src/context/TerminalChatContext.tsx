@@ -225,6 +225,7 @@ interface TerminalChatContextValue {
     selectedLabel?: string;
     source?: WorkspaceSource;
     jumpMessageId?: string;
+    githubRepoName?: string;
   }) => Promise<void>;
   /** Load an isolated prompt+response thread into terminal (new terminal from AI Media) */
   loadIsolatedThread: (messages: ChatMessage[], prompt: string, jumpMessageId?: string) => void;
@@ -774,6 +775,7 @@ export function TerminalChatProvider({
       selectedLabel?: string;
       source?: WorkspaceSource;
       jumpMessageId?: string;
+      githubRepoName?: string;
     }) => {
       if (incognito) return;
       restoringRef.current = true;
@@ -804,7 +806,7 @@ export function TerminalChatProvider({
 
       setSessionId(opts.sessionId);
       const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
-      const hydrated = await rehydratePersistedMessages(opts.messages);
+      const hydrated = await rehydratePersistedMessages(opts.messages, opts.githubRepoName);
       setMessages(hydrated);
       setPrompt(opts.prompt);
       completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
@@ -817,6 +819,7 @@ export function TerminalChatProvider({
         selectedLabel: opts.selectedLabel ?? opts.prompt.slice(0, 40),
         source: opts.source ?? 'dashboard',
         jumpMessageId: opts.jumpMessageId,
+        githubRepoName: opts.githubRepoName,
       });
       persistReadyRef.current = true;
       window.dispatchEvent(new CustomEvent('xroga-resume-workspace'));

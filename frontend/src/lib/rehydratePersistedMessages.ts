@@ -5,6 +5,7 @@ import { rehydrateMessagesWithMedia } from '@/lib/messageRehydration';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 import type { SwarmRunSummary } from '@/lib/api';
 import { recoverLegacyLandingRun } from '@/lib/legacyLandingRunRecovery';
+import { resolveLandingRecoveryRepo } from '@/lib/landingRecoveryRepo';
 
 function isLandingOutput(output: unknown): output is Record<string, unknown> {
   return Boolean(output && typeof output === 'object' && (output as { type?: string }).type === 'landing_page');
@@ -28,7 +29,10 @@ function legacyPromptCandidates(
 }
 
 /** Restore media URLs + landing page html/css/js after reload. */
-export async function rehydratePersistedMessages(messages: ChatMessage[]): Promise<ChatMessage[]> {
+export async function rehydratePersistedMessages(
+  messages: ChatMessage[],
+  repositoryName?: string
+): Promise<ChatMessage[]> {
   const withMedia = rehydrateMessagesWithMedia(messages);
   if (!withMedia.length || typeof window === 'undefined') return withMedia;
 
@@ -82,12 +86,11 @@ export async function rehydratePersistedMessages(messages: ChatMessage[]): Promi
         // Xroga already owns a scoped endpoint that reads those exact GitHub files.
         // Recovering them here restores Preview without another model call and without
         // treating the repository read as proof of an unobserved deployment.
-        const recoveryRepo =
-          typeof fo.githubRepoName === 'string' && fo.githubRepoName.includes('/')
-            ? fo.githubRepoName
-            : typeof msg.githubRepoName === 'string' && msg.githubRepoName.includes('/')
-              ? msg.githubRepoName
-              : '';
+        const recoveryRepo = resolveLandingRecoveryRepo(
+          fo.githubRepoName,
+          msg.githubRepoName,
+          repositoryName
+        );
         if (
           !(typeof fo.html === 'string' && fo.html.trim()) &&
           recoveryRepo
