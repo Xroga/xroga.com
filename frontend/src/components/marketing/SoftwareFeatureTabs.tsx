@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   TerminalSquare,
 } from 'lucide-react';
+import { SOFTWARE_ART } from '@/lib/softwareArt';
 
 /**
  * The dark bento with working filters.
@@ -21,9 +22,10 @@ import {
  * A tablist with roving arrow-key focus, so it is operable from the keyboard rather
  * than only clickable — a row of buttons that changed nothing would be a fake control.
  *
- * The centre card is the dominant one and carries `software-core.webp`; the rest are
- * flat surfaces, because a grid where every tile has artwork becomes a collage.
+ * The centre card is the dominant one and carries the artwork; the rest are flat
+ * surfaces, because a grid where every tile has artwork becomes a collage.
  */
+
 type Group = 'build' | 'integrate' | 'scale' | 'collaborate' | 'secure';
 
 const TABS: ReadonlyArray<{ id: 'all' | Group; label: string }> = [
@@ -168,7 +170,7 @@ export function SoftwareFeatureTabs() {
                 <>
                   <div className="xsw-media" aria-hidden="true">
                     <Image
-                      src="/software/software-core.webp"
+                      src={SOFTWARE_ART.core}
                       alt=""
                       fill
                       loading="lazy"
