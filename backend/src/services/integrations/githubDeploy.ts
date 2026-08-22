@@ -219,7 +219,12 @@ export async function inspectConnectedRepositoryState(
   // proves it is not a genuinely empty Git repository. It still has no product source to
   // hydrate. Inspect the exact tree before treating it as source-empty; arbitrary tiny
   // repositories must remain authoritative and must never be overwritten as new builds.
-  if ((repository.size ?? 0) === 0) {
+  // GitHub's repository `size` is an asynchronously-computed, rounded hint. The
+  // bootstrap marker has been observed as both 0 and 1 after propagation, so `=== 0`
+  // eventually turns the same neutral repository into an authoritative product repo.
+  // Inspect tiny repositories exactly; a real tiny project remains a `head` because
+  // only the exact neutral tree below is classified as source-empty.
+  if ((repository.size ?? 0) <= 1) {
     try {
       const api = makeAtomicWriteApi(
         ghFetch,

@@ -3044,7 +3044,9 @@ export async function runBuildPipeline(opts: {
         branch: githubBranch,
         projectName,
         files: nextFiles,
-        commitSha: priorCommitSha,
+        // These files are validated and recoverable, but they do not represent any
+        // GitHub commit until the atomic push below succeeds.
+        commitSha: null,
         aiSummary: cachedSummary,
       });
       if (saved.persistence === 'memory_only') {
@@ -3739,7 +3741,9 @@ export async function runBuildPipeline(opts: {
         branch: githubBranch,
         projectName,
         files: nextFiles,
-        commitSha,
+        // A failed/interrupted push must leave the recovered snapshot explicitly
+        // uncommitted instead of inheriting the previous remote head.
+        commitSha: commitSha ?? null,
         aiSummary: cachedSummary,
       });
       projectMemoryPersistenceError =
