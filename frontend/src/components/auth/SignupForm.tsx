@@ -65,81 +65,132 @@ const THEME_SWATCHES: Record<
   }
 > = {
   white: {
-    background: '#ffffff',
-    foreground: '#111111',
+    background:
+      '#ffffff',
+    foreground:
+      '#111111',
   },
 
   beige: {
-    background: '#f5efe3',
-    foreground: '#3a3127',
+    background:
+      '#f5efe3',
+    foreground:
+      '#3a3127',
   },
 
   gray: {
-    background: '#2a2a2a',
-    foreground: '#f5f5f5',
+    background:
+      '#2a2a2a',
+    foreground:
+      '#f5f5f5',
   },
 
   black: {
-    background: '#000000',
-    foreground: '#ffffff',
+    background:
+      '#000000',
+    foreground:
+      '#ffffff',
   },
 };
 
 export function SignupForm() {
-  const searchParams = useSearchParams();
+  const searchParams =
+    useSearchParams();
 
-  const refFromUrl = searchParams.get('ref');
+  const router =
+    useRouter();
+
+  const refFromUrl =
+    searchParams.get(
+      'ref'
+    );
 
   const requestedNext =
-    searchParams.get('next');
+    searchParams.get(
+      'next'
+    );
 
   const nextPath =
-    requestedNext?.startsWith('/') &&
-    !requestedNext.startsWith('//')
+    requestedNext?.startsWith(
+      '/'
+    ) &&
+    !requestedNext.startsWith(
+      '//'
+    )
       ? requestedNext
       : '/workspace';
 
-  const router = useRouter();
-
   const globalTheme =
-    useThemeStore((state) => state.theme);
+    useThemeStore(
+      (state) =>
+        state.theme
+    );
 
   const setGlobalTheme =
-    useThemeStore((state) => state.setTheme);
-
-  const [theme, setTheme] =
-    useState<CoreThemeId>(() =>
-      normalizeTheme(globalTheme)
+    useThemeStore(
+      (state) =>
+        state.setTheme
     );
 
-  const [referralCode, setReferralCode] =
-    useState('');
-
-  const [email, setEmail] =
-    useState('');
-
-  const [password, setPassword] =
-    useState('');
-
-  const [displayName, setDisplayName] =
-    useState('');
-
-  const [avatarUrl, setAvatarUrl] =
-    useState(
-      XROGA_PROFILE_AVATARS[0]?.url ?? ''
+  const [
+    theme,
+    setTheme,
+  ] =
+    useState<CoreThemeId>(
+      () =>
+        normalizeTheme(
+          globalTheme
+        )
     );
 
-  const [loading, setLoading] =
-    useState(false);
+  const [
+    referralCode,
+    setReferralCode,
+  ] = useState('');
 
-  const [oauthLoading, setOauthLoading] =
-    useState(false);
+  const [
+    email,
+    setEmail,
+  ] = useState('');
 
-  const [error, setError] =
-    useState('');
+  const [
+    password,
+    setPassword,
+  ] = useState('');
 
-  const [success, setSuccess] =
-    useState(false);
+  const [
+    displayName,
+    setDisplayName,
+  ] = useState('');
+
+  const [
+    avatarUrl,
+    setAvatarUrl,
+  ] = useState(
+    XROGA_PROFILE_AVATARS[
+      0
+    ]?.url ?? ''
+  );
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(false);
+
+  const [
+    oauthLoading,
+    setOauthLoading,
+  ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState('');
+
+  const [
+    success,
+    setSuccess,
+  ] = useState(false);
 
   const [
     confirmationRequired,
@@ -147,11 +198,19 @@ export function SignupForm() {
   ] = useState(false);
 
   const passwordStrength =
-    getPasswordStrength(password);
+    getPasswordStrength(
+      password
+    );
 
   useEffect(() => {
-    setTheme(normalizeTheme(globalTheme));
-  }, [globalTheme]);
+    setTheme(
+      normalizeTheme(
+        globalTheme
+      )
+    );
+  }, [
+    globalTheme,
+  ]);
 
   useEffect(() => {
     const code =
@@ -163,21 +222,28 @@ export function SignupForm() {
         code.toUpperCase()
       );
 
-      storeReferralCode(code);
+      storeReferralCode(
+        code
+      );
     }
-  }, [refFromUrl]);
+  }, [
+    refFromUrl,
+  ]);
 
   function selectTheme(
     nextTheme: CoreThemeId
   ) {
-    setTheme(nextTheme);
+    setTheme(
+      nextTheme
+    );
 
     /*
-     * This deliberately updates the existing global
-     * Xroga theme so the signup page previews the
-     * selected theme immediately.
+     * Preview the selected
+     * theme immediately.
      */
-    setGlobalTheme(nextTheme);
+    setGlobalTheme(
+      nextTheme
+    );
   }
 
   async function handleGitHub() {
@@ -187,34 +253,51 @@ export function SignupForm() {
     try {
       await requireGitHubProvider();
 
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { data, error: oauthError } =
+      const {
+        data,
+        error:
+          oauthError,
+      } =
         await withAuthTimeout(
-          supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-              redirectTo:
-                `${window.location.origin}` +
-                `/auth/callback?next=${encodeURIComponent(
-                  nextPath
-                )}`,
-              skipBrowserRedirect: true,
-            },
-          })
+          supabase.auth.signInWithOAuth(
+            {
+              provider:
+                'github',
+
+              options: {
+                redirectTo:
+                  `${window.location.origin}` +
+                  `/auth/callback?next=${encodeURIComponent(
+                    nextPath
+                  )}`,
+
+                skipBrowserRedirect:
+                  true,
+              },
+            }
+          )
         );
 
-      if (oauthError) {
+      if (
+        oauthError
+      ) {
         throw oauthError;
       }
 
-      if (!data.url) {
+      if (
+        !data.url
+      ) {
         throw new Error(
           'OAuth provider did not return a redirect URL'
         );
       }
 
-      window.location.assign(data.url);
+      window.location.assign(
+        data.url
+      );
     } catch (err) {
       setOauthLoading(false);
 
@@ -232,7 +315,9 @@ export function SignupForm() {
   ) {
     event.preventDefault();
 
-    if (!displayName.trim()) {
+    if (
+      !displayName.trim()
+    ) {
       setError(
         'Please enter a display name'
       );
@@ -240,7 +325,11 @@ export function SignupForm() {
       return;
     }
 
-    if (isTemporaryEmail(email)) {
+    if (
+      isTemporaryEmail(
+        email
+      )
+    ) {
       setError(
         'Temporary email addresses are not allowed. Use a real email.'
       );
@@ -248,7 +337,10 @@ export function SignupForm() {
       return;
     }
 
-    if (passwordStrength.score < 2) {
+    if (
+      passwordStrength.score <
+      2
+    ) {
       setError(
         'Please choose a stronger password'
       );
@@ -259,39 +351,48 @@ export function SignupForm() {
     setLoading(true);
     setError('');
 
-    setGlobalTheme(theme);
+    setGlobalTheme(
+      theme
+    );
 
     try {
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
       const {
         data,
-        error: signupError,
-      } = await supabase.auth.signUp({
-        email,
-        password,
+        error:
+          signupError,
+      } =
+        await supabase.auth.signUp(
+          {
+            email,
+            password,
 
-        options: {
-          data: {
-            full_name:
-              displayName.trim(),
+            options: {
+              data: {
+                full_name:
+                  displayName.trim(),
 
-            avatar_url:
-              avatarUrl,
+                avatar_url:
+                  avatarUrl,
 
-            preferred_theme:
-              theme,
-          },
+                preferred_theme:
+                  theme,
+              },
 
-          emailRedirectTo:
-            `${window.location.origin}` +
-            `/auth/callback?next=${encodeURIComponent(
-              nextPath
-            )}`,
-        },
-      });
+              emailRedirectTo:
+                `${window.location.origin}` +
+                `/auth/callback?next=${encodeURIComponent(
+                  nextPath
+                )}`,
+            },
+          }
+        );
 
-      if (signupError) {
+      if (
+        signupError
+      ) {
         const message =
           signupError.message.toLowerCase();
 
@@ -321,25 +422,36 @@ export function SignupForm() {
         return;
       }
 
-      if (!data.session) {
-        setConfirmationRequired(true);
-        setSuccess(true);
+      if (
+        !data.session
+      ) {
+        setConfirmationRequired(
+          true
+        );
+
+        setSuccess(
+          true
+        );
 
         return;
       }
 
       try {
-        await api.profile.update({
-          display_name:
-            displayName.trim(),
+        await api.profile.update(
+          {
+            display_name:
+              displayName.trim(),
 
-          avatar_url:
-            avatarUrl || null,
-        });
+            avatar_url:
+              avatarUrl ||
+              null,
+          }
+        );
       } catch {
         /*
-         * Profile may synchronize on the
-         * first workspace load.
+         * Profile may sync
+         * on first workspace
+         * load.
          */
       }
 
@@ -354,22 +466,33 @@ export function SignupForm() {
               code
             );
 
-          if (result.success) {
+          if (
+            result.success
+          ) {
             clearStoredReferralCode();
           }
         } catch {
           /*
-           * Referral can apply later if
-           * the session is not ready.
+           * Referral can be
+           * applied later if
+           * the session is not
+           * ready yet.
            */
         }
       }
 
-      setSuccess(true);
+      setSuccess(
+        true
+      );
 
-      window.setTimeout(() => {
-        router.push(nextPath);
-      }, 1500);
+      window.setTimeout(
+        () => {
+          router.push(
+            nextPath
+          );
+        },
+        1500
+      );
     } catch (err) {
       setError(
         safeAuthError(
@@ -397,9 +520,9 @@ export function SignupForm() {
             rounded-2xl
             border
             border-[#006aff]/20
-            bg-[#006aff]/8
+            bg-[#006aff]/10
             px-5
-            py-6
+            py-5
             text-center
           "
         >
@@ -426,10 +549,21 @@ export function SignupForm() {
       subtitle="Start building with Xroga and personalize your workspace before you begin."
     >
       <AuthSocialButton
-        onClick={handleGitHub}
-        disabled={oauthLoading || loading}
+        onClick={
+          handleGitHub
+        }
+        disabled={
+          oauthLoading ||
+          loading
+        }
       >
-        <GitHubIcon className="h-5 w-5 shrink-0" />
+        <GitHubIcon
+          className="
+            h-5
+            w-5
+            shrink-0
+          "
+        />
 
         {oauthLoading
           ? 'Connecting…'
@@ -439,9 +573,14 @@ export function SignupForm() {
       <AuthDivider />
 
       <form
-        onSubmit={handleSignup}
-        className="space-y-4"
+        onSubmit={
+          handleSignup
+        }
+        className="
+          space-y-2.5
+        "
       >
+        {/* THEME */}
         <div>
           <AuthModernLabel>
             Workspace theme
@@ -450,15 +589,15 @@ export function SignupForm() {
           <div
             className="
               grid
-              grid-cols-2
+              grid-cols-4
               gap-2
-              sm:grid-cols-4
             "
           >
             {THEME_OPTIONS.map(
               (option) => {
                 const selected =
-                  theme === option.id;
+                  theme ===
+                  option.id;
 
                 const swatch =
                   THEME_SWATCHES[
@@ -467,7 +606,9 @@ export function SignupForm() {
 
                 return (
                   <button
-                    key={option.id}
+                    key={
+                      option.id
+                    }
                     type="button"
                     onClick={() =>
                       selectTheme(
@@ -479,9 +620,11 @@ export function SignupForm() {
                     }
                     className={cn(
                       'relative',
+                      'min-w-0',
                       'rounded-xl',
                       'border',
-                      'px-3 py-2.5',
+                      'px-2.5',
+                      'py-1.5',
                       'text-left',
                       'transition-all duration-200',
 
@@ -491,20 +634,24 @@ export function SignupForm() {
                             'bg-[#006aff]/10',
                             'ring-1',
                             'ring-[#006aff]/25',
-                          ].join(' ')
+                          ].join(
+                            ' '
+                          )
                         : [
                             'border-[var(--auth-border)]',
                             'bg-[var(--auth-input)]',
                             'hover:border-[var(--auth-border-strong)]',
-                          ].join(' ')
+                          ].join(
+                            ' '
+                          )
                     )}
                   >
                     <span
                       className="
-                        mb-2
+                        mb-1
                         block
-                        h-5
-                        w-5
+                        h-4
+                        w-4
                         rounded-full
                         border
                         border-black/10
@@ -522,7 +669,8 @@ export function SignupForm() {
                     <span
                       className="
                         block
-                        text-xs
+                        truncate
+                        text-[11px]
                         font-semibold
                         text-[var(--auth-text)]
                       "
@@ -537,18 +685,19 @@ export function SignupForm() {
 
           <p
             className="
-              mt-1.5
-              text-[10px]
+              mt-1
+              text-[9px]
               leading-relaxed
               text-[var(--auth-muted)]
             "
           >
-            Your selected theme previews
-            instantly and can be changed
-            anytime later.
+            Changes instantly.
+            You can switch
+            themes later.
           </p>
         </div>
 
+        {/* PROFILE */}
         <div>
           <AuthModernLabel>
             Profile
@@ -558,13 +707,13 @@ export function SignupForm() {
             className="
               flex
               items-center
-              gap-3
+              gap-2
             "
           >
             <div
               className="
-                h-12
-                w-12
+                h-10
+                w-10
                 shrink-0
                 overflow-hidden
                 rounded-xl
@@ -575,7 +724,9 @@ export function SignupForm() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={avatarUrl}
+                src={
+                  avatarUrl
+                }
                 alt="Selected Xroga avatar"
                 className="
                   h-full
@@ -588,79 +739,99 @@ export function SignupForm() {
             <div
               className="
                 grid
-                max-h-[72px]
+                h-[48px]
                 flex-1
                 grid-cols-6
-                gap-1.5
+                gap-1
                 overflow-y-auto
                 rounded-xl
                 border
                 border-[var(--auth-border)]
                 bg-[var(--auth-input)]
-                p-1.5
+                p-1
               "
             >
               {XROGA_PROFILE_AVATARS
-                .slice(0, 12)
-                .map((avatar) => {
-                  const selected =
-                    avatarUrl ===
-                    avatar.url;
+                .slice(
+                  0,
+                  12
+                )
+                .map(
+                  (
+                    avatar
+                  ) => {
+                    const selected =
+                      avatarUrl ===
+                      avatar.url;
 
-                  return (
-                    <button
-                      key={avatar.url}
-                      type="button"
-                      onClick={() =>
-                        setAvatarUrl(
+                    return (
+                      <button
+                        key={
                           avatar.url
-                        )
-                      }
-                      aria-label="Select profile avatar"
-                      aria-pressed={
-                        selected
-                      }
-                      className={cn(
-                        'aspect-square',
-                        'overflow-hidden',
-                        'rounded-lg',
-                        'border-2',
-                        'transition-all',
+                        }
+                        type="button"
+                        onClick={() =>
+                          setAvatarUrl(
+                            avatar.url
+                          )
+                        }
+                        aria-label="Select profile avatar"
+                        aria-pressed={
+                          selected
+                        }
+                        className={cn(
+                          'aspect-square',
+                          'min-h-0',
+                          'overflow-hidden',
+                          'rounded-md',
+                          'border-2',
+                          'transition-all',
 
-                        selected
-                          ? 'border-[#006aff] opacity-100'
-                          : 'border-transparent opacity-65 hover:opacity-100'
-                      )}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={avatar.url}
-                        alt=""
-                        className="
-                          h-full
-                          w-full
-                          object-cover
-                        "
-                      />
-                    </button>
-                  );
-                })}
+                          selected
+                            ? 'border-[#006aff] opacity-100'
+                            : 'border-transparent opacity-65 hover:opacity-100'
+                        )}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={
+                            avatar.url
+                          }
+                          alt=""
+                          className="
+                            h-full
+                            w-full
+                            object-cover
+                          "
+                        />
+                      </button>
+                    );
+                  }
+                )}
             </div>
           </div>
         </div>
 
+        {/* DISPLAY NAME */}
         <div>
-          <AuthModernLabel htmlFor="signup-name">
+          <AuthModernLabel
+            htmlFor="signup-name"
+          >
             Display name
           </AuthModernLabel>
 
           <AuthModernInput
             id="signup-name"
             type="text"
-            value={displayName}
-            onChange={(event) =>
+            value={
+              displayName
+            }
+            onChange={(
+              event
+            ) =>
               setDisplayName(
-                event.target.value
+                event.target
+                  .value
               )
             }
             required
@@ -669,8 +840,11 @@ export function SignupForm() {
           />
         </div>
 
+        {/* EMAIL */}
         <div>
-          <AuthModernLabel htmlFor="signup-email">
+          <AuthModernLabel
+            htmlFor="signup-email"
+          >
             Email address
           </AuthModernLabel>
 
@@ -678,9 +852,12 @@ export function SignupForm() {
             id="signup-email"
             type="email"
             value={email}
-            onChange={(event) =>
+            onChange={(
+              event
+            ) =>
               setEmail(
-                event.target.value
+                event.target
+                  .value
               )
             }
             required
@@ -689,18 +866,26 @@ export function SignupForm() {
           />
         </div>
 
+        {/* PASSWORD */}
         <div>
-          <AuthModernLabel htmlFor="signup-password">
+          <AuthModernLabel
+            htmlFor="signup-password"
+          >
             Password
           </AuthModernLabel>
 
           <AuthModernInput
             id="signup-password"
             type="password"
-            value={password}
-            onChange={(event) =>
+            value={
+              password
+            }
+            onChange={(
+              event
+            ) =>
               setPassword(
-                event.target.value
+                event.target
+                  .value
               )
             }
             required
@@ -710,10 +895,10 @@ export function SignupForm() {
           />
 
           {password ? (
-            <div className="mt-2">
+            <div className="mt-1.5">
               <div
                 className="
-                  h-1.5
+                  h-1
                   overflow-hidden
                   rounded-full
                   bg-[var(--auth-soft)]
@@ -739,6 +924,7 @@ export function SignupForm() {
           ) : null}
         </div>
 
+        {/* ERROR */}
         {error ? (
           <div
             role="alert"
@@ -746,11 +932,11 @@ export function SignupForm() {
               rounded-xl
               border
               border-red-500/20
-              bg-red-500/8
-              px-3.5
-              py-3
+              bg-red-500/10
+              px-3
+              py-2
               text-center
-              text-sm
+              text-[11px]
               text-red-500
             "
           >
