@@ -44,7 +44,7 @@ const AUTH_SLIDES = [
   },
 ] as const;
 
-const ROTATION_INTERVAL_MS = 7000;
+const ROTATION_INTERVAL = 7000;
 
 export function AuthShowcase() {
   const [activeIndex, setActiveIndex] =
@@ -59,12 +59,12 @@ export function AuthShowcase() {
     );
 
   const goTo = useCallback(
-    (nextIndex: number) => {
+    (index: number) => {
       const total =
         AUTH_SLIDES.length;
 
       setActiveIndex(
-        ((nextIndex % total) + total) %
+        ((index % total) + total) %
           total
       );
     },
@@ -72,13 +72,13 @@ export function AuthShowcase() {
   );
 
   /*
-   * Load all seven images immediately.
+   * Preload every slide immediately.
    *
-   * This prevents a black/empty frame when
-   * the carousel switches to the next slide.
+   * All images also stay mounted below,
+   * preventing blank frames between slides.
    */
   useEffect(() => {
-    const images =
+    const preloaded =
       AUTH_SLIDES.map((slide) => {
         const image =
           new window.Image();
@@ -93,7 +93,7 @@ export function AuthShowcase() {
       });
 
     return () => {
-      images.forEach(
+      preloaded.forEach(
         (image) => {
           image.onload =
             null;
@@ -113,7 +113,7 @@ export function AuthShowcase() {
       return;
     }
 
-    const interval =
+    const timer =
       window.setInterval(
         () => {
           setActiveIndex(
@@ -122,12 +122,12 @@ export function AuthShowcase() {
               AUTH_SLIDES.length
           );
         },
-        ROTATION_INTERVAL_MS
+        ROTATION_INTERVAL
       );
 
     return () => {
       window.clearInterval(
-        interval
+        timer
       );
     };
   }, [
@@ -150,8 +150,7 @@ export function AuthShowcase() {
         h-full
         w-full
         overflow-hidden
-        rounded-[28px]
-        bg-[#07101d]
+        rounded-[26px]
       "
     >
       {AUTH_SLIDES.map(
@@ -160,101 +159,56 @@ export function AuthShowcase() {
             index === activeIndex;
 
           return (
-            <div
+            <img
               key={
                 slide.src
               }
+              src={
+                slide.src
+              }
+              alt={
+                slide.alt
+              }
+              draggable={
+                false
+              }
+              loading="eager"
+              decoding="async"
               aria-hidden={
                 !active
               }
               className={[
                 'absolute inset-0',
-                'overflow-hidden',
+
+                'h-full w-full',
+
+                /*
+                 * Image card is square,
+                 * matching the artwork.
+                 *
+                 * Therefore object-cover fills
+                 * the card without ugly side
+                 * backgrounds and without
+                 * significantly cropping the
+                 * original square artwork.
+                 */
+                'object-cover object-center',
+
+                'select-none',
+
                 'transition-opacity',
-                'duration-700 ease-out',
+                'duration-700',
+                'ease-out',
 
                 active
                   ? 'z-10 opacity-100'
                   : 'pointer-events-none z-0 opacity-0',
               ].join(' ')}
-            >
-              {/*
-                BACKGROUND FILL
-
-                This copy fills the entire panel so
-                there can never be black letterboxing.
-              */}
-              <div
-                aria-hidden
-                className="
-                  absolute
-                  inset-[-28px]
-                  scale-110
-                  bg-cover
-                  bg-center
-                  blur-[22px]
-                "
-                style={{
-                  backgroundImage:
-                    `url("${slide.src}")`,
-                }}
-              />
-
-              {/*
-                Slight dark treatment keeps the
-                background fill from competing with
-                the real artwork.
-              */}
-              <div
-                aria-hidden
-                className="
-                  absolute
-                  inset-0
-                  bg-black/20
-                "
-              />
-
-              {/*
-                FOREGROUND IMAGE
-
-                object-contain is intentional here.
-
-                Because the blurred background already
-                fills the panel, we can now show the
-                ENTIRE original artwork without black
-                bars and without cropping the Xroga
-                logo or bottom text.
-              */}
-              <img
-                src={
-                  slide.src
-                }
-                alt={
-                  slide.alt
-                }
-                draggable={
-                  false
-                }
-                loading="eager"
-                decoding="async"
-                className="
-                  absolute
-                  inset-0
-                  h-full
-                  w-full
-                  select-none
-                  object-contain
-                  object-center
-                "
-              />
-            </div>
+            />
           );
         }
       )}
 
-      {/*
-        Very subtle frame around artwork.
-      */}
       <div
         aria-hidden
         className="
@@ -262,7 +216,7 @@ export function AuthShowcase() {
           absolute
           inset-0
           z-[15]
-          rounded-[28px]
+          rounded-[26px]
           ring-1
           ring-inset
           ring-white/20
@@ -271,7 +225,7 @@ export function AuthShowcase() {
 
       <button
         type="button"
-        aria-label="Previous Xroga image"
+        aria-label="Previous image"
         onClick={() =>
           goTo(
             activeIndex - 1
@@ -279,29 +233,37 @@ export function AuthShowcase() {
         }
         className="
           absolute
-          left-5
+          left-4
           top-1/2
           z-20
+
           grid
           h-11
           w-11
+
           -translate-y-1/2
           place-items-center
+
           rounded-full
+
           border
           border-white/20
-          bg-[#06101f]/60
+
+          bg-black/45
           text-white
+
           opacity-0
-          shadow-[0_8px_24px_rgba(0,0,0,0.25)]
+
+          shadow-lg
           backdrop-blur-xl
+
           transition-all
           duration-200
 
           group-hover:opacity-100
 
           hover:scale-105
-          hover:bg-[#06101f]/80
+          hover:bg-black/65
 
           focus-visible:opacity-100
           focus-visible:outline-none
@@ -316,7 +278,7 @@ export function AuthShowcase() {
 
       <button
         type="button"
-        aria-label="Next Xroga image"
+        aria-label="Next image"
         onClick={() =>
           goTo(
             activeIndex + 1
@@ -324,29 +286,37 @@ export function AuthShowcase() {
         }
         className="
           absolute
-          right-5
+          right-4
           top-1/2
           z-20
+
           grid
           h-11
           w-11
+
           -translate-y-1/2
           place-items-center
+
           rounded-full
+
           border
           border-white/20
-          bg-[#06101f]/60
+
+          bg-black/45
           text-white
+
           opacity-0
-          shadow-[0_8px_24px_rgba(0,0,0,0.25)]
+
+          shadow-lg
           backdrop-blur-xl
+
           transition-all
           duration-200
 
           group-hover:opacity-100
 
           hover:scale-105
-          hover:bg-[#06101f]/80
+          hover:bg-black/65
 
           focus-visible:opacity-100
           focus-visible:outline-none
