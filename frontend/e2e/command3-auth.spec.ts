@@ -483,6 +483,79 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // stranding them in the collapsed rail.
   const restoredRail = (await rail.boundingBox())!;
   expect(restoredRail.width, 'the sidebar did not reopen after fullscreen').toBeGreaterThan(72);
+
+  /**
+   * The collapsed rail is a narrower sidebar, not a reduced one.
+   *
+   * It used to carry the logo and three shortcuts and nothing else, so collapsing —
+   * which is also what fullscreen now does — took the account with it. Signing out
+   * meant expanding the sidebar first.
+   */
+  await terminalHeader.getByRole('button', { name: 'Fullscreen terminal' }).click();
+  await page.waitForTimeout(400);
+  await expect(rail.getByRole('link', { name: 'View Xroga AI plan' })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Settings' })).toBeVisible();
+  await expect(rail.locator('.xv-sidebar-rail-profile')).toBeVisible();
+  await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
+  await page.waitForTimeout(400);
+
+  /**
+   * The workspace split is draggable, and expanding the panel takes the viewport.
+   *
+   * Both are geometric claims, so both are measured. The expanded state in particular
+   * cannot be read off the stylesheet: it depends on the composer and the sidebar
+   * being switched off from `body`, several levels above the panel that sets the flag.
+   */
+  await page.getByRole('button', { name: 'Workspace' }).last().click();
+  const wsPanel = page.locator('.xv-dev-workspace');
+  await expect(wsPanel).toBeVisible();
+
+  const handle = page.locator('.xv-workspace-resize');
+  await expect(handle).toBeVisible();
+  const beforeDrag = (await wsPanel.boundingBox())!;
+  const handleBox = (await handle.boundingBox())!;
+  await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBox.x - 160, handleBox.y + handleBox.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const afterDrag = (await wsPanel.boundingBox())!;
+  expect(
+    afterDrag.width - beforeDrag.width,
+    'dragging the split left did not widen the workspace panel',
+  ).toBeGreaterThan(60);
+
+  // Dragging the other way narrows it again, so the handle is not one-directional.
+  const handleBack = (await handle.boundingBox())!;
+  await page.mouse.move(handleBack.x + handleBack.width / 2, handleBack.y + handleBack.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBack.x + 120, handleBack.y + handleBack.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  expect(
+    (await wsPanel.boundingBox())!.width,
+    'dragging the split right did not narrow the panel',
+  ).toBeLessThan(afterDrag.width - 40);
+
+  await wsPanel.getByRole('button', { name: 'Full screen workspace' }).click();
+  await page.waitForTimeout(400);
+  const expandedBox = (await wsPanel.boundingBox())!;
+  const viewport = await page.evaluate(() => ({ w: window.innerWidth, h: window.innerHeight }));
+  expect(expandedBox.x, 'the expanded preview is inset from the left edge').toBeLessThanOrEqual(1);
+  expect(expandedBox.y, 'the expanded preview is inset from the top edge').toBeLessThanOrEqual(1);
+  expect(expandedBox.width, 'the expanded preview does not span the viewport').toBeGreaterThanOrEqual(viewport.w - 1);
+  expect(expandedBox.height, 'the expanded preview does not fill the viewport').toBeGreaterThanOrEqual(viewport.h - 1);
+  // The composer and the sidebar stand down. `display: none`, not merely hidden — a
+  // hidden sidebar keeps its width and puts a band of shell beside a "full" preview.
+  await expect(terminalDock).toBeHidden();
+  await expect(rail).toBeHidden();
+  // A soft edge, not a drawn box.
+  await expect(wsPanel).toHaveCSS('border-top-width', '0px');
+
+  await wsPanel.getByRole('button', { name: 'Exit full screen' }).click();
+  await page.waitForTimeout(400);
+  await expect(terminalDock).toBeVisible();
+  await expect(composerInput).toBeVisible();
   const shellAfterMenu = (await shell.boundingBox())!;
   expect(shellAfterMenu.y).toBeCloseTo(shellBox.y, 0);
   expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);

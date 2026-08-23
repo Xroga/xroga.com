@@ -158,7 +158,9 @@ test('the title bar is outside the scrolling container', () => {
   // In the rendered tree the header is a sibling *before* the body that holds the
   // panes, so the transcript moves underneath it rather than carrying it along.
   const header = VIEW.indexOf('<header className="xv-workspace-header"');
-  const body = VIEW.indexOf('<div className="xv-workspace-body"');
+  // Matched on the class rather than on `<div className="…"`: the body carries a ref
+  // and a style for the resizable split now, so its attributes span several lines.
+  const body = VIEW.indexOf('className="xv-workspace-body"');
   assert.ok(header > -1, 'the shell header is gone');
   assert.ok(body > -1, 'the shell body is gone');
   assert.ok(header < body, 'the header moved inside the transcript and will scroll away');
@@ -172,7 +174,13 @@ test('the split is one animated grid, not a second mounted card', () => {
   const body = rule('.xv-workspace-body') ?? '';
   assert.match(body, /display:\s*grid/);
   assert.match(body, /transition:\s*grid-template-columns 280ms/);
-  assert.match(CSS, /\.xv-workspace-body\[data-workspace-open='true'\] \{\s*grid-template-columns:\s*minmax\(0, 1\.4fr\)/);
+  // The split is still one grid, but its second column is the width the user dragged
+  // it to rather than a fixed ratio. The default of that stored share reproduces the
+  // ratio this used to assert, so an untouched split is unchanged.
+  assert.match(
+    CSS,
+    /\.xv-workspace-body\[data-workspace-open='true'\] \{\s*grid-template-columns:\s*minmax\(0, 1fr\) var\(--xv-workspace-width/,
+  );
   assert.match(VIEW, /data-workspace-open=\{workspaceOpen \? 'true' : 'false'\}/);
 });
 
