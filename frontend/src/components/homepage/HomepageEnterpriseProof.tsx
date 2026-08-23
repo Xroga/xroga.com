@@ -14,37 +14,55 @@ import {
 } from 'lucide-react';
 import { XROGA_MODEL_FULL } from '@/lib/brand';
 
-const CONCEPTS = [
-  { Icon: Activity, position: 'state', label: 'State', copy: 'Understand status and context.', code: '01' },
-  { Icon: FileText, position: 'evidence', label: 'Evidence', copy: 'See what happened and why.', code: '02' },
-  { Icon: LockKeyhole, position: 'permission', label: 'Permission', copy: 'Know who can act and when.', code: '03' },
-  { Icon: ShieldAlert, position: 'blockers', label: 'Blockers', copy: 'Surface risks that stop progress.', code: '04' },
-] as const;
-
-const CAPABILITIES = [
+/**
+ * Four signals, each paired with what it gets you.
+ *
+ * These used to be two separate lists — four floating concepts positioned around the
+ * infinity graphic, then four capability cards below it — which is what made the
+ * section tall enough to need its own scroll. The pairing was already implied by
+ * their numbering, so folding each capability into the signal it belongs to loses
+ * nothing and collapses two full-width rows into one.
+ */
+const SIGNALS = [
   {
-    Icon: ChartNoAxesColumnIncreasing,
-    code: 'REVIEW / 01',
-    title: 'Reviewable execution',
-    body: 'One customer-facing Xroga AI experience with changed files, validation, and publishing evidence.',
+    Icon: Activity,
+    code: '01 / STATE SIGNAL',
+    label: 'State',
+    copy: "Know what's happening in real time.",
+    CapIcon: ChartNoAxesColumnIncreasing,
+    capTitle: 'Reviewable execution',
+    capBody: 'Validated, published, and audit-ready.',
   },
   {
-    Icon: Users,
-    code: 'ACCESS / 02',
-    title: 'Builders & non-devs',
-    body: 'Plain language starts the work; required decisions, credentials, and review remain visible to the operator.',
+    Icon: FileText,
+    code: '02 / EVIDENCE SIGNAL',
+    label: 'Evidence',
+    copy: 'See what changed and why.',
+    CapIcon: Users,
+    capTitle: 'Builders & non-devs',
+    capBody: 'Plain language for clear decisions, together.',
   },
   {
-    Icon: Rocket,
-    code: 'BUILD / 03',
-    title: 'Hackathon-ready MVPs',
-    body: 'Build and iterate on demo projects in the same connected repository, with blockers shown truthfully.',
+    Icon: LockKeyhole,
+    code: '03 / PERMISSION SIGNAL',
+    label: 'Permission',
+    copy: 'Know who can act and when.',
+    CapIcon: Rocket,
+    capTitle: 'Hackathon-ready MVPs',
+    capBody: 'Build and iterate on demo projects, fast.',
   },
   {
-    Icon: Network,
-    code: 'FLOW / 04',
-    title: 'Outcome-first workflow',
-    body: 'Understand → implement → validate → repair → push or publish when authorised.',
+    Icon: ShieldAlert,
+    code: '04 / BLOCKER SIGNAL',
+    label: 'Blockers',
+    copy: 'Surface risks that stop progress.',
+    CapIcon: Network,
+    capTitle: 'Outcome-first workflow',
+    // "when authorised" is kept deliberately. The rest of this copy was shortened to
+    // fit the compact card, but that clause is a claim about what the product will
+    // and will not do on its own, not a stylistic flourish — a line reading
+    // "validate → publish" describes something Xroga does not do unattended.
+    capBody: 'Understand → implement → validate → publish when authorised.',
   },
 ] as const;
 
@@ -126,32 +144,33 @@ export function HomepageEnterpriseProof() {
           <div className="xv-er-stage-lines" aria-hidden="true" />
           <span className="xv-er-stage-edge" aria-hidden="true" />
 
-          <header className="xv-er-heading">
-            <span className="xv-er-mark" aria-hidden="true">∞</span>
-            <p>BUILT FOR REAL REVIEW</p>
-            <h2 id="ent-heading">Built for teams<br />that need evidence.</h2>
-            <div>
-              {XROGA_MODEL_FULL} keeps model selection internal while the product exposes the parts
-              operators need to judge: state, evidence, permission, and blockers.
-            </div>
-          </header>
+          {/* The headline and the graphic share a row rather than stacking, which is
+              most of where the height went. */}
+          <div className="xv-er-top">
+            <header className="xv-er-heading">
+              <p><span className="xv-er-mark" aria-hidden="true">∞</span>BUILT FOR REAL REVIEW</p>
+              <h2 id="ent-heading">Built for teams<br />that need <em>evidence</em>.</h2>
+              <div>
+                {XROGA_MODEL_FULL} keeps model selection internal while the product exposes the
+                parts operators need to judge.
+              </div>
+            </header>
 
-          <div className="xv-er-concepts">
-            {CONCEPTS.map(({ Icon, position, label, copy, code }) => (
-              <article key={label} tabIndex={0} className={`xv-er-concept is-${position}`}>
-                <span className="xv-er-concept-icon"><Icon aria-hidden="true" /></span>
-                <div><small>{code} / SYSTEM SIGNAL</small><h3>{label}</h3><p>{copy}</p></div>
-              </article>
-            ))}
+            <InfinitySystem />
           </div>
 
-          <InfinitySystem />
-
-          <ol className="xv-er-capabilities" aria-label="Xroga execution capabilities">
-            {CAPABILITIES.map(({ Icon, code, title, body }) => (
-              <li key={title}>
-                <span className="xv-er-cap-icon"><Icon aria-hidden="true" /></span>
-                <div><small>{code}</small><h3>{title}</h3><p>{body}</p></div>
+          <ol className="xv-er-signals" aria-label="What Xroga exposes for review">
+            {SIGNALS.map(({ Icon, code, label, copy, CapIcon, capTitle, capBody }) => (
+              <li key={label}>
+                <div className="xv-er-signal-head">
+                  <span className="xv-er-signal-icon"><Icon aria-hidden="true" /></span>
+                  <div><small>{code}</small><h3>{label}</h3></div>
+                </div>
+                <p className="xv-er-signal-copy">{copy}</p>
+                <div className="xv-er-signal-cap">
+                  <CapIcon className="xv-er-cap-icon" aria-hidden="true" />
+                  <div><b>{capTitle}</b><p>{capBody}</p></div>
+                </div>
                 <ArrowUpRight className="xv-er-cap-arrow" aria-hidden="true" />
               </li>
             ))}
