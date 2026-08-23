@@ -420,9 +420,69 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
+  // Two columns, not one tall one. As a single column the list stood roughly three
+  // times its own width, which reads as a page rather than as a menu. Asserted as a
+  // ratio rather than a pixel height so it survives an action being added or removed.
+  const grid = plusMenu.locator('.xv-cba-grid');
+  await expect(grid).toBeVisible();
+  const gridColumns = await grid.evaluate(
+    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
+  );
+  expect(gridColumns, 'the plus menu should lay out in two columns').toBe(2);
+  expect(
+    menuBox.height / menuBox.width,
+    'the plus menu is far taller than it is wide',
+  ).toBeLessThan(1.35);
+
   // Escape still closes it, and opening it never moved the window.
   await page.keyboard.press('Escape');
   await expect(plusMenu).toHaveCount(0);
+
+  /**
+   * Fullscreen actually fills the screen.
+   *
+   * It did not: the sidebar was hidden with `visibility: hidden`, which stops it
+   * painting but leaves its width in the flex row. The terminal went on starting
+   * after a band of empty page as wide as whatever the user had dragged the sidebar
+   * to — nothing was oversized, the space was reserved for something invisible.
+   *
+   * The rail is what should be left, so this checks the gap against the rail rather
+   * than against zero: anything wider means a hidden element is still holding space.
+   */
+  const fullscreenToggle = terminalHeader.getByRole('button', { name: 'Fullscreen terminal' });
+  await expect(fullscreenToggle).toBeVisible();
+  await fullscreenToggle.click();
+  await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(1);
+  await page.waitForTimeout(400);
+
+  const rail = page.locator('.xv-sidebar-root');
+  const railBox = (await rail.boundingBox())!;
+  expect(railBox, 'the sidebar rail should stay visible in fullscreen').not.toBeNull();
+  expect(railBox.width, 'the rail should collapse to its icon width').toBeLessThanOrEqual(72);
+
+  const fsShell = (await shell.boundingBox())!;
+  expect(
+    fsShell.x - (railBox.x + railBox.width),
+    'empty page is still reserved to the left of the terminal',
+  ).toBeLessThanOrEqual(4);
+  expect(
+    fsShell.width + fsShell.x,
+    'the terminal does not reach the right edge',
+  ).toBeGreaterThanOrEqual(await page.evaluate(() => window.innerWidth - 4));
+
+  // The composer stays with the terminal, and starts after the rail rather than
+  // running underneath it.
+  await expect(composerInput).toBeVisible();
+  const fsDock = (await terminalDock.boundingBox())!;
+  expect(fsDock.x, 'the composer runs under the rail').toBeGreaterThanOrEqual(railBox.width - 4);
+
+  await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
+  await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(0);
+  await page.waitForTimeout(400);
+  // Leaving fullscreen gives back the width the user had chosen, rather than
+  // stranding them in the collapsed rail.
+  const restoredRail = (await rail.boundingBox())!;
+  expect(restoredRail.width, 'the sidebar did not reopen after fullscreen').toBeGreaterThan(72);
   const shellAfterMenu = (await shell.boundingBox())!;
   expect(shellAfterMenu.y).toBeCloseTo(shellBox.y, 0);
   expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);
