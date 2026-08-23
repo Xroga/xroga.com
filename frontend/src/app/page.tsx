@@ -144,8 +144,17 @@ export default function HomePage() {
           <h1 className="xv-hc-brand">XROGA</h1>
 
           <div className="xv-hc-headline-block">
+            {/*
+              Four typographic voices on one line of reading: "The Agentic Way to Build
+              & Ship". It stays a single <p> so a screen reader gets the sentence in
+              order rather than four disconnected fragments — the styling is entirely in
+              the spans.
+            */}
             <p className="xv-hc-headline">
-              AI Agentic <span className="xv-hc-headline-em">Builds &amp; Ships</span>
+              <span className="xv-hc-headline__the">The</span>{' '}
+              <span className="xv-hc-headline__agentic">Agentic</span>{' '}
+              <span className="xv-hc-headline__way">Way to</span>{' '}
+              <span className="xv-hc-headline__ship">Build &amp; Ship</span>
             </p>
             <div
   className="xv-hc-target-stage"

@@ -795,24 +795,69 @@
   animation: xv-hc-fade-up 0.8s ease 0.1s both;
 }
 
+/* ==========================================================================
+   Hero headline — "The Agentic Way to Build & Ship"
+
+   Four voices, stacked: a small mono label, the mono display word, a mono tag on
+   the accent, and the italic serif payoff. Every colour comes from the theme's own
+   `--hc-*` pair, so the composition follows the theme picker the way the rest of the
+   homepage does rather than pinning itself to the dark reference it came from.
+   ========================================================================== */
 .xv-home-coding .xv-hc-headline {
-  font-family: var(--hc-font-sans);
-  font-weight: 700;
-  font-size: clamp(1.55rem, 4.6vw, 2.85rem);
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.06em;
   width: 100%;
+  max-width: none;
   margin: 0;
+  color: var(--hc-ink);
   text-align: center;
 }
 
-.xv-home-coding .xv-hc-headline-em {
-  font-family: var(--hc-font-serif);
-  font-style: italic;
-  font-weight: 600;
-  color: #dcecff;
+.xv-home-coding .xv-hc-headline__the {
+  font-family: var(--hc-font-pixel);
+  font-size: clamp(0.85rem, 1.7vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.1em;
 }
+
+.xv-home-coding .xv-hc-headline__agentic {
+  font-family: var(--hc-font-pixel);
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+
+/* The tag is a parallelogram, cut on the trailing edge only. `clip-path` rather than
+   a skew, because skewing the box would lean the letters with it. */
+.xv-home-coding .xv-hc-headline__way {
+  padding: 0.3em 1.1em 0.34em 0.7em;
+  /* The accent is dark in all four themes — the Beige brown included — so the label
+     on it is white in all four rather than following the page ink. */
+  background: var(--hc-blue);
+  color: #ffffff;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.6em) 100%, 0 100%);
+  font-family: var(--hc-font-pixel);
+  font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+}
+
+.xv-home-coding .xv-hc-headline__ship {
+  margin-top: 0.06em;
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.6rem, 9vw, 5.6rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+
 
 .xv-home-coding .xv-hc-headline-rotator {
   display: flex;
@@ -3638,10 +3683,8 @@ body.theme-beige .xv-home-coding h2,
 body.theme-beige .xv-home-coding h3,
 body.theme-beige .xv-home-coding h4,
 body.theme-beige .xv-home-coding strong { color:var(--hc-ink) !important; text-shadow:none; }
-body.theme-white .xv-home-coding .xv-hc-headline-em,
 body.theme-white .xv-home-coding .xv-hc-section-title em,
 body.theme-white .xv-home-coding .xv-hc-features-headline em,
-body.theme-beige .xv-home-coding .xv-hc-headline-em,
 body.theme-beige .xv-home-coding .xv-hc-section-title em,
 body.theme-beige .xv-home-coding .xv-hc-features-headline em { color:color-mix(in srgb,var(--hc-ink) 80%,var(--hc-blue)) !important; }
 body.theme-white .xv-home-coding .xv-hc-btn-ghost,
@@ -5937,7 +5980,6 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   text-shadow: none;
 }
 
-.xv-home-coding .xv-hc-headline-em,
 .xv-home-coding .xv-hc-section-title em,
 .xv-home-coding .xv-hc-features-headline em {
   color: color-mix(in srgb, var(--hc-ink) 78%, var(--hc-blue)) !important;
