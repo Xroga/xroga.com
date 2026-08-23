@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
+import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { ScrollReveal } from './ScrollReveal';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
@@ -116,8 +117,10 @@ export function AiAppBuilderLanding({
 }) {
   return (
     <div
-      className={`xab-page ${heroStyles.page}`}
+      className={`xab-page xv-theme-surface ${heroStyles.page}`}
     >
+      <ThemeBackdrop />
+
       <PageJsonLd
         path={`/${data.slug}`}
         name={data.title}

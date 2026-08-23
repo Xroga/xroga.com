@@ -1,7 +1,6 @@
 'use client';
 
 import { useId, useState } from 'react';
-import Image from 'next/image';
 import {
   Boxes,
   Database,
@@ -14,7 +13,6 @@ import {
   ShieldCheck,
   TerminalSquare,
 } from 'lucide-react';
-import { SOFTWARE_ART } from '@/lib/softwareArt';
 
 /**
  * The dark bento with working filters.
@@ -166,20 +164,6 @@ export function SoftwareFeatureTabs() {
               className={`xsw-card${feature ? ' xsw-card--feature' : ''}`}
               style={{ '--xsw-glow': card.glow } as React.CSSProperties}
             >
-              {feature ? (
-                <>
-                  <div className="xsw-media" aria-hidden="true">
-                    <Image
-                      src={SOFTWARE_ART.core}
-                      alt=""
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 1024px) 100vw, 33vw"
-                    />
-                  </div>
-                  <div className="xsw-scrim" aria-hidden="true" />
-                </>
-              ) : null}
               <span className="xsw-icon" aria-hidden="true"><Icon /></span>
               <h3>{card.title}</h3>
               <p>{card.body}</p>

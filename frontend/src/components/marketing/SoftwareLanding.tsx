@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   ArrowRight,
   Check,
@@ -23,6 +22,7 @@ import { Logo } from '@/components/layout/Logo';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { ScrollReveal } from './ScrollReveal';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { SoftwareHeader } from './SoftwareHeader';
 import { SoftwarePrompt } from './SoftwarePrompt';
@@ -32,7 +32,6 @@ import { SoftwareFeatureTabs } from './SoftwareFeatureTabs';
 // the ancestor class below is necessary but not sufficient on its own.
 import '@/styles/homepage-coding.css';
 import '@/styles/software-landing.css';
-import { SOFTWARE_ART as ART } from '@/lib/softwareArt';
 
 /**
  * /software — the Xroga Software World landing page.
@@ -94,7 +93,9 @@ const SOFTWARE_TYPES = [
 
 export function SoftwareLanding() {
   return (
-    <div className="xsw-page">
+    <div className="xsw-page xv-theme-surface">
+      <ThemeBackdrop />
+
       <PageJsonLd
         path="/software"
         name="Build Software with AI — Xroga"
@@ -103,10 +104,6 @@ export function SoftwareLanding() {
 
       {/* ---------------------------------------------------------------- hero */}
       <section className="xsw-hero">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.hero} alt="" fill priority sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <SoftwareHeader />
 
@@ -137,10 +134,6 @@ export function SoftwareLanding() {
 
       {/* ------------------------------------------------------------- problem */}
       <section className="xsw-problem" aria-labelledby="xsw-problem-heading">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.problem} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <div className="xsw-shell">
           <ScrollReveal>
@@ -176,10 +169,6 @@ export function SoftwareLanding() {
 
       {/* ------------------------------------------------------------ ai field */}
       <section className="xsw-field" aria-labelledby="xsw-field-heading">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.aiField} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <div className="xsw-shell">
           <ScrollReveal>
@@ -209,10 +198,6 @@ export function SoftwareLanding() {
 
       {/* --------------------------------------------------------------- build */}
       <section className="xsw-build" aria-labelledby="xsw-build-heading">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.build} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <div className="xsw-shell xsw-split">
           <ScrollReveal>
@@ -295,10 +280,6 @@ export function SoftwareLanding() {
 
       {/* ---------------------------------------------------------- repository */}
       <section className="xsw-repo" aria-labelledby="xsw-repo-heading">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.repository} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <div className="xsw-shell xsw-split">
           <ScrollReveal>
@@ -390,10 +371,6 @@ export function SoftwareLanding() {
 
       {/* ----------------------------------------------------------------- cta */}
       <section className="xsw-cta" aria-labelledby="xsw-cta-heading">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.cta} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
-        <div className="xsw-scrim" aria-hidden="true" />
 
         <div className="xsw-shell">
           <ScrollReveal>
@@ -414,9 +391,6 @@ export function SoftwareLanding() {
 
       {/* -------------------------------------------------------------- footer */}
       <footer className="xsw-footer">
-        <div className="xsw-media" aria-hidden="true">
-          <Image src={ART.footer} alt="" fill loading="lazy" sizes="100vw" quality={92} />
-        </div>
 
         <div className="xsw-footer__card">
           <div className="xsw-footer__top">

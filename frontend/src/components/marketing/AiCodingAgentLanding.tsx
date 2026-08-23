@@ -25,6 +25,7 @@ import {
 import { Logo } from '@/components/layout/Logo';
 import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
+import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { ScrollReveal } from './ScrollReveal';
 import { AiCodingAgentHeader } from './AiCodingAgentHeader';
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
@@ -131,8 +132,10 @@ const CHECK_LABELS = ['Lint', 'Type Check', 'Unit Tests', 'Build', 'Security'] a
 
 export function AiCodingAgentLanding() {
   return (
-    <div className="agx-page">
+    <div className="agx-page xv-theme-surface">
       <PageJsonLd path="/ai-coding-agent" name={data.title} description={data.description} />
+
+      <ThemeBackdrop />
 
       <AiCodingAgentHeader />
 
