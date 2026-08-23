@@ -3,10 +3,10 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import {
-  COMPANION_COSTUMES,
   DEFAULT_COMPANION_PREFERENCES,
   moodForOperation,
   OPERATION_LABELS,
+  resolveCostume,
   validateCompanionName,
   type CompanionCostume,
   type CompanionEventSource,
@@ -43,6 +43,11 @@ export function companionPreferencesFromUnknown(value: unknown): Partial<Compani
     if (!(key in source)) continue;
     (result as Record<string, unknown>)[key] = source[key];
   }
+  // The costume is the one key here that becomes a URL. Everything else is read
+  // back into a bounded control, but an unrecognised costume goes straight to an
+  // `<img>` src and draws a broken image — which is what a profile still holding
+  // the retired `coder` skin would do on every surface at once.
+  if ('costume' in result) result.costume = resolveCostume(result.costume);
   return result;
 }
 
@@ -123,16 +128,19 @@ export const useCompanionStore = create<CompanionState>()(
       name: 'xroga-companion',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => companionPreferencesSnapshot(state),
-      version: 4,
+      // Bumped to 5 when `coder` was retired. This is not bookkeeping: zustand only
+      // calls `migrate` when the stored version differs from this one, so leaving it
+      // at 4 would let every existing browser rehydrate its saved `coder` untouched —
+      // the migration below would never run for the only people who need it.
+      version: 5,
       migrate: (persisted) => {
         if (!persisted || typeof persisted !== 'object') return DEFAULT_COMPANION_PREFERENCES;
         const current = persisted as Partial<CompanionPreferences>;
-        const validCostume = COMPANION_COSTUMES.includes(current.costume as CompanionCostume);
         return {
           ...DEFAULT_COMPANION_PREFERENCES,
           ...current,
           name: !current.name || current.name === 'Xo' ? 'Smoky' : current.name,
-          costume: validCostume ? (current.costume as CompanionCostume) : DEFAULT_COMPANION_PREFERENCES.costume,
+          costume: resolveCostume(current.costume),
         };
       },
     },

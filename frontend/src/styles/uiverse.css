@@ -348,12 +348,105 @@
   transition: background 0.18s, transform 0.18s, color 0.18s, border-color 0.18s;
   text-align: left;
 }
+/* ── Sidebar row interaction ──────────────────────────────────────────────────
+   Hover used to be a flat fill swap, which reads the same on every theme and
+   gives no sense of the row being a control. Three layers replace it, all built
+   from the theme's own ink so they invert correctly on the dark themes rather
+   than being tuned for one palette:
+
+   1. A wash (::before) that fades and scales up from the row's own edge.
+   2. A rail (::after) on the leading edge that grows out of the centre.
+   3. The row itself shifts a couple of pixels toward the content.
+
+   The wash is `--text-primary` at low alpha rather than a fixed grey, so it is a
+   dark veil on the light themes and a light one on the dark themes — one rule,
+   four correct results. `color-mix` with `transparent` is what keeps that true;
+   a literal rgba could only ever suit half of them.
+
+   Everything animates on transform and opacity only, so the rows stay cheap to
+   paint while the nav is scrolling. */
+.xv-sidebar-menu a,
+.xv-sidebar-menu button.xv-menu-item,
+.xv-sidebar-menu .xv-hover-tip-wrap > a,
+.xv-sidebar-menu .xv-nav-group__trigger {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease,
+    box-shadow 220ms ease;
+}
+.xv-sidebar-menu a::before,
+.xv-sidebar-menu button.xv-menu-item::before,
+.xv-sidebar-menu .xv-hover-tip-wrap > a::before,
+.xv-sidebar-menu .xv-nav-group__trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--text-primary) 13%, transparent),
+    color-mix(in srgb, var(--text-primary) 6%, transparent) 62%,
+    transparent
+  );
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 200ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.xv-sidebar-menu a::after,
+.xv-sidebar-menu button.xv-menu-item::after,
+.xv-sidebar-menu .xv-hover-tip-wrap > a::after,
+.xv-sidebar-menu .xv-nav-group__trigger::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  width: 2px;
+  height: 0;
+  z-index: -1;
+  border-radius: 999rem;
+  background: var(--accent);
+  transform: translateY(-50%);
+  transition: height 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
 .xv-sidebar-menu a:hover,
 .xv-sidebar-menu button.xv-menu-item:hover,
-.xv-sidebar-menu .xv-hover-tip-wrap > a:hover {
-  background: var(--surface-inset);
-  transform: none;
+.xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
+.xv-sidebar-menu .xv-nav-group__trigger:hover {
+  background: transparent;
   color: var(--text-primary);
+  transform: translateX(2px);
+}
+.xv-sidebar-menu a:hover::before,
+.xv-sidebar-menu button.xv-menu-item:hover::before,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:hover::before,
+.xv-sidebar-menu .xv-nav-group__trigger:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+.xv-sidebar-menu a:hover::after,
+.xv-sidebar-menu button.xv-menu-item:hover::after,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:hover::after,
+.xv-sidebar-menu .xv-nav-group__trigger:hover::after {
+  height: 52%;
+}
+/* Keyboard reaches the same state the mouse does, plus the app's focus ring. */
+.xv-sidebar-menu a:focus-visible,
+.xv-sidebar-menu button.xv-menu-item:focus-visible,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:focus-visible,
+.xv-sidebar-menu .xv-nav-group__trigger:focus-visible {
+  outline: none;
+  color: var(--text-primary);
+  box-shadow: var(--focus-ring);
+}
+.xv-sidebar-menu a:focus-visible::before,
+.xv-sidebar-menu button.xv-menu-item:focus-visible::before,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:focus-visible::before,
+.xv-sidebar-menu .xv-nav-group__trigger:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
 }
 /* Active row is a solid high-contrast pill. Inverting the page's own text/surface
    pair keeps the contrast guaranteed and correct in every theme (dark pill on the
@@ -377,7 +470,89 @@
 .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover > .xv-animated-nav-icon {
   color: currentColor;
 }
-.xv-sidebar-menu a:active { transform: scale(0.98); }
+
+/* The selected row is lifted rather than merely filled, so it reads as the one
+   row in front of the others. The shadow is the theme's ink, which keeps it
+   visible on the dark themes where a black shadow would be invisible. */
+.xv-sidebar-menu a.xv-active,
+.xv-sidebar-menu button.xv-menu-item.xv-active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active {
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--text-primary) 55%, transparent);
+}
+/* The wash sits under an opaque fill, and the rail would be a second, competing
+   marker beside it. Neither belongs on a row that is already the selected one. */
+.xv-sidebar-menu a.xv-active::before,
+.xv-sidebar-menu button.xv-menu-item.xv-active::before,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active::before,
+.xv-sidebar-menu a.xv-active::after,
+.xv-sidebar-menu button.xv-menu-item.xv-active::after,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active::after {
+  content: none;
+}
+/* The group trigger is a disclosure, not a destination: it marks itself with the
+   accent rail rather than taking the solid pill a real route gets. */
+.xv-sidebar-menu .xv-nav-group__trigger.xv-active::after {
+  height: 52%;
+}
+
+/* Press: the row settles rather than jumping, and the wash tightens with it.
+   Kept on the same easing as the release so a click reads as one gesture. */
+.xv-sidebar-menu a:active,
+.xv-sidebar-menu button.xv-menu-item:active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:active,
+.xv-sidebar-menu .xv-nav-group__trigger:active {
+  transform: translateX(2px) scale(0.975);
+  transition-duration: 90ms;
+}
+.xv-sidebar-menu a:active::before,
+.xv-sidebar-menu button.xv-menu-item:active::before,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:active::before,
+.xv-sidebar-menu .xv-nav-group__trigger:active::before {
+  opacity: 1;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--text-primary) 20%, transparent),
+    color-mix(in srgb, var(--text-primary) 10%, transparent) 62%,
+    transparent
+  );
+}
+
+/* Motion is the whole point of the treatment, so with it suppressed the rows
+   fall back to the state change alone: the wash and rail still appear, they
+   just stop travelling. Removing the feedback entirely would leave the nav
+   less usable for the people this setting exists to help. */
+@media (prefers-reduced-motion: reduce) {
+  .xv-sidebar-menu a,
+  .xv-sidebar-menu button.xv-menu-item,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a,
+  .xv-sidebar-menu .xv-nav-group__trigger,
+  .xv-sidebar-menu a::before,
+  .xv-sidebar-menu button.xv-menu-item::before,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a::before,
+  .xv-sidebar-menu .xv-nav-group__trigger::before,
+  .xv-sidebar-menu a::after,
+  .xv-sidebar-menu button.xv-menu-item::after,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a::after,
+  .xv-sidebar-menu .xv-nav-group__trigger::after {
+    transition-duration: 1ms;
+  }
+  .xv-sidebar-menu a:hover,
+  .xv-sidebar-menu button.xv-menu-item:hover,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
+  .xv-sidebar-menu .xv-nav-group__trigger:hover,
+  .xv-sidebar-menu a:active,
+  .xv-sidebar-menu button.xv-menu-item:active,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:active,
+  .xv-sidebar-menu .xv-nav-group__trigger:active {
+    transform: none;
+  }
+  .xv-sidebar-menu a::before,
+  .xv-sidebar-menu button.xv-menu-item::before,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a::before,
+  .xv-sidebar-menu .xv-nav-group__trigger::before {
+    transform: scale(1);
+  }
+}
 
 /* ── Poda chatbar glow ── */
 .xv-poda {

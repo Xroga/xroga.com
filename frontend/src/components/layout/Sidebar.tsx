@@ -389,7 +389,7 @@ export function Sidebar({ displayName }: SidebarProps) {
     <>
       <div
         className={cn(
-          'xv-sidebar-brand border-b border-[var(--card-border)] shrink-0',
+          'xv-sidebar-brand shrink-0',
           navExpanded ? 'px-2 py-2' : 'flex flex-col items-center gap-2 px-2 py-2',
         )}
       >

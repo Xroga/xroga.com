@@ -30,6 +30,20 @@ describe('companion profile preferences', () => {
     assert.equal('crownEnabled' in (legacy.success ? legacy.data : {}), false);
   });
 
+  it('rewrites the retired coder costume instead of rejecting the save', () => {
+    // coder was the original default, so it is the stored costume for every account
+    // that never opened the wardrobe. Rejecting it would 400 their next profile save
+    // — including saves that have nothing to do with the companion.
+    const legacy = companionPreferencesSchema.safeParse({ ...valid, costume: 'coder' });
+    assert.equal(legacy.success, true);
+    assert.equal(legacy.success && legacy.data.costume, 'techwear');
+  });
+
+  it('still rejects a costume that never existed', () => {
+    // Accepting the one retired name must not turn the enum into a free-text field.
+    assert.equal(companionPreferencesSchema.safeParse({ ...valid, costume: 'wizard' }).success, false);
+  });
+
   it('does not persist the retired field', () => {
     const parsed = companionPreferencesSchema.parse(valid);
     assert.equal('crownEnabled' in parsed, false);
