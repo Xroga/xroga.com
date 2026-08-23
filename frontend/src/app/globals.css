@@ -8119,7 +8119,7 @@ body.theme-beige {
      The terminal takes `minmax(0, 1fr)` rather than a share of its own, so it absorbs
      the remainder and neither pane can be squeezed below its content. */
   .xv-workspace-body[data-workspace-open='true'] {
-    grid-template-columns: minmax(0, 1fr) var(--xv-workspace-width, 42%);
+    grid-template-columns: minmax(0, 1fr) auto var(--xv-workspace-width, 42%);
   }
 }
 

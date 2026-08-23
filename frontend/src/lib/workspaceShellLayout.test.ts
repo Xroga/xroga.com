@@ -179,7 +179,7 @@ test('the split is one animated grid, not a second mounted card', () => {
   // ratio this used to assert, so an untouched split is unchanged.
   assert.match(
     CSS,
-    /\.xv-workspace-body\[data-workspace-open='true'\] \{\s*grid-template-columns:\s*minmax\(0, 1fr\) var\(--xv-workspace-width/,
+    /\.xv-workspace-body\[data-workspace-open='true'\] \{\s*grid-template-columns:\s*minmax\(0, 1fr\) auto var\(--xv-workspace-width/,
   );
   assert.match(VIEW, /data-workspace-open=\{workspaceOpen \? 'true' : 'false'\}/);
 });

@@ -509,9 +509,19 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.getByRole('button', { name: 'Workspace' }).last().click();
   const wsPanel = page.locator('.xv-dev-workspace');
   await expect(wsPanel).toBeVisible();
+  // The split animates its grid columns over 280ms, so a rect read straight after
+  // opening is a frame of that animation rather than the settled width.
+  await page.waitForTimeout(600);
 
   const handle = page.locator('.xv-workspace-resize');
   await expect(handle).toBeVisible();
+  // Three children, three tracks. With two, the panel wraps to an implicit second row
+  // and takes the terminal's width — the drag then moves it the wrong way, which
+  // reads as a sign error in the maths and is not one.
+  const trackCount = await page
+    .locator('.xv-workspace-body')
+    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  expect(trackCount, 'the split needs a track for the handle as well').toBe(3);
   const beforeDrag = (await wsPanel.boundingBox())!;
   const handleBox = (await handle.boundingBox())!;
   await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);

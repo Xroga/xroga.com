@@ -59,9 +59,29 @@ test('the split width is a bounded share of the shell', () => {
   assert.ok(WORKSPACE_MAX_WIDTH <= 100, 'the share should be a percentage');
   assert.match(
     code,
-    /grid-template-columns:\s*minmax\(0, 1fr\) var\(--xv-workspace-width/,
+    /grid-template-columns:\s*minmax\(0, 1fr\) auto var\(--xv-workspace-width/,
     'the workspace column must follow the stored width',
   );
+});
+
+test('the split has a track for every child', () => {
+  /*
+   * The open split holds three children: the terminal pane, the drag handle and the
+   * panel. A two-track template silently wraps the third onto an implicit second row,
+   * where it takes the first column's width — so dragging resizes the handle's track
+   * and the panel moves the *wrong way*. It looks like a sign error in the drag maths
+   * and is not one, which is what made it worth its own guard.
+   */
+  const open = code.indexOf(".xv-workspace-body[data-workspace-open='true'] {");
+  assert.notEqual(open, -1, 'the open split has no columns');
+  const columns = code.slice(code.indexOf('grid-template-columns', open), code.indexOf('}', open));
+  const tracks = columns.split(':')[1].trim().replace(/\(([^)]*)\)/g, (m) => m.replace(/\s/g, '')).split(/\s+/);
+  assert.equal(tracks.length, 3, `the open split declares ${tracks.length} tracks for three children`);
+
+  const children = ['xv-terminal-panel', 'xv-workspace-resize', 'xv-dev-workspace'];
+  for (const child of children) {
+    assert.ok(DASH.includes(child) || PANEL.includes(child), `${child} is not in the split`);
+  }
 });
 
 test('clamping lives in the setter and on the way back out', () => {
