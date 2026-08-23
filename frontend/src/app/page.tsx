@@ -24,6 +24,7 @@ import {
   Globe2,
   LayoutDashboard,
   LayoutTemplate,
+  LogIn,
   MonitorCog,
   PanelsTopLeft,
   Puzzle,
@@ -86,27 +87,46 @@ export default function HomePage() {
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />
+            {/*
+              Theme and the account control share one segmented surface, divided by a
+              hairline, rather than sitting as two detached buttons.
+
+              Get Started stays outside it. Signed out, that is the page's conversion
+              action, and flattening it into a neutral segment of equal weight would
+              cost the homepage its primary call to action to gain a tidier header.
+              Signed in there is no such action, so the group is the whole control.
+            */}
             {authReady && (
               <div className="flex items-center gap-2">
-                <HomepageThemeSwitcher />
-                {!loggedIn && (
-                  <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
-                    Sign In
-                  </Link>
-                )}
-                <button
-                  type="button"
-                  aria-label={loggedIn ? 'Open Dashboard' : 'Get Started'}
-                  onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}
-                  className="xv-hc-btn-primary xv-hc-dashboard-action !min-h-[2.4rem] !px-4 !text-[0.7rem]"
-                >
+                <div className="xv-hc-headgroup">
+                  <HomepageThemeSwitcher />
                   {loggedIn ? (
-                    <>
-                      <LayoutDashboard className="xv-hc-dashboard-icon" aria-hidden="true" />
-                      <span className="xv-hc-dashboard-label">Dashboard</span>
-                    </>
-                  ) : 'Get Started'}
-                </button>
+                    <button
+                      type="button"
+                      aria-label="Open Dashboard"
+                      onClick={() => router.push('/workspace')}
+                      className="xv-hc-headgroup__seg"
+                    >
+                      <LayoutDashboard className="xv-hc-seg-icon" aria-hidden="true" />
+                      <span className="xv-hc-seg-label">Dashboard</span>
+                    </button>
+                  ) : (
+                    <Link href="/auth/login" className="xv-hc-headgroup__seg">
+                      <LogIn className="xv-hc-seg-icon" aria-hidden="true" />
+                      <span className="xv-hc-seg-label">Sign In</span>
+                    </Link>
+                  )}
+                </div>
+                {!loggedIn && (
+                  <button
+                    type="button"
+                    aria-label="Get Started"
+                    onClick={() => router.push('/auth/signup')}
+                    className="xv-hc-btn-primary !min-h-[2.4rem] !px-4 !text-[0.7rem]"
+                  >
+                    Get Started
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -151,9 +171,9 @@ export default function HomePage() {
 
       <HomepageFaqSection />
 
-      {/* Community and Share Feedback moved out of the hero so it stays focused on the
+      {/* Community and Feedback moved out of the hero so it stays focused on the
           product and its primary action. Both keep the same behaviour: Community links
-          to the existing page, and Share Feedback opens the existing modal. */}
+          to the existing page, and Feedback opens the existing modal. */}
       <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
         <div className="xv-hc-community-scrim" aria-hidden="true" />
         <div className="xv-hc-section-inner">
@@ -167,14 +187,17 @@ export default function HomePage() {
             Xroga.
           </p>
           <div className="xv-hc-ctas">
+            {/* The section heading and copy already say what these do, so the verbs
+                the labels used to carry ("Open", "Share", "Read the") were repeating
+                context the reader has just been given. */}
             <Link href="/community" className="xv-hc-btn-primary">
-              Open Community
+              Community
             </Link>
             <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">
-              Share Feedback
+              Feedback
             </button>
             <Link href="/docs" className="xv-hc-btn-ghost">
-              Read the docs
+              Docs
             </Link>
           </div>
         </div>

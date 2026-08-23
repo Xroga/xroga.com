@@ -6026,25 +6026,102 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
   background: rgba(239, 222, 194, 0.82);
 }
 
-.xv-home-coding .xv-hc-dashboard-action {
-  gap: 0.45rem;
+/* ── Header segmented control ──────────────────────────────────────────────
+   Theme and the account control share one surface divided by a hairline, rather
+   than sitting as two detached buttons.
+
+   The group takes its surface, ink and border from the theme tokens, so the four
+   themes produce the four looks without a rule each: white on White, cream on
+   Beige, and the two dark grounds on Gray and Black, each with the matching ink.
+
+   The segments deliberately carry no ground of their own at rest. Two nested
+   backgrounds on one control read as buttons inside a box; one ground with a
+   divider reads as a single segmented control, which is the whole point. */
+.xv-home-coding .xv-hc-headgroup {
+  --hg-radius: 999rem;
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--hc-border-strong, var(--hc-border));
+  border-radius: var(--hg-radius);
+  background: var(--hc-surface-solid);
+  color: var(--hc-ink);
+  box-shadow: 0 10px 26px var(--hc-shadow);
 }
 
-.xv-home-coding .xv-hc-dashboard-icon {
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-switcher {
+  display: flex;
+}
+
+/* Deliberately not `overflow: hidden`, which is the obvious way to keep a hover
+   ground inside the rounded ends and would clip the theme menu that anchors
+   below the trigger. The end segments carry the radius themselves instead. */
+.xv-home-coding .xv-hc-headgroup > :first-child,
+.xv-home-coding .xv-hc-headgroup > :first-child > .xv-home-theme-trigger {
+  border-start-start-radius: var(--hg-radius);
+  border-end-start-radius: var(--hg-radius);
+}
+
+.xv-home-coding .xv-hc-headgroup > :last-child,
+.xv-home-coding .xv-hc-headgroup > :last-child > .xv-home-theme-trigger {
+  border-start-end-radius: var(--hg-radius);
+  border-end-end-radius: var(--hg-radius);
+}
+
+/* One selector for both segments: the theme trigger is a button inside its own
+   positioned wrapper (the menu anchors to it), the other is a direct child. */
+.xv-home-coding .xv-hc-headgroup__seg,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger {
+  display: inline-flex;
+  min-height: 2.4rem;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  backdrop-filter: none;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.18s ease;
+}
+
+.xv-home-coding .xv-hc-headgroup__seg:hover,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger:hover {
+  background: color-mix(in srgb, var(--hc-ink) 8%, transparent);
+}
+
+/* The divider sits on the second segment. Built from the theme ink so it is a
+   dark hairline on the light themes and a light one on the dark themes. */
+.xv-home-coding .xv-hc-headgroup > * + * {
+  border-left: 1px solid color-mix(in srgb, var(--hc-ink) 15%, transparent);
+}
+
+.xv-home-coding .xv-hc-seg-icon {
   width: 1rem;
   height: 1rem;
   flex: none;
 }
 
 @media (max-width: 640px) {
-  .xv-home-coding .xv-hc-dashboard-action {
-    width: 2.4rem;
-    min-width: 2.4rem;
-    padding-inline: 0 !important;
-    border-radius: 0.8rem;
+  /* Labels drop and the group becomes the compact icon-only control, which is
+     also where the pill radius gives way to a rounded rectangle — a pill around
+     two square-ish cells reads as a lozenge rather than a control. */
+  /* The custom property, not `border-radius` — the end segments read their own
+     corners from it, so setting the shorthand alone would round the group while
+     leaving pill-shaped ends on the segments inside it. */
+  .xv-home-coding .xv-hc-headgroup {
+    --hg-radius: 0.85rem;
   }
 
-  .xv-home-coding .xv-hc-dashboard-label {
+  .xv-home-coding .xv-hc-headgroup__seg,
+  .xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger {
+    padding-inline: 0.7rem;
+  }
+
+  .xv-home-coding .xv-hc-seg-label {
     position: absolute;
     width: 1px;
     height: 1px;
