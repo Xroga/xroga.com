@@ -3567,8 +3567,11 @@ body.theme-gray * {
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
-  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open),
-  body.xv-terminal-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
+  /* Page fullscreen still hides the sidebar outright. Terminal fullscreen does not:
+     `visibility: hidden` stops the aside painting but leaves its width reserved in
+     the flex row, so the terminal began after a band of empty page. It collapses to
+     the icon rail instead — see `effectiveSidebarOpen` in Sidebar.tsx. */
+  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
     visibility: hidden;
     pointer-events: none;
   }
@@ -3643,6 +3646,15 @@ body.theme-gray * {
     z-index: 210 !important;
     left: 0 !important;
     right: 0 !important;
+  }
+  /* The composer starts after the rail rather than running beneath it, so it lines
+     up with the terminal it belongs to instead of with the window. The rail only
+     exists from `lg` up — below that the sidebar is a drawer and the composer keeps
+     the full width. */
+  @media (min-width: 1024px) {
+    body.xv-terminal-fullscreen-active .xv-terminal-dock {
+      left: var(--xv-fullscreen-rail, 64px) !important;
+    }
   }
   body.xv-terminal-fullscreen-active .xv-terminal-dock--fullscreen {
     background: linear-gradient(to top, var(--background) 72%, transparent);
@@ -8531,7 +8543,8 @@ body.theme-beige {
   margin: 0;
   z-index: 80;
   /* Never wider than the composer it is attached to — a menu whose corner sticks out
-     past the bar's edge stops reading as part of it. */
+     past the bar's edge stops reading as part of it. The two-column list widens this
+     from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */
   width: min(360px, 100%);
   max-height: min(520px, calc(100dvh - 150px));
   overflow-y: auto;
@@ -8566,6 +8579,37 @@ body.theme-beige {
 .xv-cba-menu::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
+}
+
+/* ---- the root list --------------------------------------------------------
+   Two columns from `sm` up. In one column the list ran to roughly three times its
+   own width, which is what made it read as a page rather than a menu; paired off,
+   height and width land close to each other.
+
+   Separators and the wide rows span the full grid. A separator confined to one
+   column would divide half a list, which says something the layout does not mean. */
+.xv-cba-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  align-content: start;
+}
+
+@media (min-width: 640px) {
+  /* Wide enough that the longest description ("Get the approach first, change
+     nothing yet") fits one line per column; below this it wraps and that row alone
+     drags the grid taller, which is the height the two columns were meant to save. */
+  .xv-cba-menu:has(.xv-cba-grid) {
+    width: min(620px, 100%);
+  }
+  .xv-cba-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 6px;
+  }
+  .xv-cba-grid > .xv-cba-sep,
+  .xv-cba-grid > .xv-cba-item--wide {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ---- menu rows ------------------------------------------------------------ */

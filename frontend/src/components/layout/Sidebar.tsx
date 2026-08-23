@@ -273,7 +273,22 @@ export function Sidebar({ displayName }: SidebarProps) {
     }
   }
 
-  const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
+  /**
+   * Fullscreen collapses the sidebar to its rail rather than hiding it.
+   *
+   * It used to be hidden with `visibility: hidden`, which stops it painting but
+   * leaves its width in the layout — this element is a flex sibling of the stage,
+   * so the terminal went on starting after a band of empty page as wide as
+   * whatever the user had dragged the sidebar to. That was the "fullscreen does
+   * not fill the screen" symptom: nothing was oversized, the space was reserved
+   * for something invisible.
+   *
+   * Collapsing gives the width back and keeps the rail — the logo, the sidebar
+   * toggle, search and a new terminal — reachable without leaving fullscreen.
+   * `sidebarOpen` itself is untouched, so exiting fullscreen restores the width
+   * the user had chosen.
+   */
+  const effectiveSidebarOpen = (hydrated ? sidebarOpen : true) && !terminalFullscreen;
   const asideWidth: number | string = effectiveSidebarOpen
     ? hydrated
       ? sidebarWidth
