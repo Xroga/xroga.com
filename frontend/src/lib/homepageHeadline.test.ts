@@ -74,7 +74,9 @@ test('the composition uses the two display faces, not the UI sans', () => {
     );
   }
   const ship = ruleBody('.xv-home-coding .xv-hc-headline__ship');
-  assert.match(ship, /font-style:\s*italic/, 'the payoff is set in italic');
+  // Upright, not italic: the reference wordmark is a roman serif. This assertion used
+  // to require the italic and failed honestly when the reference changed.
+  assert.match(ship, /font-style:\s*normal/, 'the payoff is set upright, like the reference wordmark');
   assert.match(
     ship,
     /var\(--font-claude-serif\)/,

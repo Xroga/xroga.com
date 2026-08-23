@@ -22,6 +22,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.6.0",
     "sharp": "0.35.3",
+    "simple-icons": "^16.28.0",
     "tailwind-merge": "^3.6.0",
     "xroga": "file:..",
     "zustand": "^5.0.14"

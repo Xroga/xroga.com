@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CODING_LANGUAGES } from '@/lib/codingLanguages';
 import {
   AppWindow,
   Bot,
@@ -87,6 +88,21 @@ export function HomepageBuildStrip() {
         <span>And<br />More</span>
         <ChevronRight aria-hidden="true" />
       </Link>
+
+      {/*
+        The language lane. Each mark is the project's own, drawn from its official
+        single path, so nothing here is redrawn or approximated.
+      */}
+      <ul className="xv-hc-strip__langs" aria-label="Languages Xroga writes">
+        {CODING_LANGUAGES.map((lang) => (
+          <li key={lang.title} className="xv-hc-strip__lang">
+            <svg viewBox="0 0 24 24" aria-hidden="true" style={{ fill: lang.color }}>
+              <path d={lang.path} />
+            </svg>
+            {lang.title}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
