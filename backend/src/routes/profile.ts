@@ -17,10 +17,20 @@ export const companionPreferencesSchema = z.object({
   voiceEnabled: z.boolean(),
   careEnabled: z.boolean(),
   reducedGamification: z.boolean(),
-  crownEnabled: z.boolean(),
+  /**
+   * Retired, and accepted only so an old bundle can still save.
+   *
+   * `crownEnabled` drew an X badge across the companion's face. It is gone from the
+   * client, but this object is `.strict()`, so a browser still running the previous
+   * bundle would have every `PATCH /api/profile` rejected with a 400 and would lose
+   * preference writes for as long as its cache lived. Accepting the key and dropping
+   * it keeps those clients working while storage converges on the new shape — no row
+   * written from here carries it forward.
+   */
+  crownEnabled: z.boolean().optional(),
   mantleEnabled: z.boolean(),
   lastFedAt: z.string().datetime().nullable(),
-}).strict();
+}).strict().transform(({ crownEnabled: _retired, ...preferences }) => preferences);
 
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
