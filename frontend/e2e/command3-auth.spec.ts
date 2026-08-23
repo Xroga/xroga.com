@@ -504,10 +504,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(rail.getByRole('link', { name: 'Settings' })).toHaveCount(0);
   // And it sits at the bottom of the rail rather than under the shortcuts. The rail
   // was sized to its contents, which left `mt-auto` with nothing to work against.
-  const railBox = (await rail.boundingBox())!;
+  // Re-measured rather than reusing the earlier `railBox`: the rail changes height
+  // between those two points, and a stale rect would be asserting about a box that
+  // is no longer on screen.
+  const collapsedRailBox = (await rail.boundingBox())!;
   const profileBox = (await railProfile.boundingBox())!;
   expect(
-    railBox.y + railBox.height - (profileBox.y + profileBox.height),
+    collapsedRailBox.y + collapsedRailBox.height - (profileBox.y + profileBox.height),
     'the account sits near the top of the rail rather than at its foot',
   ).toBeLessThan(40);
   await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
