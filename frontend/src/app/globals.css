@@ -2906,6 +2906,53 @@ body.theme-gray * {
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     outline: none;
   }
+
+  /* The rail's footer: account, plan and settings, matching the expanded sidebar's
+     own footer rather than being a reduced version of it. */
+  .xv-sidebar-rail-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0 10px;
+  }
+  .xv-sidebar-rail-profile {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .xv-sidebar-rail-action {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--text-secondary, var(--muted));
+    transition: color 150ms ease, background 150ms ease;
+  }
+  .xv-sidebar-rail-action:hover,
+  .xv-sidebar-rail-action:focus-visible {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    outline: none;
+  }
+  .xv-sidebar-rail-action.xv-active {
+    color: var(--surface-page);
+    background: var(--text-primary);
+  }
+  /* Plan keeps the filled treatment it has in the expanded footer, so the same
+     control is recognisable at either width. */
+  .xv-sidebar-rail-action.is-plan {
+    color: var(--background);
+    background: var(--foreground);
+  }
+  .xv-sidebar-rail-action.is-plan:hover,
+  .xv-sidebar-rail-action.is-plan:focus-visible {
+    color: var(--background);
+    background: var(--foreground);
+    opacity: 0.9;
+  }
   @container (max-width: 279px) {
     .xv-new-terminal-compact {
       width: 28px;
@@ -8065,9 +8112,96 @@ body.theme-beige {
 }
 
 @media (min-width: 1024px) {
+  /* The workspace column is whatever width the user dragged it to. It was a fixed
+     `1.4fr / minmax(360px, 1fr)`; the ratio is now the default value of the stored
+     share, so an untouched split looks the same as it always did.
+
+     The terminal takes `minmax(0, 1fr)` rather than a share of its own, so it absorbs
+     the remainder and neither pane can be squeezed below its content. */
   .xv-workspace-body[data-workspace-open='true'] {
-    grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto var(--xv-workspace-width, 42%);
   }
+}
+
+/* The drag handle sits on the seam between the panes. It is 8px of hit area over a
+   1px seam — a 1px target is a coin toss with a mouse — and paints nothing at rest so
+   it does not read as a third divider next to the panel's own edge. */
+.xv-workspace-resize {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .xv-workspace-body[data-workspace-open='true'] .xv-workspace-resize {
+    position: relative;
+    z-index: 6;
+    display: block;
+    width: 8px;
+    margin-inline: -4px;
+    cursor: col-resize;
+    touch-action: none;
+    background: transparent;
+  }
+  .xv-workspace-resize::after {
+    position: absolute;
+    top: 12%;
+    bottom: 12%;
+    left: 50%;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--accent);
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 160ms ease;
+    content: '';
+  }
+  .xv-workspace-resize:hover::after,
+  .xv-workspace-resize:focus-visible::after,
+  body.xv-workspace-resizing .xv-workspace-resize::after {
+    opacity: 0.75;
+  }
+  .xv-workspace-resize:focus-visible {
+    outline: none;
+  }
+}
+
+/* A drag that crosses the panes must not select their text or flip the cursor back
+   to a caret halfway through. */
+body.xv-workspace-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.xv-workspace-resizing .xv-workspace-body {
+  transition: none;
+}
+
+/* ---- expanded workspace preview ------------------------------------------
+   The preview takes the viewport. Everything that belongs to the shell around it
+   stands down: the composer, the sidebar rail and the sidebar's own toggles are
+   siblings of this panel, not descendants, so they are switched off from `body`.
+
+   `display: none` rather than `visibility: hidden` — a hidden sidebar keeps its
+   width and would leave a band of shell down the side of a "full" preview, which is
+   exactly the bug this file already carries a note about for terminal fullscreen. */
+body.xv-workspace-expanded-active .xv-terminal-dock,
+body.xv-workspace-expanded-active .xv-sidebar-root,
+body.xv-workspace-expanded-active .xv-sidebar-edge-toggle,
+body.xv-workspace-expanded-active .xv-mobile-menu-btn,
+body.xv-workspace-expanded-active .xv-mobile-workspace-header,
+body.xv-workspace-expanded-active .xv-home-companion-stage {
+  display: none !important;
+}
+
+/* No hard outline. The edge is a soft shadow and a barely-there hairline, so the
+   panel reads as lifted rather than as a box drawn on the screen. At `inset: 0` a
+   real border would also be clipped by the viewport on all four sides anyway. */
+.xv-workspace-expanded {
+  border: 0;
+  border-radius: 0;
+  background: var(--app-panel, var(--surface-raised));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 7%, transparent),
+    0 30px 90px rgba(0, 0, 0, 0.45);
 }
 
 /* Phones and small tablets get one pane at a time. Two 180px columns is not a split

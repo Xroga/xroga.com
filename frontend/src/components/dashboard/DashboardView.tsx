@@ -8,7 +8,11 @@ import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
-import { useThemeStore } from '@/store/useThemeStore';
+import {
+  useThemeStore,
+  WORKSPACE_MAX_WIDTH,
+  WORKSPACE_MIN_WIDTH,
+} from '@/store/useThemeStore';
 import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
@@ -45,6 +49,62 @@ export function DashboardView() {
   const incognito = hydrated && incognitoRaw;
   const paneRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const workspaceWidth = useThemeStore((s) => s.workspaceWidth);
+  const setWorkspaceWidth = useThemeStore((s) => s.setWorkspaceWidth);
+
+  /**
+   * Drag the split to any width.
+   *
+   * The width is stored as a share of the shell rather than in pixels, so the drag
+   * converts the pointer's position into one: the panel's edge is wherever the
+   * pointer is, expressed as the remaining fraction of the body. That keeps the split
+   * where the user put it when the sidebar opens or the window resizes, which a pixel
+   * width would not — it would keep its size and eat the terminal instead.
+   *
+   * Clamping lives in the store's setter, so the keyboard path below gets the same
+   * bounds without repeating them.
+   */
+  function startWorkspaceResize(e: React.PointerEvent<HTMLDivElement>) {
+    e.preventDefault();
+    const body = bodyRef.current;
+    if (!body) return;
+    document.body.classList.add('xv-workspace-resizing');
+
+    function onMove(ev: PointerEvent) {
+      const rect = body!.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      setWorkspaceWidth(((rect.right - ev.clientX) / rect.width) * 100);
+    }
+    function onUp() {
+      document.body.classList.remove('xv-workspace-resizing');
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp, { once: true });
+    document.addEventListener('pointercancel', onUp, { once: true });
+  }
+
+  /* A separator that only responds to a pointer is unusable without one. Arrows move
+     the split, Home and End take it to its bounds. */
+  function onWorkspaceResizeKey(e: React.KeyboardEvent<HTMLDivElement>) {
+    const step = e.shiftKey ? 8 : 2;
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setWorkspaceWidth(workspaceWidth + step);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setWorkspaceWidth(workspaceWidth - step);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setWorkspaceWidth(WORKSPACE_MIN_WIDTH);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setWorkspaceWidth(WORKSPACE_MAX_WIDTH);
+    }
+  }
   /* The same source the terminal window has always used. `AppShell` keeps this in step
      with the page theme while the user is letting it track; deriving it from the theme
      here instead would silently override a skin the user picked by hand. */
@@ -167,10 +227,32 @@ export function DashboardView() {
           )}
         </header>
 
-        <div className="xv-workspace-body" data-workspace-open={workspaceOpen ? 'true' : 'false'}>
+        <div
+          ref={bodyRef}
+          className="xv-workspace-body"
+          data-workspace-open={workspaceOpen ? 'true' : 'false'}
+          style={{ '--xv-workspace-width': `${workspaceWidth}%` } as React.CSSProperties}
+        >
           <div className="xv-terminal-panel" ref={paneRef}>
             {terminalPane}
           </div>
+          {/* The split is draggable. Rendered only while the workspace is open, so a
+              closed workspace has no invisible grab strip down the middle of the
+              terminal. */}
+          {workspaceOpen ? (
+            <div
+              role="separator"
+              aria-label="Resize workspace panel"
+              aria-orientation="vertical"
+              aria-valuemin={WORKSPACE_MIN_WIDTH}
+              aria-valuemax={WORKSPACE_MAX_WIDTH}
+              aria-valuenow={Math.round(workspaceWidth)}
+              tabIndex={0}
+              className="xv-workspace-resize"
+              onPointerDown={startWorkspaceResize}
+              onKeyDown={onWorkspaceResizeKey}
+            />
+          ) : null}
           {/* Renders nothing while closed. The split itself is animated by the body's
               grid columns, so the terminal still widens and narrows smoothly whether or
               not the panel is in the tree. */}

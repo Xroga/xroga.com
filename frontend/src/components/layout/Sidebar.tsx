@@ -363,6 +363,60 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
 
+  /**
+   * The same footer, for the collapsed rail.
+   *
+   * The rail carried the logo and three shortcuts and nothing else, so collapsing the
+   * sidebar — which is now also what fullscreen does — took the account away with it:
+   * no avatar, no way to reach Settings, no plan. Signing out meant expanding the
+   * sidebar first, which is not a thing a user should have to work out.
+   *
+   * Each row is the icon alone with a tip, and the same destination as its expanded
+   * counterpart, so the rail is a narrower view of the sidebar rather than a reduced
+   * one. Only one of the two renders at a time, so the profile anchor is shared.
+   */
+  const railBottom = (
+    <div className="xv-sidebar-rail-bottom mt-auto">
+      {displayName ? (
+        <div ref={profileRowRef} className="xv-sidebar-rail-profile">
+          {incognito ? (
+            <IncognitoProfileBox size="sidebar" />
+          ) : (
+            <UserProfileBox
+              url={avatarUrl}
+              initial={nameInitial}
+              size="sidebar"
+              onClick={() => setAvatarPickerOpen(true)}
+            />
+          )}
+          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
+        </div>
+      ) : null}
+
+      <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
+        <Link
+          href="/pricing"
+          onClick={handleNavClick}
+          aria-label="View Xroga AI plan"
+          className="xv-sidebar-rail-action is-plan"
+        >
+          <Zap className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </HoverTip>
+
+      <HoverTip label="Settings" description="Theme, terminal skin, account, and preferences.">
+        <Link
+          href="/settings"
+          onClick={handleNavClick}
+          aria-label="Settings"
+          className={cn('xv-sidebar-rail-action', isActive('/settings') && 'xv-active')}
+        >
+          <Settings className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </HoverTip>
+    </div>
+  );
+
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
       {/* The plan link used to be a full-width button of its own above the profile,
@@ -550,7 +604,7 @@ export function Sidebar({ displayName }: SidebarProps) {
         </nav>
       </SidebarNavScroller> : <div className="flex-1" aria-hidden="true" />}
 
-      {navExpanded ? bottomSection : null}
+      {navExpanded ? bottomSection : railBottom}
     </>
   );
 
