@@ -485,17 +485,31 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(restoredRail.width, 'the sidebar did not reopen after fullscreen').toBeGreaterThan(72);
 
   /**
-   * The collapsed rail is a narrower sidebar, not a reduced one.
+   * The collapsed rail keeps the account, and keeps it at the bottom.
    *
-   * It used to carry the logo and three shortcuts and nothing else, so collapsing —
-   * which is also what fullscreen now does — took the account with it. Signing out
-   * meant expanding the sidebar first.
+   * The rail used to carry the logo and three shortcuts and nothing else, so
+   * collapsing — which is also what fullscreen now does — took the account with it,
+   * and signing out meant expanding the sidebar first.
+   *
+   * Plan and Settings are deliberately *not* on the rail: they were three separate
+   * targets stacked in a 64px column for destinations the account menu already
+   * lists. Both halves are asserted, because "carries the account" and "carries only
+   * the account" are different claims and only one of them is about the avatar.
    */
   await terminalHeader.getByRole('button', { name: 'Fullscreen terminal' }).click();
   await page.waitForTimeout(400);
-  await expect(rail.getByRole('link', { name: 'View Xroga AI plan' })).toBeVisible();
-  await expect(rail.getByRole('link', { name: 'Settings' })).toBeVisible();
-  await expect(rail.locator('.xv-sidebar-rail-profile')).toBeVisible();
+  const railProfile = rail.locator('.xv-sidebar-rail-profile');
+  await expect(railProfile).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'View Xroga AI plan' })).toHaveCount(0);
+  await expect(rail.getByRole('link', { name: 'Settings' })).toHaveCount(0);
+  // And it sits at the bottom of the rail rather than under the shortcuts. The rail
+  // was sized to its contents, which left `mt-auto` with nothing to work against.
+  const railBox = (await rail.boundingBox())!;
+  const profileBox = (await railProfile.boundingBox())!;
+  expect(
+    railBox.y + railBox.height - (profileBox.y + profileBox.height),
+    'the account sits near the top of the rail rather than at its foot',
+  ).toBeLessThan(40);
   await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
   await page.waitForTimeout(400);
 

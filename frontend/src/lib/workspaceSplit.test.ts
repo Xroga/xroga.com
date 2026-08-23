@@ -194,5 +194,8 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /dragging the split left did not widen the workspace panel/);
   assert.match(E2E, /dragging the split right did not narrow the panel/);
   assert.match(E2E, /the expanded preview does not span the viewport/);
-  assert.match(E2E, /the collapsed rail is a narrower sidebar|View Xroga AI plan/);
+  // Anchored on the bottom-position check rather than on a link name: the plan link
+  // still appears in the spec, inside the assertion that it must NOT be on the rail,
+  // so matching its name would pass either way.
+  assert.match(E2E, /the account sits near the top of the rail rather than at its foot/);
 });
