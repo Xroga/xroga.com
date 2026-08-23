@@ -113,10 +113,6 @@ export default function HomePage() {
         </header>
 
         <div className="xv-hc-hero-main">
-          <p className="xv-hc-badge">
-            <span className="xv-hc-badge-dot" aria-hidden />
-            XROGA AI CODING AGENT
-          </p>
 
           <div className="xv-hc-headline-block">
             {/*

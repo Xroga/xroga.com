@@ -96,6 +96,45 @@ test('the strip stays compact and self-contained', () => {
   assert.ok(padding && Number(padding) <= 0.6, `the strip padding is ${padding}rem; it is meant to be a thin bar`);
 });
 
+test('the hero badge is gone', () => {
+  assert.ok(!PAGE.includes('xv-hc-badge'), 'the XROGA AI CODING AGENT badge should be removed');
+});
+
+test('twenty languages ship with their own marks', () => {
+  const LANGS = read('./codingLanguages.ts');
+
+  // From the package, not its CDN: the marks belong in the bundle rather than behind a
+  // runtime dependency on a third-party host, and an unknown slug becomes a build error
+  // instead of a broken image nobody sees until production.
+  assert.ok(LANGS.includes("from 'simple-icons'"), 'the marks come from the package');
+  assert.ok(!/cdn\.simpleicons\.org/.test(LANGS + STRIP), 'no runtime CDN dependency');
+
+  const imported = [...LANGS.matchAll(/^\s{2}(si[A-Z]\w*),$/gm)].map((m) => m[1]);
+  assert.equal(imported.length, 20, `expected 20 language marks, found ${imported.length}`);
+  assert.equal(new Set(imported).size, 20, 'each language appears once');
+
+  // Names come from the icon itself, so a mark can never be shown under another
+  // project's name — the reason Java and C# are not in this list at all.
+  assert.ok(LANGS.includes('title: icon.title'), 'the label must come from the mark');
+  assert.ok(!/'Java'|"Java"|'C#'|"C#"/.test(LANGS), 'no mark may be relabelled as one it is not');
+
+  assert.ok(STRIP.includes('CODING_LANGUAGES'), 'the strip renders the language lane');
+  assert.ok(/<path d=\{lang\.path\}/.test(STRIP), 'each logo draws its own official path');
+});
+
+test('the strip wraps so each lane gets its own row', () => {
+  const at = CSS.indexOf('.xv-home-coding .xv-hc-strip {');
+  const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
+  // Without this the lane is a flex item on the build-target row and squeezes five of
+  // the ten out of view, with the end cap landing mid-row.
+  assert.match(body, /flex-wrap:\s*wrap/, 'the strip must wrap or the two lanes fight for one row');
+
+  const laneAt = CSS.indexOf('.xv-home-coding .xv-hc-strip__langs {');
+  assert.notEqual(laneAt, -1, 'the language lane has no styles');
+  const lane = CSS.slice(CSS.indexOf('{', laneAt) + 1, CSS.indexOf('}', laneAt));
+  assert.match(lane, /flex:\s*1 1 100%/, 'the lane takes a full row of its own');
+});
+
 test('the narrow layout scrolls the list rather than crushing it', () => {
   // Ten cells will not fit a phone. They keep their size and the row scrolls.
   const at = CSS.indexOf('.xv-home-coding .xv-hc-strip__item {');

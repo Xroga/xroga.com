@@ -851,10 +851,12 @@
   margin-top: 0.06em;
   font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
   font-size: clamp(2.6rem, 9vw, 5.6rem);
-  font-style: italic;
-  font-weight: 500;
+  /* Upright, matching the Claude wordmark in the reference — that mark is a roman
+     serif, not an italic one. The weight and tracking come with it. */
+  font-style: normal;
+  font-weight: 400;
   line-height: 1.02;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
 }
 
 
@@ -6621,6 +6623,10 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   --strip-ink: #eaf3ff;
 
   display: flex;
+  /* Wraps so the language lane takes a row of its own. Without this the lane is a
+     flex item on the same line and squeezes the build targets: five of the ten were
+     pushed out of view and the end cap landed mid-row. */
+  flex-wrap: wrap;
   align-items: stretch;
   gap: 0;
   width: min(1120px, 100% - 2rem);
@@ -6663,7 +6669,8 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 
 .xv-home-coding .xv-hc-strip__list {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  min-width: 0;
   gap: 0;
   margin: 0;
   padding: 0;
@@ -6768,4 +6775,45 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 
 @media (prefers-reduced-motion: reduce) {
   .xv-home-coding .xv-hc-strip__more { transition: none; }
+}
+
+/* The language lane, on its own row inside the strip. Twenty marks have to stay
+   compact, so they are small, tight, and wrap rather than forcing the panel taller
+   than the row of build targets above them. */
+.xv-home-coding .xv-hc-strip__langs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.28rem 0.5rem;
+  flex: 1 1 100%;
+  order: 10;
+  margin: 0.35rem 0 0.1rem;
+  padding: 0.4rem 0.5rem 0.1rem;
+  border-top: 1px solid color-mix(in srgb, var(--strip-edge) 32%, transparent);
+  list-style: none;
+}
+
+.xv-home-coding .xv-hc-strip__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.26rem;
+  color: color-mix(in srgb, var(--strip-ink) 86%, transparent);
+  font-family: var(--hc-font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xv-home-coding .xv-hc-strip__lang svg { width: 12px; height: 12px; flex: none; }
+
+@media (max-width: 640px) {
+  /* On a phone the lane scrolls in one line rather than wrapping into five rows and
+     making the strip taller than the composer above it. */
+  .xv-home-coding .xv-hc-strip__langs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .xv-home-coding .xv-hc-strip__langs::-webkit-scrollbar { display: none; }
 }
