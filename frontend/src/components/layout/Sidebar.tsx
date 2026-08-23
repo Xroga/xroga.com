@@ -364,16 +364,15 @@ export function Sidebar({ displayName }: SidebarProps) {
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
 
   /**
-   * The same footer, for the collapsed rail.
+   * The rail's footer: the avatar and the control that opens its menu, nothing else.
    *
-   * The rail carried the logo and three shortcuts and nothing else, so collapsing the
-   * sidebar — which is now also what fullscreen does — took the account away with it:
-   * no avatar, no way to reach Settings, no plan. Signing out meant expanding the
-   * sidebar first, which is not a thing a user should have to work out.
+   * It briefly carried standalone plan and settings buttons too. That was three
+   * separate targets stacked in a 64px column for destinations the menu already
+   * lists — the rail is meant to be the quiet version of the sidebar, and a column
+   * of buttons is not quieter than a row of them. Plan and Settings live in the
+   * account menu, one tap away, where the expanded sidebar also keeps them.
    *
-   * Each row is the icon alone with a tip, and the same destination as its expanded
-   * counterpart, so the rail is a narrower view of the sidebar rather than a reduced
-   * one. Only one of the two renders at a time, so the profile anchor is shared.
+   * Only one of the two footers renders at a time, so the profile anchor is shared.
    */
   const railBottom = (
     <div className="xv-sidebar-rail-bottom mt-auto">
@@ -392,28 +391,6 @@ export function Sidebar({ displayName }: SidebarProps) {
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
       ) : null}
-
-      <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
-        <Link
-          href="/pricing"
-          onClick={handleNavClick}
-          aria-label="View Xroga AI plan"
-          className="xv-sidebar-rail-action is-plan"
-        >
-          <Zap className="h-4 w-4" aria-hidden="true" />
-        </Link>
-      </HoverTip>
-
-      <HoverTip label="Settings" description="Theme, terminal skin, account, and preferences.">
-        <Link
-          href="/settings"
-          onClick={handleNavClick}
-          aria-label="Settings"
-          className={cn('xv-sidebar-rail-action', isActive('/settings') && 'xv-active')}
-        >
-          <Settings className="h-4 w-4" aria-hidden="true" />
-        </Link>
-      </HoverTip>
     </div>
   );
 
