@@ -87,31 +87,70 @@ test('the group owns the ground and the segments do not', () => {
 test('the divider follows the theme rather than one palette', () => {
   // Passed raw: ruleBody escapes regex metacharacters itself, so pre-escaping
   // here would search for literal backslashes.
-  const body = ruleBody('.xv-home-coding .xv-hc-headgroup > * + *');
+  const body = ruleBody('.xv-home-coding .xv-hc-headgroup > * + *::before');
   assert.match(
     body,
-    /border-left:\s*1px solid color-mix\(in srgb, var\(--hc-ink\)/,
+    /background:\s*color-mix\(in srgb, var\(--hc-ink\)/,
     'the hairline must be theme ink, so it inverts on the dark themes',
   );
+  // Centred in the gap rather than drawn on a segment edge: on an edge, the
+  // inverted hover fill paints straight over it.
+  assert.match(body, /left:\s*calc\(var\(--hg-gap\) \/ -2\)/, 'the divider belongs in the gap between segments');
+});
+
+test('hover inverts the segment', () => {
+  const group = ruleBody('.xv-home-coding .xv-hc-headgroup');
+  // One rule covers three themes: the fill is the theme ink, which is already
+  // near-white on Gray and Black and near-black on White.
+  assert.match(group, /--hg-hover-bg:\s*var\(--hc-ink\)/, 'the hover fill should be the theme ink');
+  assert.match(group, /--hg-hover-ink:\s*var\(--hc-surface-solid\)/, 'the hover label should be the theme surface');
+
+  const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Beige is the deliberate exception: its ink is a dark brown, which reads as a
+  // smudge on the cream panel rather than as a state change.
+  const beigeAt = code.indexOf('body.theme-beige .xv-home-coding .xv-hc-headgroup');
+  assert.notEqual(beigeAt, -1, 'Beige needs its own hover fill');
+  assert.match(code.slice(beigeAt, beigeAt + 200), /--hg-hover-bg:\s*#ffffff/, 'Beige hovers to white');
+
+  const hover = ruleBody('.xv-home-coding .xv-hc-headgroup__seg:hover');
+  assert.match(hover, /background:\s*var\(--hg-hover-bg\)/, 'hover must take the inverted fill');
+  assert.match(hover, /color:\s*var\(--hg-hover-ink\)/, 'the label must invert with the fill, not stay put');
+
+  // The open theme menu shows the same state, read from the attribute that
+  // already expresses it rather than a second class that could drift from it.
+  assert.match(code, /\.xv-home-theme-trigger\[aria-expanded='true'\]/, 'the open theme segment should look active');
 });
 
 test('the group never clips the theme menu', () => {
-  // This is the whole reason the end segments carry their own radius.
   const group = ruleBody('.xv-home-coding .xv-hc-headgroup');
   assert.ok(!/overflow:\s*hidden/.test(group), 'overflow:hidden would clip the theme menu open below it');
-
-  const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
-  assert.match(code, /\.xv-hc-headgroup > :first-child[\s\S]{0,200}border-start-start-radius/, 'the leading end needs its own radius');
-  assert.match(code, /\.xv-hc-headgroup > :last-child[\s\S]{0,200}border-start-end-radius/, 'the trailing end needs its own radius');
+  // The segments are inset inside the group's padding, so their own radius keeps
+  // the inverted fill off the group's corners without clipping anything.
+  assert.match(group, /padding:\s*[\d.]+rem/, 'the group needs inner padding to inset its segments');
+  const seg = ruleBody('.xv-home-coding .xv-hc-headgroup__seg');
+  assert.match(seg, /border-radius:\s*var\(--hg-seg-radius\)/, 'each segment is a rounded rectangle of its own');
 });
 
-test('the compact variant rounds the group and its ends together', () => {
+test('the inner radius stays tighter than the outer one', () => {
+  // Matching them makes an inset segment look like it is bulging out of the
+  // corner it sits in.
+  const group = ruleBody('.xv-home-coding .xv-hc-headgroup');
+  const outer = Number(/--hg-radius:\s*([\d.]+)rem/.exec(group)?.[1]);
+  const inner = Number(/--hg-seg-radius:\s*([\d.]+)rem/.exec(group)?.[1]);
+  assert.ok(Number.isFinite(outer) && Number.isFinite(inner), 'both radii should be set on the group');
+  assert.ok(inner < outer, `inner radius ${inner}rem is not tighter than outer ${outer}rem`);
+});
+
+test('the compact variant tightens both radii together', () => {
   const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
   const at = code.indexOf('@media (max-width: 640px)', code.indexOf('.xv-hc-headgroup'));
   assert.notEqual(at, -1, 'there is no compact variant');
   const block = code.slice(at, at + 900);
-  // Setting `border-radius` alone would round the group and leave pill-shaped
-  // ends on the segments inside it.
-  assert.match(block, /--hg-radius:\s*0\.85rem/, 'the compact radius must go through the custom property');
+  // Setting `border-radius` alone would round the group and leave the segments
+  // inside it at the wider radius.
+  const outer = Number(/--hg-radius:\s*([\d.]+)rem/.exec(block)?.[1]);
+  const inner = Number(/--hg-seg-radius:\s*([\d.]+)rem/.exec(block)?.[1]);
+  assert.ok(Number.isFinite(outer), 'the compact radius must go through the custom property');
+  assert.ok(Number.isFinite(inner) && inner < outer, 'the segments must tighten with the group');
   assert.match(block, /\.xv-hc-seg-label[\s\S]{0,200}clip:\s*rect\(0, 0, 0, 0\)/, 'labels should be hidden accessibly, not removed');
 });

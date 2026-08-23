@@ -6034,13 +6034,27 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
    themes produce the four looks without a rule each: white on White, cream on
    Beige, and the two dark grounds on Gray and Black, each with the matching ink.
 
-   The segments deliberately carry no ground of their own at rest. Two nested
-   backgrounds on one control read as buttons inside a box; one ground with a
-   divider reads as a single segmented control, which is the whole point. */
+   The segments carry no ground of their own at rest — the group holds the single
+   surface and the segments are cut out of it by a divider, rather than being two
+   buttons sitting inside a box.
+
+   Shape: the group is a rounded rectangle with its own inner padding, and each
+   segment is a smaller rounded rectangle inset within it. The inner radius is
+   deliberately smaller than the outer one; matching them makes the inset segment
+   look like it is bulging out of the corner it sits in. */
 .xv-home-coding .xv-hc-headgroup {
-  --hg-radius: 999rem;
+  --hg-radius: 1.05rem;
+  --hg-seg-radius: 0.72rem;
+  --hg-gap: 0.3rem;
+  /* Hover inverts the segment: the fill becomes the theme ink and the label the
+     theme surface. That is one rule for three of the four themes — near-black on
+     White, and near-white on Gray and Black, because their ink already is. */
+  --hg-hover-bg: var(--hc-ink);
+  --hg-hover-ink: var(--hc-surface-solid);
   display: inline-flex;
   align-items: stretch;
+  gap: var(--hg-gap);
+  padding: 0.25rem;
   border: 1px solid var(--hc-border-strong, var(--hc-border));
   border-radius: var(--hg-radius);
   background: var(--hc-surface-solid);
@@ -6048,27 +6062,24 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
   box-shadow: 0 10px 26px var(--hc-shadow);
 }
 
+/* Beige is the one theme whose hover is not its own ink. Its ink is a dark brown,
+   and a brown fill under the cream panel reads as a smudge rather than a state
+   change; white separates from the panel cleanly. */
+body.theme-beige .xv-home-coding .xv-hc-headgroup {
+  --hg-hover-bg: #ffffff;
+  --hg-hover-ink: #2d2115;
+}
+
 .xv-home-coding .xv-hc-headgroup .xv-home-theme-switcher {
   display: flex;
 }
 
-/* Deliberately not `overflow: hidden`, which is the obvious way to keep a hover
-   ground inside the rounded ends and would clip the theme menu that anchors
-   below the trigger. The end segments carry the radius themselves instead. */
-.xv-home-coding .xv-hc-headgroup > :first-child,
-.xv-home-coding .xv-hc-headgroup > :first-child > .xv-home-theme-trigger {
-  border-start-start-radius: var(--hg-radius);
-  border-end-start-radius: var(--hg-radius);
-}
-
-.xv-home-coding .xv-hc-headgroup > :last-child,
-.xv-home-coding .xv-hc-headgroup > :last-child > .xv-home-theme-trigger {
-  border-start-end-radius: var(--hg-radius);
-  border-end-end-radius: var(--hg-radius);
-}
-
 /* One selector for both segments: the theme trigger is a button inside its own
-   positioned wrapper (the menu anchors to it), the other is a direct child. */
+   positioned wrapper (the menu anchors to it), the other is a direct child.
+
+   Not `overflow: hidden` on the group to keep the hover fill inside the corners —
+   that is the obvious fix and it clips the theme menu, which opens below the
+   trigger. The segments are inset far enough that their own radius does the job. */
 .xv-home-coding .xv-hc-headgroup__seg,
 .xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger {
   display: inline-flex;
@@ -6077,7 +6088,7 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
   gap: 0.45rem;
   padding: 0.5rem 0.9rem;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--hg-seg-radius);
   background: transparent;
   color: inherit;
   box-shadow: none;
@@ -6085,18 +6096,41 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
   font-size: 0.7rem;
   font-weight: 600;
   white-space: nowrap;
-  transition: background 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
 }
 
+/* Hover, and the theme segment while its menu is open, take the inverted fill.
+   `aria-expanded` rather than a class: the open menu is already expressed there,
+   and a second source of truth for the same state can only drift from it. */
 .xv-home-coding .xv-hc-headgroup__seg:hover,
-.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger:hover {
-  background: color-mix(in srgb, var(--hc-ink) 8%, transparent);
+.xv-home-coding .xv-hc-headgroup__seg:focus-visible,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger:hover,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger:focus-visible,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger[aria-expanded='true'] {
+  background: var(--hg-hover-bg);
+  color: var(--hg-hover-ink);
 }
 
-/* The divider sits on the second segment. Built from the theme ink so it is a
-   dark hairline on the light themes and a light one on the dark themes. */
+.xv-home-coding .xv-hc-headgroup__seg:active,
+.xv-home-coding .xv-hc-headgroup .xv-home-theme-trigger:active {
+  transform: scale(0.97);
+}
+
+/* The divider is centred in the gap between the segments rather than drawn on a
+   segment edge, so the inverted hover fill does not swallow it. Built from the
+   theme ink, so it is dark on the light themes and light on the dark ones. */
 .xv-home-coding .xv-hc-headgroup > * + * {
-  border-left: 1px solid color-mix(in srgb, var(--hc-ink) 15%, transparent);
+  position: relative;
+}
+
+.xv-home-coding .xv-hc-headgroup > * + *::before {
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: calc(var(--hg-gap) / -2);
+  width: 1px;
+  background: color-mix(in srgb, var(--hc-ink) 15%, transparent);
+  content: '';
 }
 
 .xv-home-coding .xv-hc-seg-icon {
@@ -6106,14 +6140,16 @@ body.theme-beige .xv-home-coding .xv-hc-prompt-shell {
 }
 
 @media (max-width: 640px) {
-  /* Labels drop and the group becomes the compact icon-only control, which is
-     also where the pill radius gives way to a rounded rectangle — a pill around
-     two square-ish cells reads as a lozenge rather than a control. */
-  /* The custom property, not `border-radius` — the end segments read their own
-     corners from it, so setting the shorthand alone would round the group while
-     leaving pill-shaped ends on the segments inside it. */
+  /* Labels drop and the group becomes the compact icon-only control. The corners
+     tighten with it: the same radius on a much narrower box reads as rounder than
+     it did with the labels in place.
+
+     The custom properties, not `border-radius` — the segments read their own
+     corners from these, so setting the shorthand alone would round the group and
+     leave the segments inside it at the wider radius. */
   .xv-home-coding .xv-hc-headgroup {
-    --hg-radius: 0.85rem;
+    --hg-radius: 0.9rem;
+    --hg-seg-radius: 0.62rem;
   }
 
   .xv-home-coding .xv-hc-headgroup__seg,
