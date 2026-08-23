@@ -12,6 +12,7 @@ import {
   Link2,
   Settings,
   PanelLeftClose,
+  PanelLeftOpen,
   PanelLeft,
   Search,
   Zap,
@@ -194,6 +195,14 @@ function planLabel(tier?: string | null) {
   return 'Xroga AI Plan';
 }
 
+/**
+ * How far a press on the edge toggle may travel before it counts as a resize.
+ *
+ * Small enough that a deliberate drag is picked up immediately, large enough that
+ * the few pixels of jitter in an ordinary click do not turn a collapse into one.
+ */
+const EDGE_DRAG_THRESHOLD_PX = 4;
+
 export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -203,6 +212,8 @@ export function Sidebar({ displayName }: SidebarProps) {
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
+  /** Set when a press on the edge toggle became a resize, so the click is ignored. */
+  const edgeToggleDraggedRef = useRef(false);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
   const hydrated = useHydrated();
@@ -237,9 +248,7 @@ export function Sidebar({ displayName }: SidebarProps) {
     return () => document.body.classList.remove('mobile-sidebar-open');
   }, [mobileOpen]);
 
-  function startResize(e: React.PointerEvent<HTMLDivElement>) {
-    e.preventDefault();
-    const startX = e.clientX;
+  function beginResize(startX: number) {
     const startW = sidebarWidth;
     document.body.classList.add('xv-sidebar-resizing');
 
@@ -255,6 +264,42 @@ export function Sidebar({ displayName }: SidebarProps) {
     document.addEventListener('pointermove', onMove);
     document.addEventListener('pointerup', onUp, { once: true });
     document.addEventListener('pointercancel', onUp, { once: true });
+  }
+
+  function startResize(e: React.PointerEvent<HTMLDivElement>) {
+    e.preventDefault();
+    beginResize(e.clientX);
+  }
+
+  /**
+   * A drag that starts on the edge toggle resizes rather than doing nothing.
+   *
+   * The toggle is centred on the same edge the resize handle runs down, and sits
+   * above it, so it swallowed pointerdown at the midpoint — the most natural place
+   * to grab an edge. The drag then never reached the handle and the pointerup
+   * landed away from the button, so no click fired either: the sidebar simply
+   * refused to resize from its middle.
+   *
+   * Past the threshold this hands off to the same resize the handle uses, and marks
+   * the gesture so the click that may follow does not also toggle the sidebar shut.
+   */
+  function startEdgeToggleDrag(e: React.PointerEvent<HTMLButtonElement>) {
+    if (!effectiveSidebarOpen) return; // A collapsed rail has no width to drag.
+    const startX = e.clientX;
+    edgeToggleDraggedRef.current = false;
+
+    function stop() {
+      document.removeEventListener('pointermove', onMove);
+    }
+    function onMove(ev: PointerEvent) {
+      if (Math.abs(ev.clientX - startX) <= EDGE_DRAG_THRESHOLD_PX) return;
+      stop();
+      edgeToggleDraggedRef.current = true;
+      beginResize(startX);
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', stop, { once: true });
+    document.addEventListener('pointercancel', stop, { once: true });
   }
 
   function resizeWithKeyboard(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -665,17 +710,38 @@ export function Sidebar({ displayName }: SidebarProps) {
             <span aria-hidden="true" />
           </div>
         ) : null}
-        {effectiveSidebarOpen ? <button
+        {/*
+          Rendered in both states, not only while the sidebar is open.
+          Gated on `effectiveSidebarOpen` this button removed itself the moment it
+          was used, so collapsing the sidebar was a one-way door: the rail had no
+          expand control, and clicking where the button had been did nothing. The
+          `.is-collapsed .xv-sidebar-edge-toggle` rules in globals.css were written
+          for a button that persists and could never match, and the label below
+          already spelled out both states.
+
+          Fullscreen still hides it — there the rail is collapsed by the terminal
+          rather than by the user, and leaving the sidebar is what exits fullscreen.
+        */}
+        <button
           type="button"
+          onPointerDown={startEdgeToggleDrag}
           onClick={() => {
+            // Swallowed when the gesture turned into a resize, so widening the
+            // sidebar from its midpoint does not also collapse it on release.
+            if (edgeToggleDraggedRef.current) {
+              edgeToggleDraggedRef.current = false;
+              return;
+            }
             toggleSidebar();
             setMobileOpen(false);
           }}
           className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
           aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
         >
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        </button> : null}
+          {effectiveSidebarOpen
+            ? <PanelLeftClose className="w-3.5 h-3.5" />
+            : <PanelLeftOpen className="w-3.5 h-3.5" />}
+        </button>
       </div>
 
       <AvatarPickerModal
