@@ -6,18 +6,21 @@ import { expect, test } from '@playwright/test';
  * `data-costume` but had no per-costume artwork. These pin the fix.
  */
 
-const SKINS = ['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon'] as const;
+const SKINS = ['techwear', 'mystic-robe', 'circuit', 'ninja-neon'] as const;
 
-async function seedCostume(page: import('@playwright/test').Page, costume: string) {
-  await page.addInitScript((value) => {
+/** The retired skin, still sitting in the storage of anyone who never changed it. */
+const RETIRED_SKIN = 'coder';
+
+async function seedCostume(page: import('@playwright/test').Page, costume: string, version = 4) {
+  await page.addInitScript(([value, storedVersion]) => {
     window.localStorage.setItem(
       'xroga-companion',
       JSON.stringify({
         state: { costume: value, visible: true, name: 'Smoky', accent: 'blue', size: 'standard', dock: 'composer' },
-        version: 4,
+        version: storedVersion,
       }),
     );
-  }, costume);
+  }, [costume, version] as const);
 }
 
 test('the rendered companion uses the selected skin', async ({ page }) => {
@@ -35,6 +38,27 @@ test('every skin asset actually resolves', async ({ request }) => {
     expect(response.status(), skin).toBe(200);
     expect(response.headers()['content-type'], skin).toContain('image/webp');
   }
+});
+
+/**
+ * The retired skin, seeded exactly as a real browser would still be holding it.
+ *
+ * `coder` was the original default, so this is the stored value for every account
+ * that never opened the wardrobe — the common case, not an edge case. Its artwork is
+ * deleted, so without the migration the companion renders a broken image on every
+ * surface at once. Seeded at version 4 because that is the version those browsers
+ * actually wrote; the bump to 5 is what makes the migration run at all.
+ */
+test('a browser still holding the retired skin gets a costume that exists', async ({ page }) => {
+  await seedCostume(page, RETIRED_SKIN, 4);
+  await page.goto('/');
+  const image = page.locator('img.xv-companion-renderer').first();
+  await expect(image).not.toHaveAttribute('src', /coder\.webp$/);
+  await expect(image).toHaveAttribute('src', new RegExp(`(${SKINS.join('|')})\\.webp$`));
+
+  // And the artwork is genuinely gone, rather than merely unreferenced.
+  const response = await page.request.get(`/brand/costumes/${RETIRED_SKIN}.webp`);
+  expect(response.status()).toBe(404);
 });
 
 /**

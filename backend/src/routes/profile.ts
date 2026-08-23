@@ -8,8 +8,18 @@ const router = Router();
 
 export const companionPreferencesSchema = z.object({
   name: z.string().trim().min(1).max(24),
-  // Must match COMPANION_COSTUMES in frontend/src/lib/companion.ts.
-  costume: z.enum(['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon']),
+  /**
+   * Must match COMPANION_COSTUMES in frontend/src/lib/companion.ts.
+   *
+   * `coder` is retired and its artwork is deleted, but it is still accepted here
+   * and rewritten to the default. It was the original default costume, so it is
+   * the stored value for every account that never opened the wardrobe: rejecting
+   * it would 400 the next profile save those users make — including saves that
+   * have nothing to do with the companion — and a browser on the previous bundle
+   * would keep sending it until its cache turned over.
+   */
+  costume: z.enum(['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon'])
+    .transform((costume) => (costume === 'coder' ? 'techwear' as const : costume)),
   accent: z.enum(['blue', 'violet', 'cyan', 'emerald']),
   size: z.enum(['compact', 'standard', 'large']),
   dock: z.enum(['composer', 'corner']),
