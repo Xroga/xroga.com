@@ -10,7 +10,12 @@ test('keeps public and authentication routes available', () => {
     '/community',
     '/community/9d0c98dc-6c8c-4f24-8a2b-4ddd50ed802e',
     '/docs/getting-started',
-    '/crypto-builder',
+    // `/crypto`, the page that exists. This asserted `/crypto-builder`, a route with
+    // no page behind it, and never checked the real one — so the list stayed green
+    // while the actual crypto page sat behind the login wall. `/crypto-builder` does
+    // not need to be public: `next.config.mjs` redirects it at the routing layer,
+    // before middleware sees it.
+    '/crypto',
     '/video',
     '/research/web3-hackathon-winning-patterns',
     '/showcase',

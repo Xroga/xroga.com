@@ -4,12 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Palette } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
-import {
-  THEME_OPTIONS,
-  normalizeTheme,
-  skinForTheme,
-  type CoreThemeId,
-} from '@/lib/theme';
+import { THEME_OPTIONS, normalizeTheme, type CoreThemeId } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface ThemeToggleProps {
@@ -20,8 +15,6 @@ interface ThemeToggleProps {
 export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggleProps) {
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
-  const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
-  const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -52,10 +45,12 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
     };
   }, [open, positionMenu]);
 
+  /* `setTheme` re-derives the terminal skin and clears the slideshow itself. Forcing
+     the skin here as well is what made this control disagree with the homepage
+     switcher, which only calls `setTheme`: this one worked, that one left the
+     workspace on its old skin. */
   const applyTheme = (id: CoreThemeId) => {
     setTheme(id);
-    setTerminalSkin(skinForTheme(id));
-    setSlideshowEnabled(false);
     setOpen(false);
   };
 
