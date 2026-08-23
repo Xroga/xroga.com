@@ -90,7 +90,6 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
             operation={operation}
             costume={state.costume}
             accent={state.accent}
-            crownEnabled={state.crownEnabled}
             mantleEnabled={state.mantleEnabled}
           />
           {/* The laptop prop. Drawn here rather than baked into the skins, because the
@@ -109,7 +108,6 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
             operation={operation}
             costume={state.costume}
             accent={state.accent}
-            crownEnabled={state.crownEnabled}
             mantleEnabled={state.mantleEnabled}
           />
         </span>

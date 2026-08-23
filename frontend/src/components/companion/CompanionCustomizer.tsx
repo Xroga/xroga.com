@@ -51,7 +51,6 @@ export function CompanionCustomizer() {
               operation={state.operation}
               costume={state.costume}
               accent={state.accent}
-              crownEnabled={state.crownEnabled}
               mantleEnabled={state.mantleEnabled}
               portraitSrc={selectedCostume.image}
               decorative={false}
