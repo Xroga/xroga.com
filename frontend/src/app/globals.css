@@ -2982,52 +2982,25 @@ body.theme-gray * {
     outline: none;
   }
 
-  /* The rail's footer: account, plan and settings, matching the expanded sidebar's
-     own footer rather than being a reduced version of it. */
+  /* The rail's footer: the avatar and the control that opens its menu. It briefly
+     carried standalone plan and settings buttons as well — three targets stacked in
+     a 64px column for destinations the menu already lists. */
   .xv-sidebar-rail-bottom {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 6px;
-    padding: 8px 0 10px;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 0 8px;
   }
   .xv-sidebar-rail-profile {
     position: relative;
     display: flex;
     justify-content: center;
   }
-  .xv-sidebar-rail-action {
-    display: inline-flex;
-    width: 32px;
-    height: 32px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    color: var(--text-secondary, var(--muted));
-    transition: color 150ms ease, background 150ms ease;
-  }
-  .xv-sidebar-rail-action:hover,
-  .xv-sidebar-rail-action:focus-visible {
-    color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    outline: none;
-  }
-  .xv-sidebar-rail-action.xv-active {
-    color: var(--surface-page);
-    background: var(--text-primary);
-  }
-  /* Plan keeps the filled treatment it has in the expanded footer, so the same
-     control is recognisable at either width. */
-  .xv-sidebar-rail-action.is-plan {
-    color: var(--background);
-    background: var(--foreground);
-  }
-  .xv-sidebar-rail-action.is-plan:hover,
-  .xv-sidebar-rail-action.is-plan:focus-visible {
-    color: var(--background);
-    background: var(--foreground);
-    opacity: 0.9;
-  }
+  /* `.xv-sidebar-rail-action` is gone with the plan and settings buttons it styled.
+     Left behind it would be a rule with nothing to match, and an invitation to put
+     those buttons back into a column that is meant to stay quiet. */
   @container (max-width: 279px) {
     .xv-new-terminal-compact {
       width: 28px;

@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
-  ChevronRight,
+  SlidersHorizontal,
   MessageCircleHeart,
   Palette,
   Settings,
@@ -167,9 +167,10 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         title="Account menu"
         aria-expanded={open}
       >
-        {/* A chevron, not a wand: this opens the account menu, and the icon should
-            say so rather than suggest an effect. */}
-        <ChevronRight className="w-4 h-4" />
+        {/* Sliders, not a chevron: a chevron points somewhere and this opens a panel
+            of controls in place. It was a wand before that, which suggested an effect
+            rather than a menu. */}
+        <SlidersHorizontal className="w-4 h-4" />
       </button>
 
       {open &&

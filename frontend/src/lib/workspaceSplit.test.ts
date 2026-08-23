@@ -23,8 +23,10 @@ import { readFileSync } from 'node:fs';
  * band of shell beside a preview that is supposed to be full, which is the same bug
  * terminal fullscreen already had.
  *
- * **The rail carries the account.** Collapsing is what fullscreen does now, so a rail
- * without profile, plan and settings means signing out requires expanding first.
+ * **The rail carries the account, and only that.** Collapsing is what fullscreen does
+ * now, so a rail with no avatar means signing out requires expanding first. It briefly
+ * carried standalone plan and settings buttons as well — three targets stacked in a
+ * 64px column for destinations the account menu already lists.
  *
  * The geometry is measured in `e2e/command3-auth.spec.ts`, which can reach the
  * authenticated workspace. These guard the decisions that produce it.
@@ -34,6 +36,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const DASH = read('../components/dashboard/DashboardView.tsx');
 const PANEL = read('../components/terminal/DevWorkspacePanel.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
+const UIVERSE = read('../styles/uiverse.css');
 const STORE = read('../store/useThemeStore.ts');
 const CSS = read('../app/globals.css');
 const E2E = read('../../e2e/command3-auth.spec.ts');
@@ -158,14 +161,33 @@ test('the expanded preview has no drawn border', () => {
   assert.match(body, /box-shadow:/, 'the edge should be carried by a shadow instead');
 });
 
-test('the collapsed rail carries the account', () => {
+test('the collapsed rail carries the account, and only that', () => {
   assert.match(SIDEBAR, /\{navExpanded \? bottomSection : railBottom\}/, 'the rail needs its own footer');
   const at = SIDEBAR.indexOf('const railBottom = (');
   assert.notEqual(at, -1, 'the rail footer is missing');
   const block = SIDEBAR.slice(at, SIDEBAR.indexOf('const bottomSection', at));
-  assert.ok(block.includes('href="/pricing"'), 'the plan link should be on the rail');
-  assert.ok(block.includes('href="/settings"'), 'settings should be on the rail');
+
+  // The avatar and the control that opens its menu.
   assert.ok(block.includes('ProfileQuickMenu'), 'the account menu should be on the rail');
+  assert.ok(/UserProfileBox|IncognitoProfileBox/.test(block), 'the avatar should be on the rail');
+
+  // And nothing else. Standalone plan and settings buttons were three targets stacked
+  // in a 64px column for destinations the menu already lists; the rail is meant to be
+  // the quiet version of the sidebar.
+  assert.ok(!block.includes('href="/pricing"'), 'the plan button is back on the rail');
+  assert.ok(!block.includes('href="/settings"'), 'the settings button is back on the rail');
+});
+
+test('the rail footer sits at the bottom of a full-height rail', () => {
+  // Sized to its contents the rail has no column to push anything down, so the footer
+  // rides directly under the shortcuts near the top — `mt-auto` needs something to
+  // work against.
+  const at = UIVERSE.indexOf('.xv-sidebar-root.is-collapsed .xv-sidebar-floating {');
+  assert.notEqual(at, -1, 'the collapsed rail has no rule');
+  const body = UIVERSE.slice(at, UIVERSE.indexOf('}', at));
+  assert.ok(!/height:\s*max-content/.test(body), 'the rail is sized to its contents again');
+  assert.match(body, /height:\s*calc\(100vh/, 'the rail needs a full-height column');
+  assert.match(SIDEBAR, /className="xv-sidebar-rail-bottom mt-auto"/, 'the footer must be pushed down');
 });
 
 test('the geometry is asserted where the workspace can actually be reached', () => {

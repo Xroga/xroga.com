@@ -291,7 +291,12 @@
      collapsed toolbar ended up wider than its own column and lying over the workspace.
      Bounded to the column, the controls stack instead of escaping. */
   width: calc(100% - (var(--xv-sidebar-inset) * 2));
-  height: max-content;
+  /* Full height, not `max-content`. Sized to its contents the rail had no column to
+     push anything down, so the footer sat directly under the shortcuts near the top
+     — `mt-auto` has nothing to work against in a box that is exactly as tall as its
+     children. The panel is transparent and borderless when collapsed, so the extra
+     height paints nothing; it only gives the footer somewhere to sit. */
+  height: calc(100vh - (var(--xv-sidebar-inset) * 2));
   margin-inline-start: var(--xv-sidebar-inset);
   overflow: visible;
   border: 0;
