@@ -272,7 +272,10 @@
   position: sticky;
   top: var(--xv-sidebar-inset);
   height: calc(100vh - (var(--xv-sidebar-inset) * 2));
-  width: calc(100% - (var(--xv-sidebar-inset) * 2));
+  /* The outer edge keeps the frame's inset; the edge facing the workspace takes the
+     narrower seam, so the channel between the panels is one small gap rather than
+     two full margins back to back. */
+  width: calc(100% - var(--xv-sidebar-inset) - var(--xv-app-seam, var(--xv-sidebar-inset)));
   margin-inline-start: var(--xv-sidebar-inset);
   border: 1px solid var(--app-panel-border, var(--border-subtle));
   border-radius: var(--xv-sidebar-radius);

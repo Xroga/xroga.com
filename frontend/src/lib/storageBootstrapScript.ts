@@ -6,6 +6,8 @@ export function storageBootstrapScript(): string {
     var raw = localStorage.getItem(themeKey);
     var core = 'white';
     var accent = 'blue';
+    var sidebarFont = 'default';
+    var workspaceFont = 'default';
     var font = 'modern';
     var density = 'comfortable';
     var reducedMotion = false;
@@ -33,8 +35,10 @@ export function storageBootstrapScript(): string {
               dirty = true;
               core = 'white';
             }
-            if (/^(blue|emerald|violet|coral)$/.test(state.accent || '')) accent = state.accent;
+            if (/^(default|blue|emerald|violet|coral|amber|cyan|rose)$/.test(state.accent || '')) accent = state.accent;
             if (/^(modern|classic|mono)$/.test(state.fontPreference || '')) font = state.fontPreference;
+            if (/^(default|inter|goga|serif|display|mono)$/.test(state.sidebarFont || '')) sidebarFont = state.sidebarFont;
+            if (/^(default|inter|goga|serif|display|mono)$/.test(state.workspaceFont || '')) workspaceFont = state.workspaceFont;
             if (/^(compact|comfortable)$/.test(state.density || '')) density = state.density;
             reducedMotion = state.reducedMotion === true;
             highContrast = state.highContrast === true;
@@ -54,6 +58,14 @@ export function storageBootstrapScript(): string {
     document.documentElement.setAttribute('data-theme', core);
     document.documentElement.setAttribute('data-accent', accent);
     document.documentElement.setAttribute('data-font', font);
+    // The font scales are read off body, where the next/font variables live. Set
+    // here as well as in the provider so the first paint already has the right face
+    // rather than flashing the default and correcting after hydration.
+    if (document.body) {
+      document.body.setAttribute('data-font', font);
+      document.body.setAttribute('data-sidebar-font', sidebarFont);
+      document.body.setAttribute('data-workspace-font', workspaceFont);
+    }
     document.documentElement.setAttribute('data-density', density);
     document.documentElement.setAttribute('data-reduced-motion', reducedMotion ? 'true' : 'false');
     document.documentElement.setAttribute('data-high-contrast', highContrast ? 'true' : 'false');
