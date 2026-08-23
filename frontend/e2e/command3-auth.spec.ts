@@ -517,6 +517,51 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.waitForTimeout(400);
 
   /**
+   * The edge toggle survives being used, and the edge can be dragged from its middle.
+   *
+   * The toggle used to be rendered only while the sidebar was open, so it removed
+   * itself the moment it was pressed and a second press on the same spot did nothing.
+   * (The rail's own expand button still worked, so this was a lost affordance rather
+   * than a trap.) Driven here rather than read off the markup, because the failure was
+   * a control ceasing to exist after an interaction, which only a second interaction
+   * can catch.
+   */
+  const edgeToggle = page.locator('.xv-sidebar-edge-toggle');
+  await expect(edgeToggle).toBeVisible();
+  await edgeToggle.click();
+  await page.waitForTimeout(400);
+  await expect(rail).toHaveClass(/is-collapsed/);
+  await expect(
+    edgeToggle,
+    'the sidebar could not be reopened from the edge: the toggle is gone once collapsed',
+  ).toBeVisible();
+  await edgeToggle.click();
+  await page.waitForTimeout(400);
+  const reopened = (await rail.boundingBox())!;
+  expect(reopened.width, 'the sidebar did not reopen').toBeGreaterThan(72);
+
+  /*
+   * And a drag that starts on the toggle widens rather than doing nothing. The toggle
+   * sits above the resize handle at the midpoint of the edge, which is where a user
+   * reaches to grab it.
+   */
+  const toggleBox = (await edgeToggle.boundingBox())!;
+  const grabX = toggleBox.x + toggleBox.width / 2;
+  const grabY = toggleBox.y + toggleBox.height / 2;
+  await page.mouse.move(grabX, grabY);
+  await page.mouse.down();
+  await page.mouse.move(grabX + 130, grabY, { steps: 14 });
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+  const widened = (await rail.boundingBox())!;
+  expect(
+    widened.width - reopened.width,
+    'dragging from the toggle did not widen the sidebar',
+  ).toBeGreaterThan(50);
+  // The release must not also register as a click and collapse what was just widened.
+  await expect(rail, 'the drag collapsed the sidebar on release').not.toHaveClass(/is-collapsed/);
+
+  /**
    * The workspace split is draggable, and expanding the panel takes the viewport.
    *
    * Both are geometric claims, so both are measured. The expanded state in particular
@@ -614,7 +659,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // the width floor never checked in either direction.
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
   expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x);
-  await page.getByRole('button', { name: 'Close sidebar' }).click();
+  /*
+   * Scoped to the desktop edge toggle rather than matched by name across the page.
+   * The toggle is no longer removed when the sidebar collapses, so while collapsed
+   * it carries the same "Open sidebar" label as the mobile trigger and a page-wide
+   * lookup resolves to two elements.
+   */
+  await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Same next/image encoding as the expanded-sidebar assertion above.
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
@@ -627,7 +678,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Open sidebar' }).click();
+  // Still present after collapsing — that is the control this release restores.
+  await page.locator('.xv-sidebar-edge-toggle').click();
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
