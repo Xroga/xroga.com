@@ -6606,3 +6606,166 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   .xv-home-coding .xv-hc-mid-cta-actions{width:min(280px,100%);justify-self:center}
   body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{font-size:clamp(3rem,16vw,4.8rem)}
 }
+
+/* ==========================================================================
+   Homepage build strip
+
+   A single lit panel below the composer carrying what Xroga can build. It keeps its
+   own blue on every theme: it reads as one device rather than a page surface, so its
+   text sits on that blue and never on the page ground. That is also why nothing here
+   uses `--hc-ink` — inheriting the theme's ink would put dark type on the panel.
+   ========================================================================== */
+
+.xv-home-coding .xv-hc-strip {
+  --strip-edge: #2f8bff;
+  --strip-ink: #eaf3ff;
+
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: min(1120px, 100% - 2rem);
+  margin: 1.4rem auto 0;
+  padding: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--strip-edge) 60%, transparent);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0a2a6b 0%, #061b4a 52%, #04123a 100%);
+  box-shadow:
+    0 0 0 1px rgba(6, 20, 56, 0.9),
+    0 14px 40px rgba(4, 18, 58, 0.45),
+    inset 0 0 34px rgba(47, 139, 255, 0.22);
+  color: var(--strip-ink);
+  overflow: hidden;
+}
+
+.xv-home-coding .xv-hc-strip__motto {
+  flex: none;
+  align-self: center;
+  margin: 0;
+  padding: 0.5rem 1rem 0.5rem 0.85rem;
+  font-family: var(--hc-font-sans);
+  font-size: clamp(0.82rem, 1.15vw, 1rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.xv-home-coding .xv-hc-strip__motto span { color: #4fc3ff; }
+
+/* The chevron seam between the motto and the list, as in the reference. */
+.xv-home-coding .xv-hc-strip__notch {
+  flex: none;
+  width: 18px;
+  margin-right: 0.35rem;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--strip-edge) 55%, transparent));
+  clip-path: polygon(0 0, 55% 0, 100% 50%, 55% 100%, 0 100%, 45% 50%);
+}
+
+.xv-home-coding .xv-hc-strip__list {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.xv-home-coding .xv-hc-strip__list::-webkit-scrollbar { display: none; }
+
+.xv-home-coding .xv-hc-strip__item {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  /* Small enough that ten cells fit the strip without the list becoming a scroller
+     on a desktop viewport; the narrow breakpoint below is where scrolling belongs. */
+  min-width: 64px;
+  padding: 0.5rem 0.3rem 0.55rem;
+  text-align: center;
+}
+
+/* Hairline dividers, drawn between items rather than around each one. */
+.xv-home-coding .xv-hc-strip__item + .xv-hc-strip__item::before {
+  content: '';
+  position: absolute;
+  inset-block: 18%;
+  inset-inline-start: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--strip-edge) 45%, transparent), transparent);
+}
+
+.xv-home-coding .xv-hc-strip__icon {
+  width: 21px;
+  height: 21px;
+  color: var(--strip-ink);
+  filter: drop-shadow(0 0 6px rgba(79, 195, 255, 0.5));
+}
+
+.xv-home-coding .xv-hc-strip__label {
+  font-family: var(--hc-font-sans);
+  font-size: 0.63rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.xv-home-coding .xv-hc-strip__line { display: block; }
+
+/* The lit dash under each cell. */
+.xv-home-coding .xv-hc-strip__glow {
+  width: 16px;
+  height: 2px;
+  margin-top: 0.15rem;
+  border-radius: 2px;
+  background: #4fc3ff;
+  box-shadow: 0 0 8px 1px rgba(79, 195, 255, 0.8);
+}
+
+.xv-home-coding .xv-hc-strip__item[data-warn='true'] .xv-hc-strip__line:last-child { color: #ff8a8a; }
+.xv-home-coding .xv-hc-strip__item[data-warn='true'] .xv-hc-strip__glow {
+  background: #ff7a5c;
+  box-shadow: 0 0 8px 1px rgba(255, 122, 92, 0.75);
+}
+
+/* The hexagonal end cap. */
+.xv-home-coding .xv-hc-strip__more {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.2rem;
+  align-self: center;
+  margin-left: 0.4rem;
+  padding: 0.55rem 0.85rem 0.55rem 1.05rem;
+  border: 1px solid color-mix(in srgb, var(--strip-edge) 75%, transparent);
+  background: color-mix(in srgb, var(--strip-edge) 18%, transparent);
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%);
+  color: var(--strip-ink);
+  font-family: var(--hc-font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.15;
+  text-decoration: none;
+  transition: background-color 180ms ease;
+}
+
+.xv-home-coding .xv-hc-strip__more:hover { background: color-mix(in srgb, var(--strip-edge) 32%, transparent); }
+.xv-home-coding .xv-hc-strip__more svg { width: 14px; height: 14px; }
+
+@media (max-width: 900px) {
+  .xv-home-coding .xv-hc-strip { flex-wrap: wrap; row-gap: 0.3rem; }
+  .xv-home-coding .xv-hc-strip__motto { width: 100%; padding-block: 0.35rem; text-align: center; white-space: normal; }
+  .xv-home-coding .xv-hc-strip__motto br { display: none; }
+  .xv-home-coding .xv-hc-strip__notch { display: none; }
+  /* The list scrolls rather than crushing ten cells into a phone's width. */
+  .xv-home-coding .xv-hc-strip__list { flex: 1 1 100%; }
+  .xv-home-coding .xv-hc-strip__item { flex: 0 0 auto; }
+  .xv-home-coding .xv-hc-strip__more { margin: 0.35rem auto 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding .xv-hc-strip__more { transition: none; }
+}
