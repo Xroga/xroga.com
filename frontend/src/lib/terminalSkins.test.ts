@@ -84,11 +84,41 @@ test('every automatic resolution is a real skin, and they are not all the same o
 });
 
 test('choosing a skin by hand is still what turns automatic mode off', () => {
-  // Reversing the default must not weaken the other half of the contract: a skin the
-  // user picked deliberately survives a theme change.
   const source = readFileSync(new URL('../store/useThemeStore.ts', import.meta.url), 'utf8');
-  assert.match(source, /terminalSkin: s\.terminalSkinAuto \? skinForTheme\(next\) : s\.terminalSkin/);
   assert.match(source, /setTerminalSkin: \(terminalSkin\) => set\(\{ terminalSkin, terminalSkinAuto: false \}\)/);
+});
+
+test('choosing a theme restyles the terminal too, from one place', () => {
+  /*
+   * This used to read `terminalSkinAuto ? skinForTheme(next) : terminalSkin`, so a
+   * skin picked once by hand froze the terminal against every later theme change.
+   *
+   * That half of the contract was already contradicted in practice: the sidebar's
+   * `ThemeToggle` called `setTerminalSkin` immediately after `setTheme`, forcing the
+   * skin anyway, while the homepage switcher called only `setTheme`. The two controls
+   * disagreed about what picking a theme means — the sidebar restyled the workspace,
+   * the homepage left it behind, and the user had to pick the same theme a second
+   * time from inside the workspace to make it take.
+   *
+   * The decision lives in the store now, so both controls do the same thing. A skin
+   * picked by hand still survives navigation and reloads; it gives way to the next
+   * explicit theme choice, which is a fresh statement about the whole shell.
+   */
+  const source = readFileSync(new URL('../store/useThemeStore.ts', import.meta.url), 'utf8');
+  assert.match(source, /terminalSkin: skinForTheme\(next\),\s*\n\s*terminalSkinAuto: true,/);
+  assert.ok(
+    !/terminalSkinAuto \? skinForTheme/.test(source),
+    'setTheme is conditional again, so a hand-picked skin will freeze the terminal',
+  );
+
+  // And no control may re-force the skin beside it, or they can drift apart again.
+  for (const control of ['../components/layout/ThemeToggle.tsx', '../components/companion/HomepageThemeSwitcher.tsx']) {
+    const picker = readFileSync(new URL(control, import.meta.url), 'utf8');
+    assert.ok(
+      !/setTerminalSkin\(/.test(picker),
+      `${control} forces the skin itself instead of leaving it to setTheme`,
+    );
+  }
 });
 
 test('skinTone falls back to dark for an unknown skin rather than throwing', () => {

@@ -110,17 +110,31 @@ export const useThemeStore = create<ThemeState>()(
       highContrast: false,
       browserPanelOpen: false,
       browserFullscreen: false,
-      setTheme: (theme) =>
-        set((s) => {
-          const next = normalizeTheme(theme);
-          return {
-            theme: next,
-            // Only re-derive the skin while it is still tracking the theme. A skin the
-            // user picked deliberately must survive a theme change.
-            terminalSkin: s.terminalSkinAuto ? skinForTheme(next) : s.terminalSkin,
-            slideshowEnabled: false,
-          };
-        }),
+      /**
+       * Choosing a theme restyles the whole shell, terminal included.
+       *
+       * This used to re-derive the skin only while it was still tracking, so a skin
+       * picked once by hand froze the terminal against every later theme change. Two
+       * pickers then disagreed about what choosing a theme means: the sidebar's
+       * `ThemeToggle` forced the skin itself right after calling this, while the
+       * homepage switcher did not — so picking Black on the homepage recoloured the
+       * sidebar and left the workspace behind, and the user had to pick it a second
+       * time from inside the workspace to make it take. The decision belongs here,
+       * once, rather than in each control that happens to call it.
+       *
+       * Picking a *skin* still turns tracking off, and it still survives navigation,
+       * reloads and everything else — up to the next explicit theme choice, which is
+       * a fresh statement about how the whole shell should look.
+       */
+      setTheme: (theme) => {
+        const next = normalizeTheme(theme);
+        return set({
+          theme: next,
+          terminalSkin: skinForTheme(next),
+          terminalSkinAuto: true,
+          slideshowEnabled: false,
+        });
+      },
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
         set({ sidebarWidth: Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, sidebarWidth)) }),

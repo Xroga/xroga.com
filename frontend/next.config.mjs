@@ -94,7 +94,14 @@ const nextConfig = {
       // The crypto page is now positioned as a broader Crypto Builder, not a
       // hackathon-only page. The old URL is kept as a permanent redirect so existing
       // links and indexed results still resolve, and it renders no duplicate page.
-      { source: '/crypto-hackathon-builder', destination: '/crypto-builder', permanent: true },
+      //
+      // The destination is `/crypto`, the page that exists. It pointed at
+      // `/crypto-builder`, which never has — so the redirect that was meant to rescue
+      // old links delivered them to a 404 instead. `/crypto-builder` is redirected too
+      // rather than simply dropped: this was a *permanent* redirect, so browsers and
+      // indexes have it cached and will keep asking for it.
+      { source: '/crypto-hackathon-builder', destination: '/crypto', permanent: true },
+      { source: '/crypto-builder', destination: '/crypto', permanent: true },
       { source: '/login', destination: '/auth/login', permanent: true },
       { source: '/signin', destination: '/auth/login', permanent: true },
       { source: '/signup', destination: '/auth/signup', permanent: true },

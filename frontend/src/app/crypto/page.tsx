@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
+import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { BUILD_KINDS } from '@/lib/cryptoBuilderContent';
 import { HACKATHON_SOURCES } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
@@ -284,11 +285,8 @@ export default function CryptoPage() {
         </header>
 
         <div className={styles.heroInner}>
-          <div className={styles.eyebrow}>
-            <Sparkles />
-            XROGA CRYPTO BUILDER
-          </div>
-
+          {/* The badge said the page's own title back to it, directly above a headline
+              that says the same thing. */}
           <h1 className={`xv-cb-h1 ${styles.heroTitle}`}>
             AI Crypto Builder
             <br />
@@ -904,99 +902,11 @@ export default function CryptoPage() {
         </Link>
       </section>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerBrand}>
-          <Logo
-            href="/"
-            variant="homepage"
-            height={30}
-          />
-
-          <p>
-            Repository-aware AI product building
-            <br />
-            with validation before shipping.
-          </p>
-        </div>
-
-        <div className={styles.footerColumns}>
-          <div>
-            <span>
-              Product
-            </span>
-
-            <Link href="/features">
-              Features
-            </Link>
-
-            <Link href="/pricing">
-              Pricing
-            </Link>
-
-            <Link href="/crypto">
-              Crypto
-            </Link>
-
-            <Link href="/showcase">
-              Showcase
-            </Link>
-          </div>
-
-          <div>
-            <span>
-              Learn
-            </span>
-
-            <Link href="/docs">
-              Docs
-            </Link>
-
-            <Link href="/research">
-              Research
-            </Link>
-
-            <Link href="/community">
-              Community
-            </Link>
-
-            <Link href="/about">
-              About
-            </Link>
-          </div>
-
-          <div>
-            <span>
-              Legal
-            </span>
-
-            <Link href="/terms">
-              Terms
-            </Link>
-
-            <Link href="/privacy">
-              Privacy
-            </Link>
-
-            <Link href="/refund">
-              Refund
-            </Link>
-
-            <Link href="/contact">
-              Contact
-            </Link>
-          </div>
-        </div>
-
-        <div className={styles.footerBase}>
-          <span>
-            © {new Date().getFullYear()} XROGA AI
-          </span>
-
-          <span>
-            Build with evidence. Ship with ownership.
-          </span>
-        </div>
-      </footer>
+      {/* The homepage footer, not a second one built beside it. This page carried
+          its own copy — same links, same wording, its own markup and its own
+          stylesheet — so every change to the site footer had to be made twice and
+          the two drifted apart. */}
+      <MarketingFooter />
     </main>
   );
 }

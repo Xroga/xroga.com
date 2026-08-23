@@ -9,7 +9,10 @@ const PUBLIC_PREFIXES = [
   '/docs',
   '/community',
   '/research',
-  '/crypto-builder',
+  // `/crypto`, not `/crypto-builder`. The route here named a page that has never
+  // existed, so the real crypto page was not on this list — a public marketing page
+  // that bounced every signed-out visitor to the login screen.
+  '/crypto',
   '/game-builder',
   '/video',
   '/ai-coding-agent',
