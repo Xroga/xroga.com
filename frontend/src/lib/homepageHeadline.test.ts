@@ -38,7 +38,8 @@ function ruleBody(selector: string): string {
 }
 
 test('the headline reads as one sentence', () => {
-  const block = /<p className="xv-hc-headline">([\s\S]*?)<\/p>/.exec(PAGE);
+  // An h1 since the standalone wordmark was removed and this became the page's heading.
+  const block = /<h1 className="xv-hc-headline">([\s\S]*?)<\/h1>/.exec(PAGE);
   assert.ok(block, 'the headline paragraph is missing');
 
   const words = [...block[1].matchAll(/>([^<>{}]+)<\/span>/g)].map((m) => m[1].trim());
