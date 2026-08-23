@@ -57,7 +57,6 @@ export function companionPreferencesSnapshot(state: CompanionState): CompanionPr
     voiceEnabled: state.voiceEnabled,
     careEnabled: state.careEnabled,
     reducedGamification: state.reducedGamification,
-    crownEnabled: state.crownEnabled,
     mantleEnabled: state.mantleEnabled,
     lastFedAt: state.lastFedAt,
   };

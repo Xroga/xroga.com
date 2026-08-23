@@ -57,7 +57,6 @@ export interface CompanionPreferences {
   voiceEnabled: boolean;
   careEnabled: boolean;
   reducedGamification: boolean;
-  crownEnabled: boolean;
   mantleEnabled: boolean;
   lastFedAt: string | null;
 }
@@ -93,7 +92,6 @@ export const DEFAULT_COMPANION_PREFERENCES: CompanionPreferences = {
   voiceEnabled: false,
   careEnabled: false,
   reducedGamification: true,
-  crownEnabled: true,
   mantleEnabled: true,
   lastFedAt: null,
 };
