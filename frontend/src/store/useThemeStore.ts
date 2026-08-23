@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { AccentId, DensityPreference, FontPreference, ThemeId, TerminalSkin } from '@/lib/theme';
+import type { AccentId, DensityPreference, FontChoice, FontPreference, ThemeId, TerminalSkin } from '@/lib/theme';
 import {
   CUSTOM_DESKTOP_BG_KEY,
   CUSTOM_MOBILE_BG_KEY,
@@ -57,6 +57,10 @@ interface ThemeState {
   terminalSkinAuto: boolean;
   accent: AccentId;
   fontPreference: FontPreference;
+  /** Type scale for the sidebar, chosen independently of the workspace. */
+  sidebarFont: FontChoice;
+  /** Type scale for the workspace chrome. */
+  workspaceFont: FontChoice;
   density: DensityPreference;
   reducedMotion: boolean;
   highContrast: boolean;
@@ -79,6 +83,8 @@ interface ThemeState {
   setTerminalSkinAuto: () => void;
   setAccent: (accent: AccentId) => void;
   setFontPreference: (fontPreference: FontPreference) => void;
+  setSidebarFont: (font: FontChoice) => void;
+  setWorkspaceFont: (font: FontChoice) => void;
   setDensity: (density: DensityPreference) => void;
   setReducedMotion: (reducedMotion: boolean) => void;
   setHighContrast: (highContrast: boolean) => void;
@@ -105,6 +111,8 @@ export const useThemeStore = create<ThemeState>()(
       terminalSkinAuto: true,
       accent: 'blue',
       fontPreference: 'modern',
+      sidebarFont: 'default',
+      workspaceFont: 'default',
       density: 'comfortable',
       reducedMotion: false,
       highContrast: false,
@@ -181,6 +189,8 @@ export const useThemeStore = create<ThemeState>()(
         set((s) => ({ terminalSkinAuto: true, terminalSkin: skinForTheme(s.theme) })),
       setAccent: (accent) => set({ accent }),
       setFontPreference: (fontPreference) => set({ fontPreference }),
+      setSidebarFont: (sidebarFont) => set({ sidebarFont }),
+      setWorkspaceFont: (workspaceFont) => set({ workspaceFont }),
       setDensity: (density) => set({ density }),
       setReducedMotion: (reducedMotion) => set({ reducedMotion }),
       setHighContrast: (highContrast) => set({ highContrast }),
@@ -213,6 +223,8 @@ export const useThemeStore = create<ThemeState>()(
         terminalSkinAuto: s.terminalSkinAuto,
         accent: s.accent,
         fontPreference: s.fontPreference,
+        sidebarFont: s.sidebarFont,
+        workspaceFont: s.workspaceFont,
         density: s.density,
         reducedMotion: s.reducedMotion,
         highContrast: s.highContrast,

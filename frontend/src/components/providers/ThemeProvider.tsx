@@ -16,6 +16,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const accent = useThemeStore((s) => s.accent);
   const fontPreference = useThemeStore((s) => s.fontPreference);
+  const sidebarFont = useThemeStore((s) => s.sidebarFont);
+  const workspaceFont = useThemeStore((s) => s.workspaceFont);
   const density = useThemeStore((s) => s.density);
   const reducedMotion = useThemeStore((s) => s.reducedMotion);
   const highContrast = useThemeStore((s) => s.highContrast);
@@ -58,7 +60,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     );
     body.classList.add(`theme-${core}`);
     document.documentElement.dataset.accent = accent;
-    document.documentElement.dataset.font = fontPreference;
+    /* On `body`, not on `documentElement`. The next/font variables these stacks are
+       built from live on the body class list, so a rule hung off `html` resolves them
+       to nothing and the setting silently does nothing. */
+    body.dataset.font = fontPreference;
+    body.dataset.sidebarFont = sidebarFont;
+    body.dataset.workspaceFont = workspaceFont;
     document.documentElement.dataset.density = density;
     document.documentElement.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
     document.documentElement.dataset.highContrast = highContrast ? 'true' : 'false';
@@ -84,7 +91,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (isHomepage) {
       body.style.backgroundColor = THEME_SURFACE[core];
     }
-  }, [theme, forcedTheme, accent, fontPreference, density, reducedMotion, highContrast, isHomepage]);
+  }, [theme, forcedTheme, accent, fontPreference, sidebarFont, workspaceFont, density, reducedMotion, highContrast, isHomepage]);
 
   return <>{children}</>;
 }

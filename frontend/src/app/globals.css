@@ -229,9 +229,67 @@ body.theme-beige .xv-sidebar-root > div {
   color: var(--foreground);
 }
 
-html[data-font='modern'] { --ui-font: var(--font-goga), var(--font-inter), system-ui, sans-serif; }
-html[data-font='classic'] { --ui-font: var(--font-claude-serif), var(--font-source-serif), Georgia, serif; }
-html[data-font='mono'] { --ui-font: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace; }
+/* ── Type scale ──────────────────────────────────────────────────────────────
+   Declared on `body`, not on `html`.
+
+   The next/font variables (`--font-goga` and friends) are attached to the `<body>`
+   class list, so they do not exist on `html`. A stack built from them one level up
+   resolves to nothing: `--ui-font` computed to the empty token stream in every mode,
+   `font-family` was dropped, and the Font setting changed the stored value while the
+   page kept the same face. Measured before the fix — Modern, Classic and Mono all
+   produced a byte-identical `font-family` on `body`.
+
+   The scoped rules below carry the whole stack rather than referencing a shared
+   token, so each one resolves in the place it is used. */
+body[data-font='modern'] { --ui-font: var(--font-goga), var(--font-inter), system-ui, sans-serif; }
+body[data-font='classic'] { --ui-font: var(--font-claude-serif), var(--font-source-serif), Georgia, serif; }
+body[data-font='mono'] { --ui-font: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace; }
+
+/* The sidebar and the workspace each take their own face. `default` sets nothing,
+   so the surface keeps whatever the shell is already using.
+
+   `!important` is not decoration: `<body>` carries Tailwind's `font-sans` utility,
+   which sets `font-family` directly and outranks an inherited value. Without it the
+   choice applies to the custom property and never reaches the text. */
+body[data-sidebar-font='goga'] .xv-sidebar-root,
+body[data-sidebar-font='goga'] .xv-sidebar-mobile-open {
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-sidebar-font='inter'] .xv-sidebar-root,
+body[data-sidebar-font='inter'] .xv-sidebar-mobile-open {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-sidebar-font='serif'] .xv-sidebar-root,
+body[data-sidebar-font='serif'] .xv-sidebar-mobile-open {
+  font-family: var(--font-source-serif), Georgia, 'Times New Roman', serif !important;
+}
+body[data-sidebar-font='display'] .xv-sidebar-root,
+body[data-sidebar-font='display'] .xv-sidebar-mobile-open {
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif !important;
+}
+body[data-sidebar-font='mono'] .xv-sidebar-root,
+body[data-sidebar-font='mono'] .xv-sidebar-mobile-open {
+  font-family: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace !important;
+}
+
+/* The workspace scope stops at the shell chrome: the transcript and the code panes
+   keep their own monospace, because a serif terminal is not a preference anyone is
+   expressing here. */
+body[data-workspace-font='goga'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-workspace-font='inter'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-workspace-font='serif'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-source-serif), Georgia, 'Times New Roman', serif !important;
+}
+body[data-workspace-font='display'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif !important;
+}
+body[data-workspace-font='mono'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace !important;
+}
 html[data-density='compact'] { font-size: 15px; }
 html[data-density='compact'] .glass-panel,
 html[data-density='compact'] .glass-panel-strong { --xv-density-padding: 0.875rem; }
@@ -355,6 +413,18 @@ body .xv-site-header.xv-site-header-transparent {
   .xv-main-scroll-under-header { padding-top: 6rem !important; }
 }
 
+/* Not a colour: the theme's own ink, so it inverts with the theme rather than
+   sitting on top of it — near-black on White and Beige, near-white on Gray and
+   Black. The dim tint is mixed from the same value for the same reason. */
+html[data-accent='default'] body {
+  --primary: var(--foreground);
+  --accent: var(--foreground);
+  --primary-glow: var(--foreground);
+  --accent-dim: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+html[data-accent='amber'] body { --primary: #d97706; --accent: #d97706; --primary-glow: #fbbf24; --accent-dim: rgba(217, 119, 6, 0.12); }
+html[data-accent='cyan'] body { --primary: #0891b2; --accent: #0891b2; --primary-glow: #22d3ee; --accent-dim: rgba(8, 145, 178, 0.12); }
+html[data-accent='rose'] body { --primary: #e11d48; --accent: #e11d48; --primary-glow: #fb7185; --accent-dim: rgba(225, 29, 72, 0.12); }
 html[data-accent='blue'] body { --primary: #006aff; --accent: #006aff; --primary-glow: #3b82f6; --accent-dim: rgba(0, 106, 255, 0.12); }
 html[data-accent='violet'] body { --primary: #7c3aed; --accent: #7c3aed; --primary-glow: #a78bfa; --accent-dim: rgba(124, 58, 237, 0.12); }
 html[data-accent='emerald'] body { --primary: #059669; --accent: #059669; --primary-glow: #34d399; --accent-dim: rgba(5, 150, 105, 0.12); }
@@ -2784,28 +2854,33 @@ body.theme-gray * {
     border-color: rgba(0, 0, 0, 0.1);
   }
 
+  /* Straddles the sidebar's edge: half the control inside the panel, half outside.
+     It carried its own card — border, fill and a drop shadow — which read as a
+     floating chip parked next to the sidebar rather than as part of it, and the
+     shadow spilled into the seam the panels were just brought together across. The
+     glyph alone does the job; the panel behind it is its background. */
   .xv-sidebar-edge-toggle {
     position: absolute;
     top: 50%;
     right: 0;
     z-index: 46;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 30px;
     align-items: center;
     justify-content: center;
-    border-radius: 9px;
-    border: 1px solid var(--card-border);
-    background: var(--card);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
     color: var(--muted);
-    opacity: 0.42;
-    transform: translate(42%, -50%);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
-    transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s;
+    opacity: 0.5;
+    transform: translate(50%, -50%);
+    box-shadow: none;
+    transition: opacity 0.15s ease, color 0.15s ease;
   }
   .xv-sidebar-root:hover .xv-sidebar-edge-toggle,
   .xv-sidebar-edge-toggle:focus-visible {
     opacity: 1;
-    transform: translate(28%, -50%);
+    color: var(--text-primary, var(--foreground));
   }
   .xv-sidebar-root.is-collapsed .xv-sidebar-edge-toggle {
     top: calc(var(--xv-sidebar-inset) + 3.55rem);
@@ -9098,6 +9173,12 @@ body.theme-beige {
      measure from it, which is what keeps their edges aligned at every width. */
   --xv-app-gutter: 8px;
   --xv-app-radius: 12px;
+  /* The seam between the two panels, as opposed to the gutter around the frame.
+     They were the same value, so the channel down the middle measured twice the
+     outer margin — the sidebar's own inset plus the stage's padding — and read as a
+     corridor rather than a join. Small enough to look attached, not zero: butted
+     panels lose the edge that tells you there are two of them. */
+  --xv-app-seam: 5px;
 }
 
 @media (min-width: 640px) {
@@ -9112,6 +9193,8 @@ body.theme-beige {
 .xv-app-stage,
 .xv-app-stage:not(.xv-app-stage--fullscreen) {
   padding: var(--xv-app-gutter);
+  /* Only the edge that faces the sidebar tightens; the other three keep the frame. */
+  padding-inline-start: var(--xv-app-seam);
 }
 .xv-app-stage--fullscreen { padding: 0; }
 
