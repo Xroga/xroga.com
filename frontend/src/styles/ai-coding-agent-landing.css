@@ -8,26 +8,52 @@
    The palette is local variables on `.agx-page` instead.
    ========================================================================== */
 
+/*
+ * The page reads its ground, ink and surfaces from the shared theme tokens, so the
+ * same layout works on all four themes over the homepage backdrop. Only the green is
+ * the page's own — it is this route's identity and does not follow the theme.
+ *
+ * `background: transparent` is the point: the backdrop is a fixed layer behind the
+ * document, and any opaque colour here would hide it completely.
+ */
 .agx-page {
-  --agx-bg: #070a07;
-  --agx-panel: #0d120d;
-  --agx-panel-2: #111811;
-  --agx-line: rgba(255, 255, 255, 0.07);
-  --agx-line-lit: rgba(126, 217, 87, 0.22);
-  --agx-green: #7ed957;
-  --agx-green-bright: #a8f277;
-  --agx-green-deep: #4e9b2f;
-  --agx-ink: #e9f2e6;
-  --agx-soft: #9aa697;
+  --agx-panel: var(--tp-panel);
+  --agx-panel-2: var(--tp-surface-2);
+  --agx-line: var(--tp-border);
+  --agx-line-lit: color-mix(in srgb, var(--agx-green) 30%, transparent);
+  /* The light-ground green. #4e9b2f measured 2.78:1 as heading text on the Beige
+     ground, under the 3:1 large-text floor, so the whole trio is a step darker. */
+  --agx-green: #3b7a22;
+  --agx-green-bright: #2f6b1c;
+  --agx-green-deep: #23561a;
+  /* Text sitting on a 12% green tint needs to clear the tint as well as the panel;
+     the accent itself measured 2.69:1 there. */
+  --agx-on-tint: #23561a;
+  --agx-ink: var(--tp-ink);
+  --agx-soft: var(--tp-muted);
   --agx-radius: 18px;
 
   position: relative;
   isolation: isolate;
-  background: var(--agx-bg);
+  background: transparent;
   color: var(--agx-ink);
   /* `clip`, never `hidden`: `hidden` would make this a scroll container and break
      the sticky header inside it. */
   overflow-x: clip;
+}
+
+/*
+ * The green has to invert with the ground. #7ed957 is a light lime: legible on the
+ * Black and Gray grounds, and far too pale to read as text or to carry dark button
+ * text on the White and Beige ones. The dark green above is the light-ground default;
+ * these two put the bright one back where the ground is dark.
+ */
+body.theme-black .agx-page,
+body.theme-gray .agx-page {
+  --agx-green: #7ed957;
+  --agx-green-bright: #a8f277;
+  --agx-green-deep: #4e9b2f;
+  --agx-on-tint: #a8f277;
 }
 
 .agx-shell { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
@@ -78,7 +104,7 @@
   padding: 0.4rem 0.9rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 999px;
-  background: rgba(126, 217, 87, 0.07);
+  background: color-mix(in srgb, var(--agx-green) 7%, transparent);
   color: var(--agx-ink);
   font-size: 0.78rem;
   font-weight: 500;
@@ -103,13 +129,18 @@
   border: 1px solid transparent;
   border-radius: 11px;
   background: var(--agx-green);
-  color: #06210a;
+  /* White on the dark green of the light themes, near-black on the bright green of
+     the dark ones — the button inverts with the accent, not with the page. */
+  color: #ffffff;
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
   transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease;
 }
+
+body.theme-black .agx-btn,
+body.theme-gray .agx-btn { color: #06210a; }
 
 .agx-btn:hover { background: var(--agx-green-bright); transform: translateY(-1px); }
 .agx-btn svg { width: 16px; height: 16px; }
@@ -123,7 +154,7 @@
   color: var(--agx-ink);
 }
 
-.agx-btn--ghost:hover { border-color: var(--agx-line-lit); background: rgba(126, 217, 87, 0.08); }
+.agx-btn--ghost:hover { border-color: var(--agx-line-lit); background: color-mix(in srgb, var(--agx-green) 8%, transparent); }
 
 /* ----------------------------------------------------------------------- header */
 
@@ -132,7 +163,8 @@
   top: 0;
   z-index: 40;
   border-bottom: 1px solid var(--agx-line);
-  background: rgba(7, 10, 7, 0.88);
+  background: color-mix(in srgb, var(--tp-bg) 86%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .agx-header__inner {
@@ -201,7 +233,7 @@
   display: none;
   padding: 0.8rem 1.25rem 1.2rem;
   border-top: 1px solid var(--agx-line);
-  background: var(--agx-bg);
+  background: var(--tp-bg);
 }
 
 .agx-drawer[data-open='true'] { display: block; }
@@ -257,7 +289,7 @@
   border-radius: 13px;
   background: var(--agx-panel-2);
   color: var(--agx-green);
-  box-shadow: 0 0 24px rgba(126, 217, 87, 0.14);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--agx-green) 14%, transparent);
 }
 
 .agx-chip svg { width: 19px; height: 19px; }
@@ -293,8 +325,9 @@
   margin: 0;
   border: 1px solid var(--agx-line-lit);
   border-radius: var(--agx-radius);
-  background: var(--agx-panel);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 60px rgba(126, 217, 87, 0.08);
+  background: var(--tp-panel-solid);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 60px color-mix(in srgb, var(--agx-green) 8%, transparent);
   overflow: hidden;
 }
 
@@ -360,7 +393,7 @@
 }
 
 .agx-window__rail li[data-active='true'] {
-  background: rgba(126, 217, 87, 0.12);
+  background: color-mix(in srgb, var(--agx-green) 12%, transparent);
   color: var(--agx-green);
 }
 
@@ -385,8 +418,8 @@
   padding: 0.18rem 0.5rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 999px;
-  background: rgba(126, 217, 87, 0.12);
-  color: var(--agx-green);
+  background: color-mix(in srgb, var(--agx-green) 14%, transparent);
+  color: var(--agx-on-tint);
   font-size: 0.6rem;
 }
 
@@ -414,7 +447,7 @@
   color: var(--agx-soft);
 }
 
-.agx-turn__who--agent { background: rgba(126, 217, 87, 0.14); color: var(--agx-green); }
+.agx-turn__who--agent { background: color-mix(in srgb, var(--agx-green) 14%, transparent); color: var(--agx-green); }
 .agx-turn__who svg { width: 12px; height: 12px; }
 
 .agx-term {
@@ -423,14 +456,20 @@
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--agx-line);
   border-radius: 11px;
+  /* A terminal is dark on every theme. Recolouring this one to the light grounds
+     would make it read as a quote block rather than a console. */
   background: #060a06;
+  border-color: rgba(255, 255, 255, 0.08);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.64rem;
   line-height: 1.75;
 }
 
-.agx-term p { margin: 0; color: var(--agx-green); }
-.agx-term__prompt { color: var(--agx-green-deep); }
+/* The terminal's ground is fixed at #060a06 on every theme, so its foreground is
+   fixed too. Following the theme-dependent accent put the light-ground dark green on
+   the dark console and measured 3.79:1 against a 4.5 floor. */
+.agx-term p { margin: 0; color: #7ed957; }
+.agx-term__prompt { color: #8fc97a; }
 
 .agx-stamp {
   position: absolute;
@@ -468,6 +507,7 @@
   border: 1px solid var(--agx-line);
   border-radius: 22px;
   background: var(--agx-panel);
+  backdrop-filter: blur(18px);
 }
 
 /* ------------------------------------------------------------------------ cards */
@@ -496,7 +536,7 @@
   margin-bottom: 0.9rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 10px;
-  background: rgba(126, 217, 87, 0.08);
+  background: color-mix(in srgb, var(--agx-green) 8%, transparent);
   color: var(--agx-green);
 }
 
@@ -554,7 +594,7 @@
   border-radius: 16px;
   background: var(--agx-panel-2);
   color: var(--agx-green);
-  box-shadow: 0 18px 40px rgba(126, 217, 87, 0.16), inset 0 0 22px rgba(126, 217, 87, 0.08);
+  box-shadow: 0 18px 40px rgba(126, 217, 87, 0.16), inset 0 0 22px color-mix(in srgb, var(--agx-green) 8%, transparent);
 }
 
 .agx-step__plinth svg { width: 24px; height: 24px; }
