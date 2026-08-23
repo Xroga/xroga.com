@@ -1,9 +1,38 @@
 'use client';
 
+import { useEffect } from 'react';
 import { GLOBAL_ERROR_CSS } from './global-error-styles';
 import { storageBootstrapScript } from '@/lib/storageBootstrapScript';
 
-export default function GlobalError() {
+/**
+ * The root error boundary.
+ *
+ * It previously took no props and told the reader "The problem has been recorded"
+ * while recording nothing — Next hands this component the error and it was dropped
+ * on the floor. So every report of this screen arrived with no name, no stack and
+ * no digest, and the only way to investigate was to guess.
+ *
+ * The digest is the one identifier that ties a crash the reader saw to the entry in
+ * the platform's own logs, so it is printed to the console *and* shown on the page:
+ * someone reporting this screen can now quote a code instead of a description.
+ */
+export default function GlobalError({
+  error,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    // Grouped, so the name, message, digest and stack arrive together rather than as
+    // four separate lines that interleave with whatever else is logging.
+    console.error('[GlobalError]', {
+      name: error?.name,
+      message: error?.message,
+      digest: error?.digest,
+      stack: error?.stack,
+    });
+  }, [error]);
+
   return (
     <html lang="en">
       <head>
@@ -39,6 +68,11 @@ export default function GlobalError() {
                 Return to homepage
               </button>
             </div>
+            {error?.digest ? (
+              <p className="xv-ge__digest">
+                Reference <code>{error.digest}</code>
+              </p>
+            ) : null}
           </div>
         </div>
       </body>

@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getSupabasePublicConfig } from './config';
-import { isPublicPath } from './routeAccess';
+import { isPublicPath, requiresUserLookup } from './routeAccess';
 
 function authUnavailableResponse(request: NextRequest, isPublicPage: boolean) {
   if (isPublicPage) return NextResponse.next({ request });
@@ -19,6 +19,14 @@ export async function updateSession(request: NextRequest) {
   const isAuthPage = pathname.startsWith('/auth');
   const isPublicPage = isPublicPath(pathname);
   let supabaseResponse = NextResponse.next({ request });
+
+  /*
+   * Nothing below can change the response for a public, non-auth path, so the auth
+   * round trip that used to happen here is skipped entirely — client included. For a
+   * signed-in reader that removes one call to the auth server from every navigation
+   * and every RSC prefetch of a public page.
+   */
+  if (!requiresUserLookup(pathname)) return supabaseResponse;
 
   let config: ReturnType<typeof getSupabasePublicConfig>;
   try {
