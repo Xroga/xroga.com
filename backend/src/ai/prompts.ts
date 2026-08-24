@@ -115,12 +115,25 @@ export function incrementalUpdateContext(
     .map((p) => `- ${p}`)
     .join('\n');
 
+  // `selectFilesForUpdate` and `prepareFocusedContext` already enforce the turn's
+  // repository-context budget. Truncating every selected file again at 6,000 chars
+  // made the tail of otherwise-small HTML files invisible to the implementation
+  // model. A requested section could therefore be named in the prompt but absent
+  // from the only source snapshot the model was allowed to use, guaranteeing a
+  // SEARCH miss. Preserve complete selected files inside one bounded 48k envelope.
+  const sampleBudget = 48_000;
+  let sampledChars = 0;
   const samples = files
     .slice(0, 8)
-    .map(
-      (f) =>
-        `### ${f.path}\n\`\`\`\n${f.content.slice(0, 6000)}${f.content.length > 6000 ? '\n…' : ''}\n\`\`\``,
-    )
+    .map((f) => {
+      const remaining = Math.max(0, sampleBudget - sampledChars);
+      if (!remaining) return '';
+      const content = f.content.slice(0, remaining);
+      sampledChars += content.length;
+      const truncated = content.length < f.content.length ? '\n…' : '';
+      return `### ${f.path}\n\`\`\`\n${content}${truncated}\n\`\`\``;
+    })
+    .filter(Boolean)
     .join('\n\n');
 
   const summaryBlock = opts?.cachedSummary?.trim()
