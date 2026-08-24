@@ -110,6 +110,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
       providerUserId,
       refreshToken: tokens.refresh_token,
       expiresIn: tokens.expires_in,
+      authKind: 'sign_in_with_vercel',
     });
 
     res.json({ connected: true, username });
@@ -141,6 +142,7 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
   await saveVercelConnection(req.userId!, token, {
     username,
     providerUserId: user.user?.id,
+    authKind: 'personal_token',
   });
   res.json({ connected: true, username });
 });
