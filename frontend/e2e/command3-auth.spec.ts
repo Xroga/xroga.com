@@ -251,7 +251,29 @@ test.beforeAll(async () => {
   const outsider = await admin.auth.admin.createUser({ email: outsiderEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   if (owner.error || outsider.error || !owner.data.user || !outsider.data.user) throw new Error('Temporary verified test users could not be created');
   ownerId = owner.data.user.id; outsiderId = outsider.data.user.id;
-  await admin.from('profiles').upsert([{ id: ownerId, display_name: 'Command 3 Owner' }, { id: outsiderId, display_name: 'Command 3 Outsider' }]);
+  /*
+   * These fixtures stand in for established accounts, so they are provisioned as
+   * accounts that have finished setup.
+   *
+   * Without it they take the column's default and read as brand new, and the shell
+   * sends every one of them to `/onboarding` — which is correct behaviour and would
+   * fail every workspace assertion below, since none of them would reach a workspace.
+   *
+   * Written with a fallback because the column arrives with a migration: a run
+   * against a database that does not have it yet must not fail in `beforeAll`, which
+   * would take the whole suite down before a single assertion ran.
+   */
+  const onboarded = { status: 'completed', current_step: 'complete', backfilled: true };
+  const withOnboarding = await admin.from('profiles').upsert([
+    { id: ownerId, display_name: 'Command 3 Owner', onboarding: onboarded },
+    { id: outsiderId, display_name: 'Command 3 Outsider', onboarding: onboarded },
+  ]);
+  if (withOnboarding.error) {
+    await admin.from('profiles').upsert([
+      { id: ownerId, display_name: 'Command 3 Owner' },
+      { id: outsiderId, display_name: 'Command 3 Outsider' },
+    ]);
+  }
   const projects = await admin.from('projects').insert([
     { user_id: ownerId, name: `command3-demo-owner-${run}`, type: 'app', status: 'in_progress' },
     { user_id: outsiderId, name: `command3-demo-outsider-${run}`, type: 'app', status: 'in_progress' },
