@@ -839,10 +839,13 @@ export const api = {
         body: JSON.stringify({ code, state, redirectUri: vercelOAuthCallbackUrl() }),
       }),
     connectToken: (token: string) =>
-      apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect-token', {
-        method: 'POST',
-        body: JSON.stringify({ token }),
-      }),
+      apiFetch<{ connected: boolean; username: string; canDeploy: true }>(
+        '/api/vercel/connect-token',
+        {
+          method: 'POST',
+          body: JSON.stringify({ token }),
+        },
+      ),
     status: () =>
       apiFetch<{
         connected: boolean;

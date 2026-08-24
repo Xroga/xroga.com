@@ -12,6 +12,7 @@ import {
   parseVercelOAuthState,
   saveVercelConnection,
   vercelOAuthConfigured,
+  verifyVercelPersonalTokenForDeploy,
   verifyVercelTokenLive,
 } from '../services/integrations/vercelAuth.js';
 import { deployStaticSiteWithToken } from '../lib/vercel.js';
@@ -128,23 +129,54 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
   }
 
   const token = parsed.data.token.trim();
-  const userRes = await fetch('https://api.vercel.com/v2/user', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!userRes.ok) {
-    res.status(400).json({
-      error: 'Invalid Vercel token. Create one at vercel.com/account/tokens with Full Account scope.',
+  try {
+    const verification = await verifyVercelPersonalTokenForDeploy(token);
+    if (!verification.ok && verification.reason === 'account_scope_required') {
+      console.warn('[vercel/connect-token] Vercel user check rejected', {
+        userId: req.userId,
+        status: verification.status,
+      });
+      res.status(400).json({
+        code: 'VERCEL_TOKEN_ACCOUNT_SCOPE_REQUIRED',
+        error:
+          'Vercel rejected this token for user access. Create a new token with Personal Account scope (not a Team-only scope), then paste the newly shown value.',
+      });
+      return;
+    }
+    if (!verification.ok) {
+      console.warn('[vercel/connect-token] token lacks deploy capability', {
+        userId: req.userId,
+        canListProjects: verification.capability?.canListProjects,
+        canReadDeployments: verification.capability?.canReadDeployments,
+      });
+      res.status(400).json({
+        code: 'VERCEL_TOKEN_DEPLOY_ACCESS_REQUIRED',
+        error:
+          'The token is valid but cannot access both Vercel projects and deployments. Create a new token with Personal Account scope, then try again.',
+      });
+      return;
+    }
+
+    await saveVercelConnection(req.userId!, token, {
+      username: verification.username,
+      providerUserId: verification.providerUserId,
+      authKind: 'personal_token',
     });
-    return;
+    console.info('[vercel/connect-token] deploy-capable token saved', {
+      userId: req.userId,
+      username: verification.username,
+    });
+    res.json({ connected: true, username: verification.username, canDeploy: true });
+  } catch (err) {
+    console.error('[vercel/connect-token] failed without exposing credential', {
+      userId: req.userId,
+      error: (err as Error).message,
+    });
+    res.status(502).json({
+      code: 'VERCEL_TOKEN_SAVE_FAILED',
+      error: 'Xroga could not verify and save the Vercel token. Please try again.',
+    });
   }
-  const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
-  const username = user.user?.username ?? 'vercel-user';
-  await saveVercelConnection(req.userId!, token, {
-    username,
-    providerUserId: user.user?.id,
-    authKind: 'personal_token',
-  });
-  res.json({ connected: true, username });
 });
 
 router.get('/status', async (req: AuthRequest, res) => {
