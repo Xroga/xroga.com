@@ -26,9 +26,29 @@ const CRYPTO_RE =
 const AGENT_RE =
   /\b(agent|agents|automation|autonomous|cron\s*job|scheduled\s*task|workflow|orchestrat|always[- ]?on|background\s*job)\b/i;
 
+const NEGATED_CAPABILITY_RE =
+  /\b(?:not|isn['’]t|is\s+not)\s+(?:an?\s+)?(?:next\.?js|full[- ]?stack|saas|dashboard|auth(?:entication)?|login|signup|supabase|database|postgres|backend|api(?:\s+route)?|stripe|billing|lemon\s+squeezy|e-?commerce|online\s+(?:store|shop)|storefront|mobile\s+app|desktop\s+app|crypto|web3|agent|automation)\b/gi;
+
+/**
+ * Return only capability claims the user is actually asking Xroga to build.
+ *
+ * Routing used to scan the raw sentence. That made `not ecommerce` select the
+ * ecommerce blueprint and `no backend` select Next.js. Besides wasting a model run,
+ * the false capability could merge an auth/API scaffold into an explicitly static
+ * site. Negative requirements are constraints, not requested product surfaces, so
+ * remove them before deterministic routing while leaving the original prompt intact
+ * for the model and reviewer.
+ */
+export function capabilityRoutingText(prompt: string): string {
+  return prompt
+    .replace(NEGATED_CAPABILITY_RE, ' ')
+    .replace(/\b(?:no|without)\s+[^.!?;\n]+/gi, ' ')
+    .replace(/\b(?:do\s+not|don['’]t|must\s+not|should\s+not)\s+[^.!?;\n]+/gi, ' ');
+}
+
 /** Feature packs layered on Next.js when the prompt asks for crypto or agents. */
 export function detectScaffoldFeatures(prompt: string): ScaffoldFeatures {
-  const t = prompt.trim();
+  const t = capabilityRoutingText(prompt).trim();
   return {
     crypto: CRYPTO_RE.test(t),
     agent: AGENT_RE.test(t),
@@ -37,7 +57,7 @@ export function detectScaffoldFeatures(prompt: string): ScaffoldFeatures {
 
 /** Pick a deterministic scaffold so builds ship with real structure, not empty hope. */
 export function detectScaffoldKind(prompt: string): ScaffoldKind {
-  const t = prompt.trim();
+  const t = capabilityRoutingText(prompt).trim();
 
   // Extension / desktop before generic "app" keywords
   if (CHROME_RE.test(t)) return 'chrome';
