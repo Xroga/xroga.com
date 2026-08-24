@@ -16,6 +16,13 @@ import {
 const PKCE_PROVIDER = 'vercel_oauth_pkce';
 const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
 const TOKEN_BUCKET = 'xroga-github-tokens';
+const TOKEN_REFRESH_SKEW_MS = 60_000;
+
+// A Vercel refresh token is rotated when it is used. Deduplicate refreshes in
+// this process so concurrent route/pipeline checks cannot spend the same token
+// twice. Cross-machine races are recovered by reloading the DB after a failed
+// exchange (the winning machine will already have stored the rotated pair).
+const vercelRefreshInFlight = new Map<string, Promise<string>>();
 
 const ALLOWED_CALLBACK_ORIGINS = [
   'https://xroga.com',
@@ -305,18 +312,65 @@ export async function getVercelToken(userId: string): Promise<string | null> {
   const row = await loadVercelConnection(userId);
   if (!row?.access_token?.trim()) return null;
 
-  const expiresAt = row.expires_at ? Date.parse(row.expires_at) : 0;
-  const needsRefresh = expiresAt > 0 && expiresAt < Date.now() + 60_000;
-  if (needsRefresh && row.refresh_token) {
+  if (!isVercelAccessTokenExpiring(row.expires_at)) return row.access_token.trim();
+
+  if (row.refresh_token) {
     try {
-      const refreshed = await refreshVercelOAuthToken(userId, row.refresh_token, row.username);
+      const refreshed = await refreshVercelOAuthTokenSingleFlight(
+        userId,
+        row.refresh_token,
+        row.username,
+      );
       return refreshed;
     } catch (err) {
       console.warn('[vercelAuth] refresh failed:', (err as Error).message);
-      // Fall through — access token may still work briefly
+
+      // Another Fly machine may have won a simultaneous refresh and rotated
+      // the token before this request reached Vercel. Re-read authoritative
+      // storage and accept only a different, unexpired token.
+      const latest = await loadVercelConnection(userId);
+      if (
+        latest?.access_token?.trim() &&
+        latest.access_token.trim() !== row.access_token.trim() &&
+        !isVercelAccessTokenExpiring(latest.expires_at)
+      ) {
+        return latest.access_token.trim();
+      }
     }
   }
-  return row.access_token.trim();
+
+  // Never hand a known-expired token to deployment code. Doing so turns a
+  // recoverable refresh problem into an API 401 and can incorrectly disconnect
+  // a valid integration.
+  return null;
+}
+
+export function isVercelAccessTokenExpiring(
+  expiresAt: string | undefined,
+  now = Date.now(),
+): boolean {
+  if (!expiresAt) return false;
+  const parsed = Date.parse(expiresAt);
+  return Number.isFinite(parsed) && parsed < now + TOKEN_REFRESH_SKEW_MS;
+}
+
+async function refreshVercelOAuthTokenSingleFlight(
+  userId: string,
+  refreshToken: string,
+  username?: string,
+): Promise<string> {
+  const existing = vercelRefreshInFlight.get(userId);
+  if (existing) return existing;
+
+  const pending = refreshVercelOAuthToken(userId, refreshToken, username);
+  vercelRefreshInFlight.set(userId, pending);
+  try {
+    return await pending;
+  } finally {
+    if (vercelRefreshInFlight.get(userId) === pending) {
+      vercelRefreshInFlight.delete(userId);
+    }
+  }
 }
 
 async function loadVercelConnection(userId: string): Promise<{
