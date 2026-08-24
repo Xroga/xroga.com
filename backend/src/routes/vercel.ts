@@ -172,7 +172,7 @@ router.get('/status', async (req: AuthRequest, res) => {
       connected && tokenValid === false
         ? 'Vercel token may be expired or revoked — use Change account to re-authorize'
         : connected && canDeploy === false
-          ? 'Connected, but this Vercel App token cannot list projects/deploy. Enable Read/Write Project + Deployment (+ Env) on the Vercel App, or paste a Full Account personal token.'
+          ? 'Identity connected, but deployment access is missing. Configure a Vercel Integration with Project + Deployment write access, or use a Full Account personal token.'
           : undefined,
     error: liveError,
   });

@@ -582,6 +582,22 @@ export async function getVercelUsername(userId: string): Promise<string | null> 
   return row?.username?.trim() || null;
 }
 
+export async function probeVercelApiCapabilities(token: string): Promise<{
+  canListProjects: boolean;
+  canReadDeployments: boolean;
+}> {
+  const headers = { Authorization: `Bearer ${token}` };
+  const [projects, deployments] = await Promise.allSettled([
+    fetch('https://api.vercel.com/v9/projects?limit=1', { headers }),
+    fetch('https://api.vercel.com/v6/deployments?limit=1', { headers }),
+  ]);
+
+  return {
+    canListProjects: projects.status === 'fulfilled' && projects.value.ok,
+    canReadDeployments: deployments.status === 'fulfilled' && deployments.value.ok,
+  };
+}
+
 export async function isVercelConnected(userId: string): Promise<boolean> {
   const token = await getVercelToken(userId);
   return Boolean(token);
@@ -643,10 +659,14 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
 
   let canDeploy = false;
   try {
-    const proj = await fetch('https://api.vercel.com/v9/projects?limit=1', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    canDeploy = proj.ok;
+    const capability = await probeVercelApiCapabilities(token);
+    // A Sign in with Vercel identity token can return 200 for the projects
+    // endpoint while still being forbidden from every deployment endpoint.
+    // Treating that as deploy-ready produced a green setup badge followed by a
+    // guaranteed 403 after code was pushed. Deployment-read access is a safe,
+    // non-mutating minimum proof; creation still remains guarded by the real
+    // deployment request.
+    canDeploy = capability.canListProjects && capability.canReadDeployments;
   } catch {
     canDeploy = false;
   }

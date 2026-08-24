@@ -18,6 +18,7 @@ type StepId = 'github' | 'vercel' | 'supabase' | 'keys';
 export function ConnectShipWizard() {
   const [githubOk, setGithubOk] = useState(false);
   const [vercelOk, setVercelOk] = useState(false);
+  const [vercelCanDeploy, setVercelCanDeploy] = useState<boolean | null>(null);
   const [vercelUser, setVercelUser] = useState<string | null>(null);
   const [vercelWarning, setVercelWarning] = useState<string | null>(null);
   const [supabaseOk, setSupabaseOk] = useState(false);
@@ -58,9 +59,11 @@ export function ConnectShipWizard() {
         username?: string;
         warning?: string;
         tokenValid?: boolean | null;
+        canDeploy?: boolean | null;
       };
       // Persist Connected when a token is stored (backend connected=true), even if live check is flaky
       setVercelOk(Boolean(veStatus.connected));
+      setVercelCanDeploy(veStatus.canDeploy ?? null);
       setVercelUser(veStatus.username ?? null);
       setVercelWarning(veStatus.warning ?? null);
       const list =
@@ -297,6 +300,7 @@ export function ConnectShipWizard() {
     try {
       await api.vercel.disconnect();
       setVercelOk(false);
+      setVercelCanDeploy(null);
       setVercelUser(null);
       setVercelWarning(null);
       setShowVercelProjects(false);
@@ -378,10 +382,10 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize in a popup (Vercel App). Enable Project + Deployment + Env API permissions on the App — OIDC scopes alone cannot deploy.',
-      done: vercelOk,
+      body: 'Connect deploy-capable Vercel access. Identity-only Sign in with Vercel permission is not enough to create a deployment.',
+      done: vercelOk && vercelCanDeploy === true,
       action: connectVercel,
-      label: vercelOk ? 'Connected' : 'Authorize',
+      label: vercelOk && vercelCanDeploy === true ? 'Connected' : 'Authorize',
     },
     {
       id: 'supabase',
@@ -406,7 +410,7 @@ export function ConnectShipWizard() {
     },
   ];
 
-  const ready = githubOk && vercelOk;
+  const ready = githubOk && vercelOk && vercelCanDeploy === true;
 
   return (
     <section
@@ -486,14 +490,25 @@ export function ConnectShipWizard() {
                   >
                     Change account
                   </button>
-                  <button
-                    type="button"
-                    disabled={busy === 'vercel'}
-                    onClick={() => void loadVercelProjects()}
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
-                  >
-                    Change project
-                  </button>
+                  {vercelCanDeploy === true ? (
+                    <button
+                      type="button"
+                      disabled={busy === 'vercel'}
+                      onClick={() => void loadVercelProjects()}
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40 transition-colors"
+                    >
+                      Change project
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={busy === 'vercel'}
+                      onClick={() => setShowVercelToken(true)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25 transition-colors"
+                    >
+                      Add deploy token
+                    </button>
+                  )}
                   <button
                     type="button"
                     disabled={busy === 'vercel'}
@@ -540,7 +555,7 @@ export function ConnectShipWizard() {
         ))}
       </ol>
 
-      {!vercelOk && showVercelToken ? (
+      {(!vercelOk || vercelCanDeploy === false) && showVercelToken ? (
         <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-2">
           <p className="text-xs text-[var(--muted)] leading-relaxed">
             Paste a Vercel personal token from{' '}
@@ -573,7 +588,7 @@ export function ConnectShipWizard() {
             </button>
           </div>
         </div>
-      ) : !vercelOk ? (
+      ) : !vercelOk || vercelCanDeploy === false ? (
         <button
           type="button"
           onClick={() => setShowVercelToken(true)}
