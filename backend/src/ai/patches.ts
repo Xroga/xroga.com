@@ -50,6 +50,8 @@ const PATCH_BLOCK_RE =
 
 const JSON_FENCE_RE = /```json\s*([\s\S]*?)```/gi;
 const DELETE_FILE_RE = /\*\*\*\s*Delete File:\s*([^\n*]+)/gi;
+const NESTED_PATCH_MARKER_RE =
+  /^(?:\*\*\*\s*(?:Update|Delete) File:|<{3,7}\s*SEARCH|={3,7}|>{3,7}\s*REPLACE)\s*$/m;
 
 /**
  * Parse SEARCH/REPLACE patch blocks or a JSON `{ patches: [...] }` fence.
@@ -59,6 +61,11 @@ export function extractSearchReplacePatches(text: string): FilePatch[] {
   const seen = new Set<string>();
 
   const add = (path: string, search: string, replace: string) => {
+    // A missing REPLACE terminator can make the regex consume the next patch block
+    // as replacement text. Applying that match would write patch syntax into the
+    // customer's source. Treat nested control markers as malformed output so the
+    // provider can retry instead of manufacturing an invalid file.
+    if (NESTED_PATCH_MARKER_RE.test(search) || NESTED_PATCH_MARKER_RE.test(replace)) return;
     const key = `${path}\0${search}\0${replace}`;
     if (seen.has(key)) return;
     seen.add(key);
