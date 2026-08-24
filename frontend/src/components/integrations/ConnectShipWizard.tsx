@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Check, Circle, KeyRound, GitBranch, Triangle, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
-import { clearOAuthResult, subscribeOAuthResults } from '@/lib/oauthPopupResult';
+import { openGitHubOAuthPopup } from '@/lib/githubConnect';
+import { subscribeOAuthResults } from '@/lib/oauthPopupResult';
 import { AiIntegrationsPanel } from './AiIntegrationsPanel';
 import { SupabaseConnectPanel } from './SupabaseConnectPanel';
 
@@ -162,29 +163,8 @@ export function ConnectShipWizard() {
   async function connectGithub() {
     setBusy('github');
     try {
-      clearOAuthResult();
-      const { url } = await api.github.oauthUrl();
-      if (!url) {
-        toast.error('GitHub OAuth not configured');
-        return;
-      }
-      const popup = window.open(
-        'about:blank',
-        'xroga-github-oauth',
-        'width=600,height=720,scrollbars=yes,resizable=yes',
-      );
-      if (!popup) {
-        window.location.href = url;
-      } else {
-        try {
-          popup.location.href = url;
-          popup.focus();
-        } catch {
-          window.location.href = url;
-        }
-      }
-    } catch {
-      toast.error('Could not start GitHub connect');
+      const result = await openGitHubOAuthPopup();
+      if (!result.opened) toast.error(result.error || 'Could not start GitHub connect');
     } finally {
       setBusy(null);
     }

@@ -138,6 +138,8 @@ export function classifyBuilderFailure(error: unknown): BuilderAttemptFailure {
       return 'empty_response';
     case 'UNSAFE_ARTIFACT_PATH':
       return 'unsafe_artifact_path';
+    case 'PAID_PROVIDER_CAPACITY_UNAVAILABLE':
+      return 'provider_unavailable';
     default:
       break;
   }

@@ -29,7 +29,24 @@ describe('staticValidateProject', () => {
       },
     ]);
     assert.equal(result.kind, 'nextjs');
-    assert.ok(result.issues.some((i) => /page\.tsx/i.test(i)));
+    assert.ok(result.issues.some((i) => /app\/page|pages\/index/i.test(i)));
+  });
+
+  it('accepts valid JavaScript Next.js App Router entry files', () => {
+    const result = staticValidateProject([
+      {
+        path: 'package.json',
+        content: JSON.stringify({ dependencies: { next: '15.0.0' }, scripts: { build: 'next build' } }),
+      },
+      { path: 'app/page.js', content: 'export default function Page(){return <main>Orbit</main>}' },
+      {
+        path: 'app/layout.js',
+        content: 'export default function Layout({children}){return <html><body>{children}</body></html>}',
+      },
+    ]);
+    assert.equal(result.kind, 'nextjs');
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.issues, []);
   });
 
   it('accepts static index.html', () => {

@@ -354,9 +354,21 @@ export function listRunsForUser(userId: string, limit = 30): SwarmRunRecord[] {
     .slice(0, limit);
 }
 
+export function mergeRunHistory(
+  persisted: SwarmRunRecord[],
+  hot: SwarmRunRecord[],
+  limit: number,
+): SwarmRunRecord[] {
+  const merged = new Map(persisted.map((run) => [run.id, run]));
+  for (const run of hot) merged.set(run.id, run);
+  return [...merged.values()]
+    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+    .slice(0, limit);
+}
+
 export async function listRunsForUserAsync(userId: string, limit = 30): Promise<SwarmRunRecord[]> {
   const hot = listRunsForUser(userId, limit);
-  if (hot.length || !process.env.SUPABASE_SERVICE_ROLE_KEY) return hot;
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return hot;
   try {
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
@@ -367,7 +379,7 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
       .order('created_at', { ascending: false })
       .limit(limit);
     if (error || !data?.length) return hot;
-    return data.map((row) => {
+    const persisted = data.map((row) => {
       const rec: SwarmRunRecord = {
         id: String(row.id),
         userId: String(row.user_id),
@@ -393,6 +405,11 @@ export async function listRunsForUserAsync(userId: string, limit = 30): Promise<
       touchUser(userId, rec.id);
       return rec;
     });
+    // A warm process may only know about the newest run. Returning that partial hot
+    // cache made older durable runs disappear from History and prevented legacy
+    // terminal snapshots from finding their authoritative build artifact. Merge both
+    // sources, preferring the live record for an ID that exists in each.
+    return mergeRunHistory(persisted, hot, limit);
   } catch {
     return hot;
   }

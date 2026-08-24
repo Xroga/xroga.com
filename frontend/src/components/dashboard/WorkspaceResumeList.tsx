@@ -66,6 +66,7 @@ export function WorkspaceResumeList({ className }: { className?: string }) {
       selectedLabel: resolved.title,
       source: 'projects',
       jumpMessageId: resolved.messages[resolved.messages.length - 1]?.id,
+      githubRepoName: resolved.githubRepoName,
     });
   }
 

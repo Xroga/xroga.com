@@ -207,6 +207,7 @@ function ProjectsHubInner() {
       selectedLabel: item.title,
       source: 'chats',
       jumpMessageId: item.jumpMessageId,
+      githubRepoName: item.githubRepoName,
     });
     router.push('/workspace');
     toast('Restored — exactly where you left off', { icon: '📍' });
@@ -247,6 +248,7 @@ function ProjectsHubInner() {
         selectedId: project.id,
         selectedLabel: project.name,
         source: 'projects',
+        githubRepoName: project.github_repo_name ?? undefined,
       });
       router.push('/workspace');
     } else {

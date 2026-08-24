@@ -84,6 +84,11 @@ export function historicalModelQuality(input: { modelId: ModelId; taskClass: str
   let total = 0;
   for (const outcome of recent) {
     if (outcome.modelId !== input.modelId || outcome.taskClass !== input.taskClass) continue;
+    // A deterministic scaffold proves Xroga's local recovery path, not the quality of
+    // the external model that was attempted before it. Counting the local build as a
+    // model success makes a failed route look healthier and destroys the evidence
+    // needed to distinguish real AI generation from resilient fallback generation.
+    if (outcome.provider === 'xroga-local') continue;
     if (input.framework && outcome.framework && outcome.framework !== input.framework) continue;
     const ageDays = Math.max(0, now - new Date(outcome.createdAt ?? now).getTime()) / 86_400_000;
     const weight = Math.pow(0.5, ageDays / 14);

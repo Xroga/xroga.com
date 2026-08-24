@@ -132,6 +132,16 @@ test('a skipped compile — a static site — is a pass', () => {
 
 test('a reviewer outage is recognised as an outage, not as review findings', () => {
   assert.equal(qaWasUnavailable({ ok: false, issues: ['QA unavailable'] }), true);
+  assert.equal(
+    qaWasUnavailable({
+      ok: false,
+      issues: [
+        'QA unavailable',
+        'The reviewer could not be reached for batch 1 of 1 — treated as not reviewed.',
+      ],
+    }),
+    true,
+  );
   assert.equal(qaWasUnavailable({ ok: true, issues: [] }), false);
   assert.equal(
     qaWasUnavailable({ ok: false, issues: ['Hero section is missing the requested dark theme'] }),
@@ -140,6 +150,57 @@ test('a reviewer outage is recognised as an outage, not as review findings', () 
   // A mixed list contains at least one real finding, so it is not an outage.
   assert.equal(
     qaWasUnavailable({ ok: false, issues: ['QA unavailable', 'Contact form has no action'] }),
+    false,
+  );
+});
+
+test('a missing structured harness result is not misreported as a code defect', () => {
+  const { verdict, unverifiedReasons } = classifyValidation({
+    compile: compileResult({
+      ok: false,
+      skipped: true,
+      harnessUnavailable: true,
+      reason: 'the compile stage produced no structured result, so the code was not judged',
+      issues: ['compile did not report a result'],
+    }),
+    qa: OK_QA,
+    structureOk: true,
+  });
+  assert.equal(verdict, 'not_verified');
+  assert.match(unverifiedReasons.join(' '), /harness|not judged/i);
+});
+
+test('malformed reviewer output is unverified infrastructure, never a code finding', () => {
+  for (const issue of [
+    'The reviewer returned nothing — treated as not reviewed.',
+    'The reviewer response was not a JSON object — treated as not reviewed.',
+    'The reviewer response could not be parsed — treated as not reviewed.',
+    'The reviewer returned no verdict — a missing status is not a pass.',
+    'The reviewer verdict was "yes", which is not a boolean — treated as not passed.',
+    'The reviewer did not pass the build.',
+  ]) {
+    assert.equal(qaWasUnavailable({ ok: false, issues: [issue] }), true, issue);
+    assert.equal(
+      classifyValidation({
+        compile: compileResult({ skipped: true, reason: 'No package.json — static project' }),
+        qa: { ok: false, issues: [issue] },
+        structureOk: true,
+      }).verdict,
+      'not_verified',
+      issue,
+    );
+  }
+});
+
+test('a malformed reviewer response mixed with a real finding still blocks', () => {
+  assert.equal(
+    qaWasUnavailable({
+      ok: false,
+      issues: [
+        'The reviewer response could not be parsed — treated as not reviewed.',
+        'The order button is missing.',
+      ],
+    }),
     false,
   );
 });

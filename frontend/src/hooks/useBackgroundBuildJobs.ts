@@ -10,6 +10,7 @@ import {
 } from '@/lib/pendingBuildJobs';
 import { showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { useAppStore } from '@/store/useAppStore';
+import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
 
 type BuildJobIdentity = Pick<
   PendingBuildJob,
@@ -18,6 +19,7 @@ type BuildJobIdentity = Pick<
 
 type BuildCompleteHandler = (params: BuildJobIdentity & {
   output: Record<string, unknown>;
+  runStatus: 'complete' | 'error';
 }) => void;
 
 type BuildRecoveryHandler = (params: BuildJobIdentity & {
@@ -110,9 +112,25 @@ export function useBackgroundBuildJobs(
             });
             completeRef.current?.({
               ...identity,
+              runStatus: 'complete',
               output: (run.output && typeof run.output === 'object'
                 ? run.output
-                : { type: 'landing_page' }) as Record<string, unknown>,
+                : {
+                    type: 'chat',
+                    content: 'The build completed, but its persisted result is unavailable.',
+                  }) as Record<string, unknown>,
+            });
+          } else if (run.status === 'error' && isRecoverableBuildOutput(run.output)) {
+            removePendingBuildJob(job.assistantMessageId);
+            showBuildBrowserNotification({
+              title: 'Your Xroga build finished with evidence',
+              body: 'The generated work was restored. Review the exact shipping blocker in Workspace.',
+              tag: `build-evidence-${job.runId}`,
+            });
+            completeRef.current?.({
+              ...identity,
+              runStatus: 'error',
+              output: run.output,
             });
           } else if (run.status === 'error' || run.status === 'cancelled') {
             removePendingBuildJob(job.assistantMessageId);
@@ -157,6 +175,7 @@ export function useBackgroundBuildJobs(
             userMessageId: job.userMessageId,
             userPrompt: job.userPrompt,
             startedAt: job.startedAt,
+            runStatus: 'complete',
             output: {
               type: 'landing_page',
               projectName: meta?.projectName,

@@ -8,6 +8,7 @@ import {
   type SwarmProgressEvent,
 } from '@/lib/swarm';
 import { engineeringArtifactToText, isRenderableArtifact } from '@/lib/engineeringArtifact';
+import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -201,21 +202,22 @@ async function waitForPersistedSwarmRun(
     }
     if (run.status === 'cancelled') throw new DOMException('Aborted', 'AbortError');
     if (run.status === 'error') {
-      // A blocked engineering run is delivered, not thrown.
+      // A run that produced reviewable work is delivered, not thrown.
       //
-      // `completeRun(..., { success: false })` stores the full artifact — blockers, the file
-      // manifest, evidence, often a real commit SHA — and marks the row `error`. Throwing here
-      // discarded all of it and showed "The persisted build failed." That is the *recovery*
-      // path, which is exactly where a dropped SSE stream lands, so the richer the run the
-      // more this cost. A blocked result is a real result and the user needs to see it.
-      if (isRenderableArtifact(run.output)) {
+      // `completeRun(..., { success: false })` can store a full engineering artifact or a real
+      // generated product whose validation/publish step was blocked. Throwing here discarded
+      // the files, preview and evidence and showed only "The persisted build failed." That is
+      // the recovery path, exactly where a dropped SSE stream lands.
+      if (isRecoverableBuildOutput(run.output)) {
         return deliverSwarmComplete({
           runId,
           success: false,
           featureCategory: run.featureCategory,
           output: run.output,
           tokenUsage: run.tokenUsage,
-        }, options, currentText) || engineeringArtifactToText(run.output);
+        }, options, currentText) || (isRenderableArtifact(run.output)
+          ? engineeringArtifactToText(run.output)
+          : currentText);
       }
       // No artifact: the run failed before producing one. The persisted row still carries the
       // real reason code instead of the generic BUILD_FAILED every failure used to be

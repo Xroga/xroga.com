@@ -25,6 +25,10 @@ test('our own guard codes classify before any message text', () => {
   assert.equal(classifyBuilderFailure(err({ code: 'EMPTY_MODEL_RESPONSE' })), 'empty_response');
   assert.equal(classifyBuilderFailure(err({ code: 'BUILD_CANCELLED' })), 'cancelled');
   assert.equal(classifyBuilderFailure(err({ code: 'UNSAFE_ARTIFACT_PATH' })), 'unsafe_artifact_path');
+  assert.equal(
+    classifyBuilderFailure(err({ code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' })),
+    'provider_unavailable',
+  );
 });
 
 test('a code wins even when the message says something else', () => {

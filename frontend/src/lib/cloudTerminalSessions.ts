@@ -100,7 +100,13 @@ async function pushTerminalSessionToCloudNow(
   if (!entry.id || !entry.githubRepoName?.includes('/') || !entry.messages?.length) return null;
 
   const inFlight = inFlightUploads.get(entry.id);
-  if (inFlight) return inFlight;
+  if (inFlight) {
+    // Never discard a newer terminal snapshot just because an earlier preview upload
+    // is still in flight. Wait for that write, then compare/upload this exact entry.
+    // This keeps the final commit + preview evidence authoritative after reload.
+    await inFlight;
+    return pushTerminalSessionToCloudNow(entry);
+  }
 
   const body = {
     githubRepoName: entry.githubRepoName,
