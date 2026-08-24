@@ -32,6 +32,7 @@ import {
   isRetryableBuilderFailure,
   runBuilderAttempt,
   type BuilderAttemptBudget,
+  type BuilderAttemptFailure,
   type BuilderAttemptRecord,
 } from './builderAttempt.js';
 import { withProviderReservation } from './providerBudget.js';
@@ -1980,6 +1981,7 @@ export async function runBuildPipeline(opts: {
 
   let deterministicFiles: ProjectFile[] = [];
   let usedDeterministicScaffold = false;
+  let builderProviderFailure: BuilderAttemptFailure | undefined;
   let result: ChatResult;
   try {
     result = await callBuilderStream(
@@ -2023,6 +2025,7 @@ export async function runBuildPipeline(opts: {
     );
   } catch (error) {
     const failure = classifyBuilderFailure(error);
+    builderProviderFailure = failure;
     if (!isRetryableBuilderFailure(failure)) {
       throw error;
     }
@@ -2071,10 +2074,16 @@ export async function runBuildPipeline(opts: {
 
   emit({
     agent: 'builder',
-    status: 'model_active',
-    message: 'Implementation route active',
+    status: usedDeterministicScaffold ? 'local_source_ready' : 'model_active',
+    message: usedDeterministicScaffold
+      ? 'Local resilient project source ready'
+      : 'Implementation route active',
     swarmStatusLabel: 'Building',
-    swarmActivity: result.modelId === buildSelection.modelId ? 'Primary route' : 'Compatible fallback',
+    swarmActivity: usedDeterministicScaffold
+      ? 'Local resilient route'
+      : result.modelId === buildSelection.modelId
+        ? 'Primary route'
+        : 'Compatible fallback',
     swarmTodos: todos('build'),
   });
 
@@ -2792,6 +2801,9 @@ export async function runBuildPipeline(opts: {
     reviewOk: qa.ok,
     requiredCapabilities: intelligentPlan.classification.requiredCapabilities,
     provider: usedDeterministicScaffold ? 'xroga-local' : MODELS[result.modelId].provider,
+    providerFailureType: usedDeterministicScaffold
+      ? builderProviderFailure ?? 'no_executable_artifacts'
+      : undefined,
     repairLoops,
     modelSwitches,
     recoverySucceeded:

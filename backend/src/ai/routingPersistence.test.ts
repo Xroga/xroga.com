@@ -12,3 +12,32 @@ test('routing outcomes reload after restart and affect task-specific quality', a
   assert.ok((historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'code_generation' }) ?? 0) > 0.9);
   assert.equal(historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'security_review' }), null);
 });
+
+test('local resilient builds never count as external model quality evidence', async () => {
+  resetRoutingOutcomeCache();
+  await loadRoutingOutcomes(async () =>
+    Array.from({ length: 3 }, (_, index) => ({
+      runId: `local-${index}`,
+      userId: 'user',
+      taskClass: 'code_generation' as const,
+      modelId: 'deepseek_v4_pro' as const,
+      mode: 'balanced' as const,
+      provider: 'xroga-local',
+      providerFailureType: 'provider_unavailable',
+      inputTokens: 0,
+      outputTokens: 0,
+      patchApplied: true,
+      typecheckOk: true,
+      buildOk: true,
+      reviewOk: true,
+      repairLoops: 0,
+      modelSwitches: 0,
+      createdAt: new Date().toISOString(),
+    })),
+  );
+
+  assert.equal(
+    historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'code_generation' }),
+    null,
+  );
+});
