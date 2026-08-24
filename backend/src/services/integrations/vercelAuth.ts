@@ -627,6 +627,56 @@ export function vercelCredentialCanDeploy(
   );
 }
 
+export type VercelPersonalTokenVerification =
+  | {
+      ok: true;
+      username: string;
+      providerUserId?: string;
+    }
+  | {
+      ok: false;
+      reason: 'account_scope_required' | 'deploy_access_required';
+      status?: number;
+      capability?: {
+        canListProjects: boolean;
+        canReadDeployments: boolean;
+      };
+    };
+
+/**
+ * Prove a pasted personal token can identify its owner and reach the two
+ * read-only APIs required by the deployment flow before storing it.
+ */
+export async function verifyVercelPersonalTokenForDeploy(
+  token: string,
+): Promise<VercelPersonalTokenVerification> {
+  const headers = { Authorization: `Bearer ${token}` };
+  const userRes = await fetch('https://api.vercel.com/v2/user', { headers });
+  if (!userRes.ok) {
+    return {
+      ok: false,
+      reason: 'account_scope_required',
+      status: userRes.status,
+    };
+  }
+
+  const capability = await probeVercelApiCapabilities(token);
+  if (!vercelCredentialCanDeploy('personal_token', capability)) {
+    return {
+      ok: false,
+      reason: 'deploy_access_required',
+      capability,
+    };
+  }
+
+  const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
+  return {
+    ok: true,
+    username: user.user?.username ?? 'vercel-user',
+    providerUserId: user.user?.id,
+  };
+}
+
 export async function isVercelConnected(userId: string): Promise<boolean> {
   const token = await getVercelToken(userId);
   return Boolean(token);

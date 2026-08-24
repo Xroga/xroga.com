@@ -29,6 +29,7 @@ export function ConnectShipWizard() {
   const [showSupabase, setShowSupabase] = useState(false);
   const [showVercelToken, setShowVercelToken] = useState(false);
   const [vercelToken, setVercelToken] = useState('');
+  const [vercelTokenError, setVercelTokenError] = useState<string | null>(null);
   const [showVercelProjects, setShowVercelProjects] = useState(false);
   const [vercelProjects, setVercelProjects] = useState<
     Array<{ id: string; name: string; teamName?: string }>
@@ -342,21 +343,36 @@ export function ConnectShipWizard() {
   async function saveVercelToken() {
     const token = vercelToken.trim();
     if (!token || token.length < 20) {
-      toast.error('Paste a valid token from vercel.com/account/tokens');
+      const message = 'Paste the complete token shown by vercel.com/account/tokens.';
+      setVercelTokenError(message);
+      toast.error(message);
       return;
     }
+    setVercelTokenError(null);
     setBusy('vercel');
     try {
       const res = await api.vercel.connectToken(token);
+      const status = await api.vercel.status();
+      if (!status.connected || status.canDeploy !== true) {
+        throw new Error(
+          status.warning ||
+            'The token was received but Vercel deployment access could not be confirmed.',
+        );
+      }
       setVercelOk(true);
+      setVercelCanDeploy(true);
+      setVercelUser(status.username ?? res.username ?? null);
+      setVercelWarning(null);
       setShowVercelToken(false);
       setVercelToken('');
+      setVercelTokenError(null);
       toast.success(
         res.username ? `Vercel connected as @${res.username}` : 'Vercel connected',
       );
-      void refresh();
     } catch (err) {
-      toast.error((err as Error).message || 'Could not save Vercel token');
+      const message = (err as Error).message || 'Could not save Vercel token';
+      setVercelTokenError(message);
+      toast.error(message);
     } finally {
       setBusy(null);
     }
@@ -573,10 +589,18 @@ export function ConnectShipWizard() {
             <input
               type="password"
               value={vercelToken}
-              onChange={(e) => setVercelToken(e.target.value)}
-              placeholder="vercel_… personal access token"
+              onChange={(e) => {
+                setVercelToken(e.target.value);
+                if (vercelTokenError) setVercelTokenError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && busy !== 'vercel') void saveVercelToken();
+              }}
+              placeholder="Paste the newly created Vercel token"
               className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-xs font-mono"
               autoComplete="off"
+              aria-invalid={Boolean(vercelTokenError)}
+              aria-describedby={vercelTokenError ? 'vercel-token-error' : undefined}
             />
             <button
               type="button"
@@ -587,6 +611,19 @@ export function ConnectShipWizard() {
               {busy === 'vercel' ? 'Saving…' : 'Save token'}
             </button>
           </div>
+          {vercelTokenError ? (
+            <p
+              id="vercel-token-error"
+              role="alert"
+              className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium leading-relaxed text-red-600 dark:text-red-300"
+            >
+              {vercelTokenError}
+            </p>
+          ) : null}
+          <p className="text-[11px] text-[var(--muted)] leading-relaxed">
+            In Vercel, choose <strong>Personal Account</strong> for the token scope. A Team-only
+            token cannot pass Xroga&apos;s user and deployment checks.
+          </p>
         </div>
       ) : !vercelOk || vercelCanDeploy === false ? (
         <button
