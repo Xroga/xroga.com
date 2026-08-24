@@ -139,11 +139,18 @@ export function SignupForm() {
       'next'
     );
 
+  /*
+   * A brand-new account goes to setup rather than straight into the workspace.
+   *
+   * Only as the default. An explicit `next` — a shared link, a paywalled page that
+   * bounced them here — still wins, and onboarding is not lost by honouring it: the
+   * shell sends an unfinished account back to `/onboarding` on its next load.
+   */
   const nextPath =
     requestedNext?.startsWith('/') &&
     !requestedNext.startsWith('//')
       ? requestedNext
-      : '/workspace';
+      : '/onboarding';
 
   const globalTheme =
     useThemeStore(

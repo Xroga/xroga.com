@@ -42,6 +42,38 @@ export const companionPreferencesSchema = z.object({
   lastFedAt: z.string().datetime().nullable(),
 }).strict().transform(({ crownEnabled: _retired, ...preferences }) => preferences);
 
+/**
+ * Post-signup onboarding progress.
+ *
+ * Must match `OnboardingState` in frontend/src/lib/onboarding.ts, stored snake_case
+ * to match the column's siblings.
+ *
+ * Deliberately not `.strict()`. Every field is optional and the client sends the
+ * whole object, so a browser on a newer bundle that gained a field would otherwise
+ * have its onboarding writes rejected outright — and the write it loses is the one
+ * that records the account finished. Unknown keys are dropped by the pick below
+ * rather than rejected, so nothing unvalidated reaches the column.
+ */
+export const onboardingSchema = z.object({
+  status: z.enum(['not_started', 'in_progress', 'skipped', 'completed']),
+  current_step: z.enum(['build_type', 'github', 'vercel', 'preparing', 'complete']),
+  project_type: z.enum(['saas', 'web_app', 'ai_app', 'website', 'internal_tool', 'other']).nullable(),
+  role: z.enum(['founder', 'developer', 'designer', 'other']).nullable(),
+  github_connected: z.boolean(),
+  github_skipped: z.boolean(),
+  vercel_connected: z.boolean(),
+  vercel_skipped: z.boolean(),
+  /**
+   * Set by the migration for accounts that predate onboarding. Accepted so a client
+   * can round-trip the object it was given, but never trusted from the client: the
+   * flow always writes it false, and only the migration ever sets it true.
+   */
+  backfilled: z.boolean().optional(),
+  started_at: z.string().datetime().nullable(),
+  updated_at: z.string().datetime().nullable(),
+  completed_at: z.string().datetime().nullable(),
+});
+
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -64,6 +96,7 @@ router.patch('/', async (req: AuthRequest, res) => {
     timezone: z.string().max(64).optional(),
     language: z.string().max(16).optional(),
     companion_preferences: companionPreferencesSchema.optional(),
+    onboarding: onboardingSchema.optional(),
   }).strict();
 
   const parsed = schema.safeParse(req.body);
@@ -83,6 +116,13 @@ router.patch('/', async (req: AuthRequest, res) => {
   if (parsed.data.language !== undefined) patch.language = parsed.data.language;
   if (parsed.data.companion_preferences !== undefined) {
     patch.companion_preferences = parsed.data.companion_preferences;
+  }
+  if (parsed.data.onboarding !== undefined) {
+    // `backfilled` is the migration's mark for accounts that predate onboarding and
+    // is not the client's to set. Stamped server-side so `updated_at` reflects when
+    // the row actually changed rather than what a clock in the browser claimed.
+    const { backfilled: _clientClaim, ...onboarding } = parsed.data.onboarding;
+    patch.onboarding = { ...onboarding, updated_at: new Date().toISOString() };
   }
 
   if (!Object.keys(patch).length) {
