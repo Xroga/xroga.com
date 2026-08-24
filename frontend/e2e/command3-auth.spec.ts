@@ -571,7 +571,15 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
   await expect(rail.getByRole('link', { name: 'Repositories' })).toBeVisible();
 
-  await rail.locator('.xv-sidebar-brand a').first().hover();
+  /*
+   * Scoped to the anchor that contains the mark rather than the first link in the brand
+   * row: the rail carries Dashboard and Repositories now, so a positional match would
+   * silently start hovering a nav link if the order ever changed.
+   */
+  const sidebarMark = rail.locator('.xv-sidebar-brand a')
+    .filter({ has: page.getByRole('img', { name: 'Xroga' }) });
+  await expect(sidebarMark).toHaveCount(1);
+  await sidebarMark.hover();
   // Longer than the hover-intent delay, which is deliberately not instant.
   await page.waitForTimeout(900);
   const reopened = (await rail.boundingBox())!;
@@ -697,10 +705,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
   expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x);
   /*
-   * Scoped to the desktop edge toggle rather than matched by name across the page.
-   * The toggle is no longer removed when the sidebar collapses, so while collapsed
-   * it carries the same "Open sidebar" label as the mobile trigger and a page-wide
-   * lookup resolves to two elements.
+   * Scoped to the desktop edge toggle rather than matched by name across the page:
+   * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
+   * to both. The toggle closes only — reopening is the mark's job, below.
    */
   await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
@@ -715,8 +722,16 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
-  // Still present after collapsing — that is the control this release restores.
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  /*
+   * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
+   * used to carry it alongside its own PanelLeft button, two controls a few pixels
+   * apart for one job — so clicking it here waited for an element that never appears
+   * and took the whole spec to its timeout.
+   */
+  await desktopSidebar.locator('.xv-sidebar-brand a')
+    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+    .hover();
+  await expect(desktopSidebar).not.toHaveCSS('width', '64px');
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();
