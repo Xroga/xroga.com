@@ -44,6 +44,36 @@ const x = 2;
     assert.equal(patches.length, 1);
     assert.deepEqual(patches[0], { path: 'a.txt', search: 'old', replace: 'new' });
   });
+
+  it('rejects a malformed block that swallowed a following patch', () => {
+    const text = `*** Update File: index.html
+<<<SEARCH
+old first section
+===
+new first section
+
+*** Update File: index.html
+<<<SEARCH
+old second section
+===
+new second section
+>>>REPLACE`;
+
+    const patches = extractSearchReplacePatches(text);
+    assert.equal(patches.length, 0);
+  });
+
+  it('does not mistake inline comparison operators for patch markers', () => {
+    const text = `*** Update File: src/app.js
+<<<SEARCH
+if (value === 1) return false;
+===
+if (value === 2) return true;
+>>>REPLACE`;
+
+    const patches = extractSearchReplacePatches(text);
+    assert.equal(patches.length, 1);
+  });
 });
 
 describe('applyPatches', () => {
