@@ -2610,6 +2610,7 @@ export async function runBuildPipeline(opts: {
   if (
     !qa.ok &&
     qa.fixHints.length &&
+    !patchAborted &&
     !opts.signal?.aborted &&
     !(qaOutage && !compileNeedsCodeRepair) &&
     (qaHadFailuresBeforeCompile || compileNeedsCodeRepair)
@@ -3027,7 +3028,7 @@ export async function runBuildPipeline(opts: {
   }
   if (patchAborted) shipBlockers.push('Unsafe patches aborted — live site unchanged');
   if (security.blocked) shipBlockers.push('Critical secrets blocked the push');
-  if (compileBlockerMessage) shipBlockers.push(compileBlockerMessage);
+  if (compileBlockerMessage && !patchAborted) shipBlockers.push(compileBlockerMessage);
   if (qaBlocksShip) {
     shipBlockers.push(
       `Critical structure: ${structureFinal.issues[0] || 'fix project files before ship'}`,
@@ -3188,7 +3189,7 @@ export async function runBuildPipeline(opts: {
     });
   }
 
-  if (compileBlocksShip) {
+  if (compileBlocksShip && !patchAborted) {
     emit({
       agent: 'deploy',
       status: 'push_skipped',
