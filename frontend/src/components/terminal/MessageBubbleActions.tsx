@@ -5,7 +5,6 @@ import {
   ThumbsUp,
   ThumbsDown,
   Copy,
-  Pencil,
   MessageCircleHeart,
   Check,
   Trash2,
@@ -18,7 +17,6 @@ interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
   content: string;
   messageId: string;
-  onEdit?: () => void;
   onFeedback?: () => void;
   onDelete?: () => void;
 }
@@ -27,7 +25,6 @@ export function MessageBubbleActions({
   role,
   content,
   messageId,
-  onEdit,
   onFeedback,
   onDelete,
 }: MessageBubbleActionsProps) {
@@ -70,9 +67,6 @@ export function MessageBubbleActions({
   const btnClass =
     'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--foreground)]/10 transition-colors';
 
-  const editBtnClass =
-    'p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors';
-
   return (
     <div
       className={cn(
@@ -94,11 +88,9 @@ export function MessageBubbleActions({
           <button type="button" onClick={handleShare} className={btnClass} aria-label="Share">
             <Share2 className="w-3.5 h-3.5" />
           </button>
-          {onEdit && (
-            <button type="button" onClick={onEdit} className={editBtnClass} aria-label="Edit in chatbar">
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-          )}
+          {/* No edit on an assistant reply. Editing it into the composer offered to
+              rewrite something the reader did not write, and the transcript is a
+              record of what was said — the user's own messages still carry it. */}
           {onFeedback && (
             <button type="button" onClick={onFeedback} className={btnClass} aria-label="Feedback">
               <MessageCircleHeart className="w-3.5 h-3.5" />

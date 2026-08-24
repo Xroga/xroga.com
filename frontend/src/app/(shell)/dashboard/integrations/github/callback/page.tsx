@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { api, getAccessToken } from '@/lib/api';
 import { dispatchGitHubConnected } from '@/lib/githubEvents';
 import { publishOAuthResult } from '@/lib/oauthPopupResult';
+import { takeOAuthReturn } from '@/lib/onboardingReturn';
 
 async function waitForSession(maxMs = 8000): Promise<boolean> {
   const started = Date.now();
@@ -80,8 +81,16 @@ function CallbackHandler() {
           } catch {
             /* ignore */
           }
+          /*
+           * Back where the connect was started from. This flow leaves the tab, so
+           * without the marker a reader who began in onboarding would be dropped on
+           * the integrations page mid-setup with no way back to the card they were
+           * on. Read-and-clear, so it only ever redirects the round trip that set it.
+           */
+          const returnTo = takeOAuthReturn();
           router.replace(
-            `/dashboard/integrations?github=connected&username=${encodeURIComponent(res.username)}`
+            returnTo
+              ?? `/dashboard/integrations?github=connected&username=${encodeURIComponent(res.username)}`
           );
         }, 500);
       } catch (e) {

@@ -278,11 +278,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
 
-  function handleEditAI(content: string) {
-    setPrompt(content);
-    toast('AI text loaded — edit and press GO');
-  }
-
   function handleSuggestion(text: string) {
     setPrompt(text);
     toast('Suggestion added — press GO', { icon: '💡' });
@@ -595,7 +590,6 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={msg.content}
                           messageId={msg.id}
-                          onEdit={() => handleEditAI(msg.content)}
                           onDelete={() => deleteTurn(msg.id)}
                         />
                       )}

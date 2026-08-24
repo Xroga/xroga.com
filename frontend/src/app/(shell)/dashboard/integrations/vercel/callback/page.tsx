@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, getAccessToken } from '@/lib/api';
 import { publishOAuthResult } from '@/lib/oauthPopupResult';
+import { takeOAuthReturn } from '@/lib/onboardingReturn';
 
 async function waitForSession(maxMs = 8000): Promise<boolean> {
   const started = Date.now();
@@ -81,9 +82,14 @@ function CallbackHandler() {
           } catch {
             /* ignore */
           }
-          // If close was blocked (same-tab), navigate
+          // If close was blocked (same-tab), navigate — back to whatever started the
+          // connect. Vercel usually authorises in a popup, but it falls back to the
+          // same tab, and that fallback would otherwise strand a reader who began in
+          // onboarding on the integrations page instead.
+          const returnTo = takeOAuthReturn();
           router.replace(
-            `/dashboard/integrations?vercel=connected&username=${encodeURIComponent(res.username)}`
+            returnTo
+              ?? `/dashboard/integrations?vercel=connected&username=${encodeURIComponent(res.username)}`
           );
         }, 600);
       } catch (e) {

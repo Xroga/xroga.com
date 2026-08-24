@@ -26,6 +26,22 @@ test.beforeAll(async () => {
   });
   if (created.error || !created.data.user) throw new Error('Temporary settings-shell test user could not be created');
   userId = created.data.user.id;
+
+  /*
+   * Provisioned as an account that has finished setup. This spec signs in to
+   * `/settings`, which lives inside the shell, and the shell sends an unfinished
+   * account to `/onboarding` — a fresh fixture would never reach the page under test.
+   *
+   * Tolerant of the column not existing yet: it arrives with a migration, and a run
+   * against a database without it must not take down `beforeAll`.
+   */
+  const onboarded = await admin.from('profiles').upsert({
+    id: userId,
+    onboarding: { status: 'completed', current_step: 'complete', backfilled: true },
+  });
+  if (onboarded.error) {
+    await admin.from('profiles').upsert({ id: userId });
+  }
 });
 
 test.afterAll(async () => {
