@@ -531,14 +531,25 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await edgeToggle.click();
   await page.waitForTimeout(400);
   await expect(rail).toHaveClass(/is-collapsed/);
+
+  /*
+   * Collapsed, the rail carries no sidebar toggle at all — neither this one nor the
+   * PanelLeft button it used to sit beside. Reopening is the mark's job.
+   */
+  await expect(edgeToggle, 'the collapsed rail still carries a sidebar toggle').toHaveCount(0);
   await expect(
-    edgeToggle,
-    'the sidebar could not be reopened from the edge: the toggle is gone once collapsed',
-  ).toBeVisible();
-  await edgeToggle.click();
-  await page.waitForTimeout(400);
+    rail.getByRole('button', { name: 'Open sidebar' }),
+    'the collapsed rail still carries its own open button',
+  ).toHaveCount(0);
+  // The two destinations that replaced them.
+  await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Repositories' })).toBeVisible();
+
+  await rail.locator('.xv-sidebar-brand a').first().hover();
+  // Longer than the hover-intent delay, which is deliberately not instant.
+  await page.waitForTimeout(900);
   const reopened = (await rail.boundingBox())!;
-  expect(reopened.width, 'the sidebar did not reopen').toBeGreaterThan(72);
+  expect(reopened.width, 'hovering the mark did not reopen the sidebar').toBeGreaterThan(72);
 
   /*
    * And a drag that starts on the toggle widens rather than doing nothing. The toggle

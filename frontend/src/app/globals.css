@@ -3753,15 +3753,26 @@ body.theme-gray * {
   /* The composer starts after the rail rather than running beneath it, so it lines
      up with the terminal it belongs to instead of with the window. The rail only
      exists from `lg` up — below that the sidebar is a drawer and the composer keeps
-     the full width. */
+     the full width.
+
+     The gutter is added on both edges so the composer stops where the terminal's
+     rounded box stops. Without it the dock ran to the window edge and painted across
+     the shell's corners, which is what made the composer read as a bar bolted under
+     the terminal rather than something sitting inside it. */
   @media (min-width: 1024px) {
     body.xv-terminal-fullscreen-active .xv-terminal-dock {
-      left: var(--xv-fullscreen-rail, 64px) !important;
+      left: calc(var(--xv-fullscreen-rail, 64px) + 14px) !important;
+      right: 14px !important;
     }
   }
   body.xv-terminal-fullscreen-active .xv-terminal-dock--fullscreen {
-    background: linear-gradient(to top, var(--background) 72%, transparent);
+    /* No gradient. It painted `--background` over the terminal's own surface, so an
+       inset composer sat on an opaque slab the width of the shell. The stage already
+       reserves the composer's height at the foot of the transcript, so there is no
+       text underneath for a fade to hide. */
+    background: none;
     padding-top: 0.25rem;
+    padding-bottom: 14px;
   }
   body.xv-terminal-fullscreen-active .xv-dashboard-fullscreen {
     padding-bottom: 0;
@@ -8056,14 +8067,11 @@ body.theme-beige {
   .xv-app-stage { padding: 12px 14px 14px; }
 }
 
-/* Fullscreen is the one state that gives the inset up, because that is what the
-   control means. Everything else about the architecture is unchanged. */
-.xv-app-stage--fullscreen { padding: 0; }
-.xv-app-stage--fullscreen .xv-workspace-shell {
-  border-radius: 0;
-  border-color: transparent;
-  box-shadow: none;
-}
+/* Fullscreen's own padding is declared with the rest of the stage geometry further
+   down, next to the gutter it shares. Setting it here as well left two rules of equal
+   specificity for the same property, and the later one silently won — which is exactly
+   how this state came to have no padding while a rule up here appeared to give it
+   some. */
 
 /* ---- the shell ------------------------------------------------------------ */
 
@@ -9177,7 +9185,13 @@ body.theme-beige {
   /* Only the edge that faces the sidebar tightens; the other three keep the frame. */
   padding-inline-start: var(--xv-app-seam);
 }
-.xv-app-stage--fullscreen { padding: 0; }
+/* Fullscreen keeps the frame rather than giving it up. It used to zero the padding, so
+   the terminal ran edge to edge and its rounded corners met the browser chrome — the
+   one state where the workspace stopped looking like a window. It takes the same gutter
+   as everything else now, on all four sides: the inline start gets the full gutter
+   rather than the seam, because the thing it sits beside in this state is the icon
+   rail, not the sidebar it was tightened against. */
+.xv-app-stage--fullscreen { padding: var(--xv-app-gutter); }
 
 /* The page behind the whole application, not just the workspace column. The stage
    starts where the sidebar's column ends, so without this the 64px strip beside a

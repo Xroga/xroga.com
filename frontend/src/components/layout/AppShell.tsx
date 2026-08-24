@@ -24,16 +24,27 @@ interface AppShellProps {
   email?: string;
 }
 
+/**
+ * The brand in the page header, on small screens only.
+ *
+ * From `lg` up the sidebar is on screen and carries the mark itself, so this was a
+ * second Xroga logo a few hundred pixels from the first — one inside the sidebar and
+ * one loose in the header.
+ *
+ * Hidden rather than deleted, because below `lg` the sidebar is a drawer and this is
+ * the only branding on the page; removing it outright would leave the mobile header as
+ * a bare hamburger.
+ */
 function HeaderLogo() {
   const pathname = usePathname();
   const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
   return (
-    <div className={cn('xv-mobile-header-logo min-w-0', 'pl-11 sm:pl-12 lg:pl-0')}>
+    <div className={cn('xv-mobile-header-logo min-w-0 lg:hidden', 'pl-11 sm:pl-12')}>
       <Logo
         href={logoHref}
         height={52}
         variant="header"
-        className="!h-[52px] sm:!h-[68px] lg:!h-[72px]"
+        className="!h-[52px] sm:!h-[68px]"
       />
     </div>
   );
