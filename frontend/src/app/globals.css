@@ -2966,14 +2966,19 @@ body.theme-gray * {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    /* 2px read as one four-icon blob in a 64px column. Enough room to see four
+       separate targets, still tight enough to read as one group. */
+    gap: 6px;
     padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
   }
-  .xv-sidebar-collapsed-actions button {
+  /* Links as well as buttons. Two of these four are destinations, and while this rule
+     named only `button` they had no size, no hit area and no hover — which is what
+     made them sit oddly against the two that did. */
+  .xv-sidebar-collapsed-actions :is(button, a) {
     display: inline-flex;
     width: 28px;
     height: 28px;
@@ -2983,8 +2988,8 @@ body.theme-gray * {
     color: var(--muted);
     transition: color 150ms ease, background 150ms ease;
   }
-  .xv-sidebar-collapsed-actions button:hover,
-  .xv-sidebar-collapsed-actions button:focus-visible {
+  .xv-sidebar-collapsed-actions :is(button, a):hover,
+  .xv-sidebar-collapsed-actions :is(button, a):focus-visible {
     color: var(--accent);
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     outline: none;
@@ -3578,9 +3583,82 @@ body.theme-gray * {
   .xv-chat-turn-rail--dock > * {
     pointer-events: auto;
   }
+  /* The card's own edge: a hairline ring and a layered shadow rather than a flat
+     drop shadow, so it lifts off the workspace instead of sitting on it. */
+  .xv-pqm-card {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--foreground) 5%, transparent),
+      0 18px 44px -12px rgba(0, 0, 0, 0.5),
+      0 4px 12px -4px rgba(0, 0, 0, 0.28);
+  }
+  .xv-pqm-tile {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 11%, transparent);
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .xv-pqm-row:hover {
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+  .xv-pqm-row:hover .xv-pqm-tile {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  /*
+   * In the menu this is a row, not the circular icon button it is elsewhere.
+   *
+   * Stretching it to full width while the base rule kept `border-radius: 50%` drew a
+   * giant red ellipse the width of the card — a 50% radius on a wide box is an
+   * ellipse, not a pill. The label stayed invisible too: it is absolutely positioned
+   * at `width: 0; opacity: 0` and only the hover-to-expand animation reveals it, and
+   * that animation is sized for a 42px circle. So the card's most destructive action
+   * was an unlabelled red blob.
+   *
+   * Here it is laid out honestly: a pill with the icon and the word side by side, no
+   * width animation, and a quiet resting state that only turns solid red on hover —
+   * signing out should not be the loudest thing in the menu.
+   */
   #xv-profile-quick-menu .xv-logout-btn {
     width: 100%;
+    height: 36px;
+    gap: 0.5rem;
     justify-content: center;
+    overflow: visible;
+    border-radius: 0.7rem;
+    background: color-mix(in srgb, rgb(255, 65, 65) 12%, transparent);
+    color: rgb(233, 62, 62);
+    box-shadow: none;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  #xv-profile-quick-menu .xv-logout-btn:hover {
+    width: 100%;
+    border-radius: 0.7rem;
+    background: rgb(233, 62, 62);
+    color: #fff;
+  }
+  #xv-profile-quick-menu .xv-logout-btn .xv-sign {
+    width: auto;
+    padding: 0;
+  }
+  #xv-profile-quick-menu .xv-logout-btn:hover .xv-sign {
+    width: auto;
+    padding: 0;
+  }
+  #xv-profile-quick-menu .xv-logout-btn .xv-sign svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+  /* Static and in flow, so the word sits beside the glyph instead of waiting on a
+     hover animation to give it width. */
+  #xv-profile-quick-menu .xv-logout-btn .xv-logout-text,
+  #xv-profile-quick-menu .xv-logout-btn:hover .xv-logout-text {
+    position: static;
+    width: auto;
+    padding: 0;
+    opacity: 1;
+    color: currentColor;
+    font-size: 0.78rem;
+    font-weight: 600;
   }
   .xv-chat-turn-collapsed {
     cursor: default;
@@ -3654,6 +3732,19 @@ body.theme-gray * {
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
   }
+  /*
+   * Fullscreen shows the terminal and its composer, and nothing else.
+   *
+   * The rail used to stay, on the reasoning that leaving the workspace should still be
+   * one click away. Asked for twice since, and the reasoning does not survive the name:
+   * the control says fullscreen, and a 64px column of shortcuts down the side is the
+   * one thing a fullscreen terminal is not.
+   *
+   * `display: none`, not `visibility: hidden` — a hidden rail keeps its width and
+   * leaves a band of empty page beside a terminal that is meant to have the screen,
+   * which is the bug fullscreen already had once.
+   */
+  body.xv-terminal-fullscreen-active .xv-sidebar-root,
   body.xv-terminal-fullscreen-active .xv-sidebar-edge-toggle,
   body.xv-terminal-fullscreen-active .xv-mobile-menu-btn {
     display: none !important;
@@ -3750,18 +3841,16 @@ body.theme-gray * {
     left: 0 !important;
     right: 0 !important;
   }
-  /* The composer starts after the rail rather than running beneath it, so it lines
-     up with the terminal it belongs to instead of with the window. The rail only
-     exists from `lg` up — below that the sidebar is a drawer and the composer keeps
-     the full width.
+  /* The composer stops where the terminal's rounded box stops, on both edges. Without
+     the gutter the dock ran to the window edge and painted across the shell's corners,
+     which made it read as a bar bolted under the terminal rather than something inside
+     it.
 
-     The gutter is added on both edges so the composer stops where the terminal's
-     rounded box stops. Without it the dock ran to the window edge and painted across
-     the shell's corners, which is what made the composer read as a bar bolted under
-     the terminal rather than something sitting inside it. */
+     No rail term any more: fullscreen hides the sidebar outright, so the terminal — and
+     with it the composer — starts at the frame's gutter. */
   @media (min-width: 1024px) {
     body.xv-terminal-fullscreen-active .xv-terminal-dock {
-      left: calc(var(--xv-fullscreen-rail, 64px) + 14px) !important;
+      left: 14px !important;
       right: 14px !important;
     }
   }
@@ -7062,16 +7151,22 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   height: 28px;
   padding: 0 0.5rem;
   border-radius: 0.55rem;
-  border: 1px solid var(--term-line, var(--card-border));
+  /* Readable at rest, not only on hover. This carried `--muted` text on a 72%
+     translucent ground with a hairline border, which on the dark skins left the
+     control roughly the same value as the header behind it — the one button in the
+     bar you had to hunt for. The ink now comes from the foreground and the ground is
+     opaque enough to separate it from the header. */
+  border: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
   font-family: var(--font-coding, ui-monospace, monospace);
   font-size: 0.64rem;
-  color: var(--muted);
-  background: color-mix(in srgb, var(--term-bg, var(--card)) 72%, transparent);
+  color: color-mix(in srgb, var(--foreground) 82%, transparent);
+  background: color-mix(in srgb, var(--foreground) 7%, var(--term-bg, var(--card)));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
   transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
 }
 .xv-skin-trigger:hover {
-  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: color-mix(in srgb, var(--foreground) 14%, var(--term-bg, var(--card)));
+  border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
   color: var(--foreground);
 }
 /* The label is the first thing to go when the header is tight; the swatch alone
@@ -8412,9 +8507,13 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 .xv-ws-tabs {
   display: flex;
   align-items: center;
-  gap: 0.1rem;
+  /* The tabs are pills now, so they need room between them or the rounded shapes
+     touch and read as one segmented bar again. */
+  gap: 0.25rem;
   flex-shrink: 0;
-  padding: 0.3rem 0.5rem;
+  /* Breathing room above and below the row. At 0.3rem the pills met the panel edge
+     and the rule under them, which is what made the strip read as a box. */
+  padding: 0.55rem 0.5rem;
   overflow-x: auto;
   scrollbar-width: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
@@ -8427,8 +8526,10 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   align-items: center;
   gap: 0.4rem;
   flex-shrink: 0;
-  padding: 0.45rem 0.6rem;
-  border-radius: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  /* Fully rounded. At 0.5rem these were soft-cornered rectangles sitting in a bordered
+     strip, which is the box the row used to read as. */
+  border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.45);
@@ -8436,19 +8537,14 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-ws-tab:hover {
   color: rgba(255, 255, 255, 0.78);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.05);
 }
-.xv-ws-tab.is-active { color: #2f7cff; }
-/* A 2px mark under the label, rather than an outline around every tab. */
-.xv-ws-tab.is-active::after {
-  content: '';
-  position: absolute;
-  left: 0.6rem;
-  right: 0.6rem;
-  bottom: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: #2f7cff;
+/* The active tab is a filled pill rather than a label with a bar beneath it. The bar
+   was anchored to the bottom of the row, so it tied every tab to the panel edge and
+   left no way to give the row vertical space without stranding the mark. */
+.xv-ws-tab.is-active {
+  color: #2f7cff;
+  background: color-mix(in srgb, #2f7cff 14%, transparent);
 }
 .terminal-skin-light .xv-ws-tab,
 .terminal-skin-light-grid .xv-ws-tab,

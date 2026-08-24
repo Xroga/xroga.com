@@ -157,8 +157,10 @@ test('the fullscreen composer is bounded and sits inside the terminal', () => {
   assert.match(DOCK, /\? 'max-w-3xl px-2 sm:px-4'/, 'the fullscreen composer needs a width cap');
 
   const sheet = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
-  // Inset on both edges so it stops where the terminal's rounded box stops.
-  assert.match(sheet, /left: calc\(var\(--xv-fullscreen-rail, 64px\) \+ 14px\) !important/);
+  // Inset on both edges so it stops where the terminal's rounded box stops. The rail
+  // term is gone from the left offset: fullscreen hides the sidebar outright now, so
+  // the composer starts at the frame's gutter like the terminal above it.
+  assert.match(sheet, /left: 14px !important/);
   assert.match(sheet, /right: 14px !important/);
   // The gradient painted --background over the terminal's own surface.
   const dockFs = sheet.slice(sheet.indexOf('.xv-terminal-dock--fullscreen {'));

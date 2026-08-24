@@ -596,19 +596,16 @@ export function Sidebar({ displayName }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-              {/* The two destinations that were a click away only through the expanded
-                  nav. The rail is where a collapsed sidebar earns its keep, so the two
-                  places people actually go get to stay on it. */}
-              <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
-                <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>
-                  <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </HoverTip>
-              <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
-                <Link href="/dashboard/projects" aria-label="Repositories" onClick={handleNavClick}>
-                  <FolderGit2 className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </HoverTip>
+              {/*
+                Actions first, then destinations. Searching and starting a terminal are
+                what the rail is reached for while working; Dashboard and Repositories
+                are places to leave for, and reading them last keeps that separation.
+
+                The two destinations carry a lighter stroke than the actions. They are
+                the denser glyphs of the four — a grid and a branching tree against a
+                magnifier and a circle — so at a shared weight they read as the heavy
+                end of the column rather than as its equals.
+              */}
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
                   <Search className="h-4 w-4" aria-hidden="true" />
@@ -618,6 +615,16 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
                   <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
                 </button>
+              </HoverTip>
+              <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
+                <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>
+                  <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                </Link>
+              </HoverTip>
+              <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
+                <Link href="/dashboard/projects" aria-label="Repositories" onClick={handleNavClick}>
+                  <FolderGit2 className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                </Link>
               </HoverTip>
             </div>
           )}
