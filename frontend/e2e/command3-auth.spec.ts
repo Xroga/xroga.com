@@ -460,15 +460,41 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(railBox, 'the sidebar rail should stay visible in fullscreen').not.toBeNull();
   expect(railBox.width, 'the rail should collapse to its icon width').toBeLessThanOrEqual(72);
 
+  /*
+   * Fullscreen keeps the application frame rather than giving it up.
+   *
+   * This used to require the terminal to sit flush against the rail and run to the
+   * right edge, which is what "fullscreen" meant when the state zeroed the stage's
+   * padding and squared the shell off. The terminal then met the browser chrome with
+   * its own corners and stopped reading as a window.
+   *
+   * The claim now is that the inset is the frame's gutter and nothing more — bounded
+   * on both sides, so a gap that grows past the gutter still fails. Zero would fail
+   * too: that is the old edge-to-edge layout coming back.
+   */
+  // Read from the page rather than hardcoded: the gutter is 8px below `lg` and 14px
+  // above it, so a fixed number here would assert the wrong frame on a narrow runner.
+  const GUTTER = await page.evaluate(() => parseFloat(
+    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-app-gutter'),
+  ));
+  expect(GUTTER, 'the frame gutter is not set').toBeGreaterThan(0);
   const fsShell = (await shell.boundingBox())!;
-  expect(
-    fsShell.x - (railBox.x + railBox.width),
-    'empty page is still reserved to the left of the terminal',
-  ).toBeLessThanOrEqual(4);
-  expect(
-    fsShell.width + fsShell.x,
-    'the terminal does not reach the right edge',
-  ).toBeGreaterThanOrEqual(await page.evaluate(() => window.innerWidth - 4));
+  const leftGap = fsShell.x - (railBox.x + railBox.width);
+  expect(leftGap, 'the terminal is not separated from the rail by the frame gutter')
+    .toBeGreaterThanOrEqual(GUTTER - 2);
+  expect(leftGap, 'more than the gutter is reserved to the left of the terminal')
+    .toBeLessThanOrEqual(GUTTER + 2);
+
+  const rightGap = (await page.evaluate(() => window.innerWidth)) - (fsShell.width + fsShell.x);
+  expect(rightGap, 'the terminal runs to the right edge instead of keeping its frame')
+    .toBeGreaterThanOrEqual(GUTTER - 2);
+  expect(rightGap, 'more than the gutter is reserved to the right of the terminal')
+    .toBeLessThanOrEqual(GUTTER + 2);
+
+  // And the shell keeps its rounded corners, which squaring off is what made the
+  // terminal look like a document rather than a window.
+  const fsRadius = await shell.evaluate((el) => getComputedStyle(el).borderTopLeftRadius);
+  expect(fsRadius, 'the terminal is squared off in fullscreen').not.toBe('0px');
 
   // The composer stays with the terminal, and starts after the rail rather than
   // running underneath it.

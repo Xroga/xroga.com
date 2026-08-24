@@ -123,6 +123,10 @@ test('the behaviour is asserted where the workspace can be reached', () => {
   assert.match(E2E, /the collapsed rail still carries a sidebar toggle/);
   assert.match(E2E, /hovering the mark did not reopen the sidebar/);
   assert.match(E2E, /dragging from the toggle did not widen the sidebar/);
+  // The fullscreen frame is geometry, so it is measured there rather than read off the
+  // stylesheet — the stylesheet is exactly what hid the duplicate-rule bug.
+  assert.match(E2E, /the terminal runs to the right edge instead of keeping its frame/);
+  assert.match(E2E, /the terminal is squared off in fullscreen/);
 });
 
 test('fullscreen keeps the frame instead of giving it up', () => {
