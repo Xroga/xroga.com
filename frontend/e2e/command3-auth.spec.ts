@@ -460,15 +460,41 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   expect(railBox, 'the sidebar rail should stay visible in fullscreen').not.toBeNull();
   expect(railBox.width, 'the rail should collapse to its icon width').toBeLessThanOrEqual(72);
 
+  /*
+   * Fullscreen keeps the application frame rather than giving it up.
+   *
+   * This used to require the terminal to sit flush against the rail and run to the
+   * right edge, which is what "fullscreen" meant when the state zeroed the stage's
+   * padding and squared the shell off. The terminal then met the browser chrome with
+   * its own corners and stopped reading as a window.
+   *
+   * The claim now is that the inset is the frame's gutter and nothing more — bounded
+   * on both sides, so a gap that grows past the gutter still fails. Zero would fail
+   * too: that is the old edge-to-edge layout coming back.
+   */
+  // Read from the page rather than hardcoded: the gutter is 8px below `lg` and 14px
+  // above it, so a fixed number here would assert the wrong frame on a narrow runner.
+  const GUTTER = await page.evaluate(() => parseFloat(
+    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-app-gutter'),
+  ));
+  expect(GUTTER, 'the frame gutter is not set').toBeGreaterThan(0);
   const fsShell = (await shell.boundingBox())!;
-  expect(
-    fsShell.x - (railBox.x + railBox.width),
-    'empty page is still reserved to the left of the terminal',
-  ).toBeLessThanOrEqual(4);
-  expect(
-    fsShell.width + fsShell.x,
-    'the terminal does not reach the right edge',
-  ).toBeGreaterThanOrEqual(await page.evaluate(() => window.innerWidth - 4));
+  const leftGap = fsShell.x - (railBox.x + railBox.width);
+  expect(leftGap, 'the terminal is not separated from the rail by the frame gutter')
+    .toBeGreaterThanOrEqual(GUTTER - 2);
+  expect(leftGap, 'more than the gutter is reserved to the left of the terminal')
+    .toBeLessThanOrEqual(GUTTER + 2);
+
+  const rightGap = (await page.evaluate(() => window.innerWidth)) - (fsShell.width + fsShell.x);
+  expect(rightGap, 'the terminal runs to the right edge instead of keeping its frame')
+    .toBeGreaterThanOrEqual(GUTTER - 2);
+  expect(rightGap, 'more than the gutter is reserved to the right of the terminal')
+    .toBeLessThanOrEqual(GUTTER + 2);
+
+  // And the shell keeps its rounded corners, which squaring off is what made the
+  // terminal look like a document rather than a window.
+  const fsRadius = await shell.evaluate((el) => getComputedStyle(el).borderTopLeftRadius);
+  expect(fsRadius, 'the terminal is squared off in fullscreen').not.toBe('0px');
 
   // The composer stays with the terminal, and starts after the rail rather than
   // running underneath it.
@@ -531,14 +557,33 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await edgeToggle.click();
   await page.waitForTimeout(400);
   await expect(rail).toHaveClass(/is-collapsed/);
+
+  /*
+   * Collapsed, the rail carries no sidebar toggle at all — neither this one nor the
+   * PanelLeft button it used to sit beside. Reopening is the mark's job.
+   */
+  await expect(edgeToggle, 'the collapsed rail still carries a sidebar toggle').toHaveCount(0);
   await expect(
-    edgeToggle,
-    'the sidebar could not be reopened from the edge: the toggle is gone once collapsed',
-  ).toBeVisible();
-  await edgeToggle.click();
-  await page.waitForTimeout(400);
+    rail.getByRole('button', { name: 'Open sidebar' }),
+    'the collapsed rail still carries its own open button',
+  ).toHaveCount(0);
+  // The two destinations that replaced them.
+  await expect(rail.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'Repositories' })).toBeVisible();
+
+  /*
+   * Scoped to the anchor that contains the mark rather than the first link in the brand
+   * row: the rail carries Dashboard and Repositories now, so a positional match would
+   * silently start hovering a nav link if the order ever changed.
+   */
+  const sidebarMark = rail.locator('.xv-sidebar-brand a')
+    .filter({ has: page.getByRole('img', { name: 'Xroga' }) });
+  await expect(sidebarMark).toHaveCount(1);
+  await sidebarMark.hover();
+  // Longer than the hover-intent delay, which is deliberately not instant.
+  await page.waitForTimeout(900);
   const reopened = (await rail.boundingBox())!;
-  expect(reopened.width, 'the sidebar did not reopen').toBeGreaterThan(72);
+  expect(reopened.width, 'hovering the mark did not reopen the sidebar').toBeGreaterThan(72);
 
   /*
    * And a drag that starts on the toggle widens rather than doing nothing. The toggle
@@ -660,10 +705,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
   expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x);
   /*
-   * Scoped to the desktop edge toggle rather than matched by name across the page.
-   * The toggle is no longer removed when the sidebar collapses, so while collapsed
-   * it carries the same "Open sidebar" label as the mobile trigger and a page-wide
-   * lookup resolves to two elements.
+   * Scoped to the desktop edge toggle rather than matched by name across the page:
+   * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
+   * to both. The toggle closes only — reopening is the mark's job, below.
    */
   await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
@@ -678,8 +722,16 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
-  // Still present after collapsing — that is the control this release restores.
-  await page.locator('.xv-sidebar-edge-toggle').click();
+  /*
+   * Reopened by hovering the mark. The toggle does not exist while collapsed — the rail
+   * used to carry it alongside its own PanelLeft button, two controls a few pixels
+   * apart for one job — so clicking it here waited for an element that never appears
+   * and took the whole spec to its timeout.
+   */
+  await desktopSidebar.locator('.xv-sidebar-brand a')
+    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+    .hover();
+  await expect(desktopSidebar).not.toHaveCSS('width', '64px');
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();

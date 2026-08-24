@@ -107,7 +107,10 @@ test('only the root list is a grid', () => {
 test('the geometry is asserted where the workspace can actually be reached', () => {
   // These decisions only matter if something measures the result. The workspace is
   // behind auth, so that check lives in the authenticated browser spec.
-  assert.match(E2E, /empty page is still reserved to the left of the terminal/);
+  // Re-anchored: fullscreen no longer runs the terminal edge to edge. It keeps the
+  // frame's gutter, so the spec now bounds that inset on both sides rather than
+  // requiring it to be zero.
+  assert.match(E2E, /more than the gutter is reserved to the left of the terminal/);
   assert.match(E2E, /the rail should collapse to its icon width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
   assert.match(E2E, /the plus menu should lay out in two columns/);

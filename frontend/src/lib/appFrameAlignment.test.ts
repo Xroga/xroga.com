@@ -151,9 +151,12 @@ test('the brand row lets the logo give way to the toolbar', () => {
   // `block` makes the tip wrapper `w-full`, so the logo claimed the whole row and the
   // `ml-auto` toolbar was laid on top of it.
   const brand = SIDEBAR.slice(SIDEBAR.indexOf('xv-sidebar-brand'), SIDEBAR.indexOf('xv-sidebar-header-actions'));
-  assert.match(brand, /<HoverTip label="Xroga AI"/);
+  // Matched across newlines: the tip gained hover handlers and now spans several lines,
+  // which a single-line pattern read as the element being gone rather than reformatted.
+  assert.match(brand, /<HoverTip\s[\s\S]{0,120}label="Xroga AI"/);
   assert.equal(
-    /<HoverTip label="Xroga AI"[^>]*block=\{navExpanded\}/.test(brand),
+    /<HoverTip\s[\s\S]{0,200}?block=\{navExpanded\}[\s\S]{0,200}?label="Xroga AI"/.test(brand)
+    || /label="Xroga AI"[\s\S]{0,200}?block=\{navExpanded\}/.test(brand),
     false,
     'the logo tip is full-width again and the toolbar will overlap it',
   );

@@ -12,7 +12,6 @@ import {
   Link2,
   Settings,
   PanelLeftClose,
-  PanelLeftOpen,
   PanelLeft,
   Search,
   Zap,
@@ -203,6 +202,14 @@ function planLabel(tier?: string | null) {
  */
 const EDGE_DRAG_THRESHOLD_PX = 4;
 
+/**
+ * How long the pointer must rest on the collapsed mark before the sidebar opens.
+ *
+ * Long enough that crossing the rail on the way elsewhere does not shove the workspace
+ * sideways, short enough that a deliberate hover does not feel stuck.
+ */
+const HOVER_OPEN_DELAY_MS = 220;
+
 export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -214,6 +221,8 @@ export function Sidebar({ displayName }: SidebarProps) {
   const profileRowRef = useRef<HTMLDivElement>(null);
   /** Set when a press on the edge toggle became a resize, so the click is ignored. */
   const edgeToggleDraggedRef = useRef(false);
+  /** Pending hover-to-open, so leaving the mark before the delay cancels it. */
+  const hoverOpenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { setAvatarUrl, uploadAvatarFile } = useAvatarUpdate();
   const { startNewChat } = useTerminalChat();
   const hydrated = useHydrated();
@@ -234,6 +243,13 @@ export function Sidebar({ displayName }: SidebarProps) {
   const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
   const userPlan = incognito ? 'Temporary session' : planLabel(planTier);
 
+  // A pending hover-to-open must not fire into a sidebar that is no longer mounted —
+  // navigating away mid-hover would otherwise leave the timer to run and set state on
+  // a dead component.
+  useEffect(() => () => {
+    if (hoverOpenTimerRef.current !== null) clearTimeout(hoverOpenTimerRef.current);
+  }, []);
+
   useEffect(() => {
     document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
     if (mobileOpen) {
@@ -247,6 +263,29 @@ export function Sidebar({ displayName }: SidebarProps) {
     }
     return () => document.body.classList.remove('mobile-sidebar-open');
   }, [mobileOpen]);
+
+  function cancelSidebarHover() {
+    if (hoverOpenTimerRef.current === null) return;
+    clearTimeout(hoverOpenTimerRef.current);
+    hoverOpenTimerRef.current = null;
+  }
+
+  /**
+   * Open the sidebar after a short, cancellable pause over the mark.
+   *
+   * Opening on the first pixel of hover would fire whenever the pointer crossed the
+   * mark on its way somewhere else, and a sidebar that expands under a passing cursor
+   * shoves the workspace sideways. The delay makes it a deliberate act; leaving before
+   * it elapses cancels it.
+   */
+  function openSidebarOnHover() {
+    if (effectiveSidebarOpen || terminalFullscreen) return;
+    cancelSidebarHover();
+    hoverOpenTimerRef.current = setTimeout(() => {
+      hoverOpenTimerRef.current = null;
+      toggleSidebar();
+    }, HOVER_OPEN_DELAY_MS);
+  }
 
   function beginResize(startX: number) {
     const startW = sidebarWidth;
@@ -493,14 +532,34 @@ export function Sidebar({ displayName }: SidebarProps) {
               whole brand row and the utility card — which is `ml-auto` and cannot
               shrink — was laid on top of it. The mark showed through behind the first
               icon. Sized to its content, the logo gives way instead. */}
-          <HoverTip label="Xroga AI" description="Workspace home" className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}>
-            <Logo
-              href={logoHref}
-              height={navExpanded ? 50 : 34}
-              variant={navExpanded ? 'sidebarFull' : 'sidebar'}
-              className={cn(navExpanded ? 'max-w-[100px]' : '!h-[34px] !w-[34px]')}
-              onClick={handleNavClick}
-            />
+          {/*
+            Collapsed, the mark is what reopens the sidebar. The rail used to carry a
+            PanelLeft button for that, and the edge toggle sat beside it — two controls,
+            side by side, for one job.
+
+            Hover only reaches a mouse, so the same handler runs on focus: the mark is a
+            link and therefore already in the tab order, and opening on focus keeps the
+            rail usable from the keyboard with nothing extra to find.
+          */}
+          <HoverTip
+            label="Xroga AI"
+            description={navExpanded ? 'Workspace home' : 'Hover to open the sidebar'}
+            className={navExpanded ? 'shrink min-w-0' : 'shrink-0'}
+          >
+            <span
+              onMouseEnter={openSidebarOnHover}
+              onMouseLeave={cancelSidebarHover}
+              onFocus={openSidebarOnHover}
+              onBlur={cancelSidebarHover}
+            >
+              <Logo
+                href={logoHref}
+                height={navExpanded ? 50 : 34}
+                variant={navExpanded ? 'sidebarFull' : 'sidebar'}
+                className={cn(navExpanded ? 'max-w-[100px]' : '!h-[34px] !w-[34px]')}
+                onClick={handleNavClick}
+              />
+            </span>
           </HoverTip>
           {navExpanded ? (
             <div className="xv-sidebar-header-actions ml-auto flex shrink-0 items-center">
@@ -537,14 +596,18 @@ export function Sidebar({ displayName }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-              <HoverTip label="Open sidebar" description="Show workspace navigation.">
-                <button
-                  type="button"
-                  onClick={() => toggleSidebar()}
-                  aria-label="Open sidebar"
-                >
-                  <PanelLeft className="h-4 w-4" aria-hidden="true" />
-                </button>
+              {/* The two destinations that were a click away only through the expanded
+                  nav. The rail is where a collapsed sidebar earns its keep, so the two
+                  places people actually go get to stay on it. */}
+              <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
+                <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>
+                  <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </HoverTip>
+              <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
+                <Link href="/dashboard/projects" aria-label="Repositories" onClick={handleNavClick}>
+                  <FolderGit2 className="h-4 w-4" aria-hidden="true" />
+                </Link>
               </HoverTip>
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
@@ -711,18 +774,15 @@ export function Sidebar({ displayName }: SidebarProps) {
           </div>
         ) : null}
         {/*
-          Rendered in both states, not only while the sidebar is open.
-          Gated on `effectiveSidebarOpen` this button removed itself the moment it
-          was used, so collapsing the sidebar was a one-way door: the rail had no
-          expand control, and clicking where the button had been did nothing. The
-          `.is-collapsed .xv-sidebar-edge-toggle` rules in globals.css were written
-          for a button that persists and could never match, and the label below
-          already spelled out both states.
+          Closing only. Reopening is the mark's job now: hovering it expands the rail,
+          which is why this no longer renders while collapsed. It briefly did — the
+          rail then showed this toggle beside its own PanelLeft button, two controls a
+          few pixels apart doing the same thing.
 
           Fullscreen still hides it — there the rail is collapsed by the terminal
           rather than by the user, and leaving the sidebar is what exits fullscreen.
         */}
-        <button
+        {effectiveSidebarOpen ? <button
           type="button"
           onPointerDown={startEdgeToggleDrag}
           onClick={() => {
@@ -736,12 +796,10 @@ export function Sidebar({ displayName }: SidebarProps) {
             setMobileOpen(false);
           }}
           className={cn('xv-sidebar-edge-toggle hidden lg:flex', terminalFullscreen && '!hidden')}
-          aria-label={effectiveSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          aria-label="Close sidebar"
         >
-          {effectiveSidebarOpen
-            ? <PanelLeftClose className="w-3.5 h-3.5" />
-            : <PanelLeftOpen className="w-3.5 h-3.5" />}
-        </button>
+          <PanelLeftClose className="w-3.5 h-3.5" />
+        </button> : null}
       </div>
 
       <AvatarPickerModal
