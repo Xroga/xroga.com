@@ -17,12 +17,52 @@ const PKCE_PROVIDER = 'vercel_oauth_pkce';
 const CALLBACK_PATH = '/dashboard/integrations/vercel/callback';
 const TOKEN_BUCKET = 'xroga-github-tokens';
 const TOKEN_REFRESH_SKEW_MS = 60_000;
+const REFRESH_LEASE_PREFIX = 'xroga-refresh-lease:';
+const REFRESH_LEASE_MS = 30_000;
+const REFRESH_WAIT_MS = 20_000;
 
 // A Vercel refresh token is rotated when it is used. Deduplicate refreshes in
-// this process so concurrent route/pipeline checks cannot spend the same token
-// twice. Cross-machine races are recovered by reloading the DB after a failed
-// exchange (the winning machine will already have stored the rotated pair).
+// this process, then claim the stored refresh token atomically before crossing
+// Fly machines. A DB reload remains the recovery path for a waiting machine
+// after the lease owner stores the rotated pair.
 const vercelRefreshInFlight = new Map<string, Promise<string>>();
+
+type VercelRefreshLease = {
+  claimId: string;
+  expiresAt: number;
+  refreshToken: string;
+};
+
+function encodeVercelRefreshLease(refreshToken: string): string {
+  const lease: VercelRefreshLease = {
+    claimId: randomBytes(16).toString('hex'),
+    expiresAt: Date.now() + REFRESH_LEASE_MS,
+    refreshToken,
+  };
+  return `${REFRESH_LEASE_PREFIX}${Buffer.from(JSON.stringify(lease), 'utf8').toString('base64url')}`;
+}
+
+export function parseVercelRefreshLease(value: string | null | undefined): VercelRefreshLease | null {
+  if (!value?.startsWith(REFRESH_LEASE_PREFIX)) return null;
+  try {
+    const decoded = JSON.parse(
+      Buffer.from(value.slice(REFRESH_LEASE_PREFIX.length), 'base64url').toString('utf8'),
+    ) as Partial<VercelRefreshLease>;
+    if (
+      typeof decoded.claimId !== 'string' ||
+      !decoded.claimId ||
+      typeof decoded.expiresAt !== 'number' ||
+      !Number.isFinite(decoded.expiresAt) ||
+      typeof decoded.refreshToken !== 'string' ||
+      !decoded.refreshToken
+    ) {
+      return null;
+    }
+    return decoded as VercelRefreshLease;
+  } catch {
+    return null;
+  }
+}
 
 const ALLOWED_CALLBACK_ORIGINS = [
   'https://xroga.com',
@@ -309,16 +349,28 @@ export function parseVercelOAuthState(state: string): { userId: string } | null 
 }
 
 export async function getVercelToken(userId: string): Promise<string | null> {
-  const row = await loadVercelConnection(userId);
+  let row = await loadVercelConnection(userId);
   if (!row?.access_token?.trim()) return null;
 
   if (!isVercelAccessTokenExpiring(row.expires_at)) return row.access_token.trim();
 
   if (row.refresh_token) {
     try {
+      const activeLease = parseVercelRefreshLease(row.refresh_token);
+      if (activeLease && activeLease.expiresAt > Date.now()) {
+        const winner = await waitForVercelRefreshWinner(userId, row.access_token);
+        if (winner) return winner;
+        row = (await loadVercelConnection(userId)) ?? row;
+      }
+
+      const observedRefreshToken = row.refresh_token;
+      if (!observedRefreshToken) return null;
+      const lease = parseVercelRefreshLease(observedRefreshToken);
+      const refreshToken = lease?.refreshToken ?? observedRefreshToken;
       const refreshed = await refreshVercelOAuthTokenSingleFlight(
         userId,
-        row.refresh_token,
+        observedRefreshToken,
+        refreshToken,
         row.username,
       );
       return refreshed;
@@ -356,13 +408,19 @@ export function isVercelAccessTokenExpiring(
 
 async function refreshVercelOAuthTokenSingleFlight(
   userId: string,
+  observedRefreshToken: string,
   refreshToken: string,
   username?: string,
 ): Promise<string> {
   const existing = vercelRefreshInFlight.get(userId);
   if (existing) return existing;
 
-  const pending = refreshVercelOAuthToken(userId, refreshToken, username);
+  const pending = refreshVercelOAuthTokenWithLease(
+    userId,
+    observedRefreshToken,
+    refreshToken,
+    username,
+  );
   vercelRefreshInFlight.set(userId, pending);
   try {
     return await pending;
@@ -370,6 +428,75 @@ async function refreshVercelOAuthTokenSingleFlight(
     if (vercelRefreshInFlight.get(userId) === pending) {
       vercelRefreshInFlight.delete(userId);
     }
+  }
+}
+
+async function waitForVercelRefreshWinner(
+  userId: string,
+  previousAccessToken: string,
+): Promise<string | null> {
+  const deadline = Date.now() + REFRESH_WAIT_MS;
+  while (Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    const latest = await loadVercelConnection(userId);
+    if (
+      latest?.access_token?.trim() &&
+      latest.access_token.trim() !== previousAccessToken.trim() &&
+      !isVercelAccessTokenExpiring(latest.expires_at)
+    ) {
+      return latest.access_token.trim();
+    }
+    const lease = parseVercelRefreshLease(latest?.refresh_token);
+    if (!lease || lease.expiresAt <= Date.now()) return null;
+  }
+  return null;
+}
+
+async function refreshVercelOAuthTokenWithLease(
+  userId: string,
+  observedRefreshToken: string,
+  refreshToken: string,
+  username?: string,
+): Promise<string> {
+  const supabase = getSupabaseAdmin();
+  const marker = encodeVercelRefreshLease(refreshToken);
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .update({ refresh_token: marker })
+    .eq('user_id', userId)
+    .eq('provider', 'vercel')
+    .eq('refresh_token', observedRefreshToken)
+    .select('refresh_token');
+
+  if (error && !isMissingTableError(error.message)) {
+    throw new Error(`Could not claim Vercel refresh lease: ${error.message}`);
+  }
+
+  if (!error && (!data || data.length === 0)) {
+    const previous = await loadVercelConnection(userId);
+    const winner = await waitForVercelRefreshWinner(userId, previous?.access_token ?? '');
+    if (winner) return winner;
+    throw new Error('Another Vercel token refresh is still in progress');
+  }
+
+  // Storage-only legacy installations cannot make an atomic database claim. Keep
+  // the existing in-process single flight there; production uses the DB lease.
+  if (error && isMissingTableError(error.message)) {
+    return refreshVercelOAuthToken(userId, refreshToken, username);
+  }
+
+  try {
+    return await refreshVercelOAuthToken(userId, refreshToken, username);
+  } catch (refreshError) {
+    // Restore the original refresh token only when this exact lease still owns the
+    // row. A later successful refresh must never be overwritten by cleanup.
+    await supabase
+      .from('user_integrations')
+      .update({ refresh_token: refreshToken })
+      .eq('user_id', userId)
+      .eq('provider', 'vercel')
+      .eq('refresh_token', marker);
+    throw refreshError;
   }
 }
 
