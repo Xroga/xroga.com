@@ -108,7 +108,12 @@ export function ChatBarActionsMenu({
       {open && (
         <div className="xv-cba-menu" role="dialog" aria-label="Composer actions">
           {panel === 'menu' && (
-            <>
+            /* A two-column grid from `sm` up. As one tall column this list ran to
+               roughly three times its own width, which is what made it feel like a
+               page rather than a menu. Only the root list is laid out this way — the
+               Skills and Rules panels below stay single-column, because their rows
+               are toggles in a set rather than independent destinations. */
+            <div className="xv-cba-grid">
               {/* Attach and connectors come first: they are what a `+` means in a
                   composer, and folding them in here is what let the toolbar row of
                   GitHub / Vercel / Integrations chips above the input go away. */}
@@ -187,9 +192,11 @@ export function ChatBarActionsMenu({
               {onOpenIntegrations && (
                 <>
                   <div className="xv-cba-sep" role="separator" />
+                  {/* Full width: its description is a list of accounts, which wraps to
+                      three lines in half a row and drags the whole grid taller. */}
                   <button
                     type="button"
-                    className="xv-cba-item"
+                    className="xv-cba-item xv-cba-item--wide"
                     onClick={() => {
                       onOpenIntegrations();
                       setOpen(false);
@@ -208,12 +215,12 @@ export function ChatBarActionsMenu({
               {/* The user sees exactly what gets attached. A prompt silently rewritten
                   behind the composer is the failure mode this avoids. */}
               {preamble && (
-                <p className="xv-cba-note">
+                <p className="xv-cba-note xv-cba-item--wide">
                   {activeCount} {activeCount === 1 ? 'instruction is' : 'instructions are'} added
                   above every prompt you send.
                 </p>
               )}
-            </>
+            </div>
           )}
 
           {panel === 'skills' && (

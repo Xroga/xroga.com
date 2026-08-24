@@ -39,7 +39,11 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
   const inner = (
     <div
       className={cn('relative bg-transparent', className)}
-      style={{ height, width, background: 'transparent' }}
+      // `maxWidth` belongs beside `width` rather than in a stylesheet: the width is an
+      // inline style, so no class can cap it, and an uncapped logo overflowed its
+      // container — in the sidebar it ran underneath the utility card and showed
+      // through behind the first icon. A logo should never be wider than its box.
+      style={{ height, width, maxWidth: '100%', background: 'transparent' }}
     >
       <Image
         src={src}
@@ -61,7 +65,10 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
         onClick={onClick}
         aria-label="Xroga"
         className="inline-block bg-transparent"
-        style={{ background: 'transparent' }}
+        // The link is the box the logo actually sits in, so it has to be capped too —
+        // capping only the inner div measures 100% of an uncapped parent and changes
+        // nothing.
+        style={{ background: 'transparent', maxWidth: '100%', minWidth: 0 }}
       >
         {inner}
       </Link>

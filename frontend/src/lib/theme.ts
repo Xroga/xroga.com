@@ -1,5 +1,34 @@
 export type CoreThemeId = 'white' | 'beige' | 'black' | 'gray';
-export type AccentId = 'blue' | 'violet' | 'emerald' | 'coral';
+export type AccentId =
+  | 'default'
+  | 'blue'
+  | 'violet'
+  | 'emerald'
+  | 'coral'
+  | 'amber'
+  | 'cyan'
+  | 'rose';
+
+/**
+ * The type scale a surface can be set to, independent of the rest of the shell.
+ *
+ * `default` is not a face — it means "whatever the shell already uses", so a user
+ * who has never touched this setting is not silently opted into a choice.
+ */
+export type FontChoice = 'default' | 'inter' | 'goga' | 'serif' | 'display' | 'mono';
+
+export const FONT_CHOICES: { id: FontChoice; label: string; hint: string }[] = [
+  { id: 'default', label: 'Default', hint: 'Follows the shell' },
+  { id: 'goga', label: 'Goga', hint: 'The Xroga sans' },
+  { id: 'inter', label: 'Inter', hint: 'Neutral UI sans' },
+  { id: 'serif', label: 'Source Serif', hint: 'Readable serif' },
+  { id: 'display', label: 'Newsreader', hint: 'High-contrast serif' },
+  { id: 'mono', label: 'JetBrains Mono', hint: 'Fixed width' },
+];
+
+export function isFontChoice(value: unknown): value is FontChoice {
+  return FONT_CHOICES.some((choice) => choice.id === value);
+}
 export type FontPreference = 'modern' | 'classic' | 'mono';
 export type DensityPreference = 'comfortable' | 'compact';
 
@@ -81,12 +110,25 @@ export const TERMINAL_SKINS: readonly TerminalSkinSpec[] = [
 
 export const TERMINAL_SKIN_CYCLE: TerminalSkin[] = TERMINAL_SKINS.map((skin) => skin.id);
 
-/** What `auto` resolves to. Dark on every theme — see the note above. */
+/**
+ * What `auto` resolves to.
+ *
+ * Every theme used to resolve to `dark`, which meant "auto" did not track anything:
+ * switching the page to White or Beige left a black terminal sitting in the middle of
+ * a light application, and the theme control appeared to do nothing to the largest
+ * surface on the screen. Each theme now resolves to the skin that belongs with it —
+ * Daylight for White, Parchment for the warm Beige page, Graphite for Gray, and Xroga
+ * Dark for Black, where a slightly lifted surface reads as a window against the black
+ * page rather than merging into it.
+ *
+ * This is only the *auto* resolution. Picking a skin by hand still sets
+ * `terminalSkinAuto` false, and nothing here overrides that choice again.
+ */
 export const DEFAULT_TERMINAL_SKIN: Record<CoreThemeId, TerminalSkin> = {
-  white: 'dark',
-  beige: 'dark',
+  white: 'light',
+  beige: 'solar',
   black: 'dark',
-  gray: 'dark',
+  gray: 'gray',
 };
 
 export const TERMINAL_SKIN_LABELS: Record<TerminalSkin, string> = TERMINAL_SKINS.reduce(
@@ -130,11 +172,23 @@ export const THEME_SURFACE: Record<CoreThemeId, string> = {
 
 /** Swatch hex per accent — mirrors the html[data-accent] rules in globals.css. */
 export const ACCENT_OPTIONS: { id: AccentId; label: string; swatch: string }[] = [
+  // Not a colour: it takes the theme's own ink, so it is black on the light themes
+  // and white on the dark ones. `currentColor` is the swatch because the value is
+  // whatever the surrounding theme says it is — a fixed hex here would be a lie on
+  // three themes out of four.
+  { id: 'default', label: 'Default', swatch: 'currentColor' },
   { id: 'blue', label: 'Blue', swatch: '#006aff' },
   { id: 'violet', label: 'Violet', swatch: '#7c3aed' },
   { id: 'emerald', label: 'Emerald', swatch: '#059669' },
   { id: 'coral', label: 'Coral', swatch: '#e05252' },
+  { id: 'amber', label: 'Amber', swatch: '#d97706' },
+  { id: 'cyan', label: 'Cyan', swatch: '#0891b2' },
+  { id: 'rose', label: 'Rose', swatch: '#e11d48' },
 ];
+
+export function isAccentId(value: unknown): value is AccentId {
+  return ACCENT_OPTIONS.some((option) => option.id === value);
+}
 
 /** Map legacy `image` / deep-work → white */
 export function normalizeTheme(theme: ThemeId | string | null | undefined): CoreThemeId {

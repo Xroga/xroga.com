@@ -1,0 +1,877 @@
+/*
+ * /software — the Xroga Software World landing page.
+ *
+ * Scoped under `.xsw-*` and loaded only by SoftwareLanding, so it cannot reach the
+ * capability pages or /ai-app-builder.
+ *
+ * Two rules govern the file. Text is never a gradient — headings are white, near-black
+ * or solid Xroga blue. And every image sits under an overlay tuned for the copy on top
+ * of it, because the artwork is atmosphere, never the thing being read.
+ */
+
+/*
+ * The page sits on the shared theme backdrop now, so every colour is derived from the
+ * theme tokens rather than written for one dark composition. `background: transparent`
+ * is what lets the backdrop through — an opaque ground here hides it completely.
+ */
+.xsw-page {
+  --xsw-blue: var(--tp-accent, var(--accent, #006aff));
+  --xsw-bright: var(--tp-accent, #3d8bff);
+  --xsw-cyan: var(--tp-accent, #38d2ff);
+  --xsw-ink: var(--tp-ink);
+  --xsw-soft: var(--tp-muted);
+  --xsw-black: var(--tp-panel);
+  --xsw-card: var(--tp-surface-2);
+  --xsw-hair: var(--tp-border);
+  --xsw-shell: min(1340px, 100% - 5rem);
+
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: transparent;
+  color: var(--xsw-ink);
+  font-synthesis-weight: none;
+}
+
+.xsw-page *,
+.xsw-page *::before,
+.xsw-page *::after { box-sizing: border-box; }
+
+.xsw-shell { width: var(--xsw-shell); margin-inline: auto; }
+
+/* Shared image layer. `fill` + object-cover, with per-section object-position set
+   at the breakpoints where the composition needs a different crop. */
+
+
+/* ---------------------------------------------------------------- header */
+
+.xsw-header {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 20;
+  padding-block: 1.3rem;
+}
+
+.xsw-header__inner { display: flex; align-items: center; gap: 1.5rem; }
+.xsw-header__brand { display: inline-flex; flex-shrink: 0; min-width: 0; }
+.xsw-header__nav { display: flex; align-items: center; gap: 0.3rem; margin-inline: auto; }
+
+.xsw-navlink {
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--xsw-ink) 80%, transparent);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.xsw-navlink:hover { color: var(--xsw-ink); background: color-mix(in srgb, var(--xsw-ink) 10%, transparent); }
+.xsw-header__actions { display: flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+
+.xsw-signin {
+  padding: 0.55rem 0.85rem;
+  color: color-mix(in srgb, var(--xsw-ink) 88%, transparent);
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.xsw-signin:hover { color: var(--xsw-ink); }
+
+.xsw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.1rem;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--xsw-blue) 88%, #000);
+  /* A blue fill is dark on every theme, so its label is always white. Deriving this
+     from --xsw-ink put dark text on blue in the light themes; --tp-action-text was no
+     better, since that token describes a neutral action and goes near-black on Black. */
+  color: #ffffff;
+  font-size: 0.87rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.xsw-btn:hover { background: color-mix(in srgb, var(--xsw-blue) 86%, var(--tp-ink)); transform: translateY(-1px); }
+.xsw-btn--lg { padding: 0.85rem 1.5rem; font-size: 0.95rem; border-radius: 14px; }
+
+.xsw-btn--ghost {
+  background: color-mix(in srgb, var(--xsw-ink) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 22%, transparent);
+  color: var(--xsw-ink);
+}
+
+.xsw-btn--ghost:hover { background: color-mix(in srgb, var(--xsw-ink) 18%, transparent); }
+
+.xsw-btn--dark { background: var(--xsw-ink); color: var(--tp-bg); }
+.xsw-btn--dark:hover { background: color-mix(in srgb, var(--xsw-ink) 84%, var(--tp-bg)); }
+
+.xsw-menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-left: auto;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 22%, transparent);
+  border-radius: 12px;
+  background: var(--tp-panel);
+  color: var(--xsw-ink);
+  cursor: pointer;
+}
+
+.xsw-drawer {
+  display: none;
+  margin-top: 0.7rem;
+  padding: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 16%, transparent);
+  border-radius: 18px;
+  background: var(--tp-panel-solid);
+}
+
+.xsw-drawer[data-open='true'] { display: block; }
+
+.xsw-drawer a {
+  display: block;
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--xsw-ink) 88%, transparent);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.xsw-drawer a:hover { background: color-mix(in srgb, var(--xsw-ink) 8%, transparent); }
+
+.xsw-drawer__actions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--tp-border);
+}
+
+/* ------------------------------------------------------------------ hero */
+
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
+.xsw-hero {
+  position: relative;
+  background: var(--tp-panel);
+  display: flex;
+  flex-direction: column;
+  min-height: min(880px, 100svh);
+  padding-block: 8rem 4.5rem;
+  isolation: isolate;
+}
+
+/* The hero art keeps its structures low and outboard, so the crop favours the
+   lower half where the light bands are. */
+
+
+.xsw-hero__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+}
+
+.xsw-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.38rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xsw-ink) 9%, transparent);
+  color: var(--xsw-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.xsw-eyebrow svg { width: 13px; height: 13px; }
+
+/* The hero heading takes the editorial serif rather than the UI sans. Anthropic's
+   own Styrene and Tiempos are licensed faces and are deliberately not shipped; this
+   is the bundled Newsreader/Source Serif pair globals.css already nominates for that
+   voice.
+
+   The face variables are named directly instead of going through `--font-claude`.
+   That token is declared on `:root`, but the next/font variables it is built from are
+   only defined on `<body>` and below, so on `html` it substitutes to nothing, becomes
+   guaranteed-invalid, and every descendant inherits the empty value — measurably, not
+   in theory. Naming the variables here resolves them where they actually exist.
+
+   The sans settings do not transfer either: -0.035em is tight enough to jam a serif's
+   thick-thin transitions, and 700 makes one heavy rather than confident, so the
+   tracking opens and the weight drops. */
+.xsw-h1 {
+  max-width: 20ch;
+  margin: 1.5rem 0 0;
+  color: var(--xsw-ink);
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.5rem, 5.2vw, 4.8rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+/* Solid blue, never a gradient. */
+.xsw-accent { color: var(--xsw-bright); }
+
+/* The supporting line follows the headline into the serif, a size down and lighter,
+   which is what keeps the pair reading as one editorial block instead of a serif
+   headline sitting on an unrelated UI paragraph. One rule, not two: a second
+   `.xsw-hero__lede` block later in the file would silently win on any property
+   both of them set. */
+.xsw-hero__lede {
+  max-width: 58ch;
+  margin: 1.4rem 0 0;
+  color: color-mix(in srgb, var(--xsw-ink) 76%, transparent);
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.xsw-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+/* Prompt panel — real HTML, never baked into the artwork. */
+.xsw-prompt {
+  width: min(720px, 100%);
+  margin-top: 2.2rem;
+  padding: 1rem 1rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 13%, transparent);
+  border-radius: 20px;
+  background: var(--tp-panel-solid);
+  box-shadow: 0 30px 80px rgba(2, 6, 20, 0.5);
+  text-align: left;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+
+.xsw-prompt:hover,
+.xsw-prompt:focus-within { border-color: color-mix(in srgb, var(--xsw-blue) 50%, transparent); transform: translateY(-2px); }
+
+.xsw-prompt__field {
+  width: 100%;
+  min-height: 3.2rem;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--xsw-ink);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+}
+
+.xsw-prompt__field::placeholder { color: var(--xsw-soft); }
+
+.xsw-prompt__row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.xsw-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; min-width: 0; }
+
+.xsw-chip {
+  padding: 0.35rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 15%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tp-bg) 88%, var(--tp-ink));
+  color: color-mix(in srgb, var(--xsw-ink) 76%, transparent);
+  font-size: 0.76rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.xsw-chip:hover,
+.xsw-chip[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--xsw-blue) 55%, transparent);
+  background: color-mix(in srgb, var(--xsw-blue) 20%, transparent);
+  color: var(--xsw-ink);
+}
+
+.xsw-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-left: auto;
+  border: 0;
+  border-radius: 11px;
+  background: var(--xsw-blue);
+  color: var(--xsw-ink);
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.xsw-send:hover { background: color-mix(in srgb, var(--xsw-blue) 86%, var(--tp-ink)); transform: translateY(-1px); }
+.xsw-send svg { width: 16px; height: 16px; }
+
+.xsw-hero__foot {
+  margin: 3.2rem 0 0;
+  color: var(--xsw-soft);
+  font-size: 0.76rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------- problem */
+
+.xsw-problem {
+  position: relative;
+  padding-block: 6rem;
+  isolation: isolate;
+  background: var(--tp-panel);
+  color: var(--xsw-ink);
+}
+
+
+/* The artwork is the subject here, not texture behind type. The veil is only deep
+   enough at the edges to seam into the neighbouring sections; the centre, where the
+   image actually reads, is left alone and the copy leans on its text-shadow instead. */
+
+.xsw-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+.xsw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.36rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 14%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tp-bg) 78%, var(--tp-ink));
+  color: var(--xsw-ink);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.xsw-pill svg { width: 12px; height: 12px; }
+
+.xsw-pill--light { border-color: color-mix(in srgb, var(--xsw-blue) 34%, transparent); background: color-mix(in srgb, var(--xsw-blue) 10%, var(--tp-bg)); color: color-mix(in srgb, var(--xsw-blue) 55%, var(--tp-ink)); }
+
+.xsw-pill--onblue {
+  border-color: color-mix(in srgb, var(--xsw-ink) 30%, transparent);
+  background: color-mix(in srgb, var(--xsw-ink) 14%, transparent);
+  color: var(--xsw-ink);
+}
+
+.xsw-h2 {
+  margin: 1.3rem 0 0;
+  font-size: clamp(1.9rem, 3.2vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.xsw-problem .xsw-h2 { color: var(--xsw-ink); max-width: 22ch; }
+.xsw-muted { color: var(--xsw-soft); }
+
+.xsw-tri {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 3.4rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 10%, transparent);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Divided rather than three separate cards — the reference's problem grid is one
+   panel with rules through it. */
+.xsw-tri > div { padding: 2rem; border-right: 1px solid rgba(255, 255, 255, 0.1); }
+.xsw-tri > div:last-child { border-right: 0; }
+.xsw-tri h3 { margin: 1.6rem 0 0.55rem; font-size: 1.05rem; font-weight: 600; color: var(--xsw-ink); }
+.xsw-tri p { margin: 0; color: var(--xsw-soft); font-size: 0.9rem; line-height: 1.6; }
+
+.xsw-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 12%, transparent);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--xsw-ink) 6%, transparent);
+  color: var(--xsw-bright);
+}
+
+.xsw-icon svg { width: 19px; height: 19px; }
+
+/* -------------------------------------------------------------- ai field */
+
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
+.xsw-field {
+  position: relative;
+  background: var(--tp-panel);
+  padding-block: 7rem 8rem;
+  isolation: isolate;
+  color: var(--xsw-ink);
+}
+
+
+/* Minimal overlay — this image carries its own colour transition. */
+
+.xsw-field .xsw-h2 { color: var(--xsw-ink); max-width: 20ch; }
+
+.xsw-field__lede {
+  max-width: 58ch;
+  margin: 1.2rem auto 0;
+  color: color-mix(in srgb, var(--xsw-ink) 85%, transparent);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.xsw-stage {
+  margin-top: 3.5rem;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 50px 120px rgba(2, 18, 56, 0.45);
+}
+
+/* --------------------------------------------------------------- build */
+
+.xsw-build { position: relative; padding-block: 6.5rem; isolation: isolate; background: var(--tp-panel); }
+
+.xsw-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.xsw-lede { max-width: 56ch; margin: 1.1rem 0 0; color: var(--xsw-soft); font-size: 1.02rem; line-height: 1.65; }
+
+.xsw-checks { margin: 1.8rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.8rem; }
+.xsw-checks li { display: flex; gap: 0.65rem; font-size: 0.95rem; line-height: 1.5; }
+.xsw-checks svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: var(--xsw-blue); }
+
+.xsw-actions { display: flex; flex-wrap: wrap; gap: 0.9rem; align-items: center; margin-top: 2rem; }
+
+.xsw-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--xsw-blue);
+  font-size: 0.94rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.xsw-textlink svg { width: 15px; height: 15px; transition: transform 160ms ease; }
+.xsw-textlink:hover svg { transform: translateX(3px); }
+
+/* --------------------------------------------------------------- bento */
+
+.xsw-bento-section { padding-block: 6.5rem; background: var(--xsw-black); color: var(--xsw-ink); }
+.xsw-bento-section .xsw-h2 { color: var(--xsw-ink); max-width: 20ch; }
+
+.xsw-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 2.4rem;
+  padding: 0.32rem;
+  border: 1px solid var(--xsw-hair);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tp-bg) 86%, var(--tp-ink));
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.xsw-tabs::-webkit-scrollbar { display: none; }
+
+.xsw-tab {
+  padding: 0.52rem 1.05rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--xsw-ink);
+  font-size: 0.84rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.xsw-tab:hover { color: var(--xsw-ink); }
+.xsw-tab[aria-selected='true'] { background: color-mix(in srgb, var(--xsw-blue) 88%, #000); color: #ffffff; font-weight: 600; }
+
+.xsw-bento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+
+.xsw-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.8rem;
+  border: 1px solid var(--xsw-hair);
+  border-radius: 22px;
+  background: var(--xsw-card);
+  overflow: hidden;
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+
+/* Light under the surface at the bottom edge, as in the reference cards. */
+.xsw-card::after {
+  content: '';
+  position: absolute;
+  inset-inline: -20%;
+  inset-block-end: -70%;
+  height: 130%;
+  background: radial-gradient(ellipse 50% 50% at 50% 100%, var(--xsw-glow, color-mix(in srgb, var(--xsw-blue) 50%, transparent)), transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.xsw-card > * { position: relative; z-index: 1; }
+.xsw-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--xsw-ink) 16%, transparent); }
+.xsw-card:hover::after { opacity: 0.78; }
+
+.xsw-card h3 { margin: 1.3rem 0 0.55rem; color: var(--xsw-ink); font-size: 1.08rem; font-weight: 600; }
+.xsw-card p { margin: 0; color: var(--xsw-soft); font-size: 0.9rem; line-height: 1.6; }
+
+/* The dominant centre card carries the core artwork. */
+.xsw-card--feature { grid-row: span 2; justify-content: flex-end; min-height: 420px; }
+/* The core artwork is near-black by design, so on a near-black card it disappeared.
+   The card gets a lighter ground under it and the scrim starts lower, which lets the
+   lit centre of the render actually read before the copy takes over. */
+.xsw-card--feature { background: var(--tp-panel); }
+.xsw-card--feature::after { opacity: 0.34; }
+
+/* ---------------------------------------------------------- repository */
+
+.xsw-repo { position: relative; padding-block: 6.5rem; isolation: isolate; color: var(--xsw-ink); background: var(--tp-panel); }
+
+.xsw-repo .xsw-h2 { color: var(--xsw-ink); }
+.xsw-repo .xsw-lede { color: color-mix(in srgb, var(--xsw-ink) 68%, transparent); }
+
+.xsw-panel {
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 10%, transparent);
+  border-radius: 22px;
+  background: var(--tp-panel-solid);
+  overflow: hidden;
+}
+
+.xsw-panel__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1.05rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: color-mix(in srgb, var(--xsw-ink) 78%, transparent);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.xsw-panel__bar svg { width: 15px; height: 15px; color: var(--xsw-bright); }
+
+.xsw-demo {
+  margin-left: auto;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 14%, transparent);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--xsw-soft);
+}
+
+.xsw-tree {
+  margin: 0;
+  padding: 1rem 1.15rem;
+  list-style: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.83rem;
+  line-height: 1.9;
+  color: color-mix(in srgb, var(--xsw-ink) 72%, transparent);
+}
+
+.xsw-tree li { display: flex; align-items: center; gap: 0.5rem; }
+.xsw-tree svg { width: 13px; height: 13px; color: color-mix(in srgb, var(--xsw-ink) 35%, transparent); flex-shrink: 0; }
+.xsw-tree .nest { padding-left: 1.3rem; }
+
+.xsw-checkrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.95rem 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.xsw-checkrow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--xsw-ink) 12%, transparent);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  color: color-mix(in srgb, var(--xsw-ink) 78%, transparent);
+}
+
+.xsw-checkrow svg { width: 12px; height: 12px; color: var(--xsw-cyan); }
+
+/* ------------------------------------------------------------ neutral */
+
+.xsw-plain { padding-block: 6.5rem; background: var(--tp-panel); }
+.xsw-plain--tint { background: var(--tp-surface-2); }
+.xsw-head { max-width: 46ch; margin-bottom: 3rem; }
+.xsw-head p { margin: 1rem 0 0; color: var(--xsw-soft); font-size: 1.02rem; line-height: 1.65; }
+
+.xsw-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+
+.xsw-tile {
+  padding: 1.8rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 20px;
+  background: var(--tp-panel);
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.xsw-tile:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--xsw-blue) 30%, transparent); }
+.xsw-tile h3 { margin: 1.2rem 0 0.5rem; font-size: 1.05rem; font-weight: 600; }
+.xsw-tile p { margin: 0; color: var(--xsw-soft); font-size: 0.92rem; line-height: 1.6; }
+
+.xsw-icon--light { border-color: color-mix(in srgb, var(--xsw-blue) 34%, transparent); background: color-mix(in srgb, var(--xsw-blue) 10%, var(--tp-bg)); color: color-mix(in srgb, var(--xsw-blue) 55%, var(--tp-ink)); }
+
+.xsw-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem; margin-top: 2.6rem; }
+
+.xsw-two > div { padding: 2rem; border: 1px solid rgba(15, 23, 42, 0.1); border-radius: 22px; background: var(--tp-panel); }
+.xsw-two > div:last-child { border-color: color-mix(in srgb, var(--xsw-blue) 20%, transparent); background: var(--tp-surface-2); }
+.xsw-two h3 { display: flex; align-items: center; gap: 0.55rem; margin: 0 0 1.2rem; font-size: 1.05rem; font-weight: 600; }
+.xsw-two h3 svg { width: 18px; height: 18px; color: var(--xsw-blue); }
+.xsw-two ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.75rem; }
+.xsw-two li { display: flex; gap: 0.55rem; color: var(--xsw-soft); font-size: 0.93rem; line-height: 1.55; }
+.xsw-two li svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--xsw-blue); }
+
+.xsw-note {
+  margin: 1.6rem 0 0;
+  padding: 1.05rem 1.2rem;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 16px;
+  background: var(--tp-surface-2);
+  color: var(--xsw-soft);
+  font-size: 0.91rem;
+  line-height: 1.62;
+}
+
+/* ---------------------------------------------------------------- cta */
+
+/* A ground under the artwork, not over it.
+
+   The image paints at z-index -2 and the scrim at -1, so this sits below both and is
+   invisible whenever the image loads. It matters when the image does not: these sections
+   set white type, the scrims are now thin, and the artwork is served from a remote host.
+   Without a ground, one failed request renders white text on white. */
+.xsw-cta {
+  position: relative;
+  background: var(--tp-panel);
+  padding-block: 8rem;
+  isolation: isolate;
+  color: var(--xsw-ink);
+  text-align: center;
+}
+
+
+
+.xsw-cta .xsw-h2 { color: var(--xsw-ink); max-width: 18ch; margin-inline: auto; }
+.xsw-cta__lede { max-width: 54ch; margin: 1.2rem auto 0; color: color-mix(in srgb, var(--xsw-ink) 80%, transparent); font-size: 1.05rem; line-height: 1.6; }
+
+/* -------------------------------------------------------------- footer */
+
+.xsw-footer { position: relative; padding-block: clamp(4rem, 8vw, 7.5rem); isolation: isolate; }
+
+.xsw-footer__card {
+  width: min(1320px, 100% - 3rem);
+  margin-inline: auto;
+  padding: clamp(2.2rem, 4vw, 3.4rem);
+  border-radius: 32px;
+  background: var(--tp-panel-solid);
+  box-shadow: 0 40px 100px rgba(10, 30, 60, 0.24);
+}
+
+.xsw-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, 0.72fr));
+  gap: clamp(1.7rem, 3vw, 3rem);
+}
+
+.xsw-footer__blurb { margin: 1rem 0 1.5rem; max-width: 34ch; color: var(--xsw-soft); font-size: 0.94rem; line-height: 1.6; }
+.xsw-footer__col h3 { margin: 0 0 0.95rem; font-size: 0.94rem; font-weight: 600; }
+.xsw-footer__col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.65rem; }
+.xsw-footer__col a { color: var(--xsw-soft); font-size: 0.91rem; text-decoration: none; }
+.xsw-footer__col a:hover { color: var(--xsw-blue); }
+
+.xsw-footer__note { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.8rem; color: var(--xsw-soft); font-size: 0.79rem; }
+.xsw-footer__note svg { width: 14px; height: 14px; }
+
+.xsw-social { display: flex; gap: 0.45rem; margin-top: 0.4rem; }
+
+.xsw-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  color: var(--xsw-soft);
+  text-decoration: none;
+}
+
+.xsw-social a:hover { color: var(--xsw-blue); border-color: color-mix(in srgb, var(--xsw-blue) 35%, transparent); }
+.xsw-social svg { width: 16px; height: 16px; }
+
+.xsw-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.6rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.xsw-footer__legal { margin: 0; color: var(--xsw-soft); font-size: 0.84rem; }
+.xsw-footer__links { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-left: auto; }
+.xsw-footer__links a { color: var(--xsw-soft); font-size: 0.84rem; text-decoration: none; }
+.xsw-footer__links a:hover { color: var(--xsw-blue); }
+
+/* --------------------------------------------------- focus / motion / rwd */
+
+.xsw-page :is(a, button, textarea, input):focus-visible {
+  outline: 2px solid var(--xsw-bright);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.xsw-hero :is(a, button):focus-visible,
+.xsw-cta :is(a, button):focus-visible,
+.xsw-bento-section :is(a, button):focus-visible { outline-color: var(--xsw-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xsw-page *, .xsw-page *::before, .xsw-page *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .xsw-card:hover, .xsw-tile:hover, .xsw-prompt:hover, .xsw-btn:hover { transform: none; }
+}
+
+@media (max-width: 1180px) {
+  .xsw-page { --xsw-shell: min(1340px, 100% - 4rem); }
+  .xsw-header__nav { gap: 0.05rem; }
+  .xsw-navlink { padding-inline: 0.55rem; font-size: 0.82rem; }
+}
+
+@media (max-width: 1024px) {
+  .xsw-header__nav, .xsw-header__actions { display: none; }
+  .xsw-menu { display: inline-flex; }
+  .xsw-split { grid-template-columns: minmax(0, 1fr); }
+  .xsw-bento, .xsw-grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xsw-card--feature { grid-row: auto; min-height: 320px; }
+  .xsw-tri { grid-template-columns: minmax(0, 1fr); }
+  .xsw-tri > div { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .xsw-tri > div:last-child { border-bottom: 0; }
+  .xsw-footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Portrait crops: the hero and CTA compositions read best pulled toward centre. */
+}
+
+@media (max-width: 768px) {
+  .xsw-page { --xsw-shell: min(1340px, 100% - 3rem); }
+  .xsw-hero { padding-block: 6.5rem 3.5rem; min-height: auto; }
+  .xsw-problem, .xsw-field, .xsw-build, .xsw-bento-section, .xsw-repo, .xsw-plain { padding-block: 4.5rem; }
+  .xsw-cta { padding-block: 5.5rem; }
+  .xsw-two { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .xsw-page { --xsw-shell: min(1340px, 100% - 2.25rem); }
+  .xsw-h1 { font-size: clamp(2rem, 9vw, 2.6rem); }
+  .xsw-prompt { padding: 0.85rem; border-radius: 18px; }
+  .xsw-prompt__row { flex-wrap: wrap; }
+  .xsw-send { margin-left: auto; }
+  .xsw-bento, .xsw-grid3 { grid-template-columns: minmax(0, 1fr); }
+  .xsw-footer__top { grid-template-columns: minmax(0, 1fr); }
+  .xsw-footer__card { width: min(1320px, 100% - 1.5rem); border-radius: 26px; }
+  .xsw-footer__links { margin-left: 0; }
+  .xsw-hero__actions { flex-direction: column; align-items: stretch; }
+  /* The hero's light bands sit low; on a tall narrow crop, favour them. */
+}
+
+/* ==========================================================================
+   Legibility over artwork
+
+   The section scrims were carrying two jobs at once: seaming each section into
+   the next, and keeping white type readable over whatever was behind it. They
+   were sized for the second job, which is why the images were being buried.
+
+   The scrims now only do the seaming. Contrast for the type comes from a shadow
+   on the type itself, which darkens the few hundred pixels behind each glyph
+   instead of veiling the whole image to protect them.
+   ========================================================================== */
+
+.xsw-hero .xsw-h1,
+.xsw-hero .xsw-hero__lede,
+.xsw-hero .xsw-hero__foot,
+.xsw-problem .xsw-h2,
+.xsw-field .xsw-h2,
+.xsw-field__lede,
+.xsw-repo .xsw-h2,
+.xsw-repo .xsw-lede,
+.xsw-cta .xsw-h2,
+.xsw-cta__lede {
+  text-shadow: 0 1px 2px rgba(2, 6, 18, 0.55), 0 2px 18px rgba(2, 6, 18, 0.42);
+}
+
+/* The eyebrow and pill sit on their own surfaces, so they need a real ground
+   rather than a shadow — a translucent chip over a now-visible image reads as
+   dirt on the artwork. */
+.xsw-hero .xsw-eyebrow,
+.xsw-problem .xsw-pill { background: color-mix(in srgb, var(--tp-bg) 78%, var(--tp-ink)); color: var(--xsw-ink); }

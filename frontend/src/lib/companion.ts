@@ -27,21 +27,46 @@ export const COMPANION_OPERATIONS = [
 export type CompanionOperation = (typeof COMPANION_OPERATIONS)[number];
 
 /**
- * The five companion skins. `coder` is the original default and stays first; the
- * other four are the supplied costume artwork under /brand/costumes.
+ * The four companion skins, all drawn from the costume artwork under /brand/costumes.
  *
  * Changing this list is a contract change: the backend's `companionPreferencesSchema`
  * enum and the persisted-store migration must move with it, or a saved preference
  * becomes unreadable.
  */
 export const COMPANION_COSTUMES = [
-  'coder',
   'techwear',
   'mystic-robe',
   'circuit',
   'ninja-neon',
 ] as const;
 export type CompanionCostume = (typeof COMPANION_COSTUMES)[number];
+
+/**
+ * Skins that were removed but may still be sitting in a saved preference.
+ *
+ * `coder` was the original default, so it is the value stored for every account
+ * that never opened the wardrobe — by far the most common one in the wild. Its
+ * artwork is deleted, so anything that reaches the renderer still holding it
+ * would request a file that no longer exists and draw a broken image.
+ *
+ * Retired names are kept here rather than simply dropped so both ends can
+ * recognise them: `resolveCostume` turns them back into something wearable, and
+ * the API accepts them from an older bundle instead of rejecting the whole save.
+ */
+export const RETIRED_COMPANION_COSTUMES = ['coder'] as const;
+
+/**
+ * The costume to actually wear, given whatever a store or a profile row holds.
+ *
+ * Every path into companion state runs through this: local storage, the server
+ * profile, and the API. A value that is retired, misspelled, or absent lands on
+ * the default rather than being trusted through to an `<img>` src.
+ */
+export function resolveCostume(value: unknown): CompanionCostume {
+  return COMPANION_COSTUMES.includes(value as CompanionCostume)
+    ? (value as CompanionCostume)
+    : DEFAULT_COMPANION_PREFERENCES.costume;
+}
 export type CompanionAccent = 'blue' | 'violet' | 'cyan' | 'emerald';
 export type CompanionSize = 'compact' | 'standard' | 'large';
 export type CompanionDock = 'composer' | 'corner';
@@ -57,7 +82,6 @@ export interface CompanionPreferences {
   voiceEnabled: boolean;
   careEnabled: boolean;
   reducedGamification: boolean;
-  crownEnabled: boolean;
   mantleEnabled: boolean;
   lastFedAt: string | null;
 }
@@ -85,7 +109,7 @@ export interface CompanionRuntimeEvent {
 
 export const DEFAULT_COMPANION_PREFERENCES: CompanionPreferences = {
   name: 'Smoky',
-  costume: 'coder',
+  costume: 'techwear',
   accent: 'blue',
   size: 'standard',
   dock: 'composer',
@@ -93,7 +117,6 @@ export const DEFAULT_COMPANION_PREFERENCES: CompanionPreferences = {
   voiceEnabled: false,
   careEnabled: false,
   reducedGamification: true,
-  crownEnabled: true,
   mantleEnabled: true,
   lastFedAt: null,
 };

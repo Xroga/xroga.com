@@ -1,0 +1,1090 @@
+/*
+ * AI App Builder landing page.
+ *
+ * Scoped entirely under `.xab-*` and loaded only by AiAppBuilderLanding, so nothing
+ * here can reach the five other capability pages that still render CapabilityPage.
+ *
+ * One rule governs the whole file: text is never a gradient. Headlines are white,
+ * near-black, or solid Xroga blue. Gradients belong to backgrounds and glows.
+ */
+
+.xab-page {
+  --xab-blue: var(--tp-accent, var(--accent, #006aff));
+  --xab-blue-bright: var(--tp-accent, #3d8bff);
+  --xab-ink: var(--tp-ink);
+  --xab-ink-soft: var(--tp-muted);
+  --xab-dark: var(--tp-panel);
+  --xab-card: var(--tp-surface-2);
+  --xab-hairline: var(--tp-border);
+  --xab-shell: min(1360px, 100% - 5rem);
+
+  position: relative;
+  isolation: isolate;
+  /* `clip` rather than `hidden`: the hero's ambient layers overhang horizontally and
+     must be cut off, but `hidden` would also make this element a scroll container and
+     break `position: sticky` for anything inside it. */
+  overflow-x: clip;
+  /* Transparent so the shared theme backdrop behind the document shows through. */
+  background: transparent;
+  color: var(--xab-ink);
+  font-synthesis-weight: none;
+}
+
+.xab-page *,
+.xab-page *::before,
+.xab-page *::after {
+  box-sizing: border-box;
+}
+
+.xab-shell {
+  width: var(--xab-shell);
+  margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------------
+   Header — floats over the hero image, deliberately not a navbar card
+   --------------------------------------------------------------------------- */
+
+.xab-header {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 20;
+  padding-block: 1.35rem;
+}
+
+.xab-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.xab-header__brand {
+  display: inline-flex;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.xab-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-inline: auto;
+}
+
+.xab-header__link {
+  padding: 0.5rem 0.85rem;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--xab-ink) 82%, transparent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.xab-header__link:hover {
+  color: var(--xab-ink);
+  background: color-mix(in srgb, var(--xab-ink) 10%, transparent);
+}
+
+.xab-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.xab-signin {
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--xab-ink) 90%, transparent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.xab-signin:hover { color: var(--xab-ink); }
+
+.xab-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.1rem;
+  border: 0;
+  border-radius: 12px;
+  background: var(--xab-blue);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.xab-cta:hover {
+  background: color-mix(in srgb, var(--xab-blue) 86%, var(--tp-ink));
+  transform: translateY(-1px);
+}
+
+.xab-cta--ghost {
+  background: color-mix(in srgb, var(--xab-ink) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 20%, transparent);
+  color: var(--xab-ink);
+}
+
+.xab-cta--ghost:hover { background: color-mix(in srgb, var(--xab-ink) 20%, transparent); }
+
+.xab-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 22%, transparent);
+  border-radius: 12px;
+  background: var(--tp-panel-solid);
+  color: var(--xab-ink);
+  cursor: pointer;
+}
+
+.xab-drawer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 16%, transparent);
+  border-radius: 18px;
+  background: var(--tp-panel-solid);
+  backdrop-filter: blur(18px);
+}
+
+.xab-drawer[data-open='true'] { display: block; }
+
+.xab-drawer__link {
+  display: block;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--xab-ink) 88%, transparent);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.xab-drawer__link:hover { background: color-mix(in srgb, var(--xab-ink) 8%, transparent); }
+
+.xab-drawer__actions {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid color-mix(in srgb, var(--xab-ink) 12%, transparent);
+}
+
+.xab-drawer__actions .xab-cta { justify-content: center; }
+
+/* ---------------------------------------------------------------------------
+   Section 1 — cinematic hero
+   --------------------------------------------------------------------------- */
+
+.xab-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: min(860px, 100svh);
+  padding-block: 8.5rem 5.5rem;
+  isolation: isolate;
+}
+
+.xab-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.xab-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Only as much dimming as the type needs. The image is the point. */
+.xab-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(4, 8, 20, 0.58), transparent 70%),
+    linear-gradient(180deg, rgba(4, 8, 20, 0.72) 0%, rgba(4, 8, 20, 0.28) 34%, rgba(4, 8, 20, 0.55) 78%, #041024 100%);
+}
+
+.xab-hero__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  text-align: center;
+}
+
+.xab-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xab-ink) 10%, transparent);
+  color: var(--xab-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.xab-eyebrow svg { width: 14px; height: 14px; }
+
+/* Smaller and lighter than a conventional SaaS hero. The reference's headline sits
+   *inside* the picture rather than shouting over it: one line, medium weight, enough
+   size to lead but not enough to flatten the image behind it. */
+.xab-hero__title {
+  max-width: 26ch;
+  margin: 0;
+  color: var(--xab-ink);
+  font-size: clamp(2.1rem, 4vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-shadow: 0 2px 24px rgba(4, 8, 20, 0.45);
+  text-wrap: balance;
+}
+
+/* Solid blue. Never a gradient — see the note at the top of this file. */
+.xab-accent { color: var(--xab-blue-bright); }
+
+.xab-hero__lede {
+  max-width: 62ch;
+  margin: 1.5rem 0 0;
+  color: color-mix(in srgb, var(--xab-ink) 78%, transparent);
+  font-size: clamp(1rem, 1.15vw, 1.15rem);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Prompt card ------------------------------------------------------------- */
+
+.xab-prompt {
+  width: min(700px, 100%);
+  margin-top: 2.1rem;
+  padding: 1.1rem 1.1rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 14%, transparent);
+  border-radius: 22px;
+  background: var(--tp-panel-solid);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 30px 80px rgba(2, 6, 20, 0.5);
+  text-align: left;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+
+.xab-prompt:hover,
+.xab-prompt:focus-within {
+  border-color: color-mix(in srgb, var(--xab-blue) 50%, transparent);
+  transform: translateY(-2px);
+}
+
+.xab-prompt__field {
+  width: 100%;
+  min-height: 3.4rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--xab-ink);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+}
+
+.xab-prompt__field::placeholder { color: color-mix(in srgb, var(--xab-ink) 42%, transparent); }
+
+.xab-prompt__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--xab-ink) 10%, transparent);
+}
+
+.xab-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.xab-chip {
+  padding: 0.38rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 16%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xab-ink) 6%, transparent);
+  color: color-mix(in srgb, var(--xab-ink) 78%, transparent);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.xab-chip:hover,
+.xab-chip[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--xab-blue) 55%, transparent);
+  background: color-mix(in srgb, var(--xab-blue) 18%, transparent);
+  color: var(--xab-ink);
+}
+
+.xab-prompt__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  margin-left: auto;
+  border: 0;
+  border-radius: 12px;
+  background: var(--xab-blue);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.xab-prompt__send:hover { background: color-mix(in srgb, var(--xab-blue) 86%, var(--tp-ink)); transform: translateY(-1px); }
+.xab-prompt__send svg { width: 17px; height: 17px; }
+
+.xab-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.xab-cta--lg { padding: 0.85rem 1.5rem; font-size: 0.95rem; border-radius: 14px; }
+
+.xab-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: color-mix(in srgb, var(--xab-ink) 85%, transparent);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.xab-textlink:hover { color: var(--xab-ink); }
+.xab-textlink svg { width: 16px; height: 16px; transition: transform 160ms ease; }
+.xab-textlink:hover svg { transform: translateX(3px); }
+
+.xab-hero__note {
+  margin: 4.5rem 0 0;
+  color: var(--xab-ink-soft);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------------
+   Section 2 — deep blue climbing to white
+   --------------------------------------------------------------------------- */
+
+.xab-blue {
+  position: relative;
+  padding-block: 6.5rem 7rem;
+  isolation: isolate;
+  /* The long atmospheric climb the reference trades on: royal blue, through
+     electric blue and cyan, into pale blue and finally the white the next section
+     starts from. Layered radials rather than one linear ramp, so it reads as light
+     in a space instead of a CSS button gradient. */
+  background:
+    radial-gradient(ellipse 90% 55% at 18% 8%, rgba(0, 82, 255, 0.55), transparent 62%),
+    radial-gradient(ellipse 70% 45% at 82% 26%, rgba(0, 176, 255, 0.42), transparent 66%),
+    linear-gradient(180deg, #041024 0%, #0546c8 22%, #0a7bf0 44%, #59b9f7 64%, #c8e6fb 82%, #ffffff 100%);
+  color: var(--xab-ink);
+}
+
+/* Dot field, echoing the reference's pixel decoration. Masked so it fades out
+   before it reaches the product preview. */
+.xab-blue__dots {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(color-mix(in srgb, var(--xab-ink) 32%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 45% at 12% 22%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse 55% 45% at 12% 22%, #000 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+.xab-blue__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.xab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xab-ink) 12%, transparent);
+  color: var(--xab-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.xab-pill svg { width: 13px; height: 13px; }
+
+.xab-h2 {
+  margin: 1.4rem 0 0;
+  font-size: clamp(2.1rem, 3.4vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.xab-blue .xab-h2 { color: var(--xab-ink); }
+
+.xab-blue__lede {
+  max-width: 58ch;
+  margin: 1.2rem 0 0;
+  color: color-mix(in srgb, var(--xab-ink) 82%, transparent);
+  font-size: 1.03rem;
+  line-height: 1.65;
+}
+
+.xab-checks {
+  margin: 1.9rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.xab-checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  color: color-mix(in srgb, var(--xab-ink) 92%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.xab-checks svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xab-ink) 82%, transparent);
+  color: var(--tp-bg);
+}
+
+.xab-blue__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 2.2rem;
+}
+
+/* The real workspace preview sits in a rounded frame rather than a browser chrome
+   mock — the product already has its own window furniture. */
+.xab-preview {
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 40px 110px rgba(2, 20, 60, 0.42);
+}
+
+/* ---------------------------------------------------------------------------
+   Section 3 — dark bento with working tabs
+   --------------------------------------------------------------------------- */
+
+.xab-dark {
+  position: relative;
+  padding-block: 6.5rem 7rem;
+  background: var(--xab-dark);
+  color: var(--xab-ink);
+}
+
+.xab-dark__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.xab-pill--dark {
+  border-color: color-mix(in srgb, var(--xab-ink) 14%, transparent);
+  background: color-mix(in srgb, var(--xab-ink) 5%, transparent);
+  color: var(--xab-ink-soft);
+}
+
+.xab-dark .xab-h2 { color: var(--xab-ink); max-width: 20ch; }
+
+.xab-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 2.5rem;
+  padding: 0.35rem;
+  border: 1px solid var(--xab-hairline);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--xab-ink) 3%, transparent);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.xab-tabs::-webkit-scrollbar { display: none; }
+
+.xab-tab {
+  padding: 0.55rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--xab-ink);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.xab-tab:hover { color: var(--xab-ink); }
+
+.xab-tab[aria-selected='true'] {
+  background: var(--xab-blue);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.xab-bento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.35rem;
+  margin-top: 3.2rem;
+}
+
+.xab-bento__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.9rem;
+  border: 1px solid var(--xab-hairline);
+  border-radius: 22px;
+  background: var(--xab-card);
+  overflow: hidden;
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+
+/* The glow the reference puts at the bottom edge of each card — a light source
+   under the surface, not a gradient painted across it. */
+.xab-bento__card::after {
+  content: '';
+  position: absolute;
+  inset-inline: -20%;
+  inset-block-end: -70%;
+  height: 130%;
+  background: radial-gradient(ellipse 50% 50% at 50% 100%, var(--xab-glow, color-mix(in srgb, var(--xab-blue) 50%, transparent)), transparent 70%);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.xab-bento__card > * { position: relative; z-index: 1; }
+
+.xab-bento__card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--xab-ink) 16%, transparent);
+}
+
+.xab-bento__card:hover::after { opacity: 0.8; }
+
+.xab-bento__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--xab-ink) 12%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--xab-ink) 6%, transparent);
+  color: var(--xab-ink);
+}
+
+.xab-bento__icon svg { width: 20px; height: 20px; }
+
+.xab-bento__card h3 {
+  margin: 0 0 0.6rem;
+  color: var(--xab-ink);
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.xab-bento__card p {
+  margin: 0;
+  color: var(--xab-ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   Section 4 — process
+   --------------------------------------------------------------------------- */
+
+.xab-process {
+  padding-block: 6.5rem;
+  background: var(--tp-surface-2);
+  color: var(--xab-ink);
+}
+
+.xab-process .xab-h2 { color: var(--xab-ink); }
+
+.xab-section-head {
+  max-width: 46ch;
+  margin-bottom: 3.5rem;
+}
+
+.xab-section-head p {
+  margin: 1rem 0 0;
+  color: var(--xab-ink-soft);
+  font-size: 1.03rem;
+  line-height: 1.65;
+}
+
+.xab-pill--light { border-color: color-mix(in srgb, var(--xab-blue) 34%, transparent); background: color-mix(in srgb, var(--xab-blue) 10%, var(--tp-bg)); color: color-mix(in srgb, var(--xab-blue) 55%, var(--tp-ink)); }
+
+.xab-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+}
+
+/* The thin blue progression line, drawn behind the nodes. */
+.xab-steps::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 21px;
+  inset-inline: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--xab-blue) 10%, transparent), color-mix(in srgb, var(--xab-blue) 45%, transparent), color-mix(in srgb, var(--xab-blue) 10%, transparent));
+}
+
+.xab-step__node {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--xab-blue) 28%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--tp-bg) 84%, var(--tp-ink));
+  color: var(--xab-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.xab-step h3 {
+  margin: 1.4rem 0 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.xab-step p {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--xab-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+/* ---------------------------------------------------------------------------
+   Section 5 — repository ownership
+   --------------------------------------------------------------------------- */
+
+.xab-repo {
+  padding-block: 6.5rem;
+  background: var(--tp-surface-2);
+  color: var(--xab-ink);
+}
+
+.xab-repo .xab-h2 { color: var(--xab-ink); }
+
+.xab-repo__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.xab-panel {
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 24px;
+  background: var(--tp-surface-2);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.xab-panel__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+  background: var(--tp-surface-2);
+  color: var(--xab-ink-soft);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.xab-panel__bar svg { width: 15px; height: 15px; color: var(--xab-blue); }
+
+.xab-panel__demo {
+  margin-left: auto;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--xab-ink-soft);
+}
+
+.xab-tree {
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+  list-style: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.84rem;
+  line-height: 1.95;
+  color: var(--xab-ink-soft);
+}
+
+.xab-tree li { display: flex; align-items: center; gap: 0.55rem; }
+.xab-tree svg { width: 14px; height: 14px; color: var(--xab-ink-soft); flex-shrink: 0; }
+.xab-tree .xab-tree__nest { padding-left: 1.35rem; }
+
+.xab-checkrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.07);
+  background: var(--tp-surface-2);
+}
+
+.xab-checkrow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 999px;
+  background: var(--tp-surface-2);
+  font-size: 0.78rem;
+  color: var(--xab-ink-soft);
+}
+
+.xab-checkrow svg { width: 13px; height: 13px; color: var(--xab-blue); }
+
+/* ---------------------------------------------------------------------------
+   Section 6 — what Xroga handles vs what needs approval
+   --------------------------------------------------------------------------- */
+
+.xab-limits {
+  padding-block: 6.5rem;
+  background: var(--tp-surface-2);
+}
+
+.xab-limits .xab-h2 { color: var(--xab-ink); }
+
+.xab-limits__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.xab-limits__card {
+  padding: 2rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 22px;
+  background: var(--tp-surface-2);
+}
+
+.xab-limits__card--accent {
+  border-color: color-mix(in srgb, var(--xab-blue) 20%, transparent);
+  background: var(--tp-surface-2);
+}
+
+.xab-limits__card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.3rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.xab-limits__card h3 svg { width: 18px; height: 18px; color: var(--xab-blue); }
+
+.xab-limits__card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.xab-limits__card li {
+  display: flex;
+  gap: 0.6rem;
+  color: var(--xab-ink-soft);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.xab-limits__card li svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--xab-blue);
+}
+
+.xab-limits__note {
+  margin: 1.75rem 0 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 16px;
+  background: var(--tp-surface-2);
+  color: var(--xab-ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.62;
+}
+
+/* ---------------------------------------------------------------------------
+   Section 7 — scenic footer with a floating light card
+   --------------------------------------------------------------------------- */
+
+.xab-footer {
+  position: relative;
+  padding-block: clamp(4rem, 8vw, 8rem);
+  isolation: isolate;
+}
+
+.xab-footer__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.xab-footer__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.xab-footer__card {
+  width: min(1320px, 100% - 3rem);
+  margin-inline: auto;
+  padding: clamp(2.25rem, 4vw, 3.5rem);
+  border-radius: 32px;
+  background: var(--tp-surface-2);
+  box-shadow: 0 40px 100px rgba(12, 30, 60, 0.22);
+}
+
+.xab-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) repeat(3, minmax(0, 0.72fr));
+  gap: clamp(1.75rem, 3vw, 3rem);
+}
+
+.xab-footer__blurb {
+  margin: 1.1rem 0 1.6rem;
+  max-width: 34ch;
+  color: var(--xab-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.xab-footer__col h3 {
+  margin: 0 0 1rem;
+  color: var(--xab-ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.xab-footer__col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.7rem; }
+
+.xab-footer__col a {
+  color: var(--xab-ink-soft);
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.xab-footer__col a:hover { color: var(--xab-blue); }
+
+.xab-footer__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  color: var(--xab-ink-soft);
+  font-size: 0.8rem;
+}
+
+.xab-footer__note svg { width: 14px; height: 14px; }
+
+.xab-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.75rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.xab-footer__legal {
+  margin: 0;
+  color: var(--xab-ink-soft);
+  font-size: 0.85rem;
+}
+
+.xab-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+.xab-footer__links a {
+  color: var(--xab-ink-soft);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.xab-footer__links a:hover { color: var(--xab-blue); }
+
+.xab-social {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.xab-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  color: var(--xab-ink-soft);
+  text-decoration: none;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.xab-social a:hover { color: var(--xab-blue); border-color: color-mix(in srgb, var(--xab-blue) 35%, transparent); }
+.xab-social svg { width: 16px; height: 16px; }
+
+/* ---------------------------------------------------------------------------
+   Focus, motion, responsive
+   --------------------------------------------------------------------------- */
+
+.xab-page :is(a, button, textarea, input):focus-visible {
+  outline: 2px solid var(--xab-blue-bright);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.xab-dark :is(a, button):focus-visible,
+.xab-hero :is(a, button):focus-visible {
+  outline-color: var(--xab-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xab-page *,
+  .xab-page *::before,
+  .xab-page *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .xab-bento__card:hover,
+  .xab-prompt:hover,
+  .xab-cta:hover { transform: none; }
+}
+
+@media (max-width: 1180px) {
+  .xab-page { --xab-shell: min(1360px, 100% - 4rem); }
+  .xab-header__nav { gap: 0.1rem; }
+  .xab-header__link { padding-inline: 0.6rem; font-size: 0.83rem; }
+}
+
+@media (max-width: 1024px) {
+  .xab-page { --xab-shell: min(1360px, 100% - 4rem); }
+  .xab-header__nav,
+  .xab-header__actions { display: none; }
+  .xab-menu-button { display: inline-flex; margin-left: auto; }
+  .xab-blue__grid,
+  .xab-repo__grid { grid-template-columns: minmax(0, 1fr); }
+  .xab-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xab-steps { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .xab-steps::before { display: none; }
+  .xab-footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .xab-page { --xab-shell: min(1360px, 100% - 3rem); }
+  .xab-hero { padding-block: 7rem 4rem; min-height: auto; }
+  .xab-blue,
+  .xab-dark,
+  .xab-process,
+  .xab-repo,
+  .xab-limits { padding-block: 4.5rem; }
+  .xab-limits__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .xab-page { --xab-shell: min(1360px, 100% - 2.25rem); }
+  .xab-hero__title { font-size: clamp(1.9rem, 8.5vw, 2.5rem); }
+  .xab-prompt { padding: 0.9rem; border-radius: 18px; }
+  .xab-prompt__row { flex-wrap: wrap; }
+  .xab-prompt__send { margin-left: auto; }
+  .xab-bento { grid-template-columns: minmax(0, 1fr); }
+  .xab-footer__top { grid-template-columns: minmax(0, 1fr); }
+  .xab-footer__card { width: min(1320px, 100% - 1.5rem); border-radius: 26px; }
+  .xab-hero__actions { flex-direction: column; align-items: stretch; }
+  .xab-hero__actions .xab-cta { justify-content: center; }
+  .xab-footer__links { margin-left: 0; }
+}

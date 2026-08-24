@@ -45,6 +45,25 @@ function block(selector: string): string {
 
 const winning = block;
 
+/**
+ * Every custom property a theme declares, merged across all of its rules.
+ *
+ * A theme is not one block: the toolbar palette, the stage ground and the shared panel
+ * surface are each declared in their own `body.theme-*` rule, near the code they serve.
+ * Reading only the last block silently reports the others as missing, which is exactly
+ * what happened when the panel-surface rules were added.
+ */
+function themeVars(theme: string): Map<string, string> {
+  const found = new Map<string, string>();
+  const pattern = new RegExp(`(?:^|\\n)body\\.theme-${theme} \\{([^}]*)\\}`, 'g');
+  for (const match of CSS.matchAll(pattern)) {
+    for (const decl of match[1].matchAll(/(--[\w-]+):\s*([^;]+);/g)) {
+      found.set(decl[1], decl[2].trim());
+    }
+  }
+  return found;
+}
+
 const THEMES = ['black', 'gray', 'white', 'beige'] as const;
 const TOKENS = [
   '--toolbar-bg-top',
@@ -63,10 +82,10 @@ const TOKENS = [
 
 test('every Xroga theme defines the full toolbar palette', () => {
   for (const theme of THEMES) {
-    const block = winning(`body.theme-${theme}`);
-    assert.notEqual(block, '', `body.theme-${theme} has no toolbar block`);
+    const vars = themeVars(theme);
+    assert.notEqual(vars.size, 0, `body.theme-${theme} declares nothing`);
     for (const token of TOKENS) {
-      assert.ok(block.includes(`${token}:`), `theme-${theme} is missing ${token}`);
+      assert.ok(vars.has(token), `theme-${theme} is missing ${token}`);
     }
   }
 });
@@ -74,15 +93,11 @@ test('every Xroga theme defines the full toolbar palette', () => {
 test('the four themes are actually different, not one palette repeated', () => {
   // A copy-paste that left every theme dark would satisfy the test above and fail the
   // requirement completely. The surfaces must genuinely differ.
-  const surfaces = THEMES.map((theme) => {
-    const block = winning(`body.theme-${theme}`);
-    return block.match(/--toolbar-bg-top:\s*([^;]+);/)?.[1].trim();
-  });
+  const surfaces = THEMES.map((theme) => themeVars(theme).get('--toolbar-bg-top'));
   assert.equal(new Set(surfaces).size, THEMES.length, `the themes share a surface: ${surfaces.join(', ')}`);
 
   // Light themes need dark glyphs and dark themes need light ones, or the icons vanish.
-  const iconOf = (theme: string) =>
-    winning(`body.theme-${theme}`).match(/--toolbar-icon:\s*([^;]+);/)?.[1].trim() ?? '';
+  const iconOf = (theme: string) => themeVars(theme).get('--toolbar-icon') ?? '';
   // #a7a7a2 and #c2c2c0 are light; #656565 and #777066 are dark.
   assert.match(iconOf('black'), /#a7a7a2/);
   assert.match(iconOf('gray'), /#c2c2c0/);
@@ -125,11 +140,37 @@ test('the toolbar adds no state and no theme detection of its own', () => {
 // ---------------------------------------------------------------------------
 
 test('the card is compact and rounded, not oversized', () => {
+  // Trimmed from 42px on request: at that height it competed with the brand beside
+  // it. The bound is what matters — a utility strip that grows back past ~36px is
+  // the complaint returning, and one under ~28px stops being a comfortable target.
   const card = winning('.xv-sidebar-header-actions');
-  assert.match(card, /height:\s*42px/);
-  assert.match(card, /border-radius:\s*16px/);
-  assert.match(card, /padding:\s*4px 8px/);
+  const height = Number(card.match(/height:\s*(\d+)px/)?.[1]);
+  assert.ok(height >= 28 && height <= 36, `the toolbar is ${height}px tall`);
+  const radius = Number(card.match(/border-radius:\s*(\d+)px/)?.[1]);
+  assert.ok(radius >= 10 && radius < height / 2, `radius ${radius}px is not proportional to ${height}px`);
+  assert.match(card, /padding:\s*\d+px \d+px/);
   assert.equal(/backdrop-filter/.test(card), false, 'heavy glassmorphism came back');
+});
+
+test('the controls stay comfortable targets inside the smaller card', () => {
+  // Shrinking the card must not shrink the hit areas below usability. The buttons
+  // also have to fit inside it, which is the constraint a hand-tuned height forgets.
+  const card = winning('.xv-sidebar-header-actions');
+  const cardHeight = Number(card.match(/height:\s*(\d+)px/)?.[1]);
+  const padding = Number(card.match(/padding:\s*(\d+)px/)?.[1]);
+
+  const button = winning(
+    '.xv-sidebar-header-actions .xv-new-terminal-compact,\n.xv-sidebar-header-actions .xv-sidebar-head-icon,\n.xv-sidebar-header-actions .xv-theme-toggle',
+  );
+  const width = Number(button.match(/width:\s*(\d+)px/)?.[1]);
+  const height = Number(button.match(/height:\s*(\d+)px/)?.[1]);
+
+  assert.ok(width >= 26, `control width ${width}px is too small to hit`);
+  assert.ok(height >= 24, `control height ${height}px is too small to hit`);
+  assert.ok(
+    height + padding * 2 <= cardHeight,
+    `a ${height}px control plus ${padding}px padding does not fit a ${cardHeight}px card`,
+  );
 });
 
 test('the three controls are uniform and no icon is permanently filled', () => {
@@ -162,7 +203,8 @@ test('hover is a surface, and only on hover', () => {
 test('separators are hairlines, and decorative', () => {
   const sep = winning('.xv-toolbar-sep');
   assert.match(sep, /width:\s*1px/);
-  assert.match(sep, /height:\s*22px/);
+  const sepHeight = Number(sep.match(/height:\s*(\d+)px/)?.[1]);
+  assert.ok(sepHeight >= 12 && sepHeight <= 24, `separator is ${sepHeight}px`);
   assert.match(sep, /background:\s*var\(--toolbar-separator\)/);
   // Two of them, between three controls, carrying no meaning for a screen reader.
   const spans = SIDEBAR.match(/<span className="xv-toolbar-sep" aria-hidden="true" \/>/g) ?? [];
@@ -195,10 +237,16 @@ test('the three controls, their order and their handlers are untouched', () => {
   assert.equal(/<span>(?!New<)/.test(toolbar.replace(/<span className="xv-toolbar-sep"[^/]*\/>/g, '')), false);
 });
 
-test('the collapsed sidebar toolbar is a different control and was left alone', () => {
+test('the collapsed sidebar toolbar stays a separate control from the expanded card', () => {
   // Indented inside a `@layer` block, so matched directly rather than through `block`.
   const collapsed = CSS.match(/\.xv-sidebar-collapsed-actions \{([^}]*)\}/)?.[1] ?? '';
   assert.notEqual(collapsed, '', 'the collapsed rail is gone');
-  assert.match(collapsed, /border-radius:\s*999px/, 'the collapsed rail was restyled too');
+
+  // This used to also require `border-radius: 999px` — the pill it was drawn as while
+  // the expanded card was being restyled around it, when leaving it alone was the point.
+  // The collapsed rail has since been asked for in its own right: stacked under the logo
+  // and carrying no surface at all, because in a 64px column a floating pill was a second
+  // card that could not fit. `appFrameAlignment.test.ts` holds it to that shape now.
+  // What still belongs here is the separation — the two controls must not share a palette.
   assert.equal(/--toolbar-/.test(collapsed), false, 'the collapsed rail was pulled into the new palette');
 });

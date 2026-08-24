@@ -284,9 +284,23 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(webRelease.body.release).toBe(expectedWebRelease);
     expect(apiRelease.release).toBe(expectedRelease);
   }
-  await page.getByLabel('Email').fill(ownerEmail);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
+  // Scoped to the sign-in form rather than the page. `AuthShell` now renders the signup
+  // and login panels side by side above 1280px, so `/auth/login` legitimately has two
+  // fields labelled "Email" and two labelled "Password"; an unscoped `getByLabel` matches
+  // both and fails on strict mode before it ever gets to typing. Scoping is more precise
+  // about which form is under test, not less: this test signs in, so it drives the
+  // sign-in form.
+  const loginForm = page.locator('form', { has: page.locator('#login-email') });
+  await expect(loginForm).toHaveCount(1);
+  // Addressed by id rather than by label. Scoping to the form is not enough on its own:
+  // the field's own reveal toggle carries `aria-label="Show password"`, which contains
+  // "Password", so `getByLabel('Password')` matches the input *and* the button — two
+  // elements inside one form. `exact: true` does not rescue it either, because the label
+  // text is JSX-formatted and carries surrounding whitespace. The ids are unambiguous and
+  // are already what identifies this form.
+  await loginForm.locator('#login-email').fill(ownerEmail);
+  await loginForm.locator('#login-password').fill(password);
+  await loginForm.getByRole('button', { name: 'Sign in' }).click();
   // A real Supabase sign-in is a network round trip followed by a client-side redirect. The
   // default 5s expectation left no room for either, so a slow-but-correct login was reported as
   // a login failure — the assertion was measuring CI latency, not authentication.
@@ -406,9 +420,214 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
+  // Two columns, not one tall one. As a single column the list stood roughly three
+  // times its own width, which reads as a page rather than as a menu. Asserted as a
+  // ratio rather than a pixel height so it survives an action being added or removed.
+  const grid = plusMenu.locator('.xv-cba-grid');
+  await expect(grid).toBeVisible();
+  const gridColumns = await grid.evaluate(
+    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
+  );
+  expect(gridColumns, 'the plus menu should lay out in two columns').toBe(2);
+  expect(
+    menuBox.height / menuBox.width,
+    'the plus menu is far taller than it is wide',
+  ).toBeLessThan(1.35);
+
   // Escape still closes it, and opening it never moved the window.
   await page.keyboard.press('Escape');
   await expect(plusMenu).toHaveCount(0);
+
+  /**
+   * Fullscreen actually fills the screen.
+   *
+   * It did not: the sidebar was hidden with `visibility: hidden`, which stops it
+   * painting but leaves its width in the flex row. The terminal went on starting
+   * after a band of empty page as wide as whatever the user had dragged the sidebar
+   * to — nothing was oversized, the space was reserved for something invisible.
+   *
+   * The rail is what should be left, so this checks the gap against the rail rather
+   * than against zero: anything wider means a hidden element is still holding space.
+   */
+  const fullscreenToggle = terminalHeader.getByRole('button', { name: 'Fullscreen terminal' });
+  await expect(fullscreenToggle).toBeVisible();
+  await fullscreenToggle.click();
+  await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(1);
+  await page.waitForTimeout(400);
+
+  const rail = page.locator('.xv-sidebar-root');
+  const railBox = (await rail.boundingBox())!;
+  expect(railBox, 'the sidebar rail should stay visible in fullscreen').not.toBeNull();
+  expect(railBox.width, 'the rail should collapse to its icon width').toBeLessThanOrEqual(72);
+
+  const fsShell = (await shell.boundingBox())!;
+  expect(
+    fsShell.x - (railBox.x + railBox.width),
+    'empty page is still reserved to the left of the terminal',
+  ).toBeLessThanOrEqual(4);
+  expect(
+    fsShell.width + fsShell.x,
+    'the terminal does not reach the right edge',
+  ).toBeGreaterThanOrEqual(await page.evaluate(() => window.innerWidth - 4));
+
+  // The composer stays with the terminal, and starts after the rail rather than
+  // running underneath it.
+  await expect(composerInput).toBeVisible();
+  const fsDock = (await terminalDock.boundingBox())!;
+  expect(fsDock.x, 'the composer runs under the rail').toBeGreaterThanOrEqual(railBox.width - 4);
+
+  await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
+  await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(0);
+  await page.waitForTimeout(400);
+  // Leaving fullscreen gives back the width the user had chosen, rather than
+  // stranding them in the collapsed rail.
+  const restoredRail = (await rail.boundingBox())!;
+  expect(restoredRail.width, 'the sidebar did not reopen after fullscreen').toBeGreaterThan(72);
+
+  /**
+   * The collapsed rail keeps the account, and keeps it at the bottom.
+   *
+   * The rail used to carry the logo and three shortcuts and nothing else, so
+   * collapsing — which is also what fullscreen now does — took the account with it,
+   * and signing out meant expanding the sidebar first.
+   *
+   * Plan and Settings are deliberately *not* on the rail: they were three separate
+   * targets stacked in a 64px column for destinations the account menu already
+   * lists. Both halves are asserted, because "carries the account" and "carries only
+   * the account" are different claims and only one of them is about the avatar.
+   */
+  await terminalHeader.getByRole('button', { name: 'Fullscreen terminal' }).click();
+  await page.waitForTimeout(400);
+  const railProfile = rail.locator('.xv-sidebar-rail-profile');
+  await expect(railProfile).toBeVisible();
+  await expect(rail.getByRole('link', { name: 'View Xroga AI plan' })).toHaveCount(0);
+  await expect(rail.getByRole('link', { name: 'Settings' })).toHaveCount(0);
+  // And it sits at the bottom of the rail rather than under the shortcuts. The rail
+  // was sized to its contents, which left `mt-auto` with nothing to work against.
+  // Re-measured rather than reusing the earlier `railBox`: the rail changes height
+  // between those two points, and a stale rect would be asserting about a box that
+  // is no longer on screen.
+  const collapsedRailBox = (await rail.boundingBox())!;
+  const profileBox = (await railProfile.boundingBox())!;
+  expect(
+    collapsedRailBox.y + collapsedRailBox.height - (profileBox.y + profileBox.height),
+    'the account sits near the top of the rail rather than at its foot',
+  ).toBeLessThan(40);
+  await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
+  await page.waitForTimeout(400);
+
+  /**
+   * The edge toggle survives being used, and the edge can be dragged from its middle.
+   *
+   * The toggle used to be rendered only while the sidebar was open, so it removed
+   * itself the moment it was pressed and a second press on the same spot did nothing.
+   * (The rail's own expand button still worked, so this was a lost affordance rather
+   * than a trap.) Driven here rather than read off the markup, because the failure was
+   * a control ceasing to exist after an interaction, which only a second interaction
+   * can catch.
+   */
+  const edgeToggle = page.locator('.xv-sidebar-edge-toggle');
+  await expect(edgeToggle).toBeVisible();
+  await edgeToggle.click();
+  await page.waitForTimeout(400);
+  await expect(rail).toHaveClass(/is-collapsed/);
+  await expect(
+    edgeToggle,
+    'the sidebar could not be reopened from the edge: the toggle is gone once collapsed',
+  ).toBeVisible();
+  await edgeToggle.click();
+  await page.waitForTimeout(400);
+  const reopened = (await rail.boundingBox())!;
+  expect(reopened.width, 'the sidebar did not reopen').toBeGreaterThan(72);
+
+  /*
+   * And a drag that starts on the toggle widens rather than doing nothing. The toggle
+   * sits above the resize handle at the midpoint of the edge, which is where a user
+   * reaches to grab it.
+   */
+  const toggleBox = (await edgeToggle.boundingBox())!;
+  const grabX = toggleBox.x + toggleBox.width / 2;
+  const grabY = toggleBox.y + toggleBox.height / 2;
+  await page.mouse.move(grabX, grabY);
+  await page.mouse.down();
+  await page.mouse.move(grabX + 130, grabY, { steps: 14 });
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+  const widened = (await rail.boundingBox())!;
+  expect(
+    widened.width - reopened.width,
+    'dragging from the toggle did not widen the sidebar',
+  ).toBeGreaterThan(50);
+  // The release must not also register as a click and collapse what was just widened.
+  await expect(rail, 'the drag collapsed the sidebar on release').not.toHaveClass(/is-collapsed/);
+
+  /**
+   * The workspace split is draggable, and expanding the panel takes the viewport.
+   *
+   * Both are geometric claims, so both are measured. The expanded state in particular
+   * cannot be read off the stylesheet: it depends on the composer and the sidebar
+   * being switched off from `body`, several levels above the panel that sets the flag.
+   */
+  await page.getByRole('button', { name: 'Workspace' }).last().click();
+  const wsPanel = page.locator('.xv-dev-workspace');
+  await expect(wsPanel).toBeVisible();
+  // The split animates its grid columns over 280ms, so a rect read straight after
+  // opening is a frame of that animation rather than the settled width.
+  await page.waitForTimeout(600);
+
+  const handle = page.locator('.xv-workspace-resize');
+  await expect(handle).toBeVisible();
+  // Three children, three tracks. With two, the panel wraps to an implicit second row
+  // and takes the terminal's width — the drag then moves it the wrong way, which
+  // reads as a sign error in the maths and is not one.
+  const trackCount = await page
+    .locator('.xv-workspace-body')
+    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  expect(trackCount, 'the split needs a track for the handle as well').toBe(3);
+  const beforeDrag = (await wsPanel.boundingBox())!;
+  const handleBox = (await handle.boundingBox())!;
+  await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBox.x - 160, handleBox.y + handleBox.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const afterDrag = (await wsPanel.boundingBox())!;
+  expect(
+    afterDrag.width - beforeDrag.width,
+    'dragging the split left did not widen the workspace panel',
+  ).toBeGreaterThan(60);
+
+  // Dragging the other way narrows it again, so the handle is not one-directional.
+  const handleBack = (await handle.boundingBox())!;
+  await page.mouse.move(handleBack.x + handleBack.width / 2, handleBack.y + handleBack.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBack.x + 120, handleBack.y + handleBack.height / 2, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  expect(
+    (await wsPanel.boundingBox())!.width,
+    'dragging the split right did not narrow the panel',
+  ).toBeLessThan(afterDrag.width - 40);
+
+  await wsPanel.getByRole('button', { name: 'Full screen workspace' }).click();
+  await page.waitForTimeout(400);
+  const expandedBox = (await wsPanel.boundingBox())!;
+  const viewport = await page.evaluate(() => ({ w: window.innerWidth, h: window.innerHeight }));
+  expect(expandedBox.x, 'the expanded preview is inset from the left edge').toBeLessThanOrEqual(1);
+  expect(expandedBox.y, 'the expanded preview is inset from the top edge').toBeLessThanOrEqual(1);
+  expect(expandedBox.width, 'the expanded preview does not span the viewport').toBeGreaterThanOrEqual(viewport.w - 1);
+  expect(expandedBox.height, 'the expanded preview does not fill the viewport').toBeGreaterThanOrEqual(viewport.h - 1);
+  // The composer and the sidebar stand down. `display: none`, not merely hidden — a
+  // hidden sidebar keeps its width and puts a band of shell beside a "full" preview.
+  await expect(terminalDock).toBeHidden();
+  await expect(rail).toBeHidden();
+  // A soft edge, not a drawn box.
+  await expect(wsPanel).toHaveCSS('border-top-width', '0px');
+
+  await wsPanel.getByRole('button', { name: 'Exit full screen' }).click();
+  await page.waitForTimeout(400);
+  await expect(terminalDock).toBeVisible();
+  await expect(composerInput).toBeVisible();
   const shellAfterMenu = (await shell.boundingBox())!;
   expect(shellAfterMenu.y).toBeCloseTo(shellBox.y, 0);
   expect(shellAfterMenu.height).toBeCloseTo(shellBox.height, 0);
@@ -427,8 +646,26 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   );
   const expandedLogoBox = await desktopSidebar.getByRole('img', { name: 'Xroga' }).boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(96);
-  await page.getByRole('button', { name: 'Close sidebar' }).click();
+  // The old floor here was 96px — the wordmark's full natural width. That only held while
+  // the logo was allowed to overflow the brand row: it rendered at 100px, ran underneath
+  // the utility card, and showed through behind the first icon. A floor of 96 now *requires*
+  // that defect, so it is replaced by the two things it was standing in for.
+  //
+  // First, that this is the wide wordmark and not the square rail mark, which is what the
+  // width was really distinguishing (the collapsed mark is 34x34).
+  expect(expandedLogoBox!.width).toBeGreaterThan(expandedLogoBox!.height);
+  expect(expandedLogoBox!.width).toBeGreaterThanOrEqual(60);
+  // Second, that it stays out from under the toolbar — the actual reported defect, which
+  // the width floor never checked in either direction.
+  const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
+  expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x);
+  /*
+   * Scoped to the desktop edge toggle rather than matched by name across the page.
+   * The toggle is no longer removed when the sidebar collapses, so while collapsed
+   * it carries the same "Open sidebar" label as the mobile trigger and a page-wide
+   * lookup resolves to two elements.
+   */
+  await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Same next/image encoding as the expanded-sidebar assertion above.
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
@@ -441,7 +678,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Open sidebar' }).click();
+  // Still present after collapsing — that is the control this release restores.
+  await page.locator('.xv-sidebar-edge-toggle').click();
 
   // Internal navigation must retain the shared shell and the mounted composer.
   const shellSentinel = randomUUID();

@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/Badge';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 
 const COSTUMES: Array<{ id: CompanionCostume; label: string; detail: string; image: string }> = [
-  { id: 'coder', label: 'Coder', detail: 'The original hoodie build', image: '/brand/costumes/coder.webp' },
   { id: 'techwear', label: 'Techwear', detail: 'White-plated suit with reactor core', image: '/brand/costumes/techwear.webp' },
   { id: 'mystic-robe', label: 'Mystic', detail: 'Wide-brim hat and arcane robe', image: '/brand/costumes/mystic-robe.webp' },
   { id: 'circuit', label: 'Circuit', detail: 'Wired plating and live traces', image: '/brand/costumes/circuit.webp' },
@@ -51,7 +50,6 @@ export function CompanionCustomizer() {
               operation={state.operation}
               costume={state.costume}
               accent={state.accent}
-              crownEnabled={state.crownEnabled}
               mantleEnabled={state.mantleEnabled}
               portraitSrc={selectedCostume.image}
               decorative={false}

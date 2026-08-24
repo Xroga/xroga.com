@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ChevronRight,
   Code2,
@@ -157,6 +157,16 @@ export function DevWorkspacePanel({
     );
   }, [projectFiles, query]);
 
+  /* The class the shell reads to stand down while the preview owns the screen. Set on
+     `body` rather than passed down, because the composer and the sidebar are not
+     descendants of this panel — they are siblings several levels up, mounted by the
+     app shell. Cleared on unmount too: closing the workspace while expanded would
+     otherwise leave the chrome hidden with nothing on screen to restore it. */
+  useEffect(() => {
+    document.body.classList.toggle('xv-workspace-expanded-active', expanded);
+    return () => document.body.classList.remove('xv-workspace-expanded-active');
+  }, [expanded]);
+
   // Closed renders nothing. Opening is `WorkspaceLauncher`'s job, which sits in the
   // flow above the terminal — this used to be a pill fixed to the middle of the
   // viewport's right edge, floating over whatever the user was reading.
@@ -168,8 +178,12 @@ export function DevWorkspacePanel({
         'xv-dev-workspace flex flex-col overflow-hidden',
         flush && !expanded
           ? 'xv-workspace-panel min-h-0'
-          : 'border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl min-h-[360px]',
-        expanded && 'fixed inset-3 z-[180] min-h-0 rounded-2xl',
+          : !expanded &&
+            'border border-[var(--card-border)]/60 bg-[var(--card)]/80 backdrop-blur-md rounded-xl min-h-[360px]',
+        // Expanded owns the viewport. It used to be `inset-3` under a `z-[180]` that the
+        // composer's own layer sat above, so "full screen" showed the panel inset inside
+        // the shell with the chatbar and sidebar still in view.
+        expanded && 'xv-workspace-expanded fixed inset-0 z-[260] min-h-0',
         className
       )}
     >

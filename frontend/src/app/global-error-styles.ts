@@ -102,6 +102,17 @@ body {
   color: rgba(226, 232, 240, 0.72);
   margin: 0 0 1.5rem;
 }
+.xv-ge__digest {
+  margin: 1.25rem 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: rgba(226, 232, 240, 0.42);
+}
+.xv-ge__digest code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(226, 232, 240, 0.68);
+  user-select: all;
+}
 .xv-ge__actions {
   display: flex;
   flex-wrap: wrap;

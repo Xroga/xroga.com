@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { AccentId, DensityPreference, FontPreference, ThemeId, TerminalSkin } from '@/lib/theme';
+import type { AccentId, DensityPreference, FontChoice, FontPreference, ThemeId, TerminalSkin } from '@/lib/theme';
 import {
   CUSTOM_DESKTOP_BG_KEY,
   CUSTOM_MOBILE_BG_KEY,
@@ -21,6 +21,19 @@ export const SIDEBAR_MIN_WIDTH = 224;
 export const SIDEBAR_MAX_WIDTH = 380;
 export const SIDEBAR_DEFAULT_WIDTH = 248;
 
+/**
+ * The workspace pane's share of the split, as a percentage of the shell.
+ *
+ * A percentage rather than pixels: the split lives inside a shell whose own width
+ * changes with the sidebar and the browser window, so a pixel width chosen on a wide
+ * screen would swallow the terminal on a narrow one. The bounds keep both panes
+ * usable — below 24% the file tree cannot show a path, above 72% the terminal stops
+ * being a terminal.
+ */
+export const WORKSPACE_MIN_WIDTH = 24;
+export const WORKSPACE_MAX_WIDTH = 72;
+export const WORKSPACE_DEFAULT_WIDTH = 42;
+
 if (typeof window !== 'undefined') {
   recoverCorruptStorage();
 }
@@ -30,6 +43,8 @@ interface ThemeState {
   sidebarOpen: boolean;
   sidebarPinned: boolean;
   sidebarWidth: number;
+  /** The workspace pane's share of the split, in percent. */
+  workspaceWidth: number;
   customDesktopBg: string | null;
   customMobileBg: string | null;
   slideshowEnabled: boolean;
@@ -42,6 +57,10 @@ interface ThemeState {
   terminalSkinAuto: boolean;
   accent: AccentId;
   fontPreference: FontPreference;
+  /** Type scale for the sidebar, chosen independently of the workspace. */
+  sidebarFont: FontChoice;
+  /** Type scale for the workspace chrome. */
+  workspaceFont: FontChoice;
   density: DensityPreference;
   reducedMotion: boolean;
   highContrast: boolean;
@@ -50,6 +69,7 @@ interface ThemeState {
   setTheme: (theme: ThemeId) => void;
   setSidebarOpen: (open: boolean) => void;
   setSidebarWidth: (width: number) => void;
+  setWorkspaceWidth: (percent: number) => void;
   toggleSidebar: () => void;
   setCustomDesktopBg: (url: string | null) => void;
   setCustomMobileBg: (url: string | null) => void;
@@ -63,6 +83,8 @@ interface ThemeState {
   setTerminalSkinAuto: () => void;
   setAccent: (accent: AccentId) => void;
   setFontPreference: (fontPreference: FontPreference) => void;
+  setSidebarFont: (font: FontChoice) => void;
+  setWorkspaceFont: (font: FontChoice) => void;
   setDensity: (density: DensityPreference) => void;
   setReducedMotion: (reducedMotion: boolean) => void;
   setHighContrast: (highContrast: boolean) => void;
@@ -78,6 +100,7 @@ export const useThemeStore = create<ThemeState>()(
       sidebarOpen: true,
       sidebarPinned: true,
       sidebarWidth: SIDEBAR_DEFAULT_WIDTH,
+      workspaceWidth: WORKSPACE_DEFAULT_WIDTH,
       customDesktopBg: null,
       customMobileBg: null,
       slideshowEnabled: false,
@@ -88,25 +111,45 @@ export const useThemeStore = create<ThemeState>()(
       terminalSkinAuto: true,
       accent: 'blue',
       fontPreference: 'modern',
+      sidebarFont: 'default',
+      workspaceFont: 'default',
       density: 'comfortable',
       reducedMotion: false,
       highContrast: false,
       browserPanelOpen: false,
       browserFullscreen: false,
-      setTheme: (theme) =>
-        set((s) => {
-          const next = normalizeTheme(theme);
-          return {
-            theme: next,
-            // Only re-derive the skin while it is still tracking the theme. A skin the
-            // user picked deliberately must survive a theme change.
-            terminalSkin: s.terminalSkinAuto ? skinForTheme(next) : s.terminalSkin,
-            slideshowEnabled: false,
-          };
-        }),
+      /**
+       * Choosing a theme restyles the whole shell, terminal included.
+       *
+       * This used to re-derive the skin only while it was still tracking, so a skin
+       * picked once by hand froze the terminal against every later theme change. Two
+       * pickers then disagreed about what choosing a theme means: the sidebar's
+       * `ThemeToggle` forced the skin itself right after calling this, while the
+       * homepage switcher did not — so picking Black on the homepage recoloured the
+       * sidebar and left the workspace behind, and the user had to pick it a second
+       * time from inside the workspace to make it take. The decision belongs here,
+       * once, rather than in each control that happens to call it.
+       *
+       * Picking a *skin* still turns tracking off, and it still survives navigation,
+       * reloads and everything else — up to the next explicit theme choice, which is
+       * a fresh statement about how the whole shell should look.
+       */
+      setTheme: (theme) => {
+        const next = normalizeTheme(theme);
+        return set({
+          theme: next,
+          terminalSkin: skinForTheme(next),
+          terminalSkinAuto: true,
+          slideshowEnabled: false,
+        });
+      },
       setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
       setSidebarWidth: (sidebarWidth) =>
         set({ sidebarWidth: Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, sidebarWidth)) }),
+      // Clamped in the setter, not at the drag site: every caller then gets the same
+      // bounds, including a restored value that was written before they changed.
+      setWorkspaceWidth: (workspaceWidth) =>
+        set({ workspaceWidth: Math.min(WORKSPACE_MAX_WIDTH, Math.max(WORKSPACE_MIN_WIDTH, workspaceWidth)) }),
       toggleSidebar: () =>
         set((s) => {
           if (s.sidebarOpen) {
@@ -146,6 +189,8 @@ export const useThemeStore = create<ThemeState>()(
         set((s) => ({ terminalSkinAuto: true, terminalSkin: skinForTheme(s.theme) })),
       setAccent: (accent) => set({ accent }),
       setFontPreference: (fontPreference) => set({ fontPreference }),
+      setSidebarFont: (sidebarFont) => set({ sidebarFont }),
+      setWorkspaceFont: (workspaceFont) => set({ workspaceFont }),
       setDensity: (density) => set({ density }),
       setReducedMotion: (reducedMotion) => set({ reducedMotion }),
       setHighContrast: (highContrast) => set({ highContrast }),
@@ -171,12 +216,15 @@ export const useThemeStore = create<ThemeState>()(
         sidebarOpen: s.sidebarOpen,
         sidebarPinned: s.sidebarPinned,
         sidebarWidth: s.sidebarWidth,
+        workspaceWidth: s.workspaceWidth,
         slideshowEnabled: s.slideshowEnabled,
         slideshowFrozenIndex: s.slideshowFrozenIndex,
         terminalSkin: s.terminalSkin,
         terminalSkinAuto: s.terminalSkinAuto,
         accent: s.accent,
         fontPreference: s.fontPreference,
+        sidebarFont: s.sidebarFont,
+        workspaceFont: s.workspaceFont,
         density: s.density,
         reducedMotion: s.reducedMotion,
         highContrast: s.highContrast,
@@ -193,6 +241,12 @@ export const useThemeStore = create<ThemeState>()(
             typeof state.sidebarWidth === 'number' && Number.isFinite(state.sidebarWidth)
               ? Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, state.sidebarWidth))
               : SIDEBAR_DEFAULT_WIDTH,
+          // Re-clamped on read, not just on write: a value stored before the bounds
+          // changed would otherwise come back out of range and hand one pane the shell.
+          workspaceWidth:
+            typeof state.workspaceWidth === 'number' && Number.isFinite(state.workspaceWidth)
+              ? Math.min(WORKSPACE_MAX_WIDTH, Math.max(WORKSPACE_MIN_WIDTH, state.workspaceWidth))
+              : WORKSPACE_DEFAULT_WIDTH,
           accent: ['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))
             ? state.accent
             : 'blue',

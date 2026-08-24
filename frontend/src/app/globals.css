@@ -3,7 +3,15 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-@import 'katex/dist/katex.min.css';
+/*
+ * KaTeX's stylesheet is imported by `mathRenderImpl` instead, so it travels with the
+ * typesetter rather than with the whole site. Here it was 23 kB of maths styling and
+ * twenty-odd @font-face declarations served to every visitor of every page, including
+ * the marketing pages, for something only the workspace can ever render.
+ *
+ * The `.xv-math-equation .katex` overrides further down stay: they are ours, they are
+ * small, and they need to win against the stylesheet whenever it does load.
+ */
 
 :root {
   /* Default = White theme */
@@ -229,9 +237,67 @@ body.theme-beige .xv-sidebar-root > div {
   color: var(--foreground);
 }
 
-html[data-font='modern'] { --ui-font: var(--font-goga), var(--font-inter), system-ui, sans-serif; }
-html[data-font='classic'] { --ui-font: var(--font-claude-serif), var(--font-source-serif), Georgia, serif; }
-html[data-font='mono'] { --ui-font: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace; }
+/* ── Type scale ──────────────────────────────────────────────────────────────
+   Declared on `body`, not on `html`.
+
+   The next/font variables (`--font-goga` and friends) are attached to the `<body>`
+   class list, so they do not exist on `html`. A stack built from them one level up
+   resolves to nothing: `--ui-font` computed to the empty token stream in every mode,
+   `font-family` was dropped, and the Font setting changed the stored value while the
+   page kept the same face. Measured before the fix — Modern, Classic and Mono all
+   produced a byte-identical `font-family` on `body`.
+
+   The scoped rules below carry the whole stack rather than referencing a shared
+   token, so each one resolves in the place it is used. */
+body[data-font='modern'] { --ui-font: var(--font-goga), var(--font-inter), system-ui, sans-serif; }
+body[data-font='classic'] { --ui-font: var(--font-claude-serif), var(--font-source-serif), Georgia, serif; }
+body[data-font='mono'] { --ui-font: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace; }
+
+/* The sidebar and the workspace each take their own face. `default` sets nothing,
+   so the surface keeps whatever the shell is already using.
+
+   `!important` is not decoration: `<body>` carries Tailwind's `font-sans` utility,
+   which sets `font-family` directly and outranks an inherited value. Without it the
+   choice applies to the custom property and never reaches the text. */
+body[data-sidebar-font='goga'] .xv-sidebar-root,
+body[data-sidebar-font='goga'] .xv-sidebar-mobile-open {
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-sidebar-font='inter'] .xv-sidebar-root,
+body[data-sidebar-font='inter'] .xv-sidebar-mobile-open {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-sidebar-font='serif'] .xv-sidebar-root,
+body[data-sidebar-font='serif'] .xv-sidebar-mobile-open {
+  font-family: var(--font-source-serif), Georgia, 'Times New Roman', serif !important;
+}
+body[data-sidebar-font='display'] .xv-sidebar-root,
+body[data-sidebar-font='display'] .xv-sidebar-mobile-open {
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif !important;
+}
+body[data-sidebar-font='mono'] .xv-sidebar-root,
+body[data-sidebar-font='mono'] .xv-sidebar-mobile-open {
+  font-family: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace !important;
+}
+
+/* The workspace scope stops at the shell chrome: the transcript and the code panes
+   keep their own monospace, because a serif terminal is not a preference anyone is
+   expressing here. */
+body[data-workspace-font='goga'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-workspace-font='inter'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+body[data-workspace-font='serif'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-source-serif), Georgia, 'Times New Roman', serif !important;
+}
+body[data-workspace-font='display'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif !important;
+}
+body[data-workspace-font='mono'] .xv-app-stage :is(.xv-workspace-header, .xv-ws-tabs, .xv-dev-workspace) {
+  font-family: var(--font-xv-mono), 'JetBrains Mono', ui-monospace, monospace !important;
+}
 html[data-density='compact'] { font-size: 15px; }
 html[data-density='compact'] .glass-panel,
 html[data-density='compact'] .glass-panel-strong { --xv-density-padding: 0.875rem; }
@@ -355,6 +421,18 @@ body .xv-site-header.xv-site-header-transparent {
   .xv-main-scroll-under-header { padding-top: 6rem !important; }
 }
 
+/* Not a colour: the theme's own ink, so it inverts with the theme rather than
+   sitting on top of it — near-black on White and Beige, near-white on Gray and
+   Black. The dim tint is mixed from the same value for the same reason. */
+html[data-accent='default'] body {
+  --primary: var(--foreground);
+  --accent: var(--foreground);
+  --primary-glow: var(--foreground);
+  --accent-dim: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+html[data-accent='amber'] body { --primary: #d97706; --accent: #d97706; --primary-glow: #fbbf24; --accent-dim: rgba(217, 119, 6, 0.12); }
+html[data-accent='cyan'] body { --primary: #0891b2; --accent: #0891b2; --primary-glow: #22d3ee; --accent-dim: rgba(8, 145, 178, 0.12); }
+html[data-accent='rose'] body { --primary: #e11d48; --accent: #e11d48; --primary-glow: #fb7185; --accent-dim: rgba(225, 29, 72, 0.12); }
 html[data-accent='blue'] body { --primary: #006aff; --accent: #006aff; --primary-glow: #3b82f6; --accent-dim: rgba(0, 106, 255, 0.12); }
 html[data-accent='violet'] body { --primary: #7c3aed; --accent: #7c3aed; --primary-glow: #a78bfa; --accent-dim: rgba(124, 58, 237, 0.12); }
 html[data-accent='emerald'] body { --primary: #059669; --accent: #059669; --primary-glow: #34d399; --accent-dim: rgba(5, 150, 105, 0.12); }
@@ -2784,28 +2862,33 @@ body.theme-gray * {
     border-color: rgba(0, 0, 0, 0.1);
   }
 
+  /* Straddles the sidebar's edge: half the control inside the panel, half outside.
+     It carried its own card — border, fill and a drop shadow — which read as a
+     floating chip parked next to the sidebar rather than as part of it, and the
+     shadow spilled into the seam the panels were just brought together across. The
+     glyph alone does the job; the panel behind it is its background. */
   .xv-sidebar-edge-toggle {
     position: absolute;
     top: 50%;
     right: 0;
     z-index: 46;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 30px;
     align-items: center;
     justify-content: center;
-    border-radius: 9px;
-    border: 1px solid var(--card-border);
-    background: var(--card);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
     color: var(--muted);
-    opacity: 0.42;
-    transform: translate(42%, -50%);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
-    transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s;
+    opacity: 0.5;
+    transform: translate(50%, -50%);
+    box-shadow: none;
+    transition: opacity 0.15s ease, color 0.15s ease;
   }
   .xv-sidebar-root:hover .xv-sidebar-edge-toggle,
   .xv-sidebar-edge-toggle:focus-visible {
     opacity: 1;
-    transform: translate(28%, -50%);
+    color: var(--text-primary, var(--foreground));
   }
   .xv-sidebar-root.is-collapsed .xv-sidebar-edge-toggle {
     top: calc(var(--xv-sidebar-inset) + 3.55rem);
@@ -2876,15 +2959,19 @@ body.theme-gray * {
     background: color-mix(in srgb, var(--accent) 17%, transparent);
   }
 
+  /* Stacked, and carrying no surface of its own. As a floating pill it was a second
+     card competing with the logo in a 64px rail; against a ground that now matches
+     every other panel it has nothing to sit on top of. */
   .xv-sidebar-collapsed-actions {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 3px;
-    border: 1px solid var(--card-border);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--card) 94%, transparent);
-    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
   .xv-sidebar-collapsed-actions button {
     display: inline-flex;
@@ -2902,6 +2989,26 @@ body.theme-gray * {
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     outline: none;
   }
+
+  /* The rail's footer: the avatar and the control that opens its menu. It briefly
+     carried standalone plan and settings buttons as well — three targets stacked in
+     a 64px column for destinations the menu already lists. */
+  .xv-sidebar-rail-bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 0 8px;
+  }
+  .xv-sidebar-rail-profile {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  /* `.xv-sidebar-rail-action` is gone with the plan and settings buttons it styled.
+     Left behind it would be a rule with nothing to match, and an invitation to put
+     those buttons back into a column that is meant to stay quiet. */
   @container (max-width: 279px) {
     .xv-new-terminal-compact {
       width: 28px;
@@ -3563,8 +3670,11 @@ body.theme-gray * {
   body.xv-page-fullscreen-active .xv-dashboard-welcome {
     display: none;
   }
-  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open),
-  body.xv-terminal-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
+  /* Page fullscreen still hides the sidebar outright. Terminal fullscreen does not:
+     `visibility: hidden` stops the aside painting but leaves its width reserved in
+     the flex row, so the terminal began after a band of empty page. It collapses to
+     the icon rail instead — see `effectiveSidebarOpen` in Sidebar.tsx. */
+  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
     visibility: hidden;
     pointer-events: none;
   }
@@ -3639,6 +3749,15 @@ body.theme-gray * {
     z-index: 210 !important;
     left: 0 !important;
     right: 0 !important;
+  }
+  /* The composer starts after the rail rather than running beneath it, so it lines
+     up with the terminal it belongs to instead of with the window. The rail only
+     exists from `lg` up — below that the sidebar is a drawer and the composer keeps
+     the full width. */
+  @media (min-width: 1024px) {
+    body.xv-terminal-fullscreen-active .xv-terminal-dock {
+      left: var(--xv-fullscreen-rail, 64px) !important;
+    }
   }
   body.xv-terminal-fullscreen-active .xv-terminal-dock--fullscreen {
     background: linear-gradient(to top, var(--background) 72%, transparent);
@@ -7868,6 +7987,50 @@ body.theme-beige {
 
 /* ---- the stage: breathing room around the application -------------------- */
 
+/* ---- the desk each theme puts the window on --------------------------------
+   Chosen against the skin each theme resolves to, so the window always reads as a
+   raised object rather than merging into its background: darker than the surface on
+   the light themes, and a shade above pure black on the dark ones where there is no
+   room to go down. The blue is present only where it is invisible; on a light desk
+   the same tint reads as a stain. */
+body.theme-black {
+  --composer-surface: rgba(12, 13, 15, 0.96);
+  --composer-border: rgba(90, 145, 255, 0.16);
+  --menu-surface: #0b0c0e;
+  --menu-border: rgba(255, 255, 255, 0.07);
+  /* One surface for the whole application. The desk behind the window used to be a
+     shade of its own, so the page showed three colours at once — the ground, the
+     sidebar and the workspace — and the theme read as three near-misses rather than
+     one choice. Both now resolve to --app-panel, so they cannot drift apart. The
+     window's silhouette comes from its border instead of a step in tone. */
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
+}
+body.theme-gray {
+  --composer-surface: rgba(32, 32, 35, 0.96);
+  --composer-border: rgba(255, 255, 255, 0.12);
+  --menu-surface: #212124;
+  --menu-border: rgba(255, 255, 255, 0.09);
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
+}
+body.theme-white {
+  --composer-surface: rgba(255, 255, 255, 0.97);
+  --composer-border: rgba(15, 23, 42, 0.1);
+  --menu-surface: #ffffff;
+  --menu-border: rgba(15, 23, 42, 0.1);
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
+}
+body.theme-beige {
+  --composer-surface: rgba(253, 250, 244, 0.97);
+  --composer-border: rgba(70, 60, 45, 0.14);
+  --menu-surface: #fdfaf4;
+  --menu-border: rgba(70, 60, 45, 0.12);
+  --stage-ground: var(--app-panel);
+  --stage-glow: none;
+}
+
 .xv-app-stage {
   width: 100%;
   height: 100%;
@@ -7876,10 +8039,14 @@ body.theme-beige {
   box-sizing: border-box;
   /* The ground behind the window. Barely a gradient — just enough separation for the
      rounded silhouette to be legible against it. A stronger one would read as a
-     backdrop rather than as the desk the window sits on. */
+     backdrop rather than as the desk the window sits on.
+     Both values come from the theme: this shipped hardcoded near-black, so the White
+     and Beige pages kept a black desk under a light window and the theme control
+     looked broken on the largest surface on screen. */
   background:
-    radial-gradient(circle at 72% 18%, rgba(35, 85, 180, 0.05), transparent 38%),
-    #020304;
+    var(--stage-glow, none),
+    var(--stage-ground, #020304);
+  transition: background-color 220ms ease;
 }
 
 @media (min-width: 640px) {
@@ -7900,6 +8067,14 @@ body.theme-beige {
 
 /* ---- the shell ------------------------------------------------------------ */
 
+/* The shell takes its surface from the active terminal skin. It carried a hardcoded
+   `#08090b` here, which outranked the skins' own layered rules and rendered Parchment
+   as near-black under a cream desk — the theme control appeared to do nothing. The
+   fallback below applies only when no skin class is present at all. */
+.xv-workspace-shell:not([class*='terminal-skin-']) {
+  background: var(--surface-page, #08090b);
+}
+
 .xv-workspace-shell {
   position: relative;
   width: 100%;
@@ -7910,7 +8085,6 @@ body.theme-beige {
   border-radius: 16px;
   overflow: hidden;
   isolation: isolate;
-  background: #08090b;
   /* Almost invisible on purpose. A card outline here is what made two panes read as
      two documents; the shape should be carried by the shadow and the ground. */
   border: 1px solid rgba(255, 255, 255, 0.055);
@@ -7925,10 +8099,13 @@ body.theme-beige {
 
 /* Light skins still need a readable ground; the shell takes the skin's surface rather
    than forcing a dark one, and only the border and shadow stay the shell's own. */
+/* The light skins keep their own surface — Daylight is white, Parchment is cream, and
+   forcing one colour on all three would erase the difference between them. Only the
+   border and the shadow are restated, because a dark hairline and a black drop shadow
+   are what stop reading as depth on a light desk. */
 .terminal-skin-light.xv-workspace-shell,
 .terminal-skin-light-grid.xv-workspace-shell,
-.terminal-skin-paper.xv-workspace-shell {
-  background: #ffffff;
+.terminal-skin-solar.xv-workspace-shell {
   border-color: rgba(15, 23, 42, 0.09);
   box-shadow:
     0 24px 70px rgba(15, 23, 42, 0.14),
@@ -7956,7 +8133,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-workspace-header,
 .terminal-skin-light-grid .xv-workspace-header,
-.terminal-skin-paper .xv-workspace-header {
+.terminal-skin-solar .xv-workspace-header {
   border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
@@ -7978,7 +8155,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-header-sep,
 .terminal-skin-light-grid .xv-header-sep,
-.terminal-skin-paper .xv-header-sep { background: rgba(15, 23, 42, 0.1); }
+.terminal-skin-solar .xv-header-sep { background: rgba(15, 23, 42, 0.1); }
 
 /* ---- the body: two internal panes ---------------------------------------- */
 
@@ -7991,9 +8168,96 @@ body.theme-beige {
 }
 
 @media (min-width: 1024px) {
+  /* The workspace column is whatever width the user dragged it to. It was a fixed
+     `1.4fr / minmax(360px, 1fr)`; the ratio is now the default value of the stored
+     share, so an untouched split looks the same as it always did.
+
+     The terminal takes `minmax(0, 1fr)` rather than a share of its own, so it absorbs
+     the remainder and neither pane can be squeezed below its content. */
   .xv-workspace-body[data-workspace-open='true'] {
-    grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto var(--xv-workspace-width, 42%);
   }
+}
+
+/* The drag handle sits on the seam between the panes. It is 8px of hit area over a
+   1px seam — a 1px target is a coin toss with a mouse — and paints nothing at rest so
+   it does not read as a third divider next to the panel's own edge. */
+.xv-workspace-resize {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .xv-workspace-body[data-workspace-open='true'] .xv-workspace-resize {
+    position: relative;
+    z-index: 6;
+    display: block;
+    width: 8px;
+    margin-inline: -4px;
+    cursor: col-resize;
+    touch-action: none;
+    background: transparent;
+  }
+  .xv-workspace-resize::after {
+    position: absolute;
+    top: 12%;
+    bottom: 12%;
+    left: 50%;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--accent);
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 160ms ease;
+    content: '';
+  }
+  .xv-workspace-resize:hover::after,
+  .xv-workspace-resize:focus-visible::after,
+  body.xv-workspace-resizing .xv-workspace-resize::after {
+    opacity: 0.75;
+  }
+  .xv-workspace-resize:focus-visible {
+    outline: none;
+  }
+}
+
+/* A drag that crosses the panes must not select their text or flip the cursor back
+   to a caret halfway through. */
+body.xv-workspace-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.xv-workspace-resizing .xv-workspace-body {
+  transition: none;
+}
+
+/* ---- expanded workspace preview ------------------------------------------
+   The preview takes the viewport. Everything that belongs to the shell around it
+   stands down: the composer, the sidebar rail and the sidebar's own toggles are
+   siblings of this panel, not descendants, so they are switched off from `body`.
+
+   `display: none` rather than `visibility: hidden` — a hidden sidebar keeps its
+   width and would leave a band of shell down the side of a "full" preview, which is
+   exactly the bug this file already carries a note about for terminal fullscreen. */
+body.xv-workspace-expanded-active .xv-terminal-dock,
+body.xv-workspace-expanded-active .xv-sidebar-root,
+body.xv-workspace-expanded-active .xv-sidebar-edge-toggle,
+body.xv-workspace-expanded-active .xv-mobile-menu-btn,
+body.xv-workspace-expanded-active .xv-mobile-workspace-header,
+body.xv-workspace-expanded-active .xv-home-companion-stage {
+  display: none !important;
+}
+
+/* No hard outline. The edge is a soft shadow and a barely-there hairline, so the
+   panel reads as lifted rather than as a box drawn on the screen. At `inset: 0` a
+   real border would also be clipped by the viewport on all four sides anyway. */
+.xv-workspace-expanded {
+  border: 0;
+  border-radius: 0;
+  background: var(--app-panel, var(--surface-raised));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 7%, transparent),
+    0 30px 90px rgba(0, 0, 0, 0.45);
 }
 
 /* Phones and small tablets get one pane at a time. Two 180px columns is not a split
@@ -8058,12 +8322,12 @@ body.theme-beige {
 
 .terminal-skin-light .xv-terminal-scroll,
 .terminal-skin-light-grid .xv-terminal-scroll,
-.terminal-skin-paper .xv-terminal-scroll {
+.terminal-skin-solar .xv-terminal-scroll {
   scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
 }
 .terminal-skin-light .xv-terminal-scroll::-webkit-scrollbar-thumb,
 .terminal-skin-light-grid .xv-terminal-scroll::-webkit-scrollbar-thumb,
-.terminal-skin-paper .xv-terminal-scroll::-webkit-scrollbar-thumb {
+.terminal-skin-solar .xv-terminal-scroll::-webkit-scrollbar-thumb {
   background: rgba(15, 23, 42, 0.16);
 }
 
@@ -8098,7 +8362,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-workspace-panel,
 .terminal-skin-light-grid .xv-workspace-panel,
-.terminal-skin-paper .xv-workspace-panel {
+.terminal-skin-solar .xv-workspace-panel {
   border-left-color: rgba(15, 23, 42, 0.08);
   box-shadow: -16px 0 42px rgba(15, 23, 42, 0.06);
 }
@@ -8180,10 +8444,10 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-tab,
 .terminal-skin-light-grid .xv-ws-tab,
-.terminal-skin-paper .xv-ws-tab { color: rgba(15, 23, 42, 0.5); }
+.terminal-skin-solar .xv-ws-tab { color: rgba(15, 23, 42, 0.5); }
 .terminal-skin-light .xv-ws-tab:hover,
 .terminal-skin-light-grid .xv-ws-tab:hover,
-.terminal-skin-paper .xv-ws-tab:hover {
+.terminal-skin-solar .xv-ws-tab:hover {
   color: rgba(15, 23, 42, 0.85);
   background: rgba(15, 23, 42, 0.04);
 }
@@ -8215,7 +8479,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-device,
 .terminal-skin-light-grid .xv-ws-device,
-.terminal-skin-paper .xv-ws-device { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-ws-device { color: rgba(15, 23, 42, 0.45); }
 
 /* ---- preview empty state -------------------------------------------------- */
 
@@ -8237,7 +8501,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-preview-empty p,
 .terminal-skin-light-grid .xv-preview-empty p,
-.terminal-skin-paper .xv-preview-empty p { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-preview-empty p { color: rgba(15, 23, 42, 0.45); }
 
 /* ---- the Workspace button: filled states, not an outline ------------------ */
 
@@ -8273,16 +8537,16 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-ws-launch,
 .terminal-skin-light-grid .xv-ws-launch,
-.terminal-skin-paper .xv-ws-launch { color: rgba(15, 23, 42, 0.55); }
+.terminal-skin-solar .xv-ws-launch { color: rgba(15, 23, 42, 0.55); }
 .terminal-skin-light .xv-ws-launch:hover,
 .terminal-skin-light-grid .xv-ws-launch:hover,
-.terminal-skin-paper .xv-ws-launch:hover {
+.terminal-skin-solar .xv-ws-launch:hover {
   background: rgba(15, 23, 42, 0.05);
   color: rgba(15, 23, 42, 0.85);
 }
 .terminal-skin-light .xv-ws-launch[aria-pressed='true'],
 .terminal-skin-light-grid .xv-ws-launch[aria-pressed='true'],
-.terminal-skin-paper .xv-ws-launch[aria-pressed='true'] {
+.terminal-skin-solar .xv-ws-launch[aria-pressed='true'] {
   background: rgba(15, 23, 42, 0.075);
   color: rgba(15, 23, 42, 0.95);
 }
@@ -8325,7 +8589,7 @@ body.theme-beige {
 .terminal-skin-light .xv-terminal-scroll .xv-response-text h1 + p,
 .terminal-skin-light .xv-terminal-scroll .xv-response-text h2 + p,
 .terminal-skin-light-grid .xv-terminal-scroll .xv-response-text h1 + p,
-.terminal-skin-paper .xv-terminal-scroll .xv-response-text h1 + p {
+.terminal-skin-solar .xv-terminal-scroll .xv-response-text h1 + p {
   color: rgba(15, 23, 42, 0.55);
 }
 
@@ -8351,7 +8615,7 @@ body.theme-beige {
 }
 .terminal-skin-light .xv-user-bubble,
 .terminal-skin-light-grid .xv-user-bubble,
-.terminal-skin-paper .xv-user-bubble {
+.terminal-skin-solar .xv-user-bubble {
   background: rgba(15, 23, 42, 0.04);
   border-color: rgba(15, 23, 42, 0.09);
 }
@@ -8390,14 +8654,14 @@ body.theme-beige {
 .xv-suggest-chip.is-next:hover { color: #cbdcff; }
 .terminal-skin-light .xv-suggest-chip,
 .terminal-skin-light-grid .xv-suggest-chip,
-.terminal-skin-paper .xv-suggest-chip {
+.terminal-skin-solar .xv-suggest-chip {
   background: rgba(15, 23, 42, 0.035);
   border-color: rgba(15, 23, 42, 0.08);
   color: rgba(15, 23, 42, 0.72);
 }
 .terminal-skin-light .xv-suggest-label,
 .terminal-skin-light-grid .xv-suggest-label,
-.terminal-skin-paper .xv-suggest-label { color: rgba(15, 23, 42, 0.45); }
+.terminal-skin-solar .xv-suggest-label { color: rgba(15, 23, 42, 0.45); }
 
 /* ============================================================================
    THE CHAT COMPOSER, AND THE `+` MENU ATTACHED TO IT
@@ -8433,8 +8697,8 @@ body.theme-beige {
 
 .xv-terminal-dock .xv-chatbar-solid {
   position: relative;
-  background: rgba(12, 13, 15, 0.96) !important;
-  border: 1px solid rgba(90, 145, 255, 0.16) !important;
+  background: var(--composer-surface) !important;
+  border: 1px solid var(--composer-border) !important;
   border-radius: 14px !important;
   backdrop-filter: blur(16px);
   box-shadow:
@@ -8450,10 +8714,7 @@ body.theme-beige {
     0 0 0 3px rgba(47, 124, 255, 0.065),
     0 14px 36px rgba(0, 0, 0, 0.26) !important;
 }
-body.theme-white .xv-terminal-dock .xv-chatbar-solid {
-  background: rgba(255, 255, 255, 0.97) !important;
-  border-color: rgba(15, 23, 42, 0.1) !important;
-}
+
 
 /* The composer is the menu's positioning context. `ChatBarInputRow` is `relative` for
    the homepage bar's sake, so it is stood down only inside the dock — otherwise the
@@ -8472,14 +8733,15 @@ body.theme-white .xv-terminal-dock .xv-chatbar-solid {
   margin: 0;
   z-index: 80;
   /* Never wider than the composer it is attached to — a menu whose corner sticks out
-     past the bar's edge stops reading as part of it. */
+     past the bar's edge stops reading as part of it. The two-column list widens this
+     from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */
   width: min(360px, 100%);
   max-height: min(520px, calc(100dvh - 150px));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 7px;
-  background: #0b0c0e;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--menu-surface);
+  border: 1px solid var(--menu-border);
   /* Rounded where it meets air, nearly square where it meets the composer. */
   border-radius: 14px 14px 6px 6px;
   box-shadow:
@@ -8490,10 +8752,7 @@ body.theme-white .xv-terminal-dock .xv-chatbar-solid {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
 }
-body.theme-white .xv-cba-menu {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-}
+
 
 /* Grows upward out of the bar. No bounce, no dramatic scale — it is an extension of
    a surface that is already there, not an arrival. */
@@ -8510,6 +8769,37 @@ body.theme-white .xv-cba-menu {
 .xv-cba-menu::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
+}
+
+/* ---- the root list --------------------------------------------------------
+   Two columns from `sm` up. In one column the list ran to roughly three times its
+   own width, which is what made it read as a page rather than a menu; paired off,
+   height and width land close to each other.
+
+   Separators and the wide rows span the full grid. A separator confined to one
+   column would divide half a list, which says something the layout does not mean. */
+.xv-cba-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  align-content: start;
+}
+
+@media (min-width: 640px) {
+  /* Wide enough that the longest description ("Get the approach first, change
+     nothing yet") fits one line per column; below this it wraps and that row alone
+     drags the grid taller, which is the height the two columns were meant to save. */
+  .xv-cba-menu:has(.xv-cba-grid) {
+    width: min(620px, 100%);
+  }
+  .xv-cba-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 6px;
+  }
+  .xv-cba-grid > .xv-cba-sep,
+  .xv-cba-grid > .xv-cba-item--wide {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ---- menu rows ------------------------------------------------------------ */
@@ -8540,17 +8830,24 @@ body.theme-white .xv-cba-menu {
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.43);
 }
-body.theme-white .xv-cba-item { color: rgba(15, 23, 42, 0.86); }
-body.theme-white .xv-cba-item:hover { background: rgba(15, 23, 42, 0.05); }
-body.theme-white .xv-cba-item__text b { color: rgba(15, 23, 42, 0.9); }
-body.theme-white .xv-cba-item__text i { color: rgba(15, 23, 42, 0.5); }
+/* Beige is a light theme too. These were written for White alone, so on the cream
+   Parchment surface the menu rendered white-on-white and read as empty. */
+body.theme-white .xv-cba-item,
+body.theme-beige .xv-cba-item { color: rgba(15, 23, 42, 0.86); }
+body.theme-white .xv-cba-item:hover,
+body.theme-beige .xv-cba-item:hover { background: rgba(15, 23, 42, 0.05); }
+body.theme-white .xv-cba-item__text b,
+body.theme-beige .xv-cba-item__text b { color: rgba(15, 23, 42, 0.9); }
+body.theme-white .xv-cba-item__text i,
+body.theme-beige .xv-cba-item__text i { color: rgba(15, 23, 42, 0.5); }
 
 .xv-cba-sep {
   height: 1px;
   margin: 6px 4px;
   background: rgba(255, 255, 255, 0.06);
 }
-body.theme-white .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
+body.theme-white .xv-cba-sep,
+body.theme-beige .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
 
 /* Metadata, not another button. */
 .xv-cba-kbd {
@@ -8562,7 +8859,8 @@ body.theme-white .xv-cba-sep { background: rgba(15, 23, 42, 0.08); }
   border-radius: 5px;
   padding: 2px 5px;
 }
-body.theme-white .xv-cba-kbd {
+body.theme-white .xv-cba-kbd,
+body.theme-beige .xv-cba-kbd {
   color: rgba(15, 23, 42, 0.5);
   background: rgba(15, 23, 42, 0.04);
   border-color: rgba(15, 23, 42, 0.08);
@@ -8596,7 +8894,8 @@ body.theme-white .xv-cba-kbd {
   background: rgba(47, 124, 255, 0.11);
   color: #3b82ff;
 }
-body.theme-white .xv-cba-trigger:hover:not(:disabled) {
+body.theme-white .xv-cba-trigger:hover:not(:disabled),
+body.theme-beige .xv-cba-trigger:hover:not(:disabled) {
   background: rgba(15, 23, 42, 0.05);
   color: rgba(15, 23, 42, 0.9);
 }
@@ -8707,10 +9006,18 @@ body.theme-beige {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
-  padding: 4px 8px;
+  /* The card sits at the end of the brand row and keeps its size there: the logo is
+     the element that gives way, not these three controls. */
+  margin-left: auto;
+  flex-shrink: 0;
+  /* Trimmed from 42px. At that size it was the tallest thing in the sidebar header
+     and competed with the logo beside it; a utility strip should sit under the
+     brand, not level with it. The radius comes down with the height so the corners
+     stay proportional rather than turning the card into a pill. */
+  height: 34px;
+  padding: 3px 5px;
   gap: 0;
-  border-radius: 16px;
+  border-radius: 12px;
   background: linear-gradient(180deg, var(--toolbar-bg-top), var(--toolbar-bg-bottom));
   border: 1px solid var(--toolbar-border);
   box-shadow: var(--toolbar-shadow);
@@ -8725,14 +9032,14 @@ body.theme-beige {
 .xv-sidebar-header-actions .xv-new-terminal-compact,
 .xv-sidebar-header-actions .xv-sidebar-head-icon,
 .xv-sidebar-header-actions .xv-theme-toggle {
-  width: 34px;
-  min-width: 34px;
-  height: 32px;
+  width: 30px;
+  min-width: 30px;
+  height: 28px;
   padding: 0;
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 10px;
+  border-radius: 9px;
   background: transparent;
   box-shadow: none;
   color: var(--toolbar-icon);
@@ -8765,8 +9072,8 @@ body.theme-beige {
 
 .xv-toolbar-sep {
   width: 1px;
-  height: 22px;
-  margin: 0 2px;
+  height: 16px;
+  margin: 0 1px;
   flex-shrink: 0;
   background: var(--toolbar-separator);
   transition: background 220ms ease;
@@ -8822,4 +9129,121 @@ body.theme-beige {
 .xv-sidebar-header-actions button.xv-new-terminal-compact:focus-visible {
   background: var(--toolbar-hover);
   color: var(--toolbar-icon-hover);
+}
+
+/* ============================================================================
+   THE SIDEBAR AND THE WORKSPACE ARE ONE APPLICATION
+   ============================================================================
+
+   Two reported mismatches, both from the two panels being sized and coloured by
+   different rules that nothing kept in step.
+
+   **Size.** The sidebar was inset by its own `--xv-sidebar-inset` (8px) while the
+   workspace stage used its own padding (12px top, 14px bottom). Side by side that
+   read as two panels at slightly different heights — the tops and bottoms did not
+   line up. Both now measure from one gutter, so they cannot drift apart again.
+
+   **Colour.** The sidebar painted `--surface-raised`, which on the Beige theme is a
+   near-white `rgba(255,253,249,0.95)`, while the workspace showed the Parchment skin's
+   cream `#fdf6e3`. Adjacent panels in the same window, two different whites. The
+   sidebar now takes the same per-theme surface the workspace resolves to by default.
+   ============================================================================ */
+
+:root {
+  /* One gutter for the whole application frame. The stage and the sidebar both
+     measure from it, which is what keeps their edges aligned at every width. */
+  --xv-app-gutter: 8px;
+  --xv-app-radius: 12px;
+  /* The seam between the two panels, as opposed to the gutter around the frame.
+     They were the same value, so the channel down the middle measured twice the
+     outer margin — the sidebar's own inset plus the stage's padding — and read as a
+     corridor rather than a join. Small enough to look attached, not zero: butted
+     panels lose the edge that tells you there are two of them. */
+  --xv-app-seam: 5px;
+}
+
+@media (min-width: 640px) {
+  :root { --xv-app-gutter: 12px; --xv-app-radius: 16px; }
+}
+@media (min-width: 1024px) {
+  :root { --xv-app-gutter: 14px; }
+}
+
+/* Uniform on every side. The old `12px 14px 14px` is what put the stage's top edge
+   two pixels above the sidebar's. */
+.xv-app-stage,
+.xv-app-stage:not(.xv-app-stage--fullscreen) {
+  padding: var(--xv-app-gutter);
+  /* Only the edge that faces the sidebar tightens; the other three keep the frame. */
+  padding-inline-start: var(--xv-app-seam);
+}
+.xv-app-stage--fullscreen { padding: 0; }
+
+/* The page behind the whole application, not just the workspace column. The stage
+   starts where the sidebar's column ends, so without this the 64px strip beside a
+   collapsed sidebar kept the marketing page's own background — a different colour
+   from the theme, and the one visible in the gap. */
+.xv-app-ground {
+  background: var(--app-panel);
+  transition: background-color 220ms ease;
+}
+
+/* ---- one surface for both panels ------------------------------------------ */
+
+body.theme-black { --app-panel: #000000; --app-panel-border: rgba(255, 255, 255, 0.14); }
+body.theme-gray { --app-panel: #2a2a2a; --app-panel-border: rgba(255, 255, 255, 0.14); }
+body.theme-white { --app-panel: #ffffff; --app-panel-border: rgba(15, 23, 42, 0.14); }
+body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.18); }
+
+/* The brand row and the profile row drew their own dividers against the old
+   near-white surface; on the shared one they read as seams across a single panel. */
+.xv-sidebar-floating .xv-sidebar-brand {
+  border-bottom-color: var(--app-panel-border, var(--border-subtle));
+}
+
+/* The brand row is a logo and a utility card competing for one line. The logo's image
+   carried an intrinsic width that flexbox could not shrink, so at the default sidebar
+   width it ran six pixels *under* the card — visible as a sliver of the mark behind
+   the first icon. Letting the image scale inside a shrinkable wrapper means the logo
+   gives way instead of overlapping, at any sidebar width. */
+.xv-sidebar-brand .xv-hover-tip-wrap {
+  min-width: 0;
+  overflow: hidden;
+}
+/* `Logo` sets its width as an inline style, which no class can override — but
+   `max-width` still caps a fixed width, so this is what actually lets it shrink. */
+.xv-sidebar-brand .xv-hover-tip-wrap > div {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* ---- one edge, shared by both panels -------------------------------------- */
+
+/* Between the panels sat two borders in two different colours: on Beige
+   rgba(70,60,45,0.11) against rgba(15,23,42,0.09), and on Black a barely-there
+   rgba(255,255,255,0.055) against a much heavier rgba(163,163,163,0.32) that the
+   terminal skin supplied. Two lines that matched neither each other nor the
+   surface behind them.
+
+   The first fix removed both, which also removed the window's outline entirely and
+   left the application with no shape at all. The defect was never that the panels
+   had edges — it was that they had *different* edges. So both now take the one
+   `--app-panel-border` their base rules already reference, and that value is set
+   per theme strongly enough to actually read.
+
+   The shadows stay off: each spilled a soft gradient into the gap between the
+   panels, which is the same mismatch drawn slowly. The border alone carries the
+   shape.
+
+   `!important` and a tripled class are not decoration. Three rules give the shell
+   a border, two of them `!important`, and the strongest — `body.theme-black
+   .terminal-skin-dark` — scores (0,2,1). A normal declaration cannot beat an
+   important one at any specificity, and a doubled class scores (0,2,0) and loses:
+   that was the first attempt here, and it looked correct on the light themes while
+   changing nothing on the dark ones. Three classes score (0,3,0) and win. */
+.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
+.xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
+.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
+  border-color: var(--app-panel-border) !important;
+  box-shadow: none !important;
 }

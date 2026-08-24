@@ -1,6 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Sparkles,
+} from 'lucide-react';
+
+import {
+  type FormEvent,
+  useState,
+} from 'react';
+
 import {
   useRouter,
   useSearchParams,
@@ -28,10 +41,16 @@ import {
 } from './AuthModern';
 
 export function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router =
+    useRouter();
 
-  const requestedNext = searchParams.get('next');
+  const searchParams =
+    useSearchParams();
+
+  const requestedNext =
+    searchParams.get(
+      'next'
+    );
 
   const nextPath =
     requestedNext?.startsWith('/') &&
@@ -39,20 +58,41 @@ export function LoginForm() {
       ? requestedNext
       : '/workspace';
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [
+    email,
+    setEmail,
+  ] = useState('');
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [
+    password,
+    setPassword,
+  ] = useState('');
 
-  const [loading, setLoading] =
-    useState(false);
+  const [
+    showPassword,
+    setShowPassword,
+  ] = useState(false);
 
-  const [oauthLoading, setOauthLoading] =
-    useState(false);
+  const [
+    error,
+    setError,
+  ] =
+    useState<string | null>(
+      null
+    );
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(false);
+
+  const [
+    oauthLoading,
+    setOauthLoading,
+  ] = useState(false);
 
   async function handleSubmit(
-    event: React.FormEvent
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -60,15 +100,23 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const {
+        error:
+          signInError,
+      } =
+        await supabase.auth.signInWithPassword(
+          {
+            email,
+            password,
+          }
+        );
 
-      if (signInError) {
+      if (
+        signInError
+      ) {
         setError(
           safeAuthError(
             signInError,
@@ -79,7 +127,10 @@ export function LoginForm() {
         return;
       }
 
-      router.push(nextPath);
+      router.push(
+        nextPath
+      );
+
       router.refresh();
     } catch (err) {
       setError(
@@ -89,47 +140,71 @@ export function LoginForm() {
         )
       );
     } finally {
-      setLoading(false);
+      setLoading(
+        false
+      );
     }
   }
 
   async function handleGitHub() {
     setError(null);
-    setOauthLoading(true);
+
+    setOauthLoading(
+      true
+    );
 
     try {
       await requireGitHubProvider();
 
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { data, error: oauthError } =
+      const {
+        data,
+        error:
+          oauthError,
+      } =
         await withAuthTimeout(
-          supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-              redirectTo:
-                `${window.location.origin}` +
-                `/auth/callback?next=${encodeURIComponent(
-                  nextPath
-                )}`,
-              skipBrowserRedirect: true,
-            },
-          })
+          supabase.auth.signInWithOAuth(
+            {
+              provider:
+                'github',
+
+              options: {
+                redirectTo:
+                  `${window.location.origin}` +
+                  `/auth/callback?next=${encodeURIComponent(
+                    nextPath
+                  )}`,
+
+                skipBrowserRedirect:
+                  true,
+              },
+            }
+          )
         );
 
-      if (oauthError) {
+      if (
+        oauthError
+      ) {
         throw oauthError;
       }
 
-      if (!data.url) {
+      if (
+        !data.url
+      ) {
         throw new Error(
           'OAuth provider did not return a redirect URL'
         );
       }
 
-      window.location.assign(data.url);
+      window.location.assign(
+        data.url
+      );
     } catch (err) {
-      setOauthLoading(false);
+      setOauthLoading(
+        false
+      );
 
       setError(
         safeAuthError(
@@ -142,14 +217,39 @@ export function LoginForm() {
 
   return (
     <AuthModernCard
-      title="Welcome back"
-      subtitle="Sign in and continue building with Xroga."
+      compact
+      eyebrow={
+        <>
+          <Sparkles
+            className="
+              h-3.5
+              w-3.5
+              text-[#006aff]
+            "
+          />
+
+          Welcome back
+        </>
+      }
+      title="Sign in to Xroga"
+      subtitle="Continue creating, building and shipping from your workspace."
     >
       <AuthSocialButton
-        onClick={handleGitHub}
-        disabled={oauthLoading || loading}
+        onClick={
+          handleGitHub
+        }
+        disabled={
+          oauthLoading ||
+          loading
+        }
       >
-        <GitHubIcon className="h-5 w-5 shrink-0" />
+        <GitHubIcon
+          className="
+            h-[18px]
+            w-[18px]
+            shrink-0
+          "
+        />
 
         {oauthLoading
           ? 'Connecting…'
@@ -159,21 +259,39 @@ export function LoginForm() {
       <AuthDivider />
 
       <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
+        onSubmit={
+          handleSubmit
+        }
+        className="
+          space-y-3.5
+        "
       >
         <div>
-          <AuthModernLabel htmlFor="login-email">
+          <AuthModernLabel
+            htmlFor="login-email"
+          >
             Email address
           </AuthModernLabel>
 
           <AuthModernInput
             id="login-email"
             type="email"
+            icon={
+              <Mail
+                className="
+                  h-4
+                  w-4
+                "
+              />
+            }
             placeholder="you@example.com"
             value={email}
-            onChange={(event) =>
-              setEmail(event.target.value)
+            onChange={(
+              event
+            ) =>
+              setEmail(
+                event.target.value
+              )
             }
             required
             autoComplete="email"
@@ -181,17 +299,83 @@ export function LoginForm() {
         </div>
 
         <div>
-          <AuthModernLabel htmlFor="login-password">
+          <AuthModernLabel
+            htmlFor="login-password"
+          >
             Password
           </AuthModernLabel>
 
           <AuthModernInput
             id="login-password"
-            type="password"
+            type={
+              showPassword
+                ? 'text'
+                : 'password'
+            }
+            icon={
+              <LockKeyhole
+                className="
+                  h-4
+                  w-4
+                "
+              />
+            }
+            endAdornment={
+              <button
+                type="button"
+                aria-label={
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                }
+                onClick={() =>
+                  setShowPassword(
+                    (value) =>
+                      !value
+                  )
+                }
+                className="
+                  grid
+                  h-7
+                  w-7
+
+                  place-items-center
+
+                  rounded-lg
+
+                  text-[var(--auth-muted)]
+
+                  transition-colors
+
+                  hover:bg-[var(--auth-soft)]
+                  hover:text-[var(--auth-text)]
+                "
+              >
+                {showPassword ? (
+                  <EyeOff
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                ) : (
+                  <Eye
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                )}
+              </button>
+            }
             placeholder="Enter your password"
             value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
+            onChange={(
+              event
+            ) =>
+              setPassword(
+                event.target.value
+              )
             }
             required
             autoComplete="current-password"
@@ -203,13 +387,18 @@ export function LoginForm() {
             role="alert"
             className="
               rounded-xl
+
               border
               border-red-500/20
-              bg-red-500/8
+
+              bg-red-500/10
+
               px-3.5
-              py-3
-              text-center
-              text-sm
+              py-2.5
+
+              text-[11px]
+              leading-relaxed
+
               text-red-500
             "
           >
@@ -219,11 +408,27 @@ export function LoginForm() {
 
         <AuthGradientButton
           type="submit"
-          disabled={loading || oauthLoading}
+          disabled={
+            loading ||
+            oauthLoading
+          }
         >
           {loading
             ? 'Signing in…'
             : 'Sign in'}
+
+          {!loading ? (
+            <ArrowRight
+              className="
+                h-4
+                w-4
+
+                transition-transform
+
+                group-hover:translate-x-0.5
+              "
+            />
+          ) : null}
         </AuthGradientButton>
       </form>
 

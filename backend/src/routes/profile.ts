@@ -8,8 +8,18 @@ const router = Router();
 
 export const companionPreferencesSchema = z.object({
   name: z.string().trim().min(1).max(24),
-  // Must match COMPANION_COSTUMES in frontend/src/lib/companion.ts.
-  costume: z.enum(['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon']),
+  /**
+   * Must match COMPANION_COSTUMES in frontend/src/lib/companion.ts.
+   *
+   * `coder` is retired and its artwork is deleted, but it is still accepted here
+   * and rewritten to the default. It was the original default costume, so it is
+   * the stored value for every account that never opened the wardrobe: rejecting
+   * it would 400 the next profile save those users make — including saves that
+   * have nothing to do with the companion — and a browser on the previous bundle
+   * would keep sending it until its cache turned over.
+   */
+  costume: z.enum(['coder', 'techwear', 'mystic-robe', 'circuit', 'ninja-neon'])
+    .transform((costume) => (costume === 'coder' ? 'techwear' as const : costume)),
   accent: z.enum(['blue', 'violet', 'cyan', 'emerald']),
   size: z.enum(['compact', 'standard', 'large']),
   dock: z.enum(['composer', 'corner']),
@@ -17,10 +27,20 @@ export const companionPreferencesSchema = z.object({
   voiceEnabled: z.boolean(),
   careEnabled: z.boolean(),
   reducedGamification: z.boolean(),
-  crownEnabled: z.boolean(),
+  /**
+   * Retired, and accepted only so an old bundle can still save.
+   *
+   * `crownEnabled` drew an X badge across the companion's face. It is gone from the
+   * client, but this object is `.strict()`, so a browser still running the previous
+   * bundle would have every `PATCH /api/profile` rejected with a 400 and would lose
+   * preference writes for as long as its cache lived. Accepting the key and dropping
+   * it keeps those clients working while storage converges on the new shape — no row
+   * written from here carries it forward.
+   */
+  crownEnabled: z.boolean().optional(),
   mantleEnabled: z.boolean(),
   lastFedAt: z.string().datetime().nullable(),
-}).strict();
+}).strict().transform(({ crownEnabled: _retired, ...preferences }) => preferences);
 
 router.get('/', async (req: AuthRequest, res) => {
   const supabase = getSupabaseAdmin();

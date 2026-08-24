@@ -9,11 +9,15 @@ const PUBLIC_PREFIXES = [
   '/docs',
   '/community',
   '/research',
-  '/crypto-builder',
+  // `/crypto`, not `/crypto-builder`. The route here named a page that has never
+  // existed, so the real crypto page was not on this list — a public marketing page
+  // that bounced every signed-out visitor to the login screen.
+  '/crypto',
   '/game-builder',
   '/video',
   '/ai-coding-agent',
   '/ai-app-builder',
+  '/software',
   '/ai-website-builder',
   '/build-saas-with-ai',
   '/github-ai-coding-agent',
@@ -24,6 +28,28 @@ const PUBLIC_PREFIXES = [
   // Anyone may browse and preview the showcase; only customizing or exporting needs auth.
   '/showcase',
 ];
+
+/**
+ * Whether the middleware has to ask the auth server who the visitor is.
+ *
+ * It used to ask on every request that reached the middleware, then throw the answer
+ * away for public pages. For a signed-out visitor that costs nothing — there is no
+ * token to check — but a signed-in reader paid a round trip to the auth server on
+ * every navigation *and* on every RSC prefetch, including `/terms`, `/robots.txt` and
+ * the docs, where the result could not change the response.
+ *
+ * `/auth` is deliberately not in that saving. It is a public prefix, but the answer
+ * decides something there: a signed-in visitor is sent on to the app rather than
+ * shown the login form again.
+ *
+ * Skipping the lookup also skips the session-cookie refresh that comes with it, which
+ * is safe here because the browser client owns that too — it is created with
+ * `createBrowserClient`, whose `autoRefreshToken` defaults on.
+ */
+export function requiresUserLookup(pathname: string): boolean {
+  if (pathname.startsWith('/auth')) return true;
+  return !isPublicPath(pathname);
+}
 
 export function isPublicPath(pathname: string): boolean {
   if (pathname === '/') return true;

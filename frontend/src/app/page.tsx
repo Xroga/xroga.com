@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
+import { HomepageBuildStrip } from '@/components/homepage/HomepageBuildStrip';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import { HomepageAnnouncementBanner } from '@/components/homepage/HomepageAnnouncementBanner';
@@ -23,6 +24,7 @@ import {
   Globe2,
   LayoutDashboard,
   LayoutTemplate,
+  LogIn,
   MonitorCog,
   PanelsTopLeft,
   Puzzle,
@@ -34,24 +36,10 @@ import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 
-const HERO_BUILD_WORDS = [
-  { label: 'Websites', icon: Globe2, shape: 'slash' },
-  { label: 'SaaS apps', icon: PanelsTopLeft, shape: 'capsule' },
-  { label: 'Chrome extensions', icon: Puzzle, shape: 'diamond' },
-  { label: 'Desktop software', icon: MonitorCog, shape: 'square' },
-  { label: 'Android apps', icon: Smartphone, shape: 'orb' },
-  { label: 'iOS apps', icon: Smartphone, shape: 'ring' },
-  { label: 'Mobile apps', icon: Smartphone, shape: 'pill' },
-  { label: 'Debug errors', icon: Bug, shape: 'hex' },
-  { label: 'Landing pages', icon: LayoutTemplate, shape: 'beam' },
-  { label: 'Dashboards', icon: Gauge, shape: 'soft-square' },
-] as const;
-
 export default function HomePage() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
-  const [buildWordIdx, setBuildWordIdx] = useState(0);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const hydrateCompanion = useCompanionStore((state) => state.hydratePreferences);
 
@@ -83,17 +71,7 @@ export default function HomePage() {
     return () => { active = false; };
   }, [hydrateCompanion]);
 
-  useEffect(() => {
-  const t = window.setInterval(() => {
-    setBuildWordIdx((i) => (i + 1) % HERO_BUILD_WORDS.length);
-  }, 2800);
-
-  return () => window.clearInterval(t);
-}, []);
-
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
-  const activeBuildWord = HERO_BUILD_WORDS[buildWordIdx];
-  const ActiveBuildIcon = activeBuildWord.icon;
 
   return (
     <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
@@ -109,71 +87,66 @@ export default function HomePage() {
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />
+            {/*
+              Theme and the account control share one segmented surface, divided by a
+              hairline, rather than sitting as two detached buttons.
+
+              Get Started stays outside it. Signed out, that is the page's conversion
+              action, and flattening it into a neutral segment of equal weight would
+              cost the homepage its primary call to action to gain a tidier header.
+              Signed in there is no such action, so the group is the whole control.
+            */}
             {authReady && (
               <div className="flex items-center gap-2">
-                <HomepageThemeSwitcher />
-                {!loggedIn && (
-                  <Link href="/auth/login" className="xv-hc-btn-ghost !min-h-[2.4rem] !px-4 !text-[0.7rem]">
-                    Sign In
-                  </Link>
-                )}
-                <button
-                  type="button"
-                  aria-label={loggedIn ? 'Open Dashboard' : 'Get Started'}
-                  onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}
-                  className="xv-hc-btn-primary xv-hc-dashboard-action !min-h-[2.4rem] !px-4 !text-[0.7rem]"
-                >
+                <div className="xv-hc-headgroup">
+                  <HomepageThemeSwitcher />
                   {loggedIn ? (
-                    <>
-                      <LayoutDashboard className="xv-hc-dashboard-icon" aria-hidden="true" />
-                      <span className="xv-hc-dashboard-label">Dashboard</span>
-                    </>
-                  ) : 'Get Started'}
-                </button>
+                    <button
+                      type="button"
+                      aria-label="Open Dashboard"
+                      onClick={() => router.push('/workspace')}
+                      className="xv-hc-headgroup__seg"
+                    >
+                      <LayoutDashboard className="xv-hc-seg-icon" aria-hidden="true" />
+                      <span className="xv-hc-seg-label">Dashboard</span>
+                    </button>
+                  ) : (
+                    <Link href="/auth/login" className="xv-hc-headgroup__seg">
+                      <LogIn className="xv-hc-seg-icon" aria-hidden="true" />
+                      <span className="xv-hc-seg-label">Sign In</span>
+                    </Link>
+                  )}
+                </div>
+                {!loggedIn && (
+                  <button
+                    type="button"
+                    aria-label="Get Started"
+                    onClick={() => router.push('/auth/signup')}
+                    className="xv-hc-btn-primary !min-h-[2.4rem] !px-4 !text-[0.7rem]"
+                  >
+                    Get Started
+                  </button>
+                )}
               </div>
             )}
           </div>
         </header>
 
         <div className="xv-hc-hero-main">
-          <p className="xv-hc-badge">
-            <span className="xv-hc-badge-dot" aria-hidden />
-            XROGA AI CODING AGENT
-          </p>
-
-          <h1 className="xv-hc-brand">XROGA</h1>
 
           <div className="xv-hc-headline-block">
-            <p className="xv-hc-headline">
-              AI Agentic <span className="xv-hc-headline-em">Builds &amp; Ships</span>
-            </p>
-            <div
-  className="xv-hc-target-stage"
-  aria-live="polite"
->
-  <div
-    key={activeBuildWord.label}
-    className="xv-hc-target"
-  >
-    <span
-      className={`xv-hc-target-shape xv-hc-target-shape--${activeBuildWord.shape}`}
-      aria-hidden="true"
-    >
-      <span className="xv-hc-target-shape__glow" />
-
-      <ActiveBuildIcon className="xv-hc-target-shape__icon" />
-    </span>
-
-    <span className="xv-hc-target-label">
-      {activeBuildWord.label}
-    </span>
-
-    <span
-      className="xv-hc-target-trail"
-      aria-hidden="true"
-    />
-  </div>
-</div>
+            {/*
+              Four typographic voices on one line of reading: "The Agentic Way to Build
+              & Ship". It stays a single <p> so a screen reader gets the sentence in
+              order rather than four disconnected fragments — the styling is entirely in
+              the spans.
+            */}
+            <h1 className="xv-hc-headline">
+              <span className="xv-hc-headline__the">The</span>{' '}
+              <span className="xv-hc-headline__agentic">Agentic</span>{' '}
+              <span className="xv-hc-headline__way">Way to</span>{' '}
+              <span className="xv-hc-headline__ship">Build &amp; Ship</span>
+            </h1>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
@@ -182,6 +155,8 @@ export default function HomePage() {
           </div>
 
         </div>
+
+        <HomepageBuildStrip />
       </section>
 
       <XrogaIntelligenceSection />
@@ -196,9 +171,9 @@ export default function HomePage() {
 
       <HomepageFaqSection />
 
-      {/* Community and Share Feedback moved out of the hero so it stays focused on the
+      {/* Community and Feedback moved out of the hero so it stays focused on the
           product and its primary action. Both keep the same behaviour: Community links
-          to the existing page, and Share Feedback opens the existing modal. */}
+          to the existing page, and Feedback opens the existing modal. */}
       <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
         <div className="xv-hc-community-scrim" aria-hidden="true" />
         <div className="xv-hc-section-inner">
@@ -212,14 +187,17 @@ export default function HomePage() {
             Xroga.
           </p>
           <div className="xv-hc-ctas">
+            {/* The section heading and copy already say what these do, so the verbs
+                the labels used to carry ("Open", "Share", "Read the") were repeating
+                context the reader has just been given. */}
             <Link href="/community" className="xv-hc-btn-primary">
-              Open Community
+              Community
             </Link>
             <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">
-              Share Feedback
+              Feedback
             </button>
             <Link href="/docs" className="xv-hc-btn-ghost">
-              Read the docs
+              Docs
             </Link>
           </div>
         </div>

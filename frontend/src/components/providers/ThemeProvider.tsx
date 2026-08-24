@@ -16,11 +16,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setSlideshowEnabled = useThemeStore((s) => s.setSlideshowEnabled);
   const accent = useThemeStore((s) => s.accent);
   const fontPreference = useThemeStore((s) => s.fontPreference);
+  const sidebarFont = useThemeStore((s) => s.sidebarFont);
+  const workspaceFont = useThemeStore((s) => s.workspaceFont);
   const density = useThemeStore((s) => s.density);
   const reducedMotion = useThemeStore((s) => s.reducedMotion);
   const highContrast = useThemeStore((s) => s.highContrast);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
+  /**
+   * Routes that only exist in black.
+   *
+   * The crypto page paints its own deep-blue scene end to end. Under the light
+   * themes it kept the light ink, so the headline and the composer rendered
+   * near-black on near-black — the page looked broken rather than themed.
+   *
+   * Forced here rather than by writing `black` into the store, so the user's own
+   * choice is untouched and comes back the moment they leave the page.
+   */
+  const forcedTheme = pathname?.startsWith('/crypto') ? ('black' as const) : null;
 
   // Migrate legacy image/deep-work → white once
   useEffect(() => {
@@ -33,7 +46,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, setTheme, setTerminalSkin, setSlideshowEnabled]);
 
   useEffect(() => {
-    const core = normalizeTheme(theme);
+    const core = forcedTheme ?? normalizeTheme(theme);
     document.documentElement.setAttribute('data-theme', core);
 
     const body = document.body;
@@ -47,7 +60,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     );
     body.classList.add(`theme-${core}`);
     document.documentElement.dataset.accent = accent;
-    document.documentElement.dataset.font = fontPreference;
+    /* On `body`, not on `documentElement`. The next/font variables these stacks are
+       built from live on the body class list, so a rule hung off `html` resolves them
+       to nothing and the setting silently does nothing. */
+    body.dataset.font = fontPreference;
+    body.dataset.sidebarFont = sidebarFont;
+    body.dataset.workspaceFont = workspaceFont;
     document.documentElement.dataset.density = density;
     document.documentElement.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
     document.documentElement.dataset.highContrast = highContrast ? 'true' : 'false';
@@ -73,7 +91,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (isHomepage) {
       body.style.backgroundColor = THEME_SURFACE[core];
     }
-  }, [theme, accent, fontPreference, density, reducedMotion, highContrast, isHomepage]);
+  }, [theme, forcedTheme, accent, fontPreference, sidebarFont, workspaceFont, density, reducedMotion, highContrast, isHomepage]);
 
   return <>{children}</>;
 }

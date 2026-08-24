@@ -1,6 +1,17 @@
 'use client';
 
 import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Sparkles,
+  UserRound,
+} from 'lucide-react';
+
+import {
+  type FormEvent,
   useEffect,
   useState,
 } from 'react';
@@ -65,33 +76,68 @@ const THEME_SWATCHES: Record<
   }
 > = {
   white: {
-    background: '#ffffff',
-    foreground: '#111111',
+    background:
+      '#ffffff',
+    foreground:
+      '#111111',
   },
 
   beige: {
-    background: '#f5efe3',
-    foreground: '#3a3127',
+    background:
+      '#f5efe3',
+    foreground:
+      '#3a3127',
   },
 
   gray: {
-    background: '#2a2a2a',
-    foreground: '#f5f5f5',
+    background:
+      '#2a2a2a',
+    foreground:
+      '#f5f5f5',
   },
 
   black: {
-    background: '#000000',
-    foreground: '#ffffff',
+    background:
+      '#000000',
+    foreground:
+      '#ffffff',
   },
 };
 
-export function SignupForm() {
-  const searchParams = useSearchParams();
+function getStrengthLabel(
+  score: number
+) {
+  if (score <= 1) {
+    return 'Weak';
+  }
 
-  const refFromUrl = searchParams.get('ref');
+  if (score === 2) {
+    return 'Good';
+  }
+
+  if (score === 3) {
+    return 'Strong';
+  }
+
+  return 'Excellent';
+}
+
+export function SignupForm() {
+  const searchParams =
+    useSearchParams();
+
+  const router =
+    useRouter();
+
+  const refFromUrl =
+    searchParams.get(
+      'ref'
+    );
 
   const requestedNext =
-    searchParams.get('next');
+    searchParams.get(
+      'next'
+    );
 
   const nextPath =
     requestedNext?.startsWith('/') &&
@@ -99,47 +145,82 @@ export function SignupForm() {
       ? requestedNext
       : '/workspace';
 
-  const router = useRouter();
-
   const globalTheme =
-    useThemeStore((state) => state.theme);
+    useThemeStore(
+      (state) =>
+        state.theme
+    );
 
   const setGlobalTheme =
-    useThemeStore((state) => state.setTheme);
-
-  const [theme, setTheme] =
-    useState<CoreThemeId>(() =>
-      normalizeTheme(globalTheme)
+    useThemeStore(
+      (state) =>
+        state.setTheme
     );
 
-  const [referralCode, setReferralCode] =
-    useState('');
-
-  const [email, setEmail] =
-    useState('');
-
-  const [password, setPassword] =
-    useState('');
-
-  const [displayName, setDisplayName] =
-    useState('');
-
-  const [avatarUrl, setAvatarUrl] =
-    useState(
-      XROGA_PROFILE_AVATARS[0]?.url ?? ''
+  const [
+    theme,
+    setTheme,
+  ] =
+    useState<CoreThemeId>(
+      () =>
+        normalizeTheme(
+          globalTheme
+        )
     );
 
-  const [loading, setLoading] =
-    useState(false);
+  const [
+    referralCode,
+    setReferralCode,
+  ] = useState('');
 
-  const [oauthLoading, setOauthLoading] =
-    useState(false);
+  const [
+    email,
+    setEmail,
+  ] = useState('');
 
-  const [error, setError] =
-    useState('');
+  const [
+    password,
+    setPassword,
+  ] = useState('');
 
-  const [success, setSuccess] =
-    useState(false);
+  const [
+    showPassword,
+    setShowPassword,
+  ] = useState(false);
+
+  const [
+    displayName,
+    setDisplayName,
+  ] = useState('');
+
+  const [
+    avatarUrl,
+    setAvatarUrl,
+  ] = useState(
+    XROGA_PROFILE_AVATARS[
+      0
+    ]?.url ?? ''
+  );
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(false);
+
+  const [
+    oauthLoading,
+    setOauthLoading,
+  ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState('');
+
+  const [
+    success,
+    setSuccess,
+  ] = useState(false);
 
   const [
     confirmationRequired,
@@ -147,11 +228,24 @@ export function SignupForm() {
   ] = useState(false);
 
   const passwordStrength =
-    getPasswordStrength(password);
+    getPasswordStrength(
+      password
+    );
+
+  const strengthLabel =
+    getStrengthLabel(
+      passwordStrength.score
+    );
 
   useEffect(() => {
-    setTheme(normalizeTheme(globalTheme));
-  }, [globalTheme]);
+    setTheme(
+      normalizeTheme(
+        globalTheme
+      )
+    );
+  }, [
+    globalTheme,
+  ]);
 
   useEffect(() => {
     const code =
@@ -163,60 +257,85 @@ export function SignupForm() {
         code.toUpperCase()
       );
 
-      storeReferralCode(code);
+      storeReferralCode(
+        code
+      );
     }
-  }, [refFromUrl]);
+  }, [
+    refFromUrl,
+  ]);
 
   function selectTheme(
     nextTheme: CoreThemeId
   ) {
-    setTheme(nextTheme);
+    setTheme(
+      nextTheme
+    );
 
-    /*
-     * This deliberately updates the existing global
-     * Xroga theme so the signup page previews the
-     * selected theme immediately.
-     */
-    setGlobalTheme(nextTheme);
+    setGlobalTheme(
+      nextTheme
+    );
   }
 
   async function handleGitHub() {
     setError('');
-    setOauthLoading(true);
+
+    setOauthLoading(
+      true
+    );
 
     try {
       await requireGitHubProvider();
 
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
-      const { data, error: oauthError } =
+      const {
+        data,
+        error:
+          oauthError,
+      } =
         await withAuthTimeout(
-          supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-              redirectTo:
-                `${window.location.origin}` +
-                `/auth/callback?next=${encodeURIComponent(
-                  nextPath
-                )}`,
-              skipBrowserRedirect: true,
-            },
-          })
+          supabase.auth.signInWithOAuth(
+            {
+              provider:
+                'github',
+
+              options: {
+                redirectTo:
+                  `${window.location.origin}` +
+                  `/auth/callback?next=${encodeURIComponent(
+                    nextPath
+                  )}`,
+
+                skipBrowserRedirect:
+                  true,
+              },
+            }
+          )
         );
 
-      if (oauthError) {
+      if (
+        oauthError
+      ) {
         throw oauthError;
       }
 
-      if (!data.url) {
+      if (
+        !data.url
+      ) {
         throw new Error(
           'OAuth provider did not return a redirect URL'
         );
       }
 
-      window.location.assign(data.url);
+      window.location.assign(
+        data.url
+      );
     } catch (err) {
-      setOauthLoading(false);
+      setOauthLoading(
+        false
+      );
 
       setError(
         safeAuthError(
@@ -228,11 +347,13 @@ export function SignupForm() {
   }
 
   async function handleSignup(
-    event: React.FormEvent
+    event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
-    if (!displayName.trim()) {
+    if (
+      !displayName.trim()
+    ) {
       setError(
         'Please enter a display name'
       );
@@ -240,7 +361,11 @@ export function SignupForm() {
       return;
     }
 
-    if (isTemporaryEmail(email)) {
+    if (
+      isTemporaryEmail(
+        email
+      )
+    ) {
       setError(
         'Temporary email addresses are not allowed. Use a real email.'
       );
@@ -248,7 +373,10 @@ export function SignupForm() {
       return;
     }
 
-    if (passwordStrength.score < 2) {
+    if (
+      passwordStrength.score <
+      2
+    ) {
       setError(
         'Please choose a stronger password'
       );
@@ -256,42 +384,54 @@ export function SignupForm() {
       return;
     }
 
-    setLoading(true);
+    setLoading(
+      true
+    );
+
     setError('');
 
-    setGlobalTheme(theme);
+    setGlobalTheme(
+      theme
+    );
 
     try {
-      const supabase = createClient();
+      const supabase =
+        createClient();
 
       const {
         data,
-        error: signupError,
-      } = await supabase.auth.signUp({
-        email,
-        password,
+        error:
+          signupError,
+      } =
+        await supabase.auth.signUp(
+          {
+            email,
+            password,
 
-        options: {
-          data: {
-            full_name:
-              displayName.trim(),
+            options: {
+              data: {
+                full_name:
+                  displayName.trim(),
 
-            avatar_url:
-              avatarUrl,
+                avatar_url:
+                  avatarUrl,
 
-            preferred_theme:
-              theme,
-          },
+                preferred_theme:
+                  theme,
+              },
 
-          emailRedirectTo:
-            `${window.location.origin}` +
-            `/auth/callback?next=${encodeURIComponent(
-              nextPath
-            )}`,
-        },
-      });
+              emailRedirectTo:
+                `${window.location.origin}` +
+                `/auth/callback?next=${encodeURIComponent(
+                  nextPath
+                )}`,
+            },
+          }
+        );
 
-      if (signupError) {
+      if (
+        signupError
+      ) {
         const message =
           signupError.message.toLowerCase();
 
@@ -321,25 +461,35 @@ export function SignupForm() {
         return;
       }
 
-      if (!data.session) {
-        setConfirmationRequired(true);
-        setSuccess(true);
+      if (
+        !data.session
+      ) {
+        setConfirmationRequired(
+          true
+        );
+
+        setSuccess(
+          true
+        );
 
         return;
       }
 
       try {
-        await api.profile.update({
-          display_name:
-            displayName.trim(),
+        await api.profile.update(
+          {
+            display_name:
+              displayName.trim(),
 
-          avatar_url:
-            avatarUrl || null,
-        });
+            avatar_url:
+              avatarUrl ||
+              null,
+          }
+        );
       } catch {
         /*
-         * Profile may synchronize on the
-         * first workspace load.
+         * Profile can synchronise
+         * during first workspace load.
          */
       }
 
@@ -354,22 +504,31 @@ export function SignupForm() {
               code
             );
 
-          if (result.success) {
+          if (
+            result.success
+          ) {
             clearStoredReferralCode();
           }
         } catch {
           /*
-           * Referral can apply later if
-           * the session is not ready.
+           * Referral can be applied later
+           * if the session is not ready.
            */
         }
       }
 
-      setSuccess(true);
+      setSuccess(
+        true
+      );
 
-      window.setTimeout(() => {
-        router.push(nextPath);
-      }, 1500);
+      window.setTimeout(
+        () => {
+          router.push(
+            nextPath
+          );
+        },
+        1500
+      );
     } catch (err) {
       setError(
         safeAuthError(
@@ -378,13 +537,28 @@ export function SignupForm() {
         )
       );
     } finally {
-      setLoading(false);
+      setLoading(
+        false
+      );
     }
   }
 
   if (success) {
     return (
       <AuthModernCard
+        eyebrow={
+          <>
+            <Sparkles
+              className="
+                h-3.5
+                w-3.5
+                text-[#006aff]
+              "
+            />
+
+            Account ready
+          </>
+        }
         title={`Welcome, ${displayName}!`}
         subtitle={
           confirmationRequired
@@ -394,20 +568,25 @@ export function SignupForm() {
       >
         <div
           className="
-            rounded-2xl
+            rounded-[18px]
+
             border
             border-[#006aff]/20
+
             bg-[#006aff]/8
+
             px-5
-            py-6
+            py-5
+
             text-center
           "
         >
           <p
             className="
-              text-sm
+              text-[13px]
               font-semibold
               leading-relaxed
+
               text-[var(--auth-text)]
             "
           >
@@ -422,26 +601,67 @@ export function SignupForm() {
 
   return (
     <AuthModernCard
+      eyebrow={
+        <>
+          <Sparkles
+            className="
+              h-3.5
+              w-3.5
+              text-[#006aff]
+            "
+          />
+
+          Join the next generation workspace
+        </>
+      }
       title="Create your account"
-      subtitle="Start building with Xroga and personalize your workspace before you begin."
+      subtitle="Start building with Xroga and personalise your workspace before you begin."
     >
       <AuthSocialButton
-        onClick={handleGitHub}
-        disabled={oauthLoading || loading}
+        onClick={
+          handleGitHub
+        }
+        disabled={
+          oauthLoading ||
+          loading
+        }
       >
-        <GitHubIcon className="h-5 w-5 shrink-0" />
+        <GitHubIcon
+          className="
+            h-[18px]
+            w-[18px]
+            shrink-0
+          "
+        />
 
         {oauthLoading
           ? 'Connecting…'
           : 'Continue with GitHub'}
+
+        <ArrowRight
+          className="
+            ml-auto
+            h-3.5
+            w-3.5
+
+            text-[var(--auth-muted)]
+          "
+        />
       </AuthSocialButton>
 
       <AuthDivider />
 
       <form
-        onSubmit={handleSignup}
-        className="space-y-4"
+        onSubmit={
+          handleSignup
+        }
+        className="
+          space-y-3
+        "
       >
+        {/*
+         * Workspace theme
+         */}
         <div>
           <AuthModernLabel>
             Workspace theme
@@ -450,15 +670,15 @@ export function SignupForm() {
           <div
             className="
               grid
-              grid-cols-2
+              grid-cols-4
               gap-2
-              sm:grid-cols-4
             "
           >
             {THEME_OPTIONS.map(
               (option) => {
                 const selected =
-                  theme === option.id;
+                  theme ===
+                  option.id;
 
                 const swatch =
                   THEME_SWATCHES[
@@ -467,7 +687,9 @@ export function SignupForm() {
 
                 return (
                   <button
-                    key={option.id}
+                    key={
+                      option.id
+                    }
                     type="button"
                     onClick={() =>
                       selectTheme(
@@ -479,35 +701,57 @@ export function SignupForm() {
                     }
                     className={cn(
                       'relative',
-                      'rounded-xl',
+
+                      'flex',
+                      'h-[58px]',
+                      'min-w-0',
+
+                      'flex-col',
+
+                      'justify-between',
+
+                      'rounded-[13px]',
+
                       'border',
-                      'px-3 py-2.5',
+
+                      'px-3',
+                      'py-2',
+
                       'text-left',
-                      'transition-all duration-200',
+
+                      'transition-all',
+                      'duration-200',
 
                       selected
                         ? [
                             'border-[#006aff]',
                             'bg-[#006aff]/10',
+                            'shadow-[0_6px_18px_rgba(0,106,255,0.10)]',
                             'ring-1',
-                            'ring-[#006aff]/25',
-                          ].join(' ')
+                            'ring-[#006aff]/15',
+                          ].join(
+                            ' '
+                          )
                         : [
                             'border-[var(--auth-border)]',
                             'bg-[var(--auth-input)]',
                             'hover:border-[var(--auth-border-strong)]',
-                          ].join(' ')
+                            'hover:bg-[var(--auth-input-hover)]',
+                          ].join(
+                            ' '
+                          )
                     )}
                   >
                     <span
                       className="
-                        mb-2
-                        block
-                        h-5
-                        w-5
+                        h-[17px]
+                        w-[17px]
+
                         rounded-full
+
                         border
                         border-black/10
+
                         shadow-sm
                       "
                       style={{
@@ -521,9 +765,11 @@ export function SignupForm() {
 
                     <span
                       className="
-                        block
-                        text-xs
+                        truncate
+
+                        text-[10px]
                         font-semibold
+
                         text-[var(--auth-text)]
                       "
                     >
@@ -534,21 +780,11 @@ export function SignupForm() {
               }
             )}
           </div>
-
-          <p
-            className="
-              mt-1.5
-              text-[10px]
-              leading-relaxed
-              text-[var(--auth-muted)]
-            "
-          >
-            Your selected theme previews
-            instantly and can be changed
-            anytime later.
-          </p>
         </div>
 
+        {/*
+         * Profile avatars
+         */}
         <div>
           <AuthModernLabel>
             Profile
@@ -558,58 +794,27 @@ export function SignupForm() {
             className="
               flex
               items-center
-              gap-3
+              gap-2
             "
           >
-            <div
-              className="
-                h-12
-                w-12
-                shrink-0
-                overflow-hidden
-                rounded-xl
-                border
-                border-[#006aff]/30
-                bg-[var(--auth-input)]
-              "
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={avatarUrl}
-                alt="Selected Xroga avatar"
-                className="
-                  h-full
-                  w-full
-                  object-cover
-                "
-              />
-            </div>
-
-            <div
-              className="
-                grid
-                max-h-[72px]
-                flex-1
-                grid-cols-6
-                gap-1.5
-                overflow-y-auto
-                rounded-xl
-                border
-                border-[var(--auth-border)]
-                bg-[var(--auth-input)]
-                p-1.5
-              "
-            >
-              {XROGA_PROFILE_AVATARS
-                .slice(0, 12)
-                .map((avatar) => {
+            {XROGA_PROFILE_AVATARS
+              .slice(
+                0,
+                6
+              )
+              .map(
+                (
+                  avatar
+                ) => {
                   const selected =
                     avatarUrl ===
                     avatar.url;
 
                   return (
                     <button
-                      key={avatar.url}
+                      key={
+                        avatar.url
+                      }
                       type="button"
                       onClick={() =>
                         setAvatarUrl(
@@ -621,20 +826,46 @@ export function SignupForm() {
                         selected
                       }
                       className={cn(
-                        'aspect-square',
+                        'relative',
+
+                        'h-[45px]',
+                        'w-[45px]',
+
+                        'shrink-0',
+
                         'overflow-hidden',
-                        'rounded-lg',
+
+                        'rounded-[12px]',
+
                         'border-2',
+
+                        'bg-[var(--auth-input)]',
+
                         'transition-all',
+                        'duration-200',
 
                         selected
-                          ? 'border-[#006aff] opacity-100'
-                          : 'border-transparent opacity-65 hover:opacity-100'
+                          ? [
+                              'border-[#006aff]',
+                              'scale-[1.03]',
+                              'shadow-[0_6px_18px_rgba(0,106,255,0.18)]',
+                            ].join(
+                              ' '
+                            )
+                          : [
+                              'border-transparent',
+                              'opacity-75',
+                              'hover:opacity-100',
+                            ].join(
+                              ' '
+                            )
                       )}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={avatar.url}
+                        src={
+                          avatar.url
+                        }
                         alt=""
                         className="
                           h-full
@@ -644,61 +875,187 @@ export function SignupForm() {
                       />
                     </button>
                   );
-                })}
-            </div>
+                }
+              )}
+          </div>
+        </div>
+
+        {/*
+         * Name and email side-by-side
+         * on tablets/desktop.
+         */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            gap-3
+
+            sm:grid-cols-2
+          "
+        >
+          <div>
+            <AuthModernLabel
+              htmlFor="signup-name"
+            >
+              Display name
+            </AuthModernLabel>
+
+            <AuthModernInput
+              id="signup-name"
+              type="text"
+              icon={
+                <UserRound
+                  className="
+                    h-4
+                    w-4
+                  "
+                />
+              }
+              value={
+                displayName
+              }
+              onChange={(
+                event
+              ) =>
+                setDisplayName(
+                  event.target.value
+                )
+              }
+              required
+              autoComplete="name"
+              placeholder="How should we call you?"
+            />
+          </div>
+
+          <div>
+            <AuthModernLabel
+              htmlFor="signup-email"
+            >
+              Email address
+            </AuthModernLabel>
+
+            <AuthModernInput
+              id="signup-email"
+              type="email"
+              icon={
+                <Mail
+                  className="
+                    h-4
+                    w-4
+                  "
+                />
+              }
+              value={email}
+              onChange={(
+                event
+              ) =>
+                setEmail(
+                  event.target.value
+                )
+              }
+              required
+              autoComplete="email"
+              placeholder="you@example.com"
+            />
           </div>
         </div>
 
         <div>
-          <AuthModernLabel htmlFor="signup-name">
-            Display name
-          </AuthModernLabel>
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+            "
+          >
+            <AuthModernLabel
+              htmlFor="signup-password"
+            >
+              Password
+            </AuthModernLabel>
 
-          <AuthModernInput
-            id="signup-name"
-            type="text"
-            value={displayName}
-            onChange={(event) =>
-              setDisplayName(
-                event.target.value
-              )
-            }
-            required
-            autoComplete="name"
-            placeholder="How should we call you?"
-          />
-        </div>
+            {password ? (
+              <span
+                className="
+                  mb-1.5
+                  text-[9px]
+                  font-semibold
 
-        <div>
-          <AuthModernLabel htmlFor="signup-email">
-            Email address
-          </AuthModernLabel>
-
-          <AuthModernInput
-            id="signup-email"
-            type="email"
-            value={email}
-            onChange={(event) =>
-              setEmail(
-                event.target.value
-              )
-            }
-            required
-            autoComplete="email"
-            placeholder="you@example.com"
-          />
-        </div>
-
-        <div>
-          <AuthModernLabel htmlFor="signup-password">
-            Password
-          </AuthModernLabel>
+                  text-[var(--auth-muted)]
+                "
+              >
+                {strengthLabel}
+              </span>
+            ) : null}
+          </div>
 
           <AuthModernInput
             id="signup-password"
-            type="password"
+            type={
+              showPassword
+                ? 'text'
+                : 'password'
+            }
+            icon={
+              <LockKeyhole
+                className="
+                  h-4
+                  w-4
+                "
+              />
+            }
+            endAdornment={
+              <button
+                type="button"
+                aria-label={
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                }
+                onClick={() =>
+                  setShowPassword(
+                    (value) =>
+                      !value
+                  )
+                }
+                className="
+                  grid
+                  h-7
+                  w-7
+
+                  place-items-center
+
+                  rounded-lg
+
+                  text-[var(--auth-muted)]
+
+                  transition-colors
+
+                  hover:bg-[var(--auth-soft)]
+                  hover:text-[var(--auth-text)]
+                "
+              >
+                {showPassword ? (
+                  <EyeOff
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                ) : (
+                  <Eye
+                    className="
+                      h-4
+                      w-4
+                    "
+                  />
+                )}
+              </button>
+            }
             value={password}
-            onChange={(event) =>
+            onChange={(
+              event
+            ) =>
               setPassword(
                 event.target.value
               )
@@ -710,31 +1067,36 @@ export function SignupForm() {
           />
 
           {password ? (
-            <div className="mt-2">
+            <div
+              className="
+                mt-2
+
+                h-1.5
+
+                overflow-hidden
+
+                rounded-full
+
+                bg-[var(--auth-soft)]
+              "
+            >
               <div
                 className="
-                  h-1.5
-                  overflow-hidden
-                  rounded-full
-                  bg-[var(--auth-soft)]
-                "
-              >
-                <div
-                  className="
-                    h-full
-                    rounded-full
-                    transition-all
-                    duration-300
-                  "
-                  style={{
-                    width:
-                      `${passwordStrength.percent}%`,
+                  h-full
 
-                    backgroundColor:
-                      passwordStrength.color,
-                  }}
-                />
-              </div>
+                  rounded-full
+
+                  transition-all
+                  duration-300
+                "
+                style={{
+                  width:
+                    `${passwordStrength.percent}%`,
+
+                  backgroundColor:
+                    passwordStrength.color,
+                }}
+              />
             </div>
           ) : null}
         </div>
@@ -744,13 +1106,18 @@ export function SignupForm() {
             role="alert"
             className="
               rounded-xl
+
               border
               border-red-500/20
-              bg-red-500/8
+
+              bg-red-500/10
+
               px-3.5
-              py-3
-              text-center
-              text-sm
+              py-2.5
+
+              text-[11px]
+              leading-relaxed
+
               text-red-500
             "
           >
@@ -766,7 +1133,9 @@ export function SignupForm() {
                   href="/auth/login"
                   className="
                     font-semibold
+
                     text-[#006aff]
+
                     underline
                   "
                 >
@@ -787,6 +1156,15 @@ export function SignupForm() {
           {loading
             ? 'Creating account…'
             : 'Create account'}
+
+          {!loading ? (
+            <Sparkles
+              className="
+                h-4
+                w-4
+              "
+            />
+          ) : null}
         </AuthGradientButton>
       </form>
 

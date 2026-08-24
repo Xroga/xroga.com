@@ -12,7 +12,6 @@ const valid = {
   voiceEnabled: false,
   careEnabled: true,
   reducedGamification: false,
-  crownEnabled: true,
   mantleEnabled: true,
   lastFedAt: null,
 };
@@ -20,6 +19,34 @@ const valid = {
 describe('companion profile preferences', () => {
   it('accepts the complete bounded preference contract', () => {
     assert.equal(companionPreferencesSchema.safeParse(valid).success, true);
+  });
+
+  it('still accepts a save from a client that has not dropped crownEnabled yet', () => {
+    // The field is retired, but this object is strict. Rejecting it would 400 every
+    // profile write from a browser still holding the previous bundle, which loses the
+    // user's preferences for as long as that cache lives.
+    const legacy = companionPreferencesSchema.safeParse({ ...valid, crownEnabled: true });
+    assert.equal(legacy.success, true);
+    assert.equal('crownEnabled' in (legacy.success ? legacy.data : {}), false);
+  });
+
+  it('rewrites the retired coder costume instead of rejecting the save', () => {
+    // coder was the original default, so it is the stored costume for every account
+    // that never opened the wardrobe. Rejecting it would 400 their next profile save
+    // — including saves that have nothing to do with the companion.
+    const legacy = companionPreferencesSchema.safeParse({ ...valid, costume: 'coder' });
+    assert.equal(legacy.success, true);
+    assert.equal(legacy.success && legacy.data.costume, 'techwear');
+  });
+
+  it('still rejects a costume that never existed', () => {
+    // Accepting the one retired name must not turn the enum into a free-text field.
+    assert.equal(companionPreferencesSchema.safeParse({ ...valid, costume: 'wizard' }).success, false);
+  });
+
+  it('does not persist the retired field', () => {
+    const parsed = companionPreferencesSchema.parse(valid);
+    assert.equal('crownEnabled' in parsed, false);
   });
 
   it('rejects unknown fields and invalid names', () => {

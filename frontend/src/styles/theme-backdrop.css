@@ -1,0 +1,177 @@
+/* ==========================================================================
+   Shared theme backdrop and surface tokens
+
+   The homepage paints one fixed image behind everything and swaps it per theme:
+   clouds for White and Black, monochrome code architecture for Gray, a Mars and
+   pyramids coding landscape for Beige. The marketing landings each used artwork of
+   their own instead, so moving between them changed the world as well as the page.
+
+   This sheet is that backdrop, plus the surface tokens a page needs to sit on top of
+   it in any of the four themes. Both are consumed by /software, /ai-app-builder and
+   /ai-coding-agent.
+
+   The image URLs and the per-theme values are duplicated from homepage-coding.css
+   rather than shared, because the homepage's copy is entangled with several hundred
+   `.xv-home-coding` component rules and pulling that class onto a landing would drag
+   all of them in. `themeBackdrop.test.ts` asserts the two copies name the same files
+   and the same colours, so they cannot drift apart quietly.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- the backdrop */
+
+.xv-theme-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--tp-bg);
+  background-image: url('/backgrounds/xroga-deep-work-bg.webp');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* The scrim. Its job is to settle the artwork into the theme's own ground colour by
+   the foot of the viewport, so page copy has something predictable behind it. */
+.xv-theme-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+body.theme-white .xv-theme-backdrop {
+  background-image: url('/backgrounds/xroga-light-clouds-bg.png');
+  filter: saturate(0.96) contrast(0.94) brightness(1.04);
+}
+
+body.theme-beige .xv-theme-backdrop {
+  background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg.webp');
+  background-position: center top;
+  filter: saturate(0.98) contrast(1.02) brightness(0.9);
+}
+
+body.theme-gray .xv-theme-backdrop {
+  background-image: url('/backgrounds/xroga-gray-code-city-bg.webp');
+  filter: saturate(0) contrast(1.06) brightness(0.9);
+}
+
+body.theme-black .xv-theme-backdrop {
+  background-image: url('/backgrounds/xroga-black-clouds-bg.webp');
+  filter: saturate(1.04) contrast(1.03) brightness(0.88);
+}
+
+/*
+ * The two light scrims tint toward their own ground rather than toward brown.
+ *
+ * The homepage's Beige scrim starts at rgba(71, 37, 17, 0.16) — a dark wash, which
+ * suits the homepage because its Beige copy is light. These pages set dark ink on the
+ * light themes, so that same wash left the hero paragraph sitting on mid-tone Mars
+ * rock at roughly the ink's own value and it disappeared. Tinting toward #f2e2c8
+ * instead keeps the artwork visible and gives dark type something to sit on.
+ */
+body.theme-white .xv-theme-backdrop::after {
+  background: linear-gradient(180deg, rgba(234, 247, 255, 0.5), rgba(238, 249, 255, 0.64) 58%, #eaf7ff 100%);
+}
+
+body.theme-beige .xv-theme-backdrop::after {
+  background: linear-gradient(180deg, rgba(242, 226, 200, 0.68), rgba(242, 226, 200, 0.8) 56%, #f2e2c8 100%);
+}
+
+body.theme-gray .xv-theme-backdrop::after {
+  background: linear-gradient(180deg, rgba(13, 13, 13, 0.18), rgba(15, 15, 15, 0.3) 58%, #111111 100%);
+}
+
+body.theme-black .xv-theme-backdrop::after {
+  background: linear-gradient(180deg, rgba(0, 2, 9, 0.12), rgba(0, 3, 12, 0.18) 58%, #000000 100%);
+}
+
+/* Portrait artwork on phones. A landscape `cover` crop removes the White clouds and
+   the Gray architecture entirely, which is the whole subject of those two. */
+@media (max-width: 640px) {
+  body.theme-white .xv-theme-backdrop {
+    background-image: url('/backgrounds/xroga-light-clouds-bg-mobile.webp');
+    background-position: center top;
+  }
+
+  body.theme-beige .xv-theme-backdrop {
+    background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg-mobile.webp');
+    background-position: center top;
+  }
+
+  body.theme-gray .xv-theme-backdrop {
+    background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
+    background-position: center top;
+  }
+}
+
+/* ------------------------------------------------------------ surface tokens */
+
+/*
+ * What a page needs to be readable on any of the four grounds.
+ *
+ * `--tp-ink` and `--tp-bg` are the pair everything else is derived from, so a surface
+ * is always a step away from the ground it sits on and a border is always the ink at
+ * low alpha. That is what makes one set of rules work in both directions: on White the
+ * derived surface is slightly darker than the page, on Black slightly lighter, without
+ * either being written out per theme.
+ */
+.xv-theme-surface {
+  --tp-bg: #eaf7ff;
+  --tp-ink: #071a2d;
+  --tp-muted: #33465a;
+  --tp-accent: var(--accent, #006aff);
+  --tp-action-bg: var(--tp-accent);
+  --tp-action-text: #ffffff;
+
+  --tp-surface: color-mix(in srgb, var(--tp-bg) 88%, var(--tp-ink) 12%);
+  --tp-surface-2: color-mix(in srgb, var(--tp-bg) 94%, var(--tp-ink) 6%);
+  --tp-border: color-mix(in srgb, var(--tp-ink) 15%, transparent);
+  --tp-border-strong: color-mix(in srgb, var(--tp-ink) 29%, transparent);
+  --tp-shadow: color-mix(in srgb, var(--tp-ink) 13%, transparent);
+
+  color-scheme: light;
+  color: var(--tp-ink);
+}
+
+body.theme-white .xv-theme-surface {
+  --tp-bg: #eaf7ff;
+  --tp-ink: #071a2d;
+  /* A step darker than the homepage's muted values. These pages set body copy on
+     translucent panels over artwork, so the composited ground is lighter than a solid
+     surface and the homepage's #40566d / #66523c measured 4.08:1 and 3.53:1 there. */
+  --tp-muted: #33465a;
+}
+
+body.theme-beige .xv-theme-surface {
+  --tp-bg: #f2e2c8;
+  --tp-ink: #2d2115;
+  --tp-muted: #513f2c;
+  --tp-accent: #71502f;
+  --tp-action-bg: #68431f;
+  --tp-action-text: #fff8eb;
+}
+
+body.theme-gray .xv-theme-surface {
+  --tp-bg: #1a1a1a;
+  --tp-ink: #f3f4f6;
+  --tp-muted: #a3a3a3;
+  --tp-action-bg: #f3f4f6;
+  --tp-action-text: #080808;
+  color-scheme: dark;
+}
+
+body.theme-black .xv-theme-surface {
+  --tp-bg: #000000;
+  --tp-ink: #f8fafc;
+  --tp-muted: #a3a3a3;
+  --tp-action-bg: #ffffff;
+  --tp-action-text: #050505;
+  color-scheme: dark;
+}
+
+/* A panel over artwork needs a little opacity to stay a panel, and enough of the
+   theme's ground behind it that the text on it never competes with the sky. */
+.xv-theme-surface {
+  --tp-panel: color-mix(in srgb, var(--tp-bg) 82%, transparent);
+  --tp-panel-solid: color-mix(in srgb, var(--tp-bg) 94%, var(--tp-ink) 6%);
+}

@@ -2,11 +2,27 @@
 
 import type {
   CSSProperties,
-  ReactNode,
 } from 'react';
 
-import { AuthShowcase } from './AuthShowcase';
-import { useThemeStore } from '@/store/useThemeStore';
+import {
+  LoginForm,
+} from './LoginForm';
+
+import {
+  SignupForm,
+} from './SignupForm';
+
+import {
+  AuthShowcase,
+} from './AuthShowcase';
+
+import {
+  useThemeStore,
+} from '@/store/useThemeStore';
+
+type AuthMode =
+  | 'signup'
+  | 'login';
 
 type AuthTheme =
   | 'white'
@@ -14,103 +30,193 @@ type AuthTheme =
   | 'gray'
   | 'black';
 
-type AuthThemeStyle = CSSProperties & {
-  '--auth-page': string;
-  '--auth-shell': string;
-  '--auth-panel': string;
-  '--auth-border': string;
-  '--auth-border-strong': string;
-  '--auth-text': string;
-  '--auth-muted': string;
-  '--auth-input': string;
-  '--auth-input-hover': string;
-  '--auth-soft': string;
-  '--auth-shadow': string;
-};
+type AuthThemeStyle =
+  CSSProperties & {
+    '--auth-page': string;
 
-const AUTH_THEME_STYLES: Record<AuthTheme, AuthThemeStyle> = {
+    '--auth-shell': string;
+
+    '--auth-surface': string;
+
+    '--auth-side': string;
+
+    '--auth-border': string;
+
+    '--auth-border-strong': string;
+
+    '--auth-text': string;
+
+    '--auth-muted': string;
+
+    '--auth-input': string;
+
+    '--auth-input-hover': string;
+
+    '--auth-soft': string;
+
+    '--auth-shadow': string;
+  };
+
+const AUTH_THEME_STYLES: Record<
+  AuthTheme,
+  AuthThemeStyle
+> = {
   white: {
-    '--auth-page': '#eef0f3',
-    '--auth-shell': '#ffffff',
-    '--auth-panel': '#ffffff',
+    '--auth-page':
+      '#f2f2ef',
 
-    '--auth-border': 'rgba(15, 23, 42, 0.10)',
-    '--auth-border-strong': 'rgba(15, 23, 42, 0.18)',
+    '--auth-shell':
+      '#ffffff',
 
-    '--auth-text': '#111318',
-    '--auth-muted': '#747b86',
+    '--auth-surface':
+      '#ffffff',
 
-    '--auth-input': '#f8f9fa',
-    '--auth-input-hover': '#ffffff',
+    '--auth-side':
+      '#fbfbfa',
 
-    '--auth-soft': 'rgba(15, 23, 42, 0.045)',
+    '--auth-border':
+      'rgba(15,23,42,0.10)',
+
+    '--auth-border-strong':
+      'rgba(15,23,42,0.18)',
+
+    '--auth-text':
+      '#12151b',
+
+    '--auth-muted':
+      '#717782',
+
+    '--auth-input':
+      '#f7f7f5',
+
+    '--auth-input-hover':
+      '#ffffff',
+
+    '--auth-soft':
+      'rgba(15,23,42,0.045)',
 
     '--auth-shadow':
-      '0 30px 90px rgba(30, 41, 59, 0.13), 0 8px 24px rgba(30, 41, 59, 0.06)',
+      '0 30px 90px rgba(24,35,54,0.13), 0 8px 24px rgba(24,35,54,0.05)',
   },
 
   beige: {
-    '--auth-page': '#eee9df',
-    '--auth-shell': '#fbf7ef',
-    '--auth-panel': '#fbf7ef',
+    '--auth-page':
+      '#eee8de',
 
-    '--auth-border': 'rgba(86, 68, 45, 0.13)',
-    '--auth-border-strong': 'rgba(86, 68, 45, 0.22)',
+    '--auth-shell':
+      '#fbf7ef',
 
-    '--auth-text': '#29231c',
-    '--auth-muted': '#786d60',
+    '--auth-surface':
+      '#fbf7ef',
 
-    '--auth-input': '#f5efe5',
-    '--auth-input-hover': '#fffaf2',
+    '--auth-side':
+      '#f7f1e7',
 
-    '--auth-soft': 'rgba(86, 68, 45, 0.055)',
+    '--auth-border':
+      'rgba(86,68,45,0.13)',
+
+    '--auth-border-strong':
+      'rgba(86,68,45,0.22)',
+
+    '--auth-text':
+      '#29231c',
+
+    '--auth-muted':
+      '#786d60',
+
+    '--auth-input':
+      '#f3ede2',
+
+    '--auth-input-hover':
+      '#fffaf2',
+
+    '--auth-soft':
+      'rgba(86,68,45,0.055)',
 
     '--auth-shadow':
-      '0 30px 90px rgba(73, 58, 40, 0.14), 0 8px 24px rgba(73, 58, 40, 0.07)',
+      '0 30px 90px rgba(73,58,40,0.14), 0 8px 24px rgba(73,58,40,0.06)',
   },
 
   gray: {
-    '--auth-page': '#111214',
-    '--auth-shell': '#1a1b1e',
-    '--auth-panel': '#1a1b1e',
+    '--auth-page':
+      '#111214',
 
-    '--auth-border': 'rgba(255, 255, 255, 0.09)',
-    '--auth-border-strong': 'rgba(255, 255, 255, 0.17)',
+    '--auth-shell':
+      '#1a1b1e',
 
-    '--auth-text': '#f4f4f5',
-    '--auth-muted': '#a1a4aa',
+    '--auth-surface':
+      '#1a1b1e',
 
-    '--auth-input': '#141518',
-    '--auth-input-hover': '#1e1f23',
+    '--auth-side':
+      '#16171a',
 
-    '--auth-soft': 'rgba(255, 255, 255, 0.05)',
+    '--auth-border':
+      'rgba(255,255,255,0.09)',
+
+    '--auth-border-strong':
+      'rgba(255,255,255,0.17)',
+
+    '--auth-text':
+      '#f4f4f5',
+
+    '--auth-muted':
+      '#a1a4aa',
+
+    '--auth-input':
+      '#141518',
+
+    '--auth-input-hover':
+      '#202125',
+
+    '--auth-soft':
+      'rgba(255,255,255,0.05)',
 
     '--auth-shadow':
-      '0 34px 100px rgba(0, 0, 0, 0.44), 0 10px 30px rgba(0, 0, 0, 0.25)',
+      '0 34px 100px rgba(0,0,0,0.44), 0 8px 26px rgba(0,0,0,0.25)',
   },
 
   black: {
-    '--auth-page': '#000000',
-    '--auth-shell': '#090a0c',
-    '--auth-panel': '#090a0c',
+    '--auth-page':
+      '#000000',
 
-    '--auth-border': 'rgba(255, 255, 255, 0.09)',
-    '--auth-border-strong': 'rgba(255, 255, 255, 0.18)',
+    '--auth-shell':
+      '#090a0c',
 
-    '--auth-text': '#f7f7f8',
-    '--auth-muted': '#989ba2',
+    '--auth-surface':
+      '#090a0c',
 
-    '--auth-input': '#050608',
-    '--auth-input-hover': '#101114',
+    '--auth-side':
+      '#060709',
 
-    '--auth-soft': 'rgba(255, 255, 255, 0.045)',
+    '--auth-border':
+      'rgba(255,255,255,0.09)',
+
+    '--auth-border-strong':
+      'rgba(255,255,255,0.18)',
+
+    '--auth-text':
+      '#f7f7f8',
+
+    '--auth-muted':
+      '#989ba2',
+
+    '--auth-input':
+      '#050608',
+
+    '--auth-input-hover':
+      '#101114',
+
+    '--auth-soft':
+      'rgba(255,255,255,0.045)',
 
     '--auth-shadow':
-      '0 36px 110px rgba(0, 0, 0, 0.70), 0 12px 32px rgba(0, 0, 0, 0.42)',
+      '0 36px 110px rgba(0,0,0,0.70), 0 10px 30px rgba(0,0,0,0.42)',
   },
 };
 
-function resolveAuthTheme(theme: string): AuthTheme {
+function resolveTheme(
+  theme: string
+): AuthTheme {
   if (
     theme === 'white' ||
     theme === 'beige' ||
@@ -124,109 +230,213 @@ function resolveAuthTheme(theme: string): AuthTheme {
 }
 
 export function AuthShell({
-  children,
+  mode,
 }: {
-  children: ReactNode;
-  subtitle?: string;
+  mode: AuthMode;
 }) {
-  const currentTheme = useThemeStore((state) => state.theme);
+  const currentTheme =
+    useThemeStore(
+      (state) =>
+        state.theme
+    );
 
-  const theme = resolveAuthTheme(currentTheme);
+  const theme =
+    resolveTheme(
+      currentTheme
+    );
 
   return (
     <main
-      data-auth-theme={theme}
-      style={AUTH_THEME_STYLES[theme]}
+      data-auth-theme={
+        theme
+      }
+      style={
+        AUTH_THEME_STYLES[
+          theme
+        ]
+      }
       className="
+        flex
         min-h-[100dvh]
+
+        items-center
+        justify-center
+
         bg-[var(--auth-page)]
-        p-2.5
+
+        p-2
+
         text-[var(--auth-text)]
+
         transition-colors
         duration-300
-        sm:p-4
-        lg:p-6
+
+        sm:p-3
+
+        xl:h-[100dvh]
+        xl:overflow-hidden
       "
     >
+      {/*
+       * ONE SINGLE AUTH CARD.
+       *
+       * Desktop:
+       *
+       * IMAGE | CREATE ACCOUNT | SIGN IN
+       *
+       * Tablet/mobile:
+       *
+       * IMAGE
+       * ACTIVE FORM
+       */}
       <div
         className="
           mx-auto
           grid
-          min-h-[calc(100dvh-20px)]
           w-full
-          max-w-[1380px]
+          max-w-[1740px]
+
           overflow-hidden
+
           rounded-[30px]
+
           border
           border-[var(--auth-border)]
+
           bg-[var(--auth-shell)]
+
           shadow-[var(--auth-shadow)]
-          transition-colors
-          duration-300
 
-          sm:min-h-[calc(100dvh-32px)]
+          grid-cols-1
 
-          lg:min-h-[calc(100dvh-48px)]
-          lg:grid-cols-[minmax(0,1.05fr)_minmax(430px,0.95fr)]
+          xl:h-[calc(100dvh-24px)]
+          xl:max-h-[760px]
+          xl:min-h-[680px]
+
+          xl:grid-cols-[minmax(450px,1.12fr)_minmax(500px,0.98fr)_minmax(300px,0.66fr)]
         "
       >
+        {/*
+         * IMAGE
+         *
+         * No padding.
+         * No second card.
+         * No fake image background.
+         */}
         <div
           className="
-            h-[380px]
+            relative
+            min-h-0
             min-w-0
-            p-2.5
+            overflow-hidden
 
-            sm:h-[500px]
-            sm:p-3
+            h-[300px]
 
-            lg:h-auto
-            lg:min-h-[760px]
-            lg:p-3.5
+            sm:h-[370px]
+
+            lg:h-[430px]
+
+            xl:h-full
           "
         >
           <AuthShowcase />
         </div>
 
+        {/*
+         * CREATE ACCOUNT
+         *
+         * Always shown on desktop.
+         * Below desktop it is shown only
+         * when the current route is signup.
+         */}
         <section
-          className="
-            relative
-            flex
-            min-w-0
-            items-center
-            justify-center
-            bg-[var(--auth-panel)]
-            px-5
-            py-9
-            transition-colors
-            duration-300
+          className={[
+            `
+              min-h-0
+              min-w-0
 
-            sm:px-9
-            sm:py-12
+              items-center
+              justify-center
 
-            lg:px-12
-            lg:py-14
+              bg-[var(--auth-surface)]
 
-            xl:px-16
-          "
+              px-5
+              py-7
+
+              sm:px-8
+
+              xl:flex
+              xl:h-full
+              xl:overflow-y-auto
+              xl:border-l
+              xl:border-[var(--auth-border)]
+              xl:px-8
+              xl:py-6
+
+              [scrollbar-width:none]
+              [&::-webkit-scrollbar]:hidden
+            `,
+
+            mode === 'signup'
+              ? 'flex'
+              : 'hidden xl:flex',
+          ].join(' ')}
         >
           <div
-            aria-hidden
             className="
-              pointer-events-none
-              absolute
-              inset-0
-              opacity-70
+              w-full
+              max-w-[560px]
             "
-            style={{
-              background:
-                'radial-gradient(circle at 90% 8%, rgba(0,106,255,0.075), transparent 27%)',
-            }}
-          />
-
-          <div className="relative z-10 w-full max-w-[470px]">
-            {children}
+          >
+            <SignupForm />
           </div>
         </section>
+
+        {/*
+         * SIGN IN
+         *
+         * Always shown on desktop.
+         * Below desktop it is shown only
+         * when the current route is login.
+         */}
+        <aside
+          className={[
+            `
+              min-h-0
+              min-w-0
+
+              items-center
+              justify-center
+
+              bg-[var(--auth-side)]
+
+              px-5
+              py-8
+
+              sm:px-8
+
+              xl:flex
+              xl:h-full
+              xl:border-l
+              xl:border-[var(--auth-border)]
+              xl:px-6
+              xl:py-7
+            `,
+
+            mode === 'login'
+              ? 'flex'
+              : 'hidden xl:flex',
+          ].join(' ')}
+        >
+          <div
+            className="
+              w-full
+              max-w-[390px]
+            "
+          >
+            <LoginForm />
+          </div>
+        </aside>
       </div>
     </main>
   );

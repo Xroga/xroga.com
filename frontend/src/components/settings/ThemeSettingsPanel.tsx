@@ -2,7 +2,7 @@
 
 import { Check } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
-import { ACCENT_OPTIONS, THEME_OPTIONS, THEME_SURFACE, normalizeTheme, skinForTheme, type CoreThemeId } from '@/lib/theme';
+import { ACCENT_OPTIONS, FONT_CHOICES, THEME_OPTIONS, THEME_SURFACE, normalizeTheme, skinForTheme, type CoreThemeId } from '@/lib/theme';
 import { Switch } from '@/components/ui/Switch';
 import { Select } from '@/components/ui/Select';
 import { SettingsDivider, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
@@ -16,6 +16,10 @@ export function ThemeSettingsPanel() {
   const setAccent = useThemeStore((s) => s.setAccent);
   const fontPreference = useThemeStore((s) => s.fontPreference);
   const setFontPreference = useThemeStore((s) => s.setFontPreference);
+  const sidebarFont = useThemeStore((s) => s.sidebarFont);
+  const setSidebarFont = useThemeStore((s) => s.setSidebarFont);
+  const workspaceFont = useThemeStore((s) => s.workspaceFont);
+  const setWorkspaceFont = useThemeStore((s) => s.setWorkspaceFont);
   const density = useThemeStore((s) => s.density);
   const setDensity = useThemeStore((s) => s.setDensity);
   const reducedMotion = useThemeStore((s) => s.reducedMotion);
@@ -95,12 +99,21 @@ export function ThemeSettingsPanel() {
                   active ? 'border-[var(--border-strong)] text-[var(--text-primary)]' : 'border-[var(--border-subtle)] text-[var(--text-secondary)]',
                 )}
               >
+                {/* Default's swatch is `currentColor`, so it paints the theme ink and
+                    inverts with the theme rather than showing a hex that would be
+                    wrong on three themes out of four. Its tick has to invert with it,
+                    which a fixed white one would not. */}
                 <span
                   className="flex h-5 w-5 items-center justify-center rounded-full"
-                  style={{ backgroundColor: opt.swatch }}
+                  style={{ backgroundColor: opt.swatch, color: 'var(--foreground)' }}
                   aria-hidden="true"
                 >
-                  {active && <Check className="h-3 w-3 text-white" />}
+                  {active && (
+                    <Check
+                      className="h-3 w-3"
+                      style={{ color: opt.id === 'default' ? 'var(--background)' : '#ffffff' }}
+                    />
+                  )}
                 </span>
                 {opt.label}
               </button>
@@ -112,7 +125,7 @@ export function ThemeSettingsPanel() {
       <SettingsDivider />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Select label="Font" value={fontPreference} onChange={(e) => setFontPreference(e.target.value as typeof fontPreference)}>
+        <Select label="Shell font" value={fontPreference} onChange={(e) => setFontPreference(e.target.value as typeof fontPreference)}>
           <option value="modern">Modern</option>
           <option value="classic">Classic</option>
           <option value="mono">Monospace</option>
@@ -120,6 +133,37 @@ export function ThemeSettingsPanel() {
         <Select label="Density" value={density} onChange={(e) => setDensity(e.target.value as typeof density)}>
           <option value="comfortable">Comfortable</option>
           <option value="compact">Compact</option>
+        </Select>
+      </div>
+
+      <SettingsDivider />
+
+      {/* Two surfaces, two choices. They were one setting for the whole shell, which
+          is the wrong grain: the sidebar is a list of labels and the workspace is a
+          working surface, and the face that suits one need not suit the other.
+          `Default` leaves a surface on whatever the shell is already using. */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Select
+          label="Sidebar font"
+          value={sidebarFont}
+          onChange={(e) => setSidebarFont(e.target.value as typeof sidebarFont)}
+        >
+          {FONT_CHOICES.map((choice) => (
+            <option key={choice.id} value={choice.id}>
+              {choice.label} — {choice.hint}
+            </option>
+          ))}
+        </Select>
+        <Select
+          label="Workspace font"
+          value={workspaceFont}
+          onChange={(e) => setWorkspaceFont(e.target.value as typeof workspaceFont)}
+        >
+          {FONT_CHOICES.map((choice) => (
+            <option key={choice.id} value={choice.id}>
+              {choice.label} — {choice.hint}
+            </option>
+          ))}
         </Select>
       </div>
 

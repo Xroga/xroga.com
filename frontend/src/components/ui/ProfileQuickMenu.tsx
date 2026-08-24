@@ -3,13 +3,57 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { WandSparkles, Users, MessageCircleHeart, Sparkles, ShieldCheck } from 'lucide-react';
+import {
+  SlidersHorizontal,
+  MessageCircleHeart,
+  Palette,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  UserRound,
+  Users,
+} from 'lucide-react';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { LogoutButton } from '@/components/ui/Uiverse';
 import { useAppStore } from '@/store/useAppStore';
 import { communityApi } from '@/lib/community';
 
+/**
+ * The account items come first.
+ *
+ * This menu opened off the profile row but carried none of the things a profile menu
+ * is opened for — the plan, the account, settings — so reaching any of them meant
+ * leaving the sidebar and hunting for them elsewhere.
+ */
 const ITEMS = [
+  {
+    key: 'plan',
+    label: 'Upgrade plan',
+    desc: 'Compare plans and change your subscription',
+    icon: Sparkles,
+    href: '/pricing',
+  },
+  {
+    key: 'profile',
+    label: 'Profile',
+    desc: 'Your name, avatar, and account details',
+    icon: UserRound,
+    href: '/settings?tab=profile',
+  },
+  {
+    key: 'personalization',
+    label: 'Personalization',
+    desc: 'Theme, terminal skin, and the companion',
+    icon: Palette,
+    href: '/settings?tab=companion',
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
+    desc: 'Account, workspace, and preferences',
+    icon: Settings,
+    href: '/settings',
+  },
   {
     key: 'community',
     label: 'Community',
@@ -119,11 +163,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         type="button"
         onClick={() => setOpen(!open)}
         className="xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
-        aria-label="Quick links"
-        title="Quick links"
+        aria-label="Account menu"
+        title="Account menu"
         aria-expanded={open}
       >
-        <WandSparkles className="w-4 h-4" />
+        {/* Sliders, not a chevron: a chevron points somewhere and this opens a panel
+            of controls in place. It was a wand before that, which suggested an effect
+            rather than a menu. */}
+        <SlidersHorizontal className="w-4 h-4" />
       </button>
 
       {open &&
@@ -138,7 +185,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
             >
               <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-xl shadow-2xl overflow-visible">
                 <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">
-                  Quick links
+                  Account
                 </p>
                 <ul className="p-1.5 space-y-0.5">
                   {ITEMS.map((item) => {

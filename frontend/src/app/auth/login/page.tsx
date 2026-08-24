@@ -1,24 +1,49 @@
-import type { Metadata } from 'next';
-import { buildMetadata } from '@/lib/seo';
-import { LoginForm } from '@/components/auth/LoginForm';
-import { AuthShell } from '@/components/auth/AuthShell';
-import { Suspense } from 'react';
+import type {
+  Metadata,
+} from 'next';
+
+import {
+  Suspense,
+} from 'react';
+
+import {
+  buildMetadata,
+} from '@/lib/seo';
+
+import {
+  AuthShell,
+} from '@/components/auth/AuthShell';
 
 export const metadata: Metadata = {
   ...buildMetadata({
-  title: 'Sign In — Log In to Xroga AI Dashboard',
-  description:
-    'Sign in to Xroga AI Workspace to continue repository work, validation, and authorised publishing.',
-  path: '/auth/login',
-  keywords: ['Xroga login', 'Xroga sign in', 'AI coding agent login', 'xroga.com login', 'Xroga workspace login'],
+    title:
+      'Sign In — Log In to Xroga AI Dashboard',
+
+    description:
+      'Sign in to Xroga AI Workspace to continue repository work, validation, and authorised publishing.',
+
+    path:
+      '/auth/login',
+
+    keywords: [
+      'Xroga login',
+      'Xroga sign in',
+      'AI coding agent login',
+      'xroga.com login',
+      'Xroga workspace login',
+    ],
   }),
-  robots: { index: false, follow: false },
+
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function LoginPage() {
   return (
-    <AuthShell>
-      <Suspense fallback={null}><LoginForm /></Suspense>
-    </AuthShell>
+    <Suspense fallback={null}>
+      <AuthShell mode="login" />
+    </Suspense>
   );
 }
