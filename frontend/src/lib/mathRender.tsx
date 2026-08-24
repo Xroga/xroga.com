@@ -1,16 +1,26 @@
 'use client';
 
-import katex from 'katex';
-import { useMemo } from 'react';
+import { Suspense, lazy } from 'react';
 
-/** Convert plain equation text to LaTeX for KaTeX rendering */
-export function equationToLatex(text: string): string {
-  let out = text.trim();
-  out = out.replace(/\*/g, ' \\cdot ');
-  out = out.replace(/(\d+)\s*\/\s*(\d+)/g, '\\frac{$1}{$2}');
-  out = out.replace(/(\d)([a-z])/gi, '$1$2');
-  return out;
-}
+export { equationToLatex } from './equationToLatex';
+
+/**
+ * A rendered equation, with the typesetter loaded only when one appears.
+ *
+ * KaTeX was imported statically here, which put ~256 kB of JavaScript into the first
+ * load of `/workspace` — the app's largest route — plus a 23 kB stylesheet that
+ * `globals.css` then put on every page of the site, for a feature that only runs when
+ * a reply happens to contain an equation line. Both now travel in a chunk fetched on
+ * first use.
+ *
+ * `lazy` rather than `next/dynamic` because the fallback needs the props: dynamic's
+ * `loading` receives none, so it could only render an empty box, and an equation that
+ * collapses to nothing and then reappears shifts the text under the reader. The
+ * fallback here is the same plain-text form the renderer falls back to when KaTeX
+ * throws, in the same element, so the line keeps its shape while the chunk is in
+ * flight.
+ */
+const MathEquationImpl = lazy(() => import('./mathRenderImpl'));
 
 export function MathEquation({
   text,
@@ -21,33 +31,14 @@ export function MathEquation({
   className?: string;
   display?: boolean;
 }) {
-  const html = useMemo(() => {
-    try {
-      return katex.renderToString(equationToLatex(text), {
-        throwOnError: false,
-        displayMode: display,
-        output: 'html',
-      });
-    } catch {
-      return text.replace(/\*/g, '·');
-    }
-  }, [text, display]);
-
-  if (display) {
-    return (
-      <div
-        className={className}
-        dangerouslySetInnerHTML={{ __html: html }}
-        aria-label={text}
-      />
-    );
-  }
+  const plain = text.replace(/\*/g, '·');
+  const fallback = display
+    ? <div className={className} aria-label={text}>{plain}</div>
+    : <span className={className} aria-label={text}>{plain}</span>;
 
   return (
-    <span
-      className={className}
-      dangerouslySetInnerHTML={{ __html: html }}
-      aria-label={text}
-    />
+    <Suspense fallback={fallback}>
+      <MathEquationImpl text={text} className={className} display={display} />
+    </Suspense>
   );
 }
