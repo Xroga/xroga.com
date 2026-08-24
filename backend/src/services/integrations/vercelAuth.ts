@@ -74,12 +74,18 @@ const ALLOWED_CALLBACK_ORIGINS = [
 type StoredVercelAuth = {
   access_token: string;
   username: string;
+  auth_kind?: VercelAuthKind;
   provider_user_id?: string;
   refresh_token?: string;
   expires_in?: number;
   expires_at?: string;
   updated_at: string;
 };
+
+export type VercelAuthKind =
+  | 'sign_in_with_vercel'
+  | 'personal_token'
+  | 'integration_oauth';
 
 function vercelStoragePath(userId: string): string {
   return `${userId}/vercel.json`;
@@ -505,6 +511,7 @@ async function loadVercelConnection(userId: string): Promise<{
   refresh_token?: string | null;
   username?: string;
   expires_at?: string;
+  auth_kind?: VercelAuthKind;
 } | null> {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -515,12 +522,18 @@ async function loadVercelConnection(userId: string): Promise<{
     .maybeSingle();
 
   if (!error && data?.access_token?.trim()) {
-    const meta = (data.metadata ?? {}) as { username?: string; expires_at?: string };
+    const meta = (data.metadata ?? {}) as {
+      username?: string;
+      expires_at?: string;
+      auth_kind?: VercelAuthKind;
+    };
     return {
       access_token: data.access_token.trim(),
       refresh_token: data.refresh_token,
       username: meta.username,
       expires_at: meta.expires_at,
+      auth_kind:
+        meta.auth_kind ?? (data.refresh_token ? 'sign_in_with_vercel' : 'personal_token'),
     };
   }
 
@@ -535,6 +548,8 @@ async function loadVercelConnection(userId: string): Promise<{
     refresh_token: stored.refresh_token,
     username: stored.username,
     expires_at: stored.expires_at,
+    auth_kind:
+      stored.auth_kind ?? (stored.refresh_token ? 'sign_in_with_vercel' : 'personal_token'),
   };
 }
 
@@ -598,6 +613,20 @@ export async function probeVercelApiCapabilities(token: string): Promise<{
   };
 }
 
+export function vercelCredentialCanDeploy(
+  authKind: VercelAuthKind,
+  capability: { canListProjects: boolean; canReadDeployments: boolean },
+): boolean {
+  // Sign in with Vercel is an identity grant. Its list endpoints can return 200
+  // while deployment creation still returns 403. Only credentials issued for
+  // API use may pass deploy readiness.
+  return (
+    authKind !== 'sign_in_with_vercel' &&
+    capability.canListProjects &&
+    capability.canReadDeployments
+  );
+}
+
 export async function isVercelConnected(userId: string): Promise<boolean> {
   const token = await getVercelToken(userId);
   return Boolean(token);
@@ -616,6 +645,10 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
 }> {
   const token = await getVercelToken(userId);
   if (!token) return { ok: false, error: 'not_connected' };
+  const connection = await loadVercelConnection(userId);
+  const authKind =
+    connection?.auth_kind ??
+    (connection?.refresh_token ? 'sign_in_with_vercel' : 'personal_token');
 
   let username: string | undefined;
   let identityOk = false;
@@ -666,7 +699,7 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
     // guaranteed 403 after code was pushed. Deployment-read access is a safe,
     // non-mutating minimum proof; creation still remains guarded by the real
     // deployment request.
-    canDeploy = capability.canListProjects && capability.canReadDeployments;
+    canDeploy = vercelCredentialCanDeploy(authKind, capability);
   } catch {
     canDeploy = false;
   }
@@ -682,6 +715,7 @@ export async function saveVercelConnection(
     providerUserId?: string;
     refreshToken?: string;
     expiresIn?: number;
+    authKind?: VercelAuthKind;
   },
 ): Promise<void> {
   const token = accessToken.trim();
@@ -695,6 +729,8 @@ export async function saveVercelConnection(
   const storagePayload: StoredVercelAuth = {
     access_token: token,
     username: meta.username ?? 'vercel-user',
+    auth_kind:
+      meta.authKind ?? (meta.refreshToken ? 'sign_in_with_vercel' : 'personal_token'),
     provider_user_id: meta.providerUserId,
     refresh_token: meta.refreshToken,
     expires_in: meta.expiresIn,
@@ -715,6 +751,8 @@ export async function saveVercelConnection(
     provider_user_id: meta.providerUserId ?? null,
     metadata: {
       username: meta.username ?? 'vercel-user',
+      auth_kind:
+        meta.authKind ?? (meta.refreshToken ? 'sign_in_with_vercel' : 'personal_token'),
       expires_in: meta.expiresIn,
       expires_at: expiresAt,
       connected_at: new Date().toISOString(),

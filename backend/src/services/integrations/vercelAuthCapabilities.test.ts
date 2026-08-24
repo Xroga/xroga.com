@@ -1,6 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { probeVercelApiCapabilities } from './vercelAuth.js';
+import {
+  probeVercelApiCapabilities,
+  vercelCredentialCanDeploy,
+} from './vercelAuth.js';
+
+test('identity grants never claim deploy readiness from read-only list endpoints', () => {
+  const readable = { canListProjects: true, canReadDeployments: true };
+  assert.equal(vercelCredentialCanDeploy('sign_in_with_vercel', readable), false);
+  assert.equal(vercelCredentialCanDeploy('personal_token', readable), true);
+  assert.equal(vercelCredentialCanDeploy('integration_oauth', readable), true);
+});
 
 test('deploy readiness rejects identity-only tokens that can list projects', async (t) => {
   const originalFetch = globalThis.fetch;
