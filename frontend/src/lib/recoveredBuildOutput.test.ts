@@ -3,6 +3,7 @@ import { test } from 'node:test';
 
 import {
   isRecoverableBuildOutput,
+  latestRecoverableLandingOutput,
   recoveredLandingWorkspaceBuild,
 } from './recoveredBuildOutput';
 
@@ -74,4 +75,28 @@ test('recovered update keeps existing preview fields only when the durable outpu
 
 test('a bare landing marker cannot overwrite a restored workspace', () => {
   assert.equal(recoveredLandingWorkspaceBuild({ type: 'landing_page' }, current, null), null);
+});
+
+test('reload selects the newest assistant landing artifact that owns real source', () => {
+  const older = { type: 'landing_page', html: '<main>Older generated website source</main>' };
+  const newest = { type: 'landing_page', html: '<main>Current generated website source</main>' };
+  assert.equal(
+    latestRecoverableLandingOutput([
+      { role: 'assistant', featureOutput: older },
+      { role: 'user' },
+      { role: 'assistant', featureOutput: { type: 'landing_page' } },
+      { role: 'assistant', featureOutput: newest },
+    ]),
+    newest
+  );
+});
+
+test('reload ignores non-assistant and source-less landing markers', () => {
+  assert.equal(
+    latestRecoverableLandingOutput([
+      { role: 'user', featureOutput: { type: 'landing_page', html: '<main>not output</main>' } },
+      { role: 'assistant', featureOutput: { type: 'landing_page' } },
+    ]),
+    null
+  );
 });

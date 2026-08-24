@@ -15,6 +15,20 @@ type WorkspaceSnapshot = Pick<
 
 export type RecoveredWorkspaceBuild = Parameters<ProjectWorkspaceState['applyBuild']>[0];
 
+export function latestRecoverableLandingOutput(
+  messages: Array<{ role?: string; featureOutput?: unknown }>
+): Output | null {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (message?.role !== 'assistant') continue;
+    if (isRecoverableBuildOutput(message.featureOutput)) {
+      const output = message.featureOutput as Output;
+      if (output.type === 'landing_page') return output;
+    }
+  }
+  return null;
+}
+
 function text(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }

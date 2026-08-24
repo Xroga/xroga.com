@@ -82,11 +82,30 @@ import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
-import { recoveredLandingWorkspaceBuild } from '@/lib/recoveredBuildOutput';
+import {
+  latestRecoverableLandingOutput,
+  recoveredLandingWorkspaceBuild,
+} from '@/lib/recoveredBuildOutput';
 import { swarmOutputToText } from '@/lib/swarm';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
+
+async function restoreProjectWorkspaceFromMessages(
+  messages: ChatMessage[],
+  repositoryName?: string
+): Promise<void> {
+  const output = latestRecoverableLandingOutput(messages);
+  if (!output) return;
+  const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
+  const workspace = useProjectWorkspaceStore.getState();
+  const selected = getSelectedRepoContext();
+  const payload = recoveredLandingWorkspaceBuild(output, workspace, {
+    repo: repositoryName?.includes('/') ? repositoryName : selected?.repo,
+    branch: selected?.branch ?? 'main',
+  });
+  if (payload) workspace.applyBuild(payload);
+}
 
 function lastUserPromptNear(
   messages: ChatMessage[],
@@ -568,6 +587,12 @@ export function TerminalChatProvider({
       .then((session) => {
         if (cancelled) return;
         let adoptedStored = false;
+        if (session?.messages?.length) {
+          void restoreProjectWorkspaceFromMessages(
+            session.messages,
+            session.githubRepoName
+          );
+        }
         // Never wipe a live conversation the user already started while hydrate was in flight.
         setMessages((current) => {
           if (current.length > 0) return current;
@@ -753,6 +778,7 @@ export function TerminalChatProvider({
         return;
       }
       setMessages(session.messages);
+      void restoreProjectWorkspaceFromMessages(session.messages, session.githubRepoName);
       if (threadHasCompletedWebsite(session.messages)) {
         completedWebsiteBuildRef.current = true;
       }
@@ -808,6 +834,7 @@ export function TerminalChatProvider({
       const { rehydratePersistedMessages } = await import('@/lib/rehydratePersistedMessages');
       const hydrated = await rehydratePersistedMessages(opts.messages, opts.githubRepoName);
       setMessages(hydrated);
+      await restoreProjectWorkspaceFromMessages(hydrated, opts.githubRepoName);
       setPrompt(opts.prompt);
       completedWebsiteBuildRef.current = threadHasCompletedWebsite(hydrated);
 
