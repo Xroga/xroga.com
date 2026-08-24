@@ -62,6 +62,14 @@ test('a specific product beats a generic one', () => {
   assert.equal(detectProductBlueprint('build a defi staking website')?.id, 'defi_dashboard');
 });
 
+test('negative constraints do not select the product they explicitly exclude', () => {
+  const prompt =
+    'Build a static one-page marketing website for a coffee shop. This is not ecommerce: no cart, checkout, ordering, accounts, payments, or backend.';
+  assert.notEqual(detectProductBlueprint(prompt)?.id, 'ecommerce');
+  assert.equal(detectProductBlueprint(prompt)?.id, 'website');
+  assert.equal(detectProductBlueprint('Build an online shop with a cart and checkout')?.id, 'ecommerce');
+});
+
 test('a non-web product selects no blueprint', () => {
   // Chrome extensions, CLIs and mobile apps reach the same code. Demanding a <nav> of
   // them would produce gap reports that are simply wrong.

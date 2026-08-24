@@ -40,6 +40,19 @@ describe('detectScaffoldKind', () => {
   it('defaults to static for simple sites', () => {
     assert.equal(detectScaffoldKind('Build a simple landing page for a cafe'), 'static');
   });
+
+  it('does not turn explicitly excluded capabilities into a scaffold request', () => {
+    assert.equal(
+      detectScaffoldKind(
+        'Build a static cafe website. This is not ecommerce: no cart, checkout, accounts, payments, or backend.',
+      ),
+      'static',
+    );
+    assert.equal(
+      detectScaffoldKind('Build a website without auth, login, Supabase, database, or API routes.'),
+      'static',
+    );
+  });
 });
 
 describe('detectScaffoldFeatures', () => {

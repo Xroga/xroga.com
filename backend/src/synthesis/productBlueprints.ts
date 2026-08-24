@@ -1,4 +1,5 @@
 import type { ProjectFile } from '../ai/patches.js';
+import { capabilityRoutingText } from '../services/scaffolds/detectScaffold.js';
 
 /**
  * What each kind of product actually has to contain.
@@ -153,7 +154,7 @@ export const PRODUCT_BLUEPRINTS: readonly ProductBlueprint[] = [
   {
     id: 'ecommerce',
     label: 'Online store',
-    match: /\b(e-?commerce|online\s*store|storefront|shop|cart|checkout|sell\s+products)\b/i,
+    match: /\b(e-?commerce|online\s*(?:store|shop)|storefront|shopping\s+site|cart|checkout|sell\s+products)\b/i,
     intent: 'A storefront where a visitor browses products and reaches a checkout.',
     sections: [
       ...WEB_BASE,
@@ -252,7 +253,7 @@ export const PRODUCT_BLUEPRINTS: readonly ProductBlueprint[] = [
  * that are simply wrong.
  */
 export function detectProductBlueprint(prompt: string): ProductBlueprint | null {
-  const text = prompt || '';
+  const text = capabilityRoutingText(prompt || '');
   if (!text.trim()) return null;
   // Specificity order: the array is ordered narrow → broad, so the first match wins.
   return PRODUCT_BLUEPRINTS.find((blueprint) => blueprint.match.test(text)) ?? null;
