@@ -180,11 +180,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
             <div
               ref={menuRef}
               id="xv-profile-quick-menu"
-              className="fixed z-[300] w-[min(272px,calc(100vw-32px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
+              className="fixed z-[300] w-[min(296px,calc(100vw-32px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
               style={{ top: pos.top, left: pos.left }}
             >
-              <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-xl shadow-2xl overflow-visible">
-                <p className="text-[9px] uppercase tracking-widest text-[var(--muted)] px-3 pt-2.5 pb-1 font-semibold">
+              {/* The card carries its edge with a shadow and a hairline ring rather than
+                  a drawn border: at 272px with a plain border and a flat shadow it read
+                  as a dropdown from a decade ago. */}
+              <div className="xv-pqm-card rounded-[18px] border border-[var(--card-border)]/70 bg-[var(--card)] backdrop-blur-xl overflow-visible">
+                <p className="text-[9px] uppercase tracking-[0.14em] text-[var(--muted)] px-3.5 pt-3 pb-1.5 font-semibold">
                   Account
                 </p>
                 <ul className="p-1.5 space-y-0.5">
@@ -195,9 +198,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                         <button
                           type="button"
                           onClick={() => handleItem(item)}
-                          className="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--accent)]/10 transition-all"
+                          className="xv-pqm-row w-full flex items-center gap-3 px-2.5 py-2 rounded-[13px] text-left transition-colors"
                         >
-                          <Icon className="w-4 h-4 shrink-0 mt-0.5 text-[var(--accent)]" />
+                          {/* The glyph sits on its own tinted tile. Loose against the
+                              text it left the labels starting at four different optical
+                              positions as the icons changed width. */}
+                          <span className="xv-pqm-tile grid h-7 w-7 shrink-0 place-items-center rounded-[9px]">
+                            <Icon className="w-[15px] h-[15px]" strokeWidth={1.75} />
+                          </span>
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold leading-snug">{item.label}</p>
                             <p className="text-[10px] text-[var(--muted)] leading-snug">{item.desc}</p>

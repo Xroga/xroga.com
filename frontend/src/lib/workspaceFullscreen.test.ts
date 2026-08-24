@@ -34,22 +34,33 @@ const E2E = read('../../e2e/command3-auth.spec.ts');
 /** CSS with comments stripped, so prose about a rule cannot satisfy a search for it. */
 const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
 
-test('fullscreen collapses the sidebar rather than hiding it', () => {
-  // A hidden element keeps its width. This is the whole bug.
-  assert.ok(
-    !/body\.xv-terminal-fullscreen-active aside\.xv-sidebar-hover/.test(code),
-    'the aside is hidden in terminal fullscreen again, which reserves its width',
-  );
-  // Page fullscreen is a different feature and still hides it outright.
+test('fullscreen hides the sidebar without reserving its width', () => {
+  /*
+   * Reversed deliberately, and asked for twice: fullscreen shows the terminal and its
+   * composer and nothing else, where it used to keep a 64px rail of shortcuts.
+   *
+   * How it hides still matters, and is the older half of this guard. `visibility:
+   * hidden` keeps the element's width, so the terminal would gain the rail's shortcuts
+   * back as a band of empty page — the original fullscreen bug. It must be removed from
+   * layout outright.
+   */
+  const at = code.indexOf('body.xv-terminal-fullscreen-active .xv-sidebar-root');
+  assert.notEqual(at, -1, 'the sidebar is not hidden in fullscreen');
+  const block = code.slice(at, code.indexOf('}', at));
+  assert.match(block, /display: none !important/, 'a hidden sidebar still reserves its width');
+
+  // Page fullscreen is a different feature and hides it too.
   assert.match(
     code,
     /body\.xv-page-fullscreen-active aside\.xv-sidebar-hover/,
     'page fullscreen should still hide the sidebar',
   );
+  // The store is still driven to the collapsed state, so leaving fullscreen does not
+  // flash an expanded sidebar before the rule stops applying.
   assert.match(
     SIDEBAR,
     /const effectiveSidebarOpen = \(hydrated \? sidebarOpen : true\) && !terminalFullscreen;/,
-    'fullscreen must drive the sidebar to its collapsed rail',
+    'fullscreen must still drive the sidebar closed',
   );
 });
 
@@ -64,13 +75,20 @@ test('exiting fullscreen gives back the width the user chose', () => {
   );
 });
 
-test('the composer sits beside the rail, not under it', () => {
+test('the composer stops where the terminal does', () => {
   const at = code.indexOf('body.xv-terminal-fullscreen-active .xv-terminal-dock');
   assert.notEqual(at, -1, 'the dock has no fullscreen rule');
   const block = code.slice(at, at + 700);
-  assert.match(block, /--xv-fullscreen-rail, 64px/, 'the dock should start after the rail');
-  // The rail only exists from `lg` up; below that the sidebar is a drawer.
-  assert.match(block, /@media \(min-width: 1024px\)/, 'the offset must not apply where there is no rail');
+  /*
+   * No rail term any more. The offset used to be `rail + gutter` because a 64px rail
+   * stood between the window edge and the terminal; fullscreen hides the sidebar
+   * outright now, so the composer starts at the frame's gutter like the terminal above
+   * it. Leaving the rail in the sum would have indented the composer past the terminal
+   * it belongs to.
+   */
+  assert.ok(!/--xv-fullscreen-rail/.test(block), 'the composer is offset by a rail that is gone');
+  assert.match(block, /left: 14px !important/, 'the composer must start at the gutter');
+  assert.match(block, /right: 14px !important/, 'and stop at it');
 });
 
 test('the plus menu lays out in two columns', () => {
@@ -111,7 +129,9 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   // frame's gutter, so the spec now bounds that inset on both sides rather than
   // requiring it to be zero.
   assert.match(E2E, /more than the gutter is reserved to the left of the terminal/);
-  assert.match(E2E, /the rail should collapse to its icon width/);
+  // Re-anchored: fullscreen removes the sidebar now rather than collapsing it to a rail.
+  assert.match(E2E, /the sidebar is still on screen in fullscreen/);
+  assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
   assert.match(E2E, /the plus menu should lay out in two columns/);
 });

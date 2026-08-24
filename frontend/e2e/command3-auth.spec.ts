@@ -455,10 +455,23 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(1);
   await page.waitForTimeout(400);
 
+  /*
+   * Fullscreen shows the terminal and its composer, and nothing else.
+   *
+   * This used to require the rail to stay, on the reasoning that leaving the workspace
+   * should be one click away. Reversed on request: the control says fullscreen, and a
+   * column of shortcuts down the side is the one thing a fullscreen terminal is not.
+   *
+   * Asserted as gone from layout, not merely invisible — a rail hidden with
+   * `visibility` keeps its width and leaves a band of empty page beside the terminal,
+   * which is the bug fullscreen already had once.
+   */
   const rail = page.locator('.xv-sidebar-root');
-  const railBox = (await rail.boundingBox())!;
-  expect(railBox, 'the sidebar rail should stay visible in fullscreen').not.toBeNull();
-  expect(railBox.width, 'the rail should collapse to its icon width').toBeLessThanOrEqual(72);
+  await expect(rail, 'the sidebar is still on screen in fullscreen').toBeHidden();
+  expect(
+    await rail.evaluate((el) => el.getBoundingClientRect().width),
+    'the hidden sidebar still reserves its width',
+  ).toBe(0);
 
   /*
    * Fullscreen keeps the application frame rather than giving it up.
@@ -479,8 +492,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   ));
   expect(GUTTER, 'the frame gutter is not set').toBeGreaterThan(0);
   const fsShell = (await shell.boundingBox())!;
-  const leftGap = fsShell.x - (railBox.x + railBox.width);
-  expect(leftGap, 'the terminal is not separated from the rail by the frame gutter')
+  // Measured from the window edge now rather than from the rail, which is gone.
+  const leftGap = fsShell.x;
+  expect(leftGap, 'the terminal is not inset from the left edge by the frame gutter')
     .toBeGreaterThanOrEqual(GUTTER - 2);
   expect(leftGap, 'more than the gutter is reserved to the left of the terminal')
     .toBeLessThanOrEqual(GUTTER + 2);
@@ -496,11 +510,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const fsRadius = await shell.evaluate((el) => getComputedStyle(el).borderTopLeftRadius);
   expect(fsRadius, 'the terminal is squared off in fullscreen').not.toBe('0px');
 
-  // The composer stays with the terminal, and starts after the rail rather than
-  // running underneath it.
+  // The composer stays with the terminal, starting at the same gutter rather than
+  // being indented past it by a rail that no longer exists.
   await expect(composerInput).toBeVisible();
   const fsDock = (await terminalDock.boundingBox())!;
-  expect(fsDock.x, 'the composer runs under the rail').toBeGreaterThanOrEqual(railBox.width - 4);
+  expect(fsDock.x, 'the composer does not line up with the terminal')
+    .toBeGreaterThanOrEqual(GUTTER - 2);
+  expect(fsDock.x, 'the composer is indented past the terminal it belongs to')
+    .toBeLessThanOrEqual(GUTTER + 2);
 
   await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
   await expect(page.locator('body.xv-terminal-fullscreen-active')).toHaveCount(0);
@@ -514,33 +531,38 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * The collapsed rail keeps the account, and keeps it at the bottom.
    *
    * The rail used to carry the logo and three shortcuts and nothing else, so
-   * collapsing — which is also what fullscreen now does — took the account with it,
-   * and signing out meant expanding the sidebar first.
+   * collapsing took the account with it and signing out meant expanding first.
    *
    * Plan and Settings are deliberately *not* on the rail: they were three separate
    * targets stacked in a 64px column for destinations the account menu already
    * lists. Both halves are asserted, because "carries the account" and "carries only
    * the account" are different claims and only one of them is about the avatar.
+   *
+   * Reached with the edge toggle rather than the fullscreen button. Fullscreen used to
+   * be a second route to the collapsed rail; it now hides the sidebar outright, so it
+   * can no longer be used to inspect one.
    */
-  await terminalHeader.getByRole('button', { name: 'Fullscreen terminal' }).click();
+  await page.locator('.xv-sidebar-edge-toggle').click();
   await page.waitForTimeout(400);
+  await expect(rail).toHaveClass(/is-collapsed/);
   const railProfile = rail.locator('.xv-sidebar-rail-profile');
   await expect(railProfile).toBeVisible();
   await expect(rail.getByRole('link', { name: 'View Xroga AI plan' })).toHaveCount(0);
   await expect(rail.getByRole('link', { name: 'Settings' })).toHaveCount(0);
   // And it sits at the bottom of the rail rather than under the shortcuts. The rail
   // was sized to its contents, which left `mt-auto` with nothing to work against.
-  // Re-measured rather than reusing the earlier `railBox`: the rail changes height
-  // between those two points, and a stale rect would be asserting about a box that
-  // is no longer on screen.
   const collapsedRailBox = (await rail.boundingBox())!;
   const profileBox = (await railProfile.boundingBox())!;
   expect(
     collapsedRailBox.y + collapsedRailBox.height - (profileBox.y + profileBox.height),
     'the account sits near the top of the rail rather than at its foot',
   ).toBeLessThan(40);
-  await terminalHeader.getByRole('button', { name: 'Exit fullscreen' }).click();
-  await page.waitForTimeout(400);
+  // Back to the expanded sidebar for the assertions that follow.
+  await rail.locator('.xv-sidebar-brand a')
+    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+    .hover();
+  await page.waitForTimeout(900);
+  await expect(rail).not.toHaveClass(/is-collapsed/);
 
   /**
    * The edge toggle survives being used, and the edge can be dragged from its middle.

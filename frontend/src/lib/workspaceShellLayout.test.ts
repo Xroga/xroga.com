@@ -283,11 +283,26 @@ test('the Workspace button uses filled states rather than a border', () => {
   assert.match(rule(".xv-ws-launch[aria-pressed='true']") ?? '', /background:\s*rgba\(255, 255, 255, 0\.075\)/);
 });
 
-test('workspace tabs and the device switcher are marked, not boxed', () => {
+test('workspace tabs are rounded pills, not outlined boxes', () => {
   assert.match(rule('.xv-ws-tab.is-active') ?? '', /color:\s*#2f7cff/);
   assert.match(rule('.xv-ws-device.is-active') ?? '', /color:\s*#2f7cff/);
-  // An indicator, not an outline around each control.
-  assert.match(CSS, /\.xv-ws-tab\.is-active::after/);
+
+  /*
+   * The active tab is a filled pill now rather than a label with a 2px bar beneath it.
+   * The bar was anchored to the bottom of the row, which tied every tab to the panel
+   * edge — there was no way to give the row vertical space without stranding the mark
+   * halfway up. Its `::after` is gone with it.
+   */
+  assert.ok(!/\.xv-ws-tab\.is-active::after/.test(CSS), 'the underline bar is back');
+  assert.match(rule('.xv-ws-tab.is-active') ?? '', /background:/, 'the active tab needs its fill');
+  assert.match(rule('.xv-ws-tab') ?? '', /border-radius:\s*999px/, 'the tabs should be fully rounded');
+
+  // Still no outline around each control — that is what made the row a box.
   assert.equal(/^\s*border:\s*1px/m.test(rule('.xv-ws-tab') ?? ''), false);
   assert.equal(/^\s*border:\s*1px/m.test(rule('.xv-ws-device') ?? ''), false);
+
+  // And the row has room above and below the pills.
+  const tabs = rule('.xv-ws-tabs') ?? '';
+  const padY = Number(/padding:\s*([\d.]+)rem/.exec(tabs)?.[1]);
+  assert.ok(padY >= 0.5, `the tab row is still tight at ${padY}rem`);
 });
