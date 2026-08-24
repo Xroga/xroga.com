@@ -62,20 +62,25 @@ test('deploy readiness fails closed when either capability probe errors', async 
   });
 });
 
-test('personal token verification explains account-scope rejection before saving', async (t) => {
+test('personal token verification accepts deploy-capable vcp tokens when legacy identity rejects them', async (t) => {
   const originalFetch = globalThis.fetch;
   t.after(() => {
     globalThis.fetch = originalFetch;
   });
   globalThis.fetch = (async (input) => {
-    assert.match(String(input), /\/v2\/user/);
-    return new Response('not found', { status: 404 });
+    const url = String(input);
+    if (url.includes('/v2/user')) return new Response('not found', { status: 404 });
+    if (url.includes('/v9/projects')) return new Response('{"projects":[]}', { status: 200 });
+    if (url.includes('/v6/deployments')) {
+      return new Response('{"deployments":[]}', { status: 200 });
+    }
+    throw new Error(`Unexpected URL: ${url}`);
   }) as typeof fetch;
 
-  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('team-token'), {
-    ok: false,
-    reason: 'account_scope_required',
-    status: 404,
+  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('vcp-token'), {
+    ok: true,
+    username: 'vercel-account',
+    providerUserId: undefined,
   });
 });
 
@@ -86,9 +91,6 @@ test('personal token verification rejects credentials without deployment reads',
   });
   globalThis.fetch = (async (input) => {
     const url = String(input);
-    if (url.includes('/v2/user')) {
-      return new Response('{"user":{"username":"xroga","id":"user_1"}}', { status: 200 });
-    }
     if (url.includes('/v9/projects')) return new Response('{"projects":[]}', { status: 200 });
     if (url.includes('/v6/deployments')) return new Response('forbidden', { status: 403 });
     throw new Error(`Unexpected URL: ${url}`);
@@ -121,5 +123,26 @@ test('personal token verification returns owner only after deployment checks pas
     ok: true,
     username: 'xroga',
     providerUserId: 'user_1',
+  });
+});
+
+test('personal token verification keeps deploy capability when identity lookup is unavailable', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+  globalThis.fetch = (async (input) => {
+    const url = String(input);
+    if (url.includes('/v9/projects') || url.includes('/v6/deployments')) {
+      return new Response('{}', { status: 200 });
+    }
+    if (url.includes('/v2/user')) throw new Error('legacy endpoint unavailable');
+    throw new Error(`Unexpected URL: ${url}`);
+  }) as typeof fetch;
+
+  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('vcp-token'), {
+    ok: true,
+    username: 'vercel-account',
+    providerUserId: undefined,
   });
 });

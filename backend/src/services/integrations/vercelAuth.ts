@@ -635,8 +635,7 @@ export type VercelPersonalTokenVerification =
     }
   | {
       ok: false;
-      reason: 'account_scope_required' | 'deploy_access_required';
-      status?: number;
+      reason: 'deploy_access_required';
       capability?: {
         canListProjects: boolean;
         canReadDeployments: boolean;
@@ -644,22 +643,14 @@ export type VercelPersonalTokenVerification =
     };
 
 /**
- * Prove a pasted personal token can identify its owner and reach the two
- * read-only APIs required by the deployment flow before storing it.
+ * Prove a pasted personal token reaches the two read-only APIs required by
+ * the deployment flow before storing it. Vercel's current `vcp_` personal
+ * tokens can authorize account resources even when the legacy /v2/user
+ * identity endpoint rejects them, so identity enrichment is best-effort.
  */
 export async function verifyVercelPersonalTokenForDeploy(
   token: string,
 ): Promise<VercelPersonalTokenVerification> {
-  const headers = { Authorization: `Bearer ${token}` };
-  const userRes = await fetch('https://api.vercel.com/v2/user', { headers });
-  if (!userRes.ok) {
-    return {
-      ok: false,
-      reason: 'account_scope_required',
-      status: userRes.status,
-    };
-  }
-
   const capability = await probeVercelApiCapabilities(token);
   if (!vercelCredentialCanDeploy('personal_token', capability)) {
     return {
@@ -669,11 +660,25 @@ export async function verifyVercelPersonalTokenForDeploy(
     };
   }
 
-  const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
+  let username = 'vercel-account';
+  let providerUserId: string | undefined;
+  try {
+    const userRes = await fetch('https://api.vercel.com/v2/user', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (userRes.ok) {
+      const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
+      username = user.user?.username ?? username;
+      providerUserId = user.user?.id;
+    }
+  } catch {
+    // Deploy capability is the acceptance gate; owner metadata is optional.
+  }
+
   return {
     ok: true,
-    username: user.user?.username ?? 'vercel-user',
-    providerUserId: user.user?.id,
+    username,
+    providerUserId,
   };
 }
 
@@ -699,6 +704,14 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
   const authKind =
     connection?.auth_kind ??
     (connection?.refresh_token ? 'sign_in_with_vercel' : 'personal_token');
+
+  let canDeploy = false;
+  try {
+    const capability = await probeVercelApiCapabilities(token);
+    canDeploy = vercelCredentialCanDeploy(authKind, capability);
+  } catch {
+    canDeploy = false;
+  }
 
   let username: string | undefined;
   let identityOk = false;
@@ -737,21 +750,18 @@ export async function verifyVercelTokenLive(userId: string): Promise<{
   }
 
   if (!identityOk) {
-    return { ok: false, error: 'vercel_token_invalid' };
-  }
-
-  let canDeploy = false;
-  try {
-    const capability = await probeVercelApiCapabilities(token);
-    // A Sign in with Vercel identity token can return 200 for the projects
-    // endpoint while still being forbidden from every deployment endpoint.
-    // Treating that as deploy-ready produced a green setup badge followed by a
-    // guaranteed 403 after code was pushed. Deployment-read access is a safe,
-    // non-mutating minimum proof; creation still remains guarded by the real
-    // deployment request.
-    canDeploy = vercelCredentialCanDeploy(authKind, capability);
-  } catch {
-    canDeploy = false;
+    // Modern personal (`vcp_`) and integration credentials can authorize the
+    // project/deployment APIs without access to either identity endpoint.
+    // For those credentials the capability proof is stronger and more relevant
+    // than owner-profile lookup. Sign-in tokens still require identity proof.
+    if (authKind !== 'sign_in_with_vercel' && canDeploy) {
+      return {
+        ok: true,
+        username: connection?.username?.trim() || undefined,
+        canDeploy: true,
+      };
+    }
+    return { ok: false, canDeploy, error: 'vercel_token_invalid' };
   }
 
   return { ok: true, username, canDeploy };

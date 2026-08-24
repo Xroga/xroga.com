@@ -131,18 +131,6 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
   const token = parsed.data.token.trim();
   try {
     const verification = await verifyVercelPersonalTokenForDeploy(token);
-    if (!verification.ok && verification.reason === 'account_scope_required') {
-      console.warn('[vercel/connect-token] Vercel user check rejected', {
-        userId: req.userId,
-        status: verification.status,
-      });
-      res.status(400).json({
-        code: 'VERCEL_TOKEN_ACCOUNT_SCOPE_REQUIRED',
-        error:
-          'Vercel rejected this token for user access. Create a new token with Personal Account scope (not a Team-only scope), then paste the newly shown value.',
-      });
-      return;
-    }
     if (!verification.ok) {
       console.warn('[vercel/connect-token] token lacks deploy capability', {
         userId: req.userId,
@@ -152,7 +140,7 @@ router.post('/connect-token', async (req: AuthRequest, res) => {
       res.status(400).json({
         code: 'VERCEL_TOKEN_DEPLOY_ACCESS_REQUIRED',
         error:
-          'The token is valid but cannot access both Vercel projects and deployments. Create a new token with Personal Account scope, then try again.',
+          'Vercel could not confirm access to both projects and deployments. Check the token scope, or create a new Personal Account token and try again.',
       });
       return;
     }

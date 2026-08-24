@@ -621,8 +621,8 @@ export function ConnectShipWizard() {
             </p>
           ) : null}
           <p className="text-[11px] text-[var(--muted)] leading-relaxed">
-            In Vercel, choose <strong>Personal Account</strong> for the token scope. A Team-only
-            token cannot pass Xroga&apos;s user and deployment checks.
+            Choose <strong>Personal Account</strong> for personal projects. Xroga verifies project
+            and deployment access before saving; it never exposes your token.
           </p>
         </div>
       ) : !vercelOk || vercelCanDeploy === false ? (
