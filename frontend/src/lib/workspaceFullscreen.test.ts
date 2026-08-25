@@ -49,12 +49,24 @@ test('fullscreen hides the sidebar without reserving its width', () => {
   const block = code.slice(at, code.indexOf('}', at));
   assert.match(block, /display: none !important/, 'a hidden sidebar still reserves its width');
 
-  // Page fullscreen is a different feature and hides it too.
-  assert.match(
-    code,
-    /body\.xv-page-fullscreen-active aside\.xv-sidebar-hover/,
-    'page fullscreen should still hide the sidebar',
-  );
+  /*
+   * Page fullscreen is a different feature and hides it too — and now hides it the
+   * same way. It used to name `aside.xv-sidebar-hover` and use `visibility`, which
+   * is both halves of the bug above: a state class the sidebar does not normally
+   * carry, so the sidebar stayed; and `visibility`, so even when it matched it kept
+   * its width. The bottom bar and the mobile header go with it, because on a phone
+   * those are the whole of the chrome.
+   */
+  const pageAt = code.indexOf('body.xv-page-fullscreen-active .xv-sidebar-root');
+  assert.notEqual(pageAt, -1, 'page fullscreen should still hide the sidebar');
+  const pageRule = code.slice(pageAt, code.indexOf('}', pageAt));
+  for (const selector of ['.xv-mobile-workspace-header', '.xv-mobile-nav']) {
+    assert.ok(
+      pageRule.includes(`body.xv-page-fullscreen-active ${selector}`),
+      `${selector} survives page fullscreen`,
+    );
+  }
+  assert.match(pageRule, /display: none !important/, 'page fullscreen only hides, so the chrome keeps its space');
   // The store is still driven to the collapsed state, so leaving fullscreen does not
   // flash an expanded sidebar before the rule stops applying.
   assert.match(

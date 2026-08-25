@@ -77,11 +77,19 @@ test('the rail carries the two destinations people actually go to', () => {
 });
 
 test('the page header does not repeat the sidebar mark', () => {
-  // From `lg` up the sidebar is on screen and carries the mark, so the header logo was
-  // a second Xroga a few hundred pixels from the first. Hidden rather than removed:
-  // below `lg` the sidebar is a drawer and this is the only branding on the page.
+  /*
+   * It used to be enough for the header logo to stand down from `lg` up, on the
+   * reasoning that below `lg` the sidebar is a drawer and this was the only branding
+   * on the page. It is not: the sidebar's own mobile bar sits at the top of the same
+   * screen and carries the mark along with the drawer, search and new-terminal
+   * controls. Two Xroga wordmarks a few pixels apart is what that produced, so the
+   * header carries none at all now.
+   */
   const SHELL = read('../components/layout/AppShell.tsx');
-  assert.match(SHELL, /xv-mobile-header-logo min-w-0 lg:hidden/, 'the header logo must stand down on desktop');
+  assert.ok(!/<Logo\b/.test(SHELL), 'the page header renders a logo again');
+  assert.ok(!/HeaderLogo/.test(SHELL), 'the header logo component is back');
+  const SIDEBAR_SRC = read('../components/layout/Sidebar.tsx');
+  assert.match(SIDEBAR_SRC, /xv-mobile-workspace-logo/, 'the one remaining mark is gone too');
 });
 
 test('the collapsed styling can actually match something', () => {

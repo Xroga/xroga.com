@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
-import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
@@ -24,31 +23,15 @@ interface AppShellProps {
   email?: string;
 }
 
-/**
- * The brand in the page header, on small screens only.
+/*
+ * There is no logo in this header any more.
  *
- * From `lg` up the sidebar is on screen and carries the mark itself, so this was a
- * second Xroga logo a few hundred pixels from the first — one inside the sidebar and
- * one loose in the header.
- *
- * Hidden rather than deleted, because below `lg` the sidebar is a drawer and this is
- * the only branding on the page; removing it outright would leave the mobile header as
- * a bare hamburger.
+ * It was here because below `lg` the sidebar is a drawer, so the header looked like
+ * the only place branding could live. The sidebar's own mobile bar carries the mark
+ * now, along with the drawer, search and new-terminal controls — and it sits at the
+ * top of the same screen. Two Xroga wordmarks a few pixels apart is what that
+ * produced, which is what was reported.
  */
-function HeaderLogo() {
-  const pathname = usePathname();
-  const logoHref = pathname.startsWith('/dashboard') ? '/dashboard' : '/workspace';
-  return (
-    <div className={cn('xv-mobile-header-logo min-w-0 lg:hidden', 'pl-11 sm:pl-12')}>
-      <Logo
-        href={logoHref}
-        height={52}
-        variant="header"
-        className="!h-[52px] sm:!h-[68px]"
-      />
-    </div>
-  );
-}
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
   const hydrated = useHydrated();
@@ -120,9 +103,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 <header
                   className="xv-site-header xv-site-header-transparent absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3"
                 >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <HeaderLogo />
-                  </div>
+                  <div className="flex items-center gap-2 min-w-0 flex-1" />
                   <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
                     <ThemeToggle />
                   </div>
