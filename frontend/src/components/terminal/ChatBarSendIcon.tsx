@@ -1,6 +1,8 @@
 'use client';
 
 import { LeafLoader } from '@/components/ui/LeafLoader';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ShipWheelIcon } from '@/components/icons/animated/ShipWheelIcon';
 
 /**
  * The chatbar send icon.
@@ -58,6 +60,23 @@ export function ChatBarSendIcon({
   const loading = isSendLoading(state);
   const busy = isSendBusy(state) && !loading;
   const done = state === 'launched';
+
+  /*
+   * Idle is the ship's wheel, which turns as it is reached for.
+   *
+   * Only idle. The other three states are not decoration: `sending` must show that
+   * a request is in flight and refuse a second submit, `thinking` is the Stop
+   * control for a streaming response, and `launched` is the confirmation. Replacing
+   * the whole glyph with one wheel would have taken the ability to stop a response
+   * away with it, so those keep the state machine drawn below.
+   */
+  if (!loading && !busy && !done) {
+    return (
+      <span className={`xv-sendicon ${className ?? ''}`} data-state="idle" style={{ width: size, height: size }}>
+        <AnimatedIcon icon={ShipWheelIcon} size={size} />
+      </span>
+    );
+  }
 
   // The loader replaces the glyph outright rather than layering over it, and it is
   // rendered at the same box size, so the button's contents never change dimensions.

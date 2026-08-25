@@ -13,7 +13,6 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeft,
-  Search,
   Zap,
   MessageCirclePlus,
   Terminal,
@@ -48,6 +47,15 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
 import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 import { AnimatedNavIcon, type NavIconMotion } from './AnimatedNavIcon';
+import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
+import { TerminalIcon } from '@/components/icons/animated/TerminalIcon';
+import { CodeXmlIcon } from '@/components/icons/animated/CodeXmlIcon';
+import { LocateFixedIcon } from '@/components/icons/animated/LocateFixedIcon';
+import { RocketIcon } from '@/components/icons/animated/RocketIcon';
+import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
+import { CogIcon } from '@/components/icons/animated/CogIcon';
+import { TelescopeIcon } from '@/components/icons/animated/TelescopeIcon';
+import { ConnectIcon } from '@/components/icons/animated/ConnectIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -62,10 +70,21 @@ import { ThemeToggle } from './ThemeToggle';
  * Plan & Usage is deliberately absent — it lives on the Dashboard, next to the
  * billing and activity it belongs with, rather than being a nav row of its own.
  */
+/*
+ * A row can carry either kind of icon.
+ *
+ * `icon` is a lucide glyph animated as a whole by `AnimatedNavIcon` — it tilts,
+ * lifts or blinks, but its interior never changes. `animated` is a purpose-built
+ * component that animates its own paths: the terminal's chevron advances, the
+ * dashboard's tiles trade places, the cog turns. Where a row has both, `animated`
+ * wins; `icon` stays because it is still the mobile nav's glyph and the type that
+ * the rest of the nav is written against.
+ */
 type NavLink = {
   href: string;
   label: string;
   icon: typeof LayoutDashboard;
+  animated?: AnimatedIconComponent;
   tip: string;
   motion?: NavIconMotion;
 };
@@ -74,6 +93,7 @@ type NavGroup = {
   id: string;
   label: string;
   icon: typeof LayoutDashboard;
+  animated?: AnimatedIconComponent;
   tip: string;
   motion?: NavIconMotion;
   children: NavLink[];
@@ -85,12 +105,21 @@ function isGroup(entry: NavEntry): entry is NavGroup {
   return 'children' in entry;
 }
 
+/** A row's icon: the purpose-built animated one where it has it, the lucide glyph otherwise. */
+function NavIcon({ entry }: { entry: NavEntry }) {
+  if (entry.animated) {
+    return <AnimatedIcon icon={entry.animated} className="shrink-0" />;
+  }
+  return <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />;
+}
+
 const navItems: NavEntry[] = [
   {
     href: '/workspace',
     motion: 'blink' as const,
     label: 'Workspace',
     icon: Terminal,
+    animated: TerminalIcon,
     tip: 'Main workspace — build and chat with Xroga AI.',
   },
   {
@@ -98,6 +127,7 @@ const navItems: NavEntry[] = [
     motion: 'pulse' as const,
     label: 'Dashboard',
     icon: LayoutDashboard,
+    animated: LayoutGridIcon,
     tip: 'Recent activity, billing, plan, and usage.',
   },
   
@@ -113,6 +143,7 @@ const navItems: NavEntry[] = [
     motion: 'pulse' as const,
     label: 'Integrations',
     icon: Link2,
+    animated: ConnectIcon,
     tip: 'Connect GitHub, Slack, databases, and tools.',
   },
   {
@@ -120,6 +151,7 @@ const navItems: NavEntry[] = [
     label: 'Launch & Growth',
     motion: 'launch' as const,
     icon: Rocket,
+    animated: RocketIcon,
     tip: 'Operations, growth, and publishing.',
     children: [
       {
@@ -127,6 +159,7 @@ const navItems: NavEntry[] = [
         motion: 'launch' as const,
         label: 'Publish',
         icon: Rocket,
+        animated: RocketIcon,
         tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
       },
       {
@@ -150,6 +183,7 @@ const navItems: NavEntry[] = [
     label: 'Explore',
     motion: 'sweep' as const,
     icon: Compass,
+    animated: TelescopeIcon,
     tip: 'Showcase templates, the community, and feedback.',
     children: [
       {
@@ -180,6 +214,7 @@ const navItems: NavEntry[] = [
     motion: 'shake' as const,
     label: 'Settings',
     icon: Settings,
+    animated: CogIcon,
     tip: 'Theme, terminal skin, account, and preferences.',
   },
 ];
@@ -585,7 +620,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                   className="xv-sidebar-head-icon"
                   aria-label="Search"
                 >
-                  <Search className="w-3.5 h-3.5" />
+                  <AnimatedIcon icon={LocateFixedIcon} size={14} />
                 </button>
               </HoverTip>
               <span className="xv-toolbar-sep" aria-hidden="true" />
@@ -603,22 +638,25 @@ export function Sidebar({ displayName }: SidebarProps) {
 
                 The two destinations carry a lighter stroke than the actions. They are
                 the denser glyphs of the four — a grid and a branching tree against a
-                magnifier and a circle — so at a shared weight they read as the heavy
-                end of the column rather than as its equals.
+                reticle and a chevron — so at a shared weight they read as the heavy
+                end of the column rather than as its equals. Dashboard's stroke now
+                comes from `.xv-sidebar-collapsed-actions a` in globals.css rather than
+                an attribute, because its glyph animates its own tiles and is not a
+                lucide component to pass `strokeWidth` to.
               */}
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                  <Search className="h-4 w-4" aria-hidden="true" />
+                  <AnimatedIcon icon={LocateFixedIcon} />
                 </button>
               </HoverTip>
               <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
-                  <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
+                  <AnimatedIcon icon={CodeXmlIcon} />
                 </button>
               </HoverTip>
               <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
                 <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>
-                  <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                  <AnimatedIcon icon={LayoutGridIcon} />
                 </Link>
               </HoverTip>
               <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
@@ -653,7 +691,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
                         aria-expanded={isGroupOpen(entry)}
                       >
-                        <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
+                        <NavIcon entry={entry} />
                         <span>{entry.label}</span>
                         <ChevronDown
                           className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
@@ -670,7 +708,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                               onClick={handleNavClick}
                               className={cn(isActive(child.href) && 'xv-active')}
                             >
-                              <AnimatedNavIcon Icon={child.icon} motion={child.motion} className="shrink-0" />
+                              <NavIcon entry={child} />
                               <span>{child.label}</span>
                             </Link>
                           </SidebarTip>
@@ -685,7 +723,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                       onClick={handleNavClick}
                       className={cn(isActive(entry.href) && 'xv-active')}
                     >
-                      <AnimatedNavIcon Icon={entry.icon} motion={entry.motion} className="shrink-0" />
+                      <NavIcon entry={entry} />
                       <span>{entry.label}</span>
                     </Link>
                   </SidebarTip>
@@ -728,7 +766,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
           <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-            <Search className="h-4 w-4" aria-hidden="true" />
+            <AnimatedIcon icon={LocateFixedIcon} />
           </button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />

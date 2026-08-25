@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Palette } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { useThemeStore } from '@/store/useThemeStore';
 import { THEME_OPTIONS, normalizeTheme, type CoreThemeId } from '@/lib/theme';
 import { cn } from '@/lib/utils';
@@ -69,7 +70,9 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <Palette className="w-4 h-4 text-[var(--accent)]" />
+        {/* The outline draws itself and the four inks land in sequence — the picture
+            of a palette being loaded, which is what choosing a theme is. */}
+        <AnimatedIcon icon={PaletteIcon} className="text-[var(--accent)]" />
       </button>
       {open && typeof document !== 'undefined' && createPortal(
         <div
