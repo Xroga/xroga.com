@@ -302,14 +302,12 @@ export default function CryptoPage() {
             </strong>
           </p>
 
-          <a
-            href="#builder"
-            className={styles.primaryButton}
-          >
-            Start building
-            <ArrowRight />
-          </a>
-
+          {/* The hero used to carry a "Start building" button between the subtitle and
+              the console, linking to `#builder` — the console directly beneath it. It
+              scrolled to something already on screen, and it put a second call to action
+              in front of the one thing on this page that actually starts a build. The
+              header's "Start building" is unchanged, and the anchor stays on the console
+              so any inbound `#builder` link still lands. */}
           <div
             className={styles.heroConsole}
             id="builder"
