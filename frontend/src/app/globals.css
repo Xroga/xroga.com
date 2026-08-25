@@ -2947,6 +2947,10 @@ body.theme-gray * {
     color: var(--muted);
   }
   .xv-sidebar-header-actions .xv-new-terminal-compact span { display: none; }
+  /* The close button arrives with `h-9 w-9`, a border and a 20px glyph from its modal
+     default. The compound selector outranks those utilities whatever order they are
+     emitted in, which is the whole reason it is written this way. */
+  .xv-sidebar-header-actions .xv-sidebar-head-icon svg { width: 14px; height: 14px; }
   .xv-sidebar-header-actions .xv-new-terminal-compact:hover,
   .xv-sidebar-header-actions .xv-sidebar-head-icon:hover,
   .xv-sidebar-header-actions .xv-theme-toggle:hover {
@@ -7697,6 +7701,35 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 .xv-settings-sections .xv-tabstrip::-webkit-scrollbar { display: none; }
 .xv-tabstrip__tab { scroll-snap-align: center; }
 
+/*
+ * The GitHub mark sits in a filled disc.
+ *
+ * `--foreground` on the disc and `--background` on the glyph, so it inverts with the
+ * theme rather than being pinned to one: a dark disc with a light mark on White and
+ * Beige, a light disc with a dark mark on Black and Gray. It is the one logo on the
+ * site that has to survive both, because it appears on the auth forms, the marketing
+ * footer and four landing pages.
+ *
+ * Sized in `em` so it follows whatever type it sits in — the call sites range from a
+ * 3.5 utility in a showcase row to unstyled body text in a footer — and given a fixed
+ * `flex: none` so it cannot be squeezed by the row it is in.
+ */
+.xv-github-mark {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  vertical-align: -0.35em;
+}
+/* A call site that sizes the mark with a utility is sizing the disc; the glyph
+   follows it rather than staying at its own 14px. */
+.xv-github-mark .xv-animated-icon-host { width: 62%; height: 62%; }
+.xv-github-mark svg { width: 100%; height: 100%; }
+
 /* ------------------------------------------------------------------ mobile nav */
 
 /*
@@ -9507,13 +9540,30 @@ body.theme-beige {
  * same as on desktop.
  */
 @media (max-width: 1023px) {
+  /*
+   * A hair of gutter, not none.
+   *
+   * This was `padding: 0` with the corners squared off, which did fill the screen and
+   * lost the thing the workspace is: a rounded box. 4px is enough for the radius to
+   * read against the ground and still leaves the terminal using effectively the whole
+   * display, which is what fullscreen on a phone is for. The top edge clears the
+   * status bar rather than sliding under it, and the ground behind fills the inset so
+   * there is no unpainted band above the terminal.
+   */
   body.xv-terminal-fullscreen-active .xv-app-stage--fullscreen {
-    padding: 0;
+    padding: 4px;
+    padding-top: max(4px, env(safe-area-inset-top));
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+    background: var(--background);
   }
   body.xv-terminal-fullscreen-active .xv-workspace-shell {
-    border-radius: 0;
-    border-width: 0;
-    box-shadow: none;
+    border-radius: 14px;
+  }
+  /* The composer belongs inside the box, so it stops where the terminal's corners do
+     rather than running under them to the screen edge. */
+  body.xv-terminal-fullscreen-active .xv-terminal-dock {
+    left: 4px !important;
+    right: 4px !important;
   }
 }
 

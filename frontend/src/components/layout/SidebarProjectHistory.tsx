@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
+import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import {
@@ -638,7 +639,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         <div className="xv-repos-scroll space-y-0.5 max-h-[280px] overflow-y-auto pr-1">
           {folders.map((folder) => {
             const isOpen = openFolders[folder.key] !== false;
-            const FolderIcon = isOpen ? FolderOpen : FolderGit2;
+            // A repository under the filter is a fork point, not a folder: the glyph
+            // assembles from the child commit up to its two parents. The open state
+            // keeps a folder, because that one is saying "expanded", not "repository".
+            const FolderIcon = isOpen ? FolderOpen : null;
             const isActiveRepo = selectedRepo === folder.key;
             return (
               <div key={folder.key} className="space-y-0.5">
@@ -669,7 +673,11 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                         : 'text-[var(--muted)] hover:text-[var(--foreground)]'
                     )}
                   >
-                    <FolderIcon className="h-3 w-3 shrink-0" />
+                    {FolderIcon ? (
+                      <FolderIcon className="h-3 w-3 shrink-0" />
+                    ) : (
+                      <AnimatedIcon icon={GitForkIcon} size={12} intro={false} className="shrink-0" />
+                    )}
                     <span className="truncate font-medium" title={folder.key}>
                       {folder.label}
                     </span>

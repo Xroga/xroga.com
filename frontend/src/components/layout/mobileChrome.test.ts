@@ -21,6 +21,9 @@ const CSS = read('../../app/globals.css');
 const UIVERSE = read('../../../src/styles/uiverse.css');
 const MIC = read('../terminal/ChatBarMicButton.tsx');
 const THEME_TOGGLE = read('./ThemeToggle.tsx');
+const HISTORY = read('./SidebarProjectHistory.tsx');
+const GH = read('../icons/GitHubIcon.tsx');
+const GH_GLYPH = read('../icons/animated/GithubGlyphIcon.tsx');
 
 /**
  * Two Xroga wordmarks a few pixels apart: the page header carried one for small
@@ -166,7 +169,19 @@ test('there is one theme control, not two', () => {
  * the logo and its buttons stayed on top of the terminal. Measured with `hidden`
  * applied, the header still computed `display: flex`.
  */
-test('workspace fullscreen is edge to edge on a phone and hides the mobile bar', () => {
+/**
+ * Fullscreen has to remove the mobile bar, and the CSS has to be the thing that does
+ * it.
+ *
+ * The shell puts `hidden` on the bar, but `.xv-mobile-workspace-header` sets
+ * `display: flex` inside a media query emitted after Tailwind's utilities, so at
+ * equal specificity the later rule won and the logo and its buttons stayed on top of
+ * the terminal. Measured with `hidden` applied, the header still computed
+ * `display: flex`.
+ *
+ * The geometry that goes with it is asserted separately, below.
+ */
+test('workspace fullscreen hides the mobile bar', () => {
   const at = CSS.indexOf('body.xv-terminal-fullscreen-active .xv-sidebar-root');
   assert.notEqual(at, -1, 'terminal fullscreen hides nothing');
   const rule = CSS.slice(at, CSS.indexOf('}', at));
@@ -175,14 +190,68 @@ test('workspace fullscreen is edge to edge on a phone and hides the mobile bar',
     'the mobile bar survives workspace fullscreen',
   );
   assert.match(rule, /display: none !important/, 'the bar is only hidden, so it keeps its space');
+});
 
-  const mobile = CSS.slice(CSS.indexOf('@media (max-width: 1023px) {', CSS.indexOf('.xv-app-stage--fullscreen {')));
+test('the drawer close button belongs to the toolbar it sits in', () => {
+  // Its own default is a 36px outlined button, right in a modal and wrong beside
+  // three 28px borderless siblings — it sat a head taller with a box drawn round it.
   assert.match(
-    mobile,
-    /body\.xv-terminal-fullscreen-active \.xv-app-stage--fullscreen \{\n\s*padding: 0;/,
-    'the stage keeps its gutter on a phone',
+    SIDEBAR,
+    /<ModalCloseButton onClick=\{closeMobile\} className="xv-sidebar-head-icon" \/>/,
+    'the close button is back to its modal size',
   );
-  assert.match(mobile, /border-radius: 0;/, 'the shell keeps its rounded corners on a phone');
-  // Desktop keeps the frame: there is a desk for the window to sit on there.
-  assert.match(CSS, /\.xv-app-stage--fullscreen \{ padding: var\(--xv-app-gutter\); \}/);
+  // The compound selector outranks the button's own utilities whatever order they
+  // are emitted in, which is the whole reason it is written this way.
+  assert.match(CSS, /\.xv-sidebar-header-actions \.xv-sidebar-head-icon svg \{ width: 14px;/);
+});
+
+test('the phone can change theme without opening the drawer', () => {
+  const header = SIDEBAR.slice(
+    SIDEBAR.indexOf('xv-mobile-workspace-actions'),
+    SIDEBAR.indexOf('</header>', SIDEBAR.indexOf('xv-mobile-workspace-actions')),
+  );
+  assert.match(header, /<ThemeToggle \/>/, 'theme is only reachable behind the drawer again');
+});
+
+/**
+ * The GitHub mark is the one logo on the site that has to survive every theme: it
+ * appears on both auth forms, the marketing footer, three landing pages, the
+ * homepage ship stack, the about visual and two showcase surfaces.
+ */
+test('the GitHub mark is a disc that inverts with the theme', () => {
+  assert.match(GH, /icon=\{GithubGlyphIcon\}/, 'the mark is not the animated glyph');
+  assert.match(CSS, /\.xv-github-mark \{[^}]*background: var\(--foreground\);/, 'the disc is not themed');
+  assert.match(CSS, /\.xv-github-mark \{[^}]*color: var\(--background\);/, 'the glyph is not themed');
+  assert.match(CSS, /\.xv-github-mark \{[^}]*border-radius: 999px;/, 'the disc is not round');
+  // Sized in `em` so it follows the type it sits in, from a 3.5 utility to body text.
+  assert.match(CSS, /\.xv-github-mark \{[^}]*width: 1\.6em;/);
+
+  // A span, not a div: this sits in running text, and a div inside a p is invalid
+  // HTML that React reports as a hydration mismatch.
+  assert.match(GH_GLYPH, /<m\.span/, 'the mark roots a div again and breaks hydration in prose');
+  assert.ok(!/<m\.div/.test(GH_GLYPH), 'the mark roots a div again');
+  // The handler types stay div-shaped, because widening the shared type breaks every
+  // div-rooted icon: a handler taking the narrower element cannot accept the wider.
+  assert.match(GH_GLYPH, /React\.MouseEvent<HTMLDivElement>/, 'the shared icon type was widened');
+});
+
+test('the repository rows under the filter are fork points', () => {
+  // Named carefully: this is the row icon beneath the Repositories/filter header, not
+  // the Repositories destination in the nav.
+  assert.match(HISTORY, /icon=\{GitForkIcon\}/, 'the repository rows lost the fork');
+  assert.ok(!/FolderGit2/.test(HISTORY), 'the folder glyph is back on the rows');
+  // The open state stays a folder, because that one says "expanded", not "repository".
+  assert.match(HISTORY, /const FolderIcon = isOpen \? FolderOpen : null;/);
+});
+
+test('fullscreen on a phone is a rounded box that fills the screen', () => {
+  const mobile = CSS.slice(CSS.indexOf('@media (max-width: 1023px) {', CSS.indexOf('.xv-app-stage--fullscreen {')));
+  // 4px, not 0. Zero filled the screen and lost the thing the workspace is.
+  assert.match(mobile, /padding: 4px;/, 'the stage gave up its gutter again');
+  assert.match(mobile, /border-radius: 14px;/, 'the shell squared off again');
+  assert.ok(!/border-radius: 0;/.test(mobile.slice(0, 900)), 'the shell squares off again');
+  // The top edge clears the status bar rather than sliding under it.
+  assert.match(mobile, /padding-top: max\(4px, env\(safe-area-inset-top\)\);/);
+  // And the composer stops where the terminal's corners do.
+  assert.match(mobile, /\.xv-terminal-dock \{\n\s*left: 4px !important;/, 'the composer runs past the box');
 });
