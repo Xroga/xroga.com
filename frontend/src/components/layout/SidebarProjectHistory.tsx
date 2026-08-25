@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, Filter, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
+import { Cloud, FolderGit2, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import toast from 'react-hot-toast';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import {
@@ -615,7 +617,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             onClick={() => setFilterOpen((value) => !value)}
             className={cn('xv-repo-filter-trigger', repoFilter !== 'latest' && 'is-active')}
           >
-            <Filter className="h-3 w-3" aria-hidden="true" />
+            {/* The funnel settles as if something just passed through it. */}
+            <AnimatedIcon icon={FilterIcon} size={12} />
           </button>
           <RepositoryFilterPopover
             open={filterOpen}

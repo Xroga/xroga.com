@@ -4,15 +4,16 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
-  SlidersHorizontal,
   MessageCircleHeart,
-  Palette,
-  Settings,
   ShieldCheck,
   Sparkles,
   UserRound,
   Users,
 } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { SlidersHorizontalIcon } from '@/components/icons/animated/SlidersHorizontalIcon';
+import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
+import { CogIcon } from '@/components/icons/animated/CogIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { LogoutButton } from '@/components/ui/Uiverse';
 import { useAppStore } from '@/store/useAppStore';
@@ -44,14 +45,14 @@ const ITEMS = [
     key: 'personalization',
     label: 'Personalization',
     desc: 'Theme, terminal skin, and the companion',
-    icon: Palette,
+    animated: PaletteIcon,
     href: '/settings?tab=companion',
   },
   {
     key: 'settings',
     label: 'Settings',
     desc: 'Account, workspace, and preferences',
-    icon: Settings,
+    animated: CogIcon,
     href: '/settings',
   },
   {
@@ -169,8 +170,9 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
       >
         {/* Sliders, not a chevron: a chevron points somewhere and this opens a panel
             of controls in place. It was a wand before that, which suggested an effect
-            rather than a menu. */}
-        <SlidersHorizontal className="w-4 h-4" />
+            rather than a menu. The tracks slide apart when it is opened or hovered,
+            which is the picture of a panel of controls being reached for. */}
+        <AnimatedIcon icon={SlidersHorizontalIcon} />
       </button>
 
       {open &&
@@ -192,7 +194,8 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                 </p>
                 <ul className="p-1.5 space-y-0.5">
                   {ITEMS.map((item) => {
-                    const Icon = item.icon;
+                    const Icon = 'icon' in item ? item.icon : null;
+                    const Animated = 'animated' in item ? item.animated : null;
                     return (
                       <li key={item.key}>
                         <button
@@ -204,7 +207,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                               text it left the labels starting at four different optical
                               positions as the icons changed width. */}
                           <span className="xv-pqm-tile grid h-7 w-7 shrink-0 place-items-center rounded-[9px]">
-                            <Icon className="w-[15px] h-[15px]" strokeWidth={1.75} />
+                            {Icon ? (
+                              <Icon className="w-[15px] h-[15px]" strokeWidth={1.75} />
+                            ) : (
+                              // These two draw their own motion — the palette inks its
+                              // dots in, the cog turns — so they are components rather
+                              // than lucide glyphs and take no `strokeWidth`.
+                              Animated && <AnimatedIcon icon={Animated} size={15} intro={false} />
+                            )}
                           </span>
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold leading-snug">{item.label}</p>

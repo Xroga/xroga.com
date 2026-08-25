@@ -7632,6 +7632,30 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 .xv-cb-btn:hover svg:last-child { transform: translateX(3px); }
 
 .xv-animated-nav-icon { display: inline-flex; transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/*
+ * The purpose-built animated icons.
+ *
+ * `.xv-animated-nav-icon` carries a CSS hover transform — a lift, a tilt, a scale.
+ * These icons animate their own paths through motion, which writes to `transform`
+ * on the same elements, so giving them that treatment too would mean two owners of
+ * one property. They take the colour change on row hover and leave every bit of
+ * movement to the icon itself.
+ */
+.xv-animated-icon { display: inline-flex; align-items: center; justify-content: center; transition: color 180ms ease; }
+a:hover > .xv-animated-icon,
+button:hover > .xv-animated-icon { color: var(--accent); }
+
+/* The rail's two destinations read as the heavy end of the column at a shared
+   weight, so they take a lighter stroke. Dashboard's glyph is a component rather
+   than a lucide element, so this is where its stroke is set. */
+.xv-sidebar-collapsed-actions a .xv-animated-icon svg { stroke-width: 1.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-animated-icon { transition: none; }
+}
+
+html[data-reduced-motion='true'] .xv-animated-icon { transition: none; }
 /* No CSS transform here any more — `AnimatedNavIcon` drives its own motion, and two
    transform sources on one element cancel or double each other. */
 
@@ -7801,7 +7825,10 @@ body.theme-beige {
 
 /* --------------------------------------------------------- the send glyph */
 .xv-sendicon { display: grid; place-items: center; }
-.xv-sendicon svg { width: 100%; height: 100%; overflow: visible; }
+/* Direct child only. The idle state is now an `AnimatedIcon`, which renders its own
+   wrapper element in between; a descendant selector would stretch that icon's svg
+   to 100% of a box the svg is itself sizing, and it would resolve to nothing. */
+.xv-sendicon > svg { width: 100%; height: 100%; overflow: visible; }
 
 /* Every state's shapes are present in the SVG; opacity picks the live one, so the
    swap costs no re-render and nothing reflows. */
