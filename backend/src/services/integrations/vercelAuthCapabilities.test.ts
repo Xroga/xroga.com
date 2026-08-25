@@ -3,14 +3,20 @@ import test from 'node:test';
 import {
   probeVercelApiCapabilities,
   vercelCredentialCanDeploy,
-  verifyVercelPersonalTokenForDeploy,
 } from './vercelAuth.js';
 
-test('identity grants never claim deploy readiness from read-only list endpoints', () => {
+test('Vercel App OAuth credentials become deploy ready when App API permissions are available', () => {
   const readable = { canListProjects: true, canReadDeployments: true };
-  assert.equal(vercelCredentialCanDeploy('sign_in_with_vercel', readable), false);
+  assert.equal(vercelCredentialCanDeploy('sign_in_with_vercel', readable), true);
   assert.equal(vercelCredentialCanDeploy('personal_token', readable), true);
   assert.equal(vercelCredentialCanDeploy('integration_oauth', readable), true);
+});
+
+test('all credential kinds fail closed when either required API is unavailable', () => {
+  const projectOnly = { canListProjects: true, canReadDeployments: false };
+  const deploymentOnly = { canListProjects: false, canReadDeployments: true };
+  assert.equal(vercelCredentialCanDeploy('sign_in_with_vercel', projectOnly), false);
+  assert.equal(vercelCredentialCanDeploy('sign_in_with_vercel', deploymentOnly), false);
 });
 
 test('deploy readiness rejects identity-only tokens that can list projects', async (t) => {
@@ -59,90 +65,5 @@ test('deploy readiness fails closed when either capability probe errors', async 
   assert.deepEqual(await probeVercelApiCapabilities('partial-token'), {
     canListProjects: false,
     canReadDeployments: true,
-  });
-});
-
-test('personal token verification accepts deploy-capable vcp tokens when legacy identity rejects them', async (t) => {
-  const originalFetch = globalThis.fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-  });
-  globalThis.fetch = (async (input) => {
-    const url = String(input);
-    if (url.includes('/v2/user')) return new Response('not found', { status: 404 });
-    if (url.includes('/v9/projects')) return new Response('{"projects":[]}', { status: 200 });
-    if (url.includes('/v6/deployments')) {
-      return new Response('{"deployments":[]}', { status: 200 });
-    }
-    throw new Error(`Unexpected URL: ${url}`);
-  }) as typeof fetch;
-
-  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('vcp-token'), {
-    ok: true,
-    username: 'vercel-account',
-    providerUserId: undefined,
-  });
-});
-
-test('personal token verification rejects credentials without deployment reads', async (t) => {
-  const originalFetch = globalThis.fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-  });
-  globalThis.fetch = (async (input) => {
-    const url = String(input);
-    if (url.includes('/v9/projects')) return new Response('{"projects":[]}', { status: 200 });
-    if (url.includes('/v6/deployments')) return new Response('forbidden', { status: 403 });
-    throw new Error(`Unexpected URL: ${url}`);
-  }) as typeof fetch;
-
-  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('read-only-token'), {
-    ok: false,
-    reason: 'deploy_access_required',
-    capability: {
-      canListProjects: true,
-      canReadDeployments: false,
-    },
-  });
-});
-
-test('personal token verification returns owner only after deployment checks pass', async (t) => {
-  const originalFetch = globalThis.fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-  });
-  globalThis.fetch = (async (input) => {
-    const url = String(input);
-    if (url.includes('/v2/user')) {
-      return new Response('{"user":{"username":"xroga","id":"user_1"}}', { status: 200 });
-    }
-    return new Response('{}', { status: 200 });
-  }) as typeof fetch;
-
-  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('deploy-token'), {
-    ok: true,
-    username: 'xroga',
-    providerUserId: 'user_1',
-  });
-});
-
-test('personal token verification keeps deploy capability when identity lookup is unavailable', async (t) => {
-  const originalFetch = globalThis.fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-  });
-  globalThis.fetch = (async (input) => {
-    const url = String(input);
-    if (url.includes('/v9/projects') || url.includes('/v6/deployments')) {
-      return new Response('{}', { status: 200 });
-    }
-    if (url.includes('/v2/user')) throw new Error('legacy endpoint unavailable');
-    throw new Error(`Unexpected URL: ${url}`);
-  }) as typeof fetch;
-
-  assert.deepEqual(await verifyVercelPersonalTokenForDeploy('vcp-token'), {
-    ok: true,
-    username: 'vercel-account',
-    providerUserId: undefined,
   });
 });

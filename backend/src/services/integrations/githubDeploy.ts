@@ -876,6 +876,103 @@ function frameworkForDeploy(files: ProjectFile[]): 'nextjs' | 'vite' | null {
   return null;
 }
 
+export interface UserVercelDeployOptions {
+  /** Team that owns the project selected in Integrations; absent means personal account. */
+  teamId?: string;
+  /** The GitHub repository Xroga just pushed, in owner/repo form. */
+  githubRepo?: string;
+  githubBranch?: string;
+}
+
+export interface VercelGitProjectResult {
+  created: boolean;
+  linked: boolean;
+  projectName: string;
+  error?: string;
+}
+
+function vercelTeamQuery(teamId?: string): string {
+  return teamId ? `?teamId=${encodeURIComponent(teamId)}` : '';
+}
+
+/**
+ * Ensure a generated repository has a Vercel project connected to GitHub.
+ * Vercel's documented create-project `gitRepository` field is the supported
+ * way to establish auto-deploys. Existing projects are never destructively
+ * re-linked: Xroga keeps deploying to the chosen project and reports whether
+ * its current Git link already matches.
+ */
+export async function ensureVercelGitProject(opts: {
+  token: string;
+  projectName: string;
+  githubRepo?: string;
+  teamId?: string;
+  framework?: 'nextjs' | 'vite' | null;
+}): Promise<VercelGitProjectResult> {
+  const projectName = opts.projectName.trim();
+  const query = vercelTeamQuery(opts.teamId);
+  const headers = {
+    Authorization: `Bearer ${opts.token}`,
+    'Content-Type': 'application/json',
+  };
+
+  const existing = await fetch(
+    `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}${query}`,
+    { headers },
+  );
+  if (existing.ok) {
+    const project = (await existing.json()) as {
+      link?: { type?: string; repo?: string; org?: string; productionBranch?: string } | null;
+    };
+    const link = project.link;
+    const linkedRepo = link?.repo
+      ? link.repo.includes('/')
+        ? link.repo
+        : link.org
+          ? `${link.org}/${link.repo}`
+          : link.repo
+      : '';
+    const linked = Boolean(
+      opts.githubRepo &&
+        link?.type === 'github' &&
+        linkedRepo.toLowerCase() === opts.githubRepo.toLowerCase(),
+    );
+    return { created: false, linked, projectName };
+  }
+
+  if (existing.status !== 404 || !opts.githubRepo) {
+    const detail = (await existing.text()).slice(0, 180);
+    return {
+      created: false,
+      linked: false,
+      projectName,
+      error: `Could not inspect Vercel project (${existing.status})${detail ? `: ${detail}` : ''}`,
+    };
+  }
+
+  const created = await fetch(`https://api.vercel.com/v11/projects${query}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      name: projectName,
+      ...(opts.framework ? { framework: opts.framework } : {}),
+      gitRepository: { type: 'github', repo: opts.githubRepo },
+    }),
+  });
+  if (!created.ok) {
+    const detail = (await created.text()).slice(0, 220);
+    return {
+      created: false,
+      linked: false,
+      projectName,
+      error:
+        `Vercel could not create the Git-linked project (${created.status})` +
+        (detail ? `: ${detail}` : ''),
+    };
+  }
+  return { created: true, linked: true, projectName };
+}
+
 async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const deployment = await deployStaticSite(projectSlug, vercelFiles);
@@ -890,6 +987,7 @@ async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): 
 export async function syncUserVaultToVercel(
   userId: string,
   projectSlug: string,
+  teamId?: string,
 ): Promise<VercelEnvSyncResult | null> {
   const token = await getVercelToken(userId);
   if (!token) return null;
@@ -897,27 +995,49 @@ export async function syncUserVaultToVercel(
   if (!Object.keys(env).length) {
     return { ok: true, projectName: projectSlug, upserted: [], skipped: [] };
   }
-  // Use the user's account (no platform VERCEL_TEAM_ID) so env lands on their project
+  // Use the project scope selected by the user, never the Xroga platform team.
   return syncEnvVarsToVercelProject({
     token,
     projectName: projectSlug,
     env,
-    teamId: undefined,
+    teamId,
   });
 }
 
 async function deployToVercelWithUserToken(
   userId: string,
   projectSlug: string,
-  staticFiles: ProjectFile[]
+  staticFiles: ProjectFile[],
+  opts: UserVercelDeployOptions = {},
 ): Promise<PreviewDeployResult & { envSync?: VercelEnvSyncResult }> {
   const token = await getVercelToken(userId);
   if (!token) throw new Error('Vercel not connected — user must authorize under Integrations');
 
+  const framework = frameworkForDeploy(staticFiles);
+  if (opts.githubRepo) {
+    const gitProject = await ensureVercelGitProject({
+      token,
+      projectName: projectSlug,
+      githubRepo: opts.githubRepo,
+      teamId: opts.teamId,
+      framework,
+    });
+    if (gitProject.error) {
+      // A Vercel account may not have its GitHub Integration installed for this
+      // repository. Keep the explicit OAuth deployment working and surface the
+      // non-fatal Git-link issue in server evidence instead of losing the ship.
+      console.warn('[vercel] Git project link skipped:', gitProject.error);
+    } else if (gitProject.linked) {
+      console.info(
+        `[vercel] ${gitProject.created ? 'created' : 'verified'} Git-linked project ${projectSlug} → ${opts.githubRepo}`,
+      );
+    }
+  }
+
   // Sync encrypted vault secrets → Vercel env before deploy (never into GitHub files)
   let envSync: VercelEnvSyncResult | undefined;
   try {
-    envSync = (await syncUserVaultToVercel(userId, projectSlug)) ?? undefined;
+    envSync = (await syncUserVaultToVercel(userId, projectSlug, opts.teamId)) ?? undefined;
     if (envSync && !envSync.ok && envSync.error) {
       console.warn('[vercel] env sync partial/failed:', envSync.error);
     } else if (envSync?.upserted?.length) {
@@ -936,18 +1056,17 @@ async function deployToVercelWithUserToken(
   }
 
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
-  const framework = frameworkForDeploy(staticFiles);
   const deployment = await deployStaticSiteWithToken(projectSlug, vercelFiles, token, {
     framework,
     sourceDeploy: Boolean(framework),
-    teamId: null,
+    teamId: opts.teamId ?? null,
   });
   const deployUrl = await pollDeploymentReady(
     deployment.deploymentId,
     deployment.deployUrl,
     token,
     framework ? 240_000 : 180_000,
-    null,
+    opts.teamId ?? null,
   );
   return {
     deployUrl,
@@ -1021,7 +1140,8 @@ export interface PlatformDeployResult {
 export async function deployToAllPlatforms(
   projectSlug: string,
   files: ProjectFile[],
-  userId?: string
+  userId?: string,
+  opts: UserVercelDeployOptions = {},
 ): Promise<{
   vercel?: PlatformDeployResult;
   netlify?: PlatformDeployResult;
@@ -1044,7 +1164,7 @@ export async function deployToAllPlatforms(
 
   if (userVercelToken && userId) {
     try {
-      const result = await deployToVercelWithUserToken(userId, projectSlug, staticFiles);
+      const result = await deployToVercelWithUserToken(userId, projectSlug, staticFiles, opts);
       const verified = await verifyLivePreviewUrl(result.deployUrl);
       envSync = result.envSync;
       vercel = {

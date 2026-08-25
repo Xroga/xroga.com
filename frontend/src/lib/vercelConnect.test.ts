@@ -38,7 +38,8 @@ test('does not navigate when Vercel OAuth is not configured', async () => {
   assert.equal(result.popup, false);
   assert.equal(result.oauthConfigured, false);
   assert.equal(result.goToIntegrations, true);
-  assert.match(result.error ?? '', /not configured/i);
+  assert.match(result.error ?? '', /temporarily unavailable|configure/i);
+  assert.doesNotMatch(result.error ?? '', /paste|personal token/i);
   assert.deepEqual(order, ['resolve']);
 });
 
@@ -52,5 +53,6 @@ test('classifies a missing Vercel OAuth session store', async () => {
   assert.equal(result.opened, false);
   assert.equal(result.oauthConfigured, false);
   assert.equal(result.goToIntegrations, true);
-  assert.match(result.error ?? '', /database table/i);
+  assert.match(result.error ?? '', /secure OAuth session/i);
+  assert.doesNotMatch(result.error ?? '', /paste|personal token/i);
 });

@@ -37,7 +37,7 @@ export function IntegrationsPanel() {
           toast.error(stored);
           sessionStorage.removeItem('xroga-vercel-setup-error');
         } else {
-          toast('Connect Vercel here — Authorize, or paste a personal token under Ship setup', { icon: '▲' });
+          toast('Connect Vercel here, approve deployment access, then choose a project', { icon: '▲' });
         }
       } catch {
         toast('Connect Vercel in Ship setup below', { icon: '▲' });

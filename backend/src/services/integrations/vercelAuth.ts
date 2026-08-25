@@ -614,72 +614,14 @@ export async function probeVercelApiCapabilities(token: string): Promise<{
 }
 
 export function vercelCredentialCanDeploy(
-  authKind: VercelAuthKind,
+  _authKind: VercelAuthKind,
   capability: { canListProjects: boolean; canReadDeployments: boolean },
 ): boolean {
-  // Sign in with Vercel is an identity grant. Its list endpoints can return 200
-  // while deployment creation still returns 403. Only credentials issued for
-  // API use may pass deploy readiness.
-  return (
-    authKind !== 'sign_in_with_vercel' &&
-    capability.canListProjects &&
-    capability.canReadDeployments
-  );
-}
-
-export type VercelPersonalTokenVerification =
-  | {
-      ok: true;
-      username: string;
-      providerUserId?: string;
-    }
-  | {
-      ok: false;
-      reason: 'deploy_access_required';
-      capability?: {
-        canListProjects: boolean;
-        canReadDeployments: boolean;
-      };
-    };
-
-/**
- * Prove a pasted personal token reaches the two read-only APIs required by
- * the deployment flow before storing it. Vercel's current `vcp_` personal
- * tokens can authorize account resources even when the legacy /v2/user
- * identity endpoint rejects them, so identity enrichment is best-effort.
- */
-export async function verifyVercelPersonalTokenForDeploy(
-  token: string,
-): Promise<VercelPersonalTokenVerification> {
-  const capability = await probeVercelApiCapabilities(token);
-  if (!vercelCredentialCanDeploy('personal_token', capability)) {
-    return {
-      ok: false,
-      reason: 'deploy_access_required',
-      capability,
-    };
-  }
-
-  let username = 'vercel-account';
-  let providerUserId: string | undefined;
-  try {
-    const userRes = await fetch('https://api.vercel.com/v2/user', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (userRes.ok) {
-      const user = (await userRes.json()) as { user?: { username?: string; id?: string } };
-      username = user.user?.username ?? username;
-      providerUserId = user.user?.id;
-    }
-  } catch {
-    // Deploy capability is the acceptance gate; owner metadata is optional.
-  }
-
-  return {
-    ok: true,
-    username,
-    providerUserId,
-  };
+  // Sign in with Vercel App access tokens are API credentials too. Their actual
+  // Project and Deployment access is configured in the Vercel App dashboard,
+  // not represented as extra OAuth scope strings. Judge every credential by the
+  // live resources it can reach instead of rejecting the OAuth auth kind.
+  return capability.canListProjects && capability.canReadDeployments;
 }
 
 export async function isVercelConnected(userId: string): Promise<boolean> {

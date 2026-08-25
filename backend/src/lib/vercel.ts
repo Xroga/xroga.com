@@ -58,7 +58,7 @@ export async function deployStaticSite(
   });
 }
 
-/** Deploy using a user's Vercel OAuth/PAT token (their account). No GitHub↔Vercel link required. */
+/** Deploy through the user's Vercel App OAuth authorization (their account/project). */
 export async function deployStaticSiteWithToken(
   projectName: string,
   files: VercelFile[],
