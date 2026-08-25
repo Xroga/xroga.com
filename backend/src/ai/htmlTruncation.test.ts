@@ -4,6 +4,7 @@ import { htmlLooksTruncated, htmlTagBalance } from './htmlTruncation.js';
 import {
   emptyReferencedAssets,
   pruneUnusedEmptyAssets,
+  repairReferencedEmptyClassicAssets,
   staticValidateProject,
 } from './staticValidate.js';
 
@@ -176,6 +177,56 @@ test('referenced empty assets are never pruned and still block shipping', () => 
 
   assert.deepEqual(pruneUnusedEmptyAssets(files), files);
   assert.equal(staticValidateProject(files).ok, false);
+});
+
+test('referenced empty classic assets receive a safe runnable fallback', () => {
+  const files = [
+    { path: 'index.html', content: COMPLETE_PAGE },
+    { path: 'styles.css', content: '' },
+    { path: 'script.js', content: '   ' },
+  ];
+
+  const repaired = repairReferencedEmptyClassicAssets(files);
+  const css = repaired.find((file) => file.path === 'styles.css')?.content ?? '';
+  const js = repaired.find((file) => file.path === 'script.js')?.content ?? '';
+
+  assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /button\[data-activated="true"\]/);
+  assert.match(js, /DOMContentLoaded/);
+  assert.match(js, /aria-pressed/);
+  assert.deepEqual(emptyReferencedAssets(repaired), []);
+  assert.equal(staticValidateProject(repaired).ok, true);
+});
+
+test('classic asset recovery preserves authored and unrelated files byte-for-byte', () => {
+  const files = [
+    { path: 'index.html', content: COMPLETE_PAGE },
+    { path: 'styles.css', content: 'body { color: rebeccapurple; }' },
+    { path: 'script.js', content: '' },
+    { path: 'main.js', content: '' },
+  ];
+
+  const repaired = repairReferencedEmptyClassicAssets(files);
+  assert.equal(
+    repaired.find((file) => file.path === 'styles.css')?.content,
+    'body { color: rebeccapurple; }',
+  );
+  assert.equal(repaired.find((file) => file.path === 'main.js')?.content, '');
+  assert.notEqual(repaired.find((file) => file.path === 'script.js')?.content, '');
+});
+
+test('classic asset recovery supports referenced assets inside a static subdirectory', () => {
+  const files = [
+    {
+      path: 'public/index.html',
+      content: COMPLETE_PAGE.replace('href="styles.css"', 'href="/assets/styles.css"'),
+    },
+    { path: 'assets/styles.css', content: '' },
+  ];
+
+  const repaired = repairReferencedEmptyClassicAssets(files);
+  assert.match(repaired[1]?.content ?? '', /radial-gradient/);
+  assert.deepEqual(emptyReferencedAssets(repaired), []);
 });
 
 test('an empty framework script is never mistaken for a disposable classic placeholder', () => {
