@@ -46,6 +46,7 @@ import {
   getNewRepoVisibility,
   getSelectedRepoContext,
   hasFreshTerminalIntent,
+  consumeFreshTerminalIntent,
   saveSelectedRepoContext,
 } from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
@@ -1732,15 +1733,18 @@ export function TerminalChatProvider({
         const buildSession = activeWebsiteBuildRef.current;
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
-        const repoContextEarly = getSelectedRepoContext();
+        const freshProductIntent = hasFreshTerminalIntent();
+        const repoContextEarly = freshProductIntent ? null : getSelectedRepoContext();
         // A "New product" terminal may still be rendered inside a route whose
         // projectId belongs to the previously opened repository. Passing that stale
         // projectId makes the backend recover and patch the old project even after
         // the repo picker was explicitly cleared. The fresh-product intent is the
         // authoritative boundary: no selected repo and no inherited project memory.
-        const freshProductIntent = hasFreshTerminalIntent() && !repoContextEarly;
+        // A stale local repository value must never be allowed to override the user's
+        // explicit New product action.
         // Selected repo + update language → incremental GitHub patch (not advice essays)
         const isBuildUpdate =
+          !freshProductIntent &&
           !adviceTurn &&
           (isWebsiteBuildUpdate(displayPrompt, threadForMemory) ||
             (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
@@ -1853,7 +1857,9 @@ export function TerminalChatProvider({
           }
         }
 
-        const repoContext = repoContextEarly ?? getSelectedRepoContext();
+        const repoContext = freshProductIntent
+          ? null
+          : repoContextEarly ?? getSelectedRepoContext();
         // Sticky fallback ONLY for updates — never for greenfield (wrong-product risk).
         let stickyTargetRepo = repoContext?.repo;
         let stickyTargetBranch = repoContext?.branch ?? 'main';
@@ -2055,6 +2061,9 @@ export function TerminalChatProvider({
             ...(priorSite ? { priorSite } : {}),
           },
           onStart: (runId) => {
+            // Fresh-product intent is single-use, but keep it available until the
+            // backend has accepted the run so a preflight error can be retried safely.
+            if (freshProductIntent) consumeFreshTerminalIntent();
             activeRunIdRef.current = runId;
             if (startingHeavyBuild) attachPendingBuildRun(assistantId, runId);
           },
