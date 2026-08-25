@@ -69,6 +69,119 @@ export function pruneUnusedEmptyAssets(files: ProjectFile[]): ProjectFile[] {
   );
 }
 
+const STATIC_FALLBACK_CSS = `:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #07111f;
+  color: #f8fbff;
+}
+
+* { box-sizing: border-box; }
+
+html { min-height: 100%; scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 5vw, 5rem);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(38, 132, 255, 0.28), transparent 34rem),
+    linear-gradient(145deg, #07111f 0%, #0d1d35 52%, #07111f 100%);
+}
+
+main, body > div, body > section {
+  width: min(100%, 72rem);
+}
+
+h1, h2, h3, p { text-wrap: balance; }
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2.6rem, 8vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+p {
+  max-width: 44rem;
+  color: #b8c8dc;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.7;
+}
+
+button, .button, [role="button"] {
+  min-height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.75rem 1.25rem;
+  background: #2087ff;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0.75rem 2rem rgba(32, 135, 255, 0.25);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+button:hover, .button:hover, [role="button"]:hover {
+  transform: translateY(-2px);
+  background: #0d6fdf;
+  box-shadow: 0 1rem 2.5rem rgba(32, 135, 255, 0.34);
+}
+
+button:focus-visible, .button:focus-visible, [role="button"]:focus-visible {
+  outline: 3px solid rgba(130, 195, 255, 0.9);
+  outline-offset: 4px;
+}
+
+button[data-activated="true"] { background: #0faf78; }
+
+@media (max-width: 40rem) {
+  body { place-items: start center; padding-top: 4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}`;
+
+const STATIC_FALLBACK_JS = `document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.dataset.xrogaReady = 'true';
+
+  document.querySelectorAll('button:not([type="submit"])').forEach((button) => {
+    if (button.dataset.xrogaBound === 'true') return;
+    button.dataset.xrogaBound = 'true';
+    button.addEventListener('click', () => {
+      button.dataset.activated = 'true';
+      button.setAttribute('aria-pressed', 'true');
+    });
+  });
+});`;
+
+/**
+ * Complete the two conventional static-site assets when a model emitted their
+ * references but left the files empty.
+ *
+ * This is intentionally narrow: it never rewrites authored content, framework
+ * entrypoints, or arbitrary script names. It only makes the well-known
+ * `styles.css` and `script.js` contract truthful for a standalone HTML build.
+ */
+export function repairReferencedEmptyClassicAssets(files: ProjectFile[]): ProjectFile[] {
+  const referenced = new Set(emptyReferencedAssets(files));
+  if (!referenced.size) return files;
+
+  return files.map((file) => {
+    if (file.content?.trim() || !referenced.has(file.path)) return file;
+
+    const name = file.path.replace(/\\/g, '/').split('/').pop()?.toLowerCase();
+    if (name === 'styles.css') return { ...file, content: STATIC_FALLBACK_CSS };
+    if (name === 'script.js') return { ...file, content: STATIC_FALLBACK_JS };
+    return file;
+  });
+}
+
 function isClassicOptionalAsset(path: string): boolean {
   return path === 'styles.css' || path === 'script.js';
 }
