@@ -71,6 +71,30 @@ test('the crypto page renders in black whatever the stored theme is', () => {
   );
 });
 
+/**
+ * The hero followed the homepage's rhythm — headline, subtitle, composer — after
+ * losing a "Start building" button that sat between the subtitle and the composer
+ * and linked to `#builder`, the composer directly beneath it. It scrolled to
+ * something already on screen, and it put a second call to action in front of the
+ * only control on the page that starts a build.
+ */
+test('the hero goes straight from the headline to the composer', () => {
+  const hero = PAGE.slice(PAGE.indexOf('styles.heroInner'), PAGE.indexOf('styles.stackLabel'));
+  assert.ok(hero.length > 0, 'the hero could not be located');
+
+  // The anchor is still the composer, so inbound `#builder` links keep landing.
+  assert.match(hero, /id="builder"/, 'the composer lost its anchor');
+  assert.ok(
+    !/href="#builder"/.test(hero.replace(/\{\/\*[\s\S]*?\*\/\}/g, '')),
+    'the hero links to a target already on screen',
+  );
+
+  // Headline, then subtitle, then the composer — nothing between them.
+  const order = ['styles.heroTitle', 'styles.heroSub', 'styles.heroConsole'].map((mark) => hero.indexOf(mark));
+  assert.ok(order.every((at) => at >= 0), 'the hero is missing one of its three parts');
+  assert.deepEqual([...order].sort((a, b) => a - b), order, 'the hero parts are out of order');
+});
+
 test('the page uses the shared footer and drops the redundant badge', () => {
   assert.match(PAGE, /<MarketingFooter \/>/, 'the crypto page needs the shared footer');
   // It carried its own copy — same links, same wording, its own markup — so every

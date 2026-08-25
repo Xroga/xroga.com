@@ -115,7 +115,10 @@
 
 .hero {
   position: relative;
-  min-height: 860px;
+  /* Sized to the hero's own content. At 860px it held roughly a quarter of a screen
+     of empty background under the ecosystem row, and losing the redundant CTA made
+     that gap larger. The mobile rule below still releases it to `auto`. */
+  min-height: 720px;
   overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
   isolation: isolate;
@@ -337,31 +340,17 @@
   font-weight: 650;
 }
 
-.primaryButton {
-  margin: 22px auto 34px;
-  min-height: 42px;
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 18px;
-  border-radius: 8px;
-  background: var(--button-bg);
-  color: var(--button-text) !important;
-  font-size: 12px;
-  font-weight: 750;
-  box-shadow: 0 12px 38px var(--shadow);
-}
-
-.primaryButton svg,
 .textLink svg {
   width: 14px;
   height: 14px;
 }
 
+/* Headline, subtitle, composer — the homepage's hero rhythm, where the composer is
+   the focal element rather than a narrow box below a button. 42rem matches the
+   homepage's own `.xv-hc-chat`. */
 .heroConsole {
-  width: min(600px, 100%);
-  margin: 30px auto 0;
+  width: min(672px, 100%);
+  margin: 34px auto 0;
   text-align: left;
 }
 
@@ -1974,11 +1963,6 @@
 
   .heroTitle {
     font-size: 42px;
-  }
-
-  .primaryButton {
-    width: 100%;
-    justify-content: center;
   }
 
   .ecosystemRow {
