@@ -89,15 +89,32 @@ test('deep-linking directly to a settings section opens that section', async ({ 
   await expect(page.getByText('Two-factor authentication (TOTP)')).toBeVisible();
 });
 
-test('mobile viewport shows a compact section selector instead of the desktop tab rail', async ({ page }) => {
+/**
+ * The mobile section switcher was a native select, chosen because a wrapping pill row
+ * turned nine sections into three stacked rows. It is one scrolling row now, so the
+ * sections read as sections rather than as a control that has to be opened to find
+ * out what is inside it.
+ */
+test('mobile viewport shows the sections as one scrolling row, not a dropdown', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await signIn(page, '/settings');
 
-  await expect(page.getByRole('tablist')).toBeHidden();
-  const selector = page.getByLabel('Section');
-  await expect(selector).toBeVisible();
+  const strip = page.locator('.xv-settings-sections .xv-tabstrip');
+  await expect(strip).toBeVisible();
+  await expect(page.locator('.xv-settings-sections select')).toHaveCount(0);
 
-  await selector.selectOption('theme');
+  // One row that overflows, rather than several rows that fit.
+  const shape = await strip.evaluate((el) => {
+    const tabs = [...el.querySelectorAll('[role="tab"]')];
+    return {
+      rows: new Set(tabs.map((t) => Math.round(t.getBoundingClientRect().top))).size,
+      overflows: el.scrollWidth > el.clientWidth + 1,
+    };
+  });
+  expect(shape.rows, 'the strip wraps instead of scrolling').toBe(1);
+  expect(shape.overflows, 'the strip does not scroll').toBe(true);
+
+  await strip.getByRole('tab', { name: 'Theme' }).click();
   await expect(page).toHaveURL(/tab=theme/);
 });
 

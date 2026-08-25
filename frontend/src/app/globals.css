@@ -3765,17 +3765,41 @@ body.theme-gray * {
      `visibility: hidden` stops the aside painting but leaves its width reserved in
      the flex row, so the terminal began after a band of empty page. It collapses to
      the icon rail instead — see `effectiveSidebarOpen` in Sidebar.tsx. */
-  body.xv-page-fullscreen-active aside.xv-sidebar-hover:not(.xv-sidebar-mobile-open) {
-    visibility: hidden;
-    pointer-events: none;
+  /*
+   * Page fullscreen shows the panel that was expanded, and nothing else.
+   *
+   * This used to name only `aside.xv-sidebar-hover` and hide it with `visibility`,
+   * which is two bugs in one line. It matched a state class the sidebar does not
+   * normally carry, so the sidebar simply stayed; and a `visibility: hidden` element
+   * keeps its width, so even when it did match it left a column of empty page beside
+   * a panel that is meant to have the screen.
+   *
+   * The mobile bar and the bottom nav go with it. On a phone those are the whole of
+   * the chrome, so leaving them behind meant fullscreen changed almost nothing there.
+   */
+  body.xv-page-fullscreen-active .xv-sidebar-root,
+  body.xv-page-fullscreen-active .xv-sidebar-edge-toggle,
+  body.xv-page-fullscreen-active .xv-mobile-workspace-header,
+  body.xv-page-fullscreen-active .xv-mobile-nav,
+  body.xv-page-fullscreen-active .xv-mobile-menu-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
   body.xv-page-fullscreen-active header.sticky,
   body.xv-terminal-fullscreen-active header.sticky {
     visibility: hidden;
     pointer-events: none;
   }
+  /* Opaque, and the same colour the body already paints. It was `transparent`, which
+     let the page underneath scroll past behind a surface that is supposed to be the
+     only thing on screen. */
   .xv-fullscreen-overlay {
-    background: transparent !important;
+    background: var(--background) !important;
+  }
+  /* Nothing behind the overlay should move while it is up. */
+  body.xv-page-fullscreen-active {
+    overflow: hidden;
   }
 
   .xv-sidebar-profile-row {
@@ -7644,6 +7668,151 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
  */
 .xv-animated-icon-host,
 .xv-animated-icon { display: inline-flex; align-items: center; justify-content: center; }
+
+/*
+ * The settings section strip on small screens.
+ *
+ * One row that scrolls under the finger rather than a control that has to be opened
+ * to find out what is inside it. `-webkit-overflow-scrolling` keeps the momentum on
+ * iOS; the scrollbar is hidden because the row is meant to be dragged, and a visible
+ * bar under nine pills reads as a defect on a phone.
+ */
+.xv-settings-sections { margin: 0 -0.75rem; padding: 0 0.75rem; }
+.xv-settings-sections .xv-tabstrip {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.xv-settings-sections .xv-tabstrip::-webkit-scrollbar { display: none; }
+.xv-tabstrip__tab { scroll-snap-align: center; }
+
+/* ------------------------------------------------------------------ mobile nav */
+
+/*
+ * The bottom bar, as a floating pill rather than a full-width strip welded to the
+ * edge of the screen.
+ *
+ * The selected tab's glyph sits inside a filled disc in the accent the reader chose,
+ * which is what makes the active state a shape rather than a colour — it survives a
+ * light theme, a dark theme and a colour-blind reader alike.
+ *
+ * Below it is a grab handle. Swiping down puts the bar away so it stops covering the
+ * last line of a page; swiping up brings it back. The handle stays put either way,
+ * because a gesture with nothing left to grab cannot be undone.
+ */
+.xv-mobile-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.xv-mobile-nav__bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+  max-width: 520px;
+  padding: 7px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 22px;
+  border: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  pointer-events: auto;
+  transition: opacity 200ms ease;
+}
+.xv-mobile-nav__bar::-webkit-scrollbar { display: none; }
+
+.xv-mobile-nav__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-width: 60px;
+  padding: 2px 4px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.xv-mobile-nav__disc {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 200ms ease, color 200ms ease, transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.xv-mobile-nav__tab.is-active { color: var(--accent); }
+.xv-mobile-nav__tab.is-active .xv-mobile-nav__disc {
+  background: var(--accent);
+  color: var(--button-text, #fff);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.xv-mobile-nav__label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  max-width: 62px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The selected tab is the one already marked by the disc, so its label would be a
+   second, weaker copy of the same signal taking room from seven others. */
+.xv-mobile-nav__tab.is-active .xv-mobile-nav__label { opacity: 0; height: 0; }
+
+.xv-mobile-nav__handle {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 18px;
+  border: 0;
+  background: none;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: none;
+}
+.xv-mobile-nav__handle > span {
+  display: block;
+  width: 44px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--card-border);
+  transition: background 160ms ease;
+}
+.xv-mobile-nav__handle:active > span { background: var(--accent); }
+
+/* Down and out of the way, with the handle left on screen to bring it back. */
+.xv-mobile-nav[data-hidden='true'] {
+  transform: translateY(calc(100% - 26px - env(safe-area-inset-bottom, 0px)));
+}
+.xv-mobile-nav[data-hidden='true'] .xv-mobile-nav__bar { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-mobile-nav,
+  .xv-mobile-nav__disc,
+  .xv-mobile-nav__bar { transition: none; }
+}
 .xv-animated-icon-host { transition: color 180ms ease; }
 a:hover .xv-animated-icon-host,
 button:hover .xv-animated-icon-host { color: var(--accent); }

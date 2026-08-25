@@ -1901,16 +1901,18 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   flex: none;
   width: 30px;
   height: 26px;
-  border: 1px solid var(--border-subtle, var(--card-border));
+  /* No resting outline. The pill ring around the glyph read as a second control
+     beside the composer's own buttons; the bars are the mic now, and the listening
+     state below still carries a tint so it is not signalled by colour alone. */
+  border: 0;
   border-radius: 999px;
-  background: var(--surface-raised, var(--card));
+  background: transparent;
   color: var(--text-secondary, var(--muted));
   cursor: pointer;
   transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 .xv-mic-btn:hover:not(:disabled) {
   color: var(--text-primary, var(--foreground));
-  border-color: var(--border-strong, var(--card-border));
 }
 .xv-mic-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .xv-mic-btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -1920,7 +1922,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   background: color-mix(in srgb, var(--accent) 14%, transparent);
   color: var(--accent);
 }
-.xv-mic-btn.is-error { border-color: #dc2626; color: #dc2626; }
+.xv-mic-btn.is-error { color: #dc2626; }
 
 .xv-mic-icon { transition: opacity 160ms ease; }
 .xv-mic-btn.is-listening .xv-mic-icon { opacity: 0; }

@@ -18,7 +18,6 @@ import {
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
-import { Select } from '@/components/ui/Select';
 import { GeneralSettingsPanel } from '@/components/settings/GeneralSettingsPanel';
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
 import { DataAiSettingsPanel } from '@/components/settings/DataAiSettingsPanel';
@@ -78,15 +77,24 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
             <Tabs items={SECTIONS} activeId={section} onChange={setSection} orientation="vertical" idPrefix="xv-settings" />
           </nav>
 
-          {/* Mobile/tablet: compact section selector, no clipped horizontal pills */}
-          <div className="md:hidden">
-            <Select label="Section" value={section} onChange={(e) => setSection(e.target.value)}>
-              {SECTIONS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </Select>
+          {/*
+            Mobile/tablet: the same tabs as the desktop rail, laid out as one row that
+            scrolls under the finger.
+
+            This was a native select, chosen because a wrapping pill row turned nine
+            sections into three stacked rows. The row does not wrap now — it scrolls —
+            so the sections are all visible as sections rather than hidden behind a
+            control that has to be opened to find out what is in it.
+          */}
+          <div className="xv-settings-sections md:hidden" role="group" aria-label="Section">
+            <Tabs
+              items={SECTIONS}
+              activeId={section}
+              onChange={setSection}
+              orientation="horizontal"
+              idPrefix="xv-settings-m"
+              panelPrefix="xv-settings"
+            />
           </div>
 
           <div

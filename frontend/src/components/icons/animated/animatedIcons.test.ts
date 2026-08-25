@@ -195,10 +195,12 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 });
 
 
-test('the composer takes the ring, the capsule and the wheel', () => {
+test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
   assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
-  assert.match(MIC, /icon=\{MicIcon\}/, 'the mic button is not the capsule');
+  // The capsule became the bars: a level meter says "this is listening to you" in a
+  // way a microphone body does not, and the ring around it is gone too.
+  assert.match(MIC, /icon=\{AudioLinesIcon\}/, 'the mic button is not the bars');
   assert.ok(!/<Mic\b/.test(MIC), 'the static mic is back');
 });
 

@@ -57,6 +57,11 @@ import { CogIcon } from '@/components/icons/animated/CogIcon';
 import { TelescopeIcon } from '@/components/icons/animated/TelescopeIcon';
 import { ConnectIcon } from '@/components/icons/animated/ConnectIcon';
 import { FolderOpenIcon } from '@/components/icons/animated/FolderOpenIcon';
+import { AirplayIcon } from '@/components/icons/animated/AirplayIcon';
+import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
+import { SmileIcon } from '@/components/icons/animated/SmileIcon';
+import { ChartColumnIncreasingIcon } from '@/components/icons/animated/ChartColumnIncreasingIcon';
+import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -169,6 +174,7 @@ const navItems: NavEntry[] = [
         motion: 'pulse' as const,
         label: 'Operations',
         icon: Activity,
+        animated: HeartPulseIcon,
         tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
       },
       {
@@ -176,6 +182,7 @@ const navItems: NavEntry[] = [
         motion: 'grow' as const,
         label: 'Growth',
         icon: TrendingUp,
+        animated: ChartColumnIncreasingIcon,
         tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
       },
     ],
@@ -193,6 +200,7 @@ const navItems: NavEntry[] = [
         motion: 'flip' as const,
         label: 'Showcase',
         icon: LayoutTemplate,
+        animated: AirplayIcon,
         tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
       },
       {
@@ -200,6 +208,7 @@ const navItems: NavEntry[] = [
         motion: 'pulse' as const,
         label: 'Community',
         icon: MessageCirclePlus,
+        animated: UsersRoundIcon,
         tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
       },
       {
@@ -207,6 +216,7 @@ const navItems: NavEntry[] = [
         motion: 'pulse' as const,
         label: 'Share Feedback',
         icon: MessageSquarePlus,
+        animated: SmileIcon,
         tip: 'Tell us what is working and what is not.',
       },
     ],
