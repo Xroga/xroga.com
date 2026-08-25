@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
-import { ThemeToggle } from './ThemeToggle';
 import { TerminalDock } from '@/components/terminal/TerminalDock';
 import { TerminalChatProvider } from '@/context/TerminalChatContext';
 import { TerminalScrollProvider } from '@/context/TerminalScrollContext';
@@ -99,16 +98,19 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 isDashboard ? 'h-full min-h-0' : 'min-h-screen'
               )}
             >
-              {!isDashboard ? (
-                <header
-                  className="xv-site-header xv-site-header-transparent absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-2 sm:py-3"
-                >
-                  <div className="flex items-center gap-2 min-w-0 flex-1" />
-                  <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0 relative z-[250]">
-                    <ThemeToggle />
-                  </div>
-                </header>
-              ) : null}
+              {/*
+                No page header here any more.
+                
+                It held a logo and a theme control. The logo went when it turned out to
+                be the second Xroga on a phone; the theme control was the second one of
+                those too — the sidebar's toolbar carries the real one, beside New and
+                Search, and this copy floated over every dashboard tab as a loose
+                button with no toolbar to belong to.
+                
+                With both gone the header was an empty, absolutely-positioned strip at
+                `z-30` across the top of every non-workspace page: invisible, and still
+                in front of whatever it covered.
+              */}
 
               {/* The workspace is the one route that owns its whole viewport: it renders a
                   desktop-application shell that must keep its rounded corners no matter how

@@ -20,6 +20,7 @@ const SETTINGS = read('../settings/SettingsView.tsx');
 const CSS = read('../../app/globals.css');
 const UIVERSE = read('../../../src/styles/uiverse.css');
 const MIC = read('../terminal/ChatBarMicButton.tsx');
+const THEME_TOGGLE = read('./ThemeToggle.tsx');
 
 /**
  * Two Xroga wordmarks a few pixels apart: the page header carried one for small
@@ -138,4 +139,50 @@ test('the sidebar rows that were given new glyphs kept them', () => {
     assert.ok(at > 0, `the ${label} row is gone`);
     assert.match(SIDEBAR.slice(at, at + 300), new RegExp(`animated: ${icon},`), `${label} lost ${icon}`);
   }
+});
+
+
+/**
+ * There was a second theme control: a loose button floating over every dashboard tab,
+ * with no toolbar to belong to. The sidebar's toolbar carries the real one, beside
+ * New and Search.
+ */
+test('there is one theme control, not two', () => {
+  assert.ok(!/<ThemeToggle/.test(SHELL), 'the floating theme button is back');
+  assert.match(SIDEBAR, /<ThemeToggle \/>/, 'the sidebar lost the real one');
+  assert.ok(THEME_TOGGLE.length > 0, 'the theme control itself is gone');
+  // With the logo and the toggle both gone, the header was an empty absolutely
+  // positioned strip across the top of every page — invisible, and still in front of
+  // whatever it covered.
+  assert.ok(!/xv-site-header/.test(SHELL), 'the empty header strip is back');
+});
+
+/**
+ * Fullscreen on a phone gives up the frame and the chrome.
+ *
+ * The mobile bar is named in the CSS rather than left to the `hidden` class the shell
+ * puts on it: `.xv-mobile-workspace-header` sets `display: flex` inside a media query
+ * emitted after Tailwind's utilities, so at equal specificity the later rule won and
+ * the logo and its buttons stayed on top of the terminal. Measured with `hidden`
+ * applied, the header still computed `display: flex`.
+ */
+test('workspace fullscreen is edge to edge on a phone and hides the mobile bar', () => {
+  const at = CSS.indexOf('body.xv-terminal-fullscreen-active .xv-sidebar-root');
+  assert.notEqual(at, -1, 'terminal fullscreen hides nothing');
+  const rule = CSS.slice(at, CSS.indexOf('}', at));
+  assert.ok(
+    rule.includes('body.xv-terminal-fullscreen-active .xv-mobile-workspace-header'),
+    'the mobile bar survives workspace fullscreen',
+  );
+  assert.match(rule, /display: none !important/, 'the bar is only hidden, so it keeps its space');
+
+  const mobile = CSS.slice(CSS.indexOf('@media (max-width: 1023px) {', CSS.indexOf('.xv-app-stage--fullscreen {')));
+  assert.match(
+    mobile,
+    /body\.xv-terminal-fullscreen-active \.xv-app-stage--fullscreen \{\n\s*padding: 0;/,
+    'the stage keeps its gutter on a phone',
+  );
+  assert.match(mobile, /border-radius: 0;/, 'the shell keeps its rounded corners on a phone');
+  // Desktop keeps the frame: there is a desk for the window to sit on there.
+  assert.match(CSS, /\.xv-app-stage--fullscreen \{ padding: var\(--xv-app-gutter\); \}/);
 });

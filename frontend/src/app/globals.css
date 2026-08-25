@@ -3744,8 +3744,17 @@ body.theme-gray * {
    * leaves a band of empty page beside a terminal that is meant to have the screen,
    * which is the bug fullscreen already had once.
    */
+  /*
+   * The mobile bar is on this list because the class the shell puts on it does not
+   * win. It carries `hidden` in fullscreen, but `.xv-mobile-workspace-header` sets
+   * `display: flex` inside a media query that is emitted after Tailwind's utilities,
+   * so at equal specificity the later rule took it — and the logo and its buttons sat
+   * on top of a terminal that was supposed to have the screen. Measured, not assumed:
+   * with `hidden` applied the header still computed `display: flex`.
+   */
   body.xv-terminal-fullscreen-active .xv-sidebar-root,
   body.xv-terminal-fullscreen-active .xv-sidebar-edge-toggle,
+  body.xv-terminal-fullscreen-active .xv-mobile-workspace-header,
   body.xv-terminal-fullscreen-active .xv-mobile-menu-btn {
     display: none !important;
     visibility: hidden !important;
@@ -9486,6 +9495,27 @@ body.theme-beige {
    rather than the seam, because the thing it sits beside in this state is the icon
    rail, not the sidebar it was tightened against. */
 .xv-app-stage--fullscreen { padding: var(--xv-app-gutter); }
+
+/*
+ * On a phone, fullscreen gives up the frame.
+ *
+ * The gutter and the rounded silhouette are what make the workspace read as a window
+ * on a desktop, where there is room for a window to sit on a desk. At 390px there is
+ * no desk: the same 8px margin and 16px radius are simply screen the terminal is not
+ * using, on the one control whose whole promise is the screen. The chrome around it —
+ * the mobile bar with the logo and its buttons — is already hidden by the shell, the
+ * same as on desktop.
+ */
+@media (max-width: 1023px) {
+  body.xv-terminal-fullscreen-active .xv-app-stage--fullscreen {
+    padding: 0;
+  }
+  body.xv-terminal-fullscreen-active .xv-workspace-shell {
+    border-radius: 0;
+    border-width: 0;
+    box-shadow: none;
+  }
+}
 
 /* The page behind the whole application, not just the workspace column. The stage
    starts where the sidebar's column ends, so without this the 64px strip beside a
