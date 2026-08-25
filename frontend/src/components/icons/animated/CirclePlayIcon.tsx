@@ -12,12 +12,12 @@ import {
   type HTMLAttributes,
 } from 'react';
 
-export interface LocateFixedIconHandle {
+export interface CirclePlayIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface LocateFixedIconProps
+interface CirclePlayIconProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
     | 'color'
@@ -34,7 +34,7 @@ interface LocateFixedIconProps
   color?: string;
 }
 
-const LocateFixedIcon = forwardRef<LocateFixedIconHandle, LocateFixedIconProps>(
+const CirclePlayIcon = forwardRef<CirclePlayIconHandle, CirclePlayIconProps>(
   (
     {
       onMouseEnter,
@@ -78,42 +78,27 @@ const LocateFixedIcon = forwardRef<LocateFixedIconHandle, LocateFixedIconProps>(
     );
 
     const ringVariants: Variants = {
-      normal: { scale: 1, opacity: 1 },
+      normal: { pathLength: 1, opacity: 1 },
       animate: {
-        scale: [1.4, 1],
+        pathLength: [0, 1],
         opacity: [0, 1],
-        transition: { duration: 0.45 * duration, ease: [0.34, 1.2, 0.64, 1] },
+        transition: { duration: 0.5 * duration, ease: 'easeInOut' },
       },
     };
 
-    const tickVariants: Variants = {
-      normal: { scale: 1, opacity: 1 },
-      animate: (i: number) => ({
-        scale: [1.8, 1],
-        opacity: [0, 1],
-        transition: {
-          duration: 0.35 * duration,
-          delay: (0.3 + i * 0.06) * duration,
-          ease: [0.34, 1.2, 0.64, 1],
-        },
-      }),
-    };
-
-    const dotVariants: Variants = {
+    const symbolVariants: Variants = {
       normal: { scale: 1, opacity: 1 },
       animate: {
-        scale: [0, 1.4, 1],
+        scale: [0, 1.1, 1],
         opacity: [0, 1, 1],
         transition: {
           duration: 0.4 * duration,
-          delay: 0.6 * duration,
+          delay: 0.3 * duration,
           times: [0, 0.6, 1],
-          ease: [0.34, 1.5, 0.64, 1],
+          ease: [0.34, 1.4, 0.64, 1],
         },
       },
     };
-
-    const origin = { transformBox: 'view-box', originX: '12px', originY: '12px' } as const;
 
     return (
         <m.div
@@ -136,17 +121,17 @@ const LocateFixedIcon = forwardRef<LocateFixedIconHandle, LocateFixedIconProps>(
             animate={controls}
             initial="normal"
           >
-            <m.circle cx="12" cy="12" r="7" variants={ringVariants} style={origin} />
-            <m.line x1="2" y1="12" x2="5" y2="12" custom={0} variants={tickVariants} style={origin} />
-            <m.line x1="19" y1="12" x2="22" y2="12" custom={1} variants={tickVariants} style={origin} />
-            <m.line x1="12" y1="2" x2="12" y2="5" custom={2} variants={tickVariants} style={origin} />
-            <m.line x1="12" y1="19" x2="12" y2="22" custom={3} variants={tickVariants} style={origin} />
-            <m.circle cx="12" cy="12" r="3" variants={dotVariants} style={origin} />
+            <m.circle cx="12" cy="12" r="10" variants={ringVariants} />
+            <m.path
+              d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+              variants={symbolVariants}
+              style={{ transformBox: 'view-box', originX: '12px', originY: '12px' }}
+            />
           </m.svg>
         </m.div>
     );
   },
 );
 
-LocateFixedIcon.displayName = 'LocateFixedIcon';
-export { LocateFixedIcon };
+CirclePlayIcon.displayName = 'CirclePlayIcon';
+export { CirclePlayIcon };

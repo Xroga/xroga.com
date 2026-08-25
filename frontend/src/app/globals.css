@@ -7642,9 +7642,11 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
  * one property. They take the colour change on row hover and leave every bit of
  * movement to the icon itself.
  */
-.xv-animated-icon { display: inline-flex; align-items: center; justify-content: center; transition: color 180ms ease; }
-a:hover > .xv-animated-icon,
-button:hover > .xv-animated-icon { color: var(--accent); }
+.xv-animated-icon-host,
+.xv-animated-icon { display: inline-flex; align-items: center; justify-content: center; }
+.xv-animated-icon-host { transition: color 180ms ease; }
+a:hover .xv-animated-icon-host,
+button:hover .xv-animated-icon-host { color: var(--accent); }
 
 /* The rail's two destinations read as the heavy end of the column at a shared
    weight, so they take a lighter stroke. Dashboard's glyph is a component rather
@@ -7652,10 +7654,10 @@ button:hover > .xv-animated-icon { color: var(--accent); }
 .xv-sidebar-collapsed-actions a .xv-animated-icon svg { stroke-width: 1.5; }
 
 @media (prefers-reduced-motion: reduce) {
-  .xv-animated-icon { transition: none; }
+  .xv-animated-icon-host { transition: none; }
 }
 
-html[data-reduced-motion='true'] .xv-animated-icon { transition: none; }
+html[data-reduced-motion='true'] .xv-animated-icon-host { transition: none; }
 /* No CSS transform here any more — `AnimatedNavIcon` drives its own motion, and two
    transform sources on one element cancel or double each other. */
 

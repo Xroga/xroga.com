@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/utils';
 import type { Variants } from 'motion/react';
-import { LazyMotion, domAnimation, m, useAnimation, useReducedMotion } from 'motion/react';
+import * as m from 'motion/react-m';
+import { useAnimation, useReducedMotion } from 'motion/react';
 import {
   forwardRef,
   useCallback,
@@ -95,7 +96,6 @@ const RocketIcon = forwardRef<RocketIconHandle, RocketIconProps>(
     };
 
     return (
-      <LazyMotion features={domAnimation} strict>
         <m.div
           className={cn('inline-flex items-center justify-center', className)}
           onMouseEnter={handleEnter}
@@ -141,7 +141,6 @@ const RocketIcon = forwardRef<RocketIconHandle, RocketIconProps>(
             />
           </m.svg>
         </m.div>
-      </LazyMotion>
     );
   },
 );

@@ -127,8 +127,13 @@ test('the collapsible nav groups have a styled tip like every other row', () => 
 });
 
 test('no sidebar entry is left without a description to show', () => {
-  const entries = [...SIDEBAR.matchAll(/label: '([^']+)',\s*\n\s*icon: [\w]+,\s*\n\s*tip: '([^']*)'/g)];
-  assert.ok(entries.length >= 6, `expected the nav table, found ${entries.length} entries`);
+  // `animated:` sits between `icon` and `tip` on the rows that carry a purpose-built
+  // animated glyph, so it has to be optional here — without it this matched only the
+  // five rows that do not have one and stopped checking the rest.
+  const entries = [
+    ...SIDEBAR.matchAll(/label: '([^']+)',\s*\n\s*icon: \w+,\s*\n(?:\s*animated: \w+,\s*\n)?\s*tip: '([^']*)'/g),
+  ];
+  assert.ok(entries.length >= 11, `expected the nav table, found ${entries.length} entries`);
   for (const [, label, tip] of entries) {
     assert.ok(tip.trim().length > 0, `"${label}" has an empty tip`);
   }

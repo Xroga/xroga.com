@@ -1,5 +1,6 @@
 'use client';
 
+import type { Transition } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAnimation } from 'motion/react';
 import type { HTMLAttributes } from 'react';
@@ -7,12 +8,12 @@ import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
-export interface CogIconHandle {
+export interface ExpandIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface CogIconProps
+interface ExpandIconProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
     'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'
@@ -20,7 +21,17 @@ interface CogIconProps
   size?: number;
 }
 
-const CogIcon = forwardRef<CogIconHandle, CogIconProps>(
+const DEFAULT_TRANSITION: Transition = { type: 'spring', stiffness: 250, damping: 25 };
+
+/** Each corner pulls out towards the corner it points at. */
+const CORNERS = [
+  { d: 'm21 21-6-6m6 6v-4.8m0 4.8h-4.8', x: '2px', y: '2px' },
+  { d: 'M3 16.2V21m0 0h4.8M3 21l6-6', x: '-2px', y: '2px' },
+  { d: 'M21 7.8V3m0 0h-4.8M21 3l-6 6', x: '2px', y: '-2px' },
+  { d: 'M3 7.8V3m0 0h4.8M3 3l6 6', x: '-2px', y: '-2px' },
+];
+
+const ExpandIcon = forwardRef<ExpandIconHandle, ExpandIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
@@ -56,41 +67,36 @@ const CogIcon = forwardRef<CogIconHandle, CogIconProps>(
           onMouseLeave={handleMouseLeave}
           {...props}
         >
-          <m.svg
-            animate={controls}
+          <svg
             fill="none"
             height={size}
-            initial="normal"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="2"
-            transition={{ type: 'spring', stiffness: 50, damping: 10 }}
-            variants={{ normal: { rotate: 0 }, animate: { rotate: 180 } }}
             viewBox="0 0 24 24"
             width={size}
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" />
-            <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-            <path d="M12 2v2" />
-            <path d="M12 22v-2" />
-            <path d="m17 20.66-1-1.73" />
-            <path d="M11 10.27 7 3.34" />
-            <path d="m20.66 17-1.73-1" />
-            <path d="m3.34 7 1.73 1" />
-            <path d="M14 12h8" />
-            <path d="M2 12h2" />
-            <path d="m20.66 7-1.73 1" />
-            <path d="m3.34 17 1.73-1" />
-            <path d="m17 3.34-1 1.73" />
-            <path d="m11 13.73-4 6.93" />
-          </m.svg>
+            {CORNERS.map((corner) => (
+              <m.path
+                animate={controls}
+                d={corner.d}
+                initial="normal"
+                key={corner.d}
+                transition={DEFAULT_TRANSITION}
+                variants={{
+                  normal: { translateX: '0%', translateY: '0%' },
+                  animate: { translateX: corner.x, translateY: corner.y },
+                }}
+              />
+            ))}
+          </svg>
         </div>
     );
   },
 );
 
-CogIcon.displayName = 'CogIcon';
+ExpandIcon.displayName = 'ExpandIcon';
 
-export { CogIcon };
+export { ExpandIcon };

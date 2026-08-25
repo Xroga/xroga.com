@@ -12,7 +12,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Mic } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { MicIcon } from '@/components/icons/animated/MicIcon';
 import { cn } from '@/lib/utils';
 
 interface BrowserSpeechRecognitionEvent {
@@ -124,7 +125,7 @@ export function ChatBarMicButton({
         <i />
         <i />
       </span>
-      <Mic className="xv-mic-icon h-3.5 w-3.5" aria-hidden="true" />
+      <AnimatedIcon icon={MicIcon} size={14} className="xv-mic-icon" />
       <span className="sr-only" role="status">
         {listening ? 'Listening' : error ? 'Dictation unavailable' : 'Dictation idle'}
       </span>

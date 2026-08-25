@@ -11,8 +11,6 @@ import {
   FolderTree,
   GitBranch,
   Loader2,
-  Maximize2,
-  Minimize2,
   RefreshCw,
   Rocket,
   Copy,
@@ -29,6 +27,9 @@ import {
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 import { cn } from '@/lib/utils';
 import { useHydrated } from '@/hooks/useHydrated';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
@@ -207,7 +208,7 @@ export function DevWorkspacePanel({
             className="p-1.5 rounded-md text-[var(--muted)] hover:text-[var(--foreground)]"
             aria-label={expanded ? 'Exit full screen' : 'Full screen workspace'}
           >
-            {expanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            {expanded ? <AnimatedIcon icon={MinimizeIcon} size={14} /> : <AnimatedIcon icon={ExpandIcon} size={14} />}
           </button>
           <button
             type="button"
@@ -388,7 +389,7 @@ export function DevWorkspacePanel({
                   title={logFullscreen ? 'Exit full output' : 'Full output'}
                   aria-label={logFullscreen ? 'Exit full output' : 'Full output'}
                 >
-                  {logFullscreen ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+                  {logFullscreen ? <AnimatedIcon icon={MinimizeIcon} size={12} /> : <AnimatedIcon icon={ExpandIcon} size={12} />}
                 </button>
               </div>
             </div>
@@ -433,7 +434,7 @@ export function DevWorkspacePanel({
                   title="Full preview"
                   aria-label="Full preview"
                 >
-                  <Maximize2 className="h-3 w-3" />
+                  <AnimatedIcon icon={ExpandIcon} size={12} />
                 </button>
                 {deployUrl ? (
                   <a
@@ -534,7 +535,7 @@ export function DevWorkspacePanel({
               onClick={() => setPreviewFullscreen(false)}
               className="ml-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)]"
             >
-              <Minimize2 className="h-3.5 w-3.5" aria-hidden="true" />
+              <AnimatedIcon icon={MinimizeIcon} size={14} />
               Exit full preview
             </button>
           </div>

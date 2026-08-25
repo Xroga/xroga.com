@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Blocks, Bug, Check, ChevronRight, ListChecks, Paperclip, Plus, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
+import { Blocks, Bug, Check, ChevronRight, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
 import {
   COMPOSER_PRESETS,
   COMPOSER_SKILLS,
@@ -101,7 +103,11 @@ export function ChatBarActionsMenu({
         aria-label="More composer actions"
         title="Plan, debug, skills, and rules"
       >
-        <Plus className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-45')} aria-hidden="true" />
+        {/* The ring draws itself and the symbol lands inside it. The 45deg turn that
+            marked the open state came from the plus reading as a close cross when
+            rotated; this glyph is not a cross, so the open state is carried by
+            `data-open` in the stylesheet instead. */}
+        <AnimatedIcon icon={CirclePlayIcon} size={14} />
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 

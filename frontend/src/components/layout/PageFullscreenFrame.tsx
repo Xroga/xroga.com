@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 interface PageFullscreenFrameProps {
   children: React.ReactNode;
@@ -26,11 +28,11 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
     >
       {fullscreen ? (
         <>
-          <Minimize2 className="w-3.5 h-3.5" /> Exit fullscreen
+          <AnimatedIcon icon={MinimizeIcon} size={14} /> Exit fullscreen
         </>
       ) : (
         <>
-          <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
+          <AnimatedIcon icon={ExpandIcon} size={14} /> Fullscreen
         </>
       )}
     </button>

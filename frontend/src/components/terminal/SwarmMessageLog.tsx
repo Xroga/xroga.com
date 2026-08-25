@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Terminal, Maximize2, Minimize2 } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -32,6 +31,10 @@ import { api } from '@/lib/api';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
+import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 const AGENT_STYLES: Record<string, string> = {
   architect: 'text-[var(--primary)]',
@@ -316,7 +319,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
           </span>
 
           <div className="xv-term-title">
-            <Terminal className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden="true" />
+            {/* A live shell's cursor blinks whether or not anyone is pointing at it,
+                so this one is not hover-driven — it runs continuously. */}
+            <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
             <h3>
               {isIncognito ? (
                 'guest@incognito'
@@ -343,9 +348,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 aria-label={terminalFullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
               >
                 {terminalFullscreen ? (
-                  <Minimize2 className="w-3.5 h-3.5" />
+                  <AnimatedIcon icon={MinimizeIcon} size={14} />
                 ) : (
-                  <Maximize2 className="w-3.5 h-3.5" />
+                  <AnimatedIcon icon={ExpandIcon} size={14} />
                 )}
               </button>
             </div>

@@ -12,12 +12,12 @@ import {
   type HTMLAttributes,
 } from 'react';
 
-export interface CodeXmlIconHandle {
+export interface FolderOpenIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface CodeXmlIconProps
+interface FolderOpenIconProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
     | 'color'
@@ -34,7 +34,7 @@ interface CodeXmlIconProps
   color?: string;
 }
 
-const CodeXmlIcon = forwardRef<CodeXmlIconHandle, CodeXmlIconProps>(
+const FolderOpenIcon = forwardRef<FolderOpenIconHandle, FolderOpenIconProps>(
   (
     {
       onMouseEnter,
@@ -48,25 +48,22 @@ const CodeXmlIcon = forwardRef<CodeXmlIconHandle, CodeXmlIconProps>(
     },
     ref,
   ) => {
-    const leftControls = useAnimation();
-    const rightControls = useAnimation();
-    const slashControls = useAnimation();
-    const isControlled = useRef(false);
+    const folderControls = useAnimation();
+    const paperControls = useAnimation();
     const reduced = useReducedMotion();
+    const isControlled = useRef(false);
 
     useImperativeHandle(ref, () => {
       isControlled.current = true;
       return {
         startAnimation: () => {
           const target = reduced ? 'normal' : 'animate';
-          leftControls.start(target);
-          rightControls.start(target);
-          slashControls.start(target);
+          folderControls.start(target);
+          paperControls.start(target);
         },
         stopAnimation: () => {
-          leftControls.start('normal');
-          rightControls.start('normal');
-          slashControls.start('normal');
+          folderControls.start('normal');
+          paperControls.start('normal');
         },
       };
     });
@@ -75,53 +72,43 @@ const CodeXmlIcon = forwardRef<CodeXmlIconHandle, CodeXmlIconProps>(
       (e: React.MouseEvent<HTMLDivElement>) => {
         if (!isAnimated || reduced) return;
         if (!isControlled.current) {
-          leftControls.start('animate');
-          rightControls.start('animate');
-          slashControls.start('animate');
+          folderControls.start('animate');
+          paperControls.start('animate');
         } else {
           onMouseEnter?.(e);
         }
       },
-      [leftControls, rightControls, slashControls, reduced, onMouseEnter, isAnimated],
+      [folderControls, paperControls, reduced, onMouseEnter, isAnimated],
     );
 
     const handleLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
         if (!isControlled.current) {
-          leftControls.start('normal');
-          rightControls.start('normal');
-          slashControls.start('normal');
+          folderControls.start('normal');
+          paperControls.start('normal');
         } else {
           onMouseLeave?.(e);
         }
       },
-      [leftControls, rightControls, slashControls, onMouseLeave],
+      [folderControls, paperControls, onMouseLeave],
     );
 
-    const leftArrowVariants: Variants = {
-      normal: { pathLength: 1, opacity: 1 },
+    const folderVariants: Variants = {
+      normal: { scale: 1, rotate: 0, y: 0 },
       animate: {
-        pathLength: [0, 1],
-        opacity: [0.6, 1],
-        transition: { duration: 0.7 * duration, ease: 'easeInOut' },
+        scale: [1, 1.05, 0.97, 1],
+        rotate: [0, -2, 2, 0],
+        y: [0, -1.5, 0.5, 0],
+        transition: { duration: 0.9 * duration, ease: 'easeInOut' },
       },
     };
 
-    const rightArrowVariants: Variants = {
-      normal: { pathLength: 1, opacity: 1 },
+    const paperVariants: Variants = {
+      normal: { y: 0, opacity: 0 },
       animate: {
-        pathLength: [0, 1],
-        opacity: [0.6, 1],
-        transition: { duration: 0.7 * duration, ease: 'easeInOut', delay: 0.1 },
-      },
-    };
-
-    const slashVariants: Variants = {
-      normal: { pathLength: 1, opacity: 1 },
-      animate: {
-        pathLength: [1, 0, 1],
-        opacity: [1, 0.4, 1],
-        transition: { duration: 1 * duration, ease: 'easeInOut' },
+        y: [-6, 0],
+        opacity: [0, 1, 0],
+        transition: { duration: 1 * duration, ease: 'easeInOut', delay: 0.2 },
       },
     };
 
@@ -145,22 +132,20 @@ const CodeXmlIcon = forwardRef<CodeXmlIconHandle, CodeXmlIconProps>(
             strokeLinejoin="round"
           >
             <m.path
-              d="m6 8-4 4 4 4"
-              animate={leftControls}
+              d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"
+              animate={folderControls}
               initial="normal"
-              variants={leftArrowVariants}
+              variants={folderVariants}
             />
-            <m.path
-              d="m18 16 4-4-4-4"
-              animate={rightControls}
+            <m.rect
+              x="7"
+              y="11"
+              width="10"
+              height="6"
+              rx="1"
+              animate={paperControls}
               initial="normal"
-              variants={rightArrowVariants}
-            />
-            <m.path
-              d="m14.5 4-5 16"
-              animate={slashControls}
-              initial="normal"
-              variants={slashVariants}
+              variants={paperVariants}
             />
           </m.svg>
         </m.div>
@@ -168,5 +153,5 @@ const CodeXmlIcon = forwardRef<CodeXmlIconHandle, CodeXmlIconProps>(
   },
 );
 
-CodeXmlIcon.displayName = 'CodeXmlIcon';
-export { CodeXmlIcon };
+FolderOpenIcon.displayName = 'FolderOpenIcon';
+export { FolderOpenIcon };
