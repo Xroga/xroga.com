@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import { IconMotion } from './MotionProvider';
 import { useHydrated } from '@/hooks/useHydrated';
 import { useThemeStore } from '@/store/useThemeStore';
 
@@ -57,11 +58,18 @@ const SETTLE_MS = 1200;
  * meant to be seen on every visit to the page, which is what makes the sidebar
  * read as alive on arrival rather than as a column of static glyphs.
  *
- * `hovered` exists because these sit inside rows, and hovering the row is what
- * people actually do — requiring the pointer to land on a 16px glyph would mean
- * most hovers never animated anything. When a row passes it, the row owns the
- * hover; otherwise the icon's own pointer events do.
+ * Hover and click are bound to the control the icon sits in, not to the icon.
+ * These are 16px glyphs inside 32px buttons and full-width nav rows: a listener on
+ * the glyph itself only fires when the pointer lands on the glyph exactly, so
+ * hovering a sidebar row or pressing a rail button animated nothing. The icon walks
+ * up to its nearest interactive ancestor and listens there, which is the thing the
+ * reader is actually pointing at.
+ *
+ * `hovered` overrides that, for a parent that already tracks its own hover state.
  */
+
+/** The control an icon belongs to, for binding hover and click. */
+const INTERACTIVE = 'a, button, [role="button"], [role="menuitem"], label, summary';
 export function AnimatedIcon({
   icon: Icon,
   size = 16,
@@ -79,6 +87,7 @@ export function AnimatedIcon({
   intro?: boolean;
 }) {
   const handle = useRef<AnimatedIconHandle>(null);
+  const hostRef = useRef<HTMLSpanElement>(null);
   const settleTimer = useRef<number | null>(null);
 
   const systemReduced = useReducedMotion();
@@ -123,28 +132,48 @@ export function AnimatedIcon({
     return clearSettle;
   }, [intro, hydrated, reduced, play, clearSettle]);
 
-  // Driven by the row when a row says so.
+  // Driven by the parent when a parent says so.
   useEffect(() => {
     if (hovered === undefined) return;
     if (hovered) hold();
     else release();
   }, [hovered, hold, release]);
 
+  /*
+   * Bound to the button or the row, not to the glyph.
+   *
+   * Native listeners on the ancestor rather than React props on the icon: the
+   * control is somebody else's element — a Link, a HoverTip's child, a menu row —
+   * and this is the only way to reach it without every call site passing handlers
+   * down. `mouseenter`/`mouseleave` do not bubble, so they fire for the control as
+   * a whole and not for each thing inside it.
+   */
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || hovered !== undefined || reduced) return;
+    const target = host.closest(INTERACTIVE) ?? host;
+    const enter = () => hold();
+    const leave = () => release();
+    const press = () => play();
+    target.addEventListener('mouseenter', enter);
+    target.addEventListener('mouseleave', leave);
+    target.addEventListener('click', press);
+    return () => {
+      target.removeEventListener('mouseenter', enter);
+      target.removeEventListener('mouseleave', leave);
+      target.removeEventListener('click', press);
+    };
+  }, [hovered, reduced, hold, release, play]);
+
   useEffect(() => clearSettle, [clearSettle]);
 
-  const ownsPointer = hovered === undefined;
-
   return (
-    <Icon
-      ref={handle}
-      size={size}
-      className={cn('xv-animated-icon', className)}
-      onMouseEnter={ownsPointer ? hold : undefined}
-      onMouseLeave={ownsPointer ? release : undefined}
-      onClick={(event) => {
-        play();
-        onClick?.(event);
-      }}
-    />
+    // The wrapper exists to find the control: the icon's own ref is its animation
+    // handle, so there is no DOM node to walk up from without one.
+    <span ref={hostRef} className={cn('xv-animated-icon-host', className)} onClick={onClick}>
+      <IconMotion>
+        <Icon ref={handle} size={size} className="xv-animated-icon" />
+      </IconMotion>
+    </span>
   );
 }

@@ -1,11 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Maximize2, Monitor, Smartphone, Tablet, RefreshCw } from 'lucide-react';
+import { Monitor, Smartphone, Tablet, RefreshCw } from 'lucide-react';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 import { normalizeBuildFiles } from '@/lib/normalizeBuildSource';
 import { cn } from '@/lib/utils';
 import { FullscreenPreviewModal } from './FullscreenPreviewModal';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 type SandboxTab = 'preview' | 'html' | 'css' | 'js';
 export type PreviewViewport = 'mobile' | 'tablet' | 'desktop';
@@ -124,7 +127,7 @@ export function BuildCodeSandbox({
                 'bg-[var(--accent)] text-[var(--background)] hover:opacity-90'
               )}
             >
-              <Maximize2 className="w-3.5 h-3.5" />
+              <AnimatedIcon icon={ExpandIcon} size={14} />
               Full Preview
             </button>
           ) : null}

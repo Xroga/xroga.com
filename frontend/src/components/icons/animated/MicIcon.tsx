@@ -1,6 +1,6 @@
 'use client';
 
-import type { Transition, Variants } from 'motion/react';
+import type { Variants } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAnimation } from 'motion/react';
 import type { HTMLAttributes } from 'react';
@@ -8,12 +8,12 @@ import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
-export interface LayoutGridIconHandle {
+export interface MicIconHandle {
   startAnimation: () => void;
   stopAnimation: () => void;
 }
 
-interface LayoutGridIconProps
+interface MicIconProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
     'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'
@@ -21,29 +21,15 @@ interface LayoutGridIconProps
   size?: number;
 }
 
-const TIMING: Transition = { duration: 0.8, ease: 'easeInOut', times: [0, 0.4, 0.6, 1] };
-
-const RECT_1_VARIANTS: Variants = {
-  normal: { translateX: 0, translateY: 0 },
-  animate: { translateX: [0, 11, 11, 0], translateY: [0, 0, 0, 0], transition: TIMING },
+const CAPSULE_VARIANTS: Variants = {
+  normal: { y: 0 },
+  animate: {
+    y: [0, -3, 0, -2, 0],
+    transition: { duration: 0.6, ease: 'easeInOut' },
+  },
 };
 
-const RECT_2_VARIANTS: Variants = {
-  normal: { translateX: 0, translateY: 0 },
-  animate: { translateX: [0, 0, 0, 0], translateY: [0, 11, 11, 0], transition: TIMING },
-};
-
-const RECT_3_VARIANTS: Variants = {
-  normal: { translateX: 0, translateY: 0 },
-  animate: { translateX: [0, -11, -11, 0], translateY: [0, 0, 0, 0], transition: TIMING },
-};
-
-const RECT_4_VARIANTS: Variants = {
-  normal: { translateX: 0, translateY: 0 },
-  animate: { translateX: [0, 0, 0, 0], translateY: [0, -11, -11, 0], transition: TIMING },
-};
-
-const LayoutGridIcon = forwardRef<LayoutGridIconHandle, LayoutGridIconProps>(
+const MicIcon = forwardRef<MicIconHandle, MicIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
@@ -82,6 +68,7 @@ const LayoutGridIcon = forwardRef<LayoutGridIconHandle, LayoutGridIconProps>(
           <svg
             fill="none"
             height={size}
+            overflow="visible"
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -90,45 +77,17 @@ const LayoutGridIcon = forwardRef<LayoutGridIconHandle, LayoutGridIconProps>(
             width={size}
             xmlns="http://www.w3.org/2000/svg"
           >
+            <path d="M12 19v3" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
             <m.rect
               animate={controls}
-              height="7"
+              height="13"
               initial="normal"
-              rx="1"
-              variants={RECT_1_VARIANTS}
-              width="7"
-              x="3"
-              y="3"
-            />
-            <m.rect
-              animate={controls}
-              height="7"
-              initial="normal"
-              rx="1"
-              variants={RECT_2_VARIANTS}
-              width="7"
-              x="14"
-              y="3"
-            />
-            <m.rect
-              animate={controls}
-              height="7"
-              initial="normal"
-              rx="1"
-              variants={RECT_3_VARIANTS}
-              width="7"
-              x="14"
-              y="14"
-            />
-            <m.rect
-              animate={controls}
-              height="7"
-              initial="normal"
-              rx="1"
-              variants={RECT_4_VARIANTS}
-              width="7"
-              x="3"
-              y="14"
+              rx="3"
+              variants={CAPSULE_VARIANTS}
+              width="6"
+              x="9"
+              y="2"
             />
           </svg>
         </div>
@@ -136,6 +95,6 @@ const LayoutGridIcon = forwardRef<LayoutGridIconHandle, LayoutGridIconProps>(
   },
 );
 
-LayoutGridIcon.displayName = 'LayoutGridIcon';
+MicIcon.displayName = 'MicIcon';
 
-export { LayoutGridIcon };
+export { MicIcon };

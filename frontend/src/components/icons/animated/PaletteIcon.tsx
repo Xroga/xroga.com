@@ -1,7 +1,8 @@
 'use client';
 
 import type { Variants } from 'motion/react';
-import { LazyMotion, domAnimation, m, useAnimation } from 'motion/react';
+import * as m from 'motion/react-m';
+import { useAnimation } from 'motion/react';
 import type { HTMLAttributes } from 'react';
 import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 
@@ -100,7 +101,6 @@ const PaletteIcon = forwardRef<PaletteIconHandle, PaletteIconProps>(
     );
 
     return (
-      <LazyMotion features={domAnimation} strict>
         <div
           className={cn('inline-flex items-center justify-center', className)}
           onMouseEnter={handleMouseEnter}
@@ -140,7 +140,6 @@ const PaletteIcon = forwardRef<PaletteIconHandle, PaletteIconProps>(
             </m.g>
           </svg>
         </div>
-      </LazyMotion>
     );
   },
 );

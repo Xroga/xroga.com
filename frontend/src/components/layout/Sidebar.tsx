@@ -56,6 +56,7 @@ import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
 import { CogIcon } from '@/components/icons/animated/CogIcon';
 import { TelescopeIcon } from '@/components/icons/animated/TelescopeIcon';
 import { ConnectIcon } from '@/components/icons/animated/ConnectIcon';
+import { FolderOpenIcon } from '@/components/icons/animated/FolderOpenIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -136,6 +137,7 @@ const navItems: NavEntry[] = [
     motion: 'flip' as const,
     label: 'Repositories',
     icon: FolderGit2,
+    animated: FolderOpenIcon,
     tip: 'Open connected repositories and their durable Xroga workspaces.',
   },
   {
@@ -661,7 +663,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               </HoverTip>
               <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
                 <Link href="/dashboard/projects" aria-label="Repositories" onClick={handleNavClick}>
-                  <FolderGit2 className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+                  <AnimatedIcon icon={FolderOpenIcon} />
                 </Link>
               </HoverTip>
             </div>

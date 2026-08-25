@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Maximize2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 interface FullscreenPreviewModalProps {
   open: boolean;
@@ -68,7 +71,7 @@ export function FullscreenPreviewModal({
     >
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/15 bg-black shrink-0 relative z-[2]">
         <div className="flex items-center gap-2 text-sm font-semibold text-white min-w-0">
-          <Maximize2 className="w-4 h-4 text-[#006aff] shrink-0" />
+          <AnimatedIcon icon={ExpandIcon} className="text-[#006aff] shrink-0" />
           <span className="truncate">{title}</span>
           <span className="hidden sm:inline text-[11px] font-normal text-white/50">Press Esc to exit</span>
         </div>

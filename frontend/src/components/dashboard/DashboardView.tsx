@@ -1,6 +1,5 @@
 'use client';
 
-import { Terminal, Maximize2, Minimize2 } from 'lucide-react';
 import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
@@ -19,6 +18,10 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
+import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
+import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 
 
 /**
@@ -190,7 +193,9 @@ export function DashboardView() {
           </span>
 
           <div className="xv-term-title">
-            <Terminal className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden="true" />
+            {/* A live shell's cursor blinks whether or not anyone is pointing at it,
+                so this one is not hover-driven — it runs continuously. */}
+            <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
             <h3>
               {incognito ? (
                 'guest@incognito'
@@ -218,9 +223,9 @@ export function DashboardView() {
                 aria-label={fullscreen ? 'Exit fullscreen' : 'Fullscreen terminal'}
               >
                 {fullscreen ? (
-                  <Minimize2 className="w-3.5 h-3.5" />
+                  <AnimatedIcon icon={MinimizeIcon} size={14} />
                 ) : (
-                  <Maximize2 className="w-3.5 h-3.5" />
+                  <AnimatedIcon icon={ExpandIcon} size={14} />
                 )}
               </button>
             </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { LazyMotion, domAnimation, m, useAnimation, type Variants } from 'motion/react';
+import * as m from 'motion/react-m';
+import { useAnimation, type Variants } from 'motion/react';
 import type { HTMLAttributes } from 'react';
 import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 import { cn } from '@/lib/utils';
@@ -53,7 +54,6 @@ const ShipWheelIcon = forwardRef<ShipWheelIconHandle, ShipWheelIconProps>(
     );
 
     return (
-      <LazyMotion features={domAnimation} strict>
         <div
           className={cn('inline-flex items-center justify-center', className)}
           onMouseEnter={handleMouseEnter}
@@ -86,7 +86,6 @@ const ShipWheelIcon = forwardRef<ShipWheelIconHandle, ShipWheelIconProps>(
             <circle cx="12" cy="12" r="2.5" />
           </m.svg>
         </div>
-      </LazyMotion>
     );
   },
 );

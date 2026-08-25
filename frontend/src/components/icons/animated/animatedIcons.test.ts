@@ -18,11 +18,19 @@ import { readFileSync } from 'node:fs';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
 const HOST = read('./AnimatedIcon.tsx');
+const PROVIDER = read('./MotionProvider.tsx');
 const SIDEBAR = read('../../layout/Sidebar.tsx');
 const HISTORY = read('../../layout/SidebarProjectHistory.tsx');
 const THEME = read('../../layout/ThemeToggle.tsx');
 const PROFILE = read('../../ui/ProfileQuickMenu.tsx');
 const SEND = read('../../terminal/ChatBarSendIcon.tsx');
+const ACTIONS = read('../../terminal/ChatBarActionsMenu.tsx');
+const MIC = read('../../terminal/ChatBarMicButton.tsx');
+const LOG = read('../../terminal/SwarmMessageLog.tsx');
+const DASHBOARD = read('../../dashboard/DashboardView.tsx');
+const PROMPT = read('./TerminalPromptIcon.tsx');
+const FRAME = read('../../layout/PageFullscreenFrame.tsx');
+const DEVPANEL = read('../../terminal/DevWorkspacePanel.tsx');
 
 const ICONS = [
   'TerminalIcon',
@@ -37,6 +45,11 @@ const ICONS = [
   'SlidersHorizontalIcon',
   'PaletteIcon',
   'ConnectIcon',
+  'CirclePlayIcon',
+  'MicIcon',
+  'FolderOpenIcon',
+  'ExpandIcon',
+  'MinimizeIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {
@@ -51,17 +64,57 @@ test('every animated icon exposes the handle the host drives it by', () => {
   }
 });
 
-test('the icons load motion lazily rather than pulling the full bundle', () => {
-  for (const name of ICONS) {
+/**
+ * Motion is loaded through exactly one door.
+ *
+ * Two separate costs. `domAnimation` is the feature bundle: eighteen icons each
+ * bringing their own `LazyMotion` gave the bundler eighteen owners for it. And
+ * `motion/react` is a barrel whose eager `motion` proxy drags in drag, layout and
+ * gesture support — importing `m` from it pulled roughly 14 kB of features nothing
+ * here uses onto every route the icons reach.
+ */
+test('motion is imported through one provider and the m-only entry', () => {
+  assert.match(PROVIDER, /import \{ LazyMotion, domAnimation \} from 'motion\/react';/);
+  assert.match(PROVIDER, /<LazyMotion features=\{domAnimation\} strict>/, 'the provider does not lazy-load');
+  assert.match(HOST, /<IconMotion>/, 'the host does not wrap its icon in the provider');
+
+  for (const name of [...ICONS, 'TerminalPromptIcon']) {
     const source = read(`./${name}.tsx`);
-    // `m` under LazyMotion, never the eager `motion` proxy: these mount on the
-    // workspace route, whose first-load JS is budgeted.
-    assert.match(source, /<LazyMotion features=\{domAnimation\} strict>/, `${name} is not lazily loaded`);
+    assert.match(source, /import \* as m from 'motion\/react-m';/, `${name} does not use the m-only entry`);
+    assert.ok(
+      !/\bdomAnimation\b/.test(source),
+      `${name} owns a second copy of the feature bundle`,
+    );
     assert.ok(
       !/^import \{[^}]*\bmotion\b/m.test(source),
-      `${name} imports the eager motion proxy, which would also throw under strict LazyMotion`,
+      `${name} imports the eager motion proxy, which also throws under strict LazyMotion`,
     );
   }
+});
+
+/**
+ * The bug this replaced: hover and click were React props on the icon, so they only
+ * fired when the pointer landed on the 16px glyph exactly. Hovering a sidebar row or
+ * pressing a rail button animated nothing, which is how it was reported. The icon
+ * now walks up to the control it sits in and listens there.
+ */
+test('hover and click are bound to the control, not to the glyph', () => {
+  assert.match(HOST, /const INTERACTIVE = 'a, button/, 'the interactive ancestors are gone');
+  assert.match(HOST, /const target = host\.closest\(INTERACTIVE\) \?\? host;/, 'it listens on itself again');
+  for (const event of ['mouseenter', 'mouseleave', 'click']) {
+    assert.match(
+      HOST,
+      new RegExp(`target\\.addEventListener\\('${event}'`),
+      `${event} is not bound to the control`,
+    );
+    assert.match(
+      HOST,
+      new RegExp(`target\\.removeEventListener\\('${event}'`),
+      `${event} is never unbound`,
+    );
+  }
+  // The wrapper is what makes the walk possible: the icon's own ref is its handle.
+  assert.match(HOST, /<span ref=\{hostRef\}/, 'there is no element to walk up from');
 });
 
 test('the shared host plays once on load, then on hover and on click', () => {
@@ -69,9 +122,9 @@ test('the shared host plays once on load, then on hover and on click', () => {
   // meant to be seen on every reload.
   assert.ok(!/sessionStorage/.test(HOST), 'the load pass must not be gated to once per session');
   assert.match(HOST, /if \(!intro \|\| !hydrated \|\| reduced\) return;\n\s*play\(\);/, 'no load pass');
-  assert.match(HOST, /onMouseEnter=\{ownsPointer \? hold : undefined\}/, 'hover does not start it');
-  assert.match(HOST, /onMouseLeave=\{ownsPointer \? release : undefined\}/, 'leaving does not rest it');
-  assert.match(HOST, /onClick=\{\(event\) => \{\n\s*play\(\);/, 'clicking does not replay it');
+  assert.match(HOST, /const enter = \(\) => hold\(\);/, 'hover does not start it');
+  assert.match(HOST, /const leave = \(\) => release\(\);/, 'leaving does not rest it');
+  assert.match(HOST, /const press = \(\) => play\(\);/, 'clicking does not replay it');
   // Plays and settles on its own, so a click cannot leave an icon stuck mid-pose.
   assert.match(HOST, /settleTimer\.current = window\.setTimeout/, 'nothing tells the icon to rest');
 });
@@ -139,4 +192,60 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
   for (const kept of ['LeafLoader', 'xv-sendicon__sweep', 'xv-sendicon__stop', 'xv-sendicon__check']) {
     assert.ok(SEND.includes(kept), `the send button lost ${kept}`);
   }
+});
+
+
+test('the composer takes the ring, the capsule and the wheel', () => {
+  assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
+  assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
+  assert.match(MIC, /icon=\{MicIcon\}/, 'the mic button is not the capsule');
+  assert.ok(!/<Mic\b/.test(MIC), 'the static mic is back');
+});
+
+/**
+ * The prompt glyph beside `xroga@swarm` is the one icon here that is not
+ * hover-driven. It stands for a live shell, and a shell's cursor blinks whether or
+ * not anyone is pointing at it.
+ */
+test('the terminal prompt cursor blinks continuously and is not hover-driven', () => {
+  assert.match(PROMPT, /repeat: Number\.POSITIVE_INFINITY/, 'the cursor does not repeat');
+  assert.ok(!/onMouseEnter/.test(PROMPT), 'the cursor was made hover-driven');
+  assert.match(PROMPT, /controls\.start\('animate'\);\n\s*\}, \[hydrated, reduced, controls\]\)/, 'it does not start itself');
+  // Reduced motion gets the glyph with the cursor solid rather than a still frame
+  // of a blink.
+  assert.match(PROMPT, /if \(reduced\) \{\n\s*controls\.start\('normal'\);/, 'reduced motion still blinks');
+
+  for (const [name, source] of [['SwarmMessageLog', LOG], ['DashboardView', DASHBOARD]] as const) {
+    assert.match(source, /<TerminalPromptIcon/, `${name} lost the prompt glyph`);
+    assert.ok(!/<Terminal\b/.test(source), `${name} still renders the static terminal glyph`);
+    // The label it belongs to.
+    assert.match(source, /xroga<span className="xv-term-at">@<\/span>swarm/, `${name} lost the prompt label`);
+  }
+});
+
+test('every fullscreen and minimize control animates its corners', () => {
+  for (const [name, source] of [
+    ['PageFullscreenFrame', FRAME],
+    ['DevWorkspacePanel', DEVPANEL],
+    ['SwarmMessageLog', LOG],
+    ['DashboardView', DASHBOARD],
+  ] as const) {
+    assert.match(source, /icon=\{ExpandIcon\}/, `${name} lost the expand glyph`);
+    assert.ok(
+      !/<Maximize2\b|<Minimize2\b/.test(source),
+      `${name} still renders a static fullscreen glyph`,
+    );
+  }
+  for (const [name, source] of [['DevWorkspacePanel', DEVPANEL], ['SwarmMessageLog', LOG]] as const) {
+    assert.match(source, /icon=\{MinimizeIcon\}/, `${name} lost the minimize glyph`);
+  }
+});
+
+test('Repositories opens its folder, in the row and in the rail', () => {
+  const at = SIDEBAR.indexOf("label: 'Repositories',");
+  assert.ok(at > 0, 'the Repositories row is gone');
+  assert.match(SIDEBAR.slice(at, at + 260), /animated: FolderOpenIcon,/, 'the row lost the folder');
+  const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
+  const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
+  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
 });
