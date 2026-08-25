@@ -142,18 +142,33 @@ test('fullscreen keeps the frame instead of giving it up', () => {
    * Fullscreen used to set `padding: 0` and square off the shell, so the terminal ran
    * edge to edge and its corners met the browser chrome.
    *
-   * Declared exactly once. There were two `.xv-app-stage--fullscreen` rules for the
-   * same property at equal specificity, and the later one silently won — so a rule that
-   * appeared to give the state its padding back did nothing at all. Measured after the
-   * fix: 14px above, right and below, and the shell keeps a 16px radius.
+   * The default is declared exactly once. There were two `.xv-app-stage--fullscreen`
+   * rules for the same property at equal specificity, and the later one silently won —
+   * so a rule that appeared to give the state its padding back did nothing at all.
+   * Measured after the fix: 14px above, right and below, and a 16px radius.
+   *
+   * A phone is the one exception, and it has to be an exception that cannot repeat the
+   * original bug: it is scoped to `body.xv-terminal-fullscreen-active` inside a
+   * max-width query, so it outranks the default by specificity rather than by order.
+   * At 390px the gutter and the radius are simply screen the terminal is not using.
    */
   const sheet = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
-  const rules = sheet.match(/\.xv-app-stage--fullscreen\s*\{[^}]*padding[^}]*\}/g) ?? [];
-  assert.equal(rules.length, 1, `${rules.length} rules set the fullscreen stage padding`);
-  assert.match(rules[0], /padding:\s*var\(--xv-app-gutter\)/, 'fullscreen must keep the gutter');
-  // And nothing squares the shell off again.
+  const rules = sheet.match(/[^{}]*\.xv-app-stage--fullscreen\s*\{[^}]*padding[^}]*\}/g) ?? [];
+
+  const unscoped = rules.filter((rule) => !rule.includes('xv-terminal-fullscreen-active'));
+  assert.equal(unscoped.length, 1, `${unscoped.length} unscoped rules set the fullscreen stage padding`);
+  assert.match(unscoped[0], /padding:\s*var\(--xv-app-gutter\)/, 'fullscreen must keep the gutter');
+
+  // Every override is scoped, and every one of them is a phone-only override.
+  const mobileOnly = sheet.slice(sheet.indexOf('@media (max-width: 1023px)', sheet.indexOf('.xv-app-stage--fullscreen')));
+  for (const rule of rules.filter((r) => r.includes('xv-terminal-fullscreen-active'))) {
+    assert.ok(mobileOnly.includes(rule.trim()), 'a fullscreen padding override escaped the phone breakpoint');
+  }
+
+  // Nothing squares the shell off on a desktop.
+  const desktop = sheet.slice(0, sheet.indexOf('@media (max-width: 1023px)', sheet.indexOf('.xv-app-stage--fullscreen')));
   assert.ok(
-    !/\.xv-app-stage--fullscreen\s+\.xv-workspace-shell\s*\{[^}]*border-radius:\s*0/.test(sheet),
+    !/\.xv-app-stage--fullscreen\s+\.xv-workspace-shell\s*\{[^}]*border-radius:\s*0/.test(desktop),
     'fullscreen flattens the shell again',
   );
 });
