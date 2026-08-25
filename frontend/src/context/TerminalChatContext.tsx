@@ -42,7 +42,12 @@ import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { mergeBuildTodos, normalizeActiveTodo } from '@/lib/mergeBuildTodos';
 import { startPipelineMessageForPrompt } from '@/lib/buildPlanningSteps';
 import { formatAgentActivityLine } from '@/lib/agentProcessingFormat';
-import { getNewRepoVisibility, getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import {
+  getNewRepoVisibility,
+  getSelectedRepoContext,
+  hasFreshTerminalIntent,
+  saveSelectedRepoContext,
+} from '@/lib/repoContext';
 import { isKeepaliveActivity } from '@/lib/buildLiveStatus';
 import { defaultImageAttachmentPrompt } from '@/lib/parseImageContent';
 import { saveLocalProject, shouldSaveToProjects } from '@/lib/projectArchive';
@@ -1728,6 +1733,12 @@ export function TerminalChatProvider({
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
         const repoContextEarly = getSelectedRepoContext();
+        // A "New product" terminal may still be rendered inside a route whose
+        // projectId belongs to the previously opened repository. Passing that stale
+        // projectId makes the backend recover and patch the old project even after
+        // the repo picker was explicitly cleared. The fresh-product intent is the
+        // authoritative boundary: no selected repo and no inherited project memory.
+        const freshProductIntent = hasFreshTerminalIntent() && !repoContextEarly;
         // Selected repo + update language → incremental GitHub patch (not advice essays)
         const isBuildUpdate =
           !adviceTurn &&
@@ -2006,7 +2017,7 @@ export function TerminalChatProvider({
           );
         };
         await streamSwarmExecute(apiPrompt, {
-          projectId,
+          projectId: freshProductIntent ? undefined : projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
           accessToken,
