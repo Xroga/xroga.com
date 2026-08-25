@@ -12,10 +12,20 @@ function terminalChatSource(): string {
 test('a fresh-product terminal never inherits the previously routed project', () => {
   const source = terminalChatSource();
 
-  assert.match(source, /hasFreshTerminalIntent\(\) && !repoContextEarly/);
+  assert.match(source, /const freshProductIntent = hasFreshTerminalIntent\(\)/);
+  assert.match(
+    source,
+    /const repoContextEarly = freshProductIntent \? null : getSelectedRepoContext\(\)/,
+  );
+  assert.match(source, /!freshProductIntent &&\s*!adviceTurn/);
+  assert.match(
+    source,
+    /const repoContext = freshProductIntent\s*\? null\s*:\s*repoContextEarly \?\? getSelectedRepoContext\(\)/,
+  );
   assert.match(source, /projectId: freshProductIntent \? undefined : projectId/);
   assert.match(
     source,
     /isBuildUpdate && !freshProductIntent && !stickyTargetRepo\?\.includes\('\/'\)/,
   );
+  assert.match(source, /if \(freshProductIntent\) consumeFreshTerminalIntent\(\)/);
 });
