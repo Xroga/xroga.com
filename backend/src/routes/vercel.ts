@@ -12,7 +12,8 @@ import {
   parseVercelOAuthState,
   saveVercelConnection,
   vercelOAuthConfigured,
-  verifyVercelPersonalTokenForDeploy,
+  probeVercelApiCapabilities,
+  vercelCredentialCanDeploy,
   verifyVercelTokenLive,
 } from '../services/integrations/vercelAuth.js';
 import { deployStaticSiteWithToken } from '../lib/vercel.js';
@@ -77,6 +78,16 @@ router.post('/connect', async (req: AuthRequest, res) => {
       redirectUri,
     });
 
+    const capability = await probeVercelApiCapabilities(tokens.access_token);
+    if (!vercelCredentialCanDeploy('sign_in_with_vercel', capability)) {
+      res.status(403).json({
+        code: 'VERCEL_APP_PERMISSIONS_REQUIRED',
+        error:
+          'Vercel connected, but Xroga cannot access both Projects and Deployments. Approve Project and Deployment permissions in the Vercel authorization screen, then authorize again.',
+      });
+      return;
+    }
+
     let username = 'vercel-user';
     let providerUserId: string | undefined;
     try {
@@ -114,56 +125,9 @@ router.post('/connect', async (req: AuthRequest, res) => {
       authKind: 'sign_in_with_vercel',
     });
 
-    res.json({ connected: true, username });
+    res.json({ connected: true, username, canDeploy: true });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
-  }
-});
-
-router.post('/connect-token', async (req: AuthRequest, res) => {
-  const schema = z.object({ token: z.string().min(20).max(500) });
-  const parsed = schema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.flatten() });
-    return;
-  }
-
-  const token = parsed.data.token.trim();
-  try {
-    const verification = await verifyVercelPersonalTokenForDeploy(token);
-    if (!verification.ok) {
-      console.warn('[vercel/connect-token] token lacks deploy capability', {
-        userId: req.userId,
-        canListProjects: verification.capability?.canListProjects,
-        canReadDeployments: verification.capability?.canReadDeployments,
-      });
-      res.status(400).json({
-        code: 'VERCEL_TOKEN_DEPLOY_ACCESS_REQUIRED',
-        error:
-          'Vercel could not confirm access to both projects and deployments. Check the token scope, or create a new Personal Account token and try again.',
-      });
-      return;
-    }
-
-    await saveVercelConnection(req.userId!, token, {
-      username: verification.username,
-      providerUserId: verification.providerUserId,
-      authKind: 'personal_token',
-    });
-    console.info('[vercel/connect-token] deploy-capable token saved', {
-      userId: req.userId,
-      username: verification.username,
-    });
-    res.json({ connected: true, username: verification.username, canDeploy: true });
-  } catch (err) {
-    console.error('[vercel/connect-token] failed without exposing credential', {
-      userId: req.userId,
-      error: (err as Error).message,
-    });
-    res.status(502).json({
-      code: 'VERCEL_TOKEN_SAVE_FAILED',
-      error: 'Xroga could not verify and save the Vercel token. Please try again.',
-    });
   }
 });
 
@@ -192,9 +156,9 @@ router.get('/status', async (req: AuthRequest, res) => {
     canDeploy,
     warning:
       connected && tokenValid === false
-        ? 'Vercel token may be expired or revoked — use Change account to re-authorize'
+        ? 'Vercel authorization may be expired or revoked — use Change account to authorize again'
         : connected && canDeploy === false
-          ? 'Identity connected, but deployment access is missing. Configure a Vercel Integration with Project + Deployment write access, or use a Full Account personal token.'
+          ? 'Vercel is connected, but Project or Deployment access is missing. Re-authorize Xroga and approve those permissions.'
           : undefined,
     error: liveError,
   });
@@ -283,6 +247,7 @@ router.post('/deploy', async (req: AuthRequest, res) => {
     js: z.string().optional(),
     projectSlug: z.string().optional(),
     projectName: z.string().optional(),
+    teamId: z.string().regex(/^team_[A-Za-z0-9]+$/).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
@@ -319,7 +284,7 @@ router.post('/deploy', async (req: AuthRequest, res) => {
   try {
     let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
     try {
-      envSync = await syncUserVaultToVercel(req.userId!, slug);
+      envSync = await syncUserVaultToVercel(req.userId!, slug, parsed.data.teamId);
     } catch (err) {
       envSync = {
         ok: false,
@@ -329,7 +294,9 @@ router.post('/deploy', async (req: AuthRequest, res) => {
         error: (err as Error).message.slice(0, 240),
       };
     }
-    const deployment = await deployStaticSiteWithToken(slug, staticFiles, token);
+    const deployment = await deployStaticSiteWithToken(slug, staticFiles, token, {
+      teamId: parsed.data.teamId ?? null,
+    });
     res.json({
       deployUrl: deployment.deployUrl,
       deploymentId: deployment.deploymentId,

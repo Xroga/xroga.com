@@ -27,14 +27,12 @@ export function ConnectShipWizard() {
   const [busy, setBusy] = useState<StepId | null>(null);
   const [showKeys, setShowKeys] = useState(false);
   const [showSupabase, setShowSupabase] = useState(false);
-  const [showVercelToken, setShowVercelToken] = useState(false);
-  const [vercelToken, setVercelToken] = useState('');
-  const [vercelTokenError, setVercelTokenError] = useState<string | null>(null);
   const [showVercelProjects, setShowVercelProjects] = useState(false);
   const [vercelProjects, setVercelProjects] = useState<
-    Array<{ id: string; name: string; teamName?: string }>
+    Array<{ id: string; name: string; teamId?: string; teamName?: string }>
   >([]);
   const [vercelPreferred, setVercelPreferred] = useState<string | null>(null);
+  const [vercelPreferredTeamId, setVercelPreferredTeamId] = useState<string | null>(null);
   const stopVercelListen = useRef<(() => void) | null>(null);
   const stopSupabaseListen = useRef<(() => void) | null>(null);
 
@@ -100,6 +98,15 @@ export function ConnectShipWizard() {
   }, [refresh]);
 
   useEffect(() => {
+    try {
+      setVercelPreferred(localStorage.getItem('xroga_vercel_preferred_project'));
+      setVercelPreferredTeamId(localStorage.getItem('xroga_vercel_preferred_team_id'));
+    } catch {
+      /* local preference is optional */
+    }
+  }, []);
+
+  useEffect(() => {
     return () => {
       stopVercelListen.current?.();
       stopVercelListen.current = null;
@@ -151,11 +158,11 @@ export function ConnectShipWizard() {
       setShowSupabase(true);
       void refresh();
     }
-    // Chatbar / OAuth session-store failure → land here with token paste ready
+    // Chatbar / OAuth return → focus this permission-based setup section.
     if (q.get('vercel') === 'setup' || q.get('focus') === 'vercel') {
-      setShowVercelToken(true);
+      document.getElementById('ship-setup')?.scrollIntoView({ block: 'start' });
     }
-    const onSetup = () => setShowVercelToken(true);
+    const onSetup = () => document.getElementById('ship-setup')?.scrollIntoView({ block: 'start' });
     window.addEventListener('xroga-vercel-setup', onSetup);
     const vercelErr = q.get('vercel') === 'error' ? q.get('message') : null;
     const githubErr = q.get('github') === 'error' ? q.get('message') : null;
@@ -195,24 +202,17 @@ export function ConnectShipWizard() {
       if (result.goToIntegrations && !result.opened) {
         stopVercelListen.current?.();
         stopVercelListen.current = null;
-        // Already on Integrations — show token paste instead of looping navigate
-        setShowVercelToken(true);
-        toast.error(
-          result.error ||
-            'OAuth session store unavailable — paste a Vercel personal token below',
-        );
+        toast.error(result.error || 'Could not start Vercel authorization');
         return;
       }
       if (!result.opened) {
         stopVercelListen.current?.();
         stopVercelListen.current = null;
-        setShowVercelToken(true);
         toast.error(result.error || 'Could not start Vercel authorize');
       } else if (!result.popup) {
         toast.success('Continue authorizing Vercel in this tab…');
       }
     } catch {
-      setShowVercelToken(true);
       toast.error('Could not start Vercel connect');
     } finally {
       setBusy(null);
@@ -267,11 +267,6 @@ export function ConnectShipWizard() {
     };
     window.addEventListener('xroga-supabase-setup', onSb);
     window.addEventListener('xroga-supabase-change-project', onSb);
-    try {
-      setVercelPreferred(localStorage.getItem('xroga_vercel_preferred_project'));
-    } catch {
-      /* ignore */
-    }
     return () => {
       window.removeEventListener('xroga-supabase-setup', onSb);
       window.removeEventListener('xroga-supabase-change-project', onSb);
@@ -307,8 +302,10 @@ export function ConnectShipWizard() {
       setShowVercelProjects(false);
       setVercelProjects([]);
       setVercelPreferred(null);
+      setVercelPreferredTeamId(null);
       try {
         localStorage.removeItem('xroga_vercel_preferred_project');
+        localStorage.removeItem('xroga_vercel_preferred_team_id');
       } catch {
         /* ignore */
       }
@@ -340,44 +337,6 @@ export function ConnectShipWizard() {
     }
   }
 
-  async function saveVercelToken() {
-    const token = vercelToken.trim();
-    if (!token || token.length < 20) {
-      const message = 'Paste the complete token shown by vercel.com/account/tokens.';
-      setVercelTokenError(message);
-      toast.error(message);
-      return;
-    }
-    setVercelTokenError(null);
-    setBusy('vercel');
-    try {
-      const res = await api.vercel.connectToken(token);
-      const status = await api.vercel.status();
-      if (!status.connected || status.canDeploy !== true) {
-        throw new Error(
-          status.warning ||
-            'The token was received but Vercel deployment access could not be confirmed.',
-        );
-      }
-      setVercelOk(true);
-      setVercelCanDeploy(true);
-      setVercelUser(status.username ?? res.username ?? null);
-      setVercelWarning(null);
-      setShowVercelToken(false);
-      setVercelToken('');
-      setVercelTokenError(null);
-      toast.success(
-        res.username ? `Vercel connected as @${res.username}` : 'Vercel connected',
-      );
-    } catch (err) {
-      const message = (err as Error).message || 'Could not save Vercel token';
-      setVercelTokenError(message);
-      toast.error(message);
-    } finally {
-      setBusy(null);
-    }
-  }
-
   const steps: Array<{
     id: StepId;
     title: string;
@@ -398,7 +357,7 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Connect deploy-capable Vercel access. Identity-only Sign in with Vercel permission is not enough to create a deployment.',
+      body: 'Authorize once, approve Project + Deployment access, then choose where Xroga should publish.',
       done: vercelOk && vercelCanDeploy === true,
       action: connectVercel,
       label: vercelOk && vercelCanDeploy === true ? 'Connected' : 'Authorize',
@@ -519,10 +478,10 @@ export function ConnectShipWizard() {
                     <button
                       type="button"
                       disabled={busy === 'vercel'}
-                      onClick={() => setShowVercelToken(true)}
+                      onClick={() => void connectVercel()}
                       className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25 transition-colors"
                     >
-                      Add deploy token
+                      Re-authorize permissions
                     </button>
                   )}
                   <button
@@ -571,70 +530,6 @@ export function ConnectShipWizard() {
         ))}
       </ol>
 
-      {(!vercelOk || vercelCanDeploy === false) && showVercelToken ? (
-        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 space-y-2">
-          <p className="text-xs text-[var(--muted)] leading-relaxed">
-            Paste a Vercel personal token from{' '}
-            <a
-              href="https://vercel.com/account/tokens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--accent)] font-semibold hover:underline"
-            >
-              vercel.com/account/tokens
-            </a>{' '}
-            (works even when OAuth session storage is unavailable).
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="password"
-              value={vercelToken}
-              onChange={(e) => {
-                setVercelToken(e.target.value);
-                if (vercelTokenError) setVercelTokenError(null);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && busy !== 'vercel') void saveVercelToken();
-              }}
-              placeholder="Paste the newly created Vercel token"
-              className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-[var(--card-border)] text-xs font-mono"
-              autoComplete="off"
-              aria-invalid={Boolean(vercelTokenError)}
-              aria-describedby={vercelTokenError ? 'vercel-token-error' : undefined}
-            />
-            <button
-              type="button"
-              disabled={busy === 'vercel'}
-              onClick={() => void saveVercelToken()}
-              className="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent)] disabled:opacity-50"
-            >
-              {busy === 'vercel' ? 'Saving…' : 'Save token'}
-            </button>
-          </div>
-          {vercelTokenError ? (
-            <p
-              id="vercel-token-error"
-              role="alert"
-              className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium leading-relaxed text-red-600 dark:text-red-300"
-            >
-              {vercelTokenError}
-            </p>
-          ) : null}
-          <p className="text-[11px] text-[var(--muted)] leading-relaxed">
-            Choose <strong>Personal Account</strong> for personal projects. Xroga verifies project
-            and deployment access before saving; it never exposes your token.
-          </p>
-        </div>
-      ) : !vercelOk || vercelCanDeploy === false ? (
-        <button
-          type="button"
-          onClick={() => setShowVercelToken(true)}
-          className="mt-3 text-xs text-[var(--muted)] hover:text-[var(--accent)] underline-offset-2 hover:underline"
-        >
-          Prefer a personal token? Paste it here
-        </button>
-      ) : null}
-
       {vercelOk && showVercelProjects ? (
         <ul className="mt-4 max-h-40 overflow-auto space-y-1 rounded-xl border border-[var(--card-border)] p-3">
           {vercelProjects.length === 0 ? (
@@ -657,7 +552,13 @@ export function ConnectShipWizard() {
                   onClick={() => {
                     try {
                       localStorage.setItem('xroga_vercel_preferred_project', p.name);
+                      if (p.teamId) {
+                        localStorage.setItem('xroga_vercel_preferred_team_id', p.teamId);
+                      } else {
+                        localStorage.removeItem('xroga_vercel_preferred_team_id');
+                      }
                       setVercelPreferred(p.name);
+                      setVercelPreferredTeamId(p.teamId ?? null);
                     } catch {
                       /* ignore */
                     }
@@ -665,7 +566,9 @@ export function ConnectShipWizard() {
                     setShowVercelProjects(false);
                   }}
                 >
-                  {vercelPreferred === p.name ? 'Selected' : 'Use'}
+                  {vercelPreferred === p.name && vercelPreferredTeamId === (p.teamId ?? null)
+                    ? 'Selected'
+                    : 'Use'}
                 </button>
               </li>
             ))

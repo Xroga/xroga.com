@@ -2034,6 +2034,13 @@ export function TerminalChatProvider({
                 return undefined;
               }
             })(),
+            preferredVercelTeamId: (() => {
+              try {
+                return localStorage.getItem('xroga_vercel_preferred_team_id')?.trim() || undefined;
+              } catch {
+                return undefined;
+              }
+            })(),
             ...(priorSite ? { priorSite } : {}),
           },
           onStart: (runId) => {

@@ -1,4 +1,4 @@
-/** Shared Vercel OAuth / token connect helpers for Integrations + deploy buttons. */
+/** Shared permission-verified Vercel OAuth helpers for Integrations + deploy buttons. */
 
 import {
   clearOAuthResult,
@@ -21,7 +21,7 @@ export function isVercelSessionStoreError(message?: string): boolean {
   return /session store failed|storage fallback failed|Could not store OAuth session/i.test(message);
 }
 
-/** Leave chat/popup and open Integrations (Ship setup + token paste). */
+/** Leave chat/popup and open the Vercel setup section in Integrations. */
 export function goToVercelIntegrations(opts?: { error?: string }): void {
   if (typeof window === 'undefined') return;
   try {
@@ -65,7 +65,7 @@ export async function openVercelOAuthPopup(deps: VercelOAuthDependencies = {}): 
         oauthConfigured: false,
         goToIntegrations: true,
         error:
-          'Vercel OAuth is not configured on the server. Open Integrations and paste a personal token from vercel.com/account/tokens.',
+          'Vercel connection is temporarily unavailable. Xroga must configure its Vercel App before users can authorize deployments.',
       };
     }
 
@@ -83,9 +83,9 @@ export async function openVercelOAuthPopup(deps: VercelOAuthDependencies = {}): 
       oauthConfigured: !sessionStore,
       goToIntegrations: true,
       error: network
-        ? 'Cannot reach the Xroga API to start Vercel login. Open Integrations to paste a Vercel token.'
+        ? 'Cannot reach the Xroga API to start Vercel authorization. Check your connection and try again.'
         : sessionStore
-          ? 'Vercel authorize needs a database table that is missing. Opening Integrations — paste a Vercel personal token to connect now.'
+          ? 'Vercel authorization cannot start because Xroga could not save the secure OAuth session. Please try again shortly.'
           : raw || 'Could not start Vercel authorization',
     };
   }
@@ -153,8 +153,13 @@ export function listenVercelOAuthMessages(
       try {
         const { api } = await import('./api');
         const status = await api.vercel.status();
-        if (status.connected) {
+        if (status.connected && status.canDeploy === true) {
           finishOk(status.username);
+        } else if (status.connected && status.canDeploy === false) {
+          finishErr(
+            status.warning ||
+              'Vercel is connected without the required Project and Deployment permissions. Re-authorize and approve both permissions.',
+          );
         }
       } catch {
         /* keep polling */

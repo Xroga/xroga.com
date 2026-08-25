@@ -296,6 +296,8 @@ export interface BuildClientMeta {
   githubVisibility?: 'private' | 'public';
   /** User-selected Vercel project from Integrations → Change project */
   preferredVercelProject?: string;
+  /** Scope that owns the selected Vercel project; absent means personal account. */
+  preferredVercelTeamId?: string;
   priorSite?: {
     html: string;
     css?: string;
@@ -392,6 +394,10 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     preferredVercelProject:
       typeof m.preferredVercelProject === 'string' && m.preferredVercelProject.trim().length >= 2
         ? m.preferredVercelProject.trim().slice(0, 64)
+        : undefined,
+    preferredVercelTeamId:
+      typeof m.preferredVercelTeamId === 'string' && /^team_[A-Za-z0-9]+$/.test(m.preferredVercelTeamId)
+        ? m.preferredVercelTeamId
         : undefined,
     priorSite:
       prior && typeof prior.html === 'string' && prior.html.trim().length > 40
@@ -3790,7 +3796,8 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Vercel redeploy via file-upload API — does NOT require GitHub↔Vercel project link
+  // Vercel creates a Git-linked project when possible, then uses its OAuth file API
+  // as a deterministic first-deploy/fallback path. No personal token is required.
   // Non-web products (Chrome / Electron / Expo) ship via Releases/EAS — never upload them to Vercel.
   const vercelToken = await getVercelToken(opts.userId);
   let vaultEnvSync: VercelEnvSyncResult | undefined;
@@ -3814,7 +3821,7 @@ export async function runBuildPipeline(opts: {
       agent: 'deploy',
       status: 'deploying',
       message: isUpdate
-        ? 'Redeploying on your Vercel (no GitHub link required)…'
+        ? 'Redeploying your connected Vercel project…'
         : 'Deploying to your Vercel account…',
       swarmStatusLabel: 'Deploying',
       swarmActivity: meta?.preferredVercelProject
@@ -3837,7 +3844,11 @@ export async function runBuildPipeline(opts: {
           .replace(/^-|-$/g, '')
           .slice(0, 40) ||
         'xroga-build';
-      const deployed = await deployToAllPlatforms(slug, nextFiles, opts.userId);
+      const deployed = await deployToAllPlatforms(slug, nextFiles, opts.userId, {
+        teamId: meta?.preferredVercelTeamId,
+        githubRepo: githubRepoName || meta?.githubTargetRepo,
+        githubBranch,
+      });
       vaultEnvSync = deployed.envSync ?? deployed.vercel?.envSync;
       if (vaultEnvSync && !vaultEnvSync.ok) {
         const detail =

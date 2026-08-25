@@ -101,6 +101,7 @@ export interface StreamSwarmOptions {
      */
     githubVisibility?: 'private' | 'public';
     preferredVercelProject?: string;
+    preferredVercelTeamId?: string;
     priorSite?: {
       html: string;
       css?: string;
@@ -834,18 +835,10 @@ export const api = {
       );
     },
     connect: (code: string, state: string) =>
-      apiFetch<{ connected: boolean; username: string }>('/api/vercel/connect', {
+      apiFetch<{ connected: boolean; username: string; canDeploy: true }>('/api/vercel/connect', {
         method: 'POST',
         body: JSON.stringify({ code, state, redirectUri: vercelOAuthCallbackUrl() }),
       }),
-    connectToken: (token: string) =>
-      apiFetch<{ connected: boolean; username: string; canDeploy: true }>(
-        '/api/vercel/connect-token',
-        {
-          method: 'POST',
-          body: JSON.stringify({ token }),
-        },
-      ),
     status: () =>
       apiFetch<{
         connected: boolean;
@@ -874,6 +867,7 @@ export const api = {
       js?: string;
       projectSlug?: string;
       projectName?: string;
+      teamId?: string;
     }) =>
       apiFetch<{ deployUrl: string; deploymentId?: string; deployVerified?: boolean; error?: string }>(
         '/api/vercel/deploy',

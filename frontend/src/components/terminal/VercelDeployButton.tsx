@@ -29,8 +29,7 @@ export function VercelDeployButton({
   const [deploying, setDeploying] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [liveUrl, setLiveUrl] = useState<string | null>(null);
-  const [showTokenForm, setShowTokenForm] = useState(false);
-  const [tokenInput, setTokenInput] = useState('');
+  const [connectionWarning, setConnectionWarning] = useState<string | null>(null);
   const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
   const storeDeployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
 
@@ -38,8 +37,9 @@ export function VercelDeployButton({
     void api.vercel
       .status()
       .then((s) => {
-        setConnected(s.connected);
+        setConnected(s.connected && s.canDeploy === true);
         setUsername(s.username ?? null);
+        setConnectionWarning(s.warning ?? null);
       })
       .catch(() => setConnected(false));
 
@@ -47,7 +47,7 @@ export function VercelDeployButton({
       (name) => {
         setConnected(true);
         setUsername(name ?? null);
-        setShowTokenForm(false);
+        setConnectionWarning(null);
         toast.success(name ? `Vercel connected as @${name}` : 'Vercel connected');
       },
       (msg) => toast.error(msg)
@@ -67,8 +67,10 @@ export function VercelDeployButton({
     setDeploying(true);
     try {
       let preferredSlug = '';
+      let preferredTeamId = '';
       try {
         preferredSlug = localStorage.getItem('xroga_vercel_preferred_project')?.trim() || '';
+        preferredTeamId = localStorage.getItem('xroga_vercel_preferred_team_id')?.trim() || '';
       } catch {
         /* ignore */
       }
@@ -79,6 +81,7 @@ export function VercelDeployButton({
         js,
         projectSlug: slug,
         projectName: preferredSlug || projectName,
+        teamId: preferredTeamId || undefined,
       });
       if (result.deployUrl) {
         setLiveUrl(result.deployUrl);
@@ -101,8 +104,8 @@ export function VercelDeployButton({
       const msg = (err as Error).message?.slice(0, 160) || 'Deploy failed';
       if (/connect vercel|403|not connected/i.test(msg)) {
         setConnected(false);
-        setShowTokenForm(true);
-        toast.error('Connect Vercel first — authorize or paste a token below');
+        setConnectionWarning('Authorize Vercel and approve Project + Deployment permissions.');
+        toast.error('Connect Vercel first and approve deployment permissions');
       } else {
         toast.error(msg);
       }
@@ -117,7 +120,6 @@ export function VercelDeployButton({
     try {
       const result = await openVercelOAuthPopup();
       if (!result.opened) {
-        setShowTokenForm(true);
         toast.error(result.error || 'Could not open Vercel authorization');
         return false;
       }
@@ -127,11 +129,11 @@ export function VercelDeployButton({
         const poll = setInterval(async () => {
           try {
             const status = await api.vercel.status();
-            if (status.connected) {
+            if (status.connected && status.canDeploy === true) {
               clearInterval(poll);
               setConnected(true);
               setUsername(status.username ?? null);
-              setShowTokenForm(false);
+              setConnectionWarning(null);
               toast.success('Vercel connected');
               resolve(true);
               return;
@@ -141,34 +143,11 @@ export function VercelDeployButton({
           }
           if (Date.now() - started > 120_000) {
             clearInterval(poll);
-            setShowTokenForm(true);
-            toast.error('Vercel authorization timed out — paste a token below');
+            toast.error('Vercel authorization timed out — authorize again');
             resolve(false);
           }
         }, 900);
       });
-    } finally {
-      setConnecting(false);
-    }
-  }
-
-  async function connectWithToken() {
-    const token = tokenInput.trim();
-    if (token.length < 12) {
-      toast.error('Paste a Vercel personal access token from vercel.com/account/tokens');
-      return;
-    }
-    setConnecting(true);
-    try {
-      const result = await api.vercel.connectToken(token);
-      setConnected(true);
-      setUsername(result.username ?? null);
-      setShowTokenForm(false);
-      setTokenInput('');
-      toast.success(result.username ? `Vercel connected as @${result.username}` : 'Vercel connected');
-      await runDeploy();
-    } catch (err) {
-      toast.error((err as Error).message?.slice(0, 140) || 'Token connect failed');
     } finally {
       setConnecting(false);
     }
@@ -226,48 +205,12 @@ export function VercelDeployButton({
               : 'Authorize Vercel & deploy'}
       </button>
 
-      {showTokenForm || connected === false ? (
+      {connected === false || connectionWarning ? (
         <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-3 space-y-2 min-w-[240px] max-w-[320px]">
           <p className="text-[10px] text-[var(--muted)] leading-relaxed">
-            Allow popups for OAuth, or paste a token from{' '}
-            <a
-              href="https://vercel.com/account/tokens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline text-[var(--accent)]"
-            >
-              vercel.com/account/tokens
-            </a>{' '}
-            (Full Account).
+            {connectionWarning ||
+              'Connect your Vercel account once. Xroga will ask for Project and Deployment access, then publish without asking for a personal token.'}
           </p>
-          {!showTokenForm ? (
-            <button
-              type="button"
-              onClick={() => setShowTokenForm(true)}
-              className="text-[10px] font-semibold text-[var(--accent)] hover:underline"
-            >
-              Use personal access token
-            </button>
-          ) : (
-            <>
-              <input
-                type="password"
-                value={tokenInput}
-                onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="vercel_… token"
-                className="w-full px-2.5 py-1.5 rounded-lg bg-[var(--foreground)]/5 border border-[var(--card-border)] text-[11px] font-mono focus:outline-none focus:border-[var(--accent)]/50"
-                autoComplete="off"
-              />
-              <button
-                type="button"
-                onClick={() => void connectWithToken()}
-                disabled={connecting || deploying}
-                className="w-full py-2 rounded-lg bg-[var(--accent)] text-[var(--background)] text-[11px] font-bold hover:opacity-90 disabled:opacity-60"
-              >
-                {connecting ? 'Connecting…' : 'Connect token & deploy'}
-              </button>
-            </>
-          )}
         </div>
       ) : null}
     </div>
