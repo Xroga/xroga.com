@@ -14,4 +14,8 @@ test('a fresh-product terminal never inherits the previously routed project', ()
 
   assert.match(source, /hasFreshTerminalIntent\(\) && !repoContextEarly/);
   assert.match(source, /projectId: freshProductIntent \? undefined : projectId/);
+  assert.match(
+    source,
+    /isBuildUpdate && !freshProductIntent && !stickyTargetRepo\?\.includes\('\/'\)/,
+  );
 });

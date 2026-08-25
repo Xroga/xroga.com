@@ -1857,7 +1857,7 @@ export function TerminalChatProvider({
         // Sticky fallback ONLY for updates — never for greenfield (wrong-product risk).
         let stickyTargetRepo = repoContext?.repo;
         let stickyTargetBranch = repoContext?.branch ?? 'main';
-        if (isBuildUpdate && !stickyTargetRepo?.includes('/')) {
+        if (isBuildUpdate && !freshProductIntent && !stickyTargetRepo?.includes('/')) {
           try {
             const ghStatus = await api.github.status();
             if (ghStatus.defaultRepo?.includes('/')) {
