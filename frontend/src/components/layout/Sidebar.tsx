@@ -639,7 +639,13 @@ export function Sidebar({ displayName }: SidebarProps) {
               <HoverTip label="Theme" description="Choose the workspace theme.">
                 <ThemeToggle />
               </HoverTip>
-              {isMobile && mobileOpen ? <ModalCloseButton onClick={closeMobile} /> : null}
+              {isMobile && mobileOpen ? (
+                /* The same 28px borderless square as New, Search and Theme beside it.
+                   Its own default is a 36px outlined button, which is right in a
+                   modal and wrong in a toolbar of three smaller siblings — it sat a
+                   head taller than them with a box drawn round it. */
+                <ModalCloseButton onClick={closeMobile} className="xv-sidebar-head-icon" />
+              ) : null}
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
@@ -783,6 +789,10 @@ export function Sidebar({ displayName }: SidebarProps) {
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
           </button>
+          {/* Theme belongs on this bar too. It lives in the sidebar's toolbar, which on
+              a phone is behind the drawer — so changing the theme meant opening the
+              drawer, changing it, and closing the drawer again to see the result. */}
+          <ThemeToggle />
         </div>
       </header>
 
