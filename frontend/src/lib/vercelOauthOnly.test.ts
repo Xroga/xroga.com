@@ -19,6 +19,8 @@ test('Vercel connection is OAuth-only across the API and every deploy surface', 
   }
   assert.doesNotMatch(route, /router\.post\(['"]\/connect-token/);
   assert.match(gate, /Authorize with Vercel/);
+  assert.match(wizard, /Managed Vercel publishing is ready/);
+  assert.match(deploy, /Xroga publishes through its managed Vercel authority/);
   assert.match(wizard, /xroga_vercel_preferred_project/);
   assert.match(wizard, /xroga_vercel_preferred_team_id/);
 });

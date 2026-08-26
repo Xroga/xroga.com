@@ -19,6 +19,7 @@ export function ConnectShipWizard() {
   const [githubOk, setGithubOk] = useState(false);
   const [vercelOk, setVercelOk] = useState(false);
   const [vercelCanDeploy, setVercelCanDeploy] = useState<boolean | null>(null);
+  const [managedVercelAvailable, setManagedVercelAvailable] = useState(false);
   const [vercelUser, setVercelUser] = useState<string | null>(null);
   const [vercelWarning, setVercelWarning] = useState<string | null>(null);
   const [supabaseOk, setSupabaseOk] = useState(false);
@@ -59,10 +60,12 @@ export function ConnectShipWizard() {
         warning?: string;
         tokenValid?: boolean | null;
         canDeploy?: boolean | null;
+        managedDeployAvailable?: boolean;
       };
       // Persist Connected when a token is stored (backend connected=true), even if live check is flaky
       setVercelOk(Boolean(veStatus.connected));
       setVercelCanDeploy(veStatus.canDeploy ?? null);
+      setManagedVercelAvailable(Boolean(veStatus.managedDeployAvailable));
       setVercelUser(veStatus.username ?? null);
       setVercelWarning(veStatus.warning ?? null);
       const list =
@@ -357,10 +360,16 @@ export function ConnectShipWizard() {
     {
       id: 'vercel',
       title: '2. Vercel',
-      body: 'Authorize once, approve Project + Deployment access, then choose where Xroga should publish.',
-      done: vercelOk && vercelCanDeploy === true,
+      body: managedVercelAvailable
+        ? 'Managed Vercel publishing is ready. No personal token or Vercel sign-in is required.'
+        : 'Vercel publishing is temporarily unavailable.',
+      done: managedVercelAvailable || (vercelOk && vercelCanDeploy === true),
       action: connectVercel,
-      label: vercelOk && vercelCanDeploy === true ? 'Connected' : 'Authorize',
+      label: managedVercelAvailable
+        ? 'Managed by Xroga'
+        : vercelOk && vercelCanDeploy === true
+          ? 'Connected'
+          : 'Unavailable',
     },
     {
       id: 'supabase',
@@ -385,7 +394,7 @@ export function ConnectShipWizard() {
     },
   ];
 
-  const ready = githubOk && vercelOk && vercelCanDeploy === true;
+  const ready = githubOk && (managedVercelAvailable || (vercelOk && vercelCanDeploy === true));
 
   return (
     <section
@@ -399,7 +408,7 @@ export function ConnectShipWizard() {
           </p>
           <h2 className="text-lg sm:text-xl font-bold mt-1">Connect once · then just describe</h2>
           <p className="text-sm text-[var(--muted)] mt-1 max-w-xl">
-            <strong>Web:</strong> GitHub + Vercel (+ Supabase). <strong>Chrome / Desktop:</strong>{' '}
+            <strong>Web:</strong> GitHub + managed Vercel (+ optional Supabase). <strong>Chrome / Desktop:</strong>{' '}
             GitHub alone (zip on ship). <strong>Mobile:</strong> GitHub + Expo token in Publish. Then
             open Workspace and describe what to build.
           </p>
@@ -455,7 +464,11 @@ export function ConnectShipWizard() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
-              {s.id === 'vercel' && vercelOk ? (
+              {s.id === 'vercel' && managedVercelAvailable ? (
+                <span className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-600">
+                  Ready
+                </span>
+              ) : s.id === 'vercel' && vercelOk ? (
                 <>
                   <button
                     type="button"

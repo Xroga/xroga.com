@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, deployStaticSiteWithToken, pollDeploymentReady } from '../../lib/vercel.js';
 import { syncEnvVarsToVercelProject, type VercelEnvSyncResult } from '../../lib/vercelEnv.js';
@@ -975,13 +976,82 @@ export async function ensureVercelGitProject(opts: {
 
 async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
-  const deployment = await deployStaticSite(projectSlug, vercelFiles);
-  const deployUrl = await pollDeploymentReady(deployment.deploymentId, deployment.deployUrl);
+  const framework = frameworkForDeploy(staticFiles);
+  const deployment = await deployStaticSite(projectSlug, vercelFiles, {
+    framework,
+    sourceDeploy: Boolean(framework),
+  });
+  const deployUrl = await pollDeploymentReady(
+    deployment.deploymentId,
+    deployment.deployUrl,
+    undefined,
+    framework ? 240_000 : 180_000,
+  );
   return {
     deployUrl,
     platform: 'vercel',
     vercelDeploymentId: deployment.deploymentId,
   };
+}
+
+/**
+ * Xroga's managed Vercel authority is the default publishing path for generated
+ * web products. Users never need to paste a Vercel personal token. A connected
+ * Vercel account may still be used for user-owned projects when its OAuth grant
+ * has deployment permissions, but it is not a prerequisite for a live preview.
+ */
+export function hasManagedVercelDeployment(): boolean {
+  return Boolean(getSecret('VERCEL_API_KEY'));
+}
+
+export function managedVercelProjectName(projectSlug: string, ownerKey?: string): string {
+  const clean =
+    projectSlug
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 24) || 'build';
+  if (!ownerKey) return clean.slice(0, 40);
+  const owner = createHash('sha256').update(ownerKey).digest('hex').slice(0, 8);
+  return `xroga-${clean}-${owner}`.slice(0, 40);
+}
+
+/** Deploy to Vercel with Xroga's existing platform credential, without another host fallback. */
+export async function deployManagedVercelPreview(
+  projectSlug: string,
+  files: ProjectFile[],
+  ownerKey?: string,
+): Promise<PlatformDeployResult> {
+  if (!hasManagedVercelDeployment()) {
+    return {
+      deployUrl: '',
+      deployVerified: false,
+      error: 'Managed Vercel deployment is not configured',
+    };
+  }
+
+  const staticFiles = hostingDeployFiles(files);
+  try {
+    const result = await deployToVercel(
+      managedVercelProjectName(projectSlug, ownerKey),
+      staticFiles,
+    );
+    const verified = await verifyLivePreviewUrl(result.deployUrl);
+    return {
+      deployUrl: result.deployUrl,
+      deployVerified: verified,
+      authority: 'managed',
+      vercelDeploymentId: result.vercelDeploymentId,
+      ...(!verified ? { error: 'Vercel URL failed verification' } : {}),
+    };
+  } catch (error) {
+    const message = (error as Error).message || 'Managed Vercel deployment failed';
+    return {
+      deployUrl: '',
+      deployVerified: false,
+      error: message.slice(0, 240),
+    };
+  }
 }
 
 export async function syncUserVaultToVercel(
@@ -1130,13 +1200,18 @@ export async function deployStaticPreview(
 export interface PlatformDeployResult {
   deployUrl: string;
   deployVerified: boolean;
+  authority?: 'user' | 'managed';
   vercelDeploymentId?: string;
   netlifyDeployId?: string;
   error?: string;
   envSync?: VercelEnvSyncResult;
 }
 
-/** Deploy to user's Vercel account when connected; otherwise skip platform deploy. */
+/**
+ * Deploy through one Vercel authority. Prefer a deploy-capable user OAuth grant;
+ * otherwise use Xroga's managed Vercel project. Never require a pasted PAT and
+ * never disguise another host as the requested Vercel deployment.
+ */
 export async function deployToAllPlatforms(
   projectSlug: string,
   files: ProjectFile[],
@@ -1170,6 +1245,7 @@ export async function deployToAllPlatforms(
       vercel = {
         deployUrl: result.deployUrl,
         deployVerified: verified,
+        authority: 'user',
         vercelDeploymentId: result.vercelDeploymentId,
         envSync: result.envSync,
       };
@@ -1177,15 +1253,31 @@ export async function deployToAllPlatforms(
     } catch (err) {
       const msg = (err as Error).message;
       errors.push(`Vercel: ${msg.slice(0, 120)}`);
-      vercel = { deployUrl: '', deployVerified: false, error: msg.slice(0, 240) };
+      vercel = {
+        deployUrl: '',
+        deployVerified: false,
+        authority: 'user',
+        error: msg.slice(0, 240),
+      };
     }
-  } else {
-    errors.push('Vercel: Connect your Vercel account under Integrations to deploy live on your domain');
-    vercel = {
-      deployUrl: '',
-      deployVerified: false,
-      error: 'Connect Vercel under Integrations — deploys go to your account, not Xroga servers',
-    };
+  }
+
+  // Sign in with Vercel currently provides identity scopes by default; project
+  // and deployment API permissions are not generally available to every app.
+  // A missing/insufficient user grant therefore falls through to Xroga's already
+  // configured Vercel publisher instead of asking the user for a personal token.
+  if ((!vercel?.deployUrl || !vercel.deployVerified) && hasManagedVercelDeployment()) {
+    const managed = await deployManagedVercelPreview(projectSlug, staticFiles, userId);
+    if (managed.deployUrl) {
+      vercel = managed;
+    } else {
+      errors.push(`Managed Vercel: ${managed.error || 'deployment failed'}`);
+      if (!vercel) vercel = managed;
+    }
+  } else if (!vercel) {
+    const message = 'Managed Vercel deployment is not configured';
+    errors.push(`Vercel: ${message}`);
+    vercel = { deployUrl: '', deployVerified: false, error: message };
   }
 
   const primary =
