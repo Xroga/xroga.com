@@ -20,6 +20,8 @@ export interface DeploySiteOptions {
   framework?: VercelFramework;
   /** When true, upload full source tree (framework build). */
   sourceDeploy?: boolean;
+  /** Production updates the project alias; preview returns an isolated deployment URL. */
+  target?: 'production' | 'preview';
 }
 
 async function resolveTeamId(token: string, preferred?: string | null): Promise<string | undefined> {
@@ -87,7 +89,9 @@ export async function deployStaticSiteWithToken(
           ? { buildCommand: 'npm run build', installCommand: 'npm install' }
           : {}),
     },
-    target: 'production',
+    // Vercel creates a Preview deployment when target is omitted. This matters for
+    // Xroga's shared managed project because one build must never replace another.
+    ...(opts?.target === 'preview' ? {} : { target: 'production' }),
   };
 
   const response = await fetch(`https://api.vercel.com/v13/deployments${query}`, {
@@ -114,7 +118,7 @@ export async function deployStaticSiteWithToken(
           name: projectName,
           files,
           projectSettings: { framework: null },
-          target: 'production',
+          ...(opts?.target === 'preview' ? {} : { target: 'production' }),
         }),
       });
       if (!retry.ok) {

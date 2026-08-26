@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 import { deployStaticSite, deployStaticSiteWithToken, pollDeploymentReady } from '../../lib/vercel.js';
 import { syncEnvVarsToVercelProject, type VercelEnvSyncResult } from '../../lib/vercelEnv.js';
@@ -974,12 +973,13 @@ export async function ensureVercelGitProject(opts: {
   return { created: true, linked: true, projectName };
 }
 
-async function deployToVercel(projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
+async function deployToVercel(_projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const framework = frameworkForDeploy(staticFiles);
-  const deployment = await deployStaticSite(projectSlug, vercelFiles, {
+  const deployment = await deployStaticSite(managedVercelProjectName(), vercelFiles, {
     framework,
     sourceDeploy: Boolean(framework),
+    target: 'preview',
   });
   const deployUrl = await pollDeploymentReady(
     deployment.deploymentId,
@@ -1004,23 +1004,21 @@ export function hasManagedVercelDeployment(): boolean {
   return Boolean(getSecret('VERCEL_API_KEY'));
 }
 
-export function managedVercelProjectName(projectSlug: string, ownerKey?: string): string {
-  const clean =
-    projectSlug
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
-      .slice(0, 24) || 'build';
-  if (!ownerKey) return clean.slice(0, 40);
-  const owner = createHash('sha256').update(ownerKey).digest('hex').slice(0, 8);
-  return `xroga-${clean}-${owner}`.slice(0, 40);
+export function managedVercelProjectName(): string {
+  const configured = process.env.VERCEL_MANAGED_PROJECT_NAME?.trim() || 'xroga-managed-builds';
+  const clean = configured
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 100);
+  return clean || 'xroga-managed-builds';
 }
 
 /** Deploy to Vercel with Xroga's existing platform credential, without another host fallback. */
 export async function deployManagedVercelPreview(
   projectSlug: string,
   files: ProjectFile[],
-  ownerKey?: string,
+  _ownerKey?: string,
 ): Promise<PlatformDeployResult> {
   if (!hasManagedVercelDeployment()) {
     return {
@@ -1032,10 +1030,7 @@ export async function deployManagedVercelPreview(
 
   const staticFiles = hostingDeployFiles(files);
   try {
-    const result = await deployToVercel(
-      managedVercelProjectName(projectSlug, ownerKey),
-      staticFiles,
-    );
+    const result = await deployToVercel(projectSlug, staticFiles);
     const verified = await verifyLivePreviewUrl(result.deployUrl);
     return {
       deployUrl: result.deployUrl,
