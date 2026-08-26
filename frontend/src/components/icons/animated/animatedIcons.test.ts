@@ -54,6 +54,15 @@ const ICONS = [
   'MinimizeIcon',
   'CatIcon',
   'FilePenIcon',
+  'UserRoundPenIcon',
+  'ShieldCheckIcon',
+  'DatabaseBackupIcon',
+  'WalletIcon',
+  'UserLockIcon',
+  'BellElectricIcon',
+  'UserStarIcon',
+  'AtomIcon',
+  'LogoutIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {
@@ -302,4 +311,63 @@ test('the homepage header pill takes the palette and the grid', () => {
 
   assert.match(HOME, /icon=\{LayoutGridIcon\}/, 'the homepage Dashboard lost the grid');
   assert.ok(!/LayoutDashboard/.test(HOME), 'the static dashboard glyph is back');
+});
+
+/**
+ * Every settings section wears an animated icon, and the right one.
+ *
+ * Nine tabs, nine placements. The pairing is the substance here — a guard that only
+ * counted `AnimatedIcon` occurrences would pass with all nine showing the same glyph —
+ * so each id is checked against the icon that belongs to it, inside its own object
+ * literal rather than anywhere in the file.
+ */
+test('the settings sections each carry their own animated icon', () => {
+  for (const [id, icon] of [
+    ['general', 'UserRoundPenIcon'],
+    ['companion', 'CatIcon'],
+    ['privacy', 'ShieldCheckIcon'],
+    ['data-ai', 'DatabaseBackupIcon'],
+    ['plan', 'WalletIcon'],
+    ['integrations', 'ConnectIcon'],
+    ['security', 'UserLockIcon'],
+    ['notifications', 'BellElectricIcon'],
+    ['theme', 'PaletteIcon'],
+  ] as const) {
+    const at = SETTINGS.indexOf(`id: '${id}'`);
+    assert.ok(at > 0, `the ${id} section is gone`);
+    assert.match(SETTINGS.slice(at, at + 160), new RegExp(`icon=\\{${icon}\\}`), `${id} lost ${icon}`);
+  }
+  // No lucide glyph left in the rail at all — the whole import block went with them.
+  assert.ok(!/from 'lucide-react'/.test(SETTINGS), 'a static glyph is back in the settings rail');
+});
+
+/**
+ * The account menu animates every row, with no static fallback left in the renderer.
+ *
+ * The fallback is the part worth guarding. While a `{Icon ? … : Animated}` branch
+ * existed, a new row could be added with a plain lucide glyph and look wired without
+ * moving — the same shape of mistake as a guard pointed at a file nothing imports.
+ */
+test('every account menu row carries an animated icon', () => {
+  const MENU = read('../../ui/ProfileQuickMenu.tsx');
+  for (const [key, icon] of [
+    ['plan', 'AtomIcon'],
+    ['profile', 'UserRoundPenIcon'],
+    ['personalization', 'PaletteIcon'],
+    ['settings', 'CogIcon'],
+    ['community', 'UsersRoundIcon'],
+    ['feedback', 'SmileIcon'],
+    ['about', 'UserStarIcon'],
+  ] as const) {
+    const at = MENU.indexOf(`key: '${key}'`);
+    assert.ok(at > 0, `the ${key} row is gone`);
+    assert.match(MENU.slice(at, at + 220), new RegExp(`animated: ${icon},`), `${key} lost ${icon}`);
+  }
+  assert.ok(!/from 'lucide-react'/.test(MENU), 'a static glyph is back in the account menu');
+  assert.ok(!/'icon' in item/.test(MENU), 'the static branch is back, and can hide an unwired icon');
+
+  // Logout is in a different file — the menu renders the shared button.
+  const UIVERSE = read('../../ui/Uiverse.tsx');
+  assert.match(UIVERSE, /icon=\{LogoutIcon\}/, 'the logout button lost its arrow');
+  assert.ok(!/viewBox="0 0 512 512"/.test(UIVERSE), 'the solid Font Awesome mark is back');
 });
