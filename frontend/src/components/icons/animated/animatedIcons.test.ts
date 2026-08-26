@@ -198,9 +198,13 @@ test('the send button takes the wheel at rest and keeps the rest of its states',
 test('the composer takes the ring, the bars and the wheel', () => {
   assert.match(ACTIONS, /icon=\{CirclePlayIcon\}/, 'the composer menu trigger is not the ring');
   assert.ok(!/<Plus\b/.test(ACTIONS), 'the static plus is back');
-  // The capsule became the bars: a level meter says "this is listening to you" in a
-  // way a microphone body does not, and the ring around it is gone too.
-  assert.match(MIC, /icon=\{AudioLinesIcon\}/, 'the mic button is not the bars');
+  /*
+   * The mic renders the meter directly rather than through `AnimatedIcon`, because it
+   * drives the animation from the recording state rather than from a pointer. What it
+   * looks like, and that it runs for exactly as long as the recording does, is
+   * asserted in `mobileChrome.test.ts` where the rest of the composer's chrome lives.
+   */
+  assert.match(MIC, /<AudioLinesIcon ref=\{meterRef\}/, 'the mic button is not the meter');
   assert.ok(!/<Mic\b/.test(MIC), 'the static mic is back');
 });
 

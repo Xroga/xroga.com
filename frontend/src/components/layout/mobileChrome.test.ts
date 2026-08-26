@@ -24,6 +24,8 @@ const THEME_TOGGLE = read('./ThemeToggle.tsx');
 const HISTORY = read('./SidebarProjectHistory.tsx');
 const GH = read('../icons/GitHubIcon.tsx');
 const GH_GLYPH = read('../icons/animated/GithubGlyphIcon.tsx');
+const METER = read('../icons/animated/AudioLinesIcon.tsx');
+const PROMPT = read('../icons/animated/TerminalPromptIcon.tsx');
 
 /**
  * Two Xroga wordmarks a few pixels apart: the page header carried one for small
@@ -121,13 +123,78 @@ test('page fullscreen hides every piece of chrome, on a phone too', () => {
   assert.match(CSS, /body\.xv-page-fullscreen-active \{\n\s*overflow: hidden;/, 'the page behind still scrolls');
 });
 
-test('the mic is bars with no ring around them', () => {
-  assert.match(MIC, /icon=\{AudioLinesIcon\}/, 'the mic is not the bars');
+/**
+ * The meter is the mic, and it runs for exactly as long as the recording does.
+ *
+ * There used to be two drawings of the same thing: the glyph, hidden while
+ * listening, and three CSS bars behind it. One of them was always wrong.
+ */
+test('the mic is a meter that runs while recording and stops when it ends', () => {
+  assert.match(MIC, /<AudioLinesIcon ref=\{meterRef\} loop/, 'the mic is not the meter');
+  assert.ok(!/xv-mic-wave/.test(MIC), 'the second drawing is back');
+  assert.ok(!/xv-mic-wave/.test(UIVERSE), 'the CSS bars are back');
+  assert.match(METER, /repeat: loop \? Number\.POSITIVE_INFINITY : 0/, 'the meter settles mid-recording');
+
+  /*
+   * Driven from `listening`, not from the click: the recording ends without one when
+   * the browser stops on silence, on an error, or when permission is refused. The
+   * bars have to settle with it or they go on claiming to record a released mic.
+   */
+  assert.match(MIC, /if \(listening\) meterRef\.current\?\.startAnimation\(\);/);
+  assert.match(MIC, /else meterRef\.current\?\.stopAnimation\(\);/);
+  assert.match(MIC, /\}, \[listening\]\);/, 'the meter is not tied to the recording');
+
   const rule = UIVERSE.slice(UIVERSE.indexOf('.xv-mic-btn {'), UIVERSE.indexOf('.xv-mic-btn:hover'));
   assert.match(rule, /border: 0;/, 'the resting ring is back');
   assert.match(rule, /background: transparent;/, 'the resting fill is back');
-  // Listening is still marked by more than colour.
-  assert.match(UIVERSE, /\.xv-mic-btn\.is-listening \{[^}]*background: color-mix/, 'listening lost its tint');
+  // The terminal's ink, inherited. `var(--foreground)` measured 1.24 against the Gray
+  // terminal and 1.18 against Black, because the skins do not all redefine it the
+  // same way and it fell through to the page's value.
+  assert.match(rule, /color: inherit;/, 'the meter names a token that falls through');
+  // Recording is red AND moving, so it does not rest on colour alone.
+  assert.match(UIVERSE, /\.xv-mic-btn\.is-listening[^{]*\{[^}]*color: #dc2626;/, 'recording is not red');
+});
+
+/**
+ * An icon rendered outside `AnimatedIcon` has no `LazyMotion` above it, and `m`
+ * components without one are plain elements with no animation features loaded. The
+ * meter shipped that way for one build: measured, its opacity held at 1 and its
+ * transform at `none` for the whole run. These two are the only icons rendered
+ * directly, so these two carry their own provider.
+ */
+test('the icons that render outside AnimatedIcon bring their own motion provider', () => {
+  for (const [name, source] of [['AudioLinesIcon', METER], ['TerminalPromptIcon', PROMPT]] as const) {
+    assert.match(source, /import \{ IconMotion \}/, `${name} has no provider to fall back on`);
+    assert.match(source, /<IconMotion>/, `${name} does not wrap itself`);
+  }
+});
+
+/**
+ * The mic used to be painted over by a theme rule with `!important` on both the fill
+ * and the ink: a white disc with slate-900 bars, stuck to a dark composer. That is
+ * the outline it was asked to lose, and it measured 1.24 and 1.18 against its own
+ * surface on Gray and Black.
+ */
+test('no theme paints a coin behind the mic', () => {
+  assert.ok(
+    !/\.xv-terminal-dock \.xv-mic-btn \{[^}]*background: #ffffff !important/.test(CSS),
+    'the white coin is back',
+  );
+  assert.ok(
+    !/body\.theme-gray \.xv-mic-btn \{/.test(CSS),
+    'a theme is overriding the mic again',
+  );
+});
+
+/**
+ * The Beige workspace runs the Solar terminal, whose muted ink measured 3.29 against
+ * its own surface — under AA, and the reason the prompt line read as washed-out grey
+ * rather than as text.
+ */
+test('the Solar terminal ink is readable on its own surface', () => {
+  const solar = CSS.slice(CSS.indexOf('.terminal-skin-solar {'), CSS.indexOf('}', CSS.indexOf('.terminal-skin-solar {')));
+  assert.match(solar, /--muted: #5c6a76;/, 'the washed-out muted ink is back');
+  assert.ok(!/--muted: #7c8a94;/.test(solar), 'the sub-AA value is back');
 });
 
 test('the sidebar rows that were given new glyphs kept them', () => {

@@ -12,8 +12,10 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
-import { AudioLinesIcon } from '@/components/icons/animated/AudioLinesIcon';
+import {
+  AudioLinesIcon,
+  type AudioLinesIconHandle,
+} from '@/components/icons/animated/AudioLinesIcon';
 import { cn } from '@/lib/utils';
 
 interface BrowserSpeechRecognitionEvent {
@@ -57,6 +59,7 @@ export function ChatBarMicButton({
   const [listening, setListening] = useState(false);
   const [error, setError] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const meterRef = useRef<AudioLinesIconHandle>(null);
 
   // Support is only knowable in the browser, so decide after mount to keep the
   // server and client markup identical.
@@ -105,6 +108,19 @@ export function ChatBarMicButton({
     recognition.start();
   }, [onTranscript]);
 
+  /*
+   * The meter runs while the recording does.
+   *
+   * Driven from `listening` rather than from the click, because the recording can end
+   * without one: the browser stops it on silence, on an error, or when permission is
+   * refused. Those all set `listening` false, and the bars have to settle with it or
+   * they would go on claiming to be recording after the microphone was released.
+   */
+  useEffect(() => {
+    if (listening) meterRef.current?.startAnimation();
+    else meterRef.current?.stopAnimation();
+  }, [listening]);
+
   // Nothing to offer when the browser cannot do it.
   if (!supported) return null;
 
@@ -118,14 +134,11 @@ export function ChatBarMicButton({
       title={error ? 'Dictation was unavailable or permission was denied' : listening ? 'Stop dictation' : 'Dictate'}
       className={cn('xv-mic-btn', listening && 'is-listening', error && 'is-error', className)}
     >
-      {/* Three bars that animate only while actually listening, so the state is
-          legible without relying on colour alone. */}
-      <span className="xv-mic-wave" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-      <AnimatedIcon icon={AudioLinesIcon} size={14} className="xv-mic-icon" />
+      {/* The meter is the state. It used to be hidden while listening and replaced by
+          three CSS bars behind it — two drawings of the same thing, one of which was
+          always wrong. The bars run for as long as the recording does and stop when
+          it stops, which is what the reader is actually being told. */}
+      <AudioLinesIcon ref={meterRef} loop size={16} className="xv-mic-icon" />
       <span className="sr-only" role="status">
         {listening ? 'Listening' : error ? 'Dictation unavailable' : 'Dictation idle'}
       </span>
