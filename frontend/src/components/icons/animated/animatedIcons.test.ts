@@ -15,7 +15,8 @@ import { readFileSync } from 'node:fs';
  * twelve times.
  */
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 
 const HOST = read('./AnimatedIcon.tsx');
 const PROVIDER = read('./MotionProvider.tsx');

@@ -14,6 +14,10 @@ import {
   type InSandboxBrowserRequest,
 } from './inSandboxBrowser.js';
 
+const requiresPosixShell = process.platform === 'win32'
+  ? 'requires the Linux sandbox shell (/bin/sh)'
+  : false;
+
 /**
  * The collector and the command are generated as *strings*, which makes them uniquely easy to
  * break in ways nothing catches. A stray backtick terminates the template literal (that one at
@@ -45,7 +49,7 @@ test('the generated collector is syntactically valid JavaScript', () => {
   }
 });
 
-test('the generated shell command is syntactically valid shell', () => {
+test('the generated shell command is syntactically valid shell', { skip: requiresPosixShell }, () => {
   const { command, args } = buildSandboxCommand(request());
   assert.equal(command, '/bin/sh');
   execFileSync('/bin/sh', ['-n', '-c', args[1]!], { stdio: 'pipe' });
