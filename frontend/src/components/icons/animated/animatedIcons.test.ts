@@ -25,7 +25,7 @@ const THEME = read('../../layout/ThemeToggle.tsx');
 const PROFILE = read('../../ui/ProfileQuickMenu.tsx');
 const SEND = read('../../terminal/ChatBarSendIcon.tsx');
 const ACTIONS = read('../../terminal/ChatBarActionsMenu.tsx');
-const MIC = read('../../terminal/ChatBarMicButton.tsx');
+const MIC = read('../../terminal/ChatBarButtons.tsx');
 const LOG = read('../../terminal/SwarmMessageLog.tsx');
 const DASHBOARD = read('../../dashboard/DashboardView.tsx');
 const PROMPT = read('./TerminalPromptIcon.tsx');
@@ -282,4 +282,24 @@ test('the workspace launcher opens Project edits, with a pen', () => {
     !/PanelRightClose|PanelRightOpen/.test(LAUNCHER),
     'the static panel-slide glyphs are back',
   );
+});
+
+/*
+ * The homepage header uses the product's icons, not its own.
+ *
+ * Theme and Dashboard sit in one segmented pill beside the wordmark, and they were
+ * the last two static lucide glyphs on a control the reader meets before anything
+ * else. The palette and the grid are the same components the sidebar, the collapsed
+ * rail and the mobile bottom bar use for those destinations, so a place looks like
+ * itself whichever surface you reach it from.
+ */
+test('the homepage header pill takes the palette and the grid', () => {
+  const HOME = read('../../../app/page.tsx');
+  const SWITCHER = read('../../companion/HomepageThemeSwitcher.tsx');
+
+  assert.match(SWITCHER, /icon=\{PaletteIcon\}/, 'the homepage theme control lost the palette');
+  assert.ok(!/<Palette\b/.test(SWITCHER), 'the static palette is back');
+
+  assert.match(HOME, /icon=\{LayoutGridIcon\}/, 'the homepage Dashboard lost the grid');
+  assert.ok(!/LayoutDashboard/.test(HOME), 'the static dashboard glyph is back');
 });

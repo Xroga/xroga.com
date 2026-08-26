@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
-import { CloudUpload, LoaderCircle, Mic, MicOff } from 'lucide-react';
+import { CloudUpload, LoaderCircle } from 'lucide-react';
+import { AudioLinesIcon, type AudioLinesIconHandle } from '@/components/icons/animated/AudioLinesIcon';
 import { ChatBarSendIcon, isSendBusy, isSendLoading, type SendButtonState } from './ChatBarSendIcon';
 
 export type { SendButtonState };
@@ -55,6 +56,20 @@ export function ChatBarMicrophoneButton({
 }) {
   const [state, setState] = useState<SpeechInputState>('idle');
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const meterRef = useRef<AudioLinesIconHandle>(null);
+
+  /*
+   * The meter runs off the recording state, not off the click.
+   *
+   * Recording ends without one: the browser stops on silence, on an error, and when
+   * permission is refused. All three land here as a state that is no longer
+   * 'recording', so the bars settle with the recognition rather than going on
+   * claiming to record a microphone that was already released.
+   */
+  useEffect(() => {
+    if (state === 'recording') meterRef.current?.startAnimation();
+    else meterRef.current?.stopAnimation();
+  }, [state]);
 
   useEffect(() => {
     if (!getSpeechRecognitionConstructor()) setState('unavailable');
@@ -126,26 +141,48 @@ export function ChatBarMicrophoneButton({
     }
   };
 
-  const Icon = state === 'processing' ? LoaderCircle : state === 'denied' || state === 'unavailable' ? MicOff : Mic;
+  /*
+   * A browser with no SpeechRecognition gets no button at all.
+   *
+   * The previous shape was a crossed-out mic that stayed on screen, disabled — a
+   * control that advertises a capability the browser does not have, and one more mic
+   * glyph to explain. Support is only knowable after mount, so this renders on the
+   * server and withdraws on the client rather than the other way round.
+   */
+  if (state === 'unavailable') return null;
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      disabled={state === 'processing' || state === 'unavailable'}
+      disabled={state === 'processing'}
       className={cn(
-        'h-9 w-9 shrink-0 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--muted)] transition-colors',
-        'hover:text-[var(--foreground)] hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
-        state === 'recording' && 'border-red-500 text-red-500 bg-red-500/10',
-        (state === 'processing' || state === 'unavailable') && 'cursor-not-allowed opacity-60',
-        surface === 'homepage' && 'bg-white/5'
+        'xv-mic-btn',
+        state === 'recording' && 'is-listening',
+        state === 'denied' && 'is-error',
+        surface === 'homepage' && 'xv-mic-btn--home'
       )}
       title={label}
       aria-label={label}
       aria-pressed={state === 'recording'}
       aria-live="polite"
     >
-      <Icon className={cn('h-4 w-4', state === 'processing' && 'animate-spin')} aria-hidden />
+      {/*
+        Six bars that rise and fall for exactly as long as the recording does, red
+        while it runs and still when it stops. `loop` is what makes it continue until
+        the second press rather than playing one pass and settling under a live
+        microphone.
+
+        The ring around it is gone with the mic glyph: `.xv-mic-btn` sets `border: 0`
+        and takes `color: inherit`, so the meter is the terminal's own ink — black on
+        the White and Beige skins, white on Gray and Black — rather than a token that
+        falls through inside a surface with its own colour.
+      */}
+      {state === 'processing' ? (
+        <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden />
+      ) : (
+        <AudioLinesIcon ref={meterRef} loop size={16} className="xv-mic-icon" aria-hidden />
+      )}
     </button>
   );
 }

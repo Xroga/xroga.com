@@ -140,14 +140,28 @@ test('the expanded preview owns the viewport and hides the shell', () => {
     'the flag must be cleared on unmount',
   );
 
-  const at = code.indexOf('body.xv-workspace-expanded-active');
-  assert.notEqual(at, -1, 'nothing responds to the expanded flag');
-  const block = code.slice(at, code.indexOf('}', at));
-  for (const chrome of ['.xv-terminal-dock', '.xv-sidebar-root']) {
-    assert.ok(block.includes(chrome), `${chrome} should stand down for the preview`);
+  /*
+   * The rule that hides the chrome, not merely the first mention of the flag.
+   *
+   * This used to take `indexOf` and read the block that followed. More than one rule
+   * responds to the expanded flag now — releasing the phone's reserved header strip
+   * is another — so the first hit stopped being the hiding rule and the guard failed
+   * on a change that was not about hiding anything. Every block is collected and the
+   * claim is that one of them stands the chrome down.
+   */
+  const blocks: string[] = [];
+  for (let at = code.indexOf('body.xv-workspace-expanded-active'); at !== -1;
+       at = code.indexOf('body.xv-workspace-expanded-active', at + 1)) {
+    blocks.push(code.slice(at, code.indexOf('}', at) + 1));
   }
+  assert.notEqual(blocks.length, 0, 'nothing responds to the expanded flag');
+
+  const hiding = blocks.find(
+    (block) => block.includes('.xv-terminal-dock') && block.includes('.xv-sidebar-root'),
+  );
+  assert.ok(hiding, 'the composer and the sidebar should stand down for the preview');
   assert.match(
-    code.slice(at, at + 900),
+    hiding,
     /display:\s*none\s*!important/,
     'hiding must remove the element from layout, not just stop it painting',
   );
