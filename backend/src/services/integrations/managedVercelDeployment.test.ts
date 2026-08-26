@@ -13,12 +13,17 @@ const STATIC_SITE = [
   },
 ];
 
-test('managed Vercel names are stable per user and isolated across users', () => {
-  const first = managedVercelProjectName('Orbit Coffee', 'user-a');
-  assert.equal(first, managedVercelProjectName('Orbit Coffee', 'user-a'));
-  assert.notEqual(first, managedVercelProjectName('Orbit Coffee', 'user-b'));
-  assert.match(first, /^xroga-orbit-coffee-[a-f0-9]{8}$/);
-  assert.ok(first.length <= 40);
+test('managed Vercel uses the existing Xroga project instead of creating user projects', (t) => {
+  const original = process.env.VERCEL_MANAGED_PROJECT_NAME;
+  t.after(() => {
+    if (original === undefined) delete process.env.VERCEL_MANAGED_PROJECT_NAME;
+    else process.env.VERCEL_MANAGED_PROJECT_NAME = original;
+  });
+
+  delete process.env.VERCEL_MANAGED_PROJECT_NAME;
+  assert.equal(managedVercelProjectName(), 'xroga-managed-builds');
+  process.env.VERCEL_MANAGED_PROJECT_NAME = ' Xroga Managed Builds ';
+  assert.equal(managedVercelProjectName(), 'xroga-managed-builds');
 });
 
 test('a user without a Vercel token deploys through Xroga managed Vercel', async (t) => {
@@ -73,7 +78,9 @@ test('a user without a Vercel token deploys through Xroga managed Vercel', async
   assert.equal(result.deployUrl, 'https://orbit-test.vercel.app');
   const create = calls.find((call) => call.method === 'POST');
   assert.ok(create);
-  assert.equal(JSON.parse(create.body ?? '{}').name, 'orbit-coffee');
+  const body = JSON.parse(create.body ?? '{}');
+  assert.equal(body.name, 'xroga-managed-builds');
+  assert.equal('target' in body, false);
   assert.equal(calls.some((call) => call.url.includes('netlify.com')), false);
 });
 
