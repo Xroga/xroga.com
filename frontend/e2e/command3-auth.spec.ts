@@ -399,7 +399,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await transcript.evaluate((el) => { el.scrollTop = 0; });
 
-  await expect(terminalHeader.getByRole('button', { name: 'Workspace' })).toBeVisible();
+  // "Project edits", not "Workspace": the sidebar row, the mobile bottom bar and the
+  // page itself already use that word for the whole surface, so the button that opens
+  // the file tree and the diff says what it opens instead.
+  await expect(terminalHeader.getByRole('button', { name: 'Project edits' })).toBeVisible();
   const hideChatbar = terminalHeader.getByRole('button', { name: 'Hide the chatbar' });
   await expect(hideChatbar).toBeVisible();
   await hideChatbar.click();
@@ -657,7 +660,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * cannot be read off the stylesheet: it depends on the composer and the sidebar
    * being switched off from `body`, several levels above the panel that sets the flag.
    */
-  await page.getByRole('button', { name: 'Workspace' }).last().click();
+  // Scoped to the title bar rather than taken as the last match on the page: with the
+  // rename the name is unique, so an unscoped lookup no longer needs a tiebreaker.
+  await terminalHeader.getByRole('button', { name: 'Project edits' }).click();
   const wsPanel = page.locator('.xv-dev-workspace');
   await expect(wsPanel).toBeVisible();
   // The split animates its grid columns over 280ms, so a rect read straight after
