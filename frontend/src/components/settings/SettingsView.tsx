@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   User,
-  Sparkles,
   Lock,
   Database,
   Gauge,
@@ -27,6 +26,8 @@ import { NotificationsSettingsPanel } from '@/components/settings/NotificationsS
 import { ThemeSettingsPanel } from '@/components/settings/ThemeSettingsPanel';
 import type { SettingsSectionId } from '@/lib/settingsSections';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { CatIcon } from '@/components/icons/animated/CatIcon';
 
 const CompanionCustomizer = dynamic(
   () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
@@ -35,7 +36,10 @@ const CompanionCustomizer = dynamic(
 
 const SECTIONS = [
   { id: 'general', label: 'General', icon: <User className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'companion', label: 'Companion', icon: <Sparkles className="h-4 w-4" aria-hidden="true" /> },
+  // The companion is a cat, so the tab that configures it wears one. `intro={false}`
+  // because nine tabs all waving at once on a settings load is noise — it plays on
+  // hover and on click like the rest of the strip.
+  { id: 'companion', label: 'Companion', icon: <AnimatedIcon icon={CatIcon} size={16} intro={false} /> },
   { id: 'privacy', label: 'Privacy', icon: <Lock className="h-4 w-4" aria-hidden="true" /> },
   { id: 'data-ai', label: 'Data & AI', icon: <Database className="h-4 w-4" aria-hidden="true" /> },
   { id: 'plan', label: 'Plan & Usage', icon: <Gauge className="h-4 w-4" aria-hidden="true" /> },

@@ -1,6 +1,8 @@
 'use client';
 
-import { PanelRightClose, PanelRightOpen, PanelBottomClose, PanelBottomOpen } from 'lucide-react';
+import { PanelBottomClose, PanelBottomOpen } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { FilePenIcon } from '@/components/icons/animated/FilePenIcon';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
@@ -42,15 +44,16 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
         type="button"
         onClick={() => setWorkspaceOpen(!workspaceOpen)}
         className="xv-ws-launch"
-        title={workspaceOpen ? 'Close the project workspace' : 'Open the project workspace'}
+        title={workspaceOpen ? 'Close project edits' : 'Open project edits'}
         aria-pressed={workspaceOpen}
       >
-        {workspaceOpen ? (
-          <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
-        ) : (
-          <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
-        )}
-        <span>Workspace</span>
+        {/* "Project edits" rather than "Workspace": the panel behind this button is the
+            file tree, the diff and the editor, and the word Workspace already names the
+            whole page in the sidebar and the bottom bar. Two different things called
+            the same thing is one thing too many. The pen says what it opens; a pair of
+            panel-slide glyphs said only that a panel would move. */}
+        <AnimatedIcon icon={FilePenIcon} size={14} intro={false} />
+        <span>Project edits</span>
       </button>
     </div>
   );

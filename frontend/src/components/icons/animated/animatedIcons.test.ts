@@ -31,6 +31,8 @@ const DASHBOARD = read('../../dashboard/DashboardView.tsx');
 const PROMPT = read('./TerminalPromptIcon.tsx');
 const FRAME = read('../../layout/PageFullscreenFrame.tsx');
 const DEVPANEL = read('../../terminal/DevWorkspacePanel.tsx');
+const SETTINGS = read('../../settings/SettingsView.tsx');
+const LAUNCHER = read('../../terminal/WorkspaceLauncher.tsx');
 
 const ICONS = [
   'TerminalIcon',
@@ -50,6 +52,8 @@ const ICONS = [
   'FolderOpenIcon',
   'ExpandIcon',
   'MinimizeIcon',
+  'CatIcon',
+  'FilePenIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {
@@ -254,4 +258,28 @@ test('Repositories opens its folder, in the row and in the rail', () => {
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+});
+
+test('the Companion settings tab wears the cat', () => {
+  assert.match(SETTINGS, /icon=\{CatIcon\}/, 'the Companion tab lost the cat');
+  assert.ok(!/\bSparkles\b/.test(SETTINGS), 'the static sparkles glyph is back');
+  const at = SETTINGS.indexOf("id: 'companion'");
+  assert.ok(at > 0, 'the Companion section is gone');
+  assert.match(SETTINGS.slice(at, at + 200), /CatIcon/, 'the cat is not on the Companion row');
+});
+
+/*
+ * The launcher used to say "Workspace", the same word the sidebar and the bottom bar
+ * use for the whole page. What it actually opens is the file tree, the diff and the
+ * editor, so it says "Project edits" and wears a pen. Both halves are asserted: a
+ * rename without the icon, or an icon without the rename, leaves the same collision.
+ */
+test('the workspace launcher opens Project edits, with a pen', () => {
+  assert.match(LAUNCHER, /icon=\{FilePenIcon\}/, 'the launcher lost the pen');
+  assert.match(LAUNCHER, /<span>Project edits<\/span>/, 'the launcher label was not renamed');
+  assert.ok(!/<span>Workspace<\/span>/.test(LAUNCHER), 'the launcher still says Workspace');
+  assert.ok(
+    !/PanelRightClose|PanelRightOpen/.test(LAUNCHER),
+    'the static panel-slide glyphs are back',
+  );
 });
