@@ -1001,7 +1001,22 @@ async function deployToVercel(_projectSlug: string, staticFiles: ProjectFile[]):
  * has deployment permissions, but it is not a prerequisite for a live preview.
  */
 export function hasManagedVercelDeployment(): boolean {
-  return Boolean(getSecret('VERCEL_API_KEY'));
+  return isManagedVercelCredentialCandidate(getSecret('VERCEL_API_KEY'));
+}
+
+/**
+ * Vercel API keys (`vck`) are product-scoped keys, not deployment authority.
+ * Accept deployment/integration tokens and legacy unprefixed credentials only;
+ * this prevents an AI Gateway key from making the UI claim publishing is ready.
+ */
+export function isManagedVercelCredentialCandidate(token?: string): boolean {
+  const value = token?.trim();
+  if (!value) return false;
+  if (/^vck(?:_|$)/i.test(value)) return false;
+  if (/^vc[a-z](?:_|$)/i.test(value)) {
+    return /^vc(?:p|i)(?:_|$)/i.test(value);
+  }
+  return true;
 }
 
 export function managedVercelProjectName(): string {
