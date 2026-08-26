@@ -757,7 +757,10 @@ body.theme-gray * {
     border: 1px solid rgba(101, 123, 131, 0.24);
     color: #3b4650;
     --foreground: #3b4650;
-    --muted: #7c8a94;
+    /* Was #7c8a94, which measured 3.29 against this surface — under AA, and the
+       reason the prompt line read as washed-out grey on the Beige workspace rather
+       than as text. The hue is unchanged; it is the same slate, darker. */
+    --muted: #5c6a76;
     --accent: #b5890a;
     --term-chrome: #f4ecd8;
     --term-line: rgba(101, 123, 131, 0.18);
@@ -4694,12 +4697,15 @@ body.theme-gray * {
   body.theme-gray .xv-terminal-dock .xv-power-smash-upload__shell svg {
     color: #ffffff !important;
   }
-  body.theme-black .xv-terminal-dock .xv-mic-btn,
-  body.theme-gray .xv-terminal-dock .xv-mic-btn {
-    background: #ffffff !important;
-    border: none !important;
-    color: #0f172a !important;
-  }
+  /*
+   * The mic is not on this list any more.
+   *
+   * It painted a white disc behind the glyph and forced the ink to slate-900, with
+   * `!important` on both, so on the Black and Gray terminals the meter measured 1.24
+   * and 1.18 against its own surface — a dark glyph on a white coin stuck to a dark
+   * composer. That white coin is the outline the mic was asked to lose. It follows
+   * the terminal's ink now, like the buttons beside it.
+   */
   body.theme-black .xv-terminal-dock .xv-go-btn,
   body.theme-gray .xv-terminal-dock .xv-go-btn,
   body.theme-white .xv-terminal-dock .xv-go-btn {
@@ -4719,13 +4725,11 @@ body.theme-gray * {
     display: none !important;
   }
 
-  body.theme-black .xv-chatbar-secondary-btn,
-  body.theme-black .xv-mic-btn:not(.xv-terminal-dock *) {
+  body.theme-black .xv-chatbar-secondary-btn {
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     background: rgba(255, 255, 255, 0.08) !important;
   }
-  body.theme-gray .xv-chatbar-secondary-btn,
-  body.theme-gray .xv-mic-btn {
+  body.theme-gray .xv-chatbar-secondary-btn {
     border: 1px solid rgba(0, 0, 0, 0.28) !important;
     background: rgba(255, 255, 255, 0.92) !important;
     color: #0f172a !important;

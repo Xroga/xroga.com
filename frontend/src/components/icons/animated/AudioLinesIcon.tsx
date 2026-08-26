@@ -1,11 +1,17 @@
 'use client';
 
-import * as m from 'motion/react-m';
-import { useAnimation } from 'motion/react';
-import type { HTMLAttributes } from 'react';
-import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
-
 import { cn } from '@/lib/utils';
+import { IconMotion } from './MotionProvider';
+import type { Variants } from 'motion/react';
+import * as m from 'motion/react-m';
+import { useAnimation, useReducedMotion } from 'motion/react';
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  type HTMLAttributes,
+} from 'react';
 
 export interface AudioLinesIconHandle {
   startAnimation: () => void;
@@ -15,89 +21,130 @@ export interface AudioLinesIconHandle {
 interface AudioLinesIconProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
-    'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'
+    | 'color'
+    | 'onDrag'
+    | 'onDragStart'
+    | 'onDragEnd'
+    | 'onAnimationStart'
+    | 'onAnimationEnd'
+    | 'onAnimationIteration'
   > {
   size?: number;
+  duration?: number;
+  isAnimated?: boolean;
+  color?: string;
+  /**
+   * Run until told to stop, rather than playing once.
+   *
+   * This is what the mic uses: a level meter that settles after one pass says the
+   * recording finished, and it has not. Everywhere else a single pass is right.
+   */
+  loop?: boolean;
 }
 
-/** Each bar breathes on its own clock, so the set never pulses in lockstep. */
-const BARS = [
-  { rest: 'M6 6v11', beat: 'M6 10v3', duration: 1.5 },
-  { rest: 'M10 3v18', beat: 'M10 9v5', duration: 1 },
-  { rest: 'M14 8v7', beat: 'M14 6v11', duration: 0.8 },
-  { rest: 'M18 5v13', beat: 'M18 7v9', duration: 1.5 },
-];
+const PATHS = ['M2 10v3', 'M6 6v11', 'M10 3v18', 'M14 8v7', 'M18 5v13', 'M22 10v3'];
 
 const AudioLinesIcon = forwardRef<AudioLinesIconHandle, AudioLinesIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
+  (
+    {
+      onMouseEnter,
+      onMouseLeave,
+      className,
+      size = 24,
+      duration = 1,
+      isAnimated = true,
+      color,
+      loop = false,
+      ...props
+    },
+    ref,
+  ) => {
     const controls = useAnimation();
-    const isControlledRef = useRef(false);
+    const reduced = useReducedMotion();
+    const isControlled = useRef(false);
 
     useImperativeHandle(ref, () => {
-      isControlledRef.current = true;
+      isControlled.current = true;
       return {
-        startAnimation: () => controls.start('animate'),
+        startAnimation: () => (reduced ? controls.start('normal') : controls.start('animate')),
         stopAnimation: () => controls.start('normal'),
       };
     });
 
-    const handleMouseEnter = useCallback(
+    const handleEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (isControlledRef.current) onMouseEnter?.(e);
-        else controls.start('animate');
+        if (!isAnimated || reduced) return;
+        if (!isControlled.current) controls.start('animate');
+        else onMouseEnter?.(e);
       },
-      [controls, onMouseEnter],
+      [controls, reduced, isAnimated, onMouseEnter],
     );
 
-    const handleMouseLeave = useCallback(
+    const handleLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (isControlledRef.current) onMouseLeave?.(e);
-        else controls.start('normal');
+        if (!isControlled.current) controls.start('normal');
+        else onMouseLeave?.(e);
       },
       [controls, onMouseLeave],
     );
 
+    // Each bar starts a fifth of a second after the one before, so the six read as a
+    // level meter responding to a voice rather than six bars moving together.
+    const barVariants: Variants = {
+      normal: { scaleY: 1, opacity: 1 },
+      animate: (i: number) => ({
+        scaleY: [1, 1.4, 0.6, 1],
+        opacity: [1, 0.8, 1],
+        transition: {
+          duration: 0.9 * duration,
+          repeat: loop ? Number.POSITIVE_INFINITY : 0,
+          delay: i * 0.2,
+          ease: 'easeInOut',
+        },
+      }),
+    };
+
+    /*
+     * Wraps its own provider.
+     *
+     * Every other icon here is rendered through `AnimatedIcon`, which supplies the
+     * `LazyMotion` these `m` components need. The mic renders this one directly, so
+     * it can drive the meter from the recording state — and without a provider of its
+     * own that made `m.path` a plain path with no animation features loaded. It read
+     * as a static glyph: measured, opacity held at 1 and the transform at `none` for
+     * the whole run. Nested providers are harmless; an absent one is not.
+     */
     return (
-      <div
+      <IconMotion>
+      <m.div
         className={cn('inline-flex items-center justify-center', className)}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
         {...props}
+        style={{ color, ...props.style }}
       >
-        <svg
-          fill="none"
+        <m.svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
           height={size}
+          viewBox="0 0 24 24"
+          fill="none"
           stroke="currentColor"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          width={size}
-          xmlns="http://www.w3.org/2000/svg"
+          animate={controls}
+          initial="normal"
         >
-          <path d="M2 10v3" />
-          {BARS.map((bar) => (
-            <m.path
-              animate={controls}
-              d={bar.rest}
-              initial="normal"
-              key={bar.rest}
-              variants={{
-                normal: { d: bar.rest },
-                animate: {
-                  d: [bar.rest, bar.beat, bar.rest],
-                  transition: { duration: bar.duration, repeat: Number.POSITIVE_INFINITY },
-                },
-              }}
-            />
+          {PATHS.map((d, i) => (
+            <m.path key={d} d={d} variants={barVariants} custom={i} style={{ originY: 0.5 }} />
           ))}
-          <path d="M22 10v3" />
-        </svg>
-      </div>
+        </m.svg>
+      </m.div>
+      </IconMotion>
     );
   },
 );
 
 AudioLinesIcon.displayName = 'AudioLinesIcon';
-
 export { AudioLinesIcon };
