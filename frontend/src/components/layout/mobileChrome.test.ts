@@ -19,7 +19,7 @@ const TABS = read('../ui/Tabs.tsx');
 const SETTINGS = read('../settings/SettingsView.tsx');
 const CSS = read('../../app/globals.css');
 const UIVERSE = read('../../../src/styles/uiverse.css');
-const MIC = read('../terminal/ChatBarMicButton.tsx');
+const MIC = read('../terminal/ChatBarButtons.tsx');
 const THEME_TOGGLE = read('./ThemeToggle.tsx');
 const HISTORY = read('./SidebarProjectHistory.tsx');
 const GH = read('../icons/GitHubIcon.tsx');
@@ -136,13 +136,30 @@ test('the mic is a meter that runs while recording and stops when it ends', () =
   assert.match(METER, /repeat: loop \? Number\.POSITIVE_INFINITY : 0/, 'the meter settles mid-recording');
 
   /*
-   * Driven from `listening`, not from the click: the recording ends without one when
-   * the browser stops on silence, on an error, or when permission is refused. The
-   * bars have to settle with it or they go on claiming to record a released mic.
+   * Driven from the recording state, not from the click: the recording ends without
+   * one when the browser stops on silence, on an error, or when permission is
+   * refused. The bars have to settle with it or they go on claiming to record a
+   * released mic.
    */
-  assert.match(MIC, /if \(listening\) meterRef\.current\?\.startAnimation\(\);/);
+  assert.match(MIC, /if \(state === 'recording'\) meterRef\.current\?\.startAnimation\(\);/);
   assert.match(MIC, /else meterRef\.current\?\.stopAnimation\(\);/);
-  assert.match(MIC, /\}, \[listening\]\);/, 'the meter is not tied to the recording');
+  assert.match(MIC, /\}, \[state\]\);/, 'the meter is not tied to the recording');
+
+  /*
+   * This file, and not a second one.
+   *
+   * The meter first landed in `ChatBarMicButton.tsx`, which nothing imported — the
+   * composer renders `ChatBarMicrophoneButton` from here. The guards passed against
+   * a file with no production caller while the shipped mic was still a lucide glyph,
+   * which is how it reached a user. The duplicate is deleted; this asserts the
+   * component the composer actually mounts.
+   */
+  assert.match(MIC, /export function ChatBarMicrophoneButton\(/, 'the live mic button moved');
+  assert.match(
+    read('../terminal/ChatBarParts.tsx'),
+    /<ChatBarMicrophoneButton /,
+    'the composer stopped rendering the mic this guard checks',
+  );
 
   const rule = UIVERSE.slice(UIVERSE.indexOf('.xv-mic-btn {'), UIVERSE.indexOf('.xv-mic-btn:hover'));
   assert.match(rule, /border: 0;/, 'the resting ring is back');

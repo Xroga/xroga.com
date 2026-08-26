@@ -15,6 +15,8 @@ import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
 import {
@@ -22,7 +24,6 @@ import {
   Bug,
   Gauge,
   Globe2,
-  LayoutDashboard,
   LayoutTemplate,
   LogIn,
   MonitorCog,
@@ -107,7 +108,10 @@ export default function HomePage() {
                       onClick={() => router.push('/workspace')}
                       className="xv-hc-headgroup__seg"
                     >
-                      <LayoutDashboard className="xv-hc-seg-icon" aria-hidden="true" />
+                      {/* The same grid the sidebar and the bottom bar use for Dashboard, so the
+                          destination looks like itself from the homepage too — and animates,
+                          which is what the rest of the product's icons do. */}
+                      <AnimatedIcon icon={LayoutGridIcon} size={16} className="xv-hc-seg-icon" />
                       <span className="xv-hc-seg-label">Dashboard</span>
                     </button>
                   ) : (

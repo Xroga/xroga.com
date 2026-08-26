@@ -147,3 +147,32 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
   assert.match(E2E, /the plus menu should lay out in two columns/);
 });
+
+/**
+ * Fullscreen on a phone gives back the space the hidden mobile bar was holding.
+ *
+ * `.xv-mobile-workspace-header` is `position: fixed`, so the only thing reserving its
+ * 4.45rem is a `padding-top` on the main column. Fullscreen hides the bar outright
+ * with `display: none` but left that reservation standing, and a terminal that had
+ * just been asked for the whole screen started ~71px down the page with empty ground
+ * above it. Asserted on the uncommented CSS, and both halves are named: the
+ * reservation must still exist for the normal state, and each fullscreen state must
+ * clear it.
+ */
+test('mobile fullscreen releases the reserved header strip', () => {
+  assert.match(
+    code,
+    /\.xv-workspace-main\s*\{\s*padding-top:\s*calc\(max\(0\.5rem[^}]*4\.45rem\)\s*!important;/,
+    'the reservation for the mobile bar is gone, so the bar now overlaps the terminal',
+  );
+
+  const at = code.indexOf('body.xv-terminal-fullscreen-active .xv-workspace-main');
+  assert.ok(at > 0, 'fullscreen no longer releases the reserved strip');
+  const rule = code.slice(at, code.indexOf('}', at));
+  for (const state of ['xv-terminal-fullscreen-active', 'xv-page-fullscreen-active', 'xv-workspace-expanded-active']) {
+    assert.ok(rule.includes(`body.${state} .xv-workspace-main`), `${state} still reserves the strip`);
+  }
+  // `!important`, because the rule it overrides is itself `!important` inside the
+  // same media query — a plain override loses to it however late it lands.
+  assert.match(rule, /padding-top:\s*0\s*!important/, 'the override cannot beat the reservation');
+});
