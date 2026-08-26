@@ -99,6 +99,7 @@ import {
   isGitHubConnected,
   getGithubDefaultRepo,
   inspectConnectedRepositoryState,
+  hasManagedVercelDeployment,
 } from '../services/integrations/githubDeploy.js';
 import { clearVercelConnection, getVercelToken } from '../services/integrations/vercelAuth.js';
 import {
@@ -1244,7 +1245,8 @@ export async function runBuildPipeline(opts: {
 
   // Early OAuth preflight — warn before long build so users connect before waiting
   const githubOkEarly = await isGitHubConnected(opts.userId);
-  const vercelOkEarly = Boolean(await getVercelToken(opts.userId));
+  const vercelOkEarly =
+    Boolean(await getVercelToken(opts.userId)) || hasManagedVercelDeployment();
   const scaffoldKindEarly = detectScaffoldKind(userFacingPrompt);
 
   // Observation only, and off unless UNIVERSAL_AGENT_ENABLED=shadow. Nothing below reads
@@ -1496,7 +1498,7 @@ export async function runBuildPipeline(opts: {
   const earlyShipBlockers: string[] = [];
   if (!githubOkEarly) earlyShipBlockers.push('Connect GitHub to push code to your repo');
   if (needsVercelEarly && !vercelOkEarly) {
-    earlyShipBlockers.push('Connect Vercel to deploy live to your account');
+    earlyShipBlockers.push('Vercel publishing is temporarily unavailable');
   }
   if (isUpdate && githubOkEarly && !meta?.githubTargetRepo) {
     earlyShipBlockers.push(
@@ -1522,7 +1524,7 @@ export async function runBuildPipeline(opts: {
       message: meta?.githubTargetRepo
         ? `Ship ready · target ${meta.githubTargetRepo}`
         : needsVercelEarly
-          ? 'Ship ready · GitHub + Vercel connected'
+          ? 'Ship ready · GitHub + managed Vercel publishing'
           : 'Ship ready · GitHub connected (desktop/extension/mobile)',
       swarmStatusLabel: 'Ship ready',
       swarmActivity: meta?.githubTargetRepo || 'Authorize OK',
@@ -2973,7 +2975,8 @@ export async function runBuildPipeline(opts: {
   });
 
   const githubOk = await isGitHubConnected(opts.userId);
-  const vercelOk = Boolean(await getVercelToken(opts.userId));
+  const vercelOk =
+    Boolean(await getVercelToken(opts.userId)) || hasManagedVercelDeployment();
   const remoteRepoState =
     isUpdate && githubOk && meta?.githubTargetRepo
       ? await inspectConnectedRepositoryState(
@@ -3033,7 +3036,7 @@ export async function runBuildPipeline(opts: {
   const shipBlockers: string[] = [];
   if (!githubOk) shipBlockers.push('Connect GitHub to push code to your repo');
   if (!isNonWebProduct && !vercelOk) {
-    shipBlockers.push('Connect Vercel to deploy live to your account');
+    shipBlockers.push('Vercel publishing is temporarily unavailable');
   }
   if (isUpdate && githubOk && !meta?.githubTargetRepo) {
     shipBlockers.push(
@@ -3804,8 +3807,9 @@ export async function runBuildPipeline(opts: {
     }
   }
 
-  // Vercel creates a Git-linked project when possible, then uses its OAuth file API
-  // as a deterministic first-deploy/fallback path. No personal token is required.
+  // A deploy-capable user OAuth grant is preferred when present. Otherwise the
+  // same Vercel file-deploy authority uses Xroga's managed platform credential.
+  // No personal token is required or accepted.
   // Non-web products (Chrome / Electron / Expo) ship via Releases/EAS — never upload them to Vercel.
   const vercelToken = await getVercelToken(opts.userId);
   let vaultEnvSync: VercelEnvSyncResult | undefined;
@@ -3815,7 +3819,7 @@ export async function runBuildPipeline(opts: {
     !security.blocked &&
     !compileBlocksShip &&
     !githubShippingPlan.blocker &&
-    Boolean(vercelToken) &&
+    (Boolean(vercelToken) || hasManagedVercelDeployment()) &&
     nextFiles.some(
       (f) =>
         f.path.endsWith('.html') ||
@@ -3829,12 +3833,16 @@ export async function runBuildPipeline(opts: {
       agent: 'deploy',
       status: 'deploying',
       message: isUpdate
-        ? 'Redeploying your connected Vercel project…'
-        : 'Deploying to your Vercel account…',
+        ? 'Redeploying this product on Vercel…'
+        : vercelToken
+          ? 'Deploying through your connected Vercel account…'
+          : 'Deploying through Xroga managed Vercel…',
       swarmStatusLabel: 'Deploying',
       swarmActivity: meta?.preferredVercelProject
         ? `Vercel · ${meta.preferredVercelProject}`
-        : 'Vercel file upload',
+        : vercelToken
+          ? 'Vercel file upload'
+          : 'Xroga managed Vercel',
       swarmTodos: todos('deploy'),
     });
     try {
@@ -3895,7 +3903,7 @@ export async function runBuildPipeline(opts: {
           redactSecrets(deployed.deployError),
           { githubRepoName },
         );
-        const reauth = isVercelAuthFailure(deployed.deployError);
+        const reauth = Boolean(vercelToken) && isVercelAuthFailure(deployed.deployError);
         if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
         shipBlockers.push(deployFailure);
         emit({
@@ -3904,7 +3912,7 @@ export async function runBuildPipeline(opts: {
           message: deployFailure,
           swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy issue',
           swarmTodos: todos('deploy'),
-          ...(reauth ? { needsVercel: true } : {}),
+          ...(reauth && !hasManagedVercelDeployment() ? { needsVercel: true } : {}),
         });
       }
     } catch (err) {
@@ -3913,7 +3921,7 @@ export async function runBuildPipeline(opts: {
       // An `invalidToken` rejection means the stored authorization is dead. Leaving it
       // in place makes the account look connected, so every later build repeats this
       // same failure with no way for the user to know why.
-      const reauth = isVercelAuthFailure(raw);
+      const reauth = Boolean(vercelToken) && isVercelAuthFailure(raw);
       if (reauth) await clearVercelConnection(opts.userId).catch(() => {});
       shipBlockers.push(deployFailure);
       console.warn('[pipeline] Vercel deploy failed:', deployFailure);
@@ -3923,22 +3931,22 @@ export async function runBuildPipeline(opts: {
         message: deployFailure,
         swarmStatusLabel: reauth ? 'Reconnect Vercel' : 'Deploy failed',
         swarmTodos: todos('deploy'),
-        ...(reauth ? { needsVercel: true } : {}),
+        ...(reauth && !hasManagedVercelDeployment() ? { needsVercel: true } : {}),
       });
     }
-  } else if (!isNonWebProduct && !vercelToken && !patchAborted && !security.blocked) {
-    shipBlockers.push('Connect Vercel under Integrations to deploy live to your domain');
+  } else if (!isNonWebProduct && !vercelOk && !patchAborted && !security.blocked) {
+    shipBlockers.push('Vercel publishing is temporarily unavailable');
     emit({
       agent: 'deploy',
       status: 'deploy_skipped',
       message: githubPushConfirmed
-        ? 'Code is on GitHub — connect Vercel to auto-deploy to your domain'
-        : 'Connect Vercel to deploy this build to your domain',
-      swarmStatusLabel: 'Need Vercel',
-      swarmActivity: 'Authorize Vercel',
+        ? 'Code is on GitHub — managed Vercel publishing is temporarily unavailable'
+        : 'Managed Vercel publishing is temporarily unavailable',
+      swarmStatusLabel: 'Vercel unavailable',
+      swarmActivity: 'Deployment authority unavailable',
       swarmTodos: todos('deploy').map((t) =>
         t.id === 'deploy'
-          ? { ...t, label: 'Connect Vercel to deploy', status: 'pending' as const }
+          ? { ...t, label: 'Restore Vercel publishing', status: 'pending' as const }
           : t.id === 'push'
             ? { ...t, status: (githubPushConfirmed ? 'done' : t.status) as typeof t.status }
             : t,

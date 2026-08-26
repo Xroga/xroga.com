@@ -16,10 +16,12 @@ import {
   vercelCredentialCanDeploy,
   verifyVercelTokenLive,
 } from '../services/integrations/vercelAuth.js';
-import { deployStaticSiteWithToken } from '../lib/vercel.js';
 import { normalizeBuildFiles } from '../lib/normalizeBuildSource.js';
 import { buildFullProjectFiles } from '../services/projectScaffold.js';
-import { syncUserVaultToVercel } from '../services/integrations/githubDeploy.js';
+import {
+  deployToAllPlatforms,
+  hasManagedVercelDeployment,
+} from '../services/integrations/githubDeploy.js';
 import {
   addProjectDomain,
   listProjectDomains,
@@ -79,14 +81,7 @@ router.post('/connect', async (req: AuthRequest, res) => {
     });
 
     const capability = await probeVercelApiCapabilities(tokens.access_token);
-    if (!vercelCredentialCanDeploy('sign_in_with_vercel', capability)) {
-      res.status(403).json({
-        code: 'VERCEL_APP_PERMISSIONS_REQUIRED',
-        error:
-          'Vercel connected, but Xroga cannot access both Projects and Deployments. Approve Project and Deployment permissions in the Vercel authorization screen, then authorize again.',
-      });
-      return;
-    }
+    const canDeploy = vercelCredentialCanDeploy('sign_in_with_vercel', capability);
 
     let username = 'vercel-user';
     let providerUserId: string | undefined;
@@ -125,7 +120,12 @@ router.post('/connect', async (req: AuthRequest, res) => {
       authKind: 'sign_in_with_vercel',
     });
 
-    res.json({ connected: true, username, canDeploy: true });
+    res.json({
+      connected: true,
+      username,
+      canDeploy,
+      managedDeployAvailable: hasManagedVercelDeployment(),
+    });
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
   }
@@ -154,11 +154,14 @@ router.get('/status', async (req: AuthRequest, res) => {
     oauthConfigured: vercelOAuthConfigured(),
     tokenValid,
     canDeploy,
+    managedDeployAvailable: hasManagedVercelDeployment(),
     warning:
       connected && tokenValid === false
         ? 'Vercel authorization may be expired or revoked — use Change account to authorize again'
         : connected && canDeploy === false
-          ? 'Vercel is connected, but Project or Deployment access is missing. Re-authorize Xroga and approve those permissions.'
+          ? hasManagedVercelDeployment()
+            ? 'Vercel identity is connected. Builds publish through Xroga managed Vercel because this authorization has no project/deployment API access.'
+            : 'Vercel identity is connected, but this authorization has no project/deployment API access.'
           : undefined,
     error: liveError,
   });
@@ -255,12 +258,6 @@ router.post('/deploy', async (req: AuthRequest, res) => {
     return;
   }
 
-  const token = await getVercelToken(req.userId!);
-  if (!token) {
-    res.status(403).json({ error: 'Authorize Vercel first', connected: false });
-    return;
-  }
-
   const normalized = normalizeBuildFiles(
     parsed.data.html,
     parsed.data.css ?? '',
@@ -279,29 +276,23 @@ router.post('/deploy', async (req: AuthRequest, res) => {
     userPrompt: prompt,
     projectName: parsed.data.projectName ?? slug,
   });
-  const staticFiles = projectFiles.map((f) => ({ file: f.path, data: f.content }));
-
   try {
-    let envSync: Awaited<ReturnType<typeof syncUserVaultToVercel>> | null = null;
-    try {
-      envSync = await syncUserVaultToVercel(req.userId!, slug, parsed.data.teamId);
-    } catch (err) {
-      envSync = {
-        ok: false,
-        projectName: slug,
-        upserted: [],
-        skipped: [],
-        error: (err as Error).message.slice(0, 240),
-      };
-    }
-    const deployment = await deployStaticSiteWithToken(slug, staticFiles, token, {
-      teamId: parsed.data.teamId ?? null,
+    const deployment = await deployToAllPlatforms(slug, projectFiles, req.userId!, {
+      teamId: parsed.data.teamId,
     });
+    if (!deployment.deployUrl) {
+      res.status(502).json({
+        error: deployment.deployError || 'Vercel deployment failed',
+        deployUrl: '',
+      });
+      return;
+    }
     res.json({
       deployUrl: deployment.deployUrl,
-      deploymentId: deployment.deploymentId,
-      deployVerified: true,
-      envSync,
+      deploymentId: deployment.vercelDeploymentId,
+      deployVerified: deployment.deployVerified,
+      envSync: deployment.envSync,
+      managed: deployment.vercel?.authority === 'managed',
     });
   } catch (err) {
     res.status(502).json({ error: (err as Error).message.slice(0, 240), deployUrl: '' });

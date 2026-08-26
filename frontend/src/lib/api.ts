@@ -835,7 +835,12 @@ export const api = {
       );
     },
     connect: (code: string, state: string) =>
-      apiFetch<{ connected: boolean; username: string; canDeploy: true }>('/api/vercel/connect', {
+      apiFetch<{
+        connected: boolean;
+        username: string;
+        canDeploy: boolean;
+        managedDeployAvailable?: boolean;
+      }>('/api/vercel/connect', {
         method: 'POST',
         body: JSON.stringify({ code, state, redirectUri: vercelOAuthCallbackUrl() }),
       }),
@@ -846,6 +851,7 @@ export const api = {
         oauthConfigured?: boolean;
         tokenValid?: boolean | null;
         canDeploy?: boolean | null;
+        managedDeployAvailable?: boolean;
         warning?: string;
         error?: string;
       }>('/api/vercel/status'),
