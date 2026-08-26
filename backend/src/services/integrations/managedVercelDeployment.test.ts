@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   deployToAllPlatforms,
   hasManagedVercelDeployment,
+  isManagedVercelCredentialCandidate,
   managedVercelProjectName,
 } from './githubDeploy.js';
 
@@ -12,6 +13,14 @@ const STATIC_SITE = [
     content: '<!DOCTYPE html><html><body><h1>Coffee for curious minds</h1></body></html>',
   },
 ];
+
+test('managed Vercel never treats a product API key as deployment authority', () => {
+  assert.equal(isManagedVercelCredentialCandidate(), false);
+  assert.equal(isManagedVercelCredentialCandidate('vck_example'), false);
+  assert.equal(isManagedVercelCredentialCandidate('vcp_example'), true);
+  assert.equal(isManagedVercelCredentialCandidate('vci_example'), true);
+  assert.equal(isManagedVercelCredentialCandidate('legacy-token'), true);
+});
 
 test('managed Vercel uses the existing Xroga project instead of creating user projects', (t) => {
   const original = process.env.VERCEL_MANAGED_PROJECT_NAME;
