@@ -1,6 +1,6 @@
 /**
  * Sync decrypted user vault secrets → Vercel project environment variables.
- * Requires a Vercel token with project/env write access (Full Account PAT recommended).
+ * Requires a Vercel OAuth credential with project environment write access.
  */
 
 export interface VercelEnvSyncResult {
@@ -178,7 +178,7 @@ export async function syncEnvVarsToVercelProject(opts: {
       error: ok
         ? undefined
         : skipped.length
-          ? `Could not write ${skipped.length} env var(s). Re-authorize Vercel with Read/Write Project Environment Variables enabled on the Xroga AI App (or use a Full Account token).`
+          ? `Could not write ${skipped.length} env var(s). Re-authorize Vercel with Read/Write Project Environment Variables enabled for Xroga AI.`
           : undefined,
     };
   } catch (err) {
