@@ -64,6 +64,16 @@ const ICONS = [
   'UserStarIcon',
   'AtomIcon',
   'LogoutIcon',
+  'EyeClosedIcon',
+  'BatteryChargingIcon',
+  'BatteryLowIcon',
+  'CreditCardIcon',
+  'ActivityIcon',
+  'ExternalLinkIcon',
+  'CopyIcon',
+  'UpvoteIcon',
+  'DownvoteIcon',
+  'NewTerminalIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {
@@ -168,17 +178,26 @@ test('the sidebar nav rows carry their animated icons', () => {
   }
 });
 
-test('the collapsed rail shows the workspace as code and search as a reticle', () => {
+test('the collapsed rail names each of its four shortcuts', () => {
   // Searched forward from the rail, not from the top of the file: `SidebarNavScroller`
   // is imported above it, so an unanchored lookup ends the slice before it starts.
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
   assert.ok(rail.length > 0, 'the collapsed rail could not be located');
-  assert.match(rail, /icon=\{CodeXmlIcon\}/, 'the rail lost the workspace glyph');
   assert.match(rail, /icon=\{LocateFixedIcon\}/, 'the rail lost the search glyph');
   assert.match(rail, /icon=\{LayoutGridIcon\}/, 'the rail lost the dashboard glyph');
+  assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
+  /*
+   * The rail's second button carries the new-terminal window, not the code brackets.
+   *
+   * This guard used to call it "the workspace glyph" and require `CodeXmlIcon`. Its
+   * `aria-label` is "New Terminal" and its handler is `handleNewChat`, so the
+   * description was of a button that does not exist — the rail has no workspace
+   * button. Naming the icon after what the control actually does is the fix; the
+   * old assertion would have gone on passing while the button stayed mislabelled.
+   */
+  assert.match(rail, /icon=\{NewTerminalIcon\}/, 'the rail lost the new-terminal window');
 });
-
 test('no static lucide glyph is left at a control that was given an animated one', () => {
   for (const [name, source, gone] of [
     ['Sidebar', SIDEBAR, /<Search\b/],
@@ -371,4 +390,69 @@ test('every account menu row carries an animated icon', () => {
   const UIVERSE = read('../../ui/Uiverse.tsx');
   assert.match(UIVERSE, /icon=\{LogoutIcon\}/, 'the logout button lost its arrow');
   assert.ok(!/viewBox="0 0 512 512"/.test(UIVERSE), 'the solid Font Awesome mark is back');
+});
+
+/**
+ * The capacity gauge reads its own value.
+ *
+ * Two icons for one instrument: the same battery with a bolt above the threshold and
+ * with a single bar below it. The threshold is named rather than inlined, and the
+ * unavailable case is asserted too — `?? 0` sends a reading the panel cannot
+ * establish to the low battery, because an unknown capacity is not a capacity worth
+ * reassuring anybody about.
+ */
+test('the dashboard widgets animate, and capacity picks its battery by value', () => {
+  const HOME = read('../../dashboard/DashboardHomeView.tsx');
+  assert.match(HOME, /const LOW_CAPACITY_PERCENT = 30;/, 'the threshold is gone');
+  assert.match(
+    HOME,
+    /\(entitlement\.capacityRemainingPercent \?\? 0\) < LOW_CAPACITY_PERCENT\s*\n\s*\? BatteryLowIcon\s*\n\s*: BatteryChargingIcon/,
+    'capacity no longer chooses its battery by value',
+  );
+  assert.match(HOME, /icon=\{CreditCardIcon\}/, 'Billing lost the card');
+  assert.match(HOME, /icon=\{ActivityIcon\}/, 'Recent Activity lost the pulse');
+  assert.match(HOME, /icon: AnimatedIconComponent;/, 'WidgetCard takes a static glyph again');
+});
+
+/**
+ * The GitHub mark runs on its own, everywhere it appears.
+ *
+ * It is the second icon here that is not hover-driven. It stands for the connection
+ * the product rests on and appears on surfaces nobody points at — a footer, a signup
+ * form, a showcase row that is read rather than clicked — so waiting for a hover
+ * would mean it never moves in most of its homes.
+ *
+ * The span root is asserted with it: this mark sits in running text, and a `div`
+ * inside a `p` is a hydration mismatch. That is why the continuous version went into
+ * this component rather than arriving as a second, div-rooted GitHub icon.
+ */
+test('the GitHub mark waves continuously, and is still a span', () => {
+  const GLYPH = read('./GithubGlyphIcon.tsx');
+  assert.match(GLYPH, /repeat: Number\.POSITIVE_INFINITY/, 'the arm stops waving');
+  assert.match(GLYPH, /controls\.start\(reduced \? 'normal' : 'animate'\);/, 'it waits to be driven');
+  assert.match(GLYPH, /<m\.span/, 'the mark is a div again, which breaks hydration in prose');
+  assert.ok(!/GithubIcon\.tsx/.test(GLYPH), 'a second GitHub icon is back');
+});
+
+test('the composer, the skin picker and the repo area take their icons', () => {
+  const LAUNCH = read('../../terminal/WorkspaceLauncher.tsx');
+  assert.match(LAUNCH, /icon=\{EyeClosedIcon\}/, 'hide-the-chatbar lost the closing eye');
+  assert.ok(!/PanelBottom/.test(LAUNCH), 'the panel-slide glyphs are back');
+
+  const SKIN = read('../../terminal/TerminalSkinPicker.tsx');
+  assert.match(SKIN, /icon=\{PaletteIcon\}/, 'the skin picker lost the palette');
+  assert.ok(!/<Palette\b/.test(SKIN), 'the static palette is back');
+
+  const CARD = read('../../projects/GitHubProjectCard.tsx');
+  assert.match(CARD, /icon=\{ExternalLinkIcon\}/, 'Open on GitHub lost its arrow');
+
+  const PROJECTS = read('../../../app/(shell)/dashboard/projects/page.tsx');
+  assert.match(PROJECTS, /icon=\{FolderOpenIcon\}/, 'the projects heading lost its folder');
+  assert.match(PROJECTS, /icon=\{TerminalIcon\}/, 'New Terminal lost the chevron');
+
+  const BUBBLE = read('../../terminal/MessageBubbleActions.tsx');
+  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon']) {
+    assert.match(BUBBLE, new RegExp(`icon=\\{${icon}\\}`), `the message actions lost ${icon}`);
+  }
+  assert.ok(!/ThumbsUp|ThumbsDown/.test(BUBBLE), 'the static thumbs are back');
 });

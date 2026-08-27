@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { ChevronDown, Copy, Pencil, Play, Pause, Trash2, X } from 'lucide-react';
 import type { QueuedPrompt } from '@/context/TerminalChatContext';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { CopyIcon } from '@/components/icons/animated/CopyIcon';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -62,7 +64,7 @@ function PromptRow({
       </div>
       <div className="flex items-center gap-0.5 shrink-0">
         <button type="button" onClick={onCopy} className="p-1.5 rounded-lg hover:bg-white/10 text-[var(--muted)]" title="Copy">
-          <Copy className="w-3 h-3" />
+          <AnimatedIcon icon={CopyIcon} size={12} intro={false} />
         </button>
         <button type="button" onClick={() => onEdit(item.text)} className="p-1.5 rounded-lg hover:bg-white/10 text-[var(--muted)]" title="Edit">
           <Pencil className="w-3 h-3" />

@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, Palette } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { TERMINAL_SKINS, type TerminalSkin } from '@/lib/theme';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +63,7 @@ export function TerminalSkinPicker() {
         aria-expanded={open}
         title="Terminal skin"
       >
-        <Palette className="h-3.5 w-3.5" aria-hidden="true" />
+        <AnimatedIcon icon={PaletteIcon} size={14} intro={false} />
         <span className="xv-skin-trigger-label">{auto ? 'Auto' : active.label}</span>
         <span
           aria-hidden="true"

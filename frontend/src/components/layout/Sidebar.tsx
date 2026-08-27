@@ -49,7 +49,7 @@ import { ModalCloseButton } from '@/components/ui/ConfirmDeleteModal';
 import { AnimatedNavIcon, type NavIconMotion } from './AnimatedNavIcon';
 import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
 import { TerminalIcon } from '@/components/icons/animated/TerminalIcon';
-import { CodeXmlIcon } from '@/components/icons/animated/CodeXmlIcon';
+import { NewTerminalIcon } from '@/components/icons/animated/NewTerminalIcon';
 import { LocateFixedIcon } from '@/components/icons/animated/LocateFixedIcon';
 import { RocketIcon } from '@/components/icons/animated/RocketIcon';
 import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
@@ -617,7 +617,10 @@ export function Sidebar({ displayName }: SidebarProps) {
                   className="xv-new-terminal-compact"
                   aria-label="New Terminal"
                 >
-                  <MessageCirclePlus className="h-3.5 w-3.5" aria-hidden="true" />
+                  {/* A terminal window with a plus badge, rather than a chat bubble
+                      with one — what this opens is a terminal, and the rail beside it
+                      already says so with the same window. */}
+                  <AnimatedIcon icon={NewTerminalIcon} size={14} intro={false} />
                   <span>New</span>
                 </button>
               </HoverTip>
@@ -669,7 +672,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               </HoverTip>
               <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
-                  <AnimatedIcon icon={CodeXmlIcon} />
+                  <AnimatedIcon icon={NewTerminalIcon} />
                 </button>
               </HoverTip>
               <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
@@ -768,13 +771,19 @@ export function Sidebar({ displayName }: SidebarProps) {
         )}
         aria-label="Workspace header"
       >
-        <Logo
-          href={logoHref}
-          height={40}
-          variant="sidebarFull"
-          className="xv-mobile-workspace-logo"
-        />
-        <div className="xv-mobile-workspace-actions" aria-label="Workspace shortcuts">
+        {/* One surface, not two. The logo and the shortcuts were separate floating
+            elements at opposite ends of the screen, which read as two unrelated
+            things stuck to the page rather than as the page's header. They share a
+            frosted pill now — the mark on the left, the controls on the right, one
+            edge around both. */}
+        <div className="xv-mobile-workspace-pill">
+          <Logo
+            href={logoHref}
+            height={40}
+            variant="sidebarFull"
+            className="xv-mobile-workspace-logo"
+          />
+          <div className="xv-mobile-workspace-actions" aria-label="Workspace shortcuts">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -787,12 +796,13 @@ export function Sidebar({ displayName }: SidebarProps) {
             <AnimatedIcon icon={LocateFixedIcon} />
           </button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
-            <MessageCirclePlus className="h-4 w-4" aria-hidden="true" />
+            <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>
           {/* Theme belongs on this bar too. It lives in the sidebar's toolbar, which on
               a phone is behind the drawer — so changing the theme meant opening the
               drawer, changing it, and closing the drawer again to see the result. */}
-          <ThemeToggle />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

@@ -1084,9 +1084,33 @@ body.theme-gray * {
     display: flex;
     min-width: 0;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 0.75rem;
     pointer-events: none;
+  }
+  /*
+   * One frosted pill around the mark and the controls.
+   *
+   * These were two floating elements at opposite ends of the screen — a logo stuck to
+   * one corner, a row of buttons stuck to the other — which read as two unrelated
+   * things on the page rather than as the page's header. One surface, one edge, one
+   * shadow: the header is a thing now, not an arrangement.
+   */
+  .xv-mobile-workspace-pill {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.3rem 0.55rem 0.3rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+    pointer-events: auto;
   }
   .xv-mobile-workspace-logo {
     width: 124px !important;
@@ -7772,12 +7796,14 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   bottom: 0;
   z-index: 50;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  justify-content: center;
+  /* Sits on the bottom edge rather than floating above it. The old 8px gutter left a
+     strip of page under the bar that nothing could use and that a thumb kept landing
+     in. The safe-area inset is the bar's own padding now, so its surface reaches the
+     bottom of a notched screen instead of hovering over it. */
+  padding: 0;
   pointer-events: none;
-  transition: transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .xv-mobile-nav__bar {
@@ -7785,17 +7811,20 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   align-items: flex-end;
   gap: 2px;
   width: 100%;
-  max-width: 520px;
-  padding: 7px 8px;
+  /* Room above for the selected disc to rise into without being clipped by the scroll
+     container it lives in. */
+  padding: 26px 8px calc(10px + env(safe-area-inset-bottom, 0px));
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  border-radius: 22px;
+  /* Rounded at the top only — the bottom corners are the screen's corners now. */
+  border-radius: 26px 26px 0 0;
   border: 1px solid var(--card-border);
-  background: color-mix(in srgb, var(--card) 88%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 -8px 34px rgba(0, 0, 0, 0.16);
   pointer-events: auto;
   transition: opacity 200ms ease;
 }
@@ -7807,75 +7836,79 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   align-items: center;
   gap: 3px;
   flex: 0 0 auto;
-  min-width: 60px;
+  min-width: 64px;
   padding: 2px 4px;
   color: var(--muted);
   text-decoration: none;
 }
 
 .xv-mobile-nav__disc {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   background: transparent;
-  transition: background 200ms ease, color 200ms ease, transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: background 220ms ease, color 220ms ease,
+    transform 300ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 220ms ease,
+    width 220ms ease, height 220ms ease;
 }
 
 .xv-mobile-nav__tab.is-active { color: var(--accent); }
+
+/*
+ * The selected tab lifts clear of the bar on a coloured glow.
+ *
+ * A raised disc with light behind it, so the active destination is legible as a shape
+ * before any colour is read — which is what keeps it working on a light theme, a dark
+ * theme, and for a reader who cannot separate the accent from the ink. The glow takes
+ * the accent the reader chose rather than a fixed blue, so this screen moves with the
+ * rest of the product instead of ignoring the setting.
+ */
 .xv-mobile-nav__tab.is-active .xv-mobile-nav__disc {
+  width: 52px;
+  height: 52px;
   background: var(--accent);
   color: var(--button-text, #fff);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: translateY(-18px);
+  box-shadow:
+    0 10px 26px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--accent) 14%, transparent),
+    0 0 34px 10px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .xv-mobile-nav__label {
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  max-width: 62px;
+  max-width: 64px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The selected tab is the one already marked by the disc, so its label would be a
+/* The selected tab is already marked by the raised disc, so its label would be a
    second, weaker copy of the same signal taking room from seven others. */
 .xv-mobile-nav__tab.is-active .xv-mobile-nav__label { opacity: 0; height: 0; }
 
-.xv-mobile-nav__handle {
-  display: grid;
-  place-items: center;
-  width: 92px;
-  height: 18px;
-  border: 0;
-  background: none;
-  pointer-events: auto;
-  cursor: pointer;
-  touch-action: none;
-}
-.xv-mobile-nav__handle > span {
-  display: block;
-  width: 44px;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--card-border);
-  transition: background 160ms ease;
-}
-.xv-mobile-nav__handle:active > span { background: var(--accent); }
-
-/* Down and out of the way, with the handle left on screen to bring it back. */
+/*
+ * Away, and all the way away.
+ *
+ * Nothing is left on screen to grab, because there is nothing to grab it for:
+ * scrolling back up brings the bar out, and so does arriving on a new page. The old
+ * design parked a 4px handle at the bottom whose only job was to undo the gesture that
+ * hid it — a control that existed to fix another control.
+ */
 .xv-mobile-nav[data-hidden='true'] {
-  transform: translateY(calc(100% - 26px - env(safe-area-inset-bottom, 0px)));
+  transform: translateY(100%);
 }
-.xv-mobile-nav[data-hidden='true'] .xv-mobile-nav__bar { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .xv-mobile-nav,
   .xv-mobile-nav__disc,
   .xv-mobile-nav__bar { transition: none; }
 }
+
 .xv-animated-icon-host { transition: color 180ms ease; }
 a:hover .xv-animated-icon-host,
 button:hover .xv-animated-icon-host { color: var(--accent); }

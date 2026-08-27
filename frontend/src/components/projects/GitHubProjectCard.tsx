@@ -1,7 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { Calendar, ExternalLink, Trash2 } from 'lucide-react';
+import { Calendar, Trash2 } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ExternalLinkIcon } from '@/components/icons/animated/ExternalLinkIcon';
 import { cn } from '@/lib/utils';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import type { Project } from '@/lib/api';
@@ -82,7 +84,7 @@ export function GitHubProjectCard({
             className="shrink-0 rounded p-1 text-[var(--muted)] hover:text-[var(--accent)]"
             title="Open on GitHub"
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <AnimatedIcon icon={ExternalLinkIcon} size={14} intro={false} />
           </button>
         ) : null}
       </div>

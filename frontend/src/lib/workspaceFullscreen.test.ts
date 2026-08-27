@@ -176,3 +176,43 @@ test('mobile fullscreen releases the reserved header strip', () => {
   // same media query — a plain override loses to it however late it lands.
   assert.match(rule, /padding-top:\s*0\s*!important/, 'the override cannot beat the reservation');
 });
+
+/**
+ * The expanded flag does not outlive the panel it describes.
+ *
+ * Closing the project-edits panel does not unmount `DevWorkspacePanel` — it renders
+ * `null` while staying mounted, with `expanded` still true. The body class therefore
+ * survived the panel, and the sidebar and composer stayed hidden with nothing on
+ * screen explaining why, until a reload cleared it. That is the reported bug: full
+ * preview, exit, close the panel, and the workspace comes back empty.
+ */
+test('closing the workspace clears the expanded flag', () => {
+  const PANEL = read('../components/terminal/DevWorkspacePanel.tsx');
+  assert.match(
+    PANEL,
+    /classList\.toggle\('xv-workspace-expanded-active', expanded && workspaceOpen\)/,
+    'the flag is set from `expanded` alone again, so it can outlive the panel',
+  );
+  assert.match(PANEL, /\}, \[expanded, workspaceOpen\]\);/, 'the effect no longer watches the panel');
+  // And the state resets, so reopening does not come back expanded from a session
+  // the reader has already left.
+  assert.match(PANEL, /if \(!workspaceOpen\) setExpanded\(false\);/, 'expanded is never reset');
+});
+
+/**
+ * Hiding the chatbar hides the chatbar.
+ *
+ * There used to be a floating restore button left in the composer's place. The
+ * control has a way back already — the same toggle in the title bar that hid it,
+ * which stays on screen and flips its label — so the floating button was a second
+ * control for one job, sitting in the space the reader had just asked to have back.
+ */
+test('hiding the chatbar leaves nothing floating behind it', () => {
+  const DOCK = read('../components/terminal/TerminalDock.tsx');
+  assert.ok(!/xv-chatbar-restore/.test(DOCK), 'the floating restore button is back');
+  assert.match(DOCK, /\{chatbarHidden \? \(/, 'the hidden branch is gone');
+  // The way back, in the title bar, and labelled for the state it is in.
+  const LAUNCH = read('../components/terminal/WorkspaceLauncher.tsx');
+  assert.match(LAUNCH, /chatbarHidden \? 'Show the chatbar' : 'Hide the chatbar'/, 'the toggle lost its label');
+  assert.match(LAUNCH, /setChatbarHidden\(!chatbarHidden\)/, 'the toggle no longer toggles');
+});

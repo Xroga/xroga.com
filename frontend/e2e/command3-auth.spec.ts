@@ -407,13 +407,21 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(hideChatbar).toBeVisible();
   await hideChatbar.click();
   await expect(composerInput).toBeHidden();
-  const restoreChatbar = terminalDock.getByRole('button', { name: 'Show the chatbar' });
-  await expect(restoreChatbar).toBeVisible();
-  const restoreBox = await restoreChatbar.boundingBox();
-  expect(restoreBox).not.toBeNull();
-  expect(restoreBox!.width).toBeLessThanOrEqual(40);
-  expect(restoreBox!.height).toBeLessThanOrEqual(40);
-  await restoreChatbar.click();
+
+  /*
+   * Hiding the chatbar hides the chatbar, and leaves nothing floating in its place.
+   *
+   * This used to assert a small restore button inside the dock, on the reasoning that
+   * a hidden control needs a way back. It has one: the same title-bar toggle that hid
+   * it, which stays on screen and flips its label. The floating button was a second
+   * control for one job, sitting in the space the reader had just asked to have back —
+   * so the claim is inverted rather than dropped. The dock must be empty, and the way
+   * back must still work.
+   */
+  await expect(terminalDock.getByRole('button', { name: 'Show the chatbar' })).toHaveCount(0);
+  const showChatbar = terminalHeader.getByRole('button', { name: 'Show the chatbar' });
+  await expect(showChatbar).toBeVisible();
+  await showChatbar.click();
   await expect(composerInput).toBeVisible();
 
   // The `+` menu is an upward extension of the composer, not a popup near it. The

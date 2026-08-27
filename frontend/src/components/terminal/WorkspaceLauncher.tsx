@@ -1,8 +1,8 @@
 'use client';
 
-import { PanelBottomClose, PanelBottomOpen } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilePenIcon } from '@/components/icons/animated/FilePenIcon';
+import { EyeClosedIcon } from '@/components/icons/animated/EyeClosedIcon';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useThemeStore } from '@/store/useThemeStore';
 import { cn } from '@/lib/utils';
@@ -33,11 +33,11 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
         title={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
         aria-label={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
       >
-        {chatbarHidden ? (
-          <PanelBottomOpen className="h-3.5 w-3.5" aria-hidden="true" />
-        ) : (
-          <PanelBottomClose className="h-3.5 w-3.5" aria-hidden="true" />
-        )}
+        {/* A closing eye rather than a pair of panel-slide glyphs. Those said a
+            panel would move; this says the thing stops being looked at — which is
+            what the control does, and it is now the only way back, since hiding the
+            chatbar no longer leaves a floating restore button behind. */}
+        <AnimatedIcon icon={EyeClosedIcon} size={14} intro={false} />
       </button>
 
       <button

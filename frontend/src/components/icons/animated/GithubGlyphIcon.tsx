@@ -7,6 +7,7 @@ import { useAnimation, useReducedMotion } from 'motion/react';
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useRef,
   type HTMLAttributes,
@@ -106,9 +107,29 @@ const GithubGlyphIcon = forwardRef<GithubGlyphIconHandle, GithubGlyphIconProps>(
         rotate: [0, 20, -15, 0],
         originX: 0.9,
         originY: 0.5,
-        transition: { duration: 1 * duration },
+        transition: {
+          duration: 2.4 * duration,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: 'easeInOut',
+        },
       },
     };
+
+    /*
+     * This one runs on its own, like the terminal's cursor.
+     *
+     * The mark stands for the connection the whole product rests on, and it appears
+     * on surfaces nobody points at — a footer, a signup form, a showcase row read
+     * rather than clicked. Waiting for a hover would mean it never moves in most of
+     * the places it is used.
+     *
+     * The loop is slow on purpose: at hover speed, forever, it competes with the text
+     * beside it. Reduced motion holds it still, and the mark is perfectly legible
+     * still — the waving arm is the only thing that costs.
+     */
+    useEffect(() => {
+      controls.start(reduced ? 'normal' : 'animate');
+    }, [controls, reduced]);
 
     /*
      * A span, not a div.
