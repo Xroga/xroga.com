@@ -24,6 +24,41 @@ export interface DeploySiteOptions {
   target?: 'production' | 'preview';
 }
 
+/**
+ * Xroga's shared preview project must stay public because its generated deployment
+ * URLs are the customer-facing result. Keep this separate from user-owned projects:
+ * their deployment-protection policy is never changed by Xroga.
+ */
+export async function ensureManagedVercelProjectPublic(projectName: string): Promise<void> {
+  const token = getSecret('VERCEL_API_KEY');
+  if (!token) throw new Error('VERCEL_API_KEY not configured');
+
+  const query = teamQuery(process.env.VERCEL_TEAM_ID ?? undefined);
+  const response = await fetch(
+    `https://api.vercel.com/v9/projects/${encodeURIComponent(projectName)}${query}`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ssoProtection: null }),
+    },
+  );
+
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 200);
+    throw new Error(
+      `Vercel managed preview publishing setup failed: ${response.status}${detail ? ` ${detail}` : ''}`,
+    );
+  }
+
+  const project = (await response.json()) as { ssoProtection?: unknown };
+  if (project.ssoProtection != null) {
+    throw new Error('Vercel managed preview publishing setup did not disable deployment protection');
+  }
+}
+
 async function resolveTeamId(token: string, preferred?: string | null): Promise<string | undefined> {
   if (preferred) return preferred;
   // Do NOT fall back to process.env.VERCEL_TEAM_ID for user tokens —
