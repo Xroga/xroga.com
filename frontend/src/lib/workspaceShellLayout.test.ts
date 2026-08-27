@@ -306,3 +306,36 @@ test('workspace tabs are rounded pills, not outlined boxes', () => {
   const padY = Number(/padding:\s*([\d.]+)rem/.exec(tabs)?.[1]);
   assert.ok(padY >= 0.5, `the tab row is still tight at ${padY}rem`);
 });
+
+/**
+ * The terminal pane still owns the scrollbar — it just does not draw one over nothing.
+ *
+ * Two halves, and both matter. The base rule keeps `overflow-y: auto`, so once there is
+ * a conversation the pane is the one element that scrolls and the window keeps its
+ * inset and rounded corners at any depth. The empty state drops both the overflow and
+ * the composer's reserved height, which together were pushing a greeting past the
+ * container and drawing a full-height bar down the side of an untouched terminal.
+ */
+test('the terminal pane scrolls when there is something to scroll, and not before', () => {
+  const base = CSS.slice(
+    CSS.indexOf('.xv-terminal-scroll {'),
+    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']"),
+  );
+  assert.match(base, /overflow-y: auto;/, 'the pane stopped owning the scrollbar');
+  assert.match(base, /padding-bottom: calc\(var\(--xv-chatbar-height/, 'the composer reservation is gone');
+
+  const empty = CSS.slice(
+    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']"),
+    CSS.indexOf('.xv-terminal-scroll::-webkit-scrollbar'),
+  );
+  assert.match(empty, /overflow-y: hidden;/, 'an empty terminal draws a scrollbar again');
+  assert.match(empty, /padding-bottom: 24px;/, 'the empty state still reserves the composer height');
+
+  // The flag has to be on the element the rule targets, or the rule matches nothing.
+  const VIEW = read('../components/dashboard/DashboardView.tsx');
+  assert.match(VIEW, /data-conversation=\{hasConversation \? 'true' : 'false'\}/, 'the pane cannot report its state');
+  assert.match(VIEW, /const hasConversation = messages\.length > 0;/, 'the state is not read from the transcript');
+
+  // Compact once earned: a thumb, not a groove down the edge of the window.
+  assert.match(CSS, /\.xv-terminal-scroll::-webkit-scrollbar \{ width: 4px; \}/, 'the bar is wide again');
+});

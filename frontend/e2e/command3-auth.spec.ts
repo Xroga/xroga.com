@@ -377,7 +377,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // of the architecture: at *any* scroll depth the window keeps its inset and its
   // rounded corners, because the window itself never moves.
   const transcript = page.getByTestId('terminal-scroll');
-  await expect(transcript).toHaveCSS('overflow-y', 'auto');
+  /*
+   * The pane is the scroll owner, and it says so through `data-conversation`.
+   *
+   * This asserted `overflow-y: auto` unconditionally. An empty transcript now scrolls
+   * nothing on purpose — the composer's reserved height alone was pushing the greeting
+   * a few pixels past the container and putting a full-height bar down the side of a
+   * terminal nobody had typed into. So the state is checked rather than assumed: empty
+   * means `hidden`, and the flag that drives it has to be on this element, which is
+   * what proves the pane is still the one element that scrolls once there is content.
+   */
+  await expect(transcript).toHaveAttribute('data-conversation', 'false');
+  await expect(transcript).toHaveCSS('overflow-y', 'hidden');
   await expect(shell).toHaveCSS('overflow', 'hidden');
   await expect(shell).toHaveCSS('border-radius', '16px');
 
