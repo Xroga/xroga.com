@@ -512,9 +512,26 @@ test('the GitHub and Vercel marks run on their own', () => {
  * through it, `--accent` for the fill so it follows the colour the reader chose, and
  * `--button-text` for the plus so it stays legible when that accent is a pale one.
  */
-test('the new-terminal badge is theme-aware', () => {
+test('the new-terminal badge stays legible on every theme', () => {
   const ICON = read('./NewTerminalIcon.tsx');
   assert.match(ICON, /fill="var\(--accent\)"/, 'the badge is a fixed colour again');
-  assert.match(ICON, /fill="var\(--card\)"/, 'the badge ring stopped following the surface');
-  assert.match(ICON, /stroke="var\(--button-text, #fff\)"/, 'the plus can vanish on a pale accent');
+  assert.match(ICON, /r="6.4" fill="var\(--card\)"/, 'the badge lost the ring that separates it from the window');
+
+  /*
+   * The plus is inked with the surface, not with `--button-text`.
+   *
+   * On the Black theme `--accent` is `#ffffff`, so a white plus on an accent disc was
+   * white on white and simply gone — the control rendered as a smudge, which is how it
+   * was reported. Inking it with `--card` makes it invert with the theme the way the
+   * disc does: dark on a white accent, light on a blue one. Verified in a browser
+   * across all four themes rather than reasoned about, because the first version
+   * looked correct in the source too.
+   */
+  assert.ok(!/--button-text/.test(ICON), 'the plus can vanish into a white accent again');
+  const plus = ICON.slice(ICON.indexOf('d="M17.5 3.6v5.8"'), ICON.indexOf('</m.g>'));
+  assert.match(plus, /stroke="var\(--card\)"/, 'the plus stopped following the surface');
+
+  // The window is drawn inside 17 units so the badge can be large enough to hold a
+  // plus at the 16px this renders at in the toolbar.
+  assert.match(ICON, /<m\.rect x="1.75" y="5.5" width="15.5" height="13"/, 'the window is full-bleed again, which shrinks the badge');
 });
