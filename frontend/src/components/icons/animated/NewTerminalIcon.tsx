@@ -42,9 +42,17 @@ interface NewTerminalIconProps
  * the badge pops and rocks while its plus draws itself. The badge lands last, which is
  * what makes it read as being added to the terminal rather than as part of it.
  *
- * The badge's cutout takes `--card` rather than a hardcoded white. This sits in the
- * sidebar toolbar, which is a different surface on each theme; a white disc there is
- * the same mistake the mic's white coin was.
+ * Two things about the badge, both learned from it shipping invisible.
+ *
+ * The plus is drawn in `--card`, the surface behind the icon, not in a fixed white.
+ * On the Black theme `--accent` *is* white, so a white plus on an accent disc was
+ * white on white and simply gone. Inking it with the surface makes it invert with the
+ * theme the way the disc does: dark on a white accent, light on a blue one.
+ *
+ * And the window is drawn smaller than the 24-unit box so the badge can be large. This
+ * renders at 16px in the sidebar toolbar, where the old 2.9-unit disc came out around
+ * two device pixels across — too small to hold a plus at all, which is what made the
+ * control read as a smudge rather than as "new terminal".
  */
 const NewTerminalIcon = forwardRef<NewTerminalIconHandle, NewTerminalIconProps>(
   (
@@ -154,28 +162,28 @@ const NewTerminalIcon = forwardRef<NewTerminalIconHandle, NewTerminalIconProps>(
           initial="normal"
           animate={controls}
         >
-          <m.rect x="2.75" y="4.25" width="18.5" height="15.5" rx="2.5" variants={windowVariants} />
-          <m.path d="M5.5 10 8 12.5 5.5 15" variants={chevronVariants} />
+          <m.rect x="1.75" y="5.5" width="15.5" height="13" rx="2.4" variants={windowVariants} />
+          <m.path d="M4.6 10 6.9 12.3 4.6 14.6" variants={chevronVariants} />
           <m.path
-            d="M10 15h4.25"
+            d="M8.6 14.6h4"
             variants={commandLineVariants}
-            style={{ transformOrigin: '10px 15px' }}
+            style={{ transformOrigin: '8.6px 14.6px' }}
           />
           <m.g variants={badgeVariants}>
             {/*
-              The badge is a filled accent disc with a ring the colour of the surface
-              behind it, and a plus knocked out in the accent's own ink.
- 
-              Three theme-aware values rather than the blue and white the design shows:
-              `--card` for the ring, so the badge reads as sitting on top of the
-              terminal rather than punched through it; `--accent` for the fill, so the
-              button follows the colour the reader chose; and `--button-text` for the
-              plus, which is what keeps it legible when that accent is a pale one.
+              A filled accent disc, ringed in the surface behind it, with the plus
+              knocked out in that same surface colour.
+
+              All three values follow the theme, and the plus is the one that matters:
+              on Black `--accent` is `#ffffff`, so inking it with a fixed white put a
+              white plus on a white disc and the control rendered as a smudge. Taking
+              `--card` makes it invert with the disc — dark on a white accent, light on
+              a blue one.
             */}
-            <circle cx="18" cy="7" r="3.6" fill="var(--card)" stroke="none" />
-            <circle cx="18" cy="7" r="2.9" fill="var(--accent)" stroke="none" />
-            <m.path d="M18 5.6v2.8" stroke="var(--button-text, #fff)" strokeWidth="1.7" variants={plusVariants} />
-            <m.path d="M16.6 7h2.8" stroke="var(--button-text, #fff)" strokeWidth="1.7" variants={plusVariants} />
+            <circle cx="17.5" cy="6.5" r="6.4" fill="var(--card)" stroke="none" />
+            <circle cx="17.5" cy="6.5" r="5.4" fill="var(--accent)" stroke="none" />
+            <m.path d="M17.5 3.6v5.8" stroke="var(--card)" strokeWidth="2.2" variants={plusVariants} />
+            <m.path d="M14.6 6.5h5.8" stroke="var(--card)" strokeWidth="2.2" variants={plusVariants} />
           </m.g>
         </m.svg>
       </m.div>
