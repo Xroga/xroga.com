@@ -621,7 +621,9 @@ export function Sidebar({ displayName }: SidebarProps) {
                       with one — what this opens is a terminal, and the rail beside it
                       already says so with the same window. */}
                   <AnimatedIcon icon={NewTerminalIcon} size={14} intro={false} />
-                  <span>New</span>
+                  {/* The label carries a class of its own because the rules that hide
+                      it target a span, and `AnimatedIcon` wraps its glyph in one too. */}
+                  <span className="xv-new-terminal-compact__label">New</span>
                 </button>
               </HoverTip>
               {/* Decorative only. The three controls, their order and their handlers are
