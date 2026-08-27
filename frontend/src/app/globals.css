@@ -8702,6 +8702,20 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
 }
 
+/*
+ * Nothing to scroll before the conversation starts.
+ *
+ * The pane reserves the composer's height as bottom padding so the last line of a
+ * build report is never left behind the chatbar. With an empty transcript there is no
+ * report — just the greeting — and the reservation alone pushed the content a few
+ * pixels past the container, which is what put a full-height scrollbar down the side
+ * of a terminal nobody had typed into. Both go until there is something to scroll.
+ */
+.xv-terminal-scroll[data-conversation='false'] {
+  overflow-y: hidden;
+  padding-bottom: 24px;
+}
+
 @media (min-width: 1024px) {
   .xv-terminal-scroll {
     padding: 28px 22px 36px;
@@ -8709,7 +8723,9 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   }
 }
 
-.xv-terminal-scroll::-webkit-scrollbar { width: 6px; }
+/* Compact once it is earned: 4px of thumb with no track behind it, so a running
+   build gets a position indicator rather than a groove down the edge of the window. */
+.xv-terminal-scroll::-webkit-scrollbar { width: 4px; }
 .xv-terminal-scroll::-webkit-scrollbar-track { background: transparent; }
 .xv-terminal-scroll::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);

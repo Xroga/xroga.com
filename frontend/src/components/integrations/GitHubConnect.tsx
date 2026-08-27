@@ -3,8 +3,9 @@
 import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Check, Loader2, Code2 } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { api, type GitHubStatus } from '@/lib/api';
 import { openGitHubOAuthPopup } from '@/lib/githubConnect';
 import { dispatchGitHubConnected } from '@/lib/githubEvents';
@@ -85,8 +86,11 @@ export function GitHubConnect() {
     <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
+          {/* The GitHub mark, not a generic code glyph. This card is the GitHub
+              connection and led with a pair of brackets that could have meant
+              anything — at 24px the real mark is unmistakable, and it waves. */}
           <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-            <Code2 className="w-5 h-5" />
+            <IntegrationLogo id="github" name="GitHub" size={24} />
           </div>
           <div>
             <h3 className="font-semibold">GitHub</h3>
@@ -115,7 +119,7 @@ export function GitHubConnect() {
             disabled={connecting}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
           >
-            {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Code2 className="w-4 h-4" />}
+            {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <IntegrationLogo id="github" name="GitHub" size={16} />}
             Connect GitHub
           </button>
         )}

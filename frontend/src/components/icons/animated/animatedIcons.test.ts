@@ -456,3 +456,65 @@ test('the composer, the skin picker and the repo area take their icons', () => {
   }
   assert.ok(!/ThumbsUp|ThumbsDown/.test(BUBBLE), 'the static thumbs are back');
 });
+
+/**
+ * GitHub and Vercel animate wherever an integration mark is drawn.
+ *
+ * Every provider in this product is a brand SVG served as an image, and an image
+ * cannot move. These two are the ones we have real components for, and the two that
+ * carry the most weight — the repository connection and the deployment target.
+ *
+ * The guard is on the shared component and on the call sites together. There are six
+ * of the latter, and wiring a mark at only some of them leaves the rest static with
+ * nothing failing — which is exactly how the first attempt at the mic shipped.
+ */
+test('the integration marks are animated, in one place, at every call site', () => {
+  const LOGO = read('../../integrations/IntegrationLogo.tsx');
+  assert.match(LOGO, /id === 'github'/, 'GitHub falls through to a still image');
+  assert.match(LOGO, /id === 'vercel'/, 'Vercel falls through to a still image');
+  assert.match(LOGO, /<GithubGlyphIcon size=\{size\} \/>/, 'the GitHub mark is not the animated one');
+  assert.match(LOGO, /<VercelIcon size=\{size\} \/>/, 'the Vercel mark is not the animated one');
+
+  for (const [name, path] of [
+    ['the composer modal', '../../terminal/IntegrationsModal.tsx'],
+    ['the repository card', '../../projects/GitHubProjectCard.tsx'],
+    ['the GitHub connect card', '../../integrations/GitHubConnect.tsx'],
+    ['the homepage tour', '../../homepage/HomepageWorkspaceTour.tsx'],
+  ] as const) {
+    const source = read(path);
+    assert.match(source, /<IntegrationLogo\b/, `${name} draws its own logo again`);
+    assert.ok(!/getIntegrationLogo/.test(source), `${name} bypasses the shared mark`);
+  }
+  // The connect card led with a generic code glyph and no GitHub mark at all.
+  assert.ok(!/<Code2\b/.test(read('../../integrations/GitHubConnect.tsx')), 'the generic glyph is back');
+});
+
+/**
+ * Both continuous marks run without being pointed at, and carry their own provider.
+ *
+ * Neither is driven by `AnimatedIcon`, so neither gets its `LazyMotion` — an icon
+ * rendered outside that provider has no motion features loaded and is silently
+ * static. That is not a hypothetical: it is how the mic shipped unmoving.
+ */
+test('the GitHub and Vercel marks run on their own', () => {
+  const VERCEL = read('./VercelIcon.tsx');
+  assert.match(VERCEL, /<IconMotion>/, 'the Vercel mark has no motion features loaded');
+  assert.match(VERCEL, /repeat: Number\.POSITIVE_INFINITY/, 'the Vercel mark stops');
+  assert.match(VERCEL, /controls\.start\(reduced \? 'normal' : 'animate'\);/, 'it waits to be driven');
+  // Filled, not outlined: this is a brand logo, and stroking it makes it another logo.
+  assert.match(VERCEL, /d="M12 3 21 19H3L12 3Z" fill="currentColor"/, 'the triangle lost its fill');
+});
+
+/**
+ * The new-terminal badge takes the theme rather than the design's blue and white.
+ *
+ * `--card` for the ring so the badge sits on top of the terminal rather than punched
+ * through it, `--accent` for the fill so it follows the colour the reader chose, and
+ * `--button-text` for the plus so it stays legible when that accent is a pale one.
+ */
+test('the new-terminal badge is theme-aware', () => {
+  const ICON = read('./NewTerminalIcon.tsx');
+  assert.match(ICON, /fill="var\(--accent\)"/, 'the badge is a fixed colour again');
+  assert.match(ICON, /fill="var\(--card\)"/, 'the badge ring stopped following the surface');
+  assert.match(ICON, /stroke="var\(--button-text, #fff\)"/, 'the plus can vanish on a pale accent');
+});

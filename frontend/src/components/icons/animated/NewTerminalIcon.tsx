@@ -162,12 +162,20 @@ const NewTerminalIcon = forwardRef<NewTerminalIconHandle, NewTerminalIconProps>(
             style={{ transformOrigin: '10px 15px' }}
           />
           <m.g variants={badgeVariants}>
-            <circle cx="18" cy="7" r="3.15" fill="currentColor" stroke="currentColor" strokeWidth="1.6" />
-            {/* The cutout is the surface behind the icon, not white: this rides the
-                sidebar toolbar, which is a different colour on each theme. */}
-            <circle cx="18" cy="7" r="2.25" fill="var(--card)" stroke="none" />
-            <m.path d="M18 5.55v2.9" variants={plusVariants} />
-            <m.path d="M16.55 7h2.9" variants={plusVariants} />
+            {/*
+              The badge is a filled accent disc with a ring the colour of the surface
+              behind it, and a plus knocked out in the accent's own ink.
+ 
+              Three theme-aware values rather than the blue and white the design shows:
+              `--card` for the ring, so the badge reads as sitting on top of the
+              terminal rather than punched through it; `--accent` for the fill, so the
+              button follows the colour the reader chose; and `--button-text` for the
+              plus, which is what keeps it legible when that accent is a pale one.
+            */}
+            <circle cx="18" cy="7" r="3.6" fill="var(--card)" stroke="none" />
+            <circle cx="18" cy="7" r="2.9" fill="var(--accent)" stroke="none" />
+            <m.path d="M18 5.6v2.8" stroke="var(--button-text, #fff)" strokeWidth="1.7" variants={plusVariants} />
+            <m.path d="M16.6 7h2.8" stroke="var(--button-text, #fff)" strokeWidth="1.7" variants={plusVariants} />
           </m.g>
         </m.svg>
       </m.div>

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, X, Plug, ChevronDown } from 'lucide-react';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { isConnectableIntegration } from '@/lib/connectableIntegrations';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -84,7 +84,6 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                 <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-2">{cat}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map((item) => {
-                    const logo = getIntegrationLogo(item.id);
                     const connected = item.status === 'connected';
                     return (
                       <div
@@ -93,11 +92,7 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                            {logo ? (
-                              <Image src={logo} alt="" width={22} height={22} unoptimized className="object-contain" />
-                            ) : (
-                              <span className="text-xs font-bold">{item.name.charAt(0)}</span>
-                            )}
+                            <IntegrationLogo id={item.id} name={item.name} size={22} className="object-contain" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-medium truncate">{item.name}</p>
