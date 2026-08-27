@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 
 const TOUR_TABS = [
   { id: 'workspace', label: 'Workspace', eyebrow: 'Connected product loop', icon: TerminalSquare },
@@ -86,7 +86,7 @@ function RepositoriesView() {
       <header><FolderGit2 aria-hidden="true" /><div><h3>Projects</h3><p>Repository-scoped builds and conversations. Choose a repo once, then work only inside it.</p></div></header>
       <div className="xv-wt-project-tabs"><button type="button" className="is-active">Code &amp; Repos</button><button type="button">Conversations</button></div>
       <label><Search aria-hidden="true" /><input aria-label="Search projects and repositories" placeholder="Search projects & repos…" /></label>
-      <article><div><Image src={getIntegrationLogo('github') ?? ''} alt="GitHub" width={18} height={18} unoptimized /><strong>Xroga / client-product</strong><small>main ↗</small></div><h4>Customer analytics platform</h4><p>Updated now · repository connected</p><button type="button">Continue</button></article>
+      <article><div><IntegrationLogo id="github" name="GitHub" size={18} /><strong>Xroga / client-product</strong><small>main ↗</small></div><h4>Customer analytics platform</h4><p>Updated now · repository connected</p><button type="button">Continue</button></article>
     </div>
   );
 }
@@ -96,8 +96,7 @@ function IntegrationsView() {
     <div className="xv-wt-connect-view">
       <header><small>SHIP SETUP</small><h3>Connect once · then just describe</h3><p>GitHub and Vercel handle the ship path. Supabase and your own keys are optional.</p></header>
       {CONNECTIONS.slice(0, 4).map((item, index) => {
-        const logo = item.id === 'byok' ? null : getIntegrationLogo(item.id, item.name);
-        return <button type="button" key={item.id}><span className={index === 0 ? 'is-ready' : ''}>{index === 0 ? <Check /> : index + 1}</span>{logo ? <Image src={logo} alt={`${item.name} logo`} width={22} height={22} unoptimized /> : <KeyRound aria-hidden="true" />}<b>{index + 1}. {item.name}</b><small>{index === 0 ? 'Connected' : index === 3 ? 'Add keys' : 'Authorize'}</small></button>;
+        return <button type="button" key={item.id}><span className={index === 0 ? 'is-ready' : ''}>{index === 0 ? <Check /> : index + 1}</span>{item.id === 'byok' ? <KeyRound aria-hidden="true" /> : <IntegrationLogo id={item.id} name={item.name} size={22} />}<b>{index + 1}. {item.name}</b><small>{index === 0 ? 'Connected' : index === 3 ? 'Add keys' : 'Authorize'}</small></button>;
       })}
     </div>
   );
@@ -114,7 +113,7 @@ function DockContent({ active }: { active: DockTab }) {
     return <div className="xv-wt-dock-terminal"><header><span>OUTPUT</span><small>6 lines</small></header><code>$ npm run test</code><code className="is-ok">✓ TypeScript passed</code><code className="is-ok">✓ 18 tests passed</code><code>$ npm run build</code><code className="is-ok">✓ Production build complete</code></div>;
   }
   if (active === 'Deploy') {
-    return <div className="xv-wt-dock-deploy"><Image src={getIntegrationLogo('vercel') ?? ''} alt="Vercel" width={32} height={32} unoptimized /><small>PRODUCTION</small><h4>Ready to deploy</h4><p>Commit a1b2c3d · all checks passed</p><button type="button">View deployment</button></div>;
+    return <div className="xv-wt-dock-deploy"><IntegrationLogo id="vercel" name="Vercel" size={32} /><small>PRODUCTION</small><h4>Ready to deploy</h4><p>Commit a1b2c3d · all checks passed</p><button type="button">View deployment</button></div>;
   }
   return (
     <div className="xv-wt-dock-preview">
@@ -144,8 +143,7 @@ export function HomepageIntegrationOrbit({ loggedIn }: { loggedIn: boolean }) {
       <div className="xv-connection-dock__orbit">
         <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-mark-192.png" alt="Xroga" width={74} height={74} /></Link>
         {CONNECTIONS.map((item, index) => {
-          const logo = item.id === 'byok' ? null : getIntegrationLogo(item.id, item.name);
-          return <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{logo ? <Image src={logo} alt={`${item.name} logo`} width={27} height={27} unoptimized /> : <KeyRound aria-label="Bring your own API key" />}{item.tone === 'soon' ? <small>Soon</small> : null}</div>;
+          return <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{item.id === 'byok' ? <KeyRound aria-label="Bring your own API key" /> : <IntegrationLogo id={item.id} name={item.name} size={27} />}{item.tone === 'soon' ? <small>Soon</small> : null}</div>;
         })}
       </div>
     </div>

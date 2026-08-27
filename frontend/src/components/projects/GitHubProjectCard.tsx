@@ -5,7 +5,7 @@ import { Calendar, Trash2 } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExternalLinkIcon } from '@/components/icons/animated/ExternalLinkIcon';
 import { cn } from '@/lib/utils';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import type { Project } from '@/lib/api';
 
 function formatRelative(iso: string): string {
@@ -47,7 +47,6 @@ export function GitHubProjectCard({
 }) {
   const repo = project.github_repo_name ?? 'GitHub repo';
   const updated = project.updated_at || project.created_at;
-  const githubLogo = getIntegrationLogo('github');
 
   return (
     <article
@@ -63,13 +62,7 @@ export function GitHubProjectCard({
           compact ? 'px-2.5 py-2' : 'px-3 py-2.5',
         )}
       >
-        {githubLogo ? (
-          <Image src={githubLogo} alt="" width={18} height={18} className="shrink-0 opacity-90" />
-        ) : (
-          <span className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded bg-[var(--foreground)] text-[10px] font-bold text-[var(--background)]">
-            GH
-          </span>
-        )}
+        <IntegrationLogo id="github" name="GitHub" size={18} className="shrink-0 opacity-90" />
         <span className="min-w-0 flex-1 truncate font-mono text-[10px] font-semibold text-emerald-400/90">
           {repo}
         </span>

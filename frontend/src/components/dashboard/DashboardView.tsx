@@ -16,6 +16,7 @@ import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
+import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
@@ -44,6 +45,7 @@ export function DashboardView() {
   const profile = useAppStore((s) => s.profile);
   const displayName = profile?.display_name ?? shellIdentity.displayName;
   const hydrated = useHydrated();
+  const { messages } = useTerminalChat();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
@@ -163,8 +165,25 @@ export function DashboardView() {
   /* The banner and the greeting live at the top of the transcript rather than above the
      shell. Anything placed outside would push the window down and shrink it on every
      render, and the greeting is transient content — it belongs where it can scroll away. */
+  /*
+   * An empty transcript has nothing to scroll, and says so.
+   *
+   * The pane reserves the composer's height as bottom padding so the last line of a
+   * build report never sits behind the chatbar. Before a conversation starts there is
+   * no report — just the greeting — and that reservation was enough to push the
+   * content a few pixels past the container, which is what put a full-height
+   * scrollbar down the side of an empty terminal. `data-conversation` lets the
+   * stylesheet drop the reservation and the scrollbar together until there is
+   * something to scroll.
+   */
+  const hasConversation = messages.length > 0;
+
   const terminalPane = (
-    <div className="xv-terminal-scroll" data-testid="terminal-scroll">
+    <div
+      className="xv-terminal-scroll"
+      data-testid="terminal-scroll"
+      data-conversation={hasConversation ? 'true' : 'false'}
+    >
       <ApiConnectionBanner />
       <DashboardWelcome displayName={displayName} hidden={fullscreen} />
       <SwarmMessageLog chromeless incognito={incognito} />
