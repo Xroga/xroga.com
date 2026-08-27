@@ -3,17 +3,16 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import {
-  MessageCircleHeart,
-  ShieldCheck,
-  Sparkles,
-  UserRound,
-  Users,
-} from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { SlidersHorizontalIcon } from '@/components/icons/animated/SlidersHorizontalIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { CogIcon } from '@/components/icons/animated/CogIcon';
+import { AtomIcon } from '@/components/icons/animated/AtomIcon';
+import { UserRoundPenIcon } from '@/components/icons/animated/UserRoundPenIcon';
+import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
+import { SmileIcon } from '@/components/icons/animated/SmileIcon';
+import { UserStarIcon } from '@/components/icons/animated/UserStarIcon';
+import { ShieldCheckIcon } from '@/components/icons/animated/ShieldCheckIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { LogoutButton } from '@/components/ui/Uiverse';
 import { useAppStore } from '@/store/useAppStore';
@@ -31,14 +30,14 @@ const ITEMS = [
     key: 'plan',
     label: 'Upgrade plan',
     desc: 'Compare plans and change your subscription',
-    icon: Sparkles,
+    animated: AtomIcon,
     href: '/pricing',
   },
   {
     key: 'profile',
     label: 'Profile',
     desc: 'Your name, avatar, and account details',
-    icon: UserRound,
+    animated: UserRoundPenIcon,
     href: '/settings?tab=profile',
   },
   {
@@ -59,21 +58,21 @@ const ITEMS = [
     key: 'community',
     label: 'Community',
     desc: 'Share ideas, questions, and working solutions',
-    icon: Users,
+    animated: UsersRoundIcon,
     href: '/community',
   },
   {
     key: 'feedback',
     label: 'Feedback',
     desc: 'Share your Xroga experience',
-    icon: MessageCircleHeart,
+    animated: SmileIcon,
     action: 'feedback' as const,
   },
   {
     key: 'about',
     label: 'Xroga AI & CEO',
     desc: 'Our story and mission',
-    icon: Sparkles,
+    animated: UserStarIcon,
     href: '/about',
   },
 ];
@@ -194,8 +193,10 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                 </p>
                 <ul className="p-1.5 space-y-0.5">
                   {ITEMS.map((item) => {
-                    const Icon = 'icon' in item ? item.icon : null;
-                    const Animated = 'animated' in item ? item.animated : null;
+                    /* Every row is animated now — there is no static branch left to
+                       fall back to, and keeping one invites the next icon to land in it
+                       and quietly not move. */
+                    const Animated = item.animated;
                     return (
                       <li key={item.key}>
                         <button
@@ -206,15 +207,13 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                           {/* The glyph sits on its own tinted tile. Loose against the
                               text it left the labels starting at four different optical
                               positions as the icons changed width. */}
+                          {/* Each one draws its own motion — the atom's shells turn, the
+                              palette inks its dots in, the star is awarded — so they are
+                              components rather than lucide glyphs and take no
+                              `strokeWidth`. `intro={false}`: the menu is a popover, and
+                              seven icons playing the moment it opens is a flinch. */}
                           <span className="xv-pqm-tile grid h-7 w-7 shrink-0 place-items-center rounded-[9px]">
-                            {Icon ? (
-                              <Icon className="w-[15px] h-[15px]" strokeWidth={1.75} />
-                            ) : (
-                              // These two draw their own motion — the palette inks its
-                              // dots in, the cog turns — so they are components rather
-                              // than lucide glyphs and take no `strokeWidth`.
-                              Animated && <AnimatedIcon icon={Animated} size={15} intro={false} />
-                            )}
+                            <AnimatedIcon icon={Animated} size={15} intro={false} />
                           </span>
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-semibold leading-snug">{item.label}</p>
@@ -228,7 +227,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
                 {canManageCommunity && (
                   <div className="border-t border-[var(--card-border)]/50 p-1.5">
                     <button type="button" onClick={() => { setOpen(false); router.push('/admin/community'); }} className="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-[var(--accent)]/10">
-                      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
+                      <span className="mt-0.5 shrink-0 text-[var(--accent)]"><AnimatedIcon icon={ShieldCheckIcon} size={16} intro={false} /></span>
                       <div className="min-w-0 flex-1"><p className="flex items-center justify-between gap-2 text-xs font-semibold"><span>Admin Dashboard</span>{communityOpenCount !== null && <span className="rounded-full bg-[var(--accent)] px-1.5 py-0.5 text-[9px] text-white" aria-label={`${communityOpenCount} open community posts`}>{communityOpenCount}</span>}</p><p className="text-[10px] text-[var(--muted)]">Manage community and official replies</p></div>
                     </button>
                   </div>

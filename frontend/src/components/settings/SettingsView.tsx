@@ -4,16 +4,6 @@ import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, usePathname } from 'next/navigation';
-import {
-  User,
-  Lock,
-  Database,
-  Gauge,
-  Plug,
-  Shield,
-  Bell,
-  Palette,
-} from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
@@ -28,25 +18,35 @@ import type { SettingsSectionId } from '@/lib/settingsSections';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CatIcon } from '@/components/icons/animated/CatIcon';
+import { UserRoundPenIcon } from '@/components/icons/animated/UserRoundPenIcon';
+import { ShieldCheckIcon } from '@/components/icons/animated/ShieldCheckIcon';
+import { DatabaseBackupIcon } from '@/components/icons/animated/DatabaseBackupIcon';
+import { WalletIcon } from '@/components/icons/animated/WalletIcon';
+import { ConnectIcon } from '@/components/icons/animated/ConnectIcon';
+import { UserLockIcon } from '@/components/icons/animated/UserLockIcon';
+import { BellElectricIcon } from '@/components/icons/animated/BellElectricIcon';
+import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 
 const CompanionCustomizer = dynamic(
   () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
   { loading: () => <PanelLoader height={280} /> },
 );
 
+/*
+ * Every section wears an icon that animates its own paths, the same family the
+ * sidebar and the composer use. `intro={false}` throughout: nine tabs all waving at
+ * once when Settings loads is noise, so they play on hover and on click instead.
+ */
 const SECTIONS = [
-  { id: 'general', label: 'General', icon: <User className="h-4 w-4" aria-hidden="true" /> },
-  // The companion is a cat, so the tab that configures it wears one. `intro={false}`
-  // because nine tabs all waving at once on a settings load is noise — it plays on
-  // hover and on click like the rest of the strip.
+  { id: 'general', label: 'General', icon: <AnimatedIcon icon={UserRoundPenIcon} size={16} intro={false} /> },
   { id: 'companion', label: 'Companion', icon: <AnimatedIcon icon={CatIcon} size={16} intro={false} /> },
-  { id: 'privacy', label: 'Privacy', icon: <Lock className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'data-ai', label: 'Data & AI', icon: <Database className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'plan', label: 'Plan & Usage', icon: <Gauge className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'integrations', label: 'Integrations', icon: <Plug className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'security', label: 'Security', icon: <Shield className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" aria-hidden="true" /> },
-  { id: 'theme', label: 'Theme', icon: <Palette className="h-4 w-4" aria-hidden="true" /> },
+  { id: 'privacy', label: 'Privacy', icon: <AnimatedIcon icon={ShieldCheckIcon} size={16} intro={false} /> },
+  { id: 'data-ai', label: 'Data & AI', icon: <AnimatedIcon icon={DatabaseBackupIcon} size={16} intro={false} /> },
+  { id: 'plan', label: 'Plan & Usage', icon: <AnimatedIcon icon={WalletIcon} size={16} intro={false} /> },
+  { id: 'integrations', label: 'Integrations', icon: <AnimatedIcon icon={ConnectIcon} size={16} intro={false} /> },
+  { id: 'security', label: 'Security', icon: <AnimatedIcon icon={UserLockIcon} size={16} intro={false} /> },
+  { id: 'notifications', label: 'Notifications', icon: <AnimatedIcon icon={BellElectricIcon} size={16} intro={false} /> },
+  { id: 'theme', label: 'Theme', icon: <AnimatedIcon icon={PaletteIcon} size={16} intro={false} /> },
 ] as const satisfies readonly TabItem[];
 
 export function SettingsView({ initialSection = 'general' }: { initialSection?: SettingsSectionId }) {
