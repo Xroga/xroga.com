@@ -127,10 +127,15 @@ test('the expanded preview owns the viewport and hides the shell', () => {
   assert.notEqual(rootAt, -1, 'the panel root has been renamed');
   const rootClasses = root.slice(rootAt, root.indexOf('className\n', rootAt) + 40);
   assert.ok(!/inset-3/.test(rootClasses), 'the old inset expanded state is back');
+  // `expanded && workspaceOpen`, not `expanded` alone: closing the panel leaves this
+  // component mounted rendering `null`, so a flag set from `expanded` by itself
+  // survived the panel and left the chrome hidden until a reload. The claim here is
+  // unchanged — the shell needs a flag it can read — it just has to stop being true
+  // when there is no panel to describe.
   assert.match(
     PANEL,
-    /classList\.toggle\('xv-workspace-expanded-active', expanded\)/,
-    'the shell needs a flag it can read',
+    /classList\.toggle\('xv-workspace-expanded-active', expanded && workspaceOpen\)/,
+    'the shell needs a flag it can read, and one that dies with the panel',
   );
   // Cleared on unmount: closing the workspace while expanded would otherwise leave
   // the chrome hidden with nothing on screen to bring it back.

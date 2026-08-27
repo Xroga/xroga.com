@@ -13,7 +13,6 @@ import {
   Loader2,
   RefreshCw,
   Rocket,
-  Copy,
   Search,
   Terminal as TerminalIcon,
   Trash2,
@@ -25,6 +24,7 @@ import {
   type ProjectFileEntry,
 } from '@/store/useProjectWorkspaceStore';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
+import { CopyIcon } from '@/components/icons/animated/CopyIcon';
 import { cn } from '@/lib/utils';
 import { useHydrated } from '@/hooks/useHydrated';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
@@ -164,9 +164,25 @@ export function DevWorkspacePanel({
      app shell. Cleared on unmount too: closing the workspace while expanded would
      otherwise leave the chrome hidden with nothing on screen to restore it. */
   useEffect(() => {
-    document.body.classList.toggle('xv-workspace-expanded-active', expanded);
+    /*
+     * `expanded && workspaceOpen`, not `expanded` alone.
+     *
+     * Closing the panel does not unmount this component — it renders `null` a few
+     * lines below while staying mounted with `expanded` still true. The flag
+     * therefore survived the panel it described, and the sidebar and the composer
+     * stayed hidden with nothing on screen explaining why, until a reload cleared
+     * it. That is the reported bug: full preview, exit, close the panel, and the
+     * workspace comes back empty.
+     */
+    document.body.classList.toggle('xv-workspace-expanded-active', expanded && workspaceOpen);
     return () => document.body.classList.remove('xv-workspace-expanded-active');
-  }, [expanded]);
+  }, [expanded, workspaceOpen]);
+
+  // And the state itself is reset, so reopening the panel does not come back
+  // expanded from a session the reader has already left.
+  useEffect(() => {
+    if (!workspaceOpen) setExpanded(false);
+  }, [workspaceOpen]);
 
   // Closed renders nothing. Opening is `WorkspaceLauncher`'s job, which sits in the
   // flow above the terminal — this used to be a pill fixed to the middle of the
@@ -380,7 +396,7 @@ export function DevWorkspacePanel({
                   title="Copy output"
                   aria-label="Copy output"
                 >
-                  <Copy className="h-3 w-3" />
+                  <AnimatedIcon icon={CopyIcon} size={12} intro={false} />
                 </button>
                 <button
                   type="button"

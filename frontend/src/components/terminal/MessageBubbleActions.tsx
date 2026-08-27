@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import {
-  ThumbsUp,
-  ThumbsDown,
-  Copy,
   MessageCircleHeart,
   Check,
   Trash2,
   Share2,
 } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { UpvoteIcon } from '@/components/icons/animated/UpvoteIcon';
+import { DownvoteIcon } from '@/components/icons/animated/DownvoteIcon';
+import { CopyIcon } from '@/components/icons/animated/CopyIcon';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -77,13 +78,13 @@ export function MessageBubbleActions({
       {role === 'assistant' && (
         <>
           <button type="button" onClick={() => handleLike('up')} className={cn(btnClass, reaction === 'up' && 'text-emerald-400 bg-emerald-500/10')} aria-label="Like">
-            <ThumbsUp className="w-3.5 h-3.5" />
+            <AnimatedIcon icon={UpvoteIcon} size={14} intro={false} />
           </button>
           <button type="button" onClick={() => handleLike('down')} className={cn(btnClass, reaction === 'down' && 'text-red-400 bg-red-500/10')} aria-label="Dislike">
-            <ThumbsDown className="w-3.5 h-3.5" />
+            <AnimatedIcon icon={DownvoteIcon} size={14} intro={false} />
           </button>
           <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <AnimatedIcon icon={CopyIcon} size={14} intro={false} />}
           </button>
           <button type="button" onClick={handleShare} className={btnClass} aria-label="Share">
             <Share2 className="w-3.5 h-3.5" />
@@ -106,7 +107,7 @@ export function MessageBubbleActions({
       {role === 'user' && (
         <>
           <button type="button" onClick={handleCopy} className={btnClass} aria-label="Copy">
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <AnimatedIcon icon={CopyIcon} size={14} intro={false} />}
           </button>
           {onDelete && (
             <button

@@ -82,19 +82,63 @@ test('the selected tab is a filled disc in the chosen accent', () => {
   assert.match(CSS, /\.xv-mobile-nav__tab\.is-active \.xv-mobile-nav__disc \{[^}]*transform: translateY/);
 });
 
-test('the bar can be swiped away and swiped back', () => {
-  assert.match(NAV, /onTouchStart=\{onTouchStart\}/, 'the bar has no swipe');
-  assert.match(NAV, /travel > SWIPE_THRESHOLD_PX\) setHidden\(true\)/, 'swiping down does not hide it');
-  assert.match(NAV, /travel < -SWIPE_THRESHOLD_PX\) setHidden\(false\)/, 'swiping up does not show it');
-  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY/, 'hiding moves nothing');
-  // The handle stays on screen while the bar is down, and is a button in its own
-  // right — a gesture with nothing left to grab cannot be undone, and a gesture with
-  // no control behind it cannot be used with a keyboard.
-  assert.match(NAV, /className="xv-mobile-nav__handle"/, 'there is no handle to grab');
-  assert.match(NAV, /aria-label=\{hidden \? 'Show navigation' : 'Hide navigation'\}/, 'the handle is unlabelled');
-  assert.match(CSS, /translateY\(calc\(100% - 26px/, 'the handle goes off screen with the bar');
+test('the bar goes away as the page is read, and comes back on the way up', () => {
+  /*
+   * The direction is the page's, not the bar's.
+   *
+   * Reading down puts the bar away; coming back up brings it out. That is the same
+   * direction as the scroll it competes with, so the gesture and the scroll cannot
+   * disagree — which they did before, when a downward swipe hid a bar that a downward
+   * scroll would have shown.
+   */
+  assert.match(NAV, /travel < -SWIPE_THRESHOLD_PX\) setHidden\(true\)/, 'swiping up does not hide it');
+  assert.match(NAV, /travel > SWIPE_THRESHOLD_PX\) setHidden\(false\)/, 'swiping down does not show it');
+  assert.match(NAV, /window\.addEventListener\('scroll', onScroll, \{ passive: true \}\)/, 'the bar ignores the scroll');
+  assert.match(NAV, /setHidden\(travel > 0\)/, 'scrolling down does not put it away');
+  assert.match(NAV, /if \(current <= 0\) setHidden\(false\)/, 'the top of the page can leave it hidden');
+  // A destination reached from elsewhere brings it back: arriving on a new page with
+  // no navigation on screen is the one state it must never be in.
+  assert.match(NAV, /useEffect\(\(\) => setHidden\(false\), \[pathname\]\)/, 'a new page can arrive with no nav');
+
+  /*
+   * The handle is gone, and must stay gone.
+   *
+   * It was a 4px line under the bar whose only job was to undo the gesture that hid
+   * the bar — a control existing to fix another control. With the scroll driving it
+   * there is nothing left to undo, so the bar leaves the screen completely.
+   */
+  assert.ok(!/xv-mobile-nav__handle/.test(NAV), 'the grab handle is back');
+  assert.ok(!/xv-mobile-nav__handle/.test(CSS), 'the grab handle is back in the stylesheet');
+  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(100%\);/, 'it parks a stub again');
 });
 
+test('the bar sits on the bottom edge, with the selected tab raised on a glow', () => {
+  const bar = CSS.slice(CSS.indexOf('.xv-mobile-nav__bar {'), CSS.indexOf('.xv-mobile-nav__bar::-webkit'));
+  assert.match(bar, /border-radius: 26px 26px 0 0;/, 'the bar floats again instead of meeting the edge');
+  assert.match(bar, /border-bottom: 0;/, 'the bar draws an edge across the bottom of the screen');
+  assert.match(bar, /env\(safe-area-inset-bottom, 0px\)/, 'the bar hovers over a notched screen');
+
+  const active = CSS.slice(
+    CSS.indexOf(".xv-mobile-nav__tab.is-active .xv-mobile-nav__disc {"),
+    CSS.indexOf('.xv-mobile-nav__label {'),
+  );
+  assert.match(active, /transform: translateY\(-18px\)/, 'the selected tab no longer lifts clear');
+  // The glow takes the reader's accent rather than a fixed blue, so this screen moves
+  // with the rest of the product instead of ignoring the setting.
+  assert.match(active, /color-mix\(in srgb, var\(--accent\) 30%, transparent\)/, 'the glow is gone');
+  assert.match(active, /width: 52px;/, 'the selected disc is no longer larger than the rest');
+});
+
+test('the mobile header is one pill around the mark and the controls', () => {
+  assert.match(SIDEBAR, /xv-mobile-workspace-pill/, 'the header is two floating elements again');
+  const pill = CSS.slice(
+    CSS.indexOf('.xv-mobile-workspace-pill {'),
+    CSS.indexOf('.xv-mobile-workspace-logo'),
+  );
+  assert.match(pill, /border-radius: 999px;/, 'the header pill lost its shape');
+  assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
+  assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
+});
 /**
  * Fullscreen used to name only `aside.xv-sidebar-hover` and hide it with
  * `visibility`. That matched a state class the sidebar does not normally carry, so

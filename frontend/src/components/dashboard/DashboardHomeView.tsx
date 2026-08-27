@@ -3,7 +3,19 @@
 import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Activity, ArrowUpRight, CreditCard, Gauge } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
+import { BatteryChargingIcon } from '@/components/icons/animated/BatteryChargingIcon';
+import { BatteryLowIcon } from '@/components/icons/animated/BatteryLowIcon';
+import { CreditCardIcon } from '@/components/icons/animated/CreditCardIcon';
+import { ActivityIcon } from '@/components/icons/animated/ActivityIcon';
+
+/**
+ * Below this, capacity is shown as a battery down to one bar rather than a battery
+ * with a bolt. Thirty percent is where the panel's own copy starts talking about
+ * pacing and next unlock, so the gauge changes where the advice does.
+ */
+const LOW_CAPACITY_PERCENT = 30;
 import { api, type DashboardSummary } from '@/lib/api';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
@@ -20,14 +32,16 @@ const ACTION_LABELS: Record<string, string> = {
 
 function WidgetCard({ title, icon: Icon, children, className }: {
   title: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: AnimatedIconComponent;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
     <section className={cn('glass-panel rounded-xl overflow-hidden', className)}>
       <div className="px-4 py-3 border-b border-[var(--card-border)] flex items-center gap-2">
-        <Icon className="w-4 h-4 text-[var(--accent)]" />
+        {/* `intro={false}`: three cards side by side all playing on load is a flinch
+            across the whole panel. They play on hover and on click like the rest. */}
+        <span className="text-[var(--accent)]"><AnimatedIcon icon={Icon} size={16} intro={false} /></span>
         <h2 className="font-semibold text-sm">{title}</h2>
       </div>
       <div className="p-4 space-y-3">{children}</div>
@@ -114,7 +128,17 @@ export function DashboardHomeView() {
           Plan &amp; Usage
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
-        <WidgetCard title="AI Capacity" icon={Gauge}>
+        <WidgetCard
+          title="AI Capacity"
+          icon={
+            /* The gauge reads its own value. `?? 0` sends an unavailable reading to the
+               low battery rather than the charging one: a capacity the panel cannot
+               establish is not a capacity worth reassuring anybody about. */
+            (entitlement.capacityRemainingPercent ?? 0) < LOW_CAPACITY_PERCENT
+              ? BatteryLowIcon
+              : BatteryChargingIcon
+          }
+        >
           <PercentBar label="Capacity remaining" value={entitlement.capacityRemainingPercent} />
           <PercentBar label="Available now" value={entitlement.availableNowPercent} />
           <p className="text-xs text-[var(--muted)] capitalize">Pacing: {entitlement.pacing?.replace(/_/g, ' ') ?? 'not active'}</p>
@@ -122,7 +146,7 @@ export function DashboardHomeView() {
           <Link href="/dashboard/billing" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Review Plan & Usage</Link>
         </WidgetCard>
 
-        <WidgetCard title="Billing & Plan" icon={CreditCard}>
+        <WidgetCard title="Billing & Plan" icon={CreditCardIcon}>
           <dl className="space-y-2 text-sm">
             <div><dt className="inline text-[var(--muted)]">Plan: </dt><dd className="inline font-semibold">{billing.planName}</dd></div>
             <div><dt className="inline text-[var(--muted)]">Price: </dt><dd className="inline font-semibold">{billing.planPrice}</dd></div>
@@ -137,7 +161,7 @@ export function DashboardHomeView() {
         </div>
       </section>
 
-      <WidgetCard title="Recent Activity" icon={Activity}>
+      <WidgetCard title="Recent Activity" icon={ActivityIcon}>
         <ul className="grid gap-2.5 md:grid-cols-2">
           {summary.recentActivity.length === 0 ? (
             <li className="text-sm text-[var(--muted)] py-4">No recorded activity yet.</li>

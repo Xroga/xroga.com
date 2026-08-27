@@ -33,6 +33,14 @@ const items: { href: string; label: string; icon: AnimatedIconComponent }[] = [
 /** How far a vertical drag must travel before it counts as hide or show. */
 const SWIPE_THRESHOLD_PX = 28;
 
+/**
+ * How far the page must scroll before the bar reacts.
+ *
+ * Without a floor, the rubber-banding at the top and bottom of a phone scroll flickers
+ * the bar on and off while the reader is holding still.
+ */
+const SCROLL_THRESHOLD_PX = 12;
+
 export function MobileNav() {
   const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
@@ -58,9 +66,40 @@ export function MobileNav() {
     const end = event.changedTouches[0]?.clientY;
     if (end === undefined) return;
     const travel = end - start;
-    if (travel > SWIPE_THRESHOLD_PX) setHidden(true);
-    else if (travel < -SWIPE_THRESHOLD_PX) setHidden(false);
+    // Up puts it away, down brings it back — the same direction as the page scroll
+    // that does it, so the gesture and the scroll cannot disagree.
+    if (travel < -SWIPE_THRESHOLD_PX) setHidden(true);
+    else if (travel > SWIPE_THRESHOLD_PX) setHidden(false);
   }, []);
+
+  /*
+   * Reading down the page puts the bar away; coming back up brings it out.
+   *
+   * This replaces the grab handle. The handle was a 4px line under the bar whose only
+   * job was to undo a gesture — a control that exists to fix another control. Tying
+   * the bar to the scroll it is competing with means it is out of the way exactly when
+   * the reader is reading, and back the moment they look for it, with nothing to learn.
+   *
+   * The top of the page always shows it: a reader who has scrolled back to the start
+   * is not reading past it, and a bar that stayed hidden there would look broken.
+   */
+  useEffect(() => {
+    let previous = window.scrollY;
+    const onScroll = () => {
+      const current = window.scrollY;
+      const travel = current - previous;
+      if (Math.abs(travel) < SCROLL_THRESHOLD_PX) return;
+      previous = current;
+      if (current <= 0) setHidden(false);
+      else setHidden(travel > 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // A destination reached from somewhere else brings the bar back with it — arriving
+  // on a new page with no navigation on screen is the one state it must never be in.
+  useEffect(() => setHidden(false), [pathname]);
 
   // A tab reached from somewhere else — a sidebar link, a redirect — can be off the
   // end of the row, so it is brought into view rather than left for the reader to
@@ -101,18 +140,6 @@ export function MobileNav() {
           );
         })}
       </div>
-
-      <button
-        type="button"
-        className="xv-mobile-nav__handle"
-        onClick={() => setHidden((value) => !value)}
-        aria-expanded={!hidden}
-        aria-label={hidden ? 'Show navigation' : 'Hide navigation'}
-      >
-        {/* Also a button, not only a swipe target: a gesture with no visible control
-            behind it is undiscoverable, and unusable with a keyboard. */}
-        <span aria-hidden="true" />
-      </button>
     </nav>
   );
 }

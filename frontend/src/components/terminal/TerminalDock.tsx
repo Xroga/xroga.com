@@ -8,7 +8,7 @@ import { BlackHoleVButton } from './BlackHoleVButton';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
-import { ChevronDown, PanelBottomOpen } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
@@ -24,7 +24,6 @@ export function TerminalDock() {
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const chatbarHiddenRaw = useThemeStore((s) => s.chatbarHidden);
-  const setChatbarHidden = useThemeStore((s) => s.setChatbarHidden);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
@@ -104,18 +103,14 @@ export function TerminalDock() {
         )}
       >
         {chatbarHidden ? (
-          /* Keep only a small restore affordance in the former composer area. The
-             transcript gets the rest of the height back while touch users still have
-             an obvious way to reopen the full composer. */
-          <button
-            type="button"
-            onClick={() => setChatbarHidden(false)}
-            className="xv-chatbar-restore"
-            title="Show the chatbar"
-            aria-label="Show the chatbar"
-          >
-            <PanelBottomOpen className="h-4 w-4" aria-hidden="true" />
-          </button>
+          /* Nothing. Hiding the chatbar hides the chatbar.
+             This used to leave a small floating restore button in the composer's
+             place, on the reasoning that a hidden control needs a way back. It has
+             one: the same toggle in the terminal's title bar that hid it, which
+             stays on screen and flips to "Show the chatbar". The floating button was
+             a second control for one job, sitting in the space the reader had just
+             asked to have back. */
+          null
         ) : (
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">

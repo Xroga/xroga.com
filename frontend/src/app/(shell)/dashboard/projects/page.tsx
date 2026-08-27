@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  FolderOpen,
   Plus,
   Rocket,
   Sparkles,
@@ -13,6 +12,9 @@ import {
   Code2,
   Link2,
 } from 'lucide-react';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { FolderOpenIcon } from '@/components/icons/animated/FolderOpenIcon';
+import { TerminalIcon } from '@/components/icons/animated/TerminalIcon';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { SectionSearchBar } from '@/components/ui/SectionSearchBar';
 import { SectionCompactCard } from '@/components/dashboard/SectionCompactCard';
@@ -299,7 +301,7 @@ function ProjectsHubInner() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-              <FolderOpen className="w-7 h-7 text-[var(--accent)]" />
+              <span className="text-[var(--accent)]"><AnimatedIcon icon={FolderOpenIcon} size={28} /></span>
               Projects
             </h1>
             <p className="text-sm text-[var(--muted)] mt-1">
@@ -312,7 +314,7 @@ function ProjectsHubInner() {
             )}
           </div>
           <Link href="/workspace" className="xv-footer-pill !text-[var(--foreground)] flex items-center gap-1.5">
-            <Plus className="w-3.5 h-3.5" /> New Terminal
+            <AnimatedIcon icon={TerminalIcon} size={14} intro={false} /> New Terminal
           </Link>
         </div>
 
