@@ -54,6 +54,11 @@ test('a user without a Vercel token deploys through Xroga managed Vercel', async
     const url = String(input);
     const method = init?.method ?? 'GET';
     calls.push({ url, method, body: typeof init?.body === 'string' ? init.body : undefined });
+    if (method === 'PATCH' && url.includes('/v9/projects/xroga-managed-builds')) {
+      return new Response(JSON.stringify({ name: 'xroga-managed-builds', ssoProtection: null }), {
+        status: 200,
+      });
+    }
     if (method === 'POST' && url.includes('/v13/deployments')) {
       return new Response(JSON.stringify({ id: 'dpl_managed', url: 'orbit-test.vercel.app' }), {
         status: 200,
@@ -90,6 +95,11 @@ test('a user without a Vercel token deploys through Xroga managed Vercel', async
   const body = JSON.parse(create.body ?? '{}');
   assert.equal(body.name, 'xroga-managed-builds');
   assert.equal('target' in body, false);
+  const protection = calls.find(
+    (call) => call.method === 'PATCH' && call.url.includes('/v9/projects/xroga-managed-builds'),
+  );
+  assert.ok(protection);
+  assert.deepEqual(JSON.parse(protection.body ?? '{}'), { ssoProtection: null });
   assert.equal(calls.some((call) => call.url.includes('netlify.com')), false);
 });
 
@@ -108,8 +118,14 @@ test('managed Vercel failure is reported truthfully without a Netlify substituti
   });
 
   const urls: string[] = [];
-  globalThis.fetch = (async (input) => {
-    urls.push(String(input));
+  globalThis.fetch = (async (input, init) => {
+    const url = String(input);
+    urls.push(url);
+    if ((init?.method ?? 'GET') === 'PATCH' && url.includes('/v9/projects/xroga-managed-builds')) {
+      return new Response(JSON.stringify({ name: 'xroga-managed-builds', ssoProtection: null }), {
+        status: 200,
+      });
+    }
     return new Response('deployment rejected', { status: 403 });
   }) as typeof fetch;
 
@@ -118,4 +134,32 @@ test('managed Vercel failure is reported truthfully without a Netlify substituti
   assert.equal(result.deployUrl, '');
   assert.match(result.deployError ?? '', /Managed Vercel: Vercel deploy failed: 403/i);
   assert.equal(urls.some((url) => url.includes('netlify.com')), false);
+});
+
+test('managed Vercel never reports a protected login page as a verified preview', async (t) => {
+  const originalFetch = globalThis.fetch;
+  const originalVercel = process.env.VERCEL_API_KEY;
+  const originalTeam = process.env.VERCEL_TEAM_ID;
+  process.env.VERCEL_API_KEY = 'platform-test-token';
+  process.env.VERCEL_TEAM_ID = 'team_test';
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+    if (originalVercel === undefined) delete process.env.VERCEL_API_KEY;
+    else process.env.VERCEL_API_KEY = originalVercel;
+    if (originalTeam === undefined) delete process.env.VERCEL_TEAM_ID;
+    else process.env.VERCEL_TEAM_ID = originalTeam;
+  });
+
+  const calls: string[] = [];
+  globalThis.fetch = (async (input) => {
+    calls.push(String(input));
+    return new Response('project protection could not be changed', { status: 403 });
+  }) as typeof fetch;
+
+  const result = await deployToAllPlatforms('orbit-coffee', STATIC_SITE, undefined);
+  assert.equal(result.deployPlatform, 'none');
+  assert.equal(result.deployUrl, '');
+  assert.equal(result.deployVerified, false);
+  assert.match(result.deployError ?? '', /managed preview publishing setup failed: 403/i);
+  assert.equal(calls.some((url) => url.includes('/v13/deployments')), false);
 });

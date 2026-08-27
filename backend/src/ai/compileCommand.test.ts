@@ -12,6 +12,10 @@ import {
   COMPILE_RESULT_END,
 } from './compileCommand.js';
 
+const requiresPosixShell = process.platform === 'win32'
+  ? 'requires the Linux sandbox shell (/bin/sh)'
+  : false;
+
 /**
  * The production defect, reproduced.
  *
@@ -47,7 +51,7 @@ function installInto(dir: string): void {
 // The defect
 // ---------------------------------------------------------------------------
 
-test('separate executions lose node_modules — this is the production failure', () => {
+test('separate executions lose node_modules — this is the production failure', { skip: requiresPosixShell }, () => {
   // Execution 1: a fresh workspace, install runs, node_modules appears.
   const first = mkdtempSync(join(tmpdir(), 'exec1-'));
   project(first);
@@ -68,7 +72,7 @@ test('separate executions lose node_modules — this is the production failure',
   rmSync(second, { recursive: true, force: true });
 });
 
-test('one execution keeps what install produced — this is the fix', () => {
+test('one execution keeps what install produced — this is the fix', { skip: requiresPosixShell }, () => {
   const dir = mkdtempSync(join(tmpdir(), 'combined-'));
   project(dir);
 
@@ -96,7 +100,7 @@ test('one execution keeps what install produced — this is the fix', () => {
 // A missing compiler is never reported as a type error
 // ---------------------------------------------------------------------------
 
-test('a missing compiler reports tscRan=false, not a type-check failure', () => {
+test('a missing compiler reports tscRan=false, not a type-check failure', { skip: requiresPosixShell }, () => {
   // The distinction the production message got wrong. `tscRan: false` is an infrastructure gap;
   // `tscCode !== 0` is evidence about the code. Collapsing them is how "exit 127" became
   // "TypeScript errors remain".
@@ -116,7 +120,7 @@ test('a missing compiler reports tscRan=false, not a type-check failure', () => 
   rmSync(dir, { recursive: true, force: true });
 });
 
-test('a real type error is still reported as a failure', () => {
+test('a real type error is still reported as a failure', { skip: requiresPosixShell }, () => {
   // The direction check: the fix must not make everything pass.
   const dir = mkdtempSync(join(tmpdir(), 'typeerr-'));
   project(dir);
@@ -142,7 +146,7 @@ test('a real type error is still reported as a failure', () => {
 // Stage ordering and dependencies
 // ---------------------------------------------------------------------------
 
-test('the build runs only after install and typecheck both succeed', () => {
+test('the build runs only after install and typecheck both succeed', { skip: requiresPosixShell }, () => {
   const dir = mkdtempSync(join(tmpdir(), 'buildgate-'));
   project(dir);
 
@@ -171,7 +175,7 @@ test('no build script means no build stage in the script at all', () => {
 // Shape and safety
 // ---------------------------------------------------------------------------
 
-test('the generated script is valid shell', () => {
+test('the generated script is valid shell', { skip: requiresPosixShell }, () => {
   const { command, args } = buildCompileCommand({
     installArgs: ['install', '--ignore-scripts'], typecheck: true, buildScript: 'build',
   });
@@ -186,7 +190,7 @@ test('the build script name travels in the environment, never interpolated', () 
   assert.match(args[1]!, /npm run "\$XROGA_COMPILE_BUILD_SCRIPT"/);
 });
 
-test('install arguments are quoted', () => {
+test('install arguments are quoted', { skip: requiresPosixShell }, () => {
   const { args } = buildCompileCommand({
     installArgs: ['install', '--cache=/tmp/x', "weird'token"], typecheck: false, buildScript: null,
   });

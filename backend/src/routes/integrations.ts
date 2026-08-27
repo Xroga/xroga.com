@@ -319,7 +319,7 @@ router.delete('/provider-keys/:provider', async (req: AuthRequest, res) => {
   }
 });
 
-/** Explicit sync of vault → Vercel project env (Full Account token recommended). */
+/** Explicit sync of vault → a Vercel project authorized by the user. */
 router.post('/sync-vercel-env', async (req: AuthRequest, res) => {
   const schema = z.object({
     projectSlug: z.string().min(2).max(64),
@@ -331,7 +331,7 @@ router.post('/sync-vercel-env', async (req: AuthRequest, res) => {
   }
   if (!(await getVercelToken(req.userId!))) {
     res.status(403).json({
-      error: 'Connect Vercel first (Full Account token recommended for env sync)',
+      error: 'Connect Vercel first and approve project environment access',
       connected: false,
     });
     return;

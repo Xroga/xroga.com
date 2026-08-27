@@ -21,7 +21,8 @@ import { readFileSync } from 'node:fs';
  *    specificity, and specificity is exactly the kind of thing that silently regresses.
  */
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const CSS = read('../app/globals.css');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
 

@@ -10,7 +10,8 @@ import { readFileSync } from 'node:fs';
  * looks fine to whoever is testing on a laptop.
  */
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 
 const SHELL = read('./AppShell.tsx');
 const SIDEBAR = read('./Sidebar.tsx');

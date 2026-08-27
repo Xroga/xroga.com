@@ -119,7 +119,7 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
     try {
       const res = await api.integrations.syncVercelEnv(slug);
       if (res.ok) toast.success(`Synced vault secrets to Vercel project “${slug}”`);
-      else toast.error('Sync incomplete — use a Full Account Vercel token under Integrations');
+      else toast.error('Sync incomplete — reconnect Vercel and approve project environment access');
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -130,8 +130,8 @@ export function AiIntegrationsPanel({ compact }: { compact?: boolean }) {
       <p className={`text-[var(--muted)] ${compact ? 'text-[9px]' : 'text-[11px]'} leading-relaxed`}>
         Paste keys for <strong>your live product</strong> (OpenAI, Stripe, Supabase…). Stored with
         AES-256-GCM in your account — never committed to GitHub. When Vercel is connected, deploy
-        auto-syncs them as project env vars. Use a <strong>Full Account</strong> Vercel token for
-        env write access. Expo / Apple / Google Play credentials live under{' '}
+        auto-syncs them as project env vars after you authorize project environment access. Expo /
+        Apple / Google Play credentials live under{' '}
         <strong>Publish</strong> (not synced to Vercel).
       </p>
 

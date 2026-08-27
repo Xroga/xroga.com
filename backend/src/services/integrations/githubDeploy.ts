@@ -1,5 +1,10 @@
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { deployStaticSite, deployStaticSiteWithToken, pollDeploymentReady } from '../../lib/vercel.js';
+import {
+  deployStaticSite,
+  deployStaticSiteWithToken,
+  ensureManagedVercelProjectPublic,
+  pollDeploymentReady,
+} from '../../lib/vercel.js';
 import { syncEnvVarsToVercelProject, type VercelEnvSyncResult } from '../../lib/vercelEnv.js';
 import { deployToNetlify, pollNetlifyDeploy } from '../../lib/netlify.js';
 import { verifyLivePreviewUrl } from '../../lib/deployVerify.js';
@@ -976,7 +981,9 @@ export async function ensureVercelGitProject(opts: {
 async function deployToVercel(_projectSlug: string, staticFiles: ProjectFile[]): Promise<PreviewDeployResult> {
   const vercelFiles = staticFiles.map((f) => ({ file: f.path, data: f.content }));
   const framework = frameworkForDeploy(staticFiles);
-  const deployment = await deployStaticSite(managedVercelProjectName(), vercelFiles, {
+  const projectName = managedVercelProjectName();
+  await ensureManagedVercelProjectPublic(projectName);
+  const deployment = await deployStaticSite(projectName, vercelFiles, {
     framework,
     sourceDeploy: Boolean(framework),
     target: 'preview',

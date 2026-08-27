@@ -192,7 +192,11 @@ async function portInUse(port: number): Promise<boolean> {
 }
 
 const browserReady = await browserAvailable();
-const skip = browserReady ? false : 'no browser binary available in this environment';
+const skip = process.platform === 'win32'
+  ? 'requires the Linux sandbox shell (/bin/sh)'
+  : browserReady
+    ? false
+    : 'no browser binary available in this environment';
 
 test('real in-sandbox run: a working application passes on collected evidence', { skip }, async () => {
   const result = await verifyWith(PASS_FIXTURE, ['The page shows "Create project"']);

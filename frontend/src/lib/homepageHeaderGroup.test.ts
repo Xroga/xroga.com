@@ -19,7 +19,8 @@ import { readFileSync } from 'node:fs';
  * can round the group and its ends together.
  */
 
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+const read = (path: string) =>
+  readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const PAGE = read('../app/page.tsx');
 const SWITCHER = read('../components/companion/HomepageThemeSwitcher.tsx');
 const CSS = read('../styles/homepage-coding.css');
