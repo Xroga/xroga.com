@@ -2990,7 +2990,15 @@ body.theme-gray * {
     justify-content: center;
     color: var(--muted);
   }
-  .xv-sidebar-header-actions .xv-new-terminal-compact span { display: none; }
+  /*
+   * The label, by name — not "every span in the button".
+   *
+   * `AnimatedIcon` wraps its glyph in a span, so a rule written to hide the word "New"
+   * hid the icon with it and the control rendered as an empty 30x28 square on every
+   * theme. That is what "we don't see the new terminal icon" was: not a colour, not a
+   * size, a `display: none` inherited from the label it sits beside.
+   */
+  .xv-sidebar-header-actions .xv-new-terminal-compact__label { display: none; }
   /* The close button arrives with `h-9 w-9`, a border and a 20px glyph from its modal
      default. The compound selector outranks those utilities whatever order they are
      emitted in, which is the whole reason it is written this way. */
@@ -3067,7 +3075,7 @@ body.theme-gray * {
       width: 28px;
       padding: 0;
     }
-    .xv-new-terminal-compact span { display: none; }
+    .xv-new-terminal-compact__label { display: none; }
   }
 
   .xv-sidebar-resize-handle {

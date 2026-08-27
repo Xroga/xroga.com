@@ -535,3 +535,29 @@ test('the new-terminal badge stays legible on every theme', () => {
   // plus at the 16px this renders at in the toolbar.
   assert.match(ICON, /<m\.rect x="1.75" y="5.5" width="15.5" height="13"/, 'the window is full-bleed again, which shrinks the badge');
 });
+/**
+ * A rule that hides a label must not hide the icon beside it.
+ *
+ * The compact New Terminal button showed nothing on every theme, and the cause was not
+ * a colour or a size: `.xv-new-terminal-compact span { display: none }` was written to
+ * hide the word "New", and `AnimatedIcon` wraps its glyph in a span too. The icon
+ * computed `display: none` and the control rendered as an empty 30x28 square.
+ *
+ * Measured, not reasoned about — the source read as correct, and it took rendering the
+ * real markup against the built stylesheet to see the host was `display: none` and the
+ * svg `0x0`. So the guard is written against the shape of the mistake: any rule that
+ * hides a bare `span` inside a control that also holds an `AnimatedIcon` will hide the
+ * icon, so the label has to be named.
+ */
+test('the New Terminal label is hidden by name, not by element', () => {
+  const CSS = read('../../../app/globals.css');
+  assert.ok(
+    !/\.xv-new-terminal-compact\s+span\s*\{[^}]*display:\s*none/.test(CSS),
+    'a bare span rule is back, which hides the icon along with the label',
+  );
+  assert.match(CSS, /\.xv-new-terminal-compact__label \{ display: none; \}/, 'the label is no longer hidden');
+  assert.match(SIDEBAR, /className="xv-new-terminal-compact__label"/, 'the label lost the class the rule targets');
+
+  // The icon's own wrapper is a span, which is the whole reason the rule had to change.
+  assert.match(HOST, /<span ref=\{hostRef\}/, 'the host is no longer a span, so this guard is checking the wrong thing');
+});
