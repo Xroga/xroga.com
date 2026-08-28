@@ -47,7 +47,7 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
     useCompanionStore.getState().applyRuntimeEvent({
       type: 'online',
       operation: 'greeting',
-      message: 'Smoky is ready to help with real Xroga work.',
+      message: 'Your companion is ready to help with real Xroga work.',
       source: 'deterministic',
     });
     const timer = window.setTimeout(() => setIntro(false), 1_050);

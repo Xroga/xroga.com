@@ -3022,7 +3022,7 @@ body.theme-gray * {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    /* 2px read as one four-icon blob in a 64px column. Enough room to see four
+    /* 2px read as one five-icon blob in a 64px column. Enough room to see five
        separate targets, still tight enough to read as one group. */
     gap: 6px;
     padding: 0;
@@ -8182,12 +8182,12 @@ body.theme-beige {
 .xv-chatbar-context-strip {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  min-height: 22px;
-  padding: 2px 0 0;
+  gap: 0.25rem;
+  min-height: 28px;
+  padding: 3px 0 0;
   color: var(--text-muted, var(--muted));
 }
-.xv-chatbar-context-strip > :first-child { min-width: 0; flex: 1; }
+.xv-chatbar-context-strip > :first-child { min-width: 0; flex: 0 1 auto; }
 
 /* The repo context, inline in the bottom row. */
 .xv-repo-chip {
@@ -8200,23 +8200,27 @@ body.theme-beige {
 }
 .xv-repo-chip--compact {
   display: flex !important;
+  width: auto;
   min-width: 0;
-  padding: 1px 3px;
-  border-color: color-mix(in srgb, var(--card-border) 82%, transparent);
-  background: color-mix(in srgb, var(--card) 72%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
+  min-height: 26px;
+  padding: 3px 4px;
+  border-radius: 9px;
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--card-border));
+  background: var(--card);
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--shadow-color, #000) 12%, transparent), inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
 }
-.xv-repo-chip--compact .xv-repo-intent { padding-right: 3px; border-right: 1px solid var(--card-border); }
-.xv-repo-chip--compact .xv-repo-intent button { height: 18px; padding-inline: 5px; border-radius: 5px; font-size: 8px; }
-.xv-repo-chip--compact .xv-repo-identity { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.xv-repo-chip--compact .xv-repo-intent { padding-right: 4px; border-right: 1px solid var(--card-border); }
+.xv-repo-chip--compact .xv-repo-intent button { height: 19px; padding-inline: 6px; border-radius: 6px; font-size: 8px; background-color: color-mix(in srgb, var(--foreground) 4%, var(--card)); }
+.xv-repo-chip--compact .xv-repo-identity { flex: 0 1 auto; min-width: 0; max-width: min(34vw, 23rem); overflow: hidden; }
 .xv-repo-chip--compact .xv-repo-identity > span,
 .xv-repo-chip--compact .xv-repo-identity > button { display: flex; min-width: 0; max-width: 100%; }
 .xv-repo-chip--compact .xv-repo-name { display: block; min-width: 0; max-width: none !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xv-repo-chip--compact .xv-repo-branch { padding: 2px 5px; border-radius: 6px; background: color-mix(in srgb, var(--foreground) 5%, transparent); }
+.xv-repo-chip--compact .xv-repo-branch { flex: none; padding: 2px 5px; border-radius: 6px; background: color-mix(in srgb, var(--foreground) 6%, var(--card)); }
 .xv-repo-chip--compact .xv-repo-slash { display: none; }
 .xv-repo-chip--compact .xv-repo-visibility { margin-left: auto; }
 .xv-repo-chip--compact .xv-repo-visibility button { height: 18px; padding-inline: 5px; border-radius: 5px; font-size: 8px; }
 .xv-repo-chip--compact .xv-repo-analysis { display: none; }
+.xv-repo-intent-label-short { display: none; }
 
 .xv-repo-context-notice {
   position: fixed;
@@ -8291,8 +8295,14 @@ body.theme-beige {
 .xv-repo-filter-option small { font-size: 8.5px; color: var(--muted); }
 
 @media (max-width: 560px) {
-  .xv-repo-chip--compact .xv-repo-intent button { max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .xv-repo-chip--compact .xv-repo-branch { display: none; }
+  .xv-chatbar-context-strip { min-height: 27px; padding-top: 2px; }
+  .xv-repo-chip--compact { width: 100%; gap: 4px !important; }
+  .xv-repo-chip--compact .xv-repo-intent { gap: 3px; }
+  .xv-repo-chip--compact .xv-repo-intent button { max-width: none; padding-inline: 5px; }
+  .xv-repo-intent-label-full { display: none; }
+  .xv-repo-intent-label-short { display: inline; }
+  .xv-repo-chip--compact .xv-repo-identity { flex: 1 1 auto; max-width: none; }
+  .xv-repo-chip--compact .xv-repo-branch { display: block; padding-inline: 4px; }
 }
 .xv-repo-chip--loading {
   display: inline-grid;

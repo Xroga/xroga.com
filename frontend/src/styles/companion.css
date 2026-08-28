@@ -114,8 +114,22 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-home-companion-copy span { display: block; font-size: .48rem; letter-spacing: .13em; color: var(--hc-blue); font-weight: 800; }
 .xv-home-companion-copy strong { display: block; color: var(--hc-ink); font-size: .92rem; margin-top: .25rem; }
 .xv-home-companion-copy p { color: var(--hc-muted); font-size: .72rem; line-height: 1.45; margin-top: .25rem; }
-.xv-companion-composer-anchor { position: absolute; right: .35rem; bottom: calc(100% - .3rem); z-index: 100; display: flex; flex-direction: row-reverse; align-items: center; gap: .2rem; }
-.xv-companion-composer-label { display: none; color: var(--muted); font-size: .6rem; font-weight: 700; }
+.xv-companion-composer-anchor { position: absolute; right: .35rem; bottom: calc(100% - .22rem); z-index: 100; display: flex; flex-direction: row-reverse; align-items: center; gap: .35rem; }
+.xv-companion-blackhole > button {
+  min-height: 1.75rem;
+  padding: .32rem .58rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--card-border));
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 .45rem 1.25rem color-mix(in srgb, var(--shadow-color, #000) 18%, transparent), inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+.xv-companion-blackhole > button:hover,
+.xv-companion-blackhole > button:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--card-border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  outline: none;
+}
 .xv-companion--floating { position: fixed; right: 1rem; bottom: calc(5.25rem + env(safe-area-inset-bottom)); z-index: 150; }
 
 .xv-companion-customizer { display: grid; gap: 1rem; }
@@ -176,7 +190,6 @@ button:hover > .xv-animated-nav-icon { transform: translateY(-2px) rotate(-7deg)
   .xv-home-theme-switcher button > span:nth-child(2) { display: grid; line-height: 1.05; text-align: left; }
   .xv-home-theme-switcher button strong { font-size: .62rem; }
   .xv-home-theme-switcher button small { display: none; }
-  .xv-companion-composer-label { display: inline; }
 }
 
 @media (max-width: 640px) {
@@ -185,6 +198,9 @@ button:hover > .xv-animated-nav-icon { transform: translateY(-2px) rotate(-7deg)
   .xv-companion--hero .xv-companion-trigger { width: 6rem; }
   .xv-companion--hero .xv-companion-panel { position: fixed; left: .75rem; right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom)); transform: none; width: auto; }
   .xv-companion--composer .xv-companion-panel { position: fixed; left: .75rem; right: .75rem; bottom: calc(5.8rem + env(safe-area-inset-bottom)); width: auto; }
+  .xv-companion-composer-anchor { right: .2rem; gap: .22rem; }
+  .xv-companion--composer .xv-companion-trigger { width: 3.15rem; }
+  .xv-companion-blackhole > button { min-height: 1.6rem; padding: .24rem .45rem; font-size: .52rem; }
   .xv-companion-settings-grid { grid-template-columns: 1fr; }
   .xv-companion-customizer-intro { align-items: flex-start; }
   .xv-companion-customizer-preview { width: 5.5rem; }

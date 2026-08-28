@@ -655,13 +655,14 @@ export function Sidebar({ displayName }: SidebarProps) {
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
               {/*
-                Actions first, then destinations. Searching and starting a terminal are
+                Actions first, then destinations. Searching, starting a terminal, and
+                choosing a theme are
                 what the rail is reached for while working; Dashboard and Repositories
                 are places to leave for, and reading them last keeps that separation.
 
                 The two destinations carry a lighter stroke than the actions. They are
-                the denser glyphs of the four — a grid and a branching tree against a
-                reticle and a chevron — so at a shared weight they read as the heavy
+                the denser glyphs of the five — a grid and a branching tree against a
+                reticle, chevron, and palette — so at a shared weight they read as the heavy
                 end of the column rather than as its equals. Dashboard's stroke now
                 comes from `.xv-sidebar-collapsed-actions a` in globals.css rather than
                 an attribute, because its glyph animates its own tiles and is not a
@@ -676,6 +677,9 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
                   <AnimatedIcon icon={NewTerminalIcon} />
                 </button>
+              </HoverTip>
+              <HoverTip label="Theme" description="Choose the workspace theme.">
+                <ThemeToggle placement="right-start" />
               </HoverTip>
               <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
                 <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>

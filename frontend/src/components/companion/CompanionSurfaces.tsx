@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { XrogaCompanion } from './XrogaCompanion';
+import { BlackHoleVButton } from '@/components/terminal/BlackHoleVButton';
 import { useCompanionStore } from '@/store/useCompanionStore';
 
 interface Position { left: number; top: number }
@@ -91,5 +92,10 @@ export function CompanionGlobalDock() {
 export function CompanionComposerAnchor() {
   const dock = useCompanionStore((state) => state.dock);
   if (dock !== 'composer') return null;
-  return <div className="xv-companion-composer-anchor"><XrogaCompanion variant="composer" /><span className="xv-companion-composer-label">Smoky</span></div>;
+  return (
+    <div className="xv-companion-composer-anchor">
+      <XrogaCompanion variant="composer" />
+      <BlackHoleVButton compact className="xv-companion-blackhole" />
+    </div>
+  );
 }
