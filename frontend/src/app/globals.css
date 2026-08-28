@@ -8733,6 +8733,10 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   overflow-y: hidden;
   padding-bottom: 24px;
 }
+.xv-terminal-scroll[data-conversation='false'] .xv-term-empty,
+.xv-terminal-scroll[data-conversation='false'] .xv-first-run-checklist {
+  display: none;
+}
 
 @media (min-width: 1024px) {
   .xv-terminal-scroll {
@@ -9150,18 +9154,13 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
    change the set; “New ideas” pages within it. An idea only fills the composer so
    the user remains in control of the request that is sent. */
 .xv-workspace-starter-ideas {
-  overflow: hidden;
-  border: 1px solid var(--composer-border);
-  border-radius: 14px;
-  background: var(--composer-surface);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.14);
+  overflow: visible;
 }
 .xv-workspace-idea-tabs {
   display: flex;
   gap: 0.3rem;
   overflow-x: auto;
-  padding: 0.45rem 0.5rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  padding: 0.1rem 0.15rem;
   scrollbar-width: none;
 }
 .xv-workspace-idea-tabs::-webkit-scrollbar { display: none; }
@@ -9229,7 +9228,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.4rem;
-  padding: 0 0.55rem 0.55rem;
+  padding: 0.38rem 0.15rem 0;
+  animation: xv-workspace-ideas-in 180ms ease-out both;
+}
+@keyframes xv-workspace-ideas-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .xv-workspace-idea-list > button {
   position: relative;
@@ -9241,7 +9245,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   padding: 0.5rem;
   border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
   border-radius: 9px;
-  background: color-mix(in srgb, var(--foreground) 3.5%, transparent);
+  background: color-mix(in srgb, var(--composer-surface) 92%, var(--foreground) 3%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   color: color-mix(in srgb, var(--foreground) 76%, transparent);
   text-align: left;
   font-size: 0.62rem;
@@ -9314,12 +9319,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 .xv-workspace-template-card {
   --template-accent: var(--accent);
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr) auto;
+  grid-template-columns: 118px minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem;
-  width: 245px;
-  min-height: 72px;
-  padding: 0.35rem;
+  width: 310px;
+  min-height: 88px;
+  padding: 0.42rem;
   border: 1px solid color-mix(in srgb, var(--template-accent) 24%, color-mix(in srgb, var(--foreground) 8%, transparent));
   border-radius: 10px;
   background: linear-gradient(120deg, color-mix(in srgb, var(--template-accent) 8%, transparent), transparent 52%);
@@ -9384,15 +9389,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
     transform: translateY(-22%);
   }
   .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; }
-  .xv-workspace-idea-head { padding: 0.48rem 0.55rem 0.35rem; }
-  .xv-workspace-idea-head h2 { font-size: 0.7rem; }
-  .xv-workspace-idea-refresh span { display: none; }
-  .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0 0.42rem 0.42rem; }
+  .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.35rem 0.1rem 0; }
   .xv-workspace-idea-list > button { min-height: 36px; padding: 0.38rem 0.45rem; font-size: 0.57rem; }
   .xv-workspace-idea-list > button:nth-child(3) { display: none; }
   .xv-workspace-template-head { padding: 0.4rem 0.52rem; }
   .xv-workspace-template-head > span { display: none; }
-  .xv-workspace-template-card { grid-template-columns: 74px minmax(0, 1fr) auto; width: 208px; min-height: 60px; }
+  .xv-workspace-template-card { grid-template-columns: 92px minmax(0, 1fr) auto; width: 260px; min-height: 72px; }
 }
 
 @media (max-height: 680px) {
@@ -9429,10 +9431,37 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 /* It stays elevated because it is the one thing on the screen you act with — but the
    elevation comes from the surface and a soft shadow, not from a lit outline. */
 .xv-terminal-dock .xv-chatbar-solid:focus-within {
-  border-color: rgba(47, 124, 255, 0.48) !important;
+  border-color: color-mix(in srgb, var(--foreground) 15%, transparent) !important;
   box-shadow:
-    0 0 0 3px rgba(47, 124, 255, 0.065),
-    0 14px 36px rgba(0, 0, 0, 0.26) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 14px 34px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* A quiet, moving ambient edge marks a fresh terminal and attachment work. It is a
+   shadow around the surface rather than an outline painted over the input, so text
+   remains crisp in every theme. */
+.xv-terminal-dock--idle .xv-chatbar-solid,
+.xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active {
+  animation: xv-chatbar-ambient-halo 4.8s ease-in-out infinite;
+}
+.xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active {
+  animation-duration: 2.4s;
+}
+@keyframes xv-chatbar-ambient-halo {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.045),
+      -18px 9px 36px rgba(120, 99, 255, 0.11),
+      18px 10px 38px rgba(59, 130, 246, 0.1),
+      0 12px 30px rgba(0, 0, 0, 0.16) !important;
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.055),
+      18px 8px 42px rgba(120, 99, 255, 0.14),
+      -20px 12px 40px rgba(56, 189, 248, 0.13),
+      0 16px 34px rgba(0, 0, 0, 0.17) !important;
+  }
 }
 
 
@@ -9456,7 +9485,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
      past the bar's edge stops reading as part of it. The two-column list widens this
      from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */
   width: min(360px, 100%);
-  max-height: min(520px, calc(100dvh - 150px));
+  max-height: min(420px, calc(100dvh - 150px));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 7px;
@@ -9510,7 +9539,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
      nothing yet") fits one line per column; below this it wraps and that row alone
      drags the grid taller, which is the height the two columns were meant to save. */
   .xv-cba-menu:has(.xv-cba-grid) {
-    width: min(620px, 100%);
+    width: min(560px, 100%);
   }
   .xv-cba-grid {
     grid-template-columns: 1fr 1fr;
@@ -9549,6 +9578,20 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   font-size: 12px;
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.43);
+}
+.xv-cba-command-list {
+  display: grid;
+  gap: 2px;
+}
+.xv-cba-command code {
+  min-width: 62px;
+  padding: 0.22rem 0.38rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+  color: var(--accent);
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 720;
 }
 /* Beige is a light theme too. These were written for White alone, so on the cream
    Parchment surface the menu rendered white-on-white and read as empty. */
@@ -9644,6 +9687,113 @@ body.theme-beige .xv-cba-trigger:hover:not(:disabled) {
 }
 @media (prefers-reduced-motion: reduce) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) { transition: none; }
+  .xv-terminal-dock--idle .xv-chatbar-solid,
+  .xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active { animation: none; }
+}
+
+/* ---- template decision dialog ------------------------------------------- */
+.xv-template-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(2, 6, 23, 0.66);
+  backdrop-filter: blur(14px);
+  animation: xv-template-dialog-in 180ms ease-out both;
+}
+.xv-template-dialog {
+  --template-accent: var(--accent);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(280px, 0.88fr);
+  width: min(900px, 96vw);
+  max-height: min(720px, 92dvh);
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--template-accent) 28%, var(--composer-border));
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--composer-surface) 96%, var(--template-accent) 4%);
+  color: var(--foreground);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.48);
+}
+@keyframes xv-template-dialog-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.xv-template-dialog-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--background) 80%, transparent);
+  color: var(--foreground);
+  backdrop-filter: blur(10px);
+}
+.xv-template-dialog-preview {
+  position: relative;
+  min-height: 330px;
+  overflow: hidden;
+  border-radius: 21px 0 0 21px;
+  background: color-mix(in srgb, var(--template-accent) 12%, var(--background));
+}
+.xv-template-dialog-preview img { width: 100%; height: 100%; object-fit: cover; }
+.xv-template-dialog-preview > span {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  padding: 0.36rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--template-accent) 82%, #07101f);
+  color: white;
+  font-size: 0.64rem;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+.xv-template-dialog-copy { padding: 2rem 1.6rem 5.25rem; }
+.xv-template-dialog-copy > div:first-child > p {
+  margin: 0 0 0.25rem;
+  color: var(--template-accent);
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.62rem;
+  font-weight: 760;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.xv-template-dialog-copy h2 { margin: 0; font-size: 1.35rem; line-height: 1.12; }
+.xv-template-dialog-copy > p { margin: 0.75rem 0; color: color-mix(in srgb, var(--foreground) 65%, transparent); font-size: 0.76rem; line-height: 1.55; }
+.xv-template-dialog-copy ul { display: grid; gap: 0.38rem; margin: 0.8rem 0; padding: 0; list-style: none; }
+.xv-template-dialog-copy li { position: relative; padding-left: 1rem; color: color-mix(in srgb, var(--foreground) 78%, transparent); font-size: 0.7rem; }
+.xv-template-dialog-copy li::before { content: ''; position: absolute; left: 0; top: 0.42rem; width: 5px; height: 5px; border-radius: 50%; background: var(--template-accent); }
+.xv-template-dialog-tech { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.xv-template-dialog-tech span { padding: 0.25rem 0.42rem; border-radius: 999px; background: color-mix(in srgb, var(--foreground) 6%, transparent); color: color-mix(in srgb, var(--foreground) 66%, transparent); font-size: 0.58rem; }
+.xv-template-dialog-actions {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.15rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.xv-template-dialog-actions a,
+.xv-template-dialog-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 38px; padding: 0.55rem 0.75rem; border-radius: 10px; font-size: 0.68rem; font-weight: 700; }
+.xv-template-dialog-secondary { border: 1px solid color-mix(in srgb, var(--foreground) 13%, transparent); color: var(--foreground); background: color-mix(in srgb, var(--foreground) 4%, transparent); }
+.xv-template-dialog-primary { color: #fff; background: color-mix(in srgb, var(--template-accent) 72%, #1d4ed8); }
+@media (max-width: 680px) {
+  .xv-template-dialog { grid-template-columns: 1fr; width: min(94vw, 520px); }
+  .xv-template-dialog-preview { min-height: 210px; max-height: 38dvh; border-radius: 21px 21px 0 0; }
+  .xv-template-dialog-copy { padding: 1.15rem 1rem 5.2rem; }
+  .xv-template-dialog-copy h2 { font-size: 1.1rem; }
+  .xv-template-dialog-copy > p { font-size: 0.7rem; }
+  .xv-template-dialog-actions { left: 1rem; right: 1rem; }
+  .xv-template-dialog-actions > * { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-template-dialog-backdrop { animation: none; }
 }
 
 /* ============================================================================

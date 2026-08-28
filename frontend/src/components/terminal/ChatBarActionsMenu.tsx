@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Blocks, Bug, Check, ChevronRight, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
+import { Blocks, Bug, Check, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
 import {
   COMPOSER_PRESETS,
+  COMPOSER_COMMANDS,
   COMPOSER_SKILLS,
   buildComposerPreamble,
   useComposerToolsStore,
@@ -26,7 +27,6 @@ import { cn } from '@/lib/utils';
 export function ChatBarActionsMenu({
   onInsert,
   onAddFiles,
-  onOpenConnectors,
   onOpenIntegrations,
   connectorsNeedingAttention = 0,
   disabled,
@@ -35,7 +35,6 @@ export function ChatBarActionsMenu({
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
   onInsert: (text: string) => void;
   onAddFiles?: () => void;
-  onOpenConnectors?: () => void;
   /**
    * Opens the integrations surface. This used to be a pill sitting beside the `+`,
    * which read as a second, competing entry point to the same dialog; it is a menu
@@ -48,7 +47,7 @@ export function ChatBarActionsMenu({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'menu' | 'skills' | 'rules'>('menu');
+  const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules'>('menu');
   const rootRef = useRef<HTMLDivElement>(null);
 
   const rules = useComposerToolsStore((s) => s.rules);
@@ -120,9 +119,9 @@ export function ChatBarActionsMenu({
                Skills and Rules panels below stay single-column, because their rows
                are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">
-              {/* Attach and connectors come first: they are what a `+` means in a
-                  composer, and folding them in here is what let the toolbar row of
-                  GitHub / Vercel / Integrations chips above the input go away. */}
+              {/* Attachments and commands come first: they are the immediate actions
+                  people expect behind a composer's `+`. Account connections have one
+                  canonical home in the Integrations row below. */}
               {onAddFiles && (
                 <button type="button" className="xv-cba-item" onClick={() => { onAddFiles(); setOpen(false); }}>
                   <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -133,27 +132,13 @@ export function ChatBarActionsMenu({
                 </button>
               )}
 
-              <button type="button" className="xv-cba-item" onClick={() => insert('/')}>
+              <button type="button" className="xv-cba-item" onClick={() => setPanel('commands')}>
                 <SlashSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text">
                   <b>Slash commands</b>
+                  <i>Build, plan, debug, audit, test, or deploy</i>
                 </span>
               </button>
-
-              {onOpenConnectors && (
-                <button type="button" className="xv-cba-item" onClick={() => { onOpenConnectors(); setOpen(false); }}>
-                  <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span className="xv-cba-item__text">
-                    <b>Connectors</b>
-                  </span>
-                  {connectorsNeedingAttention > 0 && (
-                    <span className="xv-cba-hint">
-                      {connectorsNeedingAttention} needs reconnection
-                    </span>
-                  )}
-                  <ChevronRight className="h-3 w-3 shrink-0 opacity-50" aria-hidden="true" />
-                </button>
-              )}
 
               <div className="xv-cba-sep" role="separator" />
 
@@ -227,6 +212,37 @@ export function ChatBarActionsMenu({
                 </p>
               )}
             </div>
+          )}
+
+          {panel === 'commands' && (
+            <>
+              <div className="xv-cba-head">
+                <button type="button" onClick={() => setPanel('menu')} className="xv-cba-back">
+                  Back
+                </button>
+                <span>Slash commands</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close">
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="xv-cba-command-list" role="menu" aria-label="Xroga slash commands">
+                {COMPOSER_COMMANDS.map((command) => (
+                  <button
+                    key={command.id}
+                    type="button"
+                    role="menuitem"
+                    className="xv-cba-item xv-cba-command"
+                    onClick={() => insert(command.prompt)}
+                  >
+                    <code>{command.command}</code>
+                    <span className="xv-cba-item__text">
+                      <b>{command.label}</b>
+                      <i>{command.description}</i>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
 
           {panel === 'skills' && (

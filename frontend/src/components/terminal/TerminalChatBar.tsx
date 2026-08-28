@@ -426,7 +426,7 @@ export function TerminalChatBar() {
           className={cn(
             'relative',
             incognito && 'xv-chatbar-incognito',
-            (dragOver || uploading) && !incognito && 'ring-2 ring-[var(--accent)]/40'
+            (dragOver || uploading || files.length > 0) && !incognito && 'xv-chatbar--upload-active'
           )}
           onDragOver={(e: React.DragEvent) => {
             if (incognito) return;
@@ -472,10 +472,6 @@ export function TerminalChatBar() {
                     className="shrink-0"
                     disabled={loading}
                     onAddFiles={() => fileRef.current?.click()}
-                    onOpenConnectors={() => {
-                      dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
-                      setIntegrationsOpen(true);
-                    }}
                     /* Same dialog the removed pill opened, same event dispatched — the
                        trigger moved into the menu, the behaviour did not change. */
                     onOpenIntegrations={() => {

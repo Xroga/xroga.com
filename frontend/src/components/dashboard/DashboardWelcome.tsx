@@ -47,7 +47,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
         <div className="xv-welcome-taglines relative mt-3">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            One prompt. A product you can <span className="xv-tagline-accent">own</span>, evolve, and{' '}
+            One prompt. <span className="xv-tagline-accent">Yours</span> to{' '}
             <span className="xv-tagline-accent">ship</span>.
           </p>
         </div>

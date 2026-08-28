@@ -5,7 +5,6 @@ import {
   Boxes,
   Globe2,
   Lightbulb,
-  RefreshCw,
   Smartphone,
   Workflow,
   type LucideIcon,
@@ -91,12 +90,16 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
 
 export function WorkspaceStarterIdeas({ className }: { className?: string }) {
   const { setPrompt } = useTerminalChat();
-  const [groupId, setGroupId] = useState(IDEA_GROUPS[0].id);
+  const [groupId, setGroupId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
-  const activeGroup = IDEA_GROUPS.find((group) => group.id === groupId) ?? IDEA_GROUPS[0];
-  const visibleIdeas = activeGroup.ideas.slice(page * 3, page * 3 + 3);
+  const activeGroup = IDEA_GROUPS.find((group) => group.id === groupId) ?? null;
+  const visibleIdeas = activeGroup?.ideas.slice(page * 3, page * 3 + 3) ?? [];
 
   const chooseGroup = (nextId: string) => {
+    if (nextId === groupId) {
+      setPage((current) => (current + 1) % 2);
+      return;
+    }
     setGroupId(nextId);
     setPage(0);
   };
@@ -111,11 +114,11 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
   };
 
   return (
-    <section className={cn('xv-workspace-starter-ideas', className)} aria-labelledby="workspace-ideas-heading">
+    <section className={cn('xv-workspace-starter-ideas', className)} aria-label="Xroga starter ideas">
       <div className="xv-workspace-idea-tabs" role="tablist" aria-label="Xroga starter categories">
         {IDEA_GROUPS.map((group) => {
           const Icon = group.icon;
-          const selected = group.id === activeGroup.id;
+          const selected = group.id === activeGroup?.id;
           return (
             <button
               key={group.id}
@@ -124,6 +127,7 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
               aria-selected={selected}
               className={cn('xv-workspace-idea-tab', selected && 'is-active')}
               onClick={() => chooseGroup(group.id)}
+              title={selected ? `Show more ${group.label.toLowerCase()} ideas` : `Show ${group.label.toLowerCase()} ideas`}
             >
               <Icon className="h-3.5 w-3.5" aria-hidden />
               <span>{group.label}</span>
@@ -132,31 +136,17 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
         })}
       </div>
 
-      <div className="xv-workspace-idea-head">
-        <div>
-          <span className="xv-workspace-idea-kicker">Xroga ideas</span>
-          <h2 id="workspace-ideas-heading">Choose a direction, then make it yours.</h2>
+      {activeGroup ? (
+        <div className="xv-workspace-idea-list" role="tabpanel" aria-label={`${activeGroup.label} ideas`}>
+          {visibleIdeas.map((idea, index) => (
+            <button key={idea} type="button" onClick={() => fillComposer(idea)}>
+              <Boxes className="h-3.5 w-3.5" aria-hidden />
+              <span>{idea}</span>
+              <span className="xv-workspace-idea-number" aria-hidden>{String(index + 1).padStart(2, '0')}</span>
+            </button>
+          ))}
         </div>
-        <button
-          type="button"
-          className="xv-workspace-idea-refresh"
-          onClick={() => setPage((current) => (current + 1) % 2)}
-          aria-label={`Show more ${activeGroup.label.toLowerCase()} ideas`}
-        >
-          <RefreshCw className="h-3.5 w-3.5" aria-hidden />
-          <span>New ideas</span>
-        </button>
-      </div>
-
-      <div className="xv-workspace-idea-list" role="tabpanel">
-        {visibleIdeas.map((idea, index) => (
-          <button key={idea} type="button" onClick={() => fillComposer(idea)}>
-            <Boxes className="h-3.5 w-3.5" aria-hidden />
-            <span>{idea}</span>
-            <span className="xv-workspace-idea-number" aria-hidden>{String(index + 1).padStart(2, '0')}</span>
-          </button>
-        ))}
-      </div>
+      ) : null}
     </section>
   );
 }

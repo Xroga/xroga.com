@@ -225,7 +225,7 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   const menu = rule('.xv-cba-menu') ?? '';
   assert.match(menu, /position:\s*absolute/);
-  assert.match(menu, /max-height:\s*min\(520px, calc\(100dvh - 150px\)\)/);
+  assert.match(menu, /max-height:\s*min\(420px, calc\(100dvh - 150px\)\)/);
   // Never wider than the bar it belongs to.
   assert.match(menu, /width:\s*min\(360px, 100%\)/);
 });
@@ -238,12 +238,19 @@ test('Integrations is a menu row, and the detached pill is gone', () => {
   assert.equal(CHATBAR.includes('xv-chatbar-integration-btn'), false, 'the detached Integrations pill returned');
 });
 
+test('the duplicate Connectors row is gone and slash commands expose real actions', () => {
+  assert.doesNotMatch(MENU, /<b>Connectors<\/b>/);
+  assert.doesNotMatch(MENU, /onOpenConnectors/);
+  assert.match(MENU, /panel === 'commands'/);
+  assert.match(MENU, /COMPOSER_COMMANDS\.map/);
+  assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt\)\}/);
+});
+
 test('every existing menu action is still present', () => {
   // Reliability and polish work must not quietly drop a feature.
   for (const label of [
     'Add files or photos',
     'Slash commands',
-    'Connectors',
     'Plan before build',
     'Debug an error',
     'Skills',

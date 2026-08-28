@@ -39,26 +39,38 @@ test('New Terminal leaves repository selection available without opening it over
   assert.doesNotMatch(effect, /setRepoGate/);
 });
 
-test('ideas change by category and fill the real composer without auto-sending', () => {
+test('ideas stay collapsed until a category is chosen, then fill the real composer without auto-sending', () => {
   assert.match(IDEAS, /role="tablist"/);
+  assert.match(IDEAS, /useState<string \| null>\(null\)/);
   assert.match(IDEAS, /setGroupId\(nextId\)/);
   assert.match(IDEAS, /setPage\(\(current\) => \(current \+ 1\) % 2\)/);
+  assert.match(IDEAS, /activeGroup \? \(/);
+  assert.doesNotMatch(IDEAS, /Xroga ideas|Choose a direction, then make it yours|New ideas/);
   assert.match(IDEAS, /setPrompt\(idea\)/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\]/);
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
 });
 
-test('templates are visible in a moving one-row rail, never hidden in a disclosure', () => {
+test('templates are visible in a moving one-row rail and open a preview-or-build decision', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
   assert.match(TEMPLATES, /xv-workspace-template-track/);
-  assert.match(TEMPLATES, /<TemplateRailGroup \/>[\s\S]*<TemplateRailGroup duplicate \/>/);
-  assert.match(TEMPLATES, /setPrompt\(template\.defaultBuildPrompt\)/);
+  assert.match(TEMPLATES, /<TemplateRailGroup onSelect=\{setSelectedTemplate\} \/>[\s\S]*<TemplateRailGroup duplicate onSelect=\{setSelectedTemplate\} \/>/);
+  assert.match(TEMPLATES, /role="dialog"/);
+  assert.match(TEMPLATES, /Full preview/);
+  assert.match(TEMPLATES, /Use prompt &amp; ship/);
+  assert.match(TEMPLATES, /setPrompt\(prompt\)/);
+  assert.match(TEMPLATES, /selected GitHub repository/);
   assert.match(CSS, /\.xv-workspace-template-track\s*\{[^}]*display:\s*flex[^}]*animation:\s*xv-workspace-template-marquee/);
 });
 
 test('the new ownership-and-shipping line replaces the retired model claim', () => {
-  assert.match(WELCOME, /One prompt\. A product you can/);
-  assert.match(WELCOME, />own</);
+  assert.match(WELCOME, /One prompt\./);
+  assert.match(WELCOME, />Yours</);
   assert.match(WELCOME, />ship</);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);
+});
+
+test('an untouched terminal hides transcript and checklist noise behind the starter', () => {
+  assert.match(CSS, /\.xv-terminal-scroll\[data-conversation='false'\] \.xv-term-empty/);
+  assert.match(CSS, /\.xv-terminal-scroll\[data-conversation='false'\] \.xv-first-run-checklist/);
 });

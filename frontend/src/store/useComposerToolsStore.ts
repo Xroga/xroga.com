@@ -71,6 +71,58 @@ export const COMPOSER_PRESETS = {
   debug: 'Debug this error. Here is what I am seeing:\n\n```\n\n```\n\nFind the root cause rather than suppressing the symptom, and tell me what actually broke.\n\n',
 } as const;
 
+/**
+ * Commands shown by the composer's slash-command picker.
+ *
+ * These are deliberately full prompts rather than decorative command names. The
+ * selected value reaches the same production agent route as typed text, so every
+ * command has a concrete outcome and remains editable before it is sent.
+ */
+export const COMPOSER_COMMANDS = [
+  {
+    id: 'build',
+    command: '/build',
+    label: 'Build a product',
+    description: 'Create the working product, test it, and prepare it to ship.',
+    prompt: '/build Build this product end to end. Keep the implementation production-ready, verify the result, and prepare the finished code to ship to my selected GitHub repository.\n\n',
+  },
+  {
+    id: 'plan',
+    command: '/plan',
+    label: 'Plan before changing',
+    description: 'Inspect the work, propose a bounded plan, and wait for approval.',
+    prompt: `/plan ${COMPOSER_PRESETS.plan}`,
+  },
+  {
+    id: 'debug',
+    command: '/debug',
+    label: 'Debug an error',
+    description: 'Trace the root cause, repair it, and verify the fix.',
+    prompt: `/debug ${COMPOSER_PRESETS.debug}`,
+  },
+  {
+    id: 'audit',
+    command: '/audit',
+    label: 'Audit this repository',
+    description: 'Find the highest-impact issue and explain the evidence.',
+    prompt: '/audit Audit my selected repository. Prioritise correctness, security, accessibility, and performance. Show the evidence, then recommend the highest-impact fix.\n\n',
+  },
+  {
+    id: 'test',
+    command: '/test',
+    label: 'Test and verify',
+    description: 'Run the relevant checks and repair genuine failures.',
+    prompt: '/test Run the relevant unit, integration, type, build, and browser checks for this change. Repair genuine failures and report exactly what passed.\n\n',
+  },
+  {
+    id: 'deploy',
+    command: '/deploy',
+    label: 'Ship the current product',
+    description: 'Verify, push to GitHub, and deploy through the connected account.',
+    prompt: '/deploy Verify the current product, push the finished code to my selected GitHub repository, deploy it through my connected Vercel account, and confirm the live result.\n\n',
+  },
+] as const;
+
 interface ComposerToolsState {
   /** Free-text standing rules the user writes. Empty means none are applied. */
   rules: string;
