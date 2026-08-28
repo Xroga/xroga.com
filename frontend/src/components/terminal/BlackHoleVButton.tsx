@@ -53,6 +53,8 @@ export function BlackHoleVButton({
           compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-[11px]'
         )}
         title="Black Hole V∞"
+        aria-label="Black Hole V infinity"
+        aria-expanded={open}
       >
         {compact ? (
           <span className="font-azurio font-bold whitespace-nowrap flex items-center gap-0.5">

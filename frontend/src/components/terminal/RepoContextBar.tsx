@@ -406,7 +406,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         className={cn(
           'flex items-center text-[10px] font-mono text-[var(--foreground)]',
           compact
-            ? 'xv-repo-chip xv-repo-chip--compact gap-1.5 w-full max-w-full min-w-0 overflow-hidden'
+            ? 'xv-repo-chip xv-repo-chip--compact gap-1.5 max-w-full min-w-0 overflow-hidden'
             : 'gap-2 overflow-x-auto scrollbar-hide',
           !compact && (outside ? 'px-0 py-0' : 'px-2 sm:px-3 py-1 border-0')
         )}
@@ -420,6 +420,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
               ? `Updates go to ${selectedRepo}`
               : 'Pick a repo first to update an existing product'
           }
+          aria-label={selectedRepo ? 'Update current' : 'Pick to update'}
           onClick={() => {
             if (!selectedRepo) {
               setOpen('repo');
@@ -433,11 +434,17 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
               : 'border-[var(--card-border)] text-[var(--muted)] hover:text-[var(--foreground)]',
           )}
         >
-          {selectedRepo ? 'Update current' : 'Pick to update'}
+          <span className="xv-repo-intent-label-full">
+            {selectedRepo ? 'Update current' : 'Pick to update'}
+          </span>
+          <span className="xv-repo-intent-label-short" aria-hidden="true">
+            {selectedRepo ? 'Update' : 'Pick repo'}
+          </span>
         </button>
         <button
           type="button"
           title="Clear repo selection and start a brand-new product"
+          aria-label="New product"
           onClick={() => {
             markFreshTerminalIntent();
             clearSelectedRepoContext();
@@ -451,7 +458,8 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           }}
           className="rounded px-1.5 py-0.5 border border-[var(--card-border)] text-[9px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors"
         >
-          New product
+          <span className="xv-repo-intent-label-full">New product</span>
+          <span className="xv-repo-intent-label-short" aria-hidden="true">New</span>
         </button>
       </div>
 

@@ -786,7 +786,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   );
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(desktopSidebar.locator('.xv-sidebar-floating')).toHaveCSS('border-top-width', '0px');
-  await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toHaveCount(0);
+  const collapsedTheme = desktopSidebar.getByRole('button', { name: 'Change theme' });
+  await expect(collapsedTheme).toBeVisible();
+  await collapsedTheme.click();
+  await expect(page.getByRole('menu')).toBeVisible();
+  await collapsedTheme.click();
+  await expect(page.getByRole('menu')).toHaveCount(0);
   await expect(desktopSidebar.getByRole('button', { name: 'Search' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.locator('nav')).toHaveCount(0);

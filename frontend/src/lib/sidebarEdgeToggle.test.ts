@@ -76,6 +76,16 @@ test('the rail carries the two destinations people actually go to', () => {
   assert.match(block, /href="\/dashboard\/projects"[\s\S]{0,80}aria-label="Repositories"/, 'Repositories should be on the rail');
 });
 
+test('the collapsed rail keeps theme selection available', () => {
+  const rail = code.slice(code.indexOf('xv-sidebar-collapsed-actions'));
+  const block = rail.slice(0, rail.indexOf('</div>'));
+  assert.match(
+    block,
+    /<ThemeToggle placement="right-start" \/>/,
+    'theme selection disappeared when the sidebar collapsed',
+  );
+});
+
 test('the page header does not repeat the sidebar mark', () => {
   /*
    * It used to be enough for the header logo to stand down from `lg` up, on the
