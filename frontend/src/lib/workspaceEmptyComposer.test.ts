@@ -54,7 +54,9 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
 test('templates are visible in a moving one-row rail and open a preview-or-build decision', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
   assert.match(TEMPLATES, /xv-workspace-template-track/);
-  assert.match(TEMPLATES, /<TemplateRailGroup onSelect=\{setSelectedTemplate\} \/>[\s\S]*<TemplateRailGroup duplicate onSelect=\{setSelectedTemplate\} \/>/);
+  assert.match(TEMPLATES, /<TemplateRailGroup onSelect=\{setSelectedTemplate\} onInteractStart=/);
+  assert.match(TEMPLATES, /<TemplateRailGroup duplicate onSelect=\{setSelectedTemplate\} onInteractStart=/);
+  assert.match(TEMPLATES, /onPointerDown=\{onInteractStart\}/);
   assert.match(TEMPLATES, /role="dialog"/);
   assert.match(TEMPLATES, /Full preview/);
   assert.match(TEMPLATES, /Use prompt &amp; ship/);

@@ -9309,7 +9309,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   animation: xv-workspace-template-marquee 42s linear infinite;
 }
 .xv-workspace-template-viewport:hover .xv-workspace-template-track,
-.xv-workspace-template-viewport:focus-within .xv-workspace-template-track { animation-play-state: paused; }
+.xv-workspace-template-viewport:focus-within .xv-workspace-template-track,
+.xv-workspace-template-track.is-paused { animation-play-state: paused; }
 .xv-workspace-template-group {
   display: flex;
   gap: 0.5rem;

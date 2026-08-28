@@ -18,9 +18,11 @@ import { cn } from '@/lib/utils';
 function TemplateRailGroup({
   duplicate = false,
   onSelect,
+  onInteractStart,
 }: {
   duplicate?: boolean;
   onSelect: (template: ShowcaseTemplate) => void;
+  onInteractStart: () => void;
 }) {
   return (
     <div className="xv-workspace-template-group" aria-hidden={duplicate || undefined}>
@@ -31,6 +33,7 @@ function TemplateRailGroup({
           tabIndex={duplicate ? -1 : 0}
           className="xv-workspace-template-card"
           style={{ '--template-accent': template.accent } as React.CSSProperties}
+          onPointerDown={onInteractStart}
           onClick={() => onSelect(template)}
           aria-label={`Explore ${template.name} template`}
         >
@@ -138,6 +141,7 @@ function TemplateDecisionDialog({
 export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
   const { setPrompt } = useTerminalChat();
   const [selectedTemplate, setSelectedTemplate] = useState<ShowcaseTemplate | null>(null);
+  const [railPaused, setRailPaused] = useState(false);
 
   const useTemplate = () => {
     if (!selectedTemplate) return;
@@ -166,10 +170,10 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
         <span>Live templates · select to preview</span>
       </div>
 
-      <div className="xv-workspace-template-viewport">
-        <div className="xv-workspace-template-track">
-          <TemplateRailGroup onSelect={setSelectedTemplate} />
-          <TemplateRailGroup duplicate onSelect={setSelectedTemplate} />
+      <div className="xv-workspace-template-viewport" onPointerLeave={() => setRailPaused(false)}>
+        <div className={cn('xv-workspace-template-track', railPaused && 'is-paused')}>
+          <TemplateRailGroup onSelect={setSelectedTemplate} onInteractStart={() => setRailPaused(true)} />
+          <TemplateRailGroup duplicate onSelect={setSelectedTemplate} onInteractStart={() => setRailPaused(true)} />
         </div>
       </div>
       </section>
