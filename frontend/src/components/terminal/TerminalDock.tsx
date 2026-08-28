@@ -39,6 +39,10 @@ export function TerminalDock() {
   const dashboardFullscreen = isDashboard && terminalFullscreen;
   const { messages, loading, sessionRestoring } = useTerminalChat();
   const emptyWorkspace = hydrated && !sessionRestoring && messages.length === 0 && !loading;
+  // Project edits owns the right pane and its draggable seam. Keep the composer in
+  // the normal bottom dock while that pane is open so the empty-state surface never
+  // sits above (and intercepts) the resize handle.
+  const showStarterExperience = emptyWorkspace && !workspaceOpen;
 
   useEffect(() => {
     if (!isDashboard) return;
@@ -62,7 +66,7 @@ export function TerminalDock() {
         !isDashboard && 'hidden',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito',
-        emptyWorkspace && !incognito && !chatbarHidden && 'xv-terminal-dock--idle'
+        showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle'
       )}
       style={{
         '--sidebar-width': (hydrated ? sidebarOpen : true)
@@ -73,7 +77,7 @@ export function TerminalDock() {
         bottom: keyboardOffset,
       } as React.CSSProperties}
       aria-hidden={!isDashboard}
-      data-workspace-state={emptyWorkspace ? 'empty' : 'conversation'}
+      data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
       data-testid="persistent-terminal-dock"
     >
       {showJumpToLatest && (
@@ -135,7 +139,7 @@ export function TerminalDock() {
                   <RepoContextBar compact />
                 </div>
               ) : null}
-              {emptyWorkspace && !incognito ? (
+              {showStarterExperience && !incognito ? (
                 <div className="xv-workspace-starter-stack">
                   <WorkspaceStarterIdeas />
                   <WorkspaceShowcaseStarts />

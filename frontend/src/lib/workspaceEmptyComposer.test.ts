@@ -11,10 +11,11 @@ const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer and exposes starters', () => {
   assert.match(DOCK, /messages\.length === 0/);
+  assert.match(DOCK, /showStarterExperience = emptyWorkspace && !workspaceOpen/);
   assert.match(DOCK, /xv-terminal-dock--idle/);
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
-  assert.match(DOCK, /emptyWorkspace[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
+  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
   assert.match(CSS, /\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*50%[^}]*bottom:\s*auto !important/);
 });
 
