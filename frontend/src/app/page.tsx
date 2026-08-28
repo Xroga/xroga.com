@@ -121,16 +121,6 @@ export default function HomePage() {
                     </Link>
                   )}
                 </div>
-                {!loggedIn && (
-                  <button
-                    type="button"
-                    aria-label="Get Started"
-                    onClick={() => router.push('/auth/signup')}
-                    className="xv-hc-btn-primary !min-h-[2.4rem] !px-4 !text-[0.7rem]"
-                  >
-                    Get Started
-                  </button>
-                )}
               </div>
             )}
           </div>
