@@ -7,6 +7,7 @@ const DOCK = read('../components/terminal/TerminalDock.tsx');
 const WELCOME = read('../components/dashboard/DashboardWelcome.tsx');
 const IDEAS = read('../components/dashboard/WorkspaceStarterIdeas.tsx');
 const TEMPLATES = read('../components/dashboard/WorkspaceShowcaseStarts.tsx');
+const SIDEBAR = read('../components/layout/Sidebar.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer and exposes starters', () => {
@@ -17,6 +18,13 @@ test('an empty terminal centers the one canonical composer and exposes starters'
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
   assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
   assert.match(CSS, /\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*50%[^}]*bottom:\s*auto !important/);
+});
+
+test('New Terminal closes Project edits before revealing the centered starter', () => {
+  const handler = SIDEBAR.slice(SIDEBAR.indexOf('function handleNewChat()'), SIDEBAR.indexOf('async function handleLogout'));
+  assert.match(handler, /startNewChat\(\)/);
+  assert.match(handler, /useProjectWorkspaceStore\.getState\(\)\.setWorkspaceOpen\(false\)/);
+  assert.match(handler, /xroga-request-new-terminal/);
 });
 
 test('ideas change by category and fill the real composer without auto-sending', () => {
