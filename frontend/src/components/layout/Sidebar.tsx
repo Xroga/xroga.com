@@ -64,6 +64,7 @@ import { ChartColumnIncreasingIcon } from '@/components/icons/animated/ChartColu
 import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -474,6 +475,10 @@ export function Sidebar({ displayName }: SidebarProps) {
   function handleNewChat() {
     // Fresh blank workspace; prior #N is flushed to permanent storage inside startNewChat.
     startNewChat();
+    // A new terminal is a clean composition state, not a blank transcript squeezed
+    // beside the previous project's editor. Closing Project edits also releases its
+    // resize seam before the centered starter composer appears.
+    useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     handleNavClick();
     router.push('/workspace');
     // Clear repo + open chatbar "Select repository" — never auto-pick for the user.
