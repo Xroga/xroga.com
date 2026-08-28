@@ -1,12 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ChevronRight, Infinity } from 'lucide-react';
+import { Infinity } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
-import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 import { claudeSerif, pixelCoding } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
@@ -48,8 +47,8 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
         <div className="xv-welcome-taglines relative mt-3">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            The <span className="xv-tagline-accent">first</span> and{' '}
-            <span className="xv-tagline-accent">last</span> model you will ever need.
+            One prompt. A product you can <span className="xv-tagline-accent">own</span>, evolve, and{' '}
+            <span className="xv-tagline-accent">ship</span>.
           </p>
         </div>
       </div>
@@ -58,22 +57,6 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
         <FirstRunShipChecklist className="mb-3" />
       </div>
 
-      {/* Keep the useful starter templates compact. Recent sessions already live in
-          Projects, so repeating them here pushed the actual terminal down and made
-          stale/degraded work look like the workspace's primary state. */}
-      <div className="relative mx-auto mt-3 max-w-3xl space-y-2">
-        <details className="xv-ws-fold">
-          <summary className="xv-ws-fold__summary">
-            <ChevronRight className="xv-ws-fold__chev h-3.5 w-3.5" aria-hidden="true" />
-            <span className="xv-ws-fold__label">Start from a Xroga build</span>
-            <span className="xv-ws-fold__hint">Templates</span>
-          </summary>
-          <div className="xv-ws-fold__body">
-            <WorkspaceShowcaseStarts />
-          </div>
-        </details>
-
-      </div>
     </div>
   );
 }
