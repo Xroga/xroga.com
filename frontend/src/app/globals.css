@@ -9127,9 +9127,9 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
    mounted, and the normal fixed-bottom geometry takes over as soon as loading or a
    message exists. */
 .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
-  top: 50%;
+  top: 54%;
   bottom: auto !important;
-  transform: translateY(-31%);
+  transform: translateY(-28%);
   z-index: 72;
 }
 .xv-terminal-dock--idle .xv-terminal-dock-inner {
@@ -9380,8 +9380,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 
 @media (max-width: 639px) {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
-    top: 49%;
-    transform: translateY(-29%);
+    top: 54%;
+    transform: translateY(-22%);
   }
   .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; }
   .xv-workspace-idea-head { padding: 0.48rem 0.55rem 0.35rem; }
@@ -9396,7 +9396,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 
 @media (max-height: 680px) {
-  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: 45%; transform: translateY(-20%); }
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: 51%; transform: translateY(-18%); }
   .xv-workspace-template-viewport { padding-block: 0.35rem; }
 }
 
