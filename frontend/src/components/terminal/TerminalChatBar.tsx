@@ -125,41 +125,19 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
-  // Sidebar "New Terminal" → clear repo, open chatbar picker (do NOT auto-select sticky)
+  // Sidebar "New Terminal" → clear repo and focus the clean composer. Repository
+  // selection stays one click away in the context strip; opening that menu here hid
+  // the very ideas and templates a new terminal is meant to reveal.
   useEffect(() => {
     const onNewTerminal = () => {
       if (incognito) return;
       void (async () => {
         const { clearSelectedRepoContext, markFreshTerminalIntent } = await import('@/lib/repoContext');
-        const {
-          notifyOpenRepoPicker,
-          notifyRepoContextCleared,
-        } = await import('@/lib/githubProjectEvents');
+        const { notifyRepoContextCleared } = await import('@/lib/githubProjectEvents');
         markFreshTerminalIntent();
         clearSelectedRepoContext();
         notifyRepoContextCleared();
-        try {
-          const ghStatus = await api.github.status();
-          setGithubConnected(ghStatus.connected);
-          if (!ghStatus.connected) {
-            setRepoGate({
-              open: true,
-              reason: 'not_connected',
-              message:
-                'Connect GitHub first, then select a repository in the chat bar to start #1 terminal.',
-            });
-            return;
-          }
-        } catch {
-          setRepoGate({
-            open: true,
-            reason: 'not_connected',
-            message: 'Connect GitHub first so you can select a repository.',
-          });
-          return;
-        }
-        // Always open picker — never auto-bind last product (multi-product safety)
-        notifyOpenRepoPicker();
+        window.setTimeout(() => textareaRef.current?.focus(), 100);
       })();
     };
     window.addEventListener('xroga-request-new-terminal', onNewTerminal);

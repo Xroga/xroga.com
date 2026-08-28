@@ -8,6 +8,7 @@ const WELCOME = read('../components/dashboard/DashboardWelcome.tsx');
 const IDEAS = read('../components/dashboard/WorkspaceStarterIdeas.tsx');
 const TEMPLATES = read('../components/dashboard/WorkspaceShowcaseStarts.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
+const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer and exposes starters', () => {
@@ -25,6 +26,17 @@ test('New Terminal closes Project edits before revealing the centered starter', 
   assert.match(handler, /startNewChat\(\)/);
   assert.match(handler, /useProjectWorkspaceStore\.getState\(\)\.setWorkspaceOpen\(false\)/);
   assert.match(handler, /xroga-request-new-terminal/);
+});
+
+test('New Terminal leaves repository selection available without opening it over the composer', () => {
+  const start = CHATBAR.indexOf('// Sidebar "New Terminal"');
+  const effectOpen = CHATBAR.indexOf('useEffect(() => {', start);
+  const effect = CHATBAR.slice(start, CHATBAR.indexOf('useEffect(() => {', effectOpen + 20));
+  assert.match(effect, /clearSelectedRepoContext\(\)/);
+  assert.match(effect, /notifyRepoContextCleared\(\)/);
+  assert.match(effect, /textareaRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(effect, /notifyOpenRepoPicker/);
+  assert.doesNotMatch(effect, /setRepoGate/);
 });
 
 test('ideas change by category and fill the real composer without auto-sending', () => {
