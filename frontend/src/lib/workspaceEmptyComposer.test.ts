@@ -17,7 +17,7 @@ test('an empty terminal centers the one canonical composer and exposes starters'
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
   assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
-  assert.match(CSS, /\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*50%[^}]*bottom:\s*auto !important/);
+  assert.match(CSS, /\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*54%[^}]*bottom:\s*auto !important/);
 });
 
 test('New Terminal closes Project edits before revealing the centered starter', () => {
