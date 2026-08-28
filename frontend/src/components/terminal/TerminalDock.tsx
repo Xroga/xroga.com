@@ -15,6 +15,9 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { INCOGNITO_PRIVATE_ROOM_NOTICE } from '@/lib/incognito';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { useTerminalChat } from '@/context/TerminalChatContext';
+import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterIdeas';
+import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 
 export function TerminalDock() {
   const pathname = usePathname();
@@ -34,6 +37,12 @@ export function TerminalDock() {
   const chatbarHidden = hydrated && chatbarHiddenRaw;
   const workspaceOpen = hydrated && workspaceOpenRaw;
   const dashboardFullscreen = isDashboard && terminalFullscreen;
+  const { messages, loading, sessionRestoring } = useTerminalChat();
+  const emptyWorkspace = hydrated && !sessionRestoring && messages.length === 0 && !loading;
+  // Project edits owns the right pane and its draggable seam. Keep the composer in
+  // the normal bottom dock while that pane is open so the empty-state surface never
+  // sits above (and intercepts) the resize handle.
+  const showStarterExperience = emptyWorkspace && !workspaceOpen;
 
   useEffect(() => {
     if (!isDashboard) return;
@@ -56,7 +65,8 @@ export function TerminalDock() {
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity,transform,bottom,z-index] duration-300',
         !isDashboard && 'hidden',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
-        incognito && 'xv-terminal-dock--incognito'
+        incognito && 'xv-terminal-dock--incognito',
+        showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle'
       )}
       style={{
         '--sidebar-width': (hydrated ? sidebarOpen : true)
@@ -67,6 +77,7 @@ export function TerminalDock() {
         bottom: keyboardOffset,
       } as React.CSSProperties}
       aria-hidden={!isDashboard}
+      data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
       data-testid="persistent-terminal-dock"
     >
       {showJumpToLatest && (
@@ -126,6 +137,12 @@ export function TerminalDock() {
               {!incognito ? (
                 <div className="xv-chatbar-context-strip">
                   <RepoContextBar compact />
+                </div>
+              ) : null}
+              {showStarterExperience && !incognito ? (
+                <div className="xv-workspace-starter-stack">
+                  <WorkspaceStarterIdeas />
+                  <WorkspaceShowcaseStarts />
                 </div>
               ) : null}
             </div>

@@ -59,7 +59,7 @@ function WorkspaceTerminal() {
   return (
     <div className="xv-wt-workspace-view">
       <div className="xv-wt-greeting"><span>Good evening,</span><strong>Xroga</strong><b>BLACK HOLE <em>V∞</em></b></div>
-      <p>The <i>first</i> and <i>last</i> model you will ever need.</p>
+      <p>One prompt. A product you can <i>own</i>, evolve, and <i>ship</i>.</p>
       <div className="xv-wt-connect-banner"><Cloud aria-hidden="true" /><strong>Connect Vercel</strong><span>Deploy on your own project and domain.</span><small>3/4</small><i /><i /><i /><button type="button">Connect</button></div>
       <button className="xv-wt-template-row" type="button"><span>›</span><b>Start from a Xroga build</b><small>TEMPLATES</small></button>
       <div className="xv-wt-terminal">

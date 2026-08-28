@@ -6986,7 +6986,7 @@ body.theme-gray .xv-rp-loader {
   .xv-dashboard-welcome .xv-welcome-name-line,
   .xv-dashboard-welcome .xv-welcome-taglines { text-align: left; }
 
-  /* "The first and last model you will ever need." is long for a phone. */
+  /* The ownership tagline still needs a deliberate phone measure. */
   .xv-dashboard-welcome .xv-welcome-tagline-sub {
     font-size: clamp(1rem, 5vw, 1.22rem);
     line-height: 1.45;
@@ -9117,6 +9117,294 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   /* Clears the shell's bottom corner. The context strip under the composer is the
      lowest thing on the screen, and at 14px its text sat on the curve. */
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+/* ---- empty workspace: the composer is the starting point -----------------
+
+   A new terminal has no transcript to protect, so pinning its only action to the
+   bottom made the page feel already in progress. The same canonical composer moves
+   into the working area until the first request is accepted; no duplicate input is
+   mounted, and the normal fixed-bottom geometry takes over as soon as loading or a
+   message exists. */
+.xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
+  top: 50%;
+  bottom: auto !important;
+  transform: translateY(-31%);
+  z-index: 72;
+}
+.xv-terminal-dock--idle .xv-terminal-dock-inner {
+  max-width: 920px;
+}
+.xv-workspace-starter-stack {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.55rem;
+  animation: xv-workspace-starters-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes xv-workspace-starters-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Idea categories and the three currently useful prompts. The category buttons
+   change the set; “New ideas” pages within it. An idea only fills the composer so
+   the user remains in control of the request that is sent. */
+.xv-workspace-starter-ideas {
+  overflow: hidden;
+  border: 1px solid var(--composer-border);
+  border-radius: 14px;
+  background: var(--composer-surface);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.14);
+}
+.xv-workspace-idea-tabs {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  scrollbar-width: none;
+}
+.xv-workspace-idea-tabs::-webkit-scrollbar { display: none; }
+.xv-workspace-idea-tab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 30px;
+  padding: 0.32rem 0.58rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--foreground) 58%, transparent);
+  font-size: 0.65rem;
+  font-weight: 650;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.xv-workspace-idea-tab:hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+.xv-workspace-idea-tab.is-active {
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+.xv-workspace-idea-tab.is-active svg { color: var(--accent); }
+.xv-workspace-idea-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.62rem 0.72rem 0.45rem;
+}
+.xv-workspace-idea-kicker {
+  display: block;
+  margin-bottom: 0.12rem;
+  color: var(--accent);
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.52rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.xv-workspace-idea-head h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.xv-workspace-idea-refresh {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.42rem;
+  border-radius: 0.45rem;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  font-size: 0.6rem;
+  font-weight: 650;
+}
+.xv-workspace-idea-refresh:hover { color: var(--foreground); background: color-mix(in srgb, var(--foreground) 6%, transparent); }
+.xv-workspace-idea-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0 0.55rem 0.55rem;
+}
+.xv-workspace-idea-list > button {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.42rem;
+  min-height: 54px;
+  padding: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--foreground) 3.5%, transparent);
+  color: color-mix(in srgb, var(--foreground) 76%, transparent);
+  text-align: left;
+  font-size: 0.62rem;
+  line-height: 1.38;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+.xv-workspace-idea-list > button:hover,
+.xv-workspace-idea-list > button:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--foreground);
+  outline: none;
+}
+.xv-workspace-idea-list > button > svg { margin-top: 0.08rem; color: var(--accent); }
+.xv-workspace-idea-number {
+  color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: 0.5rem;
+}
+
+/* One continuously moving row of real product screenshots. Two identical groups
+   make the wrap seamless; the duplicate is removed from keyboard navigation. */
+.xv-workspace-templates {
+  overflow: hidden;
+  border: 1px solid var(--composer-border);
+  border-radius: 14px;
+  background: var(--composer-surface);
+}
+.xv-workspace-template-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.48rem 0.65rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+.xv-workspace-template-head > div { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
+.xv-workspace-template-head svg { color: var(--accent); }
+.xv-workspace-template-head h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 0.68rem;
+  font-weight: 680;
+}
+.xv-workspace-template-head > span {
+  color: color-mix(in srgb, var(--foreground) 44%, transparent);
+  font-size: 0.54rem;
+  white-space: nowrap;
+}
+.xv-workspace-template-viewport {
+  position: relative;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+}
+.xv-workspace-template-track {
+  display: flex;
+  width: max-content;
+  animation: xv-workspace-template-marquee 42s linear infinite;
+}
+.xv-workspace-template-viewport:hover .xv-workspace-template-track,
+.xv-workspace-template-viewport:focus-within .xv-workspace-template-track { animation-play-state: paused; }
+.xv-workspace-template-group {
+  display: flex;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+}
+.xv-workspace-template-group[aria-hidden='true'] { pointer-events: none; }
+.xv-workspace-template-card {
+  --template-accent: var(--accent);
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 245px;
+  min-height: 72px;
+  padding: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--template-accent) 24%, color-mix(in srgb, var(--foreground) 8%, transparent));
+  border-radius: 10px;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--template-accent) 8%, transparent), transparent 52%);
+  color: var(--foreground);
+  text-align: left;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.xv-workspace-template-card:hover,
+.xv-workspace-template-card:focus-visible {
+  border-color: color-mix(in srgb, var(--template-accent) 58%, transparent);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--template-accent) 15%, transparent), transparent 68%);
+  outline: none;
+}
+.xv-workspace-template-visual {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--template-accent) 12%, var(--background));
+}
+.xv-workspace-template-visual img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.xv-workspace-template-visual > span {
+  position: absolute;
+  left: 0.25rem;
+  bottom: 0.22rem;
+  padding: 0.1rem 0.26rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--template-accent) 84%, #07101f);
+  color: white;
+  font-size: 0.4rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+.xv-workspace-template-copy { min-width: 0; }
+.xv-workspace-template-copy strong,
+.xv-workspace-template-copy small { display: block; }
+.xv-workspace-template-copy strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 0.62rem;
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xv-workspace-template-copy small {
+  display: -webkit-box;
+  margin-top: 0.16rem;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--foreground) 46%, transparent);
+  font-size: 0.5rem;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.xv-workspace-template-card > svg { color: color-mix(in srgb, var(--template-accent) 72%, var(--foreground)); }
+@keyframes xv-workspace-template-marquee { to { transform: translateX(-50%); } }
+
+@media (max-width: 639px) {
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
+    top: 49%;
+    transform: translateY(-29%);
+  }
+  .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; }
+  .xv-workspace-idea-head { padding: 0.48rem 0.55rem 0.35rem; }
+  .xv-workspace-idea-head h2 { font-size: 0.7rem; }
+  .xv-workspace-idea-refresh span { display: none; }
+  .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0 0.42rem 0.42rem; }
+  .xv-workspace-idea-list > button { min-height: 36px; padding: 0.38rem 0.45rem; font-size: 0.57rem; }
+  .xv-workspace-idea-list > button:nth-child(3) { display: none; }
+  .xv-workspace-template-head { padding: 0.4rem 0.52rem; }
+  .xv-workspace-template-head > span { display: none; }
+  .xv-workspace-template-card { grid-template-columns: 74px minmax(0, 1fr) auto; width: 208px; min-height: 60px; }
+}
+
+@media (max-height: 680px) {
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: 45%; transform: translateY(-20%); }
+  .xv-workspace-template-viewport { padding-block: 0.35rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-workspace-starter-stack { animation: none; }
+  .xv-workspace-template-track { animation: none; }
+  .xv-workspace-template-viewport { overflow-x: auto; mask-image: none; }
+  .xv-workspace-idea-list > button { transition: none; }
 }
 @media (max-width: 639px) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {

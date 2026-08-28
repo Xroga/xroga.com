@@ -44,10 +44,13 @@ test('mobile keeps clear short actions, repository, and branch in one compact ro
   assert.match(mobile, /\.xv-repo-chip--compact \.xv-repo-branch\s*\{[^}]*display:\s*block/);
 });
 
-test('the companion cluster gives Black Hole V a solid responsive chip', () => {
+test('the companion cluster keeps Black Hole V as attached responsive text', () => {
   const chip = rule(COMPANION_CSS, '.xv-companion-blackhole > button {');
-  assert.match(chip, /background:\s*var\(--card\)/);
-  assert.match(chip, /border-radius:\s*999px/);
+  assert.match(chip, /background:\s*transparent/);
+  assert.match(chip, /border:\s*0/);
+  assert.match(chip, /box-shadow:\s*none/);
+  const anchor = rule(COMPANION_CSS, '.xv-companion-composer-anchor {');
+  assert.match(anchor, /bottom:\s*calc\(100% - \.72rem\)/);
   const mobile = COMPANION_CSS.slice(COMPANION_CSS.indexOf('@media (max-width: 640px)'));
   assert.match(mobile, /\.xv-companion--composer \.xv-companion-trigger\s*\{[^}]*width:\s*3\.15rem/);
   assert.match(mobile, /\.xv-companion-blackhole > button\s*\{[^}]*font-size:\s*\.52rem/);

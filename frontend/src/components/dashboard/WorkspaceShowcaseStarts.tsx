@@ -1,64 +1,85 @@
 'use client';
 
-/**
- * Workspace starting point: the six showcase products instead of bare prompt chips.
- *
- * "Customize for me" here loads the composer rather than creating a project and
- * navigating — the user is already in the workspace. Collapsed to a single row of
- * three on small screens so it never dominates the composer.
- */
-
-import { Suspense, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { ShowcaseGrid } from '@/components/showcase/ShowcaseGrid';
+import Image from 'next/image';
+import { Suspense } from 'react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { ShowcaseResumeBridge } from '@/components/showcase/ShowcaseResumeBridge';
-import { SHOWCASE_TEMPLATES } from '@/lib/showcase/registry';
+import {
+  SHOWCASE_TEMPLATES,
+  THUMBNAIL_SIZES,
+  thumbnailFor,
+  type ShowcaseTemplate,
+} from '@/lib/showcase/registry';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
-export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
+function TemplateRailGroup({ duplicate = false }: { duplicate?: boolean }) {
   const { setPrompt } = useTerminalChat();
-  const [expanded, setExpanded] = useState(false);
 
-  const visible = expanded ? SHOWCASE_TEMPLATES : SHOWCASE_TEMPLATES.slice(0, 3);
-  const remaining = SHOWCASE_TEMPLATES.length - visible.length;
+  const chooseTemplate = (template: ShowcaseTemplate) => {
+    setPrompt(template.defaultBuildPrompt);
+    window.setTimeout(() => {
+      const composer = document.querySelector<HTMLTextAreaElement>('textarea[data-terminal-composer]');
+      composer?.focus();
+      composer?.setSelectionRange(template.defaultBuildPrompt.length, template.defaultBuildPrompt.length);
+    }, 20);
+  };
 
   return (
-    <section className={cn('', className)} aria-labelledby="workspace-showcase-heading">
-      {/* useSearchParams needs a boundary; the bridge renders nothing either way. */}
+    <div className="xv-workspace-template-group" aria-hidden={duplicate || undefined}>
+      {SHOWCASE_TEMPLATES.map((template) => (
+        <button
+          key={`${duplicate ? 'duplicate-' : ''}${template.id}`}
+          type="button"
+          tabIndex={duplicate ? -1 : 0}
+          className="xv-workspace-template-card"
+          style={{ '--template-accent': template.accent } as React.CSSProperties}
+          onClick={() => chooseTemplate(template)}
+          aria-label={`Use ${template.name} template`}
+        >
+          <span className="xv-workspace-template-visual">
+            <Image
+              src={thumbnailFor(template)}
+              alt=""
+              width={THUMBNAIL_SIZES.desktop.width}
+              height={THUMBNAIL_SIZES.desktop.height}
+              sizes="220px"
+            />
+            <span>{template.category}</span>
+          </span>
+          <span className="xv-workspace-template-copy">
+            <strong>{template.name}</strong>
+            <small>{template.shortDescription}</small>
+          </span>
+          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Always-visible template rail for an empty workspace. */
+export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
+  return (
+    <section className={cn('xv-workspace-templates', className)} aria-labelledby="workspace-showcase-heading">
       <Suspense fallback={null}>
         <ShowcaseResumeBridge />
       </Suspense>
 
-      <div className="mb-2 flex items-baseline justify-between gap-3">
-        <h2 id="workspace-showcase-heading" className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-          Start from a Xroga build
-        </h2>
-        {remaining > 0 && (
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-          >
-            Show {remaining} more
-            <ChevronDown className="h-3 w-3" aria-hidden="true" />
-          </button>
-        )}
+      <div className="xv-workspace-template-head">
+        <div>
+          <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          <h2 id="workspace-showcase-heading">Start with a proven Xroga build</h2>
+        </div>
+        <span>Live templates · select to prefill</span>
       </div>
 
-      <ShowcaseGrid
-        templates={visible}
-        compact
-        selectable
-        // Phones get a single horizontal row that scrolls, so the starters cost one
-        // row of height instead of three stacked cards above the composer. Every
-        // wider breakpoint keeps the normal grid.
-        columnsClassName="grid-flow-col auto-cols-[minmax(13rem,1fr)] overflow-x-auto scrollbar-hide sm:grid-flow-row sm:auto-cols-auto sm:overflow-visible sm:grid-cols-2 xl:grid-cols-3"
-        onPromptReady={(prompt) => {
-          setPrompt(prompt);
-          document.querySelector<HTMLTextAreaElement>('textarea[data-terminal-composer]')?.focus();
-        }}
-      />
+      <div className="xv-workspace-template-viewport">
+        <div className="xv-workspace-template-track">
+          <TemplateRailGroup />
+          <TemplateRailGroup duplicate />
+        </div>
+      </div>
     </section>
   );
 }
