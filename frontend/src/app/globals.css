@@ -9486,7 +9486,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
      past the bar's edge stops reading as part of it. The two-column list widens this
      from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */
   width: min(360px, 100%);
-  max-height: min(420px, calc(100dvh - 150px));
+  max-height: min(360px, calc(100dvh - 150px));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 7px;

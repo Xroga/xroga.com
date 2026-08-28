@@ -225,7 +225,7 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   const menu = rule('.xv-cba-menu') ?? '';
   assert.match(menu, /position:\s*absolute/);
-  assert.match(menu, /max-height:\s*min\(420px, calc\(100dvh - 150px\)\)/);
+  assert.match(menu, /max-height:\s*min\(360px, calc\(100dvh - 150px\)\)/);
   // Never wider than the bar it belongs to.
   assert.match(menu, /width:\s*min\(360px, 100%\)/);
 });
