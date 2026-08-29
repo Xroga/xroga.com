@@ -1097,21 +1097,48 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
+    --xv-mobile-header-art: url('/workspace/mobile-header/white.webp');
+    position: relative;
+    isolation: isolate;
     display: flex;
     width: 100%;
+    min-height: 58px;
     min-width: 0;
+    overflow: hidden;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    padding: 0.3rem 0.55rem 0.3rem 0.35rem;
-    border-radius: 999px;
-    border: 1px solid var(--card-border);
-    background: color-mix(in srgb, var(--card) 88%, transparent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+    padding: 0.3rem 0.5rem 0.3rem 0.35rem;
+    border-radius: 22px;
+    border: 1px solid color-mix(in srgb, var(--card-border) 82%, var(--foreground) 18%);
+    background: color-mix(in srgb, var(--card) 32%, transparent);
+    box-shadow: 0 14px 36px -22px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.18);
     pointer-events: auto;
   }
+  .xv-mobile-workspace-pill::before,
+  .xv-mobile-workspace-pill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+  }
+  .xv-mobile-workspace-pill::before {
+    background-image: var(--xv-mobile-header-art);
+    background-position: center;
+    background-size: cover;
+    opacity: 0.94;
+    transform: scale(1.015);
+  }
+  .xv-mobile-workspace-pill::after {
+    z-index: -1;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--card) 42%, transparent), color-mix(in srgb, var(--card) 12%, transparent) 54%, color-mix(in srgb, var(--card) 36%, transparent));
+    backdrop-filter: blur(8px) saturate(1.08);
+    -webkit-backdrop-filter: blur(8px) saturate(1.08);
+  }
+  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige.webp'); }
+  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray.webp'); }
+  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black.webp'); }
   .xv-mobile-workspace-logo {
     width: 124px !important;
     max-width: min(124px, 44vw);
@@ -1126,7 +1153,7 @@ body.theme-gray * {
     padding: 0.25rem;
     border: 1px solid color-mix(in srgb, var(--card-border) 88%, var(--accent) 12%);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--card) 91%, transparent);
+    background: color-mix(in srgb, var(--card) 68%, transparent);
     box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.58), inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
     backdrop-filter: blur(18px) saturate(1.15);
     -webkit-backdrop-filter: blur(18px) saturate(1.15);
@@ -9158,7 +9185,11 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-workspace-idea-tabs {
   display: flex;
+  width: fit-content;
+  max-width: 100%;
+  justify-content: safe center;
   gap: 0.3rem;
+  margin-inline: auto;
   overflow-x: auto;
   padding: 0.1rem 0.15rem;
   scrollbar-width: none;
@@ -9271,10 +9302,14 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 /* A catalog row of real product screenshots. It follows the reference's editorial
    rhythm: collection tabs, large previews, plain metadata, and vertical dividers. */
 .xv-workspace-templates {
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
-  border-top: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-  background: color-mix(in srgb, var(--composer-surface) 94%, transparent);
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--foreground) 11%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--composer-surface) 97%, var(--foreground) 1%);
+  box-shadow: 0 14px 38px -30px rgba(0, 0, 0, 0.52);
 }
 .xv-workspace-template-head {
   display: flex;
@@ -9316,6 +9351,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-workspace-template-viewport {
   position: relative;
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: thin;

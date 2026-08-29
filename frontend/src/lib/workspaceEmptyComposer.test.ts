@@ -50,6 +50,7 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(IDEAS, /setPrompt\(idea\)/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\]/);
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
+  assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*fit-content[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
 });
 
 test('templates use a large editorial catalog row and open a preview-or-build decision', () => {
@@ -68,6 +69,8 @@ test('templates use a large editorial catalog row and open a preview-or-build de
   assert.match(TEMPLATES, /selected GitHub repository/);
   assert.match(CSS, /\.xv-workspace-template-catalog\s*\{[^}]*display:\s*flex/);
   assert.match(CSS, /\.xv-workspace-template-card\s*\{[^}]*flex-direction:\s*column[^}]*min-height:\s*230px/);
+  assert.match(CSS, /\.xv-workspace-templates\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*border:\s*1px solid[^}]*border-radius:\s*14px/);
+  assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
 test('the concise idea-to-shipping line replaces the unclear ownership claim', () => {
