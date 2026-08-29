@@ -97,11 +97,35 @@ export function TerminalChatBar() {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
+  const [composerSignal, setComposerSignal] = useState(true);
+  const composerSignalTimer = useRef<number | null>(null);
   const [repoGate, setRepoGate] = useState<{
     open: boolean;
     reason: 'not_connected' | 'no_repo_selected';
     message: string;
   }>({ open: false, reason: 'not_connected', message: '' });
+
+  const triggerComposerSignal = useCallback((duration = 1200) => {
+    setComposerSignal(true);
+    if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
+    composerSignalTimer.current = window.setTimeout(() => {
+      setComposerSignal(false);
+      composerSignalTimer.current = null;
+    }, duration);
+  }, []);
+
+  // A short inner sweep introduces the composer, then yields to its steady border.
+  // It is deliberately transient: the input should not glow forever while idle.
+  useEffect(() => {
+    triggerComposerSignal(2400);
+    return () => {
+      if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
+    };
+  }, [triggerComposerSignal]);
+
+  useEffect(() => {
+    if (uploading) triggerComposerSignal(1800);
+  }, [triggerComposerSignal, uploading]);
 
   useEffect(() => {
     if (loading) setSendState('thinking');
@@ -137,12 +161,13 @@ export function TerminalChatBar() {
         markFreshTerminalIntent();
         clearSelectedRepoContext();
         notifyRepoContextCleared();
+        triggerComposerSignal(2400);
         window.setTimeout(() => textareaRef.current?.focus(), 100);
       })();
     };
     window.addEventListener('xroga-request-new-terminal', onNewTerminal);
     return () => window.removeEventListener('xroga-request-new-terminal', onNewTerminal);
-  }, [incognito]);
+  }, [incognito, triggerComposerSignal]);
 
   useEffect(() => {
     const onCompanionAsk = (event: Event) => {
@@ -329,8 +354,9 @@ export function TerminalChatBar() {
       toast.error('Supported: images, PDF, TXT, MD, CSV, JSON, DOCX');
       return;
     }
+    triggerComposerSignal(1800);
     setFiles((prev) => [...prev, ...incoming].slice(0, 4));
-  }, []);
+  }, [triggerComposerSignal]);
 
   const handlePaste = useCallback(
     (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -426,12 +452,14 @@ export function TerminalChatBar() {
           className={cn(
             'relative',
             incognito && 'xv-chatbar-incognito',
+            composerSignal && !incognito && 'xv-chatbar--inner-active',
             (dragOver || uploading || files.length > 0) && !incognito && 'xv-chatbar--upload-active'
           )}
           onDragOver={(e: React.DragEvent) => {
             if (incognito) return;
             e.preventDefault();
             setDragOver(true);
+            triggerComposerSignal(1500);
           }}
           onDragLeave={() => !incognito && setDragOver(false)}
           onDrop={(e: React.DragEvent) => {
@@ -517,6 +545,7 @@ export function TerminalChatBar() {
                   const next = e.target.value;
                   setDraft(next);
                   draftRef.current = next;
+                  triggerComposerSignal(900);
                 }}
                 onFocus={() => dispatchCompanionEvent({ type: 'composer_focused', source: 'runtime' })}
                 onCompositionStart={() => {

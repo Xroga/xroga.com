@@ -230,6 +230,13 @@ test('opening the menu overlays the terminal instead of resizing anything', () =
   assert.match(menu, /width:\s*min\(360px, 100%\)/);
 });
 
+test('mobile composer panels are bounded sheets with every row inside the viewport', () => {
+  assert.match(
+    CSS,
+    /@media \(max-width: 639px\) \{[\s\S]*?\.xv-cba-menu\s*\{[^}]*position:\s*fixed[^}]*inset:\s*auto 8px calc\(12px \+ env\(safe-area-inset-bottom\)\) 8px[^}]*max-height:\s*calc\(100dvh - 24px - env\(safe-area-inset-bottom\)\)/,
+  );
+});
+
 test('Integrations is a menu row, and the detached pill is gone', () => {
   assert.match(MENU, /<b>Integrations<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);

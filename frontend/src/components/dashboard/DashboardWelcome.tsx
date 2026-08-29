@@ -1,6 +1,5 @@
 'use client';
 
-import { Infinity } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
 import { useLocale } from '@/components/providers/LanguageProvider';
@@ -42,18 +41,9 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
         </p>
 
-        <div className="xv-blackhole-identity xv-blackhole-identity--compact relative" aria-label="Black Hole V Infinity">
-          <span className="xv-blackhole-identity__label">BLACK HOLE</span>
-          <span className="xv-blackhole-identity__mark">
-            <span className="xv-blackhole-identity__v">V</span>
-            <Infinity className="xv-blackhole-identity__inf" strokeWidth={2.75} aria-hidden />
-          </span>
-        </div>
-
         <div className="xv-welcome-taglines relative mt-3">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            One prompt. <span className="xv-tagline-accent">Yours</span> to{' '}
-            <span className="xv-tagline-accent">ship</span>.
+            Your idea. <span className="xv-tagline-accent">Built to ship.</span>
           </p>
         </div>
       </div>

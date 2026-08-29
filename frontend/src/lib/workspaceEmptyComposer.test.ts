@@ -52,34 +52,42 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
 });
 
-test('templates are visible in a moving one-row rail and open a preview-or-build decision', () => {
+test('templates use a large editorial catalog row and open a preview-or-build decision', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
-  assert.match(TEMPLATES, /xv-workspace-template-track/);
-  assert.match(TEMPLATES, /<TemplateRailGroup onSelect=\{setSelectedTemplate\} onInteractStart=/);
-  assert.match(TEMPLATES, /<TemplateRailGroup duplicate onSelect=\{setSelectedTemplate\} onInteractStart=/);
-  assert.match(TEMPLATES, /onPointerDown=\{onInteractStart\}/);
+  assert.match(TEMPLATES, /xv-workspace-template-catalog/);
+  assert.match(TEMPLATES, /<TemplateCatalog onSelect=\{setSelectedTemplate\}/);
+  assert.match(TEMPLATES, /Recent builds/);
+  assert.match(TEMPLATES, /Community templates/);
+  assert.match(TEMPLATES, /Xroga templates/);
+  assert.match(TEMPLATES, /Browse all/);
+  assert.doesNotMatch(TEMPLATES, /duplicate|template-marquee|railPaused/);
   assert.match(TEMPLATES, /role="dialog"/);
   assert.match(TEMPLATES, /Full preview/);
   assert.match(TEMPLATES, /Use prompt &amp; ship/);
   assert.match(TEMPLATES, /setPrompt\(prompt\)/);
   assert.match(TEMPLATES, /selected GitHub repository/);
-  assert.match(CSS, /\.xv-workspace-template-track\s*\{[^}]*display:\s*flex[^}]*animation:\s*xv-workspace-template-marquee/);
+  assert.match(CSS, /\.xv-workspace-template-catalog\s*\{[^}]*display:\s*flex/);
+  assert.match(CSS, /\.xv-workspace-template-card\s*\{[^}]*flex-direction:\s*column[^}]*min-height:\s*230px/);
 });
 
-test('the new ownership-and-shipping line replaces the retired model claim', () => {
-  assert.match(WELCOME, /One prompt\./);
-  assert.match(WELCOME, />Yours</);
-  assert.match(WELCOME, />ship</);
+test('the concise idea-to-shipping line replaces the unclear ownership claim', () => {
+  assert.match(WELCOME, /Your idea\./);
+  assert.match(WELCOME, />Built to ship\.</);
+  assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
+  assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);
 });
 
-test('fresh, hovered, and uploading chatbars share the visible outside-light treatment', () => {
-  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid::before\s*\{[^}]*inset:\s*-9px[^}]*linear-gradient/);
-  assert.match(CSS, /\.xv-terminal-dock--idle \.xv-chatbar-solid::before/);
-  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid:hover::before/);
-  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid\.xv-chatbar--upload-active::before/);
-  assert.match(CSS, /animation:\s*xv-chatbar-ambient-halo 3\.6s/);
-  assert.match(CHATBAR, /files\.length > 0[\s\S]*xv-chatbar--upload-active/);
+test('the composer uses a short inner signal for entry, typing, and uploads, never hover', () => {
+  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid::before\s*\{[^}]*inset:\s*0[^}]*padding:\s*2px[^}]*mask-composite:\s*exclude/);
+  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid\.xv-chatbar--inner-active::before/);
+  assert.match(CSS, /animation:\s*xv-chatbar-inner-signal 1\.5s/);
+  assert.doesNotMatch(CSS, /\.xv-chatbar-solid:hover::before/);
+  assert.doesNotMatch(CSS, /xv-chatbar-ambient-halo/);
+  assert.match(CHATBAR, /triggerComposerSignal\(2400\)/);
+  assert.match(CHATBAR, /triggerComposerSignal\(900\)/);
+  assert.match(CHATBAR, /triggerComposerSignal\(1800\)/);
+  assert.match(CHATBAR, /composerSignal[^\n]*xv-chatbar--inner-active/);
 });
 
 test('the local-time greeting cannot disagree during hydration', () => {

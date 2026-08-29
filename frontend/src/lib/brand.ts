@@ -9,7 +9,7 @@ export const XROGA_MODEL_FULL = `${XROGA_BRAND} ${XROGA_MODEL_NAME} ${XROGA_MODE
 export const XROGA_MODEL_PRONUNCIATION = 'Xroga Black Hole Version Infinity';
 
 export const XROGA_MODEL_TAGLINE = 'Others count up. We count forever.';
-export const XROGA_MODEL_FIRST_LAST = 'One prompt. Yours to ship.';
+export const XROGA_MODEL_FIRST_LAST = 'Your idea. Built to ship.';
 
 export const XROGA_MODEL_SUBTEXT = 'Only Allah is Eternal | We are just seekers';
 
