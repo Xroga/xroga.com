@@ -1,23 +1,23 @@
 'use client';
 
 import {
-  AppWindow,
   Boxes,
-  Globe2,
-  Lightbulb,
-  Smartphone,
-  Workflow,
   X,
-  type LucideIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
+import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
+import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
+import { EarthIcon } from '@/components/icons/animated/EarthIcon';
+import { AirplayIcon } from '@/components/icons/animated/AirplayIcon';
+import { TabletIcon } from '@/components/icons/animated/TabletIcon';
+import { CpuIcon } from '@/components/icons/animated/CpuIcon';
 
 type IdeaGroup = {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: AnimatedIconComponent;
   ideas: readonly string[];
 };
 
@@ -25,7 +25,7 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'suggested',
     label: 'Suggestions',
-    icon: Lightbulb,
+    icon: LightbulbIcon,
     ideas: [
       'Build a polished SaaS landing page with pricing, FAQ, and a working waitlist.',
       'Turn my product brief into a responsive website and prepare it for deployment.',
@@ -38,7 +38,7 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'website',
     label: 'Websites',
-    icon: Globe2,
+    icon: EarthIcon,
     ideas: [
       'Build a premium agency website with case studies, services, and a contact flow.',
       'Create a fast editorial portfolio with project pages and a compact mobile layout.',
@@ -51,7 +51,7 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'saas',
     label: 'SaaS apps',
-    icon: AppWindow,
+    icon: AirplayIcon,
     ideas: [
       'Build a multi-tenant SaaS dashboard with onboarding, billing, and team roles.',
       'Create an AI research workspace with sources, saved sessions, and export tools.',
@@ -64,7 +64,7 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'mobile',
     label: 'Mobile',
-    icon: Smartphone,
+    icon: TabletIcon,
     ideas: [
       'Design a mobile-first personal finance app with budgets and spending insights.',
       'Build a habit tracker with streaks, reminders, and an accessible dark mode.',
@@ -77,7 +77,7 @@ const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'automation',
     label: 'Automation',
-    icon: Workflow,
+    icon: CpuIcon,
     ideas: [
       'Create a workflow that triages support requests and drafts accurate responses.',
       'Build an approval pipeline that routes submissions, reminders, and status updates.',
@@ -147,7 +147,7 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
               onClick={() => chooseGroup(group.id)}
               title={selected ? `Show more ${group.label.toLowerCase()} ideas` : `Show ${group.label.toLowerCase()} ideas`}
             >
-              <Icon className="h-3.5 w-3.5" aria-hidden />
+              <AnimatedIcon icon={Icon} size={14} intro={false} />
               <span>{group.label}</span>
             </button>
           );

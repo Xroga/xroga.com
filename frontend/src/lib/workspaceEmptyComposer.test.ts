@@ -54,11 +54,16 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(IDEAS, /setPrompt\(idea\)/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\][\s\S]*setGroupId\(null\)/);
   assert.match(IDEAS, /aria-label="Hide ideas"/);
+  for (const icon of ['LightbulbIcon', 'EarthIcon', 'AirplayIcon', 'TabletIcon', 'CpuIcon']) {
+    assert.match(IDEAS, new RegExp(`icon: ${icon}`), `starter tabs lost ${icon}`);
+  }
+  assert.match(IDEAS, /<AnimatedIcon icon=\{Icon\}/);
+  assert.doesNotMatch(IDEAS, /icon: (?:Lightbulb|Globe2|AppWindow|Smartphone|Workflow),/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\]/);
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
   assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
-  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > svg\s*\{[^}]*display:\s*block/);
+  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
 });
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {

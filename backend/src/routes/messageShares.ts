@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ensureMessageSharesSchema } from '../db/ensureMessageSharesSchema.js';
-import { authMiddleware, type AuthRequest } from '../middleware/auth.js';
+import { authMiddleware, verifyAccessToken, type AuthRequest } from '../middleware/auth.js';
 import { cleanSharedText } from '../lib/messageShareText.js';
 
 const router = Router();
@@ -18,12 +18,21 @@ const createSchema = z.object({
 
 type ShareRow = {
   token: string;
+  owner_id: string;
   visibility: 'private' | 'public';
   scope: 'response' | 'exchange';
   prompt: string;
   response: string;
   created_at: string;
 };
+
+export function canReadMessageShare(
+  visibility: ShareRow['visibility'],
+  ownerId: string,
+  viewerId?: string,
+): boolean {
+  return visibility === 'public' || Boolean(viewerId && viewerId === ownerId);
+}
 
 function toShare(row: ShareRow) {
   return {
@@ -67,7 +76,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
         prompt,
         response,
       })
-      .select('token, visibility, scope, prompt, response, created_at')
+      .select('token, owner_id, visibility, scope, prompt, response, created_at')
       .single();
     if (error) throw error;
     res.status(201).json({ share: toShare(data as ShareRow) });
@@ -76,9 +85,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
-// Possession of a cryptographically random private token grants read access. A private
-// page is unlisted/noindex; a public page may be indexed and sent to social networks.
-router.get('/:token', async (req, res) => {
+// Public shares are bearer-by-link. Private shares are owner-only: the opaque token
+// locates the row, but never grants access without the owner's verified session.
+router.get('/:token', async (req: AuthRequest, res) => {
   const parsedToken = tokenSchema.safeParse(req.params.token);
   if (!parsedToken.success) {
     res.status(404).json({ error: 'Share not found' });
@@ -87,7 +96,7 @@ router.get('/:token', async (req, res) => {
   try {
     const { data, error } = await getSupabaseAdmin()
       .from('message_shares')
-      .select('token, visibility, scope, prompt, response, created_at')
+      .select('token, owner_id, visibility, scope, prompt, response, created_at')
       .eq('token', parsedToken.data)
       .is('revoked_at', null)
       .maybeSingle();
@@ -96,7 +105,27 @@ router.get('/:token', async (req, res) => {
       res.status(404).json({ error: 'Share not found' });
       return;
     }
-    const share = toShare(data as ShareRow);
+    const row = data as ShareRow;
+    let viewerId: string | undefined;
+    if (row.visibility === 'private') {
+      const authorization = req.headers.authorization;
+      if (authorization?.startsWith('Bearer ')) {
+        try {
+          viewerId = (await verifyAccessToken(authorization.slice(7))).userId;
+        } catch {
+          viewerId = undefined;
+        }
+      }
+    }
+    if (!canReadMessageShare(row.visibility, row.owner_id, viewerId)) {
+      res.setHeader('Cache-Control', 'private, no-store');
+      res.status(403).json({
+        error: 'This share is private to its owner.',
+        code: 'PRIVATE_SHARE',
+      });
+      return;
+    }
+    const share = toShare(row);
     res.setHeader(
       'Cache-Control',
       share.visibility === 'public' ? 'public, max-age=60' : 'private, no-store',

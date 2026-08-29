@@ -9465,7 +9465,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   border-color: transparent;
   background: transparent;
 }
-.xv-workspace-idea-tab.is-active svg { color: var(--accent); }
+.xv-workspace-idea-tab.is-active .xv-animated-icon-host { color: var(--accent); }
 .xv-workspace-idea-close {
   display: inline-grid;
   flex: none;
@@ -9729,7 +9729,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; padding-bottom: 0.5rem; }
   .xv-workspace-idea-tabs { gap: 0.12rem; }
   .xv-workspace-idea-tab { min-height: 30px; padding: 0.3rem 0.38rem; font-size: 0.54rem; }
-  .xv-workspace-idea-tab > svg { display: block; width: 12px; height: 12px; flex: none; }
+  .xv-workspace-idea-tab > .xv-animated-icon-host { display: block; width: 12px; height: 12px; flex: none; }
+  .xv-workspace-idea-tab .xv-animated-icon { width: 12px; height: 12px; }
   .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.35rem 0.1rem 0; }
   .xv-workspace-idea-list > button { min-height: 36px; padding: 0.38rem 0.45rem; font-size: 0.57rem; }
   .xv-workspace-idea-list > button:nth-child(3) { display: none; }

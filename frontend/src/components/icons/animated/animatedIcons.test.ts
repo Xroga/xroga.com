@@ -75,6 +75,12 @@ const ICONS = [
   'DownvoteIcon',
   'ShareIcon',
   'Trash2Icon',
+  'LightbulbIcon',
+  'EarthIcon',
+  'AirplayIcon',
+  'TabletIcon',
+  'CpuIcon',
+  'GlobeLockIcon',
   'NewTerminalIcon',
 ];
 

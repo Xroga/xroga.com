@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, Globe2, Link2, LoaderCircle, LockKeyhole, X } from 'lucide-react';
+import { Check, Copy, Link2, LoaderCircle, X } from 'lucide-react';
 import { siFacebook, siReddit, siWhatsapp, siX } from 'simple-icons';
 import { api, type MessageShareRecord } from '@/lib/api';
 import {
@@ -15,6 +15,9 @@ import {
 } from '@/lib/messageShare';
 import { cn } from '@/lib/utils';
 import { ShareIcon } from '@/components/icons/animated/ShareIcon';
+import { GlobeLockIcon } from '@/components/icons/animated/GlobeLockIcon';
+import { EarthIcon } from '@/components/icons/animated/EarthIcon';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import toast from 'react-hot-toast';
 
 type BrandDefinition = { title: string; path: string; hex?: string };
@@ -173,17 +176,19 @@ export function MessageShareModal({ open, onClose, prompt = '', response }: Mess
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" aria-pressed={visibility === 'private'} onClick={() => chooseVisibility('private')} className={cn('flex items-center gap-2 rounded-xl border p-2.5 text-left transition', visibility === 'private' ? 'border-[var(--accent)] bg-[var(--accent-dim)]' : 'border-[var(--border-subtle)] bg-[var(--surface-base)]')}>
-              <LockKeyhole className="h-4 w-4 shrink-0" />
-              <span><span className="block text-xs font-semibold">Private link</span><span className="block text-[10px] text-[var(--text-muted)]">Unlisted and noindex</span></span>
+            <button type="button" aria-pressed={visibility === 'private'} onClick={() => chooseVisibility('private')} className={cn('flex items-center gap-2.5 rounded-xl p-2.5 text-left transition', visibility === 'private' ? 'bg-[var(--accent-dim)] text-[var(--text-primary)] shadow-sm' : 'bg-[var(--surface-inset)] text-[var(--text-secondary)] hover:bg-[var(--surface-base)]')}>
+              <AnimatedIcon icon={GlobeLockIcon} size={16} intro={false} />
+              <span className="min-w-0 flex-1"><span className="block text-xs font-semibold">Private</span><span className="block truncate text-[10px] text-[var(--text-muted)]">Only your account</span></span>
+              <span aria-hidden="true" className={cn('h-1.5 w-1.5 rounded-full', visibility === 'private' ? 'bg-[var(--accent)]' : 'bg-transparent')} />
             </button>
-            <button type="button" aria-pressed={visibility === 'public'} onClick={() => chooseVisibility('public')} className={cn('flex items-center gap-2 rounded-xl border p-2.5 text-left transition', visibility === 'public' ? 'border-[var(--accent)] bg-[var(--accent-dim)]' : 'border-[var(--border-subtle)] bg-[var(--surface-base)]')}>
-              <Globe2 className="h-4 w-4 shrink-0" />
-              <span><span className="block text-xs font-semibold">Public link</span><span className="block text-[10px] text-[var(--text-muted)]">Shareable and indexable</span></span>
+            <button type="button" aria-pressed={visibility === 'public'} onClick={() => chooseVisibility('public')} className={cn('flex items-center gap-2.5 rounded-xl p-2.5 text-left transition', visibility === 'public' ? 'bg-[var(--accent-dim)] text-[var(--text-primary)] shadow-sm' : 'bg-[var(--surface-inset)] text-[var(--text-secondary)] hover:bg-[var(--surface-base)]')}>
+              <AnimatedIcon icon={EarthIcon} size={16} intro={false} />
+              <span className="min-w-0 flex-1"><span className="block text-xs font-semibold">Public</span><span className="block truncate text-[10px] text-[var(--text-muted)]">Anyone with the link</span></span>
+              <span aria-hidden="true" className={cn('h-1.5 w-1.5 rounded-full', visibility === 'public' ? 'bg-[var(--accent)]' : 'bg-transparent')} />
             </button>
           </div>
 
-          <div className="max-h-32 overflow-y-auto rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-base)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">
+          <div className="max-h-32 overflow-y-auto rounded-xl bg-[var(--surface-inset)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">
             {scope === 'exchange' && <><span className="mb-1 block text-[9px] font-semibold uppercase tracking-[.14em] text-[var(--text-muted)]">Prompt</span><p className="whitespace-pre-wrap">{cleanPrompt}</p><div className="my-2 h-px bg-[var(--border-subtle)]" /></>}
             <span className="mb-1 block text-[9px] font-semibold uppercase tracking-[.14em] text-[var(--text-muted)]">Response</span>
             <p className="whitespace-pre-wrap">{cleanResponse}</p>
@@ -194,27 +199,37 @@ export function MessageShareModal({ open, onClose, prompt = '', response }: Mess
           {!created ? (
             <button type="button" disabled={busy || !cleanResponse} onClick={() => void createLink()} className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-xs font-semibold text-white transition hover:opacity-90 disabled:opacity-50">
               {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
-              Create {visibility} link
+              {visibility === 'private' ? 'Create owner-only link' : 'Create public link'}
             </button>
           ) : (
             <div className="space-y-2.5">
-              <div className="flex items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-base)] p-1.5">
+              <div className="flex items-center gap-1.5 rounded-xl bg-[var(--surface-inset)] p-1.5">
                 <span className="min-w-0 flex-1 truncate px-2 text-[11px] text-[var(--text-secondary)]">{url}</span>
                 <button type="button" onClick={() => void copyLink()} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--surface-raised)] text-[var(--text-primary)]" aria-label="Copy share link">{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}</button>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1">
-                  {SOCIALS.map(({ id, icon }) => (
-                    <button key={id} type="button" title={`Share on ${icon.title}`} aria-label={`Share on ${icon.title}`} onClick={() => window.open(socialShareUrl(id, url), '_blank', 'noopener,noreferrer')} className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--border-subtle)] text-[var(--text-secondary)] transition hover:-translate-y-0.5 hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)]">
-                      <BrandIcon icon={icon} />
-                    </button>
-                  ))}
+              {created.visibility === 'private' ? (
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[var(--surface-inset)] px-3 py-2">
+                  <div className="flex min-w-0 items-center gap-2 text-[11px] text-[var(--text-secondary)]">
+                    <AnimatedIcon icon={GlobeLockIcon} size={15} intro={false} />
+                    <span className="truncate">Only your signed-in Xroga account can open it.</span>
+                  </div>
+                  <button type="button" disabled={busy} onClick={() => void revokeLink()} className="h-8 shrink-0 rounded-lg bg-red-500/10 px-2.5 text-[10px] font-semibold text-red-500">Revoke</button>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <button type="button" disabled={busy} onClick={() => void revokeLink()} className="h-9 rounded-xl px-2.5 text-[11px] font-medium text-red-500 hover:bg-red-500/10">Revoke</button>
-                  <button type="button" onClick={() => void nativeShare()} className="h-9 rounded-xl bg-[var(--text-primary)] px-3 text-[11px] font-semibold text-[var(--surface-base)]">Share</button>
+              ) : (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1">
+                    {SOCIALS.map(({ id, icon }) => (
+                      <button key={id} type="button" title={`Share on ${icon.title}`} aria-label={`Share on ${icon.title}`} onClick={() => window.open(socialShareUrl(id, url), '_blank', 'noopener,noreferrer')} className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--surface-inset)] text-[var(--text-secondary)] transition hover:-translate-y-0.5 hover:bg-[var(--surface-base)] hover:text-[var(--text-primary)]">
+                        <BrandIcon icon={icon} />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button type="button" disabled={busy} onClick={() => void revokeLink()} className="h-9 rounded-xl bg-red-500/10 px-2.5 text-[11px] font-medium text-red-500">Revoke</button>
+                    <button type="button" onClick={() => void nativeShare()} className="h-9 rounded-xl bg-[var(--accent)] px-3 text-[11px] font-semibold text-white">Share</button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
