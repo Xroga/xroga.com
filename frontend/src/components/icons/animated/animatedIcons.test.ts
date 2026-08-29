@@ -443,6 +443,7 @@ test('the composer, the skin picker and the repo area take their icons', () => {
   const SKIN = read('../../terminal/TerminalSkinPicker.tsx');
   assert.match(SKIN, /icon=\{PaletteIcon\}/, 'the skin picker lost the palette');
   assert.ok(!/<Palette\b/.test(SKIN), 'the static palette is back');
+  assert.match(SKIN, /createPortal\(/, 'the skin menu is trapped behind the workspace again');
 
   const CARD = read('../../projects/GitHubProjectCard.tsx');
   assert.match(CARD, /icon=\{ExternalLinkIcon\}/, 'Open on GitHub lost its arrow');
@@ -497,6 +498,8 @@ test('the homepage composer reuses the workspace controls and animated provider 
   assert.match(HOME_COMPOSER, /<ChatBarActionsMenu\b/, 'the homepage lost the workspace action control');
   assert.match(HOME_COMPOSER, /<ChatBarMicrophoneButton\b/, 'the homepage lost workspace voice input');
   assert.match(HOME_COMPOSER, /<ChatBarSendButton\b/, 'the homepage lost the workspace send control');
+  assert.match(HOME_COMPOSER, /triggerComposerSignal\(900\)/, 'typing no longer triggers the workspace signal');
+  assert.match(HOME_COMPOSER, /composerSignal && 'xv-chatbar--inner-active'/, 'the homepage signal is not connected to its shell');
   for (const provider of ['github', 'vercel', 'supabase']) {
     assert.match(
       HOME_COMPOSER,

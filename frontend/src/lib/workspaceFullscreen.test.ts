@@ -112,9 +112,9 @@ test('the plus menu lays out in two columns', () => {
   const block = code.slice(media, media + 500);
   assert.match(block, /grid-template-columns:\s*1fr 1fr/, 'two columns from sm up');
   // A separator confined to one column divides half a list, which is not what the
-  // layout means; the long Integrations row wraps to three lines in half a row.
+  // layout means. Integrations now pairs with file upload at the top of the grid.
   assert.match(block, /\.xv-cba-grid > \.xv-cba-sep[\s\S]{0,120}grid-column:\s*1 \/ -1/, 'separators span the grid');
-  assert.match(MENU, /xv-cba-item xv-cba-item--wide/, 'the long row should span both columns');
+  assert.ok(MENU.indexOf('<b>Integrations</b>') < MENU.indexOf('<b>Slash commands</b>'), 'Integrations should sit beside file upload');
 
   // One column is the fallback, not the default the media query overrides.
   const base = code.slice(at, code.indexOf('}', at));

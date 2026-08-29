@@ -67,8 +67,9 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
   assert.match(CHATBAR, /new ResizeObserver\(sync\)/);
 });
 
-test('the desktop companion remains visible inside short-screen containment', () => {
-  assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle \.xv-companion-composer-anchor\s*\{[^}]*bottom:\s*calc\(100% - 3\.25rem\)/);
+test('the desktop companion stays attached outside the canonical composer', () => {
+  assert.doesNotMatch(CSS, /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/);
+  assert.match(DOCK, /<CompanionComposerAnchor \/>[\s\S]*?<TerminalChatBar \/>/);
 });
 
 test('repository status is brief and is not replayed during passive restore', () => {

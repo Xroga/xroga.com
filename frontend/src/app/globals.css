@@ -7002,6 +7002,19 @@ body.theme-gray .xv-rp-loader {
 .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.55rem; }
 .xv-dashboard-welcome .xv-welcome-hero { gap: 0; }
 
+/* Greeting content belongs directly on the terminal skin. Keep every wrapper clear
+   so the greeting, display name and tagline never become a card within the pane. */
+.xv-dashboard-welcome,
+.xv-dashboard-welcome .xv-welcome-hero,
+.xv-dashboard-welcome .xv-welcome-greeting,
+.xv-dashboard-welcome .xv-welcome-name-line,
+.xv-dashboard-welcome .xv-welcome-taglines {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
 /* The checklist sat in its own generous block; pull it closer to the composer. */
 .xv-dashboard-welcome .xv-first-run-checklist { margin-bottom: 0.85rem; }
 
@@ -7317,6 +7330,11 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   backdrop-filter: blur(22px) saturate(130%);
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--accent) 55%, transparent) transparent;
+}
+.xv-skin-menu--portal {
+  right: auto;
+  bottom: auto;
+  z-index: 620;
 }
 .xv-skin-menu::-webkit-scrollbar { width: 7px; }
 .xv-skin-menu::-webkit-scrollbar-track { margin: 9px 0; background: transparent; }
@@ -9186,9 +9204,6 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)::-webkit-scrollbar { display: none; }
   .xv-terminal-dock--idle .xv-terminal-dock-inner {
     max-height: 100%;
-  }
-  .xv-terminal-dock--idle .xv-companion-composer-anchor {
-    bottom: calc(100% - 3.25rem);
   }
 }
 .xv-workspace-starter-stack {

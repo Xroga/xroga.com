@@ -269,6 +269,14 @@ test('every existing menu action is still present', () => {
   assert.match(MENU, /document\.addEventListener\('pointerdown', onPointerDown\)/);
 });
 
+test('Integrations follows file upload in the composer action menu', () => {
+  const files = MENU.indexOf('<b>Add files or photos</b>');
+  const integrations = MENU.indexOf('<b>Integrations</b>');
+  const commands = MENU.indexOf('<b>Slash commands</b>');
+  assert.ok(files >= 0 && integrations > files, 'Integrations is not after file upload');
+  assert.ok(commands > integrations, 'Integrations fell back to the end of the menu');
+});
+
 // ---------------------------------------------------------------------------
 // Quieter surfaces
 // ---------------------------------------------------------------------------

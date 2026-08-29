@@ -101,10 +101,30 @@ export function HomepageChatBar({
   const [focused, setFocused] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendState, setSendState] = useState<SendButtonState>('idle');
+  const [composerSignal, setComposerSignal] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
+  const composerSignalTimer = useRef<number | null>(null);
   const router = useRouter();
   const typewriter = useTypewriterPlaceholder(!prompt && !focused, placeholders);
+
+  const triggerComposerSignal = useCallback((duration = 1200) => {
+    setComposerSignal(true);
+    if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
+    composerSignalTimer.current = window.setTimeout(() => {
+      setComposerSignal(false);
+      composerSignalTimer.current = null;
+    }, duration);
+  }, []);
+
+  // Match the workspace composer: one introductory sweep, then a brief sweep for
+  // real input. Focus and hover alone never leave a persistent coloured outline.
+  useEffect(() => {
+    triggerComposerSignal(2400);
+    return () => {
+      if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
+    };
+  }, [triggerComposerSignal]);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -117,12 +137,15 @@ export function HomepageChatBar({
     if (!listenForAsk) return;
     const onCompanionAsk = (event: Event) => {
       const text = (event as CustomEvent<{ text?: string }>).detail?.text?.trim() ?? '';
-      if (text) setPrompt(text);
+      if (text) {
+        setPrompt(text);
+        triggerComposerSignal(1200);
+      }
       window.setTimeout(() => textareaRef.current?.focus(), 50);
     };
     window.addEventListener('xroga:companion-ask', onCompanionAsk);
     return () => window.removeEventListener('xroga:companion-ask', onCompanionAsk);
-  }, [listenForAsk]);
+  }, [listenForAsk, triggerComposerSignal]);
 
   const handleSubmit = useCallback(
     async (e?: React.FormEvent) => {
@@ -150,6 +173,7 @@ export function HomepageChatBar({
           className={cn(
             'xv-hc-prompt-shell',
             focused && 'is-focused',
+            composerSignal && 'xv-chatbar--inner-active',
             sending && 'is-sending'
           )}
         >
@@ -158,7 +182,10 @@ export function HomepageChatBar({
               <textarea
                 ref={textareaRef}
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={(e) => {
+                  setPrompt(e.target.value);
+                  triggerComposerSignal(900);
+                }}
                 onCompositionStart={() => {
                   composingRef.current = true;
                 }}
@@ -201,6 +228,7 @@ export function HomepageChatBar({
               disabled={sending}
               onInsert={(text) => {
                 setPrompt((current) => (current.trim() ? `${text}${current}` : text));
+                triggerComposerSignal(1200);
                 window.setTimeout(() => textareaRef.current?.focus(), 20);
               }}
             />
@@ -231,6 +259,7 @@ export function HomepageChatBar({
               surface="homepage"
               onTranscript={(text) => {
                 setPrompt((current) => (current.trim() ? `${current.trim()} ${text}` : text));
+                triggerComposerSignal(1200);
                 window.setTimeout(() => textareaRef.current?.focus(), 20);
               }}
             />
@@ -260,6 +289,7 @@ export function HomepageChatBar({
                 disabled={sending}
                 onClick={() => {
                   setPrompt(suggestion);
+                  triggerComposerSignal(1200);
                   window.setTimeout(() => textareaRef.current?.focus(), 20);
                 }}
               >

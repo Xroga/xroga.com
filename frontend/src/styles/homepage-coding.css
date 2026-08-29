@@ -1741,6 +1741,44 @@
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.xv-home-coding .xv-hc-prompt-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(56, 189, 248, 0.1) 0%,
+    rgba(56, 189, 248, 0.92) 22%,
+    rgba(99, 102, 241, 0.88) 43%,
+    rgba(196, 181, 253, 0.82) 60%,
+    rgba(251, 191, 36, 0.48) 74%,
+    rgba(59, 130, 246, 0.9) 92%,
+    rgba(56, 189, 248, 0.1) 100%
+  );
+  background-size: 240% 100%;
+  background-position: 0% 50%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+}
+
+.xv-home-coding .xv-hc-prompt-shell.xv-chatbar--inner-active::before {
+  opacity: 1;
+  animation: xv-chatbar-inner-signal 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding .xv-hc-prompt-shell.xv-chatbar--inner-active::before {
+    opacity: 0;
+    animation: none;
+  }
+}
+
 .xv-home-coding .xv-hc-prompt-shell.is-focused {
   border-color: color-mix(in srgb, var(--hc-ink) 12%, transparent) !important;
   box-shadow:
@@ -1766,6 +1804,14 @@
   font-size: 0.95rem;
   line-height: 1.45;
   padding: 0.35rem 0.15rem;
+}
+
+/* The page-wide keyboard rule intentionally outlines controls, but the composer
+   already exposes focus on its shared shell. A second blue rectangle around the
+   textarea reads as a broken nested input rather than useful focus feedback. */
+.xv-home-coding .xv-hc-prompt-input:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
 }
 
 .xv-home-coding .xv-hc-prompt-typewriter {

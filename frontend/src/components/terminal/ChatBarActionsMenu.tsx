@@ -158,9 +158,8 @@ export function ChatBarActionsMenu({
                Skills and Rules panels below stay single-column, because their rows
                are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">
-              {/* Attachments and commands come first: they are the immediate actions
-                  people expect behind a composer's `+`. Account connections have one
-                  canonical home in the Integrations row below. */}
+              {/* Attachments and Integrations come first: they are the two immediate
+                  resource actions people expect behind a composer's trigger. */}
               {onAddFiles && (
                 <button type="button" className="xv-cba-item" onClick={() => { onAddFiles(); setOpen(false); }}>
                   <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -168,6 +167,24 @@ export function ChatBarActionsMenu({
                     <b>Add files or photos</b>
                   </span>
                   <kbd className="xv-cba-kbd">Ctrl+U</kbd>
+                </button>
+              )}
+
+              {onOpenIntegrations && (
+                <button
+                  type="button"
+                  className="xv-cba-item"
+                  onClick={() => {
+                    onOpenIntegrations();
+                    setOpen(false);
+                  }}
+                >
+                  <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text">
+                    <b>Integrations</b>
+                    <i>GitHub, Vercel, and your authorised accounts</i>
+                  </span>
+                  {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
                 </button>
               )}
 
@@ -218,29 +235,6 @@ export function ChatBarActionsMenu({
                   <i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i>
                 </span>
               </button>
-
-              {onOpenIntegrations && (
-                <>
-                  <div className="xv-cba-sep" role="separator" />
-                  {/* Full width: its description is a list of accounts, which wraps to
-                      three lines in half a row and drags the whole grid taller. */}
-                  <button
-                    type="button"
-                    className="xv-cba-item xv-cba-item--wide"
-                    onClick={() => {
-                      onOpenIntegrations();
-                      setOpen(false);
-                    }}
-                  >
-                    <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                    <span className="xv-cba-item__text">
-                      <b>Integrations</b>
-                      <i>GitHub, Vercel, and the rest of your authorised accounts</i>
-                    </span>
-                    {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
-                  </button>
-                </>
-              )}
 
               {/* The user sees exactly what gets attached. A prompt silently rewritten
                   behind the composer is the failure mode this avoids. */}
