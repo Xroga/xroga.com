@@ -50,7 +50,9 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(IDEAS, /setPrompt\(idea\)/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\]/);
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
-  assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*fit-content[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
+  assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
+  assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
+  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > svg\s*\{[^}]*display:\s*none/);
 });
 
 test('templates use a large editorial catalog row and open a preview-or-build decision', () => {
