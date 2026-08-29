@@ -100,8 +100,8 @@ export function ChatBarActionsMenu({
         position: 'fixed',
         left: rect.left,
         bottom: Math.max(8, window.innerHeight - rect.top - 1),
-        width: Math.min(panel === 'menu' ? 560 : 360, rect.width),
-        maxHeight: Math.min(360, Math.max(180, rect.top - 12)),
+        width: rect.width,
+        maxHeight: Math.min(panel === 'menu' ? 280 : 360, Math.max(180, rect.top - 12)),
       });
     };
     sync();
@@ -152,9 +152,8 @@ export function ChatBarActionsMenu({
       {open && typeof document !== 'undefined' ? createPortal(
         <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
           {panel === 'menu' && (
-            /* A two-column grid from `sm` up. As one tall column this list ran to
-               roughly three times its own width, which is what made it feel like a
-               page rather than a menu. Only the root list is laid out this way — the
+            /* A dense row-wise grid uses the same width as the composer. Only the
+               root list is laid out this way — the
                Skills and Rules panels below stay single-column, because their rows
                are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">

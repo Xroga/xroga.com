@@ -58,3 +58,13 @@ test('the companion cluster keeps Black Hole V as a tiny caption below the chara
   assert.match(mobile, /\.xv-companion--composer \.xv-companion-trigger\s*\{[^}]*width:\s*2\.75rem/);
   assert.match(mobile, /\.xv-companion-blackhole > button\s*\{[^}]*font-size:\s*\.44rem/);
 });
+
+test('Smoky usage escapes workspace clipping in a compact foreground portal', () => {
+  assert.match(COMPANION_RUNTIME, /createPortal\([\s\S]*document\.body/);
+  assert.match(COMPANION_RUNTIME, /position:\s*'fixed'/);
+  assert.match(COMPANION_RUNTIME, /zIndex:\s*1200/);
+  const usage = rule(COMPANION_CSS, '.xv-companion-usage {');
+  assert.match(usage, /position:\s*fixed/);
+  assert.match(usage, /width:\s*236px/);
+  assert.match(usage, /z-index:\s*1200/);
+});

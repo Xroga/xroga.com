@@ -472,7 +472,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const gridColumns = await grid.evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
   );
-  expect(gridColumns, 'the plus menu should lay out in two columns').toBe(2);
+  expect(gridColumns, 'the plus menu should lay out in four compact columns').toBe(4);
   expect(
     menuBox.height / menuBox.width,
     'the plus menu is far taller than it is wide',

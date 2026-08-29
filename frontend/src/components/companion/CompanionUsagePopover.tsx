@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,13 @@ type Entitlement = {
  * filled in while loading — a usage number that is wrong is worse than one that is
  * briefly absent, so a null percentage renders as "not available" rather than 0%.
  */
-export function CompanionUsagePopover({ onClose }: { onClose: () => void }) {
+export function CompanionUsagePopover({
+  onClose,
+  style,
+}: {
+  onClose: () => void;
+  style?: CSSProperties;
+}) {
   const [data, setData] = useState<Entitlement | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -58,8 +64,11 @@ export function CompanionUsagePopover({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   return (
-    <div className="xv-companion-usage" role="dialog" aria-label="Usage">
-      <p className="xv-companion-usage__title">Usage</p>
+    <div className="xv-companion-usage" role="dialog" aria-label="Usage" style={style}>
+      <div className="xv-companion-usage__head">
+        <p className="xv-companion-usage__title">Usage</p>
+        <button type="button" onClick={onClose} aria-label="Close usage">×</button>
+      </div>
 
       {loading && <p className="xv-companion-usage__muted">Checking…</p>}
 

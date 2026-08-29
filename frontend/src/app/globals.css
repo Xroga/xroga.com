@@ -9263,11 +9263,24 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   background: color-mix(in srgb, var(--foreground) 6%, transparent);
 }
 .xv-workspace-idea-tab.is-active {
-  color: var(--foreground);
-  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
-  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: var(--accent);
+  border-color: transparent;
+  background: transparent;
 }
 .xv-workspace-idea-tab.is-active svg { color: var(--accent); }
+.xv-workspace-idea-close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-block: 2px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--foreground) 62%, transparent);
+  background: color-mix(in srgb, var(--composer-surface) 88%, transparent);
+}
+.xv-workspace-idea-close:hover { color: var(--foreground); border-color: color-mix(in srgb, var(--foreground) 24%, transparent); }
 .xv-workspace-idea-head {
   display: flex;
   align-items: end;
@@ -9610,10 +9623,10 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
      pixel makes the two borders overlap instead of stacking into a double rule. */
   bottom: calc(100% - 1px);
   margin: 0;
-  z-index: 240;
+  z-index: 900;
   /* Never wider than the composer it is attached to — a menu whose corner sticks out
-     past the bar's edge stops reading as part of it. The two-column list widens this
-     from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */
+     past the bar's edge stops reading as part of it. Runtime positioning supplies the
+     exact composer width; `100%` remains the safe CSS fallback. */
   width: min(360px, 100%);
   max-height: min(360px, calc(100dvh - 150px));
   overflow-y: auto;
@@ -9660,37 +9673,31 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
     width: auto;
     max-height: calc(100dvh - 24px - env(safe-area-inset-bottom));
     border-radius: 16px;
-    z-index: 520;
+    z-index: 900;
     transform-origin: bottom center;
   }
 }
 
 /* ---- the root list --------------------------------------------------------
-   Two columns from `sm` up. In one column the list ran to roughly three times its
-   own width, which is what made it read as a page rather than a menu; paired off,
-   height and width land close to each other.
-
-   Separators and the wide rows span the full grid. A separator confined to one
-   column would divide half a list, which says something the layout does not mean. */
+   Two columns keep the mobile sheet short; four columns use the full composer width
+   on desktop. Decorative separators disappear because the grid itself supplies the
+   grouping rhythm. Only explanatory notes span every column. */
 .xv-cba-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
   align-content: start;
 }
+.xv-cba-grid > .xv-cba-sep { display: none; }
 
 @media (min-width: 640px) {
-  /* Wide enough that the longest description ("Get the approach first, change
-     nothing yet") fits one line per column; below this it wraps and that row alone
-     drags the grid taller, which is the height the two columns were meant to save. */
-  .xv-cba-menu:has(.xv-cba-grid) {
-    width: min(560px, 100%);
-  }
+  /* The composer has enough horizontal room here to expose several detailed actions
+     per row without turning the surface into a tall sheet. */
+  .xv-cba-menu:has(.xv-cba-grid) { width: 100%; }
   .xv-cba-grid {
-    grid-template-columns: 1fr 1fr;
-    column-gap: 6px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
   }
-  .xv-cba-grid > .xv-cba-sep,
   .xv-cba-grid > .xv-cba-item--wide {
     grid-column: 1 / -1;
   }

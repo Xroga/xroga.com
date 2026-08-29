@@ -17,7 +17,8 @@
  * Settings → Companion. Mic dictation belongs to the composer, not here.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CompanionRenderer } from './CompanionRenderer';
 import { CompanionUsagePopover } from './CompanionUsagePopover';
 import { useCompanionStore } from '@/store/useCompanionStore';
@@ -31,7 +32,9 @@ export interface XrogaCompanionProps {
 export function XrogaCompanion({ variant = 'floating', className }: XrogaCompanionProps) {
   const introShown = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const [usageOpen, setUsageOpen] = useState(false);
+  const [usageStyle, setUsageStyle] = useState<React.CSSProperties>({});
   const [intro, setIntro] = useState(false);
   const state = useCompanionStore();
   const operation = state.operation;
@@ -57,10 +60,51 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
   useEffect(() => {
     if (!usageOpen) return;
     const onPointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setUsageOpen(false);
+      const target = event.target as Element;
+      if (!rootRef.current?.contains(target) && !target.closest?.('.xv-companion-usage')) {
+        setUsageOpen(false);
+      }
     };
     document.addEventListener('pointerdown', onPointerDown);
     return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [usageOpen]);
+
+  useLayoutEffect(() => {
+    if (!usageOpen) return;
+
+    const sync = () => {
+      const trigger = triggerRef.current;
+      if (!trigger) return;
+      const rect = trigger.getBoundingClientRect();
+      const gutter = 8;
+      const width = Math.min(236, window.innerWidth - gutter * 2);
+      const left = Math.min(
+        Math.max(gutter, rect.right - width),
+        window.innerWidth - width - gutter,
+      );
+      const estimatedHeight = 168;
+      const openAbove = rect.top >= estimatedHeight + gutter * 2;
+
+      setUsageStyle({
+        position: 'fixed',
+        left,
+        top: openAbove
+          ? Math.max(gutter, rect.top - estimatedHeight - gutter)
+          : Math.min(window.innerHeight - estimatedHeight - gutter, rect.bottom + gutter),
+        width,
+        zIndex: 1200,
+      });
+    };
+
+    sync();
+    window.addEventListener('resize', sync);
+    window.addEventListener('scroll', sync, true);
+    window.visualViewport?.addEventListener('resize', sync);
+    return () => {
+      window.removeEventListener('resize', sync);
+      window.removeEventListener('scroll', sync, true);
+      window.visualViewport?.removeEventListener('resize', sync);
+    };
   }, [usageOpen]);
 
   if (!state.visible && variant !== 'preview') return null;
@@ -78,6 +122,7 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
     >
       {interactive ? (
         <button
+          ref={triggerRef}
           type="button"
           className="xv-companion-trigger"
           onClick={() => setUsageOpen((v) => !v)}
@@ -113,7 +158,15 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
         </span>
       )}
 
-      {usageOpen && interactive && <CompanionUsagePopover onClose={() => setUsageOpen(false)} />}
+      {usageOpen && interactive && typeof document !== 'undefined'
+        ? createPortal(
+            <CompanionUsagePopover
+              onClose={() => setUsageOpen(false)}
+              style={usageStyle}
+            />,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

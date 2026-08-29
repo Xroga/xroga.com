@@ -7,9 +7,10 @@ import {
   Lightbulb,
   Smartphone,
   Workflow,
+  X,
   type LucideIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
 
@@ -95,6 +96,22 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
   const activeGroup = IDEA_GROUPS.find((group) => group.id === groupId) ?? null;
   const visibleIdeas = activeGroup?.ideas.slice(page * 3, page * 3 + 3) ?? [];
 
+  useEffect(() => {
+    const hideIdeasOnComposerInput = (event: Event) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLTextAreaElement
+        && target.matches('textarea[data-terminal-composer]')
+        && target.value.trim()
+      ) {
+        setGroupId(null);
+      }
+    };
+
+    document.addEventListener('input', hideIdeasOnComposerInput, true);
+    return () => document.removeEventListener('input', hideIdeasOnComposerInput, true);
+  }, []);
+
   const chooseGroup = (nextId: string) => {
     if (nextId === groupId) {
       setPage((current) => (current + 1) % 2);
@@ -106,6 +123,7 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
 
   const fillComposer = (idea: string) => {
     setPrompt(idea);
+    setGroupId(null);
     window.setTimeout(() => {
       const composer = document.querySelector<HTMLTextAreaElement>('textarea[data-terminal-composer]');
       composer?.focus();
@@ -134,6 +152,17 @@ export function WorkspaceStarterIdeas({ className }: { className?: string }) {
             </button>
           );
         })}
+        {activeGroup ? (
+          <button
+            type="button"
+            className="xv-workspace-idea-close"
+            onClick={() => setGroupId(null)}
+            aria-label="Hide ideas"
+            title="Hide ideas"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        ) : null}
       </div>
 
       {activeGroup ? (

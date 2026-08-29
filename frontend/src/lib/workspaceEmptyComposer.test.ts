@@ -52,6 +52,8 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(IDEAS, /activeGroup \? \(/);
   assert.doesNotMatch(IDEAS, /Xroga ideas|Choose a direction, then make it yours|New ideas/);
   assert.match(IDEAS, /setPrompt\(idea\)/);
+  assert.match(IDEAS, /textarea\[data-terminal-composer\][\s\S]*setGroupId\(null\)/);
+  assert.match(IDEAS, /aria-label="Hide ideas"/);
   assert.match(IDEAS, /textarea\[data-terminal-composer\]/);
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);

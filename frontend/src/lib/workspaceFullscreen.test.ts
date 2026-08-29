@@ -18,8 +18,8 @@ import { readFileSync } from 'node:fs';
  * width the user chose rather than stranding them in the rail.
  *
  * **The plus menu was one tall column**, standing about three times its own width,
- * which reads as a page rather than a menu. It pairs off into two columns from `sm`
- * up, with separators and the long Integrations row spanning the full width.
+ * which reads as a page rather than a menu. It now takes the full composer width and
+ * packs independent actions into four columns from `sm` up.
  *
  * The geometry itself is asserted in `e2e/command3-auth.spec.ts`, which can reach
  * the authenticated workspace. These guard the decisions that produce it.
@@ -103,22 +103,20 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: 14px !important/, 'and stop at it');
 });
 
-test('the plus menu lays out in two columns', () => {
+test('the plus menu uses the full composer width in a compact row-wise grid', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
   const media = code.indexOf('@media (min-width: 640px)', at);
   const block = code.slice(media, media + 500);
-  assert.match(block, /grid-template-columns:\s*1fr 1fr/, 'two columns from sm up');
-  // A separator confined to one column divides half a list, which is not what the
-  // layout means. Integrations now pairs with file upload at the top of the grid.
-  assert.match(block, /\.xv-cba-grid > \.xv-cba-sep[\s\S]{0,120}grid-column:\s*1 \/ -1/, 'separators span the grid');
+  assert.match(block, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/, 'four columns from sm up');
+  assert.match(MENU, /width:\s*rect\.width/, 'the panel should match the composer width');
   assert.ok(MENU.indexOf('<b>Integrations</b>') < MENU.indexOf('<b>Slash commands</b>'), 'Integrations should sit beside file upload');
 
-  // One column is the fallback, not the default the media query overrides.
+  // Two columns keep the mobile sheet compact without shrinking its touch targets.
   const base = code.slice(at, code.indexOf('}', at));
-  assert.match(base, /grid-template-columns:\s*1fr/, 'a narrow composer keeps one column');
+  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'a narrow composer keeps two columns');
 });
 
 test('only the root list is a grid', () => {
@@ -145,7 +143,7 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar is still on screen in fullscreen/);
   assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
-  assert.match(E2E, /the plus menu should lay out in two columns/);
+  assert.match(E2E, /the plus menu should lay out in four compact columns/);
 });
 
 /**

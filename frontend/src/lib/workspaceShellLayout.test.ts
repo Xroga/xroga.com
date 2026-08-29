@@ -224,8 +224,8 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(360, Math\.max\(180, rect\.top - 12\)\)/);
-  assert.match(MENU, /width:\s*Math\.min\(panel === 'menu' \? 560 : 360, rect\.width\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 280 : 360, Math\.max\(180, rect\.top - 12\)\)/);
+  assert.match(MENU, /width:\s*rect\.width/);
 });
 
 test('mobile composer panels are bounded sheets with every row inside the viewport', () => {
