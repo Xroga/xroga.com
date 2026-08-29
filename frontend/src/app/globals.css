@@ -1127,14 +1127,13 @@ body.theme-gray * {
     background-image: var(--xv-mobile-header-art);
     background-position: center;
     background-size: cover;
-    opacity: 0.94;
+    opacity: 1;
+    filter: saturate(0.82) contrast(1.04);
     transform: scale(1.015);
   }
   .xv-mobile-workspace-pill::after {
     z-index: -1;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--card) 42%, transparent), color-mix(in srgb, var(--card) 12%, transparent) 54%, color-mix(in srgb, var(--card) 36%, transparent));
-    backdrop-filter: blur(8px) saturate(1.08);
-    -webkit-backdrop-filter: blur(8px) saturate(1.08);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--card) 28%, transparent), color-mix(in srgb, var(--card) 7%, transparent) 54%, color-mix(in srgb, var(--card) 24%, transparent));
   }
   body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige.webp'); }
   body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray.webp'); }
@@ -9166,6 +9165,20 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 .xv-terminal-dock--idle .xv-terminal-dock-inner {
   max-width: 920px;
 }
+@media (min-width: 640px) {
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
+    top: max(calc(var(--xv-pane-top, 60px) + 96px), 30vh);
+    bottom: var(--xv-pane-bottom, 14px) !important;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    transform: none;
+    scrollbar-width: none;
+  }
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)::-webkit-scrollbar { display: none; }
+  .xv-terminal-dock--idle .xv-terminal-dock-inner {
+    max-height: 100%;
+  }
+}
 .xv-workspace-starter-stack {
   display: grid;
   min-width: 0;
@@ -9471,7 +9484,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   .xv-workspace-template-card { width: min(76vw, 268px); min-height: 218px; padding: 0.62rem; }
 }
 
-@media (max-height: 680px) {
+@media (max-width: 639px) and (max-height: 680px) {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: 51%; transform: translateY(-18%); }
   .xv-workspace-template-viewport { padding-block: 0.35rem; }
 }

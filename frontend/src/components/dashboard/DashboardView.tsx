@@ -148,6 +148,8 @@ export function DashboardView() {
       const box = paneBox.width > 0 ? paneBox : shell.getBoundingClientRect();
       root.style.setProperty('--xv-pane-left', `${Math.round(box.left)}px`);
       root.style.setProperty('--xv-pane-right', `${Math.round(window.innerWidth - box.right)}px`);
+      root.style.setProperty('--xv-pane-top', `${Math.round(box.top)}px`);
+      root.style.setProperty('--xv-pane-bottom', `${Math.round(window.innerHeight - box.bottom)}px`);
     };
     sync();
     const observer = new ResizeObserver(sync);
@@ -159,6 +161,8 @@ export function DashboardView() {
       window.removeEventListener('resize', sync);
       root.style.removeProperty('--xv-pane-left');
       root.style.removeProperty('--xv-pane-right');
+      root.style.removeProperty('--xv-pane-top');
+      root.style.removeProperty('--xv-pane-bottom');
     };
   }, [workspaceOpen, fullscreen]);
 

@@ -9,6 +9,7 @@ const IDEAS = read('../components/dashboard/WorkspaceStarterIdeas.tsx');
 const TEMPLATES = read('../components/dashboard/WorkspaceShowcaseStarts.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
 const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
+const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer and exposes starters', () => {
@@ -18,7 +19,9 @@ test('an empty terminal centers the one canonical composer and exposes starters'
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
   assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
-  assert.match(CSS, /\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*54%[^}]*bottom:\s*auto !important/);
+  assert.match(DASHBOARD, /--xv-pane-top/);
+  assert.match(DASHBOARD, /--xv-pane-bottom/);
+  assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\([^}]*bottom:\s*var\(--xv-pane-bottom[^}]*overflow-y:\s*auto[^}]*transform:\s*none/);
 });
 
 test('New Terminal closes Project edits before revealing the centered starter', () => {
