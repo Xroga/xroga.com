@@ -668,6 +668,22 @@ export const api = {
         method: 'DELETE',
       }),
   },
+  messageShares: {
+    create: (body: {
+      visibility: 'private' | 'public';
+      scope: 'response' | 'exchange';
+      prompt?: string;
+      response: string;
+    }) =>
+      apiFetch<{ share: MessageShareRecord }>('/api/message-shares', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    revoke: (token: string) =>
+      apiFetch<{ success: boolean }>(`/api/message-shares/${encodeURIComponent(token)}`, {
+        method: 'DELETE',
+      }),
+  },
   showcase: {
     /**
      * Copies a showcase template into one of the user's repositories on a new
@@ -1556,6 +1572,15 @@ export interface Project {
  * sidebar refreshes cost megabytes. Use `terminalSessions.get(id)` for a session
  * the user actually opens.
  */
+export interface MessageShareRecord {
+  token: string;
+  visibility: 'private' | 'public';
+  scope: 'response' | 'exchange';
+  prompt: string;
+  response: string;
+  createdAt: string;
+}
+
 export interface CloudTerminalSessionSummary {
   id: string;
   githubRepoName: string;

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -145,16 +146,11 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
      */
     <section
       aria-label="First ship checklist"
-      className={cn(
-        'xv-first-run-checklist mx-auto flex w-full max-w-2xl items-center gap-2.5',
-        'rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]',
-        'px-2.5 py-1.5 shadow-subtle',
-        className,
-      )}
+      className={cn('xv-first-run-checklist', className)}
     >
       <span
         className={cn(
-          'flex h-7 w-7 shrink-0 items-center justify-center rounded-token-sm',
+          'xv-first-run-checklist__mark',
           step.done
             ? 'bg-[var(--success-dim)]'
             : // The provider marks in /brand/logos are white-only assets (hardcoded
@@ -166,32 +162,31 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
         {step.done ? (
           <Check className="h-3.5 w-3.5 text-[var(--success)]" aria-hidden="true" />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={step.logo} alt="" aria-hidden="true" className="h-3.5 w-3.5 object-contain" />
+          <Image src={step.logo} alt="" aria-hidden="true" width={14} height={14} className="h-3.5 w-3.5 object-contain" />
         )}
       </span>
 
-      <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
-        <span className="shrink-0 text-[12px] font-semibold text-[var(--text-primary)]">
+      <div className="xv-first-run-checklist__copy">
+        <span className="xv-first-run-checklist__label">
           {step.label}
         </span>
         {step.optional && (
-          <span className="shrink-0 text-[9px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
+          <span className="xv-first-run-checklist__optional">
             optional
           </span>
         )}
         {/* The detail is the first thing to drop when the row is tight — the label and
             the action are what make the step actionable. */}
-        <span className="hidden min-w-0 truncate text-[11px] text-[var(--text-secondary)] sm:block">
+        <span className="xv-first-run-checklist__detail">
           {step.detail}
         </span>
       </div>
 
-      <span className="shrink-0 text-[10px] font-medium tabular-nums text-[var(--text-muted)]">
+      <span className="xv-first-run-checklist__count">
         {completedCount}/{total}
       </span>
 
-      <ol className="flex shrink-0 items-center gap-1" aria-label={`Step ${index + 1} of ${total}`}>
+      <ol className="xv-first-run-checklist__steps" aria-label={`Step ${index + 1} of ${total}`}>
         {steps.map((s, i) => (
           <li key={s.id}>
             {/* Visual dot stays small, but the button keeps a ~24px pointer target. */}
@@ -225,7 +220,7 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
       ) : (
         <Link
           href={step.href}
-          className="shrink-0 rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          className="xv-first-run-checklist__action"
         >
           {step.cta}
         </Link>
@@ -235,7 +230,7 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
         type="button"
         aria-label="Dismiss checklist"
         title="Dismiss"
-        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+        className="xv-first-run-checklist__dismiss"
         onClick={() => {
           sessionStorage.setItem('xroga-firstrun-checklist-dismissed', '1');
           setDismissed(true);

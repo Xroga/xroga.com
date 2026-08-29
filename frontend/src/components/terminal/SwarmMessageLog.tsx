@@ -194,6 +194,16 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     [messages]
   );
 
+  const promptByAssistantId = useMemo(() => {
+    const prompts = new Map<string, string>();
+    let latestUserPrompt = '';
+    for (const message of visibleMessages) {
+      if (message.role === 'user') latestUserPrompt = message.content;
+      if (message.role === 'assistant') prompts.set(message.id, latestUserPrompt);
+    }
+    return prompts;
+  }, [visibleMessages]);
+
   const chatTurns = useMemo(() => buildChatTurns(visibleMessages), [visibleMessages]);
 
   useEffect(() => {
@@ -595,6 +605,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content={msg.content}
                           messageId={msg.id}
+                          prompt={promptByAssistantId.get(msg.id)}
                           onDelete={() => deleteTurn(msg.id)}
                         />
                       )}
@@ -603,6 +614,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           role="assistant"
                           content=""
                           messageId={msg.id}
+                          prompt={promptByAssistantId.get(msg.id)}
                           onDelete={() => deleteTurn(msg.id)}
                         />
                       )}

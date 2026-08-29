@@ -27,6 +27,8 @@ const PUBLIC_PREFIXES = [
   '/refund',
   // Anyone may browse and preview the showcase; only customizing or exporting needs auth.
   '/showcase',
+  // Opaque private links and public message shares must open without an account.
+  '/share',
 ];
 
 /**

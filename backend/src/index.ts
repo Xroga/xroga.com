@@ -10,6 +10,7 @@ import swarmRouter from './routes/swarm.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
 import terminalSessionsRouter from './routes/terminalSessions.js';
+import messageSharesRouter from './routes/messageShares.js';
 import profileRouter from './routes/profile.js';
 import showcaseRouter from './routes/showcase.js';
 import debugRouter from './routes/debug.js';
@@ -42,6 +43,7 @@ import capabilitiesRouter from './routes/capabilities.js';
 import { adminMiddleware } from './middleware/admin.js';
 import { ensureGithubSchema } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
+import { ensureMessageSharesSchema } from './db/ensureMessageSharesSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
 import { activeRunIds } from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
@@ -165,6 +167,8 @@ app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
 app.use('/api/community', communityRouter);
+// Read access is token-scoped; create/revoke apply auth inside the router.
+app.use('/api/message-shares', messageSharesRouter);
 app.use('/api/token-distribution', authMiddleware, tokenDistributionRouter);
 app.use('/api/marketplace', authMiddleware, marketplaceRouter);
 app.use('/api/influencer', authMiddleware, influencerRouter);
@@ -233,6 +237,9 @@ server.listen(port, '0.0.0.0', () => {
   });
   void ensureTerminalSessionsSchema().catch((err) => {
     console.warn('[terminalSessionsSchema] Startup ensure skipped:', (err as Error).message);
+  });
+  void ensureMessageSharesSchema().catch((err) => {
+    console.warn('[messageSharesSchema] Startup ensure skipped:', (err as Error).message);
   });
   void ensureShipLoopSchema().catch((err) => {
     console.warn('[shipLoopSchema] Startup ensure skipped:', (err as Error).message);

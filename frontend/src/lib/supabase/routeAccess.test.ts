@@ -21,6 +21,7 @@ test('keeps public and authentication routes available', () => {
     '/showcase',
     '/showcase/modern-business-website',
     '/showcase/modern-business-website/preview',
+    '/share/7oDqnyDV8wIz7adMKh2tOYfJdViwN3Ks',
     '/auth/login',
     '/robots.txt',
     '/sitemap.xml',

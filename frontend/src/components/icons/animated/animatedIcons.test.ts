@@ -73,6 +73,8 @@ const ICONS = [
   'CopyIcon',
   'UpvoteIcon',
   'DownvoteIcon',
+  'ShareIcon',
+  'Trash2Icon',
   'NewTerminalIcon',
 ];
 
@@ -453,10 +455,12 @@ test('the composer, the skin picker and the repo area take their icons', () => {
   assert.match(PROJECTS, /icon=\{TerminalIcon\}/, 'New Terminal lost the chevron');
 
   const BUBBLE = read('../../terminal/MessageBubbleActions.tsx');
-  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon']) {
+  for (const icon of ['UpvoteIcon', 'DownvoteIcon', 'CopyIcon', 'ShareIcon', 'Trash2Icon']) {
     assert.match(BUBBLE, new RegExp(`icon=\\{${icon}\\}`), `the message actions lost ${icon}`);
   }
   assert.ok(!/ThumbsUp|ThumbsDown/.test(BUBBLE), 'the static thumbs are back');
+  assert.ok(!/<Share2\b|<Trash2\b/.test(BUBBLE), 'static share/delete glyphs are back');
+  assert.match(BUBBLE, /<MessageShareModal/, 'share fell back to clipboard-only output');
 });
 
 /**
