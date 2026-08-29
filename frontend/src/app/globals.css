@@ -7568,7 +7568,7 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 0;
-  z-index: 80;
+  z-index: 240;
   width: min(310px, calc(100vw - 2rem));
   max-height: 60vh;
   overflow-y: auto;
@@ -9521,7 +9521,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
      pixel makes the two borders overlap instead of stacking into a double rule. */
   bottom: calc(100% - 1px);
   margin: 0;
-  z-index: 80;
+  z-index: 240;
   /* Never wider than the composer it is attached to — a menu whose corner sticks out
      past the bar's edge stops reading as part of it. The two-column list widens this
      from `sm` up; `100%` keeps the cap honest on a narrow composer either way. */

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Blocks, Bug, Check, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
@@ -49,6 +50,8 @@ export function ChatBarActionsMenu({
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'menu' | 'commands' | 'skills' | 'rules'>('menu');
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const rules = useComposerToolsStore((s) => s.rules);
   const setRules = useComposerToolsStore((s) => s.setRules);
@@ -61,7 +64,8 @@ export function ChatBarActionsMenu({
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      const target = event.target as Node;
+      if (!rootRef.current?.contains(target) && !menuRef.current?.contains(target)) setOpen(false);
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -73,6 +77,41 @@ export function ChatBarActionsMenu({
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const sync = () => {
+      const composer = rootRef.current?.closest<HTMLElement>('.xv-chatbar-solid');
+      if (!composer) return;
+      const rect = composer.getBoundingClientRect();
+      const mobile = window.innerWidth < 640;
+      if (mobile) {
+        setMenuStyle({
+          position: 'fixed',
+          left: 8,
+          right: 8,
+          bottom: 12,
+          width: 'auto',
+          maxHeight: 'calc(100dvh - 24px)',
+        });
+        return;
+      }
+      setMenuStyle({
+        position: 'fixed',
+        left: rect.left,
+        bottom: Math.max(8, window.innerHeight - rect.top - 1),
+        width: Math.min(panel === 'menu' ? 560 : 360, rect.width),
+        maxHeight: Math.min(360, Math.max(180, rect.top - 12)),
+      });
+    };
+    sync();
+    window.addEventListener('resize', sync);
+    window.visualViewport?.addEventListener('resize', sync);
+    return () => {
+      window.removeEventListener('resize', sync);
+      window.visualViewport?.removeEventListener('resize', sync);
+    };
+  }, [open, panel]);
 
   // Always reopen on the menu — landing back inside the rules editor after a close
   // is disorienting when the trigger looks like a single generic button.
@@ -110,8 +149,8 @@ export function ChatBarActionsMenu({
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 
-      {open && (
-        <div className="xv-cba-menu" role="dialog" aria-label="Composer actions">
+      {open && typeof document !== 'undefined' ? createPortal(
+        <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
           {panel === 'menu' && (
             /* A two-column grid from `sm` up. As one tall column this list ran to
                roughly three times its own width, which is what made it feel like a
@@ -314,8 +353,9 @@ export function ChatBarActionsMenu({
               )}
             </>
           )}
-        </div>
-      )}
+        </div>,
+        document.body,
+      ) : null}
     </div>
   );
 }

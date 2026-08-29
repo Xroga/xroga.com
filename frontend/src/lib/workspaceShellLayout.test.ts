@@ -214,27 +214,25 @@ test('the menu shares an edge with the composer — no gap at any width', () => 
 });
 
 test('the menu is anchored to the composer, not to the plus button', () => {
-  // `position: absolute` resolves against the nearest *positioned* ancestor, so the
-  // trigger's own wrapper and the composer's button row must both stay static.
+  // The portal measures the full composer surface rather than the small trigger.
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
-  assert.match(rule('.xv-cba-root') ?? '', /position:\s*static/);
-  assert.match(rule('.xv-terminal-dock .xv-chatbar-row-modern') ?? '', /position:\s*static/);
-  assert.match(rule('.xv-terminal-dock .xv-chatbar-solid') ?? '', /position:\s*relative/);
+  assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
+  assert.match(MENU, /left:\s*rect\.left/);
+  assert.match(MENU, /window\.innerHeight - rect\.top - 1/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
-  const menu = rule('.xv-cba-menu') ?? '';
-  assert.match(menu, /position:\s*absolute/);
-  assert.match(menu, /max-height:\s*min\(360px, calc\(100dvh - 150px\)\)/);
-  // Never wider than the bar it belongs to.
-  assert.match(menu, /width:\s*min\(360px, 100%\)/);
+  assert.match(MENU, /createPortal\(/);
+  assert.match(MENU, /document\.body/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(360, Math\.max\(180, rect\.top - 12\)\)/);
+  assert.match(MENU, /width:\s*Math\.min\(panel === 'menu' \? 560 : 360, rect\.width\)/);
 });
 
 test('mobile composer panels are bounded sheets with every row inside the viewport', () => {
-  assert.match(
-    CSS,
-    /@media \(max-width: 639px\) \{[\s\S]*?\.xv-cba-menu\s*\{[^}]*position:\s*fixed[^}]*inset:\s*auto 8px calc\(12px \+ env\(safe-area-inset-bottom\)\) 8px[^}]*max-height:\s*calc\(100dvh - 24px - env\(safe-area-inset-bottom\)\)/,
-  );
+  assert.match(MENU, /const mobile = window\.innerWidth < 640/);
+  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*8[\s\S]*right:\s*8[\s\S]*bottom:\s*12/);
+  assert.match(MENU, /maxHeight:\s*'calc\(100dvh - 24px\)'/);
+  assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
 test('Integrations is a menu row, and the detached pill is gone', () => {
