@@ -56,7 +56,7 @@ body.theme-gray .xv-theme-backdrop {
 }
 
 body.theme-black .xv-theme-backdrop {
-  background-image: url('/backgrounds/xroga-black-digital-universe-bg.webp');
+  background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-20260829.webp');
   filter: saturate(1.02) contrast(1.04) brightness(0.86);
 }
 
@@ -104,7 +104,7 @@ body.theme-black .xv-theme-backdrop::after {
   }
 
   body.theme-black .xv-theme-backdrop {
-    background-image: url('/backgrounds/xroga-black-digital-universe-bg-mobile.webp');
+    background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-mobile-20260829.webp');
     background-position: center top;
   }
 }
