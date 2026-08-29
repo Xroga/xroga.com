@@ -114,7 +114,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-home-companion-copy span { display: block; font-size: .48rem; letter-spacing: .13em; color: var(--hc-blue); font-weight: 800; }
 .xv-home-companion-copy strong { display: block; color: var(--hc-ink); font-size: .92rem; margin-top: .25rem; }
 .xv-home-companion-copy p { color: var(--hc-muted); font-size: .72rem; line-height: 1.45; margin-top: .25rem; }
-.xv-companion-composer-anchor { position: absolute; right: .7rem; bottom: calc(100% - .3rem); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: .06rem; pointer-events: auto; }
+.xv-companion-composer-anchor { position: absolute; right: .7rem; bottom: calc(100% - .3rem); z-index: 340; display: flex; flex-direction: column; align-items: center; gap: .06rem; pointer-events: auto; }
 .xv-companion-blackhole > button {
   min-height: .9rem;
   margin: 0;

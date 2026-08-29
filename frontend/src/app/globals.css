@@ -9194,8 +9194,15 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 @media (min-width: 640px) {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
-    top: max(calc(var(--xv-pane-top, 60px) + 96px), 30vh);
+    /* Smoky sits above the first child (the composer). Because this element scrolls,
+       anything above its top edge is clipped even with a high z-index. Move the
+       container up and reserve the same amount inside it: the chatbar does not move,
+       while the companion gets a real visible layer instead of overflowing into a
+       clipped area. */
+    top: max(calc(var(--xv-pane-top, 60px) + 24px), calc(30vh - 72px));
     bottom: var(--xv-pane-bottom, 14px) !important;
+    box-sizing: border-box;
+    padding-top: 72px;
     overflow-y: auto;
     overscroll-behavior-y: contain;
     transform: none;

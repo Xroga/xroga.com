@@ -52,6 +52,7 @@ test('the companion cluster keeps Black Hole V as a tiny caption below the chara
   assert.match(chip, /font-size:\s*\.48rem/);
   const anchor = rule(COMPANION_CSS, '.xv-companion-composer-anchor {');
   assert.match(anchor, /bottom:\s*calc\(100% - \.3rem\)/);
+  assert.match(anchor, /z-index:\s*340/);
   assert.match(anchor, /flex-direction:\s*column/);
   const mobile = COMPANION_CSS.slice(COMPANION_CSS.indexOf('@media (max-width: 640px)'));
   assert.match(mobile, /\.xv-companion--composer \.xv-companion-trigger\s*\{[^}]*width:\s*2\.75rem/);
