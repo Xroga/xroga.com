@@ -193,12 +193,17 @@ export function ChatBarSendButton({
   state = 'idle',
   surface = 'dashboard',
   compact = false,
+  idleLabel = 'Send prompt',
+  loadingLabel = 'Sending message',
 }: {
   stopping?: boolean;
   onStop?: () => void;
   state?: SendButtonState;
   surface?: ChatbarSurface;
   compact?: boolean;
+  /** Lets public composers keep their established accessible action name. */
+  idleLabel?: string;
+  loadingLabel?: string;
 }) {
   const loading = isSendLoading(state) && !stopping;
   const busy = !loading && (stopping || isSendBusy(state));
@@ -233,8 +238,8 @@ export function ChatBarSendButton({
         surface === 'incognito' && 'xv-send--incognito'
       )}
       data-state={loading ? 'sending' : busy ? 'busy' : done ? 'done' : 'idle'}
-      aria-label={loading ? 'Sending message' : busy ? 'Stop response' : 'Send prompt'}
-      title={loading ? 'Sending…' : busy ? 'Stop' : 'Send'}
+      aria-label={loading ? loadingLabel : busy ? 'Stop response' : idleLabel}
+      title={loading ? 'Sending…' : busy ? 'Stop' : idleLabel}
       aria-live="polite"
     >
       <span className="xv-send__glow" aria-hidden="true" />

@@ -428,6 +428,7 @@ test('the dashboard widgets animate, and capacity picks its battery by value', (
  */
 test('the GitHub mark waves continuously, and is still a span', () => {
   const GLYPH = read('./GithubGlyphIcon.tsx');
+  assert.match(GLYPH, /<IconMotion>/, 'the GitHub mark has no motion features loaded');
   assert.match(GLYPH, /repeat: Number\.POSITIVE_INFINITY/, 'the arm stops waving');
   assert.match(GLYPH, /controls\.start\(reduced \? 'normal' : 'animate'\);/, 'it waits to be driven');
   assert.match(GLYPH, /<m\.span/, 'the mark is a div again, which breaks hydration in prose');
@@ -479,6 +480,7 @@ test('the integration marks are animated, in one place, at every call site', () 
     ['the composer modal', '../../terminal/IntegrationsModal.tsx'],
     ['the repository card', '../../projects/GitHubProjectCard.tsx'],
     ['the GitHub connect card', '../../integrations/GitHubConnect.tsx'],
+    ['the homepage composer', '../../terminal/HomepageChatBar.tsx'],
     ['the homepage tour', '../../homepage/HomepageWorkspaceTour.tsx'],
   ] as const) {
     const source = read(path);
@@ -487,6 +489,22 @@ test('the integration marks are animated, in one place, at every call site', () 
   }
   // The connect card led with a generic code glyph and no GitHub mark at all.
   assert.ok(!/<Code2\b/.test(read('../../integrations/GitHubConnect.tsx')), 'the generic glyph is back');
+});
+
+test('the homepage composer reuses the workspace controls and animated provider marks', () => {
+  const HOME_COMPOSER = read('../../terminal/HomepageChatBar.tsx');
+  assert.match(HOME_COMPOSER, /<ChatbarShell\b/, 'the homepage draws a separate chatbar shell again');
+  assert.match(HOME_COMPOSER, /<ChatBarActionsMenu\b/, 'the homepage lost the workspace action control');
+  assert.match(HOME_COMPOSER, /<ChatBarMicrophoneButton\b/, 'the homepage lost workspace voice input');
+  assert.match(HOME_COMPOSER, /<ChatBarSendButton\b/, 'the homepage lost the workspace send control');
+  for (const provider of ['github', 'vercel', 'supabase']) {
+    assert.match(
+      HOME_COMPOSER,
+      new RegExp(`<IntegrationLogo id="${provider}"`),
+      `${provider} bypasses the shared integration mark`,
+    );
+  }
+  assert.ok(!/brand\/logos\/(github|vercel)\.svg/.test(HOME_COMPOSER), 'a static provider logo returned');
 });
 
 /**

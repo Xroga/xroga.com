@@ -2,11 +2,14 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import { autocorrectText } from '@/lib/chatSuggestions';
 import { cn } from '@/lib/utils';
-import { ChatBarSendIcon, type SendButtonState } from './ChatBarSendIcon';
+import type { SendButtonState } from './ChatBarSendIcon';
+import { ChatbarShell } from '@/components/ui/Uiverse';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { ChatBarActionsMenu } from './ChatBarActionsMenu';
+import { ChatBarMicrophoneButton, ChatBarSendButton } from './ChatBarButtons';
 import { createClient } from '@/lib/supabase/client';
 import { dispatchCompanionEvent } from '@/lib/companion';
 
@@ -143,7 +146,7 @@ export function HomepageChatBar({
   return (
     <div className={cn('w-full max-w-xl mx-auto relative xv-hc-prompt', className)}>
       <form onSubmit={handleSubmit} className="w-full">
-        <div
+        <ChatbarShell
           className={cn(
             'xv-hc-prompt-shell',
             focused && 'is-focused',
@@ -193,64 +196,55 @@ export function HomepageChatBar({
           </div>
 
           <div className="xv-hc-prompt-footer">
+            <ChatBarActionsMenu
+              className="shrink-0"
+              disabled={sending}
+              onInsert={(text) => {
+                setPrompt((current) => (current.trim() ? `${text}${current}` : text));
+                window.setTimeout(() => textareaRef.current?.focus(), 20);
+              }}
+            />
             <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub, Vercel, and Supabase">
               <span className="xv-hc-prompt-integration">
-                <Image
-                  src="/brand/logos/github.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  priority
-                  className="xv-hc-prompt-integration-logo"
-                />
+                <span aria-hidden="true">
+                  <IntegrationLogo id="github" name="GitHub" size={14} className="xv-hc-prompt-integration-logo" />
+                </span>
                 <span>GitHub</span>
               </span>
               <span className="xv-hc-prompt-integration-sep" aria-hidden />
               <span className="xv-hc-prompt-integration">
-                <Image
-                  src="/brand/logos/vercel.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  priority
-                  className="xv-hc-prompt-integration-logo"
-                />
+                <span aria-hidden="true">
+                  <IntegrationLogo id="vercel" name="Vercel" size={14} className="xv-hc-prompt-integration-logo" />
+                </span>
                 <span>Vercel</span>
               </span>
               <span className="xv-hc-prompt-integration-sep" aria-hidden />
               <span className="xv-hc-prompt-integration">
-                <Image
-                  src="/brand/logos/supabase.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                  unoptimized
-                  priority
-                  className="xv-hc-prompt-integration-logo"
-                />
+                <span aria-hidden="true">
+                  <IntegrationLogo id="supabase" name="Supabase" size={14} className="xv-hc-prompt-integration-logo" />
+                </span>
                 <span>Supabase</span>
               </span>
             </div>
-            {/* The idle label stays "Launch" — it is this surface's established
-                name and is asserted by the public e2e suite. Only the in-flight
-                label changes, so a screen reader hears the state without the
-                control being renamed underneath anyone. */}
-            <button
-              type="submit"
-              className="xv-go-btn xv-go-btn--home shrink-0"
-              disabled={sending}
-              aria-busy={sending}
-              aria-label={sending ? 'Sending message' : 'Launch'}
-            >
-              <span className="xv-go-btn__liquid" aria-hidden />
-              <span className="xv-go-btn__icon">
-                <ChatBarSendIcon state={sendState} size={18} />
-              </span>
-            </button>
+            <span className="xv-hc-prompt-spacer" aria-hidden />
+            <ChatBarMicrophoneButton
+              surface="homepage"
+              onTranscript={(text) => {
+                setPrompt((current) => (current.trim() ? `${current.trim()} ${text}` : text));
+                window.setTimeout(() => textareaRef.current?.focus(), 20);
+              }}
+            />
+            {/* Keep the public control's established accessible name while using
+                the same send button and state animation as the workspace. */}
+            <ChatBarSendButton
+              state={sendState}
+              surface="homepage"
+              compact={Boolean(prompt.trim())}
+              idleLabel="Launch"
+              loadingLabel="Sending message"
+            />
           </div>
-        </div>
+        </ChatbarShell>
       </form>
 
       {/* Suggestion chips fill the input and focus it, following the same
