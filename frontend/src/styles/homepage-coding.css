@@ -5919,7 +5919,7 @@ body.theme-gray .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
-  background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-20260829.webp') !important;
+  background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp') !important;
   filter: saturate(1.02) contrast(1.04) brightness(0.86);
 }
 
@@ -5958,7 +5958,7 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   }
 
   body.theme-black .xv-home-coding .xv-hc-bg-image {
-    background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-mobile-20260829.webp') !important;
+    background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-mobile-20260829.webp') !important;
     background-position: center top;
   }
 }

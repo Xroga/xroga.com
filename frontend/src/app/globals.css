@@ -207,7 +207,7 @@ body.theme-gray.xv-public-theme {
 }
 
 body.theme-black.xv-public-theme {
-  background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-20260829.webp');
+  background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp');
 }
 
 body.xv-public-theme > main,
@@ -230,7 +230,7 @@ body.xv-public-theme > .xv-gc-root {
     background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
   }
   body.theme-black.xv-public-theme {
-    background-image: url('/backgrounds/xroga-black-coder-voxel-space-bg-mobile-20260829.webp');
+    background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-mobile-20260829.webp');
     background-position: center top;
   }
 }
