@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
@@ -30,7 +30,6 @@ export function TerminalDock() {
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const keyboardOffset = useVisualViewportBottom();
-  const dockInnerRef = useRef<HTMLDivElement>(null);
   const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
@@ -46,26 +45,23 @@ export function TerminalDock() {
 
   useEffect(() => {
     if (!isDashboard) return;
-    const el = dockInnerRef.current;
-    if (!el) return;
-    const sync = () => {
-      document.documentElement.style.setProperty('--xv-chatbar-height', `${el.offsetHeight}px`);
-    };
-    // Re-measure when the bar collapses, otherwise the transcript keeps reserving
-    // room for a composer that is no longer on screen — the whole point of hiding it.
-    sync();
-    const ro = new ResizeObserver(sync);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [incognito, isDashboard, chatbarHidden]);
+    // TerminalChatBar owns the live composer measurement. Measuring this whole dock
+    // also included starter tabs and template cards, so selecting a repository could
+    // change the value from ~90px to 350px and visibly move the workspace. The parent
+    // only needs to clear the reservation when the composer is intentionally hidden.
+    if (chatbarHidden) {
+      document.documentElement.style.setProperty('--xv-chatbar-height', '0px');
+    }
+  }, [isDashboard, chatbarHidden]);
 
   return (
     <div
       className={cn(
-        'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity,transform,bottom,z-index] duration-300',
+        'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity] duration-200',
         !isDashboard && 'hidden',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito',
+        sessionRestoring && 'xv-terminal-dock--restoring',
         showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle'
       )}
       style={{
@@ -98,7 +94,6 @@ export function TerminalDock() {
         </button>
       )}
       <div
-        ref={dockInnerRef}
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
           dashboardFullscreen

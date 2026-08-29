@@ -5919,8 +5919,8 @@ body.theme-gray .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
-  background-image: url('/backgrounds/xroga-black-clouds-bg.webp') !important;
-  filter: saturate(1.04) contrast(1.03) brightness(0.88);
+  background-image: url('/backgrounds/xroga-black-digital-universe-bg.webp') !important;
+  filter: saturate(1.02) contrast(1.04) brightness(0.86);
 }
 
 body.theme-white .xv-home-coding .xv-hc-bg-image::after {
@@ -5954,6 +5954,11 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
 
   body.theme-gray .xv-home-coding .xv-hc-bg-image {
     background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp') !important;
+    background-position: center top;
+  }
+
+  body.theme-black .xv-home-coding .xv-hc-bg-image {
+    background-image: url('/backgrounds/xroga-black-digital-universe-bg-mobile.webp') !important;
     background-position: center top;
   }
 }

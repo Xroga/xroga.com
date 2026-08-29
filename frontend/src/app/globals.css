@@ -207,7 +207,7 @@ body.theme-gray.xv-public-theme {
 }
 
 body.theme-black.xv-public-theme {
-  background-image: url('/backgrounds/xroga-black-clouds-bg.webp');
+  background-image: url('/backgrounds/xroga-black-digital-universe-bg.webp');
 }
 
 body.xv-public-theme > main,
@@ -228,6 +228,10 @@ body.xv-public-theme > .xv-gc-root {
   }
   body.theme-gray.xv-public-theme {
     background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
+  }
+  body.theme-black.xv-public-theme {
+    background-image: url('/backgrounds/xroga-black-digital-universe-bg-mobile.webp');
+    background-position: center top;
   }
 }
 
@@ -1097,7 +1101,7 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white.webp?v=grain-20260829');
+    --xv-mobile-header-art: url('/workspace/mobile-header/white-reference-20260829.webp');
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1135,9 +1139,9 @@ body.theme-gray * {
     z-index: -1;
     background: linear-gradient(90deg, color-mix(in srgb, var(--card) 28%, transparent), color-mix(in srgb, var(--card) 7%, transparent) 54%, color-mix(in srgb, var(--card) 24%, transparent));
   }
-  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige.webp?v=grain-20260829'); }
-  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray.webp?v=grain-20260829'); }
-  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black.webp?v=grain-20260829'); }
+  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige-reference-20260829.webp'); }
+  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray-reference-20260829.webp'); }
+  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black-reference-20260829.webp'); }
   .xv-mobile-workspace-logo {
     width: 124px !important;
     max-width: min(124px, 44vw);
@@ -9162,6 +9166,11 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   transform: translateY(-28%);
   z-index: 72;
 }
+.xv-terminal-dock--restoring {
+  visibility: hidden;
+  opacity: 0;
+  transition: none !important;
+}
 .xv-terminal-dock--idle .xv-terminal-dock-inner {
   max-width: 920px;
 }
@@ -9177,6 +9186,9 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)::-webkit-scrollbar { display: none; }
   .xv-terminal-dock--idle .xv-terminal-dock-inner {
     max-height: 100%;
+  }
+  .xv-terminal-dock--idle .xv-companion-composer-anchor {
+    bottom: calc(100% - 3.25rem);
   }
 }
 .xv-workspace-starter-stack {

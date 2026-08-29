@@ -56,8 +56,8 @@ body.theme-gray .xv-theme-backdrop {
 }
 
 body.theme-black .xv-theme-backdrop {
-  background-image: url('/backgrounds/xroga-black-clouds-bg.webp');
-  filter: saturate(1.04) contrast(1.03) brightness(0.88);
+  background-image: url('/backgrounds/xroga-black-digital-universe-bg.webp');
+  filter: saturate(1.02) contrast(1.04) brightness(0.86);
 }
 
 /*
@@ -100,6 +100,11 @@ body.theme-black .xv-theme-backdrop::after {
 
   body.theme-gray .xv-theme-backdrop {
     background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
+    background-position: center top;
+  }
+
+  body.theme-black .xv-theme-backdrop {
+    background-image: url('/backgrounds/xroga-black-digital-universe-bg-mobile.webp');
     background-position: center top;
   }
 }

@@ -9,6 +9,7 @@ const IDEAS = read('../components/dashboard/WorkspaceStarterIdeas.tsx');
 const TEMPLATES = read('../components/dashboard/WorkspaceShowcaseStarts.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
 const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
+const REPO = read('../components/terminal/RepoContextBar.tsx');
 const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
@@ -56,6 +57,24 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
   assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > svg\s*\{[^}]*display:\s*none/);
+});
+
+test('repository updates cannot resize or bounce the whole workspace dock', () => {
+  assert.doesNotMatch(DOCK, /new ResizeObserver/);
+  assert.match(DOCK, /chatbarHidden[\s\S]*--xv-chatbar-height', '0px'/);
+  assert.match(DOCK, /xv-terminal-dock--restoring/);
+  assert.match(CSS, /\.xv-terminal-dock--restoring\s*\{[^}]*visibility:\s*hidden[^}]*transition:\s*none !important/);
+  assert.match(CHATBAR, /new ResizeObserver\(sync\)/);
+});
+
+test('the desktop companion remains visible inside short-screen containment', () => {
+  assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle \.xv-companion-composer-anchor\s*\{[^}]*bottom:\s*calc\(100% - 3\.25rem\)/);
+});
+
+test('repository status is brief and is not replayed during passive restore', () => {
+  assert.match(REPO, /}, 1800\)/);
+  assert.match(REPO, /announce = true/);
+  assert.match(REPO, /analyzeRepo\(defaultRepo, branch, false, false\)/);
 });
 
 test('templates use a large editorial catalog row and open a preview-or-build decision', () => {

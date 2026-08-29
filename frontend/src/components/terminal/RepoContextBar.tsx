@@ -113,7 +113,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     noticeTimerRef.current = window.setTimeout(() => {
       noticeTimerRef.current = null;
       setContextNotice(null);
-    }, 3600);
+    }, 1800);
   }, []);
 
   useEffect(() => () => {
@@ -149,13 +149,13 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     }
   }, []);
 
-  const analyzeRepo = useCallback(async (fullName: string, branch: string, force = false) => {
+  const analyzeRepo = useCallback(async (fullName: string, branch: string, force = false, announce = true) => {
     if (!force) {
       const cached = getCachedRepoAnalysis(fullName, branch);
       if (cached) {
         setRepoSummary(cached.summary);
         setRepoTech(cached.techStack ?? []);
-        showContextNotice(`${fullName} · ${cached.fileCount.toLocaleString()} existing files ready to update`);
+        if (announce) showContextNotice(`${fullName} · ${cached.fileCount.toLocaleString()} existing files ready to update`);
         return;
       }
     }
@@ -174,7 +174,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         fileCount: result.fileCount,
         scannedAt: Date.now(),
       });
-      showContextNotice(`${fullName} · ${result.fileCount.toLocaleString()} existing files ready to update`);
+      if (announce) showContextNotice(`${fullName} · ${result.fileCount.toLocaleString()} existing files ready to update`);
     } catch {
       setRepoSummary(null);
     } finally {
@@ -230,7 +230,9 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         // Persist sticky selection for pipeline clientMeta
         saveSelectedRepoContext({ repo: defaultRepo, branch });
         // Defer lite analyze so the repo picker paints first
-        const runAnalyze = () => void analyzeRepo(defaultRepo, branch, false);
+        // Restore metadata silently. A reload should not replay a transient status
+        // message or make the otherwise-stable workspace look as if it moved.
+        const runAnalyze = () => void analyzeRepo(defaultRepo, branch, false, false);
         if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
           (
             window as Window & {

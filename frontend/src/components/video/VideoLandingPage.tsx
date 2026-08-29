@@ -45,7 +45,7 @@ const MEDIA = {
   islands: '/backgrounds/xroga-beige-ai-islands-bg.webp',
   data: '/backgrounds/xroga-beige-sculpted-data-bg.webp',
   mars: '/backgrounds/xroga-beige-mars-pyramids-code-bg.webp',
-  clouds: '/backgrounds/xroga-black-clouds-bg.webp',
+  clouds: '/backgrounds/xroga-black-digital-universe-bg.webp',
 } as const;
 
 const CREATION_TABS = [
