@@ -88,11 +88,11 @@ export function ChatBarActionsMenu({
       if (mobile) {
         setMenuStyle({
           position: 'fixed',
-          left: 8,
-          right: 8,
-          bottom: 12,
-          width: 'auto',
-          maxHeight: 'calc(100dvh - 24px)',
+          left: rect.left,
+          right: 'auto',
+          bottom: Math.max(8, window.innerHeight - rect.top - 1),
+          width: rect.width,
+          maxHeight: Math.min(panel === 'menu' ? 264 : 320, Math.max(156, rect.top - 8)),
         });
         return;
       }

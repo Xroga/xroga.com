@@ -228,10 +228,11 @@ test('opening the menu overlays the terminal instead of resizing anything', () =
   assert.match(MENU, /width:\s*rect\.width/);
 });
 
-test('mobile composer panels are bounded sheets with every row inside the viewport', () => {
+test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /const mobile = window\.innerWidth < 640/);
-  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*8[\s\S]*right:\s*8[\s\S]*bottom:\s*12/);
-  assert.match(MENU, /maxHeight:\s*'calc\(100dvh - 24px\)'/);
+  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top - 1\)/);
+  assert.match(MENU, /width:\s*rect\.width/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 264 : 320, Math\.max\(156, rect\.top - 8\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 

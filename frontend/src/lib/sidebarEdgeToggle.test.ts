@@ -69,9 +69,10 @@ test('hovering the mark expands the rail', () => {
   assert.match(code, /clearTimeout\(hoverOpenTimerRef\.current\)/, 'the timer must be cleared');
 });
 
-test('the rail carries the two destinations people actually go to', () => {
+test('the rail carries workspace and the destinations people actually go to', () => {
   const rail = code.slice(code.indexOf('xv-sidebar-collapsed-actions'));
   const block = rail.slice(0, rail.indexOf('</div>'));
+  assert.match(block, /href="\/workspace"[\s\S]{0,100}aria-label="Workspace"/, 'Workspace should be first on the rail');
   assert.match(block, /href="\/dashboard"[\s\S]{0,80}aria-label="Dashboard"/, 'Dashboard should be on the rail');
   assert.match(block, /href="\/dashboard\/projects"[\s\S]{0,80}aria-label="Repositories"/, 'Repositories should be on the rail');
 });

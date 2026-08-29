@@ -31,7 +31,9 @@ test('the compact repo control hugs its content on desktop and uses a solid them
   assert.match(rule(GLOBALS, '.xv-repo-chip--compact .xv-repo-identity'), /flex:\s*0 1 auto/);
   const compact = rule(GLOBALS, '.xv-repo-chip--compact {');
   assert.match(compact, /width:\s*auto/);
-  assert.match(compact, /background:\s*var\(--card\)/, 'the compact row is transparent again');
+  assert.match(compact, /background:\s*color-mix\(in srgb, var\(--card\) 94%, var\(--foreground\) 6%\)/, 'the compact row is transparent again');
+  assert.match(compact, /border:\s*0/, 'the repo strip regained an outline');
+  assert.match(compact, /box-shadow:\s*none/, 'the repo strip regained a floating edge');
 });
 
 test('mobile keeps clear short actions, repository, and branch in one compact row', () => {

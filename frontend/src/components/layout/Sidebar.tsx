@@ -659,42 +659,58 @@ export function Sidebar({ displayName }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-              {/*
-                Actions first, then destinations. Searching, starting a terminal, and
-                choosing a theme are
-                what the rail is reached for while working; Dashboard and Repositories
-                are places to leave for, and reading them last keeps that separation.
-
-                The two destinations carry a lighter stroke than the actions. They are
-                the denser glyphs of the five — a grid and a branching tree against a
-                reticle, chevron, and palette — so at a shared weight they read as the heavy
-                end of the column rather than as its equals. Dashboard's stroke now
-                comes from `.xv-sidebar-collapsed-actions a` in globals.css rather than
-                an attribute, because its glyph animates its own tiles and is not a
-                lucide component to pass `strokeWidth` to.
-              */}
-              <HoverTip label="Search" description="Search projects, chats, and commands.">
-                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-                  <AnimatedIcon icon={LocateFixedIcon} />
-                </button>
+              <HoverTip label="Workspace" description="Return to the active workspace terminal.">
+                <Link
+                  href="/workspace"
+                  aria-label="Workspace"
+                  onClick={handleNavClick}
+                  className={cn(isActive('/workspace') && 'is-active')}
+                >
+                  <AnimatedIcon icon={TerminalIcon} />
+                </Link>
               </HoverTip>
               <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
                   <AnimatedIcon icon={NewTerminalIcon} />
                 </button>
               </HoverTip>
-              <HoverTip label="Theme" description="Choose the workspace theme.">
-                <ThemeToggle placement="right-start" />
+              <HoverTip label="Search" description="Search projects, chats, and commands.">
+                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+                  <AnimatedIcon icon={LocateFixedIcon} />
+                </button>
               </HoverTip>
               <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
-                <Link href="/dashboard" aria-label="Dashboard" onClick={handleNavClick}>
+                <Link
+                  href="/dashboard"
+                  aria-label="Dashboard"
+                  onClick={handleNavClick}
+                  className={cn(isActive('/dashboard') && 'is-active')}
+                >
                   <AnimatedIcon icon={LayoutGridIcon} />
                 </Link>
               </HoverTip>
               <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
-                <Link href="/dashboard/projects" aria-label="Repositories" onClick={handleNavClick}>
+                <Link
+                  href="/dashboard/projects"
+                  aria-label="Repositories"
+                  onClick={handleNavClick}
+                  className={cn(isActive('/dashboard/projects') && 'is-active')}
+                >
                   <AnimatedIcon icon={FolderOpenIcon} />
                 </Link>
+              </HoverTip>
+              <HoverTip label="Integrations" description="Connect GitHub, Vercel, and other tools.">
+                <Link
+                  href="/dashboard/integrations"
+                  aria-label="Integrations"
+                  onClick={handleNavClick}
+                  className={cn(isActive('/dashboard/integrations') && 'is-active')}
+                >
+                  <AnimatedIcon icon={ConnectIcon} />
+                </Link>
+              </HoverTip>
+              <HoverTip label="Theme" description="Choose the workspace theme.">
+                <ThemeToggle placement="right-start" />
               </HoverTip>
             </div>
           )}

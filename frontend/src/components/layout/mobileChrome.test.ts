@@ -135,7 +135,8 @@ test('the mobile header is one textured glass frame around the mark and controls
     CSS.indexOf('.xv-mobile-workspace-pill {'),
     CSS.indexOf('.xv-mobile-workspace-logo'),
   );
-  assert.match(pill, /border-radius: 22px;/, 'the header lost its compact rounded frame');
+  assert.match(pill, /min-height: 48px;/, 'the header grew back to its oversized height');
+  assert.match(pill, /border-radius: 18px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
   assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-reference-20260829\.webp'\)/);

@@ -19,6 +19,13 @@ import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterIdeas';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 
+const FULLSCREEN_BUILD_COMMANDS = [
+  '/build a launch-ready product from one clear brief',
+  '/audit this repository and fix the highest-impact issue',
+  '/ship a responsive app with tests and deployment',
+  '/turn a rough idea into a working first release',
+] as const;
+
 export function TerminalDock() {
   const pathname = usePathname();
   const hydrated = useHydrated();
@@ -93,6 +100,21 @@ export function TerminalDock() {
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
       )}
+      {dashboardFullscreen && emptyWorkspace && !incognito ? (
+        <div className="xv-fullscreen-inspiration" aria-label="Build command inspiration">
+          <span>Try a command</span>
+          <div aria-hidden="true">
+            {FULLSCREEN_BUILD_COMMANDS.map((command, index) => (
+              <code
+                key={command}
+                style={{ '--xv-command-index': index } as React.CSSProperties}
+              >
+                {command}
+              </code>
+            ))}
+          </div>
+        </div>
+      ) : null}
       <div
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',

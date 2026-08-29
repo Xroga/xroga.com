@@ -1082,8 +1082,8 @@ body.theme-gray * {
   .xv-mobile-workspace-header {
     position: fixed;
     top: max(0.5rem, env(safe-area-inset-top));
-    left: 0.65rem;
-    right: 0.65rem;
+    left: 0.5rem;
+    right: 0.5rem;
     z-index: 80;
     display: flex;
     min-width: 0;
@@ -1106,14 +1106,14 @@ body.theme-gray * {
     isolation: isolate;
     display: flex;
     width: 100%;
-    min-height: 58px;
+    min-height: 48px;
     min-width: 0;
     overflow: hidden;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.3rem 0.5rem 0.3rem 0.35rem;
-    border-radius: 22px;
+    gap: 0.35rem;
+    padding: 0.2rem 0.35rem 0.2rem 0.25rem;
+    border-radius: 18px;
     border: 1px solid color-mix(in srgb, var(--card-border) 82%, var(--foreground) 18%);
     background: color-mix(in srgb, var(--card) 32%, transparent);
     box-shadow: 0 14px 36px -22px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.18);
@@ -1143,17 +1143,17 @@ body.theme-gray * {
   body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray-reference-20260829.webp'); }
   body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black-reference-20260829.webp'); }
   .xv-mobile-workspace-logo {
-    width: 124px !important;
-    max-width: min(124px, 44vw);
-    height: 48px !important;
+    width: 102px !important;
+    max-width: min(102px, 36vw);
+    height: 38px !important;
     filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.16));
     pointer-events: auto;
   }
   .xv-mobile-workspace-actions {
     display: flex;
     align-items: center;
-    gap: 0.1rem;
-    padding: 0.25rem;
+    gap: 0.05rem;
+    padding: 0.16rem;
     border: 1px solid color-mix(in srgb, var(--card-border) 88%, var(--accent) 12%);
     border-radius: 999px;
     background: color-mix(in srgb, var(--card) 68%, transparent);
@@ -1164,8 +1164,8 @@ body.theme-gray * {
   }
   .xv-mobile-workspace-actions button {
     display: grid;
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     place-items: center;
     border-radius: 999px;
     color: var(--muted);
@@ -1179,7 +1179,7 @@ body.theme-gray * {
   .xv-mobile-workspace-actions button:active { transform: scale(0.94); }
   @media (max-width: 1023px) {
     .xv-workspace-main {
-      padding-top: calc(max(0.5rem, env(safe-area-inset-top)) + 4.45rem) !important;
+      padding-top: calc(max(0.5rem, env(safe-area-inset-top)) + 3.75rem) !important;
     }
     /*
      * …except when nothing is up there to make room for.
@@ -1201,8 +1201,8 @@ body.theme-gray * {
   }
   @media (max-width: 380px) {
     .xv-mobile-workspace-header { left: 0.45rem; right: 0.45rem; gap: 0.35rem; }
-    .xv-mobile-workspace-logo { width: 104px !important; max-width: 38vw; height: 44px !important; }
-    .xv-mobile-workspace-actions button { width: 32px; height: 32px; }
+    .xv-mobile-workspace-logo { width: 88px !important; max-width: 32vw; height: 34px !important; }
+    .xv-mobile-workspace-actions button { width: 28px; height: 28px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .xv-mobile-workspace-actions button { transition: none; }
@@ -3054,23 +3054,23 @@ body.theme-gray * {
     align-items: center;
     /* 2px read as one five-icon blob in a 64px column. Enough room to see five
        separate targets, still tight enough to read as one group. */
-    gap: 6px;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
+    gap: 4px;
+    padding: 5px;
+    border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+    border-radius: 13px;
+    background: color-mix(in srgb, var(--card) 96%, var(--foreground) 2%);
+    box-shadow: 0 10px 28px -24px rgba(0, 0, 0, 0.58);
   }
   /* Links as well as buttons. Two of these four are destinations, and while this rule
      named only `button` they had no size, no hit area and no hover — which is what
      made them sit oddly against the two that did. */
   .xv-sidebar-collapsed-actions :is(button, a) {
     display: inline-flex;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
+    border-radius: 9px;
     color: var(--muted);
     transition: color 150ms ease, background 150ms ease;
   }
@@ -3079,6 +3079,11 @@ body.theme-gray * {
     color: var(--accent);
     background: color-mix(in srgb, var(--accent) 12%, transparent);
     outline: none;
+  }
+  .xv-sidebar-collapsed-actions :is(button, a).is-active {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 9%, var(--card));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 5%, transparent);
   }
 
   /* The rail's footer: the avatar and the control that opens its menu. It briefly
@@ -3981,6 +3986,68 @@ body.theme-gray * {
     background: none;
     padding-top: 0.25rem;
     padding-bottom: 14px;
+  }
+  .xv-fullscreen-inspiration {
+    position: fixed;
+    top: 42%;
+    left: 50%;
+    z-index: 1;
+    display: grid;
+    width: min(680px, calc(100vw - 40px));
+    translate: -50% -50%;
+    place-items: center;
+    gap: 0.7rem;
+    color: color-mix(in srgb, var(--foreground) 48%, transparent);
+    text-align: center;
+    pointer-events: none;
+  }
+  .xv-fullscreen-inspiration > span {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .xv-fullscreen-inspiration > div {
+    position: relative;
+    width: 100%;
+    min-height: 2rem;
+  }
+  .xv-fullscreen-inspiration code {
+    --xv-command-cycle: 16s;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    color: color-mix(in srgb, var(--foreground) 62%, transparent);
+    font-size: clamp(0.78rem, 1.6vw, 1rem);
+    letter-spacing: 0.015em;
+    animation: xv-fullscreen-command-cycle var(--xv-command-cycle) ease-in-out infinite;
+    animation-delay: calc(var(--xv-command-index) * 4s);
+  }
+  .xv-fullscreen-inspiration code::after {
+    content: '';
+    width: 1px;
+    height: 1.05em;
+    margin-left: 0.28rem;
+    background: var(--accent);
+    animation: xv-fullscreen-caret 900ms steps(1, end) infinite;
+  }
+  @keyframes xv-fullscreen-command-cycle {
+    0%, 2% { opacity: 0; transform: translateY(4px); filter: blur(2px); }
+    8%, 22% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    25%, 100% { opacity: 0; transform: translateY(-4px); filter: blur(2px); }
+  }
+  @keyframes xv-fullscreen-caret { 50% { opacity: 0; } }
+  @media (max-width: 639px) {
+    .xv-fullscreen-inspiration { top: 38%; width: calc(100vw - 28px); gap: 0.55rem; }
+    .xv-fullscreen-inspiration code { padding-inline: 0.5rem; font-size: 0.72rem; line-height: 1.45; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .xv-fullscreen-inspiration code { display: none; animation: none; }
+    .xv-fullscreen-inspiration code:first-child { display: flex; opacity: 1; }
+    .xv-fullscreen-inspiration code::after { animation: none; }
   }
   body.xv-terminal-fullscreen-active .xv-dashboard-fullscreen {
     padding-bottom: 0;
@@ -8253,17 +8320,25 @@ body.theme-beige {
   min-height: 26px;
   padding: 3px 4px;
   border-radius: 9px;
-  border-color: color-mix(in srgb, var(--accent) 18%, var(--card-border));
-  background: var(--card);
-  box-shadow: 0 5px 18px color-mix(in srgb, var(--shadow-color, #000) 12%, transparent), inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
+  border: 0;
+  background: color-mix(in srgb, var(--card) 94%, var(--foreground) 6%);
+  box-shadow: none;
 }
-.xv-repo-chip--compact .xv-repo-intent { padding-right: 4px; border-right: 1px solid var(--card-border); }
-.xv-repo-chip--compact .xv-repo-intent button { height: 19px; padding-inline: 6px; border-radius: 6px; font-size: 8px; background-color: color-mix(in srgb, var(--foreground) 4%, var(--card)); }
+.xv-repo-chip--compact .xv-repo-intent { padding-right: 4px; border-right: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent); }
+.xv-repo-chip--compact .xv-repo-intent button {
+  height: 19px;
+  padding-inline: 6px;
+  border: 0 !important;
+  border-radius: 6px;
+  font-size: 8px;
+  background-color: color-mix(in srgb, var(--card) 88%, var(--foreground) 12%) !important;
+  box-shadow: none !important;
+}
 .xv-repo-chip--compact .xv-repo-identity { flex: 0 1 auto; min-width: 0; max-width: min(34vw, 23rem); overflow: hidden; }
 .xv-repo-chip--compact .xv-repo-identity > span,
 .xv-repo-chip--compact .xv-repo-identity > button { display: flex; min-width: 0; max-width: 100%; }
 .xv-repo-chip--compact .xv-repo-name { display: block; min-width: 0; max-width: none !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xv-repo-chip--compact .xv-repo-branch { flex: none; padding: 2px 5px; border-radius: 6px; background: color-mix(in srgb, var(--foreground) 6%, var(--card)); }
+.xv-repo-chip--compact .xv-repo-branch { flex: none; padding: 2px 5px; border-radius: 6px; background: color-mix(in srgb, var(--card) 86%, var(--foreground) 14%); }
 .xv-repo-chip--compact .xv-repo-slash { display: none; }
 .xv-repo-chip--compact .xv-repo-visibility { margin-left: auto; }
 .xv-repo-chip--compact .xv-repo-visibility button { height: 18px; padding-inline: 5px; border-radius: 5px; font-size: 8px; }
@@ -9215,7 +9290,10 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-workspace-starter-stack {
   display: grid;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
+  overflow-x: hidden;
   gap: 0.65rem;
   margin-top: 0.55rem;
   animation: xv-workspace-starters-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -9368,6 +9446,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   max-width: 100%;
   overflow: hidden;
   box-sizing: border-box;
+  contain: inline-size;
   border: 1px solid color-mix(in srgb, var(--foreground) 11%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--composer-surface) 97%, var(--foreground) 1%);
@@ -9515,13 +9594,22 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 
 @media (max-width: 639px) {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
-    top: 54%;
-    transform: translateY(-22%);
+    top: max(calc(var(--xv-pane-top, 54px) + 8px), 16dvh);
+    bottom: var(--xv-pane-bottom, 8px) !important;
+    box-sizing: border-box;
+    padding-top: 48px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    transform: none;
+    scrollbar-width: none;
   }
-  .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; }
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)::-webkit-scrollbar { display: none; }
+  .xv-terminal-dock--idle .xv-terminal-dock-inner { width: 100%; max-height: 100%; min-width: 0; box-sizing: border-box; }
+  .xv-workspace-starter-stack { gap: 0.45rem; margin-top: 0.42rem; padding-bottom: 0.5rem; }
   .xv-workspace-idea-tabs { gap: 0.12rem; }
   .xv-workspace-idea-tab { min-height: 30px; padding: 0.3rem 0.38rem; font-size: 0.54rem; }
-  .xv-workspace-idea-tab > svg { display: none; }
+  .xv-workspace-idea-tab > svg { display: block; width: 12px; height: 12px; flex: none; }
   .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.35rem 0.1rem 0; }
   .xv-workspace-idea-list > button { min-height: 36px; padding: 0.38rem 0.45rem; font-size: 0.57rem; }
   .xv-workspace-idea-list > button:nth-child(3) { display: none; }
@@ -9532,7 +9620,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 
 @media (max-width: 639px) and (max-height: 680px) {
-  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: 51%; transform: translateY(-18%); }
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) { top: max(calc(var(--xv-pane-top, 54px) + 6px), 12dvh); padding-top: 42px; }
   .xv-workspace-template-viewport { padding-block: 0.35rem; }
 }
 
@@ -9669,13 +9757,19 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 @media (max-width: 639px) {
   .xv-cba-menu {
     position: fixed;
-    inset: auto 8px calc(12px + env(safe-area-inset-bottom)) 8px;
-    width: auto;
-    max-height: calc(100dvh - 24px - env(safe-area-inset-bottom));
-    border-radius: 16px;
+    inset: auto;
+    width: 100%;
+    max-height: min(320px, calc(100dvh - 96px));
+    padding: 5px;
+    border-radius: 13px 13px 5px 5px;
     z-index: 900;
     transform-origin: bottom center;
   }
+  .xv-cba-menu :is(.xv-cba-grid) { gap: 2px; }
+  .xv-cba-menu :is(.xv-cba-item) { min-height: 40px; gap: 7px; padding: 6px 7px; }
+  .xv-cba-menu :is(.xv-cba-item__text) b { font-size: 12px; }
+  .xv-cba-menu :is(.xv-cba-item__text) i { font-size: 10px; line-height: 1.25; }
+  .xv-cba-menu :is(.xv-cba-kbd) { display: none; }
 }
 
 /* ---- the root list --------------------------------------------------------

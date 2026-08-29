@@ -43,7 +43,7 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
         <div className="xv-welcome-taglines relative mt-3">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            Your idea. <span className="xv-tagline-accent">Built to ship.</span>
+            Describe it. Build it. <span className="xv-tagline-accent">Ship it.</span>
           </p>
         </div>
       </div>

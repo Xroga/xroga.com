@@ -240,12 +240,12 @@ test('the collapsed controls stack under the logo rather than beside it', () => 
   );
 });
 
-test('the collapsed controls carry no surface of their own', () => {
+test('the collapsed controls share one compact solid rail surface', () => {
   const rule = CSS.slice(CSS.indexOf('.xv-sidebar-collapsed-actions {'));
   const body = rule.slice(rule.indexOf('{') + 1, rule.indexOf('}'));
-  assert.match(body, /background:\s*transparent/, 'the floating pill came back');
-  assert.match(body, /border:\s*0/);
-  assert.match(body, /box-shadow:\s*none/);
+  assert.match(body, /background:\s*color-mix\(in srgb, var\(--card\) 96%, var\(--foreground\) 2%\)/);
+  assert.match(body, /border-radius:\s*13px/);
+  assert.match(CSS, /\.xv-sidebar-collapsed-actions :is\(button, a\)\.is-active\s*\{[^}]*background:/);
 });
 
 // ---------------------------------------------------------------------------

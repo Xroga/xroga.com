@@ -58,7 +58,7 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
   assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
-  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > svg\s*\{[^}]*display:\s*none/);
+  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > svg\s*\{[^}]*display:\s*block/);
 });
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {
@@ -101,9 +101,10 @@ test('templates use a large editorial catalog row and open a preview-or-build de
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
-test('the concise idea-to-shipping line replaces the unclear ownership claim', () => {
-  assert.match(WELCOME, /Your idea\./);
-  assert.match(WELCOME, />Built to ship\.</);
+test('the welcome line describes the build flow in plain language', () => {
+  assert.match(WELCOME, /Describe it\. Build it\./);
+  assert.match(WELCOME, />Ship it\.</);
+  assert.doesNotMatch(WELCOME, /Your idea|Built to ship/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);

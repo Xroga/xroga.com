@@ -119,6 +119,14 @@ test('the plus menu uses the full composer width in a compact row-wise grid', ()
   assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'a narrow composer keeps two columns');
 });
 
+test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
+  const DOCK = read('../components/terminal/TerminalDock.tsx');
+  assert.match(DOCK, /dashboardFullscreen && emptyWorkspace && !incognito/);
+  assert.match(DOCK, /xv-fullscreen-inspiration/);
+  assert.match(DOCK, /FULLSCREEN_BUILD_COMMANDS\.map/);
+  assert.match(code, /\.xv-fullscreen-inspiration code\s*\{[^}]*animation:\s*xv-fullscreen-command-cycle/);
+});
+
 test('only the root list is a grid', () => {
   // Skills and Rules are toggles in a set rather than independent destinations, and
   // reading them across two columns would break that.
@@ -160,7 +168,7 @@ test('the geometry is asserted where the workspace can actually be reached', () 
 test('mobile fullscreen releases the reserved header strip', () => {
   assert.match(
     code,
-    /\.xv-workspace-main\s*\{\s*padding-top:\s*calc\(max\(0\.5rem[^}]*4\.45rem\)\s*!important;/,
+    /\.xv-workspace-main\s*\{\s*padding-top:\s*calc\(max\(0\.5rem[^}]*3\.75rem\)\s*!important;/,
     'the reservation for the mobile bar is gone, so the bar now overlaps the terminal',
   );
 
