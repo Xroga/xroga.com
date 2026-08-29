@@ -9169,8 +9169,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   flex: none;
   align-items: center;
   gap: 0.35rem;
-  min-height: 30px;
-  padding: 0.32rem 0.58rem;
+  min-height: 34px;
+  padding: 0.38rem 0.68rem;
   border: 1px solid transparent;
   border-radius: 999px;
   color: color-mix(in srgb, var(--foreground) 58%, transparent);
@@ -9420,49 +9420,74 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 
 .xv-terminal-dock .xv-chatbar-solid {
   position: relative;
+  isolation: isolate;
+  overflow: visible;
   background: var(--composer-surface) !important;
-  border: 1px solid var(--composer-border) !important;
+  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent) !important;
   border-radius: 14px !important;
   backdrop-filter: blur(16px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.035),
-    0 10px 30px rgba(0, 0, 0, 0.2) !important;
+    0 8px 20px rgba(0, 0, 0, 0.12) !important;
   transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.xv-terminal-dock .xv-chatbar-solid::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  z-index: -1;
+  border-radius: 21px;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 3%,
+    rgba(56, 189, 248, 0.38) 24%,
+    rgba(99, 102, 241, 0.34) 43%,
+    rgba(196, 181, 253, 0.3) 58%,
+    rgba(251, 191, 36, 0.18) 72%,
+    rgba(59, 130, 246, 0.34) 88%,
+    transparent 98%
+  );
+  background-size: 280% 100%;
+  background-position: 0% 50%;
+  filter: blur(11px);
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 180ms ease, transform 180ms ease;
 }
 /* It stays elevated because it is the one thing on the screen you act with — but the
    elevation comes from the surface and a soft shadow, not from a lit outline. */
 .xv-terminal-dock .xv-chatbar-solid:focus-within {
-  border-color: color-mix(in srgb, var(--foreground) 15%, transparent) !important;
+  border-color: color-mix(in srgb, var(--foreground) 12%, transparent) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 14px 34px rgba(0, 0, 0, 0.18) !important;
+    0 9px 22px rgba(0, 0, 0, 0.13) !important;
 }
 
-/* A quiet, moving ambient edge marks a fresh terminal and attachment work. It is a
-   shadow around the surface rather than an outline painted over the input, so text
-   remains crisp in every theme. */
+/* A visible moving ambient light marks a fresh terminal, hover, and attachment work.
+   The light lives outside the surface instead of drawing a hard blue outline over it. */
 .xv-terminal-dock--idle .xv-chatbar-solid,
+.xv-terminal-dock .xv-chatbar-solid:hover,
 .xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active {
-  animation: xv-chatbar-ambient-halo 4.8s ease-in-out infinite;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 0 0 5px color-mix(in srgb, var(--accent) 4%, transparent),
+    0 9px 22px rgba(0, 0, 0, 0.12) !important;
 }
-.xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active {
-  animation-duration: 2.4s;
+.xv-terminal-dock--idle .xv-chatbar-solid::before,
+.xv-terminal-dock .xv-chatbar-solid:hover::before,
+.xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active::before {
+  opacity: 0.78;
+  transform: scale(1);
+  animation: xv-chatbar-ambient-halo 3.6s ease-in-out infinite;
+}
+.xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active::before {
+  opacity: 1;
+  animation-duration: 1.8s;
 }
 @keyframes xv-chatbar-ambient-halo {
-  0%, 100% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.045),
-      -18px 9px 36px rgba(120, 99, 255, 0.11),
-      18px 10px 38px rgba(59, 130, 246, 0.1),
-      0 12px 30px rgba(0, 0, 0, 0.16) !important;
-  }
-  50% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.055),
-      18px 8px 42px rgba(120, 99, 255, 0.14),
-      -20px 12px 40px rgba(56, 189, 248, 0.13),
-      0 16px 34px rgba(0, 0, 0, 0.17) !important;
-  }
+  0%, 100% { background-position: 0% 50%; filter: blur(11px); }
+  50% { background-position: 100% 50%; filter: blur(14px); }
 }
 
 
@@ -9689,7 +9714,11 @@ body.theme-beige .xv-cba-trigger:hover:not(:disabled) {
 @media (prefers-reduced-motion: reduce) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) { transition: none; }
   .xv-terminal-dock--idle .xv-chatbar-solid,
+  .xv-terminal-dock .xv-chatbar-solid:hover,
   .xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active { animation: none; }
+  .xv-terminal-dock--idle .xv-chatbar-solid::before,
+  .xv-terminal-dock .xv-chatbar-solid:hover::before,
+  .xv-terminal-dock .xv-chatbar-solid.xv-chatbar--upload-active::before { animation: none; }
 }
 
 /* ---- template decision dialog ------------------------------------------- */

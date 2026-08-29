@@ -41,6 +41,7 @@ test('New Terminal leaves repository selection available without opening it over
 
 test('ideas stay collapsed until a category is chosen, then fill the real composer without auto-sending', () => {
   assert.match(IDEAS, /role="tablist"/);
+  assert.match(IDEAS, /label: 'Suggestions'/);
   assert.match(IDEAS, /useState<string \| null>\(null\)/);
   assert.match(IDEAS, /setGroupId\(nextId\)/);
   assert.match(IDEAS, /setPage\(\(current\) => \(current \+ 1\) % 2\)/);
@@ -70,6 +71,21 @@ test('the new ownership-and-shipping line replaces the retired model claim', () 
   assert.match(WELCOME, />Yours</);
   assert.match(WELCOME, />ship</);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);
+});
+
+test('fresh, hovered, and uploading chatbars share the visible outside-light treatment', () => {
+  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid::before\s*\{[^}]*inset:\s*-9px[^}]*linear-gradient/);
+  assert.match(CSS, /\.xv-terminal-dock--idle \.xv-chatbar-solid::before/);
+  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid:hover::before/);
+  assert.match(CSS, /\.xv-terminal-dock \.xv-chatbar-solid\.xv-chatbar--upload-active::before/);
+  assert.match(CSS, /animation:\s*xv-chatbar-ambient-halo 3\.6s/);
+  assert.match(CHATBAR, /files\.length > 0[\s\S]*xv-chatbar--upload-active/);
+});
+
+test('the local-time greeting cannot disagree during hydration', () => {
+  assert.match(WELCOME, /const hydrated = useHydrated\(\)/);
+  assert.match(WELCOME, /hydrated \? t\(getTimeGreetingKey\(\), locale\) : '\\u00A0'/);
+  assert.doesNotMatch(WELCOME, /useMemo\(\(\) => t\(getTimeGreetingKey\(\)/);
 });
 
 test('an untouched terminal hides transcript and checklist noise behind the starter', () => {

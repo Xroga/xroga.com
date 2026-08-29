@@ -23,7 +23,7 @@ type IdeaGroup = {
 const IDEA_GROUPS: readonly IdeaGroup[] = [
   {
     id: 'suggested',
-    label: 'Suggested',
+    label: 'Suggestions',
     icon: Lightbulb,
     ideas: [
       'Build a polished SaaS landing page with pricing, FAQ, and a working waitlist.',
