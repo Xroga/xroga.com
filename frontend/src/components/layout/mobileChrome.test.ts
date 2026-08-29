@@ -138,10 +138,10 @@ test('the mobile header is one textured glass frame around the mark and controls
   assert.match(pill, /border-radius: 22px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
-  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white\.webp'\)/);
+  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white\.webp\?v=grain-\d+'\)/);
   assert.match(pill, /background-image: var\(--xv-mobile-header-art\)/);
   for (const theme of ['beige', 'gray', 'black']) {
-    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{ --xv-mobile-header-art: url\\('\\/workspace\\/mobile-header\\/${theme}\\.webp'\\); \\}`));
+    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{ --xv-mobile-header-art: url\\('\\/workspace\\/mobile-header\\/${theme}\\.webp\\?v=grain-\\d+'\\); \\}`));
   }
 });
 /**

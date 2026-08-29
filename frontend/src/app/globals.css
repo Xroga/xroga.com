@@ -1097,7 +1097,7 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white.webp');
+    --xv-mobile-header-art: url('/workspace/mobile-header/white.webp?v=grain-20260829');
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1135,9 +1135,9 @@ body.theme-gray * {
     z-index: -1;
     background: linear-gradient(90deg, color-mix(in srgb, var(--card) 28%, transparent), color-mix(in srgb, var(--card) 7%, transparent) 54%, color-mix(in srgb, var(--card) 24%, transparent));
   }
-  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige.webp'); }
-  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray.webp'); }
-  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black.webp'); }
+  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige.webp?v=grain-20260829'); }
+  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray.webp?v=grain-20260829'); }
+  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black.webp?v=grain-20260829'); }
   .xv-mobile-workspace-logo {
     width: 124px !important;
     max-width: min(124px, 44vw);
