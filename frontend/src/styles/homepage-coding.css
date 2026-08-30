@@ -3461,7 +3461,7 @@
 @media(max-width:430px){.xv-hc-mid-cta-mark{width:52px;height:52px}.xv-hc-mid-cta-actions{flex-direction:column}}
 
 /* Cinematic conversion and community scenes. */
-.xv-home-coding .xv-hc-community{isolation:isolate;min-height:clamp(560px,72vw,820px);display:grid;align-items:center;margin:clamp(2.5rem,6vw,5rem) 0;padding:clamp(4rem,9vw,7rem) 1rem;overflow:hidden;background-image:url('/homepage/xroga-community-lakeside.png');background-position:center;background-size:cover;color:#08121f}
+.xv-home-coding .xv-hc-community{isolation:isolate;min-height:clamp(560px,72vw,820px);display:grid;align-items:center;margin:clamp(2.5rem,6vw,5rem) 0;padding:clamp(4rem,9vw,7rem) 1rem;overflow:hidden;background-image:url('/homepage/xroga-community-heaven-20260831.webp');background-position:center;background-size:cover;color:#08121f}
 .xv-hc-community-scrim{position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.5) 47%,rgba(255,255,255,.13)),radial-gradient(circle at 50% 37%,rgba(255,255,255,.9),rgba(255,255,255,.12) 56%)}
 .xv-home-coding .xv-hc-community .xv-hc-section-inner{width:min(900px,100%);padding:clamp(1.4rem,4vw,2.3rem);border:1px solid rgba(255,255,255,.5);border-radius:24px;background:rgba(255,255,255,.3);box-shadow:0 25px 80px rgba(10,38,61,.18);backdrop-filter:blur(12px)}
 .xv-home-coding .xv-hc-community .xv-hc-pixel-kicker{margin:0 0 1rem;color:#0c67d8;text-shadow:none;font-size:.67rem}.xv-home-coding .xv-hc-community .xv-hc-section-title{max-width:none;margin:0;color:#07111e!important;font-size:clamp(2.6rem,6vw,5.8rem);line-height:.9;font-weight:680;letter-spacing:-.065em}.xv-home-coding .xv-hc-community .xv-hc-section-title em{color:#07111e!important;font-weight:480}.xv-hc-community-motto{margin:1.1rem 0 .5rem;color:#15273a;font:italic 520 clamp(1rem,2vw,1.35rem)/1.2 var(--hc-font-serif)}.xv-home-coding .xv-hc-community .xv-hc-section-copy{margin:0 auto 1.5rem;color:#24394e;font-size:.85rem}.xv-home-coding .xv-hc-community .xv-hc-ctas{justify-content:center}.xv-home-coding .xv-hc-community .xv-hc-btn-primary,.xv-home-coding .xv-hc-community .xv-hc-btn-ghost{border-color:rgba(7,17,30,.2);background:rgba(255,255,255,.62);color:#07111e!important;backdrop-filter:blur(10px)}.xv-home-coding .xv-hc-community .xv-hc-btn-primary{background:#07111e;color:#fff!important}
@@ -6889,9 +6889,10 @@ body .xv-home-coding .xv-er-stage .xv-er-signal-cap b{color:#fff!important}
 @keyframes xv-review-wave-field{from{background-position:50% 0,0 0,0 0;transform:scale(1)}to{background-position:43% 8%,26px 18px,18px 26px;transform:scale(1.035)}}
 @keyframes xv-review-orbit-wave{from{transform:translateX(-3%) scale(.96);border-radius:48%}to{transform:translateX(4%) scale(1.08);border-radius:42% 58% 47% 53%}}
 
-/* The community image is the card; copy sits directly on the brighter scene. */
-.xv-home-coding .xv-hc-community{background-position:center 46%;box-shadow:0 30px 88px rgba(0,38,91,.3),inset 0 0 0 1px rgba(255,255,255,.28)}
-.xv-home-coding .xv-hc-community-scrim{background:linear-gradient(180deg,rgba(2,14,31,.03),rgba(5,22,39,.12) 48%,rgba(3,14,30,.32)),radial-gradient(circle at 50% 40%,rgba(255,255,255,.08),transparent 55%)}
+/* The community scene is the card. Keep its bright, quiet centre readable while
+   the clouds, mountains, and valley remain visible around the copy. */
+.xv-home-coding .xv-hc-community{background-position:center 48%;box-shadow:0 30px 88px rgba(0,78,145,.2),inset 0 0 0 1px rgba(255,255,255,.5)}
+.xv-home-coding .xv-hc-community-scrim{background:linear-gradient(180deg,rgba(239,249,255,.04),rgba(239,249,255,.12) 48%,rgba(16,73,107,.12)),radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.76),rgba(255,255,255,.18) 48%,transparent 70%)}
 .xv-home-coding .xv-hc-community .xv-hc-section-inner{
   width:min(880px,100%);
   padding:clamp(1rem,3vw,1.8rem);
@@ -6901,15 +6902,16 @@ body .xv-home-coding .xv-er-stage .xv-er-signal-cap b{color:#fff!important}
   box-shadow:none;
   text-align:center;
   backdrop-filter:none;
-  filter:drop-shadow(0 8px 24px rgba(0,15,39,.38));
+  filter:none;
 }
-.xv-home-coding .xv-hc-community .xv-hc-pixel-kicker{color:#fff;text-shadow:0 2px 16px rgba(0,24,61,.65)}
+.xv-home-coding .xv-hc-community .xv-hc-pixel-kicker{color:#006aff;text-shadow:0 2px 18px rgba(255,255,255,.9)}
 .xv-home-coding .xv-hc-community .xv-hc-section-title,
-.xv-home-coding .xv-hc-community .xv-hc-section-title em{color:#fff!important;text-shadow:0 4px 30px rgba(0,20,49,.55)}
-.xv-home-coding .xv-hc-community-motto,.xv-home-coding .xv-hc-community .xv-hc-section-copy{color:#fff;text-shadow:0 2px 14px rgba(0,18,45,.72)}
+.xv-home-coding .xv-hc-community .xv-hc-section-title em{color:#07182a!important;text-shadow:0 3px 28px rgba(255,255,255,.96)}
+.xv-home-coding .xv-hc-community-motto{color:#142d45;text-shadow:0 2px 16px rgba(255,255,255,.96)}
+.xv-home-coding .xv-hc-community .xv-hc-section-copy{color:#27445e;text-shadow:0 2px 14px rgba(255,255,255,.96)}
 body .xv-home-coding .xv-hc-community .xv-hc-section-title,
-body .xv-home-coding .xv-hc-community .xv-hc-section-title em{color:#fff!important;text-shadow:0 4px 30px rgba(0,20,49,.55)}
-body .xv-home-coding .xv-hc-community .xv-hc-pixel-kicker{color:#fff!important;text-shadow:0 2px 16px rgba(0,24,61,.65)}
+body .xv-home-coding .xv-hc-community .xv-hc-section-title em{color:#07182a!important;text-shadow:0 3px 28px rgba(255,255,255,.96)}
+body .xv-home-coding .xv-hc-community .xv-hc-pixel-kicker{color:#006aff!important;text-shadow:0 2px 18px rgba(255,255,255,.9)}
 
 /* One focused ownership action and a consistent modern motion language. */
 .xv-home-coding .xv-hc-mid-cta-copy h2,.xv-home-coding .xv-hc-mid-cta-copy h2 em{color:#fff!important}
