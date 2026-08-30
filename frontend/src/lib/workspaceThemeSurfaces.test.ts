@@ -24,6 +24,7 @@ const CSS = readFileSync(new URL('../app/globals.css', import.meta.url), 'utf8')
 
 const THEMES = ['black', 'gray', 'white', 'beige'] as const;
 const LIGHT_THEMES = ['white', 'beige'] as const;
+const TERMINAL_SKINS = ['dark', 'amoled', 'light', 'light-grid', 'gray', 'midnight', 'forest', 'matrix', 'amber', 'solar'] as const;
 
 /** The last column-zero rule for a selector — the one the browser applies. */
 function block(selector: string): string {
@@ -72,6 +73,25 @@ test('all four themes declare every workspace surface', () => {
       assert.ok(vars.has(token), `theme-${theme} does not declare ${token}`);
     }
   }
+});
+
+test('every terminal skin owns the composer and starter surface palette', () => {
+  for (const skin of TERMINAL_SKINS) {
+    const selector = `.terminal-skin-${skin}`;
+    const rule = CSS.match(new RegExp(`\\.terminal-skin-${skin}\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    assert.notEqual(rule, '', `${selector} is gone`);
+    for (const token of ['--terminal-ui-surface', '--terminal-ui-raised', '--terminal-ui-inset', '--terminal-ui-border']) {
+      assert.match(rule, new RegExp(`${token}:\\s*[^;]+;`), `${selector} does not declare ${token}`);
+    }
+  }
+});
+
+test('the dock and all empty-state cards use solid terminal-skin surfaces', () => {
+  assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\][\s\S]*--card:\s*var\(--terminal-ui-raised\)/);
+  assert.match(block('.xv-terminal-dock .xv-chatbar-solid'), /background:\s*var\(--terminal-ui-raised/);
+  assert.match(block('.xv-chatbar-context-strip'), /background:\s*var\(--terminal-ui-raised/);
+  assert.match(block('.xv-repo-chip--compact'), /background:\s*var\(--terminal-ui-inset/);
+  assert.match(block('.xv-workspace-templates'), /background:\s*var\(--terminal-ui-raised/);
 });
 
 test('the surfaces genuinely differ between themes, rather than being one palette', () => {

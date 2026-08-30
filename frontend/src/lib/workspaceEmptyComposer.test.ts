@@ -63,7 +63,7 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
   assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
-  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.54rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
+  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.58rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
 });
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {
@@ -78,6 +78,22 @@ test('the desktop companion stays attached outside the canonical composer', () =
   assert.doesNotMatch(CSS, /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/);
   assert.match(DOCK, /<CompanionComposerAnchor \/>[\s\S]*?<TerminalChatBar \/>/);
   assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\(calc\(var\(--xv-pane-top, 60px\) \+ 24px\), calc\(30vh - 72px\)\)[^}]*padding-top:\s*72px[^}]*overflow-y:\s*auto/);
+});
+
+test('the empty dock inherits the selected terminal skin and keeps mobile greeting space', () => {
+  assert.match(DOCK, /const terminalSkinRaw = useThemeStore\(\(s\) => s\.terminalSkin\)/);
+  assert.match(DOCK, /`terminal-skin-\$\{incognito \? 'dark' : terminalSkin\}`/);
+  assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/);
+  assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\(calc\(var\(--xv-pane-top, 54px\) \+ 74px\), 22dvh\)/);
+  assert.match(CSS, /\.xv-terminal-scroll\[data-conversation='false'\] \.xv-dashboard-welcome\s*\{[^}]*z-index:\s*2[^}]*width:\s*min\(100%, 760px\)/);
+});
+
+test('fullscreen command inspiration is in flow before the composer', () => {
+  const inspiration = DOCK.indexOf('className="xv-fullscreen-inspiration"');
+  const composer = DOCK.indexOf('className="xv-chatbar-stack relative"');
+  assert.ok(inspiration !== -1 && inspiration < composer);
+  assert.match(CSS, /\.xv-fullscreen-inspiration\s*\{[^}]*position:\s*static[^}]*margin:\s*0 auto/);
+  assert.match(CSS, /\.xv-terminal-dock--fullscreen\.xv-terminal-dock--idle\s*\{[^}]*overflow-y:\s*auto/);
 });
 
 test('repository status is brief and is not replayed during passive restore', () => {

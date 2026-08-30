@@ -338,16 +338,17 @@ test('workspace tabs are rounded pills, not outlined boxes', () => {
  * container and drawing a full-height bar down the side of an untouched terminal.
  */
 test('the terminal pane scrolls when there is something to scroll, and not before', () => {
+  const baseStart = CSS.indexOf('.xv-terminal-scroll {');
   const base = CSS.slice(
-    CSS.indexOf('.xv-terminal-scroll {'),
-    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']"),
+    baseStart,
+    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']", baseStart),
   );
   assert.match(base, /overflow-y: auto;/, 'the pane stopped owning the scrollbar');
   assert.match(base, /padding-bottom: calc\(var\(--xv-chatbar-height/, 'the composer reservation is gone');
 
   const empty = CSS.slice(
-    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']"),
-    CSS.indexOf('.xv-terminal-scroll::-webkit-scrollbar'),
+    CSS.indexOf(".xv-terminal-scroll[data-conversation='false']", baseStart),
+    CSS.indexOf('.xv-terminal-scroll::-webkit-scrollbar', baseStart),
   );
   assert.match(empty, /overflow-y: hidden;/, 'an empty terminal draws a scrollbar again');
   assert.match(empty, /padding-bottom: 24px;/, 'the empty state still reserves the composer height');

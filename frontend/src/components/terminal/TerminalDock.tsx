@@ -32,6 +32,7 @@ export function TerminalDock() {
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
+  const terminalSkinRaw = useThemeStore((s) => s.terminalSkin);
   const chatbarHiddenRaw = useThemeStore((s) => s.chatbarHidden);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
@@ -40,6 +41,7 @@ export function TerminalDock() {
   const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
+  const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
   const chatbarHidden = hydrated && chatbarHiddenRaw;
   const workspaceOpen = hydrated && workspaceOpenRaw;
   const dashboardFullscreen = isDashboard && terminalFullscreen;
@@ -69,7 +71,8 @@ export function TerminalDock() {
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito',
         sessionRestoring && 'xv-terminal-dock--restoring',
-        showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle'
+        showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle',
+        `terminal-skin-${incognito ? 'dark' : terminalSkin}`,
       )}
       style={{
         '--sidebar-width': (hydrated ? sidebarOpen : true)
@@ -100,21 +103,6 @@ export function TerminalDock() {
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
       )}
-      {dashboardFullscreen && emptyWorkspace && !incognito ? (
-        <div className="xv-fullscreen-inspiration" aria-label="Build command inspiration">
-          <span>Try a command</span>
-          <div aria-hidden="true">
-            {FULLSCREEN_BUILD_COMMANDS.map((command, index) => (
-              <code
-                key={command}
-                style={{ '--xv-command-index': index } as React.CSSProperties}
-              >
-                {command}
-              </code>
-            ))}
-          </div>
-        </div>
-      ) : null}
       <div
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
@@ -141,6 +129,21 @@ export function TerminalDock() {
         ) : (
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
+              {dashboardFullscreen && emptyWorkspace && !incognito ? (
+                <div className="xv-fullscreen-inspiration" aria-label="Build command inspiration">
+                  <span>Try a command</span>
+                  <div aria-hidden="true">
+                    {FULLSCREEN_BUILD_COMMANDS.map((command, index) => (
+                      <code
+                        key={command}
+                        style={{ '--xv-command-index': index } as React.CSSProperties}
+                      >
+                        {command}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
               {/* The repo context sits in this thin strip below the composer, as a
                   compact chip — not the verbose `outside` mode, which renders a full
                   sentence ("Loading repositories…") and full name/branch text. That
