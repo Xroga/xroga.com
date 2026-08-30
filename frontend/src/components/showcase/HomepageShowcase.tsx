@@ -3,47 +3,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Monitor, ShieldCheck, Smartphone, WandSparkles } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 import { Logo } from '@/components/layout/Logo';
 
 const INITIAL_TEMPLATE = Math.max(0, SHOWCASE_TEMPLATES.findIndex((item) => item.slug === 'ai-saas-chatbot'));
 
 export function HomepageShowcase() {
-  const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(INITIAL_TEMPLATE);
-  const [isInView, setIsInView] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const template = SHOWCASE_TEMPLATES[activeIndex];
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const observer = new IntersectionObserver(([entry]) => setIsInView(entry.isIntersecting), { threshold: 0.3 });
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isInView || isPaused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => setActiveIndex((current) => (current + 1) % SHOWCASE_TEMPLATES.length), 5200);
-    return () => window.clearInterval(timer);
-  }, [isInView, isPaused]);
 
   const selectTemplate = useCallback((index: number) => setActiveIndex(index), []);
   const step = (direction: -1 | 1) => selectTemplate((activeIndex + direction + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length);
 
   return (
     <section
-      ref={sectionRef}
       className="xv-editorial-showcase"
       aria-labelledby="showcase-home-heading"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocusCapture={() => setIsPaused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsPaused(false);
-      }}
     >
       <div className="xv-editorial-showcase__canvas" style={{ '--showcase-accent': template.accent } as React.CSSProperties}>
         <header className="xv-editorial-showcase__masthead">
@@ -56,11 +32,13 @@ export function HomepageShowcase() {
 
         <div className="xv-editorial-showcase__devices">
           <Link className="xv-editorial-showcase__phone" href={`/showcase/${template.slug}/preview`} aria-label={`${template.name} mobile preview`}>
+            <span className="xv-editorial-showcase__device-label">Mobile</span>
             <span className="xv-editorial-showcase__phone-speaker" aria-hidden="true" />
             <Image key={`${template.slug}-mobile`} src={thumbnailFor(template, 'mobile')} alt={`${template.name} mobile view`} fill sizes="(max-width: 700px) 34vw, 22vw" />
           </Link>
 
           <Link className="xv-editorial-showcase__desktop" href={`/showcase/${template.slug}/preview`} aria-label={`${template.name} desktop preview`}>
+            <span className="xv-editorial-showcase__device-label">Desktop</span>
             <span className="xv-editorial-showcase__browserbar" aria-hidden="true"><i /><i /><i /><b>xroga.com/showcase/{template.slug}</b></span>
             <span className="xv-editorial-showcase__desktop-image">
               <Image key={`${template.slug}-desktop`} src={thumbnailFor(template, 'desktop')} alt={`${template.name} desktop view`} fill priority={activeIndex === INITIAL_TEMPLATE} sizes="(max-width: 700px) 78vw, 64vw" />

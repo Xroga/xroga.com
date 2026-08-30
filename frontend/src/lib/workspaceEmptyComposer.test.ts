@@ -72,6 +72,8 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
   assert.match(DOCK, /xv-terminal-dock--restoring/);
   assert.match(CSS, /\.xv-terminal-dock--restoring\s*\{[^}]*visibility:\s*hidden[^}]*transition:\s*none !important/);
   assert.match(CHATBAR, /new ResizeObserver\(sync\)/);
+  assert.doesNotMatch(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*animation:/);
+  assert.doesNotMatch(CSS, /\.xv-terminal-dock:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*bottom 300ms/);
 });
 
 test('the desktop companion stays attached outside the canonical composer', () => {
@@ -84,6 +86,7 @@ test('the empty dock inherits the selected terminal skin and keeps mobile greeti
   assert.match(DOCK, /const terminalSkinRaw = useThemeStore\(\(s\) => s\.terminalSkin\)/);
   assert.match(DOCK, /`terminal-skin-\$\{incognito \? 'dark' : terminalSkin\}`/);
   assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/);
+  assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*background:\s*transparent !important[^}]*border:\s*0 !important[^}]*box-shadow:\s*none !important/);
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\(calc\(var\(--xv-pane-top, 54px\) \+ 74px\), 22dvh\)/);
   assert.match(CSS, /\.xv-terminal-scroll\[data-conversation='false'\] \.xv-dashboard-welcome\s*\{[^}]*z-index:\s*2[^}]*width:\s*min\(100%, 760px\)/);
 });

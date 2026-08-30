@@ -9483,8 +9483,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   --send-button-fg: var(--foreground);
   --send-button-hover-bg: color-mix(in srgb, var(--terminal-ui-inset) 84%, var(--foreground) 16%);
   --send-button-border: var(--terminal-ui-border);
-  background: transparent;
-  border: 0;
+  /* Skin classes also carry a full panel background and border with `!important`.
+     The dock only borrows their tokens; painting those declarations here creates the
+     large empty rectangle that cuts through the greeting. */
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
   color: var(--foreground);
 }
 
@@ -9565,11 +9569,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   overflow-x: hidden;
   gap: 0.65rem;
   margin-top: 0.55rem;
-  animation: xv-workspace-starters-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes xv-workspace-starters-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  overflow-anchor: none;
 }
 
 /* Idea categories and the three currently useful prompts. The category buttons
@@ -9897,7 +9897,6 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .xv-workspace-starter-stack { animation: none; }
   .xv-workspace-idea-list > button { transition: none; }
 }
 @media (max-width: 639px) {
@@ -10190,8 +10189,7 @@ body.theme-beige .xv-cba-trigger:hover:not(:disabled) {
   right: var(--xv-pane-right, 0px);
   transition: left 280ms cubic-bezier(0.22, 1, 0.36, 1),
               right 280ms cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 300ms ease,
-              bottom 300ms ease;
+              opacity 180ms ease;
 }
 /* The measured edges already account for the pane, so the old reservation for an open
    workspace would subtract the same width twice. */

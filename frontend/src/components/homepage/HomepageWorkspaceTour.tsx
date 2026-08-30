@@ -8,6 +8,8 @@ import {
   Bitcoin,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Cloud,
   Code2,
   Compass,
@@ -20,6 +22,7 @@ import {
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
+  Palette,
   Plug,
   Plus,
   Rocket,
@@ -31,6 +34,7 @@ import {
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 
 const TOUR_TABS = [
   { id: 'workspace', label: 'Workspace', eyebrow: 'Connected product loop', icon: TerminalSquare },
@@ -41,6 +45,14 @@ const TOUR_TABS = [
 const DOCK_TABS = ['Files', 'Code', 'Changes', 'Terminal', 'Preview', 'Deploy'] as const;
 type TourTab = (typeof TOUR_TABS)[number]['id'];
 type DockTab = (typeof DOCK_TABS)[number];
+
+const DEMO_SKINS = [
+  { id: 'gray', label: 'Graphite' },
+  { id: 'dark', label: 'Black' },
+  { id: 'light', label: 'Daylight' },
+  { id: 'solar', label: 'Parchment' },
+] as const;
+type DemoSkin = (typeof DEMO_SKINS)[number]['id'];
 
 const CONNECTIONS = [
   { id: 'github', name: 'GitHub', tone: 'live' },
@@ -58,19 +70,19 @@ const FILES = ['app/page.tsx', 'components/Analytics.tsx', 'lib/dashboard.ts', '
 function WorkspaceTerminal() {
   return (
     <div className="xv-wt-workspace-view">
-      <div className="xv-wt-greeting"><span>Good evening,</span><strong>Xroga</strong><b>BLACK HOLE <em>V∞</em></b></div>
-      <p>One prompt. <i>Yours</i> to <i>ship</i>.</p>
+      <div className="xv-wt-greeting"><span>Good afternoon,</span><strong>Orbit Clean E2E</strong><b>BLACK HOLE <em>V∞</em></b></div>
+      <p>Describe it. Build it. <i>Ship it.</i></p>
       <div className="xv-wt-connect-banner"><Cloud aria-hidden="true" /><strong>Connect Vercel</strong><span>Deploy on your own project and domain.</span><small>3/4</small><i /><i /><i /><button type="button">Connect</button></div>
       <button className="xv-wt-template-row" type="button"><span>›</span><b>Start from a Xroga build</b><small>TEMPLATES</small></button>
       <div className="xv-wt-terminal">
         <div className="xv-wt-terminal-bar"><i /><i /><i /><code>xroga@swarm</code><span>~/workspace</span><button type="button">Workspace</button><button type="button">Graphite</button></div>
         <div className="xv-wt-terminal-body">
-          <p><b>xroga@swarm:~ $</b> Build a customer analytics platform with authentication, subscriptions, analytics, and admin controls.<span className="xv-wt-caret" /></p>
+          <p><b>xroga@swarm:~ $</b> Build the Modern Business Website from my selected Xroga showcase template.<span className="xv-wt-caret" /></p>
           <div className="xv-wt-run-lines" aria-live="polite">
             <span className="is-done">● planner: Product brief created</span>
-            <span className="is-done">● builder: Authentication and dashboard files written</span>
-            <span className="is-live">● builder: Implementing subscriptions and analytics…</span>
-            <code>components/Analytics.tsx · 84 lines</code>
+            <span className="is-done">● builder: Responsive desktop and mobile views written</span>
+            <span className="is-live">● builder: Verifying the live showcase product…</span>
+            <code>components/BusinessWebsite.tsx · building</code>
             <div className="xv-wt-progress"><span /></div>
           </div>
         </div>
@@ -102,7 +114,15 @@ function IntegrationsView() {
   );
 }
 
-function DockContent({ active }: { active: DockTab }) {
+function DockContent({
+  active,
+  showcaseIndex,
+  onShowcaseChange,
+}: {
+  active: DockTab;
+  showcaseIndex: number;
+  onShowcaseChange: (index: number) => void;
+}) {
   if (active === 'Files') {
     return <div className="xv-wt-dock-files">{FILES.map((file) => <button type="button" key={file}><FileCode2 /><span>{file}</span></button>)}</div>;
   }
@@ -115,24 +135,54 @@ function DockContent({ active }: { active: DockTab }) {
   if (active === 'Deploy') {
     return <div className="xv-wt-dock-deploy"><IntegrationLogo id="vercel" name="Vercel" size={32} /><small>PRODUCTION</small><h4>Ready to deploy</h4><p>Commit a1b2c3d · all checks passed</p><button type="button">View deployment</button></div>;
   }
+  const template = SHOWCASE_TEMPLATES[showcaseIndex];
+  const stepTemplate = (direction: -1 | 1) => {
+    onShowcaseChange((showcaseIndex + direction + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length);
+  };
   return (
     <div className="xv-wt-dock-preview">
       <div className="xv-wt-browser-bar"><button type="button" aria-label="Go back">‹</button><button type="button" aria-label="Go forward">›</button><button type="button" aria-label="Refresh preview">↻</button><span>preview.xroga.app</span></div>
-      <div className="xv-wt-product-preview">
-        <aside><b>Pulse</b><span className="is-active">Overview</span><span>Customers</span><span>Revenue</span><span>Reports</span></aside>
-        <main><small>Monthly revenue</small><strong>$48,290</strong><div className="xv-wt-mini-chart">{[38, 56, 46, 73, 64, 86, 78].map((height, index) => <i key={index} style={{ height: `${height}%` }} />)}</div><footer><span><b>1,842</b>Active customers</span><span><b>12.8%</b>Conversion</span><span><b>+24%</b>Growth</span></footer></main>
+      <div className="xv-wt-preview-canvas">
+        <Image
+          key={template.id}
+          className="xv-wt-preview-image"
+          src={thumbnailFor(template, 'desktop')}
+          alt={`${template.name} live product preview`}
+          fill
+          sizes="(max-width: 760px) 92vw, 48vw"
+        />
+        <div className="xv-wt-preview-switcher" aria-label="Showcase product controls">
+          <button type="button" onClick={() => stepTemplate(-1)} aria-label="Previous showcase product"><ChevronLeft /></button>
+          <span>{String(showcaseIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
+          <button type="button" onClick={() => stepTemplate(1)} aria-label="Next showcase product"><ChevronRight /></button>
+        </div>
+        <div className="xv-wt-preview-caption">
+          <div><Eye aria-hidden="true" /></div>
+          <div><strong>{template.name}</strong><p>{template.category} · Real Xroga showcase product</p></div>
+          <Link href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} full preview`}>Open <ChevronRight aria-hidden="true" /></Link>
+        </div>
       </div>
     </div>
   );
 }
 
-function WorkspaceDock({ active, onChange }: { active: DockTab; onChange: (tab: DockTab) => void }) {
+function WorkspaceDock({
+  active,
+  onChange,
+  showcaseIndex,
+  onShowcaseChange,
+}: {
+  active: DockTab;
+  onChange: (tab: DockTab) => void;
+  showcaseIndex: number;
+  onShowcaseChange: (index: number) => void;
+}) {
   return (
     <aside className="xv-wt-dev-dock" aria-label="Workspace development panel">
       <nav role="tablist" aria-label="Development panel tabs">
         {DOCK_TABS.map((tab) => <button type="button" role="tab" aria-selected={active === tab} className={active === tab ? 'is-active' : ''} key={tab} onClick={() => onChange(tab)}>{tab === 'Files' ? <Files /> : tab === 'Code' ? <Code2 /> : tab === 'Preview' ? <Eye /> : tab === 'Deploy' ? <Rocket /> : tab === 'Terminal' ? <TerminalSquare /> : <GitBranch />}{tab}</button>)}
       </nav>
-      <div className="xv-wt-dev-dock__body" role="tabpanel"><DockContent active={active} /></div>
+      <div className="xv-wt-dev-dock__body" role="tabpanel"><DockContent active={active} showcaseIndex={showcaseIndex} onShowcaseChange={onShowcaseChange} /></div>
     </aside>
   );
 }
@@ -155,13 +205,16 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
   const [dockTab, setDockTab] = useState<DockTab>('Preview');
   const [collapsed, setCollapsed] = useState(false);
   const [repoExpanded, setRepoExpanded] = useState(true);
+  const [demoSkin, setDemoSkin] = useState<DemoSkin>('gray');
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [showcaseIndex, setShowcaseIndex] = useState(0);
   const router = useRouter();
   const activeMeta = TOUR_TABS.find((tab) => tab.id === active) ?? TOUR_TABS[0];
 
   return (
     <section className="xv-wt" aria-label="Interactive Xroga workspace tour">
       <div className="xv-wt-scroll" tabIndex={0} aria-label="Scrollable Xroga desktop workspace">
-        <div className={`xv-wt-window${collapsed ? ' is-collapsed' : ''}`}>
+        <div className={`xv-wt-window terminal-skin-${demoSkin}${collapsed ? ' is-collapsed' : ''}`} data-demo-skin={demoSkin}>
           <div className="xv-wt-desktop-bar"><i /><i /><i /><strong>Xroga Workspace</strong><span>customer-analytics · connected</span></div>
           <aside className="xv-wt-sidebar">
             <div className="xv-wt-sidebar-head"><Logo href="/" variant={collapsed ? 'sidebar' : 'homepage'} height={collapsed ? 36 : 32} /><div><button type="button" aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} onClick={() => setCollapsed((value) => !value)}>{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}</button><button type="button" aria-label="Search workspace" onClick={() => setActive('repos')}><Search /></button><button type="button" aria-label="New terminal" onClick={() => setActive('workspace')}><Plus /></button></div></div>
@@ -186,7 +239,19 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
           </aside>
 
           <div className="xv-wt-main">
-            <header><span><i /> Xroga Workspace</span><em>{activeMeta.eyebrow}</em><button type="button" onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}>{loggedIn ? 'Open workspace' : 'Start building'}</button></header>
+            <header>
+              <span><i /> Xroga Workspace</span>
+              <em>{activeMeta.eyebrow}</em>
+              <div className="xv-wt-theme">
+                <button type="button" aria-expanded={themeOpen} onClick={() => setThemeOpen((open) => !open)}><Palette aria-hidden="true" />{DEMO_SKINS.find((skin) => skin.id === demoSkin)?.label}</button>
+                {themeOpen ? (
+                  <div role="menu" aria-label="Workspace demo theme">
+                    {DEMO_SKINS.map((skin) => <button key={skin.id} type="button" role="menuitemradio" aria-checked={skin.id === demoSkin} onClick={() => { setDemoSkin(skin.id); setThemeOpen(false); }}><i className={`terminal-skin-${skin.id}`} aria-hidden="true" />{skin.label}</button>)}
+                  </div>
+                ) : null}
+              </div>
+              <button type="button" onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}>{loggedIn ? 'Open workspace' : 'Start building'}</button>
+            </header>
             <div className="xv-wt-studio">
               <div className="xv-wt-primary">
                 <div className="xv-wt-canvas" key={active}>
@@ -196,7 +261,7 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
                 </div>
                 {active === 'workspace' ? <div className="xv-wt-composer"><HomepageChatBar listenForAsk={false} suggestions={['Build a website', 'Update my repo', 'Ship a preview']} fallbackPrompt="Build my product in the Xroga workspace" /></div> : null}
               </div>
-              <WorkspaceDock active={dockTab} onChange={setDockTab} />
+              <WorkspaceDock active={dockTab} onChange={setDockTab} showcaseIndex={showcaseIndex} onShowcaseChange={setShowcaseIndex} />
             </div>
           </div>
         </div>
