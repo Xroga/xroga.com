@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Monitor, ShieldCheck, Smartphone, WandSparkles } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
-import { Logo } from '@/components/layout/Logo';
 
 const INITIAL_TEMPLATE = Math.max(0, SHOWCASE_TEMPLATES.findIndex((item) => item.slug === 'ai-saas-chatbot'));
 
@@ -23,9 +22,7 @@ export function HomepageShowcase() {
     >
       <div className="xv-editorial-showcase__canvas" style={{ '--showcase-accent': template.accent } as React.CSSProperties}>
         <header className="xv-editorial-showcase__masthead">
-          <Link href="/showcase" aria-label="Explore all Xroga templates">
-            <Logo href={null} variant="homepage" height={34} />
-          </Link>
+          <small>XROGA · LIVE PRODUCTS</small>
           <span>PRODUCT SHOWCASE · {String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
           <p>Real working products. Ready to make yours.</p>
         </header>

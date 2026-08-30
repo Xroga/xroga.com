@@ -83,6 +83,7 @@ const ICONS = [
   'GlobeLockIcon',
   'NewTerminalIcon',
   'ImageIcon',
+  'FileTextIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {

@@ -17,8 +17,15 @@ test('uploaded images are compact square thumbnails rather than wide grid column
 
 test('an animated image glyph replaces the IMAGE word and the size stays a compact chip', () => {
   assert.match(GRID, /import \{ ImageIcon \}/);
-  assert.match(GRID, /isImage \? <AnimatedIcon icon=\{ImageIcon\} size=\{12\} intro=\{false\} \/> : kind/);
+  assert.match(GRID, /import \{ FileTextIcon \}/);
+  assert.match(GRID, /isImage \? <AnimatedIcon icon=\{ImageIcon\} size=\{12\} intro=\{false\} \/> : <AnimatedIcon icon=\{FileTextIcon\} size=\{12\} intro=\{false\} \/>/);
   assert.match(CSS, /\.xv-file-size\s*\{[^}]*max-width:\s*calc\(100% - 8px\)[^}]*white-space:\s*nowrap/);
+});
+
+test('PDFs and other documents use the animated file-text glyph everywhere in the chatbar tile', () => {
+  assert.doesNotMatch(GRID, /<FileText\b/);
+  assert.match(GRID, /<AnimatedIcon icon=\{FileTextIcon\} size=\{48\}/);
+  assert.match(GRID, /<AnimatedIcon icon=\{FileTextIcon\} size=\{24\}/);
 });
 
 test('a fresh light workspace removes only the redundant outer frame', () => {

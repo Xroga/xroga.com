@@ -12,13 +12,13 @@ import {
   FlipHorizontal,
   FlipVertical,
   Sparkles,
-  FileText,
   Music,
   Film,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ImageIcon } from '@/components/icons/animated/ImageIcon';
+import { FileTextIcon } from '@/components/icons/animated/FileTextIcon';
 import toast from 'react-hot-toast';
 
 const COLS = 4;
@@ -112,7 +112,7 @@ function FilePreviewModal({
             <video src={url} controls className="max-h-[50vh] max-w-full rounded-lg" />
           ) : (
             <div className="flex flex-col items-center justify-center text-[var(--muted)]">
-              <FileText className="w-12 h-12 mb-2" />
+              <AnimatedIcon icon={FileTextIcon} size={48} intro={false} className="mb-2" />
               <p className="text-xs">{file.type || 'Document'}</p>
             </div>
           )}
@@ -246,11 +246,11 @@ export function ChatBarFileGrid({
                 </div>
               ) : (
                 <div className="xv-file-fallback">
-                  <FileText className="w-6 h-6 text-[var(--muted)]" />
+                  <AnimatedIcon icon={FileTextIcon} size={24} intro={false} className="text-[var(--muted)]" />
                 </div>
               )}
               <span className="xv-file-kind" aria-label={isImage ? 'Image file' : `${kind} file`}>
-                {isImage ? <AnimatedIcon icon={ImageIcon} size={12} intro={false} /> : kind}
+                {isImage ? <AnimatedIcon icon={ImageIcon} size={12} intro={false} /> : <AnimatedIcon icon={FileTextIcon} size={12} intro={false} />}
               </span>
               <span className="xv-file-size">
                 {formatSize(f.size)}
