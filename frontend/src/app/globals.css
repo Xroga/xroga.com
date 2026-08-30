@@ -1141,7 +1141,7 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white-builder-strip-20260831.webp');
+    --xv-mobile-header-art: url('/workspace/mobile-header/white-heaven-horizon-20260831.webp');
     --xv-mobile-header-position: center;
     position: relative;
     isolation: isolate;

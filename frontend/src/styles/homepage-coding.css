@@ -6947,6 +6947,7 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2 em{color:#fff!i
 .xv-home-coding .xv-hc-community{
   width:min(1180px,calc(100% - clamp(1.5rem,6vw,6rem)));
   min-height:clamp(440px,48vw,610px);
+  aspect-ratio:16/9;
   margin:clamp(2rem,5vw,4rem) auto;
   padding:clamp(1.5rem,4vw,3rem);
   border-radius:clamp(20px,2.5vw,32px);

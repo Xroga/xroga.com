@@ -112,7 +112,7 @@ test('personalization exposes every terminal palette and keeps automatic theme m
 
 test('mobile workspace headers use a distinct project-bound scene for every surface', () => {
   for (const asset of [
-    'white-builder-strip-20260831.webp',
+    'white-heaven-horizon-20260831.webp',
     'black-coder-universe-20260830.webp',
     'gray-skyline-20260830.webp',
     'beige-architecture-20260830.webp',
