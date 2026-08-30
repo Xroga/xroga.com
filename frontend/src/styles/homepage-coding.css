@@ -6243,7 +6243,9 @@ body.theme-gray .xv-home-coding .xv-hc-bg-image {
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
   background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp') !important;
-  filter: saturate(1.02) contrast(1.04) brightness(0.86);
+  /* The artwork already supplies its own black negative space. A second heavy
+     brightness reduction crushed the stars, code texture, and blue highlights. */
+  filter: saturate(1.12) contrast(1.06) brightness(1.02);
 }
 
 body.theme-white .xv-home-coding .xv-hc-bg-image::after {
@@ -6259,7 +6261,9 @@ body.theme-gray .xv-home-coding .xv-hc-bg-image::after {
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image::after {
-  background: linear-gradient(180deg, rgba(0, 2, 9, 0.12), rgba(0, 3, 12, 0.18) 58%, #000000 100%);
+  /* Retain a very light reading veil, but never fade the fixed wallpaper to an
+     opaque black band at the bottom of the viewport. */
+  background: linear-gradient(180deg, rgba(0, 2, 9, 0.02), rgba(0, 3, 12, 0.05) 58%, rgba(0, 0, 0, 0.24) 100%);
 }
 
 /* Portrait artwork preserves the theme's visible subject matter on phones.
