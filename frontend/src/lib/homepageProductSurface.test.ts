@@ -17,10 +17,15 @@ test('the homepage showcase is a full-width device gallery with a phone-only mob
   assert.match(SHOWCASE, /event\.preventDefault\(\)/);
   assert.match(SHOWCASE, /xv-showcase-gallery__rail/);
   assert.doesNotMatch(SHOWCASE, /xv-editorial-showcase__(?:masthead|story|footer)/);
-  assert.match(CSS, /xv-showcase-gallery__canvas\s*\{[^}]*1480px/);
+  assert.match(CSS, /xv-showcase-gallery__canvas\s*\{[^}]*1600px[^}]*border:\s*0[^}]*background:\s*transparent[^}]*box-shadow:\s*none/);
+  assert.match(CSS, /xv-showcase-gallery__stage\s*\{[^}]*min-height:\s*0[^}]*border:\s*0[^}]*background:\s*transparent/);
+  assert.ok(
+    SHOWCASE.indexOf('xv-showcase-gallery__stage') < SHOWCASE.indexOf('xv-showcase-gallery__header'),
+    'the real device preview should appear before its description and actions',
+  );
   assert.match(CSS, /xv-showcase-gallery__rail\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
   assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-laptop\s*\{[^}]*display:none/);
-  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*position:relative[^}]*74vw/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*position:relative[^}]*82vw/);
 });
 
 test('the interactive homepage tour follows the real homepage theme and workspace shell', () => {

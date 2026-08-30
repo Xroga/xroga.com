@@ -299,12 +299,13 @@ test('Repositories opens its folder, in the row and in the rail', () => {
   assert.match(rail, /icon=\{FolderOpenIcon\}/, 'the rail lost the folder');
 });
 
-test('the Companion settings tab wears the cat', () => {
-  assert.match(SETTINGS, /icon=\{CatIcon\}/, 'the Companion tab lost the cat');
+test('the merged Personalization settings tab wears the palette', () => {
+  assert.match(SETTINGS, /icon=\{PaletteIcon\}/, 'the Personalization tab lost the palette');
   assert.ok(!/\bSparkles\b/.test(SETTINGS), 'the static sparkles glyph is back');
-  const at = SETTINGS.indexOf("id: 'companion'");
-  assert.ok(at > 0, 'the Companion section is gone');
-  assert.match(SETTINGS.slice(at, at + 200), /CatIcon/, 'the cat is not on the Companion row');
+  const at = SETTINGS.indexOf("id: 'personalization'");
+  assert.ok(at > 0, 'the Personalization section is gone');
+  assert.match(SETTINGS.slice(at, at + 220), /PaletteIcon/, 'the palette is not on the Personalization row');
+  assert.match(SETTINGS, /<CompanionCustomizer \/>/, 'companion controls were lost while merging the section');
 });
 
 /*
@@ -346,22 +347,21 @@ test('the homepage header pill takes the palette and the grid', () => {
 /**
  * Every settings section wears an animated icon, and the right one.
  *
- * Nine tabs, nine placements. The pairing is the substance here — a guard that only
- * counted `AnimatedIcon` occurrences would pass with all nine showing the same glyph —
+ * Eight tabs, eight placements. The pairing is the substance here — a guard that only
+ * counted `AnimatedIcon` occurrences would pass with all eight showing the same glyph —
  * so each id is checked against the icon that belongs to it, inside its own object
  * literal rather than anywhere in the file.
  */
 test('the settings sections each carry their own animated icon', () => {
   for (const [id, icon] of [
     ['general', 'UserRoundPenIcon'],
-    ['companion', 'CatIcon'],
+    ['personalization', 'PaletteIcon'],
     ['privacy', 'ShieldCheckIcon'],
     ['data-ai', 'DatabaseBackupIcon'],
     ['plan', 'WalletIcon'],
     ['integrations', 'ConnectIcon'],
     ['security', 'UserLockIcon'],
     ['notifications', 'BellElectricIcon'],
-    ['theme', 'PaletteIcon'],
   ] as const) {
     const at = SETTINGS.indexOf(`id: '${id}'`);
     assert.ok(at > 0, `the ${id} section is gone`);

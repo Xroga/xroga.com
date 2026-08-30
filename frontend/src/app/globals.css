@@ -1141,7 +1141,8 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white-reference-20260829.webp');
+    --xv-mobile-header-art: url('/workspace/mobile-header/white-halftone-20260830.webp');
+    --xv-mobile-header-position: center 48%;
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1169,7 +1170,7 @@ body.theme-gray * {
   }
   .xv-mobile-workspace-pill::before {
     background-image: var(--xv-mobile-header-art);
-    background-position: center;
+    background-position: var(--xv-mobile-header-position);
     background-size: cover;
     opacity: 1;
     filter: saturate(0.82) contrast(1.04);
@@ -1179,14 +1180,23 @@ body.theme-gray * {
     z-index: -1;
     background: linear-gradient(90deg, color-mix(in srgb, var(--card) 28%, transparent), color-mix(in srgb, var(--card) 7%, transparent) 54%, color-mix(in srgb, var(--card) 24%, transparent));
   }
-  body.theme-beige .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/beige-reference-20260829.webp'); }
-  body.theme-gray .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/gray-reference-20260829.webp'); }
-  body.theme-black .xv-mobile-workspace-pill { --xv-mobile-header-art: url('/workspace/mobile-header/black-reference-20260829.webp'); }
+  body.theme-beige .xv-mobile-workspace-pill {
+    --xv-mobile-header-art: url('/workspace/mobile-header/beige-desert-20260830.webp');
+    --xv-mobile-header-position: center 74%;
+  }
+  body.theme-gray .xv-mobile-workspace-pill {
+    --xv-mobile-header-art: url('/workspace/mobile-header/gray-skyline-20260830.webp');
+    --xv-mobile-header-position: center 86%;
+  }
+  body.theme-black .xv-mobile-workspace-pill {
+    --xv-mobile-header-art: url('/workspace/mobile-header/black-halftone-20260830.webp');
+    --xv-mobile-header-position: center 52%;
+  }
   .xv-mobile-workspace-logo {
     width: 102px !important;
     max-width: min(102px, 36vw);
     height: 38px !important;
-    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.16));
+    filter: drop-shadow(0 2px 1px color-mix(in srgb, var(--card) 88%, transparent)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
     pointer-events: auto;
   }
   .xv-mobile-workspace-actions {
@@ -1196,7 +1206,7 @@ body.theme-gray * {
     padding: 0.16rem;
     border: 1px solid color-mix(in srgb, var(--card-border) 88%, var(--accent) 12%);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--card) 68%, transparent);
+    background: color-mix(in srgb, var(--card) 82%, transparent);
     box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.58), inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
     backdrop-filter: blur(18px) saturate(1.15);
     -webkit-backdrop-filter: blur(18px) saturate(1.15);

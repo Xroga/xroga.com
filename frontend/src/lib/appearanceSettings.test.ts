@@ -31,6 +31,8 @@ const UIVERSE = read('../styles/uiverse.css');
 const THEME = read('./theme.ts');
 const PROVIDER = read('../components/providers/ThemeProvider.tsx');
 const PANEL = read('../components/settings/ThemeSettingsPanel.tsx');
+const SETTINGS = read('../components/settings/SettingsView.tsx');
+const PROFILE_MENU = read('../components/ui/ProfileQuickMenu.tsx');
 
 /** CSS with comments stripped, so prose about a rule cannot satisfy a search for it. */
 const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -87,6 +89,35 @@ test('six choices, including one that changes nothing', () => {
   // Both pickers are offered, and they are separate controls.
   assert.match(PANEL, /label="Sidebar font"/);
   assert.match(PANEL, /label="Workspace font"/);
+});
+
+test('personalization opens the correct section and leads with theme controls', () => {
+  assert.match(PROFILE_MENU, /href: '\/settings\?tab=personalization'/);
+  assert.doesNotMatch(PROFILE_MENU, /tab=companion/);
+  assert.match(SETTINGS, /id: 'personalization', label: 'Personalization'/);
+  assert.ok(
+    SETTINGS.indexOf('<ThemeSettingsPanel />') < SETTINGS.indexOf('<CompanionCustomizer />'),
+    'theme controls should be fully visible before companion controls',
+  );
+});
+
+test('personalization exposes every terminal palette and keeps automatic theme matching', () => {
+  assert.match(PANEL, /TERMINAL_SKINS\.map/);
+  assert.match(PANEL, /onClick=\{setTerminalSkinAuto\}/);
+  assert.match(PANEL, /onClick=\{\(\) => setTerminalSkin\(spec\.id\)\}/);
+  assert.doesNotMatch(PANEL, /setTerminalSkin\(skinForTheme/);
+});
+
+test('mobile workspace headers use a distinct project-bound scene for every surface', () => {
+  for (const asset of [
+    'white-halftone-20260830.webp',
+    'black-halftone-20260830.webp',
+    'gray-skyline-20260830.webp',
+    'beige-desert-20260830.webp',
+  ]) {
+    assert.ok(code.includes(asset), `${asset} is not wired into the mobile header`);
+  }
+  assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--card\) 82%/);
 });
 
 test('the default accent is the theme ink, not a colour', () => {

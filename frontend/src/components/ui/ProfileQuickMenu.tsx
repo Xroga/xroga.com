@@ -45,7 +45,7 @@ const ITEMS = [
     label: 'Personalization',
     desc: 'Theme, terminal skin, and the companion',
     animated: PaletteIcon,
-    href: '/settings?tab=companion',
+    href: '/settings?tab=personalization',
   },
   {
     key: 'settings',

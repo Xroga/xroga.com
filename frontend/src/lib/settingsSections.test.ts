@@ -15,6 +15,9 @@ describe('sectionFromQuery', () => {
     assert.equal(sectionFromQuery('data-ai'), 'data-ai');
     assert.equal(sectionFromQuery('DATA'), 'data-ai');
     assert.equal(sectionFromQuery('notif'), 'notifications');
+    assert.equal(sectionFromQuery('theme'), 'personalization');
+    assert.equal(sectionFromQuery('companion'), 'personalization');
+    assert.equal(sectionFromQuery('Personalization'), 'personalization');
   });
 
   it('returns null for empty or unrecognized input', () => {

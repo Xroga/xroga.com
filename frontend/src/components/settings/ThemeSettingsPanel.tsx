@@ -2,7 +2,7 @@
 
 import { Check } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
-import { ACCENT_OPTIONS, FONT_CHOICES, THEME_OPTIONS, THEME_SURFACE, normalizeTheme, skinForTheme, type CoreThemeId } from '@/lib/theme';
+import { ACCENT_OPTIONS, FONT_CHOICES, TERMINAL_SKINS, THEME_OPTIONS, THEME_SURFACE, normalizeTheme, type CoreThemeId } from '@/lib/theme';
 import { Switch } from '@/components/ui/Switch';
 import { Select } from '@/components/ui/Select';
 import { SettingsDivider, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
@@ -11,7 +11,10 @@ import { cn } from '@/lib/utils';
 export function ThemeSettingsPanel() {
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
+  const terminalSkin = useThemeStore((s) => s.terminalSkin);
+  const terminalSkinAuto = useThemeStore((s) => s.terminalSkinAuto);
   const setTerminalSkin = useThemeStore((s) => s.setTerminalSkin);
+  const setTerminalSkinAuto = useThemeStore((s) => s.setTerminalSkinAuto);
   const accent = useThemeStore((s) => s.accent);
   const setAccent = useThemeStore((s) => s.setAccent);
   const fontPreference = useThemeStore((s) => s.fontPreference);
@@ -32,7 +35,7 @@ export function ThemeSettingsPanel() {
     <SettingsStack>
       <SettingsPanelHeader
         title="Theme"
-        description="Choose a surface, accent, type style, density, and accessibility preferences. Changes preview immediately."
+        description="Choose the workspace surface first, then tune the terminal and interface around it. Every change previews immediately."
       />
 
       <div>
@@ -53,7 +56,6 @@ export function ThemeSettingsPanel() {
                 onClick={() => {
                   const id = opt.id as CoreThemeId;
                   setTheme(id);
-                  setTerminalSkin(skinForTheme(id));
                 }}
                 className={cn(
                   'rounded-token-md border p-3 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
@@ -75,6 +77,73 @@ export function ThemeSettingsPanel() {
                 </span>
                 <p className="text-sm font-medium text-[var(--text-primary)]">{opt.label}</p>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">{opt.description}</p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <SettingsDivider label="Terminal skin" />
+
+      <div>
+        <p className="mb-1 text-xs font-medium text-[var(--text-secondary)]">Console colors</p>
+        <p className="mb-3 text-xs text-[var(--text-muted)]">Match the workspace automatically or choose a dedicated palette for every terminal.</p>
+        <div role="radiogroup" aria-label="Terminal skin" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={terminalSkinAuto}
+            onClick={setTerminalSkinAuto}
+            className={cn(
+              'flex min-h-14 items-center gap-3 rounded-token-md border p-2.5 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+              terminalSkinAuto
+                ? 'border-[var(--accent)] bg-[var(--accent-dim)]'
+                : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]',
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="grid h-9 w-12 shrink-0 grid-cols-2 overflow-hidden rounded-token-sm border border-[var(--border-subtle)]"
+            >
+              <i className="bg-white" />
+              <i className="bg-black" />
+            </span>
+            <span className="min-w-0">
+              <strong className="block text-xs text-[var(--text-primary)]">Match theme</strong>
+              <small className="block text-[10px] text-[var(--text-muted)]">Updates with the surface</small>
+            </span>
+            {terminalSkinAuto && <Check className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--accent)]" aria-hidden="true" />}
+          </button>
+
+          {TERMINAL_SKINS.map((spec) => {
+            const active = !terminalSkinAuto && terminalSkin === spec.id;
+            return (
+              <button
+                key={spec.id}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => setTerminalSkin(spec.id)}
+                className={cn(
+                  'flex min-h-14 items-center gap-3 rounded-token-md border p-2.5 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                  active
+                    ? 'border-[var(--accent)] bg-[var(--accent-dim)]'
+                    : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)]',
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className="relative h-9 w-12 shrink-0 overflow-hidden rounded-token-sm border"
+                  style={{ background: spec.swatch[0], borderColor: spec.swatch[2] }}
+                >
+                  <i className="absolute bottom-2 left-2 h-1 w-5 rounded-full" style={{ background: spec.swatch[1] }} />
+                  <i className="absolute bottom-2 right-2 h-1 w-1 rounded-full" style={{ background: spec.swatch[2] }} />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block truncate text-xs text-[var(--text-primary)]">{spec.label}</strong>
+                  <small className="block text-[10px] capitalize text-[var(--text-muted)]">{spec.tone} terminal</small>
+                </span>
+                {active && <Check className="ml-auto h-3.5 w-3.5 shrink-0 text-[var(--accent)]" aria-hidden="true" />}
               </button>
             );
           })}

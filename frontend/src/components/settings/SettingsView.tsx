@@ -17,7 +17,6 @@ import { ThemeSettingsPanel } from '@/components/settings/ThemeSettingsPanel';
 import type { SettingsSectionId } from '@/lib/settingsSections';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
-import { CatIcon } from '@/components/icons/animated/CatIcon';
 import { UserRoundPenIcon } from '@/components/icons/animated/UserRoundPenIcon';
 import { ShieldCheckIcon } from '@/components/icons/animated/ShieldCheckIcon';
 import { DatabaseBackupIcon } from '@/components/icons/animated/DatabaseBackupIcon';
@@ -39,14 +38,13 @@ const CompanionCustomizer = dynamic(
  */
 const SECTIONS = [
   { id: 'general', label: 'General', icon: <AnimatedIcon icon={UserRoundPenIcon} size={16} intro={false} /> },
-  { id: 'companion', label: 'Companion', icon: <AnimatedIcon icon={CatIcon} size={16} intro={false} /> },
+  { id: 'personalization', label: 'Personalization', icon: <AnimatedIcon icon={PaletteIcon} size={16} intro={false} /> },
   { id: 'privacy', label: 'Privacy', icon: <AnimatedIcon icon={ShieldCheckIcon} size={16} intro={false} /> },
   { id: 'data-ai', label: 'Data & AI', icon: <AnimatedIcon icon={DatabaseBackupIcon} size={16} intro={false} /> },
   { id: 'plan', label: 'Plan & Usage', icon: <AnimatedIcon icon={WalletIcon} size={16} intro={false} /> },
   { id: 'integrations', label: 'Integrations', icon: <AnimatedIcon icon={ConnectIcon} size={16} intro={false} /> },
   { id: 'security', label: 'Security', icon: <AnimatedIcon icon={UserLockIcon} size={16} intro={false} /> },
   { id: 'notifications', label: 'Notifications', icon: <AnimatedIcon icon={BellElectricIcon} size={16} intro={false} /> },
-  { id: 'theme', label: 'Theme', icon: <AnimatedIcon icon={PaletteIcon} size={16} intro={false} /> },
 ] as const satisfies readonly TabItem[];
 
 export function SettingsView({ initialSection = 'general' }: { initialSection?: SettingsSectionId }) {
@@ -109,14 +107,20 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
           >
             <h2 className="sr-only">{activeMeta.label} settings</h2>
             {section === 'general' && <GeneralSettingsPanel email={email} />}
-            {section === 'companion' && <CompanionCustomizer />}
+            {section === 'personalization' && (
+              <div className="space-y-10">
+                <ThemeSettingsPanel />
+                <div className="border-t border-[var(--border-subtle)] pt-8">
+                  <CompanionCustomizer />
+                </div>
+              </div>
+            )}
             {section === 'privacy' && <PrivacySettingsPanel />}
             {section === 'data-ai' && <DataAiSettingsPanel email={email} />}
             {section === 'plan' && <PlanUsageSettingsPanel />}
             {section === 'integrations' && <IntegrationsPanel />}
             {section === 'security' && <SecuritySettingsPanel />}
             {section === 'notifications' && <NotificationsSettingsPanel />}
-            {section === 'theme' && <ThemeSettingsPanel />}
           </div>
         </div>
       </div>

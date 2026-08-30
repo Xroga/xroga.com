@@ -1,13 +1,12 @@
 export const SETTINGS_SECTION_IDS = [
   'general',
-  'companion',
+  'personalization',
   'privacy',
   'data-ai',
   'plan',
   'integrations',
   'security',
   'notifications',
-  'theme',
 ] as const;
 
 export type SettingsSectionId = (typeof SETTINGS_SECTION_IDS)[number];
@@ -20,8 +19,9 @@ export function sectionFromQuery(raw: string | null | undefined): SettingsSectio
   if (q.includes('security')) return 'security';
   if (q.includes('notif')) return 'notifications';
   if (q.includes('integrat')) return 'integrations';
-  if (q.includes('theme')) return 'theme';
-  if (q.includes('companion')) return 'companion';
+  if (q.includes('personal')) return 'personalization';
+  if (q.includes('theme')) return 'personalization';
+  if (q.includes('companion')) return 'personalization';
   if (q.includes('privacy')) return 'privacy';
   if (q.includes('data')) return 'data-ai';
   if (q.includes('general')) return 'general';

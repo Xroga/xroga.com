@@ -24,18 +24,6 @@ export function HomepageShowcase() {
   return (
     <section className="xv-editorial-showcase xv-showcase-gallery" aria-labelledby="showcase-home-heading">
       <div className="xv-showcase-gallery__canvas" style={{ '--showcase-accent': template.accent } as CSSProperties}>
-        <header className="xv-showcase-gallery__header" aria-live="polite">
-          <div>
-            <small>{template.category} · Live template</small>
-            <h2 id="showcase-home-heading">{template.name}</h2>
-          </div>
-          <div className="xv-showcase-gallery__header-actions">
-            <span>{String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
-            <Link href={`/showcase/${template.slug}`}>Use template <ArrowRight aria-hidden="true" /></Link>
-            <Link href={`/showcase/${template.slug}/preview`}>Open preview <ArrowUpRight aria-hidden="true" /></Link>
-          </div>
-        </header>
-
         <div className="xv-showcase-gallery__stage">
           <div className="xv-showcase-laptop">
             <Link className="xv-showcase-laptop__lid" href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} desktop preview`}>
@@ -75,6 +63,18 @@ export function HomepageShowcase() {
           <button type="button" className="xv-showcase-gallery__arrow is-left" onClick={() => step(-1)} aria-label="Previous template"><ChevronLeft aria-hidden="true" /></button>
           <button type="button" className="xv-showcase-gallery__arrow is-right" onClick={() => step(1)} aria-label="Next template"><ChevronRight aria-hidden="true" /></button>
         </div>
+
+        <header className="xv-showcase-gallery__header" aria-live="polite">
+          <div>
+            <small>{template.category} · Live template</small>
+            <h2 id="showcase-home-heading">{template.name}</h2>
+          </div>
+          <div className="xv-showcase-gallery__header-actions">
+            <span>{String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
+            <Link href={`/showcase/${template.slug}`}>Use template <ArrowRight aria-hidden="true" /></Link>
+            <Link href={`/showcase/${template.slug}/preview`}>Open preview <ArrowUpRight aria-hidden="true" /></Link>
+          </div>
+        </header>
 
         <nav className="xv-showcase-gallery__rail" aria-label="Scroll through showcase templates" onWheel={scrollTemplates}>
           {SHOWCASE_TEMPLATES.map((item, index) => (
