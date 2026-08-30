@@ -12,6 +12,7 @@ import {
   TERMINAL_SKIN_CYCLE,
   isTerminalSkin,
   DESKTOP_BG_SLIDESHOW,
+  isAccentId,
   normalizeTheme,
   skinForTheme,
 } from '@/lib/theme';
@@ -109,7 +110,7 @@ export const useThemeStore = create<ThemeState>()(
       chatbarHidden: false,
       terminalSkin: 'dark',
       terminalSkinAuto: true,
-      accent: 'blue',
+      accent: 'default',
       fontPreference: 'modern',
       sidebarFont: 'default',
       workspaceFont: 'default',
@@ -247,9 +248,7 @@ export const useThemeStore = create<ThemeState>()(
             typeof state.workspaceWidth === 'number' && Number.isFinite(state.workspaceWidth)
               ? Math.min(WORKSPACE_MAX_WIDTH, Math.max(WORKSPACE_MIN_WIDTH, state.workspaceWidth))
               : WORKSPACE_DEFAULT_WIDTH,
-          accent: ['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))
-            ? state.accent
-            : 'blue',
+          accent: isAccentId(state.accent) ? state.accent : 'default',
           fontPreference: ['modern', 'classic', 'mono'].includes(String(state.fontPreference))
             ? state.fontPreference
             : 'modern',
@@ -298,7 +297,7 @@ export const useThemeStore = create<ThemeState>()(
               SIDEBAR_MAX_WIDTH,
               Math.max(SIDEBAR_MIN_WIDTH, Number(state.sidebarWidth) || SIDEBAR_DEFAULT_WIDTH),
             );
-            if (!['blue', 'violet', 'emerald', 'coral'].includes(String(state.accent))) state.accent = 'blue';
+            if (!isAccentId(state.accent)) state.accent = 'default';
             if (!['modern', 'classic', 'mono'].includes(String(state.fontPreference))) state.fontPreference = 'modern';
             if (!['comfortable', 'compact'].includes(String(state.density))) state.density = 'comfortable';
             // Stored state written before skins were selectable has no `auto` flag;

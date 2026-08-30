@@ -31,7 +31,8 @@ test('PDFs and other documents use the animated file-text glyph everywhere in th
   assert.match(PARTS, /<AnimatedIcon icon=\{FileTextIcon\} size=\{24\} intro=\{false\} \/>/);
 });
 
-test('a fresh light workspace removes only the redundant outer frame', () => {
+test('a fresh light workspace keeps the same visible outer frame as dark themes', () => {
   assert.match(VIEW, /data-conversation=\{hasConversation \? 'true' : 'false'\}/);
-  assert.match(CSS, /body\.theme-white \.terminal-skin-light\.xv-workspace-shell\[data-conversation='false'\][\s\S]*border-color:\s*transparent !important/);
+  assert.match(CSS, /\.xv-workspace-shell\.xv-workspace-shell\.xv-workspace-shell[\s\S]*border-color:\s*var\(--app-panel-border\) !important/);
+  assert.doesNotMatch(CSS, /terminal-skin-(?:light|light-grid|solar)\.xv-workspace-shell\[data-conversation='false'\][\s\S]*border-color:\s*transparent !important/);
 });

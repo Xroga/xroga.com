@@ -138,12 +138,12 @@ test('the mobile header is one textured glass frame around the mark and controls
   assert.match(pill, /border-radius: 18px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
-  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-island-20260830\.webp'\)/);
+  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-voxel-world-20260830\.webp'\)/);
   assert.match(pill, /background-image: var\(--xv-mobile-header-art\)/);
   for (const [theme, asset] of [
-    ['beige', 'beige-egypt-20260830.webp'],
+    ['beige', 'beige-architecture-20260830.webp'],
     ['gray', 'gray-skyline-20260830.webp'],
-    ['black', 'black-space-coder-20260830.webp'],
+    ['black', 'black-coder-universe-20260830.webp'],
   ]) {
     assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{[\\s\\S]*?${asset}`));
   }

@@ -5,7 +5,7 @@ export function storageBootstrapScript(): string {
     var themeKey = 'xroga-theme';
     var raw = localStorage.getItem(themeKey);
     var core = 'white';
-    var accent = 'blue';
+    var accent = 'default';
     var sidebarFont = 'default';
     var workspaceFont = 'default';
     var font = 'modern';

@@ -8,7 +8,12 @@ const SHOWCASE = read('../components/showcase/HomepageShowcase.tsx');
 const CSS = read('../styles/homepage-coding.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('the homepage showcase is a full-width framed gallery with both screens at every breakpoint', () => {
-  assert.doesNotMatch(SHOWCASE, /IntersectionObserver|setInterval|isInView|isPaused/);
+  assert.doesNotMatch(SHOWCASE, /IntersectionObserver|setInterval|isInView|scrollIntoView/);
+  assert.match(SHOWCASE, /const AUTO_ADVANCE_MS = 8_000/);
+  assert.match(SHOWCASE, /window\.setTimeout\([\s\S]*AUTO_ADVANCE_MS/);
+  assert.match(SHOWCASE, /Pause automatic template rotation/);
+  assert.match(SHOWCASE, /useReducedMotion\(\)/);
+  assert.match(SHOWCASE, /rail\.scrollTo\(/);
   assert.match(SHOWCASE, /xv-showcase-display/);
   assert.doesNotMatch(SHOWCASE, /xv-showcase-laptop|xv-showcase-laptop__base|xv-showcase-laptop__browser/);
   assert.match(SHOWCASE, /xv-showcase-phone__screen/);
@@ -29,6 +34,7 @@ test('the homepage showcase is a full-width framed gallery with both screens at 
     'the real device preview should appear before its description and actions',
   );
   assert.match(CSS, /xv-showcase-gallery__rail\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
+  assert.match(CSS, /xv-showcase-autoplay-progress 8s linear/);
   assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-gallery__stage\s*\{[^}]*--xv-showcase-device-height:clamp\(8rem,40vw,10rem\)/);
   assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-display\s*\{[^}]*height:var\(--xv-showcase-device-height\)/);
   assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*height:var\(--xv-showcase-device-height\)/);

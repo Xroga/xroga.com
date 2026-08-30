@@ -33,6 +33,8 @@ const PROVIDER = read('../components/providers/ThemeProvider.tsx');
 const PANEL = read('../components/settings/ThemeSettingsPanel.tsx');
 const SETTINGS = read('../components/settings/SettingsView.tsx');
 const PROFILE_MENU = read('../components/ui/ProfileQuickMenu.tsx');
+const THEME_STORE = read('../store/useThemeStore.ts');
+const BOOTSTRAP = read('./storageBootstrapScript.ts');
 
 /** CSS with comments stripped, so prose about a rule cannot satisfy a search for it. */
 const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -110,14 +112,15 @@ test('personalization exposes every terminal palette and keeps automatic theme m
 
 test('mobile workspace headers use a distinct project-bound scene for every surface', () => {
   for (const asset of [
-    'white-island-20260830.webp',
-    'black-space-coder-20260830.webp',
+    'white-voxel-world-20260830.webp',
+    'black-coder-universe-20260830.webp',
     'gray-skyline-20260830.webp',
-    'beige-egypt-20260830.webp',
+    'beige-architecture-20260830.webp',
   ]) {
     assert.ok(code.includes(asset), `${asset} is not wired into the mobile header`);
   }
-  assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--card\) 82%/);
+  assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--card\) 70%/);
+  assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*backdrop-filter:\s*blur\(9px\)/);
 });
 
 test('the default accent is the theme ink, not a colour', () => {
@@ -128,6 +131,15 @@ test('the default accent is the theme ink, not a colour', () => {
   assert.ok(!/#[0-9a-f]{3,6}/i.test(block), 'a fixed hex is wrong on three themes out of four');
   // Its swatch says the same thing, so the settings dot inverts with the theme.
   assert.match(THEME, /\{ id: 'default', label: 'Default', swatch: 'currentColor' \}/);
+});
+
+test('every accent survives hydration and an invalid value falls back to Default', () => {
+  assert.match(THEME_STORE, /accent: 'default'/);
+  assert.match(THEME_STORE, /accent: isAccentId\(state\.accent\) \? state\.accent : 'default'/);
+  assert.match(THEME_STORE, /if \(!isAccentId\(state\.accent\)\) state\.accent = 'default'/);
+  assert.doesNotMatch(THEME_STORE, /state\.accent\)\) state\.accent = 'blue'/);
+  assert.match(BOOTSTRAP, /var accent = 'default'/);
+  assert.match(BOOTSTRAP, /default\|blue\|emerald\|violet\|coral\|amber\|cyan\|rose/);
 });
 
 test('the new accents exist in the sheet as well as the list', () => {

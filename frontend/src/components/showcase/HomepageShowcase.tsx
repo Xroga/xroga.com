@@ -2,15 +2,46 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { useCallback, useState, type CSSProperties, type WheelEvent } from 'react';
+import { ArrowRight, ArrowUpRight, Pause, Play } from 'lucide-react';
+import { useReducedMotion } from 'motion/react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type WheelEvent,
+} from 'react';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 
 const INITIAL_TEMPLATE = Math.max(0, SHOWCASE_TEMPLATES.findIndex((item) => item.slug === 'ai-saas-chatbot'));
+const AUTO_ADVANCE_MS = 8_000;
 
 export function HomepageShowcase() {
   const [activeIndex, setActiveIndex] = useState(INITIAL_TEMPLATE);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
+  const railRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
   const template = SHOWCASE_TEMPLATES[activeIndex];
+  const isPaused = !autoplayEnabled || reducedMotion;
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = window.setTimeout(() => {
+      setActiveIndex((current) => (current + 1) % SHOWCASE_TEMPLATES.length);
+    }, AUTO_ADVANCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, isPaused]);
+
+  useEffect(() => {
+    const rail = railRef.current;
+    const active = rail?.querySelector<HTMLButtonElement>('[aria-pressed="true"]');
+    if (!rail || !active) return;
+    rail.scrollTo({
+      left: active.offsetLeft - rail.clientWidth / 2 + active.clientWidth / 2,
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+  }, [activeIndex, reducedMotion]);
 
   const selectTemplate = useCallback((index: number) => setActiveIndex(index), []);
   const scrollTemplates = useCallback((event: WheelEvent<HTMLElement>) => {
@@ -19,10 +50,13 @@ export function HomepageShowcase() {
       event.currentTarget.scrollLeft += event.deltaY;
     }
   }, []);
-
   return (
     <section className="xv-editorial-showcase xv-showcase-gallery" aria-labelledby="showcase-home-heading">
-      <div className="xv-showcase-gallery__canvas" style={{ '--showcase-accent': template.accent } as CSSProperties}>
+      <div
+        className="xv-showcase-gallery__canvas"
+        data-autoplay={isPaused ? 'paused' : 'running'}
+        style={{ '--showcase-accent': template.accent } as CSSProperties}
+      >
         <div className="xv-showcase-gallery__stage">
           <Link className="xv-showcase-display" href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} desktop preview`}>
             <Image
@@ -51,19 +85,28 @@ export function HomepageShowcase() {
           </Link>
         </div>
 
-        <header className="xv-showcase-gallery__header" aria-live="polite">
+        <header className="xv-showcase-gallery__header" aria-live={isPaused ? 'polite' : 'off'}>
           <div>
             <small>{template.category} · Live template</small>
             <h2 id="showcase-home-heading">{template.name}</h2>
           </div>
           <div className="xv-showcase-gallery__header-actions">
-            <span>{String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
+            <span className="xv-showcase-gallery__count">{String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>
+            <button
+              type="button"
+              className="xv-showcase-gallery__autoplay"
+              aria-label={autoplayEnabled ? 'Pause automatic template rotation' : 'Play automatic template rotation'}
+              aria-pressed={!autoplayEnabled}
+              onClick={() => setAutoplayEnabled((enabled) => !enabled)}
+            >
+              {autoplayEnabled ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+            </button>
             <Link href={`/showcase/${template.slug}`}>Use template <ArrowRight aria-hidden="true" /></Link>
             <Link href={`/showcase/${template.slug}/preview`}>Open preview <ArrowUpRight aria-hidden="true" /></Link>
           </div>
         </header>
 
-        <nav className="xv-showcase-gallery__rail" aria-label="Scroll through showcase templates" onWheel={scrollTemplates}>
+        <nav ref={railRef} className="xv-showcase-gallery__rail" aria-label="Scroll through showcase templates" onWheel={scrollTemplates}>
           {SHOWCASE_TEMPLATES.map((item, index) => (
             <button
               key={item.id}
