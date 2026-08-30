@@ -130,8 +130,8 @@ export function MobileNav() {
               aria-current={active ? 'page' : undefined}
               className={cn('xv-mobile-nav__tab', active && 'is-active')}
             >
-              {/* Every destination keeps its glyph. The selected destination expands
-                  into the icon-and-label segment shown in the mobile reference. */}
+              {/* The compact reference keeps every icon and label visible. Selection
+                  changes contrast, not geometry, so the row stays steady while routing. */}
               <span className="xv-mobile-nav__disc">
                 <AnimatedIcon icon={icon} size={18} intro={false} />
               </span>

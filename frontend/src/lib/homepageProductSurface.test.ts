@@ -17,16 +17,21 @@ test('the homepage showcase is a full-width framed gallery with both screens at 
   assert.match(SHOWCASE, /onWheel=\{scrollTemplates\}/);
   assert.match(SHOWCASE, /event\.preventDefault\(\)/);
   assert.match(SHOWCASE, /xv-showcase-gallery__rail/);
+  assert.doesNotMatch(SHOWCASE, /ChevronLeft|ChevronRight|xv-showcase-gallery__arrow/);
   assert.doesNotMatch(SHOWCASE, /xv-editorial-showcase__(?:masthead|story|footer)/);
-  assert.match(CSS, /xv-showcase-gallery__canvas\s*\{[^}]*1600px[^}]*border:[^}]*border-radius:[^}]*radial-gradient[^}]*linear-gradient/);
+  assert.match(CSS, /xv-showcase-gallery__canvas\s*\{[^}]*1600px[^}]*border:\s*0[^}]*background:\s*transparent[^}]*box-shadow:\s*none/);
   assert.match(CSS, /xv-showcase-gallery__stage\s*\{[^}]*min-height:\s*0[^}]*border:\s*0[^}]*background:\s*transparent/);
+  assert.match(CSS, /xv-showcase-gallery__stage\s*\{[^}]*--xv-showcase-device-height:/);
+  assert.match(CSS, /xv-showcase-display\s*\{[^}]*height:var\(--xv-showcase-device-height\)[^}]*aspect-ratio:8\/5/);
+  assert.match(CSS, /xv-showcase-phone\s*\{[^}]*height:var\(--xv-showcase-device-height\)[^}]*aspect-ratio:414\/760[^}]*rgba\(255,255,255,\.96\)/);
   assert.ok(
     SHOWCASE.indexOf('xv-showcase-gallery__stage') < SHOWCASE.indexOf('xv-showcase-gallery__header'),
     'the real device preview should appear before its description and actions',
   );
   assert.match(CSS, /xv-showcase-gallery__rail\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
-  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-display\s*\{[^}]*width:72%/);
-  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*position:relative[^}]*width:23%/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-gallery__stage\s*\{[^}]*--xv-showcase-device-height:clamp\(8rem,40vw,10rem\)/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-display\s*\{[^}]*height:var\(--xv-showcase-device-height\)/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*height:var\(--xv-showcase-device-height\)/);
 });
 
 test('the interactive homepage tour follows the real homepage theme and workspace shell', () => {

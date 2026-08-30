@@ -70,16 +70,15 @@ test('the bottom bar uses the same glyphs as the sidebar', () => {
   assert.ok(!/lucide-react/.test(NAV), 'the bottom bar still uses static lucide glyphs');
 });
 
-test('the selected tab expands into one icon-and-label segment', () => {
+test('every bottom tab keeps its icon and label while selection changes contrast', () => {
   assert.match(NAV, /xv-mobile-nav__disc/, 'the disc is gone');
   assert.match(
     CSS,
-    /\.xv-mobile-nav__tab\.is-active \{[^}]*min-width: 96px;[^}]*background: var\(--xv-mobile-nav-selected\);[^}]*color: var\(--xv-mobile-nav-selected-ink\);/,
+    /\.xv-mobile-nav__tab\.is-active \{[^}]*background: var\(--foreground\);[^}]*color: var\(--background\);/,
     'the active destination is not a clear theme-aware segment',
   );
-  assert.match(CSS, /\.xv-mobile-nav__disc \{[^}]*border-radius: 999px;/, 'the disc is not round');
-  assert.match(CSS, /\.xv-mobile-nav__label \{[^}]*max-width: 0;[^}]*opacity: 0;/, 'inactive labels are still crowding the bar');
-  assert.match(CSS, /\.xv-mobile-nav__tab\.is-active \.xv-mobile-nav__label \{ max-width: 92px;opacity:1; \}/, 'the selected label does not appear');
+  assert.match(CSS, /\.xv-mobile-nav__disc \{[^}]*border-radius: 8px;/, 'the icon box is too round');
+  assert.match(CSS, /\.xv-mobile-nav__label \{[^}]*max-width: 92px;[^}]*opacity: 1;/, 'inactive labels are hidden');
 });
 
 test('the bar goes away as the page is read, and comes back on the way up', () => {
@@ -109,24 +108,24 @@ test('the bar goes away as the page is read, and comes back on the way up', () =
    */
   assert.ok(!/xv-mobile-nav__handle/.test(NAV), 'the grab handle is back');
   assert.ok(!/xv-mobile-nav__handle/.test(CSS), 'the grab handle is back in the stylesheet');
-  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(calc\(100% \+ 18px\)\);/, 'it parks a stub again');
+  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(100%\);/, 'it parks a stub again');
 });
 
-test('the bar is a compact floating capsule with a flat selected segment', () => {
+test('the bar is a compact bottom-attached box with a flat selected segment', () => {
   const bar = CSS.slice(CSS.indexOf('.xv-mobile-nav__bar {'), CSS.indexOf('.xv-mobile-nav__bar::-webkit'));
-  assert.match(bar, /width: min\(100%, 470px\);/, 'the capsule can grow without a readable bound');
-  assert.match(bar, /min-height: 62px;/, 'the reference-size capsule was lost');
-  assert.match(bar, /border-radius: 999px;/, 'the navigation is not a capsule');
+  assert.match(bar, /width: 100%;/, 'the bar is floating instead of touching both edges');
+  assert.match(bar, /min-height: 58px;/, 'the compact reference height was lost');
+  assert.match(bar, /border-radius: 14px 14px 0 0;/, 'the navigation is still a floating capsule');
+  assert.match(bar, /border-bottom: 0;/, 'the bar does not attach cleanly to the viewport');
+  assert.match(bar, /env\(safe-area-inset-bottom/, 'the attached bar ignores the home indicator');
 
   const active = CSS.slice(
     CSS.indexOf('.xv-mobile-nav__tab.is-active {'),
     CSS.indexOf('.xv-mobile-nav__label {'),
   );
   assert.doesNotMatch(active, /translateY|0 0 34px/, 'the old raised glowing disc is back');
-  assert.match(active, /background: var\(--xv-mobile-nav-selected\)/, 'the active segment does not follow its theme palette');
-  for (const theme of ['beige', 'gray', 'black']) {
-    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-nav__bar \\{[\\s\\S]*?--xv-mobile-nav-selected:`), `${theme} has no selected-segment palette`);
-  }
+  assert.match(active, /background: var\(--foreground\)/, 'the active segment does not invert with its theme');
+  assert.match(active, /color: var\(--background\)/, 'the active label does not invert with its theme');
 });
 
 test('the mobile header is one textured glass frame around the mark and controls', () => {
@@ -139,12 +138,12 @@ test('the mobile header is one textured glass frame around the mark and controls
   assert.match(pill, /border-radius: 18px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
-  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-halftone-20260830\.webp'\)/);
+  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-island-20260830\.webp'\)/);
   assert.match(pill, /background-image: var\(--xv-mobile-header-art\)/);
   for (const [theme, asset] of [
-    ['beige', 'beige-desert-20260830.webp'],
+    ['beige', 'beige-egypt-20260830.webp'],
     ['gray', 'gray-skyline-20260830.webp'],
-    ['black', 'black-halftone-20260830.webp'],
+    ['black', 'black-space-coder-20260830.webp'],
   ]) {
     assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{[\\s\\S]*?${asset}`));
   }

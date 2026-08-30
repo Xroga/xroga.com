@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useCallback, useState, type CSSProperties, type WheelEvent } from 'react';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 
@@ -13,9 +13,6 @@ export function HomepageShowcase() {
   const template = SHOWCASE_TEMPLATES[activeIndex];
 
   const selectTemplate = useCallback((index: number) => setActiveIndex(index), []);
-  const step = useCallback((direction: -1 | 1) => {
-    setActiveIndex((current) => (current + direction + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length);
-  }, []);
   const scrollTemplates = useCallback((event: WheelEvent<HTMLElement>) => {
     if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
       event.preventDefault();
@@ -34,7 +31,7 @@ export function HomepageShowcase() {
               alt={`${template.name} desktop preview`}
               fill
               priority={activeIndex === INITIAL_TEMPLATE}
-              sizes="(max-width: 760px) 68vw, 78vw"
+              sizes="(max-width: 760px) 64vw, 72vw"
             />
           </Link>
 
@@ -47,14 +44,11 @@ export function HomepageShowcase() {
                 alt={`${template.name} mobile preview`}
                 fill
                 priority={activeIndex === INITIAL_TEMPLATE}
-                sizes="(max-width: 760px) 22vw, 18vw"
+                sizes="(max-width: 760px) 28vw, 24vw"
               />
             </span>
             <span className="xv-showcase-phone__home" aria-hidden="true" />
           </Link>
-
-          <button type="button" className="xv-showcase-gallery__arrow is-left" onClick={() => step(-1)} aria-label="Previous template"><ChevronLeft aria-hidden="true" /></button>
-          <button type="button" className="xv-showcase-gallery__arrow is-right" onClick={() => step(1)} aria-label="Next template"><ChevronRight aria-hidden="true" /></button>
         </div>
 
         <header className="xv-showcase-gallery__header" aria-live="polite">
