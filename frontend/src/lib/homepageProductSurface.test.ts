@@ -7,15 +7,20 @@ const TOUR = read('../components/homepage/HomepageWorkspaceTour.tsx');
 const SHOWCASE = read('../components/showcase/HomepageShowcase.tsx');
 const CSS = read('../styles/homepage-coding.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
-test('the homepage showcase is compact, stable, and labels both real device views', () => {
+test('the homepage showcase is a full-width device gallery with a phone-only mobile view', () => {
   assert.doesNotMatch(SHOWCASE, /IntersectionObserver|setInterval|isInView|isPaused/);
-  assert.match(SHOWCASE, /xv-editorial-showcase__device-label">Mobile/);
-  assert.match(SHOWCASE, /xv-editorial-showcase__device-label">Desktop/);
+  assert.match(SHOWCASE, /xv-showcase-laptop__lid/);
+  assert.match(SHOWCASE, /xv-showcase-phone__screen/);
   assert.match(SHOWCASE, /thumbnailFor\(template, 'mobile'\)/);
   assert.match(SHOWCASE, /thumbnailFor\(template, 'desktop'\)/);
-  assert.doesNotMatch(SHOWCASE, /<Logo/);
-  assert.match(CSS, /xv-editorial-showcase__canvas\s*\{[^}]*1040px/);
-  assert.match(CSS, /xv-editorial-showcase__devices\s*\{[^}]*24rem/);
+  assert.match(SHOWCASE, /onWheel=\{scrollTemplates\}/);
+  assert.match(SHOWCASE, /event\.preventDefault\(\)/);
+  assert.match(SHOWCASE, /xv-showcase-gallery__rail/);
+  assert.doesNotMatch(SHOWCASE, /xv-editorial-showcase__(?:masthead|story|footer)/);
+  assert.match(CSS, /xv-showcase-gallery__canvas\s*\{[^}]*1480px/);
+  assert.match(CSS, /xv-showcase-gallery__rail\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-laptop\s*\{[^}]*display:none/);
+  assert.match(CSS, /@media\(max-width:760px\)[\s\S]*?\.xv-home-coding \.xv-showcase-phone\s*\{[^}]*position:relative[^}]*74vw/);
 });
 
 test('the interactive homepage tour follows the real homepage theme and workspace shell', () => {
