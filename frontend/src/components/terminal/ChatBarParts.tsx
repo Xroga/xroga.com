@@ -1,16 +1,19 @@
 'use client';
 
 import { type ReactNode } from 'react';
-import { X, FileText, Image as ImageIcon, Film } from 'lucide-react';
+import { X, Film } from 'lucide-react';
 import { ChatBarMicrophoneButton, ChatBarSendButton, ChatBarUploadButton, type SendButtonState, type ChatbarSurface } from './ChatBarButtons';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { FileTextIcon } from '@/components/icons/animated/FileTextIcon';
+import { ImageIcon } from '@/components/icons/animated/ImageIcon';
 import { cn } from '@/lib/utils';
 
 const FILE_ROWS = 2;
 
-function filePreviewIcon(type: string) {
-  if (type.startsWith('image/')) return ImageIcon;
-  if (type.startsWith('video/')) return Film;
-  return FileText;
+function FilePreviewGlyph({ type }: { type: string }) {
+  if (type.startsWith('image/')) return <AnimatedIcon icon={ImageIcon} size={24} intro={false} />;
+  if (type.startsWith('video/')) return <Film className="h-6 w-6" aria-hidden="true" />;
+  return <AnimatedIcon icon={FileTextIcon} size={24} intro={false} />;
 }
 
 export function ChatBarFileStrip({
@@ -30,7 +33,6 @@ export function ChatBarFileStrip({
           style={{ gridTemplateRows: `repeat(${FILE_ROWS}, minmax(0, auto))` }}
         >
           {files.map((f, i) => {
-            const Icon = filePreviewIcon(f.type);
             const isImage = f.type.startsWith('image/');
             const url = isImage ? URL.createObjectURL(f) : null;
             return (
@@ -43,7 +45,7 @@ export function ChatBarFileStrip({
                   <img src={url} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover shrink-0" />
                 ) : (
                   <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-white/5 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-[var(--muted)]" />
+                    <FilePreviewGlyph type={f.type} />
                   </div>
                 )}
                 <span className="w-full truncate text-center text-[var(--foreground)]">{f.name}</span>

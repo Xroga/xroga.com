@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const GRID = read('../components/terminal/ChatBarFileGrid.tsx');
+const PARTS = read('../components/terminal/ChatBarParts.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 const VIEW = read('../components/dashboard/DashboardView.tsx');
 
@@ -26,6 +27,8 @@ test('PDFs and other documents use the animated file-text glyph everywhere in th
   assert.doesNotMatch(GRID, /<FileText\b/);
   assert.match(GRID, /<AnimatedIcon icon=\{FileTextIcon\} size=\{48\}/);
   assert.match(GRID, /<AnimatedIcon icon=\{FileTextIcon\} size=\{24\}/);
+  assert.doesNotMatch(PARTS, /\bFileText\b/);
+  assert.match(PARTS, /<AnimatedIcon icon=\{FileTextIcon\} size=\{24\} intro=\{false\} \/>/);
 });
 
 test('a fresh light workspace removes only the redundant outer frame', () => {
