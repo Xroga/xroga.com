@@ -70,15 +70,16 @@ test('the bottom bar uses the same glyphs as the sidebar', () => {
   assert.ok(!/lucide-react/.test(NAV), 'the bottom bar still uses static lucide glyphs');
 });
 
-test('every bottom tab keeps its icon and label while selection changes contrast', () => {
+test('every bottom tab is icon-only while its label remains accessible', () => {
   assert.match(NAV, /xv-mobile-nav__disc/, 'the disc is gone');
   assert.match(
     CSS,
     /\.xv-mobile-nav__tab\.is-active \{[^}]*background: var\(--foreground\);[^}]*color: var\(--background\);/,
     'the active destination is not a clear theme-aware segment',
   );
-  assert.match(CSS, /\.xv-mobile-nav__disc \{[^}]*border-radius: 8px;/, 'the icon box is too round');
-  assert.match(CSS, /\.xv-mobile-nav__label \{[^}]*max-width: 92px;[^}]*opacity: 1;/, 'inactive labels are hidden');
+  assert.match(CSS, /\.xv-mobile-nav__disc \{[^}]*width: 32px;[^}]*height: 32px;[^}]*border-radius: 11px;/);
+  assert.match(CSS, /\.xv-mobile-nav__label \{[^}]*position: absolute;[^}]*clip-path: inset\(50%\);/, 'labels must be visually hidden without leaving the accessibility tree');
+  assert.doesNotMatch(NAV, /scrollIntoView/, 'an icon-only dock does not scroll or move the page to reveal an active item');
 });
 
 test('the bar goes away as the page is read, and comes back on the way up', () => {
@@ -111,13 +112,16 @@ test('the bar goes away as the page is read, and comes back on the way up', () =
   assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(100%\);/, 'it parks a stub again');
 });
 
-test('the bar is a compact bottom-attached box with a flat selected segment', () => {
-  const bar = CSS.slice(CSS.indexOf('.xv-mobile-nav__bar {'), CSS.indexOf('.xv-mobile-nav__bar::-webkit'));
-  assert.match(bar, /width: 100%;/, 'the bar is floating instead of touching both edges');
-  assert.match(bar, /min-height: 58px;/, 'the compact reference height was lost');
-  assert.match(bar, /border-radius: 14px 14px 0 0;/, 'the navigation is still a floating capsule');
-  assert.match(bar, /border-bottom: 0;/, 'the bar does not attach cleanly to the viewport');
-  assert.match(bar, /env\(safe-area-inset-bottom/, 'the attached bar ignores the home indicator');
+test('the bottom dock mirrors the compact rounded top header', () => {
+  const bar = CSS.slice(CSS.indexOf('.xv-mobile-nav__bar {'), CSS.indexOf('.xv-mobile-nav__tab {'));
+  assert.match(bar, /min-height: 48px;/, 'the dock no longer matches the top header height');
+  assert.match(bar, /border-radius: 18px;/, 'the dock no longer matches the top header radius');
+  assert.match(bar, /background: var\(--card\);/, 'the bottom dock must use a solid theme color');
+  assert.doesNotMatch(bar, /background-image|url\(/, 'artwork belongs only in the top header');
+  const nav = CSS.slice(CSS.indexOf('.xv-mobile-nav {'), CSS.indexOf('.xv-mobile-nav__bar {'));
+  assert.match(nav, /left: 0\.5rem;/);
+  assert.match(nav, /right: 0\.5rem;/);
+  assert.match(nav, /bottom: max\(0\.5rem, env\(safe-area-inset-bottom/);
 
   const active = CSS.slice(
     CSS.indexOf('.xv-mobile-nav__tab.is-active {'),
@@ -138,7 +142,7 @@ test('the mobile header is one textured glass frame around the mark and controls
   assert.match(pill, /border-radius: 18px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
-  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-voxel-world-20260830\.webp'\)/);
+  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-builder-strip-20260831\.webp'\)/);
   assert.match(pill, /background-image: var\(--xv-mobile-header-art\)/);
   for (const [theme, asset] of [
     ['beige', 'beige-architecture-20260830.webp'],

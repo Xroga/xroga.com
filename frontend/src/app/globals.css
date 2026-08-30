@@ -1141,8 +1141,8 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white-voxel-world-20260830.webp');
-    --xv-mobile-header-position: center 52%;
+    --xv-mobile-header-art: url('/workspace/mobile-header/white-builder-strip-20260831.webp');
+    --xv-mobile-header-position: center;
     position: relative;
     isolation: isolate;
     display: flex;
@@ -8124,13 +8124,13 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 
 /* ------------------------------------------------------------------ mobile nav */
 
-/* Reference-style bottom navigation: a solid bar attached to the viewport edge,
-   with every icon and label visible and one high-contrast selected segment. */
+/* The bottom dock mirrors the mobile workspace header: the same compact rounded
+   frame and icon rhythm, but a solid theme surface with no artwork. */
 .xv-mobile-nav {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
   z-index: 50;
   display: flex;
   justify-content: center;
@@ -8142,34 +8142,29 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 .xv-mobile-nav__bar {
   display: flex;
   align-items: center;
-  justify-content:flex-start;
+  justify-content:space-between;
   gap: 2px;
   width: 100%;
-  min-height: 58px;
-  padding: 5px 6px calc(5px + env(safe-area-inset-bottom, 0px));
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 14px 14px 0 0;
+  min-height: 48px;
+  padding: 4px;
+  overflow: hidden;
+  border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--card-border) 82%, var(--foreground) 18%);
-  border-bottom: 0;
   background: var(--card);
-  box-shadow: 0 -12px 30px -22px rgba(0, 0, 0, 0.5), inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent);
+  box-shadow: 0 14px 36px -22px rgba(0, 0, 0, 0.58), inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent);
   pointer-events: auto;
   transition: opacity 200ms ease;
 }
-.xv-mobile-nav__bar::-webkit-scrollbar { display: none; }
 
 .xv-mobile-nav__tab {
   display: flex;
-  height: 46px;
+  height: 38px;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  flex: 0 0 auto;
-  min-width: 80px;
-  border-radius: 11px;
-  padding: 0 9px 0 7px;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 13px;
+  padding: 0;
   color: var(--muted);
   text-decoration: none;
   transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
@@ -8178,10 +8173,10 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 .xv-mobile-nav__disc {
   display: grid;
   place-items: center;
-  width: 24px;
+  width: 32px;
   height: 32px;
   flex: none;
-  border-radius: 8px;
+  border-radius: 11px;
 }
 
 .xv-mobile-nav__tab.is-active {
@@ -8191,15 +8186,13 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 }
 
 .xv-mobile-nav__label {
-  max-width: 92px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
-  opacity: 1;
-  font-size: 11px;
-  font-weight: 680;
-  letter-spacing: -0.01em;
-  text-overflow: ellipsis;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
-  transition: color 180ms ease;
 }
 
 /*
@@ -8224,6 +8217,7 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 .xv-animated-icon-host { transition: color 180ms ease; }
 a:hover .xv-animated-icon-host,
 button:hover .xv-animated-icon-host { color: var(--accent); }
+.xv-mobile-nav__tab:hover .xv-animated-icon-host { color: currentColor; }
 
 /* The rail's two destinations read as the heavy end of the column at a shared
    weight, so they take a lighter stroke. Dashboard's glyph is a component rather

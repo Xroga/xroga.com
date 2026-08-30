@@ -17,7 +17,8 @@ import { CogIcon } from '@/components/icons/animated/CogIcon';
 /**
  * The same icons the sidebar uses, so a destination looks like itself whichever
  * chrome you reach it through. Plan is gone: it lives on the Dashboard next to the
- * billing it belongs with, and eight tabs already scroll on a phone.
+ * billing it belongs with. Eight compact glyphs fit in the same rounded dock as
+ * the top mobile header, so navigation needs neither visible labels nor a scroller.
  */
 const items: { href: string; label: string; icon: AnimatedIconComponent }[] = [
   { href: '/workspace', label: 'Workspace', icon: TerminalIcon },
@@ -44,7 +45,6 @@ const SCROLL_THRESHOLD_PX = 12;
 export function MobileNav() {
   const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
-  const activeRef = useRef<HTMLAnchorElement | null>(null);
   const dragStart = useRef<number | null>(null);
 
   /*
@@ -101,13 +101,6 @@ export function MobileNav() {
   // on a new page with no navigation on screen is the one state it must never be in.
   useEffect(() => setHidden(false), [pathname]);
 
-  // A tab reached from somewhere else — a sidebar link, a redirect — can be off the
-  // end of the row, so it is brought into view rather than left for the reader to
-  // hunt for.
-  useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
-  }, [pathname]);
-
   if (pathname === '/workspace' || pathname === '/workspace/') return null;
 
   return (
@@ -126,12 +119,11 @@ export function MobileNav() {
             <Link
               key={href}
               href={href}
-              ref={active ? activeRef : undefined}
               aria-current={active ? 'page' : undefined}
               className={cn('xv-mobile-nav__tab', active && 'is-active')}
             >
-              {/* The compact reference keeps every icon and label visible. Selection
-                  changes contrast, not geometry, so the row stays steady while routing. */}
+              {/* The phone dock is visual shorthand: the animated glyph carries the
+                  destination while the label stays in the accessibility tree. */}
               <span className="xv-mobile-nav__disc">
                 <AnimatedIcon icon={icon} size={18} intro={false} />
               </span>
