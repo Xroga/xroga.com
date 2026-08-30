@@ -6948,6 +6948,54 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2 em{color:#fff!i
 }
 .xv-home-coding .xv-hc-community .xv-hc-section-inner{width:min(720px,100%)}
 .xv-home-coding .xv-hc-community .xv-hc-section-title{font-size:clamp(2.35rem,5.3vw,4.85rem)}
+.xv-home-coding .xv-hc-community-tabs{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  margin:1.35rem auto 0;
+  padding:4px;
+  border:1px solid rgba(255,255,255,.68);
+  border-radius:15px;
+  background:rgba(249,252,255,.82);
+  box-shadow:0 16px 38px rgba(0,21,48,.24),inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(18px) saturate(1.08);
+  -webkit-backdrop-filter:blur(18px) saturate(1.08);
+}
+.xv-home-coding .xv-hc-community-tabs>:where(a,button){
+  display:inline-flex;
+  min-width:112px;
+  min-height:40px;
+  align-items:center;
+  justify-content:center;
+  margin:0;
+  border:0;
+  border-radius:11px;
+  padding:.62rem 1rem;
+  background:transparent;
+  box-shadow:none;
+  color:#52606d!important;
+  font:720 .72rem/1 var(--hc-font-sans);
+  letter-spacing:.01em;
+  text-decoration:none;
+  text-transform:none;
+  cursor:pointer;
+  transition:background 160ms ease,color 160ms ease,box-shadow 160ms ease,transform 160ms ease;
+}
+.xv-home-coding .xv-hc-community-tabs>:where(a,button):hover,
+.xv-home-coding .xv-hc-community-tabs>:where(a,button):focus-visible{
+  background:rgba(7,17,30,.07);
+  color:#07111e!important;
+  box-shadow:none;
+  transform:none;
+}
+.xv-home-coding .xv-hc-community-tabs>.is-active,
+.xv-home-coding .xv-hc-community-tabs>.is-active:hover,
+.xv-home-coding .xv-hc-community-tabs>.is-active:focus-visible{
+  background:#10151b;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(4,10,18,.3),inset 0 1px 0 rgba(255,255,255,.14);
+}
 
 .xv-home-coding .xv-hc-mid-cta{padding-inline:clamp(.75rem,4vw,3rem)}
 .xv-home-coding .xv-hc-mid-cta-inner{
@@ -6986,6 +7034,8 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 @media(max-width:700px){
   .xv-home-coding .xv-hc-community{width:calc(100% - 1rem);min-height:480px;margin:1.5rem auto;padding:1rem;background-position:54% center}
   .xv-home-coding .xv-hc-community .xv-hc-section-title{font-size:clamp(2.15rem,12vw,3.65rem)}
+  .xv-home-coding .xv-hc-community-tabs{display:flex;width:100%;gap:2px;padding:3px;border-radius:13px}
+  .xv-home-coding .xv-hc-community-tabs>:where(a,button){min-width:0;min-height:38px;flex:1;padding:.58rem .45rem;border-radius:10px;font-size:.66rem}
   .xv-home-coding .xv-hc-mid-cta-inner{
     grid-template-columns:1fr;
     grid-template-rows:auto auto auto;

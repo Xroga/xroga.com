@@ -45,6 +45,18 @@ test('the community buttons name destinations, not instructions', () => {
   }
 });
 
+test('community actions share one compact segmented control', () => {
+  assert.match(PAGE, /className="xv-hc-community-tabs" role="group" aria-label="Community and support"/);
+  assert.match(PAGE, /href="\/community" className="is-active"/);
+  const group = ruleBody('.xv-home-coding .xv-hc-community-tabs');
+  assert.match(group, /display:inline-flex/);
+  assert.match(group, /border-radius:15px/);
+  assert.match(group, /backdrop-filter:blur\(18px\)/);
+  const active = ruleBody('.xv-home-coding .xv-hc-community-tabs>.is-active');
+  assert.match(active, /background:#10151b/);
+  assert.match(active, /color:#fff!important/);
+});
+
 test('theme and the account control share one group', () => {
   assert.match(PAGE, /<div className="xv-hc-headgroup">/, 'the segmented group is missing');
   const at = PAGE.indexOf('<div className="xv-hc-headgroup">');

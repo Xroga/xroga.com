@@ -190,17 +190,17 @@ export default function HomePage() {
             Share what you shipped, report a bug, or request a feature. Feedback goes straight to the people building
             Xroga.
           </p>
-          <div className="xv-hc-ctas">
+          <div className="xv-hc-community-tabs" role="group" aria-label="Community and support">
             {/* The section heading and copy already say what these do, so the verbs
                 the labels used to carry ("Open", "Share", "Read the") were repeating
                 context the reader has just been given. */}
-            <Link href="/community" className="xv-hc-btn-primary">
+            <Link href="/community" className="is-active">
               Community
             </Link>
-            <button type="button" onClick={() => setFeedbackOpen(true)} className="xv-hc-btn-ghost">
+            <button type="button" onClick={() => setFeedbackOpen(true)}>
               Feedback
             </button>
-            <Link href="/docs" className="xv-hc-btn-ghost">
+            <Link href="/docs">
               Docs
             </Link>
           </div>
