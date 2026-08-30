@@ -94,6 +94,8 @@ test('fullscreen command inspiration is in flow before the composer', () => {
   assert.ok(inspiration !== -1 && inspiration < composer);
   assert.match(CSS, /\.xv-fullscreen-inspiration\s*\{[^}]*position:\s*static[^}]*margin:\s*0 auto/);
   assert.match(CSS, /\.xv-terminal-dock--fullscreen\.xv-terminal-dock--idle\s*\{[^}]*overflow-y:\s*auto/);
+  assert.match(DOCK, /'\/ launch-ready product from one clear brief'/);
+  assert.doesNotMatch(DOCK, /Try a command/);
 });
 
 test('repository status is brief and is not replayed during passive restore', () => {

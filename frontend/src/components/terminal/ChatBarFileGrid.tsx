@@ -17,6 +17,8 @@ import {
   Film,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { ImageIcon } from '@/components/icons/animated/ImageIcon';
 import toast from 'react-hot-toast';
 
 const COLS = 4;
@@ -41,29 +43,12 @@ function formatSize(bytes: number) {
 }
 
 function NaturalImageThumb({ url, alt }: { url: string; alt: string }) {
-  const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
-  const maxSide = 72;
-
-  useEffect(() => {
-    const img = new window.Image();
-    img.onload = () => {
-      const { naturalWidth: nw, naturalHeight: nh } = img;
-      if (!nw || !nh) return;
-      const scale = Math.min(maxSide / nw, maxSide / nh, 1);
-      setDims({ w: Math.round(nw * scale), h: Math.round(nh * scale) });
-    };
-    img.src = url;
-  }, [url]);
-
-  const style = dims ? { width: dims.w, height: dims.h } : { width: maxSide, height: maxSide };
-
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
       alt={alt}
-      style={style}
-      className="object-contain rounded max-w-full"
+      className="xv-file-thumbnail"
     />
   );
 }
@@ -226,8 +211,8 @@ export function ChatBarFileGrid({
   const previewFile = previewIdx !== null ? files[previewIdx] : null;
 
   return (
-    <div className="px-2 sm:px-3 py-2">
-      <div className="grid grid-cols-4 gap-1.5 sm:gap-2 items-end">
+    <div className="px-2 sm:px-3 py-2 xv-chatbar-file-area">
+      <div className="xv-chatbar-file-grid" role="list" aria-label="Attached files">
         {visibleFiles.map((f) => {
           const i = files.indexOf(f);
           const kind = fileKind(f.type, f.name);
@@ -244,35 +229,36 @@ export function ChatBarFileGrid({
               onClick={() => setPreviewIdx(i)}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setPreviewIdx(i); }}
               className={cn(
-                'group relative rounded-lg overflow-hidden bg-black/15 xv-file-tile cursor-pointer',
-                isImage ? 'flex items-center justify-center p-1 min-h-[48px]' : 'aspect-square'
+                'group xv-file-tile cursor-pointer',
+                isImage && 'xv-file-tile--image'
               )}
+              aria-label={`Preview ${f.name}`}
             >
               {url && isImage ? (
                 <NaturalImageThumb url={url} alt={f.name} />
               ) : isVideo ? (
-                <div className="w-full h-full flex items-center justify-center bg-black/25">
+                <div className="xv-file-fallback">
                   <Film className="w-6 h-6 text-[var(--muted)]" />
                 </div>
               ) : isAudio ? (
-                <div className="w-full h-full flex items-center justify-center bg-black/25">
+                <div className="xv-file-fallback">
                   <Music className="w-6 h-6 text-[var(--muted)]" />
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-black/25">
+                <div className="xv-file-fallback">
                   <FileText className="w-6 h-6 text-[var(--muted)]" />
                 </div>
               )}
-              <span className="absolute top-0.5 left-0.5 text-[7px] font-bold px-1 py-0.5 rounded bg-black/50 text-white/90">
-                {kind}
+              <span className="xv-file-kind" aria-label={isImage ? 'Image file' : `${kind} file`}>
+                {isImage ? <AnimatedIcon icon={ImageIcon} size={12} intro={false} /> : kind}
               </span>
-              <span className="absolute bottom-0 inset-x-0 text-[7px] px-1 py-0.5 bg-black/55 text-white/80 truncate">
+              <span className="xv-file-size">
                 {formatSize(f.size)}
               </span>
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onRemove(i); }}
-                className="absolute top-0.5 right-0.5 p-0.5 rounded bg-black/50 text-white opacity-0 group-hover:opacity-100 z-[2]"
+                className="xv-file-remove"
                 aria-label={`Remove ${f.name}`}
               >
                 <X className="w-2.5 h-2.5" />

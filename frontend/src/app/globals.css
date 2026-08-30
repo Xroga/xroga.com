@@ -4038,12 +4038,6 @@ body.theme-gray * {
     text-align: center;
     pointer-events: none;
   }
-  .xv-fullscreen-inspiration > span {
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
   .xv-fullscreen-inspiration > div {
     position: relative;
     width: 100%;
@@ -4611,13 +4605,64 @@ body.theme-gray * {
   }
 
   /* Chatbar file grid */
+  .xv-chatbar-file-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
   .xv-file-tile {
+    position: relative;
+    display: flex;
+    width: 76px;
+    height: 76px;
+    flex: 0 0 76px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     border: none;
+    border-radius: 12px;
+    background: var(--terminal-ui-inset, var(--surface-inset));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground) 8%, transparent);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   .xv-file-tile:hover {
-    transform: scale(1.02);
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  .xv-file-thumbnail,
+  .xv-file-fallback {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+  }
+  .xv-file-thumbnail { object-fit: cover; }
+  .xv-file-fallback { background: color-mix(in srgb, var(--terminal-ui-inset, var(--surface-inset)) 88%, black 12%); }
+  .xv-file-kind,
+  .xv-file-size,
+  .xv-file-remove {
+    position: absolute;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.68);
+    color: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+  }
+  .xv-file-kind { top: 4px; left: 4px; min-width: 20px; min-height: 20px; padding: 3px 4px; font-size: 7px; font-weight: 750; }
+  .xv-file-kind .xv-animated-icon-host { width: 12px; height: 12px; }
+  .xv-file-size { left: 4px; bottom: 4px; max-width: calc(100% - 8px); min-height: 17px; padding: 2px 5px; font-size: 7px; font-weight: 650; white-space: nowrap; }
+  .xv-file-remove { top: 4px; right: 4px; width: 20px; height: 20px; opacity: 0; transition: opacity 140ms ease, background 140ms ease; }
+  .xv-file-tile:hover .xv-file-remove,
+  .xv-file-tile:focus-within .xv-file-remove { opacity: 1; }
+  .xv-file-remove:hover { background: rgba(185, 28, 28, 0.88); }
+  @media (max-width: 639px) {
+    .xv-file-tile { width: 68px; height: 68px; flex-basis: 68px; border-radius: 11px; }
   }
   .xv-file-tool-btn {
     display: inline-flex;
@@ -8468,9 +8513,8 @@ body.theme-beige {
   align-items: center;
   gap: 0.25rem;
   min-height: 28px;
-  padding: 3px;
-  border-radius: 10px;
-  background: var(--terminal-ui-raised, var(--composer-surface));
+  padding: 3px 0 0;
+  background: transparent;
   color: var(--text-muted, var(--muted));
 }
 .xv-chatbar-context-strip > :first-child { min-width: 0; flex: 0 1 auto; }
@@ -10633,6 +10677,16 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
 .xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
   border-color: var(--app-panel-border) !important;
   box-shadow: none !important;
+}
+
+/* On a fresh light workspace the stage and the shell are the same solid surface.
+   Drawing the shell edge there created the large empty white rectangle around the
+   starter UI. Keep the structural shell and its clipping, but let the untouched
+   light state read as one continuous workspace. */
+body.theme-white .terminal-skin-light.xv-workspace-shell[data-conversation='false'],
+body.theme-white .terminal-skin-light-grid.xv-workspace-shell[data-conversation='false'],
+body.theme-beige .terminal-skin-solar.xv-workspace-shell[data-conversation='false'] {
+  border-color: transparent !important;
 }
 
 /* ═══ Post-signup onboarding ═══════════════════════════════════════════════════

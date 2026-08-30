@@ -202,6 +202,7 @@ export function DashboardView() {
           incognito ? 'terminal-skin-dark xv-workspace-shell--incognito' : `terminal-skin-${skin}`,
           !incognito && (skin === 'dark' || skin === 'amoled') && 'scanlines'
         )}
+        data-conversation={hasConversation ? 'true' : 'false'}
         data-testid="workspace-window"
         ref={shellRef}
       >

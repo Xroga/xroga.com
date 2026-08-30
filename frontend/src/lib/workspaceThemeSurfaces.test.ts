@@ -89,7 +89,7 @@ test('every terminal skin owns the composer and starter surface palette', () => 
 test('the dock and all empty-state cards use solid terminal-skin surfaces', () => {
   assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\][\s\S]*--card:\s*var\(--terminal-ui-raised\)/);
   assert.match(block('.xv-terminal-dock .xv-chatbar-solid'), /background:\s*var\(--terminal-ui-raised/);
-  assert.match(block('.xv-chatbar-context-strip'), /background:\s*var\(--terminal-ui-raised/);
+  assert.match(block('.xv-chatbar-context-strip'), /background:\s*transparent/);
   assert.match(block('.xv-repo-chip--compact'), /background:\s*var\(--terminal-ui-inset/);
   assert.match(block('.xv-workspace-templates'), /background:\s*var\(--terminal-ui-raised/);
 });

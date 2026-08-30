@@ -82,6 +82,7 @@ const ICONS = [
   'CpuIcon',
   'GlobeLockIcon',
   'NewTerminalIcon',
+  'ImageIcon',
 ];
 
 test('every animated icon exposes the handle the host drives it by', () => {

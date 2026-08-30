@@ -20,7 +20,7 @@ import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterId
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 
 const FULLSCREEN_BUILD_COMMANDS = [
-  '/build a launch-ready product from one clear brief',
+  '/ launch-ready product from one clear brief',
   '/audit this repository and fix the highest-impact issue',
   '/ship a responsive app with tests and deployment',
   '/turn a rough idea into a working first release',
@@ -130,8 +130,7 @@ export function TerminalDock() {
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
               {dashboardFullscreen && emptyWorkspace && !incognito ? (
-                <div className="xv-fullscreen-inspiration" aria-label="Build command inspiration">
-                  <span>Try a command</span>
+                <div className="xv-fullscreen-inspiration" aria-label="Command inspiration">
                   <div aria-hidden="true">
                     {FULLSCREEN_BUILD_COMMANDS.map((command, index) => (
                       <code
