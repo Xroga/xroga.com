@@ -70,16 +70,16 @@ test('the bottom bar uses the same glyphs as the sidebar', () => {
   assert.ok(!/lucide-react/.test(NAV), 'the bottom bar still uses static lucide glyphs');
 });
 
-test('the selected tab is a filled disc in the chosen accent', () => {
+test('the selected tab expands into one icon-and-label segment', () => {
   assert.match(NAV, /xv-mobile-nav__disc/, 'the disc is gone');
   assert.match(
     CSS,
-    /\.xv-mobile-nav__tab\.is-active \.xv-mobile-nav__disc \{[^}]*background: var\(--accent\);/,
-    'the active disc does not follow the accent',
+    /\.xv-mobile-nav__tab\.is-active \{[^}]*min-width: 96px;[^}]*background: var\(--xv-mobile-nav-selected\);[^}]*color: var\(--xv-mobile-nav-selected-ink\);/,
+    'the active destination is not a clear theme-aware segment',
   );
   assert.match(CSS, /\.xv-mobile-nav__disc \{[^}]*border-radius: 999px;/, 'the disc is not round');
-  // A shape, not only a colour — so it survives a colour-blind reader.
-  assert.match(CSS, /\.xv-mobile-nav__tab\.is-active \.xv-mobile-nav__disc \{[^}]*transform: translateY/);
+  assert.match(CSS, /\.xv-mobile-nav__label \{[^}]*max-width: 0;[^}]*opacity: 0;/, 'inactive labels are still crowding the bar');
+  assert.match(CSS, /\.xv-mobile-nav__tab\.is-active \.xv-mobile-nav__label \{ max-width: 92px;opacity:1; \}/, 'the selected label does not appear');
 });
 
 test('the bar goes away as the page is read, and comes back on the way up', () => {
@@ -109,24 +109,24 @@ test('the bar goes away as the page is read, and comes back on the way up', () =
    */
   assert.ok(!/xv-mobile-nav__handle/.test(NAV), 'the grab handle is back');
   assert.ok(!/xv-mobile-nav__handle/.test(CSS), 'the grab handle is back in the stylesheet');
-  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(100%\);/, 'it parks a stub again');
+  assert.match(CSS, /\.xv-mobile-nav\[data-hidden='true'\] \{\n\s*transform: translateY\(calc\(100% \+ 18px\)\);/, 'it parks a stub again');
 });
 
-test('the bar sits on the bottom edge, with the selected tab raised on a glow', () => {
+test('the bar is a compact floating capsule with a flat selected segment', () => {
   const bar = CSS.slice(CSS.indexOf('.xv-mobile-nav__bar {'), CSS.indexOf('.xv-mobile-nav__bar::-webkit'));
-  assert.match(bar, /border-radius: 26px 26px 0 0;/, 'the bar floats again instead of meeting the edge');
-  assert.match(bar, /border-bottom: 0;/, 'the bar draws an edge across the bottom of the screen');
-  assert.match(bar, /env\(safe-area-inset-bottom, 0px\)/, 'the bar hovers over a notched screen');
+  assert.match(bar, /width: min\(100%, 470px\);/, 'the capsule can grow without a readable bound');
+  assert.match(bar, /min-height: 62px;/, 'the reference-size capsule was lost');
+  assert.match(bar, /border-radius: 999px;/, 'the navigation is not a capsule');
 
   const active = CSS.slice(
-    CSS.indexOf(".xv-mobile-nav__tab.is-active .xv-mobile-nav__disc {"),
+    CSS.indexOf('.xv-mobile-nav__tab.is-active {'),
     CSS.indexOf('.xv-mobile-nav__label {'),
   );
-  assert.match(active, /transform: translateY\(-18px\)/, 'the selected tab no longer lifts clear');
-  // The glow takes the reader's accent rather than a fixed blue, so this screen moves
-  // with the rest of the product instead of ignoring the setting.
-  assert.match(active, /color-mix\(in srgb, var\(--accent\) 30%, transparent\)/, 'the glow is gone');
-  assert.match(active, /width: 52px;/, 'the selected disc is no longer larger than the rest');
+  assert.doesNotMatch(active, /translateY|0 0 34px/, 'the old raised glowing disc is back');
+  assert.match(active, /background: var\(--xv-mobile-nav-selected\)/, 'the active segment does not follow its theme palette');
+  for (const theme of ['beige', 'gray', 'black']) {
+    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-nav__bar \\{[\\s\\S]*?--xv-mobile-nav-selected:`), `${theme} has no selected-segment palette`);
+  }
 });
 
 test('the mobile header is one textured glass frame around the mark and controls', () => {

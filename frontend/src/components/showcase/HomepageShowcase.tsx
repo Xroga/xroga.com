@@ -13,7 +13,9 @@ export function HomepageShowcase() {
   const template = SHOWCASE_TEMPLATES[activeIndex];
 
   const selectTemplate = useCallback((index: number) => setActiveIndex(index), []);
-  const step = (direction: -1 | 1) => selectTemplate((activeIndex + direction + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length);
+  const step = useCallback((direction: -1 | 1) => {
+    setActiveIndex((current) => (current + direction + SHOWCASE_TEMPLATES.length) % SHOWCASE_TEMPLATES.length);
+  }, []);
   const scrollTemplates = useCallback((event: WheelEvent<HTMLElement>) => {
     if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
       event.preventDefault();
@@ -25,26 +27,16 @@ export function HomepageShowcase() {
     <section className="xv-editorial-showcase xv-showcase-gallery" aria-labelledby="showcase-home-heading">
       <div className="xv-showcase-gallery__canvas" style={{ '--showcase-accent': template.accent } as CSSProperties}>
         <div className="xv-showcase-gallery__stage">
-          <div className="xv-showcase-laptop">
-            <Link className="xv-showcase-laptop__lid" href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} desktop preview`}>
-              <span className="xv-showcase-laptop__camera" aria-hidden="true" />
-              <span className="xv-showcase-laptop__browser" aria-hidden="true">
-                <i /><i /><i />
-                <code>xroga.com/showcase/{template.slug}</code>
-              </span>
-              <span className="xv-showcase-laptop__screen">
-                <Image
-                  key={`${template.slug}-desktop`}
-                  src={thumbnailFor(template, 'desktop')}
-                  alt={`${template.name} desktop preview`}
-                  fill
-                  priority={activeIndex === INITIAL_TEMPLATE}
-                  sizes="(max-width: 760px) 1px, 82vw"
-                />
-              </span>
-            </Link>
-            <span className="xv-showcase-laptop__base" aria-hidden="true"><i /></span>
-          </div>
+          <Link className="xv-showcase-display" href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} desktop preview`}>
+            <Image
+              key={`${template.slug}-desktop`}
+              src={thumbnailFor(template, 'desktop')}
+              alt={`${template.name} desktop preview`}
+              fill
+              priority={activeIndex === INITIAL_TEMPLATE}
+              sizes="(max-width: 760px) 68vw, 78vw"
+            />
+          </Link>
 
           <Link className="xv-showcase-phone" href={`/showcase/${template.slug}/preview`} aria-label={`Open ${template.name} mobile preview`}>
             <span className="xv-showcase-phone__speaker" aria-hidden="true" />
@@ -54,7 +46,8 @@ export function HomepageShowcase() {
                 src={thumbnailFor(template, 'mobile')}
                 alt={`${template.name} mobile preview`}
                 fill
-                sizes="(max-width: 760px) 76vw, 17vw"
+                priority={activeIndex === INITIAL_TEMPLATE}
+                sizes="(max-width: 760px) 22vw, 18vw"
               />
             </span>
             <span className="xv-showcase-phone__home" aria-hidden="true" />

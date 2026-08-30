@@ -130,8 +130,8 @@ export function MobileNav() {
               aria-current={active ? 'page' : undefined}
               className={cn('xv-mobile-nav__tab', active && 'is-active')}
             >
-              {/* The selected tab's glyph sits in a filled disc in the accent the
-                  reader chose, so the active state is a shape and not only a colour. */}
+              {/* Every destination keeps its glyph. The selected destination expands
+                  into the icon-and-label segment shown in the mobile reference. */}
               <span className="xv-mobile-nav__disc">
                 <AnimatedIcon icon={icon} size={18} intro={false} />
               </span>

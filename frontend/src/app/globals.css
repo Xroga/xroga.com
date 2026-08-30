@@ -8124,119 +8124,101 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 
 /* ------------------------------------------------------------------ mobile nav */
 
-/*
- * The bottom bar, as a floating pill rather than a full-width strip welded to the
- * edge of the screen.
- *
- * The selected tab's glyph sits inside a filled disc in the accent the reader chose,
- * which is what makes the active state a shape rather than a colour — it survives a
- * light theme, a dark theme and a colour-blind reader alike.
- *
- * Below it is a grab handle. Swiping down puts the bar away so it stops covering the
- * last line of a page; swiping up brings it back. The handle stays put either way,
- * because a gesture with nothing left to grab cannot be undone.
- */
+/* Reference-style bottom navigation: one floating capsule, quiet icon-only
+   destinations, and one selected segment that expands to reveal its label. */
 .xv-mobile-nav {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 8px;
+  right: 8px;
+  bottom: max(8px, env(safe-area-inset-bottom, 0px));
   z-index: 50;
   display: flex;
   justify-content: center;
-  /* Sits on the bottom edge rather than floating above it. The old 8px gutter left a
-     strip of page under the bar that nothing could use and that a thumb kept landing
-     in. The safe-area inset is the bar's own padding now, so its surface reaches the
-     bottom of a notched screen instead of hovering over it. */
   padding: 0;
   pointer-events: none;
   transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .xv-mobile-nav__bar {
+  --xv-mobile-nav-selected: #ffffff;
+  --xv-mobile-nav-selected-ink: #161616;
   display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  width: 100%;
-  /* Room above for the selected disc to rise into without being clipped by the scroll
-     container it lives in. */
-  padding: 26px 8px calc(10px + env(safe-area-inset-bottom, 0px));
+  align-items: center;
+  gap: 3px;
+  width: min(100%, 470px);
+  min-height: 62px;
+  padding: 5px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  /* Rounded at the top only — the bottom corners are the screen's corners now. */
-  border-radius: 26px 26px 0 0;
-  border: 1px solid var(--card-border);
-  border-bottom: 0;
-  background: color-mix(in srgb, var(--card) 92%, transparent);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 -8px 34px rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--card-border) 82%, var(--foreground) 18%);
+  background: color-mix(in srgb, var(--card) 86%, var(--muted) 14%);
+  backdrop-filter: blur(20px) saturate(1.08);
+  -webkit-backdrop-filter: blur(20px) saturate(1.08);
+  box-shadow: 0 16px 42px -20px rgba(0, 0, 0, 0.52), inset 0 1px 0 color-mix(in srgb, var(--foreground) 8%, transparent);
   pointer-events: auto;
   transition: opacity 200ms ease;
+}
+body.theme-beige .xv-mobile-nav__bar {
+  --xv-mobile-nav-selected: #fffaf0;
+  --xv-mobile-nav-selected-ink: #2f2418;
+}
+body.theme-gray .xv-mobile-nav__bar {
+  --xv-mobile-nav-selected: #f2f2f2;
+  --xv-mobile-nav-selected-ink: #171717;
+}
+body.theme-black .xv-mobile-nav__bar {
+  --xv-mobile-nav-selected: #ffffff;
+  --xv-mobile-nav-selected-ink: #050505;
 }
 .xv-mobile-nav__bar::-webkit-scrollbar { display: none; }
 
 .xv-mobile-nav__tab {
   display: flex;
-  flex-direction: column;
+  height: 50px;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  gap: 0;
   flex: 0 0 auto;
-  min-width: 64px;
-  padding: 2px 4px;
+  min-width: 48px;
+  border-radius: 999px;
+  padding: 0 5px;
   color: var(--muted);
   text-decoration: none;
+  transition: min-width 220ms ease, padding 220ms ease, background 220ms ease, color 220ms ease, box-shadow 220ms ease;
 }
 
 .xv-mobile-nav__disc {
-  position: relative;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
+  flex: none;
   border-radius: 999px;
-  background: transparent;
-  transition: background 220ms ease, color 220ms ease,
-    transform 300ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 220ms ease,
-    width 220ms ease, height 220ms ease;
 }
 
-.xv-mobile-nav__tab.is-active { color: var(--accent); }
-
-/*
- * The selected tab lifts clear of the bar on a coloured glow.
- *
- * A raised disc with light behind it, so the active destination is legible as a shape
- * before any colour is read — which is what keeps it working on a light theme, a dark
- * theme, and for a reader who cannot separate the accent from the ink. The glow takes
- * the accent the reader chose rather than a fixed blue, so this screen moves with the
- * rest of the product instead of ignoring the setting.
- */
-.xv-mobile-nav__tab.is-active .xv-mobile-nav__disc {
-  width: 52px;
-  height: 52px;
-  background: var(--accent);
-  color: var(--button-text, #fff);
-  transform: translateY(-18px);
-  box-shadow:
-    0 10px 26px color-mix(in srgb, var(--accent) 55%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--accent) 14%, transparent),
-    0 0 34px 10px color-mix(in srgb, var(--accent) 30%, transparent);
+.xv-mobile-nav__tab.is-active {
+  min-width: 96px;
+  gap: 1px;
+  padding: 0 13px 0 7px;
+  background: var(--xv-mobile-nav-selected);
+  color: var(--xv-mobile-nav-selected-ink);
+  box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.42);
 }
 
 .xv-mobile-nav__label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  max-width: 64px;
+  max-width: 0;
   overflow: hidden;
+  opacity: 0;
+  font-size: 11px;
+  font-weight: 680;
+  letter-spacing: -0.01em;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: max-width 220ms ease, opacity 160ms ease;
 }
-/* The selected tab is already marked by the raised disc, so its label would be a
-   second, weaker copy of the same signal taking room from seven others. */
-.xv-mobile-nav__tab.is-active .xv-mobile-nav__label { opacity: 0; height: 0; }
+.xv-mobile-nav__tab.is-active .xv-mobile-nav__label { max-width: 92px;opacity:1; }
 
 /*
  * Away, and all the way away.
@@ -8247,12 +8229,13 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
  * hid it — a control that existed to fix another control.
  */
 .xv-mobile-nav[data-hidden='true'] {
-  transform: translateY(100%);
+  transform: translateY(calc(100% + 18px));
 }
 
 @media (prefers-reduced-motion: reduce) {
   .xv-mobile-nav,
-  .xv-mobile-nav__disc,
+  .xv-mobile-nav__tab,
+  .xv-mobile-nav__label,
   .xv-mobile-nav__bar { transition: none; }
 }
 
