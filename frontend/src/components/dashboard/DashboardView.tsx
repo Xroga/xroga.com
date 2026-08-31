@@ -189,7 +189,7 @@ export function DashboardView() {
       data-conversation={hasConversation ? 'true' : 'false'}
     >
       <ApiConnectionBanner />
-      <DashboardWelcome displayName={displayName} hidden={fullscreen} />
+      <DashboardWelcome displayName={displayName} hidden={fullscreen || !hasConversation} />
       <SwarmMessageLog chromeless incognito={incognito} />
     </div>
   );

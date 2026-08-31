@@ -453,7 +453,6 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   for (const action of [
     'Add files or photos',
     'Slash commands',
-    'Connectors',
     'Plan before build',
     'Debug an error',
     'Skills',
@@ -464,15 +463,14 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   }
   await expect(page.locator('.xv-chatbar-integration-btn')).toHaveCount(0);
 
-  // Two columns, not one tall one. As a single column the list stood roughly three
-  // times its own width, which reads as a page rather than as a menu. Asserted as a
-  // ratio rather than a pixel height so it survives an action being added or removed.
+  // Two columns keep the working palette compact without spreading its actions
+  // across the full composer like dashboard tabs.
   const grid = plusMenu.locator('.xv-cba-grid');
   await expect(grid).toBeVisible();
   const gridColumns = await grid.evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
   );
-  expect(gridColumns, 'the plus menu should lay out in four compact columns').toBe(4);
+  expect(gridColumns, 'the plus menu should lay out in two compact columns').toBe(2);
   expect(
     menuBox.height / menuBox.width,
     'the plus menu is far taller than it is wide',

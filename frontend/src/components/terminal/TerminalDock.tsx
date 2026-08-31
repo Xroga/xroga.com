@@ -18,6 +18,9 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterIdeas';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
+import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
+import { useAppStore } from '@/store/useAppStore';
+import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 
 const FULLSCREEN_BUILD_COMMANDS = [
   '/ launch-ready product from one clear brief',
@@ -28,6 +31,9 @@ const FULLSCREEN_BUILD_COMMANDS = [
 
 export function TerminalDock() {
   const pathname = usePathname();
+  const shellIdentity = useShellIdentity();
+  const profile = useAppStore((s) => s.profile);
+  const displayName = profile?.display_name ?? shellIdentity.displayName;
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
@@ -149,6 +155,9 @@ export function TerminalDock() {
                   variant belongs on pages with room for it; here it reintroduces the
                   exact height and clutter the compact chip exists to avoid. */}
               <ChatbarQueueOutside />
+              {showStarterExperience && !incognito ? (
+                <DashboardWelcome displayName={displayName} composer />
+              ) : null}
               <div className="xv-chatbar-stack relative">
                 {!incognito ? <CompanionComposerAnchor /> : null}
                 <TerminalChatBar />

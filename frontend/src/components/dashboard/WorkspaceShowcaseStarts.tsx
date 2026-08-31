@@ -183,11 +183,22 @@ function TemplateDecisionDialog({
   );
 }
 
-/** Always-visible template rail for an empty workspace. */
+/** Collapsed inspiration catalog for an empty workspace. */
 export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
   const { setPrompt } = useTerminalChat();
   const [selectedTemplate, setSelectedTemplate] = useState<ShowcaseTemplate | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const collectionsRef = useRef<HTMLDivElement>(null);
+
+  const toggleCatalog = () => {
+    const next = !expanded;
+    setExpanded(next);
+    if (next) {
+      window.requestAnimationFrame(() => {
+        collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  };
 
   const useTemplate = () => {
     if (!selectedTemplate) return;
@@ -211,7 +222,9 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
       <button
         type="button"
         className="xv-workspace-explore-bar"
-        onClick={() => collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        onClick={toggleCatalog}
+        aria-expanded={expanded}
+        aria-controls="workspace-template-collections"
       >
         <span className="xv-workspace-explore-label">
           <AnimatedIcon icon={LightbulbIcon} size={15} intro={false} />
@@ -221,45 +234,51 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
           </span>
         </span>
         <span className="xv-workspace-explore-action">
-          Scroll to explore
-          <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+          {expanded ? 'Close inspiration' : 'Explore when ready'}
+          <ChevronDown className={cn('h-3.5 w-3.5', expanded && 'is-open')} aria-hidden />
         </span>
       </button>
 
-      <div ref={collectionsRef} className="xv-workspace-template-collections">
-        {TEMPLATE_COLLECTIONS.map((collection) => {
-          const Icon = collection.icon;
-          return (
-            <section
-              key={collection.id}
-              className="xv-workspace-template-collection"
-              aria-labelledby={`${collection.id}-heading`}
-            >
-              <header className="xv-workspace-collection-head">
-                <span className="xv-workspace-collection-title">
-                  <AnimatedIcon icon={Icon} size={14} intro={false} />
-                  <span>
-                    <strong id={`${collection.id}-heading`}>{collection.title}</strong>
-                    <small>{collection.description}</small>
+      {expanded ? (
+        <div
+          id="workspace-template-collections"
+          ref={collectionsRef}
+          className="xv-workspace-template-collections"
+        >
+          {TEMPLATE_COLLECTIONS.map((collection) => {
+            const Icon = collection.icon;
+            return (
+              <section
+                key={collection.id}
+                className="xv-workspace-template-collection"
+                aria-labelledby={`${collection.id}-heading`}
+              >
+                <header className="xv-workspace-collection-head">
+                  <span className="xv-workspace-collection-title">
+                    <AnimatedIcon icon={Icon} size={14} intro={false} />
+                    <span>
+                      <strong id={`${collection.id}-heading`}>{collection.title}</strong>
+                      <small>{collection.description}</small>
+                    </span>
                   </span>
-                </span>
-                {collection.id === 'xroga-templates' ? (
-                  <Link href="/showcase">
-                    Browse all <ArrowUpRight className="h-3 w-3" aria-hidden />
-                  </Link>
-                ) : null}
-              </header>
-              <div className="xv-workspace-template-viewport">
-                <TemplateCatalog
-                  templates={collection.templates}
-                  attribution={collection.attribution}
-                  onSelect={setSelectedTemplate}
-                />
-              </div>
-            </section>
-          );
-        })}
-      </div>
+                  {collection.id === 'xroga-templates' ? (
+                    <Link href="/showcase">
+                      Browse all <ArrowUpRight className="h-3 w-3" aria-hidden />
+                    </Link>
+                  ) : null}
+                </header>
+                <div className="xv-workspace-template-viewport">
+                  <TemplateCatalog
+                    templates={collection.templates}
+                    attribution={collection.attribution}
+                    onSelect={setSelectedTemplate}
+                  />
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      ) : null}
       </section>
       {selectedTemplate ? (
         <TemplateDecisionDialog

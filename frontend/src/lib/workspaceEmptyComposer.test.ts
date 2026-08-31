@@ -107,12 +107,16 @@ test('repository status is brief and is not replayed during passive restore', ()
   assert.match(REPO, /analyzeRepo\(defaultRepo, branch, false, false\)/);
 });
 
-test('templates use a scrollable categorized inspiration catalog and open a preview-or-build decision', () => {
+test('templates stay collapsed until requested, then open a scrollable categorized catalog', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
   assert.match(TEMPLATES, /xv-workspace-template-catalog/);
   assert.match(TEMPLATES, /TEMPLATE_COLLECTIONS\.map/);
   assert.match(TEMPLATES, /Explore inspiration/);
-  assert.match(TEMPLATES, /Scroll to explore/);
+  assert.match(TEMPLATES, /const \[expanded, setExpanded\] = useState\(false\)/);
+  assert.match(TEMPLATES, /aria-expanded=\{expanded\}/);
+  assert.match(TEMPLATES, /\{expanded \? \(/);
+  assert.match(TEMPLATES, /Explore when ready/);
+  assert.match(TEMPLATES, /Close inspiration/);
   assert.match(TEMPLATES, /Recent builds/);
   assert.match(TEMPLATES, /Community templates/);
   assert.match(TEMPLATES, /Xroga templates/);
@@ -129,14 +133,16 @@ test('templates use a scrollable categorized inspiration catalog and open a prev
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
-test('the welcome is a compact identity line with the original three-part promise', () => {
+test('the welcome is a compact vertical identity above the canonical composer', () => {
   assert.match(WELCOME, /xv-welcome-idline/);
   assert.match(WELCOME, /Describe it\./);
   assert.match(WELCOME, /Build it\./);
   assert.match(WELCOME, /Ship it\./);
   assert.doesNotMatch(WELCOME, /Turn an idea into|something live/);
-  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*flex[^}]*min-height:\s*1\.25rem/);
-  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-tagline-sub\s*\{[^}]*font-size:\s*clamp\(0\.86rem,\s*1\.35vw,\s*1\.04rem\)/);
+  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*grid[^}]*min-height:\s*1\.8rem/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.48rem/);
+  assert.match(DOCK, /<DashboardWelcome displayName=\{displayName\} composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">/);
+  assert.match(WELCOME, /\{!composer \? \(/, 'the first-run checklist should not crowd the composer welcome');
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);

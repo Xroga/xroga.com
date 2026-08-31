@@ -92,24 +92,33 @@ export function ChatBarActionsMenu({
           right: 'auto',
           bottom: Math.max(8, window.innerHeight - rect.top - 1),
           width: rect.width,
-          maxHeight: Math.min(panel === 'menu' ? 264 : 320, Math.max(156, rect.top - 8)),
+          maxHeight: Math.min(panel === 'menu' ? 248 : 304, Math.max(150, rect.top - 8)),
         });
         return;
       }
+      const width = Math.min(rect.width, 520);
       setMenuStyle({
         position: 'fixed',
-        left: rect.left,
+        left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
         bottom: Math.max(8, window.innerHeight - rect.top - 1),
-        width: rect.width,
-        maxHeight: Math.min(panel === 'menu' ? 280 : 360, Math.max(180, rect.top - 12)),
+        width,
+        maxHeight: Math.min(panel === 'menu' ? 246 : 340, Math.max(176, rect.top - 12)),
       });
     };
     sync();
     window.addEventListener('resize', sync);
+    // The menu is portalled to the document body. Any ancestor can scroll while the
+    // composer moves underneath it, so keep the portal aligned on captured scrolls
+    // as well as viewport resizes. This is what makes it remain attached to the
+    // composer's upper edge inside the idle workspace scroller.
+    window.addEventListener('scroll', sync, { capture: true, passive: true });
     window.visualViewport?.addEventListener('resize', sync);
+    window.visualViewport?.addEventListener('scroll', sync, { passive: true });
     return () => {
       window.removeEventListener('resize', sync);
+      window.removeEventListener('scroll', sync, true);
       window.visualViewport?.removeEventListener('resize', sync);
+      window.visualViewport?.removeEventListener('scroll', sync);
     };
   }, [open, panel]);
 
@@ -152,8 +161,8 @@ export function ChatBarActionsMenu({
       {open && typeof document !== 'undefined' ? createPortal(
         <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
           {panel === 'menu' && (
-            /* A dense row-wise grid uses the same width as the composer. Only the
-               root list is laid out this way — the
+            /* A dense two-column palette stays attached to the composer without
+               becoming a second dashboard. Only the
                Skills and Rules panels below stay single-column, because their rows
                are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">

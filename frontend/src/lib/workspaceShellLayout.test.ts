@@ -224,15 +224,16 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 280 : 360, Math\.max\(180, rect\.top - 12\)\)/);
-  assert.match(MENU, /width:\s*rect\.width/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 246 : 340, Math\.max\(176, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/);
+  assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 
 test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /const mobile = window\.innerWidth < 640/);
   assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top - 1\)/);
   assert.match(MENU, /width:\s*rect\.width/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 264 : 320, Math\.max\(156, rect\.top - 8\)\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 248 : 304, Math\.max\(150, rect\.top - 8\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 

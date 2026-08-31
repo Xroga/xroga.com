@@ -7261,19 +7261,19 @@ body.theme-gray .xv-rp-loader {
 .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.55rem; }
 .xv-dashboard-welcome .xv-welcome-hero { gap: 0; }
 
-/* Workspace identity is a compact two-line lockup, not a landing-page headline.
-   Greeting and project share one status line; the product promise stays short below. */
+/* Workspace identity is a compact vertical lockup, not a landing-page headline.
+   Greeting sits above the project name and the working promise stays close to the
+   composer, following the order people read before they start a build. */
 .xv-dashboard-welcome .xv-welcome-hero {
-  gap: 0.26rem;
+  gap: 0.22rem;
 }
 .xv-dashboard-welcome .xv-welcome-idline {
-  display: flex;
+  display: grid;
   min-width: 0;
   max-width: min(100%, 680px);
-  min-height: 1.25rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.48rem;
+  min-height: 1.8rem;
+  justify-items: center;
+  gap: 0.15rem;
   margin: 0;
   line-height: 1;
 }
@@ -7281,21 +7281,15 @@ body.theme-gray .xv-rp-loader {
   flex: none;
   color: var(--text-secondary);
   font-family: var(--font-goga), system-ui, sans-serif !important;
-  font-size: clamp(0.68rem, 0.95vw, 0.77rem);
+  font-size: clamp(0.6rem, 0.8vw, 0.68rem);
   font-weight: 600;
   letter-spacing: 0.015em;
-}
-.xv-dashboard-welcome .xv-welcome-idline-rule {
-  width: 1px;
-  height: 0.72rem;
-  flex: none;
-  background: color-mix(in srgb, var(--foreground) 20%, transparent);
 }
 .xv-dashboard-welcome .xv-welcome-name {
   min-width: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: clamp(0.78rem, 1.15vw, 0.92rem);
+  font-size: clamp(0.72rem, 1vw, 0.84rem);
   font-weight: 400;
   letter-spacing: 0.035em;
   line-height: 1;
@@ -7312,10 +7306,21 @@ body.theme-gray .xv-rp-loader {
   gap: 0.3em;
   margin: 0;
   color: var(--text-primary);
-  font-size: clamp(0.86rem, 1.35vw, 1.04rem);
+  font-size: clamp(1rem, 1.8vw, 1.32rem);
   font-weight: 500;
   letter-spacing: -0.018em;
   line-height: 1.15;
+}
+
+.xv-dashboard-welcome--composer {
+  width: min(100%, 680px);
+  margin: 0 auto 0.48rem;
+  padding: 0;
+}
+.xv-dashboard-welcome--composer .xv-welcome-hero { gap: 0.18rem; }
+.xv-dashboard-welcome--composer .xv-welcome-tagline-sub {
+  font-size: clamp(1.05rem, 2.15vw, 1.4rem);
+  line-height: 1.08;
 }
 .xv-dashboard-welcome .xv-welcome-tagline-sub em {
   color: var(--accent);
@@ -7483,9 +7488,17 @@ body.theme-gray .xv-rp-loader {
   .xv-dashboard-welcome .xv-welcome-tagline-sub {
     width: 100%;
   }
-  .xv-dashboard-welcome .xv-welcome-idline { justify-content: flex-start; }
+  .xv-dashboard-welcome .xv-welcome-idline { justify-items: start; }
   .xv-dashboard-welcome .xv-welcome-greeting-text { font-size: clamp(0.68rem, 3.2vw, 0.78rem); }
   .xv-dashboard-welcome .xv-welcome-name { font-size: clamp(0.72rem, 3.6vw, 0.86rem); }
+  .xv-dashboard-welcome--composer {
+    width: calc(100% - 0.35rem);
+    margin-bottom: 0.38rem;
+  }
+  .xv-dashboard-welcome--composer .xv-welcome-tagline-sub {
+    flex-wrap: wrap;
+    font-size: clamp(0.92rem, 4.6vw, 1.08rem);
+  }
 }
 
 /* Desktop keeps the centred composition. */
@@ -9910,7 +9923,18 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   font-weight: 650;
 }
 .xv-workspace-explore-action svg { color: var(--accent); }
-.xv-workspace-template-collections { scroll-margin-top: 46px; }
+.xv-workspace-explore-action svg {
+  transition: transform 160ms ease;
+}
+.xv-workspace-explore-action svg.is-open { transform: rotate(180deg); }
+.xv-workspace-template-collections {
+  scroll-margin-top: 46px;
+  animation: xv-workspace-catalog-open 180ms ease-out both;
+}
+@keyframes xv-workspace-catalog-open {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .xv-workspace-template-collection {
   padding-top: 0.15rem;
   border-bottom: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
@@ -10086,6 +10110,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 @media (prefers-reduced-motion: reduce) {
   .xv-workspace-idea-list > button { transition: none; }
   .xv-workspace-template-card { transition: none; }
+  .xv-workspace-template-collections { animation: none; }
+  .xv-workspace-explore-action svg { transition: none; }
 }
 @media (max-width: 639px) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
@@ -10232,25 +10258,19 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 
 /* ---- the root list --------------------------------------------------------
-   Two columns keep the mobile sheet short; four columns use the full composer width
-   on desktop. Decorative separators disappear because the grid itself supplies the
-   grouping rhythm. Only explanatory notes span every column. */
+   A two-column palette is large enough to scan and small enough to stay visually
+   attached to the composer. It intentionally does not expand to the composer's full
+   desktop width: these are prompt tools, not dashboard tabs. */
 .xv-cba-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
+  gap: 3px;
   align-content: start;
 }
 .xv-cba-grid > .xv-cba-sep { display: none; }
 
 @media (min-width: 640px) {
-  /* The composer has enough horizontal room here to expose several detailed actions
-     per row without turning the surface into a tall sheet. */
-  .xv-cba-menu:has(.xv-cba-grid) { width: 100%; }
-  .xv-cba-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
-  }
+  .xv-cba-menu:has(.xv-cba-grid) { width: min(520px, 100%); }
   .xv-cba-grid > .xv-cba-item--wide {
     grid-column: 1 / -1;
   }
@@ -10259,12 +10279,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 /* ---- menu rows ------------------------------------------------------------ */
 
 .xv-cba-item {
-  min-height: 46px;
-  padding: 8px 10px;
-  border-radius: 9px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 8px;
   color: rgba(255, 255, 255, 0.86);
   border: 0;
   transition: background 120ms ease, color 120ms ease;
@@ -10275,13 +10295,13 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-cba-item svg { margin-top: 0; color: #2f7cff; }
 .xv-cba-item__text b {
-  font-size: 14px;
-  font-weight: 550;
+  font-size: 12px;
+  font-weight: 620;
   color: rgba(255, 255, 255, 0.9);
 }
 .xv-cba-item__text i {
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 10px;
+  line-height: 1.28;
   color: rgba(255, 255, 255, 0.43);
 }
 .xv-cba-command-list {

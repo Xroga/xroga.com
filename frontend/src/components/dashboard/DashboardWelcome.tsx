@@ -12,9 +12,10 @@ interface DashboardWelcomeProps {
   displayName: string;
   hidden?: boolean;
   className?: string;
+  composer?: boolean;
 }
 
-export function DashboardWelcome({ displayName, hidden, className }: DashboardWelcomeProps) {
+export function DashboardWelcome({ displayName, hidden, className, composer = false }: DashboardWelcomeProps) {
   const profile = useAppStore((s) => s.profile);
   const locale = useLocale();
   const hydrated = useHydrated();
@@ -28,7 +29,11 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
 
   return (
     <div
-      className={cn('xv-dashboard-welcome xv-welcome-modern relative', className)}
+      className={cn(
+        'xv-dashboard-welcome xv-welcome-modern relative',
+        composer && 'xv-dashboard-welcome--composer',
+        className,
+      )}
       data-testid="workspace-welcome"
     >
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
@@ -36,7 +41,6 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>
             {greeting}
           </span>
-          <span className="xv-welcome-idline-rule" aria-hidden="true" />
           <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
         </p>
 
@@ -49,9 +53,11 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
         </div>
       </div>
 
-      <div className="relative mx-auto mt-4 max-w-3xl">
-        <FirstRunShipChecklist className="mb-3" />
-      </div>
+      {!composer ? (
+        <div className="relative mx-auto mt-4 max-w-3xl">
+          <FirstRunShipChecklist className="mb-3" />
+        </div>
+      ) : null}
 
     </div>
   );

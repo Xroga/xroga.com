@@ -103,20 +103,20 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: 14px !important/, 'and stop at it');
 });
 
-test('the plus menu uses the full composer width in a compact row-wise grid', () => {
+test('the plus menu is a compact two-column palette rather than a composer-wide dashboard', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
   const media = code.indexOf('@media (min-width: 640px)', at);
-  const block = code.slice(media, media + 500);
-  assert.match(block, /grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/, 'four columns from sm up');
-  assert.match(MENU, /width:\s*rect\.width/, 'the panel should match the composer width');
+  const block = code.slice(media, media + 360);
+  assert.match(block, /width:\s*min\(520px, 100%\)/, 'the desktop panel should remain bounded');
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/, 'runtime width should match the CSS cap');
   assert.ok(MENU.indexOf('<b>Integrations</b>') < MENU.indexOf('<b>Slash commands</b>'), 'Integrations should sit beside file upload');
 
-  // Two columns keep the mobile sheet compact without shrinking its touch targets.
+  // Two columns stay consistent at every size and keep the menu easy to scan.
   const base = code.slice(at, code.indexOf('}', at));
-  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'a narrow composer keeps two columns');
+  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the palette keeps two columns');
 });
 
 test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
@@ -151,7 +151,7 @@ test('the geometry is asserted where the workspace can actually be reached', () 
   assert.match(E2E, /the sidebar is still on screen in fullscreen/);
   assert.match(E2E, /the hidden sidebar still reserves its width/);
   assert.match(E2E, /the sidebar did not reopen after fullscreen/);
-  assert.match(E2E, /the plus menu should lay out in four compact columns/);
+  assert.match(E2E, /the plus menu should lay out in two compact columns/);
 });
 
 /**
