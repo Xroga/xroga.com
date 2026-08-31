@@ -107,10 +107,12 @@ test('repository status is brief and is not replayed during passive restore', ()
   assert.match(REPO, /analyzeRepo\(defaultRepo, branch, false, false\)/);
 });
 
-test('templates use a large editorial catalog row and open a preview-or-build decision', () => {
+test('templates use a scrollable categorized inspiration catalog and open a preview-or-build decision', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
   assert.match(TEMPLATES, /xv-workspace-template-catalog/);
-  assert.match(TEMPLATES, /<TemplateCatalog onSelect=\{setSelectedTemplate\}/);
+  assert.match(TEMPLATES, /TEMPLATE_COLLECTIONS\.map/);
+  assert.match(TEMPLATES, /Explore inspiration/);
+  assert.match(TEMPLATES, /Scroll to explore/);
   assert.match(TEMPLATES, /Recent builds/);
   assert.match(TEMPLATES, /Community templates/);
   assert.match(TEMPLATES, /Xroga templates/);
@@ -122,18 +124,19 @@ test('templates use a large editorial catalog row and open a preview-or-build de
   assert.match(TEMPLATES, /setPrompt\(prompt\)/);
   assert.match(TEMPLATES, /selected GitHub repository/);
   assert.match(CSS, /\.xv-workspace-template-catalog\s*\{[^}]*display:\s*flex/);
-  assert.match(CSS, /\.xv-workspace-template-card\s*\{[^}]*flex-direction:\s*column[^}]*min-height:\s*230px/);
+  assert.match(CSS, /\.xv-workspace-template-card\s*\{[^}]*flex-direction:\s*column[^}]*width:\s*clamp\(190px,\s*24vw,\s*226px\)/);
   assert.match(CSS, /\.xv-workspace-templates\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*border:\s*1px solid[^}]*border-radius:\s*14px/);
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
-test('the welcome is a compact identity line with one short product promise', () => {
+test('the welcome is a compact identity line with the original three-part promise', () => {
   assert.match(WELCOME, /xv-welcome-idline/);
-  assert.match(WELCOME, /Turn an idea into/);
-  assert.match(WELCOME, />something live\.</);
-  assert.doesNotMatch(WELCOME, /Describe it|Build it|Ship it/);
-  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*flex[^}]*min-height:\s*1\.35rem/);
-  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-tagline-sub\s*\{[^}]*font-size:\s*clamp\(0\.76rem,\s*1\.15vw,\s*0\.9rem\)/);
+  assert.match(WELCOME, /Describe it\./);
+  assert.match(WELCOME, /Build it\./);
+  assert.match(WELCOME, /Ship it\./);
+  assert.doesNotMatch(WELCOME, /Turn an idea into|something live/);
+  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*flex[^}]*min-height:\s*1\.25rem/);
+  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-tagline-sub\s*\{[^}]*font-size:\s*clamp\(0\.86rem,\s*1\.35vw,\s*1\.04rem\)/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);

@@ -7264,16 +7264,16 @@ body.theme-gray .xv-rp-loader {
 /* Workspace identity is a compact two-line lockup, not a landing-page headline.
    Greeting and project share one status line; the product promise stays short below. */
 .xv-dashboard-welcome .xv-welcome-hero {
-  gap: 0.34rem;
+  gap: 0.26rem;
 }
 .xv-dashboard-welcome .xv-welcome-idline {
   display: flex;
   min-width: 0;
   max-width: min(100%, 680px);
-  min-height: 1.35rem;
+  min-height: 1.25rem;
   align-items: center;
   justify-content: center;
-  gap: 0.52rem;
+  gap: 0.48rem;
   margin: 0;
   line-height: 1;
 }
@@ -7281,25 +7281,23 @@ body.theme-gray .xv-rp-loader {
   flex: none;
   color: var(--text-secondary);
   font-family: var(--font-goga), system-ui, sans-serif !important;
-  font-size: clamp(0.72rem, 1vw, 0.82rem);
-  font-weight: 650;
-  letter-spacing: 0.01em;
+  font-size: clamp(0.68rem, 0.95vw, 0.77rem);
+  font-weight: 600;
+  letter-spacing: 0.015em;
 }
-.xv-dashboard-welcome .xv-welcome-idline-dot {
-  width: 4px;
-  height: 4px;
+.xv-dashboard-welcome .xv-welcome-idline-rule {
+  width: 1px;
+  height: 0.72rem;
   flex: none;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 11%, transparent);
+  background: color-mix(in srgb, var(--foreground) 20%, transparent);
 }
 .xv-dashboard-welcome .xv-welcome-name {
   min-width: 0;
   overflow: hidden;
   color: var(--text-primary);
-  font-size: clamp(0.78rem, 1.2vw, 0.96rem);
+  font-size: clamp(0.78rem, 1.15vw, 0.92rem);
   font-weight: 400;
-  letter-spacing: 0.045em;
+  letter-spacing: 0.035em;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -7308,20 +7306,21 @@ body.theme-gray .xv-rp-loader {
   margin-top: 0 !important;
 }
 .xv-dashboard-welcome .xv-welcome-tagline-sub {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3em;
   margin: 0;
-  color: var(--text-secondary);
-  font-family: var(--font-goga), system-ui, sans-serif !important;
-  font-size: clamp(0.76rem, 1.15vw, 0.9rem);
-  font-weight: 520;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-.xv-dashboard-welcome .xv-tagline-accent {
   color: var(--text-primary);
-  font-family: inherit !important;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: inherit;
+  font-size: clamp(0.86rem, 1.35vw, 1.04rem);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.15;
+}
+.xv-dashboard-welcome .xv-welcome-tagline-sub em {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 650;
 }
 
 /* Greeting content belongs directly on the terminal skin. Keep every wrapper clear
@@ -7473,6 +7472,7 @@ body.theme-gray .xv-rp-loader {
 
   /* The ownership tagline still needs a deliberate phone measure. */
   .xv-dashboard-welcome .xv-welcome-tagline-sub { font-size: clamp(0.72rem, 3.4vw, 0.84rem); line-height: 1.25; }
+  .xv-dashboard-welcome .xv-welcome-tagline-sub { justify-content: flex-start; }
 
   .xv-dashboard-welcome .xv-blackhole-identity { margin-top: 0.4rem; }
   .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.4rem; }
@@ -9835,8 +9835,9 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   font-size: 0.5rem;
 }
 
-/* A catalog row of real product screenshots. It follows the reference's editorial
-   rhythm: collection tabs, large previews, plain metadata, and vertical dividers. */
+/* A compact inspiration surface. The first row works as a scroll affordance; the
+   content beneath it is grouped into labelled collections instead of showing three
+   passive labels above one undifferentiated rail. */
 .xv-workspace-templates {
   width: 100%;
   max-width: 100%;
@@ -9848,42 +9849,94 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   background: var(--terminal-ui-raised, var(--composer-surface));
   box-shadow: 0 14px 38px -30px rgba(0, 0, 0, 0.52);
 }
-.xv-workspace-template-head {
+.xv-workspace-explore-bar {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  min-height: 38px;
-  padding: 0.45rem 0.65rem;
+  min-height: 44px;
+  padding: 0.5rem 0.68rem;
   border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: color-mix(in srgb, var(--terminal-ui-raised, var(--composer-surface)) 96%, var(--accent) 4%);
+  color: var(--foreground);
+  text-align: left;
+  transition: background-color 160ms ease;
 }
-.xv-workspace-template-head nav {
+.xv-workspace-explore-bar:hover {
+  background: color-mix(in srgb, var(--terminal-ui-raised, var(--composer-surface)) 91%, var(--accent) 9%);
+}
+.xv-workspace-explore-bar:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 58%, transparent);
+}
+.xv-workspace-explore-label,
+.xv-workspace-collection-title {
   display: flex;
   align-items: center;
-  gap: 0.52rem;
+  gap: 0.5rem;
   min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.xv-workspace-template-head nav::-webkit-scrollbar { display: none; }
-.xv-workspace-template-head nav span,
-.xv-workspace-template-head nav strong {
-  flex: none;
-  font-size: 0.58rem;
+.xv-workspace-explore-label > .xv-animated-icon-host { color: var(--accent); }
+.xv-workspace-explore-label > span,
+.xv-workspace-collection-title > span {
+  display: grid;
+  min-width: 0;
+  gap: 0.06rem;
+}
+.xv-workspace-explore-label strong {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.xv-workspace-explore-label small,
+.xv-workspace-collection-title small {
+  overflow: hidden;
+  color: color-mix(in srgb, var(--foreground) 48%, transparent);
+  font-size: 0.52rem;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-.xv-workspace-template-head nav span {
-  color: color-mix(in srgb, var(--foreground) 44%, transparent);
+.xv-workspace-explore-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.34rem;
+  color: color-mix(in srgb, var(--foreground) 58%, transparent);
+  font-size: 0.56rem;
+  font-weight: 650;
 }
-.xv-workspace-template-head nav strong { color: var(--foreground); font-weight: 700; }
-.xv-workspace-template-head nav i { width: 4px; height: 4px; flex: none; background: var(--accent); }
-.xv-workspace-template-head > a {
+.xv-workspace-explore-action svg { color: var(--accent); }
+.xv-workspace-template-collections { scroll-margin-top: 46px; }
+.xv-workspace-template-collection {
+  padding-top: 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+.xv-workspace-template-collection:last-child { border-bottom: 0; }
+.xv-workspace-collection-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 40px;
+  padding: 0.5rem 0.68rem 0.38rem;
+}
+.xv-workspace-collection-title > .xv-animated-icon-host { color: var(--accent); }
+.xv-workspace-collection-title strong {
+  color: var(--foreground);
+  font-size: 0.65rem;
+  font-weight: 720;
+}
+.xv-workspace-collection-head > a {
   display: inline-flex;
   flex: none;
   align-items: center;
   gap: 0.2rem;
   color: var(--foreground);
-  font-size: 0.58rem;
+  font-size: 0.55rem;
   font-weight: 680;
 }
 .xv-workspace-template-viewport {
@@ -9892,6 +9945,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
+  padding: 0 0.58rem 0.62rem;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--foreground) 14%, transparent) transparent;
 }
@@ -9899,22 +9953,25 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   display: flex;
   width: max-content;
   min-width: 100%;
+  gap: 0.45rem;
 }
 .xv-workspace-template-card {
   --template-accent: var(--accent);
   display: flex;
   flex-direction: column;
-  width: clamp(230px, 29vw, 278px);
-  min-height: 230px;
-  padding: 0.75rem;
-  border-right: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-  background: transparent;
+  width: clamp(190px, 24vw, 226px);
+  padding: 0.48rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--terminal-ui-inset, var(--background)) 46%, transparent);
   color: var(--foreground);
   text-align: left;
-  transition: background 160ms ease;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 .xv-workspace-template-card:hover,
 .xv-workspace-template-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--template-accent) 38%, transparent);
   background: color-mix(in srgb, var(--template-accent) 7%, transparent);
   outline: none;
 }
@@ -9940,20 +9997,20 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   font-weight: 750;
   text-transform: uppercase;
 }
-.xv-workspace-template-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; padding-top: 0.55rem; }
+.xv-workspace-template-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; padding: 0.44rem 0.06rem 0.03rem; }
 .xv-workspace-template-copy strong,
 .xv-workspace-template-copy small { display: block; }
 .xv-workspace-template-title-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .xv-workspace-template-copy strong {
   overflow: hidden;
   color: var(--foreground);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .xv-workspace-template-copy small {
-  margin-top: 0.12rem;
+  margin-top: 0.08rem;
   color: color-mix(in srgb, var(--foreground) 46%, transparent);
   font-size: 0.58rem;
   line-height: 1.35;
@@ -9974,7 +10031,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   justify-content: space-between;
   gap: 0.5rem;
   margin-top: auto;
-  padding-top: 0.6rem;
+  padding-top: 0.42rem;
   color: color-mix(in srgb, var(--foreground) 52%, transparent);
   font-family: var(--font-coding, ui-monospace, monospace);
   font-size: 0.48rem;
@@ -10010,10 +10067,13 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   .xv-workspace-idea-list { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.35rem 0.1rem 0; }
   .xv-workspace-idea-list > button { min-height: 36px; padding: 0.38rem 0.45rem; font-size: 0.57rem; }
   .xv-workspace-idea-list > button:nth-child(3) { display: none; }
-  .xv-workspace-template-head { padding: 0.4rem 0.52rem; }
-  .xv-workspace-template-head nav span:nth-of-type(-n + 2),
-  .xv-workspace-template-head nav i { display: none; }
-  .xv-workspace-template-card { width: min(72vw, 252px); min-height: 194px; padding: 0.58rem; }
+  .xv-workspace-explore-bar { min-height: 41px; padding: 0.42rem 0.5rem; }
+  .xv-workspace-explore-label small { display: none; }
+  .xv-workspace-explore-action { font-size: 0.52rem; }
+  .xv-workspace-collection-head { min-height: 38px; padding: 0.44rem 0.52rem 0.32rem; }
+  .xv-workspace-collection-title small { display: none; }
+  .xv-workspace-template-viewport { padding-inline: 0.45rem; }
+  .xv-workspace-template-card { width: min(68vw, 220px); padding: 0.48rem; }
   .xv-workspace-template-copy { padding-top: 0.42rem; }
   .xv-workspace-template-meta { padding-top: 0.4rem; }
 }
@@ -10025,6 +10085,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 
 @media (prefers-reduced-motion: reduce) {
   .xv-workspace-idea-list > button { transition: none; }
+  .xv-workspace-template-card { transition: none; }
 }
 @media (max-width: 639px) {
   .xv-terminal-dock:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {

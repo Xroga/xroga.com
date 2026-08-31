@@ -36,13 +36,15 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
           <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>
             {greeting}
           </span>
-          <span className="xv-welcome-idline-dot" aria-hidden="true" />
+          <span className="xv-welcome-idline-rule" aria-hidden="true" />
           <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
         </p>
 
         <div className="xv-welcome-taglines relative">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            Turn an idea into <span className="xv-tagline-accent">something live.</span>
+            <span>Describe it.</span>
+            <span>Build it.</span>
+            <em>Ship it.</em>
           </p>
         </div>
       </div>

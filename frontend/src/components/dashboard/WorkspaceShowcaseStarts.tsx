@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, ArrowUpRight, Eye, GitBranch, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Eye, GitBranch, X } from 'lucide-react';
 import { ShowcaseResumeBridge } from '@/components/showcase/ShowcaseResumeBridge';
 import {
   SHOWCASE_TEMPLATES,
@@ -15,15 +15,60 @@ import {
 } from '@/lib/showcase/registry';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
+import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
+import { ActivityIcon } from '@/components/icons/animated/ActivityIcon';
+import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
+import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
+import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
+
+type TemplateCollection = {
+  id: string;
+  title: string;
+  description: string;
+  attribution: string;
+  icon: AnimatedIconComponent;
+  templates: readonly ShowcaseTemplate[];
+};
+
+const TEMPLATE_COLLECTIONS: readonly TemplateCollection[] = [
+  {
+    id: 'recent-builds',
+    title: 'Recent builds',
+    description: 'Fresh, verified products from the Xroga studio.',
+    attribution: 'Recently verified',
+    icon: ActivityIcon,
+    templates: SHOWCASE_TEMPLATES.slice(0, 3),
+  },
+  {
+    id: 'xroga-templates',
+    title: 'Xroga templates',
+    description: 'Production-ready foundations you can make your own.',
+    attribution: 'By Xroga templates',
+    icon: LayoutGridIcon,
+    templates: SHOWCASE_TEMPLATES,
+  },
+  {
+    id: 'community-templates',
+    title: 'Community templates',
+    description: 'Open starting points for community remixes.',
+    attribution: 'Ready to remix',
+    icon: UsersRoundIcon,
+    templates: SHOWCASE_TEMPLATES.slice(3),
+  },
+] as const;
 
 function TemplateCatalog({
+  templates,
+  attribution,
   onSelect,
 }: {
+  templates: readonly ShowcaseTemplate[];
+  attribution: string;
   onSelect: (template: ShowcaseTemplate) => void;
 }) {
   return (
     <div className="xv-workspace-template-catalog">
-      {SHOWCASE_TEMPLATES.map((template, index) => (
+      {templates.map((template, index) => (
         <button
           key={template.id}
           type="button"
@@ -47,7 +92,7 @@ function TemplateCatalog({
               <strong>{template.name}</strong>
               <i>Live</i>
             </span>
-            <small>By Xroga templates</small>
+            <small>{attribution}</small>
             <span className="xv-workspace-template-meta">
               <span>{String(index + 1).padStart(2, '0')} · {template.category}</span>
               <ArrowRight className="h-3.5 w-3.5" aria-hidden />
@@ -142,6 +187,7 @@ function TemplateDecisionDialog({
 export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
   const { setPrompt } = useTerminalChat();
   const [selectedTemplate, setSelectedTemplate] = useState<ShowcaseTemplate | null>(null);
+  const collectionsRef = useRef<HTMLDivElement>(null);
 
   const useTemplate = () => {
     if (!selectedTemplate) return;
@@ -162,19 +208,57 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
         <ShowcaseResumeBridge />
       </Suspense>
 
-      <div className="xv-workspace-template-head">
-        <nav aria-label="Template collections">
-          <span>Recent builds</span>
-          <i aria-hidden />
-          <span>Community templates</span>
-          <i aria-hidden />
-          <strong id="workspace-showcase-heading">Xroga templates</strong>
-        </nav>
-        <Link href="/showcase">Browse all <ArrowUpRight className="h-3 w-3" aria-hidden /></Link>
-      </div>
+      <button
+        type="button"
+        className="xv-workspace-explore-bar"
+        onClick={() => collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+      >
+        <span className="xv-workspace-explore-label">
+          <AnimatedIcon icon={LightbulbIcon} size={15} intro={false} />
+          <span>
+            <strong id="workspace-showcase-heading">Explore inspiration</strong>
+            <small>Real products, ready to remix</small>
+          </span>
+        </span>
+        <span className="xv-workspace-explore-action">
+          Scroll to explore
+          <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+        </span>
+      </button>
 
-      <div className="xv-workspace-template-viewport">
-        <TemplateCatalog onSelect={setSelectedTemplate} />
+      <div ref={collectionsRef} className="xv-workspace-template-collections">
+        {TEMPLATE_COLLECTIONS.map((collection) => {
+          const Icon = collection.icon;
+          return (
+            <section
+              key={collection.id}
+              className="xv-workspace-template-collection"
+              aria-labelledby={`${collection.id}-heading`}
+            >
+              <header className="xv-workspace-collection-head">
+                <span className="xv-workspace-collection-title">
+                  <AnimatedIcon icon={Icon} size={14} intro={false} />
+                  <span>
+                    <strong id={`${collection.id}-heading`}>{collection.title}</strong>
+                    <small>{collection.description}</small>
+                  </span>
+                </span>
+                {collection.id === 'xroga-templates' ? (
+                  <Link href="/showcase">
+                    Browse all <ArrowUpRight className="h-3 w-3" aria-hidden />
+                  </Link>
+                ) : null}
+              </header>
+              <div className="xv-workspace-template-viewport">
+                <TemplateCatalog
+                  templates={collection.templates}
+                  attribution={collection.attribution}
+                  onSelect={setSelectedTemplate}
+                />
+              </div>
+            </section>
+          );
+        })}
       </div>
       </section>
       {selectedTemplate ? (
