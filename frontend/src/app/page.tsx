@@ -36,6 +36,7 @@ import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
+import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
 
 export default function HomePage() {
   const router = useRouter();
@@ -158,12 +159,23 @@ export default function HomePage() {
             <HomepageChatBar />
           </div>
 
+          <p className="xv-hc-hero-statement">
+            <strong>Tell Xroga what you want to make.</strong>{' '}
+            <span>
+              It turns the brief into working code, shows you the checks, and ships through your connected accounts
+              when you authorize it.
+            </span>{' '}
+            <em>Your repository. Your credentials. Your product.</em>
+          </p>
+
         </div>
 
         <HomepageBuildStrip />
       </section>
 
       <XrogaIntelligenceSection />
+
+      <HomepageOwnershipProof />
 
       <HomepageWorkspaceTour loggedIn={loggedIn} />
 
