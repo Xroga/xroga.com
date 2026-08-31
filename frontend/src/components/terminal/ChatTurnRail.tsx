@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ChatTurn {
@@ -52,6 +53,12 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
 
   if (turns.length < 2 || !mounted) return null;
 
+  const activeIndex = Math.max(0, turns.findIndex((turn) => turn.id === activeId));
+  const jumpRelative = (offset: -1 | 1) => {
+    const next = turns[Math.min(turns.length - 1, Math.max(0, activeIndex + offset))];
+    if (next) onJump(next.id);
+  };
+
   const rail = (
     <div
       className={cn(
@@ -64,6 +71,15 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
         setExpanded(false);
         setHoveredId(null);
       }}
+      onFocusCapture={() => setExpanded(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setExpanded(false);
+          setHoveredId(null);
+        }
+      }}
+      role="navigation"
+      aria-label="Conversation turn navigation"
     >
       {expanded ? (
         <div className="xv-chat-turn-flyout flex flex-col items-stretch w-full min-w-0">
@@ -113,8 +129,20 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
             </div>
           </div>
         </div>
-      ) : (
-        <div className="xv-chat-turn-collapsed flex flex-col items-end justify-center gap-[9px] py-2">
+      ) : null}
+
+      <div className="xv-chat-turn-collapsed flex flex-col items-center justify-center">
+        <button
+          type="button"
+          className="xv-chat-turn-nav"
+          onClick={() => jumpRelative(-1)}
+          disabled={activeIndex <= 0}
+          aria-label="Jump to previous prompt"
+          title="Previous prompt"
+        >
+          <ChevronUp aria-hidden="true" />
+        </button>
+        <div className="xv-chat-turn-track">
           {collapsedTurns.map((turn) => {
             const active = turn.id === activeId;
             return (
@@ -126,19 +154,31 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
                 title={clip(turn.label, 60)}
                 aria-label={`Jump to prompt ${clip(turn.label, 40)}`}
                 className={cn(
-                  'xv-chat-turn-tick rounded-full',
+                  'xv-chat-turn-tick',
                   active && 'xv-chat-turn-tick--active'
                 )}
-              />
+              >
+                <span aria-hidden="true" />
+              </button>
             );
           })}
           {turns.length > COLLAPSED_MAX ? (
-            <span className="text-[8px] text-[var(--muted)] opacity-60 leading-none" title="Hover to see all">
+            <span className="xv-chat-turn-more" title="Hover to see all prompts">
               +{turns.length - COLLAPSED_MAX}
             </span>
           ) : null}
         </div>
-      )}
+        <button
+          type="button"
+          className="xv-chat-turn-nav"
+          onClick={() => jumpRelative(1)}
+          disabled={activeIndex >= turns.length - 1}
+          aria-label="Jump to next prompt"
+          title="Next prompt"
+        >
+          <ChevronDown aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 
