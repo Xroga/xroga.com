@@ -7261,6 +7261,69 @@ body.theme-gray .xv-rp-loader {
 .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.55rem; }
 .xv-dashboard-welcome .xv-welcome-hero { gap: 0; }
 
+/* Workspace identity is a compact two-line lockup, not a landing-page headline.
+   Greeting and project share one status line; the product promise stays short below. */
+.xv-dashboard-welcome .xv-welcome-hero {
+  gap: 0.34rem;
+}
+.xv-dashboard-welcome .xv-welcome-idline {
+  display: flex;
+  min-width: 0;
+  max-width: min(100%, 680px);
+  min-height: 1.35rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.52rem;
+  margin: 0;
+  line-height: 1;
+}
+.xv-dashboard-welcome .xv-welcome-greeting-text {
+  flex: none;
+  color: var(--text-secondary);
+  font-family: var(--font-goga), system-ui, sans-serif !important;
+  font-size: clamp(0.72rem, 1vw, 0.82rem);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+.xv-dashboard-welcome .xv-welcome-idline-dot {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 11%, transparent);
+}
+.xv-dashboard-welcome .xv-welcome-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: clamp(0.78rem, 1.2vw, 0.96rem);
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xv-dashboard-welcome .xv-welcome-taglines {
+  margin-top: 0 !important;
+}
+.xv-dashboard-welcome .xv-welcome-tagline-sub {
+  margin: 0;
+  color: var(--text-secondary);
+  font-family: var(--font-goga), system-ui, sans-serif !important;
+  font-size: clamp(0.76rem, 1.15vw, 0.9rem);
+  font-weight: 520;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.xv-dashboard-welcome .xv-tagline-accent {
+  color: var(--text-primary);
+  font-family: inherit !important;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: inherit;
+}
+
 /* Greeting content belongs directly on the terminal skin. Keep every wrapper clear
    so the greeting, display name and tagline never become a card within the pane. */
 .xv-dashboard-welcome,
@@ -7405,29 +7468,24 @@ body.theme-gray .xv-rp-loader {
     width: 100%;
     text-align: left;
   }
-  .xv-dashboard-welcome .xv-welcome-greeting,
-  .xv-dashboard-welcome .xv-welcome-name-line,
+  .xv-dashboard-welcome .xv-welcome-idline,
   .xv-dashboard-welcome .xv-welcome-taglines { text-align: left; }
 
   /* The ownership tagline still needs a deliberate phone measure. */
-  .xv-dashboard-welcome .xv-welcome-tagline-sub {
-    font-size: clamp(1rem, 5vw, 1.22rem);
-    line-height: 1.45;
-  }
+  .xv-dashboard-welcome .xv-welcome-tagline-sub { font-size: clamp(0.72rem, 3.4vw, 0.84rem); line-height: 1.25; }
 
   .xv-dashboard-welcome .xv-blackhole-identity { margin-top: 0.4rem; }
   .xv-dashboard-welcome .xv-welcome-taglines { margin-top: 0.4rem; }
   .xv-terminal-scroll[data-conversation='false'] .xv-dashboard-welcome {
     padding-inline: 0.15rem;
   }
-  .xv-dashboard-welcome .xv-welcome-greeting,
-  .xv-dashboard-welcome .xv-welcome-name-line,
+  .xv-dashboard-welcome .xv-welcome-idline,
   .xv-dashboard-welcome .xv-welcome-tagline-sub {
     width: 100%;
-    overflow-wrap: anywhere;
   }
-  .xv-dashboard-welcome .xv-welcome-greeting { font-size: clamp(1.12rem, 5vw, 1.34rem); }
-  .xv-dashboard-welcome .xv-welcome-name { font-size: clamp(1rem, 5.4vw, 1.3rem); line-height: 1.08; }
+  .xv-dashboard-welcome .xv-welcome-idline { justify-content: flex-start; }
+  .xv-dashboard-welcome .xv-welcome-greeting-text { font-size: clamp(0.68rem, 3.2vw, 0.78rem); }
+  .xv-dashboard-welcome .xv-welcome-name { font-size: clamp(0.72rem, 3.6vw, 0.86rem); }
 }
 
 /* Desktop keeps the centred composition. */

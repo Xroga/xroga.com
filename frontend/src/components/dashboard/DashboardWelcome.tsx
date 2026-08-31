@@ -32,18 +32,17 @@ export function DashboardWelcome({ displayName, hidden, className }: DashboardWe
       data-testid="workspace-welcome"
     >
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
-        <p className="xv-welcome-greeting relative">
+        <p className="xv-welcome-idline relative">
           <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>
-            {hydrated ? `${greeting},` : greeting}
+            {greeting}
           </span>
-        </p>
-        <p className="xv-welcome-name-line relative">
+          <span className="xv-welcome-idline-dot" aria-hidden="true" />
           <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
         </p>
 
-        <div className="xv-welcome-taglines relative mt-3">
+        <div className="xv-welcome-taglines relative">
           <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            Describe it. Build it. <span className="xv-tagline-accent">Ship it.</span>
+            Turn an idea into <span className="xv-tagline-accent">something live.</span>
           </p>
         </div>
       </div>

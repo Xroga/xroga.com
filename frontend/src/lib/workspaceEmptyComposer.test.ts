@@ -127,10 +127,13 @@ test('templates use a large editorial catalog row and open a preview-or-build de
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
-test('the welcome line describes the build flow in plain language', () => {
-  assert.match(WELCOME, /Describe it\. Build it\./);
-  assert.match(WELCOME, />Ship it\.</);
-  assert.doesNotMatch(WELCOME, /Your idea|Built to ship/);
+test('the welcome is a compact identity line with one short product promise', () => {
+  assert.match(WELCOME, /xv-welcome-idline/);
+  assert.match(WELCOME, /Turn an idea into/);
+  assert.match(WELCOME, />something live\.</);
+  assert.doesNotMatch(WELCOME, /Describe it|Build it|Ship it/);
+  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*flex[^}]*min-height:\s*1\.35rem/);
+  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-tagline-sub\s*\{[^}]*font-size:\s*clamp\(0\.76rem,\s*1\.15vw,\s*0\.9rem\)/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);
