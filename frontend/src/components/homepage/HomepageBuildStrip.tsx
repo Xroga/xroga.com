@@ -15,11 +15,11 @@ import {
 } from 'lucide-react';
 
 /**
- * The capability strip below the homepage composer.
+ * The capability deck inside the homepage ownership story.
  *
- * This is the content that used to cycle one word at a time in the hero. Rotating it
- * meant nine of the ten were invisible at any moment and the tenth moved while you read
- * it; laid out flat, the whole range is legible at a glance and the hero gets quieter.
+ * This content used to sit directly under the hero composer. It now belongs beside the
+ * explanation of what Xroga actually produces, where the range reads as product context
+ * instead of a second navigation bar competing with the primary prompt.
  *
  * On the platform marks: the reference renders the Apple, Chrome and Android logos.
  * Those are third-party trademarks, and Apple's guidelines in particular do not permit
@@ -56,12 +56,15 @@ const ITEMS: ReadonlyArray<Item> = [
 
 export function HomepageBuildStrip() {
   return (
-    <div className="xv-hc-strip" role="group" aria-label="What Xroga can build">
+    <div className="xv-hc-strip" role="group" aria-label="What Xroga can build and the languages it writes">
+      <div className="xv-hc-strip__intro">
+        <span>WHAT YOU CAN SHIP</span>
+        <p>One workspace. From first brief to working product.</p>
+      </div>
+
       <p className="xv-hc-strip__motto">
         Build. Launch.<br />{' '}Scale. <span>Repeat.</span>
       </p>
-
-      <span className="xv-hc-strip__notch" aria-hidden="true" />
 
       <ul className="xv-hc-strip__list">
         {ITEMS.map((item) => {
@@ -89,10 +92,7 @@ export function HomepageBuildStrip() {
         <ChevronRight aria-hidden="true" />
       </Link>
 
-      {/*
-        The language lane. Each mark is the project's own, drawn from its official
-        single path, so nothing here is redrawn or approximated.
-      */}
+      <p className="xv-hc-strip__language-label">LANGUAGES XROGA WRITES</p>
       <ul className="xv-hc-strip__langs" aria-label="Languages Xroga writes">
         {CODING_LANGUAGES.map((lang) => (
           <li key={lang.title} className="xv-hc-strip__lang">

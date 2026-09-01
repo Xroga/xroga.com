@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/Logo';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
-import { HomepageBuildStrip } from '@/components/homepage/HomepageBuildStrip';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import { HomepageAnnouncementBanner } from '@/components/homepage/HomepageAnnouncementBanner';
@@ -161,12 +160,11 @@ export default function HomePage() {
 
         </div>
 
-        <HomepageBuildStrip />
       </section>
 
-      <XrogaIntelligenceSection />
-
       <HomepageOwnershipProof />
+
+      <XrogaIntelligenceSection />
 
       <HomepageWorkspaceTour loggedIn={loggedIn} />
 

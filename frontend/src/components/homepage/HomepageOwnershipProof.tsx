@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import { Check, Code2, GitBranch, Rocket, Sparkles } from 'lucide-react';
+import { HomepageBuildStrip } from './HomepageBuildStrip';
 
 const PROOFS = [
   {
@@ -28,15 +30,62 @@ export function HomepageOwnershipProof() {
   return (
     <section className="xv-home-proof" aria-labelledby="homepage-proof-heading">
       <div className="xv-home-proof__inner">
-        <header className="xv-home-proof__heading">
-          <p>THE DIFFERENCE IS WHAT YOU KEEP</p>
-          <h2 id="homepage-proof-heading">
-            The work doesn&apos;t disappear <em>into a chat.</em>
+        <header className="xv-home-proof__problem">
+          <p>THE REAL GAP IS AFTER THE PROMPT</p>
+          <h2>
+            Most ideas don&apos;t need another answer.
+            <span> They need the difficult work between a prompt and a product people can actually use.</span>
           </h2>
-          <span>
-            Xroga turns your brief into code you can inspect, evidence you can judge, and a product you control.
-          </span>
+          <small>
+            Xroga plans the work, changes the code, runs the checks, and prepares the release—with you in control of every consequential step.
+          </small>
         </header>
+
+        <article className="xv-home-proof__platform-card">
+          <div
+            className="xv-home-proof__platform-visual"
+            role="img"
+            aria-label="Xroga workflow from product brief to an authorized release"
+          >
+            <div className="xv-home-proof__window">
+              <div className="xv-home-proof__window-bar" aria-hidden="true">
+                <i /><i /><i />
+                <span>xroga.ai / workspace</span>
+              </div>
+              <div className="xv-home-proof__flow">
+                <div className="xv-home-proof__brief">
+                  <span>YOUR BRIEF</span>
+                  <strong>Build the product, not just the answer.</strong>
+                  <p>Scope, interface, data, checks, and release intent.</p>
+                </div>
+
+                <div className="xv-home-proof__core" aria-hidden="true">
+                  <Sparkles />
+                  <span>XROGA</span>
+                </div>
+
+                <div className="xv-home-proof__outputs" aria-hidden="true">
+                  <span><GitBranch /> Plan</span>
+                  <span><Code2 /> Code</span>
+                  <span><Check /> Checks</span>
+                  <span><Rocket /> Release</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <header className="xv-home-proof__heading">
+            <p>THE DIFFERENCE IS WHAT YOU KEEP</p>
+            <h2 id="homepage-proof-heading">
+              The work doesn&apos;t disappear <em>into a chat.</em>
+            </h2>
+            <span>
+              Xroga turns your brief into code you can inspect, evidence you can judge, and a product you control.
+            </span>
+          </header>
+
+          <HomepageBuildStrip />
+        </article>
 
         <div className="xv-home-proof__grid">
           {PROOFS.map((proof) => (

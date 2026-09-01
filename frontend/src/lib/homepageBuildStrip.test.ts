@@ -3,12 +3,10 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
 /**
- * Guards for the homepage build strip, and for what it replaced.
+ * Guards for the homepage capability deck, and for what it replaced.
  *
- * The strip carries the ten things Xroga can build, laid out flat below the composer.
- * That content used to cycle one word at a time in the hero, which meant nine of the ten
- * were invisible at any moment. The rotator, its timer and the standalone XROGA wordmark
- * are all gone with it.
+ * The deck carries the ten things Xroga can build inside the ownership story. It no
+ * longer competes with the hero composer, and the whole range remains visible together.
  *
  * Three things are easy to get wrong on the way back:
  *
@@ -25,6 +23,7 @@ import { readFileSync } from 'node:fs';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const PAGE = read('../app/page.tsx');
 const STRIP = read('../components/homepage/HomepageBuildStrip.tsx');
+const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
 /** The ten build targets, as the strip lists them. */
@@ -33,11 +32,12 @@ const TARGETS = [
   'Chrome', 'Android', 'Debug', 'Website', 'SaaS',
 ];
 
-test('the strip renders below the composer', () => {
-  assert.ok(PAGE.includes('<HomepageBuildStrip />'), 'the strip must be rendered');
-  const chat = PAGE.indexOf('<HomepageChatBar />');
-  const strip = PAGE.indexOf('<HomepageBuildStrip />');
-  assert.ok(chat !== -1 && strip > chat, 'the strip belongs after the composer, not before it');
+test('the capability deck moved out of the hero and into the ownership card', () => {
+  assert.ok(!PAGE.includes('<HomepageBuildStrip />'), 'the deck must not compete with the hero composer');
+  assert.ok(PROOF.includes('<HomepageBuildStrip />'), 'the ownership story must render the capability deck');
+  const proof = PAGE.indexOf('<HomepageOwnershipProof />');
+  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
+  assert.ok(proof !== -1 && intelligence !== -1 && proof < intelligence, 'the ownership story belongs immediately after the hero');
 });
 
 test('every build target is listed', () => {
@@ -81,19 +81,14 @@ test('no third-party logo is reproduced', () => {
   }
 });
 
-test('the strip stays compact and self-contained', () => {
+test('the deck is a self-contained blue-white product card', () => {
   const at = CSS.indexOf('.xv-home-coding .xv-hc-strip {');
   assert.notEqual(at, -1, 'the strip has no styles');
   const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
 
-  // Its own blue on every theme: the panel is a device, not a page surface, so its
-  // text must never inherit the theme ink and end up dark on dark blue.
-  assert.ok(/background:\s*linear-gradient/.test(body), 'the panel paints its own ground');
-  assert.ok(!/var\(--hc-ink\)/.test(body), 'the panel must not inherit the theme ink onto its own blue');
-
-  // Padding is what decides whether "compact" survives a later edit.
-  const padding = /padding:\s*([\d.]+)rem/.exec(body)?.[1];
-  assert.ok(padding && Number(padding) <= 0.6, `the strip padding is ${padding}rem; it is meant to be a thin bar`);
+  assert.match(body, /linear-gradient[\s\S]*rgba\(255, 255, 255/, 'the card needs its light inner surface');
+  assert.match(body, /--strip-edge:\s*#2b7cf4/, 'the card needs the Xroga blue accent');
+  assert.match(body, /grid-template-columns/, 'the capability deck needs an authored card layout');
 });
 
 test('the hero badge is gone', () => {
@@ -122,17 +117,15 @@ test('twenty languages ship with their own marks', () => {
   assert.ok(/<path d=\{lang\.path\}/.test(STRIP), 'each logo draws its own official path');
 });
 
-test('the strip wraps so each lane gets its own row', () => {
+test('the language lane spans the full card', () => {
   const at = CSS.indexOf('.xv-home-coding .xv-hc-strip {');
   const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
-  // Without this the lane is a flex item on the build-target row and squeezes five of
-  // the ten out of view, with the end cap landing mid-row.
-  assert.match(body, /flex-wrap:\s*wrap/, 'the strip must wrap or the two lanes fight for one row');
+  assert.match(body, /display:\s*grid/, 'the deck should use a stable grid');
 
   const laneAt = CSS.indexOf('.xv-home-coding .xv-hc-strip__langs {');
   assert.notEqual(laneAt, -1, 'the language lane has no styles');
   const lane = CSS.slice(CSS.indexOf('{', laneAt) + 1, CSS.indexOf('}', laneAt));
-  assert.match(lane, /flex:\s*1 1 100%/, 'the lane takes a full row of its own');
+  assert.match(lane, /grid-column:\s*1 \/ -1/, 'the lane takes a full row of its own');
 });
 
 test('the narrow layout scrolls the list rather than crushing it', () => {
@@ -140,7 +133,5 @@ test('the narrow layout scrolls the list rather than crushing it', () => {
   const at = CSS.indexOf('.xv-home-coding .xv-hc-strip__item {');
   const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
   assert.match(body, /min-width:\s*\d+px/, 'each cell needs a floor so labels do not wrap to nothing');
-  const listAt = CSS.indexOf('.xv-home-coding .xv-hc-strip__list {');
-  const listBody = CSS.slice(CSS.indexOf('{', listAt) + 1, CSS.indexOf('}', listAt));
-  assert.match(listBody, /overflow-x:\s*auto/, 'the list must scroll when it cannot fit');
+  assert.match(CSS, /@media \(max-width: 640px\)[\s\S]*\.xv-home-coding \.xv-hc-strip__list\s*\{[\s\S]*overflow-x:\s*auto/, 'the list must scroll when it cannot fit');
 });

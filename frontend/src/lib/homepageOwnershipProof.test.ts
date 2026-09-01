@@ -23,6 +23,16 @@ test('the value section uses original Xroga wording and makes no invented proof 
   assert.doesNotMatch(PROOF, /\$[\d,.]+|\d+%|customers|users trust|award-winning/i);
 });
 
+test('a text-only product problem leads directly into the blue ownership card', () => {
+  assert.match(PROOF, /THE REAL GAP IS AFTER THE PROMPT/);
+  assert.match(PROOF, /Most ideas don&apos;t need another answer/);
+  assert.match(PROOF, /product people can actually use/);
+  assert.match(PROOF, /xv-home-proof__platform-card/);
+  assert.match(PROOF, /YOUR BRIEF/);
+  assert.match(PROOF, /Plan[\s\S]*Code[\s\S]*Checks[\s\S]*Release/);
+  assert.match(CSS, /\.xv-home-coding \.xv-home-proof__platform-card\s*\{[\s\S]*linear-gradient\(145deg, #087cf3/);
+});
+
 test('all three generated illustrations are project assets rendered with next image', () => {
   assert.match(PROOF, /from 'next\/image'/);
   const images = [...PROOF.matchAll(/image: '(\/homepage\/proof\/[^']+)'/g)].map((match) => match[1]);
