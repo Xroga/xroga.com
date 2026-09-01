@@ -1020,29 +1020,117 @@
   animation: xv-hc-fade-up 0.95s ease 0.25s both;
 }
 
-.xv-home-coding .xv-hc-hero-statement {
-  max-width: 45rem;
-  margin: 0.72rem auto 0;
-  color: var(--hc-muted);
-  font-family: var(--hc-font-sans);
-  font-size: clamp(0.92rem, 1.8vw, 1.2rem);
-  font-weight: 520;
-  letter-spacing: -0.026em;
-  line-height: 1.42;
-  text-wrap: balance;
-  animation: xv-hc-fade-up 0.95s ease 0.34s both;
-}
-
-.xv-home-coding .xv-hc-hero-statement strong {
+/* A separate, scroll-led editorial passage follows the hero. The composition uses
+   typography instead of another card, so the homepage background remains visible. */
+.xv-home-coding .xv-home-editorial {
+  position: relative;
+  z-index: 2;
+  min-height: 148svh;
+  overflow: clip;
   color: var(--hc-ink);
-  font-weight: 720;
+  background: transparent;
 }
 
-.xv-home-coding .xv-hc-hero-statement em {
+.xv-home-coding .xv-home-editorial::before {
+  content: '';
+  position: absolute;
+  inset: 3rem clamp(1rem, 6vw, 5rem);
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(12.5% - 1px),
+    color-mix(in srgb, var(--hc-ink) 7%, transparent) calc(12.5% - 1px),
+    color-mix(in srgb, var(--hc-ink) 7%, transparent) 12.5%
+  );
+  mask-image: linear-gradient(transparent, #000 13%, #000 87%, transparent);
+}
+
+.xv-home-coding .xv-home-editorial__inner {
+  position: sticky;
+  top: 5svh;
+  display: grid;
+  width: min(1180px, calc(100% - clamp(2rem, 9vw, 9rem)));
+  min-height: 90svh;
+  align-content: center;
+  gap: clamp(1rem, 2.2vw, 1.8rem);
+  margin: 0 auto;
+  padding-block: clamp(3rem, 8vw, 7rem);
+}
+
+.xv-home-coding .xv-home-editorial__eyebrow {
+  width: fit-content;
+  margin: 0 0 0.3rem auto;
+  color: var(--hc-blue);
+  font-family: var(--hc-font-sans);
+  font-size: clamp(0.62rem, 0.9vw, 0.78rem);
+  font-weight: 760;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.xv-home-coding .xv-home-editorial__lead {
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
   color: var(--hc-ink);
   font-family: var(--hc-font-serif);
+  font-size: clamp(3.2rem, 9.4vw, 9.2rem);
+  font-weight: 470;
+  line-height: 0.78;
+  letter-spacing: -0.07em;
+}
+
+.xv-home-coding .xv-home-editorial__lead > span,
+.xv-home-coding .xv-home-editorial__lead > em {
+  display: block;
+  font: inherit;
+}
+
+.xv-home-coding .xv-home-editorial__lead > span:nth-child(2) { margin-left: 0.16em; }
+.xv-home-coding .xv-home-editorial__lead > em {
+  justify-self: end;
+  padding-right: 0.04em;
+  color: color-mix(in srgb, var(--hc-blue) 84%, var(--hc-ink));
   font-style: italic;
-  font-weight: 620;
+}
+
+.xv-home-coding .xv-home-editorial__detail {
+  max-width: 54ch;
+  margin: 0 0 0 auto;
+  color: var(--hc-muted);
+  font-family: var(--hc-font-sans);
+  font-size: clamp(0.92rem, 1.45vw, 1.18rem);
+  font-weight: 520;
+  letter-spacing: -0.028em;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.xv-home-coding .xv-home-editorial__ownership {
+  width: fit-content;
+  max-width: 24ch;
+  margin: 0;
+  color: var(--hc-ink);
+  font-family: var(--hc-font-serif);
+  font-size: clamp(1.55rem, 3.7vw, 3.8rem);
+  font-style: italic;
+  font-weight: 540;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.xv-home-coding .xv-home-editorial__word {
+  display: inline;
+  opacity: 0.14;
+  filter: blur(9px);
+  transition: opacity 220ms ease, filter 300ms ease;
+}
+
+.xv-home-coding .xv-home-editorial__word.is-clear {
+  opacity: 1;
+  filter: blur(0);
 }
 
 /* ===========================================================================
@@ -1209,15 +1297,30 @@
 }
 
 @media (max-width: 640px) {
-  .xv-home-coding .xv-hc-hero-statement {
-    margin-top: 0.58rem;
-    font-size: 0.82rem;
-    line-height: 1.42;
+  .xv-home-coding .xv-home-editorial { min-height: 128svh; }
+  .xv-home-coding .xv-home-editorial::before { inset-inline: 0.8rem; }
+  .xv-home-coding .xv-home-editorial__inner {
+    top: 3svh;
+    width: calc(100% - 2rem);
+    min-height: 92svh;
+    gap: 1rem;
   }
+  .xv-home-coding .xv-home-editorial__lead { font-size: clamp(3.05rem, 18vw, 5.4rem); }
+  .xv-home-coding .xv-home-editorial__detail { max-width: 34ch; margin-left: 12%; font-size: 0.88rem; }
+  .xv-home-coding .xv-home-editorial__ownership { max-width: 17ch; font-size: clamp(1.65rem, 8vw, 2.7rem); }
 
   .xv-home-coding .xv-home-proof { padding-block: 3.75rem; }
   .xv-home-coding .xv-home-proof__heading h2 { font-size: clamp(2.2rem, 12vw, 3.5rem); }
   .xv-home-coding .xv-home-proof__truthline { gap: 0.45rem; font-size: 0.52rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding .xv-home-editorial__word,
+  .xv-home-coding .xv-home-editorial__word.is-clear {
+    opacity: 1;
+    filter: none;
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

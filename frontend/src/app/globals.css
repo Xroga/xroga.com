@@ -7513,13 +7513,14 @@ body.theme-gray .xv-rp-loader {
    the action is the identity. A small, shortened account label stays attached to the
    composer edge so it informs without becoming another headline. */
 .xv-dashboard-welcome--composer {
-  width: min(100%, 860px);
-  margin: 0 auto 0.12rem;
+  width: min(100%, 896px);
+  margin: 0 auto 0.08rem;
 }
 .xv-dashboard-welcome--composer .xv-welcome-hero {
   width: 100%;
+  max-width: none;
   align-items: center;
-  gap: 0.38rem;
+  gap: 0.42rem;
   text-align: center;
 }
 .xv-welcome-editorial {
@@ -7541,21 +7542,14 @@ body.theme-gray .xv-rp-loader {
 .xv-welcome-editorial__build {
   z-index: 1;
   margin-block: 0.14em;
-  padding: 0.04em 0.12em 0.08em;
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  padding: 0;
+  background: transparent;
   color: color-mix(in srgb, var(--accent) 72%, var(--text-primary));
 }
 .xv-welcome-editorial__build::before,
 .xv-welcome-editorial__build::after {
-  content: '';
-  position: absolute;
-  top: -0.05em;
-  width: 0.13em;
-  height: calc(100% + 0.1em);
-  background: var(--accent);
+  content: none;
 }
-.xv-welcome-editorial__build::before { left: 0; }
-.xv-welcome-editorial__build::after { right: 0; }
 .xv-welcome-editorial > em {
   justify-self: end;
   padding-inline: 0.2em;
@@ -7577,30 +7571,26 @@ body.theme-gray .xv-rp-loader {
   display: flex;
   width: 100%;
   align-items: center;
-  gap: 0.42rem;
-  margin: 0.1rem 0 -0.02rem;
-  padding-left: 0.65rem;
-  color: color-mix(in srgb, var(--text-primary) 54%, transparent);
-  font-family: var(--font-coding, ui-monospace, monospace);
-  font-size: clamp(0.48rem, 0.72vw, 0.58rem);
-  font-weight: 650;
-  letter-spacing: 0.065em;
+  gap: 0.38rem;
+  margin: 0.14rem 0 0;
+  padding-left: 0.18rem;
+  color: color-mix(in srgb, var(--text-primary) 72%, transparent);
+  font-size: clamp(0.68rem, 0.9vw, 0.78rem);
+  font-weight: 520;
+  letter-spacing: -0.025em;
   line-height: 1;
   text-align: left;
-  text-transform: uppercase;
+  text-transform: none;
 }
-.xv-welcome-composer-kicker::before {
-  content: '';
-  width: 18px;
-  height: 1px;
-  flex: none;
-  background: var(--accent);
+.xv-welcome-composer-kicker strong {
+  color: var(--text-primary);
+  font-weight: 690;
 }
-.xv-welcome-composer-kicker b {
+.xv-welcome-short-name {
   overflow: hidden;
   max-width: 12ch;
   color: var(--accent);
-  font: inherit;
+  font-weight: 660;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -7614,11 +7604,10 @@ body.theme-gray .xv-rp-loader {
 }
 
 @media (max-width: 639px) {
-  .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.12rem; }
+  .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.08rem; }
   .xv-dashboard-welcome--composer .xv-welcome-hero { align-items: center; text-align: center; }
   .xv-welcome-editorial { font-size: clamp(1.45rem, 8.8vw, 2.15rem); }
-  .xv-welcome-composer-kicker { padding-left: 0.3rem; font-size: 0.46rem; }
-  .xv-welcome-composer-kicker::before { width: 12px; }
+  .xv-welcome-composer-kicker { gap: 0.28rem; padding-left: 0.12rem; font-size: 0.62rem; }
   .xv-workspace-showcase-below-fold { margin-top: max(8rem, 22vh); }
 }
 
@@ -9819,7 +9808,8 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   gap: 0.65rem;
   margin-top: 0.55rem;
   overflow-anchor: none;
@@ -9829,8 +9819,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
    change the set; “New ideas” pages within it. An idea only fills the composer so
    the user remains in control of the request that is sent. */
 .xv-workspace-starter-ideas {
+  position: sticky;
+  top: 0;
+  z-index: 8;
   min-width: 0;
   overflow: visible;
+  background: transparent;
 }
 .xv-workspace-idea-tabs {
   display: flex;
@@ -9840,19 +9834,22 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   gap: 0.3rem;
   margin-inline: auto;
   overflow-x: auto;
-  padding: 0.1rem 0.15rem;
+  padding: 0.18rem 0.15rem;
+  background: transparent;
   scrollbar-width: none;
 }
 .xv-workspace-idea-tabs::-webkit-scrollbar { display: none; }
 .xv-workspace-idea-tab {
+  position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   gap: 0.35rem;
   min-height: 34px;
   padding: 0.38rem 0.68rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: color-mix(in srgb, var(--foreground) 58%, transparent);
   font-size: 0.65rem;
   font-weight: 650;
@@ -9860,13 +9857,25 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-workspace-idea-tab:hover {
   color: var(--foreground);
-  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  background: transparent;
 }
 .xv-workspace-idea-tab.is-active {
   color: var(--accent);
-  border-color: transparent;
   background: transparent;
 }
+.xv-workspace-idea-tab::after {
+  content: '';
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.12rem;
+  left: 0.6rem;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+.xv-workspace-idea-tab.is-active::after { opacity: 0.72; transform: scaleX(1); }
 .xv-workspace-idea-tab.is-active .xv-animated-icon-host { color: var(--accent); }
 .xv-workspace-idea-close {
   display: inline-grid;

@@ -4,21 +4,28 @@ import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const PAGE = read('../app/page.tsx');
+const STATEMENT = read('../components/homepage/HomepageScrollStatement.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const COMPANION = read('../components/companion/CompanionSurfaces.tsx');
 const CSS = read('../styles/homepage-coding.css');
 const COMPANION_CSS = read('../styles/companion.css');
 
-test('the truthful product statement lives directly after the hero composer', () => {
+test('the truthful product statement reveals in its own section directly after the hero', () => {
   const chat = PAGE.indexOf('<HomepageChatBar />');
-  const statement = PAGE.indexOf('xv-hc-hero-statement');
-  const buildStrip = PAGE.indexOf('<HomepageBuildStrip />');
+  const heroClose = PAGE.indexOf('</section>', chat);
+  const statement = PAGE.indexOf('<HomepageScrollStatement />');
+  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
   assert.ok(
-    chat !== -1 && statement > chat && buildStrip > statement,
-    'the statement belongs inside the hero after the chatbar',
+    chat !== -1 && heroClose > chat && statement > heroClose && intelligence > statement,
+    'the statement belongs in its own section directly after the homepage hero',
   );
-  assert.match(PAGE, /when you authorize it/);
-  assert.match(PAGE, /Your repository\. Your credentials\. Your product\./);
+  assert.match(STATEMENT, /when you authorize it/);
+  assert.match(STATEMENT, /Your repository\. Your credentials\. Your product\./);
+  assert.match(STATEMENT, /window\.addEventListener\('scroll', sync, \{ passive: true \}\)/);
+  assert.match(STATEMENT, /classList\.toggle\('is-clear', index < clearThrough\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-home-editorial__lead\s*\{[^}]*font-family:\s*var\(--hc-font-serif\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-home-editorial__word\s*\{[^}]*filter:\s*blur\(9px\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-home-editorial__word\.is-clear\s*\{[^}]*filter:\s*blur\(0\)/);
 });
 
 test('the value section uses original Xroga wording and makes no invented proof claim', () => {

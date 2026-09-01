@@ -31,9 +31,9 @@ export function DashboardWelcome({ displayName, hidden, className, composer = fa
           <span className="xv-welcome-editorial__build">Build it.</span>
           <em className={claudeSerif.className}>Ship it.</em>
         </h1>
-        <p className="xv-welcome-composer-kicker">
-          <span>Turn an idea into something live.</span>
-          <b aria-label={`Signed in as ${shortName}`}>{shortName}</b>
+        <p className={cn('xv-welcome-composer-kicker', goga.className)}>
+          <strong>Turn an idea into something live.</strong>
+          <span className="xv-welcome-short-name" aria-label={`Signed in as ${shortName}`}>{shortName}</span>
         </p>
       </div>
 

@@ -21,7 +21,6 @@ import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTo
 import { AiAppBuilderHeader } from './AiAppBuilderHeader';
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
-import { AiAppBuilderScrollStatement } from './AiAppBuilderScrollStatement';
 import heroStyles from './AiAppBuilderHero.module.css';
 
 import type { CapabilityPageData } from '@/lib/capabilityPages';
@@ -132,8 +131,6 @@ export function AiAppBuilderLanding({
           <AiAppBuilderPrompt />
         </div>
       </section>
-
-      <AiAppBuilderScrollStatement />
 
       {/* =========================================================
           BLUE PRODUCT SECTION

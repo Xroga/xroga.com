@@ -5,13 +5,12 @@ import { test } from 'node:test';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const LANDING = read('../components/marketing/AiAppBuilderLanding.tsx');
 const PROMPT = read('../components/marketing/AiAppBuilderPrompt.tsx');
-const REVEAL = read('../components/marketing/AiAppBuilderScrollStatement.tsx');
 const HERO = read('../components/marketing/AiAppBuilderHero.module.css');
 const CSS = read('../styles/ai-app-builder-landing.css');
 const COMPANION = read('../styles/companion.css');
 
 test('the AI app builder hero contains only the header, headline, and working composer', () => {
-  const hero = LANDING.slice(LANDING.indexOf('<section className="xab-hero">'), LANDING.indexOf('<AiAppBuilderScrollStatement'));
+  const hero = LANDING.slice(LANDING.indexOf('<section className="xab-hero">'), LANDING.indexOf('BLUE PRODUCT SECTION'));
   assert.match(hero, /<AiAppBuilderHeader \/>/);
   assert.match(hero, /Describe an app/);
   assert.match(hero, /Xroga builds it/);
@@ -21,16 +20,9 @@ test('the AI app builder hero contains only the header, headline, and working co
   assert.match(PROMPT, /router\.push/);
 });
 
-test('the ownership statement reveals in both scroll directions', () => {
-  assert.match(LANDING, /<AiAppBuilderScrollStatement \/>/);
-  assert.match(REVEAL, /Tell Xroga what you want to make/);
-  assert.match(REVEAL, /Your repository\. Your credentials\. Your product\./);
-  assert.match(REVEAL, /window\.addEventListener\('scroll', sync, \{ passive: true \}\)/);
-  assert.match(REVEAL, /classList\.toggle\('is-clear', index < clearThrough\)/);
-  assert.match(REVEAL, /--xab-copy-progress/);
-  assert.doesNotMatch(REVEAL, /observer\.disconnect/);
-  assert.match(CSS, /\.xab-manifesto__word\s*\{[^}]*filter:\s*blur\(8px\)/);
-  assert.match(CSS, /\.xab-manifesto__word\.is-clear\s*\{[^}]*filter:\s*blur\(0\)/);
+test('homepage editorial copy is not duplicated on the app-builder route', () => {
+  assert.doesNotMatch(LANDING, /AiAppBuilderScrollStatement|Tell Xroga what you want to make|Your credentials/);
+  assert.doesNotMatch(CSS, /xab-manifesto/);
 });
 
 test('all app-builder surfaces and controls inherit the active theme', () => {

@@ -63,6 +63,8 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.doesNotMatch(IDEAS, /\bsubmit\s*\(/);
   assert.match(CSS, /\.xv-workspace-starter-stack\s*\{[^}]*min-width:\s*0/);
   assert.match(CSS, /\.xv-workspace-idea-tabs\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*justify-content:\s*safe center[^}]*margin-inline:\s*auto/);
+  assert.match(CSS, /\.xv-workspace-starter-ideas\s*\{[^}]*position:\s*sticky[^}]*top:\s*0[^}]*background:\s*transparent/);
+  assert.match(CSS, /\.xv-workspace-idea-tab\s*\{[^}]*border:\s*0[^}]*background:\s*transparent/);
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.58rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
 });
 
@@ -142,9 +144,12 @@ test('the empty workspace uses an editorial action lockup above the canonical co
   assert.match(WELCOME, /Ship it\./);
   assert.match(WELCOME, /Turn an idea into something live\./);
   assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*display:\s*grid[^}]*text-transform:\s*uppercase/);
-  assert.match(CSS, /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*color-mix/);
-  assert.match(CSS, /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*uppercase/);
-  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.12rem/);
+  assert.match(CSS, /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*transparent/);
+  assert.match(CSS, /\.xv-welcome-editorial__build::before,[\s\S]*?\.xv-welcome-editorial__build::after\s*\{[^}]*content:\s*none/);
+  assert.match(CSS, /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*none/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.08rem/);
+  assert.match(WELCOME, /<strong>Turn an idea into something live\.<\/strong>/);
+  assert.match(WELCOME, /xv-welcome-short-name/);
   assert.match(DOCK, /<DashboardWelcome displayName=\{displayName\} composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">/);
   assert.match(WELCOME, /\{!composer \? \(/, 'the first-run checklist should not crowd the composer welcome');
   assert.match(DOCK, /WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold"/);
