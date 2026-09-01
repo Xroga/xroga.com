@@ -20,6 +20,8 @@ export const INTEGRATION_LOGOS: Record<string, string> = {
   shopify: 'https://cdn.simpleicons.org/shopify/7AB55C',
   openai: '/brand/logos/openai.svg',
   anthropic: '/brand/logos/anthropic.svg',
+  cursor: '/brand/logos/cursor.svg',
+  replit: '/brand/logos/replit.svg',
   gemini: 'https://cdn.simpleicons.org/googlegemini/8E75B2',
   slack: 'https://cdn.simpleicons.org/slack/4A154B',
   discord: 'https://cdn.simpleicons.org/discord/5865F2',

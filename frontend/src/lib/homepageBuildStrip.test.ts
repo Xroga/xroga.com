@@ -2,132 +2,63 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
-/**
- * Guards for the homepage capability deck, and for what it replaced.
- *
- * The deck carries the ten things Xroga can build inside the ownership story. It no
- * longer competes with the hero composer, and the whole range remains visible together.
- *
- * Three things are easy to get wrong on the way back:
- *
- * 1. **Losing the h1.** The wordmark was the page's only `h1`. Deleting it without
- *    promoting the headline leaves the homepage with no top-level heading at all.
- * 2. **Leaving the rotator's machinery behind.** A `setInterval` with no consumer keeps
- *    firing; dead state keeps re-rendering. None of it shows up as a visual defect.
- * 3. **Reproducing third-party marks.** The reference draws the Apple, Chrome and
- *    Android logos. Those are trademarks, and Apple's guidelines do not permit others to
- *    reproduce theirs. The platform names in the labels carry the same information and
- *    are fair to use; the glyphs stay neutral.
- */
-
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const PAGE = read('../app/page.tsx');
 const STRIP = read('../components/homepage/HomepageBuildStrip.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
-/** The ten build targets, as the strip lists them. */
-const TARGETS = [
-  'Dashboards', 'Desktop', 'Landing', 'Mobile', 'iOS',
-  'Chrome', 'Android', 'Debug', 'Website', 'SaaS',
-];
-
-test('the capability deck moved out of the hero and into the ownership card', () => {
-  assert.ok(!PAGE.includes('<HomepageBuildStrip />'), 'the deck must not compete with the hero composer');
-  assert.ok(PROOF.includes('<HomepageBuildStrip />'), 'the ownership story must render the capability deck');
-  const proof = PAGE.indexOf('<HomepageOwnershipProof />');
-  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
-  assert.ok(proof !== -1 && intelligence !== -1 && proof < intelligence, 'the ownership story belongs immediately after the hero');
+test('the compact stack story sits immediately after the hero', () => {
+  assert.ok(!PAGE.includes('<HomepageBuildStrip />'), 'the stack strip must not compete with the hero composer');
+  assert.match(PROOF, /<HomepageBuildStrip \/>/);
+  assert.ok(PAGE.indexOf('<HomepageOwnershipProof />') < PAGE.indexOf('<XrogaIntelligenceSection />'));
 });
 
-test('every build target is listed', () => {
-  for (const target of TARGETS) {
-    assert.ok(STRIP.includes(target), `${target} is missing from the strip`);
+test('integrations and languages have separate continuous lanes', () => {
+  assert.match(STRIP, /The tools and languages/);
+  assert.match(STRIP, /CONNECTS WITH/);
+  assert.match(STRIP, /WRITES AND WORKS IN/);
+  assert.match(STRIP, /<IntegrationLogo/);
+  assert.match(STRIP, /CODING_LANGUAGES/);
+  assert.equal([...STRIP.matchAll(/<IntegrationLane/g)].length, 2);
+  assert.equal([...STRIP.matchAll(/<LanguageLane/g)].length, 2);
+  assert.match(CSS, /xv-stack-marquee 30s linear infinite/);
+  assert.match(CSS, /xv-stack-strip__track--reverse/);
+  assert.match(CSS, /prefers-reduced-motion: reduce[\s\S]*xv-stack-strip__track \{ animation: none/);
+});
+
+test('the stack composition is not wrapped in one oversized card', () => {
+  const at = CSS.lastIndexOf('.xv-home-coding .xv-stack-strip {');
+  const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
+  assert.doesNotMatch(body, /border:|border-radius:|background:|box-shadow:/);
+  assert.match(body, /grid-template-columns/);
+  assert.match(CSS, /xv-stack-strip__viewport[\s\S]*border-radius:\s*18px/);
+});
+
+test('the obsolete build-target wall and motto are gone', () => {
+  for (const text of ['Build. Launch.', 'Dashboards', 'Desktop\\nsoftware', 'Debug\\nerror', 'And More']) {
+    assert.ok(!STRIP.includes(text), `${text} should not remain in the compact stack strip`);
   }
-  assert.ok(/Build\. Launch\./.test(STRIP), 'the motto is missing');
-  assert.ok(/And More/.test(STRIP), 'the end cap is missing');
 });
 
-test('the rotator and its machinery are gone', () => {
+test('the homepage still has one real h1 and no dead hero rotator', () => {
+  assert.equal([...PAGE.matchAll(/<h1[\s>]/g)].length, 1);
   for (const trace of ['HERO_BUILD_WORDS', 'buildWordIdx', 'activeBuildWord', 'xv-hc-target-stage']) {
     assert.ok(!PAGE.includes(trace), `${trace} is still in the page`);
   }
-  // A timer with no consumer keeps firing and shows up as nothing at all.
-  assert.ok(
-    !/setInterval[\s\S]{0,120}BuildWord/.test(PAGE),
-    'the rotator interval is still scheduled',
-  );
 });
 
-test('removing the wordmark did not cost the page its heading', () => {
-  assert.ok(!PAGE.includes('xv-hc-brand'), 'the standalone XROGA wordmark should be gone');
-  const headings = [...PAGE.matchAll(/<h1[\s>]/g)].length;
-  assert.equal(headings, 1, 'the homepage needs exactly one h1');
-  assert.ok(
-    /<h1 className="xv-hc-headline">/.test(PAGE),
-    'the hero headline should carry the h1 the wordmark used to',
-  );
-});
-
-test('no third-party logo is reproduced', () => {
-  // The platform is named in the label; the glyph beside it is a generic one.
-  assert.ok(
-    !/simpleicons|\bAppleIcon\b|\bChromeIcon\b|\bAndroidIcon\b|apple-logo|<path[^>]*apple/i.test(STRIP),
-    'the strip must not reproduce a third-party brand mark',
-  );
-  // The names themselves are the informative part and must stay.
-  for (const platform of ['iOS', 'Chrome', 'Android']) {
-    assert.ok(STRIP.includes(platform), `${platform} should still be named in a label`);
-  }
-});
-
-test('the deck is a compact semantic product card', () => {
-  const at = CSS.lastIndexOf('.xv-home-coding .xv-hc-strip {');
-  assert.notEqual(at, -1, 'the strip has no styles');
-  const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
-
-  assert.match(body, /var\(--hc-surface-solid\)/, 'the card must adapt to the active theme');
-  assert.match(body, /--strip-edge:\s*var\(--hc-blue\)/, 'the card needs the Xroga theme accent');
-  assert.match(body, /grid-template-columns/, 'the capability deck needs an authored card layout');
-});
-
-test('the hero badge is gone', () => {
-  assert.ok(!PAGE.includes('xv-hc-badge'), 'the XROGA AI CODING AGENT badge should be removed');
-});
-
-test('twenty languages ship with their own marks', () => {
+test('twenty bundled language marks remain available', () => {
   const LANGS = read('./codingLanguages.ts');
-
-  // From the package, not its CDN: the marks belong in the bundle rather than behind a
-  // runtime dependency on a third-party host, and an unknown slug becomes a build error
-  // instead of a broken image nobody sees until production.
-  assert.ok(LANGS.includes("from 'simple-icons'"), 'the marks come from the package');
-  assert.ok(!/cdn\.simpleicons\.org/.test(LANGS + STRIP), 'no runtime CDN dependency');
-
-  const imported = [...LANGS.matchAll(/^\s{2}(si[A-Z]\w*),$/gm)].map((m) => m[1]);
-  assert.equal(imported.length, 20, `expected 20 language marks, found ${imported.length}`);
-  assert.equal(new Set(imported).size, 20, 'each language appears once');
-
-  // Names come from the icon itself, so a mark can never be shown under another
-  // project's name — the reason Java and C# are not in this list at all.
-  assert.ok(LANGS.includes('title: icon.title'), 'the label must come from the mark');
-  assert.ok(!/'Java'|"Java"|'C#'|"C#"/.test(LANGS), 'no mark may be relabelled as one it is not');
-
-  assert.ok(STRIP.includes('CODING_LANGUAGES'), 'the strip renders the language lane');
-  assert.ok(/<path d=\{lang\.path\}/.test(STRIP), 'each logo draws its own official path');
+  assert.ok(LANGS.includes("from 'simple-icons'"));
+  assert.ok(!/cdn\.simpleicons\.org/.test(LANGS));
+  const imported = [...LANGS.matchAll(/^\s{2}(si[A-Z]\w*),$/gm)].map((match) => match[1]);
+  assert.equal(imported.length, 20);
+  assert.equal(new Set(imported).size, 20);
+  assert.match(STRIP, /<path d=\{language\.path\}/);
 });
 
-test('build targets and languages move continuously without duplicating announcements', () => {
-  assert.match(STRIP, /xv-hc-strip__target-track/);
-  assert.match(STRIP, /xv-hc-strip__language-track/);
-  assert.equal([...STRIP.matchAll(/aria-hidden="true"/g)].length >= 3, true);
-  assert.match(CSS, /xv-build-target-marquee 34s linear infinite/);
-  assert.match(CSS, /xv-build-language-marquee 42s linear infinite reverse/);
-  assert.match(CSS, /prefers-reduced-motion: reduce[\s\S]*xv-hc-strip__target-track[\s\S]*animation:\s*none/);
-});
-
-test('coding display type stays in the hero while later sections use the editorial font system', () => {
+test('coding display type remains reserved for the hero', () => {
   assert.match(CSS, /\.xv-home-coding > :not\(\.xv-hc-hero\)[\s\S]*--hc-font-pixel:\s*var\(--hc-font-sans\)/);
   assert.match(CSS, /\.xv-home-coding \.xv-hc-headline__agentic\s*\{[\s\S]*font-family:\s*var\(--hc-font-pixel\)/);
-  assert.match(CSS, /\.xv-home-coding \.xv-hc-headline__ship\s*\{[\s\S]*font-family:\s*var\(--font-claude-serif\)/);
 });

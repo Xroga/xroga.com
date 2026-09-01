@@ -8,6 +8,7 @@ import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
 import { rootFontVariables } from '@/lib/fonts';
+import { GoogleTag } from '@/components/analytics/GoogleTag';
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning className={`theme-white ${rootFontVariables} font-sans antialiased`}>
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
+        <GoogleTag />
       </body>
     </html>
   );

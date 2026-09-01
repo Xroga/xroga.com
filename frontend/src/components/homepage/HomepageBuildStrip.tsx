@@ -1,118 +1,78 @@
-import Link from 'next/link';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { CODING_LANGUAGES } from '@/lib/codingLanguages';
-import {
-  AppWindow,
-  Bot,
-  ChevronRight,
-  Cloud,
-  CodeXml,
-  Globe,
-  LayoutGrid,
-  Monitor,
-  Puzzle,
-  Smartphone,
-  TabletSmartphone,
-} from 'lucide-react';
 
-/**
- * The capability deck inside the homepage ownership story.
- *
- * This content used to sit directly under the hero composer. It now belongs beside the
- * explanation of what Xroga actually produces, where the range reads as product context
- * instead of a second navigation bar competing with the primary prompt.
- *
- * On the platform marks: the reference renders the Apple, Chrome and Android logos.
- * Those are third-party trademarks, and Apple's guidelines in particular do not permit
- * reproduction by others without written permission — so the glyphs here are neutral and
- * the platform is named in the label instead, which is the part that actually carries
- * the information and is unambiguously fair to use. Swapping in the real marks is a
- * question of holding the rights, not of CSS.
- *
- * The panel keeps its own blue in every theme rather than following the picker. It reads
- * as a single device rather than a page surface, which is how the reference works, and
- * its text sits on that blue rather than on the page ground.
- */
-
-type Item = {
-  icon: typeof LayoutGrid;
-  /** Two lines where one would leave the column too wide. */
-  label: string;
-  /** The one entry that is a failure state rather than a thing to build. */
-  warn?: boolean;
-};
-
-const ITEMS: ReadonlyArray<Item> = [
-  { icon: LayoutGrid, label: 'Dashboards' },
-  { icon: Monitor, label: 'Desktop\nsoftware' },
-  { icon: AppWindow, label: 'Landing\npage' },
-  { icon: Smartphone, label: 'Mobile\napp' },
-  { icon: TabletSmartphone, label: 'iOS\napps' },
-  { icon: Puzzle, label: 'Chrome\nextensions' },
-  { icon: Bot, label: 'Android\napp' },
-  { icon: CodeXml, label: 'Debug\nerror', warn: true },
-  { icon: Globe, label: 'Website' },
-  { icon: Cloud, label: 'SaaS\napp' },
+const INTEGRATIONS = [
+  { id: 'github', name: 'GitHub' },
+  { id: 'gitlab', name: 'GitLab' },
+  { id: 'vercel', name: 'Vercel' },
+  { id: 'supabase', name: 'Supabase' },
+  { id: 'openai', name: 'OpenAI' },
+  { id: 'anthropic', name: 'Anthropic' },
+  { id: 'cursor', name: 'Cursor' },
+  { id: 'replit', name: 'Replit' },
 ] as const;
 
-export function HomepageBuildStrip() {
-  const buildItems = ITEMS.map((item) => {
-    const Icon = item.icon;
-    return (
-      <li key={item.label} className="xv-hc-strip__item" data-warn={item.warn ? 'true' : undefined}>
-        <Icon className="xv-hc-strip__icon" aria-hidden="true" />
-        <span className="xv-hc-strip__label">
-          {item.label.split('\n').map((line, index) => (
-            <span key={line} className="xv-hc-strip__line">
-              {index > 0 ? ' ' : ''}{line}
-            </span>
-          ))}
-        </span>
-        <span className="xv-hc-strip__glow" aria-hidden="true" />
-      </li>
-    );
-  });
-
-  const languageItems = CODING_LANGUAGES.map((lang) => (
-    <li key={lang.title} className="xv-hc-strip__lang">
-      <svg viewBox="0 0 24 24" aria-hidden="true" style={{ fill: lang.color }}>
-        <path d={lang.path} />
-      </svg>
-      {lang.title}
-    </li>
-  ));
-
+function IntegrationLane({ hidden = false }: { hidden?: boolean }) {
   return (
-    <div className="xv-hc-strip" role="group" aria-label="What Xroga can build and the languages it writes">
-      <div className="xv-hc-strip__intro">
-        <span>WHAT YOU CAN SHIP</span>
-        <p>One workspace. From first brief to working product.</p>
+    <ul className="xv-stack-strip__items" aria-hidden={hidden || undefined}>
+      {INTEGRATIONS.map((integration) => (
+        <li key={integration.id} className="xv-stack-strip__chip">
+          <IntegrationLogo id={integration.id} name={integration.name} size={18} />
+          <span>{integration.name}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function LanguageLane({ hidden = false }: { hidden?: boolean }) {
+  return (
+    <ul className="xv-stack-strip__items" aria-hidden={hidden || undefined}>
+      {CODING_LANGUAGES.map((language) => (
+        <li key={language.title} className="xv-stack-strip__chip xv-stack-strip__chip--language">
+          <svg viewBox="0 0 24 24" aria-hidden="true" style={{ fill: language.color }}>
+            <path d={language.path} />
+          </svg>
+          <span>{language.title}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function HomepageBuildStrip() {
+  return (
+    <div className="xv-stack-strip" aria-labelledby="xv-stack-strip-title">
+      <div className="xv-stack-strip__heading">
+        <p>THE STACK ALREADY AROUND YOU</p>
+        <h2 id="xv-stack-strip-title">
+          The tools and languages <span>you already know.</span>
+        </h2>
+        <small>
+          Bring the product you have or start something new. Xroga works across the repository,
+          services, and languages your build actually needs.
+        </small>
       </div>
 
-      <p className="xv-hc-strip__motto">
-        Build. Launch.<br />{' '}Scale. <span>Repeat.</span>
-      </p>
-
-      <div className="xv-hc-strip__target-marquee">
-        <div className="xv-hc-strip__target-track">
-          <div className="xv-hc-strip__target-group">
-            <ul className="xv-hc-strip__list">{buildItems}</ul>
-            <Link href="/features" className="xv-hc-strip__more">
-              <span>And More</span>
-              <ChevronRight aria-hidden="true" />
-            </Link>
-          </div>
-          <div className="xv-hc-strip__target-group" aria-hidden="true">
-            <ul className="xv-hc-strip__list">{buildItems}</ul>
-            <span className="xv-hc-strip__more"><span>And More</span><ChevronRight aria-hidden="true" /></span>
+      <div className="xv-stack-strip__lanes">
+        <div className="xv-stack-strip__lane">
+          <strong>CONNECTS WITH</strong>
+          <div className="xv-stack-strip__viewport" aria-label="Services Xroga can connect with">
+            <div className="xv-stack-strip__track">
+              <IntegrationLane />
+              <IntegrationLane hidden />
+            </div>
           </div>
         </div>
-      </div>
 
-      <p className="xv-hc-strip__language-label">LANGUAGES XROGA WRITES</p>
-      <div className="xv-hc-strip__language-marquee" aria-label="Languages Xroga writes">
-        <div className="xv-hc-strip__language-track">
-          <ul className="xv-hc-strip__langs">{languageItems}</ul>
-          <ul className="xv-hc-strip__langs" aria-hidden="true">{languageItems}</ul>
+        <div className="xv-stack-strip__lane">
+          <strong>WRITES AND WORKS IN</strong>
+          <div className="xv-stack-strip__viewport" aria-label="Languages Xroga writes and works in">
+            <div className="xv-stack-strip__track xv-stack-strip__track--reverse">
+              <LanguageLane />
+              <LanguageLane hidden />
+            </div>
+          </div>
         </div>
       </div>
     </div>

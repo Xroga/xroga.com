@@ -3,40 +3,44 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const PAGE = read('../app/page.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
+const AUDIENCE = read('../components/homepage/HomepageAudienceSlider.tsx');
 const COMPANION = read('../components/companion/CompanionSurfaces.tsx');
 const CSS = read('../styles/homepage-coding.css');
 const COMPANION_CSS = read('../styles/companion.css');
 
-test('the two removed narrative statements no longer interrupt the homepage', () => {
-  assert.match(PAGE, /<HomepageOwnershipProof \/>/);
-  assert.doesNotMatch(PROOF, /THE REAL GAP IS AFTER THE PROMPT|Most ideas don&apos;t need another answer/);
-  assert.doesNotMatch(PROOF, /THE DIFFERENCE IS WHAT YOU KEEP|The work doesn&apos;t disappear/);
+test('the removed narrative walls and brief card no longer interrupt the homepage', () => {
+  assert.doesNotMatch(PROOF, /THE REAL GAP IS AFTER THE PROMPT|THE DIFFERENCE IS WHAT YOU KEEP/);
+  assert.doesNotMatch(PROOF, /xv-home-proof__brief-card|xv-home-proof__compact-row/);
+  assert.match(PROOF, /<HomepageAudienceSlider \/>/);
 });
 
-test('build range and brief story are the only two compact cards in one row', () => {
-  assert.match(PROOF, /xv-home-proof__compact-row/);
-  assert.match(PROOF, /<HomepageBuildStrip \/>/);
-  assert.match(PROOF, /xv-home-proof__brief-card/);
-  assert.match(CSS, /\.xv-home-coding \.xv-home-proof__compact-row\s*\{[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\) minmax\(0, 1fr\)/);
-  assert.doesNotMatch(PROOF, /xv-home-proof__platform-card|xv-home-proof__heading|xv-home-proof__grid/);
+test('the audience selector covers founders, developers, non-coders, and teams', () => {
+  for (const label of ['Founders', 'Developers', 'Non-coders', 'Product teams']) {
+    assert.ok(AUDIENCE.includes(label), `${label} is missing`);
+  }
+  assert.match(AUDIENCE, /Start fresh or bring an existing repository/);
+  assert.match(AUDIENCE, /role="tablist"/);
+  assert.match(AUDIENCE, /aria-selected=\{active === index\}/);
+  assert.match(AUDIENCE, /event\.key === 'ArrowRight'/);
+  assert.match(AUDIENCE, /event\.key === 'ArrowLeft'/);
+  assert.match(AUDIENCE, /AUTO_ADVANCE_MS = 6_000/);
+  assert.match(AUDIENCE, /prefers-reduced-motion: reduce/);
 });
 
-test('the brief card supports fresh products and existing repositories', () => {
-  assert.match(PROOF, /Start a fresh product or connect an existing repository/);
-  assert.match(PROOF, /Your brief becomes the build/);
-  assert.match(PROOF, /Build the product, not just the answer/);
-  assert.match(PROOF, /Scope, interface, data, checks, and release intent/);
-  assert.doesNotMatch(PROOF, /customers|users trust|award-winning|guarantee|\d+%|\$[\d,.]+/i);
-});
-
-test('the brief illustration is bundled and rendered with next image without a card number', () => {
-  assert.match(PROOF, /from 'next\/image'/);
-  const image = '/homepage/proof/xroga-brief-to-build-20260901.png';
-  assert.match(PROOF, new RegExp(image.replaceAll('/', '\\/')));
+test('the generated audience portrait strip is local and displayed in every tab', () => {
+  const image = '/homepage/audiences/xroga-audience-portraits-20260901.png';
   assert.ok(existsSync(new URL(`../../public${image}`, import.meta.url)), `${image} is missing`);
-  assert.doesNotMatch(PROOF, /index:|'01'|'02'|'03'/);
+  assert.match(CSS, new RegExp(image.replaceAll('/', '\\/')));
+  for (const position of ['0%', '33.333%', '66.667%', '100%']) {
+    assert.ok(CSS.includes(`background-position-x: ${position}`), `portrait crop ${position} is missing`);
+  }
+});
+
+test('audience controls and copy stay compact across desktop and mobile', () => {
+  assert.match(CSS, /xv-audience\s*\{[\s\S]*grid-template-columns/);
+  assert.match(CSS, /@media \(max-width: 620px\)[\s\S]*xv-audience__tabs \{[^}]*overflow-x:\s*auto/);
+  assert.match(CSS, /xv-audience__tabs button\s*\{[\s\S]*min-height:\s*58px/);
 });
 
 test('Smoky remains attached to the homepage chatbar', () => {
