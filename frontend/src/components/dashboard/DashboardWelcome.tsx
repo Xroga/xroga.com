@@ -5,14 +5,23 @@ import { claudeSerif, goga } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 
 interface DashboardWelcomeProps {
-  displayName: string;
   hidden?: boolean;
   className?: string;
   composer?: boolean;
 }
 
-export function DashboardWelcome({ displayName, hidden, className, composer = false }: DashboardWelcomeProps) {
+export function WorkspaceComposerKicker({ displayName }: { displayName: string }) {
   const shortName = displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
+
+  return (
+    <p className={cn('xv-welcome-composer-kicker', goga.className)}>
+      <strong>Turn an idea into something live.</strong>
+      <span className="xv-welcome-short-name" aria-label={`Signed in as ${shortName}`}>{shortName}</span>
+    </p>
+  );
+}
+
+export function DashboardWelcome({ hidden, className, composer = false }: DashboardWelcomeProps) {
 
   if (hidden) return null;
 
@@ -31,10 +40,6 @@ export function DashboardWelcome({ displayName, hidden, className, composer = fa
           <span className="xv-welcome-editorial__build">Build it.</span>
           <em className={claudeSerif.className}>Ship it.</em>
         </h1>
-        <p className={cn('xv-welcome-composer-kicker', goga.className)}>
-          <strong>Turn an idea into something live.</strong>
-          <span className="xv-welcome-short-name" aria-label={`Signed in as ${shortName}`}>{shortName}</span>
-        </p>
       </div>
 
       {!composer ? (

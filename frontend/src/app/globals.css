@@ -7514,13 +7514,20 @@ body.theme-gray .xv-rp-loader {
    composer edge so it informs without becoming another headline. */
 .xv-dashboard-welcome--composer {
   width: min(100%, 896px);
-  margin: 0 auto 0.08rem;
+  overflow: visible;
+  margin: 0 auto 0.42rem;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 .xv-dashboard-welcome--composer .xv-welcome-hero {
   width: 100%;
   max-width: none;
+  overflow: visible;
   align-items: center;
-  gap: 0.42rem;
+  gap: 0;
+  background: transparent !important;
   text-align: center;
 }
 .xv-welcome-editorial {
@@ -7582,6 +7589,18 @@ body.theme-gray .xv-rp-loader {
   text-align: left;
   text-transform: none;
 }
+.xv-chatbar-stack > .xv-welcome-composer-kicker {
+  position: absolute;
+  top: -1.04rem;
+  left: 0.18rem;
+  z-index: 5;
+  width: fit-content;
+  max-width: calc(100% - 0.36rem);
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
 .xv-welcome-composer-kicker strong {
   color: var(--text-primary);
   font-weight: 690;
@@ -7599,16 +7618,40 @@ body.theme-gray .xv-rp-loader {
    container, so this margin produces an actual below-the-fold destination on desktop
    and mobile instead of merely hiding the catalog with CSS. */
 .xv-workspace-showcase-below-fold {
-  margin-top: clamp(12rem, 30vh, 22rem);
-  scroll-margin-top: 1rem;
+  position: relative;
+  margin-top: max(16rem, 42vh);
+  scroll-margin-top: 3.25rem;
+}
+.xv-workspace-showcase-below-fold[data-expanded='false'] {
+  overflow: visible;
+  contain: none;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.xv-workspace-showcase-below-fold[data-expanded='false'] .xv-workspace-explore-bar {
+  position: fixed;
+  right: auto;
+  bottom: var(--xv-explore-bottom, 18px);
+  left: var(--xv-explore-left, 14px);
+  z-index: 90;
+  width: var(--xv-explore-width, calc(100vw - 28px));
+  border: 1px solid color-mix(in srgb, var(--foreground) 11%, transparent);
+  border-radius: 14px;
+  box-shadow: 0 14px 38px -30px rgba(0, 0, 0, 0.52);
+}
+.xv-workspace-showcase-below-fold[data-expanded='true'] {
+  margin-top: 0.55rem;
 }
 
 @media (max-width: 639px) {
-  .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.08rem; }
+  .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.4rem; }
   .xv-dashboard-welcome--composer .xv-welcome-hero { align-items: center; text-align: center; }
   .xv-welcome-editorial { font-size: clamp(1.45rem, 8.8vw, 2.15rem); }
   .xv-welcome-composer-kicker { gap: 0.28rem; padding-left: 0.12rem; font-size: 0.62rem; }
-  .xv-workspace-showcase-below-fold { margin-top: max(8rem, 22vh); }
+  .xv-chatbar-stack > .xv-welcome-composer-kicker { top: -0.96rem; left: 0.1rem; padding: 0; }
+  .xv-workspace-showcase-below-fold { margin-top: max(12rem, 34vh); }
+  .xv-workspace-showcase-below-fold[data-expanded='true'] { margin-top: 0.36rem; }
 }
 
 /* ============================================================================
@@ -9753,6 +9796,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   bottom: auto !important;
   transform: translateY(-28%);
   z-index: 72;
+  background: transparent !important;
 }
 .xv-terminal-dock--restoring {
   visibility: hidden;
@@ -9761,6 +9805,9 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
 }
 .xv-terminal-dock--idle .xv-terminal-dock-inner {
   max-width: 1040px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 @media (min-width: 640px) {
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen) {
@@ -9985,8 +10032,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   box-shadow: 0 14px 38px -30px rgba(0, 0, 0, 0.52);
 }
 .xv-workspace-explore-bar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 4;
   display: flex;
   width: 100%;

@@ -188,16 +188,57 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
   const { setPrompt } = useTerminalChat();
   const [selectedTemplate, setSelectedTemplate] = useState<ShowcaseTemplate | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const collectionsRef = useRef<HTMLDivElement>(null);
+  const autoOpenedRef = useRef(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const scrollRoot = section?.closest<HTMLElement>('.xv-terminal-dock--idle');
+    if (!section || !scrollRoot) return;
+
+    const syncPinnedBar = () => {
+      const sectionRect = section.getBoundingClientRect();
+      const rootRect = scrollRoot.getBoundingClientRect();
+      section.style.setProperty('--xv-explore-left', `${sectionRect.left}px`);
+      section.style.setProperty('--xv-explore-width', `${sectionRect.width}px`);
+      section.style.setProperty('--xv-explore-bottom', `${Math.max(4, window.innerHeight - rootRect.bottom + 4)}px`);
+    };
+
+    const openFromScroll = () => {
+      syncPinnedBar();
+      if (scrollRoot.scrollTop > 28 && !autoOpenedRef.current) {
+        autoOpenedRef.current = true;
+        setExpanded(true);
+      } else if (scrollRoot.scrollTop <= 2 && autoOpenedRef.current) {
+        autoOpenedRef.current = false;
+        setExpanded(false);
+      }
+    };
+
+    syncPinnedBar();
+    const resizeObserver = new ResizeObserver(syncPinnedBar);
+    resizeObserver.observe(section);
+    resizeObserver.observe(scrollRoot);
+    window.addEventListener('resize', syncPinnedBar, { passive: true });
+    scrollRoot.addEventListener('scroll', openFromScroll, { passive: true });
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', syncPinnedBar);
+      scrollRoot.removeEventListener('scroll', openFromScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const frame = window.requestAnimationFrame(() => {
+      collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [expanded]);
 
   const toggleCatalog = () => {
-    const next = !expanded;
-    setExpanded(next);
-    if (next) {
-      window.requestAnimationFrame(() => {
-        collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
+    setExpanded((current) => !current);
   };
 
   const useTemplate = () => {
@@ -214,7 +255,12 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
 
   return (
     <>
-      <section className={cn('xv-workspace-templates', className)} aria-labelledby="workspace-showcase-heading">
+      <section
+        ref={sectionRef}
+        className={cn('xv-workspace-templates', className)}
+        data-expanded={expanded}
+        aria-labelledby="workspace-showcase-heading"
+      >
       <Suspense fallback={null}>
         <ShowcaseResumeBridge />
       </Suspense>
@@ -234,7 +280,7 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
           </span>
         </span>
         <span className="xv-workspace-explore-action">
-          {expanded ? 'Close inspiration' : 'Explore when ready'}
+          {expanded ? 'Close inspiration' : 'Scroll to explore'}
           <ChevronDown className={cn('h-3.5 w-3.5', expanded && 'is-open')} aria-hidden />
         </span>
       </button>

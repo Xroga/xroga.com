@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
@@ -18,7 +18,7 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterIdeas';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
-import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
+import { DashboardWelcome, WorkspaceComposerKicker } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 
@@ -30,6 +30,7 @@ const FULLSCREEN_BUILD_COMMANDS = [
 ] as const;
 
 export function TerminalDock() {
+  const dockRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const shellIdentity = useShellIdentity();
   const profile = useAppStore((s) => s.profile);
@@ -69,8 +70,17 @@ export function TerminalDock() {
     }
   }, [isDashboard, chatbarHidden]);
 
+  useEffect(() => {
+    if (!showStarterExperience) return;
+    const frame = window.requestAnimationFrame(() => {
+      dockRef.current?.scrollTo({ top: 0 });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [showStarterExperience]);
+
   return (
     <div
+      ref={dockRef}
       className={cn(
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity] duration-200',
         !isDashboard && 'hidden',
@@ -156,9 +166,12 @@ export function TerminalDock() {
                   exact height and clutter the compact chip exists to avoid. */}
               <ChatbarQueueOutside />
               {showStarterExperience && !incognito ? (
-                <DashboardWelcome displayName={displayName} composer />
+                <DashboardWelcome composer />
               ) : null}
               <div className="xv-chatbar-stack relative">
+                {showStarterExperience && !incognito ? (
+                  <WorkspaceComposerKicker displayName={displayName} />
+                ) : null}
                 {!incognito ? <CompanionComposerAnchor /> : null}
                 <TerminalChatBar />
               </div>

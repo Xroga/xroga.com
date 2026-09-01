@@ -6,7 +6,6 @@ import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
 import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
-import { useAppStore } from '@/store/useAppStore';
 import {
   useThemeStore,
   WORKSPACE_MAX_WIDTH,
@@ -15,7 +14,6 @@ import {
 import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
-import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
@@ -41,9 +39,6 @@ import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
  * mounting a card next to it.
  */
 export function DashboardView() {
-  const shellIdentity = useShellIdentity();
-  const profile = useAppStore((s) => s.profile);
-  const displayName = profile?.display_name ?? shellIdentity.displayName;
   const hydrated = useHydrated();
   const { messages } = useTerminalChat();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
@@ -189,7 +184,7 @@ export function DashboardView() {
       data-conversation={hasConversation ? 'true' : 'false'}
     >
       <ApiConnectionBanner />
-      <DashboardWelcome displayName={displayName} hidden={fullscreen || !hasConversation} />
+      <DashboardWelcome hidden={fullscreen || !hasConversation} />
       <SwarmMessageLog chromeless incognito={incognito} />
     </div>
   );

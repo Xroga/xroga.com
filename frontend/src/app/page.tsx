@@ -37,7 +37,6 @@ import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
-import { HomepageScrollStatement } from '@/components/homepage/HomepageScrollStatement';
 
 export default function HomePage() {
   const router = useRouter();
@@ -164,8 +163,6 @@ export default function HomePage() {
 
         <HomepageBuildStrip />
       </section>
-
-      <HomepageScrollStatement />
 
       <XrogaIntelligenceSection />
 

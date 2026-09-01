@@ -109,7 +109,7 @@ test('repository status is brief and is not replayed during passive restore', ()
   assert.match(REPO, /analyzeRepo\(defaultRepo, branch, false, false\)/);
 });
 
-test('templates stay collapsed until requested, then open a scrollable categorized catalog', () => {
+test('the bottom inspiration bar opens the real catalog automatically on workspace scroll', () => {
   assert.doesNotMatch(WELCOME, /<details|xv-ws-fold/);
   assert.match(TEMPLATES, /xv-workspace-template-catalog/);
   assert.match(TEMPLATES, /TEMPLATE_COLLECTIONS\.map/);
@@ -117,8 +117,11 @@ test('templates stay collapsed until requested, then open a scrollable categoriz
   assert.match(TEMPLATES, /const \[expanded, setExpanded\] = useState\(false\)/);
   assert.match(TEMPLATES, /aria-expanded=\{expanded\}/);
   assert.match(TEMPLATES, /\{expanded \? \(/);
-  assert.match(TEMPLATES, /Explore when ready/);
+  assert.match(TEMPLATES, /Scroll to explore/);
   assert.match(TEMPLATES, /Close inspiration/);
+  assert.match(TEMPLATES, /closest<HTMLElement>\('\.xv-terminal-dock--idle'\)/);
+  assert.match(TEMPLATES, /scrollRoot\.addEventListener\('scroll', openFromScroll, \{ passive: true \}\)/);
+  assert.match(TEMPLATES, /scrollRoot\.scrollTop > 28[\s\S]*setExpanded\(true\)/);
   assert.match(TEMPLATES, /Recent builds/);
   assert.match(TEMPLATES, /Community templates/);
   assert.match(TEMPLATES, /Xroga templates/);
@@ -133,6 +136,10 @@ test('templates stay collapsed until requested, then open a scrollable categoriz
   assert.match(CSS, /\.xv-workspace-template-card\s*\{[^}]*flex-direction:\s*column[^}]*width:\s*clamp\(190px,\s*24vw,\s*226px\)/);
   assert.match(CSS, /\.xv-workspace-templates\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*border:\s*1px solid[^}]*border-radius:\s*14px/);
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
+  assert.match(TEMPLATES, /--xv-explore-left/);
+  assert.match(TEMPLATES, /new ResizeObserver\(syncPinnedBar\)/);
+  assert.match(CSS, /\.xv-workspace-showcase-below-fold\[data-expanded='false'\] \.xv-workspace-explore-bar\s*\{[^}]*position:\s*fixed[^}]*bottom:\s*var\(--xv-explore-bottom[^}]*left:\s*var\(--xv-explore-left/);
+  assert.match(CSS, /\.xv-workspace-showcase-below-fold\[data-expanded='true'\]\s*\{[^}]*margin-top:\s*0\.55rem/);
 });
 
 test('the empty workspace uses an editorial action lockup above the canonical composer', () => {
@@ -147,13 +154,14 @@ test('the empty workspace uses an editorial action lockup above the canonical co
   assert.match(CSS, /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*transparent/);
   assert.match(CSS, /\.xv-welcome-editorial__build::before,[\s\S]*?\.xv-welcome-editorial__build::after\s*\{[^}]*content:\s*none/);
   assert.match(CSS, /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*none/);
-  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.08rem/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*background:\s*transparent !important[^}]*box-shadow:\s*none !important/);
   assert.match(WELCOME, /<strong>Turn an idea into something live\.<\/strong>/);
   assert.match(WELCOME, /xv-welcome-short-name/);
-  assert.match(DOCK, /<DashboardWelcome displayName=\{displayName\} composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">/);
+  assert.match(DOCK, /<DashboardWelcome composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">[\s\S]*?<WorkspaceComposerKicker displayName=\{displayName\} \/>/);
+  assert.match(CSS, /\.xv-chatbar-stack > \.xv-welcome-composer-kicker\s*\{[^}]*position:\s*absolute[^}]*top:\s*-1\.04rem[^}]*left:\s*0\.18rem/);
   assert.match(WELCOME, /\{!composer \? \(/, 'the first-run checklist should not crowd the composer welcome');
   assert.match(DOCK, /WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold"/);
-  assert.match(CSS, /\.xv-workspace-showcase-below-fold\s*\{[^}]*margin-top:\s*clamp\(12rem,\s*30vh,\s*22rem\)/);
+  assert.match(CSS, /\.xv-workspace-showcase-below-fold\[data-expanded='false'\] \.xv-workspace-explore-bar\s*\{[^}]*position:\s*fixed/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /Good morning|Good afternoon|Good evening|Good night/);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
@@ -176,6 +184,11 @@ test('the composer identity uses a deterministic shortened real display name', (
   assert.match(WELCOME, /displayName\.trim\(\)\.split\(\/\\s\+\/\)\[0\]\?\.slice\(0, 12\)/);
   assert.match(WELCOME, /Signed in as \$\{shortName\}/);
   assert.doesNotMatch(WELCOME, /getTimeGreetingKey|useHydrated|useLocale/);
+});
+
+test('returning to the empty workspace restores the full unclipped headline', () => {
+  assert.match(DOCK, /dockRef\.current\?\.scrollTo\(\{ top: 0 \}\)/);
+  assert.match(CSS, /\.xv-terminal-dock--idle \.xv-terminal-dock-inner\s*\{[^}]*background:\s*transparent !important[^}]*border:\s*0 !important[^}]*box-shadow:\s*none !important/);
 });
 
 test('an untouched terminal hides transcript and checklist noise behind the starter', () => {
