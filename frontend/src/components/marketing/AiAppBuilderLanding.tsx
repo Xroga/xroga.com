@@ -21,26 +21,13 @@ import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTo
 import { AiAppBuilderHeader } from './AiAppBuilderHeader';
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
+import { AiAppBuilderScrollStatement } from './AiAppBuilderScrollStatement';
 import heroStyles from './AiAppBuilderHero.module.css';
 
 import type { CapabilityPageData } from '@/lib/capabilityPages';
 
 import '@/styles/homepage-coding.css';
 import '@/styles/ai-app-builder-landing.css';
-
-/**
- * Existing hero image is intentionally retained here.
- *
- * AiAppBuilderHero.module.css hides this image and renders
- * the new hosted castle landscape as the actual hero background:
- *
- * https://i.postimg.cc/P5vZpY2b/image.png
- *
- * Keeping the existing Next/Image in the DOM means we do not need
- * to restructure the rest of the landing component.
- */
-const HERO_IMAGE =
-  '/backgrounds/bg-desktop-4-blackhole-nebula.webp';
 
 const FOOTER_GROUPS = [
   {
@@ -132,24 +119,6 @@ export function AiAppBuilderLanding({
           ========================================================= */}
 
       <section className="xab-hero">
-        <div
-          className="xab-hero__media"
-          aria-hidden="true"
-        >
-          <Image
-            src={HERO_IMAGE}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-          />
-        </div>
-
-        <div
-          className="xab-hero__scrim"
-          aria-hidden="true"
-        />
-
         <AiAppBuilderHeader />
 
         <div className="xab-shell xab-hero__body">
@@ -161,12 +130,10 @@ export function AiAppBuilderLanding({
           </h1>
 
           <AiAppBuilderPrompt />
-
-          <p className="xab-hero__note">
-            {data.eyebrow}
-          </p>
         </div>
       </section>
+
+      <AiAppBuilderScrollStatement />
 
       {/* =========================================================
           BLUE PRODUCT SECTION

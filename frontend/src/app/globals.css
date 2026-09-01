@@ -7509,6 +7509,119 @@ body.theme-gray .xv-rp-loader {
   }
 }
 
+/* Empty-workspace editorial lockup. The time greeting has no role in starting work;
+   the action is the identity. A small, shortened account label stays attached to the
+   composer edge so it informs without becoming another headline. */
+.xv-dashboard-welcome--composer {
+  width: min(100%, 860px);
+  margin: 0 auto 0.12rem;
+}
+.xv-dashboard-welcome--composer .xv-welcome-hero {
+  width: 100%;
+  align-items: center;
+  gap: 0.38rem;
+  text-align: center;
+}
+.xv-welcome-editorial {
+  position: relative;
+  display: grid;
+  width: fit-content;
+  justify-items: start;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(1.55rem, 3.6vw, 3.15rem);
+  font-weight: 780;
+  line-height: 0.83;
+  letter-spacing: -0.065em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.xv-welcome-editorial > span,
+.xv-welcome-editorial > em { position: relative; display: block; }
+.xv-welcome-editorial__build {
+  z-index: 1;
+  margin-block: 0.14em;
+  padding: 0.04em 0.12em 0.08em;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: color-mix(in srgb, var(--accent) 72%, var(--text-primary));
+}
+.xv-welcome-editorial__build::before,
+.xv-welcome-editorial__build::after {
+  content: '';
+  position: absolute;
+  top: -0.05em;
+  width: 0.13em;
+  height: calc(100% + 0.1em);
+  background: var(--accent);
+}
+.xv-welcome-editorial__build::before { left: 0; }
+.xv-welcome-editorial__build::after { right: 0; }
+.xv-welcome-editorial > em {
+  justify-self: end;
+  padding-inline: 0.2em;
+  color: var(--text-primary);
+  font-style: italic;
+  font-weight: 660;
+  letter-spacing: -0.055em;
+}
+.xv-welcome-editorial > em::after {
+  content: '';
+  position: absolute;
+  inset: -0.12em -0.17em -0.04em;
+  border: 2px solid var(--accent);
+  border-radius: 52% 48% 50% 46%;
+  transform: rotate(-3deg);
+  pointer-events: none;
+}
+.xv-welcome-composer-kicker {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.42rem;
+  margin: 0.1rem 0 -0.02rem;
+  padding-left: 0.65rem;
+  color: color-mix(in srgb, var(--text-primary) 54%, transparent);
+  font-family: var(--font-coding, ui-monospace, monospace);
+  font-size: clamp(0.48rem, 0.72vw, 0.58rem);
+  font-weight: 650;
+  letter-spacing: 0.065em;
+  line-height: 1;
+  text-align: left;
+  text-transform: uppercase;
+}
+.xv-welcome-composer-kicker::before {
+  content: '';
+  width: 18px;
+  height: 1px;
+  flex: none;
+  background: var(--accent);
+}
+.xv-welcome-composer-kicker b {
+  overflow: hidden;
+  max-width: 12ch;
+  color: var(--accent);
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Inspiration belongs beyond the first decision. The real idle dock is the scroll
+   container, so this margin produces an actual below-the-fold destination on desktop
+   and mobile instead of merely hiding the catalog with CSS. */
+.xv-workspace-showcase-below-fold {
+  margin-top: clamp(12rem, 30vh, 22rem);
+  scroll-margin-top: 1rem;
+}
+
+@media (max-width: 639px) {
+  .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.12rem; }
+  .xv-dashboard-welcome--composer .xv-welcome-hero { align-items: center; text-align: center; }
+  .xv-welcome-editorial { font-size: clamp(1.45rem, 8.8vw, 2.15rem); }
+  .xv-welcome-composer-kicker { padding-left: 0.3rem; font-size: 0.46rem; }
+  .xv-welcome-composer-kicker::before { width: 12px; }
+  .xv-workspace-showcase-below-fold { margin-top: max(8rem, 22vh); }
+}
+
 /* ============================================================================
    Terminal window chrome, prompt line, and the skin picker.
 

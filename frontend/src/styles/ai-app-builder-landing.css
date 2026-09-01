@@ -1088,3 +1088,129 @@
   .xab-hero__actions .xab-cta { justify-content: center; }
   .xab-footer__links { margin-left: 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   Theme-native route finish
+
+   The original page changed themes while several sections kept a blue-to-white
+   campaign background and a scenic light footer. These overrides keep the page
+   vocabulary intact while letting White, Beige, Gray and Black own every surface.
+   --------------------------------------------------------------------------- */
+
+.xab-manifesto {
+  position: relative;
+  min-height: 118svh;
+  background: var(--tp-bg);
+  color: var(--tp-ink);
+}
+
+.xab-manifesto__inner {
+  position: sticky;
+  top: 14svh;
+  display: grid;
+  min-height: 72svh;
+  align-content: center;
+  gap: 1.35rem;
+  padding-block: clamp(4rem, 10vw, 8rem);
+}
+
+.xab-manifesto__index {
+  margin: 0;
+  color: var(--tp-accent);
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.14em;
+}
+
+.xab-manifesto__statement {
+  max-width: 25ch;
+  margin: 0;
+  color: var(--tp-ink);
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif;
+  font-size: clamp(2.35rem, 5.2vw, 5.8rem);
+  font-weight: 610;
+  line-height: 1.01;
+  letter-spacing: -0.052em;
+  text-wrap: balance;
+}
+
+.xab-manifesto__word {
+  display: inline;
+  opacity: 0.16;
+  filter: blur(8px);
+  transition: opacity 230ms ease, filter 300ms ease, color 230ms ease;
+}
+
+.xab-manifesto__word.is-clear {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.xab-manifesto__ownership {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.62rem 0.9rem;
+  border-left: 3px solid var(--tp-accent);
+  background: color-mix(in srgb, var(--tp-accent) 8%, transparent);
+  color: var(--tp-muted);
+  font-family: var(--font-claude-serif), Georgia, serif;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-style: italic;
+  opacity: calc(0.18 + var(--xab-copy-progress, 0) * 0.82);
+  filter: blur(calc((1 - var(--xab-copy-progress, 0)) * 5px));
+  transform: translateY(calc((1 - var(--xab-copy-progress, 0)) * 12px));
+  transition: opacity 120ms linear, filter 120ms linear, transform 120ms linear;
+}
+
+.xab-page .xab-blue {
+  background:
+    radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--xab-blue) 14%, transparent), transparent 36%),
+    color-mix(in srgb, var(--tp-bg) 88%, var(--xab-blue) 12%);
+  color: var(--tp-ink);
+}
+.xab-page .xab-dark { background: var(--tp-panel-solid); color: var(--tp-ink); }
+.xab-page .xab-process { background: var(--tp-bg); }
+.xab-page .xab-repo { background: var(--tp-surface-2); }
+.xab-page .xab-limits { background: var(--tp-bg); }
+.xab-page .xab-footer { background: var(--tp-surface-2); }
+.xab-page .xab-footer__media { display: none; }
+
+.xab-page :is(.xab-panel, .xab-limits__card, .xab-limits__note, .xab-footer__card) {
+  border-color: var(--tp-border);
+  background: var(--tp-panel-solid);
+  color: var(--tp-ink);
+}
+
+.xab-page :is(.xab-panel__bar, .xab-checkrow) {
+  border-color: var(--tp-border);
+  background: var(--tp-surface-2);
+}
+
+.xab-page :is(.xab-panel, .xab-preview, .xab-footer__card) {
+  box-shadow: 0 28px 72px -52px color-mix(in srgb, var(--tp-ink) 50%, transparent);
+}
+
+.xab-page .xab-social a,
+.xab-page .xab-checkrow span,
+.xab-page .xab-panel__demo {
+  border-color: var(--tp-border);
+}
+
+@media (max-width: 768px) {
+  .xab-manifesto { min-height: 108svh; }
+  .xab-manifesto__inner { top: 10svh; min-height: 76svh; }
+  .xab-manifesto__statement { max-width: 19ch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xab-manifesto__word,
+  .xab-manifesto__word.is-clear,
+  .xab-manifesto__ownership {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+}

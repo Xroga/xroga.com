@@ -19,7 +19,7 @@ test('an empty terminal centers the one canonical composer and exposes starters'
   assert.match(DOCK, /xv-terminal-dock--idle/);
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
-  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts \/>/);
+  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" \/>/);
   assert.match(DASHBOARD, /--xv-pane-top/);
   assert.match(DASHBOARD, /--xv-pane-bottom/);
   assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\([^}]*bottom:\s*var\(--xv-pane-bottom[^}]*overflow-y:\s*auto[^}]*transform:\s*none/);
@@ -82,7 +82,7 @@ test('the desktop companion stays attached outside the canonical composer', () =
   assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\(calc\(var\(--xv-pane-top, 60px\) \+ 24px\), calc\(30vh - 72px\)\)[^}]*padding-top:\s*72px[^}]*overflow-y:\s*auto/);
 });
 
-test('the empty dock inherits the selected terminal skin and keeps mobile greeting space', () => {
+test('the empty dock inherits the selected terminal skin and keeps mobile starter space', () => {
   assert.match(DOCK, /const terminalSkinRaw = useThemeStore\(\(s\) => s\.terminalSkin\)/);
   assert.match(DOCK, /`terminal-skin-\$\{incognito \? 'dark' : terminalSkin\}`/);
   assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/);
@@ -133,17 +133,24 @@ test('templates stay collapsed until requested, then open a scrollable categoriz
   assert.match(CSS, /\.xv-workspace-template-viewport\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%[^}]*overflow-x:\s*auto/);
 });
 
-test('the welcome is a compact vertical identity above the canonical composer', () => {
-  assert.match(WELCOME, /xv-welcome-idline/);
+test('the empty workspace uses an editorial action lockup above the canonical composer', () => {
+  assert.match(WELCOME, /xv-welcome-editorial/);
+  assert.match(WELCOME, /xv-welcome-editorial__build/);
+  assert.match(WELCOME, /xv-welcome-composer-kicker/);
   assert.match(WELCOME, /Describe it\./);
   assert.match(WELCOME, /Build it\./);
   assert.match(WELCOME, /Ship it\./);
-  assert.doesNotMatch(WELCOME, /Turn an idea into|something live/);
-  assert.match(CSS, /\.xv-dashboard-welcome \.xv-welcome-idline\s*\{[^}]*display:\s*grid[^}]*min-height:\s*1\.8rem/);
-  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.48rem/);
+  assert.match(WELCOME, /Turn an idea into something live\./);
+  assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*display:\s*grid[^}]*text-transform:\s*uppercase/);
+  assert.match(CSS, /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*color-mix/);
+  assert.match(CSS, /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*uppercase/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*margin:\s*0 auto 0\.12rem/);
   assert.match(DOCK, /<DashboardWelcome displayName=\{displayName\} composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">/);
   assert.match(WELCOME, /\{!composer \? \(/, 'the first-run checklist should not crowd the composer welcome');
+  assert.match(DOCK, /WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold"/);
+  assert.match(CSS, /\.xv-workspace-showcase-below-fold\s*\{[^}]*margin-top:\s*clamp\(12rem,\s*30vh,\s*22rem\)/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
+  assert.doesNotMatch(WELCOME, /Good morning|Good afternoon|Good evening|Good night/);
   assert.doesNotMatch(WELCOME, /xv-blackhole-identity/);
   assert.doesNotMatch(WELCOME, /first[\s\S]*last[\s\S]*model you will ever need/i);
 });
@@ -160,10 +167,10 @@ test('the composer uses a short inner signal for entry, typing, and uploads, nev
   assert.match(CHATBAR, /composerSignal[^\n]*xv-chatbar--inner-active/);
 });
 
-test('the local-time greeting cannot disagree during hydration', () => {
-  assert.match(WELCOME, /const hydrated = useHydrated\(\)/);
-  assert.match(WELCOME, /hydrated \? t\(getTimeGreetingKey\(\), locale\) : '\\u00A0'/);
-  assert.doesNotMatch(WELCOME, /useMemo\(\(\) => t\(getTimeGreetingKey\(\)/);
+test('the composer identity uses a deterministic shortened real display name', () => {
+  assert.match(WELCOME, /displayName\.trim\(\)\.split\(\/\\s\+\/\)\[0\]\?\.slice\(0, 12\)/);
+  assert.match(WELCOME, /Signed in as \$\{shortName\}/);
+  assert.doesNotMatch(WELCOME, /getTimeGreetingKey|useHydrated|useLocale/);
 });
 
 test('an untouched terminal hides transcript and checklist noise behind the starter', () => {

@@ -1,12 +1,8 @@
 'use client';
 
-import { useAppStore } from '@/store/useAppStore';
-import { getTimeGreetingKey, t } from '@/lib/i18n/translations';
-import { useLocale } from '@/components/providers/LanguageProvider';
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
-import { claudeSerif, pixelCoding } from '@/lib/fonts';
+import { claudeSerif, goga } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
-import { useHydrated } from '@/hooks/useHydrated';
 
 interface DashboardWelcomeProps {
   displayName: string;
@@ -16,14 +12,7 @@ interface DashboardWelcomeProps {
 }
 
 export function DashboardWelcome({ displayName, hidden, className, composer = false }: DashboardWelcomeProps) {
-  const profile = useAppStore((s) => s.profile);
-  const locale = useLocale();
-  const hydrated = useHydrated();
-  const name = profile?.display_name ?? displayName;
-  // The server and browser can be in different time zones. Keep their first render
-  // identical, then resolve the local greeting after mount; otherwise React replaces
-  // the fresh-terminal tree during hydration and its entrance effects can disappear.
-  const greeting = hydrated ? t(getTimeGreetingKey(), locale) : '\u00A0';
+  const shortName = displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
 
   if (hidden) return null;
 
@@ -37,20 +26,15 @@ export function DashboardWelcome({ displayName, hidden, className, composer = fa
       data-testid="workspace-welcome"
     >
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
-        <p className="xv-welcome-idline relative">
-          <span className={cn('xv-welcome-greeting-text', claudeSerif.className)}>
-            {greeting}
-          </span>
-          <span className={cn('xv-welcome-name', pixelCoding.className)}>{name}</span>
+        <h1 className={cn('xv-welcome-editorial', goga.className)}>
+          <span>Describe it.</span>
+          <span className="xv-welcome-editorial__build">Build it.</span>
+          <em className={claudeSerif.className}>Ship it.</em>
+        </h1>
+        <p className="xv-welcome-composer-kicker">
+          <span>Turn an idea into something live.</span>
+          <b aria-label={`Signed in as ${shortName}`}>{shortName}</b>
         </p>
-
-        <div className="xv-welcome-taglines relative">
-          <p className={cn('xv-welcome-tagline-sub', claudeSerif.className)}>
-            <span>Describe it.</span>
-            <span>Build it.</span>
-            <em>Ship it.</em>
-          </p>
-        </div>
       </div>
 
       {!composer ? (

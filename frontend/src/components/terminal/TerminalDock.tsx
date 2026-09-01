@@ -170,7 +170,7 @@ export function TerminalDock() {
               {showStarterExperience && !incognito ? (
                 <div className="xv-workspace-starter-stack">
                   <WorkspaceStarterIdeas />
-                  <WorkspaceShowcaseStarts />
+                  <WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" />
                 </div>
               ) : null}
             </div>
