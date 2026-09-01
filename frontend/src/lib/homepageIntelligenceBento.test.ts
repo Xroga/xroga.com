@@ -6,12 +6,13 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const COMPONENT = read('../components/homepage/XrogaIntelligenceSection.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
-test('the intelligence story is a wide card with two supporting cards', () => {
+test('the intelligence story is three compact cards without decorative counting', () => {
   assert.match(COMPONENT, /xv-intelligence-bento__grid/);
-  assert.equal([...COMPONENT.matchAll(/layout: '(?:wide|standard)'/g)].length, 3);
-  assert.equal([...COMPONENT.matchAll(/layout: 'wide'/g)].length, 1);
-  assert.match(CSS, /\.xv-home-coding \.xv-intelligence-panel\[data-layout='wide'\][\s\S]*grid-column:\s*1 \/ -1/);
-  assert.match(CSS, /\.xv-home-coding \.xv-intelligence-bento__grid\s*\{[\s\S]*grid-template-columns:\s*repeat\(2/);
+  assert.equal([...COMPONENT.matchAll(/className="xv-intelligence-panel"/g)].length, 1);
+  assert.doesNotMatch(COMPONENT, /id: '0[123]'|data-layout|card\.id/);
+  assert.match(CSS, /Three intelligence cards now share one compact row/);
+  assert.match(CSS, /\.xv-home-coding \.xv-intelligence-bento__grid\s*\{[\s\S]*grid-template-columns:\s*repeat\(3/);
+  assert.match(CSS, /grid-template-rows:\s*185px auto/);
 });
 
 test('the generated Xroga visuals are bundled and rendered through next image', () => {

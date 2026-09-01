@@ -2,8 +2,6 @@ import Image from 'next/image';
 
 const intelligenceCards = [
   {
-    id: '01',
-    layout: 'wide',
     image: '/homepage/intelligence/xroga-unified-intelligence-20260901.png',
     width: 1448,
     height: 1086,
@@ -14,8 +12,6 @@ const intelligenceCards = [
     signals: ['Understand', 'Plan', 'Build', 'Verify'],
   },
   {
-    id: '02',
-    layout: 'standard',
     image: '/homepage/intelligence/xroga-visible-verification-20260901.png',
     width: 1448,
     height: 1086,
@@ -26,8 +22,6 @@ const intelligenceCards = [
     signals: ['Diffs', 'Checks', 'Evidence'],
   },
   {
-    id: '03',
-    layout: 'standard',
     image: '/homepage/intelligence/xroga-authorized-execution-20260901.png',
     width: 1192,
     height: 1320,
@@ -64,9 +58,8 @@ export function XrogaIntelligenceSection() {
         <div className="xv-intelligence-bento__grid">
           {intelligenceCards.map((card) => (
             <article
-              key={card.id}
+              key={card.kicker}
               className="xv-intelligence-panel"
-              data-layout={card.layout}
             >
               <div className="xv-intelligence-panel__visual">
                 <Image
@@ -74,14 +67,12 @@ export function XrogaIntelligenceSection() {
                   alt={card.alt}
                   width={card.width}
                   height={card.height}
-                  sizes={card.layout === 'wide'
-                    ? '(max-width: 760px) 92vw, (max-width: 1100px) 58vw, 620px'
-                    : '(max-width: 760px) 92vw, (max-width: 1100px) 44vw, 440px'}
+                  sizes="(max-width: 700px) 88vw, (max-width: 1050px) 44vw, 360px"
                 />
               </div>
 
               <div className="xv-intelligence-panel__copy">
-                <p><span>{card.id}</span>{card.kicker}</p>
+                <p>{card.kicker}</p>
                 <h3>{card.title}</h3>
                 <span>{card.copy}</span>
                 <ul aria-label={`${card.title} system stages`}>

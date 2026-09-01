@@ -45,7 +45,7 @@ test('every build target is listed', () => {
     assert.ok(STRIP.includes(target), `${target} is missing from the strip`);
   }
   assert.ok(/Build\. Launch\./.test(STRIP), 'the motto is missing');
-  assert.ok(/And<br \/>More/.test(STRIP), 'the end cap is missing');
+  assert.ok(/And More/.test(STRIP), 'the end cap is missing');
 });
 
 test('the rotator and its machinery are gone', () => {
@@ -81,13 +81,13 @@ test('no third-party logo is reproduced', () => {
   }
 });
 
-test('the deck is a self-contained blue-white product card', () => {
-  const at = CSS.indexOf('.xv-home-coding .xv-hc-strip {');
+test('the deck is a compact semantic product card', () => {
+  const at = CSS.lastIndexOf('.xv-home-coding .xv-hc-strip {');
   assert.notEqual(at, -1, 'the strip has no styles');
   const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
 
-  assert.match(body, /linear-gradient[\s\S]*rgba\(255, 255, 255/, 'the card needs its light inner surface');
-  assert.match(body, /--strip-edge:\s*#2b7cf4/, 'the card needs the Xroga blue accent');
+  assert.match(body, /var\(--hc-surface-solid\)/, 'the card must adapt to the active theme');
+  assert.match(body, /--strip-edge:\s*var\(--hc-blue\)/, 'the card needs the Xroga theme accent');
   assert.match(body, /grid-template-columns/, 'the capability deck needs an authored card layout');
 });
 
@@ -117,21 +117,17 @@ test('twenty languages ship with their own marks', () => {
   assert.ok(/<path d=\{lang\.path\}/.test(STRIP), 'each logo draws its own official path');
 });
 
-test('the language lane spans the full card', () => {
-  const at = CSS.indexOf('.xv-home-coding .xv-hc-strip {');
-  const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
-  assert.match(body, /display:\s*grid/, 'the deck should use a stable grid');
-
-  const laneAt = CSS.indexOf('.xv-home-coding .xv-hc-strip__langs {');
-  assert.notEqual(laneAt, -1, 'the language lane has no styles');
-  const lane = CSS.slice(CSS.indexOf('{', laneAt) + 1, CSS.indexOf('}', laneAt));
-  assert.match(lane, /grid-column:\s*1 \/ -1/, 'the lane takes a full row of its own');
+test('build targets and languages move continuously without duplicating announcements', () => {
+  assert.match(STRIP, /xv-hc-strip__target-track/);
+  assert.match(STRIP, /xv-hc-strip__language-track/);
+  assert.equal([...STRIP.matchAll(/aria-hidden="true"/g)].length >= 3, true);
+  assert.match(CSS, /xv-build-target-marquee 34s linear infinite/);
+  assert.match(CSS, /xv-build-language-marquee 42s linear infinite reverse/);
+  assert.match(CSS, /prefers-reduced-motion: reduce[\s\S]*xv-hc-strip__target-track[\s\S]*animation:\s*none/);
 });
 
-test('the narrow layout scrolls the list rather than crushing it', () => {
-  // Ten cells will not fit a phone. They keep their size and the row scrolls.
-  const at = CSS.indexOf('.xv-home-coding .xv-hc-strip__item {');
-  const body = CSS.slice(CSS.indexOf('{', at) + 1, CSS.indexOf('}', at));
-  assert.match(body, /min-width:\s*\d+px/, 'each cell needs a floor so labels do not wrap to nothing');
-  assert.match(CSS, /@media \(max-width: 640px\)[\s\S]*\.xv-home-coding \.xv-hc-strip__list\s*\{[\s\S]*overflow-x:\s*auto/, 'the list must scroll when it cannot fit');
+test('coding display type stays in the hero while later sections use the editorial font system', () => {
+  assert.match(CSS, /\.xv-home-coding > :not\(\.xv-hc-hero\)[\s\S]*--hc-font-pixel:\s*var\(--hc-font-sans\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-hc-headline__agentic\s*\{[\s\S]*font-family:\s*var\(--hc-font-pixel\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-hc-headline__ship\s*\{[\s\S]*font-family:\s*var\(--font-claude-serif\)/);
 });

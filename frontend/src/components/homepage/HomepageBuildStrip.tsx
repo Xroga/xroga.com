@@ -55,6 +55,32 @@ const ITEMS: ReadonlyArray<Item> = [
 ] as const;
 
 export function HomepageBuildStrip() {
+  const buildItems = ITEMS.map((item) => {
+    const Icon = item.icon;
+    return (
+      <li key={item.label} className="xv-hc-strip__item" data-warn={item.warn ? 'true' : undefined}>
+        <Icon className="xv-hc-strip__icon" aria-hidden="true" />
+        <span className="xv-hc-strip__label">
+          {item.label.split('\n').map((line, index) => (
+            <span key={line} className="xv-hc-strip__line">
+              {index > 0 ? ' ' : ''}{line}
+            </span>
+          ))}
+        </span>
+        <span className="xv-hc-strip__glow" aria-hidden="true" />
+      </li>
+    );
+  });
+
+  const languageItems = CODING_LANGUAGES.map((lang) => (
+    <li key={lang.title} className="xv-hc-strip__lang">
+      <svg viewBox="0 0 24 24" aria-hidden="true" style={{ fill: lang.color }}>
+        <path d={lang.path} />
+      </svg>
+      {lang.title}
+    </li>
+  ));
+
   return (
     <div className="xv-hc-strip" role="group" aria-label="What Xroga can build and the languages it writes">
       <div className="xv-hc-strip__intro">
@@ -66,43 +92,29 @@ export function HomepageBuildStrip() {
         Build. Launch.<br />{' '}Scale. <span>Repeat.</span>
       </p>
 
-      <ul className="xv-hc-strip__list">
-        {ITEMS.map((item) => {
-          const Icon = item.icon;
-          return (
-            <li key={item.label} className="xv-hc-strip__item" data-warn={item.warn ? 'true' : undefined}>
-              <Icon className="xv-hc-strip__icon" aria-hidden="true" />
-              {/* The label wraps at an authored point so the columns stay even; the
-                  newline is a line break, not two separate words to a screen reader. */}
-              <span className="xv-hc-strip__label">
-                {item.label.split('\n').map((line, i) => (
-                  <span key={line} className="xv-hc-strip__line">
-                    {i > 0 ? ' ' : ''}{line}
-                  </span>
-                ))}
-              </span>
-              <span className="xv-hc-strip__glow" aria-hidden="true" />
-            </li>
-          );
-        })}
-      </ul>
-
-      <Link href="/features" className="xv-hc-strip__more">
-        <span>And<br />More</span>
-        <ChevronRight aria-hidden="true" />
-      </Link>
+      <div className="xv-hc-strip__target-marquee">
+        <div className="xv-hc-strip__target-track">
+          <div className="xv-hc-strip__target-group">
+            <ul className="xv-hc-strip__list">{buildItems}</ul>
+            <Link href="/features" className="xv-hc-strip__more">
+              <span>And More</span>
+              <ChevronRight aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="xv-hc-strip__target-group" aria-hidden="true">
+            <ul className="xv-hc-strip__list">{buildItems}</ul>
+            <span className="xv-hc-strip__more"><span>And More</span><ChevronRight aria-hidden="true" /></span>
+          </div>
+        </div>
+      </div>
 
       <p className="xv-hc-strip__language-label">LANGUAGES XROGA WRITES</p>
-      <ul className="xv-hc-strip__langs" aria-label="Languages Xroga writes">
-        {CODING_LANGUAGES.map((lang) => (
-          <li key={lang.title} className="xv-hc-strip__lang">
-            <svg viewBox="0 0 24 24" aria-hidden="true" style={{ fill: lang.color }}>
-              <path d={lang.path} />
-            </svg>
-            {lang.title}
-          </li>
-        ))}
-      </ul>
+      <div className="xv-hc-strip__language-marquee" aria-label="Languages Xroga writes">
+        <div className="xv-hc-strip__language-track">
+          <ul className="xv-hc-strip__langs">{languageItems}</ul>
+          <ul className="xv-hc-strip__langs" aria-hidden="true">{languageItems}</ul>
+        </div>
+      </div>
     </div>
   );
 }
