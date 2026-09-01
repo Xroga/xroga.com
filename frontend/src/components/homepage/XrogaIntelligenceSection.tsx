@@ -1,18 +1,43 @@
-import {
-  Braces,
-  BrainCircuit,
-  Code2,
-  FileText,
-  Files,
-  Gauge,
-  Image as ImageIcon,
-  LayoutTemplate,
-  Network,
-  Sparkles,
-  Zap,
-  Wrench,
-} from 'lucide-react';
-import type { CSSProperties } from 'react';
+import Image from 'next/image';
+
+const intelligenceCards = [
+  {
+    id: '01',
+    layout: 'wide',
+    image: '/homepage/intelligence/xroga-unified-intelligence-20260901.png',
+    width: 1448,
+    height: 1086,
+    alt: 'Xroga unified intelligence connecting product understanding, planning, code, and release',
+    kicker: 'UNIFIED BUILD INTELLIGENCE',
+    title: 'One intelligence across the whole build.',
+    copy: 'Black Hole V∞ interprets the brief, selects a suitable reasoning depth, and coordinates planning, coding, verification, and handoff inside one Xroga workspace.',
+    signals: ['Understand', 'Plan', 'Build', 'Verify'],
+  },
+  {
+    id: '02',
+    layout: 'standard',
+    image: '/homepage/intelligence/xroga-visible-verification-20260901.png',
+    width: 1448,
+    height: 1086,
+    alt: 'Xroga verification system connecting code changes, checks, and approval evidence',
+    kicker: 'VISIBLE VERIFICATION',
+    title: 'Proof stays visible.',
+    copy: 'Review changed files, checks, blockers, and preview evidence before Xroga prepares a release.',
+    signals: ['Diffs', 'Checks', 'Evidence'],
+  },
+  {
+    id: '03',
+    layout: 'standard',
+    image: '/homepage/intelligence/xroga-authorized-execution-20260901.png',
+    width: 1192,
+    height: 1320,
+    alt: 'Xroga carrying an approved task through planning, code, and a verified release',
+    kicker: 'AUTHORIZED EXECUTION',
+    title: 'Execution follows your permission.',
+    copy: 'Xroga works through connected tools and accounts only when you authorize the consequential action.',
+    signals: ['Tools', 'Accounts', 'Approval'],
+  },
+] as const;
 
 const capabilities = [
   'Deep Reasoning',
@@ -26,80 +51,48 @@ const capabilities = [
 
 export function XrogaIntelligenceSection() {
   return (
-    <section className="xv-intelligence" aria-label="Black Hole Infinity intelligence capabilities">
-      <div className="xv-intelligence__inner">
-        <div className="xv-intelligence__grid">
-          <article className="xv-intelligence-card xv-intelligence-card--large xv-intelligence-card--rays">
-            <div className="xv-intelligence-card__copy">
-              <span>01 · UNIFIED INTELLIGENCE</span>
-              <h3>One Model. <em>Infinite Evolution.</em></h3>
-              <p>A single Xroga identity that adapts its depth to the work—without making you choose a vendor or model.</p>
-            </div>
-            <div className="xv-intelligence-core" aria-label="Understand, reason, and execute as one intelligence loop">
-              <i className="xv-intelligence-core__ring" aria-hidden="true" />
-              <span className="xv-intelligence-core__node xv-intelligence-core__node--one">Understand</span>
-              <span className="xv-intelligence-core__node xv-intelligence-core__node--two">Reason</span>
-              <span className="xv-intelligence-core__node xv-intelligence-core__node--three">Execute</span>
-              <b aria-hidden="true">∞</b>
-            </div>
-          </article>
+    <section className="xv-intelligence" aria-labelledby="xroga-intelligence-heading">
+      <div className="xv-intelligence-bento">
+        <header className="xv-intelligence-bento__header">
+          <p>BLACK HOLE V∞ · XROGA INTELLIGENCE</p>
+          <h2 id="xroga-intelligence-heading">
+            Intelligence that does more than <em>answer.</em>
+          </h2>
+          <span>Xroga connects reasoning to software work you can inspect, judge, and own.</span>
+        </header>
 
-          <article className="xv-intelligence-card xv-intelligence-card--large xv-intelligence-card--glass">
-            <div className="xv-intelligence-card__copy">
-              <span>02 · ADAPTIVE COMPUTE</span>
-              <h3>Adaptive Intelligence <em>Depth.</em></h3>
-              <p>Black Hole ∞ applies the right level of reasoning automatically, from a quick answer to a long build.</p>
-            </div>
-            <div className="xv-depth-rail" aria-label="Automatic intelligence depth routing from fast to deep">
-              <header><i aria-hidden="true" /><span>AUTO DEPTH ROUTER</span><small>LIVE</small></header>
-              <div><Zap aria-hidden="true" /><span><b>FAST</b><small>Direct tasks</small></span><i aria-hidden="true" /></div>
-              <div><Gauge aria-hidden="true" /><span><b>BALANCED</b><small>Everyday builds</small></span><i aria-hidden="true" /></div>
-              <div><BrainCircuit aria-hidden="true" /><span><b>DEEP</b><small>Complex systems</small></span><i aria-hidden="true" /></div>
-              <em aria-hidden="true" />
-            </div>
-          </article>
+        <div className="xv-intelligence-bento__grid">
+          {intelligenceCards.map((card) => (
+            <article
+              key={card.id}
+              className="xv-intelligence-panel"
+              data-layout={card.layout}
+            >
+              <div className="xv-intelligence-panel__visual">
+                <Image
+                  src={card.image}
+                  alt={card.alt}
+                  width={card.width}
+                  height={card.height}
+                  sizes={card.layout === 'wide'
+                    ? '(max-width: 760px) 92vw, (max-width: 1100px) 58vw, 620px'
+                    : '(max-width: 760px) 92vw, (max-width: 1100px) 44vw, 440px'}
+                />
+              </div>
 
-          <article className="xv-intelligence-card xv-intelligence-card--cyan">
-            <div className="xv-intelligence-card__icon"><Braces aria-hidden="true" /></div>
-            <span>03 · LONG CONTEXT</span>
-            <h3>1M+ Context Understanding</h3>
-            <p>Up to 1M+ context where supported, so large repositories and research can stay connected.</p>
-            <div className="xv-context-bars" aria-hidden="true">
-              {['DOCS', 'REPOS', 'RESEARCH', 'HISTORY'].map((label, index) => (
-                <div key={label}><span>{label}</span><i style={{ '--bar': `${92 - index * 9}%` } as CSSProperties} /></div>
-              ))}
-            </div>
-          </article>
-
-          <article className="xv-intelligence-card xv-intelligence-card--editorial">
-            <div className="xv-intelligence-card__icon"><LayoutTemplate aria-hidden="true" /></div>
-            <span>04 · NATIVE INPUTS</span>
-            <h3>Multimodal &amp; Code Native</h3>
-            <p>Understand the brief, inspect the interface, and work directly with the code that powers it.</p>
-            <div className="xv-mode-chips" aria-label="Supported input concepts">
-              <span><FileText aria-hidden="true" /> TEXT</span>
-              <span><ImageIcon aria-hidden="true" /> VISION</span>
-              <span><Code2 aria-hidden="true" /> CODE</span>
-              <span><LayoutTemplate aria-hidden="true" /> UI</span>
-            </div>
-          </article>
-
-          <article className="xv-intelligence-card xv-intelligence-card--horizon">
-            <div className="xv-intelligence-card__icon"><Network aria-hidden="true" /></div>
-            <span>05 · EXECUTION SYSTEM</span>
-            <h3>Agentic Execution</h3>
-            <p>Reasoning connects to real tools, files, workflows, and outputs—while permission remains visible.</p>
-            <div className="xv-agent-map" aria-label="Black Hole Infinity connected to tools, files, workflows and outputs">
-              <b>∞</b>
-              <span><Wrench aria-hidden="true" />TOOLS</span>
-              <span><Files aria-hidden="true" />FILES</span>
-              <span><Network aria-hidden="true" />WORKFLOWS</span>
-              <span><Sparkles aria-hidden="true" />OUTPUTS</span>
-            </div>
-          </article>
+              <div className="xv-intelligence-panel__copy">
+                <p><span>{card.id}</span>{card.kicker}</p>
+                <h3>{card.title}</h3>
+                <span>{card.copy}</span>
+                <ul aria-label={`${card.title} system stages`}>
+                  {card.signals.map((signal) => <li key={signal}>{signal}</li>)}
+                </ul>
+              </div>
+            </article>
+          ))}
         </div>
 
-        <ul className="xv-intelligence__capabilities" aria-label="Black Hole Infinity capabilities">
+        <ul className="xv-intelligence-bento__capabilities" aria-label="Black Hole Infinity capabilities">
           {capabilities.map((capability) => <li key={capability}>{capability}</li>)}
         </ul>
       </div>
