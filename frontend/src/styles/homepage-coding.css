@@ -8506,11 +8506,10 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 }
 
 /* ==========================================================================
-   Post-hero stack + audience story
+   Audience story
 
-   These are deliberately page-level compositions rather than another pair of
-   oversized cards. Only the moving tool lanes and the individual audience tabs
-   have rounded surfaces, keeping the story compact and easy to scan.
+   This appears near the end of the homepage as a compact role selector, after
+   the product has shown how the workspace and its intelligence actually work.
    ========================================================================== */
 .xv-home-coding .xv-home-proof {
   overflow: hidden;
@@ -8522,16 +8521,6 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   gap: clamp(3rem, 7vw, 6rem);
 }
 
-.xv-home-coding .xv-stack-strip {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 4rem);
-  min-width: 0;
-  color: var(--hc-ink);
-}
-
-.xv-home-coding .xv-stack-strip__heading > p,
 .xv-home-coding .xv-audience__copy > p {
   margin: 0;
   color: var(--hc-blue);
@@ -8540,109 +8529,6 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   font-weight: 780;
   letter-spacing: 0.12em;
 }
-
-.xv-home-coding .xv-stack-strip__heading h2 {
-  max-width: 520px;
-  margin: 0.58rem 0 0;
-  color: var(--hc-ink) !important;
-  font-family: var(--hc-font-sans);
-  font-size: clamp(1.9rem, 3.9vw, 3.45rem);
-  font-weight: 760;
-  line-height: 0.9;
-  letter-spacing: -0.067em;
-  text-wrap: balance;
-}
-
-.xv-home-coding .xv-stack-strip__heading h2 span {
-  color: var(--hc-muted);
-  font-weight: 580;
-}
-
-.xv-home-coding .xv-stack-strip__heading small {
-  display: block;
-  max-width: 465px;
-  margin-top: 0.9rem;
-  color: var(--hc-muted);
-  font-family: var(--hc-font-sans);
-  font-size: clamp(0.72rem, 1vw, 0.86rem);
-  font-weight: 520;
-  line-height: 1.5;
-}
-
-.xv-home-coding .xv-stack-strip__lanes {
-  display: grid;
-  min-width: 0;
-  gap: 0.7rem;
-}
-
-.xv-home-coding .xv-stack-strip__lane {
-  display: grid;
-  min-width: 0;
-  grid-template-columns: 7.8rem minmax(0, 1fr);
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.xv-home-coding .xv-stack-strip__lane > strong {
-  color: var(--hc-muted);
-  font-family: var(--hc-font-sans);
-  font-size: 0.5rem;
-  font-weight: 770;
-  letter-spacing: 0.1em;
-  text-align: right;
-}
-
-.xv-home-coding .xv-stack-strip__viewport {
-  min-width: 0;
-  overflow: hidden;
-  padding: 0.48rem;
-  border: 1px solid var(--hc-border);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--hc-surface-solid) 84%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 34%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-}
-
-.xv-home-coding .xv-stack-strip__track {
-  display: flex;
-  width: max-content;
-  gap: 0.42rem;
-  animation: xv-stack-marquee 30s linear infinite;
-  will-change: transform;
-}
-
-.xv-home-coding .xv-stack-strip__track--reverse { animation-duration: 44s; animation-direction: reverse; }
-
-.xv-home-coding .xv-stack-strip__items {
-  display: flex;
-  flex: none;
-  gap: 0.42rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.xv-home-coding .xv-stack-strip__chip {
-  display: inline-flex;
-  min-height: 42px;
-  flex: none;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.42rem 0.72rem;
-  border: 1px solid color-mix(in srgb, var(--hc-blue) 16%, var(--hc-border));
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--hc-surface-inset) 92%, transparent);
-  color: var(--hc-ink);
-  font-family: var(--hc-font-sans);
-  font-size: 0.66rem;
-  font-weight: 680;
-  white-space: nowrap;
-}
-
-.xv-home-coding .xv-stack-strip__chip > :first-child { flex: none; }
-.xv-home-coding .xv-stack-strip__chip--language svg { width: 18px; height: 18px; }
-
-@keyframes xv-stack-marquee { to { transform: translateX(calc(-50% - 0.21rem)); } }
 
 .xv-home-coding .xv-audience {
   display: grid;
@@ -8736,8 +8622,6 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 }
 
 @media (max-width: 900px) {
-  .xv-home-coding .xv-stack-strip { grid-template-columns: 1fr; gap: 1.35rem; }
-  .xv-home-coding .xv-stack-strip__heading h2 { max-width: 680px; }
   .xv-home-coding .xv-audience { grid-template-columns: 1fr; align-items: start; gap: 1.5rem; }
   .xv-home-coding .xv-audience__tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -8745,11 +8629,6 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 @media (max-width: 620px) {
   .xv-home-coding .xv-home-proof { padding: 1.9rem 0.72rem 2.8rem; }
   .xv-home-coding .xv-home-proof__inner { gap: 2.5rem; }
-  .xv-home-coding .xv-stack-strip__heading h2 { font-size: clamp(1.9rem, 10.6vw, 2.6rem); }
-  .xv-home-coding .xv-stack-strip__lane { grid-template-columns: 1fr; gap: 0.38rem; }
-  .xv-home-coding .xv-stack-strip__lane > strong { text-align: left; }
-  .xv-home-coding .xv-stack-strip__viewport { margin-right: -0.72rem; border-radius: 14px 0 0 14px; }
-  .xv-home-coding .xv-stack-strip__chip { min-height: 38px; padding: 0.36rem 0.6rem; }
   .xv-home-coding .xv-audience { padding-top: 2.5rem; }
   .xv-home-coding .xv-audience__copy h2 { font-size: clamp(2rem, 10.8vw, 2.7rem); }
   .xv-home-coding .xv-audience__panel { min-height: 182px; }
@@ -8759,7 +8638,6 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .xv-home-coding .xv-stack-strip__track { animation: none; }
   .xv-home-coding .xv-audience__panel { animation: none; }
   .xv-home-coding .xv-audience__tabs button,
   .xv-home-coding .xv-audience__panel a svg { transition: none; }

@@ -3,16 +3,29 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
+const PAGE = read('../app/page.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const AUDIENCE = read('../components/homepage/HomepageAudienceSlider.tsx');
 const COMPANION = read('../components/companion/CompanionSurfaces.tsx');
 const CSS = read('../styles/homepage-coding.css');
 const COMPANION_CSS = read('../styles/companion.css');
 
-test('the removed narrative walls and brief card no longer interrupt the homepage', () => {
+test('the audience selector is the last product section before FAQ', () => {
   assert.doesNotMatch(PROOF, /THE REAL GAP IS AFTER THE PROMPT|THE DIFFERENCE IS WHAT YOU KEEP/);
-  assert.doesNotMatch(PROOF, /xv-home-proof__brief-card|xv-home-proof__compact-row/);
+  assert.doesNotMatch(PROOF, /xv-home-proof__brief-card|xv-home-proof__compact-row|HomepageBuildStrip/);
   assert.match(PROOF, /<HomepageAudienceSlider \/>/);
+  const audience = PAGE.indexOf('<HomepageOwnershipProof />');
+  const faq = PAGE.indexOf('<HomepageFaqSection />');
+  assert.ok(audience !== -1 && faq !== -1 && audience < faq, 'audience must render before FAQ');
+  assert.doesNotMatch(PAGE.slice(audience, faq), /<Homepage(?:Showcase|ShipStack|EnterpriseProof|WorkspaceTour)/);
+});
+
+test('workspace follows the hero and intelligence follows the workspace', () => {
+  const heroEnd = PAGE.indexOf('</section>', PAGE.indexOf('className="xv-hc-hero"'));
+  const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
+  const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
+  assert.ok(heroEnd !== -1 && heroEnd < workspace && workspace < intelligence);
+  assert.doesNotMatch(PAGE.slice(heroEnd, workspace), /<Homepage[A-Z]/);
 });
 
 test('the audience selector covers founders, developers, non-coders, and teams', () => {
@@ -20,6 +33,7 @@ test('the audience selector covers founders, developers, non-coders, and teams',
     assert.ok(AUDIENCE.includes(label), `${label} is missing`);
   }
   assert.match(AUDIENCE, /Start fresh or bring an existing repository/);
+  assert.match(AUDIENCE, /useState\(1\)/, 'Developers should be the initial visible audience');
   assert.match(AUDIENCE, /role="tablist"/);
   assert.match(AUDIENCE, /aria-selected=\{active === index\}/);
   assert.match(AUDIENCE, /event\.key === 'ArrowRight'/);

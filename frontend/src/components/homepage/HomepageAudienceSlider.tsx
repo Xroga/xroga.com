@@ -34,7 +34,7 @@ const AUDIENCES = [
 const AUTO_ADVANCE_MS = 6_000;
 
 export function HomepageAudienceSlider() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(1);
   const [paused, setPaused] = useState(false);
   const item = AUDIENCES[active];
 

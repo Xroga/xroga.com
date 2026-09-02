@@ -162,17 +162,17 @@ export default function HomePage() {
 
       </section>
 
-      <HomepageOwnershipProof />
+      <HomepageWorkspaceTour loggedIn={loggedIn} />
 
       <XrogaIntelligenceSection />
-
-      <HomepageWorkspaceTour loggedIn={loggedIn} />
 
       <HomepageShowcase />
 
       <HomepageShipStack />
 
       <HomepageEnterpriseProof />
+
+      <HomepageOwnershipProof />
 
       <HomepageFaqSection />
 
