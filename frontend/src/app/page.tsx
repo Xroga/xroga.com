@@ -37,6 +37,7 @@ import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/ho
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
+import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 
 export default function HomePage() {
   const router = useRouter();
@@ -164,6 +165,8 @@ export default function HomePage() {
       </section>
 
       <HomepageWorkspaceTour loggedIn={loggedIn} />
+
+      <HomepageAllInOne />
 
       <XrogaIntelligenceSection />
 
