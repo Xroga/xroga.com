@@ -20,6 +20,8 @@ const connectSources = [
   'https://*.google-analytics.com',
   'https://*.analytics.google.com',
   'https://www.googletagmanager.com',
+  'https://*.clarity.ms',
+  'https://c.bing.com',
   configuredApiOrigin,
 ].filter(Boolean).join(' ');
 
@@ -27,6 +29,8 @@ const scriptSources = [
   "'self'",
   "'unsafe-inline'",
   'https://www.googletagmanager.com',
+  'https://www.clarity.ms',
+  'https://*.clarity.ms',
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 

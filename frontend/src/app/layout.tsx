@@ -9,6 +9,7 @@ import { SiteJsonLd } from '@/components/seo/SiteJsonLd';
 import { StorageBootstrap } from '@/components/bootstrap/StorageBootstrap';
 import { rootFontVariables } from '@/lib/fonts';
 import { GoogleTag } from '@/components/analytics/GoogleTag';
+import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity';
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteJsonLd />
         <RootProviders>{children}</RootProviders>
         <GoogleTag />
+        <MicrosoftClarity />
       </body>
     </html>
   );
