@@ -168,9 +168,10 @@ export default function HomePage() {
 
       <HomepageAllInOne />
 
-      <XrogaIntelligenceSection />
-
-      <HomepageStackStudio />
+      <div className="xv-system-combined" aria-label="Xroga intelligence and build system">
+        <XrogaIntelligenceSection />
+        <HomepageStackStudio />
+      </div>
 
       <HomepageShowcase />
 

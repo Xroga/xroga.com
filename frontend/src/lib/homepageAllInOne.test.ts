@@ -19,9 +19,9 @@ test('the all-in-one story appears directly after the workspace', () => {
   assert.doesNotMatch(PAGE.slice(workspaceEnd, allInOne), /<Homepage[A-Z]/);
 });
 
-test('six scroll cards cover real product work without copying the reference copy', () => {
-  assert.equal((COMPONENT.match(/kicker: '/g) || []).length, 6);
-  for (const phrase of ['PRODUCT INTERFACE', 'DATA & LOGIC', 'AUTHENTICATION', 'CONNECTED SERVICES', 'EXISTING REPOSITORIES', 'VERIFICATION & RELEASE']) {
+test('eight scroll cards cover real product work without copying the reference copy', () => {
+  assert.equal((COMPONENT.match(/kicker: '/g) || []).length, 8);
+  for (const phrase of ['REAL ESTATE PRODUCT', 'DATA & LOGIC', 'AUTHENTICATION', 'CONNECTED SERVICES', 'CONNECTED COMMERCE', 'UI QUALITY', 'EXISTING REPOSITORIES', 'VERIFICATION & RELEASE']) {
     assert.ok(COMPONENT.includes(phrase), `${phrase} is missing`);
   }
   assert.match(COMPONENT, /provider and permissions you authorize/);
@@ -30,14 +30,14 @@ test('six scroll cards cover real product work without copying the reference cop
   assert.doesNotMatch(COMPONENT, /Anything builds|No keys needed|instant dev and production|1GB\+ free/i);
 });
 
-test('the generated repository and release visuals are bundled locally', () => {
-  for (const image of [
-    '/homepage/all-in-one/xroga-existing-repo-review-20260902.png',
-    '/homepage/all-in-one/xroga-authorized-release-20260902.png',
-  ]) {
+test('the real product imagery is bundled locally and generated repository art is no longer used', () => {
+  for (const image of ['/showcase/real-estate-2026/harbourline-villa.jpg', '/showcase/real-estate-2026/harbourline-interior.webp']) {
     assert.ok(existsSync(new URL(`../../public${image}`, import.meta.url)), `${image} is missing`);
     assert.ok(COMPONENT.includes(image));
   }
+  assert.doesNotMatch(COMPONENT, /xroga-existing-repo-review|xroga-authorized-release/);
+  assert.match(COMPONENT, /CONNECTED EVENT DEMO/);
+  assert.match(COMPONENT, /Approval required/);
   assert.match(COMPONENT, /from 'next\/image'/);
 });
 

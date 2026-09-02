@@ -12,7 +12,15 @@ test('the compact stack studio follows intelligence without disturbing the appro
   const stack = PAGE.indexOf('<HomepageStackStudio />');
   const showcase = PAGE.indexOf('<HomepageShowcase />');
   assert.ok(intelligence !== -1 && intelligence < stack && stack < showcase);
+  assert.match(PAGE.slice(intelligence - 160, stack + 160), /xv-system-combined/);
   assert.match(COMPONENT, /grid-template-columns|xv-stack-studio__grid/);
+});
+
+test('intelligence and the brief-to-build studio share one animated system surface', () => {
+  assert.match(PAGE, /<div className="xv-system-combined"[\s\S]*<XrogaIntelligenceSection \/>[\s\S]*<HomepageStackStudio \/>[\s\S]*<\/div>/);
+  assert.match(CSS, /\.xv-home-coding \.xv-system-combined\s*\{/);
+  assert.match(CSS, /\.xv-home-coding \.xv-system-combined::before/);
+  assert.match(CSS, /@keyframes xv-system-halo/);
 });
 
 test('the original brief-to-product art is bundled locally and rendered through Next Image', () => {

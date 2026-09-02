@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, UserRound } from 'lucide-react';
+import { ArrowUpRight, Check, CircleDollarSign, Code2, Eye, FileCode2, LockKeyhole, MailCheck, Play, Search, ShieldCheck, UserRound } from 'lucide-react';
 import { siBrevo, siCloudflare, siGithub, siSupabase, siVercel } from 'simple-icons';
 
 const slideCopy = [
   {
-    kicker: 'PRODUCT INTERFACE',
-    title: 'Turn the brief into an interface people can use.',
-    copy: 'Xroga carries the product intent into responsive screens, states, and interactions instead of stopping at a design suggestion.',
+    kicker: 'REAL ESTATE PRODUCT',
+    title: 'Turn the brief into a product people can actually explore.',
+    copy: 'This working Xroga template includes property search, filters, favourites, detail views, enquiries, and real mortgage calculations.',
   },
   {
     kicker: 'DATA & LOGIC',
@@ -23,6 +23,16 @@ const slideCopy = [
     kicker: 'CONNECTED SERVICES',
     title: 'Use the stack the product already depends on.',
     copy: 'Connect source control, data, hosting, delivery, and business services without hiding which account or action is involved.',
+  },
+  {
+    kicker: 'CONNECTED COMMERCE',
+    title: 'Let product events trigger the next useful action.',
+    copy: 'Connect a Whop payment to customer access, a receipt email, and the product state around it—with the event trail still visible.',
+  },
+  {
+    kicker: 'UI QUALITY',
+    title: 'Yes to AI. No to generic output.',
+    copy: 'Xroga keeps layout, hierarchy, responsive states, and interaction quality in the build so one good idea does not need fifty corrective prompts.',
   },
   {
     kicker: 'EXISTING REPOSITORIES',
@@ -46,13 +56,55 @@ const integrationMarks = [
 
 function ProductVisual() {
   return (
-    <div className="xv-aio-product" aria-label="Example responsive product interface">
-      <aside><strong>Northstar</strong>{['Overview', 'Customers', 'Revenue', 'Reports'].map((item) => <span key={item}>{item}</span>)}</aside>
-      <main>
-        <header><div><small>MONTHLY REVENUE</small><b>$48,290</b></div><button type="button">Export report</button></header>
-        <div className="xv-aio-product__chart" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /></div>
-        <div className="xv-aio-product__stats"><span><b>1,842</b><small>Active customers</small></span><span><b>12.8%</b><small>Conversion</small></span><span><b>+24%</b><small>Growth</small></span></div>
-      </main>
+    <div className="xv-aio-estate" aria-label="Xroga Real Estate Platform template preview">
+      <Image src="/showcase/real-estate-2026/harbourline-villa.jpg" alt="Waterfront villa in the Xroga Real Estate Platform template" fill sizes="(max-width: 760px) 94vw, 900px" />
+      <div className="xv-aio-estate__shade" />
+      <nav><b>Harbourline</b><span>Properties</span><span>Collections</span><span>Areas</span><button type="button">Book a viewing</button></nav>
+      <div className="xv-aio-estate__copy"><small>WORKING XROGA TEMPLATE</small><h4>Find a home<br />worth arriving for.</h4><p>Search, compare, save, enquire, and calculate.</p></div>
+      <div className="xv-aio-estate__search"><span><small>Where</small>Dubai Marina</span><span><small>Property type</small>Any property</span><button type="button"><Search /> Search homes</button></div>
+    </div>
+  );
+}
+
+function CommerceVisual() {
+  return (
+    <div className="xv-aio-commerce" aria-label="Connected Whop payment and receipt email demonstration">
+      <div className="xv-aio-commerce__label">CONNECTED EVENT DEMO</div>
+      <div className="xv-aio-commerce__flow">
+        <article className="is-payment"><i>W</i><div><small>Whop · just now</small><b>Payment received</b><span>$49.00 · Pro workspace</span></div><Check /></article>
+        <span className="xv-aio-commerce__line" aria-hidden="true" />
+        <article className="is-access"><CircleDollarSign /><div><small>XROGA PRODUCT</small><b>Access updated</b><span>Plan and account state synchronized</span></div><Check /></article>
+        <span className="xv-aio-commerce__line" aria-hidden="true" />
+        <article className="is-email"><MailCheck /><div><small>BREVO EMAIL</small><b>Receipt delivered</b><span>Transactional message accepted</span></div><Check /></article>
+      </div>
+    </div>
+  );
+}
+
+function QualityVisual() {
+  return (
+    <div className="xv-aio-quality" aria-label="Xroga interface quality system">
+      <div className="xv-aio-quality__copy"><small>DESIGN AND CODE, TOGETHER</small><h4>Built to feel<br /><em>intentional.</em></h4><p>Responsive composition, useful states, clear hierarchy, and interaction details remain part of the implementation.</p><div><span>12-column grid</span><span>Mobile states</span><span>Accessible UI</span></div></div>
+      <div className="xv-aio-quality__preview"><Image src="/showcase/real-estate-2026/harbourline-interior.webp" alt="Interior property card from the Xroga Real Estate Platform" fill sizes="(max-width: 760px) 48vw, 420px" /><span><small>Marina Gate Skyhome</small><b>AED 4,850,000</b></span></div>
+    </div>
+  );
+}
+
+function WorkspaceVisual() {
+  return (
+    <div className="xv-aio-workspace" aria-label="Xroga workspace working inside an existing repository">
+      <aside><Image src="/brand/xroga-mark.png" width={28} height={28} alt="" />{['Workspace', 'Dashboard', 'Repositories', 'Integrations'].map((item) => <span className={item === 'Workspace' ? 'is-active' : ''} key={item}>{item}</span>)}<small>REPOSITORY</small><b>harbourline-platform</b></aside>
+      <main><header><span>xroga@swarm</span><code>~/workspace</code><b>Auto</b></header><div className="xv-aio-workspace__prompt"><small>EXISTING REPO · MAIN</small><h4>Describe it. Build it. <em>Ship it.</em></h4><div>Improve property search and preserve the current design system.<Play /></div></div><div className="xv-aio-workspace__changes"><span><FileCode2 /> 8 files changed</span><span><Code2 /> TypeScript</span><span><Check /> Checks ready</span></div></main>
+    </div>
+  );
+}
+
+function VerificationVisual() {
+  return (
+    <div className="xv-aio-verify" aria-label="Xroga visible verification and approval flow">
+      <aside><small>CHANGED FILES</small><b>search/filters.ts</b><span>PropertyCard.tsx</span><span>mortgage.ts</span><span>search.test.ts</span><footer>8 files <ins>+256</ins> <del>−64</del></footer></aside>
+      <div className="xv-aio-verify__diff"><header><FileCode2 /> filters.ts <span>Side-by-side</span></header><code><i>− return allProperties;</i><b>+ return applyPropertyFilters(</b><b>+ &nbsp;properties, activeFilters</b><b>+ );</b><span> const results = sortListings(filtered);</span></code></div>
+      <aside className="xv-aio-verify__checks"><header><ShieldCheck /><b>Proof stays visible</b></header>{['Type check passed', '128 tests passed', 'Preview validated'].map((item) => <span key={item}><Check />{item}</span>)}<div><Eye /> Approval required</div><button type="button">Review before release</button></aside>
     </div>
   );
 }
@@ -140,8 +192,10 @@ export function HomepageAllInOne() {
               {index === 1 && <DataVisual />}
               {index === 2 && <AuthVisual />}
               {index === 3 && <IntegrationsVisual />}
-              {index === 4 && <Image src="/homepage/all-in-one/xroga-existing-repo-review-20260902.png" alt="An existing repository with a visible code diff, passing checks, and review evidence" width={1536} height={1024} sizes="(max-width: 760px) 94vw, 900px" />}
-              {index === 5 && <Image src="/homepage/all-in-one/xroga-authorized-release-20260902.png" alt="A verified product preview waiting for approval before release" width={1536} height={1024} sizes="(max-width: 760px) 94vw, 900px" />}
+              {index === 4 && <CommerceVisual />}
+              {index === 5 && <QualityVisual />}
+              {index === 6 && <WorkspaceVisual />}
+              {index === 7 && <VerificationVisual />}
             </div>
             <footer>
               <div><p>{slide.kicker}</p><h3>{slide.title}</h3><span>{slide.copy}</span></div>
