@@ -1,6 +1,6 @@
 import Script from 'next/script';
 
-const GOOGLE_TAG_ID = 'G-7JFW03G2LH';
+const GOOGLE_TAG_ID = 'G-WJJQ8RPJHE';
 
 /** Load the site-wide Google tag once, after the page is interactive. */
 export function GoogleTag() {

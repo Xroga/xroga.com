@@ -7,7 +7,7 @@ const LAYOUT = read('../app/layout.tsx');
 const TAG = read('../components/analytics/GoogleTag.tsx');
 
 test('the requested Google tag is installed once at the root', () => {
-  assert.match(TAG, /G-7JFW03G2LH/);
+  assert.match(TAG, /G-WJJQ8RPJHE/);
   assert.match(TAG, /googletagmanager\.com\/gtag\/js\?id=/);
   assert.match(TAG, /window\.dataLayer = window\.dataLayer \|\| \[\]/);
   assert.match(TAG, /gtag\('config', '\$\{GOOGLE_TAG_ID\}'\)/);
