@@ -8,26 +8,26 @@ const AUDIENCES = [
   {
     label: 'Founders',
     eyebrow: 'FROM IDEA TO OWNED PRODUCT',
-    title: 'Move the product forward while you run the company.',
-    copy: 'Start fresh or bring an existing repository. Xroga turns the brief into implementation, checks, and release-ready work while consequential decisions stay with you.',
+    title: 'Turn the idea into owned software.',
+    copy: 'Brief, build, checks, and handoff stay connected.',
   },
   {
     label: 'Developers',
     eyebrow: 'MORE PROGRESS, LESS REPETITION',
-    title: 'Stay close to the code. Hand off the repetitive work.',
-    copy: 'Xroga can inspect the existing system, plan across files, implement changes, and show diffs and checks you can judge before anything ships.',
+    title: 'Keep the code. Hand off repetition.',
+    copy: 'Xroga works across files and returns diffs and checks.',
   },
   {
     label: 'Non-coders',
     eyebrow: 'PLAIN LANGUAGE TO WORKING SOFTWARE',
-    title: 'Describe the outcome, without pretending software is simple.',
-    copy: 'Xroga makes the technical work visible in one workspace, explains blockers plainly, and asks for permission when a connected account or release action matters.',
+    title: 'Describe the outcome. See the work.',
+    copy: 'Build steps and blockers stay visible in one workspace.',
   },
   {
     label: 'Product teams',
     eyebrow: 'ONE SHARED BUILD STORY',
-    title: 'Keep the brief, implementation, and proof together.',
-    copy: 'Product intent, repository work, previews, checks, and handoff live in one traceable flow so the team can review what changed and why.',
+    title: 'Keep brief, build, and proof together.',
+    copy: 'Review one traceable flow from intent to handoff.',
   },
 ] as const;
 
@@ -58,7 +58,7 @@ export function HomepageAudienceSlider() {
       <div className="xv-audience__copy">
         <p>BUILT FOR THE PERSON DOING THE WORK</p>
         <h2 id="xv-audience-title">
-          An AI build partner that works <span>while you work.</span>
+          A build partner that works <span>with you.</span>
         </h2>
         <div className="xv-audience__panel" role="tabpanel" id="audience-panel">
           <small>{item.eyebrow}</small>

@@ -99,9 +99,9 @@ export function HomepageStackStudio() {
       <header className="xv-stack-studio__heading">
         <p>FROM THE BRIEF TO THE BUILD</p>
         <h2 id="xroga-stack-studio-heading">
-          The difficult middle becomes <em>visible progress.</em>
+          The middle becomes <em>visible.</em>
         </h2>
-        <span>Start fresh or bring the product you already have. Xroga works inside the real repository, services, and languages your build needs.</span>
+        <span>Brief, build, and proof—connected.</span>
       </header>
 
       <div className="xv-stack-studio__grid">

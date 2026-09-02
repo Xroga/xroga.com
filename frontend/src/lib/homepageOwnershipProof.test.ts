@@ -32,7 +32,7 @@ test('the audience selector covers founders, developers, non-coders, and teams',
   for (const label of ['Founders', 'Developers', 'Non-coders', 'Product teams']) {
     assert.ok(AUDIENCE.includes(label), `${label} is missing`);
   }
-  assert.match(AUDIENCE, /Start fresh or bring an existing repository/);
+  assert.match(AUDIENCE, /Brief, build, checks, and handoff stay connected/);
   assert.match(AUDIENCE, /useState\(1\)/, 'Developers should be the initial visible audience');
   assert.match(AUDIENCE, /role="tablist"/);
   assert.match(AUDIENCE, /aria-selected=\{active === index\}/);
@@ -40,6 +40,13 @@ test('the audience selector covers founders, developers, non-coders, and teams',
   assert.match(AUDIENCE, /event\.key === 'ArrowLeft'/);
   assert.match(AUDIENCE, /AUTO_ADVANCE_MS = 6_000/);
   assert.match(AUDIENCE, /prefers-reduced-motion: reduce/);
+});
+
+test('audience and FAQ share one compact frame and the closing actions share another', () => {
+  assert.match(PAGE, /className="xv-endgame-frame"[\s\S]*<HomepageOwnershipProof \/>[\s\S]*<HomepageFaqSection \/>[\s\S]*<\/div>/);
+  assert.match(PAGE, /className="xv-closing-frame"[\s\S]*xv-hc-community[\s\S]*xv-hc-mid-cta[\s\S]*<\/section>/);
+  assert.match(CSS, /\.xv-home-coding \.xv-endgame-frame\s*\{/);
+  assert.match(CSS, /\.xv-home-coding \.xv-closing-frame\s*\{[\s\S]*grid-template-columns/);
 });
 
 test('the generated audience portrait strip is local and displayed in every tab', () => {

@@ -50,9 +50,9 @@ export function XrogaIntelligenceSection() {
         <header className="xv-intelligence-bento__header">
           <p>BLACK HOLE V∞ · XROGA INTELLIGENCE</p>
           <h2 id="xroga-intelligence-heading">
-            Intelligence that does more than <em>answer.</em>
+            Intelligence beyond <em>answers.</em>
           </h2>
-          <span>Xroga connects reasoning to software work you can inspect, judge, and own.</span>
+          <span>Reasoning you can inspect and own.</span>
         </header>
 
         <div className="xv-intelligence-bento__grid">

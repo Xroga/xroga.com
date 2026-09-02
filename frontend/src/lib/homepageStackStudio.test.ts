@@ -23,6 +23,15 @@ test('intelligence and the brief-to-build studio share one animated system surfa
   assert.match(CSS, /@keyframes xv-system-halo/);
 });
 
+test('the system handoff uses short headings and compact supporting copy', () => {
+  const intelligenceComponent = read('../components/homepage/XrogaIntelligenceSection.tsx');
+  assert.match(intelligenceComponent, /Intelligence beyond <em>answers\.<\/em>/);
+  assert.match(intelligenceComponent, /Reasoning you can inspect and own\./);
+  assert.match(COMPONENT, /The middle becomes <em>visible\.<\/em>/);
+  assert.match(COMPONENT, /Brief, build, and proof—connected\./);
+  assert.match(CSS, /xv-intelligence-bento__header h2 \{ font-size: clamp\(1\.8rem, 3\.25vw, 2\.85rem\)/);
+});
+
 test('desktop scroll turns intelligence and brief-to-build into a sticky card handoff', () => {
   assert.match(CSS, /@media \(min-width: 861px\) and \(prefers-reduced-motion: no-preference\)/);
   assert.match(CSS, /\.xv-home-coding \.xv-system-combined \.xv-intelligence \{ position: sticky; z-index: 1; top: 4\.8rem; \}/);

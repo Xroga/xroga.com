@@ -36,11 +36,11 @@ function ruleBody(selector: string): string {
 
 test('the community buttons name destinations, not instructions', () => {
   for (const [label, gone] of [
-    ['>\n              Community\n', 'Open Community'],
-    ['>\n              Feedback\n', 'Share Feedback'],
-    ['>\n              Docs\n', 'Read the docs'],
+    ['Community', 'Open Community'],
+    ['Feedback', 'Share Feedback'],
+    ['Docs', 'Read the docs'],
   ] as const) {
-    assert.ok(PAGE.includes(label), `the shortened label is missing: ${label.trim()}`);
+    assert.match(PAGE, new RegExp(`>\\s*${label}\\s*<`), `the shortened label is missing: ${label}`);
     assert.ok(!PAGE.includes(gone), `the old label "${gone}" is still on the page`);
   }
 });

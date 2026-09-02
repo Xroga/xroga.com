@@ -179,55 +179,53 @@ export default function HomePage() {
 
       <HomepageEnterpriseProof />
 
-      <HomepageOwnershipProof />
-
-      <HomepageFaqSection />
+      <div className="xv-endgame-frame" aria-label="Who Xroga is for and common questions">
+        <HomepageOwnershipProof />
+        <HomepageFaqSection />
+      </div>
 
       {/* Community and Feedback moved out of the hero so it stays focused on the
           product and its primary action. Both keep the same behaviour: Community links
           to the existing page, and Feedback opens the existing modal. */}
-      <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
-        <div className="xv-hc-community-scrim" aria-hidden="true" />
-        <div className="xv-hc-section-inner">
-          <p className="xv-hc-pixel-kicker">COMMUNITY &amp; SUPPORT</p>
-          <h2 className="xv-hc-section-title" id="community-support-heading">
-            Build alongside <em>other builders.</em>
-          </h2>
-          <p className="xv-hc-community-motto">Freedom to build. Fellows who understand the journey.</p>
-          <p className="xv-hc-section-copy">
-            Share what you shipped, report a bug, or request a feature. Feedback goes straight to the people building
-            Xroga.
-          </p>
-          <div className="xv-hc-community-tabs" role="group" aria-label="Community and support">
-            {/* The section heading and copy already say what these do, so the verbs
-                the labels used to carry ("Open", "Share", "Read the") were repeating
-                context the reader has just been given. */}
-            <Link href="/community" className="is-active">
-              Community
-            </Link>
-            <button type="button" onClick={() => setFeedbackOpen(true)}>
-              Feedback
-            </button>
-            <Link href="/docs">
-              Docs
-            </Link>
+      <section className="xv-closing-frame" aria-label="Community, support, and getting started">
+        <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
+          <div className="xv-hc-community-scrim" aria-hidden="true" />
+          <div className="xv-hc-section-inner">
+            <p className="xv-hc-pixel-kicker">COMMUNITY &amp; SUPPORT</p>
+            <h2 className="xv-hc-section-title" id="community-support-heading">
+              Build with <em>other builders.</em>
+            </h2>
+            <p className="xv-hc-community-motto">Ship, share, improve.</p>
+            <p className="xv-hc-section-copy">Share work, report bugs, and request features.</p>
+            <div className="xv-hc-community-tabs" role="group" aria-label="Community and support">
+              <Link href="/community" className="is-active">
+                Community
+              </Link>
+              <button type="button" onClick={() => setFeedbackOpen(true)}>
+                Feedback
+              </button>
+              <Link href="/docs">
+                Docs
+              </Link>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="xv-hc-mid-cta" aria-label="Start building">
+          <div className="xv-hc-mid-cta-inner">
+            <div className="xv-hc-mid-cta-copy">
+              <span>SOON</span>
+              <h2>Build what&apos;s<br /><em>yours.</em></h2>
+            </div>
+            <HomepageIntegrationOrbit loggedIn={loggedIn} />
+            <div className="xv-hc-mid-cta-actions">
+              <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
+            </div>
+          </div>
+        </section>
       </section>
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
-
-      <section className="xv-hc-mid-cta" aria-label="Start building">
-        <div className="xv-hc-mid-cta-inner">
-          <div className="xv-hc-mid-cta-copy">
-            <h2>Build what belongs<br /><em>to you.</em></h2>
-          </div>
-          <HomepageIntegrationOrbit loggedIn={loggedIn} />
-          <div className="xv-hc-mid-cta-actions">
-            <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
-          </div>
-        </div>
-      </section>
 
       <MarketingFooter />
     </div>

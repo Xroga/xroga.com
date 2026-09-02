@@ -8919,7 +8919,7 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 html:has(.xv-home-coding) { scroll-behavior: smooth; }
 
 @supports (animation-timeline: view()) {
-  .xv-home-coding :is(.xv-wt, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-home-proof, .xv-hc-faq, .xv-hc-community) {
+  .xv-home-coding :is(.xv-wt, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-endgame-frame, .xv-closing-frame) {
     animation: xv-home-scroll-reveal linear both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;
@@ -8956,11 +8956,96 @@ body.theme-gray .xv-home-coding .xv-stack-studio__pill i { background: color-mix
 
 @media (prefers-reduced-motion: reduce) {
   html:has(.xv-home-coding) { scroll-behavior: auto; }
-  .xv-home-coding :is(.xv-wt, .xv-system-combined, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-home-proof, .xv-hc-faq, .xv-hc-community),
+  .xv-home-coding :is(.xv-wt, .xv-system-combined, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-endgame-frame, .xv-closing-frame),
   .xv-home-coding .xv-system-combined::before,
   .xv-home-coding .xv-stack-studio__track { animation: none !important; opacity: 1; transform: none; filter: none; }
   .xv-home-coding .xv-stack-studio__art > img,
   .xv-home-coding .xv-stack-studio__copy a svg { transition: none; }
   .xv-home-coding .xv-system-combined .xv-intelligence,
   .xv-home-coding .xv-system-combined .xv-stack-studio { position: relative; top: auto; }
+}
+
+/* Compact copy and type for the two-card intelligence handoff. */
+.xv-home-coding .xv-intelligence { padding-top: clamp(1.8rem, 3.5vw, 2.75rem); }
+.xv-home-coding .xv-intelligence-bento__header { width: min(580px, 100%); margin-bottom: 1rem; }
+.xv-home-coding .xv-intelligence-bento__header h2 { font-size: clamp(1.8rem, 3.25vw, 2.85rem); line-height: 1; }
+.xv-home-coding .xv-intelligence-bento__header > span { margin-top: .48rem; font-size: clamp(.72rem, 1vw, .84rem); }
+.xv-home-coding .xv-stack-studio__heading { max-width: 650px; margin-bottom: 1rem; }
+.xv-home-coding .xv-stack-studio__heading h2 { font-size: clamp(1.9rem, 3.45vw, 3rem); line-height: .98; }
+.xv-home-coding .xv-system-combined .xv-stack-studio .xv-stack-studio__heading h2 { font-size: clamp(1.9rem, 3vw, 2.75rem); }
+.xv-home-coding .xv-stack-studio__heading > span { margin-top: .45rem; font-size: clamp(.7rem, 1vw, .82rem); line-height: 1.4; }
+
+/* Audience and FAQ are one compact review frame. */
+.xv-home-coding .xv-endgame-frame {
+  width: min(1240px, calc(100% - 1.5rem));
+  margin: clamp(2rem, 4vw, 3.5rem) auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--hc-blue) 17%, var(--hc-border));
+  border-radius: clamp(25px, 3.5vw, 40px);
+  background: radial-gradient(circle at 8% 0, color-mix(in srgb, var(--hc-blue) 8%, transparent), transparent 28%), color-mix(in srgb, var(--hc-surface-solid) 94%, #eef5ff);
+  box-shadow: 0 38px 90px -72px color-mix(in srgb, var(--hc-blue) 58%, var(--hc-ink));
+}
+.xv-home-coding .xv-endgame-frame .xv-home-proof { margin: 0; padding: clamp(1.2rem, 2.6vw, 2rem); }
+.xv-home-coding .xv-endgame-frame .xv-home-proof__inner { gap: 0; }
+.xv-home-coding .xv-endgame-frame .xv-audience { align-items: center; gap: clamp(1rem, 3vw, 3rem); padding: .35rem 0 1rem; border: 0; }
+.xv-home-coding .xv-endgame-frame .xv-audience__copy h2 { max-width: 650px; font-size: clamp(1.8rem, 3.35vw, 3rem); line-height: .96; }
+.xv-home-coding .xv-endgame-frame .xv-audience__panel { min-height: 112px; margin-top: 1rem; }
+.xv-home-coding .xv-endgame-frame .xv-audience__panel h3 { font-size: clamp(.95rem, 1.45vw, 1.18rem); }
+.xv-home-coding .xv-endgame-frame .xv-audience__panel p { font-size: .7rem; }
+.xv-home-coding .xv-endgame-frame .xv-audience__tabs { gap: .42rem; }
+.xv-home-coding .xv-endgame-frame .xv-audience__tabs button { min-height: 50px; grid-template-columns: 36px minmax(0, 1fr) 18px; border-radius: 14px; }
+.xv-home-coding .xv-endgame-frame .xv-audience__avatar { width: 36px; height: 36px; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq { width: 100%; margin: 0; padding: clamp(1.2rem, 2.6vw, 2rem); border-top: 1px solid var(--hc-border); }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-inner { grid-template-columns: minmax(14rem, .58fr) minmax(0, 1.42fr); gap: clamp(1.1rem, 3vw, 3rem); padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-heading .xv-hc-section-title { margin: .55rem 0; font-size: clamp(1.8rem, 3.45vw, 3rem); line-height: .92; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-heading > span { margin-top: .65rem; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: .3rem; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-q { min-height: 50px; padding: .7rem .8rem; }
+.xv-home-coding .xv-endgame-frame .xv-hc-faq-a { padding-bottom: .8rem; }
+
+/* Community, support and the conversion action share one closing frame. */
+.xv-home-coding .xv-closing-frame {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
+  width: min(1240px, calc(100% - 1.5rem));
+  margin: clamp(2rem, 5vw, 4rem) auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--hc-blue) 24%, var(--hc-border));
+  border-radius: clamp(26px, 3.5vw, 42px);
+  background: var(--hc-surface-solid);
+  box-shadow: 0 40px 100px -72px color-mix(in srgb, var(--hc-blue) 72%, var(--hc-ink));
+}
+.xv-home-coding .xv-closing-frame .xv-hc-community { width: 100%; min-height: 390px; margin: 0; padding: 1.25rem; border: 0; border-radius: 0; box-shadow: none; }
+.xv-home-coding .xv-closing-frame .xv-hc-community .xv-hc-section-inner { width: min(560px, 100%); padding: clamp(1rem, 2.5vw, 1.6rem); }
+.xv-home-coding .xv-closing-frame .xv-hc-community .xv-hc-section-title { font-size: clamp(2rem, 3.8vw, 3.45rem); line-height: .94; }
+.xv-home-coding .xv-closing-frame .xv-hc-community-motto { margin-top: .7rem; font-size: clamp(.9rem, 1.4vw, 1.08rem); }
+.xv-home-coding .xv-closing-frame .xv-hc-community .xv-hc-section-copy { margin-bottom: 1rem; font-size: .75rem; }
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta { padding: 0; }
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner { width: 100%; min-height: 390px; grid-template-columns: minmax(0, 1fr) 190px; column-gap: 1rem; padding: clamp(1.4rem, 3.5vw, 2.5rem); border: 0; border-radius: 0; box-shadow: none; }
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner > .xv-connection-dock { width: 190px; }
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner .xv-connection-dock__orbit { width: 190px; transform: scale(.7); }
+body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2 { margin-top: .7rem; font-size: clamp(2.8rem, 5vw, 4.8rem); }
+
+@media (max-width: 900px) {
+  .xv-home-coding .xv-endgame-frame .xv-hc-faq-inner { grid-template-columns: 1fr; }
+  .xv-home-coding .xv-endgame-frame .xv-hc-faq-heading { position: static; }
+  .xv-home-coding .xv-endgame-frame .xv-hc-faq-list { grid-template-columns: 1fr; }
+  .xv-home-coding .xv-closing-frame { grid-template-columns: 1fr; }
+  .xv-home-coding .xv-closing-frame .xv-hc-community,
+  .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner { min-height: 350px; }
+}
+
+@media (max-width: 620px) {
+  .xv-home-coding .xv-intelligence-bento__header h2 { font-size: clamp(1.75rem, 9vw, 2.35rem); }
+  .xv-home-coding .xv-stack-studio__heading h2 { font-size: clamp(1.8rem, 9.5vw, 2.5rem); }
+  .xv-home-coding .xv-endgame-frame,
+  .xv-home-coding .xv-closing-frame { width: calc(100% - .65rem); margin: 1.25rem auto; border-radius: 24px; }
+  .xv-home-coding .xv-endgame-frame .xv-home-proof,
+  .xv-home-coding .xv-endgame-frame .xv-hc-faq { padding: 1rem .72rem; }
+  .xv-home-coding .xv-endgame-frame .xv-audience { padding-top: .4rem; }
+  .xv-home-coding .xv-endgame-frame .xv-audience__copy h2,
+  .xv-home-coding .xv-endgame-frame .xv-hc-faq-heading .xv-hc-section-title { font-size: clamp(1.75rem, 9.5vw, 2.4rem); }
+  .xv-home-coding .xv-endgame-frame .xv-audience__panel { min-height: 128px; }
+  .xv-home-coding .xv-closing-frame .xv-hc-community { width: 100%; min-height: 360px; padding: .75rem; }
+  .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner { min-height: 330px; padding: 1.5rem 1rem; }
 }

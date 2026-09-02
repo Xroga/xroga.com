@@ -58,8 +58,8 @@ export function HomepageFaqSection() {
       <div className="xv-hc-faq-inner">
         <header className="xv-hc-faq-heading">
           <p className="xv-hc-pixel-kicker" id="faq-heading">FAQ · BEFORE YOU BUILD</p>
-          <h2 className="xv-hc-section-title">Straight answers.<br /><em>No hype.</em></h2>
-          <p className="xv-hc-section-copy">What Xroga is, what one prompt can do, and how billing works — before you start.</p>
+          <h2 className="xv-hc-section-title">Clear answers.<br /><em>No hype.</em></h2>
+          <p className="xv-hc-section-copy">Product, shipping, and billing—before you start.</p>
           <span>11 honest answers</span>
         </header>
 
