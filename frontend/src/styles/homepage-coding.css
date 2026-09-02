@@ -8700,7 +8700,16 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 
 @keyframes xv-stack-marquee { to { transform: translateX(calc(-50% - 0.325rem)); } }
 @keyframes xv-stack-marquee-reverse { from { transform: translateX(calc(-50% - 0.325rem)); } to { transform: translateX(0); } }
-@keyframes xv-home-scroll-reveal { from { opacity: 0.45; transform: translateY(34px); filter: blur(7px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+/* A reversible, scroll-scrubbed section transition. Entry rises out of a soft
+   blur; the long clear middle keeps reading comfortable; exit drifts upward.
+   Because view() drives the timeline, scrolling back up plays it backward rather
+   than firing a disconnected entrance animation. */
+@keyframes xv-home-scroll-reveal {
+  0% { opacity: 0.3; transform: translate3d(0, 74px, 0) scale(0.985); filter: blur(10px); }
+  24% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  74% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  100% { opacity: 0.72; transform: translate3d(0, -42px, 0) scale(0.992); filter: blur(2.5px); }
+}
 
 html:has(.xv-home-coding) { scroll-behavior: smooth; }
 
@@ -8708,7 +8717,9 @@ html:has(.xv-home-coding) { scroll-behavior: smooth; }
   .xv-home-coding :is(.xv-wt, .xv-intelligence, .xv-stack-studio, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-home-proof, .xv-hc-faq, .xv-hc-community) {
     animation: xv-home-scroll-reveal linear both;
     animation-timeline: view();
-    animation-range: entry 0% entry 78%;
+    animation-range: entry 0% exit 100%;
+    transform-origin: 50% 50%;
+    will-change: transform, opacity, filter;
   }
 }
 
