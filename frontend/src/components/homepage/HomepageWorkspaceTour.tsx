@@ -26,6 +26,7 @@ import {
 import { Logo } from '@/components/layout/Logo';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
+import { WorkspaceConnectionsStrip } from '@/components/terminal/WorkspaceConnectionsStrip';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
@@ -81,7 +82,7 @@ function WorkspaceTemplateRail() {
   );
 }
 
-function WorkspaceHome({ onContinueRecent }: { onContinueRecent: () => void }) {
+function WorkspaceHome({ onContinueRecent, connectionHref }: { onContinueRecent: () => void; connectionHref: string }) {
   return (
     <div className="xv-wt-real-home">
       <header className="xv-wt-real-greeting">
@@ -89,6 +90,8 @@ function WorkspaceHome({ onContinueRecent }: { onContinueRecent: () => void }) {
         <strong>Orbit Clean E2E</strong>
         <p>Describe it. Build it. <em>Ship it.</em></p>
       </header>
+
+      <WorkspaceConnectionsStrip href={connectionHref} />
 
       <div className="xv-wt-real-composer">
         <div className="xv-wt-real-companion" aria-hidden="true">
@@ -182,7 +185,7 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
             <span aria-label="Automatic workspace theme"><Palette aria-hidden="true" /> Auto</span>
             <button type="button" aria-label="Open real workspace" onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}><Maximize2 /></button>
           </div>
-          <main className="xv-wt-main"><WorkspaceHome onContinueRecent={() => router.push(loggedIn ? '/workspace' : '/auth/signup')} /></main>
+          <main className="xv-wt-main"><WorkspaceHome connectionHref={loggedIn ? '/dashboard/integrations' : '/auth/signup'} onContinueRecent={() => router.push(loggedIn ? '/workspace' : '/auth/signup')} /></main>
         </div>
       </div>
     </section>

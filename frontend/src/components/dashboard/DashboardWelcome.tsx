@@ -3,6 +3,7 @@
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
 import { claudeSerif, goga } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
+import { WorkspaceConnectionsStrip } from '@/components/terminal/WorkspaceConnectionsStrip';
 
 interface DashboardWelcomeProps {
   hidden?: boolean;
@@ -41,6 +42,8 @@ export function DashboardWelcome({ hidden, className, composer = false }: Dashbo
           <em className={claudeSerif.className}>Ship it.</em>
         </h1>
       </div>
+
+      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" /> : null}
 
       {!composer ? (
         <div className="relative mx-auto mt-4 max-w-3xl">

@@ -48,7 +48,8 @@ test('audience and FAQ share one compact frame and the closing actions share ano
   assert.match(CSS, /\.xv-home-coding \.xv-endgame-frame\s*\{/);
   assert.match(CSS, /\.xv-home-coding \.xv-closing-frame\s*\{[\s\S]*grid-template-columns/);
   assert.doesNotMatch(PAGE, /HomepageIntegrationOrbit/);
-  assert.match(PAGE, /<span>SOON<\/span>[\s\S]*Build what&apos;s/);
+  assert.doesNotMatch(PAGE, /<span>SOON<\/span>/);
+  assert.match(PAGE, /Build what&apos;s/);
   assert.match(PAGE, /Get started — it&apos;s free/);
 });
 

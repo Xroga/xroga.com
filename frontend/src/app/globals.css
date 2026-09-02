@@ -7515,7 +7515,7 @@ body.theme-gray .xv-rp-loader {
 .xv-dashboard-welcome--composer {
   width: min(100%, 896px);
   overflow: visible;
-  margin: 0 auto 0.42rem;
+  margin: 0 auto 0.9rem;
   padding: 0;
   background: transparent !important;
   border: 0 !important;
@@ -7532,23 +7532,25 @@ body.theme-gray .xv-rp-loader {
 }
 .xv-welcome-editorial {
   position: relative;
-  display: grid;
+  display: flex;
   width: fit-content;
-  justify-items: start;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.22em;
   margin: 0;
   color: var(--text-primary);
-  font-size: clamp(1.55rem, 3.6vw, 3.15rem);
+  font-size: clamp(1.12rem, 2.15vw, 1.82rem);
   font-weight: 780;
   line-height: 0.83;
   letter-spacing: -0.065em;
-  text-align: left;
+  text-align: center;
   text-transform: uppercase;
 }
 .xv-welcome-editorial > span,
 .xv-welcome-editorial > em { position: relative; display: block; }
 .xv-welcome-editorial__build {
   z-index: 1;
-  margin-block: 0.14em;
+  margin-block: 0;
   padding: 0;
   background: transparent;
   color: color-mix(in srgb, var(--accent) 72%, var(--text-primary));
@@ -7558,12 +7560,70 @@ body.theme-gray .xv-rp-loader {
   content: none;
 }
 .xv-welcome-editorial > em {
-  justify-self: end;
   padding-inline: 0.2em;
   color: var(--text-primary);
   font-style: italic;
   font-weight: 660;
   letter-spacing: -0.055em;
+}
+
+/* One compact, reusable readiness row for the homepage preview and the real empty
+   terminal. It describes available connections without pretending they are already
+   authorised; the integrations page remains the source of truth. */
+.xv-workspace-connections {
+  display: grid;
+  grid-template-columns: auto minmax(112px, auto) minmax(0, 1fr) auto;
+  width: min(100%, 760px);
+  min-height: 42px;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.58rem auto 0;
+  padding: 0.34rem 0.38rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--terminal-ui-raised, var(--card)) 92%, transparent);
+  box-shadow: 0 12px 30px -26px rgba(0, 0, 0, 0.58);
+}
+.xv-workspace-connections__mark {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--foreground);
+  color: var(--background);
+}
+.xv-workspace-connections__mark svg { width: 14px; height: 14px; }
+.xv-workspace-connections__copy { display: grid; min-width: 0; line-height: 1.05; }
+.xv-workspace-connections__copy strong { color: var(--foreground); font-size: 0.67rem; font-weight: 730; }
+.xv-workspace-connections__copy small { margin-top: 0.16rem; color: var(--muted); font-size: 0.48rem; white-space: nowrap; }
+.xv-workspace-connections__tabs { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 0.25rem; }
+.xv-workspace-connections__tabs > span {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 27px;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.28rem 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--terminal-ui-inset, var(--background)) 80%, transparent);
+  color: var(--foreground);
+}
+.xv-workspace-connections__tabs svg { width: 13px; height: 13px; flex: none; }
+.xv-workspace-connections__tabs b { overflow: hidden; font-size: 0.5rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.xv-workspace-connections__tabs i { padding: 0.15rem 0.22rem; border-radius: 4px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: 0.37rem; font-style: normal; font-weight: 760; letter-spacing: 0.05em; text-transform: uppercase; }
+.xv-workspace-connections > a { display: inline-flex; min-height: 28px; align-items: center; border-radius: 8px; padding: 0 0.58rem; background: var(--accent); color: white; font-size: 0.52rem; font-weight: 720; text-decoration: none; }
+.xv-workspace-connections > a:hover { filter: brightness(1.08); }
+
+@media (max-width: 720px) {
+  .xv-workspace-connections { grid-template-columns: auto minmax(0, 1fr) auto; width: calc(100% - 0.35rem); margin-top: 0.45rem; }
+  .xv-workspace-connections__copy small { display: none; }
+  .xv-workspace-connections__tabs { grid-column: 1 / -1; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .xv-workspace-connections__tabs::-webkit-scrollbar { display: none; }
+  .xv-workspace-connections__tabs { gap: 0.16rem; }
+  .xv-workspace-connections__tabs > span { flex: 0 0 auto; padding-inline: 0.3rem; }
+  .xv-workspace-connections__tabs i { display: none; }
 }
 .xv-welcome-editorial > em::after {
   content: '';
@@ -7647,7 +7707,7 @@ body.theme-gray .xv-rp-loader {
 @media (max-width: 639px) {
   .xv-dashboard-welcome--composer { width: calc(100% - 0.35rem); margin-bottom: 0.4rem; }
   .xv-dashboard-welcome--composer .xv-welcome-hero { align-items: center; text-align: center; }
-  .xv-welcome-editorial { font-size: clamp(1.45rem, 8.8vw, 2.15rem); }
+  .xv-welcome-editorial { flex-wrap: wrap; font-size: clamp(1rem, 5.4vw, 1.35rem); }
   .xv-welcome-composer-kicker { gap: 0.28rem; padding-left: 0.12rem; font-size: 0.62rem; }
   .xv-chatbar-stack > .xv-welcome-composer-kicker { top: -0.96rem; left: 0.1rem; padding: 0; }
   .xv-workspace-showcase-below-fold { margin-top: max(12rem, 34vh); }

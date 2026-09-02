@@ -206,7 +206,6 @@ export default function HomePage() {
         <section className="xv-hc-mid-cta" aria-label="Start building">
           <div className="xv-hc-mid-cta-inner">
             <div className="xv-hc-mid-cta-copy">
-              <span>SOON</span>
               <h2>Build what&apos;s<br /><em>yours.</em></h2>
             </div>
             <div className="xv-hc-mid-cta-actions">

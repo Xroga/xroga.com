@@ -11,6 +11,7 @@ const SIDEBAR = read('../components/layout/Sidebar.tsx');
 const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const REPO = read('../components/terminal/RepoContextBar.tsx');
 const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
+const CONNECTIONS = read('../components/terminal/WorkspaceConnectionsStrip.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer and exposes starters', () => {
@@ -66,6 +67,17 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(CSS, /\.xv-workspace-starter-ideas\s*\{[^}]*position:\s*sticky[^}]*top:\s*0[^}]*background:\s*transparent/);
   assert.match(CSS, /\.xv-workspace-idea-tab\s*\{[^}]*border:\s*0[^}]*background:\s*transparent/);
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.58rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
+});
+
+test('the real new terminal and homepage preview share a compact connection strip', () => {
+  assert.match(WELCOME, /composer \? <WorkspaceConnectionsStrip href="\/dashboard\/integrations" \/> : null/);
+  assert.match(CONNECTIONS, /GitHub/);
+  assert.match(CONNECTIONS, /Vercel/);
+  assert.match(CONNECTIONS, /Supabase/);
+  assert.match(CONNECTIONS, /AI key/);
+  assert.match(CONNECTIONS, /Optional · add only what this build needs/);
+  assert.match(CSS, /\.xv-workspace-connections\s*\{[^}]*grid-template-columns/);
+  assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*font-size:\s*clamp\(1\.12rem, 2\.15vw, 1\.82rem\)/);
 });
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {
@@ -150,7 +162,7 @@ test('the empty workspace uses an editorial action lockup above the canonical co
   assert.match(WELCOME, /Build it\./);
   assert.match(WELCOME, /Ship it\./);
   assert.match(WELCOME, /Turn an idea into something live\./);
-  assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*display:\s*grid[^}]*text-transform:\s*uppercase/);
+  assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*display:\s*flex[^}]*justify-content:\s*center[^}]*text-transform:\s*uppercase/);
   assert.match(CSS, /\.xv-welcome-editorial__build\s*\{[^}]*background:\s*transparent/);
   assert.match(CSS, /\.xv-welcome-editorial__build::before,[\s\S]*?\.xv-welcome-editorial__build::after\s*\{[^}]*content:\s*none/);
   assert.match(CSS, /\.xv-welcome-composer-kicker\s*\{[^}]*text-align:\s*left[^}]*text-transform:\s*none/);
