@@ -23,6 +23,14 @@ test('intelligence and the brief-to-build studio share one animated system surfa
   assert.match(CSS, /@keyframes xv-system-halo/);
 });
 
+test('desktop scroll turns intelligence and brief-to-build into a sticky card handoff', () => {
+  assert.match(CSS, /@media \(min-width: 861px\) and \(prefers-reduced-motion: no-preference\)/);
+  assert.match(CSS, /\.xv-home-coding \.xv-system-combined \.xv-intelligence \{ position: sticky; z-index: 1; top: 4\.8rem; \}/);
+  assert.match(CSS, /\.xv-home-coding \.xv-system-combined \.xv-stack-studio \{ position: sticky; z-index: 2; top: 5\.45rem; \}/);
+  assert.match(CSS, /@media \(max-width: 860px\)[\s\S]*\.xv-home-coding \.xv-system-combined \.xv-stack-studio \{ margin-top: 1rem; \}/);
+  assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*position: relative; top: auto/);
+});
+
 test('the original brief-to-product art is bundled locally and rendered through Next Image', () => {
   const image = '/homepage/stack/xroga-brief-to-product-20260902.png';
   assert.ok(existsSync(new URL(`../../public${image}`, import.meta.url)), `${image} is missing`);

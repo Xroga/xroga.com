@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Check, CircleDollarSign, Code2, Eye, FileCode2, LockKeyhole, MailCheck, Play, Search, ShieldCheck, UserRound } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Check, CircleDollarSign, Code2, Eye, FileCode2, Heart, Home, LockKeyhole, MailCheck, Play, Search, ShieldCheck, UserRound } from 'lucide-react';
 import { siBrevo, siCloudflare, siGithub, siSupabase, siVercel } from 'simple-icons';
 
 const slideCopy = [
@@ -59,9 +59,25 @@ function ProductVisual() {
     <div className="xv-aio-estate" aria-label="Xroga Real Estate Platform template preview">
       <Image src="/showcase/real-estate-2026/harbourline-villa.jpg" alt="Waterfront villa in the Xroga Real Estate Platform template" fill sizes="(max-width: 760px) 94vw, 900px" />
       <div className="xv-aio-estate__shade" />
-      <nav><b>Harbourline</b><span>Properties</span><span>Collections</span><span>Areas</span><button type="button">Book a viewing</button></nav>
-      <div className="xv-aio-estate__copy"><small>WORKING XROGA TEMPLATE</small><h4>Find a home<br />worth arriving for.</h4><p>Search, compare, save, enquire, and calculate.</p></div>
-      <div className="xv-aio-estate__search"><span><small>Where</small>Dubai Marina</span><span><small>Property type</small>Any property</span><button type="button"><Search /> Search homes</button></div>
+      <nav>
+        <b><i><Home aria-hidden="true" /></i>Harbourline</b>
+        <span>Properties</span><span>Collections</span><span>Areas</span><span>Mortgage</span>
+        <button className="is-saved" type="button"><Heart aria-hidden="true" /> Saved <small>0</small></button>
+        <button type="button">Book a viewing</button>
+      </nav>
+      <div className="xv-aio-estate__copy">
+        <small>CURATED HOMES ACROSS DUBAI&apos;S MOST COVETED ADDRESSES</small>
+        <h4>Find a home<br />worth arriving for.</h4>
+        <p>A quieter, smarter way to discover exceptional apartments, villas and investment opportunities—with verified details and private viewing requests in minutes.</p>
+      </div>
+      <div className="xv-aio-estate__search">
+        <span><small>WHERE</small>City, community or tower</span>
+        <span><small>PROPERTY TYPE</small>Any property</span>
+        <span><small>BUDGET</small>Any budget</span>
+        <button type="button"><Search aria-hidden="true" /> Search homes</button>
+      </div>
+      <div className="xv-aio-estate__proof" aria-label="Template demonstration statistics"><span><b>184</b><small>CURATED HOMES</small></span><span><b>27</b><small>PRIME COMMUNITIES</small></span><span><b>4.9/5</b><small>SAMPLE EXPERIENCE</small></span></div>
+      <div className="xv-aio-estate__explore"><i><ArrowDown aria-hidden="true" /></i> EXPLORE</div>
     </div>
   );
 }

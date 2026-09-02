@@ -41,6 +41,14 @@ test('the real product imagery is bundled locally and generated repository art i
   assert.match(COMPONENT, /from 'next\/image'/);
 });
 
+test('the first card carries the complete Harbourline hero instead of a reduced mockup', () => {
+  for (const phrase of ['Properties', 'Collections', 'Areas', 'Mortgage', 'Saved', 'Book a viewing', 'City, community or tower', 'Any property', 'Any budget', '184', '27', '4.9/5']) {
+    assert.ok(COMPONENT.includes(phrase), `${phrase} is missing from the product card`);
+  }
+  assert.match(SECTION_CSS, /\.xv-home-coding \.xv-aio-estate__proof/);
+  assert.match(SECTION_CSS, /\.xv-home-coding \.xv-aio-estate__explore/);
+});
+
 test('the cards form a reversible sticky scroll deck with a static reduced-motion layout', () => {
   assert.match(SECTION_CSS, /\.xv-home-coding \.xv-aio-card\s*\{[\s\S]*position:\s*sticky/);
   assert.match(SECTION_CSS, /\.xv-home-coding \.xv-aio__deck\s*\{[^}]*gap:\s*20svh/);

@@ -926,11 +926,12 @@ body.theme-gray .xv-home-coding .xv-intelligence-panel {
 /* Real product interface visual */
 .xv-home-coding .xv-aio-estate { position: relative; height: 100%; overflow: hidden; color: white; isolation: isolate; }
 .xv-home-coding .xv-aio-estate > img { z-index: -2; object-fit: cover; object-position: 50% 58%; }
-.xv-home-coding .xv-aio-estate__shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(4,15,26,.84), rgba(4,15,26,.24) 62%, rgba(4,15,26,.15)), linear-gradient(0deg, rgba(3,12,21,.5), transparent 55%); }
-.xv-home-coding .xv-aio-estate nav { display: flex; align-items: center; gap: 1.5rem; padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,.2); font-size: .62rem; }
-.xv-home-coding .xv-aio-estate nav b { margin-right: auto; font-size: .9rem; }.xv-home-coding .xv-aio-estate nav button { border: 1px solid rgba(255,255,255,.5); border-radius: 999px; padding: .55rem .8rem; background: white; color: #12212b; font-size: .55rem; font-weight: 750; }
-.xv-home-coding .xv-aio-estate__copy { position: absolute; left: clamp(1.5rem, 5vw, 4rem); top: 38%; transform: translateY(-50%); }.xv-home-coding .xv-aio-estate__copy small { font-size: .55rem; font-weight: 800; letter-spacing: .15em; }.xv-home-coding .xv-aio-estate__copy h4 { margin: .5rem 0; color: #fff; font-family: var(--hc-font-serif); font-size: clamp(2.2rem, 5vw, 4.8rem); font-weight: 500; line-height: .88; letter-spacing: -.055em; text-shadow: 0 2px 28px rgba(0,0,0,.42); }.xv-home-coding .xv-aio-estate__copy p { margin: 0; color: #fff; font-size: .72rem; text-shadow: 0 1px 12px rgba(0,0,0,.48); }
-.xv-home-coding .xv-aio-estate__search { position: absolute; right: 1.5rem; bottom: 1.35rem; left: 1.5rem; display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: .7rem; padding: .65rem; border: 1px solid rgba(255,255,255,.4); border-radius: 16px; background: rgba(255,255,255,.91); color: #15212a; box-shadow: 0 25px 50px -32px #000; backdrop-filter: blur(14px); }.xv-home-coding .xv-aio-estate__search > span { display: grid; padding: 0 .55rem; font-size: .64rem; }.xv-home-coding .xv-aio-estate__search small { color: #68737c; font-size: .47rem; }.xv-home-coding .xv-aio-estate__search button { display: flex; align-items: center; gap: .4rem; border: 0; border-radius: 10px; padding: .75rem .9rem; background: #10202b; color: #fff; font-size: .58rem; font-weight: 720; }.xv-home-coding .xv-aio-estate__search svg { width: 14px; }
+.xv-home-coding .xv-aio-estate__shade { position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgba(2,10,18,.78), rgba(2,10,18,.22) 72%), linear-gradient(0deg, rgba(2,9,16,.72), transparent 58%); }
+.xv-home-coding .xv-aio-estate nav { display: flex; align-items: center; gap: clamp(.65rem, 2vw, 1.45rem); padding: .85rem 1.35rem; border-bottom: 1px solid rgba(255,255,255,.18); background: rgba(5,17,27,.12); font-size: .56rem; backdrop-filter: blur(5px); }
+.xv-home-coding .xv-aio-estate nav b { display: flex; align-items: center; gap: .45rem; margin-right: auto; font-size: .84rem; }.xv-home-coding .xv-aio-estate nav b i { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #d9ff55; color: #122018; }.xv-home-coding .xv-aio-estate nav b svg { width: 15px; }.xv-home-coding .xv-aio-estate nav button { display: flex; align-items: center; gap: .3rem; border: 1px solid rgba(255,255,255,.42); border-radius: 999px; padding: .52rem .72rem; background: #d9ff55; color: #122018; font-size: .51rem; font-weight: 760; }.xv-home-coding .xv-aio-estate nav button.is-saved { background: rgba(255,255,255,.12); color: #fff; }.xv-home-coding .xv-aio-estate nav button svg { width: 12px; }.xv-home-coding .xv-aio-estate nav button small { display: grid; width: 14px; height: 14px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.18); font-size: .42rem; }
+.xv-home-coding .xv-aio-estate__copy { position: absolute; left: clamp(1.5rem, 5vw, 4rem); top: 42%; max-width: 620px; transform: translateY(-50%); }.xv-home-coding .xv-aio-estate__copy > small { font-size: .5rem; font-weight: 780; letter-spacing: .03em; }.xv-home-coding .xv-aio-estate__copy h4 { margin: .45rem 0 .6rem; color: #fff !important; font-family: var(--hc-font-sans); font-size: clamp(2.45rem, 5vw, 4.35rem); font-weight: 540; line-height: .9; letter-spacing: -.065em; text-shadow: 0 2px 28px rgba(0,0,0,.42); }.xv-home-coding .xv-aio-estate__copy p { max-width: 570px; margin: 0; color: #fff; font-size: clamp(.58rem, 1vw, .72rem); line-height: 1.55; text-shadow: 0 1px 12px rgba(0,0,0,.58); }
+.xv-home-coding .xv-aio-estate__search { position: absolute; right: clamp(1rem, 4vw, 3rem); bottom: 3.2rem; left: clamp(1rem, 4vw, 3rem); display: grid; grid-template-columns: 1.2fr .8fr .8fr auto; align-items: center; gap: 0; padding: .42rem; border: 1px solid rgba(255,255,255,.55); border-radius: 14px; background: rgba(255,255,255,.96); color: #15212a; box-shadow: 0 25px 50px -32px #000; backdrop-filter: blur(14px); }.xv-home-coding .xv-aio-estate__search > span { display: grid; min-height: 42px; align-content: center; gap: .2rem; padding: 0 .72rem; border-right: 1px solid #d9dee5; color: #1b2731; font-size: .55rem; }.xv-home-coding .xv-aio-estate__search small { color: #77818b; font-size: .42rem; font-weight: 800; letter-spacing: .1em; }.xv-home-coding .xv-aio-estate__search button { display: flex; min-height: 46px; align-items: center; gap: .4rem; border: 0; border-radius: 10px; padding: .75rem .9rem; background: #10191f; color: #fff; font-size: .55rem; font-weight: 720; }.xv-home-coding .xv-aio-estate__search svg { width: 14px; }
+.xv-home-coding .xv-aio-estate__proof { position: absolute; bottom: .65rem; left: clamp(1rem, 4vw, 3rem); display: flex; gap: clamp(1rem, 4vw, 2.8rem); }.xv-home-coding .xv-aio-estate__proof span { display: grid; gap: .08rem; }.xv-home-coding .xv-aio-estate__proof b { font-size: .8rem; }.xv-home-coding .xv-aio-estate__proof small { font-size: .4rem; font-weight: 780; letter-spacing: .08em; }.xv-home-coding .xv-aio-estate__explore { position: absolute; right: clamp(1rem, 4vw, 3rem); bottom: .62rem; display: flex; align-items: center; gap: .4rem; font-size: .42rem; font-weight: 800; letter-spacing: .1em; }.xv-home-coding .xv-aio-estate__explore i { display: grid; width: 24px; height: 24px; place-items: center; border: 1px solid rgba(255,255,255,.42); border-radius: 50%; }.xv-home-coding .xv-aio-estate__explore svg { width: 12px; }
 
 /* Legacy product visual retained for older snapshots. */
 .xv-home-coding .xv-aio-product { display: grid; grid-template-columns: 190px minmax(0, 1fr); height: 100%; background: linear-gradient(145deg, #eef4ff, #fff); color: #101828; }
@@ -1006,7 +1007,7 @@ body.theme-gray .xv-home-coding .xv-aio-card { box-shadow: 0 35px 85px -55px rgb
   .xv-home-coding .xv-aio-data { grid-template-columns: 1fr; }.xv-home-coding .xv-aio-data aside { display: none; }
   .xv-home-coding .xv-aio-auth { grid-template-columns: 1fr; padding: 0.8rem; }.xv-home-coding .xv-aio-auth form { display: none; }
   .xv-home-coding .xv-aio-integrations__core { width: 132px; min-height: 120px; }.xv-home-coding .xv-aio-integrations__core img { width: 44px; }.xv-home-coding .xv-aio-integration { width: 126px; padding: 0.45rem; }.xv-home-coding .xv-aio-integration i { width: 28px; height: 28px; }.xv-home-coding .xv-aio-integration small { display: none; }.xv-home-coding .xv-aio-integration--1 { left: 2%; }.xv-home-coding .xv-aio-integration--2 { right: 2%; }.xv-home-coding .xv-aio-integration--3 { left: 0; }.xv-home-coding .xv-aio-integration--4 { right: 0; }.xv-home-coding .xv-aio-integration--5 { left: 5%; }.xv-home-coding .xv-aio-integration--6 { right: 5%; }
-  .xv-home-coding .xv-aio-estate nav span { display: none; }.xv-home-coding .xv-aio-estate__search { right: .7rem; bottom: .7rem; left: .7rem; grid-template-columns: 1fr auto; }.xv-home-coding .xv-aio-estate__search > span:nth-child(2) { display: none; }.xv-home-coding .xv-aio-estate__copy { left: 1.2rem; top: 39%; }.xv-home-coding .xv-aio-estate__copy h4 { font-size: 2.5rem; }
+  .xv-home-coding .xv-aio-estate nav span,.xv-home-coding .xv-aio-estate nav button.is-saved { display: none; }.xv-home-coding .xv-aio-estate__search { right: .7rem; bottom: .7rem; left: .7rem; grid-template-columns: 1fr auto; }.xv-home-coding .xv-aio-estate__search > span:nth-child(2),.xv-home-coding .xv-aio-estate__search > span:nth-child(3) { display: none; }.xv-home-coding .xv-aio-estate__search > span { border-right: 0; }.xv-home-coding .xv-aio-estate__copy { right: 1.2rem; left: 1.2rem; top: 43%; }.xv-home-coding .xv-aio-estate__copy h4 { font-size: 2.35rem; }.xv-home-coding .xv-aio-estate__copy p { max-width: 92%; font-size: .56rem; }.xv-home-coding .xv-aio-estate__proof,.xv-home-coding .xv-aio-estate__explore { display: none; }
   .xv-home-coding .xv-aio-commerce__flow { grid-template-columns: 1fr; gap: .55rem; }.xv-home-coding .xv-aio-commerce__flow article { min-height: 94px; grid-template-columns: 38px 1fr; align-items: center; }.xv-home-coding .xv-aio-commerce__line { display: none; }.xv-home-coding .xv-aio-commerce__flow article:nth-of-type(2) { display: none; }
   .xv-home-coding .xv-aio-quality { grid-template-columns: 1fr 42%; padding: 1rem; }.xv-home-coding .xv-aio-quality__copy h4 { font-size: 2rem; }.xv-home-coding .xv-aio-quality__copy p { font-size: .58rem; }.xv-home-coding .xv-aio-quality__copy > div { display: none; }.xv-home-coding .xv-aio-quality__preview { min-height: 270px; }
   .xv-home-coding .xv-aio-workspace { grid-template-columns: 1fr; }.xv-home-coding .xv-aio-workspace > aside { display: none; }.xv-home-coding .xv-aio-workspace__changes span:nth-child(2) { display: none; }
@@ -1188,6 +1189,15 @@ body.theme-gray .xv-home-coding .xv-aio-card { box-shadow: 0 35px 85px -55px rgb
 .xv-home-coding h3,
 .xv-home-coding h4 {
   color: var(--hc-ink) !important;
+}
+
+/* The Harbourline preview is intentionally set over photography. Keep its
+   display copy legible even when the homepage theme forces dark headings. */
+.xv-home-coding .xv-aio-card .xv-aio-estate .xv-aio-estate__copy h4 {
+  color: #fff !important;
+}
+body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
+  color: #fff !important;
 }
 
 .xv-home-coding .xv-hc-headline-block {
@@ -8810,17 +8820,33 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   z-index: 2;
   width: min(1240px, calc(100% - 1.5rem));
   margin: 0 auto clamp(3rem, 7vw, 6rem);
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--hc-blue) 14%, var(--hc-border));
-  border-radius: clamp(28px, 4vw, 48px);
-  background: radial-gradient(circle at 16% 5%, color-mix(in srgb, var(--hc-blue) 10%, transparent), transparent 34%), color-mix(in srgb, var(--hc-surface-solid) 94%, #edf4ff);
-  box-shadow: 0 50px 110px -85px color-mix(in srgb, var(--hc-blue) 58%, var(--hc-ink));
+  padding-bottom: clamp(4rem, 12svh, 8rem);
+  overflow: visible;
   isolation: isolate;
 }
 .xv-home-coding .xv-system-combined::before { content: ''; position: absolute; z-index: -1; width: 360px; height: 360px; border-radius: 50%; background: color-mix(in srgb, var(--hc-blue) 10%, transparent); filter: blur(80px); animation: xv-system-halo 12s ease-in-out infinite alternate; pointer-events: none; }
-.xv-home-coding .xv-system-combined .xv-intelligence { width: 100%; padding-bottom: clamp(2rem, 5vw, 4rem); }
-.xv-home-coding .xv-system-combined .xv-stack-studio { width: calc(100% - clamp(1rem, 4vw, 3rem)); padding-top: clamp(3rem, 6vw, 5rem); border-top: 1px solid color-mix(in srgb, var(--hc-blue) 13%, var(--hc-border)); }
+.xv-home-coding .xv-system-combined .xv-intelligence,
+.xv-home-coding .xv-system-combined .xv-stack-studio { overflow: hidden; border: 1px solid color-mix(in srgb, var(--hc-blue) 16%, var(--hc-border)); border-radius: clamp(26px, 4vw, 44px); background: radial-gradient(circle at 16% 5%, color-mix(in srgb, var(--hc-blue) 10%, transparent), transparent 34%), color-mix(in srgb, var(--hc-surface-solid) 95%, #edf4ff); box-shadow: 0 42px 95px -72px color-mix(in srgb, var(--hc-blue) 58%, var(--hc-ink)); }
+.xv-home-coding .xv-system-combined .xv-intelligence { width: 100%; margin: 0 auto; padding-bottom: clamp(2rem, 5vw, 4rem); }
+.xv-home-coding .xv-system-combined .xv-stack-studio { width: calc(100% - clamp(.5rem, 2vw, 1.4rem)); margin-top: clamp(5rem, 18svh, 11rem); padding: clamp(2.25rem, 5vw, 4.5rem) clamp(.5rem, 2vw, 1.2rem) clamp(2.5rem, 6vw, 5rem); }
 @keyframes xv-system-halo { from { transform: translate3d(-20%, -15%, 0); } to { transform: translate3d(260%, 105%, 0); } }
+
+@media (min-width: 861px) and (prefers-reduced-motion: no-preference) {
+  .xv-home-coding .xv-system-combined .xv-intelligence { position: sticky; z-index: 1; top: 4.8rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio { position: sticky; z-index: 2; top: 5.45rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio { padding-top: 1.6rem; padding-bottom: 1.8rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__heading { margin-bottom: 1.15rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__heading h2 { font-size: clamp(2.35rem, 4.4vw, 4rem); }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__heading > span { margin-top: .55rem; line-height: 1.45; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__art,
+  .xv-home-coding .xv-system-combined .xv-stack-studio__art > img { height: 245px; min-height: 245px; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__copy { padding: 1.15rem 1.35rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__copy h3,
+  .xv-home-coding .xv-system-combined .xv-stack-studio__stack-visual h3 { font-size: clamp(1.45rem, 2.35vw, 2rem); }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__stack-visual { min-height: 0; padding: 1.35rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__rails { padding-top: .85rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio__ready { margin-top: .8rem; padding-top: .65rem; }
+}
 
 /* Compact editorial stack: an original brief-to-product visual beside the tools
    that can participate in the real build. The rails duplicate one semantic group
@@ -8893,7 +8919,7 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 html:has(.xv-home-coding) { scroll-behavior: smooth; }
 
 @supports (animation-timeline: view()) {
-  .xv-home-coding :is(.xv-wt, .xv-system-combined, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-home-proof, .xv-hc-faq, .xv-hc-community) {
+  .xv-home-coding :is(.xv-wt, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-home-proof, .xv-hc-faq, .xv-hc-community) {
     animation: xv-home-scroll-reveal linear both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;
@@ -8906,6 +8932,8 @@ body.theme-black .xv-home-coding .xv-stack-studio__pill i,
 body.theme-gray .xv-home-coding .xv-stack-studio__pill i { background: color-mix(in srgb, white 92%, var(--hc-surface-solid)); }
 
 @media (max-width: 860px) {
+  .xv-home-coding .xv-system-combined { padding-bottom: 2rem; }
+  .xv-home-coding .xv-system-combined .xv-stack-studio { margin-top: 1rem; }
   .xv-home-coding .xv-stack-studio__grid { grid-template-columns: 1fr; }
   .xv-home-coding .xv-stack-studio__art { min-height: 280px; }
   .xv-home-coding .xv-stack-studio__art > img { min-height: 280px; }
@@ -8913,7 +8941,7 @@ body.theme-gray .xv-home-coding .xv-stack-studio__pill i { background: color-mix
 }
 
 @media (max-width: 620px) {
-  .xv-home-coding .xv-system-combined { width: calc(100% - .65rem); border-radius: 27px; }
+  .xv-home-coding .xv-system-combined { width: calc(100% - .65rem); }
   .xv-home-coding .xv-system-combined .xv-stack-studio { width: calc(100% - .5rem); }
   .xv-home-coding .xv-stack-studio { width: calc(100% - 1.15rem); padding: 2.5rem 0 3.8rem; }
   .xv-home-coding .xv-stack-studio__heading { padding: 0 0.35rem; }
@@ -8933,4 +8961,6 @@ body.theme-gray .xv-home-coding .xv-stack-studio__pill i { background: color-mix
   .xv-home-coding .xv-stack-studio__track { animation: none !important; opacity: 1; transform: none; filter: none; }
   .xv-home-coding .xv-stack-studio__art > img,
   .xv-home-coding .xv-stack-studio__copy a svg { transition: none; }
+  .xv-home-coding .xv-system-combined .xv-intelligence,
+  .xv-home-coding .xv-system-combined .xv-stack-studio { position: relative; top: auto; }
 }
