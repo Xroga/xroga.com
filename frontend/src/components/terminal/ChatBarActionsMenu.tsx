@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Blocks, Bug, Check, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, Blocks, Bug, Check, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, TerminalSquare, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
 import {
@@ -30,6 +30,7 @@ export function ChatBarActionsMenu({
   onAddFiles,
   onOpenIntegrations,
   connectorsNeedingAttention = 0,
+  recentTerminal,
   disabled,
   className,
 }: {
@@ -44,6 +45,12 @@ export function ChatBarActionsMenu({
   onOpenIntegrations?: () => void;
   /** Drives the "n needs reconnection" note. 0 means everything is connected. */
   connectorsNeedingAttention?: number;
+  /** Optional recent work shown as a compact continuation card above the tools. */
+  recentTerminal?: {
+    title: string;
+    detail: string;
+    onContinue: () => void;
+  };
   disabled?: boolean;
   className?: string;
 }) {
@@ -92,17 +99,17 @@ export function ChatBarActionsMenu({
           right: 'auto',
           bottom: Math.max(8, window.innerHeight - rect.top - 1),
           width: rect.width,
-          maxHeight: Math.min(panel === 'menu' ? 248 : 304, Math.max(150, rect.top - 8)),
+          maxHeight: Math.min(panel === 'menu' ? 264 : 304, Math.max(150, rect.top - 8)),
         });
         return;
       }
-      const width = Math.min(rect.width, 520);
+      const width = Math.min(rect.width, 440);
       setMenuStyle({
         position: 'fixed',
         left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
         bottom: Math.max(8, window.innerHeight - rect.top - 1),
         width,
-        maxHeight: Math.min(panel === 'menu' ? 246 : 340, Math.max(176, rect.top - 12)),
+        maxHeight: Math.min(panel === 'menu' ? 264 : 340, Math.max(176, rect.top - 12)),
       });
     };
     sync();
@@ -154,7 +161,7 @@ export function ChatBarActionsMenu({
             marked the open state came from the plus reading as a close cross when
             rotated; this glyph is not a cross, so the open state is carried by
             `data-open` in the stylesheet instead. */}
-        <AnimatedIcon icon={CirclePlayIcon} size={14} />
+        <AnimatedIcon icon={CirclePlayIcon} size={12} />
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 
@@ -166,6 +173,25 @@ export function ChatBarActionsMenu({
                Skills and Rules panels below stay single-column, because their rows
                are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">
+              {recentTerminal && (
+                <button
+                  type="button"
+                  className="xv-cba-item xv-cba-recent xv-cba-item--wide"
+                  onClick={() => {
+                    recentTerminal.onContinue();
+                    setOpen(false);
+                  }}
+                >
+                  <span className="xv-cba-recent__icon"><TerminalSquare aria-hidden="true" /></span>
+                  <span className="xv-cba-item__text">
+                    <small>CONTINUE WHERE YOU STOPPED</small>
+                    <b>{recentTerminal.title}</b>
+                    <i>{recentTerminal.detail}</i>
+                  </span>
+                  <ArrowUpRight className="xv-cba-recent__arrow" aria-hidden="true" />
+                </button>
+              )}
+
               {/* Attachments and Integrations come first: they are the two immediate
                   resource actions people expect behind a composer's trigger. */}
               {onAddFiles && (

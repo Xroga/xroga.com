@@ -58,6 +58,9 @@ test('the homepage workspace mirrors the real greeting, composer, ideas, and tem
   assert.match(TOUR, /thumbnailFor\(template, 'desktop'\)/);
   assert.match(TOUR, /href=\{`\/showcase\/\$\{template\.slug\}\/preview`\}/);
   assert.match(CSS, /xv-wt-real-template-row\s*\{[^}]*repeat\(4/);
+  assert.match(TOUR, /CONTINUE WHERE YOU STOPPED|recentTerminal/);
+  assert.match(TOUR, /Orbit Clean E2E · just now/);
+  assert.match(CSS, /xv-wt-real-greeting > p\s*\{[^}]*clamp\(\.82rem,1\.3vw,1\.12rem\)/);
 });
 
 test('the workspace tour keeps the real rail and a usable template row on narrow screens', () => {

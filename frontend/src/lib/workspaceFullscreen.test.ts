@@ -110,8 +110,8 @@ test('the plus menu is a compact two-column palette rather than a composer-wide 
 
   const media = code.indexOf('@media (min-width: 640px)', at);
   const block = code.slice(media, media + 360);
-  assert.match(block, /width:\s*min\(520px, 100%\)/, 'the desktop panel should remain bounded');
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/, 'runtime width should match the CSS cap');
+  assert.match(block, /width:\s*min\(440px, 100%\)/, 'the desktop panel should remain bounded');
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 440\)/, 'runtime width should match the CSS cap');
   assert.ok(MENU.indexOf('<b>Integrations</b>') < MENU.indexOf('<b>Slash commands</b>'), 'Integrations should sit beside file upload');
 
   // Two columns stay consistent at every size and keep the menu easy to scan.

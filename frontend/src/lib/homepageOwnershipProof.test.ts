@@ -47,6 +47,9 @@ test('audience and FAQ share one compact frame and the closing actions share ano
   assert.match(PAGE, /className="xv-closing-frame"[\s\S]*xv-hc-community[\s\S]*xv-hc-mid-cta[\s\S]*<\/section>/);
   assert.match(CSS, /\.xv-home-coding \.xv-endgame-frame\s*\{/);
   assert.match(CSS, /\.xv-home-coding \.xv-closing-frame\s*\{[\s\S]*grid-template-columns/);
+  assert.doesNotMatch(PAGE, /HomepageIntegrationOrbit/);
+  assert.match(PAGE, /<span>SOON<\/span>[\s\S]*Build what&apos;s/);
+  assert.match(PAGE, /Get started — it&apos;s free/);
 });
 
 test('the generated audience portrait strip is local and displayed in every tab', () => {

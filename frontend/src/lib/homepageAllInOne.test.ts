@@ -55,6 +55,16 @@ test('the cards form a reversible sticky scroll deck with a static reduced-motio
   assert.match(SECTION_CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.xv-home-coding \.xv-aio-card \{ position: relative; top: auto; \}/);
 });
 
+test('the section opens with concise copy and a continuously moving live-ink headline', () => {
+  assert.match(COMPONENT, /The whole build\. <em>Connected\.<\/em>/);
+  assert.match(COMPONENT, /Brief to release, in one flow\./);
+  assert.doesNotMatch(COMPONENT, /interface, data, accounts, code, checks/);
+  assert.match(SECTION_CSS, /@keyframes xv-aio-live-ink/);
+  assert.match(SECTION_CSS, /background-clip:\s*text/);
+  assert.match(SECTION_CSS, /animation:\s*xv-aio-live-ink 6s linear infinite/);
+  assert.match(SECTION_CSS, /prefers-reduced-motion: reduce[\s\S]*animation:\s*none/);
+});
+
 test('the new section stays within the homepage three-family system', () => {
   assert.doesNotMatch(SECTION_CSS, /font-family:\s*var\(--(?:hc-font-mono|hc-font-coding|font-coding|font-xv-mono)/);
   assert.doesNotMatch(SECTION_CSS, /font-family:\s*var\(--hc-font-pixel/);

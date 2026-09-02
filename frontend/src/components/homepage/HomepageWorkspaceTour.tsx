@@ -81,7 +81,7 @@ function WorkspaceTemplateRail() {
   );
 }
 
-function WorkspaceHome() {
+function WorkspaceHome({ onContinueRecent }: { onContinueRecent: () => void }) {
   return (
     <div className="xv-wt-real-home">
       <header className="xv-wt-real-greeting">
@@ -99,6 +99,11 @@ function WorkspaceHome() {
           listenForAsk={false}
           placeholders={['Describe what you want to build or change…']}
           fallbackPrompt="Build my product in the Xroga workspace"
+          recentTerminal={{
+            title: '#1 terminal',
+            detail: 'Orbit Clean E2E · just now',
+            onContinue: onContinueRecent,
+          }}
         />
         <div className="xv-wt-real-repo" aria-label="Selected repository">
           <b>Update current</b><span>New product</span><strong>Xroga/xroga-e2e-orbit-coffee-20260820-164425</strong><code>main⌄</code>
@@ -177,7 +182,7 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
             <span aria-label="Automatic workspace theme"><Palette aria-hidden="true" /> Auto</span>
             <button type="button" aria-label="Open real workspace" onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}><Maximize2 /></button>
           </div>
-          <main className="xv-wt-main"><WorkspaceHome /></main>
+          <main className="xv-wt-main"><WorkspaceHome onContinueRecent={() => router.push(loggedIn ? '/workspace' : '/auth/signup')} /></main>
         </div>
       </div>
     </section>

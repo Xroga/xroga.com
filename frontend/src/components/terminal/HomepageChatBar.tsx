@@ -81,6 +81,7 @@ export function HomepageChatBar({
   suggestions,
   className,
   listenForAsk = true,
+  recentTerminal,
 }: {
   placeholders?: readonly string[];
   ariaLabel?: string;
@@ -96,6 +97,11 @@ export function HomepageChatBar({
    * furthest down the page.
    */
   listenForAsk?: boolean;
+  recentTerminal?: {
+    title: string;
+    detail: string;
+    onContinue: () => void;
+  };
 } = {}) {
   const [prompt, setPrompt] = useState('');
   const [focused, setFocused] = useState(false);
@@ -226,6 +232,7 @@ export function HomepageChatBar({
             <ChatBarActionsMenu
               className="shrink-0"
               disabled={sending}
+              recentTerminal={recentTerminal}
               onInsert={(text) => {
                 setPrompt((current) => (current.trim() ? `${text}${current}` : text));
                 triggerComposerSignal(1200);

@@ -20,20 +20,12 @@ import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
 import {
   ArrowRight,
-  Bug,
-  Gauge,
-  Globe2,
-  LayoutTemplate,
   LogIn,
-  MonitorCog,
-  PanelsTopLeft,
-  Puzzle,
-  Smartphone,
 } from 'lucide-react';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { PRODUCT_ONE_LINER } from '@/lib/seo';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
-import { HomepageIntegrationOrbit, HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
+import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
@@ -217,7 +209,6 @@ export default function HomePage() {
               <span>SOON</span>
               <h2>Build what&apos;s<br /><em>yours.</em></h2>
             </div>
-            <HomepageIntegrationOrbit loggedIn={loggedIn} />
             <div className="xv-hc-mid-cta-actions">
               <button type="button" onClick={() => router.push(primaryHref)}>Get started — it&apos;s free <ArrowRight aria-hidden="true" /></button>
             </div>
