@@ -17,12 +17,16 @@ const connectSources = [
   'wss://*.supabase.co',
   'https://api.github.com',
   'https://api.vercel.com',
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
+  'https://www.googletagmanager.com',
   configuredApiOrigin,
 ].filter(Boolean).join(' ');
 
 const scriptSources = [
   "'self'",
   "'unsafe-inline'",
+  'https://www.googletagmanager.com',
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 
