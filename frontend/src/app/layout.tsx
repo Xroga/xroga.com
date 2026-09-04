@@ -53,6 +53,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <StorageBootstrap />
+         <script
+    src="https://analytics.ahrefs.com/analytics.js"
+    data-key="vxPNnAmUvdWc+ePnPvZZ5w"
+    async
+  ></script>
         <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="64x64" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="500x500" />
