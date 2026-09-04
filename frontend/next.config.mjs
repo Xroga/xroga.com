@@ -22,6 +22,7 @@ const connectSources = [
   'https://www.googletagmanager.com',
   'https://*.clarity.ms',
   'https://c.bing.com',
+  'https://analytics.ahrefs.com',
   configuredApiOrigin,
 ].filter(Boolean).join(' ');
 
