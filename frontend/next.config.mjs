@@ -31,6 +31,7 @@ const scriptSources = [
   'https://www.googletagmanager.com',
   'https://www.clarity.ms',
   'https://*.clarity.ms',
+  'https://analytics.ahrefs.com',
   ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
 ].join(' ');
 
