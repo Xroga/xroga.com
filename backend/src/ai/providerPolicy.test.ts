@@ -34,12 +34,14 @@ test('only Moonshot, Zhipu and OpenRouter models may perform coding', () => {
   // long before the model can be called — and leaving the next model to be enabled as the
   // only one without a transport binding is the failure mode this module prevents.
   assert.deepEqual(Object.keys(CODING_MODEL_TRANSPORT).sort(), [
-    'deepseek_v4_flash',
-    'deepseek_v4_pro',
-    'glm_5_2',
-    'kimi_k2_7',
-    'kimi_k3',
-  ]);
+  'deepseek_v4_flash',
+  'deepseek_v4_pro',
+  'glm_5_2',
+  'glm_5_3',
+  'glm_5_3_flash',
+  'kimi_k2_7',
+  'kimi_k3',
+]);
 });
 
 test('every coding model, callable or gated, is bound to a Moonshot/Zhipu/OpenRouter transport', () => {
@@ -53,7 +55,12 @@ test('every coding model, callable or gated, is bound to a Moonshot/Zhipu/OpenRo
 
 test('each coding family uses its mandated transport', () => {
   assert.equal(requiredCodingTransport('kimi_k3'), 'moonshot');
+  assert.equal(requiredCodingTransport('kimi_k2_7'), 'moonshot');
+
   assert.equal(requiredCodingTransport('glm_5_2'), 'zhipu');
+  assert.equal(requiredCodingTransport('glm_5_3'), 'zhipu');
+  assert.equal(requiredCodingTransport('glm_5_3_flash'), 'zhipu');
+
   assert.equal(requiredCodingTransport('deepseek_v4_pro'), 'openrouter');
   assert.equal(requiredCodingTransport('deepseek_v4_flash'), 'openrouter');
 });
@@ -106,13 +113,23 @@ test('assertCodingModel refuses a research provider by name', () => {
 
 test('codingModelsOnly strips research providers from a candidate list', () => {
   const filtered = codingModelsOnly([
-    { modelId: 'kimi_k3' },
-    { modelId: 'grok_4_3' },
-    { modelId: 'glm_5_2' },
-    { modelId: TAVILY_PROVIDER_ID },
-  ]);
-  assert.deepEqual(filtered.map((c) => c.modelId), ['kimi_k3', 'glm_5_2']);
-});
+  { modelId: 'kimi_k3' },
+  { modelId: 'grok_4_3' },
+  { modelId: 'glm_5_2' },
+  { modelId: 'glm_5_3' },
+  { modelId: 'glm_5_3_flash' },
+  { modelId: TAVILY_PROVIDER_ID },
+]);
+
+assert.deepEqual(
+  filtered.map((c) => c.modelId),
+  [
+    'kimi_k3',
+    'glm_5_2',
+    'glm_5_3',
+    'glm_5_3_flash',
+  ],
+);
 
 test('no coding model falls back to a research provider', async () => {
   const { getRuntimeModelRegistry } = await import('./modelCapabilityRegistry.js');
