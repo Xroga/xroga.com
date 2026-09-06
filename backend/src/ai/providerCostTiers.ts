@@ -1,273 +1,731 @@
-/**
- * Coding families, fixed transports, and cost tiers.
- *
- * Command 3's provider clarifications add three rules the family-level policy in
- * `providerPolicy.ts` does not express:
- *
- *   1. **Transport is a property of the family, not the model.** Kimi is Moonshot-only,
- *      GLM is Zhipu-only, DeepSeek is OpenRouter-only. Stated as an invariant rather than
- *      a table lookup, because the dangerous direction is one-way: OpenRouter lists many
- *      models, so a future Kimi or GLM entry could acquire OpenRouter authority simply by
- *      appearing there. `assertTransportPolicy` refuses that by construction.
- *
- *   2. **Each family has a premium and a cost-efficient tier**, and the cheaper one is the
- *      default when its evidence is sufficient. Routing to the strongest model for every
- *      task is as wrong as routing to the cheapest — the command asks for the least
- *      expensive candidate whose measured evidence covers the work, escalating only when
- *      validation or capability requires it.
- *
- *   3. **Evidence is per model, never per family.** Kimi K3 and Kimi K2.7 are different
- *      products; a benchmark result for one says nothing about the other. Sharing a score
- *      across a family would let a premium model's record justify routing to its cheap
- *      sibling.
- *
- * On models this file deliberately does not name: Kimi K2.7 and the lower-cost GLM
- * candidate are registered as **configuration-gated**. The command is explicit that their
- * exact official provider identifiers must be verified against the live account rather
- * than guessed from a human-readable name, and inventing a slug like `kimi-k2.7` would
- * produce a model that 404s at the provider while appearing registered here. They resolve
- * from environment configuration, and report `not_configured` when absent — which is the
- * truthful state, not a defect.
- */
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
 
-import { isCodingModel } from './providerPolicy.js';
-
-export type CodingFamily = 'kimi' | 'glm' | 'deepseek';
-export type CodingTransport = 'moonshot' | 'zhipu' | 'openrouter';
-export type CostTier = 'premium' | 'cost_efficient';
-
-/** The one transport each coding family may use. Not overridable per model. */
-export const FAMILY_TRANSPORT: Record<CodingFamily, CodingTransport> = {
-  kimi: 'moonshot',
-  glm: 'zhipu',
-  deepseek: 'openrouter',
-};
-
-/** The only family permitted through OpenRouter, stated once so tests can assert it. */
-export const OPENROUTER_CODING_FAMILY: CodingFamily = 'deepseek';
-
-export interface CodingModelTier {
-  /** Logical id used across routing and evidence. */
-  readonly modelId: string;
-  readonly family: CodingFamily;
-  readonly tier: CostTier;
-  /**
-   * Environment variable holding the provider's exact model identifier.
-   *
-   * Present for every entry: even the models with defaults remain overridable, because a
-   * provider renaming a model must not require a code change.
-   */
-  readonly modelIdEnv: string;
-  /**
-   * Whether this entry needs configuration before it can be used at all.
-   *
-   * True where the command requires the exact official identifier to be verified against
-   * the live account rather than assumed.
-   */
-  readonly requiresVerifiedIdentifier: boolean;
-}
+import {
+  CODING_MODEL_TIERS,
+  FAMILY_TRANSPORT,
+  MIN_EVIDENCE_SAMPLES,
+  OPENROUTER_CODING_FAMILY,
+  SUFFICIENT_VALIDATION_RATE,
+  TransportPolicyError,
+  assertTransportPolicy,
+  chooseCostAware,
+  codingTierFor,
+  familyFor,
+  modelAvailability,
+  type ModelEvidence,
+} from './providerCostTiers.js';
 
 /**
- * The intended coding pool.
+ * Fixed provider transports, cost tiers, and model-specific evidence.
  *
- * Order within a family is premium first, which is only presentation — routing sorts by
- * cost and evidence, never by position here.
+ * Provider boundary:
+ *
+ * Kimi     -> Moonshot only
+ * GLM      -> Zhipu / Z.ai official only
+ * DeepSeek -> OpenRouter only
+ *
+ * No GLM or Kimi model may silently acquire OpenRouter authority.
  */
-export const CODING_MODEL_TIERS: readonly CodingModelTier[] = [
-  { modelId: 'kimi_k3', family: 'kimi', tier: 'premium', modelIdEnv: 'KIMI_MODEL_ID', requiresVerifiedIdentifier: false },
-  { modelId: 'kimi_k2_7', family: 'kimi', tier: 'cost_efficient', modelIdEnv: 'KIMI_COST_EFFICIENT_MODEL_ID', requiresVerifiedIdentifier: true },
-  {
-  modelId: 'glm_5_2',
-  family: 'glm',
-  tier: 'premium',
-  modelIdEnv: 'GLM_MODEL_ID',
-  requiresVerifiedIdentifier: false,
-},
 
-{
-  modelId: 'glm_5_3',
-  family: 'glm',
-  tier: 'premium',
-  modelIdEnv: 'GLM_5_3_MODEL_ID',
-  requiresVerifiedIdentifier: false,
-},
-
-{
-  modelId: 'glm_5_3_flash',
-  family: 'glm',
-  tier: 'cost_efficient',
-  modelIdEnv: 'GLM_5_3_FLASH_MODEL_ID',
-  requiresVerifiedIdentifier: false,
-},
-  { modelId: 'deepseek_v4_pro', family: 'deepseek', tier: 'premium', modelIdEnv: 'DEEPSEEK_PRO_MODEL_ID', requiresVerifiedIdentifier: false },
-  { modelId: 'deepseek_v4_flash', family: 'deepseek', tier: 'cost_efficient', modelIdEnv: 'DEEPSEEK_FLASH_MODEL_ID', requiresVerifiedIdentifier: false },
-];
-
-const TIER_BY_MODEL = new Map(CODING_MODEL_TIERS.map((entry) => [entry.modelId, entry]));
-
-export function codingTierFor(modelId: string): CodingModelTier | null {
-  return TIER_BY_MODEL.get(modelId) ?? null;
-}
-
-export function familyFor(modelId: string): CodingFamily | null {
-  return TIER_BY_MODEL.get(modelId)?.family ?? null;
-}
-
-export type ModelAvailability = 'available' | 'not_configured' | 'unknown_model';
-
-/**
- * Whether a tier can actually be called.
- *
- * A configuration-gated model with no configured identifier is `not_configured` — a
- * truthful state that keeps it out of routing without pretending it failed.
- */
-export function modelAvailability(
-  modelId: string,
-  env: NodeJS.ProcessEnv = process.env,
-): ModelAvailability {
-  const tier = codingTierFor(modelId);
-  if (!tier) return 'unknown_model';
-  if (!tier.requiresVerifiedIdentifier) return 'available';
-  return env[tier.modelIdEnv]?.trim() ? 'available' : 'not_configured';
-}
-
-export class TransportPolicyError extends Error {
-  readonly code = 'TRANSPORT_POLICY_VIOLATION' as const;
-  constructor(message: string) {
-    super(message);
-    this.name = 'TransportPolicyError';
-  }
-}
-
-/**
- * The invariant: OpenRouter carries DeepSeek and nothing else.
- *
- * Checked as a relationship rather than a lookup, so a model added to the catalog with the
- * wrong transport fails here instead of silently gaining authority. The reverse direction
- * matters equally — Kimi or GLM reaching OpenRouter would breach the provider agreement
- * this policy exists to hold.
- */
-export function assertTransportPolicy(modelId: string, transport: string): void {
-  const family = familyFor(modelId);
-  if (!family) {
-    throw new TransportPolicyError(
-      `"${modelId}" is not in the coding catalog, so it has no permitted transport.`,
-    );
-  }
-  const required = FAMILY_TRANSPORT[family];
-  if (transport !== required) {
-    throw new TransportPolicyError(
-      `"${modelId}" is a ${family} model and must use ${required}; ${transport} was requested.`,
-    );
-  }
-  if (transport === 'openrouter' && family !== OPENROUTER_CODING_FAMILY) {
-    throw new TransportPolicyError(
-      `OpenRouter carries ${OPENROUTER_CODING_FAMILY} coding models only; "${modelId}" is ${family}.`,
-    );
-  }
-}
-
-/** Measured evidence for one model in one role. Never shared across a family. */
-export interface ModelEvidence {
-  readonly modelId: string;
-  readonly role: string;
-  /** 0–1. Fraction of attempts whose executable validation passed. */
-  readonly validationSuccessRate: number;
-  readonly samples: number;
-  /** Observed cost per task in USD. */
-  readonly costUsdPerTask: number;
-  readonly maturity: 'unsupported' | 'experimental' | 'beta' | 'verified' | 'degraded';
-}
-
-/** Minimum samples before a record may justify preferring a cheaper model. */
-export const MIN_EVIDENCE_SAMPLES = 5;
-
-/** Validation floor a cost-efficient model must clear to be preferred on price. */
-export const SUFFICIENT_VALIDATION_RATE = 0.75;
-
-export interface RoutingChoice {
-  readonly modelId: string;
-  readonly reason: string;
-  /** Ranked candidates to escalate through, cheapest sufficient first. */
-  readonly escalation: readonly string[];
-  /**
-   * True when measurement decided this, false when a hand-written prior did.
-   *
-   * Carried structurally rather than left to the `reason` prose. A caller that has to parse
-   * a sentence to learn whether a choice was earned will eventually parse it wrong, and the
-   * failure is silent: a prior-based selection recorded as measured, which is precisely the
-   * claim §13 exists to prevent.
-   */
-  readonly measured: boolean;
-}
-
-/**
- * Chooses the least-expensive candidate whose evidence covers the work.
- *
- * Sufficiency is deliberately strict about *why* a model qualifies. A cheap model with no
- * measured history is not "probably fine" — it is unmeasured, and preferring it on price
- * alone would be exactly the unverified routing §13 forbids. So a cost-efficient model
- * wins only on `verified` or `beta` maturity with enough samples above the validation
- * floor; otherwise the premium candidate leads and the cheaper one sits in the escalation
- * chain, where a real result will eventually earn it the lead.
- *
- * Escalation order is the remaining candidates by ascending cost, so a failure walks
- * toward capability rather than jumping straight to the most expensive option.
- */
-export function chooseCostAware(input: {
-  candidates: readonly string[];
-  evidence: readonly ModelEvidence[];
-  role: string;
-  env?: NodeJS.ProcessEnv;
-}): RoutingChoice | null {
-  const usable = input.candidates.filter(
-    (modelId) =>
-      isCodingModel(modelId) === true ||
-      // The catalog is the authority for tiers the legacy allowlist has not caught up to;
-      // both must know a model before it is routed anywhere.
-      (codingTierFor(modelId) !== null && modelAvailability(modelId, input.env) === 'available'),
+test('each coding family has exactly one permitted transport', () => {
+  assert.deepEqual(
+    FAMILY_TRANSPORT,
+    {
+      kimi: 'moonshot',
+      glm: 'zhipu',
+      deepseek: 'openrouter',
+    },
   );
-  const available = usable.filter((modelId) => modelAvailability(modelId, input.env) === 'available');
-  if (!available.length) return null;
+});
 
-  const evidenceFor = (modelId: string) =>
-    input.evidence.find((record) => record.modelId === modelId && record.role === input.role) ?? null;
+test('OpenRouter carries DeepSeek and nothing else', () => {
+  assert.equal(
+    OPENROUTER_CODING_FAMILY,
+    'deepseek',
+  );
 
-  const byCost = [...available].sort((a, b) => {
-    const costA = evidenceFor(a)?.costUsdPerTask ?? Number.POSITIVE_INFINITY;
-    const costB = evidenceFor(b)?.costUsdPerTask ?? Number.POSITIVE_INFINITY;
-    return costA - costB;
-  });
-
-  const sufficient = byCost.find((modelId) => {
-    const record = evidenceFor(modelId);
-    if (!record) return false;
-    if (record.maturity !== 'verified' && record.maturity !== 'beta') return false;
-    return record.samples >= MIN_EVIDENCE_SAMPLES && record.validationSuccessRate >= SUFFICIENT_VALIDATION_RATE;
-  });
-
-  if (sufficient) {
-    const record = evidenceFor(sufficient)!;
-    return {
-      modelId: sufficient,
-      reason:
-        `${sufficient} is the least-expensive candidate with sufficient evidence for ${input.role}: ` +
-        `${Math.round(record.validationSuccessRate * 100)}% validation over ${record.samples} samples ` +
-        `(${record.maturity}), $${record.costUsdPerTask.toFixed(4)} per task.`,
-      escalation: byCost.filter((modelId) => modelId !== sufficient),
-      measured: true,
-    };
+  for (const tier of CODING_MODEL_TIERS) {
+    if (
+      FAMILY_TRANSPORT[tier.family] ===
+      'openrouter'
+    ) {
+      assert.equal(
+        tier.family,
+        'deepseek',
+        `${tier.modelId} uses openrouter but is ${tier.family}`,
+      );
+    }
   }
 
-  // Nothing has earned the lead on price. Prefer the premium tier, and say so plainly
-  // rather than implying a measured choice.
-  const premium = byCost.find((modelId) => codingTierFor(modelId)?.tier === 'premium') ?? byCost[0]!;
-  return {
-    modelId: premium,
-    reason:
-      `No cost-efficient candidate has sufficient measured evidence for ${input.role}, so the ` +
-      `premium tier leads. ${premium} selected on prior, not on measurement.`,
-    escalation: byCost.filter((modelId) => modelId !== premium),
-    measured: false,
-  };
-}
+  for (const tier of CODING_MODEL_TIERS) {
+    if (tier.family === 'deepseek') {
+      assert.equal(
+        FAMILY_TRANSPORT[tier.family],
+        'openrouter',
+      );
+    }
+  }
+});
+
+test('Kimi and every GLM route are refused on OpenRouter', () => {
+  for (
+    const modelId of [
+      'kimi_k3',
+      'kimi_k2_7',
+      'glm_5_2',
+      'glm_5_3',
+      'glm_5_3_flash',
+    ]
+  ) {
+    assert.throws(
+      () =>
+        assertTransportPolicy(
+          modelId,
+          'openrouter',
+        ),
+      (error: unknown) => {
+        assert.ok(
+          error instanceof
+            TransportPolicyError,
+        );
+
+        assert.match(
+          error.message,
+          new RegExp(modelId),
+        );
+
+        return true;
+      },
+      `${modelId} was allowed through OpenRouter`,
+    );
+  }
+});
+
+test('each model is accepted on its mandated transport and refused on others', () => {
+  assert.doesNotThrow(() =>
+    assertTransportPolicy(
+      'kimi_k3',
+      'moonshot',
+    ),
+  );
+
+  assert.doesNotThrow(() =>
+    assertTransportPolicy(
+      'glm_5_2',
+      'zhipu',
+    ),
+  );
+
+  assert.doesNotThrow(() =>
+    assertTransportPolicy(
+      'glm_5_3',
+      'zhipu',
+    ),
+  );
+
+  assert.doesNotThrow(() =>
+    assertTransportPolicy(
+      'glm_5_3_flash',
+      'zhipu',
+    ),
+  );
+
+  assert.doesNotThrow(() =>
+    assertTransportPolicy(
+      'deepseek_v4_flash',
+      'openrouter',
+    ),
+  );
+
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'kimi_k3',
+        'zhipu',
+      ),
+    TransportPolicyError,
+  );
+
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'glm_5_2',
+        'moonshot',
+      ),
+    TransportPolicyError,
+  );
+
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'glm_5_3',
+        'openrouter',
+      ),
+    TransportPolicyError,
+  );
+
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'glm_5_3_flash',
+        'openrouter',
+      ),
+    TransportPolicyError,
+  );
+
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'deepseek_v4_pro',
+        'moonshot',
+      ),
+    TransportPolicyError,
+  );
+});
+
+test('a model outside the catalog has no permitted transport at all', () => {
+  assert.throws(
+    () =>
+      assertTransportPolicy(
+        'some_new_model',
+        'openrouter',
+      ),
+    TransportPolicyError,
+  );
+
+  assert.equal(
+    familyFor('some_new_model'),
+    null,
+  );
+});
+
+test('every family carries a premium and a cost-efficient tier', () => {
+  for (
+    const family of [
+      'kimi',
+      'glm',
+      'deepseek',
+    ] as const
+  ) {
+    const tiers =
+      CODING_MODEL_TIERS
+        .filter(
+          (entry) =>
+            entry.family === family,
+        )
+        .map(
+          (entry) => entry.tier,
+        );
+
+    assert.ok(
+      tiers.includes('premium'),
+      `${family} has no premium tier`,
+    );
+
+    assert.ok(
+      tiers.includes(
+        'cost_efficient',
+      ),
+      `${family} has no cost-efficient tier`,
+    );
+  }
+});
+
+test('GLM-5.3 is the premium new GLM route', () => {
+  const tier =
+    codingTierFor('glm_5_3');
+
+  assert.equal(
+    tier?.family,
+    'glm',
+  );
+
+  assert.equal(
+    tier?.tier,
+    'premium',
+  );
+
+  assert.equal(
+    tier?.modelIdEnv,
+    'GLM_5_3_MODEL_ID',
+  );
+});
+
+test('GLM-5.3 Flash is the cost-efficient GLM route', () => {
+  const tier =
+    codingTierFor(
+      'glm_5_3_flash',
+    );
+
+  assert.equal(
+    tier?.family,
+    'glm',
+  );
+
+  assert.equal(
+    tier?.tier,
+    'cost_efficient',
+  );
+
+  assert.equal(
+    tier?.modelIdEnv,
+    'GLM_5_3_FLASH_MODEL_ID',
+  );
+});
+
+test('GLM-5.2 remains temporarily registered as the rollback route', () => {
+  const tier =
+    codingTierFor('glm_5_2');
+
+  assert.equal(
+    tier?.family,
+    'glm',
+  );
+
+  assert.equal(
+    tier?.tier,
+    'premium',
+  );
+});
+
+test('models needing a verified identifier report not_configured until supplied', () => {
+  assert.equal(
+    modelAvailability(
+      'kimi_k2_7',
+      {},
+    ),
+    'not_configured',
+  );
+
+  assert.equal(
+    modelAvailability(
+      'kimi_k2_7',
+      {
+        KIMI_COST_EFFICIENT_MODEL_ID:
+          'moonshot-v1-x',
+      },
+    ),
+    'available',
+  );
+
+  assert.equal(
+    modelAvailability(
+      'unknown',
+      {},
+    ),
+    'unknown_model',
+  );
+});
+
+test('models with known identifiers are available without extra tier configuration', () => {
+  for (
+    const modelId of [
+      'kimi_k3',
+      'glm_5_2',
+      'glm_5_3',
+      'glm_5_3_flash',
+      'deepseek_v4_pro',
+      'deepseek_v4_flash',
+    ]
+  ) {
+    assert.equal(
+      modelAvailability(
+        modelId,
+        {},
+      ),
+      'available',
+      modelId,
+    );
+  }
+});
+
+const evidence = (
+  over: Partial<ModelEvidence> & {
+    modelId: string;
+  },
+): ModelEvidence => ({
+  role: 'implementation',
+  validationSuccessRate: 0.9,
+  samples: 20,
+  costUsdPerTask: 0.05,
+  maturity: 'verified',
+  ...over,
+});
+
+test('the cheapest model with sufficient evidence wins', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+        'glm_5_2',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+
+        evidence({
+          modelId: 'glm_5_2',
+          costUsdPerTask: 0.2,
+        }),
+
+        evidence({
+          modelId:
+            'deepseek_v4_flash',
+          costUsdPerTask: 0.01,
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'deepseek_v4_flash',
+  );
+
+  assert.match(
+    choice.reason,
+    /least-expensive candidate with sufficient evidence/,
+  );
+
+  assert.deepEqual(
+    choice.escalation,
+    [
+      'glm_5_2',
+      'kimi_k3',
+    ],
+  );
+});
+
+test('GLM-5.3 Flash can beat GLM-5.3 when measured evidence is sufficient', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'glm_5_3',
+        'glm_5_3_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'glm_5_3',
+          costUsdPerTask: 0.12,
+        }),
+
+        evidence({
+          modelId:
+            'glm_5_3_flash',
+          costUsdPerTask: 0.02,
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'glm_5_3_flash',
+  );
+
+  assert.equal(
+    choice.measured,
+    true,
+  );
+});
+
+test('a cheap model without measured evidence does not win on price', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+
+  assert.match(
+    choice.reason,
+    /sufficient evidence/,
+  );
+});
+
+test('with nothing measured at all, the premium tier leads and says so', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [],
+    })!;
+
+  assert.equal(
+    codingTierFor(
+      choice.modelId,
+    )?.tier,
+    'premium',
+  );
+
+  assert.match(
+    choice.reason,
+    /selected on prior, not on measurement/,
+  );
+});
+
+test('too few samples does not qualify a cheap model', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+
+        evidence({
+          modelId:
+            'deepseek_v4_flash',
+          costUsdPerTask: 0.01,
+          samples:
+            MIN_EVIDENCE_SAMPLES -
+            1,
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+});
+
+test('a cheap model below the validation floor does not qualify', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+
+        evidence({
+          modelId:
+            'deepseek_v4_flash',
+          costUsdPerTask: 0.01,
+          validationSuccessRate:
+            SUFFICIENT_VALIDATION_RATE -
+            0.01,
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+});
+
+test('an experimental capability never wins on price', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+
+        evidence({
+          modelId:
+            'deepseek_v4_flash',
+          costUsdPerTask: 0.01,
+          maturity:
+            'experimental',
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+});
+
+test('evidence is matched per model and per role, never shared across a family', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'kimi_k2_7',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+      ],
+
+      env: {
+        KIMI_COST_EFFICIENT_MODEL_ID:
+          'moonshot-v1-x',
+      },
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+    'K3 evidence must not qualify K2.7',
+  );
+});
+
+test('evidence for another role does not qualify a model', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'deepseek_v4_flash',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.5,
+        }),
+
+        evidence({
+          modelId:
+            'deepseek_v4_flash',
+          costUsdPerTask: 0.01,
+          role: 'code_review',
+        }),
+      ],
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+});
+
+test('an unconfigured cost-efficient model is skipped rather than attempted', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k3',
+        'kimi_k2_7',
+      ],
+
+      evidence: [
+        evidence({
+          modelId: 'kimi_k3',
+          costUsdPerTask: 0.2,
+        }),
+
+        evidence({
+          modelId: 'kimi_k2_7',
+          costUsdPerTask: 0.01,
+        }),
+      ],
+
+      env: {},
+    })!;
+
+  assert.equal(
+    choice.modelId,
+    'kimi_k3',
+  );
+
+  assert.equal(
+    choice.escalation.includes(
+      'kimi_k2_7',
+    ),
+    false,
+  );
+});
+
+test('no available candidate yields no choice rather than a guess', () => {
+  const choice =
+    chooseCostAware({
+      role: 'implementation',
+
+      candidates: [
+        'kimi_k2_7',
+      ],
+
+      evidence: [],
+
+      env: {},
+    });
+
+  assert.equal(
+    choice,
+    null,
+  );
+});
+
+test('the catalog and tier lookup agree', () => {
+  for (
+    const tier of
+    CODING_MODEL_TIERS
+  ) {
+    assert.deepEqual(
+      codingTierFor(
+        tier.modelId,
+      ),
+      tier,
+    );
+
+    assert.equal(
+      familyFor(
+        tier.modelId,
+      ),
+      tier.family,
+    );
+  }
+});
