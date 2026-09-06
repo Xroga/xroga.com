@@ -91,7 +91,7 @@ const TEMPLATES: CapabilityTemplate[] = [
         id: 'xroga-model-stack',
         label: 'Xroga model stack',
         operations: ['analyze', 'generate', 'edit', 'repair', 'refactor', 'review'],
-        requiredCredentials: ['OPENROUTER_API_KEY', 'KIMI_API_KEY', 'GLM_API_KEY', 'GROK_API_KEY'],
+        requiredCredentials: ['OPENROUTER_API_KEY', 'KIMI_API_KEY', 'GLM_API_KEY',   'XAI_API_KEY', 'GROK_API_KEY'],
         inputRequirements: ['User request', 'Relevant conversation and repository context'],
         outputFormats: ['markdown', 'project_files', 'patches'],
         runtime: 'server',
