@@ -49,10 +49,17 @@ import type { ModelId } from './models.js';
  */
 export const CODING_MODEL_TRANSPORT = {
   kimi_k3: 'moonshot',
+  kimi_k2_7: 'moonshot',
+
+  // Legacy GLM rollback route.
   glm_5_2: 'zhipu',
+
+  // Current GLM engineering routes.
+  glm_5_3: 'zhipu',
+  glm_5_3_flash: 'zhipu',
+
   deepseek_v4_pro: 'openrouter',
   deepseek_v4_flash: 'openrouter',
-  kimi_k2_7: 'moonshot',
 } as const satisfies Record<string, string>;
 
 /**
