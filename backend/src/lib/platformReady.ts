@@ -90,11 +90,13 @@ export function computePlatformReady(): {
       required: true,
     },
     {
-      id: 'research',
-      label: 'Research (Tavily or SearXNG)',
-      ok: has('TAVILY_API_KEY') || Boolean(process.env.SEARXNG_URL?.trim()),
-      required: false,
-    },
+  id: 'research',
+  label: 'Web intelligence',
+  ok:
+    has('PARALLEL_API_KEY'),
+  required: true,
+  hint: 'PARALLEL_API_KEY',
+},
     {
       id: 'billing',
       label: 'Lemon Squeezy billing',
