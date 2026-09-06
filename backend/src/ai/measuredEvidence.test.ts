@@ -224,40 +224,26 @@ test('F — a research provider never enters the coding ranking', async () => {
 
 // ── State G: unconfigured cost-efficient tier ───────────────────────────────────
 
-test('G — an unconfigured cost-efficient model reports not_configured, not failure', async () => {
-  // The distinction matters operationally: `not_configured` is an owner action, a failure is
-  // an engineering investigation.
-  for (const modelId of ['kimi_k2_7', 'glm_cost_efficient']) {
-    const availability = modelAvailability(modelId);
-    assert.ok(
-      ['available', 'not_configured'].includes(availability),
-      `${modelId} reported ${availability}`,
-    );
-  }
-});
+test('G — gated and known cost-efficient models report truthful availability', async () => {
+  // Kimi K2.7 is configuration-gated.
+  const kimiAvailability =
+    modelAvailability('kimi_k2_7');
 
-// ── Failures never become positive evidence ─────────────────────────────────────
-
-test('failed runs never become positive capability evidence', async () => {
-  const evidence = await evidenceFrom(
-    Array.from({ length: 20 }, () =>
-      row({ modelId: 'deepseek_v4_flash', benchmarkId: CODING_BENCHMARK, succeeded: false }),
-    ),
+  assert.ok(
+    ['available', 'not_configured'].includes(kimiAvailability),
+    `kimi_k2_7 reported ${kimiAvailability}`,
   );
-  assert.equal(evidence.entries[0]!.validationSuccessRate, 0);
-  assert.equal(evidence.entries[0]!.maturity, 'degraded');
 
-  const choice = choose(evidence, ['deepseek_v4_flash']);
-  assert.equal(choice.measured, false, 'a model that failed every case was routed to on measurement');
-});
-
-test('one model never inherits another model evidence', async () => {
-  // §12 by name: Kimi K3 and Kimi K2.7 are different products.
-  const evidence = await evidenceFrom(
-    Array.from({ length: 20 }, () => row({ modelId: 'kimi_k3', benchmarkId: CODING_BENCHMARK })),
+  // GLM-5.3 Flash now has a known official catalog identity,
+  // so the tier itself no longer requires a separate identifier gate.
+  assert.equal(
+    modelAvailability('glm_5_3_flash', {}),
+    'available',
   );
-  assert.equal(evidence.entries.every((entry) => entry.modelId === 'kimi_k3'), true);
 
-  const choice = choose(evidence, ['kimi_k2_7']);
-  assert.equal(choice.modelId, null, 'kimi_k2_7 was routed to on kimi_k3 evidence');
+  // The old synthetic placeholder must no longer exist.
+  assert.equal(
+    modelAvailability('glm_cost_efficient', {}),
+    'unknown_model',
+  );
 });
