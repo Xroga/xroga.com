@@ -4,10 +4,12 @@ import { BLACK_HOLE_PUBLIC_NAME } from './black-hole/publicIdentity.js';
 import { readCutoverPlan } from './black-hole/cutover.js';
 import { buildEngineeringArtifact } from './engineeringArtifact.js';
 import {
-  researchThroughBlackHole,
   selectBuildModel,
   selectRepairModel as selectRepairModelThroughBlackHole,
 } from './black-hole/productionBridge.js';
+import {
+  runWebIntelligence,
+} from './black-hole/webIntelligence.js';
 import { decideConversion } from './black-hole/converterPolicy.js';
 import { analyzeTask } from './black-hole/taskClass.js';
 import { assessBlackHoleComplexity } from './black-hole/complexity.js';
@@ -57,7 +59,7 @@ import {
   usageToTokenUsage,
   type UsageSnapshot,
 } from './quota.js';
-import { formatResearchForPrompt, gatherResearch, type ResearchBundle } from './research.js';
+import type { ResearchBundle } from './research.js';
 import { isBuildPrompt, routePrompt, type RouteDecision } from './router.js';
 import {
   extractProjectFiles,
@@ -815,15 +817,6 @@ function finalizeBuildTodos(
   });
 }
 
-function wantsResearch(prompt: string, _isUpdate: boolean): boolean {
-  void _isUpdate;
-  if (explicitlyDisablesResearch(prompt)) return false;
-  // New builds and updates: research when the user asks for current facts / news
-  return /\b(research|latest|news|trends?|market|sources?|citations?|current|today|prices?)\b/i.test(
-    prompt,
-  );
-}
-
 /**
  * Light chat / research Q&A — Phase 1 lane (no site build).
  * Also handles image vision (Grok) and document analysis.
@@ -910,41 +903,36 @@ export async function runChatPipeline(opts: {
 
   let research: ResearchBundle | null = null;
   let researchBlock = '';
-  if (route.useResearch) {
-    // Item 5 — the chat research path, same staged treatment as the build path.
-    // Held in a container rather than a bare `let`: TypeScript narrows a binding only ever
-    // assigned inside a closure to `never`, which then propagates into the response type.
-    const chatLegacyHolder: { bundle: ResearchBundle | null } = { bundle: null };
-    const chatOutcome = await researchThroughBlackHole(
-      { userId: opts.userId, query: opts.prompt },
-      async () => {
-        const bundle = await gatherResearch(opts.prompt, opts.userId);
-        chatLegacyHolder.bundle = bundle;
-        return {
-          evidence: formatResearchForPrompt(bundle),
-          sourceCount: bundle.sources.length,
-        };
-      },
-    );
-    research = chatLegacyHolder.bundle;
-    researchBlock =
-      chatOutcome.source === 'black_hole'
-        ? chatOutcome.evidence
-        : formatResearchForPrompt(
-            chatLegacyHolder.bundle ?? { query: '', summary: '', sources: [], provider: 'none' },
-          );
-    if (!researchBlock) research = null;
+
+  if (!explicitlyDisablesResearch(opts.prompt)) {
+    try {
+      const web = await runWebIntelligence({
+        userId: opts.userId,
+        prompt: opts.prompt,
+      });
+
+      research = web.bundle;
+      researchBlock = web.evidence;
+    } catch (error) {
+      console.warn(
+        '[pipeline] web intelligence unavailable for chat:',
+        normalizeProviderError(error).safeMessage,
+      );
+      research = null;
+      researchBlock = '';
+    }
   }
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])
     .slice(-12)
     .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
 
-  const userContent = researchBlock
-    ? `${opts.prompt}\n\n${researchBlock}`
-    : route.kind === 'research' && researchBlock
+  const userContent =
+    route.kind === 'research' && researchBlock
       ? researchSynthesisPrompt(opts.prompt, researchBlock)
-      : opts.prompt;
+      : researchBlock
+        ? `${opts.prompt}\n\n${researchBlock}`
+        : opts.prompt;
 
   const result = await callBuilderStream(
     route.builder,
@@ -1578,85 +1566,113 @@ export async function runBuildPipeline(opts: {
 
   let researchBlock = '';
   let research: ResearchBundle | null = null;
-  const needResearch = route.useResearch || wantsResearch(opts.prompt, isUpdate);
+
+  const needResearch = !explicitlyDisablesResearch(opts.prompt);
+
   if (needResearch) {
     researchState = 'active';
+
     emit({
       agent: 'research',
-      status: 'searching',
-      message: 'Live research (web + X via Xroga Live)…',
-      swarmStatusLabel: 'Research',
-      swarmActivity: 'Xroga Live · web + X',
+      status: 'checking',
+      message: 'Checking whether current external evidence is needed…',
+      swarmStatusLabel: 'Evidence',
+      swarmActivity: 'Current-source check',
       swarmTodos: todos('research'),
     });
-    const legacyHolder: { bundle: ResearchBundle | null } = { bundle: null };
-    let blackHoleEvidence = '';
-    research = await withProgressHeartbeat(
-      {
-        everyMs: 12_000,
-        emit: (elapsedMs) =>
-          emit({
-            agent: 'research',
-            status: 'searching',
-            message: heartbeatMessage('live research sources', elapsedMs),
-            swarmStatusLabel: 'Research',
-            swarmTodos: todos('research'),
-          }),
-      },
-      async () => {
-        // Item 5 — research routes through the canonical layer when its stage is enabled.
-        // The legacy gatherResearch remains the fallback, so the evidence a build sees is
-        // never worse than before: an unavailable Black Hole route yields the old answer.
-        const outcome = await researchThroughBlackHole(
-          {
+
+    const projectContext = [
+      `Repository files: ${prior.files.length}`,
+      cachedSummary
+        ? `Project summary:\n${cachedSummary.slice(0, 2_000)}`
+        : '',
+      prior.files.length
+        ? `Representative paths:\n${prior.files
+            .slice(0, 30)
+            .map((file) => file.path)
+            .join('\n')}`
+        : '',
+    ]
+      .filter(Boolean)
+      .join('\n\n');
+
+    try {
+      const web = await withProgressHeartbeat(
+        {
+          everyMs: 12_000,
+          emit: (elapsedMs) =>
+            emit({
+              agent: 'research',
+              status: 'checking',
+              message: heartbeatMessage('current evidence', elapsedMs),
+              swarmStatusLabel: 'Evidence',
+              swarmTodos: todos('research'),
+            }),
+        },
+        () =>
+          runWebIntelligence({
             userId: opts.userId,
-            conversationId: opts.runId ?? null,
-            projectId: opts.projectId ?? null,
-            query: opts.prompt,
+            prompt: opts.prompt,
+            projectContext,
             signal: opts.signal,
-          },
-          async () => {
-            const legacyBundle = await gatherResearch(opts.prompt, opts.userId);
-            legacyHolder.bundle = legacyBundle;
-            return {
-              evidence: formatResearchForPrompt(legacyBundle),
-              sourceCount: legacyBundle.sources.length,
-            };
-          },
-        );
-        blackHoleEvidence = outcome.source === 'black_hole' ? outcome.evidence : '';
-        return legacyHolder.bundle ?? {
-          query: opts.prompt,
-          summary: '',
-          sources: [],
-          provider: 'none' as const,
-        };
-      },
-    );
-    researchBlock = blackHoleEvidence || formatResearchForPrompt(research);
-    if (!researchBlock) {
-      // Do not fake a research step when nothing came back
+          }),
+      );
+
+      research = web.bundle;
+      researchBlock = web.evidence;
+
+      if (web.action === 'none') {
+        research = null;
+        researchState = 'skipped';
+
+        emit({
+          agent: 'research',
+          status: 'skipped',
+          message: 'No live evidence needed for this task',
+          swarmStatusLabel: 'Evidence not needed',
+          swarmActivity: 'Using project context',
+          swarmTodos: todos('convert'),
+        });
+      } else if (!researchBlock) {
+        research = null;
+        researchState = 'skipped';
+
+        emit({
+          agent: 'research',
+          status: 'skipped',
+          message: 'Current evidence unavailable — continuing without inventing facts',
+          swarmStatusLabel: 'Evidence unavailable',
+          swarmActivity: 'Build continues',
+          swarmTodos: todos('convert'),
+        });
+      } else {
+        researchState = 'done';
+
+        emit({
+          agent: 'research',
+          status: 'ready',
+          message: `Current evidence ready · ${web.sourceCount} source(s)`,
+          swarmStatusLabel: 'Evidence ready',
+          swarmActivity: 'Verified public sources',
+          swarmTodos: todos('convert'),
+        });
+      }
+    } catch (error) {
+      console.warn(
+        '[pipeline] web intelligence unavailable for build:',
+        normalizeProviderError(error).safeMessage,
+      );
+
       research = null;
+      researchBlock = '';
       researchState = 'skipped';
+
       emit({
         agent: 'research',
         status: 'skipped',
-        message: 'No live sources available — continuing without research',
-        swarmStatusLabel: 'Research skipped',
+        message: 'Current evidence unavailable — continuing without inventing facts',
+        swarmStatusLabel: 'Evidence unavailable',
         swarmActivity: 'Build continues',
-        swarmTodos: todos('convert'),
-      });
-    } else {
-      researchState = 'done';
-      emit({
-        agent: 'research',
-        status: 'ready',
-        message:
-          research.provider === 'grok_live'
-            ? `Live research ready${research.includedXSearch ? ' (web + X)' : ''} · ${research.sources.length} source(s)`
-            : `Research ready · ${research.sources.length} source(s)`,
-        swarmStatusLabel: 'Research',
-        swarmActivity: 'Verified sources',
         swarmTodos: todos('convert'),
       });
     }
