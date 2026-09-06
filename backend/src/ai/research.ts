@@ -16,7 +16,7 @@ export interface ResearchBundle {
   query: string;
   summary: string;
   sources: ResearchSource[];
-  provider: 'grok_live' | 'tavily' | 'searxng' | 'none';
+  provider: 'parallel' | 'grok_x' | 'grok_live' | 'tavily' | 'searxng' | 'none';
   /** True when live X (Twitter) search was requested via Grok. */
   includedXSearch?: boolean;
 }
