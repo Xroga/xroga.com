@@ -76,8 +76,29 @@ export interface CodingModelTier {
 export const CODING_MODEL_TIERS: readonly CodingModelTier[] = [
   { modelId: 'kimi_k3', family: 'kimi', tier: 'premium', modelIdEnv: 'KIMI_MODEL_ID', requiresVerifiedIdentifier: false },
   { modelId: 'kimi_k2_7', family: 'kimi', tier: 'cost_efficient', modelIdEnv: 'KIMI_COST_EFFICIENT_MODEL_ID', requiresVerifiedIdentifier: true },
-  { modelId: 'glm_5_2', family: 'glm', tier: 'premium', modelIdEnv: 'GLM_MODEL_ID', requiresVerifiedIdentifier: false },
-  { modelId: 'glm_cost_efficient', family: 'glm', tier: 'cost_efficient', modelIdEnv: 'GLM_COST_EFFICIENT_MODEL_ID', requiresVerifiedIdentifier: true },
+  {
+  modelId: 'glm_5_2',
+  family: 'glm',
+  tier: 'premium',
+  modelIdEnv: 'GLM_MODEL_ID',
+  requiresVerifiedIdentifier: false,
+},
+
+{
+  modelId: 'glm_5_3',
+  family: 'glm',
+  tier: 'premium',
+  modelIdEnv: 'GLM_5_3_MODEL_ID',
+  requiresVerifiedIdentifier: false,
+},
+
+{
+  modelId: 'glm_5_3_flash',
+  family: 'glm',
+  tier: 'cost_efficient',
+  modelIdEnv: 'GLM_5_3_FLASH_MODEL_ID',
+  requiresVerifiedIdentifier: false,
+},
   { modelId: 'deepseek_v4_pro', family: 'deepseek', tier: 'premium', modelIdEnv: 'DEEPSEEK_PRO_MODEL_ID', requiresVerifiedIdentifier: false },
   { modelId: 'deepseek_v4_flash', family: 'deepseek', tier: 'cost_efficient', modelIdEnv: 'DEEPSEEK_FLASH_MODEL_ID', requiresVerifiedIdentifier: false },
 ];
