@@ -21,6 +21,7 @@ import { WorkspaceIdentityMenu } from '@/components/terminal/WorkspaceIdentityMe
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
+import { markFreshTerminalIntent } from '@/lib/repoContext';
 
 
 /**
@@ -40,10 +41,11 @@ import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
  */
 export function DashboardView() {
   const hydrated = useHydrated();
-  const { messages } = useTerminalChat();
+  const { messages, startNewChat } = useTerminalChat();
   const fullscreen = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
+  const setWorkspaceOpen = useProjectWorkspaceStore((s) => s.setWorkspaceOpen);
   const workspaceOpen = hydrated && workspaceOpenRaw;
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
@@ -52,6 +54,19 @@ export function DashboardView() {
   const bodyRef = useRef<HTMLDivElement>(null);
   const workspaceWidth = useThemeStore((s) => s.workspaceWidth);
   const setWorkspaceWidth = useThemeStore((s) => s.setWorkspaceWidth);
+  const freshSideChatHandled = useRef(false);
+
+  useEffect(() => {
+    if (!hydrated || freshSideChatHandled.current) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('new') !== '1') return;
+    freshSideChatHandled.current = true;
+    markFreshTerminalIntent();
+    setWorkspaceOpen(false);
+    startNewChat();
+    url.searchParams.delete('new');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  }, [hydrated, setWorkspaceOpen, startNewChat]);
 
   /**
    * Drag the split to any width.

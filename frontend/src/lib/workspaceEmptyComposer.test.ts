@@ -72,14 +72,17 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-workspace-idea-tab\s*\{[^}]*font-size:\s*0\.58rem[^}]*\}[\s\S]*?\.xv-workspace-idea-tab > \.xv-animated-icon-host\s*\{[^}]*display:\s*block/);
 });
 
-test('the real new terminal and homepage preview share a compact connection strip', () => {
+test('the real new terminal and homepage preview share a compact integrations control', () => {
   assert.match(WELCOME, /composer \? <WorkspaceConnectionsStrip href="\/dashboard\/integrations" interactive \/> : null/);
   assert.match(CONNECTIONS, /GitHub/);
   assert.match(CONNECTIONS, /Vercel/);
   assert.match(CONNECTIONS, /Supabase/);
   assert.match(CONNECTIONS, /AI key/);
-  assert.match(CONNECTIONS, /Use only what this build needs/);
-  assert.match(CSS, /\.xv-workspace-connections\s*\{[^}]*grid-template-columns/);
+  assert.match(CONNECTIONS, /<strong>Integrations<\/strong>/);
+  assert.match(CONNECTIONS, /xv-workspace-connections__preview/);
+  assert.match(CONNECTIONS, /setModalOpen\(true\)/);
+  assert.match(CSS, /\.xv-workspace-connections\s*\{[^}]*width:fit-content/);
+  assert.match(CSS, /\.xv-workspace-connections:hover \.xv-workspace-connections__preview/);
   assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*font-size:\s*clamp\(1\.12rem, 2\.15vw, 1\.82rem\)/);
 });
 

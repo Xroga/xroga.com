@@ -189,6 +189,7 @@ export function HomepageChatBar({
                 ref={textareaRef}
                 value={prompt}
                 onChange={(e) => {
+                  delete e.currentTarget.dataset.insertHighlight;
                   setPrompt(e.target.value);
                   triggerComposerSignal(900);
                 }}
@@ -233,10 +234,18 @@ export function HomepageChatBar({
               className="shrink-0"
               disabled={sending}
               recentTerminal={recentTerminal}
-              onInsert={(text) => {
+              onInsert={(text, options) => {
                 setPrompt((current) => (current.trim() ? `${text}${current}` : text));
                 triggerComposerSignal(1200);
-                window.setTimeout(() => textareaRef.current?.focus(), 20);
+                window.setTimeout(() => {
+                  const textarea = textareaRef.current;
+                  if (!textarea) return;
+                  textarea.focus();
+                  if (options) {
+                    textarea.dataset.insertHighlight = options.highlight;
+                    textarea.setSelectionRange(0, options.selectionLength);
+                  }
+                }, 20);
               }}
             />
             <div className="xv-hc-prompt-integrations" aria-label="Ships with GitHub, Vercel, and Supabase">

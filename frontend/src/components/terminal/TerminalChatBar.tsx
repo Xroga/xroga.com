@@ -507,13 +507,22 @@ export function TerminalChatBar() {
                       setIntegrationsOpen(true);
                     }}
                     connectorsNeedingAttention={[githubConnected, vercelConnected].filter((c) => !c).length}
-                    onInsert={(text) => {
+                    onInsert={(text, options) => {
                       // Fills the composer and focuses it. Deliberately not auto-sent:
                       // these are scaffolds the user finishes, and sending a
                       // half-written prompt would burn a real run.
-                      setDraft((current) => (current.trim() ? `${text}${current}` : text));
-                      draftRef.current = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
-                      window.setTimeout(() => textareaRef.current?.focus(), 20);
+                      const next = draftRef.current.trim() ? `${text}${draftRef.current}` : text;
+                      setDraft(next);
+                      draftRef.current = next;
+                      window.setTimeout(() => {
+                        const textarea = textareaRef.current;
+                        if (!textarea) return;
+                        textarea.focus();
+                        if (options) {
+                          textarea.dataset.insertHighlight = options.highlight;
+                          textarea.setSelectionRange(0, options.selectionLength);
+                        }
+                      }, 20);
                     }}
                   />
                 ) : null
@@ -543,6 +552,7 @@ export function TerminalChatBar() {
                 value={draft}
                 onChange={(e) => {
                   const next = e.target.value;
+                  delete e.currentTarget.dataset.insertHighlight;
                   setDraft(next);
                   draftRef.current = next;
                   triggerComposerSignal(900);

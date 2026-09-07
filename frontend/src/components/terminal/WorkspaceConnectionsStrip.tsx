@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle2, KeyRound, PlugZap } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { IntegrationsModal } from '@/components/terminal/IntegrationsModal';
 import { api } from '@/lib/api';
@@ -40,25 +40,26 @@ export function WorkspaceConnectionsStrip({ href, interactive = false }: { href:
   return (
     <>
       <section className="xv-workspace-connections" aria-label="Build connections">
-        <span className="xv-workspace-connections__mark" aria-hidden="true"><PlugZap /></span>
-        <button type="button" className="xv-workspace-connections__copy" onClick={openConnections}>
-          <strong>Connections</strong>
-          <small>Use only what this build needs</small>
+        <button type="button" className="xv-workspace-connections__trigger" onClick={openConnections} aria-describedby="workspace-integrations-preview">
+          <span className="xv-workspace-connections__logo" aria-hidden="true">
+            <IntegrationLogo id="github" name="GitHub" size={12} />
+            <IntegrationLogo id="vercel" name="Vercel" size={12} />
+            <IntegrationLogo id="supabase" name="Supabase" size={12} />
+          </span>
+          <strong>Integrations</strong>
+          <ChevronRight aria-hidden="true" />
         </button>
-        <div className="xv-workspace-connections__tabs" role="list" aria-label="Available connections">
+        <div id="workspace-integrations-preview" className="xv-workspace-connections__preview" role="tooltip">
+          <strong>Build connections</strong>
           {CONNECTIONS.map((connection) => (
-            <button key={connection.id} type="button" role="listitem" onClick={openConnections} aria-label={connected[connection.id] ? `${connection.name} connected; manage connection` : `Connect ${connection.name}`}>
+            <span key={connection.id}>
               <IntegrationLogo id={connection.id} name={connection.name} size={13} />
               <b>{connection.name}</b>
-              {connected[connection.id] ? <CheckCircle2 className="xv-workspace-connections__verified" aria-hidden="true" /> : null}
-            </button>
+              <i className={connected[connection.id] ? 'is-connected' : undefined}>{connected[connection.id] ? 'Connected' : 'Available'}</i>
+            </span>
           ))}
-          <button type="button" role="listitem" onClick={openConnections} aria-label="Manage optional AI key">
-            <KeyRound aria-hidden="true" />
-            <b>AI key</b>
-          </button>
+          <small>Click to manage providers and AI keys.</small>
         </div>
-        <button type="button" className="xv-workspace-connections__manage" onClick={openConnections}>Manage</button>
       </section>
       {interactive ? <IntegrationsModal open={modalOpen} onClose={() => setModalOpen(false)} /> : null}
     </>

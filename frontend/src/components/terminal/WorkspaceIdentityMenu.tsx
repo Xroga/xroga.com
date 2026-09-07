@@ -85,8 +85,20 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   };
 
   const copyWorkspace = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    toast.success('Workspace link copied');
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Workspace link copied');
+    } catch {
+      toast.error('Could not copy the workspace link');
+    }
+    setOpen(false);
+  };
+
+  const togglePinned = () => {
+    const next = !pinned;
+    setPinned(next);
+    localStorage.setItem(PIN_KEY, String(next));
+    toast.success(next ? 'Workspace pinned' : 'Workspace unpinned');
     setOpen(false);
   };
 
@@ -130,7 +142,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
 
       {open ? (
         <div className="xv-workspace-identity-menu" role="menu" aria-label="Workspace actions">
-          <button role="menuitem" type="button" onClick={() => { const next = !pinned; setPinned(next); localStorage.setItem(PIN_KEY, String(next)); }}><Pin />{pinned ? 'Unpin' : 'Pin'}</button>
+          <button role="menuitemcheckbox" aria-checked={pinned} type="button" onClick={togglePinned}><Pin />{pinned ? 'Unpin' : 'Pin'}</button>
           <button role="menuitem" type="button" onClick={archiveWorkspace}><Archive />Archive</button>
           <i role="separator" />
           <button role="menuitem" type="button" onClick={() => void shareWorkspace()}><Share2 />Share</button>

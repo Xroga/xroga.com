@@ -7571,60 +7571,63 @@ body.theme-gray .xv-rp-loader {
    terminal. It describes available connections without pretending they are already
    authorised; the integrations page remains the source of truth. */
 .xv-workspace-connections {
-  display: grid;
-  grid-template-columns: auto minmax(112px, auto) minmax(0, 1fr) auto;
-  width: min(100%, 760px);
-  min-height: 42px;
-  align-items: center;
-  gap: 0.55rem;
+  position:relative;
+  display:flex;
+  width:fit-content;
   margin: 0.58rem auto 0;
-  padding: 0.34rem 0.38rem;
-  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--terminal-ui-raised, var(--card)) 92%, transparent);
-  box-shadow: 0 12px 30px -26px rgba(0, 0, 0, 0.58);
+  user-select:none;
 }
-.xv-workspace-connections__mark {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border-radius: 9px;
-  background: var(--foreground);
-  color: var(--background);
+.xv-workspace-connections__trigger {
+  display:inline-flex;
+  min-height:30px;
+  align-items:center;
+  gap:.42rem;
+  padding:.3rem .55rem .3rem .36rem;
+  border:1px solid color-mix(in srgb,var(--foreground) 11%,transparent);
+  border-radius:9px;
+  background:color-mix(in srgb,var(--terminal-ui-raised,var(--card)) 94%,transparent);
+  color:var(--foreground);
+  box-shadow:0 8px 24px -20px rgba(0,0,0,.6);
+  cursor:pointer;
 }
-.xv-workspace-connections__mark svg { width: 14px; height: 14px; }
-.xv-workspace-connections__copy { display: grid; min-width: 0; border: 0; padding: 0; background: transparent; line-height: 1.05; text-align: left; cursor: pointer; }
-.xv-workspace-connections__copy strong { color: var(--foreground); font-size: 0.67rem; font-weight: 730; }
-.xv-workspace-connections__copy small { margin-top: 0.16rem; color: var(--muted); font-size: 0.48rem; white-space: nowrap; }
-.xv-workspace-connections__tabs { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 0.25rem; }
-.xv-workspace-connections__tabs > button {
-  display: inline-flex;
-  min-width: 0;
-  min-height: 27px;
-  align-items: center;
-  gap: 0.28rem;
-  padding: 0.28rem 0.4rem;
-  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--terminal-ui-inset, var(--background)) 80%, transparent);
-  color: var(--foreground);
-  font: inherit;
-  cursor: pointer;
+.xv-workspace-connections__trigger:hover,.xv-workspace-connections__trigger:focus-visible { border-color:color-mix(in srgb,var(--accent) 40%,var(--foreground));background:color-mix(in srgb,var(--accent) 8%,var(--terminal-ui-raised,var(--card))) }
+.xv-workspace-connections__trigger > strong { font-size:.64rem;font-weight:610 }
+.xv-workspace-connections__trigger > svg { width:11px;height:11px;color:var(--muted) }
+.xv-workspace-connections__logo { position:relative;display:grid;width:21px;height:20px;grid-template-columns:repeat(2,12px);align-content:center }
+.xv-workspace-connections__logo > * { width:12px!important;height:12px!important;border-radius:3px;background:#fff;box-shadow:0 0 0 1px color-mix(in srgb,var(--foreground) 10%,transparent) }
+.xv-workspace-connections__logo > *:last-child { margin:-3px 0 0 6px }
+.xv-workspace-connections__preview {
+  position:absolute;
+  z-index:90;
+  left:50%;
+  bottom:calc(100% + 7px);
+  display:grid;
+  width:224px;
+  gap:4px;
+  padding:9px;
+  border:1px solid var(--card-border);
+  border-radius:11px;
+  background:var(--menu-surface,var(--card));
+  color:var(--foreground);
+  box-shadow:0 18px 46px rgba(0,0,0,.3);
+  opacity:0;
+  visibility:hidden;
+  transform:translate(-50%,5px);
+  transition:opacity 140ms ease,transform 140ms ease,visibility 140ms;
+  pointer-events:none;
 }
-.xv-workspace-connections__tabs svg { width: 13px; height: 13px; flex: none; }
-.xv-workspace-connections__tabs b { overflow: hidden; font-size: 0.5rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-.xv-workspace-connections__verified { width: 11px !important; height: 11px !important; margin-left: -0.12rem; color: #20b26b; }
-.xv-workspace-connections__manage { display: inline-flex; min-height: 28px; align-items: center; border: 0; border-radius: 8px; padding: 0 0.58rem; background: var(--accent); color: white; font-size: 0.52rem; font-weight: 720; cursor: pointer; }
-.xv-workspace-connections__manage:hover { filter: brightness(1.08); }
+.xv-workspace-connections:hover .xv-workspace-connections__preview,.xv-workspace-connections:focus-within .xv-workspace-connections__preview { opacity:1;visibility:visible;transform:translate(-50%,0) }
+.xv-workspace-connections__preview > strong { margin-bottom:2px;font-size:.63rem;font-weight:680 }
+.xv-workspace-connections__preview > span { display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:5px;min-height:25px;padding:2px 4px;border-radius:6px;background:color-mix(in srgb,var(--foreground) 3.5%,transparent) }
+.xv-workspace-connections__preview > span b { font-size:.56rem;font-weight:610 }
+.xv-workspace-connections__preview > span i { color:var(--muted);font-size:.47rem;font-style:normal }
+.xv-workspace-connections__preview > span i.is-connected { color:#20a968 }
+.xv-workspace-connections__preview > small { margin-top:2px;color:var(--muted);font-size:.49rem }
 
 @media (max-width: 720px) {
-  .xv-workspace-connections { grid-template-columns: auto minmax(0, 1fr) auto; width: calc(100% - 0.35rem); margin-top: 0.45rem; }
-  .xv-workspace-connections__copy small { display: none; }
-  .xv-workspace-connections__tabs { grid-column: 1 / -1; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
-  .xv-workspace-connections__tabs::-webkit-scrollbar { display: none; }
-  .xv-workspace-connections__tabs { gap: 0.16rem; }
-  .xv-workspace-connections__tabs > button { flex: 0 0 auto; padding-inline: 0.3rem; }
+  .xv-workspace-connections { margin-top:.42rem }
+  .xv-workspace-connections__trigger { min-height:28px;padding:.24rem .48rem .24rem .32rem }
+  .xv-workspace-connections__preview { width:min(224px,calc(100vw - 28px)) }
 }
 
 /* One quiet two-way control lives above the active composer. Its upper and lower
@@ -9387,10 +9390,12 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 .xv-term-title--button { width: fit-content; max-width: 100%; border: 0; border-radius: .45rem; padding: .22rem .3rem; background: transparent; cursor: pointer; text-align: left; }
 .xv-term-title--button:hover, .xv-term-title--button[aria-expanded='true'] { background: color-mix(in srgb, var(--foreground) 6%, transparent); }
 .xv-term-pinned { width: 11px; height: 11px; color: var(--accent); }
-.xv-workspace-identity-menu { position: absolute; z-index: 1000; top: calc(100% + .5rem); left: 0; display: grid; width: min(248px, calc(100vw - 24px)); padding: .35rem; border: 1px solid var(--card-border); border-radius: .75rem; background: var(--menu-surface, var(--card)); color: var(--foreground); box-shadow: 0 18px 55px rgba(0,0,0,.28); }
-.xv-workspace-identity-menu > button { display: flex; align-items: center; gap: .65rem; min-height: 34px; border: 0; border-radius: .5rem; padding: .42rem .55rem; background: transparent; color: inherit; font-size: .72rem; text-align: left; cursor: pointer; }
-.xv-workspace-identity-menu > button:hover { background: color-mix(in srgb, var(--foreground) 7%, transparent); }
-.xv-workspace-identity-menu > button svg { width: 14px; height: 14px; color: var(--muted); }
+.xv-workspace-identity-menu { position: absolute; z-index: 1000; top: calc(100% + .4rem); left: 0; display: grid; width: min(224px, calc(100vw - 24px)); padding: .32rem; border: 1px solid var(--card-border); border-radius: .72rem; background: var(--menu-surface, var(--card)); color: var(--foreground); box-shadow: 0 18px 55px rgba(0,0,0,.28); user-select:none; }
+.xv-workspace-identity-menu > button { display: flex; align-items: center; gap: .58rem; min-height: 32px; border: 0; border-radius: .48rem; padding: .38rem .5rem; background: transparent; color: inherit; font-size: .68rem; font-weight:540; text-align: left; cursor: pointer; transition:background 120ms ease,color 120ms ease,transform 120ms ease; }
+.xv-workspace-identity-menu > button:hover,.xv-workspace-identity-menu > button:focus-visible { background: color-mix(in srgb, var(--accent) 9%, transparent);color:var(--foreground);transform:translateX(2px);outline:0; }
+.xv-workspace-identity-menu > button[aria-checked='true'] { background:color-mix(in srgb,var(--accent) 12%,transparent) }
+.xv-workspace-identity-menu > button svg { width: 13px; height: 13px; color: var(--muted); }
+.xv-workspace-identity-menu > button:hover svg,.xv-workspace-identity-menu > button:focus-visible svg { color:var(--accent) }
 .xv-workspace-identity-menu > i { height: 1px; margin: .28rem -.35rem; background: var(--card-border); }
 .xv-workspace-rename { display: flex; gap: .3rem; padding: .25rem; }
 .xv-workspace-rename input { min-width: 0; flex: 1; border: 1px solid var(--card-border); border-radius: .45rem; padding: .42rem .5rem; background: var(--surface-inset); color: var(--foreground); font: .7rem var(--font-coding, monospace); outline: none; }
@@ -10653,6 +10658,27 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   line-height: 1.28;
   color: rgba(255, 255, 255, 0.43);
 }
+.xv-cba-item--command { background:color-mix(in srgb,#2f7cff 9%,transparent) }
+.xv-cba-item--command:hover { background:color-mix(in srgb,#2f7cff 17%,transparent) }
+.xv-cba-item--plan { background:color-mix(in srgb,#f59e0b 8%,transparent) }
+.xv-cba-item--plan:hover { background:color-mix(in srgb,#f59e0b 17%,transparent) }
+.xv-cba-item--plan > svg { color:#f59e0b }
+.xv-cba-item--debug { background:color-mix(in srgb,#ef4444 8%,transparent) }
+.xv-cba-item--debug:hover { background:color-mix(in srgb,#ef4444 17%,transparent) }
+.xv-cba-item--debug > svg { color:#ef4444 }
+.xv-cba-item--integrations { position:relative }
+.xv-cba-integrations-logo { position:relative;display:grid;width:18px;height:18px;flex:none;grid-template-columns:repeat(2,10px);align-content:center }
+.xv-cba-integrations-logo > * { width:10px!important;height:10px!important;border-radius:3px;background:#fff;box-shadow:0 0 0 1px color-mix(in srgb,var(--foreground) 10%,transparent) }
+.xv-cba-integrations-logo > *:last-child { margin:-3px 0 0 5px }
+.xv-cba-integration-preview { position:absolute;z-index:5;top:calc(100% + 5px);right:0;display:grid;width:205px;grid-template-columns:repeat(3,1fr);gap:6px;padding:9px;border:1px solid var(--card-border);border-radius:10px;background:var(--menu-surface,var(--card));color:var(--foreground);box-shadow:0 16px 36px rgba(0,0,0,.28);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity 130ms ease,transform 130ms ease,visibility 130ms;pointer-events:none }
+.xv-cba-integration-preview strong,.xv-cba-integration-preview small { grid-column:1/-1;text-align:left }
+.xv-cba-integration-preview strong { font-size:10px;font-weight:680 }
+.xv-cba-integration-preview > span { display:flex;align-items:center;gap:4px;font-size:8px;color:var(--muted) }
+.xv-cba-integration-preview small { color:var(--muted);font-size:8px }
+.xv-cba-item--integrations:hover .xv-cba-integration-preview,.xv-cba-item--integrations:focus-visible .xv-cba-integration-preview { opacity:1;visibility:visible;transform:translateY(0) }
+.xv-chatbar-input-form textarea[data-insert-highlight='command']::selection,.xv-home-chatbar-shell textarea[data-insert-highlight='command']::selection { color:#fff;background:#2767d8 }
+.xv-chatbar-input-form textarea[data-insert-highlight='plan']::selection,.xv-home-chatbar-shell textarea[data-insert-highlight='plan']::selection { color:#2a1800;background:#f6b83f }
+.xv-chatbar-input-form textarea[data-insert-highlight='debug']::selection,.xv-home-chatbar-shell textarea[data-insert-highlight='debug']::selection { color:#fff;background:#dc3f4b }
 
 .xv-cba-recent {
   grid-column: 1 / -1;
@@ -10675,11 +10701,11 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   min-width: 62px;
   padding: 0.22rem 0.38rem;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--accent) 11%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 88%, #17336f);
+  color: white;
   font-family: var(--font-coding, ui-monospace, monospace);
   font-size: 0.7rem;
-  font-weight: 720;
+  font-weight: 820;
 }
 /* Beige is a light theme too. These were written for White alone, so on the cream
    Parchment surface the menu rendered white-on-white and read as empty. */

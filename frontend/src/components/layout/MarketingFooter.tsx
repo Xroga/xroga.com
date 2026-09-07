@@ -34,13 +34,13 @@ const FOOTER_GROUPS = [
 ] as const;
 
 const FOOTER_PROMPTS = [
-  'What can I build for you?',
-  'Build everything you can imagine.',
-  'What can we ship today?',
-  'Turn your idea into working software.',
-  'From brief to verified release.',
-  'Build boldly. Keep every change.',
-  'Your next product starts here.',
+  { lead: 'What can I', tail: 'build for you?' },
+  { lead: 'Build everything', tail: 'you can imagine.' },
+  { lead: 'What can we', tail: 'ship today?' },
+  { lead: 'Turn your idea', tail: 'into working software.' },
+  { lead: 'From brief', tail: 'to verified release.' },
+  { lead: 'Build boldly.', tail: 'Keep every change.' },
+  { lead: 'Your next product', tail: 'starts here.' },
 ] as const;
 
 export function MarketingFooter() {
@@ -93,8 +93,10 @@ export function MarketingFooter() {
           </div>
         </section>
 
-        <p className="xv-marketing-footer__prompt" aria-label={FOOTER_PROMPTS[0]}>
-          {FOOTER_PROMPTS.map((prompt) => <span key={prompt} aria-hidden="true">{prompt}</span>)}
+        <p className="xv-marketing-footer__prompt" aria-label={`${FOOTER_PROMPTS[0].lead} ${FOOTER_PROMPTS[0].tail}`}>
+          {FOOTER_PROMPTS.map((prompt) => (
+            <span key={prompt.lead} aria-hidden="true"><b>{prompt.lead}</b> {prompt.tail}<i /></span>
+          ))}
         </p>
       </div>
     </footer>

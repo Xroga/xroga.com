@@ -250,7 +250,7 @@ test('the duplicate Connectors row is gone and slash commands expose real action
   assert.doesNotMatch(MENU, /onOpenConnectors/);
   assert.match(MENU, /panel === 'commands'/);
   assert.match(MENU, /COMPOSER_COMMANDS\.map/);
-  assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt\)\}/);
+  assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt, \{ highlight: 'command', selectionLength: command\.command\.length \}\)\}/);
 });
 
 test('the compact menu exposes the requested working tools', () => {
@@ -277,6 +277,24 @@ test('the action palette follows the reference row order', () => {
   const plan = MENU.indexOf('<b>Plan before build</b>');
   assert.ok(files >= 0 && integrations > files, 'integrations should follow file input');
   assert.ok(commands > integrations && plan > commands, 'commands and planning should form the second row');
+});
+
+test('command, plan, and debug inserts expose an intentional selection highlight', () => {
+  assert.match(MENU, /highlight: 'command'/);
+  assert.match(MENU, /highlight: 'plan'/);
+  assert.match(MENU, /highlight: 'debug'/);
+  assert.match(CSS, /textarea\[data-insert-highlight='command'\]::selection/);
+  assert.match(CSS, /textarea\[data-insert-highlight='plan'\]::selection[^}]*background:#f6b83f/);
+  assert.match(CSS, /textarea\[data-insert-highlight='debug'\]::selection[^}]*background:#dc3f4b/);
+});
+
+test('integrations has original provider marks, a hover preview, and the full click action', () => {
+  for (const provider of ['github', 'vercel', 'supabase']) {
+    assert.match(MENU, new RegExp(`IntegrationLogo id="${provider}"`));
+  }
+  assert.match(MENU, /xv-cba-integration-preview/);
+  assert.match(CSS, /\.xv-cba-item--integrations:hover \.xv-cba-integration-preview/);
+  assert.match(MENU, /onOpenIntegrations\?\.\(\)/);
 });
 
 // ---------------------------------------------------------------------------

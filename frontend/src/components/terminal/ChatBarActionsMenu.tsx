@@ -2,9 +2,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Bug, Check, Command, Grid2X2, ListChecks, Paperclip, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
+import { ArrowUpRight, Bug, Check, Command, ListChecks, Paperclip, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import {
   COMPOSER_COMMANDS,
   COMPOSER_SKILLS,
@@ -33,7 +34,7 @@ export function ChatBarActionsMenu({
   className,
 }: {
   /** Fills the composer with a scaffold for the user to edit. Never auto-sends. */
-  onInsert: (text: string) => void;
+  onInsert: (text: string, options?: { highlight: 'command' | 'plan' | 'debug'; selectionLength: number }) => void;
   onAddFiles?: () => void;
   /**
    * Opens the integrations surface. This used to be a pill sitting beside the `+`,
@@ -131,8 +132,8 @@ export function ChatBarActionsMenu({
     if (!open) setPanel('menu');
   }, [open]);
 
-  function insert(text: string) {
-    onInsert(text);
+  function insert(text: string, options?: { highlight: 'command' | 'plan' | 'debug'; selectionLength: number }) {
+    onInsert(text, options);
     setOpen(false);
   }
 
@@ -189,20 +190,31 @@ export function ChatBarActionsMenu({
                 <span className="xv-cba-item__text"><b>Add files or photos</b><i>Upload from computer</i></span>
                 <kbd className="xv-cba-kbd">Ctrl+U</kbd>
               </button>
-              <button type="button" className="xv-cba-item" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
-                <Grid2X2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <button type="button" className="xv-cba-item xv-cba-item--integrations" disabled={!onOpenIntegrations} onClick={() => { onOpenIntegrations?.(); setOpen(false); }}>
+                <span className="xv-cba-integrations-logo" aria-hidden="true">
+                  <IntegrationLogo id="github" name="GitHub" size={10} />
+                  <IntegrationLogo id="vercel" name="Vercel" size={10} />
+                  <IntegrationLogo id="supabase" name="Supabase" size={10} />
+                </span>
                 <span className="xv-cba-item__text"><b>Integrations</b><i>GitHub, Vercel, and your authorised accounts</i></span>
                 {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
+                <span className="xv-cba-integration-preview" aria-hidden="true">
+                  <strong>Integrations</strong>
+                  <span><IntegrationLogo id="github" name="GitHub" size={14} /> GitHub</span>
+                  <span><IntegrationLogo id="vercel" name="Vercel" size={14} /> Vercel</span>
+                  <span><IntegrationLogo id="supabase" name="Supabase" size={14} /> Supabase</span>
+                  <small>Click to manage all connections</small>
+                </span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('commands')}>
+              <button type="button" className="xv-cba-item xv-cba-item--command" onClick={() => setPanel('commands')}>
                 <Command className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Slash commands</b><i>Build, plan, debug, audit, test, or deploy</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ')}>
+              <button type="button" className="xv-cba-item xv-cba-item--plan" onClick={() => insert('Plan this build first. Show the approach, affected files, checks, and blockers before changing anything: ', { highlight: 'plan', selectionLength: 'Plan this build first.'.length })}>
                 <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Plan before build</b><i>Get the approach first, change nothing yet</i></span>
               </button>
-              <button type="button" className="xv-cba-item" onClick={() => insert('Debug this error, identify the root cause, and fix it: ')}>
+              <button type="button" className="xv-cba-item xv-cba-item--debug" onClick={() => insert('Debug this error, identify the root cause, and fix it: ', { highlight: 'debug', selectionLength: 'Debug this error'.length })}>
                 <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span className="xv-cba-item__text"><b>Debug an error</b><i>Paste the error, get the root cause</i></span>
               </button>
@@ -235,7 +247,7 @@ export function ChatBarActionsMenu({
                     type="button"
                     role="menuitem"
                     className="xv-cba-item xv-cba-command"
-                    onClick={() => insert(command.prompt)}
+                    onClick={() => insert(command.prompt, { highlight: 'command', selectionLength: command.command.length })}
                   >
                     <code>{command.command}</code>
                     <span className="xv-cba-item__text">
