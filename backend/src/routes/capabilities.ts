@@ -24,7 +24,18 @@ const STORAGE_IDS = new Set<StorageProviderId>([
   'local-files', 'object-storage', 'self-hosted',
 ]);
 const MODEL_IDS = new Set<ModelId>([
-  'kimi_k3', 'glm_5_2', 'deepseek_v4_pro', 'deepseek_v4_flash', 'grok_4_5', 'grok_4_3',
+  'kimi_k3',
+  'kimi_k2_7',
+
+  'glm_5_2',
+  'glm_5_3',
+  'glm_5_3_flash',
+
+  'deepseek_v4_pro',
+  'deepseek_v4_flash',
+
+  'grok_4_5',
+  'grok_4_3',
 ]);
 
 function storageStates(value: unknown): StorageProviderState[] | undefined {
