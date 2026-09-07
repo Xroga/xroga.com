@@ -1,157 +1,229 @@
+import assert from 'node:assert/strict';
 import {
   describe,
   it,
 } from 'node:test';
 
-import assert from 'node:assert/strict';
-
 import {
-  routePrompt,
   isBuildPrompt,
+  routePrompt,
 } from './router.js';
 
-describe('routePrompt', () => {
-  it('routes complex crypto builds to Kimi', () => {
-    const r = routePrompt(
-      'build a crypto staking dashboard with wallet connect',
+describe(
+  'routePrompt',
+  () => {
+    it(
+      'routes ordinary crypto application engineering to GLM-5.3',
+      () => {
+        const route =
+          routePrompt(
+            'build a crypto staking dashboard with wallet connect',
+          );
+
+        assert.equal(
+          route.builder,
+          'glm_5_3',
+        );
+
+        assert.equal(
+          route.converter,
+          'deepseek_v4_flash',
+        );
+      },
     );
 
-    assert.equal(
-      r.builder,
-      'kimi_k3',
+    it(
+      'reserves Kimi K3 for rare principal-level systems work',
+      () => {
+        const route =
+          routePrompt(
+            'design a new compiler and operating system kernel from scratch',
+          );
+
+        assert.equal(
+          route.builder,
+          'kimi_k3',
+        );
+      },
     );
 
-    assert.equal(
-      r.converter,
-      'deepseek_v4_flash',
-    );
-  });
+    it(
+      'routes long-horizon repository work to GLM-5.3',
+      () => {
+        const route =
+          routePrompt(
+            'refactor this entire large codebase repository',
+          );
 
-  it('routes long-horizon refactors to GLM', () => {
-    const r = routePrompt(
-      'build and refactor this large codebase repository suite',
-    );
-
-    assert.equal(
-      r.builder,
-      'glm_5_2',
-    );
-  });
-
-  it('routes simple landing pages to the current volume engineering route', () => {
-    const r = routePrompt(
-      'build a simple landing page for a coffee shop',
+        assert.equal(
+          route.builder,
+          'glm_5_3',
+        );
+      },
     );
 
-    assert.equal(
-      r.builder,
-      'deepseek_v4_pro',
-    );
-  });
+    it(
+      'routes simple builds to GLM-5.3 Flash',
+      () => {
+        const route =
+          routePrompt(
+            'build a simple landing page for a coffee shop',
+          );
 
-  it('routes file analysis to GLM instead of Grok', () => {
-    const r = routePrompt(
-      'analyze this PDF document upload',
-    );
-
-    assert.equal(
-      r.kind,
-      'file_analysis',
-    );
-
-    assert.equal(
-      r.builder,
-      'glm_5_2',
-    );
-  });
-
-  it('does not use Grok for generic research synthesis', () => {
-    const r = routePrompt(
-      'research the latest public transport API changes with current sources',
+        assert.equal(
+          route.builder,
+          'glm_5_3_flash',
+        );
+      },
     );
 
-    assert.equal(
-      r.kind,
-      'research',
+    it(
+      'routes normal unknown-category builds to GLM-5.3 Flash',
+      () => {
+        const route =
+          routePrompt(
+            'build a lunar moss accounting engine',
+          );
+
+        assert.equal(
+          route.builder,
+          'glm_5_3_flash',
+        );
+
+        assert.equal(
+          route.classification.primaryIntent,
+          'build',
+        );
+      },
     );
 
-    assert.equal(
-      r.builder,
-      'deepseek_v4_flash',
+    it(
+      'routes file analysis to GLM-5.3 Flash',
+      () => {
+        const route =
+          routePrompt(
+            'analyze this PDF document upload',
+          );
+
+        assert.equal(
+          route.kind,
+          'file_analysis',
+        );
+
+        assert.equal(
+          route.builder,
+          'glm_5_3_flash',
+        );
+      },
     );
 
-    assert.equal(
-      r.useResearch,
-      true,
-    );
-  });
+    it(
+      'routes generic research synthesis to GLM-5.3 Flash',
+      () => {
+        const route =
+          routePrompt(
+            'research the latest public transport API changes with current sources',
+          );
 
-  it('does not use Grok as the final model for X-native research', () => {
-    const r = routePrompt(
-      'research current X.com posts about a new API release with sources',
-    );
+        assert.equal(
+          route.kind,
+          'research',
+        );
 
-    assert.equal(
-      r.builder,
-      'deepseek_v4_flash',
-    );
+        assert.equal(
+          route.builder,
+          'glm_5_3_flash',
+        );
 
-    assert.notEqual(
-      r.builder,
-      'grok_4_3',
-    );
-
-    assert.notEqual(
-      r.builder,
-      'grok_4_5',
-    );
-  });
-
-  it('detects build prompts', () => {
-    assert.equal(
-      isBuildPrompt(
-        'build me a website',
-      ),
-      true,
+        assert.equal(
+          route.useResearch,
+          true,
+        );
+      },
     );
 
-    assert.equal(
-      isBuildPrompt(
-        'what is staking',
-      ),
-      false,
-    );
-  });
+    it(
+      'does not use Grok as final synthesis for X-native research',
+      () => {
+        const route =
+          routePrompt(
+            'research current X.com posts about a new API release with sources',
+          );
 
-  it('routes unknown categories by requested operation instead of a whitelist', () => {
-    const r = routePrompt(
-      'build a lunar moss accounting engine',
-    );
+        assert.equal(
+          route.builder,
+          'glm_5_3_flash',
+        );
 
-    assert.equal(
-      r.kind.startsWith('build'),
-      true,
-    );
+        assert.notEqual(
+          route.builder,
+          'grok_4_3',
+        );
 
-    assert.equal(
-      r.classification.primaryIntent,
-      'build',
-    );
-  });
-
-  it('does not route pure data research into a website build', () => {
-    const r = routePrompt(
-      'research current public transport data APIs with sources',
+        assert.notEqual(
+          route.builder,
+          'grok_4_5',
+        );
+      },
     );
 
-    assert.equal(
-      r.kind,
-      'research',
+    it(
+      'keeps ordinary chat on DeepSeek Flash',
+      () => {
+        const route =
+          routePrompt(
+            'explain what a database index is',
+          );
+
+        assert.equal(
+          route.kind,
+          'chat',
+        );
+
+        assert.equal(
+          route.builder,
+          'deepseek_v4_flash',
+        );
+      },
     );
 
-    assert.equal(
-      r.classification.requiresCoding,
-      false,
+    it(
+      'detects build prompts',
+      () => {
+        assert.equal(
+          isBuildPrompt(
+            'build me a website',
+          ),
+          true,
+        );
+
+        assert.equal(
+          isBuildPrompt(
+            'what is staking',
+          ),
+          false,
+        );
+      },
     );
-  });
-});
+
+    it(
+      'does not turn pure research into a build',
+      () => {
+        const route =
+          routePrompt(
+            'research current public transport data APIs with sources',
+          );
+
+        assert.equal(
+          route.kind,
+          'research',
+        );
+
+        assert.equal(
+          route.classification.requiresCoding,
+          false,
+        );
+      },
+    );
+  },
+);
