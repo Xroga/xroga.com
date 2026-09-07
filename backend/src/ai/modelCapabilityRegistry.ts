@@ -60,17 +60,138 @@ export interface RuntimeModelCapability {
  * independent controls over the same risk is the intent; a prior that would be dangerous
  * if the filter were ever removed is not a prior worth keeping.
  */
-const UNVERIFIED_PRIOR_STRENGTHS: Record<ModelId, Record<ModelCapability, number>> = {
-  // K2.7 is the intended normal implementation route (§6). Its priors sit just under K3 for
-  // coding and well under it for architecture: a cost-efficient coding model is not a
-  // flagship reasoner, and giving it flagship priors would win it routes it should not.
-  kimi_k2_7: { coding: 9, repository_analysis: 8, architecture: 6, research: 3, review: 7, debugging: 8, security_review: 6, ui_generation: 7, structured_output: 8, tool_calls: 8, streaming: 9 },
-  kimi_k3: { coding: 9, repository_analysis: 10, architecture: 10, research: 5, review: 9, debugging: 8, security_review: 8, ui_generation: 8, structured_output: 8, tool_calls: 8, streaming: 9 },
-  glm_5_2: { coding: 9, repository_analysis: 9, architecture: 8, research: 4, review: 8, debugging: 9, security_review: 7, ui_generation: 7, structured_output: 9, tool_calls: 8, streaming: 9 },
-  deepseek_v4_pro: { coding: 8, repository_analysis: 7, architecture: 6, research: 3, review: 7, debugging: 9, security_review: 6, ui_generation: 8, structured_output: 9, tool_calls: 7, streaming: 9 },
-  deepseek_v4_flash: { coding: 7, repository_analysis: 5, architecture: 4, research: 3, review: 5, debugging: 8, security_review: 4, ui_generation: 7, structured_output: 8, tool_calls: 6, streaming: 10 },
-  grok_4_5: { coding: 0, repository_analysis: 6, architecture: 6, research: 10, review: 7, debugging: 7, security_review: 6, ui_generation: 7, structured_output: 7, tool_calls: 8, streaming: 9 },
-  grok_4_3: { coding: 0, repository_analysis: 9, architecture: 7, research: 8, review: 8, debugging: 7, security_review: 7, ui_generation: 7, structured_output: 7, tool_calls: 7, streaming: 9 },
+const UNVERIFIED_PRIOR_STRENGTHS: Record<
+  ModelId,
+  Record<ModelCapability, number>
+> = {
+  kimi_k2_7: {
+    coding: 9,
+    repository_analysis: 8,
+    architecture: 6,
+    research: 3,
+    review: 7,
+    debugging: 8,
+    security_review: 6,
+    ui_generation: 7,
+    structured_output: 8,
+    tool_calls: 8,
+    streaming: 9,
+  },
+
+  kimi_k3: {
+    coding: 9,
+    repository_analysis: 10,
+    architecture: 10,
+    research: 5,
+    review: 9,
+    debugging: 8,
+    security_review: 8,
+    ui_generation: 8,
+    structured_output: 8,
+    tool_calls: 8,
+    streaming: 9,
+  },
+
+  // Legacy rollback route.
+  glm_5_2: {
+    coding: 8,
+    repository_analysis: 8,
+    architecture: 7,
+    research: 3,
+    review: 7,
+    debugging: 8,
+    security_review: 7,
+    ui_generation: 6,
+    structured_output: 8,
+    tool_calls: 8,
+    streaming: 8,
+  },
+
+  // Serious engineering route.
+  glm_5_3: {
+    coding: 10,
+    repository_analysis: 10,
+    architecture: 9,
+    research: 4,
+    review: 9,
+    debugging: 10,
+    security_review: 8,
+    ui_generation: 8,
+    structured_output: 9,
+    tool_calls: 9,
+    streaming: 9,
+  },
+
+  // Normal high-volume engineering route.
+  glm_5_3_flash: {
+    coding: 9,
+    repository_analysis: 8,
+    architecture: 7,
+    research: 4,
+    review: 7,
+    debugging: 8,
+    security_review: 6,
+    ui_generation: 8,
+    structured_output: 9,
+    tool_calls: 9,
+    streaming: 10,
+  },
+
+  deepseek_v4_pro: {
+    coding: 8,
+    repository_analysis: 7,
+    architecture: 6,
+    research: 3,
+    review: 7,
+    debugging: 9,
+    security_review: 6,
+    ui_generation: 8,
+    structured_output: 9,
+    tool_calls: 7,
+    streaming: 9,
+  },
+
+  deepseek_v4_flash: {
+    coding: 7,
+    repository_analysis: 5,
+    architecture: 4,
+    research: 3,
+    review: 5,
+    debugging: 8,
+    security_review: 4,
+    ui_generation: 7,
+    structured_output: 8,
+    tool_calls: 6,
+    streaming: 10,
+  },
+
+  grok_4_5: {
+    coding: 0,
+    repository_analysis: 6,
+    architecture: 6,
+    research: 10,
+    review: 7,
+    debugging: 7,
+    security_review: 6,
+    ui_generation: 7,
+    structured_output: 7,
+    tool_calls: 8,
+    streaming: 9,
+  },
+
+  grok_4_3: {
+    coding: 0,
+    repository_analysis: 9,
+    architecture: 7,
+    research: 8,
+    review: 8,
+    debugging: 7,
+    security_review: 7,
+    ui_generation: 7,
+    structured_output: 7,
+    tool_calls: 7,
+    streaming: 9,
+  },
 };
 
 /**
@@ -84,14 +205,67 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<ModelId, Record<ModelCapability, number
  * The research models keep chains among themselves: falling back from one Grok to another
  * is still research, and `providerPolicy` refuses either of them for engineering work.
  */
-const FALLBACKS: Record<ModelId, ModelId[]> = {
-  kimi_k2_7: ['glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
-  kimi_k3: ['glm_5_2', 'kimi_k2_7', 'deepseek_v4_pro', 'deepseek_v4_flash'],
-  glm_5_2: ['kimi_k2_7', 'kimi_k3', 'deepseek_v4_pro', 'deepseek_v4_flash'],
-  deepseek_v4_pro: ['glm_5_2', 'kimi_k2_7', 'deepseek_v4_flash', 'kimi_k3'],
-  deepseek_v4_flash: ['deepseek_v4_pro', 'glm_5_2', 'kimi_k3'],
-  grok_4_5: ['grok_4_3'],
-  grok_4_3: ['grok_4_5'],
+const FALLBACKS: Record<
+  ModelId,
+  ModelId[]
+> = {
+  kimi_k2_7: [
+    'glm_5_3_flash',
+    'glm_5_3',
+    'kimi_k3',
+    'deepseek_v4_pro',
+  ],
+
+  kimi_k3: [
+    'glm_5_3',
+    'glm_5_3_flash',
+    'glm_5_2',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_2: [
+    'glm_5_3',
+    'glm_5_3_flash',
+    'kimi_k3',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_3: [
+    'glm_5_3_flash',
+    'kimi_k3',
+    'glm_5_2',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_3_flash: [
+    'glm_5_3',
+    'kimi_k3',
+    'glm_5_2',
+    'deepseek_v4_flash',
+  ],
+
+  deepseek_v4_pro: [
+    'glm_5_3_flash',
+    'glm_5_3',
+    'deepseek_v4_flash',
+    'kimi_k3',
+  ],
+
+  deepseek_v4_flash: [
+    'glm_5_3_flash',
+    'deepseek_v4_pro',
+    'glm_5_3',
+    'kimi_k3',
+  ],
+
+  // Temporary research-only compatibility.
+  grok_4_5: [
+    'grok_4_3',
+  ],
+
+  grok_4_3: [
+    'grok_4_5',
+  ],
 };
 
 function configured(id: ModelId): boolean {
