@@ -168,11 +168,10 @@ test('the expanded preview owns the viewport and hides the shell', () => {
     /display:\s*none\s*!important/,
     'hiding must remove the element from layout, not just stop it painting',
   );
-  const composer = blocks.find(
-    (block) => block.includes('.xv-terminal-dock') && block.includes('display: block'),
+  assert.ok(
+    hiding.includes('.xv-terminal-dock'),
+    'the composer belongs to the workspace and must stand down in the expanded editor',
   );
-  assert.ok(composer, 'the canonical composer should remain available in the expanded editor');
-  assert.match(composer, /z-index:\s*280\s*!important/);
 });
 
 test('the expanded preview has no drawn border', () => {

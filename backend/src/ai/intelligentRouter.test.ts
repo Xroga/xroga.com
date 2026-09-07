@@ -36,7 +36,7 @@ describe('intelligent router evaluation framework', () => {
       registry: healthyRegistry(),
     });
     const implementation = plan.subtasks.find((task) => task.taskClass === 'code_generation');
-    assert.ok(implementation?.selectedModel?.startsWith('deepseek'));
+    assert.equal(implementation?.selectedModel, 'glm_5_3_flash');
     assert.equal(plan.reviewRequired, false);
   });
 

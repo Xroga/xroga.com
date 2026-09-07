@@ -103,20 +103,19 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: 14px !important/, 'and stop at it');
 });
 
-test('the plus menu is a compact two-column palette rather than a composer-wide dashboard', () => {
+test('the plus menu is a compact vertical picker rather than a composer-wide dashboard', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
   const media = code.indexOf('@media (min-width: 640px)', at);
   const block = code.slice(media, media + 360);
-  assert.match(block, /width:\s*min\(440px, 100%\)/, 'the desktop panel should remain bounded');
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 440\)/, 'runtime width should match the CSS cap');
-  assert.ok(MENU.indexOf('<b>Integrations</b>') < MENU.indexOf('<b>Slash commands</b>'), 'Integrations should sit beside file upload');
+  assert.match(block, /width:\s*min\(410px, 100%\)/, 'the desktop panel should remain bounded');
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 410\)/, 'runtime width should match the CSS cap');
+  assert.ok(MENU.indexOf('<b>Add photos &amp; files</b>') < MENU.indexOf('<b>Web search</b>'), 'upload should lead the tool list');
 
-  // Two columns stay consistent at every size and keep the menu easy to scan.
   const base = code.slice(at, code.indexOf('}', at));
-  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the palette keeps two columns');
+  assert.match(base, /grid-template-columns:\s*minmax\(0, 1fr\)/, 'the picker keeps one scan-friendly column');
 });
 
 test('an empty fullscreen terminal shows rotating build-command inspiration', () => {

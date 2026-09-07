@@ -22,7 +22,6 @@ import { createPortal } from 'react-dom';
 import { CompanionRenderer } from './CompanionRenderer';
 import { CompanionUsagePopover } from './CompanionUsagePopover';
 import { useCompanionStore } from '@/store/useCompanionStore';
-import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/lib/utils';
 
 export interface XrogaCompanionProps {
@@ -39,8 +38,6 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
   const [intro, setIntro] = useState(false);
   const state = useCompanionStore();
   const operation = state.operation;
-  const usage = useAppStore((app) => app.tokenUsage);
-  const remainingPercent = usage ? Math.max(0, Math.min(100, 100 - usage.percentUsed)) : 0;
 
   // A one-per-session entrance, so Smoky does not re-animate on every navigation.
   useEffect(() => {
@@ -129,6 +126,8 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
           type="button"
           className="xv-companion-trigger"
           onClick={() => setUsageOpen((v) => !v)}
+          onMouseEnter={() => setUsageOpen(true)}
+          onFocus={() => setUsageOpen(true)}
           aria-expanded={usageOpen}
           aria-label="Show usage"
           title="Usage"
@@ -140,18 +139,6 @@ export function XrogaCompanion({ variant = 'floating', className }: XrogaCompani
             accent={state.accent}
             mantleEnabled={state.mantleEnabled}
           />
-          {/* The laptop prop. Drawn here rather than baked into the skins, because the
-              costumes are single static renders — one CSS-composed prop animates over
-              all five instead of needing ten new images. */}
-          <span className="xv-companion-laptop" aria-hidden="true">
-            <i className="xv-companion-laptop__screen" />
-            <i className="xv-companion-laptop__base" />
-          </span>
-          {variant !== 'hero' ? (
-            <span className="xv-companion-usage-meter" data-known={Boolean(usage)} aria-hidden="true">
-              <i style={{ height: `${remainingPercent}%` }} />
-            </span>
-          ) : null}
         </button>
       ) : (
         <span className="xv-companion-trigger" aria-hidden="true">

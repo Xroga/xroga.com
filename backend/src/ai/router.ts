@@ -53,6 +53,9 @@ const FILE_RE =
 const SIMPLE_BUILD_RE =
   /\b(landing\s*page|simple\s+(web|site|app)|basic\s+(web|site|app)|static\s+site|todo\s*app)\b/i;
 
+const EXPLICIT_RESEARCH_RE = /\b(research|investigate|look\s+up|find\s+(?:current|latest))\b/i;
+const MUTATION_RE = /\b(build|implement|code|create|add|change|fix|debug|deploy|ship)\b/i;
+
 const SERIOUS_CAPABILITIES =
   new Set([
     'blockchain_integration',
@@ -85,6 +88,19 @@ export function routePrompt(
   const isCodingTask =
     classification.requiresCoding;
 
+  // Principal systems language is authoritative even when the generic classifier
+  // reads "design" as advice instead of implementation.
+  if (PRINCIPAL_RE.test(text)) {
+    return {
+      kind: 'build_complex',
+      converter: 'deepseek_v4_flash',
+      builder: 'kimi_k3',
+      useResearch: classification.requiresResearch,
+      reason: 'Principal-level systems engineering task',
+      classification,
+    };
+  }
+
   /**
    * Retrieval is handled independently:
    *
@@ -93,10 +109,8 @@ export function routePrompt(
    *
    * This route chooses only the final synthesis model.
    */
-  if (
-    !isCodingTask &&
-    classification.requiresResearch
-  ) {
+  const explicitResearchOnly = EXPLICIT_RESEARCH_RE.test(text) && !MUTATION_RE.test(text);
+  if (explicitResearchOnly || (!isCodingTask && classification.requiresResearch)) {
     return {
       kind:
         'research',
@@ -161,34 +175,6 @@ export function routePrompt(
 
       reason:
         'Low-cost conversation and utility route',
-
-      classification,
-    };
-  }
-
-  /**
-   * Rare principal-expert escalation.
-   */
-  if (
-    PRINCIPAL_RE.test(
-      text,
-    )
-  ) {
-    return {
-      kind:
-        'build_complex',
-
-      converter:
-        'deepseek_v4_flash',
-
-      builder:
-        'kimi_k3',
-
-      useResearch:
-        classification.requiresResearch,
-
-      reason:
-        'Principal-level systems engineering task',
 
       classification,
     };

@@ -74,6 +74,16 @@ const REGISTRY: RuntimeModelCapability[] = [
   runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
   runtimeModel('deepseek_v4_pro', { inputUsdPer1M: 0.5, outputUsdPer1M: 2 }),
   runtimeModel('glm_5_2', { provider: 'zhipu', inputUsdPer1M: 0.6, outputUsdPer1M: 2.2 }),
+  runtimeModel('glm_5_3', { provider: 'zhipu', inputUsdPer1M: 1.4, outputUsdPer1M: 4.4, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
+  runtimeModel('glm_5_3_flash', {
+    provider: 'zhipu',
+    typicalLatency: 'fast',
+    inputUsdPer1M: 0.15,
+    outputUsdPer1M: 0.5,
+    contextWindow: 1_000_000,
+    maximumSafeRequestTokens: 800_000,
+    supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true },
+  }),
   runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
   runtimeModel('grok_4_5', { provider: 'xai' }),
   runtimeModel('grok_4_3', { provider: 'xai' }),
@@ -163,34 +173,28 @@ test('routine work starts at Flash', () => {
   assert.equal(result.selected, 'deepseek_v4_flash');
 });
 
-test('deep general reasoning starts at Pro', () => {
+test('deep general reasoning starts at GLM 5.3', () => {
   const result = route({ prompt: 'reason carefully from first principles about the trade-offs' });
   assert.equal(result.family, 'reasoning');
-  assert.equal(result.selected, 'deepseek_v4_pro');
+  assert.equal(result.selected, 'glm_5_3');
 });
 
 test('long-horizon engineering starts at GLM', () => {
   const result = route({ prompt: 'migrate the entire codebase to the new router' });
   assert.equal(result.family, 'long_horizon');
-  assert.equal(result.selected, 'glm_5_2');
+  assert.equal(result.selected, 'glm_5_3');
 });
 
-test('K2.7 heads the coding chain in policy and is reported honestly as unavailable', () => {
-  // §6 assigns normal software implementation to K2.7. It is configuration-gated and has no
-  // runtime transport entry, so it cannot be selected — but the policy order is not quietly
-  // rewritten to hide that. The gate is stated in `excluded`, and GLM inherits the route.
+test('GLM 5.3 Flash heads the normal coding chain', () => {
   const result = route({ prompt: 'add pagination', projectId: 'p-1' });
   assert.equal(result.family, 'coding');
-  const gate = result.excluded.find((entry) => entry.modelId === 'kimi_k2_7');
-  assert.ok(gate, 'K2.7 must appear in the considered chain');
-  assert.match(gate!.reason, /not_configured|no runtime transport entry/);
-  assert.equal(result.selected, 'glm_5_2');
+  assert.equal(result.selected, 'glm_5_3_flash');
 });
 
 test('a research request routes to Grok', () => {
   const result = route({ prompt: 'what is trending on x.com in the solana hackathon' });
   assert.equal(result.family, 'research');
-  assert.equal(result.selected, 'grok_4_5');
+  assert.equal(result.selected, 'grok_4_3');
 });
 
 test('a request that researches and then builds is routed as engineering', () => {
@@ -247,7 +251,9 @@ test('an image request that must also write files finds no route rather than a r
 
 test('a confirmed vision model is used when the registries agree', () => {
   const visionK3 = REGISTRY.map((model) =>
-    model.id === 'kimi_k3'
+    model.id === 'glm_5_3_flash'
+      ? runtimeModel('glm_5_3_flash', { supports: { text: true, images: false, structuredOutput: true, toolCalls: true, streaming: true } })
+      : model.id === 'kimi_k3'
       ? runtimeModel('kimi_k3', { supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true } })
       : model,
   );
@@ -314,9 +320,12 @@ test('a context requirement beyond a model\'s safe limit excludes it', () => {
     { prompt: 'summarize this repository' },
     { estimatedContextTokens: 500_000 },
   );
-  // Only K3 has a window this large in the fixture.
+  // Only the million-token models have a window this large in the fixture.
   for (const modelId of result.chain) {
-    assert.equal(modelId, 'kimi_k3');
+    assert.ok(
+      ['glm_5_3_flash', 'glm_5_3', 'kimi_k3'].includes(modelId),
+      `${modelId} does not have the required context window`,
+    );
   }
 });
 
@@ -331,9 +340,9 @@ test('a compute budget below the request is refused rather than silently truncat
 
 test('a cost ceiling excludes an over-priced model rather than ranking it down', () => {
   const result = route({ prompt: 'say that again but shorter' }, { maxCostUsdPer1MOutput: 1 });
-  assert.deepEqual(result.chain, ['deepseek_v4_flash']);
+  assert.deepEqual(result.chain, ['deepseek_v4_flash', 'glm_5_3_flash']);
   assert.match(
-    result.excluded.find((entry) => entry.modelId === 'kimi_k3')!.reason,
+    result.excluded.find((entry) => entry.modelId === 'glm_5_3')!.reason,
     /exceeds the ceiling/,
   );
 });

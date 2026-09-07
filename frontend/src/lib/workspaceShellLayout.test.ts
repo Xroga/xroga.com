@@ -224,8 +224,8 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 264 : 340, Math\.max\(176, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 440\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 410 : 340, Math\.max\(176, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 410\)/);
   assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 
@@ -233,12 +233,13 @@ test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /const mobile = window\.innerWidth < 640/);
   assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top - 1\)/);
   assert.match(MENU, /width:\s*rect\.width/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 264 : 304, Math\.max\(150, rect\.top - 8\)\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 390 : 304, Math\.max\(150, rect\.top - 8\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
-test('Integrations is a menu row, and the detached pill is gone', () => {
-  assert.match(MENU, /<b>Integrations<\/b>/);
+test('provider connections are menu rows, and the detached pill is gone', () => {
+  assert.match(MENU, /<b>Supabase<\/b>/);
+  assert.match(MENU, /<b>GitHub<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);
   assert.match(CHATBAR, /onOpenIntegrations=\{\(\) => \{/);
   // The duplicate trigger, and its styling hook, must not come back.
@@ -253,16 +254,19 @@ test('the duplicate Connectors row is gone and slash commands expose real action
   assert.match(MENU, /onClick=\{\(\) => insert\(command\.prompt\)\}/);
 });
 
-test('every existing menu action is still present', () => {
-  // Reliability and polish work must not quietly drop a feature.
+test('the compact menu exposes the requested working tools', () => {
   for (const label of [
-    'Add files or photos',
-    'Slash commands',
-    'Plan before build',
-    'Debug an error',
+    'Add photos &amp; files',
+    'Add from library',
+    'Create image',
+    'Web search',
+    'Maps',
+    'Deep research',
+    'Supabase',
+    'GitHub',
+    'Canva',
     'Skills',
     'Rules',
-    'Integrations',
   ]) {
     assert.ok(MENU.includes(`<b>${label}</b>`), `the "${label}" action is gone`);
   }
@@ -271,12 +275,13 @@ test('every existing menu action is still present', () => {
   assert.match(MENU, /document\.addEventListener\('pointerdown', onPointerDown\)/);
 });
 
-test('Integrations follows file upload in the composer action menu', () => {
-  const files = MENU.indexOf('<b>Add files or photos</b>');
-  const integrations = MENU.indexOf('<b>Integrations</b>');
-  const commands = MENU.indexOf('<b>Slash commands</b>');
-  assert.ok(files >= 0 && integrations > files, 'Integrations is not after file upload');
-  assert.ok(commands > integrations, 'Integrations fell back to the end of the menu');
+test('files, creation, discovery, and connections follow a useful order', () => {
+  const files = MENU.indexOf('<b>Add photos &amp; files</b>');
+  const create = MENU.indexOf('<b>Create image</b>');
+  const research = MENU.indexOf('<b>Deep research</b>');
+  const connections = MENU.indexOf('<b>Supabase</b>');
+  assert.ok(files >= 0 && create > files, 'creation should follow file input');
+  assert.ok(research > create && connections > research, 'connections should follow discovery tools');
 });
 
 // ---------------------------------------------------------------------------

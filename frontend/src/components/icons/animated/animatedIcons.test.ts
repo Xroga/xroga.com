@@ -29,6 +29,7 @@ const ACTIONS = read('../../terminal/ChatBarActionsMenu.tsx');
 const MIC = read('../../terminal/ChatBarButtons.tsx');
 const LOG = read('../../terminal/SwarmMessageLog.tsx');
 const DASHBOARD = read('../../dashboard/DashboardView.tsx');
+const WORKSPACE_IDENTITY = read('../../terminal/WorkspaceIdentityMenu.tsx');
 const PROMPT = read('./TerminalPromptIcon.tsx');
 const FRAME = read('../../layout/PageFullscreenFrame.tsx');
 const DEVPANEL = read('../../terminal/DevWorkspacePanel.tsx');
@@ -264,11 +265,11 @@ test('the terminal prompt cursor blinks continuously and is not hover-driven', (
   // of a blink.
   assert.match(PROMPT, /if \(reduced\) \{\n\s*controls\.start\('normal'\);/, 'reduced motion still blinks');
 
+  assert.match(WORKSPACE_IDENTITY, /<TerminalPromptIcon/, 'the workspace identity lost the prompt glyph');
+  assert.match(WORKSPACE_IDENTITY, /useState\('xroga@swarm'\)/, 'the workspace identity lost its prompt label');
   for (const [name, source] of [['SwarmMessageLog', LOG], ['DashboardView', DASHBOARD]] as const) {
-    assert.match(source, /<TerminalPromptIcon/, `${name} lost the prompt glyph`);
+    assert.match(source, /<WorkspaceIdentityMenu/, `${name} lost the interactive prompt identity`);
     assert.ok(!/<Terminal\b/.test(source), `${name} still renders the static terminal glyph`);
-    // The label it belongs to.
-    assert.match(source, /xroga<span className="xv-term-at">@<\/span>swarm/, `${name} lost the prompt label`);
   }
 });
 

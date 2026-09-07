@@ -100,7 +100,7 @@ test('engineering models hold write authority and research models do not', () =>
   const writers = BLACK_HOLE_MODELS.filter((m) => m.authority.writeProjectFiles).map((m) => m.id);
   assert.deepEqual(
     writers.sort(),
-    ['deepseek_v4_flash', 'deepseek_v4_pro', 'glm_5_2', 'kimi_k2_7', 'kimi_k3'],
+    ['deepseek_v4_flash', 'deepseek_v4_pro', 'glm_5_2', 'glm_5_3', 'glm_5_3_flash', 'kimi_k2_7', 'kimi_k3'],
   );
 });
 

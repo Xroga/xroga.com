@@ -9364,22 +9364,24 @@ body.xv-workspace-expanded-active .xv-sidebar-root,
 body.xv-workspace-expanded-active .xv-sidebar-edge-toggle,
 body.xv-workspace-expanded-active .xv-mobile-menu-btn,
 body.xv-workspace-expanded-active .xv-mobile-workspace-header,
-body.xv-workspace-expanded-active .xv-home-companion-stage {
+body.xv-workspace-expanded-active .xv-home-companion-stage,
+body.xv-workspace-expanded-active .xv-terminal-dock {
   display: none !important;
 }
-
-/* The expanded editor still uses the canonical composer. Keeping the sibling dock
-   visible avoids a blank full-screen project and preserves the current conversation. */
-body.xv-workspace-expanded-active .xv-terminal-dock {
-  display: block !important;
-  left: 0 !important;
-  z-index: 280 !important;
-}
-body.xv-workspace-expanded-active .xv-terminal-dock-inner {
-  width: min(100%, 760px);
-  max-width: 760px !important;
-  margin-inline: auto;
-}
+.xv-workspace-identity { position: relative; min-width: 0; flex: 1; }
+.xv-term-title--button { width: fit-content; max-width: 100%; border: 0; border-radius: .45rem; padding: .22rem .3rem; background: transparent; cursor: pointer; text-align: left; }
+.xv-term-title--button:hover, .xv-term-title--button[aria-expanded='true'] { background: color-mix(in srgb, var(--foreground) 6%, transparent); }
+.xv-term-pinned { width: 11px; height: 11px; color: var(--accent); }
+.xv-workspace-identity-menu { position: absolute; z-index: 1000; top: calc(100% + .5rem); left: 0; display: grid; width: min(248px, calc(100vw - 24px)); padding: .35rem; border: 1px solid var(--card-border); border-radius: .75rem; background: var(--menu-surface, var(--card)); color: var(--foreground); box-shadow: 0 18px 55px rgba(0,0,0,.28); }
+.xv-workspace-identity-menu > button { display: flex; align-items: center; gap: .65rem; min-height: 34px; border: 0; border-radius: .5rem; padding: .42rem .55rem; background: transparent; color: inherit; font-size: .72rem; text-align: left; cursor: pointer; }
+.xv-workspace-identity-menu > button:hover { background: color-mix(in srgb, var(--foreground) 7%, transparent); }
+.xv-workspace-identity-menu > button svg { width: 14px; height: 14px; color: var(--muted); }
+.xv-workspace-identity-menu > i { height: 1px; margin: .28rem -.35rem; background: var(--card-border); }
+.xv-workspace-rename { display: flex; gap: .3rem; padding: .25rem; }
+.xv-workspace-rename input { min-width: 0; flex: 1; border: 1px solid var(--card-border); border-radius: .45rem; padding: .42rem .5rem; background: var(--surface-inset); color: var(--foreground); font: .7rem var(--font-coding, monospace); outline: none; }
+.xv-workspace-rename input:focus { border-color: var(--accent); }
+.xv-workspace-rename button { display: grid; width: 30px; place-items: center; border: 0; border-radius: .45rem; background: var(--accent); color: white; }
+.xv-workspace-rename svg { width: 13px; height: 13px; }
 
 /* No hard outline. The edge is a soft shadow and a barely-there hairline, so the
    panel reads as lifted rather than as a box drawn on the screen. At `inset: 0` a
@@ -9391,7 +9393,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock-inner {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 7%, transparent),
     0 30px 90px rgba(0, 0, 0, 0.45);
-  padding-bottom: calc(var(--xv-chatbar-height, 112px) + 18px);
+  padding-bottom: 0;
 }
 
 /* Phones and small tablets get one pane at a time. Two 180px columns is not a split
@@ -10588,20 +10590,17 @@ body.xv-workspace-expanded-active .xv-terminal-dock-inner {
   .xv-cba-menu :is(.xv-cba-kbd) { display: none; }
 }
 
-/* ---- the root list --------------------------------------------------------
-   A two-column palette is large enough to scan and small enough to stay visually
-   attached to the composer. It intentionally does not expand to the composer's full
-   desktop width: these are prompt tools, not dashboard tabs. */
+/* One compact, vertical tool list mirrors the familiar attachment picker. */
 .xv-cba-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 3px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
   align-content: start;
 }
-.xv-cba-grid > .xv-cba-sep { display: none; }
+.xv-cba-grid > .xv-cba-sep { display: block; }
 
 @media (min-width: 640px) {
-  .xv-cba-menu:has(.xv-cba-grid) { width: min(440px, 100%); }
+  .xv-cba-menu:has(.xv-cba-grid) { width: min(410px, 100%); }
   .xv-cba-grid > .xv-cba-item--wide {
     grid-column: 1 / -1;
   }

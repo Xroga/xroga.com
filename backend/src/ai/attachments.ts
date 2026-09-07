@@ -28,9 +28,6 @@ export interface PreparedAttachments {
 }
 
 const IMAGE_MIME = /^image\/(png|jpe?g|webp|gif)$/i;
-const HARD_VISION_RE =
-  /\b(design|critique|redesign|ui\/ux|ux|pixel|layout critique|compare|why.*(broken|fail|error)|debug.*(screen|ui|error)|production error|stack\s*trace)\b/i;
-
 function guessMime(att: ChatAttachment): string {
   if (att.mimeType?.trim()) return att.mimeType.trim();
   const name = (att.name || att.url.split('/').pop() || '').toLowerCase();
@@ -261,12 +258,9 @@ export function pickAttachmentModel(
   prepared: PreparedAttachments,
 ): { modelId: ModelId; reason: string; kind: 'vision' | 'document' | 'mixed' } {
   if (prepared.hasImages && !prepared.hasDocuments) {
-    const hard = HARD_VISION_RE.test(prompt);
     return {
-      modelId: hard ? 'grok_4_5' : 'grok_4_3',
-      reason: hard
-        ? 'Hard image analyze → Grok 4.5 vision'
-        : 'Image analyze → Grok 4.3 vision',
+      modelId: 'glm_5_3_flash',
+      reason: 'Image analysis → GLM-5.3 Flash multimodal',
       kind: 'vision',
     };
   }
@@ -275,8 +269,8 @@ export function pickAttachmentModel(
     const chars = prepared.documents.reduce((n, d) => n + d.chars, 0);
     if (chars > 60_000 || /\b(long|entire|full)\b.*\b(doc|document|pdf|report)\b/i.test(prompt)) {
       return {
-        modelId: 'glm_5_2',
-        reason: 'Long document → GLM-5.2',
+        modelId: 'glm_5_3',
+        reason: 'Long document → GLM-5.3',
         kind: 'document',
       };
     }
@@ -291,16 +285,16 @@ export function pickAttachmentModel(
       };
     }
     return {
-      modelId: 'grok_4_3',
-      reason: 'Document analyze → Grok 4.3',
+      modelId: 'glm_5_3_flash',
+      reason: 'Document analysis → GLM-5.3 Flash',
       kind: 'document',
     };
   }
 
-  // Mixed: images win for vision model; docs appended as text
+  // The confirmed multimodal GLM route handles images and extracted document text.
   return {
-    modelId: HARD_VISION_RE.test(prompt) ? 'grok_4_5' : 'grok_4_3',
-    reason: 'Mixed image + docs → Grok vision (+ extracted text)',
+    modelId: 'glm_5_3_flash',
+    reason: 'Mixed image + documents → GLM-5.3 Flash multimodal',
     kind: 'mixed',
   };
 }

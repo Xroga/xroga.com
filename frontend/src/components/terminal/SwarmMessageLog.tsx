@@ -31,7 +31,7 @@ import { api } from '@/lib/api';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
-import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
+import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
@@ -341,21 +341,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             <i />
           </span>
 
-          <div className="xv-term-title">
-            {/* A live shell's cursor blinks whether or not anyone is pointing at it,
-                so this one is not hover-driven — it runs continuously. */}
-            <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
-            <h3>
-              {isIncognito ? (
-                'guest@incognito'
-              ) : (
-                <>
-                  xroga<span className="xv-term-at">@</span>swarm
-                </>
-              )}
-            </h3>
-            <span className="xv-term-path">{isIncognito ? '~/temporary' : '~/workspace'}</span>
-          </div>
+          <WorkspaceIdentityMenu incognito={isIncognito} />
 
           {isIncognito ? (
             <span className="xv-term-badge">Private · not saved</span>

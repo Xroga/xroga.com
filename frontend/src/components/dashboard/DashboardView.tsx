@@ -17,7 +17,7 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useHydrated } from '@/hooks/useHydrated';
-import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
+import { WorkspaceIdentityMenu } from '@/components/terminal/WorkspaceIdentityMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
@@ -211,21 +211,7 @@ export function DashboardView() {
             <i />
           </span>
 
-          <div className="xv-term-title">
-            {/* A live shell's cursor blinks whether or not anyone is pointing at it,
-                so this one is not hover-driven — it runs continuously. */}
-            <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
-            <h3>
-              {incognito ? (
-                'guest@incognito'
-              ) : (
-                <>
-                  xroga<span className="xv-term-at">@</span>swarm
-                </>
-              )}
-            </h3>
-            <span className="xv-term-path">{incognito ? '~/temporary' : '~/workspace'}</span>
-          </div>
+          <WorkspaceIdentityMenu incognito={incognito} />
 
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>

@@ -66,6 +66,8 @@ export const MODEL_PERSONAS: readonly string[] = [
   // than as a match on the "Xroga Apex" prefix.
   'Xroga Apex Efficient',
   'Xroga Apex',
+  'Xroga Horizon Legacy',
+  'Xroga Horizon Flash',
   'Xroga Horizon',
   'Xroga Forge',
   'Xroga Pulse',

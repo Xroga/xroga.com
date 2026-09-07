@@ -2,14 +2,12 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, Blocks, Bug, Check, ListChecks, Paperclip, ScrollText, SlashSquare, Sparkles, TerminalSquare, X } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Check, Database, GitBranch, Globe2, ImagePlus, Images, MapPin, Palette, Paperclip, ScrollText, Sparkles, TerminalSquare, X } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { CirclePlayIcon } from '@/components/icons/animated/CirclePlayIcon';
 import {
-  COMPOSER_PRESETS,
   COMPOSER_COMMANDS,
   COMPOSER_SKILLS,
-  buildComposerPreamble,
   useComposerToolsStore,
 } from '@/store/useComposerToolsStore';
 import { cn } from '@/lib/utils';
@@ -66,8 +64,6 @@ export function ChatBarActionsMenu({
   const toggleSkill = useComposerToolsStore((s) => s.toggleSkill);
 
   const activeCount = enabledSkills.length + (rules.trim() ? 1 : 0);
-  const preamble = buildComposerPreamble(rules, enabledSkills);
-
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (event: PointerEvent) => {
@@ -99,17 +95,17 @@ export function ChatBarActionsMenu({
           right: 'auto',
           bottom: Math.max(8, window.innerHeight - rect.top - 1),
           width: rect.width,
-          maxHeight: Math.min(panel === 'menu' ? 264 : 304, Math.max(150, rect.top - 8)),
+          maxHeight: Math.min(panel === 'menu' ? 390 : 304, Math.max(150, rect.top - 8)),
         });
         return;
       }
-      const width = Math.min(rect.width, 440);
+      const width = Math.min(rect.width, 410);
       setMenuStyle({
         position: 'fixed',
         left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
         bottom: Math.max(8, window.innerHeight - rect.top - 1),
         width,
-        maxHeight: Math.min(panel === 'menu' ? 264 : 340, Math.max(176, rect.top - 12)),
+        maxHeight: Math.min(panel === 'menu' ? 410 : 340, Math.max(176, rect.top - 12)),
       });
     };
     sync();
@@ -168,10 +164,6 @@ export function ChatBarActionsMenu({
       {open && typeof document !== 'undefined' ? createPortal(
         <div ref={menuRef} className="xv-cba-menu" role="dialog" aria-label="Composer actions" style={menuStyle}>
           {panel === 'menu' && (
-            /* A dense two-column palette stays attached to the composer without
-               becoming a second dashboard. Only the
-               Skills and Rules panels below stay single-column, because their rows
-               are toggles in a set rather than independent destinations. */
             <div className="xv-cba-grid">
               {recentTerminal && (
                 <button
@@ -198,86 +190,78 @@ export function ChatBarActionsMenu({
                 <button type="button" className="xv-cba-item" onClick={() => { onAddFiles(); setOpen(false); }}>
                   <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <span className="xv-cba-item__text">
-                    <b>Add files or photos</b>
+                    <b>Add photos &amp; files</b>
+                    <i>Upload from computer</i>
                   </span>
-                  <kbd className="xv-cba-kbd">Ctrl+U</kbd>
                 </button>
               )}
 
-              {onOpenIntegrations && (
-                <button
-                  type="button"
-                  className="xv-cba-item"
-                  onClick={() => {
-                    onOpenIntegrations();
-                    setOpen(false);
-                  }}
-                >
-                  <Blocks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span className="xv-cba-item__text">
-                    <b>Integrations</b>
-                    <i>GitHub, Vercel, and your authorised accounts</i>
-                  </span>
+              <button type="button" className="xv-cba-item" onClick={() => { window.location.assign('/dashboard/media'); setOpen(false); }}>
+                <Images className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Add from library</b>
+                  <i>Browse your saved files</i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => insert('Create an image of ')}>
+                <ImagePlus className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Create image</b>
+                  <i>Visualize anything</i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => insert('Search the web for ')}>
+                <Globe2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Web search</b>
+                  <i>Find real-time news and information</i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => insert('Find places near ')}>
+                <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Maps</b>
+                  <i>Find nearby places</i>
+                </span>
+              </button>
+
+              <button type="button" className="xv-cba-item" onClick={() => insert('Research this thoroughly with current sources: ')}>
+                <BookOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text">
+                  <b>Deep research</b>
+                  <i>Get a detailed, sourced report</i>
+                </span>
+              </button>
+
+              {onOpenIntegrations && <>
+                <button type="button" className="xv-cba-item" onClick={() => { onOpenIntegrations(); setOpen(false); }}>
+                  <Database className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text"><b>Supabase</b><i>Manage and query databases</i></span>
                   {connectorsNeedingAttention > 0 && <i className="xv-cba-flag" aria-hidden="true" />}
                 </button>
-              )}
+                <button type="button" className="xv-cba-item" onClick={() => { onOpenIntegrations(); setOpen(false); }}>
+                  <GitBranch className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="xv-cba-item__text"><b>GitHub</b><i>Repositories and publish flows</i></span>
+                </button>
+              </>}
 
-              <button type="button" className="xv-cba-item" onClick={() => setPanel('commands')}>
-                <SlashSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text">
-                  <b>Slash commands</b>
-                  <i>Build, plan, debug, audit, test, or deploy</i>
-                </span>
+              <button type="button" className="xv-cba-item" onClick={() => insert('Create a Canva-ready design for ')}>
+                <Palette className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="xv-cba-item__text"><b>Canva</b><i>Create and edit designs</i></span>
               </button>
 
               <div className="xv-cba-sep" role="separator" />
-
-              <button type="button" className="xv-cba-item" onClick={() => insert(COMPOSER_PRESETS.plan)}>
-                <ListChecks className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text">
-                  <b>Plan before build</b>
-                  <i>Get the approach first, change nothing yet</i>
-                </span>
-              </button>
-
-              <button type="button" className="xv-cba-item" onClick={() => insert(COMPOSER_PRESETS.debug)}>
-                <Bug className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text">
-                  <b>Debug an error</b>
-                  <i>Paste the error, get the root cause</i>
-                </span>
-              </button>
-
-              <div className="xv-cba-sep" role="separator" />
-
               <button type="button" className="xv-cba-item" onClick={() => setPanel('skills')}>
                 <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text">
-                  <b>Skills</b>
-                  <i>
-                    {enabledSkills.length > 0
-                      ? `${enabledSkills.length} active`
-                      : 'Reusable instruction packs'}
-                  </i>
-                </span>
+                <span className="xv-cba-item__text"><b>Skills</b><i>{enabledSkills.length ? `${enabledSkills.length} active` : 'Reusable instruction packs'}</i></span>
               </button>
-
               <button type="button" className="xv-cba-item" onClick={() => setPanel('rules')}>
                 <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span className="xv-cba-item__text">
-                  <b>Rules</b>
-                  <i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions you write'}</i>
-                </span>
+                <span className="xv-cba-item__text"><b>Rules</b><i>{rules.trim() ? 'Applied to every prompt' : 'Standing instructions'}</i></span>
               </button>
-
-              {/* The user sees exactly what gets attached. A prompt silently rewritten
-                  behind the composer is the failure mode this avoids. */}
-              {preamble && (
-                <p className="xv-cba-note xv-cba-item--wide">
-                  {activeCount} {activeCount === 1 ? 'instruction is' : 'instructions are'} added
-                  above every prompt you send.
-                </p>
-              )}
             </div>
           )}
 
