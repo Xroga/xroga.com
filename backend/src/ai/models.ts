@@ -15,6 +15,8 @@ export type ModelId =
   | 'kimi_k3'
   | 'kimi_k2_7'
   | 'glm_5_2'
+  | 'glm_5_3'
+  | 'glm_5_3_flash'
   | 'deepseek_v4_pro'
   | 'deepseek_v4_flash'
   | 'grok_4_5'
@@ -140,21 +142,93 @@ export const MODELS: Record<ModelId, ModelDef> = {
   glm_5_2: {
     id: 'glm_5_2',
     modelIdEnv: 'GLM_MODEL_ID',
-    label: 'Xroga Horizon',
-    role: 'Long-context specialist — large codebases, project-level engineering',
+    label: 'Xroga Horizon Legacy',
+    role: 'Legacy GLM rollback route',
     apiModel: 'glm-5.2',
     provider: 'zhipu',
     baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
     secretKey: 'GLM_API_KEY',
-    budgetUsd: 5.8,
-    monthlyTokens: 2_000_000,
-    inputTokens: 1_000_000,
-    outputTokens: 1_000_000,
+
+    // Small rollback reserve only.
+    budgetUsd: 0.30,
+    monthlyTokens: 100_000,
+    inputTokens: 50_000,
+    outputTokens: 50_000,
+
     inputUsdPer1M: 1.4,
     outputUsdPer1M: 4.4,
     contextWindow: 1_000_000,
-    modalities: { text: true, images: false },
-    tagline: 'Project Engineer',
+
+    modalities: {
+      text: true,
+      images: false,
+    },
+
+    tagline: 'Legacy Rollback',
+  },
+
+  glm_5_3: {
+    id: 'glm_5_3',
+    modelIdEnv: 'GLM_5_3_MODEL_ID',
+    label: 'Xroga Horizon',
+    role:
+      'Senior engineering — serious development, debugging, architecture and long-horizon repository work',
+    apiModel: 'glm-5.3',
+    provider: 'zhipu',
+
+    // Keep the already-working GLM transport during this migration.
+    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+
+    secretKey: 'GLM_API_KEY',
+
+    budgetUsd: 1.50,
+    monthlyTokens: 500_000,
+    inputTokens: 250_000,
+    outputTokens: 250_000,
+
+    inputUsdPer1M: 1.4,
+    outputUsdPer1M: 4.4,
+    contextWindow: 1_000_000,
+
+    modalities: {
+      text: true,
+      images: false,
+    },
+
+    tagline: 'Senior Engineer',
+  },
+
+  glm_5_3_flash: {
+    id: 'glm_5_3_flash',
+    modelIdEnv: 'GLM_5_3_FLASH_MODEL_ID',
+    label: 'Xroga Horizon Flash',
+    role:
+      'Primary development and synthesis — fast coding, documents, multimodal analysis and high-volume implementation',
+    apiModel: 'glm-5.3-flash',
+    provider: 'zhipu',
+
+    // Same transport as the existing GLM route.
+    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
+
+    secretKey: 'GLM_API_KEY',
+
+    // Majority of the GLM family envelope goes to the normal route.
+    budgetUsd: 4.00,
+    monthlyTokens: 1_400_000,
+    inputTokens: 700_000,
+    outputTokens: 700_000,
+
+    // Conservative accounting rates.
+    inputUsdPer1M: 0.15,
+    outputUsdPer1M: 0.50,
+    contextWindow: 1_000_000,
+
+    modalities: {
+      text: true,
+      images: true,
+    },
+
+    tagline: 'Primary Engineer',
   },
   deepseek_v4_pro: {
     id: 'deepseek_v4_pro',
@@ -443,13 +517,32 @@ export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_
       budgetUsd: Math.round(MODELS.kimi_k3.budgetUsd * scale * 100) / 100,
     },
     {
-      role: 'glm_5_2',
-      publicId: 'long_context',
-      label: 'Long-Context Engineering',
-      tagline: 'Large repositories and long-horizon work',
-      totalLimit: Math.round(MODELS.glm_5_2.monthlyTokens * scale),
-      budgetUsd: Math.round(MODELS.glm_5_2.budgetUsd * scale * 100) / 100,
-    },
+  // Keep the historical internal pool role so existing usage
+  // records remain compatible across the migration.
+  role: 'glm_5_2',
+  publicId: 'long_context',
+  label: 'Engineering Intelligence',
+  tagline: 'Everyday development through long-horizon engineering',
+
+  totalLimit: Math.round(
+    (
+      MODELS.glm_5_2.monthlyTokens +
+      MODELS.glm_5_3.monthlyTokens +
+      MODELS.glm_5_3_flash.monthlyTokens
+    ) * scale,
+  ),
+
+  budgetUsd:
+    Math.round(
+      (
+        MODELS.glm_5_2.budgetUsd +
+        MODELS.glm_5_3.budgetUsd +
+        MODELS.glm_5_3_flash.budgetUsd
+      ) *
+        scale *
+        100,
+    ) / 100,
+},
     {
       role: 'deepseek_v4',
       publicId: 'high_volume',
