@@ -2379,37 +2379,50 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
 .xv-marketing-footer__subscribe button svg { width: 13px; height: 13px; }
 .xv-marketing-footer__base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: .66rem; }
 .xv-marketing-footer__base p { margin: 0; }
-.xv-marketing-footer__wordmark {
+.xv-marketing-footer__prompt {
   position: relative;
   z-index: 1;
   grid-column: 1 / -1;
-  display: block;
+  display: grid;
+  place-items: center;
   width: 100%;
   max-width: 100%;
   margin: clamp(1rem, 2.5vw, 1.8rem) auto 0;
-  padding: .08em .04em .14em;
+  min-height: clamp(5.5rem, 10vw, 8.5rem);
+  padding: .08em .02em .14em;
   box-sizing: border-box;
-  color: transparent;
-  background: linear-gradient(105deg, color-mix(in srgb, var(--text-primary) 48%, transparent) 8%, #3478ff 34%, #23a87b 48%, #865ee8 62%, color-mix(in srgb, var(--text-primary) 48%, transparent) 88%);
-  background-size: 240% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  overflow: hidden;
+  color: var(--text-primary);
   font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
-  font-style: italic;
-  font-size: clamp(4rem, 12.5vw, 9.4rem);
-  font-weight: 600;
-  line-height: .92;
-  letter-spacing: .035em;
+  font-size: clamp(3rem, 6.9vw, 6.25rem);
+  font-weight: 500;
+  line-height: .96;
+  letter-spacing: -.045em;
   text-align: center;
-  text-decoration: none;
-  white-space: nowrap;
   user-select: none;
-  filter: drop-shadow(0 12px 22px color-mix(in srgb, var(--text-primary) 16%, transparent));
-  animation: xv-footer-live-ink 8s linear infinite;
 }
-@keyframes xv-footer-live-ink { from { background-position: 120% 50%; } to { background-position: -120% 50%; } }
-@media (prefers-reduced-motion: reduce) { .xv-marketing-footer__wordmark { animation: none; background-position: 50% 50%; } }
+.xv-marketing-footer__prompt span {
+  grid-area: 1 / 1;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(42%);
+  animation: xv-footer-prompt-cycle 35s cubic-bezier(.22,1,.36,1) infinite both;
+}
+.xv-marketing-footer__prompt span:nth-child(2) { animation-delay: 5s; }
+.xv-marketing-footer__prompt span:nth-child(3) { animation-delay: 10s; }
+.xv-marketing-footer__prompt span:nth-child(4) { animation-delay: 15s; }
+.xv-marketing-footer__prompt span:nth-child(5) { animation-delay: 20s; }
+.xv-marketing-footer__prompt span:nth-child(6) { animation-delay: 25s; }
+.xv-marketing-footer__prompt span:nth-child(7) { animation-delay: 30s; }
+@keyframes xv-footer-prompt-cycle {
+  0% { opacity:0; transform:translateY(42%); }
+  2.8%, 11.4% { opacity:1; transform:translateY(0); }
+  14.2%, 100% { opacity:0; transform:translateY(-36%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-marketing-footer__prompt span { animation:none;opacity:0;transform:none; }
+  .xv-marketing-footer__prompt span:first-child { opacity:1; }
+}
 @media (max-width: 900px) {
   .xv-marketing-footer__stage { grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr); }
   .xv-marketing-footer__main-card { grid-template-columns: 1fr; }
@@ -2426,11 +2439,11 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   .xv-marketing-footer__main-card { padding-top: 3.8rem; }
   .xv-marketing-footer__nav { gap: .75rem; }
   .xv-marketing-footer__nav a { font-size: .76rem; }
-  .xv-marketing-footer__wordmark { margin:.8rem auto 0;padding:.08em .04em .16em;font-size:clamp(3rem,15.5vw,5.3rem);line-height:.94;letter-spacing:.025em;text-align:center;color:color-mix(in srgb,var(--text-primary) 22%,transparent);filter:drop-shadow(0 8px 16px color-mix(in srgb,var(--text-primary) 16%,transparent));overflow:visible }
+  .xv-marketing-footer__prompt { margin:.8rem auto 0;min-height:clamp(7rem,26vw,10rem);padding:.08em .02em .16em;font-size:clamp(2.35rem,10.8vw,4rem);line-height:.96;letter-spacing:-.045em }
 }
 @media (max-width: 420px) {
   .xv-marketing-footer__full-logo { width:225px!important;height:62px!important }
-  .xv-marketing-footer__wordmark { font-size:15vw;letter-spacing:.02em }
+  .xv-marketing-footer__prompt { font-size:clamp(2.2rem,11vw,3.25rem) }
   .xv-marketing-footer__nav { grid-template-columns: repeat(2, 1fr); }
   .xv-marketing-footer__subscribe form { align-items: stretch; flex-direction: column; }
   .xv-marketing-footer__subscribe button { justify-content: center; }
@@ -7494,7 +7507,6 @@ body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
 .xv-home-coding .xv-wt-preview-caption>div:first-child{width:38px!important;flex:none}.xv-home-coding .xv-wt-preview-caption>div:last-child{display:grid;gap:.15rem}.xv-home-coding .xv-wt-preview-caption p{margin:0;color:#b6becb;font-size:.65rem}
 .xv-marketing-footer__floating-mark{top:-46px;right:22px;width:92px;height:92px;border-radius:50%;transform:rotate(-6deg)}
 .xv-marketing-footer__main-card{overflow:visible}
-.xv-marketing-footer__wordmark{color:color-mix(in srgb,var(--text-primary) 24%,transparent)}
 @media(max-width:480px){
   .xv-home-coding .xv-wt-window{width:100%;min-width:1120px;min-height:688px}
   .xv-home-coding .xv-wt-main>header{min-height:52px;padding:.45rem .6rem;gap:.35rem}
@@ -7508,7 +7520,7 @@ body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
   .xv-home-coding .xv-wt-preview-canvas{min-height:300px}.xv-home-coding .xv-wt-preview-caption{left:.55rem;right:.55rem;bottom:.55rem}
   .xv-marketing-footer__floating-mark{top:-35px;right:14px;width:70px;height:70px;border-radius:50%}
   .xv-marketing-footer__main-card{padding-top:3.8rem}
-  .xv-marketing-footer__wordmark{width:100%;padding:.08em .04em .16em;margin:.8rem auto 0;font-size:15vw;line-height:.94;letter-spacing:.02em;overflow:visible;color:color-mix(in srgb,var(--text-primary) 28%,transparent)}
+  .xv-marketing-footer__prompt{width:100%;min-height:8rem;padding:.08em .02em .16em;margin:.8rem auto 0;font-size:clamp(2.1rem,10.5vw,3rem);line-height:.96;letter-spacing:-.045em}
 }
 
 /* Unified real-review system: the execution evidence now lives inside the core.

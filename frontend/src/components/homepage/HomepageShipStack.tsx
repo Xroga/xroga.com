@@ -22,7 +22,7 @@ function PromptScene({ typed }: { typed: number }) {
 }
 
 function BuildScene() {
-  return <div className="xv-loop-terminal"><header><i /><i /><i /><code>xroga@swarm</code><span>~/workspace</span></header><div><p><b>you</b> {PROMPT}</p><p className="is-done">● planner: Product brief created</p><p className="is-done">● builder: Writing authentication and dashboard files</p><p>● builder: Implementing subscriptions and analytics…</p><p className="is-muted">components/Analytics.tsx · 84 lines</p><span className="xv-loop-terminal-progress"><i /></span></div></div>;
+  return <div className="xv-loop-terminal"><header><i /><i /><i /><code>harbourline</code><span>3 terminals</span></header><div><p><b>you</b> {PROMPT}</p><p className="is-done">● planner: Product brief created</p><p className="is-done">● builder: Writing authentication and dashboard files</p><p>● builder: Implementing subscriptions and analytics…</p><p className="is-muted">components/Analytics.tsx · 84 lines</p><span className="xv-loop-terminal-progress"><i /></span></div></div>;
 }
 
 function ValidateScene() {

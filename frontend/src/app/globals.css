@@ -9371,8 +9371,17 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 
 /* Project edits owns the editing canvas. The composer belongs to the normal
    workspace and must not float over files, previews, or deploy evidence. */
-.xv-terminal-dock--workspace-hidden {
-  display: none !important;
+.xv-terminal-dock--workspace-split {
+  left: var(--xv-pane-left, 0px) !important;
+  right: var(--xv-pane-right, 42%) !important;
+}
+.xv-terminal-dock--workspace-split .xv-terminal-dock-inner {
+  width: min(760px, calc(100% - 20px));
+  max-width: 100%;
+  padding-inline: 10px;
+}
+@media (max-width: 1023px) {
+  .xv-terminal-dock--workspace-split { display: none !important; }
 }
 .xv-workspace-identity { position: relative; min-width: 0; flex: 1; }
 .xv-term-title--button { width: fit-content; max-width: 100%; border: 0; border-radius: .45rem; padding: .22rem .3rem; background: transparent; cursor: pointer; text-align: left; }
@@ -10539,8 +10548,8 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   /* Never wider than the composer it is attached to — a menu whose corner sticks out
      past the bar's edge stops reading as part of it. Runtime positioning supplies the
      exact composer width; `100%` remains the safe CSS fallback. */
-  width: min(360px, 100%);
-  max-height: min(360px, calc(100dvh - 150px));
+  width: min(520px, 100%);
+  max-height: min(330px, calc(100dvh - 150px));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 7px;
@@ -10596,20 +10605,24 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   .xv-cba-menu :is(.xv-cba-kbd) { display: none; }
 }
 
-/* One compact, vertical tool list mirrors the familiar attachment picker. */
+/* The compact launcher mirrors the workspace action palette: two short columns on
+   desktop, one scan-friendly column on a phone. */
 .xv-cba-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 6px;
   align-content: start;
 }
 .xv-cba-grid > .xv-cba-sep { display: block; }
 
 @media (min-width: 640px) {
-  .xv-cba-menu:has(.xv-cba-grid) { width: min(410px, 100%); }
+  .xv-cba-menu:has(.xv-cba-grid) { width: min(520px, 100%); }
   .xv-cba-grid > .xv-cba-item--wide {
     grid-column: 1 / -1;
   }
+}
+@media (max-width: 639px) {
+  .xv-cba-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- menu rows ------------------------------------------------------------ */

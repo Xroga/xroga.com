@@ -33,7 +33,7 @@ const LINE_VARIANTS: Variants = {
 };
 
 /**
- * The prompt glyph beside `xroga@swarm`, with a cursor that never stops blinking.
+ * The prompt glyph beside the active repository, with a cursor that never stops blinking.
  *
  * The only icon here that is not hover-driven. It stands for a live shell, and a
  * shell's cursor blinks whether or not anyone is pointing at it — starting it on

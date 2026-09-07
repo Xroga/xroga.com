@@ -33,6 +33,16 @@ const FOOTER_GROUPS = [
   },
 ] as const;
 
+const FOOTER_PROMPTS = [
+  'What can I build for you?',
+  'Build everything you can imagine.',
+  'What can we ship today?',
+  'Turn your idea into working software.',
+  'From brief to verified release.',
+  'Build boldly. Keep every change.',
+  'Your next product starts here.',
+] as const;
+
 export function MarketingFooter() {
   return (
     <footer className="xv-marketing-footer">
@@ -83,7 +93,9 @@ export function MarketingFooter() {
           </div>
         </section>
 
-        <Link href="/" className="xv-marketing-footer__wordmark" aria-label="Xroga home">XROGA</Link>
+        <p className="xv-marketing-footer__prompt" aria-label={FOOTER_PROMPTS[0]}>
+          {FOOTER_PROMPTS.map((prompt) => <span key={prompt} aria-hidden="true">{prompt}</span>)}
+        </p>
       </div>
     </footer>
   );

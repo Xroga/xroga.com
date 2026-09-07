@@ -25,11 +25,13 @@ export function getSelectedRepoContext(): SelectedRepoContext | null {
 export function saveSelectedRepoContext(ctx: SelectedRepoContext): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ctx));
+  window.dispatchEvent(new Event('xroga-repo-context-change'));
 }
 
 export function clearSelectedRepoContext(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event('xroga-repo-context-change'));
 }
 
 const VISIBILITY_KEY = 'xroga-new-repo-visibility';

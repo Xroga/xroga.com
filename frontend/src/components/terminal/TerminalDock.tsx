@@ -50,12 +50,12 @@ export function TerminalDock() {
   const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
   const chatbarHidden = hydrated && chatbarHiddenRaw;
   const workspaceOpen = hydrated && workspaceOpenRaw;
-  const dockSuppressed = chatbarHidden || workspaceOpen;
+  const dockSuppressed = chatbarHidden;
   const dashboardFullscreen = isDashboard && terminalFullscreen;
   const { messages, loading, sessionRestoring } = useTerminalChat();
   const emptyWorkspace = hydrated && !sessionRestoring && messages.length === 0 && !loading;
-  // Project edits owns the editing canvas. Its files, preview, and deploy views must
-  // never be covered by the normal-workspace composer.
+  // Project edits keeps the composer in the terminal pane. DashboardView publishes
+  // that pane's live edges so the dock can stop exactly at the split.
   const showStarterExperience = emptyWorkspace && !workspaceOpen;
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export function TerminalDock() {
       className={cn(
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity] duration-200',
         !isDashboard && 'hidden',
-        workspaceOpen && 'xv-terminal-dock--workspace-hidden',
+        workspaceOpen && 'xv-terminal-dock--workspace-split',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito',
         sessionRestoring && 'xv-terminal-dock--restoring',
@@ -98,7 +98,7 @@ export function TerminalDock() {
           : '64px',
         bottom: keyboardOffset,
       } as React.CSSProperties}
-      aria-hidden={!isDashboard || workspaceOpen}
+      aria-hidden={!isDashboard}
       data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
       data-testid="persistent-terminal-dock"
     >
@@ -112,12 +112,12 @@ export function TerminalDock() {
                the text above it. */
             ? 'max-w-3xl px-2 sm:px-4'
             : workspaceOpen
-              ? 'max-w-[1400px] xl:pr-[calc(40%+1.5rem)]'
+              ? 'max-w-3xl'
               : 'max-w-4xl'
         )}
       >
         {dockSuppressed ? (
-          /* Nothing. Hiding the chatbar or opening Project edits removes the chatbar.
+          /* Nothing. Hiding the chatbar removes the chatbar.
              This used to leave a small floating restore button in the composer's
              place, on the reasoning that a hidden control needs a way back. It has
              one: the same toggle in the terminal's title bar that hid it, which

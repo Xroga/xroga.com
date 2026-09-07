@@ -688,6 +688,13 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
 
   const handle = page.locator('.xv-workspace-resize');
   await expect(handle).toBeVisible();
+  await expect(terminalDock).toBeVisible();
+  const splitDockBox = (await terminalDock.boundingBox())!;
+  const splitPanelBox = (await wsPanel.boundingBox())!;
+  expect(
+    splitDockBox.x + splitDockBox.width,
+    'the workspace chatbar crosses into Project edits',
+  ).toBeLessThanOrEqual(splitPanelBox.x + 2);
   // Three children, three tracks. With two, the panel wraps to an implicit second row
   // and takes the terminal's width — the drag then moves it the wrong way, which
   // reads as a sign error in the maths and is not one.

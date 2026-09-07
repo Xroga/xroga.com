@@ -1,28 +1,51 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Archive, Check, Copy, ExternalLink, GitFork, MessageSquarePlus, Pencil, Pin, Share2 } from 'lucide-react';
+import { Archive, Copy, ExternalLink, GitFork, MessageSquarePlus, Pin, Share2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { removeTerminalHistoryEntry, saveTerminalHistorySession } from '@/lib/terminalHistory';
+import { loadTerminalHistory, removeTerminalHistoryEntry, saveTerminalHistorySession } from '@/lib/terminalHistory';
+import { getSelectedRepoContext } from '@/lib/repoContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
-const NAME_KEY = 'xroga_workspace_name';
 const PIN_KEY = 'xroga_workspace_pinned';
 
 export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boolean }) {
   const { messages, prompt, sessionId, startNewChat, restoreTerminalSession } = useTerminalChat();
+  const workspaceRepo = useProjectWorkspaceStore((state) => state.repo);
   const [open, setOpen] = useState(false);
-  const [renaming, setRenaming] = useState(false);
-  const [name, setName] = useState('xroga@swarm');
-  const [draft, setDraft] = useState(name);
+  const [repoIdentity, setRepoIdentity] = useState({ fullName: '', label: 'Workspace', terminals: 0 });
   const [pinned, setPinned] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setName(localStorage.getItem(NAME_KEY) || 'xroga@swarm');
     setPinned(localStorage.getItem(PIN_KEY) === 'true');
   }, []);
+
+  useEffect(() => {
+    const refreshIdentity = () => {
+      const history = loadTerminalHistory();
+      const currentEntry = history.find((entry) => entry.id === sessionId);
+      const fullName = workspaceRepo || currentEntry?.githubRepoName || getSelectedRepoContext()?.repo || '';
+      const savedSessionIds = new Set(
+        history.filter((entry) => entry.githubRepoName === fullName).map((entry) => entry.id),
+      );
+      if (fullName && messages.length > 0) savedSessionIds.add(sessionId);
+      setRepoIdentity({
+        fullName,
+        label: fullName.split('/').pop() || 'Workspace',
+        terminals: fullName ? savedSessionIds.size : messages.length > 0 ? 1 : 0,
+      });
+    };
+    refreshIdentity();
+    window.addEventListener('storage', refreshIdentity);
+    window.addEventListener('xroga-repo-context-change', refreshIdentity);
+    return () => {
+      window.removeEventListener('storage', refreshIdentity);
+      window.removeEventListener('xroga-repo-context-change', refreshIdentity);
+    };
+  }, [messages.length, sessionId, workspaceRepo]);
 
   useEffect(() => {
     if (!open) return;
@@ -49,7 +72,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   }
 
   const shareWorkspace = async () => {
-    const data = { title: name, text: `Continue ${name} in Xroga`, url: window.location.href };
+    const data = { title: repoIdentity.label, text: `Continue ${repoIdentity.label} in Xroga`, url: window.location.href };
     const hasNativeShare = typeof navigator.share === 'function';
     try {
       if (hasNativeShare) await navigator.share(data);
@@ -67,14 +90,6 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     setOpen(false);
   };
 
-  const saveRename = () => {
-    const next = draft.trim().slice(0, 42) || 'xroga@swarm';
-    localStorage.setItem(NAME_KEY, next);
-    setName(next);
-    setRenaming(false);
-    toast.success('Workspace renamed');
-  };
-
   const forkWorkspace = async () => {
     if (!messages.length) {
       toast.error('Start a conversation before forking');
@@ -87,7 +102,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
       prompt,
       messages,
       selectedId: forkId,
-      selectedLabel: entry?.title || `Fork of ${name}`,
+      selectedLabel: entry?.title || `Fork of ${repoIdentity.label}`,
       source: 'dashboard',
       jumpMessageId: messages.at(-1)?.id,
       githubRepoName: entry?.githubRepoName,
@@ -108,21 +123,14 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
     <div ref={rootRef} className="xv-workspace-identity">
       <button type="button" className="xv-term-title xv-term-title--button" onClick={() => setOpen((value) => !value)} aria-haspopup="menu" aria-expanded={open}>
         <TerminalPromptIcon className="shrink-0 opacity-70" aria-hidden="true" />
-        <h3>{name}</h3>
-        <span className="xv-term-path">~/workspace</span>
+        <h3 title={repoIdentity.fullName || 'No repository selected'}>{repoIdentity.label}</h3>
+        <span className="xv-term-path">{repoIdentity.terminals} {repoIdentity.terminals === 1 ? 'terminal' : 'terminals'}</span>
         {pinned ? <Pin className="xv-term-pinned" aria-label="Pinned" /> : null}
       </button>
 
       {open ? (
         <div className="xv-workspace-identity-menu" role="menu" aria-label="Workspace actions">
-          {renaming ? (
-            <form className="xv-workspace-rename" onSubmit={(event) => { event.preventDefault(); saveRename(); }}>
-              <input autoFocus value={draft} onChange={(event) => setDraft(event.target.value)} aria-label="Workspace name" />
-              <button type="submit" aria-label="Save name"><Check /></button>
-            </form>
-          ) : null}
           <button role="menuitem" type="button" onClick={() => { const next = !pinned; setPinned(next); localStorage.setItem(PIN_KEY, String(next)); }}><Pin />{pinned ? 'Unpin' : 'Pin'}</button>
-          <button role="menuitem" type="button" onClick={() => { setDraft(name); setRenaming(true); }}><Pencil />Rename</button>
           <button role="menuitem" type="button" onClick={archiveWorkspace}><Archive />Archive</button>
           <i role="separator" />
           <button role="menuitem" type="button" onClick={() => void shareWorkspace()}><Share2 />Share</button>

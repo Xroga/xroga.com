@@ -103,19 +103,19 @@ test('the composer stops where the terminal does', () => {
   assert.match(block, /right: 14px !important/, 'and stop at it');
 });
 
-test('the plus menu is a compact vertical picker rather than a composer-wide dashboard', () => {
+test('the plus menu is a compact two-column launcher rather than a composer-wide dashboard', () => {
   assert.match(MENU, /className="xv-cba-grid"/, 'the root list needs the grid wrapper');
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
   const media = code.indexOf('@media (min-width: 640px)', at);
   const block = code.slice(media, media + 360);
-  assert.match(block, /width:\s*min\(410px, 100%\)/, 'the desktop panel should remain bounded');
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 410\)/, 'runtime width should match the CSS cap');
-  assert.ok(MENU.indexOf('<b>Add photos &amp; files</b>') < MENU.indexOf('<b>Web search</b>'), 'upload should lead the tool list');
+  assert.match(block, /width:\s*min\(520px, 100%\)/, 'the desktop panel should remain bounded');
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/, 'runtime width should match the CSS cap');
+  assert.ok(MENU.indexOf('<b>Add files or photos</b>') < MENU.indexOf('<b>Integrations</b>'), 'upload should lead the action palette');
 
   const base = code.slice(at, code.indexOf('}', at));
-  assert.match(base, /grid-template-columns:\s*minmax\(0, 1fr\)/, 'the picker keeps one scan-friendly column');
+  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the desktop launcher needs two compact columns');
 });
 
 test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
@@ -222,14 +222,15 @@ test('hiding the chatbar leaves nothing floating behind it', () => {
   assert.match(LAUNCH, /setChatbarHidden\(!chatbarHidden\)/, 'the toggle no longer toggles');
 });
 
-test('opening Project edits removes the chatbar from the editing canvas', () => {
+test('opening Project edits keeps the chatbar inside the terminal pane', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /const dockSuppressed = chatbarHidden \|\| workspaceOpen;/);
-  assert.match(DOCK, /workspaceOpen && 'xv-terminal-dock--workspace-hidden'/);
-  assert.match(DOCK, /aria-hidden=\{!isDashboard \|\| workspaceOpen\}/);
+  assert.match(DOCK, /const dockSuppressed = chatbarHidden;/);
+  assert.match(DOCK, /workspaceOpen && 'xv-terminal-dock--workspace-split'/);
+  assert.match(DOCK, /aria-hidden=\{!isDashboard\}/);
   assert.match(
     code,
-    /\.xv-terminal-dock--workspace-hidden\s*\{\s*display:\s*none !important;/,
-    'the Project edits state still leaves the fixed composer over the panel',
+    /\.xv-terminal-dock--workspace-split\s*\{[\s\S]*?right:\s*var\(--xv-pane-right, 42%\) !important;/,
+    'the Project edits state no longer stops the composer at the terminal pane edge',
   );
+  assert.match(code, /@media \(max-width: 1023px\)[\s\S]*?\.xv-terminal-dock--workspace-split \{ display: none !important; \}/);
 });

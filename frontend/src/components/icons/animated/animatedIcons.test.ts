@@ -253,7 +253,7 @@ test('the composer takes the ring, the bars and the wheel', () => {
 });
 
 /**
- * The prompt glyph beside `xroga@swarm` is the one icon here that is not
+ * The prompt glyph beside the repository identity is the one icon here that is not
  * hover-driven. It stands for a live shell, and a shell's cursor blinks whether or
  * not anyone is pointing at it.
  */
@@ -266,7 +266,8 @@ test('the terminal prompt cursor blinks continuously and is not hover-driven', (
   assert.match(PROMPT, /if \(reduced\) \{\n\s*controls\.start\('normal'\);/, 'reduced motion still blinks');
 
   assert.match(WORKSPACE_IDENTITY, /<TerminalPromptIcon/, 'the workspace identity lost the prompt glyph');
-  assert.match(WORKSPACE_IDENTITY, /useState\('xroga@swarm'\)/, 'the workspace identity lost its prompt label');
+  assert.match(WORKSPACE_IDENTITY, /useProjectWorkspaceStore/, 'the workspace identity is no longer connected to the active repository');
+  assert.match(WORKSPACE_IDENTITY, /terminals/, 'the workspace identity lost its terminal count');
   for (const [name, source] of [['SwarmMessageLog', LOG], ['DashboardView', DASHBOARD]] as const) {
     assert.match(source, /<WorkspaceIdentityMenu/, `${name} lost the interactive prompt identity`);
     assert.ok(!/<Terminal\b/.test(source), `${name} still renders the static terminal glyph`);

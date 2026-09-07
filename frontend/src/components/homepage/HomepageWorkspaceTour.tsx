@@ -163,7 +163,7 @@ export function HomepageWorkspaceTour({ loggedIn }: { loggedIn: boolean }) {
         <div className={`xv-wt-window terminal-skin-${demoSkin}${collapsed ? ' is-collapsed' : ''}`} data-home-theme={theme}>
           <WorkspaceSidebar collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} loggedIn={loggedIn} />
           <div className="xv-wt-desktop-bar">
-            <i /><i /><i /><TerminalSquare aria-hidden="true" /><strong>xroga@swarm</strong><code>~/workspace</code>
+            <i /><i /><i /><TerminalSquare aria-hidden="true" /><strong>harbourline</strong><code>3 terminals</code>
             <span aria-label="Automatic workspace theme"><Palette aria-hidden="true" /> Auto</span>
             <button type="button" aria-label="Open real workspace" onClick={() => router.push(loggedIn ? '/workspace' : '/auth/signup')}><Maximize2 /></button>
           </div>

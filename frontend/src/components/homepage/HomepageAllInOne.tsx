@@ -110,7 +110,7 @@ function WorkspaceVisual() {
   return (
     <div className="xv-aio-workspace" aria-label="Xroga workspace working inside an existing repository">
       <aside><Image src="/brand/xroga-mark.png" width={28} height={28} alt="" />{['Workspace', 'Dashboard', 'Repositories', 'Integrations'].map((item) => <span className={item === 'Workspace' ? 'is-active' : ''} key={item}>{item}</span>)}<small>REPOSITORY</small><b>harbourline-platform</b></aside>
-      <main><header><span>xroga@swarm</span><code>~/workspace</code><b>Auto</b></header><div className="xv-aio-workspace__prompt"><small>EXISTING REPO · MAIN</small><h4>Describe it. Build it. <em>Ship it.</em></h4><div>Improve property search and preserve the current design system.<Play /></div></div><div className="xv-aio-workspace__changes"><span><FileCode2 /> 8 files changed</span><span><Code2 /> TypeScript</span><span><Check /> Checks ready</span></div></main>
+      <main><header><span>harbourline</span><code>3 terminals</code><b>Auto</b></header><div className="xv-aio-workspace__prompt"><small>EXISTING REPO · MAIN</small><h4>Describe it. Build it. <em>Ship it.</em></h4><div>Improve property search and preserve the current design system.<Play /></div></div><div className="xv-aio-workspace__changes"><span><FileCode2 /> 8 files changed</span><span><Code2 /> TypeScript</span><span><Check /> Checks ready</span></div></main>
     </div>
   );
 }

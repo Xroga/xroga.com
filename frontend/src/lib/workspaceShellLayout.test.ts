@@ -224,8 +224,8 @@ test('the menu is anchored to the composer, not to the plus button', () => {
 test('opening the menu overlays the terminal instead of resizing anything', () => {
   assert.match(MENU, /createPortal\(/);
   assert.match(MENU, /document\.body/);
-  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 410 : 340, Math\.max\(176, rect\.top - 12\)\)/);
-  assert.match(MENU, /const width = Math\.min\(rect\.width, 410\)/);
+  assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 330 : 340, Math\.max\(176, rect\.top - 12\)\)/);
+  assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/);
   assert.match(MENU, /window\.addEventListener\('scroll', sync, \{ capture: true, passive: true \}\)/, 'the portal can detach while its dock scrolls');
 });
 
@@ -237,9 +237,8 @@ test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
 });
 
-test('provider connections are menu rows, and the detached pill is gone', () => {
-  assert.match(MENU, /<b>Supabase<\/b>/);
-  assert.match(MENU, /<b>GitHub<\/b>/);
+test('provider connections are one compact menu row, and the detached pill is gone', () => {
+  assert.match(MENU, /<b>Integrations<\/b>/);
   assert.match(MENU, /onOpenIntegrations/);
   assert.match(CHATBAR, /onOpenIntegrations=\{\(\) => \{/);
   // The duplicate trigger, and its styling hook, must not come back.
@@ -256,15 +255,11 @@ test('the duplicate Connectors row is gone and slash commands expose real action
 
 test('the compact menu exposes the requested working tools', () => {
   for (const label of [
-    'Add photos &amp; files',
-    'Add from library',
-    'Create image',
-    'Web search',
-    'Maps',
-    'Deep research',
-    'Supabase',
-    'GitHub',
-    'Canva',
+    'Add files or photos',
+    'Integrations',
+    'Slash commands',
+    'Plan before build',
+    'Debug an error',
     'Skills',
     'Rules',
   ]) {
@@ -275,13 +270,13 @@ test('the compact menu exposes the requested working tools', () => {
   assert.match(MENU, /document\.addEventListener\('pointerdown', onPointerDown\)/);
 });
 
-test('files, creation, discovery, and connections follow a useful order', () => {
-  const files = MENU.indexOf('<b>Add photos &amp; files</b>');
-  const create = MENU.indexOf('<b>Create image</b>');
-  const research = MENU.indexOf('<b>Deep research</b>');
-  const connections = MENU.indexOf('<b>Supabase</b>');
-  assert.ok(files >= 0 && create > files, 'creation should follow file input');
-  assert.ok(research > create && connections > research, 'connections should follow discovery tools');
+test('the action palette follows the reference row order', () => {
+  const files = MENU.indexOf('<b>Add files or photos</b>');
+  const integrations = MENU.indexOf('<b>Integrations</b>');
+  const commands = MENU.indexOf('<b>Slash commands</b>');
+  const plan = MENU.indexOf('<b>Plan before build</b>');
+  assert.ok(files >= 0 && integrations > files, 'integrations should follow file input');
+  assert.ok(commands > integrations && plan > commands, 'commands and planning should form the second row');
 });
 
 // ---------------------------------------------------------------------------
