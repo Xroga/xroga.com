@@ -333,11 +333,13 @@ export interface BuildPipelineResult {
 }
 
 const BUILDER_FALLBACKS: ModelId[] = [
+  'glm_5_3_flash',
+  'glm_5_3',
   'kimi_k3',
+
+  // Legacy compatibility / rollback routes.
   'glm_5_2',
   'deepseek_v4_pro',
-  'grok_4_5',
-  'grok_4_3',
   'deepseek_v4_flash',
 ];
 
