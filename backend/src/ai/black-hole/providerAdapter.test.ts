@@ -15,9 +15,9 @@ const VISION_OFF = {} as NodeJS.ProcessEnv;
 // Modality is a fact, read from one place
 // ---------------------------------------------------------------------------
 
-test('Grok genuinely accepts images', () => {
-  assert.equal(supportsImages('grok_4_5', VISION_OFF), true);
-  assert.equal(supportsImages('grok_4_3', VISION_OFF), true);
+test('GLM-5.3 Flash is the active vision model', () => {
+  assert.equal(supportsImages('glm_5_3_flash', VISION_OFF), true);
+  assert.equal(supportsImages('grok_4_3' as never, VISION_OFF), false);
 });
 
 test('K3 vision is off until an operator verifies it', () => {
@@ -28,7 +28,7 @@ test('K3 vision is off until an operator verifies it', () => {
 });
 
 test('a text-only model never reports image support', () => {
-  for (const id of ['glm_5_2', 'deepseek_v4_pro', 'deepseek_v4_flash'] as const) {
+  for (const id of ['glm_5_3', 'deepseek_v4_flash'] as const) {
     assert.equal(supportsImages(id, VISION_ON), false, `${id} must not claim vision`);
   }
 });
@@ -96,7 +96,7 @@ test('sending an image to a model without vision is refused, not silently droppe
   const { complete } = await import('./providerAdapter.js');
   await assert.rejects(
     complete({
-      modelId: 'glm_5_2',
+      modelId: 'glm_5_3',
       messages,
       attachments: [{ mediaType: 'image/png', url: 'https://example.com/a.png' }],
       env: VISION_OFF,
@@ -114,7 +114,7 @@ test('a text-only request to a text-only model passes modality checks', async ()
   // it is not rejected for modality.
   const { complete } = await import('./providerAdapter.js');
   await assert.rejects(
-    complete({ modelId: 'glm_5_2', messages, env: VISION_OFF }),
+    complete({ modelId: 'glm_5_3', messages, env: VISION_OFF }),
     (error: unknown) => {
       assert.equal(error instanceof ModalityUnsupportedError, false, 'must not be a modality error');
       return true;

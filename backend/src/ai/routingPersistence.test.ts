@@ -5,12 +5,12 @@ import { historicalModelQuality, loadRoutingOutcomes, resetRoutingOutcomeCache }
 test('routing outcomes reload after restart and affect task-specific quality', async () => {
   resetRoutingOutcomeCache();
   await loadRoutingOutcomes(async () => Array.from({ length: 3 }, (_, index) => ({
-    runId: `run-${index}`, userId: 'user', taskClass: 'code_generation' as const, modelId: 'deepseek_v4_pro' as const,
+    runId: `run-${index}`, userId: 'user', taskClass: 'code_generation' as const, modelId: 'glm_5_3_flash' as const,
     mode: 'balanced' as const, inputTokens: 10, outputTokens: 10, patchApplied: true, typecheckOk: true,
     buildOk: true, reviewOk: true, repairLoops: 0, modelSwitches: 0, createdAt: new Date().toISOString(),
   })));
-  assert.ok((historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'code_generation' }) ?? 0) > 0.9);
-  assert.equal(historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'security_review' }), null);
+  assert.ok((historicalModelQuality({ modelId: 'glm_5_3_flash', taskClass: 'code_generation' }) ?? 0) > 0.9);
+  assert.equal(historicalModelQuality({ modelId: 'glm_5_3_flash', taskClass: 'security_review' }), null);
 });
 
 test('local resilient builds never count as external model quality evidence', async () => {
@@ -20,7 +20,7 @@ test('local resilient builds never count as external model quality evidence', as
       runId: `local-${index}`,
       userId: 'user',
       taskClass: 'code_generation' as const,
-      modelId: 'deepseek_v4_pro' as const,
+      modelId: 'glm_5_3_flash' as const,
       mode: 'balanced' as const,
       provider: 'xroga-local',
       providerFailureType: 'provider_unavailable',
@@ -37,7 +37,7 @@ test('local resilient builds never count as external model quality evidence', as
   );
 
   assert.equal(
-    historicalModelQuality({ modelId: 'deepseek_v4_pro', taskClass: 'code_generation' }),
+    historicalModelQuality({ modelId: 'glm_5_3_flash', taskClass: 'code_generation' }),
     null,
   );
 });

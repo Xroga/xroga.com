@@ -43,7 +43,7 @@ function fakeCompletion(
   return fn;
 }
 
-const CANDIDATES = [{ modelId: 'glm_5_2' }, { modelId: 'kimi_k3' }, { modelId: 'deepseek_v4_pro' }];
+const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { modelId: 'kimi_k3' }];
 
 test('a project is generated as a plan followed by one call per file', async () => {
   const complete = fakeCompletion((_model, system) =>
@@ -76,7 +76,7 @@ test('a truncated file falls back to the next model rather than losing the proje
   // The exact production failure, now costing one call instead of everything.
   const complete = fakeCompletion((modelId, system) => {
     if (system.includes('planning the file list')) return { text: PLAN };
-    if (modelId === 'glm_5_2') return { text: 'fn main() { prin', finishReason: 'length' };
+    if (modelId === 'glm_5_3_flash') return { text: 'fn main() { prin', finishReason: 'length' };
     return { text: 'fn main() {}' };
   });
 
@@ -88,8 +88,8 @@ test('a truncated file falls back to the next model rather than losing the proje
 test('a failure names the file and every model tried', async () => {
   const complete = fakeCompletion((modelId, system) => {
     if (system.includes('planning the file list')) return { text: PLAN };
-    if (modelId === 'glm_5_2') return { text: '', finishReason: 'length' };
-    if (modelId === 'kimi_k3') return { text: '   ' };
+    if (modelId === 'glm_5_3_flash') return { text: '', finishReason: 'length' };
+    if (modelId === 'glm_5_3') return { text: '   ' };
     return { text: '' };
   });
 
@@ -98,9 +98,9 @@ test('a failure names the file and every model tried', async () => {
     (error: unknown) => {
       assert.ok(error instanceof IncrementalImplementationError);
       assert.match(error.message, /file Cargo\.toml/);
-      assert.match(error.message, /glm_5_2 was cut off/);
+      assert.match(error.message, /glm_5_3_flash was cut off/);
+      assert.match(error.message, /glm_5_3/);
       assert.match(error.message, /kimi_k3/);
-      assert.match(error.message, /deepseek_v4_pro/);
       return true;
     },
   );
@@ -129,13 +129,13 @@ test('a partial project is never returned', async () => {
 test('an unusable plan falls back before any file is attempted', async () => {
   const complete = fakeCompletion((modelId, system) => {
     if (!system.includes('planning the file list')) return { text: 'body' };
-    return modelId === 'glm_5_2' ? { text: 'not json at all' } : { text: PLAN };
+    return modelId === 'glm_5_3_flash' ? { text: 'not json at all' } : { text: PLAN };
   });
 
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
   assert.equal(files.length, 3);
-  assert.equal(complete.calls[0]!.modelId, 'glm_5_2');
-  assert.equal(complete.calls[1]!.modelId, 'kimi_k3');
+  assert.equal(complete.calls[0]!.modelId, 'glm_5_3_flash');
+  assert.equal(complete.calls[1]!.modelId, 'glm_5_3');
 });
 
 test('one unsafe path rejects the whole plan rather than being filtered out', () => {

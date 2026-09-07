@@ -44,7 +44,7 @@ const base = {
     objective: 'Implement demo',
     selectedModel: 'kimi_k3' as const,
     provider: 'moonshot',
-    fallbackModels: ['glm_5_2'] as const,
+    fallbackModels: ['glm_5_3'] as const,
     contextReferences: ['product specification'],
     allowedFiles: [],
   },
@@ -215,7 +215,7 @@ test('the task records the role and the model that did the work', async () => {
   const result = await runImplementationAsCanonicalTask({ ...base, implement: async () => FILES });
   assert.equal(result.task.selectedModel, 'kimi_k3');
   assert.equal(result.task.selectedProvider, 'moonshot');
-  assert.deepEqual(result.task.fallbackRoutes.map((route) => route.model), ['glm_5_2']);
+  assert.deepEqual(result.task.fallbackRoutes.map((route) => route.model), ['glm_5_3']);
   assert.ok(result.task.evidenceRequirements.includes('file_mutation'));
 });
 
@@ -435,7 +435,7 @@ test('a research model cannot be routed to repair or review', () => {
 
 test('the reviewer holds no mutation tool', () => {
   // A reviewer that can rewrite the code it reviews is not independent of it.
-  const node = reviewTaskNode({ objective: 'r', selectedModel: 'deepseek_v4_pro', provider: 'openrouter' });
+  const node = reviewTaskNode({ objective: 'r', selectedModel: 'glm_5_3', provider: 'zhipu' });
   assert.deepEqual(node.allowedFiles, []);
   assert.equal(node.operationType, 'code_review');
 });
@@ -445,8 +445,8 @@ test('a blocking review fails the task and records the findings', async () => {
   const result = await runReviewAsCanonicalTask({
     state,
     objective: 'Review',
-    selectedModel: 'deepseek_v4_pro',
-    provider: 'openrouter',
+    selectedModel: 'glm_5_3',
+    provider: 'zhipu',
     review: async () => ({ approved: false, findings: ['unauthenticated admin route'] }),
   });
 
@@ -462,8 +462,8 @@ test('a reviewer that does not complete is a rejection, not an approval', async 
   const result = await runReviewAsCanonicalTask({
     state,
     objective: 'Review',
-    selectedModel: 'deepseek_v4_pro',
-    provider: 'openrouter',
+    selectedModel: 'glm_5_3',
+    provider: 'zhipu',
     review: async () => {
       throw new Error('reviewer timed out');
     },

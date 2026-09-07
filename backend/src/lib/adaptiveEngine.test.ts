@@ -83,13 +83,13 @@ describe('adaptive general-purpose engine', () => {
       {
         modelProviders: [
           { id: 'kimi_k3', configured: true, healthy: true, supports: ['generate'] },
-          { id: 'glm_5_2', configured: true, healthy: true, supports: ['generate'] },
+          { id: 'glm_5_3', configured: true, healthy: true, supports: ['generate'] },
         ],
       },
       {},
     );
-    assert.equal(plan.route.primaryModel, 'kimi_k3');
-    assert.equal(plan.route.reviewerModel, 'glm_5_2');
+    assert.equal(plan.route.primaryModel, 'glm_5_3');
+    assert.equal(plan.route.reviewerModel, 'kimi_k3');
   });
 
   it('uses a healthy fallback after the preferred provider fails', () => {

@@ -25,12 +25,12 @@ describe('provider runtime health', () => {
   });
 
   it('opens a circuit after repeated failures and recovers after the window', () => {
-    recordModelExecution('glm_5_2', { ok: false, latencyMs: 10, error: new Error('timeout') }, 1);
-    recordModelExecution('glm_5_2', { ok: false, latencyMs: 10, error: new Error('timeout') }, 2);
-    const opened = recordModelExecution('glm_5_2', { ok: false, latencyMs: 10, error: new Error('timeout') }, 3);
+    recordModelExecution('glm_5_3', { ok: false, latencyMs: 10, error: new Error('timeout') }, 1);
+    recordModelExecution('glm_5_3', { ok: false, latencyMs: 10, error: new Error('timeout') }, 2);
+    const opened = recordModelExecution('glm_5_3', { ok: false, latencyMs: 10, error: new Error('timeout') }, 3);
     assert.equal(opened.status, 'circuit_open');
     const recovered = getModelRuntimeHealth(
-      'glm_5_2',
+      'glm_5_3',
       new Date(opened.circuitOpenUntil || 0).getTime() + 1,
     );
     assert.equal(recovered.status, 'degraded');
@@ -49,15 +49,15 @@ describe('provider runtime health', () => {
   it('falls back after rate limits and returns only one successful result', async () => {
     const calls: string[] = [];
     const result = await executeWithProviderFallback({
-      routes: ['kimi_k3', 'glm_5_2'], maximumAttemptsPerRoute: 1,
+      routes: ['kimi_k3', 'glm_5_3'], maximumAttemptsPerRoute: 1,
       execute: async (model) => {
         calls.push(model);
         if (model === 'kimi_k3') throw Object.assign(new Error('rate limit'), { status: 429 });
         return { patch: 'single mutation' };
       },
     });
-    assert.equal(result.modelId, 'glm_5_2');
-    assert.deepEqual(calls, ['kimi_k3', 'glm_5_2']);
+    assert.equal(result.modelId, 'glm_5_3');
+    assert.deepEqual(calls, ['kimi_k3', 'glm_5_3']);
     assert.equal(result.value.patch, 'single mutation');
   });
 

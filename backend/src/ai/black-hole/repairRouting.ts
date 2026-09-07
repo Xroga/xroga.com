@@ -121,7 +121,6 @@ const ROUTES: Record<
     preferredModels: [
       'glm_5_3_flash',
       'glm_5_3',
-      'deepseek_v4_pro',
     ],
 
     scope:
@@ -141,7 +140,6 @@ const ROUTES: Record<
     preferredModels: [
       'glm_5_3_flash',
       'glm_5_3',
-      'deepseek_v4_pro',
     ],
 
     scope:
@@ -239,7 +237,6 @@ const ROUTES: Record<
     preferredModels: [
       'glm_5_3_flash',
       'glm_5_3',
-      'deepseek_v4_pro',
     ],
 
     scope:

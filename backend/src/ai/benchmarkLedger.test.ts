@@ -22,7 +22,12 @@ import { BENCHMARKS, type BenchmarkResult } from './modelBenchmarks.js';
  */
 
 let counter = 0;
-function result(over: Partial<BenchmarkResult> & { modelId: string; benchmarkId: string }): BenchmarkResult {
+function result(
+  over: Omit<Partial<BenchmarkResult>, 'modelId' | 'benchmarkId'> & {
+    modelId: string;
+    benchmarkId: string;
+  },
+): BenchmarkResult {
   counter += 1;
   return {
     schemaVersion: '1.0.0',
@@ -39,7 +44,7 @@ function result(over: Partial<BenchmarkResult> & { modelId: string; benchmarkId:
     estimatedCostUsd: 0.01,
     at: new Date(1_700_000_000_000 + counter * 1000).toISOString(),
     ...over,
-  } as BenchmarkResult;
+  } as unknown as BenchmarkResult;
 }
 
 const CODING_BENCHMARK = BENCHMARKS.find((b) => b.capability === 'coding')!.id;
@@ -214,17 +219,12 @@ test('entries trace back to the benchmarks behind them', () => {
 const RESEARCH_BENCHMARK = BENCHMARKS.find((b) => b.capability === 'research')!.id;
 const ARCHITECTURE_BENCHMARK = BENCHMARKS.find((b) => b.capability === 'architecture')!.id;
 
-test('a research benchmark files evidence under the research role', () => {
-  // Before this existed, research benchmarks did not exist and `roleForBenchmark` returned
-  // null for the capability, so a research provider could hold no measured evidence at all
-  // and research routing ran on priors forever.
+test('private retrieval models never enter the generic benchmark ledger', () => {
   assert.equal(roleForBenchmark(RESEARCH_BENCHMARK), 'research');
   const ledger = buildLedger([
     result({ modelId: 'grok_4_5', benchmarkId: RESEARCH_BENCHMARK }),
   ]);
-  assert.equal(ledger.length, 1);
-  assert.equal(ledger[0]!.role, 'research');
-  assert.equal(ledger[0]!.modelId, 'grok_4_5');
+  assert.deepEqual(ledger, []);
 });
 
 test('a coding model never acquires a research score', () => {

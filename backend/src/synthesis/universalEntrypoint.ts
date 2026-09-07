@@ -65,7 +65,7 @@ export function capabilityCandidates(): readonly RoutingCandidate[] {
     // §7: research providers never implement. Filtered at the source of the candidate list
     // rather than after ranking, so a research model cannot be selected, cannot become a
     // fallback, and cannot appear in the run's recorded routing evidence as a coding
-    // option that merely lost. Before this, `grok_4_5` and `grok_4_3` carried a coding
+    // option that merely lost. Before this, private retrieval models carried a coding
     // score of 7 and were ranked for the `coding` capability like any other model.
     .filter((model) => isCodingModel(model.id))
     .map((model) => ({

@@ -2,27 +2,20 @@
  * Xroga multi-model stack — monthly per-user budgets and routing roles.
  *
  * Fly.io secrets:
- *   OPENROUTER_API_KEY  → DeepSeek V4 Flash/Pro ONLY
+ *   OPENROUTER_API_KEY  → DeepSeek V4 Flash ONLY
  *   KIMI_API_KEY        → Kimi K3 (Moonshot official)
- *   GLM_API_KEY         → GLM-5.2 (Zhipu / BigModel official)
- *   GROK_API_KEY        → Grok 4.5 / 4.3 (xAI official)
- *   TAVILY_API_KEY      → research gather
+ *   GLM_API_KEY         → GLM-5.3 / GLM-5.3 Flash (Zhipu / BigModel official)
  *
  * DEEPSEEK_API_KEY is unused — DeepSeek runs only via OpenRouter.
  */
 
 export type ModelId =
   | 'kimi_k3'
-  | 'kimi_k2_7'
-  | 'glm_5_2'
   | 'glm_5_3'
   | 'glm_5_3_flash'
-  | 'deepseek_v4_pro'
-  | 'deepseek_v4_flash'
-  | 'grok_4_5'
-  | 'grok_4_3';
+  | 'deepseek_v4_flash';
 
-export type ProviderKind = 'openrouter' | 'xai' | 'moonshot' | 'zhipu';
+export type ProviderKind = 'openrouter' | 'moonshot' | 'zhipu';
 
 /**
  * The canonical description of one model.
@@ -34,16 +27,8 @@ export type ProviderKind = 'openrouter' | 'xai' | 'moonshot' | 'zhipu';
  * re-declare the facts below, because two hard-coded truths eventually disagree and the
  * disagreement surfaces as a routing bug nobody can localise.
  *
- * ## Why several fields are nullable
- *
- * A model can be *known* before it is *specified*. `kimi_k2_7` is exactly that: it belongs in
- * the catalogue, its transport is decided (Moonshot), and its provider identifier, pricing and
- * context window have not been verified against the live account.
- *
- * Those three are `null` rather than zero or a plausible guess. A zero price reads as "free"
- * to a cost engine, which would then prefer this model over every other one; a guessed context
- * window silently truncates a customer's repository. `null` forces every consumer to decide
- * what to do about missing information, and the type system makes them.
+ * Nullable provider facts keep a future, explicitly gated model from being made callable with
+ * guessed pricing or context. The active catalog below is fully specified.
  */
 export interface ModelDef {
   id: ModelId;
@@ -56,7 +41,7 @@ export interface ModelDef {
   modelIdEnv: string;
   provider: ProviderKind;
   baseUrl: string;
-  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY' | 'GROK_API_KEY';
+  secretKey: 'OPENROUTER_API_KEY' | 'KIMI_API_KEY' | 'GLM_API_KEY';
   /** Monthly USD budget allocation */
   budgetUsd: number;
   /** Monthly token pool (input + output combined target) */
@@ -103,10 +88,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     provider: 'moonshot',
     baseUrl: 'https://api.moonshot.ai/v1',
     secretKey: 'KIMI_API_KEY',
-    budgetUsd: 7.73,
-    monthlyTokens: 888_888,
-    inputTokens: 444_444,
-    outputTokens: 444_444,
+    budgetUsd: 0.75,
+    monthlyTokens: 272_222,
+    inputTokens: 136_111,
+    outputTokens: 136_111,
     inputUsdPer1M: 3.0,
     outputUsdPer1M: 15.0,
     contextWindow: 1_000_000,
@@ -114,59 +99,6 @@ export const MODELS: Record<ModelId, ModelDef> = {
     imagesEnv: 'KIMI_VISION_ENABLED',
     tagline: 'Chief Architect',
   },
-  kimi_k2_7: {
-    id: 'kimi_k2_7',
-    label: 'Xroga Apex Efficient',
-    role: 'Cost-efficient repository implementation — the normal software engineering route',
-    // Not verified against the live Moonshot account. `null` is the honest value: an invented
-    // slug would look production-ready and fail at the first call, which is a worse outcome
-    // than a model that reports itself unconfigured.
-    apiModel: null,
-    modelIdEnv: 'KIMI_COST_EFFICIENT_MODEL_ID',
-    provider: 'moonshot',
-    baseUrl: 'https://api.moonshot.ai/v1',
-    secretKey: 'KIMI_API_KEY',
-    // Budget and pool are Xroga's own allocation decisions, not provider facts, so they are
-    // real. Draws from the same Moonshot allowance as K3 until it is separately funded.
-    budgetUsd: 0,
-    monthlyTokens: 0,
-    inputTokens: 0,
-    outputTokens: 0,
-    // Provider facts. Unverified, therefore null — see the ModelDef docstring.
-    inputUsdPer1M: null,
-    outputUsdPer1M: null,
-    contextWindow: null,
-    modalities: { text: true, images: false },
-    tagline: 'Efficient Engineer',
-  },
-  glm_5_2: {
-    id: 'glm_5_2',
-    modelIdEnv: 'GLM_MODEL_ID',
-    label: 'Xroga Horizon Legacy',
-    role: 'Legacy GLM rollback route',
-    apiModel: 'glm-5.2',
-    provider: 'zhipu',
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-    secretKey: 'GLM_API_KEY',
-
-    // Small rollback reserve only.
-    budgetUsd: 0.30,
-    monthlyTokens: 100_000,
-    inputTokens: 50_000,
-    outputTokens: 50_000,
-
-    inputUsdPer1M: 1.4,
-    outputUsdPer1M: 4.4,
-    contextWindow: 1_000_000,
-
-    modalities: {
-      text: true,
-      images: false,
-    },
-
-    tagline: 'Legacy Rollback',
-  },
-
   glm_5_3: {
     id: 'glm_5_3',
     modelIdEnv: 'GLM_5_3_MODEL_ID',
@@ -181,10 +113,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
 
     secretKey: 'GLM_API_KEY',
 
-    budgetUsd: 1.50,
-    monthlyTokens: 500_000,
-    inputTokens: 250_000,
-    outputTokens: 250_000,
+    budgetUsd: 6,
+    monthlyTokens: 1_500_000,
+    inputTokens: 750_000,
+    outputTokens: 750_000,
 
     inputUsdPer1M: 1.4,
     outputUsdPer1M: 4.4,
@@ -213,10 +145,10 @@ export const MODELS: Record<ModelId, ModelDef> = {
     secretKey: 'GLM_API_KEY',
 
     // Majority of the GLM family envelope goes to the normal route.
-    budgetUsd: 4.00,
-    monthlyTokens: 1_400_000,
-    inputTokens: 700_000,
-    outputTokens: 700_000,
+    budgetUsd: 8.5,
+    monthlyTokens: 3_500_000,
+    inputTokens: 1_750_000,
+    outputTokens: 1_750_000,
 
     // Conservative accounting rates.
     inputUsdPer1M: 0.15,
@@ -230,25 +162,6 @@ export const MODELS: Record<ModelId, ModelDef> = {
 
     tagline: 'Primary Engineer',
   },
-  deepseek_v4_pro: {
-    id: 'deepseek_v4_pro',
-    modelIdEnv: 'DEEPSEEK_PRO_MODEL_ID',
-    label: 'Xroga Forge',
-    role: 'Cost-effective volume — agent tasks and knowledge work',
-    apiModel: 'deepseek/deepseek-v4-pro',
-    provider: 'openrouter',
-    baseUrl: OPENROUTER_BASE_URL,
-    secretKey: 'OPENROUTER_API_KEY',
-    budgetUsd: 0.65,
-    monthlyTokens: 1_500_000,
-    inputTokens: 750_000,
-    outputTokens: 750_000,
-    inputUsdPer1M: 0.435,
-    outputUsdPer1M: 0.87,
-    contextWindow: 1_000_000,
-    modalities: { text: true, images: false },
-    tagline: 'Deep Executor',
-  },
   deepseek_v4_flash: {
     id: 'deepseek_v4_flash',
     modelIdEnv: 'DEEPSEEK_FLASH_MODEL_ID',
@@ -258,57 +171,15 @@ export const MODELS: Record<ModelId, ModelDef> = {
     provider: 'openrouter',
     baseUrl: OPENROUTER_BASE_URL,
     secretKey: 'OPENROUTER_API_KEY',
-    budgetUsd: 0.32,
-    monthlyTokens: 1_000_000,
-    inputTokens: 500_000,
-    outputTokens: 500_000,
+    budgetUsd: 1.25,
+    monthlyTokens: 900_000,
+    inputTokens: 450_000,
+    outputTokens: 450_000,
     inputUsdPer1M: 0.09,
     outputUsdPer1M: 0.18,
     contextWindow: 1_000_000,
     modalities: { text: true, images: false },
     tagline: 'Converter & Volume',
-  },
-  grok_4_5: {
-    id: 'grok_4_5',
-    modelIdEnv: 'GROK_PRIMARY_MODEL_ID',
-    label: 'Xroga Live',
-    // Research only. This previously read "…, coding agents", which contradicted the
-    // enforced policy: `providerPolicy` refuses either Grok for engineering work, so the
-    // string described a capability the system does not grant. A registry that advertises
-    // what the router forbids is how the forbidden thing eventually gets re-enabled.
-    role: 'Real-time intelligence — web/X search and crypto news. Research only; never writes code.',
-    apiModel: 'grok-4.5',
-    provider: 'xai',
-    baseUrl: 'https://api.x.ai/v1',
-    secretKey: 'GROK_API_KEY',
-    budgetUsd: 1.0,
-    monthlyTokens: 250_000,
-    inputTokens: 125_000,
-    outputTokens: 125_000,
-    inputUsdPer1M: 2.0,
-    outputUsdPer1M: 6.0,
-    contextWindow: 500_000,
-    modalities: { text: true, images: true },
-    tagline: 'Real-Time Intelligence',
-  },
-  grok_4_3: {
-    id: 'grok_4_3',
-    modelIdEnv: 'GROK_REVIEW_MODEL_ID',
-    label: 'Xroga Lens',
-    role: 'Backup — file analysis, document processing, 1M context',
-    apiModel: 'grok-4.3',
-    provider: 'xai',
-    baseUrl: 'https://api.x.ai/v1',
-    secretKey: 'GROK_API_KEY',
-    budgetUsd: 1.0,
-    monthlyTokens: 533_334,
-    inputTokens: 266_667,
-    outputTokens: 266_667,
-    inputUsdPer1M: 1.25,
-    outputUsdPer1M: 2.5,
-    contextWindow: 1_000_000,
-    modalities: { text: true, images: true },
-    tagline: 'Document & Backup',
   },
 };
 
@@ -335,7 +206,7 @@ export function scaleFactorForBudget(apiBudgetUsd: number): number {
   return apiBudgetUsd / MONTHLY_TOTAL_BUDGET_USD;
 }
 
-/** Dashboard-friendly rollup (DeepSeek Pro+Flash combined, Grok 4.5+4.3 combined). */
+/** Dashboard-friendly capability rollup. */
 /**
  * Public capability tiers for the usage dashboard.
  *
@@ -526,7 +397,6 @@ export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_
 
   totalLimit: Math.round(
     (
-      MODELS.glm_5_2.monthlyTokens +
       MODELS.glm_5_3.monthlyTokens +
       MODELS.glm_5_3_flash.monthlyTokens
     ) * scale,
@@ -535,7 +405,6 @@ export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_
   budgetUsd:
     Math.round(
       (
-        MODELS.glm_5_2.budgetUsd +
         MODELS.glm_5_3.budgetUsd +
         MODELS.glm_5_3_flash.budgetUsd
       ) *
@@ -548,24 +417,11 @@ export function dashboardModelPools(apiBudgetUsd: number = MONTHLY_TOTAL_BUDGET_
       publicId: 'high_volume',
       label: 'High-Volume Execution',
       tagline: 'Fast iteration and everyday builds',
-      totalLimit: Math.round(
-        (MODELS.deepseek_v4_pro.monthlyTokens + MODELS.deepseek_v4_flash.monthlyTokens) * scale,
-      ),
+      totalLimit: Math.round(MODELS.deepseek_v4_flash.monthlyTokens * scale),
       budgetUsd:
         Math.round(
-          (MODELS.deepseek_v4_pro.budgetUsd + MODELS.deepseek_v4_flash.budgetUsd) * scale * 100,
+          MODELS.deepseek_v4_flash.budgetUsd * scale * 100,
         ) / 100,
-    },
-    {
-      role: 'grok',
-      publicId: 'live_research',
-      label: 'Live Research',
-      tagline: 'Current web and social intelligence',
-      totalLimit: Math.round(
-        (MODELS.grok_4_5.monthlyTokens + MODELS.grok_4_3.monthlyTokens) * scale,
-      ),
-      budgetUsd:
-        Math.round((MODELS.grok_4_5.budgetUsd + MODELS.grok_4_3.budgetUsd) * scale * 100) / 100,
     },
   ];
 }

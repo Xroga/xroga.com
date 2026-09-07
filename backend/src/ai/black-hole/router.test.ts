@@ -61,7 +61,7 @@ function runtimeModel(
     preferredFallbacks: [],
     supports: {
       text: true,
-      images: id.startsWith('grok'),
+      images: id === 'glm_5_3_flash',
       structuredOutput: true,
       toolCalls: true,
       streaming: true,
@@ -72,8 +72,6 @@ function runtimeModel(
 
 const REGISTRY: RuntimeModelCapability[] = [
   runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('deepseek_v4_pro', { inputUsdPer1M: 0.5, outputUsdPer1M: 2 }),
-  runtimeModel('glm_5_2', { provider: 'zhipu', inputUsdPer1M: 0.6, outputUsdPer1M: 2.2 }),
   runtimeModel('glm_5_3', { provider: 'zhipu', inputUsdPer1M: 1.4, outputUsdPer1M: 4.4, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
   runtimeModel('glm_5_3_flash', {
     provider: 'zhipu',
@@ -85,8 +83,6 @@ const REGISTRY: RuntimeModelCapability[] = [
     supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true },
   }),
   runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15, contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
-  runtimeModel('grok_4_5', { provider: 'xai' }),
-  runtimeModel('grok_4_3', { provider: 'xai' }),
 ];
 
 function route(
@@ -191,10 +187,11 @@ test('GLM 5.3 Flash heads the normal coding chain', () => {
   assert.equal(result.selected, 'glm_5_3_flash');
 });
 
-test('a research request routes to Grok', () => {
+test('a research request routes to GLM Flash for synthesis', () => {
   const result = route({ prompt: 'what is trending on x.com in the solana hackathon' });
   assert.equal(result.family, 'research');
-  assert.equal(result.selected, 'grok_4_3');
+  assert.equal(result.selected, 'glm_5_3_flash');
+  assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
 });
 
 test('a request that researches and then builds is routed as engineering', () => {
@@ -227,15 +224,14 @@ test('a read-only image request reaches a genuinely vision-capable route', () =>
   }
 });
 
-test('a model without confirmed vision support is excluded by name and reason', () => {
+test('generic Grok and text-only models never enter the vision chain', () => {
   // Sending an image to a model that cannot read one returns a confident answer about nothing.
   const result = route({
     prompt: 'what is in this screenshot',
     attachments: [{ mediaType: 'image/png' }],
   });
-  const k3 = result.excluded.find((entry) => entry.modelId === 'kimi_k3');
-  assert.ok(k3, 'K3 heads the vision chain and must be accounted for');
-  assert.match(k3!.reason, /no confirmed vision support/);
+  assert.deepEqual(result.chain, ['glm_5_3_flash']);
+  assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
 });
 
 test('an image request that must also write files finds no route rather than a research model', () => {
@@ -249,19 +245,12 @@ test('an image request that must also write files finds no route rather than a r
   assert.equal(result.chain.some((id) => id.startsWith('grok')), false);
 });
 
-test('a confirmed vision model is used when the registries agree', () => {
-  const visionK3 = REGISTRY.map((model) =>
-    model.id === 'glm_5_3_flash'
-      ? runtimeModel('glm_5_3_flash', { supports: { text: true, images: false, structuredOutput: true, toolCalls: true, streaming: true } })
-      : model.id === 'kimi_k3'
-      ? runtimeModel('kimi_k3', { supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true } })
-      : model,
-  );
+test('the confirmed GLM Flash vision model is used', () => {
   const result = route(
     { prompt: 'what is in this screenshot', attachments: [{ mediaType: 'image/png' }] },
-    { registry: visionK3 },
+    { registry: REGISTRY },
   );
-  assert.equal(result.selected, 'kimi_k3');
+  assert.equal(result.selected, 'glm_5_3_flash');
 });
 
 // ---------------------------------------------------------------------------
@@ -303,14 +292,14 @@ test('no public route output names a provider', () => {
 
 test('an open circuit breaker removes a model from the chain', () => {
   const brokenGlm = REGISTRY.map((model) =>
-    model.id === 'glm_5_2'
-      ? runtimeModel('glm_5_2', { health: { ...model.health, status: 'circuit_open' } })
+    model.id === 'glm_5_3_flash'
+      ? runtimeModel('glm_5_3_flash', { health: { ...model.health, status: 'circuit_open' } })
       : model,
   );
   const result = route({ prompt: 'add pagination', projectId: 'p-1' }, { registry: brokenGlm });
-  assert.equal(result.chain.includes('glm_5_2'), false);
+  assert.equal(result.chain.includes('glm_5_3_flash'), false);
   assert.match(
-    result.excluded.find((entry) => entry.modelId === 'glm_5_2')!.reason,
+    result.excluded.find((entry) => entry.modelId === 'glm_5_3_flash')!.reason,
     /circuit breaker/,
   );
 });

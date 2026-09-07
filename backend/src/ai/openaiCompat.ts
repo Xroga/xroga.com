@@ -93,7 +93,6 @@ function openRouterHeaders(): Record<string, string> {
  * - DeepSeek → OpenRouter ONLY (OPENROUTER_API_KEY)
  * - Kimi → Moonshot official (KIMI_API_KEY)
  * - GLM → Zhipu official (GLM_API_KEY)
- * - Grok → xAI official (GROK_API_KEY)
  */
 export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): ResolvedEndpoint {
   const def = MODELS[modelId];
@@ -150,20 +149,6 @@ export function resolveEndpoint(modelId: ModelId, credentialOverride?: string): 
       apiModel,
       provider: 'openrouter',
       defaultHeaders: openRouterHeaders(),
-    };
-  }
-
-  if (def.provider === 'xai') {
-    const grokKey =
-      credentialOverride?.trim() || getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
-    if (!grokKey) {
-      throw new Error('GROK_API_KEY is not configured on the server');
-    }
-    return {
-      apiKey: grokKey,
-      baseUrl: def.baseUrl,
-      apiModel,
-      provider: 'xai',
     };
   }
 
@@ -385,7 +370,7 @@ export function modelKeyStatus(): Record<string, boolean> {
     OPENROUTER_API_KEY: Boolean(getSecret('OPENROUTER_API_KEY')),
     KIMI_API_KEY: Boolean(getSecret('KIMI_API_KEY')),
     GLM_API_KEY: Boolean(getSecret('GLM_API_KEY')),
-    GROK_API_KEY: Boolean(getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY')),
+    XAI_API_KEY: Boolean(getSecret('XAI_API_KEY')),
     TAVILY_API_KEY: Boolean(getSecret('TAVILY_API_KEY')),
     DEEPSEEK_VIA_OPENROUTER: Boolean(getSecret('OPENROUTER_API_KEY')),
   };

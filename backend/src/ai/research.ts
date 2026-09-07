@@ -1,9 +1,8 @@
 import { getSecret } from '../config/envSecrets.js';
-import { configuredApiModel } from './openaiCompat.js';
-import { normalizeProviderError, recordModelExecution } from './providerRuntime.js';
+import { normalizeProviderError } from './providerRuntime.js';
 import { redactSecrets } from '../lib/truthfulExecution.js';
 import { validateResearchUrl } from '../synthesis/research/researchEngine.js';
-import { withProviderReservation } from './providerBudget.js';
+import { parallelSearch } from './parallelWeb.js';
 
 export interface ResearchSource {
   title: string;
@@ -23,9 +22,8 @@ export interface ResearchBundle {
 
 /**
  * Live research for builds/chat.
- * Preferred: Grok (xAI) native live search — web + X — no separate X API key.
- * Fallback: Tavily → SearXNG.
- * Returns provider 'none' only when every source fails (caller must NOT fake a research step).
+ * General public-web retrieval uses Parallel. X/Twitter retrieval is isolated in
+ * `grokLiveSearch` and is invoked only for an explicit X intent.
  */
 export async function gatherResearch(query: string, userId?: string): Promise<ResearchBundle> {
   const q = redactSecrets(query).trim().slice(0, 2_000);
@@ -34,64 +32,49 @@ export async function gatherResearch(query: string, userId?: string): Promise<Re
   const wantsX =
     /\b(x\.com|twitter|#\w+|trending|hackathon|okx|#okxai|crypto\s*news|breaking)\b/i.test(q);
 
-  const grokKey = getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
-  if (grokKey) {
-    const started = Date.now();
+  const xaiKey = getSecret('XAI_API_KEY');
+  if (wantsX && xaiKey) {
     try {
-      const execute = () => grokLiveSearch(q, grokKey, { includeX: true, forceX: wantsX });
-      const result = userId
-        ? await withProviderReservation({
-            userId,
-            modelId: 'grok_4_5',
-            estimatedInputTokens: Math.max(1, Math.ceil(q.length / 4) + 180),
-            maximumOutputTokens: 2048,
-            purpose: 'daily_work',
-            execute,
-          })
-        : await execute();
+      const result = await grokLiveSearch(q, xaiKey, { includeX: true, forceX: true });
       const bundle = result.bundle;
-      recordModelExecution('grok_4_5', { ok: true, latencyMs: Date.now() - started });
       if (bundle.summary.trim() || bundle.sources.length) return bundle;
     } catch (err) {
-      recordModelExecution('grok_4_5', {
-        ok: false,
-        latencyMs: Date.now() - started,
-        error: err,
-      });
-      console.warn('[research] Grok live search failed:', normalizeProviderError(err).safeMessage);
+      console.warn('[research] X search failed:', normalizeProviderError(err).safeMessage);
     }
   }
 
-  const tavily = getSecret('TAVILY_API_KEY');
-  // Shared paid search must not bypass the entitlement ledger. Until an exact,
-  // versioned per-request price is configured, use the free metasearch fallback.
-  if (tavily && !userId) {
+  if (userId && getSecret('PARALLEL_API_KEY')) {
     try {
-      const bundle = await tavilySearch(q, tavily);
-      if (bundle.sources.length) return bundle;
+      const result = await parallelSearch({ userId, objective: q, queries: [q] });
+      const sources = result.sources.map((source) => ({
+        title: source.title,
+        url: source.url,
+        snippet: source.snippet,
+        source: 'parallel',
+      }));
+      if (sources.length) {
+        return {
+          query: q,
+          summary: sources.map((source) => source.snippet).join('\n\n').slice(0, 4_000),
+          sources,
+          provider: 'parallel',
+        };
+      }
     } catch (err) {
-      console.warn('[research] Tavily failed:', normalizeProviderError(err).safeMessage);
+      console.warn('[research] Parallel search failed:', normalizeProviderError(err).safeMessage);
     }
-  }
-
-  try {
-    const bundle = await searxngSearch(q);
-    if (bundle.sources.length) return bundle;
-  } catch (err) {
-    console.warn('[research] SearXNG failed:', normalizeProviderError(err).safeMessage);
   }
 
   return { query: q, summary: '', sources: [], provider: 'none' };
 }
 
 /**
- * Grok Responses API with native web/X tools.
- * Default sources = web + X (native). No X developer API required.
+ * Private Grok 4.3 Responses API adapter for native X Search only.
  */
 export async function grokLiveSearch(
   query: string,
   apiKey: string,
-  opts: { includeX: boolean; forceX: boolean },
+  _opts: { includeX: boolean; forceX: boolean },
   request: typeof fetch = fetch,
 ): Promise<{
   bundle: ResearchBundle;
@@ -99,17 +82,14 @@ export async function grokLiveSearch(
   outputTokens: number;
   providerRequestId?: string;
 }> {
-  const apiModel = configuredApiModel('grok_4_5');
-  const tools: Array<Record<string, unknown>> = [{ type: 'web_search' }];
-  if (opts.includeX) tools.push({ type: 'x_search' });
+  const apiModel = process.env.GROK_SEARCH_MODEL?.trim() || 'grok-4.3';
+  const tools: Array<Record<string, unknown>> = [{ type: 'x_search' }];
 
   const body = {
     model: apiModel,
     instructions:
-      'You are Xroga Live research. Summarize current facts with concrete details. Prefer primary sources and preserve citations. Return plain text.',
-    input: opts.forceX
-      ? `Research with live web + X sources. Include recent posts and official pages when relevant.\n\n${query}`
-      : `Research with live web sources, and use X when useful.\n\n${query}`,
+      'Return compact evidence from X posts and official X accounts. Preserve citations. Return plain text.',
+    input: `Research with X Search only. Include recent relevant posts and official accounts.\n\n${query}`,
     tools,
     temperature: 0.2,
     max_output_tokens: 2048,
@@ -157,7 +137,11 @@ export async function grokLiveSearch(
   const citationUrls = [...new Set(citationCandidates.map((citation) => citation.url))]
     .filter((value): value is string => {
       if (typeof value !== 'string') return false;
-      try { validateResearchUrl(value); return true; } catch { return false; }
+      try {
+        validateResearchUrl(value);
+        const host = new URL(value).hostname.toLowerCase();
+        return host === 'x.com' || host.endsWith('.x.com') || host === 'twitter.com' || host.endsWith('.twitter.com');
+      } catch { return false; }
     });
 
   const urlSources: ResearchSource[] = citationUrls.slice(0, 12).map((url) => ({
@@ -183,7 +167,7 @@ export async function grokLiveSearch(
       summary: summary.slice(0, 4000),
       sources: urlSources,
       provider: 'grok_live',
-      includedXSearch: opts.includeX,
+      includedXSearch: true,
     },
     inputTokens: data.usage?.input_tokens ?? Math.max(1, Math.ceil(query.length / 4)),
     outputTokens: data.usage?.output_tokens ?? Math.max(1, Math.ceil(summary.length / 4)),

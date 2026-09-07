@@ -39,11 +39,9 @@
 
 import {
   CODING_MODEL_TRANSPORT,
-  RESEARCH_MODEL_TRANSPORT,
   isCodingModel,
-  isResearchModel,
 } from '../providerPolicy.js';
-import { codingTierFor, modelAvailability, type ModelAvailability } from '../providerCostTiers.js';
+import type { ModelAvailability } from '../providerCostTiers.js';
 import { MODELS, resolveModelSpec, type ModelId } from '../models.js';
 
 /** The real transports Black Hole ∞ speaks. Named per provider, never per model family. */
@@ -129,14 +127,6 @@ const ENGINEERING_AUTHORITY: BlackHoleAuthority = {
  * Everything a research model returns is untrusted external data. It may inform a decision;
  * it may never make one that writes.
  */
-const RESEARCH_ONLY_AUTHORITY: BlackHoleAuthority = {
-  research: true,
-  inspectMedia: true,
-  writeProjectFiles: false,
-  mutateRepository: false,
-  deploy: false,
-};
-
 const NO_CAPABILITY: BlackHoleCapabilities = {
   text: false,
   reasoning: false,
@@ -171,9 +161,8 @@ const codingCapabilities = (
  * The canonical pool.
  *
  * Ids match the identifiers already used by `providerCostTiers` and the measured-evidence
- * ledger. Introducing a second id for a model that already has one — `kimi_k2_7_code`
- * alongside `kimi_k2_7` — would split its benchmark history in two and defeat the purpose of
- * a canonical registry.
+ * ledger. A second alias for an active model would split benchmark history and defeat the
+ * purpose of a canonical registry.
  */
 export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
   {
@@ -187,35 +176,6 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
     contextWindow: 1_000_000,
     costClass: 'premium',
     preferredRoles: ['flagship_reasoning', 'architecture', 'vision', 'long_context', 'escalation'],
-    prohibitedRoles: [],
-  },
-  {
-    // Registered and represented, not callable until the verified slug is configured.
-    // `providerCostTiers` already gates this model on KIMI_COST_EFFICIENT_MODEL_ID; the same
-    // variable is used here rather than a second one, so one operator action enables both.
-    id: 'kimi_k2_7',
-    provider: 'moonshot',
-    providerModel: null,
-    providerModelEnv: 'KIMI_COST_EFFICIENT_MODEL_ID',
-    credentialEnv: 'KIMI_API_KEY',
-    capabilities: codingCapabilities({ longContext: true }),
-    authority: ENGINEERING_AUTHORITY,
-    contextWindow: 256_000,
-    costClass: 'low',
-    preferredRoles: ['coding', 'repository_implementation', 'refactor', 'debugging'],
-    prohibitedRoles: [],
-  },
-  {
-    id: 'glm_5_2',
-    provider: 'glm_official',
-    providerModel: 'glm-5.2',
-    providerModelEnv: 'GLM_MODEL_ID',
-    credentialEnv: 'GLM_API_KEY',
-    capabilities: codingCapabilities({ deepReasoning: true, longContext: true }),
-    authority: ENGINEERING_AUTHORITY,
-    contextWindow: 200_000,
-    costClass: 'high',
-    preferredRoles: ['long_horizon_engineering', 'repository_understanding', 'migration'],
     prohibitedRoles: [],
   },
   {
@@ -309,67 +269,6 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
     costClass: 'ultra_low',
     preferredRoles: ['chat', 'summarisation', 'extraction', 'classification', 'light_reasoning'],
     prohibitedRoles: [],
-  },
-  {
-    id: 'deepseek_v4_pro',
-    provider: 'openrouter',
-    providerModel: 'deepseek/deepseek-v4-pro',
-    providerModelEnv: 'DEEPSEEK_PRO_MODEL_ID',
-    credentialEnv: 'OPENROUTER_API_KEY',
-    capabilities: codingCapabilities({ deepReasoning: true }),
-    authority: ENGINEERING_AUTHORITY,
-    contextWindow: 128_000,
-    costClass: 'medium',
-    preferredRoles: ['deep_reasoning', 'debugging', 'planning', 'coding_fallback'],
-    prohibitedRoles: [],
-  },
-  {
-    // Capable of producing code; not authorised to write any. The prohibited roles are stated
-    // rather than implied so a router asking "may this model implement?" gets a direct answer.
-    id: 'grok_4_5',
-    provider: 'xai',
-    providerModel: 'grok-4.5',
-    providerModelEnv: 'GROK_MODEL_ID',
-    credentialEnv: 'GROK_API_KEY',
-    capabilities: {
-      ...NO_CAPABILITY,
-      text: true,
-      reasoning: true,
-      vision: true,
-      tools: true,
-      streaming: true,
-      research: true,
-      xSearch: true,
-      webSearch: true,
-    },
-    authority: RESEARCH_ONLY_AUTHORITY,
-    contextWindow: 256_000,
-    costClass: 'medium',
-    preferredRoles: ['x_search', 'realtime_research', 'crypto_research', 'media_inspection'],
-    prohibitedRoles: ['implementation', 'repository_mutation', 'review', 'deployment'],
-  },
-  {
-    id: 'grok_4_3',
-    provider: 'xai',
-    providerModel: 'grok-4.3',
-    providerModelEnv: 'GROK_FAST_MODEL_ID',
-    credentialEnv: 'GROK_API_KEY',
-    capabilities: {
-      ...NO_CAPABILITY,
-      text: true,
-      reasoning: true,
-      vision: true,
-      tools: true,
-      streaming: true,
-      research: true,
-      xSearch: true,
-      webSearch: true,
-    },
-    authority: RESEARCH_ONLY_AUTHORITY,
-    contextWindow: 128_000,
-    costClass: 'low',
-    preferredRoles: ['file_analysis', 'realtime_research', 'media_inspection'],
-    prohibitedRoles: ['implementation', 'repository_mutation', 'review', 'deployment'],
   },
 ];
 
@@ -469,8 +368,5 @@ export function mayPerform(
  */
 export function requiredTransport(id: string): string | null {
   if (isCodingModel(id)) return CODING_MODEL_TRANSPORT[id];
-  if (id in RESEARCH_MODEL_TRANSPORT) {
-    return RESEARCH_MODEL_TRANSPORT[id as keyof typeof RESEARCH_MODEL_TRANSPORT];
-  }
-  return isResearchModel(id) ? 'research_only' : null;
+  return null;
 }

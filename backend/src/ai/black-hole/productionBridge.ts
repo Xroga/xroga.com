@@ -22,22 +22,11 @@
  */
 
 import { readCutoverPlan, servesBlackHoleFor, type CutoverPlan } from './cutover.js';
-import { analyzeTask, type TaskAnalysis } from './taskClass.js';
+import { analyzeTask } from './taskClass.js';
 import { assessBlackHoleComplexity } from './complexity.js';
 import { routeBlackHole, type PublicMode } from './router.js';
 import { classifyFailure, routeRepair, escalateScope, type RepairFailureKind } from './repairRouting.js';
-import {
-  formatResearchAsEvidence,
-  runResearch,
-  type RawResult,
-  type ResearchAvailability,
-  type ResearchExecutors,
-  type TavilyConnectionState,
-} from './researchRouter.js';
-import { grokLiveSearch, searxngSearch, tavilySearch, type ResearchBundle } from '../research.js';
-import { getSecret } from '../../config/envSecrets.js';
-import { getUserProviderKey } from '../../services/integrations/userProviderKeys.js';
-import { validateResearchUrl } from '../../synthesis/research/researchEngine.js';
+import { runWebIntelligence } from './webIntelligence.js';
 import type { ModelId } from '../models.js';
 
 // ---------------------------------------------------------------------------
@@ -261,39 +250,10 @@ export function selectRepairModel(input: RepairSelectionInput): RepairSelection 
 // Research
 // ---------------------------------------------------------------------------
 
-/**
- * The user's Tavily connection state.
- *
- * Read from the existing encrypted per-user integration store. There is no OAuth flow here
- * because Tavily's published integration mechanism is an API key, and inventing an OAuth
- * handshake that the vendor does not offer would produce a connect button that cannot work.
- * A key the user supplies is still *their* key, drawing on *their* quota, which is the
- * property that actually matters: authorization is never shared between users.
- */
-export async function userTavilyState(userId: string): Promise<TavilyConnectionState> {
-  try {
-    const key = await getUserProviderKey(userId, 'tavily');
-    return key?.trim() ? 'connected' : 'not_connected';
-  } catch {
-    return 'provider_unavailable';
-  }
-}
-
-function toRawResults(bundle: ResearchBundle): RawResult[] {
-  return bundle.sources.map((source) => ({
-    title: source.title,
-    url: source.url,
-    snippet: source.snippet,
-    xHandle: /x\.com|twitter\.com/i.test(source.url) ? source.title : undefined,
-  }));
-}
-
 export interface ResearchInput extends StageContext {
   readonly query: string;
   readonly officialDomains?: readonly string[];
   readonly signal?: AbortSignal;
-  /** Product policy: may this request spend the shared platform key? */
-  readonly platformTavilyPermitted?: boolean;
 }
 
 export interface ResearchOutcome {
@@ -305,12 +265,8 @@ export interface ResearchOutcome {
 }
 
 /**
- * Runs research through the canonical router.
- *
- * The executors below are thin adapters over the transports that already exist in
- * `research.ts`. Reusing them keeps the SSRF guard (`validateResearchUrl`) and the timeouts in
- * one place; a second Tavily or SearXNG client in this layer would be one more place for those
- * to be forgotten.
+ * Runs research through the canonical web-intelligence layer: Parallel for public web and
+ * private Grok 4.3 native x_search for explicit X/Twitter evidence.
  */
 export async function researchThroughBlackHole(
   input: ResearchInput,
@@ -322,72 +278,26 @@ export async function researchThroughBlackHole(
     return { ...result, injectionAttempts: 0, unavailable: result.sourceCount === 0, source: 'legacy' };
   }
 
-  const grokKey = getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY');
-  const platformTavilyKey = getSecret('TAVILY_API_KEY');
-  const userTavilyKey = await getUserProviderKey(input.userId, 'tavily').catch(() => null);
-
-  const availability: ResearchAvailability = {
-    grokConfigured: Boolean(grokKey),
-    userTavily: userTavilyKey?.trim() ? 'connected' : 'not_connected',
-    searxngConfigured: true,
-    platformTavilyConfigured: Boolean(platformTavilyKey),
-    // Defaults to false: §14 keeps the shared key for controlled fallback rather than as the
-    // silent default for every authenticated user.
-    platformTavilyPermitted: input.platformTavilyPermitted ?? false,
-  };
-
-  const analysis: TaskAnalysis = analyzeTask({ prompt: input.query });
-
-  const executors: ResearchExecutors = {
-    direct_fetch: async (urls) => {
-      const results: RawResult[] = [];
-      for (const url of urls.slice(0, 4)) {
-        if (input.signal?.aborted) break;
-        try {
-          validateResearchUrl(url);
-          const response = await fetch(url, {
-            headers: { 'User-Agent': 'XrogaResearch/2.0' },
-            signal: input.signal ?? AbortSignal.timeout(15_000),
-          });
-          if (!response.ok) continue;
-          const body = (await response.text()).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-          results.push({ url, title: new URL(url).hostname, snippet: body.slice(0, 1_200) });
-        } catch {
-          continue;
-        }
-      }
-      return results;
-    },
-    grok: async (query) => {
-      if (!grokKey) return [];
-      const { bundle } = await grokLiveSearch(query, grokKey, { includeX: true, forceX: true });
-      return toRawResults(bundle);
-    },
-    user_tavily: async (query) =>
-      userTavilyKey ? toRawResults(await tavilySearch(query, userTavilyKey)) : [],
-    searxng: async (query) => toRawResults(await searxngSearch(query)),
-    platform_tavily: async (query) =>
-      platformTavilyKey ? toRawResults(await tavilySearch(query, platformTavilyKey)) : [],
-  };
-
-  const { bundle, trace } = await runResearch(analysis, availability, executors, {
-    query: input.query,
+  const result = await runWebIntelligence({
+    userId: input.userId,
+    prompt: input.query,
     officialDomains: input.officialDomains,
+    signal: input.signal,
   });
 
   record({
     surface: 'research',
     legacy: null,
-    blackHole: trace.servedBy,
+    blackHole: result.action,
     agreed: true,
-    reason: trace.reasons.join('; '),
+    reason: result.reason,
   });
 
   return {
-    evidence: formatResearchAsEvidence(bundle),
-    sourceCount: bundle.sources.length,
-    injectionAttempts: bundle.injectionAttempts,
-    unavailable: bundle.unavailable,
+    evidence: result.evidence,
+    sourceCount: result.sourceCount,
+    injectionAttempts: result.injectionAttempts,
+    unavailable: result.sourceCount === 0,
     source: 'black_hole',
   };
 }

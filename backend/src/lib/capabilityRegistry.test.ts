@@ -107,7 +107,7 @@ describe('capability registry', () => {
     );
   });
 
-  it('keeps legacy GROK_API_KEY compatible for xAI availability', () => {
+  it('does not accept the retired GROK_API_KEY alias for xAI availability', () => {
     const capability = getCapability(
       'x_research',
       {
@@ -123,7 +123,7 @@ describe('capability registry', () => {
 
     assert.equal(
       xai?.availability,
-      'available',
+      'requires_configuration',
     );
   });
 

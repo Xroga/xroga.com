@@ -337,9 +337,6 @@ const BUILDER_FALLBACKS: ModelId[] = [
   'glm_5_3',
   'kimi_k3',
 
-  // Legacy compatibility / rollback routes.
-  'glm_5_2',
-  'deepseek_v4_pro',
   'deepseek_v4_flash',
 ];
 
@@ -633,7 +630,7 @@ async function callBuilderStream(
         (opts.userId
           ? await getUserProviderKey(
               opts.userId,
-              provider === 'xai' ? 'grok' : provider,
+              provider,
             ).catch(() => null)
           : null);
       const bufferedDeltas: string[] = [];
@@ -1114,8 +1111,7 @@ export async function runBuildPipeline(opts: {
   emit({ ...startupProgress('route'), swarmTodos: todosForBuild('route', 'omit') });
   const isUpdate = Boolean(meta?.buildUpdate && prior.files.length);
   const providerKeyName = (modelId: ModelId): string => {
-    const provider = MODELS[modelId].provider;
-    return provider === 'xai' ? 'grok' : provider;
+    return MODELS[modelId].provider;
   };
   const credentialOverrides: Partial<Record<ModelId, string>> = {};
   await Promise.all((Object.keys(MODELS) as ModelId[]).map(async (modelId) => {
@@ -1541,7 +1537,9 @@ export async function runBuildPipeline(opts: {
     });
     await assertCanUseModel(
       opts.userId,
-      prior.files.length >= 20 || route.kind === 'build_long_horizon' ? 'glm_5_2' : 'deepseek_v4_pro',
+      prior.files.length >= 20 || route.kind === 'build_long_horizon'
+        ? 'glm_5_3'
+        : 'glm_5_3_flash',
     );
     const memo = await summarizeRepoForUpdates({
       userId: opts.userId,
@@ -1693,7 +1691,7 @@ export async function runBuildPipeline(opts: {
     });
     try {
       const vision = await callBuilderStream(
-        'grok_4_3',
+        'glm_5_3_flash',
         [
           { role: 'system', content: VISION_SYSTEM },
           {

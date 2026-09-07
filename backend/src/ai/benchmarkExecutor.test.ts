@@ -62,7 +62,7 @@ test('the brief uses the benchmark objective and success criterion verbatim', ()
 });
 
 test('the brief is identical across models, so rows under one benchmark id aggregate comparably', () => {
-  const other: BenchmarkCase = { ...testCase, modelId: 'glm_5_2' as BenchmarkCase['modelId'] };
+  const other: BenchmarkCase = { ...testCase, modelId: 'glm_5_3' };
   assert.equal(benchmarkBrief(other), benchmarkBrief(testCase));
 });
 

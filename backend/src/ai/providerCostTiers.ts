@@ -51,8 +51,7 @@ export interface CodingModelTier {
 /**
  * Engineering catalog.
  *
- * GLM-5.2 remains temporarily available only as a rollback
- * route while GLM-5.3 and GLM-5.3-Flash are validated.
+ * The catalog contains only active executable engineering models.
  */
 export const CODING_MODEL_TIERS:
   readonly CodingModelTier[] = [
@@ -61,23 +60,6 @@ export const CODING_MODEL_TIERS:
       family: 'kimi',
       tier: 'premium',
       modelIdEnv: 'KIMI_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-
-    {
-      modelId: 'kimi_k2_7',
-      family: 'kimi',
-      tier: 'cost_efficient',
-      modelIdEnv:
-        'KIMI_COST_EFFICIENT_MODEL_ID',
-      requiresVerifiedIdentifier: true,
-    },
-
-    {
-      modelId: 'glm_5_2',
-      family: 'glm',
-      tier: 'premium',
-      modelIdEnv: 'GLM_MODEL_ID',
       requiresVerifiedIdentifier: false,
     },
 
@@ -95,15 +77,6 @@ export const CODING_MODEL_TIERS:
       tier: 'cost_efficient',
       modelIdEnv:
         'GLM_5_3_FLASH_MODEL_ID',
-      requiresVerifiedIdentifier: false,
-    },
-
-    {
-      modelId: 'deepseek_v4_pro',
-      family: 'deepseek',
-      tier: 'premium',
-      modelIdEnv:
-        'DEEPSEEK_PRO_MODEL_ID',
       requiresVerifiedIdentifier: false,
     },
 

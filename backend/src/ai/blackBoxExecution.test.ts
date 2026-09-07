@@ -39,12 +39,12 @@ test('C existing repository update is targeted and preserves unrelated code', as
 
 test('D provider failure uses a compatible fallback without duplicate mutation', async () => {
   resetModelRuntimeHealth(); let mutationCount = 0;
-  const result = await executeWithProviderFallback({ routes: ['kimi_k3', 'glm_5_2'], maximumAttemptsPerRoute: 1, execute: async (model) => {
+  const result = await executeWithProviderFallback({ routes: ['kimi_k3', 'glm_5_3'], maximumAttemptsPerRoute: 1, execute: async (model) => {
     if (model === 'kimi_k3') throw Object.assign(new Error('temporary provider failure'), { status: 503 });
     return { content: 'patch' };
   } });
   if (result.value.content === 'patch') mutationCount += 1;
-  assert.equal(result.modelId, 'glm_5_2'); assert.equal(mutationCount, 1);
+  assert.equal(result.modelId, 'glm_5_3'); assert.equal(mutationCount, 1);
 });
 
 test('E validation failure creates a bounded targeted repair and reruns validation', async () => {

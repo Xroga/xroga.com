@@ -1,7 +1,7 @@
 /**
  * Fly.io secret names for the active Xroga AI stack:
  *
- * OPENROUTER_API_KEY → DeepSeek V4 Flash/Pro ONLY
+ * OPENROUTER_API_KEY → DeepSeek V4 Flash ONLY
  * KIMI_API_KEY       → Moonshot official
  * GLM_API_KEY        → Z.ai / Zhipu official
  * XAI_API_KEY        → xAI official (Grok + native X Search)
@@ -14,8 +14,7 @@
  * - Native X/Twitter intelligence runs through xAI X Search.
  * - One XAI_API_KEY covers Grok inference + x_search.
  *
- * Legacy provider aliases are retained temporarily for rollback and
- * older code paths, but they are not part of the active AI-stack status.
+ * Provider secrets are resolved by their canonical active names.
  */
 
 const ALIASES: Record<string, string[]> = {
@@ -38,23 +37,8 @@ const ALIASES: Record<string, string[]> = {
     'BIGMODEL_API_KEY',
   ],
 
-  /**
-   * xAI official.
-   *
-   * Prefer XAI_API_KEY for new production configuration.
-   * GROK_API_KEY remains an alias so existing deployments do not break.
-   *
-   * The same xAI API key covers:
-   * - Grok model inference
-   * - native x_search
-   */
+  /** xAI official, used only for private Grok 4.3 native x_search retrieval. */
   XAI_API_KEY: [
-    'XAI_API_KEY',
-    'GROK_API_KEY',
-  ],
-
-  GROK_API_KEY: [
-    'GROK_API_KEY',
     'XAI_API_KEY',
   ],
 

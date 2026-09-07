@@ -6,18 +6,6 @@
  * facts and nothing else — they never generate project files, never receive repository
  * mutation tools, and never appear in a coding fallback chain.
  *
- * That policy was documented and not enforced. Three things were true at `59cdcf6`:
- *
- *   - `STRENGTHS` gave `grok_4_5` and `grok_4_3` a `coding` score of 7, and
- *     `capabilityCandidates()` builds a routing profile from every entry in the runtime
- *     registry. A `routeByCapability({ capability: 'coding' })` call could therefore rank
- *     and select Grok to implement a user's project.
- *   - `FALLBACKS` listed `grok_4_3` as a fallback for `kimi_k3`, `glm_5_2` and
- *     `deepseek_v4_flash` — the three coding models. Since #478 made the universal
- *     implement step actually walk its fallback chain, that was no longer theoretical:
- *     two coding-provider failures would have handed implementation to a research model.
- *   - Grok's declared role string in `models.ts` still advertised "coding agents".
- *
  * This module is the single place that answers "may this model write code?". Routing sites
  * import from here rather than re-deriving the answer, so a future model added to the
  * registry is refused by default instead of silently inheriting coding authority.
@@ -34,33 +22,15 @@ import type { ModelId } from './models.js';
 /**
  * Providers permitted to perform software-engineering work, with their required transport.
  *
- * Keyed by logical model id rather than by `ModelId`, because a coding model can be known to
- * policy before it is callable. `kimi_k2_7` is exactly that case: `providerCostTiers` gates it
- * on a verified provider identifier that has not been supplied, so it has no `MODELS` entry
- * and no verified pricing, and inventing either would be worse than leaving it absent.
- *
- * It still belongs here. Policy decides *where a model's traffic may go*, and that question
- * has an answer — Moonshot — long before the model can be called. Omitting it would leave the
- * one coding model most likely to be enabled next as the only one with no transport binding,
- * which is precisely the unenforced-binding shape this module exists to prevent.
- *
- * `MODEL_ID_TRANSPORT_COVERAGE` below keeps the compile-time typo protection that the previous
- * `satisfies Partial<Record<ModelId, string>>` provided for every entry that *is* a `ModelId`.
+ * The map is total over `ModelId`, so adding a generic model without an explicit approved
+ * transport is a compile-time error.
  */
 export const CODING_MODEL_TRANSPORT = {
   kimi_k3: 'moonshot',
-  kimi_k2_7: 'moonshot',
-
-  // Legacy GLM rollback route.
-  glm_5_2: 'zhipu',
-
-  // Current GLM engineering routes.
   glm_5_3: 'zhipu',
   glm_5_3_flash: 'zhipu',
-
-  deepseek_v4_pro: 'openrouter',
   deepseek_v4_flash: 'openrouter',
-} as const satisfies Record<string, string>;
+} as const satisfies Record<ModelId, string>;
 
 /**
  * Compile-time proof that every runtime model above is spelled like a real `ModelId`.
@@ -72,20 +42,11 @@ const MODEL_ID_TRANSPORT_COVERAGE: Partial<Record<ModelId, string>> = {
   kimi_k3:
     CODING_MODEL_TRANSPORT.kimi_k3,
 
-  kimi_k2_7:
-    CODING_MODEL_TRANSPORT.kimi_k2_7,
-
-  glm_5_2:
-    CODING_MODEL_TRANSPORT.glm_5_2,
-
   glm_5_3:
     CODING_MODEL_TRANSPORT.glm_5_3,
 
   glm_5_3_flash:
     CODING_MODEL_TRANSPORT.glm_5_3_flash,
-
-  deepseek_v4_pro:
-    CODING_MODEL_TRANSPORT.deepseek_v4_pro,
 
   deepseek_v4_flash:
     CODING_MODEL_TRANSPORT.deepseek_v4_flash,
@@ -95,10 +56,7 @@ void MODEL_ID_TRANSPORT_COVERAGE;
 export type CodingModelId = keyof typeof CODING_MODEL_TRANSPORT;
 
 /** Providers restricted to retrieval. Research output is untrusted external evidence. */
-export const RESEARCH_MODEL_TRANSPORT = {
-  grok_4_5: 'xai',
-  grok_4_3: 'xai',
-} as const satisfies Partial<Record<ModelId, string>>;
+export const RESEARCH_MODEL_TRANSPORT = {} as const;
 
 export type ResearchModelId = keyof typeof RESEARCH_MODEL_TRANSPORT;
 

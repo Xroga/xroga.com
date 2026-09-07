@@ -44,15 +44,13 @@ function runtimeModel(id: ModelId, overrides: Partial<RuntimeModelCapability> = 
     suitableTaskClasses: [],
     unsuitableTaskClasses: [],
     preferredFallbacks: [],
-    supports: { text: true, images: id.startsWith('grok'), structuredOutput: true, toolCalls: true, streaming: true },
+    supports: { text: true, images: id === 'glm_5_3_flash', structuredOutput: true, toolCalls: true, streaming: true },
     ...overrides,
   };
 }
 
 const REGISTRY: RuntimeModelCapability[] = [
   runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('deepseek_v4_pro'),
-  runtimeModel('glm_5_2', { provider: 'zhipu' }),
   runtimeModel('glm_5_3', { provider: 'zhipu', contextWindow: 1_000_000, maximumSafeRequestTokens: 800_000 }),
   runtimeModel('glm_5_3_flash', {
     provider: 'zhipu',
@@ -64,8 +62,6 @@ const REGISTRY: RuntimeModelCapability[] = [
     supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true },
   }),
   runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15 }),
-  runtimeModel('grok_4_5', { provider: 'xai' }),
-  runtimeModel('grok_4_3', { provider: 'xai' }),
 ];
 
 /** Records what the gateway asked of the provider, and answers successfully. */

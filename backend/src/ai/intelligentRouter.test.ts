@@ -78,7 +78,7 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 4096,
       registry: healthyRegistry(),
     });
-    assert.equal(ranked[0], 'grok_4_5');
+    assert.equal(ranked[0], 'glm_5_3_flash');
   });
 
   it('escalates security-sensitive changes to intelligence and independent review', () => {
@@ -149,7 +149,7 @@ describe('intelligent router evaluation framework', () => {
   it('respects user-owned/configured availability before platform fallback', () => {
     const registry = healthyRegistry().map((model) => ({
       ...model,
-      configured: model.id === 'glm_5_2',
+      configured: model.id === 'glm_5_3',
     }));
     const ranked = rankModelsForSubtask('code_generation', {
       mode: 'balanced',
@@ -157,7 +157,7 @@ describe('intelligent router evaluation framework', () => {
       requiredTokens: 4096,
       registry,
     });
-    assert.deepEqual(ranked, ['glm_5_2']);
+    assert.deepEqual(ranked, ['glm_5_3']);
   });
 
   it('implements intelligence, balanced, and cost modes without dropping validation', () => {

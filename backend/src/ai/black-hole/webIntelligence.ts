@@ -352,8 +352,7 @@ async function grokXSearch(input: {
   sources: ParallelSource[];
 }> {
   const apiKey =
-    getSecret('XAI_API_KEY') ||
-    getSecret('GROK_API_KEY');
+    getSecret('XAI_API_KEY');
 
   if (!apiKey) {
     return {

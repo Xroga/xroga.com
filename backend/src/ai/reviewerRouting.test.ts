@@ -7,7 +7,7 @@ test('the persisted selected reviewer route performs the structured review', asy
   const result = await reviewBuildOutput({
     prompt: 'secure auth changes', html: '<main>ok</main>', css: '', js: '',
     files: [{ path: 'index.html', content: '<!doctype html><html><body><main>ok</main></body></html>' }],
-    reviewerModel: 'grok_4_5',
+    reviewerModel: 'glm_5_3',
     completion: async (model) => {
       calledModel = model;
       return {
@@ -17,6 +17,6 @@ test('the persisted selected reviewer route performs the structured review', asy
       };
     },
   });
-  assert.equal(calledModel, 'grok_4_5');
-  assert.equal(result.reviewerModel, 'grok_4_5');
+  assert.equal(calledModel, 'glm_5_3');
+  assert.equal(result.reviewerModel, 'glm_5_3');
 });

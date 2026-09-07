@@ -44,10 +44,15 @@ const RESEARCH_BENCHMARK =
       benchmark.capability === 'research',
   )!.id;
 
+const ARCHITECTURE_BENCHMARK =
+  BENCHMARKS.find(
+    (benchmark) => benchmark.capability === 'architecture',
+  )!.id;
+
 let counter = 0;
 
 function row(
-  over: Partial<BenchmarkResult> & {
+  over: Omit<Partial<BenchmarkResult>, 'modelId' | 'benchmarkId'> & {
     modelId: string;
     benchmarkId: string;
   },
@@ -72,7 +77,7 @@ function row(
         counter * 1_000,
     ).toISOString(),
     ...over,
-  } as BenchmarkResult;
+  } as unknown as BenchmarkResult;
 }
 
 async function evidenceFrom(
@@ -420,9 +425,9 @@ test(
           { length: 10 },
           () =>
             row({
-              modelId: 'grok_4_5',
+              modelId: 'glm_5_3',
               benchmarkId:
-                RESEARCH_BENCHMARK,
+                ARCHITECTURE_BENCHMARK,
             }),
         ),
       );
@@ -457,17 +462,14 @@ test(
     // A perfect benchmark record cannot activate an
     // unconfigured provider route.
 
-    const availability =
-      modelAvailability(
-        'kimi_k2_7',
-      );
+    const availability = modelAvailability('kimi_k2_7');
 
     const choice =
       chooseCostAware({
         role: 'implementation',
 
         candidates: [
-          'kimi_k2_7',
+          'kimi_k2_7' as never,
         ],
 
         evidence: [
@@ -483,21 +485,8 @@ test(
         ],
       });
 
-    if (
-      availability ===
-      'not_configured'
-    ) {
-      assert.equal(
-        choice,
-        null,
-        'an unconfigured model was routed to on perfect evidence',
-      );
-    } else {
-      assert.equal(
-        choice?.modelId,
-        'kimi_k2_7',
-      );
-    }
+    assert.equal(availability, 'unknown_model');
+    assert.equal(choice, null, 'a removed model was routed to on perfect evidence');
   },
 );
 
@@ -550,22 +539,9 @@ test(
 // ── State G ─────────────────────────────────────────
 
 test(
-  'G — gated and known cost-efficient models report truthful availability',
+  'G — active and removed models report truthful availability',
   async () => {
-    const kimiAvailability =
-      modelAvailability(
-        'kimi_k2_7',
-      );
-
-    assert.ok(
-      [
-        'available',
-        'not_configured',
-      ].includes(
-        kimiAvailability,
-      ),
-      `kimi_k2_7 reported ${kimiAvailability}`,
-    );
+    assert.equal(modelAvailability('kimi_k2_7'), 'unknown_model');
 
     // GLM-5.3 Flash now has a known catalog identity.
     assert.equal(

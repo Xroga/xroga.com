@@ -23,7 +23,7 @@ const passingCase: CaseExecutor = async () => ({
   outputTokens: 100,
 });
 
-const models = (): readonly ModelId[] => ['kimi_k3' as ModelId, 'glm_5_2' as ModelId];
+const models = (): readonly ModelId[] => ['kimi_k3', 'glm_5_3'];
 
 test('a benchmark run cannot execute without confirmation and a second approval', () => {
   const definition = ACTION_DEFINITIONS.run_model_benchmark!;

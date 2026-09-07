@@ -89,37 +89,29 @@ const STARTING_CHAINS: Record<
     'glm_5_3',
     'kimi_k3',
     'glm_5_3_flash',
-    'deepseek_v4_pro',
   ],
 
   coding: [
     'glm_5_3_flash',
     'glm_5_3',
     'kimi_k3',
-    'glm_5_2',
-    'deepseek_v4_pro',
   ],
 
   long_horizon: [
     'glm_5_3',
     'kimi_k3',
     'glm_5_3_flash',
-    'glm_5_2',
   ],
 
   // GLM-5.3 Flash is the confirmed multimodal
   // GLM route. Regular 5.3 remains text-only.
   vision: [
     'glm_5_3_flash',
-    'kimi_k3',
-    'grok_4_3',
-    'grok_4_5',
   ],
 
   // Temporary until the research cleanup batch.
   research: [
-    'grok_4_3',
-    'grok_4_5',
+    'glm_5_3_flash',
   ],
 };
 

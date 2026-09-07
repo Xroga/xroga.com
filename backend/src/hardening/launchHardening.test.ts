@@ -123,8 +123,8 @@ test('AREA 1 — research providers cannot acquire coding authority', () => {
 });
 
 test('AREA 1 — a research model in a fallback chain is dropped, not ranked', () => {
-  const chain = [{ modelId: 'kimi_k3' }, { modelId: 'grok_4_5' }, { modelId: 'glm_5_2' }];
-  assert.deepEqual(codingModelsOnly(chain).map((c) => c.modelId), ['kimi_k3', 'glm_5_2']);
+  const chain = [{ modelId: 'kimi_k3' }, { modelId: 'grok_4_5' }, { modelId: 'glm_5_3' }];
+  assert.deepEqual(codingModelsOnly(chain).map((c) => c.modelId), ['kimi_k3', 'glm_5_3']);
 });
 
 test('AREA 1 — an unrecognised model is refused by default rather than inheriting authority', () => {
@@ -387,7 +387,7 @@ test('AREA 13 — plans differing in a benchmark spend parameter get different d
   assert.notEqual(digestOf({ maximumCases: 1 }), digestOf({ maximumCases: 6 }));
   assert.notEqual(digestOf({ includeHeavy: false }), digestOf({ includeHeavy: true }));
   assert.notEqual(digestOf({ benchmarkIds: ['a'] }), digestOf({ benchmarkIds: ['b'] }));
-  assert.notEqual(digestOf({ models: ['kimi_k3'] }), digestOf({ models: ['kimi_k3', 'glm_5_2'] }));
+  assert.notEqual(digestOf({ models: ['kimi_k3'] }), digestOf({ models: ['kimi_k3', 'glm_5_3'] }));
 });
 
 test('AREA 13 — plans differing only in a redaction-pattern key get different digests', () => {

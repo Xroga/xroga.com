@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { grokLiveSearch } from './research.js';
 
-test('Grok live research uses the current Responses API web and X tools', async () => {
+test('Grok 4.3 retrieval uses only the native X search tool', async () => {
   let requestUrl = '';
   let requestBody: Record<string, unknown> = {};
   const result = await grokLiveSearch(
@@ -31,12 +31,12 @@ test('Grok live research uses the current Responses API web and X tools', async 
   );
 
   assert.equal(requestUrl, 'https://api.x.ai/v1/responses');
-  assert.deepEqual(requestBody.tools, [{ type: 'web_search' }, { type: 'x_search' }]);
+  assert.deepEqual(requestBody.tools, [{ type: 'x_search' }]);
   assert.equal('search_parameters' in requestBody, false);
   assert.equal(result.bundle.provider, 'grok_live');
   assert.equal(result.bundle.includedXSearch, true);
-  assert.equal(result.bundle.sources.length, 2);
-  assert.deepEqual(result.bundle.sources.map((source) => source.source), ['web', 'x']);
+  assert.equal(result.bundle.sources.length, 1);
+  assert.deepEqual(result.bundle.sources.map((source) => source.source), ['x']);
   assert.equal(result.inputTokens, 21);
   assert.equal(result.outputTokens, 13);
 });

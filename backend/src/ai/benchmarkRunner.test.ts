@@ -26,8 +26,8 @@ import type { ModelId } from './models.js';
  * cannot record a success nobody earned.
  */
 
-const CODING: readonly ModelId[] = ['kimi_k3', 'glm_5_2', 'deepseek_v4_pro', 'deepseek_v4_flash'];
-const ALL: readonly ModelId[] = [...CODING, 'grok_4_5', 'grok_4_3'];
+const CODING: readonly ModelId[] = ['kimi_k3', 'glm_5_3', 'glm_5_3_flash', 'deepseek_v4_flash'];
+const ALL: readonly ModelId[] = CODING;
 
 const pass: CaseOutcome = {
   buildPassed: true,
@@ -61,13 +61,10 @@ test('a research model is never run against a coding benchmark', () => {
   for (const item of cases) assert.ok(CODING.includes(item.modelId), `${item.modelId} was selected`);
 });
 
-test('a coding model is never run against a research benchmark', () => {
+test('generic model benchmarks never execute private retrieval work', () => {
   const research = BENCHMARKS.find((benchmark) => benchmark.capability === 'research')!;
   const cases = selectCases({ benchmarkIds: [research.id] }, ALL);
-  assert.ok(cases.length > 0);
-  for (const item of cases) {
-    assert.ok(['grok_4_5', 'grok_4_3'].includes(item.modelId), `${item.modelId} was selected`);
-  }
+  assert.deepEqual(cases, []);
   assert.equal(modelMayRun('kimi_k3', 'research'), false);
 });
 

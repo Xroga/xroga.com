@@ -30,17 +30,16 @@ function runtimeModel(id: ModelId, over: Partial<RuntimeModelCapability> = {}): 
       security_review: 7, ui_generation: 7, structured_output: 8, tool_calls: 8, streaming: 9,
     },
     suitableTaskClasses: [], unsuitableTaskClasses: [], preferredFallbacks: [],
-    supports: { text: true, images: id.startsWith('grok'), structuredOutput: true, toolCalls: true, streaming: true },
+    supports: { text: true, images: id === 'glm_5_3_flash', structuredOutput: true, toolCalls: true, streaming: true },
     ...over,
   };
 }
 
 const REGISTRY: RuntimeModelCapability[] = [
   runtimeModel('deepseek_v4_flash', { typicalLatency: 'fast', inputUsdPer1M: 0.1, outputUsdPer1M: 0.4 }),
-  runtimeModel('deepseek_v4_pro', { inputUsdPer1M: 0.5, outputUsdPer1M: 2 }),
-  runtimeModel('glm_5_2', { provider: 'zhipu', inputUsdPer1M: 0.6, outputUsdPer1M: 2.2 }),
+  runtimeModel('glm_5_3', { provider: 'zhipu', inputUsdPer1M: 1.4, outputUsdPer1M: 4.4 }),
+  runtimeModel('glm_5_3_flash', { provider: 'zhipu', inputUsdPer1M: 0.15, outputUsdPer1M: 0.5, supports: { text: true, images: true, structuredOutput: true, toolCalls: true, streaming: true } }),
   runtimeModel('kimi_k3', { provider: 'moonshot', typicalLatency: 'slow', inputUsdPer1M: 3, outputUsdPer1M: 15 }),
-  runtimeModel('grok_4_5', { provider: 'xai' }),
 ];
 
 const route = (prompt: string, extra: Record<string, unknown> = {}) => {
@@ -61,7 +60,11 @@ const route = (prompt: string, extra: Record<string, unknown> = {}) => {
 
 test('a cost ceiling excludes an over-priced model rather than ranking it down', () => {
   const result = route('say that again but shorter', { maxCostUsdPer1MOutput: 1 });
-  assert.deepEqual(result.chain, ['deepseek_v4_flash']);
+  assert.deepEqual(result.chain, ['deepseek_v4_flash', 'glm_5_3_flash']);
+  assert.match(
+    result.excluded.find((entry) => entry.modelId === 'glm_5_3')!.reason,
+    /exceeds the ceiling/,
+  );
 });
 
 test('cost never overrides an authority requirement', () => {

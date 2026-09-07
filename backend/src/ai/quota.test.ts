@@ -233,12 +233,12 @@ describe(
 
         assert.equal(
           glm.totalLimit,
-          2_000_000,
+          5_000_000,
         );
 
         assert.equal(
           glm.budgetUsd,
-          5.8,
+          14.5,
         );
       },
     );
@@ -400,13 +400,6 @@ describe(
 
         assert.equal(
           poolRoleFor(
-            'glm_5_2',
-          ),
-          'glm_5_2',
-        );
-
-        assert.equal(
-          poolRoleFor(
             'glm_5_3',
           ),
           'glm_5_2',
@@ -417,13 +410,6 @@ describe(
             'glm_5_3_flash',
           ),
           'glm_5_2',
-        );
-
-        assert.equal(
-          poolRoleFor(
-            'grok_4_5',
-          ),
-          'grok',
         );
 
         assert.equal(

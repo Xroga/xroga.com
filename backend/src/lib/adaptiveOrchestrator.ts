@@ -97,67 +97,24 @@ const MODEL_FALLBACKS: Record<
   ModelId,
   ModelId[]
 > = {
-  kimi_k2_7: [
-    'glm_5_3_flash',
-    'glm_5_3',
-    'kimi_k3',
-    'deepseek_v4_pro',
-  ],
-
   kimi_k3: [
     'glm_5_3',
     'glm_5_3_flash',
-    'glm_5_2',
-    'deepseek_v4_pro',
-  ],
-
-  glm_5_2: [
-    'glm_5_3',
-    'glm_5_3_flash',
-    'kimi_k3',
-    'deepseek_v4_pro',
   ],
 
   glm_5_3: [
     'glm_5_3_flash',
     'kimi_k3',
-    'glm_5_2',
-    'deepseek_v4_pro',
   ],
 
   glm_5_3_flash: [
     'glm_5_3',
     'kimi_k3',
-    'glm_5_2',
-    'deepseek_v4_flash',
-  ],
-
-  deepseek_v4_pro: [
-    'glm_5_3_flash',
-    'glm_5_3',
-    'deepseek_v4_flash',
-    'kimi_k3',
   ],
 
   deepseek_v4_flash: [
     'glm_5_3_flash',
-    'deepseek_v4_pro',
     'glm_5_3',
-    'kimi_k3',
-  ],
-
-  /**
-   * Temporary research-only compatibility.
-   *
-   * Neither chain can cross into engineering because
-   * providerPolicy refuses Grok as a coding model.
-   */
-  grok_4_5: [
-    'grok_4_3',
-  ],
-
-  grok_4_3: [
-    'grok_4_5',
   ],
 };
 
@@ -167,15 +124,6 @@ function configuredFor(
 ): boolean {
   const def =
     MODELS[id];
-
-  if (
-    def.provider === 'xai'
-  ) {
-    return Boolean(
-      env.XAI_API_KEY?.trim() ||
-        env.GROK_API_KEY?.trim(),
-    );
-  }
 
   return Boolean(
     env[

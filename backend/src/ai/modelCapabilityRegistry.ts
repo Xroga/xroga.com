@@ -64,20 +64,6 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
   ModelId,
   Record<ModelCapability, number>
 > = {
-  kimi_k2_7: {
-    coding: 9,
-    repository_analysis: 8,
-    architecture: 6,
-    research: 3,
-    review: 7,
-    debugging: 8,
-    security_review: 6,
-    ui_generation: 7,
-    structured_output: 8,
-    tool_calls: 8,
-    streaming: 9,
-  },
-
   kimi_k3: {
     coding: 9,
     repository_analysis: 10,
@@ -90,21 +76,6 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
     structured_output: 8,
     tool_calls: 8,
     streaming: 9,
-  },
-
-  // Legacy rollback route.
-  glm_5_2: {
-    coding: 8,
-    repository_analysis: 8,
-    architecture: 7,
-    research: 3,
-    review: 7,
-    debugging: 8,
-    security_review: 7,
-    ui_generation: 6,
-    structured_output: 8,
-    tool_calls: 8,
-    streaming: 8,
   },
 
   // Serious engineering route.
@@ -137,20 +108,6 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
     streaming: 10,
   },
 
-  deepseek_v4_pro: {
-    coding: 8,
-    repository_analysis: 7,
-    architecture: 6,
-    research: 3,
-    review: 7,
-    debugging: 9,
-    security_review: 6,
-    ui_generation: 8,
-    structured_output: 9,
-    tool_calls: 7,
-    streaming: 9,
-  },
-
   deepseek_v4_flash: {
     coding: 7,
     repository_analysis: 5,
@@ -165,114 +122,42 @@ const UNVERIFIED_PRIOR_STRENGTHS: Record<
     streaming: 10,
   },
 
-  grok_4_5: {
-    coding: 0,
-    repository_analysis: 6,
-    architecture: 6,
-    research: 10,
-    review: 7,
-    debugging: 7,
-    security_review: 6,
-    ui_generation: 7,
-    structured_output: 7,
-    tool_calls: 8,
-    streaming: 9,
-  },
-
-  grok_4_3: {
-    coding: 0,
-    repository_analysis: 9,
-    architecture: 7,
-    research: 8,
-    review: 8,
-    debugging: 7,
-    security_review: 7,
-    ui_generation: 7,
-    structured_output: 7,
-    tool_calls: 7,
-    streaming: 9,
-  },
 };
 
 /**
  * Fallback chains.
  *
- * A coding model's chain contains only coding models. `grok_4_3` previously appeared in
- * the chains for `kimi_k3`, `glm_5_2` and `deepseek_v4_flash`, which meant two coding
- * failures handed implementation to a research provider — and once #478 made the universal
- * implement step actually walk its fallback chain, that stopped being theoretical.
- *
- * The research models keep chains among themselves: falling back from one Grok to another
- * is still research, and `providerPolicy` refuses either of them for engineering work.
+ * Every chain is closed over the four active engineering models. Retrieval providers are not
+ * represented here and therefore cannot become fallbacks.
  */
 const FALLBACKS: Record<
   ModelId,
   ModelId[]
 > = {
-  kimi_k2_7: [
-    'glm_5_3_flash',
-    'glm_5_3',
-    'kimi_k3',
-    'deepseek_v4_pro',
-  ],
-
   kimi_k3: [
     'glm_5_3',
     'glm_5_3_flash',
-    'glm_5_2',
-    'deepseek_v4_pro',
-  ],
-
-  glm_5_2: [
-    'glm_5_3',
-    'glm_5_3_flash',
-    'kimi_k3',
-    'deepseek_v4_pro',
   ],
 
   glm_5_3: [
     'glm_5_3_flash',
     'kimi_k3',
-    'glm_5_2',
-    'deepseek_v4_pro',
   ],
 
   glm_5_3_flash: [
     'glm_5_3',
     'kimi_k3',
-    'glm_5_2',
-    'deepseek_v4_flash',
-  ],
-
-  deepseek_v4_pro: [
-    'glm_5_3_flash',
-    'glm_5_3',
-    'deepseek_v4_flash',
-    'kimi_k3',
   ],
 
   deepseek_v4_flash: [
     'glm_5_3_flash',
-    'deepseek_v4_pro',
     'glm_5_3',
-    'kimi_k3',
-  ],
-
-  // Temporary research-only compatibility.
-  grok_4_5: [
-    'grok_4_3',
-  ],
-
-  grok_4_3: [
-    'grok_4_5',
   ],
 };
 
 function configured(id: ModelId): boolean {
   const def = MODELS[id];
-  return def.provider === 'xai'
-    ? Boolean(getSecret('GROK_API_KEY') || getSecret('XAI_API_KEY'))
-    : Boolean(getSecret(def.secretKey));
+  return Boolean(getSecret(def.secretKey));
 }
 
 /**
@@ -282,8 +167,7 @@ function configured(id: ModelId): boolean {
  *
  * First, a model that is registered but not fully configured is omitted rather than listed
  * with invented numbers. `resolveModelSpec` returns null for it, and a router cannot rank what
- * it cannot see — which is the correct outcome, and the reason `kimi_k2_7` simply does not
- * appear until an operator supplies its identifier, pricing and context window.
+ * it cannot see.
  *
  * Second, transport, pricing, context and image support are read from the resolved spec rather
  * than restated. The previous `images: id.startsWith('grok')` was a heuristic presented as a
@@ -314,15 +198,13 @@ export function getRuntimeModelRegistry(): RuntimeModelCapability[] {
         admin.providerBudgetUsd[def.provider] ?? def.budgetUsd,
       strengths: UNVERIFIED_PRIOR_STRENGTHS[id],
       suitableTaskClasses:
-        id === 'grok_4_5'
-          ? ['web_research', 'x_research', 'crypto_research']
-          : id === 'kimi_k3'
+        id === 'kimi_k3'
             ? ['repository_analysis', 'architecture', 'multi_file_implementation']
-            : id === 'glm_5_2'
+            : id === 'glm_5_3'
               ? ['software_engineering', 'feature_development', 'bug_fixing']
               : ['focused_code_edit', 'validation_repair', 'test_generation'],
       unsuitableTaskClasses:
-        id === 'grok_4_5' ? ['routine_formatting'] : id.includes('flash') ? ['high_risk_architecture'] : [],
+        id.includes('flash') ? ['high_risk_architecture'] : [],
       // A coding model's fallback chain is filtered to coding models here rather than only
       // in the static table, because `admin.fallbackOrder` is operator-configurable and is
       // merged in below. Without this filter an administrator could reintroduce a research

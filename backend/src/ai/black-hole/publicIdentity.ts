@@ -279,7 +279,7 @@ export function publicTierFor(taskClass: string): string {
  * A blocker message safe to publish.
  *
  * Internal blockers name the models they checked — `providerResolver` produces
- * "Provider checks failed — kimi_k3: not configured; glm_5_2: not configured" — which is
+ * "Provider checks failed — internal routes are not configured" — which is
  * exactly right for an operator and forbidden for a user.
  *
  * The user-actionable content survives the translation. "Capacity is unavailable" is what they

@@ -9,7 +9,7 @@ describe('provider completion boundary', () => {
 
   it('classifies an empty completion as a provider failure so fallback can continue', () => {
     assert.throws(
-      () => requireNonEmptyModelText('   \n ', 'deepseek_v4_pro'),
+      () => requireNonEmptyModelText('   \n ', 'deepseek_v4_flash'),
       (error: unknown) =>
         error instanceof Error &&
         (error as Error & { code?: string }).code === 'EMPTY_PROVIDER_RESPONSE',

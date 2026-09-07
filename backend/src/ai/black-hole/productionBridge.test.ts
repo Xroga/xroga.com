@@ -36,11 +36,11 @@ test('with the flag unset, repair selection is exactly the legacy answer', () =>
   const selection = selectRepairModel({
     userId: 'user-1',
     failureMessage: 'TS2345: Argument of type string is not assignable',
-    legacyModel: 'glm_5_2',
+    legacyModel: 'glm_5_3',
     attempt: 1,
     env: DARK,
   });
-  assert.equal(selection.modelId, 'glm_5_2');
+  assert.equal(selection.modelId, 'glm_5_3');
   assert.equal(selection.source, 'legacy');
 });
 
@@ -101,7 +101,7 @@ test('a repair carries the classified failure and a bounded scope', () => {
   const selection = selectRepairModel({
     userId: 'user-1',
     failureMessage: 'TS2345: Argument of type string is not assignable to parameter',
-    legacyModel: 'glm_5_2',
+    legacyModel: 'glm_5_3',
     attempt: 1,
     env: DARK,
   });
@@ -112,10 +112,10 @@ test('a repair carries the classified failure and a bounded scope', () => {
 
 test('repeated failures widen scope but only after the evidence stops localising', () => {
   const early = selectRepairModel({
-    userId: 'u', failureMessage: 'TS2345 bad type', legacyModel: 'glm_5_2', attempt: 1, env: DARK,
+    userId: 'u', failureMessage: 'TS2345 bad type', legacyModel: 'glm_5_3', attempt: 1, env: DARK,
   });
   const late = selectRepairModel({
-    userId: 'u', failureMessage: 'TS2345 bad type', legacyModel: 'glm_5_2', attempt: 3, env: DARK,
+    userId: 'u', failureMessage: 'TS2345 bad type', legacyModel: 'glm_5_3', attempt: 3, env: DARK,
   });
   assert.equal(early.scope, 'single_file');
   assert.equal(late.scope, 'affected_files');
@@ -125,7 +125,7 @@ test('a dependency failure is project-scoped from the first attempt', () => {
   const selection = selectRepairModel({
     userId: 'u',
     failureMessage: 'Cannot find module "react-dom"',
-    legacyModel: 'glm_5_2',
+    legacyModel: 'glm_5_3',
     attempt: 1,
     env: DARK,
   });
@@ -149,7 +149,7 @@ test('no repair selection is ever a research model', () => {
       const selection = selectRepairModel({
         userId: 'u',
         failureMessage: message,
-        legacyModel: 'glm_5_2',
+        legacyModel: 'glm_5_3',
         attempt: 1,
         env: stage,
       });

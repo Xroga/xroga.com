@@ -63,8 +63,6 @@ test(
     for (
       const modelId of [
         'kimi_k3',
-        'kimi_k2_7',
-        'glm_5_2',
         'glm_5_3',
         'glm_5_3_flash',
       ]
@@ -89,14 +87,6 @@ test(
         assertTransportPolicy(
           'kimi_k3',
           'moonshot',
-        ),
-    );
-
-    assert.doesNotThrow(
-      () =>
-        assertTransportPolicy(
-          'glm_5_2',
-          'zhipu',
         ),
     );
 
@@ -148,39 +138,21 @@ test(
 );
 
 test(
-  'every family has premium and cost-efficient coverage',
+  'the tier catalog contains exactly the four active models',
   () => {
-    for (
-      const family of [
-        'kimi',
-        'glm',
-        'deepseek',
-      ] as const
-    ) {
-      const tiers =
-        CODING_MODEL_TIERS
-          .filter(
-            (entry) =>
-              entry.family ===
-              family,
-          )
-          .map(
-            (entry) =>
-              entry.tier,
-          );
-
-      assert.ok(
-        tiers.includes(
-          'premium',
-        ),
-      );
-
-      assert.ok(
-        tiers.includes(
-          'cost_efficient',
-        ),
-      );
-    }
+    assert.deepEqual(
+      CODING_MODEL_TIERS.map(({ modelId, family, tier }) => ({
+        modelId,
+        family,
+        tier,
+      })),
+      [
+        { modelId: 'kimi_k3', family: 'kimi', tier: 'premium' },
+        { modelId: 'glm_5_3', family: 'glm', tier: 'premium' },
+        { modelId: 'glm_5_3_flash', family: 'glm', tier: 'cost_efficient' },
+        { modelId: 'deepseek_v4_flash', family: 'deepseek', tier: 'cost_efficient' },
+      ],
+    );
   },
 );
 
@@ -235,26 +207,19 @@ test(
 );
 
 test(
-  'Kimi K2.7 remains configuration gated',
+  'retired models remain unavailable even when legacy env values exist',
   () => {
-    assert.equal(
-      modelAvailability(
-        'kimi_k2_7',
-        {},
-      ),
-      'not_configured',
-    );
-
-    assert.equal(
-      modelAvailability(
-        'kimi_k2_7',
-        {
-          KIMI_COST_EFFICIENT_MODEL_ID:
-            'verified-provider-id',
-        },
-      ),
-      'available',
-    );
+    for (const modelId of ['kimi_k2_7', 'glm_5_2', 'deepseek_v4_pro', 'grok_4_5']) {
+      assert.equal(
+        modelAvailability(modelId, {
+          KIMI_COST_EFFICIENT_MODEL_ID: 'legacy-id',
+          GLM_MODEL_ID: 'legacy-id',
+          DEEPSEEK_PRO_MODEL_ID: 'legacy-id',
+          XAI_API_KEY: 'legacy-key',
+        }),
+        'unknown_model',
+      );
+    }
   },
 );
 
@@ -263,7 +228,6 @@ test(
   () => {
     for (
       const modelId of [
-        'glm_5_2',
         'glm_5_3',
         'glm_5_3_flash',
       ]
@@ -508,7 +472,7 @@ test(
 
         candidates: [
           'kimi_k3',
-          'kimi_k2_7',
+          'glm_5_3_flash',
         ],
 
         evidence: [
@@ -519,11 +483,6 @@ test(
               0.5,
           }),
         ],
-
-        env: {
-          KIMI_COST_EFFICIENT_MODEL_ID:
-            'verified-provider-id',
-        },
       })!;
 
     assert.equal(
@@ -571,7 +530,7 @@ test(
 );
 
 test(
-  'unconfigured gated candidate is skipped',
+  'retired candidate is skipped',
   () => {
     const choice =
       chooseCostAware({
@@ -590,7 +549,6 @@ test(
           }),
         ],
 
-        env: {},
       });
 
     assert.equal(

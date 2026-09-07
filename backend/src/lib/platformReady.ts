@@ -86,7 +86,7 @@ export function computePlatformReady(): {
     {
       id: 'ai_grok',
       label: 'Grok / xAI',
-      ok: has('GROK_API_KEY'),
+      ok: has('XAI_API_KEY'),
       required: true,
     },
     {

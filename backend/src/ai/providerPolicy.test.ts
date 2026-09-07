@@ -42,11 +42,8 @@ test(
       ).sort(),
       [
         'deepseek_v4_flash',
-        'deepseek_v4_pro',
-        'glm_5_2',
         'glm_5_3',
         'glm_5_3_flash',
-        'kimi_k2_7',
         'kimi_k3',
       ],
     );
@@ -88,20 +85,6 @@ test(
 
     assert.equal(
       requiredCodingTransport(
-        'kimi_k2_7',
-      ),
-      'moonshot',
-    );
-
-    assert.equal(
-      requiredCodingTransport(
-        'glm_5_2',
-      ),
-      'zhipu',
-    );
-
-    assert.equal(
-      requiredCodingTransport(
         'glm_5_3',
       ),
       'zhipu',
@@ -112,13 +95,6 @@ test(
         'glm_5_3_flash',
       ),
       'zhipu',
-    );
-
-    assert.equal(
-      requiredCodingTransport(
-        'deepseek_v4_pro',
-      ),
-      'openrouter',
     );
 
     assert.equal(
@@ -140,26 +116,16 @@ test(
       MODELS.kimi_k3.baseUrl,
     );
 
-    /*
-     * GLM-5.3 and GLM-5.3-Flash are policy-known now,
-     * but they are added to MODELS in the next coordinated
-     * ModelId registry migration.
-     *
-     * Until then, verify the currently callable GLM route here.
-     */
     assert.ok(
-      !MODELS.glm_5_2.baseUrl.includes(
+      !MODELS.glm_5_3.baseUrl.includes(
         'openrouter',
       ),
-      MODELS.glm_5_2.baseUrl,
+      MODELS.glm_5_3.baseUrl,
     );
 
     assert.ok(
-      MODELS.deepseek_v4_pro
-        .baseUrl
-        .includes(
-          'openrouter',
-        ),
+      !MODELS.glm_5_3_flash.baseUrl.includes('openrouter'),
+      MODELS.glm_5_3_flash.baseUrl,
     );
 
     assert.ok(
@@ -200,14 +166,14 @@ test(
       isResearchModel(
         'grok_4_5',
       ),
-      true,
+      false,
     );
 
     assert.equal(
       isResearchModel(
         'grok_4_3',
       ),
-      true,
+      false,
     );
 
     assert.equal(
@@ -220,29 +186,11 @@ test(
 );
 
 test(
-  'Grok uses xAI transport and only xAI transport',
+  'Grok is physically absent from the generic model and transport registries',
   () => {
-    assert.equal(
-      RESEARCH_MODEL_TRANSPORT
-        .grok_4_5,
-      'xai',
-    );
-
-    assert.equal(
-      RESEARCH_MODEL_TRANSPORT
-        .grok_4_3,
-      'xai',
-    );
-
-    assert.equal(
-      MODELS.grok_4_5.provider,
-      'xai',
-    );
-
-    assert.equal(
-      MODELS.grok_4_3.provider,
-      'xai',
-    );
+    assert.deepEqual(RESEARCH_MODEL_TRANSPORT, {});
+    assert.equal((MODELS as Record<string, unknown>).grok_4_5, undefined);
+    assert.equal((MODELS as Record<string, unknown>).grok_4_3, undefined);
   },
 );
 
@@ -347,11 +295,6 @@ test(
 
         {
           modelId:
-            'glm_5_2',
-        },
-
-        {
-          modelId:
             'glm_5_3',
         },
 
@@ -373,7 +316,6 @@ test(
       ),
       [
         'kimi_k3',
-        'glm_5_2',
         'glm_5_3',
         'glm_5_3_flash',
       ],
@@ -520,7 +462,7 @@ test(
 );
 
 test(
-  'a research model carries no coding capability prior',
+  'the generic runtime registry contains no research model',
   async () => {
     const {
       getRuntimeModelRegistry,
@@ -528,24 +470,7 @@ test(
       './modelCapabilityRegistry.js'
     );
 
-    for (
-      const model of
-      getRuntimeModelRegistry()
-    ) {
-      if (
-        !isResearchModel(
-          model.id,
-        )
-      ) {
-        continue;
-      }
-
-      assert.equal(
-        model.strengths.coding,
-        0,
-        `${model.id} advertises a coding score`,
-      );
-    }
+    assert.equal(getRuntimeModelRegistry().some((model) => isResearchModel(model.id)), false);
   },
 );
 
@@ -584,7 +509,7 @@ test(
 );
 
 test(
-  'no model registry entry advertises a capability the policy refuses',
+  'every generic model registry entry is policy-authorized for coding',
   () => {
     for (
       const id of
@@ -594,22 +519,7 @@ test(
         keyof typeof MODELS
       )[]
     ) {
-      if (
-        !isResearchModel(id)
-      ) {
-        continue;
-      }
-
-      assert.equal(
-        /\bcoding\b|\bcode\b/i.test(
-          MODELS[id].role.replace(
-            /never writes code/i,
-            '',
-          ),
-        ),
-        false,
-        `${id} role string advertises coding: ${MODELS[id].role}`,
-      );
+      assert.equal(isCodingModel(id), true, `${id} is executable but lacks coding authority`);
     }
   },
 );
