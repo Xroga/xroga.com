@@ -219,6 +219,85 @@ export const BLACK_HOLE_MODELS: readonly BlackHoleModelDefinition[] = [
     prohibitedRoles: [],
   },
   {
+  id: 'glm_5_3',
+  provider: 'glm_official',
+
+  providerModel:
+    'glm-5.3',
+
+  providerModelEnv:
+    'GLM_5_3_MODEL_ID',
+
+  credentialEnv:
+    'GLM_API_KEY',
+
+  capabilities:
+    codingCapabilities({
+      deepReasoning: true,
+      longContext: true,
+    }),
+
+  authority:
+    ENGINEERING_AUTHORITY,
+
+  contextWindow:
+    1_000_000,
+
+  costClass:
+    'high',
+
+  preferredRoles: [
+    'serious_engineering',
+    'long_horizon_engineering',
+    'repository_understanding',
+    'architecture',
+    'debugging',
+    'migration',
+  ],
+
+  prohibitedRoles: [],
+},
+
+{
+  id: 'glm_5_3_flash',
+  provider: 'glm_official',
+
+  providerModel:
+    'glm-5.3-flash',
+
+  providerModelEnv:
+    'GLM_5_3_FLASH_MODEL_ID',
+
+  credentialEnv:
+    'GLM_API_KEY',
+
+  capabilities:
+    codingCapabilities({
+      longContext: true,
+      vision: true,
+    }),
+
+  authority:
+    ENGINEERING_AUTHORITY,
+
+  contextWindow:
+    1_000_000,
+
+  costClass:
+    'low',
+
+  preferredRoles: [
+    'coding',
+    'normal_implementation',
+    'document_analysis',
+    'vision',
+    'synthesis',
+    'debugging',
+  ],
+
+  prohibitedRoles: [],
+},
+  {
     id: 'deepseek_v4_flash',
     provider: 'openrouter',
     providerModel: 'deepseek/deepseek-v4-flash',
