@@ -82,17 +82,20 @@ Atomic publication, phase machine and durable storage. `universalPersistence` ha
 
 The single answer to "may this model write code?", as an allowlist. Every routing site defers here.
 
-### `ai/models.ts` — **KEEP** (was EXTEND; closed by #501)
+### `ai/models.ts` — **KEEP**
 
-`grok_4_5`'s role string advertised "coding agents", contradicting the enforced policy. Corrected to state research-only explicitly. A test now asserts that no research model's role string advertises coding, because the risk was never runtime selection — `providerPolicy` always governed that — but a reader concluding the filter was a bug and removing it.
+The executable catalog contains exactly Kimi K3, GLM-5.3, GLM-5.3 Flash, and DeepSeek V4 Flash.
+Private X retrieval is deliberately outside `ModelId`; `glm_5_2` survives only as an accounting
+pool key for old usage records.
 
 ### `ai/modelCapabilityRegistry.ts` — **KEEP** (was EXTEND; closed by #501)
 
-`STRENGTHS` is now `UNVERIFIED_PRIOR_STRENGTHS`, with a comment stating that nothing in it was observed and that `capabilityRouter` confidence-weights it by provenance so a measured 7 outranks a hand-written 9 — §13's requirement. Both Grok coding priors are `0`: §7 forbids a research provider holding coding scores at all, and a prior that would be dangerous if the upstream filter were removed is not one worth keeping.
+Capability priors and fallback chains cover only the four active engineering models. Retrieval
+providers have no coding profile to rank.
 
 ### `ai/router.ts` — **KEEP**
 
-Coding routes use only `kimi_k3`, `glm_5_2`, `deepseek_v4_pro`: compliant. Its non-coding `builder` field is a naming artifact, worth renaming for clarity but not behaviour.
+Coding routes use only `kimi_k3`, `glm_5_3`, `glm_5_3_flash`, and `deepseek_v4_flash`.
 
 ### `ai/intelligentRouter.ts` + `ai/capabilityRouter.ts` — **EXTEND**
 

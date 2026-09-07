@@ -5,7 +5,6 @@ import {
   CODING_MODEL_TRANSPORT,
   ProviderPolicyError,
   RESEARCH_MODEL_TRANSPORT,
-  TAVILY_PROVIDER_ID,
   assertCodingModel,
   codingModelsOnly,
   isCodingModel,
@@ -139,7 +138,7 @@ test(
 );
 
 test(
-  'Grok and Tavily are not coding models',
+  'Grok and retired web providers are outside generic model routing',
   () => {
     assert.equal(
       isCodingModel(
@@ -157,7 +156,7 @@ test(
 
     assert.equal(
       isCodingModel(
-        TAVILY_PROVIDER_ID,
+        'tavily',
       ),
       false,
     );
@@ -178,9 +177,9 @@ test(
 
     assert.equal(
       isResearchModel(
-        TAVILY_PROVIDER_ID,
+        'tavily',
       ),
-      true,
+      false,
     );
   },
 );
@@ -305,7 +304,7 @@ test(
 
         {
           modelId:
-            TAVILY_PROVIDER_ID,
+            'tavily',
         },
       ]);
 

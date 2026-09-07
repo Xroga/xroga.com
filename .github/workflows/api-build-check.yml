@@ -1,6 +1,14 @@
 name: API Docker build check
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'Dockerfile.api'
+      - 'fly.api.toml'
+      - 'package.json'
+      - 'package-lock.json'
   pull_request:
     branches: [main]
     paths:

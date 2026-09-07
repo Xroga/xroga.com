@@ -57,7 +57,7 @@ describe('adaptive general-purpose engine', () => {
       'Research current official OAuth documentation with sources',
       '',
       {},
-      { TAVILY_API_KEY: 'configured' },
+      { PARALLEL_API_KEY: 'configured' },
     );
     assert.equal(plan.classification.requiresResearch, true);
     assert.equal(plan.route.kind, 'research');

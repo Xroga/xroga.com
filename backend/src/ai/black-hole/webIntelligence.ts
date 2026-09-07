@@ -398,7 +398,7 @@ async function grokXSearch(input: {
           },
         ],
 
-        max_output_tokens: 1_200,
+        max_output_tokens: 500,
       }),
 
       signal:

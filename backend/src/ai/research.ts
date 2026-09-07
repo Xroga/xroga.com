@@ -15,7 +15,7 @@ export interface ResearchBundle {
   query: string;
   summary: string;
   sources: ResearchSource[];
-  provider: 'parallel' | 'grok_x' | 'grok_live' | 'tavily' | 'searxng' | 'none';
+  provider: 'parallel' | 'grok_x' | 'grok_live' | 'none';
   /** True when live X (Twitter) search was requested via Grok. */
   includedXSearch?: boolean;
 }
@@ -92,7 +92,7 @@ export async function grokLiveSearch(
     input: `Research with X Search only. Include recent relevant posts and official accounts.\n\n${query}`,
     tools,
     temperature: 0.2,
-    max_output_tokens: 2048,
+    max_output_tokens: 500,
   };
 
   const res = await request('https://api.x.ai/v1/responses', {
@@ -182,76 +182,6 @@ function hostTitle(url: string): string {
   } catch {
     return url.slice(0, 48);
   }
-}
-
-/**
- * Exported so the canonical Black Hole research router can drive the same transport.
- *
- * Exported rather than reimplemented: this function already handles the response shape, the
- * URL validation and the timeout. A second Tavily client in the new layer would be one more
- * place for the SSRF guard `validateResearchUrl` provides to be forgotten.
- */
-export async function tavilySearch(query: string, apiKey: string): Promise<ResearchBundle> {
-  const res = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query,
-      search_depth: 'basic',
-      include_answer: true,
-      max_results: 8,
-    }),
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!res.ok) throw Object.assign(new Error('Tavily request failed'), { status: res.status });
-  const data = (await res.json()) as {
-    answer?: string;
-    results?: Array<{ title?: string; url?: string; content?: string }>;
-  };
-  const sources: ResearchSource[] = (data.results ?? [])
-    .filter((r) => { try { if (!r.url) return false; validateResearchUrl(r.url); return true; } catch { return false; } })
-    .map((r) => ({
-      title: r.title || r.url || 'Source',
-      url: r.url!,
-      snippet: (r.content || '').slice(0, 400),
-      source: 'tavily',
-    }));
-  return {
-    query,
-    summary: data.answer || sources.map((s) => s.snippet).join('\n\n').slice(0, 3000),
-    sources,
-    provider: 'tavily',
-  };
-}
-
-/** Exported for the canonical research router — see `tavilySearch` above. */
-export async function searxngSearch(query: string): Promise<ResearchBundle> {
-  const base = (process.env.SEARXNG_URL || 'https://searx.be').replace(/\/$/, '');
-  validateResearchUrl(base);
-  const url = `${base}/search?q=${encodeURIComponent(query)}&format=json`;
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'XrogaResearch/2.0' },
-    signal: AbortSignal.timeout(8_000),
-  });
-  if (!res.ok) throw new Error(`SearXNG HTTP ${res.status}`);
-  const data = (await res.json()) as {
-    results?: Array<{ title?: string; url?: string; content?: string }>;
-  };
-  const sources: ResearchSource[] = (data.results ?? [])
-    .slice(0, 8)
-    .filter((r) => { try { if (!r.url) return false; validateResearchUrl(r.url); return true; } catch { return false; } })
-    .map((r) => ({
-      title: r.title || r.url || 'Source',
-      url: r.url!,
-      snippet: (r.content || '').slice(0, 400),
-      source: 'searxng',
-    }));
-  return {
-    query,
-    summary: sources.map((s) => `- ${s.title}: ${s.snippet}`).join('\n').slice(0, 3000),
-    sources,
-    provider: 'searxng',
-  };
 }
 
 export function formatResearchForPrompt(bundle: ResearchBundle): string {

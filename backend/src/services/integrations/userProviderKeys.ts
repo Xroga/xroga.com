@@ -113,7 +113,6 @@ export const ALLOWED_PROVIDERS = [
   'openrouter',
   'deepseek',
   'grok',
-  'tavily',
   'huggingface',
   'replicate',
   'stripe',
@@ -159,7 +158,6 @@ export const ENV_VAR_BY_PROVIDER: Record<string, string> = {
   anthropic: 'ANTHROPIC_API_KEY',
   groq: 'GROQ_API_KEY',
   gemini: 'GEMINI_API_KEY',
-  tavily: 'TAVILY_API_KEY',
   huggingface: 'HF_TOKEN',
   openrouter: 'OPENROUTER_API_KEY',
   replicate: 'REPLICATE_API_TOKEN',
@@ -689,7 +687,6 @@ export function providerCatalog() {
       category: 'backend',
     },
     { id: 'resend', name: 'Resend email', envVar: 'RESEND_API_KEY', freeTier: true, category: 'email' },
-    { id: 'tavily', name: 'Tavily search', envVar: 'TAVILY_API_KEY', freeTier: true, category: 'search' },
     { id: 'huggingface', name: 'Hugging Face', envVar: 'HF_TOKEN', freeTier: true, category: 'ai' },
     {
       id: 'expo',

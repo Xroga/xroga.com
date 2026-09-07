@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import { redactSecrets } from '../../lib/truthfulExecution.js';
 
 export type ResearchTrust = 'A_official' | 'B_primary' | 'C_secondary' | 'D_discovery';
-export type ResearchProviderId = 'xai' | 'tavily' | 'direct';
+export type ResearchProviderId = 'xai' | 'parallel' | 'direct';
 
 export interface ResearchRequest {
   query: string;
@@ -145,51 +145,6 @@ export class ResearchEngine {
     };
     await this.store?.save(cacheKey, result);
     return result;
-  }
-}
-
-async function parseJson(response: Response): Promise<Record<string, unknown>> {
-  const value = await response.json().catch(() => ({}));
-  if (!response.ok) throw Object.assign(new Error(`research provider failed (${response.status})`), { status: response.status });
-  return value && typeof value === 'object' ? value as Record<string, unknown> : {};
-}
-
-export class TavilyResearchProvider implements ResearchProvider {
-  readonly id = 'tavily' as const;
-  constructor(private readonly apiKey: string, private readonly request: typeof fetch = fetch) { if (!apiKey) throw new Error('Tavily API key is required'); }
-  async search(input: ResearchRequest, signal: AbortSignal): Promise<ResearchCandidate[]> {
-    const response = await this.request('https://api.tavily.com/search', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ query: input.query, search_depth: 'basic', max_results: Math.min(input.maximumSources, 20), include_domains: input.officialDomains, ...(input.startDate ? { start_date: input.startDate } : {}), ...(input.endDate ? { end_date: input.endDate } : {}) }), signal });
-    const data = await parseJson(response);
-    return (Array.isArray(data.results) ? data.results : []).map((value) => { const item = value as Record<string, unknown>; return { url: String(item.url ?? ''), title: String(item.title ?? ''), excerpt: String(item.content ?? ''), publishedAt: typeof item.published_date === 'string' ? item.published_date : undefined }; });
-  }
-  async extract(urls: string[], signal: AbortSignal): Promise<Record<string, unknown>> {
-    const safeUrls = urls.slice(0, 20).map((url) => validateResearchUrl(url).toString());
-    return parseJson(await this.request('https://api.tavily.com/extract', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ urls: safeUrls, extract_depth: 'basic' }), signal }));
-  }
-  async map(url: string, signal: AbortSignal): Promise<Record<string, unknown>> {
-    return parseJson(await this.request('https://api.tavily.com/map', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: validateResearchUrl(url).toString(), max_depth: 2, max_breadth: 10, limit: 50 }), signal }));
-  }
-  async crawl(url: string, signal: AbortSignal): Promise<Record<string, unknown>> {
-    return parseJson(await this.request('https://api.tavily.com/crawl', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: validateResearchUrl(url).toString(), max_depth: 2, max_breadth: 10, limit: 30, extract_depth: 'basic' }), signal }));
-  }
-}
-
-export class XaiResearchProvider implements ResearchProvider {
-  readonly id = 'xai' as const;
-  constructor(private readonly apiKey: string, private readonly model: string, private readonly request: typeof fetch = fetch) { if (!apiKey || !model) throw new Error('xAI API key and current model are required'); }
-  async search(input: ResearchRequest, signal: AbortSignal): Promise<ResearchCandidate[]> {
-    const dateRange = { ...(input.startDate ? { from_date: input.startDate } : {}), ...(input.endDate ? { to_date: input.endDate } : {}) };
-    const webDomains = input.officialDomains.slice(0, 5);
-    const tools: Array<Record<string, unknown>> = [{
-      type: 'web_search',
-      ...(webDomains.length ? { filters: { allowed_domains: webDomains } } : {}),
-    }];
-    if (input.allowXDiscovery) tools.push({ type: 'x_search', allowed_x_handles: input.verifiedOfficialXHandles?.slice(0, 20) ?? [], ...dateRange });
-    const response = await this.request('https://api.x.ai/v1/responses', { method: 'POST', headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: this.model, input: input.query, tools }), signal });
-    const data = await parseJson(response);
-    const nested = Array.isArray(data.output) ? data.output.flatMap((output) => { const record = output as Record<string, unknown>; return Array.isArray(record.content) ? record.content.flatMap((content) => { const item = content as Record<string, unknown>; return Array.isArray(item.annotations) ? item.annotations : []; }) : []; }) : [];
-    const citations = Array.isArray(data.citations) ? data.citations : nested;
-    return citations.map((value) => { const item = value as Record<string, unknown>; return { url: String(item.url ?? ''), title: String(item.title ?? item.url ?? ''), excerpt: String(item.snippet ?? ''), xHandle: typeof item.handle === 'string' ? item.handle : undefined }; });
   }
 }
 

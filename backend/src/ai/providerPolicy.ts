@@ -67,10 +67,8 @@ export type ResearchModelId = keyof typeof RESEARCH_MODEL_TRANSPORT;
  * policy tests can assert it explicitly rather than passing because the identifier does
  * not happen to exist — an absence that a future integration could quietly end.
  */
-export const TAVILY_PROVIDER_ID = 'tavily' as const;
-
 const CODING_IDS = new Set<string>(Object.keys(CODING_MODEL_TRANSPORT));
-const RESEARCH_IDS = new Set<string>([...Object.keys(RESEARCH_MODEL_TRANSPORT), TAVILY_PROVIDER_ID]);
+const RESEARCH_IDS = new Set<string>(Object.keys(RESEARCH_MODEL_TRANSPORT));
 
 /**
  * Whether a model may perform coding work.

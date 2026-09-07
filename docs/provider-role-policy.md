@@ -8,9 +8,9 @@ What is **enforced in code**, with the enforcement point named for each rule. Wh
 | --- | --- | --- | --- |
 | coding | Kimi | official Moonshot API | yes |
 | coding | GLM | official Zhipu/BigModel API | yes |
-| coding | DeepSeek (Pro, Flash) | OpenRouter | yes |
-| research | Grok 4.5, Grok 4.3 | xAI | **no** |
-| research | Tavily | Tavily | **no** — a search service, not a chat model |
+| coding | DeepSeek V4 Flash | OpenRouter | yes |
+| research retrieval | private Grok 4.3 + `x_search` | xAI | **no** |
+| public-web retrieval | Parallel | Parallel | **no** — evidence transport, not a build model |
 
 Kimi and GLM are never routed through OpenRouter. DeepSeek is the family intentionally accessed through it.
 
@@ -37,7 +37,7 @@ The failure mode is a research provider writing code. A denylist fails open — 
 
 A research model filtered *after* ranking would still appear in the run's recorded routing evidence as a coding option that merely lost. Filtering at the source means it is not a candidate at all — it cannot be selected, cannot become a fallback, and cannot be recorded as having been considered.
 
-## What this replaced
+## Historical: what this replaced
 
 At `59cdcf6` the policy was documented and unenforced. Three facts were true simultaneously:
 
@@ -47,17 +47,17 @@ At `59cdcf6` the policy was documented and unenforced. Three facts were true sim
 
 Point 2 stopped being theoretical when PR #478 made the universal implement step walk its fallback chain for real. Two coding-provider failures would have handed implementation to a research model rather than refusing.
 
-## Resolved: the registry no longer advertises what the policy refuses
+## Historical resolution: the registry stopped advertising what policy refused
 
 `models.ts` described `grok_4_5` as *"Real-time intelligence — web/X search, crypto news, coding agents"*. It now reads *"Real-time intelligence — web/X search and crypto news. Research only; never writes code."*
 
 The phrase was harmless at runtime, since `providerPolicy` governed selection either way. The danger was documentary: a registry that advertises a capability the router forbids invites someone to read the role, conclude the filter is a bug, and remove it. A test now asserts that no research model's role string advertises coding (#501).
 
-## Deliberately unchanged: `router.ts`
+## Current routing boundary
 
-`router.ts` assigns Grok to a field named `builder` in three places (lines 51, 62, 73). All three sit inside `!classification.requiresCoding` branches — research, file analysis and chat. The field name is a legacy artifact; those branches produce conversational responses, not engineering.
-
-Its coding routes use only `kimi_k3`, `glm_5_2` and `deepseek_v4_pro`, and are compliant. Changing the non-coding assignments would break chat and research routing without serving the policy, so they were left alone. Renaming the field for clarity is worthwhile and separate.
+Generic model routing contains exactly Kimi K3, GLM-5.3, GLM-5.3 Flash, and DeepSeek V4 Flash.
+Private `grok-4.3` is invoked only by the X/Twitter retrieval adapter and Parallel serves normal
+public-web retrieval. Neither retrieval provider is a generic `ModelId` or an engineering fallback.
 
 ## Research output is untrusted input
 

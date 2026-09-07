@@ -371,7 +371,6 @@ export function modelKeyStatus(): Record<string, boolean> {
     KIMI_API_KEY: Boolean(getSecret('KIMI_API_KEY')),
     GLM_API_KEY: Boolean(getSecret('GLM_API_KEY')),
     XAI_API_KEY: Boolean(getSecret('XAI_API_KEY')),
-    TAVILY_API_KEY: Boolean(getSecret('TAVILY_API_KEY')),
     DEEPSEEK_VIA_OPENROUTER: Boolean(getSecret('OPENROUTER_API_KEY')),
   };
 }

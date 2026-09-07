@@ -32,6 +32,7 @@ test('Grok 4.3 retrieval uses only the native X search tool', async () => {
 
   assert.equal(requestUrl, 'https://api.x.ai/v1/responses');
   assert.deepEqual(requestBody.tools, [{ type: 'x_search' }]);
+  assert.equal(requestBody.max_output_tokens, 500);
   assert.equal('search_parameters' in requestBody, false);
   assert.equal(result.bundle.provider, 'grok_live');
   assert.equal(result.bundle.includedXSearch, true);

@@ -247,15 +247,6 @@ const ALIASES: Record<string, string[]> = {
     'DEEPSEEK_API_KEY',
   ],
 
-  /**
-   * Tavily is no longer an active Xroga public-web provider.
-   *
-   * Retained temporarily so old code can be removed safely in a later
-   * cleanup commit without creating an unrelated regression now.
-   */
-  TAVILY_API_KEY: [
-    'TAVILY_API_KEY',
-  ],
 };
 
 /**

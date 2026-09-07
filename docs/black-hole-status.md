@@ -3,8 +3,8 @@
 Supersedes the Part 2 status written before PR #564 merged. Reflects the integration work that
 followed it.
 
-Backend: **2128/2128 tests pass**, typecheck and build clean. No lint is configured in this
-repository.
+The current backend build and test results are enforced by CI; this document does not freeze a
+test count that becomes stale as coverage grows.
 
 **Live verification status is stated plainly in section K.** Nothing involving a real provider
 call has been exercised, and no claim of "production verified" is made anywhere in this
@@ -21,7 +21,7 @@ USER
  → task analysis                        black-hole/taskClass.ts        (22 classes)
  → complexity                           black-hole/complexity.ts       (12 capped inputs)
  → context plan                         black-hole/contextPlan.ts
- → optional research                    black-hole/researchRouter.ts
+ → optional research                    black-hole/webIntelligence.ts
  → capability + authority requirements  derived by task analysis
  → canonical router                     black-hole/router.ts
  → provider adapter                     black-hole/providerAdapter.ts
@@ -36,19 +36,18 @@ USER
 | Internal model | Transport | Enforced where | Status |
 |---|---|---|---|
 | `kimi_k3` | Moonshot | `openaiCompat.resolveEndpoint` | configured |
-| `kimi_k2_7` | Moonshot | same | **awaiting operator configuration** |
-| `glm_5_2` | Zhipu (official GLM) | same | configured |
-| `deepseek_v4_pro` | OpenRouter | same | configured |
+| `glm_5_3` | Zhipu (official GLM) | same | configured |
+| `glm_5_3_flash` | Zhipu (official GLM) | same | configured |
 | `deepseek_v4_flash` | OpenRouter | same | configured |
-| `grok_4_5` | xAI | same | configured, research-only |
-| `grok_4_3` | xAI | same | configured, research-only |
+| private `grok-4.3` retrieval | xAI Responses API | `webIntelligence` / `research` | X Search only; not a `ModelId` |
 
 Transport is checked **before** the configuration guard, so a model that is both misconfigured
 and mis-transported still fails on the security violation rather than reporting "not configured"
 and skipping the check.
 
-Coding preference once K2.7 is configured: **K2.7 → GLM-5.2 → K3 → DeepSeek V4 Pro**, with
-authority, availability, health, cost and complexity filtering applied.
+The exact fallback order is defined by the active model registry: Flash routes prefer GLM-5.3
+Flash, deeper work may lead with GLM-5.3 or Kimi K3, and every chain remains inside the four
+active engineering models.
 
 ## C. One model truth
 
@@ -63,31 +62,11 @@ authority, availability, health, cost and complexity filtering applied.
 `registryDrift.test.ts` asserts agreement per model rather than asserting values, so it cannot
 be satisfied by updating a constant in three places.
 
-## D. K2.7 status
+## D. Retired model status
 
-A real `ModelId` throughout: transport, runtime types, capability priors, fallback chains,
-cost tiers. It ships with `apiModel`, `inputUsdPer1M`, `outputUsdPer1M` and `contextWindow` all
-`null` — **nothing was invented**.
-
-`null` rather than `0` deliberately: a model priced at zero is the cheapest model on the
-platform, so it would win every cost comparison and bill nothing until the invoice arrived. A
-guessed context window silently truncates a customer's repository.
-
-Consequences today: `resolveModelSpec` returns null, `requirePricing` throws rather than
-defaulting, the runtime registry omits it entirely, and `blackHoleAvailability` reports
-`not_configured`. GLM inherits the coding route.
-
-**To enable it, an operator sets four variables:**
-
-```
-KIMI_COST_EFFICIENT_MODEL_ID=<verified Moonshot slug>
-KIMI_COST_EFFICIENT_INPUT_USD_PER_1M=<verified price>
-KIMI_COST_EFFICIENT_OUTPUT_USD_PER_1M=<verified price>
-KIMI_COST_EFFICIENT_CONTEXT_WINDOW=<verified window>
-```
-
-All four are required. Partial configuration keeps the model unavailable, and each one
-individually withheld is covered by a test.
+Kimi K2.7, GLM-5.2 as an executable model, DeepSeek V4 Pro, and generic Grok model IDs are
+retired and rejected by routing. The literal `glm_5_2` remains only as a historical accounting
+pool key so usage recorded before the migration stays readable.
 
 ## E. K3 vision status
 
@@ -99,10 +78,8 @@ The shipped default for K3 is **off**, because Moonshot's contract has not been 
 this environment. I did not set the boolean to make a test pass. An operator who has confirmed
 it sets `KIMI_VISION_ENABLED=true`.
 
-The empty-route problem is fixed independently of that switch: the vision chain now includes the
-Grok models, which genuinely accept images and hold `inspectMedia` authority. The authority
-filter removes them the moment the task also needs to write — so "describe this screenshot"
-reaches a working route, and "implement this mockup" still never reaches a research model.
+GLM-5.3 Flash is the confirmed multimodal route. Private Grok retrieval is not a vision or build
+fallback and cannot enter an engineering chain.
 
 The adapter can actually send the multimodal format (`image_url` parts on the last user turn),
 and refuses rather than silently dropping an image for a model without support — a silent drop
@@ -110,22 +87,10 @@ yields a confident description of an image the model never received.
 
 ## F. Research status
 
-`researchRouter.ts` is now wired into both production research call sites through
-`productionBridge.researchThroughBlackHole`, stage-gated with the legacy `gatherResearch` as
-fallback. Specialization: explicit URL → direct fetch; X/realtime/social → Grok; general web →
-user Tavily → SearXNG → platform Tavily only where policy permits.
-
-Executors are thin adapters over the existing transports in `research.ts`, which keeps the SSRF
-guard (`validateResearchUrl`) and the timeouts in one place.
-
-**Tavily connection uses the existing encrypted per-user integration store, not OAuth.** Tavily's
-published integration mechanism is an API key; inventing an OAuth handshake the vendor does not
-offer would produce a connect button that cannot work. A key the user supplies is still their
-key drawing on their quota, which is the property that matters — authorization is never shared
-between users.
-
-Grok holds `research` and `inspectMedia` only. It cannot appear in any coding or repair chain,
-asserted across every failure kind and every cutover stage.
+`webIntelligence.ts` is the production research path. General public-web search, extraction, and
+deep research use Parallel. Requests that explicitly depend on X/Twitter use private
+`grok-4.3` with only the native `x_search` tool. X evidence must carry an X/Twitter citation;
+uncited model text is rejected. GLM-5.3 Flash performs final synthesis.
 
 ## G. Build and repair migration
 
@@ -163,24 +128,20 @@ deleting something that still has callers.
 
 ## J. Tests
 
-2128 pass, 0 fail. Typecheck clean, build clean. No test was weakened; three were **tightened**
-because the code became stricter:
-
-- K2.7 availability now requires all four facts, not just the identifier.
-- The vision test now asserts a working route rather than an empty one.
-- The persona guard learned the new label rather than being silenced.
+Build, routing, provider isolation, retrieval policy, and stale-model rejection are covered by the
+backend suite and the API Docker build workflow.
 
 ## K. What was live verified — and what was not
 
 **Not live verified. No provider call was made.** This environment has:
 
-- no provider credentials — `KIMI_API_KEY`, `GLM_API_KEY`, `OPENROUTER_API_KEY`, `GROK_API_KEY`
-  and `TAVILY_API_KEY` all resolve absent
+- no provider credentials — `KIMI_API_KEY`, `GLM_API_KEY`, `OPENROUTER_API_KEY`, `XAI_API_KEY`
+  and `PARALLEL_API_KEY` all resolve absent
 - no provider egress — `curl https://openrouter.ai/api/v1/models` returns
   `CONNECT tunnel failed, response 403` at the environment's proxy
 
-So none of the following were exercised: DeepSeek Flash routine, DeepSeek Pro reasoning, GLM
-engineering, K3 long-context, K2.7 coding, Grok X research, K3 multimodal, real provider
+So none of the following were exercised: DeepSeek Flash routine, GLM engineering, K3
+long-context, private Grok X research, GLM-5.3 Flash multimodal, real provider
 failure/fallback, or live structured output. Every test above runs against injected fakes.
 
 What *can* be verified live is the deployed service, via the GitHub-runner health workflow —
@@ -188,11 +149,8 @@ that confirms the refactor boots and serves, not that any model answered.
 
 ## L. Blockers requiring an operator action
 
-1. **K2.7** — four verified values (slug, two prices, context window). Everything else is done.
-2. **K3 vision** — confirm with Moonshot whether the configured K3 endpoint accepts images, then
-   set `KIMI_VISION_ENABLED=true`, or leave it off and the Grok route serves image reading.
-3. **Provider smoke checks** — require an environment holding the provider keys with outbound
+1. **Provider smoke checks** — require an environment holding the provider keys with outbound
    egress. This is the only step that can convert anything in this document into a live-verified
    claim, and it will spend real provider budget.
-4. **Enabling the migration** — `BLACK_HOLE_CUTOVER_STAGE=shadow` is the safe first step;
+2. **Enabling the migration** — `BLACK_HOLE_CUTOVER_STAGE=shadow` is the safe first step;
    nothing user-visible changes.
