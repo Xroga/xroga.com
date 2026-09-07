@@ -37,14 +37,66 @@ export interface AdaptiveExecutionPlan {
   blockers: string[];
 }
 
-const MODEL_FALLBACKS: Record<ModelId, ModelId[]> = {
-  kimi_k2_7: ['glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
-  kimi_k3: ['glm_5_2', 'deepseek_v4_pro', 'grok_4_3'],
-  glm_5_2: ['kimi_k3', 'grok_4_3', 'deepseek_v4_pro'],
-  deepseek_v4_pro: ['kimi_k3', 'glm_5_2', 'deepseek_v4_flash'],
-  deepseek_v4_flash: ['deepseek_v4_pro', 'grok_4_3', 'kimi_k3'],
-  grok_4_5: ['grok_4_3', 'kimi_k3', 'deepseek_v4_flash'],
-  grok_4_3: ['glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
+const MODEL_FALLBACKS: Record<
+  ModelId,
+  ModelId[]
+> = {
+  kimi_k2_7: [
+    'glm_5_3_flash',
+    'glm_5_3',
+    'kimi_k3',
+    'deepseek_v4_pro',
+  ],
+
+  kimi_k3: [
+    'glm_5_3',
+    'glm_5_3_flash',
+    'glm_5_2',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_2: [
+    'glm_5_3',
+    'glm_5_3_flash',
+    'kimi_k3',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_3: [
+    'glm_5_3_flash',
+    'kimi_k3',
+    'glm_5_2',
+    'deepseek_v4_pro',
+  ],
+
+  glm_5_3_flash: [
+    'glm_5_3',
+    'kimi_k3',
+    'glm_5_2',
+    'deepseek_v4_flash',
+  ],
+
+  deepseek_v4_pro: [
+    'glm_5_3_flash',
+    'glm_5_3',
+    'deepseek_v4_flash',
+    'kimi_k3',
+  ],
+
+  deepseek_v4_flash: [
+    'glm_5_3_flash',
+    'deepseek_v4_pro',
+    'glm_5_3',
+    'kimi_k3',
+  ],
+
+  grok_4_5: [
+    'grok_4_3',
+  ],
+
+  grok_4_3: [
+    'grok_4_5',
+  ],
 };
 
 function modelCandidates(
