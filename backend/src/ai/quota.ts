@@ -54,8 +54,20 @@ function periodStart(): string {
 }
 
 export function poolRoleFor(modelId: ModelId): string {
-  if (modelId.startsWith('deepseek')) return 'deepseek_v4';
-  if (modelId.startsWith('grok')) return 'grok';
+  if (modelId.startsWith('deepseek')) {
+    return 'deepseek_v4';
+  }
+
+  // Preserve the historical GLM pool key so existing
+  // database usage remains readable after the model upgrade.
+  if (modelId.startsWith('glm_5_')) {
+    return 'glm_5_2';
+  }
+
+  if (modelId.startsWith('grok')) {
+    return 'grok';
+  }
+
   return modelId;
 }
 
