@@ -50,12 +50,12 @@ export function TerminalDock() {
   const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
   const chatbarHidden = hydrated && chatbarHiddenRaw;
   const workspaceOpen = hydrated && workspaceOpenRaw;
+  const dockSuppressed = chatbarHidden || workspaceOpen;
   const dashboardFullscreen = isDashboard && terminalFullscreen;
   const { messages, loading, sessionRestoring } = useTerminalChat();
   const emptyWorkspace = hydrated && !sessionRestoring && messages.length === 0 && !loading;
-  // Project edits owns the right pane and its draggable seam. Keep the composer in
-  // the normal bottom dock while that pane is open so the empty-state surface never
-  // sits above (and intercepts) the resize handle.
+  // Project edits owns the editing canvas. Its files, preview, and deploy views must
+  // never be covered by the normal-workspace composer.
   const showStarterExperience = emptyWorkspace && !workspaceOpen;
 
   useEffect(() => {
@@ -64,10 +64,10 @@ export function TerminalDock() {
     // also included starter tabs and template cards, so selecting a repository could
     // change the value from ~90px to 350px and visibly move the workspace. The parent
     // only needs to clear the reservation when the composer is intentionally hidden.
-    if (chatbarHidden) {
+    if (dockSuppressed) {
       document.documentElement.style.setProperty('--xv-chatbar-height', '0px');
     }
-  }, [isDashboard, chatbarHidden]);
+  }, [isDashboard, dockSuppressed]);
 
   useEffect(() => {
     if (!showStarterExperience) return;
@@ -83,6 +83,7 @@ export function TerminalDock() {
       className={cn(
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity] duration-200',
         !isDashboard && 'hidden',
+        workspaceOpen && 'xv-terminal-dock--workspace-hidden',
         dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
         incognito && 'xv-terminal-dock--incognito',
         sessionRestoring && 'xv-terminal-dock--restoring',
@@ -97,7 +98,7 @@ export function TerminalDock() {
           : '64px',
         bottom: keyboardOffset,
       } as React.CSSProperties}
-      aria-hidden={!isDashboard}
+      aria-hidden={!isDashboard || workspaceOpen}
       data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
       data-testid="persistent-terminal-dock"
     >
@@ -115,8 +116,8 @@ export function TerminalDock() {
               : 'max-w-4xl'
         )}
       >
-        {chatbarHidden ? (
-          /* Nothing. Hiding the chatbar hides the chatbar.
+        {dockSuppressed ? (
+          /* Nothing. Hiding the chatbar or opening Project edits removes the chatbar.
              This used to leave a small floating restore button in the composer's
              place, on the reasoning that a hidden control needs a way back. It has
              one: the same toggle in the terminal's title bar that hid it, which

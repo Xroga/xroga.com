@@ -2296,7 +2296,7 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   min-width: 0;
   min-height: 390px;
   margin: 0 auto;
-  padding-bottom: clamp(7rem, 16vw, 12rem);
+  padding-bottom: clamp(.5rem, 2vw, 1.5rem);
 }
 .xv-marketing-footer__brand-card,
 .xv-marketing-footer__main-card {
@@ -2380,11 +2380,15 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
 .xv-marketing-footer__base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: .66rem; }
 .xv-marketing-footer__base p { margin: 0; }
 .xv-marketing-footer__wordmark {
-  position: absolute;
+  position: relative;
   z-index: 1;
-  left: 4%;
-  right: 4%;
-  bottom: .4rem;
+  grid-column: 1 / -1;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: clamp(1rem, 2.5vw, 1.8rem) auto 0;
+  padding: .08em .04em .14em;
+  box-sizing: border-box;
   color: transparent;
   background: linear-gradient(105deg, color-mix(in srgb, var(--text-primary) 48%, transparent) 8%, #3478ff 34%, #23a87b 48%, #865ee8 62%, color-mix(in srgb, var(--text-primary) 48%, transparent) 88%);
   background-size: 240% 100%;
@@ -2393,10 +2397,10 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   -webkit-text-fill-color: transparent;
   font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
   font-style: italic;
-  font-size: clamp(5.4rem, 16.8vw, 13.2rem);
+  font-size: clamp(4rem, 12.5vw, 9.4rem);
   font-weight: 600;
-  line-height: .7;
-  letter-spacing: -.075em;
+  line-height: .92;
+  letter-spacing: .035em;
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
@@ -2422,11 +2426,11 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   .xv-marketing-footer__main-card { padding-top: 3.8rem; }
   .xv-marketing-footer__nav { gap: .75rem; }
   .xv-marketing-footer__nav a { font-size: .76rem; }
-  .xv-marketing-footer__wordmark { position:relative;left:auto;right:auto;bottom:auto;z-index:2;display:block;grid-column:1;margin:.7rem auto 0;width:100%;max-width:100%;padding-inline:.12em;box-sizing:border-box;font-size:clamp(3.4rem,18vw,6.2rem);line-height:.88;letter-spacing:-.045em;text-align:center;color:color-mix(in srgb,var(--text-primary) 22%,transparent);filter:drop-shadow(0 8px 16px color-mix(in srgb,var(--text-primary) 16%,transparent));overflow:hidden }
+  .xv-marketing-footer__wordmark { margin:.8rem auto 0;padding:.08em .04em .16em;font-size:clamp(3rem,15.5vw,5.3rem);line-height:.94;letter-spacing:.025em;text-align:center;color:color-mix(in srgb,var(--text-primary) 22%,transparent);filter:drop-shadow(0 8px 16px color-mix(in srgb,var(--text-primary) 16%,transparent));overflow:visible }
 }
 @media (max-width: 420px) {
   .xv-marketing-footer__full-logo { width:225px!important;height:62px!important }
-  .xv-marketing-footer__wordmark { font-size:18vw;letter-spacing:-.045em }
+  .xv-marketing-footer__wordmark { font-size:15vw;letter-spacing:.02em }
   .xv-marketing-footer__nav { grid-template-columns: repeat(2, 1fr); }
   .xv-marketing-footer__subscribe form { align-items: stretch; flex-direction: column; }
   .xv-marketing-footer__subscribe button { justify-content: center; }
@@ -7490,7 +7494,7 @@ body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
 .xv-home-coding .xv-wt-preview-caption>div:first-child{width:38px!important;flex:none}.xv-home-coding .xv-wt-preview-caption>div:last-child{display:grid;gap:.15rem}.xv-home-coding .xv-wt-preview-caption p{margin:0;color:#b6becb;font-size:.65rem}
 .xv-marketing-footer__floating-mark{top:-46px;right:22px;width:92px;height:92px;border-radius:50%;transform:rotate(-6deg)}
 .xv-marketing-footer__main-card{overflow:visible}
-.xv-marketing-footer__wordmark{color:color-mix(in srgb,var(--text-primary) 24%,transparent);letter-spacing:-.055em}
+.xv-marketing-footer__wordmark{color:color-mix(in srgb,var(--text-primary) 24%,transparent)}
 @media(max-width:480px){
   .xv-home-coding .xv-wt-window{width:100%;min-width:1120px;min-height:688px}
   .xv-home-coding .xv-wt-main>header{min-height:52px;padding:.45rem .6rem;gap:.35rem}
@@ -7504,7 +7508,7 @@ body.theme-black .xv-home-coding .xv-go-btn--home .xv-go-btn__icon {
   .xv-home-coding .xv-wt-preview-canvas{min-height:300px}.xv-home-coding .xv-wt-preview-caption{left:.55rem;right:.55rem;bottom:.55rem}
   .xv-marketing-footer__floating-mark{top:-35px;right:14px;width:70px;height:70px;border-radius:50%}
   .xv-marketing-footer__main-card{padding-top:3.8rem}
-  .xv-marketing-footer__wordmark{width:calc(100% - .4rem);padding:0;margin:.9rem .2rem 0;font-size:16.5vw;line-height:1;letter-spacing:-.035em;overflow:visible;color:color-mix(in srgb,var(--text-primary) 28%,transparent)}
+  .xv-marketing-footer__wordmark{width:100%;padding:.08em .04em .16em;margin:.8rem auto 0;font-size:15vw;line-height:.94;letter-spacing:.02em;overflow:visible;color:color-mix(in srgb,var(--text-primary) 28%,transparent)}
 }
 
 /* Unified real-review system: the execution evidence now lives inside the core.

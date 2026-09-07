@@ -9368,6 +9368,12 @@ body.xv-workspace-expanded-active .xv-home-companion-stage,
 body.xv-workspace-expanded-active .xv-terminal-dock {
   display: none !important;
 }
+
+/* Project edits owns the editing canvas. The composer belongs to the normal
+   workspace and must not float over files, previews, or deploy evidence. */
+.xv-terminal-dock--workspace-hidden {
+  display: none !important;
+}
 .xv-workspace-identity { position: relative; min-width: 0; flex: 1; }
 .xv-term-title--button { width: fit-content; max-width: 100%; border: 0; border-radius: .45rem; padding: .22rem .3rem; background: transparent; cursor: pointer; text-align: left; }
 .xv-term-title--button:hover, .xv-term-title--button[aria-expanded='true'] { background: color-mix(in srgb, var(--foreground) 6%, transparent); }

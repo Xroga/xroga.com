@@ -215,9 +215,21 @@ test('closing the workspace clears the expanded flag', () => {
 test('hiding the chatbar leaves nothing floating behind it', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
   assert.ok(!/xv-chatbar-restore/.test(DOCK), 'the floating restore button is back');
-  assert.match(DOCK, /\{chatbarHidden \? \(/, 'the hidden branch is gone');
+  assert.match(DOCK, /\{dockSuppressed \? \(/, 'the hidden branch is gone');
   // The way back, in the title bar, and labelled for the state it is in.
   const LAUNCH = read('../components/terminal/WorkspaceLauncher.tsx');
   assert.match(LAUNCH, /chatbarHidden \? 'Show the chatbar' : 'Hide the chatbar'/, 'the toggle lost its label');
   assert.match(LAUNCH, /setChatbarHidden\(!chatbarHidden\)/, 'the toggle no longer toggles');
+});
+
+test('opening Project edits removes the chatbar from the editing canvas', () => {
+  const DOCK = read('../components/terminal/TerminalDock.tsx');
+  assert.match(DOCK, /const dockSuppressed = chatbarHidden \|\| workspaceOpen;/);
+  assert.match(DOCK, /workspaceOpen && 'xv-terminal-dock--workspace-hidden'/);
+  assert.match(DOCK, /aria-hidden=\{!isDashboard \|\| workspaceOpen\}/);
+  assert.match(
+    code,
+    /\.xv-terminal-dock--workspace-hidden\s*\{\s*display:\s*none !important;/,
+    'the Project edits state still leaves the fixed composer over the panel',
+  );
 });
