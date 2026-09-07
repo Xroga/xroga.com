@@ -35,6 +35,8 @@ export function DashboardWelcome({ hidden, className, composer = false }: Dashbo
       )}
       data-testid="workspace-welcome"
     >
+      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" interactive /> : null}
+
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
         <h1 className={cn('xv-welcome-editorial', goga.className)}>
           <span>Describe it.</span>
@@ -42,8 +44,6 @@ export function DashboardWelcome({ hidden, className, composer = false }: Dashbo
           <em className={claudeSerif.className}>Ship it.</em>
         </h1>
       </div>
-
-      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" /> : null}
 
       {!composer ? (
         <div className="relative mx-auto mt-4 max-w-3xl">

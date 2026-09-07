@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, ArrowUpRight, ChevronDown, Eye, GitBranch, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Clock3, Eye, FolderGit2, GitBranch, MessageSquareText, X } from 'lucide-react';
 import { ShowcaseResumeBridge } from '@/components/showcase/ShowcaseResumeBridge';
 import {
   SHOWCASE_TEMPLATES,
@@ -20,6 +21,8 @@ import { ActivityIcon } from '@/components/icons/animated/ActivityIcon';
 import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
 import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
+import { api, type GitHubRepo } from '@/lib/api';
+import { loadTerminalHistory, type TerminalHistoryEntry } from '@/lib/terminalHistory';
 
 type TemplateCollection = {
   id: string;
@@ -31,14 +34,6 @@ type TemplateCollection = {
 };
 
 const TEMPLATE_COLLECTIONS: readonly TemplateCollection[] = [
-  {
-    id: 'recent-builds',
-    title: 'Recent builds',
-    description: 'Fresh, verified products from the Xroga studio.',
-    attribution: 'Recently verified',
-    icon: ActivityIcon,
-    templates: SHOWCASE_TEMPLATES.slice(0, 3),
-  },
   {
     id: 'xroga-templates',
     title: 'Xroga templates',
@@ -185,12 +180,26 @@ function TemplateDecisionDialog({
 
 /** Collapsed inspiration catalog for an empty workspace. */
 export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
-  const { setPrompt } = useTerminalChat();
+  const router = useRouter();
+  const { setPrompt, restoreTerminalSession } = useTerminalChat();
   const [selectedTemplate, setSelectedTemplate] = useState<ShowcaseTemplate | null>(null);
+  const [recentSessions, setRecentSessions] = useState<TerminalHistoryEntry[]>([]);
+  const [repositories, setRepositories] = useState<GitHubRepo[]>([]);
   const [expanded, setExpanded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const collectionsRef = useRef<HTMLDivElement>(null);
   const autoOpenedRef = useRef(false);
+
+  useEffect(() => {
+    setRecentSessions(loadTerminalHistory().filter((entry) => Boolean(entry.githubRepoName)).slice(0, 6));
+    let active = true;
+    void api.github.listRepos().then(({ repos }) => {
+      if (active) setRepositories(repos.slice(0, 8));
+    }).catch(() => {
+      if (active) setRepositories([]);
+    });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -253,6 +262,23 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
     }, 20);
   };
 
+  const openRecentSession = async (entry: TerminalHistoryEntry) => {
+    const { loadTerminalHistoryEntry } = await import('@/lib/terminalSessionStorage');
+    const stored = await loadTerminalHistoryEntry(entry.id);
+    const messages = stored?.messages?.length ? stored.messages : entry.messages;
+    if (!messages.length) return;
+    await restoreTerminalSession({
+      sessionId: entry.id,
+      prompt: entry.prompt,
+      messages,
+      selectedId: entry.id,
+      selectedLabel: entry.title,
+      source: 'projects',
+      githubRepoName: entry.githubRepoName,
+    });
+    router.push('/workspace');
+  };
+
   return (
     <>
       <section
@@ -291,6 +317,36 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
           ref={collectionsRef}
           className="xv-workspace-template-collections"
         >
+          <section className="xv-workspace-template-collection" aria-labelledby="recent-projects-heading">
+            <header className="xv-workspace-collection-head">
+              <span className="xv-workspace-collection-title">
+                <AnimatedIcon icon={ActivityIcon} size={14} intro={false} />
+                <span><strong id="recent-projects-heading">Recent projects</strong><small>Your saved work and connected repositories.</small></span>
+              </span>
+              <Link href="/dashboard/projects">Browse all <ArrowUpRight className="h-3 w-3" aria-hidden /></Link>
+            </header>
+            <div className="xv-workspace-real-projects" role="list">
+              {recentSessions.map((entry) => (
+                <button key={entry.id} type="button" role="listitem" onClick={() => void openRecentSession(entry)}>
+                  <span className="xv-workspace-project-folder"><MessageSquareText aria-hidden="true" /><i>{entry.messageCount}</i></span>
+                  <strong>{entry.title}</strong>
+                  <small><Clock3 aria-hidden="true" /> {new Date(entry.updatedAt).toLocaleDateString()}</small>
+                  <code>{entry.githubRepoName}</code>
+                </button>
+              ))}
+              {repositories.filter((repo) => !recentSessions.some((entry) => entry.githubRepoName === repo.fullName)).slice(0, Math.max(0, 6 - recentSessions.length)).map((repo) => (
+                <button key={repo.fullName} type="button" role="listitem" onClick={() => router.push('/dashboard/projects')}>
+                  <span className="xv-workspace-project-folder"><FolderGit2 aria-hidden="true" /><i>{repo.private ? 'Private' : 'Public'}</i></span>
+                  <strong>{repo.fullName.split('/').at(-1)}</strong>
+                  <small><GitBranch aria-hidden="true" /> {repo.defaultBranch}</small>
+                  <code>{repo.fullName}</code>
+                </button>
+              ))}
+              {recentSessions.length === 0 && repositories.length === 0 ? (
+                <div className="xv-workspace-projects-empty" role="listitem"><FolderGit2 aria-hidden="true" /><span><strong>No saved projects yet</strong><small>Connect GitHub or start a build. Your real work will appear here.</small></span></div>
+              ) : null}
+            </div>
+          </section>
           {TEMPLATE_COLLECTIONS.map((collection) => {
             const Icon = collection.icon;
             return (

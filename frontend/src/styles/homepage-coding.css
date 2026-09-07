@@ -2385,9 +2385,16 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   left: 4%;
   right: 4%;
   bottom: .4rem;
-  color: color-mix(in srgb, var(--text-primary) 14%, transparent);
+  color: transparent;
+  background: linear-gradient(105deg, color-mix(in srgb, var(--text-primary) 22%, transparent) 8%, #477ef5 34%, #43b78a 48%, #9b73ee 62%, color-mix(in srgb, var(--text-primary) 22%, transparent) 88%);
+  background-size: 240% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
+  font-style: italic;
   font-size: clamp(4.8rem, 15.5vw, 12.2rem);
-  font-weight: 950;
+  font-weight: 520;
   line-height: .7;
   letter-spacing: -.075em;
   text-align: center;
@@ -2395,7 +2402,10 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   white-space: nowrap;
   user-select: none;
   filter: drop-shadow(0 12px 22px color-mix(in srgb, var(--text-primary) 16%, transparent));
+  animation: xv-footer-live-ink 8s linear infinite;
 }
+@keyframes xv-footer-live-ink { from { background-position: 120% 50%; } to { background-position: -120% 50%; } }
+@media (prefers-reduced-motion: reduce) { .xv-marketing-footer__wordmark { animation: none; background-position: 50% 50%; } }
 @media (max-width: 900px) {
   .xv-marketing-footer__stage { grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr); }
   .xv-marketing-footer__main-card { grid-template-columns: 1fr; }

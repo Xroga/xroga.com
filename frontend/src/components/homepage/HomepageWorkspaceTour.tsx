@@ -28,12 +28,6 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { WorkspaceConnectionsStrip } from '@/components/terminal/WorkspaceConnectionsStrip';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
-import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
-import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
-import { EarthIcon } from '@/components/icons/animated/EarthIcon';
-import { AirplayIcon } from '@/components/icons/animated/AirplayIcon';
-import { TabletIcon } from '@/components/icons/animated/TabletIcon';
-import { CpuIcon } from '@/components/icons/animated/CpuIcon';
 import { SHOWCASE_TEMPLATES, thumbnailFor } from '@/lib/showcase/registry';
 import { skinForTheme } from '@/lib/theme';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -47,14 +41,6 @@ const CONNECTIONS = [
   { id: 'lemon_squeezy', name: 'Lemon Squeezy', tone: 'live' },
   { id: 'byok', name: 'BYOK', tone: 'live' },
   { id: 'sentry', name: 'Sentry', tone: 'soon' },
-] as const;
-
-const IDEA_TABS = [
-  { label: 'Suggestions', icon: LightbulbIcon },
-  { label: 'Websites', icon: EarthIcon },
-  { label: 'SaaS apps', icon: AirplayIcon },
-  { label: 'Mobile', icon: TabletIcon },
-  { label: 'Automation', icon: CpuIcon },
 ] as const;
 
 function WorkspaceTemplateRail() {
@@ -85,13 +71,13 @@ function WorkspaceTemplateRail() {
 function WorkspaceHome({ onContinueRecent, connectionHref }: { onContinueRecent: () => void; connectionHref: string }) {
   return (
     <div className="xv-wt-real-home">
+      <WorkspaceConnectionsStrip href={connectionHref} />
+
       <header className="xv-wt-real-greeting">
         <span>Good afternoon,</span>
         <strong>Orbit Clean E2E</strong>
         <p>Describe it. Build it. <em>Ship it.</em></p>
       </header>
-
-      <WorkspaceConnectionsStrip href={connectionHref} />
 
       <div className="xv-wt-real-composer">
         <div className="xv-wt-real-companion" aria-hidden="true">
@@ -112,10 +98,6 @@ function WorkspaceHome({ onContinueRecent, connectionHref }: { onContinueRecent:
           <b>Update current</b><span>New product</span><strong>Xroga/xroga-e2e-orbit-coffee-20260820-164425</strong><code>main⌄</code>
         </div>
       </div>
-
-      <nav className="xv-wt-real-ideas" aria-label="Build idea categories">
-        {IDEA_TABS.map(({ label, icon }) => <button type="button" key={label}><AnimatedIcon icon={icon} size={14} intro={false} />{label}</button>)}
-      </nav>
 
       <WorkspaceTemplateRail />
     </div>
@@ -140,7 +122,7 @@ function WorkspaceSidebar({ collapsed, onToggle, loggedIn }: { collapsed: boolea
       <nav className="xv-wt-sidebar-menu" aria-label="Workspace sections">
         <button type="button" className="is-active"><TerminalSquare /><span>Workspace</span></button>
         <Link href={loggedIn ? '/dashboard' : '/auth/signup'}><LayoutDashboard /><span>Dashboard</span></Link>
-        <Link href={loggedIn ? '/dashboard/projects' : '/auth/signup'}><FolderGit2 /><span>Repositories</span></Link>
+        <Link href={loggedIn ? '/dashboard/projects' : '/auth/signup'}><FolderGit2 /><span>Projects</span></Link>
         <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'}><Plug /><span>Integrations</span></Link>
         <Link href={loggedIn ? '/dashboard/publish' : '/auth/signup'}><Rocket /><span>Launch &amp; Growth</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
         <Link href="/showcase"><Compass /><span>Explore</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
@@ -148,7 +130,7 @@ function WorkspaceSidebar({ collapsed, onToggle, loggedIn }: { collapsed: boolea
       </nav>
 
       <section className="xv-wt-repo-history" aria-label="Saved repositories">
-        <header><b>REPOSITORIES</b><button type="button" aria-label="Filter repositories"><SlidersHorizontal /></button></header>
+        <header><b>PROJECTS</b><button type="button" aria-label="Filter projects"><SlidersHorizontal /></button></header>
         <button type="button" onClick={() => setRepoExpanded((value) => !value)}><ChevronDown className={repoExpanded ? '' : 'is-folded'} /><FolderGit2 /><strong>xroga-e2e-orbit-coffee</strong><small>9</small></button>
         {repoExpanded ? <div>{Array.from({ length: 6 }, (_, index) => <button type="button" key={index}><span>#{index + 1} terminal</span><GitBranch /><small>{index === 0 ? 'now' : '8d'}</small></button>)}</div> : null}
       </section>

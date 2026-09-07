@@ -7594,11 +7594,11 @@ body.theme-gray .xv-rp-loader {
   color: var(--background);
 }
 .xv-workspace-connections__mark svg { width: 14px; height: 14px; }
-.xv-workspace-connections__copy { display: grid; min-width: 0; line-height: 1.05; }
+.xv-workspace-connections__copy { display: grid; min-width: 0; border: 0; padding: 0; background: transparent; line-height: 1.05; text-align: left; cursor: pointer; }
 .xv-workspace-connections__copy strong { color: var(--foreground); font-size: 0.67rem; font-weight: 730; }
 .xv-workspace-connections__copy small { margin-top: 0.16rem; color: var(--muted); font-size: 0.48rem; white-space: nowrap; }
 .xv-workspace-connections__tabs { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 0.25rem; }
-.xv-workspace-connections__tabs > span {
+.xv-workspace-connections__tabs > button {
   display: inline-flex;
   min-width: 0;
   min-height: 27px;
@@ -7609,12 +7609,14 @@ body.theme-gray .xv-rp-loader {
   border-radius: 8px;
   background: color-mix(in srgb, var(--terminal-ui-inset, var(--background)) 80%, transparent);
   color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
 }
 .xv-workspace-connections__tabs svg { width: 13px; height: 13px; flex: none; }
 .xv-workspace-connections__tabs b { overflow: hidden; font-size: 0.5rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-.xv-workspace-connections__tabs i { padding: 0.15rem 0.22rem; border-radius: 4px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: 0.37rem; font-style: normal; font-weight: 760; letter-spacing: 0.05em; text-transform: uppercase; }
-.xv-workspace-connections > a { display: inline-flex; min-height: 28px; align-items: center; border-radius: 8px; padding: 0 0.58rem; background: var(--accent); color: white; font-size: 0.52rem; font-weight: 720; text-decoration: none; }
-.xv-workspace-connections > a:hover { filter: brightness(1.08); }
+.xv-workspace-connections__verified { width: 11px !important; height: 11px !important; margin-left: -0.12rem; color: #20b26b; }
+.xv-workspace-connections__manage { display: inline-flex; min-height: 28px; align-items: center; border: 0; border-radius: 8px; padding: 0 0.58rem; background: var(--accent); color: white; font-size: 0.52rem; font-weight: 720; cursor: pointer; }
+.xv-workspace-connections__manage:hover { filter: brightness(1.08); }
 
 @media (max-width: 720px) {
   .xv-workspace-connections { grid-template-columns: auto minmax(0, 1fr) auto; width: calc(100% - 0.35rem); margin-top: 0.45rem; }
@@ -7622,9 +7624,30 @@ body.theme-gray .xv-rp-loader {
   .xv-workspace-connections__tabs { grid-column: 1 / -1; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
   .xv-workspace-connections__tabs::-webkit-scrollbar { display: none; }
   .xv-workspace-connections__tabs { gap: 0.16rem; }
-  .xv-workspace-connections__tabs > span { flex: 0 0 auto; padding-inline: 0.3rem; }
-  .xv-workspace-connections__tabs i { display: none; }
+  .xv-workspace-connections__tabs > button { flex: 0 0 auto; padding-inline: 0.3rem; }
 }
+
+/* One quiet two-way control lives above the active composer. Its upper and lower
+   halves are separate targets even though they read as one animated glyph. */
+.xv-conversation-navigator {
+  position: absolute;
+  z-index: 18;
+  left: 50%;
+  top: -2.2rem;
+  width: 31px;
+  height: 31px;
+  transform: translateX(-50%);
+  border: 1px solid color-mix(in srgb, var(--foreground) 24%, transparent);
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--foreground) 72%, transparent);
+}
+.xv-conversation-navigator > div { position: absolute; inset: 0; pointer-events: none; }
+.xv-conversation-navigator > button { position: absolute; z-index: 1; left: 2px; width: 25px; height: 13px; border: 0; background: transparent; cursor: pointer; }
+.xv-conversation-navigator > button:first-of-type { top: 2px; border-radius: 999px 999px 4px 4px; }
+.xv-conversation-navigator > button:last-of-type { bottom: 2px; border-radius: 4px 4px 999px 999px; }
+.xv-conversation-navigator > button:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.xv-conversation-navigator > button:active { background: var(--accent); }
+.xv-conversation-navigator.is-away-from-latest { border-color: color-mix(in srgb, var(--accent) 58%, transparent); color: var(--accent); }
 .xv-welcome-editorial > em::after {
   content: '';
   position: absolute;
@@ -9337,13 +9360,25 @@ body.xv-workspace-resizing .xv-workspace-body {
    `display: none` rather than `visibility: hidden` — a hidden sidebar keeps its
    width and would leave a band of shell down the side of a "full" preview, which is
    exactly the bug this file already carries a note about for terminal fullscreen. */
-body.xv-workspace-expanded-active .xv-terminal-dock,
 body.xv-workspace-expanded-active .xv-sidebar-root,
 body.xv-workspace-expanded-active .xv-sidebar-edge-toggle,
 body.xv-workspace-expanded-active .xv-mobile-menu-btn,
 body.xv-workspace-expanded-active .xv-mobile-workspace-header,
 body.xv-workspace-expanded-active .xv-home-companion-stage {
   display: none !important;
+}
+
+/* The expanded editor still uses the canonical composer. Keeping the sibling dock
+   visible avoids a blank full-screen project and preserves the current conversation. */
+body.xv-workspace-expanded-active .xv-terminal-dock {
+  display: block !important;
+  left: 0 !important;
+  z-index: 280 !important;
+}
+body.xv-workspace-expanded-active .xv-terminal-dock-inner {
+  width: min(100%, 760px);
+  max-width: 760px !important;
+  margin-inline: auto;
 }
 
 /* No hard outline. The edge is a soft shadow and a barely-there hairline, so the
@@ -9356,6 +9391,7 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 7%, transparent),
     0 30px 90px rgba(0, 0, 0, 0.45);
+  padding-bottom: calc(var(--xv-chatbar-height, 112px) + 18px);
 }
 
 /* Phones and small tablets get one pane at a time. Two 180px columns is not a split
@@ -9535,11 +9571,43 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   /* Breathing room above and below the row. At 0.3rem the pills met the panel edge
      and the rule under them, which is what made the strip read as a box. */
   padding: 0.55rem 0.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
-.xv-ws-tabs::-webkit-scrollbar { display: none; }
+.xv-ws-tabs__scroller {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.xv-ws-tabs__scroller::-webkit-scrollbar { display: none; }
+.xv-ws-tabs__actions {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.25rem;
+  padding-left: 0.35rem;
+  background: linear-gradient(90deg, transparent, var(--app-panel, var(--surface-raised)) 22%);
+}
+
+.xv-ws-empty-state {
+  display: grid;
+  min-height: 100%;
+  place-content: center;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 2rem 1rem;
+  color: var(--muted);
+  text-align: center;
+}
+.xv-ws-empty-state > svg { width: 20px; height: 20px; color: var(--accent); }
+.xv-ws-empty-state > strong { color: var(--foreground); font-size: 0.75rem; }
+.xv-ws-empty-state > span { max-width: 25rem; font-size: 0.66rem; line-height: 1.45; }
 
 .xv-ws-tab {
   position: relative;
@@ -10168,6 +10236,41 @@ body.xv-workspace-expanded-active .xv-home-companion-stage {
   border-bottom: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
 }
 .xv-workspace-template-collection:last-child { border-bottom: 0; }
+.xv-workspace-real-projects {
+  display: grid;
+  grid-auto-columns: minmax(158px, 1fr);
+  grid-auto-flow: column;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding: 0 0.58rem 0.62rem;
+  scrollbar-width: thin;
+}
+.xv-workspace-real-projects > button {
+  display: grid;
+  min-height: 126px;
+  align-content: start;
+  gap: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+  border-radius: 11px;
+  padding: 0.55rem;
+  background: color-mix(in srgb, var(--terminal-ui-inset, var(--background)) 52%, transparent);
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+}
+.xv-workspace-real-projects > button:hover { border-color: color-mix(in srgb, var(--accent) 38%, transparent); background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.xv-workspace-project-folder { position: relative; display: grid; width: 100%; height: 56px; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--foreground) 6%, transparent); }
+.xv-workspace-project-folder > svg { width: 28px; height: 28px; color: color-mix(in srgb, var(--foreground) 74%, transparent); }
+.xv-workspace-project-folder > i { position: absolute; right: 5px; bottom: 5px; border-radius: 999px; padding: 0.13rem 0.3rem; background: var(--terminal-ui-raised, var(--card)); color: var(--muted); font-size: 0.42rem; font-style: normal; }
+.xv-workspace-real-projects strong { overflow: hidden; font-size: 0.6rem; text-overflow: ellipsis; white-space: nowrap; }
+.xv-workspace-real-projects small { display: flex; align-items: center; gap: 0.2rem; color: var(--muted); font-size: 0.46rem; }
+.xv-workspace-real-projects small svg { width: 10px; height: 10px; }
+.xv-workspace-real-projects code { overflow: hidden; color: color-mix(in srgb, var(--foreground) 62%, transparent); font-size: 0.43rem; text-overflow: ellipsis; white-space: nowrap; }
+.xv-workspace-projects-empty { display: flex; min-height: 86px; align-items: center; gap: 0.65rem; border: 1px dashed color-mix(in srgb, var(--foreground) 14%, transparent); border-radius: 11px; padding: 0.7rem; color: var(--muted); }
+.xv-workspace-projects-empty > svg { width: 24px; height: 24px; }
+.xv-workspace-projects-empty span { display: grid; gap: 0.18rem; }
+.xv-workspace-projects-empty strong { color: var(--foreground); font-size: 0.62rem; }
+.xv-workspace-projects-empty small { font-size: 0.5rem; }
 .xv-workspace-collection-head {
   display: flex;
   align-items: center;

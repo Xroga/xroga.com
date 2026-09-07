@@ -205,19 +205,21 @@ export function DevWorkspacePanel({
       )}
     >
       <header className="xv-ws-tabs">
-        {TABS.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setActiveTab(id)}
-            className={cn('xv-ws-tab', activeTab === id && 'is-active')}
-            aria-current={activeTab === id ? 'page' : undefined}
-          >
-            <Icon className="h-3 w-3" />
-            {label}
-          </button>
-        ))}
-        <div className="ml-auto flex items-center gap-1 shrink-0">
+        <nav className="xv-ws-tabs__scroller" aria-label="Project edit views">
+          {TABS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={cn('xv-ws-tab', activeTab === id && 'is-active')}
+              aria-current={activeTab === id ? 'page' : undefined}
+            >
+              <Icon className="h-3 w-3" />
+              {label}
+            </button>
+          ))}
+        </nav>
+        <div className="xv-ws-tabs__actions">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
@@ -264,7 +266,11 @@ export function DevWorkspacePanel({
             </div>
             <div className="flex-1 overflow-y-auto p-2 space-y-0.5 font-mono text-[11px]">
               {filtered.length === 0 ? (
-                <p className="text-[var(--muted)] p-3 text-center">No files yet</p>
+                <div className="xv-ws-empty-state">
+                  {status === 'updating' ? <Loader2 className="animate-spin" aria-hidden="true" /> : <FolderTree aria-hidden="true" />}
+                  <strong>{status === 'updating' ? 'Preparing project files…' : 'No project files yet'}</strong>
+                  <span>Describe what to build in the chatbar below.</span>
+                </div>
               ) : (
                 filtered.map((f) => (
                   <button
@@ -338,9 +344,11 @@ export function DevWorkspacePanel({
                 className="flex-1 w-full min-h-[280px] resize-none bg-[var(--background)]/60 p-3 font-mono text-[11px] leading-relaxed outline-none"
               />
             ) : (
-              <p className="p-6 text-xs text-[var(--muted)] text-center">
-                Open a file from the Files tab to inspect every line.
-              </p>
+              <div className="xv-ws-empty-state">
+                <FileCode2 aria-hidden="true" />
+                <strong>Select a project file</strong>
+                <span>Open a file from Files, or describe the next change below.</span>
+              </div>
             )}
           </div>
         ) : null}

@@ -79,7 +79,7 @@ export function UserPromptBubble({ content }: { content: string }) {
 
   return (
     <div className="inline-block max-w-full text-left">
-      <span className="xv-user-bubble">
+      <span className={cn('xv-user-bubble', expanded && 'is-expanded')}>
         <span className="opacity-60 mr-2">&gt;</span>
         <span className={cn(!expanded && long && 'line-clamp-3')}>{safe}</span>
       </span>
@@ -87,16 +87,13 @@ export function UserPromptBubble({ content }: { content: string }) {
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
+          aria-expanded={expanded}
+          aria-label={expanded ? 'Collapse full prompt' : 'Expand full prompt'}
           className="flex items-center gap-0.5 text-[9px] text-[#006aff] mt-1 font-semibold px-3"
         >
           <ChevronDown className={cn('w-3 h-3', expanded && 'rotate-180')} />
           {expanded ? 'Show less' : 'Full prompt'}
         </button>
-      )}
-      {expanded && long && (
-        <div className="mt-1.5 mx-1 px-3 py-2 rounded-lg border border-[var(--card-border)]/40 bg-[var(--background)]/60 text-[11px] text-[var(--foreground)] whitespace-pre-wrap break-words">
-          {safe}
-        </div>
       )}
     </div>
   );

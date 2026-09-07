@@ -81,7 +81,9 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 @keyframes xv-companion-success { 35% { transform: translateY(-10px) scale(1.03); } 65% { transform: translateY(2px); } }
 @keyframes xv-companion-arrival { 0% { opacity:0; transform:translateY(18px) scale(.78); } 68% { opacity:1; transform:translateY(-4px) scale(1.04); } 100% { transform:none; } }
 
-.xv-companion-operation-dot { position: absolute; right: .15rem; bottom: .35rem; width: .75rem; height: .75rem; border-radius: 999px; border: 2px solid var(--card); background: var(--xv-companion-core); box-shadow: 0 0 12px var(--xv-companion-core); }
+.xv-companion-usage-meter { position: absolute; right: -.12rem; bottom: .35rem; width: 4px; height: 28px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--foreground) 12%, transparent); }
+.xv-companion-usage-meter > i { position: absolute; right: 0; bottom: 0; left: 0; min-height: 2px; border-radius: inherit; background: var(--accent); transition: height 260ms ease; }
+.xv-companion-usage-meter[data-known='false'] > i { height: 35% !important; opacity: .35; }
 .xv-companion-panel { position: absolute; z-index: 400; width: min(23rem, calc(100vw - 1.5rem)); padding: 1rem; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--card-border)); border-radius: 1.25rem; background: color-mix(in srgb, var(--card) 94%, transparent); color: var(--foreground); box-shadow: 0 24px 70px rgba(0,0,0,.3); backdrop-filter: blur(22px); text-align: left; }
 .xv-companion--hero .xv-companion-panel { left: 50%; bottom: 1.25rem; transform: translate(-50%, 100%); }
 .xv-companion--composer .xv-companion-panel { right: 0; bottom: calc(100% + .65rem); }

@@ -195,7 +195,6 @@ export function HomepageAllInOne() {
   return (
     <section className="xv-aio" aria-labelledby="xroga-all-in-one-heading">
       <header className="xv-aio__heading">
-        <p>ONE XROGA WORKSPACE</p>
         <h2 id="xroga-all-in-one-heading">The whole build. <em>Connected.</em></h2>
         <span>Brief to release, in one flow.</span>
       </header>

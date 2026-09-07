@@ -12,15 +12,18 @@ const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const REPO = read('../components/terminal/RepoContextBar.tsx');
 const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
 const CONNECTIONS = read('../components/terminal/WorkspaceConnectionsStrip.tsx');
+const INTEGRATIONS = read('../components/terminal/IntegrationsModal.tsx');
+const PRIVACY = read('../components/settings/PrivacySettingsPanel.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
-test('an empty terminal centers the one canonical composer and exposes starters', () => {
+test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
   assert.match(DOCK, /messages\.length === 0/);
   assert.match(DOCK, /showStarterExperience = emptyWorkspace && !workspaceOpen/);
   assert.match(DOCK, /xv-terminal-dock--idle/);
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
-  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceStarterIdeas \/>[\s\S]*<WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" \/>/);
+  assert.doesNotMatch(DOCK, /<WorkspaceStarterIdeas \/>/);
+  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" \/>/);
   assert.match(DASHBOARD, /--xv-pane-top/);
   assert.match(DASHBOARD, /--xv-pane-bottom/);
   assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\([^}]*bottom:\s*var\(--xv-pane-bottom[^}]*overflow-y:\s*auto[^}]*transform:\s*none/);
@@ -70,14 +73,39 @@ test('ideas stay collapsed until a category is chosen, then fill the real compos
 });
 
 test('the real new terminal and homepage preview share a compact connection strip', () => {
-  assert.match(WELCOME, /composer \? <WorkspaceConnectionsStrip href="\/dashboard\/integrations" \/> : null/);
+  assert.match(WELCOME, /composer \? <WorkspaceConnectionsStrip href="\/dashboard\/integrations" interactive \/> : null/);
   assert.match(CONNECTIONS, /GitHub/);
   assert.match(CONNECTIONS, /Vercel/);
   assert.match(CONNECTIONS, /Supabase/);
   assert.match(CONNECTIONS, /AI key/);
-  assert.match(CONNECTIONS, /Optional · add only what this build needs/);
+  assert.match(CONNECTIONS, /Use only what this build needs/);
   assert.match(CSS, /\.xv-workspace-connections\s*\{[^}]*grid-template-columns/);
   assert.match(CSS, /\.xv-welcome-editorial\s*\{[^}]*font-size:\s*clamp\(1\.12rem, 2\.15vw, 1\.82rem\)/);
+});
+
+test('a conversation exposes one compact navigator for its first and latest turns', () => {
+  assert.match(DOCK, /messages\.length > 0 && !incognito/);
+  assert.match(DOCK, /cn\('xv-conversation-navigator'/);
+  assert.match(DOCK, /aria-label="Go to first conversation"/);
+  assert.match(DOCK, /aria-label="Go to latest conversation"/);
+  assert.match(DOCK, /<ChevronsUpDownIcon/);
+  assert.match(CSS, /\.xv-conversation-navigator\s*\{[^}]*border-radius:\s*50%/);
+});
+
+test('full prompt expands the existing prompt bubble instead of rendering a duplicate box', () => {
+  assert.match(PRIVACY, /expanded && 'is-expanded'/);
+  assert.equal((PRIVACY.match(/className="xv-settings-prompt-expanded"/g) ?? []).length, 0);
+  assert.match(PRIVACY, /aria-label=\{expanded \? 'Collapse full prompt' : 'Expand full prompt'\}/);
+});
+
+test('connection management reads real provider status and starts provider authorization', () => {
+  for (const provider of ['github', 'vercel', 'supabase']) {
+    assert.match(CONNECTIONS, new RegExp(`api\\.${provider}\\.status\\(\\)`));
+    assert.match(INTEGRATIONS, new RegExp(`api\\.${provider}\\.status\\(\\)`));
+    assert.match(INTEGRATIONS, new RegExp(`api\\.${provider}\\.oauthUrl\\(\\)`));
+  }
+  assert.match(INTEGRATIONS, /isConnected \? 'Manage' : 'Connect'/);
+  assert.match(INTEGRATIONS, /CheckCircle2/);
 });
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {
@@ -134,7 +162,10 @@ test('the bottom inspiration bar opens the real catalog automatically on workspa
   assert.match(TEMPLATES, /closest<HTMLElement>\('\.xv-terminal-dock--idle'\)/);
   assert.match(TEMPLATES, /scrollRoot\.addEventListener\('scroll', openFromScroll, \{ passive: true \}\)/);
   assert.match(TEMPLATES, /scrollRoot\.scrollTop > 28[\s\S]*setExpanded\(true\)/);
-  assert.match(TEMPLATES, /Recent builds/);
+  assert.match(TEMPLATES, /Recent projects/);
+  assert.match(TEMPLATES, /loadTerminalHistory\(\)\.filter/);
+  assert.match(TEMPLATES, /api\.github\.listRepos\(\)/);
+  assert.doesNotMatch(TEMPLATES, /id: 'recent-builds'/);
   assert.match(TEMPLATES, /Community templates/);
   assert.match(TEMPLATES, /Xroga templates/);
   assert.match(TEMPLATES, /Browse all/);

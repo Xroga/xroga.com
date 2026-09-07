@@ -50,10 +50,10 @@ test('the interactive homepage tour follows the real homepage theme and workspac
   assert.match(CSS, /xv-wt-window\[class\*='terminal-skin-'\][\s\S]*--hc-bg:\s*var\(--terminal-ui-surface\)/);
 });
 
-test('the homepage workspace mirrors the real greeting, composer, ideas, and template rail', () => {
+test('the homepage workspace mirrors the real greeting, composer, and template rail without duplicate idea tabs', () => {
   assert.match(TOUR, /xv-wt-real-greeting/);
   assert.match(TOUR, /<HomepageChatBar/);
-  assert.match(TOUR, /const IDEA_TABS = \[/);
+  assert.doesNotMatch(TOUR, /IDEA_TABS|Build idea categories|Suggestions/);
   assert.match(TOUR, /SHOWCASE_TEMPLATES\.slice\(0, 4\)/);
   assert.match(TOUR, /thumbnailFor\(template, 'desktop'\)/);
   assert.match(TOUR, /href=\{`\/showcase\/\$\{template\.slug\}\/preview`\}/);

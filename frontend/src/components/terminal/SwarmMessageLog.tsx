@@ -92,7 +92,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const storeIncognitoRaw = usePrivacyStore((s) => s.incognito);
   const storeIncognito = hydrated && storeIncognitoRaw;
   const isIncognito = incognito || storeIncognito;
-  const { setShowJumpToLatest, registerScrollToLatest } = useTerminalScroll();
+  const { setShowJumpToLatest, registerScrollToFirst, registerScrollToLatest } = useTerminalScroll();
   const bottomRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const stickToBottomRef = useRef(true);
@@ -205,6 +205,19 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   }, [visibleMessages]);
 
   const chatTurns = useMemo(() => buildChatTurns(visibleMessages), [visibleMessages]);
+
+  const scrollToFirst = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    const firstTurn = chatTurns[0];
+    if (firstTurn) messageRefs.current[firstTurn.id]?.scrollIntoView({ behavior, block: 'start' });
+    else transcriptScrollRoot().scrollTo({ top: 0, behavior });
+    stickToBottomRef.current = false;
+    userScrolledUpRef.current = true;
+    setShowJumpToLatest(true);
+  }, [chatTurns, setShowJumpToLatest]);
+
+  useEffect(() => {
+    registerScrollToFirst(scrollToFirst);
+  }, [registerScrollToFirst, scrollToFirst]);
 
   useEffect(() => {
     if (chatTurns.length === 0) {

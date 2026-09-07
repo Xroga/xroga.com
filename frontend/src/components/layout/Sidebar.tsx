@@ -141,10 +141,10 @@ const navItems: NavEntry[] = [
   {
     href: '/dashboard/projects',
     motion: 'flip' as const,
-    label: 'Repositories',
+    label: 'Projects',
     icon: FolderGit2,
     animated: FolderOpenIcon,
-    tip: 'Open connected repositories and their durable Xroga workspaces.',
+    tip: 'Open connected repositories, projects, and their durable Xroga workspaces.',
   },
   {
     href: '/dashboard/integrations',
@@ -689,10 +689,10 @@ export function Sidebar({ displayName }: SidebarProps) {
                   <AnimatedIcon icon={LayoutGridIcon} />
                 </Link>
               </HoverTip>
-              <HoverTip label="Repositories" description="Open connected repositories and their workspaces.">
+              <HoverTip label="Projects" description="Open connected repositories and their workspaces.">
                 <Link
                   href="/dashboard/projects"
-                  aria-label="Repositories"
+                  aria-label="Projects"
                   onClick={handleNavClick}
                   className={cn(isActive('/dashboard/projects') && 'is-active')}
                 >

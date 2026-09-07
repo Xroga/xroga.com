@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Search, X, Plug, ChevronDown } from 'lucide-react';
+import { Search, X, Plug, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { INTEGRATIONS, INTEGRATION_CATEGORIES } from '@/lib/integrations';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { isConnectableIntegration } from '@/lib/connectableIntegrations';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
 
 interface IntegrationsModalProps {
   open: boolean;
@@ -20,6 +20,8 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [connected, setConnected] = useState<Record<string, boolean>>({});
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -27,6 +29,22 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    setChecking(true);
+    void Promise.allSettled([api.github.status(), api.vercel.status(), api.supabase.status()]).then((results) => {
+      if (!active) return;
+      setConnected({
+        github: results[0].status === 'fulfilled' && results[0].value.connected,
+        vercel: results[1].status === 'fulfilled' && results[1].value.connected,
+        supabase: results[2].status === 'fulfilled' && results[2].value.connected,
+      });
+      setChecking(false);
+    });
+    return () => { active = false; };
+  }, [open]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -38,14 +56,39 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
   const liveFiltered = useMemo(() => filtered.filter((i) => isConnectableIntegration(i.id)), [filtered]);
   const comingSoonFiltered = useMemo(() => filtered.filter((i) => !isConnectableIntegration(i.id)), [filtered]);
 
-  function handleConnect(id: string, name: string) {
+  async function handleConnect(id: string, name: string) {
     if (!isConnectableIntegration(id)) {
       toast('Coming soon', { icon: '⏳' });
       return;
     }
-    toast(`Open Integrations to connect ${name}`, { icon: '🔌' });
-    onClose();
-    router.push('/dashboard/integrations');
+    if (connected[id]) {
+      onClose();
+      router.push('/dashboard/integrations');
+      return;
+    }
+    try {
+      if (id === 'github') {
+        const { url } = await api.github.oauthUrl();
+        window.location.href = url;
+        return;
+      }
+      if (id === 'vercel') {
+        const { url, oauthConfigured } = await api.vercel.oauthUrl();
+        if (!oauthConfigured || !url) throw new Error('Vercel authorization is not configured.');
+        window.location.href = url;
+        return;
+      }
+      if (id === 'supabase') {
+        const { url, oauthConfigured, message } = await api.supabase.oauthUrl();
+        if (!oauthConfigured || !url) throw new Error(message || 'Supabase authorization is not configured.');
+        window.location.href = url;
+        return;
+      }
+      onClose();
+      router.push('/dashboard/integrations');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `Could not connect ${name}`);
+    }
   }
 
   if (!open) return null;
@@ -84,28 +127,29 @@ export function IntegrationsModal({ open, onClose }: IntegrationsModalProps) {
                 <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-2">{cat}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map((item) => {
-                    const connected = item.status === 'connected';
+                    const isConnected = connected[item.id] === true;
                     return (
                       <div
                         key={item.id}
                         className="relative flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] transition-colors overflow-hidden hover:bg-white/[0.07]"
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                          <div className="relative w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
                             <IntegrationLogo id={item.id} name={item.name} size={22} className="object-contain" />
+                            {isConnected ? <CheckCircle2 className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[var(--card)] text-emerald-500" aria-label="Connected" /> : null}
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-sm font-medium truncate">{item.name}</p>
-                            <p className="text-[10px] text-[var(--muted)]">{connected ? 'Connected' : 'Available'}</p>
+                            <p className="text-[10px] text-[var(--muted)]">{checking ? 'Checking…' : isConnected ? 'Connected' : 'Available'}</p>
                           </div>
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleConnect(item.id, item.name)}
+                          onClick={() => void handleConnect(item.id, item.name)}
                           className="shrink-0 relative z-[1] flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-[var(--accent)]/15 border border-[var(--accent)]/35 text-[var(--foreground)] hover:bg-[var(--accent)]/25 transition-colors"
                         >
                           <Plug className="w-3 h-3" />
-                          {connected ? 'Manage' : 'Install'}
+                          {isConnected ? 'Manage' : 'Connect'}
                         </button>
                       </div>
                     );

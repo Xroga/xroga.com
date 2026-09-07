@@ -7,7 +7,6 @@ import { RepoContextBar } from './RepoContextBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
-import { ChevronDown } from 'lucide-react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useVisualViewportBottom } from '@/hooks/useVisualViewportBottom';
@@ -16,11 +15,11 @@ import { INCOGNITO_PRIVATE_ROOM_NOTICE } from '@/lib/incognito';
 import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { WorkspaceStarterIdeas } from '@/components/dashboard/WorkspaceStarterIdeas';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
 import { DashboardWelcome, WorkspaceComposerKicker } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
+import { ChevronsUpDownIcon } from '@/components/icons/animated/ChevronsUpDownIcon';
 
 const FULLSCREEN_BUILD_COMMANDS = [
   '/ launch-ready product from one clear brief',
@@ -45,7 +44,7 @@ export function TerminalDock() {
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const keyboardOffset = useVisualViewportBottom();
-  const { showJumpToLatest, scrollToLatest } = useTerminalScroll();
+  const { showJumpToLatest, scrollToFirst, scrollToLatest } = useTerminalScroll();
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
   const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
@@ -102,23 +101,6 @@ export function TerminalDock() {
       data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
       data-testid="persistent-terminal-dock"
     >
-      {showJumpToLatest && (
-        <button
-          type="button"
-          onClick={() => scrollToLatest('smooth')}
-          className={cn(
-            'absolute z-[220] flex h-7 w-7 items-center justify-center rounded-full',
-            'border border-[var(--card-border)] bg-[var(--card)]/95 backdrop-blur-md shadow-md',
-            'text-[var(--foreground)] hover:bg-[var(--accent)]/10 hover:border-[var(--accent)]/40',
-            'transition-all animate-in fade-in zoom-in-95',
-            dashboardFullscreen ? 'right-6 top-3' : 'right-3 sm:right-4 lg:right-6 top-2',
-          )}
-          aria-label="Jump to latest output"
-          title="Jump to latest"
-        >
-          <ChevronDown className="h-3.5 w-3.5" />
-        </button>
-      )}
       <div
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
@@ -169,6 +151,13 @@ export function TerminalDock() {
                 <DashboardWelcome composer />
               ) : null}
               <div className="xv-chatbar-stack relative">
+                {messages.length > 0 && !incognito ? (
+                  <div className={cn('xv-conversation-navigator', showJumpToLatest && 'is-away-from-latest')} aria-label="Conversation position">
+                    <ChevronsUpDownIcon size={19} aria-hidden="true" />
+                    <button type="button" onClick={() => scrollToFirst('smooth')} aria-label="Go to first conversation" title="First conversation" />
+                    <button type="button" onClick={() => scrollToLatest('smooth')} aria-label="Go to latest conversation" title="Latest conversation" />
+                  </div>
+                ) : null}
                 {showStarterExperience && !incognito ? (
                   <WorkspaceComposerKicker displayName={displayName} />
                 ) : null}
@@ -182,7 +171,6 @@ export function TerminalDock() {
               ) : null}
               {showStarterExperience && !incognito ? (
                 <div className="xv-workspace-starter-stack">
-                  <WorkspaceStarterIdeas />
                   <WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" />
                 </div>
               ) : null}

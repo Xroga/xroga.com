@@ -290,9 +290,9 @@ test('every fullscreen and minimize control animates its corners', () => {
   }
 });
 
-test('Repositories opens its folder, in the row and in the rail', () => {
-  const at = SIDEBAR.indexOf("label: 'Repositories',");
-  assert.ok(at > 0, 'the Repositories row is gone');
+test('Projects opens its folder, in the row and in the rail', () => {
+  const at = SIDEBAR.indexOf("label: 'Projects',");
+  assert.ok(at > 0, 'the Projects row is gone');
   assert.match(SIDEBAR.slice(at, at + 260), /animated: FolderOpenIcon,/, 'the row lost the folder');
   const start = SIDEBAR.indexOf('xv-sidebar-collapsed-actions');
   const rail = SIDEBAR.slice(start, SIDEBAR.indexOf('<SidebarNavScroller', start));
