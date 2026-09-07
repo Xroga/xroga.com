@@ -69,10 +69,26 @@ export const CODING_MODEL_TRANSPORT = {
  * keys is ever mistyped, which the widened `satisfies` above no longer catches on its own.
  */
 const MODEL_ID_TRANSPORT_COVERAGE: Partial<Record<ModelId, string>> = {
-  kimi_k3: CODING_MODEL_TRANSPORT.kimi_k3,
-  glm_5_2: CODING_MODEL_TRANSPORT.glm_5_2,
-  deepseek_v4_pro: CODING_MODEL_TRANSPORT.deepseek_v4_pro,
-  deepseek_v4_flash: CODING_MODEL_TRANSPORT.deepseek_v4_flash,
+  kimi_k3:
+    CODING_MODEL_TRANSPORT.kimi_k3,
+
+  kimi_k2_7:
+    CODING_MODEL_TRANSPORT.kimi_k2_7,
+
+  glm_5_2:
+    CODING_MODEL_TRANSPORT.glm_5_2,
+
+  glm_5_3:
+    CODING_MODEL_TRANSPORT.glm_5_3,
+
+  glm_5_3_flash:
+    CODING_MODEL_TRANSPORT.glm_5_3_flash,
+
+  deepseek_v4_pro:
+    CODING_MODEL_TRANSPORT.deepseek_v4_pro,
+
+  deepseek_v4_flash:
+    CODING_MODEL_TRANSPORT.deepseek_v4_flash,
 };
 void MODEL_ID_TRANSPORT_COVERAGE;
 
