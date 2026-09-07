@@ -75,22 +75,52 @@ export type RouteFamily =
  * at the head even while the model is configuration-gated — the gate is reported honestly at
  * selection time rather than by quietly reordering the policy.
  */
-const STARTING_CHAINS: Record<RouteFamily, readonly string[]> = {
-  routine: ['deepseek_v4_flash', 'deepseek_v4_pro', 'kimi_k3'],
-  reasoning: ['deepseek_v4_pro', 'kimi_k3', 'glm_5_2'],
-  coding: ['kimi_k2_7', 'glm_5_2', 'kimi_k3', 'deepseek_v4_pro'],
-  long_horizon: ['glm_5_2', 'kimi_k3', 'kimi_k2_7', 'deepseek_v4_pro'],
-  // §8: "K3 → only another genuinely supported visual route".
-  //
-  // The Grok models are exactly that for *reading* an image: they genuinely accept one, and
-  // they hold `inspectMedia` authority. They are safe to list because the authority filter
-  // removes them the moment the task also needs to write — so "describe this screenshot"
-  // reaches a working route, while "implement this mockup" never reaches a research model.
-  //
-  // Listing them is what stops an image request producing no route at all when K3's vision
-  // support has not been verified by an operator.
-  vision: ['kimi_k3', 'grok_4_5', 'grok_4_3'],
-  research: ['grok_4_5', 'grok_4_3'],
+const STARTING_CHAINS: Record<
+  RouteFamily,
+  readonly string[]
+> = {
+  routine: [
+    'deepseek_v4_flash',
+    'glm_5_3_flash',
+    'glm_5_3',
+  ],
+
+  reasoning: [
+    'glm_5_3',
+    'kimi_k3',
+    'glm_5_3_flash',
+    'deepseek_v4_pro',
+  ],
+
+  coding: [
+    'glm_5_3_flash',
+    'glm_5_3',
+    'kimi_k3',
+    'glm_5_2',
+    'deepseek_v4_pro',
+  ],
+
+  long_horizon: [
+    'glm_5_3',
+    'kimi_k3',
+    'glm_5_3_flash',
+    'glm_5_2',
+  ],
+
+  // GLM-5.3 Flash is the confirmed multimodal
+  // GLM route. Regular 5.3 remains text-only.
+  vision: [
+    'glm_5_3_flash',
+    'kimi_k3',
+    'grok_4_3',
+    'grok_4_5',
+  ],
+
+  // Temporary until the research cleanup batch.
+  research: [
+    'grok_4_3',
+    'grok_4_5',
+  ],
 };
 
 const CLASS_TO_FAMILY: Record<BlackHoleTaskClass, RouteFamily> = {
