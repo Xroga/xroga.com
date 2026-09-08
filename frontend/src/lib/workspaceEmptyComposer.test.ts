@@ -77,7 +77,7 @@ test('the real new terminal and homepage preview share a compact integrations co
   assert.match(CONNECTIONS, /GitHub/);
   assert.match(CONNECTIONS, /Vercel/);
   assert.match(CONNECTIONS, /Supabase/);
-  assert.match(CONNECTIONS, /AI key/);
+  assert.doesNotMatch(CONNECTIONS, /AI key/);
   assert.match(CONNECTIONS, /<strong>Integrations<\/strong>/);
   assert.match(CONNECTIONS, /xv-workspace-connections__preview/);
   assert.match(CONNECTIONS, /setModalOpen\(true\)/);
@@ -107,7 +107,7 @@ test('connection management reads real provider status and starts provider autho
     assert.match(INTEGRATIONS, new RegExp(`api\\.${provider}\\.status\\(\\)`));
     assert.match(INTEGRATIONS, new RegExp(`api\\.${provider}\\.oauthUrl\\(\\)`));
   }
-  assert.match(INTEGRATIONS, /isConnected \? 'Manage' : 'Connect'/);
+  assert.match(INTEGRATIONS, /isConnected\s*\?\s*'Manage'\s*:\s*'Connect'/);
   assert.match(INTEGRATIONS, /CheckCircle2/);
 });
 

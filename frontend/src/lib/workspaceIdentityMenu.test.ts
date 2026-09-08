@@ -36,7 +36,7 @@ test('new task uses the existing repo-preserving chat primitive', () => {
 });
 
 test('sync confidence comes from a real GitHub HEAD read', () => {
-  assert.match(MENU, /api\.github\.repoState/);
+  assert.match(MENU, /api\.github\s*\.repoState/);
   assert.match(API, /repoState:/);
   assert.match(ROUTE, /router\.get\('\/repo-state'/);
 });

@@ -267,7 +267,7 @@ test('the terminal prompt cursor blinks continuously and is not hover-driven', (
 
   assert.match(WORKSPACE_IDENTITY, /<TerminalPromptIcon/, 'the workspace identity lost the prompt glyph');
   assert.match(WORKSPACE_IDENTITY, /useProjectWorkspaceStore/, 'the workspace identity is no longer connected to the active repository');
-  assert.match(WORKSPACE_IDENTITY, /terminals/, 'the workspace identity lost its terminal count');
+  assert.match(WORKSPACE_IDENTITY, /STATUS_LABEL\[visibleStatus\]/, 'the workspace identity lost its repository status');
   for (const [name, source] of [['SwarmMessageLog', LOG], ['DashboardView', DASHBOARD]] as const) {
     assert.match(source, /<WorkspaceIdentityMenu/, `${name} lost the interactive prompt identity`);
     assert.ok(!/<Terminal\b/.test(source), `${name} still renders the static terminal glyph`);

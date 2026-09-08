@@ -8,7 +8,6 @@ import {
   ChevronDown,
   ChevronRight,
   ExternalLink,
-  Github,
   Globe2,
   Loader2,
   Plus,
@@ -17,6 +16,7 @@ import {
   Undo2,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { api } from '@/lib/api';
@@ -366,7 +366,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               onClick={() => openExternal(repoUrl)}
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition hover:bg-[var(--accent-dim)]"
             >
-              <Github className="h-4 w-4 shrink-0" />
+              <GithubGlyphIcon size={16} className="shrink-0" />
               <span className="flex-1">Open on GitHub</span>
               <ExternalLink className="h-3.5 w-3.5 opacity-55" />
             </button>
