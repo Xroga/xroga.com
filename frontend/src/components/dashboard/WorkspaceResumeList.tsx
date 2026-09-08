@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { FolderGit2, History, Play } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
-import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext, saveSelectedRepoContext, PROJECT_CONTEXT_CHANGED_EVENT } from '@/lib/repoContext';
 import { loadTerminalHistory, type TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { loadTerminalHistoryEntry } from '@/lib/terminalSessionStorage';
 import { GITHUB_PROJECT_SAVED_EVENT, GITHUB_REPO_CONTEXT_EVENT, notifyGithubRepoContext } from '@/lib/githubProjectEvents';
@@ -30,11 +30,13 @@ export function WorkspaceResumeList({ className }: { className?: string }) {
   useEffect(() => {
     refresh();
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, refresh);
+    window.addEventListener(PROJECT_CONTEXT_CHANGED_EVENT, refresh);
     window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, refresh);
     window.addEventListener('storage', refresh);
     window.addEventListener('xroga-resume-workspace', refresh);
     return () => {
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, refresh);
+      window.removeEventListener(PROJECT_CONTEXT_CHANGED_EVENT, refresh);
       window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, refresh);
       window.removeEventListener('storage', refresh);
       window.removeEventListener('xroga-resume-workspace', refresh);
@@ -54,8 +56,9 @@ export function WorkspaceResumeList({ className }: { className?: string }) {
     if (!resolved.messages?.length) return;
 
     if (resolved.githubRepoName?.includes('/')) {
-      saveSelectedRepoContext({ repo: resolved.githubRepoName, branch: 'main' });
-      notifyGithubRepoContext(resolved.githubRepoName, 'main');
+      const branch = resolved.githubBranch || 'main';
+      saveSelectedRepoContext({ repo: resolved.githubRepoName, branch, projectRoot: resolved.projectRoot || '/' });
+      notifyGithubRepoContext(resolved.githubRepoName, branch);
     }
 
     await restoreTerminalSession({

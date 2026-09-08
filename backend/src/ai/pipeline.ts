@@ -296,6 +296,7 @@ export interface BuildClientMeta {
   buildUpdate?: boolean;
   githubTargetRepo?: string;
   githubTargetBranch?: string;
+  projectRoot?: string;
   /**
    * Visibility for a repository this build creates. Only ever the two literal values the
    * user can pick between. Absent means private — see `parseClientMeta`.
@@ -392,6 +393,10 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
         : undefined,
     githubTargetBranch:
       typeof m.githubTargetBranch === 'string' ? m.githubTargetBranch : undefined,
+    projectRoot:
+      typeof m.projectRoot === 'string' && m.projectRoot.startsWith('/')
+        ? m.projectRoot
+        : '/',
     // Only the exact string "public" grants publication. Anything else — absent, null,
     // "PUBLIC", a truthy object, a client that never learned about this field — is
     // private. The failure mode of guessing wrong here is a permanently public

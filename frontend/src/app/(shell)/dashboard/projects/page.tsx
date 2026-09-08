@@ -31,7 +31,7 @@ import {
 } from '@/lib/projectArchive';
 import { loadTerminalHistory, removeTerminalHistoryEntry, type TerminalHistoryEntry } from '@/lib/terminalHistory';
 import { loadChatArchive, removeChatArchiveEntry, type ChatArchiveEntry } from '@/lib/chatArchive';
-import { getSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext, PROJECT_CONTEXT_CHANGED_EVENT } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
@@ -61,9 +61,11 @@ function ProjectsHubInner() {
     const syncRepo = () => setSelectedRepo(getSelectedRepoContext()?.repo ?? null);
     syncRepo();
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+    window.addEventListener(PROJECT_CONTEXT_CHANGED_EVENT, syncRepo);
     window.addEventListener('storage', syncRepo);
     return () => {
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, syncRepo);
+      window.removeEventListener(PROJECT_CONTEXT_CHANGED_EVENT, syncRepo);
       window.removeEventListener('storage', syncRepo);
     };
   }, []);

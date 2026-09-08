@@ -93,6 +93,7 @@ export interface StreamSwarmOptions {
     buildUpdate?: boolean;
     githubTargetRepo?: string;
     githubTargetBranch?: string;
+    projectRoot?: string;
     /**
      * Visibility for a repository this build creates. Only sent when the user chose it.
      *

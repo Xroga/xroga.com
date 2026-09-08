@@ -4,7 +4,7 @@
 
 const DB_NAME = 'xroga-workspace-preview';
 const STORE = 'preview';
-const KEY = 'current';
+const LEGACY_KEY = 'current';
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -31,12 +31,12 @@ export interface PreviewBlob {
   updatedAt: number;
 }
 
-export async function savePreviewBlob(blob: PreviewBlob): Promise<void> {
+export async function savePreviewBlob(blob: PreviewBlob, contextKey = LEGACY_KEY): Promise<void> {
   try {
     const db = await openDb();
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readwrite');
-      tx.objectStore(STORE).put(blob, KEY);
+      tx.objectStore(STORE).put(blob, contextKey);
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     });
@@ -46,13 +46,22 @@ export async function savePreviewBlob(blob: PreviewBlob): Promise<void> {
   }
 }
 
-export async function loadPreviewBlob(): Promise<PreviewBlob | null> {
+export async function loadPreviewBlob(contextKey = LEGACY_KEY): Promise<PreviewBlob | null> {
   try {
     const db = await openDb();
     const value = await new Promise<PreviewBlob | null>((resolve, reject) => {
       const tx = db.transaction(STORE, 'readonly');
-      const req = tx.objectStore(STORE).get(KEY);
-      req.onsuccess = () => resolve((req.result as PreviewBlob) ?? null);
+      const store = tx.objectStore(STORE);
+      const req = store.get(contextKey);
+      req.onsuccess = () => {
+        if (req.result || contextKey === LEGACY_KEY) {
+          resolve((req.result as PreviewBlob) ?? null);
+          return;
+        }
+        const legacy = store.get(LEGACY_KEY);
+        legacy.onsuccess = () => resolve((legacy.result as PreviewBlob) ?? null);
+        legacy.onerror = () => reject(legacy.error);
+      };
       req.onerror = () => reject(req.error);
     });
     db.close();

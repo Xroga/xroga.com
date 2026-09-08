@@ -11,10 +11,12 @@ import {
   consumeFreshTerminalIntent,
   markFreshTerminalIntent,
   clearSelectedRepoContext,
+  getSelectedRepoContext,
   saveSelectedRepoContext,
   getNewRepoVisibility,
   saveNewRepoVisibility,
   type NewRepoVisibility,
+  PROJECT_CONTEXT_CHANGED_EVENT,
 } from '@/lib/repoContext';
 import {
   GITHUB_PROJECT_SAVED_EVENT,
@@ -27,6 +29,8 @@ import {
 } from '@/lib/githubProjectEvents';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { cn } from '@/lib/utils';
+import { projectContextKey } from '@/lib/projectContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 const STORAGE_KEY = 'xroga-repo-context';
 const REPO_LIST_CACHE_KEY = 'xroga-repo-list-cache';
@@ -150,9 +154,12 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   }, []);
 
   const analyzeRepo = useCallback(async (fullName: string, branch: string, force = false, announce = true) => {
+    const requestedKey = projectContextKey({ repo: fullName, branch, projectRoot: '/' });
+    const stillActive = () => useProjectWorkspaceStore.getState().activeProjectContextKey === requestedKey;
+    if (!stillActive()) return;
     if (!force) {
       const cached = getCachedRepoAnalysis(fullName, branch);
-      if (cached) {
+      if (cached && stillActive()) {
         setRepoSummary(cached.summary);
         setRepoTech(cached.techStack ?? []);
         if (announce) showContextNotice(`${fullName} · ${cached.fileCount.toLocaleString()} existing files ready to update`);
@@ -164,6 +171,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     setRepoSummary(null);
     try {
       const result = await api.github.analyzeRepo(fullName, branch, { lite: true });
+      if (!stillActive()) return;
       setRepoSummary(result.summary);
       setRepoTech(result.techStack ?? []);
       setCachedRepoAnalysis({
@@ -176,9 +184,9 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       });
       if (announce) showContextNotice(`${fullName} · ${result.fileCount.toLocaleString()} existing files ready to update`);
     } catch {
-      setRepoSummary(null);
+      if (stillActive()) setRepoSummary(null);
     } finally {
-      setAnalyzing(false);
+      if (stillActive()) setAnalyzing(false);
     }
   }, [showContextNotice]);
 
@@ -226,8 +234,11 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       setSelectedRepo(defaultRepo);
       if (defaultRepo) {
         const meta = list.find((r) => r.fullName === defaultRepo);
-        const branch = await loadBranches(defaultRepo, savedBranch ?? meta?.defaultBranch);
-        // Persist sticky selection for pipeline clientMeta
+        const branchHint = savedBranch || meta?.defaultBranch;
+        if (!branchHint) throw new Error('GitHub did not return a default branch');
+        // Identity changes immediately; branch validation may finish later.
+        saveSelectedRepoContext({ repo: defaultRepo, branch: branchHint });
+        const branch = await loadBranches(defaultRepo, branchHint);
         saveSelectedRepoContext({ repo: defaultRepo, branch });
         // Defer lite analyze so the repo picker paints first
         // Restore metadata silently. A reload should not replay a transient status
@@ -263,6 +274,12 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     const onStorage = () => {
       void refresh(true);
     };
+    const onCanonicalContext = () => {
+      const context = getSelectedRepoContext();
+      setSelectedRepo(context?.repo || null);
+      setSelectedBranch(context?.branch || 'main');
+      if (!context) setRepoSummary(null);
+    };
     const onProjectSaved = () => void refresh(true);
     const onRepoContext = (e: Event) => {
       const detail = (e as CustomEvent<{ repo?: string; branch?: string }>).detail;
@@ -293,6 +310,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     window.addEventListener(REPO_CONTEXT_CLEARED_EVENT, onCleared);
     window.addEventListener(OPEN_REPO_PICKER_EVENT, onOpenPicker);
     window.addEventListener('storage', onStorage);
+    window.addEventListener(PROJECT_CONTEXT_CHANGED_EVENT, onCanonicalContext);
     return () => {
       window.removeEventListener(GITHUB_CONNECTED_EVENT, onConnected);
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRepoContext);
@@ -300,45 +318,45 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       window.removeEventListener(REPO_CONTEXT_CLEARED_EVENT, onCleared);
       window.removeEventListener(OPEN_REPO_PICKER_EVENT, onOpenPicker);
       window.removeEventListener('storage', onStorage);
+      window.removeEventListener(PROJECT_CONTEXT_CHANGED_EVENT, onCanonicalContext);
     };
   }, [refresh, showContextNotice]);
 
-  useEffect(() => {
-    if (!selectedRepo) return;
-    saveSelectedRepoContext({ repo: selectedRepo, branch: selectedBranch });
-  }, [selectedRepo, selectedBranch]);
-
   async function selectRepo(fullName: string) {
-    setSelectedRepo(fullName);
-    setOpen(null);
     const meta = repos.find((r) => r.fullName === fullName);
-    const branch = await loadBranches(fullName, meta?.defaultBranch);
+    const branchHint = meta?.defaultBranch;
+    if (!branchHint) {
+      showContextNotice('GitHub did not return a branch for this repository');
+      return;
+    }
 
     // Mid-chat repo switch: keep the old #N under its repo, start a blank session for the new one.
-    const prev = (() => {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return null;
-        return JSON.parse(raw) as { repo?: string };
-      } catch {
-        return null;
-      }
-    })();
+    const prev = getSelectedRepoContext();
+    const targetKey = projectContextKey({ repo: fullName, branch: branchHint, projectRoot: '/' });
+    const previousKey = prev?.repo?.includes('/') ? projectContextKey(prev) : null;
+    if (previousKey === targetKey) {
+      setSelectedRepo(fullName);
+      setSelectedBranch(branchHint);
+      setOpen(null);
+      return;
+    }
     let startedFreshSession = false;
-    if (
-      messages.length > 0 &&
-      prev?.repo?.includes('/') &&
-      prev.repo !== fullName
-    ) {
+    if (previousKey && previousKey !== targetKey) {
       startNewChat();
       startedFreshSession = true;
     }
 
+    setSelectedRepo(fullName);
+    setSelectedBranch(branchHint);
+    setOpen(null);
+    saveSelectedRepoContext({ repo: fullName, branch: branchHint });
+    notifyGithubRepoContext(fullName, branchHint);
+    const branch = await loadBranches(fullName, branchHint);
     saveSelectedRepoContext({ repo: fullName, branch });
     // Sync sidebar — sticky binding keeps prior terminals under their own folders
     const { syncRepoTerminalSessions } = await import('@/lib/syncRepoTerminalSessions');
     syncRepoTerminalSessions();
-    notifyGithubRepoContext(fullName, branch);
+    if (branch !== branchHint) notifyGithubRepoContext(fullName, branch);
     void analyzeRepo(fullName, branch, false);
     try {
       await api.github.updateSettings('manual', fullName);
@@ -377,6 +395,13 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
     setSelectedBranch(name);
     setOpen(null);
     if (selectedRepo) {
+      const current = getSelectedRepoContext();
+      const targetKey = projectContextKey({ repo: selectedRepo, branch: name, projectRoot: current?.projectRoot || '/' });
+      const changesContext = Boolean(current?.repo && projectContextKey(current) !== targetKey);
+      if (current?.repo && !changesContext) return;
+      if (changesContext) startNewChat();
+      saveSelectedRepoContext({ repo: selectedRepo, branch: name, projectRoot: current?.projectRoot || '/' });
+      notifyGithubRepoContext(selectedRepo, name);
       void analyzeRepo(selectedRepo, name, false);
     }
   }

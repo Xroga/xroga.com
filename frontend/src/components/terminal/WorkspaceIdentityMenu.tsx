@@ -20,10 +20,10 @@ import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { TerminalPromptIcon } from '@/components/icons/animated/TerminalPromptIcon';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { api } from '@/lib/api';
-import { loadTerminalHistory, removeTerminalHistoryEntry } from '@/lib/terminalHistory';
-import { getSelectedRepoContext } from '@/lib/repoContext';
+import { removeTerminalHistoryEntry } from '@/lib/terminalHistory';
 import { rollbackProjectUpdate } from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore, type ProjectWorkspaceStatus } from '@/store/useProjectWorkspaceStore';
+import { AnchoredPortalPopover } from '@/components/ui/AnchoredPortalPopover';
 
 const PROJECT_REVIEW_PROMPT =
   'Inspect this project and tell me its current health, biggest risk, unfinished work, and the highest-value next step. Do not change code unless I explicitly ask.';
@@ -59,8 +59,7 @@ function formatRelative(timestamp: number | null): string {
 
 export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boolean }) {
   const { sessionId, setPrompt, startNewChat } = useTerminalChat();
-  const workspaceRepo = useProjectWorkspaceStore((state) => state.repo);
-  const workspaceBranch = useProjectWorkspaceStore((state) => state.branch);
+  const activeProject = useProjectWorkspaceStore((state) => state.activeProjectContext);
   const projectName = useProjectWorkspaceStore((state) => state.projectName);
   const deployUrl = useProjectWorkspaceStore((state) => state.deployUrl);
   const githubRepoUrl = useProjectWorkspaceStore((state) => state.githubRepoUrl);
@@ -74,66 +73,17 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [undoBusy, setUndoBusy] = useState(false);
   const [syncConfidence, setSyncConfidence] = useState<SyncConfidence>('idle');
-  const [repoIdentity, setRepoIdentity] = useState({
-    fullName: '',
-    label: 'Workspace',
-    branch: 'main',
-  });
   const rootRef = useRef<HTMLDivElement>(null);
-
-  const identityMatchesWorkspace = Boolean(
-    workspaceRepo && workspaceRepo === repoIdentity.fullName,
-  );
-  const visibleStatus: ProjectWorkspaceStatus = identityMatchesWorkspace ? status : 'idle';
-  const visibleDeployUrl = identityMatchesWorkspace ? deployUrl : null;
-  const visibleCommitSha = identityMatchesWorkspace ? commitSha : null;
-  const visiblePreviousFiles = identityMatchesWorkspace ? previousFiles : null;
-  const visibleLastUpdateAt = identityMatchesWorkspace ? lastUpdateAt : null;
-
-  useEffect(() => {
-    const refreshIdentity = () => {
-      const history = loadTerminalHistory();
-      const currentEntry = history.find((entry) => entry.id === sessionId);
-      const selected = getSelectedRepoContext();
-      const fullName = workspaceRepo || currentEntry?.githubRepoName || selected?.repo || '';
-      const workspaceOwnsIdentity = Boolean(workspaceRepo && workspaceRepo === fullName);
-      const branch = workspaceOwnsIdentity
-        ? workspaceBranch || 'main'
-        : currentEntry?.githubBranch || selected?.branch || 'main';
-      setRepoIdentity({
-        fullName,
-        label:
-          (workspaceOwnsIdentity ? projectName : null) ||
-          fullName.split('/').pop() ||
-          'Workspace',
-        branch,
-      });
-    };
-
-    refreshIdentity();
-    window.addEventListener('storage', refreshIdentity);
-    window.addEventListener('xroga-repo-context-change', refreshIdentity);
-    return () => {
-      window.removeEventListener('storage', refreshIdentity);
-      window.removeEventListener('xroga-repo-context-change', refreshIdentity);
-    };
-  }, [projectName, sessionId, workspaceBranch, workspaceRepo]);
-
-  useEffect(() => {
-    if (!open) return;
-    const close = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('pointerdown', close);
-    document.addEventListener('keydown', escape);
-    return () => {
-      document.removeEventListener('pointerdown', close);
-      document.removeEventListener('keydown', escape);
-    };
-  }, [open]);
+  const repoIdentity = {
+    fullName: activeProject?.repo || '',
+    label: projectName || activeProject?.repo.split('/').pop() || 'Workspace',
+    branch: activeProject?.branch || '',
+  };
+  const visibleStatus: ProjectWorkspaceStatus = activeProject ? status : 'idle';
+  const visibleDeployUrl = activeProject ? deployUrl : null;
+  const visibleCommitSha = activeProject ? commitSha : null;
+  const visiblePreviousFiles = activeProject ? previousFiles : null;
+  const visibleLastUpdateAt = activeProject ? lastUpdateAt : null;
 
   // Real GitHub sync confidence. Opening the menu may perform this cheap GitHub read,
   // but it never spends AI/model tokens.
@@ -168,9 +118,9 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
 
   const repoUrl = useMemo(
     () =>
-      (identityMatchesWorkspace ? githubRepoUrl : null) ||
+      githubRepoUrl ||
       (repoIdentity.fullName ? `https://github.com/${repoIdentity.fullName}` : ''),
-    [githubRepoUrl, identityMatchesWorkspace, repoIdentity.fullName],
+    [githubRepoUrl, repoIdentity.fullName],
   );
 
   const hasUndoData = Boolean(
@@ -288,11 +238,8 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
         />
       </button>
 
-      {open ? (
-        <div
+      <AnchoredPortalPopover open={open} onClose={() => setOpen(false)} anchorRef={rootRef} placement="bottom-start" width={360} ariaLabel="Project actions"
           className="absolute left-0 top-[calc(100%+.45rem)] z-[1000] w-[min(360px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-1.5 text-[var(--foreground)] shadow-[0_20px_60px_rgba(0,0,0,.28)] backdrop-blur-xl"
-          role="menu"
-          aria-label="Project actions"
         >
           <div className="px-2.5 pb-2 pt-2">
             <div className="flex items-start gap-2.5">
@@ -424,8 +371,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
               </button>
             </div>
           ) : null}
-        </div>
-      ) : null}
+      </AnchoredPortalPopover>
     </div>
   );
 }

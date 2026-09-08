@@ -9,6 +9,8 @@ import {
 } from '@/lib/workspaceSessionStorage';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { projectContextKey } from '@/lib/projectContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 const KEY = 'xroga_workspace_session';
 
@@ -81,6 +83,9 @@ export interface WorkspaceSession {
   source?: WorkspaceSource;
   jumpMessageId?: string;
   githubRepoName?: string;
+  githubBranch?: string;
+  projectRoot?: string;
+  projectContextKey?: string;
   updatedAt: string;
 }
 
@@ -114,6 +119,13 @@ function pickNewerSession(a: WorkspaceSession | null, b: WorkspaceSession | null
 export function loadWorkspaceSession(): WorkspaceSession | null {
   const session = readLocalSession();
   if (!session) return null;
+  const activeKey = useProjectWorkspaceStore.getState().activeProjectContextKey;
+  const selected = getSelectedRepoContext();
+  const sessionKey = session.projectContextKey || (session.githubRepoName?.includes('/')
+    ? projectContextKey({ repo: session.githubRepoName, branch: session.githubBranch || selected?.branch || 'main', projectRoot: session.projectRoot || '/' })
+    : null);
+  if (activeKey && sessionKey && activeKey !== sessionKey) return null;
+  session.projectContextKey = sessionKey || undefined;
   if (session.messages?.length) {
     session.messages = sanitizeChatMessages(session.messages);
   }
@@ -138,6 +150,12 @@ export async function loadWorkspaceSessionHydrated(): Promise<WorkspaceSession |
         ? merged.githubRepoName
         : getSelectedRepoContext()?.repo;
     merged.messages = await rehydratePersistedMessages(merged.messages, repositoryName);
+    const activeKey = useProjectWorkspaceStore.getState().activeProjectContextKey;
+    const mergedKey = merged.projectContextKey || (repositoryName?.includes('/')
+      ? projectContextKey({ repo: repositoryName, branch: merged.githubBranch || getSelectedRepoContext()?.branch || 'main', projectRoot: merged.projectRoot || '/' })
+      : null);
+    if (activeKey && mergedKey && activeKey !== mergedKey) return null;
+    merged.projectContextKey = mergedKey || undefined;
     return merged;
   } catch (err) {
     console.warn('[workspace] hydrate failed, clearing session:', (err as Error).message);
@@ -156,6 +174,9 @@ export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'
       session.githubRepoName?.includes('/')
         ? session.githubRepoName
         : getSelectedRepoContext()?.repo,
+    githubBranch: session.githubBranch || getSelectedRepoContext()?.branch,
+    projectRoot: session.projectRoot || getSelectedRepoContext()?.projectRoot || '/',
+    projectContextKey: session.projectContextKey || useProjectWorkspaceStore.getState().activeProjectContextKey || undefined,
     messages: messagesForStorage(slimLandingForStorage(session.messages)),
     updatedAt: new Date().toISOString(),
   };

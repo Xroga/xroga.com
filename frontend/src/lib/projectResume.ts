@@ -1,10 +1,11 @@
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { api, type Project } from '@/lib/api';
-import { saveSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 import { loadTerminalHistoryEntry } from '@/lib/terminalSessionStorage';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 export interface GithubProjectSession {
   project: Project;
@@ -19,9 +20,21 @@ export async function loadGithubProjectSession(
   project: Project,
   opts?: { branch?: string }
 ): Promise<GithubProjectSession> {
-  const branch = opts?.branch ?? 'main';
+  const historyId = project.id.startsWith('history-') ? project.id.replace(/^history-/, '') : null;
+  const historySession = historyId ? await loadTerminalHistoryEntry(historyId) : null;
+  const selected = getSelectedRepoContext();
+  let branch = opts?.branch || historySession?.githubBranch ||
+    (selected?.repo === project.github_repo_name ? selected.branch : undefined);
+  if (!branch && project.github_repo_name?.includes('/')) {
+    const repos = await api.github.listRepos();
+    branch = repos.repos.find((repo) => repo.fullName === project.github_repo_name)?.defaultBranch;
+  }
+  if (!branch) throw new Error('Could not determine the selected project branch');
+  let activation: { key: string; version: number } | null = null;
   if (project.github_repo_name?.includes('/')) {
     saveSelectedRepoContext({ repo: project.github_repo_name, branch });
+    const active = useProjectWorkspaceStore.getState();
+    activation = { key: active.activeProjectContextKey!, version: active.transitionVersion };
     notifyGithubRepoContext(project.github_repo_name, branch);
   }
 
@@ -29,9 +42,9 @@ export async function loadGithubProjectSession(
   let messages: ChatMessage[] = [];
   let sessionId = project.id;
 
-  if (project.id.startsWith('history-')) {
-    sessionId = project.id.replace(/^history-/, '');
-    const session = await loadTerminalHistoryEntry(sessionId);
+  if (historyId) {
+    sessionId = historyId;
+    const session = historySession;
     if (session?.messages?.length) {
       messages = session.messages;
       prompt = session.prompt || session.title;
@@ -83,6 +96,13 @@ export async function loadGithubProjectSession(
       }
     } catch {
       /* use default prompt */
+    }
+  }
+
+  if (activation) {
+    const active = useProjectWorkspaceStore.getState();
+    if (active.activeProjectContextKey !== activation.key || active.transitionVersion !== activation.version) {
+      throw new DOMException('A newer project selection replaced this restore', 'AbortError');
     }
   }
 

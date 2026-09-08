@@ -575,7 +575,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                                       if (!(codeBuildActive || heavyBuildActive)) {
                                         return 'This turn ended without an AI response.';
                                       }
-                                      // Never show OrbitVault/update copy on a NEW build (e.g. "build a landing page").
+                                      // Keep update recovery copy separate from greenfield build recovery.
                                       const updateAsk =
                                         /\b(update|patch|fix|edit|change|toggle|night\s*\/\s*day|night\/day|theme\s*toggle|dark\s*mode)\b/i.test(
                                           lastUserText

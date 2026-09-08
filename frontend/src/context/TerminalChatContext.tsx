@@ -24,6 +24,7 @@ import { streamTextReveal } from '@/lib/streamText';
 import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import {
   clearWorkspaceSession,
@@ -106,11 +107,23 @@ async function restoreProjectWorkspaceFromMessages(
   const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
   const workspace = useProjectWorkspaceStore.getState();
   const selected = getSelectedRepoContext();
-  const payload = recoveredLandingWorkspaceBuild(output, workspace, {
+  if (repositoryName?.includes('/')) {
+    const target = {
+      repo: repositoryName,
+      branch: selected?.repo === repositoryName ? selected.branch : workspace.branch,
+      projectRoot: selected?.repo === repositoryName ? selected.projectRoot : workspace.projectRoot,
+    };
+    if (!workspace.activeProjectContext) workspace.activateProjectContext(target);
+    else workspace.assertActiveProjectTarget(target);
+  }
+  const active = useProjectWorkspaceStore.getState();
+  // Task restoration must not replace project state already owned by this context.
+  if (active.projectFiles.length || active.html.trim() || active.commitSha || active.deployUrl) return;
+  const payload = recoveredLandingWorkspaceBuild(output, active, {
     repo: repositoryName?.includes('/') ? repositoryName : selected?.repo,
     branch: selected?.branch ?? 'main',
   });
-  if (payload) workspace.applyBuild(payload);
+  if (payload) active.applyBuild(payload);
 }
 
 function lastUserPromptNear(
@@ -419,7 +432,14 @@ export function TerminalChatProvider({
   const setSessionId = useCallback((id: string) => {
     sessionIdRef.current = id;
     setLiveSessionId(id);
+    const workspace = useProjectWorkspaceStore.getState();
+    workspace.setActiveTaskSession(id, workspace.activeProjectContextKey || undefined);
   }, []);
+  const activeProjectContextKey = useProjectWorkspaceStore((state) => state.activeProjectContextKey);
+  useEffect(() => {
+    if (!activeProjectContextKey || messages.length > 0) return;
+    useProjectWorkspaceStore.getState().setActiveTaskSession(sessionIdRef.current, activeProjectContextKey);
+  }, [activeProjectContextKey, messages.length]);
 
   queueRef.current = promptQueue;
 
@@ -1085,8 +1105,10 @@ export function TerminalChatProvider({
       // keep / reconnect the same repo so engine loads existing files
       const { saveSelectedRepoContext } = await import('@/lib/repoContext');
       const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
-      saveSelectedRepoContext({ repo: msg.githubRepoName, branch: 'main' });
-      notifyGithubRepoContext(msg.githubRepoName, 'main');
+      const savedTask = (await import('@/lib/terminalHistory')).loadTerminalHistory().find((entry) => entry.id === sessionIdRef.current);
+      const branch = savedTask?.githubBranch || getSelectedRepoContext()?.branch || 'main';
+      saveSelectedRepoContext({ repo: msg.githubRepoName, branch, projectRoot: savedTask?.projectRoot || '/' });
+      notifyGithubRepoContext(msg.githubRepoName, branch);
     }
 
     const continuePrompt = [
@@ -1751,7 +1773,8 @@ export function TerminalChatProvider({
             (Boolean(repoContextEarly?.repo?.includes('/')) &&
               isWebsiteUpdateRequest(displayPrompt)));
 
-        // Prefer the LIVE workspace project (OrbitVault), not a later bad "Crypto Pulse" card.
+        // Project state is canonical. Task history is only a fallback for a context
+        // that has not yet produced a project snapshot.
         let priorSite:
           | { html: string; css?: string; js?: string; projectName?: string }
           | undefined;
@@ -1771,13 +1794,7 @@ export function TerminalChatProvider({
             /* ignore */
           }
 
-          const candidates: Array<{
-            html: string;
-            css?: string;
-            js?: string;
-            projectName?: string;
-            score: number;
-          }> = [];
+          const candidates: Array<{ html: string; css?: string; js?: string; projectName?: string }> = [];
           for (let i = threadForMemory.length - 1; i >= 0; i--) {
             const fo = threadForMemory[i]?.featureOutput as
               | {
@@ -1789,41 +1806,17 @@ export function TerminalChatProvider({
                 }
               | undefined;
             if (fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40) {
-              const name = (fo.projectName || '').toLowerCase();
               const html = fo.html;
-              let score = html.length;
-              if (/orbit|vault/i.test(name) || /orbitvault/i.test(html)) score += 50_000;
-              if (/swap|stake|connect wallet/i.test(html)) score += 20_000;
-              if (/crypto\s*pulse/i.test(name) || /crypto\s*pulse/i.test(html)) score -= 40_000;
-              if (priorSite?.projectName && name === priorSite.projectName.toLowerCase()) score += 30_000;
               candidates.push({
                 html: html.slice(0, 80_000),
                 css: typeof fo.css === 'string' ? fo.css.slice(0, 40_000) : undefined,
                 js: typeof fo.js === 'string' ? fo.js.slice(0, 40_000) : undefined,
                 projectName: typeof fo.projectName === 'string' ? fo.projectName : undefined,
-                score,
               });
             }
           }
-          candidates.sort((a, b) => b.score - a.score);
           const best = candidates[0];
-          if (best) {
-            const wsPulse =
-              priorSite &&
-              /crypto\s*pulse/i.test(`${priorSite.projectName || ''} ${priorSite.html.slice(0, 2500)}`);
-            const bestOrbit =
-              /orbit\s*vault|orbitvault/i.test(`${best.projectName || ''} ${best.html.slice(0, 2500)}`) ||
-              (/\bswap\b/i.test(best.html) && /\bstake\b/i.test(best.html));
-            // Restore OrbitVault if workspace was overwritten by Crypto Pulse
-            if (!priorSite || (wsPulse && bestOrbit)) {
-              priorSite = {
-                html: best.html,
-                css: best.css,
-                js: best.js,
-                projectName: best.projectName,
-              };
-            }
-          }
+          if (!priorSite && best) priorSite = { html: best.html, css: best.css, js: best.js, projectName: best.projectName };
         }
 
         // Never send prior build essays with "hi"/thanks — that burns tokens and continues the blog guide.
@@ -2006,6 +1999,14 @@ export function TerminalChatProvider({
         }
 
         if (runSwarmBuild) {
+        const activeBuildContext = useProjectWorkspaceStore.getState().activeProjectContext;
+        if (stickyTargetRepo?.includes('/')) {
+          useProjectWorkspaceStore.getState().assertActiveProjectTarget({
+            repo: stickyTargetRepo,
+            branch: stickyTargetBranch,
+            projectRoot: activeBuildContext?.projectRoot || '/',
+          });
+        }
         let bufferedDelta = '';
         let deltaTimer: ReturnType<typeof setTimeout> | null = null;
         const flushBufferedDelta = () => {
@@ -2040,6 +2041,7 @@ export function TerminalChatProvider({
               (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
             githubTargetRepo: stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
+            projectRoot: activeBuildContext?.projectRoot || '/',
             // Only meaningful when no repo is selected, since that is the case where the
             // build creates one. Read at send time rather than captured earlier so the
             // value sent is the one currently shown in the chatbar.
@@ -2557,7 +2559,7 @@ export function TerminalChatProvider({
                 'Your project';
               void import('@/store/useProjectWorkspaceStore').then(({ useProjectWorkspaceStore }) => {
                 const ws = useProjectWorkspaceStore.getState();
-                // Updates keep current project name (OrbitVault) — never swap to a new invented brand
+                // Updates keep the canonical current project name.
                 projectName = reusePreview
                   ? ws.projectName ||
                     priorSite?.projectName ||

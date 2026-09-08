@@ -1,13 +1,19 @@
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+
 const STORAGE_KEY = 'xroga-repo-context';
+export const PROJECT_CONTEXT_CHANGED_EVENT = 'xroga-repo-context-change';
 
 export interface SelectedRepoContext {
   repo: string;
   branch: string;
+  projectRoot?: string;
 }
 
 /** Repo + branch chosen in the chatbar (outside terminal). */
 export function getSelectedRepoContext(): SelectedRepoContext | null {
   if (typeof window === 'undefined') return null;
+  const active = useProjectWorkspaceStore.getState().activeProjectContext;
+  if (active) return active;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
@@ -16,22 +22,28 @@ export function getSelectedRepoContext(): SelectedRepoContext | null {
     return {
       repo: parsed.repo,
       branch: parsed.branch?.trim() || 'main',
+      projectRoot: '/',
     };
   } catch {
     return null;
   }
 }
 
-export function saveSelectedRepoContext(ctx: SelectedRepoContext): void {
+export function activateProjectContext(ctx: SelectedRepoContext): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(ctx));
-  window.dispatchEvent(new Event('xroga-repo-context-change'));
+  const result = useProjectWorkspaceStore.getState().activateProjectContext(ctx);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(useProjectWorkspaceStore.getState().activeProjectContext));
+  window.dispatchEvent(new CustomEvent(PROJECT_CONTEXT_CHANGED_EVENT, { detail: result }));
 }
+
+/** @deprecated Compatibility adapter; all writes delegate to activateProjectContext. */
+export const saveSelectedRepoContext = activateProjectContext;
 
 export function clearSelectedRepoContext(): void {
   if (typeof window === 'undefined') return;
+  useProjectWorkspaceStore.getState().clearActiveProjectContext();
   localStorage.removeItem(STORAGE_KEY);
-  window.dispatchEvent(new Event('xroga-repo-context-change'));
+  window.dispatchEvent(new Event(PROJECT_CONTEXT_CHANGED_EVENT));
 }
 
 const VISIBILITY_KEY = 'xroga-new-repo-visibility';

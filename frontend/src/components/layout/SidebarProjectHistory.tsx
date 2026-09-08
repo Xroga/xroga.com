@@ -14,7 +14,7 @@ import {
   type TerminalHistoryEntry,
   type TerminalHistoryStatus,
 } from '@/lib/terminalHistory';
-import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
+import { getSelectedRepoContext, saveSelectedRepoContext, PROJECT_CONTEXT_CHANGED_EVENT } from '@/lib/repoContext';
 import {
   GITHUB_PROJECT_SAVED_EVENT,
   GITHUB_REPO_CONTEXT_EVENT,
@@ -38,6 +38,7 @@ import type { CloudTerminalSessionSummary } from '@/lib/api';
 import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
+import { projectContextKey } from '@/lib/projectContext';
 
 type RepoSession = {
   id: string;
@@ -46,6 +47,7 @@ type RepoSession = {
   status?: TerminalHistoryStatus;
   githubRepoName?: string;
   githubBranch?: string;
+  projectRoot?: string;
   cloudSynced: boolean;
   kind: 'local' | 'cloud';
   terminalNumber: number;
@@ -54,6 +56,9 @@ type RepoSession = {
 
 type RepoFolder = {
   key: string;
+  repo: string;
+  branch: string;
+  projectRoot: string;
   label: string;
   sessions: RepoSession[];
 };
@@ -157,7 +162,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
-  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
+  const [selectedContextKey, setSelectedContextKey] = useState<string | null>(null);
   const [repoFilter, setRepoFilter] = useState<RepoFilter>('latest');
   const [filterOpen, setFilterOpen] = useState(false);
   const filterAnchorRef = useRef<HTMLButtonElement>(null);
@@ -186,7 +191,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
   const refreshLocal = useCallback(() => {
     const selected = getSelectedRepoContext();
-    setSelectedRepo(selected?.repo?.includes('/') ? selected.repo : null);
+    setSelectedContextKey(selected?.repo?.includes('/') ? projectContextKey(selected) : null);
     // Stamp live chat as #1/#2 under the selected repo (fixes "chat but still 0 terminals")
     if (messagesRef.current.length > 0 && sessionIdRef.current) {
       ensureLiveTerminalUnderSelectedRepo({
@@ -221,6 +226,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           status: 'active',
           githubRepoName: bindRepo,
           githubBranch: hist?.githubBranch || selected?.branch || 'main',
+          projectContextKey: hist?.projectContextKey || (bindRepo ? projectContextKey({ repo: bindRepo, branch: hist?.githubBranch || selected?.branch || 'main', projectRoot: hist?.projectRoot || selected?.projectRoot || '/' }) : undefined),
+          projectRoot: hist?.projectRoot || selected?.projectRoot || '/',
           messageCount: messages.length,
           createdAt: hist?.createdAt ?? new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -319,12 +326,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       refreshCloud();
     };
     window.addEventListener(GITHUB_REPO_CONTEXT_EVENT, onRefresh);
+    window.addEventListener(PROJECT_CONTEXT_CHANGED_EVENT, onRefresh);
     window.addEventListener(GITHUB_PROJECT_SAVED_EVENT, onRefresh);
     window.addEventListener('storage', refreshLocal);
     window.addEventListener('xroga-resume-workspace', onRefresh);
     const offCloud = onCloudTerminalsChanged(onRefresh);
     return () => {
       window.removeEventListener(GITHUB_REPO_CONTEXT_EVENT, onRefresh);
+      window.removeEventListener(PROJECT_CONTEXT_CHANGED_EVENT, onRefresh);
       window.removeEventListener(GITHUB_PROJECT_SAVED_EVENT, onRefresh);
       window.removeEventListener('storage', refreshLocal);
       window.removeEventListener('xroga-resume-workspace', onRefresh);
@@ -350,10 +359,12 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }, [messages.length, sessionId, expanded, refreshLocal, refreshCloud]);
 
   const folders = useMemo((): RepoFolder[] => {
-    const map = new Map<string, RepoSession[]>();
-    const push = (key: string, session: RepoSession) => {
-      if (!key.includes('/')) return;
-      const list = map.get(key) ?? [];
+    const map = new Map<string, { repo: string; branch: string; projectRoot: string; sessions: RepoSession[] }>();
+    const push = (repo: string, branch: string, projectRoot: string, session: RepoSession) => {
+      if (!repo.includes('/')) return;
+      const key = projectContextKey({ repo, branch, projectRoot });
+      const bucket = map.get(key) ?? { repo, branch, projectRoot, sessions: [] };
+      const list = bucket.sessions;
       const idx = list.findIndex((s) => s.id === session.id);
       if (idx >= 0) {
         const prev = list[idx]!;
@@ -365,22 +376,23 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           terminalNumber: number,
           title: cloudTerminalLabel(number),
         };
-        map.set(key, list);
+        map.set(key, { ...bucket, sessions: list });
         return;
       }
       list.push(session);
-      map.set(key, list);
+      map.set(key, { ...bucket, sessions: list });
     };
 
     for (const s of cloudSessions) {
       if (!s.githubRepoName?.includes('/') || s.messageCount <= 0) continue;
-      push(s.githubRepoName, {
+      push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
         title: cloudTerminalLabel(s.terminalNumber),
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
         githubBranch: s.githubBranch || 'main',
+        projectRoot: '/',
         cloudSynced: true,
         kind: 'cloud',
         terminalNumber: s.terminalNumber,
@@ -392,13 +404,14 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const n =
         cachedTerminalNumber(e.id) ??
         allocateTerminalNumber(e.id, e.githubRepoName);
-      push(e.githubRepoName, {
+      push(e.githubRepoName, e.githubBranch || 'main', e.projectRoot || '/', {
         id: e.id,
         title: cloudTerminalLabel(n),
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
         githubBranch: e.githubBranch || 'main',
+        projectRoot: e.projectRoot || '/',
         cloudSynced: Boolean(cachedTerminalNumber(e.id)),
         kind: 'local',
         terminalNumber: n,
@@ -408,19 +421,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
 
     // Show currently selected repo even before first chat (#1 appears after first message).
     // Never invent a "New terminal" stub row.
-    if (selectedRepo?.includes('/') && !map.has(selectedRepo)) {
-      map.set(selectedRepo, []);
+    const selected = getSelectedRepoContext();
+    if (selected?.repo?.includes('/') && selectedContextKey && !map.has(selectedContextKey)) {
+      map.set(selectedContextKey, { repo: selected.repo, branch: selected.branch, projectRoot: selected.projectRoot || '/', sessions: [] });
     }
 
     let foldersList = Array.from(map.entries())
       .filter(
-        ([key, sessions]) =>
-          key.includes('/') && (sessions.length > 0 || key === selectedRepo)
+        ([key, bucket]) => bucket.repo.includes('/') && (bucket.sessions.length > 0 || key === selectedContextKey)
       )
-      .map(([key, sessions]) => ({
+      .map(([key, bucket]) => ({
         key,
-        label: repoLabel(key),
-        sessions: sessions
+        repo: bucket.repo,
+        branch: bucket.branch,
+        projectRoot: bucket.projectRoot,
+        label: repoLabel(bucket.repo),
+        sessions: bucket.sessions
           .sort((a, b) => {
             if (a.terminalNumber !== b.terminalNumber) {
               return a.terminalNumber - b.terminalNumber;
@@ -443,15 +459,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         ...b.sessions.map((s) => Date.parse(s.updatedAt) || 0)
       );
       if (repoFilter === 'oldest') return aT - bT;
-      if (selectedRepo && a.key === selectedRepo) return -1;
-      if (selectedRepo && b.key === selectedRepo) return 1;
+      if (selectedContextKey && a.key === selectedContextKey) return -1;
+      if (selectedContextKey && b.key === selectedContextKey) return 1;
       return bT - aT;
     });
 
     if (repoFilter === 'latest') foldersList = foldersList.slice(0, 12);
-    if (repoFilter === 'current') foldersList = foldersList.filter((folder) => folder.key === selectedRepo);
+    if (repoFilter === 'current') foldersList = foldersList.filter((folder) => folder.key === selectedContextKey);
     return foldersList;
-  }, [entries, cloudSessions, repoFilter, selectedRepo]);
+  }, [entries, cloudSessions, repoFilter, selectedContextKey]);
 
   const closeFilter = useCallback(() => setFilterOpen(false), []);
   const changeFilter = useCallback((value: RepoFilter) => {
@@ -469,21 +485,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           changed = true;
         }
       }
-      if (selectedRepo && next[selectedRepo] !== true) {
-        next[selectedRepo] = true;
+      if (selectedContextKey && next[selectedContextKey] !== true) {
+        next[selectedContextKey] = true;
         changed = true;
       }
       // Returning `prev` unchanged lets React skip the re-render entirely; the old
       // version always produced a new object, so every refresh re-rendered the tree.
       return changed ? next : prev;
     });
-  }, [folders, selectedRepo]);
+  }, [folders, selectedContextKey]);
 
   async function applyRestore(entry: TerminalHistoryEntry, branch: string) {
     if (entry.githubRepoName?.includes('/')) {
       saveSelectedRepoContext({
         repo: entry.githubRepoName,
         branch: entry.githubBranch || branch,
+        projectRoot: entry.projectRoot || '/',
       });
       notifyGithubRepoContext(entry.githubRepoName, entry.githubBranch || branch);
     }
@@ -517,7 +534,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      saveSelectedRepoContext({ repo, branch });
+      saveSelectedRepoContext({ repo, branch, projectRoot: session.projectRoot || '/' });
       notifyGithubRepoContext(repo, branch);
 
       // Same session already open with messages — stay
@@ -545,7 +562,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         return;
       }
 
-      // Session stub exists (e.g. #1 under modernpage) but history body is empty —
+      // A session stub may exist while its history body is unavailable —
       // still open the workspace with this repo selected so chat/builds work.
       setActiveSessionId(session.id);
       router.push('/workspace');
@@ -562,20 +579,17 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     try {
       const latest =
         folder.sessions[folder.sessions.length - 1] || folder.sessions[0];
-      const branch = latest?.githubBranch || getSelectedRepoContext()?.branch || 'main';
-      const prevRepo = getSelectedRepoContext()?.repo;
+      const branch = folder.branch;
+      const previous = getSelectedRepoContext();
+      const previousKey = previous?.repo?.includes('/') ? projectContextKey(previous) : null;
 
       // Switching folders mid-chat: flush old #N (sticky), then open this folder's terminal.
-      if (
-        messages.length > 0 &&
-        prevRepo?.includes('/') &&
-        prevRepo !== folder.key
-      ) {
+      if (previousKey && previousKey !== folder.key) {
         startNewChat();
       }
 
-      saveSelectedRepoContext({ repo: folder.key, branch });
-      notifyGithubRepoContext(folder.key, branch);
+      saveSelectedRepoContext({ repo: folder.repo, branch, projectRoot: folder.projectRoot });
+      notifyGithubRepoContext(folder.repo, branch);
 
       // Repo selected but no #1 yet — stay on fresh workspace (old repos stay listed)
       if (!folder.sessions.length) {
@@ -584,7 +598,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       }
 
       const preferId = latest?.id;
-      const resolved = await resolveTerminalToOpen(folder.key, preferId);
+      const resolved = await resolveTerminalToOpen(folder.repo, preferId);
       if (resolved.kind === 'restore') {
         await applyRestore(resolved.entry, branch);
         return;
@@ -643,7 +657,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
             // assembles from the child commit up to its two parents. The open state
             // keeps a folder, because that one is saying "expanded", not "repository".
             const FolderIcon = isOpen ? FolderOpen : null;
-            const isActiveRepo = selectedRepo === folder.key;
+            const isActiveRepo = selectedContextKey === folder.key;
             return (
               <div key={folder.key} className="space-y-0.5">
                 <div className="flex items-center gap-0.5">
@@ -678,9 +692,10 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                     ) : (
                       <AnimatedIcon icon={GitForkIcon} size={12} intro={false} className="shrink-0" />
                     )}
-                    <span className="truncate font-medium" title={folder.key}>
+                    <span className="truncate font-medium" title={`${folder.repo} · ${folder.branch}`}>
                       {folder.label}
                     </span>
+                    <span className="max-w-16 truncate font-mono text-[8px] opacity-60">{folder.branch}</span>
                     <span className="text-[9px] text-[var(--muted)] tabular-nums ml-auto">
                       {folder.sessions.length}
                     </span>

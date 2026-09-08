@@ -1,5 +1,7 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 import { getSelectedRepoContext } from '@/lib/repoContext';
+import { projectContextKey } from '@/lib/projectContext';
+import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { messagesForStorage, safeStorageSet } from '@/lib/storageSafe';
 import { saveTerminalSessionToIndexedDB, deleteTerminalSessionFromIndexedDB } from '@/lib/terminalSessionStorage';
 import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
@@ -33,6 +35,9 @@ export interface TerminalHistoryEntry {
   githubRepoName?: string;
   /** Branch last used with this session (restore fidelity) */
   githubBranch?: string;
+  /** Immutable owner context for this task. Added by the v2 context migration. */
+  projectContextKey?: string;
+  projectRoot?: string;
   /** Supabase project id when synced to cloud */
   cloudProjectId?: string;
   deployUrl?: string;
@@ -81,13 +86,13 @@ function extractProjectMeta(messages: ChatMessage[]) {
   for (let i = messages.length - 1; i >= 0; i--) {
     const fo = messages[i]?.featureOutput as Record<string, unknown> | undefined;
     if (fo?.type === 'landing_page') {
-      const repo =
+      const repo = selectedRepo?.repo ??
         (typeof fo.githubRepoName === 'string' && fo.githubRepoName.includes('/')
           ? fo.githubRepoName
-          : undefined) ?? selectedRepo?.repo;
+          : undefined);
       return {
         githubRepoUrl:
-          typeof fo.githubRepoUrl === 'string'
+          typeof fo.githubRepoUrl === 'string' && fo.githubRepoName === repo
             ? fo.githubRepoUrl
             : repo
               ? `https://github.com/${repo}`
@@ -112,8 +117,15 @@ export function loadTerminalHistory(): TerminalHistoryEntry[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as TerminalHistoryEntry[];
     if (!Array.isArray(parsed)) return [];
-    return parsed.map((entry) => ({
-      ...entry,
+    return parsed.map((entry) => {
+      const projectRoot = entry.projectRoot || '/';
+      const contextKey = entry.projectContextKey || (
+        entry.githubRepoName?.includes('/')
+          ? projectContextKey({ repo: entry.githubRepoName, branch: entry.githubBranch || 'main', projectRoot })
+          : undefined
+      );
+      return ({
+      ...entry, projectRoot, projectContextKey: contextKey,
       preview: isLegacyFabricatedLiveText(entry.preview)
         ? 'Build result saved · verify GitHub and deployment evidence'
         : entry.preview,
@@ -127,7 +139,7 @@ export function loadTerminalHistory(): TerminalHistoryEntry[] {
               : message,
           )
         : [],
-    }));
+    }); });
   } catch {
     return [];
   }
@@ -197,6 +209,10 @@ export function saveTerminalHistorySession(opts: {
       existing?.githubBranch ||
       getSelectedRepoContext()?.branch ||
       'main';
+  const projectRoot = existing?.projectRoot || getSelectedRepoContext()?.projectRoot || '/';
+  const contextKey = existing?.projectContextKey || (githubRepoName
+    ? projectContextKey({ repo: githubRepoName, branch: githubBranch, projectRoot })
+    : undefined);
 
   // Assign #1 / #2 before persist so sidebar + storage use the numbered title.
   const terminalNumber =
@@ -215,6 +231,8 @@ export function saveTerminalHistorySession(opts: {
     githubRepoUrl: meta.githubRepoUrl ?? (githubRepoName ? `https://github.com/${githubRepoName}` : undefined),
     githubRepoName,
     githubBranch,
+    projectContextKey: contextKey,
+    projectRoot,
     cloudProjectId: existing?.cloudProjectId,
     deployUrl: meta.deployUrl ?? existing?.deployUrl,
     messageCount: opts.messages.length,
@@ -237,6 +255,10 @@ export function saveTerminalHistorySession(opts: {
       activityKind: toActivityKind(kind),
     });
     void pushTerminalSessionToCloud(entry);
+  }
+
+  if (contextKey === useProjectWorkspaceStore.getState().activeProjectContextKey) {
+    useProjectWorkspaceStore.getState().setActiveTaskSession(entry.id, contextKey);
   }
 
   return entry;
