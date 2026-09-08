@@ -203,12 +203,6 @@ async function waitForPersistedSwarmRun(
     }
     if (run.status === 'cancelled') throw new DOMException('Aborted', 'AbortError');
     if (run.status === 'error') {
-      // A run that produced reviewable work is delivered, not thrown.
-      //
-      // `completeRun(..., { success: false })` can store a full engineering artifact or a real
-      // generated product whose validation/publish step was blocked. Throwing here discarded
-      // the files, preview and evidence and showed only "The persisted build failed." That is
-      // the recovery path, exactly where a dropped SSE stream lands.
       if (isRecoverableBuildOutput(run.output)) {
         return deliverSwarmComplete({
           runId,
@@ -220,9 +214,6 @@ async function waitForPersistedSwarmRun(
           ? engineeringArtifactToText(run.output)
           : currentText);
       }
-      // No artifact: the run failed before producing one. The persisted row still carries the
-      // real reason code instead of the generic BUILD_FAILED every failure used to be
-      // flattened to, and losing that distinction here defeats the point of persisting it.
       const output = run.output as { error?: string; code?: string; nextUnlockAt?: string | null } | null;
       throw new ApiError(output?.error ?? 'The persisted build failed.', 500, {
         code: output?.code ?? 'BUILD_FAILED',
@@ -236,8 +227,6 @@ async function waitForPersistedSwarmRun(
       featureCategory: run.featureCategory,
       output: run.output,
       tokenUsage: run.tokenUsage,
-      // An engineering artifact always has text; the generic sentence is only ever reached
-      // for outputs that genuinely carry nothing to say.
     }, options, currentText) || (isRenderableArtifact(run.output)
       ? engineeringArtifactToText(run.output)
       : 'Swarm task complete.');
@@ -258,16 +247,6 @@ export async function streamSwarmExecute(
     throw new Error('Please sign in to chat.');
   }
 
-  // Generated here rather than waited for from the server's first SSE byte.
-  // Production evidence: three consecutive builds where the backend produced 25-49
-  // real events each while the browser received zero bytes of the stream — a proxy or
-  // dropped connection somewhere between here and the browser, invisible from this
-  // sandbox and with no guaranteed fix on our side. When the runId only ever arrived
-  // over the stream, a stream that delivers nothing left the client with no ID to fall
-  // back to polling with — it could only wait forever, which is exactly what the
-  // screenshots showed. Knowing the ID upfront means the stall watchdog below always
-  // has something to poll for, independent of whether this connection ever delivers a
-  // single byte.
   const clientRunId =
     typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
       ? crypto.randomUUID()
@@ -323,21 +302,12 @@ export async function streamSwarmExecute(
   const decoder = new TextDecoder();
   let buffer = '';
   let finalText = '';
-  // Known immediately when the server accepted a client-supplied ID; otherwise learned
-  // from the server's own 'start' event exactly as before, for the fallback case where
-  // this browser could not generate one.
   let runId: string | undefined = clientRunId;
   let lastSequence = 0;
   let receivedComplete = false;
 
   if (runId) options.onStart?.(runId);
 
-  // How long to wait for the *next* byte before treating this connection as stalled.
-  // The backend now emits its first event within milliseconds of accepting the request
-  // and sends a keepalive at minimum every 15s, so 20s of true silence at the transport
-  // level is already abnormal under every legitimate cause — a slow model, a big
-  // repository read, a busy Fly machine — because none of those delay the *first*
-  // byte, only what it says.
   const STREAM_STALL_MS = 20_000;
 
   function readWithStallGuard(): Promise<ReadableStreamReadResult<Uint8Array>> {
@@ -362,10 +332,6 @@ export async function streamSwarmExecute(
     } catch (err) {
       if ((err as Error).message !== 'SWARM_STREAM_STALLED') throw err;
       await reader.cancel().catch(() => {});
-      // No bytes arrived in time. The backend may still be working — this is not a
-      // verdict that the build failed, only that this connection stopped delivering —
-      // so fall back to polling the same run by the ID we already know, exactly the
-      // path a genuinely dropped connection already uses below.
       if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText, lastSequence);
       throw new Error('The build service is not responding. Please try again.');
     }
@@ -395,7 +361,6 @@ export async function streamSwarmExecute(
       try {
         payload = JSON.parse(dataLine) as Record<string, unknown>;
       } catch {
-        // Truncated/oversized SSE chunk — skip; preview/complete may still arrive
         console.warn('[streamSwarmExecute] skipped malformed SSE chunk');
         continue;
       }
@@ -408,9 +373,6 @@ export async function streamSwarmExecute(
             payload as Record<string, unknown>
           );
         }
-        // Carries `code` and (for CAPACITY_UNAVAILABLE) `nextUnlockAt` through as
-        // structured data rather than a plain Error, whose message is all that used to
-        // survive — losing exactly the fact the terminal needs to say when to retry.
         throw new ApiError(
           String(payload.error ?? 'Swarm stream error'),
           500,
@@ -420,10 +382,6 @@ export async function streamSwarmExecute(
 
       if (eventName === 'start' || eventName === 'pipeline') {
         if (eventName === 'start' && typeof payload.runId === 'string') {
-          // Already fired above with the client-generated ID in the normal case — the
-          // server echoes the same value back, so re-firing here would just be a
-          // duplicate notification. Only genuinely new when the browser could not
-          // generate its own ID and this is the first the client is learning it.
           const alreadyKnown = runId === payload.runId;
           runId = payload.runId;
           if (!alreadyKnown) options.onStart?.(runId);
@@ -536,7 +494,6 @@ export async function uploadChatFile(file: File): Promise<string> {
     });
     return data.url;
   } catch {
-    // Media route may be retired — data URLs work for Grok vision + server extract
     return dataUrl.startsWith('data:')
       ? dataUrl
       : `data:${contentType};base64,${dataBase64}`;
@@ -628,7 +585,6 @@ export const api = {
     delete: (id: string) =>
       apiFetch<{ success: boolean; id: string }>(`/api/projects/${id}`, { method: 'DELETE' }),
   },
-  /** Permanent terminal sessions under a GitHub repo (#1, #2, …) — stored in Supabase */
   terminalSessions: {
     list: (repo?: string, opts?: { limit?: number; offset?: number }) => {
       const params = new URLSearchParams();
@@ -655,7 +611,6 @@ export const api = {
         status?: string;
       }
     ) =>
-      // Returns metadata only — the server no longer echoes the transcript back.
       apiFetch<{ session: CloudTerminalSessionSummary }>(
         `/api/terminal-sessions/${encodeURIComponent(id)}`,
         {
@@ -685,11 +640,6 @@ export const api = {
       }),
   },
   showcase: {
-    /**
-     * Copies a showcase template into one of the user's repositories on a new
-     * feature branch and opens a pull request. Only the template id crosses the
-     * wire — the server resolves the source from its own allow-list.
-     */
     exportTemplate: (body: {
       templateId: string;
       repoFullName: string;
@@ -716,15 +666,12 @@ export const api = {
   profile: {
     get: () => apiFetch<Profile>('/api/profile'),
     update: (body: Partial<Profile>, signal?: AbortSignal, accessToken?: string | null) =>
-      // Profile payloads are small and may be triggered by debounced settings.
-      // Keep an already-started save alive when the user reloads or navigates.
       apiFetch<Profile>(
         '/api/profile',
         { method: 'PATCH', body: JSON.stringify(body), keepalive: true, signal },
         accessToken,
       ),
     activity: () => apiFetch<ActivityLog[]>('/api/profile/activity'),
-    /** Permanently deletes the authenticated Supabase user (cascades to profile/projects). */
     deleteAccount: () =>
       apiFetch<{ deleted: boolean }>('/api/profile', {
         method: 'DELETE',
@@ -762,8 +709,17 @@ export const api = {
       apiFetch<{ branches: GitHubBranch[] }>(
         `/api/github/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches`
       ),
+    repoState: (repoName: string, branch = 'main') =>
+      apiFetch<
+        | { status: 'empty'; branch: string }
+        | { status: 'head'; branch: string; headSha: string }
+        | { status: 'unavailable'; branch: string; reason: string }
+      >(
+        `/api/github/repo-state?repoName=${encodeURIComponent(repoName)}&branch=${encodeURIComponent(branch)}`,
+      ),
     redeployPreview: (payload: {
       repoName?: string;
+      branch?: string;
       html?: string;
       css?: string;
       js?: string;
@@ -793,11 +749,20 @@ export const api = {
       userPrompt?: string;
       incremental?: boolean;
       files?: Array<{ path: string; content: string }>;
+      /** Paths created by the Xroga turn that Undo must remove. */
+      deletePaths?: string[];
+      /** The Xroga commit that must still be branch HEAD before this write starts. */
+      expectedHeadSha?: string;
+      /** Explicit user click authorization for a direct default/protected-branch write. */
+      directWriteAuthorized?: boolean;
     }) =>
       apiFetch<{
         githubRepoUrl: string;
         githubRepoName: string;
         commitSha?: string;
+        branch?: string;
+        pullRequestUrl?: string;
+        warning?: string;
         pushed: boolean;
         fileCount?: number;
         generatedFiles?: string[];
@@ -1564,14 +1529,6 @@ export interface Project {
   updated_at: string;
 }
 
-/**
- * Metadata for a stored terminal session.
- *
- * Deliberately has no `prompt` and no `messages`: list responses return many of
- * these, and carrying a 20 KB prompt plus a full transcript per row made routine
- * sidebar refreshes cost megabytes. Use `terminalSessions.get(id)` for a session
- * the user actually opens.
- */
 export interface MessageShareRecord {
   token: string;
   visibility: 'private' | 'public';
@@ -1595,7 +1552,6 @@ export interface CloudTerminalSessionSummary {
   updatedAt: string;
 }
 
-/** One fully-loaded session, returned only by `get`. */
 export interface CloudTerminalSession extends CloudTerminalSessionSummary {
   prompt: string;
   messages: unknown[];
@@ -1703,7 +1659,6 @@ export interface SwarmRunSummary {
 
 export interface DashboardSummary {
   now: string;
-  /** Transitional field accepted during rolling deploys; current API does not expose internal pools. */
   tokens?: {
     totalLimit: number;
     totalUsed: number;
