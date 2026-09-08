@@ -20,15 +20,7 @@ import type { RawTreeResponse } from './githubTreeSnapshot.js';
  * nothing points at until step 7, so aborting at any of them is indistinguishable from
  * never having started — and the compare-and-swap at step 7 means even that step cannot
  * overwrite a commit it did not plan against.
- *
- * The defect this replaces is worth naming precisely, because it was one layer above the
- * check that was supposed to prevent it: the old push path caught *any* Git Data failure
- * and re-applied the same files through the per-file Contents API. That handler caught the
- * concurrency refusal too, so the mechanism protecting a concurrent commit was the thing
- * that triggered the clobber. `assertNoContentsApiSurface` below is the standing check
- * that no such second path exists.
  */
-
 interface FakeRepo {
   branches: Record<string, string>;
   commits: Record<string, { tree: string; parent: string | null; message: string }>;
@@ -39,18 +31,12 @@ interface FakeRepo {
 }
 
 interface FakeOptions {
-  /** Stage to fail. Injected as a thrown transport error, or a refused ref update. */
   failAt?: AtomicWriteStage;
-  /** Make the ref update fail as a concurrency conflict rather than a transport error. */
   refConflict?: boolean;
-  /** Move the branch head as soon as the ref update is attempted, simulating a racer. */
   concurrentHeadSha?: string;
-  /** Make verification read back a different commit than the one that was written. */
   verificationSha?: string;
   omitPullRequestSupport?: boolean;
-  /** Another writer initializes the branch while our initializer is attempted. */
   bootstrapRaceSha?: string;
-  /** Number of post-initialization ref reads that return null before GitHub catches up. */
   bootstrapVisibilityDelayReads?: number;
 }
 
@@ -204,8 +190,6 @@ function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
       calls.push(`updateRef:${branch}`);
       api.refUpdateCount += 1;
 
-      // A racer landing between the snapshot and this call is what compare-and-swap
-      // exists for, so it is modelled here rather than as a bare status code.
       if (options.concurrentHeadSha) {
         repo.branches[branch] = options.concurrentHeadSha;
         return { ok: false, conflict: true, detail: '422 Update is not a fast forward' };
@@ -232,7 +216,6 @@ function makeFake(repo: FakeRepo, options: FakeOptions = {}): FakeApi {
   return api;
 }
 
-/** A repository with `main` at one commit holding three files. */
 function repoWithFiles(
   files: Array<[path: string, sha: string, mode?: string]> = [
     ['README.md', 'sha-readme'],
@@ -268,22 +251,12 @@ function syncMutations(entries: Array<[string, string]>, deletePaths: string[] =
   return (tree: StartingTree) => deriveFileSyncMutations(tree, files(entries), deletePaths);
 }
 
-/**
- * The standing check that no second, non-atomic write path exists.
- *
- * Written as a shape assertion on the transport interface rather than a source grep,
- * because the defect was never that the Contents API was *called* — it was that a
- * fallback existed at all, reachable from a catch block, with the same authority to
- * modify the branch.
- */
 function assertNoContentsApiSurface(api: FakeApi): void {
   const contentsShaped = api.calls.filter((call) => /contents|putFile|deleteFile|pushFile/i.test(call));
   assert.deepEqual(contentsShaped, [], 'no per-file Contents API call may exist on any path');
   assert.ok(api.refUpdateCount <= 1, 'a build updates the reference at most once');
   assert.ok(api.commitCount <= 1, 'a build creates at most one commit');
 }
-
-// --- the happy path, and what it records -------------------------------------------
 
 test('a build lands as one tree, one commit and one reference update', async () => {
   const repo = repoWithFiles();
@@ -303,6 +276,36 @@ test('a build lands as one tree, one commit and one reference update', async () 
   assert.equal(repo.branches.main, record.resultingCommitSha);
   assert.equal(record.verified, true);
   assertNoContentsApiSurface(api);
+});
+
+test('an expected starting HEAD refuses a stale Undo before creating Git objects', async () => {
+  const repo = repoWithFiles();
+  const api = makeFake(repo);
+  const staleExpected = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+  await assert.rejects(
+    writeAtomically(api, { owner: 'acme', repo: 'site' }, {
+      branch: 'main',
+      expectedStartingHeadSha: staleExpected,
+      mutations: syncMutations([['index.html', 'restored']]),
+      message: 'undo',
+      ...AUTHORIZED,
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AtomicWriteError);
+      assert.equal(error.stage, 'branch_resolution');
+      assert.equal(error.reason, 'concurrent_head_movement');
+      assert.equal(error.branchUnchanged, true);
+      assert.match(error.message, /Nothing was written/i);
+      return true;
+    },
+  );
+
+  assert.equal(repo.branches.main, 'commit-base');
+  assert.equal(api.blobCount, 0);
+  assert.equal(api.treeCount, 0);
+  assert.equal(api.commitCount, 0);
+  assert.equal(api.refUpdateCount, 0);
 });
 
 test('the record carries everything needed to audit the write', async () => {
@@ -328,7 +331,6 @@ test('the record carries everything needed to audit the write', async () => {
     record.manifest.map((m) => [m.kind, m.path]),
     [['update', 'index.html'], ['delete', 'README.md']],
   );
-  // Everything the build did not name is recorded as preserved, not assumed.
   assert.deepEqual(record.preservedPaths, ['run.sh']);
 });
 
@@ -350,12 +352,7 @@ test('unchanged files survive and executable modes are preserved', async () => {
   assert.equal(byPath.get('run.sh')?.mode, '100755', 'the executable bit survived the update');
 });
 
-// --- criterion 6: more than 35 files is still a single commit ----------------------
-
 test('a build larger than 35 files still creates one tree, one commit and one ref update', async () => {
-  // The old path batched at 35, producing N commits with all deletions deferred to the
-  // last batch — so a mid-way failure left new files, no removals, and no single commit
-  // that represented the build.
   const repo = repoWithFiles();
   const api = makeFake(repo);
   const large = Array.from({ length: 120 }, (_, i): [string, string] => [
@@ -377,8 +374,6 @@ test('a build larger than 35 files still creates one tree, one commit and one re
   assert.equal(record.manifest.length, 121, 'the deletion is in the same commit, not deferred');
   assertNoContentsApiSurface(api);
 });
-
-// --- criterion 5: failure injection, one stage at a time ---------------------------
 
 const PRE_REF_STAGES: AtomicWriteStage[] = [
   'tree_snapshot',
@@ -433,7 +428,7 @@ test('a branch-creation failure refuses instead of writing somewhere else', asyn
     },
   );
 
-  assert.equal(repo.branches.main, 'commit-base', 'main is untouched by a failed run branch');
+  assert.equal(repo.branches.main, 'commit-base');
   assert.equal(repo.branches['xroga/run-7'], undefined);
   assert.equal(api.refUpdateCount, 0);
 });
@@ -459,20 +454,17 @@ test('a failed reference update exposes no partial mutation', async () => {
     },
   );
 
-  // The blobs, tree and commit were all created — and none of them is reachable, which is
-  // exactly why a failure here is indistinguishable from never having started.
   assert.ok(api.blobCount > 0 && api.treeCount === 1 && api.commitCount === 1);
   assert.equal(repo.branches.main, 'commit-base');
   const stillThere = new Map((repo.trees['tree-base']?.tree ?? []).map((e) => [e.path, e.sha]));
-  assert.equal(stillThere.get('README.md'), 'sha-readme', 'the deletion never became visible');
-  assert.equal(stillThere.get('index.html'), 'sha-index', 'the update never became visible');
-  assert.equal(stillThere.has('about.html'), false, 'the new file never became visible');
+  assert.equal(stillThere.get('README.md'), 'sha-readme');
+  assert.equal(stillThere.get('index.html'), 'sha-index');
+  assert.equal(stillThere.has('about.html'), false);
   assertNoContentsApiSurface(api);
 });
 
 test('a post-write verification failure is the one failure that cannot claim the branch is unchanged', async () => {
   const repo = repoWithFiles();
-  // The ref update reports success but the branch reads back as something else.
   const api = makeFake(repo, { verificationSha: 'commit-somebody-else' });
 
   await assert.rejects(
@@ -486,7 +478,7 @@ test('a post-write verification failure is the one failure that cannot claim the
       assert.ok(error instanceof AtomicWriteError);
       assert.equal(error.stage, 'verification');
       assert.equal(error.reason, 'verification_mismatch');
-      assert.equal(error.branchUnchanged, false, 'ambiguity is reported, not papered over');
+      assert.equal(error.branchUnchanged, false);
       assert.match(error.message, /Check the branch before retrying/i);
       return true;
     },
@@ -507,13 +499,11 @@ test('a pull-request failure is a warning on a landed commit, never a failed wri
   });
 
   assert.equal(record.verified, true);
-  assert.equal(repo.branches['xroga/run-7'], record.resultingCommitSha, 'the commit landed');
+  assert.equal(repo.branches['xroga/run-7'], record.resultingCommitSha);
   assert.equal(record.pullRequest, undefined);
   assert.match(record.pullRequestWarning ?? '', /committed to "xroga\/run-7"/);
   assert.match(record.pullRequestWarning ?? '', /pull request could not be/i);
 });
-
-// --- criterion 6: concurrency ------------------------------------------------------
 
 test('concurrent head movement produces a typed conflict and overwrites nothing', async () => {
   const repo = repoWithFiles();
@@ -536,11 +526,7 @@ test('concurrent head movement produces a typed conflict and overwrites nothing'
     },
   );
 
-  assert.equal(
-    repo.branches.main,
-    'commit-from-someone-else',
-    "the other commit is still the branch head — this build did not clobber it",
-  );
+  assert.equal(repo.branches.main, 'commit-from-someone-else');
   assertNoContentsApiSurface(api);
 });
 
@@ -559,10 +545,10 @@ test('the refused plan survives the conflict, so the build can be replanned', as
   );
 
   const proposal = error?.proposal;
-  assert.ok(proposal, 'a conflict carries a proposal');
+  assert.ok(proposal);
   assert.equal(proposal.branch, 'main');
-  assert.equal(proposal.plannedFromSha, 'commit-base', 'the commit the refused plan was built on');
-  assert.equal(proposal.observedHeadSha, 'commit-from-someone-else', 'where the branch is now');
+  assert.equal(proposal.plannedFromSha, 'commit-base');
+  assert.equal(proposal.observedHeadSha, 'commit-from-someone-else');
   assert.deepEqual(
     proposal.manifest.map((m) => [m.kind, m.path]),
     [['update', 'index.html'], ['create', 'about.html'], ['delete', 'README.md']],
@@ -585,11 +571,9 @@ test('a non-conflict reference failure also carries the plan, without claiming a
   );
 
   assert.equal(error?.reason, 'stage_failed');
-  assert.ok(error?.proposal, 'the plan is still available');
-  assert.equal(error?.proposal?.observedHeadSha, null, 'no head was observed, so none is claimed');
+  assert.ok(error?.proposal);
+  assert.equal(error?.proposal?.observedHeadSha, null);
 });
-
-// --- criterion 8: authorization happens before anything is created -----------------
 
 test('an unauthorized default-branch write creates no git objects at all', async () => {
   const repo = repoWithFiles();
@@ -654,14 +638,12 @@ test('a run branch writes without authorization, which is the whole point of usi
 
   assert.equal(record.branch, 'xroga/run-7');
   assert.equal(record.branchCreated, true);
-  assert.equal(record.startingHeadSha, 'commit-base', 'cut from the exact recorded commit');
+  assert.equal(record.startingHeadSha, 'commit-base');
   assert.equal(record.directWriteAuthorized, false);
   assert.equal(record.pullRequest?.htmlUrl, 'https://github.com/acme/site/pull/7');
   assert.deepEqual(api.pullRequests, [{ head: 'xroga/run-7', base: 'main' }]);
-  assert.equal(repo.branches.main, 'commit-base', 'main was not touched');
+  assert.equal(repo.branches.main, 'commit-base');
 });
-
-// --- the empty-repository policy ---------------------------------------------------
 
 test('an explicitly authorized empty repository gets a neutral initializer then one atomic product commit', async () => {
   const repo: FakeRepo = { branches: {}, commits: {}, trees: {}, empty: true };
@@ -683,7 +665,7 @@ test('an explicitly authorized empty repository gets a neutral initializer then 
   assert.equal(record.bootstrapPath, '.xroga/bootstrap');
   assert.equal(api.initializationCount, 1);
   assert.equal(api.commitCount, 1);
-  assert.equal(api.refUpdateCount, 1, 'the complete product lands through one ref update');
+  assert.equal(api.refUpdateCount, 1);
   assert.equal(repo.commits[record.resultingCommitSha]?.parent, record.bootstrapCommitSha);
   assert.equal(repo.branches.main, record.resultingCommitSha);
   assert.equal(api.calls.filter((call) => call === 'createRef:main').length, 0);
@@ -717,7 +699,6 @@ test('an eventually visible bootstrap ref is not mistaken for a concurrent write
   assert.equal(
     api.calls.filter((call) => call === 'getRef:main').length,
     3 + 1,
-    'two missing bootstrap reads, one visible bootstrap read, and final verification',
   );
 });
 
@@ -856,8 +837,6 @@ test('a race during empty-repository initialization refuses to write the product
   assert.equal(api.commitCount, 0);
 });
 
-// --- planning refusals abort before any upload -------------------------------------
-
 test('a rejected plan is refused before a single blob is uploaded', async () => {
   const repo = repoWithFiles();
   const api = makeFake(repo);
@@ -881,9 +860,6 @@ test('a rejected plan is refused before a single blob is uploaded', async () => 
 });
 
 test('the plan is resolved against the repository’s tree, not against the caller’s memory', async () => {
-  // `index.html` exists, so the pipeline handing over "here are the files" must produce
-  // an update; `about.html` does not, so it must produce a create. Nothing in the caller
-  // told the write which was which.
   const repo = repoWithFiles();
   const api = makeFake(repo);
 
