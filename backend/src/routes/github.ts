@@ -346,7 +346,6 @@ router.get('/analyze', async (req: AuthRequest, res) => {
     const { analyzeGitHubRepo } = await import('../services/integrations/githubDeploy.js');
     const analysis = await analyzeGitHubRepo(req.userId!, repoName, branch, { lite });
     if (lite) {
-      // Keep UI payload tiny — no multi‑hundred‑KB buildFiles
       res.json({
         repoName: analysis.repoName,
         defaultBranch: analysis.defaultBranch,
@@ -365,6 +364,41 @@ router.get('/analyze', async (req: AuthRequest, res) => {
       return;
     }
     res.json(analysis);
+  } catch (e) {
+    res.status(502).json({ error: (e as Error).message });
+  }
+});
+
+/**
+ * Read the exact connected-repository branch HEAD for UI sync confidence and safe Undo.
+ * This is a cheap GitHub read; it never calls an AI model.
+ */
+router.get('/repo-state', async (req: AuthRequest, res) => {
+  const repoName = typeof req.query.repoName === 'string' ? req.query.repoName.trim() : '';
+  const branch =
+    typeof req.query.branch === 'string' && req.query.branch.trim()
+      ? req.query.branch.trim()
+      : 'main';
+
+  if (!/^[^/]+\/[^/]+$/.test(repoName)) {
+    res.status(400).json({ error: 'repoName must be owner/repo' });
+    return;
+  }
+  if (!branch || branch.length > 100) {
+    res.status(400).json({ error: 'Invalid branch' });
+    return;
+  }
+
+  try {
+    const { inspectConnectedRepositoryState } = await import(
+      '../services/integrations/githubDeploy.js'
+    );
+    const state = await inspectConnectedRepositoryState(
+      req.userId!,
+      repoName,
+      branch,
+    );
+    res.json(state);
   } catch (e) {
     res.status(502).json({ error: (e as Error).message });
   }
@@ -394,6 +428,7 @@ router.get('/build-files', async (req: AuthRequest, res) => {
 router.post('/redeploy-preview', async (req: AuthRequest, res) => {
   const schema = z.object({
     repoName: z.string().min(3).optional(),
+    branch: z.string().max(100).optional(),
     html: z.string().optional(),
     css: z.string().optional(),
     js: z.string().optional(),
@@ -447,7 +482,11 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
       return;
     }
 
-    const result = await redeployPreviewFromGitHub(req.userId!, parsed.data.repoName);
+    const result = await redeployPreviewFromGitHub(
+      req.userId!,
+      parsed.data.repoName,
+      parsed.data.branch ?? 'main',
+    );
     res.json({
       deployUrl: result.deployUrl,
       deployVerified: result.deployVerified,
@@ -460,7 +499,7 @@ router.post('/redeploy-preview', async (req: AuthRequest, res) => {
   }
 });
 
-/** Push generated code to selected GitHub repo (Contents API — works on empty repos). */
+/** Push generated code to selected GitHub repo. */
 router.post('/push-build', async (req: AuthRequest, res) => {
   const schema = z.object({
     html: z.string().min(1).optional(),
@@ -471,24 +510,16 @@ router.post('/push-build', async (req: AuthRequest, res) => {
     projectSlug: z.string().max(80).optional(),
     userPrompt: z.string().max(5000).optional(),
     projectName: z.string().max(200).optional(),
-    /** Plan A: push only these paths (exact update / rollback) — never full scaffold */
     files: z
       .array(z.object({ path: z.string().min(1).max(260), content: z.string() }))
       .max(40)
       .optional(),
     incremental: z.boolean().optional(),
-    /**
-     * Visibility for a repository this push creates. Absent means private.
-     *
-     * Deliberately an explicit two-value enum rather than a boolean: a missing or
-     * malformed field can only ever fail closed to private, and there is no value a
-     * client can send by accident that publishes a repository.
-     */
+    /** Paths created by the last Xroga turn that an inverse write must remove. */
+    deletePaths: z.array(z.string().min(1).max(260)).max(40).optional(),
+    /** Refuse before writing if this is no longer the branch HEAD we expect. */
+    expectedHeadSha: z.string().regex(/^[0-9a-f]{40}$/i).optional(),
     visibility: z.enum(['private', 'public']).optional(),
-    /**
-     * Explicit approval to commit straight to a default or protected branch. Without it
-     * such a push becomes a pull request from `xroga/<run-id>` instead.
-     */
     directWriteAuthorized: z.boolean().optional(),
     runId: z.string().max(120).optional(),
   });
@@ -529,9 +560,12 @@ router.post('/push-build', async (req: AuthRequest, res) => {
       targetRepo: parsed.data.repoName,
       targetBranch: parsed.data.branch ?? 'main',
       slug: parsed.data.projectSlug,
-      // No visibility selected means private. Never public by omission.
+      deletePaths: parsed.data.deletePaths ?? [],
       visibility: parsed.data.visibility ?? 'private',
       ...(parsed.data.runId ? { runId: parsed.data.runId } : {}),
+      ...(parsed.data.expectedHeadSha
+        ? { expectedStartingHeadSha: parsed.data.expectedHeadSha }
+        : {}),
       ...(parsed.data.directWriteAuthorized === true ? { directWriteAuthorized: true } : {}),
     });
     res.json({
