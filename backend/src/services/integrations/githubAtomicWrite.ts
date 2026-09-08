@@ -170,6 +170,12 @@ export interface AtomicWriteRequest {
   /** Required when `branch` may not exist yet: the commit to create it from. */
   createBranchFromSha?: string | null;
   /**
+   * Optional compare-before-plan guard. When supplied, Xroga refuses before creating
+   * blobs/trees/commits unless the resolved branch still points at this exact SHA.
+   * The final `force:false` ref update remains the second race check.
+   */
+  expectedStartingHeadSha?: string | null;
+  /**
    * The changes to apply.
    *
    * A function receives the repository's real starting tree, which is what lets a caller
@@ -355,6 +361,21 @@ export async function writeAtomically(
             createFromSha: request.createBranchFromSha ?? null,
           }),
       );
+
+  if (
+    !empty &&
+    request.expectedStartingHeadSha &&
+    target.sha !== request.expectedStartingHeadSha
+  ) {
+    throw new AtomicWriteError(
+      'branch_resolution',
+      'concurrent_head_movement',
+      `Branch "${request.branch}" is now ${target.sha.slice(0, 7)}, not the expected ` +
+        `${request.expectedStartingHeadSha.slice(0, 7)}. Nothing was written. ` +
+        'Refresh the project before trying Undo again.',
+      { branchUnchanged: true },
+    );
+  }
 
   const originalStartingHeadSha = empty ? null : target.sha;
   const bootstrapPath = '.xroga/bootstrap';
