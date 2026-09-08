@@ -220,15 +220,6 @@ export async function inspectConnectedRepositoryState(
     return { status: 'unavailable', branch, reason: 'GitHub returned an invalid branch head' };
   }
 
-  // A bootstrap-only repository has a real head, so the branch lookup above correctly
-  // proves it is not a genuinely empty Git repository. It still has no product source to
-  // hydrate. Inspect the exact tree before treating it as source-empty; arbitrary tiny
-  // repositories must remain authoritative and must never be overwritten as new builds.
-  // GitHub's repository `size` is an asynchronously-computed, rounded hint. The same
-  // one-byte bootstrap marker has been observed above multiple size thresholds after
-  // propagation. Always inspect the exact head tree before cached project memory is
-  // trusted. A real repository of any size remains a `head`; only the exact neutral
-  // tree below is classified as source-empty.
   try {
     const api = makeAtomicWriteApi(
       ghFetch,
@@ -316,18 +307,6 @@ function gitCommitAuthorFields() {
   };
 }
 
-/**
- * Creates a repository, private by default, with honest 422 handling.
- *
- * Replaces two defects. Repositories were created `private: false` with no user choice.
- * And every 422 was read as "it already exists", so a build after an *invalid name* or
- * any other validation failure would construct `{owner}/{name}` and write into whatever
- * that resolved to — potentially an unrelated repository the user already owned.
- *
- * Now: a collision retries with a distinct name a bounded number of times, and every
- * other 422 stops with the real, sanitised reason. Nothing is written to a repository
- * that was not verifiably created by this call.
- */
 async function createRepo(
   token: string,
   name: string,
@@ -353,7 +332,6 @@ async function createRepo(
       if (!created) {
         throw new RepoCreateError('unknown', res.status, 'GitHub returned an unrecognised repository response.');
       }
-      // Verified from GitHub's own fields, not from a name we constructed.
       return {
         fullName: created.fullName,
         htmlUrl: created.htmlUrl,
@@ -367,8 +345,6 @@ async function createRepo(
     const body = (await res.json().catch(() => null)) as GitHubErrorBody | null;
     lastFailure = classifyRepoCreateFailure(res.status, body);
 
-    // Only a genuine name collision is retryable. Everything else stops here rather
-    // than presuming a repository exists and writing to it.
     if (lastFailure !== 'name_taken') {
       throw new RepoCreateError(lastFailure, res.status, describeRepoCreateFailure(lastFailure, candidate));
     }
@@ -381,10 +357,6 @@ async function createRepo(
   );
 }
 
-/**
- * Adapts the GitHub REST calls to the transport-free `BranchApi`, so branch resolution
- * can be tested without a live GitHub and without mocking `fetch`.
- */
 function makeBranchApi(token: string, owner: string, repo: string): BranchApi {
   return {
     async getRef(branch: string) {
@@ -404,14 +376,6 @@ function makeBranchApi(token: string, owner: string, repo: string): BranchApi {
   };
 }
 
-/**
- * Resolves a branch head, falling back to the repository's default branches.
- *
- * Callers that need a specific branch to be used *and no other* must not rely on
- * this — the fallback is deliberate for the ship flow, but it means a request for
- * a not-yet-created branch silently resolves to `main`. Use
- * `resolveExactBranchHead` when the branch identity matters.
- */
 export async function getBranchHeadSha(
   token: string,
   owner: string,
@@ -433,29 +397,6 @@ export async function getBranchHeadSha(
   return { sha: null, branch: preferredBranch ?? 'main' };
 }
 
-/**
- * The whole non-atomic write surface (Contents API helpers, the Git Data push, the
- * batching wrapper and the catch-all fallback) is replaced by one call into
- * `writeAtomically`.
- *
- * Deleted deliberately, not refactored:
- *
- * - `pushFilesViaContents` / `pushFileViaContents` / `deleteFileViaContents` — one commit
- *   per file. A build that failed at file 12 of 40 left a published repository containing
- *   twelve files of a design that was never coherent at twelve files.
- *
- * - the `catch` that fell back to Contents on *any* Git Data error — this is the one that
- *   mattered most. The compare-and-swap added in #458 refuses the write when the branch
- *   moved; this handler caught that refusal and immediately re-applied the same files
- *   through the per-file path, overwriting the commit the refusal existed to protect. The
- *   protection was real and the layer above it undid it.
- *
- * - the >35-file batching loop — N commits again, with deletes deferred to the last batch,
- *   so a failure mid-way left the repository holding some new files, none of the removals,
- *   and no single commit that represented the build.
- */
-
-/** Reads the target branch's head without the read-path fallback ever being used for a write. */
 async function atomicWriteApiFor(token: string, owner: string, repo: string) {
   return makeAtomicWriteApi(ghFetch, token, owner, repo, {
     commitIdentity: gitCommitAuthorFields(),
@@ -475,14 +416,6 @@ export interface AtomicPushOptions {
   defaultBranch?: string;
 }
 
-/**
- * Writes a build to a branch as a single commit, or writes nothing.
- *
- * One tree, one commit, one reference update, regardless of how many files the build
- * produced. Returns the full record rather than just a SHA, because the branch, the
- * starting commit, the manifest and the verification result are what make the reported
- * commit trustworthy.
- */
 async function pushFilesAtomically(
   token: string,
   owner: string,
@@ -500,8 +433,6 @@ async function pushFilesAtomically(
     {
       branch,
       createBranchFromSha: options.createBranchFromSha ?? null,
-      // Resolved against the repository's real starting tree, inside the write, so an
-      // update is classified as an update and keeps the file's existing mode.
       mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths ?? []),
       message,
       ...(options.defaultBranch ? { defaultBranch: options.defaultBranch } : {}),
@@ -515,24 +446,12 @@ interface ConnectedRepositoryPushOptions {
   requestedBranch: string;
   deletePaths: string[];
   runId?: string;
+  /** Refuse before writing unless this is still the exact branch HEAD. */
+  expectedStartingHeadSha?: string;
   directWriteAuthorized: boolean;
   allowEmptyBootstrap: boolean;
 }
 
-/**
- * Chooses where a build lands in a repository the user already owns, then writes it.
- *
- * The default is a pull request, not a commit on the branch the user is working from.
- * A generated build is a proposal; treating it as one means the branch other people
- * depend on only changes when somebody decides it should.
- *
- * A direct commit still happens when the target branch is neither the default nor
- * protected — a feature branch the run was pointed at is the user's to write to — or when
- * the caller carries explicit authorization for this specific write. When authorization is
- * required, absent, and the run has an id, the build goes to `xroga/<run-id>` cut from the
- * exact commit the target branch is at, and a pull request opens against that same branch
- * by name. Without a run id there is no branch to propose from, so it refuses.
- */
 async function pushToConnectedRepository(
   token: string,
   owner: string,
@@ -544,10 +463,6 @@ async function pushToConnectedRepository(
   const api = await atomicWriteApiFor(token, owner, repo);
   const defaultBranch = await getDefaultBranch(token, owner, repo);
 
-  // Selecting a genuinely empty repository for New Product authorizes GitHub's required
-  // neutral initialization commit followed by exactly one atomic product commit. Recheck
-  // emptiness here and again inside writeAtomically; this permission is never carried
-  // into the existing-branch path below.
   if (options.allowEmptyBootstrap && (await api.isRepositoryEmpty())) {
     return writeAtomically(
       api,
@@ -578,6 +493,9 @@ async function pushToConnectedRepository(
         mutations: (tree) => deriveFileSyncMutations(tree, files, options.deletePaths),
         message,
         defaultBranch,
+        ...(options.expectedStartingHeadSha
+          ? { expectedStartingHeadSha: options.expectedStartingHeadSha }
+          : {}),
         ...(options.directWriteAuthorized ? { directWriteAuthorized: true } : {}),
       },
     );
@@ -592,8 +510,6 @@ async function pushToConnectedRepository(
     );
   }
 
-  // The source SHA is read once, here, and is the same SHA the branch is cut from and the
-  // pull request is based on — so the diff a reviewer sees is exactly this build's work.
   const head = await api.getRef(options.requestedBranch);
   if (!head) {
     throw new ExactBranchWriteError(
@@ -629,7 +545,6 @@ async function pushToConnectedRepository(
   );
 }
 
-/** The repository's default branch, from GitHub. Empty string when it cannot be read. */
 async function getDefaultBranch(token: string, owner: string, repo: string): Promise<string> {
   try {
     const res = await ghFetch(token, `/repos/${owner}/${repo}`);
@@ -641,7 +556,6 @@ async function getDefaultBranch(token: string, owner: string, repo: string): Pro
   }
 }
 
-/** True when a direct commit to this branch would need explicit approval. */
 async function branchWriteNeedsAuthorization(
   api: Awaited<ReturnType<typeof atomicWriteApiFor>>,
   branch: string,
@@ -656,13 +570,6 @@ async function branchWriteNeedsAuthorization(
   }
 }
 
-/**
- * Turns any refusal from the write path into one sanitised sentence.
- *
- * Every branch here is a *refusal to write*, so the message has to say that plainly —
- * "nothing was written" is the single most useful fact for someone reading a failed build,
- * and the old string-matched errors did not reliably carry it.
- */
 export function describeGitHubWriteFailure(error: unknown): string {
   if (error instanceof AtomicWriteError) return describeAtomicWriteFailure(error);
   if (error instanceof BranchAuthorizationError) {
@@ -685,16 +592,11 @@ export interface GitHubPushOptions {
   targetBranch?: string;
   /** Paths to remove from the target branch (Git Data API sha:null). */
   deletePaths?: string[];
-  /**
-   * The build's run id. When present, and the target branch needs authorization that was
-   * not given, the build goes to `xroga/<run-id>` with a pull request instead of failing.
-   */
+  /** Optional compare-before-write guard, used by one-click Undo. */
+  expectedStartingHeadSha?: string;
   runId?: string;
-  /** Explicit approval to commit straight to a default or protected branch. */
   directWriteAuthorized?: boolean;
-  /** New Product may initialise a selected repository only when it is still empty. */
   allowEmptyBootstrap?: boolean;
-  /** Visibility for a repository this call creates. Private unless explicitly public. */
   visibility?: RepositoryVisibility;
 }
 
@@ -729,12 +631,12 @@ export async function pushBuildToGitHub(
       requestedBranch,
       deletePaths: opts.deletePaths ?? [],
       runId: opts.runId,
+      expectedStartingHeadSha: opts.expectedStartingHeadSha,
       directWriteAuthorized: opts.directWriteAuthorized === true,
       allowEmptyBootstrap: opts.allowEmptyBootstrap === true,
     });
 
     invalidateRepoAnalysis(userId, selectedRepo);
-    // Keep sticky default on updates too
     await setGithubDefaultRepo(userId, selectedRepo).catch(() => undefined);
     return {
       repoName: `${owner}/${repo}`,
@@ -749,17 +651,11 @@ export async function pushBuildToGitHub(
 
   const repoName = opts.slug ?? `xroga-build-${Date.now()}`;
 
-  // Visibility is whatever the caller was told to use, and private when nobody chose.
-  // A missing selection is never read as "public".
   const created = await createRepo(token, repoName, opts.visibility ?? DEFAULT_REPOSITORY_VISIBILITY);
   const owner = created.owner;
   const repo = created.repo;
   const htmlUrl = created.htmlUrl;
 
-  // This repository was created by this call, seconds ago, at the user's request, and
-  // `auto_init: true` means it already has a commit — so it is never empty and the write
-  // takes the atomic path. Writing to its default branch is the thing the user asked for,
-  // which is what makes this the one authorized direct write in the flow.
   const record = await pushFilesAtomically(
     token,
     owner,
@@ -771,7 +667,6 @@ export async function pushBuildToGitHub(
   );
 
   const fullName = `${owner}/${repo}`;
-  // Bind this as the sticky update target for later prompts (no re-pick needed)
   await setGithubDefaultRepo(userId, fullName).catch((err) => {
     console.warn('[githubDeploy] default_repo persist:', (err as Error).message);
   });
@@ -799,7 +694,6 @@ export function landingFilesFromOutput(html: string, css: string, js: string): P
   ];
 }
 
-/** Files uploaded to Vercel — merged index.html + vercel.json (matches sandbox preview). */
 export function landingDeployFilesFromOutput(html: string, css: string, js: string): ProjectFile[] {
   const merged = buildInlinePreviewDocument(html, css, js);
   return [
@@ -821,7 +715,6 @@ function isFrameworkSourceTree(files: ProjectFile[]): boolean {
   );
 }
 
-/** Chrome / Electron / Expo: deploy only the story preview page — not a fake Next build. */
 function isPreviewOnlyProduct(files: ProjectFile[]): boolean {
   if (files.some((f) => f.path === 'manifest.json')) return true;
   if (files.some((f) => f.path === 'app.json')) {
@@ -834,11 +727,6 @@ function isPreviewOnlyProduct(files: ProjectFile[]): boolean {
   return false;
 }
 
-/**
- * Prepare files for Vercel file-upload deploy.
- * Framework projects keep the full source tree (no GitHub↔Vercel link required).
- * Classic static sites still merge into a single preview HTML.
- */
 function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
   if (isPreviewOnlyProduct(files)) {
     const preview = files.find((f) => f.path === 'index.html');
@@ -850,7 +738,6 @@ function hostingDeployFiles(files: ProjectFile[]): ProjectFile[] {
   }
 
   if (isFrameworkSourceTree(files)) {
-    // Cap payload — skip lockfiles / binaries; keep README
     return files.filter(
       (f) =>
         !/node_modules\/|package-lock\.json|yarn\.lock|\.(png|jpe?g|gif|webp|ico)$/i.test(f.path) &&
@@ -877,14 +764,11 @@ function frameworkForDeploy(files: ProjectFile[]): 'nextjs' | 'vite' | null {
   const pkg = files.find((f) => f.path === 'package.json')?.content ?? '';
   if (/"next"/i.test(pkg)) return 'nextjs';
   if (/"vite"/i.test(pkg) && !/"expo"/i.test(pkg) && !/"electron"/i.test(pkg)) return 'vite';
-  // Expo / RN / Electron / Chrome: preview page only (or null framework)
   return null;
 }
 
 export interface UserVercelDeployOptions {
-  /** Team that owns the project selected in Integrations; absent means personal account. */
   teamId?: string;
-  /** The GitHub repository Xroga just pushed, in owner/repo form. */
   githubRepo?: string;
   githubBranch?: string;
 }
@@ -900,13 +784,6 @@ function vercelTeamQuery(teamId?: string): string {
   return teamId ? `?teamId=${encodeURIComponent(teamId)}` : '';
 }
 
-/**
- * Ensure a generated repository has a Vercel project connected to GitHub.
- * Vercel's documented create-project `gitRepository` field is the supported
- * way to establish auto-deploys. Existing projects are never destructively
- * re-linked: Xroga keeps deploying to the chosen project and reports whether
- * its current Git link already matches.
- */
 export async function ensureVercelGitProject(opts: {
   token: string;
   projectName: string;
@@ -1001,21 +878,10 @@ async function deployToVercel(_projectSlug: string, staticFiles: ProjectFile[]):
   };
 }
 
-/**
- * Xroga's managed Vercel authority is the default publishing path for generated
- * web products. Users never need to paste a Vercel personal token. A connected
- * Vercel account may still be used for user-owned projects when its OAuth grant
- * has deployment permissions, but it is not a prerequisite for a live preview.
- */
 export function hasManagedVercelDeployment(): boolean {
   return isManagedVercelCredentialCandidate(getSecret('VERCEL_API_KEY'));
 }
 
-/**
- * Vercel API keys (`vck`) are product-scoped keys, not deployment authority.
- * Accept deployment/integration tokens and legacy unprefixed credentials only;
- * this prevents an AI Gateway key from making the UI claim publishing is ready.
- */
 export function isManagedVercelCredentialCandidate(token?: string): boolean {
   const value = token?.trim();
   if (!value) return false;
@@ -1036,7 +902,6 @@ export function managedVercelProjectName(): string {
   return clean || 'xroga-managed-builds';
 }
 
-/** Deploy to Vercel with Xroga's existing platform credential, without another host fallback. */
 export async function deployManagedVercelPreview(
   projectSlug: string,
   files: ProjectFile[],
@@ -1082,7 +947,6 @@ export async function syncUserVaultToVercel(
   if (!Object.keys(env).length) {
     return { ok: true, projectName: projectSlug, upserted: [], skipped: [] };
   }
-  // Use the project scope selected by the user, never the Xroga platform team.
   return syncEnvVarsToVercelProject({
     token,
     projectName: projectSlug,
@@ -1110,9 +974,6 @@ async function deployToVercelWithUserToken(
       framework,
     });
     if (gitProject.error) {
-      // A Vercel account may not have its GitHub Integration installed for this
-      // repository. Keep the explicit OAuth deployment working and surface the
-      // non-fatal Git-link issue in server evidence instead of losing the ship.
       console.warn('[vercel] Git project link skipped:', gitProject.error);
     } else if (gitProject.linked) {
       console.info(
@@ -1121,7 +982,6 @@ async function deployToVercelWithUserToken(
     }
   }
 
-  // Sync encrypted vault secrets → Vercel env before deploy (never into GitHub files)
   let envSync: VercelEnvSyncResult | undefined;
   try {
     envSync = (await syncUserVaultToVercel(userId, projectSlug, opts.teamId)) ?? undefined;
@@ -1174,7 +1034,6 @@ async function deployToNetlifyPreview(projectSlug: string, staticFiles: ProjectF
   };
 }
 
-/** Try Vercel first, then Netlify; verify URL before returning. Retries alternate platform on failure. */
 export async function deployStaticPreview(
   projectSlug: string,
   files: ProjectFile[]
@@ -1186,7 +1045,6 @@ export async function deployStaticPreview(
   const attempts: Array<{ name: string; run: () => Promise<PreviewDeployResult> }> = [];
   if (hasVercel) attempts.push({ name: 'vercel', run: () => deployToVercel(projectSlug, staticFiles) });
   if (hasNetlify) attempts.push({ name: 'netlify', run: () => deployToNetlifyPreview(projectSlug, staticFiles) });
-  // If Netlify was first to fail verify, retry Vercel explicitly when both keys exist
   if (hasVercel && hasNetlify) {
     attempts.push({ name: 'vercel-retry', run: () => deployToVercel(projectSlug, staticFiles) });
   }
@@ -1224,11 +1082,6 @@ export interface PlatformDeployResult {
   envSync?: VercelEnvSyncResult;
 }
 
-/**
- * Deploy through one Vercel authority. Prefer a deploy-capable user OAuth grant;
- * otherwise use Xroga's managed Vercel project. Never require a pasted PAT and
- * never disguise another host as the requested Vercel deployment.
- */
 export async function deployToAllPlatforms(
   projectSlug: string,
   files: ProjectFile[],
@@ -1279,10 +1132,6 @@ export async function deployToAllPlatforms(
     }
   }
 
-  // Sign in with Vercel currently provides identity scopes by default; project
-  // and deployment API permissions are not generally available to every app.
-  // A missing/insufficient user grant therefore falls through to Xroga's already
-  // configured Vercel publisher instead of asking the user for a personal token.
   if ((!vercel?.deployUrl || !vercel.deployVerified) && hasManagedVercelDeployment()) {
     const managed = await deployManagedVercelPreview(projectSlug, staticFiles, userId);
     if (managed.deployUrl) {
@@ -1315,7 +1164,6 @@ export async function deployToAllPlatforms(
   };
 }
 
-/** Deploy generated code directly to one platform (no GitHub required). */
 export async function deployPreviewToPlatform(
   projectSlug: string,
   files: ProjectFile[],
@@ -1341,7 +1189,6 @@ export async function deployPreviewToPlatform(
   }
 }
 
-/** Deploy from inline html/css/js — user's Vercel account only when connected. */
 export async function deployPreviewFromSource(
   projectSlug: string,
   html: string,
@@ -1375,7 +1222,6 @@ export async function deployPreviewFromSource(
   return out;
 }
 
-/** Push build files to GitHub, then optionally deploy. */
 export async function pushBuildFromSource(
   userId: string,
   html: string,
@@ -1409,7 +1255,6 @@ async function fetchRepoTextFile(
   return Buffer.from(data.content, 'base64').toString('utf8');
 }
 
-/** Pull build files from an existing GitHub repo (no rebuild required). */
 const UPDATE_HYDRATE_PATHS = [
   'index.html',
   'styles.css',
@@ -1462,7 +1307,6 @@ export async function fetchBuildFilesFromGitHub(
   return out;
 }
 
-/** Fetch only specific paths for incremental updates (no full-repo read). */
 export async function fetchGitHubFilesByPaths(
   userId: string,
   repoName: string,
@@ -1506,7 +1350,6 @@ export interface GitHubRepoAnalysis {
   report: string;
 }
 
-/** Full repository scan before builds — tree, languages, and core site files. */
 export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
@@ -1564,7 +1407,6 @@ export async function analyzeGitHubRepo(
 
   let buildFiles = { html: '', css: '', js: '' };
   let hasBuildFiles = false;
-  // Lite analyze (repo picker / UI): skip downloading full HTML/CSS/JS — massive speed win
   if (!lite) {
     try {
       const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
@@ -1640,17 +1482,17 @@ export async function analyzeGitHubRepo(
     totalLinesEstimate,
     report,
   };
-  // Never cache lite scans (empty buildFiles) — would poison full build analysis
   if (!lite) {
     setCachedRepoAnalysis(userId, repoName, scanBranch, analysis);
   }
   return analysis;
 }
 
-/** Redeploy live preview from code already on GitHub — Vercel preferred, Netlify fallback. */
+/** Redeploy live preview from code already on the exact GitHub branch. */
 export async function redeployPreviewFromGitHub(
   userId: string,
-  repoName: string
+  repoName: string,
+  branch = 'main',
 ): Promise<{
   deployUrl: string;
   deployPlatform: 'vercel' | 'netlify' | 'none';
@@ -1659,12 +1501,12 @@ export async function redeployPreviewFromGitHub(
   netlifyDeployId?: string;
   files: ProjectFile[];
 }> {
-  const files = await fetchBuildFilesFromGitHub(userId, repoName);
+  const files = await fetchBuildFilesFromGitHub(userId, repoName, branch);
   const slug = repoName.split('/').pop()?.replace(/^xroga-/, '') ?? 'xroga-build';
-  const preview = await deployStaticPreview(slug, files);
+  const preview = await deployToAllPlatforms(slug, files, userId);
   return {
     deployUrl: preview.deployUrl,
-    deployPlatform: preview.platform,
+    deployPlatform: preview.deployPlatform,
     deployVerified: preview.deployVerified,
     vercelDeploymentId: preview.vercelDeploymentId,
     netlifyDeployId: preview.netlifyDeployId,
@@ -1672,7 +1514,6 @@ export async function redeployPreviewFromGitHub(
   };
 }
 
-/** Push to GitHub then deploy to Vercel (preferred) or Netlify — only returns URL when verified live. */
 export async function pushAndDeployLivePreview(
   userId: string,
   files: ProjectFile[],
@@ -1701,7 +1542,7 @@ export async function pushAndDeployLivePreview(
   };
 }
 
-/** Roll back a branch tip to a previous commit SHA (requires GitHub connected). */
+/** Roll back a branch tip to a previous commit SHA (legacy route; kept for old conversations). */
 export async function rollbackRepoToCommit(
   userId: string,
   repoName: string,
