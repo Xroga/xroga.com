@@ -27,7 +27,10 @@ import { cn } from '@/lib/utils';
 import { TerminalSkinPicker } from './TerminalSkinPicker';
 import { TerminalLiveActivity } from './TerminalLiveActivity';
 import { ChatTurnRail, buildChatTurns } from './ChatTurnRail';
-import { api } from '@/lib/api';
+import {
+  rollbackProjectUpdate,
+  rollbackSnapshotsEqual,
+} from '@/lib/rollbackProjectUpdate';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
@@ -80,8 +83,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
-  const applyBuild = useProjectWorkspaceStore((s) => s.applyBuild);
-  const clearRollbackBuffer = useProjectWorkspaceStore((s) => s.clearRollbackBuffer);
+  const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
+  const workspaceCommitSha = useProjectWorkspaceStore((s) => s.commitSha);
+  const workspaceRollbackBuffer = useProjectWorkspaceStore((s) => s.previousFiles);
   const terminalSkinRaw = useThemeStore((s) => s.terminalSkin);
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const setTerminalFullscreen = useThemeStore((s) => s.setTerminalFullscreen);
@@ -382,7 +386,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   <span className="xv-term-cwd">~</span>
                   <span className="xv-term-sigil">$</span>
                 </span>
-                <span className="xv-term-hint">Restoring the latest verified terminal stateâ€¦</span>
+                <span className="xv-term-hint">Restoring the latest verified terminal state…</span>
               </p>
             </div>
           )}
@@ -501,47 +505,40 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             rollingBack={rollbackId === msg.id}
                             onRollback={
                               msg.updateTrail.previousFiles?.length &&
-                              msg.updateTrail.githubRepoName?.includes('/')
+                              msg.updateTrail.githubRepoName?.includes('/') &&
+                              workspaceCommitSha &&
+                              workspaceRepo === msg.updateTrail.githubRepoName &&
+                              rollbackSnapshotsEqual(
+                                msg.updateTrail.previousFiles,
+                                workspaceRollbackBuffer,
+                              )
                                 ? () => {
                                     void (async () => {
                                       const trail = msg.updateTrail!;
-                                      const repo = trail.githubRepoName!;
+                                      const workspace = useProjectWorkspaceStore.getState();
                                       setRollbackId(msg.id);
                                       try {
-                                        const result = await api.github.pushBuild({
-                                          repoName: repo,
-                                          branch: trail.githubBranch || 'main',
-                                          incremental: true,
-                                          files: trail.previousFiles!,
-                                          userPrompt: 'Rollback last XROGA update',
-                                          projectName: 'Rollback',
+                                        const result = await rollbackProjectUpdate({
+                                          repo: trail.githubRepoName!,
+                                          branch: trail.githubBranch || workspace.branch || 'main',
+                                          previousFiles: trail.previousFiles!,
+                                          fileTrail: trail.files,
+                                          expectedHeadSha: workspaceCommitSha,
+                                          redeploy: Boolean(workspace.deployUrl),
                                         });
-                                        // Restore dock preview from previous html/css/js if present
-                                        const prevHtml =
-                                          trail.previousFiles!.find((f) => f.path.endsWith('index.html') || f.path === 'index.html')
-                                            ?.content ?? '';
-                                        const prevCss =
-                                          trail.previousFiles!.find((f) => f.path.endsWith('.css'))?.content ?? '';
-                                        const prevJs =
-                                          trail.previousFiles!.find((f) => f.path.endsWith('.js') && !f.path.endsWith('.json'))
-                                            ?.content ?? '';
-                                        applyBuild({
-                                          repo: result.githubRepoName,
-                                          branch: trail.githubBranch || 'main',
-                                          html: prevHtml,
-                                          css: prevCss,
-                                          js: prevJs,
-                                          commitSha: result.commitSha ?? null,
-                                          status: 'pushed',
-                                          changesSummary: ['Rolled back last update'],
-                                          fileTrail: [],
-                                          previousFiles: null,
-                                          openPreview: true,
-                                        });
-                                        clearRollbackBuffer();
-                                        toast.success('Rolled back last update on GitHub');
+
+                                        if (result.deployVerified) {
+                                          toast.success(
+                                            'Undo complete — GitHub and live site restored',
+                                          );
+                                        } else {
+                                          toast.success('Undo complete on GitHub');
+                                        }
+                                        if (result.warning) {
+                                          toast(result.warning, { icon: '⚠️' });
+                                        }
                                       } catch (err) {
-                                        toast.error((err as Error).message || 'Rollback failed');
+                                        toast.error((err as Error).message || 'Undo failed');
                                       } finally {
                                         setRollbackId(null);
                                       }
