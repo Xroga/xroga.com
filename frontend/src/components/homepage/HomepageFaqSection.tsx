@@ -21,7 +21,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'What do I get on a paid plan?',
-    a: 'Xroga AI is $19 per 30-day billing period with all features included. Balanced Month pacing preserves capacity across the cycle and protects completion work. The interface shows real usage percentage, available capacity, next unlock, and reset date without exposing provider balances.',
+    a: 'Xroga AI is $25 per 30-day billing period with all features included. Balanced Month pacing preserves capacity across the cycle and protects completion work. The interface shows real usage percentage, available capacity, next unlock, and reset date without exposing provider balances.',
   },
   {
     q: 'Do unused credits expire?',
