@@ -5,6 +5,7 @@ import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
 
 export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 16_500_000;
+export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
 export const PROVIDER_PRICE_VERSION = '2026-07-28-v1';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
 
@@ -25,7 +26,7 @@ export interface ProviderReservation {
 }
 
 export interface EntitlementStatus {
-  state: 'promotional_eligible' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+  state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
   pacing: 'balanced_month' | 'full_access' | null;
   startsAt: string | null;
   endsAt: string | null;
@@ -38,13 +39,14 @@ export interface EntitlementStatus {
 }
 
 type MemoryCycle = {
-  kind: 'promotion' | 'paid';
+  kind: 'free' | 'promotion' | 'paid';
   startsAt: Date;
   endsAt: Date;
   pacing: 'balanced_month' | 'full_access';
   acceleratedUnlockMicroUsd: number;
   settled: number;
   reserved: number;
+  entitlement: number;
 };
 
 const memoryCycles = new Map<string, MemoryCycle>();
@@ -108,48 +110,6 @@ function hasDurableStore(): boolean {
   return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
-async function activatePromotionDurably(userId: string): Promise<void> {
-  const { error } = await getSupabaseAdmin().rpc('activate_xroga_launch_promotion', {
-    p_user_id: userId,
-  });
-  if (error && !/already|duplicate/i.test(error.message)) throw new Error(error.message);
-}
-
-export async function activateLaunchPromotion(userId: string): Promise<{
-  state: 'promotional_active';
-  startsAt: string;
-  endsAt: string;
-  pacing: 'balanced_month' | 'full_access';
-}> {
-  if (hasDurableStore()) {
-    const { data, error } = await getSupabaseAdmin().rpc('activate_xroga_launch_promotion', {
-      p_user_id: userId,
-    });
-    if (error) throw new Error(error.message);
-    const row = data as unknown as { starts_at: string; ends_at: string; pacing: 'balanced_month' | 'full_access' };
-    return { state: 'promotional_active', startsAt: row.starts_at, endsAt: row.ends_at, pacing: row.pacing };
-  }
-
-  const existing = memoryCycles.get(userId);
-  const startsAt = existing?.startsAt ?? new Date();
-  const cycle = existing ?? {
-    kind: 'promotion' as const,
-    startsAt,
-    endsAt: new Date(startsAt.getTime() + 30 * 86_400_000),
-    pacing: 'balanced_month' as const,
-    acceleratedUnlockMicroUsd: 0,
-    settled: 0,
-    reserved: 0,
-  };
-  memoryCycles.set(userId, cycle);
-  return {
-    state: 'promotional_active',
-    startsAt: cycle.startsAt.toISOString(),
-    endsAt: cycle.endsAt.toISOString(),
-    pacing: cycle.pacing,
-  };
-}
-
 export async function activatePaidCycle(input: {
   userId: string;
   providerReference: string;
@@ -176,6 +136,7 @@ export async function activatePaidCycle(input: {
       acceleratedUnlockMicroUsd: 0,
       settled: 0,
       reserved: 0,
+      entitlement: SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
     });
   }
   return getProviderEntitlementStatus(input.userId);
@@ -191,6 +152,8 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
   const deadline = '2026-08-31T00:00:00.000Z';
   const now = new Date();
   if (hasDurableStore()) {
+    const { error: ensureError } = await getSupabaseAdmin().rpc('ensure_xroga_free_cycle', { p_user_id: userId });
+    if (ensureError) throw new Error('Billing entitlement is unavailable');
     const { data, error } = await getSupabaseAdmin()
       .from('xroga_billing_cycles')
       .select('cycle_kind,status,starts_at,ends_at,entitlement_micro_usd,pacing,settled_micro_usd,reserved_micro_usd,accounting_safety_hold_micro_usd,accelerated_unlock_micro_usd')
@@ -199,17 +162,9 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
       .limit(1)
       .maybeSingle();
     if (error) throw new Error('Billing entitlement is unavailable');
-    if (!data) {
-      const eligible = now < new Date(deadline);
-      return {
-        state: eligible ? 'promotional_eligible' : 'billing_unavailable', pacing: null,
-        startsAt: null, endsAt: null, nextUnlockAt: null,
-        capacityRemainingPercent: null, availableNowPercent: null,
-        promotionActivationDeadline: deadline, requiresCard: false, autoChargesAtPromotionEnd: false,
-      };
-    }
+    if (!data) throw new Error('Billing entitlement is unavailable');
     const row = data as unknown as {
-      cycle_kind: 'promotion' | 'paid'; status: 'active' | 'expired' | 'past_due' | 'paused' | 'cancelled';
+      cycle_kind: 'free' | 'promotion' | 'paid'; status: 'active' | 'expired' | 'past_due' | 'paused' | 'cancelled';
       starts_at: string; ends_at: string; entitlement_micro_usd: number; pacing: 'balanced_month' | 'full_access';
       settled_micro_usd: number; reserved_micro_usd: number; accounting_safety_hold_micro_usd: number;
       accelerated_unlock_micro_usd: number;
@@ -224,7 +179,7 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
     const state: EntitlementStatus['state'] = expired && row.cycle_kind === 'promotion'
       ? 'promotional_expired'
       : row.status === 'active'
-        ? row.cycle_kind === 'promotion' ? 'promotional_active' : 'paid_active'
+        ? row.cycle_kind === 'free' ? 'free_active' : row.cycle_kind === 'promotion' ? 'promotional_active' : 'paid_active'
         : row.status === 'expired' ? 'cancelled' : row.status;
     return {
       state,
@@ -244,12 +199,9 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
 
   const cycle = memoryCycles.get(userId);
   if (!cycle) {
-    return {
-      state: now < new Date(deadline) ? 'promotional_eligible' : 'billing_unavailable', pacing: null,
-      startsAt: null, endsAt: null, nextUnlockAt: null, capacityRemainingPercent: null,
-      availableNowPercent: null, promotionActivationDeadline: deadline, requiresCard: false,
-      autoChargesAtPromotionEnd: false,
-    };
+    const startsAt = new Date();
+    memoryCycles.set(userId, { kind: 'free', startsAt, endsAt: new Date(startsAt.getTime() + 30 * 86_400_000), pacing: 'balanced_month', acceleratedUnlockMicroUsd: 0, settled: 0, reserved: 0, entitlement: FREE_PROVIDER_ENTITLEMENT_MICRO_USD });
+    return getProviderEntitlementStatus(userId);
   }
   const committed = cycle.settled + cycle.reserved;
   const unlocked = unlockedEntitlementMicroUsd({
@@ -262,12 +214,12 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
   return {
     state: now >= cycle.endsAt
       ? cycle.kind === 'promotion' ? 'promotional_expired' : 'cancelled'
-      : cycle.kind === 'promotion' ? 'promotional_active' : 'paid_active',
+      : cycle.kind === 'free' ? 'free_active' : cycle.kind === 'promotion' ? 'promotional_active' : 'paid_active',
     pacing: cycle.pacing,
     startsAt: cycle.startsAt.toISOString(), endsAt: cycle.endsAt.toISOString(),
     nextUnlockAt: nextCycleUnlock(cycle.startsAt, now, cycle.endsAt),
-    capacityRemainingPercent: Math.max(0, Math.round(((SHARED_PROVIDER_ENTITLEMENT_MICRO_USD - committed) / SHARED_PROVIDER_ENTITLEMENT_MICRO_USD) * 1000) / 10),
-    availableNowPercent: Math.max(0, Math.round(((unlocked - committed) / SHARED_PROVIDER_ENTITLEMENT_MICRO_USD) * 1000) / 10),
+    capacityRemainingPercent: Math.max(0, Math.round(((cycle.entitlement - committed) / cycle.entitlement) * 1000) / 10),
+    availableNowPercent: Math.max(0, Math.round(((Math.min(unlocked, cycle.entitlement) - committed) / cycle.entitlement) * 1000) / 10),
     promotionActivationDeadline: deadline,
     requiresCard: cycle.kind === 'paid',
     autoChargesAtPromotionEnd: false,
@@ -280,6 +232,8 @@ export async function setUsagePacing(
   confirmed: boolean,
 ): Promise<EntitlementStatus> {
   if (pacing === 'full_access' && !confirmed) throw new Error('Full Access confirmation is required');
+  const current = await getProviderEntitlementStatus(userId);
+  if (current.state === 'free_active' && pacing === 'full_access') throw new Error('Xroga Pro is required for Full Access pacing');
   if (hasDurableStore()) {
     const { error } = await getSupabaseAdmin().rpc('set_xroga_usage_pacing', {
       p_user_id: userId, p_pacing: pacing, p_confirm_full_access: confirmed,
@@ -321,7 +275,7 @@ export async function reserveProviderBudget(input: {
     });
     let result = await rpc();
     if (result.error && /active_billing_cycle_required/i.test(result.error.message)) {
-      await activatePromotionDurably(input.userId);
+      await getSupabaseAdmin().rpc('ensure_xroga_free_cycle', { p_user_id: input.userId });
       result = await rpc();
     }
     if (result.error) {
@@ -348,13 +302,14 @@ export async function reserveProviderBudget(input: {
   }
 
   const cycle = memoryCycles.get(input.userId) ?? {
-    kind: 'promotion' as const,
+    kind: 'free' as const,
     startsAt: new Date(),
     endsAt: new Date(Date.now() + 30 * 86_400_000),
     pacing: 'balanced_month' as const,
     acceleratedUnlockMicroUsd: 0,
     settled: 0,
     reserved: 0,
+    entitlement: FREE_PROVIDER_ENTITLEMENT_MICRO_USD,
   };
   memoryCycles.set(input.userId, cycle);
   const unlocked = unlockedEntitlementMicroUsd({

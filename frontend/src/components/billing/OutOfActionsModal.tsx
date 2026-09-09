@@ -33,7 +33,7 @@ export function OutOfActionsModal({ open, onClose }: OutOfActionsModalProps) {
         >
           View Plan &amp; Usage
         </Link>
-        <CheckoutButton planTier="spark" label="Subscribe after promotion" className="w-full mb-3" onSuccess={onClose} />
+        <CheckoutButton planTier="spark" label="Upgrade to Xroga Pro" className="w-full mb-3" onSuccess={onClose} />
         <Link
           href="/pricing"
           className="block text-sm text-[var(--accent)] hover:underline"

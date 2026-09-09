@@ -99,8 +99,8 @@ export function computePlatformReady(): {
 },
     {
       id: 'billing',
-      label: 'Lemon Squeezy billing',
-      ok: has('LEMONSQUEEZY_API_KEY') && has('LEMONSQUEEZY_WEBHOOK_SECRET'),
+      label: 'Whop billing',
+      ok: has('WHOP_API_KEY') && has('WHOP_WEBHOOK_SECRET'),
       required: false,
       hint: 'Required before paid plans work',
     },

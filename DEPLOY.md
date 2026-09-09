@@ -82,10 +82,10 @@ fly secrets set -a xroga-api \
 
 Xroga uses PKCE + `https://api.vercel.com/login/oauth/token` (Apps API). After Authorize, users can deploy and sync vault env without a separate Full Account PAT **if** the env permissions above are granted on the App.
 
-## Lemon Squeezy (platform subscriptions)
+## Whop (platform subscriptions)
 
-See `docs/LEMONSQUEEZY_SETUP.md`. Webhook:
-`https://xroga-api.fly.dev/api/billing/webhook/lemon-squeezy`
+See `docs/WHOP_SETUP.md`. Webhook:
+`https://xroga-api.fly.dev/api/billing/webhook/whop`
 
 ## GitHub OAuth (user connect — not Fly URL)
 GitHub OAuth App → Authorization callback URL (exact):

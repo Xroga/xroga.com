@@ -1,5 +1,5 @@
 /**
- * Public company contact — required for Lemon Squeezy / MoR website compliance.
+ * Public company contact used across billing and legal pages.
  * Override the phone with NEXT_PUBLIC_SUPPORT_PHONE in Vercel if it changes.
  */
 const phoneDisplay =
@@ -15,5 +15,5 @@ export const COMPANY_CONTACT = {
   phoneTel: phoneDisplay.replace(/[^\d+]/g, ''),
   region: 'Pakistan',
   productDescription:
-    'Xroga AI works in connected repositories, validates changes, and publishes through accounts you authorise, with one 30-day plan billed by Lemon Squeezy.',
+    'Xroga AI works in connected repositories, validates changes, and publishes through accounts you authorise, with Free and Xroga Pro plans.',
 };

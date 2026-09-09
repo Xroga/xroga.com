@@ -1,131 +1,58 @@
-import crypto from 'crypto';
+import crypto, { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ActionService } from './ActionService.js';
-import { GALACTIC_PLANS, getLemonProductId, getLemonVariantId, getPlanByTier } from '../config/plans.js';
-import type { PlanTier } from '../types/index.js';
-import { activatePaidCycle } from '../ai/providerBudget.js';
+import { GALACTIC_PLANS, getPlanByTier } from '../config/plans.js';
+import { activatePaidCycle, getProviderEntitlementStatus } from '../ai/providerBudget.js';
 
-export interface LemonWebhookEvent {
-  meta?: { event_name?: string; event_id?: string; custom_data?: Record<string, unknown> };
-  data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
-}
+export const WHOP_API_VERSION_DATE = '2026-09-06';
+export const WHOP_WEBHOOK_MAX_AGE_SECONDS = 300;
+const WHOP_API_BASE = 'https://api.whop.com/api/v1';
+const EXPECTED_TIER = 'spark';
+const EXPECTED_SOURCE = 'xroga';
+const APPROVED_ACCOUNT_ID = 'biz_qhYONL4RebGX96';
+const APPROVED_PLAN_ID = 'plan_hlV1A10I5QfSP';
+const APPROVED_REDIRECT_URL = 'https://xroga.com/workspace?billing=success';
+const memoryFulfilledPayments = new Set<string>();
 
-export type LemonEnvironment = 'test' | 'live' | 'unconfigured';
+export type WhopEventType =
+  | 'payment.succeeded'
+  | 'payment.failed'
+  | 'membership.activated'
+  | 'membership.cancel_at_period_end_changed'
+  | 'membership.deactivated'
+  | 'refund.created'
+  | 'refund.updated'
+  | 'dispute.created'
+  | 'dispute.updated';
 
-export function getLemonEnvironment(env: Record<string, string | undefined> = process.env): LemonEnvironment {
-  if (!env.LEMONSQUEEZY_STORE_ID?.trim()) return 'unconfigured';
-  const configured = env.LEMONSQUEEZY_MODE?.trim().toLowerCase();
-  return configured === 'test' || configured === 'live' ? configured : 'unconfigured';
-}
-
-export function assertLemonWebhookEnvironment(
-  event: LemonWebhookEvent,
-  expected: LemonEnvironment = getLemonEnvironment(),
-): void {
-  const eventIsTest = event.data?.attributes?.test_mode;
-  if (expected === 'unconfigured') throw new Error('Lemon Squeezy environment is not configured');
-  if (typeof eventIsTest !== 'boolean') throw new Error('Billing event is missing environment evidence');
-  if ((expected === 'test') !== eventIsTest) throw new Error('Billing event environment does not match runtime configuration');
-}
-
-interface LemonVariantResource {
+export interface WhopWebhookEvent {
   id?: string;
-  attributes?: Record<string, unknown>;
+  type?: WhopEventType | string;
+  account_id?: string;
+  company_id?: string;
+  api_version?: string;
+  api_version_date?: string;
+  data?: Record<string, unknown>;
 }
 
-export type LemonVariantMismatchCode =
-  | 'no_variant'
-  | 'product'
-  | 'product_store'
-  | 'product_publication'
-  | 'product_environment'
-  | 'publication'
-  | 'environment'
-  | 'subscription'
-  | 'price'
-  | 'interval'
-  | 'interval_count'
-  | 'trial'
-  | 'trial_interval'
-  | 'trial_days'
-  | 'variant_id'
-  | 'duplicate_match';
-
-export class LemonVariantContractError extends Error {
-  constructor(public readonly mismatchCodes: LemonVariantMismatchCode[]) {
-    super(`Billing product contract mismatch: ${mismatchCodes.join(',')}`);
-  }
+export interface BillingStatus {
+  plan: 'free' | 'spark' | 'historical';
+  publicPlanName: string;
+  isPaid: boolean;
+  billingProvider: 'whop' | null;
+  billingStatus: string | null;
+  renewalPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  manageAvailable: boolean;
+  usage: { used: number; remaining: number; total: number };
+  allowance: { actions: number; concurrency: number };
+  features: { workspace: boolean; repositories: boolean; previews: boolean; fullAccessPacing: boolean; higherConcurrency: boolean };
+  entitlement: Awaited<ReturnType<typeof getProviderEntitlementStatus>>;
 }
-
-function lemonVariantMismatchCodes(
-  candidate: LemonVariantResource,
-  productId: string,
-  environment: Exclude<LemonEnvironment, 'unconfigured'>,
-  totalVariants: number,
-): LemonVariantMismatchCode[] {
-  const attributes = candidate.attributes ?? {};
-  const status = attributes.status;
-  const validPublication = status === 'published' || (status === 'pending' && totalVariants === 1);
-  return [
-    String(attributes.product_id ?? '') === productId ? null : 'product',
-    validPublication ? null : 'publication',
-    attributes.test_mode === (environment === 'test') ? null : 'environment',
-    attributes.is_subscription === true ? null : 'subscription',
-    attributes.price === 1900 ? null : 'price',
-    attributes.interval === 'month' ? null : 'interval',
-    attributes.interval_count === 1 ? null : 'interval_count',
-    attributes.has_free_trial === true ? null : 'trial',
-    attributes.trial_interval === 'day' ? null : 'trial_interval',
-    attributes.trial_interval_count === 30 ? null : 'trial_days',
-    /^\d+$/.test(String(candidate.id ?? '')) ? null : 'variant_id',
-  ].filter((code): code is LemonVariantMismatchCode => code !== null);
-}
-
-export function assertLemonProductContract(
-  payload: unknown,
-  productId: string,
-  storeId: string,
-  environment: Exclude<LemonEnvironment, 'unconfigured'>,
-): void {
-  const product = (payload as { data?: LemonVariantResource })?.data;
-  const attributes = product?.attributes ?? {};
-  const mismatchCodes: LemonVariantMismatchCode[] = [
-    String(product?.id ?? '') === productId ? null : 'product',
-    String(attributes.store_id ?? '') === storeId ? null : 'product_store',
-    attributes.status === 'published' ? null : 'product_publication',
-    attributes.test_mode === (environment === 'test') ? null : 'product_environment',
-  ].filter((code): code is LemonVariantMismatchCode => code !== null);
-  if (mismatchCodes.length) throw new LemonVariantContractError(mismatchCodes);
-}
-
-export function selectLemonVariant(
-  payload: unknown,
-  productId: string,
-  environment: Exclude<LemonEnvironment, 'unconfigured'>,
-): string {
-  const data = (payload as { data?: LemonVariantResource[] })?.data;
-  if (!Array.isArray(data)) throw new Error('Billing provider returned an invalid variant list');
-  const evaluated = data.map((candidate) => ({
-    candidate,
-    mismatchCodes: lemonVariantMismatchCodes(candidate, productId, environment, data.length),
-  }));
-  const matches = evaluated.filter(({ mismatchCodes }) => mismatchCodes.length === 0);
-  if (matches.length !== 1) {
-    const mismatchCodes = matches.length > 1
-      ? ['duplicate_match' as const]
-      : data.length === 0
-        ? ['no_variant' as const]
-        : [...new Set(evaluated.flatMap(({ mismatchCodes: codes }) => codes))];
-    throw new LemonVariantContractError(mismatchCodes);
-  }
-  return String(matches[0].candidate.id);
-}
-
-const variantCache = new Map<string, { id: string; expiresAt: number }>();
 
 export class BillingServiceError extends Error {
   constructor(
-    public readonly code: 'external_setup_required' | 'subscription_not_found' | 'provider_unavailable' | 'storage_unavailable',
+    public readonly code: 'external_setup_required' | 'subscription_not_found' | 'provider_unavailable' | 'storage_unavailable' | 'plan_mismatch',
     message: string,
     public readonly statusCode: number,
   ) {
@@ -133,86 +60,129 @@ export class BillingServiceError extends Error {
   }
 }
 
-export function parseCustomerPortalUrl(payload: unknown): string {
-  const candidate = (payload as {
-    data?: { attributes?: { urls?: { customer_portal?: unknown } } };
-  })?.data?.attributes?.urls?.customer_portal;
-  if (typeof candidate !== 'string' || !candidate.trim()) {
-    throw new BillingServiceError('subscription_not_found', 'No paid subscription is available to manage', 409);
+function requiredConfig() {
+  const apiKey = process.env.WHOP_API_KEY?.trim() ?? '';
+  const accountId = process.env.WHOP_COMPANY_ID?.trim() ?? '';
+  const planId = process.env.WHOP_PLAN_ID?.trim() ?? '';
+  const redirectUrl = process.env.WHOP_REDIRECT_URL?.trim() ?? '';
+  if (!apiKey || !accountId || !planId || !redirectUrl) {
+    throw new BillingServiceError('external_setup_required', 'Xroga Pro checkout is not configured', 409);
+  }
+  if (accountId !== APPROVED_ACCOUNT_ID || planId !== APPROVED_PLAN_ID) {
+    throw new BillingServiceError('plan_mismatch', 'Xroga Pro billing configuration does not match the approved plan', 503);
+  }
+  if (redirectUrl !== APPROVED_REDIRECT_URL) {
+    throw new BillingServiceError('plan_mismatch', 'Xroga Pro redirect configuration is invalid', 503);
+  }
+  return { apiKey, accountId, planId, redirectUrl };
+}
+
+function whopHeaders(apiKey: string, extra?: Record<string, string>): Record<string, string> {
+  return {
+    Authorization: `Bearer ${apiKey}`,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'Api-Version-Date': WHOP_API_VERSION_DATE,
+    ...extra,
+  };
+}
+
+function safeWhopUrl(value: unknown, label: string): string {
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new BillingServiceError('provider_unavailable', `${label} was not returned by Whop`, 502);
   }
   let url: URL;
-  try {
-    url = new URL(candidate);
-  } catch {
-    throw new BillingServiceError('provider_unavailable', 'Billing portal returned an invalid destination', 502);
+  try { url = new URL(value); } catch {
+    throw new BillingServiceError('provider_unavailable', `${label} returned an invalid destination`, 502);
   }
-  if (url.protocol !== 'https:' || url.username || url.password) {
-    throw new BillingServiceError('provider_unavailable', 'Billing portal returned an unsafe destination', 502);
+  if (url.protocol !== 'https:' || url.username || url.password || (url.hostname !== 'whop.com' && !url.hostname.endsWith('.whop.com'))) {
+    throw new BillingServiceError('provider_unavailable', `${label} returned an unsafe destination`, 502);
   }
   return url.toString();
 }
 
-export function derivePaidCycleEvidence(event: LemonWebhookEvent): {
-  providerReference: string;
-  startsAt: Date;
-  endsAt: Date;
-} {
-  const attributes = event.data?.attributes ?? {};
-  const rawStatus = String(attributes.status ?? '').toLowerCase();
-  if (rawStatus && ['cancelled', 'expired', 'failed', 'refunded'].includes(rawStatus)) {
-    throw new Error('Billing event does not prove an active paid period');
+function pickString(record: Record<string, unknown>, ...keys: string[]): string {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
   }
-  const parseDate = (value: unknown): Date | null => {
-    if (typeof value !== 'string' || !value.trim()) return null;
-    const date = new Date(value);
-    return Number.isFinite(date.getTime()) ? date : null;
-  };
-  const parsedEnd = parseDate(attributes.trial_ends_at ?? attributes.renews_at ?? attributes.ends_at);
-  const parsedStart = parseDate(attributes.created_at ?? attributes.updated_at);
-  const endsAt = parsedEnd ?? new Date((parsedStart ?? new Date()).getTime() + 30 * 86_400_000);
-  const startsAt = parsedStart ?? (parsedEnd ? new Date(parsedEnd.getTime() - 30 * 86_400_000) : new Date());
-  const subscriptionId = String(attributes.subscription_id ?? event.data?.id ?? '').trim();
-  if (!subscriptionId) throw new Error('Billing event is missing a durable subscription reference');
-  return {
-    providerReference: `lemon:${attributes.test_mode === true ? 'test' : 'live'}:${subscriptionId}:${endsAt.toISOString()}`,
-    startsAt,
-    endsAt,
-  };
+  return '';
 }
 
-/**
- * Xroga platform billing via Lemon Squeezy (merchant of record).
- * Paddle has been removed — use LEMONSQUEEZY_* env vars only.
- */
+function nestedRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function parseDate(value: unknown): Date | null {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date : null;
+}
+
+export function checkoutIdempotencyKey(userId: string, now = Date.now()): string {
+  const fiveMinuteWindow = Math.floor(now / 300_000);
+  return `xroga-checkout-${crypto.createHash('sha256').update(`${userId}:${fiveMinuteWindow}`).digest('hex')}`;
+}
+
+export function assertWhopPlanContract(plan: Record<string, unknown>, expectedAccountId: string, expectedPlanId: string): void {
+  const mismatch: string[] = [];
+  if (pickString(plan, 'id') !== expectedPlanId) mismatch.push('plan_id');
+  if (pickString(plan, 'account_id', 'company_id') !== expectedAccountId) mismatch.push('account_id');
+  if (pickString(plan, 'plan_type') !== 'renewal') mismatch.push('plan_type');
+  if (Number(plan.renewal_price) !== 25) mismatch.push('renewal_price');
+  if (Number(plan.billing_period) !== 30) mismatch.push('billing_period');
+  if (plan.trial_period_days != null && Number(plan.trial_period_days) !== 0) mismatch.push('trial');
+  if (pickString(plan, 'currency').toLowerCase() !== 'usd') mismatch.push('currency');
+  if (pickString(plan, 'purchase_url') && !/^https:\/\//.test(pickString(plan, 'purchase_url'))) mismatch.push('purchase_url');
+  if (mismatch.length) {
+    throw new BillingServiceError('plan_mismatch', `Whop plan contract mismatch: ${mismatch.join(',')}`, 503);
+  }
+}
+
+export function verifyWhopWebhookSignature(
+  rawBody: string,
+  headers: { id?: string; timestamp?: string; signature?: string },
+  secret = process.env.WHOP_WEBHOOK_SECRET,
+  nowMs = Date.now(),
+): boolean {
+  if (!secret || !headers.id || !headers.timestamp || !headers.signature) return false;
+  if (!/^\d+$/.test(headers.timestamp)) return false;
+  const timestampSeconds = Number(headers.timestamp);
+  if (!Number.isSafeInteger(timestampSeconds) || Math.abs(Math.floor(nowMs / 1000) - timestampSeconds) > WHOP_WEBHOOK_MAX_AGE_SECONDS) return false;
+  let key: Buffer;
+  try {
+    if (secret.startsWith('whsec_')) {
+      const encoded = secret.slice('whsec_'.length);
+      if (!encoded || !/^[A-Za-z0-9+/]+={0,2}$/.test(encoded)) return false;
+      key = Buffer.from(encoded, 'base64');
+      if (key.length < 24 || key.length > 64) return false;
+    } else {
+      // Retained for existing non-prefixed secrets and deterministic test fixtures.
+      key = Buffer.from(secret, 'utf8');
+    }
+  } catch { return false; }
+  const expected = crypto.createHmac('sha256', key).update(`${headers.id}.${headers.timestamp}.${rawBody}`).digest();
+  const candidates = headers.signature.split(/\s+/).flatMap((part) => {
+    const [version, signature] = part.split(',', 2);
+    return version === 'v1' && signature ? [signature] : [];
+  });
+  return candidates.some((candidate) => {
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(candidate)) return false;
+    const actual = Buffer.from(candidate, 'base64');
+    return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+  });
+}
+
+let verifiedPlanUntil = 0;
+
 export class BillingService {
-  static billingStatus() {
-    const apiKey = !!process.env.LEMONSQUEEZY_API_KEY;
-    const webhook = !!process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
-    const store = !!process.env.LEMONSQUEEZY_STORE_ID;
-    const environment = getLemonEnvironment();
-    return {
-      lemonApi: apiKey,
-      lemonWebhook: webhook,
-      lemonStore: store,
-      /** @deprecated kept for older clients — always false */
-      paddleApi: false,
-      paddleWebhook: false,
-      paddleClient: false,
-      environment,
-      testMode: environment === 'test',
-      trialDays: environment === 'test' ? 30 : null,
-      plans: GALACTIC_PLANS.map((plan) => ({
-        tier: plan.tier,
-        name: plan.name,
-        priceId: process.env[plan.envPriceKey] ?? null,
-        ready: !!(
-          (process.env[plan.envPriceKey] || process.env[plan.envProductKey])
-          && apiKey
-          && store
-          && environment !== 'unconfigured'
-        ),
-      })),
-    };
+  static providerConfiguration() {
+    const api = Boolean(process.env.WHOP_API_KEY?.trim());
+    const webhook = Boolean(process.env.WHOP_WEBHOOK_SECRET?.trim());
+    const account = process.env.WHOP_COMPANY_ID?.trim() === APPROVED_ACCOUNT_ID;
+    const plan = process.env.WHOP_PLAN_ID?.trim() === APPROVED_PLAN_ID;
+    const redirect = process.env.WHOP_REDIRECT_URL?.trim() === APPROVED_REDIRECT_URL;
+    return { provider: 'whop' as const, api, webhook, account, plan, redirect, ready: api && webhook && account && plan && redirect };
   }
 
   static listPlans() {
@@ -223,269 +193,190 @@ export class BillingService {
       actionsLabel: plan.actionsLabel,
       actions: plan.actions,
       concurrency: plan.concurrency,
-      priceId: process.env[plan.envPriceKey] ?? null,
+      paid: plan.paid,
+      benefits: plan.publicBenefits,
     }));
   }
 
-  static async createCheckout(
-    userId: string,
-    planTier: PlanTier,
-    userEmail?: string,
-  ): Promise<{ checkoutUrl?: string; priceId: string; customData: Record<string, string> }> {
-    const storeId = (process.env.LEMONSQUEEZY_STORE_ID || '').trim();
-    const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
-    const environment = getLemonEnvironment();
-    const customData = { user_id: userId, plan_tier: planTier };
-
-    if (!apiKey || !storeId || environment === 'unconfigured') {
-      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
-    }
-    const variantId = await this.resolveVariantId(planTier, apiKey, storeId, environment);
-
-    const checkoutData: Record<string, unknown> = {
-      custom: customData,
-    };
-    if (userEmail) checkoutData.email = userEmail;
-
-    const body = {
-      data: {
-        type: 'checkouts',
-        attributes: {
-          test_mode: environment === 'test',
-          checkout_data: checkoutData,
-          checkout_options: {
-            skip_trial: false,
-          },
-          product_options: {
-            redirect_url:
-              (process.env.LEMONSQUEEZY_REDIRECT_URL || '').trim() ||
-              `${(process.env.FRONTEND_URL || 'https://xroga.com').replace(/\/$/, '')}/dashboard/billing?checkout=success`,
-          },
-        },
-        relationships: {
-          store: { data: { type: 'stores', id: String(storeId) } },
-          variant: { data: { type: 'variants', id: String(variantId) } },
-        },
-      },
-    };
-
-    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      console.error('[BillingService] Lemon checkout failed', { status: response.status });
-      throw new BillingServiceError('provider_unavailable', 'Billing provider could not create checkout', 502);
-    }
-
-    const data = (await response.json()) as {
-      data?: { attributes?: { url?: string } };
-    };
-
-    return {
-      checkoutUrl: data.data?.attributes?.url,
-      priceId: variantId,
-      customData,
-    };
-  }
-
-  private static async resolveVariantId(
-    planTier: PlanTier,
-    apiKey: string,
-    storeId: string,
-    environment: Exclude<LemonEnvironment, 'unconfigured'>,
-  ): Promise<string> {
-    const configuredVariant = getLemonVariantId(planTier)?.trim();
-    if (configuredVariant) return configuredVariant;
-    const productId = getLemonProductId(planTier)?.trim();
-    if (!productId || !/^\d+$/.test(productId)) {
-      throw new BillingServiceError('external_setup_required', 'Paid checkout is not configured', 409);
-    }
-    const cacheKey = `${environment}:${productId}`;
-    const cached = variantCache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) return cached.id;
-
-    let productResponse: Response;
+  static async verifyConfiguredPlan(force = false): Promise<void> {
+    if (!force && verifiedPlanUntil > Date.now()) return;
+    const { apiKey, accountId, planId } = requiredConfig();
     let response: Response;
     try {
-      productResponse = await fetch(`https://api.lemonsqueezy.com/v1/products/${encodeURIComponent(productId)}`, {
-        headers: {
-          Accept: 'application/vnd.api+json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        signal: AbortSignal.timeout(10_000),
-      });
-      // Retrieve every variant for the configured product, then enforce publication
-      // and the full Xroga plan contract locally. A provider-side published filter
-      // would collapse a real draft-plan mismatch into the less useful no_variant.
-      const query = new URLSearchParams({ 'filter[product_id]': productId });
-      response = await fetch(`https://api.lemonsqueezy.com/v1/variants?${query}`, {
-        headers: {
-          Accept: 'application/vnd.api+json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        signal: AbortSignal.timeout(10_000),
+      response = await fetch(`${WHOP_API_BASE}/plans/${encodeURIComponent(planId)}`, {
+        headers: whopHeaders(apiKey), signal: AbortSignal.timeout(10_000),
       });
     } catch {
-      throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
+      throw new BillingServiceError('provider_unavailable', 'Whop plan verification is temporarily unavailable', 502);
     }
-    if (!productResponse.ok || !response.ok) {
-      console.error('[BillingService] Lemon plan lookup failed', {
-        productStatus: productResponse.status,
-        variantStatus: response.status,
-      });
-      throw new BillingServiceError('provider_unavailable', 'Billing provider could not verify the plan', 502);
-    }
-    let variantId: string;
+    if (!response.ok) throw new BillingServiceError('provider_unavailable', 'Whop plan verification failed', 502);
+    assertWhopPlanContract(await response.json() as Record<string, unknown>, accountId, planId);
+    verifiedPlanUntil = Date.now() + 300_000;
+  }
+
+  static async createCheckout(userId: string): Promise<{ purchaseUrl: string; checkoutConfigurationId: string | null }> {
+    const { apiKey, accountId, planId, redirectUrl } = requiredConfig();
+    await this.verifyConfiguredPlan();
+    const body = {
+      account_id: accountId,
+      plan_id: planId,
+      mode: 'payment',
+      redirect_url: redirectUrl,
+      metadata: { xroga_user_id: userId, plan_tier: EXPECTED_TIER, source: EXPECTED_SOURCE, xroga_checkout_id: randomUUID() },
+    };
+    let response: Response;
     try {
-      assertLemonProductContract(await productResponse.json(), productId, storeId, environment);
-      variantId = selectLemonVariant(await response.json(), productId, environment);
-    } catch (error) {
-      const diagnostic = error instanceof LemonVariantContractError
-        ? ` (${error.mismatchCodes.join(',')})`
-        : ' (invalid_provider_response)';
-      throw new BillingServiceError(
-        'provider_unavailable',
-        `Billing provider plan does not match Xroga Test Mode${diagnostic}`,
-        502,
-      );
+      response = await fetch(`${WHOP_API_BASE}/checkout_configurations`, {
+        method: 'POST',
+        headers: whopHeaders(apiKey, { 'Idempotency-Key': checkoutIdempotencyKey(userId) }),
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch {
+      throw new BillingServiceError('provider_unavailable', 'Whop checkout is temporarily unavailable', 502);
     }
-    variantCache.set(cacheKey, { id: variantId, expiresAt: Date.now() + 300_000 });
-    return variantId;
-  }
-
-  static async createCustomerPortal(userId: string): Promise<{ portalUrl: string }> {
-    const apiKey = (process.env.LEMONSQUEEZY_API_KEY || '').trim();
-    if (!apiKey) {
-      throw new BillingServiceError('external_setup_required', 'Subscription management is not configured', 409);
-    }
-
-    const { data, error } = await getSupabaseAdmin()
-      .from('profiles')
-      .select('lemon_squeezy_customer_id')
-      .eq('id', userId)
-      .maybeSingle();
-    if (error) {
-      throw new BillingServiceError('storage_unavailable', 'Billing account could not be loaded', 503);
-    }
-    const customerId = String(data?.lemon_squeezy_customer_id ?? '').trim();
-    if (!/^\d+$/.test(customerId)) {
-      throw new BillingServiceError('subscription_not_found', 'No paid subscription is available to manage', 409);
-    }
-
-    const response = await fetch(`https://api.lemonsqueezy.com/v1/customers/${encodeURIComponent(customerId)}`, {
-      headers: {
-        Accept: 'application/vnd.api+json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
     if (!response.ok) {
-      console.error('[BillingService] Lemon customer portal failed', { status: response.status });
-      throw new BillingServiceError('provider_unavailable', 'Billing provider could not open subscription management', 502);
+      console.error(JSON.stringify({ level: 'error', event: 'whop_checkout_failed', status: response.status, userId }));
+      throw new BillingServiceError('provider_unavailable', 'Whop could not create checkout', 502);
     }
-    return { portalUrl: parseCustomerPortalUrl(await response.json()) };
+    const payload = await response.json() as Record<string, unknown>;
+    return {
+      purchaseUrl: safeWhopUrl(payload.purchase_url, 'Checkout'),
+      checkoutConfigurationId: pickString(payload, 'id') || null,
+    };
   }
 
-  static verifyWebhookSignature(rawBody: string, signatureHeader: string | undefined): boolean {
-    const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
-    if (!secret || !signatureHeader) return false;
-
-    const digest = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
-    const a = Buffer.from(digest, 'utf8');
-    const b = Buffer.from(signatureHeader, 'utf8');
-    if (a.length !== b.length) return false;
-    return crypto.timingSafeEqual(a, b);
+  static async createCustomerPortal(userId: string): Promise<{ manageUrl: string }> {
+    const { data, error } = await getSupabaseAdmin().from('whop_memberships')
+      .select('manage_url,status,renewal_period_end')
+      .eq('user_id', userId).order('last_synced_at', { ascending: false }).limit(1).maybeSingle();
+    if (error) throw new BillingServiceError('storage_unavailable', 'Billing account could not be loaded', 503);
+    if (!data?.manage_url) throw new BillingServiceError('subscription_not_found', 'No Xroga Pro subscription is available to manage', 409);
+    return { manageUrl: safeWhopUrl(data.manage_url, 'Subscription management') };
   }
 
-  static async handleWebhookEvent(event: LemonWebhookEvent): Promise<void> {
-    assertLemonWebhookEnvironment(event);
-    const type = event.meta?.event_name ?? '';
-    if (
-      type === 'subscription_created' ||
-      type === 'subscription_updated' ||
-      type === 'subscription_payment_success' ||
-      type === 'order_created'
-    ) {
-      await this.syncFromLemonPayload(event);
-    }
-
-    if (type === 'subscription_cancelled' || type === 'subscription_expired') {
-      const custom = event.meta?.custom_data ?? {};
-      const userId = String(custom.user_id || '');
-      if (userId) {
-        console.log(`[BillingService] Lemon ${type} for user ${userId} — plan left until period end`);
-      }
-    }
+  static async getUserBillingStatus(userId: string): Promise<BillingStatus> {
+    const [entitlement, balance, membershipResult] = await Promise.all([
+      getProviderEntitlementStatus(userId),
+      ActionService.getBalance(userId),
+      getSupabaseAdmin().from('whop_memberships').select('status,renewal_period_end,cancel_at_period_end,manage_url')
+        .eq('user_id', userId).order('last_synced_at', { ascending: false }).limit(1).maybeSingle(),
+    ]);
+    const membership = membershipResult.error ? null : membershipResult.data;
+    const isPaid = entitlement.state === 'paid_active';
+    const historical = entitlement.state === 'promotional_active';
+    const plan = getPlanByTier(isPaid ? 'spark' : 'free')!;
+    return {
+      plan: isPaid ? 'spark' : historical ? 'historical' : 'free',
+      publicPlanName: isPaid ? 'Xroga Pro' : historical ? 'Historical access' : 'Free',
+      isPaid,
+      billingProvider: isPaid ? 'whop' : null,
+      billingStatus: membership?.status ?? null,
+      renewalPeriodEnd: membership?.renewal_period_end ?? entitlement.endsAt,
+      cancelAtPeriodEnd: Boolean(membership?.cancel_at_period_end),
+      manageAvailable: isPaid && Boolean(membership?.manage_url),
+      usage: { used: balance?.used ?? 0, remaining: Math.max(0, balance?.remaining ?? plan.actions), total: balance?.total ?? plan.actions },
+      allowance: { actions: plan.actions, concurrency: plan.concurrency },
+      features: { workspace: true, repositories: true, previews: true, fullAccessPacing: isPaid || historical, higherConcurrency: isPaid || historical },
+      entitlement,
+    };
   }
 
-  static async syncFromLemonPayload(event: LemonWebhookEvent): Promise<void> {
-    const custom = (event.meta?.custom_data ?? {}) as Record<string, string>;
-    const userId = custom.user_id ? String(custom.user_id) : '';
-    let planTier = custom.plan_tier as PlanTier | undefined;
-
-    if (!userId) {
-      console.warn('[BillingService] Lemon webhook missing user_id in meta.custom_data');
-      return;
+  static async handleWebhookEvent(event: WhopWebhookEvent, webhookId: string): Promise<{ fulfilled: boolean }> {
+    const type = String(event.type ?? '') as WhopEventType;
+    const supported: WhopEventType[] = [
+      'payment.succeeded', 'payment.failed', 'membership.activated',
+      'membership.cancel_at_period_end_changed', 'membership.deactivated',
+      'refund.created', 'refund.updated', 'dispute.created', 'dispute.updated',
+    ];
+    if (!supported.includes(type)) return { fulfilled: false };
+    const data = nestedRecord(event.data);
+    const accountId = event.account_id || event.company_id || pickString(data, 'account_id', 'company_id');
+    if (accountId !== (process.env.WHOP_COMPANY_ID?.trim() || APPROVED_ACCOUNT_ID)) throw new Error('wrong_account');
+    if (type === 'payment.succeeded') return { fulfilled: await this.fulfillPayment(data, webhookId) };
+    if (type === 'payment.failed') {
+      await this.syncMembership(data, 'payment_failed');
+      return { fulfilled: false };
     }
-
-    if (!planTier) {
-      const variantId = this.extractVariantId(event.data?.attributes);
-      planTier = this.tierFromVariantId(variantId);
+    if (type.startsWith('membership.')) {
+      await this.syncMembership(data, type.split('.')[1] || 'unknown');
+      return { fulfilled: false };
     }
-
-    if (!planTier) {
-      console.warn('[BillingService] could not determine plan tier for user', userId);
-      return;
-    }
-
-    const plan = getPlanByTier(planTier);
-    if (!plan) return;
-
-    const attributes = event.data?.attributes ?? {};
-    const cycle = derivePaidCycleEvidence(event);
-    await activatePaidCycle({ userId, ...cycle });
-    await ActionService.applyPlan(userId, planTier, plan.actions);
-
-    const supabase = getSupabaseAdmin();
-    const customerId =
-      (event.data?.attributes?.customer_id as string | number | undefined) ??
-      (event.data?.attributes?.user_email as string | undefined);
-
-    if (customerId) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          lemon_squeezy_customer_id: String(customerId),
-          paddle_customer_id: String(customerId),
-        })
-        .eq('id', userId);
-      if (error && !/lemon_squeezy_customer_id|paddle_customer_id/i.test(error.message)) {
-        console.warn('[BillingService] profile update:', error.message);
-      }
-    }
-
-    console.log(`[BillingService] Applied ${planTier} plan (${plan.actions} actions) to user ${userId}`);
+    console.info(JSON.stringify({ level: 'info', event: 'whop_financial_state_synced', webhookId, type, objectId: pickString(data, 'id') || null }));
+    return { fulfilled: false };
   }
 
-  private static extractVariantId(attrs?: Record<string, unknown>): string | undefined {
-    if (!attrs) return undefined;
-    if (attrs.variant_id != null) return String(attrs.variant_id);
-    const first = attrs.first_order_item as { variant_id?: string | number } | undefined;
-    if (first?.variant_id != null) return String(first.variant_id);
-    return undefined;
+  private static async fulfillPayment(data: Record<string, unknown>, webhookId: string): Promise<boolean> {
+    const plan = nestedRecord(data.plan);
+    const membership = nestedRecord(data.membership);
+    const checkout = nestedRecord(data.checkout_configuration);
+    const metadata = { ...nestedRecord(checkout.metadata), ...nestedRecord(data.metadata) };
+    const paymentId = pickString(data, 'id', 'payment_id');
+    const planId = pickString(data, 'plan_id') || pickString(plan, 'id') || pickString(membership, 'plan_id');
+    const userId = pickString(metadata, 'xroga_user_id');
+    if (pickString(data, 'status').toLowerCase() !== 'succeeded') throw new Error('payment_not_succeeded');
+    if (!paymentId) throw new Error('payment_id_required');
+    if (planId !== (process.env.WHOP_PLAN_ID?.trim() || APPROVED_PLAN_ID)) throw new Error('wrong_plan');
+    if (pickString(metadata, 'plan_tier') !== EXPECTED_TIER || pickString(metadata, 'source') !== EXPECTED_SOURCE) throw new Error('invalid_metadata');
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId)) throw new Error('invalid_user');
+    const { data: profile, error: profileError } = await getSupabaseAdmin().from('profiles').select('id').eq('id', userId).maybeSingle();
+    if (profileError || !profile) throw new Error('invalid_user');
+    const startsAt = parseDate(data.paid_at) ?? parseDate(data.created_at) ?? new Date();
+    const endsAt = parseDate(membership.renewal_period_end) ?? parseDate(membership.expires_at) ?? new Date(startsAt.getTime() + 30 * 86_400_000);
+    const membershipId = pickString(data, 'membership_id') || pickString(membership, 'id');
+    const memberId = pickString(data, 'member_id') || pickString(membership, 'member_id');
+    const checkoutId = pickString(data, 'checkout_configuration_id') || pickString(checkout, 'id');
+    const manageUrl = pickString(membership, 'manage_url');
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const { data: fulfilled, error } = await getSupabaseAdmin().rpc('fulfill_whop_payment', {
+        p_user_id: userId, p_webhook_id: webhookId, p_payment_id: paymentId,
+        p_membership_id: membershipId || null, p_member_id: memberId || null,
+        p_checkout_configuration_id: checkoutId || null, p_plan_id: planId,
+        p_account_id: process.env.WHOP_COMPANY_ID?.trim() || APPROVED_ACCOUNT_ID,
+        p_starts_at: startsAt.toISOString(), p_ends_at: endsAt.toISOString(), p_manage_url: manageUrl || null,
+      });
+      if (error) throw new Error('payment_fulfillment_failed');
+      return Boolean(fulfilled);
+    }
+    if (memoryFulfilledPayments.has(paymentId)) return false;
+    memoryFulfilledPayments.add(paymentId);
+    await activatePaidCycle({ userId, providerReference: `whop:payment:${paymentId}`, startsAt, endsAt });
+    await ActionService.applyPlan(userId, 'spark', getPlanByTier('spark')!.actions);
+    return true;
   }
 
-  private static tierFromVariantId(variantId?: string): PlanTier | undefined {
-    if (!variantId) return undefined;
-    for (const plan of GALACTIC_PLANS) {
-      if (process.env[plan.envPriceKey] === variantId) return plan.tier;
+  private static async syncMembership(data: Record<string, unknown>, fallbackStatus: string): Promise<void> {
+    const metadata = { ...nestedRecord(nestedRecord(data.checkout_configuration).metadata), ...nestedRecord(data.metadata) };
+    let userId = pickString(metadata, 'xroga_user_id');
+    const membership = Object.keys(nestedRecord(data.membership)).length ? nestedRecord(data.membership) : data;
+    const membershipId = pickString(data, 'membership_id') || pickString(membership, 'id');
+    if (!userId && membershipId) {
+      const { data: existing } = await getSupabaseAdmin().from('whop_memberships').select('user_id').eq('whop_membership_id', membershipId).maybeSingle();
+      userId = existing?.user_id ?? '';
     }
-    return undefined;
+    if (!userId || !membershipId) return;
+    const manageUrl = pickString(membership, 'manage_url');
+    const row = {
+      user_id: userId, whop_membership_id: membershipId,
+      whop_member_id: pickString(membership, 'member_id') || null,
+      whop_payment_id: pickString(data, 'payment_id') || null,
+      whop_checkout_configuration_id: pickString(data, 'checkout_configuration_id') || null,
+      whop_plan_id: pickString(membership, 'plan_id') || pickString(data, 'plan_id') || process.env.WHOP_PLAN_ID || null,
+      whop_account_id: pickString(membership, 'account_id', 'company_id') || process.env.WHOP_COMPANY_ID || null,
+      billing_provider: 'whop', status: pickString(membership, 'status') || fallbackStatus,
+      renewal_period_start: parseDate(membership.renewal_period_start)?.toISOString() ?? null,
+      renewal_period_end: (parseDate(membership.renewal_period_end) ?? parseDate(membership.expires_at))?.toISOString() ?? null,
+      cancel_at_period_end: Boolean(membership.cancel_at_period_end),
+      manage_url: manageUrl ? safeWhopUrl(manageUrl, 'Subscription management') : null,
+      last_synced_at: new Date().toISOString(),
+    };
+    const { error } = await getSupabaseAdmin().from('whop_memberships').upsert(row, { onConflict: 'whop_membership_id' });
+    if (error) throw new Error('membership_sync_failed');
+    if (fallbackStatus === 'deactivated') await getProviderEntitlementStatus(userId);
   }
+}
+
+export function resetBillingMemoryForTests(): void {
+  memoryFulfilledPayments.clear();
+  verifiedPlanUntil = 0;
 }

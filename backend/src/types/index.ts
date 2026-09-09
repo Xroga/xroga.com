@@ -1,4 +1,4 @@
-export type PlanTier = 'unpaid' | 'spark' | 'pulse' | 'nova' | 'zenith' | 'singularity';
+export type PlanTier = 'free' | 'unpaid' | 'spark' | 'pulse' | 'nova' | 'zenith' | 'singularity';
 
 export type ProjectType = 'app' | 'website' | 'video' | 'game' | 'research' | 'automation';
 export type ProjectStatus = 'in_progress' | 'completed' | 'archived';
@@ -101,6 +101,7 @@ export const ACTION_COSTS: Record<TaskType, number> = {
 };
 
 export const PLAN_ALLOCATIONS: Record<PlanTier, { actions: number; concurrency: number }> = {
+  free: { actions: 50, concurrency: 1 },
   unpaid: { actions: 50, concurrency: 1 },
   spark: { actions: 1500, concurrency: 2 },
   pulse: { actions: 5000, concurrency: 8 },

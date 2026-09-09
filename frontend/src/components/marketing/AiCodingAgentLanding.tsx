@@ -297,8 +297,8 @@ export function AiCodingAgentLanding() {
                   Start building with Xroga <ArrowRight aria-hidden="true" />
                 </Link>
                 <p className="agx-cta__foot">
-                  One plan, with a free trial to start. Usage and limits are shown in the
-                  workspace.
+                  Start free with no card. Upgrade to Xroga Pro when you need more capacity.
+                  Usage and limits stay visible in the workspace.
                 </p>
               </div>
 

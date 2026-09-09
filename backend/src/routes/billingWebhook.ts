@@ -1,96 +1,89 @@
-import { Router } from 'express';
-import express from 'express';
-import { BillingService } from '../services/BillingService.js';
 import { createHash } from 'node:crypto';
+import express, { Router } from 'express';
+import { BillingService, verifyWhopWebhookSignature, type WhopWebhookEvent } from '../services/BillingService.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 
 const router = Router();
 
-/** Lemon Squeezy webhooks — primary path */
-router.post(
-  '/lemon-squeezy',
-  express.raw({ type: 'application/json' }),
-  async (req, res) => {
-    const rawBody = req.body instanceof Buffer ? req.body.toString('utf8') : String(req.body);
-    const signature = (req.headers['x-signature'] as string | undefined) ?? undefined;
+router.post('/whop', express.raw({ type: 'application/json', limit: '1mb' }), async (req, res) => {
+  const rawBody = req.body instanceof Buffer ? req.body.toString('utf8') : '';
+  const webhookId = String(req.headers['webhook-id'] ?? '').slice(0, 200);
+  const timestamp = String(req.headers['webhook-timestamp'] ?? '');
+  const signature = String(req.headers['webhook-signature'] ?? '');
 
-    if (!process.env.LEMONSQUEEZY_WEBHOOK_SECRET) {
-      res.status(503).json({ error: 'Webhook verification is not configured' });
+  if (!process.env.WHOP_WEBHOOK_SECRET?.trim()) {
+    res.status(503).json({ error: 'Webhook verification is not configured' });
+    return;
+  }
+  if (!verifyWhopWebhookSignature(rawBody, { id: webhookId, timestamp, signature })) {
+    console.warn(JSON.stringify({ level: 'warn', event: 'whop_webhook_rejected', webhookId: webhookId || null, reason: 'invalid_signature' }));
+    res.status(401).json({ error: 'Invalid webhook signature' });
+    return;
+  }
+
+  let event: WhopWebhookEvent;
+  try {
+    event = JSON.parse(rawBody) as WhopWebhookEvent;
+  } catch {
+    res.status(400).json({ error: 'Invalid webhook payload' });
+    return;
+  }
+
+  const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
+  const eventType = String(event.type ?? '').slice(0, 100);
+  const supabase = getSupabaseAdmin();
+  const { error: claimError } = await supabase.from('webhook_deliveries').insert({
+    provider: 'whop', delivery_id: webhookId, payload_digest: payloadDigest,
+    status: 'processing', event_type: eventType, signature_verified: true, response_status: null,
+  });
+  if (claimError?.code === '23505') {
+    const { data: existing } = await supabase.from('webhook_deliveries')
+      .select('status,payload_digest').eq('provider', 'whop').eq('delivery_id', webhookId).maybeSingle();
+    if (!existing || existing.payload_digest !== payloadDigest) {
+      res.status(409).json({ error: 'Webhook identity conflict' });
       return;
     }
-    {
-      const valid = BillingService.verifyWebhookSignature(rawBody, signature);
-      if (!valid) {
-        const eventName = String(req.headers['x-event-name'] ?? '').slice(0, 100);
-        if (
-          /^[a-f0-9]{64}$/i.test(signature ?? '')
-          && /^(order_created|subscription_(created|updated|cancelled|expired|payment_success))$/.test(eventName)
-        ) {
-          const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
-          await getSupabaseAdmin().from('webhook_deliveries').insert({
-            provider: 'lemon_squeezy', delivery_id: `invalid:${payloadDigest}`,
-            payload_digest: payloadDigest, status: 'failed', safe_error: 'invalid_signature',
-            event_type: eventName, signature_verified: false, response_status: 401,
-            completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-          });
-        }
-        console.warn('[billing/webhook] invalid Lemon Squeezy signature');
-        res.status(401).json({ error: 'Invalid signature' });
-        return;
-      }
+    if (existing.status !== 'failed') {
+      res.status(200).json({ received: true, duplicate: true });
+      return;
     }
-
-    let claimedDeliveryId: string | undefined;
-    try {
-      const event = JSON.parse(rawBody) as {
-        meta?: { event_name?: string; event_id?: string; custom_data?: Record<string, unknown> };
-        data?: { type?: string; id?: string; attributes?: Record<string, unknown> };
-      };
-      const deliveryId = String(
-        req.headers['x-event-id'] ?? event.meta?.event_id ?? createHash('sha256').update(rawBody).digest('hex'),
-      ).slice(0, 200);
-      claimedDeliveryId = deliveryId;
-      const payloadDigest = createHash('sha256').update(rawBody).digest('hex');
-      const { error: insertError } = await getSupabaseAdmin().from('webhook_deliveries').insert({
-        provider: 'lemon_squeezy', delivery_id: deliveryId, payload_digest: payloadDigest,
-        status: 'processing', event_type: event.meta?.event_name ?? null,
-        signature_verified: true, response_status: null,
-      });
-      if (insertError) {
-        if (insertError.code === '23505') {
-          res.status(200).json({ received: true, duplicate: true });
-          return;
-        }
-        res.status(503).json({ error: 'Webhook delivery store unavailable' });
-        return;
-      }
-      await BillingService.handleWebhookEvent(event);
-      await getSupabaseAdmin().from('webhook_deliveries').update({
-        status: 'completed', response_status: 200,
-        completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-      }).eq('provider', 'lemon_squeezy').eq('delivery_id', deliveryId);
-      res.json({ received: true });
-    } catch (err) {
-      if (claimedDeliveryId) {
-        await getSupabaseAdmin().from('webhook_deliveries').update({
-          status: 'failed', safe_error: 'processing_failed', response_status: 500,
-          completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-        }).eq('provider', 'lemon_squeezy').eq('delivery_id', claimedDeliveryId);
-      }
-      console.error(JSON.stringify({
-        level: 'error', event: 'billing_webhook_failed', deliveryId: claimedDeliveryId ?? null,
-        errorClass: err instanceof SyntaxError ? 'invalid_json' : 'processing_failure',
-      }));
-      res.status(500).json({ error: 'Webhook processing failed' });
+    const { error: retryError } = await supabase.from('webhook_deliveries').update({
+      status: 'processing', safe_error: null, response_status: null, updated_at: new Date().toISOString(),
+    }).eq('provider', 'whop').eq('delivery_id', webhookId).eq('status', 'failed');
+    if (retryError) {
+      res.status(503).json({ error: 'Webhook delivery store unavailable' });
+      return;
     }
-  },
-);
+  } else if (claimError) {
+    res.status(503).json({ error: 'Webhook delivery store unavailable' });
+    return;
+  }
 
-/** @deprecated Paddle removed — return gone so old dashboard hooks fail loudly */
+  try {
+    const result = await BillingService.handleWebhookEvent(event, webhookId);
+    await supabase.from('webhook_deliveries').update({
+      status: 'completed', response_status: 200, completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+      related_object: event.data && typeof event.data.id === 'string' ? event.data.id : null,
+    }).eq('provider', 'whop').eq('delivery_id', webhookId);
+    console.info(JSON.stringify({ level: 'info', event: 'whop_webhook_processed', webhookId, eventType, fulfilled: result.fulfilled }));
+    res.status(200).json({ received: true, fulfilled: result.fulfilled });
+  } catch (error) {
+    const safeError = error instanceof Error ? error.message.slice(0, 80) : 'processing_failed';
+    await supabase.from('webhook_deliveries').update({
+      status: 'failed', safe_error: safeError, response_status: 500,
+      completed_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+    }).eq('provider', 'whop').eq('delivery_id', webhookId);
+    console.error(JSON.stringify({ level: 'error', event: 'whop_webhook_failed', webhookId, eventType, reason: safeError }));
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+router.post('/lemon-squeezy', express.raw({ type: 'application/json' }), (_req, res) => {
+  res.status(410).json({ error: 'Legacy billing webhook retired' });
+});
+
 router.post('/paddle', express.raw({ type: 'application/json' }), (_req, res) => {
-  res.status(410).json({
-    error: 'Paddle billing removed. Use Lemon Squeezy webhook: POST /api/billing/webhook/lemon-squeezy',
-  });
+  res.status(410).json({ error: 'Legacy billing webhook retired' });
 });
 
 export default router;

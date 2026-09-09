@@ -1,11 +1,8 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
 import { z } from 'zod';
 import { BillingService, BillingServiceError } from '../services/BillingService.js';
 import type { AuthRequest } from '../middleware/auth.js';
-import type { PlanTier } from '../types/index.js';
 import {
-  activateLaunchPromotion,
-  getProviderEntitlementStatus,
   setUsagePacing,
 } from '../ai/providerBudget.js';
 
@@ -24,30 +21,24 @@ router.get('/plans', (_req, res) => {
   res.json({ plans: BillingService.listPlans() });
 });
 
-router.get('/status', (_req, res) => {
-  res.json(BillingService.billingStatus());
+router.get('/status', async (req: AuthRequest, res) => {
+  try {
+    res.json(await BillingService.getUserBillingStatus(req.userId!));
+  } catch {
+    res.status(503).json({ error: 'Billing status is temporarily unavailable', code: 'BILLING_UNAVAILABLE' });
+  }
 });
 
 router.get('/entitlement', async (req: AuthRequest, res) => {
   try {
-    res.json(await getProviderEntitlementStatus(req.userId!));
+    res.json((await BillingService.getUserBillingStatus(req.userId!)).entitlement);
   } catch {
     res.status(503).json({ error: 'Billing entitlement is temporarily unavailable', code: 'BILLING_UNAVAILABLE' });
   }
 });
 
-router.post('/promotion/activate', async (req: AuthRequest, res) => {
-  try {
-    await activateLaunchPromotion(req.userId!);
-    res.status(201).json(await getProviderEntitlementStatus(req.userId!));
-  } catch (error) {
-    const message = (error as Error).message;
-    const closed = /window_closed/i.test(message);
-    res.status(closed ? 409 : 503).json({
-      error: closed ? 'The launch promotion activation window has closed' : 'Promotion activation is temporarily unavailable',
-      code: closed ? 'PROMOTION_WINDOW_CLOSED' : 'BILLING_UNAVAILABLE',
-    });
-  }
+router.post('/promotion/activate', (_req, res) => {
+  res.status(410).json({ error: 'Launch promotion activation has ended', code: 'PROMOTION_ENDED' });
 });
 
 router.post('/pacing', async (req: AuthRequest, res) => {
@@ -67,7 +58,7 @@ router.post('/pacing', async (req: AuthRequest, res) => {
   }
 });
 
-router.post('/create-checkout', async (req: AuthRequest, res) => {
+async function createCheckout(req: AuthRequest, res: Response) {
   const parsed = checkoutSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.flatten() });
@@ -75,11 +66,7 @@ router.post('/create-checkout', async (req: AuthRequest, res) => {
   }
 
   try {
-    const result = await BillingService.createCheckout(
-      req.userId!,
-      parsed.data.planTier as PlanTier,
-      req.userEmail
-    );
+    const result = await BillingService.createCheckout(req.userId!);
     res.json(result);
   } catch (err) {
     if (err instanceof BillingServiceError) {
@@ -88,9 +75,12 @@ router.post('/create-checkout', async (req: AuthRequest, res) => {
     }
     res.status(500).json({ error: 'Checkout could not be created', code: 'billing_failure' });
   }
-});
+}
 
-router.post('/portal', async (req: AuthRequest, res) => {
+router.post('/checkout', createCheckout);
+router.post('/create-checkout', createCheckout);
+
+async function manageSubscription(req: AuthRequest, res: Response) {
   try {
     res.json(await BillingService.createCustomerPortal(req.userId!));
   } catch (err) {
@@ -100,6 +90,9 @@ router.post('/portal', async (req: AuthRequest, res) => {
     }
     res.status(500).json({ error: 'Subscription management could not be opened', code: 'billing_failure' });
   }
-});
+}
+
+router.post('/manage', manageSubscription);
+router.post('/portal', manageSubscription);
 
 export default router;

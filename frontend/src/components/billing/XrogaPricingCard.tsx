@@ -66,7 +66,7 @@ function StandardPricingCard({
         </div>
         <p className="xv-plan-price">
           {price}
-          <span className="xv-plan-price__suffix">/mo</span>
+          {price !== '$0' && <span className="xv-plan-price__suffix">/month</span>}
         </p>
         {tokensLabel && <p className="xv-plan-tokens">{tokensLabel}</p>}
         <p className="xv-plan-paragraph">
@@ -125,7 +125,7 @@ function PopularPricingCard({
         </div>
         <p className="xv-galactic-popular-price">
           {price}
-          <span className="xv-plan-price__suffix">/mo</span>
+          {price !== '$0' && <span className="xv-plan-price__suffix">/month</span>}
         </p>
         {tokensLabel && <p className="xv-galactic-popular-tokens">{tokensLabel}</p>}
         <p className="xv-galactic-popular-paragraph">
@@ -195,7 +195,7 @@ export function PricingPlanGrid({
 }) {
   return (
     <div className={cn('xv-pricing-grid relative', className)}>
-      <div className="relative z-[1] grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
+      <div className="relative z-[1] mx-auto grid max-w-4xl gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 items-stretch">
         {children}
       </div>
     </div>
@@ -207,16 +207,19 @@ export function PricingCtaButton({
   onClick,
   variant = 'outline',
   className,
+  disabled,
 }: {
   children: ReactNode;
   onClick?: () => void;
   variant?: 'outline' | 'solid' | 'ghost';
   className?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         'xv-pricing-cta w-full text-xs sm:text-sm font-semibold',
         variant === 'outline' && 'xv-pricing-cta--outline',

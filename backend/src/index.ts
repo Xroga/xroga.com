@@ -105,7 +105,7 @@ const corsOptions: cors.CorsOptions = {
 
 app.use(cors(corsOptions));
 
-// Lemon Squeezy webhook needs raw body — mount before express.json()
+// Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
 
 app.use(express.json({ limit: '10mb' }));

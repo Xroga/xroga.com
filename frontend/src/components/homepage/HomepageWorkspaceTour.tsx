@@ -38,7 +38,7 @@ const CONNECTIONS = [
   { id: 'supabase', name: 'Supabase', tone: 'live' },
   { id: 'brevo', name: 'Brevo', tone: 'live' },
   { id: 'cloudflare', name: 'Cloudflare', tone: 'live' },
-  { id: 'lemon_squeezy', name: 'Lemon Squeezy', tone: 'live' },
+  { id: 'whop', name: 'Whop', tone: 'live' },
   { id: 'byok', name: 'BYOK', tone: 'live' },
   { id: 'sentry', name: 'Sentry', tone: 'soon' },
 ] as const;
@@ -135,7 +135,7 @@ function WorkspaceSidebar({ collapsed, onToggle, loggedIn }: { collapsed: boolea
         {repoExpanded ? <div>{Array.from({ length: 6 }, (_, index) => <button type="button" key={index}><span>#{index + 1} terminal</span><GitBranch /><small>{index === 0 ? 'now' : '8d'}</small></button>)}</div> : null}
       </section>
 
-      <Link className="xv-wt-sidebar-account" href={loggedIn ? '/workspace' : '/auth/signup'}><span>O</span><b>Orbit Clean E2E<small>Launch Promotion</small></b><Rocket /></Link>
+      <Link className="xv-wt-sidebar-account" href={loggedIn ? '/workspace' : '/auth/signup'}><span>O</span><b>Orbit Clean E2E<small>Free plan</small></b><Rocket /></Link>
     </aside>
   );
 }

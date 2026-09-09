@@ -17,6 +17,7 @@ export const INTEGRATION_LOGOS: Record<string, string> = {
   stripe: 'https://cdn.simpleicons.org/stripe/635BFF',
   paypal: 'https://cdn.simpleicons.org/paypal/00457C',
   lemon_squeezy: 'https://cdn.simpleicons.org/lemonsqueezy/FFC233',
+  whop: 'https://cdn.simpleicons.org/whop/FF6243',
   shopify: 'https://cdn.simpleicons.org/shopify/7AB55C',
   openai: '/brand/logos/openai.svg',
   anthropic: '/brand/logos/anthropic.svg',

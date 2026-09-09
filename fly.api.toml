@@ -13,9 +13,9 @@ primary_region = 'iad'
   NODE_ENV = 'production'
   FRONTEND_URL = 'https://xroga.com'
   GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'
-  LEMONSQUEEZY_MODE = 'test'
-  LEMONSQUEEZY_STORE_ID = '217480'
-  LEMONSQUEEZY_PRODUCT_SPARK = '1231656'
+  WHOP_COMPANY_ID = 'biz_qhYONL4RebGX96'
+  WHOP_PLAN_ID = 'plan_hlV1A10I5QfSP'
+  WHOP_REDIRECT_URL = 'https://xroga.com/workspace?billing=success'
 
   # Isolation for generated code. Neither value is a secret; the token that authorises them is
   # staged separately as a Fly secret (see .github/workflows/fly-deploy.yml).

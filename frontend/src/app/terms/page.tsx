@@ -7,7 +7,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Terms and Conditions',
   description:
-    'Xroga AI Terms and Conditions — subscriptions via Lemon Squeezy, acceptable use, and service scope.',
+    'Xroga AI Terms and Conditions — subscriptions via Whop, acceptable use, and service scope.',
   path: '/terms',
 });
 
@@ -35,11 +35,11 @@ export default function TermsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">3. Payments (Lemon Squeezy)</h2>
+        <h2 className="text-lg font-semibold">3. Payments (Whop)</h2>
         <p className="text-[var(--muted)]">
-          Paid plans are billed through Lemon Squeezy (merchant of record where applicable). Supported
+          Paid plans are billed through Whop. Supported
           methods may include cards, PayPal, Google Pay, and other local methods. Prices may show
-          in local currency; Lemon Squeezy handles conversion and taxes where required. Plan capacity,
+          in local currency; Whop handles conversion and taxes where required. Plan capacity,
           pacing, and cycle dates are described on{' '}
           <Link href="/pricing" className="text-[var(--accent)] hover:underline">
             Pricing
@@ -69,7 +69,7 @@ export default function TermsPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">6. Cancellation & refunds</h2>
         <p className="text-[var(--muted)]">
-          Paid subscribers can cancel through the signed Lemon Squeezy portal opened from dashboard billing. If the portal is unavailable, contact support before renewal. Details are in our{' '}
+          Paid subscribers can manage or cancel through the Whop membership page opened from dashboard billing. If it is unavailable, contact support before renewal. Details are in our{' '}
           <Link href="/refund" className="text-[var(--accent)] hover:underline">
             Refund Policy
           </Link>

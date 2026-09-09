@@ -16,7 +16,7 @@ import { createServer, type Server } from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import { AddressInfo } from 'node:net';
 import { SignJWT, jwtVerify } from 'jose';
-import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
+import { FREE_PLAN_ACTIONS } from '../config/plans.js';
 
 const JWT_SECRET = 'test-only-jwt-secret-not-a-real-credential-000000';
 const USER_ID = '11111111-2222-3333-4444-555555555555';
@@ -34,7 +34,7 @@ function bodyFor(path: string, wantsSingleObject: boolean): unknown {
   }
   if (path.startsWith('/rest/v1/user_actions')) {
     // Already correct for a free user, so provisioning has no repair to write.
-    const row = { plan_tier: 'unpaid', total_actions: FREE_TRIAL_ACTIONS, used_actions: 0 };
+    const row = { plan_tier: 'free', total_actions: FREE_PLAN_ACTIONS, used_actions: 0 };
     return wantsSingleObject ? row : [row];
   }
   if (path.startsWith('/rest/v1/user_token_usage')) {

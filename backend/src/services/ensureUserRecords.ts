@@ -1,4 +1,4 @@
-import { FREE_TRIAL_ACTIONS, getApiBudgetUsd } from '../config/plans.js';
+import { FREE_PLAN_ACTIONS, getApiBudgetUsd } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { recordSupabaseCall } from '../lib/supabaseCallCounters.js';
 import {
@@ -68,8 +68,8 @@ async function provisionUserRecords(userId: string, email?: string): Promise<voi
   if (!actions) {
     await supabase.from('user_actions').insert({
       user_id: userId,
-      plan_tier: 'unpaid',
-      total_actions: FREE_TRIAL_ACTIONS,
+      plan_tier: 'free',
+      total_actions: FREE_PLAN_ACTIONS,
       used_actions: 0,
       concurrency_limit: 1,
     });
@@ -77,7 +77,7 @@ async function provisionUserRecords(userId: string, email?: string): Promise<voi
     // Do NOT return early — token quota row must still be provisioned below.
   }
 
-  const planTier = (actions?.plan_tier as string) || 'unpaid';
+  const planTier = (actions?.plan_tier as string) || 'free';
   const period = currentPeriodStart();
   const { data: tokenRow, error: tokenSelectErr } = await supabase
     .from('user_token_usage')
@@ -111,20 +111,19 @@ async function provisionUserRecords(userId: string, email?: string): Promise<voi
     recordSupabaseCall({ table: 'user_token_usage', operation: 'upsert', outcome: 'ok' });
   }
 
-  // Fix unpaid users stuck at 0 or wrong trial totals
-  if (actions && (actions.plan_tier === 'unpaid' || !actions.plan_tier)) {
+  // Canonicalize legacy unpaid rows into the permanent Free plan without touching paid users.
+  if (actions && (actions.plan_tier === 'unpaid' || actions.plan_tier === 'free' || !actions.plan_tier)) {
     const used = actions.used_actions ?? 0;
     const needsFix =
-      actions.total_actions < FREE_TRIAL_ACTIONS ||
-      actions.total_actions > FREE_TRIAL_ACTIONS * 2;
+      actions.total_actions !== FREE_PLAN_ACTIONS || actions.plan_tier !== 'free';
 
     if (needsFix) {
       await supabase
         .from('user_actions')
         .update({
-          plan_tier: 'unpaid',
-          total_actions: FREE_TRIAL_ACTIONS,
-          used_actions: Math.min(used, FREE_TRIAL_ACTIONS),
+          plan_tier: 'free',
+          total_actions: FREE_PLAN_ACTIONS,
+          used_actions: Math.min(used, FREE_PLAN_ACTIONS),
           concurrency_limit: 1,
         })
         .eq('user_id', userId);

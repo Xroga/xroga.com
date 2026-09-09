@@ -10,7 +10,7 @@ export function BillingPageClient() {
       <div className="max-w-4xl mx-auto space-y-8">
         <header>
           <h1 className="text-2xl sm:text-3xl font-bold">Plan & Usage</h1>
-          <p className="text-sm text-[var(--muted)] mt-1">One Xroga AI plan, durable 30-day cycles, and truthful capacity pacing.</p>
+          <p className="text-sm text-[var(--muted)] mt-1">Free and Xroga Pro, with truthful 30-day usage and capacity.</p>
         </header>
 
         <PlanUsageSettingsPanel />
@@ -18,7 +18,7 @@ export function BillingPageClient() {
         <div className="grid sm:grid-cols-2 gap-4 text-sm">
           <div className="glass-panel rounded-xl p-4 flex gap-3">
             <Shield className="w-5 h-5 text-[var(--accent)] shrink-0" />
-            <div><p className="font-semibold">Verified checkout</p><p className="text-[var(--muted)] text-xs mt-1">Paid access is activated only by a valid signed Lemon Squeezy event.</p></div>
+            <div><p className="font-semibold">Verified checkout</p><p className="text-[var(--muted)] text-xs mt-1">Paid access is activated only after a valid signed Whop payment event.</p></div>
           </div>
           <div className="glass-panel rounded-xl p-4 flex gap-3">
             <Lock className="w-5 h-5 text-[var(--accent)] shrink-0" />

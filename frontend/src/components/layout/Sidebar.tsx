@@ -238,8 +238,8 @@ interface SidebarProps {
 }
 
 function planLabel(tier?: string | null) {
-  if (!tier || tier === 'unpaid') return 'Launch Promotion';
-  return 'Xroga AI Plan';
+  if (!tier || tier === 'unpaid' || tier === 'free') return 'Free';
+  return 'Xroga Pro';
 }
 
 /**

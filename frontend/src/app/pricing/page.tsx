@@ -3,28 +3,18 @@ import { buildMetadata } from '@/lib/seo';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 
 export const metadata = buildMetadata({
-  title: 'Pricing — One Xroga AI Plan',
+  title: 'Pricing — Free and Xroga Pro',
   description:
-    'Xroga AI is $25 per month with all product-building features included.',
+    'Start with Xroga Free at $0 with no card, or upgrade to Xroga Pro for $25/month.',
   path: '/pricing',
   keywords: [
     'Xroga pricing',
     'Xroga AI plan',
-    'Xroga monthly plan',
+    'Xroga Pro pricing',
     'AI product builder pricing',
   ],
 });
 
 export default function PricingPage() {
-  return (
-    <>
-      <PageJsonLd
-        path="/pricing"
-        name="XROGA AI pricing"
-        description="XROGA AI offers one $25 monthly plan for building, verifying, and publishing software."
-      />
-
-      <PricingPageClient />
-    </>
-  );
+  return <><PageJsonLd path="/pricing" name="XROGA AI pricing" description="Xroga Free and Xroga Pro plans, current capacity, and billing information." /><PricingPageClient /></>;
 }

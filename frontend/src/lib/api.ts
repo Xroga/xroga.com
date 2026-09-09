@@ -1320,18 +1320,28 @@ export const api = {
       }),
   },
   billing: {
-    plans: () => apiFetch<{ plans: unknown[] }>('/api/billing/plans'),
+    plans: () => apiFetch<{ plans: Array<{ tier: 'free' | 'spark'; name: string; priceLabel: string; actionsLabel: string; actions: number; concurrency: number; paid: boolean; benefits: string[] }> }>('/api/billing/plans'),
     status: () => apiFetch<{
-      lemonApi: boolean;
-      lemonWebhook: boolean;
-      lemonStore: boolean;
-      environment: 'test' | 'live' | 'unconfigured';
-      testMode: boolean;
-      trialDays: number | null;
-      plans: Array<{ tier: string; name: string; ready: boolean }>;
+      plan: 'free' | 'spark' | 'historical';
+      publicPlanName: string;
+      isPaid: boolean;
+      billingProvider: 'whop' | null;
+      billingStatus: string | null;
+      renewalPeriodEnd: string | null;
+      cancelAtPeriodEnd: boolean;
+      manageAvailable: boolean;
+      usage: { used: number; remaining: number; total: number };
+      allowance: { actions: number; concurrency: number };
+      features: { workspace: boolean; repositories: boolean; previews: boolean; fullAccessPacing: boolean; higherConcurrency: boolean };
+      entitlement: {
+        state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+        pacing: 'balanced_month' | 'full_access' | null;
+        startsAt: string | null; endsAt: string | null; nextUnlockAt: string | null;
+        capacityRemainingPercent: number | null; availableNowPercent: number | null;
+      };
     }>('/api/billing/status'),
     entitlement: () => apiFetch<{
-      state: 'promotional_eligible' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+      state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
       pacing: 'balanced_month' | 'full_access' | null;
       startsAt: string | null;
       endsAt: string | null;
@@ -1342,28 +1352,20 @@ export const api = {
       requiresCard: boolean;
       autoChargesAtPromotionEnd: boolean;
     }>('/api/billing/entitlement'),
-    activatePromotion: () => apiFetch<{
-      state: string;
-      startsAt: string;
-      endsAt: string;
-      pacing: 'balanced_month' | 'full_access';
-    }>('/api/billing/promotion/activate', { method: 'POST' }),
     setPacing: (pacing: 'balanced_month' | 'full_access', confirmed: boolean) =>
       apiFetch('/api/billing/pacing', {
         method: 'POST',
         body: JSON.stringify({ pacing, confirmed }),
       }),
-    createCheckout: (planTier: string) =>
+    createCheckout: (planTier: 'spark') =>
       apiFetch<{
-        checkoutUrl?: string;
-        priceId: string;
-        customData: Record<string, string>;
-      }>('/api/billing/create-checkout', {
+        purchaseUrl: string;
+        checkoutConfigurationId: string | null;
+      }>('/api/billing/checkout', {
         method: 'POST',
         body: JSON.stringify({ planTier }),
       }),
-    portal: () =>
-      apiFetch<{ portalUrl: string }>('/api/billing/portal', { method: 'POST' }),
+    portal: () => apiFetch<{ manageUrl: string }>('/api/billing/manage', { method: 'POST' }),
   },
   dashboard: {
     summary: () => apiFetch<DashboardSummary>('/api/dashboard/summary'),
@@ -1704,7 +1706,7 @@ export interface DashboardSummary {
     nextBilling: string | null;
   };
   entitlement: {
-    state: 'promotional_eligible' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
+    state: 'free_active' | 'promotional_active' | 'promotional_expired' | 'paid_active' | 'past_due' | 'paused' | 'cancelled' | 'billing_unavailable';
     pacing: 'balanced_month' | 'full_access' | null;
     startsAt: string | null;
     endsAt: string | null;

@@ -1,5 +1,5 @@
 import { getConcurrencyForTier } from '../config/plans.js';
-import { FREE_TRIAL_ACTIONS } from '../config/plans.js';
+import { FREE_PLAN_ACTIONS } from '../config/plans.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { ACTION_COSTS, type TaskType } from '../types/index.js';
 import { ensureUserRecords } from './ensureUserRecords.js';
@@ -20,7 +20,7 @@ export class ActionService {
     return ACTION_COSTS[taskType] ?? 1;
   }
 
-  static async ensureTrialBalance(userId: string): Promise<void> {
+  static async ensureFreeBalance(userId: string): Promise<void> {
     const supabase = getSupabaseAdmin();
     const { data } = await supabase
       .from('user_actions')
@@ -30,16 +30,17 @@ export class ActionService {
 
     if (!data) return;
 
-    const tier = data.plan_tier ?? 'unpaid';
-    if (tier !== 'unpaid') return;
+    const tier = data.plan_tier ?? 'free';
+    if (tier !== 'unpaid' && tier !== 'free') return;
 
     const used = data.used_actions ?? 0;
-    if (data.total_actions < FREE_TRIAL_ACTIONS || data.total_actions > FREE_TRIAL_ACTIONS * 4) {
+    if (data.total_actions !== FREE_PLAN_ACTIONS || tier !== 'free') {
       await supabase
         .from('user_actions')
         .update({
-          total_actions: FREE_TRIAL_ACTIONS,
-          used_actions: Math.min(used, FREE_TRIAL_ACTIONS),
+          plan_tier: 'free',
+          total_actions: FREE_PLAN_ACTIONS,
+          used_actions: Math.min(used, FREE_PLAN_ACTIONS),
           concurrency_limit: 1,
         })
         .eq('user_id', userId);
@@ -55,7 +56,7 @@ export class ActionService {
     concurrencyLimit: number;
   } | null> {
     await ensureUserRecords(userId);
-    await this.ensureTrialBalance(userId);
+    await this.ensureFreeBalance(userId);
     const supabase = getSupabaseAdmin();
     let { data, error } = await supabase
       .from('user_actions')
@@ -77,7 +78,7 @@ export class ActionService {
     if (error || !data) return null;
 
     const concurrencyLimit =
-      data.concurrency_limit ?? getConcurrencyForTier(data.plan_tier ?? 'unpaid');
+      data.concurrency_limit ?? getConcurrencyForTier(data.plan_tier ?? 'free');
 
     return {
       total: data.total_actions,
@@ -238,7 +239,7 @@ export class ActionService {
       description: `Plan upgraded to ${planTier} (${totalActions} actions)`,
     });
 
-    // Keep AI $ budget / token pool aligned with Lemon Squeezy plan (same across devices via Supabase).
+    // Keep AI provider budget and token pool aligned with the canonical plan.
     await syncPlanBudget(userId, planTier);
   }
 }

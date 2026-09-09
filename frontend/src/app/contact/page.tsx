@@ -8,7 +8,7 @@ import { PageJsonLd } from '@/components/seo/PageJsonLd';
 export const metadata: Metadata = buildMetadata({
   title: 'Contact',
   description:
-    'Contact Xroga AI support — email and phone for billing, product, and Lemon Squeezy subscription questions.',
+    'Contact Xroga AI support — email and phone for billing, product, and Whop subscription questions.',
   path: '/contact',
 });
 
@@ -16,7 +16,7 @@ export default function ContactPage() {
   return (
     <><PageJsonLd path="/contact" name="Contact XROGA AI" description="Official XROGA AI product, billing, account, and partnership contact information." type="ContactPage" /><LegalPageShell title="Contact">
       <p className="text-[var(--muted)]">
-        Reach the Xroga team for product questions, billing (Lemon Squeezy), account help, or partnership
+        Reach the Xroga team for product questions, billing (Whop), account help, or partnership
         inquiries. We respond during Pakistan business hours.
       </p>
 
@@ -51,7 +51,7 @@ export default function ContactPage() {
           </a>
         </p>
         <p className="text-[var(--muted)] text-xs">
-          Billing / refunds: include your Lemon Squeezy receipt ID. Product: include your account email.
+          Billing / refunds: include your Whop payment or membership ID. Product: include your account email.
         </p>
       </section>
 

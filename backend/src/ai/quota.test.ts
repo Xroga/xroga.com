@@ -109,14 +109,14 @@ describe(
     );
 
     it(
-      'publishes one canonical plan while preserving historical tiers at the same ceiling',
+      'publishes Free and Xroga Pro while preserving historical paid tiers at the Pro ceiling',
       () => {
         assert.deepEqual(
           GALACTIC_PLANS.map(
             (plan) =>
               plan.tier,
           ),
-          ['spark'],
+          ['free', 'spark'],
         );
 
         assert.equal(
@@ -140,24 +140,25 @@ describe(
     );
 
     it(
-      'launch promotion users receive the same complete cycle capacity',
+      'legacy unpaid users resolve to the canonical lower Free capacity',
       () => {
-        const trial =
+        const free =
           getPlanByTier(
             'unpaid',
           )!;
 
         assert.equal(
-          trial.apiBudgetUsd,
-          MONTHLY_TOTAL_BUDGET_USD,
+          free.apiBudgetUsd,
+          getApiBudgetUsd('free'),
         );
 
         assert.equal(
-          trial.tokenPool,
+          free.tokenPool,
           getTokenPool(
-            'spark',
+            'free',
           ),
         );
+        assert.ok(free.apiBudgetUsd < getApiBudgetUsd('spark'));
       },
     );
 

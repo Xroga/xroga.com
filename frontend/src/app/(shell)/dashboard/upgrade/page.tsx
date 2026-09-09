@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Rocket, ArrowRight } from 'lucide-react';
 import { GALACTIC_PLANS } from '@/lib/plans';
-import { FEATURE_COUNT } from '@/lib/features';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { GalacticPlanPricingCard, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
@@ -16,7 +15,7 @@ export default function UpgradePage() {
             Xroga AI Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            One $25 plan per complete 30-day cycle with all {FEATURE_COUNT} features and capacity pacing.
+            Start free, then move to Xroga Pro for $25 per 30-day cycle when you need more capacity.
           </p>
         </div>
 
@@ -25,13 +24,11 @@ export default function UpgradePage() {
             <GalacticPlanPricingCard
               key={plan.tier}
               plan={plan}
-              cta={
-                <CheckoutButton
-                  planTier={plan.tier}
-                  label={`Get ${plan.name} →`}
-                  className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full"
-                />
-              }
+              cta={plan.tier === 'free' ? (
+                <Link href="/workspace" className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full">Start free →</Link>
+              ) : (
+                <CheckoutButton planTier="spark" label="Get Xroga Pro →" className="!w-full xv-pricing-cta xv-pricing-cta--outline !rounded-full" />
+              )}
             />
           ))}
         </PricingPlanGrid>

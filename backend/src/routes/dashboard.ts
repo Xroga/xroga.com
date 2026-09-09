@@ -140,14 +140,14 @@ router.get('/summary', async (req: AuthRequest, res) => {
     requiresCard: false,
     autoChargesAtPromotionEnd: false,
   }));
-  const promotion = entitlement.state.startsWith('promotional_') || entitlement.state === 'billing_unavailable';
+  const promotion = entitlement.state.startsWith('promotional_');
 
   res.json({
     now: new Date().toISOString(),
     billing: {
       planTier: promotion ? 'unpaid' : 'spark',
-      planName: promotion ? 'Spark' : 'Xroga AI',
-      planPrice: promotion ? '$25 for 30 days' : '$25 per 30 days',
+      planName: entitlement.state === 'free_active' ? 'Free' : promotion ? 'Historical access' : 'Xroga Pro',
+      planPrice: promotion ? '$0 for 30 days' : '$19 per 30 days',
       nextBilling: entitlement.endsAt,
     },
     entitlement,

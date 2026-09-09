@@ -153,8 +153,8 @@ export function DashboardHomeView() {
             <div><dt className="inline text-[var(--muted)]">Status: </dt><dd className="inline font-semibold capitalize">{stateLabel}</dd></div>
             <div><dt className="inline text-[var(--muted)]">Cycle ends: </dt><dd className="inline font-semibold">{billing.nextBilling ? formatSafeDate(billing.nextBilling, 'MMM d, yyyy') : 'not active'}</dd></div>
           </dl>
-          {entitlement.state === 'promotional_eligible' && (
-            <p className="text-xs text-[var(--muted)]"></p>
+          {entitlement.state === 'free_active' && (
+            <p className="text-xs text-[var(--muted)]">Free includes core workspace access and 50 AI actions per 30 days. Upgrade when you need more capacity.</p>
           )}
           <Link href="/pricing" className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40">View plan</Link>
         </WidgetCard>

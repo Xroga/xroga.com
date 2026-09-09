@@ -1,63 +1,50 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { CheckoutButton } from './CheckoutButton';
 
-export function PaymentMethodIcons() {
-  return null;
-}
+export function PaymentMethodIcons() { return null; }
 
 export function SubscriptionManagePanel() {
-  const [ready, setReady] = useState<boolean | null>(null);
-  const [environment, setEnvironment] = useState<'test' | 'live' | 'unconfigured'>('unconfigured');
+  const [status, setStatus] = useState<Awaited<ReturnType<typeof api.billing.status>> | null>(null);
   const [opening, setOpening] = useState(false);
 
-  useEffect(() => {
-    void api.billing.status()
-      .then((status) => {
-        setEnvironment(status.environment);
-        setReady(status.lemonApi && status.lemonWebhook && status.lemonStore && status.plans.some((plan) => plan.ready));
-      })
-      .catch(() => setReady(null));
-  }, []);
+  useEffect(() => { void api.billing.status().then(setStatus).catch(() => setStatus(null)); }, []);
 
   async function openPortal() {
+    if (opening) return;
     setOpening(true);
     try {
-      const { portalUrl } = await api.billing.portal();
-      window.location.assign(portalUrl);
+      const { manageUrl } = await api.billing.portal();
+      window.location.assign(manageUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Subscription management could not be opened');
-    } finally {
-      setOpening(false);
-    }
+    } finally { setOpening(false); }
   }
 
   return (
     <div className="p-4 sm:p-5 rounded-xl border border-[var(--card-border)] bg-white/[0.02]">
       <div className="flex items-start gap-3">
-        {ready ? <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> : <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />}
-        <div>
-          <h3 className="font-semibold text-sm">Subscription management</h3>
+        {status?.isPaid ? <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> : <Sparkles className="w-5 h-5 text-[var(--accent)] shrink-0" />}
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold text-sm">{status?.isPaid ? 'Xroga Pro subscription' : 'Upgrade when you are ready'}</h3>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 leading-relaxed">
-            {ready === true && environment === 'test'
-              ? 'Lemon Squeezy Test Mode is connected. The $25/month spark plan, uses dummy payment data, and charges $0 in this environment.'
-              : ready === true
-                ? 'Checkout and verified billing webhooks are configured. Paid subscribers can open Lemon Squeezy’s signed portal to manage payment details, invoices, pause, cancellation, and renewal.'
-              : ready === false
-                ? 'External setup required: the canonical billing provider is not fully configured. Xroga will not invent subscription, payment, cancellation, or invoice state.'
-                : 'Billing configuration could not be verified. No successful billing state is being assumed.'}
+            {status?.isPaid
+              ? status.cancelAtPeriodEnd
+                ? 'Your cancellation is scheduled. Xroga Pro remains active through the paid period.'
+                : 'Your subscription is active and confirmed by Whop.'
+              : 'Free requires no card. Xroga Pro adds higher usage and production workflows for $25/month.'}
           </p>
-          <button
-            type="button"
-            disabled={ready !== true || opening}
-            onClick={() => void openPortal()}
-            className="mt-3 rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {opening ? 'Opening…' : ready === true ? environment === 'test' ? 'Manage test subscription' : 'Manage subscription' : 'Billing portal unavailable'}
-          </button>
+          <div className="mt-3">
+            {status?.isPaid ? (
+              <button type="button" disabled={!status.manageAvailable || opening} onClick={() => void openPortal()} className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+                {opening ? 'Opening…' : status.manageAvailable ? 'Manage subscription' : 'Management link unavailable'}
+              </button>
+            ) : <CheckoutButton planTier="spark" label="Upgrade to Xroga Pro" className="xv-pricing-cta xv-pricing-cta--solid !w-auto !px-4" />}
+          </div>
         </div>
       </div>
     </div>

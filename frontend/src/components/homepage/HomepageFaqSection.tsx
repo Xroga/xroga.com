@@ -21,7 +21,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'What do I get on a paid plan?',
-    a: 'Xroga AI is $25 per 30-day billing period with all features included. Balanced Month pacing preserves capacity across the cycle and protects completion work. The interface shows real usage percentage, available capacity, next unlock, and reset date without exposing provider balances.',
+    a: 'Free includes 50 AI actions every 30 days. Xroga Pro is $25 per 30-day billing period with 1,500 actions, two concurrent tasks, and higher-capacity pacing. Usage and reset dates stay visible in your account.',
   },
   {
     q: 'Do unused credits expire?',
@@ -45,7 +45,7 @@ const FAQS: Array<{ q: string; a: string }> = [
   },
   {
     q: 'Where is billing and support?',
-    a: 'Checkout and subscriptions are handled by Lemon Squeezy. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
+    a: 'Xroga Pro checkout and subscription management are handled by Whop. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
   },
 ];
 

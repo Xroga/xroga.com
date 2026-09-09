@@ -1,239 +1,127 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import crypto from 'node:crypto';
+import test, { type TestContext } from 'node:test';
 import {
-  assertLemonProductContract,
-  assertLemonWebhookEnvironment,
+  assertWhopPlanContract,
   BillingService,
-  derivePaidCycleEvidence,
-  getLemonEnvironment,
-  parseCustomerPortalUrl,
-  selectLemonVariant,
+  checkoutIdempotencyKey,
+  resetBillingMemoryForTests,
+  verifyWhopWebhookSignature,
+  WHOP_API_VERSION_DATE,
 } from './BillingService.js';
 
-test('the same paid subscription period has one stable evidence reference', () => {
-  const subscription = derivePaidCycleEvidence({
-    data: {
-      id: 'sub_123',
-      attributes: { status: 'active', renews_at: '2026-08-27T12:00:00.000Z' },
-    },
+const APPROVED_PLAN = {
+  id: 'plan_hlV1A10I5QfSP', account_id: 'biz_qhYONL4RebGX96', plan_type: 'renewal',
+  renewal_price: 25, billing_period: 30, trial_period_days: null, currency: 'usd',
+  purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/',
+};
+
+function withWhopEnv(t: TestContext) {
+  const names = ['WHOP_API_KEY', 'WHOP_COMPANY_ID', 'WHOP_PLAN_ID', 'WHOP_REDIRECT_URL', 'WHOP_WEBHOOK_SECRET'] as const;
+  const previous = Object.fromEntries(names.map((name) => [name, process.env[name]]));
+  Object.assign(process.env, {
+    WHOP_API_KEY: 'test_key', WHOP_COMPANY_ID: 'biz_qhYONL4RebGX96',
+    WHOP_PLAN_ID: 'plan_hlV1A10I5QfSP', WHOP_REDIRECT_URL: 'https://xroga.com/workspace?billing=success',
+    WHOP_WEBHOOK_SECRET: 'ws_test_signing_secret',
   });
-  const payment = derivePaidCycleEvidence({
-    data: {
-      id: 'invoice_456',
-      attributes: {
-        status: 'paid',
-        subscription_id: 'sub_123',
-        renews_at: '2026-08-27T12:00:00.000Z',
-      },
-    },
+  t.after(() => {
+    for (const name of names) previous[name] === undefined ? delete process.env[name] : process.env[name] = previous[name];
+    resetBillingMemoryForTests();
   });
-  assert.equal(payment.providerReference, subscription.providerReference);
-  assert.match(payment.providerReference, /^lemon:live:/);
-  assert.equal(payment.startsAt.toISOString(), '2026-07-28T12:00:00.000Z');
-  assert.equal(payment.endsAt.toISOString(), '2026-08-27T12:00:00.000Z');
+}
+
+test('canonical public plans are Free and Xroga Pro with real allowances', () => {
+  assert.deepEqual(BillingService.listPlans().map(({ tier, name, priceLabel, actions }) => ({ tier, name, priceLabel, actions })), [
+    { tier: 'free', name: 'Free', priceLabel: '$0', actions: 50 },
+    { tier: 'spark', name: 'Xroga Pro', priceLabel: '$25/month', actions: 1500 },
+  ]);
 });
 
-test('a Test Mode trial creates exactly one 30-day evidence window', () => {
-  const trial = derivePaidCycleEvidence({
-    data: {
-      id: 'sub_test_123',
-      attributes: {
-        status: 'on_trial',
-        test_mode: true,
-        created_at: '2026-07-29T00:00:00.000Z',
-        trial_ends_at: '2026-08-28T00:00:00.000Z',
-      },
-    },
-  });
-  assert.match(trial.providerReference, /^lemon:test:/);
-  assert.equal(trial.startsAt.toISOString(), '2026-07-29T00:00:00.000Z');
-  assert.equal(trial.endsAt.toISOString(), '2026-08-28T00:00:00.000Z');
+test('Whop plan contract requires approved account, renewal $25, 30 days, USD, and no trial', () => {
+  assert.doesNotThrow(() => assertWhopPlanContract(APPROVED_PLAN, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'));
+  for (const patch of [{ renewal_price: 19 }, { trial_period_days: 30 }, { account_id: 'biz_wrong' }, { plan_type: 'one_time' }]) {
+    assert.throws(() => assertWhopPlanContract({ ...APPROVED_PLAN, ...patch }, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'), /mismatch/);
+  }
 });
 
-test('billing mode is explicit and live webhooks cannot enter a Test Mode runtime', () => {
-  assert.equal(getLemonEnvironment({ LEMONSQUEEZY_STORE_ID: '217480', LEMONSQUEEZY_MODE: 'test' }), 'test');
-  assert.equal(getLemonEnvironment({ LEMONSQUEEZY_STORE_ID: '217480' }), 'unconfigured');
-  assert.doesNotThrow(() => assertLemonWebhookEnvironment({ data: { attributes: { test_mode: true } } }, 'test'));
-  assert.throws(
-    () => assertLemonWebhookEnvironment({ data: { attributes: { test_mode: false } } }, 'test'),
-    /does not match/,
-  );
-  assert.throws(() => assertLemonWebhookEnvironment({ data: { attributes: {} } }, 'test'), /missing environment evidence/);
-});
-
-test('selectLemonVariant accepts only the published $19 monthly 30-day Test Mode trial', () => {
-  const valid = {
-    id: '456',
-    attributes: {
-      product_id: 1231656,
-      status: 'published',
-      test_mode: true,
-      is_subscription: true,
-      price: 1900,
-      interval: 'month',
-      interval_count: 1,
-      has_free_trial: true,
-      trial_interval: 'day',
-      trial_interval_count: 30,
-    },
-  };
-  assert.equal(selectLemonVariant({ data: [valid] }, '1231656', 'test'), '456');
-  assert.equal(selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, status: 'pending' } }] }, '1231656', 'test'), '456');
-  assert.throws(
-    () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, test_mode: false } }] }, '1231656', 'test'),
-    /environment/,
-  );
-  assert.throws(
-    () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, trial_interval_count: 14 } }] }, '1231656', 'test'),
-    /trial_days/,
-  );
-  assert.throws(
-    () => selectLemonVariant({ data: [{ ...valid, attributes: { ...valid.attributes, status: 'draft' } }] }, '1231656', 'test'),
-    /publication/,
-  );
-  assert.throws(() => selectLemonVariant({ data: [] }, '1231656', 'test'), /no_variant/);
-  assert.throws(() => selectLemonVariant({ data: [valid, valid] }, '1231656', 'test'), /duplicate_match/);
-  assert.throws(
-    () => selectLemonVariant({ data: [
-      { ...valid, attributes: { ...valid.attributes, status: 'pending' } },
-      { ...valid, id: '457', attributes: { ...valid.attributes, status: 'draft' } },
-    ] }, '1231656', 'test'),
-    /publication/,
-  );
-});
-
-test('the product itself must be published in the configured Test Mode store', () => {
-  const product = { data: { id: '1231656', attributes: { store_id: 217480, status: 'published', test_mode: true } } };
-  assert.doesNotThrow(() => assertLemonProductContract(product, '1231656', '217480', 'test'));
-  assert.throws(
-    () => assertLemonProductContract({ data: { ...product.data, attributes: { ...product.data.attributes, status: 'draft' } } }, '1231656', '217480', 'test'),
-    /product_publication/,
-  );
-  assert.throws(() => assertLemonProductContract(product, '1231656', '999', 'test'), /product_store/);
-});
-
-test('checkout discovers and verifies the configured product variant when no variant ID is stored', async (t) => {
-  const previous = {
-    apiKey: process.env.LEMONSQUEEZY_API_KEY,
-    storeId: process.env.LEMONSQUEEZY_STORE_ID,
-    variant: process.env.LEMONSQUEEZY_VARIANT_SPARK,
-    product: process.env.LEMONSQUEEZY_PRODUCT_SPARK,
-    mode: process.env.LEMONSQUEEZY_MODE,
-  };
+test('checkout uses the v1 API, pinned version, approved server values, metadata and idempotency', async (t) => {
+  withWhopEnv(t);
   const originalFetch = globalThis.fetch;
-  const requested: string[] = [];
-  process.env.LEMONSQUEEZY_API_KEY = 'test_api_key';
-  process.env.LEMONSQUEEZY_STORE_ID = '217480';
-  delete process.env.LEMONSQUEEZY_VARIANT_SPARK;
-  process.env.LEMONSQUEEZY_PRODUCT_SPARK = '987654';
-  process.env.LEMONSQUEEZY_MODE = 'test';
+  const requests: Array<{ url: string; init?: RequestInit }> = [];
   globalThis.fetch = (async (input, init) => {
-    requested.push(String(input));
-    if (String(input).includes('/v1/products/987654')) {
-      return new Response(JSON.stringify({ data: {
-        id: '987654',
-        attributes: { store_id: 217480, status: 'published', test_mode: true },
-      } }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    if (String(input).includes('/v1/variants?')) {
-      return new Response(JSON.stringify({ data: [{
-        id: '456',
-        attributes: {
-          product_id: 987654,
-          status: 'published',
-          test_mode: true,
-          is_subscription: true,
-          price: 1900,
-          interval: 'month',
-          interval_count: 1,
-          has_free_trial: true,
-          trial_interval: 'day',
-          trial_interval_count: 30,
-        },
-      }] }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    const body = JSON.parse(String(init?.body)) as { data?: { relationships?: { variant?: { data?: { id?: string } } } } };
-    assert.equal(body.data?.relationships?.variant?.data?.id, '456');
-    return new Response(JSON.stringify({ data: { attributes: { url: 'https://xroga.lemonsqueezy.com/checkout/test' } } }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    requests.push({ url: String(input), init });
+    if (String(input).endsWith('/plans/plan_hlV1A10I5QfSP')) return Response.json(APPROVED_PLAN);
+    return Response.json({ id: 'ch_123', purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=unique' });
   }) as typeof fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-    for (const [name, value] of Object.entries({
-      LEMONSQUEEZY_API_KEY: previous.apiKey,
-      LEMONSQUEEZY_STORE_ID: previous.storeId,
-      LEMONSQUEEZY_VARIANT_SPARK: previous.variant,
-      LEMONSQUEEZY_PRODUCT_SPARK: previous.product,
-      LEMONSQUEEZY_MODE: previous.mode,
-    })) {
-      if (value === undefined) delete process.env[name]; else process.env[name] = value;
-    }
+  t.after(() => { globalThis.fetch = originalFetch; });
+
+  const result = await BillingService.createCheckout('00000000-0000-4000-8000-000000000123');
+  assert.match(result.purchaseUrl, /^https:\/\/whop\.com\/checkout\//);
+  assert.equal(requests.length, 2);
+  const checkout = requests[1];
+  assert.equal(checkout.url, 'https://api.whop.com/api/v1/checkout_configurations');
+  const headers = checkout.init?.headers as Record<string, string>;
+  assert.equal(headers['Api-Version-Date'], WHOP_API_VERSION_DATE);
+  assert.match(headers['Idempotency-Key'], /^xroga-checkout-/);
+  const body = JSON.parse(String(checkout.init?.body));
+  assert.equal(body.account_id, 'biz_qhYONL4RebGX96');
+  assert.equal(body.plan_id, 'plan_hlV1A10I5QfSP');
+  assert.equal(body.mode, 'payment');
+  assert.equal(body.redirect_url, 'https://xroga.com/workspace?billing=success');
+  assert.deepEqual({ ...body.metadata, xroga_checkout_id: 'ignored' }, {
+    xroga_user_id: '00000000-0000-4000-8000-000000000123', plan_tier: 'spark', source: 'xroga', xroga_checkout_id: 'ignored',
   });
-
-  const checkout = await BillingService.createCheckout('00000000-0000-0000-0000-000000000002', 'spark');
-  assert.equal(checkout.priceId, '456');
-  assert.equal(requested.length, 3);
-  assert.match(requested[0], /\/products\/987654/);
-  assert.match(requested[1], /filter%5Bproduct_id%5D=987654/);
 });
 
-test('Test Mode checkout is explicit, keeps the trial, and never requests a live charge', async (t) => {
-  const previous = {
-    apiKey: process.env.LEMONSQUEEZY_API_KEY,
-    storeId: process.env.LEMONSQUEEZY_STORE_ID,
-    variant: process.env.LEMONSQUEEZY_VARIANT_SPARK,
-    product: process.env.LEMONSQUEEZY_PRODUCT_SPARK,
-    mode: process.env.LEMONSQUEEZY_MODE,
-  };
-  const originalFetch = globalThis.fetch;
-  let requestBody: Record<string, unknown> | undefined;
-  process.env.LEMONSQUEEZY_API_KEY = 'test_api_key';
-  process.env.LEMONSQUEEZY_STORE_ID = '217480';
-  process.env.LEMONSQUEEZY_VARIANT_SPARK = '123';
-  delete process.env.LEMONSQUEEZY_PRODUCT_SPARK;
-  process.env.LEMONSQUEEZY_MODE = 'test';
-  globalThis.fetch = (async (_input, init) => {
-    requestBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
-    return new Response(JSON.stringify({ data: { attributes: { url: 'https://xroga.lemonsqueezy.com/checkout/test' } } }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }) as typeof fetch;
-  t.after(() => {
-    globalThis.fetch = originalFetch;
-    for (const [name, value] of Object.entries({
-      LEMONSQUEEZY_API_KEY: previous.apiKey,
-      LEMONSQUEEZY_STORE_ID: previous.storeId,
-      LEMONSQUEEZY_VARIANT_SPARK: previous.variant,
-      LEMONSQUEEZY_PRODUCT_SPARK: previous.product,
-      LEMONSQUEEZY_MODE: previous.mode,
-    })) {
-      if (value === undefined) delete process.env[name]; else process.env[name] = value;
-    }
-  });
-
-  await BillingService.createCheckout('00000000-0000-0000-0000-000000000001', 'spark', 'test@example.invalid');
-  const attributes = ((requestBody?.data as { attributes?: Record<string, unknown> } | undefined)?.attributes) ?? {};
-  assert.equal(attributes.test_mode, true);
-  assert.deepEqual(attributes.checkout_options, { skip_trial: false });
+test('checkout configuration fails closed when Whop secrets are absent', async (t) => {
+  const previous = process.env.WHOP_API_KEY;
+  delete process.env.WHOP_API_KEY;
+  t.after(() => previous === undefined ? delete process.env.WHOP_API_KEY : process.env.WHOP_API_KEY = previous);
+  await assert.rejects(BillingService.createCheckout('00000000-0000-4000-8000-000000000123'), /not configured/);
 });
 
-test('cancelled or unidentified billing events cannot activate capacity', () => {
-  assert.throws(
-    () => derivePaidCycleEvidence({ data: { id: 'sub_1', attributes: { status: 'cancelled' } } }),
-    /does not prove an active paid period/,
-  );
-  assert.throws(() => derivePaidCycleEvidence({ data: { attributes: { status: 'active' } } }), /durable subscription reference/);
+test('checkout idempotency is stable inside a bounded window and changes afterward', () => {
+  const user = '00000000-0000-4000-8000-000000000123';
+  assert.equal(checkoutIdempotencyKey(user, 600_001), checkoutIdempotencyKey(user, 899_999));
+  assert.notEqual(checkoutIdempotencyKey(user, 600_001), checkoutIdempotencyKey(user, 900_001));
 });
 
-test('customer portal accepts only an authenticated HTTPS destination from the provider object', () => {
-  assert.equal(
-    parseCustomerPortalUrl({ data: { attributes: { urls: { customer_portal: 'https://store.lemonsqueezy.com/billing?signature=signed' } } } }),
-    'https://store.lemonsqueezy.com/billing?signature=signed',
-  );
-  assert.throws(() => parseCustomerPortalUrl({ data: { attributes: { urls: { customer_portal: null } } } }), /No paid subscription/);
-  assert.throws(() => parseCustomerPortalUrl({ data: { attributes: { urls: { customer_portal: 'javascript:alert(1)' } } } }), /unsafe destination/);
-  assert.throws(() => parseCustomerPortalUrl({ data: { attributes: { urls: { customer_portal: 'https://user:pass@example.com' } } } }), /unsafe destination/);
+test('Standard Webhooks signature verifies the exact raw body', () => {
+  const raw = '{"type":"payment.succeeded","data":{"id":"pay_1"}}';
+  const timestamp = '1788900000';
+  const id = 'msg_123';
+  const secret = 'ws_test_signing_secret';
+  const signature = crypto.createHmac('sha256', secret).update(`${id}.${timestamp}.${raw}`).digest('base64');
+  const now = Number(timestamp) * 1000;
+  assert.equal(verifyWhopWebhookSignature(raw, { id, timestamp, signature: `v1,${signature}` }, secret, now), true);
+  assert.equal(verifyWhopWebhookSignature(`${raw} `, { id, timestamp, signature: `v1,${signature}` }, secret, now), false);
+});
+
+test('Standard Webhooks decodes a Whop whsec_ signing key before HMAC verification', () => {
+  const raw = '{"type":"payment.succeeded","data":{"id":"pay_whop"}}';
+  const timestamp = '1788900000';
+  const id = 'msg_whop';
+  const key = crypto.randomBytes(32);
+  const secret = `whsec_${key.toString('base64')}`;
+  const signature = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${raw}`).digest('base64');
+  assert.equal(verifyWhopWebhookSignature(raw, { id, timestamp, signature: `v1,${signature}` }, secret, Number(timestamp) * 1000), true);
+  assert.equal(verifyWhopWebhookSignature(raw, { id, timestamp, signature: `v1,${signature}` }, `whsec_not-valid!`, Number(timestamp) * 1000), false);
+});
+
+test('webhook verification rejects missing, malformed and stale evidence', () => {
+  assert.equal(verifyWhopWebhookSignature('{}', {}, 'ws_secret'), false);
+  assert.equal(verifyWhopWebhookSignature('{}', { id: 'msg', timestamp: 'bad', signature: 'v1,nope' }, 'ws_secret'), false);
+  assert.equal(verifyWhopWebhookSignature('{}', { id: 'msg', timestamp: '1', signature: 'v1,nope' }, 'ws_secret', 1_000_000), false);
+});
+
+test('refund and dispute events never fulfill entitlement', async (t) => {
+  withWhopEnv(t);
+  for (const type of ['refund.created', 'refund.updated', 'dispute.created', 'dispute.updated'] as const) {
+    assert.deepEqual(await BillingService.handleWebhookEvent({ type, account_id: 'biz_qhYONL4RebGX96', data: { id: `${type}_1` } }, `msg_${type}`), { fulfilled: false });
+  }
+});
+
+test('wrong Whop account is rejected before fulfillment', async (t) => {
+  withWhopEnv(t);
+  await assert.rejects(BillingService.handleWebhookEvent({ type: 'payment.succeeded', account_id: 'biz_wrong', data: {} }, 'msg_1'), /wrong_account/);
 });

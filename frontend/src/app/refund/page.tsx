@@ -7,7 +7,7 @@ import { LegalPageShell } from '@/components/legal/LegalPageShell';
 export const metadata: Metadata = buildMetadata({
   title: 'Refund Policy',
   description:
-    'Xroga AI Refund Policy — cancellation, pause options, and how Lemon Squeezy billing disputes work.',
+    'Xroga AI Refund Policy — cancellation and how Whop billing disputes work.',
   path: '/refund',
 });
 
@@ -24,15 +24,15 @@ export default function RefundPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Cancel anytime</h2>
         <p className="text-[var(--muted)]">
-          Open the signed Lemon Squeezy portal from dashboard billing to cancel. If the portal is unavailable, contact support before renewal. Cancellation stops future renewals. You keep
+          Open your Whop membership page from dashboard billing to cancel. If it is unavailable, contact support before renewal. Cancellation stops future renewals. You keep
           access until the end of the period already paid.
         </p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Pause instead of cancel</h2>
+        <h2 className="text-lg font-semibold">Manage your subscription</h2>
         <p className="text-[var(--muted)]">
-          If you need a break, use the Lemon Squeezy portal where pause is available, or contact us for help. Provider eligibility and timing are shown before confirmation; Xroga does not assume a pause succeeded without provider evidence.
+          Use the Whop membership page for the controls available to your subscription, or contact us for help. Xroga does not assume a change succeeded without provider evidence.
         </p>
       </section>
 
@@ -42,15 +42,15 @@ export default function RefundPage() {
           We generally do not offer retroactive refunds for the current billing period after AI
           capacity has been available to your account. If you were charged in error, charged twice,
           or experienced a verified service failure preventing use, email us within 14 days of the
-          charge with your Lemon Squeezy receipt ID.
+          charge with your Whop payment or membership ID.
         </p>
       </section>
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Payments & disputes</h2>
         <p className="text-[var(--muted)]">
-          Checkout is powered by Lemon Squeezy. Payment method options depend on your region. For
-          chargebacks or payment disputes, contact Lemon Squeezy and{' '}
+          Checkout is powered by Whop. Payment method options depend on your region. For
+          chargebacks or payment disputes, contact Whop and{' '}
           <a href={`mailto:${COMPANY_CONTACT.email}`} className="text-[var(--accent)] hover:underline">
             {COMPANY_CONTACT.email}
           </a>{' '}

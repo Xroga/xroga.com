@@ -22,6 +22,7 @@ import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { markFreshTerminalIntent } from '@/lib/repoContext';
+import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
 
 
 /**
@@ -206,6 +207,7 @@ export function DashboardView() {
 
   return (
     <div className={cn('xv-app-stage', fullscreen && 'xv-app-stage--fullscreen')}>
+      <BillingSuccessExperience />
       <div
         className={cn(
           'xv-workspace-shell',
