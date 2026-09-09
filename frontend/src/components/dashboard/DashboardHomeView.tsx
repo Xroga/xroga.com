@@ -154,7 +154,7 @@ export function DashboardHomeView() {
             <div><dt className="inline text-[var(--muted)]">Cycle ends: </dt><dd className="inline font-semibold">{billing.nextBilling ? formatSafeDate(billing.nextBilling, 'MMM d, yyyy') : 'not active'}</dd></div>
           </dl>
           {entitlement.state === 'promotional_eligible' && (
-            <p className="text-xs text-[var(--muted)]">Activate by August 30, 2026 for 30 complete days free. No card and no automatic charge.</p>
+            <p className="text-xs text-[var(--muted)]"></p>
           )}
           <Link href="/pricing" className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--card-border)] hover:border-[var(--accent)]/40">View plan</Link>
         </WidgetCard>
