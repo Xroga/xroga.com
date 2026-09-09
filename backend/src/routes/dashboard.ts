@@ -146,8 +146,8 @@ router.get('/summary', async (req: AuthRequest, res) => {
     now: new Date().toISOString(),
     billing: {
       planTier: promotion ? 'unpaid' : 'spark',
-      planName: promotion ? 'Launch Promotion' : 'Xroga AI',
-      planPrice: promotion ? '$0 for 30 days' : '$19 per 30 days',
+      planName: promotion ? 'Spark' : 'Xroga AI',
+      planPrice: promotion ? '$25 for 30 days' : '$25 per 30 days',
       nextBilling: entitlement.endsAt,
     },
     entitlement,
