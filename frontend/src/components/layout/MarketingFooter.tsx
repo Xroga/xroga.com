@@ -10,7 +10,6 @@ const FOOTER_GROUPS = [
     links: [
       { href: '/features', label: 'Features' },
       { href: '/crypto-builder', label: 'Crypto Builder' },
-      { href: '/video', label: 'Xroga Video' },
       { href: '/pricing', label: 'Pricing' },
     ],
   },
