@@ -156,7 +156,7 @@ export function buildSoftwareApplicationJsonLd() {
     ],
     offers: {
       '@type': 'Offer',
-      price: '19',
+      price: '25',
       priceCurrency: 'USD',
       description: 'One Xroga AI plan; current eligibility and capacity are shown before checkout.',
     },
