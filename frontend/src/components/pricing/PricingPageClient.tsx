@@ -174,7 +174,7 @@ export function PricingPageClient() {
           <LiquidPricingCard
             badge="Plus"
             title="Xroga AI"
-            price="$19"
+            price="$25"
             priceSuffix="per 30-day"
             billingText="billing period"
             features={[
