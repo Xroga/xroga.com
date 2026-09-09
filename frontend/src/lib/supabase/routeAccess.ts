@@ -14,7 +14,6 @@ const PUBLIC_PREFIXES = [
   // that bounced every signed-out visitor to the login screen.
   '/crypto',
   '/game-builder',
-  '/video',
   '/ai-coding-agent',
   '/ai-app-builder',
   '/software',
