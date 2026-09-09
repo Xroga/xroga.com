@@ -68,14 +68,14 @@ export function PricingPageClient() {
       setEntitlement(status);
 
       toast.success(
-        `Your complete 30-day promotional period ends ${formatDate(
+        `Your complete 30-day plan ${formatDate(
           status.endsAt
         )}.`
       );
     } catch (error) {
       toast.error(
         (error as Error).message ||
-          'Promotion activation is temporarily unavailable.'
+          'something wrong'
       );
     } finally {
       setActivating(false);
@@ -152,10 +152,7 @@ export function PricingPageClient() {
           </h1>
 
           <p className="text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
-            Activate by 30 August 2026 for one complete
-            30-day period free. No card is required and
-            there is no automatic charge when the
-            promotional period ends.
+              One simple plan for building, verifying, and publishing with Xroga AI.
           </p>
         </div>
 
@@ -261,9 +258,7 @@ export function PricingPageClient() {
               </p>
 
               <p>
-                Activation closes at the end of 30 August
-                2026 UTC. Activating on 29 or 30 August
-                still starts a complete 30-day period.
+               
               </p>
             </div>
 
