@@ -27,8 +27,8 @@ export const GALACTIC_PLANS: GalacticPlan[] = [
   {
     tier: 'spark',
     name: 'Xroga AI',
-    priceLabel: '$19',
-    usdPrice: 19,
+    priceLabel: '$25',
+    usdPrice: 25,
     productId: 'pro_01kw4k9efhq3tyrnzxa7kq1nra',
     actionsLabel: 'Included AI capacity',
     actions: 1500,
