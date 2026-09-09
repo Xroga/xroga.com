@@ -115,7 +115,7 @@ export function PlanUsageSettingsPanel() {
           {status?.state === 'promotional_eligible' && (
             <div className="mt-5 rounded-token-md border border-[var(--success-dim)] bg-[var(--success-dim)] p-4">
               <p className="font-semibold text-[var(--text-primary)]">Complete 30-day launch promotion</p>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">Activate by 30 August 2026. No card and no automatic charge.</p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]"></p>
               <Button variant="primary" size="sm" className="mt-3" loading={saving} onClick={() => void activate()}>
                 {saving ? 'Activating…' : 'Activate promotion'}
               </Button>
