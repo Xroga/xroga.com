@@ -99,9 +99,9 @@ export function HomepageStackStudio() {
       <header className="xv-stack-studio__heading">
         <p>FROM THE BRIEF TO THE BUILD</p>
         <h2 id="xroga-stack-studio-heading">
-          The middle becomes <em>visible.</em>
+          Start fresh or use your <em>existing repository.</em>
         </h2>
-        <span>Brief, build, and proof—connected.</span>
+        <span>One visible path from product intent to working code.</span>
       </header>
 
       <div className="xv-stack-studio__grid">
@@ -121,7 +121,7 @@ export function HomepageStackStudio() {
             <p>YOUR BRIEF</p>
             <h3>Build the product, not just the answer.</h3>
             <span>Scope, interface, data, checks, and release intent stay connected from the first request to the working result.</span>
-            <Link href="/features">See how Xroga works <ArrowUpRight aria-hidden="true" /></Link>
+            <div className="xv-stack-studio__path-links"><Link href="/ai-app-builder">Explore the AI app builder <ArrowUpRight aria-hidden="true" /></Link><Link href="/ai-coding-agent">Explore the AI coding agent <ArrowUpRight aria-hidden="true" /></Link></div>
           </div>
         </article>
 

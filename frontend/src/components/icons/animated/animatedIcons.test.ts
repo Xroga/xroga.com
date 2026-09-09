@@ -336,7 +336,7 @@ test('the workspace launcher opens Project edits, with a pen', () => {
  * itself whichever surface you reach it from.
  */
 test('the homepage header pill takes the palette and the grid', () => {
-  const HOME = read('../../../app/page.tsx');
+  const HOME = read('../../homepage/HomepageClient.tsx');
   const SWITCHER = read('../../companion/HomepageThemeSwitcher.tsx');
 
   assert.match(SWITCHER, /icon=\{PaletteIcon\}/, 'the homepage theme control lost the palette');

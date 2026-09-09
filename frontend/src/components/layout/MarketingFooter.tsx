@@ -9,7 +9,7 @@ const FOOTER_GROUPS = [
     title: 'Build',
     links: [
       { href: '/features', label: 'Features' },
-      { href: '/crypto-builder', label: 'Crypto Builder' },
+      { href: '/crypto', label: 'Crypto Builder' },
       { href: '/pricing', label: 'Pricing' },
     ],
   },

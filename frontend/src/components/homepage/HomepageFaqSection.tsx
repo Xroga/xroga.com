@@ -1,53 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-
-const FAQS: Array<{ q: string; a: string }> = [
-  {
-    q: 'What is Xroga AI?',
-    a: 'Xroga AI turns supported product requests into controlled repository work, applicable validation, and provider-backed publishing through accounts you authorise. It updates the same connected project instead of starting over.',
-  },
-  {
-    q: 'What is Black Hole V∞?',
-    a: 'Black Hole V∞ is Xroga’s single customer-facing AI. Xroga selects internal capabilities automatically for comprehension, implementation, research, review, and repair. Customers never need to select or manage a provider model.',
-  },
-  {
-    q: 'What can Xroga build from one prompt?',
-    a: 'One clear prompt can start many web products, but complex systems usually require follow-up decisions, credentials, and review. Xroga reports incomplete requirements and external blockers instead of calling a partial scaffold complete.',
-  },
-  {
-    q: 'How is this different from Cursor or Codex?',
-    a: 'Cursor and Codex are built for developers who live in an IDE. Xroga is built to finish the product loop: brief → code → QA → your GitHub → live on Vercel. You can still edit the repo afterward in any IDE.',
-  },
-  {
-    q: 'What do I get on a paid plan?',
-    a: 'Free includes 50 AI actions every 30 days. Xroga Pro is $25 per 30-day billing period with 1,500 actions, two concurrent tasks, and higher-capacity pacing. Usage and reset dates stay visible in your account.',
-  },
-  {
-    q: 'Do unused credits expire?',
-    a: 'Unused daily and complexity portions roll forward within the active 30-day cycle. The included capacity resets at the end of the cycle; completed work and checkpoints remain saved.',
-  },
-  {
-    q: 'Do I need to know how to code?',
-    a: 'No for the first ship. Describe the product in plain language. Developers can still open the repo and refine — Xroga does not lock you into a black box.',
-  },
-  {
-    q: 'Is Xroga for browser automation, image, or video studios?',
-    a: 'No. Xroga is a coding agent — websites, SaaS, Expo apps, Chrome extensions, and Electron desktops to your GitHub (and Vercel for web). Not a browser-automation farm or media generation studio.',
-  },
-  {
-    q: 'Can Xroga build Android and iOS apps?',
-    a: 'Yes — Expo / React Native scaffolds. Xroga generates the project and pushes it to your GitHub. Expo Go works for free previews. Connecting Expo + starting an EAS workflow can build binaries on your account — that is not the same as App Store / Play approval. Pasting Apple/Google credentials in Xroga does not guarantee store submission; EAS must already be set up for submit.',
-  },
-  {
-    q: 'Can Xroga ship Chrome extensions or desktop apps?',
-    a: 'It builds scaffolds and packages artifacts: Chrome MV3 zip for sideload / your own CWS upload (~$5), and unsigned Electron zips on GitHub Releases for testing. It is not a managed store publisher and does not pay fees or complete store review for you.',
-  },
-  {
-    q: 'Where is billing and support?',
-    a: 'Xroga Pro checkout and subscription management are handled by Whop. For help: hello@xroga.com or the phone on our Contact page. See Terms, Privacy, and Refund Policy in the footer.',
-  },
-];
+import { HOMEPAGE_FAQS } from '@/lib/homepageFaq';
 
 export function HomepageFaqSection() {
   const baseId = useId();
@@ -60,11 +14,11 @@ export function HomepageFaqSection() {
           <p className="xv-hc-pixel-kicker" id="faq-heading">FAQ · BEFORE YOU BUILD</p>
           <h2 className="xv-hc-section-title">Clear answers.<br /><em>No hype.</em></h2>
           <p className="xv-hc-section-copy">Product, shipping, and billing—before you start.</p>
-          <span>11 honest answers</span>
+          <span>{HOMEPAGE_FAQS.length} honest answers</span>
         </header>
 
         <div className="xv-hc-faq-list">
-          {FAQS.map((item, i) => {
+          {HOMEPAGE_FAQS.map((item, i) => {
             const panelId = `${baseId}-panel-${i}`;
             const btnId = `${baseId}-btn-${i}`;
             const isOpen = open === i;

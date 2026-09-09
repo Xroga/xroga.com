@@ -88,7 +88,8 @@ export function HomepageShowcase() {
         <header className="xv-showcase-gallery__header" aria-live={isPaused ? 'polite' : 'off'}>
           <div>
             <small>{template.category} · Live template</small>
-            <h2 id="showcase-home-heading">{template.name}</h2>
+            <h2 id="showcase-home-heading">See what you can build.</h2>
+            <h3>{template.name}</h3>
           </div>
           <div className="xv-showcase-gallery__header-actions">
             <span className="xv-showcase-gallery__count">{String(activeIndex + 1).padStart(2, '0')} / {String(SHOWCASE_TEMPLATES.length).padStart(2, '0')}</span>

@@ -87,7 +87,7 @@ function CommerceVisual() {
     <div className="xv-aio-commerce" aria-label="Connected Whop payment and receipt email demonstration">
       <div className="xv-aio-commerce__label">CONNECTED EVENT DEMO</div>
       <div className="xv-aio-commerce__flow">
-        <article className="is-payment"><i>W</i><div><small>Whop · just now</small><b>Payment received</b><span>$49.00 · Pro workspace</span></div><Check /></article>
+        <article className="is-payment"><i>W</i><div><small>Whop · just now</small><b>Subscription activated</b><span>Xroga Pro · $25/month</span></div><Check /></article>
         <span className="xv-aio-commerce__line" aria-hidden="true" />
         <article className="is-access"><CircleDollarSign /><div><small>XROGA PRODUCT</small><b>Access updated</b><span>Plan and account state synchronized</span></div><Check /></article>
         <span className="xv-aio-commerce__line" aria-hidden="true" />
@@ -195,8 +195,8 @@ export function HomepageAllInOne() {
   return (
     <section className="xv-aio" aria-labelledby="xroga-all-in-one-heading">
       <header className="xv-aio__heading">
-        <h2 id="xroga-all-in-one-heading">The whole build. <em>Connected.</em></h2>
-        <span>Brief to release, in one flow.</span>
+        <h2 id="xroga-all-in-one-heading">What can you build <em>with Xroga?</em></h2>
+        <span>Real product work, connected from brief to release.</span>
       </header>
 
       <div className="xv-aio__deck">

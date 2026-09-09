@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const PAGE = read('../app/page.tsx');
+const PAGE = read('../components/homepage/HomepageClient.tsx');
 const COMPONENT = read('../components/homepage/HomepageStackStudio.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
@@ -27,8 +27,8 @@ test('the system handoff uses short headings and compact supporting copy', () =>
   const intelligenceComponent = read('../components/homepage/XrogaIntelligenceSection.tsx');
   assert.match(intelligenceComponent, /Intelligence beyond <em>answers\.<\/em>/);
   assert.match(intelligenceComponent, /Reasoning you can inspect and own\./);
-  assert.match(COMPONENT, /The middle becomes <em>visible\.<\/em>/);
-  assert.match(COMPONENT, /Brief, build, and proof—connected\./);
+  assert.match(COMPONENT, /Start fresh or use your <em>existing repository\.<\/em>/);
+  assert.match(COMPONENT, /One visible path from product intent to working code\./);
   assert.match(CSS, /xv-intelligence-bento__header h2 \{ font-size: clamp\(1\.8rem, 3\.25vw, 2\.85rem\)/);
 });
 

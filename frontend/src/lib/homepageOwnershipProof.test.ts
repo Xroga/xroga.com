@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const PAGE = read('../app/page.tsx');
+const PAGE = read('../components/homepage/HomepageClient.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const AUDIENCE = read('../components/homepage/HomepageAudienceSlider.tsx');
 const COMPANION = read('../components/companion/CompanionSurfaces.tsx');

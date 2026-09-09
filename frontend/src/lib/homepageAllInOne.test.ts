@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const PAGE = read('../app/page.tsx');
+const PAGE = read('../components/homepage/HomepageClient.tsx');
 const COMPONENT = read('../components/homepage/HomepageAllInOne.tsx');
 const CSS = read('../styles/homepage-coding.css');
 const sectionStart = CSS.indexOf('/* Xroga all-in-one scroll deck.');
@@ -56,8 +56,8 @@ test('the cards form a reversible sticky scroll deck with a static reduced-motio
 });
 
 test('the section opens with concise copy and a continuously moving live-ink headline', () => {
-  assert.match(COMPONENT, /The whole build\. <em>Connected\.<\/em>/);
-  assert.match(COMPONENT, /Brief to release, in one flow\./);
+  assert.match(COMPONENT, /What can you build <em>with Xroga\?<\/em>/);
+  assert.match(COMPONENT, /Real product work, connected from brief to release\./);
   assert.doesNotMatch(COMPONENT, /interface, data, accounts, code, checks/);
   assert.match(SECTION_CSS, /@keyframes xv-aio-live-ink/);
   assert.match(SECTION_CSS, /background-clip:\s*text/);

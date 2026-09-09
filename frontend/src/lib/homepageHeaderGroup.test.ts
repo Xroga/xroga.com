@@ -21,7 +21,7 @@ import { readFileSync } from 'node:fs';
 
 const read = (path: string) =>
   readFileSync(new URL(path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
-const PAGE = read('../app/page.tsx');
+const PAGE = read('../components/homepage/HomepageClient.tsx');
 const SWITCHER = read('../components/companion/HomepageThemeSwitcher.tsx');
 const CSS = read('../styles/homepage-coding.css');
 
@@ -74,7 +74,7 @@ test('the conversion action stays out of the group', () => {
   // this decision and names the button, so a raw search finds the prose first and
   // concludes the button sits before the group.
   const markup = PAGE.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
-  const at = markup.indexOf('Get Started');
+  const at = markup.indexOf('Start Free');
   assert.notEqual(at, -1, 'the sign-up action is gone entirely');
   const groupEnd = markup.indexOf('</div>', markup.indexOf('xv-hc-headgroup__seg'));
   assert.ok(at > groupEnd, 'the sign-up action has been folded into the segmented group');

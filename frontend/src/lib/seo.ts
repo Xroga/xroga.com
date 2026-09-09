@@ -16,7 +16,7 @@ export const OFFICIAL_SOCIAL_URLS = [ABOUT_SOCIALS.x, ABOUT_SOCIALS.github] as c
 
 /** Canonical product one-liner — keep identical across meta, JSON-LD, llms.txt for LLM citations */
 export const PRODUCT_ONE_LINER =
-  'Xroga is an AI coding and product-building agent that helps users research, build, test, repair, connect repositories, and deploy applications.';
+  'Xroga is an AI app builder and coding agent that builds, tests, and helps ship real software from a prompt or an existing repository, with inspectable code users control.';
 
 export const DEFAULT_DESCRIPTION =
   'Describe a supported software outcome in plain language. Xroga inspects the connected project, applies focused changes, runs applicable validation, and returns publishing evidence or the exact external setup required.';
@@ -139,12 +139,12 @@ export function buildFounderJsonLd() {
 export function buildSoftwareApplicationJsonLd() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'WebApplication',
+    '@type': 'SoftwareApplication',
     '@id': SOFTWARE_ID,
     name: SITE_NAME,
     alternateName: SITE_ALTERNATE_NAME,
     applicationCategory: 'DeveloperApplication',
-    applicationSubCategory: 'AI Coding Agent',
+    applicationSubCategory: 'AI App Builder and AI Coding Agent',
     operatingSystem: 'Web',
     url: `${SITE_URL}/`,
     description: PRODUCT_ONE_LINER,
@@ -154,12 +154,28 @@ export function buildSoftwareApplicationJsonLd() {
       'AI Workspace to chat, build, preview, and ship',
       'Server-side integration vault and authorised provider operations',
     ],
-    offers: {
-      '@type': 'Offer',
-      price: '25',
-      priceCurrency: 'USD',
-      description: 'One Xroga AI plan; current eligibility and capacity are shown before checkout.',
-    },
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Free',
+        price: '0',
+        priceCurrency: 'USD',
+        description: 'Free access with no card required and limited real product capacity.',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Xroga Pro',
+        price: '25',
+        priceCurrency: 'USD',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: '25',
+          priceCurrency: 'USD',
+          billingDuration: 'P1M',
+        },
+        description: 'Xroga Pro with higher capacity and faster pacing.',
+      },
+    ],
     author: { '@id': FOUNDER_ID },
     publisher: { '@id': ORGANIZATION_ID },
   };

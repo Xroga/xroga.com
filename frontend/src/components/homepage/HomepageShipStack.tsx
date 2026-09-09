@@ -68,7 +68,7 @@ export function HomepageShipStack() {
 
   return <section ref={sectionRef} className="xv-real-loop" id="ship-loop" aria-labelledby="ship-heading">
     <div className="xv-real-loop__inner">
-      <header className="xv-real-loop__heading"><p><i /> THE XROGA SHIP LOOP</p><h2 id="ship-heading">From prompt to <em>ownership.</em></h2><span>Watch one product move through the same visible states: describe, build, verify, push, and preview.</span></header>
+      <header className="xv-real-loop__heading"><p><i /> THE XROGA SHIP LOOP</p><h2 id="ship-heading">From prompt to <em>production.</em></h2><span>Watch one product move through visible states: describe, build, verify, review, ship, and iterate.</span></header>
       <div className="xv-real-loop__stage" aria-live="polite">
         <div className="xv-real-loop__stagebar"><span><Image src="/brand/xroga-mark.png" width={26} height={26} alt="" /><b>{STAGES[stageIndex].label}</b><small>{STAGES[stageIndex].detail}</small></span><div><button type="button" onClick={()=>setPlaying(value=>!value)} aria-label={playing?'Pause animation':'Play animation'}>{playing?<CirclePause />:<CirclePlay />}</button><button type="button" onClick={replay} aria-label="Replay animation"><RefreshCw /></button></div></div>
         <div className={`xv-real-loop__scene is-${stage}`} key={stage}>{stage==='prompt'&&<PromptScene typed={typed}/>} {stage==='build'&&<BuildScene/>} {stage==='validate'&&<ValidateScene/>} {stage==='github'&&<GitHubScene/>} {stage==='preview'&&<PreviewScene/>}</div>
