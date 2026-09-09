@@ -105,7 +105,7 @@ export function PlanUsageSettingsPanel() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-lg font-semibold text-[var(--text-primary)]">Xroga AI</p>
-              <p className="text-sm text-[var(--text-secondary)]">$19 per 30-day billing period · all features</p>
+              <p className="text-sm text-[var(--text-secondary)]">$25 per 30-day billing period · all features</p>
             </div>
             <Badge tone={status ? STATE_TONE[status.state] ?? 'neutral' : 'neutral'} dot>
               {status?.state.replaceAll('_', ' ') ?? 'Unavailable'}
