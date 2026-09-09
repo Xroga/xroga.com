@@ -5,16 +5,26 @@ import { PageJsonLd } from '@/components/seo/PageJsonLd';
 export const metadata = buildMetadata({
   title: 'Pricing — One Xroga AI Plan',
   description:
-    'Xroga AI is $25 per 30-day billing period.',
+    'Xroga AI is $25 per month with all product-building features included.',
   path: '/pricing',
   keywords: [
     'Xroga pricing',
     'Xroga AI plan',
-    '30-day Xroga spark plan',
+    'Xroga monthly plan',
     'AI product builder pricing',
   ],
 });
 
 export default function PricingPage() {
-  return <><PageJsonLd path="/pricing" name="XROGA AI pricing" description="XROGA AI plan, billing period, current capacity, and eligibility information." /><PricingPageClient /></>;
+  return (
+    <>
+      <PageJsonLd
+        path="/pricing"
+        name="XROGA AI pricing"
+        description="XROGA AI offers one $25 monthly plan for building, verifying, and publishing software."
+      />
+
+      <PricingPageClient />
+    </>
+  );
 }
