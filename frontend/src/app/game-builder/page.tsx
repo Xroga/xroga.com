@@ -134,7 +134,7 @@ export default function GameBuilderPage() {
           </section>
 
           <nav className="xv-gc-foot" aria-label="Related pages">
-            <Link href="/crypto-builder">Crypto Builder</Link>
+            <Link href="/crypto">Crypto Builder</Link>
             <Link href="/showcase">Showcase</Link>
             <Link href="/pricing">Plan and capacity</Link>
             <Link href="/docs">Docs</Link>

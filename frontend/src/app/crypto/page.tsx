@@ -661,16 +661,16 @@ export default function CryptoPage() {
             </div>
 
             <p>
-              ONE PRODUCT-BUILDING PLAN
+              XROGA PRO
             </p>
 
             <div className={styles.price}>
               <strong>
-                $19
+                $25
               </strong>
 
               <span>
-                / 30 days
+                / month
               </span>
             </div>
 

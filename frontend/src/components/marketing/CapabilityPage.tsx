@@ -174,7 +174,7 @@ export function CapabilityPage({ data }: { data: CapabilityPageData }) {
             <Link href="/pricing">
               Plan and capacity <PixelGlyph name="arrow" size={10} />
             </Link>
-            <Link href="/crypto-builder">
+            <Link href="/crypto">
               Crypto Builder <PixelGlyph name="arrow" size={10} />
             </Link>
           </div>

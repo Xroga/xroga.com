@@ -62,9 +62,9 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
   return {
     title: 'Shared answer — Xroga',
     description: share.response.slice(0, 150),
-    robots: share.visibility === 'public'
-      ? { index: true, follow: true }
-      : { index: false, follow: false, noarchive: true },
+    // User-created shares are not curated editorial pages. Keep them out of the
+    // index even when the owner chooses a public link; links may still be followed.
+    robots: { index: false, follow: true, noarchive: true },
   };
 }
 

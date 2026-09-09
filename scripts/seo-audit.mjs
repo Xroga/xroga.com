@@ -5,6 +5,7 @@ const contracts = JSON.parse(await readFile(new URL('./seo-contracts.json', impo
 const problems = [];
 const titleMap = new Map();
 const canonicalMap = new Map();
+const internalPaths = new Set();
 
 function match(html, expression) { return html.match(expression)?.[1]?.trim() || ''; }
 function decodeHtml(value) { return value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#x27;', "'").replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>'); }
@@ -65,6 +66,12 @@ for (const contract of contracts.publicRoutes) {
   for (const type of contract.schemaTypes || []) if (!schemaTypes.has(type)) problems.push(`${path}: missing ${type} structured data`);
   for (const id of contract.schemaIds || []) if (!schemaIds.has(id)) problems.push(`${path}: missing structured-data ID ${id}`);
   for (const image of html.matchAll(/<img\b([^>]*)>/gi)) if (!/\balt=["'][^"']*["']/i.test(image[1])) problems.push(`${path}: image missing alt attribute`);
+  for (const link of html.matchAll(/<a\b[^>]*href=["']([^"']+)["']/gi)) {
+    try {
+      const url = new URL(decodeHtml(link[1]), 'https://xroga.com');
+      if (url.origin === 'https://xroga.com') internalPaths.add(url.pathname);
+    } catch { problems.push(`${path}: malformed internal link ${link[1]}`); }
+  }
 }
 
 for (const path of contracts.privateRoutes) {
@@ -84,6 +91,32 @@ for (const file of contracts.discoveryFiles) {
     if (!response.headers.get('content-type')?.toLowerCase().includes(file.contentType)) problems.push(`${file.path}: expected ${file.contentType} response`);
     if (file.includes && !body.includes(file.includes)) problems.push(`${file.path}: expected discovery content is missing`);
   } catch { problems.push(`${file.path}: unavailable`); }
+}
+
+// The sitemap is the publish contract: every listed URL must be canonical,
+// indexable, and return directly without a redirect.
+try {
+  const sitemapResponse = await fetch(`${base}/sitemap.xml`, { signal: AbortSignal.timeout(15_000) });
+  const sitemap = await sitemapResponse.text();
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => decodeHtml(match[1]));
+  for (const location of locations) {
+    const pathname = new URL(location).pathname;
+    const response = await fetch(`${base}${pathname}`, { redirect: 'manual', signal: AbortSignal.timeout(15_000) });
+    const html = await response.text();
+    if (response.status !== 200) problems.push(`${pathname}: sitemap URL returned HTTP ${response.status}`);
+    if (response.status >= 300 && response.status < 400) problems.push(`${pathname}: redirect appears in sitemap`);
+    if (/content=["'][^"']*noindex/i.test(html)) problems.push(`${pathname}: noindex URL appears in sitemap`);
+    const canonical = match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) || match(html, /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i);
+    if (canonical !== location) problems.push(`${pathname}: sitemap location and canonical differ (${location} vs ${canonical || 'none'})`);
+  }
+} catch (error) { problems.push(`sitemap crawl failed (${error instanceof Error ? error.message : 'network error'})`); }
+
+for (const obsolete of ['/crypto-builder', '/features/ai-chat']) {
+  if (internalPaths.has(obsolete)) problems.push(`priority pages still link to obsolete route ${obsolete}`);
+}
+for (const pathname of internalPaths) {
+  const response = await fetch(`${base}${pathname}`, { redirect: 'manual', signal: AbortSignal.timeout(15_000) });
+  if (response.status >= 400) problems.push(`broken internal link ${pathname}: HTTP ${response.status}`);
 }
 
 if (problems.length) { console.error(`SEO audit failed with ${problems.length} issue(s):\n${problems.map((problem) => `- ${problem}`).join('\n')}`); process.exit(1); }

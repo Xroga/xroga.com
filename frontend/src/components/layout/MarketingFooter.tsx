@@ -9,6 +9,8 @@ const FOOTER_GROUPS = [
     title: 'Build',
     links: [
       { href: '/features', label: 'Features' },
+      { href: '/compare', label: 'Compare' },
+      { href: '/build', label: 'Build guides' },
       { href: '/crypto', label: 'Crypto Builder' },
       { href: '/pricing', label: 'Pricing' },
     ],
@@ -18,6 +20,7 @@ const FOOTER_GROUPS = [
     links: [
       { href: '/community', label: 'Community' },
       { href: '/docs', label: 'Docs' },
+      { href: '/blog', label: 'Guides' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },
     ],
@@ -28,6 +31,7 @@ const FOOTER_GROUPS = [
       { href: '/terms', label: 'Terms' },
       { href: '/privacy', label: 'Privacy' },
       { href: '/refund', label: 'Refund' },
+      { href: '/security', label: 'Security' },
     ],
   },
 ] as const;
