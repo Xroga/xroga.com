@@ -43,7 +43,7 @@ export function SubscriptionManagePanel() {
           <h3 className="font-semibold text-sm">Subscription management</h3>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 leading-relaxed">
             {ready === true && environment === 'test'
-              ? 'Lemon Squeezy Test Mode is connected. The $19/month plan starts with a 30-day trial, uses dummy payment data, and charges $0 in this environment.'
+              ? 'Lemon Squeezy Test Mode is connected. The $25/month spark plan, uses dummy payment data, and charges $0 in this environment.'
               : ready === true
                 ? 'Checkout and verified billing webhooks are configured. Paid subscribers can open Lemon Squeezy’s signed portal to manage payment details, invoices, pause, cancellation, and renewal.'
               : ready === false
