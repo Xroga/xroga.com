@@ -6,7 +6,9 @@ Release date: 2026-09-10. Scope: public SEO foundation and priority seed content
 
 - Implemented: yes.
 - Tested locally: yes.
-- Production target: the existing Xroga Vercel project and `https://xroga.com`; the deployment record and final live crawl are reported with the release.
+- Deployed/live: yes. The release was promoted through the existing Xroga Vercel project and aliased to `https://xroga.com`.
+- Verified deployment: `dpl_G2MkNbzr3u8Mc7HSmsPkNrt3z9wd` (`https://xrogaai-4azlww4uj-xrogas-projects.vercel.app`).
+- Verified application release before this report-only follow-up: `399c9e470a6538202a667d5e9c13885f805abf8b`.
 - Search Console access: unavailable — **NEEDS SEARCH CONSOLE**.
 
 ## B. Technical SEO
@@ -57,6 +59,8 @@ New content is statically generated and uses no page-level client JavaScript. De
 - `npm run test:seo` against the production build: PASS — 20 priority public contracts, 6 private/noindex contracts, 5 discovery files, the complete sitemap, and priority internal links.
 - `git diff --check`: PASS; Git line-ending notices only.
 - Backend tests were not rerun because this release changes no backend or request metadata contract.
+- Post-deploy `npm run test:seo` against `https://xroga.com`: PASS.
+- Live Playwright checks at 1440px and 390px: priority routes returned 200 with one H1, no horizontal overflow, no error overlay, and no console errors.
 
 ## K. External systems
 
