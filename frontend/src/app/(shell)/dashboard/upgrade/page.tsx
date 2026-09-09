@@ -16,7 +16,7 @@ export default function UpgradePage() {
             Xroga AI Plan
           </h1>
           <p className="text-sm text-[var(--muted)] mt-1">
-            One $19 plan per complete 30-day cycle with all {FEATURE_COUNT} features and capacity pacing.
+            One $25 plan per complete 30-day cycle with all {FEATURE_COUNT} features and capacity pacing.
           </p>
         </div>
 
