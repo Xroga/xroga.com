@@ -16,7 +16,6 @@ test('keeps public and authentication routes available', () => {
     // not need to be public: `next.config.mjs` redirects it at the routing layer,
     // before middleware sees it.
     '/crypto',
-    '/video',
     '/research/web3-hackathon-winning-patterns',
     '/showcase',
     '/showcase/modern-business-website',
