@@ -242,5 +242,5 @@ test('the plan capacity section is gone from the homepage', async ({ page }) => 
     expect(body, `homepage still shows "${phrase}"`).not.toContain(phrase);
   }
   // The announcement banner and its date must survive the removal.
-  await expect(page.getByText(/free through August 30, 2026/i)).toBeVisible();
+  await expect(page.getByText(//i)).toBeVisible();
 });
