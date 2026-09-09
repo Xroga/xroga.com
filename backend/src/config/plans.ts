@@ -34,7 +34,7 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
   {
     tier: 'spark',
     name: 'Spark',
-    priceLabel: '$19',
+    priceLabel: '$25',
     actionsLabel: 'Included AI capacity',
     actions: 1500,
     concurrency: 2,
