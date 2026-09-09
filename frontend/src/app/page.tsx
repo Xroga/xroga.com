@@ -8,7 +8,6 @@ import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
-import { HomepageAnnouncementBanner } from '@/components/homepage/HomepageAnnouncementBanner';
 import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
@@ -78,7 +77,6 @@ export default function HomePage() {
       />
 
       <section className="xv-hc-hero">
-        <HomepageAnnouncementBanner href={primaryHref} label={loggedIn ? 'Open Workspace' : 'Start building'} />
         <header className="xv-hc-header">
           <div className="xv-hc-header-inner">
             <Logo href="/" variant="homepage" height={64} className="shrink-0" />
