@@ -66,10 +66,6 @@ const FOOTER_GROUPS = [
         href: '/community',
         label: 'Community',
       },
-      {
-        href: '/video',
-        label: 'Xroga Video',
-      },
     ],
   },
 
