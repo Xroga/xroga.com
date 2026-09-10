@@ -27,7 +27,6 @@ import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { ScrollReveal } from './ScrollReveal';
-import { AiCodingAgentHeader } from './AiCodingAgentHeader';
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
 import '@/styles/ai-coding-agent-landing.css';
 
@@ -137,8 +136,6 @@ export function AiCodingAgentLanding() {
       <PageJsonLd path="/ai-coding-agent" name={data.title} description={data.description} />
 
       <ThemeBackdrop />
-
-      <AiCodingAgentHeader />
 
       {/* ------------------------------------------------------------------ hero */}
       <section className="agx-hero">

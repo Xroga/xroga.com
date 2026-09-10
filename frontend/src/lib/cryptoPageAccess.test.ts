@@ -28,6 +28,7 @@ const ACCESS = read('./supabase/routeAccess.ts');
 const CONFIG = read('../../next.config.mjs');
 const PROVIDER = read('../components/providers/ThemeProvider.tsx');
 const PAGE = read('../app/crypto/page.tsx');
+const CHROME = read('../components/layout/PublicMarketingChrome.tsx');
 
 test('the crypto page is reachable without an account', () => {
   assert.match(ACCESS, /'\/crypto',/, '/crypto is not a public route');
@@ -96,7 +97,8 @@ test('the hero goes straight from the headline to the composer', () => {
 });
 
 test('the page uses the shared footer and drops the redundant badge', () => {
-  assert.match(PAGE, /<MarketingFooter \/>/, 'the crypto page needs the shared footer');
+  assert.match(CHROME, /<MarketingFooter \/>/, 'public chrome needs the shared footer');
+  assert.doesNotMatch(PAGE, /<MarketingFooter \/>/, 'the page must not duplicate shared chrome');
   // It carried its own copy — same links, same wording, its own markup — so every
   // change to the site footer had to be made twice.
   assert.ok(!/styles\.footer/.test(PAGE), 'the duplicated footer markup is back');

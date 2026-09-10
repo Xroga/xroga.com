@@ -24,7 +24,6 @@ import { ScrollReveal } from './ScrollReveal';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
-import { SoftwareHeader } from './SoftwareHeader';
 import { SoftwarePrompt } from './SoftwarePrompt';
 import { SoftwareFeatureTabs } from './SoftwareFeatureTabs';
 // The workspace tour's styles live here, not in the component. Without this import
@@ -104,8 +103,6 @@ export function SoftwareLanding() {
 
       {/* ---------------------------------------------------------------- hero */}
       <section className="xsw-hero">
-
-        <SoftwareHeader />
 
         <div className="xsw-shell xsw-hero__body">
           <p className="xsw-eyebrow"><Sparkles aria-hidden="true" />Xroga for software</p>

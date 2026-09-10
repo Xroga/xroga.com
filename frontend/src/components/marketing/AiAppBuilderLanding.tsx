@@ -18,7 +18,6 @@ import { GitHubIcon } from '@/components/icons/GitHubIcon';
 import { ScrollReveal } from './ScrollReveal';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
-import { AiAppBuilderHeader } from './AiAppBuilderHeader';
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
 import heroStyles from './AiAppBuilderHero.module.css';
@@ -114,8 +113,6 @@ export function AiAppBuilderLanding({
           ========================================================= */}
 
       <section className="xab-hero">
-        <AiAppBuilderHeader />
-
         <div className="xab-shell xab-hero__body">
           <h1 className="xab-hero__title">
             Describe an app.{' '}

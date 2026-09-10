@@ -21,7 +21,6 @@
 
 import { randomUUID } from 'node:crypto';
 import type { ProjectFile } from '../ai/patches.js';
-import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { productionAdapters, type CommitFn } from './productionAdapters.js';
 import { implementIncrementally } from './incrementalImplementation.js';
@@ -36,10 +35,15 @@ import { chooseCostAware } from '../ai/providerCostTiers.js';
 import { chooseFromMeasuredEvidence, loadMeasuredEvidence } from '../ai/measuredEvidence.js';
 import { MODELS, type ModelId } from '../ai/models.js';
 import type { ExecutionStateStore } from '../ai/executionRuntime.js';
+import { assertProjectWriteTarget, type ActiveProjectContext } from '../ai/universal/projectContext.js';
+import { goalContractSchema, interpretGoalContract, type GoalContract, type GoalInterpretationInput } from '../ai/universal/goalContract.js';
+import { universalCapabilityRegistry } from '../capabilities/index.js';
+import { planCapabilities } from '../ai/universal/planner.js';
 
 export interface UniversalBuildOutcome {
   readonly ran: true;
   readonly result: UniversalExecutionResult;
+  readonly goalContract: GoalContract | null;
   readonly routing: {
     readonly selectedModel: string | null;
     readonly fallbacks: readonly string[];
@@ -145,9 +149,21 @@ export async function tryUniversalBuild(input: {
   store?: UniversalStore;
   /** Durable store for the canonical task graph. In-memory when absent. */
   executionStore?: ExecutionStateStore;
+  /** Canonical context visible to the user and the independently constructed write target. */
+  activeProjectContext?: ActiveProjectContext;
+  writeTarget?: ActiveProjectContext;
+  goalContext?: Pick<GoalInterpretationInput, 'history' | 'attachments' | 'projectState'>;
+  goalInterpreter?: (input: GoalInterpretationInput & { availableCapabilityIds: readonly string[]; modelId: ModelId }) => Promise<unknown>;
 }): Promise<UniversalBuildOutcome | null> {
   const decision = routeProject(input.projectId ?? null, input.flags);
   if (!mayWrite(decision)) return null;
+
+  if (input.activeProjectContext || input.writeTarget) {
+    if (!input.activeProjectContext || !input.writeTarget) {
+      throw new Error('A universal repository write requires both active context and write target.');
+    }
+    assertProjectWriteTarget(input.activeProjectContext, input.writeTarget);
+  }
 
   const owner: Owner = {
     userId: input.userId,
@@ -169,6 +185,7 @@ export async function tryUniversalBuild(input: {
     // Refusing beats routing to something unevaluated. The excluded list explains why.
     return {
       ran: true,
+      goalContract: null,
       routing: { selectedModel: null, fallbacks: [], reason: route.reason, excluded: route.excluded },
       result: {
         outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [],
@@ -176,6 +193,42 @@ export async function tryUniversalBuild(input: {
         mutationBegan: false, verified: false, reason: route.reason,
       },
     };
+  }
+
+  let goalContract: GoalContract;
+  try {
+    const interpretationInput: GoalInterpretationInput = {
+      message: input.prompt, history: input.goalContext?.history ?? [], projectContext: input.activeProjectContext ?? null,
+      attachments: input.goalContext?.attachments ?? [],
+      projectState: input.goalContext?.projectState ?? (input.existingFiles?.length ? { fileCount: input.existingFiles.length } : undefined),
+    };
+    goalContract = input.goalInterpreter
+      ? await interpretGoalContract(interpretationInput, (goalInput) => input.goalInterpreter!({
+          ...goalInput,
+          availableCapabilityIds: universalCapabilityRegistry.list().map((item) => item.id),
+          modelId: route.selected!.modelId as ModelId,
+        }))
+      : goalContractSchema.parse({
+          version: '1.0', goal: input.prompt, desiredOutcome: input.prompt,
+          semanticIntent: 'MODIFY', constraints: [], acceptance: [], historyContext: [],
+          projectContext: input.activeProjectContext ?? null, deliverables: [],
+          requiredCapabilities: ['software.implement', 'validation.run', ...(input.activeProjectContext ? ['repository.read', 'repository.write'] : [])],
+          requiredAuthorities: [], risks: [], confidence: 0.5, blockers: [], contextComplexity: 'unknown',
+        });
+    const authorities = new Set(['model:execute', 'sandbox:execute', ...(input.activeProjectContext ? ['repository:read', 'repository:write'] : [])]);
+    const capabilityPlan = await planCapabilities({
+      goal: goalContract, registry: universalCapabilityRegistry, authorities,
+      select: async () => ({ capabilityIds: goalContract.requiredCapabilities, rationale: 'Capabilities requested by the validated semantic goal contract.' }),
+    });
+    if (capabilityPlan.rejected.length) {
+      const reason = `Goal requires unavailable or unauthorized capabilities: ${capabilityPlan.rejected.map((item) => `${item.id} (${item.reason})`).join(', ')}`;
+      return { ran: true, goalContract, routing: { selectedModel: route.selected.modelId, fallbacks: [], reason, excluded: route.excluded },
+        result: { outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [], files: [], commitSha: null, evidence: [], blockers: [reason], mutationBegan: false, verified: false, reason } };
+    }
+  } catch (error) {
+    const reason = `Semantic goal interpretation failed: ${error instanceof Error ? error.message : String(error)}`;
+    return { ran: true, goalContract: null, routing: { selectedModel: route.selected.modelId, fallbacks: [], reason, excluded: route.excluded },
+      result: { outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [], files: [], commitSha: null, evidence: [], blockers: [reason], mutationBegan: false, verified: false, reason } };
   }
 
   // §13: measured evidence outranks the hand-written priors the capability router ranks by.
@@ -252,6 +305,7 @@ export async function tryUniversalBuild(input: {
 
   return {
     ran: true,
+    goalContract,
     result,
     routing: {
       selectedModel: orderedCandidates[0] ?? null,

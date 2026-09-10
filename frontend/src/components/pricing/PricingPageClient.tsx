@@ -6,13 +6,9 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { api } from '@/lib/api';
-import { Logo } from '@/components/layout/Logo';
 import { CheckoutButton } from '@/components/billing/CheckoutButton';
 import { GalacticPlanPricingCard, PricingCtaButton, PricingPlanGrid } from '@/components/billing/XrogaPricingCard';
 import { GALACTIC_PLANS } from '@/lib/plans';
-import { GradientStartButton, PlayNowButton } from '@/components/ui/Uiverse';
-import { PowerSmashButton } from '@/components/ui/XrogaButtons';
-import { COMPANY_CONTACT } from '@/lib/companyContact';
 
 type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
 
@@ -33,20 +29,6 @@ export function PricingPageClient() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 glass-panel-strong border-b border-[var(--card-border)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-          <Logo href={loggedIn ? '/workspace' : '/'} variant="header" height={48} />
-          {loggedIn ? (
-            <PowerSmashButton size="sm" onClick={() => router.push('/workspace')}>Workspace</PowerSmashButton>
-          ) : (
-            <div className="flex items-center gap-2">
-              <PlayNowButton className="xv-play-btn-sm" onClick={() => router.push('/auth/login')}>Sign In</PlayNowButton>
-              <GradientStartButton className="xv-gradient-btn-sm" onClick={() => router.push('/auth/signup')}>Start</GradientStartButton>
-            </div>
-          )}
-        </div>
-      </header>
-
       <main className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel text-xs text-[var(--accent)] mb-5">
@@ -88,12 +70,6 @@ export function PricingPageClient() {
             {loggedIn ? 'Return to workspace' : 'Create your free account'} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-        <footer className="mt-14 pt-8 border-t border-[var(--card-border)] text-center text-xs text-[var(--muted)]">
-          <nav className="flex flex-wrap justify-center gap-3" aria-label="Legal">
-            <Link href="/contact">Contact</Link><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/refund">Refund</Link>
-            <a href={`mailto:${COMPANY_CONTACT.email}`}>{COMPANY_CONTACT.email}</a>
-          </nav>
-        </footer>
       </main>
     </div>
   );

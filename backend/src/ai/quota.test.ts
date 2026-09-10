@@ -85,13 +85,13 @@ describe(
   'plan budgets',
   () => {
     it(
-      'canonical plan uses the $16.50 internal provider ceiling',
+      'canonical plan uses the $20 shared ceiling and keeps $16.50 as the model-stack target',
       () => {
         assert.equal(
           getApiBudgetUsd(
             'spark',
           ),
-          MONTHLY_TOTAL_BUDGET_USD,
+          20,
         );
 
         assert.equal(
@@ -103,7 +103,7 @@ describe(
           getTokenPool(
             'spark',
           ),
-          6_172_222,
+          7_481_481,
         );
       },
     );

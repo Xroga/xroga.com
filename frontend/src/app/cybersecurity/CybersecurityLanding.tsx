@@ -105,7 +105,6 @@ const iconMap = {
 export default function CybersecurityLanding() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [demoValue, setDemoValue] = useState("");
   const [demoMessage, setDemoMessage] = useState("");
 
@@ -298,10 +297,6 @@ export default function CybersecurityLanding() {
     );
   }
 
-  function closeMenu() {
-    setMenuOpen(false);
-  }
-
   return (
     <main className={styles.pageShell}>
       <canvas
@@ -311,48 +306,6 @@ export default function CybersecurityLanding() {
       />
       <div className={styles.noise} aria-hidden="true" />
       <div className={styles.scanlines} aria-hidden="true" />
-
-      <header className={styles.siteHeader}>
-        <div className={styles.brand}>
-          <Logo href="/" variant="homepage" height={42} />
-        </div>
-
-        <nav className={styles.desktopNav} aria-label="Cybersecurity navigation">
-          <a href="#vision">Vision</a>
-          <a href="#capabilities">Capabilities</a>
-          <a href="#architecture">Architecture</a>
-          <a href="#roadmap">2027</a>
-        </nav>
-
-        <div className={styles.headerActions}>
-          <Link className={styles.backLink} href="/">
-            Main site
-            <ArrowUpRightIcon size={14} />
-          </Link>
-          <button
-            className={styles.menuButton}
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((value) => !value)}
-          >
-            <span />
-            <span />
-          </button>
-        </div>
-
-        <div
-          id="mobile-nav"
-          className={`${styles.mobileNav} ${menuOpen ? styles.mobileNavOpen : ""}`}
-        >
-          <a href="#vision" onClick={closeMenu}>Vision</a>
-          <a href="#capabilities" onClick={closeMenu}>Capabilities</a>
-          <a href="#architecture" onClick={closeMenu}>Architecture</a>
-          <a href="#roadmap" onClick={closeMenu}>2027</a>
-          <Link href="/" onClick={closeMenu}>Main Xroga site</Link>
-        </div>
-      </header>
 
       <section
         ref={heroRef}
@@ -691,13 +644,6 @@ export default function CybersecurityLanding() {
         </div>
       </section>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerBrand}>
-          <Logo href="/" variant="homepage" height={38} />
-        </div>
-        <p>AI-native cybersecurity direction · Target 2027</p>
-        <p>© {new Date().getFullYear()} Xroga. All rights reserved.</p>
-      </footer>
     </main>
   );
 }

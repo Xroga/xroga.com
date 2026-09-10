@@ -16,6 +16,7 @@ import { assessBlackHoleComplexity } from './black-hole/complexity.js';
 import { MODELS, type ModelId } from './models.js';
 import {
   buildVisionUserContent,
+  chatCompletion,
   chatCompletionStream,
   estimateMessageTokens,
   type ChatMessage,
@@ -121,6 +122,8 @@ import {
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
+import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
+import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { findProjectIdByRepo } from '../services/memory/buildProjectStore.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
@@ -1356,6 +1359,36 @@ export async function runBuildPipeline(opts: {
     // is persisted alongside the rest of the run's task graph rather than in a second
     // in-memory state that dies with the process.
     executionStore,
+    goalContext: {
+      history: history.map((entry) => `${entry.role}: ${entry.content}`),
+      attachments: (opts.attachments ?? []).map((attachment) => ({ mediaType: attachment.mimeType ?? 'application/octet-stream', name: attachment.name })),
+      projectState: { existingFileCount: prior.files.length, isUpdate },
+    },
+    goalInterpreter: async ({ message, history, projectContext, attachments, projectState, availableCapabilityIds, modelId }) => {
+      const maximumOutputTokens = 2_500;
+      const messages: ChatMessage[] = [
+        { role: 'system', content: `Translate the complete user request into one semantic GoalContract. Do not classify a product, framework, language, or file type. Select only capability IDs supplied below. Return strict JSON with exactly: version "1.0", goal, desiredOutcome, semanticIntent (ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED), constraints[], acceptance[], historyContext[], projectContext, deliverables[] (id, mediaType, description, required, acceptance[]), requiredCapabilities[], requiredAuthorities[], risks[], confidence 0..1, blockers[], contextComplexity (low|medium|high|unknown). Available capability IDs: ${availableCapabilityIds.join(', ')}` },
+        { role: 'user', content: JSON.stringify({ message, history, projectContext, attachments, projectState }) },
+      ];
+      const completion = await withProviderReservation({
+        userId: opts.userId, modelId, estimatedInputTokens: estimateMessageTokens(messages), maximumOutputTokens,
+        purpose: 'complexity', execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal: opts.signal }),
+      });
+      const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      return JSON.parse((fenced?.[1] ?? completion.text).trim());
+    },
+    ...(universalTargetRepo ? {
+      activeProjectContext: {
+        repo: universalTargetRepo,
+        branch: meta?.githubTargetBranch || 'main',
+        projectRoot: meta?.projectRoot || '/',
+      },
+      writeTarget: {
+        repo: universalTargetRepo,
+        branch: meta?.githubTargetBranch || 'main',
+        projectRoot: meta?.projectRoot || '/',
+      },
+    } : {}),
     commit:
       universalTargetRepo && universalToken
         ? atomicGitHubCommit({
@@ -1375,13 +1408,28 @@ export async function runBuildPipeline(opts: {
           ),
   });
   if (universal) {
-    const { result, routing } = universal;
+    const { result, routing, goalContract } = universal;
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
       message: `Universal path: ${result.outcome} at ${result.phaseReached}. ${result.reason}`,
     });
     const universalSuccess = result.outcome === 'completed' && result.verified;
+    const outputEnvelope: UniversalOutputEnvelope = {
+      type: 'xroga.output', version: '1.0',
+      status: universalSuccess ? 'completed' : result.outcome === 'failed' ? 'failed' : 'blocked',
+      summary: result.reason,
+      artifacts: result.files.map((file, index) => ({
+        id: `${runId}:file:${index}`,
+        name: file.path,
+        mediaType: 'text/plain',
+        sizeBytes: Buffer.byteLength(file.content, 'utf8'),
+        validation: [{ validator: 'universal-run', status: result.verified ? 'passed' : 'not_checked', detail: result.verified ? 'Validated by the universal run.' : 'The run did not establish complete validation.' }],
+      })),
+      evidence: result.evidence.map((entry) => ({ kind: entry.phase, detail: `${entry.statement}: ${entry.detail}` })),
+      blockers: [...result.blockers], nextActions: result.blockers.length ? ['Resolve the reported blockers and retry.'] : [],
+      provenance: { runId, projectContextKey: universalTargetRepo ? projectContextKey({ repo: universalTargetRepo, branch: meta?.githubTargetBranch || 'main', projectRoot: meta?.projectRoot || '/' }) : undefined },
+    };
     const universalOutput: Record<string, unknown> = {
         // The typed artifact contract. Every frontend renderer keys off `type`, and this
         // object previously had none — so a run that produced real files and a real commit
@@ -1406,6 +1454,8 @@ export async function runBuildPipeline(opts: {
           // "blocked" with no way to see that the reason was an unobserved page.
           ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         }),
+        outputEnvelope,
+        goalContract,
         universal: true,
         outcome: result.outcome,
         phaseReached: result.phaseReached,

@@ -219,3 +219,94 @@ export async function runAgent(input: AgentRunInput): Promise<AgentOutcome> {
       'step ceiling is not a success.',
   );
 }
+
+export interface CapabilityToolCall {
+  readonly id: string;
+  readonly capabilityId: string;
+  readonly input: unknown;
+}
+
+export interface CapabilityAgentTurn {
+  readonly summary: string;
+  readonly toolCalls?: readonly CapabilityToolCall[];
+  readonly final?: unknown;
+}
+
+export interface CapabilityTool {
+  readonly id: string;
+  readonly requiredAuthorities: readonly string[];
+  readonly estimateMicroUsd: (input: unknown) => number;
+  readonly validateInput: (input: unknown) => boolean;
+  readonly execute: (input: unknown, context: { signal?: AbortSignal }) => Promise<unknown>;
+  readonly validateOutput: (output: unknown) => boolean;
+  readonly actualMicroUsd?: (output: unknown) => number;
+}
+
+export interface CapabilityAgentResult extends AgentOutcome {
+  readonly final: unknown | null;
+  readonly observations: readonly { callId: string; capabilityId: string; output: unknown }[];
+}
+
+/**
+ * Tool-using agent loop built on the existing bounded runtime. Tools are capabilities already
+ * resolved by the registry; model output can request them, but cannot grant their authority.
+ */
+export async function runCapabilityAgent(input: {
+  budget: AgentBudget;
+  tools: readonly CapabilityTool[];
+  authorities: ReadonlySet<string>;
+  signal?: AbortSignal;
+  reserveCost: (input: { callId: string; capabilityId: string; estimatedMicroUsd: number }) => Promise<{ settle(actualMicroUsd: number): Promise<void>; release(): Promise<void> }>;
+  turn: (context: { index: number; history: readonly AgentStepRecord[]; observations: readonly { callId: string; capabilityId: string; output: unknown }[] }) => Promise<CapabilityAgentTurn>;
+  validateFinal: (output: unknown) => boolean;
+}): Promise<CapabilityAgentResult> {
+  const tools = new Map(input.tools.map((tool) => [tool.id, tool]));
+  const observations: Array<{ callId: string; capabilityId: string; output: unknown }> = [];
+  let final: unknown | null = null;
+  const outcome = await runAgent({
+    budget: input.budget,
+    signal: input.signal,
+    step: async ({ index, history, remaining }) => {
+      const turn = await input.turn({ index, history, observations });
+      if (turn.final !== undefined) {
+        if (!input.validateFinal(turn.final)) throw new Error('Agent final output failed validation.');
+        final = turn.final;
+        return { phase: 'complete', summary: turn.summary, done: true, madeProgress: true };
+      }
+      const calls = turn.toolCalls ?? [];
+      if (!calls.length) return { phase: 'adapt', summary: turn.summary, madeProgress: false };
+      if (calls.length > remaining.toolCalls) throw new Error('Tool call budget would be exceeded.');
+      const estimates = calls.map((call) => {
+        const candidate = tools.get(call.capabilityId);
+        return candidate ? Math.max(0, Math.round(candidate.estimateMicroUsd(call.input))) : 0;
+      });
+      if (estimates.reduce((sum, value) => sum + value, 0) / 1_000_000 > remaining.costUsd) {
+        throw new Error('Estimated capability cost would exceed the run budget.');
+      }
+      let estimatedCostUsd = 0;
+      for (const [callIndex, call] of calls.entries()) {
+        const tool = tools.get(call.capabilityId);
+        if (!tool) throw new Error(`Capability was not exposed to this run: ${call.capabilityId}`);
+        const missing = tool.requiredAuthorities.find((authority) => !input.authorities.has(authority));
+        if (missing) throw new Error(`Capability ${tool.id} requires authority ${missing}`);
+        if (!tool.validateInput(call.input)) throw new Error(`Invalid input for capability ${tool.id}`);
+        const estimatedMicroUsd = estimates[callIndex]!;
+        const reservation = await input.reserveCost({ callId: call.id, capabilityId: tool.id, estimatedMicroUsd });
+        try {
+          const output = await tool.execute(call.input, { signal: input.signal });
+          if (!tool.validateOutput(output)) throw new Error(`Invalid output from capability ${tool.id}`);
+          const actualMicroUsd = Math.max(0, Math.round(tool.actualMicroUsd?.(output) ?? estimatedMicroUsd));
+          if (actualMicroUsd > estimatedMicroUsd) throw new Error(`Capability ${tool.id} exceeded its reservation.`);
+          await reservation.settle(actualMicroUsd);
+          observations.push({ callId: call.id, capabilityId: tool.id, output });
+          estimatedCostUsd += estimatedMicroUsd / 1_000_000;
+        } catch (error) {
+          await reservation.release();
+          throw error;
+        }
+      }
+      return { phase: 'observe', summary: turn.summary, toolCalls: calls.length, estimatedCostUsd, madeProgress: true };
+    },
+  });
+  return { ...outcome, final, observations };
+}

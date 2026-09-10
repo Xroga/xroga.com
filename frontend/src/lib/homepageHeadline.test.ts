@@ -33,10 +33,10 @@ test('the semantic headline uses the Xroga display system and theme tokens', () 
   const start = CSS.indexOf('.xv-home-coding .xv-hc-headline {', shell);
   assert.notEqual(start, -1);
   const body = CSS.slice(start, CSS.indexOf('}', start));
-  assert.match(body, /font-family:\s*var\(--hc-font-sans\)/);
-  assert.match(body, /color:\s*var\(--hc-ink\)/);
+  assert.match(body, /font-family:\s*var\(--font-claude-serif\)/);
+  assert.match(body, /color:\s*var\(--marketing-heading\)/);
   assert.match(body, /font-size:\s*clamp\(/);
-  assert.match(CSS.slice(start), /\.xv-home-coding \.xv-hc-headline em[\s\S]*var\(--font-claude-serif\)/);
+  assert.match(CSS.slice(start), /\.xv-home-coding \.xv-hc-headline em[\s\S]*var\(--marketing-heading-accent\)/);
 });
 
 test('the mobile headline and reduced-motion behavior are deliberate', () => {

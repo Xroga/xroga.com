@@ -16,7 +16,7 @@
  * shadow, and a test asserts it for every mode.
  */
 
-export type UniversalAgentMode = 'off' | 'shadow' | 'enabled';
+export type UniversalAgentMode = 'off' | 'legacy' | 'shadow' | 'controlled' | 'default' | 'retirement' | 'enabled';
 
 export interface UniversalAgentFlags {
   readonly mode: UniversalAgentMode;
@@ -35,7 +35,11 @@ const DEFAULTS: UniversalAgentFlags = {
 
 function parseMode(value: string | undefined): UniversalAgentMode {
   switch ((value ?? '').trim().toLowerCase()) {
+    case 'legacy': return 'legacy';
     case 'shadow': return 'shadow';
+    case 'controlled': return 'controlled';
+    case 'default': return 'default';
+    case 'retirement': return 'retirement';
     case 'enabled': case 'on': case '1': case 'true': return 'enabled';
     // Anything unrecognised is off. A typo in an environment variable must not enable a
     // path; the failure of a misread flag should be "nothing changed".
@@ -95,16 +99,22 @@ export function routeProject(
   projectId: string | null | undefined,
   flags: UniversalAgentFlags = readUniversalAgentFlags(),
 ): RoutingDecision {
-  if (flags.mode === 'off') {
+  if (flags.mode === 'off' || flags.mode === 'legacy') {
     return { useUniversal: false, shadow: false, reason: 'the universal agent is disabled' };
   }
   if (flags.mode === 'shadow') {
     return { useUniversal: false, shadow: true, reason: 'shadow mode: the universal planner runs for comparison and writes nothing' };
   }
   if (!projectId) {
-    // No stable identity means no stable bucket, and a project that flipped between paths
-    // per request would be the worst of both.
-    return { useUniversal: false, shadow: true, reason: 'no project id, so bucketing would not be stable; shadowing instead' };
+    // Every live universal run needs a stable project identity, even after the rollout
+    // reaches its default or retirement stages. Otherwise a write could not be tied to
+    // the same context the user sees.
+    return { useUniversal: false, shadow: true, reason: 'no stable project id, so the universal path may not write; shadowing instead' };
+  }
+  if (flags.mode === 'default' || flags.mode === 'retirement') {
+    return { useUniversal: true, shadow: false, reason: flags.mode === 'default'
+      ? 'the universal agent is the default path with the legacy fallback still available'
+      : 'the universal agent is active and legacy retirement is in progress' };
   }
   if (flags.allowlist.includes(projectId)) {
     return { useUniversal: true, shadow: false, reason: 'the project is on the universal agent allowlist' };

@@ -59,7 +59,7 @@ function backdropImages(css: string, scope: string): Record<string, string[]> {
       const url = /url\('([^']+)'\)/.exec(m[1]);
       if (url) urls.push(url[1]);
     }
-    found[theme] = urls.sort();
+    found[theme] = [...new Set(urls)].sort();
   }
   return found;
 }
@@ -74,10 +74,10 @@ test('every theme has its own backdrop artwork', () => {
   assert.equal(new Set(desktop).size, THEMES.length, 'each theme should have distinct artwork');
 });
 
-test('shared light themes match the homepage while Black keeps homepage-only hero art', () => {
+test('every shared theme matches the approved homepage artwork', () => {
   const mine = backdropImages(SHARED, '.xv-theme-backdrop');
   const theirs = backdropImages(HOMEPAGE, '.xv-hc-bg-image');
-  for (const theme of ['white', 'beige', 'gray'] as const) {
+  for (const theme of THEMES) {
     assert.deepEqual(
       mine[theme],
       theirs[theme],
@@ -85,12 +85,8 @@ test('shared light themes match the homepage while Black keeps homepage-only her
     );
   }
 
-  const desktopPortal = '/backgrounds/xroga-black-portal-hero.webp';
-  const mobilePortal = '/backgrounds/xroga-black-portal-hero-mobile.webp';
-  assert.ok(theirs.black.includes(desktopPortal), 'Black homepage must include its cinematic desktop hero');
-  assert.ok(theirs.black.includes(mobilePortal), 'Black homepage must include its cinematic mobile hero');
-  assert.ok(!mine.black.includes(desktopPortal), 'homepage hero art must not leak into the shared app backdrop');
-  assert.ok(!mine.black.includes(mobilePortal), 'mobile hero art must not leak into the shared app backdrop');
+  assert.ok(mine.black.includes('/backgrounds/xroga-black-portal-hero.webp'));
+  assert.ok(mine.black.includes('/backgrounds/xroga-black-portal-hero-mobile.webp'));
 });
 
 test('the backdrop sits behind the document and is decorative', () => {

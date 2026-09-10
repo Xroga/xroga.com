@@ -4,7 +4,7 @@ import { MODELS, requirePricing, type ModelId } from './models.js';
 import { normalizeProviderError } from './providerRuntime.js';
 import { capacityUnavailableError } from './capacityUnavailable.js';
 
-export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 16_500_000;
+export const SHARED_PROVIDER_ENTITLEMENT_MICRO_USD = 20_000_000;
 export const FREE_PROVIDER_ENTITLEMENT_MICRO_USD = 1_650_000;
 export const PROVIDER_PRICE_VERSION = '2026-07-28-v1';
 export type BudgetPurpose = 'daily_work' | 'complexity' | 'completion';
@@ -78,10 +78,15 @@ export function actualProviderCostMicroUsd(input: {
   reasoningTokens?: number;
 }): number {
   const price = requirePricing(input.modelId);
-  const billableInput = Math.max(0, input.inputTokens - (input.cachedInputTokens ?? 0));
+  const cachedInput = Math.min(Math.max(0, input.cachedInputTokens ?? 0), Math.max(0, input.inputTokens));
+  const billableInput = Math.max(0, input.inputTokens - cachedInput);
   const billableOutput = Math.max(0, input.outputTokens + (input.reasoningTokens ?? 0));
+  // None of the active model specifications carries a separately verified cached-input
+  // price. Charge the normal input rate conservatively; silently treating cache hits as
+  // free undercounts real provider spend and can breach the product ceiling.
   return asSafeInteger(
-    billableInput * price.inputUsdPer1M + billableOutput * price.outputUsdPer1M,
+    billableInput * price.inputUsdPer1M + cachedInput * price.inputUsdPer1M +
+      billableOutput * price.outputUsdPer1M,
   );
 }
 
@@ -95,11 +100,11 @@ export function unlockedEntitlementMicroUsd(input: {
   const elapsed = input.now.getTime() - input.startsAt.getTime();
   if (elapsed < 0) return 0;
   const day = Math.min(30, Math.max(1, Math.floor(elapsed / 86_400_000) + 1));
-  const daily = input.pacing === 'full_access' ? 9_900_000 : Math.min(9_900_000, day * 330_000);
+  const daily = input.pacing === 'full_access' ? 12_000_000 : Math.min(12_000_000, day * 400_000);
   const complexity = input.pacing === 'full_access'
-    ? 4_125_000
-    : day >= 22 ? 4_125_000 : day >= 15 ? 3_093_750 : day >= 8 ? 2_062_500 : 1_031_250;
-  const completion = input.purpose === 'completion' ? 2_475_000 : 0;
+    ? 5_500_000
+    : day >= 22 ? 5_500_000 : day >= 15 ? 4_125_000 : day >= 8 ? 2_750_000 : 1_375_000;
+  const completion = input.purpose === 'completion' ? 2_500_000 : 0;
   return Math.min(
     SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
     Math.max(daily + complexity, input.acceleratedUnlockMicroUsd ?? 0) + completion,
@@ -244,7 +249,7 @@ export async function setUsagePacing(
     if (!cycle) throw new Error('Active billing cycle required');
     cycle.pacing = pacing;
     if (pacing === 'full_access') {
-      cycle.acceleratedUnlockMicroUsd = 14_025_000;
+      cycle.acceleratedUnlockMicroUsd = 17_500_000;
     }
   }
   return getProviderEntitlementStatus(userId);

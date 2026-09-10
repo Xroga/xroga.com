@@ -2275,183 +2275,6 @@ body .xv-home-coding article.xv-aio-card .xv-aio-estate .xv-aio-estate__copy p {
   color: var(--hc-ink);
 }
 
-/* Editorial split footer inspired by the supplied reference: blue identity card,
-   calm utility panel, floating Xroga mark, and the wordmark below the cards. */
-.xv-marketing-footer {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  padding: clamp(3rem, 8vw, 7rem) clamp(.75rem, 4vw, 3rem) 0;
-  color: var(--text-primary, var(--foreground));
-  background: transparent;
-  font-family: var(--font-remixa), var(--font-goga), system-ui, sans-serif;
-  overflow: hidden;
-}
-.xv-marketing-footer__stage {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(240px, .72fr) minmax(0, 1.55fr);
-  width: min(1180px, 100%);
-  max-width: 100%;
-  min-width: 0;
-  min-height: 390px;
-  margin: 0 auto;
-  padding-bottom: clamp(.5rem, 2vw, 1.5rem);
-}
-.xv-marketing-footer__brand-card,
-.xv-marketing-footer__main-card {
-  position: relative;
-  z-index: 2;
-  min-height: 350px;
-  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border-subtle));
-  box-shadow: 0 28px 75px color-mix(in srgb, var(--text-primary) 10%, transparent);
-  min-width: 0;
-  max-width: 100%;
-}
-.xv-marketing-footer__brand-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(1.4rem, 3vw, 2.2rem);
-  border-radius: 24px 12px 12px 24px;
-  color: #fff;
-  background:
-    radial-gradient(circle at 75% 24%, rgba(255,255,255,.18), transparent 28%),
-    linear-gradient(150deg, color-mix(in srgb, var(--accent) 78%, #081d68), color-mix(in srgb, var(--accent) 54%, #020d35));
-  overflow: hidden;
-}
-.xv-marketing-footer__brand-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: .24;
-  background: linear-gradient(120deg, transparent 0 48%, rgba(255,255,255,.12) 49% 50%, transparent 51%);
-  background-size: 36px 36px;
-  pointer-events: none;
-}
-.xv-marketing-footer__brand-lockup { position:relative;z-index:1;display:flex;align-items:center;min-height:68px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.22)) }
-.xv-marketing-footer__full-logo { width:260px!important;height:68px!important;max-width:100% }
-.xv-marketing-footer__brand-card > p { position: relative; z-index: 1; margin: auto 0 1.4rem; font-size: clamp(1.35rem, 2.5vw, 2.1rem); font-weight: 740; line-height: 1.02; letter-spacing: -.045em; }
-.xv-marketing-footer__brand-card > p em { font-family: var(--font-source-serif), Georgia, serif; font-weight: 500; }
-.xv-marketing-footer__social-row { position: relative; z-index: 1; display: flex; align-items: center; gap: .5rem; }
-.xv-marketing-footer__social-row > span { margin-right: auto; font-family: var(--font-source-serif), Georgia, serif; font-style: italic; font-size: .9rem; }
-.xv-marketing-footer__social-row a { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: rgba(3,10,28,.82); color: #fff; font-size: 1rem; text-decoration: none; transition: transform 170ms ease, background 170ms ease; }
-.xv-marketing-footer__social-row a:hover { transform: translateY(-3px); background: #050505; }
-.xv-marketing-footer__social-row svg { width: 16px; height: 16px; }
-.xv-marketing-footer__main-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(230px, .9fr);
-  grid-template-rows: 1fr auto;
-  gap: 1rem 2rem;
-  padding: clamp(1.5rem, 4vw, 3rem);
-  border-radius: 12px 24px 24px 12px;
-  background: color-mix(in srgb, var(--surface-raised) 76%, transparent);
-  backdrop-filter: blur(22px) saturate(1.14);
-  overflow: visible;
-}
-.xv-marketing-footer__floating-mark {
-  position: absolute;
-  z-index: 3;
-  top: -59px;
-  right: clamp(1.5rem, 6vw, 4.5rem);
-  display: grid;
-  width: 118px;
-  height: 118px;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, white);
-  border-radius: 50%;
-  background: linear-gradient(145deg, #80bdff, var(--accent) 58%, #0349b8);
-  box-shadow: 0 20px 36px color-mix(in srgb, var(--accent) 38%, transparent), inset 0 2px 0 rgba(255,255,255,.68);
-  transform: rotate(-8deg);
-}
-.xv-marketing-footer__floating-mark > img { width:88%;height:88%;object-fit:contain;filter:drop-shadow(0 7px 7px rgba(0,20,80,.28)) }
-.xv-marketing-footer__nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; padding-top: .25rem; }
-.xv-marketing-footer__nav section { display: grid; align-content: start; gap: .64rem; }
-.xv-marketing-footer__nav h2 { margin: 0 0 .45rem; color: var(--text-muted); font: italic 500 1rem/1 var(--font-source-serif), Georgia, serif; }
-.xv-marketing-footer__nav a { width: fit-content; color: var(--text-primary); font-size: .84rem; font-weight: 670; text-decoration: none; transition: color 150ms ease, transform 150ms ease; }
-.xv-marketing-footer__nav a:hover { color: var(--accent); transform: translateX(3px); }
-.xv-marketing-footer__subscribe { min-width:0;align-self: end; padding-top: 4rem; }
-.xv-marketing-footer__subscribe > p { display: grid; margin: 0 0 .9rem; font-size: 1.05rem; font-weight: 850; line-height: 1.08; }
-.xv-marketing-footer__subscribe > p span { color: var(--text-muted); font-weight: 520; }
-.xv-marketing-footer__subscribe form { display: flex; gap: .45rem; padding: .38rem; border: 1px solid var(--border-subtle); border-radius: 14px; background: color-mix(in srgb, var(--surface-page) 70%, transparent); }
-.xv-marketing-footer__subscribe input { min-width: 0; flex: 1; border: 0; outline: 0; padding: .65rem .72rem; background: transparent; color: var(--text-primary); font: inherit; font-size: .76rem; }
-.xv-marketing-footer__subscribe button { display: inline-flex; align-items: center; gap: .35rem; border: 0; border-radius: 10px; padding: .68rem .85rem; background: var(--text-primary); color: var(--surface-page); font-size: .72rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px color-mix(in srgb, var(--text-primary) 20%, transparent); }
-.xv-marketing-footer__subscribe button svg { width: 13px; height: 13px; }
-.xv-marketing-footer__base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: .66rem; }
-.xv-marketing-footer__base p { margin: 0; }
-.xv-marketing-footer__prompt {
-  position: relative;
-  z-index: 1;
-  grid-column: 1 / -1;
-  display: grid;
-  place-items: center;
-  width: 100%;
-  max-width: 100%;
-  margin: clamp(1rem, 2.5vw, 1.8rem) auto 0;
-  min-height: clamp(4.25rem, 7vw, 6.5rem);
-  padding: .08em .02em .14em;
-  box-sizing: border-box;
-  overflow: hidden;
-  color: var(--text-muted);
-  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
-  font-size: clamp(2rem, 4.35vw, 4rem);
-  font-weight: 390;
-  line-height: 1;
-  letter-spacing: -.035em;
-  text-align: center;
-  user-select: none;
-}
-.xv-marketing-footer__prompt span {
-  grid-area: 1 / 1;
-  width: 100%;
-  opacity: 0;
-  transform: translateY(42%);
-  white-space: nowrap;
-  animation: xv-footer-prompt-cycle 35s cubic-bezier(.22,1,.36,1) infinite both;
-}
-.xv-marketing-footer__prompt span b { color:var(--text-primary);font-weight:460 }
-.xv-marketing-footer__prompt span i { display:inline-block;width:.13em;height:.13em;margin-left:.12em;border-radius:50%;background:#ef302f;vertical-align:.08em }
-.xv-marketing-footer__prompt span:nth-child(2) { animation-delay: 5s; }
-.xv-marketing-footer__prompt span:nth-child(3) { animation-delay: 10s; }
-.xv-marketing-footer__prompt span:nth-child(4) { animation-delay: 15s; }
-.xv-marketing-footer__prompt span:nth-child(5) { animation-delay: 20s; }
-.xv-marketing-footer__prompt span:nth-child(6) { animation-delay: 25s; }
-.xv-marketing-footer__prompt span:nth-child(7) { animation-delay: 30s; }
-@keyframes xv-footer-prompt-cycle {
-  0% { opacity:0; transform:translateY(42%); }
-  2.8%, 11.4% { opacity:1; transform:translateY(0); }
-  14.2%, 100% { opacity:0; transform:translateY(-36%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .xv-marketing-footer__prompt span { animation:none;opacity:0;transform:none; }
-  .xv-marketing-footer__prompt span:first-child { opacity:1; }
-}
-@media (max-width: 900px) {
-  .xv-marketing-footer__stage { grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr); }
-  .xv-marketing-footer__main-card { grid-template-columns: 1fr; }
-  .xv-marketing-footer__subscribe { padding-top: 1rem; }
-  .xv-marketing-footer__base { grid-column: 1; }
-}
-@media (max-width: 680px) {
-  .xv-marketing-footer { padding-inline: .65rem; }
-  .xv-marketing-footer__stage { grid-template-columns: minmax(0,1fr); gap: .65rem; padding-bottom: 0; overflow:visible; }
-  .xv-marketing-footer__brand-card, .xv-marketing-footer__main-card { min-height: auto; border-radius: 20px; }
-  .xv-marketing-footer__brand-card { min-height: 280px; }
-  .xv-marketing-footer__floating-mark { top: -41px; right: 1rem; width: 82px; height: 82px; border-radius: 50%; }
-  .xv-marketing-footer__floating-mark > img { width:90%;height:90%; }
-  .xv-marketing-footer__main-card { padding-top: 3.8rem; }
-  .xv-marketing-footer__nav { gap: .75rem; }
-  .xv-marketing-footer__nav a { font-size: .76rem; }
-  .xv-marketing-footer__prompt { margin:.8rem auto 0;min-height:4.5rem;padding:.08em .02em .16em;font-size:clamp(1.25rem,4.85vw,2rem);line-height:1;letter-spacing:-.03em }
-}
-@media (max-width: 420px) {
-  .xv-marketing-footer__full-logo { width:225px!important;height:62px!important }
-  .xv-marketing-footer__prompt { font-size:clamp(1.15rem,4.75vw,1.65rem) }
-  .xv-marketing-footer__nav { grid-template-columns: repeat(2, 1fr); }
-  .xv-marketing-footer__subscribe form { align-items: stretch; flex-direction: column; }
-  .xv-marketing-footer__subscribe button { justify-content: center; }
-}
-
 /* Homepage workspace tour + integration constellation. This is a lightweight,
    interactive reconstruction of the real Xroga shell rather than a baked image. */
 .xv-wt { position: relative; z-index: 2; padding: clamp(3.25rem, 7vw, 6.5rem) 1rem; color: var(--hc-ink); overflow: clip; }
@@ -7032,7 +6855,7 @@ body.theme-gray .xv-home-coding .xv-hc-bg-image {
 }
 
 body.theme-black .xv-home-coding .xv-hc-bg-image {
-  background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp') !important;
+  background-image: url('/backgrounds/xroga-black-portal-hero.webp') !important;
   /* The artwork already supplies its own black negative space. A second heavy
      brightness reduction crushed the stars, code texture, and blue highlights. */
   filter: saturate(1.12) contrast(1.06) brightness(1.02);
@@ -7075,7 +6898,7 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after {
   }
 
   body.theme-black .xv-home-coding .xv-hc-bg-image {
-    background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-mobile-20260829.webp') !important;
+    background-image: url('/backgrounds/xroga-black-portal-hero-mobile.webp') !important;
     background-position: center top;
   }
 }
@@ -8924,24 +8747,25 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
 .xv-home-coding .xv-hc-eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--hc-blue); box-shadow: 0 0 15px var(--hc-blue); }
 .xv-home-coding .xv-hc-headline {
   display: block;
-  max-width: 61rem;
-  color: var(--hc-ink);
-  font-family: var(--hc-font-sans);
-  font-size: clamp(3.15rem, 6.2vw, 6.15rem);
-  font-weight: 720;
-  line-height: .91;
-  letter-spacing: -.077em;
+  max-width: 56rem;
+  color: var(--marketing-heading);
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
+  font-size: clamp(2.4rem, 5.25vw, 4.5rem);
+  font-weight: 400;
+  line-height: .98;
+  letter-spacing: -.045em;
   text-wrap: balance;
 }
 .xv-home-coding .xv-hc-headline em {
-  color: color-mix(in srgb, var(--hc-blue) 82%, #9b8dff);
-  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, serif;
-  font-weight: 430;
+  color: var(--marketing-heading-accent);
+  font-family: inherit;
+  font-weight: 400;
+  font-style: italic;
 }
 .xv-home-coding .xv-hc-hero-copy {
   max-width: 47rem;
   margin: 1rem auto 0;
-  color: var(--hc-muted);
+  color: var(--marketing-text-muted);
   font-family: var(--hc-font-sans);
   font-size: clamp(.9rem, 1.25vw, 1.08rem);
   line-height: 1.55;
@@ -9365,7 +9189,7 @@ body.theme-black .xv-home-coding .xv-hc-eyebrow i { display: none; }
 
 body.theme-black .xv-home-coding .xv-hc-headline {
   max-width: 54rem;
-  color: #aaa9a9;
+  color: #f1f1ef;
   font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
   font-size: clamp(3rem, 5vw, 5rem);
   font-weight: 420;
@@ -9374,7 +9198,7 @@ body.theme-black .xv-home-coding .xv-hc-headline {
 }
 
 body.theme-black .xv-home-coding .xv-hc-headline em {
-  color: #f5f2ec;
+  color: #a9a9a5;
   font-family: inherit;
   font-style: italic;
   font-weight: 420;

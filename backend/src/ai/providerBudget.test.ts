@@ -23,17 +23,23 @@ test('uses integer micro-USD and reserves more than the maximum estimated cost',
   assert.ok(reserved > actual);
 });
 
+test('cached input is conservatively accounted until a provider-specific rate is verified', () => {
+  const uncached = actualProviderCostMicroUsd({ modelId: 'glm_5_3_flash', inputTokens: 10_000, outputTokens: 100 });
+  const cached = actualProviderCostMicroUsd({ modelId: 'glm_5_3_flash', inputTokens: 10_000, cachedInputTokens: 9_000, outputTokens: 100 });
+  assert.equal(cached, uncached);
+});
+
 test('balanced month unlocks cycle-relative daily and complexity portions', () => {
   const startsAt = new Date('2026-07-01T12:00:00.000Z');
-  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: startsAt, pacing: 'balanced_month', purpose: 'daily_work' }), 1_361_250);
-  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: new Date('2026-07-08T12:00:00.000Z'), pacing: 'balanced_month', purpose: 'daily_work' }), 4_702_500);
+  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: startsAt, pacing: 'balanced_month', purpose: 'daily_work' }), 1_775_000);
+  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: new Date('2026-07-08T12:00:00.000Z'), pacing: 'balanced_month', purpose: 'daily_work' }), 5_950_000);
   assert.equal(unlockedEntitlementMicroUsd({ startsAt, now: new Date('2026-07-30T12:00:00.000Z'), pacing: 'balanced_month', purpose: 'completion' }), SHARED_PROVIDER_ENTITLEMENT_MICRO_USD);
 });
 
 test('full access never unlocks the protected completion reserve for ordinary work', () => {
   const startsAt = new Date('2026-07-01T00:00:00.000Z');
   const now = new Date('2026-07-01T00:00:00.000Z');
-  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now, pacing: 'full_access', purpose: 'daily_work' }), 14_025_000);
+  assert.equal(unlockedEntitlementMicroUsd({ startsAt, now, pacing: 'full_access', purpose: 'daily_work' }), 17_500_000);
   assert.equal(unlockedEntitlementMicroUsd({ startsAt, now, pacing: 'full_access', purpose: 'completion' }), SHARED_PROVIDER_ENTITLEMENT_MICRO_USD);
 });
 

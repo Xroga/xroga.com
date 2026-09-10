@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
-import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { BUILD_KINDS } from '@/lib/cryptoBuilderContent';
 import { HACKATHON_SOURCES } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
@@ -232,57 +231,6 @@ export default function CryptoPage() {
           className={styles.heroGlow}
           aria-hidden="true"
         />
-
-        <header className={styles.nav}>
-          <Link
-            href="/"
-            className={styles.brand}
-            aria-label="Xroga home"
-          >
-            <Logo
-              href={null}
-              variant="homepage"
-              height={34}
-            />
-          </Link>
-
-          <nav
-            className={styles.navLinks}
-            aria-label="Crypto navigation"
-          >
-            <a href="#capabilities">
-              Capabilities
-            </a>
-
-            <a href="#workflow">
-              Workflow
-            </a>
-
-            <a href="#research">
-              Research
-            </a>
-
-            <Link href="/docs">
-              Docs
-            </Link>
-          </nav>
-
-          <div className={styles.navActions}>
-            <Link
-              href="/auth/login"
-              className={styles.signIn}
-            >
-              Sign in
-            </Link>
-
-            <Link
-              href="/auth/signup"
-              className={styles.navCta}
-            >
-              Start building
-            </Link>
-          </div>
-        </header>
 
         <div className={styles.heroInner}>
           {/* The badge said the page's own title back to it, directly above a headline
@@ -904,7 +852,6 @@ export default function CryptoPage() {
           its own copy — same links, same wording, its own markup and its own
           stylesheet — so every change to the site footer had to be made twice and
           the two drifted apart. */}
-      <MarketingFooter />
     </main>
   );
 }

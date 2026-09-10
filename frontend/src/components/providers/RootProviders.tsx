@@ -13,6 +13,7 @@ import { CompanionProvider } from '@/components/companion/CompanionProvider';
 import { CompanionGlobalDock } from '@/components/companion/CompanionSurfaces';
 import { LightMousePointer } from '@/components/ui/LightMousePointer';
 import { PublicThemeBackground } from '@/components/layout/PublicThemeBackground';
+import { PublicMarketingChrome } from '@/components/layout/PublicMarketingChrome';
 
 export function RootProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -29,7 +30,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
       <LanguageProvider>
         <CompanionProvider>
           <CurrencyDetector />
-          {children}
+          <PublicMarketingChrome>{children}</PublicMarketingChrome>
           <LightMousePointer />
           <CompanionGlobalDock />
           <OfflineOverlay />

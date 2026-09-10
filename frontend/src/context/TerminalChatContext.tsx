@@ -473,7 +473,7 @@ export function TerminalChatProvider({
       } else {
         toast.success('Your XROGA project is complete!');
       }
-      const renderAsFeature = recoveredLanding || output.type === 'engineering_artifact';
+      const renderAsFeature = recoveredLanding || output.type === 'engineering_artifact' || output.type === 'xroga.output';
       setMessages((m) =>
         m.map((msg) =>
           msg.id === assistantMessageId

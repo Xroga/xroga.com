@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { CAPABILITY_PAGES } from './capabilityPages';
 
 /**
@@ -26,7 +26,8 @@ import { CAPABILITY_PAGES } from './capabilityPages';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const LANDING = read('../components/marketing/AiCodingAgentLanding.tsx');
-const HEADER = read('../components/marketing/AiCodingAgentHeader.tsx');
+const HEADER = read('../components/layout/PublicMarketingHeader.tsx');
+const FOOTER = read('../components/layout/MarketingFooter.tsx');
 const PAGE = read('../app/ai-coding-agent/page.tsx');
 const CSS = read('../styles/ai-coding-agent-landing.css');
 const APP_DIR = new URL('../app/', import.meta.url);
@@ -44,7 +45,7 @@ function code(source: string): string {
     .replace(/^\s*\/\/.*$/gm, ' ');
 }
 
-const SOURCE = code(LANDING) + code(HEADER);
+const SOURCE = code(LANDING) + code(HEADER) + code(FOOTER);
 
 test('the shared CapabilityPage is left to the routes that still use it', () => {
   assert.ok(
@@ -114,7 +115,7 @@ test('every internal link is a route that exists', () => {
 
 test('the routes this page abandoned are still linked nowhere here', () => {
   // Named explicitly, because these are the ones the reference uses.
-  for (const dead of ['/crypto-builder', '/changelog', '/careers', '/blog', '/guides', '/security', '/api-reference']) {
+  for (const dead of ['/crypto-builder', '/changelog', '/careers', '/guides', '/api-reference']) {
     assert.ok(
       !SOURCE.includes(`href="${dead}"`) && !SOURCE.includes(`href: '${dead}'`),
       `${dead} has never been a route; the real crypto page is /crypto`,

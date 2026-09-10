@@ -1,6 +1,4 @@
 import Link from 'next/link';
-import { Logo } from '@/components/layout/Logo';
-import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { buildWebPageJsonLd, ORGANIZATION_ID, SITE_URL } from '@/lib/seo';
 import type { ContentSection, SourceLink } from '@/lib/seoGrowthContent';
 import '@/styles/seo-editorial.css';
@@ -42,17 +40,6 @@ export function EditorialPage({
       <JsonLd data={pageSchema} />
       {article && <JsonLd data={buildWebPageJsonLd({ path, name: title, description })} />}
       <JsonLd data={breadcrumbSchema} />
-      <header className="xv-seo-header">
-        <Logo href="/" variant="homepage" height={32} />
-        <nav aria-label="Main navigation">
-          <Link href="/ai-app-builder">AI App Builder</Link>
-          <Link href="/compare">Compare</Link>
-          <Link href="/blog">Guides</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link className="xv-seo-header__cta" href="/auth/signup">Start free</Link>
-        </nav>
-      </header>
-
       <div className="xv-seo-shell">
         <nav className="xv-seo-crumbs" aria-label="Breadcrumb">
           {crumbs.map((crumb, index) => <span key={crumb.href}>{index > 0 && <i aria-hidden="true">/</i>}<Link href={crumb.href}>{crumb.label}</Link></span>)}
@@ -103,7 +90,6 @@ export function EditorialPage({
           </section>
         </article>
       </div>
-      <MarketingFooter />
     </main>
   );
 }
@@ -118,10 +104,6 @@ export function EditorialHub({
   return (
     <main className="xv-seo-page">
       <JsonLd data={buildWebPageJsonLd({ path, name: title, description, type: 'CollectionPage' })} />
-      <header className="xv-seo-header">
-        <Logo href="/" variant="homepage" height={32} />
-        <nav aria-label="Main navigation"><Link href="/ai-app-builder">AI App Builder</Link><Link href="/compare">Compare</Link><Link href="/blog">Guides</Link><Link href="/pricing">Pricing</Link><Link className="xv-seo-header__cta" href="/auth/signup">Start free</Link></nav>
-      </header>
       <div className="xv-seo-shell">
         <nav className="xv-seo-crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link>{breadcrumbs.map((crumb) => <span key={crumb.href}><i>/</i><Link href={crumb.href}>{crumb.label}</Link></span>)}</nav>
         <header className="xv-seo-hero"><p className="xv-seo-eyebrow">{eyebrow}</p><h1>{title}</h1><p className="xv-seo-dek">{intro}</p></header>
@@ -129,7 +111,6 @@ export function EditorialHub({
           {items.map((item, index) => <Link href={item.href} key={item.href}><span>{String(index + 1).padStart(2, '0')}</span><h2>{item.title}</h2><p>{item.description}</p>{item.meta && <small>{item.meta}</small>}</Link>)}
         </section>
       </div>
-      <MarketingFooter />
     </main>
   );
 }

@@ -5,6 +5,7 @@ export const FREE_PLAN_ACTIONS = 50;
 /** @deprecated historical name retained for callers while persisted `unpaid` rows migrate to `free`. */
 export const FREE_TRIAL_ACTIONS = FREE_PLAN_ACTIONS;
 export const FREE_PROVIDER_BUDGET_USD = 1.65;
+export const PRO_VARIABLE_COST_CEILING_USD = 20;
 
 /** Max unused API credit that can roll into the next month (in months of plan budget). */
 export const ROLLOVER_MAX_MONTHS = 1;
@@ -59,8 +60,8 @@ export const GALACTIC_PLANS: PlanDefinition[] = [
     envPriceKey: 'WHOP_PLAN_ID',
     envProductKey: 'WHOP_PLAN_ID',
     paid: true,
-    apiBudgetUsd: MONTHLY_TOTAL_BUDGET_USD,
-    tokenPool: MONTHLY_TOTAL_TOKENS,
+    apiBudgetUsd: PRO_VARIABLE_COST_CEILING_USD,
+    tokenPool: tokensFromBudget(PRO_VARIABLE_COST_CEILING_USD),
     publicBenefits: ['1,500 AI actions per 30 days', 'Two concurrent tasks', 'Full Access pacing'],
     highlight: true,
   },

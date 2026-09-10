@@ -7,7 +7,9 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "tsx --test \"src/**/*.test.ts\""
+    "test": "npm run capabilities:check && tsx --test \"src/**/*.test.ts\"",
+    "capabilities:generate": "node scripts/generate-capability-index.mjs",
+    "capabilities:check": "node scripts/generate-capability-index.mjs --check"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",

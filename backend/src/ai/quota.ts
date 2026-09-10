@@ -387,27 +387,15 @@ export async function assertHasQuota(userId: string): Promise<UsageSnapshot> {
       'Monthly AI credit exhausted — upgrade your plan or wait for next month’s rollover.',
     );
   }
-  if (usage.totalTokensRemaining <= 0) {
-    throw quotaError('Monthly AI token quota exhausted — upgrade your plan to continue.');
-  }
   return usage;
 }
 
-/** Enforce total credit + hard per-model pool caps before a call. */
+/** Enforce the shared account ceiling. Model pools remain soft routing/observability targets. */
 export async function assertCanUseModel(
   userId: string,
-  modelId: ModelId,
+  _modelId: ModelId,
 ): Promise<UsageSnapshot> {
-  const usage = await assertHasQuota(userId);
-  const remaining = modelBudgetRemaining(usage, modelId);
-  if (remaining.tokensRemaining <= 0 || remaining.creditRemainingUsd <= 0) {
-    const label = MODELS[modelId]?.label ?? modelId;
-    throw quotaError(
-      `${label} monthly capacity is used up — try a lighter model or upgrade your plan.`,
-      'MODEL_CAP_REACHED',
-    );
-  }
-  return usage;
+  return assertHasQuota(userId);
 }
 
 export function modelBudgetRemaining(

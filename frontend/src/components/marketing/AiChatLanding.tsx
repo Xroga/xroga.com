@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { ArrowRight, BookOpen, FileSearch, Globe2, Image as ImageIcon, LockKeyhole, MessagesSquare, SearchCheck } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
-import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import '@/styles/ai-chat-landing.css';
 
@@ -25,16 +23,6 @@ export function AiChatLanding() {
   return (
     <main className="xac-page">
       <PageJsonLd path="/features/ai-chat" name="Xroga AI Chat — Search, Research, Analyze & Act" description="Use Xroga AI Chat for grounded conversation, current research, document analysis, screenshot understanding, and safe repository collaboration." />
-      <header className="xac-header">
-        <Logo href="/" variant="homepage" height={32} />
-        <nav aria-label="Main navigation">
-          <Link href="/features">Features</Link>
-          <Link href="/ai-coding-agent">Coding Agent</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link className="xac-button xac-button--small" href="/auth/signup">Start free</Link>
-        </nav>
-      </header>
-
       <section className="xac-hero">
         <div className="xac-hero__copy">
           <p className="xac-kicker">One conversation · supported tools when needed</p>
@@ -74,7 +62,6 @@ export function AiChatLanding() {
       <section className="xac-boundaries" aria-labelledby="security-heading"><LockKeyhole aria-hidden="true" /><div><p className="xac-kicker">Security and truth</p><h2 id="security-heading">Tools stay server-side. Failures stay visible.</h2><p>Provider keys are not sent to the browser. Xroga does not claim it searched, changed a repository, tested a site, generated an asset, or deployed a product without corresponding runtime evidence. General-purpose Chat browser automation and image generation are not currently marketed as working capabilities.</p></div><Link href="/security">Read the security boundaries</Link></section>
 
       <section className="xac-cta"><p className="xac-kicker">Start with the question</p><h2>One conversation. The right supported path.</h2><Link className="xac-button" href="/auth/signup">Get started — it&apos;s free <ArrowRight aria-hidden="true" /></Link></section>
-      <MarketingFooter />
     </main>
   );
 }

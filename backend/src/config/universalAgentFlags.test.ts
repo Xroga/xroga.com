@@ -16,6 +16,14 @@ import {
   routeProject,
 } from './universalAgentFlags.js';
 
+it('cutover stages progress from legacy through shadow and controlled rollout to retirement', () => {
+  assert.equal(routeProject('synthetic', { mode: 'legacy', percentage: 0, allowlist: [] }).useUniversal, false);
+  assert.equal(routeProject('synthetic', { mode: 'shadow', percentage: 0, allowlist: [] }).shadow, true);
+  assert.equal(routeProject('synthetic', { mode: 'controlled', percentage: 100, allowlist: [] }).useUniversal, true);
+  assert.equal(routeProject('synthetic', { mode: 'default', percentage: 0, allowlist: [] }).useUniversal, true);
+  assert.equal(routeProject('synthetic', { mode: 'retirement', percentage: 0, allowlist: [] }).useUniversal, true);
+});
+
 describe('flags fail safe', () => {
   it('is off when nothing is configured', () => {
     // A flag that defaults to on is not a rollout.
@@ -121,6 +129,16 @@ describe('bucketing is stable', () => {
     assert.equal(decision.useUniversal, false);
     assert.equal(decision.shadow, true);
     assert.match(decision.reason, /stable/);
+  });
+
+  it('requires a stable project identity after universal becomes the default', () => {
+    for (const mode of ['default', 'retirement'] as const) {
+      const decision = routeProject(null, { mode, percentage: 100, allowlist: [] });
+      assert.equal(decision.useUniversal, false);
+      assert.equal(decision.shadow, true);
+      assert.equal(mayWrite(decision), false);
+      assert.match(decision.reason, /stable project id/);
+    }
   });
 });
 

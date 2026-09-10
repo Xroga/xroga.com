@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, LogIn, Menu } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
+import { ArrowRight } from 'lucide-react';
 import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
@@ -13,27 +12,14 @@ import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
-import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
-import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
-import { LayoutGridIcon } from '@/components/icons/animated/LayoutGridIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { useCompanionStore } from '@/store/useCompanionStore';
-import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { XrogaIntelligenceSection } from '@/components/homepage/XrogaIntelligenceSection';
 import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipProof';
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
-
-const NAV_LINKS = [
-  { href: '#product', label: 'Product' },
-  { href: '/ai-app-builder', label: 'AI App Builder' },
-  { href: '/ai-coding-agent', label: 'AI Coding Agent' },
-  { href: '#showcase', label: 'Showcase' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/pricing', label: 'Pricing' },
-] as const;
 
 const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Extensions', 'APIs'] as const;
 
@@ -68,36 +54,6 @@ export function HomepageClient() {
       <div className="xv-hc-bg-image" style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }} aria-hidden />
 
       <section className="xv-hc-hero">
-        <header className="xv-hc-header">
-          <div className="xv-hc-header-inner">
-            <Logo href="/" variant="homepage" height={58} className="shrink-0" />
-            <nav className="xv-hc-nav" aria-label="Primary navigation">
-              {NAV_LINKS.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}
-            </nav>
-            <div className="xv-hc-header-actions">
-              <div className="xv-hc-headgroup">
-                <HomepageThemeSwitcher />
-                {loggedIn ? (
-                  <button type="button" aria-label="Open Dashboard" onClick={() => router.push('/workspace')} className="xv-hc-headgroup__seg">
-                    <AnimatedIcon icon={LayoutGridIcon} size={16} className="xv-hc-seg-icon" />
-                    <span className="xv-hc-seg-label">Dashboard</span>
-                  </button>
-                ) : (
-                  <Link href="/auth/login" className="xv-hc-headgroup__seg">
-                    <LogIn className="xv-hc-seg-icon" aria-hidden="true" />
-                    <span className="xv-hc-seg-label">Sign In</span>
-                  </Link>
-                )}
-              </div>
-              {!loggedIn && <Link href="/auth/signup" className="xv-hc-btn-primary xv-hc-header-cta">Start Free</Link>}
-              <details className="xv-hc-mobile-menu">
-                <summary aria-label="Open navigation"><Menu aria-hidden="true" /></summary>
-                <nav aria-label="Mobile navigation">{NAV_LINKS.map((link) => <Link key={link.href} href={link.href}>{link.label}</Link>)}</nav>
-              </details>
-            </div>
-          </div>
-        </header>
-
         <div className="xv-hc-hero-main">
           <div className="xv-hc-headline-block">
             <p className="xv-hc-eyebrow"><i /> AI APP BUILDER + CODING AGENT</p>
@@ -156,7 +112,6 @@ export function HomepageClient() {
       </section>
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
-      <MarketingFooter />
     </div>
   );
 }

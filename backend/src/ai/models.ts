@@ -73,9 +73,10 @@ export interface ModelDef {
 
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 
+/** Engineering-model planning target. This is a soft allocation, not the product ceiling. */
 export const MONTHLY_TOTAL_BUDGET_USD = 16.5;
 export const MONTHLY_TOTAL_BUDGET_MICRO_USD = 16_500_000;
-export const MONTHLY_USER_PRICE_USD = 19;
+export const MONTHLY_USER_PRICE_USD = 25;
 export const MONTHLY_TOTAL_TOKENS = 6_172_222;
 
 export const MODELS: Record<ModelId, ModelDef> = {

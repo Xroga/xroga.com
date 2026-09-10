@@ -7,11 +7,9 @@ import {
   ArrowRight,
   ChevronDown,
   ImagePlus,
-  Menu,
   Plus,
   Sparkles,
   WandSparkles,
-  X,
 } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 
@@ -129,7 +127,6 @@ function scrollTo(id: string) {
 }
 
 export function ImageLandingPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>('Featured');
   const [busy, setBusy] = useState(false);
@@ -160,46 +157,6 @@ export function ImageLandingPage() {
 
   return (
     <main className="xi-page">
-      <header className="xi-header">
-        <div className="xi-header__inner">
-          <Logo href="/" variant="homepage" height={28} className="xi-header__logo" />
-
-          <nav className="xi-nav" aria-label="Image navigation">
-            <button type="button" onClick={() => scrollTo('generator')}>Generate</button>
-            <button type="button" onClick={() => scrollTo('gallery')}>Explore</button>
-            <button type="button" onClick={() => scrollTo('studio')}>Styles</button>
-            <Link href="/pricing">Pricing</Link>
-          </nav>
-
-          <div className="xi-header__actions">
-            <Link className="xi-login" href="/auth/login">Log in</Link>
-            <Link className="xi-start" href="/auth/signup">Get started <ArrowRight /></Link>
-          </div>
-
-          <button
-            className="xi-menu-button"
-            type="button"
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
-            aria-controls="xroga-image-mobile-menu"
-            onClick={() => setMobileOpen((value) => !value)}
-          >
-            {mobileOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-
-        {mobileOpen ? (
-          <div className="xi-mobile-menu" id="xroga-image-mobile-menu">
-            <button type="button" onClick={() => { setMobileOpen(false); scrollTo('generator'); }}>Generate</button>
-            <button type="button" onClick={() => { setMobileOpen(false); scrollTo('gallery'); }}>Explore</button>
-            <button type="button" onClick={() => { setMobileOpen(false); scrollTo('studio'); }}>Styles</button>
-            <Link href="/pricing">Pricing</Link>
-            <Link href="/auth/login">Log in</Link>
-            <Link className="xi-mobile-menu__primary" href="/auth/signup">Get started</Link>
-          </div>
-        ) : null}
-      </header>
-
       <section className="xi-hero" id="generator">
         <div className="xi-hero__aura xi-hero__aura--red" />
         <div className="xi-hero__aura xi-hero__aura--violet" />

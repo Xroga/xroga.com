@@ -2,18 +2,17 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-
-const PRIVATE_PREFIXES = ['/workspace', '/dashboard', '/admin', '/auth'];
+import { hasPublicImageBackground, isPublicMarketingPath } from '@/lib/publicMarketing';
 
 export function PublicThemeBackground() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const isPreview = /^\/showcase\/[^/]+\/preview/.test(pathname);
-    const isPrivate = PRIVATE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
-    document.body.classList.toggle('xv-public-theme', !isPreview && !isPrivate);
+    const isPublic = isPublicMarketingPath(pathname);
+    document.body.classList.toggle('xv-public-theme', isPublic);
+    document.body.classList.toggle('xv-public-image-background', isPublic && hasPublicImageBackground(pathname));
 
-    return () => document.body.classList.remove('xv-public-theme');
+    return () => document.body.classList.remove('xv-public-theme', 'xv-public-image-background');
   }, [pathname]);
 
   return null;

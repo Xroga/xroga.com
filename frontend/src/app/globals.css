@@ -186,11 +186,14 @@ body.theme-beige {
   --focus-ring-color: var(--accent);
 }
 
-/* Public marketing pages share the homepage's atmospheric canvas. App, auth,
-   admin, workspace, and standalone showcase previews never receive this class. */
+/* Public pages share semantic theme tokens, but only routes explicitly audited as
+   image-backed receive the atmospheric canvas. */
 body.xv-public-theme {
   min-height: 100%;
   background-color: var(--surface-page);
+}
+
+body.xv-public-theme.xv-public-image-background {
   background-image: url('/backgrounds/xroga-light-clouds-bg.png');
   background-position: center top;
   background-repeat: no-repeat;
@@ -198,39 +201,42 @@ body.xv-public-theme {
   background-attachment: fixed;
 }
 
-body.theme-beige.xv-public-theme {
+body.theme-beige.xv-public-theme.xv-public-image-background {
   background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg.webp');
 }
 
-body.theme-gray.xv-public-theme {
+body.theme-gray.xv-public-theme.xv-public-image-background {
   background-image: url('/backgrounds/xroga-gray-code-city-bg.webp');
 }
 
-body.theme-black.xv-public-theme {
-  background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-20260829.webp');
+body.theme-black.xv-public-theme.xv-public-image-background {
+  background-image: url('/backgrounds/xroga-black-portal-hero.webp');
 }
 
-body.xv-public-theme > main,
-body.xv-public-theme > .ab-root,
-body.xv-public-theme > .xv-home-coding,
-body.xv-public-theme > .xv-cb-root,
-body.xv-public-theme > .xv-gc-root {
+body.xv-public-theme .xv-public-marketing-content > main,
+body.xv-public-theme .xv-public-marketing-content > .ab-root,
+body.xv-public-theme .xv-public-marketing-content > .xv-home-coding,
+body.xv-public-theme .xv-public-marketing-content > .xv-cb-root,
+body.xv-public-theme .xv-public-marketing-content > .xv-gc-root {
   background-color: transparent !important;
 }
 
 @media (max-width: 640px) {
-  body.xv-public-theme {
+  body.xv-public-theme.xv-public-image-background {
     background-image: url('/backgrounds/xroga-light-clouds-bg-mobile.webp');
     background-attachment: scroll;
+    background-position: 52% top;
   }
-  body.theme-beige.xv-public-theme {
+  body.theme-beige.xv-public-theme.xv-public-image-background {
     background-image: url('/backgrounds/xroga-beige-mars-pyramids-code-bg-mobile.webp');
+    background-position: 58% top;
   }
-  body.theme-gray.xv-public-theme {
+  body.theme-gray.xv-public-theme.xv-public-image-background {
     background-image: url('/backgrounds/xroga-gray-code-city-bg-mobile.webp');
+    background-position: 54% top;
   }
-  body.theme-black.xv-public-theme {
-    background-image: url('/backgrounds/xroga-black-monochrome-coder-space-bg-mobile-20260829.webp');
+  body.theme-black.xv-public-theme.xv-public-image-background {
+    background-image: url('/backgrounds/xroga-black-portal-hero-mobile.webp');
     background-position: center top;
   }
 }

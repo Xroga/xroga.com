@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Bot, Clapperboard, Code2, Globe2, Lightbulb, Rocket, ShoppingBag, Sparkles } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
-import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { COMPANY_CONTACT } from '@/lib/companyContact';
 import { buildMetadata } from '@/lib/seo';
@@ -42,20 +40,6 @@ export default function AboutPage() {
         description="The founder story, journey, mission, and future ambition behind Xroga AI."
         type="AboutPage"
       />
-
-      <header className="ab-nav">
-        <div className="ab-shell ab-nav-inner">
-          <Logo href="/" variant="homepage" height={36} />
-          <nav className="ab-nav-links" aria-label="About page navigation">
-            <Link href="/">Home</Link>
-            <Link href="/about" aria-current="page">About</Link>
-            <Link href="#story">Story</Link>
-            <Link href="#mission">Mission</Link>
-            <Link href="/contact">Contact</Link>
-          </nav>
-          <Link href="/auth/signup" className="ab-nav-cta">Start a project</Link>
-        </div>
-      </header>
 
       <main>
         <section className="ab-hero" aria-labelledby="about-title">
@@ -162,7 +146,6 @@ export default function AboutPage() {
         </section>
       </main>
 
-      <MarketingFooter />
     </div>
   );
 }

@@ -265,6 +265,67 @@ export async function runTaskGraph(options: RunGraphOptions): Promise<{
 }
 
 /**
+ * Executes dependency-ready tasks concurrently only when each declares a disjoint write set.
+ * Unknown write sets serialize, so concurrency can improve latency but can never guess safety.
+ */
+export async function runTaskGraphConcurrent(options: RunGraphOptions & { maxConcurrency: number }): Promise<{
+  snapshot: TaskGraphSnapshot;
+  progress: RunProgress;
+  steps: number;
+}> {
+  if (!Number.isInteger(options.maxConcurrency) || options.maxConcurrency < 1) {
+    throw new TaskGraphError('malformed_snapshot', 'maxConcurrency must be a positive integer.');
+  }
+  let snapshot = options.snapshot;
+  let steps = 0;
+  for (;;) {
+    if (options.signal?.aborted || (options.maxSteps !== undefined && steps >= options.maxSteps)) break;
+    const candidates = readyTasks(snapshot);
+    if (!candidates.length) break;
+    const selected: GraphTask[] = [];
+    const touched = new Set<string>();
+    for (const task of candidates) {
+      if (selected.length >= options.maxConcurrency) break;
+      if (!task.touches?.length) {
+        if (!selected.length) selected.push(task);
+        break;
+      }
+      if (task.touches.some((entry) => touched.has(entry))) continue;
+      selected.push(task);
+      for (const entry of task.touches) touched.add(entry);
+    }
+    if (!selected.length) selected.push(candidates[0]!);
+    if (options.maxSteps !== undefined) selected.splice(Math.max(0, options.maxSteps - steps));
+    for (const task of selected) { task.state = 'running'; task.attempts += 1; task.detail = undefined; }
+    snapshot.revision += 1;
+    await options.store.save(snapshot);
+    const outcomes = await Promise.all(selected.map(async (task): Promise<TaskOutcome> => {
+      try { return await options.execute(task, snapshot); }
+      catch (error) { return { state: 'failed', detail: error instanceof Error ? error.message : String(error) }; }
+    }));
+    selected.forEach((task, index) => {
+      const outcome = outcomes[index]!;
+      task.state = outcome.state;
+      task.detail = outcome.detail;
+      if (outcome.evidence?.length) task.evidence.push(...outcome.evidence);
+      if (task.state === 'succeeded' && !task.evidence.length) {
+        task.state = 'failed'; task.detail = 'Reported success with no evidence; treated as a failure.';
+      }
+      if (task.state === 'failed' && task.attempts >= task.maxAttempts) {
+        task.detail = `${task.detail ?? 'Failed.'} (${task.attempts} of ${task.maxAttempts} attempts used.)`;
+      }
+    });
+    steps += selected.length;
+    snapshot.revision += 1;
+    await options.store.save(snapshot);
+  }
+  snapshot = propagateBlocked(snapshot);
+  snapshot.revision += 1;
+  await options.store.save(snapshot);
+  return { snapshot, progress: progressOf(snapshot), steps };
+}
+
+/**
  * Loads a run and continues it. The whole point of the persisted graph.
  *
  * Returns the tasks that were interrupted so the caller can say so, rather than resuming

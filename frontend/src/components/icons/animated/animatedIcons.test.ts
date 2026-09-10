@@ -335,15 +335,16 @@ test('the workspace launcher opens Project edits, with a pen', () => {
  * rail and the mobile bottom bar use for those destinations, so a place looks like
  * itself whichever surface you reach it from.
  */
-test('the homepage header pill takes the palette and the grid', () => {
-  const HOME = read('../../homepage/HomepageClient.tsx');
+test('the shared public header owns the homepage theme and account controls', () => {
+  const HEADER = read('../../layout/PublicMarketingHeader.tsx');
   const SWITCHER = read('../../companion/HomepageThemeSwitcher.tsx');
 
   assert.match(SWITCHER, /icon=\{PaletteIcon\}/, 'the homepage theme control lost the palette');
   assert.ok(!/<Palette\b/.test(SWITCHER), 'the static palette is back');
 
-  assert.match(HOME, /icon=\{LayoutGridIcon\}/, 'the homepage Dashboard lost the grid');
-  assert.ok(!/LayoutDashboard/.test(HOME), 'the static dashboard glyph is back');
+  assert.match(HEADER, /<HomepageThemeSwitcher \/>/, 'the public header lost the canonical theme control');
+  assert.match(HEADER, /loggedIn \? <LayoutGrid/, 'the signed-in Dashboard action lost its grid');
+  assert.ok(!/LayoutDashboard/.test(HEADER), 'the alternate dashboard glyph is back');
 });
 
 /**

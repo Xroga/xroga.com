@@ -6,6 +6,8 @@ import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
 import { isRenderableArtifact } from '@/lib/engineeringArtifact';
 import { EngineeringArtifactView } from './EngineeringArtifactView';
+import { isUniversalOutput } from '@/lib/universalOutput';
+import { UniversalOutputView } from './UniversalOutputView';
 
 export function FeatureOutputView({
   output,
@@ -23,6 +25,9 @@ export function FeatureOutputView({
   void _onPreviewUpdate;
   if (!output || typeof output !== 'object') return null;
   const o = output as Record<string, unknown>;
+
+  if (isUniversalOutput(output)) return <UniversalOutputView output={output} />;
+  if (isUniversalOutput(o.outputEnvelope)) return <UniversalOutputView output={o.outputEnvelope} />;
 
   // Engineering results are checked first. They were previously unrecognised entirely — this
   // component fell off the end of its branch list and rendered nothing for a run that had
@@ -109,5 +114,9 @@ export function FeatureOutputView({
     return null; // chat content rendered as ModernResponseText
   }
 
-  return null;
+  return (
+    <p className="py-1 text-sm text-[var(--muted)]">
+      Xroga produced an output this client cannot preview yet. Open the task details to inspect it.
+    </p>
+  );
 }

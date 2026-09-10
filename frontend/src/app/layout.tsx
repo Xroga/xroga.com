@@ -3,6 +3,7 @@ import './globals.css';
 import '@/styles/xroga-fonts.css';
 import '@/styles/uiverse.css';
 import '@/styles/companion.css';
+import '@/styles/public-marketing.css';
 import { buildMetadata, FAVICON_URL } from '@/lib/seo';
 import { RootProviders } from '@/components/providers/RootProviders';
 import { SiteJsonLd } from '@/components/seo/SiteJsonLd';

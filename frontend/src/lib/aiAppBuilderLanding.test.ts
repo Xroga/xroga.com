@@ -9,9 +9,9 @@ const HERO = read('../components/marketing/AiAppBuilderHero.module.css');
 const CSS = read('../styles/ai-app-builder-landing.css');
 const COMPANION = read('../styles/companion.css');
 
-test('the AI app builder hero contains only the header, headline, and working composer', () => {
+test('the AI app builder hero contains the headline and working composer while shared chrome owns the header', () => {
   const hero = LANDING.slice(LANDING.indexOf('<section className="xab-hero">'), LANDING.indexOf('BLUE PRODUCT SECTION'));
-  assert.match(hero, /<AiAppBuilderHeader \/>/);
+  assert.doesNotMatch(hero, /<AiAppBuilderHeader \/>/);
   assert.match(hero, /Describe an app/);
   assert.match(hero, /Xroga builds it/);
   assert.match(hero, /<AiAppBuilderPrompt \/>/);
