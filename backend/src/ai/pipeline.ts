@@ -126,7 +126,7 @@ import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
-import { findProjectIdByRepo } from '../services/memory/buildProjectStore.js';
+import { ensureProjectIdByRepo } from '../services/memory/buildProjectStore.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
@@ -1317,7 +1317,7 @@ export async function runBuildPipeline(opts: {
   // the build already targets reads the same `(user_id, github_repo_name)` key that
   // `upsertBuildProject` writes, so it is the id this build will be recorded under.
   const resolvedProjectId =
-    opts.projectId ?? (await findProjectIdByRepo(opts.userId, meta?.githubTargetRepo));
+    opts.projectId ?? (await ensureProjectIdByRepo(opts.userId, meta?.githubTargetRepo));
 
   // Which path this run took, and why, recorded on the run itself.
   //

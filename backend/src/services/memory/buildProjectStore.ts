@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { HACKATHON_MAX_STORED_FILES } from '../../config/modelRegistry.js';
 import { getSupabaseAdmin } from '../../config/supabase.js';
 
@@ -33,18 +34,97 @@ export async function findProjectIdByRepo(
   userId: string,
   githubRepoName: string | null | undefined,
 ): Promise<string | null> {
-  const repoName = githubRepoName?.trim();
+  const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
   if (!repoName || !userId) return null;
   try {
     const { data, error } = await getSupabaseAdmin()
       .from('projects')
       .select('id')
       .eq('user_id', userId)
-      .eq('github_repo_name', repoName)
+      .ilike('github_repo_name', repoName)
       .maybeSingle();
     if (error || !data) return null;
     return typeof data.id === 'string' ? data.id : null;
   } catch {
+    return null;
+  }
+}
+
+function normalizeRepoIdentity(value: string): string | null {
+  const normalized = value.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/^\/+|\/+$/g, '').toLowerCase();
+  return /^[^/\s]+\/[^/\s]+$/.test(normalized) ? normalized : null;
+}
+
+/**
+ * Stable UUID for the repository-level persistence row.
+ *
+ * Branch and projectRoot remain part of the canonical ActiveProjectContext used by the
+ * universal writer. The existing `projects` table is the repository container, so its id
+ * is deliberately stable across branches while branch-specific files, commits and
+ * checkpoints remain isolated by the full context key.
+ */
+export function projectIdentityId(userId: string, githubRepoName: string): string | null {
+  const repoName = normalizeRepoIdentity(githubRepoName);
+  if (!userId.trim() || !repoName) return null;
+  const bytes = createHash('sha256').update(`${userId.trim()}\0${repoName}`).digest().subarray(0, 16);
+  bytes[6] = (bytes[6]! & 0x0f) | 0x50;
+  bytes[8] = (bytes[8]! & 0x3f) | 0x80;
+  const hex = bytes.toString('hex');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+/**
+ * Ensures a selected GitHub repository has the stable persistence identity required by
+ * the universal writer before its first build.
+ *
+ * This is intentionally idempotent and generic. It does not inspect or classify the
+ * repository. `type: app` only satisfies the legacy table constraint and is never used
+ * to select a framework, language, capability or deployment path.
+ */
+export async function ensureProjectIdByRepo(
+  userId: string,
+  githubRepoName: string | null | undefined,
+): Promise<string | null> {
+  const repoName = githubRepoName ? normalizeRepoIdentity(githubRepoName) : null;
+  if (!repoName || !userId.trim()) return null;
+
+  const existing = await findProjectIdByRepo(userId, repoName);
+  if (existing) return existing;
+
+  const id = projectIdentityId(userId, repoName);
+  if (!id) return null;
+  const repoLabel = repoName.slice(repoName.indexOf('/') + 1);
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('projects')
+      .upsert({
+        id,
+        user_id: userId,
+        name: repoLabel.slice(0, 200),
+        type: 'app',
+        status: 'in_progress',
+        github_repo_url: `https://github.com/${repoName}`,
+        github_repo_name: repoName,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'id', ignoreDuplicates: true })
+      .select('id')
+      .maybeSingle();
+    if (!error && typeof data?.id === 'string') return data.id;
+
+    // `ignoreDuplicates` may return no row. Re-read the deterministic id so concurrent
+    // first requests converge on the same project rather than falling back to legacy.
+    const { data: persisted, error: readError } = await supabase
+      .from('projects')
+      .select('id')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (!readError && typeof persisted?.id === 'string') return persisted.id;
+    console.warn('[buildProjectStore] ensure project identity:', error?.message ?? readError?.message ?? 'row unavailable');
+    return null;
+  } catch (error) {
+    console.warn('[buildProjectStore] ensure project identity:', error instanceof Error ? error.message : 'unknown error');
     return null;
   }
 }
