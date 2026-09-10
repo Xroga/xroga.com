@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal } from './semanticRequestPlanner.js';
+import { dispatchForGoal, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -66,5 +66,23 @@ describe('semantic request dispatch', () => {
     const planner = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
     assert.match(planner, /\['model:execute', 'sandbox:execute'\]/);
     assert.doesNotMatch(planner, /authorities\.add\('deploy:execute'\)/);
+  });
+});
+
+describe('semantic authority blockers', () => {
+  it('does not let model prose revoke an authority the runtime granted', () => {
+    const blockers = unresolvedGoalBlockers([
+      'Missing authority for validation.run: sandbox:execute.',
+      'An essential product decision is still missing.',
+    ], new Set(['model:execute', 'sandbox:execute']));
+    assert.deepEqual(blockers, ['An essential product decision is still missing.']);
+  });
+
+  it('retains a blocker for authority the runtime did not grant', () => {
+    const blockers = unresolvedGoalBlockers(
+      ['Missing authority repository:write; user approval is required.'],
+      new Set(['model:execute', 'sandbox:execute']),
+    );
+    assert.equal(blockers.length, 1);
   });
 });

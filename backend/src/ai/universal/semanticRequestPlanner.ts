@@ -37,6 +37,14 @@ export function dispatchForGoal(goal: GoalContract, capabilityIds: readonly stri
   return 'chat';
 }
 
+export function unresolvedGoalBlockers(blockers: readonly string[], grantedAuthorities: ReadonlySet<string>): string[] {
+  return blockers.filter((blocker) => {
+    const normalized = blocker.toLowerCase();
+    if (!normalized.includes('authorit')) return true;
+    return ![...grantedAuthorities].some((authority) => normalized.includes(authority.toLowerCase()));
+  });
+}
+
 export async function planSemanticRequest(input: {
   userId: string;
   message: string;
@@ -47,10 +55,17 @@ export async function planSemanticRequest(input: {
 }): Promise<SemanticRequestPlan> {
   const modelId = selectInterpreterModel();
   const available = universalCapabilityRegistry.list();
-  const availableSummary = available.map(({ id, title, description, effects, inputMediaTypes, outputMediaTypes }) => ({
-    id, title, description, effects, inputMediaTypes, outputMediaTypes,
+  const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
+  if (input.attachments?.length) authorities.add('attachment:read');
+  if (input.projectContext) {
+    authorities.add('repository:read');
+    authorities.add('repository:write');
+  }
+  if (process.env.PARALLEL_API_KEY) authorities.add('network:public-read');
+  const availableSummary = available.map(({ id, title, description, effects, requiredAuthorities, inputMediaTypes, outputMediaTypes }) => ({
+    id, title, description, effects, requiredAuthorities, inputMediaTypes, outputMediaTypes,
   }));
-  const system = `Understand the user's current goal from the full conversation and context. Return strict JSON matching the supplied GoalContract schema. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest set of registered capabilities that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. If no registered capability can complete the goal, describe the missing capability in blockers instead of substituting a website or generic scaffold.\n\nGoalContract fields: version="1.0"; goal; desiredOutcome; semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; constraints[]; acceptance[]; historyContext[]; projectContext; deliverables[{id,mediaType,description,required,acceptance[]}]; requiredCapabilities[]; requiredAuthorities[]; risks[]; confidence 0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities:\n${JSON.stringify(availableSummary)}`;
+  const system = `Understand the user's current goal from the full conversation and context. Return strict JSON matching the supplied GoalContract schema. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest set of registered capabilities that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. Authority availability is determined by the runtime, not by you. Never report a granted authority as missing. Use blockers only for essential missing user input or a genuinely unavailable capability. If no registered capability can complete the goal, describe the missing capability in blockers instead of substituting a website or generic scaffold.\n\nGranted authorities: ${JSON.stringify([...authorities])}.\n\nGoalContract fields: version="1.0"; goal; desiredOutcome; semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; constraints[]; acceptance[]; historyContext[]; projectContext; deliverables[{id,mediaType,description,required,acceptance[]}]; requiredCapabilities[]; requiredAuthorities[]; risks[]; confidence 0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities:\n${JSON.stringify(availableSummary)}`;
   const interpretationInput: GoalInterpretationInput = {
     message: input.message,
     history: input.history ?? [],
@@ -77,13 +92,6 @@ export async function planSemanticRequest(input: {
   // The canonical build runtime owns an isolated validation sandbox. Exposing
   // that authority to planning permits validation.run to be selected; it does
   // not grant repository, deployment, or external-account authority.
-  const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
-  if (interpretationInput.attachments.length) authorities.add('attachment:read');
-  if (interpretationInput.projectContext) {
-    authorities.add('repository:read');
-    authorities.add('repository:write');
-  }
-  if (process.env.PARALLEL_API_KEY) authorities.add('network:public-read');
   const capabilityPlan = await planCapabilities({
     goal: goalContract,
     registry: universalCapabilityRegistry,
@@ -94,7 +102,7 @@ export async function planSemanticRequest(input: {
     }),
   });
   const blockers = [
-    ...goalContract.blockers,
+    ...unresolvedGoalBlockers(goalContract.blockers, authorities),
     ...capabilityPlan.rejected.map((item) => `${item.id}: ${item.reason}`),
   ];
   const usage: UsageSnapshot = await recordUsage(input.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
