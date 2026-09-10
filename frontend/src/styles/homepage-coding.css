@@ -9282,3 +9282,212 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy 
   .xv-home-coding .xv-closing-frame .xv-hc-community { width: 100%; min-height: 360px; padding: .75rem; }
   .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner { min-height: 330px; padding: 1.5rem 1rem; }
 }
+
+/* ==========================================================================
+   Black theme — cinematic glass homepage
+
+   This layer is intentionally theme-scoped. White, Beige and Gray retain their
+   existing art direction, and the chatbar remains owned by HomepageChatBar.
+   ========================================================================== */
+body.theme-black .xv-home-coding {
+  --hc-bg: #020303;
+  --hc-navy: #070808;
+  --hc-ink: #f3f1ed;
+  --hc-muted: rgba(224, 224, 220, .68);
+  --hc-blue: #d8c7a1;
+  --hc-border: rgba(255, 255, 255, .14);
+  --hc-border-strong: rgba(255, 255, 255, .24);
+  background: #020303;
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image {
+  background-image: url('/backgrounds/xroga-black-portal-hero.webp') !important;
+  background-position: center top;
+  filter: saturate(.74) contrast(1.06) brightness(.78);
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image::after {
+  background:
+    radial-gradient(circle at 50% 48%, transparent 0 14%, rgba(0, 0, 0, .12) 34%, rgba(0, 0, 0, .52) 78%),
+    linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, .08) 52%, rgba(0, 0, 0, .36) 100%);
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero {
+  min-height: min(100svh, 920px);
+  border-bottom: 1px solid rgba(255, 255, 255, .14);
+  isolation: isolate;
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0 clamp(1rem, 4.2vw, 4.5rem);
+  border-inline: 1px solid rgba(255, 255, 255, .12);
+  pointer-events: none;
+}
+
+body.theme-black .xv-home-coding .xv-hc-header {
+  padding-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(1, 2, 2, .58);
+  backdrop-filter: blur(18px);
+}
+
+body.theme-black .xv-home-coding .xv-hc-header-inner {
+  min-height: 64px;
+  max-width: 78rem;
+}
+
+body.theme-black .xv-home-coding .xv-hc-nav a {
+  color: rgba(242, 240, 236, .72);
+  font-weight: 520;
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero-main {
+  max-width: 76rem;
+  gap: clamp(.8rem, 1.8vh, 1.15rem);
+  padding-top: clamp(2.8rem, 7vh, 4.6rem);
+  padding-bottom: 1rem;
+}
+
+body.theme-black .xv-home-coding .xv-hc-headline-block { max-width: 56rem; }
+
+body.theme-black .xv-home-coding .xv-hc-eyebrow {
+  margin-bottom: 1rem;
+  color: rgba(238, 235, 228, .72);
+  font-size: clamp(.5rem, .68vw, .62rem);
+  font-weight: 650;
+  letter-spacing: .28em;
+}
+
+body.theme-black .xv-home-coding .xv-hc-eyebrow i { display: none; }
+
+body.theme-black .xv-home-coding .xv-hc-headline {
+  max-width: 54rem;
+  color: #aaa9a9;
+  font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 420;
+  line-height: .98;
+  letter-spacing: -.045em;
+}
+
+body.theme-black .xv-home-coding .xv-hc-headline em {
+  color: #f5f2ec;
+  font-family: inherit;
+  font-style: italic;
+  font-weight: 420;
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero-copy {
+  max-width: 44rem;
+  margin-top: 1.35rem;
+  color: rgba(234, 231, 225, .75);
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-size: clamp(.9rem, 1.18vw, 1.08rem);
+  line-height: 1.48;
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero-actions { margin-top: 1.3rem; gap: .75rem; }
+
+body.theme-black .xv-home-coding .xv-hc-hero-actions a,
+body.theme-black .xv-home-coding .xv-hc-header-cta,
+body.theme-black .xv-home-coding .xv-hc-community-tabs :is(a, button),
+body.theme-black .xv-home-coding .xv-hc-mid-cta-actions button,
+body.theme-black .xv-home-coding .xv-home-pricing__grid article > a {
+  min-height: 2.55rem;
+  padding: .58rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .085);
+  color: #f5f2ed !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 12px 34px rgba(0, 0, 0, .24);
+  backdrop-filter: blur(18px) saturate(1.15);
+  font-size: .7rem;
+  font-weight: 560;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.theme-black .xv-home-coding .xv-hc-hero-actions a:hover,
+body.theme-black .xv-home-coding .xv-hc-header-cta:hover,
+body.theme-black .xv-home-coding .xv-hc-community-tabs :is(a, button):hover,
+body.theme-black .xv-home-coding .xv-hc-mid-cta-actions button:hover,
+body.theme-black .xv-home-coding .xv-home-pricing__grid article > a:hover {
+  border-color: rgba(255, 255, 255, .38);
+  background: rgba(255, 255, 255, .15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 14px 38px rgba(0, 0, 0, .34);
+}
+
+body.theme-black .xv-home-coding .xv-hc-btn-build {
+  position: relative;
+  overflow: hidden;
+  background: rgba(3, 4, 4, .58);
+}
+
+body.theme-black .xv-home-coding .xv-hc-btn-build::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(105deg, transparent 28%, rgba(255, 255, 255, .26) 48%, transparent 68%);
+  transform: translateX(-135%);
+  animation: xv-black-build-glint 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+body.theme-black .xv-home-coding .xv-hc-category-strip {
+  display: flex;
+  width: min(70rem, 100%);
+  max-width: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  margin-top: auto;
+  padding: .8rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  list-style: none;
+}
+
+body.theme-black .xv-home-coding .xv-hc-category-strip li {
+  flex: 1 1 auto;
+  padding: 0 clamp(.55rem, 1.45vw, 1.1rem);
+  border-right: 1px solid rgba(255, 255, 255, .18);
+  color: rgba(237, 235, 230, .62);
+  font-size: clamp(.58rem, .78vw, .7rem);
+  white-space: nowrap;
+}
+
+body.theme-black .xv-home-coding .xv-hc-category-strip li:last-child { border-right: 0; }
+body.theme-black .xv-home-coding #ship-loop { scroll-margin-top: 1.25rem; }
+
+@keyframes xv-black-build-glint {
+  0%, 58% { transform: translateX(-135%); }
+  78%, 100% { transform: translateX(135%); }
+}
+
+@media (max-width: 640px) {
+  body.theme-black .xv-home-coding .xv-hc-bg-image {
+    background-image: url('/backgrounds/xroga-black-portal-hero-mobile.webp') !important;
+    background-position: center top;
+    filter: saturate(.72) contrast(1.04) brightness(.7);
+  }
+
+  body.theme-black .xv-home-coding .xv-hc-hero { min-height: 900px; }
+  body.theme-black .xv-home-coding .xv-hc-hero::before { inset-inline: .45rem; }
+  body.theme-black .xv-home-coding .xv-hc-header { padding-inline: .75rem; }
+  body.theme-black .xv-home-coding .xv-hc-header-inner { min-height: 58px; }
+  body.theme-black .xv-home-coding .xv-hc-hero-main { justify-content: flex-start; padding: 3.4rem .8rem .8rem; }
+  body.theme-black .xv-home-coding .xv-hc-eyebrow { font-size: .44rem; letter-spacing: .2em; }
+  body.theme-black .xv-home-coding .xv-hc-headline { max-width: 22rem; font-size: clamp(2.35rem, 11.4vw, 3.05rem); line-height: .97; }
+  body.theme-black .xv-home-coding .xv-hc-hero-copy { max-width: 21rem; font-size: .78rem; line-height: 1.46; }
+  body.theme-black .xv-home-coding .xv-hc-hero-actions { width: auto; }
+  body.theme-black .xv-home-coding .xv-hc-hero-actions a { flex: 0 1 auto; min-height: 2.35rem; padding: .5rem .9rem; font-size: .62rem; }
+  body.theme-black .xv-home-coding .xv-hc-category-strip { width: calc(100vw - 1.6rem); justify-content: flex-start; margin-top: auto; overflow-x: auto; scrollbar-width: none; }
+  body.theme-black .xv-home-coding .xv-hc-category-strip::-webkit-scrollbar { display: none; }
+  body.theme-black .xv-home-coding .xv-hc-category-strip li { flex: 0 0 auto; padding-inline: .8rem; font-size: .58rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.theme-black .xv-home-coding .xv-hc-btn-build::before { animation: none; }
+}

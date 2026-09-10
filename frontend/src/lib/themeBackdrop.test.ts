@@ -15,9 +15,10 @@ import { readFileSync } from 'node:fs';
  * 1. **An opaque page ground.** The backdrop is a fixed layer behind the document. One
  *    `background: #fff` on a page root hides it completely, and the page still looks
  *    deliberate — just wrong.
- * 2. **Drift from the homepage.** The image URLs are duplicated from homepage-coding.css
- *    because that file's copy is entangled with hundreds of `.xv-home-coding` component
- *    rules. Duplication is fine; silent divergence is not.
+ * 2. **Drift from the homepage.** The light-theme image URLs are duplicated from
+ *    homepage-coding.css because that file's copy is entangled with hundreds of
+ *    `.xv-home-coding` component rules. Black intentionally has homepage-only hero art;
+ *    the shared backdrop must not leak that marketing treatment into the workspace.
  * 3. **A colour written for one theme.** These sheets were composed for a single dark
  *    (or single light) design. Any near-white or near-black literal left behind is
  *    invisible on half the themes — measured, repeatedly, while doing this.
@@ -73,16 +74,23 @@ test('every theme has its own backdrop artwork', () => {
   assert.equal(new Set(desktop).size, THEMES.length, 'each theme should have distinct artwork');
 });
 
-test('the backdrop names the same files as the homepage', () => {
+test('shared light themes match the homepage while Black keeps homepage-only hero art', () => {
   const mine = backdropImages(SHARED, '.xv-theme-backdrop');
   const theirs = backdropImages(HOMEPAGE, '.xv-hc-bg-image');
-  for (const theme of THEMES) {
+  for (const theme of ['white', 'beige', 'gray'] as const) {
     assert.deepEqual(
       mine[theme],
       theirs[theme],
       `theme-${theme} artwork has drifted from the homepage; these two lists must stay identical`,
     );
   }
+
+  const desktopPortal = '/backgrounds/xroga-black-portal-hero.webp';
+  const mobilePortal = '/backgrounds/xroga-black-portal-hero-mobile.webp';
+  assert.ok(theirs.black.includes(desktopPortal), 'Black homepage must include its cinematic desktop hero');
+  assert.ok(theirs.black.includes(mobilePortal), 'Black homepage must include its cinematic mobile hero');
+  assert.ok(!mine.black.includes(desktopPortal), 'homepage hero art must not leak into the shared app backdrop');
+  assert.ok(!mine.black.includes(mobilePortal), 'mobile hero art must not leak into the shared app backdrop');
 });
 
 test('the backdrop sits behind the document and is decorative', () => {

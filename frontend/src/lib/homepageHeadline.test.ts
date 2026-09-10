@@ -11,8 +11,15 @@ test('the first screen states the product category and ownership value', () => {
   assert.match(PAGE, /AI APP BUILDER \+ CODING AGENT/);
   assert.match(PAGE, /<h1 className="xv-hc-headline">AI app builder that builds, tests and ships <em>code you own\.<\/em><\/h1>/);
   assert.match(PAGE, /existing repository/);
-  assert.match(PAGE, /Start building free/);
-  assert.match(PAGE, /See how Xroga works/);
+  assert.match(PAGE, /Build free/);
+  assert.match(PAGE, /href="#ship-loop"[^>]*>How it works/);
+  assert.doesNotMatch(PAGE, /href="#ship-loop"[^>]*>[^<]*<(?:Play|Video)/);
+});
+
+test('the black homepage owns responsive cinematic art without changing the chatbar component', () => {
+  assert.match(CSS, /body\.theme-black \.xv-home-coding \.xv-hc-bg-image[\s\S]*xroga-black-portal-hero\.webp/);
+  assert.match(CSS, /@media \(max-width: 640px\)[\s\S]*xroga-black-portal-hero-mobile\.webp/);
+  assert.match(PAGE, /<HomepageChatBar \/>/);
 });
 
 test('homepage metadata carries the primary and secondary search intent', () => {

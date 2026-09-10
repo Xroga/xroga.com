@@ -35,6 +35,8 @@ const NAV_LINKS = [
   { href: '/pricing', label: 'Pricing' },
 ] as const;
 
+const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Extensions', 'APIs'] as const;
+
 export function HomepageClient() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -102,8 +104,8 @@ export function HomepageClient() {
             <h1 className="xv-hc-headline">AI app builder that builds, tests and ships <em>code you own.</em></h1>
             <p className="xv-hc-hero-copy">Start from an idea or an existing repository. Xroga implements the product, runs applicable checks, and helps you ship through accounts you control.</p>
             <div className="xv-hc-hero-actions">
-              <Link href={primaryHref} className="xv-hc-btn-primary">Start building free <ArrowRight aria-hidden="true" /></Link>
-              <Link href="#how-xroga-works" className="xv-hc-btn-ghost">See how Xroga works</Link>
+              <Link href={primaryHref} className="xv-hc-btn-primary xv-hc-btn-build">Build free <ArrowRight aria-hidden="true" /></Link>
+              <Link href="#ship-loop" className="xv-hc-btn-ghost">How it works</Link>
             </div>
           </div>
 
@@ -111,7 +113,9 @@ export function HomepageClient() {
             <HomepageCompanionStage />
             <HomepageChatBar />
           </div>
-          <p className="xv-hc-category-strip">Build websites, SaaS products, dashboards, internal tools and more — from a new idea or inside an existing codebase.</p>
+          <ul className="xv-hc-category-strip" aria-label="Products Xroga can build">
+            {HERO_CATEGORIES.map((category) => <li key={category}>{category}</li>)}
+          </ul>
         </div>
       </section>
 
