@@ -23,7 +23,7 @@ const MAX_LINGER_MS = 1500;
 const STAMP_GAP = 10;
 const OUTER_DENSITY = 0.56;
 const MIN_MOVE = 0.8;
-const PINK = [255, 139, 247] as const;
+const PINK = [80, 160, 255] as const;
 
 function randomForCell(x: number, y: number, salt = 0) {
   let n = (Math.imul(x + salt * 17, 374761393) ^ Math.imul(y - salt * 23, 668265263)) >>> 0;
