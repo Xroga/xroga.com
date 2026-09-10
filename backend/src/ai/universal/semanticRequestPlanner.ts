@@ -1,6 +1,7 @@
 import { chatCompletion, estimateMessageTokens, type ChatMessage } from '../openaiCompat.js';
 import { callableModelIds, type ModelId } from '../models.js';
 import { withProviderReservation } from '../providerBudget.js';
+import { executeWithProviderFallback } from '../providerRuntime.js';
 import { recordUsage, usageToTokenUsage, type UsageSnapshot } from '../quota.js';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import { goalContractSchema, interpretGoalContract, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
@@ -17,11 +18,11 @@ export interface SemanticRequestPlan {
   readonly usage: ReturnType<typeof usageToTokenUsage>;
 }
 
-function selectInterpreterModel(env: NodeJS.ProcessEnv = process.env): ModelId {
+export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
   const callable = callableModelIds(env);
-  for (const preferred of ['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const) {
-    if (callable.includes(preferred)) return preferred;
-  }
+  const ordered = (['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const)
+    .filter((modelId) => callable.includes(modelId));
+  if (ordered.length) return ordered;
   const error = new Error('No configured model is available to understand this request.');
   (error as Error & { code?: string }).code = 'SEMANTIC_PLANNER_UNAVAILABLE';
   throw error;
@@ -53,7 +54,7 @@ export async function planSemanticRequest(input: {
   projectContext?: GoalInterpretationInput['projectContext'];
   projectState?: GoalInterpretationInput['projectState'];
 }): Promise<SemanticRequestPlan> {
-  const modelId = selectInterpreterModel();
+  const models = interpreterModelOrder();
   const available = universalCapabilityRegistry.list();
   const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (input.attachments?.length) authorities.add('attachment:read');
@@ -78,14 +79,20 @@ export async function planSemanticRequest(input: {
     { role: 'user', content: JSON.stringify(interpretationInput) },
   ];
   const maximumOutputTokens = 1_800;
-  const completion = await withProviderReservation({
-    userId: input.userId,
-    modelId,
-    estimatedInputTokens: estimateMessageTokens(messages),
-    maximumOutputTokens,
-    purpose: 'complexity',
-    execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true }),
+  const planned = await executeWithProviderFallback({
+    routes: models,
+    timeoutMs: 45_000,
+    maximumAttemptsPerRoute: 1,
+    execute: (modelId, signal) => withProviderReservation({
+      userId: input.userId,
+      modelId,
+      estimatedInputTokens: estimateMessageTokens(messages),
+      maximumOutputTokens,
+      purpose: 'complexity',
+      execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal }),
+    }),
   });
+  const completion = planned.value;
   const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const raw = JSON.parse((fenced?.[1] ?? completion.text).trim());
   const goalContract = await interpretGoalContract(interpretationInput, async () => raw);

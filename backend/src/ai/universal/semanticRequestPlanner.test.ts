@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
+import { dispatchForGoal, interpreterModelOrder, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -84,5 +84,22 @@ describe('semantic authority blockers', () => {
       new Set(['model:execute', 'sandbox:execute']),
     );
     assert.equal(blockers.length, 1);
+  });
+});
+
+describe('semantic planner provider fallback', () => {
+  it('uses every configured member of the approved model stack in stable order', () => {
+    const order = interpreterModelOrder({
+      DEEPSEEK_API_KEY: 'configured',
+      Z_AI_API_KEY: 'configured',
+      MOONSHOT_API_KEY: 'configured',
+    });
+    assert.deepEqual(order, ['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3']);
+  });
+
+  it('does not introduce a retired or private retrieval model', () => {
+    const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /grok_4_3|grok-4\.3|kimi_k2_7|glm_5_2|deepseek_v4_pro|grok_4_5/);
+    assert.match(source, /executeWithProviderFallback/);
   });
 });
