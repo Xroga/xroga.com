@@ -74,7 +74,10 @@ export async function planSemanticRequest(input: {
   const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const raw = JSON.parse((fenced?.[1] ?? completion.text).trim());
   const goalContract = await interpretGoalContract(interpretationInput, async () => raw);
-  const authorities = new Set<string>(['model:execute']);
+  // The canonical build runtime owns an isolated validation sandbox. Exposing
+  // that authority to planning permits validation.run to be selected; it does
+  // not grant repository, deployment, or external-account authority.
+  const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
   if (interpretationInput.attachments.length) authorities.add('attachment:read');
   if (interpretationInput.projectContext) {
     authorities.add('repository:read');

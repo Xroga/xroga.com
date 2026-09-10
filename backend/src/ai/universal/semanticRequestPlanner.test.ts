@@ -61,4 +61,10 @@ describe('semantic request dispatch', () => {
     assert.doesNotMatch(pipeline, /Builder routes returned no files — using the deterministic scaffold/);
     assert.doesNotMatch(pipeline, /AI route was unavailable — continuing with Xroga’s local project generator/);
   });
+
+  it('offers the real validation sandbox without granting unrelated external authority', () => {
+    const planner = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
+    assert.match(planner, /\['model:execute', 'sandbox:execute'\]/);
+    assert.doesNotMatch(planner, /authorities\.add\('deploy:execute'\)/);
+  });
 });
