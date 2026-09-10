@@ -2,6 +2,8 @@ import type { StateStorage } from 'zustand/middleware';
 
 const DB_NAME = 'xroga-project-contexts';
 const STORE = 'state';
+const CACHE_OWNER_KEY = 'xroga-cache-owner';
+const PERSISTED_OWNER_FIELD = '__xrogaCacheOwner';
 let writesSuspended = false;
 
 /** Prevent an account-boundary reset from racing a final async IndexedDB write. */
@@ -44,19 +46,52 @@ async function idbWrite(key: string, value: string | null): Promise<void> {
   } finally { db.close(); }
 }
 
+function currentCacheOwner(): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(CACHE_OWNER_KEY);
+}
+
+function valueForCurrentOwner(value: string): string | null {
+  const owner = currentCacheOwner();
+  if (!owner) return null;
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    return parsed[PERSISTED_OWNER_FIELD] === owner ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function stampCurrentOwner(value: string): string | null {
+  const owner = currentCacheOwner();
+  if (!owner) return null;
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    return JSON.stringify({ ...parsed, [PERSISTED_OWNER_FIELD]: owner });
+  } catch {
+    return null;
+  }
+}
+
 /** Async, quota-tolerant storage with one-time fallback to the legacy localStorage value. */
 export const projectWorkspaceStorage: StateStorage = {
   getItem: async (key) => {
     try {
       const stored = await idbRead(key);
-      if (stored) return stored;
+      if (stored) return valueForCurrentOwner(stored);
     } catch { /* fall through to legacy */ }
     if (typeof localStorage === 'undefined') return null;
     const legacy = localStorage.getItem(key);
-    if (legacy) void idbWrite(key, legacy).catch(() => undefined);
-    return legacy;
+    if (!legacy) return null;
+    const ownedLegacy = valueForCurrentOwner(legacy);
+    if (ownedLegacy) void idbWrite(key, ownedLegacy).catch(() => undefined);
+    return ownedLegacy;
   },
-  setItem: async (key, value) => { if (!writesSuspended) await idbWrite(key, value); },
+  setItem: async (key, value) => {
+    if (writesSuspended) return;
+    const ownedValue = stampCurrentOwner(value);
+    if (ownedValue) await idbWrite(key, ownedValue);
+  },
   removeItem: async (key) => {
     await idbWrite(key, null);
     if (typeof localStorage !== 'undefined') localStorage.removeItem(key);

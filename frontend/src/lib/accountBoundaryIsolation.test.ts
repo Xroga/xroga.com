@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const sidebar = readFileSync(new URL('../components/layout/Sidebar.tsx', import.meta.url), 'utf8');
 const store = readFileSync(new URL('../store/useProjectWorkspaceStore.ts', import.meta.url), 'utf8');
+const projectStorage = readFileSync(new URL('./projectWorkspaceStorage.ts', import.meta.url), 'utf8');
 
 test('logout clears in-memory project state and pauses persistence before storage deletion', () => {
   const handler = sidebar.slice(sidebar.indexOf('async function handleLogout()'), sidebar.indexOf('const logoHref'));
@@ -20,4 +21,10 @@ test('account-boundary reset discards every saved context and task association',
   assert.match(reset, /activeTaskSessionId: null/);
   assert.match(reset, /activeTaskSessionByProject: \{\}/);
   assert.match(reset, /projectStates: \{\}/);
+});
+
+test('project persistence refuses another account owner even if IndexedDB deletion races hydration', () => {
+  assert.match(projectStorage, /__xrogaCacheOwner/);
+  assert.match(projectStorage, /valueForCurrentOwner\(stored\)/);
+  assert.match(projectStorage, /stampCurrentOwner\(value\)/);
 });
