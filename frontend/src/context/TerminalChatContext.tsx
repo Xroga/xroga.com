@@ -3154,7 +3154,7 @@ export function TerminalChatProvider({
               ? isBuildUpdateEarly
                 ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
                 : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
-              : GENERIC_SWARM_FALLBACK);
+              : `**Request could not start.** ${err instanceof Error ? err.message : 'The server did not accept the request.'}`);
           // Carries the original prompt so "Use full power now" can resend it the
           // moment more capacity is unlocked, instead of just naming when to come back.
           const capacityUnavailable =
