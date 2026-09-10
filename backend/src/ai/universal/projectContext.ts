@@ -21,7 +21,12 @@ export function normalizeProjectContext(value: ActiveProjectContext): ActiveProj
 
 export function projectContextKey(value: ActiveProjectContext): string {
   const normalized = normalizeProjectContext(value);
-  return `${normalized.repo}\u0000${normalized.branch}\u0000${normalized.projectRoot}`;
+  // Match the browser's canonical key and remain valid PostgreSQL text. NUL-delimited
+  // keys cannot be stored in jsonb/text and caused a successful plan to fail while its
+  // run record was written.
+  return [normalized.repo, normalized.branch, normalized.projectRoot]
+    .map((part) => encodeURIComponent(part))
+    .join('::');
 }
 
 export function assertProjectWriteTarget(active: ActiveProjectContext, target: ActiveProjectContext): void {

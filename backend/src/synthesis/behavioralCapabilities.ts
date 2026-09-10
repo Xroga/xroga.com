@@ -188,7 +188,7 @@ const BEHAVIOUR_RULES: readonly BehaviourRule[] = [
   // ── Push rather than poll ─────────────────────────────────────────────────────
   {
     capability: 'realtime',
-    pattern: /\b(real[- ]?time|live (?:updates?|feed)|websocket|push (?:notification)?|chat|presence|collaborative editing)\b/i,
+    pattern: /\b(real[- ]?time|live (?:updates?|feed)|websocket|push (?:notifications?|messages?|updates?)|chat|presence|collaborative editing)\b/i,
     weight: 8,
     because: 'changes must reach a client without it asking, which needs a persistent transport',
   },

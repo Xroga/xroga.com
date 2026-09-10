@@ -1374,6 +1374,10 @@ export async function runBuildPipeline(opts: {
     userId: opts.userId,
     projectId: resolvedProjectId,
     prompt: userFacingPrompt,
+    // Repository evidence must cross the universal boundary. Without it an update to an
+    // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
+    // can acquire an invented surface instead of preserving the repository's toolchain.
+    existingFiles: prior.files,
     // The same store the engineering task pass uses, so the canonical implementation task
     // is persisted alongside the rest of the run's task graph rather than in a second
     // in-memory state that dies with the process.

@@ -313,4 +313,12 @@ describe('specs record what they could not determine', () => {
     assert.ok(cli, 'the repository establishes the surface');
     assert.ok(cli.evidence.some((line) => /main\.rs/.test(line)));
   });
+
+  it('treats a Git review-branch push as repository maintenance, not realtime messaging', () => {
+    const prompt = 'Update only normalize.py, run pytest, and push a review branch. Do not deploy.';
+    assert.equal(inferSurfaces(prompt).some((entry) => entry.surface === 'realtime_service'), false);
+    const architecture = plan(prompt, [f('normalize.py', 'def normalize(value: str) -> str:\n    return value.strip()\n')]);
+    assert.equal(architecture.inheritedFromRepository, true);
+    assert.equal(architecture.components[0]?.language, 'python');
+  });
 });

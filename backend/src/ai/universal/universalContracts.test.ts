@@ -78,6 +78,8 @@ test('project write identity includes repository, branch, and future project roo
   assert.doesNotThrow(() => assertProjectWriteTarget(a, same));
   assert.throws(() => assertProjectWriteTarget(a, { ...same, branch: 'branch/y' }), /TARGET_MISMATCH/);
   assert.throws(() => assertProjectWriteTarget(a, { ...same, projectRoot: '/units/b' }), /TARGET_MISMATCH/);
+  assert.equal(projectContextKey(a), 'org%2Frepo::branch%2Fx::%2Funits%2Fa');
+  assert.doesNotMatch(projectContextKey(a), /[\u0000-\u001f]/);
 });
 
 test('artifact workspace writes real opaque bytes inside a bounded project-independent root', async () => {
