@@ -65,6 +65,7 @@ import { HeartPulseIcon } from '@/components/icons/animated/HeartPulseIcon';
 import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { suspendProjectWorkspacePersistence } from '@/lib/projectWorkspaceStorage';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -489,6 +490,11 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   async function handleLogout() {
     const supabase = createClient();
+    // Stop the async persisted workspace from writing the previous account back after
+    // cache deletion. Clear both memory and storage before the auth boundary changes.
+    suspendProjectWorkspacePersistence();
+    useProjectWorkspaceStore.getState().resetForAccountBoundary();
+    await useProjectWorkspaceStore.persist.clearStorage();
     clearUserScopedCaches();
     useAppStore.getState().setProfile(null);
     await supabase.auth.signOut();

@@ -41,6 +41,7 @@ export interface ProjectWorkspaceState extends ProjectWorkspaceSnapshot {
   setStatus: (status: ProjectWorkspaceStatus) => void; setPreviewOpen: (open: boolean) => void;
   appendTerminal: (line: string) => void; clearRollbackBuffer: () => void;
   hydratePreviewFromDisk: () => Promise<void>; reset: () => void;
+  resetForAccountBoundary: () => void;
 }
 
 function emptySnapshot(identity?: ProjectContextIdentity | null): ProjectWorkspaceSnapshot {
@@ -124,6 +125,11 @@ export const useProjectWorkspaceStore = create<ProjectWorkspaceState>()(persist(
     setPreviewOpen: (previewOpen) => update((s) => ({ previewOpen, workspaceOpen: true, activeTab: previewOpen ? 'preview' : s.activeTab })), appendTerminal: (line) => update((s) => ({ terminalLog: [...s.terminalLog, line].slice(-200) })), clearRollbackBuffer: () => update(() => ({ previousFiles: null })),
     hydratePreviewFromDisk: async () => { const start = get(); if (!start.activeProjectContextKey || start.html.trim()) return; const key = start.activeProjectContextKey; const version = start.transitionVersion; const blob = await loadPreviewBlob(key); if (!blob?.html.trim() || (blob.repo && blob.repo !== start.repo)) return; const files = start.projectFiles.length ? start.projectFiles : landingFiles(blob.html, blob.css || '', blob.js || ''); get().completeProjectContextRestore(key, version, { html: blob.html, css: blob.css || '', js: blob.js || '', projectFiles: files, projectName: start.projectName || blob.projectName || null, previewOpen: true, workspaceOpen: true, openFilePath: files[0]?.path || 'index.html', openFilePaths: files[0]?.path ? [files[0].path] : ['index.html'] }); },
     reset: () => get().clearActiveProjectContext(),
+    resetForAccountBoundary: () => set({
+      ...emptySnapshot(), activeProjectContext: null, activeProjectContextKey: null,
+      activeTaskSessionId: null, activeTaskSessionByProject: {}, projectStates: {},
+      transitionVersion: get().transitionVersion + 1,
+    }),
   };
 }, { name: 'xroga-project-workspace', version: 3, storage: createJSONStorage(() => projectWorkspaceStorage),
   merge: (persisted, current) => {

@@ -36,6 +36,7 @@ export const USER_SCOPED_DATABASES = [
   'xroga_workspace_v1',
   'xroga_terminal_sessions_v1',
   'xroga-workspace-preview',
+  'xroga-project-contexts',
   'xroga_landing_builds_v1',
 ] as const;
 

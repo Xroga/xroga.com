@@ -2,6 +2,12 @@ import type { StateStorage } from 'zustand/middleware';
 
 const DB_NAME = 'xroga-project-contexts';
 const STORE = 'state';
+let writesSuspended = false;
+
+/** Prevent an account-boundary reset from racing a final async IndexedDB write. */
+export function suspendProjectWorkspacePersistence(): void {
+  writesSuspended = true;
+}
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -50,7 +56,7 @@ export const projectWorkspaceStorage: StateStorage = {
     if (legacy) void idbWrite(key, legacy).catch(() => undefined);
     return legacy;
   },
-  setItem: async (key, value) => { await idbWrite(key, value); },
+  setItem: async (key, value) => { if (!writesSuspended) await idbWrite(key, value); },
   removeItem: async (key) => {
     await idbWrite(key, null);
     if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
