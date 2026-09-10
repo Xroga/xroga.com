@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal, interpreterModelOrder, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
+import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -110,5 +110,29 @@ describe('semantic planner provider fallback', () => {
     const attemptEnd = source.indexOf('\n    },\n  });', fallback);
     assert.ok(fallback >= 0 && attemptValidation > fallback && attemptValidation < attemptEnd);
     assert.doesNotMatch(source.slice(attemptEnd), /JSON\.parse\(\(fenced/);
+  });
+});
+
+describe('explicit universal build command', () => {
+  it('routes the canonical arbitrary project directly without guessing a product type', async () => {
+    const plan = await planExplicitProjectBuild({
+      userId: 'generated-user',
+      message: '/build update the selected source and run its tests',
+      projectContext: { repo: 'arbitrary-owner/arbitrary-repository', branch: 'topic/generated-branch', projectRoot: '/packages/tool' },
+    });
+    assert.equal(plan.dispatch, 'build');
+    assert.equal(plan.goalContract.semanticIntent, 'MODIFY');
+    assert.deepEqual(plan.goalContract.projectContext, {
+      repo: 'arbitrary-owner/arbitrary-repository', branch: 'topic/generated-branch', projectRoot: '/packages/tool',
+    });
+    assert.deepEqual(plan.capabilityIds, ['repository.read', 'software.implement', 'validation.run', 'repository.write']);
+    assert.doesNotMatch(plan.goalContract.goal, /^\/build/);
+  });
+
+  it('refuses an empty explicit build command', async () => {
+    await assert.rejects(
+      planExplicitProjectBuild({ userId: 'generated-user', message: '/build', projectContext: { repo: 'o/r', branch: 'b', projectRoot: '/' } }),
+      (error: unknown) => (error as { code?: string }).code === 'INVALID_GOAL',
+    );
   });
 });

@@ -4,7 +4,7 @@ import { runChatPipeline } from '../ai/pipeline.js';
 import { assertHasQuota, getUsage, usageToTokenUsage } from '../ai/quota.js';
 import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
-import { planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
+import { planExplicitProjectBuild, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { analyzeGitHubRepo } from '../services/integrations/githubDeploy.js';
 
@@ -22,6 +22,9 @@ router.post('/plan', async (req: AuthRequest, res) => {
     const context = contextCandidate && typeof contextCandidate.repo === 'string' && typeof contextCandidate.branch === 'string'
       ? { repo: contextCandidate.repo, branch: contextCandidate.branch, projectRoot: typeof contextCandidate.projectRoot === 'string' ? contextCandidate.projectRoot : '/' }
       : null;
+    if (/^\/build\b/i.test(message) && context) {
+      return res.json(await planExplicitProjectBuild({ userId, message, projectContext: context }));
+    }
     const plan = await planSemanticRequest({
       userId,
       message,

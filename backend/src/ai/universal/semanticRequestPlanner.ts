@@ -2,7 +2,7 @@ import { chatCompletion, estimateMessageTokens, type ChatMessage } from '../open
 import { callableModelIds, type ModelId } from '../models.js';
 import { withProviderReservation } from '../providerBudget.js';
 import { executeWithProviderFallback } from '../providerRuntime.js';
-import { recordUsage, usageToTokenUsage, type UsageSnapshot } from '../quota.js';
+import { getUsage, recordUsage, usageToTokenUsage, type UsageSnapshot } from '../quota.js';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import { goalContractSchema, interpretGoalContract, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
 import { planCapabilities } from './planner.js';
@@ -44,6 +44,55 @@ export function unresolvedGoalBlockers(blockers: readonly string[], grantedAutho
     if (!normalized.includes('authorit')) return true;
     return ![...grantedAuthorities].some((authority) => normalized.includes(authority.toLowerCase()));
   });
+}
+
+/**
+ * Deterministic intent for the explicit composer `/build` command.
+ *
+ * This is not a natural-language classifier or product-type guess. The command is a direct
+ * user choice to modify the canonical selected project, so routing it through an unreliable
+ * model just to rediscover that choice creates a needless single point of failure.
+ */
+export async function planExplicitProjectBuild(input: {
+  userId: string;
+  message: string;
+  projectContext: NonNullable<GoalInterpretationInput['projectContext']>;
+}): Promise<SemanticRequestPlan> {
+  const goal = input.message.replace(/^\/build\b\s*/i, '').trim();
+  if (!goal) throw Object.assign(new Error('The /build command needs a requested change.'), { code: 'INVALID_GOAL' });
+  const requiredCapabilities = ['repository.read', 'software.implement', 'validation.run', 'repository.write'];
+  const goalContract = goalContractSchema.parse({
+    version: '1.0',
+    goal,
+    desiredOutcome: 'Implement and validate the requested change in the selected project.',
+    semanticIntent: 'MODIFY',
+    constraints: ['Keep all work scoped to the canonical selected repository, branch, and project root.'],
+    acceptance: ['Produce repository changes and validation evidence without changing the selected project target.'],
+    historyContext: [],
+    projectContext: input.projectContext,
+    deliverables: [{
+      id: 'repository-change',
+      mediaType: 'application/vnd.xroga.repository-change+json',
+      description: 'Validated changes for the selected software project.',
+      required: true,
+      acceptance: ['The write target equals the canonical project context.'],
+    }],
+    requiredCapabilities,
+    requiredAuthorities: ['repository:read', 'repository:write', 'model:execute', 'sandbox:execute'],
+    risks: ['Repository content may change only after target and write invariants pass.'],
+    confidence: 1,
+    blockers: [],
+    contextComplexity: 'unknown',
+  });
+  const usage = usageToTokenUsage(await getUsage(input.userId));
+  return {
+    goalContract,
+    dispatch: 'build',
+    capabilityIds: requiredCapabilities,
+    rationale: 'The user explicitly selected the /build command for the canonical active project.',
+    blockers: [],
+    usage,
+  };
 }
 
 export async function planSemanticRequest(input: {
