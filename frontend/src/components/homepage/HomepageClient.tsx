@@ -21,7 +21,7 @@ import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 
-const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Extensions', 'APIs'] as const;
+const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Browser extensions', 'APIs', 'Desktop apps', 'Automations', 'CLIs', 'Libraries', 'Data pipelines'] as const;
 
 export function HomepageClient() {
   const router = useRouter();
@@ -69,9 +69,15 @@ export function HomepageClient() {
             <HomepageCompanionStage />
             <HomepageChatBar />
           </div>
-          <ul className="xv-hc-category-strip" aria-label="Products Xroga can build">
-            {HERO_CATEGORIES.map((category) => <li key={category}>{category}</li>)}
-          </ul>
+          <div className="xv-hc-category-strip" aria-label="Products Xroga can build">
+            <div className="xv-hc-category-track">
+              {[false, true].map((duplicate) => (
+                <ul className="xv-hc-category-group" aria-hidden={duplicate || undefined} key={duplicate ? 'duplicate' : 'primary'}>
+                  {HERO_CATEGORIES.map((category) => <li key={category}>{category}</li>)}
+                </ul>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
