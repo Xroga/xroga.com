@@ -83,19 +83,26 @@ export async function planSemanticRequest(input: {
     routes: models,
     timeoutMs: 45_000,
     maximumAttemptsPerRoute: 1,
-    execute: (modelId, signal) => withProviderReservation({
-      userId: input.userId,
-      modelId,
-      estimatedInputTokens: estimateMessageTokens(messages),
-      maximumOutputTokens,
-      purpose: 'complexity',
-      execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal }),
-    }),
+    execute: async (modelId, signal) => {
+      const completion = await withProviderReservation({
+        userId: input.userId,
+        modelId,
+        estimatedInputTokens: estimateMessageTokens(messages),
+        maximumOutputTokens,
+        purpose: 'complexity',
+        execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal }),
+      });
+      // A transport-level 200 is not a usable planning result. Keep schema parsing
+      // inside the provider attempt so malformed or incomplete structured output
+      // falls through to the next approved model instead of aborting the entire
+      // universal request before another provider gets a chance.
+      const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      const raw = JSON.parse((fenced?.[1] ?? completion.text).trim());
+      const goalContract = await interpretGoalContract(interpretationInput, async () => raw);
+      return { completion, goalContract };
+    },
   });
-  const completion = planned.value;
-  const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = JSON.parse((fenced?.[1] ?? completion.text).trim());
-  const goalContract = await interpretGoalContract(interpretationInput, async () => raw);
+  const { completion, goalContract } = planned.value;
   // The canonical build runtime owns an isolated validation sandbox. Exposing
   // that authority to planning permits validation.run to be selected; it does
   // not grant repository, deployment, or external-account authority.

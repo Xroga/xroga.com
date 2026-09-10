@@ -102,4 +102,13 @@ describe('semantic planner provider fallback', () => {
     assert.doesNotMatch(source, /grok_4_3|grok-4\.3|kimi_k2_7|glm_5_2|deepseek_v4_pro|grok_4_5/);
     assert.match(source, /executeWithProviderFallback/);
   });
+
+  it('falls back when a provider returns malformed semantic output, not only on transport failure', () => {
+    const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
+    const fallback = source.indexOf('executeWithProviderFallback({');
+    const attemptValidation = source.indexOf('interpretGoalContract(interpretationInput', fallback);
+    const attemptEnd = source.indexOf('\n    },\n  });', fallback);
+    assert.ok(fallback >= 0 && attemptValidation > fallback && attemptValidation < attemptEnd);
+    assert.doesNotMatch(source.slice(attemptEnd), /JSON\.parse\(\(fenced/);
+  });
 });
