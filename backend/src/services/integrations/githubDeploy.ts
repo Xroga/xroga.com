@@ -1307,6 +1307,85 @@ export async function fetchBuildFilesFromGitHub(
   return out;
 }
 
+const UNIVERSAL_REPOSITORY_FILE_LIMIT = 80;
+const UNIVERSAL_REPOSITORY_TOTAL_BYTES = 1_500_000;
+const UNIVERSAL_REPOSITORY_FILE_BYTES = 250_000;
+
+/** Decode a Git blob without assuming a language, framework, or filename extension. */
+export function decodeRepositoryTextBlob(content: string, encoding: string | undefined): string | null {
+  if (encoding !== 'base64' || !content) return null;
+  const bytes = Buffer.from(content, 'base64');
+  if (bytes.includes(0)) return null;
+  const text = bytes.toString('utf8');
+  const replacements = [...text].filter((character) => character === '\uFFFD').length;
+  return replacements > Math.max(2, Math.floor(text.length * 0.01)) ? null : text;
+}
+
+/**
+ * Read a bounded, framework-agnostic text snapshot of an arbitrary repository.
+ *
+ * The older build hydrator intentionally targets common web manifest paths. That remains
+ * useful for web preview/deploy flows, but it cannot be the source for universal execution:
+ * a repository containing Python, Zig, Swift, a future language, or extensionless source
+ * would otherwise look empty. Selection here uses only Git tree facts and binary detection.
+ */
+export async function fetchRepositoryTextFilesFromGitHub(
+  userId: string,
+  repoName: string,
+  branch: string,
+): Promise<ProjectFile[]> {
+  const integration = await getIntegration(userId);
+  if (!integration?.access_token) throw new Error('GitHub not connected');
+  const { owner, repo } = parseRepoName(repoName);
+  const token = integration.access_token;
+
+  const branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`);
+  if (!branchRes.ok) throw new Error(`GitHub branch lookup failed: ${branchRes.status}`);
+  const branchData = (await branchRes.json()) as { commit?: { commit?: { tree?: { sha?: string } } } };
+  const treeSha = branchData.commit?.commit?.tree?.sha;
+  if (!treeSha) throw new Error('GitHub branch did not expose a source tree');
+
+  const treeRes = await ghFetch(token, `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`);
+  if (!treeRes.ok) throw new Error(`GitHub tree lookup failed: ${treeRes.status}`);
+  const tree = (await treeRes.json()) as {
+    truncated?: boolean;
+    tree?: Array<{ path?: string; type?: string; sha?: string; size?: number }>;
+  };
+  if (tree.truncated) throw new Error('GitHub repository tree is too large for a complete safe snapshot');
+
+  const candidates = (tree.tree ?? [])
+    .filter((entry): entry is { path: string; type: 'blob'; sha: string; size?: number } =>
+      entry.type === 'blob' && Boolean(entry.path) && Boolean(entry.sha) &&
+      (entry.size ?? 0) <= UNIVERSAL_REPOSITORY_FILE_BYTES)
+    .sort((a, b) => {
+      const depth = a.path.split('/').length - b.path.split('/').length;
+      return depth || (a.size ?? 0) - (b.size ?? 0) || a.path.localeCompare(b.path);
+    })
+    .slice(0, UNIVERSAL_REPOSITORY_FILE_LIMIT);
+
+  const files: ProjectFile[] = [];
+  let totalBytes = 0;
+  for (let offset = 0; offset < candidates.length && totalBytes < UNIVERSAL_REPOSITORY_TOTAL_BYTES; offset += 8) {
+    const batch = candidates.slice(offset, offset + 8);
+    const decoded = await Promise.all(batch.map(async (entry) => {
+      const response = await ghFetch(token, `/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(entry.sha)}`);
+      if (!response.ok) return null;
+      const blob = (await response.json()) as { content?: string; encoding?: string };
+      const content = decodeRepositoryTextBlob(blob.content ?? '', blob.encoding);
+      return content === null ? null : { path: entry.path, content };
+    }));
+    for (const file of decoded) {
+      if (!file) continue;
+      const bytes = Buffer.byteLength(file.content, 'utf8');
+      if (totalBytes + bytes > UNIVERSAL_REPOSITORY_TOTAL_BYTES) continue;
+      files.push(file);
+      totalBytes += bytes;
+    }
+  }
+  if (!files.length) throw new Error('No readable text files found in GitHub repository');
+  return files;
+}
+
 export async function fetchGitHubFilesByPaths(
   userId: string,
   repoName: string,

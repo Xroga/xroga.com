@@ -92,9 +92,7 @@ import {
 } from './buildStreamNarrator.js';
 import { heartbeatMessage, withProgressHeartbeat } from './progressHeartbeat.js';
 import {
-  UPDATE_HYDRATE_PATHS,
-  fetchBuildFilesFromGitHub,
-  fetchGitHubFilesByPaths,
+  fetchRepositoryTextFilesFromGitHub,
   landingFilesFromOutput,
   pushBuildToGitHub,
   describeGitHubWriteFailure,
@@ -523,8 +521,7 @@ async function hydratePriorFiles(
           source: 'github-cache',
         };
       }
-      const focused = await fetchGitHubFilesByPaths(userId, repo, UPDATE_HYDRATE_PATHS, branch);
-      const files = focused.length ? focused : await fetchBuildFilesFromGitHub(userId, repo, branch);
+      const files = await fetchRepositoryTextFilesFromGitHub(userId, repo, branch);
       setProjectMemory({
         userId,
         repo,
