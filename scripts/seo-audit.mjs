@@ -111,7 +111,7 @@ try {
   }
 } catch (error) { problems.push(`sitemap crawl failed (${error instanceof Error ? error.message : 'network error'})`); }
 
-for (const obsolete of ['/crypto-builder', '/features/ai-chat']) {
+for (const obsolete of ['/crypto-builder']) {
   if (internalPaths.has(obsolete)) problems.push(`priority pages still link to obsolete route ${obsolete}`);
 }
 for (const pathname of internalPaths) {

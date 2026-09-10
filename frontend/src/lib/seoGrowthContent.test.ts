@@ -40,3 +40,17 @@ test('alternatives pages list several legitimate choices instead of only Xroga',
     assert.ok(item.compare.startsWith('/compare/xroga-vs-'));
   }
 });
+
+test('priority authority articles satisfy comparison and production-readiness intent', () => {
+  const vibeTools = BLOG_ARTICLES.find((item) => item.slug === 'best-vibe-coding-tools')!;
+  const appBuilders = BLOG_ARTICLES.find((item) => item.slug === 'best-ai-app-builders')!;
+  const definition = BLOG_ARTICLES.find((item) => item.slug === 'what-is-vibe-coding')!;
+  assert.ok(vibeTools.sections.some((section) => (section.table?.rows.length ?? 0) >= 8));
+  assert.ok(appBuilders.sections.some((section) => (section.table?.rows.length ?? 0) >= 6));
+  assert.ok(vibeTools.sources && vibeTools.sources.length >= 6);
+  assert.ok(appBuilders.sources && appBuilders.sources.length >= 5);
+  const definitionText = definition.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]).join(' ');
+  assert.match(definitionText, /prototype-to-production/i);
+  assert.match(definitionText, /authorization/i);
+  assert.match(definitionText, /production-readiness checklist/i);
+});

@@ -83,6 +83,7 @@ export function EditorialPage({
                   <h2>{section.heading}</h2>
                   {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                   {section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
+                  {section.table && <div className="xv-seo-table-wrap"><table><caption>{section.table.caption}</caption><thead><tr>{section.table.columns.map((column) => <th scope="col" key={column}>{column}</th>)}</tr></thead><tbody>{section.table.rows.map((row) => <tr key={row.join('|')}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row" key={cell}>{cell}</th> : <td key={`${cellIndex}-${cell}`}>{cell}</td>)}</tr>)}</tbody></table></div>}
                 </section>
               ))}
             </div>
@@ -135,7 +136,7 @@ export function EditorialHub({
 
 function labelFor(href: string) {
   const labels: Record<string, string> = {
-    '/ai-app-builder': 'AI app builder', '/ai-coding-agent': 'AI coding agent', '/ai-website-builder': 'AI website builder',
+    '/ai-app-builder': 'AI app builder', '/ai-coding-agent': 'AI coding agent', '/features/ai-chat': 'Xroga AI Chat', '/ai-website-builder': 'AI website builder',
     '/showcase': 'Product showcase', '/compare': 'All comparisons', '/pricing': 'Plans and pricing', '/integrations': 'Integrations',
     '/security': 'Security approach', '/docs': 'Documentation', '/vibe-coding': 'Vibe coding guide',
     '/learn/production-readiness-checklist': 'Production-readiness checklist', '/blog/what-is-vibe-coding': 'What is vibe coding?',

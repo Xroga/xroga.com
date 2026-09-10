@@ -1,7 +1,8 @@
 {
   "publicRoutes": [
     { "path": "/", "status": 200, "title": "AI App Builder & Coding Agent for Real Software | Xroga", "canonical": "https://xroga.com", "h1Count": 1, "schemaTypes": ["Organization", "Person", "WebSite", "SoftwareApplication", "WebPage"] },
-    { "path": "/features", "status": 200, "title": "Xroga Features — Repository-Aware AI Product Building", "canonical": "https://xroga.com/features", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/features", "status": 200, "title": "Xroga Features — AI Chat, App Building & Coding Agent", "canonical": "https://xroga.com/features", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/features/ai-chat", "status": 200, "title": "Xroga AI Chat — Search, Research, Analyze & Act", "canonical": "https://xroga.com/features/ai-chat", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/pricing", "status": 200, "title": "Pricing — Free and Xroga Pro", "canonical": "https://xroga.com/pricing", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/ai-app-builder", "status": 200, "title": "AI App Builder for Real Product Work | XROGA AI", "canonical": "https://xroga.com/ai-app-builder", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/ai-coding-agent", "status": 200, "title": "AI Coding Agent That Works in Your Repository | XROGA AI", "canonical": "https://xroga.com/ai-coding-agent", "h1Count": 1, "schemaTypes": ["WebPage"] },
@@ -17,7 +18,7 @@
     { "path": "/build-with", "status": 200, "title": "Build With Connected Software Providers | XROGA AI", "canonical": "https://xroga.com/build-with", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
     { "path": "/build-with/github", "status": 200, "title": "Build with GitHub and keep repository work reviewable | XROGA AI", "canonical": "https://xroga.com/build-with/github", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] },
     { "path": "/blog", "status": 200, "title": "AI App Building and Coding Guides | XROGA AI", "canonical": "https://xroga.com/blog", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
-    { "path": "/blog/what-is-vibe-coding", "status": 200, "title": "What is vibe coding? A practical production definition | XROGA AI", "canonical": "https://xroga.com/blog/what-is-vibe-coding", "h1Count": 1, "schemaTypes": ["Article", "WebPage", "BreadcrumbList"] },
+    { "path": "/blog/what-is-vibe-coding", "status": 200, "title": "What is vibe coding? Meaning, workflow, risks, and examples | XROGA AI", "canonical": "https://xroga.com/blog/what-is-vibe-coding", "h1Count": 1, "schemaTypes": ["Article", "WebPage", "BreadcrumbList"] },
     { "path": "/learn", "status": 200, "title": "Learn Production-Ready AI Software Building | XROGA AI", "canonical": "https://xroga.com/learn", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
     { "path": "/learn/production-readiness-checklist", "status": 200, "title": "Production-readiness checklist for AI-built software | XROGA AI", "canonical": "https://xroga.com/learn/production-readiness-checklist", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] }
   ],

@@ -323,6 +323,14 @@ export interface ChatPipelineResult {
   route: RouteDecision;
 }
 
+export function shouldStopForMissingResearch(
+  route: RouteDecision,
+  providerFailed: boolean,
+  sourceCount: number,
+): boolean {
+  return (route.kind === 'research' || route.useResearch) && (providerFailed || sourceCount === 0);
+}
+
 export interface BuildPipelineResult {
   runId: string;
   success: boolean;
@@ -832,7 +840,7 @@ export async function runChatPipeline(opts: {
   attachments?: ChatAttachment[];
   onDelta?: DeltaFn;
 }): Promise<ChatPipelineResult> {
-  await assertHasQuota(opts.userId);
+  const initialUsage = await assertHasQuota(opts.userId);
 
   const prepared = await prepareAttachments(opts.attachments);
   const hasAttachments = prepared.hasImages || prepared.hasDocuments;
@@ -907,6 +915,7 @@ export async function runChatPipeline(opts: {
 
   let research: ResearchBundle | null = null;
   let researchBlock = '';
+  let researchProviderFailed = false;
 
   if (!explicitlyDisablesResearch(opts.prompt)) {
     try {
@@ -924,7 +933,26 @@ export async function runChatPipeline(opts: {
       );
       research = null;
       researchBlock = '';
+      researchProviderFailed = true;
     }
+  }
+
+  if (
+    shouldStopForMissingResearch(
+      route,
+      researchProviderFailed,
+      research?.sources.length ?? 0,
+    )
+  ) {
+    return {
+      response:
+        'I couldn\'t complete the requested live-web research just now. No current-source answer was generated, so please try again shortly.',
+      intent: 'research_unavailable',
+      usage: usageToTokenUsage(initialUsage),
+      webSources: [],
+      modelId: route.builder,
+      route,
+    };
   }
 
   const historyMsgs: ChatMessage[] = (opts.history ?? [])

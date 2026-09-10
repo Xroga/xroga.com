@@ -101,6 +101,7 @@ const FOOTER_GROUPS = [
   {
     title: 'Resources',
     links: [
+      { href: '/features/ai-chat', label: 'AI Chat' },
       { href: '/docs', label: 'Docs' },
       { href: '/research', label: 'Research' },
       { href: '/community', label: 'Community' },

@@ -144,6 +144,21 @@ describe('capability registry', () => {
     );
   });
 
+  it('does not market retired image generation or a build-only browser gate as Chat tools', () => {
+    const env = {
+      OPENAI_API_KEY: 'configured',
+      FAL_KEY: 'configured',
+      REPLICATE_API_TOKEN: 'configured',
+      BROWSERBASE_API_KEY: 'configured',
+    };
+    for (const id of ['image_generation', 'browser_automation'] as const) {
+      const capability = getCapability(id, env);
+      assert.equal(capabilityIsUsable(capability), false);
+      assert.ok(capability.providers.every((provider) => provider.availability === 'unavailable'));
+      assert.ok(capability.providers.every((provider) => Boolean(provider.unavailableReason)));
+    }
+  });
+
   it('provides execution and validation metadata for every provider', () => {
     const registry =
       getCapabilityRegistry({});

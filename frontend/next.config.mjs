@@ -136,7 +136,6 @@ const nextConfig = {
       { source: '/build-apps', destination: '/ai-app-builder', permanent: true },
       { source: '/features/ai-image-generation', destination: '/ai-app-builder', permanent: true },
       { source: '/features/ai-video-generation', destination: '/ai-app-builder', permanent: true },
-      { source: '/features/ai-chat', destination: '/ai-coding-agent', permanent: true },
       { source: '/features/build-websites-apps-games', destination: '/ai-app-builder', permanent: true },
       { source: '/features/code-debugging', destination: '/ai-coding-agent', permanent: true },
       { source: '/features/github-auto-deploy', destination: '/github-ai-coding-agent', permanent: true },

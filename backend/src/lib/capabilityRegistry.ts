@@ -53,7 +53,8 @@ export interface CapabilityDefinition {
 }
 
 type ProviderTemplate = Omit<CapabilityProvider, 'availability' | 'unavailableReason'> & {
-  credentialMode?: 'environment' | 'user_authorization' | 'none';
+  credentialMode?: 'environment' | 'user_authorization' | 'none' | 'unavailable';
+  unavailableReason?: string;
 };
 
 type CapabilityTemplate = Omit<CapabilityDefinition, 'providers'> & {
@@ -280,7 +281,7 @@ const TEMPLATES: CapabilityTemplate[] = [
   {
     id: 'image_generation',
     label: 'Image generation and processing',
-    description: 'Generate or process image assets through configured providers.',
+    description: 'Generate or process image assets through configured providers when a production route is enabled.',
     providers: [
       {
         id: 'configured-image-provider',
@@ -295,7 +296,8 @@ const TEMPLATES: CapabilityTemplate[] = [
         securityRestrictions: ['Validate media type and size', 'Persist only returned provider assets'],
         validation: 'Provider asset identifier and readable persisted file',
         fallbackProviderIds: ['comfyui'],
-        credentialMode: 'environment',
+        credentialMode: 'unavailable',
+        unavailableReason: 'The legacy media route is retired and no production Chat image-generation caller is active.',
       },
     ],
   },
@@ -548,7 +550,7 @@ const TEMPLATES: CapabilityTemplate[] = [
   {
     id: 'browser_automation',
     label: 'Browser automation',
-    description: 'Automate browser interactions only when a runtime is configured and authorized.',
+    description: 'Run browser-assisted verification for generated web projects when the isolated runtime is configured.',
     providers: [
       {
         id: 'playwright',
@@ -563,7 +565,8 @@ const TEMPLATES: CapabilityTemplate[] = [
         securityRestrictions: ['Do not bypass authorization', 'Treat page content as untrusted'],
         validation: 'Browser trace or inspected page state',
         fallbackProviderIds: ['local-playwright'],
-        credentialMode: 'environment',
+        credentialMode: 'unavailable',
+        unavailableReason: 'Browser verification is a build-pipeline gate, not a general-purpose Chat browser tool.',
       },
     ],
   },
@@ -577,7 +580,14 @@ function materializeProvider(
   template: ProviderTemplate,
   env: NodeJS.ProcessEnv,
 ): CapabilityProvider {
-  const { credentialMode = 'none', ...provider } = template;
+  const { credentialMode = 'none', unavailableReason, ...provider } = template;
+  if (credentialMode === 'unavailable') {
+    return {
+      ...provider,
+      availability: 'unavailable',
+      unavailableReason: unavailableReason || 'No active production caller is available.',
+    };
+  }
   if (credentialMode === 'user_authorization') {
     return {
       ...provider,

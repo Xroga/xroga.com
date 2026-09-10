@@ -7,7 +7,11 @@ import { FeatureLanding } from '@/components/seo/FeatureLanding';
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return getAllFeatureSlugs().map((slug) => ({ slug }));
+  // AI Chat has a dedicated product page. Keep the legacy feature registry entry
+  // available for related-link labels without letting dynamic prerendering overwrite it.
+  return getAllFeatureSlugs()
+    .filter((slug) => slug !== 'ai-chat')
+    .map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

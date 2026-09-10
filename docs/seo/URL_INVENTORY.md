@@ -32,7 +32,7 @@ Inventory date: 2026-09-09. All indexable routes use a self-referencing `https:/
 | `/api/*` | API | no | machine endpoint | block from crawl; exclude sitemap |
 | `/ref/[code]` | referral | no primary search intent | acquisition redirect/state | keep out of sitemap; review noindex at route boundary |
 | `/crypto-builder`, `/crypto-hackathon-builder` | legacy | no | old crypto URL | permanent redirect to `/crypto` |
-| `/features/ai-chat` | legacy | no | old AI chat feature | permanent redirect to `/ai-coding-agent` |
+| `/features/ai-chat` | product capability | yes | Xroga AI Chat / AI assistant | KEEP as self-canonical 200; distinct from `/ai-coding-agent` |
 | auth and typo aliases in `next.config.mjs` | legacy/typo | no | navigation recovery | permanent redirects, no chains |
 
 Registry-backed docs, showcase, capability, and SEO detail routes are expanded by their source registries at build time. A URL is not published merely because its future factory namespace exists.
