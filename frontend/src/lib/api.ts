@@ -94,6 +94,7 @@ export interface StreamSwarmOptions {
     githubTargetRepo?: string;
     githubTargetBranch?: string;
     projectRoot?: string;
+    semanticGoalContract?: SemanticRequestPlan['goalContract'];
     /**
      * Visibility for a repository this build creates. Only sent when the user chose it.
      *
@@ -1403,10 +1404,22 @@ export const api = {
       }>('/api/dashboard/ship-analytics'),
   },
   phase1: {
+    plan: (
+      message: string,
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>,
+      attachments?: ChatAttachment[],
+      projectContext?: { repo: string; branch: string; projectRoot: string } | null,
+      projectState?: Record<string, unknown>,
+    ) =>
+      apiFetch<SemanticRequestPlan>('/api/phase1/plan', {
+        method: 'POST',
+        body: JSON.stringify({ message, history, attachments, projectContext, projectState }),
+      }),
     chat: (
       message: string,
       history?: Array<{ role: 'user' | 'assistant'; content: string }>,
       attachments?: ChatAttachment[],
+      goalContract?: SemanticRequestPlan['goalContract'],
     ) =>
       apiFetch<Phase1ChatResult>('/api/phase1/chat', {
         method: 'POST',
@@ -1414,6 +1427,7 @@ export const api = {
           message,
           history,
           ...(attachments?.length ? { attachments } : {}),
+          ...(goalContract ? { goalContract } : {}),
         }),
       }),
     usage: () => apiFetch<{ usage: TokenUsage }>('/api/phase1/usage'),
@@ -1758,6 +1772,32 @@ export interface Phase1ChatResult {
     thumbnailUrl?: string;
   }>;
   hackathonBrief?: HackathonBriefCardData;
+}
+
+export interface SemanticRequestPlan {
+  goalContract: {
+    version: '1.0';
+    goal: string;
+    desiredOutcome: string;
+    semanticIntent: 'ANSWER' | 'INVESTIGATE' | 'PROPOSE' | 'MODIFY' | 'EXTERNAL_ACTION' | 'MIXED';
+    constraints: string[];
+    acceptance: string[];
+    historyContext: string[];
+    projectContext: { repo: string; branch: string; projectRoot: string } | null;
+    deliverables: Array<{ id: string; mediaType: string; description: string; required: boolean; acceptance: string[] }>;
+    requiredCapabilities: string[];
+    requiredAuthorities: string[];
+    risks: string[];
+    confidence: number;
+    blockers: string[];
+    contextComplexity: 'low' | 'medium' | 'high' | 'unknown';
+  };
+  dispatch: 'chat' | 'build' | 'blocked';
+  capabilityIds: string[];
+  rationale: string;
+  blockers: string[];
+  modelId: string;
+  usage: TokenUsage;
 }
 
 export interface TaskItem {

@@ -4,8 +4,46 @@ import { runChatPipeline } from '../ai/pipeline.js';
 import { assertHasQuota, getUsage, usageToTokenUsage } from '../ai/quota.js';
 import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
+import { planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
+import { goalContractSchema } from '../ai/universal/goalContract.js';
+import { analyzeGitHubRepo } from '../services/integrations/githubDeploy.js';
 
 const router = Router();
+
+router.post('/plan', async (req: AuthRequest, res) => {
+  const userId = requireUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Sign in required', code: 'UNAUTHORIZED' });
+  const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
+  if (!message) return res.status(400).json({ error: 'message required', code: 'INVALID_GOAL' });
+  try {
+    const contextCandidate = req.body?.projectContext && typeof req.body.projectContext === 'object'
+      ? req.body.projectContext as Record<string, unknown>
+      : null;
+    const context = contextCandidate && typeof contextCandidate.repo === 'string' && typeof contextCandidate.branch === 'string'
+      ? { repo: contextCandidate.repo, branch: contextCandidate.branch, projectRoot: typeof contextCandidate.projectRoot === 'string' ? contextCandidate.projectRoot : '/' }
+      : null;
+    const plan = await planSemanticRequest({
+      userId,
+      message,
+      history: Array.isArray(req.body?.history)
+        ? req.body.history.slice(-12).map((item: { role?: unknown; content?: unknown }) => `${item.role === 'assistant' ? 'assistant' : 'user'}: ${String(item.content ?? '').slice(0, 8_000)}`)
+        : [],
+      attachments: Array.isArray(req.body?.attachments)
+        ? req.body.attachments.map((item: { mimeType?: unknown; name?: unknown }) => ({ mediaType: String(item.mimeType ?? 'application/octet-stream'), name: typeof item.name === 'string' ? item.name : undefined }))
+        : [],
+      projectContext: context,
+      projectState: req.body?.projectState && typeof req.body.projectState === 'object' ? req.body.projectState : undefined,
+    });
+    return res.json(plan);
+  } catch (err) {
+    const error = err as Error & { code?: string };
+    console.error('[phase1/plan]', { code: error.code ?? 'SEMANTIC_PLANNING_FAILED', message: error.message });
+    return res.status(error.code === 'SEMANTIC_PLANNER_UNAVAILABLE' ? 503 : 422).json({
+      error: error.message,
+      code: error.code ?? 'SEMANTIC_PLANNING_FAILED',
+    });
+  }
+});
 
 function requireUserId(req: AuthRequest): string | null {
   return req.userId || (typeof req.body?.userId === 'string' ? req.body.userId : null);
@@ -27,9 +65,32 @@ router.post('/chat', async (req: AuthRequest, res) => {
   const history = Array.isArray(req.body?.history)
     ? (req.body.history as Array<{ role: 'user' | 'assistant'; content: string }>)
     : [];
+  const semanticGoal = goalContractSchema.safeParse(req.body?.goalContract);
 
   try {
-    const result = await runChatPipeline({ userId, prompt: message.trim(), history, attachments });
+    let projectEvidence: string | undefined;
+    if (semanticGoal.success && semanticGoal.data.requiredCapabilities.includes('repository.read') && semanticGoal.data.projectContext) {
+      const context = semanticGoal.data.projectContext;
+      const analysis = await analyzeGitHubRepo(userId, context.repo, context.branch);
+      projectEvidence = JSON.stringify({
+        repo: analysis.repoName,
+        branch: analysis.defaultBranch,
+        summary: analysis.summary,
+        techStack: analysis.techStack,
+        fileCount: analysis.fileCount,
+        topLevelEntries: analysis.topLevelEntries,
+        treeSample: analysis.treeSample,
+        report: analysis.report,
+      });
+    }
+    const result = await runChatPipeline({
+      userId,
+      prompt: message.trim(),
+      history,
+      attachments,
+      ...(semanticGoal.success ? { goalContract: semanticGoal.data } : {}),
+      ...(projectEvidence ? { projectEvidence } : {}),
+    });
     return res.json({
       response: result.response,
       intent: result.intent,

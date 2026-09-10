@@ -125,6 +125,7 @@ import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypo
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
+import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
 import { findProjectIdByRepo } from '../services/memory/buildProjectStore.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
@@ -300,6 +301,7 @@ export interface BuildClientMeta {
   githubTargetRepo?: string;
   githubTargetBranch?: string;
   projectRoot?: string;
+  semanticGoalContract?: GoalContract;
   /**
    * Visibility for a repository this build creates. Only ever the two literal values the
    * user can pick between. Absent means private — see `parseClientMeta`.
@@ -390,6 +392,7 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     m.priorSite && typeof m.priorSite === 'object'
       ? (m.priorSite as Record<string, unknown>)
       : null;
+  const semanticGoal = goalContractSchema.safeParse(m.semanticGoalContract);
   return {
     assistantMessageId: typeof m.assistantMessageId === 'string' ? m.assistantMessageId : undefined,
     userMessageId: typeof m.userMessageId === 'string' ? m.userMessageId : undefined,
@@ -408,6 +411,7 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
       typeof m.projectRoot === 'string' && m.projectRoot.startsWith('/')
         ? m.projectRoot
         : '/',
+    semanticGoalContract: semanticGoal.success ? semanticGoal.data : undefined,
     // Only the exact string "public" grants publication. Anything else — absent, null,
     // "PUBLIC", a truthy object, a client that never learned about this field — is
     // private. The failure mode of guessing wrong here is a permanently public
@@ -842,6 +846,8 @@ export async function runChatPipeline(opts: {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
   attachments?: ChatAttachment[];
   onDelta?: DeltaFn;
+  goalContract?: GoalContract;
+  projectEvidence?: string;
 }): Promise<ChatPipelineResult> {
   const initialUsage = await assertHasQuota(opts.userId);
 
@@ -908,9 +914,19 @@ export async function runChatPipeline(opts: {
     };
   }
 
-  const route = routePrompt(opts.prompt);
+  const inferredRoute = routePrompt(opts.prompt);
+  const semanticResearch = opts.goalContract?.requiredCapabilities.includes('research.public-web') ?? false;
+  const route: RouteDecision = opts.goalContract
+    ? {
+        ...inferredRoute,
+        kind: semanticResearch ? 'research' : 'chat',
+        builder: semanticResearch ? 'glm_5_3_flash' : 'deepseek_v4_flash',
+        useResearch: semanticResearch,
+        reason: 'The validated semantic goal contract selected this read-only execution path.',
+      }
+    : inferredRoute;
 
-  if (isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
+  if (!opts.goalContract && isBuildPrompt(opts.prompt) && route.kind.startsWith('build')) {
     const err = new Error('USE_BUILD_PIPELINE');
     (err as Error & { code?: string }).code = 'USE_BUILD_PIPELINE';
     throw err;
@@ -920,7 +936,7 @@ export async function runChatPipeline(opts: {
   let researchBlock = '';
   let researchProviderFailed = false;
 
-  if (!explicitlyDisablesResearch(opts.prompt)) {
+  if (route.useResearch && !explicitlyDisablesResearch(opts.prompt)) {
     try {
       const web = await runWebIntelligence({
         userId: opts.userId,
@@ -962,12 +978,15 @@ export async function runChatPipeline(opts: {
     .slice(-12)
     .map((h) => ({ role: h.role, content: h.content.slice(0, 8000) }));
 
+  const promptWithProjectEvidence = opts.projectEvidence
+    ? `${opts.prompt}\n\nAuthorized read-only repository evidence:\n${opts.projectEvidence}`
+    : opts.prompt;
   const userContent =
     route.kind === 'research' && researchBlock
-      ? researchSynthesisPrompt(opts.prompt, researchBlock)
+      ? researchSynthesisPrompt(promptWithProjectEvidence, researchBlock)
       : researchBlock
-        ? `${opts.prompt}\n\n${researchBlock}`
-        : opts.prompt;
+        ? `${promptWithProjectEvidence}\n\n${researchBlock}`
+        : promptWithProjectEvidence;
 
   const result = await callBuilderStream(
     route.builder,
@@ -1365,6 +1384,7 @@ export async function runBuildPipeline(opts: {
       projectState: { existingFileCount: prior.files.length, isUpdate },
     },
     goalInterpreter: async ({ message, history, projectContext, attachments, projectState, availableCapabilityIds, modelId }) => {
+      if (meta?.semanticGoalContract) return meta.semanticGoalContract;
       const maximumOutputTokens = 2_500;
       const messages: ChatMessage[] = [
         { role: 'system', content: `Translate the complete user request into one semantic GoalContract. Do not classify a product, framework, language, or file type. Select only capability IDs supplied below. Return strict JSON with exactly: version "1.0", goal, desiredOutcome, semanticIntent (ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED), constraints[], acceptance[], historyContext[], projectContext, deliverables[] (id, mediaType, description, required, acceptance[]), requiredCapabilities[], requiredAuthorities[], risks[], confidence 0..1, blockers[], contextComplexity (low|medium|high|unknown). Available capability IDs: ${availableCapabilityIds.join(', ')}` },
@@ -2137,47 +2157,8 @@ export async function runBuildPipeline(opts: {
   } catch (error) {
     const failure = classifyBuilderFailure(error);
     builderProviderFailure = failure;
-    if (!isRetryableBuilderFailure(failure)) {
-      throw error;
-    }
-
-    if (isUpdate) {
-      deterministicFiles = deterministicStaticUpdate ?? [];
-    } else if (scaffoldForArchitect === 'static') {
-      deterministicFiles = buildScaffoldForPrompt({
-        prompt: userFacingPrompt,
-        projectName: projectNameFromPrompt(userFacingPrompt),
-      }).files;
-    }
-    usedDeterministicScaffold = deterministicFiles.length > 0;
-    if (!usedDeterministicScaffold) throw error;
-
-    // This object records the attempted route while stating the actual local source.
-    // It carries zero usage and is never counted as a successful model validation.
-    result = {
-      text: '',
-      modelId: buildSelection.modelId,
-      apiModel: 'deterministic-static-v1',
-      provider: 'xroga-local',
-      inputTokens: 0,
-      outputTokens: 0,
-      totalTokens: 0,
-    };
-    trace.setMeta({
-      deterministicScaffold: {
-        used: true,
-        reason: failure,
-        files: deterministicFiles.map((file) => file.path),
-      },
-    });
-    emit({
-      agent: 'builder',
-      status: 'scaffolding',
-      message: 'AI route was unavailable — continuing with Xroga’s local project generator',
-      swarmStatusLabel: 'Building',
-      swarmActivity: 'Resilient static generator',
-      swarmTodos: todos('build'),
-    });
+    trace.setMeta({ builderFailure: failure, deterministicScaffold: { used: false } });
+    throw error;
   }
   // A response cut short leaves a fence open; reporting the partial file is the
   // evidence that it was truncated.
@@ -2419,38 +2400,10 @@ export async function runBuildPipeline(opts: {
   // so user vault keys can power live /api routes and mobile/extension/desktop ship complete.
   let productScaffoldKind: ScaffoldKind = 'static';
 
-  /**
-   * Deterministic scaffold fallback.
-   *
-   * The scaffold merge below was gated on `nextFiles.length`, so it only ever ran
-   * when the model had already produced files — which meant it could not help in
-   * the one case it exists for: every provider returning empty, prose-only or
-   * invalid output. That is the production blocker. A user should not receive
-   * nothing merely because external builders failed, so when a new build reaches
-   * this point with no files, the scaffold produces a real, buildable foundation
-   * that the existing install/repair and shipping stages can carry the rest of the
-   * way. These are real files written to the workspace, never a fake preview.
-   */
-  if (!isUpdate && !nextFiles.length) {
-    const scaffoldKind = detectScaffoldKind(userFacingPrompt);
-    const { files: scaffoldFiles } = buildScaffoldForPrompt({
-      prompt: userFacingPrompt,
-      projectName,
-    });
-    if (scaffoldFiles.length) {
-      nextFiles = scaffoldFiles;
-      productScaffoldKind = scaffoldKind;
-      usedDeterministicScaffold = true;
-      emit({
-        agent: 'builder',
-        status: 'model_active',
-        message: 'Builder routes returned no files — using the deterministic scaffold',
-        swarmStatusLabel: 'Building',
-        swarmActivity: 'Deterministic scaffold',
-        swarmTodos: todos('build'),
-      });
-    }
-  }
+  // A model/provider failure must remain a visible failure. Substituting a generic local
+  // project here made an unrelated website look like a successful answer to an arbitrary
+  // software request. Scaffolds may still supply required framework support beneath real
+  // generated files, but they can never be the result when generation produced nothing.
 
   if (!isUpdate && nextFiles.length && !usedDeterministicScaffold) {
     const scaffoldKind = detectScaffoldKind(userFacingPrompt);

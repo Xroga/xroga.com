@@ -17,7 +17,6 @@ import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { streamSwarmExecute, ApiError, type ChatAttachment, api } from '@/lib/api';
 import { capacityUnavailableLine } from '@/lib/capacityMessage';
-import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { buildCompletedChatHistory } from '@/lib/chatHistory';
 import { isMathQueryPrompt } from '@/lib/mathDetect';
 import { streamTextReveal } from '@/lib/streamText';
@@ -1870,14 +1869,32 @@ export function TerminalChatProvider({
           }
         }
 
-        const usePhase1Engine =
-          !isBuildUpdate &&
-          shouldRouteToPhase1(displayPrompt, threadForMemory, attachments, {
-            completedWebsiteBuild: completedWebsiteBuildRef.current,
-            selectedRepo: stickyTargetRepo ?? repoContext?.repo ?? repoContextEarly?.repo,
-          });
+        const canonicalProjectContext = useProjectWorkspaceStore.getState().activeProjectContext;
+        const semanticPlan = await api.phase1.plan(
+          displayPrompt,
+          history,
+          attachments,
+          canonicalProjectContext
+            ? {
+                repo: canonicalProjectContext.repo,
+                branch: canonicalProjectContext.branch,
+                projectRoot: canonicalProjectContext.projectRoot || '/',
+              }
+            : null,
+          { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
+        );
+        const usePhase1Engine = semanticPlan.dispatch === 'chat';
+        let runSwarmBuild = semanticPlan.dispatch === 'build';
 
-        let runSwarmBuild = !usePhase1Engine;
+        if (semanticPlan.dispatch === 'blocked') {
+          gotEvent = true;
+          fullReply = semanticPlan.blockers.length
+            ? `I can't safely complete that yet: ${semanticPlan.blockers.join(' · ')}`
+            : 'I could not match this request to an available, authorized capability.';
+          setMessages((current) => current.map((message) =>
+            message.id === assistantId ? { ...message, content: fullReply, agent: 'Xroga AI' } : message
+          ));
+        }
 
         if (usePhase1Engine) {
           setPipelineCompact(false);
@@ -1905,7 +1922,7 @@ export function TerminalChatProvider({
           );
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments);
+            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
             gotEvent = true;
             fullReply = (result.response || '').trim();
             // Empty Phase 1 must never leave a blank bubble — fall through to swarm or show retry text
@@ -2042,6 +2059,7 @@ export function TerminalChatProvider({
             githubTargetRepo: stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
             projectRoot: activeBuildContext?.projectRoot || '/',
+            semanticGoalContract: semanticPlan.goalContract,
             // Only meaningful when no repo is selected, since that is the case where the
             // build creates one. Read at send time rather than captured earlier so the
             // value sent is the one currently shown in the chatbar.
