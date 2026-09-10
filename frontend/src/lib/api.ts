@@ -1796,7 +1796,6 @@ export interface SemanticRequestPlan {
   capabilityIds: string[];
   rationale: string;
   blockers: string[];
-  modelId: string;
   usage: TokenUsage;
 }
 

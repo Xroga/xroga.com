@@ -14,7 +14,6 @@ export interface SemanticRequestPlan {
   readonly capabilityIds: readonly string[];
   readonly rationale: string;
   readonly blockers: readonly string[];
-  readonly modelId: ModelId;
   readonly usage: ReturnType<typeof usageToTokenUsage>;
 }
 
@@ -103,7 +102,6 @@ export async function planSemanticRequest(input: {
     capabilityIds: capabilityPlan.capabilities.map((item) => item.id),
     rationale: capabilityPlan.rationale,
     blockers,
-    modelId,
     usage: usageToTokenUsage(usage),
   };
 }

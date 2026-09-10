@@ -39,7 +39,7 @@ router.post('/plan', async (req: AuthRequest, res) => {
     const error = err as Error & { code?: string };
     console.error('[phase1/plan]', { code: error.code ?? 'SEMANTIC_PLANNING_FAILED', message: error.message });
     return res.status(error.code === 'SEMANTIC_PLANNER_UNAVAILABLE' ? 503 : 422).json({
-      error: error.message,
+      error: 'Xroga could not safely plan this request. Please try again.',
       code: error.code ?? 'SEMANTIC_PLANNING_FAILED',
     });
   }

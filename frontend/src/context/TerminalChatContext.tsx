@@ -1556,38 +1556,15 @@ export function TerminalChatProvider({
         return;
       }
 
-      // Website/blog builds: do NOT hard-block on GitHub — ship sandbox preview first.
-      // GitHub gate only for update continuations that already depend on an existing repo.
-      const websiteBuildStart = isWebsiteBuildPrompt(userPrompt);
-      if (
-        !websiteBuildStart &&
-        (requiresGitHubForBuild(userPrompt) || isBuildThreadContinuation(userPrompt, messages))
-      ) {
-        try {
-          const gh = await api.github.status();
-          if (!gh.connected) {
-            clearGitHubConnectedSession();
-            skipGithubGateRef.current = false;
-            pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-            setGithubGateOpen(true);
-            return;
-          }
-          markGitHubConnectedSession();
-        } catch {
-          pendingBuildRef.current = { userPrompt, fromQueue, interrupt, attachments };
-          setGithubGateOpen(true);
-          return;
-        }
-      } else if (websiteBuildStart) {
-        // Soft-check GitHub in background — never block the build card
-        void api.github
-          .status()
-          .then((gh) => {
-            if (gh.connected) markGitHubConnectedSession();
-            else clearGitHubConnectedSession();
-          })
-          .catch(() => clearGitHubConnectedSession());
-      }
+      // Connection status is informative here. The authenticated semantic planner is
+      // the only authority that may classify this turn as chat, build, or blocked.
+      void api.github
+        .status()
+        .then((gh) => {
+          if (gh.connected) markGitHubConnectedSession();
+          else clearGitHubConnectedSession();
+        })
+        .catch(() => clearGitHubConnectedSession());
 
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
@@ -1734,7 +1711,7 @@ export function TerminalChatProvider({
         // Paint assistant row immediately — don't wait on auth before the bubble appears
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
-        setPipelineMessage('Starting build…');
+        setPipelineMessage('Understanding your request…');
 
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -1925,15 +1902,10 @@ export function TerminalChatProvider({
             const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
             gotEvent = true;
             fullReply = (result.response || '').trim();
-            // Empty Phase 1 must never leave a blank bubble — fall through to swarm or show retry text
+            // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
             if (!fullReply) {
-              if (isWebsiteBuildPrompt(displayPrompt) || requiresGitHubForBuild(displayPrompt)) {
-                runSwarmBuild = true;
-                setPipelineMessage('Switching to XROGA build swarm…');
-              } else {
-                fullReply =
-                  'I could not finish that reply. Please send your question again — I am ready to answer.';
-              }
+              fullReply =
+                'I could not finish that reply. Please send your question again — I am ready to answer.';
             }
 
             if (fullReply && !runSwarmBuild) {

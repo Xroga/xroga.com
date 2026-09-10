@@ -15,3 +15,9 @@ test('the production dispatch no longer uses the browser keyword phase-one route
   assert.doesNotMatch(context, /shouldRouteToPhase1\(/);
   assert.match(context, /semanticGoalContract: semanticPlan\.goalContract/);
 });
+
+test('keyword guesses cannot pre-empt or override the authenticated semantic plan', () => {
+  assert.doesNotMatch(context, /if \(\s*!websiteBuildStart/);
+  assert.doesNotMatch(context, /if \(isWebsiteBuildPrompt\(displayPrompt\) \|\| requiresGitHubForBuild\(displayPrompt\)\)/);
+  assert.match(context, /Understanding your request…/);
+});
