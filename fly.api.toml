@@ -12,6 +12,10 @@ primary_region = 'iad'
   PORT = '8080'
   NODE_ENV = 'production'
   UNIVERSAL_AGENT_ENABLED = 'default'
+  # Also keeps a legacy `enabled` secret override fully rolled out. Fly secrets take
+  # precedence over this file, so the percentage must be explicit until that old
+  # non-sensitive mode value is removed by an operator.
+  UNIVERSAL_AGENT_PERCENTAGE = '100'
   FRONTEND_URL = 'https://xroga.com'
   GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'
   WHOP_COMPANY_ID = 'biz_qhYONL4RebGX96'
