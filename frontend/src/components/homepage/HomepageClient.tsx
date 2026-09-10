@@ -20,6 +20,7 @@ import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipP
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
+import { HomepageCursorGlitter } from '@/components/homepage/HomepageCursorGlitter';
 
 const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Browser extensions', 'APIs', 'Desktop apps', 'Automations', 'CLIs', 'Libraries', 'Data pipelines'] as const;
 
@@ -50,10 +51,16 @@ export function HomepageClient() {
   const primaryHref = loggedIn ? '/workspace' : '/auth/signup';
 
   return (
-    <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
-      <div className="xv-hc-bg-image" style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }} aria-hidden />
+  <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
+    <div
+      className="xv-hc-bg-image"
+      style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }}
+      aria-hidden
+    />
 
-      <section className="xv-hc-hero">
+    <HomepageCursorGlitter />
+
+    <section className="xv-hc-hero">
         <div className="xv-hc-hero-main">
           <div className="xv-hc-headline-block">
             <p className="xv-hc-eyebrow"><i /> AI APP BUILDER + CODING AGENT</p>
