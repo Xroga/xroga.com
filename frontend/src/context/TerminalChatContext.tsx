@@ -1698,6 +1698,7 @@ export function TerminalChatProvider({
       let gotEvent = false;
       let fullReply = '';
       let buildHadVisibleResult = false;
+      let semanticBuildPlanned = false;
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -1862,6 +1863,7 @@ export function TerminalChatProvider({
         );
         const usePhase1Engine = semanticPlan.dispatch === 'chat';
         let runSwarmBuild = semanticPlan.dispatch === 'build';
+        semanticBuildPlanned = runSwarmBuild;
 
         if (semanticPlan.dispatch === 'blocked') {
           gotEvent = true;
@@ -3148,7 +3150,7 @@ export function TerminalChatProvider({
               : null;
           const friendly =
             capacityLine ??
-            (codeBuildActive
+            (codeBuildActive || semanticBuildPlanned
               ? isBuildUpdateEarly
                 ? `**Update could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`
                 : `**Build could not start.** ${err instanceof Error ? err.message : 'The server did not accept the run.'}`

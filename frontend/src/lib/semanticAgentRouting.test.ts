@@ -21,3 +21,8 @@ test('keyword guesses cannot pre-empt or override the authenticated semantic pla
   assert.doesNotMatch(context, /if \(isWebsiteBuildPrompt\(displayPrompt\) \|\| requiresGitHubForBuild\(displayPrompt\)\)/);
   assert.match(context, /Understanding your request…/);
 });
+
+test('a semantic build failure cannot be disguised as a generic chat fallback', () => {
+  assert.match(context, /semanticBuildPlanned = runSwarmBuild/);
+  assert.match(context, /codeBuildActive \|\| semanticBuildPlanned/);
+});
