@@ -46,10 +46,8 @@ export default function GameBuilderPage() {
   /**
    * Structured data: the product only, unchanged from before the redesign.
    *
-   * Still deliberately no `FAQPage` block. `SiteJsonLd` in the root layout already
-   * emits a site-wide FAQPage on every route, so adding one here would put two
-   * conflicting FAQPage entries on a single URL. The visible FAQ is still crawled
-   * as ordinary content.
+   * Deliberately no `FAQPage` block. The visible FAQ remains crawlable content, but
+   * promotional software FAQs are not marked up as a broadly eligible rich result.
    */
   const softwareLd = {
     '@context': 'https://schema.org',

@@ -6,10 +6,21 @@ const problems = [];
 const titleMap = new Map();
 const canonicalMap = new Map();
 const internalPaths = new Set();
+const pageText = new Map();
 
 function match(html, expression) { return html.match(expression)?.[1]?.trim() || ''; }
 function decodeHtml(value) { return value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#x27;', "'").replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>'); }
 function visibleText(value) { return value.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
+function shingles(value) {
+  const words = value.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((word) => word.length > 2);
+  return new Set(words.slice(0, -4).map((_, index) => words.slice(index, index + 5).join(' ')));
+}
+function similarity(left, right) {
+  if (!left.size || !right.size) return 0;
+  let overlap = 0;
+  for (const value of left) if (right.has(value)) overlap += 1;
+  return overlap / Math.min(left.size, right.size);
+}
 function collectTypes(value, output = new Set()) {
   if (Array.isArray(value)) for (const item of value) collectTypes(item, output);
   else if (value && typeof value === 'object') {
@@ -50,7 +61,9 @@ for (const contract of contracts.publicRoutes) {
   if (!/name=["']twitter:card["']/i.test(html)) problems.push(`${path}: twitter card metadata missing`);
   if (h1Count !== contract.h1Count) problems.push(`${path}: expected ${contract.h1Count} H1, found ${h1Count}`);
   if (/name=["']robots["'][^>]+noindex/i.test(html)) problems.push(`${path}: public route is noindex`);
-  if (visibleText(html).length < 180) problems.push(`${path}: insufficient server-rendered text`);
+  const text = visibleText(html);
+  if (text.length < 180) problems.push(`${path}: insufficient server-rendered text`);
+  pageText.set(path, shingles(text));
   if (titleMap.has(title)) problems.push(`${path}: duplicate title also used by ${titleMap.get(title)}`); else titleMap.set(title, path);
   if (canonicalMap.has(canonical)) problems.push(`${path}: duplicate canonical also used by ${canonicalMap.get(canonical)}`); else canonicalMap.set(canonical, path);
 
@@ -71,6 +84,17 @@ for (const contract of contracts.publicRoutes) {
       const url = new URL(decodeHtml(link[1]), 'https://xroga.com');
       if (url.origin === 'https://xroga.com') internalPaths.add(url.pathname);
     } catch { problems.push(`${path}: malformed internal link ${link[1]}`); }
+  }
+}
+
+const comparablePages = [...pageText.entries()];
+for (let leftIndex = 0; leftIndex < comparablePages.length; leftIndex += 1) {
+  for (let rightIndex = leftIndex + 1; rightIndex < comparablePages.length; rightIndex += 1) {
+    const [leftPath, leftText] = comparablePages[leftIndex];
+    const [rightPath, rightText] = comparablePages[rightIndex];
+    if (leftText.size > 80 && rightText.size > 80 && similarity(leftText, rightText) >= 0.9) {
+      problems.push(`${rightPath}: near-duplicate server content with ${leftPath}`);
+    }
   }
 }
 
@@ -108,6 +132,9 @@ try {
     if (/content=["'][^"']*noindex/i.test(html)) problems.push(`${pathname}: noindex URL appears in sitemap`);
     const canonical = match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) || match(html, /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i);
     if (canonical !== location) problems.push(`${pathname}: sitemap location and canonical differ (${location} vs ${canonical || 'none'})`);
+    if (/^\/(?:stack|migrate|tools)(?:\/|$)|^\/changelog$/.test(pathname) && !internalPaths.has(pathname)) {
+      problems.push(`${pathname}: new discovery page has no inbound link from an audited public route`);
+    }
   }
 } catch (error) { problems.push(`sitemap crawl failed (${error instanceof Error ? error.message : 'network error'})`); }
 

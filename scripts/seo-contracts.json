@@ -20,7 +20,14 @@
     { "path": "/blog", "status": 200, "title": "AI App Building and Coding Guides | XROGA AI", "canonical": "https://xroga.com/blog", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
     { "path": "/blog/what-is-vibe-coding", "status": 200, "title": "What is vibe coding? Meaning, workflow, risks, and examples | XROGA AI", "canonical": "https://xroga.com/blog/what-is-vibe-coding", "h1Count": 1, "schemaTypes": ["Article", "WebPage", "BreadcrumbList"] },
     { "path": "/learn", "status": 200, "title": "Learn Production-Ready AI Software Building | XROGA AI", "canonical": "https://xroga.com/learn", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
-    { "path": "/learn/production-readiness-checklist", "status": 200, "title": "Production-readiness checklist for AI-built software | XROGA AI", "canonical": "https://xroga.com/learn/production-readiness-checklist", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] }
+    { "path": "/learn/production-readiness-checklist", "status": 200, "title": "Production-readiness checklist for AI-built software | XROGA AI", "canonical": "https://xroga.com/learn/production-readiness-checklist", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] },
+    { "path": "/stack", "status": 200, "title": "Build With Modern Software Stacks | XROGA AI", "canonical": "https://xroga.com/stack", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/stack/nextjs", "status": 200, "title": "Build a Next.js app with an AI coding agent | XROGA AI", "canonical": "https://xroga.com/stack/nextjs", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] },
+    { "path": "/migrate", "status": 200, "title": "Migrate AI-Built Projects Without Losing Control | XROGA AI", "canonical": "https://xroga.com/migrate", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/migrate/lovable-to-xroga", "status": 200, "title": "Move a Lovable project into a repository-led Xroga workflow", "canonical": "https://xroga.com/migrate/lovable-to-xroga", "h1Count": 1, "schemaTypes": ["WebPage", "BreadcrumbList"] },
+    { "path": "/tools", "status": 200, "title": "Free Software Planning and Release Tools | XROGA AI", "canonical": "https://xroga.com/tools", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
+    { "path": "/tools/production-readiness-checker", "status": 200, "title": "Free production-readiness checker for software teams | XROGA AI", "canonical": "https://xroga.com/tools/production-readiness-checker", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/changelog", "status": 200, "title": "Xroga product changelog", "canonical": "https://xroga.com/changelog", "h1Count": 1, "schemaTypes": ["WebPage"] }
   ],
   "privateRoutes": ["/workspace", "/dashboard", "/settings", "/admin/community", "/auth/login", "/share/abcdefghijklmnopqrstuv"],
   "discoveryFiles": [

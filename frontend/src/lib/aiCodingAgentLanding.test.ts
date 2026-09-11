@@ -115,10 +115,10 @@ test('every internal link is a route that exists', () => {
 
 test('the routes this page abandoned are still linked nowhere here', () => {
   // Named explicitly, because these are the ones the reference uses.
-  for (const dead of ['/crypto-builder', '/changelog', '/careers', '/guides', '/api-reference']) {
+  for (const dead of ['/crypto-builder', '/careers', '/guides', '/api-reference']) {
     assert.ok(
       !SOURCE.includes(`href="${dead}"`) && !SOURCE.includes(`href: '${dead}'`),
-      `${dead} has never been a route; the real crypto page is /crypto`,
+      `${dead} is not a current canonical route; the real crypto page is /crypto`,
     );
   }
 });

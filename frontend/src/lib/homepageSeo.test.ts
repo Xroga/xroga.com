@@ -14,7 +14,7 @@ test('homepage is a server route with crawlable metadata and structured content'
   assert.doesNotMatch(ROUTE, /^['"]use client['"]/);
   assert.match(ROUTE, /export const metadata/);
   assert.match(ROUTE, /path: '\/'/);
-  assert.match(ROUTE, /FAQPage/);
+  assert.doesNotMatch(ROUTE, /FAQPage/);
   assert.match(ROUTE, /<HomepageClient \/>/);
 });
 

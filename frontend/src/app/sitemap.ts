@@ -4,6 +4,7 @@ import { DOC_PAGES } from '@/lib/docsContent';
 import { SITE_URL } from '@/lib/seo';
 import { SHOWCASE_TEMPLATES } from '@/lib/showcase/registry';
 import { ALTERNATIVES, BLOG_ARTICLES, BUILD_GUIDES, COMPARISONS, INTEGRATION_GUIDES } from '@/lib/seoGrowthContent';
+import { MIGRATION_GUIDES, STACK_GUIDES } from '@/lib/seoExpansionContent';
 
 const routes = [
   ['', 1, 'daily'], ['/features', .95, 'weekly'], ['/features/ai-chat', .96, 'weekly'], ['/pricing', .92, 'weekly'], ['/integrations', .88, 'monthly'],
@@ -14,6 +15,8 @@ const routes = [
   ['/compare', .92, 'weekly'], ['/alternatives', .88, 'weekly'], ['/build', .9, 'weekly'],
   ['/build-with', .86, 'monthly'], ['/blog', .9, 'weekly'], ['/learn', .84, 'monthly'],
   ['/learn/production-readiness-checklist', .9, 'monthly'], ['/vibe-coding', .92, 'monthly'], ['/security', .82, 'monthly'],
+  ['/stack', .88, 'monthly'], ['/migrate', .88, 'monthly'], ['/tools', .86, 'monthly'],
+  ['/tools/production-readiness-checker', .92, 'monthly'], ['/changelog', .76, 'weekly'],
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -29,5 +32,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...INTEGRATION_GUIDES.map(({ slug }) => `/build-with/${slug}`),
     ...BLOG_ARTICLES.map(({ slug }) => `/blog/${slug}`),
   ].map((path) => ({ url: `${SITE_URL}${path}`, priority: .84, changeFrequency: 'monthly' as const, lastModified: new Date('2026-09-09T00:00:00Z') }));
-  return [...canonical, ...capabilities, ...docs, ...showcase, ...growth];
+  const expansion = [
+    ...STACK_GUIDES.map(({ slug }) => `/stack/${slug}`),
+    ...MIGRATION_GUIDES.map(({ slug }) => `/migrate/${slug}`),
+  ].map((path) => ({ url: `${SITE_URL}${path}`, priority: .84, changeFrequency: 'monthly' as const, lastModified: new Date('2026-09-11T00:00:00Z') }));
+  return [...canonical, ...capabilities, ...docs, ...showcase, ...growth, ...expansion];
 }

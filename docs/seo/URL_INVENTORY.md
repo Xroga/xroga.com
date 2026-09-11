@@ -25,6 +25,10 @@ Inventory date: 2026-09-09. All indexable routes use a self-referencing `https:/
 | `/build-with` + six `/build-with/[provider]` pages | integration hub/detail | yes | provider implementation | ADD |
 | `/blog` + five `/blog/[slug]` pages | editorial hub/article | yes | informational evaluation | ADD |
 | `/learn` + `/learn/production-readiness-checklist` | learning hub/guide | yes | production readiness | ADD |
+| `/stack` + four `/stack/[technology]` guides | technology hub/detail | yes | framework-aware repository work | ADD |
+| `/migrate` + four `/migrate/[source]-to-xroga` guides | migration hub/detail | yes | controlled project migration | ADD |
+| `/tools` + `/tools/production-readiness-checker` | working utility | yes | release evidence review | ADD |
+| `/changelog` | factual product record | yes | release and reliability changes | ADD |
 | `/crypto`, `/game-builder`, `/software`, `/cybersecurity`, `/research`, `/research/web3-hackathon-winning-patterns`, `/about`, `/contact`, `/community`, `/community/[postId]` | existing public content | yes | respective branded/topic intent | KEEP |
 | `/terms`, `/privacy`, `/refund` | legal | yes | policy lookup | KEEP, low sitemap priority |
 | `/share/[token]` | user-generated share | no | direct sharing | NOINDEX,FOLLOW; exclude sitemap |

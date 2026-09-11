@@ -47,7 +47,7 @@ WebPage #webpage --isPartOf--> WebSite #website
 WebPage #webpage --about/publisher--> Organization #organization
 ```
 
-Unknown organization identifiers and dates remain omitted. The $19 Offer is retained because the visible pricing page and repository configuration support it; it must be updated together with pricing if the plan changes.
+Unknown organization identifiers and dates remain omitted. Current SoftwareApplication offers match the public pricing contract: Free at $0 and Xroga Pro at $25/month.
 
 ## Metadata and canonical changes
 

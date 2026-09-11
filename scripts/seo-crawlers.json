@@ -1,0 +1,48 @@
+{
+  "reviewedAt": "2026-09-11",
+  "policy": "Public editorial and product pages are crawlable. Private workspace, account, API, preview, and terminal routes are blocked.",
+  "crawlers": [
+    {
+      "userAgent": "Googlebot",
+      "purpose": "Google Search discovery and indexing",
+      "robotsApplies": true,
+      "policy": "allow-public",
+      "source": "https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers"
+    },
+    {
+      "userAgent": "OAI-SearchBot",
+      "purpose": "Surface websites in ChatGPT search",
+      "robotsApplies": true,
+      "policy": "allow-public",
+      "source": "https://developers.openai.com/api/docs/bots"
+    },
+    {
+      "userAgent": "GPTBot",
+      "purpose": "Potential foundation-model training crawl",
+      "robotsApplies": true,
+      "policy": "inherit-public-policy",
+      "source": "https://developers.openai.com/api/docs/bots"
+    },
+    {
+      "userAgent": "ChatGPT-User",
+      "purpose": "User-initiated page retrieval in ChatGPT",
+      "robotsApplies": false,
+      "policy": "document-only",
+      "source": "https://developers.openai.com/api/docs/bots"
+    },
+    {
+      "userAgent": "PerplexityBot",
+      "purpose": "Perplexity search indexing",
+      "robotsApplies": true,
+      "policy": "allow-public",
+      "source": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
+    },
+    {
+      "userAgent": "Perplexity-User",
+      "purpose": "User-initiated retrieval in Perplexity",
+      "robotsApplies": false,
+      "policy": "document-only",
+      "source": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
+    }
+  ]
+}

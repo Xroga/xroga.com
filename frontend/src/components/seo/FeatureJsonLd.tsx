@@ -16,19 +16,6 @@ export function FeatureJsonLd({ page }: { page: FeatureSeoPage }) {
     publisher: { '@id': ORGANIZATION_ID },
   };
 
-  const faq =
-    page.faq.length > 0
-      ? {
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: page.faq.map((item) => ({
-            '@type': 'Question',
-            name: item.q,
-            acceptedAnswer: { '@type': 'Answer', text: item.a },
-          })),
-        }
-      : null;
-
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -43,9 +30,6 @@ export function FeatureJsonLd({ page }: { page: FeatureSeoPage }) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      {faq && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />
-      )}
     </>
   );
 }
