@@ -224,6 +224,13 @@ export interface ValidationReport {
   readonly blocker: string | null;
 }
 
+function describeValidationFailure(entry: ExecutedValidation): string {
+  const command = [entry.validation.command.command, ...entry.validation.command.args].join(' ');
+  const exit = entry.exitCode === null ? 'did not return an exit code' : `exited ${entry.exitCode}`;
+  const output = `${entry.stderr}\n${entry.stdout}`.trim().replace(/\s+/g, ' ').slice(0, 800);
+  return `${command} ${exit}${output ? `: ${output}` : ''}`;
+}
+
 /**
  * Runs a validation plan through the sandbox.
  *
@@ -303,7 +310,7 @@ export async function runValidationPlan(
     passed: failures.length === 0,
     failures,
     tierReached: 'sandbox',
-    blocker: null,
+    blocker: failures[0] ? describeValidationFailure(failures[0]) : null,
   };
 }
 

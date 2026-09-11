@@ -388,6 +388,7 @@ describe('a run may not overstate what it verified', () => {
     );
     assert.equal(report.passed, false);
     assert.equal(report.failures.length, 1, 'later phases assume earlier ones succeeded');
+    assert.match(report.blocker!, /cargo check --all-targets exited 1: error\[E0308\]: mismatched types/);
   });
 });
 
