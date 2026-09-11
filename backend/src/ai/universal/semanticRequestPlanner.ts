@@ -34,7 +34,18 @@ export function dispatchForGoal(goal: GoalContract, capabilityIds: readonly stri
   if (descriptors.some((item) => item!.effects.includes('write')) || capabilityIds.includes('software.implement')) {
     return 'build';
   }
-  if (goal.semanticIntent === 'MODIFY' || goal.semanticIntent === 'EXTERNAL_ACTION') return 'blocked';
+  if (goal.semanticIntent === 'MODIFY') return 'blocked';
+  if (goal.semanticIntent === 'EXTERNAL_ACTION') {
+    // Some interpreters describe a public-web lookup as an external action even though its
+    // executable capabilities are strictly read-only. Authority and capability resolution
+    // above are the security boundary; do not turn an authorized read into a false refusal
+    // merely because the semantic label is broader than the selected effects.
+    const authorizedReadOnlyExternal = descriptors.some((item) => item!.effects.includes('external'))
+      && descriptors.every((item) => !item!.effects.includes('write'))
+      && descriptors.every((item) => item!.requiredAuthorities.every((authority) =>
+        authority === 'model:execute' || /(?:^|[:-])read$/.test(authority)));
+    return authorizedReadOnlyExternal ? 'chat' : 'blocked';
+  }
   return 'chat';
 }
 

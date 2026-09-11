@@ -35,6 +35,16 @@ describe('semantic request dispatch', () => {
     );
   });
 
+  it('does not block authorized read-only research when the interpreter uses the broad external-action label', () => {
+    assert.equal(
+      dispatchForGoal(
+        goal({ semanticIntent: 'EXTERNAL_ACTION' }),
+        ['research.public-web', 'conversation.respond'],
+      ),
+      'chat',
+    );
+  });
+
   it('treats an active repository as context rather than mutation intent', () => {
     const readOnly = goal({
       semanticIntent: 'INVESTIGATE',
