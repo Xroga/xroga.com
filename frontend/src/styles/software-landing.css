@@ -169,9 +169,7 @@
    set white type, the scrims are now thin, and the artwork is served from a remote host.
    Without a ground, one failed request renders white text on white. */
 /* ============================================================
-   /software hero — Ada Lovelace PERSON-ONLY Particle Image
-   AUTO mode only
-   No rectangular image/card.
+   /software hero — FULL HERO PARTICLES + Ada person cutout
    ============================================================ */
 
 .xsw-hero {
@@ -193,11 +191,7 @@
   pointer-events: none;
 }
 
-/*
- * Hidden source image.
- * It is used only by JavaScript to build the transparent Ada cutout.
- * It never appears as a rectangular image in the hero.
- */
+/* Original rectangular image is never displayed. */
 .xsw-hero-particles__source {
   position: absolute !important;
   width: 1px !important;
@@ -206,25 +200,22 @@
   pointer-events: none !important;
 }
 
-/*
- * Visible transparent Ada cutout.
- * Only the person is drawn here; the original painting/background is removed.
- */
+/* Visible Ada cutout only. */
 .xsw-hero-particles__portrait {
   position: absolute;
   top: 50%;
-  right: clamp(-1rem, 2vw, 3rem);
+  right: clamp(-2rem, 1vw, 2rem);
 
-  width: min(47vw, 690px);
+  width: min(48vw, 700px);
   height: auto;
-  max-height: 92%;
+  max-height: 94%;
 
   transform: translateY(-50%);
   opacity: 0.90;
 
   filter:
     grayscale(1)
-    contrast(1.72)
+    contrast(1.76)
     brightness(0.78);
 
   mix-blend-mode: screen;
@@ -233,8 +224,9 @@
 }
 
 /*
- * GPU particle canvas covers the hero, but particles originate only
- * from the person cutout.
+ * The WebGL canvas now covers the ENTIRE hero.
+ * Some particles remain across the full hero even when Ada is resolved,
+ * and the auto spread sends the rest across the hero.
  */
 .xsw-hero-particles__canvas {
   position: absolute;
@@ -246,8 +238,8 @@
 }
 
 /*
- * Readability veil only.
- * No image box, no image card, no rectangular painting background.
+ * Much lighter readability veil than before.
+ * This keeps particles visible across the whole hero instead of hiding them.
  */
 .xsw-hero::before {
   content: '';
@@ -257,18 +249,17 @@
   pointer-events: none;
 
   background:
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--tp-bg) 88%, transparent) 0%,
-      color-mix(in srgb, var(--tp-bg) 66%, transparent) 34%,
-      color-mix(in srgb, var(--tp-bg) 20%, transparent) 58%,
+    radial-gradient(
+      ellipse 45% 54% at 50% 48%,
+      color-mix(in srgb, var(--tp-bg) 42%, transparent) 0%,
+      color-mix(in srgb, var(--tp-bg) 20%, transparent) 48%,
       transparent 78%
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--tp-bg) 5%, transparent) 0%,
-      transparent 70%,
-      color-mix(in srgb, var(--tp-bg) 30%, transparent) 100%
+      color-mix(in srgb, var(--tp-bg) 4%, transparent) 0%,
+      transparent 72%,
+      color-mix(in srgb, var(--tp-bg) 24%, transparent) 100%
     );
 }
 
@@ -283,35 +274,31 @@
   text-align: center;
 }
 
-/* White theme */
+/* Theme-specific portrait treatment */
 body.theme-white .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
     contrast(1.34)
-    brightness(0.86);
+    brightness(0.88);
   mix-blend-mode: multiply;
 }
 
-/* Beige theme */
 body.theme-beige .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
     sepia(0.10)
     contrast(1.30)
-    brightness(0.88);
+    brightness(0.90);
   mix-blend-mode: multiply;
 }
 
-/* Gray theme */
 body.theme-gray .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
-    contrast(1.58)
-    brightness(0.80);
+    contrast(1.60)
+    brightness(0.82);
   mix-blend-mode: screen;
 }
-
-/* Black theme uses the base rule above. */
 
 @media (max-width: 900px) {
   .xsw-hero-particles__portrait {
@@ -325,10 +312,10 @@ body.theme-gray .xsw-hero-particles__portrait {
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, var(--tp-bg) 4%, transparent) 0%,
-        color-mix(in srgb, var(--tp-bg) 20%, transparent) 34%,
-        color-mix(in srgb, var(--tp-bg) 70%, transparent) 62%,
-        var(--tp-bg) 88%
+        color-mix(in srgb, var(--tp-bg) 3%, transparent) 0%,
+        color-mix(in srgb, var(--tp-bg) 14%, transparent) 36%,
+        color-mix(in srgb, var(--tp-bg) 58%, transparent) 68%,
+        var(--tp-bg) 92%
       );
   }
 }
