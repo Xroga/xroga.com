@@ -31,6 +31,7 @@ import { SoftwareFeatureTabs } from './SoftwareFeatureTabs';
 // the ancestor class below is necessary but not sufficient on its own.
 import '@/styles/homepage-coding.css';
 import '@/styles/software-landing.css';
+import { SoftwareHeroParticleImage } from './SoftwareHeroParticleImage';
 
 /**
  * /software — the Xroga Software World landing page.
@@ -103,8 +104,9 @@ export function SoftwareLanding() {
 
       {/* ---------------------------------------------------------------- hero */}
       <section className="xsw-hero">
+  <SoftwareHeroParticleImage />
 
-        <div className="xsw-shell xsw-hero__body">
+  <div className="xsw-shell xsw-hero__body">
           <p className="xsw-eyebrow"><Sparkles aria-hidden="true" />Xroga for software</p>
 
           <h1 className="xsw-h1">
