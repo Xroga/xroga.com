@@ -1439,6 +1439,33 @@ export interface GitHubRepoAnalysis {
   report: string;
 }
 
+const REPOSITORY_BUILD_EVIDENCE = new Set(
+  UPDATE_HYDRATE_PATHS.filter((path) => !['README.md', '.env.example'].includes(path)),
+);
+
+/** Report only build/configuration files that are actually present in the scanned tree. */
+export function repositoryBuildEvidencePaths(paths: readonly string[]): string[] {
+  return [...new Set(paths.filter((path) =>
+    [...REPOSITORY_BUILD_EVIDENCE].some((candidate) => path === candidate || path.endsWith(`/${candidate}`))))].sort();
+}
+
+/** Conservative language/runtime hints derived from repository facts, never scaffold guesses. */
+export function inferRepositoryTechStack(paths: readonly string[]): string[] {
+  const normalized = paths.map((path) => path.toLowerCase());
+  const stack: string[] = [];
+  if (normalized.some((path) => path === 'package.json' || path.endsWith('/package.json'))) stack.push('Node.js / npm');
+  if (normalized.some((path) => /next\.config/.test(path))) stack.push('Next.js');
+  if (normalized.some((path) => /tailwind\.config/.test(path))) stack.push('Tailwind CSS');
+  if (normalized.some((path) => path.includes('supabase') || path.includes('migrations'))) stack.push('Supabase');
+  if (normalized.some((path) => path === 'index.html')) stack.push('Static HTML/CSS/JS');
+  if (normalized.some((path) => /\.tsx?$/.test(path))) stack.push('TypeScript');
+  if (normalized.some((path) => path.endsWith('.py') || path === 'pyproject.toml' || path === 'requirements.txt')) stack.push('Python');
+  if (normalized.some((path) => path === 'go.mod' || path.endsWith('.go'))) stack.push('Go');
+  if (normalized.some((path) => path === 'cargo.toml' || path.endsWith('.rs'))) stack.push('Rust');
+  if (normalized.some((path) => path === 'package.swift' || path.endsWith('.swift'))) stack.push('Swift');
+  return stack.length ? stack : ['No framework or runtime inferred from the sampled tree'];
+}
+
 export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
@@ -1496,10 +1523,12 @@ export async function analyzeGitHubRepo(
 
   let buildFiles = { html: '', css: '', js: '' };
   let hasBuildFiles = false;
+  let buildEvidencePaths: string[] = [];
   if (!lite) {
     try {
       const files = await fetchBuildFilesFromGitHub(userId, repoName, scanBranch);
-      hasBuildFiles = true;
+      buildEvidencePaths = repositoryBuildEvidencePaths(files.map((file) => file.path));
+      hasBuildFiles = buildEvidencePaths.length > 0;
       buildFiles = {
         html: files.find((f) => f.path === 'index.html')?.content ?? '',
         css: files.find((f) => f.path === 'styles.css')?.content ?? '',
@@ -1509,20 +1538,12 @@ export async function analyzeGitHubRepo(
       /* repo may not have static build files yet */
     }
   } else {
-    hasBuildFiles = treeSample.some(
-      (f) => f.path === 'index.html' || f.path.endsWith('/index.html') || f.path === 'package.json'
-    );
+    buildEvidencePaths = repositoryBuildEvidencePaths(treeSample.map((file) => file.path));
+    hasBuildFiles = buildEvidencePaths.length > 0;
   }
 
   const paths = treeSample.map((f) => f.path);
-  const techStack: string[] = [];
-  if (paths.some((p) => p === 'package.json' || p.endsWith('/package.json'))) techStack.push('Node.js / npm');
-  if (paths.some((p) => /next\.config/i.test(p))) techStack.push('Next.js');
-  if (paths.some((p) => /tailwind\.config/i.test(p))) techStack.push('Tailwind CSS');
-  if (paths.some((p) => p.includes('supabase') || p.includes('migrations'))) techStack.push('Supabase');
-  if (paths.some((p) => p === 'index.html')) techStack.push('Static HTML/CSS/JS');
-  if (paths.some((p) => /\.tsx?$/.test(p))) techStack.push('TypeScript');
-  if (techStack.length === 0) techStack.push('Fresh project (scaffold on build)');
+  const techStack = inferRepositoryTechStack(paths);
 
   const criticalPaths = [
     'package.json',
@@ -1542,7 +1563,7 @@ export async function analyzeGitHubRepo(
 
   const langList = Object.keys(languages).slice(0, 6).join(', ') || repoMeta.language || 'Unknown';
   const summary = hasBuildFiles
-    ? `Repository ${repoName} (${scanBranch}): ${fileCount} files. Static site detected. Stack: ${techStack.join(', ')}. Languages: ${langList}.`
+    ? `Repository ${repoName} (${scanBranch}): ${fileCount} files. Recognized build/configuration files: ${buildEvidencePaths.join(', ')}. Stack: ${techStack.join(', ')}. Languages: ${langList}.`
     : `Repository ${repoName} (${scanBranch}): ${fileCount} files. Stack: ${techStack.join(', ')}. Languages: ${langList}.`;
 
   const report = [
@@ -1553,7 +1574,9 @@ export async function analyzeGitHubRepo(
     `- Estimated lines: ~${totalLinesEstimate.toLocaleString()}`,
     `- Tech stack: ${techStack.join(', ')}`,
     `- Languages: ${langList}`,
-    hasBuildFiles ? '- Build files: index.html, styles.css, script.js ✓' : '- Build files: none yet (fresh build)',
+    hasBuildFiles
+      ? `- Recognized build/configuration files present: ${buildEvidencePaths.join(', ')}`
+      : '- Recognized build/configuration files present: none in the sampled tree',
   ].join('\n');
 
   const analysis: GitHubRepoAnalysis = {
