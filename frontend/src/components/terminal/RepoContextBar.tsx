@@ -218,7 +218,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       const { hasFreshTerminalIntent } = await import('@/lib/repoContext');
       const freshTerminal = hasFreshTerminalIntent();
 
-      // Fresh Terminal: never auto-bind sticky default — user must pick (or leave empty for new product).
+      // Explicit New product: never auto-bind a sticky repository.
       const defaultRepo = freshTerminal
         ? savedRepo && list.some((r) => r.fullName === savedRepo)
           ? savedRepo
@@ -254,7 +254,7 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
           globalThis.setTimeout(runAnalyze, 200);
         }
       } else if (freshTerminal) {
-        // Keep selection cleared for a new product
+        // Keep selection cleared for an explicit new product.
         setSelectedBranch('main');
       }
     } catch {

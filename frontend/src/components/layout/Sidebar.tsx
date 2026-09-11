@@ -482,7 +482,8 @@ export function Sidebar({ displayName }: SidebarProps) {
     useProjectWorkspaceStore.getState().setWorkspaceOpen(false);
     handleNavClick();
     router.push('/workspace');
-    // Clear repo + open chatbar "Select repository" — never auto-pick for the user.
+    // Signal the composer after the task reset. The canonical project stays selected;
+    // users clear it only through the separate "New product" control.
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('xroga-request-new-terminal'));
     }, 80);

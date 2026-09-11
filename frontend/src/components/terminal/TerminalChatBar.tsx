@@ -149,21 +149,14 @@ export function TerminalChatBar() {
       .catch(() => setVercelConnected(false));
   }, []);
 
-  // Sidebar "New Terminal" → clear repo and focus the clean composer. Repository
-  // selection stays one click away in the context strip; opening that menu here hid
-  // the very ideas and templates a new terminal is meant to reveal.
+  // Sidebar "New Terminal" creates a clean task inside the active project. Project
+  // selection is canonical workspace state and must survive task creation; only the
+  // explicit "New product" action is allowed to clear it.
   useEffect(() => {
     const onNewTerminal = () => {
       if (incognito) return;
-      void (async () => {
-        const { clearSelectedRepoContext, markFreshTerminalIntent } = await import('@/lib/repoContext');
-        const { notifyRepoContextCleared } = await import('@/lib/githubProjectEvents');
-        markFreshTerminalIntent();
-        clearSelectedRepoContext();
-        notifyRepoContextCleared();
-        triggerComposerSignal(2400);
-        window.setTimeout(() => textareaRef.current?.focus(), 100);
-      })();
+      triggerComposerSignal(2400);
+      window.setTimeout(() => textareaRef.current?.focus(), 100);
     };
     window.addEventListener('xroga-request-new-terminal', onNewTerminal);
     return () => window.removeEventListener('xroga-request-new-terminal', onNewTerminal);

@@ -4,10 +4,10 @@ export const GITHUB_PROJECT_SAVED_EVENT = 'xroga-github-project-saved';
 /** Fired when user continues a project — RepoContextBar should reload repo. */
 export const GITHUB_REPO_CONTEXT_EVENT = 'xroga-github-repo-context';
 
-/** Fired after New Terminal — clear selection and open chatbar repo picker. */
+/** Fired when an explicit project-selection flow should open the repo picker. */
 export const OPEN_REPO_PICKER_EVENT = 'xroga-open-repo-picker';
 
-/** Fired when repo selection was cleared (New Terminal). */
+/** Fired when repo selection was explicitly cleared by New product. */
 export const REPO_CONTEXT_CLEARED_EVENT = 'xroga-repo-context-cleared';
 
 export function notifyGithubProjectSaved(projectId?: string): void {

@@ -81,7 +81,7 @@ export function saveNewRepoVisibility(visibility: NewRepoVisibility): void {
 
 const FRESH_TERMINAL_KEY = 'xroga-fresh-terminal';
 
-/** Mark that New Terminal was clicked — user must pick a repo; do not auto-restore old #N. */
+/** Mark the explicit New product flow so it cannot inherit the previous project. */
 export function markFreshTerminalIntent(): void {
   if (typeof window === 'undefined') return;
   sessionStorage.setItem(FRESH_TERMINAL_KEY, '1');

@@ -36,12 +36,13 @@ test('New Terminal closes Project edits before revealing the centered starter', 
   assert.match(handler, /xroga-request-new-terminal/);
 });
 
-test('New Terminal leaves repository selection available without opening it over the composer', () => {
+test('New Terminal preserves canonical project selection and focuses the clean composer', () => {
   const start = CHATBAR.indexOf('// Sidebar "New Terminal"');
   const effectOpen = CHATBAR.indexOf('useEffect(() => {', start);
   const effect = CHATBAR.slice(start, CHATBAR.indexOf('useEffect(() => {', effectOpen + 20));
-  assert.match(effect, /clearSelectedRepoContext\(\)/);
-  assert.match(effect, /notifyRepoContextCleared\(\)/);
+  assert.doesNotMatch(effect, /clearSelectedRepoContext\(\)/);
+  assert.doesNotMatch(effect, /markFreshTerminalIntent\(\)/);
+  assert.doesNotMatch(effect, /notifyRepoContextCleared\(\)/);
   assert.match(effect, /textareaRef\.current\?\.focus\(\)/);
   assert.doesNotMatch(effect, /notifyOpenRepoPicker/);
   assert.doesNotMatch(effect, /setRepoGate/);
