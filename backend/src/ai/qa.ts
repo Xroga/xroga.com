@@ -2,6 +2,7 @@ import { chatCompletion } from './openaiCompat.js';
 import type { ProjectFile } from './patches.js';
 import { staticValidateProject } from './staticValidate.js';
 import type { ModelId } from './models.js';
+import { extractJson } from './black-hole/structuredOutput.js';
 
 export interface ReviewBuildOutputOpts {
   prompt: string;
@@ -90,22 +91,16 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
     findings: [] as ReviewBuildOutputResult['findings'],
   });
 
-  const trimmed = text.trim();
-  if (!trimmed) return failClosed('The reviewer returned nothing — treated as not reviewed.');
+  if (!text.trim()) return failClosed('The reviewer returned nothing — treated as not reviewed.');
 
-  const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = (fence ? fence[1] : trimmed).trim();
-
-  let parsed: Record<string, unknown>;
-  try {
-    const value = JSON.parse(raw) as unknown;
-    if (!value || typeof value !== 'object' || Array.isArray(value)) {
-      return failClosed('The reviewer response was not a JSON object — treated as not reviewed.');
-    }
-    parsed = value as Record<string, unknown>;
-  } catch {
+  const value = extractJson(text);
+  if (value === undefined) {
     return failClosed('The reviewer response could not be parsed — treated as not reviewed.');
   }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return failClosed('The reviewer response was not a JSON object — treated as not reviewed.');
+  }
+  const parsed = value as Record<string, unknown>;
 
   const issues = Array.isArray(parsed.issues)
     ? parsed.issues.filter((x): x is string => typeof x === 'string')

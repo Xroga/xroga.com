@@ -79,6 +79,24 @@ test('fail-closed: only explicit ok:true passes', async () => {
   assert.equal(result.ok, true);
 });
 
+test('accepts an explicit review verdict wrapped in harmless prose', async () => {
+  const result = await reviewBuildOutput({
+    prompt: 'build a thing',
+    html: '',
+    css: '',
+    js: '',
+    files: FILES,
+    changedFiles: FILES.map(f => f.path),
+    completion: async () => reply(
+      'Review complete.\n{"ok":true,"issues":[],"fixHints":[],"findings":[]}\nEnd.',
+      10,
+      10,
+    ),
+  });
+
+  assert.equal(result.ok, true);
+});
+
 test('batching: every changed file goes into some batch', () => {
   const files = projectOf(20, 50);
   const { batches, omitted } = buildReviewBatches(files, files.map((f) => f.path));
