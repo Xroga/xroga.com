@@ -80,13 +80,20 @@ export function AiWebsiteBuilderAtmosphere({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const root = rootRef.current;
-    const canvas = canvasRef.current;
+    const rootNode = rootRef.current;
+    const canvasNode = canvasRef.current;
 
-    if (!root || !canvas) return;
+    if (!rootNode || !canvasNode) return;
 
-    const ctx = canvas.getContext('2d', { alpha: false });
-    if (!ctx) return;
+    const context = canvasNode.getContext('2d', { alpha: false });
+    if (!context) return;
+
+    // Create stable non-null aliases for all nested callbacks/functions.
+    // Next.js production type-checking does not preserve the earlier null
+    // narrowing for captured ref values inside nested functions.
+    const root: HTMLDivElement = rootNode;
+    const canvas: HTMLCanvasElement = canvasNode;
+    const ctx: CanvasRenderingContext2D = context;
 
     let themeName = getTheme();
     let raf = 0;
