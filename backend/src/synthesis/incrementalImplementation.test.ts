@@ -5,6 +5,7 @@ import {
   IncrementalImplementationError,
   IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
   MAX_PLANNED_FILES,
+  explicitlyMentionedExistingFiles,
   implementIncrementally,
   parseFilePlan,
   stripCodeFence,
@@ -48,6 +49,46 @@ const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { mode
 
 test('each provider attempt is bounded before the approved fallback chain advances', () => {
   assert.equal(IMPLEMENTATION_ATTEMPT_TIMEOUT_MS, 60_000);
+});
+
+test('an explicitly named existing file skips the manifest call and receives its current content', async () => {
+  const complete = fakeCompletion((_model, system, user) => {
+    assert.doesNotMatch(system, /planning the file list/);
+    assert.match(user, /Write exactly this one file: packages\/odd-name\.py/);
+    assert.match(user, /def old_value\(\):/);
+    return { text: 'def new_value():\n    return 2' };
+  });
+
+  const existingFiles = [
+    { path: 'packages/odd-name.py', content: 'def old_value():\n    return 1' },
+    { path: 'docs/leave-me.md', content: 'unchanged' },
+  ];
+  const files = await implementIncrementally({
+    brief: 'Update packages/odd-name.py and preserve everything else.',
+    candidates: CANDIDATES,
+    existingFiles,
+    complete,
+  });
+
+  assert.deepEqual(files, [{ path: 'packages/odd-name.py', content: 'def new_value():\n    return 2' }]);
+  assert.equal(complete.calls.length, 1, 'the exact repository path already determines the change plan');
+});
+
+test('existing-file matching uses path boundaries and never guesses unknown files', () => {
+  const existing = [
+    { path: 'src/app.ts', content: 'app' },
+    { path: 'src/old-app.ts', content: 'old' },
+  ];
+  assert.deepEqual(
+    explicitlyMentionedExistingFiles('Fix src/app.ts.', existing).map((file) => file.path),
+    ['src/app.ts'],
+  );
+  assert.deepEqual(explicitlyMentionedExistingFiles('Create src/new-app.ts.', existing), []);
+  assert.deepEqual(
+    explicitlyMentionedExistingFiles('Update src/app.ts and add src/new-app.ts.', existing),
+    [],
+    'a mixed create/update request must use the complete change planner',
+  );
 });
 
 test('a project is generated as a plan followed by one call per file', async () => {

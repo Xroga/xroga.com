@@ -269,7 +269,7 @@ export async function tryUniversalBuild(input: {
     // does not survive a restart is not one.
     store: input.store ?? universalStore(getSupabaseAdmin()),
     adapters: productionAdapters({
-      implement: async ({ brief }) => {
+      implement: async ({ brief, existingFiles }) => {
         // Incremental rather than one whole-project completion. The single-call approach
         // failed against every coding model in production (run 05769971): a project encoded
         // as one JSON object under a 16k ceiling ends mid-string, and JSON.parse then
@@ -284,6 +284,7 @@ export async function tryUniversalBuild(input: {
         return implementIncrementally({
           brief,
           candidates: orderedCandidates.map((modelId) => ({ modelId })),
+          existingFiles,
         });
       },
       commit: input.commit,

@@ -74,6 +74,18 @@ Rules:
 - Do not write any file contents here. Paths and purposes only.
 - Order the list so files a reader would need first come first.`;
 
+const UPDATE_MANIFEST_SYSTEM = `You are planning a minimal change to an existing software repository.
+
+Return JSON only, no prose and no markdown fence:
+{"files":[{"path":"relative/path","purpose":"one line"}]}
+
+Rules:
+- List only files that must be created or modified for the requested change.
+- Do not list unchanged files. They are preserved automatically.
+- Use the repository paths exactly as supplied.
+- Paths are relative. Never absolute, never containing "..".
+- Do not write any file contents here. Paths and purposes only.`;
+
 const FILE_SYSTEM = `You are writing exactly one file of a software project.
 
 Return the raw file contents and nothing else. No markdown fence, no JSON wrapper, no
@@ -201,6 +213,37 @@ export class IncrementalImplementationError extends Error {
   }
 }
 
+function regexEscape(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Resolve exact existing paths named by the request without asking a model to rediscover them. */
+export function explicitlyMentionedExistingFiles(
+  brief: string,
+  existingFiles: readonly ProjectFile[],
+): readonly PlannedFile[] {
+  const normalizedExisting = new Set(existingFiles.map((file) => file.path.replace(/\\/g, '/').toLowerCase()));
+  const pathLikeMentions = [...brief.matchAll(
+    /(?:^|[\s`"'(])([A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.-]+)*\.[A-Za-z0-9_-]+)(?=$|[\s`"',):;!?]|\.(?=\s|$))/g,
+  )].map((match) => match[1]!.toLowerCase());
+  // If the request also names a new dotted path, the model must plan the complete change.
+  // Otherwise this fast path could correctly edit one existing file while silently omitting
+  // the explicitly requested new sibling.
+  if (pathLikeMentions.some((path) => !normalizedExisting.has(path))) return [];
+
+  return existingFiles.flatMap((file) => {
+    const path = file.path.trim().replace(/\\/g, '/');
+    if (!safePath(path)) return [];
+    const boundary = new RegExp(
+      `(^|[^A-Za-z0-9_.\\/-])${regexEscape(path)}(?=$|[^A-Za-z0-9_.\\/-]|\\.(?=\\s|$))`,
+      'i',
+    );
+    return boundary.test(brief)
+      ? [{ path, purpose: `Apply the requested change to ${path}` }]
+      : [];
+  });
+}
+
 export interface CompletionFn {
   (modelId: string, messages: ChatMessage[], opts: { maxTokens: number; temperature: number; json?: boolean }): Promise<{
     text: string;
@@ -278,31 +321,43 @@ async function completeWithFallback(input: {
 export async function implementIncrementally(input: {
   brief: string;
   candidates: readonly ModelCandidate[];
+  existingFiles?: readonly ProjectFile[];
   complete?: CompletionFn;
   onProgress?: (event: { stage: 'plan' | 'file'; path?: string; index?: number; total?: number }) => void;
 }): Promise<readonly ProjectFile[]> {
   const complete = input.complete ?? defaultCompletion;
+  const existingFiles = input.existingFiles ?? [];
 
-  input.onProgress?.({ stage: 'plan' });
-  const planReply = await completeWithFallback({
-    candidates: input.candidates,
-    messages: [
-      { role: 'system', content: MANIFEST_SYSTEM },
-      { role: 'user', content: input.brief },
-    ],
-    maxTokens: MANIFEST_MAX_TOKENS,
-    json: true,
-    label: 'the file plan',
-    usable: (text) => parseFilePlan(text).length > 0,
-    complete,
-  });
-
-  const plan = parseFilePlan(planReply.text);
+  const explicitPlan = explicitlyMentionedExistingFiles(input.brief, existingFiles);
+  let plan = explicitPlan;
+  if (!plan.length) {
+    input.onProgress?.({ stage: 'plan' });
+    const repositoryPaths = existingFiles.length
+      ? `\n\nExisting repository paths:\n${existingFiles.map((file) => file.path).join('\n')}`
+      : '';
+    const planReply = await completeWithFallback({
+      candidates: input.candidates,
+      messages: [
+        { role: 'system', content: existingFiles.length ? UPDATE_MANIFEST_SYSTEM : MANIFEST_SYSTEM },
+        { role: 'user', content: `${input.brief}${repositoryPaths}` },
+      ],
+      maxTokens: MANIFEST_MAX_TOKENS,
+      json: true,
+      label: 'the file plan',
+      usable: (text) => parseFilePlan(text).length > 0,
+      complete,
+    });
+    plan = parseFilePlan(planReply.text);
+  }
   const manifest = plan.map((entry) => `${entry.path} — ${entry.purpose}`).join('\n');
 
   const files: ProjectFile[] = [];
   for (const [index, entry] of plan.entries()) {
     input.onProgress?.({ stage: 'file', path: entry.path, index: index + 1, total: plan.length });
+    const current = existingFiles.find((file) => file.path === entry.path);
+    const currentContents = current
+      ? `\n\nCurrent contents of ${entry.path}:\n<current-file>\n${current.content}\n</current-file>`
+      : '\n\nThis is a new file; there are no current contents.';
     const reply = await completeWithFallback({
       candidates: input.candidates,
       messages: [
@@ -313,7 +368,8 @@ export async function implementIncrementally(input: {
             `${input.brief}\n\n` +
             `The complete file list for this project:\n${manifest}\n\n` +
             `Write exactly this one file: ${entry.path}\n` +
-            `Its purpose: ${entry.purpose}`,
+            `Its purpose: ${entry.purpose}` +
+            currentContents,
         },
       ],
       maxTokens: PER_FILE_MAX_TOKENS,
