@@ -21,6 +21,7 @@ import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 import { HomepageCursorGlitter } from '@/components/homepage/HomepageCursorGlitter';
+import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
 const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Browser extensions', 'APIs', 'Desktop apps', 'Automations', 'CLIs', 'Libraries', 'Data pipelines'] as const;
 
@@ -101,9 +102,16 @@ export function HomepageClient() {
         <HomepageFaqSection />
       </div>
 
-      <section className="xv-closing-frame" aria-label="Community, support, and getting started">
-        <section className="xv-hc-section xv-hc-community" aria-labelledby="community-support-heading">
-          <div className="xv-hc-community-scrim" aria-hidden="true" />
+      <section
+  className="xv-closing-frame"
+  aria-label="Community, support, and getting started"
+>
+  <AiCodingAgentSquaresTerminal className="xv-closing-terminal" />
+
+  <section
+    className="xv-hc-section xv-hc-community"
+    aria-labelledby="community-support-heading"
+  >
           <div className="xv-hc-section-inner">
             <p className="xv-hc-pixel-kicker">COMMUNITY &amp; SUPPORT</p>
             <h2 className="xv-hc-section-title" id="community-support-heading">Build with <em>other builders.</em></h2>
