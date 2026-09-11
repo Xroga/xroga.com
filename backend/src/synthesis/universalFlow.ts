@@ -227,7 +227,11 @@ export interface ValidationReport {
 function describeValidationFailure(entry: ExecutedValidation): string {
   const command = [entry.validation.command.command, ...entry.validation.command.args].join(' ');
   const exit = entry.exitCode === null ? 'did not return an exit code' : `exited ${entry.exitCode}`;
-  const output = `${entry.stderr}\n${entry.stdout}`.trim().replace(/\s+/g, ' ').slice(0, 800);
+  const combined = `${entry.stderr}\n${entry.stdout}`.trim().replace(/\s+/g, ' ');
+  // Install/setup output precedes the phase command in a stateless sandbox. Test runners
+  // put their actionable exception at the end, so retaining the head would preserve pip
+  // download chatter and discard the actual failing assertion or syntax error.
+  const output = combined.length > 1_200 ? `… ${combined.slice(-1_200)}` : combined;
   return `${command} ${exit}${output ? `: ${output}` : ''}`;
 }
 

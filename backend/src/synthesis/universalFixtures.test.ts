@@ -390,6 +390,21 @@ describe('a run may not overstate what it verified', () => {
     assert.equal(report.failures.length, 1, 'later phases assume earlier ones succeeded');
     assert.match(report.blocker!, /cargo check --all-targets exited 1: error\[E0308\]: mismatched types/);
   });
+
+  it('keeps the actionable tail of a failed command after noisy setup output', async () => {
+    const plan = run('Fix a bug', [
+      f('requirements.txt', 'pytest>=8\n'),
+      f('src/tool.py', 'def value(): return 1\n'),
+      f('tests/test_tool.py', 'def test_value(): assert False\n'),
+    ]);
+    const report = await runValidationPlan(plan, async (command) =>
+      command.args.includes('-q')
+        ? { exitCode: 2, stdout: '', stderr: `${'install chatter '.repeat(100)}SyntaxError: unexpected indent` }
+        : { exitCode: 0, stdout: '', stderr: '' },
+    );
+    assert.match(report.blocker!, /SyntaxError: unexpected indent$/);
+    assert.ok(report.blocker!.length < 1_300);
+  });
 });
 
 describe('the flow itself names no language', () => {
