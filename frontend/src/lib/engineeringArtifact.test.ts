@@ -76,6 +76,17 @@ test('the text fallback carries blockers, files, repository and commit', () => {
   assert.match(text, /Files changed \(2\)/);
 });
 
+test('the text fallback renders persisted file-path strings instead of undefined', () => {
+  const legacy = artifact({
+    files: ['normalize.py', 'tests/test_normalize.py'] as unknown as EngineeringArtifact['files'],
+    fileCount: 2,
+  });
+  const text = engineeringArtifactToText(legacy);
+  assert.match(text, /- normalize\.py/);
+  assert.match(text, /- tests\/test_normalize\.py/);
+  assert.doesNotMatch(text, /undefined/);
+});
+
 test('a verified run reports its verification and commit', () => {
   const text = engineeringArtifactToText(
     artifact({

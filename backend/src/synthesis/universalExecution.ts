@@ -379,14 +379,14 @@ export async function executeUniversalRun(input: {
     ? await runValidationAsCanonicalTask({
         state: implementationState,
         objective: `Validate ${plan.spec.title}`,
-        validate: () => runValidationPlan(validationPlan, input.adapters.runValidation),
+        validate: () => runValidationPlan(validationPlan, input.adapters.runValidation, files),
         store: input.executionStore,
         signal: input.signal,
       })
     : null;
   let report = canonicalValidation
     ? canonicalValidation.report
-    : await runValidationPlan(validationPlan, input.adapters.runValidation);
+    : await runValidationPlan(validationPlan, input.adapters.runValidation, files);
   record('validation', `tier ${report.tierReached}`, report.blocker ?? `${report.executed.length} command(s) ran`);
   if (canonicalValidation) {
     record(
@@ -425,12 +425,12 @@ export async function executeUniversalRun(input: {
             await runValidationAsCanonicalTask({
               state: implementationState,
               objective: `Revalidate after repair`,
-              validate: () => runValidationPlan(rerunPlan, input.adapters.runValidation),
+              validate: () => runValidationPlan(rerunPlan, input.adapters.runValidation, files),
               store: input.executionStore,
               signal: input.signal,
             })
           ).report
-        : await runValidationPlan(rerunPlan, input.adapters.runValidation);
+        : await runValidationPlan(rerunPlan, input.adapters.runValidation, files);
       record('validation', `revalidation tier ${report.tierReached}`, report.blocker ?? 'revalidated after repair');
     }
   }
@@ -491,7 +491,7 @@ export async function executeUniversalRun(input: {
 
         // Deterministic validation first — a browser fix that breaks the build is not a fix.
         const rerunPlan = planUniversalRun({ prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId });
-        report = await runValidationPlan(rerunPlan, input.adapters.runValidation);
+        report = await runValidationPlan(rerunPlan, input.adapters.runValidation, files);
         record('validation', `revalidation after browser repair`, report.blocker ?? 'revalidated');
 
         if (report.passed) {

@@ -154,7 +154,13 @@ export function engineeringArtifactToText(artifact: EngineeringArtifact): string
 
   if (artifact.fileCount > 0) {
     lines.push('', `Files changed (${artifact.fileCount}):`);
-    for (const file of artifact.files.slice(0, 20)) lines.push(`- ${file.path}`);
+    // Older/overlaid universal payloads carried paths as strings even though the versioned
+    // artifact contract uses `{ path }` entries. Render those persisted runs defensively;
+    // printing `undefined` hides the only useful clue a blocked build still produced.
+    for (const file of artifact.files.slice(0, 20)) {
+      const path = typeof file === 'string' ? file : file.path;
+      if (path) lines.push(`- ${path}`);
+    }
     if (artifact.files.length > 20) lines.push(`- …and ${artifact.files.length - 20} more`);
   }
 

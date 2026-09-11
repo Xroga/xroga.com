@@ -455,6 +455,26 @@ describe('each ecosystem gets an image whose toolchain exists', () => {
     );
   });
 
+  it('hands each stateless validation its files, image, and component install setup', async () => {
+    const files = [
+      f('requirements.txt', 'pytest==8.3.5\n'),
+      f('normalize.py', 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n'),
+      f('tests/test_normalize.py', 'def test_it():\n    assert True\n'),
+    ];
+    const plan = run('Update the Python utility and run pytest', files);
+    const contexts: Array<import('./universalFlow.js').ValidationExecutionContext | undefined> = [];
+    await runValidationPlan(plan, async (_command, context) => {
+      contexts.push(context);
+      return { exitCode: 0, stdout: '', stderr: '' };
+    }, files);
+
+    const testIndex = plan.validations.findIndex((validation) => validation.phase === 'test');
+    assert.ok(testIndex >= 0);
+    assert.equal(contexts[testIndex]?.files.length, files.length);
+    assert.match(contexts[testIndex]?.image ?? '', /python:/);
+    assert.ok(contexts[testIndex]?.setupCommands.some((command) => command.command === 'pip'));
+  });
+
   it('leaves Node on the sandbox default, which already has node and npm', () => {
     const node = run('Fix a bug', [f('package.json', '{"name":"a","scripts":{"test":"vitest run"}}')]);
     assert.ok(node.validations.every((validation) => validation.sandboxImage === null));

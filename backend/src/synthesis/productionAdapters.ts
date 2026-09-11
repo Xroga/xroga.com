@@ -118,18 +118,35 @@ export function buildImplementationBrief(input: {
  * describe what production actually does with the same model.
  */
 export function sandboxValidationRunner(): ValidationRunner {
-  return async (command) => {
+  return async (command, context) => {
+    const shellQuote = (value: string): string => `'${value.replace(/'/g, `'"'"'`)}'`;
+    const argv = (candidate: typeof command): string =>
+      [candidate.command, ...candidate.args].map(shellQuote).join(' ');
+    const cwd = command.cwd?.trim();
+    const setupCommands = context?.setupCommands ?? [];
+    const needsWrapper = setupCommands.length > 0 || Boolean(cwd);
+    const setupScript = setupCommands.map((candidate) => argv(candidate)).join('\n');
+    const phaseCommand = command.networkPolicy === 'none' && setupCommands.length > 0
+      ? `exec unshare -n ${argv(command)}`
+      : `exec ${argv(command)}`;
+    const script = [
+      'set -eu',
+      ...(cwd ? [`cd ${shellQuote(cwd)}`] : []),
+      ...(setupScript ? [setupScript] : []),
+      phaseCommand,
+    ].join('\n');
+
     // Straight through the Command 1 boundary. The adapter already decided the network
-    // policy per command, so nothing here widens it.
+    // policy per command. A stateless sandbox may temporarily need registry access for its
+    // setup commands; the actual phase is put in a denied network namespace before it runs.
     const result = await executeSandboxed({
-      files: [],
-      command: command.command,
-      args: [...command.args],
+      files: [...(context?.files ?? [])],
+      command: needsWrapper ? '/bin/sh' : command.command,
+      args: needsWrapper ? ['-c', script] : [...command.args],
       timeoutMs: 600_000,
-      networkPolicy: command.networkPolicy,
-      environment: buildSandboxEnvironment(
-        command.cwd ? { XROGA_SANDBOX_WORKDIR: command.cwd } : undefined,
-      ),
+      networkPolicy: setupCommands.length > 0 ? 'registry-only' : command.networkPolicy,
+      environment: buildSandboxEnvironment(),
+      ...(context?.image ? { image: context.image } : {}),
     });
     return { exitCode: result.exitCode, stdout: result.stdout, stderr: result.stderr };
   };

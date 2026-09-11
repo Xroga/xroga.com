@@ -99,6 +99,45 @@ describe('the review adapter fails closed', () => {
 });
 
 describe('adapters delegate rather than reimplement', () => {
+  it('materializes the repository and selected runtime image for validation', async () => {
+    const seen: Array<{ files: ProjectFile[]; image?: string; command: string; args: string[] }> = [];
+    setSandboxProvidersForTesting([
+      {
+        name: 'recording',
+        probe: async () => ({ available: true, runtime: 'recording', networkIsolation: true }),
+        execute: async (request) => {
+          seen.push({ files: request.files, image: request.image, command: request.command, args: request.args });
+          return { exitCode: 0, stdout: '', stderr: '', timedOut: false, killedForLimit: false, durationMs: 1 };
+        },
+      },
+    ]);
+
+    try {
+      const adapters = productionAdapters({
+        implement: async () => [],
+        commit: async () => ({ commitSha: 'x' }),
+      });
+      await adapters.runValidation(
+        { command: 'pytest', args: ['-q'], networkPolicy: 'none', source: 'manifest', purpose: 'test' },
+        {
+          files: [f('normalize.py', 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n')],
+          image: 'registry-1.docker.io/library/python:3.12-alpine',
+          setupCommands: [
+            { command: 'pip', args: ['install', '-r', 'requirements.txt'], networkPolicy: 'registry-only', source: 'manifest', purpose: 'install' },
+          ],
+        },
+      );
+
+      assert.equal(seen[0]?.files[0]?.path, 'normalize.py');
+      assert.equal(seen[0]?.image, 'registry-1.docker.io/library/python:3.12-alpine');
+      assert.equal(seen[0]?.command, '/bin/sh');
+      assert.match(seen[0]?.args[1] ?? '', /pip.*install.*requirements\.txt/);
+      assert.match(seen[0]?.args[1] ?? '', /unshare -n.*pytest.*-q/);
+    } finally {
+      setSandboxProvidersForTesting(null);
+    }
+  });
+
   it('passes each command\'s own network policy through unchanged', async () => {
     // The adapter already decided which step needs a registry. Nothing here may widen it.
     //

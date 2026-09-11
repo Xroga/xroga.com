@@ -119,7 +119,7 @@ export function createBenchmarkCaseExecutor(deps: BenchmarkExecutorDeps): CaseEx
       return unvalidatedOutcome(startedAt, generated, true);
     }
 
-    const report = await runValidationPlan(plan, deps.runValidation);
+    const report = await runValidationPlan(plan, deps.runValidation, files);
     const security = scanProjectFiles(files);
 
     return {

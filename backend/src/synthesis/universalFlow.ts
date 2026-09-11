@@ -200,7 +200,16 @@ export interface ExecutedValidation {
   readonly skipped: boolean;
 }
 
-export type ValidationRunner = (command: ToolCommand) => Promise<{
+export interface ValidationExecutionContext {
+  /** Complete repository snapshot materialized into this disposable sandbox. */
+  readonly files: readonly ProjectFile[];
+  /** Runtime image selected by the adapter for this component. */
+  readonly image: string | null;
+  /** Install commands rerun in the same stateless sandbox before this phase. */
+  readonly setupCommands: readonly ToolCommand[];
+}
+
+export type ValidationRunner = (command: ToolCommand, context?: ValidationExecutionContext) => Promise<{
   exitCode: number | null;
   stdout: string;
   stderr: string;
@@ -232,6 +241,7 @@ export interface ValidationReport {
 export async function runValidationPlan(
   plan: UniversalRunPlan,
   run: ValidationRunner,
+  files: readonly ProjectFile[] = [],
 ): Promise<ValidationReport> {
   if (!plan.validations.length) {
     return {
@@ -247,7 +257,24 @@ export async function runValidationPlan(
   const failures: ExecutedValidation[] = [];
 
   for (const validation of plan.validations) {
-    const result = await run(validation.command);
+    // Every production execution is a fresh disposable microVM. Dependencies installed by
+    // an earlier validation therefore cannot be assumed to exist in this one. Re-run this
+    // component's install commands as setup in the same sandbox as the current phase.
+    // The production runner restores network denial before the phase command begins.
+    const setupCommands = validation.phase === 'install'
+      ? []
+      : plan.validations
+          .filter((candidate) =>
+            candidate.phase === 'install' &&
+            candidate.componentRoot === validation.componentRoot &&
+            candidate.adapterId === validation.adapterId,
+          )
+          .map((candidate) => candidate.command);
+    const result = await run(validation.command, {
+      files,
+      image: validation.sandboxImage,
+      setupCommands,
+    });
     const record: ExecutedValidation = { validation, ...result, skipped: false };
     executed.push(record);
 
