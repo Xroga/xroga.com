@@ -19,6 +19,7 @@ import { ScrollReveal } from './ScrollReveal';
 import { PageJsonLd } from '@/components/seo/PageJsonLd';
 import { HomepageWorkspaceTour } from '@/components/homepage/HomepageWorkspaceTour';
 import { AiAppBuilderPrompt } from './AiAppBuilderPrompt';
+import { AiAppBuilderWatercolor } from './AiAppBuilderWatercolor';
 import { AiAppBuilderFeatureTabs } from './AiAppBuilderFeatureTabs';
 import heroStyles from './AiAppBuilderHero.module.css';
 
@@ -113,7 +114,11 @@ export function AiAppBuilderLanding({
           ========================================================= */}
 
       <section className="xab-hero">
-        <div className="xab-shell xab-hero__body">
+  <AiAppBuilderWatercolor
+    className={heroStyles.watercolor}
+  />
+
+  <div className="xab-shell xab-hero__body">
           <h1 className="xab-hero__title">
             Describe an app.{' '}
             <span className="xab-accent">
