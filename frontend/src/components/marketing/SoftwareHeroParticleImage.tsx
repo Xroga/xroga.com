@@ -14,35 +14,35 @@ const IMAGE_URL =
   'https://upload.wikimedia.org/wikipedia/commons/a/a4/Ada_Lovelace_portrait.jpg';
 
 const SETTINGS = {
-  particleCount: 300_000,
-  particleSize: 1.75,
-  particleOpacity: 0.92,
+  particleCount: 260_000,
+  particleSize: 1.7,
+  particleOpacity: 0.94,
   speed: 1,
-  cursorStrength: 0.1,
-  cursorRadius: 115,
-  maxDpr: 1.6,
+  cursorStrength: 0.11,
+  cursorRadius: 120,
+  maxDpr: 1.5,
 };
 
 const THEMES: Record<ThemeName, ThemePalette> = {
   white: {
-    low: [26, 37, 50],
-    high: [74, 118, 166],
-    hot: [235, 247, 255],
+    low: [34, 45, 58],
+    high: [78, 124, 176],
+    hot: [239, 248, 255],
   },
   gray: {
-    low: [28, 31, 35],
-    high: [235, 238, 242],
+    low: [35, 38, 43],
+    high: [232, 235, 239],
     hot: [255, 255, 255],
   },
   black: {
-    low: [78, 81, 86],
-    high: [242, 244, 247],
+    low: [86, 90, 96],
+    high: [244, 246, 249],
     hot: [255, 255, 255],
   },
   beige: {
-    low: [65, 58, 52],
-    high: [216, 205, 190],
-    hot: [255, 249, 239],
+    low: [72, 63, 54],
+    high: [220, 208, 190],
+    hot: [255, 249, 240],
   },
 };
 
@@ -58,42 +58,61 @@ function smoothstep(a: number, b: number, x: number) {
   return t * t * (3 - 2 * t);
 }
 
-export function SoftwareHeroParticleImage({
-  className = '',
-}: {
-  className?: string;
-}) {
+function ellipseMask(
+  x: number,
+  y: number,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  feather = 0.16,
+) {
+  const dx = (x - cx) / rx;
+  const dy = (y - cy) / ry;
+  const d = Math.sqrt(dx * dx + dy * dy);
+  return 1 - smoothstep(1 - feather, 1, d);
+}
+
+export function SoftwareHeroParticleImage() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sourceRef = useRef<HTMLImageElement>(null);
+  const portraitRef = useRef<HTMLCanvasElement>(null);
+  const particleRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
-    const image = imageRef.current;
-    const canvas = canvasRef.current;
+    const source = sourceRef.current;
+    const portraitCanvas = portraitRef.current;
+    const particleCanvas = particleRef.current;
 
-    if (!root || !image || !canvas) return;
+    if (!root || !source || !portraitCanvas || !particleCanvas) return;
 
-    const gl = canvas.getContext('webgl', {
+    const gl = particleCanvas.getContext('webgl', {
       alpha: true,
       antialias: false,
       premultipliedAlpha: false,
       powerPreference: 'high-performance',
     });
 
-    // The real source image remains visible even if WebGL is unavailable.
     if (!gl) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const finePointer = window.matchMedia('(pointer: fine)');
 
     let theme = getTheme();
-    let pointCount = 0;
-    let renderDpr = 1;
     let raf = 0;
     let started = performance.now();
     let visible = true;
+    let renderDpr = 1;
+    let pointCount = 0;
     let rebuildTimer = 0;
+
+    let cutout:
+      | {
+          canvas: HTMLCanvasElement;
+          pixels: ImageData;
+        }
+      | null = null;
 
     let displayRect = {
       x: 0,
@@ -110,7 +129,7 @@ export function SoftwareHeroParticleImage({
       vx: 0,
       vy: 0,
       active: 0,
-      overImage: false,
+      overPerson: false,
       lastMove: 0,
     };
 
@@ -146,24 +165,24 @@ export function SoftwareHeroParticleImage({
 
         float t = u_time;
         float seed = a_seed;
-        float signedSeed = seed * 2.0 - 1.0;
+        float s = seed * 2.0 - 1.0;
         float aspect = u_resolution.x / u_resolution.y;
 
-        // Always-on micro movement. The portrait never feels frozen.
+        // Always alive.
         float field =
           sin(home.y * 14.0 + t * 0.52 + seed * 7.0) +
           cos(home.x * 12.0 - t * 0.44 + seed * 9.0);
 
-        vec2 microFlow = normalize(
+        vec2 micro = normalize(
           vec2(
             cos(field + seed * 3.1),
             sin(field - seed * 2.4)
           ) + 0.0001
         );
 
-        p += microFlow * u_alive * (0.0018 + seed * 0.0036);
+        p += micro * u_alive * (0.0016 + seed * 0.0032);
 
-        // Automatic dissolve / spread.
+        // Auto dissolve.
         float wave =
           0.5 +
           0.5 * sin(home.y * 12.0 + seed * 10.0 + t * 0.35);
@@ -181,18 +200,15 @@ export function SoftwareHeroParticleImage({
 
         float amount = local * u_spread;
 
-        // Mostly horizontal dust plume, like the reference.
         vec2 sweep = normalize(
           vec2(
             0.96 + 0.22 * sin(seed * 17.0 + t * 0.44),
-            signedSeed * 0.32 +
-              0.14 * sin(home.x * 18.0 + t * 0.52)
+            s * 0.32 + 0.14 * sin(home.x * 18.0 + t * 0.52)
           )
         );
 
-        p += sweep * amount * (0.055 + seed * 0.24);
+        p += sweep * amount * (0.050 + seed * 0.22);
 
-        // Curved swirl around the portrait.
         vec2 center = vec2(0.72, 0.50);
         vec2 radial = home - center;
         vec2 tangent =
@@ -201,20 +217,20 @@ export function SoftwareHeroParticleImage({
         p +=
           tangent *
           amount *
-          signedSeed *
-          (0.022 + seed * 0.078);
+          s *
+          (0.020 + seed * 0.070);
 
         p.x +=
           sin(t * 0.48 + home.y * 15.0 + seed * 11.0) *
           amount *
-          0.015;
+          0.013;
 
         p.y +=
           cos(t * 0.54 + home.x * 14.0 + seed * 9.0) *
           amount *
-          0.018;
+          0.016;
 
-        // Cursor only becomes strong while it is over the displayed Ada image.
+        // Cursor interaction only over the PERSON, not the old image rectangle.
         if (u_mouseActive > 0.001) {
           vec2 delta = p - u_mouse;
           vec2 scaled = vec2(delta.x * aspect, delta.y);
@@ -246,7 +262,7 @@ export function SoftwareHeroParticleImage({
             u_mouseVel *
             influence *
             u_cursorStrength *
-            1.18;
+            1.20;
         }
 
         gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
@@ -256,7 +272,7 @@ export function SoftwareHeroParticleImage({
             1.0,
             u_pointSize *
             a_size *
-            (1.0 + amount * 0.38)
+            (1.0 + amount * 0.34)
           );
 
         v_luma = a_luma;
@@ -266,7 +282,7 @@ export function SoftwareHeroParticleImage({
         v_alpha =
           u_particleOpacity *
           mix(0.42, 0.98, max(a_edge, a_luma * 0.72)) *
-          mix(1.0, 0.82, amount);
+          mix(1.0, 0.84, amount);
       }
     `;
 
@@ -284,12 +300,12 @@ export function SoftwareHeroParticleImage({
 
       void main() {
         vec2 point = gl_PointCoord - 0.5;
-        float distance = length(point);
+        float d = length(point);
 
-        if (distance > 0.5) discard;
+        if (d > 0.5) discard;
 
         float mask =
-          1.0 - smoothstep(0.28, 0.5, distance);
+          1.0 - smoothstep(0.28, 0.5, d);
 
         float brightness =
           clamp(
@@ -312,17 +328,18 @@ export function SoftwareHeroParticleImage({
       }
     `;
 
-    const compile = (type: number, source: string) => {
+    const compile = (type: number, sourceCode: string) => {
       const shader = gl.createShader(type);
-      if (!shader) throw new Error('Unable to create WebGL shader.');
+      if (!shader) throw new Error('Unable to create shader.');
 
-      gl.shaderSource(shader, source);
+      gl.shaderSource(shader, sourceCode);
       gl.compileShader(shader);
 
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const info = gl.getShaderInfoLog(shader) || 'Shader compile failed.';
+        const message =
+          gl.getShaderInfoLog(shader) || 'Shader compile failed.';
         gl.deleteShader(shader);
-        throw new Error(info);
+        throw new Error(message);
       }
 
       return shader;
@@ -338,12 +355,7 @@ export function SoftwareHeroParticleImage({
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      gl.deleteShader(vertexShader);
-      gl.deleteShader(fragmentShader);
-      gl.deleteProgram(program);
-      return;
-    }
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
 
     gl.useProgram(program);
 
@@ -379,20 +391,15 @@ export function SoftwareHeroParticleImage({
       data: Float32Array,
       size: number,
     ) => {
+      if (attribute < 0) return;
+
       const buffer = gl.createBuffer();
-      if (!buffer || attribute < 0) return;
+      if (!buffer) return;
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
       gl.enableVertexAttribArray(attribute);
-      gl.vertexAttribPointer(
-        attribute,
-        size,
-        gl.FLOAT,
-        false,
-        0,
-        0,
-      );
+      gl.vertexAttribPointer(attribute, size, gl.FLOAT, false, 0, 0);
 
       buffers.push(buffer);
     };
@@ -404,115 +411,307 @@ export function SoftwareHeroParticleImage({
       }
     };
 
-    const getDisplayedImageRect = () => {
-      const rootRect = root.getBoundingClientRect();
-      const imageElementRect = image.getBoundingClientRect();
+    /**
+     * Creates a transparent cutout from the historical portrait.
+     *
+     * Important:
+     * - We do NOT render the rectangular source image.
+     * - We keep only a soft person-shaped alpha region.
+     * - Particles are generated only from pixels that survive this alpha mask.
+     */
+    const createPersonCutout = () => {
+      if (!source.naturalWidth || !source.naturalHeight) return null;
 
-      const naturalWidth = Math.max(1, image.naturalWidth);
-      const naturalHeight = Math.max(1, image.naturalHeight);
-
-      // CSS uses object-fit: contain, so calculate the actual painted image box.
-      const scale = Math.min(
-        imageElementRect.width / naturalWidth,
-        imageElementRect.height / naturalHeight,
+      const width = 720;
+      const height = Math.max(
+        1,
+        Math.round(
+          width * (source.naturalHeight / source.naturalWidth),
+        ),
       );
 
-      const paintedWidth = naturalWidth * scale;
-      const paintedHeight = naturalHeight * scale;
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d', {
+        willReadFrequently: true,
+      });
+
+      if (!ctx) return null;
+
+      ctx.drawImage(source, 0, 0, width, height);
+
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      // Estimate the painted background from the four corners.
+      const samples: [number, number, number][] = [];
+      const cornerSize = Math.max(12, Math.floor(width * 0.06));
+
+      const sampleCorner = (
+        startX: number,
+        startY: number,
+        endX: number,
+        endY: number,
+      ) => {
+        for (let y = startY; y < endY; y += 4) {
+          for (let x = startX; x < endX; x += 4) {
+            const i = (y * width + x) * 4;
+            samples.push([
+              data[i],
+              data[i + 1],
+              data[i + 2],
+            ]);
+          }
+        }
+      };
+
+      sampleCorner(0, 0, cornerSize, cornerSize);
+      sampleCorner(width - cornerSize, 0, width, cornerSize);
+      sampleCorner(0, height - cornerSize, cornerSize, height);
+      sampleCorner(
+        width - cornerSize,
+        height - cornerSize,
+        width,
+        height,
+      );
+
+      const bg = samples.reduce(
+        (acc, c) => {
+          acc[0] += c[0];
+          acc[1] += c[1];
+          acc[2] += c[2];
+          return acc;
+        },
+        [0, 0, 0],
+      );
+
+      bg[0] /= samples.length;
+      bg[1] /= samples.length;
+      bg[2] /= samples.length;
+
+      const alphaMask = new Uint8ClampedArray(width * height);
+
+      for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+          const i = (y * width + x) * 4;
+
+          const nx = x / width;
+          const ny = y / height;
+
+          const dr = data[i] - bg[0];
+          const dg = data[i + 1] - bg[1];
+          const db = data[i + 2] - bg[2];
+
+          const colorDistance = Math.sqrt(
+            dr * dr + dg * dg + db * db,
+          );
+
+          // Ada-specific soft silhouette prior:
+          // head + shoulders/torso + lower dress.
+          const head = ellipseMask(
+            nx,
+            ny,
+            0.53,
+            0.22,
+            0.23,
+            0.22,
+            0.24,
+          );
+
+          const torso = ellipseMask(
+            nx,
+            ny,
+            0.52,
+            0.56,
+            0.43,
+            0.44,
+            0.17,
+          );
+
+          const lower = ellipseMask(
+            nx,
+            ny,
+            0.50,
+            0.84,
+            0.48,
+            0.32,
+            0.18,
+          );
+
+          const personPrior = Math.max(head, torso, lower);
+
+          // Background-like pixels fade out.
+          const colorScore = smoothstep(
+            30,
+            88,
+            colorDistance,
+          );
+
+          // Preserve the central subject, but kill the rectangular painting.
+          const alpha =
+            Math.max(
+              colorScore * personPrior,
+              personPrior * 0.34,
+            ) *
+            personPrior;
+
+          alphaMask[y * width + x] = Math.round(
+            255 * Math.max(0, Math.min(1, alpha)),
+          );
+        }
+      }
+
+      // Feather the person edge.
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = width;
+      maskCanvas.height = height;
+
+      const maskCtx = maskCanvas.getContext('2d');
+      if (!maskCtx) return null;
+
+      const maskImage = maskCtx.createImageData(width, height);
+
+      for (let p = 0; p < alphaMask.length; p += 1) {
+        const j = p * 4;
+        maskImage.data[j] = 255;
+        maskImage.data[j + 1] = 255;
+        maskImage.data[j + 2] = 255;
+        maskImage.data[j + 3] = alphaMask[p];
+      }
+
+      maskCtx.putImageData(maskImage, 0, 0);
+
+      const softenedMask = document.createElement('canvas');
+      softenedMask.width = width;
+      softenedMask.height = height;
+
+      const softenedCtx = softenedMask.getContext('2d');
+      if (!softenedCtx) return null;
+
+      softenedCtx.filter = 'blur(2.2px)';
+      softenedCtx.drawImage(maskCanvas, 0, 0);
+
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(softenedMask, 0, 0);
+      ctx.globalCompositeOperation = 'source-over';
 
       return {
-        x:
-          imageElementRect.left -
-          rootRect.left +
-          (imageElementRect.width - paintedWidth) / 2,
-        y:
-          imageElementRect.top -
-          rootRect.top +
-          (imageElementRect.height - paintedHeight) / 2,
-        width: paintedWidth,
-        height: paintedHeight,
+        canvas,
+        pixels: ctx.getImageData(0, 0, width, height),
+      };
+    };
+
+    const paintCutout = () => {
+      if (!cutout) return;
+
+      portraitCanvas.width = cutout.canvas.width;
+      portraitCanvas.height = cutout.canvas.height;
+
+      const ctx = portraitCanvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.clearRect(
+        0,
+        0,
+        portraitCanvas.width,
+        portraitCanvas.height,
+      );
+
+      ctx.drawImage(cutout.canvas, 0, 0);
+    };
+
+    const getDisplayedPersonRect = () => {
+      const rootRect = root.getBoundingClientRect();
+      const personRect = portraitCanvas.getBoundingClientRect();
+
+      return {
+        x: personRect.left - rootRect.left,
+        y: personRect.top - rootRect.top,
+        width: personRect.width,
+        height: personRect.height,
       };
     };
 
     const buildParticles = () => {
-      if (!image.naturalWidth || !image.naturalHeight) return;
+      if (!cutout) return;
 
       const rootRect = root.getBoundingClientRect();
       if (rootRect.width < 1 || rootRect.height < 1) return;
 
-      displayRect = getDisplayedImageRect();
+      displayRect = getDisplayedPersonRect();
 
-      const sampleWidth = 620;
-      const sampleHeight = Math.max(
-        1,
-        Math.round(
-          sampleWidth *
-            (image.naturalHeight / image.naturalWidth),
-        ),
-      );
+      const { width, height } = cutout.canvas;
+      const data = cutout.pixels.data;
 
-      const sample = document.createElement('canvas');
-      sample.width = sampleWidth;
-      sample.height = sampleHeight;
-
-      const context = sample.getContext('2d', {
-        willReadFrequently: true,
-      });
-
-      if (!context) return;
-
-      try {
-        context.drawImage(
-          image,
-          0,
-          0,
-          sampleWidth,
-          sampleHeight,
-        );
-      } catch {
-        return;
-      }
-
-      let imageData: ImageData;
-
-      try {
-        imageData = context.getImageData(
-          0,
-          0,
-          sampleWidth,
-          sampleHeight,
-        );
-      } catch {
-        // If remote sampling is blocked, the source portrait still stays visible.
-        return;
-      }
-
-      const data = imageData.data;
+      const candidates: {
+        x: number;
+        y: number;
+        luma: number;
+        edge: number;
+      }[] = [];
 
       const lumaAt = (x: number, y: number) => {
-        const px = Math.max(
-          0,
-          Math.min(sampleWidth - 1, Math.floor(x)),
-        );
-        const py = Math.max(
-          0,
-          Math.min(sampleHeight - 1, Math.floor(y)),
-        );
-
-        const index = (py * sampleWidth + px) * 4;
+        const px = Math.max(0, Math.min(width - 1, x | 0));
+        const py = Math.max(0, Math.min(height - 1, y | 0));
+        const i = (py * width + px) * 4;
 
         return (
-          data[index] * 0.2126 +
-          data[index + 1] * 0.7152 +
-          data[index + 2] * 0.0722
+          data[i] * 0.2126 +
+          data[i + 1] * 0.7152 +
+          data[i + 2] * 0.0722
         ) / 255;
       };
 
+      for (let y = 2; y < height - 2; y += 2) {
+        for (let x = 2; x < width - 2; x += 2) {
+          const i = (y * width + x) * 4;
+          const alpha = data[i + 3] / 255;
+
+          // This is the key change:
+          // no particles are generated from the removed painting/background.
+          if (alpha < 0.13) continue;
+
+          const luma = lumaAt(x, y);
+
+          const gx = Math.abs(
+            lumaAt(x + 2, y) - lumaAt(x - 2, y),
+          );
+
+          const gy = Math.abs(
+            lumaAt(x, y + 2) - lumaAt(x, y - 2),
+          );
+
+          const edge = Math.min(1, (gx + gy) * 3.1);
+
+          // Denser on Ada, especially detail/high-contrast areas.
+          const probability =
+            Math.min(
+              1,
+              0.18 +
+                alpha * 0.45 +
+                edge * 0.42,
+            );
+
+          if (Math.random() > probability) continue;
+
+          candidates.push({
+            x: x / width,
+            y: y / height,
+            luma: Math.max(0.04, 1 - luma * 0.78),
+            edge,
+          });
+        }
+      }
+
+      if (!candidates.length) return;
+
       const actualCount =
         rootRect.width < 700
-          ? 120_000
+          ? 110_000
           : rootRect.width < 1100
-            ? 210_000
+            ? 180_000
             : SETTINGS.particleCount;
 
       pointCount = actualCount;
@@ -524,56 +723,31 @@ export function SoftwareHeroParticleImage({
       const sizes = new Float32Array(actualCount);
 
       for (let i = 0; i < actualCount; i += 1) {
-        const sampleX = Math.random() * (sampleWidth - 1);
-        const sampleY = Math.random() * (sampleHeight - 1);
+        const p =
+          candidates[
+            Math.floor(Math.random() * candidates.length)
+          ];
 
-        const luma = lumaAt(sampleX, sampleY);
-
-        const gradientX = Math.abs(
-          lumaAt(sampleX + 2, sampleY) -
-            lumaAt(sampleX - 2, sampleY),
-        );
-
-        const gradientY = Math.abs(
-          lumaAt(sampleX, sampleY + 2) -
-            lumaAt(sampleX, sampleY - 2),
-        );
-
-        const edge = Math.min(
-          1,
-          (gradientX + gradientY) * 3.1,
-        );
-
-        const normalizedX = sampleX / sampleWidth;
-        const normalizedY = sampleY / sampleHeight;
-
-        const jitterX = (Math.random() - 0.5) * 1.2;
-        const jitterY = (Math.random() - 0.5) * 1.2;
+        const jitterX = (Math.random() - 0.5) * 1.0;
+        const jitterY = (Math.random() - 0.5) * 1.0;
 
         homes[i * 2] =
           (displayRect.x +
-            normalizedX * displayRect.width +
+            p.x * displayRect.width +
             jitterX) /
           rootRect.width;
 
         homes[i * 2 + 1] =
           1 -
           (displayRect.y +
-            normalizedY * displayRect.height +
+            p.y * displayRect.height +
             jitterY) /
             rootRect.height;
 
         seeds[i] = Math.random();
-
-        // Invert source luminance so facial / clothing structure becomes
-        // a dense monochrome stipple field like the reference.
-        lumas[i] = Math.max(
-          0.04,
-          1 - luma * 0.78,
-        );
-
-        edges[i] = edge;
-        sizes[i] = 0.48 + Math.random() * 0.90;
+        lumas[i] = p.luma;
+        edges[i] = p.edge;
+        sizes[i] = 0.50 + Math.random() * 0.86;
       }
 
       clearBuffers();
@@ -585,7 +759,7 @@ export function SoftwareHeroParticleImage({
       bindBuffer(attributes.size, sizes, 1);
     };
 
-    const resize = () => {
+    const resizeWebgl = () => {
       const rect = root.getBoundingClientRect();
 
       renderDpr = Math.min(
@@ -604,33 +778,24 @@ export function SoftwareHeroParticleImage({
       );
 
       if (
-        canvas.width !== width ||
-        canvas.height !== height
+        particleCanvas.width !== width ||
+        particleCanvas.height !== height
       ) {
-        canvas.width = width;
-        canvas.height = height;
-        canvas.style.width = `${rect.width}px`;
-        canvas.style.height = `${rect.height}px`;
+        particleCanvas.width = width;
+        particleCanvas.height = height;
 
         gl.viewport(0, 0, width, height);
       }
     };
 
-    // AUTO ONLY:
-    // resolved -> dissolve -> spread -> rebuild -> resolved -> repeat
-    const automaticSpread = (seconds: number) => {
+    const autoSpread = (seconds: number) => {
       if (reducedMotion.matches) return 0;
 
       const time = seconds % 18;
 
       if (time < 4) return 0.015;
-
-      if (time < 7.2) {
-        return smoothstep(4, 7.2, time);
-      }
-
+      if (time < 7.2) return smoothstep(4, 7.2, time);
       if (time < 10.2) return 1;
-
       if (time < 14.8) {
         return 1 - smoothstep(10.2, 14.8, time);
       }
@@ -640,15 +805,15 @@ export function SoftwareHeroParticleImage({
 
     const setColor = (
       location: WebGLUniformLocation | null,
-      value: [number, number, number],
+      color: [number, number, number],
     ) => {
       if (!location) return;
 
       gl.uniform3f(
         location,
-        value[0] / 255,
-        value[1] / 255,
-        value[2] / 255,
+        color[0] / 255,
+        color[1] / 255,
+        color[2] / 255,
       );
     };
 
@@ -658,7 +823,7 @@ export function SoftwareHeroParticleImage({
       if (!visible || pointCount === 0) return;
 
       const seconds = (now - started) / 1000;
-      const spread = automaticSpread(seconds);
+      const spread = autoSpread(seconds);
 
       if (now - pointer.lastMove > 650) {
         pointer.active *= 0.965;
@@ -684,19 +849,17 @@ export function SoftwareHeroParticleImage({
 
       gl.uniform1f(uniforms.spread, spread);
 
-      // Keeps particles subtly alive even in the resolved phase.
       gl.uniform1f(
         uniforms.alive,
         reducedMotion.matches
           ? 0
-          : 0.68 +
-              Math.sin(seconds * 0.8) * 0.22,
+          : 0.68 + Math.sin(seconds * 0.8) * 0.22,
       );
 
       gl.uniform2f(
         uniforms.resolution,
-        canvas.width,
-        canvas.height,
+        particleCanvas.width,
+        particleCanvas.height,
       );
 
       gl.uniform2f(
@@ -714,7 +877,7 @@ export function SoftwareHeroParticleImage({
       gl.uniform1f(
         uniforms.mouseActive,
         finePointer.matches &&
-          pointer.overImage &&
+          pointer.overPerson &&
           !reducedMotion.matches
           ? pointer.active
           : 0,
@@ -746,29 +909,66 @@ export function SoftwareHeroParticleImage({
       setColor(uniforms.highColor, palette.high);
       setColor(uniforms.hotColor, palette.hot);
 
-      gl.drawArrays(
-        gl.POINTS,
+      gl.drawArrays(gl.POINTS, 0, pointCount);
+
+      // Only the cutout person fades a little — never a rectangular image.
+      portraitCanvas.style.opacity = String(
+        0.90 - spread * 0.46,
+      );
+    };
+
+    const hitTestPerson = (
+      localX: number,
+      localY: number,
+    ) => {
+      if (!cutout) return false;
+
+      const rect = getDisplayedPersonRect();
+
+      if (
+        localX < rect.x ||
+        localX > rect.x + rect.width ||
+        localY < rect.y ||
+        localY > rect.y + rect.height
+      ) {
+        return false;
+      }
+
+      const nx = (localX - rect.x) / rect.width;
+      const ny = (localY - rect.y) / rect.height;
+
+      const px = Math.max(
         0,
-        pointCount,
+        Math.min(
+          cutout.canvas.width - 1,
+          Math.floor(nx * cutout.canvas.width),
+        ),
       );
 
-      // Never let the source portrait disappear.
-      image.style.opacity = String(
-        0.92 - spread * 0.48,
+      const py = Math.max(
+        0,
+        Math.min(
+          cutout.canvas.height - 1,
+          Math.floor(ny * cutout.canvas.height),
+        ),
       );
+
+      const alpha =
+        cutout.pixels.data[
+          (py * cutout.canvas.width + px) * 4 + 3
+        ];
+
+      return alpha > 32;
     };
 
     const handlePointerMove = (event: PointerEvent) => {
       const rootRect = root.getBoundingClientRect();
 
-      const x =
-        (event.clientX - rootRect.left) /
-        rootRect.width;
+      const localX = event.clientX - rootRect.left;
+      const localY = event.clientY - rootRect.top;
 
-      const y =
-        1 -
-        (event.clientY - rootRect.top) /
-          rootRect.height;
+      const x = localX / rootRect.width;
+      const y = 1 - localY / rootRect.height;
 
       pointer.vx = x - pointer.px;
       pointer.vy = y - pointer.py;
@@ -779,42 +979,39 @@ export function SoftwareHeroParticleImage({
       pointer.x = x;
       pointer.y = y;
 
-      const localX =
-        event.clientX - rootRect.left;
-
-      const localY =
-        event.clientY - rootRect.top;
-
-      pointer.overImage =
-        localX >= displayRect.x &&
-        localX <= displayRect.x + displayRect.width &&
-        localY >= displayRect.y &&
-        localY <= displayRect.y + displayRect.height;
+      pointer.overPerson = hitTestPerson(localX, localY);
 
       pointer.active = 1;
       pointer.lastMove = performance.now();
     };
 
-    const scheduleRebuild = () => {
+    const rebuild = () => {
       window.clearTimeout(rebuildTimer);
 
       rebuildTimer = window.setTimeout(() => {
-        resize();
+        resizeWebgl();
         buildParticles();
-      }, 100);
+      }, 120);
     };
 
-    const handleImageLoad = () => {
-      resize();
-      buildParticles();
-      started = performance.now();
+    const handleSourceLoad = () => {
+      try {
+        cutout = createPersonCutout();
+        paintCutout();
+        resizeWebgl();
+        buildParticles();
+        started = performance.now();
+      } catch {
+        // Avoid a broken rectangular fallback.
+        portraitCanvas.style.opacity = '0';
+      }
     };
 
     const themeObserver = new MutationObserver(() => {
       theme = getTheme();
     });
 
-    const resizeObserver = new ResizeObserver(scheduleRebuild);
+    const resizeObserver = new ResizeObserver(rebuild);
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
@@ -837,14 +1034,13 @@ export function SoftwareHeroParticleImage({
       { passive: true },
     );
 
-    image.addEventListener('load', handleImageLoad);
+    source.addEventListener('load', handleSourceLoad);
 
-    resize();
-
-    if (image.complete && image.naturalWidth) {
-      buildParticles();
+    if (source.complete && source.naturalWidth) {
+      handleSourceLoad();
     }
 
+    resizeWebgl();
     raf = requestAnimationFrame(render);
 
     return () => {
@@ -860,9 +1056,9 @@ export function SoftwareHeroParticleImage({
         handlePointerMove,
       );
 
-      image.removeEventListener(
+      source.removeEventListener(
         'load',
-        handleImageLoad,
+        handleSourceLoad,
       );
 
       clearBuffers();
@@ -876,20 +1072,27 @@ export function SoftwareHeroParticleImage({
   return (
     <div
       ref={rootRef}
-      className={`xsw-hero-particles ${className}`.trim()}
+      className="xsw-hero-particles"
       aria-hidden="true"
     >
+      {/* Source is hidden. It is used only to build the transparent cutout. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        ref={imageRef}
-        className="xsw-hero-particles__image"
+        ref={sourceRef}
+        className="xsw-hero-particles__source"
         src={IMAGE_URL}
         crossOrigin="anonymous"
         alt=""
       />
 
+      {/* This canvas contains ONLY the person. No image rectangle/card. */}
       <canvas
-        ref={canvasRef}
+        ref={portraitRef}
+        className="xsw-hero-particles__portrait"
+      />
+
+      <canvas
+        ref={particleRef}
         className="xsw-hero-particles__canvas"
       />
     </div>
