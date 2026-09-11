@@ -283,6 +283,7 @@ export async function tryUniversalBuild(input: {
         // one model answering once.
         return implementIncrementally({
           brief,
+          originalRequest: input.prompt,
           candidates: orderedCandidates.map((modelId) => ({ modelId })),
           existingFiles,
         });

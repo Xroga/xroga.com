@@ -339,6 +339,8 @@ async function completeWithFallback(input: {
  */
 export async function implementIncrementally(input: {
   brief: string;
+  /** Raw user request. Canonical planning may summarize `brief`; explicit constraints must survive. */
+  originalRequest?: string;
   candidates: readonly ModelCandidate[];
   existingFiles?: readonly ProjectFile[];
   complete?: CompletionFn;
@@ -346,8 +348,11 @@ export async function implementIncrementally(input: {
 }): Promise<readonly ProjectFile[]> {
   const complete = input.complete ?? defaultCompletion;
   const existingFiles = input.existingFiles ?? [];
+  const requestWithConstraints = input.originalRequest?.trim()
+    ? `${input.originalRequest.trim()}\n\nImplementation plan:\n${input.brief}`
+    : input.brief;
 
-  const explicitPlan = explicitlyMentionedExistingFiles(input.brief, existingFiles);
+  const explicitPlan = explicitlyMentionedExistingFiles(requestWithConstraints, existingFiles);
   let plan = explicitPlan;
   if (!plan.length) {
     input.onProgress?.({ stage: 'plan' });
@@ -358,7 +363,7 @@ export async function implementIncrementally(input: {
       candidates: input.candidates,
       messages: [
         { role: 'system', content: existingFiles.length ? UPDATE_MANIFEST_SYSTEM : MANIFEST_SYSTEM },
-        { role: 'user', content: `${input.brief}${repositoryPaths}` },
+        { role: 'user', content: `${requestWithConstraints}${repositoryPaths}` },
       ],
       maxTokens: MANIFEST_MAX_TOKENS,
       json: true,
@@ -384,7 +389,7 @@ export async function implementIncrementally(input: {
         {
           role: 'user',
           content:
-            `${input.brief}\n\n` +
+            `${requestWithConstraints}\n\n` +
             `The complete file list for this project:\n${manifest}\n\n` +
             `Write exactly this one file: ${entry.path}\n` +
             `Its purpose: ${entry.purpose}` +
@@ -398,7 +403,7 @@ export async function implementIncrementally(input: {
       usable: (text) => {
         const candidateContent = stripCodeFence(text);
         return candidateContent.trim().length > 0 &&
-          preservesRequiredSymbols(input.brief, current, candidateContent);
+          preservesRequiredSymbols(requestWithConstraints, current, candidateContent);
       },
       complete,
     });

@@ -103,6 +103,27 @@ test('an explicit preserve instruction falls back when a model drops an existing
   assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
 });
 
+test('raw preservation constraints survive a canonical implementation-plan summary', async () => {
+  const current = { path: 'normalize.py', content: 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n' };
+  const complete = fakeCompletion((model) => ({
+    text: model === 'glm_5_3_flash'
+      ? 'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n'
+      : `${current.content}\ndef normalize_unique_lines(text: str) -> list[str]:\n    return []\n`,
+  }));
+
+  const files = await implementIncrementally({
+    brief: 'Modify the normalization utility according to the accepted plan.',
+    originalRequest: 'Update only normalize.py. Preserve every existing function unchanged.',
+    candidates: CANDIDATES,
+    existingFiles: [current],
+    complete,
+  });
+
+  assert.match(files[0]!.content, /def normalize_whitespace/);
+  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
+  assert.match(complete.calls[0]!.user, /Preserve every existing function unchanged/);
+});
+
 test('existing-file matching uses path boundaries and never guesses unknown files', () => {
   const existing = [
     { path: 'src/app.ts', content: 'app' },
