@@ -169,15 +169,11 @@
    set white type, the scrims are now thin, and the artwork is served from a remote host.
    Without a ground, one failed request renders white text on white. */
 /* ============================================================
-   /software hero — Ada Lovelace Particle Image
+   /software hero — Ada Lovelace PERSON-ONLY Particle Image
    AUTO mode only
+   No rectangular image/card.
    ============================================================ */
 
-/*
- * Replace the existing .xsw-hero block with this version.
- * The opaque theme ground hides the global ThemeBackdrop inside
- * the hero only. The rest of /software keeps using ThemeBackdrop.
- */
 .xsw-hero {
   position: relative;
   display: flex;
@@ -189,7 +185,6 @@
   background: var(--tp-bg);
 }
 
-/* Particle-image layer: hero only. */
 .xsw-hero-particles {
   position: absolute;
   inset: 0;
@@ -199,31 +194,48 @@
 }
 
 /*
- * Full Ada Lovelace portrait stays visible under the GPU particles.
- * object-fit: contain means the complete portrait is preserved.
+ * Hidden source image.
+ * It is used only by JavaScript to build the transparent Ada cutout.
+ * It never appears as a rectangular image in the hero.
  */
-.xsw-hero-particles__image {
+.xsw-hero-particles__source {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/*
+ * Visible transparent Ada cutout.
+ * Only the person is drawn here; the original painting/background is removed.
+ */
+.xsw-hero-particles__portrait {
   position: absolute;
   top: 50%;
-  right: clamp(-5rem, -3vw, -1rem);
+  right: clamp(-1rem, 2vw, 3rem);
 
-  width: min(64vw, 920px);
-  height: 112%;
+  width: min(47vw, 690px);
+  height: auto;
+  max-height: 92%;
 
-  object-fit: contain;
-  object-position: center;
   transform: translateY(-50%);
+  opacity: 0.90;
 
-  opacity: 0.92;
   filter:
     grayscale(1)
-    contrast(1.9)
-    brightness(0.68);
+    contrast(1.72)
+    brightness(0.78);
 
   mix-blend-mode: screen;
+  pointer-events: none;
   will-change: opacity;
 }
 
+/*
+ * GPU particle canvas covers the hero, but particles originate only
+ * from the person cutout.
+ */
 .xsw-hero-particles__canvas {
   position: absolute;
   inset: 0;
@@ -234,8 +246,8 @@
 }
 
 /*
- * Readability veil. The image and particles remain clearly visible
- * on the right, while the existing Software hero HTML stays readable.
+ * Readability veil only.
+ * No image box, no image card, no rectangular painting background.
  */
 .xsw-hero::before {
   content: '';
@@ -245,31 +257,21 @@
   pointer-events: none;
 
   background:
-    radial-gradient(
-      ellipse 62% 78% at 50% 45%,
-      color-mix(in srgb, var(--tp-bg) 54%, transparent) 0%,
-      color-mix(in srgb, var(--tp-bg) 24%, transparent) 52%,
-      transparent 82%
-    ),
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--tp-bg) 82%, transparent) 0%,
-      color-mix(in srgb, var(--tp-bg) 56%, transparent) 34%,
-      color-mix(in srgb, var(--tp-bg) 18%, transparent) 60%,
-      transparent 86%
+      color-mix(in srgb, var(--tp-bg) 88%, transparent) 0%,
+      color-mix(in srgb, var(--tp-bg) 66%, transparent) 34%,
+      color-mix(in srgb, var(--tp-bg) 20%, transparent) 58%,
+      transparent 78%
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--tp-bg) 6%, transparent) 0%,
-      transparent 68%,
-      color-mix(in srgb, var(--tp-bg) 38%, transparent) 100%
+      color-mix(in srgb, var(--tp-bg) 5%, transparent) 0%,
+      transparent 70%,
+      color-mix(in srgb, var(--tp-bg) 30%, transparent) 100%
     );
 }
 
-/*
- * Keep all existing hero HTML above the animation.
- * Add position/z-index to your existing .xsw-hero__body rule.
- */
 .xsw-hero__body {
   position: relative;
   z-index: 2;
@@ -281,40 +283,42 @@
   text-align: center;
 }
 
-/* Light themes: use multiply so Ada still reads against the light ground. */
-body.theme-white .xsw-hero-particles__image {
+/* White theme */
+body.theme-white .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
-    contrast(1.42)
+    contrast(1.34)
     brightness(0.86);
   mix-blend-mode: multiply;
 }
 
-body.theme-beige .xsw-hero-particles__image {
+/* Beige theme */
+body.theme-beige .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
-    sepia(0.12)
-    contrast(1.38)
-    brightness(0.86);
+    sepia(0.10)
+    contrast(1.30)
+    brightness(0.88);
   mix-blend-mode: multiply;
 }
 
-/* Gray keeps the high-contrast monochrome treatment. */
-body.theme-gray .xsw-hero-particles__image {
+/* Gray theme */
+body.theme-gray .xsw-hero-particles__portrait {
   filter:
     grayscale(1)
-    contrast(1.72)
-    brightness(0.76);
+    contrast(1.58)
+    brightness(0.80);
   mix-blend-mode: screen;
 }
 
-/* Mobile: keep the image full-view but move it upward behind the hero. */
+/* Black theme uses the base rule above. */
+
 @media (max-width: 900px) {
-  .xsw-hero-particles__image {
-    top: 35%;
-    right: -18vw;
-    width: 105vw;
-    height: 78%;
+  .xsw-hero-particles__portrait {
+    top: 34%;
+    right: -12vw;
+    width: min(78vw, 620px);
+    max-height: 68%;
   }
 
   .xsw-hero::before {
@@ -324,22 +328,22 @@ body.theme-gray .xsw-hero-particles__image {
         color-mix(in srgb, var(--tp-bg) 4%, transparent) 0%,
         color-mix(in srgb, var(--tp-bg) 20%, transparent) 34%,
         color-mix(in srgb, var(--tp-bg) 70%, transparent) 62%,
-        var(--tp-bg) 86%
+        var(--tp-bg) 88%
       );
   }
 }
 
 @media (max-width: 620px) {
-  .xsw-hero-particles__image {
-    right: -26vw;
-    width: 118vw;
-    height: 72%;
+  .xsw-hero-particles__portrait {
+    right: -18vw;
+    width: 92vw;
+    max-height: 62%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .xsw-hero-particles__image {
-    opacity: 0.82 !important;
+  .xsw-hero-particles__portrait {
+    opacity: 0.86 !important;
   }
 }
 
