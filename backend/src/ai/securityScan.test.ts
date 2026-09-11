@@ -56,4 +56,25 @@ describe('staticValidateProject', () => {
     assert.equal(result.kind, 'static');
     assert.equal(result.ok, true);
   });
+
+  it('does not require a web preview entry from a non-web repository', () => {
+    const result = staticValidateProject([
+      { path: 'requirements.txt', content: 'pytest>=8,<9\n' },
+      { path: 'normalize.py', content: 'def normalize(value):\n    return value.strip()\n' },
+      { path: 'tests/test_normalize.py', content: 'def test_normalize():\n    assert True\n' },
+    ]);
+
+    assert.equal(result.kind, 'unknown');
+    assert.equal(result.ok, true);
+    assert.ok(!result.issues.some((issue) => /nothing to preview/i.test(issue)));
+  });
+
+  it('still requires index.html when a repository presents an HTML surface', () => {
+    const result = staticValidateProject([
+      { path: 'about.html', content: '<!doctype html><html><body>About</body></html>' },
+    ]);
+
+    assert.equal(result.ok, false);
+    assert.ok(result.issues.some((issue) => /nothing to preview/i.test(issue)));
+  });
 });

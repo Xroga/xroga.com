@@ -292,9 +292,18 @@ export function staticValidateProject(files: ProjectFile[]): StaticValidateResul
       kind = 'unknown';
     }
   } else if (kind !== 'chrome') {
-    if (!has(files, 'index.html')) {
+    // A repository without a JavaScript manifest is not necessarily a broken website.
+    // Python, Rust, Go, native and unknown-language projects legitimately have neither
+    // package.json nor index.html; their runtime adapters provide the executable checks.
+    // Require a conventional entry document only when the file set actually presents an
+    // HTML surface. This keeps the legacy static-site check while allowing universal
+    // non-web repositories to reach their language-appropriate review.
+    const presentsHtmlSurface = files.some((file) => /\.html?$/i.test(file.path));
+    if (presentsHtmlSurface && !has(files, 'index.html')) {
       issues.push('No index.html and no package.json — nothing to preview');
       fixHints.push('Add index.html or a framework package.json');
+    } else if (!presentsHtmlSurface) {
+      kind = 'unknown';
     }
   }
 

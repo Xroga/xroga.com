@@ -61,10 +61,11 @@ export interface ReviewBuildOutputResult {
   scope: ReviewScope;
 }
 
-const REVIEW_SYSTEM = `You are a strict QA reviewer for Xroga builds (static HTML, Next.js, or Expo).
+const REVIEW_SYSTEM = `You are a strict QA reviewer for Xroga builds across arbitrary repositories, languages, and product types.
 Respond with JSON only: { "ok": boolean, "issues": string[], "fixHints": string[], "findings": [{ "severity": "low|medium|high|critical", "title": string, "evidence": string, "affectedFiles": string[] }] }.
 - ok=true when the build satisfies the user prompt with no critical defects.
-- For Next/Expo: check entry files, env usage (no hardcoded secrets), and that the ask was met.
+- Judge the repository using its own manifests, source, tests, validation evidence, and requested outcome. Do not require browser or web entry files for non-web projects.
+- For web, Next, Expo, extension, and desktop projects: check their applicable entry files, env usage (no hardcoded secrets), and that the ask was met.
 - issues: concrete problems.
 - fixHints: short, actionable repairs.
 No markdown. No extra keys.`;
