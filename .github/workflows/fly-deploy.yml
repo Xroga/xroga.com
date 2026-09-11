@@ -3,6 +3,13 @@ name: Deploy to Fly.io
 on:
   push:
     branches: [main]
+    paths:
+      - 'backend/**'
+      - 'Dockerfile.api'
+      - 'fly.api.toml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/fly-deploy.yml'
   workflow_dispatch:
 
 concurrency:
