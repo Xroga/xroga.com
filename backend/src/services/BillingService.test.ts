@@ -39,8 +39,20 @@ test('canonical public plans are Free and Xroga Pro with real allowances', () =>
 
 test('Whop plan contract requires approved account, renewal $25, 30 days, USD, and no trial', () => {
   assert.doesNotThrow(() => assertWhopPlanContract(APPROVED_PLAN, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'));
+  assert.doesNotThrow(() => assertWhopPlanContract({
+    ...APPROVED_PLAN,
+    account_id: undefined,
+    company: { id: 'biz_qhYONL4RebGX96', title: 'Xroga' },
+  }, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'));
   for (const patch of [{ renewal_price: 19 }, { trial_period_days: 30 }, { account_id: 'biz_wrong' }, { plan_type: 'one_time' }]) {
     assert.throws(() => assertWhopPlanContract({ ...APPROVED_PLAN, ...patch }, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'), /mismatch/);
+  }
+  for (const company of [{ id: 'biz_wrong' }, {}, undefined]) {
+    assert.throws(() => assertWhopPlanContract({
+      ...APPROVED_PLAN,
+      account_id: undefined,
+      company,
+    }, 'biz_qhYONL4RebGX96', 'plan_hlV1A10I5QfSP'), /account_id/);
   }
 });
 

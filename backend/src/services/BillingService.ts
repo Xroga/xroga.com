@@ -127,7 +127,8 @@ export function checkoutIdempotencyKey(userId: string, now = Date.now()): string
 export function assertWhopPlanContract(plan: Record<string, unknown>, expectedAccountId: string, expectedPlanId: string): void {
   const mismatch: string[] = [];
   if (pickString(plan, 'id') !== expectedPlanId) mismatch.push('plan_id');
-  if (pickString(plan, 'account_id', 'company_id') !== expectedAccountId) mismatch.push('account_id');
+  const companyId = pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
+  if (companyId !== expectedAccountId) mismatch.push('account_id');
   if (pickString(plan, 'plan_type') !== 'renewal') mismatch.push('plan_type');
   if (Number(plan.renewal_price) !== 25) mismatch.push('renewal_price');
   if (Number(plan.billing_period) !== 30) mismatch.push('billing_period');
