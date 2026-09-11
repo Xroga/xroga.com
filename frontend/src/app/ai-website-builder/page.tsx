@@ -1,4 +1,4 @@
-import { AiWebsiteBuilderLanding } from '@/components/marketing/AiWebsiteBuilderLanding';
+import { CapabilityPage } from '@/components/marketing/CapabilityPage';
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
 import { buildMetadata } from '@/lib/seo';
 
@@ -12,5 +12,5 @@ export const metadata = buildMetadata({
 });
 
 export default function Page() {
-  return <AiWebsiteBuilderLanding data={data} />;
+  return <CapabilityPage data={data} />;
 }
