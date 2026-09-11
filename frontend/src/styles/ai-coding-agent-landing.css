@@ -251,6 +251,15 @@ body.theme-gray .agx-btn { color: #06210a; }
 
 /* ------------------------------------------------------------------------- hero */
 
+.agx-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding-block:
+    clamp(2.5rem, 5vw, 4.5rem)
+    clamp(3rem, 6vw, 5rem);
+}
+
 .agx-hero__squares {
   position: absolute;
   inset: 0;
@@ -288,17 +297,13 @@ body.theme-gray .agx-btn { color: #06210a; }
     );
 }
 
-items: center;
-
 .agx-hero__grid {
   position: relative;
   z-index: 2;
-
   display: grid;
   grid-template-columns:
     minmax(0, 0.92fr)
     minmax(0, 1.08fr);
-
   gap: clamp(2rem, 4vw, 3.5rem);
   align-items: center;
 }
