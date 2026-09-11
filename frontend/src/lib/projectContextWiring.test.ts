@@ -19,6 +19,15 @@ test('one activation operation owns repository selection and compatibility write
   assert.match(STORE, /activeTaskSessionByProject: Record<string, string \| null>/);
 });
 
+test('canonical project activation clears stale fresh-product intent', () => {
+  assert.match(REPO, /function activateProjectContext/);
+  const activation = REPO.slice(
+    REPO.indexOf('export function activateProjectContext'),
+    REPO.indexOf('/** @deprecated Compatibility adapter'),
+  );
+  assert.match(activation, /sessionStorage\.removeItem\(FRESH_TERMINAL_KEY\)/);
+});
+
 test('header, sidebar and task history bind to the canonical project identity', () => {
   assert.match(HEADER, /state\.activeProjectContext/);
   assert.doesNotMatch(HEADER, /loadTerminalHistory|getSelectedRepoContext/);

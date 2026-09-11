@@ -1,6 +1,7 @@
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 
 const STORAGE_KEY = 'xroga-repo-context';
+const FRESH_TERMINAL_KEY = 'xroga-fresh-terminal';
 export const PROJECT_CONTEXT_CHANGED_EVENT = 'xroga-repo-context-change';
 
 export interface SelectedRepoContext {
@@ -33,6 +34,10 @@ export function activateProjectContext(ctx: SelectedRepoContext): void {
   if (typeof window === 'undefined') return;
   const result = useProjectWorkspaceStore.getState().activateProjectContext(ctx);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(useProjectWorkspaceStore.getState().activeProjectContext));
+  // An explicit/restored repository and a fresh-product intent cannot both be canonical.
+  // Clear stale intent here, at the shared activation boundary, so every selector and
+  // resume flow gets the same behavior.
+  sessionStorage.removeItem(FRESH_TERMINAL_KEY);
   window.dispatchEvent(new CustomEvent(PROJECT_CONTEXT_CHANGED_EVENT, { detail: result }));
 }
 
@@ -78,8 +83,6 @@ export function saveNewRepoVisibility(visibility: NewRepoVisibility): void {
     /* non-blocking — the send path re-reads and falls back to private */
   }
 }
-
-const FRESH_TERMINAL_KEY = 'xroga-fresh-terminal';
 
 /** Mark the explicit New product flow so it cannot inherit the previous project. */
 export function markFreshTerminalIntent(): void {
