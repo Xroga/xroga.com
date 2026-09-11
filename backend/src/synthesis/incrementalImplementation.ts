@@ -51,6 +51,9 @@ export const PER_FILE_MAX_TOKENS = 16_000;
  */
 export const MANIFEST_MAX_TOKENS = 8_000;
 
+/** Per-provider deadline before the existing coding fallback chain advances. */
+export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
+
 export interface PlannedFile {
   readonly path: string;
   readonly purpose: string;
@@ -207,7 +210,15 @@ export interface CompletionFn {
 }
 
 const defaultCompletion: CompletionFn = (modelId, messages, opts) =>
-  chatCompletion(modelId as Parameters<typeof chatCompletion>[0], messages, opts);
+  chatCompletion(modelId as Parameters<typeof chatCompletion>[0], messages, {
+    ...opts,
+    // A universal step already has an explicit provider fallback chain. Letting the SDK
+    // wait three minutes and retry one unavailable route before that chain can advance
+    // turns a bounded four-model fallback into a 20+ minute request. Abort this individual
+    // attempt after one minute; the next approved coding route remains responsible for the
+    // same exact file/manifest, with no widened authority or partial output.
+    signal: AbortSignal.timeout(IMPLEMENTATION_ATTEMPT_TIMEOUT_MS),
+  });
 
 /**
  * Runs one call across the ranked candidates, returning the first usable reply.

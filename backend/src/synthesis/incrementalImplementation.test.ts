@@ -3,6 +3,7 @@ import type { ChatMessage } from '../ai/openaiCompat.js';
 import { test } from 'node:test';
 import {
   IncrementalImplementationError,
+  IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
   MAX_PLANNED_FILES,
   implementIncrementally,
   parseFilePlan,
@@ -44,6 +45,10 @@ function fakeCompletion(
 }
 
 const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { modelId: 'kimi_k3' }];
+
+test('each provider attempt is bounded before the approved fallback chain advances', () => {
+  assert.equal(IMPLEMENTATION_ATTEMPT_TIMEOUT_MS, 60_000);
+});
 
 test('a project is generated as a plan followed by one call per file', async () => {
   const complete = fakeCompletion((_model, system) =>
