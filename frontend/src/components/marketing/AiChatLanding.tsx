@@ -340,8 +340,7 @@ export function AiChatLanding() {
             Provider keys are not sent to the browser. Xroga does not claim it
             searched, changed a repository, tested a site, generated an asset,
             or deployed a product without corresponding runtime evidence.
-            General-purpose Chat browser automation and image generation are
-            not currently marketed as working capabilities.
+            General-purpose Chat browser automation and image generation are not currently marketed as working capabilities.
           </p>
         </div>
 
