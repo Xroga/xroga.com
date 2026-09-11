@@ -86,6 +86,29 @@ export type ConnectedRepositoryState =
   | { status: 'head'; branch: string; headSha: string; sourcePaths?: readonly string[] }
   | { status: 'unavailable'; branch: string; reason: string };
 
+/** Classify only response metadata; never expose GitHub response bodies or credentials. */
+export function describeGitHubInspectionResponse(
+  response: Pick<Response, 'status' | 'headers'>,
+  target: 'repository' | 'branch',
+): string {
+  const rateLimited =
+    response.status === 429 ||
+    (response.status === 403 && response.headers.get('x-ratelimit-remaining') === '0');
+  if (rateLimited) {
+    const resetSeconds = Number(response.headers.get('x-ratelimit-reset'));
+    const resetAt = Number.isFinite(resetSeconds) && resetSeconds > 0
+      ? new Date(resetSeconds * 1000).toISOString()
+      : null;
+    return resetAt
+      ? `GitHub API rate limit is temporarily exhausted; try again after ${resetAt}`
+      : 'GitHub API rate limit is temporarily exhausted; try again shortly';
+  }
+  if (response.status === 401 || response.status === 403) {
+    return `GitHub authorization cannot inspect the target ${target}`;
+  }
+  return `GitHub ${target} inspection failed (${response.status})`;
+}
+
 /**
  * The neutral marker is not product source. GitHub rounds very small repositories to
  * `size: 0`, but that number alone cannot distinguish the marker from a tiny real project.
@@ -189,9 +212,7 @@ export async function inspectConnectedRepositoryState(
     const reason =
       repoResponse.status === 404
         ? 'GitHub repository was not found or is not authorized'
-        : repoResponse.status === 401 || repoResponse.status === 403
-          ? 'GitHub authorization cannot inspect the target repository'
-          : `GitHub repository inspection failed (${repoResponse.status})`;
+        : describeGitHubInspectionResponse(repoResponse, 'repository');
     return { status: 'unavailable', branch, reason };
   }
 
@@ -208,9 +229,7 @@ export async function inspectConnectedRepositoryState(
     const reason =
       refResponse.status === 404
         ? `GitHub branch ${branch} was not found`
-        : refResponse.status === 401 || refResponse.status === 403
-          ? 'GitHub authorization cannot inspect the target branch'
-          : `GitHub branch inspection failed (${refResponse.status})`;
+        : describeGitHubInspectionResponse(refResponse, 'branch');
     return { status: 'unavailable', branch, reason };
   }
 
