@@ -202,7 +202,8 @@ Summarize and analyze uploaded documents accurately.
 If text extraction looks empty (scanned PDF), say so and ask for a text export or clearer file.`;
 
 export function researchSynthesisPrompt(query: string, gathered: string): string {
-  return `Based on this research, write a comprehensive, well-structured report answering:
+  const brief = researchAnswerMaxTokens(query) === 800;
+  return `Based on this research, ${brief ? 'answer the user directly' : 'write a comprehensive, well-structured report'}:
 
 ${query}
 
@@ -210,9 +211,21 @@ Research materials:
 ${gathered.slice(0, 40000)}
 
 Requirements:
-- Clear sections and headings
+- Follow the user's requested length, format, and number of items exactly.
 - Synthesize (do not merely list links)
 - Cite sources inline where claims come from the research
-- Note uncertainty when sources conflict
-- End with practical takeaways`;
+${brief
+    ? `- Lead with the answer. Omit generic report sections, tables, and takeaways unless necessary.
+- Do not turn a single-fact lookup into a long report.`
+    : `- Use clear sections and headings.
+- Note uncertainty when sources conflict.
+- End with practical takeaways.`}`;
+}
+
+const BRIEF_RESEARCH_RESPONSE_RE =
+  /\b(?:concise(?:ly)?|brief(?:ly)?|short answer|in (?:one|two|three|four|five|\d+) (?:sentences?|bullets?|points?|lines?)|under \d+ words?)\b/i;
+
+/** Keep an explicit user request for brevity from being overridden by research defaults. */
+export function researchAnswerMaxTokens(query: string): number {
+  return BRIEF_RESEARCH_RESPONSE_RE.test(query) ? 800 : 8192;
 }

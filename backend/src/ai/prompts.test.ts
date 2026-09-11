@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { incrementalUpdateContext } from './prompts.js';
+import {
+  incrementalUpdateContext,
+  researchAnswerMaxTokens,
+  researchSynthesisPrompt,
+} from './prompts.js';
 
 test('incremental update context preserves requested sections beyond the old 6k cutoff', () => {
   const tail = '<section id="roasted-this-week"><h2>Roasted this week</h2></section>';
@@ -24,4 +28,26 @@ test('incremental update context remains bounded across selected files', () => {
   assert.match(context, /first\.html/);
   assert.match(context, /second\.html/);
   assert.doesNotMatch(context, /third\.html\n```/);
+});
+
+test('research synthesis preserves an explicit concise response contract', () => {
+  const prompt = researchSynthesisPrompt(
+    'What is the current stable release? Answer concisely in three bullets.',
+    'Official source evidence.',
+  );
+
+  assert.match(prompt, /requested length, format, and number of items exactly/);
+  assert.match(prompt, /Omit generic report sections, tables, and takeaways/);
+  assert.doesNotMatch(prompt, /comprehensive, well-structured report/);
+  assert.equal(
+    researchAnswerMaxTokens('Answer concisely in three bullets.'),
+    800,
+  );
+});
+
+test('research retains the full output budget when the user requests a report', () => {
+  assert.equal(
+    researchAnswerMaxTokens('Prepare a comprehensive multi-source research report.'),
+    8192,
+  );
 });

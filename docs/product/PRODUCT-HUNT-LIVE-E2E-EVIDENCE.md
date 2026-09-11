@@ -28,3 +28,29 @@ No secret values are recorded. “Live” means the normal production Workspace 
 ## Pending production retest
 
 After the reporting fix is deployed, run a semantically different focused edit in the disposable repository. Passing evidence requires Workspace and GitHub to agree on the changed path count and names. No test may merge or deploy the fixture.
+
+## E2E-CHAT-001 — direct conceptual question in a connected project
+
+| Field | Evidence |
+| --- | --- |
+| Prompt ID | E2E-CHAT-001 |
+| Persona | Developer asking a normal conceptual question while a repository remains selected |
+| Prompt | `What is the difference between optimistic and pessimistic locking? Answer in three concise bullets. Do not change this project.` |
+| Expected result | Three concise bullets; no Builder, file, Preview, GitHub, or deployment action |
+| Visible result | Three relevant bullets covering mechanism and trade-off; project header remained stable; no execution artifact appeared |
+| Duration | 25.4 seconds to completed response; acknowledgement timing was not captured reliably |
+| Verdict | PASS |
+| Evidence | Authenticated production Workspace DOM snapshot, 2026-09-12 |
+
+## E2E-WEB-001 — current official technical fact
+
+| Field | Evidence |
+| --- | --- |
+| Prompt ID | E2E-WEB-001 |
+| Persona | Developer checking a current runtime release |
+| Prompt | `As of September 2026, what is the current Node.js LTS line? Search the web, cite the official Node.js release page, and answer concisely. Do not change project files.` |
+| Expected result | Short current answer from official Node.js evidence; no project mutation |
+| Visible result | Correctly identified Node.js 24.x “Krypton” and v24.20.0 with nodejs.org citations; explicitly stated no files changed. The response ignored “concisely” and expanded into a long report and table. |
+| Timing | Prompt visible in 0.53 seconds; completion in approximately 32.1 seconds |
+| Verdict | FAIL for instruction-following; PASS for retrieval freshness, source authority, and no-mutation boundary |
+| Evidence | Authenticated production Workspace DOM snapshot with official nodejs.org source cards, 2026-09-12 |

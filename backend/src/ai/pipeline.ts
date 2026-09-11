@@ -45,6 +45,7 @@ import {
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
+  researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
 import {
@@ -1008,7 +1009,7 @@ export async function runChatPipeline(opts: {
     [{ role: 'system', content: CHAT_SYSTEM }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
-      maxTokens: route.kind === 'research' ? 8192 : 4096,
+      maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
       temperature: 0.5,
       onDelta: opts.onDelta,
     },
