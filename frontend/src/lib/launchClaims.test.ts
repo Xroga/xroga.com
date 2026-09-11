@@ -10,6 +10,12 @@ const intelligenceSection = readFileSync(
   new URL('../components/homepage/XrogaIntelligenceSection.tsx', import.meta.url),
   'utf8',
 );
+const connectedServices = readFileSync(
+  new URL('../components/integrations/ConnectedServicesSection.tsx', import.meta.url),
+  'utf8',
+);
+const platformDocs = readFileSync(new URL('./platformDocsContent.ts', import.meta.url), 'utf8');
+const creationIntelligence = readFileSync(new URL('./creationIntelligence.ts', import.meta.url), 'utf8');
 
 describe('launch claims stay inside executable capability boundaries', () => {
   it('labels the integration list as a technology catalog rather than automatic runtime connections', () => {
@@ -21,5 +27,11 @@ describe('launch claims stay inside executable capability boundaries', () => {
   it('does not promise a one-million-token end-to-end request surface', () => {
     assert.match(intelligenceSection, /Focused Context/);
     assert.doesNotMatch(intelligenceSection, /1M\+ Context/);
+  });
+
+  it('does not expose retired Lemon Squeezy setup as a current connection or generated-product default', () => {
+    assert.doesNotMatch(`${connectedServices}\n${platformDocs}\n${creationIntelligence}`, /Lemon Squeezy/i);
+    assert.match(connectedServices, /Add credentials/);
+    assert.match(platformDocs, /external actions require authorization and provider evidence/);
   });
 });

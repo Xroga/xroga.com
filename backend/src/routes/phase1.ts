@@ -4,7 +4,7 @@ import { runChatPipeline } from '../ai/pipeline.js';
 import { assertHasQuota, getUsage, usageToTokenUsage } from '../ai/quota.js';
 import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
-import { planExplicitProjectBuild, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
+import { planExplicitProjectBuild, planRetiredDirectCapability, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { analyzeGitHubRepo } from '../services/integrations/githubDeploy.js';
 
@@ -25,6 +25,12 @@ router.post('/plan', async (req: AuthRequest, res) => {
     if (/^\/build\b/i.test(message) && context) {
       return res.json(await planExplicitProjectBuild({ userId, message, projectContext: context }));
     }
+    const retiredCapabilityPlan = await planRetiredDirectCapability({
+      userId,
+      message,
+      projectContext: context,
+    });
+    if (retiredCapabilityPlan) return res.json(retiredCapabilityPlan);
     const plan = await planSemanticRequest({
       userId,
       message,

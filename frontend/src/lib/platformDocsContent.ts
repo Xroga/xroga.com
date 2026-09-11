@@ -20,7 +20,7 @@ export const PLATFORM_PARTS = [
           'SaaS, CRM, project management, invoicing, dashboards',
           'Help desks, inventory, task management, booking systems',
         ],
-        stack: 'Next.js + Supabase + Edge Functions · Lemon Squeezy · Vercel',
+        stack: 'Next.js + Supabase + Edge Functions · authorised payment provider · Vercel',
       },
       {
         heading: 'AI-powered applications',
@@ -45,15 +45,15 @@ export const PLATFORM_PARTS = [
     title: 'Part 2: Integrations',
     sections: [
       {
-        heading: 'Automatic (zero effort)',
+        heading: 'Available connections and integration patterns',
         items: [
-          'Supabase — database, auth, realtime, storage',
-          'Vercel — frontend deployment',
-          'Cloudflare — CDN, DNS, SSL, R2 storage',
-          'Lemon Squeezy — payments & subscriptions',
-          'Brevo — email · GitHub — code repository',
+          'GitHub — authorized repository reads and writes',
+          'Vercel — deployment through an authorized account',
+          'Supabase — project setup when connected by the user',
+          'Cloudflare and Brevo — generated integration code using credentials you provide',
+          'Whop — Xroga Pro billing; generated product billing still requires its own authorized provider setup',
         ],
-        stack: 'Click Connect → Authorize → auto-configured',
+        stack: 'The connection UI reports real status; external actions require authorization and provider evidence',
       },
       {
         heading: 'Optional (technical users)',
@@ -88,7 +88,7 @@ export const PLATFORM_PARTS = [
           'Frontend: project-native framework and established repository patterns',
           'Backend: server routes, durable jobs, and integrations required by the outcome',
           'Database: PostgreSQL schema + RLS',
-          'Auth: Supabase Auth · Payments: Lemon Squeezy/Stripe',
+          'Auth and payments: use the providers and credentials the project owner authorizes',
           'Deploy: Vercel + Cloudflare · GitHub repo + README',
         ],
         stack: 'Full SaaS folder structure on GitHub',

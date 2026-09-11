@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
+import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, planRetiredDirectCapability, retiredDirectCapability, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -144,5 +144,32 @@ describe('explicit universal build command', () => {
       planExplicitProjectBuild({ userId: 'generated-user', message: '/build', projectContext: { repo: 'o/r', branch: 'b', projectRoot: '/' } }),
       (error: unknown) => (error as { code?: string }).code === 'INVALID_GOAL',
     );
+  });
+});
+
+describe('retired direct capability boundary', () => {
+  it('recognizes semantic variants of direct media generation without treating product builds as media jobs', () => {
+    assert.equal(retiredDirectCapability('Generate a photorealistic image of a bicycle and return it.'), 'media-generation');
+    assert.equal(retiredDirectCapability('Make a short video of waves at sunset.'), 'media-generation');
+    assert.equal(retiredDirectCapability('Create a web app that generates product images.'), null);
+    assert.equal(retiredDirectCapability('Build an image gallery website with responsive filters.'), null);
+  });
+
+  it('recognizes direct browser operation but not browser products or build verification', () => {
+    assert.equal(retiredDirectCapability('Open https://example.com and submit the signup form.'), 'browser-automation');
+    assert.equal(retiredDirectCapability('Scrape this website and download every record.'), 'browser-automation');
+    assert.equal(retiredDirectCapability('Build a browser extension that organizes bookmarks.'), null);
+    assert.equal(retiredDirectCapability('Build the site and verify it in a browser.'), null);
+  });
+
+  it('returns a truthful blocked plan without substituting a build', async () => {
+    const plan = await planRetiredDirectCapability({
+      userId: 'generated-user',
+      message: 'Create an illustration of a lunar bicycle. Do not build or change a software project.',
+    });
+    assert.equal(plan?.dispatch, 'blocked');
+    assert.deepEqual(plan?.capabilityIds, []);
+    assert.match(plan?.blockers[0] ?? '', /not available in Xroga/i);
+    assert.match(plan?.blockers[0] ?? '', /upload an image for analysis/i);
   });
 });

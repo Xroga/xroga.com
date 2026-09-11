@@ -146,7 +146,7 @@ const REFINE_BY_TYPE: Record<CreationType, string[]> = {
 
 const FOLLOWUP_BY_TYPE: Record<CreationType, string[]> = {
   website: ['Add a pricing section', 'Add online ordering', 'Make it responsive'],
-  webapp: ['Add user login with Supabase', 'Add Lemon Squeezy payments', 'Add analytics dashboard'],
+  webapp: ['Add user login with Supabase', 'Add subscription payments', 'Add analytics dashboard'],
   mobile_app: ['Connect Expo in Publish', 'Add app icon & splash screen', 'Add offline mode'],
   chrome_extension: [
     'Download extension.zip and Load unpacked',

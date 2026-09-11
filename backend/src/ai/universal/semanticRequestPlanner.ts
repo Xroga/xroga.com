@@ -18,6 +18,72 @@ export interface SemanticRequestPlan {
   readonly usage: ReturnType<typeof usageToTokenUsage>;
 }
 
+type RetiredDirectCapability = 'media-generation' | 'browser-automation';
+
+/**
+ * Stable product boundaries do not need a model call to rediscover them. This
+ * classifier is deliberately narrow: it only recognizes direct requests for a
+ * retired capability, and yields to any positive software-product build intent.
+ * Image analysis from an attachment and browser verification inside a build are
+ * separate, supported capabilities and are not matched here.
+ */
+export function retiredDirectCapability(message: string): RetiredDirectCapability | null {
+  const withoutNegatedProjectWork = message.replace(
+    /\b(?:do not|don't|without)\s+(?:build|change|modify|edit|create)[^.?!]*/gi,
+    '',
+  );
+  const positiveSoftwareBuild =
+    /\b(?:build|develop|implement|code|create|make)\b[\s\S]{0,100}\b(?:website|web\s*app|app|dashboard|extension|api|software|tool|project|site)\b/i;
+  if (positiveSoftwareBuild.test(withoutNegatedProjectWork)) return null;
+
+  const directMediaGeneration =
+    /\b(?:generate|create|make|draw|render|produce|return)\b[\s\S]{0,80}\b(?:image|picture|photo|logo|thumbnail|poster|illustration|artwork|video|animation|gif)\b/i;
+  if (directMediaGeneration.test(message)) return 'media-generation';
+
+  const directBrowserAction =
+    /\b(?:browser\s+automation|automate\s+(?:a\s+)?browser|browse\s+and\s+(?:click|fill|submit|purchase|book|apply)|(?:open|visit|navigate\s+to)\s+https?:\/\/|scrape\s+(?:this|the|a)\s+(?:site|website|page))\b/i;
+  if (directBrowserAction.test(message)) return 'browser-automation';
+  return null;
+}
+
+export async function planRetiredDirectCapability(input: {
+  userId: string;
+  message: string;
+  projectContext?: GoalInterpretationInput['projectContext'];
+}): Promise<SemanticRequestPlan | null> {
+  const retired = retiredDirectCapability(input.message);
+  if (!retired) return null;
+  const media = retired === 'media-generation';
+  const blocker = media
+    ? 'Image and video generation are not available in Xroga. You can upload an image for analysis, or ask Xroga to build software that uses image assets.'
+    : 'General-purpose browser automation is not available in Xroga. You can ask Xroga to research public sources or build and verify a web product.';
+  const goalContract = goalContractSchema.parse({
+    version: '1.0',
+    goal: input.message,
+    desiredOutcome: media ? 'Generate a media asset.' : 'Operate a third-party website in a browser.',
+    semanticIntent: 'EXTERNAL_ACTION',
+    constraints: ['Do not substitute an unrelated software build for an unavailable capability.'],
+    acceptance: ['State the current product boundary truthfully and offer a supported alternative.'],
+    historyContext: [],
+    projectContext: input.projectContext ?? null,
+    deliverables: [],
+    requiredCapabilities: [],
+    requiredAuthorities: [],
+    risks: ['A fallback must not claim an external action or generated asset that did not occur.'],
+    confidence: 1,
+    blockers: [blocker],
+    contextComplexity: 'low',
+  });
+  return {
+    goalContract,
+    dispatch: 'blocked',
+    capabilityIds: [],
+    rationale: 'The requested direct capability is outside the current product contract.',
+    blockers: [blocker],
+    usage: usageToTokenUsage(await getUsage(input.userId)),
+  };
+}
+
 export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
   const callable = callableModelIds(env);
   const ordered = (['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const)

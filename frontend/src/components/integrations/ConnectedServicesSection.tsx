@@ -10,7 +10,6 @@ import { SettingsPanelHeader } from '@/components/settings/SettingsPrimitives';
 const CONNECTABLE = [
   { id: 'brevo', name: 'Brevo', detail: 'Transactional email' },
   { id: 'cloudflare', name: 'Cloudflare', detail: 'CDN, DNS, SSL, R2 storage' },
-  { id: 'lemon_squeezy', name: 'Lemon Squeezy', detail: 'Payments & subscriptions (MoR)' },
 ] as const;
 
 /**
@@ -26,8 +25,8 @@ export function ConnectedServicesSection() {
     setCustomCount(loadCredentials().length);
   }, []);
 
-  function connectSoon(name: string) {
-    toast(`${name} connect — add credentials in Custom API Keys`, { icon: '🔑' });
+  function explainCredentialSetup(name: string) {
+    toast(`${name} requires your own credentials in Custom API Keys below.`, { icon: '🔑' });
   }
 
   return (
@@ -51,9 +50,9 @@ export function ConnectedServicesSection() {
               <button
                 type="button"
                 className="mt-2 rounded-token-sm border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-bold hover:border-[var(--accent)]/50"
-                onClick={() => connectSoon(svc.name)}
+                onClick={() => explainCredentialSetup(svc.name)}
               >
-                Connect
+                Add credentials
               </button>
             </div>
           </div>
