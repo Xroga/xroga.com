@@ -223,7 +223,7 @@ ${brief
 }
 
 const BRIEF_RESEARCH_RESPONSE_RE =
-  /\b(?:concise(?:ly)?|brief(?:ly)?|short answer|in (?:one|two|three|four|five|\d+) (?:sentences?|bullets?|points?|lines?)|under \d+ words?)\b/i;
+  /\b(?:concise(?:ly)?|brief(?:ly)?|short answer|(?:one|two|three|four|five|\d+) short (?:sentences?|bullets?|points?|lines?)|in (?:one|two|three|four|five|\d+) (?:short )?(?:sentences?|bullets?|points?|lines?)|under \d+ words?)\b/i;
 
 /** Keep an explicit user request for brevity from being overridden by research defaults. */
 export function researchAnswerMaxTokens(query: string): number {
