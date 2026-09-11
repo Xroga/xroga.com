@@ -138,16 +138,13 @@ body.theme-gray .agx-page {
   background: var(--agx-accent);
   /* White on the dark neutral of the light themes, near-black on the bright neutral of
      the dark ones — the button inverts with the accent, not with the page. */
-  color: #ffffff;
+  color: var(--tp-action-text);
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
   transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease;
 }
-
-body.theme-black .agx-btn,
-body.theme-gray .agx-btn { color: #0a0c0f; }
 
 .agx-btn:hover { background: var(--agx-accent-bright); transform: translateY(-1px); }
 .agx-btn svg { width: 16px; height: 16px; }
