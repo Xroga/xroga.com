@@ -14,35 +14,36 @@ const IMAGE_URL =
   'https://upload.wikimedia.org/wikipedia/commons/a/a4/Ada_Lovelace_portrait.jpg';
 
 const SETTINGS = {
-  particleCount: 260_000,
-  particleSize: 1.7,
+  particleCount: 280_000,
+  particleSize: 1.72,
   particleOpacity: 0.94,
   speed: 1,
-  cursorStrength: 0.11,
-  cursorRadius: 120,
+  cursorStrength: 0.14,
+  cursorRadius: 150,
   maxDpr: 1.5,
+  ambientShare: 0.18,
 };
 
 const THEMES: Record<ThemeName, ThemePalette> = {
   white: {
-    low: [34, 45, 58],
-    high: [78, 124, 176],
-    hot: [239, 248, 255],
+    low: [52, 88, 126],
+    high: [87, 153, 219],
+    hot: [244, 250, 255],
   },
   gray: {
-    low: [35, 38, 43],
+    low: [63, 67, 73],
     high: [232, 235, 239],
     hot: [255, 255, 255],
   },
   black: {
-    low: [86, 90, 96],
+    low: [76, 80, 86],
     high: [244, 246, 249],
     hot: [255, 255, 255],
   },
   beige: {
-    low: [72, 63, 54],
-    high: [220, 208, 190],
-    hot: [255, 249, 240],
+    low: [90, 76, 64],
+    high: [224, 210, 192],
+    hot: [255, 249, 239],
   },
 };
 
@@ -114,7 +115,7 @@ export function SoftwareHeroParticleImage() {
         }
       | null = null;
 
-    let displayRect = {
+    let personRect = {
       x: 0,
       y: 0,
       width: 1,
@@ -122,14 +123,14 @@ export function SoftwareHeroParticleImage() {
     };
 
     const pointer = {
-      x: 0.72,
+      x: 0.5,
       y: 0.5,
-      px: 0.72,
+      px: 0.5,
       py: 0.5,
       vx: 0,
       vy: 0,
       active: 0,
-      overPerson: false,
+      insideHero: false,
       lastMove: 0,
     };
 
@@ -137,6 +138,8 @@ export function SoftwareHeroParticleImage() {
       precision highp float;
 
       attribute vec2 a_home;
+      attribute vec2 a_field;
+      attribute float a_ambient;
       attribute float a_seed;
       attribute float a_luma;
       attribute float a_edge;
@@ -165,72 +168,56 @@ export function SoftwareHeroParticleImage() {
 
         float t = u_time;
         float seed = a_seed;
-        float s = seed * 2.0 - 1.0;
+        float signedSeed = seed * 2.0 - 1.0;
         float aspect = u_resolution.x / u_resolution.y;
 
-        // Always alive.
-        float field =
-          sin(home.y * 14.0 + t * 0.52 + seed * 7.0) +
-          cos(home.x * 12.0 - t * 0.44 + seed * 9.0);
+        // 18% of particles remain hero-wide even in the resolved phase.
+        float fieldMix =
+          max(
+            a_ambient * 0.88,
+            u_spread * (0.76 + seed * 0.20)
+          );
 
-        vec2 micro = normalize(
+        // Main movement between Ada and the full hero particle field.
+        p = mix(home, a_field, fieldMix);
+
+        // Always-on "alive" flow.
+        float flowAngle =
+          sin(p.y * 16.0 + t * 0.62 + seed * 9.0) +
+          cos(p.x * 13.0 - t * 0.51 + seed * 7.0);
+
+        vec2 flow = normalize(
           vec2(
-            cos(field + seed * 3.1),
-            sin(field - seed * 2.4)
+            cos(flowAngle + seed * 2.6),
+            sin(flowAngle - seed * 2.1)
           ) + 0.0001
         );
 
-        p += micro * u_alive * (0.0016 + seed * 0.0032);
+        p += flow * u_alive * (0.0022 + seed * 0.0040);
 
-        // Auto dissolve.
-        float wave =
-          0.5 +
-          0.5 * sin(home.y * 12.0 + seed * 10.0 + t * 0.35);
-
-        float threshold =
-          mix(1.14, -0.10, u_spread) +
-          (wave - 0.5) * 0.18;
-
-        float local =
-          smoothstep(
-            threshold - 0.16,
-            threshold + 0.07,
-            home.x
-          );
-
-        float amount = local * u_spread;
-
+        // During spread, create a broad sweep across the hero.
         vec2 sweep = normalize(
           vec2(
-            0.96 + 0.22 * sin(seed * 17.0 + t * 0.44),
-            s * 0.32 + 0.14 * sin(home.x * 18.0 + t * 0.52)
+            0.92 + 0.24 * sin(seed * 17.0 + t * 0.46),
+            signedSeed * 0.28 +
+              0.14 * sin(p.x * 18.0 + t * 0.56)
           )
         );
 
-        p += sweep * amount * (0.050 + seed * 0.22);
+        p += sweep * u_spread * (0.010 + seed * 0.040);
 
-        vec2 center = vec2(0.72, 0.50);
-        vec2 radial = home - center;
+        vec2 center = vec2(0.70, 0.50);
+        vec2 radial = p - center;
         vec2 tangent =
           normalize(vec2(-radial.y, radial.x) + 0.0001);
 
         p +=
           tangent *
-          amount *
-          s *
-          (0.020 + seed * 0.070);
+          u_spread *
+          signedSeed *
+          (0.008 + seed * 0.026);
 
-        p.x +=
-          sin(t * 0.48 + home.y * 15.0 + seed * 11.0) *
-          amount *
-          0.013;
-
-        p.y +=
-          cos(t * 0.54 + home.x * 14.0 + seed * 9.0) *
-          amount *
-          0.016;
-
-        // Cursor interaction only over the PERSON, not the old image rectangle.
+        // Cursor interaction works over the ENTIRE hero.
         if (u_mouseActive > 0.001) {
           vec2 delta = p - u_mouse;
           vec2 scaled = vec2(delta.x * aspect, delta.y);
@@ -239,30 +226,31 @@ export function SoftwareHeroParticleImage() {
 
           float influence =
             1.0 -
-            smoothstep(radius * 0.12, radius, distance);
+            smoothstep(radius * 0.10, radius, distance);
 
           influence *= u_mouseActive;
 
           vec2 direction = normalize(delta + 0.0001);
           vec2 curl = vec2(-direction.y, direction.x);
 
+          // Repel + curl + cursor velocity wake.
           p +=
             direction *
             influence *
             u_cursorStrength *
-            0.30;
+            0.34;
 
           p +=
             curl *
             influence *
             u_cursorStrength *
-            0.18;
+            0.22;
 
           p +=
             u_mouseVel *
             influence *
             u_cursorStrength *
-            1.20;
+            1.85;
         }
 
         gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
@@ -272,17 +260,20 @@ export function SoftwareHeroParticleImage() {
             1.0,
             u_pointSize *
             a_size *
-            (1.0 + amount * 0.34)
+            (1.0 + u_spread * 0.26)
           );
 
         v_luma = a_luma;
         v_edge = a_edge;
         v_seed = a_seed;
 
+        float ambientAlpha =
+          mix(1.0, 0.52, a_ambient);
+
         v_alpha =
           u_particleOpacity *
-          mix(0.42, 0.98, max(a_edge, a_luma * 0.72)) *
-          mix(1.0, 0.84, amount);
+          ambientAlpha *
+          mix(0.42, 0.98, max(a_edge, a_luma * 0.72));
       }
     `;
 
@@ -300,18 +291,18 @@ export function SoftwareHeroParticleImage() {
 
       void main() {
         vec2 point = gl_PointCoord - 0.5;
-        float d = length(point);
+        float distance = length(point);
 
-        if (d > 0.5) discard;
+        if (distance > 0.5) discard;
 
         float mask =
-          1.0 - smoothstep(0.28, 0.5, d);
+          1.0 - smoothstep(0.28, 0.5, distance);
 
         float brightness =
           clamp(
-            0.18 +
-            v_luma * 0.60 +
-            v_edge * 0.52,
+            0.16 +
+            v_luma * 0.62 +
+            v_edge * 0.54,
             0.0,
             1.0
           );
@@ -320,7 +311,7 @@ export function SoftwareHeroParticleImage() {
           mix(u_lowColor, u_highColor, brightness);
 
         if (v_seed > 0.993) {
-          color = mix(color, u_hotColor, 0.88);
+          color = mix(color, u_hotColor, 0.90);
         }
 
         gl_FragColor =
@@ -328,11 +319,11 @@ export function SoftwareHeroParticleImage() {
       }
     `;
 
-    const compile = (type: number, sourceCode: string) => {
+    const compile = (type: number, code: string) => {
       const shader = gl.createShader(type);
       if (!shader) throw new Error('Unable to create shader.');
 
-      gl.shaderSource(shader, sourceCode);
+      gl.shaderSource(shader, code);
       gl.compileShader(shader);
 
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -361,6 +352,8 @@ export function SoftwareHeroParticleImage() {
 
     const attributes = {
       home: gl.getAttribLocation(program, 'a_home'),
+      field: gl.getAttribLocation(program, 'a_field'),
+      ambient: gl.getAttribLocation(program, 'a_ambient'),
       seed: gl.getAttribLocation(program, 'a_seed'),
       luma: gl.getAttribLocation(program, 'a_luma'),
       edge: gl.getAttribLocation(program, 'a_edge'),
@@ -411,14 +404,6 @@ export function SoftwareHeroParticleImage() {
       }
     };
 
-    /**
-     * Creates a transparent cutout from the historical portrait.
-     *
-     * Important:
-     * - We do NOT render the rectangular source image.
-     * - We keep only a soft person-shaped alpha region.
-     * - Particles are generated only from pixels that survive this alpha mask.
-     */
     const createPersonCutout = () => {
       if (!source.naturalWidth || !source.naturalHeight) return null;
 
@@ -445,7 +430,6 @@ export function SoftwareHeroParticleImage() {
       const imageData = ctx.getImageData(0, 0, width, height);
       const data = imageData.data;
 
-      // Estimate the painted background from the four corners.
       const samples: [number, number, number][] = [];
       const cornerSize = Math.max(12, Math.floor(width * 0.06));
 
@@ -508,8 +492,6 @@ export function SoftwareHeroParticleImage() {
             dr * dr + dg * dg + db * db,
           );
 
-          // Ada-specific soft silhouette prior:
-          // head + shoulders/torso + lower dress.
           const head = ellipseMask(
             nx,
             ny,
@@ -542,14 +524,12 @@ export function SoftwareHeroParticleImage() {
 
           const personPrior = Math.max(head, torso, lower);
 
-          // Background-like pixels fade out.
           const colorScore = smoothstep(
             30,
             88,
             colorDistance,
           );
 
-          // Preserve the central subject, but kill the rectangular painting.
           const alpha =
             Math.max(
               colorScore * personPrior,
@@ -563,7 +543,6 @@ export function SoftwareHeroParticleImage() {
         }
       }
 
-      // Feather the person edge.
       const maskCanvas = document.createElement('canvas');
       maskCanvas.width = width;
       maskCanvas.height = height;
@@ -622,15 +601,15 @@ export function SoftwareHeroParticleImage() {
       ctx.drawImage(cutout.canvas, 0, 0);
     };
 
-    const getDisplayedPersonRect = () => {
+    const getPersonRect = () => {
       const rootRect = root.getBoundingClientRect();
-      const personRect = portraitCanvas.getBoundingClientRect();
+      const rect = portraitCanvas.getBoundingClientRect();
 
       return {
-        x: personRect.left - rootRect.left,
-        y: personRect.top - rootRect.top,
-        width: personRect.width,
-        height: personRect.height,
+        x: rect.left - rootRect.left,
+        y: rect.top - rootRect.top,
+        width: rect.width,
+        height: rect.height,
       };
     };
 
@@ -640,7 +619,7 @@ export function SoftwareHeroParticleImage() {
       const rootRect = root.getBoundingClientRect();
       if (rootRect.width < 1 || rootRect.height < 1) return;
 
-      displayRect = getDisplayedPersonRect();
+      personRect = getPersonRect();
 
       const { width, height } = cutout.canvas;
       const data = cutout.pixels.data;
@@ -669,8 +648,6 @@ export function SoftwareHeroParticleImage() {
           const i = (y * width + x) * 4;
           const alpha = data[i + 3] / 255;
 
-          // This is the key change:
-          // no particles are generated from the removed painting/background.
           if (alpha < 0.13) continue;
 
           const luma = lumaAt(x, y);
@@ -685,14 +662,10 @@ export function SoftwareHeroParticleImage() {
 
           const edge = Math.min(1, (gx + gy) * 3.1);
 
-          // Denser on Ada, especially detail/high-contrast areas.
-          const probability =
-            Math.min(
-              1,
-              0.18 +
-                alpha * 0.45 +
-                edge * 0.42,
-            );
+          const probability = Math.min(
+            1,
+            0.18 + alpha * 0.45 + edge * 0.42,
+          );
 
           if (Math.random() > probability) continue;
 
@@ -709,14 +682,16 @@ export function SoftwareHeroParticleImage() {
 
       const actualCount =
         rootRect.width < 700
-          ? 110_000
+          ? 120_000
           : rootRect.width < 1100
-            ? 180_000
+            ? 190_000
             : SETTINGS.particleCount;
 
       pointCount = actualCount;
 
       const homes = new Float32Array(actualCount * 2);
+      const fields = new Float32Array(actualCount * 2);
+      const ambient = new Float32Array(actualCount);
       const seeds = new Float32Array(actualCount);
       const lumas = new Float32Array(actualCount);
       const edges = new Float32Array(actualCount);
@@ -732,17 +707,33 @@ export function SoftwareHeroParticleImage() {
         const jitterY = (Math.random() - 0.5) * 1.0;
 
         homes[i * 2] =
-          (displayRect.x +
-            p.x * displayRect.width +
+          (personRect.x +
+            p.x * personRect.width +
             jitterX) /
           rootRect.width;
 
         homes[i * 2 + 1] =
           1 -
-          (displayRect.y +
-            p.y * displayRect.height +
+          (personRect.y +
+            p.y * personRect.height +
             jitterY) /
             rootRect.height;
+
+        /*
+         * Full hero target.
+         * Slight horizontal bias keeps the field cinematic instead of uniform noise.
+         */
+        const fx = Math.random();
+        const band =
+          0.5 +
+          (Math.random() - 0.5) * 0.82 +
+          Math.sin(fx * Math.PI * 2.0) * 0.07;
+
+        fields[i * 2] = fx;
+        fields[i * 2 + 1] = Math.max(0.03, Math.min(0.97, band));
+
+        ambient[i] =
+          Math.random() < SETTINGS.ambientShare ? 1 : 0;
 
         seeds[i] = Math.random();
         lumas[i] = p.luma;
@@ -753,6 +744,8 @@ export function SoftwareHeroParticleImage() {
       clearBuffers();
 
       bindBuffer(attributes.home, homes, 2);
+      bindBuffer(attributes.field, fields, 2);
+      bindBuffer(attributes.ambient, ambient, 1);
       bindBuffer(attributes.seed, seeds, 1);
       bindBuffer(attributes.luma, lumas, 1);
       bindBuffer(attributes.edge, edges, 1);
@@ -783,7 +776,6 @@ export function SoftwareHeroParticleImage() {
       ) {
         particleCanvas.width = width;
         particleCanvas.height = height;
-
         gl.viewport(0, 0, width, height);
       }
     };
@@ -825,10 +817,10 @@ export function SoftwareHeroParticleImage() {
       const seconds = (now - started) / 1000;
       const spread = autoSpread(seconds);
 
-      if (now - pointer.lastMove > 650) {
-        pointer.active *= 0.965;
-        pointer.vx *= 0.9;
-        pointer.vy *= 0.9;
+      if (now - pointer.lastMove > 520) {
+        pointer.active *= 0.952;
+        pointer.vx *= 0.88;
+        pointer.vy *= 0.88;
       }
 
       gl.clearColor(0, 0, 0, 0);
@@ -853,7 +845,7 @@ export function SoftwareHeroParticleImage() {
         uniforms.alive,
         reducedMotion.matches
           ? 0
-          : 0.68 + Math.sin(seconds * 0.8) * 0.22,
+          : 0.78 + Math.sin(seconds * 0.8) * 0.20,
       );
 
       gl.uniform2f(
@@ -877,7 +869,7 @@ export function SoftwareHeroParticleImage() {
       gl.uniform1f(
         uniforms.mouseActive,
         finePointer.matches &&
-          pointer.overPerson &&
+          pointer.insideHero &&
           !reducedMotion.matches
           ? pointer.active
           : 0,
@@ -911,64 +903,26 @@ export function SoftwareHeroParticleImage() {
 
       gl.drawArrays(gl.POINTS, 0, pointCount);
 
-      // Only the cutout person fades a little — never a rectangular image.
       portraitCanvas.style.opacity = String(
-        0.90 - spread * 0.46,
+        0.90 - spread * 0.52,
       );
-    };
-
-    const hitTestPerson = (
-      localX: number,
-      localY: number,
-    ) => {
-      if (!cutout) return false;
-
-      const rect = getDisplayedPersonRect();
-
-      if (
-        localX < rect.x ||
-        localX > rect.x + rect.width ||
-        localY < rect.y ||
-        localY > rect.y + rect.height
-      ) {
-        return false;
-      }
-
-      const nx = (localX - rect.x) / rect.width;
-      const ny = (localY - rect.y) / rect.height;
-
-      const px = Math.max(
-        0,
-        Math.min(
-          cutout.canvas.width - 1,
-          Math.floor(nx * cutout.canvas.width),
-        ),
-      );
-
-      const py = Math.max(
-        0,
-        Math.min(
-          cutout.canvas.height - 1,
-          Math.floor(ny * cutout.canvas.height),
-        ),
-      );
-
-      const alpha =
-        cutout.pixels.data[
-          (py * cutout.canvas.width + px) * 4 + 3
-        ];
-
-      return alpha > 32;
     };
 
     const handlePointerMove = (event: PointerEvent) => {
-      const rootRect = root.getBoundingClientRect();
+      const rect = root.getBoundingClientRect();
 
-      const localX = event.clientX - rootRect.left;
-      const localY = event.clientY - rootRect.top;
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
 
-      const x = localX / rootRect.width;
-      const y = 1 - localY / rootRect.height;
+      pointer.insideHero = inside;
+
+      if (!inside) return;
+
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = 1 - (event.clientY - rect.top) / rect.height;
 
       pointer.vx = x - pointer.px;
       pointer.vy = y - pointer.py;
@@ -979,10 +933,12 @@ export function SoftwareHeroParticleImage() {
       pointer.x = x;
       pointer.y = y;
 
-      pointer.overPerson = hitTestPerson(localX, localY);
-
       pointer.active = 1;
       pointer.lastMove = performance.now();
+    };
+
+    const handlePointerLeave = () => {
+      pointer.insideHero = false;
     };
 
     const rebuild = () => {
@@ -1002,7 +958,6 @@ export function SoftwareHeroParticleImage() {
         buildParticles();
         started = performance.now();
       } catch {
-        // Avoid a broken rectangular fallback.
         portraitCanvas.style.opacity = '0';
       }
     };
@@ -1034,6 +989,11 @@ export function SoftwareHeroParticleImage() {
       { passive: true },
     );
 
+    root.addEventListener(
+      'pointerleave',
+      handlePointerLeave,
+    );
+
     source.addEventListener('load', handleSourceLoad);
 
     if (source.complete && source.naturalWidth) {
@@ -1056,6 +1016,11 @@ export function SoftwareHeroParticleImage() {
         handlePointerMove,
       );
 
+      root.removeEventListener(
+        'pointerleave',
+        handlePointerLeave,
+      );
+
       source.removeEventListener(
         'load',
         handleSourceLoad,
@@ -1075,7 +1040,7 @@ export function SoftwareHeroParticleImage() {
       className="xsw-hero-particles"
       aria-hidden="true"
     >
-      {/* Source is hidden. It is used only to build the transparent cutout. */}
+      {/* Hidden source only — never visible as an image card. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={sourceRef}
@@ -1085,12 +1050,13 @@ export function SoftwareHeroParticleImage() {
         alt=""
       />
 
-      {/* This canvas contains ONLY the person. No image rectangle/card. */}
+      {/* Transparent Ada cutout. */}
       <canvas
         ref={portraitRef}
         className="xsw-hero-particles__portrait"
       />
 
+      {/* Hero-wide reactive particle field. */}
       <canvas
         ref={particleRef}
         className="xsw-hero-particles__canvas"
