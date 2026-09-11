@@ -84,16 +84,12 @@ export function AiWebsiteBuilderAtmosphere({
     const canvasNode = canvasRef.current;
 
     if (!rootNode || !canvasNode) return;
+    const rootElement: HTMLDivElement = rootNode;
+    const canvasElement: HTMLCanvasElement = canvasNode;
 
-    const context = canvasNode.getContext('2d', { alpha: false });
-    if (!context) return;
-
-    // Create stable non-null aliases for all nested callbacks/functions.
-    // Next.js production type-checking does not preserve the earlier null
-    // narrowing for captured ref values inside nested functions.
-    const root: HTMLDivElement = rootNode;
-    const canvas: HTMLCanvasElement = canvasNode;
-    const ctx: CanvasRenderingContext2D = context;
+    const maybeContext = canvasElement.getContext('2d', { alpha: false });
+    if (!maybeContext) return;
+    const ctx: CanvasRenderingContext2D = maybeContext;
 
     let themeName = getTheme();
     let raf = 0;
@@ -130,7 +126,7 @@ export function AiWebsiteBuilderAtmosphere({
     }));
 
     function resize() {
-      const rect = root.getBoundingClientRect();
+      const rect = rootElement.getBoundingClientRect();
 
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
@@ -139,11 +135,11 @@ export function AiWebsiteBuilderAtmosphere({
       const rw = Math.max(1, Math.floor(width * dpr));
       const rh = Math.max(1, Math.floor(height * dpr));
 
-      if (canvas.width !== rw || canvas.height !== rh) {
-        canvas.width = rw;
-        canvas.height = rh;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+      if (canvasElement.width !== rw || canvasElement.height !== rh) {
+        canvasElement.width = rw;
+        canvasElement.height = rh;
+        canvasElement.style.width = `${width}px`;
+        canvasElement.style.height = `${height}px`;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
     }
@@ -370,7 +366,7 @@ export function AiWebsiteBuilderAtmosphere({
     }
 
     function handlePointer(event: PointerEvent) {
-      const rect = root.getBoundingClientRect();
+      const rect = rootElement.getBoundingClientRect();
 
       pointer.tx =
         Math.max(
@@ -401,7 +397,7 @@ export function AiWebsiteBuilderAtmosphere({
     });
 
     const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(root);
+    resizeObserver.observe(rootElement);
 
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
@@ -411,7 +407,7 @@ export function AiWebsiteBuilderAtmosphere({
       { threshold: 0.01 },
     );
 
-    intersectionObserver.observe(root);
+    intersectionObserver.observe(rootElement);
 
     window.addEventListener('pointermove', handlePointer, {
       passive: true,
