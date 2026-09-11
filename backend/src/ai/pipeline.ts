@@ -125,7 +125,6 @@ import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
-import { ensureProjectIdByRepo } from '../services/memory/buildProjectStore.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
@@ -1320,20 +1319,19 @@ export async function runBuildPipeline(opts: {
   );
   if (shadowLine) console.log(shadowLine);
 
-  // The identity this run is routed by.
-  //
-  // The client sends a project id only when the browser happens to be on
-  // `/dashboard/projects/<id>` — it is parsed from the URL, and builds are typed into the
-  // terminal dock, which is on every route. So a real build usually arrives without one.
-  //
-  // `routeProject` buckets on project id, which means an absent id can never be
-  // allowlisted and never lands inside a percentage. Without this the rollout dial does
-  // not work: raising it to 50% would route approximately nothing, because the identity
-  // being bucketed is missing from most requests. Recovering the id from the repository
-  // the build already targets reads the same `(user_id, github_repo_name)` key that
-  // `upsertBuildProject` writes, so it is the id this build will be recorded under.
-  const resolvedProjectId =
-    opts.projectId ?? (await ensureProjectIdByRepo(opts.userId, meta?.githubTargetRepo));
+  // Universal execution is owned by the canonical project context, not by the route the
+  // terminal happens to be rendered on. A workspace terminal normally has no database
+  // project UUID, while it does have the exact repo/branch/root the user sees. Routing by
+  // that normalized key both keeps arbitrary workspace builds eligible and isolates two
+  // branches or monorepo roots of the same repository. `opts.projectId` remains the
+  // compatibility identity only for a project that has no repository context yet.
+  const resolvedProjectId = meta?.githubTargetRepo?.includes('/')
+    ? projectContextKey({
+        repo: meta.githubTargetRepo,
+        branch: meta.githubTargetBranch || 'main',
+        projectRoot: meta.projectRoot || '/',
+      })
+    : opts.projectId;
 
   // Which path this run took, and why, recorded on the run itself.
   //

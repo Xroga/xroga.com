@@ -12,6 +12,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { planCapabilities } from './planner.js';
 import { routeModelByRequirements } from './modelRequirements.js';
+import { readFileSync } from 'node:fs';
 
 function syntheticCapability(id: string, authority = 'synthetic:run'): CapabilityDescriptor {
   return {
@@ -80,6 +81,19 @@ test('project write identity includes repository, branch, and future project roo
   assert.throws(() => assertProjectWriteTarget(a, { ...same, projectRoot: '/units/b' }), /TARGET_MISMATCH/);
   assert.equal(projectContextKey(a), 'org%2Frepo::branch%2Fx::%2Funits%2Fa');
   assert.doesNotMatch(projectContextKey(a), /[\u0000-\u001f]/);
+});
+
+test('workspace builds route universal execution by the canonical repo branch and root key', () => {
+  const source = readFileSync(new URL('../pipeline.ts', import.meta.url), 'utf8');
+  const identity = source.slice(
+    source.indexOf('const resolvedProjectId ='),
+    source.indexOf('const universalDecision ='),
+  );
+  assert.match(identity, /projectContextKey\(\{/);
+  assert.match(identity, /meta\.githubTargetRepo/);
+  assert.match(identity, /meta\.githubTargetBranch/);
+  assert.match(identity, /meta\.projectRoot/);
+  assert.doesNotMatch(identity, /ensureProjectIdByRepo/);
 });
 
 test('artifact workspace writes real opaque bytes inside a bounded project-independent root', async () => {
