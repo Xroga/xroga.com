@@ -129,25 +129,28 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
   }, []);
 
   const loadBranches = useCallback(async (fullName: string, preferred?: string) => {
+    const fallback = preferred?.trim() || 'main';
     const [owner, repo] = fullName.split('/');
-    if (!owner || !repo) return 'main';
+    if (!owner || !repo) return fallback;
     setLoadingBranches(true);
     try {
       const { branches: list } = await api.github.listBranches(owner, repo);
       const names = list.map((b) => b.name);
       setBranches(names);
       const next =
-        preferred && names.includes(preferred)
-          ? preferred
+        preferred?.trim()
+          ? preferred.trim()
           : names.includes('main')
             ? 'main'
             : names[0] ?? 'main';
       setSelectedBranch(next);
       return next;
     } catch {
-      setBranches(['main']);
-      setSelectedBranch('main');
-      return 'main';
+      // A passive branch-list refresh is not authority to switch the project.
+      // Keep the canonical branch through transient GitHub failures or partial lists.
+      setBranches(preferred?.trim() ? [fallback] : []);
+      setSelectedBranch(fallback);
+      return fallback;
     } finally {
       setLoadingBranches(false);
     }
@@ -204,16 +207,9 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
       const list = snapshot.repos;
       setRepos(list);
 
-      const saved = localStorage.getItem(STORAGE_KEY);
-      let savedRepo: string | null = null;
-      let savedBranch: string | null = null;
-      if (saved) {
-        try {
-          const p = JSON.parse(saved) as { repo?: string; branch?: string };
-          savedRepo = p.repo ?? null;
-          savedBranch = p.branch ?? null;
-        } catch { /* ignore */ }
-      }
+      const canonical = getSelectedRepoContext();
+      const savedRepo = canonical?.repo ?? null;
+      const savedBranch = canonical?.branch ?? null;
 
       const { hasFreshTerminalIntent } = await import('@/lib/repoContext');
       const freshTerminal = hasFreshTerminalIntent();

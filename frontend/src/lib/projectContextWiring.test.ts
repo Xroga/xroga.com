@@ -9,6 +9,7 @@ const CHAT = read('../context/TerminalChatContext.tsx');
 const HISTORY = read('./terminalHistory.ts');
 const SIDEBAR = read('../components/layout/SidebarProjectHistory.tsx');
 const HEADER = read('../components/terminal/WorkspaceIdentityMenu.tsx');
+const REPO_BAR = read('../components/terminal/RepoContextBar.tsx');
 
 test('one activation operation owns repository selection and compatibility writes delegate to it', () => {
   assert.match(REPO, /export function activateProjectContext/);
@@ -49,4 +50,11 @@ test('same-context activation is a no-op and async restoration is version guarde
   assert.match(STORE, /isCurrentProjectTransition/);
   assert.match(STORE, /completeProjectContextRestore/);
   assert.match(STORE, /current\.transitionVersion > 0/);
+});
+
+test('passive repository refresh cannot reset the canonical branch', () => {
+  assert.match(REPO_BAR, /const canonical = getSelectedRepoContext\(\)/);
+  assert.match(REPO_BAR, /const fallback = preferred\?\.trim\(\) \|\| 'main'/);
+  assert.match(REPO_BAR, /setSelectedBranch\(fallback\)/);
+  assert.match(REPO_BAR, /return fallback/);
 });
