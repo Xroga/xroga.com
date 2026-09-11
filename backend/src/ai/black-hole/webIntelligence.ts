@@ -35,6 +35,7 @@ import type {
 import {
   formatResearchAsEvidence,
   normalizeResearch,
+  type ResearchBundle as NormalizedResearchBundle,
   type RawResult,
 } from './researchRouter.js';
 
@@ -51,6 +52,8 @@ export interface WebDecision {
   objective: string;
   queries: string[];
   urls: string[];
+  sourcePolicy: 'any' | 'official_only';
+  officialDomains: string[];
   reason: string;
 }
 
@@ -122,6 +125,15 @@ function parseDecision(
       return null;
     }
 
+    const sourcePolicy = value.sourcePolicy === 'official_only' ? 'official_only' : 'any';
+    const officialDomains = Array.isArray(value.officialDomains)
+      ? value.officialDomains
+          .map(String)
+          .map((domain) => domain.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, ''))
+          .filter((domain) => /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))
+          .slice(0, 6)
+      : [];
+
     return {
       action: value.action as WebAction,
 
@@ -152,6 +164,9 @@ function parseDecision(
             .slice(0, 4)
         : [],
 
+      sourcePolicy,
+      officialDomains,
+
       reason: String(
         value.reason ?? '',
       ).slice(0, 1_000),
@@ -159,6 +174,16 @@ function parseDecision(
   } catch {
     return null;
   }
+}
+
+/** Enforce a user-requested source boundary after retrieval, before synthesis or UI. */
+export function applyRequestedSourcePolicy(
+  bundle: NormalizedResearchBundle,
+  sourcePolicy: WebDecision['sourcePolicy'],
+): NormalizedResearchBundle {
+  if (sourcePolicy !== 'official_only') return bundle;
+  const sources = bundle.sources.filter((source) => source.trust === 'A_official');
+  return { ...bundle, sources, unavailable: sources.length === 0 };
 }
 
 /**
@@ -187,6 +212,8 @@ export async function decideWebAction(input: {
       objective: '',
       queries: [],
       urls: [],
+      sourcePolicy: 'any',
+      officialDomains: [],
       reason:
         'User explicitly disabled public-web retrieval.',
     };
@@ -214,6 +241,11 @@ export async function decideWebAction(input: {
       queries: [],
       urls: knownUrls,
 
+      sourcePolicy: /\bofficial\b/i.test(input.prompt) ? 'official_only' : 'any',
+      officialDomains: /\bofficial\b/i.test(input.prompt)
+        ? knownUrls.map((url) => new URL(url).hostname.toLowerCase().replace(/^www\./, ''))
+        : [],
+
       reason: xOnly
         ? 'Explicit X URL supplied.'
         : 'Explicit public URL supplied.',
@@ -235,6 +267,8 @@ Return ONLY valid JSON:
   "objective": "...",
   "queries": ["..."],
   "urls": [],
+  "sourcePolicy": "any|official_only",
+  "officialDomains": ["official.example"],
   "reason": "..."
 }
 
@@ -267,6 +301,7 @@ Rules:
 7. Use x_research only when X itself matters.
 8. Prefer search over research when search is sufficient.
 9. Prefer research over deep_research when research is sufficient.
+10. Preserve source restrictions. If the user requests only official sources, set sourcePolicy to official_only and list the subject's official domains. Otherwise use any and an empty list.
 `,
     },
 
@@ -325,6 +360,8 @@ ${redactSecrets(
         objective: '',
         queries: [],
         urls: [],
+        sourcePolicy: 'any',
+        officialDomains: [],
         reason:
           'Web decision was not parseable.',
       }
@@ -337,6 +374,8 @@ ${redactSecrets(
       objective: '',
       queries: [],
       urls: [],
+      sourcePolicy: 'any',
+      officialDomains: [],
       reason:
         'Web decision controller unavailable.',
     };
@@ -677,8 +716,12 @@ export async function runWebIntelligence(
         userId: input.userId,
 
         objective:
-          decision.objective ||
-          input.prompt,
+          [
+            decision.objective || input.prompt,
+            decision.sourcePolicy === 'official_only' && decision.officialDomains.length
+              ? `Use only official sources from: ${decision.officialDomains.join(', ')}.`
+              : '',
+          ].filter(Boolean).join('\n'),
 
         queries:
           decision.queries
@@ -752,15 +795,15 @@ export async function runWebIntelligence(
   }
 
   const normalized =
-    normalizeResearch(
+    applyRequestedSourcePolicy(normalizeResearch(
       rawResults,
       {
         query: input.prompt,
         officialDomains:
-          input.officialDomains,
+          decision.officialDomains.length ? decision.officialDomains : input.officialDomains,
         maxSources: 12,
       },
-    );
+    ), decision.sourcePolicy);
 
   // Never trust an uncited synthesis.
   if (

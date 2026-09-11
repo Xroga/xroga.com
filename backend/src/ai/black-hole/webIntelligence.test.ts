@@ -1,7 +1,27 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { runWebIntelligence } from './webIntelligence.js';
+import { applyRequestedSourcePolicy, runWebIntelligence } from './webIntelligence.js';
+import { normalizeResearch } from './researchRouter.js';
+
+test('official-only evidence excludes secondary sources before synthesis and UI', () => {
+  const normalized = normalizeResearch([
+    { title: 'Official docs', url: 'https://docs.vendor.example/releases', snippet: 'Version 4 is stable.' },
+    { title: 'Community tracker', url: 'https://tracker.example/releases', snippet: 'Version 4 is stable.' },
+  ], { query: 'current release', officialDomains: ['vendor.example'] });
+  const filtered = applyRequestedSourcePolicy(normalized, 'official_only');
+  assert.deepEqual(filtered.sources.map((source) => source.url), ['https://docs.vendor.example/releases']);
+  assert.equal(filtered.unavailable, false);
+
+  const unavailable = applyRequestedSourcePolicy(
+    normalizeResearch([
+      { title: 'Community tracker', url: 'https://tracker.example/releases', snippet: 'Version 4 is stable.' },
+    ], { query: 'current release', officialDomains: ['vendor.example'] }),
+    'official_only',
+  );
+  assert.equal(unavailable.sources.length, 0);
+  assert.equal(unavailable.unavailable, true);
+});
 
 test('production web intelligence uses Parallel for public URLs and x_search-only Grok for X', async () => {
   const priorFetch = globalThis.fetch;
