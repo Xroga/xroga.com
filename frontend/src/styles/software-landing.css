@@ -168,27 +168,181 @@
    invisible whenever the image loads. It matters when the image does not: these sections
    set white type, the scrims are now thin, and the artwork is served from a remote host.
    Without a ground, one failed request renders white text on white. */
+/* ============================================================
+   /software hero — Ada Lovelace Particle Image
+   AUTO mode only
+   ============================================================ */
+
+/*
+ * Replace the existing .xsw-hero block with this version.
+ * The opaque theme ground hides the global ThemeBackdrop inside
+ * the hero only. The rest of /software keeps using ThemeBackdrop.
+ */
 .xsw-hero {
   position: relative;
-  background: var(--tp-panel);
   display: flex;
-  flex-direction: column;
   min-height: min(880px, 100svh);
-  padding-block: 8rem 4.5rem;
+  flex-direction: column;
+  overflow: hidden;
   isolation: isolate;
+  padding-block: 8rem 4.5rem;
+  background: var(--tp-bg);
 }
 
-/* The hero art keeps its structures low and outboard, so the crop favours the
-   lower half where the light bands are. */
+/* Particle-image layer: hero only. */
+.xsw-hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
+/*
+ * Full Ada Lovelace portrait stays visible under the GPU particles.
+ * object-fit: contain means the complete portrait is preserved.
+ */
+.xsw-hero-particles__image {
+  position: absolute;
+  top: 50%;
+  right: clamp(-5rem, -3vw, -1rem);
 
+  width: min(64vw, 920px);
+  height: 112%;
+
+  object-fit: contain;
+  object-position: center;
+  transform: translateY(-50%);
+
+  opacity: 0.92;
+  filter:
+    grayscale(1)
+    contrast(1.9)
+    brightness(0.68);
+
+  mix-blend-mode: screen;
+  will-change: opacity;
+}
+
+.xsw-hero-particles__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/*
+ * Readability veil. The image and particles remain clearly visible
+ * on the right, while the existing Software hero HTML stays readable.
+ */
+.xsw-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 62% 78% at 50% 45%,
+      color-mix(in srgb, var(--tp-bg) 54%, transparent) 0%,
+      color-mix(in srgb, var(--tp-bg) 24%, transparent) 52%,
+      transparent 82%
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--tp-bg) 82%, transparent) 0%,
+      color-mix(in srgb, var(--tp-bg) 56%, transparent) 34%,
+      color-mix(in srgb, var(--tp-bg) 18%, transparent) 60%,
+      transparent 86%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--tp-bg) 6%, transparent) 0%,
+      transparent 68%,
+      color-mix(in srgb, var(--tp-bg) 38%, transparent) 100%
+    );
+}
+
+/*
+ * Keep all existing hero HTML above the animation.
+ * Add position/z-index to your existing .xsw-hero__body rule.
+ */
 .xsw-hero__body {
+  position: relative;
+  z-index: 2;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: auto;
   text-align: center;
 }
+
+/* Light themes: use multiply so Ada still reads against the light ground. */
+body.theme-white .xsw-hero-particles__image {
+  filter:
+    grayscale(1)
+    contrast(1.42)
+    brightness(0.86);
+  mix-blend-mode: multiply;
+}
+
+body.theme-beige .xsw-hero-particles__image {
+  filter:
+    grayscale(1)
+    sepia(0.12)
+    contrast(1.38)
+    brightness(0.86);
+  mix-blend-mode: multiply;
+}
+
+/* Gray keeps the high-contrast monochrome treatment. */
+body.theme-gray .xsw-hero-particles__image {
+  filter:
+    grayscale(1)
+    contrast(1.72)
+    brightness(0.76);
+  mix-blend-mode: screen;
+}
+
+/* Mobile: keep the image full-view but move it upward behind the hero. */
+@media (max-width: 900px) {
+  .xsw-hero-particles__image {
+    top: 35%;
+    right: -18vw;
+    width: 105vw;
+    height: 78%;
+  }
+
+  .xsw-hero::before {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--tp-bg) 4%, transparent) 0%,
+        color-mix(in srgb, var(--tp-bg) 20%, transparent) 34%,
+        color-mix(in srgb, var(--tp-bg) 70%, transparent) 62%,
+        var(--tp-bg) 86%
+      );
+  }
+}
+
+@media (max-width: 620px) {
+  .xsw-hero-particles__image {
+    right: -26vw;
+    width: 118vw;
+    height: 72%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xsw-hero-particles__image {
+    opacity: 0.82 !important;
+  }
+}
+
 
 .xsw-eyebrow {
   display: inline-flex;
