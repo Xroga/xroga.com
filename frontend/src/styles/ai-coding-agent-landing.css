@@ -2,15 +2,15 @@
    /ai-coding-agent — repository-work landing page
 
    Every rule is prefixed `agx-` and every one of them is a class this page owns.
-   The page runs a green accent while the rest of the site runs `--accent` blue, so
+   The page runs a neutral accent while the rest of the site runs `--accent` blue, so
    nothing here reads a shared token or writes one: a stray `:root` override would
-   turn the whole site green the moment another page imported this sheet by accident.
+   turn the whole site neutral the moment another page imported this sheet by accident.
    The palette is local variables on `.agx-page` instead.
    ========================================================================== */
 
 /*
  * The page reads its ground, ink and surfaces from the shared theme tokens, so the
- * same layout works on all four themes over the homepage backdrop. Only the green is
+ * same layout works on all four themes over the homepage backdrop. Only the neutral is
  * the page's own — it is this route's identity and does not follow the theme.
  *
  * `background: transparent` is the point: the backdrop is a fixed layer behind the
@@ -20,15 +20,14 @@
   --agx-panel: var(--tp-panel);
   --agx-panel-2: var(--tp-surface-2);
   --agx-line: var(--tp-border);
-  --agx-line-lit: color-mix(in srgb, var(--agx-green) 30%, transparent);
-  /* The light-ground green. #4e9b2f measured 2.78:1 as heading text on the Beige
-     ground, under the 3:1 large-text floor, so the whole trio is a step darker. */
-  --agx-green: #3b7a22;
-  --agx-green-bright: #2f6b1c;
-  --agx-green-deep: #23561a;
-  /* Text sitting on a 12% green tint needs to clear the tint as well as the panel;
-     the accent itself measured 2.69:1 there. */
-  --agx-on-tint: #23561a;
+
+  /* Neutral accent system — no neutral on this route. */
+  --agx-accent: #16191d;
+  --agx-accent-bright: #2c3137;
+  --agx-accent-deep: #090b0d;
+  --agx-on-tint: #16191d;
+  --agx-line-lit: color-mix(in srgb, var(--agx-accent) 28%, transparent);
+
   --agx-ink: var(--tp-ink);
   --agx-soft: var(--tp-muted);
   --agx-radius: 18px;
@@ -37,23 +36,31 @@
   isolation: isolate;
   background: transparent;
   color: var(--agx-ink);
-  /* `clip`, never `hidden`: `hidden` would make this a scroll container and break
-     the sticky header inside it. */
   overflow-x: clip;
 }
 
-/*
- * The green has to invert with the ground. #7ed957 is a light lime: legible on the
- * Black and Gray grounds, and far too pale to read as text or to carry dark button
- * text on the White and Beige ones. The dark green above is the light-ground default;
- * these two put the bright one back where the ground is dark.
- */
-body.theme-black .agx-page,
+/* Beige: warm charcoal / ivory-neutral treatment. */
+body.theme-beige .agx-page {
+  --agx-accent: #3a342e;
+  --agx-accent-bright: #514940;
+  --agx-accent-deep: #24201c;
+  --agx-on-tint: #3a342e;
+}
+
+/* Black: white / silver neutral treatment. */
+body.theme-black .agx-page {
+  --agx-accent: #f2f4f7;
+  --agx-accent-bright: #ffffff;
+  --agx-accent-deep: #c7ccd3;
+  --agx-on-tint: #f2f4f7;
+}
+
+/* Gray: white / light-gray neutral treatment. */
 body.theme-gray .agx-page {
-  --agx-green: #7ed957;
-  --agx-green-bright: #a8f277;
-  --agx-green-deep: #4e9b2f;
-  --agx-on-tint: #a8f277;
+  --agx-accent: #ffffff;
+  --agx-accent-bright: #ffffff;
+  --agx-accent-deep: #d9dde2;
+  --agx-on-tint: #ffffff;
 }
 
 .agx-shell { width: min(1180px, 100% - 2.5rem); margin-inline: auto; }
@@ -86,7 +93,7 @@ body.theme-gray .agx-page {
 .agx-h2--center { text-align: center; }
 
 /* Solid colour, never a gradient fill on text. */
-.agx-accent { color: var(--agx-green); }
+.agx-accent { color: var(--agx-accent); }
 
 .agx-lede {
   max-width: 46ch;
@@ -104,7 +111,7 @@ body.theme-gray .agx-page {
   padding: 0.4rem 0.9rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--agx-green) 7%, transparent);
+  background: color-mix(in srgb, var(--agx-accent) 7%, transparent);
   color: var(--agx-ink);
   font-size: 0.78rem;
   font-weight: 500;
@@ -114,8 +121,8 @@ body.theme-gray .agx-page {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--agx-green);
-  box-shadow: 0 0 10px rgba(126, 217, 87, 0.9);
+  background: var(--agx-accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--agx-accent) 62%, transparent);
 }
 
 /* ---------------------------------------------------------------------- buttons */
@@ -128,8 +135,8 @@ body.theme-gray .agx-page {
   padding: 0.72rem 1.25rem;
   border: 1px solid transparent;
   border-radius: 11px;
-  background: var(--agx-green);
-  /* White on the dark green of the light themes, near-black on the bright green of
+  background: var(--agx-accent);
+  /* White on the dark neutral of the light themes, near-black on the bright neutral of
      the dark ones — the button inverts with the accent, not with the page. */
   color: #ffffff;
   font-size: 0.9rem;
@@ -140,9 +147,9 @@ body.theme-gray .agx-page {
 }
 
 body.theme-black .agx-btn,
-body.theme-gray .agx-btn { color: #06210a; }
+body.theme-gray .agx-btn { color: #0a0c0f; }
 
-.agx-btn:hover { background: var(--agx-green-bright); transform: translateY(-1px); }
+.agx-btn:hover { background: var(--agx-accent-bright); transform: translateY(-1px); }
 .agx-btn svg { width: 16px; height: 16px; }
 
 .agx-btn--sm { padding: 0.55rem 1rem; font-size: 0.85rem; }
@@ -150,11 +157,11 @@ body.theme-gray .agx-btn { color: #06210a; }
 
 .agx-btn--ghost {
   border-color: var(--agx-line);
-  background: rgba(255, 255, 255, 0.03);
+  background: color-mix(in srgb, var(--agx-ink) 4%, transparent);
   color: var(--agx-ink);
 }
 
-.agx-btn--ghost:hover { border-color: var(--agx-line-lit); background: color-mix(in srgb, var(--agx-green) 8%, transparent); }
+.agx-btn--ghost:hover { border-color: var(--agx-line-lit); background: color-mix(in srgb, var(--agx-accent) 8%, transparent); }
 
 /* ----------------------------------------------------------------------- header */
 
@@ -201,7 +208,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   transition: color 160ms ease, border-color 160ms ease;
 }
 
-.agx-iconbtn:hover { color: var(--agx-green); border-color: var(--agx-line-lit); }
+.agx-iconbtn:hover { color: var(--agx-accent); border-color: var(--agx-line-lit); }
 .agx-iconbtn svg { width: 16px; height: 16px; }
 
 .agx-signin {
@@ -251,6 +258,11 @@ body.theme-gray .agx-btn { color: #06210a; }
 
 /* ------------------------------------------------------------------------- hero */
 
+/*
+ * The global ThemeBackdrop may remain on the route, but the hero gets an opaque
+ * theme ground. This removes the background image from the HERO ONLY while the
+ * Squares Terminal animation remains visible above it.
+ */
 .agx-hero {
   position: relative;
   overflow: hidden;
@@ -258,6 +270,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   padding-block:
     clamp(2.5rem, 5vw, 4.5rem)
     clamp(3rem, 6vw, 5rem);
+  background: var(--tp-bg);
 }
 
 .agx-hero__squares {
@@ -270,6 +283,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   pointer-events: none;
 }
 
+/* Theme-aware readability veil over the animation. */
 .agx-hero::before {
   content: '';
   position: absolute;
@@ -321,7 +335,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   line-height: 1.6;
 }
 
-.agx-hero__note svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--agx-green); }
+.agx-hero__note svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--agx-accent); }
 
 /* The stage: the window, the chips around it, and the lit plinth beneath. */
 .agx-hero__stage { position: relative; isolation: isolate; }
@@ -336,8 +350,8 @@ body.theme-gray .agx-btn { color: #06210a; }
   border: 1px solid var(--agx-line-lit);
   border-radius: 13px;
   background: var(--agx-panel-2);
-  color: var(--agx-green);
-  box-shadow: 0 0 24px color-mix(in srgb, var(--agx-green) 14%, transparent);
+  color: var(--agx-accent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--agx-accent) 14%, transparent);
 }
 
 .agx-chip svg { width: 19px; height: 19px; }
@@ -361,7 +375,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   left: 8%;
   height: 130px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(126, 217, 87, 0.4), rgba(126, 217, 87, 0.06) 55%, transparent 72%);
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--agx-accent) 30%, transparent), color-mix(in srgb, var(--agx-accent) 5%, transparent) 55%, transparent 72%);
   filter: blur(6px);
 }
 
@@ -375,7 +389,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   border-radius: var(--agx-radius);
   background: var(--tp-panel-solid);
   backdrop-filter: blur(18px);
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 60px color-mix(in srgb, var(--agx-green) 8%, transparent);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6), 0 0 60px color-mix(in srgb, var(--agx-accent) 8%, transparent);
   overflow: hidden;
 }
 
@@ -398,7 +412,7 @@ body.theme-gray .agx-btn { color: #06210a; }
 }
 
 .agx-window__dots { display: inline-flex; gap: 6px; }
-.agx-window__dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+.agx-window__dots i { width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--agx-ink) 16%, transparent); }
 
 .agx-window__body { display: grid; grid-template-columns: 148px minmax(0, 1fr); }
 
@@ -441,8 +455,8 @@ body.theme-gray .agx-btn { color: #06210a; }
 }
 
 .agx-window__rail li[data-active='true'] {
-  background: color-mix(in srgb, var(--agx-green) 12%, transparent);
-  color: var(--agx-green);
+  background: color-mix(in srgb, var(--agx-accent) 12%, transparent);
+  color: var(--agx-accent);
 }
 
 .agx-window__rail li svg { width: 12px; height: 12px; }
@@ -466,7 +480,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   padding: 0.18rem 0.5rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--agx-green) 14%, transparent);
+  background: color-mix(in srgb, var(--agx-accent) 14%, transparent);
   color: var(--agx-on-tint);
   font-size: 0.6rem;
 }
@@ -491,11 +505,11 @@ body.theme-gray .agx-btn { color: #06210a; }
   width: 20px;
   height: 20px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--agx-ink) 6%, transparent);
   color: var(--agx-soft);
 }
 
-.agx-turn__who--agent { background: color-mix(in srgb, var(--agx-green) 14%, transparent); color: var(--agx-green); }
+.agx-turn__who--agent { background: color-mix(in srgb, var(--agx-accent) 14%, transparent); color: var(--agx-accent); }
 .agx-turn__who svg { width: 12px; height: 12px; }
 
 .agx-term {
@@ -506,18 +520,17 @@ body.theme-gray .agx-btn { color: #06210a; }
   border-radius: 11px;
   /* A terminal is dark on every theme. Recolouring this one to the light grounds
      would make it read as a quote block rather than a console. */
-  background: #060a06;
+  background: #08090b;
   border-color: rgba(255, 255, 255, 0.08);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.64rem;
   line-height: 1.75;
 }
 
-/* The terminal's ground is fixed at #060a06 on every theme, so its foreground is
-   fixed too. Following the theme-dependent accent put the light-ground dark green on
-   the dark console and measured 3.79:1 against a 4.5 floor. */
-.agx-term p { margin: 0; color: #7ed957; }
-.agx-term__prompt { color: #8fc97a; }
+/* The terminal's ground is fixed at #08090b on every theme, so its foreground is
+   fixed too. The terminal keeps a fixed neutral foreground on its dark console and measured 3.79:1 against a 4.5 floor. */
+.agx-term p { margin: 0; color: #e7e9ed; }
+.agx-term__prompt { color: #aeb4bc; }
 
 .agx-stamp {
   position: absolute;
@@ -526,7 +539,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 8px;
-  color: var(--agx-green);
+  color: var(--agx-accent);
   font-size: 0.55rem;
   line-height: 1.3;
   letter-spacing: 0.06em;
@@ -584,8 +597,8 @@ body.theme-gray .agx-btn { color: #06210a; }
   margin-bottom: 0.9rem;
   border: 1px solid var(--agx-line-lit);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--agx-green) 8%, transparent);
-  color: var(--agx-green);
+  background: color-mix(in srgb, var(--agx-accent) 8%, transparent);
+  color: var(--agx-accent);
 }
 
 .agx-card__icon svg { width: 17px; height: 17px; }
@@ -620,7 +633,7 @@ body.theme-gray .agx-btn { color: #06210a; }
 .agx-step { display: flex; flex-direction: column; }
 
 .agx-step__num {
-  color: var(--agx-green);
+  color: var(--agx-accent);
   font-size: 1.55rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -641,8 +654,8 @@ body.theme-gray .agx-btn { color: #06210a; }
   border: 1px solid var(--agx-line-lit);
   border-radius: 16px;
   background: var(--agx-panel-2);
-  color: var(--agx-green);
-  box-shadow: 0 18px 40px rgba(126, 217, 87, 0.16), inset 0 0 22px color-mix(in srgb, var(--agx-green) 8%, transparent);
+  color: var(--agx-accent);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--agx-accent) 12%, transparent), inset 0 0 22px color-mix(in srgb, var(--agx-accent) 8%, transparent);
 }
 
 .agx-step__plinth svg { width: 24px; height: 24px; }
@@ -658,16 +671,16 @@ body.theme-gray .agx-btn { color: #06210a; }
   z-index: -1;
   width: calc(100% + 1.2rem + 100%);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(126, 217, 87, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--agx-accent) 30%, transparent), transparent);
   transform: translate(-50%, 18px);
 }
 
 .agx-step:first-child .agx-step__plinth::before {
-  background: linear-gradient(90deg, transparent 50%, rgba(126, 217, 87, 0.4) 74%, transparent);
+  background: linear-gradient(90deg, transparent 50%, color-mix(in srgb, var(--agx-accent) 30%, transparent) 74%, transparent);
 }
 
 .agx-step:last-child .agx-step__plinth::before {
-  background: linear-gradient(90deg, transparent, rgba(126, 217, 87, 0.4) 26%, transparent 50%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--agx-accent) 30%, transparent) 26%, transparent 50%);
 }
 
 .agx-step__plinth::after {
@@ -678,7 +691,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   left: -18%;
   height: 26px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(126, 217, 87, 0.42), transparent 70%);
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--agx-accent) 31%, transparent), transparent 70%);
 }
 
 /* ----------------------------------------------------------------------- limits */
@@ -735,7 +748,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   font-size: 0.66rem;
 }
 
-.agx-tree p[data-accent='true'] { color: var(--agx-green); }
+.agx-tree p[data-accent='true'] { color: var(--agx-accent); }
 .agx-tree svg { flex: none; width: 11px; height: 11px; }
 
 .agx-proof { display: grid; gap: 0.7rem; }
@@ -782,7 +795,7 @@ body.theme-gray .agx-btn { color: #06210a; }
   font-size: 0.7rem;
 }
 
-.agx-checks li svg { width: 12px; height: 12px; color: var(--agx-green); }
+.agx-checks li svg { width: 12px; height: 12px; color: var(--agx-accent); }
 
 .agx-checks__note {
   margin: 0.6rem 0 0;
@@ -807,7 +820,7 @@ body.theme-gray .agx-btn { color: #06210a; }
 
 .agx-social { display: flex; gap: 0.7rem; margin-top: 1.1rem; }
 .agx-social a { color: var(--agx-soft); transition: color 160ms ease; }
-.agx-social a:hover { color: var(--agx-green); }
+.agx-social a:hover { color: var(--agx-accent); }
 .agx-social svg { width: 16px; height: 16px; }
 
 .agx-footer__col h2 { margin: 0 0 0.8rem; color: var(--agx-ink); font-size: 0.78rem; font-weight: 600; }
