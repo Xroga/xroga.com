@@ -491,6 +491,24 @@ export function projectMemoryContainsRemoteTree(
   return remoteSourcePaths.every((path) => cached.has(path));
 }
 
+/**
+ * Marks a repository diagnosis that was produced by our GitHub adapter rather than
+ * copied from an upstream response body. These messages are deliberately bounded and
+ * safe to show to the user so they can distinguish authorization, branch, and provider
+ * failures instead of receiving an unactionable "unknown provider failure".
+ */
+export class SafeRepositoryReadError extends Error {
+  constructor(message: string) {
+    super(redactSecrets(message).slice(0, 180));
+    this.name = 'SafeRepositoryReadError';
+  }
+}
+
+export function describeRepositoryReadFailure(error: unknown): string {
+  if (error instanceof SafeRepositoryReadError) return error.message;
+  return normalizeProviderError(error).safeMessage;
+}
+
 async function hydratePriorFiles(
   userId: string,
   meta?: BuildClientMeta,
@@ -524,7 +542,7 @@ async function hydratePriorFiles(
         return { files: [], fromMemory: false, source: 'github-empty' };
       }
       if (remote.status === 'unavailable') {
-        throw new Error(remote.reason);
+        throw new SafeRepositoryReadError(remote.reason);
       }
       if (
         mem?.files?.length &&
@@ -558,7 +576,7 @@ async function hydratePriorFiles(
         source: 'github-api',
       };
     } catch (err) {
-      const safe = normalizeProviderError(err).safeMessage;
+      const safe = describeRepositoryReadFailure(err);
       throw new Error(`Could not read the selected GitHub repository: ${safe}`);
     }
   }
