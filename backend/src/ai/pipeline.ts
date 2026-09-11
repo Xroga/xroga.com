@@ -1448,6 +1448,10 @@ export async function runBuildPipeline(opts: {
   });
   if (universal) {
     const { result, routing, goalContract } = universal;
+    // Universal execution validates and atomically publishes a complete merged snapshot.
+    // The user-facing artifact must describe only the real before/after diff; treating the
+    // snapshot as the diff made a one-file edit appear to have changed every repository file.
+    const universalFileTrail = buildFileTrail(prior.files, [...result.files]);
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
@@ -1458,11 +1462,11 @@ export async function runBuildPipeline(opts: {
       type: 'xroga.output', version: '1.0',
       status: universalSuccess ? 'completed' : result.outcome === 'failed' ? 'failed' : 'blocked',
       summary: result.reason,
-      artifacts: result.files.map((file, index) => ({
+      artifacts: universalFileTrail.map((entry, index) => ({
         id: `${runId}:file:${index}`,
-        name: file.path,
+        name: entry.path,
         mediaType: 'text/plain',
-        sizeBytes: Buffer.byteLength(file.content, 'utf8'),
+        sizeBytes: Buffer.byteLength(entry.after, 'utf8'),
         validation: [{ validator: 'universal-run', status: result.verified ? 'passed' : 'not_checked', detail: result.verified ? 'Validated by the universal run.' : 'The run did not establish complete validation.' }],
       })),
       evidence: result.evidence.map((entry) => ({ kind: entry.phase, detail: `${entry.statement}: ${entry.detail}` })),
@@ -1484,7 +1488,12 @@ export async function runBuildPipeline(opts: {
           reason: result.reason,
           blockers: result.blockers,
           commitSha: result.commitSha,
-          files: result.files.map((file) => file.path),
+          files: universalFileTrail.map((entry) => ({
+            path: entry.path,
+            added: entry.added,
+            removed: entry.removed,
+            action: entry.action,
+          })),
           evidence: result.evidence,
           repository: universalCommit.record,
         }, {
@@ -1502,7 +1511,12 @@ export async function runBuildPipeline(opts: {
         reason: result.reason,
         blockers: result.blockers,
         commitSha: result.commitSha,
-        files: result.files.map((file) => file.path),
+        files: universalFileTrail.map((entry) => ({
+          path: entry.path,
+          added: entry.added,
+          removed: entry.removed,
+          action: entry.action,
+        })),
         evidence: result.evidence,
         ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         routing,

@@ -42,6 +42,7 @@ export interface FileTrailEntry {
   after: string;
   added: number;
   removed: number;
+  action: 'created' | 'modified' | 'deleted';
 }
 
 /** Merge-safe delimiters (preferred). Also accept legacy git-conflict-style markers. */
@@ -337,11 +338,22 @@ export function buildFileTrail(previous: ProjectFile[], next: ProjectFile[]): Fi
   const trail: FileTrailEntry[] = [];
 
   for (const path of paths) {
+    const existedBefore = prevMap.has(path);
+    const existsAfter = nextMap.has(path);
     const before = prevMap.get(path) ?? '';
     const after = nextMap.get(path) ?? '';
-    if (before === after) continue;
+    // Presence is part of the diff. An empty file being created or deleted still changed
+    // the repository even though both fallback contents are the empty string.
+    if (existedBefore === existsAfter && before === after) continue;
     const { added, removed } = lineDiffCounts(before, after);
-    trail.push({ path, before, after, added, removed });
+    trail.push({
+      path,
+      before,
+      after,
+      added,
+      removed,
+      action: !existedBefore ? 'created' : !existsAfter ? 'deleted' : 'modified',
+    });
   }
 
   return trail.sort((a, b) => a.path.localeCompare(b.path));

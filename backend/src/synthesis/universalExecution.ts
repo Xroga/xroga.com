@@ -23,7 +23,7 @@
  * So `canFallBack` is a function with a reason, not a boolean, and the reason is recorded.
  */
 
-import type { ProjectFile } from '../ai/patches.js';
+import { buildFileTrail, type ProjectFile } from '../ai/patches.js';
 import { planUniversalRun, runValidationPlan, mayClaimVerified, type UniversalRunPlan, type ValidationRunner } from './universalFlow.js';
 import { deriveSecurityControls, securityRoutingRequirement, type SecurityControl } from './securityControls.js';
 import { compileAcceptanceCriteria } from './acceptanceCompiler.js';
@@ -332,7 +332,11 @@ export async function executeUniversalRun(input: {
   if (!files.length) {
     return fail('failed', 'implementation', 'the implementation step produced no files', plan);
   }
-  record('implementation', `${files.length} file(s) generated`, files.map((file) => file.path).slice(0, 20).join(', '));
+  record(
+    'implementation',
+    'project snapshot prepared',
+    `${files.length} total file(s) available for validation`,
+  );
   // States plainly that implementation ran as a canonical task, and names the evidence the
   // scheduler required before it would complete. Without this the run's own evidence would
   // not distinguish a canonical execution from the direct adapter call it replaced.
@@ -560,6 +564,12 @@ export async function executeUniversalRun(input: {
   const claim = mayClaimVerified(validationPlan, report);
   const browserBlocker = browserGate ? browserGateBlockerReason(browserGate) : null;
   const verified = claim.verified && browserBlocker === null;
+  const finalFileTrail = buildFileTrail([...existingFiles], [...files]);
+  record(
+    'implementation',
+    `${finalFileTrail.length} file(s) changed`,
+    finalFileTrail.map((entry) => entry.path).slice(0, 20).join(', ') || 'no content changes',
+  );
   mutationBegan = true;
   // Publication as a canonical task. The Command 1 atomic writer still performs the write —
   // no second GitHub writer exists and none is created — but the run now records the commit
@@ -569,7 +579,7 @@ export async function executeUniversalRun(input: {
   const { commitSha } = implementationState
     ? await runPublishAsCanonicalTask({
         state: implementationState,
-        objective: `Publish ${files.length} file(s)`,
+        objective: `Publish ${finalFileTrail.length} changed file(s) in a ${files.length}-file project snapshot`,
         repository: input.owner.projectId,
         baseBranch: implementationState.selectedBranch,
         startingCommitSha: implementationState.startingCommitSha,

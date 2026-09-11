@@ -50,11 +50,12 @@ export default function IntegrationsSeoPage() {
 
         <main className="max-w-5xl mx-auto px-4 sm:px-8 py-10">
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-            {INTEGRATIONS.length}+ Integrations on Xroga AI
+            {INTEGRATIONS.length}+ technologies in Xroga&apos;s build catalog
           </h1>
           <p className="text-[var(--muted)] mb-8 leading-relaxed max-w-3xl">
-            Connect GitHub, Vercel, Netlify, payment providers, AI APIs, and {INTEGRATION_CATEGORIES.length}{' '}
-            categories of tools. Xroga routes swarm tasks to the right integration automatically.
+            Ask Xroga to build or update software using technologies across {INTEGRATION_CATEGORIES.length}{' '}
+            categories. Live account actions are available only for the connectors shown as authorized in your
+            workspace; every other entry is a code-integration option, not a pre-connected service.
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-10">
@@ -70,7 +71,7 @@ export default function IntegrationsSeoPage() {
           </div>
 
           <p className="text-sm text-[var(--muted)] mb-6">
-            Full catalog available after sign-in on the dashboard. Featured categories:{' '}
+            Browse and select the full technology catalog after sign-in. Featured categories:{' '}
             {INTEGRATION_CATEGORIES.slice(0, 12).join(', ')}, and more.
           </p>
 

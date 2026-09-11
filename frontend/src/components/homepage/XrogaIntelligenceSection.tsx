@@ -35,7 +35,7 @@ const intelligenceCards = [
 
 const capabilities = [
   'Deep Reasoning',
-  '1M+ Context',
+  'Focused Context',
   'Multimodal',
   'Advanced Coding',
   'Agentic',

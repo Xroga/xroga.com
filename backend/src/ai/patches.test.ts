@@ -152,6 +152,36 @@ describe('buildFileTrail', () => {
     assert.equal(trail[0].after, 'two\n');
     assert.equal(trail[0].added, 1);
     assert.equal(trail[0].removed, 1);
+    assert.equal(trail[0].action, 'modified');
+  });
+
+  it('reports one real edit instead of every file in the project snapshot', () => {
+    const previous: ProjectFile[] = [
+      { path: 'requirements.txt', content: 'pytest\n' },
+      { path: 'pytest.ini', content: '[pytest]\n' },
+      { path: 'normalize.py', content: 'def normalize(items):\n    return items\n' },
+      { path: 'README.md', content: '# Example\n' },
+      { path: 'tests/test_normalize.py', content: 'def test_normalize(): pass\n' },
+    ];
+    const next: ProjectFile[] = previous.map((file) =>
+      file.path === 'normalize.py'
+        ? { ...file, content: `${file.content}\ndef normalize_whitespace(value):\n    return ' '.join(value.split())\n` }
+        : file,
+    );
+
+    const trail = buildFileTrail(previous, next);
+
+    assert.deepEqual(trail.map(({ path, action }) => ({ path, action })), [
+      { path: 'normalize.py', action: 'modified' },
+    ]);
+  });
+
+  it('counts empty-file creation and deletion as repository changes', () => {
+    const created = buildFileTrail([], [{ path: '.keep', content: '' }]);
+    const deleted = buildFileTrail([{ path: '.keep', content: '' }], []);
+
+    assert.equal(created[0]?.action, 'created');
+    assert.equal(deleted[0]?.action, 'deleted');
   });
 });
 

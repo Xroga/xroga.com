@@ -1,0 +1,15 @@
+# Product Hunt launch defect ledger
+
+Updated 2026-09-12. A defect is resolved only after the appropriate automated proof and, where it changes a live user journey, a production retest.
+
+| ID | Severity | Capability | Reproduction | Root cause | Files/functions | Fix | Regression proof | Live retest | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| PH-001 | P1 | Existing-repository result rendering | A focused one-file Python edit produced remote commit `ab260dc78cd46a343798e3e7f447cb58a055b931`. GitHub showed one file changed, while Workspace said five files changed. | Universal execution correctly retained a complete merged project snapshot for validation and atomic publication, but the pipeline reused that snapshot as the user-visible diff. | `buildFileTrail`; `executeUniversalRun`; universal result assembly in `pipeline.ts` | Preserve the full snapshot for validation/write; build artifact files, counts, actions, and output-envelope artifacts from the actual before/after trail. Presence-aware comparison also handles empty-file create/delete. | Backend: 2,363 tests passed, including a five-file snapshot/one-file edit regression and empty-file create/delete cases. Backend build passed. | Pending production deployment and semantic-variant run. | FIXED IN SOURCE; LIVE RETEST PENDING |
+| PH-002 | P1 | Public integrations claim | `/integrations` presented the static 711-entry technology catalog as “Integrations on Xroga” and said tasks were routed to the correct integration automatically. | Catalog entries and authorized runtime connectors were described as the same capability. | `frontend/src/app/integrations/page.tsx` | Label the list as a build-technology catalog and state that live actions exist only for connectors authorized in Workspace. | Launch-claim regression test passes; frontend production build passes. | Pending production deployment/render verification. | FIXED IN SOURCE; LIVE RETEST PENDING |
+| PH-003 | P2 | Context marketing claim | Homepage badge said `1M+ Context`, while runtime applies model-specific safe-request ceilings, focused selection, attachment limits, provider availability, and plan budget. | A provider model specification was promoted as an unconditional end-to-end product limit. | `XrogaIntelligenceSection.tsx` | Replace the numeric promise with `Focused Context`; document the actual boundary. | Launch-claim regression test passes; frontend production build passes. | Pending production deployment/render verification. | FIXED IN SOURCE; LIVE RETEST PENDING |
+
+## Observed non-defects
+
+- The disposable Python repository was not overwritten: GitHub’s authoritative commit view shows exactly `normalize.py`, four additions, zero deletions, and the existing function preserved.
+- Frontend and backend release SHAs differ, but no backend source changed between the deployed backend commit and current frontend release; this is not version skew.
+- General chat image generation and general-purpose browser automation are already disclosed as unavailable and are not launch blockers unless marketing reintroduces them as working.
