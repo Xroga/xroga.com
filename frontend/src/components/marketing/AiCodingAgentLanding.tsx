@@ -29,6 +29,7 @@ import { ThemeBackdrop } from '@/components/layout/ThemeBackdrop';
 import { ScrollReveal } from './ScrollReveal';
 import { CAPABILITY_PAGES } from '@/lib/capabilityPages';
 import '@/styles/ai-coding-agent-landing.css';
+import { AiCodingAgentSquaresTerminal } from './AiCodingAgentSquaresTerminal';
 
 /**
  * /ai-coding-agent — the repository-work landing page.
@@ -139,7 +140,9 @@ export function AiCodingAgentLanding() {
 
       {/* ------------------------------------------------------------------ hero */}
       <section className="agx-hero">
-        <div className="agx-shell agx-hero__grid">
+  <AiCodingAgentSquaresTerminal className="agx-hero__squares" />
+
+  <div className="agx-shell agx-hero__grid">
           <div className="agx-hero__copy">
             <p className="agx-pill"><span className="agx-dot" aria-hidden="true" />{data.eyebrow}</p>
 
