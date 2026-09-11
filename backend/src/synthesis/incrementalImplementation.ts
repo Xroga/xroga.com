@@ -27,6 +27,7 @@
 import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
 import type { ProjectFile } from '../ai/patches.js';
+import { extractSymbols } from './repositoryIndex.js';
 
 /** Ceiling on files per project. A runaway manifest is a cost incident, not a big build. */
 export const MAX_PLANNED_FILES = 24;
@@ -95,7 +96,25 @@ file.
 Rules:
 - The file must be complete and syntactically valid. No placeholders, no TODO stubs.
 - Honour the language, framework and architecture the brief states.
+- When current contents are supplied, preserve every unrelated declaration and behavior.
 - Write only the file you are asked for.`;
+
+function requiresExistingSymbolPreservation(brief: string): boolean {
+  return /\b(?:preserve|keep|retain)\b[\s\S]{0,100}\b(?:existing|current|unrelated|every|all)\b|\b(?:existing|current|unrelated|every|all)\b[\s\S]{0,100}\b(?:preserve|keep|retain|unchanged)\b/i.test(brief);
+}
+
+/** Refuse a candidate that violates an explicit preserve-existing-code instruction. */
+export function preservesRequiredSymbols(
+  brief: string,
+  current: ProjectFile | undefined,
+  candidateContent: string,
+): boolean {
+  if (!current || !requiresExistingSymbolPreservation(brief)) return true;
+  const before = extractSymbols(current.path, current.content);
+  if (!before.length) return true;
+  const after = new Set(extractSymbols(current.path, candidateContent));
+  return before.every((symbol) => after.has(symbol));
+}
 
 /**
  * Paths that would escape the repository, address git internals, or are malformed.
@@ -376,7 +395,11 @@ export async function implementIncrementally(input: {
       label: `file ${entry.path}`,
       // A file that is only whitespace is a failure worth falling back on: an empty source
       // file commits cleanly and breaks the build later, which is harder to diagnose.
-      usable: (text) => stripCodeFence(text).trim().length > 0,
+      usable: (text) => {
+        const candidateContent = stripCodeFence(text);
+        return candidateContent.trim().length > 0 &&
+          preservesRequiredSymbols(input.brief, current, candidateContent);
+      },
       complete,
     });
     files.push({ path: entry.path, content: stripCodeFence(reply.text) });

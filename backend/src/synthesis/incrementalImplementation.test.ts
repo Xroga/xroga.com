@@ -8,6 +8,7 @@ import {
   explicitlyMentionedExistingFiles,
   implementIncrementally,
   parseFilePlan,
+  preservesRequiredSymbols,
   stripCodeFence,
   type CompletionFn,
 } from './incrementalImplementation.js';
@@ -56,7 +57,7 @@ test('an explicitly named existing file skips the manifest call and receives its
     assert.doesNotMatch(system, /planning the file list/);
     assert.match(user, /Write exactly this one file: packages\/odd-name\.py/);
     assert.match(user, /def old_value\(\):/);
-    return { text: 'def new_value():\n    return 2' };
+    return { text: 'def old_value():\n    return 1\n\ndef new_value():\n    return 2' };
   });
 
   const existingFiles = [
@@ -70,8 +71,36 @@ test('an explicitly named existing file skips the manifest call and receives its
     complete,
   });
 
-  assert.deepEqual(files, [{ path: 'packages/odd-name.py', content: 'def new_value():\n    return 2' }]);
+  assert.deepEqual(files, [{ path: 'packages/odd-name.py', content: 'def old_value():\n    return 1\n\ndef new_value():\n    return 2' }]);
   assert.equal(complete.calls.length, 1, 'the exact repository path already determines the change plan');
+});
+
+test('an explicit preserve instruction falls back when a model drops an existing symbol', async () => {
+  const current = { path: 'normalize.py', content: 'def normalize_whitespace(text: str) -> str:\n    return " ".join(text.split())\n' };
+  assert.equal(
+    preservesRequiredSymbols(
+      'Preserve every existing function unchanged.',
+      current,
+      'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n',
+    ),
+    false,
+  );
+
+  const complete = fakeCompletion((model) => ({
+    text: model === 'glm_5_3_flash'
+      ? 'def normalize_unique_lines(text: str) -> list[str]:\n    return []\n'
+      : `${current.content}\ndef normalize_unique_lines(text: str) -> list[str]:\n    return []\n`,
+  }));
+  const files = await implementIncrementally({
+    brief: 'Update only normalize.py. Preserve every existing function unchanged.',
+    candidates: CANDIDATES,
+    existingFiles: [current],
+    complete,
+  });
+
+  assert.match(files[0]!.content, /def normalize_whitespace/);
+  assert.match(files[0]!.content, /def normalize_unique_lines/);
+  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
 });
 
 test('existing-file matching uses path boundaries and never guesses unknown files', () => {
