@@ -15,6 +15,7 @@ export interface ProjectWorkspaceSnapshot {
   repo: string | null; branch: string; projectRoot: string; projectName: string | null;
   html: string; css: string; js: string; projectFiles: ProjectFileEntry[];
   deployUrl: string | null; githubRepoUrl: string | null; commitSha: string | null;
+  reviewBranch: string | null;
   status: ProjectWorkspaceStatus; previewOpen: boolean; workspaceOpen: boolean; activeTab: DevWorkspaceTab;
   openFilePath: string | null; openFilePaths: string[]; terminalLog: string[]; lastUpdateAt: number | null;
   lastChanges: string[]; lastFileTrail: FileTrailItem[]; previousFiles: Array<{ path: string; content: string }> | null;
@@ -32,7 +33,7 @@ export interface ProjectWorkspaceState extends ProjectWorkspaceSnapshot {
   setActiveTaskSession: (id: string | null, expectedKey?: string) => void;
   completeProjectContextRestore: (key: string, version: number, patch: Partial<ProjectWorkspaceSnapshot>) => boolean;
   assertActiveProjectTarget: (target: ProjectTargetInput) => ProjectContextIdentity;
-  applyBuild: (payload: { repo?: string | null; branch?: string; projectRoot?: string; projectName?: string | null; html: string; css: string; js: string; projectFiles?: ProjectFileEntry[]; deployUrl?: string | null; githubRepoUrl?: string | null; commitSha?: string | null; status?: ProjectWorkspaceStatus; changesSummary?: string[]; fileTrail?: FileTrailItem[]; previousFiles?: Array<{ path: string; content: string }> | null; openPreview?: boolean; terminalLine?: string }) => void;
+  applyBuild: (payload: { repo?: string | null; branch?: string; projectRoot?: string; projectName?: string | null; html: string; css: string; js: string; projectFiles?: ProjectFileEntry[]; deployUrl?: string | null; githubRepoUrl?: string | null; commitSha?: string | null; reviewBranch?: string | null; status?: ProjectWorkspaceStatus; changesSummary?: string[]; fileTrail?: FileTrailItem[]; previousFiles?: Array<{ path: string; content: string }> | null; openPreview?: boolean; terminalLine?: string }) => void;
   setProjectFiles: (files: ProjectFileEntry[]) => void;
   upsertFile: (path: string, content: string, flag?: ProjectFileEntry['flag']) => void;
   deleteFile: (path: string) => void; renameFile: (from: string, to: string) => void;
@@ -46,11 +47,11 @@ export interface ProjectWorkspaceState extends ProjectWorkspaceSnapshot {
 
 function emptySnapshot(identity?: ProjectContextIdentity | null): ProjectWorkspaceSnapshot {
   return { repo: identity?.repo ?? null, branch: identity?.branch ?? 'main', projectRoot: identity?.projectRoot ?? '/', projectName: null,
-    html: '', css: '', js: '', projectFiles: [], deployUrl: null, githubRepoUrl: null, commitSha: null, status: 'idle',
+    html: '', css: '', js: '', projectFiles: [], deployUrl: null, githubRepoUrl: null, commitSha: null, reviewBranch: null, status: 'idle',
     previewOpen: false, workspaceOpen: false, activeTab: 'preview', openFilePath: null, openFilePaths: [], terminalLog: [],
     lastUpdateAt: null, lastChanges: [], lastFileTrail: [], previousFiles: null };
 }
-const snapshotKeys: Array<keyof ProjectWorkspaceSnapshot> = ['repo','branch','projectRoot','projectName','html','css','js','projectFiles','deployUrl','githubRepoUrl','commitSha','status','previewOpen','workspaceOpen','activeTab','openFilePath','openFilePaths','terminalLog','lastUpdateAt','lastChanges','lastFileTrail','previousFiles'];
+const snapshotKeys: Array<keyof ProjectWorkspaceSnapshot> = ['repo','branch','projectRoot','projectName','html','css','js','projectFiles','deployUrl','githubRepoUrl','commitSha','reviewBranch','status','previewOpen','workspaceOpen','activeTab','openFilePath','openFilePaths','terminalLog','lastUpdateAt','lastChanges','lastFileTrail','previousFiles'];
 function snapshotFrom(s: ProjectWorkspaceSnapshot): ProjectWorkspaceSnapshot {
   return Object.fromEntries(snapshotKeys.map((key) => [key, s[key]])) as unknown as ProjectWorkspaceSnapshot;
 }
@@ -108,7 +109,7 @@ export const useProjectWorkspaceStore = create<ProjectWorkspaceState>()(persist(
         const projectFiles = [...merged.values()].sort((a,b) => a.path.localeCompare(b.path));
         const openFilePath = s.openFilePath && projectFiles.some((f) => f.path === s.openFilePath) ? s.openFilePath : projectFiles[0]?.path || null;
         const next: Partial<ProjectWorkspaceSnapshot> = { projectName: payload.projectName ?? s.projectName, html: payload.html ?? s.html, css: payload.css ?? s.css, js: payload.js ?? s.js, projectFiles,
-          deployUrl: payload.deployUrl !== undefined ? payload.deployUrl : s.deployUrl, githubRepoUrl: payload.githubRepoUrl !== undefined ? payload.githubRepoUrl : s.githubRepoUrl, commitSha: payload.commitSha !== undefined ? payload.commitSha : s.commitSha,
+          deployUrl: payload.deployUrl !== undefined ? payload.deployUrl : s.deployUrl, githubRepoUrl: payload.githubRepoUrl !== undefined ? payload.githubRepoUrl : s.githubRepoUrl, commitSha: payload.commitSha !== undefined ? payload.commitSha : s.commitSha, reviewBranch: payload.reviewBranch !== undefined ? payload.reviewBranch : s.reviewBranch,
           status: payload.status ?? s.status, previewOpen: payload.openPreview ?? s.previewOpen, workspaceOpen: true, activeTab: payload.openPreview ? 'preview' : s.activeTab, openFilePath,
           openFilePaths: openFilePath ? [...new Set([...s.openFilePaths, openFilePath])] : s.openFilePaths, terminalLog: payload.terminalLine ? [...s.terminalLog, payload.terminalLine].slice(-200) : s.terminalLog,
           lastUpdateAt: Date.now(), lastChanges: payload.changesSummary ?? s.lastChanges, lastFileTrail: payload.fileTrail ?? s.lastFileTrail, previousFiles: payload.previousFiles !== undefined ? payload.previousFiles : s.previousFiles };

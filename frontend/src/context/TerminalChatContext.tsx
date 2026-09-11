@@ -93,6 +93,11 @@ import {
   recoveredLandingWorkspaceBuild,
 } from '@/lib/recoveredBuildOutput';
 import { swarmOutputToText } from '@/lib/swarm';
+import {
+  engineeringArtifactWorkspaceProjection,
+  isRenderableArtifact,
+} from '@/lib/engineeringArtifact';
+import { sameProjectContext } from '@/lib/projectContext';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -2421,6 +2426,52 @@ export function TerminalChatProvider({
                 complete.followUps?.some((f) => /connect github/i.test(f)));
             if (githubConnectionBlocked) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
+            }
+            if (isRenderableArtifact(output)) {
+              buildHadVisibleResult = true;
+              const projection = engineeringArtifactWorkspaceProjection(output);
+              if (projection) {
+                const ws = useProjectWorkspaceStore.getState();
+                const target = {
+                  repo: projection.repo,
+                  branch: projection.sourceBranch,
+                  projectRoot: repoContext?.projectRoot || '/',
+                };
+                // A late result from another project must never overwrite the project the user
+                // now sees. The run still remains visible in its conversation transcript.
+                const activeMatches =
+                  !ws.activeProjectContext ||
+                  sameProjectContext(ws.activeProjectContext, target);
+                if (activeMatches) {
+                  if (!ws.activeProjectContext) ws.activateProjectContext(target);
+                  const active = useProjectWorkspaceStore.getState();
+                  active.applyBuild({
+                    ...target,
+                    projectName: projection.projectName,
+                    html: '',
+                    css: '',
+                    js: '',
+                    projectFiles: projection.projectFiles,
+                    githubRepoUrl: projection.githubRepoUrl,
+                    commitSha: projection.commitSha,
+                    reviewBranch: projection.reviewBranch,
+                    status: projection.status,
+                    changesSummary: projection.changesSummary,
+                    fileTrail: projection.fileTrail,
+                    openPreview: false,
+                    terminalLine: projection.terminalLines[0],
+                  });
+                  for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
+                }
+              }
+              setMessages((messages) =>
+                messages.map((message) =>
+                  message.id === assistantId
+                    ? { ...message, content: '', featureOutput: output }
+                    : message,
+                ),
+              );
+              return;
             }
             if (output?.type === 'image_blocked') {
               dispatchCompanionEvent({

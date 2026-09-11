@@ -1534,6 +1534,20 @@ export async function runBuildPipeline(opts: {
           removed: entry.removed,
           action: entry.action,
         })),
+        // Operational workspace projection. The versioned artifact above intentionally keeps
+        // only a compact manifest; Project edits additionally needs the actual changed-file
+        // bodies and before/after trail. Scope this to the real diff instead of serialising the
+        // whole repository, so an arbitrary monorepo cannot turn one edit into a huge SSE frame.
+        projectFiles: universalFileTrail
+          .filter((entry) => entry.action !== 'deleted')
+          .map((entry) => ({ path: entry.path, content: entry.after })),
+        fileTrail: universalFileTrail.map((entry) => ({
+          path: entry.path,
+          before: entry.before,
+          after: entry.after,
+          added: entry.added,
+          removed: entry.removed,
+        })),
         evidence: result.evidence,
         ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         routing,

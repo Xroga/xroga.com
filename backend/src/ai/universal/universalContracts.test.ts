@@ -96,6 +96,19 @@ test('workspace builds route universal execution by the canonical repo branch an
   assert.doesNotMatch(identity, /ensureProjectIdByRepo/);
 });
 
+test('universal completion carries only changed-file bodies and exact diff trails for Project edits', () => {
+  const source = readFileSync(new URL('../pipeline.ts', import.meta.url), 'utf8');
+  const completion = source.slice(
+    source.indexOf('const universalOutput:'),
+    source.indexOf('// Usage may legitimately be null here'),
+  );
+  assert.match(completion, /projectFiles:\s*universalFileTrail/);
+  assert.match(completion, /filter\(\(entry\) => entry\.action !== 'deleted'\)/);
+  assert.match(completion, /content:\s*entry\.after/);
+  assert.match(completion, /fileTrail:\s*universalFileTrail/);
+  assert.doesNotMatch(completion, /projectFiles:\s*\[\.\.\.result\.files\]/);
+});
+
 test('artifact workspace writes real opaque bytes inside a bounded project-independent root', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'xroga-artifacts-'));
   try {

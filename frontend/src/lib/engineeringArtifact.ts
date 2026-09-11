@@ -118,6 +118,16 @@ export interface EngineeringArtifact {
   /** Present when the run failed after producing the artifact. */
   error?: string;
   code?: string;
+  /** Changed-file bodies used only to hydrate Project edits; never the whole repository. */
+  projectFiles?: Array<{ path: string; content: string }>;
+  /** The exact before/after trail for the changed files. */
+  fileTrail?: Array<{
+    path: string;
+    before: string;
+    after: string;
+    added: number;
+    removed: number;
+  }>;
 }
 
 export function isEngineeringArtifact(value: unknown): value is EngineeringArtifact {
@@ -192,4 +202,93 @@ export function engineeringArtifactToText(artifact: EngineeringArtifact): string
   if (artifact.nextAction) lines.push('', artifact.nextAction);
 
   return lines.join('\n');
+}
+
+export interface EngineeringArtifactWorkspaceProjection {
+  repo: string;
+  sourceBranch: string;
+  reviewBranch: string | null;
+  projectName: string;
+  projectFiles: Array<{
+    path: string;
+    content: string;
+    flag: 'generated' | 'modified' | 'deleted';
+  }>;
+  fileTrail: Array<{
+    path: string;
+    before: string;
+    after: string;
+    added: number;
+    removed: number;
+  }>;
+  githubRepoUrl: string;
+  commitSha: string | null;
+  status: 'pushed' | 'degraded';
+  changesSummary: string[];
+  terminalLines: string[];
+}
+
+/**
+ * Converts a completed engineering artifact into facts Project edits can display.
+ *
+ * This deliberately does not infer a deployment or preview. A review-branch commit is pushed,
+ * not live, and a non-web project may have no preview at all.
+ */
+export function engineeringArtifactWorkspaceProjection(
+  artifact: EngineeringArtifact,
+): EngineeringArtifactWorkspaceProjection | null {
+  const repository = artifact.repository;
+  if (!repository?.owner || !repository.repo) return null;
+  const repo = `${repository.owner}/${repository.repo}`;
+  const sourceBranch = repository.baseBranch || repository.branch;
+  const manifestActions = new Map(
+    artifact.files.map((file) => [
+      typeof file === 'string' ? file : file.path,
+      typeof file === 'string' ? undefined : file.action,
+    ]),
+  );
+  const projectFiles: EngineeringArtifactWorkspaceProjection['projectFiles'] = (artifact.projectFiles ?? [])
+    .filter((file) => file && typeof file.path === 'string' && typeof file.content === 'string')
+    .map((file) => ({
+      path: file.path,
+      content: file.content,
+      flag: manifestActions.get(file.path) === 'created' ? 'generated' as const : 'modified' as const,
+    }));
+  for (const [path, action] of manifestActions) {
+    if (action === 'deleted' && !projectFiles.some((file) => file.path === path)) {
+      projectFiles.push({ path, content: '', flag: 'deleted' });
+    }
+  }
+  const fileTrail = (artifact.fileTrail ?? [])
+    .filter((file) => file && typeof file.path === 'string')
+    .map((file) => ({
+      path: file.path,
+      before: typeof file.before === 'string' ? file.before : '',
+      after: typeof file.after === 'string' ? file.after : '',
+      added: Number.isFinite(Number(file.added)) ? Number(file.added) : 0,
+      removed: Number.isFinite(Number(file.removed)) ? Number(file.removed) : 0,
+    }));
+  const verificationLines = artifact.verificationEvidence.map((item) =>
+    [item.phase, item.statement, item.detail].filter(Boolean).join(' · '),
+  );
+  const terminalLines = [
+    artifact.summary,
+    ...verificationLines,
+    repository.branch ? `Review branch · ${repository.branch}` : '',
+    artifact.commitSha ? `Commit · ${artifact.commitSha}` : '',
+  ].filter(Boolean);
+
+  return {
+    repo,
+    sourceBranch,
+    reviewBranch: repository.branch || null,
+    projectName: repository.repo,
+    projectFiles,
+    fileTrail,
+    githubRepoUrl: `https://github.com/${repo}`,
+    commitSha: artifact.commitSha,
+    status: artifact.status === 'verified' && artifact.commitSha ? 'pushed' : 'degraded',
+    changesSummary: [artifact.summary, ...verificationLines].filter(Boolean),
+    terminalLines,
+  };
 }

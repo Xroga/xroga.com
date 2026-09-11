@@ -5,6 +5,7 @@ import {
   ENGINEERING_ARTIFACT_TYPE,
   SUPPORTED_ARTIFACT_VERSION,
   browserVerificationLine,
+  engineeringArtifactWorkspaceProjection,
   engineeringArtifactToText,
   isEngineeringArtifact,
   isRenderableArtifact,
@@ -103,6 +104,53 @@ test('a verified run reports its verification and commit', () => {
   assert.match(text, /Verified/);
   assert.match(text, /npm run build succeeded/);
   assert.match(text, /Review the commit/);
+});
+
+test('a universal result projects exact changed-file and review evidence into Project edits', () => {
+  const projection = engineeringArtifactWorkspaceProjection(
+    artifact({
+      status: 'verified',
+      verified: true,
+      outcome: 'completed',
+      blockers: [],
+      repository: {
+        owner: 'random-org',
+        repo: 'random-repository',
+        branch: 'xroga/random-review',
+        baseBranch: 'feature/random-source',
+      },
+      files: [
+        { path: 'src/random.ts', added: 3, removed: 1, action: 'modified' },
+        { path: 'src/retired.ts', added: 0, removed: 4, action: 'deleted' },
+      ],
+      fileCount: 2,
+      projectFiles: [{ path: 'src/random.ts', content: 'export const random = true;\n' }],
+      fileTrail: [{
+        path: 'src/random.ts',
+        before: 'export const random = false;\n',
+        after: 'export const random = true;\n',
+        added: 1,
+        removed: 1,
+      }],
+      verificationEvidence: [{ phase: 'validation', statement: 'npm test passed', detail: 'exit 0' }],
+    }),
+  );
+
+  assert.ok(projection);
+  assert.equal(projection.repo, 'random-org/random-repository');
+  assert.equal(projection.sourceBranch, 'feature/random-source');
+  assert.equal(projection.reviewBranch, 'xroga/random-review');
+  assert.deepEqual(projection.projectFiles, [
+    { path: 'src/random.ts', content: 'export const random = true;\n', flag: 'modified' },
+    { path: 'src/retired.ts', content: '', flag: 'deleted' },
+  ]);
+  assert.match(projection.terminalLines.join('\n'), /npm test passed · exit 0/);
+  assert.match(projection.terminalLines.join('\n'), /xroga\/random-review/);
+  assert.equal(projection.status, 'pushed');
+});
+
+test('an artifact without an authoritative repository cannot update Project edits', () => {
+  assert.equal(engineeringArtifactWorkspaceProjection(artifact({ repository: null })), null);
 });
 
 test('a run error recorded alongside the artifact is shown, not hidden', () => {

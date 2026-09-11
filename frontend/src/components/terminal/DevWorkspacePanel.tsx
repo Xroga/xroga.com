@@ -132,6 +132,7 @@ export function DevWorkspacePanel({
   const repo = useProjectWorkspaceStore((s) => s.repo);
   const branch = useProjectWorkspaceStore((s) => s.branch);
   const commitSha = useProjectWorkspaceStore((s) => s.commitSha);
+  const reviewBranch = useProjectWorkspaceStore((s) => s.reviewBranch);
   const deployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
   const githubRepoUrl = useProjectWorkspaceStore((s) => s.githubRepoUrl);
   const status = useProjectWorkspaceStore((s) => s.status);
@@ -502,6 +503,12 @@ export function DevWorkspacePanel({
                 <dt className="text-[var(--muted)]">Branch</dt>
                 <dd>{branch || 'main'}</dd>
               </div>
+              {reviewBranch && reviewBranch !== branch ? (
+                <div className="flex justify-between gap-2">
+                  <dt className="text-[var(--muted)]">Review branch</dt>
+                  <dd>{reviewBranch}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-2">
                 <dt className="text-[var(--muted)]">Commit</dt>
                 <dd>{commitSha ? commitSha.slice(0, 8) : '—'}</dd>
