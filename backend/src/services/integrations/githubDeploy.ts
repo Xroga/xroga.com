@@ -83,7 +83,7 @@ export interface GitHubPushResult {
 
 export type ConnectedRepositoryState =
   | { status: 'empty'; branch: string }
-  | { status: 'head'; branch: string; headSha: string }
+  | { status: 'head'; branch: string; headSha: string; sourcePaths?: readonly string[] }
   | { status: 'unavailable'; branch: string; reason: string };
 
 /**
@@ -220,6 +220,7 @@ export async function inspectConnectedRepositoryState(
     return { status: 'unavailable', branch, reason: 'GitHub returned an invalid branch head' };
   }
 
+  let sourcePaths: string[];
   try {
     const api = makeAtomicWriteApi(
       ghFetch,
@@ -231,6 +232,10 @@ export async function inspectConnectedRepositoryState(
     if (isNeutralXrogaBootstrapTree(snapshot.entries)) {
       return { status: 'empty', branch };
     }
+    sourcePaths = snapshot.entries
+      .filter((entry) => entry.type === 'blob')
+      .map((entry) => entry.path)
+      .sort();
   } catch (error) {
     const reason =
       error instanceof TreeSnapshotError
@@ -238,7 +243,12 @@ export async function inspectConnectedRepositoryState(
         : 'GitHub could not verify the repository tree';
     return { status: 'unavailable', branch, reason };
   }
-  return { status: 'head', branch, headSha };
+  return {
+    status: 'head',
+    branch,
+    headSha,
+    sourcePaths,
+  };
 }
 
 export async function ghFetch(token: string, path: string, init?: RequestInit): Promise<Response> {

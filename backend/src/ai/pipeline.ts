@@ -474,6 +474,23 @@ export function projectMemoryMatchesRemoteHead(
   );
 }
 
+/**
+ * A matching commit SHA is not enough to reuse an old repository snapshot.
+ *
+ * Earlier hydrators intentionally cached only common web paths. After the universal
+ * reader shipped, those records could still match the remote HEAD while omitting arbitrary
+ * source files. Comparing path inventories upgrades those caches without relying on a
+ * repository name, language, framework, or filename allow-list.
+ */
+export function projectMemoryContainsRemoteTree(
+  memoryPaths: readonly string[] | undefined,
+  remoteSourcePaths: readonly string[] | undefined,
+): boolean {
+  if (!memoryPaths?.length || !remoteSourcePaths?.length || memoryPaths.length !== remoteSourcePaths.length) return false;
+  const cached = new Set(memoryPaths);
+  return remoteSourcePaths.every((path) => cached.has(path));
+}
+
 async function hydratePriorFiles(
   userId: string,
   meta?: BuildClientMeta,
@@ -511,7 +528,8 @@ async function hydratePriorFiles(
       }
       if (
         mem?.files?.length &&
-        projectMemoryMatchesRemoteHead(mem.commitSha, remote.headSha)
+        projectMemoryMatchesRemoteHead(mem.commitSha, remote.headSha) &&
+        projectMemoryContainsRemoteTree(mem.paths, remote.sourcePaths)
       ) {
         return {
           files: mem.files,

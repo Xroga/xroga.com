@@ -107,7 +107,7 @@ describe('semantic planner provider fallback', () => {
     const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
     const fallback = source.indexOf('executeWithProviderFallback({');
     const attemptValidation = source.indexOf('interpretGoalContract(interpretationInput', fallback);
-    const attemptEnd = source.indexOf('\n    },\n  });', fallback);
+    const attemptEnd = source.indexOf('const { completion, goalContract }', fallback);
     assert.ok(fallback >= 0 && attemptValidation > fallback && attemptValidation < attemptEnd);
     assert.doesNotMatch(source.slice(attemptEnd), /JSON\.parse\(\(fenced/);
   });

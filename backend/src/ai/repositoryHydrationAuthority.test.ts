@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectMemoryMatchesRemoteHead } from './pipeline.js';
+import { projectMemoryContainsRemoteTree, projectMemoryMatchesRemoteHead } from './pipeline.js';
 
 test('uncommitted failed-run memory can never stand in for an empty or unknown repository', () => {
   assert.equal(projectMemoryMatchesRemoteHead(undefined, undefined), false);
@@ -14,4 +14,10 @@ test('memory from a different GitHub head is stale', () => {
 test('memory is reusable only for the exact authoritative GitHub head', () => {
   const sha = 'AdFe19ff104ba8815d01882bdf90f62fa5db5a09';
   assert.equal(projectMemoryMatchesRemoteHead(sha, sha.toLowerCase()), true);
+});
+
+test('cache reuse requires the complete remote path inventory', () => {
+  assert.equal(projectMemoryContainsRemoteTree(['README.md'], ['README.md', 'normalize.py']), false);
+  assert.equal(projectMemoryContainsRemoteTree(['normalize.py', 'README.md'], ['README.md', 'normalize.py']), true);
+  assert.equal(projectMemoryContainsRemoteTree(undefined, ['README.md']), false);
 });
