@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import type { ProjectFile } from '../ai/patches.js';
 import { planUniversalRun } from './universalFlow.js';
 import { deriveSecurityControls } from './securityControls.js';
-import { buildImplementationBrief, productionAdapters } from './productionAdapters.js';
+import { buildImplementationBrief, mergeProjectSnapshot, productionAdapters } from './productionAdapters.js';
 import { listSandboxProviders, setSandboxProvidersForTesting } from '../sandbox/sandboxProviders.js';
 
 const f = (path: string, content = ''): ProjectFile => ({ path, content });
@@ -99,6 +99,19 @@ describe('the review adapter fails closed', () => {
 });
 
 describe('adapters delegate rather than reimplement', () => {
+  it('merges a focused implementation change set into the complete repository snapshot', () => {
+    const merged = mergeProjectSnapshot(
+      [f('README.md', 'keep'), f('requirements.txt', 'pytest>=8,<9\n'), f('normalize.py', 'old')],
+      [f('normalize.py', 'new'), f('tests/test_normalize.py', 'def test_it(): pass\n')],
+    );
+    assert.deepEqual(merged, [
+      f('README.md', 'keep'),
+      f('requirements.txt', 'pytest>=8,<9\n'),
+      f('normalize.py', 'new'),
+      f('tests/test_normalize.py', 'def test_it(): pass\n'),
+    ]);
+  });
+
   it('materializes the repository and selected runtime image for validation', async () => {
     const seen: Array<{ files: ProjectFile[]; image?: string; command: string; args: string[] }> = [];
     setSandboxProvidersForTesting([

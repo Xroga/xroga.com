@@ -42,6 +42,23 @@ export type CommitFn = (input: {
 }) => Promise<{ commitSha: string }>;
 
 /**
+ * Applies an implementation change set to the repository snapshot it was generated from.
+ *
+ * Incremental generation intentionally returns only files it changed. Validation and the
+ * atomic writer, however, require the complete project. Treating the change set as the
+ * whole repository silently drops unchanged manifests and makes correct focused edits
+ * impossible to test or publish.
+ */
+export function mergeProjectSnapshot(
+  existingFiles: readonly ProjectFile[],
+  generatedFiles: readonly ProjectFile[],
+): readonly ProjectFile[] {
+  const merged = new Map(existingFiles.map((file) => [file.path, { ...file }]));
+  for (const file of generatedFiles) merged.set(file.path, { ...file });
+  return [...merged.values()];
+}
+
+/**
  * The brief handed to the implementation model.
  *
  * Assembled from the plan rather than from the raw prompt, because the plan is where the
@@ -167,12 +184,14 @@ export function productionAdapters(input: {
   sourceCommitSha?: string;
 }): ExecutionAdapters {
   return {
-    implement: async ({ plan, securityControls, existingFiles }) =>
-      input.implement({
+    implement: async ({ plan, securityControls, existingFiles }) => {
+      const generatedFiles = await input.implement({
         brief: buildImplementationBrief({ plan, securityControls }),
         plan,
         existingFiles,
-      }),
+      });
+      return mergeProjectSnapshot(existingFiles, generatedFiles);
+    },
 
     runValidation: sandboxValidationRunner(),
 
