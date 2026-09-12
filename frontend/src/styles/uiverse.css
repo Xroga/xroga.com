@@ -2484,6 +2484,56 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     box-shadow: none !important;
   }
 
+  /* ==========================================================
+   6. SELECTED / ACTIVE SIDEBAR ITEM
+   Kimi-style soft selected pill
+   ========================================================== */
+
+.xv-sidebar-menu a[aria-current="page"],
+.xv-sidebar-menu a.active,
+.xv-sidebar-menu a.is-active,
+.xv-sidebar-menu button.xv-menu-item.active,
+.xv-sidebar-menu button.xv-menu-item.is-active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a[aria-current="page"],
+.xv-sidebar-menu .xv-hover-tip-wrap > a.active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.is-active,
+.xv-sidebar-menu .xv-nav-group__trigger.active,
+.xv-sidebar-menu .xv-nav-group__trigger.is-active {
+  color: var(--xv-sidebar-ink) !important;
+  background: color-mix(
+    in srgb,
+    var(--xv-sidebar-ink) 9%,
+    transparent
+  ) !important;
+  border: 1px solid color-mix(
+    in srgb,
+    var(--xv-sidebar-ink) 8%,
+    transparent
+  ) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+
+/* selected state icon color stays same as text */
+.xv-sidebar-menu a[aria-current="page"] svg,
+.xv-sidebar-menu a.active svg,
+.xv-sidebar-menu a.is-active svg,
+.xv-sidebar-menu button.xv-menu-item.active svg,
+.xv-sidebar-menu button.xv-menu-item.is-active svg,
+.xv-sidebar-menu .xv-hover-tip-wrap > a[aria-current="page"] svg,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.active svg,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.is-active svg,
+.xv-sidebar-menu .xv-nav-group__trigger.active svg,
+.xv-sidebar-menu .xv-nav-group__trigger.is-active svg {
+  color: var(--xv-sidebar-ink) !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+
 
   /*
    * Active page:
@@ -2986,66 +3036,73 @@ body.theme-black .xv-sidebar-root {
   }
 
 
-  /* ==========================================================
-     6. ACTIVE ITEM
-     No black pill / gray pill / colored rail.
-     Slightly heavier type is enough.
-     ========================================================== */
+/* ==========================================================
+   6. ACTIVE / SELECTED ITEM
+   Kimi-style permanent soft pill after clicking.
+   ========================================================== */
 
-  .xv-sidebar-menu a.xv-active,
-  .xv-sidebar-menu button.xv-menu-item.xv-active,
-  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active,
-  .xv-sidebar-menu .xv-nav-group__trigger.xv-active {
-    color: var(--xv-sidebar-ink) !important;
+.xv-sidebar-menu a.xv-active,
+.xv-sidebar-menu button.xv-menu-item.xv-active,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active,
+.xv-sidebar-menu .xv-nav-group__trigger.xv-active {
+  color: var(--xv-sidebar-ink) !important;
 
-    background: transparent !important;
+  /* slightly stronger than normal hover */
+  background: color-mix(
+    in srgb,
+    var(--xv-sidebar-ink) 9%,
+    transparent
+  ) !important;
 
-    border: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
 
-    box-shadow: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 
-    transform: none !important;
-
-    font-weight: 700 !important;
-  }
-
-
-  .xv-sidebar-menu a.xv-active svg,
-  .xv-sidebar-menu button.xv-menu-item.xv-active svg,
-  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active svg,
-  .xv-sidebar-menu .xv-nav-group__trigger.xv-active svg,
-
-  .xv-sidebar-menu a.xv-active .xv-animated-nav-icon,
-  .xv-sidebar-menu button.xv-menu-item.xv-active .xv-animated-nav-icon,
-  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active .xv-animated-nav-icon,
-  .xv-sidebar-menu .xv-nav-group__trigger.xv-active .xv-animated-nav-icon {
-    color: var(--xv-sidebar-ink) !important;
-
-    stroke: currentColor !important;
-
-    stroke-width: 2.2 !important;
-
-    opacity: 1 !important;
-
-    transform: none !important;
-
-    filter: none !important;
-  }
+  font-weight: 600 !important;
+}
 
 
-  /* active item also stays identical on hover */
-  .xv-sidebar-menu a.xv-active:hover,
-  .xv-sidebar-menu button.xv-menu-item.xv-active:hover,
-  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover,
-  .xv-sidebar-menu .xv-nav-group__trigger.xv-active:hover {
-    color: var(--xv-sidebar-ink) !important;
+/* selected icon stays monochrome */
+.xv-sidebar-menu a.xv-active svg,
+.xv-sidebar-menu button.xv-menu-item.xv-active svg,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active svg,
+.xv-sidebar-menu .xv-nav-group__trigger.xv-active svg,
 
-    background: transparent !important;
+.xv-sidebar-menu a.xv-active .xv-animated-nav-icon,
+.xv-sidebar-menu button.xv-menu-item.xv-active .xv-animated-nav-icon,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active .xv-animated-nav-icon,
+.xv-sidebar-menu .xv-nav-group__trigger.xv-active .xv-animated-nav-icon {
+  color: var(--xv-sidebar-ink) !important;
 
-    box-shadow: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
 
-    transform: none !important;
-  }
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+
+/* selected item remains selected when hovered */
+.xv-sidebar-menu a.xv-active:hover,
+.xv-sidebar-menu button.xv-menu-item.xv-active:hover,
+.xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover,
+.xv-sidebar-menu .xv-nav-group__trigger.xv-active:hover {
+  color: var(--xv-sidebar-ink) !important;
+
+  background: color-mix(
+    in srgb,
+    var(--xv-sidebar-ink) 11%,
+    transparent
+  ) !important;
+
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
 
 
   /* ==========================================================
