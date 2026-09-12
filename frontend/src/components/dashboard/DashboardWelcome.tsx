@@ -1,7 +1,7 @@
 'use client';
 
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
-import { emilio, goga } from '@/lib/fonts';
+import { goga } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
 import { WorkspaceConnectionsStrip } from '@/components/terminal/WorkspaceConnectionsStrip';
 
@@ -13,10 +13,10 @@ interface DashboardWelcomeProps {
 
 
 /* ============================================================
-   SMALL IDENTITY ABOVE THE REAL COMPOSER
-
-   X  Hi Alex
-      Turn an idea into something live.
+   COMPOSER GREETING
+   ------------------------------------------------------------
+   Hi Alex
+   Turn an idea into something live.
    ============================================================ */
 
 export function WorkspaceComposerKicker({
@@ -34,38 +34,27 @@ export function WorkspaceComposerKicker({
     <div
       className={cn(
         'xv-welcome-composer-kicker',
-        'xv-welcome-composer-kicker-v2',
         goga.className,
       )}
       aria-label={`Hi ${shortName}. Turn an idea into something live.`}
     >
       <div className="xv-welcome-composer-hello">
-        <span
-          className={cn(
-            'xv-welcome-composer-mark',
-            emilio.className,
-          )}
-          aria-hidden="true"
-        >
-          X
+        <span className="xv-welcome-composer-hi">
+          Hi
         </span>
 
-        <span className="xv-welcome-composer-hello-copy">
-          <span>Hi</span>
-
-          <b>{shortName}</b>
-        </span>
+        <b className="xv-welcome-composer-user">
+          {shortName}
+        </b>
       </div>
 
-      <strong>
-        Turn an idea into something live.
-      </strong>
+      <strong>Turn an idea into something live.</strong>
 
       {/*
-       * Keep this existing hook in the DOM contract.
-       * It is visually hidden because the username now lives
-       * beside "Hi", but existing workspace tests/selectors
-       * can continue finding it.
+       * Keep this hook for compatibility with the existing
+       * workspace tests/accessibility contract.
+       *
+       * The visible username is now rendered above.
        */}
       <span
         className="xv-welcome-short-name"
@@ -80,9 +69,7 @@ export function WorkspaceComposerKicker({
 
 
 /* ============================================================
-   EMPTY WORKSPACE CENTER IDENTITY
-
-   Describe it. Build it. Ship it.
+   EMPTY WORKSPACE IDENTITY
    ============================================================ */
 
 export function DashboardWelcome({
@@ -95,56 +82,49 @@ export function DashboardWelcome({
   return (
     <div
       className={cn(
-        'xv-dashboard-welcome',
-        'xv-welcome-modern',
-        'relative',
-
+        'xv-dashboard-welcome xv-welcome-modern relative',
         composer &&
           'xv-dashboard-welcome--composer',
-
         className,
       )}
       data-testid="workspace-welcome"
     >
-      {composer ? (
-        <WorkspaceConnectionsStrip
-          href="/dashboard/integrations"
-          interactive
-        />
-      ) : null}
+      {/* =====================================================
+          MAIN CENTERED HEADLINE
+          ===================================================== */}
 
-      <div
-        className="
-          xv-welcome-hero
-          relative
-          mx-auto
-          flex
-          max-w-3xl
-          flex-col
-          items-center
-          text-center
-        "
-      >
-        <h1
-          className={cn(
-            'xv-welcome-editorial',
-            'xv-welcome-editorial-v2',
-            goga.className,
-          )}
-        >
-          <span className="xv-welcome-editorial__primary">
-            Describe it.
-          </span>
+      <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
+        <h1 className={cn('xv-welcome-editorial', goga.className)}>
+          <span>Describe it.</span>
 
           <span className="xv-welcome-editorial__build">
             Build it.
           </span>
 
-          <span className="xv-welcome-editorial__primary">
+          <span>
             Ship it.
           </span>
         </h1>
+
+        {composer ? (
+          <p className="xv-welcome-capabilities">
+            Create, explore, search, research, learn, plan, build,
+            debug, and ship live.
+          </p>
+        ) : null}
       </div>
+
+
+      {/* =====================================================
+          INTEGRATIONS — BELOW HEADLINE
+          ===================================================== */}
+
+      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" interactive /> : null}
+
+
+      {/* =====================================================
+          NON-COMPOSER DASHBOARD CONTENT
+          ===================================================== */}
 
       {!composer ? (
         <div className="relative mx-auto mt-4 max-w-3xl">
