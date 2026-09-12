@@ -2073,10 +2073,10 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 
 .xv-sidebar-root:not(.is-collapsed)
 [data-testid="xroga-sidebar-wordmark"] {
-  height: 42px !important;
+  height: 48px !important;
 
   width: auto !important;
-  max-width: 160px !important;
+  max-width: 190px !important;
 
   display: inline-flex !important;
 
@@ -2118,15 +2118,15 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     "Times New Roman",
     serif !important;
 
-  font-size: 32px !important;
+  font-size: 38px !important;
 
-  font-weight: 300 !important;
+  font-weight: 500 !important;
 
   font-style: italic !important;
 
-  line-height: 0.9 !important;
+  line-height: 0.92 !important;
 
-  letter-spacing: 0.01em !important;
+  letter-spacing: 0.005em !important;
 
   color: var(--foreground) !important;
 
