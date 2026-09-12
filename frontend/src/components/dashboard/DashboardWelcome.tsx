@@ -24,11 +24,7 @@ export function WorkspaceComposerKicker({
 }: {
   displayName: string;
 }) {
-  const shortName =
-    displayName
-      .trim()
-      .split(/\s+/)[0]
-      ?.slice(0, 12) || 'builder';
+  const shortName = displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
 
   return (
     <div
@@ -57,9 +53,7 @@ export function WorkspaceComposerKicker({
         </span>
       </div>
 
-      <strong>
-        Turn an idea into something live.
-      </strong>
+      <strong>Turn an idea into something live.</strong>
 
       {/*
        * Keep this existing hook in the DOM contract.
@@ -106,12 +100,7 @@ export function DashboardWelcome({
       )}
       data-testid="workspace-welcome"
     >
-      {composer ? (
-        <WorkspaceConnectionsStrip
-          href="/dashboard/integrations"
-          interactive
-        />
-      ) : null}
+      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" interactive /> : null}
 
       <div
         className="
