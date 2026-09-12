@@ -24,9 +24,13 @@ export interface SemanticRequestPlan {
   readonly directResponse?: string;
 }
 
+export const SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS = 28_000;
+export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS = 30_000;
+export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS = 14_000;
+
 export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
   const callable = callableModelIds(env);
-  const ordered = (['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const)
+  const ordered = (['glm_5_3_flash', 'deepseek_v4_flash', 'glm_5_3', 'kimi_k3'] as const)
     .filter((modelId) => callable.includes(modelId));
   if (ordered.length) return ordered;
   throw new RuntimeFailure(
@@ -247,11 +251,11 @@ export async function planSemanticRequest(input: {
     { role: 'system', content: system },
     { role: 'user', content: JSON.stringify(interpretationInput) },
   ];
-  const maximumOutputTokens = 1_500;
+  const maximumOutputTokens = 1_000;
   const configuredTotalMs = Number(process.env.SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS);
   const totalTimeoutMs = Number.isFinite(configuredTotalMs)
-    ? Math.min(25_000, Math.max(5_000, configuredTotalMs))
-    : 18_000;
+    ? Math.min(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS, Math.max(5_000, configuredTotalMs))
+    : SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS;
   const totalController = new AbortController();
   const totalTimer = setTimeout(() => totalController.abort(), totalTimeoutMs);
   let lastStructuredFailure: RuntimeFailure | null = null;
@@ -260,7 +264,7 @@ export async function planSemanticRequest(input: {
   try {
     const planned = await executeWithProviderFallback({
       routes: models,
-      timeoutMs: Math.min(9_000, totalTimeoutMs),
+      timeoutMs: Math.min(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, totalTimeoutMs),
       maximumAttemptsPerRoute: 1,
       signal: totalController.signal,
       execute: async (modelId, signal) => {
