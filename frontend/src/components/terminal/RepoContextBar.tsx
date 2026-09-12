@@ -232,10 +232,12 @@ export function RepoContextBar({ outside, compact }: RepoContextBarProps) {
         const meta = list.find((r) => r.fullName === defaultRepo);
         const branchHint = savedBranch || meta?.defaultBranch;
         if (!branchHint) throw new Error('GitHub did not return a default branch');
-        // Identity changes immediately; branch validation may finish later.
-        saveSelectedRepoContext({ repo: defaultRepo, branch: branchHint });
+        // A repository-list refresh is passive. Another Workspace tab may have its own
+        // in-memory context, so writing it here would silently replace the context the user
+        // most recently chose elsewhere. Only bootstrap when no canonical context exists.
+        if (!canonical) saveSelectedRepoContext({ repo: defaultRepo, branch: branchHint });
         const branch = await loadBranches(defaultRepo, branchHint);
-        saveSelectedRepoContext({ repo: defaultRepo, branch });
+        if (!canonical) saveSelectedRepoContext({ repo: defaultRepo, branch });
         // Defer lite analyze so the repo picker paints first
         // Restore metadata silently. A reload should not replay a transient status
         // message or make the otherwise-stable workspace look as if it moved.

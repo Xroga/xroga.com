@@ -57,4 +57,18 @@ test('passive repository refresh cannot reset the canonical branch', () => {
   assert.match(REPO_BAR, /const fallback = preferred\?\.trim\(\) \|\| 'main'/);
   assert.match(REPO_BAR, /setSelectedBranch\(fallback\)/);
   assert.match(REPO_BAR, /return fallback/);
+  const passiveRefresh = REPO_BAR.slice(
+    REPO_BAR.indexOf('const canonical = getSelectedRepoContext()'),
+    REPO_BAR.indexOf('} else if (freshTerminal)'),
+  );
+  assert.equal(
+    [...passiveRefresh.matchAll(/saveSelectedRepoContext/g)].length,
+    2,
+    'the passive refresh has only the initial and validated bootstrap writes',
+  );
+  assert.equal(
+    [...passiveRefresh.matchAll(/if \(!canonical\) saveSelectedRepoContext/g)].length,
+    2,
+    'both bootstrap writes must be guarded when a canonical context already exists',
+  );
 });
