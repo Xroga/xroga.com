@@ -24,11 +24,7 @@ export function WorkspaceComposerKicker({
 }: {
   displayName: string;
 }) {
-  const shortName =
-    displayName
-      .trim()
-      .split(/\s+/)[0]
-      ?.slice(0, 12) || 'builder';
+  const shortName = displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
 
   return (
     <div
