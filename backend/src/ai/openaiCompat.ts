@@ -238,7 +238,6 @@ export async function chatCompletion(
           'model that answers within it.',
       ) as Error & { code?: string };
       error.code = 'REASONING_WITHOUT_ANSWER';
-      recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started });
       throw error;
     }
 
