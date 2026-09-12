@@ -1942,3 +1942,723 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 @media (prefers-reduced-motion: reduce) {
   .xv-mic-btn, .xv-mic-icon { transition: none; }
 }
+/* ============================================================
+   XROGA — CLEAN KIMI-STYLE DESKTOP SIDEBAR
+   ------------------------------------------------------------
+   - flush/fixed to left edge
+   - no outer card outline
+   - no floating rounded container
+   - smaller typography
+   - soft rounded hover rows
+   - soft active row instead of black pill
+   - Kimi-style sidebar toggle at top-right
+   - New terminal becomes a clean full-width action
+   - preserves Xroga themes automatically
+   ============================================================ */
+
+@media (min-width: 1024px) {
+
+  /* ----------------------------------------------------------
+     Theme-aware sidebar design tokens
+     ---------------------------------------------------------- */
+
+  .xv-sidebar-root {
+    --xv-kimi-hover:
+      color-mix(in srgb, var(--foreground) 6%, transparent);
+
+    --xv-kimi-active:
+      color-mix(in srgb, var(--foreground) 8%, transparent);
+
+    --xv-kimi-pressed:
+      color-mix(in srgb, var(--foreground) 11%, transparent);
+
+    --xv-kimi-line:
+      color-mix(in srgb, var(--foreground) 9%, transparent);
+  }
+
+
+  /* ==========================================================
+     1. SIDEBAR FRAME
+     ========================================================== */
+
+  .xv-sidebar-root {
+    position: relative;
+    min-height: 100dvh;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .xv-sidebar-floating {
+    position: fixed !important;
+
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+
+    height: 100dvh !important;
+
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    outline: 0 !important;
+
+    box-shadow: none !important;
+
+    background:
+      var(--app-panel) !important;
+
+    overflow: hidden !important;
+  }
+
+
+  /*
+   * Keep the collapsed rail clean too.
+   */
+  .xv-sidebar-root.is-collapsed .xv-sidebar-floating {
+    width: 64px !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+  }
+
+
+  /* ==========================================================
+     2. BRAND / XROGA WORDMARK
+     ========================================================== */
+
+  .xv-sidebar-brand {
+    position: relative;
+
+    padding:
+      11px
+      10px
+      6px !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+  }
+
+
+  /*
+   * Expanded header:
+   *
+   * row 1 = Xroga wordmark
+   * row 2 = New terminal + Search + Theme
+   */
+  .xv-sidebar-root:not(.is-collapsed)
+  .xv-sidebar-brand > div:first-child {
+    width: 100%;
+
+    flex-wrap: wrap !important;
+
+    column-gap: 8px !important;
+    row-gap: 7px !important;
+
+    align-items: center !important;
+  }
+
+
+  /* thinner / smaller Xroga text logo */
+  [data-testid="xroga-sidebar-wordmark"] {
+    height: 32px !important;
+
+    max-width: 120px !important;
+
+    padding-left: 3px;
+
+    color: var(--foreground) !important;
+  }
+
+
+  [data-testid="xroga-sidebar-wordmark"] > span {
+    gap: 0.10em !important;
+
+    font-family:
+      "Helvetica Neue",
+      "Avenir Next",
+      "Segoe UI",
+      Arial,
+      sans-serif !important;
+
+    font-weight: 200 !important;
+
+    line-height: 1 !important;
+  }
+
+
+  [data-testid="xroga-sidebar-wordmark"]
+  > span
+  > span {
+    font-size: 21px !important;
+  }
+
+
+  [data-testid="xroga-sidebar-wordmark"]
+  > span
+  > span:first-child {
+    font-size: 25px !important;
+  }
+
+
+  /* ==========================================================
+     3. TOP ACTION ROW
+     Kimi-like "New Chat" treatment
+     ========================================================== */
+
+  .xv-sidebar-header-actions {
+    order: 3;
+
+    flex: 1 0 100% !important;
+
+    width: 100% !important;
+    height: 38px !important;
+
+    margin-left: 0 !important;
+
+    padding: 0 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      32px
+      32px;
+
+    align-items: center;
+
+    gap: 4px;
+
+    background: transparent !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+  }
+
+
+  /*
+   * Remove old segmented-control divider lines.
+   */
+  .xv-sidebar-header-actions
+  .xv-toolbar-sep {
+    display: none !important;
+  }
+
+
+  .xv-sidebar-header-actions
+  > .xv-hover-tip-wrap {
+    width: 100%;
+    min-width: 0;
+
+    height: 38px;
+
+    display: flex !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     NEW TERMINAL — Kimi "New Chat" style
+     ---------------------------------------------------------- */
+
+  .xv-sidebar-header-actions
+  .xv-new-terminal-compact {
+    width: 100% !important;
+    height: 38px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: flex-start !important;
+
+    gap: 8px !important;
+
+    padding:
+      0
+      10px !important;
+
+    color: var(--foreground) !important;
+
+    background: transparent !important;
+
+    border:
+      1px
+      solid
+      var(--xv-kimi-line) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 150ms ease !important;
+  }
+
+
+  .xv-sidebar-header-actions
+  .xv-new-terminal-compact:hover {
+    background:
+      var(--xv-kimi-hover) !important;
+
+    border-color:
+      color-mix(
+        in srgb,
+        var(--foreground) 14%,
+        transparent
+      ) !important;
+  }
+
+
+  .xv-sidebar-header-actions
+  .xv-new-terminal-compact:active {
+    transform: scale(0.985);
+  }
+
+
+  .xv-new-terminal-compact__label {
+    display: inline !important;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    font-family:
+      "Helvetica Neue",
+      "Avenir Next",
+      "Segoe UI",
+      Arial,
+      sans-serif !important;
+
+    font-size: 13px !important;
+
+    font-weight: 450 !important;
+
+    line-height: 1 !important;
+
+    letter-spacing: -0.015em !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     SEARCH + THEME BUTTONS
+     ---------------------------------------------------------- */
+
+  .xv-sidebar-header-actions
+  .xv-sidebar-head-icon,
+
+  .xv-sidebar-header-actions
+  button.xv-theme-toggle {
+    width: 32px !important;
+    min-width: 32px !important;
+
+    height: 32px !important;
+
+    padding: 0 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: var(--muted) !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    border-radius: 9px !important;
+
+    box-shadow: none !important;
+
+    transition:
+      background-color 150ms ease,
+      color 150ms ease !important;
+  }
+
+
+  .xv-sidebar-header-actions
+  .xv-sidebar-head-icon:hover,
+
+  .xv-sidebar-header-actions
+  button.xv-theme-toggle:hover {
+    color: var(--foreground) !important;
+
+    background:
+      var(--xv-kimi-hover) !important;
+  }
+
+
+  .xv-sidebar-header-actions
+  .xv-sidebar-head-icon svg,
+
+  .xv-sidebar-header-actions
+  button.xv-theme-toggle svg {
+    width: 15px !important;
+    height: 15px !important;
+
+    stroke-width: 1.7 !important;
+  }
+
+
+  /* ==========================================================
+     4. KIMI-STYLE SIDEBAR CLOSE BUTTON
+     ========================================================== */
+
+  .xv-sidebar-edge-toggle {
+    position: absolute !important;
+
+    top: 13px !important;
+    right: 10px !important;
+
+    left: auto !important;
+
+    transform: none !important;
+
+    width: 30px !important;
+    height: 30px !important;
+
+    padding: 0 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: var(--muted) !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+    border-radius: 9px !important;
+
+    outline: 0 !important;
+
+    box-shadow: none !important;
+
+    z-index: 80 !important;
+
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 150ms ease !important;
+  }
+
+
+  .xv-sidebar-edge-toggle:hover {
+    color: var(--foreground) !important;
+
+    background:
+      var(--xv-kimi-hover) !important;
+  }
+
+
+  .xv-sidebar-edge-toggle:active {
+    transform:
+      scale(0.94) !important;
+  }
+
+
+  .xv-sidebar-edge-toggle svg {
+    width: 16px !important;
+    height: 16px !important;
+
+    stroke-width: 1.6 !important;
+  }
+
+
+  /* ==========================================================
+     5. MAIN NAV
+     ========================================================== */
+
+  .xv-sidebar-nav-scroll {
+    padding:
+      5px
+      10px
+      8px !important;
+
+    scrollbar-width: none;
+  }
+
+
+  .xv-sidebar-nav-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+
+  .xv-sidebar-menu {
+    display: grid !important;
+
+    gap: 2px !important;
+  }
+
+
+  .xv-sidebar-menu
+  .xv-hover-tip-wrap {
+    width: 100% !important;
+
+    display: block !important;
+  }
+
+
+  /*
+   * All top-level and grouped nav rows.
+   */
+  .xv-sidebar-menu a,
+
+  .xv-sidebar-menu button.xv-menu-item,
+
+  .xv-sidebar-menu .xv-hover-tip-wrap > a,
+
+  .xv-sidebar-menu .xv-nav-group__trigger {
+    min-height: 34px !important;
+
+    width: 100%;
+
+    padding:
+      0
+      10px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 9px !important;
+
+    color: var(--muted) !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    font-family:
+      "Helvetica Neue",
+      "Avenir Next",
+      "Segoe UI",
+      Arial,
+      sans-serif !important;
+
+    font-size: 13px !important;
+
+    font-weight: 450 !important;
+
+    line-height: 1 !important;
+
+    letter-spacing: -0.012em !important;
+
+    transition:
+      background-color 140ms ease,
+      color 140ms ease,
+      transform 140ms ease !important;
+  }
+
+
+  /* ==========================================================
+     6. KIMI HOVER — matches your third screenshot
+     ========================================================== */
+
+  .xv-sidebar-menu a:hover,
+
+  .xv-sidebar-menu button.xv-menu-item:hover,
+
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
+
+  .xv-sidebar-menu .xv-nav-group__trigger:hover {
+    color: var(--foreground) !important;
+
+    background:
+      var(--xv-kimi-hover) !important;
+
+    box-shadow: none !important;
+  }
+
+
+  /*
+   * Active page:
+   * no more huge black Workspace pill.
+   */
+  .xv-sidebar-menu a.xv-active,
+
+  .xv-sidebar-menu
+  .xv-nav-group__trigger.xv-active {
+    color: var(--foreground) !important;
+
+    background:
+      var(--xv-kimi-active) !important;
+
+    font-weight: 500 !important;
+
+    box-shadow: none !important;
+  }
+
+
+  .xv-sidebar-menu a:active,
+
+  .xv-sidebar-menu
+  .xv-nav-group__trigger:active {
+    background:
+      var(--xv-kimi-pressed) !important;
+
+    transform: scale(0.985);
+  }
+
+
+  /* ----------------------------------------------------------
+     Nav icons
+     ---------------------------------------------------------- */
+
+  .xv-sidebar-menu svg {
+    width: 15px !important;
+    height: 15px !important;
+
+    flex: 0 0 auto;
+
+    stroke-width: 1.65 !important;
+  }
+
+
+  .xv-sidebar-menu
+  .xv-nav-group__chev {
+    width: 12px !important;
+    height: 12px !important;
+
+    margin-left: auto !important;
+
+    opacity: 0.56;
+  }
+
+
+  /* ----------------------------------------------------------
+     Nested group links
+     ---------------------------------------------------------- */
+
+  .xv-sidebar-menu
+  .xv-nav-group__items {
+    margin:
+      2px
+      0
+      4px
+      12px !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+  }
+
+
+  .xv-sidebar-menu
+  .xv-nav-group__items a {
+    min-height: 31px !important;
+
+    font-size: 12.5px !important;
+  }
+
+
+  /* ==========================================================
+     7. REPOSITORIES
+     Keep functionality, make it visually quiet
+     ========================================================== */
+
+  .xv-repos-scroll {
+    scrollbar-width: none;
+  }
+
+
+  .xv-repos-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+
+  .xv-repos-scroll button {
+    border-radius: 9px !important;
+
+    box-shadow: none !important;
+
+    transition:
+      background-color 140ms ease,
+      color 140ms ease !important;
+  }
+
+
+  .xv-repos-scroll button:hover {
+    background:
+      var(--xv-kimi-hover) !important;
+
+    box-shadow: none !important;
+  }
+
+
+  /*
+   * Removes the blue outlined terminal-card look.
+   * Active terminals remain identifiable by their subtle fill.
+   */
+  .xv-repos-scroll button[class*="ring-"] {
+    box-shadow: none !important;
+  }
+
+
+  /* ==========================================================
+     8. PROFILE / FOOTER
+     ========================================================== */
+
+  .xv-sidebar-bottom {
+    padding:
+      7px
+      10px
+      10px !important;
+  }
+
+
+  .xv-sidebar-profile-row {
+    padding:
+      7px
+      8px !important;
+
+    border: 0 !important;
+
+    border-radius: 11px !important;
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+
+    transition:
+      background-color 150ms ease !important;
+  }
+
+
+  .xv-sidebar-profile-row:hover {
+    background:
+      var(--xv-kimi-hover) !important;
+  }
+
+
+  .xv-sidebar-profile-name {
+    font-size: 12px !important;
+
+    font-weight: 500 !important;
+
+    letter-spacing: -0.01em;
+  }
+
+
+  .xv-sidebar-profile-plan {
+    font-size: 10px !important;
+
+    color: var(--muted) !important;
+  }
+
+}
