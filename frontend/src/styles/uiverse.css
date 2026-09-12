@@ -2064,9 +2064,10 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
 
- /* ============================================================
-   XROGA OPEN SIDEBAR WORDMARK — AZURIO STYLE
+/* ============================================================
+   XROGA OPEN SIDEBAR WORDMARK — EMILIO STYLE
    Capital X + lowercase roga
+   Thin elegant italic serif
    Expanded sidebar only
    ============================================================ */
 
@@ -2075,7 +2076,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   height: 42px !important;
 
   width: auto !important;
-  max-width: 150px !important;
+  max-width: 160px !important;
 
   display: inline-flex !important;
 
@@ -2099,7 +2100,9 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 
-/* Actual Xroga text */
+/* ============================================================
+   ACTUAL XROGA WORDMARK
+   ============================================================ */
 
 .xv-sidebar-root:not(.is-collapsed)
 [data-testid="xroga-sidebar-wordmark"] > span {
@@ -2110,24 +2113,20 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   gap: 0 !important;
 
   font-family:
-    var(--font-azurio),
-    Georgia,
+    var(--font-emilio),
+    "Cormorant Garamond",
     "Times New Roman",
     serif !important;
 
-  font-size: 30px !important;
+  font-size: 32px !important;
 
-  font-weight: 700 !important;
+  font-weight: 300 !important;
 
-  font-style: normal !important;
+  font-style: italic !important;
 
-  line-height: 1 !important;
+  line-height: 0.9 !important;
 
-  /*
-   * Azurio-style breathing room.
-   * Do NOT use the old negative tracking.
-   */
-  letter-spacing: 0.015em !important;
+  letter-spacing: 0.01em !important;
 
   color: var(--foreground) !important;
 
@@ -2148,19 +2147,22 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 
-/* Keep every nested letter/span in the same Azurio face */
+/* ============================================================
+   KEEP X + roga IDENTICAL
+   Sidebar currently contains nested spans.
+   ============================================================ */
 
 .xv-sidebar-root:not(.is-collapsed)
 [data-testid="xroga-sidebar-wordmark"] > span * {
   font-family:
-    var(--font-azurio),
-    Georgia,
+    var(--font-emilio),
+    "Cormorant Garamond",
     "Times New Roman",
     serif !important;
 
-  font-weight: 700 !important;
+  font-weight: 300 !important;
 
-  font-style: normal !important;
+  font-style: italic !important;
 
   letter-spacing: inherit !important;
 
@@ -2168,7 +2170,17 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 
-/* Clean interaction */
+/* Slight controlled breathing room after capital X */
+
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"] > span > span:first-child {
+  margin-right: 0.015em !important;
+}
+
+
+/* ============================================================
+   INTERACTION
+   ============================================================ */
 
 .xv-sidebar-root:not(.is-collapsed)
 [data-testid="xroga-sidebar-wordmark"]:hover {
