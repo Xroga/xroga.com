@@ -6,8 +6,9 @@ import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
 import { planExplicitProjectBuild, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
-import { analyzeGitHubRepo } from '../services/integrations/githubDeploy.js';
+import { analyzeGitHubRepo, fetchRepositoryTextFilesFromGitHub } from '../services/integrations/githubDeploy.js';
 import { publicRuntimeFailure, RuntimeFailure } from '../ai/universal/runtimeFailure.js';
+import { selectRepositoryChatEvidence } from '../ai/universal/repositoryChatEvidence.js';
 
 const router = Router();
 
@@ -98,6 +99,19 @@ router.post('/chat', async (req: AuthRequest, res) => {
           { cause: error, retryable: !disconnected },
         );
       }
+      let sourceFiles: Array<{ path: string; content: string }> = [];
+      try {
+        sourceFiles = selectRepositoryChatEvidence(
+          await fetchRepositoryTextFilesFromGitHub(userId, context.repo, context.branch),
+          message,
+        );
+      } catch (error) {
+        console.warn('[phase1/chat] bounded repository source snapshot unavailable', {
+          repo: context.repo,
+          branch: context.branch,
+          reason: error instanceof Error ? error.message : 'unknown error',
+        });
+      }
       projectEvidence = JSON.stringify({
         repo: analysis.repoName,
         branch: analysis.defaultBranch,
@@ -107,6 +121,8 @@ router.post('/chat', async (req: AuthRequest, res) => {
         topLevelEntries: analysis.topLevelEntries,
         treeSample: analysis.treeSample,
         report: analysis.report,
+        sourceFiles,
+        sourceEvidenceComplete: sourceFiles.length > 0,
       });
     }
     const result = await runChatPipeline({
