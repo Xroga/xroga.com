@@ -673,8 +673,9 @@ export function Sidebar({ displayName }: SidebarProps) {
                   <AnimatedIcon icon={NewTerminalIcon} size={14} intro={false} />
                   {/* The label carries a class of its own because the rules that hide
                       it target a span, and `AnimatedIcon` wraps its glyph in one too. */}
-                  <span className="xv-new-terminal-compact__label">New</span>
-                </button>
+<span className="xv-new-terminal-compact__label">
+  New terminal
+</span>                </button>
               </HoverTip>
               {/* Decorative only. The three controls, their order and their handlers are
                   untouched; these hairlines just divide them the way a segmented control
@@ -900,12 +901,13 @@ export function Sidebar({ displayName }: SidebarProps) {
         style={{ width: asideWidth }}
       >
         <aside
-          className={cn(
-            'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
-          )}
-        >
-          {sidebarInner}
-        </aside>
+  className={cn(
+    'xv-sidebar-floating xv-sidebar-hover relative z-40 flex flex-col shrink-0 overflow-hidden transition-[width,opacity] duration-200 opacity-100'
+  )}
+  style={{ width: asideWidth }}
+>
+  {sidebarInner}
+</aside>
         {effectiveSidebarOpen ? (
           <div
             role="separator"
