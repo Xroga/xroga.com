@@ -9,6 +9,7 @@ import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { analyzeGitHubRepo, fetchRepositoryTextFilesFromGitHub } from '../services/integrations/githubDeploy.js';
 import { publicRuntimeFailure, RuntimeFailure } from '../ai/universal/runtimeFailure.js';
 import { selectRepositoryChatEvidence } from '../ai/universal/repositoryChatEvidence.js';
+import { boundedSemanticHistory } from '../ai/universal/semanticHistory.js';
 
 const router = Router();
 
@@ -30,9 +31,7 @@ router.post('/plan', async (req: AuthRequest, res) => {
     const plan = await planSemanticRequest({
       userId,
       message,
-      history: Array.isArray(req.body?.history)
-        ? req.body.history.slice(-12).map((item: { role?: unknown; content?: unknown }) => `${item.role === 'assistant' ? 'assistant' : 'user'}: ${String(item.content ?? '').slice(0, 8_000)}`)
-        : [],
+      history: boundedSemanticHistory(req.body?.history),
       attachments: Array.isArray(req.body?.attachments)
         ? req.body.attachments.map((item: { mimeType?: unknown; name?: unknown }) => ({ mediaType: String(item.mimeType ?? 'application/octet-stream'), name: typeof item.name === 'string' ? item.name : undefined }))
         : [],
