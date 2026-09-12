@@ -12317,90 +12317,157 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
     min-height:
       52px !important;
   }
+}
 
 
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  /* =========================================================
+/* =========================================================
    EXPLORE INSPIRATION BAR (BOTTOM) — KIMI-LIKE
    ========================================================= */
 
+.xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-bar {
-  width: var(--xv-explore-width, min(772px, calc(100vw - 40px)));
-  left: var(--xv-explore-left, 50%);
-  transform: translateX(-50%);
-  bottom: var(--xv-explore-bottom, 8px);
+  width:
+    var(
+      --xv-explore-width,
+      min(772px, calc(100vw - 40px))
+    );
+
+  left:
+    var(
+      --xv-explore-left,
+      24px
+    );
+
+  transform: none;
+
+  bottom:
+    var(
+      --xv-explore-bottom,
+      8px
+    );
 
   min-height: 48px;
+
   border-radius: 18px;
-  padding: 10px 16px;
+
+  padding:
+    10px
+    16px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 14px;
 
-  background: var(--xv-explore-bg);
-  border: 1px solid var(--xv-explore-border);
+  background:
+    var(--xv-explore-bg);
+
+  border:
+    1px solid
+    var(--xv-explore-border);
+
   box-shadow: none;
 }
 
+
 .xv-workspace-explore-left {
   display: flex;
+
   align-items: center;
+
   gap: 10px;
+
   min-width: 0;
 }
+
 
 .xv-workspace-explore-icon {
   width: 16px;
+
   height: 16px;
-  flex: 0 0 16px;
-  color: var(--xv-explore-icon);
+
+  flex:
+    0 0 16px;
+
+  color:
+    var(--xv-explore-icon);
+
   opacity: 0.9;
 }
 
+
 .xv-workspace-explore-label {
   display: flex;
+
   flex-direction: column;
+
   justify-content: center;
+
   min-width: 0;
 }
 
+
 .xv-workspace-explore-label strong {
   font-size: 13px;
+
   line-height: 1.1;
+
   font-weight: 500;
-  color: var(--xv-explore-text);
+
+  color:
+    var(--xv-explore-text);
 }
+
 
 .xv-workspace-explore-label small {
   margin-top: 2px;
+
   font-size: 11px;
+
   line-height: 1.1;
-  color: var(--xv-explore-muted);
+
+  color:
+    var(--xv-explore-muted);
 }
+
 
 .xv-workspace-explore-action {
   display: inline-flex;
+
   align-items: center;
+
   gap: 6px;
+
   white-space: nowrap;
 
   font-size: 13px;
+
   line-height: 1;
+
   font-weight: 500;
-  color: var(--xv-explore-text);
+
+  color:
+    var(--xv-explore-text);
 }
+
 
 .xv-workspace-explore-action svg,
 .xv-workspace-explore-action i {
   width: 14px;
+
   height: 14px;
-  color: var(--xv-explore-muted);
+
+  color:
+    var(--xv-explore-muted);
 }
 
+
 .xv-workspace-explore-bar:hover {
-  border-color: var(--xv-explore-border-hover);
+  border-color:
+    var(--xv-explore-border-hover);
 }
 
 /* ============================================================
