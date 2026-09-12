@@ -11576,1830 +11576,276 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
   .xv-onb-choice:hover { transform: none; }
 }
 
+
 /* ============================================================
-   XROGA WORKSPACE — KIMI-STYLE EXPLORE INSPIRATION BAR
+   XROGA WORKSPACE — CONSOLIDATED KIMI EMPTY-STATE UI
    ------------------------------------------------------------
-   compact centered bottom dock
-   soft monochrome surface
-   one-line label
-   no blue accent
-   no large border/shadow
-   theme-aware
+   Single authoritative workspace override:
+   - shared Kimi composer geometry
+   - four theme token sets
+   - attached Explore Inspiration bar
+   - no alternate/legacy Kimi shell
    ============================================================ */
-
-@media (min-width: 640px) {
-
-  /* ----------------------------------------------------------
-     COLLAPSED / DEFAULT BAR
-     ---------------------------------------------------------- */
-
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  .xv-workspace-explore-bar {
-    position: fixed !important;
-
-    left: 50% !important;
-    right: auto !important;
-
-    bottom: var(--xv-explore-bottom, 4px) !important;
-
-    /* Kimi-like centered width */
-    width: min(60vw, 770px) !important;
-    max-width: calc(100vw - 40px) !important;
-
-    min-height: 50px !important;
-
-    padding: 0 18px !important;
-
-    transform: translateX(-50%) !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-
-    gap: 16px !important;
-
-    /* very soft theme-aware panel */
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 4%,
-        var(--surface-page)
-      ) !important;
-
-    border:
-      1px solid
-      color-mix(
-        in srgb,
-        var(--foreground) 5%,
-        transparent
-      ) !important;
-
-    border-radius: 18px !important;
-
-    box-shadow: none !important;
-
-    color: var(--foreground) !important;
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
-    transition:
-      background-color 150ms ease,
-      border-color 150ms ease !important;
-
-    z-index: 90 !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     SIMPLE HOVER
-     ---------------------------------------------------------- */
-
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  .xv-workspace-explore-bar:hover {
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 6.5%,
-        var(--surface-page)
-      ) !important;
-
-    border-color:
-      color-mix(
-        in srgb,
-        var(--foreground) 7%,
-        transparent
-      ) !important;
-
-    box-shadow: none !important;
-
-    transform: translateX(-50%) !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     LEFT LABEL
-     ---------------------------------------------------------- */
-
-  .xv-workspace-explore-label {
-    display: inline-flex !important;
-
-    align-items: center !important;
-
-    gap: 10px !important;
-
-    min-width: 0;
-  }
-
-
-  /*
-   * Kimi only shows "Explore inspiration",
-   * so remove the second descriptive line.
-   */
-  .xv-workspace-explore-label small {
-    display: none !important;
-  }
-
-
-  .xv-workspace-explore-label strong {
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 62%,
-        transparent
-      ) !important;
-
-    font-size: 13px !important;
-
-    font-weight: 450 !important;
-
-    line-height: 1 !important;
-
-    letter-spacing: -0.01em !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     BULB ICON
-     monochrome instead of blue
-     ---------------------------------------------------------- */
-
-  .xv-workspace-explore-label
-  .xv-animated-icon-host,
-
-  .xv-workspace-explore-label
-  .xv-animated-icon,
-
-  .xv-workspace-explore-label svg {
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 38%,
-        transparent
-      ) !important;
-
-    stroke: currentColor !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     RIGHT ACTION
-     ---------------------------------------------------------- */
-
-  .xv-workspace-explore-action {
-    display: inline-flex !important;
-
-    align-items: center !important;
-
-    gap: 7px !important;
-
-    flex: none !important;
-
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 48%,
-        transparent
-      ) !important;
-
-    font-size: 12px !important;
-
-    font-weight: 400 !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-  }
-
-
-  /* remove old blue chevron */
-  .xv-workspace-explore-action svg {
-    width: 15px !important;
-    height: 15px !important;
-
-    color: inherit !important;
-
-    stroke: currentColor !important;
-
-    stroke-width: 1.8 !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     KEYBOARD FOCUS
-     clean neutral focus state
-     ---------------------------------------------------------- */
-
-  .xv-workspace-explore-bar:focus-visible {
-    outline:
-      1px
-      solid
-      color-mix(
-        in srgb,
-        var(--foreground) 20%,
-        transparent
-      ) !important;
-
-    outline-offset: 2px !important;
-
-    box-shadow: none !important;
-  }
-}
-
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
-
-@media (max-width: 639px) {
-
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  .xv-workspace-explore-bar {
-    left: 50% !important;
-
-    right: auto !important;
-
-    width: calc(100vw - 24px) !important;
-
-    min-height: 48px !important;
-
-    padding: 0 14px !important;
-
-    transform: translateX(-50%) !important;
-
-    border-radius: 16px !important;
-
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 4%,
-        var(--surface-page)
-      ) !important;
-
-    border:
-      1px solid
-      color-mix(
-        in srgb,
-        var(--foreground) 5%,
-        transparent
-      ) !important;
-
-    box-shadow: none !important;
-  }
-
-
-  .xv-workspace-explore-label small {
-    display: none !important;
-  }
-
-
-  .xv-workspace-explore-label strong {
-    font-size: 12px !important;
-    font-weight: 450 !important;
-  }
-
-
-  .xv-workspace-explore-action {
-    font-size: 11px !important;
-    font-weight: 400 !important;
-  }
-}
-
-/* ============================================================
-   XROGA EMPTY WORKSPACE — KIMI PROPORTIONS
-   ------------------------------------------------------------
-   ✓ narrower composer
-   ✓ taller composer
-   ✓ centered workspace composition
-   ✓ compact Kimi-style inspiration dock
-   ✓ proper workspace-centered positioning
-   ✓ all four Xroga themes preserved
-   ============================================================ */
-
-
-/* ============================================================
-   1. DESKTOP EMPTY WORKSPACE WIDTH
-   Current Xroga was ~1040px.
-   Kimi-like target is ~770px.
-   ============================================================ */
-
-@media (min-width: 640px) {
-
-  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)
-  .xv-terminal-dock-inner {
-    width: min(
-      770px,
-      calc(100% - 32px)
-    ) !important;
-
-    max-width: 770px !important;
-
-    margin-inline: auto !important;
-
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-
-  /* ==========================================================
-     2. TALLER KIMI-LIKE COMPOSER
-     ========================================================== */
-
-  .xv-terminal-dock--idle
-  .xv-chatbar-solid {
-    width: 100% !important;
-
-    min-height: 124px !important;
-
-    border-radius: 21px !important;
-
-    overflow: visible !important;
-  }
-
-
-  /*
-   * More interior breathing room.
-   */
-  .xv-terminal-dock--idle
-  .xv-chatbar-input-form {
-    min-height: 122px !important;
-
-    padding:
-      14px
-      16px
-      12px !important;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
-  }
-
-
-  /*
-   * Taller writing field.
-   *
-   * TerminalChatBar still auto-grows for long prompts.
-   */
-  .xv-terminal-dock--idle
-  .xv-chatbar-composer {
-    min-height: 58px !important;
-
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
-
-    font-size: 14px !important;
-
-    line-height: 21px !important;
-  }
-
-
-  /*
-   * Keep bottom controls toward the bottom of the card,
-   * similar to Kimi.
-   */
-  .xv-terminal-dock--idle
-  .xv-chatbar-tools {
-    min-height: 34px;
-
-    margin-top: auto;
-  }
-
-
-  /* ==========================================================
-     3. CONTEXT STRIP UNDER COMPOSER
-     Kimi-like subtle secondary surface
-     ========================================================== */
-
-  .xv-terminal-dock--idle
-  .xv-chatbar-context-strip {
-    width: 100% !important;
-
-    min-height: 42px !important;
-
-    margin-top: 4px !important;
-
-    padding:
-      0
-      14px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 3.5%,
-        var(--surface-page)
-      ) !important;
-
-    border-radius:
-      0
-      0
-      18px
-      18px !important;
-
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 58%,
-        transparent
-      ) !important;
-  }
-
-
-  /* ==========================================================
-     4. KIMI-LIKE EXPLORE INSPIRATION
-     IMPORTANT:
-     use the JS-calculated absolute workspace position.
-     DO NOT use left:50%.
-     ========================================================== */
-
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  .xv-workspace-explore-bar {
-    position: fixed !important;
-
-    left:
-      var(
-        --xv-explore-left,
-        24px
-      ) !important;
-
-    right: auto !important;
-
-    bottom:
-      var(
-        --xv-explore-bottom,
-        4px
-      ) !important;
-
-    width:
-      var(
-        --xv-explore-width,
-        770px
-      ) !important;
-
-    max-width:
-      calc(
-        100vw - 48px
-      ) !important;
-
-    min-height: 50px !important;
-
-    padding:
-      0
-      18px !important;
-
-    transform: none !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-
-    justify-content:
-      space-between !important;
-
-    gap: 16px !important;
-
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 4%,
-        var(--surface-page)
-      ) !important;
-
-    border:
-      1px
-      solid
-      color-mix(
-        in srgb,
-        var(--foreground) 5%,
-        transparent
-      ) !important;
-
-    border-radius:
-      18px !important;
-
-    box-shadow:
-      none !important;
-
-    color:
-      var(--foreground) !important;
-
-    backdrop-filter:
-      blur(16px);
-
-    -webkit-backdrop-filter:
-      blur(16px);
-
-    z-index: 90 !important;
-  }
-
-
-  /* ==========================================================
-     5. EXPLORE LABEL
-     ========================================================== */
-
-  .xv-workspace-explore-label {
-    display:
-      inline-flex !important;
-
-    align-items:
-      center !important;
-
-    gap:
-      10px !important;
-
-    min-width:
-      0 !important;
-  }
-
-
-  /*
-   * Kimi uses one clean line.
-   */
-  .xv-workspace-explore-label small {
-    display:
-      none !important;
-  }
-
-
-  .xv-workspace-explore-label strong {
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 58%,
-        transparent
-      ) !important;
-
-    font-size:
-      13px !important;
-
-    font-weight:
-      450 !important;
-
-    line-height:
-      1 !important;
-
-    letter-spacing:
-      -0.01em !important;
-  }
-
-
-  /* bulb */
-  .xv-workspace-explore-label
-  .xv-animated-icon-host,
-
-  .xv-workspace-explore-label
-  .xv-animated-icon,
-
-  .xv-workspace-explore-label
-  svg {
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 36%,
-        transparent
-      ) !important;
-
-    stroke:
-      currentColor !important;
-  }
-
-
-  /* ==========================================================
-     6. RIGHT SIDE
-     ========================================================== */
-
-  .xv-workspace-explore-action {
-    display:
-      inline-flex !important;
-
-    align-items:
-      center !important;
-
-    gap:
-      7px !important;
-
-    flex:
-      none !important;
-
-    color:
-      color-mix(
-        in srgb,
-        var(--foreground) 46%,
-        transparent
-      ) !important;
-
-    font-size:
-      12px !important;
-
-    font-weight:
-      400 !important;
-
-    white-space:
-      nowrap !important;
-  }
-
-
-  .xv-workspace-explore-action svg {
-    width:
-      15px !important;
-
-    height:
-      15px !important;
-
-    color:
-      inherit !important;
-
-    stroke:
-      currentColor !important;
-
-    stroke-width:
-      1.8 !important;
-  }
-
-
-  /* ==========================================================
-     7. VERY SIMPLE HOVER
-     ========================================================== */
-
-  .xv-workspace-showcase-below-fold[data-expanded='false']
-  .xv-workspace-explore-bar:hover {
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 6%,
-        var(--surface-page)
-      ) !important;
-
-    border-color:
-      color-mix(
-        in srgb,
-        var(--foreground) 7%,
-        transparent
-      ) !important;
-
-    transform:
-      none !important;
-
-    box-shadow:
-      none !important;
-  }
-
-
-  .xv-workspace-explore-bar:focus-visible {
-    outline:
-      1px
-      solid
-      color-mix(
-        in srgb,
-        var(--foreground) 20%,
-        transparent
-      ) !important;
-
-    outline-offset:
-      2px !important;
-
-    box-shadow:
-      none !important;
-  }
-}
-
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
-
-@media (max-width: 639px) {
-
-  .xv-terminal-dock--idle
-  .xv-terminal-dock-inner {
-    width:
-      calc(
-        100% - 16px
-      ) !important;
-
-    max-width:
-      none !important;
-
-    margin-inline:
-      auto !important;
-  }
-
-
-  .xv-terminal-dock--idle
-  .xv-chatbar-solid {
-    min-height:
-      112px !important;
-
-    border-radius:
-      18px !important;
-  }
-
-
-  .xv-terminal-dock--idle
-  .xv-chatbar-input-form {
-    min-height:
-      110px !important;
-
-    padding:
-      11px
-      12px
-      10px !important;
-  }
-
-
-  .xv-terminal-dock--idle
-  .xv-chatbar-composer {
-    min-height:
-      52px !important;
-  }
-}
-
-
-/* =========================================================
-   EXPLORE INSPIRATION BAR (BOTTOM) — KIMI-LIKE
-   ========================================================= */
-
-.xv-workspace-showcase-below-fold[data-expanded='false']
-.xv-workspace-explore-bar {
-  width:
-    var(
-      --xv-explore-width,
-      min(772px, calc(100vw - 40px))
-    );
-
-  left:
-    var(
-      --xv-explore-left,
-      24px
-    );
-
-  transform: none;
-
-  bottom:
-    var(
-      --xv-explore-bottom,
-      8px
-    );
-
-  min-height: 48px;
-
-  border-radius: 18px;
-
-  padding:
-    10px
-    16px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 14px;
-
-  background:
-    var(--xv-explore-bg);
-
-  border:
-    1px solid
-    var(--xv-explore-border);
-
-  box-shadow: none;
-}
-
-
-.xv-workspace-explore-left {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  min-width: 0;
-}
-
-
-.xv-workspace-explore-icon {
-  width: 16px;
-
-  height: 16px;
-
-  flex:
-    0 0 16px;
-
-  color:
-    var(--xv-explore-icon);
-
-  opacity: 0.9;
-}
-
-
-.xv-workspace-explore-label {
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  min-width: 0;
-}
-
-
-.xv-workspace-explore-label strong {
-  font-size: 13px;
-
-  line-height: 1.1;
-
-  font-weight: 500;
-
-  color:
-    var(--xv-explore-text);
-}
-
-
-.xv-workspace-explore-label small {
-  margin-top: 2px;
-
-  font-size: 11px;
-
-  line-height: 1.1;
-
-  color:
-    var(--xv-explore-muted);
-}
-
-
-.xv-workspace-explore-action {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 6px;
-
-  white-space: nowrap;
-
-  font-size: 13px;
-
-  line-height: 1;
-
-  font-weight: 500;
-
-  color:
-    var(--xv-explore-text);
-}
-
-
-.xv-workspace-explore-action svg,
-.xv-workspace-explore-action i {
-  width: 14px;
-
-  height: 14px;
-
-  color:
-    var(--xv-explore-muted);
-}
-
-
-.xv-workspace-explore-bar:hover {
-  border-color:
-    var(--xv-explore-border-hover);
-}
-
-/* ============================================================
-   XROGA WORKSPACE — KIMI-STYLE COMPOSER FRAME
-   ------------------------------------------------------------
-   White main composer
-   Soft secondary outer/footer surface
-   Smaller width
-   Cleaner proportions
-   Theme-aware
-   ============================================================ */
-
 
 /* ============================================================
    THEME TOKENS
    ============================================================ */
 
-/* WHITE */
 body.theme-white {
-  --xv-explore-bg: #f3f3f4;
-  --xv-explore-border: #e6e7ea;
-  --xv-explore-border-hover: #dddddf;
-  --xv-explore-text: #7d828a;
-  --xv-explore-muted: #a3a7ae;
-  --xv-explore-icon: #b3b7bd;
+  --xv-kimi-frame-bg: #f5f5f6;
+  --xv-kimi-frame-border: rgba(15, 23, 42, 0.08);
+  --xv-kimi-composer-bg: #ffffff;
+  --xv-kimi-composer-border: rgba(15, 23, 42, 0.11);
+  --xv-kimi-footer-text: #727780;
+
+  --xv-explore-bg: #f4f4f5;
+  --xv-explore-border: #e8e8ea;
+  --xv-explore-border-hover: #dedee1;
+  --xv-explore-text: #858991;
+  --xv-explore-muted: #969aa1;
+  --xv-explore-icon: #b7bac0;
 }
 
-/* GRAY */
+body.theme-beige {
+  --xv-kimi-frame-bg: #eee4d6;
+  --xv-kimi-frame-border: rgba(57, 43, 30, 0.09);
+  --xv-kimi-composer-bg: #faf3e9;
+  --xv-kimi-composer-border: rgba(57, 43, 30, 0.11);
+  --xv-kimi-footer-text: #766b60;
+
+  --xv-explore-bg: #f1eadf;
+  --xv-explore-border: #e1d7c8;
+  --xv-explore-border-hover: #d6c9b7;
+  --xv-explore-text: #80766a;
+  --xv-explore-muted: #9c9184;
+  --xv-explore-icon: #aea393;
+}
+
 body.theme-gray {
-  --xv-explore-bg: #2f2f31;
-  --xv-explore-border: rgba(255, 255, 255, 0.08);
-  --xv-explore-border-hover: rgba(255, 255, 255, 0.12);
-  --xv-explore-text: rgba(255, 255, 255, 0.78);
-  --xv-explore-muted: rgba(255, 255, 255, 0.48);
+  --xv-kimi-frame-bg: #242424;
+  --xv-kimi-frame-border: rgba(255, 255, 255, 0.08);
+  --xv-kimi-composer-bg: #2a2a2a;
+  --xv-kimi-composer-border: rgba(255, 255, 255, 0.10);
+  --xv-kimi-footer-text: #d2d4d8;
+
+  --xv-explore-bg: #232323;
+  --xv-explore-border: rgba(255, 255, 255, 0.06);
+  --xv-explore-border-hover: rgba(255, 255, 255, 0.10);
+  --xv-explore-text: rgba(255, 255, 255, 0.72);
+  --xv-explore-muted: rgba(255, 255, 255, 0.52);
   --xv-explore-icon: rgba(255, 255, 255, 0.42);
 }
 
-/* BLACK */
 body.theme-black {
-  --xv-explore-bg: #1b1c1f;
-  --xv-explore-border: rgba(255, 255, 255, 0.08);
-  --xv-explore-border-hover: rgba(255, 255, 255, 0.13);
-  --xv-explore-text: rgba(255, 255, 255, 0.82);
+  --xv-kimi-frame-bg: #111214;
+  --xv-kimi-frame-border: rgba(255, 255, 255, 0.09);
+  --xv-kimi-composer-bg: #08090b;
+  --xv-kimi-composer-border: rgba(255, 255, 255, 0.11);
+  --xv-kimi-footer-text: #a8adb7;
+
+  --xv-explore-bg: #151618;
+  --xv-explore-border: rgba(255, 255, 255, 0.07);
+  --xv-explore-border-hover: rgba(255, 255, 255, 0.11);
+  --xv-explore-text: rgba(255, 255, 255, 0.76);
   --xv-explore-muted: rgba(255, 255, 255, 0.50);
-  --xv-explore-icon: rgba(255, 255, 255, 0.44);
+  --xv-explore-icon: rgba(255, 255, 255, 0.42);
 }
-
-/* BEIGE */
-body.theme-beige {
-  --xv-explore-bg: #f0eadf;
-  --xv-explore-border: #ddd4c5;
-  --xv-explore-border-hover: #d4c9b7;
-  --xv-explore-text: #7b7267;
-  --xv-explore-muted: #aca292;
-  --xv-explore-icon: #b3a894;
-}
-
 
 /* ============================================================
-   DESKTOP EMPTY WORKSPACE
+   DESKTOP EMPTY WORKSPACE / COMPOSER
    ============================================================ */
 
 @media (min-width: 640px) {
-
-  /*
-   * Your current idle dock can stretch to around 1040px.
-   * Make it closer to Kimi: compact and centered.
-   */
   .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)
   .xv-terminal-dock-inner {
     width: min(770px, calc(100% - 32px)) !important;
     max-width: 770px !important;
-
     margin-inline: auto !important;
-
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
 
-
-  /* ==========================================================
-     OUTER SECONDARY FRAME
-     This is the light-gray area visible around/below Kimi's
-     white main composer.
-     ========================================================== */
-
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame {
     position: relative;
-
     width: 100%;
-
     padding: 0 0 2px;
-
     background: var(--xv-kimi-frame-bg);
-
-    border:
-      1px solid
-      var(--xv-kimi-frame-border);
-
+    border: 1px solid var(--xv-kimi-frame-border);
     border-radius: 24px;
-
-    box-shadow:
-      0 1px 2px rgba(15, 23, 42, 0.025);
-
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
     overflow: visible;
   }
-
-
-  /* ==========================================================
-     MAIN WHITE CHATBAR
-     ========================================================== */
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-stack {
     position: relative;
-
     z-index: 2;
-
     width: 100%;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-solid {
     width: 100% !important;
-
     min-height: 128px !important;
-
     margin-top: 0 !important;
-
-    background:
-      var(--xv-kimi-composer-bg) !important;
-
-    border:
-      1px solid
-      var(--xv-kimi-composer-border) !important;
-
-    border-radius:
-      23px !important;
-
-    box-shadow:
-      0 5px 18px rgba(15, 23, 42, 0.045) !important;
-
+    background: var(--xv-kimi-composer-bg) !important;
+    border: 1px solid var(--xv-kimi-composer-border) !important;
+    border-radius: 23px !important;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045) !important;
     overflow: visible !important;
   }
 
-
-  /*
-   * Remove the old animated secondary outline from the composer.
-   * We now have the cleaner outer Kimi frame.
-   */
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-solid::before {
-    opacity: 0 !important;
     display: none !important;
+    opacity: 0 !important;
   }
-
-
-  /* ==========================================================
-     INPUT HEIGHT
-     Not extremely tall like your first screenshot.
-     ========================================================== */
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-input-form {
     min-height: 126px !important;
-
-    padding:
-      12px
-      14px
-      10px !important;
+    padding: 12px 14px 10px !important;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-composer {
     min-height: 60px !important;
-
-    padding:
-      8px
-      8px !important;
-
+    padding: 8px !important;
     font-size: 14px !important;
-
     line-height: 21px !important;
   }
 
-
-  /* bottom controls */
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-tools {
     min-height: 34px;
-
     margin-top: 4px;
   }
-
-
-  /* ==========================================================
-     SECONDARY FOOTER STRIP
-     Repo / branch controls like Kimi's lower gray strip.
-     ========================================================== */
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-context-strip {
     width: 100% !important;
-
     min-height: 46px !important;
-
     margin: 0 !important;
-
-    padding:
-      5px
-      14px
-      3px !important;
-
+    padding: 5px 14px 3px !important;
     display: flex !important;
-
     align-items: center !important;
-
-    background:
-      var(--xv-kimi-frame-bg) !important;
-
+    background: var(--xv-kimi-frame-bg) !important;
     border: 0 !important;
-
-    border-radius:
-      0
-      0
-      23px
-      23px !important;
-
-    color:
-      var(--xv-kimi-footer-text) !important;
-
-    box-shadow:
-      none !important;
+    border-radius: 0 0 23px 23px !important;
+    color: var(--xv-kimi-footer-text) !important;
+    box-shadow: none !important;
   }
 
-
-  /*
-   * Small visual gap between the white composer and
-   * secondary context surface.
-   */
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-context-strip::before {
     content: '';
-
     position: absolute;
-
+    top: 128px;
     left: 18px;
     right: 18px;
-
     height: 1px;
-
-    top: 128px;
-
-    background:
-      color-mix(
-        in srgb,
-        var(--foreground) 5%,
-        transparent
-      );
-
+    background: color-mix(in srgb, var(--foreground) 5%, transparent);
     pointer-events: none;
   }
-
-
-  /* ==========================================================
-     REPO CONTEXT CHIP CLEANUP
-     ========================================================== */
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-repo-chip--compact {
     background: transparent !important;
-
     border-color: transparent !important;
-
     box-shadow: none !important;
   }
 }
 
-
 /* ============================================================
-   MOBILE
+   MOBILE EMPTY WORKSPACE / COMPOSER
    ============================================================ */
 
 @media (max-width: 639px) {
-
   .xv-terminal-dock--idle
   .xv-terminal-dock-inner {
-    width:
-      calc(100% - 16px) !important;
-
-    margin-inline:
-      auto !important;
-
-    padding-inline:
-      0 !important;
+    width: calc(100% - 16px) !important;
+    margin-inline: auto !important;
+    padding-inline: 0 !important;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame {
-    border-radius:
-      20px;
+    border-radius: 20px;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-solid {
-    min-height:
-      116px !important;
-
-    border-radius:
-      19px !important;
+    min-height: 116px !important;
+    border-radius: 19px !important;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-input-form {
-    min-height:
-      114px !important;
-
-    padding:
-      10px
-      11px
-      8px !important;
+    min-height: 114px !important;
+    padding: 10px 11px 8px !important;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-composer {
-    min-height:
-      52px !important;
+    min-height: 52px !important;
   }
-
 
   .xv-terminal-dock--idle
   .xv-kimi-composer-frame
   .xv-chatbar-context-strip {
-    min-height:
-      42px !important;
-
-    padding:
-      4px
-      10px !important;
-
-    border-radius:
-      0
-      0
-      19px
-      19px !important;
+    min-height: 42px !important;
+    padding: 4px 10px !important;
+    border-radius: 0 0 19px 19px !important;
   }
 }
 
-/* =========================================================
-   KIMI-LIKE WORKSPACE COMPOSER
-   ========================================================= */
-
-.xv-kimi-composer-shell {
-  width: min(772px, calc(100vw - 40px));
-  margin: 0 auto;
-}
-
-.xv-kimi-composer-main {
-  position: relative;
-
-  background: var(--xv-chat-main-bg);
-
-  border:
-    1px solid
-    var(--xv-chat-border);
-
-  border-radius: 26px;
-
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.02) inset,
-    0 10px 30px rgba(0, 0, 0, 0.04);
-
-  padding:
-    18px
-    18px
-    14px;
-}
-
-.xv-kimi-composer-topline {
-  display: flex;
-  align-items: center;
-
-  margin-bottom: 8px;
-}
-
-.xv-kimi-composer-mode {
-  font-size: 13px;
-  line-height: 1;
-
-  font-weight: 500;
-
-  color: var(--xv-chat-accent);
-}
-
-.xv-kimi-composer-textarea {
-  width: 100%;
-
-  min-height: 102px;
-  max-height: 180px;
-
-  resize: none;
-
-  border: 0;
-  outline: none;
-
-  background: transparent;
-
-  color: var(--xv-chat-text);
-
-  font-size: 14px;
-  line-height: 1.55;
-
-  font-weight: 500;
-
-  padding:
-    6px
-    2px
-    10px;
-}
-
-.xv-kimi-composer-textarea::placeholder {
-  color: var(--xv-chat-muted);
-
-  opacity: 1;
-}
-
-.xv-kimi-composer-main-actions {
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 12px;
-
-  margin-top: 6px;
-}
-
-.xv-kimi-plus-btn {
-  width: 28px;
-  height: 28px;
-
-  border: 0;
-
-  border-radius: 999px;
-
-  background: transparent;
-
-  color: var(--xv-chat-icon);
-
-  font-size: 26px;
-  line-height: 1;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  cursor: pointer;
-}
-
-.xv-kimi-right-actions {
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-}
-
-.xv-kimi-model-btn {
-  border: 0;
-
-  background: transparent;
-
-  color: var(--xv-chat-muted);
-
-  font-size: 14px;
-
-  font-weight: 500;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 6px;
-
-  cursor: pointer;
-}
-
-.xv-kimi-send-btn {
-  width: 40px;
-  height: 40px;
-
-  border: 0;
-
-  border-radius: 999px;
-
-  background: var(--xv-chat-send-bg);
-
-  color: var(--xv-chat-send-text);
-
-  font-size: 22px;
-
-  font-weight: 700;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 3px 10px
-    rgba(0, 0, 0, 0.12);
-
-  transition:
-    transform 160ms ease,
-    opacity 160ms ease;
-}
-
-
-/* =========================================================
-   BOTTOM COMPOSER BAR
-   ========================================================= */
-
-.xv-kimi-composer-footer {
-  margin-top: 8px;
-
-  min-height: 48px;
-
-  background:
-    var(--xv-chat-footer-bg);
-
-  border:
-    1px solid
-    var(--xv-chat-border);
-
-  border-radius: 18px;
-
-  padding:
-    9px
-    16px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 12px;
-}
-
-.xv-kimi-footer-left {
-  display: flex;
-
-  align-items: center;
-
-  gap: 14px;
-
-  flex-wrap: wrap;
-}
-
-.xv-kimi-footer-item {
-  border: 0;
-
-  background: transparent;
-
-  color:
-    var(--xv-chat-footer-text);
-
-  font-size: 13px;
-
-  font-weight: 500;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 6px;
-
-  cursor: pointer;
-
-  padding: 0;
-}
-
-.xv-kimi-footer-app {
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   EXPLORE INSPIRATION BAR
-   ========================================================= */
-
-.xv-workspace-explore-bar {
-  width:
-    var(
-      --xv-explore-width,
-      min(772px, calc(100vw - 40px))
-    );
-
-  left:
-    var(
-      --xv-explore-left,
-      50%
-    );
-
-  transform: translateX(0);
-
-  bottom:
-    var(
-      --xv-explore-bottom,
-      6px
-    );
-
-  min-height: 50px;
-
-  border-radius: 18px;
-
-  padding:
-    10px
-    18px;
-
-  background:
-    var(--xv-chat-footer-bg);
-
-  border:
-    1px solid
-    var(--xv-chat-border);
-
-  box-shadow: none;
-}
-
-.xv-workspace-explore-label strong {
-  font-size: 13px;
-
-  font-weight: 600;
-}
-
-.xv-workspace-explore-label small {
-  font-size: 11px;
-
-  color:
-    var(--xv-chat-muted);
-}
-
-.xv-workspace-explore-action {
-  font-size: 12px;
-
-  color:
-    var(--xv-chat-muted);
-}
-
-
-/* =========================================================
-   THEME COLORS
-   ========================================================= */
-
-
-/* =========================
-   WHITE
-   ========================= */
-
-body.theme-white {
-  --xv-chat-main-bg: #ffffff;
-
-  --xv-chat-footer-bg: #f6f6f7;
-
-  --xv-chat-border: #e4e6eb;
-
-  --xv-chat-text: #16181d;
-
-  --xv-chat-muted: #7d8490;
-
-  --xv-chat-icon: #151820;
-
-  --xv-chat-footer-text: #666d79;
-
-  --xv-chat-send-bg: #111214;
-
-  --xv-chat-send-text: #ffffff;
-
-  --xv-chat-accent: #ff8a72;
-}
-
-
-/* =========================
-   BEIGE
-   ========================= */
-
-body.theme-beige {
-  --xv-chat-main-bg: #faf5eb;
-
-  --xv-chat-footer-bg: #f2ecdf;
-
-  --xv-chat-border: #ddd2c1;
-
-  --xv-chat-text: #231e19;
-
-  --xv-chat-muted: #7f7569;
-
-  --xv-chat-icon: #231e19;
-
-  --xv-chat-footer-text: #73685e;
-
-  --xv-chat-send-bg: #1a1816;
-
-  --xv-chat-send-text: #ffffff;
-
-  --xv-chat-accent: #c9795e;
-}
-
-
-/* =========================
-   BLACK
-   ========================= */
-
-body.theme-black {
-  --xv-chat-main-bg: #08090b;
-
-  --xv-chat-footer-bg: #111214;
-
-  --xv-chat-border:
-    rgba(255, 255, 255, 0.09);
-
-  --xv-chat-text: #f4f6f8;
-
-  --xv-chat-muted: #8d93a0;
-
-  --xv-chat-icon: #f4f6f8;
-
-  --xv-chat-footer-text: #c0c4cc;
-
-  --xv-chat-send-bg: #ffffff;
-
-  --xv-chat-send-text: #111214;
-
-  --xv-chat-accent: #ff9a83;
-}
-
-
-/* =========================
-   GRAY
-   IMPORTANT:
-   same structure as all themes,
-   only colors are different.
-   ========================= */
-
-body.theme-gray {
-  --xv-chat-main-bg: #2a2a2a;
-
-  --xv-chat-footer-bg: #242424;
-
-  --xv-chat-border:
-    rgba(255, 255, 255, 0.10);
-
-  --xv-chat-text: #f3f4f6;
-
-  --xv-chat-muted:
-    rgba(243, 244, 246, 0.56);
-
-  --xv-chat-icon: #f3f4f6;
-
-  --xv-chat-footer-text: #d2d4d8;
-
-  --xv-chat-send-bg: #f3f4f6;
-
-  --xv-chat-send-text: #171717;
-
-  --xv-chat-accent: #e5e5e5;
-}
-
-
-/* =========================================================
-   HOVER
-   ========================================================= */
-
-.xv-kimi-footer-item:hover,
-.xv-kimi-model-btn:hover,
-.xv-kimi-plus-btn:hover {
-  opacity: 0.82;
-}
-
-.xv-kimi-send-btn:hover {
-  transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   CURRENT REAL COMPOSER FRAME THEME TOKENS
-   These are used by xv-kimi-composer-frame in TerminalDock.
-   ========================================================= */
-
-
-/* WHITE */
-
-body.theme-white {
-  --xv-kimi-frame-bg: #f5f5f6;
-
-  --xv-kimi-frame-border:
-    rgba(15, 23, 42, 0.08);
-
-  --xv-kimi-composer-bg: #ffffff;
-
-  --xv-kimi-composer-border:
-    rgba(15, 23, 42, 0.11);
-
-  --xv-kimi-footer-text: #727780;
-}
-
-
-/* BEIGE */
-
-body.theme-beige {
-  --xv-kimi-frame-bg: #eee4d6;
-
-  --xv-kimi-frame-border:
-    rgba(57, 43, 30, 0.09);
-
-  --xv-kimi-composer-bg: #faf3e9;
-
-  --xv-kimi-composer-border:
-    rgba(57, 43, 30, 0.11);
-
-  --xv-kimi-footer-text: #766b60;
-}
-
-
-/* BLACK */
-
-body.theme-black {
-  --xv-kimi-frame-bg: #111214;
-
-  --xv-kimi-frame-border:
-    rgba(255, 255, 255, 0.09);
-
-  --xv-kimi-composer-bg: #08090b;
-
-  --xv-kimi-composer-border:
-    rgba(255, 255, 255, 0.11);
-
-  --xv-kimi-footer-text: #a8adb7;
-}
-
-
-/* GRAY */
-
-body.theme-gray {
-  --xv-kimi-frame-bg: #242424;
-
-  --xv-kimi-frame-border:
-    rgba(255, 255, 255, 0.08);
-
-  --xv-kimi-composer-bg: #2a2a2a;
-
-  --xv-kimi-composer-border:
-    rgba(255, 255, 255, 0.10);
-
-  --xv-kimi-footer-text: #d2d4d8;
-}
-
-  /* ============================================================
-   FINAL EXPLORE INSPIRATION BAR
-   Kimi-style — authoritative final override
+/* ============================================================
+   EXPLORE INSPIRATION BAR — ATTACHED TO WORKSPACE BOTTOM
+   Uses the JS-calculated workspace left/width and removes the
+   old 4px floating gap so the bar meets the workspace edge.
    ============================================================ */
 
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-bar {
   position: fixed !important;
-
-  left:
-    var(--xv-explore-left, 24px) !important;
-
+  left: var(--xv-explore-left, 24px) !important;
   right: auto !important;
+  bottom: max(0px, calc(var(--xv-explore-bottom, 4px) - 4px)) !important;
 
-  bottom:
-    var(--xv-explore-bottom, 6px) !important;
+  width: var(--xv-explore-width, 770px) !important;
+  max-width: calc(100vw - 32px) !important;
 
-  width:
-    var(--xv-explore-width, 770px) !important;
+  height: 52px !important;
+  min-height: 52px !important;
 
-  max-width:
-    calc(100vw - 32px) !important;
-
-  min-height: 48px !important;
-  height: 48px !important;
-
-  padding:
-    0
-    16px !important;
+  padding: 0 18px !important;
 
   transform: none !important;
 
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-
   gap: 14px !important;
 
-  border:
-    1px solid
-    var(--xv-explore-border) !important;
+  background: var(--xv-explore-bg) !important;
+  color: var(--xv-explore-text) !important;
 
-  border-radius: 18px !important;
-
-  background:
-    var(--xv-explore-bg) !important;
-
-  color:
-    var(--xv-explore-text) !important;
+  border: 1px solid var(--xv-explore-border) !important;
+  border-bottom: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
 
   box-shadow: none !important;
 
@@ -13407,215 +11853,113 @@ body.theme-gray {
   -webkit-backdrop-filter: none !important;
 
   overflow: hidden !important;
-
   z-index: 90 !important;
 }
-
-
-/* LEFT SIDE */
 
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-label {
   display: inline-flex !important;
-
   flex-direction: row !important;
-
   align-items: center !important;
-
   gap: 10px !important;
-
   min-width: 0 !important;
 }
-
 
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-label strong {
   margin: 0 !important;
-
-  color:
-    var(--xv-explore-text) !important;
-
+  color: var(--xv-explore-text) !important;
   font-size: 13px !important;
-
   line-height: 1 !important;
-
   font-weight: 500 !important;
-
   letter-spacing: -0.01em !important;
 }
 
-
-/* Kimi reference is single-line */
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-label small {
   display: none !important;
 }
 
-
-/* BULB ICON */
-
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-label svg,
-
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-label .xv-animated-icon,
-
 .xv-workspace-showcase-below-fold[data-expanded='false']
-.xv-workspace-explore-label .xv-animated-icon-host {
+.xv-workspace-explore-label .xv-animated-icon-host,
+.xv-workspace-showcase-below-fold[data-expanded='false']
+.xv-workspace-explore-icon {
   width: 16px !important;
   height: 16px !important;
-
-  color:
-    var(--xv-explore-icon) !important;
-
+  flex: 0 0 16px;
+  color: var(--xv-explore-icon) !important;
   stroke: currentColor !important;
-
   opacity: 1 !important;
 }
-
-
-/* RIGHT SIDE */
 
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-action {
   display: inline-flex !important;
-
   align-items: center !important;
-
   gap: 7px !important;
-
   flex: none !important;
-
-  color:
-    var(--xv-explore-muted) !important;
-
+  color: var(--xv-explore-muted) !important;
   font-size: 12px !important;
-
   line-height: 1 !important;
-
   font-weight: 400 !important;
-
   white-space: nowrap !important;
 }
 
-
 .xv-workspace-showcase-below-fold[data-expanded='false']
-.xv-workspace-explore-action svg {
+.xv-workspace-explore-action svg,
+.xv-workspace-showcase-below-fold[data-expanded='false']
+.xv-workspace-explore-action i {
   width: 14px !important;
   height: 14px !important;
-
-  color:
-    var(--xv-explore-muted) !important;
-
+  color: var(--xv-explore-muted) !important;
   stroke: currentColor !important;
-
   stroke-width: 1.8 !important;
 }
 
-
-/* SIMPLE HOVER */
-
 .xv-workspace-showcase-below-fold[data-expanded='false']
 .xv-workspace-explore-bar:hover {
-  background:
-    var(--xv-explore-bg) !important;
-
-  border-color:
-    var(--xv-explore-border-hover) !important;
-
+  background: var(--xv-explore-bg) !important;
+  border-color: var(--xv-explore-border-hover) !important;
   transform: none !important;
-
   box-shadow: none !important;
 }
 
-
-/* ============================================================
-   THEME COLORS
-   ============================================================ */
-
-body.theme-white {
-  --xv-explore-bg: #f4f4f5;
-  --xv-explore-border: #e8e8ea;
-  --xv-explore-border-hover: #dedee1;
-
-  --xv-explore-text: #858991;
-  --xv-explore-muted: #969aa1;
-  --xv-explore-icon: #b7bac0;
+.xv-workspace-showcase-below-fold[data-expanded='false']
+.xv-workspace-explore-bar:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
 }
-
-
-body.theme-beige {
-  --xv-explore-bg: #f1eadf;
-  --xv-explore-border: #e1d7c8;
-  --xv-explore-border-hover: #d6c9b7;
-
-  --xv-explore-text: #80766a;
-  --xv-explore-muted: #9c9184;
-  --xv-explore-icon: #aea393;
-}
-
-
-body.theme-gray {
-  --xv-explore-bg: #232323;
-
-  --xv-explore-border:
-    rgba(255, 255, 255, 0.06);
-
-  --xv-explore-border-hover:
-    rgba(255, 255, 255, 0.10);
-
-  --xv-explore-text:
-    rgba(255, 255, 255, 0.72);
-
-  --xv-explore-muted:
-    rgba(255, 255, 255, 0.52);
-
-  --xv-explore-icon:
-    rgba(255, 255, 255, 0.42);
-}
-
-
-body.theme-black {
-  --xv-explore-bg: #151618;
-
-  --xv-explore-border:
-    rgba(255, 255, 255, 0.07);
-
-  --xv-explore-border-hover:
-    rgba(255, 255, 255, 0.11);
-
-  --xv-explore-text:
-    rgba(255, 255, 255, 0.76);
-
-  --xv-explore-muted:
-    rgba(255, 255, 255, 0.50);
-
-  --xv-explore-icon:
-    rgba(255, 255, 255, 0.42);
-}
-
-
-/* MOBILE */
 
 @media (max-width: 639px) {
-
   .xv-workspace-showcase-below-fold[data-expanded='false']
   .xv-workspace-explore-bar {
-    width:
-      calc(100vw - 24px) !important;
+    left: 8px !important;
+    right: auto !important;
+    bottom: 0 !important;
 
-    max-width:
-      calc(100vw - 24px) !important;
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
 
-    height: 46px !important;
-    min-height: 46px !important;
+    height: 48px !important;
+    min-height: 48px !important;
 
-    padding:
-      0
-      14px !important;
+    padding: 0 14px !important;
 
-    border-radius:
-      16px !important;
+    border-radius: 18px 18px 0 0 !important;
   }
 
+  .xv-workspace-showcase-below-fold[data-expanded='false']
+  .xv-workspace-explore-label strong {
+    font-size: 12px !important;
+  }
+
+  .xv-workspace-showcase-below-fold[data-expanded='false']
+  .xv-workspace-explore-action {
+    font-size: 11px !important;
+  }
 }
