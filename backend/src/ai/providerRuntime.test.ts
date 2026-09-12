@@ -61,6 +61,24 @@ describe('provider runtime health', () => {
     assert.equal(result.value.patch, 'single mutation');
   });
 
+  it('does not duplicate health events when the provider transport records them', async () => {
+    const result = await executeWithProviderFallback({
+      routes: ['deepseek_v4_flash'],
+      maximumAttemptsPerRoute: 1,
+      recordHealth: false,
+      execute: async (model) => {
+        recordModelExecution(model, { ok: false, latencyMs: 7, error: new Error('request timed out') });
+        throw new Error('request timed out');
+      },
+    }).catch(() => null);
+
+    assert.equal(result, null);
+    const health = getModelRuntimeHealth('deepseek_v4_flash');
+    assert.equal(health.failures, 1);
+    assert.equal(health.consecutiveFailures, 1);
+    assert.equal(health.status, 'degraded');
+  });
+
   it('does not retry authentication, invalid model, invalid request, or context failures', async () => {
     for (const error of [
       Object.assign(new Error('invalid API key'), { status: 401 }),

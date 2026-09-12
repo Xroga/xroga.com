@@ -284,6 +284,10 @@ export async function planSemanticRequest(input: {
       routes: models,
       timeoutMs: Math.min(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, totalTimeoutMs),
       maximumAttemptsPerRoute: 1,
+      // chatCompletion owns the real provider health event. Recording again in
+      // the fallback wrapper would open circuits after fewer real calls than
+      // the configured failure threshold.
+      recordHealth: false,
       signal: totalController.signal,
       execute: async (modelId, signal) => {
         const goalContract = await resolveStructuredGoalContract(async (repairHint) => {

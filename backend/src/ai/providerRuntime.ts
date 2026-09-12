@@ -254,6 +254,8 @@ export async function executeWithProviderFallback<T>(input: {
   execute: (modelId: ModelId, signal: AbortSignal) => Promise<T>;
   timeoutMs?: number;
   maximumAttemptsPerRoute?: number;
+  /** Set false when `execute` already records the underlying provider request. */
+  recordHealth?: boolean;
   signal?: AbortSignal;
   sleep?: (ms: number) => Promise<void>;
 }): Promise<{ value: T; modelId: ModelId; failures: NormalizedProviderError[] }> {
@@ -271,14 +273,18 @@ export async function executeWithProviderFallback<T>(input: {
       const started = Date.now();
       try {
         const value = await input.execute(modelId, controller.signal);
-        recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+        if (input.recordHealth !== false) {
+          recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
+        }
         return { value, modelId, failures };
       } catch (error) {
         const normalized = controller.signal.aborted && !input.signal?.aborted
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);
         failures.push(normalized);
-        recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
+        if (input.recordHealth !== false) {
+          recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
+        }
         if (!normalized.retryable || normalized.kind === 'authentication' || normalized.kind === 'invalid_model' || normalized.kind === 'invalid_request' || attempt === attempts - 1) break;
         const delay = Math.min(5_000, 200 * 2 ** attempt) + Math.floor(Math.random() * 100);
         await sleep(delay);
