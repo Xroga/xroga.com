@@ -2662,3 +2662,112 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
 }
+
+/* ============================================================
+   KIMI-LIKE WORKSPACE FRAME TIGHTENING
+   - less empty space around the workspace
+   - tighter outer gutter like Kimi
+   - cleaner stage border
+   - works with existing themes
+   ============================================================ */
+
+@media (min-width: 1024px) {
+  :root {
+    /* tighter desktop spacing */
+    --xv-app-gutter: 4px;
+    --xv-app-seam: 4px;
+    --xv-app-radius: 14px;
+
+    /* keep sidebar + workspace aligned */
+    --xv-sidebar-inset: var(--xv-app-gutter);
+    --xv-sidebar-radius: var(--xv-app-radius);
+  }
+
+  /* ----------------------------------------------------------
+     Overall desktop shell spacing
+     ---------------------------------------------------------- */
+  .xv-app-shell,
+  .xv-shell,
+  .xv-workspace-shell,
+  .xv-main-shell,
+  .xv-shell-layout {
+    padding: 4px !important;
+    gap: 4px !important;
+  }
+
+  /* main area next to sidebar */
+  .xv-shell-main,
+  .xv-main-content,
+  .xv-workspace-content,
+  .xv-stage-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 0;
+  }
+
+  /* ----------------------------------------------------------
+     Workspace frame / stage
+     ---------------------------------------------------------- */
+  .xv-workspace-root,
+  .xv-workspace-stage,
+  .xv-workspace-frame,
+  .xv-main-stage,
+  .xv-terminal-stage,
+  .xv-editor-stage,
+  .xv-app-stage,
+  .xv-canvas-stage {
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+
+    border-radius: 14px !important;
+    border: 1px solid var(--app-panel-border, var(--border-subtle)) !important;
+
+    background: var(--app-panel, var(--surface-raised)) !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  /* make inner content hug the stage properly */
+  .xv-workspace-root > *,
+  .xv-workspace-stage > *,
+  .xv-workspace-frame > *,
+  .xv-main-stage > *,
+  .xv-terminal-stage > *,
+  .xv-editor-stage > * {
+    border-radius: inherit;
+  }
+
+  /* ----------------------------------------------------------
+     Top terminal / workspace chrome
+     ---------------------------------------------------------- */
+  .xv-terminal-window,
+  .xv-terminal-frame,
+  .xv-editor-window,
+  .xv-editor-frame {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--app-panel-border, var(--border-subtle)) !important;
+    box-shadow: none !important;
+  }
+
+  /* remove extra outer spacing some wrappers add */
+  .xv-terminal-window-wrap,
+  .xv-terminal-stage-wrap,
+  .xv-workspace-wrap,
+  .xv-main-stage-wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* ============================================================
+   Mobile / tablet — keep slightly tighter too
+   ============================================================ */
+@media (max-width: 1023px) {
+  :root {
+    --xv-app-gutter: 6px;
+    --xv-app-seam: 6px;
+    --xv-app-radius: 14px;
+  }
+}
