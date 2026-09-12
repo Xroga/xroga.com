@@ -215,8 +215,8 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
  * Center against the real workspace viewport, NOT against the
  * narrower starter-content section.
  */
-const horizontalInset = 24;
-const maxBarWidth = 770;
+const horizontalInset = 16;
+const maxBarWidth = 772;
 
 const availableWidth = Math.max(
   280,
@@ -245,8 +245,8 @@ section.style.setProperty(
 section.style.setProperty(
   '--xv-explore-bottom',
   `${Math.max(
-    4,
-    window.innerHeight - rootRect.bottom + 4
+    6,
+    window.innerHeight - rootRect.bottom + 6
   )}px`
 );
 
