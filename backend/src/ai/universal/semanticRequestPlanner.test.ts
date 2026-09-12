@@ -140,8 +140,11 @@ describe('semantic planner provider fallback', () => {
 describe('social protocol fast path', () => {
   it('answers only bounded social turns and never questions or attached requests', () => {
     assert.match(protocolSocialResponse('hello') ?? '', /help you/i);
+    assert.match(protocolSocialResponse('Good evening — glad to be here.') ?? '', /help you/i);
+    assert.match(protocolSocialResponse('Hello there — nice to connect!') ?? '', /help you/i);
     assert.equal(protocolSocialResponse('Can you build a parser?'), null);
     assert.equal(protocolSocialResponse('hello?', false), null);
+    assert.equal(protocolSocialResponse('Hello — inspect this repository'), null);
     assert.equal(protocolSocialResponse('hi', true), null);
   });
 });

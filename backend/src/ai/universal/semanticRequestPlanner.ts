@@ -35,7 +35,8 @@ export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): Mod
   );
 }
 
-const SOCIAL_GREETING = /^(?:hi|hello|hey|howdy|hola|good\s+(?:morning|afternoon|evening))[!.,\s]*$/i;
+const SOCIAL_GREETING_HEAD = /^(?:hi|hello(?:\s+there)?|hey(?:\s+there)?|howdy|hola|good\s+(?:morning|afternoon|evening))\b/i;
+const SOCIAL_GREETING_TAIL = /^(?:[!.,\s]*|\s*(?:—|–|-|,)\s*(?:(?:i(?:'m|\s+am)\s+)?(?:glad|happy|pleased)\s+to\s+(?:be\s+here|meet\s+you|connect)|(?:it(?:'s|\s+is)\s+)?nice\s+to\s+(?:meet\s+you|connect)|hope\s+(?:you(?:'re|\s+are)\s+well|all\s+is\s+well))[!.,\s]*)$/i;
 const SOCIAL_ACKNOWLEDGEMENT = /^(?:thanks|thank\s+you|thank\s+you\s+very\s+much|okay|ok|got\s+it|bye|goodbye)[!.,\s]*$/i;
 
 /**
@@ -46,7 +47,10 @@ export function protocolSocialResponse(message: string, hasAttachments = false):
   if (hasAttachments) return null;
   const normalized = message.trim();
   if (!normalized || normalized.includes('?')) return null;
-  if (SOCIAL_GREETING.test(normalized)) return 'Hey! 👋 What can I help you accomplish today?';
+  const greeting = normalized.match(SOCIAL_GREETING_HEAD);
+  if (greeting && SOCIAL_GREETING_TAIL.test(normalized.slice(greeting[0].length))) {
+    return 'Hey! 👋 What can I help you accomplish today?';
+  }
   if (SOCIAL_ACKNOWLEDGEMENT.test(normalized)) {
     return /bye|goodbye/i.test(normalized) ? 'See you soon!' : 'You’re welcome!';
   }
