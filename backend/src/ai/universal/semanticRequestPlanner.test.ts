@@ -114,7 +114,7 @@ describe('semantic planner provider fallback', () => {
       Z_AI_API_KEY: 'configured',
       MOONSHOT_API_KEY: 'configured',
     });
-    assert.deepEqual(order, ['glm_5_3_flash', 'deepseek_v4_flash', 'glm_5_3', 'kimi_k3']);
+    assert.deepEqual(order, ['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3']);
   });
 
   it('does not introduce a retired or private retrieval model', () => {
