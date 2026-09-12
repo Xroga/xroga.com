@@ -338,14 +338,13 @@ export async function executeUniversalRun(input: {
     `${files.length} total file(s) available for validation`,
   );
   // States plainly that implementation ran as a canonical task, and names the evidence the
-  // scheduler required before it would complete. Without this the run's own evidence would
-  // not distinguish a canonical execution from the direct adapter call it replaced.
+  // scheduler required before it would complete. Provider/model identity remains on the
+  // private task record; evidence is user-visible and must preserve the Black Hole boundary.
   if (implementationTask) {
     record(
       'implementation',
       `canonical task ${implementationTask.id} completed`,
-      `role=implementation model=${implementationTask.selectedModel ?? 'unrouted'} ` +
-        `attempts=${implementationTask.attempts} ` +
+      `role=implementation attempts=${implementationTask.attempts} ` +
         `evidence=${implementationTask.evidence.map((item) => item.identifier ?? item.kind).join(', ')}`,
     );
   }

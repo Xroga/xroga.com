@@ -11,6 +11,8 @@
  * was verified, "I cannot display this" is far better than a confident wrong answer.
  */
 
+import { redactTerminalText } from './terminal/terminalRedaction';
+
 export const ENGINEERING_ARTIFACT_TYPE = 'engineering_artifact';
 /** The highest version this frontend knows how to render. */
 export const SUPPORTED_ARTIFACT_VERSION = 1;
@@ -269,10 +271,10 @@ export function engineeringArtifactWorkspaceProjection(
       removed: Number.isFinite(Number(file.removed)) ? Number(file.removed) : 0,
     }));
   const verificationLines = artifact.verificationEvidence.map((item) =>
-    [item.phase, item.statement, item.detail].filter(Boolean).join(' · '),
+    redactTerminalText([item.phase, item.statement, item.detail].filter(Boolean).join(' · ')),
   );
   const terminalLines = [
-    artifact.summary,
+    redactTerminalText(artifact.summary),
     ...verificationLines,
     repository.branch ? `Review branch · ${repository.branch}` : '',
     artifact.commitSha ? `Commit · ${artifact.commitSha}` : '',

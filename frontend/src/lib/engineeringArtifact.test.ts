@@ -149,6 +149,21 @@ test('a universal result projects exact changed-file and review evidence into Pr
   assert.equal(projection.status, 'pushed');
 });
 
+test('Project edits evidence never exposes an internal model identity, including persisted artifacts', () => {
+  const projection = engineeringArtifactWorkspaceProjection(artifact({
+    verificationEvidence: [{
+      phase: 'implementation',
+      statement: 'canonical task completed',
+      detail: 'role=implementation model=glm_5_3 attempts=1 evidence=sha256:abc123',
+    }],
+  }));
+
+  assert.ok(projection);
+  assert.doesNotMatch(projection.terminalLines.join('\n'), /glm_5_3|model=glm/i);
+  assert.match(projection.terminalLines.join('\n'), /Black Hole ∞/);
+  assert.match(projection.terminalLines.join('\n'), /attempts=1/);
+});
+
 test('an artifact without an authoritative repository cannot update Project edits', () => {
   assert.equal(engineeringArtifactWorkspaceProjection(artifact({ repository: null })), null);
 });

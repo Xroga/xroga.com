@@ -66,6 +66,10 @@ export const REDACTION_MASK = '[redacted]';
  * whichever route happened to serve one request.
  */
 const INTERNAL_MODEL_NAMES: readonly RegExp[] = [
+  // Canonical server IDs use underscores (for example `glm_5_3`). Keep this
+  // separate from the prose-name matcher because `_` is a word character and
+  // the older word-boundary pattern deliberately cannot see through it.
+  /\b(?:glm|deepseek|kimi|grok)(?:[_-][a-z0-9.]+)+\b/gi,
   /\b(?:kimi(?:\s+k?\d+(?:\.\d+)?)?|moonshot|deepseek(?:[-\s](?:v?\d+(?:\.\d+)*|r\d+|coder))?|gemini(?:[-\s](?:\d+(?:\.\d+)*|pro|flash)(?:[-\s][a-z0-9.]+)?)?|glm(?:[-\s]\d+(?:\.\d+)*)?|claude(?:[-\s](?:\d+(?:\.\d+)*|opus|sonnet|haiku)(?:[-\s][a-z0-9.]+)?)?|gpt(?:[-\s]\d+(?:\.\d+)*(?:[-\s][a-z0-9.]+)?)?|openai|anthropic|openrouter|groq)\b/gi,
 ];
 

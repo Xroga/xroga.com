@@ -91,6 +91,10 @@ describe('a complete enabled run', () => {
     for (const phase of ['routing', 'spec', 'architecture', 'security', 'planning', 'implementation', 'validation', 'review', 'commit']) {
       assert.ok(phases.includes(phase as never), `phase ${phase} produced no evidence`);
     }
+    const publicEvidence = JSON.stringify(result.evidence);
+    assert.doesNotMatch(publicEvidence, /model=/i);
+    assert.doesNotMatch(publicEvidence, /glm|deepseek|kimi|grok|moonshot|zhipu|openrouter/i);
+    assert.match(publicEvidence, /role=implementation attempts=1/);
   });
 
   it('derives security controls for what it is actually building', async () => {
