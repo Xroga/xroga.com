@@ -1,7 +1,7 @@
 import { chatCompletion, estimateMessageTokens, type ChatMessage } from '../openaiCompat.js';
 import { callableModelIds, type ModelId } from '../models.js';
 import { withProviderReservation } from '../providerBudget.js';
-import { executeWithProviderFallback, recordModelValidation } from '../providerRuntime.js';
+import { executeWithProviderFallback, getModelRuntimeHealth, recordModelValidation, type ModelRuntimeHealth } from '../providerRuntime.js';
 import { getUsage, recordUsage, usageToTokenUsage } from '../quota.js';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import { generateStructured } from '../black-hole/structuredOutput.js';
@@ -36,6 +36,20 @@ export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): Mod
   throw new RuntimeFailure(
     'PLANNER_PROVIDER_UNAVAILABLE',
     'No configured model is currently available to understand this request.',
+  );
+}
+
+export function selectPlannerRoutes(
+  env: NodeJS.ProcessEnv = process.env,
+  healthFor: (modelId: ModelId) => Pick<ModelRuntimeHealth, 'status'> = getModelRuntimeHealth,
+): ModelId[] {
+  const routes = interpreterModelOrder(env)
+    .filter((modelId) => healthFor(modelId).status !== 'circuit_open')
+    .slice(0, 2);
+  if (routes.length) return routes;
+  throw new RuntimeFailure(
+    'PLANNER_PROVIDER_UNAVAILABLE',
+    'Planning providers are temporarily cooling down. Please retry shortly.',
   );
 }
 
@@ -230,7 +244,7 @@ export async function planSemanticRequest(input: {
 
   // Two bounded routes are enough for resilience without multiplying a harmless
   // request into four serial 45-second waits.
-  const models = interpreterModelOrder().slice(0, 2);
+  const models = selectPlannerRoutes();
   const available = universalCapabilityRegistry.list();
   // A visible project is context, not authorization. Reading the persisted
   // token is a local authorization check (not a GitHub network/status call),

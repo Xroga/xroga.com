@@ -7,6 +7,7 @@ import {
   planExplicitProjectBuild,
   protocolSocialResponse,
   resolveStructuredGoalContract,
+  selectPlannerRoutes,
   SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS,
   SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS,
   SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,
@@ -123,6 +124,18 @@ describe('semantic planner provider fallback', () => {
     assert.match(source, /executeWithProviderFallback/);
   });
 
+  it('selects two healthy routes from the full stack instead of slicing open circuits', () => {
+    const env = {
+      DEEPSEEK_API_KEY: 'configured',
+      Z_AI_API_KEY: 'configured',
+      MOONSHOT_API_KEY: 'configured',
+    };
+    const routes = selectPlannerRoutes(env, (modelId) => ({
+      status: ['deepseek_v4_flash', 'glm_5_3_flash'].includes(modelId) ? 'circuit_open' : 'healthy',
+    }));
+    assert.deepEqual(routes, ['glm_5_3', 'kimi_k3']);
+  });
+
   it('repairs one malformed semantic output and safely strips commentary fields', async () => {
     let calls = 0;
     const contract = await resolveStructuredGoalContract(async (hint) => {
@@ -140,7 +153,7 @@ describe('semantic planner provider fallback', () => {
 
   it('caps semantic fallback to two routes and a bounded total deadline', () => {
     const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
-    assert.match(source, /interpreterModelOrder\(\)\.slice\(0, 2\)/);
+    assert.match(source, /selectPlannerRoutes\(\)/);
     assert.match(source, /SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS/);
     assert.match(source, /correctionUsed \? 0 : 1/);
     assert.doesNotMatch(source, /timeoutMs:\s*45_000/);
