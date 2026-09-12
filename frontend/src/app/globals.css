@@ -12732,135 +12732,232 @@ body.theme-beige {
 
 .xv-kimi-composer-main {
   position: relative;
+
   background: var(--xv-chat-main-bg);
-  border: 1px solid var(--xv-chat-border);
+
+  border:
+    1px solid
+    var(--xv-chat-border);
+
   border-radius: 26px;
+
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.02) inset,
-    0 10px 30px rgba(0,0,0,0.04);
-  padding: 18px 18px 14px;
+    0 1px 0 rgba(255, 255, 255, 0.02) inset,
+    0 10px 30px rgba(0, 0, 0, 0.04);
+
+  padding:
+    18px
+    18px
+    14px;
 }
 
 .xv-kimi-composer-topline {
   display: flex;
   align-items: center;
+
   margin-bottom: 8px;
 }
 
 .xv-kimi-composer-mode {
   font-size: 13px;
   line-height: 1;
+
   font-weight: 500;
+
   color: var(--xv-chat-accent);
 }
 
 .xv-kimi-composer-textarea {
   width: 100%;
+
   min-height: 102px;
   max-height: 180px;
+
   resize: none;
+
   border: 0;
   outline: none;
+
   background: transparent;
+
   color: var(--xv-chat-text);
+
   font-size: 14px;
   line-height: 1.55;
+
   font-weight: 500;
-  padding: 6px 2px 10px;
+
+  padding:
+    6px
+    2px
+    10px;
 }
 
 .xv-kimi-composer-textarea::placeholder {
   color: var(--xv-chat-muted);
+
   opacity: 1;
 }
 
 .xv-kimi-composer-main-actions {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 12px;
+
   margin-top: 6px;
 }
 
 .xv-kimi-plus-btn {
   width: 28px;
   height: 28px;
+
   border: 0;
+
   border-radius: 999px;
+
   background: transparent;
+
   color: var(--xv-chat-icon);
+
   font-size: 26px;
   line-height: 1;
+
   display: inline-flex;
+
   align-items: center;
+
   justify-content: center;
+
   cursor: pointer;
 }
 
 .xv-kimi-right-actions {
   display: flex;
+
   align-items: center;
+
   gap: 12px;
 }
 
 .xv-kimi-model-btn {
   border: 0;
+
   background: transparent;
+
   color: var(--xv-chat-muted);
+
   font-size: 14px;
+
   font-weight: 500;
+
   display: inline-flex;
+
   align-items: center;
+
   gap: 6px;
+
   cursor: pointer;
 }
 
 .xv-kimi-send-btn {
   width: 40px;
   height: 40px;
+
   border: 0;
+
   border-radius: 999px;
+
   background: var(--xv-chat-send-bg);
+
   color: var(--xv-chat-send-text);
+
   font-size: 22px;
+
   font-weight: 700;
+
   display: inline-flex;
+
   align-items: center;
+
   justify-content: center;
+
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+
+  box-shadow:
+    0 3px 10px
+    rgba(0, 0, 0, 0.12);
+
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
 }
 
+
+/* =========================================================
+   BOTTOM COMPOSER BAR
+   ========================================================= */
+
 .xv-kimi-composer-footer {
-  margin-top: 8px; /* tighter like Kimi */
-  min-height: 54px;
-  background: var(--xv-chat-footer-bg);
-  border: 1px solid var(--xv-chat-border);
+  margin-top: 8px;
+
+  min-height: 48px;
+
+  background:
+    var(--xv-chat-footer-bg);
+
+  border:
+    1px solid
+    var(--xv-chat-border);
+
   border-radius: 18px;
-  padding: 12px 18px;
+
+  padding:
+    9px
+    16px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   gap: 12px;
 }
 
 .xv-kimi-footer-left {
   display: flex;
+
   align-items: center;
+
   gap: 14px;
+
   flex-wrap: wrap;
 }
 
 .xv-kimi-footer-item {
   border: 0;
+
   background: transparent;
-  color: var(--xv-chat-footer-text);
+
+  color:
+    var(--xv-chat-footer-text);
+
   font-size: 13px;
+
   font-weight: 500;
+
   display: inline-flex;
+
   align-items: center;
+
   gap: 6px;
+
   cursor: pointer;
+
   padding: 0;
 }
 
@@ -12868,99 +12965,194 @@ body.theme-beige {
   white-space: nowrap;
 }
 
+
 /* =========================================================
-   EXPLORE INSPIRATION BAR (BOTTOM)
+   EXPLORE INSPIRATION BAR
    ========================================================= */
 
 .xv-workspace-explore-bar {
-  width: var(--xv-explore-width, min(772px, calc(100vw - 40px)));
-  left: var(--xv-explore-left, 50%);
+  width:
+    var(
+      --xv-explore-width,
+      min(772px, calc(100vw - 40px))
+    );
+
+  left:
+    var(
+      --xv-explore-left,
+      50%
+    );
+
   transform: translateX(0);
-  bottom: var(--xv-explore-bottom, 6px);
-  min-height: 58px;
+
+  bottom:
+    var(
+      --xv-explore-bottom,
+      6px
+    );
+
+  min-height: 50px;
+
   border-radius: 18px;
-  padding: 12px 18px;
-  background: var(--xv-chat-footer-bg);
-  border: 1px solid var(--xv-chat-border);
+
+  padding:
+    10px
+    18px;
+
+  background:
+    var(--xv-chat-footer-bg);
+
+  border:
+    1px solid
+    var(--xv-chat-border);
+
   box-shadow: none;
 }
 
 .xv-workspace-explore-label strong {
-  font-size: 14px;
+  font-size: 13px;
+
   font-weight: 600;
 }
 
 .xv-workspace-explore-label small {
   font-size: 11px;
-  color: var(--xv-chat-muted);
+
+  color:
+    var(--xv-chat-muted);
 }
 
 .xv-workspace-explore-action {
-  font-size: 13px;
-  color: var(--xv-chat-muted);
+  font-size: 12px;
+
+  color:
+    var(--xv-chat-muted);
 }
+
 
 /* =========================================================
    THEME COLORS
    ========================================================= */
 
-/* WHITE THEME */
-.theme-white {
+
+/* =========================
+   WHITE
+   ========================= */
+
+body.theme-white {
   --xv-chat-main-bg: #ffffff;
+
   --xv-chat-footer-bg: #f6f6f7;
+
   --xv-chat-border: #e4e6eb;
+
   --xv-chat-text: #16181d;
+
   --xv-chat-muted: #7d8490;
+
   --xv-chat-icon: #151820;
+
   --xv-chat-footer-text: #666d79;
+
   --xv-chat-send-bg: #111214;
+
   --xv-chat-send-text: #ffffff;
+
   --xv-chat-accent: #ff8a72;
 }
 
-/* GRAY THEME — THIS IS YOUR MAIN FIX */
-.theme-gray {
-  --xv-chat-main-bg: #f4f4f5;
-  --xv-chat-footer-bg: #ececed;
-  --xv-chat-border: #d9dadd;
-  --xv-chat-text: #17191d;
-  --xv-chat-muted: #7b7f87;
-  --xv-chat-icon: #17191d;
-  --xv-chat-footer-text: #6f7480;
-  --xv-chat-send-bg: #111214;
-  --xv-chat-send-text: #ffffff;
-  --xv-chat-accent: #ff8d7a;
-}
 
-/* BLACK THEME */
-.theme-black {
-  --xv-chat-main-bg: #121316;
-  --xv-chat-footer-bg: #181a1e;
-  --xv-chat-border: rgba(255,255,255,0.08);
-  --xv-chat-text: #f4f6f8;
-  --xv-chat-muted: #8d93a0;
-  --xv-chat-icon: #f4f6f8;
-  --xv-chat-footer-text: #c0c4cc;
-  --xv-chat-send-bg: #ffffff;
-  --xv-chat-send-text: #111214;
-  --xv-chat-accent: #ff9a83;
-}
+/* =========================
+   BEIGE
+   ========================= */
 
-/* BEIGE THEME */
-.theme-beige {
+body.theme-beige {
   --xv-chat-main-bg: #faf5eb;
+
   --xv-chat-footer-bg: #f2ecdf;
+
   --xv-chat-border: #ddd2c1;
+
   --xv-chat-text: #231e19;
+
   --xv-chat-muted: #7f7569;
+
   --xv-chat-icon: #231e19;
+
   --xv-chat-footer-text: #73685e;
+
   --xv-chat-send-bg: #1a1816;
+
   --xv-chat-send-text: #ffffff;
+
   --xv-chat-accent: #c9795e;
 }
 
-/* subtle hover only */
+
+/* =========================
+   BLACK
+   ========================= */
+
+body.theme-black {
+  --xv-chat-main-bg: #08090b;
+
+  --xv-chat-footer-bg: #111214;
+
+  --xv-chat-border:
+    rgba(255, 255, 255, 0.09);
+
+  --xv-chat-text: #f4f6f8;
+
+  --xv-chat-muted: #8d93a0;
+
+  --xv-chat-icon: #f4f6f8;
+
+  --xv-chat-footer-text: #c0c4cc;
+
+  --xv-chat-send-bg: #ffffff;
+
+  --xv-chat-send-text: #111214;
+
+  --xv-chat-accent: #ff9a83;
+}
+
+
+/* =========================
+   GRAY
+   IMPORTANT:
+   same structure as all themes,
+   only colors are different.
+   ========================= */
+
+body.theme-gray {
+  --xv-chat-main-bg: #2a2a2a;
+
+  --xv-chat-footer-bg: #242424;
+
+  --xv-chat-border:
+    rgba(255, 255, 255, 0.10);
+
+  --xv-chat-text: #f3f4f6;
+
+  --xv-chat-muted:
+    rgba(243, 244, 246, 0.56);
+
+  --xv-chat-icon: #f3f4f6;
+
+  --xv-chat-footer-text: #d2d4d8;
+
+  --xv-chat-send-bg: #f3f4f6;
+
+  --xv-chat-send-text: #171717;
+
+  --xv-chat-accent: #e5e5e5;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
 .xv-kimi-footer-item:hover,
 .xv-kimi-model-btn:hover,
 .xv-kimi-plus-btn:hover {
@@ -12971,320 +13163,76 @@ body.theme-beige {
   transform: translateY(-1px);
 }
 
-/* ============================================================
-   FINAL KIMI CHATBAR FIX — GRAY THEME ONLY
-   ------------------------------------------------------------
-   This affects ONLY body.theme-gray.
-   White / Black / Beige stay unchanged.
-   ============================================================ */
+
+/* =========================================================
+   CURRENT REAL COMPOSER FRAME THEME TOKENS
+   These are used by xv-kimi-composer-frame in TerminalDock.
+   ========================================================= */
 
 
-/* ------------------------------------------------------------
-   GRAY THEME COLOR TOKENS
-   ------------------------------------------------------------ */
+/* WHITE */
+
+body.theme-white {
+  --xv-kimi-frame-bg: #f5f5f6;
+
+  --xv-kimi-frame-border:
+    rgba(15, 23, 42, 0.08);
+
+  --xv-kimi-composer-bg: #ffffff;
+
+  --xv-kimi-composer-border:
+    rgba(15, 23, 42, 0.11);
+
+  --xv-kimi-footer-text: #727780;
+}
+
+
+/* BEIGE */
+
+body.theme-beige {
+  --xv-kimi-frame-bg: #eee4d6;
+
+  --xv-kimi-frame-border:
+    rgba(57, 43, 30, 0.09);
+
+  --xv-kimi-composer-bg: #faf3e9;
+
+  --xv-kimi-composer-border:
+    rgba(57, 43, 30, 0.11);
+
+  --xv-kimi-footer-text: #766b60;
+}
+
+
+/* BLACK */
+
+body.theme-black {
+  --xv-kimi-frame-bg: #111214;
+
+  --xv-kimi-frame-border:
+    rgba(255, 255, 255, 0.09);
+
+  --xv-kimi-composer-bg: #08090b;
+
+  --xv-kimi-composer-border:
+    rgba(255, 255, 255, 0.11);
+
+  --xv-kimi-footer-text: #a8adb7;
+}
+
+
+/* GRAY */
 
 body.theme-gray {
   --xv-kimi-frame-bg: #242424;
-  --xv-kimi-frame-border: rgba(255, 255, 255, 0.075);
+
+  --xv-kimi-frame-border:
+    rgba(255, 255, 255, 0.08);
 
   --xv-kimi-composer-bg: #2a2a2a;
-  --xv-kimi-composer-border: rgba(255, 255, 255, 0.10);
+
+  --xv-kimi-composer-border:
+    rgba(255, 255, 255, 0.10);
 
   --xv-kimi-footer-text: #d2d4d8;
-}
-
-
-/* ============================================================
-   DESKTOP
-   ============================================================ */
-
-@media (min-width: 640px) {
-
-  /* ----------------------------------------------------------
-     OUTER COMPOSER FRAME
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame {
-    width: 100% !important;
-
-    padding: 0 !important;
-
-    background: #242424 !important;
-
-    border:
-      1px solid
-      rgba(255, 255, 255, 0.075) !important;
-
-    border-radius: 24px !important;
-
-    box-shadow: none !important;
-
-    overflow: hidden !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     MAIN CHATBAR
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-solid {
-    width: 100% !important;
-
-    min-height: 124px !important;
-
-    margin: 0 !important;
-
-    background: #2a2a2a !important;
-
-    color: #f3f4f6 !important;
-
-    border:
-      1px solid
-      rgba(255, 255, 255, 0.10) !important;
-
-    border-radius: 23px !important;
-
-    box-shadow: none !important;
-
-    overflow: visible !important;
-  }
-
-
-  /* remove old extra/decorative outline */
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-solid::before {
-    content: none !important;
-    display: none !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     INPUT AREA
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-input-form {
-    min-height: 122px !important;
-
-    padding:
-      12px
-      14px
-      8px !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-composer {
-    min-height: 56px !important;
-
-    padding:
-      7px
-      8px !important;
-
-    color: #f3f4f6 !important;
-
-    font-size: 14px !important;
-
-    line-height: 21px !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  textarea {
-    color: #f3f4f6 !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  textarea::placeholder {
-    color:
-      rgba(243, 244, 246, 0.54) !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     CONTROLS INSIDE MAIN CHATBAR
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-tools {
-    min-height: 31px !important;
-
-    margin-top: 2px !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     BOTTOM REPOSITORY / PROJECT BAR
-     Kimi-like compact height
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip {
-    width: 100% !important;
-
-    height: 40px !important;
-
-    min-height: 40px !important;
-
-    margin: 0 !important;
-
-    padding:
-      0
-      13px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-
-    background: #242424 !important;
-
-    color: #d2d4d8 !important;
-
-    border: 0 !important;
-
-    border-radius:
-      0
-      0
-      23px
-      23px !important;
-
-    box-shadow: none !important;
-  }
-
-
-  /* Remove old separator that creates extra visual spacing */
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip::before {
-    content: none !important;
-    display: none !important;
-  }
-
-
-  /* ----------------------------------------------------------
-     PROJECT / REPOSITORY CONTROLS
-     ---------------------------------------------------------- */
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip button,
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip a {
-    min-height: 27px !important;
-
-    padding:
-      0
-      6px !important;
-
-    color: #d2d4d8 !important;
-
-    background: transparent !important;
-
-    border: 0 !important;
-
-    border-radius: 8px !important;
-
-    box-shadow: none !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip button:hover,
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip a:hover {
-    background:
-      rgba(255, 255, 255, 0.055) !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-repo-chip--compact {
-    background: transparent !important;
-
-    border: 0 !important;
-
-    box-shadow: none !important;
-  }
-}
-
-
-/* ============================================================
-   MOBILE — GRAY ONLY
-   ============================================================ */
-
-@media (max-width: 639px) {
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame {
-    background: #242424 !important;
-
-    border-radius: 20px !important;
-
-    overflow: hidden !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-solid {
-    background: #2a2a2a !important;
-
-    border-radius: 19px !important;
-  }
-
-
-  body.theme-gray
-  .xv-terminal-dock--idle
-  .xv-kimi-composer-frame
-  .xv-chatbar-context-strip {
-    height: 38px !important;
-
-    min-height: 38px !important;
-
-    padding:
-      0
-      10px !important;
-
-    background: #242424 !important;
-
-    border-radius:
-      0
-      0
-      19px
-      19px !important;
-  }
 }
