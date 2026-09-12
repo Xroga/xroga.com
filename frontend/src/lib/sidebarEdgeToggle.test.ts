@@ -194,8 +194,8 @@ test('the fullscreen composer is bounded and sits inside the terminal', () => {
   // Inset on both edges so it stops where the terminal's rounded box stops. The rail
   // term is gone from the left offset: fullscreen hides the sidebar outright now, so
   // the composer starts at the frame's gutter like the terminal above it.
-  assert.match(sheet, /left: 14px !important/);
-  assert.match(sheet, /right: 14px !important/);
+  assert.match(sheet, /left: var\(--xv-app-gutter\) !important/);
+  assert.match(sheet, /right: var\(--xv-app-gutter\) !important/);
   // The gradient painted --background over the terminal's own surface.
   const dockFs = sheet.slice(sheet.indexOf('.xv-terminal-dock--fullscreen {'));
   assert.match(dockFs.slice(0, 260), /background: none/, 'the composer still paints a slab');

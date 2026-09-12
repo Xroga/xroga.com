@@ -6,6 +6,7 @@ import { repositoryReadCapability } from './modules/repositoryRead.js';
 import { repositoryWriteCapability } from './modules/repositoryWrite.js';
 import { softwareImplementCapability } from './modules/softwareImplement.js';
 import { validationRunCapability } from './modules/validationRun.js';
+import { xResearchCapability } from './modules/xResearch.js';
 
 export const generatedCapabilities = [
   attachmentAnalyzeCapability,
@@ -15,4 +16,5 @@ export const generatedCapabilities = [
   repositoryWriteCapability,
   softwareImplementCapability,
   validationRunCapability,
+  xResearchCapability,
 ] as const;

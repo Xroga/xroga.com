@@ -4,9 +4,10 @@ import { runChatPipeline } from '../ai/pipeline.js';
 import { assertHasQuota, getUsage, usageToTokenUsage } from '../ai/quota.js';
 import { MONTHLY_USER_PRICE_USD } from '../ai/models.js';
 import { getProviderEntitlementStatus } from '../ai/providerBudget.js';
-import { planExplicitProjectBuild, planRetiredDirectCapability, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
+import { planExplicitProjectBuild, planSemanticRequest } from '../ai/universal/semanticRequestPlanner.js';
 import { goalContractSchema } from '../ai/universal/goalContract.js';
 import { analyzeGitHubRepo } from '../services/integrations/githubDeploy.js';
+import { publicRuntimeFailure, RuntimeFailure } from '../ai/universal/runtimeFailure.js';
 
 const router = Router();
 
@@ -25,12 +26,6 @@ router.post('/plan', async (req: AuthRequest, res) => {
     if (/^\/build\b/i.test(message) && context) {
       return res.json(await planExplicitProjectBuild({ userId, message, projectContext: context }));
     }
-    const retiredCapabilityPlan = await planRetiredDirectCapability({
-      userId,
-      message,
-      projectContext: context,
-    });
-    if (retiredCapabilityPlan) return res.json(retiredCapabilityPlan);
     const plan = await planSemanticRequest({
       userId,
       message,
@@ -46,11 +41,13 @@ router.post('/plan', async (req: AuthRequest, res) => {
     return res.json(plan);
   } catch (err) {
     const error = err as Error & { code?: string };
-    console.error('[phase1/plan]', { code: error.code ?? 'SEMANTIC_PLANNING_FAILED', message: error.message });
-    return res.status(error.code === 'SEMANTIC_PLANNER_UNAVAILABLE' ? 503 : 422).json({
-      error: 'Xroga could not safely plan this request. Please try again.',
-      code: error.code ?? 'SEMANTIC_PLANNING_FAILED',
+    const failure = publicRuntimeFailure(err);
+    console.error('[phase1/plan]', {
+      code: failure.body.code,
+      message: error.message,
+      retryable: failure.body.retryable,
     });
+    return res.status(failure.status).json(failure.body);
   }
 });
 
@@ -75,12 +72,32 @@ router.post('/chat', async (req: AuthRequest, res) => {
     ? (req.body.history as Array<{ role: 'user' | 'assistant'; content: string }>)
     : [];
   const semanticGoal = goalContractSchema.safeParse(req.body?.goalContract);
+  if (!semanticGoal.success) {
+    const failure = publicRuntimeFailure(new RuntimeFailure(
+      'PLANNER_SCHEMA_INVALID',
+      'This request does not include a valid semantic execution contract. Please retry.',
+      { status: 400, retryable: true },
+    ));
+    return res.status(failure.status).json(failure.body);
+  }
 
   try {
     let projectEvidence: string | undefined;
-    if (semanticGoal.success && semanticGoal.data.requiredCapabilities.includes('repository.read') && semanticGoal.data.projectContext) {
+    if (semanticGoal.data.requiredCapabilities.includes('repository.read') && semanticGoal.data.projectContext) {
       const context = semanticGoal.data.projectContext;
-      const analysis = await analyzeGitHubRepo(userId, context.repo, context.branch);
+      let analysis;
+      try {
+        analysis = await analyzeGitHubRepo(userId, context.repo, context.branch, { strictBranch: true });
+      } catch (error) {
+        const disconnected = error instanceof Error && /not connected/i.test(error.message);
+        throw new RuntimeFailure(
+          disconnected ? 'CAPABILITY_AUTH_REQUIRED' : 'REPOSITORY_FAILED',
+          disconnected
+            ? 'Connect GitHub to read the selected repository.'
+            : 'Xroga could not read the selected repository and branch.',
+          { cause: error, retryable: !disconnected },
+        );
+      }
       projectEvidence = JSON.stringify({
         repo: analysis.repoName,
         branch: analysis.defaultBranch,
@@ -97,7 +114,7 @@ router.post('/chat', async (req: AuthRequest, res) => {
       prompt: message.trim(),
       history,
       attachments,
-      ...(semanticGoal.success ? { goalContract: semanticGoal.data } : {}),
+      goalContract: semanticGoal.data,
       ...(projectEvidence ? { projectEvidence } : {}),
     });
     return res.json({
@@ -123,7 +140,8 @@ router.post('/chat', async (req: AuthRequest, res) => {
       });
     }
     console.error('[phase1/chat]', { code: error.code ?? 'CHAT_FAILED', message: error.message });
-    return res.status(500).json({ error: 'Chat is temporarily unavailable', code: 'CHAT_FAILED' });
+    const failure = publicRuntimeFailure(err);
+    return res.status(failure.status).json(failure.body);
   }
 });
 

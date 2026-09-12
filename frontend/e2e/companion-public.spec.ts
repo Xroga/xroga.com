@@ -26,7 +26,7 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
   // accessibility instead.
 
   for (const theme of ['Beige', 'White', 'Gray', 'Black']) {
-    await page.getByRole('button', { name: 'Change homepage theme' }).click();
+    await page.getByRole('button', { name: 'Change website theme' }).click();
     await page.getByRole('radio', { name: new RegExp(`^${theme}`) }).click();
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }

@@ -1489,7 +1489,7 @@ export async function analyzeGitHubRepo(
   userId: string,
   repoName: string,
   preferredBranch?: string,
-  opts?: { lite?: boolean }
+  opts?: { lite?: boolean; strictBranch?: boolean }
 ): Promise<GitHubRepoAnalysis> {
   const lite = Boolean(opts?.lite);
   const integration = await getIntegration(userId);
@@ -1518,6 +1518,9 @@ export async function analyzeGitHubRepo(
   let topLevelEntries: string[] = [];
 
   let branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(scanBranch)}`);
+  if (!branchRes.ok && opts?.strictBranch) {
+    throw new Error('The selected repository branch could not be read.');
+  }
   if (!branchRes.ok && scanBranch !== defaultBranch) {
     branchRes = await ghFetch(token, `/repos/${owner}/${repo}/branches/${encodeURIComponent(defaultBranch)}`);
   }

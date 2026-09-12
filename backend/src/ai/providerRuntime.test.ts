@@ -79,7 +79,13 @@ describe('provider runtime health', () => {
     await assert.rejects(() => executeWithProviderFallback({
       routes: ['deepseek_v4_flash'], timeoutMs: 5, maximumAttemptsPerRoute: 1,
       execute: async (_model, signal) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('timed out')), { once: true })),
-    }), /All compatible provider routes failed/);
+    }), (error: unknown) => {
+      const typed = error as { code?: string; message?: string; details?: { failures?: Array<{ kind?: string }> } };
+      assert.equal(typed.code, 'PROVIDER_UNAVAILABLE');
+      assert.match(typed.message ?? '', /route timed out/i);
+      assert.deepEqual(typed.details?.failures?.map((failure) => failure.kind), ['timeout']);
+      return true;
+    });
     const health = getModelRuntimeHealth('deepseek_v4_flash');
     assert.equal(health.lastFailureKind, 'timeout');
   });

@@ -1,11 +1,15 @@
 import { chatCompletion, estimateMessageTokens, type ChatMessage } from '../openaiCompat.js';
 import { callableModelIds, type ModelId } from '../models.js';
 import { withProviderReservation } from '../providerBudget.js';
-import { executeWithProviderFallback } from '../providerRuntime.js';
-import { getUsage, recordUsage, usageToTokenUsage, type UsageSnapshot } from '../quota.js';
+import { executeWithProviderFallback, recordModelValidation } from '../providerRuntime.js';
+import { getUsage, recordUsage, usageToTokenUsage } from '../quota.js';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { goalContractSchema, interpretGoalContract, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
+import { generateStructured } from '../black-hole/structuredOutput.js';
+import { goalContractSchema, normalizeGoalContractCandidate, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
 import { planCapabilities } from './planner.js';
+import { currentProductTruth } from './productTruth.js';
+import { RuntimeFailure } from './runtimeFailure.js';
+import { getGitHubToken } from '../../services/integrations/githubAuth.js';
 
 export type UniversalDispatch = 'chat' | 'build' | 'blocked';
 
@@ -16,72 +20,8 @@ export interface SemanticRequestPlan {
   readonly rationale: string;
   readonly blockers: readonly string[];
   readonly usage: ReturnType<typeof usageToTokenUsage>;
-}
-
-type RetiredDirectCapability = 'media-generation' | 'browser-automation';
-
-/**
- * Stable product boundaries do not need a model call to rediscover them. This
- * classifier is deliberately narrow: it only recognizes direct requests for a
- * retired capability, and yields to any positive software-product build intent.
- * Image analysis from an attachment and browser verification inside a build are
- * separate, supported capabilities and are not matched here.
- */
-export function retiredDirectCapability(message: string): RetiredDirectCapability | null {
-  const withoutNegatedProjectWork = message.replace(
-    /\b(?:do not|don't|without)\s+(?:build|change|modify|edit|create)[^.?!]*/gi,
-    '',
-  );
-  const positiveSoftwareBuild =
-    /\b(?:build|develop|implement|code|create|make)\b[\s\S]{0,100}\b(?:website|web\s*app|app|dashboard|extension|api|software|tool|project|site)\b/i;
-  if (positiveSoftwareBuild.test(withoutNegatedProjectWork)) return null;
-
-  const directMediaGeneration =
-    /\b(?:generate|create|make|draw|render|produce|return)\b[\s\S]{0,80}\b(?:image|picture|photo|logo|thumbnail|poster|illustration|artwork|video|animation|gif)\b/i;
-  if (directMediaGeneration.test(message)) return 'media-generation';
-
-  const directBrowserAction =
-    /\b(?:browser\s+automation|automate\s+(?:a\s+)?browser|browse\s+and\s+(?:click|fill|submit|purchase|book|apply)|(?:open|visit|navigate\s+to)\s+https?:\/\/|scrape\s+(?:this|the|a)\s+(?:site|website|page))\b/i;
-  if (directBrowserAction.test(message)) return 'browser-automation';
-  return null;
-}
-
-export async function planRetiredDirectCapability(input: {
-  userId: string;
-  message: string;
-  projectContext?: GoalInterpretationInput['projectContext'];
-}): Promise<SemanticRequestPlan | null> {
-  const retired = retiredDirectCapability(input.message);
-  if (!retired) return null;
-  const media = retired === 'media-generation';
-  const blocker = media
-    ? 'Image and video generation are not available in Xroga. You can upload an image for analysis, or ask Xroga to build software that uses image assets.'
-    : 'General-purpose browser automation is not available in Xroga. You can ask Xroga to research public sources or build and verify a web product.';
-  const goalContract = goalContractSchema.parse({
-    version: '1.0',
-    goal: input.message,
-    desiredOutcome: media ? 'Generate a media asset.' : 'Operate a third-party website in a browser.',
-    semanticIntent: 'EXTERNAL_ACTION',
-    constraints: ['Do not substitute an unrelated software build for an unavailable capability.'],
-    acceptance: ['State the current product boundary truthfully and offer a supported alternative.'],
-    historyContext: [],
-    projectContext: input.projectContext ?? null,
-    deliverables: [],
-    requiredCapabilities: [],
-    requiredAuthorities: [],
-    risks: ['A fallback must not claim an external action or generated asset that did not occur.'],
-    confidence: 1,
-    blockers: [blocker],
-    contextComplexity: 'low',
-  });
-  return {
-    goalContract,
-    dispatch: 'blocked',
-    capabilityIds: [],
-    rationale: 'The requested direct capability is outside the current product contract.',
-    blockers: [blocker],
-    usage: usageToTokenUsage(await getUsage(input.userId)),
-  };
+  /** Completes a bounded social protocol turn without a second model call. */
+  readonly directResponse?: string;
 }
 
 export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
@@ -89,9 +29,87 @@ export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): Mod
   const ordered = (['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const)
     .filter((modelId) => callable.includes(modelId));
   if (ordered.length) return ordered;
-  const error = new Error('No configured model is available to understand this request.');
-  (error as Error & { code?: string }).code = 'SEMANTIC_PLANNER_UNAVAILABLE';
-  throw error;
+  throw new RuntimeFailure(
+    'PLANNER_PROVIDER_UNAVAILABLE',
+    'No configured model is currently available to understand this request.',
+  );
+}
+
+const SOCIAL_GREETING = /^(?:hi|hello|hey|howdy|hola|good\s+(?:morning|afternoon|evening))[!.,\s]*$/i;
+const SOCIAL_ACKNOWLEDGEMENT = /^(?:thanks|thank\s+you|thank\s+you\s+very\s+much|okay|ok|got\s+it|bye|goodbye)[!.,\s]*$/i;
+
+/**
+ * A deliberately tiny protocol optimization, never an intent router. Questions,
+ * attachments and every side-effecting request always continue to semantic planning.
+ */
+export function protocolSocialResponse(message: string, hasAttachments = false): string | null {
+  if (hasAttachments) return null;
+  const normalized = message.trim();
+  if (!normalized || normalized.includes('?')) return null;
+  if (SOCIAL_GREETING.test(normalized)) return 'Hey! 👋 What can I help you accomplish today?';
+  if (SOCIAL_ACKNOWLEDGEMENT.test(normalized)) {
+    return /bye|goodbye/i.test(normalized) ? 'See you soon!' : 'You’re welcome!';
+  }
+  return null;
+}
+
+export async function planProtocolSocialTurn(input: {
+  userId: string;
+  message: string;
+  attachments?: GoalInterpretationInput['attachments'];
+}): Promise<SemanticRequestPlan | null> {
+  const directResponse = protocolSocialResponse(input.message, Boolean(input.attachments?.length));
+  if (!directResponse) return null;
+  const goalContract = goalContractSchema.parse({
+    version: '1.0',
+    goal: input.message,
+    desiredOutcome: 'A brief conversational acknowledgement.',
+    semanticIntent: 'ANSWER',
+    constraints: ['Do not start tools, repository work, web retrieval, Preview, or deployment.'],
+    acceptance: ['Respond immediately and briefly.'],
+    historyContext: [],
+    projectContext: null,
+    deliverables: [],
+    requiredCapabilities: ['conversation.respond'],
+    requiredAuthorities: [],
+    risks: [],
+    confidence: 1,
+    blockers: [],
+    contextComplexity: 'low',
+  });
+  return {
+    goalContract,
+    dispatch: 'chat',
+    capabilityIds: ['conversation.respond'],
+    rationale: 'Completed by the bounded social protocol path without execution side effects.',
+    blockers: [],
+    usage: usageToTokenUsage(await getUsage(input.userId)),
+    directResponse,
+  };
+}
+
+export async function resolveStructuredGoalContract(
+  attempt: (repairHint?: string) => Promise<string>,
+  maxRepairs = 1,
+): Promise<GoalContract> {
+  const generated = await generateStructured<GoalContract>({
+    maxRepairs,
+    attempt,
+    validate: (value) => {
+      const parsed = goalContractSchema.safeParse(normalizeGoalContractCandidate(value));
+      return parsed.success
+        ? { valid: true, value: parsed.data }
+        : { valid: false, error: parsed.error.issues.map((issue) => issue.message).join('; ') };
+    },
+  });
+  if (generated.ok) return generated.value;
+  const schemaFailure = generated.detail !== 'the reply did not contain parseable JSON'
+    && generated.detail !== 'the model returned no content';
+  throw new RuntimeFailure(
+    schemaFailure ? 'PLANNER_SCHEMA_INVALID' : 'PLANNER_INVALID_OUTPUT',
+    'Xroga received an unusable planning response after one bounded correction attempt.',
+    { details: { reason: generated.reason, repairs: generated.repairs } },
+  );
 }
 
 export function dispatchForGoal(goal: GoalContract, capabilityIds: readonly string[]): UniversalDispatch {
@@ -172,6 +190,21 @@ export async function planExplicitProjectBuild(input: {
   };
 }
 
+export async function resolveRequestAuthorities(
+  input: Pick<Parameters<typeof planSemanticRequest>[0], 'userId' | 'attachments' | 'projectContext'>,
+  hasGitHubAuthorization: (userId: string) => Promise<boolean> = async (userId) => Boolean(await getGitHubToken(userId)),
+): Promise<Set<string>> {
+  const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
+  if (input.attachments?.length) authorities.add('attachment:read');
+  if (input.projectContext && await hasGitHubAuthorization(input.userId)) {
+    authorities.add('repository:read');
+    authorities.add('repository:write');
+  }
+  if (process.env.PARALLEL_API_KEY) authorities.add('network:public-read');
+  if (process.env.XAI_API_KEY) authorities.add('network:x-read');
+  return authorities;
+}
+
 export async function planSemanticRequest(input: {
   userId: string;
   message: string;
@@ -180,19 +213,25 @@ export async function planSemanticRequest(input: {
   projectContext?: GoalInterpretationInput['projectContext'];
   projectState?: GoalInterpretationInput['projectState'];
 }): Promise<SemanticRequestPlan> {
-  const models = interpreterModelOrder();
+  const social = await planProtocolSocialTurn(input);
+  if (social) return social;
+
+  // Two bounded routes are enough for resilience without multiplying a harmless
+  // request into four serial 45-second waits.
+  const models = interpreterModelOrder().slice(0, 2);
   const available = universalCapabilityRegistry.list();
-  const authorities = new Set<string>(['model:execute', 'sandbox:execute']);
-  if (input.attachments?.length) authorities.add('attachment:read');
-  if (input.projectContext) {
-    authorities.add('repository:read');
-    authorities.add('repository:write');
-  }
-  if (process.env.PARALLEL_API_KEY) authorities.add('network:public-read');
+  // A visible project is context, not authorization. Reading the persisted
+  // token is a local authorization check (not a GitHub network/status call),
+  // so pure conversation avoids an external request while repository
+  // capabilities are never advertised as READY for another or disconnected
+  // account.
+  const authorities = await resolveRequestAuthorities(input);
+  const readiness = new Map(universalCapabilityRegistry.snapshot(authorities).map((item) => [item.id, item]));
   const availableSummary = available.map(({ id, title, description, effects, requiredAuthorities, inputMediaTypes, outputMediaTypes }) => ({
     id, title, description, effects, requiredAuthorities, inputMediaTypes, outputMediaTypes,
+    readiness: readiness.get(id)?.state ?? 'UNSUPPORTED',
   }));
-  const system = `Understand the user's current goal from the full conversation and context. Return strict JSON matching the supplied GoalContract schema. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest set of registered capabilities that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. Authority availability is determined by the runtime, not by you. Never report a granted authority as missing. Use blockers only for essential missing user input or a genuinely unavailable capability. If no registered capability can complete the goal, describe the missing capability in blockers instead of substituting a website or generic scaffold.\n\nGranted authorities: ${JSON.stringify([...authorities])}.\n\nGoalContract fields: version="1.0"; goal; desiredOutcome; semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; constraints[]; acceptance[]; historyContext[]; projectContext; deliverables[{id,mediaType,description,required,acceptance[]}]; requiredCapabilities[]; requiredAuthorities[]; risks[]; confidence 0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities:\n${JSON.stringify(availableSummary)}`;
+  const system = `Understand the user's current goal from the full conversation and context. Return strict JSON matching the supplied GoalContract schema. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. Authority availability is determined by the runtime, not by you. Never report a granted authority as missing. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(authorities)}\n\nGranted authorities: ${JSON.stringify([...authorities])}.\n\nGoalContract fields: version="1.0"; goal; desiredOutcome; semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; constraints[]; acceptance[]; historyContext[]; projectContext; deliverables[{id,mediaType,description,required,acceptance[]}]; requiredCapabilities[]; requiredAuthorities[]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence 0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(availableSummary)}`;
   const interpretationInput: GoalInterpretationInput = {
     message: input.message,
     history: input.history ?? [],
@@ -204,55 +243,104 @@ export async function planSemanticRequest(input: {
     { role: 'system', content: system },
     { role: 'user', content: JSON.stringify(interpretationInput) },
   ];
-  const maximumOutputTokens = 1_800;
-  const planned = await executeWithProviderFallback({
-    routes: models,
-    timeoutMs: 45_000,
-    maximumAttemptsPerRoute: 1,
-    execute: async (modelId, signal) => {
-      const completion = await withProviderReservation({
-        userId: input.userId,
-        modelId,
-        estimatedInputTokens: estimateMessageTokens(messages),
-        maximumOutputTokens,
-        purpose: 'complexity',
-        execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal }),
+  const maximumOutputTokens = 1_500;
+  const configuredTotalMs = Number(process.env.SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS);
+  const totalTimeoutMs = Number.isFinite(configuredTotalMs)
+    ? Math.min(25_000, Math.max(5_000, configuredTotalMs))
+    : 18_000;
+  const totalController = new AbortController();
+  const totalTimer = setTimeout(() => totalController.abort(), totalTimeoutMs);
+  let lastStructuredFailure: RuntimeFailure | null = null;
+  let finalModelId: ModelId | null = null;
+  let correctionUsed = false;
+  try {
+    const planned = await executeWithProviderFallback({
+      routes: models,
+      timeoutMs: Math.min(9_000, totalTimeoutMs),
+      maximumAttemptsPerRoute: 1,
+      signal: totalController.signal,
+      execute: async (modelId, signal) => {
+        const goalContract = await resolveStructuredGoalContract(async (repairHint) => {
+          if (repairHint) correctionUsed = true;
+          const attemptMessages: ChatMessage[] = repairHint
+            ? [...messages, { role: 'user', content: `Correct the previous planning output. ${repairHint}` }]
+            : messages;
+          const completion = await withProviderReservation({
+            userId: input.userId,
+            modelId,
+            estimatedInputTokens: estimateMessageTokens(attemptMessages),
+            maximumOutputTokens,
+            purpose: 'complexity',
+            execute: () => chatCompletion(modelId, attemptMessages, {
+              maxTokens: maximumOutputTokens,
+              temperature: 0,
+              json: true,
+              signal,
+            }),
+          });
+          finalModelId = completion.modelId;
+          await recordUsage(input.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
+          return completion.text;
+        }, correctionUsed ? 0 : 1).catch((error) => {
+          if (error instanceof RuntimeFailure) {
+            lastStructuredFailure = error;
+            recordModelValidation(modelId, false);
+          }
+          throw error;
+        });
+        recordModelValidation(modelId, true);
+        return goalContract;
+      },
+    });
+    const goalContract = planned.value;
+
+    // The canonical build runtime owns an isolated validation sandbox. Exposing
+    // that authority permits validation.run; it grants no deployment authority.
+    const capabilityPlan = await planCapabilities({
+      goal: goalContract,
+      registry: universalCapabilityRegistry,
+      authorities,
+      select: async () => ({
+        capabilityIds: goalContract.requiredCapabilities,
+        rationale: 'Selected by the semantic interpreter from the live capability registry.',
+      }),
+    });
+    const blockers = [
+      ...unresolvedGoalBlockers(goalContract.blockers, authorities),
+      ...capabilityPlan.rejected.map((item) => `${item.id}: ${item.reason}`),
+    ];
+    const usage = await getUsage(input.userId);
+    const effectiveGoal = blockers.length ? goalContractSchema.parse({ ...goalContract, blockers }) : goalContract;
+    return {
+      goalContract: effectiveGoal,
+      dispatch: blockers.length ? 'blocked' : dispatchForGoal(effectiveGoal, capabilityPlan.capabilities.map((item) => item.id)),
+      capabilityIds: capabilityPlan.capabilities.map((item) => item.id),
+      rationale: capabilityPlan.rationale,
+      blockers,
+      usage: usageToTokenUsage(usage),
+    };
+  } catch (error) {
+    if (totalController.signal.aborted) {
+      throw new RuntimeFailure('PLANNER_TIMEOUT', 'Xroga could not understand this request before the planning deadline. Please retry.', {
+        cause: error,
+        details: { totalTimeoutMs },
       });
-      // A transport-level 200 is not a usable planning result. Keep schema parsing
-      // inside the provider attempt so malformed or incomplete structured output
-      // falls through to the next approved model instead of aborting the entire
-      // universal request before another provider gets a chance.
-      const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-      const raw = JSON.parse((fenced?.[1] ?? completion.text).trim());
-      const goalContract = await interpretGoalContract(interpretationInput, async () => raw);
-      return { completion, goalContract };
-    },
-  });
-  const { completion, goalContract } = planned.value;
-  // The canonical build runtime owns an isolated validation sandbox. Exposing
-  // that authority to planning permits validation.run to be selected; it does
-  // not grant repository, deployment, or external-account authority.
-  const capabilityPlan = await planCapabilities({
-    goal: goalContract,
-    registry: universalCapabilityRegistry,
-    authorities,
-    select: async () => ({
-      capabilityIds: goalContract.requiredCapabilities,
-      rationale: 'Selected by the semantic interpreter from the live capability registry.',
-    }),
-  });
-  const blockers = [
-    ...unresolvedGoalBlockers(goalContract.blockers, authorities),
-    ...capabilityPlan.rejected.map((item) => `${item.id}: ${item.reason}`),
-  ];
-  const usage: UsageSnapshot = await recordUsage(input.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
-  const effectiveGoal = blockers.length ? goalContractSchema.parse({ ...goalContract, blockers }) : goalContract;
-  return {
-    goalContract: effectiveGoal,
-    dispatch: blockers.length ? 'blocked' : dispatchForGoal(effectiveGoal, capabilityPlan.capabilities.map((item) => item.id)),
-    capabilityIds: capabilityPlan.capabilities.map((item) => item.id),
-    rationale: capabilityPlan.rationale,
-    blockers,
-    usage: usageToTokenUsage(usage),
-  };
+    }
+    if (lastStructuredFailure) throw lastStructuredFailure;
+    const failures = (
+      (error as { failures?: Array<{ kind?: string }> }).failures
+      ?? (error instanceof RuntimeFailure && Array.isArray(error.details?.failures)
+        ? error.details.failures as Array<{ kind?: string }>
+        : [])
+    );
+    if (failures.some((failure) => failure.kind === 'timeout')) {
+      throw new RuntimeFailure('PLANNER_TIMEOUT', 'The planning model timed out. Please retry this request.', { cause: error });
+    }
+    throw new RuntimeFailure('PLANNER_PROVIDER_UNAVAILABLE', 'The planning service is temporarily unavailable. Please retry.', {
+      cause: error,
+      details: { attemptedModels: models.length, finalModelId },
+    });
+  } finally {
+    clearTimeout(totalTimer);
+  }
 }

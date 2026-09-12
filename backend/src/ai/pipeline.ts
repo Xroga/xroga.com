@@ -9,6 +9,7 @@ import {
 } from './black-hole/productionBridge.js';
 import {
   runWebIntelligence,
+  webDecisionFromGoalContract,
 } from './black-hole/webIntelligence.js';
 import { decideConversion } from './black-hole/converterPolicy.js';
 import { analyzeTask } from './black-hole/taskClass.js';
@@ -125,6 +126,9 @@ import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
+import { currentProductTruth } from './universal/productTruth.js';
+import { RuntimeFailure } from './universal/runtimeFailure.js';
+import { resolveStructuredGoalContract } from './universal/semanticRequestPlanner.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
 import { getGitHubToken } from '../services/integrations/githubAuth.js';
 import {
@@ -948,7 +952,11 @@ export async function runChatPipeline(opts: {
   }
 
   const inferredRoute = routePrompt(opts.prompt);
-  const semanticResearch = opts.goalContract?.requiredCapabilities.includes('research.public-web') ?? false;
+  const semanticResearch = Boolean(
+    opts.goalContract?.requiredCapabilities.includes('research.public-web')
+    || opts.goalContract?.requiredCapabilities.includes('research.x')
+    || (opts.goalContract && opts.goalContract.freshnessRequirement !== 'NONE'),
+  );
   const route: RouteDecision = opts.goalContract
     ? {
         ...inferredRoute,
@@ -974,6 +982,9 @@ export async function runChatPipeline(opts: {
       const web = await runWebIntelligence({
         userId: opts.userId,
         prompt: opts.prompt,
+        ...(opts.goalContract
+          ? { decision: webDecisionFromGoalContract(opts.goalContract) ?? undefined }
+          : {}),
       });
 
       research = web.bundle;
@@ -996,6 +1007,14 @@ export async function runChatPipeline(opts: {
       research?.sources.length ?? 0,
     )
   ) {
+    if (opts.goalContract?.freshnessRequirement === 'CURRENT_REQUIRED') {
+      throw new RuntimeFailure(
+        researchProviderFailed ? 'PROVIDER_UNAVAILABLE' : 'TOOL_UNAVAILABLE',
+        researchProviderFailed
+          ? 'Current public-web evidence is temporarily unavailable. No unsourced current answer was generated.'
+          : 'No qualifying current sources were returned. No unsourced current answer was generated.',
+      );
+    }
     return {
       response:
         'I couldn\'t complete the requested live-web research just now. No current-source answer was generated, so please try again shortly.',
@@ -1021,9 +1040,12 @@ export async function runChatPipeline(opts: {
         ? `${promptWithProjectEvidence}\n\n${researchBlock}`
         : promptWithProjectEvidence;
 
+  const truthAuthorities = new Set<string>(['model:execute', 'sandbox:execute']);
+  if (opts.projectEvidence) truthAuthorities.add('repository:read');
+  if (research?.sources.length) truthAuthorities.add('network:public-read');
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: CHAT_SYSTEM }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: `${CHAT_SYSTEM}\n\n${currentProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,
@@ -1426,12 +1448,26 @@ export async function runBuildPipeline(opts: {
         { role: 'system', content: `Translate the complete user request into one semantic GoalContract. Do not classify a product, framework, language, or file type. Select only capability IDs supplied below. Return strict JSON with exactly: version "1.0", goal, desiredOutcome, semanticIntent (ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED), constraints[], acceptance[], historyContext[], projectContext, deliverables[] (id, mediaType, description, required, acceptance[]), requiredCapabilities[], requiredAuthorities[], risks[], confidence 0..1, blockers[], contextComplexity (low|medium|high|unknown). Available capability IDs: ${availableCapabilityIds.join(', ')}` },
         { role: 'user', content: JSON.stringify({ message, history, projectContext, attachments, projectState }) },
       ];
-      const completion = await withProviderReservation({
-        userId: opts.userId, modelId, estimatedInputTokens: estimateMessageTokens(messages), maximumOutputTokens,
-        purpose: 'complexity', execute: () => chatCompletion(modelId, messages, { maxTokens: maximumOutputTokens, temperature: 0, json: true, signal: opts.signal }),
+      return resolveStructuredGoalContract(async (repairHint) => {
+        const attemptMessages: ChatMessage[] = repairHint
+          ? [...messages, { role: 'user', content: `Correct the previous planning output. ${repairHint}` }]
+          : messages;
+        const completion = await withProviderReservation({
+          userId: opts.userId,
+          modelId,
+          estimatedInputTokens: estimateMessageTokens(attemptMessages),
+          maximumOutputTokens,
+          purpose: 'complexity',
+          execute: () => chatCompletion(modelId, attemptMessages, {
+            maxTokens: maximumOutputTokens,
+            temperature: 0,
+            json: true,
+            signal: opts.signal,
+          }),
+        });
+        await recordUsage(opts.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
+        return completion.text;
       });
-      const fenced = completion.text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-      return JSON.parse((fenced?.[1] ?? completion.text).trim());
     },
     ...(universalTargetRepo ? {
       activeProjectContext: {

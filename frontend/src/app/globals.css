@@ -4130,8 +4130,8 @@ body.theme-gray * {
      with it the composer — starts at the frame's gutter. */
   @media (min-width: 1024px) {
     body.xv-terminal-fullscreen-active .xv-terminal-dock {
-      left: 14px !important;
-      right: 14px !important;
+      left: var(--xv-app-gutter) !important;
+      right: var(--xv-app-gutter) !important;
     }
   }
   body.xv-terminal-fullscreen-active .xv-terminal-dock--fullscreen {

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { assertProjectTarget, isCurrentProjectTransition, normalizeProjectContext, projectContextKey, transitionProjectState } from './projectContext';
+import { assertProjectTarget, isCurrentProjectTransition, normalizeProjectContext, projectContextForRequest, projectContextKey, transitionProjectState } from './projectContext';
 
 type State = { name: string; files: string[]; deployUrl: string | null; commit: string | null; undo: string | null; preview: string | null; loads: number };
 const clean = (): State => ({ name: '', files: [], deployUrl: null, commit: null, undo: null, preview: null, loads: 0 });
@@ -54,4 +54,10 @@ test('pipeline target assertion refuses a stale repository or branch', () => {
   assert.deepEqual(assertProjectTarget(active, active), active);
   assert.throws(() => assertProjectTarget(active, target('other-owner/other-target', 'release/9')), /no longer matches/);
   assert.throws(() => assertProjectTarget(active, target(active.repo, 'release/10')), /no longer matches/);
+});
+
+test('a fresh product request cannot inherit the previously active project target', () => {
+  const active = target('arbitrary-owner/existing-system', 'release/not-main', '/apps/worker');
+  assert.equal(projectContextForRequest(active, true), null);
+  assert.deepEqual(projectContextForRequest(active, false), normalizeProjectContext(active));
 });

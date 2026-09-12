@@ -1,249 +1,60 @@
 'use client';
 
-import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import React from 'react';
+import ReactMarkdown, { type Components, type UrlTransform } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-/** Lightweight markdown — headings, bold, bullets, numbered lists, code */
-function renderInline(text: string): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  const re = /(\*\*[^*]+\*\*|`[^`]+`)/g;
-  let last = 0;
-  let match: RegExpExecArray | null;
-  let key = 0;
-  while ((match = re.exec(text)) !== null) {
-    if (match.index > last) parts.push(text.slice(last, match.index));
-    const token = match[0];
-    if (token.startsWith('**')) {
-      parts.push(<strong key={key++} className="font-semibold text-[var(--foreground)]">{token.slice(2, -2)}</strong>);
-    } else if (token.startsWith('`')) {
-      parts.push(
-        <code key={key++} className="rounded bg-[var(--muted)]/15 px-1 py-0.5 text-[11px] font-mono text-[var(--accent)]">
-          {token.slice(1, -1)}
-        </code>
-      );
-    }
-    last = match.index + token.length;
-  }
-  if (last < text.length) parts.push(text.slice(last));
-  return parts.length ? parts : [text];
+function joinClasses(...values: Array<string | undefined>): string {
+  return values.filter(Boolean).join(' ');
 }
 
-type Block =
-  | { type: 'heading'; level: number; text: string }
-  | { type: 'bullet'; items: string[] }
-  | { type: 'numbered'; items: string[] }
-  | { type: 'para'; text: string; lead?: boolean }
-  | { type: 'hr' }
-  | { type: 'summary'; text: string }
-  | { type: 'table'; headers: string[]; rows: string[][] };
-
-function parseBlocks(content: string): Block[] {
-  const lines = content.split('\n');
-  const blocks: Block[] = [];
-  let i = 0;
-
-  while (i < lines.length) {
-    const line = lines[i] ?? '';
-    const trimmed = line.trim();
-
-    if (!trimmed) {
-      i += 1;
-      continue;
-    }
-
-    if (/^---+$/.test(trimmed) || /^\*\*\*+$/.test(trimmed)) {
-      blocks.push({ type: 'hr' });
-      i += 1;
-      continue;
-    }
-
-    if (trimmed.startsWith('> ')) {
-      const summaryLines: string[] = [trimmed.slice(2)];
-      i += 1;
-      while (i < lines.length && (lines[i] ?? '').trim().startsWith('> ')) {
-        summaryLines.push((lines[i] ?? '').trim().slice(2));
-        i += 1;
-      }
-      blocks.push({ type: 'summary', text: summaryLines.join(' ') });
-      continue;
-    }
-
-    if (/^\|.+\|/.test(trimmed) && trimmed.includes('|')) {
-      const tableLines: string[] = [trimmed];
-      i += 1;
-      while (i < lines.length && /^\|.+\|/.test((lines[i] ?? '').trim())) {
-        tableLines.push((lines[i] ?? '').trim());
-        i += 1;
-      }
-      const parsed = tableLines
-        .filter((l) => !/^[\|\s:-]+$/.test(l.replace(/\|/g, '').trim()))
-        .map((l) =>
-          l
-            .split('|')
-            .map((c) => c.trim())
-            .filter(Boolean)
-        );
-      if (parsed.length >= 1) {
-        blocks.push({
-          type: 'table',
-          headers: parsed[0] ?? [],
-          rows: parsed.slice(1),
-        });
-      }
-      continue;
-    }
-
-    const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
-    if (heading) {
-      blocks.push({ type: 'heading', level: heading[1]!.length, text: heading[2]! });
-      i += 1;
-      continue;
-    }
-
-    if (/^[-*•]\s+/.test(trimmed)) {
-      const items: string[] = [];
-      while (i < lines.length && /^[-*•]\s+/.test((lines[i] ?? '').trim())) {
-        items.push((lines[i] ?? '').trim().replace(/^[-*•]\s+/, ''));
-        i += 1;
-      }
-      blocks.push({ type: 'bullet', items });
-      continue;
-    }
-
-    if (/^\d+[.)]\s+/.test(trimmed)) {
-      const items: string[] = [];
-      while (i < lines.length && /^\d+[.)]\s+/.test((lines[i] ?? '').trim())) {
-        items.push((lines[i] ?? '').trim().replace(/^\d+[.)]\s+/, ''));
-        i += 1;
-      }
-      blocks.push({ type: 'numbered', items });
-      continue;
-    }
-
-    const paraLines: string[] = [trimmed];
-    i += 1;
-    while (i < lines.length && (lines[i] ?? '').trim() && !/^(#{1,4}\s|[-*•]\s|\d+[.)]\s|---)/.test((lines[i] ?? '').trim())) {
-      paraLines.push((lines[i] ?? '').trim());
-      i += 1;
-    }
-    const isFirstPara = !blocks.some((b) => b.type === 'heading' || b.type === 'bullet' || b.type === 'numbered' || b.type === 'summary');
-    blocks.push({ type: 'para', text: paraLines.join(' '), lead: isFirstPara });
+/** Blocks script/data protocols while retaining normal web, mail, fragment and app-relative links. */
+export const safeMarkdownUrl: UrlTransform = (url, key) => {
+  const value = url.trim();
+  if (!value) return '';
+  if (value.startsWith('#') || value.startsWith('/') || value.startsWith('./') || value.startsWith('../')) return value;
+  try {
+    const parsed = new URL(value);
+    if (key === 'src') return parsed.protocol === 'https:' ? value : '';
+    return ['https:', 'http:', 'mailto:'].includes(parsed.protocol) ? value : '';
+  } catch {
+    return '';
   }
+};
 
-  return blocks;
-}
+const components: Components = {
+  h1: ({ children }) => <h3 className="mt-1 border-b border-[var(--card-border)]/30 pb-1 text-lg font-bold tracking-tight text-[var(--foreground)] sm:text-xl">{children}</h3>,
+  h2: ({ children }) => <h3 className="mt-0.5 border-b border-[var(--card-border)]/30 pb-1 text-base font-bold tracking-tight text-[var(--foreground)] sm:text-lg">{children}</h3>,
+  h3: ({ children }) => <h4 className="text-[15px] font-bold tracking-tight text-[var(--accent)]">{children}</h4>,
+  h4: ({ children }) => <h5 className="text-[14px] font-semibold text-[var(--foreground)]">{children}</h5>,
+  p: ({ children }) => <p className="text-[var(--foreground)]/95">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-[var(--foreground)]">{children}</strong>,
+  em: ({ children }) => <em className="italic text-[var(--foreground)]/90">{children}</em>,
+  a: ({ href, children }) => <a href={href} target={href?.startsWith('http') ? '_blank' : undefined} rel={href?.startsWith('http') ? 'noreferrer noopener' : undefined} className="font-medium text-[var(--accent)] underline decoration-[var(--accent)]/35 underline-offset-2 hover:decoration-[var(--accent)]">{children}</a>,
+  ul: ({ children }) => <ul className="list-disc space-y-1 pl-5 marker:text-[var(--accent)]">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal space-y-1 pl-5 marker:font-semibold marker:text-[var(--accent)]">{children}</ol>,
+  li: ({ children }) => <li className="pl-0.5 text-[var(--foreground)]/95">{children}</li>,
+  blockquote: ({ children }) => <blockquote className="rounded-r-lg border-l-2 border-[var(--accent)]/50 bg-[var(--accent)]/5 px-3 py-2 text-[var(--foreground)]/85">{children}</blockquote>,
+  hr: () => <hr className="my-2 border-[var(--card-border)]/50" />,
+  code: ({ className, children }) => {
+    const fenced = Boolean(className?.startsWith('language-')) || String(children).includes('\n');
+    return fenced
+      ? <code className={joinClasses('block overflow-x-auto whitespace-pre p-3 font-mono text-[12px] leading-relaxed text-[var(--foreground)]', className)}>{children}</code>
+      : <code className="rounded bg-[var(--muted)]/15 px-1 py-0.5 font-mono text-[11px] text-[var(--accent)]">{children}</code>;
+  },
+  pre: ({ children }) => <pre className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60 bg-[var(--foreground)]/[0.035]">{children}</pre>,
+  table: ({ children }) => <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60"><table className="w-full text-[13px] sm:text-[14px]">{children}</table></div>,
+  thead: ({ children }) => <thead className="border-b border-[var(--card-border)]/50 bg-[var(--accent)]/5">{children}</thead>,
+  th: ({ children }) => <th className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">{children}</th>,
+  td: ({ children }) => <td className="border-t border-[var(--card-border)]/30 px-3 py-2 text-[var(--foreground)]/90">{children}</td>,
+};
 
-export function FormattedAiMarkdown({
-  content,
-  className,
-}: {
-  content: string;
-  streaming?: boolean;
-  className?: string;
-}) {
-  const blocks = useMemo(() => parseBlocks(content), [content]);
-
+export function FormattedAiMarkdown({ content, className }: { content: string; streaming?: boolean; className?: string }) {
   return (
-    <div className={cn('xv-formatted-response space-y-3 text-[14px] sm:text-[15px] leading-relaxed', className)}>
-      {blocks.map((block, idx) => {
-        if (block.type === 'heading') {
-          const Tag = block.level <= 2 ? 'h3' : block.level === 3 ? 'h4' : 'h5';
-          return (
-            <Tag
-              key={idx}
-              className={cn(
-                'font-bold text-[var(--foreground)] tracking-tight border-b border-[var(--card-border)]/30 pb-1',
-                block.level === 1 && 'text-lg sm:text-xl mt-1',
-                block.level === 2 && 'text-base sm:text-lg mt-0.5',
-                block.level >= 3 && 'text-[15px] text-[var(--accent)] border-none pb-0',
-                /recommended video/i.test(block.text) && 'text-red-500/90 dark:text-red-400',
-              )}
-            >
-              {renderInline(block.text)}
-            </Tag>
-          );
-        }
-        if (block.type === 'bullet') {
-          return (
-            <ul key={idx} className="list-none space-y-1 pl-0.5">
-              {block.items.map((item, j) => (
-                <li key={j} className="flex gap-2">
-                  <span className="text-[var(--accent)] shrink-0 mt-0.5">•</span>
-                  <span>{renderInline(item)}</span>
-                </li>
-              ))}
-            </ul>
-          );
-        }
-        if (block.type === 'numbered') {
-          return (
-            <ol key={idx} className="list-none space-y-1 pl-0.5 counter-reset-none">
-              {block.items.map((item, j) => (
-                <li key={j} className="flex gap-2">
-                  <span className="text-[var(--accent)] font-semibold shrink-0 tabular-nums w-4">{j + 1}.</span>
-                  <span>{renderInline(item)}</span>
-                </li>
-              ))}
-            </ol>
-          );
-        }
-        if (block.type === 'hr') {
-          return <hr key={idx} className="border-[var(--card-border)]/50 my-2" />;
-        }
-        if (block.type === 'summary') {
-          return (
-            <div
-              key={idx}
-              className="rounded-xl border border-[var(--accent)]/25 bg-gradient-to-br from-[var(--accent)]/8 to-transparent px-4 py-3 text-[14px] text-[var(--foreground)]/90 shadow-sm"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--accent)] mb-2">Summary</p>
-              <p className="leading-relaxed">{renderInline(block.text)}</p>
-            </div>
-          );
-        }
-        if (block.type === 'table' && block.headers.length) {
-          return (
-            <div key={idx} className="overflow-x-auto rounded-xl border border-[var(--card-border)]/60">
-              <table className="w-full text-[13px] sm:text-[14px]">
-                <thead>
-                  <tr className="border-b border-[var(--card-border)]/50 bg-[var(--accent)]/5">
-                    {block.headers.map((h, j) => (
-                      <th key={j} className="px-3 py-2 text-left font-semibold text-[var(--foreground)]">
-                        {renderInline(h)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {block.rows.map((row, ri) => (
-                    <tr key={ri} className="border-b border-[var(--card-border)]/30 last:border-0">
-                      {row.map((cell, ci) => (
-                        <td key={ci} className="px-3 py-2 text-[var(--foreground)]/90">
-                          {renderInline(cell)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        }
-        if (block.type === 'para') {
-          return (
-            <p
-              key={idx}
-              className={cn(
-                'text-[var(--foreground)]/95',
-                block.lead && 'text-[15px] sm:text-[16px] font-medium leading-snug text-[var(--foreground)]',
-              )}
-            >
-              {renderInline(block.text)}
-            </p>
-          );
-        }
-        return null;
-      })}
+    <div className={joinClasses('xv-formatted-response space-y-3 text-[14px] leading-relaxed sm:text-[15px] [&>*:first-child]:mt-0 [&>*:last-child]:mb-0', className)}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={safeMarkdownUrl} components={components}>
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }

@@ -99,8 +99,8 @@ test('the composer stops where the terminal does', () => {
    * it belongs to.
    */
   assert.ok(!/--xv-fullscreen-rail/.test(block), 'the composer is offset by a rail that is gone');
-  assert.match(block, /left: 14px !important/, 'the composer must start at the gutter');
-  assert.match(block, /right: 14px !important/, 'and stop at it');
+  assert.match(block, /left: var\(--xv-app-gutter\) !important/, 'the composer must start at the shared gutter');
+  assert.match(block, /right: var\(--xv-app-gutter\) !important/, 'and stop at it');
 });
 
 test('the plus menu is a compact two-column launcher rather than a composer-wide dashboard', () => {
@@ -120,7 +120,7 @@ test('the plus menu is a compact two-column launcher rather than a composer-wide
 
 test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /dashboardFullscreen && emptyWorkspace && !incognito/);
+  assert.match(DOCK, /dashboardFullscreen\s*&&\s*emptyWorkspace\s*&&\s*!incognito/);
   assert.match(DOCK, /xv-fullscreen-inspiration/);
   assert.match(DOCK, /FULLSCREEN_BUILD_COMMANDS\.map/);
   assert.match(code, /\.xv-fullscreen-inspiration code\s*\{[^}]*animation:\s*xv-fullscreen-command-cycle/);
@@ -224,8 +224,8 @@ test('hiding the chatbar leaves nothing floating behind it', () => {
 
 test('opening Project edits keeps the chatbar inside the terminal pane', () => {
   const DOCK = read('../components/terminal/TerminalDock.tsx');
-  assert.match(DOCK, /const dockSuppressed = chatbarHidden;/);
-  assert.match(DOCK, /workspaceOpen && 'xv-terminal-dock--workspace-split'/);
+  assert.match(DOCK, /const dockSuppressed\s*=\s*chatbarHidden;/);
+  assert.match(DOCK, /workspaceOpen\s*&&\s*'xv-terminal-dock--workspace-split'/);
   assert.match(DOCK, /aria-hidden=\{!isDashboard\}/);
   assert.match(
     code,
