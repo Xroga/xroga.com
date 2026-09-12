@@ -2936,26 +2936,33 @@ body.theme-black .xv-sidebar-root {
 
 
   /* ==========================================================
-     5. NO HOVER COLOR CHANGE
-     Keep it deliberately simple.
-     ========================================================== */
+   5. SIMPLE KIMI-STYLE HOVER
+   Only the soft rounded background appears on hover.
+   Text + icons keep their normal theme color.
+   ========================================================== */
 
-  .xv-sidebar-menu a:hover,
-  .xv-sidebar-menu button.xv-menu-item:hover,
-  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
-  .xv-sidebar-menu .xv-nav-group__trigger:hover {
-    color: var(--xv-sidebar-ink) !important;
+.xv-sidebar-menu a:hover,
+.xv-sidebar-menu button.xv-menu-item:hover,
+.xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
+.xv-sidebar-menu .xv-nav-group__trigger:hover {
+  color: var(--xv-sidebar-ink) !important;
 
-    background: transparent !important;
+  background: color-mix(
+    in srgb,
+    var(--xv-sidebar-ink) 6%,
+    transparent
+  ) !important;
 
-    border-color: transparent !important;
+  border-color: transparent !important;
 
-    box-shadow: none !important;
+  border-radius: 12px !important;
 
-    transform: none !important;
+  box-shadow: none !important;
 
-    opacity: 1 !important;
-  }
+  transform: none !important;
+
+  opacity: 1 !important;
+}
 
 
   .xv-sidebar-menu a:hover svg,
