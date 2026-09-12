@@ -151,39 +151,46 @@ export function TerminalDock() {
               {showStarterExperience && !incognito ? (
                 <DashboardWelcome composer />
               ) : null}
-              <div className="xv-chatbar-stack relative">
-                {messages.length > 0 && !incognito ? (
-                  <div className={cn('xv-conversation-navigator', showJumpToLatest && 'is-away-from-latest')} aria-label="Conversation position">
-                    <ChevronsUpDownIcon size={19} aria-hidden="true" />
-                    <button type="button" onClick={() => scrollToFirst('smooth')} aria-label="Go to first conversation" title="First conversation" />
-                    <button type="button" onClick={() => scrollToLatest('smooth')} aria-label="Go to latest conversation" title="Latest conversation" />
-                  </div>
-                ) : null}
-                {showStarterExperience && !incognito ? (
-                  <WorkspaceComposerKicker displayName={displayName} />
-                ) : null}
-                {!incognito ? <CompanionComposerAnchor /> : null}
-                <TerminalChatBar />
-              </div>
-              {!incognito ? (
-                <div className="xv-chatbar-context-strip">
-                  <RepoContextBar compact />
-                </div>
-              ) : null}
-              {showStarterExperience && !incognito ? (
-                <div className="xv-workspace-starter-stack">
-                  <WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" />
-                </div>
-              ) : null}
-            </div>
-          </div>
+              <div className="xv-kimi-composer-frame">
+  <div className="xv-chatbar-stack relative">
+    {messages.length > 0 && !incognito ? (
+      <div
+        className={cn(
+          'xv-conversation-navigator',
+          showJumpToLatest && 'is-away-from-latest'
         )}
-        {incognito ? (
-          <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">
-            {INCOGNITO_PRIVATE_ROOM_NOTICE}
-          </p>
-        ) : null}
+        aria-label="Conversation position"
+      >
+        <ChevronsUpDownIcon size={19} aria-hidden="true" />
+
+        <button
+          type="button"
+          onClick={() => scrollToFirst('smooth')}
+          aria-label="Go to first conversation"
+          title="First conversation"
+        />
+
+        <button
+          type="button"
+          onClick={() => scrollToLatest('smooth')}
+          aria-label="Go to latest conversation"
+          title="Latest conversation"
+        />
       </div>
+    ) : null}
+
+    {showStarterExperience && !incognito ? (
+      <WorkspaceComposerKicker displayName={displayName} />
+    ) : null}
+
+    {!incognito ? <CompanionComposerAnchor /> : null}
+
+    <TerminalChatBar />
+  </div>
+
+  {!incognito ? (
+    <div className="xv-chatbar-context-strip">
+      <RepoContextBar compact />
     </div>
-  );
-}
+  ) : null}
+</div>
