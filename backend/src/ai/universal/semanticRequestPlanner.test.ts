@@ -1,7 +1,17 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, protocolSocialResponse, resolveStructuredGoalContract, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
+import {
+  dispatchForGoal,
+  interpreterModelOrder,
+  planExplicitProjectBuild,
+  protocolSocialResponse,
+  resolveStructuredGoalContract,
+  SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS,
+  SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS,
+  SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,
+  unresolvedGoalBlockers,
+} from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -104,7 +114,7 @@ describe('semantic planner provider fallback', () => {
       Z_AI_API_KEY: 'configured',
       MOONSHOT_API_KEY: 'configured',
     });
-    assert.deepEqual(order, ['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3']);
+    assert.deepEqual(order, ['glm_5_3_flash', 'deepseek_v4_flash', 'glm_5_3', 'kimi_k3']);
   });
 
   it('does not introduce a retired or private retrieval model', () => {
@@ -134,6 +144,8 @@ describe('semantic planner provider fallback', () => {
     assert.match(source, /SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS/);
     assert.match(source, /correctionUsed \? 0 : 1/);
     assert.doesNotMatch(source, /timeoutMs:\s*45_000/);
+    assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS * 2, SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
+    assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS < 60_000);
   });
 });
 
