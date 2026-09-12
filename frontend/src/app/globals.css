@@ -11965,207 +11965,28 @@ body.theme-black {
 }
 
 /* ============================================================
-   XROGA WORKSPACE IDENTITY V2
+   XROGA WORKSPACE IDENTITY V3
    ------------------------------------------------------------
-   Compact AI-assistant-style empty workspace identity.
+   MAIN:
+     Describe it. Build it. Ship it.
+     Create, explore, search, research, learn, plan,
+     build, debug, and ship live.
 
-   Desktop:
-       X  Hi Alex
-          Turn an idea into something live.
+     Integrations
 
-              Describe it. Build it. Ship it.
+   COMPOSER:
+     Hi Alex
+     Turn an idea into something live.
 
-   Theme-aware:
-   White / Beige -> dark primary + muted secondary
-   Gray / Black  -> light primary + muted secondary
-
-   NO blue accent.
-   NO gradient.
-   NO outlined Ship it.
+   No blue headline.
+   No gradients.
+   No decorative Ship-it outline.
+   Theme-aware primary + secondary ink only.
    ============================================================ */
 
 
 /* ============================================================
-   CENTER WORKSPACE LOCKUP
-   Describe it. Build it. Ship it.
-   ============================================================ */
-
-.xv-welcome-editorial.xv-welcome-editorial-v2 {
-  position: relative !important;
-
-  width: fit-content !important;
-
-  margin:
-    0
-    auto !important;
-
-  padding: 0 !important;
-
-  display: flex !important;
-
-  align-items: baseline !important;
-
-  justify-content: center !important;
-
-  gap: 0.32rem !important;
-
-  /*
-   * Deliberately compact.
-   *
-   * This replaces the previous large marketing-heading feel
-   * with the small workspace greeting treatment from the
-   * reference.
-   */
-  font-size:
-    clamp(
-      0.88rem,
-      1.25vw,
-      1rem
-    ) !important;
-
-  font-weight: 650 !important;
-
-  font-style: normal !important;
-
-  line-height: 1.1 !important;
-
-  letter-spacing:
-    -0.028em !important;
-
-  text-align: center !important;
-
-  text-transform: none !important;
-
-  white-space: nowrap !important;
-
-  color:
-    var(--text-primary) !important;
-
-  background:
-    transparent !important;
-
-  border: 0 !important;
-
-  box-shadow: none !important;
-
-  text-shadow: none !important;
-}
-
-
-/* Primary words */
-
-.xv-welcome-editorial-v2
-.xv-welcome-editorial__primary {
-  display: inline-block !important;
-
-  position: relative !important;
-
-  margin: 0 !important;
-
-  padding: 0 !important;
-
-  color:
-    var(--text-primary) !important;
-
-  background:
-    transparent !important;
-
-  font: inherit !important;
-
-  font-weight: 650 !important;
-
-  letter-spacing:
-    inherit !important;
-
-  text-transform: none !important;
-
-  box-shadow: none !important;
-}
-
-
-/* Secondary word — theme-aware gray */
-
-.xv-welcome-editorial-v2
-.xv-welcome-editorial__build {
-  display: inline-block !important;
-
-  position: relative !important;
-
-  z-index: auto !important;
-
-  margin: 0 !important;
-
-  padding: 0 !important;
-
-  color:
-    var(--text-secondary) !important;
-
-  background:
-    transparent !important;
-
-  border: 0 !important;
-
-  border-radius: 0 !important;
-
-  font: inherit !important;
-
-  font-weight: 550 !important;
-
-  letter-spacing:
-    inherit !important;
-
-  text-transform: none !important;
-
-  box-shadow: none !important;
-
-  text-shadow: none !important;
-}
-
-
-/* Kill all previous decorative/accent treatment */
-
-.xv-welcome-editorial-v2
-.xv-welcome-editorial__build::before,
-
-.xv-welcome-editorial-v2
-.xv-welcome-editorial__build::after {
-  content: none !important;
-
-  display: none !important;
-}
-
-
-/*
- * Previous versions used an italic <em> with a blue
- * hand-drawn border around Ship it.
- *
- * Keep that treatment disabled inside V2 even if an older
- * child is accidentally reintroduced later.
- */
-
-.xv-welcome-editorial-v2 > em,
-.xv-welcome-editorial-v2 > em::before,
-.xv-welcome-editorial-v2 > em::after {
-  background:
-    transparent !important;
-
-  border:
-    0 !important;
-
-  box-shadow:
-    none !important;
-
-  color:
-    var(--text-primary) !important;
-
-  content:
-    none !important;
-}
-
-
-/* ============================================================
-   DASHBOARD WELCOME SPACING
-   Creates room for the two-line greeting above the composer.
+   1. MAIN EMPTY-WORKSPACE WRAPPER
    ============================================================ */
 
 .xv-dashboard-welcome--composer {
@@ -12178,7 +11999,7 @@ body.theme-black {
   margin:
     0
     auto
-    2.55rem !important;
+    3.5rem !important;
 
   padding:
     0 !important;
@@ -12194,8 +12015,15 @@ body.theme-black {
 
   box-shadow:
     none !important;
+
+  text-align:
+    center !important;
 }
 
+
+/* ============================================================
+   2. CENTER HERO
+   ============================================================ */
 
 .xv-dashboard-welcome--composer
 .xv-welcome-hero {
@@ -12205,8 +12033,18 @@ body.theme-black {
   max-width:
     none !important;
 
+  margin:
+    0
+    auto !important;
+
+  padding:
+    0 !important;
+
   display:
     flex !important;
+
+  flex-direction:
+    column !important;
 
   align-items:
     center !important;
@@ -12214,22 +12052,355 @@ body.theme-black {
   justify-content:
     center !important;
 
-  text-align:
-    center !important;
+  gap:
+    0 !important;
 
   overflow:
     visible !important;
 
-  gap:
-    0 !important;
+  text-align:
+    center !important;
 }
 
 
 /* ============================================================
-   SMALL "X + HI USER" AREA ABOVE COMPOSER
+   3. DESCRIBE IT. BUILD IT. SHIP IT.
+   ------------------------------------------------------------
+   Sized closer to your second reference:
+   prominent, but not a huge marketing hero.
    ============================================================ */
 
-.xv-welcome-composer-kicker.xv-welcome-composer-kicker-v2 {
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial {
+  position:
+    relative !important;
+
+  width:
+    fit-content !important;
+
+  max-width:
+    100% !important;
+
+  margin:
+    0
+    auto !important;
+
+  padding:
+    0 !important;
+
+  display:
+    flex !important;
+
+  align-items:
+    baseline !important;
+
+  justify-content:
+    center !important;
+
+  gap:
+    0.34rem !important;
+
+  font-size:
+    clamp(
+      1.35rem,
+      2vw,
+      1.65rem
+    ) !important;
+
+  font-weight:
+    650 !important;
+
+  font-style:
+    normal !important;
+
+  line-height:
+    1.06 !important;
+
+  letter-spacing:
+    -0.045em !important;
+
+  text-align:
+    center !important;
+
+  text-transform:
+    none !important;
+
+  white-space:
+    nowrap !important;
+
+  color:
+    var(--text-primary) !important;
+
+  background:
+    transparent !important;
+
+  border:
+    0 !important;
+
+  box-shadow:
+    none !important;
+
+  text-shadow:
+    none !important;
+}
+
+
+/* ============================================================
+   PRIMARY WORDS
+   Describe it. / Ship it.
+   ============================================================ */
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial > span {
+  position:
+    relative !important;
+
+  display:
+    inline-block !important;
+
+  margin:
+    0 !important;
+
+  padding:
+    0 !important;
+
+  color:
+    var(--text-primary) !important;
+
+  background:
+    transparent !important;
+
+  border:
+    0 !important;
+
+  box-shadow:
+    none !important;
+
+  font:
+    inherit !important;
+
+  font-weight:
+    650 !important;
+
+  font-style:
+    normal !important;
+
+  letter-spacing:
+    inherit !important;
+
+  text-transform:
+    none !important;
+}
+
+
+/* ============================================================
+   SECONDARY WORD
+   Build it.
+
+   White / Beige:
+     black + gray
+
+   Gray / Black:
+     white + gray
+   ============================================================ */
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial
+.xv-welcome-editorial__build {
+  position:
+    relative !important;
+
+  display:
+    inline-block !important;
+
+  z-index:
+    auto !important;
+
+  margin:
+    0 !important;
+
+  padding:
+    0 !important;
+
+  color:
+    var(--text-secondary) !important;
+
+  background:
+    transparent !important;
+
+  border:
+    0 !important;
+
+  border-radius:
+    0 !important;
+
+  box-shadow:
+    none !important;
+
+  text-shadow:
+    none !important;
+
+  font:
+    inherit !important;
+
+  font-weight:
+    560 !important;
+
+  font-style:
+    normal !important;
+
+  letter-spacing:
+    inherit !important;
+
+  text-transform:
+    none !important;
+}
+
+
+/* Remove old Build decorative treatment */
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial
+.xv-welcome-editorial__build::before,
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial
+.xv-welcome-editorial__build::after {
+  content:
+    none !important;
+
+  display:
+    none !important;
+}
+
+
+/* Remove any previous Ship-it decoration */
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial > em,
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial > em::before,
+
+.xv-dashboard-welcome--composer
+.xv-welcome-editorial > em::after {
+  content:
+    none !important;
+
+  background:
+    transparent !important;
+
+  border:
+    0 !important;
+
+  box-shadow:
+    none !important;
+
+  color:
+    var(--text-primary) !important;
+}
+
+
+/* ============================================================
+   4. SMALL CAPABILITY DESCRIPTION
+   ============================================================ */
+
+.xv-welcome-capabilities {
+  width:
+    min(
+      100%,
+      560px
+    );
+
+  margin:
+    0.48rem
+    auto
+    0;
+
+  padding:
+    0
+    1rem;
+
+  color:
+    var(--text-secondary);
+
+  font-family:
+    var(--font-goga),
+    var(--font-inter),
+    system-ui,
+    sans-serif;
+
+  font-size:
+    0.71rem;
+
+  font-weight:
+    470;
+
+  line-height:
+    1.35;
+
+  letter-spacing:
+    -0.012em;
+
+  text-align:
+    center;
+
+  text-transform:
+    none;
+}
+
+
+/* ============================================================
+   5. INTEGRATIONS POSITION
+   ------------------------------------------------------------
+   Headline
+   Description
+   Integrations
+   ============================================================ */
+
+.xv-dashboard-welcome--composer
+.xv-workspace-connections {
+  margin:
+    0.8rem
+    auto
+    0 !important;
+
+  position:
+    relative !important;
+
+  left:
+    auto !important;
+
+  right:
+    auto !important;
+
+  transform:
+    none !important;
+}
+
+
+/* ============================================================
+   6. COMPOSER GREETING
+   ------------------------------------------------------------
+   Hi Alex
+   Turn an idea into something live.
+   ============================================================ */
+
+.xv-welcome-composer-kicker {
+  width:
+    fit-content !important;
+
+  max-width:
+    calc(
+      100% - 24px
+    ) !important;
+
+  margin:
+    0 !important;
+
+  padding:
+    0 !important;
+
   display:
     flex !important;
 
@@ -12243,19 +12414,7 @@ body.theme-black {
     center !important;
 
   gap:
-    0.22rem !important;
-
-  width:
-    fit-content !important;
-
-  max-width:
-    calc(100% - 24px) !important;
-
-  margin:
-    0 !important;
-
-  padding:
-    0 !important;
+    0.2rem !important;
 
   color:
     var(--text-primary) !important;
@@ -12275,33 +12434,32 @@ body.theme-black {
   text-transform:
     none !important;
 
-  white-space:
-    nowrap !important;
-
   pointer-events:
     none !important;
+
+  white-space:
+    nowrap !important;
 }
 
 
-/* Position relative to the REAL composer */
+/* Attach greeting above the real composer */
 
 .xv-chatbar-stack >
-.xv-welcome-composer-kicker-v2 {
+.xv-welcome-composer-kicker {
   position:
     absolute !important;
 
-  /*
-   * Moves the complete two-line identity above the composer
-   * without touching the composer geometry itself.
-   */
   top:
-    -3.42rem !important;
+    -3rem !important;
 
   left:
     0.42rem !important;
 
   z-index:
     8 !important;
+
+  width:
+    fit-content !important;
 
   margin:
     0 !important;
@@ -12312,7 +12470,7 @@ body.theme-black {
 
 
 /* ============================================================
-   "X  Hi Alex"
+   HI + USERNAME
    ============================================================ */
 
 .xv-welcome-composer-hello {
@@ -12320,99 +12478,40 @@ body.theme-black {
     inline-flex !important;
 
   align-items:
-    center !important;
+    baseline !important;
 
   justify-content:
     flex-start !important;
 
   gap:
-    0.38rem !important;
+    0.25rem !important;
 
-  height:
-    1rem !important;
+  margin:
+    0 !important;
 
-  color:
-    var(--text-secondary) !important;
+  padding:
+    0 !important;
+
+  font-family:
+    var(--font-goga),
+    var(--font-inter),
+    system-ui,
+    sans-serif !important;
 
   font-size:
     0.72rem !important;
-
-  font-weight:
-    560 !important;
 
   line-height:
     1 !important;
 
   letter-spacing:
-    -0.015em !important;
+    -0.018em !important;
 }
 
 
-/* Small Xroga X mark */
+/* "Hi" = secondary tone */
 
-.xv-welcome-composer-mark {
-  display:
-    inline-flex !important;
-
-  align-items:
-    center !important;
-
-  justify-content:
-    center !important;
-
-  width:
-    0.92rem !important;
-
-  height:
-    0.92rem !important;
-
-  flex:
-    0 0 0.92rem !important;
-
-  color:
-    var(--text-primary) !important;
-
-  font-size:
-    1rem !important;
-
-  font-weight:
-    650 !important;
-
-  font-style:
-    italic !important;
-
-  line-height:
-    0.9 !important;
-
-  letter-spacing:
-    -0.08em !important;
-
-  transform:
-    translateY(-0.02rem) !important;
-}
-
-
-/* Hi + username */
-
-.xv-welcome-composer-hello-copy {
-  display:
-    inline-flex !important;
-
-  align-items:
-    baseline !important;
-
-  gap:
-    0.24rem !important;
-
-  color:
-    var(--text-secondary) !important;
-
-  white-space:
-    nowrap !important;
-}
-
-
-.xv-welcome-composer-hello-copy > span {
+.xv-welcome-composer-hi {
   color:
     var(--text-secondary) !important;
 
@@ -12421,20 +12520,22 @@ body.theme-black {
 }
 
 
-.xv-welcome-composer-hello-copy > b {
+/* Username = primary tone */
+
+.xv-welcome-composer-user {
   color:
     var(--text-primary) !important;
 
   font-weight:
-    650 !important;
+    680 !important;
 }
 
 
 /* ============================================================
-   "Turn an idea into something live."
+   TAGLINE ABOVE COMPOSER
    ============================================================ */
 
-.xv-welcome-composer-kicker-v2 > strong {
+.xv-welcome-composer-kicker > strong {
   display:
     block !important;
 
@@ -12447,8 +12548,14 @@ body.theme-black {
   color:
     var(--text-primary) !important;
 
+  font-family:
+    var(--font-goga),
+    var(--font-inter),
+    system-ui,
+    sans-serif !important;
+
   font-size:
-    0.96rem !important;
+    0.94rem !important;
 
   font-weight:
     610 !important;
@@ -12457,7 +12564,10 @@ body.theme-black {
     1.12 !important;
 
   letter-spacing:
-    -0.03em !important;
+    -0.032em !important;
+
+  text-align:
+    left !important;
 
   text-transform:
     none !important;
@@ -12467,12 +12577,13 @@ body.theme-black {
 }
 
 
-/*
- * Username now appears in the Hi row.
- * Keep the legacy element only for compatibility.
- */
+/* ============================================================
+   LEGACY USERNAME HOOK
+   ------------------------------------------------------------
+   Keep DOM/test/accessibility compatibility without showing a
+   second username.
+   ============================================================ */
 
-.xv-welcome-composer-kicker-v2
 .xv-welcome-short-name {
   position:
     absolute !important;
@@ -12493,10 +12604,17 @@ body.theme-black {
     hidden !important;
 
   clip:
-    rect(0 0 0 0) !important;
+    rect(
+      0,
+      0,
+      0,
+      0
+    ) !important;
 
   clip-path:
-    inset(50%) !important;
+    inset(
+      50%
+    ) !important;
 
   white-space:
     nowrap !important;
@@ -12507,7 +12625,7 @@ body.theme-black {
 
 
 /* ============================================================
-   MOBILE
+   7. MOBILE
    ============================================================ */
 
 @media (max-width: 639px) {
@@ -12519,7 +12637,7 @@ body.theme-black {
       ) !important;
 
     margin-bottom:
-      2.35rem !important;
+      3.15rem !important;
   }
 
 
@@ -12533,32 +12651,68 @@ body.theme-black {
   }
 
 
-  .xv-welcome-editorial.xv-welcome-editorial-v2 {
+  .xv-dashboard-welcome--composer
+  .xv-welcome-editorial {
     gap:
-      0.24rem !important;
+      0.25rem !important;
 
     font-size:
       clamp(
-        0.78rem,
-        3.7vw,
-        0.9rem
+        1.02rem,
+        5vw,
+        1.25rem
       ) !important;
 
+    line-height:
+      1.08 !important;
+
     letter-spacing:
-      -0.025em !important;
+      -0.038em !important;
 
     flex-wrap:
+      nowrap !important;
+
+    white-space:
       nowrap !important;
   }
 
 
+  .xv-welcome-capabilities {
+    width:
+      min(
+        100%,
+        390px
+      );
+
+    margin-top:
+      0.4rem;
+
+    padding:
+      0
+      0.65rem;
+
+    font-size:
+      0.62rem;
+
+    line-height:
+      1.35;
+  }
+
+
+  .xv-dashboard-welcome--composer
+  .xv-workspace-connections {
+    margin-top:
+      0.68rem !important;
+  }
+
+
   .xv-chatbar-stack >
-  .xv-welcome-composer-kicker-v2 {
+  .xv-welcome-composer-kicker {
     top:
-      -3.18rem !important;
+      -2.85rem !important;
 
     left:
-      0.32rem !important;
+      0.3rem !important;
 
     max-width:
       calc(
@@ -12568,37 +12722,19 @@ body.theme-black {
 
 
   .xv-welcome-composer-hello {
-    gap:
-      0.3rem !important;
-
     font-size:
-      0.64rem !important;
+      0.65rem !important;
   }
 
 
-  .xv-welcome-composer-mark {
-    width:
-      0.82rem !important;
-
-    height:
-      0.82rem !important;
-
-    flex-basis:
-      0.82rem !important;
-
-    font-size:
-      0.88rem !important;
-  }
-
-
-  .xv-welcome-composer-kicker-v2 > strong {
+  .xv-welcome-composer-kicker > strong {
     max-width:
       calc(
-        100vw - 52px
+        100vw - 48px
       ) !important;
 
     font-size:
-      0.82rem !important;
+      0.8rem !important;
 
     white-space:
       normal !important;
