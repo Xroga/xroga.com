@@ -250,6 +250,9 @@ section.style.setProperty(
   )}px`
 );
 
+/* CLOSE syncPinnedBar */
+};
+
     const openFromScroll = () => {
       syncPinnedBar();
       if (scrollRoot.scrollTop > 28 && !autoOpenedRef.current) {
