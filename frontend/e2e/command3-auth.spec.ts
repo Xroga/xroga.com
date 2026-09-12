@@ -555,6 +555,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const expandedWordmark = desktopSidebar.getByTestId('xroga-sidebar-wordmark');
   await expect(expandedWordmark).toHaveAccessibleName('Xroga');
   await expect(expandedWordmark).toHaveText('Xroga');
+  // Geometry must be measured against the product font rather than whichever fallback font
+  // happens to win the first CI paint. The fallback can be nearly square even though the
+  // settled wordmark is the intended wide mark.
+  await page.evaluate(() => document.fonts.ready);
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
   // The old floor here was 96px — the wordmark's full natural width. That only held while
