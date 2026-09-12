@@ -42,6 +42,18 @@ test('repository folders do not hide terminals behind a fixed client-side cap', 
   assert.doesNotMatch(SIDEBAR, /sessions:[\s\S]*?\.slice\(0,\s*24\)/);
 });
 
+test('restoring an engineering task rehydrates Project edits without crossing project context', () => {
+  const restore = CHAT.slice(
+    CHAT.indexOf('async function restoreProjectWorkspaceFromMessages'),
+    CHAT.indexOf('function lastUserPromptNear'),
+  );
+  assert.match(restore, /\.find\(isRenderableArtifact\)/);
+  assert.match(restore, /engineeringArtifactWorkspaceProjection\(engineeringArtifact\)/);
+  assert.match(restore, /projection\.repo !== repositoryName/);
+  assert.match(restore, /sameProjectContext\(workspace\.activeProjectContext, target\)/);
+  assert.match(restore, /projectFiles: projection\.projectFiles/);
+});
+
 test('outgoing write metadata is asserted against the visible canonical context', () => {
   assert.match(CHAT, /assertActiveProjectTarget\(\{/);
   assert.match(CHAT, /githubTargetRepo: stickyTargetRepo/);

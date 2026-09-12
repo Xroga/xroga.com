@@ -106,6 +106,52 @@ async function restoreProjectWorkspaceFromMessages(
   messages: ChatMessage[],
   repositoryName?: string
 ): Promise<void> {
+  const engineeringArtifact = [...messages]
+    .reverse()
+    .map((message) => message.featureOutput)
+    .find(isRenderableArtifact);
+  if (engineeringArtifact) {
+    const projection = engineeringArtifactWorkspaceProjection(engineeringArtifact);
+    if (!projection) return;
+    // A saved task must never hydrate its files into a differently selected repository.
+    if (repositoryName?.includes('/') && projection.repo !== repositoryName) return;
+    const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
+    const workspace = useProjectWorkspaceStore.getState();
+    const selected = getSelectedRepoContext();
+    const target = {
+      repo: projection.repo,
+      branch: projection.sourceBranch,
+      projectRoot:
+        selected?.repo === projection.repo && selected.branch === projection.sourceBranch
+          ? selected.projectRoot
+          : '/',
+    };
+    if (!workspace.activeProjectContext) workspace.activateProjectContext(target);
+    else if (!sameProjectContext(workspace.activeProjectContext, target)) return;
+    const active = useProjectWorkspaceStore.getState();
+    // Project state is shared by all tasks in a context; a restored task may fill an
+    // empty context, but it must not replace newer project state already present there.
+    if (active.projectFiles.length || active.commitSha || active.deployUrl) return;
+    active.applyBuild({
+      ...target,
+      projectName: projection.projectName,
+      html: '',
+      css: '',
+      js: '',
+      projectFiles: projection.projectFiles,
+      githubRepoUrl: projection.githubRepoUrl,
+      commitSha: projection.commitSha,
+      reviewBranch: projection.reviewBranch,
+      status: projection.status,
+      changesSummary: projection.changesSummary,
+      fileTrail: projection.fileTrail,
+      openPreview: false,
+      terminalLine: projection.terminalLines[0],
+    });
+    for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
+    return;
+  }
+
   const output = latestRecoverableLandingOutput(messages);
   if (!output) return;
   const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
