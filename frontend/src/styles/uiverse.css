@@ -2773,3 +2773,381 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     border-radius: 14px !important;
   }
 }
+
+/* ============================================================
+   XROGA SIDEBAR — FINAL SIMPLE MONO STYLE
+   ------------------------------------------------------------
+   ✓ no gradient hover
+   ✓ no colored accent line
+   ✓ no icon color animation
+   ✓ no hover movement
+   ✓ no active pill background
+   ✓ bold text by default
+   ✓ stronger/bolder icons
+   ✓ theme-controlled monochrome colors
+
+   White  = black
+   Beige  = black
+   Gray   = white
+   Black  = white
+   ============================================================ */
+
+
+/* ============================================================
+   1. THEME COLORS
+   ============================================================ */
+
+body.theme-white .xv-sidebar-root {
+  --xv-sidebar-ink: #111111;
+}
+
+body.theme-beige .xv-sidebar-root {
+  --xv-sidebar-ink: #241f18;
+}
+
+body.theme-gray .xv-sidebar-root {
+  --xv-sidebar-ink: #ffffff;
+}
+
+body.theme-black .xv-sidebar-root {
+  --xv-sidebar-ink: #ffffff;
+}
+
+
+/* ============================================================
+   2. REMOVE OLD GRADIENT + LEFT ACCENT LINE
+   ============================================================ */
+
+@media (min-width: 1024px) {
+
+  .xv-sidebar-menu a::before,
+  .xv-sidebar-menu button.xv-menu-item::before,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a::before,
+  .xv-sidebar-menu .xv-nav-group__trigger::before,
+
+  .xv-sidebar-menu a::after,
+  .xv-sidebar-menu button.xv-menu-item::after,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a::after,
+  .xv-sidebar-menu .xv-nav-group__trigger::after {
+    content: none !important;
+    display: none !important;
+
+    background: none !important;
+
+    width: 0 !important;
+    height: 0 !important;
+
+    opacity: 0 !important;
+
+    transform: none !important;
+
+    transition: none !important;
+  }
+
+
+  /* ==========================================================
+     3. DEFAULT NAV ITEM
+     Text + icon are already strong before hover
+     ========================================================== */
+
+  .xv-sidebar-menu a,
+  .xv-sidebar-menu button.xv-menu-item,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a,
+  .xv-sidebar-menu .xv-nav-group__trigger {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    box-shadow: none !important;
+
+    transform: none !important;
+
+    opacity: 1 !important;
+
+    font-weight: 600 !important;
+
+    transition:
+      background-color 120ms ease,
+      color 120ms ease !important;
+  }
+
+
+  /* labels */
+  .xv-sidebar-menu .xv-menu-label,
+  .xv-sidebar-menu a span,
+  .xv-sidebar-menu button.xv-menu-item span,
+  .xv-sidebar-menu .xv-nav-group__trigger span {
+    color: inherit !important;
+
+    font-weight: 600 !important;
+
+    opacity: 1 !important;
+  }
+
+
+  /* ==========================================================
+     4. ICONS
+     Bold monochrome icons — no blue/purple/etc.
+     ========================================================== */
+
+  .xv-sidebar-menu svg,
+  .xv-sidebar-menu .xv-animated-nav-icon {
+    width: 15px !important;
+    height: 15px !important;
+
+    color: var(--xv-sidebar-ink) !important;
+
+    stroke: currentColor !important;
+
+    stroke-width: 2.1 !important;
+
+    opacity: 1 !important;
+
+    filter: none !important;
+
+    transform: none !important;
+
+    transition: none !important;
+  }
+
+
+  .xv-sidebar-menu svg path,
+  .xv-sidebar-menu svg line,
+  .xv-sidebar-menu svg polyline,
+  .xv-sidebar-menu svg circle,
+  .xv-sidebar-menu svg rect {
+    stroke: currentColor !important;
+  }
+
+
+  /*
+   * Only SVG shapes that are already filled should inherit
+   * the monochrome sidebar color.
+   *
+   * We deliberately don't force fill on normal Lucide icons.
+   */
+  .xv-sidebar-menu svg path[fill]:not([fill="none"]),
+  .xv-sidebar-menu svg circle[fill]:not([fill="none"]),
+  .xv-sidebar-menu svg rect[fill]:not([fill="none"]) {
+    fill: currentColor !important;
+  }
+
+
+  /* ==========================================================
+     5. NO HOVER COLOR CHANGE
+     Keep it deliberately simple.
+     ========================================================== */
+
+  .xv-sidebar-menu a:hover,
+  .xv-sidebar-menu button.xv-menu-item:hover,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover,
+  .xv-sidebar-menu .xv-nav-group__trigger:hover {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    border-color: transparent !important;
+
+    box-shadow: none !important;
+
+    transform: none !important;
+
+    opacity: 1 !important;
+  }
+
+
+  .xv-sidebar-menu a:hover svg,
+  .xv-sidebar-menu button.xv-menu-item:hover svg,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover svg,
+  .xv-sidebar-menu .xv-nav-group__trigger:hover svg,
+
+  .xv-sidebar-menu a:hover .xv-animated-nav-icon,
+  .xv-sidebar-menu button.xv-menu-item:hover .xv-animated-nav-icon,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:hover .xv-animated-nav-icon,
+  .xv-sidebar-menu .xv-nav-group__trigger:hover .xv-animated-nav-icon {
+    color: var(--xv-sidebar-ink) !important;
+
+    stroke: currentColor !important;
+
+    opacity: 1 !important;
+
+    filter: none !important;
+
+    transform: none !important;
+  }
+
+
+  /* ==========================================================
+     6. ACTIVE ITEM
+     No black pill / gray pill / colored rail.
+     Slightly heavier type is enough.
+     ========================================================== */
+
+  .xv-sidebar-menu a.xv-active,
+  .xv-sidebar-menu button.xv-menu-item.xv-active,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active,
+  .xv-sidebar-menu .xv-nav-group__trigger.xv-active {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    box-shadow: none !important;
+
+    transform: none !important;
+
+    font-weight: 700 !important;
+  }
+
+
+  .xv-sidebar-menu a.xv-active svg,
+  .xv-sidebar-menu button.xv-menu-item.xv-active svg,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active svg,
+  .xv-sidebar-menu .xv-nav-group__trigger.xv-active svg,
+
+  .xv-sidebar-menu a.xv-active .xv-animated-nav-icon,
+  .xv-sidebar-menu button.xv-menu-item.xv-active .xv-animated-nav-icon,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active .xv-animated-nav-icon,
+  .xv-sidebar-menu .xv-nav-group__trigger.xv-active .xv-animated-nav-icon {
+    color: var(--xv-sidebar-ink) !important;
+
+    stroke: currentColor !important;
+
+    stroke-width: 2.2 !important;
+
+    opacity: 1 !important;
+
+    transform: none !important;
+
+    filter: none !important;
+  }
+
+
+  /* active item also stays identical on hover */
+  .xv-sidebar-menu a.xv-active:hover,
+  .xv-sidebar-menu button.xv-menu-item.xv-active:hover,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a.xv-active:hover,
+  .xv-sidebar-menu .xv-nav-group__trigger.xv-active:hover {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+
+    transform: none !important;
+  }
+
+
+  /* ==========================================================
+     7. CLICK / PRESS
+     No movement or colorful feedback
+     ========================================================== */
+
+  .xv-sidebar-menu a:active,
+  .xv-sidebar-menu button.xv-menu-item:active,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:active,
+  .xv-sidebar-menu .xv-nav-group__trigger:active {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    transform: none !important;
+
+    box-shadow: none !important;
+  }
+
+
+  /* ==========================================================
+     8. CHEVRONS
+     Same monochrome color
+     ========================================================== */
+
+  .xv-sidebar-menu .xv-nav-group__chev {
+    color: var(--xv-sidebar-ink) !important;
+
+    stroke: currentColor !important;
+
+    opacity: 0.72 !important;
+  }
+
+
+  /* ==========================================================
+     9. REPOSITORY AREA
+     Remove blue/colorful terminal selection styling too.
+     ========================================================== */
+
+  .xv-repos-scroll button {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    border-color: transparent !important;
+
+    box-shadow: none !important;
+
+    font-weight: 600 !important;
+
+    transition: none !important;
+  }
+
+
+  .xv-repos-scroll button:hover {
+    color: var(--xv-sidebar-ink) !important;
+
+    background: transparent !important;
+
+    border-color: transparent !important;
+
+    box-shadow: none !important;
+
+    transform: none !important;
+  }
+
+
+  .xv-repos-scroll button svg {
+    color: var(--xv-sidebar-ink) !important;
+
+    stroke: currentColor !important;
+
+    stroke-width: 2 !important;
+
+    opacity: 1 !important;
+  }
+
+
+  .xv-repos-scroll button[class*="ring-"] {
+    box-shadow: none !important;
+
+    outline: none !important;
+  }
+
+
+  /* ==========================================================
+     10. KEEP KEYBOARD ACCESSIBILITY
+     No gradient, only a clean outline when keyboard navigating.
+     ========================================================== */
+
+  .xv-sidebar-menu a:focus-visible,
+  .xv-sidebar-menu button.xv-menu-item:focus-visible,
+  .xv-sidebar-menu .xv-hover-tip-wrap > a:focus-visible,
+  .xv-sidebar-menu .xv-nav-group__trigger:focus-visible {
+    outline:
+      1px
+      solid
+      color-mix(
+        in srgb,
+        var(--xv-sidebar-ink) 25%,
+        transparent
+      ) !important;
+
+    outline-offset: -1px !important;
+
+    box-shadow: none !important;
+
+    background: transparent !important;
+  }
+
+}
