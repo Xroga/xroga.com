@@ -38,6 +38,10 @@ test('header, sidebar and task history bind to the canonical project identity', 
   assert.match(CHAT, /setActiveTaskSession\(sessionIdRef\.current, activeProjectContextKey\)/);
 });
 
+test('repository folders do not hide terminals behind a fixed client-side cap', () => {
+  assert.doesNotMatch(SIDEBAR, /sessions:[\s\S]*?\.slice\(0,\s*24\)/);
+});
+
 test('outgoing write metadata is asserted against the visible canonical context', () => {
   assert.match(CHAT, /assertActiveProjectTarget\(\{/);
   assert.match(CHAT, /githubTargetRepo: stickyTargetRepo/);

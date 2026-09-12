@@ -442,8 +442,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
               return a.terminalNumber - b.terminalNumber;
             }
             return Date.parse(a.updatedAt) - Date.parse(b.updatedAt);
-          })
-          .slice(0, 24),
+          }),
       }));
 
     // Activity filters operate on real terminal timestamps. The active repository

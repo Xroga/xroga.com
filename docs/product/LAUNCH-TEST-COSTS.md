@@ -1,6 +1,6 @@
 # Launch test cost plan
 
-The pass uses bounded prompts, one disposable repository, no customer repositories, no paid checkout, no real email delivery, no DNS change, and no app-store or blockchain publication.
+The pass uses bounded prompts, one disposable repository, no customer repositories, no completed paid checkout, no real email delivery, no DNS change, and no app-store or blockchain publication.
 
 | Test family | Maximum live attempts before investigation | External side effect | Cost control |
 | --- | ---: | --- | --- |
@@ -19,6 +19,8 @@ The pass uses bounded prompts, one disposable repository, no customer repositori
 - Per-run dollar cost was not exposed in the existing Workspace record, so no numeric live-run cost is claimed.
 - Source audit found bounded retry, no-progress, deadline, tool-call, provider-reservation, and completion-reserve controls.
 - The focused edit reused one hydrated repository snapshot for validation and publication. Its defect was presentation duplication, not a duplicate GitHub write.
+- The semantic-variant retest used one model attempt, four sandbox commands, one remote review-branch commit, and no repair loop. It stopped immediately after independent GitHub verification.
+- Billing validation created a non-charging checkout configuration and opened the hosted Whop checkout only. No payment credentials were entered and no subscription was purchased.
 
 ## Stop conditions
 

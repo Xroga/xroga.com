@@ -4,9 +4,7 @@ Verified against the production release endpoints, the public product pages, the
 
 ## Production identity
 
-- Frontend: `ae73ccf3665323309e1ae457d22d81aeafce7d46` from `https://xroga.com/api/release`.
-- Backend: `6b3e548ef590108175fe121cf646ccb6bf7748a4` from `https://xroga-api.fly.dev/health` and `/ready`.
-- The releases are source-compatible: no backend path changed between the backend release commit and the frontend release commit.
+- Frontend and backend release identities are recorded at the end of the live audit, after the final evidence commit reaches production. A frontend-only commit may legitimately leave the backend release SHA unchanged.
 
 ## Capability truth table
 
@@ -49,6 +47,9 @@ Verified against the production release endpoints, the public product pages, the
 5. Missing permission, provider configuration, runtime, or evidence must render as a clear blocker instead of a success claim.
 6. The visible repository, branch, and project root must equal the write target or the write is refused.
 
-## Known launch defect under repair
+## Verified repairs and remaining evidence gaps
 
-An authenticated disposable-repository run produced the correct one-file GitHub commit `ab260dc78cd46a343798e3e7f447cb58a055b931`, but its completion artifact reported all five files in the merged project snapshot as changed. Repository safety and scope were correct; the user-facing diff summary was not. The launch fix must preserve the full snapshot for validation and atomic publication while deriving completion artifacts from the actual before/after file trail.
+- The changed-file reporting defect is closed: semantic-variant run E2E-REPO-002 reported one changed file in Workspace and GitHub.
+- Official-only web requests now reject third-party evidence, concise requests preserve their response shape, unsupported image/browser requests fail truthfully, and internal model ids are removed/redacted from project evidence.
+- Canonical repository and branch identity survives production reload after upgrading multiple open tabs; passive refresh cannot reset it.
+- A connected GitHub review-branch workflow is live-verified. Vercel, direct document/vision input, and a full new web-product Preview remain evidence gaps because the tested account/runtime did not provide the required authorization or upload control.
