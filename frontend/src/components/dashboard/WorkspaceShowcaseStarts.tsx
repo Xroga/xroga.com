@@ -207,12 +207,48 @@ export function WorkspaceShowcaseStarts({ className }: { className?: string }) {
     if (!section || !scrollRoot) return;
 
     const syncPinnedBar = () => {
-      const sectionRect = section.getBoundingClientRect();
-      const rootRect = scrollRoot.getBoundingClientRect();
-      section.style.setProperty('--xv-explore-left', `${sectionRect.left}px`);
-      section.style.setProperty('--xv-explore-width', `${sectionRect.width}px`);
-      section.style.setProperty('--xv-explore-bottom', `${Math.max(4, window.innerHeight - rootRect.bottom + 4)}px`);
-    };
+     const rootRect = scrollRoot.getBoundingClientRect();
+
+/*
+ * Kimi-style centered inspiration dock.
+ *
+ * Center against the real workspace viewport, NOT against the
+ * narrower starter-content section.
+ */
+const horizontalInset = 24;
+const maxBarWidth = 770;
+
+const availableWidth = Math.max(
+  280,
+  rootRect.width - horizontalInset * 2
+);
+
+const barWidth = Math.min(
+  maxBarWidth,
+  availableWidth
+);
+
+const barLeft =
+  rootRect.left +
+  (rootRect.width - barWidth) / 2;
+
+section.style.setProperty(
+  '--xv-explore-left',
+  `${barLeft}px`
+);
+
+section.style.setProperty(
+  '--xv-explore-width',
+  `${barWidth}px`
+);
+
+section.style.setProperty(
+  '--xv-explore-bottom',
+  `${Math.max(
+    4,
+    window.innerHeight - rootRect.bottom + 4
+  )}px`
+);
 
     const openFromScroll = () => {
       syncPinnedBar();
