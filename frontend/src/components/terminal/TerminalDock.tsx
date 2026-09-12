@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+
 import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
+
 import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -16,7 +18,10 @@ import { cn } from '@/lib/utils';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { WorkspaceShowcaseStarts } from '@/components/dashboard/WorkspaceShowcaseStarts';
-import { DashboardWelcome, WorkspaceComposerKicker } from '@/components/dashboard/DashboardWelcome';
+import {
+  DashboardWelcome,
+  WorkspaceComposerKicker,
+} from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { ChevronsUpDownIcon } from '@/components/icons/animated/ChevronsUpDownIcon';
@@ -30,51 +35,117 @@ const FULLSCREEN_BUILD_COMMANDS = [
 
 export function TerminalDock() {
   const dockRef = useRef<HTMLDivElement>(null);
+
   const pathname = usePathname();
+
   const shellIdentity = useShellIdentity();
+
   const profile = useAppStore((s) => s.profile);
-  const displayName = profile?.display_name ?? shellIdentity.displayName;
+
+  const displayName =
+    profile?.display_name ?? shellIdentity.displayName;
+
   const hydrated = useHydrated();
-  const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
-  const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
-  const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
-  const terminalSkinRaw = useThemeStore((s) => s.terminalSkin);
-  const chatbarHiddenRaw = useThemeStore((s) => s.chatbarHidden);
-  const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
-  const incognitoRaw = usePrivacyStore((s) => s.incognito);
-  const incognito = hydrated && incognitoRaw;
-  const keyboardOffset = useVisualViewportBottom();
-  const { showJumpToLatest, scrollToFirst, scrollToLatest } = useTerminalScroll();
-  const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
-  const terminalFullscreen = hydrated && terminalFullscreenRaw;
-  const terminalSkin = hydrated ? terminalSkinRaw : 'dark';
-  const chatbarHidden = hydrated && chatbarHiddenRaw;
-  const workspaceOpen = hydrated && workspaceOpenRaw;
-  const dockSuppressed = chatbarHidden;
-  const dashboardFullscreen = isDashboard && terminalFullscreen;
-  const { messages, loading, sessionRestoring } = useTerminalChat();
-  const emptyWorkspace = hydrated && !sessionRestoring && messages.length === 0 && !loading;
-  // Project edits keeps the composer in the terminal pane. DashboardView publishes
-  // that pane's live edges so the dock can stop exactly at the split.
-  const showStarterExperience = emptyWorkspace && !workspaceOpen;
+
+  const sidebarOpen =
+    useThemeStore((s) => s.sidebarOpen);
+
+  const sidebarWidth =
+    useThemeStore((s) => s.sidebarWidth);
+
+  const terminalFullscreenRaw =
+    useThemeStore((s) => s.terminalFullscreen);
+
+  const terminalSkinRaw =
+    useThemeStore((s) => s.terminalSkin);
+
+  const chatbarHiddenRaw =
+    useThemeStore((s) => s.chatbarHidden);
+
+  const workspaceOpenRaw =
+    useProjectWorkspaceStore((s) => s.workspaceOpen);
+
+  const incognitoRaw =
+    usePrivacyStore((s) => s.incognito);
+
+  const incognito =
+    hydrated && incognitoRaw;
+
+  const keyboardOffset =
+    useVisualViewportBottom();
+
+  const {
+    showJumpToLatest,
+    scrollToFirst,
+    scrollToLatest,
+  } = useTerminalScroll();
+
+  const isDashboard =
+    pathname === '/workspace' ||
+    pathname === '/workspace/';
+
+  const terminalFullscreen =
+    hydrated && terminalFullscreenRaw;
+
+  const terminalSkin =
+    hydrated
+      ? terminalSkinRaw
+      : 'dark';
+
+  const chatbarHidden =
+    hydrated && chatbarHiddenRaw;
+
+  const workspaceOpen =
+    hydrated && workspaceOpenRaw;
+
+  const dockSuppressed =
+    chatbarHidden;
+
+  const dashboardFullscreen =
+    isDashboard && terminalFullscreen;
+
+  const {
+    messages,
+    loading,
+    sessionRestoring,
+  } = useTerminalChat();
+
+  const emptyWorkspace =
+    hydrated &&
+    !sessionRestoring &&
+    messages.length === 0 &&
+    !loading;
+
+  const showStarterExperience =
+    emptyWorkspace &&
+    !workspaceOpen;
 
   useEffect(() => {
     if (!isDashboard) return;
-    // TerminalChatBar owns the live composer measurement. Measuring this whole dock
-    // also included starter tabs and template cards, so selecting a repository could
-    // change the value from ~90px to 350px and visibly move the workspace. The parent
-    // only needs to clear the reservation when the composer is intentionally hidden.
+
     if (dockSuppressed) {
-      document.documentElement.style.setProperty('--xv-chatbar-height', '0px');
+      document.documentElement.style.setProperty(
+        '--xv-chatbar-height',
+        '0px'
+      );
     }
-  }, [isDashboard, dockSuppressed]);
+  }, [
+    isDashboard,
+    dockSuppressed,
+  ]);
 
   useEffect(() => {
     if (!showStarterExperience) return;
-    const frame = window.requestAnimationFrame(() => {
-      dockRef.current?.scrollTo({ top: 0 });
-    });
-    return () => window.cancelAnimationFrame(frame);
+
+    const frame =
+      window.requestAnimationFrame(() => {
+        dockRef.current?.scrollTo({
+          top: 0,
+        });
+      });
+
+    return () =>
+      window.cancelAnimationFrame(frame);
   }, [showStarterExperience]);
 
   return (
@@ -82,34 +153,62 @@ export function TerminalDock() {
       ref={dockRef}
       className={cn(
         'xv-terminal-dock fixed left-0 right-0 transition-[left,opacity] duration-200',
-        !isDashboard && 'hidden',
-        workspaceOpen && 'xv-terminal-dock--workspace-split',
-        dashboardFullscreen ? 'z-[210] xv-terminal-dock--fullscreen' : 'z-[55] lg:left-[var(--sidebar-width)]',
-        incognito && 'xv-terminal-dock--incognito',
-        sessionRestoring && 'xv-terminal-dock--restoring',
-        showStarterExperience && !incognito && !chatbarHidden && 'xv-terminal-dock--idle',
-        `terminal-skin-${incognito ? 'dark' : terminalSkin}`,
+
+        !isDashboard &&
+          'hidden',
+
+        workspaceOpen &&
+          'xv-terminal-dock--workspace-split',
+
+        dashboardFullscreen
+          ? 'z-[210] xv-terminal-dock--fullscreen'
+          : 'z-[55] lg:left-[var(--sidebar-width)]',
+
+        incognito &&
+          'xv-terminal-dock--incognito',
+
+        sessionRestoring &&
+          'xv-terminal-dock--restoring',
+
+        showStarterExperience &&
+          !incognito &&
+          !chatbarHidden &&
+          'xv-terminal-dock--idle',
+
+        `terminal-skin-${
+          incognito
+            ? 'dark'
+            : terminalSkin
+        }`
       )}
-      style={{
-        '--sidebar-width': (hydrated ? sidebarOpen : true)
-          ? hydrated
-            ? `${sidebarWidth}px`
-            : 'var(--xv-boot-sidebar-width, 256px)'
-          : '64px',
-        bottom: keyboardOffset,
-      } as React.CSSProperties}
+      style={
+        {
+          '--sidebar-width':
+            (hydrated
+              ? sidebarOpen
+              : true)
+              ? hydrated
+                ? `${sidebarWidth}px`
+                : 'var(--xv-boot-sidebar-width, 256px)'
+              : '64px',
+
+          bottom:
+            keyboardOffset,
+        } as React.CSSProperties
+      }
       aria-hidden={!isDashboard}
-      data-workspace-state={showStarterExperience ? 'empty' : 'conversation'}
+      data-workspace-state={
+        showStarterExperience
+          ? 'empty'
+          : 'conversation'
+      }
       data-testid="persistent-terminal-dock"
     >
       <div
         className={cn(
           'mx-auto px-2 sm:px-4 lg:px-6 pt-1.5 sm:pt-2 pb-0.5 sm:pb-1 xv-terminal-dock-inner',
+
           dashboardFullscreen
-            /* Bounded, like every other state. `max-w-none` stretched the composer to
-               the full width of the screen, so on a wide monitor a one-line prompt sat
-               in a field over a metre of pixels long and the caret started nowhere near
-               the text above it. */
             ? 'max-w-3xl px-2 sm:px-4'
             : workspaceOpen
               ? 'max-w-3xl'
@@ -117,80 +216,149 @@ export function TerminalDock() {
         )}
       >
         {dockSuppressed ? (
-          /* Nothing. Hiding the chatbar removes the chatbar.
-             This used to leave a small floating restore button in the composer's
-             place, on the reasoning that a hidden control needs a way back. It has
-             one: the same toggle in the terminal's title bar that hid it, which
-             stays on screen and flips to "Show the chatbar". The floating button was
-             a second control for one job, sitting in the space the reader had just
-             asked to have back. */
           null
         ) : (
           <div className="flex items-end gap-3">
             <div className="flex-1 min-w-0">
-              {dashboardFullscreen && emptyWorkspace && !incognito ? (
-                <div className="xv-fullscreen-inspiration" aria-label="Command inspiration">
+
+              {dashboardFullscreen &&
+              emptyWorkspace &&
+              !incognito ? (
+                <div
+                  className="xv-fullscreen-inspiration"
+                  aria-label="Command inspiration"
+                >
                   <div aria-hidden="true">
-                    {FULLSCREEN_BUILD_COMMANDS.map((command, index) => (
-                      <code
-                        key={command}
-                        style={{ '--xv-command-index': index } as React.CSSProperties}
-                      >
-                        {command}
-                      </code>
-                    ))}
+                    {FULLSCREEN_BUILD_COMMANDS.map(
+                      (
+                        command,
+                        index
+                      ) => (
+                        <code
+                          key={command}
+                          style={
+                            {
+                              '--xv-command-index':
+                                index,
+                            } as React.CSSProperties
+                          }
+                        >
+                          {command}
+                        </code>
+                      )
+                    )}
                   </div>
                 </div>
               ) : null}
-              {/* The repo context sits in this thin strip below the composer, as a
-                  compact chip — not the verbose `outside` mode, which renders a full
-                  sentence ("Loading repositories…") and full name/branch text. That
-                  variant belongs on pages with room for it; here it reintroduces the
-                  exact height and clutter the compact chip exists to avoid. */}
+
               <ChatbarQueueOutside />
-              {showStarterExperience && !incognito ? (
+
+              {showStarterExperience &&
+              !incognito ? (
                 <DashboardWelcome composer />
               ) : null}
+
+              {/* =========================================
+                  KIMI-STYLE COMPOSER FRAME
+                  ========================================= */}
+
               <div className="xv-kimi-composer-frame">
-  <div className="xv-chatbar-stack relative">
-    {messages.length > 0 && !incognito ? (
-      <div
-        className={cn(
-          'xv-conversation-navigator',
-          showJumpToLatest && 'is-away-from-latest'
+
+                <div className="xv-chatbar-stack relative">
+
+                  {messages.length > 0 &&
+                  !incognito ? (
+                    <div
+                      className={cn(
+                        'xv-conversation-navigator',
+
+                        showJumpToLatest &&
+                          'is-away-from-latest'
+                      )}
+                      aria-label="Conversation position"
+                    >
+                      <ChevronsUpDownIcon
+                        size={19}
+                        aria-hidden="true"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          scrollToFirst(
+                            'smooth'
+                          )
+                        }
+                        aria-label="Go to first conversation"
+                        title="First conversation"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          scrollToLatest(
+                            'smooth'
+                          )
+                        }
+                        aria-label="Go to latest conversation"
+                        title="Latest conversation"
+                      />
+                    </div>
+                  ) : null}
+
+                  {showStarterExperience &&
+                  !incognito ? (
+                    <WorkspaceComposerKicker
+                      displayName={
+                        displayName
+                      }
+                    />
+                  ) : null}
+
+                  {!incognito ? (
+                    <CompanionComposerAnchor />
+                  ) : null}
+
+                  <TerminalChatBar />
+
+                </div>
+
+                {!incognito ? (
+                  <div className="xv-chatbar-context-strip">
+                    <RepoContextBar
+                      compact
+                    />
+                  </div>
+                ) : null}
+
+              </div>
+
+              {/* IMPORTANT:
+                  This must stay OUTSIDE the Kimi composer.
+                  Your failed edit accidentally removed it. */}
+
+              {showStarterExperience &&
+              !incognito ? (
+                <div className="xv-workspace-starter-stack">
+                  <WorkspaceShowcaseStarts
+                    className="xv-workspace-showcase-below-fold"
+                  />
+                </div>
+              ) : null}
+
+            </div>
+          </div>
         )}
-        aria-label="Conversation position"
-      >
-        <ChevronsUpDownIcon size={19} aria-hidden="true" />
 
-        <button
-          type="button"
-          onClick={() => scrollToFirst('smooth')}
-          aria-label="Go to first conversation"
-          title="First conversation"
-        />
+        {incognito ? (
+          <p className="text-[10px] sm:text-xs text-center text-white py-2 sm:py-2.5 px-3 font-medium leading-relaxed xv-incognito-room-notice">
+            {
+              INCOGNITO_PRIVATE_ROOM_NOTICE
+            }
+          </p>
+        ) : null}
 
-        <button
-          type="button"
-          onClick={() => scrollToLatest('smooth')}
-          aria-label="Go to latest conversation"
-          title="Latest conversation"
-        />
       </div>
-    ) : null}
-
-    {showStarterExperience && !incognito ? (
-      <WorkspaceComposerKicker displayName={displayName} />
-    ) : null}
-
-    {!incognito ? <CompanionComposerAnchor /> : null}
-
-    <TerminalChatBar />
-  </div>
-
-  {!incognito ? (
-    <div className="xv-chatbar-context-strip">
-      <RepoContextBar compact />
     </div>
-  ) : null}
-</div>
+  );
+}
