@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { goalContractSchema, normalizeGoalContractCandidate } from './goalContract.js';
+import { goalContractSchema, normalizeGoalContractCandidate, normalizePlannerDecisionCandidate } from './goalContract.js';
 
 const base = {
   version: '1.0',
@@ -37,4 +37,36 @@ test('normalization removes commentary but does not coerce invalid semantics', (
   const parsed = goalContractSchema.safeParse(normalized);
   assert.equal(parsed.success, false);
   assert.equal('commentary' in (normalized as Record<string, unknown>), false);
+});
+
+test('a minimal planner decision is bound to the server canonical project context', () => {
+  const normalized = normalizePlannerDecisionCandidate({
+    semanticIntent: 'investigate',
+    requiredCapabilities: ['conversation.respond'],
+    freshnessRequirement: 'none',
+    projectContext: { repo: 'attacker/other', branch: 'main', projectRoot: '/' },
+    requiredAuthorities: ['repository:write'],
+  }, {
+    message: 'describe the concept',
+    history: ['user: earlier context'],
+    attachments: [],
+    projectContext: { repo: 'arbitrary-owner/arbitrary-repo', branch: 'feature/arbitrary', projectRoot: '/packages/core' },
+  });
+  const contract = goalContractSchema.parse(normalized);
+  assert.equal(contract.semanticIntent, 'INVESTIGATE');
+  assert.deepEqual(contract.projectContext, {
+    repo: 'arbitrary-owner/arbitrary-repo', branch: 'feature/arbitrary', projectRoot: '/packages/core',
+  });
+  assert.deepEqual(contract.requiredAuthorities, []);
+  assert.equal(contract.goal, 'describe the concept');
+});
+
+test('a planner decision cannot silently omit freshness', () => {
+  const normalized = normalizePlannerDecisionCandidate({
+    semanticIntent: 'ANSWER',
+    requiredCapabilities: ['conversation.respond'],
+  }, {
+    message: 'arbitrary request', history: [], attachments: [], projectContext: null,
+  });
+  assert.equal(goalContractSchema.safeParse(normalized).success, false);
 });

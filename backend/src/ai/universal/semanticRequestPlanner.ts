@@ -5,7 +5,7 @@ import { executeWithProviderFallback, recordModelValidation } from '../providerR
 import { getUsage, recordUsage, usageToTokenUsage } from '../quota.js';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import { generateStructured } from '../black-hole/structuredOutput.js';
-import { goalContractSchema, normalizeGoalContractCandidate, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
+import { goalContractSchema, normalizeGoalContractCandidate, normalizePlannerDecisionCandidate, type GoalContract, type GoalInterpretationInput } from './goalContract.js';
 import { planCapabilities } from './planner.js';
 import { currentProductTruth } from './productTruth.js';
 import { RuntimeFailure } from './runtimeFailure.js';
@@ -99,12 +99,16 @@ export async function planProtocolSocialTurn(input: {
 export async function resolveStructuredGoalContract(
   attempt: (repairHint?: string) => Promise<string>,
   maxRepairs = 1,
+  normalize: (value: unknown) => unknown = normalizeGoalContractCandidate,
 ): Promise<GoalContract> {
   const generated = await generateStructured<GoalContract>({
     maxRepairs,
     attempt,
     validate: (value) => {
-      const parsed = goalContractSchema.safeParse(normalizeGoalContractCandidate(value));
+      const parsed = goalContractSchema.safeParse(normalize(value));
+      if (parsed.success && parsed.data.requiredCapabilities.length === 0) {
+        return { valid: false, error: 'requiredCapabilities must contain at least one registered capability id' };
+      }
       return parsed.success
         ? { valid: true, value: parsed.data }
         : { valid: false, error: parsed.error.issues.map((issue) => issue.message).join('; ') };
@@ -239,7 +243,7 @@ export async function planSemanticRequest(input: {
     id, title, description, effects, requiredAuthorities, inputMediaTypes, outputMediaTypes,
     readiness: readiness.get(id)?.state ?? 'UNSUPPORTED',
   }));
-  const system = `Understand the user's current goal from the full conversation and context. Return strict JSON matching the supplied GoalContract schema. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. Authority availability is determined by the runtime, not by you. Never report a granted authority as missing. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(authorities)}\n\nGranted authorities: ${JSON.stringify([...authorities])}.\n\nGoalContract fields: version="1.0"; goal; desiredOutcome; semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; constraints[]; acceptance[]; historyContext[]; projectContext; deliverables[{id,mediaType,description,required,acceptance[]}]; requiredCapabilities[]; requiredAuthorities[]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence 0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(availableSummary)}`;
+  const system = `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(authorities)}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(availableSummary)}`;
   const interpretationInput: GoalInterpretationInput = {
     message: input.message,
     history: input.history ?? [],
@@ -289,7 +293,7 @@ export async function planSemanticRequest(input: {
           finalModelId = completion.modelId;
           await recordUsage(input.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
           return completion.text;
-        }, correctionUsed ? 0 : 1).catch((error) => {
+        }, correctionUsed ? 0 : 1, (value) => normalizePlannerDecisionCandidate(value, interpretationInput)).catch((error) => {
           if (error instanceof RuntimeFailure) {
             lastStructuredFailure = error;
             recordModelValidation(modelId, false);
@@ -300,7 +304,11 @@ export async function planSemanticRequest(input: {
         return goalContract;
       },
     });
-    const goalContract = planned.value;
+    const goalContract = goalContractSchema.parse({
+      ...planned.value,
+      requiredAuthorities: [...new Set(planned.value.requiredCapabilities.flatMap((capabilityId) =>
+        universalCapabilityRegistry.get(capabilityId)?.requiredAuthorities ?? []))],
+    });
 
     // The canonical build runtime owns an isolated validation sandbox. Exposing
     // that authority permits validation.run; it grants no deployment authority.

@@ -116,6 +116,60 @@ export function normalizeGoalContractCandidate(value: unknown): unknown {
   return normalized;
 }
 
+/**
+ * Expands the deliberately small provider-facing semantic decision into the
+ * canonical contract. Project identity, conversation history and authorities
+ * are server-owned; a planner response can neither replace nor grant them.
+ */
+export function normalizePlannerDecisionCandidate(
+  value: unknown,
+  input: GoalInterpretationInput,
+): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  const decision = value as Record<string, unknown>;
+  const strings = (candidate: unknown): string[] => Array.isArray(candidate)
+    ? candidate.filter((item): item is string => typeof item === 'string').map((item) => item.trim()).filter(Boolean)
+    : [];
+  const enumValue = (candidate: unknown): string | undefined =>
+    typeof candidate === 'string' ? candidate.trim().toUpperCase() : undefined;
+  const freshnessRequirement = enumValue(decision.freshnessRequirement);
+  const suppliedSource = decision.sourcePolicy && typeof decision.sourcePolicy === 'object' && !Array.isArray(decision.sourcePolicy)
+    ? decision.sourcePolicy as Record<string, unknown>
+    : {};
+
+  return {
+    version: '1.0',
+    goal: typeof decision.goal === 'string' && decision.goal.trim() ? decision.goal : input.message,
+    desiredOutcome: typeof decision.desiredOutcome === 'string' && decision.desiredOutcome.trim()
+      ? decision.desiredOutcome
+      : input.message,
+    semanticIntent: enumValue(decision.semanticIntent),
+    constraints: strings(decision.constraints),
+    acceptance: strings(decision.acceptance),
+    historyContext: input.history.slice(-12),
+    projectContext: input.projectContext,
+    deliverables: [],
+    requiredCapabilities: strings(decision.requiredCapabilities),
+    requiredAuthorities: [],
+    // Missing freshness is intentionally invalid. Defaulting it to NONE could
+    // turn a freshness-sensitive request into a stale model-memory answer.
+    freshnessRequirement: freshnessRequirement ?? '__MISSING__',
+    sourcePolicy: {
+      mode: suppliedSource.mode === 'official_only' ? 'official_only' : 'any',
+      scope: suppliedSource.scope === 'x' ? 'x' : 'public_web',
+      officialDomains: strings(suppliedSource.officialDomains),
+    },
+    previewRequirement: enumValue(decision.previewRequirement) ?? 'NONE',
+    deploymentRequirement: enumValue(decision.deploymentRequirement) ?? 'NONE',
+    risks: strings(decision.risks),
+    confidence: typeof decision.confidence === 'number' ? decision.confidence : 0.5,
+    blockers: strings(decision.blockers),
+    contextComplexity: typeof decision.contextComplexity === 'string'
+      ? decision.contextComplexity.trim().toLowerCase()
+      : 'unknown',
+  };
+}
+
 /** Semantic interpretation is injected so this layer has no prompt keyword taxonomy. */
 export async function interpretGoalContract(
   input: GoalInterpretationInput,
