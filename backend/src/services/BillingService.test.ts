@@ -63,7 +63,10 @@ test('checkout uses the v1 API, pinned version, approved server values, metadata
   globalThis.fetch = (async (input, init) => {
     requests.push({ url: String(input), init });
     if (String(input).endsWith('/plans/plan_hlV1A10I5QfSP')) return Response.json(APPROVED_PLAN);
-    return Response.json({ id: 'ch_123', purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=unique' });
+    return Response.json({
+      id: 'ch_123', company_id: 'biz_qhYONL4RebGX96', plan: APPROVED_PLAN,
+      purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=unique',
+    });
   }) as typeof fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
 
@@ -85,7 +88,7 @@ test('checkout uses the v1 API, pinned version, approved server values, metadata
   });
 });
 
-test('checkout verifies ownership through the company-scoped plan list when retrieve omits company', async (t) => {
+test('checkout verifies ownership from the checkout contract when plan retrieval omits company', async (t) => {
   withWhopEnv(t);
   const originalFetch = globalThis.fetch;
   const requests: string[] = [];
@@ -95,29 +98,28 @@ test('checkout verifies ownership through the company-scoped plan list when retr
     if (url.endsWith('/plans/plan_hlV1A10I5QfSP')) {
       return Response.json({ ...APPROVED_PLAN, account_id: undefined });
     }
-    if (url.includes('/plans?')) {
-      return Response.json({ data: [{ id: 'plan_hlV1A10I5QfSP' }] });
-    }
-    return Response.json({ id: 'ch_456', purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=verified' });
+    return Response.json({
+      id: 'ch_456', company_id: 'biz_qhYONL4RebGX96', plan: APPROVED_PLAN,
+      purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=verified',
+    });
   }) as typeof fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
 
   const result = await BillingService.createCheckout('00000000-0000-4000-8000-000000000456');
   assert.match(result.purchaseUrl, /^https:\/\/whop\.com\/checkout\//);
-  assert.equal(requests.length, 3);
-  const companyPlansUrl = new URL(requests[1]);
-  assert.equal(companyPlansUrl.pathname, '/api/v1/plans');
-  assert.equal(companyPlansUrl.searchParams.get('company_id'), 'biz_qhYONL4RebGX96');
-  assert.equal(companyPlansUrl.searchParams.get('first'), '100');
+  assert.equal(requests.length, 2);
 });
 
-test('checkout rejects a plan absent from its configured company plan list', async (t) => {
+test('checkout rejects a checkout response for another company', async (t) => {
   withWhopEnv(t);
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input) => {
     const url = String(input);
     if (url.endsWith('/plans/plan_hlV1A10I5QfSP')) return Response.json({ ...APPROVED_PLAN, account_id: undefined });
-    return Response.json({ data: [{ id: 'plan_other' }] });
+    return Response.json({
+      id: 'ch_wrong', company_id: 'biz_wrong', plan: APPROVED_PLAN,
+      purchase_url: 'https://whop.com/checkout/plan_hlV1A10I5QfSP/?session=wrong',
+    });
   }) as typeof fetch;
   t.after(() => { globalThis.fetch = originalFetch; });
 

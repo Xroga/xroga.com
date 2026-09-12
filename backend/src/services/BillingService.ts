@@ -124,30 +124,35 @@ export function checkoutIdempotencyKey(userId: string, now = Date.now()): string
   return `xroga-checkout-${crypto.createHash('sha256').update(`${userId}:${fiveMinuteWindow}`).digest('hex')}`;
 }
 
-export function assertWhopPlanContract(plan: Record<string, unknown>, expectedAccountId: string, expectedPlanId: string): void {
+function whopPlanContractMismatches(plan: Record<string, unknown>, expectedPlanId: string): string[] {
   const mismatch: string[] = [];
   if (pickString(plan, 'id') !== expectedPlanId) mismatch.push('plan_id');
-  const companyId = pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
-  if (companyId !== expectedAccountId) mismatch.push('account_id');
   if (pickString(plan, 'plan_type') !== 'renewal') mismatch.push('plan_type');
   if (Number(plan.renewal_price) !== 25) mismatch.push('renewal_price');
   if (Number(plan.billing_period) !== 30) mismatch.push('billing_period');
   if (plan.trial_period_days != null && Number(plan.trial_period_days) !== 0) mismatch.push('trial');
   if (pickString(plan, 'currency').toLowerCase() !== 'usd') mismatch.push('currency');
   if (pickString(plan, 'purchase_url') && !/^https:\/\//.test(pickString(plan, 'purchase_url'))) mismatch.push('purchase_url');
+  return mismatch;
+}
+
+function assertWhopPlanTerms(plan: Record<string, unknown>, expectedPlanId: string): void {
+  const mismatch = whopPlanContractMismatches(plan, expectedPlanId);
   if (mismatch.length) {
     throw new BillingServiceError('plan_mismatch', `Whop plan contract mismatch: ${mismatch.join(',')}`, 503);
   }
 }
 
-function whopPlanOwnerId(plan: Record<string, unknown>): string {
-  return pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
+export function assertWhopPlanContract(plan: Record<string, unknown>, expectedAccountId: string, expectedPlanId: string): void {
+  const companyId = pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
+  if (companyId !== expectedAccountId) {
+    throw new BillingServiceError('plan_mismatch', 'Whop plan contract mismatch: account_id', 503);
+  }
+  assertWhopPlanTerms(plan, expectedPlanId);
 }
 
-function whopPlanList(payload: Record<string, unknown>): Record<string, unknown>[] {
-  return Array.isArray(payload.data)
-    ? payload.data.filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === 'object' && !Array.isArray(entry))
-    : [];
+function whopPlanOwnerId(plan: Record<string, unknown>): string {
+  return pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
 }
 
 export function verifyWhopWebhookSignature(
@@ -226,26 +231,8 @@ export class BillingService {
     if (ownerId && ownerId !== accountId) {
       throw new BillingServiceError('plan_mismatch', 'Whop plan contract mismatch: account_id', 503);
     }
-    if (!ownerId) {
-      const query = new URLSearchParams({ company_id: accountId, first: '100' });
-      let companyPlansResponse: Response;
-      try {
-        companyPlansResponse = await fetch(`${WHOP_API_BASE}/plans?${query}`, {
-          headers: whopHeaders(apiKey), signal: AbortSignal.timeout(10_000),
-        });
-      } catch {
-        throw new BillingServiceError('provider_unavailable', 'Whop plan ownership verification is temporarily unavailable', 502);
-      }
-      if (!companyPlansResponse.ok) {
-        throw new BillingServiceError('provider_unavailable', 'Whop plan ownership verification failed', 502);
-      }
-      const companyPlans = whopPlanList(await companyPlansResponse.json() as Record<string, unknown>);
-      if (!companyPlans.some((companyPlan) => pickString(companyPlan, 'id') === planId)) {
-        throw new BillingServiceError('plan_mismatch', 'Whop plan contract mismatch: account_id', 503);
-      }
-      plan.company_id = accountId;
-    }
-    assertWhopPlanContract(plan, accountId, planId);
+    if (ownerId) assertWhopPlanContract(plan, accountId, planId);
+    else assertWhopPlanTerms(plan, planId);
     verifiedPlanUntil = Date.now() + 300_000;
   }
 
@@ -275,6 +262,10 @@ export class BillingService {
       throw new BillingServiceError('provider_unavailable', 'Whop could not create checkout', 502);
     }
     const payload = await response.json() as Record<string, unknown>;
+    if (pickString(payload, 'company_id', 'account_id') !== accountId) {
+      throw new BillingServiceError('plan_mismatch', 'Whop checkout contract mismatch: account_id', 503);
+    }
+    assertWhopPlanTerms(nestedRecord(payload.plan), planId);
     return {
       purchaseUrl: safeWhopUrl(payload.purchase_url, 'Checkout'),
       checkoutConfigurationId: pickString(payload, 'id') || null,
