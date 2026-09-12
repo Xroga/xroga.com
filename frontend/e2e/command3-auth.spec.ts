@@ -865,7 +865,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // next two lines — a protected route must bounce to the login page, and the session
   // endpoint must answer 401 unauthenticated — and neither is relaxed.
   await expect.poll(() => new URL(page.url()).pathname).toMatch(/^\/(auth\/login)?$/);
-  await page.goto('/dashboard/operations');
+  // The protected route only needs to reach middleware before it redirects. Waiting for the
+  // full load event can hang on unrelated production subresources after logout and consume the
+  // entire test timeout even though the authentication boundary has already responded.
+  await page.goto('/dashboard/operations', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
