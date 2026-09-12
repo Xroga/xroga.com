@@ -140,6 +140,16 @@ export function assertWhopPlanContract(plan: Record<string, unknown>, expectedAc
   }
 }
 
+function whopPlanOwnerId(plan: Record<string, unknown>): string {
+  return pickString(plan, 'account_id', 'company_id') || pickString(nestedRecord(plan.company), 'id');
+}
+
+function whopPlanList(payload: Record<string, unknown>): Record<string, unknown>[] {
+  return Array.isArray(payload.data)
+    ? payload.data.filter((entry): entry is Record<string, unknown> => Boolean(entry) && typeof entry === 'object' && !Array.isArray(entry))
+    : [];
+}
+
 export function verifyWhopWebhookSignature(
   rawBody: string,
   headers: { id?: string; timestamp?: string; signature?: string },
@@ -211,7 +221,31 @@ export class BillingService {
       throw new BillingServiceError('provider_unavailable', 'Whop plan verification is temporarily unavailable', 502);
     }
     if (!response.ok) throw new BillingServiceError('provider_unavailable', 'Whop plan verification failed', 502);
-    assertWhopPlanContract(await response.json() as Record<string, unknown>, accountId, planId);
+    const plan = await response.json() as Record<string, unknown>;
+    const ownerId = whopPlanOwnerId(plan);
+    if (ownerId && ownerId !== accountId) {
+      throw new BillingServiceError('plan_mismatch', 'Whop plan contract mismatch: account_id', 503);
+    }
+    if (!ownerId) {
+      const query = new URLSearchParams({ company_id: accountId, first: '100' });
+      let companyPlansResponse: Response;
+      try {
+        companyPlansResponse = await fetch(`${WHOP_API_BASE}/plans?${query}`, {
+          headers: whopHeaders(apiKey), signal: AbortSignal.timeout(10_000),
+        });
+      } catch {
+        throw new BillingServiceError('provider_unavailable', 'Whop plan ownership verification is temporarily unavailable', 502);
+      }
+      if (!companyPlansResponse.ok) {
+        throw new BillingServiceError('provider_unavailable', 'Whop plan ownership verification failed', 502);
+      }
+      const companyPlans = whopPlanList(await companyPlansResponse.json() as Record<string, unknown>);
+      if (!companyPlans.some((companyPlan) => pickString(companyPlan, 'id') === planId)) {
+        throw new BillingServiceError('plan_mismatch', 'Whop plan contract mismatch: account_id', 503);
+      }
+      plan.company_id = accountId;
+    }
+    assertWhopPlanContract(plan, accountId, planId);
     verifiedPlanUntil = Date.now() + 300_000;
   }
 
