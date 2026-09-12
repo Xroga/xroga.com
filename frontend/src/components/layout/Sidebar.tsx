@@ -611,13 +611,51 @@ export function Sidebar({ displayName }: SidebarProps) {
               onFocus={openSidebarOnHover}
               onBlur={cancelSidebarHover}
             >
-              <Logo
-                href={logoHref}
-                height={navExpanded ? 50 : 34}
-                variant={navExpanded ? 'sidebarFull' : 'sidebar'}
-                className={cn(navExpanded ? 'max-w-[100px]' : '!h-[34px] !w-[34px]')}
-                onClick={handleNavClick}
-              />
+              {navExpanded ? (
+  <Link
+    href={logoHref}
+    onClick={handleNavClick}
+    aria-label="Xroga"
+    data-testid="xroga-sidebar-wordmark"
+    className="
+      inline-flex
+      h-[50px]
+      min-w-0
+      max-w-[130px]
+      items-center
+      overflow-hidden
+      whitespace-nowrap
+      text-[var(--text-primary)]
+      no-underline
+      select-none
+    "
+  >
+    <span
+      className="inline-flex items-baseline"
+      style={{
+        fontFamily:
+          '"Helvetica Neue", "Avenir Next", "Segoe UI", Arial, sans-serif',
+        fontWeight: 200,
+        lineHeight: 1,
+        gap: '0.11em',
+      }}
+    >
+      <span style={{ fontSize: '31px' }}>X</span>
+      <span style={{ fontSize: '27px' }}>r</span>
+      <span style={{ fontSize: '27px' }}>o</span>
+      <span style={{ fontSize: '27px' }}>g</span>
+      <span style={{ fontSize: '27px' }}>a</span>
+    </span>
+  </Link>
+) : (
+  <Logo
+    href={logoHref}
+    height={34}
+    variant="sidebar"
+    className="!h-[34px] !w-[34px]"
+    onClick={handleNavClick}
+  />
+)}
             </span>
           </HoverTip>
           {navExpanded ? (
