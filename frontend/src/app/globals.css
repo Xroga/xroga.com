@@ -12355,3 +12355,368 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
       11px !important;
   }
 }
+
+/* ============================================================
+   XROGA WORKSPACE — KIMI-STYLE COMPOSER FRAME
+   ------------------------------------------------------------
+   White main composer
+   Soft secondary outer/footer surface
+   Smaller width
+   Cleaner proportions
+   Theme-aware
+   ============================================================ */
+
+
+/* ============================================================
+   THEME TOKENS
+   ============================================================ */
+
+body.theme-white {
+  --xv-kimi-frame-bg: #f5f5f6;
+  --xv-kimi-frame-border: rgba(15, 23, 42, 0.08);
+
+  --xv-kimi-composer-bg: #ffffff;
+  --xv-kimi-composer-border: rgba(15, 23, 42, 0.11);
+
+  --xv-kimi-footer-text: #727780;
+}
+
+body.theme-black {
+  --xv-kimi-frame-bg: #111214;
+  --xv-kimi-frame-border: rgba(255, 255, 255, 0.09);
+
+  --xv-kimi-composer-bg: #08090b;
+  --xv-kimi-composer-border: rgba(255, 255, 255, 0.11);
+
+  --xv-kimi-footer-text: #a8adb7;
+}
+
+body.theme-gray {
+  --xv-kimi-frame-bg: #3c4046;
+  --xv-kimi-frame-border: rgba(255, 255, 255, 0.10);
+
+  --xv-kimi-composer-bg: #454a51;
+  --xv-kimi-composer-border: rgba(255, 255, 255, 0.12);
+
+  --xv-kimi-footer-text: #d5d8de;
+}
+
+body.theme-beige {
+  --xv-kimi-frame-bg: #eee4d6;
+  --xv-kimi-frame-border: rgba(57, 43, 30, 0.09);
+
+  --xv-kimi-composer-bg: #faf3e9;
+  --xv-kimi-composer-border: rgba(57, 43, 30, 0.11);
+
+  --xv-kimi-footer-text: #766b60;
+}
+
+
+/* ============================================================
+   DESKTOP EMPTY WORKSPACE
+   ============================================================ */
+
+@media (min-width: 640px) {
+
+  /*
+   * Your current idle dock can stretch to around 1040px.
+   * Make it closer to Kimi: compact and centered.
+   */
+  .xv-terminal-dock--idle:not(.xv-terminal-dock--fullscreen)
+  .xv-terminal-dock-inner {
+    width: min(770px, calc(100% - 32px)) !important;
+    max-width: 770px !important;
+
+    margin-inline: auto !important;
+
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+
+  /* ==========================================================
+     OUTER SECONDARY FRAME
+     This is the light-gray area visible around/below Kimi's
+     white main composer.
+     ========================================================== */
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame {
+    position: relative;
+
+    width: 100%;
+
+    padding: 0 0 2px;
+
+    background: var(--xv-kimi-frame-bg);
+
+    border:
+      1px solid
+      var(--xv-kimi-frame-border);
+
+    border-radius: 24px;
+
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.025);
+
+    overflow: visible;
+  }
+
+
+  /* ==========================================================
+     MAIN WHITE CHATBAR
+     ========================================================== */
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-stack {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-solid {
+    width: 100% !important;
+
+    min-height: 128px !important;
+
+    margin-top: 0 !important;
+
+    background:
+      var(--xv-kimi-composer-bg) !important;
+
+    border:
+      1px solid
+      var(--xv-kimi-composer-border) !important;
+
+    border-radius:
+      23px !important;
+
+    box-shadow:
+      0 5px 18px rgba(15, 23, 42, 0.045) !important;
+
+    overflow: visible !important;
+  }
+
+
+  /*
+   * Remove the old animated secondary outline from the composer.
+   * We now have the cleaner outer Kimi frame.
+   */
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-solid::before {
+    opacity: 0 !important;
+    display: none !important;
+  }
+
+
+  /* ==========================================================
+     INPUT HEIGHT
+     Not extremely tall like your first screenshot.
+     ========================================================== */
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-input-form {
+    min-height: 126px !important;
+
+    padding:
+      12px
+      14px
+      10px !important;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-composer {
+    min-height: 60px !important;
+
+    padding:
+      8px
+      8px !important;
+
+    font-size: 14px !important;
+
+    line-height: 21px !important;
+  }
+
+
+  /* bottom controls */
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-tools {
+    min-height: 34px;
+
+    margin-top: 4px;
+  }
+
+
+  /* ==========================================================
+     SECONDARY FOOTER STRIP
+     Repo / branch controls like Kimi's lower gray strip.
+     ========================================================== */
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-context-strip {
+    width: 100% !important;
+
+    min-height: 46px !important;
+
+    margin: 0 !important;
+
+    padding:
+      5px
+      14px
+      3px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    background:
+      var(--xv-kimi-frame-bg) !important;
+
+    border: 0 !important;
+
+    border-radius:
+      0
+      0
+      23px
+      23px !important;
+
+    color:
+      var(--xv-kimi-footer-text) !important;
+
+    box-shadow:
+      none !important;
+  }
+
+
+  /*
+   * Small visual gap between the white composer and
+   * secondary context surface.
+   */
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-context-strip::before {
+    content: '';
+
+    position: absolute;
+
+    left: 18px;
+    right: 18px;
+
+    height: 1px;
+
+    top: 128px;
+
+    background:
+      color-mix(
+        in srgb,
+        var(--foreground) 5%,
+        transparent
+      );
+
+    pointer-events: none;
+  }
+
+
+  /* ==========================================================
+     REPO CONTEXT CHIP CLEANUP
+     ========================================================== */
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-repo-chip--compact {
+    background: transparent !important;
+
+    border-color: transparent !important;
+
+    box-shadow: none !important;
+  }
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 639px) {
+
+  .xv-terminal-dock--idle
+  .xv-terminal-dock-inner {
+    width:
+      calc(100% - 16px) !important;
+
+    margin-inline:
+      auto !important;
+
+    padding-inline:
+      0 !important;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame {
+    border-radius:
+      20px;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-solid {
+    min-height:
+      116px !important;
+
+    border-radius:
+      19px !important;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-input-form {
+    min-height:
+      114px !important;
+
+    padding:
+      10px
+      11px
+      8px !important;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-composer {
+    min-height:
+      52px !important;
+  }
+
+
+  .xv-terminal-dock--idle
+  .xv-kimi-composer-frame
+  .xv-chatbar-context-strip {
+    min-height:
+      42px !important;
+
+    padding:
+      4px
+      10px !important;
+
+    border-radius:
+      0
+      0
+      19px
+      19px !important;
+  }
+}
