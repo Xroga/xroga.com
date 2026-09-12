@@ -30,7 +30,7 @@ export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS = 14_000;
 
 export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
   const callable = callableModelIds(env);
-  const ordered = (['glm_5_3_flash', 'deepseek_v4_flash', 'glm_5_3', 'kimi_k3'] as const)
+  const ordered = (['deepseek_v4_flash', 'glm_5_3_flash', 'glm_5_3', 'kimi_k3'] as const)
     .filter((modelId) => callable.includes(modelId));
   if (ordered.length) return ordered;
   throw new RuntimeFailure(
@@ -251,7 +251,7 @@ export async function planSemanticRequest(input: {
     { role: 'system', content: system },
     { role: 'user', content: JSON.stringify(interpretationInput) },
   ];
-  const maximumOutputTokens = 1_000;
+  const maximumOutputTokens = 1_500;
   const configuredTotalMs = Number(process.env.SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS);
   const totalTimeoutMs = Number.isFinite(configuredTotalMs)
     ? Math.min(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS, Math.max(5_000, configuredTotalMs))
