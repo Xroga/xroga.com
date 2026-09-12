@@ -2064,47 +2064,132 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
 
-  /* thinner / smaller Xroga text logo */
-  [data-testid="xroga-sidebar-wordmark"] {
-    height: 32px !important;
+ /* ============================================================
+   XROGA OPEN SIDEBAR WORDMARK — AZURIO STYLE
+   Capital X + lowercase roga
+   Expanded sidebar only
+   ============================================================ */
 
-    max-width: 120px !important;
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"] {
+  height: 42px !important;
 
-    padding-left: 3px;
+  width: auto !important;
+  max-width: 150px !important;
 
-    color: var(--foreground) !important;
-  }
+  display: inline-flex !important;
 
+  align-items: center !important;
+  justify-content: flex-start !important;
 
-  [data-testid="xroga-sidebar-wordmark"] > span {
-    gap: 0.10em !important;
+  padding: 0 !important;
+  margin: 0 !important;
 
-    font-family:
-      "Helvetica Neue",
-      "Avenir Next",
-      "Segoe UI",
-      Arial,
-      sans-serif !important;
+  overflow: visible !important;
 
-    font-weight: 200 !important;
+  color: var(--foreground) !important;
 
-    line-height: 1 !important;
-  }
+  text-decoration: none !important;
 
+  background: transparent !important;
 
-  [data-testid="xroga-sidebar-wordmark"]
-  > span
-  > span {
-    font-size: 21px !important;
-  }
+  border: 0 !important;
+
+  box-shadow: none !important;
+}
 
 
-  [data-testid="xroga-sidebar-wordmark"]
-  > span
-  > span:first-child {
-    font-size: 25px !important;
-  }
+/* Actual Xroga text */
 
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"] > span {
+  display: inline-flex !important;
+
+  align-items: baseline !important;
+
+  gap: 0 !important;
+
+  font-family:
+    var(--font-azurio),
+    Georgia,
+    "Times New Roman",
+    serif !important;
+
+  font-size: 30px !important;
+
+  font-weight: 700 !important;
+
+  font-style: normal !important;
+
+  line-height: 1 !important;
+
+  /*
+   * Azurio-style breathing room.
+   * Do NOT use the old negative tracking.
+   */
+  letter-spacing: 0.015em !important;
+
+  color: var(--foreground) !important;
+
+  white-space: nowrap !important;
+
+  font-kerning: normal;
+
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
+
+  font-synthesis: none;
+
+  text-rendering: geometricPrecision;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Keep every nested letter/span in the same Azurio face */
+
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"] > span * {
+  font-family:
+    var(--font-azurio),
+    Georgia,
+    "Times New Roman",
+    serif !important;
+
+  font-weight: 700 !important;
+
+  font-style: normal !important;
+
+  letter-spacing: inherit !important;
+
+  color: inherit !important;
+}
+
+
+/* Clean interaction */
+
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"]:hover {
+  opacity: 0.88;
+}
+
+
+.xv-sidebar-root:not(.is-collapsed)
+[data-testid="xroga-sidebar-wordmark"]:focus-visible {
+  outline:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--foreground) 22%,
+      transparent
+    );
+
+  outline-offset: 4px;
+
+  border-radius: 6px;
+}
 
   /* ==========================================================
      3. TOP ACTION ROW
