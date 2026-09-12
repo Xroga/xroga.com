@@ -1,8 +1,40 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { applyRequestedSourcePolicy, runWebIntelligence } from './webIntelligence.js';
+import { applyRequestedSourcePolicy, runWebIntelligence, webDecisionFromGoalContract } from './webIntelligence.js';
 import { normalizeResearch } from './researchRouter.js';
+import { goalContractSchema } from '../universal/goalContract.js';
+
+test('a validated freshness contract deterministically selects evidence without a second model decision', () => {
+  const goal = goalContractSchema.parse({
+    version: '1.0',
+    goal: 'Compare newly published protocol guidance from primary materials.',
+    desiredOutcome: 'An evidence-backed comparison.',
+    semanticIntent: 'INVESTIGATE',
+    requiredCapabilities: ['research.public-web', 'conversation.respond'],
+    freshnessRequirement: 'CURRENT_REQUIRED',
+    sourcePolicy: { mode: 'official_only', scope: 'public_web', officialDomains: ['standards.example'] },
+    confidence: 0.9,
+    contextComplexity: 'high',
+  });
+  const decision = webDecisionFromGoalContract(goal);
+  assert.equal(decision?.action, 'research');
+  assert.equal(decision?.sourcePolicy, 'official_only');
+  assert.deepEqual(decision?.officialDomains, ['standards.example']);
+});
+
+test('the canonical X capability can only produce an x_search decision', () => {
+  const goal = goalContractSchema.parse({
+    version: '1.0',
+    goal: 'Summarize public discussion from X.',
+    desiredOutcome: 'A sourced summary of X posts.',
+    semanticIntent: 'INVESTIGATE',
+    requiredCapabilities: ['research.x', 'conversation.respond'],
+    sourcePolicy: { mode: 'any', scope: 'public_web', officialDomains: [] },
+    confidence: 0.9,
+  });
+  assert.equal(webDecisionFromGoalContract(goal)?.action, 'x_research');
+});
 
 test('official-only evidence excludes secondary sources before synthesis and UI', () => {
   const normalized = normalizeResearch([

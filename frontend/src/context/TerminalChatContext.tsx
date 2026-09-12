@@ -60,7 +60,6 @@ import toast from 'react-hot-toast';
 import { isTrivialPrompt, isSimpleChat } from '@/lib/promptClassifier';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import {
-  classifyWorkLane,
   nextHeavyQueuePosition,
   type WorkLane,
 } from '@/lib/workLanes';
@@ -97,7 +96,7 @@ import {
   engineeringArtifactWorkspaceProjection,
   isRenderableArtifact,
 } from '@/lib/engineeringArtifact';
-import { sameProjectContext } from '@/lib/projectContext';
+import { projectContextForRequest, sameProjectContext } from '@/lib/projectContext';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -1442,9 +1441,17 @@ export function TerminalChatProvider({
       );
 
       try {
+        const activeContext = useProjectWorkspaceStore.getState().activeProjectContext;
         const result = await runLightLaneChat({
           prompt: displayPrompt,
           history,
+          projectContext: activeContext
+            ? {
+                repo: activeContext.repo,
+                branch: activeContext.branch,
+                projectRoot: activeContext.projectRoot || '/',
+              }
+            : null,
           signal: controller.signal,
           onPartial: (partial) => {
             setMessages((m) =>
@@ -1517,6 +1524,14 @@ export function TerminalChatProvider({
           });
         }
       } catch (err) {
+        if (err instanceof ApiError && String(err.data?.code) === 'QUEUE_BUILD') {
+          setMessages((current) => current.filter(
+            (message) => message.id !== userMessageId && message.id !== assistantId,
+          ));
+          enqueuePrompt(displayPrompt, 'heavy');
+          toast('Build queued — it starts after the current build finishes.');
+          return;
+        }
         if ((err as Error)?.name !== 'AbortError') {
           const msg = (err as Error)?.message || 'Chat failed';
           setMessages((m) =>
@@ -1558,32 +1573,21 @@ export function TerminalChatProvider({
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
 
-      const lane = classifyWorkLane(userPrompt, messages, attachments, {
-        completedWebsiteBuild: completedWebsiteBuildRef.current,
-      });
-
-      // Two lanes: light chat/planning always open during any heavy job.
-      if (heavyJobActiveRef.current && lane === 'light' && !interrupt) {
+      // Execution authority lives on the backend semantic resolver. Before that
+      // decision arrives every request is a neutral/light request; a semantic
+      // build decision promotes or queues it below. This prevents prompt wording
+      // from selecting a write path in the browser.
+      // The light-lane helper calls the same backend planner. If it resolves to a
+      // build it returns QUEUE_BUILD and the request is queued without executing
+      // repository work concurrently with the active build.
+      if (heavyJobActiveRef.current && !interrupt) {
         await submitLightAlongsideHeavy(userPrompt);
         return;
       }
 
-      if (heavyJobActiveRef.current && lane === 'heavy' && !fromQueue) {
-        enqueuePrompt(userPrompt, 'heavy');
-        setPrompt('');
-        return;
-      }
-
-      if (heavyJobActiveRef.current && lane === 'heavy' && fromQueue) {
-        if (heavyLoading) {
-          enqueuePrompt(userPrompt, 'heavy');
-          return;
-        }
-      }
-
       if (loading && interrupt) {
         // Interrupt never kills an active heavy build unless the user pressed Stop on that build.
-        if (heavyJobActiveRef.current && lane === 'heavy') {
+        if (heavyJobActiveRef.current) {
           toast.error('Finish or stop the current build before starting another');
           enqueuePrompt(userPrompt, 'heavy');
           setPrompt('');
@@ -1600,22 +1604,12 @@ export function TerminalChatProvider({
         setImageProgressStep(null);
         setImageAttempts([]);
       } else if (loading && !fromQueue) {
-        enqueuePrompt(userPrompt, lane);
+        enqueuePrompt(userPrompt, 'light');
         setPrompt('');
         return;
       } else if (loading) {
         return;
       }
-
-      // Connection status is informative here. The authenticated semantic planner is
-      // the only authority that may classify this turn as chat, build, or blocked.
-      void api.github
-        .status()
-        .then((gh) => {
-          if (gh.connected) markGitHubConnectedSession();
-          else clearGitHubConnectedSession();
-        })
-        .catch(() => clearGitHubConnectedSession());
 
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
@@ -1643,14 +1637,14 @@ export function TerminalChatProvider({
         isCodeBuildProcessing(displayPrompt, messages, {
           completedBuildRef: completedWebsiteBuildRef.current,
         });
-      const selectedRepoForUpdate = getSelectedRepoContext()?.repo;
+      const selectedRepoForUpdate = useProjectWorkspaceStore.getState().activeProjectContext?.repo;
       const isBuildUpdateEarly =
         !adviceTurn &&
         (isWebsiteBuildUpdate(displayPrompt, messages) ||
           (completedWebsiteBuildRef.current && isWebsiteUpdateRequest(displayPrompt)) ||
           (Boolean(selectedRepoForUpdate?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)));
-      const startingHeavyJob = !adviceTurn && (lane === 'heavy' || codeBuildActive || isBuildUpdateEarly);
-      const startingHeavyBuild =
+      let startingHeavyJob = !adviceTurn && (codeBuildActive || isBuildUpdateEarly);
+      let startingHeavyBuild =
         !adviceTurn &&
         (codeBuildActive ||
           isWebsiteBuildPrompt(displayPrompt) ||
@@ -1694,7 +1688,7 @@ export function TerminalChatProvider({
         setSwarmStatusLabel(null);
         setSwarmAnalysis(null);
         setSwarmActivityLog([]);
-      } else if (adviceTurn || lane === 'light') {
+      } else {
         setSwarmNegotiationPhase(null);
         setSwarmTodos([]);
         setSwarmStatusLabel(null);
@@ -1784,7 +1778,10 @@ export function TerminalChatProvider({
         const isBuildAnswer =
           Boolean(buildSession) && looksLikeBuildClarificationAnswer(displayPrompt);
         const freshProductIntent = hasFreshTerminalIntent();
-        const repoContextEarly = freshProductIntent ? null : getSelectedRepoContext();
+        const repoContextEarly = projectContextForRequest(
+          useProjectWorkspaceStore.getState().activeProjectContext,
+          freshProductIntent,
+        );
         // A "New product" terminal may still be rendered inside a route whose
         // projectId belongs to the previously opened repository. Passing that stale
         // projectId makes the backend recover and patch the old project even after
@@ -1878,27 +1875,14 @@ export function TerminalChatProvider({
           }
         }
 
-        const repoContext = freshProductIntent
-          ? null
-          : repoContextEarly ?? getSelectedRepoContext();
-        // Sticky fallback ONLY for updates — never for greenfield (wrong-product risk).
-        let stickyTargetRepo = repoContext?.repo;
-        let stickyTargetBranch = repoContext?.branch ?? 'main';
-        if (isBuildUpdate && !freshProductIntent && !stickyTargetRepo?.includes('/')) {
-          try {
-            const ghStatus = await api.github.status();
-            if (ghStatus.defaultRepo?.includes('/')) {
-              stickyTargetRepo = ghStatus.defaultRepo;
-              stickyTargetBranch = 'main';
-              saveSelectedRepoContext({ repo: stickyTargetRepo, branch: stickyTargetBranch });
-              notifyGithubRepoContext(stickyTargetRepo, stickyTargetBranch);
-            }
-          } catch {
-            /* non-blocking */
-          }
-        }
+        const repoContext = freshProductIntent ? null : repoContextEarly;
+        const stickyTargetRepo = repoContext?.repo;
+        const stickyTargetBranch = repoContext?.branch ?? 'main';
 
-        const canonicalProjectContext = useProjectWorkspaceStore.getState().activeProjectContext;
+        const canonicalProjectContext = projectContextForRequest(
+          useProjectWorkspaceStore.getState().activeProjectContext,
+          freshProductIntent,
+        );
         const semanticPlan = await api.phase1.plan(
           displayPrompt,
           history,
@@ -1912,14 +1896,67 @@ export function TerminalChatProvider({
             : null,
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
         );
-        const usePhase1Engine = semanticPlan.dispatch === 'chat';
+        const directResponse = semanticPlan.directResponse?.trim() ?? '';
+        const usePhase1Engine = semanticPlan.dispatch === 'chat' && !directResponse;
         let runSwarmBuild = semanticPlan.dispatch === 'build';
         semanticBuildPlanned = runSwarmBuild;
+
+        if (runSwarmBuild) {
+          void api.github
+            .status()
+            .then((gh) => {
+              if (gh.connected) markGitHubConnectedSession();
+              else clearGitHubConnectedSession();
+            })
+            .catch(() => clearGitHubConnectedSession());
+        }
+
+        // Lexical lane guesses are presentation hints only. The authenticated
+        // semantic plan is the authority that promotes a turn into a build.
+        if (runSwarmBuild && !startingHeavyBuild) {
+          startingHeavyJob = true;
+          startingHeavyBuild = true;
+          setLightLoading(false);
+          setHeavyLoading(true);
+          setHeavyBuildActive(true);
+          heavyBuildActiveRef.current = true;
+          heavyJobActiveRef.current = true;
+          setHeavyAssistantId(assistantId);
+          setSwarmNegotiationPhase(0);
+          setSwarmStatusLabel('XROGA Architect');
+          setPipelineMessage('Preparing the verified build…');
+        }
+
+        if (directResponse) {
+          gotEvent = true;
+          fullReply = directResponse;
+          setMessages((current) => current.map((message) =>
+            message.id === assistantId
+              ? { ...message, content: directResponse, agent: 'Xroga AI' }
+              : message
+          ));
+          setPipelineMessage(null);
+          setSwarmStatusLabel('XROGA AI');
+          if (
+            semanticPlan.usage
+            && typeof semanticPlan.usage.totalTokensRemaining === 'number'
+          ) {
+            setTokenUsage({
+              ...semanticPlan.usage,
+              totalLimit:
+                semanticPlan.usage.totalTokensRemaining
+                + (semanticPlan.usage.totalTokensUsed ?? 0),
+              quotaPeriodStart: new Date().toISOString().slice(0, 10),
+              emergencyTokensAvailable: false,
+              emergencyTokensClaimedThisMonth: false,
+            });
+          }
+        }
 
         if (semanticPlan.dispatch === 'blocked') {
           gotEvent = true;
           fullReply = semanticPlan.blockers.length
-            ? `I can't safely complete that yet: ${semanticPlan.blockers.join(' · ')}`
+            ? `I can't complete that with the capabilities or authorization currently available: ${semanticPlan.blockers.join(' · ')}`
             : 'I could not match this request to an available, authorized capability.';
           setMessages((current) => current.map((message) =>
             message.id === assistantId ? { ...message, content: fullReply, agent: 'Xroga AI' } : message
@@ -3373,7 +3410,7 @@ export function TerminalChatProvider({
         setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, heavyLoading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
+    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
   );
 
   submitRef.current = submit;

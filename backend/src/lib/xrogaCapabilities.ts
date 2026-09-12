@@ -1,7 +1,4 @@
-import {
-  capabilityIsUsable,
-  getCapabilityRegistry,
-} from './capabilityRegistry.js';
+import { currentProductTruth } from '../ai/universal/productTruth.js';
 
 /** "What can you do?" fast-path backed by the server capability registry. */
 export function isCapabilitiesQuery(input: string): boolean {
@@ -19,25 +16,5 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  const registry = getCapabilityRegistry();
-  const usable = registry.filter(capabilityIsUsable);
-  const configured = usable
-    .map((capability) => `- **${capability.label}** — ${capability.description}`)
-    .join('\n');
-
-  const needsSetup = registry
-    .filter((capability) => !capabilityIsUsable(capability))
-    .map((capability) => `- ${capability.label}`)
-    .join('\n');
-
-  return `✨ What Xroga can execute
-
-Xroga is capability-driven, not limited to a fixed list of project categories. Your message defines the task; Xroga selects only the capabilities needed and reports real blockers when authorization, credentials, or infrastructure are missing.
-
-Available or user-authorizable now:
-${configured || '- No executable providers are currently configured.'}
-
-${needsSetup ? `Requires provider configuration:\n${needsSetup}\n\n` : ''}A task is only marked completed when its operation has real verification evidence. Mock or simulated output is labeled, and failed external actions are never replaced with fake success.
-
-What outcome do you want?`;
+  return `✨ What Xroga can execute\n\n${currentProductTruth()}\n\nTell me the outcome you want; Xroga will select the smallest available capability set and report any real authorization or provider blocker.`;
 }

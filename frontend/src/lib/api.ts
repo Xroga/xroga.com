@@ -363,8 +363,11 @@ export async function streamSwarmExecute(
       try {
         payload = JSON.parse(dataLine) as Record<string, unknown>;
       } catch {
-        console.warn('[streamSwarmExecute] skipped malformed SSE chunk');
-        continue;
+        throw new ApiError(
+          'The build stream returned malformed event data.',
+          502,
+          { code: 'STREAM_PROTOCOL_ERROR', event: eventName },
+        );
       }
 
       if (eventName === 'error' || payload.error) {
@@ -423,6 +426,7 @@ export async function streamSwarmExecute(
     }
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error;
+    if (error instanceof ApiError && error.data.code === 'STREAM_PROTOCOL_ERROR') throw error;
     if (runId) return waitForPersistedSwarmRun(runId, token, options, finalText, lastSequence);
     throw error;
   }
@@ -1787,6 +1791,10 @@ export interface SemanticRequestPlan {
     deliverables: Array<{ id: string; mediaType: string; description: string; required: boolean; acceptance: string[] }>;
     requiredCapabilities: string[];
     requiredAuthorities: string[];
+    freshnessRequirement: 'NONE' | 'PREFERRED' | 'CURRENT_REQUIRED';
+    sourcePolicy: { mode: 'any' | 'official_only'; scope: 'public_web' | 'x'; officialDomains: string[] };
+    previewRequirement: 'NONE' | 'PREFERRED' | 'REQUIRED';
+    deploymentRequirement: 'NONE' | 'REQUESTED';
     risks: string[];
     confidence: number;
     blockers: string[];
@@ -1797,6 +1805,7 @@ export interface SemanticRequestPlan {
   rationale: string;
   blockers: string[];
   usage: TokenUsage;
+  directResponse?: string;
 }
 
 export interface TaskItem {

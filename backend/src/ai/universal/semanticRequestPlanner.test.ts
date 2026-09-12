@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, planRetiredDirectCapability, retiredDirectCapability, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
+import { dispatchForGoal, interpreterModelOrder, planExplicitProjectBuild, protocolSocialResponse, resolveStructuredGoalContract, unresolvedGoalBlockers } from './semanticRequestPlanner.js';
 import { goalContractSchema, type GoalContract } from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
@@ -61,7 +61,7 @@ describe('semantic request dispatch', () => {
 
   it('registers user-facing read, response, research, implementation, validation, and write capabilities', () => {
     const ids = new Set(universalCapabilityRegistry.list().map((item) => String(item.id)));
-    for (const id of ['attachment.analyze', 'conversation.respond', 'research.public-web', 'repository.read', 'repository.write', 'software.implement', 'validation.run']) {
+    for (const id of ['attachment.analyze', 'conversation.respond', 'research.public-web', 'research.x', 'repository.read', 'repository.write', 'software.implement', 'validation.run']) {
       assert.ok(ids.has(id), `${id} missing`);
     }
   });
@@ -113,13 +113,36 @@ describe('semantic planner provider fallback', () => {
     assert.match(source, /executeWithProviderFallback/);
   });
 
-  it('falls back when a provider returns malformed semantic output, not only on transport failure', () => {
+  it('repairs one malformed semantic output and safely strips commentary fields', async () => {
+    let calls = 0;
+    const contract = await resolveStructuredGoalContract(async (hint) => {
+      calls += 1;
+      if (!hint) return 'not json at all';
+      return `Planning result:\n\`\`\`json\n${JSON.stringify({
+        ...goal({ semanticIntent: 'PROPOSE' }),
+        commentary: 'not part of the canonical contract',
+      })}\n\`\`\``;
+    });
+    assert.equal(calls, 2);
+    assert.equal(contract.semanticIntent, 'PROPOSE');
+    assert.equal('commentary' in contract, false);
+  });
+
+  it('caps semantic fallback to two routes and a bounded total deadline', () => {
     const source = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
-    const fallback = source.indexOf('executeWithProviderFallback({');
-    const attemptValidation = source.indexOf('interpretGoalContract(interpretationInput', fallback);
-    const attemptEnd = source.indexOf('const { completion, goalContract }', fallback);
-    assert.ok(fallback >= 0 && attemptValidation > fallback && attemptValidation < attemptEnd);
-    assert.doesNotMatch(source.slice(attemptEnd), /JSON\.parse\(\(fenced/);
+    assert.match(source, /interpreterModelOrder\(\)\.slice\(0, 2\)/);
+    assert.match(source, /SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS/);
+    assert.match(source, /correctionUsed \? 0 : 1/);
+    assert.doesNotMatch(source, /timeoutMs:\s*45_000/);
+  });
+});
+
+describe('social protocol fast path', () => {
+  it('answers only bounded social turns and never questions or attached requests', () => {
+    assert.match(protocolSocialResponse('hello') ?? '', /help you/i);
+    assert.equal(protocolSocialResponse('Can you build a parser?'), null);
+    assert.equal(protocolSocialResponse('hello?', false), null);
+    assert.equal(protocolSocialResponse('hi', true), null);
   });
 });
 
@@ -144,32 +167,5 @@ describe('explicit universal build command', () => {
       planExplicitProjectBuild({ userId: 'generated-user', message: '/build', projectContext: { repo: 'o/r', branch: 'b', projectRoot: '/' } }),
       (error: unknown) => (error as { code?: string }).code === 'INVALID_GOAL',
     );
-  });
-});
-
-describe('retired direct capability boundary', () => {
-  it('recognizes semantic variants of direct media generation without treating product builds as media jobs', () => {
-    assert.equal(retiredDirectCapability('Generate a photorealistic image of a bicycle and return it.'), 'media-generation');
-    assert.equal(retiredDirectCapability('Make a short video of waves at sunset.'), 'media-generation');
-    assert.equal(retiredDirectCapability('Create a web app that generates product images.'), null);
-    assert.equal(retiredDirectCapability('Build an image gallery website with responsive filters.'), null);
-  });
-
-  it('recognizes direct browser operation but not browser products or build verification', () => {
-    assert.equal(retiredDirectCapability('Open https://example.com and submit the signup form.'), 'browser-automation');
-    assert.equal(retiredDirectCapability('Scrape this website and download every record.'), 'browser-automation');
-    assert.equal(retiredDirectCapability('Build a browser extension that organizes bookmarks.'), null);
-    assert.equal(retiredDirectCapability('Build the site and verify it in a browser.'), null);
-  });
-
-  it('returns a truthful blocked plan without substituting a build', async () => {
-    const plan = await planRetiredDirectCapability({
-      userId: 'generated-user',
-      message: 'Create an illustration of a lunar bicycle. Do not build or change a software project.',
-    });
-    assert.equal(plan?.dispatch, 'blocked');
-    assert.deepEqual(plan?.capabilityIds, []);
-    assert.match(plan?.blockers[0] ?? '', /not available in Xroga/i);
-    assert.match(plan?.blockers[0] ?? '', /upload an image for analysis/i);
   });
 });

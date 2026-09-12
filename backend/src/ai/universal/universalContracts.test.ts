@@ -45,7 +45,10 @@ test('capability registry accepts source-controlled namespaced additions without
   registry.register(syntheticCapability('invented.alpha'));
   registry.register(syntheticCapability('invented.beta', 'invented:approve'));
   assert.deepEqual(registry.resolve(['invented.alpha'], new Set(['synthetic:run'])).eligible.map((x) => x.id), ['invented.alpha']);
-  assert.deepEqual(registry.resolve(['invented.beta'], new Set()).rejected[0], { id: 'invented.beta', reason: 'missing_authority:invented:approve' });
+  assert.deepEqual(registry.resolve(['invented.beta'], new Set()).rejected[0], {
+    id: 'invented.beta',
+    reason: 'AUTH_REQUIRED:missing_authority:invented:approve',
+  });
   assert.equal(capabilitySelectionSchema.safeParse({ capabilityIds: ['bad_closed_id'], rationale: 'x' }).success, false);
 });
 

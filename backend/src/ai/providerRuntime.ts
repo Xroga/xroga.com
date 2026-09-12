@@ -5,6 +5,7 @@ import {
   worthPersisting,
   type ProviderHealthStore,
 } from './providerHealthStore.js';
+import { RuntimeFailure } from './universal/runtimeFailure.js';
 
 export type ProviderFailureKind =
   | 'authentication'
@@ -287,7 +288,12 @@ export async function executeWithProviderFallback<T>(input: {
       }
     }
   }
-  const error = new Error('All compatible provider routes failed');
-  Object.assign(error, { failures });
-  throw error;
+  const onlyTimeouts = failures.length > 0 && failures.every((failure) => failure.kind === 'timeout');
+  throw new RuntimeFailure(
+    'PROVIDER_UNAVAILABLE',
+    onlyTimeouts ? 'Every compatible provider route timed out.' : 'Every compatible provider route failed.',
+    {
+      details: { failures: failures.map(({ kind, retryable, status, code }) => ({ kind, retryable, status, code })) },
+    },
+  );
 }

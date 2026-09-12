@@ -6,6 +6,7 @@
     "postinstall": "node ../scripts/enforce-next-postcss.mjs",
     "dev": "next dev",
     "build": "next build",
+    "test": "cd .. && tsx --test \"frontend/src/**/*.test.ts\"",
     "start": "next start",
     "lint": "next lint"
   },
@@ -21,6 +22,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.6.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "sharp": "0.35.3",
     "simple-icons": "^16.28.0",
     "tailwind-merge": "^3.6.0",

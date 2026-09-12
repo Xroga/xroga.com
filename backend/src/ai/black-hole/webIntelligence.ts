@@ -31,6 +31,7 @@ import type {
   ResearchBundle,
   ResearchSource,
 } from '../research.js';
+import type { GoalContract } from '../universal/goalContract.js';
 
 import {
   formatResearchAsEvidence,
@@ -174,6 +175,31 @@ function parseDecision(
   } catch {
     return null;
   }
+}
+
+/**
+ * Once semantic planning establishes a freshness contract, execution must not
+ * spend another model call deciding whether to honor it.
+ */
+export function webDecisionFromGoalContract(goal: GoalContract): WebDecision | null {
+  const xResearch = goal.requiredCapabilities.includes('research.x');
+  const requiresResearch = xResearch || goal.requiredCapabilities.includes('research.public-web');
+  if (goal.freshnessRequirement === 'NONE' && !requiresResearch) return null;
+  const sourcePolicy = goal.sourcePolicy.mode;
+  const officialDomains = goal.sourcePolicy.officialDomains;
+  return {
+    action: xResearch || goal.sourcePolicy.scope === 'x'
+      ? 'x_research'
+      : goal.contextComplexity === 'high'
+        ? 'research'
+        : 'search',
+    objective: goal.desiredOutcome || goal.goal,
+    queries: [goal.goal.slice(0, 500)],
+    urls: [],
+    sourcePolicy,
+    officialDomains,
+    reason: `The validated goal contract requires ${goal.freshnessRequirement.toLowerCase()} evidence.`,
+  };
 }
 
 /** Enforce a user-requested source boundary after retrieval, before synthesis or UI. */
@@ -655,11 +681,12 @@ export async function runWebIntelligence(
     prompt: string;
     projectContext?: string;
     officialDomains?: readonly string[];
+    decision?: WebDecision;
     signal?: AbortSignal;
   },
 ): Promise<WebIntelligenceResult> {
   const decision =
-    await decideWebAction(input);
+    input.decision ?? await decideWebAction(input);
 
   if (
     decision.action === 'none'

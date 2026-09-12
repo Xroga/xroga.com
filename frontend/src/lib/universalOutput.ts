@@ -17,6 +17,8 @@ export interface UniversalOutput {
   artifacts: UniversalArtifact[];
   blockers: string[];
   nextActions: string[];
+  evidence?: Array<{ kind: string; detail: string }>;
+  provenance?: { runId: string; taskSessionId?: string; projectContextKey?: string };
 }
 
 export function isUniversalOutput(value: unknown): value is UniversalOutput {
@@ -34,4 +36,15 @@ export function artifactPresentation(artifact: UniversalArtifact): 'image' | 'au
   if (artifact.mediaType.startsWith('video/')) return 'video';
   if (artifact.mediaType.startsWith('text/') || artifact.mediaType.endsWith('+json') || artifact.mediaType === 'application/json') return 'text';
   return 'download';
+}
+
+export function safeArtifactUri(uri?: string): string | null {
+  if (!uri) return null;
+  if (uri.startsWith('/') || uri.startsWith('./') || uri.startsWith('../') || uri.startsWith('blob:')) return uri;
+  try {
+    const value = new URL(uri);
+    return ['https:', 'http:'].includes(value.protocol) ? uri : null;
+  } catch {
+    return null;
+  }
 }

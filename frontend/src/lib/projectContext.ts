@@ -50,6 +50,19 @@ export function sameProjectContext(
   return projectContextKey(left) === projectContextKey(right);
 }
 
+/**
+ * The canonical context exposed to one outgoing request. A fresh-product
+ * terminal intentionally has no repository target even if another project was
+ * active immediately before it; every other request uses the active store
+ * identity verbatim.
+ */
+export function projectContextForRequest(
+  active: ProjectTargetInput | null | undefined,
+  freshProductIntent: boolean,
+): ProjectContextIdentity | null {
+  return freshProductIntent || !active ? null : normalizeProjectContext(active);
+}
+
 export function assertProjectTarget(
   active: ProjectContextIdentity | null,
   target: ProjectTargetInput,

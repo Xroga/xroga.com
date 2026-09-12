@@ -18,12 +18,12 @@ const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
   assert.match(DOCK, /messages\.length === 0/);
-  assert.match(DOCK, /showStarterExperience = emptyWorkspace && !workspaceOpen/);
+  assert.match(DOCK, /showStarterExperience\s*=\s*emptyWorkspace\s*&&\s*!workspaceOpen/);
   assert.match(DOCK, /xv-terminal-dock--idle/);
   assert.match(DOCK, /<TerminalChatBar \/>/);
   assert.equal((DOCK.match(/<TerminalChatBar \/>/g) ?? []).length, 1);
   assert.doesNotMatch(DOCK, /<WorkspaceStarterIdeas \/>/);
-  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold" \/>/);
+  assert.match(DOCK, /showStarterExperience[\s\S]*<WorkspaceShowcaseStarts[\s\S]*?className="xv-workspace-showcase-below-fold"[\s\S]*?\/>/);
   assert.match(DASHBOARD, /--xv-pane-top/);
   assert.match(DASHBOARD, /--xv-pane-bottom/);
   assert.match(CSS, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\([^}]*bottom:\s*var\(--xv-pane-bottom[^}]*overflow-y:\s*auto[^}]*transform:\s*none/);
@@ -88,8 +88,8 @@ test('the real new terminal and homepage preview share a compact integrations co
 });
 
 test('a conversation exposes one compact navigator for its first and latest turns', () => {
-  assert.match(DOCK, /messages\.length > 0 && !incognito/);
-  assert.match(DOCK, /cn\('xv-conversation-navigator'/);
+  assert.match(DOCK, /messages\.length\s*>\s*0\s*&&\s*!incognito/);
+  assert.match(DOCK, /cn\(\s*'xv-conversation-navigator'/);
   assert.match(DOCK, /aria-label="Go to first conversation"/);
   assert.match(DOCK, /aria-label="Go to latest conversation"/);
   assert.match(DOCK, /<ChevronsUpDownIcon/);
@@ -114,7 +114,7 @@ test('connection management reads real provider status and starts provider autho
 
 test('repository updates cannot resize or bounce the whole workspace dock', () => {
   assert.doesNotMatch(DOCK, /new ResizeObserver/);
-  assert.match(DOCK, /chatbarHidden[\s\S]*--xv-chatbar-height', '0px'/);
+  assert.match(DOCK, /chatbarHidden[\s\S]*'--xv-chatbar-height',\s*'0px'/);
   assert.match(DOCK, /xv-terminal-dock--restoring/);
   assert.match(CSS, /\.xv-terminal-dock--restoring\s*\{[^}]*visibility:\s*hidden[^}]*transition:\s*none !important/);
   assert.match(CHATBAR, /new ResizeObserver\(sync\)/);
@@ -129,8 +129,8 @@ test('the desktop companion stays attached outside the canonical composer', () =
 });
 
 test('the empty dock inherits the selected terminal skin and keeps mobile starter space', () => {
-  assert.match(DOCK, /const terminalSkinRaw = useThemeStore\(\(s\) => s\.terminalSkin\)/);
-  assert.match(DOCK, /`terminal-skin-\$\{incognito \? 'dark' : terminalSkin\}`/);
+  assert.match(DOCK, /const terminalSkinRaw\s*=\s*useThemeStore\(\(s\)\s*=>\s*s\.terminalSkin\)/);
+  assert.match(DOCK, /`terminal-skin-\$\{\s*incognito\s*\?\s*'dark'\s*:\s*terminalSkin\s*\}`/);
   assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*--composer-surface:\s*var\(--terminal-ui-raised\)[^}]*background:\s*transparent[^}]*border:\s*0/);
   assert.match(CSS, /\.xv-terminal-dock\[class\*='terminal-skin-'\]\s*\{[^}]*background:\s*transparent !important[^}]*border:\s*0 !important[^}]*box-shadow:\s*none !important/);
   assert.match(CSS, /@media \(max-width:\s*639px\)[\s\S]*?\.xv-terminal-dock--idle:not\(\.xv-terminal-dock--fullscreen\)\s*\{[^}]*top:\s*max\(calc\(var\(--xv-pane-top, 54px\) \+ 74px\), 22dvh\)/);
@@ -204,10 +204,13 @@ test('the empty workspace uses an editorial action lockup above the canonical co
   assert.match(CSS, /\.xv-dashboard-welcome--composer\s*\{[^}]*background:\s*transparent !important[^}]*box-shadow:\s*none !important/);
   assert.match(WELCOME, /<strong>Turn an idea into something live\.<\/strong>/);
   assert.match(WELCOME, /xv-welcome-short-name/);
-  assert.match(DOCK, /<DashboardWelcome composer \/>[\s\S]*?<div className="xv-chatbar-stack relative">[\s\S]*?<WorkspaceComposerKicker displayName=\{displayName\} \/>/);
+  assert.match(
+    DOCK,
+    /<DashboardWelcome\s+composer\s*\/>[\s\S]*?<div\s+className="xv-chatbar-stack relative">[\s\S]*?<WorkspaceComposerKicker[\s\S]*?displayName=\{\s*displayName\s*\}[\s\S]*?\/>/,
+  );
   assert.match(CSS, /\.xv-chatbar-stack > \.xv-welcome-composer-kicker\s*\{[^}]*position:\s*absolute[^}]*top:\s*-1\.04rem[^}]*left:\s*0\.18rem/);
   assert.match(WELCOME, /\{!composer \? \(/, 'the first-run checklist should not crowd the composer welcome');
-  assert.match(DOCK, /WorkspaceShowcaseStarts className="xv-workspace-showcase-below-fold"/);
+  assert.match(DOCK, /WorkspaceShowcaseStarts[\s\S]*?className="xv-workspace-showcase-below-fold"/);
   assert.match(CSS, /\.xv-workspace-showcase-below-fold\[data-expanded='false'\] \.xv-workspace-explore-bar\s*\{[^}]*position:\s*fixed/);
   assert.doesNotMatch(WELCOME, /One prompt|>Yours</);
   assert.doesNotMatch(WELCOME, /Good morning|Good afternoon|Good evening|Good night/);
@@ -234,7 +237,7 @@ test('the composer identity uses a deterministic shortened real display name', (
 });
 
 test('returning to the empty workspace restores the full unclipped headline', () => {
-  assert.match(DOCK, /dockRef\.current\?\.scrollTo\(\{ top: 0 \}\)/);
+  assert.match(DOCK, /dockRef\.current\?\.scrollTo\(\{\s*top:\s*0,?\s*\}\)/);
   assert.match(CSS, /\.xv-terminal-dock--idle \.xv-terminal-dock-inner\s*\{[^}]*background:\s*transparent !important[^}]*border:\s*0 !important[^}]*box-shadow:\s*none !important/);
 });
 
