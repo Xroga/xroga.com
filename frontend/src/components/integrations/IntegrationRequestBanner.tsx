@@ -16,13 +16,13 @@ export function IntegrationRequestBanner({ query }: { query: string }) {
       toast.error('Company name required');
       return;
     }
-    toast.success('Request submitted — Xroga AI will review this integration');
+    toast.success('Request submitted — Xroga AI will review this Plugins');
     setNote('');
   }
 
   return (
     <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 space-y-3">
-      <p className="text-sm font-semibold">Request integration</p>
+      <p className="text-sm font-semibold">Request Plugins</p>
       <p className="text-[11px] text-[var(--muted)] leading-relaxed">
         We could not find <strong className="text-[var(--foreground)]">{query}</strong> in our catalog.
         Submit a request and our team will check if this company offers a safe, useful API for Xroga AI.
