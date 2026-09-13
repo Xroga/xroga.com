@@ -8,6 +8,7 @@ import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure }
 import { costUsdForTokens, MODELS, type ModelId } from '../ai/models.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
 import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { extractJson } from '../ai/black-hole/structuredOutput.js';
 import { prepareFocusedContext } from '../ai/contextPreparation.js';
 import { scanProjectFiles } from '../ai/securityScan.js';
 import type { ProjectFile } from '../ai/patches.js';
@@ -91,7 +92,7 @@ export interface CoherentCompletionFn {
   (
     modelId: string,
     messages: ChatMessage[],
-    opts: { maxTokens: number; temperature: number; signal?: AbortSignal },
+    opts: { maxTokens: number; temperature: number; json?: boolean; signal?: AbortSignal },
   ): Promise<CoherentCompletionResult>;
 }
 
@@ -215,6 +216,46 @@ function containsHighConfidenceSecret(files: readonly ProjectFile[]): boolean {
   return files.some((file) => patterns.some((pattern) => pattern.test(file.content)));
 }
 
+function jsonFilesToFrames(value: unknown): string | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const files = (value as { files?: unknown }).files;
+  if (!Array.isArray(files)) return null;
+  return files.flatMap((candidate) => {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return [];
+    const file = candidate as Record<string, unknown>;
+    if (typeof file.content !== 'string' || !file.content.trim()) return [];
+    return [
+      FILE_OPEN,
+      JSON.stringify({ path: file.path, operation: file.operation }),
+      CONTENT_OPEN,
+      file.content,
+      FILE_CLOSE,
+    ].join('\n');
+  }).join('\n');
+}
+
+/** Convert the preferred JSON project bundle into the same hardened internal framing. */
+function jsonBundleToFrames(text: string): string | null {
+  const value = extractJson(text);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const object = value as Record<string, unknown>;
+  if (!Array.isArray(object.files)) return null;
+  const manifest = {
+    ...object,
+    files: object.files.map((candidate) => {
+      if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return candidate;
+      const { content: _content, ...file } = candidate as Record<string, unknown>;
+      return file;
+    }),
+  };
+  return [
+    MANIFEST_OPEN,
+    JSON.stringify(manifest),
+    MANIFEST_CLOSE,
+    jsonFilesToFrames(value) ?? '',
+  ].join('\n');
+}
+
 /** Parse and validate the complete framed project-change contract before materialization. */
 export function parseCoherentBundle(
   text: string,
@@ -224,16 +265,17 @@ export function parseCoherentBundle(
   if (text.length > 1_500_000) {
     return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle exceeded the output-size limit' };
   }
-  const manifestStart = text.indexOf(MANIFEST_OPEN);
-  const manifestEnd = text.indexOf(MANIFEST_CLOSE);
+  const normalizedText = text.includes(MANIFEST_OPEN) ? text : (jsonBundleToFrames(text) ?? text);
+  const manifestStart = normalizedText.indexOf(MANIFEST_OPEN);
+  const manifestEnd = normalizedText.indexOf(MANIFEST_CLOSE);
   if (manifestStart < 0 || manifestEnd < manifestStart) {
     return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle manifest is missing or truncated' };
   }
-  const contract = parseContract(text.slice(manifestStart + MANIFEST_OPEN.length, manifestEnd).trim());
+  const contract = parseContract(normalizedText.slice(manifestStart + MANIFEST_OPEN.length, manifestEnd).trim());
   if (!contract) {
     return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle manifest is invalid' };
   }
-  const frames = parseFileFrames(text.slice(manifestEnd + MANIFEST_CLOSE.length));
+  const frames = parseFileFrames(normalizedText.slice(manifestEnd + MANIFEST_CLOSE.length));
   if (frames.invalidReason) {
     return { status: 'invalid', contract, files: [], missingPaths: [], reason: frames.invalidReason };
   }
@@ -271,7 +313,10 @@ export function mergeCoherentContinuation(
   preservationBrief = '',
 ): ParsedCoherentBundle {
   if (!initial.contract || initial.status !== 'partial') return initial;
-  const parsed = parseFileFrames(continuationText);
+  const normalizedContinuation = continuationText.includes(FILE_OPEN)
+    ? continuationText
+    : (jsonFilesToFrames(extractJson(continuationText)) ?? continuationText);
+  const parsed = parseFileFrames(normalizedContinuation);
   if (parsed.invalidReason) return { ...initial, status: 'invalid', reason: parsed.invalidReason };
   const expected = new Set(initial.missingPaths.map((path) => path.toLowerCase()));
   if (!parsed.files.length || parsed.files.some((file) => !expected.has(file.path.toLowerCase()))) {
@@ -307,20 +352,13 @@ export function mergeCoherentContinuation(
 
 const BUNDLE_SYSTEM = `You are Xroga's software implementation agent. Produce one coherent project change, not one reply per file.
 
-Output exactly this framed protocol. Do not use markdown fences or prose outside it:
-${MANIFEST_OPEN}
-{"version":1,"summary":"...","project":{"runtime":"...","framework":null,"packageManager":null,"buildCommands":[],"testCommands":[],"runCommand":null},"sharedContracts":["..."],"files":[{"path":"relative/path","operation":"upsert","purpose":"..."}]}
-${MANIFEST_CLOSE}
-${FILE_OPEN}
-{"path":"relative/path","operation":"upsert"}
-${CONTENT_OPEN}
-complete raw file contents
-${FILE_CLOSE}
+Return exactly one JSON object with this shape and no markdown or prose:
+{"version":1,"summary":"...","project":{"runtime":"...","framework":null,"packageManager":null,"buildCommands":[],"testCommands":[],"runCommand":null},"sharedContracts":["..."],"files":[{"path":"relative/path","operation":"upsert","purpose":"...","content":"complete raw file contents"}]}
 
 Rules:
-- Put the complete manifest first, before any file contents.
+- Put the complete project contract and every complete file in the same JSON object.
 - Keep all routes, exports, data models, component interfaces, commands and tests consistent with sharedContracts.
-- Every manifest file must have exactly one complete file frame. No duplicate or conflicting paths.
+- Every declared file must have exactly one complete content value. No duplicate or conflicting paths.
 - Paths are relative, never absolute, never contain '..', and never address .git.
 - Use only upsert operations. Preserve unrelated existing behavior.
 - Include complete working source, manifests and relevant tests. No TODOs or placeholders.
@@ -328,13 +366,8 @@ Rules:
 - Prefer a compact maintainable implementation that fits in one response.`;
 
 const CONTINUATION_SYSTEM = `Continue an already validated Xroga project bundle.
-Return only complete file frames in this exact format, with no manifest, prose or markdown fence:
-${FILE_OPEN}
-{"path":"relative/path","operation":"upsert"}
-${CONTENT_OPEN}
-complete raw file contents
-${FILE_CLOSE}
-
+Return exactly one JSON object with this shape and no prose or markdown:
+{"files":[{"path":"relative/path","operation":"upsert","content":"complete raw file contents"}]}
 Return exactly the requested missing files. Do not repeat completed files.`;
 
 function repositoryContext(existingFiles: readonly ProjectFile[], objective: string): string {
@@ -360,9 +393,10 @@ const defaultCompletion: CoherentCompletionFn = async (modelId, messages, opts) 
       signal,
       onActivity,
       // The semantic planner has already resolved the implementation. This call must
-      // spend its bounded output budget on the framed project bundle, not a private
+      // spend its bounded output budget on the structured project bundle, not a private
       // reasoning trace. openaiCompat applies this only where the provider documents it.
       reasoningMode: 'none',
+      json: opts.json,
       onDelta: (delta) => {
         if (firstOutputMs === null) firstOutputMs = Date.now() - startedAt;
         onToken(delta);
@@ -400,6 +434,7 @@ async function callWithTelemetry(input: {
     const reply = await input.complete(input.modelId, input.messages, {
       maxTokens: input.maxTokens,
       temperature: 0.15,
+      json: true,
       signal: input.signal,
     });
     const inputTokens = reply.inputTokens ?? estimateTokens(input.messages.map((message) => typeof message.content === 'string' ? message.content : JSON.stringify(message.content)).join('\n'));
