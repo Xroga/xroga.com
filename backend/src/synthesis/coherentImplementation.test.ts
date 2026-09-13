@@ -211,7 +211,57 @@ test('safe provider vocabulary differences normalize to the same full-file snaps
   assert.deepEqual(parsed.contract?.sharedContracts, []);
 });
 
-test('normalization never turns a deletion or unknown operation into a write', () => {
+test('a harmless structured-output envelope and full-snapshot aliases normalize without weakening safety', () => {
+  const parsed = parseCoherentBundle(JSON.stringify({
+    result: {
+      summary: 'wrapped browser application',
+      project: {
+        language: 'browser',
+        package_manager: 'npm',
+        build_commands: ['npm run build'],
+        test_commands: ['npm test'],
+        run_command: 'npm start',
+      },
+      files: [
+        { filePath: './index.html', action: 'write', body: '<main>Ready</main>' },
+        { name: 'app.js', action: 'replace', source: 'console.log("ready")' },
+      ],
+    },
+  }));
+
+  assert.equal(parsed.status, 'complete');
+  assert.deepEqual(parsed.files.map((file) => file.path), ['index.html', 'app.js']);
+  assert.equal(parsed.contract?.project.runtime, 'browser');
+  assert.deepEqual(parsed.contract?.project.buildCommands, ['npm run build']);
+});
+
+test('a complete content-only response derives its manifest instead of discarding usable code', () => {
+  const parsed = parseCoherentBundle(JSON.stringify({
+    fileContents: {
+      'index.html': '<main>Ready</main>',
+      'app.js': 'console.log("ready")',
+    },
+  }));
+
+  assert.equal(parsed.status, 'complete');
+  assert.deepEqual(parsed.files.map((file) => file.path), ['index.html', 'app.js']);
+  assert.equal(parsed.contract?.project.runtime, 'unspecified');
+});
+
+test('a protocol-invalid primary gives the distinct fallback corrective evidence', async () => {
+  const complete = fakeCompletion((_model, messages, call) => {
+    if (call === 1) return { text: '{"notFiles":true}' };
+    assert.match(String(messages[1]?.content ?? ''), /Protocol correction from the previous bounded attempt/);
+    assert.match(String(messages[1]?.content ?? ''), /bundle manifest is missing or truncated/);
+    return { text: jsonBundle(['index.html'], { 'index.html': '<main>Recovered</main>' }) };
+  });
+
+  const files = await implementCoherently({ brief: 'Create the project.', candidates: CANDIDATES, complete });
+  assert.deepEqual(files, [{ path: 'index.html', content: '<main>Recovered</main>' }]);
+  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'deepseek_v4_flash']);
+});
+
+test('normalization never turns a deletion or unsafe operation into a write', () => {
   for (const operation of ['delete', 'rename', 'execute']) {
     const parsed = parseCoherentBundle(JSON.stringify({
       ...contract(['src/index.ts']),
