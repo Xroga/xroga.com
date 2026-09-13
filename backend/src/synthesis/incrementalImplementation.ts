@@ -63,6 +63,11 @@ export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
  */
 export const IMPLEMENTATION_FILE_CONCURRENCY = 2;
 
+/** A repair may touch only a small, existing slice of the validated snapshot. */
+export const MAX_REPAIR_FILES = 4;
+/** Bound repository evidence placed in one repair request. */
+export const REPAIR_CONTEXT_CHARS = 48_000;
+
 export interface PlannedFile {
   readonly path: string;
   readonly purpose: string;
@@ -106,6 +111,21 @@ Rules:
 - Honour the language, framework and architecture the brief states.
 - When current contents are supplied, preserve every unrelated declaration and behavior.
 - Write only the file you are asked for.`;
+
+const REPAIR_SYSTEM = `You are repairing a software project after a deterministic command failed.
+
+Return JSON only, with no prose and no markdown fence:
+{"files":[{"path":"existing/relative/path","content":"complete repaired file contents"}]}
+
+Rules:
+- Fix the root cause shown by the validation evidence, not a product name or prompt keyword.
+- Return only existing files that must change, with complete contents.
+- Preserve unrelated behavior, public interfaces, security controls, and requested features.
+- Never delete, skip, weaken, or comment out a test or validation command to make it pass.
+- Prefer repairing implementation code when a test exposes an implementation defect.
+- Do not add dependencies unless the failure proves one is required.
+- Paths are relative and must exactly match a supplied repository path.
+- Make the smallest coherent repair. No placeholders and no TODO stubs.`;
 
 function requiresExistingSymbolPreservation(brief: string): boolean {
   return /\b(?:preserve|keep|retain)\b[\s\S]{0,100}\b(?:existing|current|unrelated|every|all)\b|\b(?:existing|current|unrelated|every|all)\b[\s\S]{0,100}\b(?:preserve|keep|retain|unchanged)\b/i.test(brief);
@@ -238,6 +258,108 @@ export class IncrementalImplementationError extends Error {
     this.name = 'IncrementalImplementationError';
     this.failures = failures;
   }
+}
+
+/**
+ * Parse a bounded repair response and refuse scope widening.
+ *
+ * A repair is downstream of a failing command, so it may correct only files in the snapshot
+ * that actually failed validation. New files and deletions belong to implementation planning,
+ * not this one-attempt recovery boundary.
+ */
+export function parseRepairFiles(
+  text: string,
+  existingFiles: readonly ProjectFile[],
+): readonly ProjectFile[] {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const raw = (fenced ? fenced[1] : text).trim();
+  try {
+    const parsed = JSON.parse(raw) as { files?: Array<{ path?: unknown; content?: unknown }> };
+    if (!Array.isArray(parsed.files) || !parsed.files.length || parsed.files.length > MAX_REPAIR_FILES) {
+      return [];
+    }
+    const existing = new Map(existingFiles.map((file) => [file.path, file]));
+    const seen = new Set<string>();
+    const repaired: ProjectFile[] = [];
+    for (const candidate of parsed.files) {
+      if (!safePath(candidate?.path) || typeof candidate.content !== 'string' || !candidate.content.trim()) {
+        return [];
+      }
+      const path = candidate.path.trim().replace(/\\/g, '/');
+      const current = existing.get(path);
+      if (!current || seen.has(path)) return [];
+      if (!preservesRequiredSymbols('Preserve every unrelated existing declaration and behavior.', current, candidate.content)) {
+        return [];
+      }
+      seen.add(path);
+      repaired.push({ path, content: candidate.content });
+    }
+    return repaired;
+  } catch {
+    return [];
+  }
+}
+
+function repairRepositoryContext(
+  files: readonly ProjectFile[],
+  failures: readonly string[],
+): string {
+  const evidence = failures.join('\n');
+  const mentioned = (file: ProjectFile): boolean =>
+    evidence.toLowerCase().includes(file.path.toLowerCase()) ||
+    evidence.toLowerCase().includes(file.path.replace(/^.*\//, '').toLowerCase());
+  const ordered = [...files].sort((left, right) => Number(mentioned(right)) - Number(mentioned(left)));
+  const paths = `Repository paths:\n${files.map((file) => file.path).join('\n')}`;
+  let remaining = Math.max(0, REPAIR_CONTEXT_CHARS - paths.length);
+  const excerpts: string[] = [];
+  for (const file of ordered) {
+    if (remaining <= 0) break;
+    const header = `\n<file path="${file.path}">\n`;
+    const footer = '\n</file>';
+    const allowance = Math.min(file.content.length, Math.max(0, remaining - header.length - footer.length));
+    if (allowance <= 0) continue;
+    excerpts.push(`${header}${file.content.slice(0, allowance)}${footer}`);
+    remaining -= header.length + allowance + footer.length;
+  }
+  return `${paths}\n${excerpts.join('\n')}`;
+}
+
+/**
+ * One bounded model repair over deterministic failure evidence and the exact file snapshot.
+ * The caller revalidates the returned snapshot; the model can never mark its own repair as
+ * successful.
+ */
+export async function repairIncrementally(input: {
+  brief: string;
+  failures: readonly string[];
+  files: readonly ProjectFile[];
+  candidates: readonly ModelCandidate[];
+  complete?: CompletionFn;
+}): Promise<readonly ProjectFile[] | null> {
+  if (!input.failures.length || !input.files.length) return null;
+  const complete = input.complete ?? defaultCompletion;
+  const unavailableCandidates = new Set<string>();
+  const result = await completeWithFallback({
+    candidates: input.candidates,
+    messages: [
+      { role: 'system', content: REPAIR_SYSTEM },
+      {
+        role: 'user',
+        content:
+          `Original implementation brief:\n${input.brief}\n\n` +
+          `Deterministic validation evidence:\n${input.failures.join('\n\n')}\n\n` +
+          repairRepositoryContext(input.files, input.failures),
+      },
+    ],
+    maxTokens: PER_FILE_MAX_TOKENS,
+    json: true,
+    label: 'the bounded validation repair',
+    usable: (text) => parseRepairFiles(text, input.files).length > 0,
+    complete,
+    unavailableCandidates,
+  });
+  const repaired = parseRepairFiles(result.text, input.files);
+  return repaired.length ? repaired : null;
 }
 
 function regexEscape(value: string): string {

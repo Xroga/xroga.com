@@ -5,11 +5,14 @@ import {
   IncrementalImplementationError,
   IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
   IMPLEMENTATION_FILE_CONCURRENCY,
+  MAX_REPAIR_FILES,
   MAX_PLANNED_FILES,
   explicitlyMentionedExistingFiles,
   implementIncrementally,
   parseFilePlan,
+  parseRepairFiles,
   preservesRequiredSymbols,
+  repairIncrementally,
   stripCodeFence,
   type CompletionFn,
 } from './incrementalImplementation.js';
@@ -264,6 +267,47 @@ test('a partial project is never returned', async () => {
       return true;
     },
   );
+});
+
+test('a bounded repair receives the real failure and cross-file repository evidence', async () => {
+  const files = [
+    { path: 'module.py', content: 'def existing():\n    return "ok"\n' },
+    { path: 'tests/test_module.py', content: 'from module import render\n\ndef test_render():\n    assert render() == "ok"\n' },
+  ];
+  const complete = fakeCompletion((_model, system, user) => {
+    assert.match(system, /repairing a software project/i);
+    assert.match(user, /ImportError: cannot import name 'render'/);
+    assert.match(user, /<file path="module\.py">/);
+    assert.match(user, /<file path="tests\/test_module\.py">/);
+    return {
+      text: JSON.stringify({
+        files: [{ path: 'module.py', content: `${files[0]!.content}\ndef render():\n    return "ok"\n` }],
+      }),
+    };
+  });
+
+  const repaired = await repairIncrementally({
+    brief: 'Implement the accepted product without removing tests.',
+    failures: ["pytest -q: ImportError: cannot import name 'render' from 'module'"],
+    files,
+    candidates: CANDIDATES,
+    complete,
+  });
+
+  assert.deepEqual(repaired?.map((file) => file.path), ['module.py']);
+  assert.match(repaired?.[0]?.content ?? '', /def existing/);
+  assert.match(repaired?.[0]?.content ?? '', /def render/);
+  assert.equal(complete.calls.length, 1, 'repair is one bounded correction call when the first route is usable');
+});
+
+test('repair responses cannot add files, widen past the cap, or drop existing declarations', () => {
+  const existing = [{ path: 'module.py', content: 'def keep_me():\n    return 1\n' }];
+  assert.deepEqual(parseRepairFiles('{"files":[{"path":"new.py","content":"x"}]}', existing), []);
+  assert.deepEqual(
+    parseRepairFiles(JSON.stringify({ files: Array.from({ length: MAX_REPAIR_FILES + 1 }, () => ({ path: 'module.py', content: 'x' })) }), existing),
+    [],
+  );
+  assert.deepEqual(parseRepairFiles('{"files":[{"path":"module.py","content":"def replacement():\\n    return 2"}]}', existing), []);
 });
 
 test('an unusable plan falls back before any file is attempted', async () => {
