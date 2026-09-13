@@ -14,6 +14,7 @@ import {
   parseRepairFiles,
   preservesRequiredSymbols,
   repairIncrementally,
+  rotateImplementationCandidates,
   stripCodeFence,
   type CompletionFn,
 } from './incrementalImplementation.js';
@@ -53,6 +54,18 @@ function fakeCompletion(
 }
 
 const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { modelId: 'kimi_k3' }];
+
+test('a concurrent batch is distributed across the approved routes without widening it', () => {
+  assert.deepEqual(
+    rotateImplementationCandidates(CANDIDATES, 1).map((candidate) => candidate.modelId),
+    ['glm_5_3', 'kimi_k3', 'glm_5_3_flash'],
+  );
+  assert.deepEqual(
+    rotateImplementationCandidates(CANDIDATES, 4).map((candidate) => candidate.modelId),
+    ['glm_5_3', 'kimi_k3', 'glm_5_3_flash'],
+  );
+  assert.deepEqual(rotateImplementationCandidates([], 9), []);
+});
 
 test('each provider attempt is bounded before the approved fallback chain advances', () => {
   assert.equal(IMPLEMENTATION_ATTEMPT_TIMEOUT_MS, 60_000);
@@ -210,10 +223,12 @@ test('an unavailable provider is quarantined for the rest of one implementation 
 
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
   assert.equal(files.length, IMPLEMENTATION_FILE_CONCURRENCY + 1);
+  const unavailableCalls = complete.calls.filter((call) => call.modelId === 'glm_5_3_flash');
+  assert.ok(unavailableCalls.length >= 2 && unavailableCalls.length <= IMPLEMENTATION_FILE_CONCURRENCY + 1);
   assert.equal(
-    complete.calls.filter((call) => call.modelId === 'glm_5_3_flash').length,
-    IMPLEMENTATION_FILE_CONCURRENCY + 1,
-    'the manifest and first concurrent batch may use it, but later files must skip the outage',
+    unavailableCalls.some((call) => call.user.includes(`Write exactly this one file: src/file-${IMPLEMENTATION_FILE_CONCURRENCY}.ts`)),
+    false,
+    'a later batch must skip the provider quarantined by the first concurrent batch',
   );
 });
 
