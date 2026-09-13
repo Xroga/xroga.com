@@ -57,7 +57,7 @@ test('each provider attempt is bounded before the approved fallback chain advanc
 });
 
 test('independent file generation uses conservative bounded concurrency', () => {
-  assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 2);
+  assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 3);
 });
 
 test('an explicitly named existing file skips the manifest call and receives its current content', async () => {
@@ -200,7 +200,7 @@ test('an unavailable provider is quarantined for the rest of one implementation 
   assert.equal(files.length, 3);
   assert.equal(
     complete.calls.filter((call) => call.modelId === 'glm_5_3_flash').length,
-    3,
+    IMPLEMENTATION_FILE_CONCURRENCY + 1,
     'the manifest and first concurrent batch may use it, but later files must skip the outage',
   );
 });
