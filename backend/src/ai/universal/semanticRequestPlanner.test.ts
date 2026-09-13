@@ -3,12 +3,14 @@ import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import {
   dispatchForGoal,
+  executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
   protocolSocialResponse,
   resolveStructuredGoalContract,
   selectPlannerRoutes,
   SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS,
+  SEMANTIC_PLANNER_HEDGE_DELAY_MS,
   SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS,
   SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,
   unresolvedGoalBlockers,
@@ -157,8 +159,50 @@ describe('semantic planner provider fallback', () => {
     assert.match(source, /SEMANTIC_PLANNER_TOTAL_TIMEOUT_MS/);
     assert.match(source, /correctionUsed \? 0 : 1/);
     assert.doesNotMatch(source, /timeoutMs:\s*45_000/);
-    assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS * 2, SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
+    assert.equal(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS);
+    assert.ok(SEMANTIC_PLANNER_HEDGE_DELAY_MS < SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS);
     assert.ok(SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS < 60_000);
+  });
+
+  it('hedges a slow primary route and cancels it when the fallback succeeds', async () => {
+    const called: string[] = [];
+    let primaryAborted = false;
+    const total = new AbortController();
+    const result = await executeHedgedPlannerFallback({
+      routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
+      signal: total.signal,
+      routeTimeoutMs: 1_000,
+      hedgeDelayMs: 0,
+      execute: async (modelId, signal) => {
+        called.push(modelId);
+        if (modelId === 'glm_5_3_flash') return 'valid fallback plan';
+        return await new Promise<string>((_resolve, reject) => signal.addEventListener('abort', () => {
+          primaryAborted = true;
+          reject(Object.assign(new Error('cancelled'), { name: 'AbortError' }));
+        }, { once: true }));
+      },
+    });
+    assert.equal(result.value, 'valid fallback plan');
+    assert.equal(result.modelId, 'glm_5_3_flash');
+    assert.deepEqual(called, ['deepseek_v4_flash', 'glm_5_3_flash']);
+    assert.equal(primaryAborted, true);
+  });
+
+  it('does not spend a fallback call when the primary finishes before the hedge', async () => {
+    const called: string[] = [];
+    const total = new AbortController();
+    const result = await executeHedgedPlannerFallback({
+      routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
+      signal: total.signal,
+      routeTimeoutMs: 1_000,
+      hedgeDelayMs: 100,
+      execute: async (modelId) => {
+        called.push(modelId);
+        return 'primary plan';
+      },
+    });
+    assert.equal(result.value, 'primary plan');
+    assert.deepEqual(called, ['deepseek_v4_flash']);
   });
 });
 

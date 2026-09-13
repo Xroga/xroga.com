@@ -26,7 +26,94 @@ export interface SemanticRequestPlan {
 
 export const SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS = 28_000;
 export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS = 30_000;
-export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS = 14_000;
+export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS = 28_000;
+export const SEMANTIC_PLANNER_HEDGE_DELAY_MS = 4_000;
+
+type PlannerRouteOutcome<T> =
+  | { ok: true; value: T; modelId: ModelId }
+  | { ok: false; error: unknown; modelId: ModelId };
+
+/**
+ * Give the primary semantic interpreter the whole request deadline, then hedge one
+ * fallback after a short delay. The old serial split aborted both healthy-but-slower
+ * providers at 14 seconds. The losing request is cancelled as soon as one route wins.
+ */
+export async function executeHedgedPlannerFallback<T>(input: {
+  routes: readonly ModelId[];
+  execute: (modelId: ModelId, signal: AbortSignal) => Promise<T>;
+  signal: AbortSignal;
+  routeTimeoutMs: number;
+  hedgeDelayMs?: number;
+}): Promise<{ value: T; modelId: ModelId }> {
+  const routes = [...new Set(input.routes)].slice(0, 2);
+  if (!routes.length) {
+    throw new RuntimeFailure('PLANNER_PROVIDER_UNAVAILABLE', 'No planning route is available.');
+  }
+
+  const controllers = new Map<ModelId, AbortController>();
+  const run = async (modelId: ModelId): Promise<PlannerRouteOutcome<T>> => {
+    const controller = new AbortController();
+    controllers.set(modelId, controller);
+    const relayAbort = () => controller.abort();
+    input.signal.addEventListener('abort', relayAbort, { once: true });
+    try {
+      const result = await executeWithProviderFallback({
+        routes: [modelId],
+        timeoutMs: input.routeTimeoutMs,
+        maximumAttemptsPerRoute: 1,
+        recordHealth: false,
+        signal: controller.signal,
+        execute: input.execute,
+      });
+      return { ok: true, value: result.value, modelId: result.modelId };
+    } catch (error) {
+      return { ok: false, error, modelId };
+    } finally {
+      input.signal.removeEventListener('abort', relayAbort);
+    }
+  };
+  const finish = (outcome: Extract<PlannerRouteOutcome<T>, { ok: true }>) => {
+    for (const [modelId, controller] of controllers) {
+      if (modelId !== outcome.modelId) controller.abort();
+    }
+    return { value: outcome.value, modelId: outcome.modelId };
+  };
+
+  const primary = run(routes[0]!);
+  if (routes.length === 1) {
+    const outcome = await primary;
+    if (outcome.ok) return finish(outcome);
+    throw outcome.error;
+  }
+
+  let hedgeTimer: ReturnType<typeof setTimeout> | undefined;
+  const hedgeReady = new Promise<'hedge'>((resolve) => {
+    hedgeTimer = setTimeout(() => resolve('hedge'), Math.max(0, input.hedgeDelayMs ?? SEMANTIC_PLANNER_HEDGE_DELAY_MS));
+  });
+  const beforeHedge = await Promise.race([primary, hedgeReady]);
+  if (beforeHedge !== 'hedge' && beforeHedge.ok) {
+    if (hedgeTimer) clearTimeout(hedgeTimer);
+    return finish(beforeHedge);
+  }
+
+  const fallback = run(routes[1]!);
+  if (beforeHedge !== 'hedge') {
+    if (hedgeTimer) clearTimeout(hedgeTimer);
+    const fallbackOutcome = await fallback;
+    if (fallbackOutcome.ok) return finish(fallbackOutcome);
+    throw new RuntimeFailure('PROVIDER_UNAVAILABLE', 'Every compatible planning route failed.', {
+      details: { failures: [beforeHedge.error, fallbackOutcome.error].map((error) => error instanceof RuntimeFailure ? error.details : undefined) },
+    });
+  }
+
+  const first = await Promise.race([primary, fallback]);
+  if (first.ok) return finish(first);
+  const other = first.modelId === routes[0] ? await fallback : await primary;
+  if (other.ok) return finish(other);
+  throw new RuntimeFailure('PROVIDER_UNAVAILABLE', 'Every compatible planning route failed.', {
+    details: { failures: [first.error, other.error].map((error) => error instanceof RuntimeFailure ? error.details : undefined) },
+  });
+}
 
 export function interpreterModelOrder(env: NodeJS.ProcessEnv = process.env): ModelId[] {
   const callable = callableModelIds(env);
@@ -278,18 +365,13 @@ export async function planSemanticRequest(input: {
   const totalTimer = setTimeout(() => totalController.abort(), totalTimeoutMs);
   let lastStructuredFailure: RuntimeFailure | null = null;
   let finalModelId: ModelId | null = null;
-  let correctionUsed = false;
   try {
-    const planned = await executeWithProviderFallback({
+    const planned = await executeHedgedPlannerFallback({
       routes: models,
-      timeoutMs: Math.min(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, totalTimeoutMs),
-      maximumAttemptsPerRoute: 1,
-      // chatCompletion owns the real provider health event. Recording again in
-      // the fallback wrapper would open circuits after fewer real calls than
-      // the configured failure threshold.
-      recordHealth: false,
+      routeTimeoutMs: Math.min(SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS, totalTimeoutMs),
       signal: totalController.signal,
       execute: async (modelId, signal) => {
+        let correctionUsed = false;
         const goalContract = await resolveStructuredGoalContract(async (repairHint) => {
           if (repairHint) correctionUsed = true;
           const attemptMessages: ChatMessage[] = repairHint
