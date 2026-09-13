@@ -25,6 +25,7 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { ChevronsUpDownIcon } from '@/components/icons/animated/ChevronsUpDownIcon';
+import { WorkspaceConnectionsStrip } from './WorkspaceConnectionsStrip';
 
 const FULLSCREEN_BUILD_COMMANDS = [
   '/ launch-ready product from one clear brief',
@@ -319,19 +320,25 @@ export function TerminalDock() {
                     <CompanionComposerAnchor />
                   ) : null}
 
-                  <TerminalChatBar />
+                 <TerminalChatBar />
 
-                </div>
+</div>
 
-                {!incognito ? (
-                  <div className="xv-chatbar-context-strip">
-                    <RepoContextBar
-                      compact
-                    />
-                  </div>
-                ) : null}
+{!incognito ? (
+  <div className="xv-chatbar-context-strip">
+    <RepoContextBar
+      compact
+    />
 
-              </div>
+    <WorkspaceConnectionsStrip
+      href="/dashboard/integrations"
+      interactive
+      variant="chatbar"
+    />
+  </div>
+) : null}
+
+</div>
 
               {/* IMPORTANT:
                   This must stay OUTSIDE the Kimi composer.
