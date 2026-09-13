@@ -123,7 +123,7 @@ function WorkspaceSidebar({ collapsed, onToggle, loggedIn }: { collapsed: boolea
         <button type="button" className="is-active"><TerminalSquare /><span>Workspace</span></button>
         <Link href={loggedIn ? '/dashboard' : '/auth/signup'}><LayoutDashboard /><span>Dashboard</span></Link>
         <Link href={loggedIn ? '/dashboard/projects' : '/auth/signup'}><FolderGit2 /><span>Projects</span></Link>
-        <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'}><Plug /><span>Integrations</span></Link>
+        <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'}><Plug /><span>Plugins</span></Link>
         <Link href={loggedIn ? '/dashboard/publish' : '/auth/signup'}><Rocket /><span>Launch &amp; Growth</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
         <Link href="/showcase"><Compass /><span>Explore</span><ChevronDown className="xv-wt-nav-chevron" /></Link>
         <Link href={loggedIn ? '/settings' : '/auth/signup'}><Settings /><span>Settings</span></Link>
