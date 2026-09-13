@@ -20,3 +20,4 @@ export * from './SoftwareAgentService.js';
 export * from './softwareAgentContractFactory.js';
 export * from './softwareAgentFeatureFlags.js';
 export * from './softwareExecutorSelector.js';
+export * from './SoftwareAgentRuntime.js';
