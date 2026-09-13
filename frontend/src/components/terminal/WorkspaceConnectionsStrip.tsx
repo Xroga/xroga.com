@@ -15,21 +15,39 @@ const CONNECTIONS = [
   { id: 'supabase', name: 'Supabase' },
 ] as const;
 
+type WorkspaceConnectionsVariant =
+  | 'default'
+  | 'chatbar';
+
 interface WorkspaceConnectionsStripProps {
   href: string;
   interactive?: boolean;
+  variant?: WorkspaceConnectionsVariant;
 }
 
 export function WorkspaceConnectionsStrip({
   href,
   interactive = false,
+  variant = 'default',
 }: WorkspaceConnectionsStripProps) {
   const router = useRouter();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [connected, setConnected] = useState<Record<string, boolean>>({});
-  const [checking, setChecking] = useState(interactive);
-  const [connectingGithub, setConnectingGithub] = useState(false);
+  const chatbar =
+    variant === 'chatbar';
+
+  const [modalOpen, setModalOpen] =
+    useState(false);
+
+  const [connected, setConnected] =
+    useState<Record<string, boolean>>({});
+
+  const [checking, setChecking] =
+    useState(interactive);
+
+  const [
+    connectingGithub,
+    setConnectingGithub,
+  ] = useState(false);
 
   useEffect(() => {
     if (!interactive) {
@@ -70,7 +88,18 @@ export function WorkspaceConnectionsStrip({
     };
   }, [interactive]);
 
-  const githubConnected = connected.github === true;
+  const githubConnected =
+    connected.github === true;
+
+  const rootClassName = [
+    'xv-workspace-connections',
+
+    chatbar
+      ? 'xv-workspace-connections--chatbar'
+      : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   async function connectGithub() {
     if (connectingGithub) return;
@@ -78,13 +107,17 @@ export function WorkspaceConnectionsStrip({
     setConnectingGithub(true);
 
     try {
-      const { url } = await api.github.oauthUrl();
+      const { url } =
+        await api.github.oauthUrl();
 
       if (!url) {
-        throw new Error('GitHub authorization is not available.');
+        throw new Error(
+          'GitHub authorization is not available.',
+        );
       }
 
-      window.location.href = url;
+      window.location.href =
+        url;
     } catch (error) {
       setConnectingGithub(false);
 
@@ -106,31 +139,41 @@ export function WorkspaceConnectionsStrip({
   }
 
   /*
-   * Avoid flashing the experienced-user Integrations state
-   * before GitHub status is known.
+   * Avoid flashing the wrong state while the real
+   * connection status is loading.
    */
   if (interactive && checking) {
     return null;
   }
 
   /*
-   * Beginner state:
+   * GitHub-first state.
    *
-   * Until GitHub is connected, show one clear action only.
-   * Do not expose Vercel, Supabase, provider keys, etc.
+   * We keep your existing connection behaviour.
+   * Only the visual presentation changes when this
+   * lives in the chatbar.
    */
-  if (interactive && !githubConnected) {
+  if (
+    interactive &&
+    !githubConnected
+  ) {
     return (
       <section
-        className="xv-workspace-connections"
+        className={rootClassName}
         aria-label="Connect GitHub to start"
       >
         <button
           type="button"
           className="xv-workspace-connections__trigger"
-          onClick={() => void connectGithub()}
-          disabled={connectingGithub}
-          aria-busy={connectingGithub}
+          onClick={() =>
+            void connectGithub()
+          }
+          disabled={
+            connectingGithub
+          }
+          aria-busy={
+            connectingGithub
+          }
         >
           <span
             className="xv-workspace-connections__logo"
@@ -139,38 +182,48 @@ export function WorkspaceConnectionsStrip({
             <IntegrationLogo
               id="github"
               name="GitHub"
-              size={14}
+              size={
+                chatbar
+                  ? 13
+                  : 14
+              }
             />
           </span>
 
           <strong>
             {connectingGithub
               ? 'Connecting GitHub…'
-              : 'Connect GitHub to start'}
+              : chatbar
+                ? 'Connect GitHub'
+                : 'Connect GitHub to start'}
           </strong>
 
-          <ChevronRight aria-hidden="true" />
+          {!chatbar ? (
+            <ChevronRight
+              aria-hidden="true"
+            />
+          ) : null}
         </button>
       </section>
     );
   }
 
-  /*
-   * Connected / experienced state.
-   *
-   * Non-interactive marketing/demo usage also keeps the
-   * familiar integrations presentation.
-   */
   return (
     <>
       <section
-        className="xv-workspace-connections"
-        aria-label="Build connections"
+        className={rootClassName}
+        aria-label={
+          chatbar
+            ? 'Plugins and integrations'
+            : 'Build connections'
+        }
       >
         <button
           type="button"
           className="xv-workspace-connections__trigger"
-          onClick={openConnections}
+          onClick={
+            openConnections
+          }
           aria-describedby="workspace-integrations-preview"
         >
           <span
@@ -196,9 +249,17 @@ export function WorkspaceConnectionsStrip({
             />
           </span>
 
-          <strong>Integrations</strong>
+          <strong>
+            {chatbar
+              ? 'Plugins'
+              : 'Integrations'}
+          </strong>
 
-          <ChevronRight aria-hidden="true" />
+          {!chatbar ? (
+            <ChevronRight
+              aria-hidden="true"
+            />
+          ) : null}
         </button>
 
         <div
@@ -206,39 +267,58 @@ export function WorkspaceConnectionsStrip({
           className="xv-workspace-connections__preview"
           role="tooltip"
         >
-          <strong>Build connections</strong>
+          <strong>
+            Build connections
+          </strong>
 
-          {CONNECTIONS.map((connection) => {
-            const isConnected =
-              connected[connection.id] === true;
+          {CONNECTIONS.map(
+            (connection) => {
+              const isConnected =
+                connected[
+                  connection.id
+                ] === true;
 
-            return (
-              <span key={connection.id}>
-                <IntegrationLogo
-                  id={connection.id}
-                  name={connection.name}
-                  size={13}
-                />
-
-                <b>{connection.name}</b>
-
-                <i
-                  className={
-                    isConnected
-                      ? 'is-connected'
-                      : undefined
+              return (
+                <span
+                  key={
+                    connection.id
                   }
                 >
-                  {isConnected
-                    ? 'Connected'
-                    : 'Available'}
-                </i>
-              </span>
-            );
-          })}
+                  <IntegrationLogo
+                    id={
+                      connection.id
+                    }
+                    name={
+                      connection.name
+                    }
+                    size={13}
+                  />
+
+                  <b>
+                    {
+                      connection.name
+                    }
+                  </b>
+
+                  <i
+                    className={
+                      isConnected
+                        ? 'is-connected'
+                        : undefined
+                    }
+                  >
+                    {isConnected
+                      ? 'Connected'
+                      : 'Available'}
+                  </i>
+                </span>
+              );
+            },
+          )}
 
           <small>
-            Click to manage integrations.
+            Click to manage
+            integrations.
           </small>
         </div>
       </section>
@@ -246,7 +326,9 @@ export function WorkspaceConnectionsStrip({
       {interactive ? (
         <IntegrationsModal
           open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={() =>
+            setModalOpen(false)
+          }
         />
       ) : null}
     </>
