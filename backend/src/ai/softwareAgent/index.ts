@@ -23,3 +23,4 @@ export * from './softwareExecutorSelector.js';
 export * from './SoftwareAgentRuntime.js';
 export * from './softwareAgentModelAdapter.js';
 export * from './createXrogaSoftwareAgentBindings.js';
+export * from './softwareAgentGitHubPersistence.js';
