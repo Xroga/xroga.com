@@ -61,6 +61,7 @@ test('a web project is identified and its declared serve script is used', () => 
   // From the project's own manifest, not guessed.
   assert.equal(verdict.startScript, 'dev');
   assert.equal(verdict.staticRoot, null);
+  assert.equal(verdict.entryPath, '/');
 });
 
 test('a CLI tool is not web-verifiable and is not blocked by that', () => {
@@ -84,6 +85,17 @@ test('a dependency-free static artifact is browser-verifiable from its own bound
   assert.equal(verdict.webVerifiable, true);
   assert.equal(verdict.startScript, null);
   assert.equal(verdict.staticRoot, 'public');
+  assert.equal(verdict.entryPath, '/');
+});
+
+test('a server template with repository-root assets keeps those assets addressable', () => {
+  const verdict = assessWebVerifiability([
+    { path: 'templates/index.html', content: '<link rel="stylesheet" href="/static/site.css"><h1>Arbitrary product</h1>' },
+    { path: 'static/site.css', content: 'body { color: black; }' },
+  ]);
+  assert.equal(verdict.webVerifiable, true);
+  assert.equal(verdict.staticRoot, '.');
+  assert.equal(verdict.entryPath, '/templates/index.html');
 });
 
 test('a web project declaring no serve script reports it rather than guessing npm start', () => {

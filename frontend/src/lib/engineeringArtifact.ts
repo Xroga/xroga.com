@@ -257,9 +257,11 @@ function referencedFile(
   const clean = reference.split(/[?#]/, 1)[0]?.trim() ?? '';
   if (!clean || /^(?:[a-z]+:|\/\/|#|data:)/i.test(clean)) return '';
   const base = htmlPath.includes('/') ? htmlPath.slice(0, htmlPath.lastIndexOf('/')) : '';
-  const candidate = safeProjectPath(clean.startsWith('/')
-    ? `${base}/${clean.slice(1)}`
-    : `${base}/${clean}`);
+  if (clean.startsWith('/')) {
+    const fromProjectRoot = safeProjectPath(clean.slice(1));
+    if (fromProjectRoot && files.has(fromProjectRoot)) return files.get(fromProjectRoot) ?? '';
+  }
+  const candidate = safeProjectPath(`${base}/${clean.replace(/^\//, '')}`);
   return candidate ? files.get(candidate) ?? '' : '';
 }
 
@@ -303,7 +305,12 @@ function staticPreview(files: readonly { path: string; content: string }[]): {
     .filter(Boolean);
   const html = htmlFile.content
     .replace(/<link\b[^>]*\brel\s*=\s*["'][^"']*stylesheet[^>]*>/gi, '')
-    .replace(/<script\b[^>]*\bsrc\s*=\s*["'][^"']+["'][^>]*>[\s\S]*?<\/script>/gi, '');
+    .replace(/<script\b[^>]*\bsrc\s*=\s*["'][^"']+["'][^>]*>[\s\S]*?<\/script>/gi, '')
+    // A static Preview presents the returned frontend shell; it does not execute a server-side
+    // template engine. Remove template control/placeholder tokens so implementation syntax is
+    // not shown as user content while leaving the surrounding HTML untouched.
+    .replace(/{%[\s\S]*?%}/g, '')
+    .replace(/{{[\s\S]*?}}/g, '');
 
   return {
     html,

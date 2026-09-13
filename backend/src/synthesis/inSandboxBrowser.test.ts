@@ -29,6 +29,7 @@ const requiresPosixShell = process.platform === 'win32'
 const request = (over: Partial<InSandboxBrowserRequest> = {}): InSandboxBrowserRequest => ({
   startScript: 'dev',
   staticRoot: null,
+  entryPath: '/',
   domExpectations: [],
   interactions: [],
   totalTimeoutMs: 60_000,
@@ -66,6 +67,16 @@ test('acceptance checks survive into the collector rather than being swallowed',
   assert.match(source, /#add/);
   // The tell-tale of an interpolation accident: an unresolved placeholder shipping verbatim.
   assert.equal(/\$\{[a-zA-Z]/.test(source), false, 'an unsubstituted template placeholder shipped');
+});
+
+test('a nested static entry is the URL the collector observes', () => {
+  const source = collectorSource(request({
+    startScript: null,
+    staticRoot: '.',
+    entryPath: '/templates/index.html',
+  }));
+  assert.match(source, /templates\/index\.html/);
+  assert.match(source, /CONFIG\.entryPath/);
 });
 
 test('the collector searches global module roots, not only the local tree', () => {

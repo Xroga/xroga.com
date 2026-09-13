@@ -211,6 +211,7 @@ export function browserVerificationAdapter(
       files: input.files,
       startScript: verifiability.startScript,
       staticRoot: verifiability.staticRoot,
+      entryPath: verifiability.entryPath ?? '/',
       compiled,
       buildPassed: input.buildPassed,
       testsPassed: input.testsPassed,
@@ -254,6 +255,7 @@ async function runInSandbox(input: {
   files: readonly ProjectFile[];
   startScript: string | null;
   staticRoot: string | null;
+  entryPath: string;
   compiled: CompiledBrowserChecks;
   buildPassed: boolean;
   testsPassed: boolean | null;
@@ -266,6 +268,7 @@ async function runInSandbox(input: {
   const request = {
     startScript: input.startScript,
     staticRoot: input.staticRoot,
+    entryPath: input.entryPath,
     domExpectations: input.compiled.domExpectations,
     interactions: input.compiled.interactions,
     totalTimeoutMs: input.totalTimeoutMs,

@@ -61,6 +61,7 @@ export const CANDIDATE_PORTS = [3000, 5173, 4321, 8080, 4200, 5000] as const;
 export interface InSandboxBrowserRequest {
   readonly startScript: string | null;
   readonly staticRoot: string | null;
+  readonly entryPath: string;
   readonly domExpectations: readonly DomExpectation[];
   readonly interactions: readonly InteractionExpectation[];
   /** Hard ceiling for the whole command, including install and build. */
@@ -133,6 +134,7 @@ export function collectorSource(request: InSandboxBrowserRequest): string {
     domExpectations: request.domExpectations,
     interactions: request.interactions,
     ports,
+    entryPath: request.entryPath,
     serverTimeoutMs: request.serverTimeoutMs,
     begin: RESULT_BEGIN,
     end: RESULT_END,
@@ -230,7 +232,7 @@ async function waitForServer() {
   let lastError = '';
   while (Date.now() < deadline) {
     for (const port of CONFIG.ports) {
-      const url = 'http://127.0.0.1:' + port + '/';
+      const url = 'http://127.0.0.1:' + port + CONFIG.entryPath;
       try {
         const response = await fetch(url, { redirect: 'manual' });
         // Any HTTP answer means something is listening. Whether the status is acceptable is

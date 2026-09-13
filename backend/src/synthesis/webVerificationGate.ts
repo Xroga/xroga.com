@@ -48,6 +48,8 @@ export interface WebVerifiability {
   readonly startScript: string | null;
   /** A dependency-free static root when the artifact is a directly serveable HTML project. */
   readonly staticRoot: string | null;
+  /** URL path of the selected HTML entry relative to staticRoot. */
+  readonly entryPath: string | null;
   readonly reason: string;
 }
 
@@ -73,7 +75,8 @@ function readPackageJson(files: readonly ProjectFile[]): Record<string, unknown>
   }
 }
 
-function staticHtmlRoot(files: readonly ProjectFile[]): string | null {
+function staticHtmlLaunch(files: readonly ProjectFile[]): { staticRoot: string; entryPath: string } | null {
+  const paths = new Set(files.map((file) => file.path.replace(/\\/g, '/')));
   const entries = files
     .map((file) => file.path.replace(/\\/g, '/'))
     .filter((path) =>
@@ -87,7 +90,15 @@ function staticHtmlRoot(files: readonly ProjectFile[]): string | null {
   const entry = entries[0];
   if (!entry) return null;
   const separator = entry.lastIndexOf('/');
-  return separator === -1 ? '.' : entry.slice(0, separator);
+  const directory = separator === -1 ? '.' : entry.slice(0, separator);
+  const html = files.find((file) => file.path.replace(/\\/g, '/') === entry)?.content ?? '';
+  const rootReferences = [...html.matchAll(/(?:href|src)\s*=\s*["']\/([^"'?#]+)[^"']*["']/gi)]
+    .map((match) => match[1] ?? '')
+    .filter(Boolean);
+  const usesRepositoryRoot = rootReferences.some((reference) => paths.has(reference));
+  return usesRepositoryRoot
+    ? { staticRoot: '.', entryPath: `/${entry}` }
+    : { staticRoot: directory, entryPath: '/' };
 }
 
 /**
@@ -101,19 +112,20 @@ function staticHtmlRoot(files: readonly ProjectFile[]): string | null {
 export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifiability {
   const pkg = readPackageJson(files);
   if (!pkg) {
-    const staticRoot = staticHtmlRoot(files);
-    if (staticRoot) {
+    const staticLaunch = staticHtmlLaunch(files);
+    if (staticLaunch) {
       return {
         webVerifiable: true,
         startScript: null,
-        staticRoot,
-        reason: `static HTML project rooted at "${staticRoot}"`,
+        ...staticLaunch,
+        reason: `static HTML project rooted at "${staticLaunch.staticRoot}"`,
       };
     }
     return {
       webVerifiable: false,
       startScript: null,
       staticRoot: null,
+      entryPath: null,
       reason: 'no browser entry point or declared web runtime',
     };
   }
@@ -129,11 +141,12 @@ export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifi
       webVerifiable: false,
       startScript: null,
       staticRoot: null,
+      entryPath: null,
       reason: 'no web framework dependency and no HTML entry point',
     };
   }
   if (!hasNodeComponent && !hasHtml) {
-    return { webVerifiable: false, startScript: null, staticRoot: null, reason: 'no Node component detected' };
+    return { webVerifiable: false, startScript: null, staticRoot: null, entryPath: null, reason: 'no Node component detected' };
   }
 
   const scripts = (pkg.scripts ?? {}) as Record<string, unknown>;
@@ -143,6 +156,7 @@ export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifi
     webVerifiable: true,
     startScript,
     staticRoot: null,
+    entryPath: '/',
     reason: startScript
       ? `web project declaring a "${startScript}" script`
       : 'web project, but it declares no script that serves it',
