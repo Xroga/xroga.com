@@ -42,7 +42,7 @@ export type BuilderAttemptFailure =
 
 /** Attempt bounds. Values are deliberately generous — this is a backstop, not a SLA. */
 export interface BuilderAttemptBudget {
-  /** No token at all within this window means the provider is not going to answer. */
+  /** No meaningful stream activity within this window means the provider is not answering. */
   firstTokenMs: number;
   /** Total wall-clock for one attempt, first token or not. */
   generationMs: number;
@@ -189,17 +189,29 @@ export interface BuilderAttemptRecord {
  * holding the process open.
  */
 export async function runBuilderAttempt<T>(
-  run: (ctx: { signal: AbortSignal; onToken: (chunk: string) => void }) => Promise<T>,
+  run: (ctx: {
+    signal: AbortSignal;
+    /** Any live provider stream activity, including private reasoning deltas. */
+    onActivity: () => void;
+    /** Usable answer output only. Private reasoning must never be passed here. */
+    onToken: (chunk: string) => void;
+  }) => Promise<T>,
   opts: {
     budget?: Partial<BuilderAttemptBudget>;
     /** The caller's signal — cancellation must propagate through, not be swallowed. */
     signal?: AbortSignal;
   } = {},
-): Promise<{ value: T; outputChars: number; firstTokenMs: number | null }> {
+): Promise<{
+  value: T;
+  outputChars: number;
+  firstActivityMs: number | null;
+  firstTokenMs: number | null;
+}> {
   const budget = { ...DEFAULT_BUILDER_BUDGET, ...opts.budget };
   const controller = new AbortController();
   const startedAt = Date.now();
 
+  let firstActivityAt: number | null = null;
   let firstTokenAt: number | null = null;
   let outputChars = 0;
   let failure: (Error & { code: string }) | null = null;
@@ -238,11 +250,16 @@ export async function runBuilderAttempt<T>(
     );
   }, budget.generationMs);
 
-  const onToken = (chunk: string) => {
-    if (firstTokenAt === null) {
-      firstTokenAt = Date.now();
+  const onActivity = () => {
+    if (firstActivityAt === null) {
+      firstActivityAt = Date.now();
       clearTimeout(firstTokenTimer);
     }
+  };
+
+  const onToken = (chunk: string) => {
+    onActivity();
+    if (firstTokenAt === null) firstTokenAt = Date.now();
     outputChars += chunk.length;
     if (outputChars > budget.maxOutputChars) {
       abortWith(
@@ -252,13 +269,14 @@ export async function runBuilderAttempt<T>(
   };
 
   try {
-    const value = await run({ signal: controller.signal, onToken });
+    const value = await run({ signal: controller.signal, onActivity, onToken });
     // A deadline that fired while the provider was mid-flush must still win — the
     // attempt is over budget even if a result arrived a moment later.
     if (failure) throw failure;
     return {
       value,
       outputChars,
+      firstActivityMs: firstActivityAt === null ? null : firstActivityAt - startedAt,
       firstTokenMs: firstTokenAt === null ? null : firstTokenAt - startedAt,
     };
   } catch (error) {

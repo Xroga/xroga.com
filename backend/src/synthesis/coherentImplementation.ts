@@ -346,12 +346,18 @@ function repositoryContext(existingFiles: readonly ProjectFile[], objective: str
 }
 
 const defaultCompletion: CoherentCompletionFn = async (modelId, messages, opts) => {
+  const startedAt = Date.now();
+  let firstOutputMs: number | null = null;
   const attempted = await runBuilderAttempt(
-    ({ signal, onToken }) => chatCompletionStream(modelId as ModelId, messages, {
+    ({ signal, onActivity, onToken }) => chatCompletionStream(modelId as ModelId, messages, {
       maxTokens: opts.maxTokens,
       temperature: opts.temperature,
       signal,
-      onDelta: onToken,
+      onActivity,
+      onDelta: (delta) => {
+        if (firstOutputMs === null) firstOutputMs = Date.now() - startedAt;
+        onToken(delta);
+      },
     }),
     {
       budget: {
@@ -362,7 +368,7 @@ const defaultCompletion: CoherentCompletionFn = async (modelId, messages, opts) 
       signal: opts.signal,
     },
   );
-  return { ...attempted.value, firstOutputMs: attempted.firstTokenMs };
+  return { ...attempted.value, firstOutputMs };
 };
 
 function inputChars(messages: readonly ChatMessage[]): number {
