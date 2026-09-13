@@ -354,6 +354,10 @@ const defaultCompletion: CoherentCompletionFn = async (modelId, messages, opts) 
       temperature: opts.temperature,
       signal,
       onActivity,
+      // The semantic planner has already resolved the implementation. This call must
+      // spend its bounded output budget on the framed project bundle, not a private
+      // reasoning trace. openaiCompat applies this only where the provider documents it.
+      reasoningMode: 'none',
       onDelta: (delta) => {
         if (firstOutputMs === null) firstOutputMs = Date.now() - startedAt;
         onToken(delta);
