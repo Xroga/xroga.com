@@ -14,3 +14,4 @@ export * from './xrogaTools.js';
 export * from './AgentSoftwareExecutor.js';
 export * from './ProductionSoftwareAgentToolHost.js';
 export * from './SoftwareAgentWorkspace.js';
+export * from './productionOperations.js';
