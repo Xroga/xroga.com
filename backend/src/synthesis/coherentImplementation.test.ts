@@ -42,12 +42,26 @@ function bundle(paths: string[], bodies: Record<string, string>, include = paths
   ].join('\n');
 }
 
+function jsonBundle(paths: string[], bodies: Record<string, string>, include = paths): string {
+  return JSON.stringify({
+    ...contract(paths),
+    files: contract(paths).files.map((file) => ({
+      ...file,
+      ...(include.includes(file.path) ? { content: bodies[file.path] ?? `content for ${file.path}` } : {}),
+    })),
+  });
+}
+
 function fakeCompletion(
   handler: (modelId: string, messages: ChatMessage[], call: number) => { text: string; finishReason?: string },
-): CoherentCompletionFn & { calls: Array<{ modelId: string; messages: ChatMessage[] }> } {
-  const calls: Array<{ modelId: string; messages: ChatMessage[] }> = [];
-  const fn = (async (modelId: string, messages: ChatMessage[]) => {
-    calls.push({ modelId, messages });
+): CoherentCompletionFn & { calls: Array<{ modelId: string; messages: ChatMessage[]; json?: boolean }> } {
+  const calls: Array<{ modelId: string; messages: ChatMessage[]; json?: boolean }> = [];
+  const fn = (async (
+    modelId: string,
+    messages: ChatMessage[],
+    opts: { json?: boolean },
+  ) => {
+    calls.push({ modelId, messages, json: opts.json });
     const result = handler(modelId, messages, calls.length);
     return {
       ...result,
@@ -79,6 +93,7 @@ test('small project generation uses one coherent coding call for all related fil
 
   assert.deepEqual(files.map((file) => file.path), paths);
   assert.equal(complete.calls.length, 1, 'one successful coherent bundle must not create per-file calls');
+  assert.equal(complete.calls[0]!.json, true, 'the provider must constrain a project bundle to one JSON object');
   assert.equal(telemetry.length, 1);
   assert.equal(telemetry[0]!.outputUsed, true);
   assert.equal(telemetry[0]!.queueWaitMs, 0);
@@ -161,6 +176,28 @@ test('a provider failure uses one direct-output-capable fallback and never spend
   const files = await implementCoherently({ brief: 'Create a page.', candidates: CANDIDATES, complete });
   assert.equal(files[0]!.path, 'index.html');
   assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'deepseek_v4_flash']);
+});
+
+test('a standard JSON object materializes one validated coherent project bundle', () => {
+  const paths = ['package.json', 'src/index.ts'];
+  const bodies = {
+    'package.json': '{"scripts":{"build":"tsc"}}',
+    'src/index.ts': 'export const ready = true;',
+  };
+  const parsed = parseCoherentBundle(jsonBundle(paths, bodies));
+  assert.equal(parsed.status, 'complete');
+  assert.deepEqual(parsed.files, paths.map((path) => ({ path, content: bodies[path as keyof typeof bodies] })));
+});
+
+test('a JSON bundle missing one body retains complete files for one bounded continuation', () => {
+  const paths = ['src/index.ts', 'README.md'];
+  const first = parseCoherentBundle(jsonBundle(paths, { 'src/index.ts': 'export const ready = true;' }, ['src/index.ts']));
+  assert.equal(first.status, 'partial');
+  const completed = mergeCoherentContinuation(first, JSON.stringify({
+    files: [{ path: 'README.md', operation: 'upsert', content: '# Ready' }],
+  }));
+  assert.equal(completed.status, 'complete');
+  assert.deepEqual(completed.files.map((file) => file.path), paths);
 });
 
 test('an existing-repository patch returns only intended files and sends compact redacted context', async () => {

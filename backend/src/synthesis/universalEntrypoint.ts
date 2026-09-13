@@ -271,9 +271,9 @@ export async function tryUniversalBuild(input: {
     store: input.store ?? universalStore(getSupabaseAdmin()),
     adapters: productionAdapters({
       implement: async ({ brief, existingFiles, signal }) => {
-        // Small and medium projects are generated as one coherent framed bundle. The
-        // manifest is emitted before raw file bodies, so completed files survive a clipped
-        // response and one bounded continuation can request only what is missing. This
+        // Small and medium projects are generated as one coherent structured bundle.
+        // Completed files survive a clipped response, so one bounded continuation can
+        // request only what is missing. This
         // avoids the production failure mode where every file paid for duplicated context
         // and concurrently contended for the same provider.
         return implementCoherently({

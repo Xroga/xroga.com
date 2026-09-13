@@ -297,6 +297,8 @@ export async function chatCompletionStream(
     onActivity?: () => void;
     /** Provider-specific reasoning control. Used only by direct-output workloads. */
     reasoningMode?: ReasoningMode;
+    /** Ask the compatible endpoint to constrain the response to one JSON object. */
+    json?: boolean;
     signal?: AbortSignal;
     credentialOverride?: string;
   } = {},
@@ -320,6 +322,7 @@ export async function chatCompletionStream(
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
           ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
+          ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
           stream: true,
         } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
         opts.signal ? { signal: opts.signal } : undefined,
