@@ -33,6 +33,7 @@ export type ImplementFn = (input: {
   brief: string;
   plan: UniversalRunPlan;
   existingFiles: readonly ProjectFile[];
+  signal?: AbortSignal;
 }) => Promise<readonly ProjectFile[]>;
 
 /** Commits a file set. Supplied by the caller that owns the repository connection. */
@@ -205,11 +206,12 @@ export function productionAdapters(input: {
     : undefined;
 
   return {
-    implement: async ({ plan, securityControls, existingFiles }) => {
+    implement: async ({ plan, securityControls, existingFiles, signal }) => {
       const generatedFiles = await input.implement({
         brief: buildImplementationBrief({ plan, securityControls }),
         plan,
         existingFiles,
+        signal,
       });
       return mergeProjectSnapshot(existingFiles, generatedFiles);
     },

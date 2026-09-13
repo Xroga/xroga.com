@@ -23,7 +23,8 @@ import { randomUUID } from 'node:crypto';
 import type { ProjectFile } from '../ai/patches.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { productionAdapters, type CommitFn } from './productionAdapters.js';
-import { implementIncrementally, repairIncrementally } from './incrementalImplementation.js';
+import { repairIncrementally } from './incrementalImplementation.js';
+import { implementCoherently } from './coherentImplementation.js';
 import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
 import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
@@ -269,23 +270,23 @@ export async function tryUniversalBuild(input: {
     // does not survive a restart is not one.
     store: input.store ?? universalStore(getSupabaseAdmin()),
     adapters: productionAdapters({
-      implement: async ({ brief, existingFiles }) => {
-        // Incremental rather than one whole-project completion. The single-call approach
-        // failed against every coding model in production (run 05769971): a project encoded
-        // as one JSON object under a 16k ceiling ends mid-string, and JSON.parse then
-        // rejects the entire reply — nine finished files lost because the tenth was
-        // clipped. Raising the ceiling only moves that cliff.
-        //
-        // The router's ranked candidates are passed through, so each call independently
-        // falls back rather than the whole build depending on one model answering once.
-        // Ordered by measurement when there is any, by prior otherwise. Passing the whole
-        // chain means each call independently falls back rather than the build depending on
-        // one model answering once.
-        return implementIncrementally({
+      implement: async ({ brief, existingFiles, signal }) => {
+        // Small and medium projects are generated as one coherent framed bundle. The
+        // manifest is emitted before raw file bodies, so completed files survive a clipped
+        // response and one bounded continuation can request only what is missing. This
+        // avoids the production failure mode where every file paid for duplicated context
+        // and concurrently contended for the same provider.
+        return implementCoherently({
           brief,
           originalRequest: input.prompt,
           candidates: orderedCandidates.map((modelId) => ({ modelId })),
           existingFiles,
+          signal,
+          onTelemetry: (record) => {
+            // Operator-only structured evidence. It contains model identity and usage, so it
+            // belongs in backend logs rather than the primary user result.
+            console.info('[builder_model_call]', JSON.stringify(record));
+          },
         });
       },
       repair: async ({ brief, failures, files }) => repairIncrementally({
