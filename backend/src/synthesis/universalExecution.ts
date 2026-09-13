@@ -324,6 +324,9 @@ export async function executeUniversalRun(input: {
     const implementationCode = (error as { code?: unknown })?.code;
     const isBoundedGenerationFailure = implementationCode === 'SOFTWARE_IMPLEMENTATION_FAILED' ||
       implementationCode === 'INCREMENTAL_IMPLEMENTATION_FAILED';
+    const safeFailureReasons = Array.isArray((error as { safeReasons?: unknown }).safeReasons)
+      ? (error as { safeReasons: unknown[] }).safeReasons.filter((item): item is string => typeof item === 'string').slice(0, 2)
+      : [];
     const operatorDetail = error instanceof Error ? error.message : String(error);
     console.warn('[universal_implementation_failed]', JSON.stringify({
       runId: input.runId,
@@ -332,7 +335,8 @@ export async function executeUniversalRun(input: {
       fallbackAllowed: fallback.allowed,
     }));
     const publicReason = isBoundedGenerationFailure
-      ? 'Implementation could not complete. Your project was preserved and no repository changes were published.'
+      ? `Implementation could not complete${safeFailureReasons.length ? `: ${safeFailureReasons.join('; ')}` : ''}. ` +
+        'Your project was preserved and no repository changes were published.'
       : fallback.allowed
         ? 'Implementation could not complete. Your project was preserved.'
         : fallback.reason;

@@ -99,12 +99,29 @@ export interface CoherentCompletionFn {
 export class CoherentImplementationError extends Error {
   readonly code = 'SOFTWARE_IMPLEMENTATION_FAILED' as const;
   readonly failures: readonly string[];
+  readonly safeReasons: readonly string[];
 
   constructor(message: string, failures: readonly string[]) {
     super(message);
     this.name = 'CoherentImplementationError';
     this.failures = failures;
+    this.safeReasons = [...new Set(failures.map(safeCoherentFailureReason))];
   }
+}
+
+function safeCoherentFailureReason(value: string): string {
+  const reason = value.includes(': ') ? value.slice(value.indexOf(': ') + 2) : value;
+  if (reason === 'first_token_timeout') return 'the implementation provider did not respond before the deadline';
+  if (reason === 'generation_timeout') return 'project generation exceeded its bounded deadline';
+  if (reason === 'truncated_output' || /missing or truncated|cut off/i.test(reason)) return 'the project bundle was incomplete';
+  if (reason === 'provider_rate_limit') return 'implementation capacity was rate limited';
+  if (reason === 'provider_unavailable' || reason === 'provider_unconfigured') return 'implementation capacity was unavailable';
+  if (reason === 'provider_authentication') return 'implementation capacity was not configured correctly';
+  if (reason === 'empty_response') return 'the implementation provider returned no project output';
+  if (/secret|unsafe/i.test(reason)) return 'the generated project did not pass safety validation';
+  if (/unexpected|conflicting|duplicate/i.test(reason)) return 'the generated file set conflicted with its project manifest';
+  if (/symbol/i.test(reason)) return 'the update did not preserve required repository contracts';
+  return 'the generated project did not pass structured-output validation';
 }
 
 function normalizePath(value: string): string {
@@ -218,7 +235,8 @@ function containsHighConfidenceSecret(files: readonly ProjectFile[]): boolean {
 
 function jsonFilesToFrames(value: unknown): string | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const files = (value as { files?: unknown }).files;
+  const object = value as { files?: unknown; fileContents?: unknown };
+  const files = Array.isArray(object.fileContents) ? object.fileContents : object.files;
   if (!Array.isArray(files)) return null;
   return files.flatMap((candidate) => {
     if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return [];
@@ -240,7 +258,7 @@ function jsonBundleToFrames(text: string): string | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const object = value as Record<string, unknown>;
   if (!Array.isArray(object.files)) return null;
-  const manifest = {
+  const manifest: Record<string, unknown> = {
     ...object,
     files: object.files.map((candidate) => {
       if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return candidate;
@@ -248,11 +266,79 @@ function jsonBundleToFrames(text: string): string | null {
       return file;
     }),
   };
+  delete manifest.fileContents;
   return [
     MANIFEST_OPEN,
     JSON.stringify(manifest),
     MANIFEST_CLOSE,
     jsonFilesToFrames(value) ?? '',
+  ].join('\n');
+}
+
+/**
+ * Retain only complete file-content objects from a clipped JSON bundle.
+ *
+ * The manifest is deliberately emitted before fileContents. That means the prefix can be
+ * closed into a valid object without guessing any source text. A small string-aware scanner
+ * then accepts only balanced JSON objects; the clipped tail is never materialized as code.
+ */
+function truncatedJsonBundleToFrames(text: string): string | null {
+  const match = /"fileContents"\s*:\s*\[/.exec(text);
+  if (!match || match.index < 0) return null;
+  const arrayStart = match.index + match[0].lastIndexOf('[');
+  let header: unknown;
+  try {
+    header = JSON.parse(`${text.slice(0, arrayStart)}[]}`);
+  } catch {
+    return null;
+  }
+  if (!header || typeof header !== 'object' || Array.isArray(header)) return null;
+
+  const complete: unknown[] = [];
+  let objectStart = -1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let index = arrayStart + 1; index < text.length; index += 1) {
+    const char = text[index]!;
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+    if (char === '{') {
+      if (depth === 0) objectStart = index;
+      depth += 1;
+      continue;
+    }
+    if (char === '}' && depth > 0) {
+      depth -= 1;
+      if (depth === 0 && objectStart >= 0) {
+        try {
+          complete.push(JSON.parse(text.slice(objectStart, index + 1)));
+        } catch {
+          return null;
+        }
+        objectStart = -1;
+      }
+      continue;
+    }
+    if (char === ']' && depth === 0) break;
+  }
+
+  const object = header as Record<string, unknown>;
+  const manifest = { ...object };
+  delete manifest.fileContents;
+  return [
+    MANIFEST_OPEN,
+    JSON.stringify(manifest),
+    MANIFEST_CLOSE,
+    jsonFilesToFrames({ fileContents: complete }) ?? '',
   ].join('\n');
 }
 
@@ -265,7 +351,9 @@ export function parseCoherentBundle(
   if (text.length > 1_500_000) {
     return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle exceeded the output-size limit' };
   }
-  const normalizedText = text.includes(MANIFEST_OPEN) ? text : (jsonBundleToFrames(text) ?? text);
+  const normalizedText = text.includes(MANIFEST_OPEN)
+    ? text
+    : (jsonBundleToFrames(text) ?? truncatedJsonBundleToFrames(text) ?? text);
   const manifestStart = normalizedText.indexOf(MANIFEST_OPEN);
   const manifestEnd = normalizedText.indexOf(MANIFEST_CLOSE);
   if (manifestStart < 0 || manifestEnd < manifestStart) {
@@ -353,12 +441,12 @@ export function mergeCoherentContinuation(
 const BUNDLE_SYSTEM = `You are Xroga's software implementation agent. Produce one coherent project change, not one reply per file.
 
 Return exactly one JSON object with this shape and no markdown or prose:
-{"version":1,"summary":"...","project":{"runtime":"...","framework":null,"packageManager":null,"buildCommands":[],"testCommands":[],"runCommand":null},"sharedContracts":["..."],"files":[{"path":"relative/path","operation":"upsert","purpose":"...","content":"complete raw file contents"}]}
+{"version":1,"summary":"...","project":{"runtime":"...","framework":null,"packageManager":null,"buildCommands":[],"testCommands":[],"runCommand":null},"sharedContracts":["..."],"files":[{"path":"relative/path","operation":"upsert","purpose":"..."}],"fileContents":[{"path":"relative/path","operation":"upsert","content":"complete raw file contents"}]}
 
 Rules:
-- Put the complete project contract and every complete file in the same JSON object.
+- Put the complete project contract and files manifest before fileContents. Keep fileContents as the final property.
 - Keep all routes, exports, data models, component interfaces, commands and tests consistent with sharedContracts.
-- Every declared file must have exactly one complete content value. No duplicate or conflicting paths.
+- Every manifest file must have exactly one matching complete fileContents value. No duplicate or conflicting paths.
 - Paths are relative, never absolute, never contain '..', and never address .git.
 - Use only upsert operations. Preserve unrelated existing behavior.
 - Include complete working source, manifests and relevant tests. No TODOs or placeholders.
@@ -367,7 +455,7 @@ Rules:
 
 const CONTINUATION_SYSTEM = `Continue an already validated Xroga project bundle.
 Return exactly one JSON object with this shape and no prose or markdown:
-{"files":[{"path":"relative/path","operation":"upsert","content":"complete raw file contents"}]}
+{"fileContents":[{"path":"relative/path","operation":"upsert","content":"complete raw file contents"}]}
 Return exactly the requested missing files. Do not repeat completed files.`;
 
 function repositoryContext(existingFiles: readonly ProjectFile[], objective: string): string {

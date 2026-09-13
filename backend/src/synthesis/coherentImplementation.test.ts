@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { ChatMessage } from '../ai/openaiCompat.js';
 import {
-  MAX_COHERENT_PROVIDER_ATTEMPTS,
   CoherentImplementationError,
+  MAX_COHERENT_PROVIDER_ATTEMPTS,
   implementCoherently,
   mergeCoherentContinuation,
   parseCoherentBundle,
@@ -45,10 +45,13 @@ function bundle(paths: string[], bodies: Record<string, string>, include = paths
 function jsonBundle(paths: string[], bodies: Record<string, string>, include = paths): string {
   return JSON.stringify({
     ...contract(paths),
-    files: contract(paths).files.map((file) => ({
-      ...file,
-      ...(include.includes(file.path) ? { content: bodies[file.path] ?? `content for ${file.path}` } : {}),
-    })),
+    fileContents: contract(paths).files
+      .filter((file) => include.includes(file.path))
+      .map((file) => ({
+        path: file.path,
+        operation: file.operation,
+        content: bodies[file.path] ?? `content for ${file.path}`,
+      })),
   });
 }
 
@@ -194,10 +197,35 @@ test('a JSON bundle missing one body retains complete files for one bounded cont
   const first = parseCoherentBundle(jsonBundle(paths, { 'src/index.ts': 'export const ready = true;' }, ['src/index.ts']));
   assert.equal(first.status, 'partial');
   const completed = mergeCoherentContinuation(first, JSON.stringify({
-    files: [{ path: 'README.md', operation: 'upsert', content: '# Ready' }],
+    fileContents: [{ path: 'README.md', operation: 'upsert', content: '# Ready' }],
   }));
   assert.equal(completed.status, 'complete');
   assert.deepEqual(completed.files.map((file) => file.path), paths);
+});
+
+test('a physically truncated JSON response retains only fully closed file contents', () => {
+  const paths = ['src/index.ts', 'src/styles.css'];
+  const text = jsonBundle(paths, {
+    'src/index.ts': 'export const ready = true;',
+    'src/styles.css': 'body { color: gold; }',
+  });
+  const clipped = text.slice(0, text.indexOf('body { color: gold; }') + 8);
+  const parsed = parseCoherentBundle(clipped);
+  assert.equal(parsed.status, 'partial');
+  assert.deepEqual(parsed.files, [{ path: 'src/index.ts', content: 'export const ready = true;' }]);
+  assert.deepEqual(parsed.missingPaths, ['src/styles.css']);
+});
+
+test('terminal-safe implementation failures omit provider identity but retain the failure stage', () => {
+  const failure = new CoherentImplementationError('bounded routes failed', [
+    'glm_5_3_flash: bundle manifest is missing or truncated',
+    'deepseek_v4_flash: provider_rate_limit',
+  ]);
+  assert.deepEqual(failure.safeReasons, [
+    'the project bundle was incomplete',
+    'implementation capacity was rate limited',
+  ]);
+  assert.doesNotMatch(failure.safeReasons.join(' '), /glm|deepseek/i);
 });
 
 test('an existing-repository patch returns only intended files and sends compact redacted context', async () => {
