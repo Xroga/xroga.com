@@ -81,6 +81,20 @@ export interface ModelCandidate {
   readonly modelId: string;
 }
 
+/**
+ * Spread one concurrent file batch across the approved coding routes instead of
+ * sending every file to the same provider at once. Each file keeps a deterministic
+ * fallback order and the caller's model set is never widened.
+ */
+export function rotateImplementationCandidates(
+  candidates: readonly ModelCandidate[],
+  offset: number,
+): readonly ModelCandidate[] {
+  if (candidates.length < 2) return candidates;
+  const start = ((offset % candidates.length) + candidates.length) % candidates.length;
+  return [...candidates.slice(start), ...candidates.slice(0, start)];
+}
+
 const MANIFEST_SYSTEM = `You are planning the file list for a software project.
 
 Return JSON only, no prose and no markdown fence:
@@ -539,7 +553,7 @@ export async function implementIncrementally(input: {
         ? `\n\nCurrent contents of ${entry.path}:\n<current-file>\n${current.content}\n</current-file>`
         : '\n\nThis is a new file; there are no current contents.';
       const reply = await completeWithFallback({
-        candidates: input.candidates,
+        candidates: rotateImplementationCandidates(input.candidates, index),
         messages: [
           { role: 'system', content: FILE_SYSTEM },
           {
