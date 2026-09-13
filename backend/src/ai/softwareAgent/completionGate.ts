@@ -32,15 +32,29 @@ export function evaluateSoftwareCompletion(
   } = input;
 
   if (evidence.changedFiles.length === 0) {
-    blockers.push('No project changes were produced.');
+    blockers.push(
+      'No project changes were produced.',
+    );
   }
 
   if (requireSuccessfulChecks) {
+    /*
+     * Important:
+     *
+     * Zero recorded checks must NOT silently count as
+     * verification success.
+     */
+    if (evidence.checks.length === 0) {
+      blockers.push(
+        'No project checks were recorded.',
+      );
+    }
+
     const failedChecks = evidence.checks.filter(
       (check) => check.status === 'failed',
     );
 
-    const runningChecks = evidence.checks.filter(
+    const unfinishedChecks = evidence.checks.filter(
       (check) =>
         check.status === 'pending' ||
         check.status === 'running',
@@ -54,40 +68,59 @@ export function evaluateSoftwareCompletion(
       );
     }
 
-    if (runningChecks.length > 0) {
+    if (unfinishedChecks.length > 0) {
       blockers.push(
-        `${runningChecks.length} required check${
-          runningChecks.length === 1 ? '' : 's'
+        `${unfinishedChecks.length} required check${
+          unfinishedChecks.length === 1 ? '' : 's'
         } did not finish.`,
       );
     }
   }
 
   if (previewRequirement === 'required') {
-    if (!evidence.preview) {
+    const preview = evidence.preview;
+
+    if (!preview) {
       blockers.push(
         'A verified Preview is required but no Preview evidence exists.',
       );
     } else {
       if (
-        evidence.preview.httpStatus === undefined ||
-        evidence.preview.httpStatus < 200 ||
-        evidence.preview.httpStatus >= 400
+        preview.httpStatus === undefined ||
+        preview.httpStatus < 200 ||
+        preview.httpStatus >= 400
       ) {
         blockers.push(
           'Preview did not return a successful HTTP response.',
         );
       }
 
-      if (evidence.preview.runtimeErrors.length > 0) {
+      if (preview.runtimeErrors.length > 0) {
         blockers.push(
           'Preview contains runtime errors.',
         );
       }
 
-      if (evidence.preview.consoleErrors.length > 0) {
+      if (preview.consoleErrors.length > 0) {
         blockers.push(
           'Preview contains browser console errors.',
+        );
+      }
+
+      /*
+       * startPreview() alone must NOT be enough.
+       *
+       * At least one real browser verification result must
+       * exist before a preview-required project can complete.
+       */
+      const browserVerified =
+        preview.desktopVerified === true ||
+        preview.tabletVerified === true ||
+        preview.mobileVerified === true;
+
+      if (!browserVerified) {
+        blockers.push(
+          'Preview exists but browser verification has not completed.',
         );
       }
     }
