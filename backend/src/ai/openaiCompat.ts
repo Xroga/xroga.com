@@ -214,6 +214,8 @@ export async function chatCompletion(
     maxTokens?: number;
     temperature?: number;
     json?: boolean;
+    /** Provider-specific reasoning control for compact structured workloads. */
+    reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
     credentialOverride?: string;
   } = {},
@@ -229,6 +231,7 @@ export async function chatCompletion(
           messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
+          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
           ...(opts.json ? { response_format: { type: 'json_object' as const } } : {}),
         },
         opts.signal ? { signal: opts.signal } : undefined,

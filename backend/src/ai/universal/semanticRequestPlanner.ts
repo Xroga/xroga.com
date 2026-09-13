@@ -29,6 +29,17 @@ export const SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS = 30_000;
 export const SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS = 28_000;
 export const SEMANTIC_PLANNER_HEDGE_DELAY_MS = 4_000;
 
+/** The planner needs a compact JSON decision, not a private reasoning transcript. */
+export function semanticPlannerCompletionOptions(signal: AbortSignal) {
+  return {
+    maxTokens: 1_500,
+    temperature: 0,
+    json: true,
+    reasoningMode: 'none' as const,
+    signal,
+  };
+}
+
 type PlannerRouteOutcome<T> =
   | { ok: true; value: T; modelId: ModelId }
   | { ok: false; error: unknown; modelId: ModelId };
@@ -383,12 +394,7 @@ export async function planSemanticRequest(input: {
             estimatedInputTokens: estimateMessageTokens(attemptMessages),
             maximumOutputTokens,
             purpose: 'complexity',
-            execute: () => chatCompletion(modelId, attemptMessages, {
-              maxTokens: maximumOutputTokens,
-              temperature: 0,
-              json: true,
-              signal,
-            }),
+            execute: () => chatCompletion(modelId, attemptMessages, semanticPlannerCompletionOptions(signal)),
           });
           finalModelId = completion.modelId;
           await recordUsage(input.userId, completion.modelId, completion.inputTokens, completion.outputTokens);
