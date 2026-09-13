@@ -8011,12 +8011,6 @@ body.theme-gray .xv-rp-loader {
 }
 
 
-  .xv-workspace-connections--chatbar
-  .xv-workspace-connections__trigger
-  > strong {
-    font-size: 9px;
-  }
-}
 
 /* One quiet two-way control lives above the active composer. Its upper and lower
    halves are separate targets even though they read as one animated glyph. */
