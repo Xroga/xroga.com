@@ -57,12 +57,15 @@ export const MANIFEST_MAX_TOKENS = 8_000;
 export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
 
 /**
- * Files in a manifest are independent generation units. Three-at-a-time keeps an ordinary
+ * Files in a manifest are independent generation units. Four-at-a-time keeps an ordinary
  * five-to-eight-file project inside the request-level deadline even when one approved route
  * is quarantined, while remaining conservative enough for provider rate limits and the
  * unchanged model budget.
  */
-export const IMPLEMENTATION_FILE_CONCURRENCY = 3;
+export const IMPLEMENTATION_FILE_CONCURRENCY = 4;
+
+/** One primary route plus one fallback per logical generation unit. */
+export const MAX_CANDIDATE_ATTEMPTS_PER_UNIT = 2;
 
 /** A repair may touch only a small, existing slice of the validated snapshot. */
 export const MAX_REPAIR_FILES = 4;
@@ -431,11 +434,18 @@ async function completeWithFallback(input: {
   unavailableCandidates?: Set<string>;
 }): Promise<{ text: string; modelId: string }> {
   const failures: string[] = [];
+  let attempts = 0;
+  // A logical file used to walk all four one-minute provider attempts. One slow batch could
+  // therefore hold the request open for four minutes before the next batch even started.
+  // The ranked route plus one fallback is enough to distinguish an isolated provider issue
+  // from an unavailable generation step while keeping the run inside its request deadline.
   for (const candidate of input.candidates) {
     if (input.unavailableCandidates?.has(candidate.modelId)) {
       failures.push(`${candidate.modelId} was unavailable earlier in this implementation run`);
       continue;
     }
+    if (attempts >= MAX_CANDIDATE_ATTEMPTS_PER_UNIT) break;
+    attempts += 1;
     try {
       assertCodingModel(candidate.modelId, `universal ${input.label}`);
       const reply = await input.complete(candidate.modelId, input.messages, {

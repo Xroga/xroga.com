@@ -5,6 +5,7 @@ import {
   IncrementalImplementationError,
   IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
   IMPLEMENTATION_FILE_CONCURRENCY,
+  MAX_CANDIDATE_ATTEMPTS_PER_UNIT,
   MAX_REPAIR_FILES,
   MAX_PLANNED_FILES,
   explicitlyMentionedExistingFiles,
@@ -34,6 +35,7 @@ const PLAN = JSON.stringify({
     { path: 'README.md', purpose: 'usage' },
   ],
 });
+const PLAN_FILE_COUNT = 3;
 
 function fakeCompletion(
   handler: (modelId: string, system: string, user: string) => { text: string; finishReason?: string | null },
@@ -57,7 +59,11 @@ test('each provider attempt is bounded before the approved fallback chain advanc
 });
 
 test('independent file generation uses conservative bounded concurrency', () => {
-  assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 3);
+  assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 4);
+});
+
+test('one logical generation unit uses only the primary route and one fallback', () => {
+  assert.equal(MAX_CANDIDATE_ATTEMPTS_PER_UNIT, 2);
 });
 
 test('an explicitly named existing file skips the manifest call and receives its current content', async () => {
@@ -190,14 +196,20 @@ test('a truncated file falls back to the next model rather than losing the proje
 });
 
 test('an unavailable provider is quarantined for the rest of one implementation run', async () => {
+  const quarantinedPlan = JSON.stringify({
+    files: Array.from({ length: IMPLEMENTATION_FILE_CONCURRENCY + 1 }, (_, index) => ({
+      path: `src/file-${index}.ts`,
+      purpose: `unit ${index}`,
+    })),
+  });
   const complete = fakeCompletion((modelId, system) => {
-    if (system.includes('planning the file list')) return { text: PLAN };
+    if (system.includes('planning the file list')) return { text: quarantinedPlan };
     if (modelId === 'glm_5_3_flash') throw new Error('provider temporarily unavailable');
     return { text: 'file body' };
   });
 
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(files.length, 3);
+  assert.equal(files.length, IMPLEMENTATION_FILE_CONCURRENCY + 1);
   assert.equal(
     complete.calls.filter((call) => call.modelId === 'glm_5_3_flash').length,
     IMPLEMENTATION_FILE_CONCURRENCY + 1,
@@ -223,12 +235,12 @@ test('two independent files are generated concurrently while result order stays 
   }) as CompletionFn;
 
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
-  assert.equal(peak, IMPLEMENTATION_FILE_CONCURRENCY);
+  assert.equal(peak, Math.min(PLAN_FILE_COUNT, IMPLEMENTATION_FILE_CONCURRENCY));
   assert.deepEqual(files.map((file) => file.path), ['Cargo.toml', 'src/main.rs', 'README.md']);
   assert.deepEqual(files.map((file) => file.content), ['Cargo.toml', 'src/main.rs', 'README.md']);
 });
 
-test('a failure names the file and every model tried', async () => {
+test('a failure names the file and both bounded model attempts', async () => {
   const complete = fakeCompletion((modelId, system) => {
     if (system.includes('planning the file list')) return { text: PLAN };
     if (modelId === 'glm_5_3_flash') return { text: '', finishReason: 'length' };
@@ -243,7 +255,7 @@ test('a failure names the file and every model tried', async () => {
       assert.match(error.message, /file Cargo\.toml/);
       assert.match(error.message, /glm_5_3_flash was cut off/);
       assert.match(error.message, /glm_5_3/);
-      assert.match(error.message, /kimi_k3/);
+      assert.doesNotMatch(error.message, /kimi_k3/, 'a third route must not extend one file past its bounded fallback');
       return true;
     },
   );
