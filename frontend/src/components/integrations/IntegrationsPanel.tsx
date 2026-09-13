@@ -369,7 +369,7 @@ export function IntegrationsPanel() {
   return (
     <SettingsStack>
       <SettingsPanelHeader
-        title="Integrations"
+        title="Plugins"
         description="GitHub is connected. Add deployment, database, publishing, and other services when your project needs them."
         action={
           <Badge
@@ -443,7 +443,7 @@ export function IntegrationsPanel() {
 
             <p className="text-xs text-[var(--text-secondary)]">
               {comingSoon.length}{' '}
-              wishlist integrations — not
+              wishlist Plugins — not
               live OAuth yet
             </p>
           </div>
