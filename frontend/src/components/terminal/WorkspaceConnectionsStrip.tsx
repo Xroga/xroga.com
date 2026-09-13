@@ -217,7 +217,7 @@ export function WorkspaceConnectionsStrip({
               name="GitHub"
               size={
                 chatbar
-                  ? 13
+                  ? 18
                   : 14
               }
             />
@@ -268,24 +268,35 @@ export function WorkspaceConnectionsStrip({
             className="xv-workspace-connections__logo"
             aria-hidden="true"
           >
-            <IntegrationLogo
-              id="github"
-              name="GitHub"
-              size={12}
-            />
+           <IntegrationLogo
+  id="github"
+  name="GitHub"
+  size={
+    chatbar
+      ? 17
+      : 12
+  }
+/>
 
-            <IntegrationLogo
-              id="vercel"
-              name="Vercel"
-              size={12}
-            />
+<IntegrationLogo
+  id="vercel"
+  name="Vercel"
+  size={
+    chatbar
+      ? 17
+      : 12
+  }
+/>
 
-            <IntegrationLogo
-              id="supabase"
-              name="Supabase"
-              size={12}
-            />
-          </span>
+<IntegrationLogo
+  id="supabase"
+  name="Supabase"
+  size={
+    chatbar
+      ? 17
+      : 12
+  }
+/>
 
           <strong>
             {chatbar
