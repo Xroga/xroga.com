@@ -7664,7 +7664,7 @@ body.theme-gray .xv-rp-loader {
    BUTTON
    ============================================================ */
 
-..xv-workspace-connections--chatbar
+.xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger {
   display: inline-flex;
   align-items: center;
@@ -7673,7 +7673,7 @@ body.theme-gray .xv-rp-loader {
   min-width: 0;
   min-height: 32px;
 
-  gap: 13px;
+  gap: 15px;
 
   margin: 0;
   padding: 4px 12px 4px 7px;
@@ -7720,15 +7720,15 @@ body.theme-gray .xv-rp-loader {
 > strong {
   display: block;
   min-width: 0;
-  margin: 0;
+  margin: 0 0 0 2px;
 
   color: inherit;
 
-  font-size: 12px;
-  font-weight: 560;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1;
 
-  letter-spacing: 0;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
