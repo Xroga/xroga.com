@@ -46,6 +46,8 @@ export interface WebVerifiability {
   readonly webVerifiable: boolean;
   /** The script name the project declares, e.g. `dev` or `start`. Null when it declares none. */
   readonly startScript: string | null;
+  /** A dependency-free static root when the artifact is a directly serveable HTML project. */
+  readonly staticRoot: string | null;
   readonly reason: string;
 }
 
@@ -71,6 +73,23 @@ function readPackageJson(files: readonly ProjectFile[]): Record<string, unknown>
   }
 }
 
+function staticHtmlRoot(files: readonly ProjectFile[]): string | null {
+  const entries = files
+    .map((file) => file.path.replace(/\\/g, '/'))
+    .filter((path) =>
+      path === 'index.html' ||
+      (path.endsWith('/index.html') && !path.startsWith('/') && !path.split('/').includes('..')),
+    )
+    .sort((left, right) => {
+      const depth = left.split('/').length - right.split('/').length;
+      return depth || left.localeCompare(right);
+    });
+  const entry = entries[0];
+  if (!entry) return null;
+  const separator = entry.lastIndexOf('/');
+  return separator === -1 ? '.' : entry.slice(0, separator);
+}
+
 /**
  * Whether a browser can say anything useful about this project.
  *
@@ -82,7 +101,21 @@ function readPackageJson(files: readonly ProjectFile[]): Record<string, unknown>
 export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifiability {
   const pkg = readPackageJson(files);
   if (!pkg) {
-    return { webVerifiable: false, startScript: null, reason: 'no package.json — not a Node web project' };
+    const staticRoot = staticHtmlRoot(files);
+    if (staticRoot) {
+      return {
+        webVerifiable: true,
+        startScript: null,
+        staticRoot,
+        reason: `static HTML project rooted at "${staticRoot}"`,
+      };
+    }
+    return {
+      webVerifiable: false,
+      startScript: null,
+      staticRoot: null,
+      reason: 'no browser entry point or declared web runtime',
+    };
   }
 
   const raw = JSON.stringify(pkg);
@@ -95,11 +128,12 @@ export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifi
     return {
       webVerifiable: false,
       startScript: null,
+      staticRoot: null,
       reason: 'no web framework dependency and no HTML entry point',
     };
   }
   if (!hasNodeComponent && !hasHtml) {
-    return { webVerifiable: false, startScript: null, reason: 'no Node component detected' };
+    return { webVerifiable: false, startScript: null, staticRoot: null, reason: 'no Node component detected' };
   }
 
   const scripts = (pkg.scripts ?? {}) as Record<string, unknown>;
@@ -108,6 +142,7 @@ export function assessWebVerifiability(files: readonly ProjectFile[]): WebVerifi
   return {
     webVerifiable: true,
     startScript,
+    staticRoot: null,
     reason: startScript
       ? `web project declaring a "${startScript}" script`
       : 'web project, but it declares no script that serves it',

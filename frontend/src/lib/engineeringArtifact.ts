@@ -216,6 +216,11 @@ export interface EngineeringArtifactWorkspaceProjection {
     content: string;
     flag: 'generated' | 'modified' | 'deleted';
   }>;
+  /** Direct static entry point, when the changed-file artifact contains one. */
+  html: string;
+  css: string;
+  js: string;
+  previewAvailable: boolean;
   fileTrail: Array<{
     path: string;
     before: string;
@@ -230,11 +235,90 @@ export interface EngineeringArtifactWorkspaceProjection {
   terminalLines: string[];
 }
 
+function safeProjectPath(path: string): string | null {
+  const parts: string[] = [];
+  for (const part of path.replace(/\\/g, '/').split('/')) {
+    if (!part || part === '.') continue;
+    if (part === '..') {
+      if (!parts.length) return null;
+      parts.pop();
+    } else {
+      parts.push(part);
+    }
+  }
+  return parts.join('/');
+}
+
+function referencedFile(
+  files: ReadonlyMap<string, string>,
+  htmlPath: string,
+  reference: string,
+): string {
+  const clean = reference.split(/[?#]/, 1)[0]?.trim() ?? '';
+  if (!clean || /^(?:[a-z]+:|\/\/|#|data:)/i.test(clean)) return '';
+  const base = htmlPath.includes('/') ? htmlPath.slice(0, htmlPath.lastIndexOf('/')) : '';
+  const candidate = safeProjectPath(clean.startsWith('/')
+    ? `${base}/${clean.slice(1)}`
+    : `${base}/${clean}`);
+  return candidate ? files.get(candidate) ?? '' : '';
+}
+
+function attribute(tag: string, name: string): string {
+  const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*["']([^"']+)["']`, 'i'));
+  return match?.[1] ?? '';
+}
+
+function staticPreview(files: readonly { path: string; content: string }[]): {
+  html: string;
+  css: string;
+  js: string;
+  previewAvailable: boolean;
+} {
+  const normalized = files
+    .map((file) => ({ ...file, normalizedPath: safeProjectPath(file.path) }))
+    .filter((file): file is typeof file & { normalizedPath: string } => Boolean(file.normalizedPath));
+  const htmlFile = normalized
+    .filter((file) => file.normalizedPath === 'index.html' || file.normalizedPath.endsWith('/index.html'))
+    .sort((left, right) => {
+      const depth = left.normalizedPath.split('/').length - right.normalizedPath.split('/').length;
+      return depth || left.normalizedPath.localeCompare(right.normalizedPath);
+    })[0];
+  if (!htmlFile?.content.trim()) return { html: '', css: '', js: '', previewAvailable: false };
+
+  const byPath = new Map(normalized.map((file) => [file.normalizedPath, file.content]));
+  const linkTags = htmlFile.content.match(/<link\b[^>]*>/gi) ?? [];
+  const scriptTags = htmlFile.content.match(/<script\b[^>]*\bsrc\s*=\s*["'][^"']+["'][^>]*>[\s\S]*?<\/script>/gi) ?? [];
+  const linkedCss = linkTags
+    .filter((tag) => /\brel\s*=\s*["'][^"']*stylesheet/i.test(tag))
+    .map((tag) => referencedFile(byPath, htmlFile.normalizedPath, attribute(tag, 'href')))
+    .filter(Boolean);
+  const linkedJs = scriptTags
+    .map((tag) => referencedFile(byPath, htmlFile.normalizedPath, attribute(tag, 'src')))
+    .filter(Boolean);
+  const inlineCss = [...htmlFile.content.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)]
+    .map((match) => match[1] ?? '')
+    .filter(Boolean);
+  const inlineJs = [...htmlFile.content.matchAll(/<script\b(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map((match) => match[1] ?? '')
+    .filter(Boolean);
+  const html = htmlFile.content
+    .replace(/<link\b[^>]*\brel\s*=\s*["'][^"']*stylesheet[^>]*>/gi, '')
+    .replace(/<script\b[^>]*\bsrc\s*=\s*["'][^"']+["'][^>]*>[\s\S]*?<\/script>/gi, '');
+
+  return {
+    html,
+    css: [...inlineCss, ...linkedCss].join('\n'),
+    js: [...linkedJs, ...inlineJs].join('\n'),
+    previewAvailable: true,
+  };
+}
+
 /**
  * Converts a completed engineering artifact into facts Project edits can display.
  *
- * This deliberately does not infer a deployment or preview. A review-branch commit is pushed,
- * not live, and a non-web project may have no preview at all.
+ * This never infers a deployment: a review-branch commit is pushed, not live. It does derive a
+ * local inline preview when the artifact itself contains a complete static HTML entry and its
+ * referenced changed CSS/JS, which is presentation of returned bytes rather than a deploy claim.
  */
 export function engineeringArtifactWorkspaceProjection(
   artifact: EngineeringArtifact,
@@ -279,6 +363,7 @@ export function engineeringArtifactWorkspaceProjection(
     repository.branch ? `Review branch · ${repository.branch}` : '',
     artifact.commitSha ? `Commit · ${artifact.commitSha}` : '',
   ].filter(Boolean);
+  const preview = staticPreview(projectFiles.filter((file) => file.flag !== 'deleted'));
 
   return {
     repo,
@@ -286,6 +371,7 @@ export function engineeringArtifactWorkspaceProjection(
     reviewBranch: repository.branch || null,
     projectName: repository.repo,
     projectFiles,
+    ...preview,
     fileTrail,
     githubRepoUrl: `https://github.com/${repo}`,
     commitSha: artifact.commitSha,

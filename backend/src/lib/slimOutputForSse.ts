@@ -1,4 +1,23 @@
-/** Shrink build output for SSE — huge projectFiles/previousFiles often drop the connection after LLM spend. */
+const MAX_PROJECT_FILE_COUNT = 48;
+const MAX_PROJECT_FILE_BYTES = 200_000;
+const MAX_PROJECT_FILES_TOTAL_BYTES = 500_000;
+
+function projectFilesFitSse(value: unknown): value is Array<{ path: string; content: string }> {
+  if (!Array.isArray(value) || value.length > MAX_PROJECT_FILE_COUNT) return false;
+  let total = 0;
+  for (const file of value) {
+    if (!file || typeof file !== 'object') return false;
+    const { path, content } = file as { path?: unknown; content?: unknown };
+    if (typeof path !== 'string' || typeof content !== 'string') return false;
+    const bytes = Buffer.byteLength(content, 'utf8');
+    if (bytes > MAX_PROJECT_FILE_BYTES) return false;
+    total += bytes;
+    if (total > MAX_PROJECT_FILES_TOTAL_BYTES) return false;
+  }
+  return true;
+}
+
+/** Shrink build output for SSE without hiding ordinary changed-file artifacts from Project edits. */
 export function slimOutputForSse(
   output: Record<string, unknown> | null | undefined,
 ): Record<string, unknown> | null | undefined {
@@ -11,7 +30,7 @@ export function slimOutputForSse(
       (o.projectFiles as Array<{ path?: string }>)
         .map((f) => f.path)
         .filter((p): p is string => typeof p === 'string');
-    delete o.projectFiles;
+    if (!projectFilesFitSse(o.projectFiles)) delete o.projectFiles;
   }
   delete o.previousFiles;
 

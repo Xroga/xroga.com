@@ -91,6 +91,32 @@ test('a web project declaring no serve script is reported rather than guessed at
   assert.equal(result.notCheckedReason, 'no_start_command');
 });
 
+test('a plain static artifact runs through the browser adapter without an invented npm script', async () => {
+  let requestFiles: readonly ProjectFile[] = [];
+  let environment: Record<string, string> = {};
+  const verify = browserVerificationAdapter({
+    sandboxAvailable: available,
+    browserPresent: available,
+    execute: async (request) => {
+      requestFiles = request.files;
+      environment = request.environment;
+      return {
+        exitCode: 0,
+        stderr: '',
+        timedOut: false,
+        stdout: '<<<XROGA_BROWSER_RESULT{"ok":true,"url":"http://127.0.0.1:3000/","viewports":[]}XROGA_BROWSER_RESULT>>>',
+      };
+    },
+  });
+  await verify(input([
+    { path: 'site/index.html', content: '<!doctype html><h1>Static product</h1>' },
+    { path: 'site/app.js', content: 'document.body.dataset.ready = "yes";' },
+  ]));
+  assert.equal(environment.XROGA_STATIC_ROOT, 'site');
+  assert.equal(environment.XROGA_START_SCRIPT, '');
+  assert.ok(requestFiles.some((file) => file.path === '.xroga-verify/static-server.mjs'));
+});
+
 test('cancellation short-circuits before any sandbox or browser work', async () => {
   const controller = new AbortController();
   controller.abort();

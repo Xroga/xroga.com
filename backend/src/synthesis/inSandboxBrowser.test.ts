@@ -11,6 +11,7 @@ import {
   extractAppLog,
   parseCollectorOutput,
   playwrightVersionFromImage,
+  staticServerFile,
   type InSandboxBrowserRequest,
 } from './inSandboxBrowser.js';
 
@@ -27,6 +28,7 @@ const requiresPosixShell = process.platform === 'win32'
 
 const request = (over: Partial<InSandboxBrowserRequest> = {}): InSandboxBrowserRequest => ({
   startScript: 'dev',
+  staticRoot: null,
   domExpectations: [],
   interactions: [],
   totalTimeoutMs: 60_000,
@@ -91,6 +93,24 @@ test('the start script travels in the environment, never interpolated into the s
   assert.equal(args.length, 2, 'the start script must not be passed positionally');
   assert.equal(args[1]!.includes('rm -rf /'), false, 'the start script was interpolated');
   assert.match(args[1]!, /XROGA_START_SCRIPT/);
+});
+
+test('the injected static server is syntactically valid JavaScript', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'static-server-'));
+  try {
+    const file = join(dir, 'static-server.mjs');
+    writeFileSync(file, staticServerFile().content);
+    execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a static launch uses only the first-party server and treats the project root as data', () => {
+  const { args } = buildSandboxCommand(request({ startScript: null, staticRoot: 'public; touch /tmp/nope' }));
+  assert.equal(args[1]!.includes('public; touch /tmp/nope'), false, 'the static root was interpolated');
+  assert.match(args[1]!, /\.xroga-verify\/static-server\.mjs/);
+  assert.equal(args[1]!.includes('npm run'), false);
 });
 
 test('log and pid paths are per-run, so a stale file cannot be read as this run', () => {
