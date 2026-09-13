@@ -781,7 +781,7 @@ test('the empty workspace uses an editorial action lockup above the canonical co
 
   assert.match(
     WELCOME,
-    /<strong>Turn an idea into something live\.<\/strong>/,
+    /<strong>\s*Turn an idea into something live\.\s*<\/strong>/,
   );
 
   assert.match(

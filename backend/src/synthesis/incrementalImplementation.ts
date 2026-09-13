@@ -26,6 +26,7 @@
 
 import { chatCompletion, type ChatMessage } from '../ai/openaiCompat.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
+import { normalizeProviderError } from '../ai/providerRuntime.js';
 import type { ProjectFile } from '../ai/patches.js';
 import { extractSymbols } from './repositoryIndex.js';
 
@@ -54,6 +55,13 @@ export const MANIFEST_MAX_TOKENS = 8_000;
 
 /** Per-provider deadline before the existing coding fallback chain advances. */
 export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
+
+/**
+ * Files in a manifest are independent generation units. Two-at-a-time keeps a multi-file
+ * project from turning ten healthy 40-second completions into a seven-minute serial wait,
+ * while remaining conservative enough for provider rate limits and the model budget.
+ */
+export const IMPLEMENTATION_FILE_CONCURRENCY = 2;
 
 export interface PlannedFile {
   readonly path: string;
@@ -297,9 +305,14 @@ async function completeWithFallback(input: {
   label: string;
   usable: (text: string) => boolean;
   complete: CompletionFn;
+  unavailableCandidates?: Set<string>;
 }): Promise<{ text: string; modelId: string }> {
   const failures: string[] = [];
   for (const candidate of input.candidates) {
+    if (input.unavailableCandidates?.has(candidate.modelId)) {
+      failures.push(`${candidate.modelId} was unavailable earlier in this implementation run`);
+      continue;
+    }
     try {
       assertCodingModel(candidate.modelId, `universal ${input.label}`);
       const reply = await input.complete(candidate.modelId, input.messages, {
@@ -321,7 +334,12 @@ async function completeWithFallback(input: {
           : `${candidate.modelId} returned ${reply.text.trim() ? 'an unusable reply' : 'an empty completion'}`,
       );
     } catch (error) {
-      failures.push(`${candidate.modelId} failed: ${(error as Error).message}`);
+      const normalized = normalizeProviderError(error);
+      const message = (error as Error).message;
+      failures.push(`${candidate.modelId} failed: ${message}`);
+      if (normalized.retryable) {
+        input.unavailableCandidates?.add(candidate.modelId);
+      }
     }
   }
   throw new IncrementalImplementationError(
@@ -347,6 +365,7 @@ export async function implementIncrementally(input: {
   onProgress?: (event: { stage: 'plan' | 'file'; path?: string; index?: number; total?: number }) => void;
 }): Promise<readonly ProjectFile[]> {
   const complete = input.complete ?? defaultCompletion;
+  const unavailableCandidates = new Set<string>();
   const existingFiles = input.existingFiles ?? [];
   const requestWithConstraints = input.originalRequest?.trim()
     ? `${input.originalRequest.trim()}\n\nImplementation plan:\n${input.brief}`
@@ -370,44 +389,50 @@ export async function implementIncrementally(input: {
       label: 'the file plan',
       usable: (text) => parseFilePlan(text).length > 0,
       complete,
+      unavailableCandidates,
     });
     plan = parseFilePlan(planReply.text);
   }
   const manifest = plan.map((entry) => `${entry.path} — ${entry.purpose}`).join('\n');
 
-  const files: ProjectFile[] = [];
-  for (const [index, entry] of plan.entries()) {
-    input.onProgress?.({ stage: 'file', path: entry.path, index: index + 1, total: plan.length });
-    const current = existingFiles.find((file) => file.path === entry.path);
-    const currentContents = current
-      ? `\n\nCurrent contents of ${entry.path}:\n<current-file>\n${current.content}\n</current-file>`
-      : '\n\nThis is a new file; there are no current contents.';
-    const reply = await completeWithFallback({
-      candidates: input.candidates,
-      messages: [
-        { role: 'system', content: FILE_SYSTEM },
-        {
-          role: 'user',
-          content:
-            `${requestWithConstraints}\n\n` +
-            `The complete file list for this project:\n${manifest}\n\n` +
-            `Write exactly this one file: ${entry.path}\n` +
-            `Its purpose: ${entry.purpose}` +
-            currentContents,
+  const files: ProjectFile[] = new Array(plan.length);
+  for (let offset = 0; offset < plan.length; offset += IMPLEMENTATION_FILE_CONCURRENCY) {
+    const batch = plan.slice(offset, offset + IMPLEMENTATION_FILE_CONCURRENCY);
+    await Promise.all(batch.map(async (entry, batchIndex) => {
+      const index = offset + batchIndex;
+      input.onProgress?.({ stage: 'file', path: entry.path, index: index + 1, total: plan.length });
+      const current = existingFiles.find((file) => file.path === entry.path);
+      const currentContents = current
+        ? `\n\nCurrent contents of ${entry.path}:\n<current-file>\n${current.content}\n</current-file>`
+        : '\n\nThis is a new file; there are no current contents.';
+      const reply = await completeWithFallback({
+        candidates: input.candidates,
+        messages: [
+          { role: 'system', content: FILE_SYSTEM },
+          {
+            role: 'user',
+            content:
+              `${requestWithConstraints}\n\n` +
+              `The complete file list for this project:\n${manifest}\n\n` +
+              `Write exactly this one file: ${entry.path}\n` +
+              `Its purpose: ${entry.purpose}` +
+              currentContents,
+          },
+        ],
+        maxTokens: PER_FILE_MAX_TOKENS,
+        label: `file ${entry.path}`,
+        // A file that is only whitespace is a failure worth falling back on: an empty source
+        // file commits cleanly and breaks the build later, which is harder to diagnose.
+        usable: (text) => {
+          const candidateContent = stripCodeFence(text);
+          return candidateContent.trim().length > 0 &&
+            preservesRequiredSymbols(requestWithConstraints, current, candidateContent);
         },
-      ],
-      maxTokens: PER_FILE_MAX_TOKENS,
-      label: `file ${entry.path}`,
-      // A file that is only whitespace is a failure worth falling back on: an empty source
-      // file commits cleanly and breaks the build later, which is harder to diagnose.
-      usable: (text) => {
-        const candidateContent = stripCodeFence(text);
-        return candidateContent.trim().length > 0 &&
-          preservesRequiredSymbols(requestWithConstraints, current, candidateContent);
-      },
-      complete,
-    });
-    files.push({ path: entry.path, content: stripCodeFence(reply.text) });
+        complete,
+        unavailableCandidates,
+      });
+      files[index] = { path: entry.path, content: stripCodeFence(reply.text) };
+    }));
   }
 
   if (!files.length) {

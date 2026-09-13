@@ -717,10 +717,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // account sees the truthful first-connection state. The transient readiness probe
   // may appear between them, but it is not the completed interaction state.
   const integrationsDialog = page.getByRole('dialog', {
-    name: /^(?:Integrations|Start with GitHub)$/,
+    name: /^(?:Plugins|Integrations|Start with GitHub)$/,
   });
   await expect(integrationsDialog).toBeVisible({ timeout: 10_000 });
-  await integrationsDialog.getByRole('button', { name: /^Close(?: integrations)?$/ }).click();
+  await integrationsDialog.getByRole('button', { name: /^Close(?: plugins| integrations)?$/i }).click();
 
   await composerActions.click();
   await expect(actionsMenu).toBeVisible();
