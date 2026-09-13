@@ -3,7 +3,6 @@
 import { FirstRunShipChecklist } from '@/components/dashboard/FirstRunShipChecklist';
 import { goga } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
-import { WorkspaceConnectionsStrip } from '@/components/terminal/WorkspaceConnectionsStrip';
 
 interface DashboardWelcomeProps {
   hidden?: boolean;
@@ -24,7 +23,8 @@ export function WorkspaceComposerKicker({
 }: {
   displayName: string;
 }) {
-  const shortName = displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
+  const shortName =
+    displayName.trim().split(/\s+/)[0]?.slice(0, 12) || 'builder';
 
   return (
     <div
@@ -44,14 +44,10 @@ export function WorkspaceComposerKicker({
         </b>
       </div>
 
-      <strong>Turn an idea into something live.</strong>
+      <strong>
+        Turn an idea into something live.
+      </strong>
 
-      {/*
-       * Keep this hook for compatibility with the existing
-       * workspace tests/accessibility contract.
-       *
-       * The visible username is now rendered above.
-       */}
       <span
         className="xv-welcome-short-name"
         aria-label={`Signed in as ${shortName}`}
@@ -79,19 +75,24 @@ export function DashboardWelcome({
     <div
       className={cn(
         'xv-dashboard-welcome xv-welcome-modern relative',
+
         composer &&
           'xv-dashboard-welcome--composer',
+
         className,
       )}
       data-testid="workspace-welcome"
     >
-      {/* =====================================================
-          MAIN CENTERED HEADLINE
-          ===================================================== */}
-
       <div className="xv-welcome-hero relative mx-auto flex max-w-3xl flex-col items-center text-center">
-        <h1 className={cn('xv-welcome-editorial', goga.className)}>
-          <span>Describe it.</span>
+        <h1
+          className={cn(
+            'xv-welcome-editorial',
+            goga.className,
+          )}
+        >
+          <span>
+            Describe it.
+          </span>
 
           <span className="xv-welcome-editorial__build">
             Build it.
@@ -104,23 +105,11 @@ export function DashboardWelcome({
 
         {composer ? (
           <p className="xv-welcome-capabilities">
-            Create, explore, search, research, learn, plan, build,
-            debug, and ship live.
+            Create, explore, search, research, learn, plan,
+            build, debug, and ship live.
           </p>
         ) : null}
       </div>
-
-
-      {/* =====================================================
-          INTEGRATIONS — BELOW HEADLINE
-          ===================================================== */}
-
-      {composer ? <WorkspaceConnectionsStrip href="/dashboard/integrations" interactive /> : null}
-
-
-      {/* =====================================================
-          NON-COMPOSER DASHBOARD CONTENT
-          ===================================================== */}
 
       {!composer ? (
         <div className="relative mx-auto mt-4 max-w-3xl">
