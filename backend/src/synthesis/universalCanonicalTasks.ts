@@ -596,12 +596,20 @@ export interface CanonicalImplementationResult {
 }
 
 export class CanonicalTaskFailure extends Error {
-  readonly code = 'CANONICAL_TASK_FAILED' as const;
+  readonly code: string;
+  readonly safeReasons: readonly string[];
   readonly taskId: string;
   readonly taskStatus: string;
-  constructor(message: string, taskId: string, taskStatus: string) {
+  constructor(
+    message: string,
+    taskId: string,
+    taskStatus: string,
+    failure?: { code?: string; safeReasons?: readonly string[] },
+  ) {
     super(message);
     this.name = 'CanonicalTaskFailure';
+    this.code = failure?.code ?? 'CANONICAL_TASK_FAILED';
+    this.safeReasons = failure?.safeReasons ?? [];
     this.taskId = taskId;
     this.taskStatus = taskStatus;
   }
@@ -654,10 +662,14 @@ export async function runImplementationAsCanonicalTask(input: {
     // evidence summary carries the actual reason, so both are reported.
     const detail = executed.evidence.at(-1)?.summary;
     const blocker = executed.blocker ?? `implementation task ended ${executed.status}`;
+    const persistedFailure = (executed.output as {
+      failure?: { code?: string; safeReasons?: readonly string[] };
+    } | undefined)?.failure;
     throw new CanonicalTaskFailure(
       detail ? `${blocker} — ${detail}` : blocker,
       executed.id,
       executed.status,
+      persistedFailure,
     );
   }
 

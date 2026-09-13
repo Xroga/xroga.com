@@ -55,6 +55,27 @@ export interface ExecutableTaskNode {
   completedAt?: string;
 }
 
+interface PersistedTaskFailure {
+  code: string;
+  safeReasons: string[];
+}
+
+function persistedTaskFailure(error: unknown): PersistedTaskFailure | null {
+  if (!error || typeof error !== 'object') return null;
+  const rawCode = (error as { code?: unknown }).code;
+  const rawReasons = (error as { safeReasons?: unknown }).safeReasons;
+  const code = typeof rawCode === 'string' && /^[A-Z][A-Z0-9_]{1,79}$/.test(rawCode)
+    ? rawCode
+    : null;
+  const safeReasons = Array.isArray(rawReasons)
+    ? rawReasons
+      .filter((value): value is string => typeof value === 'string' && Boolean(value.trim()))
+      .slice(0, 4)
+      .map((value) => redactSecrets(value).slice(0, 240))
+    : [];
+  return code || safeReasons.length ? { code: code ?? 'TASK_FAILED', safeReasons } : null;
+}
+
 export interface ExecutionEvidence {
   id: string;
   kind: string;
@@ -445,7 +466,15 @@ export class ExecutionScheduler {
             : `${task.operationType} produced evidence but did not pass its validation rule`;
       }
     } catch (error) {
-      task.blocker = redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
+      const failure = persistedTaskFailure(error);
+      // Preserve a typed, already-sanitized failure across the scheduler boundary. Without
+      // this, a coherent implementation failure becomes a generic CanonicalTaskFailure and
+      // the API cannot distinguish provider capacity, a bounded timeout, or an invalid
+      // project bundle. The raw provider payload remains operator-only.
+      if (failure) task.output = { failure };
+      task.blocker = failure?.safeReasons.length
+        ? failure.safeReasons.join('; ').slice(0, 500)
+        : redactSecrets(error instanceof Error ? error.message : String(error)).slice(0, 500);
       const mutation = isMutationOperation(task);
       if (!mutation && task.attempts < task.retryPolicy.maximumAttempts) {
         task.status = 'waiting_for_provider';

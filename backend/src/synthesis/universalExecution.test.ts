@@ -74,6 +74,30 @@ describe('routing controls whether anything happens at all', () => {
   });
 });
 
+describe('typed implementation failures remain truthful at the public boundary', () => {
+  it('surfaces sanitized capacity detail without provider identity or a false safety label', async () => {
+    const result = await executeUniversalRun({
+      prompt: 'Build a Rust CLI that converts CSV files to JSON',
+      owner,
+      runId: 'run-typed-implementation-failure',
+      flags: enabled,
+      adapters: adapters({
+        implement: async () => {
+          throw Object.assign(new Error('openrouter internal response'), {
+            code: 'SOFTWARE_IMPLEMENTATION_FAILED',
+            safeReasons: ['implementation capacity was unavailable'],
+          });
+        },
+      }),
+    });
+
+    assert.equal(result.outcome, 'failed');
+    assert.match(result.reason, /implementation capacity was unavailable/);
+    assert.match(result.reason, /no repository changes were published/);
+    assert.doesNotMatch(result.reason, /openrouter|safety/i);
+  });
+});
+
 describe('a complete enabled run', () => {
   it('walks every phase and produces an exact commit', async () => {
     const result = await executeUniversalRun({
