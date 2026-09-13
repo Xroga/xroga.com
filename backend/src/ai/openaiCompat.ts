@@ -50,6 +50,28 @@ interface ResolvedEndpoint {
   defaultHeaders?: Record<string, string>;
 }
 
+export type ReasoningMode = 'default' | 'none';
+
+/**
+ * Provider-supported controls for calls that need direct public output rather than a
+ * long hidden reasoning phase. Keep this explicit and provider-scoped: forwarding an
+ * invented compatibility parameter to Moonshot (or another provider) can turn a healthy
+ * fallback into a 400 response.
+ */
+export function providerReasoningControls(
+  provider: string,
+  mode: ReasoningMode = 'default',
+): Record<string, unknown> {
+  if (mode === 'default') return {};
+  if (provider === 'zhipu') {
+    return { thinking: { type: 'disabled' } };
+  }
+  if (provider === 'openrouter') {
+    return { reasoning: { effort: 'none', exclude: true } };
+  }
+  return {};
+}
+
 export function requireNonEmptyModelText(text: string, modelId: ModelId): string {
   const normalized = text.trim();
   if (normalized) return normalized;
@@ -273,6 +295,8 @@ export async function chatCompletionStream(
     onDelta?: (delta: string) => void;
     /** Provider stream activity, including private reasoning chunks. */
     onActivity?: () => void;
+    /** Provider-specific reasoning control. Used only by direct-output workloads. */
+    reasoningMode?: ReasoningMode;
     signal?: AbortSignal;
     credentialOverride?: string;
   } = {},
@@ -295,8 +319,9 @@ export async function chatCompletionStream(
           messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
           max_tokens: opts.maxTokens ?? 8192,
           ...(temperature === undefined ? {} : { temperature }),
+          ...providerReasoningControls(endpoint.provider, opts.reasoningMode),
           stream: true,
-        },
+        } as OpenAI.Chat.ChatCompletionCreateParamsStreaming,
         opts.signal ? { signal: opts.signal } : undefined,
       ),
     );

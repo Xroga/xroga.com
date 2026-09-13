@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { requireNonEmptyModelText } from './openaiCompat.js';
+import { providerReasoningControls, requireNonEmptyModelText } from './openaiCompat.js';
 
 describe('provider completion boundary', () => {
   it('accepts a real non-empty completion', () => {
@@ -14,5 +14,27 @@ describe('provider completion boundary', () => {
         error instanceof Error &&
         (error as Error & { code?: string }).code === 'EMPTY_PROVIDER_RESPONSE',
     );
+  });
+});
+
+describe('direct-output reasoning controls', () => {
+  it('disables GLM thinking with the Zhipu-supported request shape', () => {
+    assert.deepEqual(providerReasoningControls('zhipu', 'none'), {
+      thinking: { type: 'disabled' },
+    });
+  });
+
+  it('disables and excludes reasoning through the OpenRouter-supported request shape', () => {
+    assert.deepEqual(providerReasoningControls('openrouter', 'none'), {
+      reasoning: { effort: 'none', exclude: true },
+    });
+  });
+
+  it('does not invent an unsupported Moonshot request parameter', () => {
+    assert.deepEqual(providerReasoningControls('moonshot', 'none'), {});
+  });
+
+  it('leaves ordinary model calls unchanged', () => {
+    assert.deepEqual(providerReasoningControls('zhipu'), {});
   });
 });
