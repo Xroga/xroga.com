@@ -83,12 +83,20 @@ No markdown. No extra keys.`;
  * The rule now: `ok` must be present and must be the boolean `true`. Nothing else passes
  * — not `"true"`, not `1`, not absent.
  */
-function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'issues' | 'fixHints' | 'findings'> {
-  const failClosed = (reason: string) => ({
+interface ParsedReviewVerdict extends Pick<ReviewBuildOutputResult, 'ok' | 'issues' | 'fixHints' | 'findings'> {
+  /** False only when the transport answered but did not honor the review protocol. */
+  protocolValid: boolean;
+  protocolIssue?: string;
+}
+
+function parseReviewJson(text: string): ParsedReviewVerdict {
+  const failClosed = (reason: string): ParsedReviewVerdict => ({
     ok: false,
     issues: [reason],
     fixHints: [] as string[],
     findings: [] as ReviewBuildOutputResult['findings'],
+    protocolValid: false,
+    protocolIssue: reason,
   });
 
   if (!text.trim()) return failClosed('The reviewer returned nothing — treated as not reviewed.');
@@ -137,11 +145,23 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
         : typeof parsed.ok !== 'boolean'
           ? `The reviewer verdict was ${JSON.stringify(parsed.ok)}, which is not a boolean — treated as not passed.`
           : 'The reviewer did not pass the build.';
-    return { ok: false, issues: issues.length ? issues : [reason], fixHints, findings };
+    return {
+      ok: false,
+      issues: issues.length ? issues : [reason],
+      fixHints,
+      findings,
+      protocolValid: typeof parsed.ok === 'boolean',
+      ...(typeof parsed.ok === 'boolean' ? {} : { protocolIssue: reason }),
+    };
   }
 
-  return { ok: true, issues, fixHints, findings };
+  return { ok: true, issues, fixHints, findings, protocolValid: true };
 }
+
+const REVIEW_PROTOCOL_REPAIR = `Your previous response did not follow the required review JSON protocol.
+Return exactly one valid JSON object with these fields:
+{"ok":boolean,"issues":string[],"fixHints":string[],"findings":[{"severity":"low|medium|high|critical","title":string,"evidence":string,"affectedFiles":string[]}]}
+Do not change the substantive verdict merely to satisfy the schema. Do not include markdown or prose.`;
 
 /**
  * How much file content one project-level reviewer call carries.
@@ -310,22 +330,46 @@ export async function reviewBuildOutput(
       },
     };
 
-    let text: string;
+    let parsed: ParsedReviewVerdict;
     try {
-      const result = await (opts.completion ?? chatCompletion)(
+      const completion = opts.completion ?? chatCompletion;
+      const reviewMessages = [
+        { role: 'system' as const, content: REVIEW_SYSTEM },
+        {
+          role: 'user' as const,
+          content: `Review this build against the user prompt.\n${JSON.stringify(userPayload)}`,
+        },
+      ];
+      const result = await completion(
         model,
-        [
-          { role: 'system', content: REVIEW_SYSTEM },
-          {
-            role: 'user',
-            content: `Review this build against the user prompt.\n${JSON.stringify(userPayload)}`,
-          },
-        ],
+        reviewMessages,
         { maxTokens: 1024, temperature: 0.2, json: true, reasoningMode: 'none' },
       );
-      text = result.text;
       inputTokens += result.inputTokens;
       outputTokens += result.outputTokens;
+
+      parsed = parseReviewJson(result.text);
+      if (!parsed.protocolValid) {
+        // One bounded protocol repair. This is not a second review and it cannot turn a
+        // substantive `ok:false` verdict into a pass: it runs only when no typed verdict
+        // exists. Keeping the same project payload in context lets the reviewer reproduce
+        // its decision without inventing facts from a clipped excerpt.
+        const repair = await completion(
+          model,
+          [
+            ...reviewMessages,
+            { role: 'assistant' as const, content: result.text.slice(0, 4_000) },
+            {
+              role: 'user' as const,
+              content: `${REVIEW_PROTOCOL_REPAIR}\nProtocol error: ${parsed.protocolIssue ?? 'invalid review response'}`,
+            },
+          ],
+          { maxTokens: 1024, temperature: 0, json: true, reasoningMode: 'none' },
+        );
+        inputTokens += repair.inputTokens;
+        outputTokens += repair.outputTokens;
+        parsed = parseReviewJson(repair.text);
+      }
     } catch {
       // A provider failure is not a pass. The old catch path returned `staticResult.ok`,
       // so a build whose LLM review never happened could still be reported as reviewed.
@@ -345,7 +389,6 @@ export async function reviewBuildOutput(
       };
     }
 
-    const parsed = parseReviewJson(text);
     issues.push(...parsed.issues);
     fixHints.push(...parsed.fixHints);
     // A finding is evidence only if it says where it is and what commit it is against.
