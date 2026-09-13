@@ -147,7 +147,7 @@ test('a continuation cannot repeat completed files or widen the validated manife
   assert.equal(mergeCoherentContinuation(first, frame('src/c.ts', 'outside')).status, 'invalid');
 });
 
-test('a retryable provider failure uses one healthy fallback and never calls a third route', async () => {
+test('a provider failure uses one distinct healthy fallback and never spends both attempts on one transport', async () => {
   const paths = ['index.html'];
   const complete = fakeCompletion((modelId) => {
     if (modelId === 'glm_5_3_flash') {
@@ -159,7 +159,7 @@ test('a retryable provider failure uses one healthy fallback and never calls a t
   });
   const files = await implementCoherently({ brief: 'Create a page.', candidates: CANDIDATES, complete });
   assert.equal(files[0]!.path, 'index.html');
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'glm_5_3']);
+  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'kimi_k3']);
 });
 
 test('an existing-repository patch returns only intended files and sends compact redacted context', async () => {

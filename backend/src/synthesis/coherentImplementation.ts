@@ -1,6 +1,6 @@
 import { chatCompletionStream, estimateTokens, type ChatMessage } from '../ai/openaiCompat.js';
 import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure } from '../ai/builderAttempt.js';
-import { costUsdForTokens, type ModelId } from '../ai/models.js';
+import { costUsdForTokens, MODELS, type ModelId } from '../ai/models.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
 import { normalizeProviderError } from '../ai/providerRuntime.js';
 import { prepareFocusedContext } from '../ai/contextPreparation.js';
@@ -456,18 +456,25 @@ export async function implementCoherently(input: {
   const context = repositoryContext(existingFiles, objective);
   const failures: string[] = [];
   const unavailable = new Set<string>();
+  const attemptedProviders = new Set<string>();
   let realAttempts = 0;
 
   for (const candidate of input.candidates) {
     if (unavailable.has(candidate.modelId)) continue;
+    const provider = MODELS[candidate.modelId as ModelId]?.provider ?? `unknown:${candidate.modelId}`;
+    // The fallback budget is a provider budget, not a model-name budget. Two models on
+    // one transport share the same outage, request-contract incompatibility and queue, so
+    // spending both permitted attempts there is not a fallback at all.
+    if (attemptedProviders.has(provider)) continue;
     if (realAttempts >= MAX_COHERENT_PROVIDER_ATTEMPTS) break;
-    realAttempts += 1;
     try {
       assertCodingModel(candidate.modelId, 'coherent universal implementation');
     } catch (error) {
       failures.push(`${candidate.modelId}: ${classifyBuilderFailure(error)}`);
       continue;
     }
+    attemptedProviders.add(provider);
+    realAttempts += 1;
     input.onProgress?.({ stage: 'bundle', modelId: candidate.modelId });
     const messages: ChatMessage[] = [
       { role: 'system', content: BUNDLE_SYSTEM },
