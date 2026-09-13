@@ -125,7 +125,7 @@ function safeCoherentFailureReason(value: string): string {
 }
 
 function normalizePath(value: string): string {
-  return value.trim().replace(/\\/g, '/');
+  return value.trim().replace(/\\/g, '/').replace(/^(?:\.\/)+/, '');
 }
 
 function safeProjectPath(value: unknown): value is string {
@@ -152,9 +152,112 @@ function optionalStringList(value: unknown, maximum = 16): readonly string[] | n
  * Delete remains deliberately unsupported because it has different data-loss semantics.
  */
 function normalizeSnapshotOperation(value: unknown): 'upsert' | null {
-  return value === undefined || value === 'upsert' || value === 'create' || value === 'update'
+  return value === undefined || value === 'upsert' || value === 'create' || value === 'update' ||
+    value === 'write' || value === 'replace' || value === 'modify' || value === 'add'
     ? 'upsert'
     : null;
+}
+
+function firstString(record: Record<string, unknown>, keys: readonly string[]): string | undefined {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === 'string') return value;
+  }
+  return undefined;
+}
+
+function unwrapBundle(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  let object = value as Record<string, unknown>;
+  if (Array.isArray(object.files) || Array.isArray(object.fileContents)) return object;
+
+  // Some structured-output transports add one harmless envelope around the requested object.
+  // Unwrap only when there is exactly one object-shaped value carrying file data; never search
+  // arbitrary nested values, because that could reinterpret unrelated model prose as a write.
+  const nested = Object.values(object).filter((candidate): candidate is Record<string, unknown> =>
+    Boolean(candidate) && typeof candidate === 'object' && !Array.isArray(candidate) &&
+    (Array.isArray((candidate as Record<string, unknown>).files) ||
+      Array.isArray((candidate as Record<string, unknown>).fileContents)),
+  );
+  if (nested.length === 1) object = nested[0]!;
+  return object;
+}
+
+function normalizeContentRecords(value: unknown): Array<Record<string, unknown>> | null {
+  if (Array.isArray(value)) {
+    return value.map((candidate) => {
+      if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return {};
+      const file = candidate as Record<string, unknown>;
+      return {
+        path: firstString(file, ['path', 'filePath', 'file', 'name']),
+        operation: file.operation ?? file.action,
+        content: firstString(file, ['content', 'body', 'source', 'code']),
+        purpose: firstString(file, ['purpose', 'description']),
+      };
+    });
+  }
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>).map(([path, content]) => ({ path, content }));
+  }
+  return null;
+}
+
+function normalizeManifestRecords(
+  value: unknown,
+  contents: readonly Record<string, unknown>[],
+): Array<Record<string, unknown>> | null {
+  if (value === undefined || value === null) {
+    return contents.map((file) => ({
+      path: file.path,
+      operation: file.operation,
+      purpose: file.purpose,
+    }));
+  }
+  if (!Array.isArray(value)) return null;
+  return value.map((candidate) => {
+    if (typeof candidate === 'string') return { path: candidate };
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return {};
+    const file = candidate as Record<string, unknown>;
+    return {
+      path: firstString(file, ['path', 'filePath', 'file', 'name']),
+      operation: file.operation ?? file.action,
+      purpose: firstString(file, ['purpose', 'description']),
+    };
+  });
+}
+
+function normalizedJsonBundle(value: unknown): Record<string, unknown> | null {
+  const object = unwrapBundle(value);
+  if (!object) return null;
+  const contents = normalizeContentRecords(object.fileContents ?? object.files);
+  if (!contents?.length) return null;
+  const files = normalizeManifestRecords(object.files, contents);
+  if (!files?.length) return null;
+  const projectValue = object.project;
+  const project = projectValue && typeof projectValue === 'object' && !Array.isArray(projectValue)
+    ? projectValue as Record<string, unknown>
+    : {};
+  const runtime = firstString(project, ['runtime', 'language', 'platform']) ?? 'unspecified';
+  const framework = firstString(project, ['framework']);
+  const packageManager = firstString(project, ['packageManager', 'package_manager']);
+  const runCommand = firstString(project, ['runCommand', 'run_command']);
+  return {
+    version: object.version ?? 1,
+    summary: typeof object.summary === 'string' && object.summary.trim()
+      ? object.summary
+      : 'Generated coherent project change',
+    project: {
+      runtime,
+      framework: framework ?? null,
+      packageManager: packageManager ?? null,
+      buildCommands: project.buildCommands ?? project.build_commands ?? [],
+      testCommands: project.testCommands ?? project.test_commands ?? [],
+      runCommand: runCommand ?? null,
+    },
+    sharedContracts: object.sharedContracts ?? object.shared_contracts ?? [],
+    files,
+    fileContents: contents,
+  };
 }
 
 function parseContract(raw: string): ProjectChangeContract | null {
@@ -259,10 +362,9 @@ function containsHighConfidenceSecret(files: readonly ProjectFile[]): boolean {
 function jsonFilesToFrames(value: unknown): string | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const object = value as { files?: unknown; fileContents?: unknown };
-  const files = Array.isArray(object.fileContents) ? object.fileContents : object.files;
-  if (!Array.isArray(files)) return null;
+  const files = normalizeContentRecords(object.fileContents ?? object.files);
+  if (!files) return null;
   return files.flatMap((candidate) => {
-    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return [];
     const file = candidate as Record<string, unknown>;
     if (typeof file.content !== 'string' || !file.content.trim()) return [];
     return [
@@ -280,13 +382,12 @@ function jsonFilesToFrames(value: unknown): string | null {
 
 /** Convert the preferred JSON project bundle into the same hardened internal framing. */
 function jsonBundleToFrames(text: string): string | null {
-  const value = extractJson(text);
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const object = value as Record<string, unknown>;
-  if (!Array.isArray(object.files)) return null;
+  const object = normalizedJsonBundle(extractJson(text));
+  if (!object) return null;
+  const manifestFiles = object.files as Array<Record<string, unknown>>;
   const manifest: Record<string, unknown> = {
     ...object,
-    files: object.files.map((candidate) => {
+    files: manifestFiles.map((candidate) => {
       if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return candidate;
       const { content: _content, ...file } = candidate as Record<string, unknown>;
       return file;
@@ -297,7 +398,7 @@ function jsonBundleToFrames(text: string): string | null {
     MANIFEST_OPEN,
     JSON.stringify(manifest),
     MANIFEST_CLOSE,
-    jsonFilesToFrames(value) ?? '',
+    jsonFilesToFrames(object) ?? '',
   ].join('\n');
 }
 
@@ -357,15 +458,7 @@ function truncatedJsonBundleToFrames(text: string): string | null {
     if (char === ']' && depth === 0) break;
   }
 
-  const object = header as Record<string, unknown>;
-  const manifest = { ...object };
-  delete manifest.fileContents;
-  return [
-    MANIFEST_OPEN,
-    JSON.stringify(manifest),
-    MANIFEST_CLOSE,
-    jsonFilesToFrames({ fileContents: complete }) ?? '',
-  ].join('\n');
+  return jsonBundleToFrames(JSON.stringify({ ...(header as Record<string, unknown>), fileContents: complete }));
 }
 
 /** Parse and validate the complete framed project-change contract before materialization. */
@@ -612,6 +705,7 @@ export async function implementCoherently(input: {
   const unavailable = new Set<string>();
   const attemptedProviders = new Set<string>();
   let realAttempts = 0;
+  let protocolCorrection: string | null = null;
 
   // Keep the router's primary choice. For its single independent fallback, prefer an
   // approved transport that documents a direct-output/no-reasoning request. A provider
@@ -648,7 +742,17 @@ export async function implementCoherently(input: {
     input.onProgress?.({ stage: 'bundle', modelId: candidate.modelId });
     const messages: ChatMessage[] = [
       { role: 'system', content: BUNDLE_SYSTEM },
-      { role: 'user', content: `${objective}\n\n${context}` },
+      {
+        role: 'user',
+        content: [
+          objective,
+          context,
+          protocolCorrection
+            ? `Protocol correction from the previous bounded attempt:\n${protocolCorrection}\n` +
+              'Return a complete full-file snapshot that fixes exactly this contract error.'
+            : '',
+        ].filter(Boolean).join('\n\n'),
+      },
     ];
     try {
       const first = await callWithTelemetry({
@@ -709,6 +813,7 @@ export async function implementCoherently(input: {
 
       input.onTelemetry?.(withUsage(first.record, false, parsed.reason));
       failures.push(`${candidate.modelId}: ${parsed.reason}`);
+      protocolCorrection = parsed.reason;
     } catch (error) {
       const telemetry = (error as { builderTelemetry?: BuilderModelCallTelemetry }).builderTelemetry;
       if (telemetry) input.onTelemetry?.(telemetry);
