@@ -744,6 +744,33 @@ export function createXrogaSoftwareTools(
   });
 
   const createReviewBranch = createTool({
+          const verification =
+        evaluateSoftwareCompletion({
+          previewRequirement:
+            contract.preview,
+
+          evidence,
+
+          requireSuccessfulChecks: true,
+
+          /*
+           * We are deciding whether persistence MAY happen.
+           *
+           * Persistence therefore cannot already be required
+           * at this stage.
+           */
+          requireRepositoryPersistence: false,
+        });
+
+      if (!verification.complete) {
+        return {
+          ok: false,
+          code: 'VERIFICATION_REQUIRED',
+          message:
+            'Xroga will not persist unverified software changes.',
+          blockers: verification.blockers,
+        };
+      }
     name: 'create_review_branch',
 
     description:
