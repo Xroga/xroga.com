@@ -276,10 +276,15 @@ test('the real new terminal keeps plugins in the composer footer', () => {
     /Supabase/,
   );
 
-  assert.match(
-    CONNECTIONS,
-    /chatbar[\s\S]*?'Plugins'[\s\S]*?'Integrations'/,
-  );
+ assert.match(
+  CONNECTIONS,
+  /<strong>\s*Plugins\s*<\/strong>/,
+);
+
+assert.match(
+  CONNECTIONS,
+  /Click to manage plugins\./,
+);
 
   assert.match(
     CONNECTIONS,
