@@ -96,6 +96,7 @@ export interface ExecutionAdapters {
     plan: UniversalRunPlan;
     securityControls: readonly SecurityControl[];
     existingFiles: readonly ProjectFile[];
+    signal?: AbortSignal;
   }) => Promise<readonly ProjectFile[]>;
   /** Runs one validation command under isolation. */
   readonly runValidation: ValidationRunner;
@@ -308,7 +309,7 @@ export async function executeUniversalRun(input: {
         ],
         allowedFiles: existingFiles.map((file) => file.path),
       },
-      implement: () => input.adapters.implement({ plan, securityControls, existingFiles }),
+      implement: () => input.adapters.implement({ plan, securityControls, existingFiles, signal: input.signal }),
       store: input.executionStore,
       signal: input.signal,
     });
@@ -320,11 +321,26 @@ export async function executeUniversalRun(input: {
     // could build the same product.
     const surfaces = plan.spec.surfaces.map((declaration) => String(declaration.surface));
     const fallback = canFallBack({ mutationBegan, surfaces });
-    record('implementation', 'implementation failed', fallback.reason);
+    const implementationCode = (error as { code?: unknown })?.code;
+    const isBoundedGenerationFailure = implementationCode === 'SOFTWARE_IMPLEMENTATION_FAILED' ||
+      implementationCode === 'INCREMENTAL_IMPLEMENTATION_FAILED';
+    const operatorDetail = error instanceof Error ? error.message : String(error);
+    console.warn('[universal_implementation_failed]', JSON.stringify({
+      runId: input.runId,
+      code: typeof implementationCode === 'string' ? implementationCode : 'UNKNOWN',
+      detail: operatorDetail,
+      fallbackAllowed: fallback.allowed,
+    }));
+    const publicReason = isBoundedGenerationFailure
+      ? 'Implementation could not complete. Your project was preserved and no repository changes were published.'
+      : fallback.allowed
+        ? 'Implementation could not complete. Your project was preserved.'
+        : fallback.reason;
+    record('implementation', 'implementation failed', publicReason);
     return fail(
       fallback.allowed ? 'fell_back_to_legacy' : 'failed',
       'implementation',
-      `implementation failed: ${error instanceof Error ? error.message : String(error)}. ${fallback.reason}`,
+      publicReason,
       plan,
     );
   }

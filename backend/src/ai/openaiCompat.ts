@@ -301,6 +301,7 @@ export async function chatCompletionStream(
 
     let text = '';
     let providerRequestId: string | undefined;
+    let finishReason: string | null = null;
     let inputTokens = messages.reduce((sum, m) => sum + contentTokenEstimate(m.content), 0);
     let outputTokens = 0;
 
@@ -312,6 +313,7 @@ export async function chatCompletionStream(
         throw err;
       }
       const delta = chunk.choices[0]?.delta?.content ?? '';
+      finishReason = chunk.choices[0]?.finish_reason ?? finishReason;
       if (delta) {
         text += delta;
         opts.onDelta?.(delta);
@@ -329,6 +331,7 @@ export async function chatCompletionStream(
     recordModelExecution(modelId, { ok: true, latencyMs: Date.now() - started });
     return {
       text,
+      finishReason,
       modelId,
       apiModel: endpoint.apiModel,
       provider: endpoint.provider,

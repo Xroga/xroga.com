@@ -1,0 +1,535 @@
+import { chatCompletionStream, estimateTokens, type ChatMessage } from '../ai/openaiCompat.js';
+import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure } from '../ai/builderAttempt.js';
+import { costUsdForTokens, type ModelId } from '../ai/models.js';
+import { assertCodingModel } from '../ai/providerPolicy.js';
+import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { prepareFocusedContext } from '../ai/contextPreparation.js';
+import { scanProjectFiles } from '../ai/securityScan.js';
+import type { ProjectFile } from '../ai/patches.js';
+import { preservesRequiredSymbols, type ModelCandidate } from './incrementalImplementation.js';
+
+export const MAX_COHERENT_FILES = 24;
+export const COHERENT_BUNDLE_MAX_TOKENS = 32_000;
+export const COHERENT_CONTINUATION_MAX_TOKENS = 20_000;
+export const COHERENT_FIRST_TOKEN_TIMEOUT_MS = 60_000;
+export const COHERENT_ACTIVE_TIMEOUT_MS = 240_000;
+export const COHERENT_CONTEXT_TOKENS = 24_000;
+export const MAX_COHERENT_PROVIDER_ATTEMPTS = 2;
+
+const MANIFEST_OPEN = '<<<XROGA_MANIFEST>>>';
+const MANIFEST_CLOSE = '<<<XROGA_END_MANIFEST>>>';
+const FILE_OPEN = '<<<XROGA_FILE>>>';
+const CONTENT_OPEN = '<<<XROGA_CONTENT>>>';
+const FILE_CLOSE = '<<<XROGA_END_FILE>>>';
+
+export interface ProjectChangeContract {
+  readonly version: 1;
+  readonly summary: string;
+  readonly project: {
+    readonly runtime: string;
+    readonly framework: string | null;
+    readonly packageManager: string | null;
+    readonly buildCommands: readonly string[];
+    readonly testCommands: readonly string[];
+    readonly runCommand: string | null;
+  };
+  readonly sharedContracts: readonly string[];
+  readonly files: ReadonlyArray<{
+    readonly path: string;
+    readonly operation: 'upsert';
+    readonly purpose: string;
+  }>;
+}
+
+export interface ParsedCoherentBundle {
+  readonly status: 'complete' | 'partial' | 'invalid';
+  readonly contract: ProjectChangeContract | null;
+  readonly files: readonly ProjectFile[];
+  readonly missingPaths: readonly string[];
+  readonly reason: string;
+}
+
+export interface BuilderModelCallTelemetry {
+  readonly stage: 'implementation' | 'continuation';
+  readonly modelId: string;
+  readonly purpose: string;
+  readonly inputChars: number;
+  readonly estimatedInputTokens: number;
+  readonly outputChars: number;
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+  readonly queueWaitMs: number;
+  readonly activeDurationMs: number;
+  readonly firstOutputMs: number | null;
+  readonly completionStatus: 'completed' | 'failed';
+  readonly failure: BuilderAttemptFailure | null;
+  readonly retryReason: string | null;
+  readonly approximateCostUsd: number;
+  readonly outputUsed: boolean;
+  readonly valueClassification:
+    | 'NECESSARY_VALUE'
+    | 'NECESSARY_TOO_EXPENSIVE'
+    | 'FAILED_BEFORE_VALUE'
+    | 'RETRY_WITH_NEW_EVIDENCE'
+    | 'PROVIDER_UNSUITABLE';
+}
+
+export interface CoherentCompletionResult {
+  readonly text: string;
+  readonly finishReason?: string | null;
+  readonly inputTokens?: number;
+  readonly outputTokens: number;
+  readonly firstOutputMs?: number | null;
+}
+
+export interface CoherentCompletionFn {
+  (
+    modelId: string,
+    messages: ChatMessage[],
+    opts: { maxTokens: number; temperature: number; signal?: AbortSignal },
+  ): Promise<CoherentCompletionResult>;
+}
+
+export class CoherentImplementationError extends Error {
+  readonly code = 'SOFTWARE_IMPLEMENTATION_FAILED' as const;
+  readonly failures: readonly string[];
+
+  constructor(message: string, failures: readonly string[]) {
+    super(message);
+    this.name = 'CoherentImplementationError';
+    this.failures = failures;
+  }
+}
+
+function normalizePath(value: string): string {
+  return value.trim().replace(/\\/g, '/');
+}
+
+function safeProjectPath(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const path = normalizePath(value);
+  if (!path || path.startsWith('/') || /^[A-Za-z]:\//.test(path) || /\p{Cf}/u.test(path)) return false;
+  const segments = path.split('/');
+  return !segments.some((segment) => !segment || segment === '..' || segment === '.' || segment === '.git' || segment.endsWith('.'));
+}
+
+function stringList(value: unknown, maximum = 16): readonly string[] | null {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) return null;
+  return value.slice(0, maximum).map((item) => item.trim()).filter(Boolean);
+}
+
+function parseContract(raw: string): ProjectChangeContract | null {
+  try {
+    const value = JSON.parse(raw) as Record<string, unknown>;
+    const project = value.project as Record<string, unknown> | null;
+    const files = value.files;
+    const sharedContracts = stringList(value.sharedContracts, 40);
+    if (
+      value.version !== 1 || typeof value.summary !== 'string' || !value.summary.trim() ||
+      !project || typeof project.runtime !== 'string' || !project.runtime.trim() ||
+      !(typeof project.framework === 'string' || project.framework === null) ||
+      !(typeof project.packageManager === 'string' || project.packageManager === null) ||
+      !(typeof project.runCommand === 'string' || project.runCommand === null) ||
+      !stringList(project.buildCommands) || !stringList(project.testCommands) || !sharedContracts ||
+      !Array.isArray(files) || !files.length || files.length > MAX_COHERENT_FILES
+    ) return null;
+
+    const seen = new Set<string>();
+    const normalizedFiles: ProjectChangeContract['files'][number][] = [];
+    for (const candidate of files as Array<Record<string, unknown>>) {
+      if (
+        !safeProjectPath(candidate?.path) || candidate.operation !== 'upsert' ||
+        typeof candidate.purpose !== 'string' || !candidate.purpose.trim()
+      ) return null;
+      const path = normalizePath(candidate.path);
+      const folded = path.toLowerCase();
+      if (seen.has(folded)) return null;
+      seen.add(folded);
+      normalizedFiles.push({ path, operation: 'upsert', purpose: candidate.purpose.trim() });
+    }
+
+    return {
+      version: 1,
+      summary: value.summary.trim(),
+      project: {
+        runtime: project.runtime.trim(),
+        framework: typeof project.framework === 'string' ? project.framework.trim() || null : null,
+        packageManager: typeof project.packageManager === 'string' ? project.packageManager.trim() || null : null,
+        buildCommands: stringList(project.buildCommands)!,
+        testCommands: stringList(project.testCommands)!,
+        runCommand: typeof project.runCommand === 'string' ? project.runCommand.trim() || null : null,
+      },
+      sharedContracts,
+      files: normalizedFiles,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function parseFileFrames(text: string): { files: ProjectFile[]; invalidReason: string | null } {
+  const files: ProjectFile[] = [];
+  const seen = new Set<string>();
+  let cursor = 0;
+  while (true) {
+    const start = text.indexOf(FILE_OPEN, cursor);
+    if (start < 0) break;
+    const metadataStart = start + FILE_OPEN.length;
+    const contentMarker = text.indexOf(CONTENT_OPEN, metadataStart);
+    if (contentMarker < 0) break;
+    const end = text.indexOf(FILE_CLOSE, contentMarker + CONTENT_OPEN.length);
+    if (end < 0) break; // safely resumable truncation: retain only complete frames
+    let metadata: { path?: unknown; operation?: unknown };
+    try {
+      metadata = JSON.parse(text.slice(metadataStart, contentMarker).trim()) as typeof metadata;
+    } catch {
+      return { files: [], invalidReason: 'a file frame has malformed metadata' };
+    }
+    if (!safeProjectPath(metadata.path) || metadata.operation !== 'upsert') {
+      return { files: [], invalidReason: 'a file frame has an unsafe path or operation' };
+    }
+    const path = normalizePath(metadata.path);
+    const folded = path.toLowerCase();
+    if (seen.has(folded)) return { files: [], invalidReason: `duplicate file frame for ${path}` };
+    const content = text.slice(contentMarker + CONTENT_OPEN.length, end).replace(/^\r?\n/, '').replace(/\r?\n$/, '');
+    if (!content.trim()) return { files: [], invalidReason: `file ${path} is empty` };
+    seen.add(folded);
+    files.push({ path, content });
+    cursor = end + FILE_CLOSE.length;
+  }
+  return { files, invalidReason: null };
+}
+
+function containsHighConfidenceSecret(files: readonly ProjectFile[]): boolean {
+  const patterns = [
+    /\b(?:sk|rk)-[A-Za-z0-9][A-Za-z0-9_-]{19,}\b/,
+    /\b(?:ghp_|github_pat_|xai-)[A-Za-z0-9_-]{20,}\b/,
+    /\bAKIA[0-9A-Z]{16}\b/,
+    /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/,
+  ];
+  return files.some((file) => patterns.some((pattern) => pattern.test(file.content)));
+}
+
+/** Parse and validate the complete framed project-change contract before materialization. */
+export function parseCoherentBundle(
+  text: string,
+  existingFiles: readonly ProjectFile[] = [],
+  preservationBrief = '',
+): ParsedCoherentBundle {
+  if (text.length > 1_500_000) {
+    return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle exceeded the output-size limit' };
+  }
+  const manifestStart = text.indexOf(MANIFEST_OPEN);
+  const manifestEnd = text.indexOf(MANIFEST_CLOSE);
+  if (manifestStart < 0 || manifestEnd < manifestStart) {
+    return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle manifest is missing or truncated' };
+  }
+  const contract = parseContract(text.slice(manifestStart + MANIFEST_OPEN.length, manifestEnd).trim());
+  if (!contract) {
+    return { status: 'invalid', contract: null, files: [], missingPaths: [], reason: 'bundle manifest is invalid' };
+  }
+  const frames = parseFileFrames(text.slice(manifestEnd + MANIFEST_CLOSE.length));
+  if (frames.invalidReason) {
+    return { status: 'invalid', contract, files: [], missingPaths: [], reason: frames.invalidReason };
+  }
+  const allowed = new Set(contract.files.map((file) => file.path.toLowerCase()));
+  if (frames.files.some((file) => !allowed.has(file.path.toLowerCase()))) {
+    return { status: 'invalid', contract, files: [], missingPaths: [], reason: 'bundle emitted a file outside its manifest' };
+  }
+  const current = new Map(existingFiles.map((file) => [file.path, file]));
+  for (const file of frames.files) {
+    if (!preservesRequiredSymbols(preservationBrief, current.get(file.path), file.content)) {
+      return { status: 'invalid', contract, files: [], missingPaths: [], reason: `bundle dropped required declarations from ${file.path}` };
+    }
+  }
+  const security = scanProjectFiles(frames.files as ProjectFile[]);
+  if (security.blocked || containsHighConfidenceSecret(frames.files)) {
+    return { status: 'invalid', contract, files: [], missingPaths: [], reason: 'bundle contains a blocked secret or invalid manifest' };
+  }
+  const byPath = new Map(frames.files.map((file) => [file.path.toLowerCase(), file]));
+  const missingPaths = contract.files.filter((file) => !byPath.has(file.path.toLowerCase())).map((file) => file.path);
+  const ordered = contract.files.flatMap((file) => byPath.get(file.path.toLowerCase()) ?? []);
+  return {
+    status: missingPaths.length ? 'partial' : 'complete',
+    contract,
+    files: ordered,
+    missingPaths,
+    reason: missingPaths.length ? `bundle is missing ${missingPaths.length} file(s)` : 'complete coherent bundle',
+  };
+}
+
+/** Parse continuation frames against an already validated manifest. */
+export function mergeCoherentContinuation(
+  initial: ParsedCoherentBundle,
+  continuationText: string,
+  existingFiles: readonly ProjectFile[] = [],
+  preservationBrief = '',
+): ParsedCoherentBundle {
+  if (!initial.contract || initial.status !== 'partial') return initial;
+  const parsed = parseFileFrames(continuationText);
+  if (parsed.invalidReason) return { ...initial, status: 'invalid', reason: parsed.invalidReason };
+  const expected = new Set(initial.missingPaths.map((path) => path.toLowerCase()));
+  if (!parsed.files.length || parsed.files.some((file) => !expected.has(file.path.toLowerCase()))) {
+    return { ...initial, status: 'invalid', reason: 'continuation emitted an unexpected file' };
+  }
+  const combinedFrames = [...initial.files, ...parsed.files];
+  const duplicate = new Set<string>();
+  for (const file of combinedFrames) {
+    const folded = file.path.toLowerCase();
+    if (duplicate.has(folded)) return { ...initial, status: 'invalid', reason: `duplicate file frame for ${file.path}` };
+    duplicate.add(folded);
+  }
+  const current = new Map(existingFiles.map((file) => [file.path, file]));
+  for (const file of parsed.files) {
+    if (!preservesRequiredSymbols(preservationBrief, current.get(file.path), file.content)) {
+      return { ...initial, status: 'invalid', reason: `continuation dropped required declarations from ${file.path}` };
+    }
+  }
+  const security = scanProjectFiles(combinedFrames as ProjectFile[]);
+  if (security.blocked || containsHighConfidenceSecret(combinedFrames)) {
+    return { ...initial, status: 'invalid', reason: 'continuation contains a blocked secret or invalid manifest' };
+  }
+  const byPath = new Map(combinedFrames.map((file) => [file.path.toLowerCase(), file]));
+  const missingPaths = initial.contract.files.filter((file) => !byPath.has(file.path.toLowerCase())).map((file) => file.path);
+  return {
+    status: missingPaths.length ? 'partial' : 'complete',
+    contract: initial.contract,
+    files: initial.contract.files.flatMap((file) => byPath.get(file.path.toLowerCase()) ?? []),
+    missingPaths,
+    reason: missingPaths.length ? `continuation is missing ${missingPaths.length} file(s)` : 'complete coherent bundle after continuation',
+  };
+}
+
+const BUNDLE_SYSTEM = `You are Xroga's software implementation agent. Produce one coherent project change, not one reply per file.
+
+Output exactly this framed protocol. Do not use markdown fences or prose outside it:
+${MANIFEST_OPEN}
+{"version":1,"summary":"...","project":{"runtime":"...","framework":null,"packageManager":null,"buildCommands":[],"testCommands":[],"runCommand":null},"sharedContracts":["..."],"files":[{"path":"relative/path","operation":"upsert","purpose":"..."}]}
+${MANIFEST_CLOSE}
+${FILE_OPEN}
+{"path":"relative/path","operation":"upsert"}
+${CONTENT_OPEN}
+complete raw file contents
+${FILE_CLOSE}
+
+Rules:
+- Put the complete manifest first, before any file contents.
+- Keep all routes, exports, data models, component interfaces, commands and tests consistent with sharedContracts.
+- Every manifest file must have exactly one complete file frame. No duplicate or conflicting paths.
+- Paths are relative, never absolute, never contain '..', and never address .git.
+- Use only upsert operations. Preserve unrelated existing behavior.
+- Include complete working source, manifests and relevant tests. No TODOs or placeholders.
+- Environment variables may be referenced by NAME only. Never include credentials or secret values.
+- Prefer a compact maintainable implementation that fits in one response.`;
+
+const CONTINUATION_SYSTEM = `Continue an already validated Xroga project bundle.
+Return only complete file frames in this exact format, with no manifest, prose or markdown fence:
+${FILE_OPEN}
+{"path":"relative/path","operation":"upsert"}
+${CONTENT_OPEN}
+complete raw file contents
+${FILE_CLOSE}
+
+Return exactly the requested missing files. Do not repeat completed files.`;
+
+function repositoryContext(existingFiles: readonly ProjectFile[], objective: string): string {
+  if (!existingFiles.length) return 'This is a new project. There are no existing files.';
+  const focused = prepareFocusedContext({ files: [...existingFiles], objective, maximumTokens: COHERENT_CONTEXT_TOKENS });
+  const paths = existingFiles.map((file) => file.path).join('\n');
+  const bodies = focused.files.map((file) => `<file path="${file.path}">\n${file.content}\n</file>`).join('\n\n');
+  const summaries = focused.summaries.map((item) => `${item.path}: ${item.summary}`).join('\n');
+  return [
+    `Existing repository paths (${existingFiles.length}):\n${paths}`,
+    bodies ? `Relevant current files (secret values redacted):\n${bodies}` : '',
+    summaries ? `Other relevant file summaries:\n${summaries}` : '',
+  ].filter(Boolean).join('\n\n');
+}
+
+const defaultCompletion: CoherentCompletionFn = async (modelId, messages, opts) => {
+  const attempted = await runBuilderAttempt(
+    ({ signal, onToken }) => chatCompletionStream(modelId as ModelId, messages, {
+      maxTokens: opts.maxTokens,
+      temperature: opts.temperature,
+      signal,
+      onDelta: onToken,
+    }),
+    {
+      budget: {
+        firstTokenMs: COHERENT_FIRST_TOKEN_TIMEOUT_MS,
+        generationMs: COHERENT_ACTIVE_TIMEOUT_MS,
+        maxOutputChars: 1_500_000,
+      },
+      signal: opts.signal,
+    },
+  );
+  return { ...attempted.value, firstOutputMs: attempted.firstTokenMs };
+};
+
+function inputChars(messages: readonly ChatMessage[]): number {
+  return messages.reduce((total, message) => total + (typeof message.content === 'string' ? message.content.length : JSON.stringify(message.content).length), 0);
+}
+
+async function callWithTelemetry(input: {
+  modelId: string;
+  stage: BuilderModelCallTelemetry['stage'];
+  purpose: string;
+  messages: ChatMessage[];
+  maxTokens: number;
+  complete: CoherentCompletionFn;
+  retryReason?: string | null;
+  signal?: AbortSignal;
+}): Promise<{ reply: CoherentCompletionResult; record: BuilderModelCallTelemetry }> {
+  const startedAt = Date.now();
+  const chars = inputChars(input.messages);
+  try {
+    const reply = await input.complete(input.modelId, input.messages, {
+      maxTokens: input.maxTokens,
+      temperature: 0.15,
+      signal: input.signal,
+    });
+    const inputTokens = reply.inputTokens ?? estimateTokens(input.messages.map((message) => typeof message.content === 'string' ? message.content : JSON.stringify(message.content)).join('\n'));
+    const outputTokens = reply.outputTokens;
+    return {
+      reply,
+      record: {
+        stage: input.stage, modelId: input.modelId, purpose: input.purpose,
+        inputChars: chars, estimatedInputTokens: Math.max(1, Math.ceil(chars / 4)), outputChars: reply.text.length,
+        inputTokens, outputTokens, queueWaitMs: 0, activeDurationMs: Date.now() - startedAt,
+        firstOutputMs: reply.firstOutputMs ?? null, completionStatus: 'completed', failure: null,
+        retryReason: input.retryReason ?? null,
+        approximateCostUsd: costUsdForTokens(input.modelId as ModelId, inputTokens, outputTokens), outputUsed: false,
+        valueClassification: 'FAILED_BEFORE_VALUE',
+      },
+    };
+  } catch (error) {
+    const failure = classifyBuilderFailure(error);
+    const record: BuilderModelCallTelemetry = {
+      stage: input.stage, modelId: input.modelId, purpose: input.purpose,
+      inputChars: chars, estimatedInputTokens: Math.max(1, Math.ceil(chars / 4)), outputChars: 0,
+      inputTokens: 0, outputTokens: 0, queueWaitMs: 0, activeDurationMs: Date.now() - startedAt,
+      firstOutputMs: null, completionStatus: 'failed', failure, retryReason: input.retryReason ?? null,
+      approximateCostUsd: 0, outputUsed: false,
+      valueClassification: failure === 'invalid_structured_output' || failure === 'prose_only_response'
+        ? 'PROVIDER_UNSUITABLE'
+        : 'FAILED_BEFORE_VALUE',
+    };
+    throw Object.assign(error instanceof Error ? error : new Error(String(error)), { builderTelemetry: record });
+  }
+}
+
+function withUsage(record: BuilderModelCallTelemetry, outputUsed: boolean, retryReason?: string | null): BuilderModelCallTelemetry {
+  return {
+    ...record,
+    outputUsed,
+    retryReason: retryReason ?? record.retryReason,
+    valueClassification: outputUsed
+      ? (record.stage === 'continuation' ? 'RETRY_WITH_NEW_EVIDENCE' : 'NECESSARY_VALUE')
+      : record.valueClassification,
+  };
+}
+
+export async function implementCoherently(input: {
+  brief: string;
+  originalRequest?: string;
+  candidates: readonly ModelCandidate[];
+  existingFiles?: readonly ProjectFile[];
+  complete?: CoherentCompletionFn;
+  onTelemetry?: (record: BuilderModelCallTelemetry) => void;
+  onProgress?: (event: { stage: 'bundle' | 'continuation'; modelId?: string; missing?: number }) => void;
+  signal?: AbortSignal;
+}): Promise<readonly ProjectFile[]> {
+  const complete = input.complete ?? defaultCompletion;
+  const existingFiles = input.existingFiles ?? [];
+  const objective = input.originalRequest?.trim()
+    ? `${input.originalRequest.trim()}\n\nImplementation plan:\n${input.brief}`
+    : input.brief;
+  const context = repositoryContext(existingFiles, objective);
+  const failures: string[] = [];
+  const unavailable = new Set<string>();
+  let realAttempts = 0;
+
+  for (const candidate of input.candidates) {
+    if (unavailable.has(candidate.modelId)) continue;
+    if (realAttempts >= MAX_COHERENT_PROVIDER_ATTEMPTS) break;
+    realAttempts += 1;
+    try {
+      assertCodingModel(candidate.modelId, 'coherent universal implementation');
+    } catch (error) {
+      failures.push(`${candidate.modelId}: ${classifyBuilderFailure(error)}`);
+      continue;
+    }
+    input.onProgress?.({ stage: 'bundle', modelId: candidate.modelId });
+    const messages: ChatMessage[] = [
+      { role: 'system', content: BUNDLE_SYSTEM },
+      { role: 'user', content: `${objective}\n\n${context}` },
+    ];
+    try {
+      const first = await callWithTelemetry({
+        modelId: candidate.modelId,
+        stage: 'implementation',
+        purpose: 'produce one coherent project change contract and file bundle',
+        messages,
+        maxTokens: COHERENT_BUNDLE_MAX_TOKENS,
+        complete,
+        retryReason: realAttempts > 1 ? failures.at(-1) ?? 'primary route failed' : null,
+        signal: input.signal,
+      });
+      let parsed = parseCoherentBundle(first.reply.text, existingFiles, objective);
+      if (parsed.status === 'complete') {
+        input.onTelemetry?.(withUsage(first.record, true));
+        return parsed.files;
+      }
+
+      if (parsed.status === 'partial' && parsed.files.length && parsed.missingPaths.length) {
+        input.onProgress?.({ stage: 'continuation', modelId: candidate.modelId, missing: parsed.missingPaths.length });
+        const continuationMessages: ChatMessage[] = [
+          { role: 'system', content: CONTINUATION_SYSTEM },
+          {
+            role: 'user',
+            content:
+              `Original objective:\n${objective}\n\nValidated shared contract:\n${JSON.stringify(parsed.contract)}\n\n` +
+              `Completed files already retained:\n${parsed.files.map((file) => file.path).join('\n')}\n\n` +
+              `Return these missing files only:\n${parsed.missingPaths.join('\n')}`,
+          },
+        ];
+        let continuation: Awaited<ReturnType<typeof callWithTelemetry>>;
+        try {
+          continuation = await callWithTelemetry({
+            modelId: candidate.modelId,
+            stage: 'continuation',
+            purpose: 'resume only the missing dependency-batch files from a validated bundle',
+            messages: continuationMessages,
+            maxTokens: COHERENT_CONTINUATION_MAX_TOKENS,
+            complete,
+            retryReason: parsed.reason,
+            signal: input.signal,
+          });
+        } catch (error) {
+          input.onTelemetry?.(withUsage(first.record, false, 'bounded continuation failed'));
+          throw error;
+        }
+        parsed = mergeCoherentContinuation(parsed, continuation.reply.text, existingFiles, objective);
+        if (parsed.status === 'complete') {
+          input.onTelemetry?.(withUsage(first.record, true, 'partial bundle retained for bounded continuation'));
+          input.onTelemetry?.(withUsage(continuation.record, true));
+          return parsed.files;
+        }
+        input.onTelemetry?.(withUsage(first.record, false, parsed.reason));
+        input.onTelemetry?.(withUsage(continuation.record, false, parsed.reason));
+        failures.push(`${candidate.modelId}: ${parsed.reason}`);
+        continue;
+      }
+
+      input.onTelemetry?.(withUsage(first.record, false, parsed.reason));
+      failures.push(`${candidate.modelId}: ${parsed.reason}`);
+    } catch (error) {
+      const telemetry = (error as { builderTelemetry?: BuilderModelCallTelemetry }).builderTelemetry;
+      if (telemetry) input.onTelemetry?.(telemetry);
+      const normalized = normalizeProviderError(error);
+      if (normalized.retryable) unavailable.add(candidate.modelId);
+      failures.push(`${candidate.modelId}: ${classifyBuilderFailure(error)}`);
+    }
+  }
+
+  throw new CoherentImplementationError('No coherent implementation bundle completed within the bounded provider routes.', failures);
+}

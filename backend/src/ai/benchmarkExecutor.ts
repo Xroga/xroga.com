@@ -30,7 +30,7 @@ import { scanProjectFiles } from './securityScan.js';
 import type { BenchmarkCase, CaseExecutor, CaseOutcome } from './benchmarkRunner.js';
 import type { ModelId } from './models.js';
 import type { ProjectFile } from './patches.js';
-import { implementIncrementally, type CompletionFn } from '../synthesis/incrementalImplementation.js';
+import { implementCoherently, type CoherentCompletionFn } from '../synthesis/coherentImplementation.js';
 import {
   planUniversalRun,
   runValidationPlan,
@@ -172,7 +172,7 @@ export function singleModelImplementation(): BenchmarkExecutorDeps['implement'] 
     let inputTokens = 0;
     let outputTokens = 0;
 
-    const complete: CompletionFn = async (candidateId, messages, opts) => {
+    const complete: CoherentCompletionFn = async (candidateId, messages, opts) => {
       if (candidateId !== modelId) {
         // Unreachable through `candidates` below, and asserted anyway: a substitution here
         // would silently attribute another model's work to this case's row.
@@ -186,7 +186,7 @@ export function singleModelImplementation(): BenchmarkExecutorDeps['implement'] 
       return reply;
     };
 
-    const files = await implementIncrementally({
+    const files = await implementCoherently({
       brief,
       // Exactly one candidate. This is rule 1, enforced structurally rather than by comment.
       candidates: [{ modelId }],
