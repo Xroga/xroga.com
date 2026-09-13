@@ -40,6 +40,7 @@ import {
   PLAYWRIGHT_MODULE_ROOT,
   buildSandboxCommand,
   collectorFile,
+  staticServerFile,
   playwrightVersionFromImage,
   extractAppLog,
   parseCollectorOutput,
@@ -175,7 +176,7 @@ export function browserVerificationAdapter(
 
     // 2. Does the project say how to serve itself? Inventing `npm start` here would blame the
     //    application for our guess when it fails.
-    if (!verifiability.startScript) {
+    if (!verifiability.startScript && !verifiability.staticRoot) {
       return notChecked(
         'no_start_command',
         'This web project declares no script that serves it, so it could not be started for verification.',
@@ -209,6 +210,7 @@ export function browserVerificationAdapter(
     return runInSandbox({
       files: input.files,
       startScript: verifiability.startScript,
+      staticRoot: verifiability.staticRoot,
       compiled,
       buildPassed: input.buildPassed,
       testsPassed: input.testsPassed,
@@ -250,7 +252,8 @@ function declaresDependencies(files: readonly ProjectFile[]): boolean {
  */
 async function runInSandbox(input: {
   files: readonly ProjectFile[];
-  startScript: string;
+  startScript: string | null;
+  staticRoot: string | null;
   compiled: CompiledBrowserChecks;
   buildPassed: boolean;
   testsPassed: boolean | null;
@@ -262,13 +265,14 @@ async function runInSandbox(input: {
 }): Promise<WebGateResult> {
   const request = {
     startScript: input.startScript,
+    staticRoot: input.staticRoot,
     domExpectations: input.compiled.domExpectations,
     interactions: input.compiled.interactions,
     totalTimeoutMs: input.totalTimeoutMs,
     serverTimeoutMs: input.serverTimeoutMs,
     // A project that declares no dependencies has nothing to install, and running `npm install`
     // anyway would demand registry access it does not need and fail closed without it.
-    install: declaresDependencies(input.files),
+    install: Boolean(input.startScript) && declaresDependencies(input.files),
     port: input.port,
     // Derived from the image reference, so the driver and the browser builds it drives are
     // decided by one string and cannot drift apart.
@@ -281,7 +285,11 @@ async function runInSandbox(input: {
     result = await input.execute({
       // The collector travels with the project through the existing `files` mechanism. No new
       // transport into the sandbox is introduced.
-      files: [...input.files, collectorFile(request)],
+      files: [
+        ...input.files,
+        collectorFile(request),
+        ...(input.staticRoot ? [staticServerFile()] : []),
+      ],
       command,
       args,
       timeoutMs: input.totalTimeoutMs,
@@ -294,7 +302,8 @@ async function runInSandbox(input: {
         NODE_ENV: 'development',
         // The serve script the project declared. Passed in the environment rather than as a
         // positional parameter so it is never interpolated into the shell script body.
-        XROGA_START_SCRIPT: input.startScript,
+        XROGA_START_SCRIPT: input.startScript ?? '',
+        XROGA_STATIC_ROOT: input.staticRoot ?? '',
         // Where the run-time driver install lands, searched first by the collector.
         XROGA_PLAYWRIGHT_ROOT: PLAYWRIGHT_MODULE_ROOT,
         // The browser path the official image bakes in. Set explicitly because the sandbox

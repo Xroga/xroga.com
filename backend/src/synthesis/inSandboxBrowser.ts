@@ -43,6 +43,8 @@ export const RESULT_END = 'XROGA_BROWSER_RESULT>>>';
 
 /** Where the collector is written inside the sandbox workspace. */
 export const COLLECTOR_PATH = '.xroga-verify/collect.mjs';
+/** First-party dependency-free server used only for directly serveable static artifacts. */
+export const STATIC_SERVER_PATH = '.xroga-verify/static-server.mjs';
 
 /**
  * Ports we wait on, in order of likelihood.
@@ -57,7 +59,8 @@ export const DEFAULT_PORT = 3000;
 export const CANDIDATE_PORTS = [3000, 5173, 4321, 8080, 4200, 5000] as const;
 
 export interface InSandboxBrowserRequest {
-  readonly startScript: string;
+  readonly startScript: string | null;
+  readonly staticRoot: string | null;
   readonly domExpectations: readonly DomExpectation[];
   readonly interactions: readonly InteractionExpectation[];
   /** Hard ceiling for the whole command, including install and build. */
@@ -407,6 +410,10 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
     ? `npm install --no-save --no-audit --no-fund --prefix ${PLAYWRIGHT_PREFIX} playwright-core@${request.playwrightVersion} >/tmp/xroga_pw_$$.log 2>&1 || { echo "playwright-core install failed"; tail -c 2000 /tmp/xroga_pw_$$.log; }\n`
     : '';
 
+  const launchStep = request.staticRoot
+    ? `setsid /bin/sh -c 'echo $$ > "$1"; exec node ${STATIC_SERVER_PATH}' xroga-static "$PID_FILE" >"$APP_LOG" 2>&1 &\n`
+    : 'setsid /bin/sh -c \'echo $$ > "$1"; exec npm run "$0"\' "$XROGA_START_SCRIPT" "$PID_FILE" >"$APP_LOG" 2>&1 &\n';
+
   const script =
     'set -u\n' +
     // Per-run paths. `/tmp/app.log` was shared across runs on a host that runs more than one,
@@ -432,7 +439,7 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
     driverStep +
     // `exec` so the recorded pid *is* the server's process group leader, with no wrapper shell
     // left between the group and the process that must die.
-    'setsid /bin/sh -c \'echo $$ > "$1"; exec npm run "$0"\' "$XROGA_START_SCRIPT" "$PID_FILE" >"$APP_LOG" 2>&1 &\n' +
+    launchStep +
     // The pid file is written by the child, so give it a moment to appear before the collector
     // starts waiting on the port.
     'for _ in 1 2 3 4 5 6 7 8 9 10; do [ -f "$PID_FILE" ] && break; sleep 0.2; done\n' +
@@ -453,6 +460,56 @@ export function buildSandboxCommand(request: InSandboxBrowserRequest): { command
 /** The collector as a project file, materialized through the existing `files` mechanism. */
 export function collectorFile(request: InSandboxBrowserRequest): ProjectFile {
   return { path: COLLECTOR_PATH, content: collectorSource(request) };
+}
+
+/**
+ * A fixed static server, injected by Xroga rather than supplied by generated code.
+ * The root arrives as data, is resolved beneath the workspace, and every request is contained
+ * beneath it. This gives plain HTML/CSS/JS artifacts the same real-browser gate as framework apps
+ * without inventing a project command or widening the sandbox boundary.
+ */
+export function staticServerFile(): ProjectFile {
+  return {
+    path: STATIC_SERVER_PATH,
+    content: `import { createServer } from 'node:http';
+import { readFile, stat } from 'node:fs/promises';
+import { extname, resolve, sep } from 'node:path';
+
+const port = Number(process.env.PORT || 3000);
+const workspace = resolve(process.cwd());
+const root = resolve(workspace, process.env.XROGA_STATIC_ROOT || '.');
+if (root !== workspace && !root.startsWith(workspace + sep)) throw new Error('Static root escaped workspace');
+const mime = new Map([
+  ['.html', 'text/html; charset=utf-8'], ['.css', 'text/css; charset=utf-8'],
+  ['.js', 'text/javascript; charset=utf-8'], ['.mjs', 'text/javascript; charset=utf-8'],
+  ['.json', 'application/json; charset=utf-8'], ['.svg', 'image/svg+xml'],
+  ['.png', 'image/png'], ['.jpg', 'image/jpeg'], ['.jpeg', 'image/jpeg'],
+  ['.webp', 'image/webp'], ['.gif', 'image/gif'], ['.ico', 'image/x-icon'],
+]);
+
+createServer(async (request, response) => {
+  try {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      response.writeHead(405).end(); return;
+    }
+    const pathname = decodeURIComponent(new URL(request.url || '/', 'http://localhost').pathname);
+    let target = resolve(root, '.' + pathname);
+    if (target !== root && !target.startsWith(root + sep)) {
+      response.writeHead(403).end(); return;
+    }
+    if ((await stat(target)).isDirectory()) target = resolve(target, 'index.html');
+    if (target !== root && !target.startsWith(root + sep)) {
+      response.writeHead(403).end(); return;
+    }
+    const body = await readFile(target);
+    response.writeHead(200, { 'content-type': mime.get(extname(target).toLowerCase()) || 'application/octet-stream' });
+    response.end(request.method === 'HEAD' ? undefined : body);
+  } catch {
+    response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }).end('Not found');
+  }
+}).listen(port, '127.0.0.1');
+`,
+  };
 }
 
 // ---------------------------------------------------------------------------

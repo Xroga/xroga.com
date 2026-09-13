@@ -147,6 +147,37 @@ test('a universal result projects exact changed-file and review evidence into Pr
   assert.match(projection.terminalLines.join('\n'), /npm test passed · exit 0/);
   assert.match(projection.terminalLines.join('\n'), /xroga\/random-review/);
   assert.equal(projection.status, 'pushed');
+  assert.equal(projection.previewAvailable, false);
+});
+
+test('a bounded static artifact hydrates Files and an exact inline Preview', () => {
+  const projection = engineeringArtifactWorkspaceProjection(artifact({
+    status: 'verified',
+    verified: true,
+    repository: { owner: 'arbitrary-lab', repo: 'night-market', branch: 'xroga/review' },
+    files: [
+      { path: 'public/index.html', action: 'created' },
+      { path: 'public/css/site.css', action: 'created' },
+      { path: 'public/js/site.js', action: 'created' },
+    ],
+    fileCount: 3,
+    projectFiles: [
+      {
+        path: 'public/index.html',
+        content: '<!doctype html><html><head><link rel="stylesheet" href="css/site.css"></head><body><h1>Night market</h1><script src="js/site.js"></script></body></html>',
+      },
+      { path: 'public/css/site.css', content: 'h1 { color: gold; }' },
+      { path: 'public/js/site.js', content: 'document.body.dataset.ready = "true";' },
+    ],
+  }));
+
+  assert.ok(projection);
+  assert.equal(projection.previewAvailable, true);
+  assert.match(projection.html, /Night market/);
+  assert.doesNotMatch(projection.html, /src="js\/site\.js"/);
+  assert.match(projection.css, /color: gold/);
+  assert.match(projection.js, /dataset\.ready/);
+  assert.equal(projection.projectFiles.length, 3);
 });
 
 test('Project edits evidence never exposes an internal model identity, including persisted artifacts', () => {

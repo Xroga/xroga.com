@@ -134,9 +134,9 @@ async function restoreProjectWorkspaceFromMessages(
     active.applyBuild({
       ...target,
       projectName: projection.projectName,
-      html: '',
-      css: '',
-      js: '',
+      html: projection.html,
+      css: projection.css,
+      js: projection.js,
       projectFiles: projection.projectFiles,
       githubRepoUrl: projection.githubRepoUrl,
       commitSha: projection.commitSha,
@@ -144,7 +144,7 @@ async function restoreProjectWorkspaceFromMessages(
       status: projection.status,
       changesSummary: projection.changesSummary,
       fileTrail: projection.fileTrail,
-      openPreview: false,
+      openPreview: projection.previewAvailable,
       terminalLine: projection.terminalLines[0],
     });
     for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
@@ -2531,9 +2531,9 @@ export function TerminalChatProvider({
                   active.applyBuild({
                     ...target,
                     projectName: projection.projectName,
-                    html: '',
-                    css: '',
-                    js: '',
+                    html: projection.html,
+                    css: projection.css,
+                    js: projection.js,
                     projectFiles: projection.projectFiles,
                     githubRepoUrl: projection.githubRepoUrl,
                     commitSha: projection.commitSha,
@@ -2541,7 +2541,7 @@ export function TerminalChatProvider({
                     status: projection.status,
                     changesSummary: projection.changesSummary,
                     fileTrail: projection.fileTrail,
-                    openPreview: false,
+                    openPreview: projection.previewAvailable,
                     terminalLine: projection.terminalLines[0],
                   });
                   for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
