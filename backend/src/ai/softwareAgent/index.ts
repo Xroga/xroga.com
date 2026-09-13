@@ -12,3 +12,4 @@ export * from './softwareAgentPrompt.js';
 export * from './xrogaTools.js';
 
 export * from './AgentSoftwareExecutor.js';
+export * from './ProductionSoftwareAgentToolHost.js';
