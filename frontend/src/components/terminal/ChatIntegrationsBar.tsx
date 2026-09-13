@@ -59,7 +59,7 @@ export function ChatIntegrationsBar({ onSelect }: ChatIntegrationsBarProps) {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Integrations..."
+          placeholder="Plugins..."
           className="w-full pl-7 pr-2 py-1 rounded-md bg-white/5 border border-transparent text-[10px] focus:border-[var(--accent)]/30 focus:outline-none"
           onFocus={() => setMoreOpen(true)}
         />
@@ -157,7 +157,7 @@ export function ChatIntegrationsBar({ onSelect }: ChatIntegrationsBarProps) {
             setGithubOpen(false);
           }}
           className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-white/5"
-          title="All integrations"
+          title="All Plugins"
         >
           <Plug className="w-3.5 h-3.5" />
         </button>
