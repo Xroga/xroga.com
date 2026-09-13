@@ -271,6 +271,8 @@ export async function chatCompletionStream(
     maxTokens?: number;
     temperature?: number;
     onDelta?: (delta: string) => void;
+    /** Provider stream activity, including private reasoning chunks. */
+    onActivity?: () => void;
     signal?: AbortSignal;
     credentialOverride?: string;
   } = {},
@@ -312,8 +314,21 @@ export async function chatCompletionStream(
         err.code = 'BUILD_CANCELLED';
         throw err;
       }
-      const delta = chunk.choices[0]?.delta?.content ?? '';
-      finishReason = chunk.choices[0]?.finish_reason ?? finishReason;
+      const choice = chunk.choices[0];
+      const delta = choice?.delta?.content ?? '';
+      const reasoningDelta = (choice?.delta as { reasoning_content?: unknown } | undefined)?.reasoning_content;
+      // Reasoning-capable providers can spend tens of seconds streaming private
+      // reasoning before answer content. That is live transport activity, so it must
+      // cancel the silence deadline without becoming answer text or telemetry output.
+      if (
+        delta ||
+        (typeof reasoningDelta === 'string' && reasoningDelta.length > 0) ||
+        choice?.finish_reason ||
+        chunk.usage
+      ) {
+        opts.onActivity?.();
+      }
+      finishReason = choice?.finish_reason ?? finishReason;
       if (delta) {
         text += delta;
         opts.onDelta?.(delta);

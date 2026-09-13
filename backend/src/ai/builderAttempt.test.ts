@@ -135,6 +135,23 @@ test('a token cancels the first-token deadline', async () => {
   assert.ok(result.firstTokenMs !== null);
 });
 
+test('private reasoning activity keeps a healthy provider alive without counting as answer output', async () => {
+  const result = await runBuilderAttempt(
+    async ({ onActivity, onToken }) => {
+      onActivity();
+      await new Promise((r) => setTimeout(r, 60)); // past firstTokenMs while reasoning continues
+      onToken('answer');
+      return 'done';
+    },
+    { budget: { firstTokenMs: 25, generationMs: 5_000 } },
+  );
+  assert.equal(result.value, 'done');
+  assert.equal(result.outputChars, 6);
+  assert.ok(result.firstActivityMs !== null);
+  assert.ok(result.firstTokenMs !== null);
+  assert.ok(result.firstTokenMs! >= result.firstActivityMs!);
+});
+
 test('a provider that streams forever fails with generation_timeout', async () => {
   await assert.rejects(
     runBuilderAttempt(
