@@ -41,6 +41,14 @@ export type CommitFn = (input: {
   message: string;
 }) => Promise<{ commitSha: string }>;
 
+/** Produces a bounded change set for a failed deterministic validation. */
+export type RepairFn = (input: {
+  brief: string;
+  plan: UniversalRunPlan;
+  failures: readonly string[];
+  files: readonly ProjectFile[];
+}) => Promise<readonly ProjectFile[] | null>;
+
 /**
  * Applies an implementation change set to the repository snapshot it was generated from.
  *
@@ -178,11 +186,24 @@ export function sandboxValidationRunner(): ValidationRunner {
  */
 export function productionAdapters(input: {
   implement: ImplementFn;
+  repair?: RepairFn;
   commit: CommitFn;
   reviewerModel?: string;
   acceptanceCriteria?: readonly string[];
   sourceCommitSha?: string;
 }): ExecutionAdapters {
+  const repair = input.repair
+    ? async ({ plan, failures, files }: Parameters<NonNullable<ExecutionAdapters['repair']>>[0]) => {
+        const changed = await input.repair!({
+          brief: buildImplementationBrief({ plan, securityControls: [] }),
+          plan,
+          failures,
+          files,
+        });
+        return changed?.length ? mergeProjectSnapshot(files, changed) : null;
+      }
+    : undefined;
+
   return {
     implement: async ({ plan, securityControls, existingFiles }) => {
       const generatedFiles = await input.implement({
@@ -199,6 +220,8 @@ export function productionAdapters(input: {
     // application actually works in a browser; when a precondition is missing it reports
     // `not_checked` with the reason rather than letting the gap read as a pass.
     browserVerify: browserVerificationAdapter({ acceptanceCriteria: input.acceptanceCriteria }),
+
+    ...(repair ? { repair } : {}),
 
     review: async (files) => {
       try {

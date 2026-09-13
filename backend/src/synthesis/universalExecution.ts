@@ -400,7 +400,15 @@ export async function executeUniversalRun(input: {
   }
 
   if (!report.passed && input.adapters.repair) {
-    const failures = report.failures.map((failure) => `${failure.validation.command.command}: ${failure.stderr.slice(0, 200)}`);
+    const failures = report.failures.map((failure) => {
+      const command = [failure.validation.command.command, ...failure.validation.command.args].join(' ');
+      const output = `${failure.stderr}\n${failure.stdout}`.trim().replace(/\s+/g, ' ');
+      // Setup chatter is at the beginning and actionable compiler/test diagnostics are at
+      // the end. Preserve enough tail for the repairer to see the actual assertion, import,
+      // path and line instead of only a package-download progress bar.
+      const actionable = output.length > 4_000 ? `… ${output.slice(-4_000)}` : output;
+      return `${command}: ${actionable}`;
+    });
     // Repair as a canonical task. Bounded by the node's retry policy rather than by a
     // counter here, so a model that is not converging stops instead of burning budget.
     const repairOutcome = implementationState

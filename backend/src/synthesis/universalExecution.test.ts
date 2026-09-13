@@ -257,6 +257,27 @@ describe('validation, repair and review gate the commit', () => {
     assert.ok(result.evidence.some((entry) => entry.phase === 'repair'));
   });
 
+  it('hands repair the actionable validation tail rather than setup chatter', async () => {
+    let received = '';
+    const chatter = 'downloading package '.repeat(400);
+    const result = await executeUniversalRun({
+      prompt: 'Build a Rust CLI that converts CSV files to JSON',
+      owner, runId: 'run-actionable-tail', flags: enabled,
+      adapters: adapters({
+        runValidation: async () => ({
+          exitCode: 1,
+          stdout: '',
+          stderr: `${chatter}\nImportError: cannot import name 'render' from 'module'`,
+        }),
+        repair: async ({ failures }) => { received = failures[0] ?? ''; return null; },
+      }),
+    });
+
+    assert.equal(result.outcome, 'failed');
+    assert.match(received, /ImportError: cannot import name 'render'/);
+    assert.ok(received.length <= 4_100, 'repair evidence must stay bounded');
+  });
+
   it('does not commit when review blocks', async () => {
     let committed = false;
     const result = await executeUniversalRun({

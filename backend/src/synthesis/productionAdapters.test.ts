@@ -234,6 +234,34 @@ describe('adapters delegate rather than reimplement', () => {
     assert.match(receivedBrief, /rust/);
   });
 
+  it('exposes the injected bounded repair and merges its change set into the snapshot', async () => {
+    const plan = planFor('Build a Rust CLI that converts CSV files to JSON');
+    let receivedFailure = '';
+    const adapters = productionAdapters({
+      implement: async () => [],
+      repair: async ({ brief, failures, files }) => {
+        receivedFailure = failures[0] ?? '';
+        assert.match(brief, /Objective:/);
+        assert.equal(files.length, 2);
+        return [f('src/main.rs', 'fn main() { println!("fixed"); }')];
+      },
+      commit: async () => ({ commitSha: 'x' }),
+    });
+
+    assert.ok(adapters.repair, 'production repair must be wired when a repair implementation is supplied');
+    const repaired = await adapters.repair!({
+      plan,
+      failures: ['cargo test: mismatched types'],
+      files: [f('Cargo.toml', '[package]'), f('src/main.rs', 'fn main() {}')],
+    });
+
+    assert.equal(receivedFailure, 'cargo test: mismatched types');
+    assert.deepEqual(repaired, [
+      f('Cargo.toml', '[package]'),
+      f('src/main.rs', 'fn main() { println!("fixed"); }'),
+    ]);
+  });
+
   it('routes commit through the injected function', async () => {
     let message = '';
     const adapters = productionAdapters({

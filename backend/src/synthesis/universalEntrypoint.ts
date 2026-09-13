@@ -23,7 +23,7 @@ import { randomUUID } from 'node:crypto';
 import type { ProjectFile } from '../ai/patches.js';
 import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
 import { productionAdapters, type CommitFn } from './productionAdapters.js';
-import { implementIncrementally } from './incrementalImplementation.js';
+import { implementIncrementally, repairIncrementally } from './incrementalImplementation.js';
 import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
 import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
 import { getSupabaseAdmin } from '../config/supabase.js';
@@ -288,6 +288,12 @@ export async function tryUniversalBuild(input: {
           existingFiles,
         });
       },
+      repair: async ({ brief, failures, files }) => repairIncrementally({
+        brief: `${input.prompt}\n\n${brief}`,
+        failures,
+        files,
+        candidates: orderedCandidates.map((modelId) => ({ modelId })),
+      }),
       commit: input.commit,
     }),
     // The canonical implementation task records the model routing actually selected, not a
