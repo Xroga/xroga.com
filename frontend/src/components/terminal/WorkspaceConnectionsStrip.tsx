@@ -10,9 +10,18 @@ import { IntegrationsModal } from '@/components/terminal/IntegrationsModal';
 import { api } from '@/lib/api';
 
 const CONNECTIONS = [
-  { id: 'github', name: 'GitHub' },
-  { id: 'vercel', name: 'Vercel' },
-  { id: 'supabase', name: 'Supabase' },
+  {
+    id: 'github',
+    name: 'GitHub',
+  },
+  {
+    id: 'vercel',
+    name: 'Vercel',
+  },
+  {
+    id: 'supabase',
+    name: 'Supabase',
+  },
 ] as const;
 
 type WorkspaceConnectionsVariant =
@@ -49,6 +58,11 @@ export function WorkspaceConnectionsStrip({
     setConnectingGithub,
   ] = useState(false);
 
+
+  /* ============================================================
+     CONNECTION STATUS
+     ============================================================ */
+
   useEffect(() => {
     if (!interactive) {
       setChecking(false);
@@ -69,15 +83,21 @@ export function WorkspaceConnectionsStrip({
       setConnected({
         github:
           results[0].status === 'fulfilled' &&
-          Boolean(results[0].value.connected),
+          Boolean(
+            results[0].value.connected,
+          ),
 
         vercel:
           results[1].status === 'fulfilled' &&
-          Boolean(results[1].value.connected),
+          Boolean(
+            results[1].value.connected,
+          ),
 
         supabase:
           results[2].status === 'fulfilled' &&
-          Boolean(results[2].value.connected),
+          Boolean(
+            results[2].value.connected,
+          ),
       });
 
       setChecking(false);
@@ -88,8 +108,10 @@ export function WorkspaceConnectionsStrip({
     };
   }, [interactive]);
 
+
   const githubConnected =
     connected.github === true;
+
 
   const rootClassName = [
     'xv-workspace-connections',
@@ -100,6 +122,11 @@ export function WorkspaceConnectionsStrip({
   ]
     .filter(Boolean)
     .join(' ');
+
+
+  /* ============================================================
+     GITHUB CONNECT
+     ============================================================ */
 
   async function connectGithub() {
     if (connectingGithub) return;
@@ -116,8 +143,7 @@ export function WorkspaceConnectionsStrip({
         );
       }
 
-      window.location.href =
-        url;
+      window.location.href = url;
     } catch (error) {
       setConnectingGithub(false);
 
@@ -129,6 +155,11 @@ export function WorkspaceConnectionsStrip({
     }
   }
 
+
+  /* ============================================================
+     OPEN INTEGRATIONS
+     ============================================================ */
+
   function openConnections() {
     if (interactive) {
       setModalOpen(true);
@@ -138,21 +169,23 @@ export function WorkspaceConnectionsStrip({
     router.push(href);
   }
 
-  /*
-   * Avoid flashing the wrong state while the real
-   * connection status is loading.
-   */
-  if (interactive && checking) {
+
+  /* ============================================================
+     LOADING
+     ============================================================ */
+
+  if (
+    interactive &&
+    checking
+  ) {
     return null;
   }
 
-  /*
-   * GitHub-first state.
-   *
-   * We keep your existing connection behaviour.
-   * Only the visual presentation changes when this
-   * lives in the chatbar.
-   */
+
+  /* ============================================================
+     GITHUB NOT CONNECTED
+     ============================================================ */
+
   if (
     interactive &&
     !githubConnected
@@ -208,6 +241,11 @@ export function WorkspaceConnectionsStrip({
     );
   }
 
+
+  /* ============================================================
+     CONNECTED / PLUGINS STATE
+     ============================================================ */
+
   return (
     <>
       <section
@@ -261,6 +299,11 @@ export function WorkspaceConnectionsStrip({
             />
           ) : null}
         </button>
+
+
+        {/* ====================================================
+            HOVER PREVIEW
+            ==================================================== */}
 
         <div
           id="workspace-integrations-preview"
@@ -317,11 +360,15 @@ export function WorkspaceConnectionsStrip({
           )}
 
           <small>
-            Click to manage
-            integrations.
+            Click to manage integrations.
           </small>
         </div>
       </section>
+
+
+      {/* ======================================================
+          REAL INTEGRATIONS MODAL
+          ====================================================== */}
 
       {interactive ? (
         <IntegrationsModal
