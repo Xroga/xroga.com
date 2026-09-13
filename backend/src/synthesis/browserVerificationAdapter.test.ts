@@ -117,6 +117,26 @@ test('a plain static artifact runs through the browser adapter without an invent
   assert.ok(requestFiles.some((file) => file.path === '.xroga-verify/static-server.mjs'));
 });
 
+test('a server template is observed at its entry path with root static assets available', async () => {
+  let collector = '';
+  const verify = browserVerificationAdapter({
+    sandboxAvailable: available,
+    browserPresent: available,
+    execute: async (request) => {
+      collector = request.files.find((file) => file.path === '.xroga-verify/collect.mjs')?.content ?? '';
+      return {
+        exitCode: 0, stderr: '', timedOut: false,
+        stdout: '<<<XROGA_BROWSER_RESULT{"ok":true,"url":"http://127.0.0.1:3000/templates/index.html","viewports":[]}XROGA_BROWSER_RESULT>>>',
+      };
+    },
+  });
+  await verify(input([
+    { path: 'templates/index.html', content: '<link rel="stylesheet" href="/static/site.css"><h1>Product</h1>' },
+    { path: 'static/site.css', content: 'h1 { color: gold; }' },
+  ]));
+  assert.match(collector, /templates\/index\.html/);
+});
+
 test('cancellation short-circuits before any sandbox or browser work', async () => {
   const controller = new AbortController();
   controller.abort();

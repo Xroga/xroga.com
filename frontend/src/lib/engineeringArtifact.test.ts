@@ -180,6 +180,27 @@ test('a bounded static artifact hydrates Files and an exact inline Preview', () 
   assert.equal(projection.projectFiles.length, 3);
 });
 
+test('a server template resolves project-root assets without exposing template syntax', () => {
+  const projection = engineeringArtifactWorkspaceProjection(artifact({
+    repository: { owner: 'arbitrary-lab', repo: 'service-ui', branch: 'xroga/review' },
+    files: [
+      { path: 'templates/index.html', action: 'created' },
+      { path: 'static/site.css', action: 'created' },
+      { path: 'static/site.js', action: 'created' },
+    ],
+    projectFiles: [
+      { path: 'templates/index.html', content: '<link rel="stylesheet" href="/static/site.css"><main>{% if notice %}<p>{{ notice }}</p>{% endif %}<h1>Service UI</h1></main><script src="/static/site.js"></script>' },
+      { path: 'static/site.css', content: 'h1 { color: gold; }' },
+      { path: 'static/site.js', content: 'document.body.dataset.ready = "true";' },
+    ],
+  }));
+  assert.ok(projection);
+  assert.equal(projection.previewAvailable, true);
+  assert.match(projection.css, /color: gold/);
+  assert.match(projection.js, /dataset\.ready/);
+  assert.doesNotMatch(projection.html, /{%|{{/);
+});
+
 test('Project edits evidence never exposes an internal model identity, including persisted artifacts', () => {
   const projection = engineeringArtifactWorkspaceProjection(artifact({
     verificationEvidence: [{
