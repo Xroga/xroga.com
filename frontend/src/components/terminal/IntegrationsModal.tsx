@@ -37,27 +37,56 @@ export function IntegrationsModal({
 }: IntegrationsModalProps) {
   const router = useRouter();
 
-  const [search, setSearch] = useState('');
-  const [comingSoonOpen, setComingSoonOpen] = useState(false);
-  const [connected, setConnected] = useState<Record<string, boolean>>({});
-  const [checking, setChecking] = useState(false);
-  const [connectingGithub, setConnectingGithub] = useState(false);
+  const [search, setSearch] =
+    useState('');
+
+  const [
+    comingSoonOpen,
+    setComingSoonOpen,
+  ] = useState(false);
+
+  const [connected, setConnected] =
+    useState<Record<string, boolean>>({});
+
+  const [checking, setChecking] =
+    useState(false);
+
+  const [
+    connectingGithub,
+    setConnectingGithub,
+  ] = useState(false);
+
+  /* ============================================================
+     ESCAPE TO CLOSE
+     ============================================================ */
 
   useEffect(() => {
     if (!open) return;
 
-    const onKey = (event: KeyboardEvent) => {
+    const onKey = (
+      event: KeyboardEvent,
+    ) => {
       if (event.key === 'Escape') {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', onKey);
+    window.addEventListener(
+      'keydown',
+      onKey,
+    );
 
     return () => {
-      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(
+        'keydown',
+        onKey,
+      );
     };
   }, [open, onClose]);
+
+  /* ============================================================
+     CONNECTION STATUS
+     ============================================================ */
 
   useEffect(() => {
     if (!open) return;
@@ -75,16 +104,25 @@ export function IntegrationsModal({
 
       setConnected({
         github:
-          results[0].status === 'fulfilled' &&
-          Boolean(results[0].value.connected),
+          results[0].status ===
+            'fulfilled' &&
+          Boolean(
+            results[0].value.connected,
+          ),
 
         vercel:
-          results[1].status === 'fulfilled' &&
-          Boolean(results[1].value.connected),
+          results[1].status ===
+            'fulfilled' &&
+          Boolean(
+            results[1].value.connected,
+          ),
 
         supabase:
-          results[2].status === 'fulfilled' &&
-          Boolean(results[2].value.connected),
+          results[2].status ===
+            'fulfilled' &&
+          Boolean(
+            results[2].value.connected,
+          ),
       });
 
       setChecking(false);
@@ -95,19 +133,26 @@ export function IntegrationsModal({
     };
   }, [open]);
 
+  /* ============================================================
+     SEARCH
+     ============================================================ */
+
   const filtered = useMemo(() => {
-    const query = search.toLowerCase().trim();
+    const query =
+      search
+        .toLowerCase()
+        .trim();
 
     if (!query) {
       return INTEGRATIONS;
     }
 
     return INTEGRATIONS.filter(
-      (integration) =>
-        integration.name
+      (plugin) =>
+        plugin.name
           .toLowerCase()
           .includes(query) ||
-        integration.category
+        plugin.category
           .toLowerCase()
           .includes(query),
     );
@@ -115,26 +160,37 @@ export function IntegrationsModal({
 
   const liveFiltered = useMemo(
     () =>
-      filtered.filter((integration) =>
-        isConnectableIntegration(integration.id),
+      filtered.filter((plugin) =>
+        isConnectableIntegration(
+          plugin.id,
+        ),
       ),
     [filtered],
   );
 
-  const comingSoonFiltered = useMemo(
-    () =>
-      filtered.filter(
-        (integration) =>
-          !isConnectableIntegration(integration.id),
-      ),
-    [filtered],
-  );
+  const comingSoonFiltered =
+    useMemo(
+      () =>
+        filtered.filter(
+          (plugin) =>
+            !isConnectableIntegration(
+              plugin.id,
+            ),
+        ),
+      [filtered],
+    );
+
+  /* ============================================================
+     CONNECT / MANAGE
+     ============================================================ */
 
   async function handleConnect(
     id: string,
     name: string,
   ) {
-    if (!isConnectableIntegration(id)) {
+    if (
+      !isConnectableIntegration(id)
+    ) {
       toast('Coming soon', {
         icon: '⏳',
       });
@@ -144,7 +200,11 @@ export function IntegrationsModal({
 
     if (connected[id]) {
       onClose();
-      router.push('/dashboard/integrations');
+
+      router.push(
+        '/dashboard/integrations',
+      );
+
       return;
     }
 
@@ -162,6 +222,7 @@ export function IntegrationsModal({
         }
 
         window.location.href = url;
+
         return;
       }
 
@@ -169,15 +230,20 @@ export function IntegrationsModal({
         const {
           url,
           oauthConfigured,
-        } = await api.vercel.oauthUrl();
+        } =
+          await api.vercel.oauthUrl();
 
-        if (!oauthConfigured || !url) {
+        if (
+          !oauthConfigured ||
+          !url
+        ) {
           throw new Error(
             'Vercel authorization is not configured.',
           );
         }
 
         window.location.href = url;
+
         return;
       }
 
@@ -186,9 +252,13 @@ export function IntegrationsModal({
           url,
           oauthConfigured,
           message,
-        } = await api.supabase.oauthUrl();
+        } =
+          await api.supabase.oauthUrl();
 
-        if (!oauthConfigured || !url) {
+        if (
+          !oauthConfigured ||
+          !url
+        ) {
           throw new Error(
             message ||
               'Supabase authorization is not configured.',
@@ -196,11 +266,15 @@ export function IntegrationsModal({
         }
 
         window.location.href = url;
+
         return;
       }
 
       onClose();
-      router.push('/dashboard/integrations');
+
+      router.push(
+        '/dashboard/integrations',
+      );
     } catch (error) {
       setConnectingGithub(false);
 
@@ -216,10 +290,10 @@ export function IntegrationsModal({
     return null;
   }
 
-  /*
-   * Do not flash the entire integration catalogue while
-   * GitHub connection status is being checked.
-   */
+  /* ============================================================
+     CHECKING STATE
+     ============================================================ */
+
   if (checking) {
     return (
       <div
@@ -233,22 +307,21 @@ export function IntegrationsModal({
           }
           role="dialog"
           aria-modal="true"
-          aria-label="Checking GitHub connection"
+          aria-label="Checking plugin connections"
         >
           <p className="text-sm text-[var(--muted)]">
-            Checking your workspace…
+            Checking your plugins…
           </p>
         </div>
       </div>
     );
   }
 
-  /*
-   * Beginner state:
-   *
-   * GitHub is the only integration exposed before the
-   * user's first connection.
-   */
+  /* ============================================================
+     BEGINNER STATE
+     GitHub remains the first required connection.
+     ============================================================ */
+
   if (!connected.github) {
     return (
       <div
@@ -269,7 +342,7 @@ export function IntegrationsModal({
               type="button"
               onClick={onClose}
               className="rounded-lg p-2 hover:bg-white/10"
-              aria-label="Close"
+              aria-label="Close plugins"
             >
               <X className="h-4 w-4" />
             </button>
@@ -292,8 +365,9 @@ export function IntegrationsModal({
             </h2>
 
             <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">
-              Connect GitHub so Xroga can create,
-              save, and update the projects you build.
+              Connect GitHub so Xroga
+              can create, save, and update
+              the projects you build.
             </p>
 
             <button
@@ -304,7 +378,9 @@ export function IntegrationsModal({
                   'GitHub',
                 )
               }
-              disabled={connectingGithub}
+              disabled={
+                connectingGithub
+              }
               className="mt-6 w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold transition-opacity disabled:opacity-60"
             >
               {connectingGithub
@@ -313,8 +389,9 @@ export function IntegrationsModal({
             </button>
 
             <p className="mt-3 text-xs text-[var(--muted)]">
-              You can connect deployment, database,
-              and other services later.
+              You can add deployment,
+              database, and other plugins
+              later.
             </p>
           </div>
         </div>
@@ -322,11 +399,10 @@ export function IntegrationsModal({
     );
   }
 
-  /*
-   * GitHub connected:
-   *
-   * Show the existing experienced-user integration manager.
-   */
+  /* ============================================================
+     PLUGINS MANAGER
+     ============================================================ */
+
   return (
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-backdrop"
@@ -339,14 +415,18 @@ export function IntegrationsModal({
         }
         role="dialog"
         aria-modal="true"
-        aria-labelledby="xv-integrations-modal-title"
+        aria-labelledby="xv-plugins-modal-title"
       >
+        {/* ====================================================
+            HEADER
+            ==================================================== */}
+
         <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
           <h2
-            id="xv-integrations-modal-title"
+            id="xv-plugins-modal-title"
             className="font-semibold text-base"
           >
-            Integrations
+            Plugins
           </h2>
 
           <div className="relative flex-1">
@@ -359,9 +439,11 @@ export function IntegrationsModal({
               autoFocus
               value={search}
               onChange={(event) =>
-                setSearch(event.target.value)
+                setSearch(
+                  event.target.value,
+                )
               }
-              placeholder="Search integrations..."
+              placeholder="Search plugins..."
               className="w-full rounded-xl bg-white/5 py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/40"
             />
           </div>
@@ -370,110 +452,141 @@ export function IntegrationsModal({
             type="button"
             onClick={onClose}
             className="rounded-lg p-2 hover:bg-white/10"
-            aria-label="Close integrations"
+            aria-label="Close plugins"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
+        {/* ====================================================
+            PLUGIN LIST
+            ==================================================== */}
+
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {INTEGRATION_CATEGORIES.map((category) => {
-            const items =
-              liveFiltered.filter(
-                (integration) =>
-                  integration.category ===
-                  category,
-              );
+          {INTEGRATION_CATEGORIES.map(
+            (category) => {
+              const items =
+                liveFiltered.filter(
+                  (plugin) =>
+                    plugin.category ===
+                    category,
+                );
 
-            if (!items.length) {
-              return null;
-            }
+              if (!items.length) {
+                return null;
+              }
 
-            return (
-              <div key={category}>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                  {category}
-                </p>
+              return (
+                <div key={category}>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                    {category}
+                  </p>
 
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {items.map((item) => {
-                    const isConnected =
-                      connected[item.id] === true;
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {items.map(
+                      (item) => {
+                        const isConnected =
+                          connected[
+                            item.id
+                          ] === true;
 
-                    return (
-                      <div
-                        key={item.id}
-                        className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] p-3 transition-colors hover:bg-white/[0.07]"
-                      >
-                        <div className="flex min-w-0 flex-1 items-center gap-3">
-                          <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10">
-                            <IntegrationLogo
-                              id={item.id}
-                              name={item.name}
-                              size={22}
-                              className="object-contain"
-                            />
+                        return (
+                          <div
+                            key={
+                              item.id
+                            }
+                            className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] p-3 transition-colors hover:bg-white/[0.07]"
+                          >
+                            <div className="flex min-w-0 flex-1 items-center gap-3">
+                              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10">
+                                <IntegrationLogo
+                                  id={
+                                    item.id
+                                  }
+                                  name={
+                                    item.name
+                                  }
+                                  size={
+                                    22
+                                  }
+                                  className="object-contain"
+                                />
 
-                            {isConnected ? (
-                              <CheckCircle2
-                                className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[var(--card)] text-emerald-500"
-                                aria-label="Connected"
-                              />
-                            ) : null}
-                          </div>
+                                {isConnected ? (
+                                  <CheckCircle2
+                                    className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[var(--card)] text-emerald-500"
+                                    aria-label="Connected"
+                                  />
+                                ) : null}
+                              </div>
 
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium">
-                              {item.name}
-                            </p>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium">
+                                  {
+                                    item.name
+                                  }
+                                </p>
 
-                            <p className="text-[10px] text-[var(--muted)]">
+                                <p className="text-[10px] text-[var(--muted)]">
+                                  {isConnected
+                                    ? 'Connected'
+                                    : 'Available'}
+                                </p>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void handleConnect(
+                                  item.id,
+                                  item.name,
+                                )
+                              }
+                              className="relative z-[1] flex shrink-0 items-center gap-1 rounded-lg border border-[var(--accent)]/35 bg-[var(--accent)]/15 px-2.5 py-1.5 text-[10px] font-bold text-[var(--foreground)] transition-colors hover:bg-[var(--accent)]/25"
+                            >
+                              <Plug className="h-3 w-3" />
+
                               {isConnected
-                                ? 'Connected'
-                                : 'Available'}
-                            </p>
+                                ? 'Manage'
+                                : 'Connect'}
+                            </button>
                           </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            void handleConnect(
-                              item.id,
-                              item.name,
-                            )
-                          }
-                          className="relative z-[1] flex shrink-0 items-center gap-1 rounded-lg border border-[var(--accent)]/35 bg-[var(--accent)]/15 px-2.5 py-1.5 text-[10px] font-bold text-[var(--foreground)] transition-colors hover:bg-[var(--accent)]/25"
-                        >
-                          <Plug className="h-3 w-3" />
-
-                          {isConnected
-                            ? 'Manage'
-                            : 'Connect'}
-                        </button>
-                      </div>
-                    );
-                  })}
+                        );
+                      },
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            },
+          )}
 
-          {comingSoonFiltered.length > 0 ? (
+          {/* ==================================================
+              COMING SOON
+              ================================================== */}
+
+          {comingSoonFiltered.length >
+          0 ? (
             <div className="overflow-hidden rounded-xl border border-white/[0.06]">
               <button
                 type="button"
                 onClick={() =>
                   setComingSoonOpen(
-                    (current) => !current,
+                    (current) =>
+                      !current,
                   )
                 }
-                aria-expanded={comingSoonOpen}
+                aria-expanded={
+                  comingSoonOpen
+                }
                 className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-white/[0.03]"
               >
                 <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
                   Coming soon (
-                  {comingSoonFiltered.length})
+                  {
+                    comingSoonFiltered.length
+                  }
+                  )
                 </span>
 
                 <ChevronDown
@@ -491,10 +604,14 @@ export function IntegrationsModal({
                   {comingSoonFiltered.map(
                     (item) => (
                       <span
-                        key={item.id}
+                        key={
+                          item.id
+                        }
                         className="rounded-md bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]"
                       >
-                        {item.name}
+                        {
+                          item.name
+                        }
                       </span>
                     ),
                   )}
@@ -504,13 +621,17 @@ export function IntegrationsModal({
           ) : null}
         </div>
 
+        {/* ====================================================
+            FOOTER
+            ==================================================== */}
+
         <div className="flex flex-col items-center justify-center gap-2 border-t border-white/10 px-5 py-3 sm:flex-row">
           <Link
             href="/dashboard/integrations"
             onClick={onClose}
             className="w-full rounded-xl border border-[var(--accent)]/35 bg-[var(--accent)]/20 px-4 py-2 text-center text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--accent)]/30 sm:w-auto"
           >
-            Open Integrations tab →
+            Open Plugins →
           </Link>
         </div>
       </div>
