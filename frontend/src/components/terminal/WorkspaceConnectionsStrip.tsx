@@ -112,7 +112,6 @@ export function WorkspaceConnectionsStrip({
 
   const rootClassName = [
     'xv-workspace-connections',
-
     chatbar
       ? 'xv-workspace-connections--chatbar'
       : '',
@@ -152,7 +151,7 @@ export function WorkspaceConnectionsStrip({
   }
 
   /* ============================================================
-     OPEN INTEGRATIONS
+     OPEN PLUGINS
      ============================================================ */
 
   function openConnections() {
@@ -242,19 +241,13 @@ export function WorkspaceConnectionsStrip({
     <>
       <section
         className={rootClassName}
-        aria-label={
-          chatbar
-            ? 'Plugins and integrations'
-            : 'Build connections'
-        }
+        aria-label="Plugins"
       >
         <button
           type="button"
           className="xv-workspace-connections__trigger"
-          onClick={
-            openConnections
-          }
-          aria-describedby="workspace-integrations-preview"
+          onClick={openConnections}
+          aria-describedby="workspace-plugins-preview"
         >
           <span
             className="xv-workspace-connections__logo"
@@ -292,9 +285,7 @@ export function WorkspaceConnectionsStrip({
           </span>
 
           <strong>
-            {chatbar
-              ? 'Plugins'
-              : 'Integrations'}
+            Plugins
           </strong>
 
           {!chatbar ? (
@@ -309,12 +300,12 @@ export function WorkspaceConnectionsStrip({
             ==================================================== */}
 
         <div
-          id="workspace-integrations-preview"
+          id="workspace-plugins-preview"
           className="xv-workspace-connections__preview"
           role="tooltip"
         >
           <strong>
-            Build connections
+            Plugins
           </strong>
 
           {CONNECTIONS.map(
@@ -363,13 +354,13 @@ export function WorkspaceConnectionsStrip({
           )}
 
           <small>
-            Click to manage integrations.
+            Click to manage plugins.
           </small>
         </div>
       </section>
 
       {/* ======================================================
-          REAL INTEGRATIONS MODAL
+          PLUGINS MODAL
           ====================================================== */}
 
       {interactive ? (
