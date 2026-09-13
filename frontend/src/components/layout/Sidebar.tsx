@@ -150,7 +150,7 @@ const navItems: NavEntry[] = [
   {
     href: '/dashboard/integrations',
     motion: 'pulse' as const,
-    label: 'Integrations',
+    label: 'Plugins',
     icon: Link2,
     animated: ConnectIcon,
     tip: 'Connect GitHub, Slack, databases, and tools.',
