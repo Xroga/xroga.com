@@ -152,6 +152,28 @@ test('a thrown implementation surfaces as a task failure, not a silent empty res
   );
 });
 
+test('typed implementation failures keep sanitized reasons through the scheduler boundary', async () => {
+  await assert.rejects(
+    runImplementationAsCanonicalTask({
+      ...base,
+      implement: async () => {
+        throw Object.assign(new Error('openrouter raw payload must stay operator-only'), {
+          code: 'SOFTWARE_IMPLEMENTATION_FAILED',
+          safeReasons: ['implementation capacity was unavailable'],
+        });
+      },
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof CanonicalTaskFailure);
+      assert.equal(error.code, 'SOFTWARE_IMPLEMENTATION_FAILED');
+      assert.deepEqual(error.safeReasons, ['implementation capacity was unavailable']);
+      assert.match(error.message, /implementation capacity was unavailable/);
+      assert.doesNotMatch(error.message, /openrouter|raw payload/);
+      return true;
+    },
+  );
+});
+
 test('the task is persisted before it is known to have succeeded', async () => {
   // A crash mid-implementation must leave a record of which phase was in flight. Asserting
   // the store saw the task while it was still running is the only way to know that.
