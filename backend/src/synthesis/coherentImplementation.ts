@@ -141,19 +141,38 @@ function stringList(value: unknown, maximum = 16): readonly string[] | null {
   return value.slice(0, maximum).map((item) => item.trim()).filter(Boolean);
 }
 
+function optionalStringList(value: unknown, maximum = 16): readonly string[] | null {
+  return value === undefined || value === null ? [] : stringList(value, maximum);
+}
+
+/**
+ * The materialized result is a complete file snapshot; the atomic writer later derives
+ * create-versus-update from the real repository tree. Treating these three spellings as
+ * different here made harmless provider vocabulary differences invalidate good code.
+ * Delete remains deliberately unsupported because it has different data-loss semantics.
+ */
+function normalizeSnapshotOperation(value: unknown): 'upsert' | null {
+  return value === undefined || value === 'upsert' || value === 'create' || value === 'update'
+    ? 'upsert'
+    : null;
+}
+
 function parseContract(raw: string): ProjectChangeContract | null {
   try {
     const value = JSON.parse(raw) as Record<string, unknown>;
     const project = value.project as Record<string, unknown> | null;
     const files = value.files;
-    const sharedContracts = stringList(value.sharedContracts, 40);
+    const sharedContracts = optionalStringList(value.sharedContracts, 40);
+    const framework = project?.framework;
+    const packageManager = project?.packageManager;
+    const runCommand = project?.runCommand;
     if (
-      value.version !== 1 || typeof value.summary !== 'string' || !value.summary.trim() ||
+      !(value.version === 1 || value.version === '1') || typeof value.summary !== 'string' || !value.summary.trim() ||
       !project || typeof project.runtime !== 'string' || !project.runtime.trim() ||
-      !(typeof project.framework === 'string' || project.framework === null) ||
-      !(typeof project.packageManager === 'string' || project.packageManager === null) ||
-      !(typeof project.runCommand === 'string' || project.runCommand === null) ||
-      !stringList(project.buildCommands) || !stringList(project.testCommands) || !sharedContracts ||
+      !(framework === undefined || typeof framework === 'string' || framework === null) ||
+      !(packageManager === undefined || typeof packageManager === 'string' || packageManager === null) ||
+      !(runCommand === undefined || typeof runCommand === 'string' || runCommand === null) ||
+      !optionalStringList(project.buildCommands) || !optionalStringList(project.testCommands) || !sharedContracts ||
       !Array.isArray(files) || !files.length || files.length > MAX_COHERENT_FILES
     ) return null;
 
@@ -161,14 +180,18 @@ function parseContract(raw: string): ProjectChangeContract | null {
     const normalizedFiles: ProjectChangeContract['files'][number][] = [];
     for (const candidate of files as Array<Record<string, unknown>>) {
       if (
-        !safeProjectPath(candidate?.path) || candidate.operation !== 'upsert' ||
-        typeof candidate.purpose !== 'string' || !candidate.purpose.trim()
+        !safeProjectPath(candidate?.path) || !normalizeSnapshotOperation(candidate.operation) ||
+        !(candidate.purpose === undefined || (typeof candidate.purpose === 'string' && candidate.purpose.trim()))
       ) return null;
       const path = normalizePath(candidate.path);
       const folded = path.toLowerCase();
       if (seen.has(folded)) return null;
       seen.add(folded);
-      normalizedFiles.push({ path, operation: 'upsert', purpose: candidate.purpose.trim() });
+      normalizedFiles.push({
+        path,
+        operation: 'upsert',
+        purpose: typeof candidate.purpose === 'string' ? candidate.purpose.trim() : `update ${path}`,
+      });
     }
 
     return {
@@ -176,11 +199,11 @@ function parseContract(raw: string): ProjectChangeContract | null {
       summary: value.summary.trim(),
       project: {
         runtime: project.runtime.trim(),
-        framework: typeof project.framework === 'string' ? project.framework.trim() || null : null,
-        packageManager: typeof project.packageManager === 'string' ? project.packageManager.trim() || null : null,
-        buildCommands: stringList(project.buildCommands)!,
-        testCommands: stringList(project.testCommands)!,
-        runCommand: typeof project.runCommand === 'string' ? project.runCommand.trim() || null : null,
+        framework: typeof framework === 'string' ? framework.trim() || null : null,
+        packageManager: typeof packageManager === 'string' ? packageManager.trim() || null : null,
+        buildCommands: optionalStringList(project.buildCommands)!,
+        testCommands: optionalStringList(project.testCommands)!,
+        runCommand: typeof runCommand === 'string' ? runCommand.trim() || null : null,
       },
       sharedContracts,
       files: normalizedFiles,
@@ -208,7 +231,7 @@ function parseFileFrames(text: string): { files: ProjectFile[]; invalidReason: s
     } catch {
       return { files: [], invalidReason: 'a file frame has malformed metadata' };
     }
-    if (!safeProjectPath(metadata.path) || metadata.operation !== 'upsert') {
+    if (!safeProjectPath(metadata.path) || !normalizeSnapshotOperation(metadata.operation)) {
       return { files: [], invalidReason: 'a file frame has an unsafe path or operation' };
     }
     const path = normalizePath(metadata.path);
@@ -244,7 +267,10 @@ function jsonFilesToFrames(value: unknown): string | null {
     if (typeof file.content !== 'string' || !file.content.trim()) return [];
     return [
       FILE_OPEN,
-      JSON.stringify({ path: file.path, operation: file.operation }),
+      JSON.stringify({
+        path: file.path,
+        operation: normalizeSnapshotOperation(file.operation) ?? file.operation,
+      }),
       CONTENT_OPEN,
       file.content,
       FILE_CLOSE,
