@@ -3,6 +3,7 @@ import type { ChatMessage } from '../ai/openaiCompat.js';
 import { test } from 'node:test';
 import {
   IncrementalImplementationError,
+  createCandidateLaneRunner,
   IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
   IMPLEMENTATION_FILE_CONCURRENCY,
   MAX_CANDIDATE_ATTEMPTS_PER_UNIT,
@@ -54,6 +55,29 @@ function fakeCompletion(
 }
 
 const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { modelId: 'kimi_k3' }];
+
+test('candidate lanes serialize one provider while different providers keep useful concurrency', async () => {
+  const runCandidate = createCandidateLaneRunner();
+  const active = new Map<string, number>();
+  const peak = new Map<string, number>();
+  let globalActive = 0;
+  let globalPeak = 0;
+  const work = (modelId: string) => runCandidate(modelId, async () => {
+    const count = (active.get(modelId) ?? 0) + 1;
+    active.set(modelId, count);
+    peak.set(modelId, Math.max(peak.get(modelId) ?? 0, count));
+    globalActive += 1;
+    globalPeak = Math.max(globalPeak, globalActive);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    active.set(modelId, count - 1);
+    globalActive -= 1;
+  });
+
+  await Promise.all([work('glm_5_3_flash'), work('glm_5_3_flash'), work('kimi_k3')]);
+  assert.equal(peak.get('glm_5_3_flash'), 1);
+  assert.equal(peak.get('kimi_k3'), 1);
+  assert.equal(globalPeak, 2);
+});
 
 test('a concurrent batch is distributed across the approved routes without widening it', () => {
   assert.deepEqual(

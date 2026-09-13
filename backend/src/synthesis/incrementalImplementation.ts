@@ -81,6 +81,27 @@ export interface ModelCandidate {
   readonly modelId: string;
 }
 
+export type CandidateLaneRunner = <T>(modelId: string, execute: () => Promise<T>) => Promise<T>;
+
+/** At most one in-flight implementation request per provider route. */
+export function createCandidateLaneRunner(): CandidateLaneRunner {
+  const tails = new Map<string, Promise<void>>();
+  return async <T>(modelId: string, execute: () => Promise<T>): Promise<T> => {
+    const predecessor = tails.get(modelId) ?? Promise.resolve();
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const tail = predecessor.then(() => gate);
+    tails.set(modelId, tail);
+    await predecessor;
+    try {
+      return await execute();
+    } finally {
+      release();
+      if (tails.get(modelId) === tail) tails.delete(modelId);
+    }
+  };
+}
+
 /**
  * Spread one concurrent file batch across the approved coding routes instead of
  * sending every file to the same provider at once. Each file keeps a deterministic
@@ -129,6 +150,8 @@ Rules:
 - Honour the language, framework and architecture the brief states.
 - When current contents are supplied, preserve every unrelated declaration and behavior.
 - Write only the file you are asked for.`;
+
+class CandidateQuarantinedError extends Error {}
 
 const REPAIR_SYSTEM = `You are repairing a software project after a deterministic command failed.
 
@@ -446,6 +469,7 @@ async function completeWithFallback(input: {
   usable: (text: string) => boolean;
   complete: CompletionFn;
   unavailableCandidates?: Set<string>;
+  runCandidate?: CandidateLaneRunner;
 }): Promise<{ text: string; modelId: string }> {
   const failures: string[] = [];
   let attempts = 0;
@@ -459,13 +483,26 @@ async function completeWithFallback(input: {
       continue;
     }
     if (attempts >= MAX_CANDIDATE_ATTEMPTS_PER_UNIT) break;
-    attempts += 1;
     try {
-      assertCodingModel(candidate.modelId, `universal ${input.label}`);
-      const reply = await input.complete(candidate.modelId, input.messages, {
-        maxTokens: input.maxTokens,
-        temperature: 0.2,
-        ...(input.json ? { json: true } : {}),
+      const runCandidate = input.runCandidate ?? (async <T>(_modelId: string, execute: () => Promise<T>) => execute());
+      const reply = await runCandidate(candidate.modelId, async () => {
+        if (input.unavailableCandidates?.has(candidate.modelId)) {
+          throw new CandidateQuarantinedError(`${candidate.modelId} was unavailable earlier in this implementation run`);
+        }
+        attempts += 1;
+        assertCodingModel(candidate.modelId, `universal ${input.label}`);
+        try {
+          return await input.complete(candidate.modelId, input.messages, {
+            maxTokens: input.maxTokens,
+            temperature: 0.2,
+            ...(input.json ? { json: true } : {}),
+          });
+        } catch (error) {
+          if (normalizeProviderError(error).retryable) {
+            input.unavailableCandidates?.add(candidate.modelId);
+          }
+          throw error;
+        }
       });
       // Truncation is disqualifying on its own, before any content check. A clipped file is
       // still non-empty — `fn main() { prin` passes every emptiness test — so judging it by
@@ -481,12 +518,12 @@ async function completeWithFallback(input: {
           : `${candidate.modelId} returned ${reply.text.trim() ? 'an unusable reply' : 'an empty completion'}`,
       );
     } catch (error) {
-      const normalized = normalizeProviderError(error);
+      if (error instanceof CandidateQuarantinedError) {
+        failures.push(error.message);
+        continue;
+      }
       const message = (error as Error).message;
       failures.push(`${candidate.modelId} failed: ${message}`);
-      if (normalized.retryable) {
-        input.unavailableCandidates?.add(candidate.modelId);
-      }
     }
   }
   throw new IncrementalImplementationError(
@@ -513,6 +550,7 @@ export async function implementIncrementally(input: {
 }): Promise<readonly ProjectFile[]> {
   const complete = input.complete ?? defaultCompletion;
   const unavailableCandidates = new Set<string>();
+  const runCandidate = createCandidateLaneRunner();
   const existingFiles = input.existingFiles ?? [];
   const requestWithConstraints = input.originalRequest?.trim()
     ? `${input.originalRequest.trim()}\n\nImplementation plan:\n${input.brief}`
@@ -577,6 +615,7 @@ export async function implementIncrementally(input: {
         },
         complete,
         unavailableCandidates,
+        runCandidate,
       });
       files[index] = { path: entry.path, content: stripCodeFence(reply.text) };
     }));
