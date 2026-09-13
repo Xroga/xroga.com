@@ -58,7 +58,6 @@ export function WorkspaceConnectionsStrip({
     setConnectingGithub,
   ] = useState(false);
 
-
   /* ============================================================
      CONNECTION STATUS
      ============================================================ */
@@ -108,10 +107,8 @@ export function WorkspaceConnectionsStrip({
     };
   }, [interactive]);
 
-
   const githubConnected =
     connected.github === true;
-
 
   const rootClassName = [
     'xv-workspace-connections',
@@ -122,7 +119,6 @@ export function WorkspaceConnectionsStrip({
   ]
     .filter(Boolean)
     .join(' ');
-
 
   /* ============================================================
      GITHUB CONNECT
@@ -155,7 +151,6 @@ export function WorkspaceConnectionsStrip({
     }
   }
 
-
   /* ============================================================
      OPEN INTEGRATIONS
      ============================================================ */
@@ -169,7 +164,6 @@ export function WorkspaceConnectionsStrip({
     router.push(href);
   }
 
-
   /* ============================================================
      LOADING
      ============================================================ */
@@ -180,7 +174,6 @@ export function WorkspaceConnectionsStrip({
   ) {
     return null;
   }
-
 
   /* ============================================================
      GITHUB NOT CONNECTED
@@ -241,7 +234,6 @@ export function WorkspaceConnectionsStrip({
     );
   }
 
-
   /* ============================================================
      CONNECTED / PLUGINS STATE
      ============================================================ */
@@ -268,35 +260,36 @@ export function WorkspaceConnectionsStrip({
             className="xv-workspace-connections__logo"
             aria-hidden="true"
           >
-           <IntegrationLogo
-  id="github"
-  name="GitHub"
-  size={
-    chatbar
-      ? 17
-      : 12
-  }
-/>
+            <IntegrationLogo
+              id="github"
+              name="GitHub"
+              size={
+                chatbar
+                  ? 17
+                  : 12
+              }
+            />
 
-<IntegrationLogo
-  id="vercel"
-  name="Vercel"
-  size={
-    chatbar
-      ? 17
-      : 12
-  }
-/>
+            <IntegrationLogo
+              id="vercel"
+              name="Vercel"
+              size={
+                chatbar
+                  ? 17
+                  : 12
+              }
+            />
 
-<IntegrationLogo
-  id="supabase"
-  name="Supabase"
-  size={
-    chatbar
-      ? 17
-      : 12
-  }
-/>
+            <IntegrationLogo
+              id="supabase"
+              name="Supabase"
+              size={
+                chatbar
+                  ? 17
+                  : 12
+              }
+            />
+          </span>
 
           <strong>
             {chatbar
@@ -310,7 +303,6 @@ export function WorkspaceConnectionsStrip({
             />
           ) : null}
         </button>
-
 
         {/* ====================================================
             HOVER PREVIEW
@@ -375,7 +367,6 @@ export function WorkspaceConnectionsStrip({
           </small>
         </div>
       </section>
-
 
       {/* ======================================================
           REAL INTEGRATIONS MODAL
