@@ -24,7 +24,7 @@ const items: { href: string; label: string; icon: AnimatedIconComponent }[] = [
   { href: '/workspace', label: 'Workspace', icon: TerminalIcon },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutGridIcon },
   { href: '/dashboard/projects', label: 'Repositories', icon: FolderOpenIcon },
-  { href: '/dashboard/integrations', label: 'Integrations', icon: ConnectIcon },
+  { href: '/dashboard/integrations', label: 'Plugins', icon: ConnectIcon },
   { href: '/dashboard/publish', label: 'Publish', icon: RocketIcon },
   { href: '/dashboard/operations', label: 'Operations', icon: HeartPulseIcon },
   { href: '/dashboard/growth', label: 'Growth', icon: ChartColumnIncreasingIcon },
