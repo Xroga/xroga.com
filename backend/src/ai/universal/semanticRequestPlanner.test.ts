@@ -9,6 +9,7 @@ import {
   protocolSocialResponse,
   resolveStructuredGoalContract,
   selectPlannerRoutes,
+  semanticPlannerCompletionOptions,
   SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS,
   SEMANTIC_PLANNER_HEDGE_DELAY_MS,
   SEMANTIC_PLANNER_MAX_TOTAL_TIMEOUT_MS,
@@ -111,6 +112,17 @@ describe('semantic authority blockers', () => {
 });
 
 describe('semantic planner provider fallback', () => {
+  it('spends the bounded planner budget on the JSON decision instead of hidden reasoning', () => {
+    const signal = new AbortController().signal;
+    assert.deepEqual(semanticPlannerCompletionOptions(signal), {
+      maxTokens: 1_500,
+      temperature: 0,
+      json: true,
+      reasoningMode: 'none',
+      signal,
+    });
+  });
+
   it('uses every configured member of the approved model stack in stable order', () => {
     const order = interpreterModelOrder({
       DEEPSEEK_API_KEY: 'configured',
