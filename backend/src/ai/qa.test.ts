@@ -97,6 +97,76 @@ test('accepts an explicit review verdict wrapped in harmless prose', async () =>
   assert.equal(result.ok, true);
 });
 
+test('repairs one malformed reviewer response and preserves token accounting', async () => {
+  let callCount = 0;
+  const result = await reviewBuildOutput({
+    prompt: 'implement an arbitrary product',
+    html: '',
+    css: '',
+    js: '',
+    files: FILES,
+    changedFiles: FILES.map((file) => file.path),
+    completion: async (_model, messages, options) => {
+      callCount += 1;
+      assert.equal(options?.json, true);
+      assert.equal(options?.reasoningMode, 'none');
+      if (callCount === 1) return reply('{"ok": tru', 80, 12);
+      assert.match(String(messages.at(-1)?.content), /previous response did not follow/i);
+      return reply(JSON.stringify({ ok: true, issues: [], fixHints: [], findings: [] }), 90, 18);
+    },
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(callCount, 2);
+  assert.equal(result.inputTokens, 170);
+  assert.equal(result.outputTokens, 30);
+});
+
+test('review protocol repair is bounded to one retry', async () => {
+  let callCount = 0;
+  const result = await reviewBuildOutput({
+    prompt: 'implement an arbitrary product',
+    html: '',
+    css: '',
+    js: '',
+    files: FILES,
+    changedFiles: FILES.map((file) => file.path),
+    completion: async () => {
+      callCount += 1;
+      return reply('not json', 10, 5);
+    },
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(callCount, 2);
+  assert.ok(result.issues.some((issue) => /could not be parsed/i.test(issue)));
+});
+
+test('a substantive reviewer rejection is not retried as a protocol failure', async () => {
+  let callCount = 0;
+  const result = await reviewBuildOutput({
+    prompt: 'implement an arbitrary product',
+    html: '',
+    css: '',
+    js: '',
+    files: FILES,
+    changedFiles: FILES.map((file) => file.path),
+    completion: async () => {
+      callCount += 1;
+      return reply(JSON.stringify({
+        ok: false,
+        issues: ['The requested behavior is incomplete.'],
+        fixHints: ['Complete the missing behavior.'],
+        findings: [],
+      }), 10, 5);
+    },
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(callCount, 1);
+  assert.deepEqual(result.issues, ['The requested behavior is incomplete.']);
+});
+
 test('batching: every changed file goes into some batch', () => {
   const files = projectOf(20, 50);
   const { batches, omitted } = buildReviewBatches(files, files.map((f) => f.path));
