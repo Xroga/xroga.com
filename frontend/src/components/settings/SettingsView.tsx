@@ -42,7 +42,7 @@ const SECTIONS = [
   { id: 'privacy', label: 'Privacy', icon: <AnimatedIcon icon={ShieldCheckIcon} size={16} intro={false} /> },
   { id: 'data-ai', label: 'Data & AI', icon: <AnimatedIcon icon={DatabaseBackupIcon} size={16} intro={false} /> },
   { id: 'plan', label: 'Plan & Usage', icon: <AnimatedIcon icon={WalletIcon} size={16} intro={false} /> },
-  { id: 'integrations', label: 'Integrations', icon: <AnimatedIcon icon={ConnectIcon} size={16} intro={false} /> },
+  { id: 'integrations', label: 'Plugins', icon: <AnimatedIcon icon={ConnectIcon} size={16} intro={false} /> },
   { id: 'security', label: 'Security', icon: <AnimatedIcon icon={UserLockIcon} size={16} intro={false} /> },
   { id: 'notifications', label: 'Notifications', icon: <AnimatedIcon icon={BellElectricIcon} size={16} intro={false} /> },
 ] as const satisfies readonly TabItem[];
