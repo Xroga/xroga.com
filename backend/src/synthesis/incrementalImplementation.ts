@@ -57,11 +57,12 @@ export const MANIFEST_MAX_TOKENS = 8_000;
 export const IMPLEMENTATION_ATTEMPT_TIMEOUT_MS = 60_000;
 
 /**
- * Files in a manifest are independent generation units. Two-at-a-time keeps a multi-file
- * project from turning ten healthy 40-second completions into a seven-minute serial wait,
- * while remaining conservative enough for provider rate limits and the model budget.
+ * Files in a manifest are independent generation units. Three-at-a-time keeps an ordinary
+ * five-to-eight-file project inside the request-level deadline even when one approved route
+ * is quarantined, while remaining conservative enough for provider rate limits and the
+ * unchanged model budget.
  */
-export const IMPLEMENTATION_FILE_CONCURRENCY = 2;
+export const IMPLEMENTATION_FILE_CONCURRENCY = 3;
 
 /** A repair may touch only a small, existing slice of the validated snapshot. */
 export const MAX_REPAIR_FILES = 4;
