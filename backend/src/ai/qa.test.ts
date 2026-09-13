@@ -106,6 +106,28 @@ test('batching: every changed file goes into some batch', () => {
   }
 });
 
+test('a typical multi-file product is reviewed in one coherent project-level call', async () => {
+  const files = projectOf(10, 80);
+  let callCount = 0;
+  let reasoningMode: unknown;
+  const result = await reviewBuildOutput({
+    prompt: 'implement the requested product',
+    html: '',
+    css: '',
+    js: '',
+    files,
+    changedFiles: files.map((file) => file.path),
+    completion: async (_model, _messages, options) => {
+      callCount += 1;
+      reasoningMode = options?.reasoningMode;
+      return reply(JSON.stringify({ ok: true, issues: [], fixHints: [], findings: [] }), 100, 50);
+    },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(callCount, 1);
+  assert.equal(reasoningMode, 'none');
+});
+
 test('batching: deterministic — same input produces same batches', () => {
   const files = projectOf(10, 30);
   const first = buildReviewBatches(files, files.map((f) => f.path));
@@ -121,14 +143,14 @@ test('batching: respects per-file byte limit', () => {
 });
 
 test('batching: omits beyond max batches', () => {
-  const files = projectOf(50, 100);
+  const files = projectOf(50, 600);
   const { batches, omitted } = buildReviewBatches(files, files.map((f) => f.path), { maxBatches: 3 });
   assert.equal(batches.length, 3);
   assert.ok(omitted.length > 0, 'files beyond the batch limit must be omitted');
 });
 
 test('multi-batch review: makes one call per batch', async () => {
-  const files = projectOf(15, 80);
+  const files = projectOf(15, 300);
   let callCount = 0;
   const result = await reviewBuildOutput({
     prompt: 'build a system',
@@ -148,7 +170,7 @@ test('multi-batch review: makes one call per batch', async () => {
 });
 
 test('multi-batch review: one batch fails means the review fails', async () => {
-  const files = projectOf(15, 80);
+  const files = projectOf(15, 300);
   let callIndex = 0;
   const result = await reviewBuildOutput({
     prompt: 'build',
@@ -274,7 +296,7 @@ test('findings without a file are attributed to the batch that produced them', a
 });
 
 test('omitted files block verification', async () => {
-  const files = projectOf(100, 100);
+  const files = projectOf(100, 600);
   const result = await reviewBuildOutput({
     prompt: 'build',
     html: '',

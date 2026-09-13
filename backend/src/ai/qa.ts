@@ -143,12 +143,19 @@ function parseReviewJson(text: string): Pick<ReviewBuildOutputResult, 'ok' | 'is
   return { ok: true, issues, fixHints, findings };
 }
 
-/** How much file content one reviewer call carries. */
-export const REVIEW_BATCH_BYTES = 14_000;
+/**
+ * How much file content one project-level reviewer call carries.
+ *
+ * A normal generated project must be reviewed coherently. The old 14 kB ceiling split a
+ * six-file site into two independent provider calls and the second call could fail after
+ * the first had already approved only half of the change. Large repositories remain
+ * bounded and explicitly multi-batch; typical builds stay one review transaction.
+ */
+export const REVIEW_BATCH_BYTES = 64_000;
 /** How many reviewer calls a single review may make. Beyond this, files are omitted. */
 export const REVIEW_MAX_BATCHES = 8;
 /** No single file may consume the whole budget and starve the rest of the batch. */
-const PER_FILE_BYTES = 6_000;
+const PER_FILE_BYTES = 16_000;
 
 export interface ReviewBatch {
   sample: string;
@@ -314,7 +321,7 @@ export async function reviewBuildOutput(
             content: `Review this build against the user prompt.\n${JSON.stringify(userPayload)}`,
           },
         ],
-        { maxTokens: 1024, temperature: 0.2, json: true },
+        { maxTokens: 1024, temperature: 0.2, json: true, reasoningMode: 'none' },
       );
       text = result.text;
       inputTokens += result.inputTokens;
