@@ -192,6 +192,37 @@ test('a standard JSON object materializes one validated coherent project bundle'
   assert.deepEqual(parsed.files, paths.map((path) => ({ path, content: bodies[path as keyof typeof bodies] })));
 });
 
+test('safe provider vocabulary differences normalize to the same full-file snapshot contract', () => {
+  const parsed = parseCoherentBundle(JSON.stringify({
+    version: '1',
+    summary: 'small browser application',
+    project: { runtime: 'browser' },
+    files: [
+      { path: 'index.html', operation: 'create', content: '<main>Ready</main>' },
+      { path: 'app.js', operation: 'update', purpose: 'browser behavior', content: 'console.log("ready")' },
+    ],
+  }));
+
+  assert.equal(parsed.status, 'complete');
+  assert.deepEqual(parsed.files.map((file) => file.path), ['index.html', 'app.js']);
+  assert.equal(parsed.contract?.files[0]?.operation, 'upsert');
+  assert.equal(parsed.contract?.files[0]?.purpose, 'update index.html');
+  assert.deepEqual(parsed.contract?.project.buildCommands, []);
+  assert.deepEqual(parsed.contract?.sharedContracts, []);
+});
+
+test('normalization never turns a deletion or unknown operation into a write', () => {
+  for (const operation of ['delete', 'rename', 'execute']) {
+    const parsed = parseCoherentBundle(JSON.stringify({
+      ...contract(['src/index.ts']),
+      files: [{ path: 'src/index.ts', operation, purpose: 'not an allowed snapshot write' }],
+      fileContents: [{ path: 'src/index.ts', operation, content: 'export const ready = true;' }],
+    }));
+    assert.equal(parsed.status, 'invalid', operation);
+    assert.equal(parsed.files.length, 0, operation);
+  }
+});
+
 test('a JSON bundle missing one body retains complete files for one bounded continuation', () => {
   const paths = ['src/index.ts', 'README.md'];
   const first = parseCoherentBundle(jsonBundle(paths, { 'src/index.ts': 'export const ready = true;' }, ['src/index.ts']));
