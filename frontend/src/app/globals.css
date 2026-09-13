@@ -7636,9 +7636,11 @@ body.theme-gray .xv-rp-loader {
   .xv-workspace-connections__preview { width:min(224px,calc(100vw - 28px)) }
 }
 
+
+
 /* ============================================================
    CHATBAR PLUGINS / INTEGRATIONS
-   Compact ChatGPT-style control inside composer footer
+   Larger, clearer ChatGPT-style control inside composer footer
    ============================================================ */
 
 .xv-workspace-connections--chatbar {
@@ -7649,7 +7651,7 @@ body.theme-gray .xv-rp-loader {
   width: auto;
   min-width: 0;
 
-  margin: 0 0 0 0.18rem !important;
+  margin: 0 0 0 0.35rem !important;
 
   flex: 0 0 auto;
   align-self: center;
@@ -7665,32 +7667,25 @@ body.theme-gray .xv-rp-loader {
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger {
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
   min-width: 0;
-  min-height: 25px;
+  min-height: 30px;
 
-  gap: 5px;
+  gap: 8px;
 
   margin: 0;
-
-  padding: 3px 7px 3px 4px;
+  padding: 4px 10px 4px 6px;
 
   border: 0;
-  border-radius: 7px;
+  border-radius: 9px;
 
   background: transparent;
 
-  color:
-    var(
-      --xv-kimi-footer-text,
-      var(--foreground)
-    );
+  color: var(--xv-kimi-footer-text, var(--foreground));
 
   box-shadow: none;
-
   cursor: pointer;
 
   transition:
@@ -7699,25 +7694,15 @@ body.theme-gray .xv-rp-loader {
     opacity 140ms ease;
 }
 
-
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger:hover,
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger:focus-visible {
   border-color: transparent;
-
-  background:
-    color-mix(
-      in srgb,
-      var(--foreground) 6%,
-      transparent
-    );
-
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
   color: var(--foreground);
-
   box-shadow: none;
 }
-
 
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger:disabled {
@@ -7734,24 +7719,18 @@ body.theme-gray .xv-rp-loader {
 .xv-workspace-connections__trigger
 > strong {
   display: block;
-
   min-width: 0;
-
   margin: 0;
 
   color: inherit;
 
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 560;
   line-height: 1;
 
   letter-spacing: 0;
-
   white-space: nowrap;
 }
-
-
-/* Chatbar design does not use the right arrow. */
 
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger
@@ -7762,6 +7741,7 @@ body.theme-gray .xv-rp-loader {
 
 /* ============================================================
    STACKED PLUGIN ICONS
+   Bigger + more visible + less overlap
    ============================================================ */
 
 .xv-workspace-connections--chatbar
@@ -7771,50 +7751,35 @@ body.theme-gray .xv-rp-loader {
   display: flex !important;
   align-items: center;
 
-  width: 30px;
-  height: 18px;
-
-  min-width: 30px;
+  width: 44px;
+  height: 22px;
+  min-width: 44px;
 
   grid-template-columns: none;
-
   overflow: visible;
 }
-
 
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__logo
 > * {
   position: relative;
-
   display: block;
 
-  width: 15px !important;
-  height: 15px !important;
-
-  min-width: 15px;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px;
 
   margin: 0 !important;
+  flex: 0 0 20px;
 
-  flex: 0 0 15px;
+  border-radius: 6px;
 
-  border-radius: 5px;
-
-  background:
-    var(
-      --terminal-ui-raised,
-      var(--card)
-    );
+  background: var(--terminal-ui-raised, var(--card));
 
   box-shadow:
-    0 0 0 1px
-      color-mix(
-        in srgb,
-        var(--foreground) 11%,
-        transparent
-      );
+    0 0 0 1px color-mix(in srgb, var(--foreground) 11%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.10);
 }
-
 
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__logo
@@ -7822,22 +7787,18 @@ body.theme-gray .xv-rp-loader {
   z-index: 1;
 }
 
-
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__logo
 > :nth-child(2) {
   z-index: 2;
-
-  margin-left: -5px !important;
+  margin-left: -3px !important;
 }
-
 
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__logo
 > :nth-child(3) {
   z-index: 3;
-
-  margin-left: -5px !important;
+  margin-left: -3px !important;
 }
 
 
@@ -7848,20 +7809,13 @@ body.theme-gray .xv-rp-loader {
 .xv-chatbar-context-strip
 .xv-workspace-connections--chatbar {
   position: relative;
-
   z-index: 6;
-
   flex: 0 0 auto;
 }
-
-
-/* Let repository context consume available space while the
-   Plugins button remains compact. */
 
 .xv-chatbar-context-strip
 > .xv-repo-chip {
   min-width: 0;
-
   flex: 0 1 auto;
 }
 
@@ -7873,29 +7827,19 @@ body.theme-gray .xv-rp-loader {
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__preview {
   position: absolute;
-
   z-index: 120;
 
   left: 50%;
-  bottom: calc(100% + 9px);
+  bottom: calc(100% + 10px);
 
-  transform:
-    translate(
-      -50%,
-      5px
-    );
+  transform: translate(-50%, 5px);
 }
-
 
 .xv-workspace-connections--chatbar:hover
 .xv-workspace-connections__preview,
 .xv-workspace-connections--chatbar:focus-within
 .xv-workspace-connections__preview {
-  transform:
-    translate(
-      -50%,
-      0
-    );
+  transform: translate(-50%, 0);
 }
 
 
@@ -7908,16 +7852,13 @@ body.theme-gray .xv-rp-loader {
 .xv-chatbar-context-strip
 .xv-workspace-connections--chatbar {
   width: auto !important;
-
   min-width: 0 !important;
 
-  margin-left: 0.2rem !important;
-
+  margin-left: 0.38rem !important;
   padding: 0 !important;
 
   flex: 0 0 auto;
 }
-
 
 .xv-terminal-dock--idle
 .xv-workspace-connections--chatbar {
@@ -7932,11 +7873,7 @@ body.theme-gray .xv-rp-loader {
 .xv-terminal-dock[class*='terminal-skin-']
 .xv-workspace-connections--chatbar
 .xv-workspace-connections__trigger {
-  color:
-    var(
-      --xv-kimi-footer-text,
-      var(--foreground)
-    );
+  color: var(--xv-kimi-footer-text, var(--foreground));
 }
 
 
@@ -7945,53 +7882,43 @@ body.theme-gray .xv-rp-loader {
    ============================================================ */
 
 @media (max-width: 720px) {
-
   .xv-workspace-connections--chatbar {
     width: auto;
-
-    margin:
-      0
-      0
-      0
-      0.12rem !important;
+    margin: 0 0 0 0.2rem !important;
   }
-
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__trigger {
-    min-height: 24px;
-
-    gap: 4px;
-
-    padding:
-      3px
-      6px
-      3px
-      3px;
+    min-height: 28px;
+    gap: 7px;
+    padding: 4px 8px 4px 5px;
   }
-
-
-  .xv-workspace-connections--chatbar
-  .xv-workspace-connections__logo {
-    width: 28px;
-    min-width: 28px;
-  }
-
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__trigger
   > strong {
-    font-size: 9.5px;
+    font-size: 11px;
   }
 
+  .xv-workspace-connections--chatbar
+  .xv-workspace-connections__logo {
+    width: 40px;
+    min-width: 40px;
+    height: 21px;
+  }
+
+  .xv-workspace-connections--chatbar
+  .xv-workspace-connections__logo
+  > * {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    flex-basis: 18px;
+  }
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__preview {
-    width:
-      min(
-        224px,
-        calc(100vw - 28px)
-      );
+    width: min(224px, calc(100vw - 28px));
   }
 }
 
@@ -8001,53 +7928,43 @@ body.theme-gray .xv-rp-loader {
    ============================================================ */
 
 @media (max-width: 560px) {
-
   .xv-chatbar-context-strip
   .xv-workspace-connections--chatbar {
     width: auto !important;
-
     min-width: 0;
-
     margin-left: auto !important;
-
     flex: 0 0 auto;
   }
 
-
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__trigger {
-    min-height: 23px;
-
-    padding:
-      2px
-      5px
-      2px
-      3px;
-
-    border-radius: 6px;
+    min-height: 27px;
+    gap: 6px;
+    padding: 3px 7px 3px 4px;
+    border-radius: 8px;
   }
 
+  .xv-workspace-connections--chatbar
+  .xv-workspace-connections__trigger
+  > strong {
+    font-size: 10px;
+  }
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__logo {
-    width: 27px;
-    min-width: 27px;
-
-    height: 17px;
+    width: 36px;
+    min-width: 36px;
+    height: 19px;
   }
-
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__logo
   > * {
-    width: 14px !important;
-    height: 14px !important;
-
-    min-width: 14px;
-
-    flex-basis: 14px;
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px;
+    flex-basis: 17px;
   }
-
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__logo
@@ -8055,14 +7972,7 @@ body.theme-gray .xv-rp-loader {
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__logo
   > :nth-child(3) {
-    margin-left: -4px !important;
-  }
-
-
-  .xv-workspace-connections--chatbar
-  .xv-workspace-connections__trigger
-  > strong {
-    font-size: 9px;
+    margin-left: -3px !important;
   }
 }
 
@@ -8072,26 +7982,39 @@ body.theme-gray .xv-rp-loader {
    ============================================================ */
 
 @media (max-width: 390px) {
-
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__trigger {
-    gap: 3px;
-
-    padding-right: 4px;
+    gap: 5px;
+    padding-right: 5px;
   }
 
+  .xv-workspace-connections--chatbar
+  .xv-workspace-connections__trigger
+  > strong {
+    font-size: 9.5px;
+  }
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__logo {
-    width: 25px;
-    min-width: 25px;
+    width: 33px;
+    min-width: 33px;
   }
+
+  .xv-workspace-connections--chatbar
+  .xv-workspace-connections__logo
+  > * {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px;
+    flex-basis: 15px;
+  }
+}
 
 
   .xv-workspace-connections--chatbar
   .xv-workspace-connections__trigger
   > strong {
-    font-size: 8.5px;
+    font-size: 9px;
   }
 }
 
