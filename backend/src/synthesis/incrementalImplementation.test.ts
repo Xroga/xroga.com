@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import {
   IncrementalImplementationError,
   IMPLEMENTATION_ATTEMPT_TIMEOUT_MS,
+  IMPLEMENTATION_FILE_CONCURRENCY,
   MAX_PLANNED_FILES,
   explicitlyMentionedExistingFiles,
   implementIncrementally,
@@ -50,6 +51,10 @@ const CANDIDATES = [{ modelId: 'glm_5_3_flash' }, { modelId: 'glm_5_3' }, { mode
 
 test('each provider attempt is bounded before the approved fallback chain advances', () => {
   assert.equal(IMPLEMENTATION_ATTEMPT_TIMEOUT_MS, 60_000);
+});
+
+test('independent file generation uses conservative bounded concurrency', () => {
+  assert.equal(IMPLEMENTATION_FILE_CONCURRENCY, 2);
 });
 
 test('an explicitly named existing file skips the manifest call and receives its current content', async () => {
@@ -179,6 +184,45 @@ test('a truncated file falls back to the next model rather than losing the proje
   const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
   assert.equal(files.length, 3);
   for (const file of files) assert.equal(file.content, 'fn main() {}');
+});
+
+test('an unavailable provider is quarantined for the rest of one implementation run', async () => {
+  const complete = fakeCompletion((modelId, system) => {
+    if (system.includes('planning the file list')) return { text: PLAN };
+    if (modelId === 'glm_5_3_flash') throw new Error('provider temporarily unavailable');
+    return { text: 'file body' };
+  });
+
+  const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
+  assert.equal(files.length, 3);
+  assert.equal(
+    complete.calls.filter((call) => call.modelId === 'glm_5_3_flash').length,
+    3,
+    'the manifest and first concurrent batch may use it, but later files must skip the outage',
+  );
+});
+
+test('two independent files are generated concurrently while result order stays deterministic', async () => {
+  let active = 0;
+  let peak = 0;
+  const complete = (async (_modelId: string, messages: ChatMessage[]) => {
+    const system = String(messages[0]?.content ?? '');
+    if (system.includes('planning the file list')) {
+      return { text: PLAN, finishReason: 'stop', outputTokens: PLAN.length };
+    }
+    active += 1;
+    peak = Math.max(peak, active);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    active -= 1;
+    const user = String(messages[1]?.content ?? '');
+    const path = user.match(/Write exactly this one file: ([^\n]+)/)?.[1] ?? 'unknown';
+    return { text: path, finishReason: 'stop', outputTokens: 1 };
+  }) as CompletionFn;
+
+  const files = await implementIncrementally({ brief: 'b', candidates: CANDIDATES, complete });
+  assert.equal(peak, IMPLEMENTATION_FILE_CONCURRENCY);
+  assert.deepEqual(files.map((file) => file.path), ['Cargo.toml', 'src/main.rs', 'README.md']);
+  assert.deepEqual(files.map((file) => file.content), ['Cargo.toml', 'src/main.rs', 'README.md']);
 });
 
 test('a failure names the file and every model tried', async () => {
