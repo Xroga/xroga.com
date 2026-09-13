@@ -18,3 +18,5 @@ export * from './productionOperations.js';
 export * from './xrogaProductionAdapters.js';
 export * from './SoftwareAgentService.js';
 export * from './softwareAgentContractFactory.js';
+export * from './softwareAgentFeatureFlags.js';
+export * from './softwareExecutorSelector.js';
