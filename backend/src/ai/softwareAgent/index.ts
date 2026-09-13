@@ -21,3 +21,4 @@ export * from './softwareAgentContractFactory.js';
 export * from './softwareAgentFeatureFlags.js';
 export * from './softwareExecutorSelector.js';
 export * from './SoftwareAgentRuntime.js';
+export * from './softwareAgentModelAdapter.js';
