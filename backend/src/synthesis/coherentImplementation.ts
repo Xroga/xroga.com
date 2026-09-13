@@ -1,4 +1,9 @@
-import { chatCompletionStream, estimateTokens, type ChatMessage } from '../ai/openaiCompat.js';
+import {
+  chatCompletionStream,
+  estimateTokens,
+  providerReasoningControls,
+  type ChatMessage,
+} from '../ai/openaiCompat.js';
 import { runBuilderAttempt, classifyBuilderFailure, type BuilderAttemptFailure } from '../ai/builderAttempt.js';
 import { costUsdForTokens, MODELS, type ModelId } from '../ai/models.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
@@ -459,7 +464,23 @@ export async function implementCoherently(input: {
   const attemptedProviders = new Set<string>();
   let realAttempts = 0;
 
-  for (const candidate of input.candidates) {
+  // Keep the router's primary choice. For its single independent fallback, prefer an
+  // approved transport that documents a direct-output/no-reasoning request. A provider
+  // without that control remains eligible only when no controlled alternative exists;
+  // otherwise it can spend the entire bounded window on private reasoning and never emit
+  // the file protocol this stage requires.
+  const [primary, ...fallbacks] = input.candidates;
+  const directOutputScore = (candidate: ModelCandidate): number => {
+    const provider = MODELS[candidate.modelId as ModelId]?.provider;
+    return provider && Object.keys(providerReasoningControls(provider, 'none')).length ? 0 : 1;
+  };
+  const candidates = primary
+    ? [primary, ...fallbacks.map((candidate, index) => ({ candidate, index }))
+      .sort((left, right) => directOutputScore(left.candidate) - directOutputScore(right.candidate) || left.index - right.index)
+      .map(({ candidate }) => candidate)]
+    : [];
+
+  for (const candidate of candidates) {
     if (unavailable.has(candidate.modelId)) continue;
     const provider = MODELS[candidate.modelId as ModelId]?.provider ?? `unknown:${candidate.modelId}`;
     // The fallback budget is a provider budget, not a model-name budget. Two models on

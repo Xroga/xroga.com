@@ -15,6 +15,7 @@ const CANDIDATES = [
   { modelId: 'glm_5_3_flash' },
   { modelId: 'glm_5_3' },
   { modelId: 'kimi_k3' },
+  { modelId: 'deepseek_v4_flash' },
 ];
 
 const contract = (paths: string[]) => ({
@@ -147,7 +148,7 @@ test('a continuation cannot repeat completed files or widen the validated manife
   assert.equal(mergeCoherentContinuation(first, frame('src/c.ts', 'outside')).status, 'invalid');
 });
 
-test('a provider failure uses one distinct healthy fallback and never spends both attempts on one transport', async () => {
+test('a provider failure uses one direct-output-capable fallback and never spends both attempts on one transport', async () => {
   const paths = ['index.html'];
   const complete = fakeCompletion((modelId) => {
     if (modelId === 'glm_5_3_flash') {
@@ -159,7 +160,7 @@ test('a provider failure uses one distinct healthy fallback and never spends bot
   });
   const files = await implementCoherently({ brief: 'Create a page.', candidates: CANDIDATES, complete });
   assert.equal(files[0]!.path, 'index.html');
-  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'kimi_k3']);
+  assert.deepEqual(complete.calls.map((call) => call.modelId), ['glm_5_3_flash', 'deepseek_v4_flash']);
 });
 
 test('an existing-repository patch returns only intended files and sends compact redacted context', async () => {
