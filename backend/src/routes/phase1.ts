@@ -55,6 +55,11 @@ import {
   readBusinessData,
 } from '../services/integrations/businessRead.js';
 
+import {
+  executePreparedBusinessAction,
+  prepareBusinessAction,
+} from '../services/integrations/businessAction.js';
+
 const router =
   Router();
 
@@ -89,6 +94,7 @@ function displayToolkitName(
 function buildBusinessEvidence(
   input: {
     toolkit: string;
+
     evidenceText: string;
   },
 ): string {
@@ -126,7 +132,54 @@ function buildBusinessEvidence(
     '',
 
     'Answer the original user request using only the relevant portions of this evidence.',
-  ].join('\n');
+  ].join(
+    '\n',
+  );
+}
+
+function businessRuntimeFailure(
+  error: unknown,
+  fallbackMessage: string,
+): RuntimeFailure {
+  const code =
+    (
+      error as {
+        code?: string;
+      }
+    )?.code;
+
+  const message =
+    error instanceof
+    Error
+      ? error.message
+      : fallbackMessage;
+
+  const authRelated =
+    code ===
+      'COMPOSIO_UPSTREAM_ERROR' &&
+    /authoriz|authenticat|permission|scope/i.test(
+      message,
+    );
+
+  return new RuntimeFailure(
+    code ===
+      'COMPOSIO_NOT_CONFIGURED'
+      ? 'PROVIDER_UNAVAILABLE'
+      : authRelated
+        ? 'CAPABILITY_AUTH_REQUIRED'
+        : 'TOOL_UNAVAILABLE',
+
+    message,
+
+    {
+      cause:
+        error,
+
+      retryable:
+        code !==
+        'COMPOSIO_NOT_CONFIGURED',
+    },
+  );
 }
 
 /**
@@ -139,37 +192,53 @@ router.post(
     res,
   ) => {
     const userId =
-      requireUserId(req);
+      requireUserId(
+        req,
+      );
 
-    if (!userId) {
+    if (
+      !userId
+    ) {
       return res
-        .status(401)
-        .json({
-          error:
-            'Sign in required',
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
 
-          code:
-            'UNAUTHORIZED',
-        });
+            code:
+              'UNAUTHORIZED',
+          },
+        );
     }
 
     const message =
       typeof req.body
         ?.message ===
       'string'
-        ? req.body.message.trim()
+        ? req.body
+            .message
+            .trim()
         : '';
 
-    if (!message) {
+    if (
+      !message
+    ) {
       return res
-        .status(400)
-        .json({
-          error:
-            'message required',
+        .status(
+          400,
+        )
+        .json(
+          {
+            error:
+              'message required',
 
-          code:
-            'INVALID_GOAL',
-        });
+            code:
+              'INVALID_GOAL',
+          },
+        );
     }
 
     try {
@@ -257,8 +326,11 @@ router.post(
                     .map(
                       (
                         item: {
-                          mimeType?: unknown;
-                          name?: unknown;
+                          mimeType?:
+                            unknown;
+
+                          name?:
+                            unknown;
                         },
                       ) => ({
                         mediaType:
@@ -296,9 +368,10 @@ router.post(
       );
     } catch (err) {
       const error =
-        err as Error & {
-          code?: string;
-        };
+        err as
+          Error & {
+            code?: string;
+          };
 
       const failure =
         publicRuntimeFailure(
@@ -333,10 +406,11 @@ router.post(
 );
 
 /**
- * Chat, research, repository-read and Xroga Connect
- * business-read lane.
+ * Chat, research, repository-read and
+ * Xroga Connect business read/action lane.
  *
- * Build requests remain on the durable workspace pipeline.
+ * Build requests remain on the durable
+ * workspace pipeline.
  */
 router.post(
   '/chat',
@@ -345,18 +419,26 @@ router.post(
     res,
   ) => {
     const userId =
-      requireUserId(req);
+      requireUserId(
+        req,
+      );
 
-    if (!userId) {
+    if (
+      !userId
+    ) {
       return res
-        .status(401)
-        .json({
-          error:
-            'Sign in required',
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
 
-          code:
-            'UNAUTHORIZED',
-        });
+            code:
+              'UNAUTHORIZED',
+          },
+        );
     }
 
     const message =
@@ -391,16 +473,21 @@ router.post(
       )
     ) {
       return res
-        .status(400)
-        .json({
-          error:
-            'message or attachments required',
-        });
+        .status(
+          400,
+        )
+        .json(
+          {
+            error:
+              'message or attachments required',
+          },
+        );
     }
 
     const history =
       Array.isArray(
-        req.body?.history,
+        req.body
+          ?.history,
       )
         ? (
             req.body
@@ -434,7 +521,8 @@ router.post(
             'This request does not include a valid semantic execution contract. Please retry.',
 
             {
-              status: 400,
+              status:
+                400,
 
               retryable:
                 true,
@@ -460,28 +548,308 @@ router.post(
             'business.read',
           );
 
+      const requiresBusinessAction =
+        semanticGoal
+          .data
+          .requiredCapabilities
+          .includes(
+            'business.action',
+          );
+
       /*
-       * V1 safety boundary:
+       * Attachment analysis uses a separate
+       * vision/document trust boundary.
        *
-       * Attachment analysis follows a dedicated vision/document
-       * system prompt. Until business evidence is added to that
-       * separate trusted channel, do not combine the two in one
-       * execution.
+       * Do not let uploaded content silently
+       * become instructions for a connected
+       * app read or state-changing action.
        */
       if (
-        requiresBusinessRead &&
+        (
+          requiresBusinessRead ||
+          requiresBusinessAction
+        ) &&
         attachments?.length
       ) {
         throw new RuntimeFailure(
           'CAPABILITY_UNSUPPORTED',
 
-          'Xroga Connect can read connected business data in chat, but combining business data with uploaded attachments is not enabled yet. Please ask for the business data first, then analyze the attachment separately.',
+          'Xroga Connect cannot combine uploaded attachments with connected-app reads or actions in the same execution yet. Please complete the connected-app request and attachment analysis as separate steps.',
 
           {
-            status: 422,
+            status:
+              422,
 
             retryable:
               false,
+          },
+        );
+      }
+
+      /*
+       * A read-then-act workflow needs a
+       * dedicated data-flow policy so
+       * untrusted retrieved content cannot
+       * become action instructions.
+       *
+       * Keep the single-turn mutation lane
+       * limited to explicit actions whose
+       * arguments come from the user request.
+       */
+      if (
+        requiresBusinessRead &&
+        requiresBusinessAction
+      ) {
+        throw new RuntimeFailure(
+          'CAPABILITY_UNSUPPORTED',
+
+          'Xroga Connect can read connected data and can perform explicit connected-app actions, but automatic read-then-act workflows are not enabled in one turn yet. Ask for the data first, then request the exact action you want.',
+
+          {
+            status:
+              422,
+
+            retryable:
+              false,
+          },
+        );
+      }
+
+      /*
+       * Connected-app actions are executed
+       * server-side before any general chat
+       * model is asked to respond.
+       *
+       * The original user message is the only
+       * natural-language input used to prepare
+       * the action. Retrieved external content
+       * is never promoted into action intent.
+       */
+      if (
+        requiresBusinessAction
+      ) {
+        let prepared;
+
+        try {
+          prepared =
+            await prepareBusinessAction(
+              {
+                userId,
+
+                useCase:
+                  message
+                    .trim(),
+              },
+            );
+        } catch (error) {
+          throw businessRuntimeFailure(
+            error,
+
+            'Xroga Connect could not prepare the requested connected-app action.',
+          );
+        }
+
+        if (
+          prepared.status ===
+          'connection_required'
+        ) {
+          const usage =
+            await getUsage(
+              userId,
+            );
+
+          const appName =
+            displayToolkitName(
+              prepared.toolkit,
+            );
+
+          return res.json(
+            {
+              response:
+                `I need permission to use ${appName} for this action.\n\n` +
+                `[Connect or re-authorize ${appName}](${prepared.connectUrl})\n\n` +
+                'After authorization, retry the same action request.',
+
+              intent:
+                'business_action_connection_required',
+
+              usage:
+                usageToTokenUsage(
+                  usage,
+                ),
+
+              webSources:
+                [],
+
+              engine:
+                'xroga',
+
+              connectRequired:
+                true,
+
+              connectToolkit:
+                prepared.toolkit,
+
+              connectUrl:
+                prepared.connectUrl,
+
+              businessAction:
+                true,
+            },
+          );
+        }
+
+        if (
+          prepared.status ===
+          'unavailable'
+        ) {
+          throw new RuntimeFailure(
+            'TOOL_UNAVAILABLE',
+
+            prepared.message,
+
+            {
+              retryable:
+                true,
+            },
+          );
+        }
+
+        let execution;
+
+        try {
+          execution =
+            await executePreparedBusinessAction(
+              {
+                userId,
+
+                plan:
+                  prepared.plan,
+
+                authorization: {
+                  /*
+                   * business.action can only
+                   * reach this branch when the
+                   * semantic planner selected it
+                   * from the user's current
+                   * explicit request.
+                   */
+                  explicitUserAuthorization:
+                    true,
+                },
+              },
+            );
+        } catch (error) {
+          throw businessRuntimeFailure(
+            error,
+
+            'Xroga Connect could not complete the requested connected-app action.',
+          );
+        }
+
+        if (
+          execution.status ===
+          'confirmation_required'
+        ) {
+          const usage =
+            await getUsage(
+              userId,
+            );
+
+          return res.json(
+            {
+              response:
+                `${execution.message}\n\n` +
+                'Nothing has been changed yet. Xroga is waiting for your confirmation.',
+
+              intent:
+                'business_action_confirmation_required',
+
+              usage:
+                usageToTokenUsage(
+                  usage,
+                ),
+
+              webSources:
+                [],
+
+              engine:
+                'xroga',
+
+              businessAction:
+                true,
+
+              businessActionConfirmationRequired:
+                true,
+
+              businessActionSummary:
+                execution.plan
+                  .summary,
+
+              businessActionRisk:
+                execution.plan
+                  .risk,
+
+              businessActionToolkit:
+                execution.plan
+                  .toolkit,
+            },
+          );
+        }
+
+        const usage =
+          await getUsage(
+            userId,
+          );
+
+        const appName =
+          displayToolkitName(
+            execution.toolkit,
+          );
+
+        /*
+         * Do not send a successful action
+         * through a second language-model
+         * turn. The server already has
+         * authoritative execution evidence;
+         * a deterministic acknowledgement
+         * prevents duplicate-action wording,
+         * web-research contamination and
+         * prompt injection from provider
+         * result data.
+         */
+        return res.json(
+          {
+            response:
+              `Done — ${prepared.plan.summary}\n\n` +
+              `${appName} confirmed the action completed.`,
+
+            intent:
+              'business_action_completed',
+
+            usage:
+              usageToTokenUsage(
+                usage,
+              ),
+
+            webSources:
+              [],
+
+            engine:
+              'xroga',
+
+            businessAction:
+              true,
+
+            businessActionCompleted:
+              true,
+
+            businessActionToolkit:
+              execution.toolkit,
+
+            businessActionRisk:
+              prepared.plan
+                .risk,
           },
         );
       }
@@ -509,32 +877,10 @@ router.post(
               },
             );
         } catch (error) {
-          const code =
-            (
-              error as {
-                code?: string;
-              }
-            )?.code;
+          throw businessRuntimeFailure(
+            error,
 
-          throw new RuntimeFailure(
-            code ===
-              'COMPOSIO_NOT_CONFIGURED'
-              ? 'PROVIDER_UNAVAILABLE'
-              : 'TOOL_UNAVAILABLE',
-
-            error instanceof
-            Error
-              ? error.message
-              : 'Xroga Connect could not complete the business-data read.',
-
-            {
-              cause:
-                error,
-
-              retryable:
-                code !==
-                'COMPOSIO_NOT_CONFIGURED',
-            },
+            'Xroga Connect could not complete the business-data read.',
           );
         }
 
@@ -554,36 +900,39 @@ router.post(
                 .toolkit,
             );
 
-          return res.json({
-            response:
-              `I need access to ${appName} before I can read that data.\n\n` +
-              `[Connect ${appName}](${businessResult.connectUrl})\n\n` +
-              'After you authorize the connection, retry your request.',
+          return res.json(
+            {
+              response:
+                `I need access to ${appName} before I can read that data.\n\n` +
+                `[Connect ${appName}](${businessResult.connectUrl})\n\n` +
+                'After you authorize the connection, retry your request.',
 
-            intent:
-              'business_connection_required',
+              intent:
+                'business_connection_required',
 
-            usage:
-              usageToTokenUsage(
-                usage,
-              ),
+              usage:
+                usageToTokenUsage(
+                  usage,
+                ),
 
-            webSources: [],
+              webSources:
+                [],
 
-            engine:
-              'xroga',
+              engine:
+                'xroga',
 
-            connectRequired:
-              true,
+              connectRequired:
+                true,
 
-            connectToolkit:
-              businessResult
-                .toolkit,
+              connectToolkit:
+                businessResult
+                  .toolkit,
 
-            connectUrl:
-              businessResult
-                .connectUrl,
-          });
+              connectUrl:
+                businessResult
+                  .connectUrl,
+            },
+          );
         }
 
         if (
@@ -687,8 +1036,10 @@ router.post(
         let sourceFiles:
           Array<{
             path: string;
+
             content: string;
-          }> = [];
+          }> =
+          [];
 
         try {
           sourceFiles =
@@ -716,7 +1067,7 @@ router.post(
 
               reason:
                 error instanceof
-                Error
+                  Error
                   ? error.message
                   : 'unknown error',
             },
@@ -724,39 +1075,48 @@ router.post(
         }
 
         projectEvidence =
-          JSON.stringify({
-            repo:
-              analysis.repoName,
+          JSON.stringify(
+            {
+              repo:
+                analysis
+                  .repoName,
 
-            branch:
-              analysis.defaultBranch,
+              branch:
+                analysis
+                  .defaultBranch,
 
-            summary:
-              analysis.summary,
+              summary:
+                analysis
+                  .summary,
 
-            techStack:
-              analysis.techStack,
+              techStack:
+                analysis
+                  .techStack,
 
-            fileCount:
-              analysis.fileCount,
+              fileCount:
+                analysis
+                  .fileCount,
 
-            topLevelEntries:
-              analysis
-                .topLevelEntries,
+              topLevelEntries:
+                analysis
+                  .topLevelEntries,
 
-            treeSample:
-              analysis
-                .treeSample,
+              treeSample:
+                analysis
+                  .treeSample,
 
-            report:
-              analysis.report,
+              report:
+                analysis
+                  .report,
 
-            sourceFiles,
+              sourceFiles,
 
-            sourceEvidenceComplete:
-              sourceFiles.length >
-              0,
-          });
+              sourceEvidenceComplete:
+                sourceFiles
+                  .length >
+                0,
+            },
+          );
       }
 
       const promptForChat =
@@ -767,7 +1127,9 @@ router.post(
               '',
 
               businessEvidence,
-            ].join('\n')
+            ].join(
+              '\n',
+            )
           : message.trim();
 
       const result =
@@ -783,7 +1145,8 @@ router.post(
             attachments,
 
             goalContract:
-              semanticGoal.data,
+              semanticGoal
+                .data,
 
             ...(projectEvidence
               ? {
@@ -793,36 +1156,39 @@ router.post(
           },
         );
 
-      return res.json({
-        response:
-          result.response,
+      return res.json(
+        {
+          response:
+            result.response,
 
-        intent:
-          result.intent,
+          intent:
+            result.intent,
 
-        usage:
-          result.usage,
+          usage:
+            result.usage,
 
-        webSources:
-          result.webSources,
+          webSources:
+            result.webSources,
 
-        engine:
-          'xroga',
+          engine:
+            'xroga',
 
-        ...(businessToolkit
-          ? {
-              businessRead:
-                true,
+          ...(businessToolkit
+            ? {
+                businessRead:
+                  true,
 
-              businessToolkit,
-            }
-          : {}),
-      });
+                businessToolkit,
+              }
+            : {}),
+        },
+      );
     } catch (err) {
       const error =
-        err as Error & {
-          code?: string;
-        };
+        err as
+          Error & {
+            code?: string;
+          };
 
       if (
         error.code ===
@@ -831,14 +1197,18 @@ router.post(
           'USE_BUILD_PIPELINE'
       ) {
         return res
-          .status(409)
-          .json({
-            error:
-              'This looks like a build request - use the workspace build pipeline.',
+          .status(
+            409,
+          )
+          .json(
+            {
+              error:
+                'This looks like a build request - use the workspace build pipeline.',
 
-            code:
-              'USE_BUILD_PIPELINE',
-          });
+              code:
+                'USE_BUILD_PIPELINE',
+            },
+          );
       }
 
       if (
@@ -854,17 +1224,21 @@ router.post(
         )
       ) {
         return res
-          .status(402)
-          .json({
-            error:
-              error.message,
+          .status(
+            402,
+          )
+          .json(
+            {
+              error:
+                error.message,
 
-            code:
-              'CAPACITY_UNAVAILABLE',
+              code:
+                'CAPACITY_UNAVAILABLE',
 
-            paymentLink:
-              '/pricing',
-          });
+              paymentLink:
+                '/pricing',
+            },
+          );
       }
 
       console.error(
@@ -902,18 +1276,26 @@ router.get(
     res,
   ) => {
     const userId =
-      requireUserId(req);
+      requireUserId(
+        req,
+      );
 
-    if (!userId) {
+    if (
+      !userId
+    ) {
       return res
-        .status(401)
-        .json({
-          error:
-            'Sign in required',
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
 
-          code:
-            'UNAUTHORIZED',
-        });
+            code:
+              'UNAUTHORIZED',
+          },
+        );
     }
 
     try {
@@ -922,12 +1304,14 @@ router.get(
           userId,
         );
 
-      return res.json({
-        usage:
-          usageToTokenUsage(
-            usage,
-          ),
-      });
+      return res.json(
+        {
+          usage:
+            usageToTokenUsage(
+              usage,
+            ),
+        },
+      );
     } catch {
       console.error(
         '[phase1/usage]',
@@ -938,18 +1322,23 @@ router.get(
       );
 
       return res
-        .status(500)
-        .json({
-          error:
-            'Failed to load usage',
-        });
+        .status(
+          500,
+        )
+        .json(
+          {
+            error:
+              'Failed to load usage',
+          },
+        );
     }
   },
 );
 
 /**
  * Customer-safe plan information.
- * Internal provider economics are never returned.
+ * Internal provider economics are never
+ * returned.
  */
 router.get(
   '/economics',
@@ -958,40 +1347,54 @@ router.get(
     res,
   ) => {
     const userId =
-      requireUserId(req);
+      requireUserId(
+        req,
+      );
 
-    if (!userId) {
+    if (
+      !userId
+    ) {
       return res
-        .status(401)
-        .json({
-          error:
-            'Sign in required',
-        });
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+          },
+        );
     }
 
     try {
-      res.json({
-        plan:
-          'Xroga AI',
+      res.json(
+        {
+          plan:
+            'Xroga AI',
 
-        price:
-          `$${MONTHLY_USER_PRICE_USD} per 30 days`,
+          price:
+            `$${MONTHLY_USER_PRICE_USD} per 30 days`,
 
-        entitlement:
-          await getProviderEntitlementStatus(
-            userId,
-          ),
-      });
+          entitlement:
+            await getProviderEntitlementStatus(
+              userId,
+            ),
+        },
+      );
     } catch {
       res
-        .status(503)
-        .json({
-          error:
-            'Plan capacity is temporarily unavailable',
+        .status(
+          503,
+        )
+        .json(
+          {
+            error:
+              'Plan capacity is temporarily unavailable',
 
-          code:
-            'BILLING_UNAVAILABLE',
-        });
+            code:
+              'BILLING_UNAVAILABLE',
+          },
+        );
     }
   },
 );
@@ -1003,17 +1406,21 @@ router.post(
     res,
   ) => {
     res
-      .status(410)
-      .json({
-        success:
-          false,
+      .status(
+        410,
+      )
+      .json(
+        {
+          success:
+            false,
 
-        message:
-          'Emergency capacity grants are not available on the current plan.',
+          message:
+            'Emergency capacity grants are not available on the current plan.',
 
-        code:
-          'NOT_SUPPORTED',
-      });
+          code:
+            'NOT_SUPPORTED',
+        },
+      );
   },
 );
 
@@ -1023,17 +1430,21 @@ router.get(
     _req,
     res,
   ) => {
-    res.json({
-      ok: true,
+    res.json(
+      {
+        ok:
+          true,
 
-      service:
-        'xroga-ai',
-    });
+        service:
+          'xroga-ai',
+      },
+    );
   },
 );
 
 /**
- * Non-mutating quota preflight used by the workspace.
+ * Non-mutating quota preflight used by
+ * the workspace.
  */
 router.get(
   '/quota-check',
@@ -1042,15 +1453,23 @@ router.get(
     res,
   ) => {
     const userId =
-      requireUserId(req);
+      requireUserId(
+        req,
+      );
 
-    if (!userId) {
+    if (
+      !userId
+    ) {
       return res
-        .status(401)
-        .json({
-          error:
-            'Sign in required',
-        });
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+          },
+        );
     }
 
     try {
@@ -1059,31 +1478,40 @@ router.get(
           userId,
         );
 
-      res.json({
-        ok: true,
+      res.json(
+        {
+          ok:
+            true,
 
-        usage:
-          usageToTokenUsage(
-            usage,
-          ),
-      });
+          usage:
+            usageToTokenUsage(
+              usage,
+            ),
+        },
+      );
     } catch (err) {
       const error =
-        err as Error & {
-          code?: string;
-        };
+        err as
+          Error & {
+            code?: string;
+          };
 
       res
-        .status(402)
-        .json({
-          ok: false,
+        .status(
+          402,
+        )
+        .json(
+          {
+            ok:
+              false,
 
-          error:
-            error.message,
+            error:
+              error.message,
 
-          code:
-            error.code,
-        });
+            code:
+              error.code,
+          },
+        );
     }
   },
 );
