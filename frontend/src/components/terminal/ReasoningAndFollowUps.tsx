@@ -1,42 +1,101 @@
-/** Human-readable duration used by the live request surface. */
-export function formatElapsed(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  if (safe < 60) return `${safe}s`;
+'use client';
 
-  const minutes = Math.floor(safe / 60);
-  const rest = safe % 60;
-
-  return rest === 0
-    ? `${minutes}m`
-    : `${minutes}m ${rest}s`;
-}
-
-/**
- * The backend normally emits a real progress event almost immediately. Keep the
- * client-only state out of view for a moment so fast requests do not flicker.
- */
-export const WAITING_LINE_AFTER_SECONDS = 2;
+import { cn } from '@/lib/utils';
+import {
+  extractImagesFromContent,
+  stripImageMarkdown,
+  parseProviderFromContent,
+  isFailedImageContent,
+} from '@/lib/parseImageContent';
+import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
+import { PlainAiResponse } from '@/lib/plainAiText';
+import { isMathSolutionContent } from '@/lib/mathDetect';
+import { ImageStudioCard } from './ImageStudioCard';
 
 /**
- * Client-only wording used before the first verified backend progress event arrives.
+ * Route structural markdown and interactive Xroga links through the markdown renderer.
  *
- * It deliberately avoids "build service", model names, percentages, or invented
- * execution steps because the same workspace surface handles chat, Xroga Connect,
- * research and builds. The only fact the browser knows here is that the request is
- * active and Xroga has not returned its first progress event yet.
+ * Xroga Connect persists interactive cards as safe markdown links so they survive
+ * transcript reloads. If a response contains only one of those links, treating it as
+ * plain text exposes implementation syntax such as `[Review action](...)` to users.
  */
-export function waitingLine(elapsedSeconds: number): string {
-  if (elapsedSeconds < 8) {
-    return 'Getting things ready…';
-  }
-
-  if (elapsedSeconds < 20) {
-    return 'Working on your request…';
-  }
-
-  return 'Still working on your request…';
+function hasMarkdown(content: string): boolean {
+  return (
+    /^#{1,4}\s/m.test(content) ||
+    /^\|.+\|/m.test(content) ||
+    /^[-*•]\s/m.test(content) ||
+    /^>\s/m.test(content) ||
+    /\[[^\]]+\]\((?:\/xroga\/tool-ui\?payload=|\/dashboard\/actions\/confirm\/|https?:\/\/[^)\s]+)[^)]*\)/i.test(
+      content,
+    )
+  );
 }
 
-export function shouldShowWaitingLine(elapsedSeconds: number): boolean {
-  return elapsedSeconds >= WAITING_LINE_AFTER_SECONDS;
+/** Modern AI response — professional markdown or structured plain text */
+export function ModernResponseText({
+  content,
+  streaming,
+}: {
+  content: string;
+  streaming?: boolean;
+}) {
+  const safeContent = typeof content === 'string' ? content : '';
+
+  if (!safeContent && streaming) {
+    return null;
+  }
+
+  const images = extractImagesFromContent(safeContent);
+  const textOnly = stripImageMarkdown(safeContent);
+  const provider = parseProviderFromContent(safeContent);
+
+  if (isFailedImageContent(safeContent) && images.length === 0) {
+    return (
+      <div className="xv-response-text">
+        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">
+          {textOnly || safeContent}
+        </p>
+      </div>
+    );
+  }
+
+  if (images.length > 0) {
+    return (
+      <div
+        className={cn('xv-response-text space-y-2', streaming && 'xv-streaming')}
+      >
+        {textOnly && (
+          <FormattedAiMarkdown content={textOnly} streaming={streaming} />
+        )}
+
+        {images.map((img, i) => (
+          <ImageStudioCard
+            key={`studio-img-${i}`}
+            data={{
+              type: 'image',
+              imageUrl: img.url,
+              provider,
+              prompt: img.alt !== 'Generated image' ? img.alt : undefined,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn('xv-response-text', streaming && 'xv-streaming')}
+    >
+      {hasMarkdown(safeContent) && !isMathSolutionContent(safeContent) ? (
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} />
+      ) : (
+        <PlainAiResponse
+          content={safeContent}
+          streaming={streaming}
+          mathMode={isMathSolutionContent(safeContent)}
+        />
+      )}
+    </div>
+  );
 }
