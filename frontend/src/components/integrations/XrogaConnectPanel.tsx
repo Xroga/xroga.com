@@ -34,64 +34,99 @@ import {
 
 const QUICK_APPS = [
   {
-    name: 'Gmail',
+    name:
+      'Gmail',
+
     query:
-      'read recent Gmail emails',
+      'find Gmail email and message capabilities',
   },
+
   {
-    name: 'Google Calendar',
+    name:
+      'Google Calendar',
+
     query:
-      'read upcoming Google Calendar events',
+      'find Google Calendar event capabilities',
   },
+
   {
-    name: 'Google Drive',
+    name:
+      'Google Drive',
+
     query:
-      'find and read Google Drive files',
+      'find Google Drive file capabilities',
   },
+
   {
-    name: 'Slack',
+    name:
+      'Slack',
+
     query:
-      'read recent Slack messages',
+      'find Slack message and channel capabilities',
   },
+
   {
-    name: 'Stripe',
+    name:
+      'Stripe',
+
     query:
-      'read recent Stripe payments and sales',
+      'find Stripe payment and customer capabilities',
   },
+
   {
-    name: 'Shopify',
+    name:
+      'Shopify',
+
     query:
-      'read Shopify orders and store information',
+      'find Shopify order and store capabilities',
   },
+
   {
-    name: 'HubSpot',
+    name:
+      'HubSpot',
+
     query:
-      'read HubSpot contacts and deals',
+      'find HubSpot contact and deal capabilities',
   },
+
   {
-    name: 'Notion',
+    name:
+      'Notion',
+
     query:
-      'read Notion pages',
+      'find Notion page and database capabilities',
   },
+
   {
-    name: 'Airtable',
+    name:
+      'Airtable',
+
     query:
-      'read Airtable records',
+      'find Airtable record capabilities',
   },
+
   {
-    name: 'QuickBooks',
+    name:
+      'QuickBooks',
+
     query:
-      'read QuickBooks accounting information',
+      'find QuickBooks accounting capabilities',
   },
+
   {
-    name: 'Linear',
+    name:
+      'Linear',
+
     query:
-      'read Linear issues',
+      'find Linear issue and project capabilities',
   },
+
   {
-    name: 'Sentry',
+    name:
+      'Sentry',
+
     query:
-      'read Sentry errors and issues',
+      'find Sentry error and issue capabilities',
   },
 ] as const;
 
@@ -99,14 +134,92 @@ function displayToolkitName(
   toolkit: string,
 ): string {
   return toolkit
-    .split(/[_-]/g)
-    .filter(Boolean)
+    .split(
+      /[_-]/g,
+    )
+    .filter(
+      Boolean,
+    )
     .map(
       (part) =>
-        part.charAt(0).toUpperCase() +
+        part
+          .charAt(0)
+          .toUpperCase() +
         part.slice(1),
     )
-    .join(' ');
+    .join(
+      ' ',
+    );
+}
+
+function ToolkitMark({
+  item,
+}: {
+  item:
+    XrogaConnectToolkit;
+}) {
+  const [
+    failed,
+    setFailed,
+  ] =
+    useState(
+      false,
+    );
+
+  const name =
+    item.name ||
+    displayToolkitName(
+      item.toolkit,
+    );
+
+  if (
+    item.logo &&
+    !failed
+  ) {
+    return (
+      <img
+        src={
+          item.logo
+        }
+        alt=""
+        className="h-9 w-9 shrink-0 rounded-xl border border-[var(--border-subtle)] bg-white object-contain p-1.5"
+        onError={() =>
+          setFailed(
+            true,
+          )
+        }
+      />
+    );
+  }
+
+  const initials =
+    name
+      .split(
+        /\s+/g,
+      )
+      .filter(
+        Boolean,
+      )
+      .slice(
+        0,
+        2,
+      )
+      .map(
+        (part) =>
+          part[0]
+            ?.toUpperCase() ??
+          '',
+      )
+      .join(
+        '',
+      );
+
+  return (
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--accent)]/10 text-[10px] font-bold tracking-wide text-[var(--accent)]">
+      {initials ||
+        'APP'}
+    </span>
+  );
 }
 
 export function XrogaConnectPanel() {
@@ -114,7 +227,10 @@ export function XrogaConnectPanel() {
     configured,
     setConfigured,
   ] =
-    useState<boolean | null>(
+    useState<
+      boolean |
+      null
+    >(
       null,
     );
 
@@ -122,13 +238,18 @@ export function XrogaConnectPanel() {
     query,
     setQuery,
   ] =
-    useState('');
+    useState(
+      '',
+    );
 
   const [
     sessionId,
     setSessionId,
   ] =
-    useState<string | null>(
+    useState<
+      string |
+      null
+    >(
       null,
     );
 
@@ -138,7 +259,9 @@ export function XrogaConnectPanel() {
   ] =
     useState<
       XrogaConnectToolkit[]
-    >([]);
+    >(
+      [],
+    );
 
   const [
     tools,
@@ -146,33 +269,44 @@ export function XrogaConnectPanel() {
   ] =
     useState<
       XrogaConnectTool[]
-    >([]);
+    >(
+      [],
+    );
 
   const [
     loading,
     setLoading,
   ] =
-    useState(false);
+    useState(
+      false,
+    );
 
   const [
     connectingToolkit,
     setConnectingToolkit,
   ] =
-    useState<string | null>(
+    useState<
+      string |
+      null
+    >(
       null,
     );
 
   const lastQuery =
-    useRef('');
+    useRef(
+      '',
+    );
 
   async function runSearch(
     nextQuery: string,
   ) {
     const clean =
-      nextQuery.trim();
+      nextQuery
+        .trim();
 
     if (
-      clean.length < 2 ||
+      clean.length <
+        2 ||
       loading
     ) {
       return;
@@ -181,16 +315,22 @@ export function XrogaConnectPanel() {
     lastQuery.current =
       clean;
 
-    setQuery(clean);
-    setLoading(true);
+    setQuery(
+      clean,
+    );
+
+    setLoading(
+      true,
+    );
 
     try {
       const result =
-        await xrogaConnect.search(
-          clean,
-          sessionId ??
-            undefined,
-        );
+        await xrogaConnect
+          .search(
+            clean,
+            sessionId ??
+              undefined,
+          );
 
       setSessionId(
         result.sessionId,
@@ -202,16 +342,22 @@ export function XrogaConnectPanel() {
       );
 
       setTools(
-        result.tools ?? [],
+        result.tools ??
+          [],
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       toast.error(
-        error instanceof Error
+        error instanceof
+          Error
           ? error.message
           : 'Could not search connected apps',
       );
     } finally {
-      setLoading(false);
+      setLoading(
+        false,
+      );
     }
   }
 
@@ -231,11 +377,6 @@ export function XrogaConnectPanel() {
 
     clearOAuthResult();
 
-    /*
-     * Open first to avoid browser
-     * popup blockers while we wait
-     * for the backend link.
-     */
     const popup =
       window.open(
         '',
@@ -245,10 +386,11 @@ export function XrogaConnectPanel() {
 
     try {
       const result =
-        await xrogaConnect.link(
-          sessionId,
-          toolkit,
-        );
+        await xrogaConnect
+          .link(
+            sessionId,
+            toolkit,
+          );
 
       if (
         !result.redirectUrl
@@ -258,20 +400,20 @@ export function XrogaConnectPanel() {
         );
       }
 
-      if (popup) {
+      if (
+        popup
+      ) {
         popup.location.href =
           result.redirectUrl;
 
         popup.focus();
       } else {
-        /*
-         * Safe fallback when popup
-         * blocking is enabled.
-         */
         window.location.href =
           result.redirectUrl;
       }
-    } catch (error) {
+    } catch (
+      error
+    ) {
       try {
         popup?.close();
       } catch {
@@ -283,83 +425,105 @@ export function XrogaConnectPanel() {
       );
 
       toast.error(
-        error instanceof Error
+        error instanceof
+          Error
           ? error.message
           : 'Could not start authorization',
       );
     }
   }
 
-  useEffect(() => {
-    let active = true;
+  useEffect(
+    () => {
+      let active =
+        true;
 
-    void xrogaConnect
-      .status()
-      .then((status) => {
-        if (!active) {
-          return;
-        }
+      void xrogaConnect
+        .status()
+        .then(
+          (
+            status,
+          ) => {
+            if (
+              !active
+            ) {
+              return;
+            }
 
-        setConfigured(
-          status.configured,
+            setConfigured(
+              status.configured,
+            );
+          },
+        )
+        .catch(
+          () => {
+            if (
+              !active
+            ) {
+              return;
+            }
+
+            setConfigured(
+              false,
+            );
+          },
         );
-      })
-      .catch(() => {
-        if (!active) {
-          return;
-        }
 
-        setConfigured(false);
-      });
+      return () => {
+        active =
+          false;
+      };
+    },
+    [],
+  );
 
-    return () => {
-      active = false;
-    };
-  }, []);
+  useEffect(
+    () =>
+      subscribeOAuthResults(
+        (
+          payload,
+        ) => {
+          if (
+            payload.type ===
+            'xroga-composio-connected'
+          ) {
+            setConnectingToolkit(
+              null,
+            );
 
-  useEffect(() => {
-    return subscribeOAuthResults(
-      (payload) => {
-        if (
-          payload.type ===
-          'xroga-composio-connected'
-        ) {
-          setConnectingToolkit(
-            null,
-          );
+            toast.success(
+              'App connected to Xroga',
+            );
 
-          toast.success(
-            'App connected to Xroga',
-          );
+            if (
+              lastQuery.current
+            ) {
+              void runSearch(
+                lastQuery.current,
+              );
+            }
+          }
 
           if (
-            lastQuery.current
+            payload.type ===
+            'xroga-composio-error'
           ) {
-            void runSearch(
-              lastQuery.current,
+            setConnectingToolkit(
+              null,
+            );
+
+            toast.error(
+              payload.message ||
+                'App connection failed',
             );
           }
-        }
-
-        if (
-          payload.type ===
-          'xroga-composio-error'
-        ) {
-          setConnectingToolkit(
-            null,
-          );
-
-          toast.error(
-            payload.message ||
-              'App connection failed',
-          );
-        }
-      },
-    );
-  });
+        },
+      ),
+  );
 
   if (
-    configured === null
+    configured ===
+    null
   ) {
     return (
       <div className="glass-panel rounded-token-lg p-4">
@@ -369,13 +533,15 @@ export function XrogaConnectPanel() {
             aria-hidden="true"
           />
 
-          Checking Xroga Connect…
+          Loading connected apps…
         </div>
       </div>
     );
   }
 
-  if (!configured) {
+  if (
+    !configured
+  ) {
     return (
       <div className="glass-panel rounded-token-lg p-4">
         <SettingsPanelHeader
@@ -386,18 +552,18 @@ export function XrogaConnectPanel() {
             />
           }
           title="Xroga Connect"
-          description="External business apps are not configured on the Xroga backend yet."
+          description="Connected business apps are temporarily unavailable."
         />
 
         <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
-          Xroga Connect will become available when the server-side integration is enabled.
+          Xroga will show app connection controls here when the server-side integration is available.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel rounded-token-lg p-4 space-y-4">
+    <div className="glass-panel space-y-4 rounded-token-lg p-4">
       <SettingsPanelHeader
         icon={
           <PlugZap
@@ -406,7 +572,7 @@ export function XrogaConnectPanel() {
           />
         }
         title="Xroga Connect"
-        description="Connect the apps your business already uses. Xroga can securely read connected services when a task needs them."
+        description="Connect the apps you already use. Xroga can read their data and perform the actions you explicitly request."
       />
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
@@ -417,17 +583,19 @@ export function XrogaConnectPanel() {
 
         <div>
           <p className="text-xs font-semibold text-[var(--text-primary)]">
-            Read-only protection
+            Built-in action safety
           </p>
 
           <p className="mt-0.5 text-[11px] leading-5 text-[var(--text-secondary)]">
-            Xroga cannot send, delete, refund, publish, or modify connected-app data in this release.
+            Read requests stay read-only. Xroga only performs writes you explicitly ask for, and destructive, financial, permission-changing, or other high-risk actions require a separate confirmation.
           </p>
         </div>
       </div>
 
       <form
-        onSubmit={(event) => {
+        onSubmit={(
+          event,
+        ) => {
           event.preventDefault();
 
           void runSearch(
@@ -443,13 +611,17 @@ export function XrogaConnectPanel() {
           />
 
           <input
-            value={query}
-            onChange={(event) =>
+            value={
+              query
+            }
+            onChange={(
+              event,
+            ) =>
               setQuery(
                 event.target.value,
               )
             }
-            placeholder="What do you want Xroga to access?"
+            placeholder="What should Xroga do with your apps?"
             className="w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] py-2.5 pl-10 pr-3 text-sm text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           />
         </div>
@@ -458,10 +630,12 @@ export function XrogaConnectPanel() {
           type="submit"
           disabled={
             loading ||
-            query.trim().length <
+            query
+              .trim()
+              .length <
               2
           }
-          className="rounded-token-sm bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] disabled:opacity-50"
+          className="rounded-token-sm bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
           {loading ? (
             <Loader2
@@ -481,11 +655,17 @@ export function XrogaConnectPanel() {
 
         <div className="flex flex-wrap gap-2">
           {QUICK_APPS.map(
-            (app) => (
+            (
+              app,
+            ) => (
               <button
-                key={app.name}
+                key={
+                  app.name
+                }
                 type="button"
-                disabled={loading}
+                disabled={
+                  loading
+                }
                 onClick={() =>
                   void runSearch(
                     app.query,
@@ -500,93 +680,111 @@ export function XrogaConnectPanel() {
         </div>
       </div>
 
-      {toolkits.length > 0 ? (
+      {toolkits.length >
+      0 ? (
         <div className="space-y-2">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
             Apps
           </p>
 
           {toolkits.map(
-            (item) => (
-              <div
-                key={
-                  item.toolkit
-                }
-                className="flex items-center justify-between gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
-                    {displayToolkitName(
-                      item.toolkit,
-                    )}
-                  </p>
+            (
+              item,
+            ) => {
+              const name =
+                item.name ||
+                displayToolkitName(
+                  item.toolkit,
+                );
 
-                  <p className="mt-0.5 line-clamp-2 text-xs text-[var(--text-secondary)]">
-                    {item.description ||
-                      item.statusMessage ||
-                      'Business app connection'}
-                  </p>
-                </div>
-
-                {item.connected ? (
-                  <div className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-[var(--accent)]">
-                    <Check
-                      className="h-4 w-4"
-                      aria-hidden="true"
+              return (
+                <div
+                  key={
+                    item.toolkit
+                  }
+                  className="flex items-center justify-between gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <ToolkitMark
+                      item={
+                        item
+                      }
                     />
 
-                    Connected
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    disabled={
-                      Boolean(
-                        connectingToolkit,
-                      )
-                    }
-                    onClick={() =>
-                      void connectToolkit(
-                        item.toolkit,
-                      )
-                    }
-                    className="flex shrink-0 items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--accent)]/50 disabled:opacity-50"
-                  >
-                    {connectingToolkit ===
-                    item.toolkit ? (
-                      <Loader2
-                        className="h-3.5 w-3.5 animate-spin"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <ExternalLink
-                        className="h-3.5 w-3.5"
-                        aria-hidden="true"
-                      />
-                    )}
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
+                        {name}
+                      </p>
 
-                    Connect
-                  </button>
-                )}
-              </div>
-            ),
+                      <p className="mt-0.5 line-clamp-2 text-xs text-[var(--text-secondary)]">
+                        {item.description ||
+                          item.statusMessage ||
+                          'Connected app capability'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {item.connected ? (
+                    <div className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-[var(--accent)]">
+                      <Check
+                        className="h-4 w-4"
+                        aria-hidden="true"
+                      />
+
+                      Connected
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={
+                        Boolean(
+                          connectingToolkit,
+                        )
+                      }
+                      onClick={() =>
+                        void connectToolkit(
+                          item.toolkit,
+                        )
+                      }
+                      className="flex shrink-0 items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--accent)]/50 disabled:opacity-50"
+                    >
+                      {connectingToolkit ===
+                      item.toolkit ? (
+                        <Loader2
+                          className="h-3.5 w-3.5 animate-spin"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <ExternalLink
+                          className="h-3.5 w-3.5"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      Connect
+                    </button>
+                  )}
+                </div>
+              );
+            },
           )}
         </div>
       ) : null}
 
-      {tools.length > 0 ? (
+      {tools.length >
+      0 ? (
         <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
           <p className="text-xs font-semibold text-[var(--text-primary)]">
             {tools.length}{' '}
-            read capability
-            {tools.length === 1
-              ? ''
-              : 'ies'}{' '}
+            {tools.length ===
+            1
+              ? 'capability'
+              : 'capabilities'}{' '}
             found
           </p>
 
           <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
-            Xroga will use these capabilities automatically when they are relevant to your request.
+            Xroga discovers the right capability automatically when a request needs it. High-risk actions still stop for confirmation before execution.
           </p>
         </div>
       ) : null}
