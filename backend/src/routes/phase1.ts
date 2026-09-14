@@ -60,6 +60,13 @@ import {
   prepareBusinessAction,
 } from '../services/integrations/businessAction.js';
 
+import {
+  cancelBusinessActionConfirmation,
+  confirmBusinessAction,
+  createBusinessActionConfirmation,
+  getBusinessActionConfirmation,
+} from '../services/integrations/businessActionConfirmations.js';
+
 const router =
   Router();
 
@@ -71,6 +78,20 @@ function requireUserId(
 
   return userId ||
     null;
+}
+
+function frontendBaseUrl():
+  string {
+  const value =
+    process.env
+      .FRONTEND_URL
+      ?.trim() ||
+    'https://xroga.com';
+
+  return value.replace(
+    /\/$/,
+    '',
+  );
 }
 
 function displayToolkitName(
@@ -154,6 +175,22 @@ function businessRuntimeFailure(
       ? error.message
       : fallbackMessage;
 
+  const upstreamStatus =
+    (
+      error as {
+        status?: unknown;
+      }
+    )?.status;
+
+  const status =
+    typeof upstreamStatus ===
+      'number' &&
+    Number.isInteger(
+      upstreamStatus,
+    )
+      ? upstreamStatus
+      : undefined;
+
   const authRelated =
     code ===
       'COMPOSIO_UPSTREAM_ERROR' &&
@@ -175,9 +212,23 @@ function businessRuntimeFailure(
       cause:
         error,
 
+      ...(status
+        ? {
+            status,
+          }
+        : {}),
+
       retryable:
         code !==
-        'COMPOSIO_NOT_CONFIGURED',
+          'COMPOSIO_NOT_CONFIGURED' &&
+        (
+          status ===
+            undefined ||
+          status >=
+            500 ||
+          status ===
+            429
+        ),
     },
   );
 }
@@ -751,16 +802,29 @@ router.post(
           execution.status ===
           'confirmation_required'
         ) {
+          const confirmation =
+            await createBusinessActionConfirmation(
+              userId,
+
+              execution.plan,
+            );
+
           const usage =
             await getUsage(
               userId,
             );
 
+          const reviewUrl =
+            `${frontendBaseUrl()}/dashboard/actions/confirm/${encodeURIComponent(
+              confirmation.id,
+            )}`;
+
           return res.json(
             {
               response:
                 `${execution.message}\n\n` +
-                'Nothing has been changed yet. Xroga is waiting for your confirmation.',
+                'Nothing has been changed yet.\n\n' +
+                `[Review & confirm](${reviewUrl})`,
 
               intent:
                 'business_action_confirmation_required',
@@ -782,17 +846,23 @@ router.post(
               businessActionConfirmationRequired:
                 true,
 
+              businessActionConfirmationId:
+                confirmation.id,
+
+              businessActionConfirmationUrl:
+                reviewUrl,
+
               businessActionSummary:
-                execution.plan
-                  .summary,
+                confirmation.summary,
 
               businessActionRisk:
-                execution.plan
-                  .risk,
+                confirmation.risk,
 
               businessActionToolkit:
-                execution.plan
-                  .toolkit,
+                confirmation.toolkit,
+
+              businessActionExpiresAt:
+                confirmation.expiresAt,
             },
           );
         }
@@ -1256,6 +1326,228 @@ router.post(
       const failure =
         publicRuntimeFailure(
           err,
+        );
+
+      return res
+        .status(
+          failure.status,
+        )
+        .json(
+          failure.body,
+        );
+    }
+  },
+);
+
+
+/**
+ * Safe review details for one pending
+ * high-risk connected-app action.
+ *
+ * The stored Composio session, exact tool,
+ * arguments, OAuth context and plan digest
+ * never leave the server.
+ */
+router.get(
+  '/business-actions/confirmations/:id',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const userId =
+      requireUserId(
+        req,
+      );
+
+    if (
+      !userId
+    ) {
+      return res
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+
+            code:
+              'UNAUTHORIZED',
+          },
+        );
+    }
+
+    try {
+      const confirmation =
+        await getBusinessActionConfirmation(
+          userId,
+
+          String(
+            req.params.id ??
+              '',
+          ),
+        );
+
+      return res.json(
+        {
+          confirmation,
+        },
+      );
+    } catch (error) {
+      const failure =
+        publicRuntimeFailure(
+          businessRuntimeFailure(
+            error,
+
+            'Xroga could not complete the business-action confirmation request.',
+          ),
+        );
+
+      return res
+        .status(
+          failure.status,
+        )
+        .json(
+          failure.body,
+        );
+    }
+  },
+);
+
+router.post(
+  '/business-actions/confirmations/:id/confirm',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const userId =
+      requireUserId(
+        req,
+      );
+
+    if (
+      !userId
+    ) {
+      return res
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+
+            code:
+              'UNAUTHORIZED',
+          },
+        );
+    }
+
+    try {
+      const result =
+        await confirmBusinessAction(
+          userId,
+
+          String(
+            req.params.id ??
+              '',
+          ),
+        );
+
+      return res.json(
+        {
+          ok:
+            true,
+
+          confirmation:
+            result.confirmation,
+
+          response:
+            `Done — ${result.confirmation.summary}`,
+
+          toolkit:
+            result.execution
+              .toolkit,
+        },
+      );
+    } catch (error) {
+      const failure =
+        publicRuntimeFailure(
+          businessRuntimeFailure(
+            error,
+
+            'Xroga could not complete the business-action confirmation request.',
+          ),
+        );
+
+      return res
+        .status(
+          failure.status,
+        )
+        .json(
+          failure.body,
+        );
+    }
+  },
+);
+
+router.post(
+  '/business-actions/confirmations/:id/cancel',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const userId =
+      requireUserId(
+        req,
+      );
+
+    if (
+      !userId
+    ) {
+      return res
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+
+            code:
+              'UNAUTHORIZED',
+          },
+        );
+    }
+
+    try {
+      const confirmation =
+        await cancelBusinessActionConfirmation(
+          userId,
+
+          String(
+            req.params.id ??
+              '',
+          ),
+        );
+
+      return res.json(
+        {
+          ok:
+            confirmation.status ===
+            'cancelled',
+
+          confirmation,
+        },
+      );
+    } catch (error) {
+      const failure =
+        publicRuntimeFailure(
+          businessRuntimeFailure(
+            error,
+
+            'Xroga could not complete the business-action confirmation request.',
+          ),
         );
 
       return res
