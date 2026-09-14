@@ -1,4 +1,8 @@
 import {
+  Buffer,
+} from 'node:buffer';
+
+import {
   Router,
 } from 'express';
 
@@ -61,6 +65,12 @@ import {
 } from '../services/integrations/businessAction.js';
 
 import {
+  createActionComposioSession,
+  createComposioConnectionLink,
+  createReadOnlyComposioSession,
+} from '../services/integrations/composioClient.js';
+
+import {
   cancelBusinessActionConfirmation,
   confirmBusinessAction,
   createBusinessActionConfirmation,
@@ -80,17 +90,155 @@ function requireUserId(
     null;
 }
 
-function frontendBaseUrl():
+interface ToolUiConnectionCandidate {
+  toolkit: string;
+
+  name: string;
+
+  description?: string;
+
+  logo?: string;
+
+  recommended: boolean;
+}
+
+type ToolUiDescriptor =
+  | {
+      version: 1;
+
+      type:
+        'connection_required' |
+        'provider_choice';
+
+      mode:
+        'read' |
+        'action';
+
+      task: string;
+
+      title: string;
+
+      message: string;
+
+      candidates:
+        ToolUiConnectionCandidate[];
+    }
+  | {
+      version: 1;
+
+      type:
+        'confirmation_required';
+
+      task: string;
+
+      title: string;
+
+      message: string;
+
+      confirmationId: string;
+
+      summary: string;
+
+      toolkit: string;
+
+      risk: string;
+
+      expiresAt: string;
+    };
+
+function composioCallbackUrl():
   string {
-  const value =
+  const base =
     process.env
       .FRONTEND_URL
       ?.trim() ||
     'https://xroga.com';
 
-  return value.replace(
-    /\/$/,
-    '',
+  return (
+    `${base.replace(
+      /\/$/,
+      '',
+    )}` +
+    '/dashboard/integrations/composio/callback'
+  );
+}
+
+function toolUiLink(
+  descriptor:
+    ToolUiDescriptor,
+): string {
+  const payload =
+    Buffer
+      .from(
+        JSON.stringify(
+          descriptor,
+        ),
+        'utf8',
+      )
+      .toString(
+        'base64url',
+      );
+
+  return (
+    '/xroga/tool-ui?payload=' +
+    encodeURIComponent(
+      payload,
+    )
+  );
+}
+
+function connectionCardMarkdown(
+  input: {
+    mode:
+      'read' |
+      'action';
+
+    task: string;
+
+    message: string;
+
+    candidates:
+      ToolUiConnectionCandidate[];
+  },
+): string {
+  const type =
+    input.candidates.length >
+    1
+      ? 'provider_choice'
+      : 'connection_required';
+
+  const title =
+    type ===
+      'provider_choice'
+      ? 'Choose an app'
+      : `Connect ${input.candidates[0]?.name ?? 'app'}`;
+
+  const href =
+    toolUiLink(
+      {
+        version: 1,
+
+        type,
+
+        mode:
+          input.mode,
+
+        task:
+          input.task,
+
+        title,
+
+        message:
+          input.message,
+
+        candidates:
+          input.candidates,
+      },
+    );
+
+  return (
+    `${input.message}\n\n` +
+    `[Open Xroga Connect](${href})`
   );
 }
 
@@ -709,17 +857,25 @@ router.post(
               userId,
             );
 
-          const appName =
-            displayToolkitName(
-              prepared.toolkit,
-            );
-
           return res.json(
             {
               response:
-                `I need permission to use ${appName} for this action.\n\n` +
-                `[Connect or re-authorize ${appName}](${prepared.connectUrl})\n\n` +
-                'After authorization, retry the same action request.',
+                connectionCardMarkdown(
+                  {
+                    mode:
+                      'action',
+
+                    task:
+                      message.trim(),
+
+                    message:
+                      `Xroga needs access to ${prepared.candidate.name} to perform this action.`,
+
+                    candidates: [
+                      prepared.candidate,
+                    ],
+                  },
+                ),
 
               intent:
                 'business_action_connection_required',
@@ -741,8 +897,53 @@ router.post(
               connectToolkit:
                 prepared.toolkit,
 
-              connectUrl:
-                prepared.connectUrl,
+              businessAction:
+                true,
+            },
+          );
+        }
+
+        if (
+          prepared.status ===
+          'provider_choice'
+        ) {
+          const usage =
+            await getUsage(
+              userId,
+            );
+
+          return res.json(
+            {
+              response:
+                connectionCardMarkdown(
+                  {
+                    mode:
+                      'action',
+
+                    task:
+                      message.trim(),
+
+                    message:
+                      prepared.message,
+
+                    candidates:
+                      prepared.candidates,
+                  },
+                ),
+
+              intent:
+                'business_action_provider_choice',
+
+              usage:
+                usageToTokenUsage(
+                  usage,
+                ),
+
+              webSources:
+                [],
+
+              engine:
+                'xroga',
 
               businessAction:
                 true,
@@ -814,17 +1015,46 @@ router.post(
               userId,
             );
 
-          const reviewUrl =
-            `${frontendBaseUrl()}/dashboard/actions/confirm/${encodeURIComponent(
-              confirmation.id,
-            )}`;
+          const confirmationUi =
+            toolUiLink(
+              {
+                version: 1,
+
+                type:
+                  'confirmation_required',
+
+                task:
+                  message.trim(),
+
+                title:
+                  'Confirm external action',
+
+                message:
+                  'Review this high-risk action before Xroga executes it.',
+
+                confirmationId:
+                  confirmation.id,
+
+                summary:
+                  confirmation.summary,
+
+                toolkit:
+                  confirmation.toolkit,
+
+                risk:
+                  confirmation.risk,
+
+                expiresAt:
+                  confirmation.expiresAt,
+              },
+            );
 
           return res.json(
             {
               response:
                 `${execution.message}\n\n` +
                 'Nothing has been changed yet.\n\n' +
-                `[Review & confirm](${reviewUrl})`,
+                `[Review action](${confirmationUi})`,
 
               intent:
                 'business_action_confirmation_required',
@@ -848,9 +1078,6 @@ router.post(
 
               businessActionConfirmationId:
                 confirmation.id,
-
-              businessActionConfirmationUrl:
-                reviewUrl,
 
               businessActionSummary:
                 confirmation.summary,
@@ -964,18 +1191,25 @@ router.post(
               userId,
             );
 
-          const appName =
-            displayToolkitName(
-              businessResult
-                .toolkit,
-            );
-
           return res.json(
             {
               response:
-                `I need access to ${appName} before I can read that data.\n\n` +
-                `[Connect ${appName}](${businessResult.connectUrl})\n\n` +
-                'After you authorize the connection, retry your request.',
+                connectionCardMarkdown(
+                  {
+                    mode:
+                      'read',
+
+                    task:
+                      message.trim(),
+
+                    message:
+                      `Xroga needs access to ${businessResult.candidate.name} to read the data required for this request.`,
+
+                    candidates: [
+                      businessResult.candidate,
+                    ],
+                  },
+                ),
 
               intent:
                 'business_connection_required',
@@ -997,10 +1231,52 @@ router.post(
               connectToolkit:
                 businessResult
                   .toolkit,
+            },
+          );
+        }
 
-              connectUrl:
-                businessResult
-                  .connectUrl,
+        if (
+          businessResult
+            .status ===
+          'provider_choice'
+        ) {
+          const usage =
+            await getUsage(
+              userId,
+            );
+
+          return res.json(
+            {
+              response:
+                connectionCardMarkdown(
+                  {
+                    mode:
+                      'read',
+
+                    task:
+                      message.trim(),
+
+                    message:
+                      businessResult.message,
+
+                    candidates:
+                      businessResult.candidates,
+                  },
+                ),
+
+              intent:
+                'business_provider_choice',
+
+              usage:
+                usageToTokenUsage(
+                  usage,
+                ),
+
+              webSources:
+                [],
+
+              engine:
+                'xroga',
             },
           );
         }
@@ -1339,6 +1615,139 @@ router.post(
   },
 );
 
+
+
+/**
+ * Creates a fresh provider authorization
+ * link only when the user clicks Connect.
+ *
+ * Session IDs and authorization links are
+ * intentionally not persisted inside chat
+ * messages. The browser receives only the
+ * short-lived redirect URL after an explicit
+ * click on a server-approved toolkit card.
+ */
+router.post(
+  '/business-apps/:toolkit/connect-link',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const userId =
+      requireUserId(
+        req,
+      );
+
+    if (
+      !userId
+    ) {
+      return res
+        .status(
+          401,
+        )
+        .json(
+          {
+            error:
+              'Sign in required',
+
+            code:
+              'UNAUTHORIZED',
+          },
+        );
+    }
+
+    const mode =
+      req.body?.mode ===
+      'action'
+        ? 'action'
+        : 'read';
+
+    const toolkit =
+      String(
+        req.params.toolkit ??
+          '',
+      )
+        .trim()
+        .toLowerCase();
+
+    if (
+      !/^[a-z0-9][a-z0-9_-]{1,79}$/.test(
+        toolkit,
+      )
+    ) {
+      return res
+        .status(
+          400,
+        )
+        .json(
+          {
+            error:
+              'Invalid integration identifier.',
+
+            code:
+              'INVALID_COMPOSIO_TOOLKIT',
+          },
+        );
+    }
+
+    try {
+      const session =
+        mode ===
+        'action'
+          ? await createActionComposioSession(
+              userId,
+            )
+          : await createReadOnlyComposioSession(
+              userId,
+            );
+
+      const link =
+        await createComposioConnectionLink(
+          userId,
+          {
+            sessionId:
+              session.session_id,
+
+            toolkit,
+
+            callbackUrl:
+              composioCallbackUrl(),
+
+            mode,
+          },
+        );
+
+      return res.json(
+        {
+          ok:
+            true,
+
+          toolkit,
+
+          redirectUrl:
+            link.redirectUrl,
+        },
+      );
+    } catch (error) {
+      const failure =
+        publicRuntimeFailure(
+          businessRuntimeFailure(
+            error,
+
+            'Xroga could not start the app authorization flow.',
+          ),
+        );
+
+      return res
+        .status(
+          failure.status,
+        )
+        .json(
+          failure.body,
+        );
+    }
+  },
+);
 
 /**
  * Safe review details for one pending
