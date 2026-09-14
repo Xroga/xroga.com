@@ -68,11 +68,17 @@ export interface SoftwareExecutionContract {
   preview: PreviewRequirement;
 
   /**
-   * Repository persistence is a separate authority from deployment.
+   * Repository mutation authority is intentionally separate
+   * from deployment authority.
    *
-   * - none: the run may modify only its isolated workspace.
-   * - review_branch: verified work may be persisted to an authorized
-   *   review branch, but never merged automatically.
+   * none:
+   *   Work remains inside the isolated Xroga workspace.
+   *
+   * review_branch:
+   *   Verified work may be persisted to an authorized review
+   *   branch only.
+   *
+   * This never implies merge or deployment permission.
    */
   persistence: RepositoryPersistenceAuthority;
 
