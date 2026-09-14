@@ -430,6 +430,16 @@ const DESTRUCTIVE_TOKENS =
     'CANCEL',
     'TERMINATE',
     'VOID',
+    'GRANT',
+    'INVITE',
+    'PERMISSION',
+    'PERMISSIONS',
+    'ACL',
+    'SHARE',
+    'SHARING',
+    'OWNER',
+    'OWNERSHIP',
+    'ROLE',
   ]);
 
 const WRITE_TOKENS =
