@@ -21,8 +21,12 @@ export class ComposioClientError extends Error {
   ) {
     super(message);
 
-    this.name = 'ComposioClientError';
-    this.status = options.status ?? 502;
+    this.name =
+      'ComposioClientError';
+
+    this.status =
+      options.status ?? 502;
+
     this.code =
       options.code ??
       'COMPOSIO_ERROR';
@@ -33,24 +37,24 @@ interface ComposioTagsConfig {
   enabled?: string[];
   disabled?: string[];
 
-  /*
-   * Some Composio SDK/docs surfaces use
-   * enable/disable while REST responses
-   * use enabled/disabled.
-   *
-   * Accept both when validating a
-   * returned session.
-   */
   enable?: string[];
   disable?: string[];
+}
+
+interface ComposioWorkbenchConfig {
+  enable?: boolean;
+
+  proxy_execution_enabled?: boolean;
+
+  enable_proxy_execution?: boolean;
 }
 
 interface ComposioSessionConfig {
   user_id?: string;
 
   tags?:
-    | ComposioTagsConfig
-    | string[];
+    | string[]
+    | ComposioTagsConfig;
 
   search?: {
     enable?: boolean;
@@ -60,13 +64,8 @@ interface ComposioSessionConfig {
     enable_multi_execute?: boolean;
   };
 
-  workbench?: {
-    enable?: boolean;
-
-    proxy_execution_enabled?: boolean;
-
-    enable_proxy_execution?: boolean;
-  };
+  workbench?:
+    ComposioWorkbenchConfig;
 }
 
 export interface ComposioSession {
@@ -78,6 +77,26 @@ export interface ComposioSession {
     code?: string;
     message?: string;
   }>;
+}
+
+interface ComposioConfigHistoryResponse {
+  items?: Array<{
+    version?: number;
+
+    created_at?: string;
+
+    config?: ComposioSessionConfig;
+
+    is_current?: boolean;
+  }>;
+
+  next_cursor?: string;
+
+  total_pages?: number;
+
+  current_page?: number;
+
+  total_items?: number;
 }
 
 interface ComposioToolSchema {
@@ -337,14 +356,6 @@ function cleanToolSlug(
   return clean;
 }
 
-/**
- * Extra Xroga-side defense.
- *
- * Even though the Composio session
- * exposes only readOnlyHint tools,
- * obviously mutating tool names are
- * also rejected before execution.
- */
 function looksMutatingToolSlug(
   toolSlug: string,
 ): boolean {
@@ -365,31 +376,16 @@ function looksMutatingToolSlug(
     'MODIFY',
     'EDIT',
     'WRITE',
-    'POST',
     'PUBLISH',
     'UNPUBLISH',
     'REFUND',
     'TRANSFER',
-    'PAY',
     'CHARGE',
     'CANCEL',
     'ARCHIVE',
     'INVITE',
-    'ADD_MEMBER',
-    'REMOVE_MEMBER',
     'GRANT',
     'REVOKE',
-    'CHANGE_PERMISSION',
-    'SET_PERMISSION',
-    'CREATE_EVENT',
-    'UPDATE_EVENT',
-    'DELETE_EVENT',
-    'CREATE_INVOICE',
-    'UPDATE_INVOICE',
-    'DELETE_INVOICE',
-    'CREATE_ORDER',
-    'UPDATE_ORDER',
-    'DELETE_ORDER',
   ];
 
   return dangerousWords.some(
@@ -427,8 +423,7 @@ function validateCallbackUrl(
   }
 
   const localHttp =
-    url.protocol ===
-      'http:' &&
+    url.protocol === 'http:' &&
     (
       url.hostname ===
         'localhost' ||
@@ -437,8 +432,7 @@ function validateCallbackUrl(
     );
 
   if (
-    url.protocol !==
-      'https:' &&
+    url.protocol !== 'https:' &&
     !localHttp
   ) {
     throw new ComposioClientError(
@@ -459,7 +453,9 @@ async function composioRequest<T>(
   path: string,
   options: {
     method?: string;
+
     body?: unknown;
+
     timeoutMs?: number;
   } = {},
 ): Promise<T> {
@@ -468,9 +464,8 @@ async function composioRequest<T>(
 
   const timer =
     setTimeout(
-      () => {
-        controller.abort();
-      },
+      () =>
+        controller.abort(),
       options.timeoutMs ??
         DEFAULT_TIMEOUT_MS,
     );
@@ -551,7 +546,8 @@ async function composioRequest<T>(
       );
     }
 
-    let payload: unknown = {};
+    let payload:
+      unknown = {};
 
     if (text) {
       try {
@@ -575,34 +571,28 @@ async function composioRequest<T>(
         'Xroga Connect could not complete the external request.';
 
       if (
-        response.status ===
-          401 ||
-        response.status ===
-          403
+        response.status === 401 ||
+        response.status === 403
       ) {
         message =
           'Xroga Connect authorization failed.';
       } else if (
-        response.status ===
-        404
+        response.status === 404
       ) {
         message =
           'The requested Xroga Connect resource was not found.';
       } else if (
-        response.status ===
-        408
+        response.status === 408
       ) {
         message =
           'Xroga Connect request timed out.';
       } else if (
-        response.status ===
-        413
+        response.status === 413
       ) {
         message =
           'The external request was too large.';
       } else if (
-        response.status ===
-        429
+        response.status === 429
       ) {
         message =
           'Xroga Connect is temporarily rate limited.';
@@ -612,8 +602,7 @@ async function composioRequest<T>(
         message,
         {
           status:
-            response.status >=
-            500
+            response.status >= 500
               ? 502
               : response.status,
 
@@ -662,6 +651,193 @@ async function composioRequest<T>(
   }
 }
 
+function enabledSessionTags(
+  config:
+    | ComposioSessionConfig
+    | undefined,
+): string[] {
+  const tags =
+    config?.tags;
+
+  if (!tags) {
+    return [];
+  }
+
+  if (
+    Array.isArray(tags)
+  ) {
+    return tags.filter(
+      (tag): tag is string =>
+        typeof tag ===
+        'string',
+    );
+  }
+
+  return [
+    ...(tags.enabled ?? []),
+
+    ...(tags.enable ?? []),
+  ];
+}
+
+async function getCurrentSessionConfig(
+  sessionId: string,
+  session:
+    ComposioSession,
+): Promise<
+  | ComposioSessionConfig
+  | undefined
+> {
+  const directTags =
+    enabledSessionTags(
+      session.config,
+    );
+
+  /*
+   * Normal v3.1 responses usually
+   * include the canonical tags here.
+   */
+  if (
+    directTags.length > 0
+  ) {
+    return session.config;
+  }
+
+  /*
+   * Composio also exposes the canonical
+   * config history. Their API guarantees
+   * that the current config appears on
+   * the first page with is_current=true.
+   *
+   * Use this as the authoritative fallback
+   * when GET session omits or normalizes
+   * configuration fields.
+   */
+  const history =
+    await composioRequest<ComposioConfigHistoryResponse>(
+      `/tool_router/session/${encodeURIComponent(
+        sessionId,
+      )}/config_history?limit=1`,
+    );
+
+  const current =
+    history.items?.find(
+      (item) =>
+        item.is_current ===
+        true,
+    ) ??
+    history.items?.[0];
+
+  return (
+    current?.config ??
+    session.config
+  );
+}
+
+function validateReadOnlyConfig(
+  config:
+    | ComposioSessionConfig
+    | undefined,
+): void {
+  const enabled =
+    enabledSessionTags(
+      config,
+    );
+
+  if (
+    !enabled.includes(
+      READ_ONLY_TAG,
+    )
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect session is missing the required read-only policy.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_READ_ONLY_POLICY_MISSING',
+      },
+    );
+  }
+
+  /*
+   * A positive readOnlyHint allowlist
+   * is the primary policy boundary.
+   *
+   * If destructiveHint somehow appears
+   * as enabled too, reject the session.
+   */
+  if (
+    enabled.includes(
+      DESTRUCTIVE_TAG,
+    )
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect rejected an unsafe session policy.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_UNSAFE_POLICY',
+      },
+    );
+  }
+
+  if (
+    config
+      ?.workbench
+      ?.enable === true
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect rejected a session with workbench access enabled.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_WORKBENCH_BLOCKED',
+      },
+    );
+  }
+
+  if (
+    config
+      ?.workbench
+      ?.proxy_execution_enabled ===
+        true ||
+    config
+      ?.workbench
+      ?.enable_proxy_execution ===
+        true
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect rejected a session with proxy execution enabled.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_PROXY_EXECUTION_BLOCKED',
+      },
+    );
+  }
+
+  if (
+    config
+      ?.execute
+      ?.enable_multi_execute ===
+    true
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect rejected a session with multi-execution enabled.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_MULTI_EXECUTE_BLOCKED',
+      },
+    );
+  }
+}
+
 export async function createReadOnlyComposioSession(
   userId: string,
 ): Promise<ComposioSession> {
@@ -678,49 +854,36 @@ export async function createReadOnlyComposioSession(
             ),
 
           /*
-           * Primary security boundary:
-           * Composio may expose ONLY tools
-           * tagged readOnlyHint.
+           * Composio documents the array
+           * form as an enabled-tag allowlist.
            *
-           * destructiveHint remains explicitly
-           * disabled as defense in depth.
+           * This avoids ambiguity between
+           * enable/disable and
+           * enabled/disabled object forms.
+           *
+           * Only tools carrying
+           * readOnlyHint are eligible.
            */
-          tags: {
-            enabled: [
-              READ_ONLY_TAG,
-            ],
+          tags: [
+            READ_ONLY_TAG,
+          ],
 
-            disabled: [
-              DESTRUCTIVE_TAG,
-            ],
-          },
-
-          /*
-           * Xroga does not expose Composio's
-           * remote workbench or shell.
-           */
           workbench: {
             enable: false,
+
+            enable_proxy_execution:
+              false,
           },
 
           search: {
             enable: true,
           },
 
-          /*
-           * Prevent batching multiple tools
-           * into one unrestricted execution.
-           */
           execute: {
             enable_multi_execute:
               false,
           },
 
-          /*
-           * Users may connect applications,
-           * but Xroga does not let tools
-           * remove their connections.
-           */
           manage_connections: {
             enable: true,
 
@@ -769,68 +932,72 @@ export async function getComposioSession(
   );
 }
 
-function enabledSessionTags(
-  config:
-    | ComposioSessionConfig
-    | undefined,
-): string[] {
-  const tags =
-    config?.tags;
-
-  if (
-    Array.isArray(tags)
-  ) {
-    return tags;
-  }
-
-  if (!tags) {
-    return [];
-  }
-
-  return [
-    ...(tags.enabled ?? []),
-    ...(tags.enable ?? []),
-  ];
-}
-
-function disabledSessionTags(
-  config:
-    | ComposioSessionConfig
-    | undefined,
-): string[] {
-  const tags =
-    config?.tags;
-
-  if (
-    !tags ||
-    Array.isArray(tags)
-  ) {
-    return [];
-  }
-
-  return [
-    ...(tags.disabled ?? []),
-    ...(tags.disable ?? []),
-  ];
-}
-
 export async function assertReadOnlyComposioSession(
   userId: string,
   sessionId: string,
 ): Promise<ComposioSession> {
-  const session =
-    await getComposioSession(
+  const clean =
+    cleanSessionId(
       sessionId,
     );
 
+  const session =
+    await getComposioSession(
+      clean,
+    );
+
+  const currentConfig =
+    await getCurrentSessionConfig(
+      clean,
+      session,
+    );
+
+  const expectedUserId =
+    composioUserId(
+      userId,
+    );
+
+  const reportedOwners =
+    [
+      session.config
+        ?.user_id,
+
+      currentConfig
+        ?.user_id,
+    ].filter(
+      (
+        value,
+      ): value is string =>
+        typeof value ===
+        'string' &&
+        value.length > 0,
+    );
+
   /*
-   * Never trust a browser/model supplied
-   * session ID unless the session belongs
-   * to this authenticated Xroga user.
+   * Fail closed when Composio does not
+   * return any ownership information.
    */
   if (
-    session.config?.user_id !==
-    composioUserId(userId)
+    reportedOwners.length ===
+    0
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect could not verify session ownership.',
+      {
+        status: 403,
+
+        code:
+          'COMPOSIO_SESSION_OWNER_MISSING',
+      },
+    );
+  }
+
+  if (
+    reportedOwners.some(
+      (owner) =>
+        owner !==
+        expectedUserId,
+    )
   ) {
     throw new ComposioClientError(
       'Xroga Connect session does not belong to this user.',
@@ -843,117 +1010,24 @@ export async function assertReadOnlyComposioSession(
     );
   }
 
-  const enabled =
-    enabledSessionTags(
+  validateReadOnlyConfig(
+    currentConfig,
+  );
+
+  return {
+    ...session,
+
+    config:
+      currentConfig ??
       session.config,
-    );
-
-  const disabled =
-    disabledSessionTags(
-      session.config,
-    );
-
-  /*
-   * IMPORTANT:
-   *
-   * readOnlyHint is the real fail-closed
-   * policy boundary.
-   *
-   * We do NOT require Composio to echo
-   * destructiveHint inside its returned
-   * disabled array because Composio may
-   * normalize redundant negative filters.
-   *
-   * We DO reject the session if the
-   * destructive tag is explicitly enabled.
-   */
-  if (
-    !enabled.includes(
-      READ_ONLY_TAG,
-    )
-  ) {
-    throw new ComposioClientError(
-      'Xroga Connect session is missing the required read-only policy.',
-      {
-        status: 403,
-
-        code:
-          'COMPOSIO_READ_ONLY_POLICY_MISSING',
-      },
-    );
-  }
-
-  if (
-    enabled.includes(
-      DESTRUCTIVE_TAG,
-    )
-  ) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected an unsafe session policy.',
-      {
-        status: 403,
-
-        code:
-          'COMPOSIO_UNSAFE_POLICY',
-      },
-    );
-  }
-
-  /*
-   * If Composio echoes the negative
-   * destructive filter, good.
-   *
-   * If it canonicalizes it away,
-   * readOnlyHint remains the required
-   * positive restriction.
-   */
-  void disabled;
-
-  /*
-   * Reject unexpected dangerous runtime
-   * configuration when Composio explicitly
-   * reports it as enabled.
-   */
-  if (
-    session.config
-      ?.workbench
-      ?.enable === true
-  ) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected a session with workbench access enabled.',
-      {
-        status: 403,
-
-        code:
-          'COMPOSIO_WORKBENCH_BLOCKED',
-      },
-    );
-  }
-
-  if (
-    session.config
-      ?.execute
-      ?.enable_multi_execute ===
-    true
-  ) {
-    throw new ComposioClientError(
-      'Xroga Connect rejected a session with multi-execution enabled.',
-      {
-        status: 403,
-
-        code:
-          'COMPOSIO_MULTI_EXECUTE_BLOCKED',
-      },
-    );
-  }
-
-  return session;
+  };
 }
 
 export async function searchComposioTools(
   userId: string,
   input: {
     query: string;
+
     sessionId?: string;
   },
 ): Promise<XrogaConnectSearchResult> {
@@ -1021,13 +1095,10 @@ export async function searchComposioTools(
         } =>
           Boolean(
             tool.toolkit &&
-              tool.tool_slug,
+            tool.tool_slug,
           ),
       )
-      /*
-       * Never expose Composio's own
-       * internal/meta tools.
-       */
+
       .filter(
         (tool) =>
           !tool.tool_slug
@@ -1036,24 +1107,19 @@ export async function searchComposioTools(
               'COMPOSIO_',
             ),
       )
-      /*
-       * Xroga-side read-only defense.
-       *
-       * A tool that looks obviously
-       * mutating is not presented to
-       * the model even if provider
-       * metadata is wrong.
-       */
+
       .filter(
         (tool) =>
           !looksMutatingToolSlug(
             tool.tool_slug,
           ),
       )
+
       .slice(
         0,
         20,
       )
+
       .map(
         (tool) => ({
           slug:
@@ -1086,10 +1152,12 @@ export async function searchComposioTools(
             status.toolkit,
           ),
       )
+
       .slice(
         0,
         20,
       )
+
       .map(
         (status) => ({
           toolkit:
@@ -1128,12 +1196,16 @@ export async function createComposioConnectionLink(
   userId: string,
   input: {
     sessionId: string;
+
     toolkit: string;
+
     callbackUrl: string;
   },
 ): Promise<{
   toolkit: string;
+
   redirectUrl: string;
+
   connectedAccountId?: string;
 }> {
   const sessionId =
@@ -1142,8 +1214,9 @@ export async function createComposioConnectionLink(
     );
 
   /*
-   * Re-check ownership and read-only
-   * policy before starting OAuth.
+   * Verify both authenticated ownership
+   * and canonical read-only policy before
+   * starting provider authorization.
    */
   await assertReadOnlyComposioSession(
     userId,
@@ -1229,9 +1302,9 @@ export async function executeComposioReadTool(
     );
 
   /*
-   * Verify session ownership and
-   * read-only policy before every
-   * execution.
+   * Re-check authenticated ownership
+   * and canonical policy before every
+   * external execution.
    */
   await assertReadOnlyComposioSession(
     userId,
@@ -1244,7 +1317,7 @@ export async function executeComposioReadTool(
     );
 
   /*
-   * Hard Xroga-side mutation block.
+   * Xroga-side second safety gate.
    */
   if (
     looksMutatingToolSlug(
@@ -1263,14 +1336,13 @@ export async function executeComposioReadTool(
   }
 
   /*
-   * Defense in depth:
+   * Re-discover the tool inside the
+   * same read-only session.
    *
-   * Re-discover the requested tool
-   * inside the SAME authenticated,
-   * read-only Composio session.
-   *
-   * The browser/model cannot invent
-   * an arbitrary hidden tool slug.
+   * This prevents a browser or model
+   * from inventing an arbitrary tool
+   * slug that was never exposed by
+   * the read-only search policy.
    */
   const discovery =
     await searchComposioTools(
@@ -1316,10 +1388,6 @@ export async function executeComposioReadTool(
         arguments:
           input.arguments,
 
-        /*
-         * Never let Composio offload
-         * execution to workbench.
-         */
         enable_auto_workbench_offload:
           false,
       },
