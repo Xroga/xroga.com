@@ -14,6 +14,10 @@ export type PreviewRequirement =
   | 'optional'
   | 'not_applicable';
 
+export type RepositoryPersistenceAuthority =
+  | 'none'
+  | 'review_branch';
+
 export type DeploymentAuthority =
   | 'forbidden'
   | 'prepare_only'
@@ -62,6 +66,15 @@ export interface SoftwareExecutionContract {
   writePolicy: SoftwareWritePolicy;
 
   preview: PreviewRequirement;
+
+  /**
+   * Repository persistence is a separate authority from deployment.
+   *
+   * - none: the run may modify only its isolated workspace.
+   * - review_branch: verified work may be persisted to an authorized
+   *   review branch, but never merged automatically.
+   */
+  persistence: RepositoryPersistenceAuthority;
 
   deployment: DeploymentAuthority;
 
