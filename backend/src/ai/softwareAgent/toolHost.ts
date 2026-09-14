@@ -29,6 +29,10 @@ export interface CommandExecutionResult {
   durationMs: number;
 }
 
+export type FileWriteIntent =
+  | 'create'
+  | 'modify';
+
 export interface FileMutationResult {
   path: string;
 
@@ -90,9 +94,19 @@ export interface SoftwareAgentToolHost {
   >;
 
   /**
-   * Create or replace one project file.
+   * Create or modify one project file.
+   *
+   * The caller must declare whether the requested operation
+   * is a create or modify operation.
+   *
+   * The host must independently verify that intent against
+   * the real current workspace state:
+   *
+   * create + existing file -> reject
+   * modify + missing file -> reject
    *
    * IMPORTANT:
+   *
    * The host implementation must independently enforce
    * repository-root and write-policy rules.
    *
@@ -103,6 +117,7 @@ export interface SoftwareAgentToolHost {
     contract: SoftwareExecutionContract,
     path: string,
     content: string,
+    intent: FileWriteIntent,
   ): Promise<FileMutationResult>;
 
   /**
