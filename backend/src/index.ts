@@ -26,6 +26,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
+import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
 import referralsRouter from './routes/referrals.js';
@@ -162,7 +163,12 @@ app.use('/chat', simpleChatRouter);
 app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
-app.use('/api/phase1', phase1AuthMiddleware, phase1Router);
+app.use(
+  '/api/phase1',
+  phase1AuthMiddleware,
+  phase1BusinessPreflightRouter,
+  phase1Router,
+);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
