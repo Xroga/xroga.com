@@ -4,46 +4,55 @@ import {
 
 export interface XrogaConnectTool {
   slug: string;
-
   toolkit: string;
-
   description?: string;
-
   inputSchema?: Record<
     string,
     unknown
   >;
+  risk?:
+    | 'read'
+    | 'write'
+    | 'destructive'
+    | 'unknown';
+  requiresConfirmation?:
+    boolean;
 }
 
 export interface XrogaConnectToolkit {
   toolkit: string;
-
+  name?: string;
   description?: string;
-
+  logo?: string;
   connected: boolean;
-
   statusMessage?: string;
+  noAuth?: boolean;
 }
 
 export interface XrogaConnectSearchResult {
   ok: boolean;
-
   sessionId: string;
-
-  tools: XrogaConnectTool[];
-
+  mode?:
+    | 'read'
+    | 'action';
+  tools:
+    XrogaConnectTool[];
   toolkits:
     XrogaConnectToolkit[];
-
   guidance?: string;
 }
+
+export type XrogaConnectAvailabilityMode =
+  | 'read_only'
+  | 'connected_apps'
+  | 'read_write';
 
 export const xrogaConnect = {
   status: () =>
     apiFetch<{
       configured: boolean;
-
-      mode: 'read_only';
+      mode:
+        XrogaConnectAvailabilityMode;
     }>(
       '/api/integrations/xroga-connect/status',
     ),
@@ -51,18 +60,19 @@ export const xrogaConnect = {
   session: () =>
     apiFetch<{
       ok: boolean;
-
       sessionId: string;
-
-      mode: 'read_only';
+      mode:
+        XrogaConnectAvailabilityMode;
     }>(
       '/api/integrations/xroga-connect/session',
       {
-        method: 'POST',
+        method:
+          'POST',
 
-        body: JSON.stringify(
-          {},
-        ),
+        body:
+          JSON.stringify(
+            {},
+          ),
       },
     ),
 
@@ -73,17 +83,21 @@ export const xrogaConnect = {
     apiFetch<XrogaConnectSearchResult>(
       '/api/integrations/xroga-connect/search',
       {
-        method: 'POST',
+        method:
+          'POST',
 
-        body: JSON.stringify({
-          query,
+        body:
+          JSON.stringify(
+            {
+              query,
 
-          ...(sessionId
-            ? {
-                sessionId,
-              }
-            : {}),
-        }),
+              ...(sessionId
+                ? {
+                    sessionId,
+                  }
+                : {}),
+            },
+          ),
       },
     ),
 
@@ -93,21 +107,22 @@ export const xrogaConnect = {
   ) =>
     apiFetch<{
       ok: boolean;
-
       toolkit: string;
-
       redirectUrl: string;
-
       connectedAccountId?: string;
     }>(
       '/api/integrations/xroga-connect/link',
       {
-        method: 'POST',
+        method:
+          'POST',
 
-        body: JSON.stringify({
-          sessionId,
-          toolkit,
-        }),
+        body:
+          JSON.stringify(
+            {
+              sessionId,
+              toolkit,
+            },
+          ),
       },
     ),
 };
