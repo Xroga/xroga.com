@@ -188,7 +188,9 @@ export interface XrogaConnectToolDetails extends XrogaConnectTool {
 
 export interface XrogaConnectToolkit {
   toolkit: string;
+  name?: string;
   description?: string;
+  logo?: string;
   connected: boolean;
   statusMessage?: string;
   noAuth?: boolean;
@@ -875,12 +877,13 @@ export async function searchComposioActionTools(
   });
 }
 
-export async function listConnectedComposioToolkits(
+async function listSessionComposioToolkits(
   userId: string,
   input: {
     sessionId: string;
     mode?: XrogaConnectMode;
     toolkits?: string[];
+    connectedOnly?: boolean;
   },
 ): Promise<XrogaConnectToolkit[]> {
   const mode = input.mode ?? 'read';
@@ -889,8 +892,11 @@ export async function listConnectedComposioToolkits(
   await assertComposioSession(userId, sessionId, mode);
 
   const params = new URLSearchParams();
-  params.set('is_connected', 'true');
   params.set('limit', String(MAX_TOOLKIT_PAGE_SIZE));
+
+  if (input.connectedOnly) {
+    params.set('is_connected', 'true');
+  }
 
   if (input.toolkits?.length) {
     const toolkits = [...new Set(input.toolkits.map(cleanToolkit))];
@@ -913,13 +919,43 @@ export async function listConnectedComposioToolkits(
     )
     .map((item) => ({
       toolkit: item.slug,
+      name: item.name,
       description: item.meta?.description,
+      logo: item.meta?.logo,
       connected:
         item.is_no_auth === true || Boolean(item.connected_account),
       statusMessage: item.connected_account?.status,
       noAuth:
         item.is_no_auth === true || item.meta?.isNoAuth === true,
     }));
+}
+
+export async function listComposioToolkits(
+  userId: string,
+  input: {
+    sessionId: string;
+    mode?: XrogaConnectMode;
+    toolkits?: string[];
+  },
+): Promise<XrogaConnectToolkit[]> {
+  return listSessionComposioToolkits(userId, {
+    ...input,
+    connectedOnly: false,
+  });
+}
+
+export async function listConnectedComposioToolkits(
+  userId: string,
+  input: {
+    sessionId: string;
+    mode?: XrogaConnectMode;
+    toolkits?: string[];
+  },
+): Promise<XrogaConnectToolkit[]> {
+  return listSessionComposioToolkits(userId, {
+    ...input,
+    connectedOnly: true,
+  });
 }
 
 export async function getComposioToolDetails(
