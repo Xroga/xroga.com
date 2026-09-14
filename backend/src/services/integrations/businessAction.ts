@@ -26,12 +26,12 @@ import {
 
 import {
   ComposioClientError,
-  createComposioConnectionLink,
   executeComposioActionTool,
   getComposioToolDetails,
-  listConnectedComposioToolkits,
+  listComposioToolkits,
   searchComposioActionTools,
   type XrogaConnectTool,
+  type XrogaConnectToolkit,
   type XrogaConnectToolRisk,
 } from './composioClient.js';
 
@@ -85,6 +85,19 @@ export interface BusinessActionPlan {
   planDigest: string;
 }
 
+export interface BusinessActionConnectionCandidate {
+  toolkit: string;
+
+  name: string;
+
+  description?: string;
+
+  logo?: string;
+
+
+  recommended: boolean;
+}
+
 export type BusinessActionPreparationOutcome =
   | {
       status: 'ready';
@@ -98,7 +111,18 @@ export type BusinessActionPreparationOutcome =
 
       toolkit: string;
 
-      connectUrl: string;
+
+      candidate:
+        BusinessActionConnectionCandidate;
+
+      message: string;
+    }
+  | {
+      status:
+        'provider_choice';
+
+      candidates:
+        BusinessActionConnectionCandidate[];
 
       message: string;
     }
@@ -157,6 +181,78 @@ function normalizeToolkit(
   return value
     .trim()
     .toLowerCase();
+}
+
+function displayToolkitName(
+  value: string,
+): string {
+  return value
+    .split(/[_-]+/g)
+    .filter(Boolean)
+    .map(
+      (part) =>
+        part.charAt(0).toUpperCase() +
+        part.slice(1),
+    )
+    .join(' ');
+}
+
+function normalizedProviderText(
+  value: string,
+): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function userExplicitlyNamedToolkit(
+  useCase: string,
+  toolkit: XrogaConnectToolkit,
+): boolean {
+  const haystack =
+    ` ${normalizedProviderText(useCase)} `;
+
+  const names = [
+    toolkit.toolkit,
+    toolkit.name,
+  ]
+    .filter(
+      (value): value is string =>
+        typeof value === 'string' &&
+        value.trim().length >= 3,
+    )
+    .map(normalizedProviderText)
+    .filter(Boolean);
+
+  return names.some(
+    (name) =>
+      haystack.includes(
+        ` ${name} `,
+      ) ||
+      (
+        name.length >= 6 &&
+        haystack.includes(name)
+      ),
+  );
+}
+
+function toolkitMetadataFor(
+  slug: string,
+  metadata: XrogaConnectToolkit[],
+): XrogaConnectToolkit {
+  return (
+    metadata.find(
+      (item) =>
+        normalizeToolkit(item.toolkit) ===
+        normalizeToolkit(slug),
+    ) ?? {
+      toolkit: slug,
+      name: displayToolkitName(slug),
+      connected: false,
+    }
+  );
 }
 
 function isPlainRecord(
@@ -329,23 +425,6 @@ function boundedResult(
       MAX_RESULT_CHARS,
     ) +
     '\n\n[Xroga truncated additional action result data for safety and context limits.]'
-  );
-}
-
-function frontendCallbackUrl():
-  string {
-  const base =
-    process.env
-      .FRONTEND_URL
-      ?.trim() ||
-    'https://xroga.com';
-
-  return (
-    `${base.replace(
-      /\/$/,
-      '',
-    )}` +
-    '/dashboard/integrations/composio/callback'
   );
 }
 
@@ -785,52 +864,169 @@ async function selectActionToolAndArguments(
   );
 }
 
-async function connectionRequiredOutcome(
+function connectionCandidate(
+  input: {
+    toolkit:
+      XrogaConnectToolkit;
+
+    recommended:
+      boolean;
+  },
+): BusinessActionConnectionCandidate {
+  return {
+    toolkit:
+      input.toolkit.toolkit,
+
+    name:
+      input.toolkit.name ??
+      displayToolkitName(
+        input.toolkit.toolkit,
+      ),
+
+    description:
+      input.toolkit.description,
+
+    logo:
+      input.toolkit.logo,
+
+    recommended:
+      input.recommended,
+  };
+}
+
+async function connectionOutcomeForToolkits(
   input: {
     userId: string;
 
     sessionId: string;
 
-    toolkit: string;
+    useCase: string;
+
+    orderedToolkits:
+      XrogaConnectToolkit[];
   },
 ): Promise<
   Extract<
     BusinessActionPreparationOutcome,
     {
       status:
-        'connection_required';
+        'connection_required' |
+        'provider_choice';
     }
   >
 > {
-  const link =
-    await createComposioConnectionLink(
-      input.userId,
+  const explicit =
+    input.orderedToolkits.find(
+      (toolkit) =>
+        userExplicitlyNamedToolkit(
+          input.useCase,
+          toolkit,
+        ),
+    );
+
+  const selected =
+    explicit ??
+    (
+      input.orderedToolkits.length ===
+      1
+        ? input.orderedToolkits[0]
+        : undefined
+    );
+
+  if (
+    selected
+  ) {
+    const candidate =
+      connectionCandidate(
+        {
+          toolkit:
+            selected,
+
+          recommended:
+            true,
+        },
+      );
+
+    return {
+      status:
+        'connection_required',
+
+      toolkit:
+        candidate.toolkit,
+
+      candidate,
+
+      message:
+        `Connect or re-authorize ${candidate.name} so Xroga can perform this action.`,
+    };
+  }
+
+  const top =
+    input.orderedToolkits
+      .slice(
+        0,
+        5,
+      );
+
+  const candidates =
+    top.map(
+      (
+        toolkit,
+        index,
+      ) =>
+        connectionCandidate(
+          {
+            toolkit,
+
+            recommended:
+              index === 0,
+          },
+        ),
+    );
+
+  if (
+    !candidates.length
+  ) {
+    throw new ComposioClientError(
+      'Xroga Connect could not start authorization for the matching applications.',
       {
-        sessionId:
-          input.sessionId,
+        status: 502,
 
-        toolkit:
-          input.toolkit,
-
-        callbackUrl:
-          frontendCallbackUrl(),
-
-        mode: 'action',
+        code:
+          'COMPOSIO_LINK_MISSING',
       },
     );
+  }
+
+  if (
+    candidates.length ===
+    1
+  ) {
+    const candidate =
+      candidates[0]!;
+
+    return {
+      status:
+        'connection_required',
+
+      toolkit:
+        candidate.toolkit,
+
+      candidate,
+
+      message:
+        `Connect or re-authorize ${candidate.name} so Xroga can perform this action.`,
+    };
+  }
 
   return {
     status:
-      'connection_required',
+      'provider_choice',
 
-    toolkit:
-      input.toolkit,
-
-    connectUrl:
-      link.redirectUrl,
+    candidates,
 
     message:
-      `Connect or re-authorize ${input.toolkit} so Xroga can perform this action, then retry.`,
+      'Several applications can perform this action. Choose the one you want Xroga to use.',
   };
 }
 
@@ -916,8 +1112,8 @@ export async function prepareBusinessAction(
       ),
     ];
 
-  const connected =
-    await listConnectedComposioToolkits(
+  const toolkitMetadata =
+    await listComposioToolkits(
       input.userId,
       {
         sessionId:
@@ -933,7 +1129,7 @@ export async function prepareBusinessAction(
 
   const connectedSet =
     new Set(
-      connected
+      toolkitMetadata
         .filter(
           (item) =>
             item.connected,
@@ -959,7 +1155,16 @@ export async function prepareBusinessAction(
   if (
     !connectedTools.length
   ) {
-    return connectionRequiredOutcome(
+    const orderedToolkits =
+      candidateToolkits.map(
+        (toolkit) =>
+          toolkitMetadataFor(
+            toolkit,
+            toolkitMetadata,
+          ),
+      );
+
+    return connectionOutcomeForToolkits(
       {
         userId:
           input.userId,
@@ -967,9 +1172,9 @@ export async function prepareBusinessAction(
         sessionId:
           discovery.sessionId,
 
-        toolkit:
-          actionCandidates[0]!
-            .toolkit,
+        useCase,
+
+        orderedToolkits,
       },
     );
   }
