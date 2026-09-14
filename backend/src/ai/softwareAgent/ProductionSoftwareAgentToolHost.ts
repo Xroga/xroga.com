@@ -4,6 +4,10 @@ import type {
   SoftwarePreviewEvidence,
 } from './contracts.js';
 
+import {
+  evaluateWritePolicy,
+} from './writePolicy.js';
+
 import type {
   CommandExecutionResult,
   FileMutationResult,
@@ -130,6 +134,29 @@ function uniquePaths(
   ];
 }
 
+function requireMutationAllowed(
+  contract: SoftwareExecutionContract,
+  operation: FileWriteIntent | 'delete',
+  path: string,
+): void {
+  const decision = evaluateWritePolicy(
+    contract.writePolicy,
+    operation,
+    path,
+  );
+
+  if (decision.allowed) {
+    return;
+  }
+
+  throw new Error(
+    `${decision.code ?? 'WRITE_POLICY_DENIED'}: ${
+      decision.message ??
+      `Mutation of ${path} is outside the authorized task scope.`
+    }`,
+  );
+}
+
 /**
  * Production boundary between the software agent and Xroga.
  *
@@ -238,8 +265,22 @@ export class ProductionSoftwareAgentToolHost
       normalizeProjectPath(path);
 
     /*
-     * We independently verify whether the requested create /
-     * modify operation matches the real workspace.
+     * Defense in depth:
+     *
+     * The Cline tool wrapper checks the write policy before
+     * calling this host, but the production host is itself a
+     * security boundary and must never trust the model/tool
+     * layer to have performed authorization correctly.
+     */
+    requireMutationAllowed(
+      contract,
+      intent,
+      normalizedPath,
+    );
+
+    /*
+     * Independently verify whether the requested create /
+     * modify operation matches the real current workspace.
      *
      * Model-declared intent is never trusted by itself.
      */
@@ -292,6 +333,18 @@ export class ProductionSoftwareAgentToolHost
   }> {
     const normalizedPath =
       normalizeProjectPath(path);
+
+    /*
+     * Deletion receives the same independent host-side policy
+     * enforcement as create/modify. allowedPaths therefore
+     * remains a runtime boundary even if a future caller skips
+     * the Cline tool wrapper entirely.
+     */
+    requireMutationAllowed(
+      contract,
+      'delete',
+      normalizedPath,
+    );
 
     const result =
       await this.operations.deleteFile(
