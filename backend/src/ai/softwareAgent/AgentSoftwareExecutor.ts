@@ -186,36 +186,67 @@ export class AgentSoftwareExecutor {
       evidence,
     });
 
-    const agent = new Agent({
-      providerId: model.providerId,
-      modelId: model.modelId,
+    const systemPrompt =
+      buildSoftwareAgentPrompt(
+        contract,
+      );
 
-      ...(model.apiKey
-        ? {
-            apiKey: model.apiKey,
-          }
-        : {}),
+    const registeredTools = [
+      ...tools,
+      completionTool,
+    ];
 
-      ...(model.baseUrl
-        ? {
-            baseUrl: model.baseUrl,
-          }
-        : {}),
+    /*
+     * Production Xroga supplies a pre-built AgentModel whose provider
+     * calls stay behind Xroga quota/budget/health controls.
+     *
+     * The direct provider configuration path remains for isolated tests
+     * and controlled non-production callers only.
+     */
+    const agent =
+      model.model
+        ? new Agent({
+            model:
+              model.model,
 
-      ...(model.headers
-        ? {
-            headers: model.headers,
-          }
-        : {}),
+            systemPrompt,
 
-      systemPrompt:
-        buildSoftwareAgentPrompt(contract),
+            tools:
+              registeredTools,
+          })
+        : new Agent({
+            providerId:
+              model.providerId!,
 
-      tools: [
-        ...tools,
-        completionTool,
-      ],
-    });
+            modelId:
+              model.modelId!,
+
+            ...(model.apiKey
+              ? {
+                  apiKey:
+                    model.apiKey,
+                }
+              : {}),
+
+            ...(model.baseUrl
+              ? {
+                  baseUrl:
+                    model.baseUrl,
+                }
+              : {}),
+
+            ...(model.headers
+              ? {
+                  headers:
+                    model.headers,
+                }
+              : {}),
+
+            systemPrompt,
+
+            tools:
+              registeredTools,
+          });
 
     const timeoutMs =
       normalizeTimeout(input.timeoutMs);
