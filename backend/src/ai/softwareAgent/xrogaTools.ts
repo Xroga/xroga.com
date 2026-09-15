@@ -1034,13 +1034,13 @@ export function createXrogaSoftwareTools(
         },
     });
 
-  const startPreview =
+  const verifyPreview =
     createTool({
       name:
-        'start_preview',
+        'verify_preview',
 
       description:
-        'Start the real application Preview when this project supports Preview.',
+        'Run Xroga browser/runtime verification against the current workspace. The application and browser run together inside one disposable isolated sandbox; no persistent Preview id exists.',
 
       inputSchema: {
         type:
@@ -1067,7 +1067,7 @@ export function createXrogaSoftwareTools(
                 'PREVIEW_NOT_APPLICABLE',
 
               message:
-                'This software task does not require a web Preview.',
+                'This software task does not require browser Preview verification.',
             };
           }
 
@@ -1079,104 +1079,8 @@ export function createXrogaSoftwareTools(
               'running',
 
             title:
-              'Starting Preview',
+              'Starting isolated Preview verification',
           });
-
-          try {
-            const preview =
-              await host.startPreview(
-                contract,
-              );
-
-            evidence.preview =
-              preview;
-
-            await emit({
-              type:
-                'preview.ready',
-
-              status:
-                'success',
-
-              title:
-                'Preview ready',
-
-              evidence: {
-                previewId:
-                  preview.previewId,
-              },
-            });
-
-            return {
-              ok:
-                true,
-              preview,
-            };
-          } catch {
-            await emit({
-              type:
-                'preview.failed',
-
-              status:
-                'failed',
-
-              title:
-                'Preview could not start',
-            });
-
-            return {
-              ok:
-                false,
-
-              code:
-                'PREVIEW_START_FAILED',
-
-              message:
-                'The application Preview could not start.',
-            };
-          }
-        },
-    });
-
-  const verifyPreview =
-    createTool({
-      name:
-        'verify_preview',
-
-      description:
-        'Verify the running Preview using Xroga browser/runtime checks.',
-
-      inputSchema: {
-        type:
-          'object',
-
-        properties: {
-          preview_id: {
-            type:
-              'string',
-
-            minLength:
-              1,
-          },
-        },
-
-        required: [
-          'preview_id',
-        ],
-
-        additionalProperties:
-          false,
-      },
-
-      execute:
-        async (
-          rawInput,
-        ) => {
-          const toolInput =
-            rawInput as {
-              preview_id:
-                string;
-            };
 
           await emit({
             type:
@@ -1186,45 +1090,54 @@ export function createXrogaSoftwareTools(
               'running',
 
             title:
-              'Verifying Preview',
-
-            evidence: {
-              previewId:
-                toolInput.preview_id,
-            },
+              'Verifying application in browser',
           });
 
           try {
             const preview =
               await host.verifyPreview(
                 contract,
-                toolInput.preview_id,
               );
 
             evidence.preview =
               preview;
 
             const valid =
-              typeof preview.httpStatus ===
-                'number' &&
-              preview.httpStatus >=
-                200 &&
-              preview.httpStatus <
-                400 &&
-              preview.consoleErrors
-                .length ===
-                0 &&
-              preview.runtimeErrors
-                .length ===
-                0 &&
-              (
-                preview.desktopVerified ===
-                  true ||
-                preview.tabletVerified ===
-                  true ||
-                preview.mobileVerified ===
-                  true
-              );
+              preview.status ===
+              'passed';
+
+            if (
+              valid
+            ) {
+              await emit({
+                type:
+                  'preview.ready',
+
+                status:
+                  'success',
+
+                title:
+                  'Preview verified',
+              });
+            } else {
+              await emit({
+                type:
+                  'preview.failed',
+
+                status:
+                  'failed',
+
+                title:
+                  preview.status ===
+                  'not_checked'
+                    ? 'Preview verification did not run'
+                    : 'Preview verification failed',
+
+                summary:
+                  preview.blocker ??
+                  undefined,
+              });
+            }
 
             await emit({
               type:
@@ -1237,21 +1150,61 @@ export function createXrogaSoftwareTools(
 
               title:
                 valid
-                  ? 'Preview verified'
-                  : 'Preview needs attention',
+                  ? 'Browser verification passed'
+                  : 'Browser verification incomplete',
 
-              evidence: {
-                previewId:
-                  toolInput.preview_id,
-              },
+              summary:
+                valid
+                  ? undefined
+                  : preview.blocker ??
+                    'Required browser evidence is incomplete.',
             });
 
             return {
               ok:
                 valid,
+
               preview,
+
+              ...(
+                valid
+                  ? {}
+                  : {
+                      code:
+                        preview.status ===
+                        'not_checked'
+                          ? 'PREVIEW_NOT_CHECKED'
+                          : 'PREVIEW_VERIFICATION_FAILED',
+
+                      message:
+                        preview.blocker ??
+                        'The application did not produce passing browser verification evidence.',
+                    }
+              ),
             };
           } catch {
+            await emit({
+              type:
+                'preview.failed',
+
+              status:
+                'failed',
+
+              title:
+                'Preview verification could not run',
+            });
+
+            await emit({
+              type:
+                'browser.verification.completed',
+
+              status:
+                'failed',
+
+              title:
+                'Browser verification failed to execute',
+            });
+
             return {
               ok:
                 false,
@@ -1260,7 +1213,7 @@ export function createXrogaSoftwareTools(
                 'PREVIEW_VERIFICATION_FAILED',
 
               message:
-                'Xroga could not complete Preview verification.',
+                'Xroga could not complete browser verification.',
             };
           }
         },
@@ -1524,7 +1477,6 @@ export function createXrogaSoftwareTools(
       runCommand,
       runChecks,
       gitDiff,
-      startPreview,
       verifyPreview,
       createReviewBranch,
     ],
