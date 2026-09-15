@@ -1,46 +1,48 @@
+import type {
+  AgentModel,
+} from '@cline/sdk';
+
 export interface SoftwareAgentModelRoute {
+  /**
+   * Optional pre-built model transport.
+   *
+   * Production Xroga uses this path so Cline's agent loop can run
+   * through Xroga-owned quota, provider policy, health and accounting
+   * instead of receiving raw provider credentials.
+   */
+  model?: AgentModel;
+
   /**
    * Cline SDK provider id.
    *
-   * For Xroga's OpenAI-compatible providers this will normally be:
-   * "openai-compatible"
+   * Kept for isolated tests and controlled non-production callers.
    */
-  providerId: string;
+  providerId?: string;
 
   /**
    * Provider-specific model id.
    *
-   * Examples are intentionally NOT hard-coded here.
-   * Xroga's provider registry will supply the real model id.
+   * Kept for isolated tests and controlled non-production callers.
    */
-  modelId: string;
+  modelId?: string;
 
   /**
-   * Resolved server-side only.
+   * Server-side only.
    *
-   * Never return this object to the frontend.
-   * Never log the key.
+   * Production Xroga should prefer `model` above and must never expose
+   * this value to the frontend or logs.
    */
   apiKey?: string;
 
   /**
-   * Required for OpenAI-compatible custom/provider endpoints.
+   * Required for direct OpenAI-compatible provider routes.
    */
   baseUrl?: string;
 
-  /**
-   * Optional provider-specific headers.
-   *
-   * Do not place secrets here unless they are handled with the
-   * same server-side protections as apiKey.
-   */
   headers?: Record<string, string>;
 
   /**
    * Internal Xroga identifier for telemetry only.
-   *
-   * Example:
-   * software_primary
    *
    * Do not expose vendor/provider internals to normal users.
    */
@@ -50,26 +52,42 @@ export interface SoftwareAgentModelRoute {
 export function assertSoftwareAgentModelRoute(
   route: SoftwareAgentModelRoute,
 ): void {
-  if (!route.providerId.trim()) {
-    throw new Error(
-      'Software agent providerId is required.',
-    );
-  }
-
-  if (!route.modelId.trim()) {
-    throw new Error(
-      'Software agent modelId is required.',
-    );
-  }
-
   if (!route.routeId.trim()) {
     throw new Error(
       'Software agent routeId is required.',
     );
   }
 
+  /*
+   * A pre-built AgentModel is the production-safe path.
+   * Provider credentials are intentionally unnecessary here because
+   * the model adapter owns the provider boundary.
+   */
+  if (route.model) {
+    return;
+  }
+
+  const providerId =
+    route.providerId?.trim();
+
+  const modelId =
+    route.modelId?.trim();
+
+  if (!providerId) {
+    throw new Error(
+      'Software agent providerId is required when no pre-built model is supplied.',
+    );
+  }
+
+  if (!modelId) {
+    throw new Error(
+      'Software agent modelId is required when no pre-built model is supplied.',
+    );
+  }
+
   if (
-    route.providerId === 'openai-compatible' &&
+    providerId ===
+      'openai-compatible' &&
     !route.baseUrl?.trim()
   ) {
     throw new Error(
