@@ -31,22 +31,15 @@ export interface XrogaSoftwareAgentBindingImplementations {
     files: ProjectFile[];
   }): Promise<SoftwareCheckResult[]>;
 
-  startProjectPreview(input: {
-    userId: string;
-    contract: SoftwareExecutionContract;
-    files: ProjectFile[];
-  }): Promise<SoftwarePreviewEvidence>;
-
-  probeProjectPreview(input: {
-    userId: string;
-    contract: SoftwareExecutionContract;
-    previewId: string;
-  }): Promise<SoftwarePreviewEvidence>;
-
+  /**
+   * Run the existing one-shot browser verifier against the
+   * supplied current workspace snapshot.
+   */
   verifyProjectPreview(input: {
     userId: string;
     contract: SoftwareExecutionContract;
-    previewId: string;
+    files: ProjectFile[];
+    checks: SoftwareCheckResult[];
   }): Promise<SoftwarePreviewEvidence>;
 
   createReviewBranch(input: {
@@ -61,7 +54,8 @@ export interface XrogaSoftwareAgentBindingImplementations {
 function requireUserId(
   userId: string,
 ): string {
-  const value = userId.trim();
+  const value =
+    userId.trim();
 
   if (!value) {
     throw new Error(
@@ -73,7 +67,8 @@ function requireUserId(
 }
 
 function requirePreviewAllowed(
-  contract: SoftwareExecutionContract,
+  contract:
+    SoftwareExecutionContract,
 ): void {
   if (
     contract.preview ===
@@ -86,7 +81,8 @@ function requirePreviewAllowed(
 }
 
 function requirePersistenceAllowed(
-  contract: SoftwareExecutionContract,
+  contract:
+    SoftwareExecutionContract,
 ): void {
   if (
     contract.persistence !==
@@ -97,22 +93,15 @@ function requirePersistenceAllowed(
     );
   }
 
-  if (!contract.repository) {
+  if (
+    !contract.repository
+  ) {
     throw new Error(
       'AUTHORIZED_REPOSITORY_REQUIRED',
     );
   }
 }
 
-/**
- * Creates the guarded bridge between Agent V2 and Xroga's
- * existing production infrastructure.
- *
- * This layer does not implement another sandbox, Preview
- * system, validator or GitHub client.
- *
- * Those real implementations are injected from Xroga.
- */
 export function createXrogaSoftwareAgentBindings(
   input: {
     userId: string;
@@ -141,7 +130,9 @@ export function createXrogaSoftwareAgentBindings(
       const cleanedCommand =
         command.trim();
 
-      if (!cleanedCommand) {
+      if (
+        !cleanedCommand
+      ) {
         throw new Error(
           'Sandbox command is required.',
         );
@@ -152,6 +143,7 @@ export function createXrogaSoftwareAgentBindings(
           userId,
           contract,
           files,
+
           command:
             cleanedCommand,
         });
@@ -170,7 +162,9 @@ export function createXrogaSoftwareAgentBindings(
           });
 
       if (
-        !Array.isArray(checks)
+        !Array.isArray(
+          checks,
+        )
       ) {
         throw new Error(
           'INVALID_CHECK_RESULT',
@@ -180,69 +174,21 @@ export function createXrogaSoftwareAgentBindings(
       return checks;
     },
 
-    async startProjectPreview({
-      contract,
-      files,
-    }) {
-      requirePreviewAllowed(
-        contract,
-      );
-
-      return implementations
-        .startProjectPreview({
-          userId,
-          contract,
-          files,
-        });
-    },
-
-    async probeProjectPreview({
-      contract,
-      previewId,
-    }) {
-      requirePreviewAllowed(
-        contract,
-      );
-
-      const id =
-        previewId.trim();
-
-      if (!id) {
-        throw new Error(
-          'Preview id is required.',
-        );
-      }
-
-      return implementations
-        .probeProjectPreview({
-          userId,
-          contract,
-          previewId: id,
-        });
-    },
-
     async verifyProjectPreview({
       contract,
-      previewId,
+      files,
+      checks,
     }) {
       requirePreviewAllowed(
         contract,
       );
-
-      const id =
-        previewId.trim();
-
-      if (!id) {
-        throw new Error(
-          'Preview id is required.',
-        );
-      }
 
       return implementations
         .verifyProjectPreview({
           userId,
           contract,
-          previewId: id,
+          files,
+          checks,
         });
     },
 
@@ -257,7 +203,8 @@ export function createXrogaSoftwareAgentBindings(
       );
 
       if (
-        changedPaths.length === 0
+        changedPaths.length ===
+        0
       ) {
         throw new Error(
           'NO_CHANGES_TO_PERSIST',
