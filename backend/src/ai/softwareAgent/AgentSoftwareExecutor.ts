@@ -177,18 +177,6 @@ export class AgentSoftwareExecutor {
       evidence,
     });
 
-    /*
-     * IMPORTANT:
-     *
-     * We deliberately DO NOT give the model complete_task yet.
-     *
-     * Xroga remains the authority that decides whether a run is
-     * actually complete.
-     *
-     * If evidence is incomplete, we call agent.continue(...)
-     * on the SAME conversation instead of terminating and
-     * starting another model/project generation.
-     */
     const agent = new Agent({
       providerId: model.providerId,
       modelId: model.modelId,
@@ -235,9 +223,7 @@ export class AgentSoftwareExecutor {
           'Xroga software-agent execution deadline reached.',
         );
       } catch {
-        /*
-         * Abort itself must never turn into another failure.
-         */
+        /* Abort must not create a second failure. */
       }
     }, timeoutMs);
 
@@ -246,16 +232,6 @@ export class AgentSoftwareExecutor {
     let usage: unknown;
 
     try {
-      /*
-       * Do not forward assistant-text-delta directly into the
-       * public Workspace.
-       *
-       * Public execution evidence comes from Xroga tool events.
-       *
-       * We can later subscribe here for internal usage/latency
-       * telemetry without exposing model reasoning.
-       */
-
       let result =
         await agent.run(contract.goal);
 
@@ -320,19 +296,12 @@ export class AgentSoftwareExecutor {
           requireSuccessfulChecks: true,
 
           requireRepositoryPersistence:
-            Boolean(contract.repository),
+            contract.persistence ===
+            'review_branch',
         });
 
       let verificationRound = 0;
 
-      /*
-       * Critical architectural difference from the old Builder:
-       *
-       * DO NOT restart the model and regenerate the project.
-       *
-       * Continue the SAME agent conversation with the SAME
-       * workspace and the real verification blockers.
-       */
       while (
         !completion.complete &&
         verificationRound <
@@ -373,9 +342,8 @@ export class AgentSoftwareExecutor {
             requireSuccessfulChecks: true,
 
             requireRepositoryPersistence:
-              Boolean(
-                contract.repository,
-              ),
+              contract.persistence ===
+              'review_branch',
           });
       }
 
