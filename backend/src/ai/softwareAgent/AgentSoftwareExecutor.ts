@@ -168,8 +168,17 @@ export class AgentSoftwareExecutor {
     const evidence =
       createAgentEvidence();
 
+    /*
+     * createXrogaSoftwareTools deliberately exposes the completion
+     * tool separately because it has lifecycle.completesRun = true.
+     *
+     * The completion tool still MUST be registered with Cline.
+     * Previously only `tools` was passed to Agent, so `complete_task`
+     * existed in source code but was invisible to the runtime.
+     */
     const {
       tools,
+      completionTool,
     } = createXrogaSoftwareTools({
       contract,
       host,
@@ -202,7 +211,10 @@ export class AgentSoftwareExecutor {
       systemPrompt:
         buildSoftwareAgentPrompt(contract),
 
-      tools,
+      tools: [
+        ...tools,
+        completionTool,
+      ],
     });
 
     const timeoutMs =
@@ -223,7 +235,10 @@ export class AgentSoftwareExecutor {
           'Xroga software-agent execution deadline reached.',
         );
       } catch {
-        /* Abort must not create a second failure. */
+        /*
+         * Abort is best-effort.
+         * It must never create a second failure path.
+         */
       }
     }, timeoutMs);
 
