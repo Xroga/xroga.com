@@ -1,6 +1,33 @@
-import type {
-  AgentModel,
+import {
+  Agent,
 } from '@cline/sdk';
+
+type AgentConstructorConfig =
+  ConstructorParameters<
+    typeof Agent
+  >[0];
+
+type ExtractPrebuiltAgentModel<
+  TConfig,
+> =
+  TConfig extends {
+    model: infer TModel;
+  }
+    ? TModel
+    : never;
+
+/**
+ * The exact pre-built model type accepted by the installed Cline Agent
+ * constructor, inferred from Cline's public `Agent` export.
+ *
+ * We deliberately do not import `AgentModel` from @cline/shared or another
+ * transitive package. @cline/sdk@0.0.82 does not re-export that low-level
+ * type from its package root, while `Agent` itself is public and stable.
+ */
+export type SoftwareAgentPrebuiltModel =
+  ExtractPrebuiltAgentModel<
+    AgentConstructorConfig
+  >;
 
 export interface SoftwareAgentModelRoute {
   /**
@@ -10,7 +37,7 @@ export interface SoftwareAgentModelRoute {
    * through Xroga-owned quota, provider policy, health and accounting
    * instead of receiving raw provider credentials.
    */
-  model?: AgentModel;
+  model?: SoftwareAgentPrebuiltModel;
 
   /**
    * Cline SDK provider id.
@@ -59,9 +86,9 @@ export function assertSoftwareAgentModelRoute(
   }
 
   /*
-   * A pre-built AgentModel is the production-safe path.
+   * A pre-built model is the production-safe path.
    * Provider credentials are intentionally unnecessary here because
-   * the model adapter owns the provider boundary.
+   * the Xroga model adapter owns the provider boundary.
    */
   if (route.model) {
     return;
