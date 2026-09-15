@@ -1,125 +1,322 @@
 /**
- * The point where a real user build enters the universal path.
+ * Production entrypoint for Xroga's universal engineering path.
  *
- * Until this existed, `executeUniversalRun` and `productionAdapters` were defined, tested
- * and called by nothing. The flag could be set to `enabled` and a project could be
- * allowlisted and the outcome would be identical to leaving it off — which meant M19's
- * requirement to run "through the ACTUAL production user-build entrypoint" could not be
- * met, because there was no path from the entrypoint to the code.
+ * The universal pipeline remains authoritative for planning, security,
+ * validation, browser verification, review and the final atomic commit.
  *
- * The integration is deliberately one function returning `null`. `runBuildPipeline` calls
- * it once; a null means "not selected, carry on as before" and the legacy pipeline proceeds
- * untouched. That shape matters more than it looks: the alternative is an `if` wrapped
- * around three thousand lines of orchestration, where every later edit has to remember
- * which branch it is in.
+ * The implementation phase is now routed through SoftwareAgentRuntime so
+ * Xroga can select:
+ *   - legacy coherent generation
+ *   - Cline-backed Agent V2
+ *   - Agent V2 shadow mode
  *
- * Reachability is worth stating plainly. This returns `null` unless
- * `UNIVERSAL_AGENT_ENABLED=enabled` *and* the project is allowlisted. Production runs
- * `shadow`, so today this is unreachable there — which is the intended state until a
- * designated test project exists.
+ * No second builder, preview service, sandbox or repository writer is
+ * introduced here.
  */
 
-import { randomUUID } from 'node:crypto';
-import type { ProjectFile } from '../ai/patches.js';
-import { mayWrite, routeProject, type UniversalAgentFlags } from '../config/universalAgentFlags.js';
-import { productionAdapters, type CommitFn } from './productionAdapters.js';
-import { repairIncrementally } from './incrementalImplementation.js';
-import { implementCoherently } from './coherentImplementation.js';
-import { executeUniversalRun, type UniversalExecutionResult } from './universalExecution.js';
-import { universalStore, type Owner, type UniversalStore } from './universalPersistence.js';
-import { getSupabaseAdmin } from '../config/supabase.js';
-import { routeByCapability, type RoutingCandidate } from '../ai/capabilityRouter.js';
-import { buildProfile } from '../ai/modelCapabilityProfile.js';
-import { getRuntimeModelRegistry } from '../ai/modelCapabilityRegistry.js';
-import { assertCodingModel, isCodingModel } from '../ai/providerPolicy.js';
-import { chooseCostAware } from '../ai/providerCostTiers.js';
-import { chooseFromMeasuredEvidence, loadMeasuredEvidence } from '../ai/measuredEvidence.js';
-import { MODELS, type ModelId } from '../ai/models.js';
-import type { ExecutionStateStore } from '../ai/executionRuntime.js';
-import { assertProjectWriteTarget, type ActiveProjectContext } from '../ai/universal/projectContext.js';
-import { goalContractSchema, interpretGoalContract, type GoalContract, type GoalInterpretationInput } from '../ai/universal/goalContract.js';
-import { universalCapabilityRegistry } from '../capabilities/index.js';
-import { planCapabilities } from '../ai/universal/planner.js';
+import {
+  randomUUID,
+} from 'node:crypto';
+
+import type {
+  ProjectFile,
+} from '../ai/patches.js';
+
+import {
+  mayWrite,
+  routeProject,
+  type UniversalAgentFlags,
+} from '../config/universalAgentFlags.js';
+
+import {
+  productionAdapters,
+  type CommitFn,
+} from './productionAdapters.js';
+
+import {
+  repairIncrementally,
+} from './incrementalImplementation.js';
+
+import {
+  implementCoherently,
+} from './coherentImplementation.js';
+
+import {
+  executeUniversalRun,
+  type UniversalExecutionResult,
+} from './universalExecution.js';
+
+import {
+  universalStore,
+  type Owner,
+  type UniversalStore,
+} from './universalPersistence.js';
+
+import {
+  getSupabaseAdmin,
+} from '../config/supabase.js';
+
+import {
+  routeByCapability,
+  type RoutingCandidate,
+} from '../ai/capabilityRouter.js';
+
+import {
+  buildProfile,
+} from '../ai/modelCapabilityProfile.js';
+
+import {
+  getRuntimeModelRegistry,
+} from '../ai/modelCapabilityRegistry.js';
+
+import {
+  isCodingModel,
+} from '../ai/providerPolicy.js';
+
+import {
+  chooseCostAware,
+} from '../ai/providerCostTiers.js';
+
+import {
+  chooseFromMeasuredEvidence,
+  loadMeasuredEvidence,
+} from '../ai/measuredEvidence.js';
+
+import {
+  MODELS,
+  type ModelId,
+} from '../ai/models.js';
+
+import type {
+  ExecutionStateStore,
+} from '../ai/executionRuntime.js';
+
+import {
+  assertProjectWriteTarget,
+  type ActiveProjectContext,
+} from '../ai/universal/projectContext.js';
+
+import {
+  goalContractSchema,
+  interpretGoalContract,
+  type GoalContract,
+  type GoalInterpretationInput,
+} from '../ai/universal/goalContract.js';
+
+import {
+  universalCapabilityRegistry,
+} from '../capabilities/index.js';
+
+import {
+  planCapabilities,
+} from '../ai/universal/planner.js';
+
+import {
+  runUniversalSoftwareImplementation,
+} from './softwareAgentImplementationAdapter.js';
 
 export interface UniversalBuildOutcome {
   readonly ran: true;
-  readonly result: UniversalExecutionResult;
-  readonly goalContract: GoalContract | null;
+
+  readonly result:
+    UniversalExecutionResult;
+
+  readonly goalContract:
+    GoalContract | null;
+
   readonly routing: {
-    readonly selectedModel: string | null;
-    readonly fallbacks: readonly string[];
-    readonly reason: string;
-    readonly excluded: ReadonlyArray<{ modelId: string; reason: string }>;
-    /** True when a hand-written prior decided this rather than a measurement. */
+    readonly selectedModel:
+      string | null;
+
+    readonly fallbacks:
+      readonly string[];
+
+    readonly reason:
+      string;
+
+    readonly excluded:
+      ReadonlyArray<{
+        modelId: string;
+        reason: string;
+      }>;
+
+    /**
+     * True when a hand-written prior decided this rather than a
+     * measurement.
+     */
     readonly selectedOnPrior?: boolean;
-    readonly evidenceSource?: 'measured' | 'unavailable';
+
+    readonly evidenceSource?:
+      | 'measured'
+      | 'unavailable';
   };
 }
 
 /**
- * Builds capability profiles from the runtime model registry.
+ * Build implementation-routing candidates from Xroga's runtime model
+ * registry.
  *
- * The bridge M19 §8 asks for. The legacy `intelligentRouter` picks from the same registry
- * by hand-written strength scores; this converts those into profiles so the capability
- * router ranks them by provenance-weighted evidence instead. Every profile starts
- * `declared` and stays that way until outcomes accumulate — which is the honest starting
- * point, not a defect.
+ * Research-only models are excluded at the source of the candidate list.
  */
-export function capabilityCandidates(): readonly RoutingCandidate[] {
+export function capabilityCandidates():
+  readonly RoutingCandidate[] {
   return getRuntimeModelRegistry()
-    // §7: research providers never implement. Filtered at the source of the candidate list
-    // rather than after ranking, so a research model cannot be selected, cannot become a
-    // fallback, and cannot appear in the run's recorded routing evidence as a coding
-    // option that merely lost. Before this, private retrieval models carried a coding
-    // score of 7 and were ranked for the `coding` capability like any other model.
-    .filter((model) => isCodingModel(model.id))
-    .map((model) => ({
-    // A model with an open circuit or a known outage is excluded rather than ranked down:
-    // §22 treats availability as a hard requirement, not a scoring penalty.
-    available:
-      model.configured &&
-      model.enabled &&
-      model.health.status !== 'unavailable' &&
-      model.health.status !== 'circuit_open',
-    profile: buildProfile({
-      modelId: model.id,
-      providerId: model.provider,
-      contextWindow: model.contextWindow,
-      maximumOutput: model.maximumSafeRequestTokens,
-      toolSupport: model.supports.toolCalls,
-      structuredOutputSupport: model.supports.structuredOutput,
-      visionSupport: model.supports.images,
-      streamingSupport: model.supports.streaming,
-      declaredScores: model.strengths as unknown as Record<string, number>,
-      inputUsdPer1M: model.inputUsdPer1M,
-      outputUsdPer1M: model.outputUsdPer1M,
-    }),
-  }));
+    .filter(
+      (model) =>
+        isCodingModel(
+          model.id,
+        ),
+    )
+    .map(
+      (model) => ({
+        available:
+          model.configured &&
+          model.enabled &&
+          model.health.status !==
+            'unavailable' &&
+          model.health.status !==
+            'circuit_open',
+
+        profile:
+          buildProfile({
+            modelId:
+              model.id,
+
+            providerId:
+              model.provider,
+
+            contextWindow:
+              model.contextWindow,
+
+            maximumOutput:
+              model.maximumSafeRequestTokens,
+
+            toolSupport:
+              model.supports
+                .toolCalls,
+
+            structuredOutputSupport:
+              model.supports
+                .structuredOutput,
+
+            visionSupport:
+              model.supports
+                .images,
+
+            streamingSupport:
+              model.supports
+                .streaming,
+
+            declaredScores:
+              model.strengths as unknown as
+                Record<
+                  string,
+                  number
+                >,
+
+            inputUsdPer1M:
+              model.inputUsdPer1M,
+
+            outputUsdPer1M:
+              model.outputUsdPer1M,
+          }),
+      }),
+    );
 }
 
-/** Extracts a file map from a model reply, tolerating the fences models add. */
-export function parseGeneratedFiles(text: string): readonly ProjectFile[] {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const raw = (fenced ? fenced[1] : text).trim();
+/**
+ * Extract a generated file map from a JSON model reply.
+ *
+ * Kept exported for compatibility with existing tests/callers even though
+ * the production implementation path now uses the coherent/agent runtime
+ * rather than this parser directly.
+ */
+export function parseGeneratedFiles(
+  text: string,
+): readonly ProjectFile[] {
+  const fenced =
+    text.match(
+      /```(?:json)?\s*([\s\S]*?)```/i,
+    );
+
+  const raw =
+    (
+      fenced
+        ? fenced[1]
+        : text
+    )
+      ?.trim() ??
+    '';
+
   try {
-    const parsed = JSON.parse(raw) as { files?: Array<{ path?: unknown; content?: unknown }> };
-    if (!Array.isArray(parsed.files)) return [];
+    const parsed =
+      JSON.parse(
+        raw,
+      ) as {
+        files?: Array<{
+          path?: unknown;
+          content?: unknown;
+        }>;
+      };
+
+    if (
+      !Array.isArray(
+        parsed.files,
+      )
+    ) {
+      return [];
+    }
+
     return parsed.files
-      .filter((file) => typeof file?.path === 'string' && typeof file?.content === 'string')
-      // Path safety is enforced again here even though the patch workspace enforces it too.
-      // A traversal that reaches the workspace is caught, but catching it at the boundary
-      // means the run reports a bad generation rather than a rejected write.
-      .filter((file) => {
-        const path = String(file.path);
-        return !path.startsWith('/') && !path.includes('..') && path.length > 0;
-      })
-      .map((file) => ({ path: String(file.path), content: String(file.content) }));
+      .filter(
+        (
+          file,
+        ): file is {
+          path: string;
+          content: string;
+        } =>
+          typeof file?.path ===
+            'string' &&
+          typeof file?.content ===
+            'string',
+      )
+      .filter(
+        (file) => {
+          const path =
+            file.path;
+
+          return (
+            path.length > 0 &&
+            !path.startsWith(
+              '/',
+            ) &&
+            !path.includes(
+              '..',
+            )
+          );
+        },
+      )
+      .map(
+        (file) => ({
+          path:
+            file.path,
+
+          content:
+            file.content,
+        }),
+      );
   } catch {
     return [];
   }
 }
 
-const IMPLEMENT_SYSTEM = `You are the implementation agent on Xroga's universal engineering path.
+/**
+ * Preserved for compatibility with the older structured implementation
+ * tests/documentation. The live implementation path now delegates to
+ * SoftwareAgentRuntime.
+ */
+export const IMPLEMENT_SYSTEM =
+  `You are the implementation agent on Xroga's universal engineering path.
 You receive a brief containing decisions that are already settled. Do not change the language,
 framework, package manager or architecture the brief states.
 
@@ -133,215 +330,774 @@ Rules:
 - Include the tests the acceptance criteria and security requirements call for, including
   the negative tests that prove a refusal actually happens.`;
 
-/**
- * Runs a build through the universal path, or returns null.
- *
- * Null is the normal answer. It means the project was not selected, and the caller should
- * continue exactly as it did before this function existed.
- */
-export async function tryUniversalBuild(input: {
-  runId?: string;
-  userId: string;
-  projectId?: string | null;
-  prompt: string;
-  existingFiles?: readonly ProjectFile[];
-  commit: CommitFn;
-  flags?: UniversalAgentFlags;
-  store?: UniversalStore;
-  /** Durable store for the canonical task graph. In-memory when absent. */
-  executionStore?: ExecutionStateStore;
-  /** Canonical context visible to the user and the independently constructed write target. */
-  activeProjectContext?: ActiveProjectContext;
-  writeTarget?: ActiveProjectContext;
-  goalContext?: Pick<GoalInterpretationInput, 'history' | 'attachments' | 'projectState'>;
-  goalInterpreter?: (input: GoalInterpretationInput & { availableCapabilityIds: readonly string[]; modelId: ModelId }) => Promise<unknown>;
-}): Promise<UniversalBuildOutcome | null> {
-  const decision = routeProject(input.projectId ?? null, input.flags);
-  if (!mayWrite(decision)) return null;
+export async function tryUniversalBuild(
+  input: {
+    runId?: string;
 
-  if (input.activeProjectContext || input.writeTarget) {
-    if (!input.activeProjectContext || !input.writeTarget) {
-      throw new Error('A universal repository write requires both active context and write target.');
-    }
-    assertProjectWriteTarget(input.activeProjectContext, input.writeTarget);
+    userId: string;
+
+    projectId?:
+      | string
+      | null;
+
+    prompt: string;
+
+    existingFiles?:
+      readonly ProjectFile[];
+
+    commit:
+      CommitFn;
+
+    flags?:
+      UniversalAgentFlags;
+
+    store?:
+      UniversalStore;
+
+    /**
+     * Durable store for the canonical task graph.
+     */
+    executionStore?:
+      ExecutionStateStore;
+
+    /**
+     * Canonical project identity visible to the user and the
+     * independently constructed repository write target.
+     */
+    activeProjectContext?:
+      ActiveProjectContext;
+
+    writeTarget?:
+      ActiveProjectContext;
+
+    goalContext?:
+      Pick<
+        GoalInterpretationInput,
+        | 'history'
+        | 'attachments'
+        | 'projectState'
+      >;
+
+    goalInterpreter?: (
+      input:
+        GoalInterpretationInput & {
+          availableCapabilityIds:
+            readonly string[];
+
+          modelId:
+            ModelId;
+        },
+    ) => Promise<unknown>;
+  },
+): Promise<
+  UniversalBuildOutcome |
+  null
+> {
+  const decision =
+    routeProject(
+      input.projectId ??
+        null,
+      input.flags,
+    );
+
+  if (
+    !mayWrite(
+      decision,
+    )
+  ) {
+    return null;
   }
 
-  const owner: Owner = {
-    userId: input.userId,
-    projectId: input.projectId ?? `run:${input.runId ?? 'unknown'}`,
+  if (
+    input.activeProjectContext ||
+    input.writeTarget
+  ) {
+    if (
+      !input.activeProjectContext ||
+      !input.writeTarget
+    ) {
+      throw new Error(
+        'A universal repository write requires both active context and write target.',
+      );
+    }
+
+    assertProjectWriteTarget(
+      input.activeProjectContext,
+      input.writeTarget,
+    );
+  }
+
+  /*
+   * One run id is shared by universal execution, Agent V2 events and
+   * canonical task evidence. Previously a generated id existed only
+   * inside executeUniversalRun, which made it impossible for an inner
+   * implementation runtime to bind its evidence to the same run.
+   */
+  const runId =
+    input.runId ??
+    randomUUID();
+
+  const owner:
+    Owner = {
+    userId:
+      input.userId,
+
+    projectId:
+      input.projectId ??
+      `run:${runId}`,
   };
 
-  // §8: the capability router must actually decide, not the legacy one. The selection is
-  // captured so the run's evidence can name the model and why it won.
-  const route = routeByCapability(
-    {
-      capability: 'coding',
-      requiredContextTokens: 32_000,
-      needsStructuredOutput: true,
-    },
-    capabilityCandidates(),
-  );
+  const route =
+    routeByCapability(
+      {
+        capability:
+          'coding',
 
-  if (!route.selected) {
-    // Refusing beats routing to something unevaluated. The excluded list explains why.
+        requiredContextTokens:
+          32_000,
+
+        needsStructuredOutput:
+          true,
+      },
+
+      capabilityCandidates(),
+    );
+
+  if (
+    !route.selected
+  ) {
     return {
-      ran: true,
-      goalContract: null,
-      routing: { selectedModel: null, fallbacks: [], reason: route.reason, excluded: route.excluded },
+      ran:
+        true,
+
+      goalContract:
+        null,
+
+      routing: {
+        selectedModel:
+          null,
+
+        fallbacks:
+          [],
+
+        reason:
+          route.reason,
+
+        excluded:
+          route.excluded,
+      },
+
       result: {
-        outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [],
-        files: [], commitSha: null, evidence: [], blockers: [route.reason],
-        mutationBegan: false, verified: false, reason: route.reason,
+        outcome:
+          'blocked',
+
+        phaseReached:
+          'routing',
+
+        plan:
+          null,
+
+        securityControls:
+          [],
+
+        files:
+          [],
+
+        commitSha:
+          null,
+
+        evidence:
+          [],
+
+        blockers: [
+          route.reason,
+        ],
+
+        mutationBegan:
+          false,
+
+        verified:
+          false,
+
+        reason:
+          route.reason,
       },
     };
   }
 
-  let goalContract: GoalContract;
+  let goalContract:
+    GoalContract;
+
   try {
-    const interpretationInput: GoalInterpretationInput = {
-      message: input.prompt, history: input.goalContext?.history ?? [], projectContext: input.activeProjectContext ?? null,
-      attachments: input.goalContext?.attachments ?? [],
-      projectState: input.goalContext?.projectState ?? (input.existingFiles?.length ? { fileCount: input.existingFiles.length } : undefined),
+    const interpretationInput:
+      GoalInterpretationInput = {
+      message:
+        input.prompt,
+
+      history:
+        input.goalContext
+          ?.history ??
+        [],
+
+      projectContext:
+        input.activeProjectContext ??
+        null,
+
+      attachments:
+        input.goalContext
+          ?.attachments ??
+        [],
+
+      projectState:
+        input.goalContext
+          ?.projectState ??
+        (
+          input.existingFiles
+            ?.length
+            ? {
+                fileCount:
+                  input
+                    .existingFiles
+                    .length,
+              }
+            : undefined
+        ),
     };
-    goalContract = input.goalInterpreter
-      ? await interpretGoalContract(interpretationInput, (goalInput) => input.goalInterpreter!({
-          ...goalInput,
-          availableCapabilityIds: universalCapabilityRegistry.list().map((item) => item.id),
-          modelId: route.selected!.modelId as ModelId,
-        }))
-      : goalContractSchema.parse({
-          version: '1.0', goal: input.prompt, desiredOutcome: input.prompt,
-          semanticIntent: 'MODIFY', constraints: [], acceptance: [], historyContext: [],
-          projectContext: input.activeProjectContext ?? null, deliverables: [],
-          requiredCapabilities: ['software.implement', 'validation.run', ...(input.activeProjectContext ? ['repository.read', 'repository.write'] : [])],
-          requiredAuthorities: [], risks: [], confidence: 0.5, blockers: [], contextComplexity: 'unknown',
-        });
-    const authorities = new Set(['model:execute', 'sandbox:execute', ...(input.activeProjectContext ? ['repository:read', 'repository:write'] : [])]);
-    const capabilityPlan = await planCapabilities({
-      goal: goalContract, registry: universalCapabilityRegistry, authorities,
-      select: async () => ({ capabilityIds: goalContract.requiredCapabilities, rationale: 'Capabilities requested by the validated semantic goal contract.' }),
-    });
-    if (capabilityPlan.rejected.length) {
-      const reason = `Goal requires unavailable or unauthorized capabilities: ${capabilityPlan.rejected.map((item) => `${item.id} (${item.reason})`).join(', ')}`;
-      return { ran: true, goalContract, routing: { selectedModel: route.selected.modelId, fallbacks: [], reason, excluded: route.excluded },
-        result: { outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [], files: [], commitSha: null, evidence: [], blockers: [reason], mutationBegan: false, verified: false, reason } };
+
+    goalContract =
+      input.goalInterpreter
+        ? await interpretGoalContract(
+            interpretationInput,
+            (
+              goalInput,
+            ) =>
+              input.goalInterpreter!(
+                {
+                  ...goalInput,
+
+                  availableCapabilityIds:
+                    universalCapabilityRegistry
+                      .list()
+                      .map(
+                        (
+                          item,
+                        ) =>
+                          item.id,
+                      ),
+
+                  modelId:
+                    route.selected!
+                      .modelId as
+                      ModelId,
+                },
+              ),
+          )
+        : goalContractSchema.parse(
+            {
+              version:
+                '1.0',
+
+              goal:
+                input.prompt,
+
+              desiredOutcome:
+                input.prompt,
+
+              semanticIntent:
+                'MODIFY',
+
+              constraints:
+                [],
+
+              acceptance:
+                [],
+
+              historyContext:
+                [],
+
+              projectContext:
+                input.activeProjectContext ??
+                null,
+
+              deliverables:
+                [],
+
+              requiredCapabilities: [
+                'software.implement',
+                'validation.run',
+
+                ...(input.activeProjectContext
+                  ? [
+                      'repository.read',
+                      'repository.write',
+                    ]
+                  : []),
+              ],
+
+              requiredAuthorities:
+                [],
+
+              risks:
+                [],
+
+              confidence:
+                0.5,
+
+              blockers:
+                [],
+
+              contextComplexity:
+                'unknown',
+            },
+          );
+
+    const authorities =
+      new Set([
+        'model:execute',
+        'sandbox:execute',
+
+        ...(input.activeProjectContext
+          ? [
+              'repository:read',
+              'repository:write',
+            ]
+          : []),
+      ]);
+
+    const capabilityPlan =
+      await planCapabilities({
+        goal:
+          goalContract,
+
+        registry:
+          universalCapabilityRegistry,
+
+        authorities,
+
+        select:
+          async () => ({
+            capabilityIds:
+              goalContract
+                .requiredCapabilities,
+
+            rationale:
+              'Capabilities requested by the validated semantic goal contract.',
+          }),
+      });
+
+    if (
+      capabilityPlan
+        .rejected
+        .length
+    ) {
+      const reason =
+        `Goal requires unavailable or unauthorized capabilities: ${
+          capabilityPlan.rejected
+            .map(
+              (item) =>
+                `${item.id} (${item.reason})`,
+            )
+            .join(', ')
+        }`;
+
+      return {
+        ran:
+          true,
+
+        goalContract,
+
+        routing: {
+          selectedModel:
+            route.selected
+              .modelId,
+
+          fallbacks:
+            [],
+
+          reason,
+
+          excluded:
+            route.excluded,
+        },
+
+        result: {
+          outcome:
+            'blocked',
+
+          phaseReached:
+            'routing',
+
+          plan:
+            null,
+
+          securityControls:
+            [],
+
+          files:
+            [],
+
+          commitSha:
+            null,
+
+          evidence:
+            [],
+
+          blockers: [
+            reason,
+          ],
+
+          mutationBegan:
+            false,
+
+          verified:
+            false,
+
+          reason,
+        },
+      };
     }
-  } catch (error) {
-    const reason = `Semantic goal interpretation failed: ${error instanceof Error ? error.message : String(error)}`;
-    return { ran: true, goalContract: null, routing: { selectedModel: route.selected.modelId, fallbacks: [], reason, excluded: route.excluded },
-      result: { outcome: 'blocked', phaseReached: 'routing', plan: null, securityControls: [], files: [], commitSha: null, evidence: [], blockers: [reason], mutationBegan: false, verified: false, reason } };
+  } catch (
+    error
+  ) {
+    const reason =
+      `Semantic goal interpretation failed: ${
+        error instanceof
+        Error
+          ? error.message
+          : String(error)
+      }`;
+
+    return {
+      ran:
+        true,
+
+      goalContract:
+        null,
+
+      routing: {
+        selectedModel:
+          route.selected
+            .modelId,
+
+        fallbacks:
+          [],
+
+        reason,
+
+        excluded:
+          route.excluded,
+      },
+
+      result: {
+        outcome:
+          'blocked',
+
+        phaseReached:
+          'routing',
+
+        plan:
+          null,
+
+        securityControls:
+          [],
+
+        files:
+          [],
+
+        commitSha:
+          null,
+
+        evidence:
+          [],
+
+        blockers: [
+          reason,
+        ],
+
+        mutationBegan:
+          false,
+
+        verified:
+          false,
+
+        reason,
+      },
+    };
   }
 
-  // §13: measured evidence outranks the hand-written priors the capability router ranks by.
-  //
-  // Until this existed the chain was three disconnected halves — the runner wrote
-  // `model_benchmark_runs`, nothing read it, `buildLedger` was called by no production code
-  // and neither was `chooseCostAware`. Real benchmark rows would have accumulated beside a
-  // router that never consulted them.
-  //
-  // Absence of measurement is reported rather than inferred: with no evidence for this role
-  // the prior-based `route` above stands unchanged, and the run records that the choice was
-  // made on a prior instead of implying it was earned.
-  const measuredEvidence = await loadMeasuredEvidence();
-  const measured = chooseFromMeasuredEvidence({
-    role: 'implementation',
-    candidates: [route.selected.modelId, ...route.fallbacks.map((model) => model.modelId)],
-    evidence: measuredEvidence,
-    chooser: (choice) => chooseCostAware(choice),
-  });
+  const measuredEvidence =
+    await loadMeasuredEvidence();
 
-  // The measured winner leads and the prior ranking becomes its fallback chain, with the
-  // winner removed so it is never attempted twice. When nothing was measured this is exactly
-  // the previous ordering.
-  const orderedCandidates: readonly string[] = measured.modelId
-    ? [measured.modelId, ...[route.selected.modelId, ...route.fallbacks.map((m) => m.modelId)].filter((id) => id !== measured.modelId)]
-    : [route.selected.modelId, ...route.fallbacks.map((m) => m.modelId)];
+  const measured =
+    chooseFromMeasuredEvidence({
+      role:
+        'implementation',
 
-  const result = await executeUniversalRun({
-    prompt: input.prompt,
-    owner,
-    runId: input.runId ?? randomUUID(),
-    existingFiles: input.existingFiles ?? [],
-    flags: input.flags,
-    // A real client, not null. `universalStore(null)` builds an in-memory store, so every
-    // spec, plan and run record the universal path produced lived in process memory and
-    // died with the process — `universal_runs` stayed empty no matter how many runs
-    // executed. M19 asks for durable evidence of what a run decided; an audit trail that
-    // does not survive a restart is not one.
-    store: input.store ?? universalStore(getSupabaseAdmin()),
-    adapters: productionAdapters({
-      implement: async ({ brief, existingFiles, signal }) => {
-        // Small and medium projects are generated as one coherent structured bundle.
-        // Completed files survive a clipped response, so one bounded continuation can
-        // request only what is missing. This
-        // avoids the production failure mode where every file paid for duplicated context
-        // and concurrently contended for the same provider.
-        return implementCoherently({
-          brief,
-          originalRequest: input.prompt,
-          candidates: orderedCandidates.map((modelId) => ({ modelId })),
-          existingFiles,
-          signal,
-          onTelemetry: (record) => {
-            // Operator-only structured evidence. It contains model identity and usage, so it
-            // belongs in backend logs rather than the primary user result.
-            console.info('[builder_model_call]', JSON.stringify(record));
-          },
-        });
+      candidates: [
+        route.selected
+          .modelId,
+
+        ...route.fallbacks
+          .map(
+            (model) =>
+              model.modelId,
+          ),
+      ],
+
+      evidence:
+        measuredEvidence,
+
+      chooser:
+        (
+          choice,
+        ) =>
+          chooseCostAware(
+            choice,
+          ),
+    });
+
+  const orderedCandidates:
+    readonly string[] =
+    measured.modelId
+      ? [
+          measured.modelId,
+
+          ...[
+            route.selected
+              .modelId,
+
+            ...route.fallbacks
+              .map(
+                (
+                  model,
+                ) =>
+                  model.modelId,
+              ),
+          ].filter(
+            (
+              modelId,
+            ) =>
+              modelId !==
+              measured.modelId,
+          ),
+        ]
+      : [
+          route.selected
+            .modelId,
+
+          ...route.fallbacks
+            .map(
+              (
+                model,
+              ) =>
+                model.modelId,
+            ),
+        ];
+
+  const primaryModelId =
+    orderedCandidates[0] as
+      ModelId;
+
+  const fallbackModelIds =
+    orderedCandidates.slice(
+      1,
+    ) as ModelId[];
+
+  const result =
+    await executeUniversalRun({
+      prompt:
+        input.prompt,
+
+      owner,
+
+      runId,
+
+      existingFiles:
+        input.existingFiles ??
+        [],
+
+      flags:
+        input.flags,
+
+      store:
+        input.store ??
+        universalStore(
+          getSupabaseAdmin(),
+        ),
+
+      adapters:
+        productionAdapters({
+          implement:
+            async ({
+              brief,
+              plan,
+              existingFiles,
+              signal,
+            }) =>
+              runUniversalSoftwareImplementation(
+                {
+                  userId:
+                    input.userId,
+
+                  runId,
+
+                  projectId:
+                    input.projectId,
+
+                  prompt:
+                    input.prompt,
+
+                  brief,
+
+                  plan,
+
+                  existingFiles,
+
+                  primaryModelId,
+
+                  fallbackModelIds,
+
+                  activeProjectContext:
+                    input.activeProjectContext,
+
+                  signal,
+
+                  /*
+                   * The legacy implementation is still present, but it is
+                   * now behind SoftwareAgentRuntime's selector rather than
+                   * being hard-wired as the production implementation.
+                   */
+                  runLegacy:
+                    () =>
+                      implementCoherently(
+                        {
+                          brief,
+
+                          originalRequest:
+                            input.prompt,
+
+                          candidates:
+                            orderedCandidates.map(
+                              (
+                                modelId,
+                              ) => ({
+                                modelId,
+                              }),
+                            ),
+
+                          existingFiles,
+
+                          signal,
+
+                          onTelemetry:
+                            (
+                              record,
+                            ) => {
+                              console.info(
+                                '[builder_model_call]',
+                                JSON.stringify(
+                                  record,
+                                ),
+                              );
+                            },
+                        },
+                      ),
+                },
+              ),
+
+          /*
+           * Outer deterministic validation remains authoritative.
+           * Agent V2 already gets bounded same-agent repair rounds during
+           * implementation; this existing repair adapter remains the
+           * universal pipeline's final bounded repair after independent
+           * validation/browser evidence.
+           */
+          repair:
+            async ({
+              brief,
+              failures,
+              files,
+            }) =>
+              repairIncrementally(
+                {
+                  brief:
+                    `${input.prompt}\n\n${brief}`,
+
+                  failures,
+
+                  files,
+
+                  candidates:
+                    orderedCandidates.map(
+                      (
+                        modelId,
+                      ) => ({
+                        modelId,
+                      }),
+                    ),
+                },
+              ),
+
+          commit:
+            input.commit,
+        }),
+
+      implementationRouting: {
+        selectedModel:
+          primaryModelId,
+
+        provider:
+          MODELS[
+            primaryModelId
+          ]?.provider ??
+          null,
+
+        fallbackModels:
+          fallbackModelIds,
       },
-      repair: async ({ brief, failures, files }) => repairIncrementally({
-        brief: `${input.prompt}\n\n${brief}`,
-        failures,
-        files,
-        candidates: orderedCandidates.map((modelId) => ({ modelId })),
-      }),
-      commit: input.commit,
-    }),
-    // The canonical implementation task records the model routing actually selected, not a
-    // re-derivation. A task whose recorded model differs from the one that generated the
-    // files would make the routing evidence useless for exactly the question it exists to
-    // answer: which model produced this code.
-    implementationRouting: {
-      selectedModel: orderedCandidates[0] as ModelId,
-      // The provider is looked up from the registry rather than carried on the ranked
-      // model, which holds only scoring fields. Recording the transport matters because
-      // the family/transport binding is a policy invariant, not a detail.
-      provider: MODELS[orderedCandidates[0] as ModelId]?.provider ?? null,
-      fallbackModels: orderedCandidates.slice(1) as ModelId[],
-    },
-    executionStore: input.executionStore,
-  });
+
+      executionStore:
+        input.executionStore,
+    });
 
   return {
-    ran: true,
+    ran:
+      true,
+
     goalContract,
+
     result,
+
     routing: {
-      selectedModel: orderedCandidates[0] ?? null,
-      fallbacks: orderedCandidates.slice(1),
-      // States plainly whether a measurement or a prior decided this. Without it a run
-      // records a model and a plausible reason, and nobody can tell afterwards whether the
-      // choice was earned or assumed.
-      reason: measured.measured
-        ? `selected on measured evidence — ${measured.reason}`
-        : `selected on prior — ${route.reason} (${measured.reason})`,
-      excluded: route.excluded,
-      selectedOnPrior: !measured.measured,
-      evidenceSource: measuredEvidence.source,
+      selectedModel:
+        primaryModelId,
+
+      fallbacks:
+        fallbackModelIds,
+
+      reason:
+        measured.measured
+          ? `selected on measured evidence — ${measured.reason}`
+          : `selected on prior — ${route.reason} (${measured.reason})`,
+
+      excluded:
+        route.excluded,
+
+      selectedOnPrior:
+        !measured.measured,
+
+      evidenceSource:
+        measuredEvidence.source,
     },
   };
 }
 
 /**
  * A commit function that refuses rather than inventing a repository.
- *
- * §9 requires the final write to go through the Command 1 atomic path against a real
- * connected repository. A run without one must fail visibly: returning a fake SHA, or
- * skipping the commit and reporting success, would produce a "completed" build with
- * nothing in source control — the precise shape of dishonest evidence this command exists
- * to prevent.
  */
-export function refusingCommit(reason: string): CommitFn {
+export function refusingCommit(
+  reason: string,
+): CommitFn {
   return async () => {
     throw new Error(
       `Refusing to commit: ${reason}. A universal run must write through the atomic GitHub ` +
