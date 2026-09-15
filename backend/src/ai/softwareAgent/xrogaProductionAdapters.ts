@@ -1,5 +1,5 @@
 import {
-  fetchBuildFilesFromGitHub,
+  fetchRepositoryTextFilesFromGitHub,
   type ProjectFile,
 } from '../../services/integrations/githubDeploy.js';
 
@@ -140,13 +140,13 @@ export function createXrogaProductionRepositoryAdapter(
         requireRepository(contract);
 
       /*
-       * Existing Xroga repository reader.
+       * Use Xroga's universal repository reader here.
        *
-       * Important:
-       * use the exact branch from the execution contract.
+       * Agent V2 must receive the real text source tree for the exact
+       * authorized branch, not the older web/build-focused hydration set.
        */
       const files =
-        await fetchBuildFilesFromGitHub(
+        await fetchRepositoryTextFilesFromGitHub(
           bindings.userId,
           `${repository.owner}/${repository.repo}`,
           repository.branch,
