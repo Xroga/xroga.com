@@ -41,6 +41,22 @@ export interface SoftwareAgentRuntimeV2Context {
 
   events: SoftwareRunEventSink;
 
+  /**
+   * Authoritative snapshot supplied by the caller.
+   *
+   * This lets the universal builder hand Agent V2 the exact files its
+   * planner saw instead of re-reading repository state mid-run.
+   */
+  initialFiles?: Array<{
+    path: string;
+    content: string;
+  }>;
+
+  /**
+   * Caller-owned cancellation boundary.
+   */
+  signal?: AbortSignal;
+
   timeoutMs?: number;
 
   verificationRounds?: number;
@@ -169,6 +185,41 @@ function createShadowContract(
   };
 }
 
+function softwareAgentServiceInput(
+  contract: SoftwareExecutionContract,
+  context: SoftwareAgentRuntimeV2Context,
+) {
+  return {
+    contract,
+
+    bindings:
+      context.bindings,
+
+    model:
+      context.model,
+
+    events:
+      context.events,
+
+    ...(context.initialFiles !==
+    undefined
+      ? {
+          initialFiles:
+            context.initialFiles,
+        }
+      : {}),
+
+    signal:
+      context.signal,
+
+    timeoutMs:
+      context.timeoutMs,
+
+    verificationRounds:
+      context.verificationRounds,
+  };
+}
+
 /**
  * Migration-safe software executor boundary.
  *
@@ -232,24 +283,12 @@ export async function runSoftwareAgentRuntime<
 
   if (executor === 'agent_v2') {
     const result =
-      await runSoftwareAgent({
-        contract,
-
-        bindings:
-          agentV2.bindings,
-
-        model:
-          agentV2.model,
-
-        events:
-          agentV2.events,
-
-        timeoutMs:
-          agentV2.timeoutMs,
-
-        verificationRounds:
-          agentV2.verificationRounds,
-      });
+      await runSoftwareAgent(
+        softwareAgentServiceInput(
+          contract,
+          agentV2,
+        ),
+      );
 
     return {
       executor:
@@ -266,12 +305,8 @@ export async function runSoftwareAgentRuntime<
    *
    * Legacy remains authoritative.
    *
-   * For this first migration implementation we intentionally
-   * await both runs rather than creating an unsafe detached
-   * Promise inside the API process.
-   *
-   * Later Xroga can move the shadow execution to its durable
-   * run/job infrastructure.
+   * Both executions receive the same authoritative initial snapshot.
+   * The shadow contract removes persistence/deployment authority.
    */
   const shadowContract =
     createShadowContract(
@@ -287,25 +322,12 @@ export async function runSoftwareAgentRuntime<
         contract,
       ),
 
-      runSoftwareAgent({
-        contract:
+      runSoftwareAgent(
+        softwareAgentServiceInput(
           shadowContract,
-
-        bindings:
-          agentV2.bindings,
-
-        model:
-          agentV2.model,
-
-        events:
-          agentV2.events,
-
-        timeoutMs:
-          agentV2.timeoutMs,
-
-        verificationRounds:
-          agentV2.verificationRounds,
-      }),
+          agentV2,
+        ),
+      ),
     ]);
 
   /*
