@@ -1,0 +1,106 @@
+name: Agent V2 dependency lock
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'backend/package.json'
+      - '.github/workflows/agent-v2-dependency-lock.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-v2-dependency-lock-main
+  cancel-in-progress: false
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Use Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Refresh workspace lockfile
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Refresh standalone backend lockfile
+        run: npm install --package-lock-only --ignore-scripts --workspaces=false --prefix backend
+
+      - name: Verify Cline SDK is locked in both install surfaces
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const root = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          const backend = JSON.parse(fs.readFileSync('backend/package-lock.json', 'utf8'));
+
+          const expected = '0.0.82';
+          const rootVersion = root.packages?.['node_modules/@cline/sdk']?.version;
+          const backendVersion = backend.packages?.['node_modules/@cline/sdk']?.version;
+
+          if (rootVersion !== expected) {
+            throw new Error(`Root lockfile has @cline/sdk ${rootVersion ?? 'missing'}; expected ${expected}`);
+          }
+
+          if (backendVersion !== expected) {
+            throw new Error(`Backend lockfile has @cline/sdk ${backendVersion ?? 'missing'}; expected ${expected}`);
+          }
+
+          const rootZod = root.packages?.['node_modules/zod']?.version;
+          const backendZod = backend.packages?.['node_modules/zod']?.version;
+
+          if (rootZod !== '3.25.76') {
+            throw new Error(`Root lockfile has zod ${rootZod ?? 'missing'}; expected 3.25.76`);
+          }
+
+          if (backendZod !== '3.25.76') {
+            throw new Error(`Backend lockfile has zod ${backendZod ?? 'missing'}; expected 3.25.76`);
+          }
+
+          console.log(`Locked @cline/sdk@${expected} and zod@3.25.76 in both install surfaces.`);
+          NODE
+
+      - name: Prove clean installs
+        run: |
+          rm -rf node_modules backend/node_modules frontend/node_modules
+          npm ci --ignore-scripts
+          rm -rf backend/node_modules
+          npm ci --ignore-scripts --workspaces=false --prefix backend
+
+      - name: Upload generated lockfiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-v2-lockfiles
+          path: |
+            package-lock.json
+            backend/package-lock.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Commit generated lockfiles
+        run: |
+          if git diff --quiet -- package-lock.json backend/package-lock.json; then
+            echo "Lockfiles are already current."
+            exit 0
+          fi
+
+          git config user.name "xroga-actions"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add package-lock.json backend/package-lock.json
+          git commit -m "Lock Cline SDK dependency"
+          git push origin HEAD:main
