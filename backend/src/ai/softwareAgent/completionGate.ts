@@ -23,9 +23,6 @@ export interface CompletionGateResult {
  * Xroga-owned deterministic completion gate.
  *
  * The model cannot declare a software run complete.
- *
- * Completion is allowed only when the required runtime evidence
- * actually exists.
  */
 export function evaluateSoftwareCompletion(
   input: CompletionGateInput,
@@ -46,17 +43,6 @@ export function evaluateSoftwareCompletion(
   }
 
   if (requireSuccessfulChecks) {
-    /*
-     * A required verification phase must contain real executed
-     * checks.
-     *
-     * Important:
-     *
-     * - zero checks is not success
-     * - skipped checks are not success
-     * - infrastructure refusal is not success
-     * - unfinished checks are not success
-     */
     if (evidence.checks.length === 0) {
       blockers.push(
         'No project checks were recorded.',
@@ -117,13 +103,6 @@ export function evaluateSoftwareCompletion(
         );
       }
 
-      /*
-       * Defensive final guard.
-       *
-       * Even if a future check status is added or check
-       * construction changes, required verification cannot pass
-       * unless at least one check actually passed.
-       */
       if (
         passedChecks.length === 0 &&
         failedChecks.length === 0 &&
@@ -143,45 +122,21 @@ export function evaluateSoftwareCompletion(
 
     if (!preview) {
       blockers.push(
-        'A verified Preview is required but no Preview evidence exists.',
+        'A verified Preview is required but no browser verification evidence exists.',
       );
-    } else {
-      if (
-        preview.httpStatus === undefined ||
-        preview.httpStatus < 200 ||
-        preview.httpStatus >= 400
-      ) {
-        blockers.push(
-          'Preview did not return a successful HTTP response.',
-        );
-      }
-
-      if (preview.runtimeErrors.length > 0) {
-        blockers.push(
-          'Preview contains runtime errors.',
-        );
-      }
-
-      if (preview.consoleErrors.length > 0) {
-        blockers.push(
-          'Preview contains browser console errors.',
-        );
-      }
-
-      /*
-       * Merely starting a server or returning a URL is not
-       * browser verification.
-       */
-      const browserVerified =
-        preview.desktopVerified === true ||
-        preview.tabletVerified === true ||
-        preview.mobileVerified === true;
-
-      if (!browserVerified) {
-        blockers.push(
-          'Preview exists but browser verification has not completed.',
-        );
-      }
+    } else if (
+      preview.status !==
+      'passed'
+    ) {
+      blockers.push(
+        preview.blocker?.trim() ||
+          (
+            preview.status ===
+            'not_checked'
+              ? 'Browser verification did not run for this web project.'
+              : 'Browser verification did not pass.'
+          ),
+      );
     }
   }
 
