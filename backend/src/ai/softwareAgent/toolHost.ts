@@ -100,18 +100,7 @@ export interface SoftwareAgentToolHost {
    * is a create or modify operation.
    *
    * The host must independently verify that intent against
-   * the real current workspace state:
-   *
-   * create + existing file -> reject
-   * modify + missing file -> reject
-   *
-   * IMPORTANT:
-   *
-   * The host implementation must independently enforce
-   * repository-root and write-policy rules.
-   *
-   * Never trust the model merely because the tool wrapper
-   * already checked a path.
+   * the real current workspace state.
    */
   writeFile(
     contract: SoftwareExecutionContract,
@@ -159,27 +148,15 @@ export interface SoftwareAgentToolHost {
   ): Promise<GitDiffResult>;
 
   /**
-   * Start a sandbox Preview when applicable.
-   */
-  startPreview(
-    contract: SoftwareExecutionContract,
-  ): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Re-query the current Preview health instead of trusting a
-   * stale result.
-   */
-  probePreview(
-    contract: SoftwareExecutionContract,
-    previewId: string,
-  ): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Browser-level verification.
+   * Run one isolated browser/runtime verification against the
+   * CURRENT workspace snapshot.
+   *
+   * There is intentionally no start/probe lifecycle here:
+   * Xroga's production browser verifier starts the app and the
+   * browser inside one disposable sandbox execution.
    */
   verifyPreview(
     contract: SoftwareExecutionContract,
-    previewId: string,
   ): Promise<SoftwarePreviewEvidence>;
 
   /**
