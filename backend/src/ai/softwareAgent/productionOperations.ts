@@ -128,6 +128,21 @@ export interface ProductionSoftwareAgentOperationsSession {
     SoftwareAgentWorkspace;
 }
 
+export interface ProductionSoftwareAgentOperationsOptions {
+  /**
+   * Authoritative run-start snapshot supplied by an outer Xroga
+   * orchestration layer.
+   *
+   * When present, even as an empty array, Agent V2 MUST use this
+   * snapshot instead of re-reading GitHub. This keeps planning,
+   * implementation and validation on the same repository state.
+   */
+  initialFiles?: Array<{
+    path: string;
+    content: string;
+  }>;
+}
+
 function buildSimpleUnifiedDiff(
   changes: ReturnType<
     SoftwareAgentWorkspace['getChanges']
@@ -335,15 +350,28 @@ export async function createProductionSoftwareAgentOperations(
   contract: SoftwareExecutionContract,
   dependencies:
     ProductionSoftwareAgentDependencies,
+  options:
+    ProductionSoftwareAgentOperationsOptions = {},
 ): Promise<ProductionSoftwareAgentOperationsSession> {
   const initialFiles =
-    contract.repository
-      ? await dependencies
-          .repository
-          .loadFiles(
-            contract,
-          )
-      : [];
+    options.initialFiles !==
+    undefined
+      ? options.initialFiles.map(
+          (file) => ({
+            path:
+              file.path,
+
+            content:
+              file.content,
+          }),
+        )
+      : contract.repository
+        ? await dependencies
+            .repository
+            .loadFiles(
+              contract,
+            )
+        : [];
 
   const workspace =
     new SoftwareAgentWorkspace(
