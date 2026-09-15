@@ -52,11 +52,25 @@ export interface SoftwareAgentServiceInput {
 
   /**
    * Durable event sink.
-   *
-   * Later this will point at Xroga's persisted run-event
-   * infrastructure and SSE projection.
    */
   events: SoftwareRunEventSink;
+
+  /**
+   * Optional authoritative run-start snapshot.
+   *
+   * The universal builder supplies the same snapshot its planner saw,
+   * preventing Agent V2 from re-hydrating a newer/different branch state
+   * between planning and implementation.
+   */
+  initialFiles?: Array<{
+    path: string;
+    content: string;
+  }>;
+
+  /**
+   * Caller-owned cancellation boundary.
+   */
+  signal?: AbortSignal;
 
   timeoutMs?: number;
 
@@ -83,20 +97,6 @@ export interface SoftwareAgentServiceResult
  * High-level entry point for the new Xroga software-agent path.
  *
  * One invocation represents one coherent software task.
- *
- * Flow:
- *
- * ExecutionContract
- *       ↓
- * Xroga production bindings
- *       ↓
- * run-scoped SoftwareAgentWorkspace
- *       ↓
- * ProductionSoftwareAgentToolHost
- *       ↓
- * AgentSoftwareExecutor
- *       ↓
- * verified result
  */
 export class SoftwareAgentService {
   private readonly executor:
@@ -141,6 +141,15 @@ export class SoftwareAgentService {
       await createProductionSoftwareAgentOperations(
         contract,
         dependencies,
+        {
+          ...(input.initialFiles !==
+          undefined
+            ? {
+                initialFiles:
+                  input.initialFiles,
+              }
+            : {}),
+        },
       );
 
     /*
@@ -161,6 +170,9 @@ export class SoftwareAgentService {
         host,
         events,
         model,
+
+        signal:
+          input.signal,
 
         timeoutMs:
           input.timeoutMs,
