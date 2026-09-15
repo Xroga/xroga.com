@@ -28,61 +28,27 @@ export interface XrogaSoftwareAgentBindings {
    */
   userId: string;
 
-  /**
-   * Execute one command against the supplied working snapshot
-   * inside Xroga's existing isolated sandbox.
-   */
   runSandboxCommand(input: {
     contract: SoftwareExecutionContract;
     files: ProjectFile[];
     command: string;
   }): Promise<CommandExecutionResult>;
 
-  /**
-   * Run Xroga's existing deterministic validation against the
-   * supplied current workspace snapshot.
-   */
   runProjectChecks(input: {
     contract: SoftwareExecutionContract;
     files: ProjectFile[];
   }): Promise<SoftwareCheckResult[]>;
 
   /**
-   * Start Xroga's real Preview using the supplied current
-   * working snapshot.
-   */
-  startProjectPreview(input: {
-    contract: SoftwareExecutionContract;
-    files: ProjectFile[];
-  }): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Probe an existing Preview.
-   */
-  probeProjectPreview(input: {
-    contract: SoftwareExecutionContract;
-    previewId: string;
-  }): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Run Xroga's existing browser verification.
+   * Run Xroga's existing one-shot browser verification against
+   * the supplied CURRENT workspace snapshot.
    */
   verifyProjectPreview(input: {
     contract: SoftwareExecutionContract;
-    previewId: string;
+    files: ProjectFile[];
+    checks: SoftwareCheckResult[];
   }): Promise<SoftwarePreviewEvidence>;
 
-  /**
-   * Persist already-verified work.
-   *
-   * The implementation MUST:
-   *
-   * - branch from the exact authorized base
-   * - use one atomic commit
-   * - never silently fall back to main
-   * - never merge
-   * - never deploy
-   */
   createReviewBranch(input: {
     userId: string;
     contract: SoftwareExecutionContract;
@@ -97,7 +63,9 @@ function requireRepository(
 ): NonNullable<
   SoftwareExecutionContract['repository']
 > {
-  if (!contract.repository) {
+  if (
+    !contract.repository
+  ) {
     throw new Error(
       'AUTHORIZED_REPOSITORY_REQUIRED',
     );
@@ -125,26 +93,30 @@ function toProjectFiles(
     content: string;
   }>,
 ): ProjectFile[] {
-  return files.map((file) => ({
-    path: file.path,
-    content: file.content,
-  }));
+  return files.map(
+    (file) => ({
+      path:
+        file.path,
+
+      content:
+        file.content,
+    }),
+  );
 }
 
 export function createXrogaProductionRepositoryAdapter(
-  bindings: XrogaSoftwareAgentBindings,
+  bindings:
+    XrogaSoftwareAgentBindings,
 ): ProductionSoftwareAgentRepositoryAdapter {
   return {
-    async loadFiles(contract) {
+    async loadFiles(
+      contract,
+    ) {
       const repository =
-        requireRepository(contract);
+        requireRepository(
+          contract,
+        );
 
-      /*
-       * Use Xroga's universal repository reader here.
-       *
-       * Agent V2 must receive the real text source tree for the exact
-       * authorized branch, not the older web/build-focused hydration set.
-       */
       const files =
         await fetchRepositoryTextFilesFromGitHub(
           bindings.userId,
@@ -152,81 +124,100 @@ export function createXrogaProductionRepositoryAdapter(
           repository.branch,
         );
 
-      return files.map((file) => ({
-        path: file.path,
-        content: file.content,
-      }));
+      return files.map(
+        (file) => ({
+          path:
+            file.path,
+
+          content:
+            file.content,
+        }),
+      );
     },
 
     async createReviewBranch(
       contract,
       input,
     ): Promise<ReviewBranchResult> {
-      requireRepository(contract);
+      requireRepository(
+        contract,
+      );
+
       requireReviewBranchAuthority(
         contract,
       );
 
       if (
-        input.changedPaths.length === 0
+        input.changedPaths
+          .length ===
+        0
       ) {
         throw new Error(
           'NO_CHANGES_TO_PERSIST',
         );
       }
 
-      return bindings.createReviewBranch({
-        userId: bindings.userId,
+      return bindings
+        .createReviewBranch({
+          userId:
+            bindings.userId,
 
-        contract,
+          contract,
 
-        files: toProjectFiles(
-          input.files,
-        ),
+          files:
+            toProjectFiles(
+              input.files,
+            ),
 
-        changedPaths:
-          input.changedPaths,
+          changedPaths:
+            input.changedPaths,
 
-        deletedPaths:
-          input.deletedPaths,
-      });
+          deletedPaths:
+            input.deletedPaths,
+        });
     },
   };
 }
 
 export function createXrogaProductionRuntimeAdapter(
-  bindings: XrogaSoftwareAgentBindings,
+  bindings:
+    XrogaSoftwareAgentBindings,
 ): ProductionSoftwareAgentRuntimeAdapter {
   return {
     async runCommand(
       contract,
       input,
     ) {
-      return bindings.runSandboxCommand({
-        contract,
+      return bindings
+        .runSandboxCommand({
+          contract,
 
-        files: toProjectFiles(
-          input.files,
-        ),
+          files:
+            toProjectFiles(
+              input.files,
+            ),
 
-        command: input.command,
-      });
+          command:
+            input.command,
+        });
     },
 
     async runChecks(
       contract,
       input,
     ) {
-      return bindings.runProjectChecks({
-        contract,
+      return bindings
+        .runProjectChecks({
+          contract,
 
-        files: toProjectFiles(
-          input.files,
-        ),
-      });
+          files:
+            toProjectFiles(
+              input.files,
+            ),
+        });
     },
 
-    async startPreview(
+    async verifyPreview(
       contract,
       input,
     ) {
@@ -239,41 +230,29 @@ export function createXrogaProductionRuntimeAdapter(
         );
       }
 
-      return bindings.startProjectPreview({
-        contract,
+      return bindings
+        .verifyProjectPreview({
+          contract,
 
-        files: toProjectFiles(
-          input.files,
-        ),
-      });
-    },
+          files:
+            toProjectFiles(
+              input.files,
+            ),
 
-    async probePreview(
-      contract,
-      input,
-    ) {
-      return bindings.probeProjectPreview({
-        contract,
-        previewId:
-          input.previewId,
-      });
-    },
-
-    async verifyPreview(
-      contract,
-      input,
-    ) {
-      return bindings.verifyProjectPreview({
-        contract,
-        previewId:
-          input.previewId,
-      });
+          checks:
+            input.checks.map(
+              (check) => ({
+                ...check,
+              }),
+            ),
+        });
     },
   };
 }
 
 export function createXrogaProductionDependencies(
-  bindings: XrogaSoftwareAgentBindings,
+  bindings:
+    XrogaSoftwareAgentBindings,
 ): ProductionSoftwareAgentDependencies {
   return {
     repository:
