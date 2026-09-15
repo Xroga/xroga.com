@@ -3,18 +3,15 @@ import type {
 } from './createXrogaSoftwareAgentBindings.js';
 
 import type {
+  SoftwareCheckResult,
   SoftwareExecutionContract,
+  SoftwarePreviewEvidence,
 } from './contracts.js';
 
 import type {
   CommandExecutionResult,
   ReviewBranchResult,
 } from './toolHost.js';
-
-import type {
-  SoftwareCheckResult,
-  SoftwarePreviewEvidence,
-} from './contracts.js';
 
 import type {
   ProjectFile,
@@ -35,9 +32,6 @@ export interface ExistingXrogaSoftwareInfrastructure {
 
   /**
    * Must use Xroga's existing validation path.
-   *
-   * Codex will map this onto compileValidateProject and any
-   * applicable test/static validation already present.
    */
   runProjectChecks(input: {
     userId: string;
@@ -46,37 +40,22 @@ export interface ExistingXrogaSoftwareInfrastructure {
   }): Promise<SoftwareCheckResult[]>;
 
   /**
-   * Must start Preview from the supplied CURRENT workspace.
-   */
-  startProjectPreview(input: {
-    userId: string;
-    contract: SoftwareExecutionContract;
-    files: ProjectFile[];
-  }): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Probe the real Preview runtime.
-   */
-  probeProjectPreview(input: {
-    userId: string;
-    contract: SoftwareExecutionContract;
-    previewId: string;
-  }): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Must use Xroga's existing browser-verification path.
+   * Must use Xroga's existing one-shot browser-verification path.
+   *
+   * The implementation receives the current workspace snapshot
+   * plus deterministic check evidence. It must not create a new
+   * preview server or persistent preview-id subsystem.
    */
   verifyProjectPreview(input: {
     userId: string;
     contract: SoftwareExecutionContract;
-    previewId: string;
+    files: ProjectFile[];
+    checks: SoftwareCheckResult[];
   }): Promise<SoftwarePreviewEvidence>;
 
   /**
-   * Persist only verified work.
-   *
-   * Implementation must use Xroga's existing atomic GitHub
-   * write/review-branch infrastructure.
+   * Persist only verified work through Xroga's existing atomic
+   * GitHub review-branch infrastructure.
    */
   createReviewBranch(input: {
     userId: string;
@@ -88,45 +67,51 @@ export interface ExistingXrogaSoftwareInfrastructure {
 }
 
 /**
- * Converts Xroga's existing production infrastructure into
- * the implementation surface consumed by
- * createXrogaSoftwareAgentBindings().
+ * Converts Xroga's existing production infrastructure into the
+ * implementation surface consumed by Agent V2.
  *
- * This file intentionally contains no new sandbox,
- * validation, browser or GitHub implementation.
+ * This file intentionally contains no new sandbox, validator,
+ * browser runtime or GitHub implementation.
  */
 export function createSoftwareAgentProductionImplementations(
-  infrastructure: ExistingXrogaSoftwareInfrastructure,
+  infrastructure:
+    ExistingXrogaSoftwareInfrastructure,
 ): XrogaSoftwareAgentBindingImplementations {
   return {
-    async runSandboxCommand(input) {
+    async runSandboxCommand(
+      input,
+    ) {
       return infrastructure
-        .runSandboxCommand(input);
+        .runSandboxCommand(
+          input,
+        );
     },
 
-    async runProjectChecks(input) {
+    async runProjectChecks(
+      input,
+    ) {
       return infrastructure
-        .runProjectChecks(input);
+        .runProjectChecks(
+          input,
+        );
     },
 
-    async startProjectPreview(input) {
+    async verifyProjectPreview(
+      input,
+    ) {
       return infrastructure
-        .startProjectPreview(input);
+        .verifyProjectPreview(
+          input,
+        );
     },
 
-    async probeProjectPreview(input) {
+    async createReviewBranch(
+      input,
+    ) {
       return infrastructure
-        .probeProjectPreview(input);
-    },
-
-    async verifyProjectPreview(input) {
-      return infrastructure
-        .verifyProjectPreview(input);
-    },
-
-    async createReviewBranch(input) {
-      return infrastructure
-        .createReviewBranch(input);
+        .createReviewBranch(
+          input,
+        );
     },
   };
 }
