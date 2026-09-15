@@ -259,7 +259,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
@@ -347,7 +347,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
@@ -434,7 +434,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
@@ -595,7 +595,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
@@ -718,7 +718,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
@@ -1397,7 +1397,7 @@ export function createXrogaSoftwareTools(
 
       execute:
         async (
-          rawInput,
+          rawInput: unknown,
         ) => {
           const toolInput =
             rawInput as {
