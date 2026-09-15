@@ -25,9 +25,6 @@ import {
 export interface ProductionSoftwareAgentRepositoryAdapter {
   /**
    * Load the exact authorized repository/branch snapshot.
-   *
-   * Existing Xroga integration will eventually map this to
-   * fetchBuildFilesFromGitHub(...).
    */
   loadFiles(
     contract: SoftwareExecutionContract,
@@ -62,11 +59,6 @@ export interface ProductionSoftwareAgentRepositoryAdapter {
 export interface ProductionSoftwareAgentRuntimeAdapter {
   /**
    * Execute inside Xroga's isolated sandbox.
-   *
-   * The implementation MUST materialize the supplied files
-   * into the sandbox used for this run.
-   *
-   * Never run generated commands on xroga-api.
    */
   runCommand(
     contract: SoftwareExecutionContract,
@@ -95,50 +87,45 @@ export interface ProductionSoftwareAgentRuntimeAdapter {
   ): Promise<SoftwareCheckResult[]>;
 
   /**
-   * Start the real application Preview from the CURRENT
-   * working snapshot.
+   * Run ONE isolated browser/runtime verification against the
+   * CURRENT working snapshot.
+   *
+   * Xroga's real verifier starts the application and browser
+   * inside the same disposable sandbox execution. There is no
+   * persistent preview id.
    */
-  startPreview(
+  verifyPreview(
     contract: SoftwareExecutionContract,
     input: {
       files: Array<{
         path: string;
         content: string;
       }>;
-    },
-  ): Promise<SoftwarePreviewEvidence>;
 
-  /**
-   * Probe an already-started Preview.
-   */
-  probePreview(
-    contract: SoftwareExecutionContract,
-    input: {
-      previewId: string;
-    },
-  ): Promise<SoftwarePreviewEvidence>;
-
-  /**
-   * Browser/runtime verification for an existing Preview.
-   */
-  verifyPreview(
-    contract: SoftwareExecutionContract,
-    input: {
-      previewId: string;
+      /**
+       * Latest deterministic check evidence from this same
+       * workspace. The production verifier can use it to map
+       * build/test preconditions without trusting the model.
+       */
+      checks: SoftwareCheckResult[];
     },
   ): Promise<SoftwarePreviewEvidence>;
 }
 
 export interface ProductionSoftwareAgentDependencies {
-  repository: ProductionSoftwareAgentRepositoryAdapter;
+  repository:
+    ProductionSoftwareAgentRepositoryAdapter;
 
-  runtime: ProductionSoftwareAgentRuntimeAdapter;
+  runtime:
+    ProductionSoftwareAgentRuntimeAdapter;
 }
 
 export interface ProductionSoftwareAgentOperationsSession {
-  operations: ProductionSoftwareAgentOperations;
+  operations:
+    ProductionSoftwareAgentOperations;
 
-  workspace: SoftwareAgentWorkspace;
+  workspace:
+    SoftwareAgentWorkspace;
 }
 
 function buildSimpleUnifiedDiff(
@@ -146,71 +133,115 @@ function buildSimpleUnifiedDiff(
     SoftwareAgentWorkspace['getChanges']
   >,
 ): string {
-  if (changes.length === 0) {
+  if (
+    changes.length ===
+    0
+  ) {
     return '';
   }
 
-  const chunks: string[] = [];
+  const chunks:
+    string[] =
+    [];
 
-  for (const change of changes) {
+  for (
+    const change of
+    changes
+  ) {
     chunks.push(
       `diff --xroga a/${change.path} b/${change.path}`,
     );
 
-    if (change.kind === 'created') {
-      chunks.push('--- /dev/null');
-      chunks.push(`+++ b/${change.path}`);
+    if (
+      change.kind ===
+      'created'
+    ) {
+      chunks.push(
+        '--- /dev/null',
+      );
+
+      chunks.push(
+        `+++ b/${change.path}`,
+      );
 
       for (
         const line of
-        (change.after ?? '').split(/\r?\n/)
+        (change.after ?? '')
+          .split(
+            /\r?\n/,
+          )
       ) {
-        chunks.push(`+${line}`);
+        chunks.push(
+          `+${line}`,
+        );
       }
 
       continue;
     }
 
-    if (change.kind === 'deleted') {
-      chunks.push(`--- a/${change.path}`);
-      chunks.push('+++ /dev/null');
+    if (
+      change.kind ===
+      'deleted'
+    ) {
+      chunks.push(
+        `--- a/${change.path}`,
+      );
+
+      chunks.push(
+        '+++ /dev/null',
+      );
 
       for (
         const line of
-        (change.before ?? '').split(/\r?\n/)
+        (change.before ?? '')
+          .split(
+            /\r?\n/,
+          )
       ) {
-        chunks.push(`-${line}`);
+        chunks.push(
+          `-${line}`,
+        );
       }
 
       continue;
     }
 
-    chunks.push(`--- a/${change.path}`);
-    chunks.push(`+++ b/${change.path}`);
+    chunks.push(
+      `--- a/${change.path}`,
+    );
 
-    /*
-     * This is intentionally a compact evidence representation,
-     * not a full Myers/Git diff implementation.
-     *
-     * The final production binding may replace this with
-     * Xroga's authoritative Git diff implementation.
-     */
+    chunks.push(
+      `+++ b/${change.path}`,
+    );
+
     for (
       const line of
-      (change.before ?? '').split(/\r?\n/)
+      (change.before ?? '')
+        .split(
+          /\r?\n/,
+        )
     ) {
-      chunks.push(`-${line}`);
+      chunks.push(
+        `-${line}`,
+      );
     }
 
     for (
       const line of
-      (change.after ?? '').split(/\r?\n/)
+      (change.after ?? '')
+        .split(
+          /\r?\n/,
+        )
     ) {
-      chunks.push(`+${line}`);
+      chunks.push(
+        `+${line}`,
+      );
     }
   }
 
-  return chunks.join('\n');
+  return chunks.join(
+    '\n',
+  );
 }
 
 function countChangedLines(
@@ -221,52 +252,71 @@ function countChangedLines(
   additions: number;
   deletions: number;
 } {
-  let additions = 0;
-  let deletions = 0;
+  let additions =
+    0;
 
-  for (const change of changes) {
+  let deletions =
+    0;
+
+  for (
+    const change of
+    changes
+  ) {
     const beforeLines =
-      change.before === undefined
+      change.before ===
+      undefined
         ? []
-        : change.before.split(/\r?\n/);
+        : change.before.split(
+            /\r?\n/,
+          );
 
     const afterLines =
-      change.after === undefined
+      change.after ===
+      undefined
         ? []
-        : change.after.split(/\r?\n/);
+        : change.after.split(
+            /\r?\n/,
+          );
 
-    if (change.kind === 'created') {
-      additions += afterLines.length;
+    if (
+      change.kind ===
+      'created'
+    ) {
+      additions +=
+        afterLines.length;
+
       continue;
     }
 
-    if (change.kind === 'deleted') {
-      deletions += beforeLines.length;
+    if (
+      change.kind ===
+      'deleted'
+    ) {
+      deletions +=
+        beforeLines.length;
+
       continue;
     }
 
-    /*
-     * Approximation only.
-     *
-     * Final authoritative Git statistics may replace this.
-     */
-    additions += Math.max(
-      0,
-      afterLines.length -
-        Math.min(
-          beforeLines.length,
-          afterLines.length,
-        ),
-    );
+    additions +=
+      Math.max(
+        0,
+        afterLines.length -
+          Math.min(
+            beforeLines.length,
+            afterLines.length,
+          ),
+      );
 
-    deletions += Math.max(
-      0,
-      beforeLines.length -
-        Math.min(
-          beforeLines.length,
-          afterLines.length,
-        ),
-    );
+    deletions +=
+      Math.max(
+        0,
+        beforeLines.length -
+          Math.min(
+            beforeLines.length,
+            afterLines.length,
+          ),
+      );
   }
 
   return {
@@ -278,22 +328,21 @@ function countChangedLines(
 /**
  * Create one stateful production-operations session.
  *
- * IMPORTANT:
- *
- * One instance belongs to ONE software-agent run.
- *
- * All reads, edits, commands, checks and Preview operations
- * use the same SoftwareAgentWorkspace.
+ * The workspace snapshot is durable for the agent run even
+ * though each sandbox execution remains disposable.
  */
 export async function createProductionSoftwareAgentOperations(
   contract: SoftwareExecutionContract,
-  dependencies: ProductionSoftwareAgentDependencies,
+  dependencies:
+    ProductionSoftwareAgentDependencies,
 ): Promise<ProductionSoftwareAgentOperationsSession> {
   const initialFiles =
     contract.repository
-      ? await dependencies.repository.loadFiles(
-          contract,
-        )
+      ? await dependencies
+          .repository
+          .loadFiles(
+            contract,
+          )
       : [];
 
   const workspace =
@@ -301,18 +350,25 @@ export async function createProductionSoftwareAgentOperations(
       initialFiles,
     );
 
+  let latestChecks:
+    SoftwareCheckResult[] =
+    [];
+
   const operations:
     ProductionSoftwareAgentOperations = {
-      async listFiles(): Promise<
-        ProjectFileSummary[]
-      > {
+      async listFiles():
+        Promise<
+          ProjectFileSummary[]
+        > {
         return workspace.listFiles();
       },
 
       async readFiles(
         _contract,
         paths,
-      ): Promise<ProjectFileContent[]> {
+      ): Promise<
+        ProjectFileContent[]
+      > {
         return workspace.readFiles(
           paths,
         );
@@ -322,14 +378,17 @@ export async function createProductionSoftwareAgentOperations(
         _contract,
         query,
       ) {
-        return workspace.search(query);
+        return workspace.search(
+          query,
+        );
       },
 
       async writeFile(
         _contract,
         path,
         content,
-        intent: FileWriteIntent,
+        intent:
+          FileWriteIntent,
       ): Promise<FileMutationResult> {
         return workspace.writeFile(
           path,
@@ -351,33 +410,54 @@ export async function createProductionSoftwareAgentOperations(
         currentContract,
         command,
       ): Promise<CommandExecutionResult> {
-        return dependencies.runtime.runCommand(
-          currentContract,
-          {
-            files: workspace.getFiles(),
-            command,
-          },
-        );
+        return dependencies.runtime
+          .runCommand(
+            currentContract,
+            {
+              files:
+                workspace.getFiles(),
+
+              command,
+            },
+          );
       },
 
       async runChecks(
         currentContract,
-      ): Promise<SoftwareCheckResult[]> {
-        return dependencies.runtime.runChecks(
-          currentContract,
-          {
-            files: workspace.getFiles(),
-          },
-        );
+      ): Promise<
+        SoftwareCheckResult[]
+      > {
+        const checks =
+          await dependencies.runtime
+            .runChecks(
+              currentContract,
+              {
+                files:
+                  workspace.getFiles(),
+              },
+            );
+
+        latestChecks =
+          checks.map(
+            (check) => ({
+              ...check,
+            }),
+          );
+
+        return checks;
       },
 
       async gitDiff():
-        Promise<GitDiffResult> {
+        Promise<
+          GitDiffResult
+        > {
         const changes =
           workspace.getChanges();
 
         const counts =
-          countChangedLines(changes);
+          countChangedLines(
+            changes,
+          );
 
         return {
           changedPaths:
@@ -399,39 +479,24 @@ export async function createProductionSoftwareAgentOperations(
         };
       },
 
-      async startPreview(
-        currentContract,
-      ): Promise<SoftwarePreviewEvidence> {
-        return dependencies.runtime.startPreview(
-          currentContract,
-          {
-            files: workspace.getFiles(),
-          },
-        );
-      },
-
-      async probePreview(
-        currentContract,
-        previewId,
-      ): Promise<SoftwarePreviewEvidence> {
-        return dependencies.runtime.probePreview(
-          currentContract,
-          {
-            previewId,
-          },
-        );
-      },
-
       async verifyPreview(
         currentContract,
-        previewId,
       ): Promise<SoftwarePreviewEvidence> {
-        return dependencies.runtime.verifyPreview(
-          currentContract,
-          {
-            previewId,
-          },
-        );
+        return dependencies.runtime
+          .verifyPreview(
+            currentContract,
+            {
+              files:
+                workspace.getFiles(),
+
+              checks:
+                latestChecks.map(
+                  (check) => ({
+                    ...check,
+                  }),
+                ),
+            },
+          );
       },
 
       async createReviewBranch(
@@ -440,7 +505,10 @@ export async function createProductionSoftwareAgentOperations(
         const changes =
           workspace.getChanges();
 
-        if (changes.length === 0) {
+        if (
+          changes.length ===
+          0
+        ) {
           throw new Error(
             'NO_CHANGES_TO_PERSIST',
           );
@@ -458,7 +526,8 @@ export async function createProductionSoftwareAgentOperations(
                 change.path,
             );
 
-        return dependencies.repository
+        return dependencies
+          .repository
           .createReviewBranch(
             currentContract,
             {
