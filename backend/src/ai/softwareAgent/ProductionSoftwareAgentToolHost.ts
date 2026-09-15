@@ -68,18 +68,8 @@ export interface ProductionSoftwareAgentOperations {
     contract: SoftwareExecutionContract,
   ): Promise<GitDiffResult>;
 
-  startPreview(
-    contract: SoftwareExecutionContract,
-  ): Promise<SoftwarePreviewEvidence>;
-
-  probePreview(
-    contract: SoftwareExecutionContract,
-    previewId: string,
-  ): Promise<SoftwarePreviewEvidence>;
-
   verifyPreview(
     contract: SoftwareExecutionContract,
-    previewId: string,
   ): Promise<SoftwarePreviewEvidence>;
 
   createReviewBranch(
@@ -129,21 +119,26 @@ function uniquePaths(
 ): string[] {
   return [
     ...new Set(
-      paths.map(normalizeProjectPath),
+      paths.map(
+        normalizeProjectPath,
+      ),
     ),
   ];
 }
 
 function requireMutationAllowed(
   contract: SoftwareExecutionContract,
-  operation: FileWriteIntent | 'delete',
+  operation:
+    | FileWriteIntent
+    | 'delete',
   path: string,
 ): void {
-  const decision = evaluateWritePolicy(
-    contract.writePolicy,
-    operation,
-    path,
-  );
+  const decision =
+    evaluateWritePolicy(
+      contract.writePolicy,
+      operation,
+      path,
+    );
 
   if (decision.allowed) {
     return;
@@ -159,21 +154,6 @@ function requireMutationAllowed(
 
 /**
  * Production boundary between the software agent and Xroga.
- *
- * The agent never receives direct access to:
- *
- * - GitHub credentials
- * - Fly credentials
- * - Supabase secrets
- * - the Xroga API host shell
- * - production deployment credentials
- *
- * It can only invoke operations exposed through this host.
- *
- * Real implementations are injected through
- * ProductionSoftwareAgentOperations so Xroga can reuse its
- * existing sandbox, repository, validation, Preview and GitHub
- * systems instead of creating another infrastructure stack.
  */
 export class ProductionSoftwareAgentToolHost
   implements SoftwareAgentToolHost
@@ -193,9 +173,11 @@ export class ProductionSoftwareAgentToolHost
 
     return files.map((file) => ({
       ...file,
-      path: normalizeProjectPath(
-        file.path,
-      ),
+
+      path:
+        normalizeProjectPath(
+          file.path,
+        ),
     }));
   }
 
@@ -206,7 +188,10 @@ export class ProductionSoftwareAgentToolHost
     const normalizedPaths =
       uniquePaths(paths);
 
-    if (normalizedPaths.length === 0) {
+    if (
+      normalizedPaths.length ===
+      0
+    ) {
       return [];
     }
 
@@ -218,9 +203,11 @@ export class ProductionSoftwareAgentToolHost
 
     return files.map((file) => ({
       ...file,
-      path: normalizeProjectPath(
-        file.path,
-      ),
+
+      path:
+        normalizeProjectPath(
+          file.path,
+        ),
     }));
   }
 
@@ -247,12 +234,16 @@ export class ProductionSoftwareAgentToolHost
         cleanedQuery,
       );
 
-    return results.map((result) => ({
-      ...result,
-      path: normalizeProjectPath(
-        result.path,
-      ),
-    }));
+    return results.map(
+      (result) => ({
+        ...result,
+
+        path:
+          normalizeProjectPath(
+            result.path,
+          ),
+      }),
+    );
   }
 
   async writeFile(
@@ -262,44 +253,39 @@ export class ProductionSoftwareAgentToolHost
     intent: FileWriteIntent,
   ): Promise<FileMutationResult> {
     const normalizedPath =
-      normalizeProjectPath(path);
+      normalizeProjectPath(
+        path,
+      );
 
-    /*
-     * Defense in depth:
-     *
-     * The Cline tool wrapper checks the write policy before
-     * calling this host, but the production host is itself a
-     * security boundary and must never trust the model/tool
-     * layer to have performed authorization correctly.
-     */
     requireMutationAllowed(
       contract,
       intent,
       normalizedPath,
     );
 
-    /*
-     * Independently verify whether the requested create /
-     * modify operation matches the real current workspace.
-     *
-     * Model-declared intent is never trusted by itself.
-     */
     const files =
       await this.operations.listFiles(
         contract,
       );
 
-    const existingPaths = new Set(
-      files.map((file) =>
-        normalizeProjectPath(file.path),
-      ),
-    );
+    const existingPaths =
+      new Set(
+        files.map(
+          (file) =>
+            normalizeProjectPath(
+              file.path,
+            ),
+        ),
+      );
 
     const exists =
-      existingPaths.has(normalizedPath);
+      existingPaths.has(
+        normalizedPath,
+      );
 
     if (
-      intent === 'create' &&
+      intent ===
+        'create' &&
       exists
     ) {
       throw new Error(
@@ -308,7 +294,8 @@ export class ProductionSoftwareAgentToolHost
     }
 
     if (
-      intent === 'modify' &&
+      intent ===
+        'modify' &&
       !exists
     ) {
       throw new Error(
@@ -316,12 +303,13 @@ export class ProductionSoftwareAgentToolHost
       );
     }
 
-    return this.operations.writeFile(
-      contract,
-      normalizedPath,
-      content,
-      intent,
-    );
+    return this.operations
+      .writeFile(
+        contract,
+        normalizedPath,
+        content,
+        intent,
+      );
   }
 
   async deleteFile(
@@ -332,14 +320,10 @@ export class ProductionSoftwareAgentToolHost
     deleted: boolean;
   }> {
     const normalizedPath =
-      normalizeProjectPath(path);
+      normalizeProjectPath(
+        path,
+      );
 
-    /*
-     * Deletion receives the same independent host-side policy
-     * enforcement as create/modify. allowedPaths therefore
-     * remains a runtime boundary even if a future caller skips
-     * the Cline tool wrapper entirely.
-     */
     requireMutationAllowed(
       contract,
       'delete',
@@ -354,9 +338,11 @@ export class ProductionSoftwareAgentToolHost
 
     return {
       ...result,
-      path: normalizeProjectPath(
-        result.path,
-      ),
+
+      path:
+        normalizeProjectPath(
+          result.path,
+        ),
     };
   }
 
@@ -373,42 +359,32 @@ export class ProductionSoftwareAgentToolHost
       );
     }
 
-    /*
-     * IMPORTANT:
-     *
-     * ProductionSoftwareAgentOperations.runCommand must execute
-     * only inside Xroga's isolated sandbox.
-     *
-     * Never implement this using child_process on xroga-api.
-     */
-    return this.operations.runCommand(
-      contract,
-      cleanedCommand,
-    );
+    return this.operations
+      .runCommand(
+        contract,
+        cleanedCommand,
+      );
   }
 
   async runChecks(
     contract: SoftwareExecutionContract,
   ): Promise<SoftwareCheckResult[]> {
-    /*
-     * Xroga selects applicable checks from the actual project.
-     *
-     * The model does not decide that a test/build passed.
-     */
-    return this.operations.runChecks(
-      contract,
-    );
+    return this.operations
+      .runChecks(
+        contract,
+      );
   }
 
   async gitDiff(
     contract: SoftwareExecutionContract,
   ): Promise<GitDiffResult> {
-    return this.operations.gitDiff(
-      contract,
-    );
+    return this.operations
+      .gitDiff(
+        contract,
+      );
   }
 
-  async startPreview(
+  async verifyPreview(
     contract: SoftwareExecutionContract,
   ): Promise<SoftwarePreviewEvidence> {
     if (
@@ -420,45 +396,10 @@ export class ProductionSoftwareAgentToolHost
       );
     }
 
-    return this.operations.startPreview(
-      contract,
-    );
-  }
-
-  async probePreview(
-    contract: SoftwareExecutionContract,
-    previewId: string,
-  ): Promise<SoftwarePreviewEvidence> {
-    const id = previewId.trim();
-
-    if (!id) {
-      throw new Error(
-        'Preview id is required.',
+    return this.operations
+      .verifyPreview(
+        contract,
       );
-    }
-
-    return this.operations.probePreview(
-      contract,
-      id,
-    );
-  }
-
-  async verifyPreview(
-    contract: SoftwareExecutionContract,
-    previewId: string,
-  ): Promise<SoftwarePreviewEvidence> {
-    const id = previewId.trim();
-
-    if (!id) {
-      throw new Error(
-        'Preview id is required.',
-      );
-    }
-
-    return this.operations.verifyPreview(
-      contract,
-      id,
-    );
   }
 
   async createReviewBranch(
@@ -473,32 +414,24 @@ export class ProductionSoftwareAgentToolHost
       );
     }
 
-    if (!contract.repository) {
+    if (
+      !contract.repository
+    ) {
       throw new Error(
         'NO_AUTHORIZED_REPOSITORY',
       );
     }
 
-    /*
-     * Verification is already enforced by the
-     * create_review_branch tool before reaching this host.
-     *
-     * The underlying GitHub implementation must still enforce:
-     *
-     * - exact repository
-     * - exact branch/base SHA
-     * - atomic write
-     * - no automatic merge
-     * - no deployment
-     */
-    return this.operations.createReviewBranch(
-      contract,
-    );
+    return this.operations
+      .createReviewBranch(
+        contract,
+      );
   }
 }
 
 export function createProductionSoftwareAgentToolHost(
-  operations: ProductionSoftwareAgentOperations,
+  operations:
+    ProductionSoftwareAgentOperations,
 ): SoftwareAgentToolHost {
   return new ProductionSoftwareAgentToolHost(
     operations,
