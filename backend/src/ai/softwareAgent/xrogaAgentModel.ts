@@ -5,6 +5,7 @@ import {
 } from '../openaiCompat.js';
 
 import {
+  executeWithProviderFallback,
   getModelRuntimeHealth,
   recordModelExecution,
 } from '../providerRuntime.js';
@@ -15,6 +16,7 @@ import {
 } from '../providerBudget.js';
 
 import {
+  assertCanUseModel,
   recordUsage,
 } from '../quota.js';
 
@@ -96,6 +98,7 @@ const MAXIMUM_AGENT_OUTPUT_TOKENS =
 
 interface BufferedAgentTurn
   extends ProviderUsageResult {
+  modelId: ModelId;
   events: AgentModelEvent[];
 }
 
@@ -103,6 +106,14 @@ export interface XrogaAgentModelInput {
   userId: string;
 
   modelId: ModelId;
+
+  /**
+   * Ordered fallback models already selected by Xroga's coding router.
+   *
+   * The model adapter never invents a fallback. It may only move through
+   * this server-owned list when the current provider fails retryably.
+   */
+  fallbackModelIds?: readonly ModelId[];
 
   /**
    * Optional user-owned provider credential already decrypted by Xroga.
@@ -511,16 +522,23 @@ function assertModelAvailable(
   }
 }
 
-async function runBufferedTurn(
+async function runSingleModelTurn(
   input: {
     userId: string;
     modelId: ModelId;
+    primaryModelId: ModelId;
     credentialOverride?: string;
     maximumOutputTokens: number;
     request: AgentModelRequest;
+    signal?: AbortSignal;
   },
 ): Promise<BufferedAgentTurn> {
   assertModelAvailable(
+    input.modelId,
+  );
+
+  await assertCanUseModel(
+    input.userId,
     input.modelId,
   );
 
@@ -528,6 +546,16 @@ async function runBufferedTurn(
     estimateRequestTokens(
       input.request,
     );
+
+  /*
+   * A user-owned credential is scoped to the originally selected model.
+   * Never forward one provider's credential to a fallback provider.
+   */
+  const credentialOverride =
+    input.modelId ===
+    input.primaryModelId
+      ? input.credentialOverride
+      : undefined;
 
   return withProviderReservation({
     userId:
@@ -553,7 +581,7 @@ async function runBufferedTurn(
           const endpoint =
             resolveEndpoint(
               input.modelId,
-              input.credentialOverride,
+              credentialOverride,
             );
 
           const client =
@@ -613,10 +641,10 @@ async function runBufferedTurn(
                   : {}),
               },
 
-              input.request.signal
+              input.signal
                 ? {
                     signal:
-                      input.request.signal,
+                      input.signal,
                   }
                 : undefined,
             );
@@ -797,6 +825,9 @@ async function runBufferedTurn(
           );
 
           return {
+            modelId:
+              input.modelId,
+
             events,
 
             providerRequestId,
@@ -835,6 +866,79 @@ async function runBufferedTurn(
   });
 }
 
+async function runBufferedTurn(
+  input: {
+    userId: string;
+    modelId: ModelId;
+    fallbackModelIds: readonly ModelId[];
+    credentialOverride?: string;
+    maximumOutputTokens: number;
+    request: AgentModelRequest;
+  },
+): Promise<BufferedAgentTurn> {
+  const routes = [
+    input.modelId,
+    ...input.fallbackModelIds,
+  ];
+
+  const outcome =
+    await executeWithProviderFallback({
+      routes:
+        [...routes],
+
+      /*
+       * Cline owns its iterative agent loop; Xroga owns routing between
+       * provider transports for each individual model turn.
+       *
+       * One attempt per route keeps retry accounting bounded. Cline may
+       * make another turn later with the same durable conversation.
+       */
+      maximumAttemptsPerRoute:
+        1,
+
+      timeoutMs:
+        180_000,
+
+      /*
+       * runSingleModelTurn records the underlying provider request itself,
+       * so the fallback coordinator must not double-count health.
+       */
+      recordHealth:
+        false,
+
+      signal:
+        input.request.signal,
+
+      execute:
+        async (
+          modelId,
+          signal,
+        ) =>
+          runSingleModelTurn({
+            userId:
+              input.userId,
+
+            modelId,
+
+            primaryModelId:
+              input.modelId,
+
+            credentialOverride:
+              input.credentialOverride,
+
+            maximumOutputTokens:
+              input.maximumOutputTokens,
+
+            request:
+              input.request,
+
+            signal,
+          }),
+    });
+
+  return outcome.value;
+}
+
 export function createXrogaAgentModel(
   input: XrogaAgentModelInput,
 ): SoftwareAgentPrebuiltModel {
@@ -853,6 +957,18 @@ export function createXrogaAgentModel(
       ?.trim() ||
     undefined;
 
+  const fallbackModelIds =
+    [
+      ...new Set(
+        input.fallbackModelIds ??
+        [],
+      ),
+    ].filter(
+      (modelId) =>
+        modelId !==
+        input.modelId,
+    );
+
   const model:
     SoftwareAgentPrebuiltModel = {
       async *stream(
@@ -866,6 +982,8 @@ export function createXrogaAgentModel(
             modelId:
               input.modelId,
 
+            fallbackModelIds,
+
             credentialOverride,
 
             maximumOutputTokens,
@@ -875,12 +993,12 @@ export function createXrogaAgentModel(
 
         /*
          * Provider-budget settlement has completed before these events are
-         * released into the agent loop. This keeps accounting truthful even
-         * if the caller disconnects immediately after the model turn.
+         * released into the agent loop. Quota usage is recorded against
+         * the route that actually succeeded, including a fallback.
          */
         await recordUsage(
           userId,
-          input.modelId,
+          turn.modelId,
           turn.inputTokens,
           turn.outputTokens,
         );
@@ -907,6 +1025,11 @@ export function createXrogaAgentModelRoute(
       ),
 
     routeId:
-      `xroga:${input.modelId}`,
+      [
+        'xroga',
+        input.modelId,
+        ...(input.fallbackModelIds ??
+          []),
+      ].join(':'),
   };
 }
