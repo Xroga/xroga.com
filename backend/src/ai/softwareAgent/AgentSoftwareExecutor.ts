@@ -55,6 +55,15 @@ export interface AgentSoftwareExecutorInput {
   model: SoftwareAgentModelRoute;
 
   /**
+   * Caller-owned cancellation signal.
+   *
+   * Universal execution already has a run AbortSignal; Agent V2 must
+   * honor the same cancellation boundary instead of continuing after
+   * the user cancels the build.
+   */
+  signal?: AbortSignal;
+
+  /**
    * Overall safety ceiling for one software-agent session.
    *
    * This is NOT a provider timeout.
@@ -248,6 +257,47 @@ export class AgentSoftwareExecutor {
               registeredTools,
           });
 
+    let externallyAborted =
+      input.signal?.aborted ===
+      true;
+
+    const abortFromCaller = () => {
+      externallyAborted = true;
+
+      try {
+        agent.abort(
+          'Xroga software-agent execution was cancelled by the caller.',
+        );
+      } catch {
+        /*
+         * Abort is best-effort.
+         * The final status is still derived from the caller signal.
+         */
+      }
+    };
+
+    if (externallyAborted) {
+      return {
+        status: 'cancelled',
+        evidence,
+        blockers: [],
+        outputText: '',
+        iterations: 0,
+        failureCode:
+          'AGENT_ABORTED',
+        failureMessage:
+          'The software-agent run was cancelled.',
+      };
+    }
+
+    input.signal?.addEventListener(
+      'abort',
+      abortFromCaller,
+      {
+        once: true,
+      },
+    );
+
     const timeoutMs =
       normalizeTimeout(input.timeoutMs);
 
@@ -303,6 +353,20 @@ export class AgentSoftwareExecutor {
         };
       }
 
+      if (externallyAborted) {
+        return {
+          status: 'cancelled',
+          evidence,
+          blockers: [],
+          outputText,
+          iterations: totalIterations,
+          usage,
+          failureCode: 'AGENT_ABORTED',
+          failureMessage:
+            'The software-agent run was cancelled.',
+        };
+      }
+
       if (result.status === 'aborted') {
         return {
           status: 'cancelled',
@@ -352,7 +416,8 @@ export class AgentSoftwareExecutor {
         !completion.complete &&
         verificationRound <
           maximumVerificationRounds &&
-        !timedOut
+        !timedOut &&
+        !externallyAborted
       ) {
         verificationRound += 1;
 
@@ -408,6 +473,21 @@ export class AgentSoftwareExecutor {
         };
       }
 
+      if (externallyAborted) {
+        return {
+          status: 'cancelled',
+          evidence,
+          blockers:
+            completion.blockers,
+          outputText,
+          iterations: totalIterations,
+          usage,
+          failureCode: 'AGENT_ABORTED',
+          failureMessage:
+            'The software-agent run was cancelled.',
+        };
+      }
+
       if (!completion.complete) {
         return {
           status: 'incomplete',
@@ -447,6 +527,20 @@ export class AgentSoftwareExecutor {
         };
       }
 
+      if (externallyAborted) {
+        return {
+          status: 'cancelled',
+          evidence,
+          blockers: [],
+          outputText,
+          iterations: totalIterations,
+          usage,
+          failureCode: 'AGENT_ABORTED',
+          failureMessage:
+            'The software-agent run was cancelled.',
+        };
+      }
+
       return {
         status: 'failed',
         evidence,
@@ -462,6 +556,11 @@ export class AgentSoftwareExecutor {
       };
     } finally {
       clearTimeout(timeout);
+
+      input.signal?.removeEventListener(
+        'abort',
+        abortFromCaller,
+      );
     }
   }
 }
