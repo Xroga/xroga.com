@@ -121,21 +121,72 @@ export interface SoftwareCheckResult {
   summary?: string;
 }
 
+export type SoftwarePreviewVerificationStatus =
+  | 'passed'
+  | 'failed'
+  | 'not_checked';
+
+export type SoftwarePreviewNotCheckedReason =
+  | 'not_a_web_project'
+  | 'no_start_command'
+  | 'sandbox_unavailable'
+  | 'browser_unavailable'
+  | 'application_did_not_start'
+  | 'cancelled';
+
+/**
+ * Evidence from ONE isolated browser-verification execution.
+ *
+ * Xroga does not expose a persistent preview process to Agent V2.
+ * The production verifier materializes the current workspace,
+ * starts the application and browser inside one disposable sandbox,
+ * gathers deterministic evidence, and tears that sandbox down.
+ */
 export interface SoftwarePreviewEvidence {
-  previewId: string;
-  url: string;
+  status: SoftwarePreviewVerificationStatus;
 
-  runtime?: string;
-  port?: number;
+  /**
+   * True only when the browser/runtime verifier actually ran.
+   * A not_checked result is never equivalent to a pass.
+   */
+  attempted: boolean;
 
-  httpStatus?: number;
+  /**
+   * Local URL observed inside the isolated sandbox when available.
+   */
+  url: string | null;
 
-  consoleErrors: string[];
-  runtimeErrors: string[];
+  notCheckedReason?:
+    | SoftwarePreviewNotCheckedReason
+    | null;
 
-  desktopVerified?: boolean;
-  tabletVerified?: boolean;
-  mobileVerified?: boolean;
+  /**
+   * Human-readable reason verification cannot be considered passed.
+   */
+  blocker?:
+    | string
+    | null;
+
+  /**
+   * Bounded deterministic failure evidence suitable for repair.
+   */
+  evidenceForRepair?: string;
+
+  /**
+   * Acceptance criteria the current deterministic verifier could
+   * not execute. They are evidence gaps, never silent passes.
+   */
+  criteriaNotChecked: string[];
+
+  /**
+   * Evidence paths only. Screenshot blobs do not belong here.
+   */
+  screenshots: string[];
+
+  /**
+   * Furthest deterministic verification stage reached, when known.
+   */
+  rungReached?: string;
 }
 
 export interface SoftwareRunEvidence {
