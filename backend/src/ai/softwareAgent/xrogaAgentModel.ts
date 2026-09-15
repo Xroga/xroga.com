@@ -1,14 +1,5 @@
 import OpenAI from 'openai';
 
-import type {
-  AgentMessage,
-  AgentMessagePart,
-  AgentModel,
-  AgentModelEvent,
-  AgentModelRequest,
-  AgentToolDefinition,
-} from '@cline/sdk';
-
 import {
   resolveEndpoint,
 } from '../openaiCompat.js';
@@ -33,7 +24,69 @@ import type {
 
 import type {
   SoftwareAgentModelRoute,
+  SoftwareAgentPrebuiltModel,
 } from './agentModelRoute.js';
+
+type AgentModelRequest =
+  Parameters<
+    SoftwareAgentPrebuiltModel[
+      'stream'
+    ]
+  >[0];
+
+type AgentModelStream =
+  Awaited<
+    ReturnType<
+      SoftwareAgentPrebuiltModel[
+        'stream'
+      ]
+    >
+  >;
+
+type AgentModelEvent =
+  AgentModelStream extends
+    AsyncIterable<infer TEvent>
+      ? TEvent
+      : never;
+
+type AgentMessage =
+  AgentModelRequest[
+    'messages'
+  ][number];
+
+type AgentMessagePart =
+  AgentMessage[
+    'content'
+  ][number];
+
+type AgentToolDefinition =
+  AgentModelRequest[
+    'tools'
+  ][number];
+
+type ToolCallPart =
+  Extract<
+    AgentMessagePart,
+    {
+      type: 'tool-call';
+    }
+  >;
+
+type ToolResultPart =
+  Extract<
+    AgentMessagePart,
+    {
+      type: 'tool-result';
+    }
+  >;
+
+type FinishEvent =
+  Extract<
+    AgentModelEvent,
+    {
+      type: 'finish';
+    }
+  >;
 
 const DEFAULT_MAXIMUM_OUTPUT_TOKENS =
   8_192;
@@ -135,13 +188,16 @@ function textFromPart(
 
     /*
      * Software Agent V2 currently operates on repository files and
-     * deterministic tool evidence. Image/media parts are not silently
-     * converted into invented text.
+     * deterministic tool evidence. Image/media and tool protocol parts
+     * are handled elsewhere or deliberately omitted from plain text.
      */
     case 'image':
     case 'media':
     case 'tool-call':
     case 'tool-result':
+      return null;
+
+    default:
       return null;
   }
 }
@@ -151,11 +207,19 @@ function textContent(
 ): string {
   return message.content
     .map(
-      textFromPart,
+      (
+        part:
+          AgentMessagePart,
+      ) =>
+        textFromPart(
+          part,
+        ),
     )
     .filter(
       (
-        value,
+        value:
+          string |
+          null,
       ): value is string =>
         typeof value ===
         'string' &&
@@ -170,18 +234,17 @@ function assistantToolCalls(
   return message.content
     .filter(
       (
-        part,
-      ): part is Extract<
-        AgentMessagePart,
-        {
-          type: 'tool-call';
-        }
-      > =>
+        part:
+          AgentMessagePart,
+      ): part is ToolCallPart =>
         part.type ===
         'tool-call',
     )
     .map(
-      (part) => ({
+      (
+        part:
+          ToolCallPart,
+      ) => ({
         id:
           part.toolCallId,
 
@@ -207,18 +270,17 @@ function toolResultMessages(
   return message.content
     .filter(
       (
-        part,
-      ): part is Extract<
-        AgentMessagePart,
-        {
-          type: 'tool-result';
-        }
-      > =>
+        part:
+          AgentMessagePart,
+      ): part is ToolResultPart =>
         part.type ===
         'tool-result',
     )
     .map(
-      (part) => ({
+      (
+        part:
+          ToolResultPart,
+      ) => ({
         role:
           'tool' as const,
 
@@ -330,7 +392,10 @@ function toOpenAiTools(
     readonly AgentToolDefinition[],
 ): OpenAI.Chat.ChatCompletionTool[] {
   return tools.map(
-    (tool) => ({
+    (
+      tool:
+        AgentToolDefinition,
+    ) => ({
       type:
         'function' as const,
 
@@ -381,8 +446,8 @@ function estimateRequestTokens(
     );
 
   /*
-   * Deliberately conservative enough for reservation while remaining
-   * provider-independent. Actual settlement always uses provider usage.
+   * Conservative reservation estimate. Actual provider usage remains
+   * authoritative for settlement.
    */
   return Math.max(
     1,
@@ -398,12 +463,9 @@ function finishReason(
     | string
     | null
     | undefined,
-): Extract<
-  AgentModelEvent,
-  {
-    type: 'finish';
-  }
->['reason'] {
+): FinishEvent[
+  'reason'
+] {
   switch (value) {
     case 'tool_calls':
     case 'function_call':
@@ -614,7 +676,7 @@ async function runBufferedTurn(
 
                 text:
                   delta.content,
-              });
+              } as AgentModelEvent);
             }
 
             const toolCalls =
@@ -650,7 +712,7 @@ async function runBufferedTurn(
                 inputText:
                   toolCall.function
                     ?.arguments,
-              });
+              } as AgentModelEvent);
             }
 
             if (
@@ -710,7 +772,7 @@ async function runBufferedTurn(
                   }
                 : {}),
             },
-          });
+          } as AgentModelEvent);
 
           events.push({
             type:
@@ -720,7 +782,7 @@ async function runBufferedTurn(
               finishReason(
                 finalReason,
               ),
-          });
+          } as AgentModelEvent);
 
           recordModelExecution(
             input.modelId,
@@ -775,7 +837,7 @@ async function runBufferedTurn(
 
 export function createXrogaAgentModel(
   input: XrogaAgentModelInput,
-): AgentModel {
+): SoftwareAgentPrebuiltModel {
   const userId =
     requireUserId(
       input.userId,
@@ -791,45 +853,48 @@ export function createXrogaAgentModel(
       ?.trim() ||
     undefined;
 
-  return {
-    async *stream(
-      request:
-        AgentModelRequest,
-    ) {
-      const turn =
-        await runBufferedTurn({
-          userId,
-
-          modelId:
-            input.modelId,
-
-          credentialOverride,
-
-          maximumOutputTokens,
-
-          request,
-        });
-
-      /*
-       * Provider-budget settlement has completed before these events are
-       * released into the agent loop. This keeps accounting truthful even
-       * if the caller disconnects immediately after the model turn.
-       */
-      await recordUsage(
-        userId,
-        input.modelId,
-        turn.inputTokens,
-        turn.outputTokens,
-      );
-
-      for (
-        const event of
-        turn.events
+  const model:
+    SoftwareAgentPrebuiltModel = {
+      async *stream(
+        request:
+          AgentModelRequest,
       ) {
-        yield event;
-      }
-    },
-  };
+        const turn =
+          await runBufferedTurn({
+            userId,
+
+            modelId:
+              input.modelId,
+
+            credentialOverride,
+
+            maximumOutputTokens,
+
+            request,
+          });
+
+        /*
+         * Provider-budget settlement has completed before these events are
+         * released into the agent loop. This keeps accounting truthful even
+         * if the caller disconnects immediately after the model turn.
+         */
+        await recordUsage(
+          userId,
+          input.modelId,
+          turn.inputTokens,
+          turn.outputTokens,
+        );
+
+        for (
+          const event of
+          turn.events
+        ) {
+          yield event;
+        }
+      },
+    };
+
+  return model;
 }
 
 export function createXrogaAgentModelRoute(
