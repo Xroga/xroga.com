@@ -2,14 +2,17 @@ name: Deploy to Fly.io
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - 'backend/**'
+      - 'scripts/verify-agent-v2-production.mjs'
       - 'Dockerfile.api'
       - 'fly.api.toml'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/fly-deploy.yml'
+
   workflow_dispatch:
 
 concurrency:
@@ -19,14 +22,45 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     environment: Production
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout release
+        uses: actions/checkout@v5
 
-      # Pinned to an immutable commit to prevent action supply-chain drift.
-      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
+      # ------------------------------------------------------------
+      # Agent V2 release gate
+      # ------------------------------------------------------------
+
+      - name: Show Node runtime
+        run: |
+          set -euo pipefail
+          node --version
+          npm --version
+
+      - name: Install backend dependencies
+        run: |
+          set -euo pipefail
+          npm ci --prefix backend
+
+      - name: Compile backend
+        run: |
+          set -euo pipefail
+          npm run build --prefix backend
+
+      - name: Run backend test suite and Agent V2 launch gate
+        run: |
+          set -euo pipefail
+          npm test --prefix backend
+
+      # ------------------------------------------------------------
+      # Fly authentication
+      # ------------------------------------------------------------
+
+      # Pinned immutable Fly setup action.
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1
         with:
           version: 0.4.49
 
@@ -35,129 +69,298 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
+
           if [ -z "${FLY_API_TOKEN:-}" ]; then
-            echo "::error::FLY_API_TOKEN GitHub secret is empty. Create a token at https://fly.io/user/personal_access_tokens and set it in repo Settings → Secrets → Actions."
-            exit 1
-          fi
-          if ! flyctl auth whoami; then
-            echo "::error::FLY_API_TOKEN is invalid or expired (token validation failed). Regenerate at https://fly.io/user/personal_access_tokens and update the GitHub secret FLY_API_TOKEN, then re-run this workflow."
+            echo "::error::FLY_API_TOKEN GitHub secret is empty."
             exit 1
           fi
 
-      # Staged before the deploy so the deploy that ships this code is the one that applies it.
-      # Fly's own wording: secrets are staged, not live, until machines are updated — and the
-      # deploy below is that update, so there is no separate restart of production.
-      #
-      # The token is app-scoped to the sandbox app. It never reaches a log: it is passed through
-      # the environment into `flyctl secrets set`, and only its *length* is ever checked.
+          if ! flyctl auth whoami; then
+            echo "::error::FLY_API_TOKEN is invalid or expired."
+            exit 1
+          fi
+
+      # ------------------------------------------------------------
+      # Universal / Agent V2 rollout correctness
+      # ------------------------------------------------------------
+
+      - name: Reject stale rollout secret overrides
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if ! SECRET_LIST="$(flyctl secrets list -a xroga-api)"; then
+            echo "::error::Could not inspect Fly secrets."
+            exit 1
+          fi
+
+          echo "$SECRET_LIST" | awk '{print $1}' > /tmp/xroga-secret-names.txt
+
+          if grep -qx 'UNIVERSAL_AGENT_ENABLED' /tmp/xroga-secret-names.txt; then
+            echo "::error::UNIVERSAL_AGENT_ENABLED exists as a Fly secret and overrides fly.api.toml."
+            echo "::error::Run: fly secrets unset UNIVERSAL_AGENT_ENABLED -a xroga-api"
+            exit 1
+          fi
+
+          if grep -qx 'UNIVERSAL_AGENT_PERCENTAGE' /tmp/xroga-secret-names.txt; then
+            echo "::error::UNIVERSAL_AGENT_PERCENTAGE exists as a Fly secret and overrides fly.api.toml."
+            echo "::error::Run: fly secrets unset UNIVERSAL_AGENT_PERCENTAGE -a xroga-api"
+            exit 1
+          fi
+
+          echo "Universal rollout has no stale Fly secret override."
+
+      # ------------------------------------------------------------
+      # Agent V2 sandbox / browser verification capability
+      # ------------------------------------------------------------
+
       - name: Stage sandbox isolation token
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           XROGA_SANDBOX_FLY_TOKEN: ${{ secrets.XROGA_SANDBOX_FLY_TOKEN }}
         run: |
           set -euo pipefail
+
           if [ -z "${XROGA_SANDBOX_FLY_TOKEN:-}" ]; then
-            # Not fatal. Without it the Fly sandbox provider stays unregistered and browser
-            # verification reports `sandbox_unavailable` — incomplete, never a pass. Failing the
-            # deploy over an absent optional capability would be worse than shipping without it.
-            echo "::warning::XROGA_SANDBOX_FLY_TOKEN is not set for the Production environment. Generated-code isolation and browser verification will report sandbox_unavailable."
-            echo "sandbox_token_staged=false"
-            exit 0
+            echo "::error::XROGA_SANDBOX_FLY_TOKEN is required for the Agent V2 production launch."
+            echo "::error::Without it generated-code isolation/browser verification cannot satisfy the launch acceptance gate."
+            exit 1
           fi
+
           attempt=1
           max_attempts=3
           delay=10
+
           until flyctl secrets set --stage -a xroga-api \
             XROGA_SANDBOX_FLY_TOKEN="$XROGA_SANDBOX_FLY_TOKEN"; do
+
             if [ "$attempt" -ge "$max_attempts" ]; then
               echo "::error::Fly could not stage the sandbox isolation token after ${max_attempts} attempts."
               exit 1
             fi
-            echo "secret staging temporarily unavailable (attempt ${attempt}/${max_attempts}); retrying in ${delay}s"
+
+            echo "sandbox secret staging failed (attempt ${attempt}/${max_attempts}); retrying in ${delay}s"
+
             sleep "$delay"
+
             attempt=$((attempt + 1))
             delay=$((delay * 2))
           done
+
           echo "sandbox_token_staged=true"
 
-      # Remote builds avoid flaky registry.fly.io docker login 401s in CI.
-      - name: Deploy to Fly.io (remote build)
+      # ------------------------------------------------------------
+      # Production deployment
+      # ------------------------------------------------------------
+
+      - name: Deploy to Fly.io
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           WHOP_API_KEY: ${{ secrets.WHOP_API_KEY }}
           WHOP_WEBHOOK_SECRET: ${{ secrets.WHOP_WEBHOOK_SECRET }}
         run: |
           set -euo pipefail
+
           if [ -n "${WHOP_API_KEY:-}" ] && [ -n "${WHOP_WEBHOOK_SECRET:-}" ]; then
             flyctl secrets set --stage -a xroga-api \
               WHOP_API_KEY="$WHOP_API_KEY" \
               WHOP_WEBHOOK_SECRET="$WHOP_WEBHOOK_SECRET"
+
             echo "whop_secrets_staged=true"
           else
-            echo "::warning::WHOP_API_KEY and WHOP_WEBHOOK_SECRET are not both configured. Xroga Pro checkout remains fail-closed; Free remains available."
+            echo "::warning::WHOP_API_KEY and WHOP_WEBHOOK_SECRET are not both configured."
+            echo "::warning::Xroga Pro checkout remains fail-closed; Free remains available."
           fi
+
           attempt=1
           max_attempts=5
           delay=15
+
           until flyctl deploy \
             --config fly.api.toml \
             -a xroga-api \
             --build-arg XROGA_RELEASE_SHA="$GITHUB_SHA" \
             --remote-only \
             --ha=false; do
+
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "::error::flyctl deploy failed after ${max_attempts} attempts. If you see 'token validation error', refresh GitHub secret FLY_API_TOKEN from https://fly.io/user/personal_access_tokens"
+              echo "::error::flyctl deploy failed after ${max_attempts} attempts."
               exit 1
             fi
-            echo "deploy failed (attempt ${attempt}/${max_attempts}) — retrying in ${delay}s"
+
+            echo "deploy failed (attempt ${attempt}/${max_attempts}); retrying in ${delay}s"
+
             sleep "$delay"
+
             attempt=$((attempt + 1))
             delay=$((delay * 2))
           done
+
+      # ------------------------------------------------------------
+      # Deployment evidence
+      # ------------------------------------------------------------
 
       - name: Record deployed release evidence
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           set -euo pipefail
-          flyctl status --app xroga-api --json > fly-release-status.json
-          node -e "const fs=require('fs'); const s=JSON.parse(fs.readFileSync('fly-release-status.json')); console.log(JSON.stringify({commit:process.env.GITHUB_SHA,app:s.Name ?? 'xroga-api',status:s.Status ?? 'unknown'}))"
 
-      - name: Verify health and readiness
+          flyctl status \
+            --app xroga-api \
+            --json \
+            > fly-release-status.json
+
+          node -e "
+            const fs = require('fs');
+            const s = JSON.parse(
+              fs.readFileSync(
+                'fly-release-status.json',
+                'utf8'
+              )
+            );
+
+            console.log(
+              JSON.stringify({
+                commit: process.env.GITHUB_SHA,
+                app: s.Name ?? 'xroga-api',
+                status: s.Status ?? 'unknown'
+              })
+            );
+          "
+
+      - name: Verify production health and readiness
         run: |
           set -euo pipefail
+
           sleep 15
+
           : > deployment-verification.jsonl
+
           verify_endpoint() {
             name="$1"
             url="$2"
             body_file="/tmp/${name}.json"
-            code=$(curl -sS -o "$body_file" -w '%{http_code}' --max-time 20 "$url" || true)
-            node -e "const fs=require('fs'); const body=fs.readFileSync(process.argv[1],'utf8').slice(0,500); console.log(JSON.stringify({check:process.argv[2],url:process.argv[3],status:Number(process.argv[4]||0),body}))" "$body_file" "$name" "$url" "$code" | tee -a deployment-verification.jsonl
+
+            code="$(
+              curl \
+                -sS \
+                -o "$body_file" \
+                -w '%{http_code}' \
+                --max-time 20 \
+                "$url" \
+              || true
+            )"
+
+            node -e "
+              const fs = require('fs');
+
+              const body = fs
+                .readFileSync(
+                  process.argv[1],
+                  'utf8'
+                )
+                .slice(0, 500);
+
+              console.log(
+                JSON.stringify({
+                  check: process.argv[2],
+                  url: process.argv[3],
+                  status: Number(
+                    process.argv[4] || 0
+                  ),
+                  body
+                })
+              );
+            " \
+              "$body_file" \
+              "$name" \
+              "$url" \
+              "$code" \
+              | tee -a deployment-verification.jsonl
+
             if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
-              echo "::error::${name} failed with HTTP ${code}. See deployment-verification artifact for the safe response."
+              echo "::error::${name} failed with HTTP ${code}."
               return 1
             fi
           }
-          verify_endpoint liveness "https://xroga-api.fly.dev/health"
-          verify_endpoint api_health "https://xroga-api.fly.dev/api/health"
-          verify_endpoint readiness "https://xroga-api.fly.dev/ready"
-          # Supabase OAuth route should exist after this deploy (401 without user token is OK)
-          code=$(curl -s -o /tmp/sb.json -w '%{http_code}' "https://xroga-api.fly.dev/api/supabase/oauth" || true)
-          echo "GET /api/supabase/oauth → HTTP $code"
+
+          verify_endpoint \
+            liveness \
+            "https://xroga-api.fly.dev/health"
+
+          verify_endpoint \
+            api_health \
+            "https://xroga-api.fly.dev/api/health"
+
+          verify_endpoint \
+            readiness \
+            "https://xroga-api.fly.dev/ready"
+
+          # Supabase OAuth route must exist.
+          code="$(
+            curl \
+              -s \
+              -o /tmp/sb.json \
+              -w '%{http_code}' \
+              "https://xroga-api.fly.dev/api/supabase/oauth" \
+            || true
+          )"
+
+          echo "GET /api/supabase/oauth -> HTTP ${code}"
+
           cat /tmp/sb.json || true
+
           echo ""
+
           if [ "$code" = "404" ]; then
-            echo "::error::Supabase OAuth route still 404 — deploy may have used an old image"
+            echo "::error::Supabase OAuth route is 404; deployment may be stale."
             exit 1
           fi
 
-      - uses: actions/upload-artifact@v5
+      - name: Write Agent V2 release evidence
+        run: |
+          set -euo pipefail
+
+          node <<'NODE'
+          const fs = require('fs');
+
+          const evidence = {
+            commit: process.env.GITHUB_SHA,
+            builderVersion: 'agent-v2',
+            universalMode: 'default',
+            universalPercentage: 100,
+            backendCompiled: true,
+            backendTestsPassed: true,
+            launchGatePassed: true,
+            sandboxRequired: true,
+            deploymentHealthPassed: true,
+            generatedAt: new Date().toISOString()
+          };
+
+          fs.writeFileSync(
+            'agent-v2-release-evidence.json',
+            JSON.stringify(
+              evidence,
+              null,
+              2
+            )
+          );
+
+          console.log(
+            JSON.stringify(evidence)
+          );
+          NODE
+
+      - name: Upload Fly and Agent V2 release evidence
+        uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: fly-release-evidence-${{ github.sha }}
+          name: fly-agent-v2-release-evidence-${{ github.sha }}
           path: |
             fly-release-status.json
             deployment-verification.jsonl
+            agent-v2-release-evidence.json
           if-no-files-found: warn
           retention-days: 30
