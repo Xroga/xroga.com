@@ -22,6 +22,10 @@ import type {
   ProjectFile,
 } from '../ai/patches.js';
 
+import type {
+  SoftwareRunEvent,
+} from '../ai/softwareAgent/runEvents.js';
+
 import {
   mayWrite,
   routeProject,
@@ -359,6 +363,14 @@ export async function tryUniversalBuild(
      */
     executionStore?:
       ExecutionStateStore;
+        /**
+     * Public Software Agent V2 execution events.
+     *
+     * Used by the outer build pipeline for live delivery.
+     */
+    onEvent?: (
+      event: SoftwareRunEvent,
+    ) => void;
 
     /**
      * Canonical project identity visible to the user and the
@@ -961,6 +973,9 @@ export async function tryUniversalBuild(
                     input.activeProjectContext,
 
                   signal,
+
+                  onEvent:
+                    input.onEvent,
 
                   /*
                    * The legacy implementation is still present, but it is
