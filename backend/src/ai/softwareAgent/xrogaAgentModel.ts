@@ -8,6 +8,7 @@ import {
   executeWithProviderFallback,
   getModelRuntimeHealth,
   recordModelExecution,
+  type NormalizedProviderError,
 } from '../providerRuntime.js';
 
 import {
@@ -20,8 +21,9 @@ import {
   recordUsage,
 } from '../quota.js';
 
-import type {
-  ModelId,
+import {
+  MODELS,
+  type ModelId,
 } from '../models.js';
 
 import type {
@@ -102,8 +104,56 @@ interface BufferedAgentTurn
   events: AgentModelEvent[];
 }
 
+export interface SoftwareAgentModelTelemetry {
+  /**
+   * Canonical Xroga build run when available.
+   */
+  runId?: string;
+
+  builderVersion: 'agent-v2';
+
+  /**
+   * Model requested by the coding router.
+   */
+  requestedModelId: ModelId;
+
+  requestedProvider: string;
+
+  /**
+   * Model that actually completed this Agent V2 turn.
+   */
+  actualModelId: ModelId;
+
+  actualProvider: string;
+
+  /**
+   * True only when execution moved away from the requested model.
+   */
+  fallbackUsed: boolean;
+
+  /**
+   * Compact internal operational reason.
+   *
+   * Never contains prompts, provider response bodies, credentials,
+   * command output or model reasoning.
+   */
+  fallbackReason: string | null;
+
+  /**
+   * Number of failed provider attempts observed before successful execution.
+   */
+  fallbackFailureCount: number;
+}
+
 export interface XrogaAgentModelInput {
   userId: string;
+
+  /**
+   * Canonical Xroga build run.
+   *
+   * Used only to correlate server-side operational telemetry.
+   */
+  runId?: string;
 
   modelId: ModelId;
 
@@ -124,6 +174,124 @@ export interface XrogaAgentModelInput {
   credentialOverride?: string;
 
   maximumOutputTokens?: number;
+
+  /**
+   * Internal execution telemetry callback.
+   *
+   * It must remain operational metadata only.
+   */
+  onTelemetry?: (
+    record: SoftwareAgentModelTelemetry,
+  ) => void;
+}
+
+function providerForModel(
+  modelId: ModelId,
+): string {
+  return (
+    MODELS[
+      modelId
+    ]?.provider ??
+    'unknown'
+  );
+}
+
+function safeFallbackReason(
+  failure:
+    NormalizedProviderError |
+    undefined,
+): string | null {
+  if (!failure) {
+    return null;
+  }
+
+  const parts = [
+    failure.kind,
+
+    failure.code
+      ? `code=${failure.code}`
+      : null,
+
+    typeof failure.status ===
+      'number'
+      ? `status=${failure.status}`
+      : null,
+  ].filter(
+    (
+      value,
+    ): value is string =>
+      Boolean(value),
+  );
+
+  return (
+    parts.join(':') ||
+    null
+  );
+}
+
+/**
+ * Pure helper used by production execution and unit tests.
+ */
+export function buildSoftwareAgentModelTelemetry(
+  input: {
+    runId?: string;
+
+    requestedModelId:
+      ModelId;
+
+    actualModelId:
+      ModelId;
+
+    failures:
+      readonly NormalizedProviderError[];
+  },
+): SoftwareAgentModelTelemetry {
+  const fallbackUsed =
+    input.actualModelId !==
+    input.requestedModelId;
+
+  return {
+    ...(input.runId
+      ? {
+          runId:
+            input.runId,
+        }
+      : {}),
+
+    builderVersion:
+      'agent-v2',
+
+    requestedModelId:
+      input.requestedModelId,
+
+    requestedProvider:
+      providerForModel(
+        input.requestedModelId,
+      ),
+
+    actualModelId:
+      input.actualModelId,
+
+    actualProvider:
+      providerForModel(
+        input.actualModelId,
+      ),
+
+    fallbackUsed,
+
+    fallbackReason:
+      fallbackUsed
+        ? (
+            safeFallbackReason(
+              input.failures[0],
+            ) ??
+            'primary_route_unavailable'
+          )
+        : null,
+
+    fallbackFailureCount:
+      input.failures.length,
+  };
 }
 
 function requireUserId(
@@ -233,7 +401,7 @@ function textContent(
           null,
       ): value is string =>
         typeof value ===
-        'string' &&
+          'string' &&
         value.length > 0,
     )
     .join('\n');
@@ -869,11 +1037,26 @@ async function runSingleModelTurn(
 async function runBufferedTurn(
   input: {
     userId: string;
+
+    runId?: string;
+
     modelId: ModelId;
-    fallbackModelIds: readonly ModelId[];
+
+    fallbackModelIds:
+      readonly ModelId[];
+
     credentialOverride?: string;
-    maximumOutputTokens: number;
-    request: AgentModelRequest;
+
+    maximumOutputTokens:
+      number;
+
+    request:
+      AgentModelRequest;
+
+    onTelemetry?: (
+      record:
+        SoftwareAgentModelTelemetry,
+    ) => void;
   },
 ): Promise<BufferedAgentTurn> {
   const routes = [
@@ -936,6 +1119,52 @@ async function runBufferedTurn(
           }),
     });
 
+  const telemetry =
+    buildSoftwareAgentModelTelemetry({
+      runId:
+        input.runId,
+
+      requestedModelId:
+        input.modelId,
+
+      actualModelId:
+        outcome.modelId,
+
+      failures:
+        outcome.failures,
+    });
+
+  /*
+   * Internal operational telemetry only.
+   *
+   * No prompt content, credentials, command output, provider response
+   * bodies or hidden reasoning are logged here.
+   */
+  console.info(
+    '[software_agent_model_route]',
+    JSON.stringify(
+      telemetry,
+    ),
+  );
+
+  try {
+    input.onTelemetry?.(
+      telemetry,
+    );
+  } catch (
+    error
+  ) {
+    /*
+     * Telemetry is non-critical and must never terminate an engineering run.
+     */
+    console.warn(
+      '[software_agent_model_telemetry]',
+      error instanceof Error
+        ? error.message
+        : String(error),
+    );
+  }
+
   return outcome.value;
 }
 
@@ -979,6 +1208,9 @@ export function createXrogaAgentModel(
           await runBufferedTurn({
             userId,
 
+            runId:
+              input.runId,
+
             modelId:
               input.modelId,
 
@@ -989,6 +1221,9 @@ export function createXrogaAgentModel(
             maximumOutputTokens,
 
             request,
+
+            onTelemetry:
+              input.onTelemetry,
           });
 
         /*
