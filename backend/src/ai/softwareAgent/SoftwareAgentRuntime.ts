@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto';
-
 import type {
   SoftwareExecutionContract,
 } from './contracts.js';
@@ -26,7 +24,6 @@ import {
 
 import {
   selectSoftwareExecutor,
-  type SoftwareExecutorKind,
 } from './softwareExecutorSelector.js';
 
 import {
@@ -62,127 +59,28 @@ export interface SoftwareAgentRuntimeV2Context {
   verificationRounds?: number;
 }
 
-export interface SoftwareAgentRuntimeInput<
-  TLegacyResult,
-> {
+export interface SoftwareAgentRuntimeInput {
   /**
    * Server-owned contract input.
    *
-   * Do not construct authorization fields directly from
-   * arbitrary frontend/model output.
+   * Do not construct authorization fields directly from arbitrary
+   * frontend/model output.
    */
-  contract:
-    SoftwareAgentContractInput;
+  contract: SoftwareAgentContractInput;
 
   /**
-   * Existing Builder execution.
-   *
-   * During migration this remains the fallback and the
-   * authoritative result in shadow mode.
+   * Agent V2 production context is mandatory because Agent V2 is now the
+   * authoritative implementation engine for software tasks.
    */
-  runLegacy(
-    contract: SoftwareExecutionContract,
-  ): Promise<TLegacyResult>;
-
-  /**
-   * Required only when Agent V2 is actually selected.
-   */
-  agentV2?:
-    SoftwareAgentRuntimeV2Context;
-
-  /**
-   * Internal/testing controls only.
-   *
-   * Never expose these as normal client-controlled fields.
-   */
-  forceLegacy?: boolean;
-
-  forceAgentV2?: boolean;
+  agentV2: SoftwareAgentRuntimeV2Context;
 }
 
-export interface SoftwareAgentShadowResult {
-  status:
-    | 'completed'
-    | 'failed'
-    | 'not_configured';
+export interface SoftwareAgentRuntimeResult {
+  executor: 'agent_v2';
 
-  result?: SoftwareAgentServiceResult;
+  contract: SoftwareExecutionContract;
 
-  error?: string;
-}
-
-export type SoftwareAgentRuntimeResult<
-  TLegacyResult,
-> =
-  | {
-      executor: 'legacy';
-
-      contract:
-        SoftwareExecutionContract;
-
-      result:
-        TLegacyResult;
-    }
-  | {
-      executor: 'agent_v2';
-
-      contract:
-        SoftwareExecutionContract;
-
-      result:
-        SoftwareAgentServiceResult;
-    }
-  | {
-      executor: 'agent_v2_shadow';
-
-      contract:
-        SoftwareExecutionContract;
-
-      result:
-        TLegacyResult;
-
-      shadow:
-        SoftwareAgentShadowResult;
-    };
-
-function requireAgentV2Context(
-  context:
-    | SoftwareAgentRuntimeV2Context
-    | undefined,
-): SoftwareAgentRuntimeV2Context {
-  if (!context) {
-    throw new Error(
-      'SOFTWARE_AGENT_V2_CONTEXT_REQUIRED',
-    );
-  }
-
-  return context;
-}
-
-/**
- * Shadow execution must NEVER persist, merge or deploy.
- *
- * It may:
- * - read repository state
- * - modify its isolated workspace
- * - run sandbox commands
- * - run checks
- * - generate/verify Preview
- *
- * It may NOT mutate the user's repository.
- */
-function createShadowContract(
-  contract: SoftwareExecutionContract,
-): SoftwareExecutionContract {
-  return {
-    ...contract,
-
-    runId: randomUUID(),
-
-    persistence: 'none',
-
-    deployment: 'forbidden',
-  };
+  result: SoftwareAgentServiceResult;
 }
 
 function softwareAgentServiceInput(
@@ -221,162 +119,35 @@ function softwareAgentServiceInput(
 }
 
 /**
- * Migration-safe software executor boundary.
+ * Authoritative software implementation runtime.
  *
- * LEGACY
- *   Existing Builder owns the result.
- *
- * AGENT V2
- *   New software agent owns the result.
- *
- * SHADOW
- *   Existing Builder owns the result.
- *   Agent V2 executes with persistence/deployment disabled.
+ * Agent V2 is the only executable path. The previous legacy and shadow
+ * branches have been removed from this runtime so neither environment flags
+ * nor internal migration controls can route a production software task back
+ * to the old builder.
  */
-export async function runSoftwareAgentRuntime<
-  TLegacyResult,
->(
-  input:
-    SoftwareAgentRuntimeInput<
-      TLegacyResult
-    >,
-): Promise<
-  SoftwareAgentRuntimeResult<
-    TLegacyResult
-  >
-> {
+export async function runSoftwareAgentRuntime(
+  input: SoftwareAgentRuntimeInput,
+): Promise<SoftwareAgentRuntimeResult> {
   const contract =
     createSoftwareExecutionContract(
       input.contract,
     );
 
-  const executor:
-    SoftwareExecutorKind =
-    selectSoftwareExecutor({
-      forceLegacy:
-        input.forceLegacy,
+  const executor =
+    selectSoftwareExecutor();
 
-      forceAgentV2:
-        input.forceAgentV2,
-    });
-
-  if (executor === 'legacy') {
-    const result =
-      await input.runLegacy(
+  const result =
+    await runSoftwareAgent(
+      softwareAgentServiceInput(
         contract,
-      );
-
-    return {
-      executor:
-        'legacy',
-
-      contract,
-
-      result,
-    };
-  }
-
-  const agentV2 =
-    requireAgentV2Context(
-      input.agentV2,
-    );
-
-  if (executor === 'agent_v2') {
-    const result =
-      await runSoftwareAgent(
-        softwareAgentServiceInput(
-          contract,
-          agentV2,
-        ),
-      );
-
-    return {
-      executor:
-        'agent_v2',
-
-      contract,
-
-      result,
-    };
-  }
-
-  /*
-   * SHADOW MODE
-   *
-   * Legacy remains authoritative.
-   *
-   * Both executions receive the same authoritative initial snapshot.
-   * The shadow contract removes persistence/deployment authority.
-   */
-  const shadowContract =
-    createShadowContract(
-      contract,
-    );
-
-  const [
-    legacyOutcome,
-    shadowOutcome,
-  ] =
-    await Promise.allSettled([
-      input.runLegacy(
-        contract,
+        input.agentV2,
       ),
-
-      runSoftwareAgent(
-        softwareAgentServiceInput(
-          shadowContract,
-          agentV2,
-        ),
-      ),
-    ]);
-
-  /*
-   * Shadow failures must never replace or invalidate the
-   * legacy result.
-   *
-   * Legacy failure remains a real request failure.
-   */
-  if (
-    legacyOutcome.status ===
-    'rejected'
-  ) {
-    throw legacyOutcome.reason;
-  }
-
-  const shadow:
-    SoftwareAgentShadowResult =
-    shadowOutcome.status ===
-    'fulfilled'
-      ? {
-          status:
-            'completed',
-
-          result:
-            shadowOutcome.value,
-        }
-      : {
-          status:
-            'failed',
-
-          error:
-            shadowOutcome.reason instanceof
-            Error
-              ? shadowOutcome.reason
-                  .message
-              : String(
-                  shadowOutcome.reason,
-                ),
-        };
+    );
 
   return {
-    executor:
-      'agent_v2_shadow',
-
+    executor,
     contract,
-
-    result:
-      legacyOutcome.value,
-
-    shadow,
+    result,
   };
 }
