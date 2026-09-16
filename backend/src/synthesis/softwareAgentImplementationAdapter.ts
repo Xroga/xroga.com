@@ -77,12 +77,11 @@ export interface UniversalSoftwareImplementationInput {
   /**
    * Public Software Agent V2 activity callback.
    *
-   * The event already contains only public execution evidence — never
-   * private model chain-of-thought.
+   * These are public execution-evidence events only — never hidden model
+   * reasoning.
    *
-   * The next integration layer uses this callback to forward events into
-   * the active HTTP/SSE build stream while the durable sink continues to
-   * persist them independently.
+   * When supplied by the live pipeline, the outer progress system owns
+   * persistence and SSE delivery.
    */
   onEvent?: (
     event: SoftwareRunEvent,
@@ -133,7 +132,9 @@ function surfacesOf(
 ): string[] {
   return plan.spec.surfaces.map(
     (declaration) =>
-      String(declaration.surface),
+      String(
+        declaration.surface,
+      ),
   );
 }
 
@@ -141,46 +142,71 @@ function taskKindFor(
   plan: UniversalRunPlan,
   existingFiles: readonly ProjectFile[],
 ): SoftwareTaskKind {
-  if (existingFiles.length > 0) {
+  if (
+    existingFiles.length >
+    0
+  ) {
     return 'existing_repo_change';
   }
 
   const surfaces =
     new Set(
-      surfacesOf(plan),
+      surfacesOf(
+        plan,
+      ),
     );
 
   if (
-    surfaces.has('web_frontend')
+    surfaces.has(
+      'web_frontend',
+    )
   ) {
     return 'web_app';
   }
 
   if (
-    surfaces.has('api') ||
-    surfaces.has('webhook_service') ||
-    surfaces.has('mcp_server')
+    surfaces.has(
+      'api',
+    ) ||
+    surfaces.has(
+      'webhook_service',
+    ) ||
+    surfaces.has(
+      'mcp_server',
+    )
   ) {
     return 'api';
   }
 
   if (
-    surfaces.has('cli') ||
-    surfaces.has('devtool')
+    surfaces.has(
+      'cli',
+    ) ||
+    surfaces.has(
+      'devtool',
+    )
   ) {
     return 'cli';
   }
 
   if (
-    surfaces.has('library') ||
-    surfaces.has('sdk') ||
-    surfaces.has('package')
+    surfaces.has(
+      'library',
+    ) ||
+    surfaces.has(
+      'sdk',
+    ) ||
+    surfaces.has(
+      'package',
+    )
   ) {
     return 'library';
   }
 
   if (
-    surfaces.has('documentation_site')
+    surfaces.has(
+      'documentation_site',
+    )
   ) {
     return 'documentation';
   }
@@ -192,19 +218,28 @@ function previewRequirementFor(
   plan: UniversalRunPlan,
 ): PreviewRequirement {
   const surfaces =
-    surfacesOf(plan);
+    surfacesOf(
+      plan,
+    );
 
   if (
-    surfaces.includes('web_frontend') ||
-    surfaces.includes('documentation_site')
+    surfaces.includes(
+      'web_frontend',
+    ) ||
+    surfaces.includes(
+      'documentation_site',
+    )
   ) {
     return 'required';
   }
 
   if (
-    surfaces.length > 0 &&
+    surfaces.length >
+      0 &&
     surfaces.every(
-      (surface) =>
+      (
+        surface,
+      ) =>
         DEFINITELY_NON_BROWSER_SURFACES.has(
           surface,
         ),
@@ -235,7 +270,9 @@ function repositoryFromContext(
     owner,
     repo,
   ] =
-    context.repo.split('/');
+    context.repo.split(
+      '/',
+    );
 
   if (
     !owner ||
@@ -248,6 +285,7 @@ function repositoryFromContext(
 
   return {
     owner,
+
     repo,
 
     branch:
@@ -268,8 +306,12 @@ function implementationGoal(
     'Xroga planner contract:',
     input.brief.trim(),
   ]
-    .filter(Boolean)
-    .join('\n');
+    .filter(
+      Boolean,
+    )
+    .join(
+      '\n',
+    );
 }
 
 function softwareAgentFailure(
@@ -292,11 +334,15 @@ function softwareAgentFailure(
         ): value is string =>
           typeof value ===
             'string' &&
-          value.trim().length >
+          value
+            .trim()
+            .length >
             0,
       )
       .map(
-        (value) =>
+        (
+          value,
+        ) =>
           value
             .trim()
             .slice(
@@ -348,9 +394,7 @@ function softwareAgentFailure(
  * - final review
  * - repository publication
  *
- * Software Agent V2's execution events are now written into Xroga's existing
- * durable swarm-run history instead of disappearing inside a temporary
- * in-memory sink.
+ * Agent V2 events use Xroga's existing build/run delivery path.
  */
 export async function runUniversalSoftwareImplementation(
   input: UniversalSoftwareImplementationInput,
@@ -379,21 +423,101 @@ export async function runUniversalSoftwareImplementation(
         createSoftwareAgentProductionImplementations(),
     });
 
+  /**
+   * Aggregate every Cline/model turn used during this implementation.
+   *
+   * A single software build can contain many model turns, so storing only
+   * the final turn would make fallback telemetry misleading.
+   */
+  const modelTelemetry = {
+    actualModels:
+      new Set<string>(),
+
+    actualProviders:
+      new Set<string>(),
+
+    fallbackUsed:
+      false,
+
+    fallbackReasons:
+      new Set<string>(),
+
+    fallbackFailureCount:
+      0,
+
+    turnCount:
+      0,
+  };
+
   const model =
     createXrogaAgentModelRoute({
       userId:
         input.userId,
+
+      runId:
+        input.runId,
 
       modelId:
         input.primaryModelId,
 
       fallbackModelIds:
         input.fallbackModelIds,
+
+      onTelemetry:
+        (
+          telemetry,
+        ) => {
+          modelTelemetry
+            .turnCount +=
+            1;
+
+          modelTelemetry
+            .actualModels
+            .add(
+              telemetry
+                .actualModelId,
+            );
+
+          modelTelemetry
+            .actualProviders
+            .add(
+              telemetry
+                .actualProvider,
+            );
+
+          modelTelemetry
+            .fallbackFailureCount +=
+            telemetry
+              .fallbackFailureCount;
+
+          if (
+            telemetry
+              .fallbackUsed
+          ) {
+            modelTelemetry
+              .fallbackUsed =
+              true;
+
+            if (
+              telemetry
+                .fallbackReason
+            ) {
+              modelTelemetry
+                .fallbackReasons
+                .add(
+                  telemetry
+                    .fallbackReason,
+                );
+            }
+          }
+        },
     });
 
   /*
-   * Keep a diagnostic mirror because it is useful in logs/tests, but make
-   * the durable swarm-run sink the production delivery path.
+   * Keep a diagnostic mirror for tests and server diagnostics.
+   *
+   * SwarmRunSoftwareEventSink itself decides whether the outer live pipeline
+   * or direct persistence owns delivery, preventing duplicate run events.
    */
   const diagnosticEvents =
     new InMemorySoftwareRunEventSink();
@@ -478,7 +602,9 @@ export async function runUniversalSoftwareImplementation(
 
         acceptanceCriteria:
           input.plan.acceptance.map(
-            (criterion) => ({
+            (
+              criterion,
+            ) => ({
               id:
                 criterion.id,
 
@@ -508,7 +634,9 @@ export async function runUniversalSoftwareImplementation(
 
         initialFiles:
           input.existingFiles.map(
-            (file) => ({
+            (
+              file,
+            ) => ({
               path:
                 file.path,
 
@@ -521,13 +649,28 @@ export async function runUniversalSoftwareImplementation(
           input.signal,
 
         timeoutMs:
-          8 * 60 * 1000,
+          8 *
+          60 *
+          1000,
 
         verificationRounds:
           2,
       },
     });
 
+  /**
+   * One summary record for the complete implementation run.
+   *
+   * This makes operational debugging answer:
+   *
+   * - which builder ran
+   * - which model was requested
+   * - which model(s) actually ran
+   * - whether fallback happened
+   * - why fallback happened
+   * - how many Agent V2 turns happened
+   * - whether Agent V2 reached verified completion
+   */
   console.info(
     '[software_agent_v2_implementation]',
     JSON.stringify({
@@ -537,11 +680,44 @@ export async function runUniversalSoftwareImplementation(
       builderVersion:
         'agent-v2',
 
-      primaryModel:
+      executor:
+        runtime.executor,
+
+      requestedModel:
         input.primaryModelId,
 
-      fallbackModels:
+      configuredFallbackModels:
         input.fallbackModelIds,
+
+      actualModelsUsed:
+        [
+          ...modelTelemetry
+            .actualModels,
+        ],
+
+      actualProvidersUsed:
+        [
+          ...modelTelemetry
+            .actualProviders,
+        ],
+
+      fallbackUsed:
+        modelTelemetry
+          .fallbackUsed,
+
+      fallbackReasons:
+        [
+          ...modelTelemetry
+            .fallbackReasons,
+        ],
+
+      fallbackFailureCount:
+        modelTelemetry
+          .fallbackFailureCount,
+
+      modelTurnCount:
+        modelTelemetry
+          .turnCount,
 
       status:
         runtime.result.status,
