@@ -30,6 +30,14 @@ import {
   InMemorySoftwareRunEventSink,
 } from '../ai/softwareAgent/runEvents.js';
 
+import type {
+  SoftwareRunEvent,
+} from '../ai/softwareAgent/runEvents.js';
+
+import {
+  SwarmRunSoftwareEventSink,
+} from '../ai/softwareAgent/swarmRunSoftwareEventSink.js';
+
 import {
   runSoftwareAgentRuntime,
 } from '../ai/softwareAgent/SoftwareAgentRuntime.js';
@@ -45,11 +53,13 @@ import type {
 
 export interface UniversalSoftwareImplementationInput {
   userId: string;
+
   runId: string;
 
   projectId?: string | null;
 
   prompt: string;
+
   brief: string;
 
   plan: UniversalRunPlan;
@@ -57,6 +67,7 @@ export interface UniversalSoftwareImplementationInput {
   existingFiles: readonly ProjectFile[];
 
   primaryModelId: ModelId;
+
   fallbackModelIds: readonly ModelId[];
 
   activeProjectContext?: ActiveProjectContext;
@@ -64,12 +75,24 @@ export interface UniversalSoftwareImplementationInput {
   signal?: AbortSignal;
 
   /**
-   * Temporary source-compatibility field for the current universal entrypoint.
+   * Public Software Agent V2 activity callback.
    *
-   * Agent V2 is authoritative. This callback is NEVER evaluated. It remains
-   * in the input shape only so the final cleanup batch can remove the old
-   * coherent-builder callback from universalEntrypoint.ts without coupling
-   * that large-file cleanup to this production cutover.
+   * The event already contains only public execution evidence — never
+   * private model chain-of-thought.
+   *
+   * The next integration layer uses this callback to forward events into
+   * the active HTTP/SSE build stream while the durable sink continues to
+   * persist them independently.
+   */
+  onEvent?: (
+    event: SoftwareRunEvent,
+  ) => void;
+
+  /**
+   * Temporary source-compatibility field.
+   *
+   * Agent V2 is authoritative. This callback is intentionally never
+   * evaluated.
    */
   runLegacy?: () => Promise<readonly ProjectFile[]>;
 }
@@ -190,11 +213,6 @@ function previewRequirementFor(
     return 'not_applicable';
   }
 
-  /*
-   * Unknown or mixed surfaces remain optional. The outer universal path
-   * still runs its own browser gate after deterministic validation, so
-   * optional here never upgrades missing evidence into a verified claim.
-   */
   return 'optional';
 }
 
@@ -231,6 +249,7 @@ function repositoryFromContext(
   return {
     owner,
     repo,
+
     branch:
       context.branch,
   };
@@ -278,10 +297,12 @@ function softwareAgentFailure(
       )
       .map(
         (value) =>
-          value.trim().slice(
-            0,
-            220,
-          ),
+          value
+            .trim()
+            .slice(
+              0,
+              220,
+            ),
       )
       .slice(
         0,
@@ -295,7 +316,9 @@ function softwareAgentFailure(
     ) as Error & {
       code:
         'SOFTWARE_IMPLEMENTATION_FAILED';
-      safeReasons: string[];
+
+      safeReasons:
+        string[];
     };
 
   error.code =
@@ -312,22 +335,22 @@ function softwareAgentFailure(
 }
 
 /**
- * Production bridge between the universal implementation phase and
- * Software Agent V2.
+ * Production bridge between Universal engineering and Software Agent V2.
  *
- * Agent V2 is now the authoritative implementation engine.
+ * Agent V2 owns implementation.
  *
- * The universal pipeline still owns:
+ * The outer Universal pipeline continues to own:
+ *
  * - product/spec planning
- * - architecture/security requirements
- * - deterministic validation
- * - browser verification
- * - review
- * - the final atomic repository commit
+ * - security requirements
+ * - independent deterministic validation
+ * - final browser verification
+ * - final review
+ * - repository publication
  *
- * The old coherent implementation callback may still be present on the
- * caller's object during this cutover batch, but this adapter never reads or
- * invokes it.
+ * Software Agent V2's execution events are now written into Xroga's existing
+ * durable swarm-run history instead of disappearing inside a temporary
+ * in-memory sink.
  */
 export async function runUniversalSoftwareImplementation(
   input: UniversalSoftwareImplementationInput,
@@ -368,8 +391,18 @@ export async function runUniversalSoftwareImplementation(
         input.fallbackModelIds,
     });
 
-  const events =
+  /*
+   * Keep a diagnostic mirror because it is useful in logs/tests, but make
+   * the durable swarm-run sink the production delivery path.
+   */
+  const diagnosticEvents =
     new InMemorySoftwareRunEventSink();
+
+  const events =
+    new SwarmRunSoftwareEventSink(
+      diagnosticEvents,
+      input.onEvent,
+    );
 
   const repository =
     repositoryFromContext(
@@ -407,9 +440,8 @@ export async function runUniversalSoftwareImplementation(
           : {}),
 
         /*
-         * The universal implementation adapter currently authorizes
-         * repository-wide implementation, matching the existing universal
-         * path. Normal repository/path safety still applies.
+         * Universal implementation currently authorizes repository-wide
+         * implementation. Individual filesystem safety controls still apply.
          */
         allowedPaths:
           [],
@@ -421,9 +453,8 @@ export async function runUniversalSoftwareImplementation(
           true,
 
         /*
-         * Deletion/rename stay closed during migration. The current
-         * universal merge contract is upsert-oriented and cannot truthfully
-         * carry a deletion through its final snapshot merge yet.
+         * Delete and rename remain closed until the outer snapshot/commit
+         * contract carries those mutations truthfully.
          */
         allowDelete:
           false,
@@ -437,9 +468,7 @@ export async function runUniversalSoftwareImplementation(
           ),
 
         /*
-         * The outer universal pipeline owns publication. Agent V2 must not
-         * create its own review branch or deployment from inside the
-         * implementation phase.
+         * Universal owns repository publication.
          */
         persistence:
           'none',
@@ -472,7 +501,9 @@ export async function runUniversalSoftwareImplementation(
 
       agentV2: {
         bindings,
+
         model,
+
         events,
 
         initialFiles:
@@ -489,10 +520,6 @@ export async function runUniversalSoftwareImplementation(
         signal:
           input.signal,
 
-        /*
-         * Keep the universal request's existing bounded execution semantics.
-         * AgentSoftwareExecutor clamps this to its own hard ceiling.
-         */
         timeoutMs:
           8 * 60 * 1000,
 
@@ -507,15 +534,24 @@ export async function runUniversalSoftwareImplementation(
       runId:
         input.runId,
 
+      builderVersion:
+        'agent-v2',
+
+      primaryModel:
+        input.primaryModelId,
+
+      fallbackModels:
+        input.fallbackModelIds,
+
       status:
         runtime.result.status,
 
       iterations:
-        runtime.result
-          .iterations,
+        runtime.result.iterations,
 
       eventCount:
-        events.getEvents()
+        diagnosticEvents
+          .getEvents()
           .length,
     }),
   );
@@ -540,6 +576,7 @@ export async function runUniversalSoftwareImplementation(
     throw softwareAgentFailure({
       failureMessage:
         'Software Agent V2 produced an empty project snapshot.',
+
       blockers:
         [],
     });
