@@ -10,22 +10,79 @@ import type {
 export type SoftwareRunEventObserver =
   (event: SoftwareRunEvent) => void;
 
+export type SoftwareRunProgressData = {
+  agent: 'builder';
+  status: SoftwareRunEvent['type'];
+  message: string;
+
+  swarmStatusLabel: string;
+  swarmActivity: string;
+
+  builderVersion: 'agent-v2';
+  softwareAgentV2: true;
+
+  softwareEvent: SoftwareRunEvent;
+} & Record<string, unknown>;
+
 /**
- * Bridges Software Agent V2's native execution events into Xroga's existing
- * durable swarm-run history.
+ * Convert the native Software Agent V2 event into the existing Xroga
+ * pipeline progress contract.
  *
- * This deliberately reuses runStore instead of introducing a second run
- * persistence system:
+ * This object can travel through:
  *
  * Agent V2
- *   -> SoftwareRunEvent
- *   -> swarm_runs.events
- *   -> existing reconnect/polling path
+ *   -> pipeline.emit(...)
+ *   -> /api/swarm onProgress
+ *   -> appendRunEvent(...)
+ *   -> live SSE
  *   -> frontend
+ */
+export function softwareRunEventToProgress(
+  event: SoftwareRunEvent,
+): SoftwareRunProgressData {
+  return {
+    agent:
+      'builder',
+
+    status:
+      event.type,
+
+    message:
+      event.title,
+
+    swarmStatusLabel:
+      statusLabel(event),
+
+    swarmActivity:
+      event.summary ??
+      event.title,
+
+    builderVersion:
+      'agent-v2',
+
+    softwareAgentV2:
+      true,
+
+    softwareEvent:
+      event,
+  };
+}
+
+/**
+ * Software Agent V2 event sink.
  *
- * The optional mirror preserves an in-memory copy for diagnostics/tests.
- * The optional observer is the hook used by the next batch to push the same
- * event into the live SSE connection without replacing this file again.
+ * IMPORTANT:
+ *
+ * When an observer exists, that observer is the authoritative live delivery
+ * path. In production that observer forwards into pipeline.emit(), whose
+ * existing /api/swarm onProgress handler already persists the event and
+ * sends it over SSE.
+ *
+ * Therefore we MUST NOT persist here as well when the observer succeeds,
+ * otherwise every Agent V2 event would appear twice.
+ *
+ * When no observer exists — for example a non-streamed execution — this sink
+ * falls back to direct runStore persistence so the evidence is still durable.
  */
 export class SwarmRunSoftwareEventSink
   implements SoftwareRunEventSink
@@ -41,79 +98,16 @@ export class SwarmRunSoftwareEventSink
     const mirrorResult =
       this.mirror?.emit(event);
 
-    appendRunEvent(
-      event.runId,
-      'progress',
-      {
-        agent:
-          'builder',
-
-        status:
-          event.type,
-
-        message:
-          event.title,
-
-        swarmStatusLabel:
-          statusLabel(event),
-
-        swarmActivity:
-          event.summary ??
-          event.title,
-
-        builderVersion:
-          'agent-v2',
-
-        softwareAgentV2:
-          true,
-
-        softwareEvent: {
-          id:
-            event.id,
-
-          runId:
-            event.runId,
-
-          sequence:
-            event.sequence,
-
-          createdAt:
-            event.createdAt,
-
-          type:
-            event.type,
-
-          status:
-            event.status,
-
-          title:
-            event.title,
-
-          ...(event.summary
-            ? {
-                summary:
-                  event.summary,
-              }
-            : {}),
-
-          ...(event.evidence
-            ? {
-                evidence:
-                  event.evidence,
-              }
-            : {}),
-        },
-      },
-    );
+    let observerDelivered =
+      false;
 
     if (this.observer) {
       try {
         this.observer(event);
+
+        observerDelivered =
+          true;
       } catch (error) {
-        /*
-         * A UI observer must never be able to kill an engineering run.
-         * Durable persistence above remains authoritative.
-         */
         console.warn(
           '[software_agent_v2_event_observer]',
           error instanceof Error
@@ -121,6 +115,23 @@ export class SwarmRunSoftwareEventSink
             : String(error),
         );
       }
+    }
+
+    /*
+     * No observer means there is no outer live pipeline responsible for
+     * persistence.
+     *
+     * Observer failure also falls back here so execution evidence is not
+     * silently lost.
+     */
+    if (!observerDelivered) {
+      appendRunEvent(
+        event.runId,
+        'progress',
+        softwareRunEventToProgress(
+          event,
+        ),
+      );
     }
 
     return mirrorResult;
