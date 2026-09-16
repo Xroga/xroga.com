@@ -6,7 +6,9 @@ import {
   useState,
 } from 'react';
 
-import { cn } from '@/lib/utils';
+import {
+  cn,
+} from '@/lib/utils';
 
 import type {
   TerminalEvent,
@@ -24,8 +26,12 @@ import {
   type ActivityIconHandle,
 } from '@/components/icons/animated/ActivityIcon';
 
-/** Rows kept visible while a request is running. */
-const VISIBLE_ROWS = 8;
+/**
+ * Enough history to understand what the agent is doing without turning the
+ * chat transcript into a full terminal emulator.
+ */
+const VISIBLE_ROWS =
+  10;
 
 const LEVEL_CLASS:
   Record<
@@ -52,25 +58,31 @@ function seconds(
   return Math.max(
     0,
     Math.floor(
-      (nowMs - fromMs) /
+      (
+        nowMs -
+        fromMs
+      ) /
         1000,
     ),
   );
 }
 
 interface TerminalLiveActivityProps {
-  run: TerminalRunState;
+  run:
+    TerminalRunState;
 
-  /** Injected in tests; production reads the client clock. */
+  /**
+   * Injected in tests; production reads the client clock.
+   */
   now?: number;
 }
 
 /**
- * Shows real backend progress when available.
+ * Real execution activity.
  *
- * Before the first backend event, the UI renders one compact neutral activity card.
- * It does not mention the build service because this component is shared by normal
- * chat, connected-app work, research and builds.
+ * Agent V2 command output is already public/redacted evidence. When present it
+ * is rendered below the corresponding activity line in a bounded terminal
+ * block.
  */
 export function TerminalLiveActivity({
   run,
@@ -133,7 +145,9 @@ export function TerminalLiveActivity({
   const rows =
     run.events
       .filter(
-        (event) =>
+        (
+          event,
+        ) =>
           event.kind !==
             'output' &&
           event.kind !==
@@ -147,7 +161,8 @@ export function TerminalLiveActivity({
     () => {
       if (
         run.active &&
-        rows.length === 0
+        rows.length ===
+          0
       ) {
         activityRef
           .current
@@ -182,8 +197,7 @@ export function TerminalLiveActivity({
   const elapsed =
     run.startedAt !=
       null &&
-    clock !=
-      null
+    clock != null
       ? seconds(
           run.startedAt,
           clock,
@@ -192,7 +206,7 @@ export function TerminalLiveActivity({
 
   if (
     rows.length ===
-      0
+    0
   ) {
     if (
       !shouldShowWaitingLine(
@@ -271,54 +285,77 @@ export function TerminalLiveActivity({
               1;
 
           return (
-            <p
+            <div
               key={
                 event.seq
               }
-              className={cn(
-                'xv-term-liveline',
-                !isLatest &&
-                  'xv-term-liveline--past',
-              )}
-              data-testid={
-                isLatest
-                  ? 'ai-processing-status'
-                  : undefined
-              }
+              className="min-w-0"
             >
-              <span
+              <p
                 className={cn(
-                  'xv-term-livedot',
-                  isLatest &&
-                    'xv-term-livedot--active',
-                )}
-                aria-hidden="true"
-              />
+                  'xv-term-liveline',
 
-              <span
-                className={
-                  LEVEL_CLASS[
-                    event.level
-                  ]
+                  !isLatest &&
+                    'xv-term-liveline--past',
+                )}
+                data-testid={
+                  isLatest
+                    ? 'ai-processing-status'
+                    : undefined
                 }
               >
-                {event.source
-                  ? `${event.source}: `
-                  : ''}
-                {event.text}
-              </span>
-
-              {isLatest ? (
                 <span
-                  className="xv-term-liveclock"
-                  data-testid="terminal-elapsed"
-                >
-                  {formatElapsed(
-                    elapsed,
+                  className={cn(
+                    'xv-term-livedot',
+
+                    isLatest &&
+                      'xv-term-livedot--active',
                   )}
+                  aria-hidden="true"
+                />
+
+                <span
+                  className={cn(
+                    'min-w-0 break-words',
+
+                    LEVEL_CLASS[
+                      event.level
+                    ],
+                  )}
+                >
+                  {event.source
+                    ? `${event.source}: `
+                    : ''}
+
+                  {event.text}
                 </span>
+
+                {isLatest ? (
+                  <span
+                    className="xv-term-liveclock"
+                    data-testid="terminal-elapsed"
+                  >
+                    {formatElapsed(
+                      elapsed,
+                    )}
+                  </span>
+                ) : null}
+              </p>
+
+              {event.body ? (
+                <pre
+                  className={cn(
+                    'mb-2 ml-5 mt-1 max-h-32 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-[var(--card-border)]/50 bg-[var(--foreground)]/[0.035] px-3 py-2 text-[10px] leading-4 text-[var(--foreground)]/65',
+
+                    !isLatest &&
+                      'opacity-60',
+                  )}
+                  data-testid="terminal-event-body"
+                >
+                  {event.body}
+                </pre>
               ) : null}
-            </p>
+            </div>
           );
         },
       )}
