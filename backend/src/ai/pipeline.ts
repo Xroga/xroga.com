@@ -215,8 +215,29 @@ import {
 import { describeVerificationState } from './verificationLifecycle.js';
 import { engineeringTaskHandlers } from './engineeringTasks.js';
 import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
+import type {
+  SoftwareRunEvent,
+} from './softwareAgent/runEvents.js';
+
+import {
+  softwareRunEventToProgress,
+} from './softwareAgent/swarmRunSoftwareEventSink.js';
 
 export interface PipelineProgress {
+    /**
+   * Software builder implementation identity.
+   */
+  builderVersion?: 'agent-v2';
+
+  /**
+   * Explicit marker for Agent V2 execution events.
+   */
+  softwareAgentV2?: boolean;
+
+  /**
+   * Native public Agent V2 execution evidence.
+   */
+  softwareEvent?: SoftwareRunEvent;
   agent?: string;
   status?: string;
   message?: string;
@@ -1423,9 +1444,34 @@ export async function runBuildPipeline(opts: {
     githubOkEarly && meta?.githubTargetRepo?.includes('/') ? meta.githubTargetRepo : null;
   const universalToken = universalTargetRepo ? await getGitHubToken(opts.userId) : null;
 
-  const universal = await tryUniversalBuild({
+    const universal = await tryUniversalBuild({
     runId,
-    userId: opts.userId,
+
+    userId:
+      opts.userId,
+
+    /*
+     * Streaming executions use the existing pipeline progress channel.
+     *
+     * /api/swarm already:
+     * 1. persists this progress event
+     * 2. assigns the canonical run sequence
+     * 3. sends it over live SSE
+     *
+     * Non-stream executions omit this callback, causing the Agent V2 event
+     * sink to fall back to direct runStore persistence.
+     */
+    onEvent:
+      opts.onProgress
+        ? (event) => {
+            emit(
+              softwareRunEventToProgress(
+                event,
+              ),
+            );
+          }
+        : undefined,
+
     projectId: resolvedProjectId,
     prompt: userFacingPrompt,
     // Repository evidence must cross the universal boundary. Without it an update to an
