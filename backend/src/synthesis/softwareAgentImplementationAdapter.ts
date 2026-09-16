@@ -64,10 +64,14 @@ export interface UniversalSoftwareImplementationInput {
   signal?: AbortSignal;
 
   /**
-   * The existing coherent implementation remains the legacy implementation
-   * behind SoftwareAgentRuntime's migration selector.
+   * Temporary source-compatibility field for the current universal entrypoint.
+   *
+   * Agent V2 is authoritative. This callback is NEVER evaluated. It remains
+   * in the input shape only so the final cleanup batch can remove the old
+   * coherent-builder callback from universalEntrypoint.ts without coupling
+   * that large-file cleanup to this production cutover.
    */
-  runLegacy(): Promise<readonly ProjectFile[]>;
+  runLegacy?: () => Promise<readonly ProjectFile[]>;
 }
 
 const DEFINITELY_NON_BROWSER_SURFACES =
@@ -311,7 +315,7 @@ function softwareAgentFailure(
  * Production bridge between the universal implementation phase and
  * Software Agent V2.
  *
- * This does not replace the universal pipeline.
+ * Agent V2 is now the authoritative implementation engine.
  *
  * The universal pipeline still owns:
  * - product/spec planning
@@ -321,8 +325,9 @@ function softwareAgentFailure(
  * - review
  * - the final atomic repository commit
  *
- * SoftwareAgentRuntime owns only the implementation engine selection:
- * legacy, Agent V2, or Agent V2 shadow.
+ * The old coherent implementation callback may still be present on the
+ * caller's object during this cutover batch, but this adapter never reads or
+ * invokes it.
  */
 export async function runUniversalSoftwareImplementation(
   input: UniversalSoftwareImplementationInput,
@@ -372,9 +377,7 @@ export async function runUniversalSoftwareImplementation(
     );
 
   const runtime =
-    await runSoftwareAgentRuntime<
-      readonly ProjectFile[]
-    >({
+    await runSoftwareAgentRuntime({
       contract: {
         runId:
           input.runId,
@@ -467,10 +470,6 @@ export async function runUniversalSoftwareImplementation(
         ],
       },
 
-      runLegacy:
-        async () =>
-          input.runLegacy(),
-
       agentV2: {
         bindings,
         model,
@@ -501,38 +500,6 @@ export async function runUniversalSoftwareImplementation(
           2,
       },
     });
-
-  if (
-    runtime.executor ===
-      'legacy'
-  ) {
-    return runtime.result;
-  }
-
-  if (
-    runtime.executor ===
-      'agent_v2_shadow'
-  ) {
-    console.info(
-      '[software_agent_v2_shadow]',
-      JSON.stringify({
-        runId:
-          input.runId,
-
-        shadowStatus:
-          runtime.shadow.status,
-
-        eventCount:
-          events.getEvents()
-            .length,
-      }),
-    );
-
-    /*
-     * Shadow mode is deliberately non-authoritative.
-     */
-    return runtime.result;
-  }
 
   console.info(
     '[software_agent_v2_implementation]',
