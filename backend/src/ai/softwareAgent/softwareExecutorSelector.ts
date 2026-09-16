@@ -1,49 +1,34 @@
-import {
-  getSoftwareAgentFeatureFlags,
-} from './softwareAgentFeatureFlags.js';
-
 export type SoftwareExecutorKind =
-  | 'legacy'
-  | 'agent_v2'
-  | 'agent_v2_shadow';
+  'agent_v2';
 
 export interface SelectSoftwareExecutorInput {
   /**
-   * Allows internal/test callers to force legacy behavior
-   * regardless of environment flags.
+   * Retained temporarily for source compatibility with internal callers that
+   * still construct the old migration options object.
+   *
+   * Agent V2 is authoritative now. This value is intentionally ignored and
+   * cannot re-enable the legacy implementation path.
    */
   forceLegacy?: boolean;
 
   /**
-   * Allows controlled internal testing of V2 without globally
-   * enabling it.
+   * Retained temporarily for source compatibility.
    *
-   * Do not expose this directly to normal client requests.
+   * Agent V2 no longer needs to be forced on because it is the only software
+   * executor selected by this boundary.
    */
   forceAgentV2?: boolean;
 }
 
+/**
+ * Authoritative software-executor selector.
+ *
+ * The migration period is over: software implementation always uses Agent V2.
+ * Legacy and shadow execution are deliberately not selectable here, including
+ * through environment variables or internal force flags.
+ */
 export function selectSoftwareExecutor(
-  input: SelectSoftwareExecutorInput = {},
+  _input: SelectSoftwareExecutorInput = {},
 ): SoftwareExecutorKind {
-  if (input.forceLegacy) {
-    return 'legacy';
-  }
-
-  if (input.forceAgentV2) {
-    return 'agent_v2';
-  }
-
-  const flags =
-    getSoftwareAgentFeatureFlags();
-
-  if (!flags.enabled) {
-    return 'legacy';
-  }
-
-  if (flags.shadowMode) {
-    return 'agent_v2_shadow';
-  }
-
   return 'agent_v2';
 }
