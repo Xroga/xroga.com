@@ -42,6 +42,12 @@ import {
   runSoftwareAgentRuntime,
 } from '../ai/softwareAgent/SoftwareAgentRuntime.js';
 
+import {
+  SupabaseSoftwareAgentCheckpointStore,
+  inMemorySoftwareAgentCheckpointStore,
+  type SoftwareAgentCheckpointStore,
+} from '../ai/softwareAgent/softwareAgentCheckpoint.js';
+
 import type {
   PreviewRequirement,
   SoftwareTaskKind,
@@ -56,48 +62,57 @@ export interface UniversalSoftwareImplementationInput {
 
   runId: string;
 
-  projectId?: string | null;
+  projectId?:
+    string |
+    null;
 
   prompt: string;
 
   brief: string;
 
-  plan: UniversalRunPlan;
+  plan:
+    UniversalRunPlan;
 
-  existingFiles: readonly ProjectFile[];
+  existingFiles:
+    readonly ProjectFile[];
 
-  primaryModelId: ModelId;
+  primaryModelId:
+    ModelId;
 
-  fallbackModelIds: readonly ModelId[];
+  fallbackModelIds:
+    readonly ModelId[];
 
-  activeProjectContext?: ActiveProjectContext;
+  activeProjectContext?:
+    ActiveProjectContext;
 
-  signal?: AbortSignal;
+  signal?:
+    AbortSignal;
 
-  /**
-   * Public Software Agent V2 activity callback.
-   *
-   * These are public execution-evidence events only — never hidden model
-   * reasoning.
-   *
-   * When supplied by the live pipeline, the outer progress system owns
-   * persistence and SSE delivery.
-   */
   onEvent?: (
-    event: SoftwareRunEvent,
+    event:
+      SoftwareRunEvent,
   ) => void;
 
   /**
-   * Temporary source-compatibility field.
+   * Test/custom injection seam.
    *
-   * Agent V2 is authoritative. This callback is intentionally never
-   * evaluated.
+   * Production automatically selects the durable Supabase checkpoint
+   * store when Supabase is configured.
    */
-  runLegacy?: () => Promise<readonly ProjectFile[]>;
+  checkpointStore?:
+    SoftwareAgentCheckpointStore;
+
+  runLegacy?:
+    () =>
+      Promise<
+        readonly ProjectFile[]
+      >;
 }
 
 const DEFINITELY_NON_BROWSER_SURFACES =
-  new Set<string>([
+  new Set<
+    string
+  >([
     'api',
     'worker',
     'scheduled_job',
@@ -128,21 +143,28 @@ const DEFINITELY_NON_BROWSER_SURFACES =
   ]);
 
 function surfacesOf(
-  plan: UniversalRunPlan,
+  plan:
+    UniversalRunPlan,
 ): string[] {
-  return plan.spec.surfaces.map(
-    (
-      declaration,
-    ) =>
-      String(
-        declaration.surface,
-      ),
-  );
+  return plan
+    .spec
+    .surfaces
+    .map(
+      (
+        declaration,
+      ) =>
+        String(
+          declaration.surface,
+        ),
+    );
 }
 
 function taskKindFor(
-  plan: UniversalRunPlan,
-  existingFiles: readonly ProjectFile[],
+  plan:
+    UniversalRunPlan,
+
+  existingFiles:
+    readonly ProjectFile[],
 ): SoftwareTaskKind {
   if (
     existingFiles.length >
@@ -217,7 +239,8 @@ function taskKindFor(
 }
 
 function previewRequirementFor(
-  plan: UniversalRunPlan,
+  plan:
+    UniversalRunPlan,
 ): PreviewRequirement {
   const surfaces =
     surfacesOf(
@@ -289,7 +312,6 @@ function repositoryFromContext(
 
   return {
     owner,
-
     repo,
 
     branch:
@@ -298,11 +320,12 @@ function repositoryFromContext(
 }
 
 function implementationGoal(
-  input: Pick<
-    UniversalSoftwareImplementationInput,
-    | 'prompt'
-    | 'brief'
-  >,
+  input:
+    Pick<
+      UniversalSoftwareImplementationInput,
+      | 'prompt'
+      | 'brief'
+    >,
 ): string {
   return [
     input.prompt.trim(),
@@ -320,12 +343,18 @@ function implementationGoal(
 
 function softwareAgentFailure(
   result: {
-    failureMessage?: string;
-    blockers: readonly string[];
+    failureMessage?:
+      string;
+
+    blockers:
+      readonly string[];
   },
 ): Error & {
-  code: 'SOFTWARE_IMPLEMENTATION_FAILED';
-  safeReasons: string[];
+  code:
+    'SOFTWARE_IMPLEMENTATION_FAILED';
+
+  safeReasons:
+    string[];
 } {
   const safeReasons =
     [
@@ -384,32 +413,44 @@ function softwareAgentFailure(
   return error;
 }
 
+function checkpointStoreFor(
+  input:
+    UniversalSoftwareImplementationInput,
+): SoftwareAgentCheckpointStore {
+  if (
+    input.checkpointStore
+  ) {
+    return input
+      .checkpointStore;
+  }
+
+  if (
+    process.env
+      .SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return new SupabaseSoftwareAgentCheckpointStore(
+      input.userId,
+    );
+  }
+
+  return inMemorySoftwareAgentCheckpointStore;
+}
+
 /**
  * Production bridge between Universal engineering and Software Agent V2.
  *
- * Agent V2 owns implementation.
+ * No whole-product timeout is imposed here.
  *
- * The outer Universal pipeline continues to own:
- *
- * - product/spec planning
- * - security requirements
- * - independent deterministic validation
- * - final browser verification
- * - final review
- * - repository publication
- *
- * Agent V2 events use Xroga's existing build/run delivery path.
- *
- * IMPORTANT:
- *
- * This layer intentionally sets no total implementation timeout and no
- * fixed total verification-round count.
- *
- * Product completion is evidence-driven, not clock-driven.
+ * Agent V2 workspace state is checkpointed independently from GitHub.
+ * Checkpoint persistence does NOT publish code. GitHub publication
+ * remains exclusively owned by the outer verified Universal pipeline.
  */
 export async function runUniversalSoftwareImplementation(
-  input: UniversalSoftwareImplementationInput,
-): Promise<readonly ProjectFile[]> {
+  input:
+    UniversalSoftwareImplementationInput,
+): Promise<
+  readonly ProjectFile[]
+> {
   assertCodingModel(
     input.primaryModelId,
     'universal software-agent primary model',
@@ -434,24 +475,24 @@ export async function runUniversalSoftwareImplementation(
         createSoftwareAgentProductionImplementations(),
     });
 
-  /**
-   * Aggregate every Cline/model turn used during this implementation.
-   *
-   * A single software build can contain many model turns, so storing only
-   * the final turn would make fallback telemetry misleading.
-   */
   const modelTelemetry = {
     actualModels:
-      new Set<string>(),
+      new Set<
+        string
+      >(),
 
     actualProviders:
-      new Set<string>(),
+      new Set<
+        string
+      >(),
 
     fallbackUsed:
       false,
 
     fallbackReasons:
-      new Set<string>(),
+      new Set<
+        string
+      >(),
 
     fallbackFailureCount:
       0,
@@ -524,12 +565,6 @@ export async function runUniversalSoftwareImplementation(
         },
     });
 
-  /*
-   * Keep a diagnostic mirror for tests and server diagnostics.
-   *
-   * SwarmRunSoftwareEventSink itself decides whether the outer live pipeline
-   * or direct persistence owns delivery, preventing duplicate run events.
-   */
   const diagnosticEvents =
     new InMemorySoftwareRunEventSink();
 
@@ -578,10 +613,6 @@ export async function runUniversalSoftwareImplementation(
             : {}
         ),
 
-        /*
-         * Universal implementation currently authorizes repository-wide
-         * implementation. Individual filesystem safety controls still apply.
-         */
         allowedPaths:
           [],
 
@@ -592,8 +623,8 @@ export async function runUniversalSoftwareImplementation(
           true,
 
         /*
-         * Delete and rename remain closed until the outer snapshot/commit
-         * contract carries those mutations truthfully.
+         * Outer Universal publication still owns deletes/renames until
+         * its mutation contract carries those operations end-to-end.
          */
         allowDelete:
           false,
@@ -607,7 +638,9 @@ export async function runUniversalSoftwareImplementation(
           ),
 
         /*
-         * Universal owns repository publication.
+         * GitHub persistence remains outside Agent V2.
+         *
+         * A software-agent checkpoint is NOT repository publication.
          */
         persistence:
           'none',
@@ -616,20 +649,25 @@ export async function runUniversalSoftwareImplementation(
           'forbidden',
 
         acceptanceCriteria:
-          input.plan.acceptance.map(
-            (
-              criterion,
-            ) => ({
-              id:
-                criterion.id,
+          input
+            .plan
+            .acceptance
+            .map(
+              (
+                criterion,
+              ) => ({
+                id:
+                  criterion.id,
 
-              description:
-                criterion.statement,
+                description:
+                  criterion
+                    .statement,
 
-              required:
-                criterion.required,
-            }),
-          ),
+                required:
+                  criterion
+                    .required,
+              }),
+            ),
 
         constraints: [
           input.brief,
@@ -637,55 +675,43 @@ export async function runUniversalSoftwareImplementation(
           'Preserve unrelated repository files and make the smallest coherent change.',
           'Do not merge, deploy, or persist a repository branch from inside the implementation phase.',
           'Use Xroga deterministic checks and browser verification when applicable before claiming completion.',
+          'If this run was restored from a checkpoint, continue from the checkpointed workspace rather than rebuilding correct work from scratch.',
         ],
       },
 
       agentV2: {
         bindings,
-
         model,
-
         events,
 
         initialFiles:
-          input.existingFiles.map(
-            (
-              file,
-            ) => ({
-              path:
-                file.path,
+          input
+            .existingFiles
+            .map(
+              (
+                file,
+              ) => ({
+                path:
+                  file.path,
 
-              content:
-                file.content,
-            }),
-          ),
+                content:
+                  file.content,
+              }),
+            ),
 
-        /*
-         * Caller cancellation remains supported.
-         *
-         * There is deliberately no total timeoutMs and no fixed
-         * verificationRounds value here.
-         */
         signal:
           input.signal,
+
+        checkpointStore:
+          checkpointStoreFor(
+            input,
+          ),
       },
     });
 
-  /**
-   * One summary record for the complete implementation run.
-   *
-   * This makes operational debugging answer:
-   *
-   * - which builder ran
-   * - which model was requested
-   * - which model(s) actually ran
-   * - whether fallback happened
-   * - why fallback happened
-   * - how many Agent V2 turns happened
-   * - whether Agent V2 reached verified completion
-   */
   console.info(
     '[software_agent_v2_implementation]',
+
     JSON.stringify({
       runId:
         input.runId,
@@ -730,20 +756,32 @@ export async function runUniversalSoftwareImplementation(
           .turnCount,
 
       status:
-        runtime.result.status,
+        runtime
+          .result
+          .status,
 
       iterations:
-        runtime.result.iterations,
+        runtime
+          .result
+          .iterations,
 
       eventCount:
         diagnosticEvents
           .getEvents()
           .length,
+
+      checkpointing:
+        process.env
+          .SUPABASE_SERVICE_ROLE_KEY
+          ? 'durable'
+          : 'process-local',
     }),
   );
 
   if (
-    runtime.result.status !==
+    runtime
+      .result
+      .status !==
     'verified'
   ) {
     throw softwareAgentFailure(
@@ -752,7 +790,9 @@ export async function runUniversalSoftwareImplementation(
   }
 
   const files =
-    runtime.result.workspace
+    runtime
+      .result
+      .workspace
       .getFiles();
 
   if (
