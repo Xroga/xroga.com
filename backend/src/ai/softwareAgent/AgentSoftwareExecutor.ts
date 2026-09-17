@@ -8,6 +8,7 @@ import type {
 } from './contracts.js';
 
 import type {
+  SoftwareRunEvent,
   SoftwareRunEventSink,
 } from './runEvents.js';
 
@@ -50,57 +51,78 @@ export type AgentSoftwareExecutionStatus =
   | 'cancelled';
 
 export interface AgentSoftwareExecutorInput {
-  contract: SoftwareExecutionContract;
+  contract:
+    SoftwareExecutionContract;
 
-  host: SoftwareAgentToolHost;
+  host:
+    SoftwareAgentToolHost;
 
-  events: SoftwareRunEventSink;
+  events:
+    SoftwareRunEventSink;
 
-  model: SoftwareAgentModelRoute;
+  model:
+    SoftwareAgentModelRoute;
+
+  signal?:
+    AbortSignal;
 
   /**
-   * Caller-owned cancellation boundary.
-   *
-   * There is intentionally no Xroga-owned total execution deadline.
-   *
-   * A software product may legitimately require many model turns,
-   * builds, tests, repairs and browser-verification cycles.
-   *
-   * Individual provider/tool/sandbox operations retain their own
-   * bounded safety deadlines.
+   * Evidence recovered from a durable workspace checkpoint.
    */
-  signal?: AbortSignal;
+  initialEvidence?:
+    SoftwareRunEvidence;
+
+  /**
+   * Tells the agent that the working tree already contains prior work
+   * from this exact run.
+   */
+  resumedFromCheckpoint?:
+    boolean;
+
+  /**
+   * Durable checkpoint callback.
+   *
+   * Called after evidence-affecting Xroga tool events.
+   */
+  checkpoint?: (
+    evidence:
+      SoftwareRunEvidence,
+  ) =>
+    Promise<void> |
+    void;
 }
 
 export interface AgentSoftwareExecutorResult {
-  status: AgentSoftwareExecutionStatus;
+  status:
+    AgentSoftwareExecutionStatus;
 
-  evidence: SoftwareRunEvidence;
+  evidence:
+    SoftwareRunEvidence;
 
-  blockers: string[];
+  blockers:
+    string[];
 
-  outputText: string;
+  outputText:
+    string;
 
-  iterations: number;
+  iterations:
+    number;
 
-  /**
-   * Keep provider usage available internally.
-   *
-   * The exact SDK usage object may evolve, so keep this opaque at
-   * the Xroga boundary.
-   */
-  usage?: unknown;
+  usage?:
+    unknown;
 
   failureCode?:
     | 'AGENT_FAILED'
     | 'AGENT_ABORTED'
     | 'VERIFICATION_INCOMPLETE';
 
-  failureMessage?: string;
+  failureMessage?:
+    string;
 }
 
 function buildVerificationContinuation(
-  blockers: string[],
+  blockers:
+    string[],
 ): string {
   return `
 The software task is not verified yet.
@@ -121,8 +143,38 @@ There is no arbitrary total build-time deadline and no fixed total verification-
 `.trim();
 }
 
+function buildInitialGoal(
+  goal:
+    string,
+
+  resumed:
+    boolean,
+): string {
+  if (
+    !resumed
+  ) {
+    return goal;
+  }
+
+  return `
+${goal}
+
+Xroga recovery context:
+
+This is the SAME software task resumed from a durable Agent V2 checkpoint.
+
+The current project files already include work produced earlier in this run.
+
+Inspect the current workspace before changing anything.
+Preserve correct existing checkpointed work.
+Continue from the current state instead of regenerating the product from scratch.
+Rerun deterministic checks and Preview when their evidence is missing or invalidated.
+`.trim();
+}
+
 function nonConvergenceBlocker(
-  stagnantContinuations: number,
+  stagnantContinuations:
+    number,
 ): string {
   return (
     'Agent V2 stopped because ' +
@@ -132,10 +184,80 @@ function nonConvergenceBlocker(
   );
 }
 
+/**
+ * Any code mutation invalidates verification evidence produced for the
+ * previous snapshot.
+ *
+ * Without this, the agent could:
+ *
+ * checks pass
+ * → Preview passes
+ * → edit a file
+ * → reuse the old evidence
+ * → incorrectly complete
+ */
+function invalidateVerificationAfterMutation(
+  evidence:
+    SoftwareRunEvidence,
+): void {
+  evidence.checks.splice(
+    0,
+    evidence.checks.length,
+  );
+
+  delete evidence.preview;
+  delete evidence.commitSha;
+  delete evidence.branch;
+}
+
+function isMutationEvent(
+  type:
+    SoftwareRunEvent[
+      'type'
+    ],
+): boolean {
+  return (
+    type ===
+      'file.created' ||
+    type ===
+      'file.updated' ||
+    type ===
+      'file.deleted'
+  );
+}
+
+function shouldCheckpointAfter(
+  type:
+    SoftwareRunEvent[
+      'type'
+    ],
+): boolean {
+  return (
+    isMutationEvent(
+      type,
+    ) ||
+    type ===
+      'check.completed' ||
+    type ===
+      'preview.ready' ||
+    type ===
+      'preview.failed' ||
+    type ===
+      'browser.verification.completed' ||
+    type ===
+      'git.branch.created' ||
+    type ===
+      'git.commit.created'
+  );
+}
+
 export class AgentSoftwareExecutor {
   async execute(
-    input: AgentSoftwareExecutorInput,
-  ): Promise<AgentSoftwareExecutorResult> {
+    input:
+      AgentSoftwareExecutorInput,
+  ): Promise<
+    AgentSoftwareExecutorResult
+  > {
     const {
       contract,
       host,
@@ -148,14 +270,79 @@ export class AgentSoftwareExecutor {
     );
 
     const evidence =
-      createAgentEvidence();
+      input.initialEvidence
+        ? structuredClone(
+            input.initialEvidence,
+          )
+        : createAgentEvidence();
+
+    const checkpointSafely =
+      async () => {
+        if (
+          !input.checkpoint
+        ) {
+          return;
+        }
+
+        try {
+          await input.checkpoint(
+            structuredClone(
+              evidence,
+            ),
+          );
+        } catch (
+          error
+        ) {
+          console.warn(
+            '[software_agent_checkpoint_write_failed]',
+            error instanceof
+            Error
+              ? error.message
+              : String(
+                  error,
+                ),
+          );
+        }
+      };
 
     /*
-     * createXrogaSoftwareTools deliberately exposes the completion
-     * tool separately because it has lifecycle.completesRun = true.
+     * Tool events are the exact boundary where we know a real Xroga
+     * operation has completed.
      *
-     * The completion tool still MUST be registered with Cline.
+     * Persist the resulting evidence/workspace before publishing the
+     * event outward. A process dying immediately after the event can
+     * therefore never leave the UI claiming work that was not durable.
      */
+    const checkpointingEvents:
+      SoftwareRunEventSink = {
+      emit:
+        async (
+          event,
+        ) => {
+          if (
+            isMutationEvent(
+              event.type,
+            )
+          ) {
+            invalidateVerificationAfterMutation(
+              evidence,
+            );
+          }
+
+          if (
+            shouldCheckpointAfter(
+              event.type,
+            )
+          ) {
+            await checkpointSafely();
+          }
+
+          await events.emit(
+            event,
+          );
+        },
+    };
+
     const {
       tools,
       completionTool,
@@ -163,7 +350,10 @@ export class AgentSoftwareExecutor {
       createXrogaSoftwareTools({
         contract,
         host,
-        events,
+
+        events:
+          checkpointingEvents,
+
         evidence,
       });
 
@@ -177,13 +367,6 @@ export class AgentSoftwareExecutor {
       completionTool,
     ];
 
-    /*
-     * Production Xroga supplies a pre-built AgentModel whose provider
-     * calls stay behind Xroga quota/budget/health controls.
-     *
-     * The direct provider configuration path remains for isolated tests
-     * and controlled non-production callers only.
-     */
     const agent =
       model.model
         ? new Agent({
@@ -251,9 +434,7 @@ export class AgentSoftwareExecutor {
           );
         } catch {
           /*
-           * Abort is best-effort.
-           *
-           * The caller-owned cancellation flag remains authoritative.
+           * Caller cancellation remains authoritative.
            */
         }
       };
@@ -323,7 +504,8 @@ export class AgentSoftwareExecutor {
       (
         blockers:
           string[],
-      ): AgentSoftwareExecutorResult => ({
+      ):
+        AgentSoftwareExecutorResult => ({
         status:
           'cancelled',
 
@@ -352,7 +534,8 @@ export class AgentSoftwareExecutor {
 
         message:
           string,
-      ): AgentSoftwareExecutorResult => ({
+      ):
+        AgentSoftwareExecutorResult => ({
         status:
           'failed',
 
@@ -375,9 +558,46 @@ export class AgentSoftwareExecutor {
       });
 
     try {
+      /*
+       * A restored checkpoint may already contain complete deterministic
+       * evidence. Do not spend another model turn simply to rediscover
+       * that fact.
+       */
+      const restoredCompletion =
+        completion();
+
+      if (
+        input
+          .resumedFromCheckpoint &&
+        restoredCompletion
+          .complete
+      ) {
+        return {
+          status:
+            'verified',
+
+          evidence,
+
+          blockers:
+            [],
+
+          outputText:
+            '',
+
+          iterations:
+            0,
+        };
+      }
+
       let result =
         await agent.run(
-          contract.goal,
+          buildInitialGoal(
+            contract.goal,
+
+            input
+              .resumedFromCheckpoint ===
+              true,
+          ),
         );
 
       outputText =
@@ -394,15 +614,9 @@ export class AgentSoftwareExecutor {
       let currentCompletion =
         completion();
 
-      /*
-       * Deterministic Xroga evidence remains the strongest source of
-       * truth.
-       *
-       * If the tools already proved the task complete, do not throw the
-       * work away because the SDK happened to end its turn awkwardly.
-       */
       if (
-        currentCompletion.complete
+        currentCompletion
+          .complete
       ) {
         return {
           status:
@@ -426,7 +640,8 @@ export class AgentSoftwareExecutor {
         externallyAborted
       ) {
         return cancelledResult(
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
         );
       }
 
@@ -435,7 +650,8 @@ export class AgentSoftwareExecutor {
         'aborted'
       ) {
         return cancelledResult(
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
         );
       }
 
@@ -444,7 +660,8 @@ export class AgentSoftwareExecutor {
         'failed'
       ) {
         return failedResult(
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
 
           result.error
             ?.message ??
@@ -452,16 +669,6 @@ export class AgentSoftwareExecutor {
         );
       }
 
-      /*
-       * There is intentionally no maximum total continuation count.
-       *
-       * As long as deterministic evidence keeps changing, Agent V2 can
-       * continue working for as many verification/repair cycles as the
-       * task genuinely requires.
-       *
-       * Only repeated identical verification states trigger the
-       * non-convergence guard.
-       */
       const continuationTracker =
         new VerificationContinuationTracker({
           evidence,
@@ -472,7 +679,8 @@ export class AgentSoftwareExecutor {
         });
 
       while (
-        !currentCompletion.complete &&
+        !currentCompletion
+          .complete &&
         !externallyAborted
       ) {
         result =
@@ -498,14 +706,9 @@ export class AgentSoftwareExecutor {
         currentCompletion =
           completion();
 
-        /*
-         * Tool evidence wins over model/SDK status.
-         *
-         * A continuation may successfully finish its final check or
-         * Preview immediately before the SDK reports its terminal turn.
-         */
         if (
-          currentCompletion.complete
+          currentCompletion
+            .complete
         ) {
           return {
             status:
@@ -529,7 +732,8 @@ export class AgentSoftwareExecutor {
           externallyAborted
         ) {
           return cancelledResult(
-            currentCompletion.blockers,
+            currentCompletion
+              .blockers,
           );
         }
 
@@ -538,7 +742,8 @@ export class AgentSoftwareExecutor {
           'aborted'
         ) {
           return cancelledResult(
-            currentCompletion.blockers,
+            currentCompletion
+              .blockers,
           );
         }
 
@@ -547,7 +752,8 @@ export class AgentSoftwareExecutor {
           'failed'
         ) {
           return failedResult(
-            currentCompletion.blockers,
+            currentCompletion
+              .blockers,
 
             result.error
               ?.message ??
@@ -556,16 +762,18 @@ export class AgentSoftwareExecutor {
         }
 
         const observation =
-          continuationTracker.observe({
-            evidence,
+          continuationTracker
+            .observe({
+              evidence,
 
-            blockers:
-              currentCompletion
-                .blockers,
-          });
+              blockers:
+                currentCompletion
+                  .blockers,
+            });
 
         if (
-          observation.shouldStop
+          observation
+            .shouldStop
         ) {
           const blocker =
             nonConvergenceBlocker(
@@ -609,18 +817,20 @@ export class AgentSoftwareExecutor {
         externallyAborted
       ) {
         return cancelledResult(
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
         );
       }
 
       if (
-        currentCompletion.complete
+        currentCompletion
+          .complete
       ) {
         return {
           status:
             'verified',
 
-        evidence,
+          evidence,
 
           blockers:
             [],
@@ -641,7 +851,8 @@ export class AgentSoftwareExecutor {
         evidence,
 
         blockers:
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
 
         outputText,
 
@@ -662,12 +873,9 @@ export class AgentSoftwareExecutor {
       const currentCompletion =
         completion();
 
-      /*
-       * A thrown SDK/provider error after deterministic completion must
-       * not erase verified work.
-       */
       if (
-        currentCompletion.complete
+        currentCompletion
+          .complete
       ) {
         return {
           status:
@@ -691,12 +899,14 @@ export class AgentSoftwareExecutor {
         externallyAborted
       ) {
         return cancelledResult(
-          currentCompletion.blockers,
+          currentCompletion
+            .blockers,
         );
       }
 
       return failedResult(
-        currentCompletion.blockers,
+        currentCompletion
+          .blockers,
 
         error instanceof
         Error
@@ -704,6 +914,12 @@ export class AgentSoftwareExecutor {
           : 'The software agent failed unexpectedly.',
       );
     } finally {
+      /*
+       * Last best-effort evidence checkpoint even when the SDK/provider
+       * exits between public tool events.
+       */
+      await checkpointSafely();
+
       input.signal
         ?.removeEventListener(
           'abort',
