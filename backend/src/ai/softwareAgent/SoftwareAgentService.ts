@@ -1,5 +1,6 @@
 import type {
   SoftwareExecutionContract,
+  SoftwareRunEvidence,
 } from './contracts.js';
 
 import type {
@@ -31,77 +32,84 @@ import {
   type AgentSoftwareExecutorResult,
 } from './AgentSoftwareExecutor.js';
 
+import {
+  createAgentEvidence,
+} from './createAgentEvidence.js';
+
 import type {
   SoftwareAgentWorkspace,
 } from './SoftwareAgentWorkspace.js';
 
+import {
+  checkpointChangesFromWorkspace,
+  checkpointMatchesExecution,
+  softwareAgentBaseFingerprint,
+  workingFilesFromCheckpoint,
+  type SoftwareAgentCheckpointStatus,
+  type SoftwareAgentCheckpointStore,
+} from './softwareAgentCheckpoint.js';
+
 export interface SoftwareAgentServiceInput {
-  contract: SoftwareExecutionContract;
+  contract:
+    SoftwareExecutionContract;
 
-  /**
-   * Existing authenticated Xroga infrastructure.
-   *
-   * Contains no model-visible secrets.
-   */
-  bindings: XrogaSoftwareAgentBindings;
+  bindings:
+    XrogaSoftwareAgentBindings;
 
-  /**
-   * Xroga-selected coding model route.
-   */
-  model: SoftwareAgentModelRoute;
+  model:
+    SoftwareAgentModelRoute;
 
-  /**
-   * Durable event sink.
-   */
-  events: SoftwareRunEventSink;
+  events:
+    SoftwareRunEventSink;
 
-  /**
-   * Optional authoritative run-start snapshot.
-   *
-   * The universal builder supplies the same snapshot its planner saw,
-   * preventing Agent V2 from re-hydrating a newer/different branch
-   * state between planning and implementation.
-   */
   initialFiles?: Array<{
     path: string;
     content: string;
   }>;
 
+  signal?:
+    AbortSignal;
+
   /**
-   * Caller-owned cancellation boundary.
+   * Optional durable checkpoint store.
    *
-   * There is intentionally no total Agent V2 execution timeout here.
-   * Lower-level provider, command, validation and browser operations
-   * remain individually bounded.
+   * Production supplies Supabase.
    */
-  signal?: AbortSignal;
+  checkpointStore?:
+    SoftwareAgentCheckpointStore;
 }
 
 export interface SoftwareAgentServiceResult
-  extends AgentSoftwareExecutorResult {
-  /**
-   * Final isolated workspace snapshot.
-   *
-   * Useful for:
-   * - Files
-   * - Code
-   * - Changes
-   * - diagnostics
-   *
-   * This is NOT proof of GitHub persistence.
-   */
-  workspace: SoftwareAgentWorkspace;
+  extends
+    AgentSoftwareExecutorResult {
+  workspace:
+    SoftwareAgentWorkspace;
 }
 
-/**
- * High-level entry point for the Xroga software-agent path.
- *
- * One invocation represents one coherent software task.
- *
- * A software task has no arbitrary wall-clock lifetime here. It ends
- * because it is verified, cancelled by its caller, hits a real
- * provider/infrastructure failure, or stops making verifiable progress.
- */
+function checkpointStatusFor(
+  status:
+    AgentSoftwareExecutorResult[
+      'status'
+    ],
+): SoftwareAgentCheckpointStatus {
+  switch (
+    status
+  ) {
+    case 'verified':
+      return 'verified';
+
+    case 'incomplete':
+      return 'incomplete';
+
+    case 'cancelled':
+      return 'cancelled';
+
+    case 'failed':
+    default:
+      return 'failed';
+  }
+}
+
 export class SoftwareAgentService {
   private readonly executor:
     AgentSoftwareExecutor;
@@ -115,8 +123,11 @@ export class SoftwareAgentService {
   }
 
   async execute(
-    input: SoftwareAgentServiceInput,
-  ): Promise<SoftwareAgentServiceResult> {
+    input:
+      SoftwareAgentServiceInput,
+  ): Promise<
+    SoftwareAgentServiceResult
+  > {
     const {
       contract,
       bindings,
@@ -124,21 +135,118 @@ export class SoftwareAgentService {
       events,
     } = input;
 
-    /*
-     * Convert Xroga's existing infrastructure into the narrow
-     * repository/runtime interfaces used by the agent.
-     */
     const dependencies =
       createXrogaProductionDependencies(
         bindings,
       );
 
     /*
-     * Create ONE stateful workspace for this entire run.
+     * Universal execution always supplies this exact repository snapshot.
      *
-     * Every read/edit/check/Preview operation must see this same
-     * evolving snapshot.
+     * Checkpoint recovery deliberately requires a known base. A direct
+     * caller that supplies no initial snapshot still works normally, but
+     * checkpoint replay is disabled because Xroga could not prove what
+     * base the checkpoint belongs to.
      */
+    const baseFiles =
+      input.initialFiles !==
+      undefined
+        ? input
+            .initialFiles
+            .map(
+              (
+                file,
+              ) => ({
+                path:
+                  file.path,
+
+                content:
+                  file.content,
+              }),
+            )
+        : null;
+
+    let restoredCheckpoint:
+      Awaited<
+        ReturnType<
+          NonNullable<
+            SoftwareAgentServiceInput[
+              'checkpointStore'
+            ]
+          >[
+            'load'
+          ]
+        >
+      > =
+      null;
+
+    if (
+      input.checkpointStore &&
+      baseFiles
+    ) {
+      try {
+        const candidate =
+          await input
+            .checkpointStore
+            .load(
+              contract.runId,
+            );
+
+        if (
+          candidate &&
+          checkpointMatchesExecution(
+            candidate,
+
+            {
+              contract,
+              baseFiles,
+            },
+          )
+        ) {
+          restoredCheckpoint =
+            candidate;
+        } else if (
+          candidate
+        ) {
+          console.warn(
+            '[software_agent_checkpoint_ignored]',
+            JSON.stringify({
+              runId:
+                contract.runId,
+
+              reason:
+                'checkpoint base/project/repository identity no longer matches the authorized run-start snapshot',
+            }),
+          );
+        }
+      } catch (
+        error
+      ) {
+        /*
+         * Checkpoint infrastructure must never turn a usable software
+         * build into a failed build. It is a resilience layer.
+         */
+        console.warn(
+          '[software_agent_checkpoint_load_failed]',
+          error instanceof
+          Error
+            ? error.message
+            : String(
+                error,
+              ),
+        );
+      }
+    }
+
+    const restoredWorkingFiles =
+      baseFiles &&
+      restoredCheckpoint
+        ? workingFilesFromCheckpoint(
+            baseFiles,
+            restoredCheckpoint,
+          )
+        : undefined;
+
     const {
       operations,
       workspace,
@@ -146,6 +254,7 @@ export class SoftwareAgentService {
       await createProductionSoftwareAgentOperations(
         contract,
         dependencies,
+
         {
           ...(
             input.initialFiles !==
@@ -156,34 +265,235 @@ export class SoftwareAgentService {
                 }
               : {}
           ),
+
+          ...(
+            restoredWorkingFiles
+              ? {
+                  workingFiles:
+                    restoredWorkingFiles,
+                }
+              : {}
+          ),
         },
       );
 
-    /*
-     * Security boundary between model tools and actual Xroga
-     * infrastructure.
-     */
     const host =
       createProductionSoftwareAgentToolHost(
         operations,
       );
 
-    /*
-     * Cline-style durable tool-using agent loop.
-     *
-     * No total timeout and no fixed verification-round limit are passed
-     * to the executor.
-     */
-    const result =
-      await this.executor.execute({
-        contract,
-        host,
-        events,
-        model,
+    const initialEvidence:
+      SoftwareRunEvidence =
+      restoredCheckpoint
+        ? structuredClone(
+            restoredCheckpoint
+              .evidence,
+          )
+        : createAgentEvidence();
 
-        signal:
-          input.signal,
-      });
+    /*
+     * Defensive recovery:
+     *
+     * If a process died after the workspace mutation became durable but
+     * before the corresponding evidence checkpoint completed, reconstruct
+     * the minimum changed-file evidence from the durable workspace diff.
+     */
+    if (
+      restoredCheckpoint &&
+      workspace.hasChanges() &&
+      initialEvidence
+        .changedFiles
+        .length ===
+        0
+    ) {
+      initialEvidence
+        .changedFiles
+        .push(
+          ...workspace
+            .getChanges()
+            .map(
+              (
+                change,
+              ) => ({
+                path:
+                  change.path,
+
+                created:
+                  change.kind ===
+                  'created',
+
+                deleted:
+                  change.kind ===
+                  'deleted',
+              }),
+            ),
+        );
+    }
+
+    const persistCheckpoint =
+      async (
+        evidence:
+          SoftwareRunEvidence,
+
+        status:
+          SoftwareAgentCheckpointStatus,
+
+        blockers:
+          readonly string[] =
+          [],
+
+        failureCode:
+          string |
+          null =
+          null,
+      ) => {
+        if (
+          !input.checkpointStore ||
+          !baseFiles
+        ) {
+          return;
+        }
+
+        try {
+          await input
+            .checkpointStore
+            .save({
+              schemaVersion:
+                '1.0.0',
+
+              runId:
+                contract.runId,
+
+              projectId:
+                contract.projectId ??
+                null,
+
+              repository:
+                contract.repository
+                  ? {
+                      owner:
+                        contract
+                          .repository
+                          .owner,
+
+                      repo:
+                        contract
+                          .repository
+                          .repo,
+
+                      branch:
+                        contract
+                          .repository
+                          .branch,
+
+                      ...(
+                        contract
+                          .repository
+                          .sourceCommit
+                          ? {
+                              sourceCommit:
+                                contract
+                                  .repository
+                                  .sourceCommit,
+                            }
+                          : {}
+                      ),
+                    }
+                  : null,
+
+              baseFingerprint:
+                softwareAgentBaseFingerprint(
+                  baseFiles,
+                ),
+
+              changes:
+                checkpointChangesFromWorkspace(
+                  workspace
+                    .getChanges(),
+                ),
+
+              evidence:
+                structuredClone(
+                  evidence,
+                ),
+
+              status,
+
+              blockers: [
+                ...blockers,
+              ],
+
+              failureCode,
+
+              updatedAt:
+                new Date()
+                  .toISOString(),
+            });
+        } catch (
+          error
+        ) {
+          console.warn(
+            '[software_agent_checkpoint_save_failed]',
+            error instanceof
+            Error
+              ? error.message
+              : String(
+                  error,
+                ),
+          );
+        }
+      };
+
+    /*
+     * Make the resumed/current workspace durable before asking the
+     * model to do more work.
+     */
+    await persistCheckpoint(
+      initialEvidence,
+      'active',
+    );
+
+    const result =
+      await this
+        .executor
+        .execute({
+          contract,
+          host,
+          events,
+          model,
+
+          signal:
+            input.signal,
+
+          initialEvidence,
+
+          resumedFromCheckpoint:
+            Boolean(
+              restoredCheckpoint,
+            ),
+
+          checkpoint:
+            async (
+              evidence,
+            ) =>
+              persistCheckpoint(
+                evidence,
+                'active',
+              ),
+        });
+
+    await persistCheckpoint(
+      result.evidence,
+
+      checkpointStatusFor(
+        result.status,
+      ),
+
+      result.blockers,
+
+      result.failureCode ??
+      null,
+    );
 
     return {
       ...result,
@@ -193,8 +503,11 @@ export class SoftwareAgentService {
 }
 
 export async function runSoftwareAgent(
-  input: SoftwareAgentServiceInput,
-): Promise<SoftwareAgentServiceResult> {
+  input:
+    SoftwareAgentServiceInput,
+): Promise<
+  SoftwareAgentServiceResult
+> {
   const service =
     new SoftwareAgentService();
 
