@@ -59,8 +59,8 @@ export interface SoftwareAgentServiceInput {
    * Optional authoritative run-start snapshot.
    *
    * The universal builder supplies the same snapshot its planner saw,
-   * preventing Agent V2 from re-hydrating a newer/different branch state
-   * between planning and implementation.
+   * preventing Agent V2 from re-hydrating a newer/different branch
+   * state between planning and implementation.
    */
   initialFiles?: Array<{
     path: string;
@@ -69,12 +69,12 @@ export interface SoftwareAgentServiceInput {
 
   /**
    * Caller-owned cancellation boundary.
+   *
+   * There is intentionally no total Agent V2 execution timeout here.
+   * Lower-level provider, command, validation and browser operations
+   * remain individually bounded.
    */
   signal?: AbortSignal;
-
-  timeoutMs?: number;
-
-  verificationRounds?: number;
 }
 
 export interface SoftwareAgentServiceResult
@@ -94,9 +94,13 @@ export interface SoftwareAgentServiceResult
 }
 
 /**
- * High-level entry point for the new Xroga software-agent path.
+ * High-level entry point for the Xroga software-agent path.
  *
  * One invocation represents one coherent software task.
+ *
+ * A software task has no arbitrary wall-clock lifetime here. It ends
+ * because it is verified, cancelled by its caller, hits a real
+ * provider/infrastructure failure, or stops making verifiable progress.
  */
 export class SoftwareAgentService {
   private readonly executor:
@@ -106,7 +110,8 @@ export class SoftwareAgentService {
     executor =
       new AgentSoftwareExecutor(),
   ) {
-    this.executor = executor;
+    this.executor =
+      executor;
   }
 
   async execute(
@@ -131,8 +136,8 @@ export class SoftwareAgentService {
     /*
      * Create ONE stateful workspace for this entire run.
      *
-     * Every read/edit/check/Preview operation must see this
-     * same evolving snapshot.
+     * Every read/edit/check/Preview operation must see this same
+     * evolving snapshot.
      */
     const {
       operations,
@@ -142,13 +147,15 @@ export class SoftwareAgentService {
         contract,
         dependencies,
         {
-          ...(input.initialFiles !==
-          undefined
-            ? {
-                initialFiles:
-                  input.initialFiles,
-              }
-            : {}),
+          ...(
+            input.initialFiles !==
+            undefined
+              ? {
+                  initialFiles:
+                    input.initialFiles,
+                }
+              : {}
+          ),
         },
       );
 
@@ -163,6 +170,9 @@ export class SoftwareAgentService {
 
     /*
      * Cline-style durable tool-using agent loop.
+     *
+     * No total timeout and no fixed verification-round limit are passed
+     * to the executor.
      */
     const result =
       await this.executor.execute({
@@ -173,12 +183,6 @@ export class SoftwareAgentService {
 
         signal:
           input.signal,
-
-        timeoutMs:
-          input.timeoutMs,
-
-        verificationRounds:
-          input.verificationRounds,
       });
 
     return {
@@ -194,5 +198,7 @@ export async function runSoftwareAgent(
   const service =
     new SoftwareAgentService();
 
-  return service.execute(input);
+  return service.execute(
+    input,
+  );
 }
