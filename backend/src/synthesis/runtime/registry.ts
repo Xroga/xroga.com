@@ -27,6 +27,7 @@ import { dirOf, type ProjectInspection, type RuntimeAdapter, type ToolCommand } 
 import { NodeRuntimeAdapter } from './nodeAdapter.js';
 import { PythonRuntimeAdapter } from './pythonAdapter.js';
 import { RustRuntimeAdapter } from './rustAdapter.js';
+import { StaticWebRuntimeAdapter } from './staticWebAdapter.js';
 
 /** One detected component: a root, the adapter that owns it, and the evidence. */
 export interface DetectedComponent {
@@ -45,7 +46,12 @@ export interface RepositoryComposition {
 let registry: RuntimeAdapter[] | null = null;
 
 function defaults(): RuntimeAdapter[] {
-  return [new NodeRuntimeAdapter(), new PythonRuntimeAdapter(), new RustRuntimeAdapter()];
+  return [
+    new NodeRuntimeAdapter(),
+    new StaticWebRuntimeAdapter(),
+    new PythonRuntimeAdapter(),
+    new RustRuntimeAdapter(),
+  ];
 }
 
 export function runtimeAdapters(): readonly RuntimeAdapter[] {
