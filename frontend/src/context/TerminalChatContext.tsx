@@ -210,7 +210,12 @@ export interface ChatMessage {
   thinkingSteps?: string[];
   thoughtMs?: number;
   /** User stopped mid-build — show Retry card, keep in history */
-  buildStopped?: boolean;
+buildStopped?: boolean;
+
+/**
+ * Durable backend run whose Agent V2 checkpoint this Retry card resumes.
+ */
+stoppedRunId?: string;
   stoppedTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   stoppedPhase?: number | null;
   stoppedActivityLog?: string[];
@@ -459,8 +464,14 @@ export function TerminalChatProvider({
   const activeRunIdRef = useRef<string | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<
-    (text?: string, fromQueue?: boolean, interrupt?: boolean, attachments?: ChatAttachment[]) => Promise<void>
-  >(async () => {});
+  (
+    text?: string,
+    fromQueue?: boolean,
+    interrupt?: boolean,
+    attachments?: ChatAttachment[],
+    resumeRunId?: string,
+  ) => Promise<void>
+>(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
   const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
   const skipNextQueueRef = useRef(false);
@@ -1174,8 +1185,13 @@ export function TerminalChatProvider({
       .filter(Boolean)
       .join('\n');
 
-    await submitRef.current(continuePrompt, false, false);
-  }, [messages]);
+await submitRef.current(
+  continuePrompt,
+  false,
+  false,
+  undefined,
+  msg.stoppedRunId,
+);  }, [messages]);
 
   /**
    * "Use full power now" — switches the account off the daily drip and onto Full
@@ -1565,11 +1581,12 @@ export function TerminalChatProvider({
 
   const submit = useCallback(
     async (
-      overrideText?: string,
-      fromQueue = false,
-      interrupt = false,
-      attachments?: ChatAttachment[]
-    ) => {
+  overrideText?: string,
+  fromQueue = false,
+  interrupt = false,
+  attachments?: ChatAttachment[],
+  resumeRunId?: string,
+) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
 
@@ -2103,19 +2120,30 @@ export function TerminalChatProvider({
           );
         };
         await streamSwarmExecute(apiPrompt, {
-          projectId: freshProductIntent ? undefined : projectId,
+  runId:
+    resumeRunId,
+
+  projectId:
+    freshProductIntent
+      ? undefined
+      : projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
           accessToken,
           attachments,
           history,
-          clientMeta: {
+          clientMeta: 
+          {
             assistantMessageId: assistantId,
             userMessageId: userMessageId,
             userPrompt: displayPrompt,
             buildContinuation: isBuildAnswer,
             buildOriginalPrompt: buildSession?.originalPrompt,
             buildUpdate:
+              resumeRun:
+  Boolean(
+    resumeRunId,
+  ),
               isBuildUpdate ||
               (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
             githubTargetRepo: stickyTargetRepo,
@@ -3189,9 +3217,18 @@ export function TerminalChatProvider({
               return {
                 ...msg,
                 content: msg.content?.trim() || (wasStall ? stallMessage : userStopMessage),
-                buildStopped: true,
-                originalBuildPrompt: original,
-                githubRepoName: repo,
+                buildStopped:
+  true,
+
+stoppedRunId:
+  activeRunIdRef.current ??
+  msg.stoppedRunId,
+
+originalBuildPrompt:
+  original,
+
+githubRepoName:
+  repo,
                 stoppedTodos: todosSnapshot.length ? todosSnapshot : msg.stoppedTodos,
                 stoppedPhase: phaseSnapshot,
                 stoppedActivityLog: activitySnapshot,
