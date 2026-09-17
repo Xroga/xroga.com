@@ -2866,13 +2866,57 @@ githubTargetRepo:
                   for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
                 }
               }
-              setMessages((messages) =>
-                messages.map((message) =>
-                  message.id === assistantId
-                    ? { ...message, content: '', featureOutput: output }
-                    : message,
-                ),
-              );
+              const failedBuildRunId =
+  complete.success ===
+    false &&
+  typeof complete.runId ===
+    'string'
+    ? complete.runId
+    : undefined;
+              setMessages(
+  (
+    messages,
+  ) =>
+    messages.map(
+      (
+        message,
+      ) =>
+        message.id ===
+        assistantId
+          ? {
+              ...message,
+
+              content:
+                '',
+
+              featureOutput:
+                output,
+
+              ...(
+                failedBuildRunId
+                  ? {
+                      buildStopped:
+                        true,
+
+                      stoppedRunId:
+                        failedBuildRunId,
+
+                      originalBuildPrompt:
+                        lastTurnRef
+                          .current
+                          ?.text ||
+                        displayPrompt,
+
+                      githubRepoName:
+                        repoContext
+                          ?.repo,
+                    }
+                  : {}
+              ),
+            }
+          : message,
+    ),
+);
               return;
             }
             if (output?.type === 'image_blocked') {
