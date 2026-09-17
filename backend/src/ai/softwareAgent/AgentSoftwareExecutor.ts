@@ -39,6 +39,10 @@ import {
   evaluateSoftwareCompletion,
 } from './completionGate.js';
 
+import {
+  VerificationContinuationTracker,
+} from './verificationContinuationPolicy.js';
+
 export type AgentSoftwareExecutionStatus =
   | 'verified'
   | 'incomplete'
@@ -55,30 +59,17 @@ export interface AgentSoftwareExecutorInput {
   model: SoftwareAgentModelRoute;
 
   /**
-   * Caller-owned cancellation signal.
+   * Caller-owned cancellation boundary.
    *
-   * Universal execution already has a run AbortSignal; Agent V2 must
-   * honor the same cancellation boundary instead of continuing after
-   * the user cancels the build.
+   * There is intentionally no Xroga-owned total execution deadline.
+   *
+   * A software product may legitimately require many model turns,
+   * builds, tests, repairs and browser-verification cycles.
+   *
+   * Individual provider/tool/sandbox operations retain their own
+   * bounded safety deadlines.
    */
   signal?: AbortSignal;
-
-  /**
-   * Overall safety ceiling for one software-agent session.
-   *
-   * This is NOT a provider timeout.
-   * Provider/network timeout policy will remain Xroga-owned.
-   */
-  timeoutMs?: number;
-
-  /**
-   * Number of times Xroga may tell the SAME durable agent:
-   *
-   * "You are not verified yet; here are the blockers."
-   *
-   * This is deliberately small.
-   */
-  verificationRounds?: number;
 }
 
 export interface AgentSoftwareExecutorResult {
@@ -95,15 +86,14 @@ export interface AgentSoftwareExecutorResult {
   /**
    * Keep provider usage available internally.
    *
-   * The exact SDK usage object may evolve, so keep this
-   * opaque at this Xroga boundary for now.
+   * The exact SDK usage object may evolve, so keep this opaque at
+   * the Xroga boundary.
    */
   usage?: unknown;
 
   failureCode?:
     | 'AGENT_FAILED'
     | 'AGENT_ABORTED'
-    | 'AGENT_TIMEOUT'
     | 'VERIFICATION_INCOMPLETE';
 
   failureMessage?: string;
@@ -126,38 +116,19 @@ Use the available Xroga tools to inspect the actual evidence, diagnose the remai
 Do not merely explain the blockers.
 Do not claim completion until the tools produce the required evidence.
 Do not restart or regenerate unrelated project work.
+
+There is no arbitrary total build-time deadline and no fixed total verification-round limit. Continue while you can make real verifiable progress.
 `.trim();
 }
 
-function normalizeTimeout(
-  timeoutMs: number | undefined,
-): number {
-  if (
-    typeof timeoutMs !== 'number' ||
-    !Number.isFinite(timeoutMs)
-  ) {
-    return 6 * 60 * 1000;
-  }
-
-  return Math.min(
-    Math.max(timeoutMs, 30_000),
-    10 * 60 * 1000,
-  );
-}
-
-function normalizeVerificationRounds(
-  rounds: number | undefined,
-): number {
-  if (
-    typeof rounds !== 'number' ||
-    !Number.isFinite(rounds)
-  ) {
-    return 2;
-  }
-
-  return Math.min(
-    Math.max(Math.floor(rounds), 0),
-    3,
+function nonConvergenceBlocker(
+  stagnantContinuations: number,
+): string {
+  return (
+    'Agent V2 stopped because ' +
+    `${stagnantContinuations} consecutive verification continuation ` +
+    `attempt${stagnantContinuations === 1 ? '' : 's'} produced no new ` +
+    'verifiable project evidence. This is a convergence blocker, not a time limit.'
   );
 }
 
@@ -172,7 +143,9 @@ export class AgentSoftwareExecutor {
       model,
     } = input;
 
-    assertSoftwareAgentModelRoute(model);
+    assertSoftwareAgentModelRoute(
+      model,
+    );
 
     const evidence =
       createAgentEvidence();
@@ -182,18 +155,17 @@ export class AgentSoftwareExecutor {
      * tool separately because it has lifecycle.completesRun = true.
      *
      * The completion tool still MUST be registered with Cline.
-     * Previously only `tools` was passed to Agent, so `complete_task`
-     * existed in source code but was invisible to the runtime.
      */
     const {
       tools,
       completionTool,
-    } = createXrogaSoftwareTools({
-      contract,
-      host,
-      events,
-      evidence,
-    });
+    } =
+      createXrogaSoftwareTools({
+        contract,
+        host,
+        events,
+        evidence,
+      });
 
     const systemPrompt =
       buildSoftwareAgentPrompt(
@@ -230,26 +202,32 @@ export class AgentSoftwareExecutor {
             modelId:
               model.modelId!,
 
-            ...(model.apiKey
-              ? {
-                  apiKey:
-                    model.apiKey,
-                }
-              : {}),
+            ...(
+              model.apiKey
+                ? {
+                    apiKey:
+                      model.apiKey,
+                  }
+                : {}
+            ),
 
-            ...(model.baseUrl
-              ? {
-                  baseUrl:
-                    model.baseUrl,
-                }
-              : {}),
+            ...(
+              model.baseUrl
+                ? {
+                    baseUrl:
+                      model.baseUrl,
+                  }
+                : {}
+            ),
 
-            ...(model.headers
-              ? {
-                  headers:
-                    model.headers,
-                }
-              : {}),
+            ...(
+              model.headers
+                ? {
+                    headers:
+                      model.headers,
+                  }
+                : {}
+            ),
 
             systemPrompt,
 
@@ -258,309 +236,479 @@ export class AgentSoftwareExecutor {
           });
 
     let externallyAborted =
-      input.signal?.aborted ===
+      input.signal
+        ?.aborted ===
       true;
 
-    const abortFromCaller = () => {
-      externallyAborted = true;
+    const abortFromCaller =
+      () => {
+        externallyAborted =
+          true;
 
-      try {
-        agent.abort(
-          'Xroga software-agent execution was cancelled by the caller.',
-        );
-      } catch {
-        /*
-         * Abort is best-effort.
-         * The final status is still derived from the caller signal.
-         */
-      }
-    };
+        try {
+          agent.abort(
+            'Xroga software-agent execution was cancelled by the caller.',
+          );
+        } catch {
+          /*
+           * Abort is best-effort.
+           *
+           * The caller-owned cancellation flag remains authoritative.
+           */
+        }
+      };
 
-    if (externallyAborted) {
+    if (
+      externallyAborted
+    ) {
       return {
-        status: 'cancelled',
+        status:
+          'cancelled',
+
         evidence,
-        blockers: [],
-        outputText: '',
-        iterations: 0,
+
+        blockers:
+          [],
+
+        outputText:
+          '',
+
+        iterations:
+          0,
+
         failureCode:
           'AGENT_ABORTED',
+
         failureMessage:
           'The software-agent run was cancelled.',
       };
     }
 
-    input.signal?.addEventListener(
-      'abort',
-      abortFromCaller,
-      {
-        once: true,
-      },
-    );
-
-    const timeoutMs =
-      normalizeTimeout(input.timeoutMs);
-
-    const maximumVerificationRounds =
-      normalizeVerificationRounds(
-        input.verificationRounds,
+    input.signal
+      ?.addEventListener(
+        'abort',
+        abortFromCaller,
+        {
+          once:
+            true,
+        },
       );
 
-    let timedOut = false;
+    let outputText =
+      '';
 
-    const timeout = setTimeout(() => {
-      timedOut = true;
+    let totalIterations =
+      0;
 
-      try {
-        agent.abort(
-          'Xroga software-agent execution deadline reached.',
-        );
-      } catch {
-        /*
-         * Abort is best-effort.
-         * It must never create a second failure path.
-         */
-      }
-    }, timeoutMs);
+    let usage:
+      unknown;
 
-    let outputText = '';
-    let totalIterations = 0;
-    let usage: unknown;
-
-    try {
-      let result =
-        await agent.run(contract.goal);
-
-      outputText =
-        result.outputText ?? '';
-
-      totalIterations +=
-        result.iterations ?? 0;
-
-      usage = result.usage;
-
-      if (timedOut) {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_TIMEOUT',
-          failureMessage:
-            'The software-agent execution deadline was reached.',
-        };
-      }
-
-      if (externallyAborted) {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_ABORTED',
-          failureMessage:
-            'The software-agent run was cancelled.',
-        };
-      }
-
-      if (result.status === 'aborted') {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_ABORTED',
-          failureMessage:
-            'The software-agent run was cancelled.',
-        };
-      }
-
-      if (result.status === 'failed') {
-        return {
-          status: 'failed',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_FAILED',
-          failureMessage:
-            result.error?.message ??
-            'The software agent failed.',
-        };
-      }
-
-      let completion =
+    const completion =
+      () =>
         evaluateSoftwareCompletion({
           previewRequirement:
             contract.preview,
 
           evidence,
 
-          requireSuccessfulChecks: true,
+          requireSuccessfulChecks:
+            true,
 
           requireRepositoryPersistence:
             contract.persistence ===
             'review_branch',
         });
 
-      let verificationRound = 0;
+    const cancelledResult =
+      (
+        blockers:
+          string[],
+      ): AgentSoftwareExecutorResult => ({
+        status:
+          'cancelled',
+
+        evidence,
+
+        blockers,
+
+        outputText,
+
+        iterations:
+          totalIterations,
+
+        usage,
+
+        failureCode:
+          'AGENT_ABORTED',
+
+        failureMessage:
+          'The software-agent run was cancelled.',
+      });
+
+    const failedResult =
+      (
+        blockers:
+          string[],
+
+        message:
+          string,
+      ): AgentSoftwareExecutorResult => ({
+        status:
+          'failed',
+
+        evidence,
+
+        blockers,
+
+        outputText,
+
+        iterations:
+          totalIterations,
+
+        usage,
+
+        failureCode:
+          'AGENT_FAILED',
+
+        failureMessage:
+          message,
+      });
+
+    try {
+      let result =
+        await agent.run(
+          contract.goal,
+        );
+
+      outputText =
+        result.outputText ??
+        '';
+
+      totalIterations +=
+        result.iterations ??
+        0;
+
+      usage =
+        result.usage;
+
+      let currentCompletion =
+        completion();
+
+      /*
+       * Deterministic Xroga evidence remains the strongest source of
+       * truth.
+       *
+       * If the tools already proved the task complete, do not throw the
+       * work away because the SDK happened to end its turn awkwardly.
+       */
+      if (
+        currentCompletion.complete
+      ) {
+        return {
+          status:
+            'verified',
+
+          evidence,
+
+          blockers:
+            [],
+
+          outputText,
+
+          iterations:
+            totalIterations,
+
+          usage,
+        };
+      }
+
+      if (
+        externallyAborted
+      ) {
+        return cancelledResult(
+          currentCompletion.blockers,
+        );
+      }
+
+      if (
+        result.status ===
+        'aborted'
+      ) {
+        return cancelledResult(
+          currentCompletion.blockers,
+        );
+      }
+
+      if (
+        result.status ===
+        'failed'
+      ) {
+        return failedResult(
+          currentCompletion.blockers,
+
+          result.error
+            ?.message ??
+            'The software agent failed.',
+        );
+      }
+
+      /*
+       * There is intentionally no maximum total continuation count.
+       *
+       * As long as deterministic evidence keeps changing, Agent V2 can
+       * continue working for as many verification/repair cycles as the
+       * task genuinely requires.
+       *
+       * Only repeated identical verification states trigger the
+       * non-convergence guard.
+       */
+      const continuationTracker =
+        new VerificationContinuationTracker({
+          evidence,
+
+          blockers:
+            currentCompletion
+              .blockers,
+        });
 
       while (
-        !completion.complete &&
-        verificationRound <
-          maximumVerificationRounds &&
-        !timedOut &&
+        !currentCompletion.complete &&
         !externallyAborted
       ) {
-        verificationRound += 1;
-
-        result = await agent.continue(
-          buildVerificationContinuation(
-            completion.blockers,
-          ),
-        );
+        result =
+          await agent.continue(
+            buildVerificationContinuation(
+              currentCompletion
+                .blockers,
+            ),
+          );
 
         outputText =
           result.outputText ??
           outputText;
 
         totalIterations +=
-          result.iterations ?? 0;
+          result.iterations ??
+          0;
 
-        usage = result.usage ?? usage;
+        usage =
+          result.usage ??
+          usage;
 
+        currentCompletion =
+          completion();
+
+        /*
+         * Tool evidence wins over model/SDK status.
+         *
+         * A continuation may successfully finish its final check or
+         * Preview immediately before the SDK reports its terminal turn.
+         */
         if (
-          result.status === 'failed' ||
-          result.status === 'aborted'
+          currentCompletion.complete
         ) {
-          break;
-        }
-
-        completion =
-          evaluateSoftwareCompletion({
-            previewRequirement:
-              contract.preview,
+          return {
+            status:
+              'verified',
 
             evidence,
 
-            requireSuccessfulChecks: true,
+            blockers:
+              [],
 
-            requireRepositoryPersistence:
-              contract.persistence ===
-              'review_branch',
+            outputText,
+
+            iterations:
+              totalIterations,
+
+            usage,
+          };
+        }
+
+        if (
+          externallyAborted
+        ) {
+          return cancelledResult(
+            currentCompletion.blockers,
+          );
+        }
+
+        if (
+          result.status ===
+          'aborted'
+        ) {
+          return cancelledResult(
+            currentCompletion.blockers,
+          );
+        }
+
+        if (
+          result.status ===
+          'failed'
+        ) {
+          return failedResult(
+            currentCompletion.blockers,
+
+            result.error
+              ?.message ??
+              'The software agent failed.',
+          );
+        }
+
+        const observation =
+          continuationTracker.observe({
+            evidence,
+
+            blockers:
+              currentCompletion
+                .blockers,
           });
+
+        if (
+          observation.shouldStop
+        ) {
+          const blocker =
+            nonConvergenceBlocker(
+              observation
+                .stagnantContinuations,
+            );
+
+          return {
+            status:
+              'incomplete',
+
+            evidence,
+
+            blockers: [
+              ...currentCompletion
+                .blockers,
+
+              blocker,
+            ],
+
+            outputText,
+
+            iterations:
+              totalIterations,
+
+            usage,
+
+            failureCode:
+              'VERIFICATION_INCOMPLETE',
+
+            failureMessage:
+              blocker,
+          };
+        }
       }
 
-      if (timedOut) {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers:
-            completion.blockers,
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_TIMEOUT',
-          failureMessage:
-            'The software-agent execution deadline was reached.',
-        };
+      currentCompletion =
+        completion();
+
+      if (
+        externallyAborted
+      ) {
+        return cancelledResult(
+          currentCompletion.blockers,
+        );
       }
 
-      if (externallyAborted) {
+      if (
+        currentCompletion.complete
+      ) {
         return {
-          status: 'cancelled',
-          evidence,
-          blockers:
-            completion.blockers,
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_ABORTED',
-          failureMessage:
-            'The software-agent run was cancelled.',
-        };
-      }
+          status:
+            'verified',
 
-      if (!completion.complete) {
-        return {
-          status: 'incomplete',
-          evidence,
+        evidence,
+
           blockers:
-            completion.blockers,
+            [],
+
           outputText,
-          iterations: totalIterations,
+
+          iterations:
+            totalIterations,
+
           usage,
-          failureCode:
-            'VERIFICATION_INCOMPLETE',
-          failureMessage:
-            'The software agent stopped before Xroga verification proved the task complete.',
         };
       }
 
       return {
-        status: 'verified',
-        evidence,
-        blockers: [],
-        outputText,
-        iterations: totalIterations,
-        usage,
-      };
-    } catch (error) {
-      if (timedOut) {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_TIMEOUT',
-          failureMessage:
-            'The software-agent execution deadline was reached.',
-        };
-      }
+        status:
+          'incomplete',
 
-      if (externallyAborted) {
-        return {
-          status: 'cancelled',
-          evidence,
-          blockers: [],
-          outputText,
-          iterations: totalIterations,
-          usage,
-          failureCode: 'AGENT_ABORTED',
-          failureMessage:
-            'The software-agent run was cancelled.',
-        };
-      }
-
-      return {
-        status: 'failed',
         evidence,
-        blockers: [],
+
+        blockers:
+          currentCompletion.blockers,
+
         outputText,
-        iterations: totalIterations,
+
+        iterations:
+          totalIterations,
+
         usage,
-        failureCode: 'AGENT_FAILED',
+
+        failureCode:
+          'VERIFICATION_INCOMPLETE',
+
         failureMessage:
-          error instanceof Error
-            ? error.message
-            : 'The software agent failed unexpectedly.',
+          'The software agent stopped before Xroga verification proved the task complete.',
       };
-    } finally {
-      clearTimeout(timeout);
+    } catch (
+      error
+    ) {
+      const currentCompletion =
+        completion();
 
-      input.signal?.removeEventListener(
-        'abort',
-        abortFromCaller,
+      /*
+       * A thrown SDK/provider error after deterministic completion must
+       * not erase verified work.
+       */
+      if (
+        currentCompletion.complete
+      ) {
+        return {
+          status:
+            'verified',
+
+          evidence,
+
+          blockers:
+            [],
+
+          outputText,
+
+          iterations:
+            totalIterations,
+
+          usage,
+        };
+      }
+
+      if (
+        externallyAborted
+      ) {
+        return cancelledResult(
+          currentCompletion.blockers,
+        );
+      }
+
+      return failedResult(
+        currentCompletion.blockers,
+
+        error instanceof
+        Error
+          ? error.message
+          : 'The software agent failed unexpectedly.',
       );
+    } finally {
+      input.signal
+        ?.removeEventListener(
+          'abort',
+          abortFromCaller,
+        );
     }
   }
 }
