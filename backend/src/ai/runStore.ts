@@ -38,31 +38,50 @@ const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 function schedulePersist(rec: SwarmRunRecord) {
   if (persistTimers.has(rec.id)) return;
+
   const timer = setTimeout(() => {
     persistTimers.delete(rec.id);
     void persistToSupabase(rec).catch(() => {});
   }, 500);
+
   timer.unref?.();
   persistTimers.set(rec.id, timer);
 }
 
 function flushPersist(rec: SwarmRunRecord) {
   const timer = persistTimers.get(rec.id);
+
   if (timer) clearTimeout(timer);
+
   persistTimers.delete(rec.id);
   void persistToSupabase(rec).catch(() => {});
 }
 
 function touchUser(userId: string, runId: string) {
   const list = userIndex.get(userId) ?? [];
-  const next = [runId, ...list.filter((id) => id !== runId)].slice(0, MAX_PER_USER);
+
+  const next = [
+    runId,
+    ...list.filter((id) => id !== runId),
+  ].slice(0, MAX_PER_USER);
+
   userIndex.set(userId, next);
+
   for (const [id, run] of runs) {
-    if (run.userId === userId && !next.includes(id)) runs.delete(id);
+    if (
+      run.userId === userId &&
+      !next.includes(id)
+    ) {
+      runs.delete(id);
+    }
   }
 }
 
-function createRunHot(userId: string, prompt: string, runId: string): SwarmRunRecord {
+function createRunHot(
+  userId: string,
+  prompt: string,
+  runId: string,
+): SwarmRunRecord {
   const rec: SwarmRunRecord = {
     id: runId,
     userId,
@@ -75,20 +94,47 @@ function createRunHot(userId: string, prompt: string, runId: string): SwarmRunRe
     events: [],
     lastSequence: 0,
   };
+
   runs.set(runId, rec);
   touchUser(userId, runId);
+
   return rec;
 }
 
-export function createRun(userId: string, prompt: string, runId: string): SwarmRunRecord {
-  const rec = createRunHot(userId, prompt, runId);
+export function createRun(
+  userId: string,
+  prompt: string,
+  runId: string,
+): SwarmRunRecord {
+  const rec = createRunHot(
+    userId,
+    prompt,
+    runId,
+  );
+
   flushPersist(rec);
+
   return rec;
 }
 
 /** Persist the recovery record before an expensive provider call begins. */
 export async function createRunDurable(
-  /**
+  userId: string,
+  prompt: string,
+  runId: string,
+): Promise<SwarmRunRecord> {
+  const rec = createRunHot(
+    userId,
+    prompt,
+    runId,
+  );
+
+  await persistToSupabase(rec);
+
+  return rec;
+}
+
+/**
  * Re-open one previously interrupted durable run without destroying its
  * run identity, event sequence, transcript or Agent V2 checkpoint key.
  *
@@ -98,37 +144,25 @@ export async function createRunDurable(
  * software_agent_checkpoints are keyed by that run id.
  */
 export async function resumeRunDurable(
-  userId:
-    string,
-
-  prompt:
-    string,
-
-  runId:
-    string,
-): Promise<
-  SwarmRunRecord
-> {
+  userId: string,
+  prompt: string,
+  runId: string,
+): Promise<SwarmRunRecord> {
   const existing =
-    await getRunAsync(
-      runId,
-    );
+    await getRunAsync(runId);
 
   if (
     !existing ||
-    existing.userId !==
-      userId
+    existing.userId !== userId
   ) {
     const error =
       new Error(
         'The build checkpoint could not be found for this account.',
       ) as Error & {
-        code?:
-          string;
+        code?: string;
       };
 
-    error.code =
-      'RUN_NOT_FOUND';
+    error.code = 'RUN_NOT_FOUND';
 
     throw error;
   }
@@ -137,20 +171,15 @@ export async function resumeRunDurable(
    * Never launch a second worker against a run that Xroga still regards
    * as active.
    */
-  if (
-    existing.status ===
-    'running'
-  ) {
+  if (existing.status === 'running') {
     const error =
       new Error(
         'This build is already running. Reconnect to the existing run instead of starting another worker.',
       ) as Error & {
-        code?:
-          string;
+        code?: string;
       };
 
-    error.code =
-      'RUN_ALREADY_ACTIVE';
+    error.code = 'RUN_ALREADY_ACTIVE';
 
     throw error;
   }
@@ -160,26 +189,20 @@ export async function resumeRunDurable(
    *
    * New product changes should receive a new run id instead.
    */
-  if (
-    existing.status ===
-    'complete'
-  ) {
+  if (existing.status === 'complete') {
     const error =
       new Error(
         'This build already completed. Start a new update request instead of resuming it.',
       ) as Error & {
-        code?:
-          string;
+        code?: string;
       };
 
-    error.code =
-      'RUN_ALREADY_COMPLETE';
+    error.code = 'RUN_ALREADY_COMPLETE';
 
     throw error;
   }
 
-  const resumed:
-    SwarmRunRecord = {
+  const resumed: SwarmRunRecord = {
     ...existing,
 
     /*
@@ -188,18 +211,13 @@ export async function resumeRunDurable(
      * separately.
      */
     prompt:
-      existing.prompt
-        .trim()
+      existing.prompt.trim()
         ? existing.prompt
         : prompt
             .trim()
-            .slice(
-              0,
-              8_000,
-            ),
+            .slice(0, 8_000),
 
-    status:
-      'running',
+    status: 'running',
 
     /*
      * Preserve a real artifact if one was already emitted before the
@@ -207,39 +225,19 @@ export async function resumeRunDurable(
      * clients do not mistake the old failure for the current run.
      */
     output:
-      isEngineeringArtifact(
-        existing.output,
-      )
+      isEngineeringArtifact(existing.output)
         ? existing.output
         : null,
 
-    completed_at:
-      null,
+    completed_at: null,
   };
 
-  runs.set(
-    runId,
-    resumed,
-  );
+  runs.set(runId, resumed);
+  touchUser(userId, runId);
 
-  touchUser(
-    userId,
-    runId,
-  );
-
-  await persistToSupabase(
-    resumed,
-  );
+  await persistToSupabase(resumed);
 
   return resumed;
-}
-  userId: string,
-  prompt: string,
-  runId: string,
-): Promise<SwarmRunRecord> {
-  const rec = createRunHot(userId, prompt, runId);
-  await persistToSupabase(rec);
-  return rec;
 }
 
 export function completeRun(
@@ -252,15 +250,23 @@ export function completeRun(
   },
 ): SwarmRunRecord | null {
   const rec = runs.get(runId);
+
   if (!rec) return null;
-  rec.status = data.success === false ? 'error' : 'complete';
+
+  rec.status =
+    data.success === false
+      ? 'error'
+      : 'complete';
+
   rec.output = data.output;
   rec.featureCategory = data.featureCategory;
   rec.tokenUsage = data.tokenUsage;
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
+
   runs.set(runId, rec);
   flushPersist(rec);
+
   return rec;
 }
 
@@ -268,14 +274,21 @@ export function failRun(
   runId: string,
   error: string,
   status: 'error' | 'cancelled' = 'error',
+
   // The specific reason code (e.g. CAPACITY_UNAVAILABLE) previously never reached the
   // persisted row — every failure was stored as the generic BUILD_FAILED, so a run
   // reconnected or reloaded after the fact lost the distinction the live stream had.
-  extra: { code?: string; nextUnlockAt?: string | null } = {},
+  extra: {
+    code?: string;
+    nextUnlockAt?: string | null;
+  } = {},
 ): SwarmRunRecord | null {
   const rec = runs.get(runId);
+
   if (!rec) return null;
+
   rec.status = status;
+
   // Preserve an engineering artifact that already exists on this record.
   //
   // This used to assign unconditionally, which destroyed the result of any run that produced
@@ -283,28 +296,70 @@ export function failRun(
   // bare error object, on both the live and the recovery path. The failure is real and must be
   // recorded; the evidence of what was actually built is what the user needs alongside it, and
   // discarding it makes a late failure indistinguishable from a run that did nothing.
-  const existingArtifact = isEngineeringArtifact(rec.output) ? rec.output : null;
+  const existingArtifact =
+    isEngineeringArtifact(rec.output)
+      ? rec.output
+      : null;
+
   const failure = {
     error: error.slice(0, 1000),
-    code: status === 'cancelled' ? 'BUILD_CANCELLED' : (extra.code ?? 'BUILD_FAILED'),
-    ...(extra.nextUnlockAt ? { nextUnlockAt: extra.nextUnlockAt } : {}),
+
+    code:
+      status === 'cancelled'
+        ? 'BUILD_CANCELLED'
+        : (
+            extra.code ??
+            'BUILD_FAILED'
+          ),
+
+    ...(
+      extra.nextUnlockAt
+        ? {
+            nextUnlockAt:
+              extra.nextUnlockAt,
+          }
+        : {}
+    ),
   };
-  rec.output = existingArtifact
-    ? { ...existingArtifact, ...failure }
-    : { type: 'error', ...failure };
-  rec.completed_at = new Date().toISOString();
+
+  rec.output =
+    existingArtifact
+      ? {
+          ...existingArtifact,
+          ...failure,
+        }
+      : {
+          type: 'error',
+          ...failure,
+        };
+
+  rec.completed_at =
+    new Date().toISOString();
+
   rec.iteration_count += 1;
+
   runs.set(runId, rec);
   flushPersist(rec);
+
   return rec;
 }
 
-export function saveConversation(runId: string, messages: unknown[]): boolean {
+export function saveConversation(
+  runId: string,
+  messages: unknown[],
+): boolean {
   const rec = runs.get(runId);
+
   if (!rec) return false;
-  rec.messages = Array.isArray(messages) ? messages.slice(-80) : [];
+
+  rec.messages =
+    Array.isArray(messages)
+      ? messages.slice(-80)
+      : [];
+
   runs.set(runId, rec);
   schedulePersist(rec);
+
   return true;
 }
 
@@ -328,23 +383,63 @@ export async function persistConversationOnly(
   userId: string,
   messages: unknown[],
 ): Promise<boolean> {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
-  const trimmed = Array.isArray(messages) ? messages.slice(-80) : [];
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return false;
+  }
+
+  const trimmed =
+    Array.isArray(messages)
+      ? messages.slice(-80)
+      : [];
+
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from('swarm_runs')
-      .update({ messages: trimmed })
-      .eq('id', runId)
-      .eq('user_id', userId)
-      .select('id');
+    const supabase =
+      getSupabaseAdmin();
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from('swarm_runs')
+        .update({
+          messages:
+            trimmed,
+        })
+        .eq(
+          'id',
+          runId,
+        )
+        .eq(
+          'user_id',
+          userId,
+        )
+        .select('id');
+
     if (error) {
-      console.warn('[runStore] conversation-only persist failed:', error.message);
+      console.warn(
+        '[runStore] conversation-only persist failed:',
+        error.message,
+      );
+
       return false;
     }
-    return (data?.length ?? 0) > 0;
+
+    return (
+      (
+        data?.length ??
+        0
+      ) >
+      0
+    );
   } catch (error) {
-    console.warn('[runStore] conversation-only persist threw:', (error as Error).message);
+    console.warn(
+      '[runStore] conversation-only persist threw:',
+      (error as Error).message,
+    );
+
     return false;
   }
 }
@@ -355,56 +450,183 @@ export function appendRunEvent(
   data: Record<string, unknown>,
 ): SwarmRunEvent | null {
   const rec = runs.get(runId);
+
   if (!rec) return null;
+
   const event: SwarmRunEvent = {
-    sequence: rec.lastSequence + 1,
+    sequence:
+      rec.lastSequence + 1,
+
     type,
-    data: redactOperationsValue(data) as Record<string, unknown>,
-    createdAt: new Date().toISOString(),
+
+    data:
+      redactOperationsValue(
+        data,
+      ) as Record<string, unknown>,
+
+    createdAt:
+      new Date().toISOString(),
   };
-  rec.lastSequence = event.sequence;
-  rec.events = [...rec.events, event].slice(-MAX_EVENTS_PER_RUN);
+
+  rec.lastSequence =
+    event.sequence;
+
+  rec.events = [
+    ...rec.events,
+    event,
+  ].slice(
+    -MAX_EVENTS_PER_RUN,
+  );
+
   runs.set(runId, rec);
   schedulePersist(rec);
+
   return event;
 }
 
-export function getRun(runId: string): SwarmRunRecord | null {
-  return runs.get(runId) ?? null;
+export function getRun(
+  runId: string,
+): SwarmRunRecord | null {
+  return (
+    runs.get(runId) ??
+    null
+  );
 }
 
 /** Hot cache first; fall back to Supabase for cold starts / other instances. */
-export async function getRunAsync(runId: string): Promise<SwarmRunRecord | null> {
-  const hot = runs.get(runId);
-  if (hot) return hot;
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+export async function getRunAsync(
+  runId: string,
+): Promise<SwarmRunRecord | null> {
+  const hot =
+    runs.get(runId);
+
+  if (hot) {
+    return hot;
+  }
+
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return null;
+  }
+
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.from('swarm_runs').select('*').eq('id', runId).maybeSingle();
-    if (error || !data) return null;
+    const supabase =
+      getSupabaseAdmin();
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from('swarm_runs')
+        .select('*')
+        .eq(
+          'id',
+          runId,
+        )
+        .maybeSingle();
+
+    if (
+      error ||
+      !data
+    ) {
+      return null;
+    }
+
     const rec: SwarmRunRecord = {
-      id: String(data.id),
-      userId: String(data.user_id),
-      prompt: String(data.prompt ?? ''),
-      status: data.status === 'error'
-        ? 'error'
-        : data.status === 'cancelled'
-          ? 'cancelled'
-          : data.status === 'running'
-            ? 'running'
-            : 'complete',
-      output: (data.output as Record<string, unknown>) ?? null,
-      featureCategory: data.feature_category ?? undefined,
-      tokenUsage: data.token_usage ?? undefined,
-      messages: Array.isArray(data.messages) ? data.messages : undefined,
-      created_at: String(data.created_at ?? new Date().toISOString()),
-      completed_at: data.completed_at ? String(data.completed_at) : null,
-      iteration_count: Number(data.iteration_count ?? 0),
-      events: Array.isArray(data.events) ? (data.events as SwarmRunEvent[]) : [],
-      lastSequence: Number(data.last_sequence ?? 0),
+      id:
+        String(data.id),
+
+      userId:
+        String(data.user_id),
+
+      prompt:
+        String(
+          data.prompt ??
+          '',
+        ),
+
+      status:
+        data.status ===
+        'error'
+          ? 'error'
+          : data.status ===
+            'cancelled'
+            ? 'cancelled'
+            : data.status ===
+              'running'
+              ? 'running'
+              : 'complete',
+
+      output:
+        (
+          data.output as
+            Record<string, unknown>
+        ) ??
+        null,
+
+      featureCategory:
+        data.feature_category ??
+        undefined,
+
+      tokenUsage:
+        data.token_usage ??
+        undefined,
+
+      messages:
+        Array.isArray(
+          data.messages,
+        )
+          ? data.messages
+          : undefined,
+
+      created_at:
+        String(
+          data.created_at ??
+          new Date().toISOString(),
+        ),
+
+      completed_at:
+        data.completed_at
+          ? String(
+              data.completed_at,
+            )
+          : null,
+
+      iteration_count:
+        Number(
+          data.iteration_count ??
+          0,
+        ),
+
+      events:
+        Array.isArray(
+          data.events,
+        )
+          ? (
+              data.events as
+                SwarmRunEvent[]
+            )
+          : [],
+
+      lastSequence:
+        Number(
+          data.last_sequence ??
+          0,
+        ),
     };
-    runs.set(runId, rec);
-    touchUser(rec.userId, runId);
+
+    runs.set(
+      runId,
+      rec,
+    );
+
+    touchUser(
+      rec.userId,
+      runId,
+    );
+
     return rec;
   } catch {
     return null;
@@ -420,58 +642,142 @@ export async function requestRunCancellation(
   runId: string,
   userId: string,
 ): Promise<boolean> {
-  const hot = runs.get(runId);
-  if (hot && hot.userId !== userId) return false;
+  const hot =
+    runs.get(runId);
 
-  const cancelledAt = new Date().toISOString();
+  if (
+    hot &&
+    hot.userId !== userId
+  ) {
+    return false;
+  }
+
+  const cancelledAt =
+    new Date().toISOString();
+
   const cancelledOutput = {
     type: 'error',
     error: 'Build stopped.',
     code: 'BUILD_CANCELLED',
   };
 
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from('swarm_runs')
-      .update({
-        status: 'cancelled',
-        output: cancelledOutput,
-        completed_at: cancelledAt,
-      })
-      .eq('id', runId)
-      .eq('user_id', userId)
-      .eq('status', 'running')
-      .select('id');
-    if (error) throw new Error(`Platform cancellation write failed: ${error.message}`);
-    if (!data?.length) return false;
+  if (
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    const supabase =
+      getSupabaseAdmin();
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from('swarm_runs')
+        .update({
+          status:
+            'cancelled',
+
+          output:
+            cancelledOutput,
+
+          completed_at:
+            cancelledAt,
+        })
+        .eq(
+          'id',
+          runId,
+        )
+        .eq(
+          'user_id',
+          userId,
+        )
+        .eq(
+          'status',
+          'running',
+        )
+        .select('id');
+
+    if (error) {
+      throw new Error(
+        `Platform cancellation write failed: ${error.message}`,
+      );
+    }
+
+    if (
+      !data?.length
+    ) {
+      return false;
+    }
   } else if (!hot) {
     return false;
   }
 
-  if (hot?.status === 'running') {
-    hot.status = 'cancelled';
-    hot.output = cancelledOutput;
-    hot.completed_at = cancelledAt;
+  if (
+    hot?.status ===
+    'running'
+  ) {
+    hot.status =
+      'cancelled';
+
+    hot.output =
+      cancelledOutput;
+
+    hot.completed_at =
+      cancelledAt;
+
     hot.iteration_count += 1;
-    runs.set(runId, hot);
+
+    runs.set(
+      runId,
+      hot,
+    );
   }
+
   return true;
 }
 
 /** Read the durable cancellation flag without accepting a potentially stale hot row. */
-export async function isRunCancellationRequested(runId: string): Promise<boolean> {
-  const hot = runs.get(runId);
-  if (hot?.status === 'cancelled') return true;
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
+export async function isRunCancellationRequested(
+  runId: string,
+): Promise<boolean> {
+  const hot =
+    runs.get(runId);
+
+  if (
+    hot?.status ===
+    'cancelled'
+  ) {
+    return true;
+  }
+
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return false;
+  }
+
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from('swarm_runs')
-      .select('status')
-      .eq('id', runId)
-      .maybeSingle();
-    return !error && data?.status === 'cancelled';
+    const supabase =
+      getSupabaseAdmin();
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from('swarm_runs')
+        .select('status')
+        .eq(
+          'id',
+          runId,
+        )
+        .maybeSingle();
+
+    return (
+      !error &&
+      data?.status ===
+        'cancelled'
+    );
   } catch {
     return false;
   }
@@ -485,18 +791,47 @@ export async function isRunCancellationRequested(runId: string): Promise<boolean
  */
 export function activeRunIds(): string[] {
   const active: string[] = [];
-  for (const [id, run] of runs) {
-    if (run.status === 'running') active.push(id);
+
+  for (
+    const [
+      id,
+      run,
+    ] of runs
+  ) {
+    if (
+      run.status ===
+      'running'
+    ) {
+      active.push(id);
+    }
   }
+
   return active;
 }
 
-export function listRunsForUser(userId: string, limit = 30): SwarmRunRecord[] {
-  const ids = userIndex.get(userId) ?? [];
+export function listRunsForUser(
+  userId: string,
+  limit = 30,
+): SwarmRunRecord[] {
+  const ids =
+    userIndex.get(userId) ??
+    [];
+
   return ids
-    .map((id) => runs.get(id))
-    .filter((r): r is SwarmRunRecord => Boolean(r))
-    .slice(0, limit);
+    .map(
+      (id) =>
+        runs.get(id),
+    )
+    .filter(
+      (
+        r,
+      ): r is SwarmRunRecord =>
+        Boolean(r),
+    )
+    .slice(
+      0,
+      limit,
+    );
 }
 
 export function mergeRunHistory(
@@ -504,91 +839,315 @@ export function mergeRunHistory(
   hot: SwarmRunRecord[],
   limit: number,
 ): SwarmRunRecord[] {
-  const merged = new Map(persisted.map((run) => [run.id, run]));
-  for (const run of hot) merged.set(run.id, run);
-  return [...merged.values()]
-    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
-    .slice(0, limit);
+  const merged =
+    new Map(
+      persisted.map(
+        (run) => [
+          run.id,
+          run,
+        ],
+      ),
+    );
+
+  for (
+    const run of hot
+  ) {
+    merged.set(
+      run.id,
+      run,
+    );
+  }
+
+  return [
+    ...merged.values(),
+  ]
+    .sort(
+      (
+        a,
+        b,
+      ) =>
+        Date.parse(
+          b.created_at,
+        ) -
+        Date.parse(
+          a.created_at,
+        ),
+    )
+    .slice(
+      0,
+      limit,
+    );
 }
 
-export async function listRunsForUserAsync(userId: string, limit = 30): Promise<SwarmRunRecord[]> {
-  const hot = listRunsForUser(userId, limit);
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return hot;
+export async function listRunsForUserAsync(
+  userId: string,
+  limit = 30,
+): Promise<SwarmRunRecord[]> {
+  const hot =
+    listRunsForUser(
+      userId,
+      limit,
+    );
+
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return hot;
+  }
+
   try {
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from('swarm_runs')
-      .select('*')
-      .eq('user_id', userId)
-      .in('status', ['running', 'complete', 'completed', 'error', 'cancelled'])
-      .order('created_at', { ascending: false })
-      .limit(limit);
-    if (error || !data?.length) return hot;
-    const persisted = data.map((row) => {
-      const rec: SwarmRunRecord = {
-        id: String(row.id),
-        userId: String(row.user_id),
-        prompt: String(row.prompt ?? ''),
-        status: row.status === 'error'
-          ? 'error'
-          : row.status === 'cancelled'
-            ? 'cancelled'
-            : row.status === 'running'
-              ? 'running'
-              : 'complete',
-        output: (row.output as Record<string, unknown>) ?? null,
-        featureCategory: row.feature_category ?? undefined,
-        tokenUsage: row.token_usage ?? undefined,
-        messages: Array.isArray(row.messages) ? row.messages : undefined,
-        created_at: String(row.created_at ?? new Date().toISOString()),
-        completed_at: row.completed_at ? String(row.completed_at) : null,
-        iteration_count: Number(row.iteration_count ?? 0),
-        events: Array.isArray(row.events) ? (row.events as SwarmRunEvent[]) : [],
-        lastSequence: Number(row.last_sequence ?? 0),
-      };
-      runs.set(rec.id, rec);
-      touchUser(userId, rec.id);
-      return rec;
-    });
+    const supabase =
+      getSupabaseAdmin();
+
+    const {
+      data,
+      error,
+    } =
+      await supabase
+        .from('swarm_runs')
+        .select('*')
+        .eq(
+          'user_id',
+          userId,
+        )
+        .in(
+          'status',
+          [
+            'running',
+            'complete',
+            'completed',
+            'error',
+            'cancelled',
+          ],
+        )
+        .order(
+          'created_at',
+          {
+            ascending:
+              false,
+          },
+        )
+        .limit(limit);
+
+    if (
+      error ||
+      !data?.length
+    ) {
+      return hot;
+    }
+
+    const persisted =
+      data.map(
+        (row) => {
+          const rec: SwarmRunRecord = {
+            id:
+              String(
+                row.id,
+              ),
+
+            userId:
+              String(
+                row.user_id,
+              ),
+
+            prompt:
+              String(
+                row.prompt ??
+                '',
+              ),
+
+            status:
+              row.status ===
+              'error'
+                ? 'error'
+                : row.status ===
+                  'cancelled'
+                  ? 'cancelled'
+                  : row.status ===
+                    'running'
+                    ? 'running'
+                    : 'complete',
+
+            output:
+              (
+                row.output as
+                  Record<
+                    string,
+                    unknown
+                  >
+              ) ??
+              null,
+
+            featureCategory:
+              row.feature_category ??
+              undefined,
+
+            tokenUsage:
+              row.token_usage ??
+              undefined,
+
+            messages:
+              Array.isArray(
+                row.messages,
+              )
+                ? row.messages
+                : undefined,
+
+            created_at:
+              String(
+                row.created_at ??
+                new Date()
+                  .toISOString(),
+              ),
+
+            completed_at:
+              row.completed_at
+                ? String(
+                    row.completed_at,
+                  )
+                : null,
+
+            iteration_count:
+              Number(
+                row.iteration_count ??
+                0,
+              ),
+
+            events:
+              Array.isArray(
+                row.events,
+              )
+                ? (
+                    row.events as
+                      SwarmRunEvent[]
+                  )
+                : [],
+
+            lastSequence:
+              Number(
+                row.last_sequence ??
+                0,
+              ),
+          };
+
+          runs.set(
+            rec.id,
+            rec,
+          );
+
+          touchUser(
+            userId,
+            rec.id,
+          );
+
+          return rec;
+        },
+      );
+
     // A warm process may only know about the newest run. Returning that partial hot
     // cache made older durable runs disappear from History and prevented legacy
     // terminal snapshots from finding their authoritative build artifact. Merge both
     // sources, preferring the live record for an ID that exists in each.
-    return mergeRunHistory(persisted, hot, limit);
+    return mergeRunHistory(
+      persisted,
+      hot,
+      limit,
+    );
   } catch {
     return hot;
   }
 }
 
-export async function persistRunState(runId: string): Promise<void> {
-  const rec = runs.get(runId);
-  if (!rec) throw new Error('Cannot persist an unknown swarm run');
-  await persistToSupabase(rec);
+export async function persistRunState(
+  runId: string,
+): Promise<void> {
+  const rec =
+    runs.get(runId);
+
+  if (!rec) {
+    throw new Error(
+      'Cannot persist an unknown swarm run',
+    );
+  }
+
+  await persistToSupabase(
+    rec,
+  );
 }
 
-async function persistToSupabase(rec: SwarmRunRecord): Promise<void> {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+async function persistToSupabase(
+  rec: SwarmRunRecord,
+): Promise<void> {
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return;
+  }
+
   await ensureShipLoopSchema();
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from('swarm_runs').upsert(
-    {
-      id: rec.id,
-      user_id: rec.userId,
-      prompt: rec.prompt,
-      status: rec.status,
-      output: rec.output,
-      feature_category: rec.featureCategory ?? null,
-      token_usage: rec.tokenUsage ?? null,
-      messages: rec.messages ?? null,
-      created_at: rec.created_at,
-      completed_at: rec.completed_at,
-      iteration_count: rec.iteration_count,
-      events: rec.events,
-      last_sequence: rec.lastSequence,
-    },
-    { onConflict: 'id' },
-  );
+
+  const supabase =
+    getSupabaseAdmin();
+
+  const {
+    error,
+  } =
+    await supabase
+      .from('swarm_runs')
+      .upsert(
+        {
+          id:
+            rec.id,
+
+          user_id:
+            rec.userId,
+
+          prompt:
+            rec.prompt,
+
+          status:
+            rec.status,
+
+          output:
+            rec.output,
+
+          feature_category:
+            rec.featureCategory ??
+            null,
+
+          token_usage:
+            rec.tokenUsage ??
+            null,
+
+          messages:
+            rec.messages ??
+            null,
+
+          created_at:
+            rec.created_at,
+
+          completed_at:
+            rec.completed_at,
+
+          iteration_count:
+            rec.iteration_count,
+
+          events:
+            rec.events,
+
+          last_sequence:
+            rec.lastSequence,
+        },
+
+        {
+          onConflict:
+            'id',
+        },
+      );
+
   if (error) {
-    throw new Error(`Platform swarm-run write failed: ${error.message}`);
+    throw new Error(
+      `Platform swarm-run write failed: ${error.message}`,
+    );
   }
 }
