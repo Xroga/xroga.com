@@ -77,7 +77,15 @@ export interface ChatAttachment {
 }
 
 export interface StreamSwarmOptions {
-  projectId?: string;
+  /**
+   * Normally omitted and Xroga creates a fresh run id.
+   *
+   * Supplied only when explicitly resuming a previously interrupted
+   * Agent V2 run.
+   */
+  runId?: string;
+
+  projectId?: string;  projectId?: string;
   signal?: AbortSignal;
   compact?: boolean;
   /** Reuse a session token already fetched — skips a second Supabase round-trip */
@@ -91,6 +99,7 @@ export interface StreamSwarmOptions {
     buildContinuation?: boolean;
     buildOriginalPrompt?: string;
     buildUpdate?: boolean;
+    resumeRun?: boolean;
     githubTargetRepo?: string;
     githubTargetBranch?: string;
     projectRoot?: string;
@@ -250,9 +259,15 @@ export async function streamSwarmExecute(
   }
 
   const clientRunId =
-    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+  options.runId ??
+  (
+    typeof crypto !==
+      'undefined' &&
+    typeof crypto.randomUUID ===
+      'function'
       ? crypto.randomUUID()
-      : undefined;
+      : undefined
+  );
 
   const res = await fetch(`${API_URL}/api/swarm/execute`, {
     method: 'POST',
