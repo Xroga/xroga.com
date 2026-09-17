@@ -23,11 +23,9 @@ import {
 } from './SoftwareAgentWorkspace.js';
 
 export interface ProductionSoftwareAgentRepositoryAdapter {
-  /**
-   * Load the exact authorized repository/branch snapshot.
-   */
   loadFiles(
-    contract: SoftwareExecutionContract,
+    contract:
+      SoftwareExecutionContract,
   ): Promise<
     Array<{
       path: string;
@@ -35,81 +33,79 @@ export interface ProductionSoftwareAgentRepositoryAdapter {
     }>
   >;
 
-  /**
-   * Persist the fully verified working snapshot to an
-   * authorized review branch.
-   *
-   * Must never merge or deploy.
-   */
   createReviewBranch(
-    contract: SoftwareExecutionContract,
+    contract:
+      SoftwareExecutionContract,
+
     input: {
-      files: Array<{
-        path: string;
-        content: string;
-      }>;
+      files:
+        Array<{
+          path: string;
+          content: string;
+        }>;
 
-      changedPaths: string[];
+      changedPaths:
+        string[];
 
-      deletedPaths: string[];
+      deletedPaths:
+        string[];
     },
-  ): Promise<ReviewBranchResult>;
+  ): Promise<
+    ReviewBranchResult
+  >;
 }
 
 export interface ProductionSoftwareAgentRuntimeAdapter {
-  /**
-   * Execute inside Xroga's isolated sandbox.
-   */
   runCommand(
-    contract: SoftwareExecutionContract,
+    contract:
+      SoftwareExecutionContract,
+
     input: {
-      files: Array<{
-        path: string;
-        content: string;
-      }>;
+      files:
+        Array<{
+          path: string;
+          content: string;
+        }>;
 
-      command: string;
+      command:
+        string;
     },
-  ): Promise<CommandExecutionResult>;
+  ): Promise<
+    CommandExecutionResult
+  >;
 
-  /**
-   * Run deterministic checks against the CURRENT working
-   * snapshot.
-   */
   runChecks(
-    contract: SoftwareExecutionContract,
-    input: {
-      files: Array<{
-        path: string;
-        content: string;
-      }>;
-    },
-  ): Promise<SoftwareCheckResult[]>;
+    contract:
+      SoftwareExecutionContract,
 
-  /**
-   * Run ONE isolated browser/runtime verification against the
-   * CURRENT working snapshot.
-   *
-   * Xroga's real verifier starts the application and browser
-   * inside the same disposable sandbox execution. There is no
-   * persistent preview id.
-   */
+    input: {
+      files:
+        Array<{
+          path: string;
+          content: string;
+        }>;
+    },
+  ): Promise<
+    SoftwareCheckResult[]
+  >;
+
   verifyPreview(
-    contract: SoftwareExecutionContract,
-    input: {
-      files: Array<{
-        path: string;
-        content: string;
-      }>;
+    contract:
+      SoftwareExecutionContract,
 
-      /**
-       * Latest deterministic check evidence from this same
-       * workspace. The production verifier can use it to map
-       * build/test preconditions without trusting the model.
-       */
-      checks: SoftwareCheckResult[];
+    input: {
+      files:
+        Array<{
+          path: string;
+          content: string;
+        }>;
+
+      checks:
+        SoftwareCheckResult[];
     },
-  ): Promise<SoftwarePreviewEvidence>;
+  ): Promise<
+    SoftwarePreviewEvidence
+  >;
 }
 
 export interface ProductionSoftwareAgentDependencies {
@@ -130,23 +126,35 @@ export interface ProductionSoftwareAgentOperationsSession {
 
 export interface ProductionSoftwareAgentOperationsOptions {
   /**
-   * Authoritative run-start snapshot supplied by an outer Xroga
-   * orchestration layer.
+   * Exact authorized run-start snapshot.
    *
-   * When present, even as an empty array, Agent V2 MUST use this
-   * snapshot instead of re-reading GitHub. This keeps planning,
-   * implementation and validation on the same repository state.
+   * This remains the immutable diff base even when a checkpoint is
+   * restored.
    */
   initialFiles?: Array<{
+    path: string;
+    content: string;
+  }>;
+
+  /**
+   * Optional restored Agent V2 working snapshot.
+   *
+   * It MUST have been reconstructed from a checkpoint whose base
+   * fingerprint matches initialFiles.
+   */
+  workingFiles?: Array<{
     path: string;
     content: string;
   }>;
 }
 
 function buildSimpleUnifiedDiff(
-  changes: ReturnType<
-    SoftwareAgentWorkspace['getChanges']
-  >,
+  changes:
+    ReturnType<
+      SoftwareAgentWorkspace[
+        'getChanges'
+      ]
+    >,
 ): string {
   if (
     changes.length ===
@@ -181,10 +189,12 @@ function buildSimpleUnifiedDiff(
 
       for (
         const line of
-        (change.after ?? '')
-          .split(
-            /\r?\n/,
-          )
+        (
+          change.after ??
+          ''
+        ).split(
+          /\r?\n/,
+        )
       ) {
         chunks.push(
           `+${line}`,
@@ -208,10 +218,12 @@ function buildSimpleUnifiedDiff(
 
       for (
         const line of
-        (change.before ?? '')
-          .split(
-            /\r?\n/,
-          )
+        (
+          change.before ??
+          ''
+        ).split(
+          /\r?\n/,
+        )
       ) {
         chunks.push(
           `-${line}`,
@@ -231,10 +243,12 @@ function buildSimpleUnifiedDiff(
 
     for (
       const line of
-      (change.before ?? '')
-        .split(
-          /\r?\n/,
-        )
+      (
+        change.before ??
+        ''
+      ).split(
+        /\r?\n/,
+      )
     ) {
       chunks.push(
         `-${line}`,
@@ -243,10 +257,12 @@ function buildSimpleUnifiedDiff(
 
     for (
       const line of
-      (change.after ?? '')
-        .split(
-          /\r?\n/,
-        )
+      (
+        change.after ??
+        ''
+      ).split(
+        /\r?\n/,
+      )
     ) {
       chunks.push(
         `+${line}`,
@@ -260,12 +276,18 @@ function buildSimpleUnifiedDiff(
 }
 
 function countChangedLines(
-  changes: ReturnType<
-    SoftwareAgentWorkspace['getChanges']
-  >,
+  changes:
+    ReturnType<
+      SoftwareAgentWorkspace[
+        'getChanges'
+      ]
+    >,
 ): {
-  additions: number;
-  deletions: number;
+  additions:
+    number;
+
+  deletions:
+    number;
 } {
   let additions =
     0;
@@ -316,6 +338,7 @@ function countChangedLines(
     additions +=
       Math.max(
         0,
+
         afterLines.length -
           Math.min(
             beforeLines.length,
@@ -326,6 +349,7 @@ function countChangedLines(
     deletions +=
       Math.max(
         0,
+
         beforeLines.length -
           Math.min(
             beforeLines.length,
@@ -340,31 +364,35 @@ function countChangedLines(
   };
 }
 
-/**
- * Create one stateful production-operations session.
- *
- * The workspace snapshot is durable for the agent run even
- * though each sandbox execution remains disposable.
- */
 export async function createProductionSoftwareAgentOperations(
-  contract: SoftwareExecutionContract,
+  contract:
+    SoftwareExecutionContract,
+
   dependencies:
     ProductionSoftwareAgentDependencies,
+
   options:
-    ProductionSoftwareAgentOperationsOptions = {},
-): Promise<ProductionSoftwareAgentOperationsSession> {
+    ProductionSoftwareAgentOperationsOptions =
+      {},
+): Promise<
+  ProductionSoftwareAgentOperationsSession
+> {
   const initialFiles =
     options.initialFiles !==
     undefined
-      ? options.initialFiles.map(
-          (file) => ({
-            path:
-              file.path,
+      ? options
+          .initialFiles
+          .map(
+            (
+              file,
+            ) => ({
+              path:
+                file.path,
 
-            content:
-              file.content,
-          }),
-        )
+              content:
+                file.content,
+            }),
+          )
       : contract.repository
         ? await dependencies
             .repository
@@ -373,9 +401,32 @@ export async function createProductionSoftwareAgentOperations(
             )
         : [];
 
+  const workingFiles =
+    options.workingFiles !==
+    undefined
+      ? options
+          .workingFiles
+          .map(
+            (
+              file,
+            ) => ({
+              path:
+                file.path,
+
+              content:
+                file.content,
+            }),
+          )
+      : initialFiles;
+
+  /*
+   * The authorized base and the resumed working snapshot remain
+   * separate. This preserves the complete diff across a restart.
+   */
   const workspace =
     new SoftwareAgentWorkspace(
       initialFiles,
+      workingFiles,
     );
 
   let latestChecks:
@@ -384,195 +435,233 @@ export async function createProductionSoftwareAgentOperations(
 
   const operations:
     ProductionSoftwareAgentOperations = {
-      async listFiles():
-        Promise<
-          ProjectFileSummary[]
-        > {
-        return workspace.listFiles();
-      },
-
-      async readFiles(
-        _contract,
-        paths,
-      ): Promise<
-        ProjectFileContent[]
+    async listFiles():
+      Promise<
+        ProjectFileSummary[]
       > {
-        return workspace.readFiles(
+      return workspace
+        .listFiles();
+    },
+
+    async readFiles(
+      _contract,
+      paths,
+    ): Promise<
+      ProjectFileContent[]
+    > {
+      return workspace
+        .readFiles(
           paths,
         );
-      },
+    },
 
-      async searchProject(
-        _contract,
-        query,
-      ) {
-        return workspace.search(
+    async searchProject(
+      _contract,
+      query,
+    ) {
+      return workspace
+        .search(
           query,
         );
-      },
+    },
 
-      async writeFile(
-        _contract,
-        path,
-        content,
-        intent:
-          FileWriteIntent,
-      ): Promise<FileMutationResult> {
-        return workspace.writeFile(
+    async writeFile(
+      _contract,
+      path,
+      content,
+      intent:
+        FileWriteIntent,
+    ): Promise<
+      FileMutationResult
+    > {
+      return workspace
+        .writeFile(
           path,
           content,
           intent,
         );
-      },
+    },
 
-      async deleteFile(
-        _contract,
-        path,
-      ) {
-        return workspace.deleteFile(
+    async deleteFile(
+      _contract,
+      path,
+    ) {
+      return workspace
+        .deleteFile(
           path,
         );
-      },
+    },
 
-      async runCommand(
-        currentContract,
-        command,
-      ): Promise<CommandExecutionResult> {
-        return dependencies.runtime
-          .runCommand(
+    async runCommand(
+      currentContract,
+      command,
+    ): Promise<
+      CommandExecutionResult
+    > {
+      return dependencies
+        .runtime
+        .runCommand(
+          currentContract,
+
+          {
+            files:
+              workspace
+                .getFiles(),
+
+            command,
+          },
+        );
+    },
+
+    async runChecks(
+      currentContract,
+    ): Promise<
+      SoftwareCheckResult[]
+    > {
+      const checks =
+        await dependencies
+          .runtime
+          .runChecks(
             currentContract,
+
             {
               files:
-                workspace.getFiles(),
-
-              command,
+                workspace
+                  .getFiles(),
             },
           );
-      },
 
-      async runChecks(
-        currentContract,
-      ): Promise<
-        SoftwareCheckResult[]
+      latestChecks =
+        checks.map(
+          (
+            check,
+          ) => ({
+            ...check,
+          }),
+        );
+
+      return checks;
+    },
+
+    async gitDiff():
+      Promise<
+        GitDiffResult
       > {
-        const checks =
-          await dependencies.runtime
-            .runChecks(
-              currentContract,
-              {
-                files:
-                  workspace.getFiles(),
-              },
-            );
+      const changes =
+        workspace
+          .getChanges();
 
-        latestChecks =
-          checks.map(
-            (check) => ({
-              ...check,
-            }),
-          );
+      const counts =
+        countChangedLines(
+          changes,
+        );
 
-        return checks;
-      },
+      return {
+        changedPaths:
+          changes.map(
+            (
+              change,
+            ) =>
+              change.path,
+          ),
 
-      async gitDiff():
-        Promise<
-          GitDiffResult
-        > {
-        const changes =
-          workspace.getChanges();
-
-        const counts =
-          countChangedLines(
+        diff:
+          buildSimpleUnifiedDiff(
             changes,
+          ),
+
+        additions:
+          counts.additions,
+
+        deletions:
+          counts.deletions,
+      };
+    },
+
+    async verifyPreview(
+      currentContract,
+    ): Promise<
+      SoftwarePreviewEvidence
+    > {
+      return dependencies
+        .runtime
+        .verifyPreview(
+          currentContract,
+
+          {
+            files:
+              workspace
+                .getFiles(),
+
+            checks:
+              latestChecks.map(
+                (
+                  check,
+                ) => ({
+                  ...check,
+                }),
+              ),
+          },
+        );
+    },
+
+    async createReviewBranch(
+      currentContract,
+    ): Promise<
+      ReviewBranchResult
+    > {
+      const changes =
+        workspace
+          .getChanges();
+
+      if (
+        changes.length ===
+        0
+      ) {
+        throw new Error(
+          'NO_CHANGES_TO_PERSIST',
+        );
+      }
+
+      const deletedPaths =
+        changes
+          .filter(
+            (
+              change,
+            ) =>
+              change.kind ===
+              'deleted',
+          )
+          .map(
+            (
+              change,
+            ) =>
+              change.path,
           );
 
-        return {
-          changedPaths:
-            changes.map(
-              (change) =>
-                change.path,
-            ),
+      return dependencies
+        .repository
+        .createReviewBranch(
+          currentContract,
 
-          diff:
-            buildSimpleUnifiedDiff(
-              changes,
-            ),
+          {
+            files:
+              workspace
+                .getFiles(),
 
-          additions:
-            counts.additions,
+            changedPaths:
+              changes.map(
+                (
+                  change,
+                ) =>
+                  change.path,
+              ),
 
-          deletions:
-            counts.deletions,
-        };
-      },
-
-      async verifyPreview(
-        currentContract,
-      ): Promise<SoftwarePreviewEvidence> {
-        return dependencies.runtime
-          .verifyPreview(
-            currentContract,
-            {
-              files:
-                workspace.getFiles(),
-
-              checks:
-                latestChecks.map(
-                  (check) => ({
-                    ...check,
-                  }),
-                ),
-            },
-          );
-      },
-
-      async createReviewBranch(
-        currentContract,
-      ): Promise<ReviewBranchResult> {
-        const changes =
-          workspace.getChanges();
-
-        if (
-          changes.length ===
-          0
-        ) {
-          throw new Error(
-            'NO_CHANGES_TO_PERSIST',
-          );
-        }
-
-        const deletedPaths =
-          changes
-            .filter(
-              (change) =>
-                change.kind ===
-                'deleted',
-            )
-            .map(
-              (change) =>
-                change.path,
-            );
-
-        return dependencies
-          .repository
-          .createReviewBranch(
-            currentContract,
-            {
-              files:
-                workspace.getFiles(),
-
-              changedPaths:
-                changes.map(
-                  (change) =>
-                    change.path,
-                ),
-
-              deletedPaths,
-            },
-          );
-      },
-    };
+            deletedPaths,
+          },
+        );
+    },
+  };
 
   return {
     operations,
