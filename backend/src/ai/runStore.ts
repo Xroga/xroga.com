@@ -88,6 +88,151 @@ export function createRun(userId: string, prompt: string, runId: string): SwarmR
 
 /** Persist the recovery record before an expensive provider call begins. */
 export async function createRunDurable(
+  /**
+ * Re-open one previously interrupted durable run without destroying its
+ * run identity, event sequence, transcript or Agent V2 checkpoint key.
+ *
+ * This is intentionally different from createRunDurable().
+ *
+ * A retry of an interrupted Agent V2 task must use the SAME runId because
+ * software_agent_checkpoints are keyed by that run id.
+ */
+export async function resumeRunDurable(
+  userId:
+    string,
+
+  prompt:
+    string,
+
+  runId:
+    string,
+): Promise<
+  SwarmRunRecord
+> {
+  const existing =
+    await getRunAsync(
+      runId,
+    );
+
+  if (
+    !existing ||
+    existing.userId !==
+      userId
+  ) {
+    const error =
+      new Error(
+        'The build checkpoint could not be found for this account.',
+      ) as Error & {
+        code?:
+          string;
+      };
+
+    error.code =
+      'RUN_NOT_FOUND';
+
+    throw error;
+  }
+
+  /*
+   * Never launch a second worker against a run that Xroga still regards
+   * as active.
+   */
+  if (
+    existing.status ===
+    'running'
+  ) {
+    const error =
+      new Error(
+        'This build is already running. Reconnect to the existing run instead of starting another worker.',
+      ) as Error & {
+        code?:
+          string;
+      };
+
+    error.code =
+      'RUN_ALREADY_ACTIVE';
+
+    throw error;
+  }
+
+  /*
+   * A completely successful run has nothing to resume.
+   *
+   * New product changes should receive a new run id instead.
+   */
+  if (
+    existing.status ===
+    'complete'
+  ) {
+    const error =
+      new Error(
+        'This build already completed. Start a new update request instead of resuming it.',
+      ) as Error & {
+        code?:
+          string;
+      };
+
+    error.code =
+      'RUN_ALREADY_COMPLETE';
+
+    throw error;
+  }
+
+  const resumed:
+    SwarmRunRecord = {
+    ...existing,
+
+    /*
+     * Keep the original request as the canonical run title when it
+     * exists. The new continuation prompt still reaches the pipeline
+     * separately.
+     */
+    prompt:
+      existing.prompt
+        .trim()
+        ? existing.prompt
+        : prompt
+            .trim()
+            .slice(
+              0,
+              8_000,
+            ),
+
+    status:
+      'running',
+
+    /*
+     * Preserve a real artifact if one was already emitted before the
+     * interruption. A plain error payload is cleared so reconnecting
+     * clients do not mistake the old failure for the current run.
+     */
+    output:
+      isEngineeringArtifact(
+        existing.output,
+      )
+        ? existing.output
+        : null,
+
+    completed_at:
+      null,
+  };
+
+  runs.set(
+    runId,
+    resumed,
+  );
+
+  touchUser(
+    userId,
+    runId,
+  );
+
+  await persistToSupabase(
+    resumed,
+  );
+
+  return resumed;
+}
   userId: string,
   prompt: string,
   runId: string,
