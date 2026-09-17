@@ -84,7 +84,7 @@ jobs:
       # Universal / Agent V2 rollout correctness
       # ------------------------------------------------------------
 
-      - name: Reject stale rollout secret overrides
+      - name: Remove stale rollout secret overrides
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
@@ -98,18 +98,33 @@ jobs:
           echo "$SECRET_LIST" | awk '{print $1}' > /tmp/xroga-secret-names.txt
 
           if grep -qx 'UNIVERSAL_AGENT_ENABLED' /tmp/xroga-secret-names.txt; then
-            echo "::error::UNIVERSAL_AGENT_ENABLED exists as a Fly secret and overrides fly.api.toml."
-            echo "::error::Run: fly secrets unset UNIVERSAL_AGENT_ENABLED -a xroga-api"
-            exit 1
+            echo "Removing stale UNIVERSAL_AGENT_ENABLED Fly secret so fly.api.toml is authoritative."
+            flyctl secrets unset UNIVERSAL_AGENT_ENABLED -a xroga-api
           fi
 
           if grep -qx 'UNIVERSAL_AGENT_PERCENTAGE' /tmp/xroga-secret-names.txt; then
-            echo "::error::UNIVERSAL_AGENT_PERCENTAGE exists as a Fly secret and overrides fly.api.toml."
-            echo "::error::Run: fly secrets unset UNIVERSAL_AGENT_PERCENTAGE -a xroga-api"
+            echo "Removing stale UNIVERSAL_AGENT_PERCENTAGE Fly secret so fly.api.toml is authoritative."
+            flyctl secrets unset UNIVERSAL_AGENT_PERCENTAGE -a xroga-api
+          fi
+
+          if ! UPDATED_SECRET_LIST="$(flyctl secrets list -a xroga-api)"; then
+            echo "::error::Could not verify Fly secrets after cleanup."
             exit 1
           fi
 
-          echo "Universal rollout has no stale Fly secret override."
+          echo "$UPDATED_SECRET_LIST" | awk '{print $1}' > /tmp/xroga-secret-names-after.txt
+
+          if grep -qx 'UNIVERSAL_AGENT_ENABLED' /tmp/xroga-secret-names-after.txt; then
+            echo "::error::UNIVERSAL_AGENT_ENABLED still exists after cleanup."
+            exit 1
+          fi
+
+          if grep -qx 'UNIVERSAL_AGENT_PERCENTAGE' /tmp/xroga-secret-names-after.txt; then
+            echo "::error::UNIVERSAL_AGENT_PERCENTAGE still exists after cleanup."
+            exit 1
+          fi
+
+          echo "Universal rollout secret cleanup complete. fly.api.toml now controls rollout mode and percentage."
 
       # ------------------------------------------------------------
       # Agent V2 sandbox / browser verification capability
