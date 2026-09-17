@@ -58,17 +58,21 @@ import type {
 } from './universalFlow.js';
 
 export interface UniversalSoftwareImplementationInput {
-  userId: string;
+  userId:
+    string;
 
-  runId: string;
+  runId:
+    string;
 
   projectId?:
-    string |
-    null;
+    | string
+    | null;
 
-  prompt: string;
+  prompt:
+    string;
 
-  brief: string;
+  brief:
+    string;
 
   plan:
     UniversalRunPlan;
@@ -102,11 +106,10 @@ export interface UniversalSoftwareImplementationInput {
   checkpointStore?:
     SoftwareAgentCheckpointStore;
 
-  runLegacy?:
-    () =>
-      Promise<
-        readonly ProjectFile[]
-      >;
+  runLegacy?: () =>
+    Promise<
+      readonly ProjectFile[]
+    >;
 }
 
 const DEFINITELY_NON_BROWSER_SURFACES =
@@ -157,6 +160,69 @@ function surfacesOf(
           declaration.surface,
         ),
     );
+}
+
+/**
+ * Whether Universal Architecture deliberately selected the dependency-free
+ * static browser runtime.
+ *
+ * This is architecture evidence, not prompt keyword inference.
+ *
+ * By the time execution reaches Agent V2, architecturePlan.ts has already
+ * decided whether the request is:
+ *
+ * - a dependency-free HTML/CSS/JavaScript site, or
+ * - a framework/package-managed web application.
+ *
+ * Agent V2 must obey that decision rather than independently upgrading a
+ * static landing page into Next.js.
+ */
+function usesStaticWebArchitecture(
+  plan:
+    UniversalRunPlan,
+): boolean {
+  return plan
+    .architecture
+    .components
+    .some(
+      (
+        component,
+      ) =>
+        component.adapterId ===
+        'static-web',
+    );
+}
+
+/**
+ * Extra implementation constraints for the dependency-free static web
+ * architecture.
+ *
+ * These are deliberately added only when the canonical architecture selected
+ * `static-web`. An ordinary Next.js / React / Vue / Svelte request therefore
+ * receives none of these restrictions.
+ */
+function staticWebConstraints(
+  plan:
+    UniversalRunPlan,
+): string[] {
+  if (
+    !usesStaticWebArchitecture(
+      plan,
+    )
+  ) {
+    return [];
+  }
+
+  return [
+    'STATIC WEB CONTRACT: The canonical Xroga architecture selected the dependency-free static-web runtime. Follow that architecture exactly.',
+    'Create a directly servable browser project centered on index.html, with local CSS and JavaScript files as needed.',
+    'Do not create package.json, package-lock.json, pnpm-lock.yaml, yarn.lock, bun.lock, tsconfig.json, next.config.*, vite.config.*, or another package-manager/build-tool manifest.',
+    'Do not introduce Next.js, React, Vue, Svelte, Angular, Vite, Tailwind build tooling, npm packages, or another framework unless the validated architecture itself explicitly selected that framework.',
+    'Do not run npm install, npm view, npx, pnpm, yarn, bun install, or any package-registry discovery command for this static-web project.',
+    'Use browser-native HTML, CSS, and JavaScript only. The finished product must work when index.html and its local assets are served directly by Xroga static preview infrastructure.',
+    'All local href/src references required by the page must point to files that exist in the workspace.',
+    'For this static-web architecture, dependency installation is not an implementation requirement and must not be invented as a verification step.',
+  ];
 }
 
 function taskKindFor(
@@ -282,9 +348,14 @@ function repositoryFromContext(
     | undefined,
 ):
   | {
-      owner: string;
-      repo: string;
-      branch: string;
+      owner:
+        string;
+
+      repo:
+        string;
+
+      branch:
+        string;
     }
   | undefined {
   if (
@@ -579,6 +650,24 @@ export async function runUniversalSoftwareImplementation(
       input.activeProjectContext,
     );
 
+  const implementationConstraints = [
+    input.brief,
+
+    'Treat Xroga planner architecture decisions as authoritative.',
+
+    'Preserve unrelated repository files and make the smallest coherent change.',
+
+    'Do not merge, deploy, or persist a repository branch from inside the implementation phase.',
+
+    'Use Xroga deterministic checks and browser verification when applicable before claiming completion.',
+
+    'If this run was restored from a checkpoint, continue from the checkpointed workspace rather than rebuilding correct work from scratch.',
+
+    ...staticWebConstraints(
+      input.plan,
+    ),
+  ];
+
   const runtime =
     await runSoftwareAgentRuntime({
       contract: {
@@ -669,14 +758,8 @@ export async function runUniversalSoftwareImplementation(
               }),
             ),
 
-        constraints: [
-          input.brief,
-          'Treat Xroga planner architecture decisions as authoritative.',
-          'Preserve unrelated repository files and make the smallest coherent change.',
-          'Do not merge, deploy, or persist a repository branch from inside the implementation phase.',
-          'Use Xroga deterministic checks and browser verification when applicable before claiming completion.',
-          'If this run was restored from a checkpoint, continue from the checkpointed workspace rather than rebuilding correct work from scratch.',
-        ],
+        constraints:
+          implementationConstraints,
       },
 
       agentV2: {
@@ -775,92 +858,113 @@ export async function runUniversalSoftwareImplementation(
           .SUPABASE_SERVICE_ROLE_KEY
           ? 'durable'
           : 'process-local',
+
+      staticWebArchitecture:
+        usesStaticWebArchitecture(
+          input.plan,
+        ),
     }),
   );
 
   /*
- * Implementation and verification are separate responsibilities.
- *
- * Agent V2 may have produced a complete usable workspace before a
- * provider continuation, sandbox check or Preview attempt fails.
- *
- * Do not discard those files.
- *
- * The OUTER Universal pipeline remains authoritative for deterministic
- * validation, browser verification, review and GitHub publication.
- * Therefore returning a non-empty workspace here does not allow
- * unverified code to be published.
- */
-const files =
-  runtime
-    .result
-    .workspace
-    .getFiles();
+   * Implementation and verification are separate responsibilities.
+   *
+   * Agent V2 may have produced a complete usable workspace before a
+   * provider continuation, sandbox check or Preview attempt fails.
+   *
+   * Do not discard those files.
+   *
+   * The OUTER Universal pipeline remains authoritative for deterministic
+   * validation, browser verification, review and GitHub publication.
+   * Therefore returning a non-empty workspace here does not allow
+   * unverified code to be published.
+   */
+  const files =
+    runtime
+      .result
+      .workspace
+      .getFiles();
 
-if (
-  files.length ===
-  0
-) {
-  throw softwareAgentFailure({
-    failureMessage:
-      runtime.result.failureMessage ??
-      'Software Agent V2 produced an empty project snapshot.',
-
-    blockers:
-      runtime.result.blockers,
-  });
-}
-
-if (
-  runtime
-    .result
-    .status !==
-  'verified'
-) {
-  console.warn(
-    '[software_agent_v2_inner_verification_incomplete]',
-    JSON.stringify({
-      runId:
-        input.runId,
-
-      status:
-        runtime.result.status,
-
-      failureCode:
-        runtime.result.failureCode,
-
+  if (
+    files.length ===
+    0
+  ) {
+    throw softwareAgentFailure({
       failureMessage:
-        runtime.result.failureMessage,
+        runtime.result.failureMessage ??
+        'Software Agent V2 produced an empty project snapshot.',
 
       blockers:
-        runtime.result.blockers.slice(
-          0,
-          4,
-        ),
+        runtime.result.blockers,
+    });
+  }
 
-      preservedFiles:
-        files.length,
+  if (
+    runtime
+      .result
+      .status !==
+    'verified'
+  ) {
+    console.warn(
+      '[software_agent_v2_inner_verification_incomplete]',
 
-      action:
-        'returning workspace to outer universal verification',
-    }),
-  );
+      JSON.stringify({
+        runId:
+          input.runId,
+
+        status:
+          runtime
+            .result
+            .status,
+
+        failureCode:
+          runtime
+            .result
+            .failureCode,
+
+        failureMessage:
+          runtime
+            .result
+            .failureMessage,
+
+        blockers:
+          runtime
+            .result
+            .blockers
+            .slice(
+              0,
+              4,
+            ),
+
+        preservedFiles:
+          files.length,
+
+        staticWebArchitecture:
+          usesStaticWebArchitecture(
+            input.plan,
+          ),
+
+        action:
+          'returning workspace to outer universal verification',
+      }),
+    );
+  }
+
+  /*
+   * Important:
+   *
+   * Returning files here is NOT publication.
+   *
+   * UniversalExecution still has to:
+   * - run deterministic validation
+   * - perform required browser verification
+   * - perform review
+   * - pass the verified gate
+   * - atomically commit to GitHub
+   *
+   * This simply prevents good implementation work from being destroyed
+   * because Agent V2's internal verification loop encountered an
+   * infrastructure/provider failure.
+   */
+  return files;
 }
-
-/*
- * Important:
- *
- * Returning files here is NOT publication.
- *
- * UniversalExecution still has to:
- * - run deterministic validation
- * - perform required browser verification
- * - perform review
- * - pass the verified gate
- * - atomically commit to GitHub
- *
- * This simply prevents good implementation work from being destroyed
- * because Agent V2's internal verification loop encountered an
- * infrastructure/provider failure.
- */
-return files;
