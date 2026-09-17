@@ -778,35 +778,89 @@ export async function runUniversalSoftwareImplementation(
     }),
   );
 
-  if (
-    runtime
-      .result
-      .status !==
-    'verified'
-  ) {
-    throw softwareAgentFailure(
-      runtime.result,
-    );
-  }
+  /*
+ * Implementation and verification are separate responsibilities.
+ *
+ * Agent V2 may have produced a complete usable workspace before a
+ * provider continuation, sandbox check or Preview attempt fails.
+ *
+ * Do not discard those files.
+ *
+ * The OUTER Universal pipeline remains authoritative for deterministic
+ * validation, browser verification, review and GitHub publication.
+ * Therefore returning a non-empty workspace here does not allow
+ * unverified code to be published.
+ */
+const files =
+  runtime
+    .result
+    .workspace
+    .getFiles();
 
-  const files =
-    runtime
-      .result
-      .workspace
-      .getFiles();
+if (
+  files.length ===
+  0
+) {
+  throw softwareAgentFailure({
+    failureMessage:
+      runtime.result.failureMessage ??
+      'Software Agent V2 produced an empty project snapshot.',
 
-  if (
-    files.length ===
-    0
-  ) {
-    throw softwareAgentFailure({
+    blockers:
+      runtime.result.blockers,
+  });
+}
+
+if (
+  runtime
+    .result
+    .status !==
+  'verified'
+) {
+  console.warn(
+    '[software_agent_v2_inner_verification_incomplete]',
+    JSON.stringify({
+      runId:
+        input.runId,
+
+      status:
+        runtime.result.status,
+
+      failureCode:
+        runtime.result.failureCode,
+
       failureMessage:
-        'Software Agent V2 produced an empty project snapshot.',
+        runtime.result.failureMessage,
 
       blockers:
-        [],
-    });
-  }
+        runtime.result.blockers.slice(
+          0,
+          4,
+        ),
 
-  return files;
+      preservedFiles:
+        files.length,
+
+      action:
+        'returning workspace to outer universal verification',
+    }),
+  );
 }
+
+/*
+ * Important:
+ *
+ * Returning files here is NOT publication.
+ *
+ * UniversalExecution still has to:
+ * - run deterministic validation
+ * - perform required browser verification
+ * - perform review
+ * - pass the verified gate
+ * - atomically commit to GitHub
+ *
+ * This simply prevents good implementation work from being destroyed
+ * because Agent V2's internal verification loop encountered an
+ * infrastructure/provider failure.
+ */
+return files;
