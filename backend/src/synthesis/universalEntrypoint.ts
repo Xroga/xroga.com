@@ -116,6 +116,10 @@ import {
 } from '../ai/universal/planner.js';
 
 import {
+  semanticExecutionPrompt,
+} from './semanticExecutionPrompt.js';
+
+import {
   runUniversalSoftwareImplementation,
 } from './softwareAgentImplementationAdapter.js';
 
@@ -837,8 +841,25 @@ export async function tryUniversalBuild(
     };
   }
 
-  const measuredEvidence =
-    await loadMeasuredEvidence();
+  /*
+ * Everything downstream must consume the validated semantic request,
+ * not reparsed conversational shorthand from the latest message.
+ *
+ * This is the boundary that resolves:
+ *
+ * "build a landing page"
+ * → "finish that"
+ *
+ * into one stable engineering goal.
+ */
+const executionPrompt =
+  semanticExecutionPrompt(
+    goalContract,
+    input.prompt,
+  );
+
+const measuredEvidence =
+  await loadMeasuredEvidence();
 
   const measured =
     chooseFromMeasuredEvidence({
@@ -918,7 +939,7 @@ export async function tryUniversalBuild(
   const result =
     await executeUniversalRun({
       prompt:
-        input.prompt,
+  executionPrompt,
 
       owner,
 
@@ -957,7 +978,7 @@ export async function tryUniversalBuild(
                     input.projectId,
 
                   prompt:
-                    input.prompt,
+                  executionPrompt,
 
                   brief,
 
@@ -989,7 +1010,7 @@ export async function tryUniversalBuild(
                           brief,
 
                           originalRequest:
-                            input.prompt,
+                          executionPrompt,
 
                           candidates:
                             orderedCandidates.map(
@@ -1036,7 +1057,7 @@ export async function tryUniversalBuild(
               repairIncrementally(
                 {
                   brief:
-                    `${input.prompt}\n\n${brief}`,
+                    `${executionPrompt}\n\n${brief}`,
 
                   failures,
 
