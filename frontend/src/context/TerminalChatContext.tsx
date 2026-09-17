@@ -2137,16 +2137,32 @@ await submitRef.current(
             assistantMessageId: assistantId,
             userMessageId: userMessageId,
             userPrompt: displayPrompt,
-            buildContinuation: isBuildAnswer,
-            buildOriginalPrompt: buildSession?.originalPrompt,
-            buildUpdate:
-              resumeRun:
+            buildContinuation:
+  isBuildAnswer,
+
+buildOriginalPrompt:
+  buildSession?.originalPrompt,
+
+buildUpdate:
+  isBuildUpdate ||
+  (
+    Boolean(
+      stickyTargetRepo?.includes(
+        '/',
+      ),
+    ) &&
+    isWebsiteUpdateRequest(
+      displayPrompt,
+    )
+  ),
+
+resumeRun:
   Boolean(
     resumeRunId,
   ),
-              isBuildUpdate ||
-              (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
-            githubTargetRepo: stickyTargetRepo,
+
+githubTargetRepo:
+  stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
             projectRoot: activeBuildContext?.projectRoot || '/',
             semanticGoalContract: semanticPlan.goalContract,
