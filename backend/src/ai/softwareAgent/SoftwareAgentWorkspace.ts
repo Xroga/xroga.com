@@ -100,23 +100,33 @@ export class SoftwareAgentWorkspace {
     new Map<string, string>();
 
   constructor(
-    files: SoftwareAgentWorkspaceFile[],
-  ) {
-    for (const file of files) {
-      const path =
-        normalizePath(file.path);
+  baseFiles: SoftwareAgentWorkspaceFile[],
+  workingFiles?: SoftwareAgentWorkspaceFile[],
+) {
+  for (const file of baseFiles) {
+    const path =
+      normalizePath(file.path);
 
-      this.baseFiles.set(
-        path,
-        file.content,
-      );
-
-      this.workingFiles.set(
-        path,
-        file.content,
-      );
-    }
+    this.baseFiles.set(
+      path,
+      file.content,
+    );
   }
+
+  const filesToRestore =
+    workingFiles ??
+    baseFiles;
+
+  for (const file of filesToRestore) {
+    const path =
+      normalizePath(file.path);
+
+    this.workingFiles.set(
+      path,
+      file.content,
+    );
+  }
+}
 
   listFiles(): ProjectFileSummary[] {
     return [...this.workingFiles.entries()]
