@@ -31,60 +31,60 @@ import {
   type SoftwareAgentServiceResult,
 } from './SoftwareAgentService.js';
 
+import type {
+  SoftwareAgentCheckpointStore,
+} from './softwareAgentCheckpoint.js';
+
 export interface SoftwareAgentRuntimeV2Context {
-  bindings: XrogaSoftwareAgentBindings;
+  bindings:
+    XrogaSoftwareAgentBindings;
 
-  model: SoftwareAgentModelRoute;
+  model:
+    SoftwareAgentModelRoute;
 
-  events: SoftwareRunEventSink;
+  events:
+    SoftwareRunEventSink;
 
-  /**
-   * Authoritative snapshot supplied by the caller.
-   *
-   * This lets the universal builder hand Agent V2 the exact files its
-   * planner saw instead of re-reading repository state mid-run.
-   */
   initialFiles?: Array<{
     path: string;
     content: string;
   }>;
 
+  signal?:
+    AbortSignal;
+
   /**
-   * Caller-owned cancellation boundary.
-   *
-   * There is intentionally no whole-software-task timeout and no fixed
-   * total verification-round allowance in Agent V2.
+   * Durable Agent V2 workspace/evidence checkpoints.
    */
-  signal?: AbortSignal;
+  checkpointStore?:
+    SoftwareAgentCheckpointStore;
 }
 
 export interface SoftwareAgentRuntimeInput {
-  /**
-   * Server-owned contract input.
-   *
-   * Do not construct authorization fields directly from arbitrary
-   * frontend/model output.
-   */
-  contract: SoftwareAgentContractInput;
+  contract:
+    SoftwareAgentContractInput;
 
-  /**
-   * Agent V2 production context is mandatory because Agent V2 is the
-   * authoritative implementation engine for software tasks.
-   */
-  agentV2: SoftwareAgentRuntimeV2Context;
+  agentV2:
+    SoftwareAgentRuntimeV2Context;
 }
 
 export interface SoftwareAgentRuntimeResult {
-  executor: 'agent_v2';
+  executor:
+    'agent_v2';
 
-  contract: SoftwareExecutionContract;
+  contract:
+    SoftwareExecutionContract;
 
-  result: SoftwareAgentServiceResult;
+  result:
+    SoftwareAgentServiceResult;
 }
 
 function softwareAgentServiceInput(
-  contract: SoftwareExecutionContract,
-  context: SoftwareAgentRuntimeV2Context,
+  contract:
+    SoftwareExecutionContract,
+
+  context:
+    SoftwareAgentRuntimeV2Context,
 ) {
   return {
     contract,
@@ -110,23 +110,18 @@ function softwareAgentServiceInput(
 
     signal:
       context.signal,
+
+    checkpointStore:
+      context.checkpointStore,
   };
 }
 
-/**
- * Authoritative software implementation runtime.
- *
- * Agent V2 is the only executable path. The previous legacy and shadow
- * branches have been removed from this runtime so neither environment
- * flags nor internal migration controls can route a production software
- * task back to the old builder.
- *
- * This runtime deliberately does not impose a wall-clock lifetime on
- * the complete software task.
- */
 export async function runSoftwareAgentRuntime(
-  input: SoftwareAgentRuntimeInput,
-): Promise<SoftwareAgentRuntimeResult> {
+  input:
+    SoftwareAgentRuntimeInput,
+): Promise<
+  SoftwareAgentRuntimeResult
+> {
   const contract =
     createSoftwareExecutionContract(
       input.contract,
