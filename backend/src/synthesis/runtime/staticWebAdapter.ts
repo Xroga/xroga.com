@@ -50,10 +50,8 @@ implements RuntimeAdapter {
     'Static HTML / CSS / JavaScript';
 
   readonly languages = [
-    'html',
-    'css',
-    'javascript',
-  ] as const;
+  'javascript',
+] as const;
 
   readonly runtimes = [
     'browser',
@@ -113,30 +111,34 @@ implements RuntimeAdapter {
           ),
       );
 
-    const languages:
-      string[] = [
-        'html',
-      ];
+    const evidence: string[] = [
+  `${joinPath(
+    root,
+    'index.html',
+  )} identifies a dependency-free browser application`,
+];
 
-    if (hasCss) {
-      languages.push(
-        'css',
-      );
-    }
+if (hasCss) {
+  evidence.push(
+    'local CSS assets are present',
+  );
+}
 
-    if (hasJavaScript) {
-      languages.push(
-        'javascript',
-      );
-    }
+if (hasJavaScript) {
+  evidence.push(
+    'local JavaScript assets are present',
+  );
+}
 
-    return {
-      adapterId:
-        this.id,
+return {
+  adapterId:
+    this.id,
 
-      root,
+  root,
 
-      languages,
+  languages: [
+    'javascript',
+  ],
 
       manifests: [
         joinPath(
@@ -177,12 +179,7 @@ implements RuntimeAdapter {
       confidence:
         0.9,
 
-      evidence: [
-        `${joinPath(
-          root,
-          'index.html',
-        )} identifies a dependency-free browser application`,
-      ],
+      evidence,
     };
   }
 
