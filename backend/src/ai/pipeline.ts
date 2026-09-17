@@ -78,7 +78,12 @@ import {
   type ProjectFile,
 } from './patches.js';
 import { reviewBuildOutput } from './qa.js';
-import { completeRun, createRunDurable, failRun } from './runStore.js';
+import {
+  completeRun,
+  createRunDurable,
+  failRun,
+  resumeRunDurable,
+} from './runStore.js';
 import { authorizeLegacyBuild } from './legacyBuilderAdapter.js';
 import { startupProgress } from './startupProgress.js';
 import {
@@ -315,12 +320,19 @@ export type ProgressFn = (event: PipelineProgress) => void;
 export type DeltaFn = (delta: string) => void;
 
 export interface BuildClientMeta {
+  
   assistantMessageId?: string;
   userMessageId?: string;
   userPrompt?: string;
   buildContinuation?: boolean;
   buildOriginalPrompt?: string;
   buildUpdate?: boolean;
+    /**
+   * Explicit UI-authorized continuation of the SAME interrupted run.
+   *
+   * This does not come from semantic model output.
+   */
+  resumeRun?: boolean;
   githubTargetRepo?: string;
   githubTargetBranch?: string;
   projectRoot?: string;
@@ -424,6 +436,9 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     buildOriginalPrompt:
       typeof m.buildOriginalPrompt === 'string' ? m.buildOriginalPrompt : undefined,
     buildUpdate: m.buildUpdate === true,
+    resumeRun:
+  m.resumeRun ===
+  true,
     githubTargetRepo:
       typeof m.githubTargetRepo === 'string' && m.githubTargetRepo.includes('/')
         ? m.githubTargetRepo
@@ -1149,8 +1164,21 @@ export async function runBuildPipeline(opts: {
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
-  await createRunDurable(opts.userId, userFacingPrompt, runId);
-  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
+if (
+  meta?.resumeRun
+) {
+  await resumeRunDurable(
+    opts.userId,
+    userFacingPrompt,
+    runId,
+  );
+} else {
+  await createRunDurable(
+    opts.userId,
+    userFacingPrompt,
+    runId,
+  );
+}  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
