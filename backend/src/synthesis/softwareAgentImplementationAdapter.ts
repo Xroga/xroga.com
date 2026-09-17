@@ -131,7 +131,9 @@ function surfacesOf(
   plan: UniversalRunPlan,
 ): string[] {
   return plan.spec.surfaces.map(
-    (declaration) =>
+    (
+      declaration,
+    ) =>
       String(
         declaration.surface,
       ),
@@ -262,7 +264,9 @@ function repositoryFromContext(
       branch: string;
     }
   | undefined {
-  if (!context) {
+  if (
+    !context
+  ) {
     return undefined;
   }
 
@@ -395,6 +399,13 @@ function softwareAgentFailure(
  * - repository publication
  *
  * Agent V2 events use Xroga's existing build/run delivery path.
+ *
+ * IMPORTANT:
+ *
+ * This layer intentionally sets no total implementation timeout and no
+ * fixed total verification-round count.
+ *
+ * Product completion is evidence-driven, not clock-driven.
  */
 export async function runUniversalSoftwareImplementation(
   input: UniversalSoftwareImplementationInput,
@@ -539,12 +550,14 @@ export async function runUniversalSoftwareImplementation(
         runId:
           input.runId,
 
-        ...(input.projectId
-          ? {
-              projectId:
-                input.projectId,
-            }
-          : {}),
+        ...(
+          input.projectId
+            ? {
+                projectId:
+                  input.projectId,
+              }
+            : {}
+        ),
 
         goal:
           implementationGoal(
@@ -557,11 +570,13 @@ export async function runUniversalSoftwareImplementation(
             input.existingFiles,
           ),
 
-        ...(repository
-          ? {
-              repository,
-            }
-          : {}),
+        ...(
+          repository
+            ? {
+                repository,
+              }
+            : {}
+        ),
 
         /*
          * Universal implementation currently authorizes repository-wide
@@ -645,16 +660,14 @@ export async function runUniversalSoftwareImplementation(
             }),
           ),
 
+        /*
+         * Caller cancellation remains supported.
+         *
+         * There is deliberately no total timeoutMs and no fixed
+         * verificationRounds value here.
+         */
         signal:
           input.signal,
-
-        timeoutMs:
-          8 *
-          60 *
-          1000,
-
-        verificationRounds:
-          2,
       },
     });
 
@@ -689,27 +702,24 @@ export async function runUniversalSoftwareImplementation(
       configuredFallbackModels:
         input.fallbackModelIds,
 
-      actualModelsUsed:
-        [
-          ...modelTelemetry
-            .actualModels,
-        ],
+      actualModelsUsed: [
+        ...modelTelemetry
+          .actualModels,
+      ],
 
-      actualProvidersUsed:
-        [
-          ...modelTelemetry
-            .actualProviders,
-        ],
+      actualProvidersUsed: [
+        ...modelTelemetry
+          .actualProviders,
+      ],
 
       fallbackUsed:
         modelTelemetry
           .fallbackUsed,
 
-      fallbackReasons:
-        [
-          ...modelTelemetry
-            .fallbackReasons,
-        ],
+      fallbackReasons: [
+        ...modelTelemetry
+          .fallbackReasons,
+      ],
 
       fallbackFailureCount:
         modelTelemetry
