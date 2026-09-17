@@ -51,12 +51,11 @@ export interface SoftwareAgentRuntimeV2Context {
 
   /**
    * Caller-owned cancellation boundary.
+   *
+   * There is intentionally no whole-software-task timeout and no fixed
+   * total verification-round allowance in Agent V2.
    */
   signal?: AbortSignal;
-
-  timeoutMs?: number;
-
-  verificationRounds?: number;
 }
 
 export interface SoftwareAgentRuntimeInput {
@@ -69,7 +68,7 @@ export interface SoftwareAgentRuntimeInput {
   contract: SoftwareAgentContractInput;
 
   /**
-   * Agent V2 production context is mandatory because Agent V2 is now the
+   * Agent V2 production context is mandatory because Agent V2 is the
    * authoritative implementation engine for software tasks.
    */
   agentV2: SoftwareAgentRuntimeV2Context;
@@ -99,22 +98,18 @@ function softwareAgentServiceInput(
     events:
       context.events,
 
-    ...(context.initialFiles !==
-    undefined
-      ? {
-          initialFiles:
-            context.initialFiles,
-        }
-      : {}),
+    ...(
+      context.initialFiles !==
+      undefined
+        ? {
+            initialFiles:
+              context.initialFiles,
+          }
+        : {}
+    ),
 
     signal:
       context.signal,
-
-    timeoutMs:
-      context.timeoutMs,
-
-    verificationRounds:
-      context.verificationRounds,
   };
 }
 
@@ -122,9 +117,12 @@ function softwareAgentServiceInput(
  * Authoritative software implementation runtime.
  *
  * Agent V2 is the only executable path. The previous legacy and shadow
- * branches have been removed from this runtime so neither environment flags
- * nor internal migration controls can route a production software task back
- * to the old builder.
+ * branches have been removed from this runtime so neither environment
+ * flags nor internal migration controls can route a production software
+ * task back to the old builder.
+ *
+ * This runtime deliberately does not impose a wall-clock lifetime on
+ * the complete software task.
  */
 export async function runSoftwareAgentRuntime(
   input: SoftwareAgentRuntimeInput,
