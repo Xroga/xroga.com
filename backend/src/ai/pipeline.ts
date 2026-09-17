@@ -1472,6 +1472,38 @@ if (
     githubOkEarly && meta?.githubTargetRepo?.includes('/') ? meta.githubTargetRepo : null;
   const universalToken = universalTargetRepo ? await getGitHubToken(opts.userId) : null;
 
+  /*
+ * A build follow-up must retain the original product definition.
+ *
+ * Example:
+ *
+ * original:
+ *   build a landing page named Jhon Mix
+ *
+ * follow-up:
+ *   give me the real preview
+ *
+ * Product synthesis must see BOTH, otherwise the literal follow-up
+ * contains no product surface and gets incorrectly refused.
+ */
+const originalBuildPrompt =
+  meta
+    ?.buildOriginalPrompt
+    ?.trim();
+
+const universalRequestPrompt =
+  originalBuildPrompt &&
+  originalBuildPrompt !==
+    userFacingPrompt
+    ? [
+        originalBuildPrompt,
+        '',
+        'Current continuation request:',
+        userFacingPrompt,
+      ].join(
+        '\n',
+      )
+    : userFacingPrompt;
     const universal = await tryUniversalBuild({
     runId,
 
@@ -1501,7 +1533,7 @@ if (
         : undefined,
 
     projectId: resolvedProjectId,
-    prompt: userFacingPrompt,
+    prompt: universalRequestPrompt,
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
