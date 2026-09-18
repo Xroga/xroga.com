@@ -2853,8 +2853,14 @@ githubTargetRepo:
                     html: projection.html,
                     css: projection.css,
                     js: projection.js,
-                    projectFiles: projection.projectFiles,
-                    githubRepoUrl: projection.githubRepoUrl,
+                                        projectFiles:
+                      projection.projectFiles,
+
+                    replaceProjectFiles:
+                      projection.replaceProjectFiles,
+
+                    githubRepoUrl:
+                      projection.githubRepoUrl,
                     commitSha: projection.commitSha,
                     reviewBranch: projection.reviewBranch,
                     status: projection.status,
@@ -2866,13 +2872,29 @@ githubTargetRepo:
                   for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
                 }
               }
-              const failedBuildRunId =
-  complete.success ===
-    false &&
-  typeof complete.runId ===
-    'string'
-    ? complete.runId
-    : undefined;
+
+                            ...(
+                failedBuildRunId
+                  ? {
+                      buildStopped:
+                        true,
+
+                      stoppedRunId:
+                        failedBuildRunId,
+
+                      originalBuildPrompt:
+                        lastTurnRef
+                          .current
+                          ?.text ||
+                        displayPrompt,
+
+                      githubRepoName:
+                        repoContext
+                          ?.repo,
+                    }
+                  : {}
+              ),
+                
               setMessages(
   (
     messages,
