@@ -985,10 +985,9 @@ const measuredEvidence =
       1,
     ) as ModelId[];
 
-  const result =
+    const result =
     await executeUniversalRun({
       prompt:
-        prompt:
         executionPrompt,
 
       buildContract,
@@ -1149,10 +1148,6 @@ const measuredEvidence =
     });
 
   return {
-    ran:
-      true,
-
-      return {
     ran:
       true,
 
