@@ -2929,9 +2929,10 @@ githubTargetRepo:
                 ),
               );
 
-              return;
+                            return;
             }
-            
+
+            if (output?.type === 'image_blocked') {
               dispatchCompanionEvent({
                 type: 'task_warning',
                 message: 'Image generation requires attention before it can continue.',
