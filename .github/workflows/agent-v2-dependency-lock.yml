@@ -35,51 +35,460 @@ jobs:
           cache: npm
 
       - name: Refresh workspace lockfile
-        run: npm install --package-lock-only --ignore-scripts
+        run: |
+          set -euo pipefail
+          npm install --package-lock-only --ignore-scripts
 
       - name: Refresh standalone backend lockfile
-        run: npm install --package-lock-only --ignore-scripts --workspaces=false --prefix backend
-
-      - name: Verify Cline SDK is locked in both install surfaces
         run: |
+          set -euo pipefail
+          npm install \
+            --package-lock-only \
+            --ignore-scripts \
+            --workspaces=false \
+            --prefix backend
+
+      - name: Verify Agent V2 dependency graph
+        run: |
+          set -euo pipefail
+
           node <<'NODE'
           const fs = require('node:fs');
 
-          const root = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
-          const backend = JSON.parse(fs.readFileSync('backend/package-lock.json', 'utf8'));
+          const root = JSON.parse(
+            fs.readFileSync('package-lock.json', 'utf8')
+          );
 
-          const expected = '0.0.82';
-          const rootVersion = root.packages?.['node_modules/@cline/sdk']?.version;
-          const backendVersion = backend.packages?.['node_modules/@cline/sdk']?.version;
+          const backend = JSON.parse(
+            fs.readFileSync('backend/package-lock.json', 'utf8')
+          );
 
-          if (rootVersion !== expected) {
-            throw new Error(`Root lockfile has @cline/sdk ${rootVersion ?? 'missing'}; expected ${expected}`);
+          const expectedCline = '0.0.82';
+          const expectedRootZod = '4.6.5';
+          const expectedBackendZod = '3.25.76';
+
+          const rootCline =
+            root.packages?.['node_modules/@cline/sdk']?.version;
+
+          const backendCline =
+            backend.packages?.['node_modules/@cline/sdk']?.version;
+
+          if (rootCline !== expectedCline) {
+            throw new Error(
+              `Root lockfile has @cline/sdk ${rootCline ?? 'missing'}; expected ${expectedCline}`
+            );
           }
 
-          if (backendVersion !== expected) {
-            throw new Error(`Backend lockfile has @cline/sdk ${backendVersion ?? 'missing'}; expected ${expected}`);
+          if (backendCline !== expectedCline) {
+            throw new Error(
+              `Backend lockfile has @cline/sdk ${backendCline ?? 'missing'}; expected ${expectedCline}`
+            );
           }
 
-          const rootZod = root.packages?.['node_modules/zod']?.version;
-          const backendZod = backend.packages?.['node_modules/zod']?.version;
+          const rootZod =
+            root.packages?.['node_modules/zod']?.version;
 
-          if (rootZod !== '3.25.76') {
-            throw new Error(`Root lockfile has zod ${rootZod ?? 'missing'}; expected 3.25.76`);
+          const backendZod =
+            backend.packages?.['node_modules/zod']?.version;
+
+          if (rootZod !== expectedRootZod) {
+            throw new Error(
+              `Root lockfile has zod ${rootZod ?? 'missing'}; expected ${expectedRootZod}`
+            );
           }
 
-          if (backendZod !== '3.25.76') {
-            throw new Error(`Backend lockfile has zod ${backendZod ?? 'missing'}; expected 3.25.76`);
+          if (backendZod !== expectedBackendZod) {
+            throw new Error(
+              `Backend standalone lockfile has zod ${backendZod ?? 'missing'}; expected ${expectedBackendZod}`
+            );
           }
 
-          console.log(`Locked @cline/sdk@${expected} and zod@3.25.76 in both install surfaces.`);
+          const rootPromptRegistry =
+            root.packages?.[
+              'node_modules/@sap-ai-sdk/prompt-registry'
+            ];
+
+          const backendPromptRegistry =
+            backend.packages?.[
+              'node_modules/@sap-ai-sdk/prompt-registry'
+            ];
+
+          if (!rootPromptRegistry) {
+            throw new Error(
+              'Root lockfile is missing @sap-ai-sdk/prompt-registry'
+            );
+          }
+
+          if (!backendPromptRegistry) {
+            throw new Error(
+              'Backend lockfile is missing @sap-ai-sdk/prompt-registry'
+            );
+          }
+
+          const backendPromptZod =
+            backend.packages?.[
+              'node_modules/@sap-ai-sdk/prompt-registry/node_modules/zod'
+            ]?.version;
+
+          if (
+            typeof backendPromptZod !== 'string' ||
+            !backendPromptZod.startsWith('4.')
+          ) {
+            throw new Error(
+              `@sap-ai-sdk/prompt-registry resolves Zod ${backendPromptZod ?? 'missing'} in the standalone backend install; expected Zod 4.x`
+            );
+          }
+
+          console.log(
+            [
+              `@cline/sdk: ${expectedCline}`,
+              `root Zod: ${rootZod}`,
+              `backend application Zod: ${backendZod}`,
+              `SAP Prompt Registry Zod: ${backendPromptZod}`,
+            ].join('\n')
+          );
           NODE
 
-      - name: Prove clean installs
+      - name: Prove workspace clean install and runtime resolution
         run: |
-          rm -rf node_modules backend/node_modules frontend/node_modules
+          set -euo pipefail
+
+          rm -rf \
+            node_modules \
+            backend/node_modules \
+            frontend/node_modules
+
           npm ci --ignore-scripts
-          rm -rf backend/node_modules
-          npm ci --ignore-scripts --workspaces=false --prefix backend
+
+          cd backend
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const {
+            createRequire,
+          } = require('node:module');
+          const {
+            pathToFileURL,
+          } = require('node:url');
+
+          function packageVersionFromEntry(
+            entry,
+            expectedName
+          ) {
+            let directory =
+              path.dirname(entry);
+
+            while (true) {
+              const manifestPath =
+                path.join(
+                  directory,
+                  'package.json'
+                );
+
+              if (
+                fs.existsSync(
+                  manifestPath
+                )
+              ) {
+                const manifest =
+                  JSON.parse(
+                    fs.readFileSync(
+                      manifestPath,
+                      'utf8'
+                    )
+                  );
+
+                if (
+                  manifest.name ===
+                  expectedName
+                ) {
+                  return manifest.version;
+                }
+              }
+
+              const parent =
+                path.dirname(
+                  directory
+                );
+
+              if (
+                parent ===
+                directory
+              ) {
+                break;
+              }
+
+              directory =
+                parent;
+            }
+
+            return null;
+          }
+
+          const backendRequire =
+            createRequire(
+              path.join(
+                process.cwd(),
+                '__xroga_dependency_check.cjs'
+              )
+            );
+
+          const directZodEntry =
+            backendRequire.resolve(
+              'zod'
+            );
+
+          const backendZod =
+            packageVersionFromEntry(
+              directZodEntry,
+              'zod'
+            );
+
+          if (
+            backendZod !==
+            '3.25.76'
+          ) {
+            throw new Error(
+              `Backend application resolves zod ${backendZod ?? 'missing'}; expected 3.25.76`
+            );
+          }
+
+          const promptRegistryEntry =
+            backendRequire.resolve(
+              '@sap-ai-sdk/prompt-registry'
+            );
+
+          const promptRegistryRequire =
+            createRequire(
+              promptRegistryEntry
+            );
+
+          const promptZodEntry =
+            promptRegistryRequire.resolve(
+              'zod'
+            );
+
+          const promptZod =
+            packageVersionFromEntry(
+              promptZodEntry,
+              'zod'
+            );
+
+          if (
+            !promptZod ||
+            !promptZod.startsWith(
+              '4.'
+            )
+          ) {
+            throw new Error(
+              `SAP Prompt Registry resolves zod ${promptZod ?? 'missing'}; expected Zod 4.x`
+            );
+          }
+
+          console.log(
+            `Workspace backend Zod: ${backendZod}`
+          );
+
+          console.log(
+            `Workspace SAP Prompt Registry Zod: ${promptZod}`
+          );
+
+          import(
+            pathToFileURL(
+              promptRegistryEntry
+            ).href
+          )
+            .then(
+              () => {
+                console.log(
+                  'SAP Prompt Registry import succeeded.'
+                );
+              }
+            )
+            .catch(
+              (error) => {
+                console.error(
+                  error
+                );
+
+                process.exitCode =
+                  1;
+              }
+            );
+          NODE
+
+      - name: Prove standalone backend clean install and runtime resolution
+        run: |
+          set -euo pipefail
+
+          rm -rf \
+            node_modules \
+            backend/node_modules \
+            frontend/node_modules
+
+          npm ci \
+            --ignore-scripts \
+            --workspaces=false \
+            --prefix backend
+
+          cd backend
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const {
+            createRequire,
+          } = require('node:module');
+          const {
+            pathToFileURL,
+          } = require('node:url');
+
+          function packageVersionFromEntry(
+            entry,
+            expectedName
+          ) {
+            let directory =
+              path.dirname(entry);
+
+            while (true) {
+              const manifestPath =
+                path.join(
+                  directory,
+                  'package.json'
+                );
+
+              if (
+                fs.existsSync(
+                  manifestPath
+                )
+              ) {
+                const manifest =
+                  JSON.parse(
+                    fs.readFileSync(
+                      manifestPath,
+                      'utf8'
+                    )
+                  );
+
+                if (
+                  manifest.name ===
+                  expectedName
+                ) {
+                  return manifest.version;
+                }
+              }
+
+              const parent =
+                path.dirname(
+                  directory
+                );
+
+              if (
+                parent ===
+                directory
+              ) {
+                break;
+              }
+
+              directory =
+                parent;
+            }
+
+            return null;
+          }
+
+          const backendRequire =
+            createRequire(
+              path.join(
+                process.cwd(),
+                '__xroga_dependency_check.cjs'
+              )
+            );
+
+          const directZodEntry =
+            backendRequire.resolve(
+              'zod'
+            );
+
+          const backendZod =
+            packageVersionFromEntry(
+              directZodEntry,
+              'zod'
+            );
+
+          if (
+            backendZod !==
+            '3.25.76'
+          ) {
+            throw new Error(
+              `Standalone backend resolves zod ${backendZod ?? 'missing'}; expected 3.25.76`
+            );
+          }
+
+          const promptRegistryEntry =
+            backendRequire.resolve(
+              '@sap-ai-sdk/prompt-registry'
+            );
+
+          const promptRegistryRequire =
+            createRequire(
+              promptRegistryEntry
+            );
+
+          const promptZodEntry =
+            promptRegistryRequire.resolve(
+              'zod'
+            );
+
+          const promptZod =
+            packageVersionFromEntry(
+              promptZodEntry,
+              'zod'
+            );
+
+          if (
+            !promptZod ||
+            !promptZod.startsWith(
+              '4.'
+            )
+          ) {
+            throw new Error(
+              `Standalone SAP Prompt Registry resolves zod ${promptZod ?? 'missing'}; expected Zod 4.x`
+            );
+          }
+
+          console.log(
+            `Standalone backend Zod: ${backendZod}`
+          );
+
+          console.log(
+            `Standalone SAP Prompt Registry Zod: ${promptZod}`
+          );
+
+          import(
+            pathToFileURL(
+              promptRegistryEntry
+            ).href
+          )
+            .then(
+              () => {
+                console.log(
+                  'Standalone SAP Prompt Registry import succeeded.'
+                );
+              }
+            )
+            .catch(
+              (error) => {
+                console.error(
+                  error
+                );
+
+                process.exitCode =
+                  1;
+              }
+            );
+          NODE
 
       - name: Upload generated lockfiles
         uses: actions/upload-artifact@v4
@@ -93,6 +502,8 @@ jobs:
 
       - name: Commit generated lockfiles
         run: |
+          set -euo pipefail
+
           if git diff --quiet -- package-lock.json backend/package-lock.json; then
             echo "Lockfiles are already current."
             exit 0
@@ -101,6 +512,11 @@ jobs:
           git config user.name "xroga-actions"
           git config user.email "actions@users.noreply.github.com"
 
-          git add package-lock.json backend/package-lock.json
-          git commit -m "Lock Cline SDK dependency"
+          git add \
+            package-lock.json \
+            backend/package-lock.json
+
+          git commit \
+            -m "Refresh Agent V2 dependency lockfiles"
+
           git push origin HEAD:main
