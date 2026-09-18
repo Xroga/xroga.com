@@ -66,8 +66,16 @@ test('conversation persistence updates rather than upserts', async () => {
 
   assert.match(body, /\.update\(/, 'must use update');
   assert.doesNotMatch(body, /\.upsert\(/, 'must never upsert — that is what created the empty row');
-  assert.match(body, /\.eq\('id', runId\)/);
-  assert.match(body, /\.eq\('user_id', userId\)/, 'must be scoped to the owner');
+  assert.match(
+  body,
+  /\.eq\(\s*['"]id['"]\s*,\s*runId\s*,?\s*\)/,
+);
+
+assert.match(
+  body,
+  /\.eq\(\s*['"]user_id['"]\s*,\s*userId\s*,?\s*\)/,
+  'must be scoped to the owner',
+);
 });
 
 test('only the messages column is written', async () => {
