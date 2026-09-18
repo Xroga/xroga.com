@@ -20,6 +20,10 @@
  */
 
 import type { ProjectFile } from '../ai/patches.js';
+import type {
+  BuildContract,
+} from './buildContract.js';
+
 import {
   synthesizeUniversalProductSpec,
   type UniversalProductSpec,
@@ -113,14 +117,31 @@ export function planUniversalRun(input: {
   files?: readonly ProjectFile[];
   projectId?: string | null;
   runId?: string | null;
+  buildContract?: BuildContract | null;
 }): UniversalRunPlan {
-  const files = input.files ?? [];
-  const spec = synthesizeUniversalProductSpec({
-    prompt: input.prompt,
-    files,
-    projectId: input.projectId ?? null,
-    runId: input.runId ?? null,
-  });
+  const files =
+    input.files ??
+    [];
+
+  const spec =
+    synthesizeUniversalProductSpec({
+      prompt:
+        input.prompt,
+
+      files,
+
+      projectId:
+        input.projectId ??
+        null,
+
+      runId:
+        input.runId ??
+        null,
+
+      buildContract:
+        input.buildContract ??
+        null,
+    });
   const architecture = planArchitecture({ spec, files });
   const acceptance = compileAcceptanceCriteria({ spec, plan: architecture });
 
