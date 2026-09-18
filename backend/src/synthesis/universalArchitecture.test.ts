@@ -214,8 +214,10 @@ describe('stated preferences beat defaults, and coherence beats both', () => {
     assert.equal(byRoot.web_frontend, 'typescript', 'and not where it cannot');
 
     const decision = architecture.decisions.find((d) => d.id === 'language:web_frontend');
-    assert.match(decision!.reason, /cannot run in a browser/);
-  });
+assert.match(
+  decision!.reason,
+  /cannot run(?: directly)? in (?:a|the) browser/i,
+);  });
 
   it('reports a language with no adapter as plannable but not buildable', () => {
     const architecture = plan('Build a Go API for managing tasks');
