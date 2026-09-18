@@ -29,6 +29,11 @@
  */
 
 import type { ProjectFile } from '../ai/patches.js';
+
+import {
+  buildContractPlanningText,
+  type BuildContract,
+} from './buildContract.js';
 import { detectComposition } from './runtime/registry.js';
 import { inferBehaviouralCapabilities, surfacesImpliedByCapabilities } from './behavioralCapabilities.js';
 
@@ -340,59 +345,226 @@ export function synthesizeUniversalProductSpec(input: {
   files?: readonly ProjectFile[];
   projectId?: string | null;
   runId?: string | null;
+  buildContract?: BuildContract | null;
   now?: Date;
 }): UniversalProductSpec {
-  const prompt = input.prompt ?? '';
-  const files = input.files ?? [];
-  const timestamp = (input.now ?? new Date()).toISOString();
-  const surfaces = inferSurfaces(prompt, files);
+  const prompt =
+    input.prompt ??
+    '';
 
-  const repositoryEvidence: string[] = [];
-  if (files.length) {
-    const composition = detectComposition(files);
-    for (const component of composition.components) {
+  const files =
+    input.files ??
+    [];
+
+  const timestamp =
+    (
+      input.now ??
+      new Date()
+    ).toISOString();
+
+  const buildContract =
+    input.buildContract ??
+    null;
+
+  const goal =
+    buildContract
+      ?.semanticGoal ??
+    null;
+
+  /*
+   * Until Step 2 supplies typed product taxonomy/recipes, the old
+   * surface recognizer remains as a compatibility mechanism.
+   *
+   * Crucially, it now receives resolved semantic intent rather than
+   * conversational shorthand such as "finish that".
+   */
+  const planningText =
+    buildContract
+      ? buildContractPlanningText(
+          buildContract,
+        )
+      : prompt;
+
+  const surfaces =
+    inferSurfaces(
+      planningText,
+      files,
+    );
+
+  const repositoryEvidence:
+    string[] = [];
+
+  if (
+    files.length
+  ) {
+    const composition =
+      detectComposition(
+        files,
+      );
+
+    for (
+      const component of
+      composition.components
+    ) {
       repositoryEvidence.push(
         `${component.root || '.'} is ${component.adapterId} (${component.inspection.packageManager ?? 'no package manager'})`,
       );
     }
-    if (composition.polyglot) repositoryEvidence.push('the repository is polyglot; components keep their own toolchains');
+
+    if (
+      composition.polyglot
+    ) {
+      repositoryEvidence.push(
+        'the repository is polyglot; components keep their own toolchains',
+      );
+    }
   }
 
-  const unresolvedQuestions: string[] = [];
-  const blockers: string[] = [];
-  if (!surfaces.length) {
+  const unresolvedQuestions:
+    string[] = [];
+
+  const blockers:
+    string[] = [
+    ...(goal?.blockers ??
+      []),
+  ];
+
+  if (
+    !surfaces.length
+  ) {
     unresolvedQuestions.push(
       'The request does not yet describe what the product does concretely enough to determine its surfaces. ' +
         'This is recorded rather than guessed — defaulting to a website is how a Rust CLI became a static page.',
     );
   }
 
-  const inferred = surfaces
-    .filter((declaration) => declaration.confidence < 0.75)
-    .map((declaration) => `${declaration.surface} inferred at ${Math.round(declaration.confidence * 100)}% confidence: ${declaration.reason}`);
+  const inferred =
+    surfaces
+      .filter(
+        (declaration) =>
+          declaration.confidence <
+          0.75,
+      )
+      .map(
+        (declaration) =>
+          `${declaration.surface} inferred at ${Math.round(declaration.confidence * 100)}% confidence: ${declaration.reason}`,
+      );
+
+  const functionalRequirements =
+    goal
+      ? goal.deliverables.map(
+          (deliverable) =>
+            deliverable.description,
+        )
+      : [];
+
+  const acceptanceCriteria =
+    goal
+      ? [
+          ...goal.acceptance,
+
+          ...goal.deliverables
+            .flatMap(
+              (deliverable) =>
+                deliverable
+                  .acceptance,
+            ),
+        ]
+      : [];
 
   return {
-    schemaVersion: UNIVERSAL_PRODUCT_SPEC_SCHEMA_VERSION,
-    projectId: input.projectId ?? null,
-    runId: input.runId ?? null,
-    title: titleFrom(prompt),
-    objective: prompt.trim().slice(0, 500),
-    requestedOutcome: prompt.trim(),
+    schemaVersion:
+      UNIVERSAL_PRODUCT_SPEC_SCHEMA_VERSION,
+
+    projectId:
+      buildContract
+        ?.projectId ??
+      input.projectId ??
+      null,
+
+    runId:
+      buildContract
+        ?.runId ??
+      input.runId ??
+      null,
+
+    title:
+      titleFrom(
+        goal?.goal ??
+          prompt,
+      ),
+
+    objective:
+      (
+        goal?.goal ??
+        prompt
+      )
+        .trim()
+        .slice(
+          0,
+          500,
+        ),
+
+    requestedOutcome:
+      (
+        goal
+          ?.desiredOutcome ??
+        prompt
+      ).trim(),
+
     surfaces,
-    functionalRequirements: [],
-    nonFunctionalRequirements: [],
-    storageRequirements: matchAll(prompt, STORAGE_RULES),
-    integrationRequirements: [],
-    packagingRequirements: matchAll(prompt, PACKAGING_RULES),
-    acceptanceCriteria: [],
-    assumptions: [],
-    inferredRequirements: inferred,
+
+    functionalRequirements,
+
+    nonFunctionalRequirements:
+      [
+        ...(goal
+          ?.constraints ??
+          []),
+      ],
+
+    storageRequirements:
+      matchAll(
+        planningText,
+        STORAGE_RULES,
+      ),
+
+    integrationRequirements:
+      [],
+
+    packagingRequirements:
+      matchAll(
+        planningText,
+        PACKAGING_RULES,
+      ),
+
+    acceptanceCriteria:
+      [
+        ...new Set(
+          acceptanceCriteria,
+        ),
+      ],
+
+    assumptions:
+      [],
+
+    inferredRequirements:
+      inferred,
+
     unresolvedQuestions,
+
     blockers,
+
     repositoryEvidence,
-    sourcePrompt: prompt,
-    createdAt: timestamp,
-    updatedAt: timestamp,
+
+    sourcePrompt:
+      prompt,
+
+    createdAt:
+      timestamp,
+
+    updatedAt:
+      timestamp,
   };
 }
 
