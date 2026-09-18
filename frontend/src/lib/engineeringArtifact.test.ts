@@ -309,6 +309,196 @@ test('browser verification: says nothing for a project a browser could not judge
     );
 });
 
+test('a committed but unverified artifact remains published instead of becoming a publication failure', () => {
+  const projection =
+    engineeringArtifactWorkspaceProjection(
+      artifact({
+        status:
+          'blocked',
+
+        verified:
+          false,
+
+        outcome:
+          'completed',
+
+        phaseReached:
+          'complete',
+
+        reason:
+          'browser verification did not run',
+
+        blockers: [
+          'browser verification did not run',
+        ],
+
+        commitSha:
+          'abc123',
+
+        repository: {
+          owner:
+            'random-org',
+
+          repo:
+            'random-project',
+
+          branch:
+            'xroga/run-blocked',
+
+          baseBranch:
+            'main',
+        },
+
+        projectFilesMode:
+          'snapshot',
+
+        projectFiles: [
+          {
+            path:
+              'src/index.ts',
+
+            content:
+              'export const ready = true;',
+          },
+        ],
+      }),
+    );
+
+  assert.ok(
+    projection,
+  );
+
+  assert.equal(
+    projection.status,
+    'pushed',
+  );
+
+  assert.equal(
+    projection.replaceProjectFiles,
+    true,
+  );
+});
+
+test('canonical SoftwareProject workspace replaces diff-only project hydration', () => {
+  const projection =
+    engineeringArtifactWorkspaceProjection(
+      artifact({
+        status:
+          'verified',
+
+        verified:
+          true,
+
+        outcome:
+          'completed',
+
+        blockers: [],
+
+        repository: {
+          owner:
+            'random-org',
+
+          repo:
+            'canonical-project',
+
+          branch:
+            'xroga/run-canonical',
+
+          baseBranch:
+            'main',
+        },
+
+        files: [
+          {
+            path:
+              'src/Header.tsx',
+
+            action:
+              'modified',
+          },
+        ],
+
+        projectFiles: [
+          {
+            path:
+              'src/Header.tsx',
+
+            content:
+              'export const Header = () => null;',
+          },
+        ],
+
+        softwareProject: {
+          workspace: {
+            files: [
+              {
+                path:
+                  'package.json',
+
+                content:
+                  '{}',
+              },
+
+              {
+                path:
+                  'src/App.tsx',
+
+                content:
+                  'export default function App() {}',
+              },
+
+              {
+                path:
+                  'src/Header.tsx',
+
+                content:
+                  'export const Header = () => null;',
+              },
+            ],
+          },
+        },
+      }),
+    );
+
+  assert.ok(
+    projection,
+  );
+
+  assert.equal(
+    projection.replaceProjectFiles,
+    true,
+  );
+
+  assert.deepEqual(
+    projection.projectFiles.map(
+      (file) =>
+        file.path,
+    ),
+    [
+      'package.json',
+      'src/App.tsx',
+      'src/Header.tsx',
+    ],
+  );
+
+  assert.equal(
+    projection.projectFiles.find(
+      (file) =>
+        file.path ===
+        'src/Header.tsx',
+    )?.flag,
+    'modified',
+  );
+
+  assert.equal(
+    projection.projectFiles.find(
+      (file) =>
+        file.path ===
+        'src/App.tsx',
+    )?.flag,
+    'unchanged',
+  );
+});
 test('browser verification: carries the exact finding when the page failed', () => {
     const line = browserVerificationLine({
       status: 'failed',
