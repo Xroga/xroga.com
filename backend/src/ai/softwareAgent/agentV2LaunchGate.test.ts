@@ -172,7 +172,7 @@ test(
 
     assert.match(
       adapter,
-      /runtime\.result\.status\s*!==\s*['"]verified['"]/,
+/runtime\s*\.\s*result\s*\.\s*status\s*!==\s*['"]verified['"]/
     );
 
     /*
