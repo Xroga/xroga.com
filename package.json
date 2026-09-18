@@ -20,9 +20,9 @@
     "seo:indexnow": "node scripts/indexnow-submit.mjs"
   },
   "overrides": {
-  "postcss": "8.5.24",
-  "sharp": "0.35.3"
-}
+    "postcss": "8.5.24",
+    "sharp": "0.35.3"
+  },
   "devDependencies": {
     "@playwright/test": "1.62.0",
     "concurrently": "10.0.4",
