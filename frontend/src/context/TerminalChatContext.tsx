@@ -2829,31 +2829,55 @@ githubTargetRepo:
             if (githubConnectionBlocked) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
-            if (isRenderableArtifact(output)) {
+                        if (isRenderableArtifact(output)) {
               buildHadVisibleResult = true;
-              const projection = engineeringArtifactWorkspaceProjection(output);
+
+              const projection =
+                engineeringArtifactWorkspaceProjection(output);
+
               if (projection) {
-                const ws = useProjectWorkspaceStore.getState();
+                const ws =
+                  useProjectWorkspaceStore.getState();
+
                 const target = {
                   repo: projection.repo,
                   branch: projection.sourceBranch,
                   projectRoot: repoContext?.projectRoot || '/',
                 };
-                // A late result from another project must never overwrite the project the user
-                // now sees. The run still remains visible in its conversation transcript.
+
+                // A late result from another project must never overwrite
+                // the project the user now sees.
                 const activeMatches =
                   !ws.activeProjectContext ||
-                  sameProjectContext(ws.activeProjectContext, target);
+                  sameProjectContext(
+                    ws.activeProjectContext,
+                    target,
+                  );
+
                 if (activeMatches) {
-                  if (!ws.activeProjectContext) ws.activateProjectContext(target);
-                  const active = useProjectWorkspaceStore.getState();
+                  if (!ws.activeProjectContext) {
+                    ws.activateProjectContext(target);
+                  }
+
+                  const active =
+                    useProjectWorkspaceStore.getState();
+
                   active.applyBuild({
                     ...target,
-                    projectName: projection.projectName,
-                    html: projection.html,
-                    css: projection.css,
-                    js: projection.js,
-                                        projectFiles:
+
+                    projectName:
+                      projection.projectName,
+
+                    html:
+                      projection.html,
+
+                    css:
+                      projection.css,
+
+                    js:
+                      projection.js,
+
+                    projectFiles:
                       projection.projectFiles,
 
                     replaceProjectFiles:
@@ -2861,87 +2885,53 @@ githubTargetRepo:
 
                     githubRepoUrl:
                       projection.githubRepoUrl,
-                    commitSha: projection.commitSha,
-                    reviewBranch: projection.reviewBranch,
-                    status: projection.status,
-                    changesSummary: projection.changesSummary,
-                    fileTrail: projection.fileTrail,
-                    openPreview: projection.previewAvailable,
-                    terminalLine: projection.terminalLines[0],
+
+                    commitSha:
+                      projection.commitSha,
+
+                    reviewBranch:
+                      projection.reviewBranch,
+
+                    status:
+                      projection.status,
+
+                    changesSummary:
+                      projection.changesSummary,
+
+                    fileTrail:
+                      projection.fileTrail,
+
+                    openPreview:
+                      projection.previewAvailable,
+
+                    terminalLine:
+                      projection.terminalLines[0],
                   });
-                  for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
+
+                  for (
+                    const line of
+                    projection.terminalLines.slice(1)
+                  ) {
+                    active.appendTerminal(line);
+                  }
                 }
               }
 
-                            ...(
-                failedBuildRunId
-                  ? {
-                      buildStopped:
-                        true,
+              setMessages((messages) =>
+                messages.map((message) =>
+                  message.id === assistantId
+                    ? {
+                        ...message,
+                        content: '',
+                        featureOutput: output,
+                      }
+                    : message,
+                ),
+              );
 
-                      stoppedRunId:
-                        failedBuildRunId,
-
-                      originalBuildPrompt:
-                        lastTurnRef
-                          .current
-                          ?.text ||
-                        displayPrompt,
-
-                      githubRepoName:
-                        repoContext
-                          ?.repo,
-                    }
-                  : {}
-              ),
-                
-              setMessages(
-  (
-    messages,
-  ) =>
-    messages.map(
-      (
-        message,
-      ) =>
-        message.id ===
-        assistantId
-          ? {
-              ...message,
-
-              content:
-                '',
-
-              featureOutput:
-                output,
-
-              ...(
-                failedBuildRunId
-                  ? {
-                      buildStopped:
-                        true,
-
-                      stoppedRunId:
-                        failedBuildRunId,
-
-                      originalBuildPrompt:
-                        lastTurnRef
-                          .current
-                          ?.text ||
-                        displayPrompt,
-
-                      githubRepoName:
-                        repoContext
-                          ?.repo,
-                    }
-                  : {}
-              ),
-            }
-          : message,
-    ),
-);
               return;
             }
-            if (output?.type === 'image_blocked') {
+            
               dispatchCompanionEvent({
                 type: 'task_warning',
                 message: 'Image generation requires attention before it can continue.',
