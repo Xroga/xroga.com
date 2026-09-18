@@ -116,8 +116,10 @@ import {
 } from '../ai/universal/planner.js';
 
 import {
-  semanticExecutionPrompt,
-} from './semanticExecutionPrompt.js';
+  buildContractExecutionText,
+  createBuildContract,
+  type BuildContract,
+} from './buildContract.js';
 
 import {
   runUniversalSoftwareImplementation,
@@ -129,8 +131,11 @@ export interface UniversalBuildOutcome {
   readonly result:
     UniversalExecutionResult;
 
-  readonly goalContract:
+   readonly goalContract:
     GoalContract | null;
+
+  readonly buildContract:
+    BuildContract | null;
 
   readonly routing: {
     readonly selectedModel:
@@ -486,7 +491,10 @@ export async function tryUniversalBuild(
       ran:
         true,
 
-      goalContract:
+            goalContract:
+        null,
+
+      buildContract:
         null,
 
       routing: {
@@ -720,7 +728,10 @@ export async function tryUniversalBuild(
         ran:
           true,
 
-        goalContract,
+                goalContract,
+
+        buildContract:
+          null,
 
         routing: {
           selectedModel:
@@ -787,7 +798,10 @@ export async function tryUniversalBuild(
       ran:
         true,
 
-      goalContract:
+           goalContract:
+        null,
+
+      buildContract:
         null,
 
       routing: {
@@ -852,10 +866,45 @@ export async function tryUniversalBuild(
  *
  * into one stable engineering goal.
  */
+const buildContract =
+  createBuildContract({
+    projectId:
+      owner.projectId,
+
+    runId,
+
+    sourcePrompt:
+      input.prompt,
+
+    goal:
+      goalContract,
+
+    existingFileCount:
+      input.existingFiles
+        ?.length ??
+      0,
+
+    continuation:
+      Boolean(
+        (
+          input.existingFiles
+            ?.length ??
+          0
+        ) >
+          0 &&
+        (
+          input.goalContext
+            ?.history
+            ?.length ??
+          0
+        ) >
+          0,
+      ),
+  });
+
 const executionPrompt =
-  semanticExecutionPrompt(
-    goalContract,
-    input.prompt,
+  buildContractExecutionText(
+    buildContract,
   );
 
 const measuredEvidence =
@@ -939,7 +988,10 @@ const measuredEvidence =
   const result =
     await executeUniversalRun({
       prompt:
-  executionPrompt,
+        prompt:
+        executionPrompt,
+
+      buildContract,
 
       owner,
 
@@ -1100,7 +1152,13 @@ const measuredEvidence =
     ran:
       true,
 
+      return {
+    ran:
+      true,
+
     goalContract,
+
+    buildContract,
 
     result,
 
