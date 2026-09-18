@@ -127,6 +127,14 @@ import {
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
+import {
+  deriveProjectRunState,
+  projectRunTransportSucceeded,
+} from '../synthesis/projectRunState.js';
+
+import {
+  createSoftwareProject,
+} from '../synthesis/softwareProject.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
@@ -1606,18 +1614,118 @@ const universalRequestPrompt =
           ),
   });
   if (universal) {
-    const { result, routing, goalContract } = universal;
-    // Universal execution validates and atomically publishes a complete merged snapshot.
+    const {
+      result,
+      routing,
+      goalContract,
+      buildContract,
+    } = universal;    // Universal execution validates and atomically publishes a complete merged snapshot.
     // The user-facing artifact must describe only the real before/after diff; treating the
     // snapshot as the diff made a one-file edit appear to have changed every repository file.
-    const universalFileTrail = buildFileTrail(prior.files, [...result.files]);
+        const universalFileTrail =
+      buildFileTrail(
+        prior.files,
+        [...result.files],
+      );
+
+    const projectRunState =
+      deriveProjectRunState({
+        outcome:
+          result.outcome,
+
+        phaseReached:
+          result.phaseReached,
+
+        verified:
+          result.verified,
+
+        fileCount:
+          result.files.length,
+
+        commitSha:
+          result.commitSha,
+
+        reason:
+          result.reason,
+
+        blockers:
+          result.blockers,
+
+        publicationRequested:
+          Boolean(
+            universalTargetRepo,
+          ),
+
+        deploymentRequested:
+          buildContract
+            ?.delivery
+            .deploymentRequirement ===
+          'REQUESTED',
+      });
+
+    const softwareProject =
+      buildContract
+        ? createSoftwareProject({
+            contract:
+              buildContract,
+
+            files:
+              result.files,
+
+            fileTrail:
+              universalFileTrail,
+
+            lifecycle:
+              projectRunState,
+
+            verified:
+              result.verified,
+
+            reason:
+              result.reason,
+
+            blockers:
+              result.blockers,
+
+            repository:
+              universalCommit.record
+                ? {
+                    owner:
+                      universalCommit
+                        .record
+                        .owner,
+
+                    repo:
+                      universalCommit
+                        .record
+                        .repo,
+
+                    branch:
+                      universalCommit
+                        .record
+                        .branch,
+
+                    baseBranch:
+                      universalCommit
+                        .record
+                        .baseBranch,
+
+                    commitSha:
+                      result.commitSha,
+                  }
+                : null,
+          })
+        : null;
+
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
       message: `Universal path: ${result.outcome} at ${result.phaseReached}. ${result.reason}`,
     });
-    const universalSuccess = result.outcome === 'completed' && result.verified;
-    const outputEnvelope: UniversalOutputEnvelope = {
+    const universalSuccess =
+      projectRunTransportSucceeded(
+        result.outcome,
+      );    const outputEnvelope: UniversalOutputEnvelope = {
       type: 'xroga.output', version: '1.0',
       status: universalSuccess ? 'completed' : result.outcome === 'failed' ? 'failed' : 'blocked',
       summary: result.reason,
@@ -1661,8 +1769,23 @@ const universalRequestPrompt =
           // "blocked" with no way to see that the reason was an unobserved page.
           ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         }),
-        outputEnvelope,
+                outputEnvelope,
+
         goalContract,
+
+        buildContract,
+
+        projectRunState,
+
+        ...(softwareProject
+          ? {
+              softwareProject,
+            }
+          : {}),
+
+        projectFilesMode:
+          'snapshot',
+
         universal: true,
         outcome: result.outcome,
         phaseReached: result.phaseReached,
@@ -1676,13 +1799,38 @@ const universalRequestPrompt =
           removed: entry.removed,
           action: entry.action,
         })),
-        // Operational workspace projection. The versioned artifact above intentionally keeps
-        // only a compact manifest; Project edits additionally needs the actual changed-file
-        // bodies and before/after trail. Scope this to the real diff instead of serialising the
-        // whole repository, so an arbitrary monorepo cannot turn one edit into a huge SSE frame.
-        projectFiles: universalFileTrail
-          .filter((entry) => entry.action !== 'deleted')
-          .map((entry) => ({ path: entry.path, content: entry.after })),
+                /*
+         * Canonical workspace snapshot.
+         *
+         * projectFiles is now the COMPLETE current project.
+         * fileTrail below remains only the before/after diff.
+         *
+         * slimOutputForSse still bounds transport size for large
+         * repositories without changing the persisted canonical result.
+         */
+        projectFiles:
+          [...result.files]
+            .map(
+              (file) => ({
+                path:
+                  file.path,
+
+                content:
+                  file.content,
+              }),
+            ),
+
+        generatedFiles:
+          universalFileTrail
+            .filter(
+              (entry) =>
+                entry.action !==
+                'deleted',
+            )
+            .map(
+              (entry) =>
+                entry.path,
+            ),
         fileTrail: universalFileTrail.map((entry) => ({
           path: entry.path,
           before: entry.before,
