@@ -239,12 +239,18 @@ export interface EngineeringArtifactWorkspaceProjection {
   sourceBranch: string;
   reviewBranch: string | null;
   projectName: string;
+
   projectFiles: Array<{
-      replaceProjectFiles: boolean;
     path: string;
     content: string;
-    flag: 'generated' | 'modified' | 'deleted';
+    flag:
+      | 'generated'
+      | 'modified'
+      | 'deleted'
+      | 'unchanged';
   }>;
+
+  replaceProjectFiles: boolean;
   /** Direct static entry point, when the changed-file artifact contains one. */
   html: string;
   css: string;
