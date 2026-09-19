@@ -1678,11 +1678,31 @@ const universalRequestPrompt =
             fileTrail:
               universalFileTrail,
 
-            lifecycle:
+                        lifecycle:
               projectRunState,
+
+            architecture:
+              result.plan
+                ?.architecture ??
+              null,
+
+            recipe:
+              result.plan
+                ?.productIntelligence
+                .recipe ??
+              null,
+
+            filePlan:
+              result.plan
+                ?.productIntelligence
+                .filePlan ??
+              null,
 
             verified:
               result.verified,
+
+            evidence:
+              result.evidence,
 
             reason:
               result.reason,
