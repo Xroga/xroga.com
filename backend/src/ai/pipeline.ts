@@ -138,6 +138,9 @@ import {
 import {
   persistSoftwareProjectRevision,
 } from '../synthesis/projectRuntime/store.js';
+import {
+  startOrRefreshLivePreview,
+} from '../synthesis/livePreview/coordinator.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
@@ -1666,7 +1669,7 @@ const universalRequestPrompt =
           'REQUESTED',
       });
 
-    const softwareProject =
+     softwareProject =
       buildContract
         ? createSoftwareProject({
             contract:
@@ -1740,6 +1743,41 @@ const universalRequestPrompt =
           })
         : null;
 
+        let runtimePreview =
+      null;
+
+    if (
+      softwareProject
+    ) {
+      const livePreview =
+        await startOrRefreshLivePreview({
+          userId:
+            opts.userId,
+
+          project:
+            softwareProject,
+
+          runId,
+
+          emit:
+            (
+              softwareEvent,
+            ) => {
+              emit(
+                softwareRunEventToProgress(
+                  softwareEvent,
+                ),
+              );
+            },
+        });
+
+      softwareProject =
+        livePreview.project;
+
+      runtimePreview =
+        livePreview.preview;
+    }
+    
         const projectRevision =
       softwareProject
         ? await persistSoftwareProjectRevision(
@@ -1811,6 +1849,12 @@ const universalRequestPrompt =
                 ...(softwareProject
           ? {
               softwareProject,
+            }
+          : {}),
+
+              ...(runtimePreview
+          ? {
+              runtimePreview,
             }
           : {}),
 
