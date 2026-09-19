@@ -282,11 +282,21 @@ export class ProjectDependencyManager {
       }
     }
 
-    return {
+       return {
       installed:
         failures.length ===
           0 &&
         blockers.length ===
           0,
 
+      steps,
+
+      attempts,
+
+      failures,
+
+      blockers,
+    };
+  }
+}
      
