@@ -2,6 +2,8 @@ export * from './types.js';
 
 export * from './store.js';
 
+export * from './projectHistory.js';
+
 export * from './secretManager.js';
 
 export * from './flyProvider.js';
