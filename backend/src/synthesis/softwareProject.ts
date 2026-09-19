@@ -12,6 +12,10 @@ import type {
   ProjectLifecycleStatus,
 } from './projectRunState.js';
 
+import type {
+  ProjectRuntimeBinding,
+} from './projectRuntime/types.js';
+
 export const SOFTWARE_PROJECT_SCHEMA_VERSION =
   '1.0.0' as const;
 
@@ -73,8 +77,16 @@ export interface SoftwareProject {
       }>;
   };
 
-  readonly lifecycle:
+    readonly lifecycle:
     ProjectRunState;
+
+  /**
+   * Binding to the active persistent runtime when one exists.
+   *
+   * Step 4 will attach the live Preview runtime here.
+   */
+  readonly runtime:
+    ProjectRuntimeBinding | null;
 
   readonly verification: {
     readonly status:
@@ -222,8 +234,11 @@ export function createSoftwareProject(
       renamed: [],
     },
 
-    lifecycle:
+        lifecycle:
       input.lifecycle,
+
+    runtime:
+      null,
 
     verification: {
       status:
