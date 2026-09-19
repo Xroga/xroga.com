@@ -182,7 +182,7 @@ function environmentPrefix(
     )} `;
 }
 
-function executableLine(
+export function executableLine(
   command:
     string,
 
@@ -206,10 +206,20 @@ function executableLine(
         ' ',
       );
 
+    /*
+   * Fail closed.
+   *
+   * "restricted" must never mean ordinary unrestricted internet.
+   * Until a host/domain-aware egress gateway is added, restricted
+   * receives the same denied-egress boundary as none.
+   *
+   * registry-only is the one explicit networked mode used for
+   * dependency resolution.
+   */
   return networkPolicy ===
-    'none'
-    ? `unshare -n ${argv}`
-    : argv;
+    'registry-only'
+    ? argv
+    : `unshare -n ${argv}`;
 }
 
 function commandScript(
@@ -343,8 +353,12 @@ export class FlyProjectRuntimeProvider
     snapshots:
       true,
 
+        /*
+     * Ports are currently tracked from declared process metadata.
+     * We do not yet inspect the guest's listening sockets.
+     */
     portDiscovery:
-      true,
+      false,
 
     /*
      * Step 4 owns the Preview Gateway.
@@ -636,6 +650,18 @@ export class FlyProjectRuntimeProvider
       );
     }
 
+        if (
+      Object.keys(
+        input.secretEnvironment,
+      ).length >
+      0
+    ) {
+      throw new Error(
+        'Project runtime secrets may only be injected into scoped commands/processes, never into the machine-wide environment.',
+      );
+    }
+    
+
     const now =
       new Date();
 
@@ -706,9 +732,8 @@ export class FlyProjectRuntimeProvider
             ),
         },
 
-        env: {
+                env: {
           ...input.environment,
-          ...input.secretEnvironment,
         },
 
         /*
@@ -887,6 +912,19 @@ export class FlyProjectRuntimeProvider
     session:
       ProjectRuntimeSession,
   ): Promise<ProjectRuntimeSession> {
+
+        if (
+      session.expiresAt &&
+      Date.parse(
+        session.expiresAt,
+      ) <=
+        Date.now()
+    ) {
+      throw new Error(
+        'Persisted runtime session has expired.',
+      );
+    }
+    
     const machineId =
       this.machineId(
         session,
@@ -905,11 +943,34 @@ export class FlyProjectRuntimeProvider
         },
       );
 
-    if (
+        if (
       !response.ok
     ) {
       throw new Error(
         'Persisted runtime machine no longer exists.',
+      );
+    }
+
+    const machine =
+      await response.json() as
+        Record<
+          string,
+          unknown
+        >;
+
+    const state =
+      typeof machine.state ===
+        'string'
+        ? machine.state
+        : null;
+
+    if (
+      state &&
+      state !==
+        'started'
+    ) {
+      throw new Error(
+        `Persisted runtime machine is not running (${state}).`,
       );
     }
 
