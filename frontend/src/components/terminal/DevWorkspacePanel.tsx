@@ -30,6 +30,9 @@ import { useHydrated } from '@/hooks/useHydrated';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
+import { useLiveBuildStore } from '@/store/useLiveBuildStore';
+import { LiveBuildTimeline } from './LiveBuildTimeline';
+import { RuntimePreviewControls } from './RuntimePreviewControls';
 
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
@@ -54,45 +57,173 @@ function buildTree(files: ProjectFileEntry[]): Record<string, ProjectFileEntry[]
   return root;
 }
 
-function PreviewPane({ viewport, nonce = 0 }: { viewport: 'mobile' | 'tablet' | 'desktop'; nonce?: number }) {
-  const html = useProjectWorkspaceStore((s) => s.html);
-  const css = useProjectWorkspaceStore((s) => s.css);
-  const js = useProjectWorkspaceStore((s) => s.js);
-  const deployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
-  const lastUpdateAt = useProjectWorkspaceStore((s) => s.lastUpdateAt);
-  const sandboxDoc = useMemo(
-    () => (html?.trim() ? buildInlinePreviewDocument(html, css, js) : ''),
-    [html, css, js]
-  );
-  const useLive = Boolean(deployUrl && /^https?:\/\//i.test(deployUrl));
-  const width =
-    viewport === 'mobile' ? 'max-w-[390px]' : viewport === 'tablet' ? 'max-w-[768px]' : 'max-w-none';
+function PreviewPane({
+  viewport,
+  nonce = 0,
+}: {
+  viewport:
+    | 'mobile'
+    | 'tablet'
+    | 'desktop';
 
-  if (!sandboxDoc && !useLive) {
+  nonce?:
+    number;
+}) {
+  const html =
+    useProjectWorkspaceStore(
+      (
+        s,
+      ) =>
+        s.html,
+    );
+
+  const css =
+    useProjectWorkspaceStore(
+      (
+        s,
+      ) =>
+        s.css,
+    );
+
+  const js =
+    useProjectWorkspaceStore(
+      (
+        s,
+      ) =>
+        s.js,
+    );
+
+  const deployUrl =
+    useProjectWorkspaceStore(
+      (
+        s,
+      ) =>
+        s.deployUrl,
+    );
+
+  const lastUpdateAt =
+    useProjectWorkspaceStore(
+      (
+        s,
+      ) =>
+        s.lastUpdateAt,
+    );
+
+  const runtimePreview =
+    useLiveBuildStore(
+      (
+        state,
+      ) =>
+        state.preview,
+    );
+
+  const sandboxDoc =
+    useMemo(
+      () =>
+        html?.trim()
+          ? buildInlinePreviewDocument(
+              html,
+              css,
+              js,
+            )
+          : '',
+
+      [
+        html,
+        css,
+        js,
+      ],
+    );
+
+  const width =
+    viewport ===
+      'mobile'
+      ? 'max-w-[390px]'
+      : viewport ===
+          'tablet'
+        ? 'max-w-[768px]'
+        : 'max-w-none';
+
+  const runtimeUrl =
+    runtimePreview
+      ?.status ===
+        'ready'
+      ? runtimePreview
+          .url
+      : null;
+
+  if (
+    !runtimeUrl &&
+    runtimePreview &&
+    runtimePreview.status ===
+      'ready' &&
+    !sandboxDoc
+  ) {
     return (
       <div className="xv-preview-empty">
-        <p>No preview yet — submit a build prompt to generate the app.</p>
+        <p className="font-semibold">
+          {runtimePreview.kind} Preview ready
+        </p>
+
+        <p>
+          {runtimePreview.message}
+        </p>
+      </div>
+    );
+  }
+
+  if (
+    !runtimeUrl &&
+    !sandboxDoc &&
+    !deployUrl
+  ) {
+    return (
+      <div className="xv-preview-empty">
+        <p>
+          {runtimePreview
+            ?.status ===
+            'starting'
+            ? 'Starting the Xroga runtime Preview…'
+            : runtimePreview
+                ?.status ===
+                'failed'
+              ? runtimePreview.message
+              : 'No Preview yet — submit a build prompt to generate the product.'}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={cn('mx-auto h-full w-full bg-white', width)}>
-      {useLive ? (
+    <div
+      className={cn(
+        'mx-auto h-full w-full bg-white',
+        width,
+      )}
+    >
+      {runtimeUrl ? (
         <iframe
-          key={`live-${deployUrl}-${lastUpdateAt ?? 0}-${nonce}`}
-          title="Live Vercel preview"
-          src={deployUrl!}
+          key={`runtime-${runtimeUrl}-${runtimePreview?.updatedAt ?? ''}-${nonce}`}
+          title="Xroga runtime Preview"
+          src={runtimeUrl}
           className="h-full w-full min-h-[320px] border-0"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         />
-      ) : (
+      ) : sandboxDoc ? (
         <iframe
           key={`${lastUpdateAt ?? 'preview'}-${nonce}`}
           title="Sandbox preview"
           srcDoc={sandboxDoc}
           className="h-full w-full min-h-[320px] border-0"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        />
+      ) : (
+        <iframe
+          key={`deploy-${deployUrl}-${nonce}`}
+          title="Deployed product"
+          src={deployUrl!}
+          className="h-full w-full min-h-[320px] border-0"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         />
       )}
     </div>
@@ -386,7 +517,7 @@ export function DevWorkspacePanel({
         ) : null}
 
         {activeTab === 'terminal' ? (
-          <div className={cn('h-full flex flex-col min-h-0', logFullscreen && 'fixed inset-3 z-[190] rounded-2xl overflow-hidden bg-black')}>
+          <div className={cn(<LiveBuildTimeline /> 'h-full flex flex-col min-h-0', logFullscreen && 'fixed inset-3 z-[190] rounded-2xl overflow-hidden bg-black')}>
             <div className="flex items-center gap-1 px-2 py-1.5 border-b border-[var(--card-border)]/40 bg-[var(--card)]/60">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
                 Output
@@ -443,15 +574,16 @@ export function DevWorkspacePanel({
                 </button>
               ))}
               <div className="ml-auto flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setPreviewNonce((n) => n + 1)}
-                  className="p-1 rounded text-[var(--muted)] hover:text-[var(--foreground)]"
-                  title="Reload preview"
-                  aria-label="Reload preview"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                </button>
+                                <RuntimePreviewControls
+                  onReload={() =>
+                    setPreviewNonce(
+                      (
+                        n,
+                      ) =>
+                        n + 1,
+                    )
+                  }
+                />
                 <button
                   type="button"
                   onClick={() => setPreviewFullscreen(true)}
