@@ -27,6 +27,9 @@ import type { ExecutionAdapters } from './universalExecution.js';
 import type { UniversalRunPlan, ValidationRunner } from './universalFlow.js';
 import type { SecurityControl } from './securityControls.js';
 import { compileSecurityTests } from './securityControls.js';
+import {
+  productIntelligenceBrief,
+} from './productIntelligence.js';
 
 /** Produces the file set for a plan. Supplied by the caller that owns model access. */
 export type ImplementFn = (input: {
@@ -104,6 +107,13 @@ export function buildImplementationBrief(input: {
   for (const decision of plan.architecture.decisions) {
     lines.push(`  - ${decision.category}: ${decision.selection} — ${decision.reason}`);
   }
+
+    lines.push(
+    '',
+    productIntelligenceBrief(
+      plan.productIntelligence,
+    ),
+  );
 
   if (plan.acceptance.length) {
     lines.push('', 'Acceptance criteria — the build is judged against these:');
