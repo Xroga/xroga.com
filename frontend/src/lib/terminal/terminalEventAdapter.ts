@@ -90,6 +90,35 @@ const SOFTWARE_EVENT_TYPES:
     'deployment.started',
     'deployment.ready',
     'deployment.failed',
+
+        'goal.resolved',
+    'product.classified',
+    'recipe.selected',
+    'architecture.selected',
+    'file_plan.created',
+
+    'workspace.created',
+    'checkpoint.created',
+
+    'file.renamed',
+
+    'dependency.install.started',
+    'dependency.install.completed',
+
+    'runtime.started',
+    'runtime.stopped',
+
+    'process.started',
+    'process.stopped',
+
+    'verification.started',
+    'verification.completed',
+
+    'publication.started',
+    'publication.completed',
+
+    'delivery.ready',
+    
   ]);
 
 const SOFTWARE_STATUSES:
@@ -209,6 +238,36 @@ function softwareEvidence(
         value.durationMs,
       ),
   };
+
+      projectId:
+      str(
+        value.projectId,
+      ) ?? undefined,
+
+    runtimeSessionId:
+      str(
+        value.runtimeSessionId,
+      ) ?? undefined,
+
+    processId:
+      str(
+        value.processId,
+      ) ?? undefined,
+
+    port:
+      finiteNumber(
+        value.port,
+      ),
+
+    previewKind:
+      str(
+        value.previewKind,
+      ) ?? undefined,
+
+    previewUrl:
+      str(
+        value.previewUrl,
+      ) ?? undefined,
 
   return evidence;
 }
