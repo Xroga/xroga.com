@@ -59,8 +59,22 @@ import {
   configureRemoteSandboxProvider,
   configureFlyMachineSandboxProvider,
 } from './sandbox/sandboxRuntime.js';
+import projectRuntimeRouter from './routes/projectRuntime.js';
+
+import {
+  attachRuntimePreviewWebSocketGateway,
+  runtimePreviewGateway,
+} from './middleware/runtimePreviewGateway.js';
 
 const app = express();
+
+/*
+ * Preview hosts bypass ordinary API middleware.
+ *
+ * The gateway validates the signed Preview hostname and proxies only
+ * to the exact private runtime Machine represented by that grant.
+ */
+app.use(runtimePreviewGateway);
 
 const port = Number(process.env.PORT) || 8080;
 
@@ -125,6 +139,12 @@ app.get('/', (_req, res) => {
     },
   });
 });
+
+app.use(
+  '/api/project-runtime',
+  authMiddleware,
+  projectRuntimeRouter,
+);
 
 app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
@@ -225,6 +245,9 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 const server = createServer(app);
+attachRuntimePreviewWebSocketGateway(
+  server,
+);
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
