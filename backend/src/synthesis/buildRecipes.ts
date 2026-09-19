@@ -1532,7 +1532,7 @@ const RECIPES:
       verify(
         'manifest',
         'The extension manifest references real build outputs and valid permissions',
-        'extension',
+        'contract',
         'manifest paths resolve and required permissions are explicitly declared',
       ),
     ],
@@ -1654,7 +1654,7 @@ const RECIPES:
       verify(
         'mobile_build',
         'The mobile project builds for its declared toolchain',
-        'mobile',
+        'build',
         'the framework build/test command completes successfully',
       ),
     ],
@@ -1913,7 +1913,7 @@ const RECIPES:
       verify(
         'retrieval',
         'Known content is retrievable from a deterministic fixture',
-        'ai_evaluation',
+        'integration',
         'a known query retrieves the expected fixture content before generation is evaluated',
       ),
     ],
@@ -2174,7 +2174,7 @@ const RECIPES:
       verify(
         'job',
         'A representative job completes deterministically',
-        'background_job',
+        'integration',
         'the worker processes a fixture job and records the expected result',
       ),
     ],
