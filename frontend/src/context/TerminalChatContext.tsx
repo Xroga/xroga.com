@@ -24,6 +24,7 @@ import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import {
   clearWorkspaceSession,
@@ -2482,6 +2483,11 @@ githubTargetRepo:
               thinkingTimerRef.current = null;
             }
             const swarmEv = event as SwarmProgressEvent;
+                        useLiveBuildStore
+              .getState()
+              .ingestProgress(
+                swarmEv,
+              );
             // Fed before the keepalive bail-out below: the adapter drops keepalive
             // noise itself, but still surfaces a permission gate attached to one.
             pushTerminalEvent('progress', swarmEv as unknown as Record<string, unknown>);
@@ -2830,6 +2836,11 @@ githubTargetRepo:
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
                         if (isRenderableArtifact(output)) {
+                useLiveBuildStore
+                .getState()
+                .ingestOutput(
+                  output,
+                );
               buildHadVisibleResult = true;
 
               const projection =
