@@ -135,6 +135,9 @@ import {
 import {
   createSoftwareProject,
 } from '../synthesis/softwareProject.js';
+import {
+  persistSoftwareProjectRevision,
+} from '../synthesis/projectRuntime/store.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
@@ -1717,6 +1720,14 @@ const universalRequestPrompt =
           })
         : null;
 
+        const projectRevision =
+      softwareProject
+        ? await persistSoftwareProjectRevision(
+            opts.userId,
+            softwareProject,
+          )
+        : null;
+
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
@@ -1777,9 +1788,15 @@ const universalRequestPrompt =
 
         projectRunState,
 
-        ...(softwareProject
+                ...(softwareProject
           ? {
               softwareProject,
+            }
+          : {}),
+
+        ...(projectRevision
+          ? {
+              projectRevision,
             }
           : {}),
 
