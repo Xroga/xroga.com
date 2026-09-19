@@ -143,7 +143,50 @@ function statusLabel(
 ): string {
   switch (event.type) {
     case 'run.started':
-      return 'Starting';
+            return 'Starting';
+
+          case 'goal.resolved':
+    case 'product.classified':
+    case 'recipe.selected':
+    case 'architecture.selected':
+    case 'file_plan.created':
+    case 'plan.updated':
+      return 'Planning';
+
+    case 'workspace.created':
+    case 'checkpoint.created':
+      return 'Preparing workspace';
+
+    case 'dependency.install.started':
+      return 'Installing';
+
+    case 'dependency.install.completed':
+      return event.status === 'success'
+        ? 'Dependencies ready'
+        : 'Install failed';
+
+    case 'runtime.started':
+    case 'process.started':
+      return 'Starting runtime';
+
+    case 'runtime.stopped':
+    case 'process.stopped':
+      return 'Runtime stopped';
+
+    case 'verification.started':
+      return 'Verifying';
+
+    case 'verification.completed':
+      return 'Verification complete';
+
+    case 'publication.started':
+      return 'Publishing';
+
+    case 'publication.completed':
+      return 'Published';
+
+    case 'delivery.ready':
+      return 'Ready';
 
     case 'plan.updated':
       return 'Planning';
