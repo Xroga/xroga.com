@@ -33,7 +33,7 @@ export interface SwarmRunRecord {
 const runs = new Map<string, SwarmRunRecord>();
 const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
-const MAX_EVENTS_PER_RUN = 240;
+const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 function schedulePersist(rec: SwarmRunRecord) {
