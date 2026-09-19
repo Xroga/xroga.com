@@ -11,22 +11,44 @@ export type SoftwareRunEventType =
   | 'run.failed'
   | 'run.cancelled'
 
+  | 'goal.resolved'
+  | 'product.classified'
+  | 'recipe.selected'
+  | 'architecture.selected'
+  | 'file_plan.created'
+
   | 'plan.updated'
 
   | 'project.inspect.started'
   | 'project.inspect.completed'
 
+  | 'workspace.created'
+  | 'checkpoint.created'
+
   | 'file.read'
   | 'file.created'
   | 'file.updated'
   | 'file.deleted'
+  | 'file.renamed'
+
+  | 'dependency.install.started'
+  | 'dependency.install.completed'
 
   | 'command.started'
   | 'command.output'
   | 'command.completed'
 
+  | 'runtime.started'
+  | 'runtime.stopped'
+
+  | 'process.started'
+  | 'process.stopped'
+
   | 'check.started'
   | 'check.completed'
+
+  | 'verification.started'
+  | 'verification.completed'
 
   | 'repair.started'
   | 'repair.completed'
@@ -41,9 +63,14 @@ export type SoftwareRunEventType =
   | 'git.branch.created'
   | 'git.commit.created'
 
+  | 'publication.started'
+  | 'publication.completed'
+
   | 'deployment.started'
   | 'deployment.ready'
-  | 'deployment.failed';
+  | 'deployment.failed'
+
+  | 'delivery.ready';
 
 export interface SoftwareRunEventEvidence {
   filePath?: string;
@@ -64,6 +91,18 @@ export interface SoftwareRunEventEvidence {
   exitCode?: number;
 
   durationMs?: number;
+
+  projectId?: string;
+
+  runtimeSessionId?: string;
+
+  processId?: string;
+
+  port?: number;
+
+  previewKind?: string;
+
+  previewUrl?: string;
 }
 
 export interface SoftwareRunEvent {
