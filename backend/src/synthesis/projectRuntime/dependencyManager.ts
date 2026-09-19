@@ -35,6 +35,29 @@ export interface DependencyInstallStep {
     string;
 }
 
+export interface DependencyInstallAttempt {
+  readonly componentRoot:
+    string;
+
+  readonly command:
+    string;
+
+  readonly attempt:
+    number;
+
+  readonly exitCode:
+    number | null;
+
+  readonly durationMs:
+    number;
+
+  readonly stdout:
+    string;
+
+  readonly stderr:
+    string;
+}
+
 export interface DependencyInstallResult {
   readonly installed:
     boolean;
@@ -42,12 +65,18 @@ export interface DependencyInstallResult {
   readonly steps:
     readonly DependencyInstallStep[];
 
+  readonly attempts:
+    readonly DependencyInstallAttempt[];
+
   readonly failures:
     readonly string[];
 
   readonly blockers:
     readonly string[];
 }
+
+const MAX_INSTALL_ATTEMPTS =
+  2;
 
 export function dependencyInstallPlan(
   files:
@@ -129,11 +158,17 @@ export class ProjectDependencyManager {
         input.files,
       );
 
+    const attempts:
+      DependencyInstallAttempt[] =
+      [];
+
     const failures:
-      string[] = [];
+      string[] =
+      [];
 
     const blockers:
-      string[] = [];
+      string[] =
+      [];
 
     for (
       const step of
@@ -152,9 +187,24 @@ export class ProjectDependencyManager {
         continue;
       }
 
-      const result =
-        await this.runtime
-          .exec(
+      let installed =
+        false;
+
+      let finalError =
+        '';
+
+      for (
+        let attempt =
+          1;
+
+        attempt <=
+        MAX_INSTALL_ATTEMPTS;
+
+        attempt +=
+          1
+      ) {
+        const result =
+          await this.runtime.exec(
             input.sessionId,
             {
               command:
@@ -166,6 +216,10 @@ export class ProjectDependencyManager {
               cwd:
                 step.cwd,
 
+              /*
+               * Adapter install steps are the only steps allowed to
+               * request package-registry network access.
+               */
               networkPolicy:
                 'registry-only',
 
@@ -174,12 +228,53 @@ export class ProjectDependencyManager {
             },
           );
 
+        attempts.push({
+          componentRoot:
+            step.componentRoot,
+
+          command:
+            step.command,
+
+          attempt,
+
+          exitCode:
+            result.exitCode,
+
+          durationMs:
+            result.durationMs,
+
+          stdout:
+            result.stdout.slice(
+              -4_000,
+            ),
+
+          stderr:
+            result.stderr.slice(
+              -4_000,
+            ),
+        });
+
+        if (
+          result.exitCode ===
+          0
+        ) {
+          installed =
+            true;
+
+          break;
+        }
+
+        finalError =
+          result.stderr ||
+          result.stdout ||
+          'Dependency installation failed without output.';
+      }
+
       if (
-        result.exitCode !==
-        0
+        !installed
       ) {
         failures.push(
-          `${step.componentRoot || '.'}: ${step.command} failed (${result.exitCode ?? 'unknown exit'}) — ${result.stderr.slice(
+          `${step.componentRoot || '.'}: ${step.command} failed after ${MAX_INSTALL_ATTEMPTS} attempt(s) — ${finalError.slice(
             0,
             2_000,
           )}`,
@@ -194,11 +289,4 @@ export class ProjectDependencyManager {
         blockers.length ===
           0,
 
-      steps,
-
-      failures,
-
-      blockers,
-    };
-  }
-}
+     
