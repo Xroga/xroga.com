@@ -189,10 +189,11 @@ export function executableLine(
   args:
     readonly string[],
 
-  networkPolicy:
+    networkPolicy:
     'none'
     | 'registry-only'
-    | 'restricted',
+    | 'restricted'
+    | 'preview',
 ): string {
   const argv =
     [
@@ -216,8 +217,12 @@ export function executableLine(
    * registry-only is the one explicit networked mode used for
    * dependency resolution.
    */
-  return networkPolicy ===
-    'registry-only'
+    return (
+    networkPolicy ===
+      'registry-only' ||
+    networkPolicy ===
+      'preview'
+  )
     ? argv
     : `unshare -n ${argv}`;
 }
