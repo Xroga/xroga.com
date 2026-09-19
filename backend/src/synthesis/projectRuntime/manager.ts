@@ -275,10 +275,14 @@ export class ProjectRuntimeManager {
         limits:
           input.limits,
 
-        ttlSeconds:
+                ttlSeconds:
           input.ttlSeconds ??
-          45 *
-            60,
+          (
+            input.runtimeClass ===
+              'verification'
+              ? 10 * 60
+              : 45 * 60
+          ),
       });
 
     await this.store
@@ -312,7 +316,7 @@ export class ProjectRuntimeManager {
     return session;
   }
 
-  async restore(
+   async restore(
     sessionId:
       string,
   ): Promise<ProjectRuntimeSession> {
@@ -320,6 +324,15 @@ export class ProjectRuntimeManager {
       await this.session(
         sessionId,
       );
+
+    if (
+      persisted.runtimeClass ===
+      'verification'
+    ) {
+      throw new Error(
+        'Verification runtimes are disposable and cannot be restored.',
+      );
+    }
 
     const restored =
       await this.provider(
