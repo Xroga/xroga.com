@@ -216,12 +216,31 @@ export class ProjectRuntimeManager {
         input.runtimeClass,
       );
 
-    const secretEnvironment =
-      await this.resolvedSecrets(
-        input.projectId,
-        input.secretScopes ??
-          [],
+        /*
+     * A runtime session itself never receives project secrets.
+     *
+     * Secrets are decrypted only for the exact exec/process operation
+     * that requested an allowed scope. This prevents one preview
+     * process from reading credentials intended for another operation.
+     */
+    if (
+      (
+        input.secretScopes
+          ?.length ??
+        0
+      ) >
+      0
+    ) {
+      throw new Error(
+        'Project secrets cannot be injected at runtime creation. Request secret scopes on exec/startProcess instead.',
       );
+    }
+
+    const secretEnvironment:
+      Record<
+        string,
+        string
+      > = {};
 
     const environment =
       buildSandboxEnvironment(
