@@ -23,9 +23,19 @@ import type {
   ProjectRuntimeProcessRecord,
 } from './types.js';
 
+
+
 import {
   createBuildContract,
 } from '../buildContract.js';
+
+import {
+  executableLine,
+} from './flyProvider.js';
+
+import {
+  cloneSoftwareProjectRevision,
+} from './projectHistory.js';
 
 import {
   deriveProjectRunState,
@@ -839,5 +849,218 @@ describe(
         );
       },
     );
+
+        it(
+      'makes verification runtimes disposable and non-restorable',
+      async () => {
+        const store =
+          new InMemoryProjectRuntimeStore();
+
+        const provider =
+          new FakePersistentProvider();
+
+        const runtime =
+          new ProjectRuntimeManager(
+            'user-1',
+            store,
+            [
+              provider,
+            ],
+          );
+
+        const session =
+          await runtime.create({
+            projectId:
+              'project-verification',
+
+            runtimeClass:
+              'verification',
+
+            files: [],
+          });
+
+        assert.equal(
+          session.runtimeClass,
+          'verification',
+        );
+
+        await assert.rejects(
+          () =>
+            runtime.restore(
+              session.sessionId,
+            ),
+
+          /disposable and cannot be restored/i,
+        );
+      },
+    );
+
+    it(
+      'fails restricted runtime commands closed with no network namespace',
+      () => {
+        const restricted =
+          executableLine(
+            'node',
+            [
+              'script.js',
+            ],
+            'restricted',
+          );
+
+        const none =
+          executableLine(
+            'node',
+            [
+              'script.js',
+            ],
+            'none',
+          );
+
+        const registry =
+          executableLine(
+            'npm',
+            [
+              'install',
+            ],
+            'registry-only',
+          );
+
+        assert.match(
+          restricted,
+          /^unshare -n /,
+        );
+
+        assert.match(
+          none,
+          /^unshare -n /,
+        );
+
+        assert.doesNotMatch(
+          registry,
+          /^unshare -n /,
+        );
+      },
+    );
+
+    it(
+      'cloning an old revision creates new canonical project state without reusing its runtime',
+      () => {
+        const source =
+          softwareProjectFixture();
+
+        const restored =
+          cloneSoftwareProjectRevision(
+            source,
+            {
+              projectId:
+                source.projectId,
+
+              runId:
+                'restored-run',
+
+              sourcePrompt:
+                'Restore this revision.',
+
+              now:
+                new Date(
+                  '2026-09-19T12:00:00.000Z',
+                ),
+            },
+          );
+
+        assert.equal(
+          restored.projectId,
+          source.projectId,
+        );
+
+        assert.equal(
+          restored.runId,
+          'restored-run',
+        );
+
+        assert.equal(
+          restored.contract.runId,
+          'restored-run',
+        );
+
+        assert.equal(
+          restored.contract.projectMode,
+          'follow_up',
+        );
+
+        assert.equal(
+          restored.runtime,
+          null,
+        );
+
+        assert.equal(
+          restored.workspace.revision,
+          source.workspace.revision +
+            1,
+        );
+
+        assert.deepEqual(
+          restored.workspace.files,
+          source.workspace.files,
+        );
+      },
+    );
+
+    it(
+      'forking canonical project state changes project identity and detaches repository/runtime state',
+      () => {
+        const source =
+          softwareProjectFixture();
+
+        const fork =
+          cloneSoftwareProjectRevision(
+            source,
+            {
+              projectId:
+                'forked-project',
+
+              runId:
+                'fork-run',
+
+              preserveRepository:
+                false,
+
+              sourcePrompt:
+                'Fork this project.',
+
+              now:
+                new Date(
+                  '2026-09-19T12:00:00.000Z',
+                ),
+            },
+          );
+
+        assert.equal(
+          fork.projectId,
+          'forked-project',
+        );
+
+        assert.equal(
+          fork.contract.projectId,
+          'forked-project',
+        );
+
+        assert.equal(
+          fork.repository,
+          null,
+        );
+
+        assert.equal(
+          fork.contract.repository,
+          null,
+        );
+
+        assert.equal(
+          fork.runtime,
+          null,
+        );
+      },
+    );
+    
   },
 );
