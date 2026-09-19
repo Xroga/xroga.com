@@ -31,6 +31,10 @@ import type {
   UniversalProductSpec,
 } from './universalProductSpec.js';
 
+import type {
+  BuildRecipe,
+} from './buildRecipes.js';
+
 import {
   detectComposition,
   type RepositoryComposition,
@@ -1150,6 +1154,9 @@ export function planArchitecture(
 
     files?:
       readonly ProjectFile[];
+
+    recipe?:
+      BuildRecipe | null;
   },
 ): ArchitecturePlan {
   const files =
@@ -1275,10 +1282,24 @@ export function planArchitecture(
       declaration
         .surface as string;
 
-    const fallback =
+        const fallback =
       SURFACE_DEFAULTS[
         surface
       ];
+
+    const recipeDefault =
+      input.recipe
+        ?.architectureDefaults
+        .find(
+          (
+            item,
+          ) =>
+            String(
+              item.surface,
+            ) ===
+            surface,
+        ) ??
+      null;
 
     /*
      * Only a real web_frontend may become static-web.
@@ -1311,13 +1332,15 @@ export function planArchitecture(
       ) &&
       !browserBound;
 
-    const language =
+        const language =
       staticWeb
         ? 'html'
         : useStated
           ? stated!
               .language
-          : fallback
+          : recipeDefault
+              ?.language ??
+            fallback
               ?.language ??
             null;
 
@@ -1327,7 +1350,9 @@ export function planArchitecture(
         : useStated
           ? stated!
               .runtime
-          : fallback
+          : recipeDefault
+              ?.runtime ??
+            fallback
               ?.runtime ??
             null;
 
@@ -1336,7 +1361,9 @@ export function planArchitecture(
       null =
       staticWeb
         ? null
-        : fallback
+        : recipeDefault
+            ?.framework ??
+          fallback
             ?.framework ??
           null;
 
@@ -1519,7 +1546,9 @@ export function planArchitecture(
             : browserBound &&
                 stated
               ? `${stated.language} cannot run directly in the browser, so this surface keeps ${language} while non-browser surfaces may use the stated language`
-              : fallback
+                            : recipeDefault
+                  ?.reason ??
+                fallback
                   ?.reason ??
                 'no stronger signal was available',
 
@@ -1615,7 +1644,9 @@ export function planArchitecture(
             ?.framework ===
           framework
             ? `the request names ${statedFramework.matched} explicitly`
-            : fallback
+                        : recipeDefault
+                ?.reason ??
+              fallback
                 ?.reason ??
               'the surface default',
 
