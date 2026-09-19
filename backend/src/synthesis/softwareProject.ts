@@ -4,8 +4,20 @@ import type {
 } from '../ai/patches.js';
 
 import type {
+  ArchitecturePlan,
+} from './architecturePlan.js';
+
+import type {
   BuildContract,
 } from './buildContract.js';
+
+import type {
+  BuildRecipe,
+} from './buildRecipes.js';
+
+import type {
+  ProductFilePlan,
+} from './filePlan.js';
 
 import type {
   ProjectRunState,
@@ -23,28 +35,62 @@ export interface SoftwareProjectRepository {
   readonly owner: string;
   readonly repo: string;
   readonly branch: string;
+
   readonly baseBranch:
     string | null;
+
   readonly commitSha:
     string | null;
+}
+
+export interface SoftwareProjectVerificationEvidence {
+  readonly phase:
+    string;
+
+  readonly statement:
+    string;
+
+  readonly detail:
+    string;
 }
 
 export interface SoftwareProject {
   readonly schemaVersion:
     typeof SOFTWARE_PROJECT_SCHEMA_VERSION;
 
-  readonly projectId: string;
-  readonly runId: string;
+  readonly projectId:
+    string;
+
+  readonly runId:
+    string;
 
   readonly contract:
     BuildContract;
 
+  /**
+   * Canonical technical state selected before implementation.
+   *
+   * Existing-repository facts and explicit user choices remain
+   * authoritative over recipe defaults.
+   */
+  readonly architecture:
+    ArchitecturePlan | null;
+
+  readonly recipe:
+    BuildRecipe | null;
+
+  readonly filePlan:
+    ProductFilePlan | null;
+
   readonly workspace: {
-    readonly revision: number;
-    readonly fileCount: number;
+    readonly revision:
+      number;
+
+    readonly fileCount:
+      number;
 
     /**
-     * Full current project snapshot.
+     * Complete current project.
      *
      * Never a diff.
      */
@@ -65,11 +111,6 @@ export interface SoftwareProject {
     readonly deleted:
       string[];
 
-    /**
-     * Agent V2 does not yet publish rename operations end-to-end.
-     * Step 5 will populate this once rename/move becomes a canonical
-     * mutation.
-     */
     readonly renamed:
       Array<{
         from: string;
@@ -77,13 +118,13 @@ export interface SoftwareProject {
       }>;
   };
 
-    readonly lifecycle:
+  readonly lifecycle:
     ProjectRunState;
 
   /**
-   * Binding to the active persistent runtime when one exists.
+   * Binding to the active project runtime when one exists.
    *
-   * Step 4 will attach the live Preview runtime here.
+   * Step 4 will use this for live Preview.
    */
   readonly runtime:
     ProjectRuntimeBinding | null;
@@ -100,19 +141,33 @@ export interface SoftwareProject {
 
     readonly blockers:
       string[];
+
+    readonly evidence:
+      SoftwareProjectVerificationEvidence[];
   };
 
   readonly repository:
-    SoftwareProjectRepository |
-    null;
+    SoftwareProjectRepository | null;
 
-  readonly createdAt: string;
-  readonly updatedAt: string;
+  readonly createdAt:
+    string;
+
+  readonly updatedAt:
+    string;
 }
 
 export interface CreateSoftwareProjectInput {
   readonly contract:
     BuildContract;
+
+  readonly architecture?:
+    ArchitecturePlan | null;
+
+  readonly recipe?:
+    BuildRecipe | null;
+
+  readonly filePlan?:
+    ProductFilePlan | null;
 
   readonly files:
     readonly ProjectFile[];
@@ -123,6 +178,9 @@ export interface CreateSoftwareProjectInput {
   readonly lifecycle:
     ProjectRunState;
 
+  readonly runtime?:
+    ProjectRuntimeBinding | null;
+
   readonly verified:
     boolean;
 
@@ -132,15 +190,19 @@ export interface CreateSoftwareProjectInput {
   readonly blockers:
     readonly string[];
 
-  readonly repository?:
-    SoftwareProjectRepository |
-    null;
+  readonly evidence?:
+    readonly SoftwareProjectVerificationEvidence[];
 
-  readonly now?: Date;
+  readonly repository?:
+    SoftwareProjectRepository | null;
+
+  readonly now?:
+    Date;
 }
 
 export function createSoftwareProject(
-  input: CreateSoftwareProjectInput,
+  input:
+    CreateSoftwareProjectInput,
 ): SoftwareProject {
   const timestamp =
     (
@@ -215,8 +277,21 @@ export function createSoftwareProject(
     contract:
       input.contract,
 
+    architecture:
+      input.architecture ??
+      null,
+
+    recipe:
+      input.recipe ??
+      null,
+
+    filePlan:
+      input.filePlan ??
+      null,
+
     workspace: {
-      revision: 1,
+      revision:
+        1,
 
       fileCount:
         files.length,
@@ -234,10 +309,11 @@ export function createSoftwareProject(
       renamed: [],
     },
 
-        lifecycle:
+    lifecycle:
       input.lifecycle,
 
     runtime:
+      input.runtime ??
       null,
 
     verification: {
@@ -254,6 +330,23 @@ export function createSoftwareProject(
 
       blockers:
         [...input.blockers],
+
+      evidence:
+        (
+          input.evidence ??
+          []
+        ).map(
+          (entry) => ({
+            phase:
+              entry.phase,
+
+            statement:
+              entry.statement,
+
+            detail:
+              entry.detail,
+          }),
+        ),
     },
 
     repository:
