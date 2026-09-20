@@ -132,13 +132,14 @@ function signatureFor(
       `${grant.previewId}:${grant.expiresAt}`,
       'utf8',
     )
-    .digest(
-      'base64url',
-    )
-    .slice(
-      0,
-      24,
-    );
+   .digest(
+  'hex',
+)
+.slice(
+  0,
+  24,
+);
+  
 }
 
 export function livePreviewUrl(
