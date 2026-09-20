@@ -53,6 +53,7 @@ export type SoftwareRunEventType =
   | 'repair.completed'
   | 'preview.starting'
   | 'preview.ready'
+  | 'preview.updated'
   | 'preview.failed'
   | 'browser.verification.started'
   | 'browser.verification.completed'
