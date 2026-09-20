@@ -5,7 +5,7 @@ import {
 import type {
   SoftwareRunEvent,
   SoftwareRunEventEvidence,
-  SoftwareRunEventStatus,
+  SoftwareRunStatus,
   SoftwareRunEventType,
 } from '../../ai/softwareAgent/runEvents.js';
 
@@ -67,7 +67,7 @@ function event(
       SoftwareRunEventType;
 
     status:
-      SoftwareRunEventStatus;
+      SoftwareRunStatus;
 
     title:
       string;
