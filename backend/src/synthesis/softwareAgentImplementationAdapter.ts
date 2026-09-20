@@ -18,6 +18,14 @@ import {
   createXrogaSoftwareAgentBindings,
 } from '../ai/softwareAgent/createXrogaSoftwareAgentBindings.js';
 
+import type {
+  BuildContract,
+} from './buildContract.js';
+
+import {
+  createAgentLivePreviewBridge,
+} from './livePreview/agentBridge.js';
+
 import {
   createSoftwareAgentProductionImplementations,
 } from '../ai/softwareAgent/softwareAgentProductionInfrastructure.js';
@@ -67,6 +75,9 @@ export interface UniversalSoftwareImplementationInput {
 
   runId:
     string;
+
+  buildContract:
+  BuildContract;
 
   projectId?:
     | string
@@ -618,13 +629,7 @@ export async function runUniversalSoftwareImplementation(
     });
 
   const diagnosticEvents =
-    new InMemorySoftwareRunEventSink();
-
-  const events =
-    new SwarmRunSoftwareEventSink(
-      diagnosticEvents,
-      input.onEvent,
-    );
+  new InMemorySoftwareRunEventSink();
 
   const repository =
     repositoryFromContext(
@@ -672,6 +677,57 @@ export async function runUniversalSoftwareImplementation(
       input.plan,
     ),
   ];
+
+  const checkpointStore =
+  checkpointStoreFor(
+    input,
+  );
+
+const livePreviewBridge =
+  createAgentLivePreviewBridge({
+    userId:
+      input.userId,
+
+    runId:
+      input.runId,
+
+    buildContract:
+      input.buildContract,
+
+    plan:
+      input.plan,
+
+    baseFiles:
+      agentInitialFiles,
+
+    checkpointStore,
+
+    emit:
+      input.onEvent,
+  });
+
+const eventObserver =
+  input.onEvent
+    ? (
+        event:
+          SoftwareRunEvent,
+      ) => {
+        input.onEvent?.(
+          event,
+        );
+
+        livePreviewBridge
+          .handle(
+            event,
+          );
+      }
+    : undefined;
+
+const events =
+  new SwarmRunSoftwareEventSink(
+    diagnosticEvents,
+    eventObserver,
+  );
 
   const runtime =
     await runSoftwareAgentRuntime({
@@ -791,10 +847,7 @@ export async function runUniversalSoftwareImplementation(
         signal:
           input.signal,
 
-        checkpointStore:
-          checkpointStoreFor(
-            input,
-          ),
+        checkpointStore,
       },
     });
 
