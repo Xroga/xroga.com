@@ -1025,6 +1025,8 @@ const measuredEvidence =
 
                   runId,
 
+                  buildContract,
+
                   projectId:
                     input.projectId,
 
