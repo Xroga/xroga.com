@@ -237,9 +237,8 @@ function softwareEvidence(
       finiteNumber(
         value.durationMs,
       ),
-  };
 
-      projectId:
+    projectId:
       str(
         value.projectId,
       ) ?? undefined,
@@ -268,6 +267,7 @@ function softwareEvidence(
       str(
         value.previewUrl,
       ) ?? undefined,
+  };
 
   return evidence;
 }
