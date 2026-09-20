@@ -1669,7 +1669,7 @@ const universalRequestPrompt =
           'REQUESTED',
       });
 
-     softwareProject =
+    let softwareProject =
       buildContract
         ? createSoftwareProject({
             contract:
