@@ -517,7 +517,14 @@ export function DevWorkspacePanel({
         ) : null}
 
         {activeTab === 'terminal' ? (
-          <div className={cn(<LiveBuildTimeline /> 'h-full flex flex-col min-h-0', logFullscreen && 'fixed inset-3 z-[190] rounded-2xl overflow-hidden bg-black')}>
+  <div
+    className={cn(
+      'h-full flex flex-col min-h-0',
+      logFullscreen &&
+        'fixed inset-3 z-[190] rounded-2xl overflow-hidden bg-black',
+    )}
+  >
+    <LiveBuildTimeline />
             <div className="flex items-center gap-1 px-2 py-1.5 border-b border-[var(--card-border)]/40 bg-[var(--card)]/60">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
                 Output
