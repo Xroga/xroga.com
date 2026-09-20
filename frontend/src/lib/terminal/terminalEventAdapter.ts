@@ -79,6 +79,7 @@ const SOFTWARE_EVENT_TYPES:
 
     'preview.starting',
     'preview.ready',
+    'preview.updated',
     'preview.failed',
 
     'browser.verification.started',
