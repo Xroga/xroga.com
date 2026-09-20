@@ -292,10 +292,12 @@ function eventPreview(
     ) as RuntimePreviewKind;
 
   const status:
-    RuntimePreviewStatus =
+  RuntimePreviewStatus =
+  event.type ===
+      'preview.ready' ||
     event.type ===
-      'preview.ready'
-      ? 'ready'
+      'preview.updated'
+    ? 'ready'
       : event.type ===
           'preview.failed'
         ? 'failed'
@@ -415,12 +417,14 @@ export const useLiveBuildStore =
                 .preview;
 
             if (
-              software.type ===
-                'preview.starting' ||
-              software.type ===
-                'preview.ready' ||
-              software.type ===
-                'preview.failed'
+             software.type ===
+  'preview.starting' ||
+software.type ===
+  'preview.ready' ||
+software.type ===
+  'preview.updated' ||
+software.type ===
+  'preview.failed'
             ) {
               preview =
                 eventPreview(
