@@ -228,9 +228,12 @@ function statusLabel(
       return 'Starting preview';
 
     case 'preview.ready':
-      return 'Preview ready';
+  return 'Preview ready';
 
-    case 'preview.failed':
+case 'preview.updated':
+  return 'Preview updated';
+
+case 'preview.failed':
       return 'Preview failed';
 
     case 'browser.verification.started':
