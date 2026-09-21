@@ -45,6 +45,7 @@ import {
 } from './verificationContinuationPolicy.js';
 
 export type AgentSoftwareExecutionStatus =
+  | 'implemented'
   | 'verified'
   | 'incomplete'
   | 'failed'
@@ -484,21 +485,37 @@ export class AgentSoftwareExecutor {
     let usage:
       unknown;
 
-    const completion =
-      () =>
-        evaluateSoftwareCompletion({
-          previewRequirement:
-            contract.preview,
+   const completion =
+  () =>
+    evaluateSoftwareCompletion({
+      previewRequirement:
+        contract.preview,
 
-          evidence,
+      verificationAuthority:
+        contract.verificationAuthority,
 
-          requireSuccessfulChecks:
-            true,
+      evidence,
 
-          requireRepositoryPersistence:
-            contract.persistence ===
-            'review_branch',
-        });
+      requireSuccessfulChecks:
+        contract
+          .verificationAuthority ===
+        'agent',
+
+      requireRepositoryPersistence:
+        contract
+          .verificationAuthority ===
+          'agent' &&
+        contract.persistence ===
+          'review_branch',
+    });
+
+const successfulStatus:
+  AgentSoftwareExecutionStatus =
+  contract
+    .verificationAuthority ===
+    'universal'
+    ? 'implemented'
+    : 'verified';
 
     const cancelledResult =
       (
@@ -573,8 +590,8 @@ export class AgentSoftwareExecutor {
           .complete
       ) {
         return {
-          status:
-            'verified',
+         status:
+  successfulStatus,
 
           evidence,
 
@@ -619,8 +636,8 @@ export class AgentSoftwareExecutor {
           .complete
       ) {
         return {
-          status:
-            'verified',
+         status:
+  successfulStatus,
 
           evidence,
 
@@ -712,7 +729,7 @@ export class AgentSoftwareExecutor {
         ) {
           return {
             status:
-              'verified',
+  successfulStatus,
 
             evidence,
 
@@ -828,7 +845,7 @@ export class AgentSoftwareExecutor {
       ) {
         return {
           status:
-            'verified',
+  successfulStatus,
 
           evidence,
 
@@ -879,7 +896,7 @@ export class AgentSoftwareExecutor {
       ) {
         return {
           status:
-            'verified',
+  successfulStatus,
 
           evidence,
 
