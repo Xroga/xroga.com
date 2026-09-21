@@ -96,6 +96,28 @@ export interface LivePreviewDescriptor {
     string;
 }
 
+export interface LivePreviewCommandPlan {
+  readonly command:
+    string;
+
+  readonly args:
+    readonly string[];
+
+  readonly cwd:
+    string;
+
+  readonly environment:
+    Readonly<
+      Record<
+        string,
+        string
+      >
+    >;
+
+  readonly timeoutMs:
+    number;
+}
+
 export interface LivePreviewProcessPlan {
   readonly command:
     string;
@@ -115,13 +137,13 @@ export interface LivePreviewProcessPlan {
     >;
 
   readonly port:
-    number;
+  number | null;
 
   readonly hotReload:
     boolean;
 
   readonly probeCommand:
-    string;
+  string | null;
 
   readonly probeArgs:
     readonly string[];
@@ -140,6 +162,9 @@ export interface LivePreviewLaunchPlan {
   readonly process:
     LivePreviewProcessPlan | null;
 
+  readonly command?:
+  LivePreviewCommandPlan | null;
+  
   readonly message:
     string;
 }
