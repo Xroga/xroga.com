@@ -297,9 +297,132 @@ describe(
         );
 
         assert.equal(
-          plan.process,
-          null,
-        );
+  plan.process,
+  null,
+);
+        
+assert.equal(
+  plan.command
+    ?.command,
+  'cargo',
+);
+
+assert.deepEqual(
+  plan.command
+    ?.args,
+  [
+    'run',
+    '--',
+    '--help',
+  ],
+);
+        it(
+  'plans a worker as a real log-backed runtime process',
+  () => {
+    const plan =
+      planLivePreview(
+        project(
+          [
+            {
+              path:
+                'package.json',
+
+              content:
+                JSON.stringify({
+                  scripts: {
+                    worker:
+                      'node worker.js',
+                  },
+                }),
+            },
+
+            {
+              path:
+                'worker.js',
+
+              content:
+                'console.log("worker ready")',
+            },
+          ],
+
+          'logs',
+        ),
+      );
+
+    assert.equal(
+      plan.kind,
+      'logs',
+    );
+
+    assert.equal(
+      plan.process
+        ?.command,
+      'npm',
+    );
+
+    assert.deepEqual(
+      plan.process
+        ?.args,
+      [
+        'run',
+        'worker',
+      ],
+    );
+
+    assert.equal(
+      plan.process
+        ?.port,
+      null,
+    );
+  },
+);
+
+it(
+  'does not claim a runnable mobile Preview without a mobile runtime provider',
+  () => {
+    const plan =
+      planLivePreview(
+        project(
+          [
+            {
+              path:
+                'package.json',
+
+              content:
+                JSON.stringify({
+                  scripts: {
+                    start:
+                      'expo start',
+                  },
+                }),
+            },
+          ],
+
+          'mobile_runtime',
+        ),
+      );
+
+    assert.equal(
+      plan.kind,
+      'mobile',
+    );
+
+    assert.equal(
+      plan.process,
+      null,
+    );
+
+    assert.equal(
+      plan.command,
+      null,
+    );
+
+    assert.match(
+      plan.message,
+      /not connected/i,
+    );
+  },
+);
       },
     );
 
