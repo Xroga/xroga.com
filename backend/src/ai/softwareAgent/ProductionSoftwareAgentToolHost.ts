@@ -325,8 +325,48 @@ export class ProductionSoftwareAgentToolHost
       );
   }
 
-  async deleteFile(
-    async renameFile(
+async deleteFile(
+  contract:
+    SoftwareExecutionContract,
+
+  path:
+    string,
+): Promise<{
+  path:
+    string;
+
+  deleted:
+    boolean;
+}> {
+  const normalizedPath =
+    normalizeProjectPath(
+      path,
+    );
+
+  requireMutationAllowed(
+    contract,
+    'delete',
+    normalizedPath,
+  );
+
+  const result =
+    await this.operations
+      .deleteFile(
+        contract,
+        normalizedPath,
+      );
+
+  return {
+    ...result,
+
+    path:
+      normalizeProjectPath(
+        result.path,
+      ),
+  };
+}
+
+async renameFile(
   contract:
     SoftwareExecutionContract,
 
@@ -418,38 +458,6 @@ export class ProductionSoftwareAgentToolHost
       ),
   };
 }
-    contract: SoftwareExecutionContract,
-    path: string,
-  ): Promise<{
-    path: string;
-    deleted: boolean;
-  }> {
-    const normalizedPath =
-      normalizeProjectPath(
-        path,
-      );
-
-    requireMutationAllowed(
-      contract,
-      'delete',
-      normalizedPath,
-    );
-
-    const result =
-      await this.operations.deleteFile(
-        contract,
-        normalizedPath,
-      );
-
-    return {
-      ...result,
-
-      path:
-        normalizeProjectPath(
-          result.path,
-        ),
-    };
-  }
 
   async runCommand(
     contract: SoftwareExecutionContract,
