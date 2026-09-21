@@ -11,6 +11,7 @@ import {
 import type {
   CommandExecutionResult,
   FileMutationResult,
+  FileRenameResult,
   FileWriteIntent,
   GitDiffResult,
   ProjectFileContent,
@@ -54,6 +55,17 @@ export interface ProductionSoftwareAgentOperations {
     path: string;
     deleted: boolean;
   }>;
+
+  renameFile(
+  contract:
+    SoftwareExecutionContract,
+
+  fromPath:
+    string,
+
+  toPath:
+    string,
+): Promise<FileRenameResult>;
 
   runCommand(
     contract: SoftwareExecutionContract,
@@ -128,9 +140,10 @@ function uniquePaths(
 
 function requireMutationAllowed(
   contract: SoftwareExecutionContract,
-  operation:
-    | FileWriteIntent
-    | 'delete',
+ operation:
+  | FileWriteIntent
+  | 'delete'
+  | 'rename',
   path: string,
 ): void {
   const decision =
@@ -313,6 +326,98 @@ export class ProductionSoftwareAgentToolHost
   }
 
   async deleteFile(
+    async renameFile(
+  contract:
+    SoftwareExecutionContract,
+
+  fromPath:
+    string,
+
+  toPath:
+    string,
+): Promise<FileRenameResult> {
+  const normalizedFrom =
+    normalizeProjectPath(
+      fromPath,
+    );
+
+  const normalizedTo =
+    normalizeProjectPath(
+      toPath,
+    );
+
+  requireMutationAllowed(
+    contract,
+    'rename',
+    normalizedFrom,
+  );
+
+  requireMutationAllowed(
+    contract,
+    'rename',
+    normalizedTo,
+  );
+
+  const listed =
+    await this.operations
+      .listFiles(
+        contract,
+      );
+
+  const existing =
+    new Set(
+      listed.map(
+        (
+          file,
+        ) =>
+          normalizeProjectPath(
+            file.path,
+          ),
+      ),
+    );
+
+  if (
+    !existing.has(
+      normalizedFrom,
+    )
+  ) {
+    throw new Error(
+      `RENAME_SOURCE_MISSING: ${normalizedFrom}`,
+    );
+  }
+
+  if (
+    existing.has(
+      normalizedTo,
+    )
+  ) {
+    throw new Error(
+      `RENAME_TARGET_EXISTS: ${normalizedTo}`,
+    );
+  }
+
+  const result =
+    await this.operations
+      .renameFile(
+        contract,
+        normalizedFrom,
+        normalizedTo,
+      );
+
+  return {
+    ...result,
+
+    fromPath:
+      normalizeProjectPath(
+        result.fromPath,
+      ),
+
+    toPath:
+      normalizeProjectPath(
+        result.toPath,
+      ),
+  };
+}
     contract: SoftwareExecutionContract,
     path: string,
   ): Promise<{
