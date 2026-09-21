@@ -645,29 +645,21 @@ const rerunPlan =
   record('review', review.approved ? 'review approved' : 'review found blocking issues',
     review.findings.join('; ') || 'no findings');
 
+  if (
+    !review.approved
+  ) {
+    return fail(
+      'failed',
+      'review',
+      `review blocked the change: ${review.findings.join('; ')}`,
+      validationPlan,
+      review.findings,
+      files,
+    );
+  }
+
   /*
  * Final verification belongs to the verified project itself.
- if (
-  !review.approved
-) {
-  return fail(
-    'failed',
-
-    'review',
-
-    `review blocked the change: ${
-      review.findings.join(
-        '; ',
-      )
-    }`,
-
-    validationPlan,
-
-    review.findings,
-
-    files,
-  );
-}
  *
  * Publication below may succeed, fail, be blocked, or not be
  * requested at all without changing this verification verdict.

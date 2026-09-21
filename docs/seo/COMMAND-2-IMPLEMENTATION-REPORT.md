@@ -30,7 +30,7 @@ The system cannot produce validated keyword, near-win, sleeper, CTR, video-gap, 
 
 - Growth tests: 54 passed, 0 failed.
 - Focused Command 2 and rendered-evidence tests: 32 passed, 0 failed.
-- Backend suite: 2,589 total; 2,576 passed, 13 skipped, 0 failed.
+- Backend suite after synchronizing current main: 2,593 total; 2,580 passed, 13 skipped, 0 failed.
 - Frontend suite after Command 2: 670 total; 653 passed, with the same 17 inherited source-contract failures reproduced on the clean baseline and no new failures.
 - Backend production build: passed.
 - Frontend production build: passed; 165 routes generated.

@@ -264,22 +264,21 @@ describe('adapters delegate rather than reimplement', () => {
 
   it('routes commit through the injected function', async () => {
     let message = '';
+    const adapters = productionAdapters({
+      implement: async () => [],
+      commit: async (input) => { message = input.message; return { commitSha: 'deadbeef' }; },
+    });
+
     assert.ok(
-  adapters.commit,
-  'commit adapter must exist when one is supplied',
-);
+      adapters.commit,
+      'commit adapter must exist when one is supplied',
+    );
 
-const result =
-  await adapters.commit!(
-    [
-      f(
-        'a.ts',
-        '',
-      ),
-    ],
+    const result = await adapters.commit!(
+      [f('a.ts', '')],
+      'feat: add a thing',
+    );
 
-    'feat: add a thing',
-  );
     assert.equal(result.commitSha, 'deadbeef');
     assert.equal(message, 'feat: add a thing');
   });
