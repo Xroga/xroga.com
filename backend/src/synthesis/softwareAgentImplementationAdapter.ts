@@ -669,8 +669,7 @@ export async function runUniversalSoftwareImplementation(
 
     'Do not merge, deploy, or persist a repository branch from inside the implementation phase.',
 
-    'Use Xroga deterministic checks and browser verification when applicable before claiming completion.',
-
+'This phase owns implementation only. The outer UniversalExecution verifier owns deterministic checks, browser verification, repair acceptance, review, and final verification.',
     'If this run was restored from a checkpoint, continue from the checkpointed workspace rather than rebuilding correct work from scratch.',
 
     ...staticWebConstraints(
@@ -779,16 +778,17 @@ const events =
           true,
 
         allowDelete:
-          false,
+          true,
 
         allowRename:
-          false,
+          true,
 
         preview:
           previewRequirementFor(
             input.plan,
           ),
-
+verificationAuthority:
+  'universal',
         /*
          * Publication belongs to the outer verified Universal pipeline.
          */
@@ -975,13 +975,13 @@ const events =
   }
 
   if (
-    runtime
-      .result
-      .status !==
-    'verified'
-  ) {
+  runtime
+    .result
+    .status !==
+  'implemented'
+) {
     console.warn(
-      '[software_agent_v2_inner_verification_incomplete]',
+      '[software_agent_v2_implementation_incomplete]',
 
       JSON.stringify({
         runId:
