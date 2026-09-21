@@ -67,6 +67,21 @@ export interface SoftwareAgentServiceInput {
     content: string;
   }>;
 
+  /**
+ * Current known working snapshot.
+ *
+ * The original initialFiles remain the checkpoint base identity.
+ * This snapshot is used only when a durable checkpoint cannot
+ * be restored.
+ */
+workingFiles?: Array<{
+  path: string;
+  content: string;
+}>;
+
+forceContinueFromCheckpoint?:
+  boolean;
+  
   signal?:
     AbortSignal;
 
@@ -96,9 +111,17 @@ function checkpointStatusFor(
     status
   ) {
     case 'verified':
-      return 'verified';
+  return 'verified';
 
-    case 'incomplete':
+case 'implemented':
+  /*
+   * Universal verification happens outside Agent V2.
+   * Keep the durable checkpoint resumable until that verifier
+   * has accepted the project.
+   */
+  return 'active';
+
+case 'incomplete':
       return 'incomplete';
 
     case 'cancelled':
@@ -247,6 +270,28 @@ export class SoftwareAgentService {
           )
         : undefined;
 
+    const suppliedWorkingFiles =
+  input.workingFiles !==
+  undefined
+    ? input
+        .workingFiles
+        .map(
+          (
+            file,
+          ) => ({
+            path:
+              file.path,
+
+            content:
+              file.content,
+          }),
+        )
+    : undefined;
+
+const effectiveWorkingFiles =
+  restoredWorkingFiles ??
+  suppliedWorkingFiles;
+
     const {
       operations,
       workspace,
@@ -267,13 +312,13 @@ export class SoftwareAgentService {
           ),
 
           ...(
-            restoredWorkingFiles
-              ? {
-                  workingFiles:
-                    restoredWorkingFiles,
-                }
-              : {}
-          ),
+  effectiveWorkingFiles
+    ? {
+        workingFiles:
+          effectiveWorkingFiles,
+      }
+    : {}
+),
         },
       );
 
@@ -468,11 +513,14 @@ export class SoftwareAgentService {
           initialEvidence,
 
           resumedFromCheckpoint:
-            Boolean(
-              restoredCheckpoint,
-            ),
+  Boolean(
+    restoredCheckpoint,
+  ),
 
-          checkpoint:
+forceContinueFromCheckpoint:
+  input.forceContinueFromCheckpoint,
+
+checkpoint:
             async (
               evidence,
             ) =>
