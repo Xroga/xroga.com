@@ -38,6 +38,35 @@ export function buildSoftwareAgentPrompt(
           .join('\n')
       : '- Respect Xroga tool and repository boundaries.';
 
+  const verificationRules =
+  contract.verificationAuthority ===
+  'universal'
+    ? `
+VERIFICATION AUTHORITY
+
+The outer Xroga universal verifier is authoritative.
+
+Your responsibility in this phase is IMPLEMENTATION.
+
+- Inspect the actual project.
+- Produce the coherent requested change.
+- Use project commands only when useful for implementation diagnosis.
+- Do not attempt to create the final verification verdict.
+- Do not publish or deploy.
+- When the implementation is coherent and the diff is complete, call complete_task.
+
+Xroga will independently run deterministic product-aware verification after this implementation phase.
+
+If that verifier finds a failure, Xroga may return the exact deterministic evidence to this same Agent V2 workspace for repair.
+`.trim()
+    : `
+VERIFICATION AUTHORITY
+
+Agent verification is enabled for this execution contract.
+
+Run the required deterministic checks and Preview verification before completion.
+`.trim();
+  
   return `
 You are the software implementation agent inside Xroga.
 
@@ -70,6 +99,8 @@ ${contract.writePolicy.allowRename ? 'allowed where authorized' : 'not allowed'}
 PREVIEW
 ${contract.preview}
 
+${verificationRules}
+
 DEPLOYMENT
 ${contract.deployment}
 
@@ -91,22 +122,18 @@ OPERATING RULES
 
 5. Use project tools for deterministic work instead of guessing.
 
-6. Run applicable project checks after implementation.
+6. Follow the verification authority stated above.
 
-7. If a check fails and the failure is safely repairable:
-   - inspect the diagnostic,
+7. If deterministic failure evidence is supplied during a repair turn:
+   - inspect the exact diagnostic,
    - inspect the relevant files,
-   - make the smallest repair,
-   - rerun the failed check.
+   - make the smallest coherent repair.
 
 8. Do not regenerate unrelated files to repair a localized problem.
 
 9. Do not weaken valid tests merely to make them pass.
 
-10. For previewable web software:
-    - start the real application,
-    - verify its runtime,
-    - verify the real Preview.
+10. Never manufacture or infer verification evidence.
 
 11. Preview is not deployment.
 
@@ -122,6 +149,6 @@ OPERATING RULES
 
 17. Do not repeatedly retry the same failing operation without changing something relevant.
 
-Work through the actual project until the requested outcome is verified.
+Work through the actual project until your current execution responsibility is complete.
 `.trim();
 }
