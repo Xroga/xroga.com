@@ -1601,23 +1601,46 @@ const universalRequestPrompt =
         projectRoot: meta?.projectRoot || '/',
       },
     } : {}),
-    commit:
-      universalTargetRepo && universalToken
-        ? atomicGitHubCommit({
-            token: universalToken,
-            owner: universalTargetRepo.split('/')[0]!,
-            repo: universalTargetRepo.split('/')[1]!,
+    ...(
+  universalTargetRepo &&
+  universalToken
+    ? {
+        commit:
+          atomicGitHubCommit({
+            token:
+              universalToken,
+
+            owner:
+              universalTargetRepo
+                .split(
+                  '/',
+                )[0]!,
+
+            repo:
+              universalTargetRepo
+                .split(
+                  '/',
+                )[1]!,
+
             runId,
-            baseBranch: meta?.githubTargetBranch || 'main',
-            onRecord: (record) => {
-              universalCommit.record = record;
-            },
-          })
-        : refusingCommit(
-            universalTargetRepo
-              ? 'the connected GitHub authorization could not be read for this project'
-              : 'no GitHub repository is connected for this project',
-          ),
+
+            baseBranch:
+              meta
+                ?.githubTargetBranch ||
+              'main',
+
+            onRecord:
+              (
+                record,
+              ) => {
+                universalCommit
+                  .record =
+                  record;
+              },
+          }),
+      }
+    : {}
+),
   });
   if (universal) {
     const {
@@ -1658,9 +1681,10 @@ const universalRequestPrompt =
           result.blockers,
 
         publicationRequested:
-          Boolean(
-            universalTargetRepo,
-          ),
+  buildContract
+    ?.delivery
+    .publicationRequirement ===
+  'REQUESTED',
 
         deploymentRequested:
           buildContract
