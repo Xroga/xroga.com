@@ -44,6 +44,19 @@ export interface FileMutationResult {
   deletions?: number;
 }
 
+export interface FileRenameResult {
+  fromPath:
+    string;
+
+  toPath:
+    string;
+
+  renamed:
+    boolean;
+
+  revision?:
+    string;
+}
 export interface GitDiffResult {
   changedPaths: string[];
 
@@ -120,6 +133,20 @@ export interface SoftwareAgentToolHost {
     deleted: boolean;
   }>;
 
+  /**
+ * Rename one project file when the contract explicitly permits it.
+ */
+renameFile(
+  contract:
+    SoftwareExecutionContract,
+
+  fromPath:
+    string,
+
+  toPath:
+    string,
+): Promise<FileRenameResult>;
+  
   /**
    * Execute a command only inside the isolated Xroga
    * execution environment.
