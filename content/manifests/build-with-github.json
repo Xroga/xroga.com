@@ -1,0 +1,65 @@
+{
+  "title": "Build with GitHub and keep repository work reviewable",
+  "description": "See how Xroga targets an authorized GitHub repository and branch, verifies focused changes, and keeps protected-branch policy authoritative.",
+  "slug": "github",
+  "canonical": "https://xroga.com/build-with/github",
+  "publishedAt": "2026-09-09",
+  "updatedAt": "2026-09-22",
+  "lastVerifiedAt": "2026-09-22T00:00:00.000Z",
+  "author": "Xroga Growth and Product Truth",
+  "intent": "DOCUMENTATION",
+  "cluster": "topic.existing-repositories",
+  "entityIds": ["capability.repository-work", "integration.github"],
+  "opportunityId": "opportunity.assoc.xroga.repository-native-topic.existing-repositories",
+  "gapIds": ["gap.assoc.xroga.repository-native.topic"],
+  "promptFamilyIds": ["prompt.ai-app-existing-repo"],
+  "validatedKeywords": [],
+  "audience": ["developers", "teams"],
+  "funnelStage": "EVALUATION",
+  "sourceIds": ["source.xroga.github-atomic-write", "source.xroga.repository-review-visual", "source.github.app-permissions", "source.github.branch-protection"],
+  "claimIds": ["claim.github.atomic-authorized-write", "claim.github.permission-boundary", "claim.github.policy-authoritative"],
+  "evidenceManifest": [
+    {
+      "type": "PRODUCT_CODE",
+      "source": "source.xroga.github-atomic-write",
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "location": "backend/src/services/integrations/githubAtomicWrite.ts",
+      "claimSupported": "Authorized repository writes use the current atomic write path.",
+      "publicSafe": true,
+      "freshnessDue": "2026-10-22T00:00:00.000Z"
+    },
+    {
+      "type": "PRODUCT_SCREENSHOT",
+      "source": "source.xroga.repository-review-visual",
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "location": "frontend/public/homepage/all-in-one/xroga-existing-repo-review-20260902.png",
+      "claimSupported": "The public Xroga interface exposes repository work and review state.",
+      "publicSafe": true,
+      "freshnessDue": "2026-12-22T00:00:00.000Z"
+    }
+  ],
+  "visualManifest": [
+    {
+      "type": "PRODUCT_SCREENSHOT",
+      "source": "/homepage/all-in-one/xroga-existing-repo-review-20260902.png",
+      "alt": "Xroga interface showing a reviewable existing-repository workflow",
+      "caption": "Public product illustration of repository review state; no customer or private repository data is shown.",
+      "width": null,
+      "height": null,
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "publicSafe": true
+    }
+  ],
+  "related": ["/ai-coding-agent", "/security", "/docs"],
+  "productCapability": "Authorized repository read and atomic write",
+  "indexStatus": "INDEX",
+  "qualityDimensions": {"intentMatch": 14, "productRelevance": 10, "originalEvidence": 13, "answerCompleteness": 8, "citationReadiness": 9, "visualProof": 8, "sourceQuality": 10, "freshness": 5, "internalLinking": 4, "conversionPath": 3, "technicalReadiness": 4},
+  "qualityScore": 88,
+  "qualityDeficiencies": ["conversionPath is 3/5."],
+  "refreshDue": "2026-10-22T00:00:00.000Z",
+  "owner": "Growth / GitHub integration",
+  "requiredSections": ["Direct answer", "At a glance", "How the workflow works", "Evidence", "Limitations", "Next action"],
+  "coveredQuestions": ["How does Xroga target a repository and branch?", "What happens when remote state changes?", "Does Xroga bypass protected branches?"],
+  "cta": {"label": "Connect your repository", "href": "/auth/signup"},
+  "conversionPath": {"entryIntent": "Use AI safely with an existing GitHub repository", "valueDelivered": "A source-backed explanation of target, write, and review boundaries", "nextAction": "Connect your repository", "activationEvent": "Authorized GitHub repository selected"}
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "sourceId": "source.xroga.github-atomic-write",
+    "url": "backend/src/services/integrations/githubAtomicWrite.ts",
+    "publisher": "Xroga",
+    "sourceType": "XROGA_PRODUCT_CODE",
+    "claimTopics": ["atomic repository writes", "authorized repository target"],
+    "publishedAt": null,
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Current implementation source for atomic GitHub writes.",
+    "volatility": "MEDIUM",
+    "pagesUsingSource": ["/build-with/github"]
+  },
+  {
+    "sourceId": "source.xroga.repository-review-visual",
+    "url": "/homepage/all-in-one/xroga-existing-repo-review-20260902.png",
+    "publisher": "Xroga",
+    "sourceType": "XROGA_PUBLIC_ASSET",
+    "claimTopics": ["reviewable repository workflow"],
+    "publishedAt": "2026-09-02",
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Public-safe product illustration already shipped on the Xroga site; not a customer repository.",
+    "volatility": "LOW",
+    "pagesUsingSource": ["/build-with/github"]
+  },
+  {
+    "sourceId": "source.github.app-permissions",
+    "url": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app",
+    "publisher": "GitHub",
+    "sourceType": "OFFICIAL_PRIMARY",
+    "claimTopics": ["GitHub App and user authorization"],
+    "publishedAt": null,
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Official GitHub documentation confirms that request success depends on granted app permissions and, for user tokens, the user's own permissions.",
+    "volatility": "MEDIUM",
+    "pagesUsingSource": ["/build-with/github"]
+  },
+  {
+    "sourceId": "source.github.branch-protection",
+    "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches",
+    "publisher": "GitHub",
+    "sourceType": "OFFICIAL_PRIMARY",
+    "claimTopics": ["protected branch policy"],
+    "publishedAt": null,
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Official GitHub documentation for protected-branch enforcement.",
+    "volatility": "MEDIUM",
+    "pagesUsingSource": ["/build-with/github"]
+  },
+  {
+    "sourceId": "source.xroga.readiness-tool",
+    "url": "frontend/src/components/seo/ProductionReadinessChecker.tsx",
+    "publisher": "Xroga",
+    "sourceType": "XROGA_PRODUCT_CODE",
+    "claimTopics": ["production readiness checklist behavior"],
+    "publishedAt": null,
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Current source of the public interactive checklist.",
+    "volatility": "MEDIUM",
+    "pagesUsingSource": ["/tools/production-readiness-checker"]
+  },
+  {
+    "sourceId": "source.xroga.validation-runtime",
+    "url": "backend/src/capabilities/modules/validationRun.ts",
+    "publisher": "Xroga",
+    "sourceType": "XROGA_PRODUCT_CODE",
+    "claimTopics": ["isolated project validation"],
+    "publishedAt": null,
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "authorityNotes": "Current product implementation for validation capability boundaries.",
+    "volatility": "MEDIUM",
+    "pagesUsingSource": ["/tools/production-readiness-checker"]
+  }
+]

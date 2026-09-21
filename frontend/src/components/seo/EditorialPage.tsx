@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { buildWebPageJsonLd, ORGANIZATION_ID, SITE_URL } from '@/lib/seo';
 import type { ContentSection, SourceLink } from '@/lib/seoGrowthContent';
+import { EvidenceFigure, type GrowthVisual } from '@/components/seo/GrowthEvidence';
 import '@/styles/seo-editorial.css';
 import '@/styles/homepage-coding.css';
 
@@ -12,11 +13,12 @@ function JsonLd({ data }: { data: unknown }) {
 
 export function EditorialPage({
   path, title, description, eyebrow, intro, sections, breadcrumbs, related = [], sources = [],
-  updated, article = false, note,
+  updated, article = false, note, visuals = [], cta,
 }: {
   path: string; title: string; description: string; eyebrow: string; intro: string;
   sections: ContentSection[]; breadcrumbs: Crumb[]; related?: string[]; sources?: SourceLink[];
   updated?: string; article?: boolean; note?: string;
+  visuals?: GrowthVisual[]; cta?: { label: string; href: string };
 }) {
   const url = `${SITE_URL}${path}`;
   const crumbs = [{ label: 'Home', href: '/' }, ...breadcrumbs];
@@ -50,13 +52,14 @@ export function EditorialPage({
             <h1>{title}</h1>
             <p className="xv-seo-dek">{intro}</p>
             <div className="xv-seo-actions">
-              <Link href="/auth/signup">Start building free</Link>
+              <Link href={cta?.href ?? '/auth/signup'}>{cta?.label ?? 'Start building free'}</Link>
               <Link href="/showcase">See working examples</Link>
             </div>
             {updated && <p className="xv-seo-updated">Reviewed against official sources · {updated}</p>}
           </header>
 
           {note && <aside className="xv-seo-note"><strong>Decision note</strong><p>{note}</p></aside>}
+          {visuals.map((visual) => <EvidenceFigure key={`${visual.type}-${visual.src ?? visual.caption}`} visual={visual} />)}
 
           <div className="xv-seo-layout">
             <aside className="xv-seo-toc" aria-label="On this page">
