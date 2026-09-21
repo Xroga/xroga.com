@@ -849,7 +849,10 @@ record(
 
   return {
     outcome: 'completed', phaseReached: 'complete', plan: validationPlan, securityControls,
-    files, commitSha, evidence,
+files,
+commitSha,
+publication,
+evidence,
     // The commit is preserved and reported, but it is reported *unverified* with the exact
     // reason. `artifactStatusFor` turns `completed` + `verified: false` into a **blocked**
     // artifact, so the user sees the work that exists and the evidence that is missing —
