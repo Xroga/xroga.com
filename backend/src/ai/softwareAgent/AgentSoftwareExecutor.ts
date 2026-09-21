@@ -195,12 +195,32 @@ function buildInitialGoal(
 
   resumed:
     boolean,
+
+  verificationAuthority:
+    SoftwareExecutionContract[
+      'verificationAuthority'
+    ],
 ): string {
   if (
     !resumed
   ) {
     return goal;
   }
+
+  const recoveryInstruction =
+    verificationAuthority ===
+    'universal'
+      ? `
+The outer Xroga universal verifier owns final deterministic verification.
+
+If this continuation contains verifier failure evidence, repair that exact evidence in the current workspace.
+
+Do not rerun or manufacture final verification evidence inside Agent V2.
+Return the repaired implementation to the outer verifier.
+`.trim()
+      : `
+Rerun deterministic checks and Preview when their evidence is missing or invalidated.
+`.trim();
 
   return `
 ${goal}
@@ -214,7 +234,8 @@ The current project files already include work produced earlier in this run.
 Inspect the current workspace before changing anything.
 Preserve correct existing checkpointed work.
 Continue from the current state instead of regenerating the product from scratch.
-Rerun deterministic checks and Preview when their evidence is missing or invalidated.
+
+${recoveryInstruction}
 `.trim();
 }
 
@@ -658,12 +679,15 @@ restoredCompletion
       let result =
         await agent.run(
           buildInitialGoal(
-            contract.goal,
+  contract.goal,
 
-            input
-              .resumedFromCheckpoint ===
-              true,
-          ),
+  input
+    .resumedFromCheckpoint ===
+    true,
+
+  contract
+    .verificationAuthority,
+),
         );
 
       outputText =
@@ -751,10 +775,13 @@ restoredCompletion
       ) {
         result =
           await agent.continue(
-            buildVerificationContinuation(
-              currentCompletion
-                .blockers,
-            ),
+            buildSoftwareContinuation(
+  currentCompletion
+    .blockers,
+
+  contract
+    .verificationAuthority,
+),
           );
 
         outputText =
