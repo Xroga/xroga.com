@@ -37,9 +37,6 @@ import {
   type CommitFn,
 } from './productionAdapters.js';
 
-import {
-  repairIncrementally,
-} from './incrementalImplementation.js';
 
 import {
   implementCoherently,
@@ -1094,6 +1091,8 @@ const measuredEvidence =
                 },
               ),
 
+          
+
           /*
            * Outer deterministic validation remains authoritative.
            * Agent V2 already gets bounded same-agent repair rounds during
@@ -1101,32 +1100,107 @@ const measuredEvidence =
            * universal pipeline's final bounded repair after independent
            * validation/browser evidence.
            */
-          repair:
-            async ({
-              brief,
-              failures,
-              files,
-            }) =>
-              repairIncrementally(
-                {
-                  brief:
-                    `${executionPrompt}\n\n${brief}`,
+ /*
+ * Authoritative verification failures re-enter the SAME
+ * Agent V2 run.
+ *
+ * Important:
+ *
+ * - runId stays identical;
+ * - existingFiles stays the original run-start repository base;
+ * - workingFiles is the exact snapshot rejected by the verifier;
+ * - the durable checkpoint is therefore still valid;
+ * - verifier diagnostics are supplied verbatim as repair evidence.
+ */
 
-                  failures,
+          implementationResultMode:
+  'snapshot',
+repair:
+  async ({
+    brief,
+    plan,
+    failures,
+    files,
+  }) => {
+    const repairBrief =
+      [
+        brief,
 
-                  files,
+        '',
 
-                  candidates:
-                    orderedCandidates.map(
-                      (
-                        modelId,
-                      ) => ({
-                        modelId,
-                      }),
-                    ),
-                },
-              ),
+        'AUTHORITATIVE XROGA VERIFICATION FAILURE',
 
+        'The outer deterministic verifier rejected the current workspace.',
+
+        'Continue from the CURRENT workspace. Do not regenerate correct unrelated work.',
+
+        'Repair the smallest coherent set of files that addresses the exact evidence below.',
+
+        '',
+
+        ...failures.map(
+          (
+            failure,
+            index,
+          ) =>
+            `Failure ${index + 1}:\n${failure}`,
+        ),
+      ].join(
+        '\n',
+      );
+
+    return runUniversalSoftwareImplementation(
+      {
+        userId:
+          input.userId,
+
+        runId,
+
+        buildContract,
+
+        projectId:
+          input.projectId,
+
+        prompt:
+          executionPrompt,
+
+        brief:
+          repairBrief,
+
+        plan,
+
+        /*
+         * Keep the immutable run-start base so the existing
+         * durable checkpoint fingerprint still matches.
+         */
+        existingFiles:
+          input.existingFiles ??
+          [],
+
+        /*
+         * If durable checkpoint restoration is unavailable,
+         * this prevents repair from falling back to an old base.
+         */
+        workingFiles:
+          files,
+
+        forceContinueFromCheckpoint:
+          true,
+
+        primaryModelId,
+
+        fallbackModelIds,
+
+        activeProjectContext:
+          input.activeProjectContext,
+
+        onEvent:
+          input.onEvent,
+      },
+    );
+  },
+repairResultMode:
+  'snapshot',
           commit:
             input.commit,
         }),
