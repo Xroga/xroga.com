@@ -16,6 +16,10 @@ import {
 } from '@/lib/projectRuntimeApi';
 
 import {
+  RuntimeLogsButton,
+} from './RuntimeLogsButton';
+
+import {
   useLiveBuildStore,
 } from '@/store/useLiveBuildStore';
 
@@ -184,6 +188,7 @@ export function RuntimePreviewControls({
         </button>
       ) : null}
 
+      <RuntimeLogsButton />
       {preview.url ? (
         <a
           href={
