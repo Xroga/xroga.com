@@ -120,8 +120,36 @@ export interface EngineeringArtifact {
   /** Present when the run failed after producing the artifact. */
   error?: string;
   code?: string;
-  /** Changed-file bodies used only to hydrate Project edits; never the whole repository. */
-  projectFiles?: Array<{ path: string; content: string }>;
+    /**
+   * New Universal runs send a complete workspace snapshot here.
+   * Older persisted artifacts may still contain only changed files.
+   */
+  projectFiles?: Array<{
+    path: string;
+    content: string;
+  }>;
+
+  projectFilesMode?:
+    | 'snapshot'
+    | 'diff';
+
+  buildContract?:
+    unknown;
+
+  projectRunState?:
+    unknown;
+
+  softwareProject?: {
+    workspace?: {
+      files?: Array<{
+        path: string;
+        content: string;
+      }>;
+    };
+
+    [key: string]:
+      unknown;
+  };
   /** The exact before/after trail for the changed files. */
   fileTrail?: Array<{
     path: string;
@@ -211,11 +239,18 @@ export interface EngineeringArtifactWorkspaceProjection {
   sourceBranch: string;
   reviewBranch: string | null;
   projectName: string;
+
   projectFiles: Array<{
     path: string;
     content: string;
-    flag: 'generated' | 'modified' | 'deleted';
+    flag:
+      | 'generated'
+      | 'modified'
+      | 'deleted'
+      | 'unchanged';
   }>;
+
+  replaceProjectFiles: boolean;
   /** Direct static entry point, when the changed-file artifact contains one. */
   html: string;
   css: string;
@@ -340,16 +375,115 @@ export function engineeringArtifactWorkspaceProjection(
       typeof file === 'string' ? undefined : file.action,
     ]),
   );
-  const projectFiles: EngineeringArtifactWorkspaceProjection['projectFiles'] = (artifact.projectFiles ?? [])
-    .filter((file) => file && typeof file.path === 'string' && typeof file.content === 'string')
-    .map((file) => ({
-      path: file.path,
-      content: file.content,
-      flag: manifestActions.get(file.path) === 'created' ? 'generated' as const : 'modified' as const,
-    }));
-  for (const [path, action] of manifestActions) {
-    if (action === 'deleted' && !projectFiles.some((file) => file.path === path)) {
-      projectFiles.push({ path, content: '', flag: 'deleted' });
+    const canonicalWorkspaceFiles =
+    artifact
+      .softwareProject
+      ?.workspace
+      ?.files;
+
+  const hasNestedCanonicalWorkspace =
+    Array.isArray(
+      canonicalWorkspaceFiles,
+    ) &&
+    canonicalWorkspaceFiles.length >
+      0;
+
+  const topLevelProjectFiles =
+    artifact.projectFiles ??
+    [];
+
+  const hasTopLevelCanonicalWorkspace =
+    artifact.projectFilesMode ===
+      'snapshot' &&
+    topLevelProjectFiles.length >
+      0;
+
+  const replaceProjectFiles =
+    hasNestedCanonicalWorkspace ||
+    hasTopLevelCanonicalWorkspace;
+
+  const sourceProjectFiles =
+    hasNestedCanonicalWorkspace
+      ? canonicalWorkspaceFiles
+      : topLevelProjectFiles;
+
+  const projectFiles:
+    EngineeringArtifactWorkspaceProjection['projectFiles'] =
+    sourceProjectFiles
+      .filter(
+        (
+          file,
+        ): file is {
+          path: string;
+          content: string;
+        } =>
+          Boolean(
+            file,
+          ) &&
+          typeof file.path ===
+            'string' &&
+          typeof file.content ===
+            'string',
+      )
+      .map(
+        (file) => {
+          const action =
+            manifestActions.get(
+              file.path,
+            );
+
+          return {
+            path:
+              file.path,
+
+            content:
+              file.content,
+
+            flag:
+              action ===
+              'created'
+                ? 'generated' as const
+                : action ===
+                    'modified'
+                  ? 'modified' as const
+                  : replaceProjectFiles
+                    ? 'unchanged' as const
+                    : 'modified' as const,
+          };
+        },
+      );
+
+  /*
+   * Legacy diff artifacts represented deletions as synthetic empty
+   * files. Canonical snapshots must not do that: deleted files are
+   * absent from the workspace and remain only in fileTrail/changeSet.
+   */
+  if (
+    !replaceProjectFiles
+  ) {
+    for (
+      const [
+        path,
+        action,
+      ] of
+      manifestActions
+    ) {
+      if (
+        action ===
+          'deleted' &&
+        !projectFiles.some(
+          (file) =>
+            file.path ===
+            path,
+        )
+      ) {
+        projectFiles.push({
+          path,
+          content: '',
+          flag:
+            'deleted',
+        });
+      }
     }
   }
   const fileTrail = (artifact.fileTrail ?? [])
@@ -378,11 +512,15 @@ export function engineeringArtifactWorkspaceProjection(
     reviewBranch: repository.branch || null,
     projectName: repository.repo,
     projectFiles,
+    replaceProjectFiles,
     ...preview,
     fileTrail,
     githubRepoUrl: `https://github.com/${repo}`,
     commitSha: artifact.commitSha,
-    status: artifact.status === 'verified' && artifact.commitSha ? 'pushed' : 'degraded',
+    status:
+      artifact.commitSha
+        ? 'pushed'
+        : 'degraded',
     changesSummary: [artifact.summary, ...verificationLines].filter(Boolean),
     terminalLines,
   };

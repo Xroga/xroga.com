@@ -5,25 +5,57 @@ import {
   useMemo,
   useState,
 } from 'react';
+
 import {
   ChevronDown,
   Search,
 } from 'lucide-react';
+
 import toast from 'react-hot-toast';
 
-import { INTEGRATIONS } from '@/lib/integrations';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import {
+  INTEGRATIONS,
+} from '@/lib/integrations';
 
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
-import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
-import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
-import { IntegrationRequestBanner } from '@/components/integrations/IntegrationRequestBanner';
-import { ConnectShipWizard } from '@/components/integrations/ConnectShipWizard';
+import {
+  api,
+} from '@/lib/api';
 
-import { UserOwnedPublishPanel } from '@/components/publish/UserOwnedPublishPanel';
+import {
+  cn,
+} from '@/lib/utils';
 
-import { Badge } from '@/components/ui/Badge';
+import {
+  IntegrationLogo,
+} from '@/components/integrations/IntegrationLogo';
+
+import {
+  ConnectedServicesSection,
+} from '@/components/integrations/ConnectedServicesSection';
+
+import {
+  CustomCredentialsSection,
+} from '@/components/integrations/CustomCredentialsSection';
+
+import {
+  IntegrationRequestBanner,
+} from '@/components/integrations/IntegrationRequestBanner';
+
+import {
+  ConnectShipWizard,
+} from '@/components/integrations/ConnectShipWizard';
+
+import {
+  XrogaConnectPanel,
+} from '@/components/integrations/XrogaConnectPanel';
+
+import {
+  UserOwnedPublishPanel,
+} from '@/components/publish/UserOwnedPublishPanel';
+
+import {
+  Badge,
+} from '@/components/ui/Badge';
 
 import {
   SettingsDivider,
@@ -37,45 +69,56 @@ import {
 } from '@/lib/connectableIntegrations';
 
 export function IntegrationsPanel() {
-  const [search, setSearch] = useState('');
-  const [comingSoonOpen, setComingSoonOpen] =
+  const [
+    search,
+    setSearch,
+  ] =
+    useState('');
+
+  const [
+    comingSoonOpen,
+    setComingSoonOpen,
+  ] =
     useState(false);
 
-  /*
-   * null = checking
-   * false = beginner / GitHub not connected
-   * true = GitHub connected
-   */
   const [
     githubConnected,
     setGithubConnected,
-  ] = useState<boolean | null>(null);
+  ] =
+    useState<
+      boolean | null
+    >(null);
 
   const [
     connectingGithub,
     setConnectingGithub,
-  ] = useState(false);
+  ] =
+    useState(false);
 
-  /*
-   * Determine whether the user should see the beginner
-   * GitHub-only onboarding state or the full integrations page.
-   */
   useEffect(() => {
     let active = true;
 
     void api.github
       .status()
       .then((status) => {
-        if (!active) return;
+        if (!active) {
+          return;
+        }
 
         setGithubConnected(
-          Boolean(status.connected),
+          Boolean(
+            status.connected,
+          ),
         );
       })
       .catch(() => {
-        if (!active) return;
+        if (!active) {
+          return;
+        }
 
-        setGithubConnected(false);
+        setGithubConnected(
+          false,
+        );
       });
 
     return () => {
@@ -83,12 +126,11 @@ export function IntegrationsPanel() {
     };
   }, []);
 
-  /*
-   * Surface OAuth callback messages, then scrub them
-   * from the browser URL.
-   */
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (
+      typeof window ===
+      'undefined'
+    ) {
       return;
     }
 
@@ -98,34 +140,59 @@ export function IntegrationsPanel() {
       );
 
     const vercel =
-      query.get('vercel');
+      query.get(
+        'vercel',
+      );
 
     const github =
-      query.get('github');
+      query.get(
+        'github',
+      );
 
     const supabase =
-      query.get('supabase');
+      query.get(
+        'supabase',
+      );
+
+    const composio =
+      query.get(
+        'composio',
+      );
 
     const message =
-      query.get('message');
+      query.get(
+        'message',
+      );
 
-    if (vercel === 'connected') {
+    if (
+      vercel ===
+      'connected'
+    ) {
       toast.success(
-        query.get('username')
-          ? `Vercel connected as @${query.get('username')}`
+        query.get(
+          'username',
+        )
+          ? `Vercel connected as @${query.get(
+              'username',
+            )}`
           : 'Vercel connected',
       );
     } else if (
-      vercel === 'error' ||
-      vercel === 'missing_code'
+      vercel ===
+        'error' ||
+      vercel ===
+        'missing_code'
     ) {
       toast.error(
         message ||
           'Vercel authorize failed — try again',
       );
     } else if (
-      vercel === 'setup' ||
-      query.get('focus') === 'vercel'
+      vercel ===
+        'setup' ||
+      query.get(
+        'focus',
+      ) === 'vercel'
     ) {
       try {
         const stored =
@@ -134,7 +201,9 @@ export function IntegrationsPanel() {
           );
 
         if (stored) {
-          toast.error(stored);
+          toast.error(
+            stored,
+          );
 
           sessionStorage.removeItem(
             'xroga-vercel-setup-error',
@@ -158,31 +227,45 @@ export function IntegrationsPanel() {
 
       setTimeout(() => {
         document
-          .getElementById('ship-setup')
+          .getElementById(
+            'ship-setup',
+          )
           ?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
+            behavior:
+              'smooth',
+
+            block:
+              'center',
           });
       }, 200);
     }
 
-    if (github === 'connected') {
-      /*
-       * Immediately reveal the full integrations page
-       * after a successful GitHub OAuth return.
-       */
-      setGithubConnected(true);
+    if (
+      github ===
+      'connected'
+    ) {
+      setGithubConnected(
+        true,
+      );
 
       toast.success(
-        query.get('username')
-          ? `GitHub connected as @${query.get('username')}`
+        query.get(
+          'username',
+        )
+          ? `GitHub connected as @${query.get(
+              'username',
+            )}`
           : 'GitHub connected',
       );
     } else if (
-      github === 'error' ||
-      github === 'missing_code'
+      github ===
+        'error' ||
+      github ===
+        'missing_code'
     ) {
-      setGithubConnected(false);
+      setGithubConnected(
+        false,
+      );
 
       toast.error(
         message ||
@@ -190,13 +273,18 @@ export function IntegrationsPanel() {
       );
     }
 
-    if (supabase === 'connected') {
+    if (
+      supabase ===
+      'connected'
+    ) {
       toast.success(
         'Supabase authorized',
       );
     } else if (
-      supabase === 'error' ||
-      supabase === 'missing_code'
+      supabase ===
+        'error' ||
+      supabase ===
+        'missing_code'
     ) {
       toast.error(
         message ||
@@ -205,9 +293,27 @@ export function IntegrationsPanel() {
     }
 
     if (
+      composio ===
+      'connected'
+    ) {
+      toast.success(
+        'App connected to Xroga',
+      );
+    } else if (
+      composio ===
+      'error'
+    ) {
+      toast.error(
+        message ||
+          'App connection failed',
+      );
+    }
+
+    if (
       vercel ||
       github ||
-      supabase
+      supabase ||
+      composio
     ) {
       const url =
         new URL(
@@ -218,63 +324,82 @@ export function IntegrationsPanel() {
         'vercel',
         'github',
         'supabase',
+        'composio',
         'message',
         'username',
         'pick',
-      ].forEach((key) =>
-        url.searchParams.delete(key),
+      ].forEach(
+        (key) =>
+          url.searchParams.delete(
+            key,
+          ),
       );
 
       window.history.replaceState(
         {},
         '',
-        url.pathname + url.search,
+        url.pathname +
+          url.search,
       );
     }
   }, []);
 
-  const comingSoon = useMemo(() => {
-    const query =
-      search
-        .toLowerCase()
-        .trim();
+  const comingSoon =
+    useMemo(() => {
+      const query =
+        search
+          .toLowerCase()
+          .trim();
 
-    const list =
-      INTEGRATIONS.filter(
+      const list =
+        INTEGRATIONS.filter(
+          (integration) =>
+            !isConnectableIntegration(
+              integration.id,
+            ),
+        );
+
+      if (!query) {
+        return list;
+      }
+
+      return list.filter(
         (integration) =>
-          !isConnectableIntegration(
-            integration.id,
-          ),
+          integration.name
+            .toLowerCase()
+            .includes(
+              query,
+            ) ||
+          integration.category
+            .toLowerCase()
+            .includes(
+              query,
+            ),
       );
-
-    if (!query) {
-      return list;
-    }
-
-    return list.filter(
-      (integration) =>
-        integration.name
-          .toLowerCase()
-          .includes(query) ||
-        integration.category
-          .toLowerCase()
-          .includes(query),
-    );
-  }, [search]);
+    }, [search]);
 
   const noResults =
-    search.trim().length > 0 &&
-    comingSoon.length === 0;
+    search.trim()
+      .length >
+      0 &&
+    comingSoon.length ===
+      0;
 
   async function connectGithub() {
-    if (connectingGithub) {
+    if (
+      connectingGithub
+    ) {
       return;
     }
 
-    setConnectingGithub(true);
+    setConnectingGithub(
+      true,
+    );
 
     try {
-      const { url } =
+      const {
+        url,
+      } =
         await api.github.oauthUrl();
 
       if (!url) {
@@ -283,9 +408,12 @@ export function IntegrationsPanel() {
         );
       }
 
-      window.location.href = url;
+      window.location.href =
+        url;
     } catch (error) {
-      setConnectingGithub(false);
+      setConnectingGithub(
+        false,
+      );
 
       toast.error(
         error instanceof Error
@@ -295,22 +423,13 @@ export function IntegrationsPanel() {
     }
   }
 
-  /*
-   * Status is still loading.
-   *
-   * Do not flash either the beginner card or the
-   * experienced integrations page.
-   */
-  if (githubConnected === null) {
+  if (
+    githubConnected ===
+    null
+  ) {
     return null;
   }
 
-  /*
-   * Beginner experience.
-   *
-   * Until GitHub is connected, no Vercel, Supabase,
-   * publishing, custom keys, or integration catalogue.
-   */
   if (!githubConnected) {
     return (
       <SettingsStack>
@@ -333,9 +452,7 @@ export function IntegrationsPanel() {
           </h2>
 
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Xroga uses GitHub behind the
-            scenes to save your project and
-            keep every update organized.
+            Xroga uses GitHub behind the scenes to save your project and keep every update organized.
           </p>
 
           <button
@@ -343,7 +460,9 @@ export function IntegrationsPanel() {
             onClick={() =>
               void connectGithub()
             }
-            disabled={connectingGithub}
+            disabled={
+              connectingGithub
+            }
             className="mt-6 rounded-token-sm bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[var(--foreground)] transition-opacity disabled:opacity-60"
           >
             {connectingGithub
@@ -352,25 +471,18 @@ export function IntegrationsPanel() {
           </button>
 
           <p className="mt-3 text-xs text-[var(--text-muted)]">
-            You can connect deployment,
-            database, and other services
-            later.
+            You can connect deployment, database, and business apps later.
           </p>
         </div>
       </SettingsStack>
     );
   }
 
-  /*
-   * GitHub connected.
-   *
-   * Existing full integration management becomes visible.
-   */
   return (
     <SettingsStack>
       <SettingsPanelHeader
         title="Plugins"
-        description="GitHub is connected. Add deployment, database, publishing, and other services when your project needs them."
+        description="Connect shipping infrastructure and the business apps Xroga can securely work with."
         action={
           <Badge
             tone="accent"
@@ -379,23 +491,25 @@ export function IntegrationsPanel() {
             {
               CONNECTABLE_INTEGRATION_IDS.size
             }{' '}
-            live
+            core
           </Badge>
         }
       />
 
-      {/* Main shipping/deployment setup */}
       <ConnectShipWizard />
 
-      {/* Publishing platform setup */}
-      <UserOwnedPublishPanel compact />
+      <UserOwnedPublishPanel
+        compact
+      />
 
-      <SettingsDivider label="Optional" />
+      <SettingsDivider label="Business apps" />
 
-      {/* Optional product-service integrations */}
+      <XrogaConnectPanel />
+
+      <SettingsDivider label="Optional credentials" />
+
       <ConnectedServicesSection />
 
-      {/* Custom credentials and webhooks */}
       <CustomCredentialsSection />
 
       <SettingsDivider label="Coming soon" />
@@ -408,9 +522,12 @@ export function IntegrationsPanel() {
 
         <input
           value={search}
-          onChange={(event) =>
+          onChange={(
+            event,
+          ) =>
             setSearch(
-              event.target.value,
+              event.target
+                .value,
             )
           }
           placeholder="Search the coming-soon catalogue…"
@@ -420,7 +537,9 @@ export function IntegrationsPanel() {
 
       {noResults ? (
         <IntegrationRequestBanner
-          query={search.trim()}
+          query={
+            search.trim()
+          }
         />
       ) : null}
 
@@ -433,7 +552,9 @@ export function IntegrationsPanel() {
                 !current,
             )
           }
-          aria-expanded={comingSoonOpen}
+          aria-expanded={
+            comingSoonOpen
+          }
           className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[var(--surface-inset)]"
         >
           <div>
@@ -442,9 +563,10 @@ export function IntegrationsPanel() {
             </h3>
 
             <p className="text-xs text-[var(--text-secondary)]">
-              {comingSoon.length}{' '}
-              wishlist Plugins — not
-              live OAuth yet
+              {
+                comingSoon.length
+              }{' '}
+              wishlist Plugins
             </p>
           </div>
 
@@ -452,6 +574,7 @@ export function IntegrationsPanel() {
             aria-hidden="true"
             className={cn(
               'h-4 w-4 shrink-0 text-[var(--text-muted)] transition-transform',
+
               comingSoonOpen &&
                 'rotate-180',
             )}
@@ -463,21 +586,29 @@ export function IntegrationsPanel() {
             {comingSoon.map(
               (item) => (
                 <div
-                  key={item.id}
+                  key={
+                    item.id
+                  }
                   className="flex items-center justify-between gap-3 px-4 py-2.5 opacity-80"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-token-sm bg-[var(--surface-inset)] text-xs font-bold">
-                      {item.name.charAt(0)}
+                      {item.name.charAt(
+                        0,
+                      )}
                     </div>
 
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-[var(--text-primary)]">
-                        {item.name}
+                        {
+                          item.name
+                        }
                       </p>
 
                       <p className="truncate text-[10px] text-[var(--text-muted)]">
-                        {item.category}
+                        {
+                          item.category
+                        }
                       </p>
                     </div>
                   </div>

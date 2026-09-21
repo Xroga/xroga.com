@@ -4,6 +4,7 @@ import { ExternalLink, Eye, EyeOff, FolderGit2, Loader2 } from 'lucide-react';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { cn } from '@/lib/utils';
 import { useHydrated } from '@/hooks/useHydrated';
+import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 
 function statusLabel(status: string): string {
   switch (status) {
@@ -31,9 +32,24 @@ export function ProjectWorkspaceRail() {
   const previewOpen = useProjectWorkspaceStore((s) => s.previewOpen);
   const setPreviewOpen = useProjectWorkspaceStore((s) => s.setPreviewOpen);
   const html = useProjectWorkspaceStore((s) => s.html);
+    const runtimePreview =
+    useLiveBuildStore(
+      (
+        state,
+      ) =>
+        state.preview,
+    );
 
-  if (!hydrated || (!repo?.includes('/') && !html)) return null;
-
+  if (
+    !hydrated ||
+    (
+      !repo?.includes('/') &&
+      !html &&
+      !runtimePreview
+    )
+  ) {
+    return null;
+  }
   const label = projectName || (repo ? repo.split('/')[1] : 'Project');
 
   return (

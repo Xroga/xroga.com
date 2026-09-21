@@ -12,8 +12,23 @@ import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
+/**
+ * Route structural markdown and interactive Xroga links through the markdown renderer.
+ *
+ * Xroga Connect persists interactive cards as safe markdown links so they survive
+ * transcript reloads. If a response contains only one of those links, treating it as
+ * plain text exposes implementation syntax such as `[Review action](...)` to users.
+ */
 function hasMarkdown(content: string): boolean {
-  return /^#{1,4}\s/m.test(content) || /^\|.+\|/m.test(content) || /^[-*•]\s/m.test(content) || /^>\s/m.test(content);
+  return (
+    /^#{1,4}\s/m.test(content) ||
+    /^\|.+\|/m.test(content) ||
+    /^[-*•]\s/m.test(content) ||
+    /^>\s/m.test(content) ||
+    /\[[^\]]+\]\((?:\/xroga\/tool-ui\?payload=|\/dashboard\/actions\/confirm\/|https?:\/\/[^)\s]+)[^)]*\)/i.test(
+      content,
+    )
+  );
 }
 
 /** Modern AI response — professional markdown or structured plain text */
@@ -37,7 +52,9 @@ export function ModernResponseText({
   if (isFailedImageContent(safeContent) && images.length === 0) {
     return (
       <div className="xv-response-text">
-        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">{textOnly || safeContent}</p>
+        <p className="whitespace-pre-wrap text-[13px] text-red-300/90">
+          {textOnly || safeContent}
+        </p>
       </div>
     );
   }
@@ -50,6 +67,7 @@ export function ModernResponseText({
         {textOnly && (
           <FormattedAiMarkdown content={textOnly} streaming={streaming} />
         )}
+
         {images.map((img, i) => (
           <ImageStudioCard
             key={`studio-img-${i}`}
@@ -72,7 +90,11 @@ export function ModernResponseText({
       {hasMarkdown(safeContent) && !isMathSolutionContent(safeContent) ? (
         <FormattedAiMarkdown content={safeContent} streaming={streaming} />
       ) : (
-        <PlainAiResponse content={safeContent} streaming={streaming} mathMode={isMathSolutionContent(safeContent)} />
+        <PlainAiResponse
+          content={safeContent}
+          streaming={streaming}
+          mathMode={isMathSolutionContent(safeContent)}
+        />
       )}
     </div>
   );

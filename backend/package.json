@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
-    "@supabase/supabase-js": "^2.49.1",
+    "@cline/sdk": "0.0.82",
+    "@supabase/supabase-js": "2.110.7",
     "bullmq": "^5.41.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -29,7 +30,7 @@
     "pg": "^8.14.1",
     "winston": "^3.19.0",
     "ws": "^8.21.0",
-    "zod": "3.24.2"
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

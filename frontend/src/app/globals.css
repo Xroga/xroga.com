@@ -9838,7 +9838,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   padding: 18px 14px 24px;
   /* Room for the composer, which is fixed over the bottom of the shell. Without it the
      last few lines of a build report sit permanently behind the chatbar. */
-  padding-bottom: calc(var(--xv-chatbar-height, 112px) + 28px);
+  padding-bottom: calc(var(--xv-chatbar-height, 112px) + 64px);
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.13) transparent;
 }
@@ -9870,7 +9870,13 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 @media (min-width: 1024px) {
   .xv-terminal-scroll {
     padding: 28px 22px 36px;
-    padding-bottom: calc(var(--xv-chatbar-height, 112px) + 36px);
+    padding-bottom: calc(var(--xv-chatbar-height, 112px) + 104px);
+  }
+}
+
+@media (max-width: 639px) {
+  .xv-terminal-scroll {
+    padding-bottom: calc(var(--xv-chatbar-height, 112px) + 48px);
   }
 }
 

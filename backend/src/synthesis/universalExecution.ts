@@ -22,7 +22,9 @@
  *
  * So `canFallBack` is a function with a reason, not a boolean, and the reason is recorded.
  */
-
+import type {
+  BuildContract,
+} from './buildContract.js';
 import { buildFileTrail, type ProjectFile } from '../ai/patches.js';
 import { planUniversalRun, runValidationPlan, mayClaimVerified, type UniversalRunPlan, type ValidationRunner } from './universalFlow.js';
 import { deriveSecurityControls, securityRoutingRequirement, type SecurityControl } from './securityControls.js';
@@ -174,6 +176,7 @@ export function canFallBack(input: {
  */
 export async function executeUniversalRun(input: {
   prompt: string;
+  buildContract?: BuildContract | null;
   owner: Owner;
   runId: string;
   existingFiles?: readonly ProjectFile[];
@@ -208,9 +211,37 @@ export async function executeUniversalRun(input: {
   };
   signal?: AbortSignal;
 }): Promise<UniversalExecutionResult> {
-  const evidence: ExecutionEvidenceRecord[] = [];
-  const existingFiles = input.existingFiles ?? [];
-  let mutationBegan = false;
+    const evidence:
+    ExecutionEvidenceRecord[] =
+    [];
+
+  const existingFiles =
+    input.existingFiles ??
+    [];
+
+  let mutationBegan =
+    false;
+
+  const planFor = (
+    files:
+      readonly ProjectFile[],
+  ) =>
+    planUniversalRun({
+      prompt:
+        input.prompt,
+
+      files,
+
+      projectId:
+        input.owner.projectId,
+
+      runId:
+        input.runId,
+
+      buildContract:
+        input.buildContract ??
+        null,
+    });
 
   const record = (phase: ExecutionPhase, statement: string, detail: string) =>
     evidence.push({ phase, statement, detail });
@@ -247,10 +278,10 @@ export async function executeUniversalRun(input: {
   }
 
   // ── Spec and architecture ──────────────────────────────────────────────────
-  const plan = planUniversalRun({
-    prompt: input.prompt, files: existingFiles,
-    projectId: input.owner.projectId, runId: input.runId,
-  });
+    const plan =
+    planFor(
+      existingFiles,
+    );
   record('spec', 'product surfaces determined', plan.spec.surfaces.map((s) => String(s.surface)).join(', ') || 'none');
   record('architecture', 'architecture selected', plan.summary);
 
@@ -390,9 +421,10 @@ export async function executeUniversalRun(input: {
   );
 
   // ── Validation, with bounded repair ────────────────────────────────────────
-  const validationPlan = planUniversalRun({
-    prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId,
-  });
+    const validationPlan =
+    planFor(
+      files,
+    );
   // Validation runs as a canonical task on the same state the implementation task is
   // recorded in, so the run has one task graph rather than two. The sandbox's exit codes
   // remain the only verdict — §19 puts executable verification above model confidence, and
@@ -447,8 +479,10 @@ export async function executeUniversalRun(input: {
     if (repaired) {
       files = repaired;
       record('repair', 'bounded repair applied', `${failures.length} failure(s) addressed`);
-      const rerunPlan = planUniversalRun({ prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId });
-      // §9 requires the repair to rerun the validation it was given. Deterministic
+const rerunPlan =
+        planFor(
+          files,
+        );      // §9 requires the repair to rerun the validation it was given. Deterministic
       // revalidation is what decides whether the repair worked — not the model's belief
       // that it fixed the failure.
       report = implementationState
@@ -521,8 +555,10 @@ export async function executeUniversalRun(input: {
         record('repair', 'browser repair applied', `${browserFailures.length} browser failure(s) addressed`);
 
         // Deterministic validation first — a browser fix that breaks the build is not a fix.
-        const rerunPlan = planUniversalRun({ prompt: input.prompt, files, projectId: input.owner.projectId, runId: input.runId });
-        report = await runValidationPlan(rerunPlan, input.adapters.runValidation, files);
+const rerunPlan =
+        planFor(
+          files,
+        );        report = await runValidationPlan(rerunPlan, input.adapters.runValidation, files);
         record('validation', `revalidation after browser repair`, report.blocker ?? 'revalidated');
 
         if (report.passed) {

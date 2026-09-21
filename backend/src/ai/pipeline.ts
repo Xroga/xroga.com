@@ -78,7 +78,12 @@ import {
   type ProjectFile,
 } from './patches.js';
 import { reviewBuildOutput } from './qa.js';
-import { completeRun, createRunDurable, failRun } from './runStore.js';
+import {
+  completeRun,
+  createRunDurable,
+  failRun,
+  resumeRunDurable,
+} from './runStore.js';
 import { authorizeLegacyBuild } from './legacyBuilderAdapter.js';
 import { startupProgress } from './startupProgress.js';
 import {
@@ -122,6 +127,20 @@ import {
   observeUniversalShadow,
 } from '../synthesis/universalShadow.js';
 import { refusingCommit, tryUniversalBuild } from '../synthesis/universalEntrypoint.js';
+import {
+  deriveProjectRunState,
+  projectRunTransportSucceeded,
+} from '../synthesis/projectRunState.js';
+
+import {
+  createSoftwareProject,
+} from '../synthesis/softwareProject.js';
+import {
+  persistSoftwareProjectRevision,
+} from '../synthesis/projectRuntime/store.js';
+import {
+  startOrRefreshLivePreview,
+} from '../synthesis/livePreview/coordinator.js';
 import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
@@ -215,8 +234,29 @@ import {
 import { describeVerificationState } from './verificationLifecycle.js';
 import { engineeringTaskHandlers } from './engineeringTasks.js';
 import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
+import type {
+  SoftwareRunEvent,
+} from './softwareAgent/runEvents.js';
+
+import {
+  softwareRunEventToProgress,
+} from './softwareAgent/swarmRunSoftwareEventSink.js';
 
 export interface PipelineProgress {
+    /**
+   * Software builder implementation identity.
+   */
+  builderVersion?: 'agent-v2';
+
+  /**
+   * Explicit marker for Agent V2 execution events.
+   */
+  softwareAgentV2?: boolean;
+
+  /**
+   * Native public Agent V2 execution evidence.
+   */
+  softwareEvent?: SoftwareRunEvent;
   agent?: string;
   status?: string;
   message?: string;
@@ -294,12 +334,19 @@ export type ProgressFn = (event: PipelineProgress) => void;
 export type DeltaFn = (delta: string) => void;
 
 export interface BuildClientMeta {
+  
   assistantMessageId?: string;
   userMessageId?: string;
   userPrompt?: string;
   buildContinuation?: boolean;
   buildOriginalPrompt?: string;
   buildUpdate?: boolean;
+    /**
+   * Explicit UI-authorized continuation of the SAME interrupted run.
+   *
+   * This does not come from semantic model output.
+   */
+  resumeRun?: boolean;
   githubTargetRepo?: string;
   githubTargetBranch?: string;
   projectRoot?: string;
@@ -403,6 +450,9 @@ function parseClientMeta(raw: unknown): BuildClientMeta | undefined {
     buildOriginalPrompt:
       typeof m.buildOriginalPrompt === 'string' ? m.buildOriginalPrompt : undefined,
     buildUpdate: m.buildUpdate === true,
+    resumeRun:
+  m.resumeRun ===
+  true,
     githubTargetRepo:
       typeof m.githubTargetRepo === 'string' && m.githubTargetRepo.includes('/')
         ? m.githubTargetRepo
@@ -1128,8 +1178,21 @@ export async function runBuildPipeline(opts: {
     : undefined;
   const userFacingPrompt = (meta?.userPrompt || opts.prompt).trim();
 
-  await createRunDurable(opts.userId, userFacingPrompt, runId);
-  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
+if (
+  meta?.resumeRun
+) {
+  await resumeRunDurable(
+    opts.userId,
+    userFacingPrompt,
+    runId,
+  );
+} else {
+  await createRunDurable(
+    opts.userId,
+    userFacingPrompt,
+    runId,
+  );
+}  emit({ ...startupProgress('quota'), swarmTodos: todosForBuild('route', 'omit') });
   await assertHasQuota(opts.userId);
   throwIfAborted();
 
@@ -1423,11 +1486,68 @@ export async function runBuildPipeline(opts: {
     githubOkEarly && meta?.githubTargetRepo?.includes('/') ? meta.githubTargetRepo : null;
   const universalToken = universalTargetRepo ? await getGitHubToken(opts.userId) : null;
 
-  const universal = await tryUniversalBuild({
+  /*
+ * A build follow-up must retain the original product definition.
+ *
+ * Example:
+ *
+ * original:
+ *   build a landing page named Jhon Mix
+ *
+ * follow-up:
+ *   give me the real preview
+ *
+ * Product synthesis must see BOTH, otherwise the literal follow-up
+ * contains no product surface and gets incorrectly refused.
+ */
+const originalBuildPrompt =
+  meta
+    ?.buildOriginalPrompt
+    ?.trim();
+
+const universalRequestPrompt =
+  originalBuildPrompt &&
+  originalBuildPrompt !==
+    userFacingPrompt
+    ? [
+        originalBuildPrompt,
+        '',
+        'Current continuation request:',
+        userFacingPrompt,
+      ].join(
+        '\n',
+      )
+    : userFacingPrompt;
+    const universal = await tryUniversalBuild({
     runId,
-    userId: opts.userId,
+
+    userId:
+      opts.userId,
+
+    /*
+     * Streaming executions use the existing pipeline progress channel.
+     *
+     * /api/swarm already:
+     * 1. persists this progress event
+     * 2. assigns the canonical run sequence
+     * 3. sends it over live SSE
+     *
+     * Non-stream executions omit this callback, causing the Agent V2 event
+     * sink to fall back to direct runStore persistence.
+     */
+    onEvent:
+      opts.onProgress
+        ? (event) => {
+            emit(
+              softwareRunEventToProgress(
+                event,
+              ),
+            );
+          }
+        : undefined,
+
     projectId: resolvedProjectId,
-    prompt: userFacingPrompt,
+    prompt: universalRequestPrompt,
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
@@ -1500,18 +1620,181 @@ export async function runBuildPipeline(opts: {
           ),
   });
   if (universal) {
-    const { result, routing, goalContract } = universal;
-    // Universal execution validates and atomically publishes a complete merged snapshot.
+    const {
+      result,
+      routing,
+      goalContract,
+      buildContract,
+    } = universal;    // Universal execution validates and atomically publishes a complete merged snapshot.
     // The user-facing artifact must describe only the real before/after diff; treating the
     // snapshot as the diff made a one-file edit appear to have changed every repository file.
-    const universalFileTrail = buildFileTrail(prior.files, [...result.files]);
+        const universalFileTrail =
+      buildFileTrail(
+        prior.files,
+        [...result.files],
+      );
+
+    const projectRunState =
+      deriveProjectRunState({
+        outcome:
+          result.outcome,
+
+        phaseReached:
+          result.phaseReached,
+
+        verified:
+          result.verified,
+
+        fileCount:
+          result.files.length,
+
+        commitSha:
+          result.commitSha,
+
+        reason:
+          result.reason,
+
+        blockers:
+          result.blockers,
+
+        publicationRequested:
+          Boolean(
+            universalTargetRepo,
+          ),
+
+        deploymentRequested:
+          buildContract
+            ?.delivery
+            .deploymentRequirement ===
+          'REQUESTED',
+      });
+
+    let softwareProject =
+      buildContract
+        ? createSoftwareProject({
+            contract:
+              buildContract,
+
+            files:
+              result.files,
+
+            fileTrail:
+              universalFileTrail,
+
+                        lifecycle:
+              projectRunState,
+
+            architecture:
+              result.plan
+                ?.architecture ??
+              null,
+
+            recipe:
+              result.plan
+                ?.productIntelligence
+                .recipe ??
+              null,
+
+            filePlan:
+              result.plan
+                ?.productIntelligence
+                .filePlan ??
+              null,
+
+            verified:
+              result.verified,
+
+            evidence:
+              result.evidence,
+
+            reason:
+              result.reason,
+
+            blockers:
+              result.blockers,
+
+            repository:
+              universalCommit.record
+                ? {
+                    owner:
+                      universalCommit
+                        .record
+                        .owner,
+
+                    repo:
+                      universalCommit
+                        .record
+                        .repo,
+
+                    branch:
+                      universalCommit
+                        .record
+                        .branch,
+
+                    baseBranch:
+                      universalCommit
+                        .record
+                        .baseBranch,
+
+                    commitSha:
+                      result.commitSha,
+                  }
+                : null,
+          })
+        : null;
+
+        let runtimePreview =
+      null;
+
+    if (
+      softwareProject
+    ) {
+      const livePreview =
+        await startOrRefreshLivePreview({
+          userId:
+            opts.userId,
+
+          project:
+            softwareProject,
+
+          runId,
+
+          emit:
+            (
+              softwareEvent,
+            ) => {
+              emit(
+                softwareRunEventToProgress(
+                  softwareEvent,
+                ),
+              );
+            },
+        });
+
+      softwareProject =
+        livePreview.project;
+
+      runtimePreview =
+        livePreview.preview;
+    }
+    
+        const projectRevision =
+      softwareProject
+        ? await persistSoftwareProjectRevision(
+            opts.userId,
+            softwareProject,
+          )
+        : null;
+
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
       message: `Universal path: ${result.outcome} at ${result.phaseReached}. ${result.reason}`,
     });
-    const universalSuccess = result.outcome === 'completed' && result.verified;
-    const outputEnvelope: UniversalOutputEnvelope = {
+    const universalSuccess =
+      projectRunTransportSucceeded(
+        result.outcome,
+      );    const outputEnvelope: UniversalOutputEnvelope = {
       type: 'xroga.output', version: '1.0',
       status: universalSuccess ? 'completed' : result.outcome === 'failed' ? 'failed' : 'blocked',
       summary: result.reason,
@@ -1555,8 +1838,35 @@ export async function runBuildPipeline(opts: {
           // "blocked" with no way to see that the reason was an unobserved page.
           ...(result.browserVerification ? { browserVerification: result.browserVerification } : {}),
         }),
-        outputEnvelope,
+                outputEnvelope,
+
         goalContract,
+
+        buildContract,
+
+        projectRunState,
+
+                ...(softwareProject
+          ? {
+              softwareProject,
+            }
+          : {}),
+
+              ...(runtimePreview
+          ? {
+              runtimePreview,
+            }
+          : {}),
+
+        ...(projectRevision
+          ? {
+              projectRevision,
+            }
+          : {}),
+
+        projectFilesMode:
+          'snapshot',
+
         universal: true,
         outcome: result.outcome,
         phaseReached: result.phaseReached,
@@ -1570,13 +1880,38 @@ export async function runBuildPipeline(opts: {
           removed: entry.removed,
           action: entry.action,
         })),
-        // Operational workspace projection. The versioned artifact above intentionally keeps
-        // only a compact manifest; Project edits additionally needs the actual changed-file
-        // bodies and before/after trail. Scope this to the real diff instead of serialising the
-        // whole repository, so an arbitrary monorepo cannot turn one edit into a huge SSE frame.
-        projectFiles: universalFileTrail
-          .filter((entry) => entry.action !== 'deleted')
-          .map((entry) => ({ path: entry.path, content: entry.after })),
+                /*
+         * Canonical workspace snapshot.
+         *
+         * projectFiles is now the COMPLETE current project.
+         * fileTrail below remains only the before/after diff.
+         *
+         * slimOutputForSse still bounds transport size for large
+         * repositories without changing the persisted canonical result.
+         */
+        projectFiles:
+          [...result.files]
+            .map(
+              (file) => ({
+                path:
+                  file.path,
+
+                content:
+                  file.content,
+              }),
+            ),
+
+        generatedFiles:
+          universalFileTrail
+            .filter(
+              (entry) =>
+                entry.action !==
+                'deleted',
+            )
+            .map(
+              (entry) =>
+                entry.path,
+            ),
         fileTrail: universalFileTrail.map((entry) => ({
           path: entry.path,
           before: entry.before,

@@ -21,9 +21,22 @@
 
 import type { ProjectFile } from '../ai/patches.js';
 import {
+  buildContractPlanningText,
+  type BuildContract,
+} from './buildContract.js';
+
+import {
   synthesizeUniversalProductSpec,
   type UniversalProductSpec,
 } from './universalProductSpec.js';
+
+import {
+  finalizeProductIntelligence,
+  mergeProductIntelligenceAcceptance,
+  prepareProductIntelligence,
+  type ProductIntelligencePlan,
+} from './productIntelligence.js';
+
 import { planArchitecture, planIsRefusal, type ArchitecturePlan } from './architecturePlan.js';
 import { compileAcceptanceCriteria, automatedCriteria, type AcceptanceCriterion } from './acceptanceCompiler.js';
 import {
@@ -61,8 +74,13 @@ export interface PlannedValidation {
 
 export interface UniversalRunPlan {
   readonly spec: UniversalProductSpec;
-  readonly architecture: ArchitecturePlan;
-  readonly acceptance: readonly AcceptanceCriterion[];
+    readonly architecture: ArchitecturePlan;
+
+  readonly productIntelligence:
+    ProductIntelligencePlan;
+
+  readonly acceptance:
+    readonly AcceptanceCriterion[];
   readonly validations: readonly PlannedValidation[];
   readonly status: UniversalRunStatus;
   readonly blockers: readonly string[];
@@ -113,20 +131,91 @@ export function planUniversalRun(input: {
   files?: readonly ProjectFile[];
   projectId?: string | null;
   runId?: string | null;
+  buildContract?: BuildContract | null;
 }): UniversalRunPlan {
-  const files = input.files ?? [];
-  const spec = synthesizeUniversalProductSpec({
-    prompt: input.prompt,
-    files,
-    projectId: input.projectId ?? null,
-    runId: input.runId ?? null,
-  });
-  const architecture = planArchitecture({ spec, files });
-  const acceptance = compileAcceptanceCriteria({ spec, plan: architecture });
+  const files =
+    input.files ??
+    [];
+
+  const spec =
+    synthesizeUniversalProductSpec({
+      prompt:
+        input.prompt,
+
+      files,
+
+      projectId:
+        input.projectId ??
+        null,
+
+      runId:
+        input.runId ??
+        null,
+
+      buildContract:
+        input.buildContract ??
+        null,
+    });
+    const semanticText =
+    input.buildContract
+      ? buildContractPlanningText(
+          input.buildContract,
+        )
+      : input.prompt;
+
+  const preparedProductIntelligence =
+    prepareProductIntelligence({
+      text:
+        semanticText,
+
+      surfaces:
+        spec.surfaces.map(
+          (
+            declaration,
+          ) =>
+            declaration.surface,
+        ),
+    });
+
+  const architecture =
+    planArchitecture({
+      spec,
+      files,
+
+      recipe:
+        preparedProductIntelligence
+          .recipe,
+    });
+
+  const productIntelligence =
+    finalizeProductIntelligence({
+      prepared:
+        preparedProductIntelligence,
+
+      architecture,
+
+      existingFiles:
+        files,
+    });
+
+  const acceptance =
+    mergeProductIntelligenceAcceptance(
+      compileAcceptanceCriteria({
+        spec,
+        plan:
+          architecture,
+      }),
+
+      productIntelligence,
+    );
 
   if (planIsRefusal(architecture)) {
     return {
-      spec, architecture, acceptance: [], validations: [],
+      spec,
+      architecture,
+      productIntelligence,
+      acceptance: [],
+      validations: [],
       status: 'refused_no_surface',
       blockers: architecture.blockers,
       discovery: null,
@@ -163,9 +252,27 @@ export function planUniversalRun(input: {
         ? 'ready_with_blockers'
         : 'ready';
 
-  return {
-    spec, architecture, acceptance, validations, status, blockers, discovery,
-    summary: describeRun({ spec, architecture, acceptance, validations, status, blockers, discovery }),
+    return {
+    spec,
+    architecture,
+    productIntelligence,
+    acceptance,
+    validations,
+    status,
+    blockers,
+    discovery,
+
+    summary:
+      describeRun({
+        spec,
+        architecture,
+        productIntelligence,
+        acceptance,
+        validations,
+        status,
+        blockers,
+        discovery,
+      }),
   };
 }
 
@@ -175,8 +282,30 @@ function describeRun(plan: Omit<UniversalRunPlan, 'summary'>): string {
   const automated = automatedCriteria(plan.acceptance).length;
   const manual = plan.acceptance.length - automated;
 
-  const lines = [
+    const lines = [
     `Surfaces: ${surfaces}`,
+
+    `Product: ${
+      plan.productIntelligence
+        .classification
+        ?.taxonomyId ??
+      'custom/unclassified'
+    }`,
+
+    `Recipe: ${
+      plan.productIntelligence
+        .recipe
+        ?.id ??
+      'architecture-derived'
+    }`,
+
+    `Planned files: ${
+      plan.productIntelligence
+        .filePlan
+        .entries
+        .length
+    }`,
+
     `Languages: ${languages.join(', ') || 'none selected'}`,
     `Acceptance criteria: ${automated} automated` + (manual ? `, ${manual} needing a person` : ''),
     `Validation commands: ${plan.validations.length}`,

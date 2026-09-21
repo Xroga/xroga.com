@@ -1,156 +1,971 @@
 /**
  * The single backend → terminal translation point.
  *
- * Every raw SSE payload enters here and leaves as zero or more `TerminalEvent`
- * rows. No React component may read raw payload fields directly; if a new field
- * needs to reach the UI, it is mapped here first. That rule is what keeps the
- * surfaces from drifting apart the way the previous four components did.
+ * Every raw SSE payload enters here and leaves as zero or more TerminalEvent
+ * rows.
  *
- * Returning an array (rather than one row) matters: a single `progress` payload can
- * legitimately carry both a status line and a newly-blocked permission, and both
- * are real facts that belong in the log. Returning `[]` is also normal — keepalives
- * and empty payloads produce nothing, because a terminal must not show a row for
- * "the connection is still open".
+ * Software Agent V2 events are also normalized here. React components never
+ * need to understand the raw Agent V2 wire contract.
  */
 
-import type { TerminalEvent, TerminalEventKind, TerminalEventLevel } from './terminalEvent';
-import { redactTerminalText } from './terminalRedaction';
-import { capacityUnavailableLine } from '../capacityMessage';
+import type {
+  TerminalEvent,
+  TerminalEventKind,
+  TerminalEventLevel,
+} from './terminalEvent';
 
-/** Raw payload as received. Deliberately loose — this is untrusted input. */
-export type RawTerminalPayload = Record<string, unknown>;
+import type {
+  SoftwareRunEvent,
+  SoftwareRunEventEvidence,
+  SoftwareRunEventType,
+  SoftwareRunStatus,
+} from '../swarm';
+
+import {
+  redactTerminalText,
+} from './terminalRedaction';
+
+import {
+  capacityUnavailableLine,
+} from '../capacityMessage';
+
+/**
+ * Raw payload as received from the network.
+ *
+ * It is deliberately loose because SSE data is untrusted runtime input.
+ */
+export type RawTerminalPayload =
+  Record<string, unknown>;
 
 export interface AdapterContext {
-  /** Sequence number of the last row emitted; the adapter assigns from here. */
+  /**
+   * Sequence number of the last terminal row emitted.
+   */
   fromSeq: number;
-  /** Receipt time, injected so tests are deterministic. */
+
+  /**
+   * Receipt time, injected so tests are deterministic.
+   */
   now?: number;
 }
 
-function str(value: unknown): string | null {
-  return typeof value === 'string' && value.trim() ? value.trim() : null;
+const SOFTWARE_EVENT_TYPES:
+  ReadonlySet<string> =
+  new Set([
+    'run.started',
+    'run.completed',
+    'run.failed',
+    'run.cancelled',
+
+    'plan.updated',
+
+    'project.inspect.started',
+    'project.inspect.completed',
+
+    'file.read',
+    'file.created',
+    'file.updated',
+    'file.deleted',
+
+    'command.started',
+    'command.output',
+    'command.completed',
+
+    'check.started',
+    'check.completed',
+
+    'repair.started',
+    'repair.completed',
+
+    'preview.starting',
+    'preview.ready',
+    'preview.updated',
+    'preview.failed',
+
+    'browser.verification.started',
+    'browser.verification.completed',
+
+    'git.branch.created',
+    'git.commit.created',
+
+    'deployment.started',
+    'deployment.ready',
+    'deployment.failed',
+
+        'goal.resolved',
+    'product.classified',
+    'recipe.selected',
+    'architecture.selected',
+    'file_plan.created',
+
+    'workspace.created',
+    'checkpoint.created',
+
+    'file.renamed',
+
+    'dependency.install.started',
+    'dependency.install.completed',
+
+    'runtime.started',
+    'runtime.stopped',
+
+    'process.started',
+    'process.stopped',
+
+    'verification.started',
+    'verification.completed',
+
+    'publication.started',
+    'publication.completed',
+
+    'delivery.ready',
+    
+  ]);
+
+const SOFTWARE_STATUSES:
+  ReadonlySet<string> =
+  new Set([
+    'pending',
+    'running',
+    'success',
+    'failed',
+    'cancelled',
+  ]);
+
+function isRecord(
+  value: unknown,
+): value is Record<
+  string,
+  unknown
+> {
+  return Boolean(
+    value &&
+      typeof value ===
+        'object' &&
+      !Array.isArray(
+        value,
+      ),
+  );
+}
+
+function str(
+  value: unknown,
+): string | null {
+  return (
+    typeof value ===
+      'string' &&
+    value.trim()
+      ? value.trim()
+      : null
+  );
+}
+
+function finiteNumber(
+  value: unknown,
+): number | undefined {
+  return (
+    typeof value ===
+      'number' &&
+    Number.isFinite(
+      value,
+    )
+      ? value
+      : undefined
+  );
+}
+
+function softwareEvidence(
+  value: unknown,
+):
+  | SoftwareRunEventEvidence
+  | undefined {
+  if (
+    !isRecord(
+      value,
+    )
+  ) {
+    return undefined;
+  }
+
+  const evidence:
+    SoftwareRunEventEvidence = {
+    filePath:
+      str(
+        value.filePath,
+      ) ?? undefined,
+
+    fileRevision:
+      str(
+        value.fileRevision,
+      ) ?? undefined,
+
+    diffId:
+      str(
+        value.diffId,
+      ) ?? undefined,
+
+    commandId:
+      str(
+        value.commandId,
+      ) ?? undefined,
+
+    checkId:
+      str(
+        value.checkId,
+      ) ?? undefined,
+
+    previewId:
+      str(
+        value.previewId,
+      ) ?? undefined,
+
+    commitSha:
+      str(
+        value.commitSha,
+      ) ?? undefined,
+
+    deploymentId:
+      str(
+        value.deploymentId,
+      ) ?? undefined,
+
+    exitCode:
+      finiteNumber(
+        value.exitCode,
+      ),
+
+    durationMs:
+      finiteNumber(
+        value.durationMs,
+      ),
+
+    projectId:
+      str(
+        value.projectId,
+      ) ?? undefined,
+
+    runtimeSessionId:
+      str(
+        value.runtimeSessionId,
+      ) ?? undefined,
+
+    processId:
+      str(
+        value.processId,
+      ) ?? undefined,
+
+    port:
+      finiteNumber(
+        value.port,
+      ),
+
+    previewKind:
+      str(
+        value.previewKind,
+      ) ?? undefined,
+
+    previewUrl:
+      str(
+        value.previewUrl,
+      ) ?? undefined,
+  };
+
+  return evidence;
 }
 
 /**
- * Keepalives are sent every 15s purely to hold the connection open. They carry
- * `message: 'Working…'`, which the old UI displayed — making an idle stream look
- * like active work. They must never produce a row.
+ * Validate the Agent V2 event before allowing it into terminal state.
  */
-function isKeepalive(payload: RawTerminalPayload): boolean {
-  return payload.keepalive === true;
+function parseSoftwareEvent(
+  payload:
+    RawTerminalPayload,
+):
+  | SoftwareRunEvent
+  | null {
+  if (
+    payload.softwareAgentV2 !==
+    true
+  ) {
+    return null;
+  }
+
+  if (
+    !isRecord(
+      payload.softwareEvent,
+    )
+  ) {
+    return null;
+  }
+
+  const raw =
+    payload.softwareEvent;
+
+  const id =
+    str(
+      raw.id,
+    );
+
+  const runId =
+    str(
+      raw.runId,
+    );
+
+  const createdAt =
+    str(
+      raw.createdAt,
+    );
+
+  const title =
+    str(
+      raw.title,
+    );
+
+  const eventType =
+    str(
+      raw.type,
+    );
+
+  const status =
+    str(
+      raw.status,
+    );
+
+  const sequence =
+    finiteNumber(
+      raw.sequence,
+    );
+
+  if (
+    !id ||
+    !runId ||
+    !createdAt ||
+    !title ||
+    !eventType ||
+    !SOFTWARE_EVENT_TYPES.has(
+      eventType,
+    ) ||
+    !status ||
+    !SOFTWARE_STATUSES.has(
+      status,
+    ) ||
+    sequence ==
+      null
+  ) {
+    return null;
+  }
+
+  return {
+    id,
+
+    runId,
+
+    sequence,
+
+    createdAt,
+
+    type:
+      eventType as
+        SoftwareRunEventType,
+
+    status:
+      status as
+        SoftwareRunStatus,
+
+    title,
+
+    summary:
+      str(
+        raw.summary,
+      ) ?? undefined,
+
+    evidence:
+      softwareEvidence(
+        raw.evidence,
+      ),
+  };
 }
 
-function levelFor(event: string, payload: RawTerminalPayload): TerminalEventLevel {
-  if (event === 'error' || payload.error) return 'error';
-  if (event === 'slow_request' || event === 'billing_webhook_failed') return 'warn';
-  if (event === 'complete') return payload.success === false ? 'error' : 'success';
+/**
+ * Keepalives exist only to hold the connection open.
+ */
+function isKeepalive(
+  payload:
+    RawTerminalPayload,
+): boolean {
+  return (
+    payload.keepalive ===
+    true
+  );
+}
+
+function levelFor(
+  event: string,
+  payload:
+    RawTerminalPayload,
+):
+  TerminalEventLevel {
+  if (
+    event === 'error' ||
+    payload.error
+  ) {
+    return 'error';
+  }
+
+  if (
+    event ===
+      'slow_request' ||
+    event ===
+      'billing_webhook_failed'
+  ) {
+    return 'warn';
+  }
+
+  if (
+    event ===
+    'complete'
+  ) {
+    return payload.success ===
+      false
+      ? 'error'
+      : 'success';
+  }
+
   return 'info';
 }
 
-function kindFor(event: string): TerminalEventKind | null {
+function kindFor(
+  event: string,
+):
+  | TerminalEventKind
+  | null {
   switch (event) {
     case 'start':
     case 'pipeline':
       return 'session';
+
     case 'progress':
     case 'slow_request':
       return 'status';
+
     case 'delta':
       return 'output';
+
     case 'preview':
       return 'artifact';
+
     case 'complete':
       return 'result';
+
     case 'error':
     case 'billing_webhook_failed':
       return 'failure';
-    // `done` closes the HTTP stream and carries no information of its own; the
-    // preceding `complete` or `error` already recorded the outcome.
+
+    /*
+     * `done` only closes the HTTP stream.
+     */
     case 'done':
       return null;
+
     default:
       return null;
   }
 }
 
-/**
- * Text for a row, in payload-field priority order. `swarmActivity` is the most
- * specific real activity line the backend produces, so it wins over the generic
- * `message`; `status` is last because it is often a bare enum like `running`.
- */
-function textFor(event: string, payload: RawTerminalPayload): string | null {
-  if (event === 'delta') return str(payload.delta);
-  if (event === 'error') {
-    const base = str(payload.error) ?? 'Run failed';
-    return payload.code === 'CAPACITY_UNAVAILABLE'
-      ? capacityUnavailableLine(base, payload.nextUnlockAt)
-      : base;
+function textFor(
+  event: string,
+  payload:
+    RawTerminalPayload,
+): string | null {
+  if (
+    event === 'delta'
+  ) {
+    return str(
+      payload.delta,
+    );
   }
-  if (event === 'preview') return 'Preview build ready';
-  if (event === 'complete') {
-    return payload.success === false ? 'Run finished with errors' : 'Run complete';
+
+  if (
+    event === 'error'
+  ) {
+    const base =
+      str(
+        payload.error,
+      ) ??
+      'Run failed';
+
+    return (
+      payload.code ===
+        'CAPACITY_UNAVAILABLE'
+        ? capacityUnavailableLine(
+            base,
+            payload.nextUnlockAt,
+          )
+        : base
+    );
   }
+
+  if (
+    event === 'preview'
+  ) {
+    return 'Preview build ready';
+  }
+
+  if (
+    event === 'complete'
+  ) {
+    return (
+      payload.success ===
+        false
+        ? 'Run finished with errors'
+        : 'Run complete'
+    );
+  }
+
   return (
-    str(payload.swarmActivity) ??
-    str(payload.message) ??
-    str(payload.swarmStatusLabel) ??
-    str(payload.status)
+    str(
+      payload.swarmActivity,
+    ) ??
+    str(
+      payload.message,
+    ) ??
+    str(
+      payload.swarmStatusLabel,
+    ) ??
+    str(
+      payload.status,
+    )
   );
 }
 
-/** Permission gates the backend can signal. Names are fixed, not user-supplied. */
-const PERMISSION_FLAGS: ReadonlyArray<readonly [string, string]> = [
-  ['needsGitHub', 'GitHub authorisation required'],
-  ['needsVercel', 'Vercel authorisation required'],
-  ['needsRepoPick', 'Repository selection required'],
-];
+function durationLabel(
+  durationMs:
+    number | undefined,
+): string | null {
+  if (
+    durationMs ==
+    null
+  ) {
+    return null;
+  }
+
+  if (
+    durationMs <
+    1000
+  ) {
+    return `${Math.round(
+      durationMs,
+    )}ms`;
+  }
+
+  const seconds =
+    durationMs /
+    1000;
+
+  return (
+    seconds < 10
+      ? `${seconds.toFixed(
+          1,
+        )}s`
+      : `${Math.round(
+          seconds,
+        )}s`
+  );
+}
+
+function softwareLevel(
+  event:
+    SoftwareRunEvent,
+):
+  TerminalEventLevel {
+  if (
+    event.status ===
+    'failed'
+  ) {
+    return 'error';
+  }
+
+  if (
+    event.status ===
+    'cancelled'
+  ) {
+    return 'warn';
+  }
+
+  if (
+    event.type ===
+      'command.output' &&
+    event.title
+      .toLowerCase()
+      .includes(
+        'error output',
+      )
+  ) {
+    return 'warn';
+  }
+
+  if (
+    event.status ===
+      'success' &&
+    (
+      event.type ===
+        'command.completed' ||
+      event.type ===
+        'check.completed' ||
+      event.type ===
+        'preview.ready' ||
+      event.type ===
+        'browser.verification.completed' ||
+      event.type ===
+        'run.completed' ||
+      event.type ===
+        'deployment.ready'
+    )
+  ) {
+    return 'success';
+  }
+
+  return 'info';
+}
+
+function softwareText(
+  event:
+    SoftwareRunEvent,
+): {
+  text: string;
+  body: string | null;
+} {
+  switch (
+    event.type
+  ) {
+    case 'command.started': {
+      return {
+        text:
+          event.summary
+            ? `Running ${event.summary}`
+            : event.title,
+
+        body:
+          null,
+      };
+    }
+
+    case 'command.output': {
+      return {
+        text:
+          event.title,
+
+        body:
+          event.summary ??
+          null,
+      };
+    }
+
+    case 'command.completed': {
+      const details:
+        string[] = [];
+
+      if (
+        event.evidence
+          ?.exitCode !=
+        null
+      ) {
+        details.push(
+          `exit ${event.evidence.exitCode}`,
+        );
+      }
+
+      const duration =
+        durationLabel(
+          event.evidence
+            ?.durationMs,
+        );
+
+      if (
+        duration
+      ) {
+        details.push(
+          duration,
+        );
+      }
+
+      return {
+        text:
+          details.length
+            ? `${event.title} · ${details.join(
+                ' · ',
+              )}`
+            : event.title,
+
+        /*
+         * command.completed.summary contains the redacted command itself.
+         */
+        body:
+          event.summary ??
+          null,
+      };
+    }
+
+    case 'file.read':
+    case 'file.created':
+    case 'file.updated':
+    case 'file.deleted': {
+      return {
+        text:
+          event.title,
+
+        body:
+          null,
+      };
+    }
+
+    case 'check.started':
+    case 'check.completed':
+    case 'repair.started':
+    case 'repair.completed':
+    case 'preview.starting':
+    case 'preview.ready':
+    case 'preview.failed':
+    case 'browser.verification.started':
+    case 'browser.verification.completed':
+    case 'project.inspect.started':
+    case 'project.inspect.completed':
+    case 'plan.updated':
+    case 'git.branch.created':
+    case 'git.commit.created':
+    case 'deployment.started':
+    case 'deployment.ready':
+    case 'deployment.failed':
+    case 'run.started':
+    case 'run.completed':
+    case 'run.failed':
+    case 'run.cancelled':
+    default:
+      return {
+        text:
+          event.title,
+
+        body:
+          event.summary ??
+          null,
+      };
+  }
+}
+
+/**
+ * Permission gates the backend can signal.
+ */
+const PERMISSION_FLAGS:
+  ReadonlyArray<
+    readonly [
+      string,
+      string,
+    ]
+  > = [
+    [
+      'needsGitHub',
+      'GitHub authorisation required',
+    ],
+
+    [
+      'needsVercel',
+      'Vercel authorisation required',
+    ],
+
+    [
+      'needsRepoPick',
+      'Repository selection required',
+    ],
+  ];
 
 export function adaptTerminalEvent(
   event: string,
-  payload: RawTerminalPayload,
-  context: AdapterContext,
+  payload:
+    RawTerminalPayload,
+  context:
+    AdapterContext,
 ): TerminalEvent[] {
-  const rows: TerminalEvent[] = [];
-  const at = context.now ?? Date.now();
-  let seq = context.fromSeq;
+  const rows:
+    TerminalEvent[] = [];
+
+  const at =
+    context.now ??
+    Date.now();
+
+  let seq =
+    context.fromSeq;
 
   const push = (
-    kind: TerminalEventKind,
-    level: TerminalEventLevel,
-    text: string,
-    body: string | null,
+    kind:
+      TerminalEventKind,
+
+    level:
+      TerminalEventLevel,
+
+    text:
+      string,
+
+    body:
+      string | null,
+
+    source?:
+      string | null,
   ) => {
     rows.push({
-      seq: ++seq,
+      seq:
+        ++seq,
+
       kind,
+
       level,
-      source: str(payload.agent),
-      // Redacted at the boundary, so no downstream component can render an
-      // unmasked value even by accident.
-      text: redactTerminalText(text),
-      body: body ? redactTerminalText(body) : null,
+
+      source:
+        source ===
+          undefined
+          ? str(
+              payload.agent,
+            )
+          : source,
+
+      /*
+       * Redact at the frontend boundary as a second defense.
+       *
+       * Agent V2 already redacts public command output on the backend.
+       */
+      text:
+        redactTerminalText(
+          text,
+        ),
+
+      body:
+        body
+          ? redactTerminalText(
+              body,
+            )
+          : null,
+
       at,
-      rawEvent: event,
+
+      rawEvent:
+        event,
     });
   };
 
-  // Permission gates are checked before the keepalive bail-out: the backend can
-  // attach `needsGitHub` to a keepalive, and a blocked run must surface that even
-  // though the keepalive itself is not progress.
-  for (const [flag, label] of PERMISSION_FLAGS) {
-    if (payload[flag] === true) push('permission', 'warn', label, null);
+  /*
+   * Permission gates must be processed before keepalive suppression.
+   */
+  for (
+    const [
+      flag,
+      label,
+    ] of
+    PERMISSION_FLAGS
+  ) {
+    if (
+      payload[
+        flag
+      ] ===
+      true
+    ) {
+      push(
+        'permission',
+        'warn',
+        label,
+        null,
+      );
+    }
   }
 
-  if (isKeepalive(payload)) return rows;
+  if (
+    isKeepalive(
+      payload,
+    )
+  ) {
+    return rows;
+  }
 
-  const kind = kindFor(event);
-  if (!kind) return rows;
+  /*
+   * Software Agent V2 progress events receive richer terminal treatment than
+   * generic swarm progress.
+   *
+   * They intentionally remain TerminalEventKind `status`.
+   *
+   * Agent V2's `run.completed` only means the implementation agent finished.
+   * The outer Xroga pipeline may still need independent verification, commit,
+   * and deployment. Marking it as TerminalEventKind `result` here would end
+   * the whole frontend run too early.
+   */
+  if (
+    event ===
+    'progress'
+  ) {
+    const softwareEvent =
+      parseSoftwareEvent(
+        payload,
+      );
 
-  const text = textFor(event, payload);
-  if (!text) return rows;
+    if (
+      softwareEvent
+    ) {
+      const display =
+        softwareText(
+          softwareEvent,
+        );
 
-  const body = str(payload.detail) ?? str(payload.stack) ?? null;
-  push(kind, levelFor(event, payload), text, body);
+      push(
+        'status',
+        softwareLevel(
+          softwareEvent,
+        ),
+        display.text,
+        display.body,
+        'builder',
+      );
+
+      return rows;
+    }
+  }
+
+  const kind =
+    kindFor(
+      event,
+    );
+
+  if (
+    !kind
+  ) {
+    return rows;
+  }
+
+  const text =
+    textFor(
+      event,
+      payload,
+    );
+
+  if (
+    !text
+  ) {
+    return rows;
+  }
+
+  const body =
+    str(
+      payload.detail,
+    ) ??
+    str(
+      payload.stack,
+    ) ??
+    null;
+
+  push(
+    kind,
+    levelFor(
+      event,
+      payload,
+    ),
+    text,
+    body,
+  );
 
   return rows;
 }

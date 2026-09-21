@@ -1,14 +1,28 @@
-import type { Response, NextFunction } from 'express';
-import { authMiddleware, type AuthRequest } from './auth.js';
+import type {
+  NextFunction,
+  Response,
+} from 'express';
+
+import {
+  authMiddleware,
+  type AuthRequest,
+} from './auth.js';
 
 /**
- * Phase 1 optional auth — uses Bearer token when present,
- * otherwise allows userId in body/header for development.
+ * Phase 1 uses the same authenticated Xroga identity
+ * boundary as the rest of the production API.
+ *
+ * Browser/body/header supplied user IDs are never accepted
+ * as authentication.
  */
-export async function phase1AuthMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (authHeader?.startsWith('Bearer ')) {
-    return authMiddleware(req, res, next);
-  }
-  next();
+export async function phase1AuthMiddleware(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  return authMiddleware(
+    req,
+    res,
+    next,
+  );
 }

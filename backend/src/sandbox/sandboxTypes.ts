@@ -14,7 +14,11 @@ import type { ProjectFile } from '../ai/patches.js';
  * `--ignore-scripts` was never the boundary it looked like. The boundary is here.
  */
 
-export type SandboxNetworkPolicy = 'none' | 'registry-only' | 'restricted';
+export type SandboxNetworkPolicy =
+  | 'none'
+  | 'registry-only'
+  | 'restricted'
+  | 'preview';
 
 export interface SandboxLimits {
   memoryMb: number;

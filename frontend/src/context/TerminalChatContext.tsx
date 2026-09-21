@@ -24,6 +24,7 @@ import type { SwarmProgressEvent } from '@/lib/swarm';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 import { PENDING_PROMPT_KEY } from '@/lib/constants';
 import {
   clearWorkspaceSession,
@@ -210,7 +211,12 @@ export interface ChatMessage {
   thinkingSteps?: string[];
   thoughtMs?: number;
   /** User stopped mid-build — show Retry card, keep in history */
-  buildStopped?: boolean;
+buildStopped?: boolean;
+
+/**
+ * Durable backend run whose Agent V2 checkpoint this Retry card resumes.
+ */
+stoppedRunId?: string;
   stoppedTodos?: Array<{ id: string; label: string; status: 'done' | 'active' | 'pending' | 'skipped' }>;
   stoppedPhase?: number | null;
   stoppedActivityLog?: string[];
@@ -459,12 +465,33 @@ export function TerminalChatProvider({
   const activeRunIdRef = useRef<string | null>(null);
   const autoRanRef = useRef(false);
   const submitRef = useRef<
-    (text?: string, fromQueue?: boolean, interrupt?: boolean, attachments?: ChatAttachment[]) => Promise<void>
-  >(async () => {});
+  (
+    text?: string,
+    fromQueue?: boolean,
+    interrupt?: boolean,
+    attachments?: ChatAttachment[],
+    resumeRunId?: string,
+  ) => Promise<void>
+>(async () => {});
   const queueRef = useRef<QueuedPrompt[]>([]);
   const lastTurnRef = useRef<{ userMessageId: string; assistantId: string; text: string } | null>(null);
   const skipNextQueueRef = useRef(false);
-  const interruptRef = useRef(false);
+
+/**
+ * Local stream interruption used for non-build UI flow.
+ */
+const interruptRef = useRef(false);
+
+/**
+ * Exact durable run ID whose cancellation was explicitly requested by
+ * the user through the Stop button.
+ *
+ * Keeping this separately from activeRunIdRef is important because
+ * background reconciliation may clear activeRunIdRef after the backend
+ * confirms cancellation but before the local AbortError is handled.
+ */
+const stopRequestedRunIdRef =
+  useRef<string | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
   const [sessionRestoring, setSessionRestoring] = useState(true);
   const persistReadyRef = useRef(false);
@@ -1093,89 +1120,321 @@ export function TerminalChatProvider({
     void submitRef.current(next.text, true);
   }, []);
 
-  const stop = useCallback(() => {
-    interruptRef.current = true;
-    const runId =
-      activeRunIdRef.current ??
-      loadPendingBuildJobs().find((job) => Boolean(job.runId))?.runId ??
+ const stop = useCallback(() => {
+  const runId =
+    activeRunIdRef.current ??
+    loadPendingBuildJobs().find(
+      (job) =>
+        Boolean(
+          job.runId,
+        ),
+    )?.runId ??
+    null;
+
+  if (
+    !runId
+  ) {
+    interruptRef.current =
+      false;
+
+    stopRequestedRunIdRef.current =
       null;
-    if (runId) {
-      activeRunIdRef.current = runId;
-      setSwarmStatusLabel('Stopping');
-      setPipelineMessage('Stopping this build safely…');
-      void api.swarm
-        .cancelRun(runId)
-        .then((result) => {
-          if (!result.cancelled && result.status !== 'cancelled') {
-            throw new Error('The build is still running. Please try Stop again.');
-          }
-          // The durable run is the source of truth. Only end the local stream after the
-          // server confirms cancellation; otherwise a failed POST made the UI look stopped
-          // while paid work continued remotely.
-          if (heavyBuildActiveRef.current && abortRef.current) {
-            abortRef.current.abort();
-          } else {
-            lightAbortRef.current?.abort();
-            abortRef.current?.abort();
-          }
-          setHeavyLoading(false);
-          setHeavyBuildActive(false);
-          heavyBuildActiveRef.current = false;
-          heavyJobActiveRef.current = false;
-          setHeavyAssistantId(null);
-          setSwarmRunning(false);
-          setPipelineMessage('Build stopped. Progress already written remains saved.');
-          toast.success('Build stopped.');
-        })
-        .catch((error) => {
-          interruptRef.current = false;
-          setSwarmStatusLabel('Running');
-          setPipelineMessage('The build is still running — Stop was not confirmed.');
-          toast.error((error as Error).message || 'Could not stop this build. Please try again.');
+
+    toast.error(
+      'Restoring the build connection. Try Stop again in a moment.',
+    );
+
+    return;
+  }
+
+  /*
+   * Preserve this exact identity BEFORE asking the backend to cancel.
+   *
+   * Background reconciliation is allowed to clear activeRunIdRef after
+   * cancellation, but Retry still needs the original durable run ID so
+   * Agent V2 can recover its checkpoint.
+   */
+  stopRequestedRunIdRef.current =
+    runId;
+
+  interruptRef.current =
+    true;
+
+  activeRunIdRef.current =
+    runId;
+
+  setSwarmStatusLabel(
+    'Stopping',
+  );
+
+  setPipelineMessage(
+    'Stopping this build safely…',
+  );
+
+  void api.swarm
+    .cancelRun(
+      runId,
+    )
+    .then(
+      (
+        result,
+      ) => {
+        if (
+          !result.cancelled &&
+          result.status !==
+            'cancelled'
+        ) {
+          throw new Error(
+            'The build is still running. Please try Stop again.',
+          );
+        }
+
+        /*
+         * The durable backend cancellation is authoritative.
+         *
+         * Only now end the browser stream. The AbortError handler below
+         * converts this into a durable Retry card carrying this SAME runId.
+         */
+        if (
+          abortRef.current
+        ) {
+          abortRef.current.abort();
+        } else {
+          lightAbortRef.current?.abort();
+        }
+
+        setHeavyLoading(
+          false,
+        );
+
+        setHeavyBuildActive(
+          false,
+        );
+
+        heavyBuildActiveRef.current =
+          false;
+
+        heavyJobActiveRef.current =
+          false;
+
+        setHeavyAssistantId(
+          null,
+        );
+
+        setSwarmRunning(
+          false,
+        );
+
+        setSwarmStatusLabel(
+          'Stopped',
+        );
+
+        setPipelineMessage(
+          'Build stopped. Progress already written remains saved.',
+        );
+
+        toast.success(
+          'Build stopped. Progress is saved.',
+        );
+      },
+    )
+    .catch(
+      (
+        error,
+      ) => {
+        /*
+         * Cancellation was NOT confirmed.
+         *
+         * Do not pretend the build stopped and do not expose a Resume
+         * button against a run that may still be executing.
+         */
+        stopRequestedRunIdRef.current =
+          null;
+
+        interruptRef.current =
+          false;
+
+        setSwarmStatusLabel(
+          'Running',
+        );
+
+        setPipelineMessage(
+          'The build is still running — Stop was not confirmed.',
+        );
+
+        toast.error(
+          (
+            error as Error
+          ).message ||
+            'Could not stop this build. Please try again.',
+        );
+      },
+    );
+}, [
+  setSwarmRunning,
+]);
+
+  const retryStoppedBuild =
+  useCallback(
+    async (
+      assistantMessageId:
+        string,
+    ) => {
+      const msg =
+        messages.find(
+          (
+            message,
+          ) =>
+            message.id ===
+              assistantMessageId &&
+            message.buildStopped,
+        );
+
+      if (
+        !msg
+      ) {
+        toast.error(
+          'Stopped build not found',
+        );
+
+        return;
+      }
+
+      const original =
+        msg.originalBuildPrompt
+          ?.trim() ||
+        lastUserPromptNear(
+          messages,
+          assistantMessageId,
+        );
+
+      if (
+        !original
+      ) {
+        toast.error(
+          'Original build prompt missing',
+        );
+
+        return;
+      }
+
+      if (
+        msg.githubRepoName
+          ?.includes(
+            '/',
+          )
+      ) {
+        const {
+          saveSelectedRepoContext,
+        } =
+          await import(
+            '@/lib/repoContext'
+          );
+
+        const {
+          notifyGithubRepoContext,
+        } =
+          await import(
+            '@/lib/githubProjectEvents'
+          );
+
+        const savedTask =
+          (
+            await import(
+              '@/lib/terminalHistory'
+            )
+          )
+            .loadTerminalHistory()
+            .find(
+              (
+                entry,
+              ) =>
+                entry.id ===
+                sessionIdRef.current,
+            );
+
+        const branch =
+          savedTask
+            ?.githubBranch ||
+          getSelectedRepoContext()
+            ?.branch ||
+          'main';
+
+        saveSelectedRepoContext({
+          repo:
+            msg.githubRepoName,
+
+          branch,
+
+          projectRoot:
+            savedTask
+              ?.projectRoot ||
+            '/',
         });
-    } else {
-      interruptRef.current = false;
-      toast.error('Restoring the build connection. Try Stop again in a moment.');
-    }
-  }, [setSwarmRunning]);
 
-  const retryStoppedBuild = useCallback(async (assistantMessageId: string) => {
-    const msg = messages.find((m) => m.id === assistantMessageId && m.buildStopped);
-    if (!msg) {
-      toast.error('Stopped build not found');
-      return;
-    }
-    const original = msg.originalBuildPrompt?.trim() || lastUserPromptNear(messages, assistantMessageId);
-    if (!original) {
-      toast.error('Original build prompt missing');
-      return;
-    }
-    if (msg.githubRepoName?.includes('/')) {
-      // keep / reconnect the same repo so engine loads existing files
-      const { saveSelectedRepoContext } = await import('@/lib/repoContext');
-      const { notifyGithubRepoContext } = await import('@/lib/githubProjectEvents');
-      const savedTask = (await import('@/lib/terminalHistory')).loadTerminalHistory().find((entry) => entry.id === sessionIdRef.current);
-      const branch = savedTask?.githubBranch || getSelectedRepoContext()?.branch || 'main';
-      saveSelectedRepoContext({ repo: msg.githubRepoName, branch, projectRoot: savedTask?.projectRoot || '/' });
-      notifyGithubRepoContext(msg.githubRepoName, branch);
-    }
+        notifyGithubRepoContext(
+          msg.githubRepoName,
+          branch,
+        );
+      }
 
-    const continuePrompt = [
-      'Continue this build from where it was stopped.',
-      'Analyze existing GitHub project files first.',
-      'Finish remaining todos and incomplete sections only.',
-      'Do NOT rebuild the entire website from scratch.',
-      '',
-      `Original request:\n${original}`,
-      msg.stoppedTodos?.length
-        ? `\nLast progress:\n${msg.stoppedTodos.map((t) => `- [${t.status}] ${t.label}`).join('\n')}`
-        : '',
-    ]
-      .filter(Boolean)
-      .join('\n');
+      const continuePrompt =
+        [
+          'Continue this build from where it was stopped.',
+          'Recover and inspect the existing Agent V2 checkpoint and current project files first.',
+          'Preserve all correct work already completed.',
+          'Finish remaining todos and incomplete sections only.',
+          'Run the applicable deterministic checks again.',
+          'Verify the real browser Preview when required.',
+          'Do NOT rebuild the entire product from scratch.',
+          '',
+          `Original request:\n${original}`,
 
-    await submitRef.current(continuePrompt, false, false);
-  }, [messages]);
+          msg.stoppedTodos
+            ?.length
+            ? [
+                '',
+                'Last recorded progress:',
+
+                ...msg
+                  .stoppedTodos
+                  .map(
+                    (
+                      todo,
+                    ) =>
+                      `- [${todo.status}] ${todo.label}`,
+                  ),
+              ].join(
+                '\n',
+              )
+            : '',
+        ]
+          .filter(
+            Boolean,
+          )
+          .join(
+            '\n',
+          );
+
+      await submitRef.current(
+        continuePrompt,
+        false,
+        false,
+        undefined,
+
+        /*
+         * When present this is deliberately the SAME durable run ID.
+         *
+         * api.ts will therefore NOT create another UUID.
+         */
+        msg.stoppedRunId,
+      );
+    },
+
+    [
+      messages,
+    ],
+  );
 
   /**
    * "Use full power now" — switches the account off the daily drip and onto Full
@@ -1565,11 +1824,12 @@ export function TerminalChatProvider({
 
   const submit = useCallback(
     async (
-      overrideText?: string,
-      fromQueue = false,
-      interrupt = false,
-      attachments?: ChatAttachment[]
-    ) => {
+  overrideText?: string,
+  fromQueue = false,
+  interrupt = false,
+  attachments?: ChatAttachment[],
+  resumeRunId?: string,
+) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
 
@@ -1896,10 +2156,39 @@ export function TerminalChatProvider({
             : null,
           { hasExistingPreview: Boolean(priorSite), isUpdate: isBuildUpdate },
         );
-        const directResponse = semanticPlan.directResponse?.trim() ?? '';
-        const usePhase1Engine = semanticPlan.dispatch === 'chat' && !directResponse;
-        let runSwarmBuild = semanticPlan.dispatch === 'build';
-        semanticBuildPlanned = runSwarmBuild;
+        /*
+ * Clicking Retry on a stopped build is explicit execution intent.
+ *
+ * We still call the semantic planner so it can reconstruct the resolved
+ * goal contract, but it must not accidentally convert an explicit
+ * checkpoint resume into a chat answer.
+ */
+const explicitResume =
+  Boolean(
+    resumeRunId,
+  );
+
+const directResponse =
+  explicitResume
+    ? ''
+    : semanticPlan
+        .directResponse
+        ?.trim() ??
+      '';
+
+const usePhase1Engine =
+  !explicitResume &&
+  semanticPlan.dispatch ===
+    'chat' &&
+  !directResponse;
+
+let runSwarmBuild =
+  explicitResume ||
+  semanticPlan.dispatch ===
+    'build';
+
+semanticBuildPlanned =
+  runSwarmBuild;
 
         if (runSwarmBuild) {
           void api.github
@@ -1953,8 +2242,12 @@ export function TerminalChatProvider({
           }
         }
 
-        if (semanticPlan.dispatch === 'blocked') {
-          gotEvent = true;
+if (
+  !explicitResume &&
+  semanticPlan.dispatch ===
+    'blocked'
+) {
+  gotEvent = true;
           fullReply = semanticPlan.blockers.length
             ? `I can't complete that with the capabilities or authorization currently available: ${semanticPlan.blockers.join(' · ')}`
             : 'I could not match this request to an available, authorized capability.';
@@ -2103,22 +2396,49 @@ export function TerminalChatProvider({
           );
         };
         await streamSwarmExecute(apiPrompt, {
-          projectId: freshProductIntent ? undefined : projectId,
+  runId:
+    resumeRunId,
+
+  projectId:
+    freshProductIntent
+      ? undefined
+      : projectId,
           signal: controller.signal,
           compact: useCompactPipeline,
           accessToken,
           attachments,
           history,
-          clientMeta: {
+          clientMeta: 
+          {
             assistantMessageId: assistantId,
             userMessageId: userMessageId,
             userPrompt: displayPrompt,
-            buildContinuation: isBuildAnswer,
-            buildOriginalPrompt: buildSession?.originalPrompt,
-            buildUpdate:
-              isBuildUpdate ||
-              (Boolean(stickyTargetRepo?.includes('/')) && isWebsiteUpdateRequest(displayPrompt)),
-            githubTargetRepo: stickyTargetRepo,
+            buildContinuation:
+  isBuildAnswer,
+
+buildOriginalPrompt:
+  buildSession?.originalPrompt,
+
+buildUpdate:
+  isBuildUpdate ||
+  (
+    Boolean(
+      stickyTargetRepo?.includes(
+        '/',
+      ),
+    ) &&
+    isWebsiteUpdateRequest(
+      displayPrompt,
+    )
+  ),
+
+resumeRun:
+  Boolean(
+    resumeRunId,
+  ),
+
+githubTargetRepo:
+  stickyTargetRepo,
             githubTargetBranch: stickyTargetBranch,
             projectRoot: activeBuildContext?.projectRoot || '/',
             semanticGoalContract: semanticPlan.goalContract,
@@ -2163,6 +2483,11 @@ export function TerminalChatProvider({
               thinkingTimerRef.current = null;
             }
             const swarmEv = event as SwarmProgressEvent;
+                        useLiveBuildStore
+              .getState()
+              .ingestProgress(
+                swarmEv,
+              );
             // Fed before the keepalive bail-out below: the adapter drops keepalive
             // noise itself, but still surfaces a permission gate attached to one.
             pushTerminalEvent('progress', swarmEv as unknown as Record<string, unknown>);
@@ -2510,52 +2835,114 @@ export function TerminalChatProvider({
             if (githubConnectionBlocked) {
               handleGitHubBuildBlocked(displayPrompt, attachments);
             }
-            if (isRenderableArtifact(output)) {
+                        if (isRenderableArtifact(output)) {
+                useLiveBuildStore
+                .getState()
+                .ingestOutput(
+                  output,
+                );
               buildHadVisibleResult = true;
-              const projection = engineeringArtifactWorkspaceProjection(output);
+
+              const projection =
+                engineeringArtifactWorkspaceProjection(output);
+
               if (projection) {
-                const ws = useProjectWorkspaceStore.getState();
+                const ws =
+                  useProjectWorkspaceStore.getState();
+
                 const target = {
                   repo: projection.repo,
                   branch: projection.sourceBranch,
                   projectRoot: repoContext?.projectRoot || '/',
                 };
-                // A late result from another project must never overwrite the project the user
-                // now sees. The run still remains visible in its conversation transcript.
+
+                // A late result from another project must never overwrite
+                // the project the user now sees.
                 const activeMatches =
                   !ws.activeProjectContext ||
-                  sameProjectContext(ws.activeProjectContext, target);
+                  sameProjectContext(
+                    ws.activeProjectContext,
+                    target,
+                  );
+
                 if (activeMatches) {
-                  if (!ws.activeProjectContext) ws.activateProjectContext(target);
-                  const active = useProjectWorkspaceStore.getState();
+                  if (!ws.activeProjectContext) {
+                    ws.activateProjectContext(target);
+                  }
+
+                  const active =
+                    useProjectWorkspaceStore.getState();
+
                   active.applyBuild({
                     ...target,
-                    projectName: projection.projectName,
-                    html: projection.html,
-                    css: projection.css,
-                    js: projection.js,
-                    projectFiles: projection.projectFiles,
-                    githubRepoUrl: projection.githubRepoUrl,
-                    commitSha: projection.commitSha,
-                    reviewBranch: projection.reviewBranch,
-                    status: projection.status,
-                    changesSummary: projection.changesSummary,
-                    fileTrail: projection.fileTrail,
-                    openPreview: projection.previewAvailable,
-                    terminalLine: projection.terminalLines[0],
+
+                    projectName:
+                      projection.projectName,
+
+                    html:
+                      projection.html,
+
+                    css:
+                      projection.css,
+
+                    js:
+                      projection.js,
+
+                    projectFiles:
+                      projection.projectFiles,
+
+                    replaceProjectFiles:
+                      projection.replaceProjectFiles,
+
+                    githubRepoUrl:
+                      projection.githubRepoUrl,
+
+                    commitSha:
+                      projection.commitSha,
+
+                    reviewBranch:
+                      projection.reviewBranch,
+
+                    status:
+                      projection.status,
+
+                    changesSummary:
+                      projection.changesSummary,
+
+                    fileTrail:
+                      projection.fileTrail,
+
+                    openPreview:
+                      projection.previewAvailable,
+
+                    terminalLine:
+                      projection.terminalLines[0],
                   });
-                  for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
+
+                  for (
+                    const line of
+                    projection.terminalLines.slice(1)
+                  ) {
+                    active.appendTerminal(line);
+                  }
                 }
               }
+
               setMessages((messages) =>
                 messages.map((message) =>
                   message.id === assistantId
-                    ? { ...message, content: '', featureOutput: output }
+                    ? {
+                        ...message,
+                        content: '',
+                        featureOutput: output,
+                      }
                     : message,
                 ),
               );
-              return;
+
+                            return;
             }
+
             if (output?.type === 'image_blocked') {
               dispatchCompanionEvent({
                 type: 'task_warning',
@@ -3152,81 +3539,214 @@ export function TerminalChatProvider({
             ...errData,
           });
         }
-        if (err instanceof DOMException && err.name === 'AbortError') {
-          if (interruptRef.current) {
-            dispatchCompanionEvent({
-              type: 'task_interrupted',
-              message: 'You stopped the current operation.',
-              source: 'runtime',
-            });
-            interruptRef.current = false;
-            cleanupInProgressAssistant();
-            return;
-          }
-          const wasStall = stallAbortRef.current;
-          stallAbortRef.current = false;
-          const repo = getSelectedRepoContext()?.repo;
-          const snap = liveBuildSnapshotRef.current;
-          const todosSnapshot = snap.todos.length ? [...snap.todos] : [...buildTodosSeedRef.current];
-          const phaseSnapshot = snap.phase;
-          const activitySnapshot = [...snap.activity].slice(-12);
-          const original = lastTurnRef.current?.text || displayPrompt;
-          dispatchCompanionEvent({
-            type: wasStall ? 'task_failure' : 'task_interrupted',
-            message: wasStall
-              ? 'The build stalled and was safely stopped.'
-              : 'The build was stopped with progress preserved.',
-            source: 'runtime',
-          });
-          const stallMessage =
-            '⚠️ **Build stalled — no real progress.** Fake busy animations were stopped and further API calls were cancelled to protect your credits.\n\nTap **Retry** to continue, or start a new chat with a clearer prompt.';
-          const userStopMessage =
-            'Build stopped. Your progress is saved — tap Retry to continue from where you left off (GitHub files kept; not a fresh rebuild).';
+        if (
+  err instanceof DOMException &&
+  err.name === 'AbortError'
+) {
+  const explicitlyStoppedRunId =
+    stopRequestedRunIdRef.current;
 
-          setMessages((m) => {
-            const next = m.map((msg) => {
-              if (msg.id !== assistantId) return msg;
-              return {
-                ...msg,
-                content: msg.content?.trim() || (wasStall ? stallMessage : userStopMessage),
-                buildStopped: true,
-                originalBuildPrompt: original,
-                githubRepoName: repo,
-                stoppedTodos: todosSnapshot.length ? todosSnapshot : msg.stoppedTodos,
-                stoppedPhase: phaseSnapshot,
-                stoppedActivityLog: activitySnapshot,
-                thinkingSteps: thinkingStepsRef.current.length
-                  ? [...thinkingStepsRef.current]
-                  : msg.thinkingSteps,
-                thoughtMs: Date.now() - thinkingStartedAtRef.current,
-              };
-            });
-            // Persist immediately so sidebar history shows Open/stopped even after New chat.
-            try {
-              if (!usePrivacyStore.getState().incognito) {
-                saveTerminalHistorySession({
-                  sessionId: sessionIdRef.current,
-                  prompt: original,
-                  messages: next,
-                  status: 'stopped',
-                });
-                if (shouldSaveToProjects(original)) {
-                  saveLocalProject({
-                    name: original.slice(0, 48),
-                    prompt: original,
-                    sourceMessageId: assistantId,
-                  });
-                }
-                window.dispatchEvent(new Event('xroga-resume-workspace'));
-              }
-            } catch {
-              /* ignore */
-            }
-            return next;
+  /*
+   * A confirmed user Stop on a real build becomes a durable Retry card.
+   *
+   * Most importantly: preserve the SAME run ID so Retry can load the
+   * software_agent_checkpoints row created by Agent V2.
+   */
+  if (
+    explicitlyStoppedRunId &&
+    startingHeavyBuild
+  ) {
+    const repo =
+      getSelectedRepoContext()?.repo;
+
+    const snap =
+      liveBuildSnapshotRef.current;
+
+    const todosSnapshot =
+      snap.todos.length
+        ? [...snap.todos]
+        : [...buildTodosSeedRef.current];
+
+    const phaseSnapshot =
+      snap.phase;
+
+    const activitySnapshot =
+      [...snap.activity].slice(-12);
+
+    const original =
+      lastTurnRef.current?.text ||
+      displayPrompt;
+
+    interruptRef.current =
+      false;
+
+    stopRequestedRunIdRef.current =
+      null;
+
+    /*
+     * This run has reached a durable cancelled state.
+     * Background polling no longer needs to treat it as actively running.
+     */
+    removePendingBuildJob(
+      assistantId,
+    );
+
+    dispatchCompanionEvent({
+      type: 'task_interrupted',
+
+      message:
+        'The build was stopped with progress preserved.',
+
+      source: 'runtime',
+    });
+
+    const userStopMessage =
+      'Build stopped. Your Agent V2 progress is checkpointed — tap Retry to continue the same build from where it stopped.';
+
+    setMessages((current) => {
+      const next =
+        current.map((message) => {
+          if (
+            message.id !==
+            assistantId
+          ) {
+            return message;
+          }
+
+          return {
+            ...message,
+
+            content:
+              message.content?.trim() ||
+              userStopMessage,
+
+            buildStopped:
+              true,
+
+            stoppedRunId:
+              explicitlyStoppedRunId,
+
+            originalBuildPrompt:
+              original,
+
+            githubRepoName:
+              repo,
+
+            stoppedTodos:
+              todosSnapshot.length
+                ? todosSnapshot
+                : message.stoppedTodos,
+
+            stoppedPhase:
+              phaseSnapshot,
+
+            stoppedActivityLog:
+              activitySnapshot,
+
+            thinkingSteps:
+              thinkingStepsRef.current.length
+                ? [...thinkingStepsRef.current]
+                : message.thinkingSteps,
+
+            thoughtMs:
+              Date.now() -
+              thinkingStartedAtRef.current,
+          };
+        });
+
+      try {
+        if (
+          !usePrivacyStore
+            .getState()
+            .incognito
+        ) {
+          saveTerminalHistorySession({
+            sessionId:
+              sessionIdRef.current,
+
+            prompt:
+              original,
+
+            messages:
+              next,
+
+            status:
+              'stopped',
           });
-          return;
+
+          if (
+            shouldSaveToProjects(
+              original,
+            )
+          ) {
+            saveLocalProject({
+              name:
+                original.slice(
+                  0,
+                  48,
+                ),
+
+              prompt:
+                original,
+
+              sourceMessageId:
+                assistantId,
+            });
+          }
+
+          window.dispatchEvent(
+            new Event(
+              'xroga-resume-workspace',
+            ),
+          );
         }
-        if (err instanceof ApiError && err.status === 402) {
+      } catch {
+        /*
+         * The durable Agent V2 checkpoint still exists even if local
+         * chat-history persistence fails.
+         */
+      }
+
+      return next;
+    });
+
+    return;
+  }
+
+  /*
+   * A local interruption that was NOT a confirmed backend Stop must not
+   * manufacture a resumable cancelled-build card.
+   *
+   * The durable background-build machinery remains responsible for
+   * reconnecting to a still-running run.
+   */
+  if (
+    interruptRef.current
+  ) {
+    dispatchCompanionEvent({
+      type: 'task_interrupted',
+
+      message:
+        'You interrupted the current operation.',
+
+      source: 'runtime',
+    });
+
+    interruptRef.current =
+      false;
+
+    stopRequestedRunIdRef.current =
+      null;
+
+    cleanupInProgressAssistant();
+
+    return;
+  }
+
+  return;
+}
+          if (err instanceof ApiError && err.status === 402) {
+
           dispatchCompanionEvent({
             type: 'task_warning',
             message: 'This account has reached its current plan capacity.',
@@ -3387,8 +3907,9 @@ export function TerminalChatProvider({
           setImageProgressStep(null);
           setImageAttempts([]);
           setPipelineCompact(false);
-        } else {
+                } else {
           setLightLoading(false);
+
           if (!heavyBuildActiveRef.current) {
             setSwarmRunning(false);
             setAnimatingId(null);
@@ -3402,12 +3923,19 @@ export function TerminalChatProvider({
             setPipelineCompact(false);
           }
         }
-        interruptRef.current = false;
-        if (skipNextQueueRef.current) {
-          skipNextQueueRef.current = false;
-          return;
-        }
-        setTimeout(processNextInQueue, 50);
+
+        interruptRef.current =
+          false;
+
+        stopRequestedRunIdRef.current =
+          null;
+
+       if (skipNextQueueRef.current) {
+  skipNextQueueRef.current = false;
+  return;
+}
+
+setTimeout(processNextInQueue, 50);
       }
     },
     [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]

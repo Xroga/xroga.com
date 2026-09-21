@@ -26,6 +26,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
+import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
 import referralsRouter from './routes/referrals.js';
@@ -58,8 +59,22 @@ import {
   configureRemoteSandboxProvider,
   configureFlyMachineSandboxProvider,
 } from './sandbox/sandboxRuntime.js';
+import projectRuntimeRouter from './routes/projectRuntime.js';
+
+import {
+  attachRuntimePreviewWebSocketGateway,
+  runtimePreviewGateway,
+} from './middleware/runtimePreviewGateway.js';
 
 const app = express();
+
+/*
+ * Preview hosts bypass ordinary API middleware.
+ *
+ * The gateway validates the signed Preview hostname and proxies only
+ * to the exact private runtime Machine represented by that grant.
+ */
+app.use(runtimePreviewGateway);
 
 const port = Number(process.env.PORT) || 8080;
 
@@ -125,6 +140,12 @@ app.get('/', (_req, res) => {
   });
 });
 
+app.use(
+  '/api/project-runtime',
+  authMiddleware,
+  projectRuntimeRouter,
+);
+
 app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
 });
@@ -162,7 +183,12 @@ app.use('/chat', simpleChatRouter);
 app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
-app.use('/api/phase1', phase1AuthMiddleware, phase1Router);
+app.use(
+  '/api/phase1',
+  phase1AuthMiddleware,
+  phase1BusinessPreflightRouter,
+  phase1Router,
+);
 app.use('/api/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/tasks', authMiddleware, tasksRouter);
 app.use('/api/referrals', authMiddleware, referralsRouter);
@@ -219,6 +245,9 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 const server = createServer(app);
+attachRuntimePreviewWebSocketGateway(
+  server,
+);
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);

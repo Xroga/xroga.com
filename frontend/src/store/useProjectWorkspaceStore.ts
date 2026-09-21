@@ -33,7 +33,8 @@ export interface ProjectWorkspaceState extends ProjectWorkspaceSnapshot {
   setActiveTaskSession: (id: string | null, expectedKey?: string) => void;
   completeProjectContextRestore: (key: string, version: number, patch: Partial<ProjectWorkspaceSnapshot>) => boolean;
   assertActiveProjectTarget: (target: ProjectTargetInput) => ProjectContextIdentity;
-  applyBuild: (payload: { repo?: string | null; branch?: string; projectRoot?: string; projectName?: string | null; html: string; css: string; js: string; projectFiles?: ProjectFileEntry[]; deployUrl?: string | null; githubRepoUrl?: string | null; commitSha?: string | null; reviewBranch?: string | null; status?: ProjectWorkspaceStatus; changesSummary?: string[]; fileTrail?: FileTrailItem[]; previousFiles?: Array<{ path: string; content: string }> | null; openPreview?: boolean; terminalLine?: string }) => void;
+  applyBuild: (payload: { repo?: string | null; branch?: string; projectRoot?: string; projectName?: string | null; html: string; css: string; js: string; projectFiles?: ProjectFileEntry[]; replaceProjectFiles?: boolean;
+ deployUrl?: string | null; githubRepoUrl?: string | null; commitSha?: string | null; reviewBranch?: string | null; status?: ProjectWorkspaceStatus; changesSummary?: string[]; fileTrail?: FileTrailItem[]; previousFiles?: Array<{ path: string; content: string }> | null; openPreview?: boolean; terminalLine?: string }) => void;
   setProjectFiles: (files: ProjectFileEntry[]) => void;
   upsertFile: (path: string, content: string, flag?: ProjectFileEntry['flag']) => void;
   deleteFile: (path: string) => void; renameFile: (from: string, to: string) => void;
@@ -103,7 +104,18 @@ export const useProjectWorkspaceStore = create<ProjectWorkspaceState>()(persist(
         if (!state.activeProjectContext) { get().activateProjectContext(target); state = get(); } else assertProjectTarget(state.activeProjectContext, target);
       }
       update((s) => {
-        const merged = new Map(s.projectFiles.map((f) => [f.path, f]));
+        const merged =
+          new Map(
+            payload
+              .replaceProjectFiles
+              ? []
+              : s.projectFiles.map(
+                  (file) => [
+                    file.path,
+                    file,
+                  ] as const,
+                ),
+          );
         for (const f of payload.projectFiles?.length ? payload.projectFiles : landingFiles(payload.html, payload.css, payload.js)) merged.set(f.path, { ...f, flag: f.flag || (merged.has(f.path) ? 'modified' : 'generated') });
         for (const [path, content] of [['index.html', payload.html], ['styles.css', payload.css], ['script.js', payload.js]] as const) if (content?.trim()) merged.set(path, { path, content, flag: merged.has(path) ? 'modified' : 'generated' });
         const projectFiles = [...merged.values()].sort((a,b) => a.path.localeCompare(b.path));
