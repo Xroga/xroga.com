@@ -264,59 +264,62 @@ describe(
     );
 
     it(
-      'keeps a CLI as a terminal Preview rather than inventing a browser',
-      () => {
-        const plan =
-          planLivePreview(
-            project(
-              [
-                {
-                  path:
-                    'Cargo.toml',
+  'keeps a CLI as a terminal Preview rather than inventing a browser',
+  () => {
+    const plan =
+      planLivePreview(
+        project(
+          [
+            {
+              path:
+                'Cargo.toml',
 
-                  content:
-                    '[package]\nname="tool"\nversion="0.1.0"\n',
-                },
+              content:
+                '[package]\nname="tool"\nversion="0.1.0"\n',
+            },
 
-                {
-                  path:
-                    'src/main.rs',
+            {
+              path:
+                'src/main.rs',
 
-                  content:
-                    'fn main() {}',
-                },
-              ],
+              content:
+                'fn main() {}',
+            },
+          ],
 
-              'terminal',
-            ),
-          );
-
-        assert.equal(
-          plan.kind,
           'terminal',
-        );
+        ),
+      );
 
-        assert.equal(
-  plan.process,
-  null,
-);
-        
-assert.equal(
-  plan.command
-    ?.command,
-  'cargo',
+    assert.equal(
+      plan.kind,
+      'terminal',
+    );
+
+    assert.equal(
+      plan.process,
+      null,
+    );
+
+    assert.equal(
+      plan.command
+        ?.command,
+      'cargo',
+    );
+
+    assert.deepEqual(
+      plan.command
+        ?.args,
+      [
+        'run',
+        '--',
+        '--help',
+      ],
+    );
+  },
 );
 
-assert.deepEqual(
-  plan.command
-    ?.args,
-  [
-    'run',
-    '--',
-    '--help',
-  ],
-);
-        it(
+it(
   'plans a worker as a real log-backed runtime process',
   () => {
     const plan =
@@ -423,8 +426,6 @@ it(
     );
   },
 );
-      },
-    );
 
     it(
       'creates and validates a signed temporary Preview hostname',
