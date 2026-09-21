@@ -336,6 +336,101 @@ export class SoftwareAgentWorkspace {
     };
   }
 
+  renameFile(
+  fromPath:
+    string,
+
+  toPath:
+    string,
+): {
+  fromPath:
+    string;
+
+  toPath:
+    string;
+
+  renamed:
+    boolean;
+
+  revision?:
+    string;
+} {
+  const normalizedFrom =
+    normalizePath(
+      fromPath,
+    );
+
+  const normalizedTo =
+    normalizePath(
+      toPath,
+    );
+
+  if (
+    normalizedFrom ===
+    normalizedTo
+  ) {
+    return {
+      fromPath:
+        normalizedFrom,
+
+      toPath:
+        normalizedTo,
+
+      renamed:
+        false,
+    };
+  }
+
+  const content =
+    this.workingFiles.get(
+      normalizedFrom,
+    );
+
+  if (
+    content ===
+    undefined
+  ) {
+    throw new Error(
+      `RENAME_SOURCE_MISSING: ${normalizedFrom}`,
+    );
+  }
+
+  if (
+    this.workingFiles.has(
+      normalizedTo,
+    )
+  ) {
+    throw new Error(
+      `RENAME_TARGET_EXISTS: ${normalizedTo}`,
+    );
+  }
+
+  this.workingFiles.delete(
+    normalizedFrom,
+  );
+
+  this.workingFiles.set(
+    normalizedTo,
+    content,
+  );
+
+  return {
+    fromPath:
+      normalizedFrom,
+
+    toPath:
+      normalizedTo,
+
+    renamed:
+      true,
+
+    revision:
+      revisionFor(
+        content,
+      ),
+  };
+}
+  
   getFiles():
     SoftwareAgentWorkspaceFile[] {
     return [...this.workingFiles.entries()]
