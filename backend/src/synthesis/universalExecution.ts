@@ -647,6 +647,27 @@ const rerunPlan =
 
   /*
  * Final verification belongs to the verified project itself.
+ if (
+  !review.approved
+) {
+  return fail(
+    'failed',
+
+    'review',
+
+    `review blocked the change: ${
+      review.findings.join(
+        '; ',
+      )
+    }`,
+
+    validationPlan,
+
+    review.findings,
+
+    files,
+  );
+}
  *
  * Publication below may succeed, fail, be blocked, or not be
  * requested at all without changing this verification verdict.
