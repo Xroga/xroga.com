@@ -492,6 +492,18 @@ export async function createProductionSoftwareAgentOperations(
         );
     },
 
+    async renameFile(
+  _contract,
+  fromPath,
+  toPath,
+) {
+  return workspace
+    .renameFile(
+      fromPath,
+      toPath,
+    );
+},
+    
     async runCommand(
       currentContract,
       command,
