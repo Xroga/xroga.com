@@ -49,6 +49,15 @@ The initial universe covers app builders, coding agents, existing repositories, 
 
 The six independent gap classes are VISIBILITY, NARRATIVE, TOPIC, FORMAT, WEB_MENTION, and DEMAND. A record carries dated evidence, data confidence, source URLs, desired/current state, product fit, and remeasurement metadata.
 
+Runtime evidence connections are explicit:
+
+- GSC query/page rows can create demand gaps only when observed impressions plus weak position/CTR exist.
+- Platform visibility metrics require an explicit observed Xroga zero before competitor visibility can create a visibility gap; a missing Xroga record remains `NO_DATA`.
+- Prompt-observation samples can create platform-specific visibility or narrative gaps.
+- Relevant Mention Intersect records can create web-mention gaps.
+- Missing formats create format gaps only when dated search, AI, or competitor preference evidence exists.
+- Internal desired-association shortfalls create inferred topic gaps, clearly separated from external visibility.
+
 Deterministic action rules:
 
 - **FIX**: a controlled existing asset/association is deficient.
@@ -71,6 +80,7 @@ Provider results use `AVAILABLE`, `NO_DATA`, `UNAVAILABLE`, or `PLAN_LIMITED`.
 
 - **Ahrefs**: absent credentials return UNAVAILABLE; configured but unverified plan access returns PLAN_LIMITED. No metric is synthesized. CSV/JSON imports remain the fallback.
 - **Google Search Console**: CSV imports require query, page, date, clicks, impressions, CTR, and position, with optional country/device. The parser handles quoted fields, percent CTR, malformed rows, and position/CTR classes.
+- **Visibility metrics**: optional `visibility-metrics.json` imports keep platform, entity, topic, provider, availability, numeric/UNKNOWN value and dated evidence together. Missing metrics are never treated as zero.
 - **AI Prompt Observatory**: observations are dated samples per engine. States are CITED_LINKED, MENTIONED_UNLINKED, ABSENT, and INCORRECT_OR_MISLEADING. Rates are calculated only when samples exist.
 - **Mention intelligence**: independent page records retain competitor overlap and available page evidence. Mention Intersect requires competitor overlap while Xroga is absent; UNKNOWN authority metrics stay UNKNOWN.
 
@@ -120,6 +130,10 @@ Without `--dry-run`, output is written beneath ignored `artifacts/growth-intelli
 - No third-party mention records are bundled; Mention Intersect remains NO_DATA.
 - Competitor visibility and ranking difficulty are not inferred from brand awareness or memory.
 - Search traffic, ranking, conversion, and AI citation outcomes are never guaranteed.
+
+## Audited baseline semantics
+
+The clean source baseline produces 11 inferred TOPIC gaps and no evidence-backed FORMAT, VISIBILITY, NARRATIVE, WEB_MENTION, or DEMAND gaps. The missing Next.js demand mapping is intentionally not synthesized. All baseline priorities are capped below P1 until observed demand and stronger evidence exist. Synthetic adversarial fixtures cover all six gap types and every action route without changing the real baseline.
 
 ## Intentionally deferred to Commands 2–5
 

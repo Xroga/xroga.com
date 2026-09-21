@@ -22,14 +22,14 @@ async function main(): Promise<void> {
     counts: {
       entities: source.entities.length, associations: source.associations.length, facts: source.facts.length,
       demand: source.demand.length, gscRows: source.gscRows.length, observations: source.promptObservations.length, mentions: source.mentions.length,
-      formats: source.formatCoverage.length, crawlers: source.crawlerPolicies.length,
+      visibilityMetrics: source.visibilityMetrics.length, formats: source.formatCoverage.length, crawlers: source.crawlerPolicies.length,
     },
   };
   let output: unknown;
   switch (args.command) {
     case 'entities': output = { entities: source.entities, associations: source.associations, facts: source.facts, validation }; break;
     case 'gaps': output = { gaps: snapshot.gaps, providerStates: snapshot.providerStates, unknowns: snapshot.unknowns }; break;
-    case 'discover': output = { opportunities: snapshot.opportunities, productOpportunities: snapshot.opportunities.filter((item) => item.actionTypes.includes('PRODUCT')) }; break;
+    case 'discover': output = { opportunities: snapshot.opportunities, productOpportunities: snapshot.productOpportunities }; break;
     case 'validate': output = validation; break;
     case 'report': output = renderReport(snapshot); break;
     default: output = snapshot;

@@ -1,13 +1,13 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   associationSchema, canonicalFactSchema, crawlerPolicySchema, demandItemSchema, entitySchema,
   formatCoverageSchema, mentionSchema, promptObservationSchema,
   type Association, type CanonicalFact, type CrawlerPolicy, type DemandItem, type Entity,
-  type FormatCoverage, type GscRow, type Mention, type PromptObservation,
+  type FormatCoverage, type GscRow, type Mention, type PromptObservation, type VisibilityMetric,
 } from './model.js';
-import { parseGscCsv, parseMentions, parsePromptObservations } from './providers.js';
+import { parseGscCsv, parseMentions, parsePromptObservations, parseVisibilityMetrics } from './providers.js';
 
 const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const REPOSITORY_ROOT = path.resolve(MODULE_DIR, '../../..');
@@ -34,6 +34,7 @@ export type IntelligenceSource = {
   formatCoverage: FormatCoverage[];
   crawlerPolicies: CrawlerPolicy[];
   gscRows: GscRow[];
+  visibilityMetrics: VisibilityMetric[];
 };
 
 async function optionalText(name: string): Promise<string | null> {
@@ -49,8 +50,8 @@ export async function loadSource(): Promise<IntelligenceSource> {
     json('entities.json'), json('associations.json'), json('facts.json'), json('demand.json'),
     json('prompt-observations.json'), json('mentions.json'), json('format-coverage.json'), json('crawler-policies.json'),
   ]);
-  const [gscImport, promptImport, mentionImport] = await Promise.all([
-    optionalText('gsc.csv'), optionalText('prompt-observations.json'), optionalText('mentions.json'),
+  const [gscImport, promptImport, mentionImport, visibilityImport] = await Promise.all([
+    optionalText('gsc.csv'), optionalText('prompt-observations.json'), optionalText('mentions.json'), optionalText('visibility-metrics.json'),
   ]);
   return {
     entities: list(entities, entitySchema), associations: list(associations, associationSchema), facts: list(facts, canonicalFactSchema),
@@ -60,6 +61,7 @@ export async function loadSource(): Promise<IntelligenceSource> {
     formatCoverage: list(formatCoverage, formatCoverageSchema),
     crawlerPolicies: list(crawlerPolicies, crawlerPolicySchema),
     gscRows: gscImport ? parseGscCsv(gscImport) : [],
+    visibilityMetrics: visibilityImport ? parseVisibilityMetrics(JSON.parse(visibilityImport)) : [],
   };
 }
 
@@ -67,4 +69,20 @@ export async function writeOutput(name: string, content: string, dryRun: boolean
   const target = path.join(OUTPUT_ROOT, name);
   if (!dryRun) { await mkdir(OUTPUT_ROOT, { recursive: true }); await writeFile(target, content, 'utf8'); }
   return target;
+}
+
+export async function validateCanonicalFactSources(facts: readonly CanonicalFact[]): Promise<Array<{ code: string; path: string; message: string }>> {
+  const issues: Array<{ code: string; path: string; message: string }> = [];
+  for (const fact of facts) {
+    if (/^https?:\/\//i.test(fact.source)) continue;
+    const relativePath = fact.source.split('#', 1)[0];
+    const resolved = path.resolve(REPOSITORY_ROOT, relativePath);
+    if (resolved !== REPOSITORY_ROOT && !resolved.startsWith(`${REPOSITORY_ROOT}${path.sep}`)) {
+      issues.push({ code: 'UNSAFE_FACT_SOURCE', path: fact.factKey, message: fact.source });
+      continue;
+    }
+    try { await access(resolved); }
+    catch { issues.push({ code: 'MISSING_FACT_SOURCE', path: fact.factKey, message: fact.source }); }
+  }
+  return issues;
 }
