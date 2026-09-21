@@ -196,22 +196,74 @@ export function sandboxValidationRunner(): ValidationRunner {
  * since both are pure functions of the files plus systems that already exist.
  */
 export function productionAdapters(input: {
-  implement: ImplementFn;
-  repair?: RepairFn;
-  commit: CommitFn;
+  implement:
+    ImplementFn;
+
+  repair?:
+    RepairFn;
+
+  /**
+   * Agent V2 returns the canonical full workspace rather than
+   * a partial changed-file set.
+   */
+  implementationResultMode?:
+    | 'changes'
+    | 'snapshot';
+
+  repairResultMode?:
+    | 'changes'
+    | 'snapshot';
+
+  commit:
+    CommitFn;
   reviewerModel?: string;
   acceptanceCriteria?: readonly string[];
   sourceCommitSha?: string;
 }): ExecutionAdapters {
-  const repair = input.repair
-    ? async ({ plan, failures, files }: Parameters<NonNullable<ExecutionAdapters['repair']>>[0]) => {
-        const changed = await input.repair!({
-          brief: buildImplementationBrief({ plan, securityControls: [] }),
-          plan,
-          failures,
-          files,
-        });
-        return changed?.length ? mergeProjectSnapshot(files, changed) : null;
+  const repair =
+  input.repair
+    ? async ({
+        plan,
+        failures,
+        files,
+      }:
+        Parameters<
+          NonNullable<
+            ExecutionAdapters[
+              'repair'
+            ]
+          >
+        >[0]) => {
+        const repaired =
+          await input
+            .repair!({
+              brief:
+                buildImplementationBrief({
+                  plan,
+
+                  securityControls:
+                    [],
+                }),
+
+              plan,
+              failures,
+              files,
+            });
+
+        if (
+          !repaired?.length
+        ) {
+          return null;
+        }
+
+        return input
+          .repairResultMode ===
+          'snapshot'
+          ? repaired
+          : mergeProjectSnapshot(
+              files,
+              repaired,
+            );
       }
     : undefined;
 
@@ -223,7 +275,14 @@ export function productionAdapters(input: {
         existingFiles,
         signal,
       });
-      return mergeProjectSnapshot(existingFiles, generatedFiles);
+return input
+  .implementationResultMode ===
+  'snapshot'
+  ? generatedFiles
+  : mergeProjectSnapshot(
+      existingFiles,
+      generatedFiles,
+    );
     },
 
     runValidation: sandboxValidationRunner(),
