@@ -842,8 +842,27 @@ verificationAuthority:
 
         events,
 
-        initialFiles:
-          agentInitialFiles
+       initialFiles:
+  agentInitialFiles
+    .map(
+      (
+        file,
+      ) => ({
+        path:
+          file.path,
+
+        content:
+          file.content,
+      }),
+    ),
+
+...(
+  input.workingFiles !==
+  undefined
+    ? {
+        workingFiles:
+          input
+            .workingFiles
             .map(
               (
                 file,
@@ -855,45 +874,26 @@ verificationAuthority:
                   file.content,
               }),
             ),
+      }
+    : {}
+),
 
-        signal:
-          input.signal,
-
-        ...(
-          input.workingFiles !==
-          undefined
-            ? {
-                workingFiles:
-                  input
-                    .workingFiles
-                    .map(
-                      (
-                        file,
-                      ) => ({
-                        path:
-                          file.path,
-
-                        content:
-                          file.content,
-                      }),
-                    ),
-              }
-            : {}
-        ),
-
-        ...(
+...(
+  input
+    .forceContinueFromCheckpoint !==
+  undefined
+    ? {
+        forceContinueFromCheckpoint:
           input
-            .forceContinueFromCheckpoint !==
-          undefined
-            ? {
-                forceContinueFromCheckpoint:
-                  input
-                    .forceContinueFromCheckpoint,
-              }
-            : {}
-        ),
+            .forceContinueFromCheckpoint,
+      }
+    : {}
+),
 
-        checkpointStore,
+signal:
+  input.signal,
+
+checkpointStore,
       },
     });
 
