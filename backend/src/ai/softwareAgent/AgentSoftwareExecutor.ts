@@ -218,13 +218,15 @@ function isMutationEvent(
     ],
 ): boolean {
   return (
-    type ===
-      'file.created' ||
-    type ===
-      'file.updated' ||
-    type ===
-      'file.deleted'
-  );
+  type ===
+    'file.created' ||
+  type ===
+    'file.updated' ||
+  type ===
+    'file.deleted' ||
+  type ===
+    'file.renamed'
+);
 }
 
 function shouldCheckpointAfter(
