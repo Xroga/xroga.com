@@ -1091,15 +1091,6 @@ const measuredEvidence =
                 },
               ),
 
-          
-
-          /*
-           * Outer deterministic validation remains authoritative.
-           * Agent V2 already gets bounded same-agent repair rounds during
-           * implementation; this existing repair adapter remains the
-           * universal pipeline's final bounded repair after independent
-           * validation/browser evidence.
-           */
  /*
  * Authoritative verification failures re-enter the SAME
  * Agent V2 run.
