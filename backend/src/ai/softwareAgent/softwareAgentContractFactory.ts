@@ -4,6 +4,7 @@ import type {
   DeploymentAuthority,
   PreviewRequirement,
   RepositoryPersistenceAuthority,
+  VerificationAuthority,
   SoftwareAcceptanceCriterion,
   SoftwareExecutionContract,
   SoftwareRepositoryRef,
@@ -42,6 +43,9 @@ export interface SoftwareAgentContractInput {
   allowRename?: boolean;
 
   preview?: PreviewRequirement;
+
+  verificationAuthority?:
+  VerificationAuthority;
 
   persistence?: RepositoryPersistenceAuthority;
 
@@ -308,12 +312,16 @@ export function createSoftwareExecutionContract(
       buildWritePolicy(input),
 
     preview:
-      input.preview ??
-      defaultPreviewRequirement(
-        input.taskKind,
-      ),
+  input.preview ??
+  defaultPreviewRequirement(
+    input.taskKind,
+  ),
 
-    persistence,
+verificationAuthority:
+  input.verificationAuthority ??
+  'agent',
+
+persistence,
 
     deployment,
 
