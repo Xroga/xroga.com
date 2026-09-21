@@ -171,9 +171,9 @@ test(
     );
 
     assert.match(
-      adapter,
-/runtime\s*\.\s*result\s*\.\s*status\s*!==\s*['"]verified['"]/
-    );
+  adapter,
+  /runtime\s*\.\s*result\s*\.\s*status\s*!==\s*['"]implemented['"]/
+);
 
     /*
      * The compatibility field may still exist in the input type, but it
