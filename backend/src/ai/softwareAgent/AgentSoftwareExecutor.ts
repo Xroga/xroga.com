@@ -131,10 +131,45 @@ export interface AgentSoftwareExecutorResult {
     string;
 }
 
-function buildVerificationContinuation(
+function buildSoftwareContinuation(
   blockers:
     string[],
+
+  verificationAuthority:
+    SoftwareExecutionContract[
+      'verificationAuthority'
+    ],
 ): string {
+  if (
+    verificationAuthority ===
+    'universal'
+  ) {
+    return `
+The implementation phase is not complete yet.
+
+Xroga's implementation completion gate reports:
+
+${blockers.map((blocker) => `- ${blocker}`).join('\n')}
+
+Continue working on the SAME project and SAME task.
+
+Your responsibility is IMPLEMENTATION only.
+
+Use the available Xroga project tools to:
+- inspect the current workspace,
+- diagnose what implementation work is still missing,
+- make the smallest coherent code change,
+- preserve correct existing work.
+
+Do not attempt to produce the final verification verdict.
+Do not invent test, browser, Preview, or deployment evidence.
+The outer Xroga universal verifier owns deterministic verification after this implementation phase.
+
+Do not merely explain the blockers.
+Do not restart or regenerate unrelated project work.
+`.trim();
+  }
+
   return `
 The software task is not verified yet.
 
