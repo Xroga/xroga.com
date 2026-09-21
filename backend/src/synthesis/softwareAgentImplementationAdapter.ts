@@ -859,44 +859,44 @@ verificationAuthority:
         signal:
           input.signal,
 
+        ...(
+          input.workingFiles !==
+          undefined
+            ? {
+                workingFiles:
+                  input
+                    .workingFiles
+                    .map(
+                      (
+                        file,
+                      ) => ({
+                        path:
+                          file.path,
+
+                        content:
+                          file.content,
+                      }),
+                    ),
+              }
+            : {}
+        ),
+
+        ...(
+          input
+            .forceContinueFromCheckpoint !==
+          undefined
+            ? {
+                forceContinueFromCheckpoint:
+                  input
+                    .forceContinueFromCheckpoint,
+              }
+            : {}
+        ),
+
         checkpointStore,
       },
     });
 
-  ...(
-  input.workingFiles !==
-  undefined
-    ? {
-        workingFiles:
-          input
-            .workingFiles
-            .map(
-              (
-                file,
-              ) => ({
-                path:
-                  file.path,
-
-                content:
-                  file.content,
-              }),
-            ),
-      }
-    : {}
-),
-
-...(
-  input
-    .forceContinueFromCheckpoint !==
-  undefined
-    ? {
-        forceContinueFromCheckpoint:
-          input
-            .forceContinueFromCheckpoint,
-      }
-    : {}
-),
-    
   console.info(
     '[software_agent_v2_implementation]',
 
