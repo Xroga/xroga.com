@@ -645,11 +645,71 @@ const rerunPlan =
   record('review', review.approved ? 'review approved' : 'review found blocking issues',
     review.findings.join('; ') || 'no findings');
 
-  if (!review.approved) {
-    // Nothing has been committed, and this is not a fallback candidate: review failing
-    // means the generated code has a problem, and legacy would not fix it.
-    return fail('failed', 'review', `review blocked the change: ${review.findings.join('; ')}`, validationPlan, review.findings, files);
-  }
+  /*
+ * Final verification belongs to the verified project itself.
+ *
+ * Publication below may succeed, fail, be blocked, or not be
+ * requested at all without changing this verification verdict.
+ */
+const claim =
+  mayClaimVerified(
+    validationPlan,
+    report,
+  );
+
+const browserBlocker =
+  browserGate
+    ? browserGateBlockerReason(
+        browserGate,
+      )
+    : null;
+
+const verified =
+  claim.verified &&
+  browserBlocker ===
+    null;
+
+const finalFileTrail =
+  buildFileTrail(
+    [
+      ...existingFiles,
+    ],
+
+    [
+      ...files,
+    ],
+  );
+
+record(
+  'implementation',
+
+  `${finalFileTrail.length} file(s) changed`,
+
+  finalFileTrail
+    .map(
+      (
+        entry,
+      ) =>
+        entry.path,
+    )
+    .slice(
+      0,
+      20,
+    )
+    .join(
+      ', ',
+    ) ||
+    'no content changes',
+);
+
+/*
+ * The universal engine has now produced the canonical current
+ * workspace.
+ *
+ * Remote publication is deliberately handled separately below.
+ */
+mutationBegan =
+  true;
 
 /*
  * Publication is a delivery operation, not a prerequisite for a
