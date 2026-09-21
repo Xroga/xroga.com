@@ -119,18 +119,26 @@ router.get(
           });
       }
 
-      const process =
-        [...session.processes]
-          .reverse()
-          .find(
-            (
-              item,
-            ) =>
-              item.port ===
-                3000 ||
-              item.status ===
-                'running',
-          );
+      const reversedProcesses =
+  [
+    ...session.processes,
+  ].reverse();
+
+const process =
+  reversedProcesses
+    .find(
+      (
+        item,
+      ) =>
+        item.port ===
+          3000 ||
+        item.status ===
+          'running',
+    ) ??
+  reversedProcesses[
+    0
+  ] ??
+  null;
 
       if (
         !process
@@ -422,13 +430,20 @@ router.get(
           .project
           .runtime;
 
+      const runnable =
+  Boolean(
+    plan.process ||
+    plan.command,
+  );
+
       let processId:
         string | null =
         null;
 
       if (
-        binding
-      ) {
+  binding &&
+  plan.process
+) {
         const session =
           await store
             .loadSession(
@@ -462,8 +477,10 @@ router.get(
       }
 
       const grant =
-        binding
-          ? await getLatestLivePreviewGrant({
+  binding &&
+  plan.process?.port !=
+    null
+    ? await getLatestLivePreviewGrant({
               userId,
 
               projectId,
@@ -489,19 +506,16 @@ router.get(
           plan.kind,
 
         status:
-          binding
-            ? (
-                binding.status ===
-                  'running'
-                  ? 'ready'
-                  : 'stopped'
-              )
-            : (
-                plan.kind ===
-                  'none'
-                  ? 'not_applicable'
-                  : 'stopped'
-              ),
+  !runnable
+    ? 'not_applicable'
+    : binding
+      ? (
+          binding.status ===
+            'running'
+            ? 'ready'
+            : 'stopped'
+        )
+      : 'stopped',
 
         sessionId:
           binding
