@@ -81,6 +81,9 @@ function contract():
     preview:
       'required',
 
+    verificationAuthority:
+    'agent',
+    
     persistence:
       'none',
 
