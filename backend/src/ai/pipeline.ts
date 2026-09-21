@@ -1686,6 +1686,15 @@ const universalRequestPrompt =
     .publicationRequirement ===
   'REQUESTED',
 
+        publicationStatus:
+  result.publication
+    ?.status,
+
+publicationReason:
+  result.publication
+    ?.reason ??
+  null,
+
         deploymentRequested:
           buildContract
             ?.delivery
