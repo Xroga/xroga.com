@@ -355,3 +355,70 @@ test(
     );
   },
 );
+
+
+test(
+  'Universal Agent V2 cannot own the final verification verdict',
+  () => {
+    const adapter =
+      repoFile(
+        'backend/src/synthesis/softwareAgentImplementationAdapter.ts',
+      );
+
+    const tools =
+      repoFile(
+        'backend/src/ai/softwareAgent/xrogaTools.ts',
+      );
+
+    assert.match(
+      adapter,
+      /verificationAuthority\s*:\s*['"]universal['"]/,
+    );
+
+    assert.match(
+      adapter,
+      /status\s*!==\s*['"]implemented['"]/,
+    );
+
+    const implementationBlock =
+      tools.match(
+        /const implementationTools\s*=\s*\[([\s\S]*?)\];/,
+      )?.[1] ??
+      '';
+
+    assert.doesNotMatch(
+      implementationBlock,
+      /runChecks|verifyPreview|createReviewBranch/,
+    );
+  },
+);
+
+test(
+  'Universal verifier failures repair through the same Agent V2 run',
+  () => {
+    const entry =
+      repoFile(
+        'backend/src/synthesis/universalEntrypoint.ts',
+      );
+
+    assert.doesNotMatch(
+      entry,
+      /repairIncrementally/,
+    );
+
+    assert.match(
+      entry,
+      /forceContinueFromCheckpoint\s*:\s*true/,
+    );
+
+    assert.match(
+      entry,
+      /workingFiles\s*:\s*files/,
+    );
+
+    assert.match(
+      entry,
+      /repairResultMode\s*:\s*['"]snapshot['"]/,
+    );
+  },
+);
