@@ -106,6 +106,28 @@ describe('typed implementation failures remain truthful at the public boundary',
 });
 
 describe('a complete enabled run', () => {
+  it('walks every phase and produces an exact commit', async () => {
+    const result = await executeUniversalRun({
+      prompt: 'Build a Rust CLI that converts CSV files to JSON',
+      owner, runId: 'run-1', flags: enabled, adapters: adapters(),
+      store: new InMemoryUniversalStore(),
+    });
+
+    assert.equal(result.outcome, 'completed');
+    assert.equal(result.phaseReached, 'complete');
+    assert.equal(result.commitSha, 'abc123def456');
+    assert.equal(result.mutationBegan, true);
+
+    const phases = result.evidence.map((entry) => entry.phase);
+    for (const phase of ['routing', 'spec', 'architecture', 'security', 'planning', 'implementation', 'validation', 'review', 'commit']) {
+      assert.ok(phases.includes(phase as never), `phase ${phase} produced no evidence`);
+    }
+    const publicEvidence = JSON.stringify(result.evidence);
+    assert.doesNotMatch(publicEvidence, /model=/i);
+    assert.doesNotMatch(publicEvidence, /glm|deepseek|kimi|grok|moonshot|zhipu|openrouter/i);
+    assert.match(publicEvidence, /role=implementation attempts=1/);
+  });
+
   it(
   'does not publish when BuildContract says publication was not requested even when a commit adapter exists',
   async () => {
@@ -205,21 +227,6 @@ describe('a complete enabled run', () => {
     );
   },
 );
-
-    assert.equal(result.outcome, 'completed');
-    assert.equal(result.phaseReached, 'complete');
-    assert.equal(result.commitSha, 'abc123def456');
-    assert.equal(result.mutationBegan, true);
-
-    const phases = result.evidence.map((entry) => entry.phase);
-    for (const phase of ['routing', 'spec', 'architecture', 'security', 'planning', 'implementation', 'validation', 'review', 'commit']) {
-      assert.ok(phases.includes(phase as never), `phase ${phase} produced no evidence`);
-    }
-    const publicEvidence = JSON.stringify(result.evidence);
-    assert.doesNotMatch(publicEvidence, /model=/i);
-    assert.doesNotMatch(publicEvidence, /glm|deepseek|kimi|grok|moonshot|zhipu|openrouter/i);
-    assert.match(publicEvidence, /role=implementation attempts=1/);
-  });
 
   it('derives security controls for what it is actually building', async () => {
     const result = await executeUniversalRun({
