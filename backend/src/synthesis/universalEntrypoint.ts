@@ -355,8 +355,8 @@ export async function tryUniversalBuild(
     existingFiles?:
       readonly ProjectFile[];
 
-    commit:
-      CommitFn;
+    commit?:
+    CommitFn;
 
     flags?:
       UniversalAgentFlags;
@@ -1192,8 +1192,14 @@ repair:
   },
 repairResultMode:
   'snapshot',
-          commit:
-            input.commit,
+         ...(
+  input.commit
+    ? {
+        commit:
+          input.commit,
+      }
+    : {}
+),
         }),
 
       implementationRouting: {

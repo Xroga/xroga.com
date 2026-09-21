@@ -15,6 +15,10 @@ test('old persisted contracts receive safe freshness and release defaults', () =
   const value = goalContractSchema.parse(base);
   assert.equal(value.freshnessRequirement, 'NONE');
   assert.equal(value.previewRequirement, 'NONE');
+  assert.equal(
+  value.publicationRequirement,
+  'NONE',
+);
   assert.equal(value.deploymentRequirement, 'NONE');
   assert.deepEqual(value.sourcePolicy, { mode: 'any', scope: 'public_web', officialDomains: [] });
 });

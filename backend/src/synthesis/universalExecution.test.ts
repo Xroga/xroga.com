@@ -12,6 +12,13 @@ import assert from 'node:assert/strict';
 
 import type { ProjectFile } from '../ai/patches.js';
 import { readUniversalAgentFlags } from '../config/universalAgentFlags.js';
+import {
+  goalContractSchema,
+} from '../ai/universal/goalContract.js';
+
+import {
+  createBuildContract,
+} from './buildContract.js';
 import { InMemoryUniversalStore, type Owner } from './universalPersistence.js';
 import {
   canFallBack,
@@ -99,12 +106,105 @@ describe('typed implementation failures remain truthful at the public boundary',
 });
 
 describe('a complete enabled run', () => {
-  it('walks every phase and produces an exact commit', async () => {
-    const result = await executeUniversalRun({
-      prompt: 'Build a Rust CLI that converts CSV files to JSON',
-      owner, runId: 'run-1', flags: enabled, adapters: adapters(),
-      store: new InMemoryUniversalStore(),
-    });
+  it(
+  'does not publish when BuildContract says publication was not requested even when a commit adapter exists',
+  async () => {
+    let commitCalled =
+      false;
+
+    const goal =
+      goalContractSchema.parse({
+        version:
+          '1.0',
+
+        goal:
+          'Build a Rust CLI',
+
+        desiredOutcome:
+          'A working Rust CLI',
+
+        semanticIntent:
+          'MODIFY',
+
+        publicationRequirement:
+          'NONE',
+
+        deploymentRequirement:
+          'NONE',
+
+        confidence:
+          1,
+      });
+
+    const buildContract =
+      createBuildContract({
+        projectId:
+          owner.projectId,
+
+        runId:
+          'run-no-publication',
+
+        sourcePrompt:
+          'Build a Rust CLI',
+
+        goal,
+
+        existingFileCount:
+          0,
+      });
+
+    const result =
+      await executeUniversalRun({
+        prompt:
+          'Build a Rust CLI that converts CSV files to JSON',
+
+        buildContract,
+
+        owner,
+
+        runId:
+          'run-no-publication',
+
+        flags:
+          enabled,
+
+        adapters:
+          adapters({
+            commit:
+              async () => {
+                commitCalled =
+                  true;
+
+                return {
+                  commitSha:
+                    'must-not-happen',
+                };
+              },
+          }),
+      });
+
+    assert.equal(
+      result.outcome,
+      'completed',
+    );
+
+    assert.equal(
+      result.commitSha,
+      null,
+    );
+
+    assert.equal(
+      result.publication
+        ?.status,
+      'not_requested',
+    );
+
+    assert.equal(
+      commitCalled,
+      false,
+    );
+  },
+);
 
     assert.equal(result.outcome, 'completed');
     assert.equal(result.phaseReached, 'complete');

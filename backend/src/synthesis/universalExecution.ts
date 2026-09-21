@@ -68,6 +68,26 @@ export interface ExecutionEvidenceRecord {
   readonly detail: string;
 }
 
+export type UniversalPublicationStatus =
+  | 'not_requested'
+  | 'succeeded'
+  | 'blocked'
+  | 'failed';
+
+export interface UniversalPublicationResult {
+  readonly requested:
+    boolean;
+
+  readonly status:
+    UniversalPublicationStatus;
+
+  readonly commitSha:
+    string | null;
+
+  readonly reason:
+    string | null;
+}
+
 export interface UniversalExecutionResult {
   readonly outcome: ExecutionOutcome;
   readonly phaseReached: ExecutionPhase;
@@ -75,6 +95,8 @@ export interface UniversalExecutionResult {
   readonly securityControls: readonly SecurityControl[];
   readonly files: readonly ProjectFile[];
   readonly commitSha: string | null;
+  readonly publication?:
+  UniversalPublicationResult;
   readonly evidence: readonly ExecutionEvidenceRecord[];
   readonly blockers: readonly string[];
   /** True once anything has been written. After this, no fallback is permitted. */
@@ -104,8 +126,22 @@ export interface ExecutionAdapters {
   readonly runValidation: ValidationRunner;
   /** Reviews the complete diff. Returns findings; a non-empty critical list blocks. */
   readonly review: (files: readonly ProjectFile[]) => Promise<{ approved: boolean; findings: readonly string[] }>;
-  /** Writes through the transactional workspace and returns the exact commit. */
-  readonly commit: (files: readonly ProjectFile[], message: string) => Promise<{ commitSha: string }>;
+ /**
+ * Optional remote publication adapter.
+ *
+ * Building, verification, persistence and Preview do not require
+ * a GitHub repository.
+ */
+readonly commit?: (
+  files:
+    readonly ProjectFile[],
+
+  message:
+    string,
+) => Promise<{
+  commitSha:
+    string;
+}>;
   /** Optional bounded repair between validation attempts. */
   readonly repair?: (input: { plan: UniversalRunPlan; failures: readonly string[]; files: readonly ProjectFile[] }) => Promise<readonly ProjectFile[] | null>;
   /**
@@ -609,54 +645,295 @@ const rerunPlan =
   record('review', review.approved ? 'review approved' : 'review found blocking issues',
     review.findings.join('; ') || 'no findings');
 
-  if (!review.approved) {
-    // Nothing has been committed, and this is not a fallback candidate: review failing
-    // means the generated code has a problem, and legacy would not fix it.
-    return fail('failed', 'review', `review blocked the change: ${review.findings.join('; ')}`, validationPlan, review.findings, files);
-  }
+  /*
+ * Final verification belongs to the verified project itself.
+ if (
+  !review.approved
+) {
+  return fail(
+    'failed',
 
-  // ── Commit ─────────────────────────────────────────────────────────────────
-  //
-  // The verified claim is the deterministic claim *and* the browser gate, when the browser gate
-  // applies. Before this, `mayClaimVerified` was consulted alone, so a web project whose browser
-  // check returned `not_checked` — no sandbox, no browser, app never started — still reported
-  // `verified: true`. Compiling is not working, and "we could not look" is not "we looked".
-  //
-  // `not_a_web_project` is the one reason that does not veto: a CLI tool has no browser surface,
-  // and its own deterministic validation is the whole of its evidence.
-  const claim = mayClaimVerified(validationPlan, report);
-  const browserBlocker = browserGate ? browserGateBlockerReason(browserGate) : null;
-  const verified = claim.verified && browserBlocker === null;
-  const finalFileTrail = buildFileTrail([...existingFiles], [...files]);
-  record(
-    'implementation',
-    `${finalFileTrail.length} file(s) changed`,
-    finalFileTrail.map((entry) => entry.path).slice(0, 20).join(', ') || 'no content changes',
+    'review',
+
+    `review blocked the change: ${
+      review.findings.join(
+        '; ',
+      )
+    }`,
+
+    validationPlan,
+
+    review.findings,
+
+    files,
   );
-  mutationBegan = true;
-  // Publication as a canonical task. The Command 1 atomic writer still performs the write —
-  // no second GitHub writer exists and none is created — but the run now records the commit
-  // as task evidence, and a writer returning no sha fails the task rather than completing a
-  // run with nothing published.
-  const message = input.commitMessage ?? `feat: ${plan.spec.title}`;
-  const { commitSha } = implementationState
-    ? await runPublishAsCanonicalTask({
-        state: implementationState,
-        objective: `Publish ${finalFileTrail.length} changed file(s) in a ${files.length}-file project snapshot`,
-        repository: input.owner.projectId,
-        baseBranch: implementationState.selectedBranch,
-        startingCommitSha: implementationState.startingCommitSha,
-        publish: () => input.adapters.commit(files, message),
-        store: input.executionStore,
-        signal: input.signal,
-      })
-    : await input.adapters.commit(files, message);
-  record('commit', 'exact commit produced', commitSha);
-  record('complete', 'verification claim', browserBlocker ?? claim.reason);
+}
+ *
+ * Publication below may succeed, fail, be blocked, or not be
+ * requested at all without changing this verification verdict.
+ */
+const claim =
+  mayClaimVerified(
+    validationPlan,
+    report,
+  );
+
+const browserBlocker =
+  browserGate
+    ? browserGateBlockerReason(
+        browserGate,
+      )
+    : null;
+
+const verified =
+  claim.verified &&
+  browserBlocker ===
+    null;
+
+const finalFileTrail =
+  buildFileTrail(
+    [
+      ...existingFiles,
+    ],
+
+    [
+      ...files,
+    ],
+  );
+
+record(
+  'implementation',
+
+  `${finalFileTrail.length} file(s) changed`,
+
+  finalFileTrail
+    .map(
+      (
+        entry,
+      ) =>
+        entry.path,
+    )
+    .slice(
+      0,
+      20,
+    )
+    .join(
+      ', ',
+    ) ||
+    'no content changes',
+);
+
+/*
+ * The universal engine has now produced the canonical current
+ * workspace.
+ *
+ * Remote publication is deliberately handled separately below.
+ */
+mutationBegan =
+  true;
+
+/*
+ * Publication is a delivery operation, not a prerequisite for a
+ * successful Xroga build.
+ *
+ * Existing tests that call executeUniversalRun directly without a
+ * BuildContract keep their historical behavior: supplying a commit
+ * adapter means publication is requested.
+ *
+ * Production always supplies a BuildContract, so its explicit
+ * publicationRequirement is authoritative.
+ */
+const publicationRequested =
+  input.buildContract
+    ? input
+        .buildContract
+        .delivery
+        .publicationRequirement ===
+      'REQUESTED'
+    : Boolean(
+        input.adapters.commit,
+      );
+
+let commitSha:
+  string | null =
+  null;
+
+let publication:
+  UniversalPublicationResult = {
+  requested:
+    publicationRequested,
+
+  status:
+    publicationRequested
+      ? 'blocked'
+      : 'not_requested',
+
+  commitSha:
+    null,
+
+  reason:
+    publicationRequested
+      ? 'Publication was requested but has not completed.'
+      : null,
+};
+
+if (
+  publicationRequested
+) {
+  if (
+    !input.adapters
+      .commit
+  ) {
+    const publicationReason =
+      'GitHub publication was requested, but no authorized publication adapter is available.';
+
+    publication = {
+      requested:
+        true,
+
+      status:
+        'blocked',
+
+      commitSha:
+        null,
+
+      reason:
+        publicationReason,
+    };
+
+    record(
+      'commit',
+      'publication blocked',
+      publicationReason,
+    );
+  } else {
+    const message =
+      input.commitMessage ??
+      `feat: ${plan.spec.title}`;
+
+    try {
+      const published =
+        implementationState
+          ? await runPublishAsCanonicalTask({
+              state:
+                implementationState,
+
+              objective:
+                `Publish ${finalFileTrail.length} changed file(s) in a ${files.length}-file project snapshot`,
+
+              repository:
+                input.owner
+                  .projectId,
+
+              baseBranch:
+                implementationState
+                  .selectedBranch,
+
+              startingCommitSha:
+                implementationState
+                  .startingCommitSha,
+
+              publish:
+                () =>
+                  input.adapters
+                    .commit!(
+                      files,
+                      message,
+                    ),
+
+              store:
+                input.executionStore,
+
+              signal:
+                input.signal,
+            })
+          : {
+              ...(
+                await input.adapters
+                  .commit(
+                    files,
+                    message,
+                  )
+              ),
+
+              task:
+                null,
+            };
+
+      commitSha =
+        published.commitSha;
+
+      publication = {
+        requested:
+          true,
+
+        status:
+          'succeeded',
+
+        commitSha,
+
+        reason:
+          null,
+      };
+
+      record(
+        'commit',
+        'exact commit produced',
+        commitSha,
+      );
+    } catch (
+      error
+    ) {
+      const publicationReason =
+        error instanceof
+          Error
+          ? error.message
+          : String(
+              error,
+            );
+
+      publication = {
+        requested:
+          true,
+
+        status:
+          'failed',
+
+        commitSha:
+          null,
+
+        reason:
+          publicationReason,
+      };
+
+      record(
+        'commit',
+        'publication failed',
+        publicationReason,
+      );
+    }
+  }
+} else {
+  record(
+    'commit',
+    'publication not requested',
+    'The verified project remains saved in Xroga without remote repository publication.',
+  );
+}
+
+record(
+  'complete',
+  'verification claim',
+  browserBlocker ??
+    claim.reason,
+);
 
   return {
     outcome: 'completed', phaseReached: 'complete', plan: validationPlan, securityControls,
-    files, commitSha, evidence,
+files,
+commitSha,
+publication,
+evidence,
     // The commit is preserved and reported, but it is reported *unverified* with the exact
     // reason. `artifactStatusFor` turns `completed` + `verified: false` into a **blocked**
     // artifact, so the user sees the work that exists and the evidence that is missing —

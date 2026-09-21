@@ -214,8 +214,8 @@ export function productionAdapters(input: {
     | 'changes'
     | 'snapshot';
 
-  commit:
-    CommitFn;
+  commit?:
+  CommitFn;
   reviewerModel?: string;
   acceptanceCriteria?: readonly string[];
   sourceCommitSha?: string;
@@ -319,6 +319,20 @@ return input
       }
     },
 
-    commit: async (files, message) => input.commit({ files, message }),
+...(
+  input.commit
+    ? {
+        commit:
+          async (
+            files,
+            message,
+          ) =>
+            input.commit!({
+              files,
+              message,
+            }),
+      }
+    : {}
+),
   };
 }

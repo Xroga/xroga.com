@@ -61,12 +61,21 @@ export interface BuildContract {
   };
 
   readonly delivery: {
-    readonly previewRequirement:
-      GoalContract['previewRequirement'];
+  readonly previewRequirement:
+    GoalContract[
+      'previewRequirement'
+    ];
 
-    readonly deploymentRequirement:
-      GoalContract['deploymentRequirement'];
-  };
+  readonly publicationRequirement:
+    GoalContract[
+      'publicationRequirement'
+    ];
+
+  readonly deploymentRequirement:
+    GoalContract[
+      'deploymentRequirement'
+    ];
+};
 
   readonly createdAt: string;
 }
@@ -90,6 +99,14 @@ function buildOperationFor(
   ) {
     return 'deploy';
   }
+
+  if (
+  input.goal
+    .publicationRequirement ===
+  'REQUESTED'
+) {
+  return 'publish';
+}
 
   if (
     input.goal.semanticIntent ===
@@ -192,11 +209,15 @@ export function createBuildContract(
     },
 
     delivery: {
-      previewRequirement:
-        input.goal
-          .previewRequirement,
+  previewRequirement:
+    input.goal
+      .previewRequirement,
 
-      deploymentRequirement:
+  publicationRequirement:
+    input.goal
+      .publicationRequirement,
+
+  deploymentRequirement:
         input.goal
           .deploymentRequirement,
     },

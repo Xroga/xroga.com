@@ -1565,7 +1565,7 @@ const universalRequestPrompt =
       if (meta?.semanticGoalContract) return meta.semanticGoalContract;
       const maximumOutputTokens = 2_500;
       const messages: ChatMessage[] = [
-        { role: 'system', content: `Translate the complete user request into one semantic GoalContract. Do not classify a product, framework, language, or file type. Select only capability IDs supplied below. Return strict JSON with exactly: version "1.0", goal, desiredOutcome, semanticIntent (ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED), constraints[], acceptance[], historyContext[], projectContext, deliverables[] (id, mediaType, description, required, acceptance[]), requiredCapabilities[], requiredAuthorities[], risks[], confidence 0..1, blockers[], contextComplexity (low|medium|high|unknown). Available capability IDs: ${availableCapabilityIds.join(', ')}` },
+        { role: 'system', content: `Translate the complete user request into one semantic GoalContract. Do not classify a product, framework, language, or file type. Select only capability IDs supplied below. Return strict JSON with exactly: version "1.0", goal, desiredOutcome, semanticIntent (ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED), constraints[], acceptance[], historyContext[], projectContext, deliverables[] (id, mediaType, description, required, acceptance[]), requiredCapabilities[], requiredAuthorities[], previewRequirement (NONE|PREFERRED|REQUIRED), publicationRequirement (NONE|REQUESTED), deploymentRequirement (NONE|REQUESTED), risks[], confidence 0..1, blockers[], contextComplexity (low|medium|high|unknown). Available capability IDs: ${availableCapabilityIds.join(', ')}` },
         { role: 'user', content: JSON.stringify({ message, history, projectContext, attachments, projectState }) },
       ];
       return resolveStructuredGoalContract(async (repairHint) => {
@@ -1601,23 +1601,46 @@ const universalRequestPrompt =
         projectRoot: meta?.projectRoot || '/',
       },
     } : {}),
-    commit:
-      universalTargetRepo && universalToken
-        ? atomicGitHubCommit({
-            token: universalToken,
-            owner: universalTargetRepo.split('/')[0]!,
-            repo: universalTargetRepo.split('/')[1]!,
+    ...(
+  universalTargetRepo &&
+  universalToken
+    ? {
+        commit:
+          atomicGitHubCommit({
+            token:
+              universalToken,
+
+            owner:
+              universalTargetRepo
+                .split(
+                  '/',
+                )[0]!,
+
+            repo:
+              universalTargetRepo
+                .split(
+                  '/',
+                )[1]!,
+
             runId,
-            baseBranch: meta?.githubTargetBranch || 'main',
-            onRecord: (record) => {
-              universalCommit.record = record;
-            },
-          })
-        : refusingCommit(
-            universalTargetRepo
-              ? 'the connected GitHub authorization could not be read for this project'
-              : 'no GitHub repository is connected for this project',
-          ),
+
+            baseBranch:
+              meta
+                ?.githubTargetBranch ||
+              'main',
+
+            onRecord:
+              (
+                record,
+              ) => {
+                universalCommit
+                  .record =
+                  record;
+              },
+          }),
+      }
+    : {}
+),
   });
   if (universal) {
     const {
@@ -1658,9 +1681,19 @@ const universalRequestPrompt =
           result.blockers,
 
         publicationRequested:
-          Boolean(
-            universalTargetRepo,
-          ),
+  buildContract
+    ?.delivery
+    .publicationRequirement ===
+  'REQUESTED',
+
+        publicationStatus:
+  result.publication
+    ?.status,
+
+publicationReason:
+  result.publication
+    ?.reason ??
+  null,
 
         deploymentRequested:
           buildContract

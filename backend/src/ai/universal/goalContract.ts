@@ -195,15 +195,23 @@ export const goalContractSchema =
       }),
 
     previewRequirement:
-      z
-        .enum([
-          'NONE',
-          'PREFERRED',
-          'REQUIRED',
-        ])
-        .default('NONE'),
+  z
+    .enum([
+      'NONE',
+      'PREFERRED',
+      'REQUIRED',
+    ])
+    .default('NONE'),
 
-    deploymentRequirement:
+publicationRequirement:
+  z
+    .enum([
+      'NONE',
+      'REQUESTED',
+    ])
+    .default('NONE'),
+
+deploymentRequirement:
       z
         .enum([
           'NONE',
@@ -296,6 +304,7 @@ const GOAL_KEYS =
     'freshnessRequirement',
     'sourcePolicy',
     'previewRequirement',
+    'publicationRequirement',
     'deploymentRequirement',
     'risks',
     'confidence',
@@ -714,13 +723,20 @@ export function normalizePlannerDecisionCandidate(
     },
 
     previewRequirement:
-      enumValue(
-        decision
-          .previewRequirement,
-      ) ??
-      'NONE',
+  enumValue(
+    decision
+      .previewRequirement,
+  ) ??
+  'NONE',
 
-    deploymentRequirement:
+publicationRequirement:
+  enumValue(
+    decision
+      .publicationRequirement,
+  ) ??
+  'NONE',
+
+deploymentRequirement:
       enumValue(
         decision
           .deploymentRequirement,
