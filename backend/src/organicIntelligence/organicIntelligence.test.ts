@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -15,10 +16,12 @@ import { renderReport } from './report.js';
 import type { DemandItem, Mention, OpportunityScores, PromptObservation } from './model.js';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+const require = createRequire(import.meta.url);
+const tsxCli = require.resolve('tsx/cli');
 
 function runCli(command: string): Promise<{ code: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [path.join(repoRoot, 'node_modules', 'tsx', 'dist', 'cli.mjs'), path.join(repoRoot, 'backend', 'src', 'organicIntelligence', 'cli.ts'), command, '--dry-run'], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(process.execPath, [tsxCli, path.join(repoRoot, 'backend', 'src', 'organicIntelligence', 'cli.ts'), command, '--dry-run'], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = ''; let stderr = '';
     child.stdout.on('data', (chunk) => { stdout += String(chunk); });
     child.stderr.on('data', (chunk) => { stderr += String(chunk); });
