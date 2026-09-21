@@ -686,6 +686,191 @@ export function createXrogaSoftwareTools(
         },
     });
 
+  const renameFile =
+  createTool({
+    name:
+      'project_rename_file',
+
+    description:
+      'Rename or move exactly one project file when the execution contract authorizes renaming.',
+
+    inputSchema: {
+      type:
+        'object',
+
+      properties: {
+        fromPath: {
+          type:
+            'string',
+
+          minLength:
+            1,
+        },
+
+        toPath: {
+          type:
+            'string',
+
+          minLength:
+            1,
+        },
+      },
+
+      required: [
+        'fromPath',
+        'toPath',
+      ],
+
+      additionalProperties:
+        false,
+    },
+
+    execute:
+      async (
+        rawInput:
+          unknown,
+      ) => {
+        const toolInput =
+          rawInput as {
+            fromPath:
+              string;
+
+            toPath:
+              string;
+          };
+
+        const sourceDecision =
+          evaluateWritePolicy(
+            contract.writePolicy,
+            'rename',
+            toolInput.fromPath,
+          );
+
+        const targetDecision =
+          evaluateWritePolicy(
+            contract.writePolicy,
+            'rename',
+            toolInput.toPath,
+          );
+
+        if (
+          !sourceDecision.allowed ||
+          !targetDecision.allowed
+        ) {
+          const decision =
+            !sourceDecision.allowed
+              ? sourceDecision
+              : targetDecision;
+
+          return {
+            ok:
+              false,
+
+            code:
+              decision.code ??
+              'RENAME_SCOPE_DENIED',
+
+            message:
+              decision.message ??
+              'Rename is not authorized.',
+          };
+        }
+
+        try {
+          const result =
+            await host.renameFile(
+              contract,
+              toolInput.fromPath,
+              toolInput.toPath,
+            );
+
+          if (
+            result.renamed
+          ) {
+            upsertChangedFile(
+              evidence,
+              {
+                path:
+                  result.fromPath,
+
+                deleted:
+                  true,
+              },
+            );
+
+            upsertChangedFile(
+              evidence,
+              {
+                path:
+                  result.toPath,
+
+                revision:
+                  result.revision,
+
+                created:
+                  true,
+
+                deleted:
+                  false,
+              },
+            );
+
+            await emit({
+              type:
+                'file.renamed',
+
+              status:
+                'success',
+
+              title:
+                `Renamed ${result.fromPath} → ${result.toPath}`,
+
+              evidence: {
+                filePath:
+                  result.toPath,
+
+                fileRevision:
+                  result.revision,
+              },
+            });
+          }
+
+          return {
+            ok:
+              true,
+
+            ...result,
+          };
+        } catch (
+          error
+        ) {
+          const message =
+            error instanceof
+              Error
+              ? error.message
+              : 'Xroga could not safely rename this file.';
+
+          return {
+            ok:
+              false,
+
+            code:
+              message.startsWith(
+                'RENAME_SOURCE_MISSING:',
+              )
+                ? 'RENAME_SOURCE_MISSING'
+                : message.startsWith(
+                      'RENAME_TARGET_EXISTS:',
+                    )
+                  ? 'RENAME_TARGET_EXISTS'
+                  : 'FILE_RENAME_FAILED',
+
+            message,
+          };
+        }
+      },
+  });
+  
   const runCommand =
     createTool({
       name:
