@@ -81,6 +81,16 @@ export interface AgentSoftwareExecutorInput {
     boolean;
 
   /**
+ * Force another Agent turn even when the restored universal
+ * implementation checkpoint is already implementation-complete.
+ *
+ * Used when the authoritative outer verifier has returned
+ * new deterministic failure evidence that requires repair.
+ */
+forceContinueFromCheckpoint?:
+  boolean;
+  
+  /**
    * Durable checkpoint callback.
    *
    * Called after evidence-affecting Xroga tool events.
@@ -587,9 +597,11 @@ const successfulStatus:
 
       if (
         input
-          .resumedFromCheckpoint &&
-        restoredCompletion
-          .complete
+  .resumedFromCheckpoint &&
+!input
+  .forceContinueFromCheckpoint &&
+restoredCompletion
+  .complete
       ) {
         return {
          status:
