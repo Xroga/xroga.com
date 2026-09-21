@@ -475,7 +475,7 @@ function softwareAgentFailure(
   const error =
     new Error(
       safeReasons[0] ??
-        'Software Agent V2 did not reach verified completion.',
+        'Software Agent V2 did not produce a usable implementation.',
     ) as Error & {
       code:
         'SOFTWARE_IMPLEMENTATION_FAILED';
@@ -491,7 +491,7 @@ function softwareAgentFailure(
     safeReasons.length
       ? safeReasons
       : [
-          'the software agent did not reach verified completion',
+          'the software agent did not produce a usable implementation',
         ];
 
   return error;
