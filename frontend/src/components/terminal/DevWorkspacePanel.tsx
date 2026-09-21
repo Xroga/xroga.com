@@ -23,6 +23,9 @@ import {
   type DevWorkspaceTab,
   type ProjectFileEntry,
 } from '@/store/useProjectWorkspaceStore';
+import {
+  useRuntimePreviewHydration,
+} from '@/hooks/useRuntimePreviewHydration';
 import { buildInlinePreviewDocument } from '@/lib/landingPreview';
 import { CopyIcon } from '@/components/icons/animated/CopyIcon';
 import { cn } from '@/lib/utils';
@@ -245,6 +248,7 @@ export function DevWorkspacePanel({
    */
   flush?: boolean;
 }) {
+useRuntimePreviewHydration();
   const hydrated = useHydrated();
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const workspaceOpen = hydrated && workspaceOpenRaw;
