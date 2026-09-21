@@ -1,10 +1,14 @@
 import type {
   PreviewRequirement,
   SoftwareRunEvidence,
+  VerificationAuthority,
 } from './contracts.js';
 
 export interface CompletionGateInput {
   previewRequirement: PreviewRequirement;
+
+  verificationAuthority?:
+  VerificationAuthority;
 
   evidence: SoftwareRunEvidence;
 
@@ -139,6 +143,10 @@ export function evaluateSoftwareCompletion(
     requireRepositoryPersistence,
   } = input;
 
+  const verificationAuthority =
+  input.verificationAuthority ??
+  'agent';
+  
   if (
     evidence.changedFiles.length ===
     0
@@ -148,6 +156,27 @@ export function evaluateSoftwareCompletion(
     );
   }
 
+  /*
+ * Universal builds have exactly one authoritative verifier:
+ * UniversalExecution.
+ *
+ * Agent V2 owns implementation only in this mode.
+ * It must produce a real changed workspace, then hand control
+ * back to the deterministic universal verifier.
+ */
+if (
+  verificationAuthority ===
+  'universal'
+) {
+  return {
+    complete:
+      blockers.length ===
+      0,
+
+    blockers,
+  };
+}
+  
   if (
     requireSuccessfulChecks
   ) {
