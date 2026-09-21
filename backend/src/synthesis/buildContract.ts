@@ -60,21 +60,22 @@ export interface BuildContract {
     readonly continuation: boolean;
   };
 
+  readonly delivery: {
   readonly previewRequirement:
-  GoalContract[
-    'previewRequirement'
-  ];
+    GoalContract[
+      'previewRequirement'
+    ];
 
-readonly publicationRequirement:
-  GoalContract[
-    'publicationRequirement'
-  ];
+  readonly publicationRequirement:
+    GoalContract[
+      'publicationRequirement'
+    ];
 
-readonly deploymentRequirement:
-  GoalContract[
-    'deploymentRequirement'
-  ];
-  };
+  readonly deploymentRequirement:
+    GoalContract[
+      'deploymentRequirement'
+    ];
+};
 
   readonly createdAt: string;
 }
