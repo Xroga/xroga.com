@@ -17,7 +17,14 @@
     "test:frontend": "tsx --test \"frontend/src/**/*.test.ts\"",
     "test:resilience": "node scripts/test-resilience.js",
     "test:seo": "node scripts/seo-audit.mjs",
-    "seo:indexnow": "node scripts/indexnow-submit.mjs"
+    "seo:indexnow": "node scripts/indexnow-submit.mjs",
+    "growth:intelligence": "tsx backend/src/organicIntelligence/cli.ts intelligence",
+    "growth:entities": "tsx backend/src/organicIntelligence/cli.ts entities",
+    "growth:gaps": "tsx backend/src/organicIntelligence/cli.ts gaps",
+    "growth:discover": "tsx backend/src/organicIntelligence/cli.ts discover",
+    "growth:report": "tsx backend/src/organicIntelligence/cli.ts report",
+    "growth:validate": "tsx backend/src/organicIntelligence/cli.ts validate",
+    "test:growth": "tsx --test \"backend/src/organicIntelligence/**/*.test.ts\""
   },
   "overrides": {
     "zod": "3.24.2",
