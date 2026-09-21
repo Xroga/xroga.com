@@ -445,13 +445,12 @@ export async function startOrRefreshLivePreview(
   });
 
   if (
-    launchPlan.kind ===
-    'none'
-  ) {
-
-    if (
-  !launchPlan.process &&
-  !launchPlan.command
+  launchPlan.kind ===
+    'none' ||
+  (
+    !launchPlan.process &&
+    !launchPlan.command
+  )
 ) {
   return {
     project:
@@ -462,7 +461,8 @@ export async function startOrRefreshLivePreview(
         LIVE_PREVIEW_SCHEMA_VERSION,
 
       projectId:
-        input.project.projectId,
+        input.project
+          .projectId,
 
       runId:
         input.runId,
@@ -499,54 +499,7 @@ export async function startOrRefreshLivePreview(
     },
   };
 }
-    
-    return {
-      project:
-        input.project,
-
-      preview: {
-        schemaVersion:
-          LIVE_PREVIEW_SCHEMA_VERSION,
-
-        projectId:
-          input.project.projectId,
-
-        runId:
-          input.runId,
-
-        kind:
-          'none',
-
-        status:
-          'not_applicable',
-
-        sessionId:
-          null,
-
-        processId:
-          null,
-
-        providerId:
-          null,
-
-        port:
-          null,
-
-        url:
-          null,
-
-        expiresAt:
-          null,
-
-        message:
-          launchPlan.message,
-
-        updatedAt:
-          now(),
-      },
-    };
-  }
-
+  
   await emit(
     input.emit,
 
