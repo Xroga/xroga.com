@@ -57,6 +57,15 @@ export interface ProjectRunObservation {
   readonly publicationRequested:
     boolean;
 
+  readonly publicationStatus?:
+  | 'not_requested'
+  | 'succeeded'
+  | 'blocked'
+  | 'failed';
+
+readonly publicationReason?:
+  string | null;
+
   readonly deploymentRequested:
     boolean;
 }
@@ -219,32 +228,40 @@ export function deriveProjectRunState(
         );
 
   const publication =
-    input.commitSha
+  input.publicationStatus ===
+    'succeeded' ||
+  input.commitSha
+    ? phase(
+        'succeeded',
+
+        input.commitSha
+          ? `Published commit ${input.commitSha}.`
+          : 'Publication completed.',
+      )
+    : input.publicationStatus ===
+        'failed'
       ? phase(
-          'succeeded',
-          `Published commit ${input.commitSha}.`,
+          'failed',
+
+          input.publicationReason ??
+          'Publication failed.',
         )
-      : !input
-          .publicationRequested
+      : input.publicationStatus ===
+          'blocked'
         ? phase(
-            'not_requested',
+            'blocked',
+
+            input.publicationReason ??
+            'Publication is blocked.',
           )
-        : input.phaseReached ===
-              'commit' &&
-            failed
+        : !input
+            .publicationRequested
           ? phase(
-              'failed',
-              input.reason,
+              'not_requested',
             )
-          : input.outcome ===
-              'completed'
-            ? phase(
-                'blocked',
-                'Implementation completed but no publication commit was recorded.',
-              )
-            : phase(
-                'not_started',
-              );
+          : phase(
+              'not_started',
+            );
 
   const deployment =
     input.deploymentRequested
