@@ -651,44 +651,201 @@ const rerunPlan =
     return fail('failed', 'review', `review blocked the change: ${review.findings.join('; ')}`, validationPlan, review.findings, files);
   }
 
-  // ── Commit ─────────────────────────────────────────────────────────────────
-  //
-  // The verified claim is the deterministic claim *and* the browser gate, when the browser gate
-  // applies. Before this, `mayClaimVerified` was consulted alone, so a web project whose browser
-  // check returned `not_checked` — no sandbox, no browser, app never started — still reported
-  // `verified: true`. Compiling is not working, and "we could not look" is not "we looked".
-  //
-  // `not_a_web_project` is the one reason that does not veto: a CLI tool has no browser surface,
-  // and its own deterministic validation is the whole of its evidence.
-  const claim = mayClaimVerified(validationPlan, report);
-  const browserBlocker = browserGate ? browserGateBlockerReason(browserGate) : null;
-  const verified = claim.verified && browserBlocker === null;
-  const finalFileTrail = buildFileTrail([...existingFiles], [...files]);
+/*
+ * Publication is a delivery operation, not a prerequisite for a
+ * successful Xroga build.
+ *
+ * Existing tests that call executeUniversalRun directly without a
+ * BuildContract keep their historical behavior: supplying a commit
+ * adapter means publication is requested.
+ *
+ * Production always supplies a BuildContract, so its explicit
+ * publicationRequirement is authoritative.
+ */
+const publicationRequested =
+  input.buildContract
+    ? input
+        .buildContract
+        .delivery
+        .publicationRequirement ===
+      'REQUESTED'
+    : Boolean(
+        input.adapters.commit,
+      );
+
+let commitSha:
+  string | null =
+  null;
+
+let publication:
+  UniversalPublicationResult = {
+  requested:
+    publicationRequested,
+
+  status:
+    publicationRequested
+      ? 'blocked'
+      : 'not_requested',
+
+  commitSha:
+    null,
+
+  reason:
+    publicationRequested
+      ? 'Publication was requested but has not completed.'
+      : null,
+};
+
+if (
+  publicationRequested
+) {
+  if (
+    !input.adapters
+      .commit
+  ) {
+    const publicationReason =
+      'GitHub publication was requested, but no authorized publication adapter is available.';
+
+    publication = {
+      requested:
+        true,
+
+      status:
+        'blocked',
+
+      commitSha:
+        null,
+
+      reason:
+        publicationReason,
+    };
+
+    record(
+      'commit',
+      'publication blocked',
+      publicationReason,
+    );
+  } else {
+    const message =
+      input.commitMessage ??
+      `feat: ${plan.spec.title}`;
+
+    try {
+      const published =
+        implementationState
+          ? await runPublishAsCanonicalTask({
+              state:
+                implementationState,
+
+              objective:
+                `Publish ${finalFileTrail.length} changed file(s) in a ${files.length}-file project snapshot`,
+
+              repository:
+                input.owner
+                  .projectId,
+
+              baseBranch:
+                implementationState
+                  .selectedBranch,
+
+              startingCommitSha:
+                implementationState
+                  .startingCommitSha,
+
+              publish:
+                () =>
+                  input.adapters
+                    .commit!(
+                      files,
+                      message,
+                    ),
+
+              store:
+                input.executionStore,
+
+              signal:
+                input.signal,
+            })
+          : {
+              ...(
+                await input.adapters
+                  .commit(
+                    files,
+                    message,
+                  )
+              ),
+
+              task:
+                null,
+            };
+
+      commitSha =
+        published.commitSha;
+
+      publication = {
+        requested:
+          true,
+
+        status:
+          'succeeded',
+
+        commitSha,
+
+        reason:
+          null,
+      };
+
+      record(
+        'commit',
+        'exact commit produced',
+        commitSha,
+      );
+    } catch (
+      error
+    ) {
+      const publicationReason =
+        error instanceof
+          Error
+          ? error.message
+          : String(
+              error,
+            );
+
+      publication = {
+        requested:
+          true,
+
+        status:
+          'failed',
+
+        commitSha:
+          null,
+
+        reason:
+          publicationReason,
+      };
+
+      record(
+        'commit',
+        'publication failed',
+        publicationReason,
+      );
+    }
+  }
+} else {
   record(
-    'implementation',
-    `${finalFileTrail.length} file(s) changed`,
-    finalFileTrail.map((entry) => entry.path).slice(0, 20).join(', ') || 'no content changes',
+    'commit',
+    'publication not requested',
+    'The verified project remains saved in Xroga without remote repository publication.',
   );
-  mutationBegan = true;
-  // Publication as a canonical task. The Command 1 atomic writer still performs the write —
-  // no second GitHub writer exists and none is created — but the run now records the commit
-  // as task evidence, and a writer returning no sha fails the task rather than completing a
-  // run with nothing published.
-  const message = input.commitMessage ?? `feat: ${plan.spec.title}`;
-  const { commitSha } = implementationState
-    ? await runPublishAsCanonicalTask({
-        state: implementationState,
-        objective: `Publish ${finalFileTrail.length} changed file(s) in a ${files.length}-file project snapshot`,
-        repository: input.owner.projectId,
-        baseBranch: implementationState.selectedBranch,
-        startingCommitSha: implementationState.startingCommitSha,
-        publish: () => input.adapters.commit(files, message),
-        store: input.executionStore,
-        signal: input.signal,
-      })
-    : await input.adapters.commit(files, message);
-  record('commit', 'exact commit produced', commitSha);
-  record('complete', 'verification claim', browserBlocker ?? claim.reason);
+}
+
+record(
+  'complete',
+  'verification claim',
+  browserBlocker ??
+    claim.reason,
+);
 
   return {
     outcome: 'completed', phaseReached: 'complete', plan: validationPlan, securityControls,
