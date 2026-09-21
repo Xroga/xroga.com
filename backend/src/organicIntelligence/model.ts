@@ -124,7 +124,7 @@ export const gapSchema = z.object({
   gapType: gapTypeSchema,
   currentState: z.string().min(1),
   desiredState: z.string().min(1),
-  evidence: z.array(datedEvidenceSchema),
+  evidence: z.array(datedEvidenceSchema).min(1),
   evidenceQuality: confidenceStateSchema,
   sourceUrls: z.array(z.string()),
   searchDemand: scoreSchema,
@@ -182,7 +182,8 @@ export const mentionSchema = z.object({
   attribute: z.string().nullable(), competitorIds: z.array(z.string()), xrogaPresent: z.boolean(),
   pageReferringDomains: scoreSchema, pageOrganicTraffic: scoreSchema, domainAuthority: scoreSchema,
   aiCitationFrequency: scoreSchema, contentFormat: z.string().min(1), commercialIntent: scoreSchema,
-  editorialIndependence: scoreSchema, freshness: freshnessStateSchema, outreachFeasibility: scoreSchema,
+  editorialIndependence: scoreSchema, topicRelevance: scoreSchema.default('UNKNOWN'),
+  freshness: freshnessStateSchema, outreachFeasibility: scoreSchema,
   dateDiscovered: z.string().date(), dateVerified: z.string().date().nullable(),
 });
 
@@ -206,6 +207,7 @@ export const visibilityMetricSchema = z.object({
   metric: z.enum(['ORGANIC_KEYWORDS', 'POSITION', 'IMPRESSIONS', 'CLICKS', 'CTR', 'ORGANIC_TRAFFIC', 'REFERRING_DOMAINS', 'BACKLINKS', 'TRAFFIC_VALUE', 'ENTITY_MENTIONS', 'CITATIONS', 'AI_SHARE_OF_VOICE', 'NARRATIVE_ACCURACY']),
   value: z.union([z.number(), z.literal('UNKNOWN')]), unit: z.string().min(1), page: z.string().url().nullable(),
   provider: z.string().min(1), availability: dataAvailabilitySchema, evidence: z.array(datedEvidenceSchema),
+  topicClusterId: z.string().min(1).nullable().default(null),
 });
 
 export const productOpportunitySchema = z.object({

@@ -13,6 +13,8 @@ Captured from repository product truth on 2026-09-21. This is not a traffic or r
 
 Strongest existing public associations are AI app builder and AI coding agent. Repository-native development, production readiness, build repair, verification, ownership, Preview, and authorized deployment are product-supported but have lower observed public-association strength in the reviewed repository evidence. These are diagnosis candidates, not proof of search-engine or AI visibility.
 
+The adversarial Command 1 audit corrected the initial baseline to **11 inferred TOPIC gaps and zero evidence-backed FORMAT gaps**. The earlier four FORMAT records were caused by treating any missing format as a gap and by selecting the first entity-related topic; that behavior was removed. The Next.js desired association remains in the graph but does not become a gap until it has a matching demand topic/evidence path. All baseline topic-gap evidence is explicitly `INFERRED` repository-audit evidence, not verified external visibility.
+
 ## Evidence unavailable at capture
 
 - Search demand volume and ranking difficulty: NO_DATA.
