@@ -11,6 +11,11 @@ import type {
   SoftwareProject,
 } from '../softwareProject.js';
 
+import {
+  cliPreviewCommand,
+  workerPreviewProcess,
+} from './commandPlans.js';
+
 import type {
   LivePreviewKind,
   LivePreviewLaunchPlan,
@@ -885,57 +890,14 @@ export function planLivePreview(
     };
   }
 
-  const messages:
-    Record<
-      Exclude<
-        LivePreviewKind,
-        'browser'
-        | 'api'
-        | 'none'
-      >,
-      string
-    > = {
-    terminal:
-      'This product is previewed through terminal execution and command output.',
-
-    logs:
-      'This product is previewed through process logs and job execution.',
-
-    extension:
-      'Browser-extension Preview uses the generated extension package and runtime evidence.',
-
-    mobile:
-      'Mobile Preview uses the project runtime until an emulator/Expo surface is connected.',
-
-    desktop:
-      'Desktop Preview uses build/runtime evidence until GUI streaming is connected.',
-
-    mcp:
-      'MCP Preview uses tool/runtime evidence until the dedicated inspector is connected.',
-
-    ai:
-      'AI Preview uses runtime input/output evidence until the dedicated playground is connected.',
-  };
-
-  if (
-    kind ===
-    'none'
-  ) {
-    return {
-      kind,
-
-      image,
-
-      installDependencies:
-        false,
-
-      process:
-        null,
-
-      message:
-        'This product does not expose an interactive Preview surface.',
-    };
-  }
+ if (
+  kind ===
+  'terminal'
+) {
+  const command =
+    cliPreviewCommand(
+      files,
+    );
 
   return {
     kind,
@@ -948,9 +910,109 @@ export function planLivePreview(
     process:
       null,
 
+    command,
+
     message:
-      messages[
-        kind
-      ],
+      command
+        ? 'CLI Preview executes the generated command in the isolated Xroga runtime.'
+        : 'This CLI was built, but no safe executable CLI entrypoint was detected.',
   };
+}
+
+if (
+  kind ===
+  'logs'
+) {
+  const process =
+    workerPreviewProcess(
+      files,
+    );
+
+  return {
+    kind,
+
+    image,
+
+    installDependencies:
+      true,
+
+    process,
+
+    command:
+      null,
+
+    message:
+      process
+        ? 'Worker Preview is available through the isolated runtime process and logs.'
+        : 'This worker was built, but no supported background-process entrypoint was detected.',
+  };
+}
+
+if (
+  kind ===
+  'none'
+) {
+  return {
+    kind,
+
+    image,
+
+    installDependencies:
+      false,
+
+    process:
+      null,
+
+    command:
+      null,
+
+    message:
+      'This product does not expose an interactive Preview surface.',
+  };
+}
+
+const unsupportedMessages:
+  Record<
+    | 'extension'
+    | 'mobile'
+    | 'desktop'
+    | 'mcp'
+    | 'ai',
+    string
+  > = {
+  extension:
+    'Browser-extension runtime Preview is not connected yet. Xroga will not claim a runnable Preview without a browser-extension host.',
+
+  mobile:
+    'Mobile runtime Preview is not connected yet. Xroga will not claim an emulator Preview without a mobile runtime provider.',
+
+  desktop:
+    'Desktop GUI Preview is not connected yet. Xroga will not claim a GUI Preview without desktop streaming support.',
+
+  mcp:
+    'The dedicated MCP inspector is not connected yet. Xroga will not claim an interactive MCP Preview without it.',
+
+  ai:
+    'The dedicated AI playground is not connected yet. Xroga will not claim an interactive AI Preview without it.',
+};
+
+return {
+  kind,
+
+  image,
+
+  installDependencies:
+    false,
+
+  process:
+    null,
+
+  command:
+    null,
+
+  message:
+    unsupportedMessages[
+      kind
+    ],
+};
 }
