@@ -1459,6 +1459,8 @@ export function createXrogaSoftwareTools(
           const verification =
             evaluateSoftwareCompletion({
               previewRequirement:
+                verificationAuthority:
+  contract.verificationAuthority,
                 contract.preview,
 
               evidence,
@@ -1591,19 +1593,27 @@ export function createXrogaSoftwareTools(
             };
 
           const result =
-            evaluateSoftwareCompletion({
-              previewRequirement:
-                contract.preview,
+  evaluateSoftwareCompletion({
+    previewRequirement:
+      contract.preview,
 
-              evidence,
+    verificationAuthority:
+      contract.verificationAuthority,
 
-              requireSuccessfulChecks:
-                true,
+    evidence,
 
-              requireRepositoryPersistence:
-                contract.persistence ===
-                'review_branch',
-            });
+    requireSuccessfulChecks:
+      contract
+        .verificationAuthority ===
+      'agent',
+
+    requireRepositoryPersistence:
+      contract
+        .verificationAuthority ===
+        'agent' &&
+      contract.persistence ===
+        'review_branch',
+  });
 
           if (
             !result.complete
@@ -1652,21 +1662,33 @@ export function createXrogaSoftwareTools(
         },
     });
 
-  return {
-    tools: [
-      listFiles,
-      readFiles,
-      searchProject,
-      writeFile,
-      deleteFile,
-      runCommand,
-      runChecks,
-      gitDiff,
-      verifyPreview,
-      createReviewBranch,
-    ],
+  const implementationTools = [
+  listFiles,
+  readFiles,
+  searchProject,
+  writeFile,
+  deleteFile,
+  renameFile,
+  runCommand,
+  gitDiff,
+];
 
-    completionTool:
-      completeTask,
-  };
+const agentVerifiedTools = [
+  ...implementationTools,
+  runChecks,
+  verifyPreview,
+  createReviewBranch,
+];
+
+return {
+  tools:
+    contract
+      .verificationAuthority ===
+      'universal'
+      ? implementationTools
+      : agentVerifiedTools,
+
+  completionTool:
+    completeTask,
+};
 }
