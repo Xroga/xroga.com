@@ -50,6 +50,14 @@ export interface SoftwareAgentRuntimeV2Context {
     content: string;
   }>;
 
+  workingFiles?: Array<{
+  path: string;
+  content: string;
+}>;
+
+forceContinueFromCheckpoint?:
+  boolean;
+  
   signal?:
     AbortSignal;
 
@@ -108,6 +116,28 @@ function softwareAgentServiceInput(
         : {}
     ),
 
+    ...(
+  context.workingFiles !==
+  undefined
+    ? {
+        workingFiles:
+          context.workingFiles,
+      }
+    : {}
+),
+
+...(
+  context
+    .forceContinueFromCheckpoint !==
+  undefined
+    ? {
+        forceContinueFromCheckpoint:
+          context
+            .forceContinueFromCheckpoint,
+      }
+    : {}
+),
+    
     signal:
       context.signal,
 
