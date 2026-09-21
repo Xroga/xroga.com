@@ -95,6 +95,18 @@ export interface UniversalSoftwareImplementationInput {
   existingFiles:
     readonly ProjectFile[];
 
+  /**
+ * Current verifier-visible working tree used for repair fallback.
+ *
+ * existingFiles remains the immutable run-start base used to
+ * validate durable checkpoints.
+ */
+workingFiles?:
+  readonly ProjectFile[];
+
+forceContinueFromCheckpoint?:
+  boolean;
+  
   primaryModelId:
     ModelId;
 
@@ -851,6 +863,40 @@ verificationAuthority:
       },
     });
 
+  ...(
+  input.workingFiles !==
+  undefined
+    ? {
+        workingFiles:
+          input
+            .workingFiles
+            .map(
+              (
+                file,
+              ) => ({
+                path:
+                  file.path,
+
+                content:
+                  file.content,
+              }),
+            ),
+      }
+    : {}
+),
+
+...(
+  input
+    .forceContinueFromCheckpoint !==
+  undefined
+    ? {
+        forceContinueFromCheckpoint:
+          input
+            .forceContinueFromCheckpoint,
+      }
+    : {}
+),
+    
   console.info(
     '[software_agent_v2_implementation]',
 
