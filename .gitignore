@@ -34,6 +34,12 @@ yarn-error.log*
 # Test artifacts
 test-results/
 playwright-report/
+artifacts/growth-intelligence/
+.growth-cache/
+growth/imports/*
+!growth/imports/README.md
+!growth/imports/examples/
+!growth/imports/examples/**
 
 # TypeScript
 *.tsbuildinfo
