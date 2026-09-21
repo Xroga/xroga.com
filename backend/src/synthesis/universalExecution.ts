@@ -68,6 +68,26 @@ export interface ExecutionEvidenceRecord {
   readonly detail: string;
 }
 
+export type UniversalPublicationStatus =
+  | 'not_requested'
+  | 'succeeded'
+  | 'blocked'
+  | 'failed';
+
+export interface UniversalPublicationResult {
+  readonly requested:
+    boolean;
+
+  readonly status:
+    UniversalPublicationStatus;
+
+  readonly commitSha:
+    string | null;
+
+  readonly reason:
+    string | null;
+}
+
 export interface UniversalExecutionResult {
   readonly outcome: ExecutionOutcome;
   readonly phaseReached: ExecutionPhase;
@@ -75,6 +95,8 @@ export interface UniversalExecutionResult {
   readonly securityControls: readonly SecurityControl[];
   readonly files: readonly ProjectFile[];
   readonly commitSha: string | null;
+  readonly publication?:
+  UniversalPublicationResult;
   readonly evidence: readonly ExecutionEvidenceRecord[];
   readonly blockers: readonly string[];
   /** True once anything has been written. After this, no fallback is permitted. */
@@ -104,8 +126,22 @@ export interface ExecutionAdapters {
   readonly runValidation: ValidationRunner;
   /** Reviews the complete diff. Returns findings; a non-empty critical list blocks. */
   readonly review: (files: readonly ProjectFile[]) => Promise<{ approved: boolean; findings: readonly string[] }>;
-  /** Writes through the transactional workspace and returns the exact commit. */
-  readonly commit: (files: readonly ProjectFile[], message: string) => Promise<{ commitSha: string }>;
+ /**
+ * Optional remote publication adapter.
+ *
+ * Building, verification, persistence and Preview do not require
+ * a GitHub repository.
+ */
+readonly commit?: (
+  files:
+    readonly ProjectFile[],
+
+  message:
+    string,
+) => Promise<{
+  commitSha:
+    string;
+}>;
   /** Optional bounded repair between validation attempts. */
   readonly repair?: (input: { plan: UniversalRunPlan; failures: readonly string[]; files: readonly ProjectFile[] }) => Promise<readonly ProjectFile[] | null>;
   /**
