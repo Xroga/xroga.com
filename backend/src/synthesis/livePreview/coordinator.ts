@@ -207,11 +207,12 @@ async function waitForProcess(
     input.plan
       .process;
 
-  if (
-    !probe
-  ) {
-    return true;
-  }
+ if (
+  !probe ||
+  !probe.probeCommand
+) {
+  return true;
+}
 
   for (
     let attempt =
@@ -447,6 +448,58 @@ export async function startOrRefreshLivePreview(
     launchPlan.kind ===
     'none'
   ) {
+
+    if (
+  !launchPlan.process &&
+  !launchPlan.command
+) {
+  return {
+    project:
+      input.project,
+
+    preview: {
+      schemaVersion:
+        LIVE_PREVIEW_SCHEMA_VERSION,
+
+      projectId:
+        input.project.projectId,
+
+      runId:
+        input.runId,
+
+      kind:
+        launchPlan.kind,
+
+      status:
+        'not_applicable',
+
+      sessionId:
+        null,
+
+      processId:
+        null,
+
+      providerId:
+        null,
+
+      port:
+        null,
+
+      url:
+        null,
+
+      expiresAt:
+        null,
+
+      message:
+        launchPlan.message,
+
+      updatedAt:
+        now(),
+    },
+  };
+}
+    
     return {
       project:
         input.project,
@@ -808,8 +861,185 @@ export async function startOrRefreshLivePreview(
     }
 
     let processId:
-      string | null =
-      null;
+  string | null =
+  null;
+
+let representationMessage =
+  launchPlan.message;
+
+if (
+  launchPlan.command
+) {
+  const commandId =
+    randomUUID();
+
+  await emit(
+    input.emit,
+
+    event({
+      runId:
+        input.runId,
+
+      type:
+        'command.started',
+
+      status:
+        'running',
+
+      title:
+        'Running CLI Preview',
+
+      summary: [
+        launchPlan
+          .command
+          .command,
+
+        ...launchPlan
+          .command
+          .args,
+      ].join(
+        ' ',
+      ),
+
+      evidence: {
+        commandId,
+
+        projectId:
+          input.project
+            .projectId,
+
+        runtimeSessionId:
+          session.sessionId,
+      },
+    }),
+  );
+
+  const commandResult =
+    await runtime.exec(
+      session.sessionId,
+
+      {
+        command:
+          launchPlan
+            .command
+            .command,
+
+        args:
+          launchPlan
+            .command
+            .args,
+
+        cwd:
+          launchPlan
+            .command
+            .cwd,
+
+        environment:
+          launchPlan
+            .command
+            .environment,
+
+        secretScopes:
+          [],
+
+        networkPolicy:
+          'none',
+
+        timeoutMs:
+          launchPlan
+            .command
+            .timeoutMs,
+      },
+    );
+
+  const output =
+    [
+      commandResult
+        .stdout,
+
+      commandResult
+        .stderr,
+    ]
+      .filter(
+        Boolean,
+      )
+      .join(
+        '\n',
+      )
+      .trim();
+
+  await emit(
+    input.emit,
+
+    event({
+      runId:
+        input.runId,
+
+      type:
+        'command.completed',
+
+      status:
+        commandResult
+          .exitCode ===
+          0
+          ? 'success'
+          : 'failed',
+
+      title:
+        commandResult
+          .exitCode ===
+          0
+          ? 'CLI Preview completed'
+          : 'CLI Preview failed',
+
+      summary:
+        output
+          .slice(
+            -1_200,
+          ) ||
+        `Exit code ${commandResult.exitCode ?? 'unknown'}`,
+
+      evidence: {
+        commandId,
+
+        projectId:
+          input.project
+            .projectId,
+
+        runtimeSessionId:
+          session.sessionId,
+
+        exitCode:
+          commandResult
+            .exitCode ??
+          undefined,
+
+        durationMs:
+          commandResult
+            .durationMs,
+      },
+    }),
+  );
+
+  if (
+    commandResult
+      .exitCode !==
+    0
+  ) {
+    throw new Error(
+      output ||
+      `CLI Preview exited with code ${commandResult.exitCode ?? 'unknown'}.`,
+    );
+  }
+
+  representationMessage =
+    output
+      ? output.slice(
+          -4_000,
+        )
+      : launchPlan
+          .message;
+}
 
     if (
       launchPlan.process
@@ -1018,12 +1248,18 @@ export async function startOrRefreshLivePreview(
       null;
 
     let expiresAt:
-      string | null =
-      null;
+  string | null =
+  null;
 
-    if (
-      launchPlan.process
-    ) {
+const previewPort =
+  launchPlan.process
+    ?.port ??
+  null;
+
+if (
+  previewPort !==
+  null
+) {
       let grant =
         await getLatestLivePreviewGrant({
           userId:
@@ -1072,9 +1308,7 @@ export async function startOrRefreshLivePreview(
                 >,
 
             port:
-              launchPlan
-                .process
-                .port,
+  previewPort,
 
             expiresAt:
               previewExpiry(
@@ -1129,7 +1363,7 @@ export async function startOrRefreshLivePreview(
       expiresAt,
 
       message:
-        launchPlan.message,
+  representationMessage,
 
       updatedAt:
         now(),
@@ -1154,7 +1388,11 @@ export async function startOrRefreshLivePreview(
             : 'Product Preview ready',
 
         summary:
-          launchPlan.message,
+  representationMessage
+    .slice(
+      0,
+      1_200,
+    ),
 
         evidence: {
           projectId:
