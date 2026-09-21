@@ -14,6 +14,10 @@ export type PreviewRequirement =
   | 'optional'
   | 'not_applicable';
 
+export type VerificationAuthority =
+  | 'agent'
+  | 'universal';
+
 export type RepositoryPersistenceAuthority =
   | 'none'
   | 'review_branch';
@@ -66,6 +70,9 @@ export interface SoftwareExecutionContract {
   writePolicy: SoftwareWritePolicy;
 
   preview: PreviewRequirement;
+
+  verificationAuthority:
+  VerificationAuthority;
 
   /**
    * Repository persistence is separate from deployment.
