@@ -1457,20 +1457,23 @@ export function createXrogaSoftwareTools(
           }
 
           const verification =
-            evaluateSoftwareCompletion({
-              previewRequirement:
-                verificationAuthority:
-  contract.verificationAuthority,
-                contract.preview,
+  evaluateSoftwareCompletion({
+    previewRequirement:
+      contract.preview,
 
-              evidence,
+    verificationAuthority:
+      contract.verificationAuthority,
 
-              requireSuccessfulChecks:
-                true,
+    evidence,
 
-              requireRepositoryPersistence:
-                false,
-            });
+    requireSuccessfulChecks:
+      contract
+        .verificationAuthority ===
+      'agent',
+
+    requireRepositoryPersistence:
+      false,
+  });
 
           if (
             !verification.complete
