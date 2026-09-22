@@ -21,7 +21,7 @@ export function BillingSuccessExperience() {
         if (status.isPaid && status.plan === 'spark' && status.entitlement.state === 'paid_active') {
           const receiptKey = `xroga-pro-welcome:${status.renewalPeriodEnd ?? 'active'}`;
           if (signal?.aborted) return;
-          setUsage({ remaining: status.usage.remaining, total: status.usage.total });
+
           setPhase(sessionStorage.getItem(receiptKey) ? 'idle' : 'active');
           sessionStorage.setItem(receiptKey, 'shown');
           const url = new URL(window.location.href);
@@ -70,7 +70,9 @@ export function BillingSuccessExperience() {
         <button type="button" onClick={() => setPhase('idle')} className="absolute right-4 top-4 rounded-full p-1.5 text-[var(--muted)] hover:bg-[var(--foreground)]/5" aria-label="Close"><X className="h-4 w-4" /></button>
         <CheckCircle2 className="mx-auto h-11 w-11 text-[var(--accent)]" aria-hidden="true" />
         <h2 id="xroga-pro-active" className="mt-4 text-2xl font-semibold">Xroga Pro is active</h2>
-        <p className="mt-2 text-sm text-[var(--muted)]">Your verified plan now includes {usage?.total ?? 1500} AI actions per 30 days{usage ? `, with ${usage.remaining} currently available` : ''}.</p>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+  Your higher monthly AI capacity is now active.
+</p>
         <Link href="/workspace" onClick={() => setPhase('idle')} className="mt-6 inline-flex rounded-full bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white">Start building</Link>
       </div>
     </div>
