@@ -28,7 +28,7 @@ export const XROGA_FEATURES = [
   'Usage, pacing, and reset visibility',
   'Custom domain deploy (your Vercel)',
   'Real-time SSE swarm stream',
-  'Free plan with 50 AI actions per 30 days',
+  'Free plan with included monthly AI usage',
   'Bounded run concurrency',
   'Xroga Pro upgrades through Whop',
   'Magic link / Google / GitHub / email auth',
