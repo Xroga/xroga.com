@@ -1,48 +1,16 @@
 {
-  "reviewedAt": "2026-09-11",
-  "policy": "Public editorial and product pages are crawlable. Private workspace, account, API, preview, and terminal routes are blocked.",
+  "reviewedAt": "2026-09-22",
+  "policy": "Search crawlers may retrieve public pages. Private product surfaces remain blocked. Training and user-initiated fetch policies are modeled separately from search.",
   "crawlers": [
-    {
-      "userAgent": "Googlebot",
-      "purpose": "Google Search discovery and indexing",
-      "robotsApplies": true,
-      "policy": "allow-public",
-      "source": "https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers"
-    },
-    {
-      "userAgent": "OAI-SearchBot",
-      "purpose": "Surface websites in ChatGPT search",
-      "robotsApplies": true,
-      "policy": "allow-public",
-      "source": "https://developers.openai.com/api/docs/bots"
-    },
-    {
-      "userAgent": "GPTBot",
-      "purpose": "Potential foundation-model training crawl",
-      "robotsApplies": true,
-      "policy": "inherit-public-policy",
-      "source": "https://developers.openai.com/api/docs/bots"
-    },
-    {
-      "userAgent": "ChatGPT-User",
-      "purpose": "User-initiated page retrieval in ChatGPT",
-      "robotsApplies": false,
-      "policy": "document-only",
-      "source": "https://developers.openai.com/api/docs/bots"
-    },
-    {
-      "userAgent": "PerplexityBot",
-      "purpose": "Perplexity search indexing",
-      "robotsApplies": true,
-      "policy": "allow-public",
-      "source": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
-    },
-    {
-      "userAgent": "Perplexity-User",
-      "purpose": "User-initiated retrieval in Perplexity",
-      "robotsApplies": false,
-      "policy": "document-only",
-      "source": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
-    }
+    {"userAgent":"Googlebot","purposeCategory":"TRADITIONAL_SEARCH","purpose":"Google Search discovery and indexing","robotsApplies":true,"policy":"allow-public","source":"https://developers.google.com/search/docs/crawling-indexing/googlebot"},
+    {"userAgent":"bingbot","purposeCategory":"TRADITIONAL_SEARCH","purpose":"Bing Search discovery and indexing","robotsApplies":true,"policy":"allow-public","source":"https://www.bing.com/webmasters/help/which-crawlers-does-bing-use-8c184ec0"},
+    {"userAgent":"OAI-SearchBot","purposeCategory":"SEARCH_RETRIEVAL","purpose":"Surface websites in ChatGPT search","robotsApplies":true,"policy":"allow-public","source":"https://developers.openai.com/api/docs/bots"},
+    {"userAgent":"GPTBot","purposeCategory":"MODEL_TRAINING","purpose":"Potential OpenAI foundation-model training crawl","robotsApplies":true,"policy":"inherit-public-policy","source":"https://developers.openai.com/api/docs/bots"},
+    {"userAgent":"ChatGPT-User","purposeCategory":"USER_INITIATED_FETCH","purpose":"User-initiated retrieval in ChatGPT","robotsApplies":false,"policy":"document-only","source":"https://developers.openai.com/api/docs/bots"},
+    {"userAgent":"PerplexityBot","purposeCategory":"SEARCH_RETRIEVAL","purpose":"Perplexity search indexing","robotsApplies":true,"policy":"allow-public","source":"https://docs.perplexity.ai/docs/resources/perplexity-crawlers"},
+    {"userAgent":"Perplexity-User","purposeCategory":"USER_INITIATED_FETCH","purpose":"User-initiated retrieval in Perplexity","robotsApplies":false,"policy":"document-only","source":"https://docs.perplexity.ai/docs/resources/perplexity-crawlers"},
+    {"userAgent":"Claude-SearchBot","purposeCategory":"SEARCH_RETRIEVAL","purpose":"Anthropic search-result retrieval","robotsApplies":true,"policy":"allow-public","source":"https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"},
+    {"userAgent":"Claude-User","purposeCategory":"USER_INITIATED_FETCH","purpose":"User-initiated retrieval in Claude","robotsApplies":true,"policy":"inherit-public-policy","source":"https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"},
+    {"userAgent":"ClaudeBot","purposeCategory":"MODEL_TRAINING","purpose":"Potential Anthropic model-training crawl","robotsApplies":true,"policy":"inherit-public-policy","source":"https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"}
   ]
 }

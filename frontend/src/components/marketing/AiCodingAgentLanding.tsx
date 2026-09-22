@@ -133,7 +133,7 @@ const CHECK_LABELS = ['Lint', 'Type Check', 'Unit Tests', 'Build', 'Security'] a
 
 export function AiCodingAgentLanding() {
   return (
-    <div className="agx-page xv-theme-surface">
+    <main className="agx-page xv-theme-surface">
       <PageJsonLd path="/ai-coding-agent" name={data.title} description={data.description} />
 
       <ThemeBackdrop />
@@ -351,7 +351,7 @@ export function AiCodingAgentLanding() {
           </p>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
 

@@ -34,6 +34,9 @@
     { "path": "/robots.txt", "contentType": "text/plain", "includes": "Sitemap: https://xroga.com/sitemap.xml" },
     { "path": "/sitemap.xml", "contentType": "application/xml", "includes": "https://xroga.com/compare/xroga-vs-lovable" },
     { "path": "/llms.txt", "contentType": "text/plain", "includes": "Comparisons: https://xroga.com/compare" },
+    { "path": "/blog/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
+    { "path": "/research/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
+    { "path": "/changelog/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
     { "path": "/opengraph-image", "contentType": "image/png" },
     { "path": "/manifest.webmanifest", "contentType": "application/manifest+json", "includes": "XROGA AI" }
   ]

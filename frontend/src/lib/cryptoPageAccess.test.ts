@@ -25,7 +25,7 @@ import { existsSync } from 'node:fs';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const ACCESS = read('./supabase/routeAccess.ts');
-const CONFIG = read('../../next.config.mjs');
+const REDIRECTS = read('../../redirects.mjs');
 const PROVIDER = read('../components/providers/ThemeProvider.tsx');
 const PAGE = read('../app/crypto/page.tsx');
 const CHROME = read('../components/layout/PublicMarketingChrome.tsx');
@@ -40,7 +40,7 @@ test('the crypto page is reachable without an account', () => {
 
 test('every crypto route in the config resolves to a page that exists', () => {
   // The routes named as redirect destinations must be real directories under app/.
-  const destinations = [...CONFIG.matchAll(/source: '(\/crypto[^']*)', destination: '([^']+)'/g)];
+  const destinations = [...REDIRECTS.matchAll(/\['(\/crypto[^']*)', '([^']+)'/g)];
   assert.ok(destinations.length >= 2, 'the old crypto URLs are no longer redirected');
   for (const [, source, destination] of destinations) {
     assert.equal(destination, '/crypto', `${source} points at ${destination}`);

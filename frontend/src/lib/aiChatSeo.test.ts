@@ -6,16 +6,16 @@ const read = (relative: string) => fs.readFileSync(new URL(relative, import.meta
 const page = read('../app/features/ai-chat/page.tsx');
 const landing = read('../components/marketing/AiChatLanding.tsx');
 const coding = read('../components/marketing/AiCodingAgentLanding.tsx');
-const config = read('../../next.config.mjs');
-const sitemap = read('../app/sitemap.ts');
+const redirects = read('../../redirects.mjs');
+const inventory = read('./publicUrlInventory.ts');
 const llms = read('../app/llms.txt/route.ts');
 const features = read('../app/features/page.tsx');
 
 test('/features/ai-chat is a self-canonical public page, not a redirect', () => {
   assert.match(page, /path: '\/features\/ai-chat'/);
-  assert.doesNotMatch(config, /source: '\/features\/ai-chat'/);
+  assert.doesNotMatch(redirects, /\['\/features\/ai-chat'/);
   assert.equal((landing.match(/<h1\b/g) ?? []).length, 1);
-  assert.match(sitemap, /\/features\/ai-chat/);
+  assert.match(inventory, /\['\/features\/ai-chat'/);
   assert.match(llms, /AI Chat: https:\/\/xroga\.com\/features\/ai-chat/);
   assert.match(features, /href="\/features\/ai-chat"/);
 });
