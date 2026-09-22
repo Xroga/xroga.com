@@ -250,7 +250,7 @@ describe('Supabase round trips for one authenticated page load', () => {
 });
 
 describe('the behaviour this replaced, measured the same way', () => {
-  it('cost one auth call plus three selects on every single request', async () => {
+  it('cost one auth call plus two provisioning selects on every single request', async () => {
     // Reproduces the old code path exactly: remote verification forced, and no
     // memory that this user was already provisioned.
     process.env.REQUIRE_REMOTE_AUTH_CHECK = '1';
@@ -272,7 +272,15 @@ describe('the behaviour this replaced, measured the same way', () => {
     const restCalls = requestPaths.filter((p) => p.startsWith('/rest/v1/')).length;
 
     assert.equal(authCalls, REQUESTS, 'the old path spent one Auth round trip per request');
-    assert.equal(restCalls, REQUESTS * 3, 'and re-read all three provisioning rows each time');
-    assert.equal(requestPaths.length, 48, '12 requests × 4 calls — the number this PR removes');
+    assert.equal(
+  restCalls,
+  REQUESTS * 2,
+  'and re-read both provisioning rows each time'
+);
+   assert.equal(
+  requestPaths.length,
+  36,
+  '12 requests × 3 calls — the number this optimization removes'
+);
   });
 });
