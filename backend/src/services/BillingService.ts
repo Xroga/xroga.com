@@ -920,11 +920,10 @@ export class BillingService {
 
 
     const plan =
-      await response.json()
-        as Record<
-          string,
-          unknown
-        >;
+  (await response.json()) as Record<
+    string,
+    unknown
+  >;
 
 
     const ownerId =
@@ -1090,12 +1089,11 @@ export class BillingService {
     }
 
 
-    const payload =
-      await response.json()
-        as Record<
-          string,
-          unknown
-        >;
+   const payload =
+  (await response.json()) as Record<
+    string,
+    unknown
+  >;
 
 
     if (
