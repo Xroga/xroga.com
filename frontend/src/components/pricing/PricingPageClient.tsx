@@ -18,6 +18,7 @@ import {
   BadgeCheck,
   Blocks,
   Bot,
+  BrainCircuit,
   Briefcase,
   CalendarClock,
   Check,
@@ -1993,12 +1994,12 @@ export function PricingPageClient() {
           >
 
             <span
-              className={
-                styles.darkEyebrow
-              }
-            >
-              VERIFICATION > SELF-CONFIDENCE
-            </span>
+  className={
+    styles.darkEyebrow
+  }
+>
+  VERIFICATION &gt; SELF-CONFIDENCE
+</span>
 
 
             <h2>
