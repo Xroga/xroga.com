@@ -60,7 +60,7 @@ import {
   configureFlyMachineSandboxProvider,
 } from './sandbox/sandboxRuntime.js';
 import projectRuntimeRouter from './routes/projectRuntime.js';
-
+import deliveryRouter from './routes/delivery.js';
 import {
   attachRuntimePreviewWebSocketGateway,
   runtimePreviewGateway,
@@ -144,6 +144,12 @@ app.use(
   '/api/project-runtime',
   authMiddleware,
   projectRuntimeRouter,
+);
+
+app.use(
+  '/api/delivery',
+  authMiddleware,
+  deliveryRouter,
 );
 
 app.get('/health', (_req, res) => {
