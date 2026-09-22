@@ -149,10 +149,6 @@ const paid =
   entitlement.state ===
   'paid_active';
 
-const free =
-  entitlement.state ===
-  'free_active';
-
 
 res.json({
   now:
@@ -177,18 +173,14 @@ res.json({
     planPrice:
       paid
         ? '$25/month'
-        : promotion
-          ? '$0'
-          : '$0',
+        : '$0',
 
     nextBilling:
       entitlement.endsAt,
   },
-      nextBilling: entitlement.endsAt,
-    },
-    entitlement,
-    recentActivity,
-  });
+
+  entitlement,
+  recentActivity,
 });
 
 router.post('/emergency-tokens', (_req, res) => {
