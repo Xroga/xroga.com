@@ -2131,7 +2131,7 @@ export function PricingPageClient() {
             >
 
               {
-                [
+                ([
                   [
                     Search,
                     'Web Search',
@@ -2167,7 +2167,7 @@ export function PricingPageClient() {
                     'Research → Build',
                     'Use evidence directly in implementation.',
                   ],
-                ].map(
+                ] as Array<[LucideIcon, string, string]>).map(
                   (
                     [
                       Icon,
@@ -2386,7 +2386,7 @@ export function PricingPageClient() {
           >
 
             {
-              [
+              ([
                 [
                   WandSparkles,
                   'Your idea',
@@ -2426,7 +2426,7 @@ export function PricingPageClient() {
                   Rocket,
                   'Live product',
                 ],
-              ].map(
+              ] as Array<[LucideIcon, string]>).map(
                 (
                   [
                     Icon,
@@ -2962,7 +2962,7 @@ export function PricingPageClient() {
           >
 
             {
-              [
+              ([
                 [
                   '01',
                   Search,
@@ -3004,7 +3004,7 @@ export function PricingPageClient() {
                   'Ship',
                   'GitHub, deployment, database, domain and release evidence.',
                 ],
-              ].map(
+              ] as Array<[string, LucideIcon, string, string]>).map(
                 (
                   [
                     number,
