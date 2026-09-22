@@ -1750,6 +1750,7 @@ export async function apiFetch<
 }
 
 
+export const api = {
 
   projects: {
     list:
@@ -4528,16 +4529,10 @@ export async function apiFetch<
                 string;
 
               priceLabel:
-                string;
+  string;
 
-              actionsLabel:
-                string;
-
-              actions:
-                number;
-
-              concurrency:
-                number;
+concurrency:
+  number;
 
               paid:
                 boolean;
@@ -5679,17 +5674,6 @@ export interface Notification {
 
   created_at:
     string;
-}
-
-
-  planTier:
-    string;
-
-  resetDate:
-    string;
-
-  concurrencyLimit?:
-    number;
 }
 
 export interface SwarmRunSummary {
