@@ -201,7 +201,7 @@ export function detectVideoGaps(demand: readonly DemandItem[], serp: readonly Se
       query: rows[0].query, topicClusterId: item.id,
       rankingVideoUrls: rows.filter((row) => row.contentType === 'VIDEO').map((row) => row.url),
       competitors: [...new Set(rows.filter((row) => row.contentType === 'VIDEO').map((row) => row.domain))],
-      xrogaVideoCoverage: 'NO_DATA' as const, potentialVideoTitle: `${item.value}: a verified Xroga workflow`,
+      xrogaVideoCoverage: 'ABSENT' as const, potentialVideoTitle: `${item.value}: a verified Xroga workflow`,
       associatedPage: inventory.find((asset) => asset.topicClusterIds.includes(item.id))?.url ?? null,
       priority: 'P3' as const, evidence: rows.map((row) => row.id),
     }];
@@ -235,12 +235,22 @@ export function buildQueryFanOut(
 export function resolveExistingAsset(candidate: ResearchCandidate | DemandItem, inventory: readonly AssetInventory[]): AssetResolution {
   const query = 'query' in candidate ? candidate.query : `${candidate.value} ${candidate.userJob}`;
   const topic = 'seedDemandId' in candidate ? candidate.seedDemandId : candidate.id;
+  const expectedIntent = 'requiredAssetType' in candidate
+    ? ({ PRODUCT: 'PRODUCT', FEATURE: 'PRODUCT', CATEGORY: 'CATEGORY', GUIDE: 'GUIDE', COMPARISON: 'COMPARISON', ALTERNATIVE: 'ALTERNATIVE', MIGRATION: 'MIGRATION', VIDEO: 'VIDEO', TOOL: 'TOOL', RESEARCH: 'RESEARCH', DOCUMENTATION: 'DOCUMENTATION', TEMPLATE: 'TEMPLATE', SHOWCASE: 'OTHER', PUBLIC_REPORT: 'RESEARCH', BLOG: 'GUIDE', BENCHMARK: 'RESEARCH', THIRD_PARTY_EDITORIAL: 'OTHER', COMMUNITY: 'COMMUNITY', OTHER: 'OTHER' } as const)[candidate.requiredAssetType]
+    : null;
   const matches = inventory.map((asset) => ({
     asset,
+    lexicalOverlap: similarity(query, `${asset.title} ${asset.contentFamily}`),
     overlap: Math.max(similarity(query, `${asset.title} ${asset.contentFamily}`), asset.topicClusterIds.includes(topic) ? 0.85 : 0),
   })).sort((left, right) => right.overlap - left.overlap || left.asset.url.localeCompare(right.asset.url));
   const best = matches[0];
   if (!best || best.overlap < 0.35) return { candidateId: candidate.id, decision: 'BUILD_NEW', targetUrl: null, overlap: best?.overlap ?? 0, reason: 'No current asset serves the topic and intent.', cannibalizationWarning: null };
+  if (expectedIntent && best.asset.intent !== expectedIntent) {
+    if (best.asset.topicClusterIds.includes(topic) && best.lexicalOverlap >= 0.35) {
+      return { candidateId: candidate.id, decision: 'REPOSITION', targetUrl: best.asset.url, overlap: best.overlap, reason: `The current asset covers the query but its ${best.asset.intent} intent does not match the required ${expectedIntent} intent.`, cannibalizationWarning: null };
+    }
+    return { candidateId: candidate.id, decision: 'BUILD_NEW', targetUrl: null, overlap: best.lexicalOverlap, reason: `The related asset serves a distinct ${best.asset.intent} intent; it must not be repurposed for ${expectedIntent}.`, cannibalizationWarning: null };
+  }
   const duplicates = matches.filter((match) => match.overlap >= 0.7);
   if (duplicates.length > 1) return { candidateId: candidate.id, decision: 'MERGE', targetUrl: best.asset.url, overlap: best.overlap, reason: 'Several current assets materially overlap.', cannibalizationWarning: `Potential overlap: ${duplicates.map((item) => item.asset.url).join(', ')}` };
   return {
@@ -344,6 +354,8 @@ export function validateSourcesAndClaims(sources: readonly SourceRecord[], claim
   if (sourceIds.size !== sources.length) issues.push('Source registry contains duplicate source IDs.');
   const claimIds = new Set(claims.map((claim) => claim.claimId));
   if (claimIds.size !== claims.length) issues.push('Claim registry contains duplicate claim IDs.');
+  const normalizedClaims = claims.map((claim) => claim.text.trim().toLowerCase().replace(/\s+/g, ' '));
+  if (new Set(normalizedClaims).size !== normalizedClaims.length) issues.push('Claim registry contains duplicate normalized claim text.');
   const maximumAgeDays = { HIGH: 30, MEDIUM: 90, LOW: 365 } as const;
   for (const source of sources) {
     const ageDays = (now.getTime() - new Date(source.verifiedAt).getTime()) / 86_400_000;
@@ -388,10 +400,17 @@ export function validateCitationReadyManifest(manifest: ContentManifest, sources
   if (new Set(manifest.related).size !== manifest.related.length) issues.push('Duplicate internal link detected.');
   if (!sources.length || !claims.length) issues.push('Source and claim registries are required.');
   const sourceIds = new Set(sources.map((source) => source.sourceId));
+  const pathname = new URL(manifest.canonical).pathname;
   for (const sourceId of manifest.sourceIds) if (!sourceIds.has(sourceId)) issues.push(`Manifest references missing source ${sourceId}.`);
+  for (const item of manifest.evidenceManifest) if (!sourceIds.has(item.source)) issues.push(`Evidence manifest references missing source ${item.source}.`);
+  for (const source of sources) if (!source.pagesUsingSource.includes(pathname)) issues.push(`Source ${source.sourceId} does not declare page ${pathname}.`);
   const claimIds = new Set(claims.map((claim) => claim.claimId));
   for (const claimId of manifest.claimIds) if (!claimIds.has(claimId)) issues.push(`Manifest references missing claim ${claimId}.`);
+  for (const claim of claims) if (!claim.pagesUsingClaim.includes(pathname)) issues.push(`Claim ${claim.claimId} does not declare page ${pathname}.`);
   issues.push(...validateSourcesAndClaims(sources, claims));
+  if (manifest.visualManifest.every((item) => item.type === 'ILLUSTRATION') && manifest.qualityDimensions.visualProof > 5) {
+    issues.push('Illustration-only visual evidence cannot claim more than 5/10 visual proof.');
+  }
   const quality = scoreContentQuality(manifest.qualityDimensions, manifest.intent === 'COMPARISON' || manifest.intent === 'RESEARCH' ? 80 : 75);
   if (quality.total !== manifest.qualityScore) issues.push(`Stored quality score ${manifest.qualityScore} does not match component total ${quality.total}.`);
   if (JSON.stringify(quality.deficiencies) !== JSON.stringify(manifest.qualityDeficiencies)) issues.push('Stored quality deficiencies do not match component scoring.');
@@ -475,10 +494,11 @@ export function selectControlledBatch(
 ): Array<{ opportunity: Opportunity; asset: AssetInventory; reason: string }> {
   return opportunities.filter((opportunity) => opportunity.actionTypes.includes('FIX'))
     .flatMap((opportunity) => {
-      const candidates = inventory.filter((asset) => asset.topicClusterIds.includes(opportunity.topicClusterId)
+      const candidates = inventory.filter((asset) => asset.indexable
+        && asset.topicClusterIds.includes(opportunity.topicClusterId)
         && asset.entityIds.includes(opportunity.entityId)
         && asset.evidenceClasses.length >= 2 && asset.visualClasses.length >= 1);
-      return candidates.map((asset) => ({ opportunity, asset, reason: 'Existing indexed asset, Command 1 FIX opportunity, two public-safe evidence classes, and a real visual are available.' }));
+      return candidates.map((asset) => ({ opportunity, asset, reason: 'Existing indexed asset, Command 1 FIX opportunity, two declared evidence classes, and a public-safe visual are available.' }));
     })
     .sort((left, right) => {
       const rank = { P0: 0, P1: 1, P2: 2, P3: 3, P4: 4 };

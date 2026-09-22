@@ -26,6 +26,7 @@ test('data charts require real points and retain an accessible table and source'
 
 test('GitHub FIX page uses public-safe product evidence and explicit limitations', () => {
   assert.match(github, /xroga-existing-repo-review-20260902\.png/);
+  assert.match(github, /visuals: \[\{ type: 'ILLUSTRATION', src: '\/homepage\/all-in-one\/xroga-existing-repo-review-20260902\.png'/);
   assert.match(github, /no customer or private repository data/i);
   assert.match(github, /Repository access does not imply permission to merge or deploy/);
 });

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import '@/styles/growth-evidence.css';
 
 export type GrowthVisual = {
-  type: 'PRODUCT_SCREENSHOT' | 'WORKFLOW_DIAGRAM';
+  type: 'PRODUCT_SCREENSHOT' | 'ILLUSTRATION' | 'WORKFLOW_DIAGRAM';
   src?: string;
   alt: string;
   caption: string;

@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, realpath, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   assetInventorySchema, claimRecordSchema, contentManifestSchema, sourceRecordSchema,
@@ -96,9 +96,11 @@ export async function writeContentOutput(name: string, content: string, dryRun: 
   return target;
 }
 
-export async function resolveSafeContentPath(requested: string): Promise<string> {
-  const resolved = path.resolve(REPOSITORY_ROOT, requested);
-  if (resolved !== REPOSITORY_ROOT && !resolved.startsWith(`${REPOSITORY_ROOT}${path.sep}`)) throw new Error('Content path must stay inside the repository.');
+export async function resolveSafeContentPath(requested: string, repositoryRoot = REPOSITORY_ROOT): Promise<string> {
+  const resolved = path.resolve(repositoryRoot, requested);
+  if (resolved !== repositoryRoot && !resolved.startsWith(`${repositoryRoot}${path.sep}`)) throw new Error('Content path must stay inside the repository.');
   await access(resolved);
-  return resolved;
+  const [canonicalRoot, canonicalTarget] = await Promise.all([realpath(repositoryRoot), realpath(resolved)]);
+  if (canonicalTarget !== canonicalRoot && !canonicalTarget.startsWith(`${canonicalRoot}${path.sep}`)) throw new Error('Content path must not escape the repository through a symbolic link.');
+  return canonicalTarget;
 }

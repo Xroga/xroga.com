@@ -53,7 +53,9 @@ export async function buildGrowthContentSnapshot(input?: {
   const validatedCandidates = attachValidatedDemand(researchCandidates, growth.keywordMetrics);
   const entityAssociations = Object.fromEntries(source.entities.map((entity) => [entity.id, entity.desiredAssociations]));
   const queryFanOut = buildQueryFanOut(source.demand, growth.inventory, entityAssociations);
-  const assetResolutions = validatedCandidates.map((candidate) => resolveExistingAsset(candidate, growth.inventory));
+  const assetResolutions = validatedCandidates
+    .filter((candidate) => candidate.origin === 'VALIDATED_DEMAND')
+    .map((candidate) => resolveExistingAsset(candidate, growth.inventory));
   const searchIntentFindings = source.demand.filter((item) => item.kind === 'TOPIC_CLUSTER').map((item) => ({
     topicClusterId: item.id,
     decision: decideSearchIntent(growth.serpObservations.filter((row) => demandMatchesText(item, row.query))),
@@ -72,17 +74,25 @@ export async function buildGrowthContentSnapshot(input?: {
       query: candidate.query,
       classification: classifyCompetitorContentGap({
         demandStatus: candidate.status,
-        productSupported: candidate.relatedEntityIds.length > 0,
+        productSupported: !command1.gaps.some((gap) => gap.topicClusterId === candidate.seedDemandId && gap.actionType === 'PRODUCT'),
         xrogaCoverage: coverage.length > 0,
         competitorCoverage: new Set(serpRows.map((row) => row.domain).filter((domain) => domain !== 'xroga.com')).size,
         formatMismatch: observedIntent.status === 'AVAILABLE' && observedIntent.intent !== 'UNKNOWN' && !coverage.some((asset) => asset.intent === observedIntent.intent),
-        brandAssociationMissing: false,
+        brandAssociationMissing: command1.gaps.some((gap) => gap.topicClusterId === candidate.seedDemandId && ['TOPIC', 'VISIBILITY'].includes(gap.gapType)),
       }),
       evidence: [...candidate.evidenceIds, ...serpRows.map((row) => row.id)].sort(),
     };
   });
   const preferredOpportunityByUrl = new Map(growth.manifests.map((manifest) => [new URL(manifest.canonical).pathname, manifest.opportunityId]));
-  const selected = selectControlledBatch(command1.opportunities, growth.inventory, 8, preferredOpportunityByUrl);
+  const manifestByUrl = new Map(growth.manifests.map((manifest) => [new URL(manifest.canonical).pathname, manifest]));
+  const eligibleInventory = growth.inventory.filter((asset) => {
+    const manifest = manifestByUrl.get(asset.url);
+    if (!manifest) return false;
+    const sources = growth.sources.filter((record) => manifest.sourceIds.includes(record.sourceId));
+    const claims = growth.claims.filter((record) => manifest.claimIds.includes(record.claimId));
+    return validateCitationReadyManifest(manifest, sources, claims).length === 0;
+  });
+  const selected = selectControlledBatch(command1.opportunities, eligibleInventory, 8, preferredOpportunityByUrl);
   const briefs = selected.flatMap(({ opportunity, asset }) => {
     const demand = source.demand.find((item) => item.id === opportunity.topicClusterId);
     const manifest = growth.manifests.find((item) => new URL(item.canonical).pathname === asset.url && item.opportunityId === opportunity.id);
