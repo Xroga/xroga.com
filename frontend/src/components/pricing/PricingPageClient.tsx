@@ -21,17 +21,15 @@ import {
   BrainCircuit,
   Briefcase,
   CalendarClock,
-  Check,
-  Chrome,
-  CircleGauge,
-  Cloud,
-  Code2,
-  Database,
-  FileSearch,
-  Files,
-  Gamepad2,
-  Github,
-  Globe2,
+ Check,
+CircleGauge,
+Cloud,
+Code2,
+Database,
+FileSearch,
+Files,
+GitBranch,
+Globe2,
   Layers3,
   Laptop,
   Monitor,
@@ -100,7 +98,7 @@ const FREE_FEATURES:
   },
 
   {
-    icon: Github,
+    icon: GitBranch,
     label: 'Work with real GitHub repositories',
     strong: true,
   },
@@ -221,9 +219,10 @@ const PRO_FEATURES:
   },
 
   {
-    icon: Github,
-    label: 'Deep repository engineering',
-  },
+  icon: GitBranch,
+  label: 'Work with real GitHub repositories',
+  strong: true,
+},
 
   {
     icon: Search,
@@ -241,7 +240,7 @@ const PRO_FEATURES:
   },
 
   {
-    icon: Github,
+    icon: GitBranch,
     label: 'Branch, commit & release workflows',
   },
 
@@ -261,7 +260,7 @@ const PRO_FEATURES:
   },
 
   {
-    icon: Chrome,
+    icon: Globe2,
     label: 'Chrome extension packaging',
   },
 
@@ -323,7 +322,7 @@ const CAPABILITY_GROUPS = [
   },
 
   {
-    icon: Github,
+    icon: GitBranch,
 
     title:
       'Code & repositories',
