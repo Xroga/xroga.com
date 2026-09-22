@@ -1749,14 +1749,7 @@ export async function apiFetch<
   return data as T;
 }
 
-export const api = {
-  actions: {
-    balance:
-      () =>
-        apiFetch<ActionBalance>(
-          '/api/actions/balance',
-        ),
-  },
+
 
   projects: {
     list:
@@ -4588,20 +4581,7 @@ export const api = {
           manageAvailable:
             boolean;
 
-          usage: {
-            used:
-              number;
-
-            remaining:
-              number;
-
-            total:
-              number;
-          };
-
           allowance: {
-            actions:
-              number;
 
             concurrency:
               number;
@@ -5701,15 +5681,6 @@ export interface Notification {
     string;
 }
 
-export interface ActionBalance {
-  total:
-    number;
-
-  used:
-    number;
-
-  remaining:
-    number;
 
   planTier:
     string;
