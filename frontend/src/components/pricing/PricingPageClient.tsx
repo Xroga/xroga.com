@@ -160,7 +160,7 @@ const FREE_FEATURES:
   },
 
   {
-    icon: BrainIcon,
+    icon: BrainCircuit,
     label: 'Black Hole V∞ intelligence',
   },
 
@@ -852,19 +852,6 @@ const AUDIENCES = [
 ] as const;
 
 
-function BrainIcon({
-  className,
-}: {
-  className?: string;
-}) {
-  return (
-    <BrainCircuit
-      className={
-        className
-      }
-    />
-  );
-}
 
 
 function FeatureLine({
