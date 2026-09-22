@@ -168,7 +168,7 @@ async function resolvePlanTier(userId: string): Promise<string> {
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return 'spark';
     const supabase = getSupabaseAdmin();
     const { data } = await supabase
-      .from('user_actions')
+      .from('user_token_usage')
       .select('plan_tier')
       .eq('user_id', userId)
       .maybeSingle();
