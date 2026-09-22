@@ -106,7 +106,7 @@ function fixture(
         'A working project',
 
       semanticIntent:
-        'BUILD',
+      'MODIFY',
 
       previewRequirement:
         'PREFERRED',
