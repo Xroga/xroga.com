@@ -1,6 +1,6 @@
 import crypto, { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../config/supabase.js';
-import { ActionService } from './ActionService.js';
+import { syncPlanBudget } from '../ai/quota.js';
 import { GALACTIC_PLANS, getPlanByTier } from '../config/plans.js';
 import { activatePaidCycle, getProviderEntitlementStatus } from '../ai/providerBudget.js';
 
@@ -367,7 +367,7 @@ export class BillingService {
     if (memoryFulfilledPayments.has(paymentId)) return false;
     memoryFulfilledPayments.add(paymentId);
     await activatePaidCycle({ userId, providerReference: `whop:payment:${paymentId}`, startsAt, endsAt });
-    await ActionService.applyPlan(userId, 'spark', getPlanByTier('spark')!.actions);
+   await syncPlanBudget(userId, 'spark');
     return true;
   }
 
