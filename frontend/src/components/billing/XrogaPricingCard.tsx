@@ -174,7 +174,7 @@ export function GalacticPlanPricingCard({
     <XrogaPricingCard
       name={plan.name}
       price={plan.priceLabel}
-      subtitle={plan.tagline ?? `${plan.concurrency} concurrent tasks`}
+subtitle={plan.tagline ?? 'Usage-based AI access'}
       tokensLabel={plan.tokensLabel}
       description={plan.tagline}
       features={getPlanFeatures(plan, FEATURE_COUNT)}
