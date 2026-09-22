@@ -1,0 +1,52 @@
+[
+  {
+    "claimId": "claim.github.atomic-authorized-write",
+    "text": "Xroga repository writes require an authorized target and use the current atomic write path.",
+    "entityId": "integration.github",
+    "sourceIds": ["source.xroga.github-atomic-write"],
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "pagesUsingClaim": ["/build-with/github"],
+    "volatility": "MEDIUM",
+    "nextVerificationDue": "2026-10-22T00:00:00.000Z"
+  },
+  {
+    "claimId": "claim.github.permission-boundary",
+    "text": "A GitHub operation can succeed only within the permissions granted to the app and connected user or installation.",
+    "entityId": "integration.github",
+    "sourceIds": ["source.github.app-permissions"],
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "pagesUsingClaim": ["/build-with/github"],
+    "volatility": "MEDIUM",
+    "nextVerificationDue": "2026-10-22T00:00:00.000Z"
+  },
+  {
+    "claimId": "claim.github.policy-authoritative",
+    "text": "GitHub protected branches and organization policy remain authoritative.",
+    "entityId": "integration.github",
+    "sourceIds": ["source.github.branch-protection"],
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "pagesUsingClaim": ["/build-with/github"],
+    "volatility": "MEDIUM",
+    "nextVerificationDue": "2026-10-22T00:00:00.000Z"
+  },
+  {
+    "claimId": "claim.readiness.tool-scope",
+    "text": "The public checklist records user confirmations but does not inspect or certify a repository or deployment.",
+    "entityId": "capability.validation",
+    "sourceIds": ["source.xroga.readiness-tool"],
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "pagesUsingClaim": ["/tools/production-readiness-checker"],
+    "volatility": "MEDIUM",
+    "nextVerificationDue": "2026-10-22T00:00:00.000Z"
+  },
+  {
+    "claimId": "claim.validation.capability-boundary",
+    "text": "Xroga validation uses applicable project checks and reports unavailable or failed validation truthfully.",
+    "entityId": "capability.validation",
+    "sourceIds": ["source.xroga.validation-runtime"],
+    "verifiedAt": "2026-09-22T00:00:00.000Z",
+    "pagesUsingClaim": ["/tools/production-readiness-checker"],
+    "volatility": "MEDIUM",
+    "nextVerificationDue": "2026-10-22T00:00:00.000Z"
+  }
+]

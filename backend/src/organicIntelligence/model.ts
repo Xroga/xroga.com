@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const confidenceStateSchema = z.enum(['VERIFIED', 'OBSERVED', 'INFERRED', 'UNKNOWN', 'STALE']);
 export const freshnessStateSchema = z.enum(['CURRENT', 'VERIFY_SOON', 'STALE', 'UNKNOWN']);
-export const dataAvailabilitySchema = z.enum(['AVAILABLE', 'NO_DATA', 'UNAVAILABLE', 'PLAN_LIMITED']);
+export const dataAvailabilitySchema = z.enum(['AVAILABLE', 'NO_DATA', 'UNKNOWN', 'UNAVAILABLE', 'PLAN_LIMITED', 'STALE']);
 export const scoreSchema = z.union([z.number().int().min(0).max(5), z.literal('UNKNOWN')]);
 
 const datedEvidenceSchema = z.object({

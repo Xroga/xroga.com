@@ -24,6 +24,12 @@
     "growth:discover": "tsx backend/src/organicIntelligence/cli.ts discover",
     "growth:report": "tsx backend/src/organicIntelligence/cli.ts report",
     "growth:validate": "tsx backend/src/organicIntelligence/cli.ts validate",
+    "growth:research": "tsx backend/src/organicIntelligence/content/cli.ts research",
+    "growth:brief": "tsx backend/src/organicIntelligence/content/cli.ts brief",
+    "growth:content": "tsx backend/src/organicIntelligence/content/cli.ts content",
+    "growth:content:validate": "tsx backend/src/organicIntelligence/content/cli.ts validate",
+    "growth:links": "tsx backend/src/organicIntelligence/content/cli.ts links",
+    "growth:visuals": "tsx backend/src/organicIntelligence/content/cli.ts visuals",
     "test:growth": "tsx --test \"backend/src/organicIntelligence/**/*.test.ts\""
   },
   "overrides": {

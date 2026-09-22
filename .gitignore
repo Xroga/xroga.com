@@ -35,6 +35,7 @@ yarn-error.log*
 test-results/
 playwright-report/
 artifacts/growth-intelligence/
+artifacts/growth-content/
 .growth-cache/
 growth/imports/*
 !growth/imports/README.md

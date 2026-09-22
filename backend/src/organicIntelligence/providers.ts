@@ -3,7 +3,7 @@ import {
   type GscRow, type Mention, type PromptObservation, type VisibilityMetric,
 } from './model.js';
 
-export type ProviderStatus = 'AVAILABLE' | 'NO_DATA' | 'UNAVAILABLE' | 'PLAN_LIMITED';
+export type ProviderStatus = 'AVAILABLE' | 'NO_DATA' | 'UNKNOWN' | 'UNAVAILABLE' | 'PLAN_LIMITED' | 'STALE';
 export type ProviderResult<T> = { provider: string; status: ProviderStatus; records: T[]; reason?: string; observedAt: string };
 
 export interface OrganicDataProvider<T> {
@@ -40,7 +40,7 @@ function assertUniqueIds<T>(records: readonly T[], label: string, idFor: (record
   }
 }
 
-function parseCsvLine(line: string): string[] {
+export function parseCsvLine(line: string): string[] {
   const cells: string[] = [];
   let value = '';
   let quoted = false;

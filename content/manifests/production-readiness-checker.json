@@ -1,0 +1,65 @@
+{
+  "title": "Free production-readiness checker for software teams",
+  "description": "Review release evidence across ownership, security, data, quality, accessibility, runtime, and operations without an invented readiness score.",
+  "slug": "production-readiness-checker",
+  "canonical": "https://xroga.com/tools/production-readiness-checker",
+  "publishedAt": "2026-09-09",
+  "updatedAt": "2026-09-22",
+  "lastVerifiedAt": "2026-09-22T00:00:00.000Z",
+  "author": "Xroga Growth and Product Truth",
+  "intent": "TOOL",
+  "cluster": "topic.production-readiness",
+  "entityIds": ["capability.validation"],
+  "opportunityId": "opportunity.assoc.xroga.production-readiness-topic.production-readiness",
+  "gapIds": ["gap.assoc.xroga.production-readiness.topic"],
+  "promptFamilyIds": ["prompt.repair-failed-build"],
+  "validatedKeywords": [],
+  "audience": ["developers", "founders", "teams"],
+  "funnelStage": "EVALUATION",
+  "sourceIds": ["source.xroga.readiness-tool", "source.xroga.validation-runtime"],
+  "claimIds": ["claim.readiness.tool-scope", "claim.validation.capability-boundary"],
+  "evidenceManifest": [
+    {
+      "type": "PUBLIC_TOOL",
+      "source": "source.xroga.readiness-tool",
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "location": "frontend/src/components/seo/ProductionReadinessChecker.tsx",
+      "claimSupported": "The checklist records confirmed and unresolved evidence without manufacturing a percentage score.",
+      "publicSafe": true,
+      "freshnessDue": "2026-10-22T00:00:00.000Z"
+    },
+    {
+      "type": "PRODUCT_CODE",
+      "source": "source.xroga.validation-runtime",
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "location": "backend/src/capabilities/modules/validationRun.ts",
+      "claimSupported": "Product validation capability is bounded by applicable checks and reports real failure state.",
+      "publicSafe": true,
+      "freshnessDue": "2026-10-22T00:00:00.000Z"
+    }
+  ],
+  "visualManifest": [
+    {
+      "type": "WORKFLOW_DIAGRAM",
+      "source": "frontend/src/components/seo/GrowthEvidence.tsx",
+      "alt": "Four-stage release evidence workflow from ownership to operations",
+      "caption": "A data-driven release evidence map; it explains the method and does not claim a project passed.",
+      "width": null,
+      "height": null,
+      "verifiedAt": "2026-09-22T00:00:00.000Z",
+      "publicSafe": true
+    }
+  ],
+  "related": ["/learn/production-readiness-checklist", "/security", "/ai-coding-agent"],
+  "productCapability": "Release evidence review and project validation",
+  "indexStatus": "INDEX",
+  "qualityDimensions": {"intentMatch": 14, "productRelevance": 10, "originalEvidence": 14, "answerCompleteness": 9, "citationReadiness": 9, "visualProof": 8, "sourceQuality": 9, "freshness": 5, "internalLinking": 4, "conversionPath": 3, "technicalReadiness": 5},
+  "qualityScore": 90,
+  "qualityDeficiencies": ["conversionPath is 3/5."],
+  "refreshDue": "2026-10-22T00:00:00.000Z",
+  "owner": "Growth / validation capability",
+  "requiredSections": ["Direct answer", "At a glance", "Method and evidence", "Evidence", "Limitations", "Next action"],
+  "coveredQuestions": ["What evidence should exist before release?", "Does the checklist certify a project?", "How should unresolved items be handled?"],
+  "cta": {"label": "Use Xroga on your project", "href": "/auth/signup"},
+  "conversionPath": {"entryIntent": "Assess whether software is ready to release", "valueDelivered": "A transparent evidence checklist and limitations", "nextAction": "Use Xroga on the project", "activationEvent": "Authorized workspace task started"}
+}
