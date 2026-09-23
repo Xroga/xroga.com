@@ -2,6 +2,10 @@ import {
   Router,
 } from 'express';
 
+import {
+  z,
+} from 'zod';
+
 import type {
   AuthRequest,
 } from '../middleware/auth.js';
@@ -12,8 +16,14 @@ import {
 
 import {
   buildProjectArchive,
-  deliveryStateForProject,
 } from '../synthesis/delivery/projectDelivery.js';
+
+import {
+  deployProjectDelivery,
+  loadProjectDelivery,
+  ProjectDeliveryActionError,
+  publishProjectDelivery,
+} from '../synthesis/delivery/projectDeliveryService.js';
 
 const router =
   Router();
@@ -25,8 +35,12 @@ function requireUser(
   if (
     !req.userId
   ) {
-    throw new Error(
+    throw new ProjectDeliveryActionError(
+      'AUTH_REQUIRED',
+
       'Sign in required.',
+
+      401,
     );
   }
 
@@ -48,36 +62,64 @@ function projectIdFrom(
   if (
     !projectId
   ) {
-    throw new Error(
+    throw new ProjectDeliveryActionError(
+      'PROJECT_ID_REQUIRED',
+
       'Project id is required.',
+
+      400,
     );
   }
 
   return projectId;
 }
 
-async function latestProject(
-  userId:
-    string,
+function respondError(
+  res:
+    Parameters<
+      Parameters<
+        typeof router.get
+      >[1]
+    >[1],
 
-  projectId:
-    string,
+  error:
+    unknown,
 ) {
-  const store =
-    new SupabaseProjectRuntimeStore();
+  if (
+    error instanceof
+    ProjectDeliveryActionError
+  ) {
+    return res
+      .status(
+        error.statusCode,
+      )
+      .json({
+        error:
+          error.message,
 
-  return store
-    .loadLatestRevision(
-      userId,
-      projectId,
-    );
+        code:
+          error.code,
+      });
+  }
+
+  return res
+    .status(
+      500,
+    )
+    .json({
+      error:
+        error instanceof
+          Error
+          ? error.message
+          : String(
+              error,
+            ),
+
+      code:
+        'DELIVERY_FAILED',
+    });
 }
 
-/**
- * Download the COMPLETE latest project workspace.
- *
- * GitHub and Vercel are intentionally not prerequisites.
- */
 router.get(
   '/:projectId/download.zip',
 
@@ -98,23 +140,26 @@ router.get(
           req,
         );
 
+      const store =
+        new SupabaseProjectRuntimeStore();
+
       const revision =
-        await latestProject(
-          userId,
-          projectId,
-        );
+        await store
+          .loadLatestRevision(
+            userId,
+            projectId,
+          );
 
       if (
         !revision
       ) {
-        return res
-          .status(
-            404,
-          )
-          .json({
-            error:
-              'Project not found.',
-          });
+        throw new ProjectDeliveryActionError(
+          'PROJECT_NOT_FOUND',
+
+          'Project not found.',
+
+          404,
+        );
       }
 
       const archive =
@@ -184,6 +229,9 @@ router.get(
           .json({
             error:
               'The project does not contain downloadable files yet.',
+
+            code:
+              'PROJECT_ARCHIVE_EMPTY',
           });
       }
 
@@ -198,26 +246,20 @@ router.get(
           .json({
             error:
               'The project archive is too large to download through this endpoint.',
+
+            code:
+              'PROJECT_ARCHIVE_TOO_LARGE',
           });
       }
 
-      return res
-        .status(
-          500,
-        )
-        .json({
-          error:
-            message,
-        });
+      return respondError(
+        res,
+        error,
+      );
     }
   },
 );
 
-/**
- * Canonical user-facing delivery truth.
- *
- * A GitHub or deployment failure does not erase a saved Xroga project.
- */
 router.get(
   '/:projectId',
 
@@ -228,71 +270,156 @@ router.get(
     res,
   ) => {
     try {
-      const userId =
-        requireUser(
-          req,
-        );
-
-      const projectId =
-        projectIdFrom(
-          req,
-        );
-
-      const revision =
-        await latestProject(
-          userId,
-          projectId,
-        );
-
-      if (
-        !revision
-      ) {
-        return res
-          .status(
-            404,
-          )
-          .json({
-            error:
-              'Project not found.',
-          });
-      }
-
-      return res.json({
-        delivery:
-          deliveryStateForProject(
-            revision.project,
+      const delivery =
+        await loadProjectDelivery(
+          requireUser(
+            req,
           ),
 
-        revision: {
-          revisionId:
-            revision
-              .revisionId,
+          projectIdFrom(
+            req,
+          ),
+        );
 
-          revisionNumber:
-            revision
-              .revisionNumber,
-
-          createdAt:
-            revision
-              .createdAt,
-        },
-      });
+      return res.json(
+        delivery,
+      );
     } catch (
       error
     ) {
+      return respondError(
+        res,
+        error,
+      );
+    }
+  },
+);
+
+router.post(
+  '/:projectId/publish',
+
+  async (
+    req:
+      AuthRequest,
+
+    res,
+  ) => {
+    const parsed =
+      z.object({
+        repository:
+          z
+            .string()
+            .trim()
+            .min(
+              3,
+            )
+            .optional(),
+
+        branch:
+          z
+            .string()
+            .trim()
+            .min(
+              1,
+            )
+            .max(
+              100,
+            )
+            .optional(),
+
+        directWriteAuthorized:
+          z
+            .boolean()
+            .optional(),
+
+        visibility:
+          z
+            .enum([
+              'private',
+              'public',
+            ])
+            .optional(),
+      })
+        .safeParse(
+          req.body ??
+          {},
+        );
+
+    if (
+      !parsed.success
+    ) {
       return res
         .status(
-          500,
+          400,
         )
         .json({
           error:
-            error instanceof
-              Error
-              ? error.message
-              : String(
-                  error,
-                ),
+            'Invalid publication request.',
+
+          code:
+            'INVALID_PUBLICATION_REQUEST',
         });
+    }
+
+    try {
+      const delivery =
+        await publishProjectDelivery(
+          requireUser(
+            req,
+          ),
+
+          projectIdFrom(
+            req,
+          ),
+
+          parsed.data,
+        );
+
+      return res.json(
+        delivery,
+      );
+    } catch (
+      error
+    ) {
+      return respondError(
+        res,
+        error,
+      );
+    }
+  },
+);
+
+router.post(
+  '/:projectId/deploy',
+
+  async (
+    req:
+      AuthRequest,
+
+    res,
+  ) => {
+    try {
+      const delivery =
+        await deployProjectDelivery(
+          requireUser(
+            req,
+          ),
+
+          projectIdFrom(
+            req,
+          ),
+        );
+
+      return res.json(
+        delivery,
+      );
+    } catch (
+      error
+    ) {
+      return respondError(
+        res,
+        error,
+      );
     }
   },
 );
