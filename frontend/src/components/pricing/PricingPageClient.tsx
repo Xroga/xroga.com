@@ -1,1531 +1,517 @@
-/* ============================================================
-   XROGA PRICING — CONCISE 2026 REDESIGN
-   Three type roles:
-   - Goga / Outfit: UI + body
-   - Newsreader: editorial accent
-   - JetBrains Mono: prices + technical labels
-   ============================================================ */
-
-.root {
-  --pp-bg: #f7f7f5;
-  --pp-surface: #ffffff;
-  --pp-surface-2: #f0f1f3;
-  --pp-ink: #121315;
-  --pp-muted: #6d7077;
-  --pp-line: rgba(18, 19, 21, 0.11);
-  --pp-line-strong: rgba(18, 19, 21, 0.2);
-  --pp-accent: #6268f2;
-  --pp-accent-2: #a356e8;
-  --pp-accent-soft: rgba(98, 104, 242, 0.1);
-  --pp-pro-bg:
-    radial-gradient(circle at 50% -10%, rgba(133, 146, 255, 0.25), transparent 36%),
-    radial-gradient(circle at 92% 82%, rgba(190, 90, 255, 0.14), transparent 32%),
-    #ffffff;
-  --pp-button: #111216;
-  --pp-button-ink: #ffffff;
-  --pp-shadow: 0 24px 70px rgba(16, 20, 30, 0.08);
-  --pp-grid: rgba(18, 19, 21, 0.09);
-
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  min-height: 100vh;
-  background: var(--pp-bg);
-  color: var(--pp-ink);
-  font-family:
-    var(--font-goga),
-    var(--font-inter),
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-:global(body.theme-white) .root {
-  --pp-bg: #f7f7f5;
-  --pp-surface: #ffffff;
-  --pp-surface-2: #f0f1f3;
-  --pp-ink: #121315;
-  --pp-muted: #6d7077;
-  --pp-line: rgba(18, 19, 21, 0.11);
-  --pp-line-strong: rgba(18, 19, 21, 0.2);
-  --pp-accent: #6268f2;
-  --pp-accent-2: #a356e8;
-  --pp-accent-soft: rgba(98, 104, 242, 0.1);
-  --pp-pro-bg:
-    radial-gradient(circle at 50% -10%, rgba(133, 146, 255, 0.25), transparent 36%),
-    radial-gradient(circle at 92% 82%, rgba(190, 90, 255, 0.14), transparent 32%),
-    #ffffff;
-  --pp-button: #111216;
-  --pp-button-ink: #ffffff;
-  --pp-shadow: 0 24px 70px rgba(16, 20, 30, 0.08);
-  --pp-grid: rgba(18, 19, 21, 0.09);
-}
-
-:global(body.theme-beige) .root {
-  --pp-bg: #faf7f0;
-  --pp-surface: #fffaf2;
-  --pp-surface-2: #f3ecdf;
-  --pp-ink: #29231d;
-  --pp-muted: #756c61;
-  --pp-line: rgba(75, 59, 42, 0.12);
-  --pp-line-strong: rgba(75, 59, 42, 0.21);
-  --pp-accent: #6c63d8;
-  --pp-accent-2: #b56aa4;
-  --pp-accent-soft: rgba(108, 99, 216, 0.1);
-  --pp-pro-bg:
-    radial-gradient(circle at 48% -8%, rgba(119, 132, 232, 0.21), transparent 36%),
-    radial-gradient(circle at 90% 84%, rgba(216, 139, 109, 0.16), transparent 32%),
-    #fffaf2;
-  --pp-button: #2c2721;
-  --pp-button-ink: #fffaf2;
-  --pp-shadow: 0 24px 70px rgba(74, 54, 30, 0.1);
-  --pp-grid: rgba(75, 59, 42, 0.1);
-}
-
-:global(body.theme-gray) .root {
-  --pp-bg: #1a1a1a;
-  --pp-surface: #24262a;
-  --pp-surface-2: #202226;
-  --pp-ink: #f4f5f7;
-  --pp-muted: #a5a8af;
-  --pp-line: rgba(255, 255, 255, 0.095);
-  --pp-line-strong: rgba(255, 255, 255, 0.18);
-  --pp-accent: #83b1ff;
-  --pp-accent-2: #bd8dff;
-  --pp-accent-soft: rgba(131, 177, 255, 0.11);
-  --pp-pro-bg:
-    radial-gradient(circle at 50% -12%, rgba(73, 132, 255, 0.26), transparent 38%),
-    radial-gradient(circle at 94% 84%, rgba(156, 88, 255, 0.17), transparent 34%),
-    #24262a;
-  --pp-button: #f4f6fb;
-  --pp-button-ink: #111318;
-  --pp-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
-  --pp-grid: rgba(255, 255, 255, 0.075);
-}
-
-:global(body.theme-black) .root {
-  --pp-bg: #000000;
-  --pp-surface: #0b0d10;
-  --pp-surface-2: #101216;
-  --pp-ink: #f8f9fb;
-  --pp-muted: #9b9ea6;
-  --pp-line: rgba(255, 255, 255, 0.095);
-  --pp-line-strong: rgba(255, 255, 255, 0.18);
-  --pp-accent: #7cb0ff;
-  --pp-accent-2: #c27aff;
-  --pp-accent-soft: rgba(124, 176, 255, 0.11);
-  --pp-pro-bg:
-    radial-gradient(circle at 50% -12%, rgba(65, 124, 255, 0.29), transparent 39%),
-    radial-gradient(circle at 92% 84%, rgba(150, 70, 255, 0.2), transparent 35%),
-    #0b0d10;
-  --pp-button: #f5f7fb;
-  --pp-button-ink: #0a0c10;
-  --pp-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
-  --pp-grid: rgba(255, 255, 255, 0.075);
-}
-
-.root * {
-  box-sizing: border-box;
-}
-
-.root button,
-.root a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.shell {
-  width: min(1180px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 0 0 96px;
-}
-
-/* HERO */
-
-.hero {
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--pp-line);
-}
-
-.hero::before {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(90deg, var(--pp-grid) 1px, transparent 1px);
-  background-size: 56px 100%;
-  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 45%, transparent 86%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 45%, transparent 86%);
-  content: "";
-  pointer-events: none;
-}
-
-.gridGlow {
-  position: absolute;
-  inset: -15% -10% auto;
-  height: 560px;
-  background:
-    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pp-accent) 17%, transparent), transparent 46%),
-    linear-gradient(to bottom, color-mix(in srgb, var(--pp-surface) 72%, transparent), transparent);
-  pointer-events: none;
-}
-
-.starField {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-:global(body.theme-gray) .starField,
-:global(body.theme-black) .starField {
-  opacity: 0.65;
-}
-
-.starField span {
-  position: absolute;
-  inset: -20%;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.4px);
-  background-size: 83px 83px;
-  animation: starDrift 28s linear infinite;
-}
-
-.starField span:nth-child(2) {
-  background-size: 137px 137px;
-  opacity: 0.38;
-  animation-duration: 44s;
-  animation-direction: reverse;
-}
-
-.starField span:nth-child(3) {
-  background-size: 211px 211px;
-  opacity: 0.22;
-  animation-duration: 62s;
-}
-
-@keyframes starDrift {
-  to {
-    transform: translate3d(83px, -83px, 0);
-  }
-}
-
-.heroInner {
-  position: relative;
-  z-index: 2;
-  width: min(980px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 118px 0 104px;
-  text-align: center;
-}
-
-.heroKicker,
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--pp-accent);
-  font-family:
-    var(--font-xv-mono),
-    "JetBrains Mono",
-    ui-monospace,
-    monospace;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.heroKicker {
-  padding: 8px 12px;
-  border: 1px solid var(--pp-line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--pp-surface) 78%, transparent);
-  backdrop-filter: blur(14px);
-}
-
-.heroKicker svg {
-  width: 14px;
-  height: 14px;
-}
-
-.heroTitle {
-  max-width: 930px;
-  margin: 24px auto 0;
-  font-size: clamp(3.5rem, 7.2vw, 6.7rem);
-  font-weight: 650;
-  line-height: 0.92;
-  letter-spacing: -0.067em;
-}
-
-.heroTitle span,
-.sectionHead h2 em,
-.sectionHeadCompact h2 em,
-.capacityCopy h2 em,
-.faqIntro h2 em,
-.finalCopy h2 em {
-  font-family:
-    var(--font-claude-serif),
-    Newsreader,
-    Georgia,
-    serif;
-  font-style: italic;
-  font-weight: 440;
-  letter-spacing: -0.045em;
-}
-
-.heroTitle span {
-  display: block;
-  color: color-mix(in srgb, var(--pp-ink) 58%, var(--pp-accent));
-}
-
-.heroCopy {
-  max-width: 710px;
-  margin: 28px auto 0;
-  color: var(--pp-muted);
-  font-size: clamp(1rem, 1.5vw, 1.18rem);
-  line-height: 1.65;
-}
-
-.heroFacts {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 32px;
-  padding: 10px 14px;
-  border: 1px solid var(--pp-line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--pp-surface) 78%, transparent);
-  color: var(--pp-muted);
-  font-size: 0.78rem;
-  backdrop-filter: blur(16px);
-}
-
-.heroFacts span {
-  display: inline-flex;
-  gap: 6px;
-  align-items: baseline;
-}
-
-.heroFacts strong {
-  color: var(--pp-ink);
-  font-family:
-    var(--font-xv-mono),
-    "JetBrains Mono",
-    monospace;
-  font-size: 0.82rem;
-}
-
-.heroFacts i {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--pp-line-strong);
-}
-
-/* SECTION HEADINGS */
-
-.plansSection,
-.outcomesSection,
-.capacitySection,
-.compareSection,
-.faqSection {
-  padding-top: 96px;
-}
-
-.sectionHead {
-  max-width: 760px;
-  margin: 0 auto 42px;
-  text-align: center;
-}
-
-.sectionHeadCompact {
-  max-width: 760px;
-  margin-bottom: 30px;
-}
-
-.sectionHead h2,
-.sectionHeadCompact h2,
-.capacityCopy h2,
-.faqIntro h2,
-.finalCopy h2 {
-  margin: 12px 0 0;
-  font-size: clamp(2.2rem, 4.4vw, 4rem);
-  font-weight: 650;
-  line-height: 0.98;
-  letter-spacing: -0.055em;
-}
-
-.sectionHead p,
-.capacityCopy > p,
-.faqIntro > p {
-  max-width: 650px;
-  margin: 18px auto 0;
-  color: var(--pp-muted);
-  line-height: 1.65;
-}
-
-.sectionHeadCompact h2 em,
-.capacityCopy h2 em,
-.faqIntro h2 em,
-.finalCopy h2 em {
-  color: color-mix(in srgb, var(--pp-ink) 58%, var(--pp-accent));
-}
-
-/* PLAN CARDS */
-
-.planGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  align-items: stretch;
-  max-width: 1040px;
-  margin: 0 auto;
-}
-
-.planCard {
-  position: relative;
-  overflow: hidden;
-  min-height: 620px;
-  padding: 30px;
-  border: 1px solid var(--pp-line);
-  border-radius: 28px;
-  background: var(--pp-surface);
-  box-shadow: var(--pp-shadow);
-  transition:
-    transform 0.28s ease,
-    border-color 0.28s ease,
-    box-shadow 0.28s ease;
-}
-
-.planCard:hover {
-  transform: translateY(-4px);
-  border-color: var(--pp-line-strong);
-}
-
-.proCard {
-  background: var(--pp-pro-bg);
-  border-color: color-mix(in srgb, var(--pp-accent) 36%, var(--pp-line));
-}
-
-.proHalo {
-  position: absolute;
-  top: -110px;
-  left: 50%;
-  width: 420px;
-  height: 220px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--pp-accent) 24%, transparent);
-  filter: blur(65px);
-  pointer-events: none;
-}
-
-.planTop,
-.priceRow,
-.featureList,
-.planCta,
-.planNote,
-.planLead {
-  position: relative;
-  z-index: 2;
-}
-
-.planTop {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.planName {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 740;
-  letter-spacing: -0.035em;
-}
-
-.planTagline {
-  margin: 5px 0 0;
-  color: var(--pp-muted);
-  font-size: 0.86rem;
-}
-
-.popularBadge,
-.currentBadge {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, var(--pp-accent) 30%, var(--pp-line));
-  border-radius: 999px;
-  background: var(--pp-accent-soft);
-  color: var(--pp-accent);
-  font-family:
-    var(--font-xv-mono),
-    monospace;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.popularBadge svg {
-  width: 12px;
-  height: 12px;
-}
-
-.priceRow {
-  display: flex;
-  align-items: flex-end;
-  gap: 14px;
-  margin-top: 28px;
-}
-
-.price {
-  font-family:
-    var(--font-xv-mono),
-    "JetBrains Mono",
-    monospace;
-  font-size: clamp(3.4rem, 6vw, 5.25rem);
-  font-weight: 650;
-  line-height: 0.9;
-  letter-spacing: -0.07em;
-}
-
-.priceMeta {
-  display: grid;
-  gap: 2px;
-  padding-bottom: 5px;
-  color: var(--pp-muted);
-  font-size: 0.78rem;
-}
-
-.priceMeta b {
-  color: var(--pp-ink);
-  font-weight: 650;
-}
-
-.planLead {
-  min-height: 76px;
-  margin: 24px 0 0;
-  color: var(--pp-muted);
-  font-size: 0.94rem;
-  line-height: 1.62;
-}
-
-.featureList {
-  display: grid;
-  gap: 13px;
-  margin: 26px 0 0;
-  padding: 24px 0 0;
-  border-top: 1px solid var(--pp-line);
-  list-style: none;
-}
-
-.featureList li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: color-mix(in srgb, var(--pp-ink) 88%, var(--pp-muted));
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.check {
-  display: grid;
-  width: 20px;
-  height: 20px;
-  flex: none;
-  place-items: center;
-  margin-top: 1px;
-  border-radius: 50%;
-  background: var(--pp-accent-soft);
-  color: var(--pp-accent);
-}
-
-.check svg {
-  width: 12px;
-  height: 12px;
-  stroke-width: 2.6;
-}
-
-.planCta {
-  margin-top: 30px;
-}
-
-.ctaButton {
-  display: inline-flex;
-  width: 100%;
-  min-height: 50px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 0;
-  border-radius: 14px;
-  padding: 12px 18px;
-  font: inherit;
-  font-size: 0.92rem;
-  font-weight: 720;
-  cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.25s ease,
-    background-position 0.6s ease;
-}
-
-.ctaButton svg {
-  width: 17px;
-  height: 17px;
-}
-
-.ctaButton:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.ctaButton:disabled {
-  cursor: default;
-  opacity: 0.58;
-}
-
-.freeCta {
-  border: 1px solid var(--pp-line-strong);
-  background: var(--pp-surface-2);
-  color: var(--pp-ink);
-}
-
-.freeCta:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--pp-accent) 44%, var(--pp-line));
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--pp-accent) 10%, transparent);
-}
-
-.proCtaWrap {
-  position: relative;
-  overflow: hidden;
-  border-radius: 14px;
-  isolation: isolate;
-}
-
-.proCta {
-  position: relative;
-  z-index: 1;
-  color: #fff;
-  background-size: 280% auto;
-  background-image:
-    radial-gradient(
-      70% 90% at 50% 120%,
-      rgba(226, 133, 255, 0.7) 0%,
-      rgba(226, 133, 255, 0) 70%
-    ),
-    linear-gradient(325deg, #4f56ef 0%, #7b63f6 48%, #b553d7 100%);
-  box-shadow:
-    0 12px 28px rgba(88, 83, 238, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
-}
-
-.proCta:hover:not(:disabled) {
-  background-position: right top;
-  box-shadow:
-    0 15px 34px rgba(88, 83, 238, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.32);
-}
-
-.fold {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  right: 0;
-  width: 16px;
-  height: 16px;
-  border-bottom-left-radius: 8px;
-  background: radial-gradient(circle at 20% 70%, #df71ff, transparent 70%), #745af4;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.28);
-  pointer-events: none;
-  transition:
-    margin 0.45s ease,
-    opacity 0.45s ease;
-}
-
-.fold::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 150%;
-  height: 150%;
-  transform: rotate(45deg) translate(0, -18px);
-  background: color-mix(in srgb, var(--pp-surface) 88%, white);
-  content: "";
-}
-
-.proCtaWrap:hover .fold {
-  margin-top: -16px;
-  margin-right: -16px;
-  opacity: 0.2;
-}
-
-.pointsWrapper {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.point {
-  position: absolute;
-  bottom: -6px;
-  width: 2px;
-  height: 2px;
-  border-radius: 999px;
-  background: #fff;
-  opacity: 0;
-  animation: floatingPoints 2.4s ease-in-out infinite;
-}
-
-.point:nth-child(1) { left: 10%; animation-delay: 0.2s; }
-.point:nth-child(2) { left: 23%; animation-delay: 0.7s; animation-duration: 2.1s; }
-.point:nth-child(3) { left: 31%; animation-delay: 0.1s; animation-duration: 2.7s; }
-.point:nth-child(4) { left: 42%; animation-delay: 0.55s; }
-.point:nth-child(5) { left: 51%; animation-delay: 0.9s; animation-duration: 1.9s; }
-.point:nth-child(6) { left: 63%; animation-delay: 0.3s; animation-duration: 2.2s; }
-.point:nth-child(7) { left: 72%; animation-delay: 1.2s; animation-duration: 1.8s; }
-.point:nth-child(8) { left: 80%; animation-delay: 0.45s; animation-duration: 2.6s; }
-.point:nth-child(9) { left: 89%; animation-delay: 0.8s; }
-.point:nth-child(10) { left: 96%; animation-delay: 0.15s; animation-duration: 2s; }
-
-@keyframes floatingPoints {
-  0% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.9;
-  }
-  82% {
-    opacity: 0.12;
-  }
-  100% {
-    transform: translateY(-52px);
-    opacity: 0;
-  }
-}
-
-.planNote {
-  margin: 11px 0 0;
-  color: var(--pp-muted);
-  font-size: 0.72rem;
-  line-height: 1.45;
-  text-align: center;
-}
-
-/* ACCESSIBLE TOOLTIP */
-
-.tooltipWrap {
-  position: relative;
-  display: inline-flex;
-  margin-left: 5px;
-  vertical-align: middle;
-}
-
-.infoButton {
-  display: grid;
-  width: 20px;
-  height: 20px;
-  place-items: center;
-  border: 0;
-  border-radius: 50%;
-  background: var(--pp-accent-soft);
-  color: var(--pp-accent);
-  cursor: help;
-}
-
-.infoButton svg {
-  width: 12px;
-  height: 12px;
-}
-
-.tooltip {
-  position: absolute;
-  z-index: 20;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  width: 260px;
-  padding: 12px 13px;
-  transform: translate(-50%, 8px);
-  border: 1px solid var(--pp-line-strong);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--pp-surface) 96%, transparent);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
-  color: var(--pp-ink);
-  font-size: 0.76rem;
-  line-height: 1.5;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  backdrop-filter: blur(16px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    visibility 0.2s ease;
-}
-
-.infoButton:hover + .tooltip,
-.infoButton:focus-visible + .tooltip {
-  transform: translate(-50%, 0);
-  opacity: 1;
-  visibility: visible;
-}
-
-/* OUTCOMES */
-
-.outcomeGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.outcomeCard {
-  min-height: 230px;
-  padding: 22px;
-  border: 1px solid var(--pp-line);
-  border-radius: 22px;
-  background: var(--pp-surface);
-}
-
-.outcomeIcon {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--pp-accent) 24%, var(--pp-line));
-  border-radius: 13px;
-  background: var(--pp-accent-soft);
-  color: var(--pp-accent);
-}
-
-.outcomeIcon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.outcomeCard h3 {
-  margin: 22px 0 0;
-  font-size: 1.18rem;
-  letter-spacing: -0.03em;
-}
-
-.outcomeCard p {
-  margin: 9px 0 0;
-  color: var(--pp-muted);
-  font-size: 0.86rem;
-  line-height: 1.58;
-}
-
-.capabilityLinks {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 18px;
-  margin-top: 18px;
-}
-
-.capabilityLinks a {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--pp-muted);
-  font-size: 0.82rem;
-  text-decoration: none;
-}
-
-.capabilityLinks a:first-child {
-  color: var(--pp-ink);
-  font-weight: 700;
-}
-
-.capabilityLinks a:hover {
-  color: var(--pp-accent);
-}
-
-.capabilityLinks svg {
-  width: 14px;
-  height: 14px;
-}
-
-/* CAPACITY — UIVERSE-INSPIRED PROGRESS, WITHOUT FAKE QUOTAS */
-
-.capacitySection {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
-  gap: 56px;
-  align-items: center;
-}
-
-.capacityCopy > p {
-  margin-left: 0;
-}
-
-.shimmerText {
-  background: linear-gradient(
-    90deg,
-    var(--pp-muted) 0%,
-    var(--pp-ink) 35%,
-    var(--pp-accent) 50%,
-    var(--pp-ink) 65%,
-    var(--pp-muted) 100%
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+  ArrowRight,
+  Check,
+  CircleGauge,
+  Code2,
+  GitBranch,
+  Info,
+  Monitor,
+  Rocket,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+} from 'lucide-react';
+
+import { CheckoutButton } from '@/components/billing/CheckoutButton';
+import { api } from '@/lib/api';
+import { GALACTIC_PLANS } from '@/lib/plans';
+import { createClient } from '@/lib/supabase/client';
+
+import styles from './PricingPage.module.css';
+
+type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
+
+const PLAN_FEATURES = {
+  free: [
+    'AI app builder + coding agent',
+    'New or existing GitHub repositories',
+    'Repository-aware edits and debugging',
+    'Browser preview + verification',
+    'Live web research, files and documents',
+    'Included monthly AI capacity',
+  ],
+  spark: [
+    'Everything in Free',
+    'Higher monthly AI capacity',
+    'Full Access pacing',
+    'Longer end-to-end builds and multi-file changes',
+    'More build → test → repair cycles',
+    'Production-focused GitHub, Vercel and Supabase workflows',
+  ],
+} as const;
+
+const OUTCOMES = [
+  {
+    icon: Code2,
+    title: 'Build',
+    body: 'Websites, SaaS, dashboards, portals and product interfaces from a plain-language brief.',
+  },
+  {
+    icon: GitBranch,
+    title: 'Code',
+    body: 'Start fresh or work inside a real repository with reviewable edits, fixes and refactors.',
+  },
+  {
+    icon: Monitor,
+    title: 'Verify',
+    body: 'Run builds, inspect the product in a browser and feed observed failures back into repair.',
+  },
+  {
+    icon: Rocket,
+    title: 'Ship',
+    body: 'Move through GitHub and supported provider workflows while keeping your accounts and code.',
+  },
+] as const;
+
+const COMPARISON = [
+  ['Price', '$0', '$25/month'],
+  ['Card required', 'No', 'Yes, to subscribe'],
+  ['Core AI building workspace', 'Included', 'Included'],
+  ['Existing GitHub repositories', 'Included', 'Included'],
+  ['Browser preview + verification', 'Included', 'Included'],
+  ['Monthly AI capacity', 'Included', 'Higher'],
+  ['Full Access pacing', '—', 'Included'],
+  ['Production-focused workflows', 'Supported', 'More room for sustained work'],
+] as const;
+
+const FAQS = [
+  {
+    question: 'Does Free require a credit card?',
+    answer:
+      'No. Free is $0 and does not require a card. It includes the core Xroga building workflow with included monthly AI capacity.',
+  },
+  {
+    question: 'What changes when I upgrade to Xroga Pro?',
+    answer:
+      'The core workflow stays familiar. Pro adds higher monthly AI capacity, Full Access pacing and more room for long research, coding, verification, repair and production workflows.',
+  },
+  {
+    question: 'What is Full Access pacing?',
+    answer:
+      'Full Access is a Pro pacing option that can make remaining working capacity for the current billing cycle available earlier instead of waiting for later progressive unlocks. It changes timing, not the total monthly capacity.',
+  },
+  {
+    question: 'What happens when my currently available capacity is used?',
+    answer:
+      'Your project state and completed work remain preserved. New AI work can continue when more capacity unlocks or when the next billing cycle begins.',
+  },
+  {
+    question: 'Can I use an existing GitHub repository?',
+    answer:
+      'Yes. Xroga supports workflows that start from new projects or repositories you already own, subject to the repository access you authorize.',
+  },
+  {
+    question: 'Does Xroga own my code?',
+    answer:
+      'Xroga is designed around repositories and provider accounts you authorize, so your source and deployment workflow are not trapped inside a closed generated preview.',
+  },
+] as const;
+
+function CtaParticles() {
+  return (
+    <>
+      <span className={styles.fold} aria-hidden="true" />
+      <span className={styles.pointsWrapper} aria-hidden="true">
+        {Array.from({ length: 10 }, (_, index) => (
+          <i key={index} className={styles.point} />
+        ))}
+      </span>
+    </>
   );
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: textShimmer 4.5s linear infinite;
 }
 
-@keyframes textShimmer {
-  to {
-    background-position: 220% center;
-  }
+function FullAccessInfo() {
+  return (
+    <span className={styles.tooltipWrap}>
+      <button
+        type="button"
+        className={styles.infoButton}
+        aria-label="What is Full Access pacing?"
+      >
+        <Info aria-hidden="true" />
+      </button>
+      <span className={styles.tooltip} role="tooltip">
+        Makes remaining working capacity for the current cycle available earlier.
+        It does not add extra monthly capacity.
+      </span>
+    </span>
+  );
 }
 
-.capacityPanel {
-  position: relative;
-  overflow: hidden;
-  padding: 28px;
-  border: 1px solid var(--pp-line);
-  border-radius: 26px;
-  background:
-    radial-gradient(circle at 90% 0%, var(--pp-accent-soft), transparent 38%),
-    var(--pp-surface);
-  box-shadow: var(--pp-shadow);
-}
+export function PricingPageClient() {
+  const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [status, setStatus] = useState<BillingStatus | null>(null);
 
-.capacityRow + .capacityRow {
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid var(--pp-line);
-}
+  useEffect(() => {
+    void (async () => {
+      try {
+        const { data } = await createClient().auth.getSession();
+        const hasSession = Boolean(data.session);
+        setLoggedIn(hasSession);
 
-.capacityRow > div:first-child {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 10px;
-}
+        if (hasSession) {
+          setStatus(await api.billing.status());
+        }
+      } catch {
+        setStatus(null);
+      }
+    })();
+  }, []);
 
-.capacityRow span {
-  color: var(--pp-muted);
-  font-family:
-    var(--font-xv-mono),
-    monospace;
-  font-size: 0.72rem;
-}
+  const freeCurrent = status?.plan === 'free';
+  const proCurrent = status?.plan === 'spark';
 
-.capacityRow strong {
-  font-size: 0.84rem;
-  font-weight: 680;
-  text-align: right;
-}
-
-.progressTrack {
-  position: relative;
-  height: 13px;
-  overflow: hidden;
-  border: 1px solid var(--pp-line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--pp-surface-2) 85%, transparent);
-}
-
-.progressBar {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: inherit;
-  transform-origin: left center;
-  animation: progressGrow 1.25s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.freeProgress {
-  width: 44%;
-  background: linear-gradient(90deg, #7f8797, #aeb4c1);
-}
-
-.proProgress {
-  width: 86%;
-  background: linear-gradient(90deg, #5361ee, #7e71ff 54%, #c05ad9);
-  box-shadow: 0 0 20px color-mix(in srgb, var(--pp-accent) 36%, transparent);
-}
-
-.progressSpark {
-  position: absolute;
-  top: 50%;
-  left: 82%;
-  width: 28px;
-  height: 28px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent 64%);
-  animation: capacityPulse 2.2s ease-in-out infinite;
-}
-
-@keyframes progressGrow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes capacityPulse {
-  50% {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 0.2;
-  }
-}
-
-.capacityNote {
-  margin: 18px 0 0;
-  color: var(--pp-muted);
-  font-size: 0.71rem;
-  line-height: 1.5;
-}
-
-/* COMPARISON */
-
-.compareTable {
-  overflow: hidden;
-  border: 1px solid var(--pp-line);
-  border-radius: 24px;
-  background: var(--pp-surface);
-}
-
-.compareHeader,
-.compareRow {
-  display: grid;
-  grid-template-columns: minmax(220px, 1.2fr) minmax(160px, 0.8fr) minmax(200px, 1fr);
-  align-items: center;
-}
-
-.compareHeader {
-  background: var(--pp-surface-2);
-  color: var(--pp-muted);
-  font-family:
-    var(--font-xv-mono),
-    monospace;
-  font-size: 0.69rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.compareHeader > span,
-.compareRow > span,
-.compareLabel {
-  padding: 16px 20px;
-}
-
-.compareRow {
-  min-height: 58px;
-  border-top: 1px solid var(--pp-line);
-  font-size: 0.84rem;
-}
-
-.compareRow > span {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--pp-muted);
-}
-
-.compareRow > span svg {
-  width: 14px;
-  height: 14px;
-  flex: none;
-  color: color-mix(in srgb, var(--pp-muted) 70%, var(--pp-accent));
-}
-
-.compareLabel {
-  color: var(--pp-ink);
-  font-weight: 650;
-}
-
-.compareRow .proCell {
-  color: var(--pp-ink);
-  background: color-mix(in srgb, var(--pp-accent-soft) 54%, transparent);
-}
-
-.compareRow .proCell svg {
-  color: var(--pp-accent);
-}
-
-/* FAQ */
-
-.faqSection {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
-  gap: 64px;
-  align-items: start;
-}
-
-.faqIntro {
-  position: sticky;
-  top: 100px;
-}
-
-.faqIntro > p {
-  margin-left: 0;
-}
-
-.textLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 18px;
-  color: var(--pp-ink);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.textLink:hover {
-  color: var(--pp-accent);
-}
-
-.textLink svg {
-  width: 15px;
-  height: 15px;
-}
-
-.faqList {
-  border-top: 1px solid var(--pp-line);
-}
-
-.faqItem {
-  border-bottom: 1px solid var(--pp-line);
-}
-
-.faqItem summary {
-  display: flex;
-  min-height: 74px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--pp-ink);
-  font-size: 1rem;
-  font-weight: 650;
-  cursor: pointer;
-  list-style: none;
-}
-
-.faqItem summary::-webkit-details-marker {
-  display: none;
-}
-
-.plus {
-  display: grid;
-  width: 28px;
-  height: 28px;
-  flex: none;
-  place-items: center;
-  border: 1px solid var(--pp-line);
-  border-radius: 50%;
-  color: var(--pp-muted);
-  font-family:
-    var(--font-xv-mono),
-    monospace;
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease;
-}
-
-.faqItem[open] .plus {
-  transform: rotate(45deg);
-  color: var(--pp-accent);
-}
-
-.faqItem p {
-  max-width: 700px;
-  margin: -4px 44px 22px 0;
-  color: var(--pp-muted);
-  font-size: 0.9rem;
-  line-height: 1.66;
-}
-
-/* FINAL CTA — MOVING DOT BORDER INSPIRED BY THE PROVIDED UIVERSE CARD */
-
-.finalCta {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  margin-top: 96px;
-  padding: 42px;
-  border: 1px solid var(--pp-line-strong);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 4% 0%, var(--pp-accent-soft), transparent 34%),
-    var(--pp-surface);
-  box-shadow: var(--pp-shadow);
-}
-
-.finalGlow {
-  position: absolute;
-  top: -60px;
-  left: -20px;
-  width: 240px;
-  height: 90px;
-  transform: rotate(20deg);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--pp-accent) 18%, transparent);
-  filter: blur(28px);
-  pointer-events: none;
-}
-
-.orbitDot {
-  position: absolute;
-  z-index: 3;
-  top: 10px;
-  right: 10px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--pp-accent);
-  box-shadow: 0 0 12px var(--pp-accent);
-  animation: orbitDot 7s linear infinite;
-}
-
-@keyframes orbitDot {
-  0%,
-  100% {
-    top: 10px;
-    right: 10px;
-  }
-  25% {
-    top: 10px;
-    right: calc(100% - 15px);
-  }
-  50% {
-    top: calc(100% - 15px);
-    right: calc(100% - 15px);
-  }
-  75% {
-    top: calc(100% - 15px);
-    right: 10px;
-  }
-}
-
-.finalCopy,
-.finalActions {
-  position: relative;
-  z-index: 2;
-}
-
-.finalCopy {
-  max-width: 650px;
-}
-
-.finalCopy p {
-  margin: 14px 0 0;
-  color: var(--pp-muted);
-}
-
-.finalActions {
-  width: min(320px, 100%);
-}
-
-.finalPrimary {
-  color: var(--pp-button-ink);
-  background: var(--pp-button);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
-}
-
-.finalPrimary:hover {
-  box-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.18),
-    0 0 0 4px var(--pp-accent-soft);
-}
-
-.trustLine {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  margin-top: 10px;
-  color: var(--pp-muted);
-  font-size: 0.72rem;
-}
-
-.trustLine svg {
-  width: 14px;
-  height: 14px;
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 980px) {
-  .heroInner {
-    padding: 102px 0 88px;
+  function openFree() {
+    if (freeCurrent) return;
+    router.push(loggedIn ? '/workspace' : '/auth/signup');
   }
 
-  .planGrid {
-    max-width: 660px;
-    grid-template-columns: 1fr;
-  }
+  return (
+    <main className={styles.root}>
+      <section className={styles.hero} aria-labelledby="pricing-title">
+        <div className={styles.gridGlow} aria-hidden="true" />
+        <div className={styles.starField} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
 
-  .planCard {
-    min-height: 0;
-  }
+        <div className={styles.heroInner}>
+          <div className={styles.heroKicker}>
+            <Sparkles aria-hidden="true" />
+            XROGA PRICING
+          </div>
 
-  .planLead {
-    min-height: 0;
-  }
+          <h1 id="pricing-title" className={styles.heroTitle}>
+            Start free.
+            <span> Build further with Pro.</span>
+          </h1>
 
-  .outcomeGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+          <p className={styles.heroCopy}>
+            One product workflow for research, code, verification and shipping.
+            Free lets you start for $0. Pro is $25/month when you need more capacity.
+          </p>
 
-  .capacitySection {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
+          <div className={styles.heroFacts} aria-label="Pricing highlights">
+            <span>
+              <strong>$0</strong>
+              no card
+            </span>
+            <i aria-hidden="true" />
+            <span>
+              <strong>$25</strong>
+              monthly Pro
+            </span>
+            <i aria-hidden="true" />
+            <span>
+              <strong>Cancel</strong>
+              anytime
+            </span>
+          </div>
+        </div>
+      </section>
 
-  .capacityCopy {
-    max-width: 720px;
-  }
+      <div className={styles.shell}>
+        <section className={styles.plansSection} aria-labelledby="plans-title">
+          <div className={styles.sectionHead}>
+            <span className={styles.eyebrow}>TWO PLANS. ONE WORKFLOW.</span>
+            <h2 id="plans-title">
+              Pick the capacity you need,
+              <em> not a different product.</em>
+            </h2>
+            <p>
+              Both plans start with Xroga&apos;s core building workflow. Pro is the
+              upgrade for longer, more demanding product work.
+            </p>
+          </div>
 
-  .faqSection {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
+          <div className={styles.planGrid}>
+            {GALACTIC_PLANS.map((plan) => {
+              const isFree = plan.tier === 'free';
+              const isCurrent = isFree ? freeCurrent : proCurrent;
+              const features = PLAN_FEATURES[plan.tier];
 
-  .faqIntro {
-    position: static;
-    max-width: 720px;
-  }
+              return (
+                <article
+                  key={plan.tier}
+                  className={`${styles.planCard} ${
+                    isFree ? styles.freeCard : styles.proCard
+                  }`}
+                >
+                  {!isFree && <div className={styles.proHalo} aria-hidden="true" />}
 
-  .finalCta {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
+                  <div className={styles.planTop}>
+                    <div>
+                      <span className={styles.planName}>{plan.name}</span>
+                      <p className={styles.planTagline}>{plan.tagline}</p>
+                    </div>
 
-@media (max-width: 720px) {
-  .shell {
-    width: min(100% - 24px, 1180px);
-    padding-bottom: 72px;
-  }
+                    {isCurrent ? (
+                      <span className={styles.currentBadge}>Current plan</span>
+                    ) : !isFree ? (
+                      <span className={styles.popularBadge}>
+                        <Zap aria-hidden="true" />
+                        BUILDER PICK
+                      </span>
+                    ) : null}
+                  </div>
 
-  .heroInner {
-    width: min(100% - 24px, 980px);
-    padding: 84px 0 72px;
-  }
+                  <div className={styles.priceRow}>
+                    <strong className={styles.price}>{plan.priceLabel}</strong>
+                    <span className={styles.priceMeta}>
+                      <b>per month</b>
+                      <small>{isFree ? 'no card required' : 'billed monthly'}</small>
+                    </span>
+                  </div>
 
-  .heroTitle {
-    font-size: clamp(2.9rem, 14vw, 4.5rem);
-  }
+                  <p className={styles.planLead}>
+                    {isFree
+                      ? 'Explore the real Xroga workflow, work on real code and finish a smaller build with included capacity.'
+                      : 'For active builders who need more room for sustained research, implementation, verification and shipping.'}
+                  </p>
 
-  .heroCopy {
-    font-size: 0.96rem;
-  }
+                  <ul className={styles.featureList}>
+                    {features.map((feature) => (
+                      <li key={feature}>
+                        <span className={styles.check}>
+                          <Check aria-hidden="true" />
+                        </span>
+                        <span>
+                          {feature}
+                          {feature === 'Full Access pacing' ? <FullAccessInfo /> : null}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
 
-  .heroFacts {
-    width: 100%;
-    flex-wrap: wrap;
-    border-radius: 18px;
-    gap: 8px 12px;
-  }
+                  <div className={styles.planCta}>
+                    {isFree ? (
+                      <button
+                        type="button"
+                        className={`${styles.ctaButton} ${styles.freeCta}`}
+                        onClick={openFree}
+                        disabled={isCurrent}
+                      >
+                        {isCurrent ? 'Current plan' : 'Start building free'}
+                        {!isCurrent && <ArrowRight aria-hidden="true" />}
+                      </button>
+                    ) : isCurrent ? (
+                      <button
+                        type="button"
+                        className={`${styles.ctaButton} ${styles.proCta}`}
+                        disabled
+                      >
+                        Current plan
+                      </button>
+                    ) : loggedIn ? (
+                      <div className={styles.proCtaWrap}>
+                        <CheckoutButton planTier="spark" label="Get Xroga Pro — $25/month" className={`${styles.ctaButton} ${styles.proCta}`} />
+                        <CtaParticles />
+                      </div>
+                    ) : (
+                      <div className={styles.proCtaWrap}>
+                        <button
+                          type="button"
+                          className={`${styles.ctaButton} ${styles.proCta}`}
+                          onClick={() => router.push('/auth/signup')}
+                        >
+                          Get Xroga Pro — $25/month
+                          <ArrowRight aria-hidden="true" />
+                        </button>
+                        <CtaParticles />
+                      </div>
+                    )}
+                  </div>
 
-  .heroFacts i {
-    display: none;
-  }
+                  <p className={styles.planNote}>
+                    {isFree
+                      ? 'Build in plain language. Go technical only when you want to.'
+                      : 'Your code · Your accounts · Your deployment workflow'}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
 
-  .heroFacts span {
-    flex: 1 1 120px;
-    justify-content: center;
-  }
+        <section className={styles.outcomesSection} aria-labelledby="outcomes-title">
+          <div className={styles.sectionHeadCompact}>
+            <span className={styles.eyebrow}>WHAT XROGA HELPS YOU DO</span>
+            <h2 id="outcomes-title">
+              From brief to <em>working software.</em>
+            </h2>
+          </div>
 
-  .plansSection,
-  .outcomesSection,
-  .capacitySection,
-  .compareSection,
-  .faqSection {
-    padding-top: 72px;
-  }
+          <div className={styles.outcomeGrid}>
+            {OUTCOMES.map((outcome) => {
+              const Icon = outcome.icon;
+              return (
+                <article key={outcome.title} className={styles.outcomeCard}>
+                  <span className={styles.outcomeIcon}>
+                    <Icon aria-hidden="true" />
+                  </span>
+                  <h3>{outcome.title}</h3>
+                  <p>{outcome.body}</p>
+                </article>
+              );
+            })}
+          </div>
 
-  .sectionHead {
-    margin-bottom: 28px;
-  }
+          <div className={styles.capabilityLinks}>
+            <Link href="/features">
+              Explore all features <ArrowRight aria-hidden="true" />
+            </Link>
+            <Link href="/ai-app-builder">AI App Builder</Link>
+            <Link href="/ai-coding-agent">AI Coding Agent</Link>
+            <Link href="/docs">Docs</Link>
+          </div>
+        </section>
 
-  .sectionHead h2,
-  .sectionHeadCompact h2,
-  .capacityCopy h2,
-  .faqIntro h2,
-  .finalCopy h2 {
-    font-size: clamp(2.1rem, 10vw, 3.2rem);
-  }
+        <section className={styles.capacitySection} aria-labelledby="capacity-title">
+          <div className={styles.capacityCopy}>
+            <span className={`${styles.eyebrow} ${styles.shimmerText}`}>
+              CAPACITY, WITHOUT TOKEN MATH
+            </span>
+            <h2 id="capacity-title">
+              Same workflow.
+              <em> More room with Pro.</em>
+            </h2>
+            <p>
+              Xroga shows understandable capacity and cycle status instead of
+              turning pricing into internal model accounting.
+            </p>
+          </div>
 
-  .planCard {
-    padding: 22px;
-    border-radius: 22px;
-  }
+          <div className={styles.capacityPanel}>
+            <div className={styles.capacityRow}>
+              <div>
+                <span>Free</span>
+                <strong>Included monthly AI capacity</strong>
+              </div>
+              <div className={styles.progressTrack} aria-hidden="true">
+                <span className={`${styles.progressBar} ${styles.freeProgress}`} />
+              </div>
+            </div>
 
-  .planTop {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+            <div className={styles.capacityRow}>
+              <div>
+                <span>Xroga Pro</span>
+                <strong>Higher capacity + Full Access pacing</strong>
+              </div>
+              <div className={styles.progressTrack} aria-hidden="true">
+                <span className={`${styles.progressBar} ${styles.proProgress}`} />
+                <span className={styles.progressSpark} />
+              </div>
+            </div>
 
-  .price {
-    font-size: clamp(3.2rem, 17vw, 4.5rem);
-  }
+            <p className={styles.capacityNote}>
+              Visual comparison only — your live capacity and unlock timing are
+              shown inside Xroga.
+            </p>
+          </div>
+        </section>
 
-  .outcomeGrid {
-    grid-template-columns: 1fr;
-  }
+        <section className={styles.compareSection} aria-labelledby="compare-title">
+          <div className={styles.sectionHeadCompact}>
+            <span className={styles.eyebrow}>FREE VS PRO</span>
+            <h2 id="compare-title">
+              The difference, <em>in eight rows.</em>
+            </h2>
+          </div>
 
-  .outcomeCard {
-    min-height: 0;
-  }
+          <div className={styles.compareTable} role="table" aria-label="Free and Pro plan comparison">
+            <div className={styles.compareHeader} role="row">
+              <span role="columnheader">Capability</span>
+              <span role="columnheader">Free</span>
+              <span role="columnheader">Xroga Pro</span>
+            </div>
 
-  .capacityPanel {
-    padding: 20px;
-    border-radius: 22px;
-  }
+            {COMPARISON.map(([label, free, pro]) => (
+              <div className={styles.compareRow} role="row" key={label}>
+                <strong className={styles.compareLabel} role="rowheader">
+                  {label}
+                </strong>
+                <span role="cell">
+                  <Check aria-hidden="true" />
+                  {free}
+                </span>
+                <span role="cell" className={styles.proCell}>
+                  <Sparkles aria-hidden="true" />
+                  {pro}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-  .capacityRow > div:first-child {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
-  }
+        <section className={styles.faqSection} aria-labelledby="faq-title">
+          <div className={styles.faqIntro}>
+            <span className={styles.eyebrow}>PRICING FAQ</span>
+            <h2 id="faq-title">
+              Clear enough to decide <em>in one read.</em>
+            </h2>
+            <p>
+              Need implementation details instead? The docs go deeper without
+              turning the pricing page into a manual.
+            </p>
+            <Link className={styles.textLink} href="/docs">
+              Open docs <ArrowRight aria-hidden="true" />
+            </Link>
+          </div>
 
-  .capacityRow strong {
-    text-align: left;
-  }
+          <div className={styles.faqList}>
+            {FAQS.map((faq) => (
+              <details key={faq.question} className={styles.faqItem}>
+                <summary>
+                  <span>{faq.question}</span>
+                  <span className={styles.plus} aria-hidden="true">
+                    +
+                  </span>
+                </summary>
+                <p>{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
-  .compareHeader {
-    display: none;
-  }
+        <section className={styles.finalCta} aria-labelledby="final-title">
+          <div className={styles.orbitDot} aria-hidden="true" />
+          <div className={styles.finalGlow} aria-hidden="true" />
 
-  .compareRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 15px 16px;
-  }
+          <div className={styles.finalCopy}>
+            <span className={styles.eyebrow}>YOUR IDEA IS ENOUGH TO START</span>
+            <h2 id="final-title">
+              Build something <em>real.</em>
+            </h2>
+            <p>
+              Start for $0. Upgrade only when the work needs more room.
+            </p>
+          </div>
 
-  .compareLabel {
-    grid-column: 1 / -1;
-    padding: 0 0 10px;
-  }
+          <div className={styles.finalActions}>
+            <button
+              type="button"
+              className={`${styles.ctaButton} ${styles.finalPrimary}`}
+              onClick={openFree}
+            >
+              Start building free
+              <ArrowRight aria-hidden="true" />
+            </button>
 
-  .compareRow > span {
-    min-width: 0;
-    padding: 0 12px 0 0;
-    align-items: flex-start;
-  }
-
-  .compareRow .proCell {
-    padding: 0 0 0 12px;
-    border-left: 1px solid var(--pp-line);
-    background: transparent;
-  }
-
-  .faqItem summary {
-    min-height: 68px;
-  }
-
-  .finalCta {
-    margin-top: 72px;
-    padding: 28px 22px;
-    border-radius: 22px;
-  }
-
-  .finalActions {
-    width: 100%;
-  }
-
-  .tooltip {
-    left: auto;
-    right: -14px;
-    width: min(250px, calc(100vw - 50px));
-    transform: translate(0, 8px);
-  }
-
-  .infoButton:hover + .tooltip,
-  .infoButton:focus-visible + .tooltip {
-    transform: translate(0, 0);
-  }
-}
-
-@media (max-width: 430px) {
-  .heroKicker,
-  .eyebrow {
-    font-size: 0.64rem;
-  }
-
-  .priceRow {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .priceMeta {
-    padding-bottom: 0;
-  }
-
-  .capabilityLinks {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .compareRow {
-    grid-template-columns: 1fr;
-  }
-
-  .compareRow > span,
-  .compareRow .proCell {
-    padding: 5px 0;
-    border-left: 0;
-  }
-
-  .compareRow > span::before {
-    width: 42px;
-    flex: none;
-    color: var(--pp-muted);
-    font-family:
-      var(--font-xv-mono),
-      monospace;
-    font-size: 0.62rem;
-    font-weight: 800;
-  }
-
-  .compareRow > span:nth-of-type(1)::before {
-    content: "FREE";
-  }
-
-  .compareRow > span:nth-of-type(2)::before {
-    content: "PRO";
-  }
-
-  .faqItem p {
-    margin-right: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .root *,
-  .root *::before,
-  .root *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-
-  .planCard:hover {
-    transform: none;
-  }
+            <div className={styles.trustLine}>
+              <ShieldCheck aria-hidden="true" />
+              No card on Free
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }
