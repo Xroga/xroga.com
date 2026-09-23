@@ -7,10 +7,17 @@ import {
   CheckCircle2,
   Download,
   ExternalLink,
-  Github,
   Loader2,
   Rocket,
 } from 'lucide-react';
+
+import {
+  GitHubIcon,
+} from '@/components/icons/GitHubIcon';
+
+import {
+  useLiveBuildStore,
+} from '@/store/useLiveBuildStore';
 
 import {
   useCallback,
@@ -28,13 +35,27 @@ import {
 } from '@/store/useProjectWorkspaceStore';
 
 export function ProjectDeliveryPanel() {
-  const projectId =
-    useProjectWorkspaceStore(
-      (
-        state,
-      ) =>
-        state.projectId,
-    );
+  const workspaceProjectId =
+  useProjectWorkspaceStore(
+    (
+      state,
+    ) =>
+      state.projectId,
+  );
+
+const runtimeProjectId =
+  useLiveBuildStore(
+    (
+      state,
+    ) =>
+      state.preview
+        ?.projectId ??
+      null,
+  );
+
+const projectId =
+  workspaceProjectId ??
+  runtimeProjectId;
 
   const repo =
     useProjectWorkspaceStore(
@@ -458,7 +479,7 @@ export function ProjectDeliveryPanel() {
               'publish' ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Github className="h-3.5 w-3.5" />
+                <GitHubIcon className="h-3.5 w-3.5" />
               )}
 
               {delivery
