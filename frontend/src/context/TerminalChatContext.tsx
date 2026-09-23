@@ -94,6 +94,7 @@ import {
 } from '@/lib/recoveredBuildOutput';
 import { swarmOutputToText } from '@/lib/swarm';
 import {
+  artifactProjectId,
   engineeringArtifactWorkspaceProjection,
   isRenderableArtifact,
 } from '@/lib/engineeringArtifact';
@@ -111,8 +112,60 @@ async function restoreProjectWorkspaceFromMessages(
     .map((message) => message.featureOutput)
     .find(isRenderableArtifact);
   if (engineeringArtifact) {
-    const projection = engineeringArtifactWorkspaceProjection(engineeringArtifact);
-    if (!projection) return;
+  const deliveryProjectId =
+    artifactProjectId(
+      engineeringArtifact,
+    );
+
+  const projection =
+    engineeringArtifactWorkspaceProjection(
+      engineeringArtifact,
+    );
+
+  /*
+   * A canonical Xroga project may intentionally have no GitHub repository.
+   *
+   * Project-file hydration still requires an authoritative repository context,
+   * but delivery identity does not.
+   *
+   * This keeps Download ZIP / later Publish / later Deploy available after a
+   * restored chat without inventing a fake repository.
+   */
+  if (
+    !projection
+  ) {
+    if (
+      deliveryProjectId
+    ) {
+      const {
+        useProjectWorkspaceStore,
+      } =
+        await import(
+          '@/store/useProjectWorkspaceStore'
+        );
+
+      const workspace =
+        useProjectWorkspaceStore
+          .getState();
+
+      /*
+       * Never attach an unrelated repository context to a repository-less
+       * artifact. We restore only the independent Xroga project identity.
+       */
+      if (
+        !workspace
+          .activeProjectContext
+      ) {
+        workspace
+          .applyDelivery({
+            projectId:
+              deliveryProjectId,
+          });
+      }
+    }
+
+    return;
+  }
     // A saved task must never hydrate its files into a differently selected repository.
     if (repositoryName?.includes('/') && projection.repo !== repositoryName) return;
     const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
