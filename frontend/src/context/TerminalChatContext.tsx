@@ -105,162 +105,319 @@ const GENERIC_SWARM_FALLBACK =
 
 async function restoreProjectWorkspaceFromMessages(
   messages: ChatMessage[],
-  repositoryName?: string
+  repositoryName?: string,
 ): Promise<void> {
-  const engineeringArtifact = [...messages]
-    .reverse()
-    .map((message) => message.featureOutput)
-    .find(isRenderableArtifact);
-  if (engineeringArtifact) {
-  const deliveryProjectId =
-    artifactProjectId(
-      engineeringArtifact,
-    );
+  const engineeringArtifact =
+    [...messages]
+      .reverse()
+      .map(
+        (
+          message,
+        ) =>
+          message.featureOutput,
+      )
+      .find(
+        isRenderableArtifact,
+      );
 
-  const projection =
-    engineeringArtifactWorkspaceProjection(
-      engineeringArtifact,
-    );
-
-  /*
-   * A canonical Xroga project may intentionally have no GitHub repository.
-   *
-   * Project-file hydration still requires an authoritative repository context,
-   * but delivery identity does not.
-   *
-   * This keeps Download ZIP / later Publish / later Deploy available after a
-   * restored chat without inventing a fake repository.
-   */
   if (
-    !projection
+    engineeringArtifact
   ) {
+    const deliveryProjectId =
+      artifactProjectId(
+        engineeringArtifact,
+      );
+
+    const projection =
+      engineeringArtifactWorkspaceProjection(engineeringArtifact);
+
+    /*
+     * A canonical Xroga project can exist without GitHub.
+     *
+     * Repository-scoped files must never be attached to an unrelated
+     * repository context, but the canonical Xroga projectId is independent.
+     *
+     * Keeping projectId here preserves Download ZIP / Publish / Deploy after
+     * restoring a repository-less build from chat history.
+     */
     if (
-      deliveryProjectId
+      !projection
     ) {
-      const {
-        useProjectWorkspaceStore,
-      } =
-        await import(
-          '@/store/useProjectWorkspaceStore'
-        );
-
-      const workspace =
-        useProjectWorkspaceStore
-          .getState();
-
-      /*
-       * Never attach an unrelated repository context to a repository-less
-       * artifact. We restore only the independent Xroga project identity.
-       */
       if (
-        !workspace
-          .activeProjectContext
+        deliveryProjectId
       ) {
-        workspace
-          .applyDelivery({
-            projectId:
-              deliveryProjectId,
-          });
+        const {
+          useProjectWorkspaceStore,
+        } =
+          await import(
+            '@/store/useProjectWorkspaceStore'
+          );
+
+        const workspace =
+          useProjectWorkspaceStore
+            .getState();
+
+        if (
+          !workspace
+            .activeProjectContext
+        ) {
+          workspace
+            .applyDelivery({
+              projectId:
+                deliveryProjectId,
+            });
+        }
       }
+
+      return;
+    }
+
+    /*
+     * A saved task must never hydrate its project files into a different
+     * repository selected by the user.
+     */
+    if (
+      repositoryName?.includes(
+        '/',
+      ) &&
+      projection.repo !== repositoryName
+    ) {
+      return;
+    }
+
+    const {
+      useProjectWorkspaceStore,
+    } =
+      await import(
+        '@/store/useProjectWorkspaceStore'
+      );
+
+    const workspace =
+      useProjectWorkspaceStore
+        .getState();
+
+    const selected =
+      getSelectedRepoContext();
+
+    const target = {
+      repo:
+        projection.repo,
+
+      branch:
+        projection.sourceBranch,
+
+      projectRoot:
+        selected?.repo ===
+          projection.repo &&
+        selected.branch ===
+          projection.sourceBranch
+          ? selected.projectRoot
+          : '/',
+    };
+
+    if (
+      !workspace
+        .activeProjectContext
+    ) {
+      workspace
+        .activateProjectContext(
+          target,
+        );
+    } else if (
+      !sameProjectContext(workspace.activeProjectContext, target)
+    ) {
+      return;
+    }
+
+    const active =
+      useProjectWorkspaceStore
+        .getState();
+
+    /*
+     * Project state is shared by all task sessions in this context.
+     * Historical task restoration may fill an empty context, but must never
+     * overwrite newer project state.
+     */
+    if (
+      active.projectFiles
+        .length ||
+      active.commitSha ||
+      active.deployUrl
+    ) {
+      return;
+    }
+
+    active.applyBuild({
+      ...target,
+
+      projectId:
+        projection.projectId,
+
+      projectName:
+        projection.projectName,
+
+      html:
+        projection.html,
+
+      css:
+        projection.css,
+
+      js:
+        projection.js,
+
+      projectFiles: projection.projectFiles,
+
+      replaceProjectFiles:
+        projection.replaceProjectFiles,
+
+      githubRepoUrl:
+        projection.githubRepoUrl,
+
+      commitSha:
+        projection.commitSha,
+
+      reviewBranch:
+        projection.reviewBranch,
+
+      status:
+        projection.status,
+
+      changesSummary:
+        projection.changesSummary,
+
+      fileTrail:
+        projection.fileTrail,
+
+      openPreview:
+        projection.previewAvailable,
+
+      terminalLine:
+        projection.terminalLines[
+          0
+        ],
+    });
+
+    for (
+      const line of
+      projection
+        .terminalLines
+        .slice(
+          1,
+        )
+    ) {
+      active
+        .appendTerminal(
+          line,
+        );
     }
 
     return;
   }
-    // A saved task must never hydrate its files into a differently selected repository.
-    if (repositoryName?.includes('/') && projection.repo !== repositoryName) return;
-    const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
-    const workspace = useProjectWorkspaceStore.getState();
-    const selected = getSelectedRepoContext();
-    const target = {
-      repo: projection.repo,
-      branch: projection.sourceBranch,
-      projectRoot:
-        selected?.repo === projection.repo && selected.branch === projection.sourceBranch
-          ? selected.projectRoot
-          : '/',
-    };
-    if (!workspace.activeProjectContext) workspace.activateProjectContext(target);
-    else if (!sameProjectContext(workspace.activeProjectContext, target)) return;
-    const active = useProjectWorkspaceStore.getState();
-    // Project state is shared by all tasks in a context; a restored task may fill an
-    // empty context, but it must not replace newer project state already present there.
-    if (active.projectFiles.length || active.commitSha || active.deployUrl) return;
 
-    active.applyBuild({
-  ...target,
+  const output =
+    latestRecoverableLandingOutput(
+      messages,
+    );
 
-  projectId:
-    projection.projectId,
-
-  projectName:
-    projection.projectName,
-
-  html:
-    projection.html,
-
-  css:
-    projection.css,
-
-  js:
-    projection.js,
-
-  projectFiles:
-    projection.projectFiles,
-
-  replaceProjectFiles:
-    projection.replaceProjectFiles,
-
-  githubRepoUrl:
-    projection.githubRepoUrl,
-
-  commitSha:
-    projection.commitSha,
-
-  reviewBranch:
-    projection.reviewBranch,
-
-  status:
-    projection.status,
-
-  changesSummary:
-    projection.changesSummary,
-
-  fileTrail:
-    projection.fileTrail,
-
-  openPreview:
-    projection.previewAvailable,
-
-  terminalLine:
-    projection.terminalLines[0],
-});
-    
-    for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
+  if (
+    !output
+  ) {
     return;
   }
 
-  const output = latestRecoverableLandingOutput(messages);
-  if (!output) return;
-  const { useProjectWorkspaceStore } = await import('@/store/useProjectWorkspaceStore');
-  const workspace = useProjectWorkspaceStore.getState();
-  const selected = getSelectedRepoContext();
-  if (repositoryName?.includes('/')) {
+  const {
+    useProjectWorkspaceStore,
+  } =
+    await import(
+      '@/store/useProjectWorkspaceStore'
+    );
+
+  const workspace =
+    useProjectWorkspaceStore
+      .getState();
+
+  const selected =
+    getSelectedRepoContext();
+
+  if (
+    repositoryName?.includes(
+      '/',
+    )
+  ) {
     const target = {
-      repo: repositoryName,
-      branch: selected?.repo === repositoryName ? selected.branch : workspace.branch,
-      projectRoot: selected?.repo === repositoryName ? selected.projectRoot : workspace.projectRoot,
+      repo:
+        repositoryName,
+
+      branch:
+        selected?.repo ===
+        repositoryName
+          ? selected.branch
+          : workspace.branch,
+
+      projectRoot:
+        selected?.repo ===
+        repositoryName
+          ? selected.projectRoot
+          : workspace.projectRoot,
     };
-    if (!workspace.activeProjectContext) workspace.activateProjectContext(target);
-    else workspace.assertActiveProjectTarget(target);
+
+    if (
+      !workspace
+        .activeProjectContext
+    ) {
+      workspace
+        .activateProjectContext(
+          target,
+        );
+    } else {
+      workspace
+        .assertActiveProjectTarget(
+          target,
+        );
+    }
   }
-  const active = useProjectWorkspaceStore.getState();
-  // Task restoration must not replace project state already owned by this context.
-  if (active.projectFiles.length || active.html.trim() || active.commitSha || active.deployUrl) return;
-  const payload = recoveredLandingWorkspaceBuild(output, active, {
-    repo: repositoryName?.includes('/') ? repositoryName : selected?.repo,
-    branch: selected?.branch ?? 'main',
-  });
-  if (payload) active.applyBuild(payload);
+
+  const active =
+    useProjectWorkspaceStore
+      .getState();
+
+  if (
+    active.projectFiles
+      .length ||
+    active.html.trim() ||
+    active.commitSha ||
+    active.deployUrl
+  ) {
+    return;
+  }
+
+  const payload =
+    recoveredLandingWorkspaceBuild(
+      output,
+      active,
+
+      {
+        repo:
+          repositoryName?.includes(
+            '/',
+          )
+            ? repositoryName
+            : selected?.repo,
+
+        branch:
+          selected?.branch ??
+          'main',
+      },
+    );
+
+  if (
+    payload
+  ) {
+    active
+      .applyBuild(
+        payload,
+      );
+  }
 }
 
 function lastUserPromptNear(
