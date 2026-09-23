@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -13,6 +12,17 @@ import '@/styles/xroga-vs-lovable.css';
 
 export const XROGA_VS_LOVABLE_PATH = '/compare/xroga-vs-lovable';
 
+const COMPARISON_IMAGES = {
+  hero: 'https://i.postimg.cc/Fs5XS9fq/fdde9453-1bd2-4c3e-9261-5ff95fc9df61.png',
+  atAGlance: 'https://i.postimg.cc/25q0TZM0/02-at-a-glance.png',
+  differentPaths:
+    'https://i.postimg.cc/ZnY3sknf/03-same-request-different-paths.png',
+  proof:
+    'https://i.postimg.cc/kGjSkjtx/04-working-software-proof.png',
+  future:
+    'https://i.postimg.cc/4xHcSQ4y/05-build-today-go-further.png',
+} as const;
+
 export const XROGA_VS_LOVABLE_TITLE =
   'Xroga vs Lovable (2026): Which AI App Builder Fits Your Project?';
 
@@ -20,7 +30,7 @@ export const XROGA_VS_LOVABLE_DESCRIPTION =
   'Compare Xroga vs Lovable in 2026 across existing repositories, GitHub, testing, previews, deployment, code ownership, pricing, and product fit.';
 
 export const XROGA_VS_LOVABLE_OG_IMAGE =
-  '/images/compare/xroga-vs-lovable/01-hero-xroga-vs-lovable.png';
+  '/opengraph-image';
 
 const REVIEWED = '2026-09-23';
 const PUBLISHED = '2026-09-09';
@@ -175,14 +185,16 @@ function Figure({
 }) {
   return (
     <figure className="xvl-figure">
-      <Image
+      <img
         src={src}
         alt={alt}
-        width={1600}
-        height={900}
-        priority={priority}
-        sizes="(max-width: 760px) 100vw, 1120px"
+        width="1600"
+        height="900"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        decoding="async"
       />
+
       <figcaption>{caption}</figcaption>
     </figure>
   );
@@ -341,7 +353,11 @@ export function XrogaVsLovablePage() {
           </aside>
 
           <Figure
-            src="/images/compare/xroga-vs-lovable/01-hero-xroga-vs-lovable.png"
+  src={COMPARISON_IMAGES.hero}
+  alt="Xroga versus Lovable AI app builder comparison showing two different ways to turn an idea into software"
+  caption="Two ways to turn an idea into software. The real difference becomes clearer after generation."
+  priority
+/>
             alt="Xroga versus Lovable AI app builder comparison showing two different ways to turn an idea into software"
             caption="Two ways to turn an idea into software. The real difference becomes clearer after generation."
             priority
@@ -512,7 +528,10 @@ export function XrogaVsLovablePage() {
                 </p>
 
                 <Figure
-                  src="/images/compare/xroga-vs-lovable/02-at-a-glance.png"
+  src={COMPARISON_IMAGES.atAGlance}
+  alt="At a glance comparison of Xroga and Lovable across starting point, codebase, validation, preview, deployment and ownership"
+  caption="Both products can move from a description toward working software. Their starting points and relationship with the codebase differ."
+/>
                   alt="At a glance comparison of Xroga and Lovable across starting point, codebase, validation, preview, deployment and ownership"
                   caption="Both products can move from a description toward working software. Their starting points and relationship with the codebase differ."
                 />
@@ -649,7 +668,10 @@ export function XrogaVsLovablePage() {
                 </div>
 
                 <Figure
-                  src="/images/compare/xroga-vs-lovable/03-same-request-different-paths.png"
+  src={COMPARISON_IMAGES.differentPaths}
+  alt="The same customer portal request taking different workflow paths in Xroga and Lovable"
+  caption="Same request, different starting points. This difference becomes more important as a product accumulates architecture, history and users."
+/>
                   alt="The same customer portal request taking different workflow paths in Xroga and Lovable"
                   caption="Same request, different starting points. This difference becomes more important as a product accumulates architecture, history and users."
                 />
@@ -783,7 +805,10 @@ export function XrogaVsLovablePage() {
                 </p>
 
                 <Figure
-                  src="/images/compare/xroga-vs-lovable/04-working-software-proof.png"
+  src={COMPARISON_IMAGES.proof}
+  alt="Xroga implementation workflow showing built changes, passed checks, preview evidence and reviewable files"
+  caption="Generation is the beginning. The useful question is whether the result can be inspected, checked and continued."
+/>
                   alt="Xroga implementation workflow showing built changes, passed checks, preview evidence and reviewable files"
                   caption="Generation is the beginning. The useful question is whether the result can be inspected, checked and continued."
                 />
@@ -1008,7 +1033,10 @@ export function XrogaVsLovablePage() {
                 </div>
 
                 <Figure
-                  src="/images/compare/xroga-vs-lovable/05-build-today-go-further.png"
+  src={COMPARISON_IMAGES.future}
+  alt="Xroga long-term workflow from starting an idea through existing repository work, verification and deployment"
+  caption="Start simple. Keep going when the product gets serious."
+/>
                   alt="Xroga long-term workflow from starting an idea through existing repository work, verification and deployment"
                   caption="Start simple. Keep going when the product gets serious."
                 />
