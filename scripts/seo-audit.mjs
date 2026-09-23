@@ -10,6 +10,10 @@ const pageText = new Map();
 
 function match(html, expression) { return html.match(expression)?.[1]?.trim() || ''; }
 function decodeHtml(value) { return value.replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#x27;', "'").replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>'); }
+function normalizeCanonical(value) {
+  try { const url = new URL(value); return url.pathname === '/' && !url.search && !url.hash ? url.origin : url.href.replace(/\/$/, ''); }
+  catch { return value; }
+}
 function visibleText(value) { return value.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 function shingles(value) {
   const words = value.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((word) => word.length > 2);
@@ -55,8 +59,8 @@ for (const contract of contracts.publicRoutes) {
   const h1Count = (html.match(/<h1(?:\s|>)/gi) || []).length;
   if (title !== contract.title) problems.push(`${path}: expected title "${contract.title}", found "${title}"`);
   if (!description || description.length < 70 || description.length > 180) problems.push(`${path}: description missing or outside 70–180 characters`);
-  if (canonical !== contract.canonical) problems.push(`${path}: expected canonical ${contract.canonical}, found ${canonical || 'none'}`);
-  if (ogUrl !== contract.canonical) problems.push(`${path}: og:url does not match canonical`);
+  if (normalizeCanonical(canonical) !== normalizeCanonical(contract.canonical)) problems.push(`${path}: expected canonical ${contract.canonical}, found ${canonical || 'none'}`);
+  if (normalizeCanonical(ogUrl) !== normalizeCanonical(contract.canonical)) problems.push(`${path}: og:url does not match canonical`);
   if (!ogImage.startsWith('https://xroga.com/')) problems.push(`${path}: og:image missing or non-absolute`);
   if (!/name=["']twitter:card["']/i.test(html)) problems.push(`${path}: twitter card metadata missing`);
   if (h1Count !== contract.h1Count) problems.push(`${path}: expected ${contract.h1Count} H1, found ${h1Count}`);
@@ -65,7 +69,8 @@ for (const contract of contracts.publicRoutes) {
   if (text.length < 180) problems.push(`${path}: insufficient server-rendered text`);
   pageText.set(path, shingles(text));
   if (titleMap.has(title)) problems.push(`${path}: duplicate title also used by ${titleMap.get(title)}`); else titleMap.set(title, path);
-  if (canonicalMap.has(canonical)) problems.push(`${path}: duplicate canonical also used by ${canonicalMap.get(canonical)}`); else canonicalMap.set(canonical, path);
+  const canonicalKey = normalizeCanonical(canonical);
+  if (canonicalMap.has(canonicalKey)) problems.push(`${path}: duplicate canonical also used by ${canonicalMap.get(canonicalKey)}`); else canonicalMap.set(canonicalKey, path);
 
   const schemaTypes = new Set();
   const schemaIds = new Set();
@@ -131,7 +136,7 @@ try {
     if (response.status >= 300 && response.status < 400) problems.push(`${pathname}: redirect appears in sitemap`);
     if (/content=["'][^"']*noindex/i.test(html)) problems.push(`${pathname}: noindex URL appears in sitemap`);
     const canonical = match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) || match(html, /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i);
-    if (canonical !== location) problems.push(`${pathname}: sitemap location and canonical differ (${location} vs ${canonical || 'none'})`);
+    if (normalizeCanonical(canonical) !== normalizeCanonical(location)) problems.push(`${pathname}: sitemap location and canonical differ (${location} vs ${canonical || 'none'})`);
     if (/^\/(?:stack|migrate|tools)(?:\/|$)|^\/changelog$/.test(pathname) && !internalPaths.has(pathname)) {
       problems.push(`${pathname}: new discovery page has no inbound link from an audited public route`);
     }

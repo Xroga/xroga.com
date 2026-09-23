@@ -17,7 +17,7 @@ export const metadata =
       'Xroga AI Pricing — Free & Xroga Pro',
 
     description:
-      'Start building software with Xroga AI for free. Upgrade to Xroga Pro for $25/month for higher AI capacity, Full Access pacing, deeper product workflows, browser verification, repository engineering and production-focused building.',
+      'Start building software with Xroga AI for free. Upgrade to Xroga Pro for $25/month for higher capacity, browser verification, repository engineering, and product workflows.',
 
     path:
       '/pricing',

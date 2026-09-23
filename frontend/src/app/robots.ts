@@ -7,11 +7,11 @@ export default function robots(): MetadataRoute.Robots {
   }
 
   const privatePaths = ['/api/', '/dashboard/', '/workspace', '/settings', '/admin', '/auth/', '/preview/', '/terminal/'];
+  const publicSearchCrawlers = ['Googlebot', 'bingbot', 'OAI-SearchBot', 'PerplexityBot', 'Claude-SearchBot'];
   return {
     rules: [
       { userAgent: '*', allow: ['/', '/llms.txt'], disallow: privatePaths },
-      { userAgent: 'OAI-SearchBot', allow: ['/', '/llms.txt'], disallow: privatePaths },
-      { userAgent: 'PerplexityBot', allow: ['/', '/llms.txt'], disallow: privatePaths },
+      ...publicSearchCrawlers.map((userAgent) => ({ userAgent, allow: ['/', '/llms.txt'], disallow: privatePaths })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

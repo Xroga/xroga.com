@@ -3,7 +3,7 @@
     { "path": "/", "status": 200, "title": "AI App Builder & Coding Agent for Real Software | Xroga", "canonical": "https://xroga.com", "h1Count": 1, "schemaTypes": ["Organization", "Person", "WebSite", "SoftwareApplication", "WebPage"] },
     { "path": "/features", "status": 200, "title": "Xroga Features — AI Chat, App Building & Coding Agent", "canonical": "https://xroga.com/features", "h1Count": 1, "schemaTypes": ["CollectionPage"] },
     { "path": "/features/ai-chat", "status": 200, "title": "Xroga AI Chat — Search, Research, Analyze & Act", "canonical": "https://xroga.com/features/ai-chat", "h1Count": 1, "schemaTypes": ["WebPage"] },
-    { "path": "/pricing", "status": 200, "title": "Pricing — Free and Xroga Pro", "canonical": "https://xroga.com/pricing", "h1Count": 1, "schemaTypes": ["WebPage"] },
+    { "path": "/pricing", "status": 200, "title": "Xroga AI Pricing — Free & Xroga Pro", "canonical": "https://xroga.com/pricing", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/ai-app-builder", "status": 200, "title": "AI App Builder for Real Product Work | XROGA AI", "canonical": "https://xroga.com/ai-app-builder", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/ai-coding-agent", "status": 200, "title": "AI Coding Agent That Works in Your Repository | XROGA AI", "canonical": "https://xroga.com/ai-coding-agent", "h1Count": 1, "schemaTypes": ["WebPage"] },
     { "path": "/ai-website-builder", "status": 200, "title": "AI Website Builder With Code You Own | XROGA AI", "canonical": "https://xroga.com/ai-website-builder", "h1Count": 1, "schemaTypes": ["WebPage"] },
@@ -34,6 +34,9 @@
     { "path": "/robots.txt", "contentType": "text/plain", "includes": "Sitemap: https://xroga.com/sitemap.xml" },
     { "path": "/sitemap.xml", "contentType": "application/xml", "includes": "https://xroga.com/compare/xroga-vs-lovable" },
     { "path": "/llms.txt", "contentType": "text/plain", "includes": "Comparisons: https://xroga.com/compare" },
+    { "path": "/blog/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
+    { "path": "/research/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
+    { "path": "/changelog/feed.xml", "contentType": "application/rss+xml", "includes": "<rss" },
     { "path": "/opengraph-image", "contentType": "image/png" },
     { "path": "/manifest.webmanifest", "contentType": "application/manifest+json", "includes": "XROGA AI" }
   ]

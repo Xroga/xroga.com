@@ -1,3 +1,5 @@
+import { nextRedirects } from './redirects.mjs';
+
 const configuredApiOrigin = (() => {
   try {
     const url = new URL(process.env.NEXT_PUBLIC_API_URL ?? '');
@@ -100,52 +102,7 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    return [
-      // The crypto page is now positioned as a broader Crypto Builder, not a
-      // hackathon-only page. The old URL is kept as a permanent redirect so existing
-      // links and indexed results still resolve, and it renders no duplicate page.
-      //
-      // The destination is `/crypto`, the page that exists. It pointed at
-      // `/crypto-builder`, which never has — so the redirect that was meant to rescue
-      // old links delivered them to a 404 instead. `/crypto-builder` is redirected too
-      // rather than simply dropped: this was a *permanent* redirect, so browsers and
-      // indexes have it cached and will keep asking for it.
-      { source: '/crypto-hackathon-builder', destination: '/crypto', permanent: true },
-      { source: '/crypto-builder', destination: '/crypto', permanent: true },
-      { source: '/login', destination: '/auth/login', permanent: true },
-      { source: '/signin', destination: '/auth/login', permanent: true },
-      { source: '/signup', destination: '/auth/signup', permanent: true },
-      { source: '/register', destination: '/auth/signup', permanent: true },
-      { source: '/sign-up', destination: '/auth/signup', permanent: true },
-      { source: '/sign-in', destination: '/auth/login', permanent: true },
-      { source: '/droga', destination: '/about', permanent: true },
-      { source: '/droga-ai', destination: '/about', permanent: true },
-      { source: '/drogaai', destination: '/about', permanent: true },
-      { source: '/roga', destination: '/about', permanent: true },
-      { source: '/roga-ai', destination: '/about', permanent: true },
-      { source: '/zroga', destination: '/about', permanent: true },
-      { source: '/zroga-ai', destination: '/about', permanent: true },
-      { source: '/xroga-ai', destination: '/', permanent: true },
-      { source: '/ai-image-generator', destination: '/ai-app-builder', permanent: true },
-      { source: '/ai-image-generation', destination: '/ai-app-builder', permanent: true },
-      { source: '/ai-chat', destination: '/ai-coding-agent', permanent: true },
-      { source: '/github-deploy', destination: '/github-ai-coding-agent', permanent: true },
-      { source: '/vercel-deploy', destination: '/vercel-ai-deployment', permanent: true },
-      { source: '/netlify-deploy', destination: '/vercel-ai-deployment', permanent: true },
-      { source: '/ai-debugging', destination: '/ai-coding-agent', permanent: true },
-      { source: '/build-apps', destination: '/ai-app-builder', permanent: true },
-      { source: '/features/ai-image-generation', destination: '/ai-app-builder', permanent: true },
-      { source: '/features/ai-video-generation', destination: '/ai-app-builder', permanent: true },
-      { source: '/features/build-websites-apps-games', destination: '/ai-app-builder', permanent: true },
-      { source: '/features/code-debugging', destination: '/ai-coding-agent', permanent: true },
-      { source: '/features/github-auto-deploy', destination: '/github-ai-coding-agent', permanent: true },
-      { source: '/features/vercel-netlify-deploy', destination: '/vercel-ai-deployment', permanent: true },
-      { source: '/features/browser-automation', destination: '/ai-coding-agent', permanent: true },
-      { source: '/features/xroga-workspace', destination: '/ai-coding-agent', permanent: true },
-      { source: '/features/community-hub', destination: '/community', permanent: true },
-      { source: '/features/earn-xrg-referrals', destination: '/pricing', permanent: true },
-      { source: '/features/integrations', destination: '/integrations', permanent: true },
-    ];
+    return nextRedirects();
   },
 };
 

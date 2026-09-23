@@ -36,6 +36,7 @@ test-results/
 playwright-report/
 artifacts/growth-intelligence/
 artifacts/growth-content/
+artifacts/growth-publishing/
 .growth-cache/
 growth/imports/*
 !growth/imports/README.md

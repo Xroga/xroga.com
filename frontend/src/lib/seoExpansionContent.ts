@@ -54,7 +54,7 @@ export const STACK_GUIDES: EvidencePage[] = [
       { heading: 'Run the actual project checks', paragraphs: ['Use the repository’s pinned compiler and build scripts. A standalone type check can pass while framework compilation, tests, generated code, or bundling still fail. Report skipped checks and blockers explicitly.'] },
     ],
     sources: [{ label: 'TypeScript handbook', href: 'https://www.typescriptlang.org/docs/handbook/intro.html' }, { label: 'TypeScript compiler options', href: 'https://www.typescriptlang.org/tsconfig/' }],
-    related: ['/ai-coding-agent', '/build/api', '/learn/production-readiness-checklist'], reviewed,
+    related: ['/ai-coding-agent', '/build/saas-app', '/learn/production-readiness-checklist'], reviewed,
   },
   {
     slug: 'python',
@@ -68,7 +68,7 @@ export const STACK_GUIDES: EvidencePage[] = [
       { heading: 'Test the intended artifact', paragraphs: ['Run the repository’s unit and integration tests, static checks, packaging or container build, and a representative runtime path. For libraries, verify the public import surface; for services, verify health and one real request boundary.'] },
     ],
     sources: [{ label: 'Python packaging guide', href: 'https://packaging.python.org/en/latest/' }, { label: 'Python documentation', href: 'https://docs.python.org/3/' }],
-    related: ['/ai-coding-agent', '/build/api', '/security'], reviewed,
+    related: ['/ai-coding-agent', '/build/saas-app', '/security'], reviewed,
   },
 ];
 
