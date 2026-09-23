@@ -273,32 +273,31 @@ export interface ProjectWorkspaceState
       },
     ) => void;
 
-  applyDelivery:
-    (
-      payload: {
+applyDelivery:
+  (
+    payload: {
+      projectId?:
+        string | null;
 
-        projectId?:
-  string | null;
-        
-        repo?:
-          string | null;
+      repo?:
+        string | null;
 
-        branch?:
-          string;
+      branch?:
+        string;
 
-        githubRepoUrl?:
-          string | null;
+      githubRepoUrl?:
+        string | null;
 
-        commitSha?:
-          string | null;
+      commitSha?:
+        string | null;
 
-        deployUrl?:
-          string | null;
+      deployUrl?:
+        string | null;
 
-        status?:
-          ProjectWorkspaceStatus;
-      },
-    ) => void;
+      status?:
+        ProjectWorkspaceStatus;
+    },
+  ) => void;
 
   setProjectFiles:
     (
@@ -1279,59 +1278,58 @@ export const useProjectWorkspaceStore =
               );
             },
 
-          applyDelivery:
-            (
-              payload,
-            ) =>
-              update(
-                (
-                  s,
-                ) => ({
-                  repo:
-                    projectId:
-  payload.projectId !==
-  undefined
-    ? payload.projectId
-    : s.projectId,
-                    payload.repo !==
-                    undefined
-                      ? payload.repo
-                      : s.repo,
+applyDelivery:
+  (
+    payload,
+  ) =>
+    update(
+      (
+        s,
+      ) => ({
+        projectId:
+          payload.projectId !==
+          undefined
+            ? payload.projectId
+            : s.projectId,
 
-                  branch:
-                    payload.branch ??
-                    s.branch,
+        repo:
+          payload.repo !==
+          undefined
+            ? payload.repo
+            : s.repo,
 
-                  githubRepoUrl:
-                    payload
-                      .githubRepoUrl !==
-                    undefined
-                      ? payload
-                          .githubRepoUrl
-                      : s.githubRepoUrl,
+        branch:
+          payload.branch ??
+          s.branch,
 
-                  commitSha:
-                    payload.commitSha !==
-                    undefined
-                      ? payload.commitSha
-                      : s.commitSha,
+        githubRepoUrl:
+          payload.githubRepoUrl !==
+          undefined
+            ? payload.githubRepoUrl
+            : s.githubRepoUrl,
 
-                  deployUrl:
-                    payload.deployUrl !==
-                    undefined
-                      ? payload.deployUrl
-                      : s.deployUrl,
+        commitSha:
+          payload.commitSha !==
+          undefined
+            ? payload.commitSha
+            : s.commitSha,
 
-                  status:
-                    payload.status ??
-                    s.status,
+        deployUrl:
+          payload.deployUrl !==
+          undefined
+            ? payload.deployUrl
+            : s.deployUrl,
 
-                  lastUpdateAt:
-                    Date.now(),
-                }),
-              ),
+        status:
+          payload.status ??
+          s.status,
 
-          setProjectFiles:
+        lastUpdateAt:
+          Date.now(),
+      }),
+    ),
+
+setProjectFiles:
             (
               projectFiles,
             ) =>
