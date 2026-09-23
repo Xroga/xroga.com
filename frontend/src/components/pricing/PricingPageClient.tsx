@@ -1,3474 +1,1531 @@
-'use client';
-
-import {
-  useEffect,
-  useState,
-} from 'react';
-
-import {
-  useRouter,
-} from 'next/navigation';
-
-import type {
-  LucideIcon,
-} from 'lucide-react';
-
-import {
-  ArrowRight,
-  BadgeCheck,
-  Blocks,
-  Bot,
-  BrainCircuit,
-  Briefcase,
-  CalendarClock,
- Check,
-CircleGauge,
-Cloud,
-Code2,
-Database,
-FileSearch,
-Files,
-GitBranch,
-Globe2,
-  Layers3,
-  Laptop,
-  Monitor,
-  PackageCheck,
-  Plug,
-  RefreshCw,
-  Rocket,
-  Search,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Terminal,
-  TestTube2,
-  UserRound,
-  Users,
-  WandSparkles,
-  Workflow,
-  Wrench,
-  Zap,
-} from 'lucide-react';
-
-import {
-  createClient,
-} from '@/lib/supabase/client';
-
-import {
-  api,
-} from '@/lib/api';
-
-import {
-  CheckoutButton,
-} from '@/components/billing/CheckoutButton';
-
-import styles
-  from './PricingPage.module.css';
-
-
-type BillingStatus =
-  Awaited<
-    ReturnType<
-      typeof api.billing.status
-    >
-  >;
-
-
-type FeatureItem = {
-  icon: LucideIcon;
-  label: string;
-  strong?: boolean;
-};
-
-
-const FREE_FEATURES:
-  FeatureItem[] = [
-
-  {
-    icon: Code2,
-    label: 'AI coding agent & app builder',
-    strong: true,
-  },
-
-  {
-    icon: Layers3,
-    label: 'Build websites, web apps & SaaS',
-    strong: true,
-  },
-
-  {
-    icon: GitBranch,
-    label: 'Work with real GitHub repositories',
-    strong: true,
-  },
-
-  {
-    icon: Files,
-    label: 'Repository-aware code changes',
-  },
-
-  {
-    icon: Wrench,
-    label: 'Debug, fix & repair code',
-  },
-
-  {
-    icon: Database,
-    label: 'APIs, backend & data workflows',
-  },
-
-  {
-    icon: PackageCheck,
-    label: 'Automatic production build checks',
-  },
-
-  {
-    icon: Monitor,
-    label: 'Real browser preview',
-  },
-
-  {
-    icon: TestTube2,
-    label: 'Automatic browser verification',
-    strong: true,
-  },
-
-  {
-    icon: Smartphone,
-    label: 'Desktop + mobile UI checks',
-  },
-
-  {
-    icon: Database,
-    label: 'Supabase integration workflows',
-  },
-
-  {
-    icon: Rocket,
-    label: 'Supported Vercel deployment workflow',
-  },
-
-  {
-    icon: Search,
-    label: 'Live web search & research',
-  },
-
-  {
-    icon: FileSearch,
-    label: 'Documents, screenshots & files',
-  },
-
-  {
-    icon: BrainCircuit,
-    label: 'Black Hole V∞ intelligence',
-  },
-
-  {
-    icon: Plug,
-    label: 'Plugins & integrations workspace',
-  },
-
-  {
-    icon: CircleGauge,
-    label: 'Included monthly AI capacity',
-  },
-
-  {
-    icon: CalendarClock,
-    label: 'Capacity unlocks progressively',
-  },
-];
-
-
-const PRO_FEATURES:
-  FeatureItem[] = [
-
-  {
-    icon: BadgeCheck,
-    label: 'Everything available in Free',
-    strong: true,
-  },
-
-  {
-    icon: Zap,
-    label: 'Higher monthly AI capacity',
-    strong: true,
-  },
-
-  {
-    icon: Rocket,
-    label: 'Full Access pacing',
-    strong: true,
-  },
-
-  {
-    icon: Workflow,
-    label: 'Longer end-to-end software builds',
-    strong: true,
-  },
-
-  {
-    icon: Code2,
-    label: 'Large multi-file changes & refactors',
-  },
-
-  {
-    icon: RefreshCw,
-    label: 'Repeated build → test → repair loops',
-  },
-
-  {
-  icon: GitBranch,
-  label: 'Work with real GitHub repositories',
-  strong: true,
-},
-
-  {
-    icon: Search,
-    label: 'Research-heavy product workflows',
-  },
-
-  {
-    icon: TestTube2,
-    label: 'Extended browser verification cycles',
-  },
-
-  {
-    icon: Wrench,
-    label: 'Repair after runtime & browser failures',
-  },
-
-  {
-    icon: GitBranch,
-    label: 'Branch, commit & release workflows',
-  },
-
-  {
-    icon: Rocket,
-    label: 'Production deployment workflows',
-  },
-
-  {
-    icon: Database,
-    label: 'Supabase schema, auth & storage setup',
-  },
-
-  {
-    icon: Globe2,
-    label: 'Custom domain + DNS verification',
-  },
-
-  {
-    icon: Globe2,
-    label: 'Chrome extension packaging',
-  },
-
-  {
-    icon: Laptop,
-    label: 'Electron desktop release workflows',
-  },
-
-  {
-    icon: Smartphone,
-    label: 'Expo mobile project workflows',
-  },
-
-  {
-    icon: Bot,
-    label: 'Automation & agent scaffolds',
-  },
-
-  {
-    icon: Blocks,
-    label: 'Crypto / Web3 product workflows',
-  },
-
-  {
-    icon: RefreshCw,
-    label: 'More room for post-launch iteration',
-  },
-
-  {
-    icon: Sparkles,
-    label: 'Priority capacity for active builders',
-  },
-];
-
-
-const CAPABILITY_GROUPS = [
-
-  {
-    icon: Code2,
-
-    title:
-      'Build',
-
-    description:
-      'Turn product ideas into real software surfaces.',
-
-    items: [
-      'Websites',
-      'SaaS products',
-      'Dashboards',
-      'Admin systems',
-      'Internal tools',
-      'Booking products',
-      'Marketplaces',
-      'Customer portals',
-      'APIs',
-      'AI products',
-    ],
-  },
-
-  {
-    icon: GitBranch,
-
-    title:
-      'Code & repositories',
-
-    description:
-      'Work with new projects or code you already own.',
-
-    items: [
-      'Existing repositories',
-      'New GitHub projects',
-      'Multi-file changes',
-      'Refactoring',
-      'Bug fixing',
-      'Feature implementation',
-      'Repository understanding',
-      'Branch workflows',
-      'Commit evidence',
-      'Release preparation',
-    ],
-  },
-
-  {
-    icon: Search,
-
-    title:
-      'Research',
-
-    description:
-      'Use current evidence when the work depends on the outside world.',
-
-    items: [
-      'Live web search',
-      'Multi-source research',
-      'Current documentation',
-      'Source-backed answers',
-      'API research',
-      'Provider research',
-      'Public-source intelligence',
-      'Evidence freshness',
-      'Source authority checks',
-      'Research → implementation',
-    ],
-  },
-
-  {
-    icon: Database,
-
-    title:
-      'Backend & data',
-
-    description:
-      'Go beyond the visible interface.',
-
-    items: [
-      'Backend routes',
-      'APIs',
-      'PostgreSQL',
-      'Supabase',
-      'Authentication',
-      'Storage',
-      'Schema setup',
-      'RLS workflows',
-      'Persistent application data',
-      'Environment configuration',
-    ],
-  },
-
-  {
-    icon: TestTube2,
-
-    title:
-      'Test & verify',
-
-    description:
-      'Treat running evidence as more important than an AI saying “done.”',
-
-    items: [
-      'Production builds',
-      'Applicable tests',
-      'Server startup',
-      'HTTP checks',
-      'DOM checks',
-      'Page errors',
-      'Console errors',
-      'Network failures',
-      'Interaction checks',
-      'Desktop + mobile verification',
-    ],
-  },
-
-  {
-    icon: Rocket,
-
-    title:
-      'Publish',
-
-    description:
-      'Move from project files to provider-backed release evidence.',
-
-    items: [
-      'GitHub',
-      'Vercel',
-      'Production previews',
-      'Web deployment',
-      'Custom domains',
-      'DNS verification',
-      'Chrome extension ZIP',
-      'Desktop releases',
-      'Expo / EAS workflow',
-      'Release evidence',
-    ],
-  },
-
-  {
-    icon: Plug,
-
-    title:
-      'Plugins & services',
-
-    description:
-      'Connect infrastructure and business tools your product needs.',
-
-    items: [
-      'Developer tools',
-      'Databases',
-      'Cloud infrastructure',
-      'AI providers',
-      'Storage',
-      'Payments',
-      'Analytics',
-      'Automation',
-      'Domains & DNS',
-      'Hundreds more',
-    ],
-  },
-
-  {
-    icon: Terminal,
-
-    title:
-      'Developer workspace',
-
-    description:
-      'Keep the underlying work visible when you want technical control.',
-
-    items: [
-      'Files',
-      'Code',
-      'Changes',
-      'Terminal',
-      'Browser preview',
-      'Deploy evidence',
-      'Run history',
-      'Project state',
-      'Uploads',
-      'Live execution status',
-    ],
-  },
-
-] as const;
-
-
-const BUILD_TYPES = [
-  'Website',
-  'SaaS',
-  'AI SaaS',
-  'Dashboard',
-  'CRM',
-  'Admin panel',
-  'Internal tool',
-  'Booking system',
-  'Marketplace',
-  'Customer portal',
-  'API',
-  'AI chatbot',
-  'Chrome extension',
-  'Desktop utility',
-  'Mobile-app foundation',
-  'Automation',
-  'AI agent',
-  'Browser game',
-  'Analytics product',
-  'Data product',
-  'Crypto dashboard',
-  'Web3 app',
-  'DAO tool',
-  'Portfolio',
-  'Landing page',
-  'Existing-product feature',
-  'Bug fix',
-  'Redesign',
-];
-
-
-const VERIFICATION_STEPS = [
-  'Code',
-  'Build',
-  'Tests',
-  'Start app',
-  'HTTP',
-  'DOM',
-  'Page errors',
-  'Console',
-  'Network',
-  'Interactions',
-  'Desktop + mobile',
-  'Repair or ship',
-];
-
-
-const PLAN_COMPARISON = [
-
-  [
-    'Build software with AI',
-    'Core access',
-    'Full workflow + higher capacity',
-  ],
-
-  [
-    'AI Coding Agent',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'New projects',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Existing repositories',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Websites & web apps',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'SaaS & dashboards',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Backend & APIs',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Chrome / desktop / mobile workflows',
-    'Supported',
-    'More capacity for sustained builds',
-  ],
-
-  [
-    'Debug & repair',
-    'Included',
-    'More room for repeated repair loops',
-  ],
-
-  [
-    'Browser verification',
-    'Included',
-    'Extended verification & iteration',
-  ],
-
-  [
-    'Desktop + mobile checks',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'GitHub workflow',
-    'Included',
-    'Better suited to repeated shipping',
-  ],
-
-  [
-    'Supabase workflows',
-    'Included',
-    'More room for full-stack implementation',
-  ],
-
-  [
-    'Vercel workflow',
-    'Supported',
-    'Production-focused workflows',
-  ],
-
-  [
-    'Custom domains / DNS',
-    'Supported',
-    'Supported',
-  ],
-
-  [
-    'Live web search',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Deep research',
-    'Included',
-    'Higher capacity for research-heavy work',
-  ],
-
-  [
-    'Documents / screenshots / files',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Plugin catalog',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Monthly AI capacity',
-    'Included',
-    'Higher',
-  ],
-
-  [
-    'Balanced Month',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Progressive daily unlocks',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Full Access',
-    '—',
-    'Unlock current-cycle capacity earlier',
-  ],
-
-  [
-    'Large multi-stage builds',
-    'Capacity constrained',
-    'Designed for active use',
-  ],
-
-  [
-    'Long coding sessions',
-    'Capacity constrained',
-    'Designed for active use',
-  ],
-
-  [
-    'Production iteration',
-    'Limited by included capacity',
-    'Primary use case',
-  ],
-
-  [
-    'Monthly renewal',
-    'Included',
-    'Included',
-  ],
-
-  [
-    'Credit card',
-    'Not required',
-    'Required to subscribe',
-  ],
-
-  [
-    'Price',
-    '$0',
-    '$25 / month',
-  ],
-
-] as const;
-
-
-const COMPETITORS = [
-
-  {
-    name:
-      'Lovable',
-
-    price:
-      'Pro from $25/mo',
-
-    focus:
-      'Conversational web-app building, cloud hosting, Supabase and visual editing.',
-
-    difference:
-      'Xroga is positioned around a broader repository → research → verification → publishing workflow and additional software-output paths.',
-  },
-
-  {
-    name:
-      'Bolt',
-
-    price:
-      'Pro $25/mo',
-
-    focus:
-      'Browser-based app building with hosting, databases and custom domains.',
-
-    difference:
-      'Xroga emphasizes repository ownership, research, explicit verification evidence and cross-product engineering workflows.',
-  },
-
-  {
-    name:
-      'Replit',
-
-    price:
-      'Core $20/mo · Pro $100/mo',
-
-    focus:
-      'Broad cloud development environment with Agent, hosting, databases and collaboration.',
-
-    difference:
-      'Xroga is designed around an outcome-first path that hides technical complexity for nontechnical builders while keeping evidence available.',
-  },
-
-  {
-    name:
-      'v0',
-
-    price:
-      'Plus $30/user/mo',
-
-    focus:
-      'Web product creation with strong React, Next.js and Vercel integration.',
-
-    difference:
-      'Xroga combines product creation with live research, repository work, broader output workflows and explicit browser verification.',
-  },
-
-  {
-    name:
-      'Cursor',
-
-    price:
-      'Pro $20/mo',
-
-    focus:
-      'Developer-first coding environment with agents, repository tools, cloud agents and browser tooling.',
-
-    difference:
-      'Xroga wraps engineering inside an outcome-oriented product workflow intended to remain usable without coding experience.',
-  },
-
-] as const;
-
-
-const AUDIENCES = [
-
-  {
-    icon: Sparkles,
-
-    title:
-      'Founders',
-
-    body:
-      'Turn the product in your head into something customers, investors and teammates can actually open and test.',
-  },
-
-  {
-    icon: UserRound,
-
-    title:
-      'Nontechnical founders',
-
-    body:
-      'Describe the outcome in plain language. Xroga handles the technical workflow while keeping real project evidence visible.',
-  },
-
-  {
-    icon: Briefcase,
-
-    title:
-      'Business owners',
-
-    body:
-      'Build internal tools, portals, dashboards, automations and customer software around how your business actually works.',
-  },
-
-  {
-    icon: Users,
-
-    title:
-      'Product teams',
-
-    body:
-      'Prototype, research, connect real infrastructure, validate behavior and keep iterating without rebuilding the workflow elsewhere.',
-  },
-
-  {
-    icon: Code2,
-
-    title:
-      'Developers',
-
-    body:
-      'Bring an existing repository, inspect changes, use the terminal, review evidence and retain control of the underlying code.',
-  },
-
-  {
-    icon: WandSparkles,
-
-    title:
-      'Anyone with an idea',
-
-    body:
-      'Start from an outcome instead of starting by learning an entire development stack.',
-  },
-
-] as const;
-
-
-
-
-function FeatureLine({
-  feature,
-  pro = false,
-}: {
-  feature:
-    FeatureItem;
-
-  pro?:
-    boolean;
-}) {
-
-  const Icon =
-    feature.icon;
-
-
-  return (
-    <li
-      className={
-        styles.featureLine
-      }
-    >
-      <span
-        className={
-          pro
-            ? styles.featureIconPro
-            : styles.featureIcon
-        }
-      >
-        <Icon
-          aria-hidden="true"
-        />
-      </span>
-
-      <span
-        className={
-          feature.strong
-            ? styles.featureStrong
-            : undefined
-        }
-      >
-        {
-          feature.label
-        }
-      </span>
-    </li>
-  );
+/* ============================================================
+   XROGA PRICING — CONCISE 2026 REDESIGN
+   Three type roles:
+   - Goga / Outfit: UI + body
+   - Newsreader: editorial accent
+   - JetBrains Mono: prices + technical labels
+   ============================================================ */
+
+.root {
+  --pp-bg: #f7f7f5;
+  --pp-surface: #ffffff;
+  --pp-surface-2: #f0f1f3;
+  --pp-ink: #121315;
+  --pp-muted: #6d7077;
+  --pp-line: rgba(18, 19, 21, 0.11);
+  --pp-line-strong: rgba(18, 19, 21, 0.2);
+  --pp-accent: #6268f2;
+  --pp-accent-2: #a356e8;
+  --pp-accent-soft: rgba(98, 104, 242, 0.1);
+  --pp-pro-bg:
+    radial-gradient(circle at 50% -10%, rgba(133, 146, 255, 0.25), transparent 36%),
+    radial-gradient(circle at 92% 82%, rgba(190, 90, 255, 0.14), transparent 32%),
+    #ffffff;
+  --pp-button: #111216;
+  --pp-button-ink: #ffffff;
+  --pp-shadow: 0 24px 70px rgba(16, 20, 30, 0.08);
+  --pp-grid: rgba(18, 19, 21, 0.09);
+
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-height: 100vh;
+  background: var(--pp-bg);
+  color: var(--pp-ink);
+  font-family:
+    var(--font-goga),
+    var(--font-inter),
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
+:global(body.theme-white) .root {
+  --pp-bg: #f7f7f5;
+  --pp-surface: #ffffff;
+  --pp-surface-2: #f0f1f3;
+  --pp-ink: #121315;
+  --pp-muted: #6d7077;
+  --pp-line: rgba(18, 19, 21, 0.11);
+  --pp-line-strong: rgba(18, 19, 21, 0.2);
+  --pp-accent: #6268f2;
+  --pp-accent-2: #a356e8;
+  --pp-accent-soft: rgba(98, 104, 242, 0.1);
+  --pp-pro-bg:
+    radial-gradient(circle at 50% -10%, rgba(133, 146, 255, 0.25), transparent 36%),
+    radial-gradient(circle at 92% 82%, rgba(190, 90, 255, 0.14), transparent 32%),
+    #ffffff;
+  --pp-button: #111216;
+  --pp-button-ink: #ffffff;
+  --pp-shadow: 0 24px 70px rgba(16, 20, 30, 0.08);
+  --pp-grid: rgba(18, 19, 21, 0.09);
+}
 
-export function PricingPageClient() {
+:global(body.theme-beige) .root {
+  --pp-bg: #faf7f0;
+  --pp-surface: #fffaf2;
+  --pp-surface-2: #f3ecdf;
+  --pp-ink: #29231d;
+  --pp-muted: #756c61;
+  --pp-line: rgba(75, 59, 42, 0.12);
+  --pp-line-strong: rgba(75, 59, 42, 0.21);
+  --pp-accent: #6c63d8;
+  --pp-accent-2: #b56aa4;
+  --pp-accent-soft: rgba(108, 99, 216, 0.1);
+  --pp-pro-bg:
+    radial-gradient(circle at 48% -8%, rgba(119, 132, 232, 0.21), transparent 36%),
+    radial-gradient(circle at 90% 84%, rgba(216, 139, 109, 0.16), transparent 32%),
+    #fffaf2;
+  --pp-button: #2c2721;
+  --pp-button-ink: #fffaf2;
+  --pp-shadow: 0 24px 70px rgba(74, 54, 30, 0.1);
+  --pp-grid: rgba(75, 59, 42, 0.1);
+}
 
-  const [
-    loggedIn,
-    setLoggedIn,
-  ] =
-    useState(
-      false,
-    );
+:global(body.theme-gray) .root {
+  --pp-bg: #1a1a1a;
+  --pp-surface: #24262a;
+  --pp-surface-2: #202226;
+  --pp-ink: #f4f5f7;
+  --pp-muted: #a5a8af;
+  --pp-line: rgba(255, 255, 255, 0.095);
+  --pp-line-strong: rgba(255, 255, 255, 0.18);
+  --pp-accent: #83b1ff;
+  --pp-accent-2: #bd8dff;
+  --pp-accent-soft: rgba(131, 177, 255, 0.11);
+  --pp-pro-bg:
+    radial-gradient(circle at 50% -12%, rgba(73, 132, 255, 0.26), transparent 38%),
+    radial-gradient(circle at 94% 84%, rgba(156, 88, 255, 0.17), transparent 34%),
+    #24262a;
+  --pp-button: #f4f6fb;
+  --pp-button-ink: #111318;
+  --pp-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+  --pp-grid: rgba(255, 255, 255, 0.075);
+}
 
+:global(body.theme-black) .root {
+  --pp-bg: #000000;
+  --pp-surface: #0b0d10;
+  --pp-surface-2: #101216;
+  --pp-ink: #f8f9fb;
+  --pp-muted: #9b9ea6;
+  --pp-line: rgba(255, 255, 255, 0.095);
+  --pp-line-strong: rgba(255, 255, 255, 0.18);
+  --pp-accent: #7cb0ff;
+  --pp-accent-2: #c27aff;
+  --pp-accent-soft: rgba(124, 176, 255, 0.11);
+  --pp-pro-bg:
+    radial-gradient(circle at 50% -12%, rgba(65, 124, 255, 0.29), transparent 39%),
+    radial-gradient(circle at 92% 84%, rgba(150, 70, 255, 0.2), transparent 35%),
+    #0b0d10;
+  --pp-button: #f5f7fb;
+  --pp-button-ink: #0a0c10;
+  --pp-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  --pp-grid: rgba(255, 255, 255, 0.075);
+}
 
-  const [
-    status,
-    setStatus,
-  ] =
-    useState<
-      BillingStatus |
-      null
-    >(
-      null,
-    );
+.root * {
+  box-sizing: border-box;
+}
 
+.root button,
+.root a {
+  -webkit-tap-highlight-color: transparent;
+}
 
-  const router =
-    useRouter();
+.shell {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 0 0 96px;
+}
 
+/* HERO */
 
-  useEffect(
-    () => {
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--pp-line);
+}
 
-      void (
-        async () => {
+.hero::before {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, var(--pp-grid) 1px, transparent 1px);
+  background-size: 56px 100%;
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 45%, transparent 86%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 45%, transparent 86%);
+  content: "";
+  pointer-events: none;
+}
 
-          try {
+.gridGlow {
+  position: absolute;
+  inset: -15% -10% auto;
+  height: 560px;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--pp-accent) 17%, transparent), transparent 46%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--pp-surface) 72%, transparent), transparent);
+  pointer-events: none;
+}
 
-            const {
-              data,
-            } =
-              await createClient()
-                .auth
-                .getSession();
+.starField {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
 
+:global(body.theme-gray) .starField,
+:global(body.theme-black) .starField {
+  opacity: 0.65;
+}
 
-            const hasSession =
-              Boolean(
-                data.session,
-              );
+.starField span {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.4px);
+  background-size: 83px 83px;
+  animation: starDrift 28s linear infinite;
+}
 
+.starField span:nth-child(2) {
+  background-size: 137px 137px;
+  opacity: 0.38;
+  animation-duration: 44s;
+  animation-direction: reverse;
+}
 
-            setLoggedIn(
-              hasSession,
-            );
+.starField span:nth-child(3) {
+  background-size: 211px 211px;
+  opacity: 0.22;
+  animation-duration: 62s;
+}
 
+@keyframes starDrift {
+  to {
+    transform: translate3d(83px, -83px, 0);
+  }
+}
 
-            if (
-              hasSession
-            ) {
-              setStatus(
-                await api.billing
-                  .status(),
-              );
-            }
+.heroInner {
+  position: relative;
+  z-index: 2;
+  width: min(980px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 118px 0 104px;
+  text-align: center;
+}
 
-          } catch {
+.heroKicker,
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pp-accent);
+  font-family:
+    var(--font-xv-mono),
+    "JetBrains Mono",
+    ui-monospace,
+    monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 
-            setStatus(
-              null,
-            );
+.heroKicker {
+  padding: 8px 12px;
+  border: 1px solid var(--pp-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pp-surface) 78%, transparent);
+  backdrop-filter: blur(14px);
+}
 
-          }
+.heroKicker svg {
+  width: 14px;
+  height: 14px;
+}
 
-        }
-      )();
+.heroTitle {
+  max-width: 930px;
+  margin: 24px auto 0;
+  font-size: clamp(3.5rem, 7.2vw, 6.7rem);
+  font-weight: 650;
+  line-height: 0.92;
+  letter-spacing: -0.067em;
+}
 
-    },
-    [],
+.heroTitle span,
+.sectionHead h2 em,
+.sectionHeadCompact h2 em,
+.capacityCopy h2 em,
+.faqIntro h2 em,
+.finalCopy h2 em {
+  font-family:
+    var(--font-claude-serif),
+    Newsreader,
+    Georgia,
+    serif;
+  font-style: italic;
+  font-weight: 440;
+  letter-spacing: -0.045em;
+}
+
+.heroTitle span {
+  display: block;
+  color: color-mix(in srgb, var(--pp-ink) 58%, var(--pp-accent));
+}
+
+.heroCopy {
+  max-width: 710px;
+  margin: 28px auto 0;
+  color: var(--pp-muted);
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.65;
+}
+
+.heroFacts {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 10px 14px;
+  border: 1px solid var(--pp-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pp-surface) 78%, transparent);
+  color: var(--pp-muted);
+  font-size: 0.78rem;
+  backdrop-filter: blur(16px);
+}
+
+.heroFacts span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.heroFacts strong {
+  color: var(--pp-ink);
+  font-family:
+    var(--font-xv-mono),
+    "JetBrains Mono",
+    monospace;
+  font-size: 0.82rem;
+}
+
+.heroFacts i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--pp-line-strong);
+}
+
+/* SECTION HEADINGS */
+
+.plansSection,
+.outcomesSection,
+.capacitySection,
+.compareSection,
+.faqSection {
+  padding-top: 96px;
+}
+
+.sectionHead {
+  max-width: 760px;
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.sectionHeadCompact {
+  max-width: 760px;
+  margin-bottom: 30px;
+}
+
+.sectionHead h2,
+.sectionHeadCompact h2,
+.capacityCopy h2,
+.faqIntro h2,
+.finalCopy h2 {
+  margin: 12px 0 0;
+  font-size: clamp(2.2rem, 4.4vw, 4rem);
+  font-weight: 650;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.sectionHead p,
+.capacityCopy > p,
+.faqIntro > p {
+  max-width: 650px;
+  margin: 18px auto 0;
+  color: var(--pp-muted);
+  line-height: 1.65;
+}
+
+.sectionHeadCompact h2 em,
+.capacityCopy h2 em,
+.faqIntro h2 em,
+.finalCopy h2 em {
+  color: color-mix(in srgb, var(--pp-ink) 58%, var(--pp-accent));
+}
+
+/* PLAN CARDS */
+
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.planCard {
+  position: relative;
+  overflow: hidden;
+  min-height: 620px;
+  padding: 30px;
+  border: 1px solid var(--pp-line);
+  border-radius: 28px;
+  background: var(--pp-surface);
+  box-shadow: var(--pp-shadow);
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.planCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--pp-line-strong);
+}
+
+.proCard {
+  background: var(--pp-pro-bg);
+  border-color: color-mix(in srgb, var(--pp-accent) 36%, var(--pp-line));
+}
+
+.proHalo {
+  position: absolute;
+  top: -110px;
+  left: 50%;
+  width: 420px;
+  height: 220px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--pp-accent) 24%, transparent);
+  filter: blur(65px);
+  pointer-events: none;
+}
+
+.planTop,
+.priceRow,
+.featureList,
+.planCta,
+.planNote,
+.planLead {
+  position: relative;
+  z-index: 2;
+}
+
+.planTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.planName {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 740;
+  letter-spacing: -0.035em;
+}
+
+.planTagline {
+  margin: 5px 0 0;
+  color: var(--pp-muted);
+  font-size: 0.86rem;
+}
+
+.popularBadge,
+.currentBadge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--pp-accent) 30%, var(--pp-line));
+  border-radius: 999px;
+  background: var(--pp-accent-soft);
+  color: var(--pp-accent);
+  font-family:
+    var(--font-xv-mono),
+    monospace;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.popularBadge svg {
+  width: 12px;
+  height: 12px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.price {
+  font-family:
+    var(--font-xv-mono),
+    "JetBrains Mono",
+    monospace;
+  font-size: clamp(3.4rem, 6vw, 5.25rem);
+  font-weight: 650;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+}
+
+.priceMeta {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 5px;
+  color: var(--pp-muted);
+  font-size: 0.78rem;
+}
+
+.priceMeta b {
+  color: var(--pp-ink);
+  font-weight: 650;
+}
+
+.planLead {
+  min-height: 76px;
+  margin: 24px 0 0;
+  color: var(--pp-muted);
+  font-size: 0.94rem;
+  line-height: 1.62;
+}
+
+.featureList {
+  display: grid;
+  gap: 13px;
+  margin: 26px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--pp-line);
+  list-style: none;
+}
+
+.featureList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: color-mix(in srgb, var(--pp-ink) 88%, var(--pp-muted));
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.check {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  place-items: center;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--pp-accent-soft);
+  color: var(--pp-accent);
+}
+
+.check svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.6;
+}
+
+.planCta {
+  margin-top: 30px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  width: 100%;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.25s ease,
+    background-position 0.6s ease;
+}
+
+.ctaButton svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ctaButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ctaButton:disabled {
+  cursor: default;
+  opacity: 0.58;
+}
+
+.freeCta {
+  border: 1px solid var(--pp-line-strong);
+  background: var(--pp-surface-2);
+  color: var(--pp-ink);
+}
+
+.freeCta:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--pp-accent) 44%, var(--pp-line));
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--pp-accent) 10%, transparent);
+}
+
+.proCtaWrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  isolation: isolate;
+}
+
+.proCta {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  background-size: 280% auto;
+  background-image:
+    radial-gradient(
+      70% 90% at 50% 120%,
+      rgba(226, 133, 255, 0.7) 0%,
+      rgba(226, 133, 255, 0) 70%
+    ),
+    linear-gradient(325deg, #4f56ef 0%, #7b63f6 48%, #b553d7 100%);
+  box-shadow:
+    0 12px 28px rgba(88, 83, 238, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.proCta:hover:not(:disabled) {
+  background-position: right top;
+  box-shadow:
+    0 15px 34px rgba(88, 83, 238, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.fold {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border-bottom-left-radius: 8px;
+  background: radial-gradient(circle at 20% 70%, #df71ff, transparent 70%), #745af4;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+  transition:
+    margin 0.45s ease,
+    opacity 0.45s ease;
+}
+
+.fold::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150%;
+  height: 150%;
+  transform: rotate(45deg) translate(0, -18px);
+  background: color-mix(in srgb, var(--pp-surface) 88%, white);
+  content: "";
+}
+
+.proCtaWrap:hover .fold {
+  margin-top: -16px;
+  margin-right: -16px;
+  opacity: 0.2;
+}
+
+.pointsWrapper {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.point {
+  position: absolute;
+  bottom: -6px;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: #fff;
+  opacity: 0;
+  animation: floatingPoints 2.4s ease-in-out infinite;
+}
+
+.point:nth-child(1) { left: 10%; animation-delay: 0.2s; }
+.point:nth-child(2) { left: 23%; animation-delay: 0.7s; animation-duration: 2.1s; }
+.point:nth-child(3) { left: 31%; animation-delay: 0.1s; animation-duration: 2.7s; }
+.point:nth-child(4) { left: 42%; animation-delay: 0.55s; }
+.point:nth-child(5) { left: 51%; animation-delay: 0.9s; animation-duration: 1.9s; }
+.point:nth-child(6) { left: 63%; animation-delay: 0.3s; animation-duration: 2.2s; }
+.point:nth-child(7) { left: 72%; animation-delay: 1.2s; animation-duration: 1.8s; }
+.point:nth-child(8) { left: 80%; animation-delay: 0.45s; animation-duration: 2.6s; }
+.point:nth-child(9) { left: 89%; animation-delay: 0.8s; }
+.point:nth-child(10) { left: 96%; animation-delay: 0.15s; animation-duration: 2s; }
+
+@keyframes floatingPoints {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.9;
+  }
+  82% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: translateY(-52px);
+    opacity: 0;
+  }
+}
+
+.planNote {
+  margin: 11px 0 0;
+  color: var(--pp-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* ACCESSIBLE TOOLTIP */
+
+.tooltipWrap {
+  position: relative;
+  display: inline-flex;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.infoButton {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--pp-accent-soft);
+  color: var(--pp-accent);
+  cursor: help;
+}
+
+.infoButton svg {
+  width: 12px;
+  height: 12px;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 20;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  width: 260px;
+  padding: 12px 13px;
+  transform: translate(-50%, 8px);
+  border: 1px solid var(--pp-line-strong);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--pp-surface) 96%, transparent);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+  color: var(--pp-ink);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  backdrop-filter: blur(16px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.infoButton:hover + .tooltip,
+.infoButton:focus-visible + .tooltip {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* OUTCOMES */
+
+.outcomeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.outcomeCard {
+  min-height: 230px;
+  padding: 22px;
+  border: 1px solid var(--pp-line);
+  border-radius: 22px;
+  background: var(--pp-surface);
+}
+
+.outcomeIcon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--pp-accent) 24%, var(--pp-line));
+  border-radius: 13px;
+  background: var(--pp-accent-soft);
+  color: var(--pp-accent);
+}
+
+.outcomeIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.outcomeCard h3 {
+  margin: 22px 0 0;
+  font-size: 1.18rem;
+  letter-spacing: -0.03em;
+}
+
+.outcomeCard p {
+  margin: 9px 0 0;
+  color: var(--pp-muted);
+  font-size: 0.86rem;
+  line-height: 1.58;
+}
+
+.capabilityLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin-top: 18px;
+}
+
+.capabilityLinks a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--pp-muted);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.capabilityLinks a:first-child {
+  color: var(--pp-ink);
+  font-weight: 700;
+}
+
+.capabilityLinks a:hover {
+  color: var(--pp-accent);
+}
+
+.capabilityLinks svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* CAPACITY — UIVERSE-INSPIRED PROGRESS, WITHOUT FAKE QUOTAS */
+
+.capacitySection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  gap: 56px;
+  align-items: center;
+}
+
+.capacityCopy > p {
+  margin-left: 0;
+}
+
+.shimmerText {
+  background: linear-gradient(
+    90deg,
+    var(--pp-muted) 0%,
+    var(--pp-ink) 35%,
+    var(--pp-accent) 50%,
+    var(--pp-ink) 65%,
+    var(--pp-muted) 100%
   );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShimmer 4.5s linear infinite;
+}
 
+@keyframes textShimmer {
+  to {
+    background-position: 220% center;
+  }
+}
 
-  const freeCurrent =
-    status?.plan ===
-    'free';
+.capacityPanel {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border: 1px solid var(--pp-line);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 90% 0%, var(--pp-accent-soft), transparent 38%),
+    var(--pp-surface);
+  box-shadow: var(--pp-shadow);
+}
 
+.capacityRow + .capacityRow {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--pp-line);
+}
 
-  const proCurrent =
-    status?.plan ===
-    'spark';
+.capacityRow > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
 
+.capacityRow span {
+  color: var(--pp-muted);
+  font-family:
+    var(--font-xv-mono),
+    monospace;
+  font-size: 0.72rem;
+}
 
-  function openFree() {
+.capacityRow strong {
+  font-size: 0.84rem;
+  font-weight: 680;
+  text-align: right;
+}
 
-    if (
-      freeCurrent
-    ) {
-      return;
-    }
+.progressTrack {
+  position: relative;
+  height: 13px;
+  overflow: hidden;
+  border: 1px solid var(--pp-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pp-surface-2) 85%, transparent);
+}
 
+.progressBar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  transform-origin: left center;
+  animation: progressGrow 1.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
 
-    router.push(
-      loggedIn
-        ? '/workspace'
-        : '/auth/signup',
-    );
+.freeProgress {
+  width: 44%;
+  background: linear-gradient(90deg, #7f8797, #aeb4c1);
+}
+
+.proProgress {
+  width: 86%;
+  background: linear-gradient(90deg, #5361ee, #7e71ff 54%, #c05ad9);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--pp-accent) 36%, transparent);
+}
+
+.progressSpark {
+  position: absolute;
+  top: 50%;
+  left: 82%;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent 64%);
+  animation: capacityPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes progressGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes capacityPulse {
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.2;
+  }
+}
+
+.capacityNote {
+  margin: 18px 0 0;
+  color: var(--pp-muted);
+  font-size: 0.71rem;
+  line-height: 1.5;
+}
+
+/* COMPARISON */
+
+.compareTable {
+  overflow: hidden;
+  border: 1px solid var(--pp-line);
+  border-radius: 24px;
+  background: var(--pp-surface);
+}
+
+.compareHeader,
+.compareRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(160px, 0.8fr) minmax(200px, 1fr);
+  align-items: center;
+}
+
+.compareHeader {
+  background: var(--pp-surface-2);
+  color: var(--pp-muted);
+  font-family:
+    var(--font-xv-mono),
+    monospace;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compareHeader > span,
+.compareRow > span,
+.compareLabel {
+  padding: 16px 20px;
+}
+
+.compareRow {
+  min-height: 58px;
+  border-top: 1px solid var(--pp-line);
+  font-size: 0.84rem;
+}
+
+.compareRow > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pp-muted);
+}
+
+.compareRow > span svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: color-mix(in srgb, var(--pp-muted) 70%, var(--pp-accent));
+}
+
+.compareLabel {
+  color: var(--pp-ink);
+  font-weight: 650;
+}
+
+.compareRow .proCell {
+  color: var(--pp-ink);
+  background: color-mix(in srgb, var(--pp-accent-soft) 54%, transparent);
+}
+
+.compareRow .proCell svg {
+  color: var(--pp-accent);
+}
+
+/* FAQ */
+
+.faqSection {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+  gap: 64px;
+  align-items: start;
+}
+
+.faqIntro {
+  position: sticky;
+  top: 100px;
+}
+
+.faqIntro > p {
+  margin-left: 0;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  color: var(--pp-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.textLink:hover {
+  color: var(--pp-accent);
+}
+
+.textLink svg {
+  width: 15px;
+  height: 15px;
+}
+
+.faqList {
+  border-top: 1px solid var(--pp-line);
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--pp-line);
+}
+
+.faqItem summary {
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--pp-ink);
+  font-size: 1rem;
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faqItem summary::-webkit-details-marker {
+  display: none;
+}
+
+.plus {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--pp-line);
+  border-radius: 50%;
+  color: var(--pp-muted);
+  font-family:
+    var(--font-xv-mono),
+    monospace;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.faqItem[open] .plus {
+  transform: rotate(45deg);
+  color: var(--pp-accent);
+}
+
+.faqItem p {
+  max-width: 700px;
+  margin: -4px 44px 22px 0;
+  color: var(--pp-muted);
+  font-size: 0.9rem;
+  line-height: 1.66;
+}
+
+/* FINAL CTA — MOVING DOT BORDER INSPIRED BY THE PROVIDED UIVERSE CARD */
+
+.finalCta {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 96px;
+  padding: 42px;
+  border: 1px solid var(--pp-line-strong);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 4% 0%, var(--pp-accent-soft), transparent 34%),
+    var(--pp-surface);
+  box-shadow: var(--pp-shadow);
+}
+
+.finalGlow {
+  position: absolute;
+  top: -60px;
+  left: -20px;
+  width: 240px;
+  height: 90px;
+  transform: rotate(20deg);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pp-accent) 18%, transparent);
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.orbitDot {
+  position: absolute;
+  z-index: 3;
+  top: 10px;
+  right: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pp-accent);
+  box-shadow: 0 0 12px var(--pp-accent);
+  animation: orbitDot 7s linear infinite;
+}
+
+@keyframes orbitDot {
+  0%,
+  100% {
+    top: 10px;
+    right: 10px;
+  }
+  25% {
+    top: 10px;
+    right: calc(100% - 15px);
+  }
+  50% {
+    top: calc(100% - 15px);
+    right: calc(100% - 15px);
+  }
+  75% {
+    top: calc(100% - 15px);
+    right: 10px;
+  }
+}
+
+.finalCopy,
+.finalActions {
+  position: relative;
+  z-index: 2;
+}
+
+.finalCopy {
+  max-width: 650px;
+}
+
+.finalCopy p {
+  margin: 14px 0 0;
+  color: var(--pp-muted);
+}
+
+.finalActions {
+  width: min(320px, 100%);
+}
+
+.finalPrimary {
+  color: var(--pp-button-ink);
+  background: var(--pp-button);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+}
+
+.finalPrimary:hover {
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.18),
+    0 0 0 4px var(--pp-accent-soft);
+}
+
+.trustLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+  color: var(--pp-muted);
+  font-size: 0.72rem;
+}
+
+.trustLine svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 980px) {
+  .heroInner {
+    padding: 102px 0 88px;
   }
 
-
-  return (
-    <div
-      className={
-        styles.root
-      }
-    >
-
-      <main
-        className={
-          styles.shell
-        }
-      >
-
-        {/* ==================================================
-            HERO
-        ================================================== */}
-
-        <section
-          className={
-            styles.hero
-          }
-        >
-
-          <div
-            className={
-              styles.heroKicker
-            }
-          >
-            <Sparkles
-              aria-hidden="true"
-            />
-
-            XROGA AI · BUILD BEYOND THE PROMPT
-          </div>
-
-
-          <h1
-            className={
-              styles.heroTitle
-            }
-          >
-            From an idea to software
-            {' '}
-            <span>
-              people can actually use.
-            </span>
-          </h1>
-
-
-          <p
-            className={
-              styles.heroCopy
-            }
-          >
-            Research the web. Understand the project.
-            Write and repair code. Connect data.
-            Test the product in a real browser.
-            Publish through infrastructure you control.
-          </p>
-
-
-          <div
-            className={
-              styles.heroPills
-            }
-          >
-
-            <span>
-              <Code2 />
-              Build
-            </span>
-
-            <span>
-              <Search />
-              Research
-            </span>
-
-            <span>
-              <TestTube2 />
-              Verify
-            </span>
-
-            <span>
-              <Rocket />
-              Ship
-            </span>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            PRICING CARDS
-        ================================================== */}
-
-        <section
-          className={
-            styles.pricingSection
-          }
-          aria-labelledby="plans"
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              START FREE · GO PRO WHEN YOU SHIP
-            </span>
-
-
-            <h2
-              id="plans"
-              className={
-                styles.sectionTitle
-              }
-            >
-              Choose how far you want to build.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              The core Xroga workflow starts free.
-              Pro gives active builders substantially
-              more room for long research, engineering,
-              verification and shipping cycles.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.pricingGrid
-            }
-          >
-
-            {/* ==============================================
-                PRO
-            ============================================== */}
-
-            <article
-              className={`${styles.planCard} ${styles.proCard}`}
-            >
-
-              <div
-                className={
-                  styles.proGlow
-                }
-                aria-hidden="true"
-              />
-
-
-              <div
-                className={
-                  styles.cardInner
-                }
-              >
-
-                <div
-                  className={
-                    styles.cardTop
-                  }
-                >
-
-                  <div>
-
-                    <div
-                      className={
-                        styles.proLabel
-                      }
-                    >
-                      Xroga Pro
-                    </div>
-
-                    <div
-                      className={
-                        styles.proBadge
-                      }
-                    >
-                      <Sparkles />
-                      FOR SHIPPING REAL PRODUCTS
-                    </div>
-
-                  </div>
-
-
-                  {
-                    proCurrent
-                      ? (
-                        <span
-                          className={
-                            styles.currentBadge
-                          }
-                        >
-                          CURRENT
-                        </span>
-                      )
-                      : null
-                  }
-
-                </div>
-
-
-                <div
-                  className={
-                    styles.priceRow
-                  }
-                >
-
-                  <span
-                    className={
-                      styles.price
-                    }
-                  >
-                    $25
-                  </span>
-
-                  <span
-                    className={
-                      styles.priceMeta
-                    }
-                  >
-                    <strong>
-                      per month
-                    </strong>
-
-                    <span>
-                      billed monthly
-                    </span>
-                  </span>
-
-                </div>
-
-
-                <p
-                  className={
-                    styles.planLead
-                  }
-                >
-                  Move from experimenting to sustained
-                  building. Research, implement, verify,
-                  repair and ship demanding products with
-                  higher monthly capacity.
-                </p>
-
-
-                {
-                  proCurrent
-                    ? (
-                      <button
-                        type="button"
-                        className={`${styles.ctaButton} ${styles.proCta}`}
-                        disabled
-                      >
-                        Current plan
-                      </button>
-                    )
-                    : loggedIn
-                      ? (
-                        <CheckoutButton
-                          planTier="spark"
-                          label="Get Xroga Pro — $25/month"
-                          className={`${styles.ctaButton} ${styles.proCta}`}
-                        />
-                      )
-                      : (
-                        <button
-                          type="button"
-                          className={`${styles.ctaButton} ${styles.proCta}`}
-                          onClick={
-                            () =>
-                              router.push(
-                                '/auth/signup',
-                              )
-                          }
-                        >
-                          Get Xroga Pro — $25/month
-                        </button>
-                      )
-                }
-
-
-                <p
-                  className={
-                    styles.ctaNote
-                  }
-                >
-                  Cancel anytime · Your code · Your accounts · Your deployment
-                </p>
-
-
-                <div
-                  className={
-                    styles.cardDivider
-                  }
-                />
-
-
-                <div
-                  className={
-                    styles.cardSectionTitle
-                  }
-                >
-                  <Zap />
-                  Built for sustained product work
-                </div>
-
-
-                <ul
-                  className={
-                    styles.featureList
-                  }
-                >
-
-                  {
-                    PRO_FEATURES.map(
-                      (
-                        feature,
-                      ) => (
-                        <FeatureLine
-                          key={
-                            feature.label
-                          }
-                          feature={
-                            feature
-                          }
-                          pro
-                        />
-                      ),
-                    )
-                  }
-
-                </ul>
-
-
-                <div
-                  className={
-                    styles.fullAccessBox
-                  }
-                >
-
-                  <div
-                    className={
-                      styles.fullAccessIcon
-                    }
-                  >
-                    <Zap />
-                  </div>
-
-
-                  <div>
-
-                    <strong>
-                      Full Access
-                    </strong>
-
-                    <p>
-                      Need the power now? Pro can make
-                      remaining working capacity for the
-                      current cycle available earlier
-                      instead of waiting for later unlocks.
-                    </p>
-
-                    <small>
-                      Full Access accelerates existing
-                      capacity. It does not add extra
-                      monthly capacity.
-                    </small>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </article>
-
-
-
-            {/* ==============================================
-                FREE
-            ============================================== */}
-
-            <article
-              className={`${styles.planCard} ${styles.freeCard}`}
-            >
-
-              <div
-                className={
-                  styles.cardInner
-                }
-              >
-
-                <div
-                  className={
-                    styles.cardTop
-                  }
-                >
-
-                  <div
-                    className={
-                      styles.freeLabel
-                    }
-                  >
-                    Free
-                  </div>
-
-
-                  {
-                    freeCurrent
-                      ? (
-                        <span
-                          className={
-                            styles.currentBadge
-                          }
-                        >
-                          CURRENT
-                        </span>
-                      )
-                      : null
-                  }
-
-                </div>
-
-
-                <div
-                  className={
-                    styles.priceRow
-                  }
-                >
-
-                  <span
-                    className={
-                      styles.price
-                    }
-                  >
-                    $0
-                  </span>
-
-                  <span
-                    className={
-                      styles.priceMeta
-                    }
-                  >
-                    <strong>
-                      per month
-                    </strong>
-
-                    <span>
-                      no card required
-                    </span>
-                  </span>
-
-                </div>
-
-
-                <p
-                  className={
-                    styles.planLead
-                  }
-                >
-                  Start an idea, work on real code and
-                  experience the complete Xroga product
-                  workflow with included monthly capacity.
-                </p>
-
-
-                <button
-                  type="button"
-                  className={`${styles.ctaButton} ${styles.freeCta}`}
-                  disabled={
-                    freeCurrent ||
-                    Boolean(
-                      status?.isPaid,
-                    )
-                  }
-                  onClick={
-                    openFree
-                  }
-                >
-                  {
-                    freeCurrent
-                      ? 'Current plan'
-                      : status?.isPaid
-                        ? 'Included with your account'
-                        : 'Start building free'
-                  }
-                </button>
-
-
-                <p
-                  className={
-                    styles.ctaNote
-                  }
-                >
-                  Build with plain language.
-                  No coding experience required.
-                </p>
-
-
-                <div
-                  className={
-                    styles.cardDivider
-                  }
-                />
-
-
-                <div
-                  className={
-                    styles.cardSectionTitle
-                  }
-                >
-                  <Code2 />
-                  Build real software
-                </div>
-
-
-                <ul
-                  className={
-                    styles.featureList
-                  }
-                >
-
-                  {
-                    FREE_FEATURES.map(
-                      (
-                        feature,
-                      ) => (
-                        <FeatureLine
-                          key={
-                            feature.label
-                          }
-                          feature={
-                            feature
-                          }
-                        />
-                      ),
-                    )
-                  }
-
-                </ul>
-
-              </div>
-
-            </article>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            CAPACITY
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              CAPACITY WITHOUT TOKEN MATH
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Built around how real product work happens.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              Xroga shows understandable capacity,
-              unlock timing and cycle status instead
-              of asking users to calculate arbitrary
-              action counts.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.threeGrid
-            }
-          >
-
-            <article
-              className={
-                styles.infoCard
-              }
-            >
-
-              <div
-                className={
-                  styles.infoNumber
-                }
-              >
-                01
-              </div>
-
-              <div
-                className={
-                  styles.infoIcon
-                }
-              >
-                <CalendarClock />
-              </div>
-
-              <h3>
-                Daily unlocks
-              </h3>
-
-              <p>
-                Monthly capacity becomes progressively
-                available through the billing cycle,
-                giving normal work a predictable rhythm.
-              </p>
-
-            </article>
-
-
-            <article
-              className={
-                styles.infoCard
-              }
-            >
-
-              <div
-                className={
-                  styles.infoNumber
-                }
-              >
-                02
-              </div>
-
-              <div
-                className={
-                  styles.infoIcon
-                }
-              >
-                <RefreshCw />
-              </div>
-
-              <h3>
-                Monthly renewal
-              </h3>
-
-              <p>
-                Included capacity begins a fresh cycle
-                at renewal. Your projects, repositories
-                and completed work remain preserved.
-              </p>
-
-            </article>
-
-
-            <article
-              className={`${styles.infoCard} ${styles.infoCardAccent}`}
-            >
-
-              <div
-                className={
-                  styles.infoNumber
-                }
-              >
-                03
-              </div>
-
-              <div
-                className={
-                  styles.infoIcon
-                }
-              >
-                <Zap />
-              </div>
-
-              <h3>
-                Full Access · Pro
-              </h3>
-
-              <p>
-                Have an important build today? Accelerate
-                remaining current-cycle capacity instead
-                of waiting for later daily unlocks.
-              </p>
-
-              <span
-                className={
-                  styles.infoFoot
-                }
-              >
-                Acceleration — not extra monthly capacity.
-              </span>
-
-            </article>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            EVERYTHING
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              XROGA.COM POWERS
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              One AI. A much larger software workflow.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              Xroga is designed to move across research,
-              engineering, infrastructure, validation
-              and shipping instead of stopping when
-              code appears on the screen.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.capabilityGrid
-            }
-          >
-
-            {
-              CAPABILITY_GROUPS.map(
-                (
-                  group,
-                ) => {
-
-                  const Icon =
-                    group.icon;
-
-
-                  return (
-                    <article
-                      key={
-                        group.title
-                      }
-                      className={
-                        styles.capabilityCard
-                      }
-                    >
-
-                      <div
-                        className={
-                          styles.capabilityIcon
-                        }
-                      >
-                        <Icon />
-                      </div>
-
-
-                      <h3>
-                        {
-                          group.title
-                        }
-                      </h3>
-
-
-                      <p>
-                        {
-                          group.description
-                        }
-                      </p>
-
-
-                      <div
-                        className={
-                          styles.miniList
-                        }
-                      >
-
-                        {
-                          group.items.map(
-                            (
-                              item,
-                            ) => (
-                              <span
-                                key={
-                                  item
-                                }
-                              >
-                                <Check />
-                                {
-                                  item
-                                }
-                              </span>
-                            ),
-                          )
-                        }
-
-                      </div>
-
-                    </article>
-                  );
-
-                },
-              )
-            }
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            WHAT CAN YOU BUILD
-        ================================================== */}
-
-        <section
-          className={`${styles.section} ${styles.buildSection}`}
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              START WITH THE OUTCOME
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              What could you build with Xroga?
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              Do not pick a template category first.
-              Describe what the product should do.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.chipCloud
-            }
-          >
-
-            {
-              BUILD_TYPES.map(
-                (
-                  item,
-                ) => (
-                  <span
-                    key={
-                      item
-                    }
-                  >
-                    {
-                      item
-                    }
-                  </span>
-                ),
-              )
-            }
-
-          </div>
-
-
-          <p
-            className={
-              styles.buildEnding
-            }
-          >
-            Or describe something
-            Xroga has never seen before.
-          </p>
-
-        </section>
-
-
-
-        {/* ==================================================
-            BROWSER VERIFICATION
-        ================================================== */}
-
-        <section
-          className={`${styles.section} ${styles.darkFeatureSection}`}
-        >
-
-          <div
-            className={
-              styles.darkFeatureCopy
-            }
-          >
-
-            <span
-  className={
-    styles.darkEyebrow
+  .planGrid {
+    max-width: 660px;
+    grid-template-columns: 1fr;
   }
->
-  VERIFICATION &gt; SELF-CONFIDENCE
-</span>
-
-
-            <h2>
-              Xroga does not stop
-              when the code compiles.
-            </h2>
-
-
-            <p>
-              Xroga can run the product, open it in a
-              browser and gather evidence from the
-              software itself — then send failures back
-              through the repair workflow.
-            </p>
-
-
-            <div
-              className={
-                styles.darkStatement
-              }
-            >
-              <TestTube2 />
-
-              <span>
-                AI exercises the product like a user
-                and investigates failures like a developer.
-              </span>
-            </div>
-
-          </div>
-
-
-          <div
-            className={
-              styles.verificationFlow
-            }
-          >
-
-            {
-              VERIFICATION_STEPS.map(
-                (
-                  step,
-                  index,
-                ) => (
-                  <div
-                    key={
-                      step
-                    }
-                    className={
-                      styles.verifyStep
-                    }
-                  >
-                    <span>
-                      {
-                        String(
-                          index + 1,
-                        ).padStart(
-                          2,
-                          '0',
-                        )
-                      }
-                    </span>
-
-                    <strong>
-                      {
-                        step
-                      }
-                    </strong>
-
-                    {
-                      index <
-                      VERIFICATION_STEPS.length - 1
-                        ? (
-                          <ArrowRight />
-                        )
-                        : null
-                    }
-                  </div>
-                ),
-              )
-            }
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            RESEARCH
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.splitFeature
-            }
-          >
-
-            <div>
-
-              <span
-                className={
-                  styles.eyebrow
-                }
-              >
-                LIVE RESEARCH
-              </span>
-
-
-              <h2
-                className={
-                  styles.sectionTitleLeft
-                }
-              >
-                Research before Xroga guesses.
-              </h2>
-
-
-              <p
-                className={
-                  styles.sectionCopyLeft
-                }
-              >
-                When a product depends on current
-                information, Xroga can retrieve public
-                sources and turn evidence into
-                implementation context.
-              </p>
-
-            </div>
-
-
-            <div
-              className={
-                styles.researchGrid
-              }
-            >
-
-              {
-                ([
-                  [
-                    Search,
-                    'Web Search',
-                    'Current public information.',
-                  ],
-
-                  [
-                    FileSearch,
-                    'Deep Research',
-                    'Multiple sources instead of one answer.',
-                  ],
-
-                  [
-                    Files,
-                    'Documentation Research',
-                    'Current provider and API information.',
-                  ],
-
-                  [
-                    ShieldCheck,
-                    'Source Intelligence',
-                    'Authority, freshness and evidence.',
-                  ],
-
-                  [
-                    Globe2,
-                    'Public-source Research',
-                    'Supported web and social-source workflows.',
-                  ],
-
-                  [
-                    Code2,
-                    'Research → Build',
-                    'Use evidence directly in implementation.',
-                  ],
-                ] as Array<[LucideIcon, string, string]>).map(
-                  (
-                    [
-                      Icon,
-                      title,
-                      body,
-                    ],
-                  ) => (
-                    <div
-                      key={
-                        String(
-                          title,
-                        )
-                      }
-                      className={
-                        styles.researchItem
-                      }
-                    >
-
-                      <Icon />
-
-                      <div>
-                        <strong>
-                          {
-                            title
-                          }
-                        </strong>
-
-                        <p>
-                          {
-                            body
-                          }
-                        </p>
-                      </div>
-
-                    </div>
-                  ),
-                )
-              }
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            PLUGINS
-        ================================================== */}
-
-        <section
-          className={`${styles.section} ${styles.pluginSection}`}
-        >
-
-          <div
-            className={
-              styles.pluginNumber
-            }
-          >
-            700+
-          </div>
-
-
-          <div
-            className={
-              styles.pluginContent
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              SERVICES IN THE XROGA PLUGIN CATALOG
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitleLeft
-              }
-            >
-              Your product rarely lives alone.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopyLeft
-              }
-            >
-              Discover infrastructure, APIs and business
-              services your product may need. Connect
-              supported services directly or request
-              providers that are not yet executable
-              through Xroga.
-            </p>
-
-
-            <div
-              className={
-                styles.pluginTags
-              }
-            >
-
-              {
-                [
-                  'Developer tools',
-                  'Databases',
-                  'Cloud',
-                  'AI providers',
-                  'Payments',
-                  'Storage',
-                  'Authentication',
-                  'Analytics',
-                  'Automation',
-                  'Email',
-                  'Marketing',
-                  'Project management',
-                  'Domains & DNS',
-                  'Finance',
-                  'Commerce',
-                  'Communication',
-                  'Scheduling',
-                  'Customer support',
-                ].map(
-                  (
-                    item,
-                  ) => (
-                    <span
-                      key={
-                        item
-                      }
-                    >
-                      {
-                        item
-                      }
-                    </span>
-                  ),
-                )
-              }
-
-            </div>
-
-
-            <p
-              className={
-                styles.pluginDisclaimer
-              }
-            >
-              Catalog entries include connected,
-              connectable and requestable services.
-              Availability depends on provider support,
-              credentials and authorization.
-            </p>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            FULL STACK
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              NOT JUST THE UI
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Build the product behind the screen.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              Connect frontend, backend, authentication,
-              data and deployment instead of stopping
-              at a convincing mockup.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.architectureFlow
-            }
-          >
-
-            {
-              ([
-                [
-                  WandSparkles,
-                  'Your idea',
-                ],
-
-                [
-                  Workflow,
-                  'Product architecture',
-                ],
-
-                [
-                  Code2,
-                  'Frontend',
-                ],
-
-                [
-                  Cloud,
-                  'Backend / API',
-                ],
-
-                [
-                  ShieldCheck,
-                  'Auth',
-                ],
-
-                [
-                  Database,
-                  'Database + storage',
-                ],
-
-                [
-                  TestTube2,
-                  'Verify',
-                ],
-
-                [
-                  Rocket,
-                  'Live product',
-                ],
-              ] as Array<[LucideIcon, string]>).map(
-                (
-                  [
-                    Icon,
-                    label,
-                  ],
-                  index,
-                ) => (
-                  <div
-                    key={
-                      String(
-                        label,
-                      )
-                    }
-                    className={
-                      styles.architectureNode
-                    }
-                  >
-
-                    <Icon />
-
-                    <strong>
-                      {
-                        label
-                      }
-                    </strong>
-
-                    {
-                      index <
-                      7
-                        ? (
-                          <ArrowRight />
-                        )
-                        : null
-                    }
-
-                  </div>
-                ),
-              )
-            }
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            SHIP
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.shipPanel
-            }
-          >
-
-            <div
-              className={
-                styles.shipCopy
-              }
-            >
-
-              <span
-                className={
-                  styles.eyebrow
-                }
-              >
-                FROM PROMPT TO A URL
-              </span>
-
-
-              <h2
-                className={
-                  styles.sectionTitleLeft
-                }
-              >
-                Build it. Verify it. Ship it.
-              </h2>
-
-
-              <p
-                className={
-                  styles.sectionCopyLeft
-                }
-              >
-                Publishing is treated as a real
-                provider operation — not a success
-                message generated because code exists.
-              </p>
-
-            </div>
-
-
-            <div
-              className={
-                styles.shipSteps
-              }
-            >
-
-              {
-                [
-                  'Build',
-                  'Validate',
-                  'Repair',
-                  'GitHub',
-                  'Deploy',
-                  'Verify provider',
-                  'Custom domain',
-                ].map(
-                  (
-                    step,
-                    index,
-                  ) => (
-                    <div
-                      key={
-                        step
-                      }
-                      className={
-                        styles.shipStep
-                      }
-                    >
-
-                      <span>
-                        <Check />
-                      </span>
-
-                      <strong>
-                        {
-                          step
-                        }
-                      </strong>
-
-                      {
-                        index < 6
-                          ? (
-                            <ArrowRight />
-                          )
-                          : null
-                      }
-
-                    </div>
-                  ),
-                )
-              }
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            FREE VS PRO
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              PLAN COMPARISON
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Free starts the workflow.
-              Pro gives it room to run.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              We do not hide core product capabilities
-              just to make a comparison table look better.
-              Pro is about substantially more capacity
-              for serious, sustained product work.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.tableWrap
-            }
-          >
-
-            <table
-              className={
-                styles.compareTable
-              }
-            >
-
-              <thead>
-
-                <tr>
-
-                  <th>
-                    Capability
-                  </th>
-
-                  <th>
-                    Free
-                    <small>
-                      $0
-                    </small>
-                  </th>
-
-                  <th
-                    className={
-                      styles.proColumn
-                    }
-                  >
-                    Xroga Pro
-                    <small>
-                      $25/month
-                    </small>
-                  </th>
-
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {
-                  PLAN_COMPARISON.map(
-                    (
-                      [
-                        feature,
-                        free,
-                        pro,
-                      ],
-                    ) => (
-                      <tr
-                        key={
-                          feature
-                        }
-                      >
-
-                        <td>
-                          {
-                            feature
-                          }
-                        </td>
-
-                        <td>
-                          {
-                            free ===
-                            'Included'
-                              ? (
-                                <span
-                                  className={
-                                    styles.tableYes
-                                  }
-                                >
-                                  <Check />
-                                  Included
-                                </span>
-                              )
-                              : free
-                          }
-                        </td>
-
-                        <td
-                          className={
-                            styles.proColumn
-                          }
-                        >
-                          {
-                            pro ===
-                            'Included'
-                              ? (
-                                <span
-                                  className={
-                                    styles.tableYes
-                                  }
-                                >
-                                  <Check />
-                                  Included
-                                </span>
-                              )
-                              : (
-                                <strong>
-                                  {
-                                    pro
-                                  }
-                                </strong>
-                              )
-                          }
-                        </td>
-
-                      </tr>
-                    ),
-                  )
-                }
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            COMPETITOR COMPARISON
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              HOW THE MARKET DIFFERS
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Different AI tools stop at
-              different parts of the job.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              The question is not whether another
-              AI can write code. The question is how
-              much of the journey from intent to
-              verified software lives in one workflow.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.competitorGrid
-            }
-          >
-
-            {
-              COMPETITORS.map(
-                (
-                  competitor,
-                ) => (
-                  <article
-                    key={
-                      competitor.name
-                    }
-                    className={
-                      styles.competitorCard
-                    }
-                  >
-
-                    <div
-                      className={
-                        styles.competitorTop
-                      }
-                    >
-
-                      <strong>
-                        {
-                          competitor.name
-                        }
-                      </strong>
-
-                      <span>
-                        {
-                          competitor.price
-                        }
-                      </span>
-
-                    </div>
-
-
-                    <div
-                      className={
-                        styles.competitorBlock
-                      }
-                    >
-
-                      <small>
-                        DOCUMENTED FOCUS
-                      </small>
-
-                      <p>
-                        {
-                          competitor.focus
-                        }
-                      </p>
-
-                    </div>
-
-
-                    <div
-                      className={
-                        styles.competitorDifference
-                      }
-                    >
-
-                      <small>
-                        XROGA DIFFERENCE
-                      </small>
-
-                      <p>
-                        {
-                          competitor.difference
-                        }
-                      </p>
-
-                    </div>
-
-                  </article>
-                ),
-              )
-            }
-
-          </div>
-
-
-          <div
-            className={
-              styles.competitorNote
-            }
-          >
-
-            <ShieldCheck />
-
-            <p>
-              Competitor prices and positioning shown
-              for context as checked in September 2026.
-              Products change frequently. This comparison
-              describes documented focus rather than
-              claiming another product cannot perform
-              a particular task.
-            </p>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            WHY XROGA
-        ================================================== */}
-
-        <section
-          className={`${styles.section} ${styles.loopSection}`}
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              THE WHOLE LOOP
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Code generation is one step.
-              The product is the entire loop.
-            </h2>
-
-          </div>
-
-
-          <div
-            className={
-              styles.loopGrid
-            }
-          >
-
-            {
-              ([
-                [
-                  '01',
-                  Search,
-                  'Understand',
-                  'Project, repository, objective and constraints.',
-                ],
-
-                [
-                  '02',
-                  Globe2,
-                  'Research',
-                  'Current sources, providers, APIs and evidence.',
-                ],
-
-                [
-                  '03',
-                  Code2,
-                  'Build',
-                  'Frontend, backend, data and integrations.',
-                ],
-
-                [
-                  '04',
-                  Monitor,
-                  'Run',
-                  'Start the actual application.',
-                ],
-
-                [
-                  '05',
-                  TestTube2,
-                  'Verify & repair',
-                  'Exercise behavior and repair observed failures.',
-                ],
-
-                [
-                  '06',
-                  Rocket,
-                  'Ship',
-                  'GitHub, deployment, database, domain and release evidence.',
-                ],
-              ] as Array<[string, LucideIcon, string, string]>).map(
-                (
-                  [
-                    number,
-                    Icon,
-                    title,
-                    body,
-                  ],
-                ) => (
-                  <article
-                    key={
-                      String(
-                        number,
-                      )
-                    }
-                    className={
-                      styles.loopCard
-                    }
-                  >
-
-                    <span>
-                      {
-                        number
-                      }
-                    </span>
-
-                    <Icon />
-
-                    <h3>
-                      {
-                        title
-                      }
-                    </h3>
-
-                    <p>
-                      {
-                        body
-                      }
-                    </p>
-
-                  </article>
-                ),
-              )
-            }
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            AUDIENCE
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              FOR BUILDERS OF EVERY KIND
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              No blank IDE required.
-            </h2>
-
-
-            <p
-              className={
-                styles.sectionCopy
-              }
-            >
-              Describe the outcome.
-              Go technical only when you want to.
-            </p>
-
-          </div>
-
-
-          <div
-            className={
-              styles.audienceGrid
-            }
-          >
-
-            {
-              AUDIENCES.map(
-                (
-                  audience,
-                ) => {
-
-                  const Icon =
-                    audience.icon;
-
-
-                  return (
-                    <article
-                      key={
-                        audience.title
-                      }
-                      className={
-                        styles.audienceCard
-                      }
-                    >
-
-                      <Icon />
-
-                      <h3>
-                        {
-                          audience.title
-                        }
-                      </h3>
-
-                      <p>
-                        {
-                          audience.body
-                        }
-                      </p>
-
-                    </article>
-                  );
-
-                },
-              )
-            }
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            FAQ
-        ================================================== */}
-
-        <section
-          className={
-            styles.section
-          }
-        >
-
-          <div
-            className={
-              styles.sectionHeading
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              PRICING FAQ
-            </span>
-
-
-            <h2
-              className={
-                styles.sectionTitle
-              }
-            >
-              Clear capacity.
-              No arbitrary action counter.
-            </h2>
-
-          </div>
-
-
-          <div
-            className={
-              styles.faqGrid
-            }
-          >
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                What does included AI capacity mean?
-              </summary>
-
-              <p>
-                Your plan includes capacity for Xroga&apos;s
-                research, reasoning, coding and product-building
-                work. Xroga shows understandable capacity and
-                cycle status rather than forcing you to calculate
-                internal model token costs.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                Does my capacity reset every day?
-              </summary>
-
-              <p>
-                Not exactly. Balanced Month progressively
-                makes monthly capacity available through
-                the billing cycle. When the currently
-                available portion is used, later capacity
-                can become available at the next unlock.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                When does the full capacity renew?
-              </summary>
-
-              <p>
-                Your included plan capacity begins a fresh
-                cycle with the next monthly billing-cycle
-                renewal.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                What is Full Access?
-              </summary>
-
-              <p>
-                Xroga Pro users can explicitly choose
-                Full Access to make remaining working
-                capacity for the current cycle available
-                earlier instead of waiting for later
-                progressive unlocks.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                Does Full Access give extra capacity?
-              </summary>
-
-              <p>
-                No. Full Access changes when current-cycle
-                capacity becomes available. It does not
-                increase the total monthly capacity.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                What happens if I use the monthly capacity?
-              </summary>
-
-              <p>
-                Completed work and project state remain
-                preserved. New AI work can continue when
-                capacity becomes available again or when
-                the next cycle begins.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                Do I need coding skills?
-              </summary>
-
-              <p>
-                No. Xroga is designed so you can begin
-                with the result you want in plain language.
-                Developers can still inspect repository
-                changes, terminal output and verification
-                evidence when they want deeper control.
-              </p>
-
-            </details>
-
-
-            <details
-              className={
-                styles.faq
-              }
-            >
-
-              <summary>
-                Does Xroga own my code?
-              </summary>
-
-              <p>
-                Xroga&apos;s supported repository and publishing
-                workflows are designed around GitHub and
-                provider accounts you authorize, keeping
-                project ownership outside a closed generated
-                preview.
-              </p>
-
-            </details>
-
-          </div>
-
-        </section>
-
-
-
-        {/* ==================================================
-            FINAL CTA
-        ================================================== */}
-
-        <section
-          className={
-            styles.finalCta
-          }
-        >
-
-          <div
-            className={
-              styles.finalGlow
-            }
-            aria-hidden="true"
-          />
-
-
-          <div
-            className={
-              styles.finalContent
-            }
-          >
-
-            <span
-              className={
-                styles.eyebrow
-              }
-            >
-              YOUR IDEA IS ENOUGH TO START
-            </span>
-
-
-            <h2>
-              Build something real.
-            </h2>
-
-
-            <p>
-              Research it. Build it. Test it.
-              Repair it. Connect it. Ship it.
-            </p>
-
-
-            <div
-              className={
-                styles.finalButtons
-              }
-            >
-
-              <button
-                type="button"
-                className={`${styles.ctaButton} ${styles.proCta} ${styles.finalButton}`}
-                onClick={
-                  () =>
-                    router.push(
-                      loggedIn
-                        ? '/workspace'
-                        : '/auth/signup',
-                    )
-                }
-              >
-                Start building free
-
-                <ArrowRight />
-              </button>
-
-
-              {
-                !proCurrent
-                  ? loggedIn
-                    ? (
-                      <CheckoutButton
-                        planTier="spark"
-                        label="Get Xroga Pro"
-                        className={`${styles.ctaButton} ${styles.freeCta} ${styles.finalButton}`}
-                      />
-                    )
-                    : (
-                      <button
-                        type="button"
-                        className={`${styles.ctaButton} ${styles.freeCta} ${styles.finalButton}`}
-                        onClick={
-                          () =>
-                            router.push(
-                              '/auth/signup',
-                            )
-                        }
-                      >
-                        Explore Xroga Pro
-                      </button>
-                    )
-                  : null
-              }
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-      </main>
-
-    </div>
-  );
+
+  .planCard {
+    min-height: 0;
+  }
+
+  .planLead {
+    min-height: 0;
+  }
+
+  .outcomeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .capacitySection {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .capacityCopy {
+    max-width: 720px;
+  }
+
+  .faqSection {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .faqIntro {
+    position: static;
+    max-width: 720px;
+  }
+
+  .finalCta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .shell {
+    width: min(100% - 24px, 1180px);
+    padding-bottom: 72px;
+  }
+
+  .heroInner {
+    width: min(100% - 24px, 980px);
+    padding: 84px 0 72px;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.9rem, 14vw, 4.5rem);
+  }
+
+  .heroCopy {
+    font-size: 0.96rem;
+  }
+
+  .heroFacts {
+    width: 100%;
+    flex-wrap: wrap;
+    border-radius: 18px;
+    gap: 8px 12px;
+  }
+
+  .heroFacts i {
+    display: none;
+  }
+
+  .heroFacts span {
+    flex: 1 1 120px;
+    justify-content: center;
+  }
+
+  .plansSection,
+  .outcomesSection,
+  .capacitySection,
+  .compareSection,
+  .faqSection {
+    padding-top: 72px;
+  }
+
+  .sectionHead {
+    margin-bottom: 28px;
+  }
+
+  .sectionHead h2,
+  .sectionHeadCompact h2,
+  .capacityCopy h2,
+  .faqIntro h2,
+  .finalCopy h2 {
+    font-size: clamp(2.1rem, 10vw, 3.2rem);
+  }
+
+  .planCard {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .planTop {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .price {
+    font-size: clamp(3.2rem, 17vw, 4.5rem);
+  }
+
+  .outcomeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .outcomeCard {
+    min-height: 0;
+  }
+
+  .capacityPanel {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .capacityRow > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .capacityRow strong {
+    text-align: left;
+  }
+
+  .compareHeader {
+    display: none;
+  }
+
+  .compareRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 15px 16px;
+  }
+
+  .compareLabel {
+    grid-column: 1 / -1;
+    padding: 0 0 10px;
+  }
+
+  .compareRow > span {
+    min-width: 0;
+    padding: 0 12px 0 0;
+    align-items: flex-start;
+  }
+
+  .compareRow .proCell {
+    padding: 0 0 0 12px;
+    border-left: 1px solid var(--pp-line);
+    background: transparent;
+  }
+
+  .faqItem summary {
+    min-height: 68px;
+  }
+
+  .finalCta {
+    margin-top: 72px;
+    padding: 28px 22px;
+    border-radius: 22px;
+  }
+
+  .finalActions {
+    width: 100%;
+  }
+
+  .tooltip {
+    left: auto;
+    right: -14px;
+    width: min(250px, calc(100vw - 50px));
+    transform: translate(0, 8px);
+  }
+
+  .infoButton:hover + .tooltip,
+  .infoButton:focus-visible + .tooltip {
+    transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 430px) {
+  .heroKicker,
+  .eyebrow {
+    font-size: 0.64rem;
+  }
+
+  .priceRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .priceMeta {
+    padding-bottom: 0;
+  }
+
+  .capabilityLinks {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .compareRow {
+    grid-template-columns: 1fr;
+  }
+
+  .compareRow > span,
+  .compareRow .proCell {
+    padding: 5px 0;
+    border-left: 0;
+  }
+
+  .compareRow > span::before {
+    width: 42px;
+    flex: none;
+    color: var(--pp-muted);
+    font-family:
+      var(--font-xv-mono),
+      monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+  }
+
+  .compareRow > span:nth-of-type(1)::before {
+    content: "FREE";
+  }
+
+  .compareRow > span:nth-of-type(2)::before {
+    content: "PRO";
+  }
+
+  .faqItem p {
+    margin-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .planCard:hover {
+    transform: none;
+  }
 }
