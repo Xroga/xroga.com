@@ -36,6 +36,9 @@ import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { useLiveBuildStore } from '@/store/useLiveBuildStore';
 import { LiveBuildTimeline } from './LiveBuildTimeline';
 import { RuntimePreviewControls } from './RuntimePreviewControls';
+import {
+  ProjectDeliveryPanel,
+} from './ProjectDeliveryPanel';
 
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
@@ -622,36 +625,11 @@ useRuntimePreviewHydration();
           </div>
         ) : null}
 
-        {activeTab === 'deploy' ? (
-          <div className="h-full overflow-y-auto p-4 space-y-3 text-xs">
-            <p className="text-[10px] uppercase tracking-wider text-[var(--muted)]">Ship status</p>
-            <dl className="space-y-2 font-mono">
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">Project</dt>
-                <dd>{projectName || '—'}</dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">GitHub</dt>
-                <dd className="truncate text-right">
-                  {githubRepoUrl ? (
-                    <a href={githubRepoUrl} target="_blank" rel="noreferrer" className="text-[var(--accent)]">
-                      {repo || githubRepoUrl}
-                    </a>
-                  ) : (
-                    repo || '—'
-                  )}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">Branch</dt>
-                <dd>{branch || 'main'}</dd>
-              </div>
-              {reviewBranch && reviewBranch !== branch ? (
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--muted)]">Review branch</dt>
-                  <dd>{reviewBranch}</dd>
-                </div>
-              ) : null}
+       {activeTab === 'deploy' ? (
+  <div className="h-full overflow-y-auto p-4">
+    <ProjectDeliveryPanel />
+  </div>
+) : null}
               <div className="flex justify-between gap-2">
                 <dt className="text-[var(--muted)]">Commit</dt>
                 <dd>{commitSha ? commitSha.slice(0, 8) : '—'}</dd>
