@@ -208,7 +208,7 @@ export async function generateMetadata({
 
 
     const image =
-      `${SITE_URL}${XROGA_VS_BOLT_OG_IMAGE}`;
+      XROGA_VS_BOLT_OG_IMAGE;
 
 
     return {
