@@ -132,6 +132,7 @@ async function restoreProjectWorkspaceFromMessages(
     // Project state is shared by all tasks in a context; a restored task may fill an
     // empty context, but it must not replace newer project state already present there.
     if (active.projectFiles.length || active.commitSha || active.deployUrl) return;
+
     active.applyBuild({
   ...target,
 
@@ -180,19 +181,7 @@ async function restoreProjectWorkspaceFromMessages(
   terminalLine:
     projection.terminalLines[0],
 });
-      html: projection.html,
-      css: projection.css,
-      js: projection.js,
-      projectFiles: projection.projectFiles,
-      githubRepoUrl: projection.githubRepoUrl,
-      commitSha: projection.commitSha,
-      reviewBranch: projection.reviewBranch,
-      status: projection.status,
-      changesSummary: projection.changesSummary,
-      fileTrail: projection.fileTrail,
-      openPreview: projection.previewAvailable,
-      terminalLine: projection.terminalLines[0],
-    });
+    
     for (const line of projection.terminalLines.slice(1)) active.appendTerminal(line);
     return;
   }
@@ -3079,7 +3068,7 @@ githubTargetRepo:
                   const active =
                     useProjectWorkspaceStore.getState();
 
-                 active.applyBuild({
+active.applyBuild({
   ...target,
 
   projectId:
@@ -3100,33 +3089,33 @@ githubTargetRepo:
   projectFiles:
     projection.projectFiles,
 
-                    replaceProjectFiles:
-                      projection.replaceProjectFiles,
+  replaceProjectFiles:
+    projection.replaceProjectFiles,
 
-                    githubRepoUrl:
-                      projection.githubRepoUrl,
+  githubRepoUrl:
+    projection.githubRepoUrl,
 
-                    commitSha:
-                      projection.commitSha,
+  commitSha:
+    projection.commitSha,
 
-                    reviewBranch:
-                      projection.reviewBranch,
+  reviewBranch:
+    projection.reviewBranch,
 
-                    status:
-                      projection.status,
+  status:
+    projection.status,
 
-                    changesSummary:
-                      projection.changesSummary,
+  changesSummary:
+    projection.changesSummary,
 
-                    fileTrail:
-                      projection.fileTrail,
+  fileTrail:
+    projection.fileTrail,
 
-                    openPreview:
-                      projection.previewAvailable,
+  openPreview:
+    projection.previewAvailable,
 
-                    terminalLine:
-                      projection.terminalLines[0],
-                  });
+  terminalLine:
+    projection.terminalLines[0],
+});
 
                   for (
                     const line of
