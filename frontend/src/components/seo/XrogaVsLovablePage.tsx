@@ -358,10 +358,6 @@ export function XrogaVsLovablePage() {
   caption="Two ways to turn an idea into software. The real difference becomes clearer after generation."
   priority
 />
-            alt="Xroga versus Lovable AI app builder comparison showing two different ways to turn an idea into software"
-            caption="Two ways to turn an idea into software. The real difference becomes clearer after generation."
-            priority
-          />
 
           <section className="xvl-direct-answer" aria-labelledby="short-answer">
             <p className="xvl-kicker">The 30-second answer</p>
@@ -532,9 +528,6 @@ export function XrogaVsLovablePage() {
   alt="At a glance comparison of Xroga and Lovable across starting point, codebase, validation, preview, deployment and ownership"
   caption="Both products can move from a description toward working software. Their starting points and relationship with the codebase differ."
 />
-                  alt="At a glance comparison of Xroga and Lovable across starting point, codebase, validation, preview, deployment and ownership"
-                  caption="Both products can move from a description toward working software. Their starting points and relationship with the codebase differ."
-                />
               </section>
 
               <section id="lovable-strengths">
@@ -672,9 +665,6 @@ export function XrogaVsLovablePage() {
   alt="The same customer portal request taking different workflow paths in Xroga and Lovable"
   caption="Same request, different starting points. This difference becomes more important as a product accumulates architecture, history and users."
 />
-                  alt="The same customer portal request taking different workflow paths in Xroga and Lovable"
-                  caption="Same request, different starting points. This difference becomes more important as a product accumulates architecture, history and users."
-                />
 
                 <h3>Same prompt. Different relationship with the project.</h3>
 
@@ -804,14 +794,11 @@ export function XrogaVsLovablePage() {
                   connected project.
                 </p>
 
-                <Figure
+               <Figure
   src={COMPARISON_IMAGES.proof}
   alt="Xroga implementation workflow showing built changes, passed checks, preview evidence and reviewable files"
   caption="Generation is the beginning. The useful question is whether the result can be inspected, checked and continued."
 />
-                  alt="Xroga implementation workflow showing built changes, passed checks, preview evidence and reviewable files"
-                  caption="Generation is the beginning. The useful question is whether the result can be inspected, checked and continued."
-                />
 
                 <h3>Proof is more useful than a finished message.</h3>
 
@@ -1037,9 +1024,6 @@ export function XrogaVsLovablePage() {
   alt="Xroga long-term workflow from starting an idea through existing repository work, verification and deployment"
   caption="Start simple. Keep going when the product gets serious."
 />
-                  alt="Xroga long-term workflow from starting an idea through existing repository work, verification and deployment"
-                  caption="Start simple. Keep going when the product gets serious."
-                />
 
                 <h3>The first prompt is only the beginning.</h3>
 
