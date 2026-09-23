@@ -251,7 +251,7 @@ export function DevWorkspacePanel({
    */
   flush?: boolean;
 }) {
-useRuntimePreviewHydration();
+  useRuntimePreviewHydration();
   const hydrated = useHydrated();
   const workspaceOpenRaw = useProjectWorkspaceStore((s) => s.workspaceOpen);
   const workspaceOpen = hydrated && workspaceOpenRaw;
@@ -267,12 +267,7 @@ useRuntimePreviewHydration();
   const deleteFile = useProjectWorkspaceStore((s) => s.deleteFile);
   const lastFileTrail = useProjectWorkspaceStore((s) => s.lastFileTrail);
   const terminalLog = useProjectWorkspaceStore((s) => s.terminalLog);
-  const repo = useProjectWorkspaceStore((s) => s.repo);
-  const branch = useProjectWorkspaceStore((s) => s.branch);
-  const commitSha = useProjectWorkspaceStore((s) => s.commitSha);
-  const reviewBranch = useProjectWorkspaceStore((s) => s.reviewBranch);
   const deployUrl = useProjectWorkspaceStore((s) => s.deployUrl);
-  const githubRepoUrl = useProjectWorkspaceStore((s) => s.githubRepoUrl);
   const status = useProjectWorkspaceStore((s) => s.status);
   const projectName = useProjectWorkspaceStore((s) => s.projectName);
   const lastChanges = useProjectWorkspaceStore((s) => s.lastChanges);
@@ -628,37 +623,6 @@ useRuntimePreviewHydration();
                {activeTab === 'deploy' ? (
           <div className="h-full overflow-y-auto p-4">
             <ProjectDeliveryPanel />
-          </div>
-        ) : null}
-        
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">Commit</dt>
-                <dd>{commitSha ? commitSha.slice(0, 8) : '—'}</dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">State</dt>
-                <dd className="inline-flex items-center gap-1">
-                  {status === 'updating' ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                  {status}
-                </dd>
-              </div>
-              <div className="flex justify-between gap-2">
-                <dt className="text-[var(--muted)]">Vercel URL</dt>
-                <dd className="truncate text-right">
-                  {deployUrl ? (
-                    <a href={deployUrl} target="_blank" rel="noreferrer" className="text-[#006aff]">
-                      {deployUrl.replace(/^https?:\/\//, '')}
-                    </a>
-                  ) : (
-                    '—'
-                  )}
-                </dd>
-              </div>
-            </dl>
-            <p className="text-[10px] text-[var(--muted)] leading-relaxed pt-2">
-              Change Vercel account / project under Integrations. Env var names only are shown — values stay
-              server-side.
-            </p>
           </div>
         ) : null}
       </div>
