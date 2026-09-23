@@ -4,9 +4,10 @@ import { test } from 'node:test';
 import {
   ENGINEERING_ARTIFACT_TYPE,
   SUPPORTED_ARTIFACT_VERSION,
-  browserVerificationLine,
-  engineeringArtifactWorkspaceProjection,
-  engineeringArtifactToText,
+  artifactProjectId,
+browserVerificationLine,
+engineeringArtifactWorkspaceProjection,
+engineeringArtifactToText,
   isEngineeringArtifact,
   isRenderableArtifact,
   type EngineeringArtifact,
@@ -215,6 +216,42 @@ test('Project edits evidence never exposes an internal model identity, including
   assert.match(projection.terminalLines.join('\n'), /Black Hole ∞/);
   assert.match(projection.terminalLines.join('\n'), /attempts=1/);
 });
+
+test(
+  'a repository-less Xroga project still exposes its canonical delivery project id',
+  () => {
+    const value =
+      artifact({
+        repository:
+          null,
+
+        softwareProject: {
+          projectId:
+            'xroga-project-123',
+        },
+      });
+
+    assert.equal(
+      artifactProjectId(
+        value,
+      ),
+
+      'xroga-project-123',
+    );
+
+    /*
+     * Repository-less artifacts still must not mutate repository-scoped
+     * Project edits.
+     */
+    assert.equal(
+      engineeringArtifactWorkspaceProjection(
+        value,
+      ),
+
+      null,
+    );
+  },
+);
 
 test('an artifact without an authoritative repository cannot update Project edits', () => {
   assert.equal(engineeringArtifactWorkspaceProjection(artifact({ repository: null })), null);
