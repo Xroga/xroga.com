@@ -3034,23 +3034,26 @@ githubTargetRepo:
                   const active =
                     useProjectWorkspaceStore.getState();
 
-                  active.applyBuild({
-                    ...target,
+                 active.applyBuild({
+  ...target,
 
-                    projectName:
-                      projection.projectName,
+  projectId:
+    projection.projectId,
 
-                    html:
-                      projection.html,
+  projectName:
+    projection.projectName,
 
-                    css:
-                      projection.css,
+  html:
+    projection.html,
 
-                    js:
-                      projection.js,
+  css:
+    projection.css,
 
-                    projectFiles:
-                      projection.projectFiles,
+  js:
+    projection.js,
+
+  projectFiles:
+    projection.projectFiles,
 
                     replaceProjectFiles:
                       projection.replaceProjectFiles,
