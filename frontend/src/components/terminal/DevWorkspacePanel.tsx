@@ -39,6 +39,9 @@ import { RuntimePreviewControls } from './RuntimePreviewControls';
 import {
   ProjectDeliveryPanel,
 } from './ProjectDeliveryPanel';
+import {
+  ProjectDeliveryPanel,
+} from './ProjectDeliveryPanel';
 
 const TABS: Array<{ id: DevWorkspaceTab; label: string; Icon: typeof FolderTree }> = [
   { id: 'files', label: 'Files', Icon: FolderTree },
