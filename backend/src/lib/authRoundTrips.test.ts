@@ -2,7 +2,7 @@
  * Bounds the number of Supabase round trips one authenticated page load costs.
  *
  * This is the regression guard for the egress incident: every authenticated request
- * used to spend one `/auth/v1/user` call plus three provisioning selects, and a
+ * used to spend one `/auth/v1/user` call plus multiple provisioning selects, and a
  * single page load issues a dozen or more requests. The arithmetic — not any single
  * slow query — is what consumed 29 GB against a 5 GB quota.
  *
@@ -16,8 +16,6 @@ import { createServer, type Server } from 'node:http';
 import { after, before, describe, it } from 'node:test';
 import { AddressInfo } from 'node:net';
 import { SignJWT, jwtVerify } from 'jose';
-import { FREE_PLAN_ACTIONS } from '../config/plans.js';
-
 const JWT_SECRET = 'test-only-jwt-secret-not-a-real-credential-000000';
 const USER_ID = '11111111-2222-3333-4444-555555555555';
 const USER_EMAIL = 'tester@example.test';
@@ -30,11 +28,6 @@ let baseUrl = '';
 function bodyFor(path: string, wantsSingleObject: boolean): unknown {
   if (path.startsWith('/rest/v1/profiles')) {
     const row = { id: USER_ID };
-    return wantsSingleObject ? row : [row];
-  }
-  if (path.startsWith('/rest/v1/user_actions')) {
-    // Already correct for a free user, so provisioning has no repair to write.
-    const row = { plan_tier: 'free', total_actions: FREE_PLAN_ACTIONS, used_actions: 0 };
     return wantsSingleObject ? row : [row];
   }
   if (path.startsWith('/rest/v1/user_token_usage')) {
@@ -164,15 +157,15 @@ describe('Supabase round trips for one authenticated page load', () => {
       'a valid project-signed token is verified cryptographically, with no Auth round trip'
     );
     assert.equal(
-      restCalls,
-      3,
-      'provisioning reads profiles, user_actions and user_token_usage exactly once per user'
-    );
+  restCalls,
+  2,
+  'provisioning reads profiles and user_token_usage exactly once per user'
+);
 
     // The bound the incident is about: total calls must not scale with request count.
     assert.ok(
-      requestPaths.length <= 4,
-      `expected at most 4 Supabase calls per page load, got ${requestPaths.length}`
+      requestPaths.length <= 3,
+      `expected at most 3 Supabase calls per page load, got ${requestPaths.length}`
     );
   });
 
@@ -203,7 +196,11 @@ describe('Supabase round trips for one authenticated page load', () => {
     for (const result of results) assert.equal(result.userId, USER_ID);
 
     const restCalls = requestPaths.filter((p) => p.startsWith('/rest/v1/')).length;
-    assert.equal(restCalls, 3, 'concurrent first requests must share one provisioning pass');
+    assert.equal(
+  restCalls,
+  2,
+  'concurrent first requests must share one provisioning pass'
+);
   });
 
   it('still rejects a token this project did not sign', async () => {
@@ -253,7 +250,7 @@ describe('Supabase round trips for one authenticated page load', () => {
 });
 
 describe('the behaviour this replaced, measured the same way', () => {
-  it('cost one auth call plus three selects on every single request', async () => {
+  it('cost one auth call plus two provisioning selects on every single request', async () => {
     // Reproduces the old code path exactly: remote verification forced, and no
     // memory that this user was already provisioned.
     process.env.REQUIRE_REMOTE_AUTH_CHECK = '1';
@@ -275,7 +272,15 @@ describe('the behaviour this replaced, measured the same way', () => {
     const restCalls = requestPaths.filter((p) => p.startsWith('/rest/v1/')).length;
 
     assert.equal(authCalls, REQUESTS, 'the old path spent one Auth round trip per request');
-    assert.equal(restCalls, REQUESTS * 3, 'and re-read all three provisioning rows each time');
-    assert.equal(requestPaths.length, 48, '12 requests × 4 calls — the number this PR removes');
+    assert.equal(
+  restCalls,
+  REQUESTS * 2,
+  'and re-read both provisioning rows each time'
+);
+   assert.equal(
+  requestPaths.length,
+  36,
+  '12 requests × 3 calls — the number this optimization removes'
+);
   });
 });

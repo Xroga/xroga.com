@@ -1749,14 +1749,8 @@ export async function apiFetch<
   return data as T;
 }
 
+
 export const api = {
-  actions: {
-    balance:
-      () =>
-        apiFetch<ActionBalance>(
-          '/api/actions/balance',
-        ),
-  },
 
   projects: {
     list:
@@ -4535,16 +4529,10 @@ export const api = {
                 string;
 
               priceLabel:
-                string;
+  string;
 
-              actionsLabel:
-                string;
-
-              actions:
-                number;
-
-              concurrency:
-                number;
+concurrency:
+  number;
 
               paid:
                 boolean;
@@ -4588,20 +4576,7 @@ export const api = {
           manageAvailable:
             boolean;
 
-          usage: {
-            used:
-              number;
-
-            remaining:
-              number;
-
-            total:
-              number;
-          };
-
           allowance: {
-            actions:
-              number;
 
             concurrency:
               number;
@@ -5699,26 +5674,6 @@ export interface Notification {
 
   created_at:
     string;
-}
-
-export interface ActionBalance {
-  total:
-    number;
-
-  used:
-    number;
-
-  remaining:
-    number;
-
-  planTier:
-    string;
-
-  resetDate:
-    string;
-
-  concurrencyLimit?:
-    number;
 }
 
 export interface SwarmRunSummary {

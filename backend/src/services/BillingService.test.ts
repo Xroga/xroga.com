@@ -30,11 +30,49 @@ function withWhopEnv(t: TestContext) {
   });
 }
 
-test('canonical public plans are Free and Xroga Pro with real allowances', () => {
-  assert.deepEqual(BillingService.listPlans().map(({ tier, name, priceLabel, actions }) => ({ tier, name, priceLabel, actions })), [
-    { tier: 'free', name: 'Free', priceLabel: '$0', actions: 50 },
-    { tier: 'spark', name: 'Xroga Pro', priceLabel: '$25/month', actions: 1500 },
-  ]);
+test('canonical public plans are Free and Xroga Pro without legacy action allowances', () => {
+  const plans =
+    BillingService.listPlans();
+
+  assert.deepEqual(
+    plans.map(
+      ({
+        tier,
+        name,
+        priceLabel,
+      }) => ({
+        tier,
+        name,
+        priceLabel,
+      }),
+    ),
+    [
+      {
+        tier: 'free',
+        name: 'Free',
+        priceLabel: '$0',
+      },
+      {
+        tier: 'spark',
+        name: 'Xroga Pro',
+        priceLabel: '$25/month',
+      },
+    ],
+  );
+
+  for (const plan of plans) {
+    assert.equal(
+      'actions' in plan,
+      false,
+      `${plan.name} must not expose legacy action allowances`,
+    );
+
+    assert.equal(
+      'actionsLabel' in plan,
+      false,
+      `${plan.name} must not expose legacy action labels`,
+    );
+  }
 });
 
 test('Whop plan contract requires approved account, renewal $25, 30 days, USD, and no trial', () => {

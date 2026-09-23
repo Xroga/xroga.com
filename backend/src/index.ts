@@ -5,7 +5,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { authMiddleware } from './middleware/auth.js';
-import actionsRouter from './routes/actions.js';
 import swarmRouter from './routes/swarm.js';
 import chatRouter from './routes/chat.js';
 import projectsRouter from './routes/projects.js';
@@ -60,7 +59,7 @@ import {
   configureFlyMachineSandboxProvider,
 } from './sandbox/sandboxRuntime.js';
 import projectRuntimeRouter from './routes/projectRuntime.js';
-
+import deliveryRouter from './routes/delivery.js';
 import {
   attachRuntimePreviewWebSocketGateway,
   runtimePreviewGateway,
@@ -146,6 +145,12 @@ app.use(
   projectRuntimeRouter,
 );
 
+app.use(
+  '/api/delivery',
+  authMiddleware,
+  deliveryRouter,
+);
+
 app.get('/health', (_req, res) => {
   res.json(publicHealthPayload());
 });
@@ -180,7 +185,6 @@ app.get('/api/config', (_req, res) => {
 
 app.use('/chat', simpleChatRouter);
 
-app.use('/api/actions', authMiddleware, actionsRouter);
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
 app.use(

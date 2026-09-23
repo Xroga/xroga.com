@@ -12,9 +12,19 @@ export function HomepagePricingPreview({ loggedIn }: { loggedIn: boolean }) {
       </header>
       <div className="xv-home-pricing__grid">
         {GALACTIC_PLANS.map((plan) => {
-          const features = plan.tier === 'free'
-            ? [`${plan.actions} AI actions included`, 'Repository-aware edits', 'Preview and verification', 'No card required']
-            : [`${plan.actions.toLocaleString('en-US')} AI actions included`, `${plan.concurrency} concurrent tasks`, 'Higher-capacity pacing'];
+          const features =
+  plan.tier === 'free'
+    ? [
+        'Included AI usage',
+        'Repository-aware edits',
+        'Preview and verification',
+        'No card required',
+      ]
+    : [
+        'Higher monthly AI capacity',
+        'Full Access pacing',
+        'Production-focused workflows',
+      ];
           return (
           <article className={plan.highlight ? 'is-pro' : undefined} key={plan.tier}>
             <div className="xv-home-pricing__plan">

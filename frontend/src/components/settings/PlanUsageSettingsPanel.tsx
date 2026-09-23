@@ -100,7 +100,6 @@ export function PlanUsageSettingsPanel() {
 
           {status && (
             <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-              <StatTile icon={<Gauge className="h-4 w-4" aria-hidden="true" />} label="AI actions" value={`${status.usage.used} used · ${status.usage.remaining} remaining`} />
               <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Period ends" value={dateTime(status.renewalPeriodEnd)} />
               <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
                 <span className="mb-2 flex text-[var(--accent)]">

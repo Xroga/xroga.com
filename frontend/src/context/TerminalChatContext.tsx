@@ -448,6 +448,24 @@ export function TerminalChatProvider({
   const setTokenUsage = useAppStore((s) => s.setTokenUsage);
   const setPlanInfo = useAppStore((s) => s.setPlanInfo);
 
+  const planTier = useAppStore((s) => s.planTier);
+
+/**
+ * Internal submitted-request limit.
+ *
+ * Free:
+ * 1 request total.
+ *
+ * Pro:
+ * 1 running + up to 2 waiting.
+ *
+ * This is NOT shown on the pricing page.
+ */
+const submittedRequestLimit =
+  planTier === 'spark'
+    ? 3
+    : 1;
+  
   const refreshTokenUsage = useCallback(() => {
     void api.dashboard
       .summary()
@@ -1076,26 +1094,6 @@ const stopRequestedRunIdRef =
     return () => window.clearInterval(id);
   }, [loading, heavyBuildActive, thinkingStartedAt]);
 
-  const enqueuePrompt = useCallback((text: string, lane: WorkLane = 'heavy') => {
-    const position = lane === 'heavy' ? nextHeavyQueuePosition(queueRef.current) : undefined;
-    const label = lane === 'heavy' ? `#${position}` : undefined;
-    setPromptQueue((q) => [
-      ...q,
-      {
-        id: crypto.randomUUID(),
-        text,
-        createdAt: Date.now(),
-        lane,
-        hold: false,
-        queueLabel: label,
-      },
-    ]);
-    if (lane === 'heavy') {
-      toast.success(`Queued as ${label} — finishes after current build. Chat still open.`);
-    } else {
-      toast.success('Queued — sends when current reply finishes');
-    }
-  }, []);
 
   const cleanupInProgressAssistant = useCallback(() => {
     setMessages((m) => {
@@ -1109,16 +1107,179 @@ const stopRequestedRunIdRef =
     lastTurnRef.current = null;
   }, []);
 
-  const processNextInQueue = useCallback(() => {
-    // Prefer releasing the next heavy build that is not on hold; never steal a hold.
-    const q = queueRef.current;
-    const nextHeavy = q.find((p) => p.lane === 'heavy' && !p.hold);
-    const nextLight = q.find((p) => p.lane === 'light' && !p.hold);
-    const next = heavyJobActiveRef.current ? nextLight : nextHeavy ?? nextLight;
-    if (!next) return;
-    setPromptQueue((prev) => prev.filter((p) => p.id !== next.id));
-    void submitRef.current(next.text, true);
-  }, []);
+  const enqueuePrompt = useCallback(
+  (
+    text: string,
+    lane: WorkLane = 'heavy',
+  ): boolean => {
+    let activeCount = 0;
+
+    /*
+     * Count the request that is currently running.
+     *
+     * We treat Xroga as having one active user request
+     * at a time. Pro gets additional waiting slots,
+     * not multiple simultaneous user requests.
+     */
+    if (
+      heavyJobActiveRef.current ||
+      lightBusyRef.current ||
+      loading
+    ) {
+      activeCount = 1;
+    }
+
+    const submittedCount =
+      activeCount +
+      queueRef.current.length;
+
+    /*
+     * Free:
+     * maximum 1 submitted request.
+     *
+     * Pro:
+     * maximum 3 submitted requests:
+     * 1 running + 2 queued.
+     */
+    if (
+      submittedCount >=
+      submittedRequestLimit
+    ) {
+      if (
+        submittedRequestLimit === 1
+      ) {
+        toast(
+          'Finish the current response before sending another request.',
+          {
+            icon: '⏳',
+          },
+        );
+      } else {
+        toast(
+          'You already have 3 requests running or waiting.',
+          {
+            icon: '⏳',
+          },
+        );
+      }
+
+      return false;
+    }
+
+    const position =
+      lane === 'heavy'
+        ? nextHeavyQueuePosition(
+            queueRef.current,
+          )
+        : undefined;
+
+    const label =
+      lane === 'heavy'
+        ? `#${position}`
+        : undefined;
+
+    const queuedPrompt: QueuedPrompt = {
+      id: crypto.randomUUID(),
+      text,
+      createdAt: Date.now(),
+      lane,
+      hold: false,
+      queueLabel: label,
+    };
+
+    /*
+     * Update the ref immediately as well as React state.
+     *
+     * This prevents very fast repeated Send clicks from
+     * slipping past the 3-request Pro limit before React
+     * has finished updating state.
+     */
+    const nextQueue = [
+      ...queueRef.current,
+      queuedPrompt,
+    ];
+
+    queueRef.current = nextQueue;
+    setPromptQueue(nextQueue);
+
+    toast.success(
+      'Saved in queue — sends automatically when the current response finishes.',
+    );
+
+    return true;
+  },
+  [
+    loading,
+    submittedRequestLimit,
+  ],
+);
+
+  const processNextInQueue = useCallback(
+  () => {
+    /*
+     * A queued request must never begin while
+     * another user request is still processing.
+     */
+    if (
+      loading ||
+      heavyJobActiveRef.current ||
+      lightBusyRef.current
+    ) {
+      return;
+    }
+
+    const queue =
+      queueRef.current;
+
+    /*
+     * FIFO:
+     * first available queued request runs next.
+     *
+     * Held requests remain in the queue
+     * until the user releases them.
+     */
+    const next =
+      queue.find(
+        (item) =>
+          !item.hold,
+      );
+
+    if (
+      !next
+    ) {
+      return;
+    }
+
+    const remainingQueue =
+      queue.filter(
+        (item) =>
+          item.id !== next.id,
+      );
+
+    /*
+     * Keep the ref synchronized immediately
+     * with React state.
+     */
+    queueRef.current =
+      remainingQueue;
+
+    setPromptQueue(
+      remainingQueue,
+    );
+
+    /*
+     * `true` tells submit() that this request
+     * came from the queue.
+     */
+    void submitRef.current(
+      next.text,
+      true,
+    );
+  },
+  [
+    loading,
+  ],
+);
 
  const stop = useCallback(() => {
   const runId =
