@@ -252,15 +252,21 @@
 }
 
 .heroTitle {
-  max-width: 930px;
+  max-width: 1100px;
   margin: 24px auto 0;
-  font-size: clamp(3.5rem, 7.2vw, 6.7rem);
-  font-weight: 650;
-  line-height: 0.92;
-  letter-spacing: -0.067em;
+
+  font-family:
+    var(--font-emilio),
+    "Cormorant Garamond",
+    Georgia,
+    serif;
+
+  font-size: clamp(4rem, 8vw, 7.4rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
 }
 
-.heroTitle span,
 .sectionHead h2 em,
 .sectionHeadCompact h2 em,
 .capacityCopy h2 em,
@@ -278,7 +284,21 @@
 
 .heroTitle span {
   display: block;
-  color: color-mix(in srgb, var(--pp-ink) 58%, var(--pp-accent));
+
+  font-family:
+    var(--font-emilio),
+    "Cormorant Garamond",
+    Georgia,
+    serif;
+
+  font-style: italic;
+  font-weight: 450;
+
+  color: color-mix(
+    in srgb,
+    var(--pp-ink) 58%,
+    var(--pp-accent)
+  );
 }
 
 .heroCopy {
