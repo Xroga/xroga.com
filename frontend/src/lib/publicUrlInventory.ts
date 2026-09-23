@@ -118,7 +118,7 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
   );
 
   records.push(
-    ...Object.values(CAPABILITY_PAGES).map((page) => record(`/${page.slug}`, 'CAPABILITY', 'frontend/src/app/[capability]/page.tsx', ['frontend/src/lib/capabilityPages.ts'], { priority: .9 })),
+    ...Object.values(CAPABILITY_PAGES).map((page) => record(`/${page.slug}`, 'CAPABILITY', `frontend/src/app/${page.slug}/page.tsx`, ['frontend/src/lib/capabilityPages.ts'], { priority: .9 })),
     ...DOC_PAGES.map((page) => record(`/docs/${page.slug}`, 'DOCUMENTATION', 'frontend/src/app/docs/[slug]/page.tsx', ['frontend/src/lib/docsContent.ts'], { priority: .72, updatedAt: page.updated })),
     ...SHOWCASE_TEMPLATES.map((template) => record(`/showcase/${template.slug}`, 'SHOWCASE', 'frontend/src/app/showcase/[slug]/page.tsx', ['frontend/src/lib/showcase/registry.ts'], { priority: .85 })),
     ...COMPARISONS.map((page) => record(`/compare/${page.slug}`, 'COMPARISON', 'frontend/src/app/compare/[slug]/page.tsx', ['frontend/src/lib/seoGrowthContent.ts'], { updatedAt: page.lastVerified })),
@@ -140,8 +140,8 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
 
   const nonIndexable: PublicUrlRecord[] = [
     ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/admin', 'PRIVATE'],
-    ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
-    ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],
+    ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/auth/github/callback', 'PRIVATE'], ['/onboarding', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
+    ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/community/[postId]', 'PUBLIC_NOINDEX'], ['/ref/[code]', 'PUBLIC_NOINDEX'], ['/share/[token]', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],
     ['/sitemap.xml', 'SYSTEM'], ['/llms.txt', 'SYSTEM'], ['/blog/feed.xml', 'SYSTEM'],
     ['/research/feed.xml', 'SYSTEM'], ['/changelog/feed.xml', 'SYSTEM'],
     ['/research/web3-hackathon-sources.json', 'SYSTEM'], ['/research/web3-hackathon-sources.csv', 'SYSTEM'],

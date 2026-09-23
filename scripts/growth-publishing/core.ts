@@ -24,7 +24,37 @@ export type PublicationFailure =
   | 'LIVE_404' | 'LIVE_5XX' | 'CANONICAL_MISMATCH' | 'ROBOTS_BLOCK' | 'NOINDEX'
   | 'SITEMAP_MISSING' | 'STRUCTURED_DATA_ERROR' | 'SOURCE_STALE' | 'INDEXNOW_FAILURE'
   | 'NETWORK_UNKNOWN' | 'DRIFT' | 'REDIRECT' | 'TITLE_MISSING' | 'DESCRIPTION_MISSING'
-  | 'CLIENT_ONLY_CRITICAL_CONTENT' | 'AUTH_BLOCKED';
+  | 'CLIENT_ONLY_CRITICAL_CONTENT' | 'AUTH_BLOCKED' | 'RATE_LIMITED' | 'SOFT_404';
+
+const PUBLICATION_TRANSITIONS: Record<PublicationState, readonly PublicationState[]> = {
+  DRAFT: ['RESEARCH_REQUIRED', 'EVIDENCE_REQUIRED', 'VISUALS_REQUIRED', 'QUALITY_BLOCKED', 'READY_FOR_REVIEW', 'RETIRED'],
+  RESEARCH_REQUIRED: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  EVIDENCE_REQUIRED: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  VISUALS_REQUIRED: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  QUALITY_BLOCKED: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  READY_FOR_REVIEW: ['APPROVED', 'DRAFT', 'RETIRED'],
+  APPROVED: ['READY_TO_BUILD', 'DRAFT', 'RETIRED'],
+  READY_TO_BUILD: ['BUILDING', 'RETIRED'],
+  BUILDING: ['BUILD_FAILED', 'PREVIEW_READY'],
+  BUILD_FAILED: ['READY_TO_BUILD', 'RETIRED'],
+  PREVIEW_READY: ['PREVIEW_VERIFIED', 'BUILD_FAILED'],
+  PREVIEW_VERIFIED: ['MERGED', 'BUILDING'],
+  MERGED: ['DEPLOYING'],
+  DEPLOYING: ['DEPLOY_FAILED', 'LIVE_UNVERIFIED'],
+  DEPLOY_FAILED: ['DEPLOYING', 'RETIRED'],
+  LIVE_UNVERIFIED: ['LIVE_VERIFIED', 'DEPLOY_FAILED', 'DRIFTED'],
+  LIVE_VERIFIED: ['DISCOVERY_SUBMITTED', 'MONITORING', 'DRIFTED', 'RETIRED'],
+  DISCOVERY_SUBMITTED: ['MONITORING', 'DRIFTED'],
+  MONITORING: ['REFRESH_DUE', 'STALE', 'DRIFTED', 'RETIRED'],
+  REFRESH_DUE: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  STALE: ['DRAFT', 'READY_FOR_REVIEW', 'RETIRED'],
+  DRIFTED: ['READY_TO_BUILD', 'DEPLOYING', 'RETIRED'],
+  RETIRED: [],
+};
+
+export function publicationTransitionAllowed(from: PublicationState, to: PublicationState) {
+  return PUBLICATION_TRANSITIONS[from].includes(to);
+}
 
 export type ContentManifest = {
   canonical: string; opportunityId: string; indexStatus: 'INDEX' | 'NOINDEX' | 'DRAFT';
@@ -75,11 +105,63 @@ export function evaluatePublicationEligibility(record: PublicUrlRecord, manifest
   return { status: reasons.length ? 'PUBLICATION_BLOCKED' as const : 'PUBLICATION_ELIGIBLE' as const, reasons };
 }
 
-export type ChangedUrlResult = { directlyChangedUrls: string[]; dependentUrls: string[]; globalImpact: boolean; unknownImpact: string[] };
-const globalFiles = new Set([
+export type DeploymentImpact = {
+  frontendDeploymentRequired: boolean;
+  backendDeploymentRequired: boolean;
+  publicContentImpact: boolean;
+  discoveryImpact: boolean;
+  buildInputOnly: boolean;
+};
+export type ChangedUrlResult = {
+  directlyChangedUrls: string[]; dependentUrls: string[]; globalImpact: boolean;
+  discoveryImpact: boolean; unknownImpact: string[]; deploymentImpact: DeploymentImpact;
+};
+const globalContentFiles = new Set([
   'frontend/src/app/layout.tsx', 'frontend/src/lib/seo.ts', 'frontend/src/lib/publicUrlInventory.ts',
   'frontend/src/middleware.ts', 'frontend/next.config.mjs', 'frontend/redirects.mjs',
 ]);
+const globalDiscoveryFiles = new Set([
+  'frontend/src/app/robots.ts', 'frontend/src/app/sitemap.ts',
+  'scripts/seo-contracts.json', 'scripts/seo-crawlers.json', 'growth/source/crawler-policies.json',
+]);
+
+export function classifyDeploymentImpact(files: string[]): DeploymentImpact {
+  const normalized = files.map((file) => file.replaceAll('\\', '/').replace(/^\.\//, ''));
+  const frontendRuntime = normalized.some((file) =>
+    /^(?:frontend\/src\/(?:app|components|lib|styles)\/|frontend\/(?:next\.config\.mjs|redirects\.mjs|public\/))/.test(file)
+      && !/(?:\.test\.|\/tests?\/)/.test(file));
+  const backendRuntime = normalized.some((file) =>
+    /^backend\/(?:src|Dockerfile|fly\.toml)/.test(file) && !/(?:\.test\.|\/tests?\/)/.test(file));
+  const publicContentImpact = normalized.some((file) =>
+    /^(?:content\/manifests\/|growth\/(?:content|source)\/|frontend\/src\/(?:app|lib)\/)/.test(file)
+      && !/(?:\.test\.|\/tests?\/)/.test(file));
+  const discoveryImpact = normalized.some((file) => globalDiscoveryFiles.has(file));
+  const onlyBuildInputsOrNonRuntime = normalized.length > 0 && normalized.every((file) =>
+    /^(?:docs\/|\.github\/|package(?:-lock)?\.json$|.*(?:\.test\.[cm]?[jt]sx?|\/tests?\/))/.test(file));
+  return {
+    frontendDeploymentRequired: frontendRuntime,
+    backendDeploymentRequired: backendRuntime,
+    publicContentImpact,
+    discoveryImpact,
+    buildInputOnly: onlyBuildInputsOrNonRuntime && normalized.some((file) => /^package(?:-lock)?\.json$/.test(file)),
+  };
+}
+
+export function assessDeploymentRevision(input: {
+  mainSha: string; frontendSha: string | null; backendSha: string | null;
+  filesSinceFrontend: string[]; filesSinceBackend: string[];
+}) {
+  const frontendImpact = classifyDeploymentImpact(input.filesSinceFrontend);
+  const backendImpact = classifyDeploymentImpact(input.filesSinceBackend);
+  return {
+    frontend: input.frontendSha === input.mainSha ? 'MATCH' as const
+      : frontendImpact.frontendDeploymentRequired ? 'DEPLOY_REQUIRED' as const : 'NO_DEPLOY_REQUIRED' as const,
+    backend: input.backendSha === input.mainSha ? 'MATCH' as const
+      : backendImpact.backendDeploymentRequired ? 'DEPLOY_REQUIRED' as const : 'NO_DEPLOY_REQUIRED' as const,
+    frontendImpact,
+    backendImpact,
+  };
+}
 
 export async function mapChangedFilesToUrls(files: string[]): Promise<ChangedUrlResult> {
   const normalized = files.map((file) => file.replaceAll('\\', '/').replace(/^\.\//, ''));
@@ -88,8 +170,10 @@ export async function mapChangedFilesToUrls(files: string[]): Promise<ChangedUrl
   const dependent = new Set<string>();
   const unknown = new Set<string>();
   let globalImpact = false;
+  let discoveryImpact = false;
   for (const file of normalized) {
-    if (globalFiles.has(file)) { globalImpact = true; continue; }
+    if (globalContentFiles.has(file)) { globalImpact = true; continue; }
+    if (globalDiscoveryFiles.has(file)) { discoveryImpact = true; continue; }
     let matched = false;
     for (const record of INDEXABLE_PUBLIC_URLS) {
       if (record.routeSource === file || record.contentSources.includes(file) || record.manifestSource === file) {
@@ -112,13 +196,13 @@ export async function mapChangedFilesToUrls(files: string[]): Promise<ChangedUrl
       const route = file.replace('frontend/src/app', '').replace(/\/page\.tsx$/, '').replace(/\([^/]+\)\//g, '').replace(/\[.+?\]/g, '');
       if (route && PUBLIC_URL_INVENTORY.some((item) => item.path === route)) { direct.add(route); matched = true; }
     }
-    if (!matched && !/^(backend\/.*(?:\.test\.ts|docs\/)|\.github\/|docs\/|scripts\/growth-publishing\/|package(?:-lock)?\.json)/.test(file)) unknown.add(file);
+    if (!matched && !/^(?:backend\/.*(?:\.test\.[cm]?[jt]s|\/tests?\/)|\.github\/|docs\/|scripts\/growth-publishing\/|package(?:-lock)?\.json$|frontend\/.*\.(?:css|scss))/.test(file)) unknown.add(file);
   }
   if (globalImpact) INDEXABLE_PUBLIC_URLS.forEach((record) => dependent.add(record.path));
   direct.forEach((url) => dependent.delete(url));
   return {
     directlyChangedUrls: [...direct].sort(), dependentUrls: [...dependent].sort(),
-    globalImpact, unknownImpact: [...unknown].sort(),
+    globalImpact, discoveryImpact, unknownImpact: [...unknown].sort(), deploymentImpact: classifyDeploymentImpact(normalized),
   };
 }
 
@@ -150,7 +234,8 @@ export function inspectHtml(html: string): HtmlSignals {
     try { const value = JSON.parse(block[1]); schemas.push(JSON.stringify(value)); } catch { schemas.push('INVALID'); }
   }
   const text = stripHtml(html);
-  return { title, description, h1, canonical, robots, links, schemas, images, text, contentHash: sha256(text) };
+  const semanticFingerprint = JSON.stringify({ title, description, canonical, robots, h1, text });
+  return { title, description, h1, canonical, robots, links, schemas, images, text, contentHash: sha256(semanticFingerprint) };
 }
 
 export function analyzeSemanticHtml(html: string) {
@@ -188,9 +273,11 @@ export function robotsAllows(body: string, userAgent: string, pathname: string) 
   return rules[0]?.allowed ?? true;
 }
 
-const privateIpv4 = (ip: string) => /^(?:10\.|127\.|169\.254\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|0\.)/.test(ip);
-const privateIpv6 = (ip: string) => /^(?:::1$|f[cd][0-9a-f]{2}:|fe8[0-9a-f]:)/i.test(ip);
-export async function assertSafeFetchUrl(value: string, allowedOrigin = 'https://xroga.com', allowLocal = false): Promise<URL> {
+const privateIpv4 = (ip: string) => /^(?:10\.|127\.|169\.254\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.|0\.|100\.(?:6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.|198\.(?:1[89])\.|192\.0\.0\.)/.test(ip);
+const privateIpv6 = (ip: string) => /^(?:::1$|::$|f[cd][0-9a-f]{2}:|fe[89ab][0-9a-f]:|::ffff:(?:0*:)?(?:10\.|127\.|169\.254\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.))/i.test(ip);
+export const isPrivateNetworkAddress = (ip: string) => privateIpv4(ip) || privateIpv6(ip);
+type DnsLookup = typeof dns.lookup;
+export async function assertSafeFetchUrl(value: string, allowedOrigin = 'https://xroga.com', allowLocal = false, lookup: DnsLookup = dns.lookup): Promise<URL> {
   const url = new URL(value, allowedOrigin);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Only credential-free HTTP(S) URLs are allowed.');
   const allowed = new URL(allowedOrigin);
@@ -199,20 +286,20 @@ export async function assertSafeFetchUrl(value: string, allowedOrigin = 'https:/
     if (!allowLocal) throw new Error('Private network target refused.');
     return url;
   }
-  const addresses = isIP(url.hostname) ? [{ address: url.hostname }] : await dns.lookup(url.hostname, { all: true });
-  if (!addresses.length || addresses.some(({ address }) => privateIpv4(address) || privateIpv6(address))) throw new Error('Private or unresolved network target refused.');
+  const addresses = isIP(url.hostname) ? [{ address: url.hostname }] : await lookup(url.hostname, { all: true });
+  if (!addresses.length || addresses.some(({ address }) => isPrivateNetworkAddress(address))) throw new Error('Private or unresolved network target refused.');
   return url;
 }
 
-export async function safeFetch(value: string, options: { allowedOrigin?: string; allowLocal?: boolean; userAgent?: string; timeoutMs?: number; maxBytes?: number; fetchImpl?: typeof fetch } = {}) {
+export async function safeFetch(value: string, options: { allowedOrigin?: string; allowLocal?: boolean; userAgent?: string; timeoutMs?: number; maxBytes?: number; fetchImpl?: typeof fetch; lookup?: DnsLookup } = {}) {
   const allowedOrigin = options.allowedOrigin ?? 'https://xroga.com';
-  let url = await assertSafeFetchUrl(value, allowedOrigin, options.allowLocal ?? false);
+  let url = await assertSafeFetchUrl(value, allowedOrigin, options.allowLocal ?? false, options.lookup);
   const fetchImpl = options.fetchImpl ?? fetch;
   for (let redirects = 0; redirects <= 5; redirects += 1) {
     const response = await fetchImpl(url, { redirect: 'manual', signal: AbortSignal.timeout(options.timeoutMs ?? 15_000), headers: { 'user-agent': options.userAgent ?? 'XrogaGrowthVerifier/1.0' } });
     if (response.status >= 300 && response.status < 400 && response.headers.get('location')) {
       if (redirects === 5) throw new Error('Redirect limit exceeded.');
-      url = await assertSafeFetchUrl(new URL(response.headers.get('location')!, url).href, allowedOrigin, options.allowLocal ?? false);
+      url = await assertSafeFetchUrl(new URL(response.headers.get('location')!, url).href, allowedOrigin, options.allowLocal ?? false, options.lookup);
       continue;
     }
     const declared = Number(response.headers.get('content-length') || 0);
@@ -232,6 +319,13 @@ export type LiveVerification = {
   failures: PublicationFailure[]; warnings: string[]; signals?: HtmlSignals; semanticFindings: string[];
   challenge: boolean; networkState: 'CONFIRMED' | 'UNKNOWN';
 };
+export function detectChallengePage(status: number, body: string, finalUrl: string) {
+  const sample = body.slice(0, 100_000);
+  const challenge = /captcha|cf-chl-|just a moment|verify you are human|attention required|access denied|bot verification/i.test(sample);
+  const authWall = /(?:authentication required|sign in to continue|vercel authentication|log in to continue)/i.test(sample)
+    || /\/(?:login|signin|auth)(?:\/|\?|$)/i.test(new URL(finalUrl).pathname);
+  return { challenge, authWall, blocked: challenge || authWall || status === 401 || status === 403 };
+}
 export async function verifyLiveUrl(record: PublicUrlRecord, options: { baseUrl?: string; userAgent?: string; sitemap?: string; fetchImpl?: typeof fetch } = {}): Promise<LiveVerification> {
   const baseUrl = (options.baseUrl ?? 'https://xroga.com').replace(/\/$/, '');
   const target = `${baseUrl}${record.path}`;
@@ -243,6 +337,7 @@ export async function verifyLiveUrl(record: PublicUrlRecord, options: { baseUrl?
     if (response.status === 404) failures.push('LIVE_404');
     else if (response.status >= 500) failures.push('LIVE_5XX');
     else if (response.status === 401 || response.status === 403) failures.push('AUTH_BLOCKED');
+    else if (response.status === 429) failures.push('RATE_LIMITED');
     else if (response.status !== 200) failures.push('DRIFT');
     if (normalizePath(new URL(finalUrl).pathname) !== record.path) failures.push('REDIRECT');
     const signals = inspectHtml(body);
@@ -255,11 +350,14 @@ export async function verifyLiveUrl(record: PublicUrlRecord, options: { baseUrl?
     if (!signals.description) failures.push('DESCRIPTION_MISSING');
     if (signals.h1.length !== 1 || signals.text.length < 180) failures.push('CLIENT_ONLY_CRITICAL_CONTENT');
     if (signals.schemas.includes('INVALID')) failures.push('STRUCTURED_DATA_ERROR');
+    if (detectSoft404(response.status, body)) failures.push('SOFT_404');
     if (options.sitemap && expectedCanonical && !options.sitemap.includes(`<loc>${expectedCanonical}</loc>`)) failures.push('SITEMAP_MISSING');
     if (semanticFindings.length) warnings.push(`Semantic HTML findings: ${semanticFindings.join(', ')}`);
     if (durationMs > 3_000) warnings.push(`Slow response observed: ${durationMs}ms`);
-    const challenge = /captcha|cf-chl-|just a moment|verify you are human/i.test(body.slice(0, 50_000));
-    if (challenge) failures.push('ROBOTS_BLOCK');
+    const challengeState = detectChallengePage(response.status, body, finalUrl);
+    if (challengeState.challenge) failures.push('ROBOTS_BLOCK');
+    if (challengeState.authWall) failures.push('AUTH_BLOCKED');
+    const challenge = challengeState.challenge;
     return { url: target, finalUrl, durationMs, xRobotsTag, agent: options.userAgent ?? 'XrogaGrowthVerifier/1.0', status: response.status, contentType: response.headers.get('content-type'), indexability: failures.length ? 'BLOCKED' : 'INDEXABLE', failures: [...new Set(failures)], warnings, signals, semanticFindings, challenge, networkState: 'CONFIRMED' };
   } catch (error) {
     warnings.push(error instanceof Error ? error.message : String(error));
@@ -286,18 +384,27 @@ export function indexNowEligibility(record: PublicUrlRecord, verification: LiveV
 export async function submitIndexNow(urls: string[], options: { dryRun?: boolean; fetchImpl?: typeof fetch } = {}) {
   const key = process.env.INDEXNOW_KEY?.trim(); const keyLocation = process.env.INDEXNOW_KEY_LOCATION?.trim();
   if (!key || !keyLocation) return { status: 'UNAVAILABLE' as const, submitted: [], reason: 'INDEXNOW_KEY and INDEXNOW_KEY_LOCATION are not configured.' };
-  if (!keyLocation.startsWith('https://xroga.com/')) return { status: 'REFUSED' as const, submitted: [], reason: 'Key location must be hosted on xroga.com.' };
+  let keyUrl: URL;
+  try { keyUrl = new URL(keyLocation); } catch { return { status: 'REFUSED' as const, submitted: [], reason: 'Key location is invalid.' }; }
+  if (keyUrl.protocol !== 'https:' || keyUrl.origin !== 'https://xroga.com') return { status: 'REFUSED' as const, submitted: [], reason: 'Key location must be hosted on xroga.com.' };
   const unique = [...new Set(urls)];
   if (!unique.length || unique.some((url) => new URL(url).origin !== 'https://xroga.com')) return { status: 'REFUSED' as const, submitted: [], reason: 'Only unique canonical xroga.com URLs may be submitted.' };
   if (options.dryRun !== false) return { status: 'DRY_RUN' as const, submitted: unique };
   const fetchImpl = options.fetchImpl ?? fetch;
+  try {
+    const keyResponse = await fetchImpl(keyUrl, { signal: AbortSignal.timeout(15_000), redirect: 'error' });
+    const hostedKey = await keyResponse.text();
+    if (!keyResponse.ok || hostedKey.trim() !== key) return { status: 'REFUSED' as const, submitted: [], reason: 'The domain-hosted IndexNow key could not be verified.' };
+  } catch {
+    return { status: 'REFUSED' as const, submitted: [], reason: 'The domain-hosted IndexNow key could not be verified.' };
+  }
   let lastStatus = 0;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       const response = await fetchImpl('https://api.indexnow.org/indexnow', { method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8' }, body: JSON.stringify({ host: 'xroga.com', key, keyLocation, urlList: unique }), signal: AbortSignal.timeout(15_000) });
       lastStatus = response.status;
       if ([200, 202].includes(response.status)) return { status: 'ACCEPTED' as const, submitted: unique, responseCode: response.status };
-      if (response.status < 500) break;
+      if (response.status !== 429 && response.status < 500) break;
     } catch { if (attempt === 2) return { status: 'FAILED' as const, submitted: [], reason: 'Transient IndexNow request failed after bounded retries.' }; }
   }
   return { status: 'FAILED' as const, submitted: [], responseCode: lastStatus, reason: `IndexNow returned HTTP ${lastStatus}.` };
@@ -329,7 +436,9 @@ export function fingerprintDrift(expectedHash: string | null, verification: Live
 
 export function buildPublicationReceipt(input: { record: PublicUrlRecord; verification: LiveVerification; sitemapPresent: boolean; feedPresent?: boolean; commitSha?: string; mergeSha?: string; deploymentId?: string; deploymentUrl?: string; expectedHash?: string; indexNow?: unknown }) {
   const { record, verification } = input;
-  const blocking = verification.failures.filter((failure) => failure !== 'SITEMAP_MISSING');
+  const drift = fingerprintDrift(input.expectedHash ?? null, verification);
+  const failures = [...new Set([...verification.failures, ...(drift.state === 'DRIFTED' ? ['DRIFT' as const] : [])])];
+  const blocking = failures;
   const receiptIdentity = [record.canonical, input.commitSha ?? '', verification.signals?.contentHash ?? '', verification.status ?? 'UNKNOWN'].join('|');
   return {
     publication_id: `publication_${sha256(receiptIdentity).slice(0, 24)}`, url: record.path, canonical: record.canonical, asset_id: record.manifestSource ?? record.routeSource,
@@ -343,12 +452,14 @@ export function buildPublicationReceipt(input: { record: PublicUrlRecord; verifi
     sitemap_present: input.sitemapPresent, feed_present: input.feedPresent ?? null,
     structured_data_state: verification.failures.includes('STRUCTURED_DATA_ERROR') ? 'INVALID' : 'VALID_OR_ABSENT',
     server_content_state: verification.failures.includes('CLIENT_ONLY_CRITICAL_CONTENT') ? 'INSUFFICIENT' : 'VISIBLE',
-    visual_state: 'NOT_ASSESSED_BY_HTML_CHECK', internal_links_state: verification.signals?.links.length ? 'PRESENT' : 'ABSENT',
+    visual_state: 'NOT_ASSESSED_BY_HTML_CHECK', internal_links_state: verification.signals?.links.some((link) => {
+      try { return new URL(link, 'https://xroga.com').origin === 'https://xroga.com'; } catch { return false; }
+    }) ? 'PRESENT' : 'ABSENT',
     indexnow_status: input.indexNow ?? 'NOT_REQUESTED', google_inspection_state: process.env.GSC_URL_INSPECTION_CREDENTIALS ? 'CONFIGURED_NOT_RUN' : 'NO_DATA',
-    content_hash: verification.signals?.contentHash ?? null, expected_hash: input.expectedHash ?? null,
+    content_hash: verification.signals?.contentHash ?? null, expected_hash: input.expectedHash ?? null, drift_state: drift.state,
     lastmod: record.updatedAt ?? null,
     result: blocking.length ? 'FAILED' : verification.warnings.length || verification.failures.length ? 'LIVE_WITH_WARNING' : 'LIVE_VERIFIED',
-    failures: verification.failures,
+    failures,
   };
 }
 
@@ -417,6 +528,21 @@ export function scheduledPublicationEligibility(item: { state: PublicationState;
   if (new Date(item.scheduledAt) > now) return { eligible: false, reason: 'NOT_DUE' };
   if (!item.approved || !['APPROVED', 'READY_TO_BUILD'].includes(item.state)) return { eligible: false, reason: 'APPROVAL_REQUIRED' };
   return { eligible: true, reason: 'DUE_AND_APPROVED' };
+}
+
+export function auditRouteInventoryPaths(routeFiles: string[], inventory = PUBLIC_URL_INVENTORY) {
+  const coveredByPrivatePrefix = (route: string) => inventory.some((item) =>
+    ['PRIVATE', 'SYSTEM'].includes(item.classification) && (route === item.path || route.startsWith(`${item.path}/`)));
+  const uncovered: string[] = [];
+  for (const file of routeFiles.map((item) => item.replaceAll('\\', '/'))) {
+    if (!/frontend\/src\/app\/.*\/page\.tsx$|frontend\/src\/app\/page\.tsx$/.test(file)) continue;
+    const appPart = file.replace(/^.*frontend\/src\/app/, '').replace(/\/page\.tsx$/, '').replace(/\/\([^/]+\)/g, '');
+    const route = appPart || '/';
+    const routeExpression = new RegExp(`^${route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\[[^/]+\\\]/g, '[^/]+')}$`);
+    const exact = inventory.some((item) => item.path === route || item.routeSource.replaceAll('\\', '/') === file || routeExpression.test(item.path));
+    if (!exact && !coveredByPrivatePrefix(route)) uncovered.push(route);
+  }
+  return { uncovered: [...new Set(uncovered)].sort(), complete: uncovered.length === 0 };
 }
 
 export function classifyProductChange(files: string[]) {

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { existsSync } from 'node:fs';
+import { isPublicPath } from './supabase/routeAccess';
 
 /**
  * Guards for the crypto page's route, its theme, and its footer.
@@ -24,18 +25,14 @@ import { existsSync } from 'node:fs';
  */
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const ACCESS = read('./supabase/routeAccess.ts');
 const REDIRECTS = read('../../redirects.mjs');
 const PROVIDER = read('../components/providers/ThemeProvider.tsx');
 const PAGE = read('../app/crypto/page.tsx');
 const CHROME = read('../components/layout/PublicMarketingChrome.tsx');
 
 test('the crypto page is reachable without an account', () => {
-  assert.match(ACCESS, /'\/crypto',/, '/crypto is not a public route');
-  assert.ok(
-    !/'\/crypto-builder'/.test(ACCESS),
-    'the public list still names a route that does not exist',
-  );
+  assert.equal(isPublicPath('/crypto'), true, '/crypto is not a public route');
+  assert.equal(isPublicPath('/crypto-builder'), true, 'unknown document paths must reach Next routing');
 });
 
 test('every crypto route in the config resolves to a page that exists', () => {

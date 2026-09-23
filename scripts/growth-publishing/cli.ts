@@ -1,9 +1,9 @@
 import { execFile as execFileCallback } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import {
   CRAWLER_PROFILES, INDEXABLE_PUBLIC_URLS, PUBLIC_URL_INVENTORY, REPOSITORY_ROOT,
-  analyzeLinkGraph, buildFreshnessQueue, buildPublicationReceipt, classifyProductChange,
+  analyzeLinkGraph, assessDeploymentRevision, auditRouteInventoryPaths, buildFreshnessQueue, buildPublicationReceipt, classifyProductChange,
   detectRedirectProblems, evaluatePublicationEligibility, googleDiscoveryState,
   indexNowEligibility, loadPublicationSource, mapChangedFilesToUrls, publicationStatusData,
   robotsAllows, safeFetch, submitIndexNow, verifyLiveUrl, writeArtifact,
@@ -17,10 +17,25 @@ const value = (name: string) => args.find((item) => item.startsWith(`--${name}=`
 const json = flag('json');
 const print = (result: unknown) => console.log(json ? JSON.stringify(result, null, 2) : typeof result === 'string' ? result : JSON.stringify(result, null, 2));
 
-async function changedFiles() {
-  const since = value('since') ?? 'HEAD^';
-  const { stdout } = await execFile('git', ['diff', '--name-only', `${since}..HEAD`], { cwd: REPOSITORY_ROOT });
+async function gitChangedFiles(base: string, head: string) {
+  const { stdout } = await execFile('git', ['diff', '--name-only', `${base}..${head}`], { cwd: REPOSITORY_ROOT });
   return stdout.split(/\r?\n/).filter(Boolean);
+}
+
+async function changedFiles() {
+  const head = value('head-ref') ?? 'HEAD';
+  const base = value('base-ref') ?? value('since') ?? `${head}^`;
+  return gitChangedFiles(base, head);
+}
+
+async function appPageFiles() {
+  const root = `${REPOSITORY_ROOT}/frontend/src/app`;
+  const files = await readdir(root, { recursive: true, withFileTypes: true });
+  return files.filter((entry) => entry.isFile() && entry.name === 'page.tsx')
+    .map((entry) => {
+      const relativeDir = entry.parentPath.slice(root.length).replace(/^[/\\]+/, '').replaceAll('\\', '/');
+      return `frontend/src/app/${relativeDir ? `${relativeDir}/` : ''}page.tsx`;
+    });
 }
 
 async function sitemapText(baseUrl: string) {
@@ -32,6 +47,8 @@ async function verify(paths: string[]) {
   const baseUrl = (value('base-url') ?? process.env.SEO_AUDIT_BASE_URL ?? 'https://xroga.com').replace(/\/$/, '');
   const sitemap = await sitemapText(baseUrl);
   const records = paths.map((path) => INDEXABLE_PUBLIC_URLS.find((item) => item.path === path)).filter(Boolean) as typeof INDEXABLE_PUBLIC_URLS;
+  const unknown = paths.filter((path) => !records.some((record) => record.path === path));
+  if (unknown.length) throw new Error(`Unknown or non-indexable URL(s): ${unknown.join(', ')}`);
   const results = [];
   for (const record of records.slice(0, 150)) results.push(await verifyLiveUrl(record, { baseUrl, sitemap }));
   return { baseUrl, checked: results.length, results, blockers: results.filter((item) => item.failures.length) };
@@ -83,9 +100,19 @@ async function main() {
   }
   if (command === 'drift') {
     const result = await verify((value('urls')?.split(',') ?? ['/build-with/github', '/tools/production-readiness-checker']));
-    const receipts = result.results.map((verification) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => `${result.baseUrl}${item.path}` === verification.url)!; return buildPublicationReceipt({ record, verification, sitemapPresent: !verification.failures.includes('SITEMAP_MISSING'), commitSha: value('commit') }); });
+    const expectedHash = value('expected-hash');
+    if (expectedHash && result.results.length !== 1) throw new Error('--expected-hash requires exactly one --urls value.');
+    const receipts = result.results.map((verification) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => `${result.baseUrl}${item.path}` === verification.url)!; return buildPublicationReceipt({ record, verification, sitemapPresent: !verification.failures.includes('SITEMAP_MISSING'), commitSha: value('commit'), expectedHash }); });
+    const mainSha = value('main-sha'); const frontendSha = value('frontend-sha'); const backendSha = value('backend-sha');
+    const revision = mainSha && (frontendSha || backendSha) ? assessDeploymentRevision({
+      mainSha,
+      frontendSha: frontendSha ?? null,
+      backendSha: backendSha ?? null,
+      filesSinceFrontend: frontendSha ? await gitChangedFiles(value('frontend-base-ref') ?? frontendSha, mainSha) : [],
+      filesSinceBackend: backendSha ? await gitChangedFiles(value('backend-base-ref') ?? backendSha, mainSha) : [],
+    }) : null;
     if (!flag('dry-run')) await writeArtifact('publication-receipts.json', receipts);
-    print({ ...result, receipts }); if (result.blockers.length) process.exitCode = 2; return;
+    print({ ...result, receipts, revision }); if (result.blockers.length || receipts.some((receipt) => receipt.result === 'FAILED') || revision?.frontend === 'DEPLOY_REQUIRED' || revision?.backend === 'DEPLOY_REQUIRED') process.exitCode = 2; return;
   }
   if (command === 'feeds') {
     const routes = ['/blog/feed.xml', '/research/feed.xml', '/changelog/feed.xml'];
@@ -132,6 +159,8 @@ async function main() {
     for (const { file, manifest } of source.manifests) { const record = INDEXABLE_PUBLIC_URLS.find((item) => item.canonical === manifest.canonical); if (!record) errors.push(`${file}: canonical absent from public URL inventory`); else errors.push(...evaluatePublicationEligibility(record, manifest).reasons.map((reason) => `${file}: ${reason}`)); }
     const llms = await readFile(new URL('../../frontend/src/app/llms.txt/route.ts', import.meta.url), 'utf8');
     for (const match of llms.matchAll(/https:\/\/xroga\.com([^'`\s)]+)/g)) if (!PUBLIC_URL_INVENTORY.some((item) => item.path === normalize(match[1]))) errors.push(`llms.txt references unknown path ${match[1]}`);
+    const routeAudit = auditRouteInventoryPaths(await appPageFiles());
+    errors.push(...routeAudit.uncovered.map((route) => `app route absent from public URL inventory: ${route}`));
     const result = { inventory: { total: PUBLIC_URL_INVENTORY.length, indexable: INDEXABLE_PUBLIC_URLS.length }, errors };
     print(result); if (errors.length) process.exitCode = 2; return;
   }

@@ -4,11 +4,13 @@ import { buildRssFeed } from '../../frontend/src/lib/seoFeeds.js';
 import { buildSitemapRecords } from '../../frontend/src/lib/publicUrlInventory.js';
 import {
   CRAWLER_PROFILES, INDEXABLE_PUBLIC_URLS, PUBLICATION_STATES, PUBLIC_URL_INVENTORY,
-  analyzeLinkGraph, analyzeSemanticHtml, assertSafeFetchUrl, buildFreshnessQueue, buildPublicationReceipt,
-  classifyExternalSourceHealth, classifyProductChange, detectRedirectProblems, detectSoft404, evaluatePublicationEligibility,
+  analyzeLinkGraph, analyzeSemanticHtml, assertSafeFetchUrl, assessDeploymentRevision, auditRouteInventoryPaths,
+  buildFreshnessQueue, buildPublicationReceipt, classifyDeploymentImpact,
+  classifyExternalSourceHealth, classifyProductChange, detectChallengePage, detectRedirectProblems, detectSoft404, evaluatePublicationEligibility,
   fingerprintDrift, googleDiscoveryState, indexNowEligibility, inspectGoogleUrl, inspectHtml, loadPublicationSource,
-  mapChangedFilesToUrls, meaningfulLastmod, normalizePath, scheduledPublicationEligibility, submitIndexNow,
-  parseRobots, redirectRecommendation, robotsAllows, verifyLiveUrl, verifyReleaseSha, writeArtifact,
+  isPrivateNetworkAddress, mapChangedFilesToUrls, meaningfulLastmod, normalizePath, publicationTransitionAllowed,
+  scheduledPublicationEligibility, submitIndexNow,
+  parseRobots, redirectRecommendation, robotsAllows, safeFetch, verifyLiveUrl, verifyReleaseSha, writeArtifact,
 } from './core.js';
 
 const page = (overrides = '') => `<!doctype html><html><head><title>Useful public page</title><meta name="description" content="A sufficiently descriptive summary for this public Xroga page and the people who need to understand it before taking action."><link rel="canonical" href="https://xroga.com/example">${overrides}<script type="application/ld+json">{"@type":"WebPage"}</script></head><body><main><h1>Useful public page</h1><p>${'Meaningful server rendered content '.repeat(12)}</p><a href="/pricing">Pricing</a></main></body></html>`;
@@ -17,6 +19,13 @@ const record = { ...INDEXABLE_PUBLIC_URLS[0], path: '/example', canonical: 'http
 
 test('publication state machine contains build, live, discovery, refresh and retirement states', () => {
   for (const state of ['DRAFT', 'BUILD_FAILED', 'PREVIEW_VERIFIED', 'LIVE_VERIFIED', 'DISCOVERY_SUBMITTED', 'REFRESH_DUE', 'DRIFTED', 'RETIRED']) assert.ok(PUBLICATION_STATES.includes(state as never));
+});
+
+test('publication state transitions reject illegitimate lifecycle jumps', () => {
+  assert.equal(publicationTransitionAllowed('DRAFT', 'LIVE_VERIFIED'), false);
+  assert.equal(publicationTransitionAllowed('APPROVED', 'READY_TO_BUILD'), true);
+  assert.equal(publicationTransitionAllowed('PREVIEW_VERIFIED', 'MERGED'), true);
+  assert.equal(publicationTransitionAllowed('RETIRED', 'DRAFT'), false);
 });
 
 test('public URL registry is unique and classifies private, system, and indexable routes', () => {
@@ -65,6 +74,43 @@ test('changed-file mapping handles direct, dependent, global and unknown impact'
   assert.equal(global.globalImpact, true); assert.equal(global.dependentUrls.length, INDEXABLE_PUBLIC_URLS.length);
   const unknown = await mapChangedFilesToUrls(['frontend/src/mystery/unknown.ts']);
   assert.deepEqual(unknown.unknownImpact, ['frontend/src/mystery/unknown.ts']);
+  const robots = await mapChangedFilesToUrls(['frontend/src/app/robots.ts']);
+  assert.equal(robots.discoveryImpact, true); assert.equal(robots.globalImpact, false);
+  const styles = await mapChangedFilesToUrls(['frontend/src/styles/site.css']);
+  assert.deepEqual(styles.directlyChangedUrls, []); assert.deepEqual(styles.unknownImpact, []);
+  assert.equal(styles.deploymentImpact.frontendDeploymentRequired, true);
+});
+
+test('deployment drift is component-aware and does not require main SHA equality', () => {
+  const mainSha = 'b'.repeat(40); const deployedSha = 'a'.repeat(40);
+  assert.deepEqual(assessDeploymentRevision({
+    mainSha, frontendSha: deployedSha, backendSha: deployedSha,
+    filesSinceFrontend: ['docs/audit.md'], filesSinceBackend: ['docs/audit.md'],
+  }).frontend, 'NO_DEPLOY_REQUIRED');
+  assert.equal(assessDeploymentRevision({
+    mainSha, frontendSha: deployedSha, backendSha: deployedSha,
+    filesSinceFrontend: ['frontend/src/app/pricing/page.tsx'], filesSinceBackend: [],
+  }).frontend, 'DEPLOY_REQUIRED');
+  assert.equal(assessDeploymentRevision({
+    mainSha, frontendSha: deployedSha, backendSha: deployedSha,
+    filesSinceFrontend: [], filesSinceBackend: ['backend/src/routes/chat.ts'],
+  }).backend, 'DEPLOY_REQUIRED');
+  assert.equal(assessDeploymentRevision({
+    mainSha, frontendSha: deployedSha, backendSha: deployedSha,
+    filesSinceFrontend: ['frontend/src/app/pricing/page.test.tsx'], filesSinceBackend: ['backend/src/foo.test.ts'],
+  }).frontend, 'NO_DEPLOY_REQUIRED');
+  assert.equal(classifyDeploymentImpact(['content/manifests/build-with-github.json']).publicContentImpact, true);
+});
+
+test('inventory completeness flags omitted static/dynamic routes and accepts registered sources/private prefixes', () => {
+  const complete = auditRouteInventoryPaths([
+    'frontend/src/app/page.tsx',
+    'frontend/src/app/(shell)/dashboard/projects/page.tsx',
+    'frontend/src/app/docs/[slug]/page.tsx',
+  ]);
+  assert.equal(complete.complete, true);
+  const missing = auditRouteInventoryPaths(['frontend/src/app/new-public/page.tsx', 'frontend/src/app/catalog/[slug]/page.tsx']);
+  assert.deepEqual(missing.uncovered, ['/catalog/[slug]', '/new-public']);
 });
 
 test('RSS generation escapes values, uses stable GUIDs and rejects duplicates', () => {
@@ -92,6 +138,14 @@ test('HTML inspection preserves canonical, headings, links and structured data',
   const signals = inspectHtml(page());
   assert.equal(signals.canonical, 'https://xroga.com/example'); assert.deepEqual(signals.h1, ['Useful public page']);
   assert.deepEqual(signals.links, ['/pricing']); assert.equal(signals.schemas.length, 1); assert.ok(signals.text.length > 180);
+});
+
+test('semantic fingerprint ignores scripts but changes for content, canonical and important metadata', () => {
+  const base = inspectHtml(page());
+  assert.equal(inspectHtml(page().replace('</body>', '<script>window.buildId="random"</script></body>')).contentHash, base.contentHash);
+  assert.notEqual(inspectHtml(page().replace('Useful public page</h1>', 'Changed public page</h1>')).contentHash, base.contentHash);
+  assert.notEqual(inspectHtml(page().replace('https://xroga.com/example', 'https://xroga.com/changed')).contentHash, base.contentHash);
+  assert.notEqual(inspectHtml(page().replace('sufficiently descriptive summary', 'different descriptive summary')).contentHash, base.contentHash);
 });
 
 test('semantic HTML audit detects heading, main, image-alt and table problems', () => {
@@ -145,6 +199,12 @@ test('challenge response differentiates robots permission from WAF retrieval', a
   assert.equal(result.challenge, true); assert.ok(result.failures.includes('ROBOTS_BLOCK'));
 });
 
+test('challenge detection catches 200 challenge/auth walls and does not flag normal pages', () => {
+  assert.equal(detectChallengePage(200, '<title>Vercel Authentication</title><p>Authentication required</p>', 'https://xroga.com/pricing').blocked, true);
+  assert.equal(detectChallengePage(200, '<title>Access denied</title>', 'https://xroga.com/pricing').challenge, true);
+  assert.equal(detectChallengePage(200, page(), 'https://xroga.com/example').blocked, false);
+});
+
 test('network uncertainty is not reported as a confirmed 404', async () => {
   const result = await verifyLiveUrl(record, { baseUrl: 'http://localhost:3000', fetchImpl: async () => { throw new TypeError('network down'); } });
   assert.equal(result.networkState, 'UNKNOWN'); assert.deepEqual(result.failures, ['NETWORK_UNKNOWN']);
@@ -170,10 +230,28 @@ test('IndexNow defaults safe and remains unavailable without keys', async () => 
 test('IndexNow hard errors are bounded and do not pretend to submit to Google', async () => {
   const oldKey = process.env.INDEXNOW_KEY; const oldLocation = process.env.INDEXNOW_KEY_LOCATION;
   process.env.INDEXNOW_KEY = 'test-key'; process.env.INDEXNOW_KEY_LOCATION = 'https://xroga.com/test-key.txt';
-  let calls = 0; const result = await submitIndexNow(['https://xroga.com/pricing'], { dryRun: false, fetchImpl: async () => { calls += 1; return new Response('', { status: 400 }); } });
-  assert.equal(result.status, 'FAILED'); assert.equal(calls, 1);
+  let calls = 0; const result = await submitIndexNow(['https://xroga.com/pricing'], { dryRun: false, fetchImpl: async (input) => {
+    calls += 1;
+    return String(input).includes('test-key.txt') ? new Response('test-key', { status: 200 }) : new Response('', { status: 400 });
+  } });
+  assert.equal(result.status, 'FAILED'); assert.equal(calls, 2);
   const google = googleDiscoveryState(record, true, true);
   assert.equal(google.submission, 'NOT_SUPPORTED_FOR_GENERAL_WEB_PAGES'); assert.equal(JSON.stringify(google).includes('IndexNow submitted to Google'), false);
+  if (oldKey) process.env.INDEXNOW_KEY = oldKey; else delete process.env.INDEXNOW_KEY;
+  if (oldLocation) process.env.INDEXNOW_KEY_LOCATION = oldLocation; else delete process.env.INDEXNOW_KEY_LOCATION;
+});
+
+test('IndexNow refuses an unverified key and bounds transient retries without exposing it', async () => {
+  const oldKey = process.env.INDEXNOW_KEY; const oldLocation = process.env.INDEXNOW_KEY_LOCATION;
+  process.env.INDEXNOW_KEY = 'secret-test-key'; process.env.INDEXNOW_KEY_LOCATION = 'https://xroga.com/secret-test-key.txt';
+  const refused = await submitIndexNow(['https://xroga.com/pricing'], { dryRun: false, fetchImpl: async () => new Response('wrong', { status: 200 }) });
+  assert.equal(refused.status, 'REFUSED'); assert.equal(JSON.stringify(refused).includes('secret-test-key'), false);
+  let calls = 0;
+  const rateLimited = await submitIndexNow(['https://xroga.com/pricing'], { dryRun: false, fetchImpl: async (input) => {
+    calls += 1;
+    return String(input).includes('secret-test-key.txt') ? new Response('secret-test-key', { status: 200 }) : new Response('', { status: 429 });
+  } });
+  assert.equal(rateLimited.status, 'FAILED'); assert.equal(rateLimited.responseCode, 429); assert.equal(calls, 4);
   if (oldKey) process.env.INDEXNOW_KEY = oldKey; else delete process.env.INDEXNOW_KEY;
   if (oldLocation) process.env.INDEXNOW_KEY_LOCATION = oldLocation; else delete process.env.INDEXNOW_KEY_LOCATION;
 });
@@ -198,11 +276,28 @@ test('publication receipts never contain credentials and are atomic on blocking 
   assert.equal(receipt.result, 'FAILED'); assert.equal('authorization' in receipt, false); assert.equal(receipt.commit_sha, 'abc');
 });
 
+test('missing sitemap is a blocking publication receipt failure', () => {
+  const receipt = buildPublicationReceipt({
+    record,
+    verification: { status: 200, contentType: 'text/html', indexability: 'BLOCKED', failures: ['SITEMAP_MISSING'], warnings: [], challenge: false, networkState: 'CONFIRMED' } as never,
+    sitemapPresent: false,
+  });
+  assert.equal(receipt.result, 'FAILED');
+});
+
 test('publication receipt identity is stable for the same URL, commit, response and content', () => {
   const verification = { status: 200, contentType: 'text/html', indexability: 'INDEXABLE', failures: [], warnings: [], semanticFindings: [], challenge: false, networkState: 'CONFIRMED', signals: inspectHtml(page()) } as never;
   const first = buildPublicationReceipt({ record, verification, sitemapPresent: true, commitSha: 'abc' });
   const second = buildPublicationReceipt({ record, verification, sitemapPresent: true, commitSha: 'abc' });
   assert.equal(first.publication_id, second.publication_id);
+});
+
+test('publication receipt exposes semantic fingerprint drift as a blocking failure', () => {
+  const verification = { status: 200, contentType: 'text/html', indexability: 'INDEXABLE', failures: [], warnings: [], semanticFindings: [], challenge: false, networkState: 'CONFIRMED', signals: inspectHtml(page()) } as never;
+  const receipt = buildPublicationReceipt({ record, verification, sitemapPresent: true, expectedHash: 'different' });
+  assert.equal(receipt.drift_state, 'DRIFTED');
+  assert.equal(receipt.result, 'FAILED');
+  assert.ok(receipt.failures.includes('DRIFT'));
 });
 
 test('redirect registry has no loops, self redirects, or redirects to private product surfaces', () => assert.deepEqual(detectRedirectProblems(), []));
@@ -268,6 +363,22 @@ test('SSRF defenses reject credentials, cross-origin, and private network target
   await assert.rejects(assertSafeFetchUrl('https://user:pass@xroga.com/'), /credential-free/);
   await assert.rejects(assertSafeFetchUrl('https://example.com/'), /Cross-origin/);
   assert.equal((await assertSafeFetchUrl('http://localhost:3000/page', 'http://localhost:3000', true)).pathname, '/page');
+  for (const address of ['100.64.0.1', '198.18.0.1', '192.0.0.1', '::ffff:127.0.0.1', 'fe80::1', 'fc00::1']) {
+    assert.equal(isPrivateNetworkAddress(address), true, address);
+  }
+});
+
+test('SSRF defenses re-check redirects and reject private DNS resolution', async () => {
+  await assert.rejects(assertSafeFetchUrl('https://xroga.com/', 'https://xroga.com', false, (async () => [{ address: '127.0.0.1', family: 4 }]) as never), /Private/);
+  let calls = 0;
+  await assert.rejects(safeFetch('https://xroga.com/start', {
+    lookup: (async () => [{ address: '93.184.216.34', family: 4 }]) as never,
+    fetchImpl: (async () => {
+      calls += 1;
+      return new Response('', { status: 302, headers: { location: 'http://127.0.0.1/internal' } });
+    }) as never,
+  }), /Cross-origin|Private/);
+  assert.equal(calls, 1);
 });
 
 test('artifact path handling rejects traversal', async () => {

@@ -4,7 +4,7 @@ Status: merged through PR #684 and verified in production at merge SHA `0ab180c8
 
 ## Architecture and inventory
 
-- One normalized inventory contains 157 classified records: 97 canonical public indexable URLs plus explicit private, noindex, system, and redirect records.
+- One normalized inventory contains 162 classified records: 97 canonical public indexable URLs plus explicit private, noindex, system, and redirect records. The audit added omitted auth/onboarding and dynamic community/ref/share route classes without changing the indexable sitemap set.
 - Both certified Command 2 assets are manifest-linked and pass the publication eligibility gate.
 - Sitemap, live verification, link analysis, changed-URL mapping, discovery status, and publication planning consume that inventory.
 - `/image` and `/cybersecurity` are truthfully classified as protected/noindex surfaces; all six concrete showcase preview routes are public-noindex.
@@ -14,7 +14,7 @@ Status: merged through PR #684 and verified in production at merge SHA `0ab180c8
 
 ## Local runtime evidence
 
-- Command 3 adversarial tests: 39 passed, 0 failed.
+- Command 3 adversarial tests: 48 passed, 0 failed after the independent audit added coverage for inventory completeness, component-aware deployment drift, semantic fingerprints, challenge pages, hosted IndexNow key verification/retries, sitemap receipt blocking, and redirect/DNS SSRF defenses.
 - Growth OS tests: 59 passed, 0 failed.
 - Growth validate/intelligence/gaps/discover/report/research/brief/content validation: passed.
 - Backend tests: 2,602 total; 2,589 passed, 13 skipped, 0 failed.
@@ -47,3 +47,7 @@ The unchanged current main and this branch both fail the same source-contract te
 Confirmed 404/5xx, authentication, redirect drift, missing title/description, canonical corruption, private exposure, noindex on an intended public page, invalid structured data, or missing critical server content blocks publication. Semantic HTML and slow-response observations remain visible diagnostics. Optional discovery providers, absent GSC credentials, IndexNow unavailability, and transient network/source uncertainty remain warnings or explicit unknown states rather than fabricated zeros or false success.
 
 Production evidence above was observed after the normal merge and deployments; it does not claim indexing, citation, rankings, GSC inspection, or IndexNow submission.
+
+## Independent audit repairs
+
+The post-merge adversarial audit found and repaired gaps that the initial report overstated or omitted: explicit `--base-ref`/`--head-ref` handling, global discovery impact for robots/sitemap changes, component-aware deployment SHA comparison, semantic metadata/canonical fingerprints, broader challenge and private-network detection, full app-route inventory coverage, hosted IndexNow-key verification with bounded retry behavior, and workflow recovery issue closure. It also found a live HTTP integrity defect where arbitrary unknown document URLs were redirected to login; access control now explicitly protects application/API surfaces while allowing Next.js to return a genuine 404 for unknown public document paths. The original claim that the system was fully complete before these repairs was therefore inaccurate.

@@ -1,46 +1,26 @@
-/** Routes that remain available when authentication is not configured or unavailable. */
-const PUBLIC_PREFIXES = [
-  '/features',
-  '/integrations',
-  '/droga',
-  '/pricing',
-  '/about',
-  '/contact',
-  '/docs',
-  '/community',
-  '/research',
-  // `/crypto`, not `/crypto-builder`. The route here named a page that has never
-  // existed, so the real crypto page was not on this list — a public marketing page
-  // that bounced every signed-out visitor to the login screen.
-  '/crypto',
-  '/game-builder',
-  '/ai-coding-agent',
-  '/ai-app-builder',
-  '/software',
-  '/ai-website-builder',
-  '/build-saas-with-ai',
-  '/github-ai-coding-agent',
-  '/vercel-ai-deployment',
-  '/vibe-coding',
-  '/security',
-  '/compare',
-  '/alternatives',
-  '/build',
-  '/build-with',
-  '/blog',
-  '/learn',
-  '/stack',
-  '/migrate',
-  '/tools',
-  '/changelog',
-  '/terms',
-  '/privacy',
-  '/refund',
-  // Anyone may browse and preview the showcase; only customizing or exporting needs auth.
-  '/showcase',
-  // Opaque private links and public message shares must open without an account.
-  '/share',
+/**
+ * Application surfaces that require a signed-in user.
+ *
+ * Keep this as a protected allowlist rather than a public allowlist. Unknown document
+ * paths must reach Next's router so they can produce a real 404; treating every unknown
+ * path as private turns misspelled and hallucinated URLs into misleading login redirects.
+ */
+const PROTECTED_PREFIXES = [
+  '/admin',
+  '/dashboard',
+  '/onboarding',
+  '/preview',
+  '/settings',
+  '/terminal',
+  '/workspace',
 ];
+
+const PUBLIC_API_PATHS = new Set([
+  '/api/session',
+  '/api/release',
+  '/api/showcase/aura/chat',
+  '/api/showcase/aura/health',
+]);
 
 /**
  * Whether the middleware has to ask the auth server who the visitor is.
@@ -68,15 +48,10 @@ export function isPublicPath(pathname: string): boolean {
   if (pathname === '/') return true;
   // This route reports authenticated=false as JSON; middleware must not replace
   // that contract with an HTML login redirect for signed-out callers.
-  if (
-    pathname === '/api/session' ||
-    pathname === '/api/release' ||
-    pathname === '/api/showcase/aura/chat' ||
-    pathname === '/api/showcase/aura/health'
-  ) return true;
+  if (pathname.startsWith('/api/')) return PUBLIC_API_PATHS.has(pathname);
   if (pathname === '/robots.txt' || pathname === '/sitemap.xml' || pathname === '/llms.txt' || pathname === '/opengraph-image' || pathname === '/manifest.webmanifest') return true;
   if (pathname.startsWith('/auth')) return true;
-  return PUBLIC_PREFIXES.some((prefix) =>
+  return !PROTECTED_PREFIXES.some((prefix) =>
     pathname === prefix || pathname.startsWith(`${prefix}/`)
   );
 }

@@ -373,8 +373,8 @@ export function XrogaVsLovablePage() {
 
             <p>
               <strong>Xroga</strong> becomes more differentiated when the job
-              is “build this product — and keep working with the software after
-              the first version.” Xroga can start from a prompt or an existing
+              is &ldquo;build this product — and keep working with the software after
+              the first version.&rdquo; Xroga can start from a prompt or an existing
               repository, reuse project architecture, run applicable checks,
               expose preview and review evidence, and work through accounts you
               authorize.
