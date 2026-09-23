@@ -133,8 +133,53 @@ async function restoreProjectWorkspaceFromMessages(
     // empty context, but it must not replace newer project state already present there.
     if (active.projectFiles.length || active.commitSha || active.deployUrl) return;
     active.applyBuild({
-      ...target,
-      projectName: projection.projectName,
+  ...target,
+
+  projectId:
+    projection.projectId,
+
+  projectName:
+    projection.projectName,
+
+  html:
+    projection.html,
+
+  css:
+    projection.css,
+
+  js:
+    projection.js,
+
+  projectFiles:
+    projection.projectFiles,
+
+  replaceProjectFiles:
+    projection.replaceProjectFiles,
+
+  githubRepoUrl:
+    projection.githubRepoUrl,
+
+  commitSha:
+    projection.commitSha,
+
+  reviewBranch:
+    projection.reviewBranch,
+
+  status:
+    projection.status,
+
+  changesSummary:
+    projection.changesSummary,
+
+  fileTrail:
+    projection.fileTrail,
+
+  openPreview:
+    projection.previewAvailable,
+
+  terminalLine:
+    projection.terminalLines[0],
+});
       html: projection.html,
       css: projection.css,
       js: projection.js,
