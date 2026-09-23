@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -22,7 +21,7 @@ export const XROGA_VS_BOLT_DESCRIPTION =
   'Compare Xroga vs Bolt.new in 2026 across AI app building, GitHub, existing repositories, web research, testing, mobile use, databases, integrations, deployment, pricing, and code ownership.';
 
 export const XROGA_VS_BOLT_OG_IMAGE =
-  '/compare/xroga-vs-bolt/01-xroga-vs-bolt-hero.webp';
+  'https://i.postimg.cc/gJzkkbXp/Chat-GPT-Image-Sep-23-2026-08-29-13-PM.png';
 
 
 const REVIEWED =
@@ -62,19 +61,19 @@ const COMPOSIO_TOOLKITS =
 
 const IMAGES = {
   hero:
-    '/compare/xroga-vs-bolt/01-xroga-vs-bolt-hero.webp',
+    'https://i.postimg.cc/gJzkkbXp/Chat-GPT-Image-Sep-23-2026-08-29-13-PM.png',
 
   workflow:
-    '/compare/xroga-vs-bolt/02-same-request-different-path.webp',
+    'https://i.postimg.cc/zXbDfjBZ/11619399-288f-4d89-9927-983e6be97682.png',
 
   strengths:
-    '/compare/xroga-vs-bolt/03-xroga-bolt-strength-map.webp',
+    'https://i.postimg.cc/8CHNYXyJ/70ed7ae4-8f59-44b1-8bf5-5b4b5cbe2ef6.png',
 
   proof:
-    '/compare/xroga-vs-bolt/04-xroga-proof-before-done.webp',
+    'https://i.postimg.cc/Bnf3nfkc/e1b6ef12-744b-4635-b24b-b10c62ed2307.png',
 
   audience:
-    '/compare/xroga-vs-bolt/05-xroga-for-every-builder.webp',
+    'https://i.postimg.cc/zfJ1TSJq/ab8aa738-157c-41a3-b2bb-9889efa9dccf.png',
 } as const;
 
 
@@ -650,13 +649,14 @@ function ComparisonImage({
 }) {
   return (
     <figure className="xvb-figure">
-      <Image
+      <img
         src={src}
         alt={alt}
-        width={1672}
-        height={941}
-        priority={priority}
-        sizes="(max-width: 760px) 100vw, (max-width: 1200px) calc(100vw - 48px), 1120px"
+        width="1672"
+        height="941"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        decoding="async"
       />
 
       <figcaption>
@@ -689,7 +689,7 @@ export function XrogaVsBoltPage() {
     `${SITE_URL}${XROGA_VS_BOLT_PATH}`;
 
   const absoluteHero =
-    `${SITE_URL}${XROGA_VS_BOLT_OG_IMAGE}`;
+    XROGA_VS_BOLT_OG_IMAGE;
 
 
   const webPageSchema =
@@ -725,10 +725,10 @@ export function XrogaVsBoltPage() {
 
     image: [
       absoluteHero,
-      `${SITE_URL}${IMAGES.workflow}`,
-      `${SITE_URL}${IMAGES.strengths}`,
-      `${SITE_URL}${IMAGES.proof}`,
-      `${SITE_URL}${IMAGES.audience}`,
+      IMAGES.workflow,
+      IMAGES.strengths,
+      IMAGES.proof,
+      IMAGES.audience,
     ],
 
     datePublished:
