@@ -1,6 +1,6 @@
 # Command 3 implementation report
 
-Status: pre-merge implementation complete on `codex/growth-command3-technical-publishing`; production evidence must be generated only after normal PR review, merge, and deployment.
+Status: merged through PR #684 and verified in production at merge SHA `0ab180c80007b2f5d7dd14c6a6741714fcef8297`.
 
 ## Architecture and inventory
 
@@ -17,10 +17,10 @@ Status: pre-merge implementation complete on `codex/growth-command3-technical-pu
 - Command 3 adversarial tests: 39 passed, 0 failed.
 - Growth OS tests: 59 passed, 0 failed.
 - Growth validate/intelligence/gaps/discover/report/research/brief/content validation: passed.
-- Backend tests: 2,598 total; 2,585 passed, 13 skipped, 0 failed.
+- Backend tests: 2,602 total; 2,589 passed, 13 skipped, 0 failed.
 - Backend TypeScript production build: passed.
 - Frontend production build: passed (existing lint warnings only).
-- Frontend tests: 670 total; 653 passed, 17 failed. A clean detached worktree at base SHA `fa59c26df8ea445072515b2bb130fc820b323d04` produced the same 17 test names and errors; Command 3 added zero failures.
+- Frontend tests: 670 total; 651 passed, 19 failed. Current `main` advanced during implementation and added two pricing source-contract failures to the 17 previously certified failures. A current-main run at `32b470589c5c2296d1c75be574c7899c7154cc4e` and PR #684 both produced the same 19 failures; Command 3 added zero failures.
 - SEO audit: passed for 28 public routes, 6 private routes, and 8 discovery files.
 - Frontend lint: passed with pre-existing warnings and no new errors.
 - Rebuilt local production crawl: 97/97 indexable URLs returned without publication blockers; 0 broken internal links; 0 orphans; maximum observed depth 5. The crawl found and this branch repaired one genuine stale `/build/api` internal link and one missing `<main>` landmark on `/ai-coding-agent`.
@@ -29,18 +29,21 @@ Status: pre-merge implementation complete on `codex/growth-command3-technical-pu
 
 ## Exact inherited frontend failures
 
-The unchanged base and this branch both fail the same source-contract tests: formatAiMarkdown alias module loading; outgoing write metadata canonical context; semantic planner path; semantic build failure fallback; client run ID; onStart timing; stalled read polling; stall threshold; no-runId stall; duplicate onStart; interrupted run ID; stopped assistant run ID; durable cancellation; unconfirmed Stop; fresh-product routed project; plain AI status; and live transcript waiting line.
+The unchanged current main and this branch both fail the same source-contract tests: formatAiMarkdown alias module loading; outgoing write metadata canonical context; semantic planner path; semantic build failure fallback; client run ID; onStart timing; stalled read polling; stall threshold; no-runId stall; duplicate onStart; interrupted run ID; stopped assistant run ID; durable cancellation; unconfirmed Stop; fresh-product routed project; plain AI status; live transcript waiting line; public billing plan/price contract; and Free-versus-Pro checkout routing. These remain unrelated product-test debt and were not skipped or weakened.
 
 ## Discovery and external state
 
 - GSC URL Inspection: `NO_DATA`; no authorized URL Inspection provider is configured for the local publishing runtime.
-- IndexNow: no submission is claimed. No public content asset was meaningfully changed by this infrastructure branch, so submitting URLs would be false. Missing key configuration remains `UNAVAILABLE`.
+- IndexNow: no submission is claimed. A production dry-run verified `/pricing` as live, canonical, and eligible, then returned `UNAVAILABLE` because `INDEXNOW_KEY` and `INDEXNOW_KEY_LOCATION` are not configured. No mass submission or Google-submission claim was made.
 - CDN/WAF: repository diagnostics detect obvious status/challenge differences by user agent. Genuine crawler identity/IP allowlisting remains external configuration.
-- Current production before merge still lacks the Command 3 feed/inventory deployment. Production receipts and release-SHA evidence are therefore intentionally pending.
-- No backend runtime source changed; a Fly deployment is not required for this Command 3 frontend/publishing-infrastructure change.
+- Production serves release SHA `0ab180c80007b2f5d7dd14c6a6741714fcef8297` from `/api/release`. Vercel deployment completed successfully. The repository's normal push workflow also deployed Fly successfully and verified production health/readiness.
+- The production live gate passed for 10 representative URLs. A bounded 97-URL crawl found zero blockers, zero network-unknown results, zero semantic findings, zero broken internal links, zero orphans, and maximum click depth 5. `/contact` produced one non-blocking 3.5-second response observation.
+- Browser verification passed on desktop and mobile. The production-readiness checker had one H1, one main landmark, its intended canonical, `index, follow`, no horizontal overflow at a 390×844 viewport, and no console warnings/errors.
+- `/pricing` serves the current `$25/month` version, with no `$19`, `$49`, or Lemon Squeezy text. Its metadata and SEO contract were synchronized after current main changed the page title.
+- Real `LIVE_VERIFIED` receipts were generated for `/build-with/github` and `/tools/production-readiness-checker`, both HTTP 200, canonical-verified, indexable, sitemap-present, server-visible, internally linked, and fingerprinted.
 
 ## Fail-open / fail-closed policy
 
 Confirmed 404/5xx, authentication, redirect drift, missing title/description, canonical corruption, private exposure, noindex on an intended public page, invalid structured data, or missing critical server content blocks publication. Semantic HTML and slow-response observations remain visible diagnostics. Optional discovery providers, absent GSC credentials, IndexNow unavailability, and transient network/source uncertainty remain warnings or explicit unknown states rather than fabricated zeros or false success.
 
-Production merge SHA, Vercel deployment ID/URL, real production receipts, and post-deploy crawl results are reported after those events occur; this document does not predict them.
+Production evidence above was observed after the normal merge and deployments; it does not claim indexing, citation, rankings, GSC inspection, or IndexNow submission.
