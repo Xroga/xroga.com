@@ -276,6 +276,10 @@ export interface ProjectWorkspaceState
   applyDelivery:
     (
       payload: {
+
+        projectId?:
+  string | null;
+        
         repo?:
           string | null;
 
@@ -1284,6 +1288,11 @@ export const useProjectWorkspaceStore =
                   s,
                 ) => ({
                   repo:
+                    projectId:
+  payload.projectId !==
+  undefined
+    ? payload.projectId
+    : s.projectId,
                     payload.repo !==
                     undefined
                       ? payload.repo
