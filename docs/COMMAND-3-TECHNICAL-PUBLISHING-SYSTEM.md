@@ -66,7 +66,7 @@ The refresh queue consumes Command 2 claim due dates, source volatility, and man
 
 ## Scheduled publication
 
-Scheduled items are eligible only when due and explicitly `APPROVED` or `READY_TO_BUILD`. A due draft is blocked. A no-op does not trigger deployment. The repository does not auto-merge, expose previews, or roll back production. The scheduled workflow runs static checks on changes and bounded live checks weekly; IndexNow is not invoked automatically by tests.
+Scheduled items are eligible only when due and explicitly `APPROVED` or `READY_TO_BUILD`. A due draft is blocked. This is an eligibility/state contract, not a scheduled content deployment executor: it does not build, merge, or publish an approved item by itself. A no-op does not trigger deployment. The repository does not auto-merge, expose previews, or roll back production. The weekly workflow is a technical/discovery audit and does not publish content; IndexNow is not invoked automatically by tests.
 
 ## Security
 

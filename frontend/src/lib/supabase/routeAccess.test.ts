@@ -43,6 +43,9 @@ test('keeps public and authentication routes available', () => {
     '/api/release',
     '/api/showcase/aura/chat',
     '/api/showcase/aura/health',
+    // Unknown document routes must be handled by Next's not-found boundary, not
+    // misclassified as private and redirected to login.
+    '/definitely-not-a-real-xroga-route',
   ]) {
     assert.equal(isPublicPath(path), true, path);
   }
@@ -54,6 +57,10 @@ test('keeps application and API routes protected', () => {
     '/dashboard/operations',
     '/api/operations/portfolio',
     '/settings',
+    '/workspace/arbitrary-project',
+    '/admin/arbitrary-tool',
+    '/onboarding',
+    '/api/arbitrary-private-endpoint',
   ]) {
     assert.equal(isPublicPath(path), false, path);
   }
