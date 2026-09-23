@@ -14,11 +14,11 @@ export const XROGA_VS_LOVABLE_PATH = '/compare/xroga-vs-lovable';
 
 const COMPARISON_IMAGES = {
   hero: 'https://i.postimg.cc/NMXD1vSr/01-hero-xroga-vs-lovable.png',
-  atAGlance: 'https://i.postimg.cc/25q0TZM0/02-at-a-glance.png',
+  atAGlance: 'https://i.postimg.cc/SxWmtn9j/02-at-a-glance.png',
   differentPaths:
-    'https://i.postimg.cc/ZnY3sknf/03-same-request-different-paths.png',
+    'https://i.postimg.cc/bNnPsZmy/03-same-request-different-paths.png',
   proof:
-    'https://i.postimg.cc/kGjSkjtx/04-working-software-proof.png',
+    'https://i.postimg.cc/FRqtKvc7/04-working-software-proof.png',
   future:
     'https://i.postimg.cc/4xHcSQ4y/05-build-today-go-further.png',
 } as const;
