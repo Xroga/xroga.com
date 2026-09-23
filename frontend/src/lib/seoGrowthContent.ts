@@ -32,16 +32,66 @@ export type ComparisonPage = {
 const verified = '2026-09-09';
 
 export const COMPARISONS: ComparisonPage[] = [
-  {
-    slug: 'xroga-vs-lovable', competitor: 'Lovable',
-    title: 'Xroga vs Lovable: repository work or browser-first app creation?',
-    description: 'Compare Xroga and Lovable across existing repositories, GitHub workflow, validation, deployment ownership, and the kinds of software work each product is designed for.',
-    summary: 'Lovable is a browser-based web application builder. Xroga is positioned around carrying a software outcome through an inspectable repository, applicable checks, and authorised publishing steps.',
-    bestFor: 'Choose Lovable when its supported web stack and browser-first creation flow match the product you want to make. Consider Xroga when the centre of gravity is an existing repository, reviewable changes, explicit validation, or work that crosses product and engineering tasks.',
-    xrogaDifference: 'Xroga treats the repository and its real project state as the shared build record. It does not treat a rendered interface as proof that tests, provider setup, or production release succeeded.',
-    facts: ['Lovable documents GitHub synchronisation and says creators own their code.', 'Lovable documents a supported web-app stack and says it does not currently support mobile app development.', 'Lovable documents publishing and custom-domain workflows for its hosted projects.'],
-    decisionPoints: ['Do you need to begin with an existing repository or a fresh browser project?', 'Must validation evidence and blockers remain visible with the implementation?', 'Does the target fit the vendor’s documented application stack?', 'Which account should own source control and production infrastructure?'],
-    sources: [{ label: 'Lovable GitHub integration', href: 'https://docs.lovable.dev/integrations/github' }, { label: 'Lovable FAQ', href: 'https://docs.lovable.dev/introduction/faq' }, { label: 'Lovable publishing', href: 'https://docs.lovable.dev/features/publish' }], lastVerified: verified,
+   {
+    slug: 'xroga-vs-lovable',
+    competitor: 'Lovable',
+
+    title:
+      'Xroga vs Lovable (2026): Which AI App Builder Fits Your Project?',
+
+    description:
+      'Compare Xroga vs Lovable in 2026 across existing repositories, GitHub, testing, previews, deployment, code ownership, pricing, and product fit.',
+
+    summary:
+      'Lovable offers a polished browser-first path from a new idea to a working web application. Xroga can also start from natural language, but is designed to continue through an existing or new repository, project-defined checks, reviewable changes, previews, and authorised deployment.',
+
+    bestFor:
+      'Consider Lovable when a fast browser-first path from a new idea to a hosted web app is the main requirement. Consider Xroga when the work needs to begin from or remain attached to an existing repository, preserve project architecture, run applicable checks, produce reviewable changes, or ship through provider accounts your team controls.',
+
+    xrogaDifference:
+      'Xroga treats the repository and its real project state as part of the build workflow. Generation, validation, preview, review, GitHub work, and deployment can remain distinct states so a rendered interface is not automatically treated as proof that the complete software task succeeded.',
+
+    facts: [
+      'Lovable documents two-way GitHub synchronization, branch operations, local cloning, and pull-request workflows.',
+      'Lovable currently documents importing an existing GitHub repository into Lovable as unsupported; connecting a Lovable project creates a new repository.',
+      'Lovable documents a two-click first-publish workflow, lovable.app hosting, a Basic security scan during publishing, and custom domains on paid plans.',
+      'Lovable documents Basic and Deep security scanners and explicitly says they do not replace a thorough security review.',
+      'Lovable states that users own the projects and generated code they create.',
+      'Lovable currently lists Pro at $25 per month for 100 monthly credits, with larger credit tiers available.',
+    ],
+
+    decisionPoints: [
+      'Does the task begin with a new idea or software that already exists?',
+      'Must the tool work directly against an existing GitHub repository and architecture?',
+      'Which project-defined tests, type checks, builds, or browser checks must pass before the work is considered complete?',
+      'Do you prefer built-in hosting or deployment through provider accounts your team controls?',
+      'How should code, Git history, deployment evidence, and blockers remain inspectable after the first generated version?',
+    ],
+
+    sources: [
+      {
+        label: 'Lovable GitHub integration',
+        href: 'https://docs.lovable.dev/integrations/github',
+      },
+      {
+        label: 'Lovable publishing',
+        href: 'https://docs.lovable.dev/features/publish',
+      },
+      {
+        label: 'Lovable security',
+        href: 'https://docs.lovable.dev/features/security',
+      },
+      {
+        label: 'Lovable subscription plans',
+        href: 'https://docs.lovable.dev/introduction/subscription-plans',
+      },
+      {
+        label: 'Lovable pricing and ownership',
+        href: 'https://lovable.dev/pricing',
+      },
+    ],
+
+    lastVerified: '2026-09-23',
   },
   {
     slug: 'xroga-vs-bolt', competitor: 'Bolt',
