@@ -137,7 +137,11 @@ import {
 } from '../synthesis/softwareProject.js';
 import {
   persistSoftwareProjectRevision,
+  SupabaseProjectRuntimeStore,
 } from '../synthesis/projectRuntime/store.js';
+import {
+  deliveryStateForProject,
+} from '../synthesis/delivery/projectDelivery.js';
 import {
   startOrRefreshLivePreview,
 } from '../synthesis/livePreview/coordinator.js';
@@ -1819,6 +1823,113 @@ publicationReason:
           )
         : null;
 
+    if (
+  softwareProject &&
+  projectRevision
+) {
+  const delivery =
+    deliveryStateForProject(
+      softwareProject,
+    );
+
+  if (
+    delivery.status ===
+    'ready'
+  ) {
+    const deliveryEvent = {
+      id:
+        randomUUID(),
+
+      runId,
+
+      sequence:
+        0,
+
+      createdAt:
+        new Date()
+          .toISOString(),
+
+      type:
+        'delivery.ready' as const,
+
+      status:
+        'success' as const,
+
+      title:
+        'Project ready',
+
+      summary:
+        'The verified project is saved in Xroga and ready for download.',
+
+      evidence: {
+        projectId:
+          softwareProject
+            .projectId,
+      },
+    };
+
+    emit(
+      softwareRunEventToProgress(
+        deliveryEvent,
+      ),
+    );
+
+    await new SupabaseProjectRuntimeStore()
+      .appendEvent({
+        userId:
+          opts.userId,
+
+        projectId:
+          softwareProject
+            .projectId,
+
+        sessionId:
+          softwareProject
+            .runtime
+            ?.sessionId ??
+          null,
+
+        eventType:
+          'delivery.ready',
+
+        payload: {
+          runId,
+
+          revisionId:
+            projectRevision
+              .revisionId,
+
+          revisionNumber:
+            projectRevision
+              .revisionNumber,
+
+          archive:
+            delivery.archive
+              .href,
+
+          status:
+            'ready',
+        },
+      })
+      .catch(
+        (
+          error,
+        ) => {
+          console.warn(
+            '[delivery_ready_persist_failed]',
+
+            error instanceof
+              Error
+              ? error.message
+              : String(
+                  error,
+                ),
+          );
+        },
+      );
+  }
+}
+    
     emit({
       agent: 'architect',
       status: result.outcome === 'completed' ? 'done' : 'error',
