@@ -625,11 +625,12 @@ useRuntimePreviewHydration();
           </div>
         ) : null}
 
-       {activeTab === 'deploy' ? (
-  <div className="h-full overflow-y-auto p-4">
-    <ProjectDeliveryPanel />
-  </div>
-) : null}
+               {activeTab === 'deploy' ? (
+          <div className="h-full overflow-y-auto p-4">
+            <ProjectDeliveryPanel />
+          </div>
+        ) : null}
+        
               <div className="flex justify-between gap-2">
                 <dt className="text-[var(--muted)]">Commit</dt>
                 <dd>{commitSha ? commitSha.slice(0, 8) : '—'}</dd>
