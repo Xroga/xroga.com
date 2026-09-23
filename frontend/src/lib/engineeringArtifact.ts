@@ -1087,7 +1087,7 @@ function staticPreview(
   };
 }
 
-function artifactProjectId(
+export function artifactProjectId(
   artifact:
     EngineeringArtifact,
 ): string | null {
