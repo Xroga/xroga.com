@@ -183,11 +183,9 @@ export function PricingPageClient() {
           <span />
         </div>
 
-        <div className={styles.heroInner}>
-          <div className={styles.heroKicker}>
-            <Sparkles aria-hidden="true" />
-            XROGA PRICING
-          </div>
+        <div className={styles.heroKicker}>
+  XROGA PRICING
+</div>
 
           <h1 id="pricing-title" className={styles.heroTitle}>
             Start free.
