@@ -23,7 +23,7 @@ const MAX_LINGER_MS = 1500;
 const STAMP_GAP = 10;
 const OUTER_DENSITY = 0.56;
 const MIN_MOVE = 0.8;
-const PINK = [80, 160, 255] as const;
+const PINK = [38, 122, 230] as const;
 
 function randomForCell(x: number, y: number, salt = 0) {
   let n = (Math.imul(x + salt * 17, 374761393) ^ Math.imul(y - salt * 23, 668265263)) >>> 0;
@@ -177,7 +177,7 @@ export function HomepageCursorGlitter() {
         const glitter = 0.9 + 0.1 * Math.sin(now * 0.009 + cell.seed * Math.PI * 8);
         const visible = Math.max(0, Math.min(1, cell.value * glitter));
         const size = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * Math.pow(visible, 0.67);
-        const alpha = Math.min(1, 0.22 + visible * 0.95);
+        const alpha = Math.min(1, 0.34 + visible * 0.98);
         const squareSize = Math.max(1, Math.round(size));
 
         ctx.fillStyle = `rgba(${PINK[0]}, ${PINK[1]}, ${PINK[2]}, ${alpha})`;
