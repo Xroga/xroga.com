@@ -10,6 +10,7 @@ import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpris
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
 import { HomepageShowcase } from '@/components/showcase/HomepageShowcase';
 import '@/styles/homepage-coding.css';
+import '@/styles/homepage-closing-animation.css';
 import { createClient } from '@/lib/supabase/client';
 import { HomepageCompanionStage } from '@/components/companion/CompanionSurfaces';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
