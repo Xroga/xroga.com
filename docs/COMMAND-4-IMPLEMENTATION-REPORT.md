@@ -4,7 +4,7 @@
 
 - **Branch:** `codex/command4-authority`
 - **Base:** `82055727c0cef5c34276e36fd5fdd1fdb1a7ca76` (`origin/main`, verified again before review)
-- **Pull request:** assigned after the first branch push
+- **Pull request:** [#691](https://github.com/Xroga/xroga.com/pull/691)
 - **Merge/deploy:** not yet merged at the time this report was written. No Fly, Vercel, database, package-registry, marketplace, email, community, creator, directory, video, release or satellite-repository action was performed.
 - **Architecture:** a typed authority graph and evidence pipeline under `backend/src/organicIntelligence/authority`, evidence inputs under `growth/authority`, generated ignored artifacts under `artifacts/growth-authority`, and one functional read-only public wedge under `tools/xroga-project-check` plus `.github/actions/project-check`.
 
