@@ -55,3 +55,8 @@ CLAUDE.local.md
 
 # Transient workspace for the in-sandbox browser verification integration test
 .tmp-insandbox-tests/
+
+# Local output from the read-only public project-check Action/CLI
+/xroga-project-check.json
+/xroga-project-check.svg
+artifacts/growth-authority/

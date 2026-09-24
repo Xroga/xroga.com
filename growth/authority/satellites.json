@@ -1,0 +1,128 @@
+[
+  {
+    "id": "satellite.action.project-check",
+    "kind": "ACTION",
+    "purpose": "Run deterministic, local repository project checks and produce human, JSON and badge outputs without uploading source.",
+    "utility": 5,
+    "maturity": 4,
+    "distributionPotential": 5,
+    "maintenanceBurden": 2,
+    "securityRisk": 1,
+    "installFriction": 1,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "SELECTED_WEDGE",
+    "rationale": [
+      "GitHub is already central to the Xroga product and the Action can provide useful read-only value with contents:read permissions.",
+      "A dependency-free deterministic engine can also power a local CLI without creating a second checker.",
+      "External version tags and satellite extraction remain blocked until licensing and release policy are approved."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "OWNER_DECISION_REQUIRED: approve an open-source license.",
+      "OWNER_DECISION_REQUIRED: define semantic version and immutable release-tag policy."
+    ]
+  },
+  {
+    "id": "satellite.cli.project-check",
+    "kind": "CLI",
+    "purpose": "Expose the same deterministic project-check engine as a local, no-telemetry CLI.",
+    "utility": 5,
+    "maturity": 4,
+    "distributionPotential": 4,
+    "maintenanceBurden": 2,
+    "securityRisk": 1,
+    "installFriction": 2,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "PLANNED",
+    "rationale": [
+      "The local CLI is functional in the main repository but is not published as a package.",
+      "Package-name availability, licensing and release provenance must be resolved before registry publication."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "OWNER_DECISION_REQUIRED: approve licensing and package publication identity."
+    ]
+  },
+  {
+    "id": "satellite.skills.project-check",
+    "kind": "SKILLS",
+    "purpose": "Orchestrate the real project-check engine with explicit read-only permissions and evidence outputs.",
+    "utility": 4,
+    "maturity": 4,
+    "distributionPotential": 3,
+    "maintenanceBurden": 1,
+    "securityRisk": 1,
+    "installFriction": 2,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "PLANNED",
+    "rationale": [
+      "The skill contract is implemented and references a real tool instead of promising unsupported repair or deployment."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "OWNER_DECISION_REQUIRED: approve distribution license and target skill ecosystem."
+    ]
+  },
+  {
+    "id": "satellite.mcp",
+    "kind": "MCP",
+    "purpose": "Potential read-only repository inspection surface.",
+    "utility": 4,
+    "maturity": 1,
+    "distributionPotential": 4,
+    "maintenanceBurden": 4,
+    "securityRisk": 4,
+    "installFriction": 3,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "BLOCKED",
+    "rationale": [
+      "The Action is the safer first wedge; no MCP server is shipped until transport, client compatibility and permission boundaries are independently reviewed.",
+      "No mutation, external-write, production or destructive tool is exposed."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "No reviewed MCP transport/package exists.",
+      "Marketplace and client metadata require current official validation when MCP work begins."
+    ]
+  },
+  {
+    "id": "satellite.benchmarks",
+    "kind": "BENCHMARKS",
+    "purpose": "Future reproducible benchmark fixtures and raw results.",
+    "utility": 3,
+    "maturity": 0,
+    "distributionPotential": 4,
+    "maintenanceBurden": 4,
+    "securityRisk": 2,
+    "installFriction": 3,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "BLOCKED",
+    "rationale": [
+      "No completed reproducible study or public-safe raw dataset exists, so publishing a benchmark repository would be an empty vanity artifact."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "Real methodology, fixtures, raw data and limitations are required."
+    ]
+  },
+  {
+    "id": "satellite.examples",
+    "kind": "EXAMPLES",
+    "purpose": "Future permissioned, reproducible workflow examples.",
+    "utility": 3,
+    "maturity": 1,
+    "distributionPotential": 3,
+    "maintenanceBurden": 3,
+    "securityRisk": 2,
+    "installFriction": 2,
+    "licensing": "OWNER_DECISION_REQUIRED",
+    "decision": "PLANNED",
+    "rationale": [
+      "No standalone example repository is created until a complete starting state, task, evidence and limitations package exists."
+    ],
+    "releaseReady": false,
+    "blockers": [
+      "A public-safe complete example and approved license are required."
+    ]
+  }
+]

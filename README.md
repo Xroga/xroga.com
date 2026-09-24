@@ -195,6 +195,19 @@ npm run test:resilience
 npm run test:seo
 ```
 
+### Xroga Project Check
+
+The repository includes a dependency-free, read-only project check used by the Command 4 GitHub Action:
+
+```bash
+npm run project:check -- .
+npm run project:check -- . --json
+```
+
+It inspects declared build, test, typecheck and lint support; dependency locking; deployment and workflow configuration; documentation; agent instructions; and environment-variable names from example files. It does **not** execute repository scripts, upload source, read secret values, enable telemetry, certify security, or prove that a deployment works.
+
+The same engine powers [the local composite Action](.github/actions/project-check/README.md), machine-readable JSON and a computed score badge. External consumers should wait for an approved license/release policy and then pin an immutable full commit SHA—never mutable `main`.
+
 Production CI verifies the frontend build, unit suites, authenticated browser flows, and the Fly sandbox browser path. The API exposes safe release and readiness information at [xroga-api.fly.dev/health](https://xroga-api.fly.dev/health).
 
 ## Security and execution rules
@@ -206,7 +219,7 @@ Production CI verifies the frontend build, unit suites, authenticated browser fl
 - Failed validation, unavailable providers, missing authorization, and unreachable deployments remain blockers; they are never converted into simulated success.
 - Generated code is validated in an isolated runtime rather than inside the production API process.
 
-See [DEPLOY.md](DEPLOY.md) for production configuration and [AGENTS.md](AGENTS.md) for repository-specific engineering guidance.
+See [DEPLOY.md](DEPLOY.md) for production configuration, [SECURITY.md](SECURITY.md) for private vulnerability reporting, [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance, and [AGENTS.md](AGENTS.md) for repository-specific engineering guidance.
 
 ## Plan and access
 

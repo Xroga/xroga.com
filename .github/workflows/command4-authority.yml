@@ -1,0 +1,51 @@
+name: Command 4 authority distribution
+
+on:
+  pull_request:
+    paths:
+      - ".github/actions/project-check/**"
+      - ".github/workflows/command4-authority.yml"
+      - "backend/src/organicIntelligence/authority/**"
+      - "growth/authority/**"
+      - "tools/xroga-project-check/**"
+      - "docs/COMMAND-4-*.md"
+      - "package.json"
+  push:
+    branches: [main]
+    paths:
+      - ".github/actions/project-check/**"
+      - ".github/workflows/command4-authority.yml"
+      - "backend/src/organicIntelligence/authority/**"
+      - "growth/authority/**"
+      - "tools/xroga-project-check/**"
+      - "docs/COMMAND-4-*.md"
+      - "package.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: command4-authority-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  authority-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run project check as a local Action
+        uses: ./.github/actions/project-check
+        with:
+          minimum-score: "75"
+          fail-on-critical: "true"
+      - run: npm run test:project-check
+      - run: npm run test:growth:authority
+      - run: npm run growth:authority:validate -- --dry-run --json
+      - run: npm run growth:distribute -- --dry-run --json

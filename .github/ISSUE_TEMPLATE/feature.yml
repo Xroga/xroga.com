@@ -1,0 +1,24 @@
+name: Focused enhancement
+description: Propose a specific product or developer-tool improvement.
+title: "Enhancement: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: job
+    attributes:
+      label: User job
+      description: What outcome should a real user be able to achieve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and scope
+      description: Explain the observed need, affected surface, and smallest credible scope.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Permission, security or privacy boundaries
+      description: Identify any repository write, external action, deployment or sensitive-data concern.
