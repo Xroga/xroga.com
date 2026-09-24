@@ -130,3 +130,13 @@
     opacity: .34;
   }
 }
+
+
+/* Global homepage cursor glitter must stay behind every interactive/content surface. */
+.xv-home-coding > .xv-homepage-cursor-glitter {
+  z-index: 1 !important;
+}
+
+.xv-home-coding > :not(.xv-hc-bg-image):not(.xv-homepage-cursor-glitter) {
+  z-index: 2;
+}
