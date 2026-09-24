@@ -42,7 +42,20 @@
     "growth:technical:validate": "tsx scripts/growth-publishing/cli.ts validate",
     "growth:status": "tsx scripts/growth-publishing/cli.ts status --json",
     "test:growth": "tsx --test \"backend/src/organicIntelligence/**/*.test.ts\"",
-    "test:growth:technical": "tsx --test \"scripts/growth-publishing/**/*.test.ts\""
+    "test:growth:technical": "tsx --test \"scripts/growth-publishing/**/*.test.ts\"",
+    "growth:authority": "tsx backend/src/organicIntelligence/authority/cli.ts authority",
+    "growth:mentions": "tsx backend/src/organicIntelligence/authority/cli.ts mentions",
+    "growth:distribute": "tsx backend/src/organicIntelligence/authority/cli.ts distribute",
+    "growth:github": "tsx backend/src/organicIntelligence/authority/cli.ts github",
+    "growth:oss": "tsx backend/src/organicIntelligence/authority/cli.ts oss",
+    "growth:video": "tsx backend/src/organicIntelligence/authority/cli.ts video",
+    "growth:creators": "tsx backend/src/organicIntelligence/authority/cli.ts creators",
+    "growth:reports": "tsx backend/src/organicIntelligence/authority/cli.ts reports",
+    "growth:badge": "tsx backend/src/organicIntelligence/authority/cli.ts badge",
+    "growth:authority:validate": "tsx backend/src/organicIntelligence/authority/cli.ts validate",
+    "project:check": "node tools/xroga-project-check/cli.mjs",
+    "test:project-check": "node --test \"tools/xroga-project-check/*.test.mjs\"",
+    "test:growth:authority": "tsx --test \"backend/src/organicIntelligence/authority/**/*.test.ts\""
   },
   "overrides": {
     "postcss": "8.5.24",

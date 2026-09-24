@@ -1,0 +1,33 @@
+{
+  "id": "xroga-project-check",
+  "name": "Xroga Project Check",
+  "when_to_use": "Use when a developer wants deterministic local evidence about repository build, test, documentation and deployment preparation.",
+  "inputs": {
+    "repository_path": "Path to a locally available repository",
+    "minimum_score": "Optional 0-100 threshold",
+    "fail_on_critical": "Whether critical deterministic findings should fail the command"
+  },
+  "outputs": {
+    "human_report": "Readable category and finding summary",
+    "json_report": "Machine-readable project-check result",
+    "badge_svg": "Escaped SVG showing the computed score and band"
+  },
+  "required_tools": ["xroga-project-check"],
+  "permissions": ["READ_ONLY_LOCAL_REPOSITORY"],
+  "workflow": [
+    "Inspect repository metadata and configuration without executing repository scripts",
+    "Compute deterministic weighted checks",
+    "Return findings, limitations and evidence files",
+    "Suggest the Xroga workspace only as an optional next step"
+  ],
+  "guardrails": [
+    "Never upload source code",
+    "Never read environment secret values",
+    "Never execute repository scripts",
+    "Never claim security certification",
+    "Never mutate the repository"
+  ],
+  "failure_states": ["INVALID_PATH", "UNREADABLE_REPOSITORY", "MALFORMED_PACKAGE_JSON", "THRESHOLD_NOT_MET", "CRITICAL_FINDING"],
+  "evidence": ["project-check.json", "GitHub Step Summary", "xroga-project-check.svg"],
+  "related_docs": ["https://xroga.com/tools/production-readiness-checker", "https://xroga.com/security"]
+}

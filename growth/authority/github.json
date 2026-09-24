@@ -1,0 +1,24 @@
+{
+  "repository": "Xroga/xroga.com",
+  "url": "https://github.com/Xroga/xroga.com",
+  "description": "Repository-aware AI coding agent and app builder that implements, validates, repairs, and helps ship software with inspectable evidence.",
+  "homepage": "https://xroga.com",
+  "visibility": "PUBLIC",
+  "topics": [
+    "agentic-development",
+    "ai-app-builder",
+    "ai-coding-agent",
+    "github",
+    "nextjs",
+    "typescript"
+  ],
+  "stars": 0,
+  "forks": 0,
+  "discussionsEnabled": false,
+  "issuesEnabled": true,
+  "releases": 0,
+  "tags": 0,
+  "license": null,
+  "observedAt": "2026-09-24T00:00:00.000Z",
+  "evidenceState": "OBSERVED"
+}

@@ -1,0 +1,51 @@
+name: Xroga Project Check
+description: Deterministic local repository checks with human, JSON and computed badge output.
+author: Xroga
+inputs:
+  minimum-score:
+    description: Minimum 0-100 score required for a successful step.
+    required: false
+    default: "0"
+  fail-on-critical:
+    description: Fail when deterministic critical findings exist.
+    required: false
+    default: "true"
+  report-path:
+    description: Relative path for the JSON report inside the checked-out repository.
+    required: false
+    default: xroga-project-check.json
+  badge-path:
+    description: Relative path for the computed SVG badge inside the checked-out repository.
+    required: false
+    default: xroga-project-check.svg
+outputs:
+  score:
+    description: Computed repository project-check score.
+    value: ${{ steps.check.outputs.score }}
+  band:
+    description: Computed score band.
+    value: ${{ steps.check.outputs.band }}
+  critical-count:
+    description: Number of deterministic critical findings.
+    value: ${{ steps.check.outputs.critical-count }}
+  report-path:
+    description: Relative JSON report path.
+    value: ${{ steps.check.outputs.report-path }}
+  badge-path:
+    description: Relative SVG badge path.
+    value: ${{ steps.check.outputs.badge-path }}
+runs:
+  using: composite
+  steps:
+    - id: check
+      name: Inspect repository without executing project code
+      shell: bash
+      env:
+        INPUT_MINIMUM_SCORE: ${{ inputs.minimum-score }}
+        INPUT_FAIL_ON_CRITICAL: ${{ inputs.fail-on-critical }}
+        INPUT_REPORT_PATH: ${{ inputs.report-path }}
+        INPUT_BADGE_PATH: ${{ inputs.badge-path }}
+      run: node "$GITHUB_ACTION_PATH/../../../tools/xroga-project-check/action.mjs"
+branding:
+  icon: check-circle
+  color: blue
