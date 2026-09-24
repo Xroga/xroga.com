@@ -1,0 +1,132 @@
+/*
+ * Closing frame layering fix.
+ *
+ * Keep the Squares Terminal animation visible as ambient motion, but always behind
+ * readable content. Text, controls, and the section surfaces own the foreground.
+ */
+
+.xv-home-coding .xv-closing-frame {
+  isolation: isolate;
+}
+
+.xv-home-coding .xv-closing-terminal {
+  z-index: 0;
+  opacity: .56;
+  filter: saturate(.9) brightness(.88);
+  transform: translateZ(0);
+}
+
+/* Soft local scrims protect both content columns without turning them into cards. */
+.xv-home-coding .xv-closing-frame::before {
+  z-index: 1;
+  background:
+    radial-gradient(
+      ellipse 58% 88% at 24% 50%,
+      color-mix(in srgb, var(--hc-bg) 94%, transparent) 0%,
+      color-mix(in srgb, var(--hc-bg) 82%, transparent) 42%,
+      color-mix(in srgb, var(--hc-bg) 34%, transparent) 72%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 54% 86% at 78% 50%,
+      color-mix(in srgb, var(--hc-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--hc-bg) 78%, transparent) 44%,
+      color-mix(in srgb, var(--hc-bg) 30%, transparent) 72%,
+      transparent 100%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--hc-bg) 42%, transparent) 0%,
+      transparent 24%,
+      transparent 76%,
+      color-mix(in srgb, var(--hc-bg) 48%, transparent) 100%
+    );
+}
+
+/* Content is always the foreground layer. */
+.xv-home-coding .xv-closing-frame > .xv-hc-community,
+.xv-home-coding .xv-closing-frame > .xv-hc-mid-cta,
+.xv-home-coding .xv-closing-frame .xv-hc-section-inner,
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner {
+  position: relative;
+  z-index: 3;
+}
+
+.xv-home-coding .xv-closing-frame :is(
+  .xv-hc-pixel-kicker,
+  .xv-hc-section-title,
+  .xv-hc-community-motto,
+  .xv-hc-section-copy,
+  .xv-hc-mid-cta-copy,
+  .xv-hc-community-tabs,
+  .xv-hc-mid-cta-actions
+) {
+  position: relative;
+  z-index: 4;
+}
+
+/* Give interactive controls their own stable surface so moving squares never
+   visually cut through labels or button text. */
+.xv-home-coding .xv-closing-frame .xv-hc-community-tabs {
+  background: color-mix(in srgb, var(--hc-surface) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-actions button {
+  position: relative;
+  z-index: 5;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* A very soft halo follows the text blocks, preserving the animated background
+   around them rather than covering the whole section. */
+.xv-home-coding .xv-closing-frame .xv-hc-section-inner::before,
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 36px;
+  filter: blur(26px);
+}
+
+.xv-home-coding .xv-closing-frame .xv-hc-section-inner::before {
+  inset: 4% -4% 2% -4%;
+  background: color-mix(in srgb, var(--hc-bg) 48%, transparent);
+}
+
+.xv-home-coding .xv-closing-frame .xv-hc-mid-cta-inner::after {
+  display: block !important;
+  inset: 13% 3% 10%;
+  background: color-mix(in srgb, var(--hc-bg) 44%, transparent);
+}
+
+@media (max-width: 900px) {
+  .xv-home-coding .xv-closing-terminal {
+    opacity: .48;
+  }
+
+  .xv-home-coding .xv-closing-frame::before {
+    background:
+      radial-gradient(
+        ellipse 92% 48% at 50% 24%,
+        color-mix(in srgb, var(--hc-bg) 94%, transparent) 0%,
+        color-mix(in srgb, var(--hc-bg) 78%, transparent) 56%,
+        transparent 100%
+      ),
+      radial-gradient(
+        ellipse 92% 46% at 50% 77%,
+        color-mix(in srgb, var(--hc-bg) 92%, transparent) 0%,
+        color-mix(in srgb, var(--hc-bg) 76%, transparent) 58%,
+        transparent 100%
+      );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding .xv-closing-terminal {
+    opacity: .34;
+  }
+}

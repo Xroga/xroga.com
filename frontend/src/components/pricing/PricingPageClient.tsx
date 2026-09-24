@@ -213,7 +213,6 @@ export function PricingPageClient() {
               anytime
             </span>
           </div>
-        </div>
       </section>
 
       <div className={styles.shell}>
