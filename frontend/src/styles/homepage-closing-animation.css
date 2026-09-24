@@ -133,10 +133,137 @@
 
 
 /* Global homepage cursor glitter must stay behind every interactive/content surface. */
+.xv-home-coding {
+  position: relative;
+  isolation: isolate;
+}
+
 .xv-home-coding > .xv-homepage-cursor-glitter {
-  z-index: 1 !important;
+  z-index: 0 !important;
+  opacity: .38;
+  mix-blend-mode: normal;
 }
 
 .xv-home-coding > :not(.xv-hc-bg-image):not(.xv-homepage-cursor-glitter) {
+  position: relative;
   z-index: 2;
+}
+
+/* Keep the effect visible, but give important homepage copy a soft local shield.
+   These are halos, not cards, so the existing layout/design stays intact. */
+.xv-home-coding .xv-hc-headline-block,
+.xv-home-coding .xv-hc-chat,
+.xv-home-coding .xv-hc-section-inner,
+.xv-home-coding .xv-hc-mid-cta-inner {
+  position: relative;
+  isolation: isolate;
+}
+
+.xv-home-coding .xv-hc-headline-block::before,
+.xv-home-coding .xv-hc-chat::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 42px;
+  filter: blur(18px);
+}
+
+.xv-home-coding .xv-hc-headline-block::before {
+  inset: -1.4rem -2.2rem -1.6rem;
+  background:
+    radial-gradient(
+      ellipse at 48% 46%,
+      color-mix(in srgb, var(--hc-bg) 88%, transparent) 0%,
+      color-mix(in srgb, var(--hc-bg) 70%, transparent) 48%,
+      color-mix(in srgb, var(--hc-bg) 28%, transparent) 72%,
+      transparent 100%
+    );
+}
+
+.xv-home-coding .xv-hc-chat::before {
+  inset: -.85rem -1rem;
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      color-mix(in srgb, var(--hc-bg) 76%, transparent) 0%,
+      color-mix(in srgb, var(--hc-bg) 46%, transparent) 62%,
+      transparent 100%
+    );
+}
+
+/* Text always paints in the foreground, with a tiny background-colored halo so
+   animated squares can pass nearby without making copy noisy or unreadable. */
+.xv-home-coding :is(
+  h1, h2, h3, h4, h5, h6,
+  p, small, label,
+  .xv-hc-eyebrow,
+  .xv-hc-hero-copy,
+  .xv-hc-pixel-kicker,
+  .xv-hc-community-motto
+) {
+  position: relative;
+  z-index: 3;
+  text-shadow:
+    0 0 4px color-mix(in srgb, var(--hc-bg) 96%, transparent),
+    0 0 10px color-mix(in srgb, var(--hc-bg) 82%, transparent);
+}
+
+/* Buttons/interactive controls get a real surface above the particles. */
+.xv-home-coding :is(
+  button,
+  [role='button'],
+  .xv-hc-btn-primary,
+  .xv-hc-btn-ghost,
+  .xv-hc-community-tabs > a,
+  .xv-hc-community-tabs > button
+) {
+  position: relative;
+  z-index: 4;
+  isolation: isolate;
+  backdrop-filter: blur(12px) saturate(1.04);
+  -webkit-backdrop-filter: blur(12px) saturate(1.04);
+}
+
+.xv-home-coding .xv-hc-btn-ghost {
+  background: color-mix(in srgb, var(--hc-surface) 86%, transparent);
+}
+
+.xv-home-coding .xv-hc-btn-primary,
+.xv-home-coding .xv-hc-btn-build {
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--hc-ink) 14%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--hc-border) 88%, transparent);
+}
+
+/* Existing section/card surfaces remain above the global animation. */
+.xv-home-coding :is(
+  section,
+  article,
+  nav,
+  form,
+  .xv-hc-chat,
+  .xv-home-chatbar-wrap,
+  .xv-endgame-frame,
+  .xv-closing-frame,
+  .xv-system-combined
+) {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .xv-home-coding > .xv-homepage-cursor-glitter {
+    opacity: .30;
+  }
+
+  .xv-home-coding .xv-hc-headline-block::before {
+    inset: -1rem -.8rem -1.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-home-coding > .xv-homepage-cursor-glitter {
+    opacity: .22;
+  }
 }
