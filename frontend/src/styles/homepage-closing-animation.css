@@ -140,8 +140,9 @@
 
 .xv-home-coding > .xv-homepage-cursor-glitter {
   z-index: 0 !important;
-  opacity: .38;
+  opacity: .64;
   mix-blend-mode: normal;
+  filter: saturate(1.18) contrast(1.08);
 }
 
 .xv-home-coding > :not(.xv-hc-bg-image):not(.xv-homepage-cursor-glitter) {
@@ -254,7 +255,7 @@
 
 @media (max-width: 900px) {
   .xv-home-coding > .xv-homepage-cursor-glitter {
-    opacity: .30;
+    opacity: .54;
   }
 
   .xv-home-coding .xv-hc-headline-block::before {
@@ -264,6 +265,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .xv-home-coding > .xv-homepage-cursor-glitter {
-    opacity: .22;
+    opacity: .34;
   }
 }
