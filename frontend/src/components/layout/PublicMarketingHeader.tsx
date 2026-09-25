@@ -11,7 +11,7 @@ import {
   Code2,
   FileCode2,
   GalleryHorizontalEnd,
-  Github,
+  GitBranch,
   Globe2,
   LayoutDashboard,
   LayoutGrid,
@@ -92,7 +92,7 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
     description: 'Use Xroga for focused implementation, debugging, verification, and reviewable changes inside existing software.',
     primary: [
       { href: '/ai-coding-agent', label: 'AI Coding Agent', note: 'Repository-aware product workflow.', icon: Code2 },
-      { href: '/build-with/github', label: 'GitHub workflow', note: 'Work from a connected repository.', icon: Github },
+      { href: '/build-with/github', label: 'GitHub workflow', note: 'Work from a connected repository.', icon: GitBranch },
       { href: '/features', label: 'Verification', note: 'See checks, evidence, and blockers.', icon: ShieldCheck },
     ],
     secondary: [
