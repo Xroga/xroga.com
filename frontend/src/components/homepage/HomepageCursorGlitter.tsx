@@ -17,20 +17,20 @@ type PointerSample = {
   time: number;
 };
 
-const GRID = 16;
-const CORE_RADIUS = 58;
-const OUTER_RADIUS = 104;
-const MAX_SIZE = 7.4;
-const MIN_SIZE = 1.1;
-const RISE_MS = 110;
-const TARGET_DECAY_MS = 300;
-const VISUAL_DECAY_MS = 430;
-const MAX_LINGER_MS = 720;
-const STAMP_GAP = 24;
+const GRID = 14;
+const CORE_RADIUS = 78;
+const OUTER_RADIUS = 142;
+const MAX_SIZE = 9.6;
+const MIN_SIZE = 1.35;
+const RISE_MS = 95;
+const TARGET_DECAY_MS = 360;
+const VISUAL_DECAY_MS = 520;
+const MAX_LINGER_MS = 920;
+const STAMP_GAP = 21;
 const MAX_STAMPS_PER_FRAME = 4;
-const MAX_CELLS = 360;
-const OUTER_DENSITY = 0.34;
-const MIN_MOVE = 1.6;
+const MAX_CELLS = 520;
+const OUTER_DENSITY = 0.46;
+const MIN_MOVE = 1.3;
 const BLUE = [38, 122, 230] as const;
 
 function randomForCell(x: number, y: number, salt = 0) {
@@ -114,7 +114,7 @@ export function HomepageCursorGlitter() {
     };
 
     const stamp = (x: number, y: number, speed: number, now: number) => {
-      const speedBoost = 1 + Math.min(speed, 2.2) * 0.045;
+      const speedBoost = 1 + Math.min(speed, 2.4) * 0.065;
       const outer = OUTER_RADIUS * speedBoost;
       const outerSq = outer * outer;
       const coreSq = CORE_RADIUS * CORE_RADIUS;
@@ -145,9 +145,9 @@ export function HomepageCursorGlitter() {
             const t = 1 - (distance - CORE_RADIUS) / (outer - CORE_RADIUS);
             const falloff = Math.pow(Math.max(0, t), 1.45);
             const keepChance =
-              0.035 +
+              0.045 +
               falloff * OUTER_DENSITY +
-              Math.min(speed, 2.2) * 0.018;
+              Math.min(speed, 2.4) * 0.024;
             if (noise > keepChance) continue;
 
             amount =
@@ -235,7 +235,7 @@ export function HomepageCursorGlitter() {
         const glitter = 0.92 + 0.08 * Math.sin(now * 0.008 + cell.seed * Math.PI * 8);
         const visible = Math.max(0, Math.min(1, cell.value * glitter));
         const size = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * Math.pow(visible, 0.7);
-        const alpha = Math.min(0.94, 0.28 + visible * 0.84);
+        const alpha = Math.min(0.98, 0.34 + visible * 0.9);
         const squareSize = Math.max(1, Math.round(size));
 
         ctx.fillStyle = `rgba(${BLUE[0]}, ${BLUE[1]}, ${BLUE[2]}, ${alpha})`;
