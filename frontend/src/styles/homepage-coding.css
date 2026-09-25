@@ -10063,3 +10063,91 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-copy h2 em {
     --xv-showcase-device-height: clamp(8rem, 40vw, 10rem);
   }
 }
+
+
+/* =========================================================
+   HOMEPAGE SHOWCASE — final wide alignment pass
+   Make the preview cluster, info bar, and template rail share
+   the same larger visual footprint.
+   ========================================================= */
+.xv-home-coding .xv-showcase-gallery__canvas {
+  width: min(1540px, 100%);
+}
+
+.xv-home-coding .xv-showcase-gallery__stage,
+.xv-home-coding .xv-showcase-gallery__header,
+.xv-home-coding .xv-showcase-gallery__rail {
+  width: min(1480px, calc(100% - .35rem));
+  max-width: none;
+}
+
+.xv-home-coding .xv-showcase-gallery__stage {
+  --xv-showcase-device-height: clamp(23rem, 41vw, 39rem);
+  gap: clamp(.9rem, 1.5vw, 1.4rem);
+  padding: .5rem 0 .55rem;
+}
+
+.xv-home-coding .xv-showcase-display {
+  max-width: calc(100% - 275px);
+}
+
+.xv-home-coding .xv-showcase-gallery__header {
+  min-height: 88px;
+  margin-top: .5rem;
+  padding: .68rem .9rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__header h2 {
+  font-size: clamp(1.3rem, 2vw, 1.85rem);
+}
+
+.xv-home-coding .xv-showcase-gallery__header h3 {
+  font-size: clamp(.76rem, .95vw, .95rem);
+}
+
+.xv-home-coding .xv-showcase-gallery__rail {
+  gap: .52rem;
+  margin-top: .5rem;
+  padding: .43rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail button {
+  min-width: clamp(194px, 16.5vw, 232px);
+  grid-template-columns: 78px minmax(0, 1fr);
+  min-height: 62px;
+  gap: .6rem;
+  padding: .34rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail-image {
+  width: 78px;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail b {
+  font-size: .68rem;
+}
+
+@media (max-width: 1380px) {
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: min(1320px, calc(100% - .3rem));
+  }
+
+  .xv-home-coding .xv-showcase-gallery__stage {
+    --xv-showcase-device-height: clamp(20rem, 40vw, 34rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .xv-home-coding .xv-showcase-gallery__canvas,
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: 100%;
+  }
+
+  .xv-home-coding .xv-showcase-gallery__stage {
+    --xv-showcase-device-height: clamp(8rem, 40vw, 10rem);
+  }
+}
