@@ -33,12 +33,13 @@ function isBuildNotification(n: Notification): boolean {
 }
 
 /** Show browser + toast alerts when user returns after a background build completes. */
-export function useBuildCompletionAlerts() {
+export function useBuildCompletionAlerts(enabled = true) {
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
   const setNotifications = useAppStore((s) => s.setNotifications);
   const checkingRef = useRef(false);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
 
     async function checkAlerts() {
@@ -110,5 +111,5 @@ export function useBuildCompletionAlerts() {
       window.removeEventListener('focus', onFocus);
       clearInterval(interval);
     };
-  }, [setNotifications, setUnreadCount]);
+  }, [enabled, setNotifications, setUnreadCount]);
 }
