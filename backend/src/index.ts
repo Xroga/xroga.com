@@ -25,6 +25,7 @@ import billingWebhookRouter from './routes/billingWebhook.js';
 import simpleChatRouter from './routes/simpleChat.js';
 import v1Router from './routes/v1.js';
 import phase1Router from './routes/phase1.js';
+import guestChatRouter from './routes/guestChat.js';
 import phase1BusinessPreflightRouter from './routes/phase1BusinessPreflight.js';
 import dashboardRouter from './routes/dashboard.js';
 import tasksRouter from './routes/tasks.js';
@@ -184,6 +185,8 @@ app.get('/api/config', (_req, res) => {
 });
 
 app.use('/chat', simpleChatRouter);
+// Guest preview is isolated from authenticated Phase 1, integrations, tools and builds.
+app.use('/api/guest', guestChatRouter);
 
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
