@@ -21,6 +21,7 @@ import {
   TrendingUp,
   FolderGit2,
   LayoutTemplate,
+  Sparkles,
   LogIn,
   UserPlus,
 } from 'lucide-react';
