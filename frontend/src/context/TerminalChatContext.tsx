@@ -65,6 +65,8 @@ import {
   type WorkLane,
 } from '@/lib/workLanes';
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
+import { runGuestLaneChat } from '@/lib/runGuestLaneChat';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -595,6 +597,8 @@ export function TerminalChatProvider({
   projectId?: string;
 }) {
   const pathname = usePathname();
+  const workspaceIdentity = useWorkspaceIdentity();
+  const isGuest = workspaceIdentity.status === 'guest';
   const routeProjectId = pathname.match(/\/dashboard\/projects\/([^/]+)/)?.[1];
   const projectId = projectIdProp ?? routeProjectId;
   const incognito = usePrivacyStore((s) => s.incognito);
@@ -889,15 +893,16 @@ const stopRequestedRunIdRef =
         }
       }
     },
+    !isGuest,
   );
 
-  useBuildCompletionAlerts();
+  useBuildCompletionAlerts(!isGuest);
 
   // Restore the visible build shell synchronously from durable local identity. The
   // network poll still supplies authoritative events/output, but users should never
   // see an empty terminal or a dead Stop button during that first request after reload.
   useEffect(() => {
-    if (incognito) return;
+    if (incognito || isGuest) return;
     const pending = loadPendingBuildJobs().find((job) => Boolean(job.runId));
     if (!pending?.runId) return;
     activeRunIdRef.current = pending.runId;
@@ -910,7 +915,7 @@ const stopRequestedRunIdRef =
     setSwarmRunning(true);
     setSwarmStatusLabel('Reconnecting');
     setPipelineMessage('Restoring your active build…');
-  }, [incognito, setSwarmRunning]);
+  }, [incognito, isGuest, setSwarmRunning]);
 
   useEffect(() => {
     if (!heavyBuildActive) return;
@@ -976,7 +981,7 @@ const stopRequestedRunIdRef =
         persistReadyRef.current = true;
         setSessionReady(true);
         setSessionRestoring(false);
-        if (adoptedStored && session?.messages?.length && session.sessionId) {
+        if (!isGuest && adoptedStored && session?.messages?.length && session.sessionId) {
           void import('@/lib/syncRepoTerminalSessions').then(({ ensureLiveTerminalUnderSelectedRepo }) => {
             ensureLiveTerminalUnderSelectedRepo({
               sessionId: session.sessionId,
@@ -997,11 +1002,11 @@ const stopRequestedRunIdRef =
     return () => {
       cancelled = true;
     };
-  }, [incognito, setSessionId]);
+  }, [incognito, isGuest, setSessionId]);
 
   useEffect(() => {
   const isDashboard = pathname === '/workspace' || pathname === '/workspace/';
-    if (!isDashboard || typeof window === 'undefined') return;
+    if (!isDashboard || isGuest || typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('github') !== 'connected') return;
     const rawUser = params.get('username');
@@ -1018,9 +1023,10 @@ const stopRequestedRunIdRef =
       });
     });
     window.history.replaceState({}, '', '/workspace');
-  }, [pathname]);
+  }, [pathname, isGuest]);
 
   useEffect(() => {
+    if (isGuest) return;
     const onGitHubConnected = (e: Event) => {
       const detail = (e as CustomEvent<{ username?: string }>).detail;
       void api.github.status().then((gh) => {
@@ -1035,7 +1041,7 @@ const stopRequestedRunIdRef =
     };
     window.addEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
     return () => window.removeEventListener(GITHUB_CONNECTED_EVENT, onGitHubConnected);
-  }, []);
+  }, [isGuest]);
 
   const finishGitHubActivation = useCallback(() => {
     setGithubActivation({ open: false });
@@ -1286,7 +1292,7 @@ const stopRequestedRunIdRef =
 
   /** Persist terminal history while user works — not only after submit completes */
   useEffect(() => {
-    if (!sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
+    if (isGuest || !sessionReady || incognito || !persistReadyRef.current || restoringRef.current) return;
     if (messages.length === 0) return;
     const selected = getSelectedRepoContext();
     const timer = window.setTimeout(() => {
@@ -1312,7 +1318,7 @@ const stopRequestedRunIdRef =
       });
     }, 500);
     return () => window.clearTimeout(timer);
-  }, [sessionReady, prompt, messages, incognito]);
+  }, [sessionReady, prompt, messages, incognito, isGuest]);
 
   /**
    * Soft stall WARNING only — never abort mid-build.
@@ -2066,6 +2072,132 @@ const stopRequestedRunIdRef =
     );
   }, []);
 
+  const submitGuestTurn = useCallback(
+    async (userPrompt: string, attachments?: ChatAttachment[]) => {
+      if (lightBusyRef.current || loading) {
+        toast('Finish the current guest reply before sending another message.', {
+          icon: '⏳',
+        });
+        return;
+      }
+
+      const displayPrompt = userPrompt.trim();
+      const userMessageId = crypto.randomUUID();
+      const assistantId = crypto.randomUUID();
+      const now = Date.now();
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: userMessageId,
+          role: 'user',
+          content: attachments?.length
+            ? `${displayPrompt}${displayPrompt ? '\n' : ''}📎 ${attachments.length} file(s) attached`
+            : displayPrompt,
+          createdAt: now,
+        },
+        {
+          id: assistantId,
+          role: 'assistant',
+          content: '',
+          createdAt: now,
+          agent: 'Xroga AI',
+        },
+      ]);
+      setPrompt('');
+      setLightLoading(true);
+      lightBusyRef.current = true;
+      setSwarmRunning(true);
+      setSwarmStatusLabel('Guest preview');
+      setPipelineMessage('Thinking in guest preview…');
+      setAnimatingId(assistantId);
+
+      if (attachments?.length) {
+        setMessages((current) =>
+          current.map((message) =>
+            message.id === assistantId
+              ? {
+                  ...message,
+                  content:
+                    'File uploads are available after you create or sign in to a free Xroga account. I can still help with the text of your request here in guest preview.',
+                }
+              : message,
+          ),
+        );
+        lightBusyRef.current = false;
+        setLightLoading(false);
+        setSwarmRunning(false);
+        setPipelineMessage(null);
+        setSwarmStatusLabel(null);
+        setAnimatingId(null);
+        return;
+      }
+
+      const history = buildCompletedChatHistory(
+        messages.map((message) => ({
+          role: message.role,
+          content:
+            (message.content ?? '').length > 1_200
+              ? `${(message.content ?? '').slice(0, 1_200)}…`
+              : (message.content ?? ''),
+        })),
+      ).slice(-8);
+
+      const controller = new AbortController();
+      lightAbortRef.current = controller;
+
+      try {
+        await runGuestLaneChat({
+          prompt: displayPrompt,
+          history,
+          signal: controller.signal,
+          onStatus: setPipelineMessage,
+          onPartial: (partial) => {
+            setMessages((current) =>
+              current.map((message) =>
+                message.id === assistantId
+                  ? { ...message, content: partial, agent: 'Xroga AI' }
+                  : message,
+              ),
+            );
+          },
+        });
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        const apiError = error instanceof ApiError ? error : null;
+        const limitReached =
+          String(apiError?.data?.code ?? '') === 'GUEST_LIMIT_REACHED';
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Guest chat is temporarily unavailable. Please try again.';
+
+        setMessages((current) =>
+          current.map((row) =>
+            row.id === assistantId
+              ? { ...row, content: message, agent: 'Xroga AI' }
+              : row,
+          ),
+        );
+
+        if (limitReached) {
+          toast(
+            'Guest preview complete — create a free account to continue without losing this chat.',
+          );
+        }
+      } finally {
+        lightBusyRef.current = false;
+        lightAbortRef.current = null;
+        setLightLoading(false);
+        setSwarmRunning(false);
+        setPipelineMessage(null);
+        setSwarmStatusLabel(null);
+        setAnimatingId(null);
+      }
+    },
+    [loading, messages, setSwarmRunning],
+  );
+
   /** Light lane while a heavy build runs — chat/planning without clearing todos. */
   const submitLightAlongsideHeavy = useCallback(
     async (userPrompt: string) => {
@@ -2237,6 +2369,11 @@ const stopRequestedRunIdRef =
 ) => {
       const userPrompt = (overrideText ?? prompt).trim();
       if (!userPrompt && !attachments?.length) return;
+
+      if (isGuest) {
+        await submitGuestTurn(userPrompt, attachments);
+        return;
+      }
 
       // Execution authority lives on the backend semantic resolver. Before that
       // decision arrives every request is a neutral/light request; a semantic
@@ -4346,7 +4483,7 @@ active.applyBuild({
 setTimeout(processNextInQueue, 50);
       }
     },
-    [prompt, loading, projectId, incognito, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
+    [prompt, loading, projectId, incognito, isGuest, messages, setSwarmRunning, refreshTokenUsage, enqueuePrompt, processNextInQueue, cleanupInProgressAssistant, pushSwarmTerminalLine, handleGitHubBuildBlocked, handleVercelBuildBlocked, setTokenUsage, submitGuestTurn, submitLightAlongsideHeavy, pushTerminalEvent, startTerminalRun]
   );
 
   submitRef.current = submit;
