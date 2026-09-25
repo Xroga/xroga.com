@@ -11,19 +11,27 @@ type GlitterCell = {
   seed: number;
 };
 
-const GRID = 11;
-const CORE_RADIUS = 82;
-const OUTER_RADIUS = 158;
-const MAX_SIZE = 8.8;
-const MIN_SIZE = 1.2;
-const RISE_MS = 150;
-const TARGET_DECAY_MS = 520;
-const VISUAL_DECAY_MS = 780;
-const MAX_LINGER_MS = 1500;
-const STAMP_GAP = 10;
-const OUTER_DENSITY = 0.56;
-const MIN_MOVE = 0.8;
-const PINK = [38, 122, 230] as const;
+type PointerSample = {
+  x: number;
+  y: number;
+  time: number;
+};
+
+const GRID = 16;
+const CORE_RADIUS = 58;
+const OUTER_RADIUS = 104;
+const MAX_SIZE = 7.4;
+const MIN_SIZE = 1.1;
+const RISE_MS = 110;
+const TARGET_DECAY_MS = 300;
+const VISUAL_DECAY_MS = 430;
+const MAX_LINGER_MS = 720;
+const STAMP_GAP = 24;
+const MAX_STAMPS_PER_FRAME = 4;
+const MAX_CELLS = 360;
+const OUTER_DENSITY = 0.34;
+const MIN_MOVE = 1.6;
+const BLUE = [38, 122, 230] as const;
 
 function randomForCell(x: number, y: number, salt = 0) {
   let n = (Math.imul(x + salt * 17, 374761393) ^ Math.imul(y - salt * 23, 668265263)) >>> 0;
@@ -48,16 +56,21 @@ export function HomepageCursorGlitter() {
     const finePointer = window.matchMedia('(pointer: fine)');
     if (reducedMotion.matches || !finePointer.matches) return;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext('2d', {
+      alpha: true,
+      desynchronized: true,
+    });
     if (!ctx) return;
 
     let width = 0;
     let height = 0;
     let dpr = 1;
-    let lastPointer: { x: number; y: number } | null = null;
-    let lastMoveTime = 0;
+    let lastRenderedPointer: PointerSample | null = null;
+    let latestPointer: PointerSample | null = null;
     let raf = 0;
     let lastFrame = performance.now();
+    let scrolling = false;
+    let scrollTimer = 0;
     const cells = new Map<string, GlitterCell>();
 
     const clearCanvas = () => {
@@ -65,7 +78,7 @@ export function HomepageCursorGlitter() {
     };
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.round(width * dpr);
@@ -78,12 +91,13 @@ export function HomepageCursorGlitter() {
     };
 
     const activateCell = (gx: number, gy: number, amount: number, now: number) => {
-      if (amount <= 0.015) return;
+      if (amount <= 0.025) return;
 
       const key = `${gx},${gy}`;
       let cell = cells.get(key);
 
       if (!cell) {
+        if (cells.size >= MAX_CELLS) return;
         cell = {
           gx,
           gy,
@@ -95,40 +109,50 @@ export function HomepageCursorGlitter() {
         cells.set(key, cell);
       }
 
-      cell.target = Math.min(1.22, Math.max(cell.target, amount) + amount * 0.25);
+      cell.target = Math.min(1.15, Math.max(cell.target, amount) + amount * 0.18);
       cell.touched = now;
     };
 
     const stamp = (x: number, y: number, speed: number, now: number) => {
-      const outer = OUTER_RADIUS * (1 + Math.min(speed, 2.5) * 0.08);
-      const minGX = Math.floor((x - outer) / GRID) - 1;
-      const maxGX = Math.ceil((x + outer) / GRID) + 1;
-      const minGY = Math.floor((y - outer) / GRID) - 1;
-      const maxGY = Math.ceil((y + outer) / GRID) + 1;
+      const speedBoost = 1 + Math.min(speed, 2.2) * 0.045;
+      const outer = OUTER_RADIUS * speedBoost;
+      const outerSq = outer * outer;
+      const coreSq = CORE_RADIUS * CORE_RADIUS;
+      const minGX = Math.floor((x - outer) / GRID);
+      const maxGX = Math.ceil((x + outer) / GRID);
+      const minGY = Math.floor((y - outer) / GRID);
+      const maxGY = Math.ceil((y + outer) / GRID);
 
       for (let gy = minGY; gy <= maxGY; gy += 1) {
         const py = gy * GRID;
 
         for (let gx = minGX; gx <= maxGX; gx += 1) {
           const px = gx * GRID;
-          const distance = Math.hypot(px - x, py - y);
-          if (distance > outer) continue;
+          const dx = px - x;
+          const dy = py - y;
+          const distanceSq = dx * dx + dy * dy;
+          if (distanceSq > outerSq) continue;
 
           const noise = randomForCell(gx, gy, 7);
+          const distance = Math.sqrt(distanceSq);
           let amount = 0;
 
-          if (distance <= CORE_RADIUS) {
-            let t = 1 - distance / CORE_RADIUS;
-            t = smoothstep01(t);
-            amount = 0.38 + Math.pow(t, 0.58) * 0.72;
-            if (noise < 0.025 && amount < 0.72) continue;
+          if (distanceSq <= coreSq) {
+            const t = smoothstep01(1 - distance / CORE_RADIUS);
+            amount = 0.4 + Math.pow(t, 0.62) * 0.62;
+            if (noise < 0.04 && amount < 0.68) continue;
           } else {
             const t = 1 - (distance - CORE_RADIUS) / (outer - CORE_RADIUS);
-            const falloff = Math.pow(Math.max(0, t), 1.35);
-            const keepChance = 0.05 + falloff * OUTER_DENSITY + Math.min(speed, 2.5) * 0.035;
+            const falloff = Math.pow(Math.max(0, t), 1.45);
+            const keepChance =
+              0.035 +
+              falloff * OUTER_DENSITY +
+              Math.min(speed, 2.2) * 0.018;
             if (noise > keepChance) continue;
 
-            amount = (0.12 + falloff * 0.46) * (0.72 + randomForCell(gx, gy, 19) * 0.42);
+            amount =
+              (0.1 + falloff * 0.38) *
+              (0.76 + randomForCell(gx, gy, 19) * 0.32);
           }
 
           activateCell(gx, gy, amount, now);
@@ -136,20 +160,51 @@ export function HomepageCursorGlitter() {
       }
     };
 
-    const emitSegment = (x0: number, y0: number, x1: number, y1: number, speed: number, now: number) => {
-      const distance = Math.hypot(x1 - x0, y1 - y0);
-      const steps = Math.max(1, Math.ceil(distance / STAMP_GAP));
+    const emitLatestSegment = (now: number) => {
+      const current = latestPointer;
+      if (!current) return;
 
-      for (let index = 0; index <= steps; index += 1) {
-        const t = index / steps;
-        stamp(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, speed, now);
+      if (!lastRenderedPointer) {
+        lastRenderedPointer = current;
+        stamp(current.x, current.y, 0, now);
+        return;
       }
+
+      const dx = current.x - lastRenderedPointer.x;
+      const dy = current.y - lastRenderedPointer.y;
+      const distance = Math.hypot(dx, dy);
+
+      if (distance < MIN_MOVE) {
+        lastRenderedPointer = current;
+        return;
+      }
+
+      const delta = Math.max(1, current.time - lastRenderedPointer.time);
+      const speed = distance / delta;
+      const desiredSteps = Math.max(1, Math.ceil(distance / STAMP_GAP));
+      const steps = Math.min(MAX_STAMPS_PER_FRAME, desiredSteps);
+
+      for (let index = 1; index <= steps; index += 1) {
+        const t = index / steps;
+        stamp(
+          lastRenderedPointer.x + dx * t,
+          lastRenderedPointer.y + dy * t,
+          speed,
+          now,
+        );
+      }
+
+      lastRenderedPointer = current;
     };
 
     const frame = (now: number) => {
       raf = 0;
-      const delta = Math.min(40, Math.max(1, now - lastFrame));
+      const delta = Math.min(34, Math.max(1, now - lastFrame));
       lastFrame = now;
+
+      // During active scroll, prioritize scrolling and the immediate pointer.
+      if (!scrolling) emitLatestSegment(now);
+
       clearCanvas();
 
       let alive = 0;
@@ -166,7 +221,10 @@ export function HomepageCursorGlitter() {
         }
 
         const ageSinceTouch = now - cell.touched;
-        if ((cell.value < 0.012 && cell.target < 0.012) || ageSinceTouch > MAX_LINGER_MS) {
+        if (
+          (cell.value < 0.014 && cell.target < 0.014) ||
+          ageSinceTouch > MAX_LINGER_MS
+        ) {
           cells.delete(key);
           continue;
         }
@@ -174,13 +232,13 @@ export function HomepageCursorGlitter() {
         alive += 1;
         const x = cell.gx * GRID;
         const y = cell.gy * GRID;
-        const glitter = 0.9 + 0.1 * Math.sin(now * 0.009 + cell.seed * Math.PI * 8);
+        const glitter = 0.92 + 0.08 * Math.sin(now * 0.008 + cell.seed * Math.PI * 8);
         const visible = Math.max(0, Math.min(1, cell.value * glitter));
-        const size = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * Math.pow(visible, 0.67);
-        const alpha = Math.min(1, 0.34 + visible * 0.98);
+        const size = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * Math.pow(visible, 0.7);
+        const alpha = Math.min(0.94, 0.28 + visible * 0.84);
         const squareSize = Math.max(1, Math.round(size));
 
-        ctx.fillStyle = `rgba(${PINK[0]}, ${PINK[1]}, ${PINK[2]}, ${alpha})`;
+        ctx.fillStyle = `rgba(${BLUE[0]}, ${BLUE[1]}, ${BLUE[2]}, ${alpha})`;
         ctx.fillRect(
           Math.round(x - squareSize / 2),
           Math.round(y - squareSize / 2),
@@ -189,7 +247,13 @@ export function HomepageCursorGlitter() {
         );
       }
 
-      if (alive > 0) {
+      const pointerChanged =
+        latestPointer &&
+        (!lastRenderedPointer ||
+          latestPointer.x !== lastRenderedPointer.x ||
+          latestPointer.y !== lastRenderedPointer.y);
+
+      if (alive > 0 || pointerChanged) {
         raf = requestAnimationFrame(frame);
       }
     };
@@ -201,53 +265,56 @@ export function HomepageCursorGlitter() {
     };
 
     const handlePointerMove = (event: PointerEvent) => {
-      const now = performance.now();
-      const x = event.clientX;
-      const y = event.clientY;
-
-      if (!lastPointer) {
-        lastPointer = { x, y };
-        lastMoveTime = now;
-        stamp(x, y, 0, now);
-        ensureAnimation();
-        return;
-      }
-
-      const distance = Math.hypot(x - lastPointer.x, y - lastPointer.y);
-      if (distance < MIN_MOVE) return;
-
-      const delta = Math.max(1, now - lastMoveTime);
-      const speed = distance / delta;
-      emitSegment(lastPointer.x, lastPointer.y, x, y, speed, now);
-      lastPointer = { x, y };
-      lastMoveTime = now;
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      latestPointer = {
+        x: event.clientX,
+        y: event.clientY,
+        time: performance.now(),
+      };
       ensureAnimation();
     };
 
     const handlePointerLeave = () => {
-      lastPointer = null;
+      latestPointer = null;
+      lastRenderedPointer = null;
+    };
+
+    const handleScroll = () => {
+      scrolling = true;
+      if (scrollTimer) window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        scrolling = false;
+        if (latestPointer) {
+          lastRenderedPointer = latestPointer;
+          ensureAnimation();
+        }
+      }, 90);
     };
 
     const handleVisibilityChange = () => {
       if (document.visibilityState !== 'hidden') return;
       cells.clear();
-      lastPointer = null;
+      latestPointer = null;
+      lastRenderedPointer = null;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
       clearCanvas();
     };
 
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
     document.documentElement.addEventListener('pointerleave', handlePointerLeave);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('pointermove', handlePointerMove);
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (scrollTimer) window.clearTimeout(scrollTimer);
       if (raf) cancelAnimationFrame(raf);
       cells.clear();
       clearCanvas();
