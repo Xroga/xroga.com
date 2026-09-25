@@ -1238,3 +1238,100 @@
   .xv-nav-connect-more a,
   .xv-nav-mega__art-link{transition:none!important}
 }
+
+
+/* =========================================================
+   PUBLIC NAVIGATION PERFORMANCE PASS
+   Keep the mega menu visually rich without blocking pointer motion.
+   ========================================================= */
+.xv-nav-mega {
+  animation: xv-nav-mega-fast-in .14s cubic-bezier(.22,1,.36,1) both;
+  contain: layout paint;
+}
+
+@keyframes xv-nav-mega-fast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-5px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.xv-nav-mega__inner {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow:
+    0 22px 52px -28px var(--marketing-shadow),
+    0 0 0 1px color-mix(in srgb, var(--nav-accent) 8%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.xv-nav-mega__inner::after {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: .34;
+  inset: -12% 74% 54% -8%;
+}
+
+.xv-nav-trigger svg {
+  transition-duration: .13s, .11s;
+}
+
+.xv-nav-trigger::after,
+.xv-marketing-header__direct-link::after {
+  transition-duration: .14s;
+}
+
+.xv-nav-mega__links a {
+  transition:
+    background .12s ease,
+    border-color .12s ease,
+    transform .12s cubic-bezier(.22,1,.36,1);
+}
+
+.xv-nav-mega__links a > svg {
+  transition:
+    opacity .1s ease,
+    transform .1s ease,
+    color .1s ease;
+}
+
+.xv-nav-mega__cta {
+  transition:
+    transform .13s ease,
+    box-shadow .13s ease;
+}
+
+.xv-nav-art__fan i,
+.xv-nav-art__fan b,
+.xv-nav-art__stack i,
+.xv-nav-art__stack strong,
+.xv-nav-art__terminal,
+.xv-nav-connect-logo,
+.xv-nav-connect-card,
+.xv-nav-connect-more > div > a {
+  transition-duration: .16s !important;
+}
+
+/* Avoid expensive repaint-heavy hover shadows while traversing the menu. */
+.xv-nav-mega__cta:hover,
+.xv-nav-connect-card:hover,
+.xv-nav-connect-card:focus-visible,
+.xv-nav-connect-more > div > a:not(.xv-nav-connect-more__all):hover {
+  box-shadow: none;
+}
+
+/* Promote the actual moving elements instead of the full mega panel. */
+.xv-nav-trigger svg,
+.xv-nav-mega__links a,
+.xv-nav-mega__links a > svg,
+.xv-nav-art__fan i,
+.xv-nav-art__fan b,
+.xv-nav-art__stack i,
+.xv-nav-art__stack strong,
+.xv-nav-art__terminal {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-nav-mega {
+    animation: none !important;
+  }
+}
