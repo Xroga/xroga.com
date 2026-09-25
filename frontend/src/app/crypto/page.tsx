@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Arvo, Manrope } from 'next/font/google';
 import {
   ArrowRight,
   BarChart3,
@@ -10,848 +11,742 @@ import {
   CheckCircle2,
   Code2,
   Database,
-  ExternalLink,
   GitBranch,
   Globe2,
   Layers3,
   Network,
   Radar,
   Rocket,
-  Search,
   ShieldCheck,
   Sparkles,
+  WalletCards,
   Workflow,
+  FileCode2,
+  LineChart,
+  Boxes,
 } from 'lucide-react';
 
 import { Logo } from '@/components/layout/Logo';
-import { BUILD_KINDS } from '@/lib/cryptoBuilderContent';
-import { HACKATHON_SOURCES } from '@/lib/hackathonResearch';
 import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
 import styles from './crypto.module.css';
 
+const manrope = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-manrope',
+});
+
+const arvo = Arvo({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-arvo',
+});
+
 export const metadata: Metadata = buildMetadata({
-  title: 'Crypto Builder — Build Web3 Apps & AI Agents',
+  title: 'Free AI App Builder for Web3 & Blockchain Apps | Xroga',
   description:
-    'Build crypto agents, Web3 applications, DeFi dashboards, DAO tooling, on-chain monitoring and hackathon projects with Xroga AI.',
+    'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 app development in real repositories. Start free.',
   path: '/crypto',
   keywords: [
-    'crypto builder',
-    'AI crypto agent builder',
-    'Web3 builder',
-    'DeFi app builder',
-    'on-chain analytics',
-    'crypto hackathon builder',
-    'AI Web3 development',
+    'free ai app builder',
+    'web3 app',
+    'web3 apps',
+    'web3 app development',
+    'blockchain app builder',
+    'web3 website builder',
+    'ai dashboard builder',
+    'ai saas builder',
+    'dapp builder',
+    'ai crypto builder',
   ],
 });
 
-const FEATURE_ICONS = [Bot, Blocks, Radar, ShieldCheck] as const;
+const PRODUCT_TYPES = [
+  {
+    icon: Globe2,
+    title: 'Web3 Apps',
+    copy: 'Build wallet-facing applications, blockchain interfaces, API-backed products and other Web3 application experiences.',
+  },
+  {
+    icon: Blocks,
+    title: 'Blockchain Applications',
+    copy: 'Create software around blockchain data, transaction activity, supported contract interactions and on-chain workflows.',
+  },
+  {
+    icon: BarChart3,
+    title: 'DeFi Apps & Dashboards',
+    copy: 'Build position views, protocol analytics, wallet activity and monitoring surfaces over approved data sources.',
+  },
+  {
+    icon: Boxes,
+    title: 'Crypto SaaS Products',
+    copy: 'Create research platforms, analytics products, account-based tools and subscription software for crypto users.',
+  },
+  {
+    icon: Braces,
+    title: 'dApps & On-Chain Tools',
+    copy: 'Build decentralized application interfaces, monitoring systems, wallet utilities and blockchain-connected products.',
+  },
+  {
+    icon: Network,
+    title: 'DAO & Governance Tools',
+    copy: 'Create proposal dashboards, voting interfaces, treasury views and contributor workflows.',
+  },
+  {
+    icon: WalletCards,
+    title: 'Wallet & Token Tools',
+    copy: 'Build interfaces for wallet activity, token data, balances, approvals and supported crypto workflows.',
+  },
+  {
+    icon: Bot,
+    title: 'AI Crypto Agents',
+    copy: 'Create AI-powered research, monitoring, summarization and automation workflows using approved sources.',
+  },
+] as const;
 
-const BUILD_ICONS = [
-  Bot,
-  Braces,
-  BarChart3,
-  Blocks,
-  Network,
-  Radar,
-  Database,
-  Rocket,
+const DEVELOPMENT = [
+  {
+    icon: Sparkles,
+    title: 'Start a new Web3 app',
+    copy: 'Describe the users, workflow, screens, data and outcome. Xroga turns the requirements into implementation work.',
+  },
+  {
+    icon: GitBranch,
+    title: 'Continue an existing project',
+    copy: 'Connect the repository you already have and make focused changes without intentionally replacing unrelated working code.',
+  },
+  {
+    icon: Database,
+    title: 'Connect UI, APIs & data',
+    copy: 'Work across the interface, application logic, persistent data and supported external services in one project.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Verify before deployment',
+    copy: 'Run applicable builds, type checks, tests and runtime checks before presenting the work as ready.',
+  },
+] as const;
+
+const DASHBOARD_EXAMPLES = [
+  'Wallet activity',
+  'DeFi positions',
+  'Token analytics',
+  'Protocol data',
+  'Governance',
+  'On-chain alerts',
+] as const;
+
+const SAAS_EXAMPLES = [
+  ['Crypto Research SaaS', 'Organize research, data and AI summaries into a focused product.'],
+  ['Wallet Intelligence', 'Build monitoring and analytics around approved wallet activity.'],
+  ['Protocol Analytics', 'Turn blockchain and protocol data into product interfaces.'],
+  ['DAO Software', 'Create governance, treasury and contributor experiences.'],
 ] as const;
 
 const PROCESS = [
-  {
-    number: '01',
-    icon: Search,
-    title: 'Research the brief',
-    copy:
-      'Start from official documentation, current ecosystem requirements and the exact product outcome you want.',
-  },
-  {
-    number: '02',
-    icon: Code2,
-    title: 'Build in the real repo',
-    copy:
-      'Xroga works against the connected project, applies focused changes and keeps unrelated working code intact.',
-  },
-  {
-    number: '03',
-    icon: ShieldCheck,
-    title: 'Verify, then ship',
-    copy:
-      'Run applicable checks first. Push to GitHub and publish through Vercel only with provider-backed evidence.',
-  },
+  ['01', 'Describe', 'Tell Xroga what you want to build, who will use it and what must be true when the work is complete.'],
+  ['02', 'Build', 'Xroga works in the project and implements the product instead of returning only a mockup or explanation.'],
+  ['03', 'Verify', 'Applicable checks run against the project and blockers stay visible instead of being hidden.'],
+  ['04', 'Ship', 'Review the result and use supported GitHub or Vercel workflows through accounts you authorize.'],
 ] as const;
 
 const FAQS = [
   {
-    q: 'What can Xroga build for crypto?',
-    a:
-      'Crypto agents, Web3 front ends, DeFi dashboards, DAO and governance tooling, token and wallet utilities, on-chain monitoring, analytics products and hackathon MVPs.',
+    q: 'What is a Web3 app builder?',
+    a: 'A Web3 app builder helps create software that uses blockchain data, wallets, decentralized protocols or other Web3 technologies. Xroga uses AI to help build those products while keeping the resulting work connected to an inspectable repository.',
   },
   {
-    q: 'Does Xroga custody funds or execute trades?',
-    a:
-      'No. This page is for building software products and interfaces. Xroga does not present itself as a custody service or a managed trading service.',
+    q: 'Can I build a Web3 app with AI?',
+    a: 'Yes. Describe the product you want to create and Xroga can help implement supported interfaces, application logic, APIs, data workflows and integrations inside the project.',
   },
   {
-    q: 'Can I use my existing repository?',
-    a:
-      'Yes. Xroga is repository-aware and can work against an existing project rather than forcing every build into a new generic template.',
+    q: 'Is Xroga a free AI app builder?',
+    a: 'Xroga has a free plan that lets you start building without a card. Paid capacity is available when you need more usage.',
   },
   {
-    q: 'Can Xroga deploy the finished web product?',
-    a:
-      'For supported web projects, Xroga can publish through a Vercel account you authorize after applicable validation succeeds.',
+    q: 'Can Xroga build blockchain applications?',
+    a: 'Xroga can help build supported blockchain and Web3 applications including dashboards, wallet-facing tools, analytics products, DAO software, crypto SaaS and on-chain monitoring interfaces.',
   },
   {
-    q: 'Is the hackathon research affiliated with the organizers shown?',
-    a:
-      'No. The organizer links are references to official public sources so you can verify current rules, tracks and requirements yourself.',
+    q: 'Can I use Xroga for Web3 app development?',
+    a: 'Yes. You can start a new project or work from an existing repository, then build across supported UI, APIs, data and integrations.',
+  },
+  {
+    q: 'Can Xroga build dApps?',
+    a: 'Xroga can help build supported decentralized application interfaces and related Web3 product workflows. Exact requirements depend on the blockchain, contracts, infrastructure and integrations involved.',
+  },
+  {
+    q: 'Can I build a DeFi dashboard with Xroga?',
+    a: 'Yes. Xroga can help create supported DeFi dashboards and analytics interfaces around approved market, wallet, protocol or blockchain data sources.',
+  },
+  {
+    q: 'Can Xroga build a Web3 website?',
+    a: 'Yes. Xroga can build supported websites and web applications for Web3, blockchain and crypto products while keeping the project attached to code you can inspect.',
+  },
+  {
+    q: 'Can Xroga work with an existing repository?',
+    a: 'Yes. Xroga is repository-aware and can work against an existing project rather than forcing every build into a new generic template.',
+  },
+  {
+    q: 'Does Xroga custody cryptocurrency or execute trades?',
+    a: 'No. Xroga is a software-building platform, not a broker, exchange, custody provider or managed trading service.',
   },
 ] as const;
 
-function FeatureArtwork({ index }: { index: number }) {
-  if (index === 0) {
-    return (
-      <div className={styles.repoArtwork} aria-hidden="true">
-        <div className={styles.repoTopline}>
-          <span />
-          <span />
-          <span />
-        </div>
-
-        <div className={styles.repoPrompt}>
-          Build a wallet activity intelligence dashboard
-        </div>
-
-        <div className={styles.repoFlow}>
-          <span>plan</span>
-          <i />
-          <span>code</span>
-          <i />
-          <span>verify</span>
-        </div>
-
-        <div className={styles.repoStatus}>
-          <CheckCircle2 />
-          <span>Repository change ready for review</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (index === 1) {
-    return (
-      <div className={styles.agentArtwork} aria-hidden="true">
-        <div className={styles.agentHalo} />
-
-        <div className={styles.agentOrb}>
-          <Sparkles />
-        </div>
-
-        <div className={styles.agentBubbleOne}>
-          Summarise protocol activity
-        </div>
-
-        <div className={styles.agentBubbleTwo}>
-          Source-aware result
-        </div>
-      </div>
-    );
-  }
-
-  if (index === 2) {
-    return (
-      <div className={styles.monitorArtwork} aria-hidden="true">
-        <div className={styles.monitorGrid} />
-
-        <div className={styles.monitorLine}>
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-
-        <div className={styles.monitorCard}>
-          <Radar />
-
-          <span>
-            <b>Watch event</b>
-            address · contract · state
-          </span>
-        </div>
-      </div>
-    );
-  }
-
+function GlowButton({
+  href,
+  children,
+  secondary = false,
+}: {
+  href: string;
+  children: React.ReactNode;
+  secondary?: boolean;
+}) {
   return (
-    <div className={styles.shipArtwork} aria-hidden="true">
-      <div className={styles.shipRingOuter} />
-      <div className={styles.shipRingInner} />
-
-      <div className={styles.shipCore}>
-        <Check />
-      </div>
-
-      <div className={styles.shipPill}>
-        <GitBranch />
-        verified → pushed → live
-      </div>
-    </div>
+    <Link
+      href={href}
+      className={secondary ? styles.secondaryButton : styles.glowButton}
+    >
+      <span>{children}</span>
+      <ArrowRight aria-hidden="true" />
+    </Link>
   );
 }
 
 export default function CryptoPage() {
-  const softwareLd = {
+  const ld = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Xroga Crypto Builder',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Web',
-    url: 'https://xroga.com/crypto',
-    description:
-      'Build AI crypto agents, Web3 applications, DeFi products, on-chain analytics and hackathon projects with Xroga AI.',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': 'https://xroga.com/crypto#webpage',
+        url: 'https://xroga.com/crypto',
+        name: 'Free AI App Builder for Web3 & Blockchain Apps | Xroga',
+        description:
+          'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 app development in real repositories.',
+        isPartOf: { '@id': 'https://xroga.com/#website' },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://xroga.com/#software',
+        name: 'Xroga AI',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://xroga.com/',
+        description:
+          'AI app builder and coding agent for repository-backed software work, verification and supported deployment workflows.',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://xroga.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Web3 & Blockchain App Builder',
+            item: 'https://xroga.com/crypto',
+          },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: FAQS.map((item) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.a,
+          },
+        })),
+      },
+    ],
   };
 
   return (
-    <main className={`xv-cb-root ${styles.root}`}>
+    <main className={`${styles.root} ${manrope.variable} ${arvo.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c'),
+          __html: JSON.stringify(ld).replace(/</g, '\\u003c'),
         }}
       />
 
       <section className={styles.hero} id="top">
-        <div
-          className={styles.heroGlow}
-          aria-hidden="true"
-        />
-
+        <div className={styles.heroGlow} aria-hidden="true" />
         <div className={styles.heroInner}>
-          {/* The badge said the page's own title back to it, directly above a headline
-              that says the same thing. */}
-          <h1 className={`xv-cb-h1 ${styles.heroTitle}`}>
-            AI Crypto Builder
+          <div className={styles.seoEyebrow}>
+            <Sparkles aria-hidden="true" />
+            FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO
+          </div>
+
+          <h1 className={styles.heroTitle}>
+            Build Web3 &amp; Blockchain
             <br />
-            That <span>Ships</span>
+            Apps with <span>AI</span>
           </h1>
 
           <p className={styles.heroSub}>
-            Build crypto agents, Web3 apps, DeFi dashboards,
-            DAO tooling and on-chain products in a real
-            repository. Xroga is for crypto product work,{' '}
-            <strong>
-              not only hackathons.
-            </strong>
+            Build Web3 apps, dApps, DeFi dashboards, crypto SaaS, wallet tools and
+            on-chain products with AI — inside a real repository you control.
           </p>
 
-          {/* The hero used to carry a "Start building" button between the subtitle and
-              the console, linking to `#builder` — the console directly beneath it. It
-              scrolled to something already on screen, and it put a second call to action
-              in front of the one thing on this page that actually starts a build. The
-              header's "Start building" is unchanged, and the anchor stays on the console
-              so any inbound `#builder` link still lands. */}
-          <div
-            className={styles.heroConsole}
-            id="builder"
-          >
+          <div className={styles.heroActions}>
+            <GlowButton href="/auth/signup">Start Building Free</GlowButton>
+            <GlowButton href="#what-you-can-build" secondary>
+              See What You Can Build
+            </GlowButton>
+          </div>
+
+          <div className={styles.heroConsole} id="builder">
             <CryptoPromptBar />
           </div>
 
-          <div className={styles.stackLabel}>
-            RESEARCH FROM OFFICIAL ECOSYSTEM SOURCES
+          <div className={styles.trustStrip} aria-label="Xroga workflow benefits">
+            <span><CheckCircle2 /> Free to start</span>
+            <span><GitBranch /> Real repository</span>
+            <span><Code2 /> Reviewable code</span>
+            <span><ShieldCheck /> Verification before shipping</span>
           </div>
-
-          <div
-            className={styles.ecosystemRow}
-            id="research"
-          >
-            {HACKATHON_SOURCES.map((source) => (
-              <a
-                key={source.name}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`xv-cb-eco-card ${styles.ecoLink}`}
-                title={source.note}
-              >
-                {source.name}
-              </a>
-            ))}
-          </div>
-
-          <p className={styles.ecosystemNote}>
-            Xroga is not affiliated with or endorsed by the
-            organizations shown.
-            <strong>
-              {' '}
-              Check official event details
-            </strong>
-            , current rules and requirements before you build
-            or submit.
-          </p>
         </div>
       </section>
 
-      <section
-        className={styles.section}
-        id="capabilities"
-      >
+      <section className={`${styles.section} ${styles.introSection}`}>
         <div className={styles.sectionHeading}>
           <div>
-            <span className={styles.kicker}>
-              WHAT YOU GET
-            </span>
-
-            <h2>
-              Everything You Need to
-              <br />
-              Build Crypto Products
-            </h2>
+            <span className={styles.kicker}>AI APP BUILDER FOR WEB3</span>
+            <h2>Build the product behind the crypto idea.</h2>
           </div>
-
           <p>
-            A focused software loop from current research to
-            repository work, validation and publishing.
+            Xroga is an AI app builder for real Web3, blockchain and crypto software.
+            Start from an idea or an existing repository and keep the result inspectable.
           </p>
         </div>
 
-        <div className={styles.featureGrid}>
-          {[
-            {
-              title: 'Repository-Aware Building',
-              copy:
-                'Inspect the existing project, make focused changes and keep the work attached to code you own.',
-            },
-            {
-              title: 'AI-Powered Crypto Workflows',
-              copy:
-                'Turn product requirements and approved sources into agents, interfaces, analytics and automation.',
-            },
-            {
-              title: 'On-chain Monitoring Products',
-              copy:
-                'Build address, contract, event and protocol-state monitoring surfaces with clear source context.',
-            },
-            {
-              title: 'Verification Before Shipping',
-              copy:
-                'Run applicable checks first, then push or publish with evidence—or surface the exact blocker.',
-            },
-          ].map((feature, index) => {
-            const Icon = FEATURE_ICONS[index];
+        <div className={styles.introGrid}>
+          <article className={styles.statementCard}>
+            <span>01 / BUILD</span>
+            <h3>Not just a crypto website generator.</h3>
+            <p>
+              Work across interfaces, APIs, data, application logic and supported
+              integrations instead of stopping at a static landing page.
+            </p>
+          </article>
 
+          <article className={styles.statementCard}>
+            <span>02 / OWN</span>
+            <h3>Real repository. Code you control.</h3>
+            <p>
+              Build in a codebase your team can inspect, continue developing and hand
+              off without being trapped inside a visual prototype.
+            </p>
+          </article>
+
+          <article className={styles.statementCard}>
+            <span>03 / VERIFY</span>
+            <h3>From crypto idea to verified code.</h3>
+            <p>
+              Applicable checks happen before the work is presented as ready, with
+              blockers surfaced rather than hidden.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section className={`${styles.section} ${styles.freeSection}`}>
+        <div className={styles.freePanel}>
+          <div className={styles.freeCopy}>
+            <span className={styles.kicker}>FREE AI APP BUILDER</span>
+            <h2>Start a Web3 project before you pay.</h2>
+            <p>
+              Use Xroga&apos;s free plan to turn a Web3 or blockchain idea into a working
+              project, explore the workflow and build against a real repository before
+              you need more capacity.
+            </p>
+            <div className={styles.miniPoints}>
+              <span><Check /> No card required</span>
+              <span><Check /> Repository-aware edits</span>
+              <span><Check /> Preview &amp; verification</span>
+            </div>
+            <GlowButton href="/auth/signup">Start Free</GlowButton>
+          </div>
+
+          <div className={styles.folderVisual} aria-hidden="true">
+            <div className={styles.folderBack} />
+            <div className={`${styles.folderFile} ${styles.fileOne}`}>
+              <FileCode2 />
+              <span>app/page.tsx</span>
+            </div>
+            <div className={`${styles.folderFile} ${styles.fileTwo}`}>
+              <Database />
+              <span>data/web3.ts</span>
+            </div>
+            <div className={`${styles.folderFile} ${styles.fileThree}`}>
+              <ShieldCheck />
+              <span>checks/verify.ts</span>
+            </div>
+            <div className={styles.folderFront}>
+              <div>
+                <GitBranch />
+                <span>xroga/web3-product</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="what-you-can-build">
+        <div className={styles.sectionHeading}>
+          <div>
+            <span className={styles.kicker}>BLOCKCHAIN APP BUILDER</span>
+            <h2>What can you build with Xroga?</h2>
+          </div>
+          <p>
+            From focused crypto utilities to full Web3 applications, the same
+            repository-aware workflow scales with the product.
+          </p>
+        </div>
+
+        <div className={styles.productGrid}>
+          {PRODUCT_TYPES.map((item) => {
+            const Icon = item.icon;
             return (
-              <article
-                className={styles.featureCard}
-                key={feature.title}
-              >
-                <div className={styles.featureVisual}>
-                  <FeatureArtwork index={index} />
-                </div>
-
-                <div className={styles.featureBody}>
-                  <div className={styles.featureIcon}>
-                    <Icon />
-                  </div>
-
-                  <div>
-                    <h3>
-                      {feature.title}
-                    </h3>
-
-                    <p>
-                      {feature.copy}
-                    </p>
-                  </div>
-                </div>
+              <article key={item.title} className={styles.productCard}>
+                <div className={styles.productIcon}><Icon /></div>
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+                <span className={styles.cardArrow}><ArrowRight /></span>
               </article>
             );
           })}
         </div>
       </section>
 
-      <section
-        className={`${styles.section} ${styles.typesSection}`}
-      >
+      <section className={`${styles.section} ${styles.devSection}`}>
         <div className={styles.sectionHeading}>
           <div>
-            <span className={styles.kicker}>
-              BUILT FOR THE CATEGORY
-            </span>
-
-            <h2>
-              Built for Every Type
-              <br />
-              of Crypto Product
-            </h2>
+            <span className={styles.kicker}>WEB3 APP DEVELOPMENT</span>
+            <h2>Build a Web3 app without starting from zero.</h2>
           </div>
-
           <p>
-            From focused research tools to full Web3
-            applications, the same repository-aware workflow
-            scales with the product.
+            A real Web3 product can need UI, APIs, persistent data, wallet experiences,
+            blockchain data and deployment configuration. Keep those parts in one project.
           </p>
         </div>
 
-        <div className={styles.typesPanel}>
-          <div className={styles.typesIntro}>
-            <span className={styles.typesMark}>
-              <Globe2 />
-            </span>
-
-            <h3>
-              One builder. Multiple crypto product shapes.
-            </h3>
-
-            <p>
-              Keep architecture, validation and shipping
-              evidence in the same product loop instead of
-              stitching together disconnected demos.
-            </p>
-
-            <Link href="/features">
-              Explore Xroga capabilities
-              <ArrowRight />
-            </Link>
-          </div>
-
-          <div className={styles.typesGrid}>
-            {BUILD_KINDS.map((kind, index) => {
-              const Icon = BUILD_ICONS[index];
-
+        <div className={styles.devLayout}>
+          <div className={styles.devSteps}>
+            {DEVELOPMENT.map((item) => {
+              const Icon = item.icon;
               return (
-                <article
-                  key={kind.title}
-                  className={styles.typeItem}
-                >
-                  <span>
-                    <Icon />
-                  </span>
-
+                <article key={item.title} className={styles.devStep}>
+                  <span><Icon /></span>
                   <div>
-                    <h3>
-                      {kind.title}
-                    </h3>
-
-                    <p>
-                      {kind.body}
-                    </p>
+                    <h3>{item.title}</h3>
+                    <p>{item.copy}</p>
                   </div>
                 </article>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      <section
-        className={`${styles.section} ${styles.proofSection}`}
-      >
-        <div className={styles.proofCard}>
-          <div
-            className={styles.proofGlow}
-            aria-hidden="true"
-          />
-
-          <span className={styles.kicker}>
-            WHAT THE WORKFLOW KEEPS VISIBLE
-          </span>
-
-          <blockquote>
-            “A build is complete only after the required
-            validation passes. Shipping is reported only with
-            repository or provider evidence.”
-          </blockquote>
-
-          <div className={styles.proofMeta}>
-            <span className={styles.proofLogo}>
-              <Logo
-                href={null}
-                variant="homepage"
-                height={26}
-              />
-            </span>
-
-            <div>
-              <strong>
-                Xroga execution principle
-              </strong>
-
-              <small>
-                Plan → code → verify → ship
-              </small>
+          <div className={styles.repoWindow} aria-hidden="true">
+            <div className={styles.repoWindowTop}>
+              <div><i /><i /><i /></div>
+              <span>xroga / protocol-console</span>
+              <small>main</small>
+            </div>
+            <div className={styles.repoTabs}>
+              <span className={styles.activeTab}>Code</span>
+              <span>Changes</span>
+              <span>Checks</span>
+            </div>
+            <div className={styles.repoRows}>
+              <span><CheckCircle2 /> app/dashboard/page.tsx <b>updated</b></span>
+              <span><CheckCircle2 /> lib/onchain/client.ts <b>updated</b></span>
+              <span><CheckCircle2 /> components/wallet.tsx <b>updated</b></span>
+              <span><CheckCircle2 /> tests/dashboard.test.ts <b>passed</b></span>
+            </div>
+            <div className={styles.repoStatusBar}>
+              <GitBranch /> 4 files changed · checks passing
             </div>
           </div>
         </div>
       </section>
 
-      <section
-        className={styles.section}
-        id="workflow"
-      >
-        <div className={styles.sectionHeading}>
-          <div>
-            <span className={styles.kicker}>
-              HOW IT WORKS
-            </span>
-
-            <h2>
-              One Continuous
-              <br />
-              Build Loop
-            </h2>
+      <section className={`${styles.section} ${styles.dashboardSection}`}>
+        <div className={styles.splitFeature}>
+          <div className={styles.dashboardVisual} aria-hidden="true">
+            <div className={styles.dashboardTop}>
+              <div>
+                <span>Portfolio</span>
+                <strong>$84,320.18</strong>
+              </div>
+              <small>LIVE DATA UI</small>
+            </div>
+            <div className={styles.assetTabs}>
+              <span className={styles.assetActive}>BTC</span>
+              <span>ETH</span>
+              <span>SOL</span>
+              <span>USDC</span>
+            </div>
+            <div className={styles.chartArea}>
+              <svg viewBox="0 0 420 150" preserveAspectRatio="none">
+                <path
+                  d="M0,130 C45,122 52,84 92,93 C132,103 135,56 177,68 C220,80 230,35 268,49 C307,64 326,24 360,38 C392,48 399,20 420,15"
+                  fill="none"
+                />
+              </svg>
+              <i /><i /><i /><i />
+            </div>
           </div>
 
-          <p>
-            The layout is simple because the workflow is
-            simple: understand the outcome, change the real
-            project, verify the result, then deliver it.
-          </p>
-        </div>
-
-        <div className={styles.processGrid}>
-          {PROCESS.map((step) => {
-            const Icon = step.icon;
-
-            return (
-              <article
-                className={styles.processCard}
-                key={step.number}
-              >
-                <div className={styles.processTop}>
-                  <span>
-                    {step.number}
-                  </span>
-
-                  <Icon />
-                </div>
-
-                <h3>
-                  {step.title}
-                </h3>
-
-                <p>
-                  {step.copy}
-                </p>
-
-                <div className={styles.processLine} />
-              </article>
-            );
-          })}
+          <div className={styles.splitCopy}>
+            <span className={styles.kicker}>AI DASHBOARD BUILDER</span>
+            <h2>Build DeFi &amp; crypto analytics dashboards.</h2>
+            <p>
+              Turn approved market, wallet, protocol and blockchain data into usable
+              product experiences with interfaces, logic and data flows in the same repo.
+            </p>
+            <div className={styles.chipGrid}>
+              {DASHBOARD_EXAMPLES.map((item) => <span key={item}>{item}</span>)}
+            </div>
+            <GlowButton href="/auth/signup" secondary>Build a Crypto Dashboard</GlowButton>
+          </div>
         </div>
       </section>
 
-      <section
-        className={`${styles.section} ${styles.planSection}`}
-      >
+      <section className={styles.section}>
         <div className={styles.sectionHeading}>
           <div>
-            <span className={styles.kicker}>
-              SIMPLE PRICING
-            </span>
+            <span className={styles.kicker}>AI SAAS BUILDER</span>
+            <h2>Build crypto SaaS products, not just demos.</h2>
+          </div>
+          <p>
+            Create account-based products with supported dashboards, application logic,
+            APIs, persistent data and external integrations.
+          </p>
+        </div>
 
-            <h2>
-              One Plan.
-              <br />
-              Everything Included.
-            </h2>
+        <div className={styles.saasGrid}>
+          {SAAS_EXAMPLES.map(([title, copy], index) => (
+            <article key={title} className={styles.tiltCard}>
+              <div className={styles.tiltTop}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <Layers3 />
+              </div>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+              <div className={styles.tiltLine} />
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={`${styles.section} ${styles.websiteSection}`}>
+        <div className={styles.websitePanel}>
+          <div className={styles.websiteCopy}>
+            <span className={styles.kicker}>WEB3 WEBSITE BUILDER</span>
+            <h2>Build the website — then build the product behind it.</h2>
+            <p>
+              Create a Web3 or crypto project website, then keep going into the actual
+              application, dashboard, API and product workflow in the same development environment.
+            </p>
+            <div className={styles.websiteKinds}>
+              <span>Crypto project websites</span>
+              <span>DeFi websites</span>
+              <span>Blockchain startup websites</span>
+              <span>Web3 landing pages</span>
+            </div>
+            <p className={styles.editorialLine}>
+              Not just a Web3 website. <strong>Build the product behind it.</strong>
+            </p>
           </div>
 
+          <div className={styles.browserVisual} aria-hidden="true">
+            <div className={styles.browserBar}>
+              <i /><i /><i />
+              <span>protocol.xyz</span>
+            </div>
+            <div className={styles.browserHero}>
+              <div className={styles.browserSkeletonLg} />
+              <div className={styles.browserSkeletonSm} />
+              <div className={styles.browserButtons}>
+                <span />
+                <span />
+              </div>
+            </div>
+            <div className={styles.browserCards}>
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className={styles.traceOne} />
+            <div className={styles.traceTwo} />
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="workflow">
+        <div className={styles.sectionHeading}>
+          <div>
+            <span className={styles.kicker}>HOW IT WORKS</span>
+            <h2>From Web3 idea to working product.</h2>
+          </div>
           <p>
-            No crypto-specific surcharge. The Crypto Builder
-            sits inside the same Xroga AI product-building
-            plan.
+            A simple build loop keeps the request, repository work, checks and release
+            evidence connected.
+          </p>
+        </div>
+
+        <div className={styles.processGridFour}>
+          {PROCESS.map(([number, title, copy]) => (
+            <article className={styles.processCard} key={number}>
+              <div className={styles.processTop}>
+                <span>{number}</span>
+                <Workflow />
+              </div>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+              <div className={styles.processLine} />
+            </article>
+          ))}
+        </div>
+
+        <div className={styles.flowRail}>
+          <span>DESCRIBE</span><i />
+          <span>BUILD</span><i />
+          <span>VERIFY</span><i />
+          <span>SHIP</span>
+        </div>
+      </section>
+
+      <section className={`${styles.section} ${styles.whySection}`}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <span className={styles.kicker}>WHY XROGA</span>
+            <h2>Built for more than a prototype.</h2>
+          </div>
+          <p>
+            Generating code is only the beginning. Xroga keeps the work tied to a real
+            project, real checks and code you can continue using.
+          </p>
+        </div>
+
+        <div className={styles.whyGrid}>
+          <article><GitBranch /><h3>Real repository</h3><p>Your project stays attached to inspectable code.</p></article>
+          <article><Code2 /><h3>Existing code support</h3><p>Use Xroga for new builds or focused work inside a project you already have.</p></article>
+          <article><ShieldCheck /><h3>Verification before shipping</h3><p>Applicable checks help separate generated code from code that actually passed validation.</p></article>
+          <article><Rocket /><h3>Provider-backed shipping</h3><p>Use supported GitHub and Vercel workflows through accounts you authorize.</p></article>
+        </div>
+
+        <div className={styles.proofQuote}>
+          <span className={styles.proofLogo}>
+            <Logo href={null} variant="homepage" height={24} />
+          </span>
+          <blockquote>
+            “A build is complete only after the required validation passes.”
+          </blockquote>
+          <small>From crypto idea to verified code.</small>
+        </div>
+      </section>
+
+      <section className={`${styles.section} ${styles.planSection}`}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <span className={styles.kicker}>SIMPLE ACCESS</span>
+            <h2>Start free. Scale when you need more.</h2>
+          </div>
+          <p>
+            Xroga&apos;s free plan is built to let you start. Move to Pro when you need
+            more capacity for ongoing product work.
           </p>
         </div>
 
         <div className={styles.planGrid}>
           <article className={styles.planSideCard}>
-            <span>
-              BUILD
-            </span>
-
-            <h3>
-              Research + Code
-            </h3>
-
+            <span>BUILD</span>
+            <h3>Research + Code</h3>
             <ul>
-              <li>
-                <Check />
-                Repository inspection
-              </li>
-
-              <li>
-                <Check />
-                Focused implementation
-              </li>
-
-              <li>
-                <Check />
-                Crypto product scaffolding
-              </li>
-
-              <li>
-                <Check />
-                Current-source research
-              </li>
+              <li><Check /> Repository inspection</li>
+              <li><Check /> Focused implementation</li>
+              <li><Check /> Web3 product scaffolding</li>
+              <li><Check /> Current-source research</li>
             </ul>
           </article>
 
           <article className={styles.planMainCard}>
-            <div className={styles.planBadge}>
-              XROGA AI
-            </div>
-
-            <p>
-              XROGA PRO
-            </p>
-
-            <div className={styles.price}>
-              <strong>
-                $25
-              </strong>
-
-              <span>
-                / month
-              </span>
-            </div>
-
-            <Link href="/auth/signup">
-              Start building
-              <ArrowRight />
-            </Link>
-
+            <div className={styles.planBadge}>START FREE</div>
+            <p>XROGA AI</p>
+            <div className={styles.price}><strong>$0</strong><span>to start</span></div>
+            <Link href="/auth/signup">Start building free <ArrowRight /></Link>
             <ul>
-              <li>
-                <Check />
-                All product-building features
-              </li>
-
-              <li>
-                <Check />
-                GitHub repository workflow
-              </li>
-
-              <li>
-                <Check />
-                Vercel publishing workflow
-              </li>
-
-              <li>
-                <Check />
-                Validation and repair loop
-              </li>
+              <li><Check /> Included AI usage</li>
+              <li><Check /> Repository-aware edits</li>
+              <li><Check /> Preview and verification</li>
+              <li><Check /> No card required</li>
             </ul>
           </article>
 
           <article className={styles.planSideCard}>
-            <span>
-              SHIP
-            </span>
-
-            <h3>
-              Verify + Publish
-            </h3>
-
+            <span>SHIP</span>
+            <h3>Verify + Publish</h3>
             <ul>
-              <li>
-                <Check />
-                Applicable checks
-              </li>
-
-              <li>
-                <Check />
-                Reviewable changes
-              </li>
-
-              <li>
-                <Check />
-                GitHub evidence
-              </li>
-
-              <li>
-                <Check />
-                Vercel evidence
-              </li>
+              <li><Check /> Applicable checks</li>
+              <li><Check /> Reviewable changes</li>
+              <li><Check /> GitHub workflow</li>
+              <li><Check /> Vercel workflow</li>
             </ul>
           </article>
         </div>
       </section>
 
-      <section
-        className={`${styles.section} ${styles.faqSection}`}
-      >
+      <section className={`${styles.section} ${styles.faqSection}`}>
         <div className={styles.faqIntro}>
-          <span className={styles.kicker}>
-            FREQUENTLY ASKED QUESTIONS
-          </span>
-
-          <h2>
-            Crypto Builder, without the vague claims.
-          </h2>
-
+          <span className={styles.kicker}>WEB3 &amp; BLOCKCHAIN APP BUILDER FAQ</span>
+          <h2>Clear answers before you build.</h2>
           <p>
-            What this page can help you build, how shipping
-            works and where the boundaries are.
+            What Xroga can build, how the workflow works and where the boundaries are.
           </p>
-
-          <Link href="/docs">
-            Read the docs
-            <ArrowRight />
-          </Link>
+          <Link href="/docs">Read the docs <ArrowRight /></Link>
         </div>
 
         <div className={styles.faqList}>
           {FAQS.map((item) => (
             <details key={item.q}>
-              <summary>
-                {item.q}
-                <span>
-                  +
-                </span>
-              </summary>
-
-              <p>
-                {item.a}
-              </p>
+              <summary>{item.q}<span>+</span></summary>
+              <p>{item.a}</p>
             </details>
           ))}
         </div>
       </section>
 
-      <section
-        className={`${styles.section} ${styles.insightsSection}`}
-      >
-        <div className={styles.sectionHeading}>
-          <div>
-            <span className={styles.kicker}>
-              XROGA INSIGHTS
-            </span>
-
-            <h2>
-              Research and docs for the build.
-            </h2>
-          </div>
-
-          <Link
-            href="/research"
-            className={styles.textLink}
-          >
-            Browse research
-            <ArrowRight />
-          </Link>
-        </div>
-
-        <div className={styles.insightGrid}>
-          <Link
-            href="/research/web3-hackathon-winning-patterns"
-            className={styles.insightCard}
-          >
-            <div className={styles.insightVisual}>
-              <Search />
-              <span>
-                OFFICIAL SOURCES
-              </span>
-            </div>
-
-            <p>
-              Web3 hackathon winning patterns
-            </p>
-
-            <ExternalLink />
-          </Link>
-
-          <Link
-            href="/docs/hackathon-workflows"
-            className={styles.insightCard}
-          >
-            <div className={styles.insightVisual}>
-              <Workflow />
-              <span>
-                WORKFLOW
-              </span>
-            </div>
-
-            <p>
-              Turn rules into a credible MVP
-            </p>
-
-            <ArrowRight />
-          </Link>
-
-          <Link
-            href="/docs/github"
-            className={styles.insightCard}
-          >
-            <div className={styles.insightVisual}>
-              <GitBranch />
-              <span>
-                OWNERSHIP
-              </span>
-            </div>
-
-            <p>
-              Ship through your GitHub repository
-            </p>
-
-            <ArrowRight />
-          </Link>
-
-          <Link
-            href="/docs/vercel"
-            className={styles.insightCard}
-          >
-            <div className={styles.insightVisual}>
-              <Rocket />
-              <span>
-                DEPLOY
-              </span>
-            </div>
-
-            <p>
-              Publish with real provider evidence
-            </p>
-
-            <ArrowRight />
-          </Link>
-        </div>
-      </section>
-
       <section className={styles.finalCta}>
-        <div
-          className={styles.finalGlow}
-          aria-hidden="true"
-        />
-
-        <span className={styles.finalOrb}>
-          <Layers3 />
-        </span>
-
-        <h2>
-          Build the crypto product.
-        </h2>
-
+        <div className={styles.finalGlow} aria-hidden="true" />
+        <span className={styles.finalOrb}><Layers3 /></span>
+        <span className={styles.kicker}>FREE AI APP BUILDER · WEB3 · BLOCKCHAIN</span>
+        <h2>Build your Web3 product with Xroga.</h2>
         <p>
-          Describe the outcome. Xroga works against the
-          project and keeps the evidence visible.
+          Go from an idea to real, reviewable software. Build Web3 apps, blockchain
+          products, DeFi dashboards, crypto SaaS and on-chain tools with AI.
         </p>
-
-        <Link href="/auth/signup">
-          Start building
-          <ArrowRight />
-        </Link>
+        <GlowButton href="/auth/signup">Start Building Free</GlowButton>
+        <div className={styles.finalTags}>
+          <span>Web3 Apps</span>
+          <span>Blockchain Apps</span>
+          <span>Crypto SaaS</span>
+          <span>DeFi Dashboards</span>
+          <span>On-Chain Tools</span>
+        </div>
       </section>
-
-      {/* The homepage footer, not a second one built beside it. This page carried
-          its own copy — same links, same wording, its own markup and its own
-          stylesheet — so every change to the site footer had to be made twice and
-          the two drifted apart. */}
     </main>
   );
 }
