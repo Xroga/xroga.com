@@ -39,6 +39,7 @@ import { formatCompactAgo } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { projectContextKey } from '@/lib/projectContext';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 
 type RepoSession = {
   id: string;
@@ -159,6 +160,8 @@ function repoLabel(full: string): string {
  */
 export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
+  const workspaceIdentity = useWorkspaceIdentity();
+  const isGuest = workspaceIdentity.status === 'guest';
   const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
@@ -190,6 +193,15 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   promptRef.current = prompt;
 
   const refreshLocal = useCallback(() => {
+    if (isGuest) {
+      setEntries([]);
+      setCloudSessions([]);
+      const ws = loadWorkspaceSession();
+      setActiveSessionId(ws?.sessionId ?? sessionIdRef.current ?? null);
+      setSelectedContextKey(null);
+      return;
+    }
+
     const selected = getSelectedRepoContext();
     setSelectedContextKey(selected?.repo?.includes('/') ? projectContextKey(selected) : null);
     // Stamp live chat as #1/#2 under the selected repo (fixes "chat but still 0 terminals")
@@ -272,12 +284,16 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     // always current at call time without making this callback unstable. Listing them
     // here is what caused the lag this fixes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isGuest]);
 
   const cloudRefreshTimer = useRef<number | null>(null);
   const cloudRefreshInFlight = useRef(false);
 
   const refreshCloudNow = useCallback(async () => {
+    if (isGuest) {
+      setCloudSessions([]);
+      return;
+    }
     // One list call at a time. Five listeners below plus the chat-progress effect
     // can all ask for a refresh inside the same tick; without this each ask was
     // its own request to /api/terminal-sessions.
@@ -299,7 +315,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     } finally {
       cloudRefreshInFlight.current = false;
     }
-  }, []);
+  }, [isGuest]);
 
   /**
    * Coalesced cloud refresh.
@@ -310,13 +326,13 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    * UI just as fresh at a fraction of the egress.
    */
   const refreshCloud = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (isGuest || typeof window === 'undefined') return;
     if (cloudRefreshTimer.current !== null) window.clearTimeout(cloudRefreshTimer.current);
     cloudRefreshTimer.current = window.setTimeout(() => {
       cloudRefreshTimer.current = null;
       void refreshCloudNow();
     }, 400);
-  }, [refreshCloudNow]);
+  }, [isGuest, refreshCloudNow]);
 
   useEffect(() => {
     refreshLocal();
