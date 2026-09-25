@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';\nimport type { ReactNode } from 'react';
+import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { Arvo, Manrope } from 'next/font/google';
 import {
   ArrowRight,
