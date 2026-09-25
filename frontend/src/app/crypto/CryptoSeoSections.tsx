@@ -64,7 +64,7 @@ const PRODUCT_CARDS = [
   {
     icon: Globe2,
     eyebrow: 'WEB3 WEBSITE BUILDER',
-    title: 'Web3 sites + the product behind them',
+    title: 'AI website generator for Web3 projects',
     copy:
       'Launch a crypto or blockchain website, then keep building the application, APIs and dashboard behind the public-facing experience.',
     items: ['Crypto project sites', 'DeFi websites', 'Web3 landing pages'],
