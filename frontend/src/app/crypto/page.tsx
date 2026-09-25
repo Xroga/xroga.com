@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Arvo, Manrope } from 'next/font/google';
 import {
   ArrowRight,
   BarChart3,
@@ -33,6 +34,9 @@ import { CryptoPromptBar } from './CryptoPromptBar';
 import { CryptoSeoSections } from './CryptoSeoSections';
 import seoStyles from './crypto-seo.module.css';
 import styles from './crypto.module.css';
+
+const arvo = Arvo({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-arvo', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
 
 export const metadata: Metadata = buildMetadata({
   title: 'Free AI App Builder for Web3 & Blockchain Apps',
