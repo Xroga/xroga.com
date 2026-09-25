@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Link from 'next/link';\nimport type { ReactNode } from 'react';
 import { Arvo, Manrope } from 'next/font/google';
 import {
   ArrowRight,
@@ -31,7 +31,7 @@ import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
-import styles from './crypto.module.css';
+import styles from './crypto-seo.module.css';
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -203,7 +203,7 @@ function GlowButton({
   secondary = false,
 }: {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   secondary?: boolean;
 }) {
   return (
