@@ -92,19 +92,49 @@ const PROCESS = [
 
 const FAQS = [
   {
-    q: 'What can Xroga build for crypto?',
+    q: 'What is a Web3 app builder?',
     a:
-      'Crypto agents, Web3 front ends, DeFi dashboards, DAO and governance tooling, token and wallet utilities, on-chain monitoring, analytics products and hackathon MVPs.',
+      'A Web3 app builder helps create software around blockchain data, wallets, decentralized protocols and other on-chain workflows. Xroga focuses on repository-backed product work rather than only generating a visual prototype.',
   },
   {
-    q: 'Does Xroga custody funds or execute trades?',
+    q: 'Is Xroga a free AI app builder?',
     a:
-      'No. This page is for building software products and interfaces. Xroga does not present itself as a custody service or a managed trading service.',
+      'Yes. Xroga has a free plan with no card required, including limited access to the core building workspace, repository-aware edits, previews and verification. Paid capacity is available when you need more.',
+  },
+  {
+    q: 'Can Xroga build blockchain apps and dApps?',
+    a:
+      'Xroga can help build supported Web3 and blockchain applications including wallet-facing interfaces, dApp front ends, dashboards, DAO software, analytics products, crypto SaaS and on-chain monitoring tools.',
+  },
+  {
+    q: 'Can I use Xroga for Web3 app development?',
+    a:
+      'Yes. You can start a supported Web3 product from a new project or continue from an existing repository while keeping the implementation attached to inspectable code.',
+  },
+  {
+    q: 'Can I build a DeFi dashboard with Xroga?',
+    a:
+      'Yes. Xroga can help build supported DeFi and crypto dashboards around approved public or authorized data sources, including wallet activity, protocol information, analytics and monitoring workflows.',
+  },
+  {
+    q: 'Can I build a crypto SaaS product?',
+    a:
+      'Yes. Supported crypto SaaS work can span application interfaces, APIs, accounts, persistent data, dashboards and authorized integrations in the same repository-aware workflow.',
+  },
+  {
+    q: 'Can Xroga build a Web3 website?',
+    a:
+      'Yes. Xroga can build supported Web3 and crypto websites, and it can continue beyond the marketing surface into the application, APIs and product workflows behind it.',
   },
   {
     q: 'Can I use my existing repository?',
     a:
       'Yes. Xroga is repository-aware and can work against an existing project rather than forcing every build into a new generic template.',
+  },
+  {
+    q: 'Does Xroga custody funds or execute trades?',
+    a:
+      'No. This page is for building software products and interfaces. Xroga does not present itself as a custody service, exchange, broker or managed trading service.',
   },
   {
     q: 'Can Xroga deploy the finished web product?',
@@ -573,20 +603,20 @@ export default function CryptoPage() {
         <div className={styles.sectionHeading}>
           <div>
             <span className={styles.kicker}>
-              SIMPLE PRICING
+              START FREE · SCALE WITH THE WORK
             </span>
 
             <h2>
-              One Plan.
+              Build First.
               <br />
-              Everything Included.
+              Upgrade When You Need More.
             </h2>
           </div>
 
           <p>
-            No crypto-specific surcharge. The Crypto Builder
-            sits inside the same Xroga AI product-building
-            plan.
+            Crypto building uses the same Xroga workspace. Start
+            free with no card, then move to Pro when you need
+            higher capacity and production-focused workflows.
           </p>
         </div>
 
@@ -597,109 +627,69 @@ export default function CryptoPage() {
             </span>
 
             <h3>
-              Research + Code
+              Repository-Aware Work
             </h3>
 
             <ul>
-              <li>
-                <Check />
-                Repository inspection
-              </li>
-
-              <li>
-                <Check />
-                Focused implementation
-              </li>
-
-              <li>
-                <Check />
-                Crypto product scaffolding
-              </li>
-
-              <li>
-                <Check />
-                Current-source research
-              </li>
+              <li><Check /> Existing or new project</li>
+              <li><Check /> Focused implementation</li>
+              <li><Check /> Web3 product scaffolding</li>
+              <li><Check /> Applicable verification</li>
             </ul>
           </article>
 
           <article className={styles.planMainCard}>
             <div className={styles.planBadge}>
-              XROGA AI
+              START HERE
             </div>
 
             <p>
-              XROGA PRO
+              XROGA FREE
             </p>
 
             <div className={styles.price}>
               <strong>
-                $25
+                $0
               </strong>
 
               <span>
-                / month
+                / forever
               </span>
             </div>
 
             <Link href="/auth/signup">
-              Start building
+              Start building free
               <ArrowRight />
             </Link>
 
             <ul>
-              <li>
-                <Check />
-                All product-building features
-              </li>
-
-              <li>
-                <Check />
-                GitHub repository workflow
-              </li>
-
-              <li>
-                <Check />
-                Vercel publishing workflow
-              </li>
-
-              <li>
-                <Check />
-                Validation and repair loop
-              </li>
+              <li><Check /> No card required</li>
+              <li><Check /> Included AI usage</li>
+              <li><Check /> Repository-aware edits</li>
+              <li><Check /> Preview and verification</li>
             </ul>
           </article>
 
           <article className={styles.planSideCard}>
             <span>
-              SHIP
+              SCALE
             </span>
 
             <h3>
-              Verify + Publish
+              Xroga Pro
             </h3>
 
             <ul>
-              <li>
-                <Check />
-                Applicable checks
-              </li>
-
-              <li>
-                <Check />
-                Reviewable changes
-              </li>
-
-              <li>
-                <Check />
-                GitHub evidence
-              </li>
-
-              <li>
-                <Check />
-                Vercel evidence
-              </li>
+              <li><Check /> Higher monthly AI capacity</li>
+              <li><Check /> Faster access pacing</li>
+              <li><Check /> Production-focused workflows</li>
+              <li><Check /> Same code and provider ownership</li>
             </ul>
+
+            <Link href="/pricing">
+              View current pricing
+              <ArrowRight />
+            </Link>
           </article>
         </div>
       </section>
