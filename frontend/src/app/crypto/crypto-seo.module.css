@@ -11,14 +11,14 @@
 }
 
 .heroTitle {
-  font-family: var(--font-claude-serif), "Arvo", Georgia, serif !important;
+  font-family: var(--font-claude-serif), var(--font-arvo), Georgia, serif !important;
   font-weight: 520 !important;
   letter-spacing: -0.052em !important;
   line-height: .98 !important;
 }
 
 .heroTitle span {
-  font-family: "Arvo", var(--font-claude-serif), Georgia, serif;
+  font-family: var(--font-arvo), var(--font-claude-serif), Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.045em;
 }
@@ -33,7 +33,7 @@
   justify-content: center;
   gap: 8px;
   color: rgba(225, 229, 244, 0.56);
-  font-family: "Manrope", var(--font-goga), sans-serif;
+  font-family: var(--font-manrope), var(--font-goga), sans-serif;
   font-size: 9px;
   font-weight: 650;
   letter-spacing: .025em;
@@ -60,15 +60,13 @@
   }
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap');
-
 .seoRoot {
   --seo-violet: #7468ff;
   --seo-violet-soft: rgba(116, 104, 255, 0.18);
   --seo-cyan: #5bd8ff;
   --seo-positive: #6ee7a8;
   color: var(--text);
-  font-family: "Manrope", var(--font-goga), var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-goga), var(--font-inter), system-ui, sans-serif;
 }
 :global(body.theme-white) .seoRoot {
   --seo-violet: #5548da;
@@ -98,7 +96,7 @@
 .pillar h2 {
   margin: 0;
   max-width: 760px;
-  font-family: var(--font-claude-serif), "Arvo", Georgia, serif;
+  font-family: var(--font-claude-serif), var(--font-arvo), Georgia, serif;
   font-size: clamp(34px, 4.5vw, 56px);
   font-weight: 520;
   line-height: 0.98;
@@ -106,7 +104,7 @@
 }
 .pillar h3 {
   margin: 0;
-  font-family: "Arvo", var(--font-claude-serif), Georgia, serif;
+  font-family: var(--font-arvo), var(--font-claude-serif), Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -114,7 +112,7 @@
   display: inline-block;
   margin-bottom: 14px;
   color: var(--muted);
-  font-family: "Manrope", var(--font-goga), sans-serif;
+  font-family: var(--font-manrope), var(--font-goga), sans-serif;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -345,7 +343,7 @@
   border-radius: 50%;
   background: var(--card);
   color: var(--seo-violet);
-  font-family: "Arvo", serif;
+  font-family: var(--font-arvo), serif;
   font-size: 11px;
   font-weight: 700;
   box-shadow: 0 0 28px var(--seo-violet-soft);
@@ -566,7 +564,7 @@
   font-size: 11px;
   line-height: 1.62;
 }
-.numbered b { color: var(--seo-violet); font-family: "Arvo", serif; }
+.numbered b { color: var(--seo-violet); font-family: var(--font-arvo), serif; }
 .numbered strong { color: var(--soft); }
 .terminalVisual {
   overflow: hidden;
