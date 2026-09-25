@@ -10220,3 +10220,43 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-copy h2 em {
     overflow: visible;
   }
 }
+
+
+/* =========================================================
+   HOMEPAGE SHOWCASE — tighter control width to match devices
+   ========================================================= */
+.xv-home-coding .xv-showcase-gallery__stage,
+.xv-home-coding .xv-showcase-gallery__header,
+.xv-home-coding .xv-showcase-gallery__rail {
+  width: min(1180px, calc(100% - 1.5rem));
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.xv-home-coding .xv-showcase-gallery__header {
+  padding-left: .78rem;
+  padding-right: .78rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail {
+  padding-left: .38rem;
+  padding-right: .38rem;
+}
+
+@media (max-width: 1220px) {
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: calc(100% - .9rem);
+    max-width: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: 100%;
+  }
+}
