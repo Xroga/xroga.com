@@ -11,6 +11,7 @@ import { isLegacyFabricatedLiveText } from '@/lib/landingOutcome';
 import { getSelectedRepoContext } from '@/lib/repoContext';
 import { projectContextKey } from '@/lib/projectContext';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { persistGuestWorkspaceSnapshotIfGuest } from '@/lib/guestWorkspace';
 
 const KEY = 'xroga_workspace_session';
 
@@ -209,9 +210,11 @@ export function saveWorkspaceSession(session: Omit<WorkspaceSession, 'updatedAt'
     }
 
     safeStorageSet(localStorage, KEY, json);
+    persistGuestWorkspaceSnapshotIfGuest(payload);
     void saveWorkspaceToIndexedDB(payload);
   } catch (err) {
     console.warn('[workspace] save failed:', (err as Error).message);
+    persistGuestWorkspaceSnapshotIfGuest(payload);
     void saveWorkspaceToIndexedDB(payload);
   }
 }
