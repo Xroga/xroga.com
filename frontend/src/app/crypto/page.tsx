@@ -15,14 +15,12 @@ import {
   Globe2,
   Layers3,
   Network,
-  Radar,
   Rocket,
   ShieldCheck,
   Sparkles,
   WalletCards,
   Workflow,
   FileCode2,
-  LineChart,
   Boxes,
 } from 'lucide-react';
 
@@ -231,6 +229,12 @@ export default function CryptoPage() {
         isPartOf: { '@id': 'https://xroga.com/#website' },
       },
       {
+        '@type': 'WebSite',
+        '@id': 'https://xroga.com/#website',
+        url: 'https://xroga.com/',
+        name: 'Xroga AI',
+      },
+      {
         '@type': 'SoftwareApplication',
         '@id': 'https://xroga.com/#software',
         name: 'Xroga AI',
@@ -239,6 +243,22 @@ export default function CryptoPage() {
         url: 'https://xroga.com/',
         description:
           'AI app builder and coding agent for repository-backed software work, verification and supported deployment workflows.',
+        offers: [
+          {
+            '@type': 'Offer',
+            name: 'Free',
+            price: '0',
+            priceCurrency: 'USD',
+            url: 'https://xroga.com/pricing',
+          },
+          {
+            '@type': 'Offer',
+            name: 'Xroga Pro',
+            price: '25',
+            priceCurrency: 'USD',
+            url: 'https://xroga.com/pricing',
+          },
+        ],
       },
       {
         '@type': 'BreadcrumbList',
@@ -256,17 +276,6 @@ export default function CryptoPage() {
             item: 'https://xroga.com/crypto',
           },
         ],
-      },
-      {
-        '@type': 'FAQPage',
-        mainEntity: FAQS.map((item) => ({
-          '@type': 'Question',
-          name: item.q,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: item.a,
-          },
-        })),
       },
     ],
   };
