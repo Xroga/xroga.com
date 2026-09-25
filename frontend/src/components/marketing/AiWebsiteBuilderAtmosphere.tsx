@@ -106,7 +106,7 @@ export function AiWebsiteBuilderAtmosphere({
       ty: 0.5,
     };
 
-    const particles: Particle[] = Array.from({ length: 260 }, () => ({
+    const particles: Particle[] = Array.from({ length: 180 }, () => ({
       x: Math.random(),
       y: Math.random(),
       z: 0.25 + Math.random() * 0.75,
@@ -130,7 +130,7 @@ export function AiWebsiteBuilderAtmosphere({
 
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
       const rw = Math.max(1, Math.floor(width * dpr));
       const rh = Math.max(1, Math.floor(height * dpr));
@@ -174,7 +174,7 @@ export function AiWebsiteBuilderAtmosphere({
     }
 
     function render(now: number) {
-      raf = requestAnimationFrame(render);
+      raf = 0;
       if (!running) return;
 
       const delta = Math.min(40, now - last);
@@ -352,7 +352,7 @@ export function AiWebsiteBuilderAtmosphere({
       ctx.globalCompositeOperation = 'source-over';
       const grainAlpha = light ? 0.025 : 0.045;
 
-      for (let i = 0; i < 150; i += 1) {
+      for (let i = 0; i < 60; i += 1) {
         const x = Math.random() * width;
         const y = Math.random() * height;
 
@@ -363,6 +363,8 @@ export function AiWebsiteBuilderAtmosphere({
 
         ctx.fillRect(x, y, 1, 1);
       }
+
+      if (running) raf = requestAnimationFrame(render);
     }
 
     function handlePointer(event: PointerEvent) {
@@ -402,7 +404,10 @@ export function AiWebsiteBuilderAtmosphere({
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
         running = entry?.isIntersecting ?? true;
-        if (running) last = performance.now();
+        if (running) {
+          last = performance.now();
+          if (!raf) raf = requestAnimationFrame(render);
+        }
       },
       { threshold: 0.01 },
     );
@@ -414,7 +419,7 @@ export function AiWebsiteBuilderAtmosphere({
     });
 
     resize();
-    raf = requestAnimationFrame(render);
+    if (running) raf = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(raf);
