@@ -26,7 +26,7 @@ import {
   Workflow,
   X,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
@@ -198,7 +198,7 @@ function BrandMark({ brand, compact = false }: { brand: ConnectBrand; compact?: 
 
   return (
     <img
-      src={\`https://cdn.simpleicons.org/\${brand.slug}/\${brand.color}\`}
+      src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`}
       alt=""
       width={compact ? 18 : 22}
       height={compact ? 18 : 22}
@@ -229,7 +229,7 @@ function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
         <div className="xv-nav-connect-orbit">
           <div className="xv-nav-connect-core">X</div>
           {CONNECT_PRIMARY_BRANDS.slice(0, 6).map((brand, index) => (
-            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as React.CSSProperties} key={brand.name}>
+            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as CSSProperties} key={brand.name}>
               <BrandMark brand={brand} compact />
             </span>
           ))}
