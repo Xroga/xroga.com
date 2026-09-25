@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { normalizeTheme, skinForTheme } from '@/lib/theme';
 import { ShellIdentityProvider } from '@/components/layout/ShellIdentityContext';
 import { WorkspacePerformanceProbe } from '@/components/layout/WorkspacePerformanceProbe';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -33,6 +34,7 @@ interface AppShellProps {
  */
 
 export function AppShell({ children, displayName, email }: AppShellProps) {
+  const workspaceIdentity = useWorkspaceIdentity();
   const hydrated = useHydrated();
   const sidebarOpen = useThemeStore((s) => s.sidebarOpen);
   const sidebarWidth = useThemeStore((s) => s.sidebarWidth);
@@ -68,7 +70,10 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   }, [incognito, isDashboard]);
 
   return (
-    <ShellIdentityProvider displayName={displayName ?? 'there'} email={email}>
+    <ShellIdentityProvider
+      displayName={displayName ?? workspaceIdentity.displayName}
+      email={email ?? workspaceIdentity.email}
+    >
       <WorkspacePerformanceProbe />
       <TerminalChatProvider>
         <TerminalScrollProvider>
@@ -90,6 +95,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
             )}
             style={{ '--sidebar-width': widthPx } as React.CSSProperties}
             data-testid="workspace-shell"
+            data-workspace-identity={workspaceIdentity.status}
           >
             <Sidebar displayName={displayName} email={email} />
             <div

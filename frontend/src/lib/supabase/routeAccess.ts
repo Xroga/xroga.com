@@ -46,6 +46,9 @@ export function requiresUserLookup(pathname: string): boolean {
 
 export function isPublicPath(pathname: string): boolean {
   if (pathname === '/') return true;
+  // The exact workspace route is the guest product surface. Nested workspace routes
+  // stay protected so future project-specific URLs cannot accidentally inherit guest access.
+  if (pathname === '/workspace' || pathname === '/workspace/') return true;
   // This route reports authenticated=false as JSON; middleware must not replace
   // that contract with an HTML login redirect for signed-out callers.
   if (pathname.startsWith('/api/')) return PUBLIC_API_PATHS.has(pathname);

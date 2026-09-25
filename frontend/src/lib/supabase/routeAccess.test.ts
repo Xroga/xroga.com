@@ -7,6 +7,8 @@ test('keeps public and authentication routes available', () => {
     '/',
     '/pricing',
     '/pricing/start',
+    '/workspace',
+    '/workspace/',
     '/community',
     '/community/9d0c98dc-6c8c-4f24-8a2b-4ddd50ed802e',
     '/docs/getting-started',

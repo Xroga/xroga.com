@@ -5,6 +5,7 @@ import { AppProviders } from '@/components/providers/AppProviders';
 import type { Metadata } from 'next';
 import { UserCacheScopeBootstrap } from '@/components/bootstrap/UserCacheScopeBootstrap';
 import { normalizeOnboarding, shouldRouteToOnboarding } from '@/lib/onboarding';
+import { WorkspaceIdentityProvider } from '@/components/layout/WorkspaceIdentityContext';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -47,9 +48,16 @@ export default async function ShellLayout({
   return (
     <>
       <UserCacheScopeBootstrap userId={user.id} />
-      <AppProviders>
-        <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
-      </AppProviders>
+      <WorkspaceIdentityProvider
+        status="authenticated"
+        userId={user.id}
+        displayName={displayName}
+        email={user.email ?? undefined}
+      >
+        <AppProviders>
+          <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
+        </AppProviders>
+      </WorkspaceIdentityProvider>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 
 const FETCH_TIMEOUT_MS = 8000;
 
@@ -23,6 +24,7 @@ async function withTimeout<T>(promise: Promise<T>, ms = FETCH_TIMEOUT_MS): Promi
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
+  const workspaceIdentity = useWorkspaceIdentity();
   const setTokenUsage = useAppStore((s) => s.setTokenUsage);
   const setPlanInfo = useAppStore((s) => s.setPlanInfo);
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
@@ -35,6 +37,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Guest mode deliberately does not probe authenticated dashboard/profile APIs.
+    // Phase 3 will provide a separate constrained guest-chat transport.
+    if (workspaceIdentity.status !== 'authenticated') return;
+
     let cancelled = false;
     let coreRunning = false;
     let secondaryRunning = false;
@@ -95,7 +101,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [setTokenUsage, setPlanInfo, setUnreadCount, setNotifications, setProfile]);
+  }, [workspaceIdentity.status, setTokenUsage, setPlanInfo, setUnreadCount, setNotifications, setProfile]);
 
   return <>{children}</>;
 }

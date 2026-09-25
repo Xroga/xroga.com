@@ -22,13 +22,13 @@ const MIDDLEWARE = readFileSync(new URL('./middleware.ts', import.meta.url), 'ut
 const MATCHER = readFileSync(new URL('../../middleware.ts', import.meta.url), 'utf8');
 
 test('public content pages do not cost an auth round trip', () => {
-  for (const pathname of ['/', '/terms', '/privacy', '/docs', '/docs/workspace', '/pricing', '/crypto']) {
+  for (const pathname of ['/', '/workspace', '/terms', '/privacy', '/docs', '/docs/workspace', '/pricing', '/crypto']) {
     assert.equal(requiresUserLookup(pathname), false, `${pathname} should not need the auth server`);
   }
 });
 
 test('gated pages still cost one, because the answer decides the response', () => {
-  for (const pathname of ['/workspace', '/dashboard', '/settings', '/admin', '/dashboard/projects']) {
+  for (const pathname of ['/workspace/project-private', '/dashboard', '/settings', '/admin', '/dashboard/projects']) {
     assert.equal(requiresUserLookup(pathname), true, `${pathname} must still be gated`);
   }
 });
