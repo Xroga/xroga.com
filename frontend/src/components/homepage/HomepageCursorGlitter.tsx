@@ -2,13 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 
-type GlitterCell = {
-  gx: number;
-  gy: number;
-  value: number;
-  target: number;
-  touched: number;
-  seed: number;
+type ThemeName = 'white' | 'gray' | 'black' | 'beige';
+
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  life: number;
+  maxLife: number;
+  alpha: number;
+  spin: number;
+  spinSpeed: number;
 };
 
 type PointerSample = {
@@ -17,32 +23,54 @@ type PointerSample = {
   time: number;
 };
 
-const GRID = 14;
-const CORE_RADIUS = 78;
-const OUTER_RADIUS = 142;
-const MAX_SIZE = 9.6;
-const MIN_SIZE = 1.35;
-const RISE_MS = 95;
-const TARGET_DECAY_MS = 360;
-const VISUAL_DECAY_MS = 520;
-const MAX_LINGER_MS = 920;
-const STAMP_GAP = 21;
-const MAX_STAMPS_PER_FRAME = 4;
-const MAX_CELLS = 520;
-const OUTER_DENSITY = 0.46;
-const MIN_MOVE = 1.3;
-const BLUE = [38, 122, 230] as const;
+const MAX_PARTICLES = 760;
+const BASE_EMIT = 12;
+const FAST_EMIT = 22;
+const TRAIL_SPACING = 11;
+const MAX_SEGMENT_POINTS = 7;
+const DPR_CAP = 1.25;
 
-function randomForCell(x: number, y: number, salt = 0) {
-  let n = (Math.imul(x + salt * 17, 374761393) ^ Math.imul(y - salt * 23, 668265263)) >>> 0;
-  n = Math.imul(n ^ (n >>> 13), 1274126177) >>> 0;
-  n ^= n >>> 16;
-  return (n >>> 0) / 4294967295;
+function currentTheme(): ThemeName {
+  if (document.body.classList.contains('theme-beige')) return 'beige';
+  if (document.body.classList.contains('theme-gray')) return 'gray';
+  if (document.body.classList.contains('theme-black')) return 'black';
+  return 'white';
 }
 
-function smoothstep01(value: number) {
-  const t = Math.max(0, Math.min(1, value));
-  return t * t * (3 - 2 * t);
+function themeRgb(theme: ThemeName): readonly [number, number, number] {
+  if (theme === 'black' || theme === 'gray') return [255, 255, 255] as const;
+  if (theme === 'beige') return [14, 14, 14] as const;
+  return [37, 99, 235] as const;
+}
+
+function emitBurst(
+  particles: Particle[],
+  x: number,
+  y: number,
+  speed: number,
+  count: number,
+) {
+  for (let index = 0; index < count; index += 1) {
+    if (particles.length >= MAX_PARTICLES) particles.shift();
+
+    const angle = Math.random() * Math.PI * 2;
+    const spread = 12 + Math.random() * 58 + Math.min(speed, 3.5) * 13;
+    const velocity = 0.05 + Math.random() * 0.27 + Math.min(speed, 3.2) * 0.055;
+    const life = 360 + Math.random() * 620;
+
+    particles.push({
+      x: x + Math.cos(angle) * spread * Math.random(),
+      y: y + Math.sin(angle) * spread * Math.random(),
+      vx: Math.cos(angle) * velocity,
+      vy: Math.sin(angle) * velocity,
+      size: 1.2 + Math.random() * 7.8,
+      life,
+      maxLife: life,
+      alpha: 0.45 + Math.random() * 0.55,
+      spin: Math.random() * Math.PI,
+      spinSpeed: (Math.random() - 0.5) * 0.003,
+    });
+  }
 }
 
 export function HomepageCursorGlitter() {
@@ -62,206 +90,134 @@ export function HomepageCursorGlitter() {
     });
     if (!ctx) return;
 
-    let width = 0;
-    let height = 0;
+    let width = 1;
+    let height = 1;
     let dpr = 1;
-    let lastRenderedPointer: PointerSample | null = null;
-    let latestPointer: PointerSample | null = null;
     let raf = 0;
     let lastFrame = performance.now();
+    let latestPointer: PointerSample | null = null;
+    let renderedPointer: PointerSample | null = null;
+    let theme = currentTheme();
     let scrolling = false;
     let scrollTimer = 0;
-    const cells = new Map<string, GlitterCell>();
-
-    const clearCanvas = () => {
-      ctx.clearRect(0, 0, width, height);
-    };
+    const particles: Particle[] = [];
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      width = window.innerWidth;
-      height = window.innerHeight;
+      width = Math.max(1, window.innerWidth);
+      height = Math.max(1, window.innerHeight);
+      dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = false;
-      clearCanvas();
     };
 
-    const activateCell = (gx: number, gy: number, amount: number, now: number) => {
-      if (amount <= 0.025) return;
-
-      const key = `${gx},${gy}`;
-      let cell = cells.get(key);
-
-      if (!cell) {
-        if (cells.size >= MAX_CELLS) return;
-        cell = {
-          gx,
-          gy,
-          value: 0,
-          target: 0,
-          touched: now,
-          seed: randomForCell(gx, gy, 91),
-        };
-        cells.set(key, cell);
-      }
-
-      cell.target = Math.min(1.15, Math.max(cell.target, amount) + amount * 0.18);
-      cell.touched = now;
-    };
-
-    const stamp = (x: number, y: number, speed: number, now: number) => {
-      const speedBoost = 1 + Math.min(speed, 2.4) * 0.065;
-      const outer = OUTER_RADIUS * speedBoost;
-      const outerSq = outer * outer;
-      const coreSq = CORE_RADIUS * CORE_RADIUS;
-      const minGX = Math.floor((x - outer) / GRID);
-      const maxGX = Math.ceil((x + outer) / GRID);
-      const minGY = Math.floor((y - outer) / GRID);
-      const maxGY = Math.ceil((y + outer) / GRID);
-
-      for (let gy = minGY; gy <= maxGY; gy += 1) {
-        const py = gy * GRID;
-
-        for (let gx = minGX; gx <= maxGX; gx += 1) {
-          const px = gx * GRID;
-          const dx = px - x;
-          const dy = py - y;
-          const distanceSq = dx * dx + dy * dy;
-          if (distanceSq > outerSq) continue;
-
-          const noise = randomForCell(gx, gy, 7);
-          const distance = Math.sqrt(distanceSq);
-          let amount = 0;
-
-          if (distanceSq <= coreSq) {
-            const t = smoothstep01(1 - distance / CORE_RADIUS);
-            amount = 0.4 + Math.pow(t, 0.62) * 0.62;
-            if (noise < 0.04 && amount < 0.68) continue;
-          } else {
-            const t = 1 - (distance - CORE_RADIUS) / (outer - CORE_RADIUS);
-            const falloff = Math.pow(Math.max(0, t), 1.45);
-            const keepChance =
-              0.045 +
-              falloff * OUTER_DENSITY +
-              Math.min(speed, 2.4) * 0.024;
-            if (noise > keepChance) continue;
-
-            amount =
-              (0.1 + falloff * 0.38) *
-              (0.76 + randomForCell(gx, gy, 19) * 0.32);
-          }
-
-          activateCell(gx, gy, amount, now);
-        }
-      }
-    };
-
-    const emitLatestSegment = (now: number) => {
+    const emitTrail = () => {
       const current = latestPointer;
-      if (!current) return;
+      if (!current || scrolling) return;
 
-      if (!lastRenderedPointer) {
-        lastRenderedPointer = current;
-        stamp(current.x, current.y, 0, now);
+      if (!renderedPointer) {
+        renderedPointer = current;
+        emitBurst(particles, current.x, current.y, 0, BASE_EMIT + 5);
         return;
       }
 
-      const dx = current.x - lastRenderedPointer.x;
-      const dy = current.y - lastRenderedPointer.y;
+      const dx = current.x - renderedPointer.x;
+      const dy = current.y - renderedPointer.y;
       const distance = Math.hypot(dx, dy);
-
-      if (distance < MIN_MOVE) {
-        lastRenderedPointer = current;
+      if (distance < 0.6) {
+        renderedPointer = current;
         return;
       }
 
-      const delta = Math.max(1, current.time - lastRenderedPointer.time);
+      const delta = Math.max(1, current.time - renderedPointer.time);
       const speed = distance / delta;
-      const desiredSteps = Math.max(1, Math.ceil(distance / STAMP_GAP));
-      const steps = Math.min(MAX_STAMPS_PER_FRAME, desiredSteps);
+      const points = Math.min(
+        MAX_SEGMENT_POINTS,
+        Math.max(1, Math.ceil(distance / TRAIL_SPACING)),
+      );
+      const emitCount =
+        BASE_EMIT +
+        Math.min(
+          FAST_EMIT - BASE_EMIT,
+          Math.floor(speed * 4),
+        );
 
-      for (let index = 1; index <= steps; index += 1) {
-        const t = index / steps;
-        stamp(
-          lastRenderedPointer.x + dx * t,
-          lastRenderedPointer.y + dy * t,
+      for (let point = 1; point <= points; point += 1) {
+        const t = point / points;
+        emitBurst(
+          particles,
+          renderedPointer.x + dx * t,
+          renderedPointer.y + dy * t,
           speed,
-          now,
+          emitCount,
         );
       }
 
-      lastRenderedPointer = current;
+      renderedPointer = current;
     };
 
-    const frame = (now: number) => {
+    const render = (now: number) => {
       raf = 0;
       const delta = Math.min(34, Math.max(1, now - lastFrame));
       lastFrame = now;
 
-      // During active scroll, prioritize scrolling and the immediate pointer.
-      if (!scrolling) emitLatestSegment(now);
+      emitTrail();
+      ctx.clearRect(0, 0, width, height);
 
-      clearCanvas();
+      const rgb = themeRgb(theme);
+      let writeIndex = 0;
 
-      let alive = 0;
-      const riseK = 1 - Math.exp(-delta / RISE_MS);
-      const targetDecay = Math.exp(-delta / TARGET_DECAY_MS);
-      const visualDecay = Math.exp(-delta / VISUAL_DECAY_MS);
+      for (let index = 0; index < particles.length; index += 1) {
+        const particle = particles[index];
+        particle.life -= delta;
+        if (particle.life <= 0) continue;
 
-      for (const [key, cell] of cells) {
-        cell.value += (cell.target - cell.value) * riseK;
-        cell.target *= targetDecay;
+        const age = 1 - particle.life / particle.maxLife;
+        const fadeIn = Math.min(1, age * 8);
+        const fadeOut = Math.max(0, 1 - age);
+        const alpha = particle.alpha * fadeIn * fadeOut * fadeOut;
 
-        if (cell.target < cell.value) {
-          cell.value *= visualDecay;
-        }
+        particle.x += particle.vx * delta;
+        particle.y += particle.vy * delta;
+        particle.vx *= 0.986;
+        particle.vy *= 0.986;
+        particle.spin += particle.spinSpeed * delta;
 
-        const ageSinceTouch = now - cell.touched;
-        if (
-          (cell.value < 0.014 && cell.target < 0.014) ||
-          ageSinceTouch > MAX_LINGER_MS
-        ) {
-          cells.delete(key);
-          continue;
-        }
+        const scale = 0.72 + (1 - age) * 0.48;
+        const size = Math.max(1, particle.size * scale);
 
-        alive += 1;
-        const x = cell.gx * GRID;
-        const y = cell.gy * GRID;
-        const glitter = 0.92 + 0.08 * Math.sin(now * 0.008 + cell.seed * Math.PI * 8);
-        const visible = Math.max(0, Math.min(1, cell.value * glitter));
-        const size = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * Math.pow(visible, 0.7);
-        const alpha = Math.min(0.98, 0.34 + visible * 0.9);
-        const squareSize = Math.max(1, Math.round(size));
+        ctx.save();
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.spin);
+        ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+        ctx.fillRect(-size / 2, -size / 2, size, size);
+        ctx.restore();
 
-        ctx.fillStyle = `rgba(${BLUE[0]}, ${BLUE[1]}, ${BLUE[2]}, ${alpha})`;
-        ctx.fillRect(
-          Math.round(x - squareSize / 2),
-          Math.round(y - squareSize / 2),
-          squareSize,
-          squareSize,
-        );
+        particles[writeIndex] = particle;
+        writeIndex += 1;
       }
 
-      const pointerChanged =
-        latestPointer &&
-        (!lastRenderedPointer ||
-          latestPointer.x !== lastRenderedPointer.x ||
-          latestPointer.y !== lastRenderedPointer.y);
+      particles.length = writeIndex;
 
-      if (alive > 0 || pointerChanged) {
-        raf = requestAnimationFrame(frame);
+      const pointerPending =
+        latestPointer &&
+        (!renderedPointer ||
+          latestPointer.x !== renderedPointer.x ||
+          latestPointer.y !== renderedPointer.y);
+
+      if (particles.length > 0 || pointerPending) {
+        raf = requestAnimationFrame(render);
       }
     };
 
     const ensureAnimation = () => {
       if (raf) return;
       lastFrame = performance.now();
-      raf = requestAnimationFrame(frame);
+      raf = requestAnimationFrame(render);
     };
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -276,7 +232,7 @@ export function HomepageCursorGlitter() {
 
     const handlePointerLeave = () => {
       latestPointer = null;
-      lastRenderedPointer = null;
+      renderedPointer = null;
     };
 
     const handleScroll = () => {
@@ -284,22 +240,30 @@ export function HomepageCursorGlitter() {
       if (scrollTimer) window.clearTimeout(scrollTimer);
       scrollTimer = window.setTimeout(() => {
         scrolling = false;
-        if (latestPointer) {
-          lastRenderedPointer = latestPointer;
-          ensureAnimation();
-        }
-      }, 90);
+        renderedPointer = latestPointer;
+        ensureAnimation();
+      }, 70);
     };
 
     const handleVisibilityChange = () => {
       if (document.visibilityState !== 'hidden') return;
-      cells.clear();
+      particles.length = 0;
       latestPointer = null;
-      lastRenderedPointer = null;
+      renderedPointer = null;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
-      clearCanvas();
+      ctx.clearRect(0, 0, width, height);
     };
+
+    const themeObserver = new MutationObserver(() => {
+      theme = currentTheme();
+      ensureAnimation();
+    });
+
+    themeObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
 
     resize();
     window.addEventListener('resize', resize, { passive: true });
@@ -309,6 +273,7 @@ export function HomepageCursorGlitter() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      themeObserver.disconnect();
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('pointermove', handlePointerMove);
@@ -316,8 +281,8 @@ export function HomepageCursorGlitter() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (scrollTimer) window.clearTimeout(scrollTimer);
       if (raf) cancelAnimationFrame(raf);
-      cells.clear();
-      clearCanvas();
+      particles.length = 0;
+      ctx.clearRect(0, 0, width, height);
     };
   }, []);
 
