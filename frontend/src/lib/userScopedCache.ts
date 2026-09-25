@@ -1,3 +1,9 @@
+import {
+  GUEST_SESSION_ID_KEY,
+  GUEST_WORKSPACE_SNAPSHOT_KEY,
+  GUEST_WORKSPACE_TTL_MS,
+} from './guestWorkspace';
+
 export const USER_CACHE_OWNER_KEY = 'xroga-cache-owner';
 export const USER_CACHE_SCOPE_VERSION = 'v2';
 
@@ -50,13 +56,39 @@ export function buildUserCacheScopeScript(userId: string) {
   return `(function(){try{
     var ownerKey=${JSON.stringify(USER_CACHE_OWNER_KEY)};
     var userId=${JSON.stringify(userId)};
-    var scopedOwner=${JSON.stringify(`${USER_CACHE_SCOPE_VERSION}:`)}+userId;
+    var scopePrefix=${JSON.stringify(`${USER_CACHE_SCOPE_VERSION}:`)};
+    var scopedOwner=scopePrefix+userId;
+    var guestOwner=scopePrefix+'guest';
+    var guestSnapshotKey=${JSON.stringify(GUEST_WORKSPACE_SNAPSHOT_KEY)};
+    var guestSessionIdKey=${JSON.stringify(GUEST_SESSION_ID_KEY)};
+    var guestTtl=${JSON.stringify(GUEST_WORKSPACE_TTL_MS)};
     var previous=localStorage.getItem(ownerKey);
+    var migratingGuest=userId!=='guest'&&previous===guestOwner;
+    var guestRaw=migratingGuest?localStorage.getItem(guestSnapshotKey):null;
     if(previous!==scopedOwner){
       var keys=${JSON.stringify(USER_SCOPED_STORAGE_KEYS)};
       for(var i=0;i<keys.length;i++){localStorage.removeItem(keys[i]);sessionStorage.removeItem(keys[i]);}
       if(typeof indexedDB!=='undefined'){
         ${JSON.stringify(USER_SCOPED_DATABASES)}.forEach(function(name){try{indexedDB.deleteDatabase(name);}catch(e){}});
+      }
+      if(migratingGuest&&guestRaw){
+        try{
+          var guest=JSON.parse(guestRaw);
+          var updatedAt=Date.parse(guest.updatedAt||(guest.workspaceSession&&guest.workspaceSession.updatedAt)||'');
+          var fresh=Number.isFinite(updatedAt)&&(Date.now()-updatedAt)<=guestTtl;
+          var workspace=guest.workspaceSession;
+          if(fresh&&workspace&&Array.isArray(workspace.messages)&&workspace.messages.length){
+            localStorage.setItem('xroga_workspace_session',JSON.stringify(workspace));
+            localStorage.removeItem(guestSnapshotKey);
+            localStorage.removeItem(guestSessionIdKey);
+          }else if(!fresh){
+            localStorage.removeItem(guestSnapshotKey);
+            localStorage.removeItem(guestSessionIdKey);
+          }
+        }catch(e){
+          localStorage.removeItem(guestSnapshotKey);
+          localStorage.removeItem(guestSessionIdKey);
+        }
       }
     }
     localStorage.setItem(ownerKey,scopedOwner);
