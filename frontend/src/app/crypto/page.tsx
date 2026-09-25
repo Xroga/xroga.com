@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Arvo, Manrope } from 'next/font/google';
 import {
   ArrowRight,
   BarChart3,
@@ -30,21 +31,30 @@ import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
+import { CryptoSeoSections } from './CryptoSeoSections';
+import seoStyles from './crypto-seo.module.css';
 import styles from './crypto.module.css';
 
+const arvo = Arvo({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-arvo', display: 'swap' });
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
+
 export const metadata: Metadata = buildMetadata({
-  title: 'Crypto Builder — Build Web3 Apps & AI Agents',
+  title: 'Free AI App Builder for Web3 & Blockchain Apps',
   description:
-    'Build crypto agents, Web3 applications, DeFi dashboards, DAO tooling, on-chain monitoring and hackathon projects with Xroga AI.',
+    'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 development in real repositories. Start free.',
   path: '/crypto',
   keywords: [
-    'crypto builder',
-    'AI crypto agent builder',
-    'Web3 builder',
-    'DeFi app builder',
-    'on-chain analytics',
-    'crypto hackathon builder',
-    'AI Web3 development',
+    'free AI app builder',
+    'Web3 app',
+    'Web3 apps',
+    'Web3 app development',
+    'blockchain app builder',
+    'Web3 website builder',
+    'AI website generator',
+    'AI dashboard builder',
+    'AI SaaS builder',
+    'dApp builder',
+    'AI crypto builder',
   ],
 });
 
@@ -87,19 +97,49 @@ const PROCESS = [
 
 const FAQS = [
   {
-    q: 'What can Xroga build for crypto?',
+    q: 'What is a Web3 app builder?',
     a:
-      'Crypto agents, Web3 front ends, DeFi dashboards, DAO and governance tooling, token and wallet utilities, on-chain monitoring, analytics products and hackathon MVPs.',
+      'A Web3 app builder helps create software around blockchain data, wallets, decentralized protocols and other on-chain workflows. Xroga focuses on repository-backed product work rather than only generating a visual prototype.',
   },
   {
-    q: 'Does Xroga custody funds or execute trades?',
+    q: 'Is Xroga a free AI app builder?',
     a:
-      'No. This page is for building software products and interfaces. Xroga does not present itself as a custody service or a managed trading service.',
+      'Yes. Xroga has a free plan with no card required, including limited access to the core building workspace, repository-aware edits, previews and verification. Paid capacity is available when you need more.',
+  },
+  {
+    q: 'Is Xroga a dApp builder?',
+    a:
+      'Xroga can help build supported Web3 and blockchain applications including wallet-facing interfaces, dApp front ends, dashboards, DAO software, analytics products, crypto SaaS and on-chain monitoring tools.',
+  },
+  {
+    q: 'Can I use Xroga for Web3 app development?',
+    a:
+      'Yes. You can start a supported Web3 product from a new project or continue from an existing repository while keeping the implementation attached to inspectable code.',
+  },
+  {
+    q: 'Can I build a DeFi dashboard with Xroga?',
+    a:
+      'Yes. Xroga can help build supported DeFi and crypto dashboards around approved public or authorized data sources, including wallet activity, protocol information, analytics and monitoring workflows.',
+  },
+  {
+    q: 'Can I build a crypto SaaS product?',
+    a:
+      'Yes. Supported crypto SaaS work can span application interfaces, APIs, accounts, persistent data, dashboards and authorized integrations in the same repository-aware workflow.',
+  },
+  {
+    q: 'Can Xroga build a Web3 website?',
+    a:
+      'Yes. Xroga can build supported Web3 and crypto websites, and it can continue beyond the marketing surface into the application, APIs and product workflows behind it.',
   },
   {
     q: 'Can I use my existing repository?',
     a:
       'Yes. Xroga is repository-aware and can work against an existing project rather than forcing every build into a new generic template.',
+  },
+  {
+    q: 'Does Xroga custody funds or execute trades?',
+    a:
+      'No. This page is for building software products and interfaces. Xroga does not present itself as a custody service, exchange, broker or managed trading service.',
   },
   {
     q: 'Can Xroga deploy the finished web product?',
@@ -206,15 +246,58 @@ function FeatureArtwork({ index }: { index: number }) {
 }
 
 export default function CryptoPage() {
-  const softwareLd = {
+  const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Xroga Crypto Builder',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Web',
-    url: 'https://xroga.com/crypto',
-    description:
-      'Build AI crypto agents, Web3 applications, DeFi products, on-chain analytics and hackathon projects with Xroga AI.',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': 'https://xroga.com/crypto#webpage',
+        url: 'https://xroga.com/crypto',
+        name: 'Free AI App Builder for Web3 & Blockchain Apps',
+        description:
+          'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga in real repositories you control.',
+        isPartOf: {
+          '@id': 'https://xroga.com/#website',
+        },
+        about: {
+          '@id': 'https://xroga.com/crypto#software',
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://xroga.com/crypto#software',
+        name: 'Xroga Web3 & Blockchain App Builder',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://xroga.com/crypto',
+        description:
+          'A free AI app builder for Web3 and blockchain projects, including dApps, DeFi dashboards, crypto SaaS, wallet tools and on-chain products.',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          url: 'https://xroga.com/crypto#builder',
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://xroga.com/crypto#breadcrumb',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://xroga.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Web3 & Blockchain App Builder',
+            item: 'https://xroga.com/crypto',
+          },
+        ],
+      },
+    ],
   };
 
   return (
@@ -222,7 +305,7 @@ export default function CryptoPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c'),
+          __html: JSON.stringify(structuredData).replace(/</g, '\\u003c'),
         }}
       />
 
@@ -233,22 +316,33 @@ export default function CryptoPage() {
         />
 
         <div className={styles.heroInner}>
-          {/* The badge said the page's own title back to it, directly above a headline
-              that says the same thing. */}
-          <h1 className={`xv-cb-h1 ${styles.heroTitle}`}>
-            AI Crypto Builder
+          <span className={`${styles.eyebrow} ${seoStyles.heroEyebrow}`}>
+            <Sparkles aria-hidden="true" />
+            FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO
+          </span>
+
+          <h1 className={`xv-cb-h1 ${styles.heroTitle} ${seoStyles.heroTitle}`}>
+            Build Web3 &amp; Blockchain Apps
             <br />
-            That <span>Ships</span>
+            <span>with AI</span>
           </h1>
 
           <p className={styles.heroSub}>
-            Build crypto agents, Web3 apps, DeFi dashboards,
-            DAO tooling and on-chain products in a real
-            repository. Xroga is for crypto product work,{' '}
-            <strong>
-              not only hackathons.
-            </strong>
+            Build Web3 apps, dApps, DeFi dashboards, crypto SaaS,
+            wallet tools and on-chain products with AI—in a real
+            repository you control.{' '}
+            <strong>Start free. Keep the code.</strong>
           </p>
+
+          <div className={seoStyles.heroTrust} aria-label="Xroga product advantages">
+            <span>Free to start</span>
+            <i />
+            <span>Real repository</span>
+            <i />
+            <span>Reviewable code</span>
+            <i />
+            <span>Verification before shipping</span>
+          </div>
 
           {/* The hero used to carry a "Start building" button between the subtitle and
               the console, linking to `#builder` — the console directly beneath it. It
@@ -309,15 +403,16 @@ export default function CryptoPage() {
             </span>
 
             <h2>
-              Everything You Need to
+              AI App Builder for Web3
               <br />
-              Build Crypto Products
+              &amp; Blockchain Products
             </h2>
           </div>
 
           <p>
-            A focused software loop from current research to
-            repository work, validation and publishing.
+            Turn Web3 product requirements into repository work,
+            supported integrations, validation and publishing
+            evidence without hiding the code.
           </p>
         </div>
 
@@ -378,6 +473,7 @@ export default function CryptoPage() {
 
       <section
         className={`${styles.section} ${styles.typesSection}`}
+        id="use-cases"
       >
         <div className={styles.sectionHeading}>
           <div>
@@ -386,16 +482,16 @@ export default function CryptoPage() {
             </span>
 
             <h2>
-              Built for Every Type
+              What Can You Build with
               <br />
-              of Crypto Product
+              a Web3 App Builder?
             </h2>
           </div>
 
           <p>
-            From focused research tools to full Web3
-            applications, the same repository-aware workflow
-            scales with the product.
+            From Web3 apps and dApps to DeFi dashboards, crypto
+            SaaS and on-chain tools, the same repository-aware
+            workflow scales with the product.
           </p>
         </div>
 
@@ -449,6 +545,8 @@ export default function CryptoPage() {
           </div>
         </div>
       </section>
+
+      <CryptoSeoSections />
 
       <section
         className={`${styles.section} ${styles.proofSection}`}
@@ -553,20 +651,20 @@ export default function CryptoPage() {
         <div className={styles.sectionHeading}>
           <div>
             <span className={styles.kicker}>
-              SIMPLE PRICING
+              START FREE · SCALE WITH THE WORK
             </span>
 
             <h2>
-              One Plan.
+              Build First.
               <br />
-              Everything Included.
+              Upgrade When You Need More.
             </h2>
           </div>
 
           <p>
-            No crypto-specific surcharge. The Crypto Builder
-            sits inside the same Xroga AI product-building
-            plan.
+            Crypto building uses the same Xroga workspace. Start
+            free with no card, then move to Pro when you need
+            higher capacity and production-focused workflows.
           </p>
         </div>
 
@@ -577,109 +675,69 @@ export default function CryptoPage() {
             </span>
 
             <h3>
-              Research + Code
+              Repository-Aware Work
             </h3>
 
             <ul>
-              <li>
-                <Check />
-                Repository inspection
-              </li>
-
-              <li>
-                <Check />
-                Focused implementation
-              </li>
-
-              <li>
-                <Check />
-                Crypto product scaffolding
-              </li>
-
-              <li>
-                <Check />
-                Current-source research
-              </li>
+              <li><Check /> Existing or new project</li>
+              <li><Check /> Focused implementation</li>
+              <li><Check /> Web3 product scaffolding</li>
+              <li><Check /> Applicable verification</li>
             </ul>
           </article>
 
           <article className={styles.planMainCard}>
             <div className={styles.planBadge}>
-              XROGA AI
+              START HERE
             </div>
 
             <p>
-              XROGA PRO
+              XROGA FREE
             </p>
 
             <div className={styles.price}>
               <strong>
-                $25
+                $0
               </strong>
 
               <span>
-                / month
+                / forever
               </span>
             </div>
 
             <Link href="/auth/signup">
-              Start building
+              Start building free
               <ArrowRight />
             </Link>
 
             <ul>
-              <li>
-                <Check />
-                All product-building features
-              </li>
-
-              <li>
-                <Check />
-                GitHub repository workflow
-              </li>
-
-              <li>
-                <Check />
-                Vercel publishing workflow
-              </li>
-
-              <li>
-                <Check />
-                Validation and repair loop
-              </li>
+              <li><Check /> No card required</li>
+              <li><Check /> Included AI usage</li>
+              <li><Check /> Repository-aware edits</li>
+              <li><Check /> Preview and verification</li>
             </ul>
           </article>
 
           <article className={styles.planSideCard}>
             <span>
-              SHIP
+              SCALE
             </span>
 
             <h3>
-              Verify + Publish
+              Xroga Pro
             </h3>
 
             <ul>
-              <li>
-                <Check />
-                Applicable checks
-              </li>
-
-              <li>
-                <Check />
-                Reviewable changes
-              </li>
-
-              <li>
-                <Check />
-                GitHub evidence
-              </li>
-
-              <li>
-                <Check />
-                Vercel evidence
-              </li>
+              <li><Check /> Higher monthly AI capacity</li>
+              <li><Check /> Faster access pacing</li>
+              <li><Check /> Production-focused workflows</li>
+              <li><Check /> Same code and provider ownership</li>
             </ul>
+
+            <Link href="/pricing">
+              View current pricing
+              <ArrowRight />
+            </Link>
           </article>
         </div>
       </section>
@@ -693,12 +751,13 @@ export default function CryptoPage() {
           </span>
 
           <h2>
-            Crypto Builder, without the vague claims.
+            Web3 &amp; Blockchain App Builder FAQs
           </h2>
 
           <p>
-            What this page can help you build, how shipping
-            works and where the boundaries are.
+            Direct answers about building Web3 apps with AI,
+            repository ownership, dashboards, SaaS, dApps and
+            shipping boundaries.
           </p>
 
           <Link href="/docs">

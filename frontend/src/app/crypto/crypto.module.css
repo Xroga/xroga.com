@@ -1318,6 +1318,26 @@
   color: var(--accent);
 }
 
+.planSideCard > a {
+  margin-top: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--soft);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.planSideCard > a svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 180ms ease;
+}
+
+.planSideCard > a:hover svg {
+  transform: translateX(3px);
+}
+
 .planMainCard {
   position: relative;
   padding: 26px;

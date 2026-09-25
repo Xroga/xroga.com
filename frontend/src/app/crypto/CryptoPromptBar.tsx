@@ -22,10 +22,10 @@ import { createClient } from '@/lib/supabase/client';
 import styles from './crypto.module.css';
 
 const PHRASES = [
-  'Build an AI agent for crypto market research…',
+  'Build a blockchain app with wallet analytics…',
   'Create a DeFi analytics dashboard…',
-  'Build an on-chain monitoring product…',
-  'Create a Web3 app in my repository…',
+  'Build a Web3 app in my repository…',
+  'Create a crypto SaaS monitoring product…',
 ] as const;
 
 function useTypewriter(active: boolean) {
@@ -134,7 +134,7 @@ export function CryptoPromptBar() {
         <div className={styles.composerMeta}>
           <span>
             <Sparkles aria-hidden="true" />
-            XROGA AI · CRYPTO
+            XROGA AI · WEB3 · CRYPTO
           </span>
           <small>repository-aware builder</small>
         </div>
