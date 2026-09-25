@@ -23,17 +23,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const highContrast = useThemeStore((s) => s.highContrast);
   const pathname = usePathname();
   const isHomepage = pathname === '/';
-  /**
-   * Routes that only exist in black.
-   *
-   * The crypto page paints its own deep-blue scene end to end. Under the light
-   * themes it kept the light ink, so the headline and the composer rendered
-   * near-black on near-black — the page looked broken rather than themed.
-   *
-   * Forced here rather than by writing `black` into the store, so the user's own
-   * choice is untouched and comes back the moment they leave the page.
-   */
-  const forcedTheme = pathname?.startsWith('/crypto') ? ('black' as const) : null;
+  // Public marketing routes, including /crypto, now inherit the user's selected
+  // solid theme. Route-specific surfaces adapt through the shared theme tokens.
+  const forcedTheme = null;
 
   // Migrate legacy image/deep-work → white once
   useEffect(() => {
