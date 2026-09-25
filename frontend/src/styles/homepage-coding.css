@@ -9964,3 +9964,102 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-copy h2 em {
     padding: .3rem;
   }
 }
+
+
+/* =========================================================
+   HOMEPAGE SHOWCASE — wider matched presentation
+   Match the preview, info bar, and template rail to one larger width.
+   ========================================================= */
+.xv-home-coding .xv-showcase-gallery__stage,
+.xv-home-coding .xv-showcase-gallery__header,
+.xv-home-coding .xv-showcase-gallery__rail {
+  width: min(1380px, calc(100% - .5rem));
+}
+
+.xv-home-coding .xv-showcase-gallery__stage {
+  --xv-showcase-device-height: clamp(21rem, 38vw, 36rem);
+  justify-content: center;
+  gap: clamp(.8rem, 1.35vw, 1.25rem);
+  padding: .45rem 0 .5rem;
+}
+
+.xv-home-coding .xv-showcase-display {
+  max-width: calc(100% - 250px);
+}
+
+.xv-home-coding .xv-showcase-gallery__header {
+  min-height: 82px;
+  margin-top: .42rem;
+  padding: .62rem .8rem;
+  border-radius: 15px;
+}
+
+.xv-home-coding .xv-showcase-gallery__header h2 {
+  font-size: clamp(1.2rem, 1.85vw, 1.7rem);
+}
+
+.xv-home-coding .xv-showcase-gallery__header h3 {
+  font-size: clamp(.72rem, .9vw, .9rem);
+}
+
+.xv-home-coding .xv-showcase-gallery__count {
+  min-height: 34px;
+  padding: 0 .6rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__autoplay {
+  width: 34px;
+  height: 34px;
+}
+
+.xv-home-coding .xv-showcase-gallery__header-actions > a {
+  min-height: 35px;
+  padding: .5rem .7rem;
+  font-size: .64rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail {
+  gap: .48rem;
+  margin-top: .46rem;
+  padding: .4rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail button {
+  min-width: clamp(182px, 16vw, 220px);
+  grid-template-columns: 72px minmax(0, 1fr);
+  min-height: 58px;
+  gap: .56rem;
+  padding: .32rem;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail-image {
+  width: 72px;
+}
+
+.xv-home-coding .xv-showcase-gallery__rail b {
+  font-size: .65rem;
+}
+
+@media (max-width: 1180px) {
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: min(1120px, calc(100% - .4rem));
+  }
+
+  .xv-home-coding .xv-showcase-gallery__stage {
+    --xv-showcase-device-height: clamp(18rem, 40vw, 31rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .xv-home-coding .xv-showcase-gallery__stage,
+  .xv-home-coding .xv-showcase-gallery__header,
+  .xv-home-coding .xv-showcase-gallery__rail {
+    width: 100%;
+  }
+
+  .xv-home-coding .xv-showcase-gallery__stage {
+    --xv-showcase-device-height: clamp(8rem, 40vw, 10rem);
+  }
+}
