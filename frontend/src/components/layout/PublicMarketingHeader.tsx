@@ -152,6 +152,7 @@ type ConnectBrand = {
   slug: string;
   color: string;
   category: string;
+  domain?: string;
 };
 
 const CONNECT_PRIMARY_BRANDS: ConnectBrand[] = [
@@ -178,33 +179,39 @@ const CONNECT_PRIMARY_BRANDS: ConnectBrand[] = [
 ];
 
 const CONNECT_MORE_BRANDS: ConnectBrand[] = [
-  { name: 'OneDrive', slug: 'microsoftonedrive', color: '0078D4', category: 'Storage' },
-  { name: 'Box', slug: 'box', color: '0061D5', category: 'Storage' },
-  { name: 'Calendly', slug: 'calendly', color: '006BFF', category: 'Scheduling' },
-  { name: 'Mailchimp', slug: 'mailchimp', color: 'FFE01B', category: 'Marketing' },
-  { name: 'Twilio', slug: 'twilio', color: 'F22F46', category: 'Communication' },
-  { name: 'Postman', slug: 'postman', color: 'FF6C37', category: 'Developer' },
-  { name: 'MongoDB', slug: 'mongodb', color: '47A248', category: 'Database' },
-  { name: 'OpenAI', slug: 'openai', color: '412991', category: 'AI' },
-  { name: 'Figma', slug: 'figma', color: 'F24E1E', category: 'Design' },
-  { name: 'PayPal', slug: 'paypal', color: '003087', category: 'Payments' },
+  { name: 'OneDrive', slug: 'microsoftonedrive', color: '0078D4', category: 'Storage', domain: 'onedrive.live.com' },
+  { name: 'Box', slug: 'box', color: '0061D5', category: 'Storage', domain: 'box.com' },
+  { name: 'Calendly', slug: 'calendly', color: '006BFF', category: 'Scheduling', domain: 'calendly.com' },
+  { name: 'Mailchimp', slug: 'mailchimp', color: 'FFE01B', category: 'Marketing', domain: 'mailchimp.com' },
+  { name: 'Twilio', slug: 'twilio', color: 'F22F46', category: 'Communication', domain: 'twilio.com' },
+  { name: 'Postman', slug: 'postman', color: 'FF6C37', category: 'Developer', domain: 'postman.com' },
+  { name: 'MongoDB', slug: 'mongodb', color: '47A248', category: 'Database', domain: 'mongodb.com' },
+  { name: 'OpenAI', slug: 'openai', color: '412991', category: 'AI', domain: 'openai.com' },
+  { name: 'Figma', slug: 'figma', color: 'F24E1E', category: 'Design', domain: 'figma.com' },
+  { name: 'PayPal', slug: 'paypal', color: '003087', category: 'Payments', domain: 'paypal.com' },
 ];
 
 function BrandMark({ brand, compact = false }: { brand: ConnectBrand; compact?: boolean }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
+  const [sourceStage, setSourceStage] = useState(0);
+  const primary = `https://cdn.simpleicons.org/${brand.slug}/${brand.color}`;
+  const fallback = brand.domain
+    ? `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=128`
+    : null;
+
+  if (sourceStage > 1 || (sourceStage === 1 && !fallback)) {
     return <span className="xv-nav-brand-fallback" aria-hidden="true">{brand.name.slice(0, 1)}</span>;
   }
 
   return (
     <img
-      src={`https://cdn.simpleicons.org/${brand.slug}/${brand.color}`}
+      src={sourceStage === 0 ? primary : fallback ?? primary}
       alt=""
-      width={compact ? 18 : 22}
-      height={compact ? 18 : 22}
-      loading="lazy"
+      width={compact ? 22 : 24}
+      height={compact ? 22 : 24}
+      loading="eager"
+      decoding="async"
       referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
+      onError={() => setSourceStage((stage) => stage + 1)}
     />
   );
 }
