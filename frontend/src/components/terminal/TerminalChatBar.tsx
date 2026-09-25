@@ -28,6 +28,7 @@ import { isGeneralAdviceOrKnowledgePrompt, isWebsiteBuildPrompt } from '@/lib/ch
 import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 
 const MIN_INPUT_H = 32;
 
@@ -45,6 +46,8 @@ function renameFile(file: File, newName: string) {
 }
 
 export function TerminalChatBar() {
+  const workspaceIdentity = useWorkspaceIdentity();
+  const isGuest = workspaceIdentity.status === 'guest';
   const {
     prompt,
     setPrompt,
@@ -139,6 +142,11 @@ export function TerminalChatBar() {
   }, [sendState]);
 
   useEffect(() => {
+    if (isGuest) {
+      setGithubConnected(false);
+      setVercelConnected(false);
+      return;
+    }
     void api.github
       .status()
       .then((s) => setGithubConnected(s.connected))
@@ -147,7 +155,7 @@ export function TerminalChatBar() {
       .status()
       .then((s) => setVercelConnected(s.connected))
       .catch(() => setVercelConnected(false));
-  }, []);
+  }, [isGuest]);
 
   // Sidebar "New Terminal" creates a clean task inside the active project. Project
   // selection is canonical workspace state and must survive task creation; only the
@@ -178,7 +186,9 @@ export function TerminalChatBar() {
   }, [setPrompt]);
 
   async function ensureRepoWorkspace(promptText?: string): Promise<boolean> {
-    if (incognito) return true;
+    // Guest conversation is deliberately detached from repository/provider gates.
+    // The chat provider itself is the hard boundary that prevents guest execution.
+    if (isGuest || incognito) return true;
     // Sandbox website/landing/chatbot/crypto builds must not be blocked by a flaky GitHub status
     // when the user already selected a repo in the footer (or when building a simple site).
     const p = (promptText || draftRef.current || prompt || '').trim();
