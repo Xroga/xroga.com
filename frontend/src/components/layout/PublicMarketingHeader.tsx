@@ -23,19 +23,23 @@ import {
   Sparkles,
   TerminalSquare,
   WandSparkles,
+  Workflow,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
+import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
 
 type MegaItem = {
   href: string;
   label: string;
   note: string;
-  icon: typeof Sparkles;
+  icon?: typeof Sparkles;
+  logoId?: string;
+  logoName?: string;
 };
 
 type MegaMenu = {
@@ -46,143 +50,168 @@ type MegaMenu = {
   secondary: MegaItem[];
   ctaHref: string;
   ctaLabel: string;
-  art: 'product' | 'app' | 'agent' | 'showcase' | 'docs';
+  art: 'product' | 'build' | 'connect' | 'develop' | 'explore';
 };
 
 const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'], MegaMenu>> = {
   Product: {
-    eyebrow: 'XROGA PLATFORM',
-    title: 'From idea to verified software.',
-    description: 'Explore the core product surfaces that make Xroga useful to beginners, founders, and developers.',
+    eyebrow: 'XROGA',
+    title: 'Everything Xroga can do.',
+    description: 'One AI workspace to create software, work on existing code, connect external apps, verify results, and help ship what you build.',
     primary: [
-      { href: '/features', label: 'Product overview', note: 'See the whole Xroga system.', icon: Sparkles },
-      { href: '/software', label: 'Software builder', note: 'Build beyond a single screen.', icon: AppWindow },
-      { href: '/integrations', label: 'Integrations', note: 'Connect the tools your product uses.', icon: Boxes },
+      { href: '/features', label: 'Overview', note: 'See the full Xroga product.', icon: Sparkles },
+      { href: '/software', label: 'Workspace', note: 'Chat, build, inspect, preview, and iterate.', icon: LayoutDashboard },
+      { href: '/features', label: 'Xroga Intelligence', note: 'Plan and coordinate software work.', icon: Workflow },
     ],
     secondary: [
-      { href: '/build', label: 'What you can build', note: 'Apps, websites, SaaS, APIs, tools, and more.', icon: LayoutDashboard },
-      { href: '/compare', label: 'Compare Xroga', note: 'Understand product differences with evidence.', icon: ShieldCheck },
-      { href: '/showcase', label: 'Showcase', note: 'See working product directions.', icon: GalleryHorizontalEnd },
+      { href: '/features', label: 'Verification', note: 'Tests, builds, evidence, and blockers.', icon: ShieldCheck },
+      { href: '/integrations', label: 'Integrations', note: 'Connect apps and services to Xroga.', icon: Boxes },
+      { href: '/build-with/github', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch },
     ],
     ctaHref: '/features',
-    ctaLabel: 'Explore Product',
+    ctaLabel: 'Explore Xroga',
     art: 'product',
   },
-  'AI App Builder': {
-    eyebrow: 'BUILD FROM AN IDEA',
-    title: 'Describe the product. Build the real thing.',
-    description: 'Start in plain language and move through interface, product logic, data, checks, and release preparation.',
+
+  Build: {
+    eyebrow: 'BUILD',
+    title: 'Build almost any kind of software.',
+    description: 'Start with an idea, a prompt, or a product direction and turn it into a working project.',
     primary: [
-      { href: '/ai-app-builder', label: 'AI App Builder', note: 'The complete product page.', icon: WandSparkles },
-      { href: '/ai-website-builder', label: 'AI Website Builder', note: 'Build modern websites with AI.', icon: Globe2 },
-      { href: '/build', label: 'Build directory', note: 'Explore supported product categories.', icon: Boxes },
+      { href: '/ai-app-builder', label: 'Web apps', note: 'Full-stack products with real application logic.', icon: AppWindow },
+      { href: '/ai-website-builder', label: 'Websites', note: 'Marketing sites, product sites, and landing pages.', icon: Globe2 },
+      { href: '/build-saas-with-ai', label: 'SaaS', note: 'Subscription products, dashboards, and accounts.', icon: LayoutDashboard },
     ],
     secondary: [
-      { href: '/game-builder', label: 'Game Builder', note: 'Build playable web experiences.', icon: Rocket },
-      { href: '/crypto-builder', label: 'Web3 & Crypto', note: 'Build supported Web3 products.', icon: AppWindow },
-      { href: '/showcase', label: 'Templates & examples', note: 'See what a prompt can become.', icon: GalleryHorizontalEnd },
+      { href: '/build', label: 'Extensions, APIs & tools', note: 'Browser extensions, APIs, automations, and utilities.', icon: Boxes },
+      { href: '/game-builder', label: 'Games', note: 'Build supported playable web experiences.', icon: Rocket },
+      { href: '/crypto-builder', label: 'Web3 & crypto', note: 'Build supported Web3 product experiences.', icon: Sparkles },
     ],
-    ctaHref: '/ai-app-builder',
-    ctaLabel: 'Open AI App Builder',
-    art: 'app',
+    ctaHref: '/build',
+    ctaLabel: 'Explore What You Can Build',
+    art: 'build',
   },
-  'AI Coding Agent': {
-    eyebrow: 'WORK WITH REAL CODE',
-    title: 'Bring the repository you already own.',
-    description: 'Use Xroga for focused implementation, debugging, verification, and reviewable changes inside existing software.',
+
+  Connect: {
+    eyebrow: 'XROGA CONNECT',
+    title: 'Connect Xroga to the apps you already use.',
+    description: 'Let Xroga retrieve data from supported connected apps and perform actions you explicitly request.',
     primary: [
-      { href: '/ai-coding-agent', label: 'AI Coding Agent', note: 'Repository-aware product workflow.', icon: Code2 },
-      { href: '/build-with/github', label: 'GitHub workflow', note: 'Work from a connected repository.', icon: GitBranch },
-      { href: '/features', label: 'Verification', note: 'See checks, evidence, and blockers.', icon: ShieldCheck },
+      { href: '/integrations', label: 'Gmail & Calendar', note: 'Email, schedules, and connected Google workflows.', logoId: 'gmail_google_calendar', logoName: 'Gmail' },
+      { href: '/integrations', label: 'Slack', note: 'Read and act in connected team workflows.', logoId: 'slack', logoName: 'Slack' },
+      { href: '/integrations', label: 'Notion', note: 'Work with connected workspace content.', logoId: 'notion', logoName: 'Notion' },
     ],
     secondary: [
-      { href: '/docs', label: 'Technical docs', note: 'Understand how the product works.', icon: BookOpen },
-      { href: '/compare', label: 'Compare coding agents', note: 'Review differences by capability.', icon: Search },
-      { href: '/software', label: 'Software workflows', note: 'Explore broader software-building paths.', icon: TerminalSquare },
+      { href: '/integrations', label: 'GitHub', note: 'Repositories, project delivery, and code workflows.', logoId: 'github', logoName: 'GitHub' },
+      { href: '/integrations', label: 'Stripe', note: 'Supported billing and business workflows.', logoId: 'stripe', logoName: 'Stripe' },
+      { href: '/integrations', label: 'Vercel & Supabase', note: 'Deployment, data, authentication, and app infrastructure.', logoId: 'vercel', logoName: 'Vercel' },
+    ],
+    ctaHref: '/integrations',
+    ctaLabel: 'Explore All Integrations',
+    art: 'connect',
+  },
+
+  Develop: {
+    eyebrow: 'DEVELOP',
+    title: 'Work on real software you already own.',
+    description: 'Bring an existing repository and use Xroga for implementation, debugging, verification, and release preparation.',
+    primary: [
+      { href: '/ai-coding-agent', label: 'Existing projects', note: 'Understand and change a real codebase.', icon: Code2 },
+      { href: '/build-with/github', label: 'GitHub repositories', note: 'Work from connected repositories and branches.', icon: GitBranch },
+      { href: '/ai-coding-agent', label: 'Add features & fix bugs', note: 'Make focused changes without rebuilding everything.', icon: FileCode2 },
+    ],
+    secondary: [
+      { href: '/ai-coding-agent', label: 'Test & verify', note: 'Run relevant checks and surface failures.', icon: ShieldCheck },
+      { href: '/tools/production-readiness-checker', label: 'Production readiness', note: 'Check whether a project is ready to ship.', icon: Search },
+      { href: '/docs', label: 'Developer docs', note: 'Technical reference and workflow guidance.', icon: TerminalSquare },
     ],
     ctaHref: '/ai-coding-agent',
-    ctaLabel: 'Explore Coding Agent',
-    art: 'agent',
+    ctaLabel: 'Explore Development Workflows',
+    art: 'develop',
   },
-  Showcase: {
-    eyebrow: 'BUILT WITH XROGA',
-    title: 'See what the output can look like.',
-    description: 'Browse product directions, responsive previews, and templates instead of relying on marketing claims alone.',
+
+  Explore: {
+    eyebrow: 'EXPLORE',
+    title: 'See what Xroga can build and how it works.',
+    description: 'Browse examples, learn the workflows, and compare product paths before you start.',
     primary: [
-      { href: '/showcase', label: 'All showcase projects', note: 'Browse the complete collection.', icon: GalleryHorizontalEnd },
-      { href: '/build', label: 'Build categories', note: 'Choose what you want to create.', icon: Boxes },
-      { href: '/ai-app-builder', label: 'Start a new app', note: 'Turn your own idea into software.', icon: WandSparkles },
+      { href: '/showcase', label: 'Showcase', note: 'See real product directions and output.', icon: GalleryHorizontalEnd },
+      { href: '/build', label: 'Build categories', note: 'Explore apps, websites, SaaS, tools, and more.', icon: Boxes },
+      { href: '/learn', label: 'Guides & tutorials', note: 'Learn how to build with Xroga.', icon: BookOpen },
     ],
     secondary: [
-      { href: '/game-builder', label: 'Games', note: 'Explore playable product directions.', icon: Rocket },
-      { href: '/crypto-builder', label: 'Web3', note: 'Explore supported Web3 builds.', icon: AppWindow },
-      { href: '/learn', label: 'Build guides', note: 'Learn the workflow behind the output.', icon: BookOpen },
+      { href: '/blog', label: 'Blog', note: 'Product, software, and AI-building insights.', icon: FileCode2 },
+      { href: '/compare', label: 'Compare', note: 'Evidence-based comparisons and alternatives.', icon: ShieldCheck },
+      { href: '/docs', label: 'Docs', note: 'Product and technical documentation.', icon: BookOpen },
     ],
     ctaHref: '/showcase',
-    ctaLabel: 'View Showcase',
-    art: 'showcase',
-  },
-  Docs: {
-    eyebrow: 'LEARN XROGA',
-    title: 'Find the answer, workflow, or reference.',
-    description: 'Documentation, guides, comparisons, and learning material for beginners through advanced builders.',
-    primary: [
-      { href: '/docs', label: 'Documentation', note: 'Product and technical reference.', icon: BookOpen },
-      { href: '/learn', label: 'Learn', note: 'Practical guides for building with AI.', icon: Sparkles },
-      { href: '/blog', label: 'Blog', note: 'Product, AI, and software insights.', icon: FileCode2 },
-    ],
-    secondary: [
-      { href: '/compare', label: 'Compare', note: 'Evidence-based product comparisons.', icon: ShieldCheck },
-      { href: '/build', label: 'Build guides', note: 'Find a path for a specific product.', icon: Boxes },
-      { href: '/showcase', label: 'Examples', note: 'See product output and patterns.', icon: GalleryHorizontalEnd },
-    ],
-    ctaHref: '/docs',
-    ctaLabel: 'Open Docs',
-    art: 'docs',
+    ctaLabel: 'Explore Xroga',
+    art: 'explore',
   },
 };
 
+const CONNECT_LOGOS = [
+  { id: 'github', name: 'GitHub' },
+  { id: 'slack', name: 'Slack' },
+  { id: 'notion', name: 'Notion' },
+  { id: 'stripe', name: 'Stripe' },
+  { id: 'vercel', name: 'Vercel' },
+  { id: 'supabase', name: 'Supabase' },
+] as const;
+
+function BrandMark({ id, name }: { id: string; name: string }) {
+  const src = getIntegrationLogo(id, name);
+  if (!src) return <Boxes aria-hidden="true" />;
+  return <img src={src} alt="" loading="lazy" referrerPolicy="no-referrer" />;
+}
+
 function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
-  if (kind === 'app') {
+  if (kind === 'build') {
     return (
       <div className="xv-nav-art xv-nav-art--app" aria-hidden="true">
-        <span className="xv-nav-art__serif">AI App</span>
+        <span className="xv-nav-art__serif">Build</span>
         <div className="xv-nav-art__fan">
           <i /><i /><i /><i />
-          <b>build</b>
+          <b>anything</b>
         </div>
       </div>
     );
   }
 
-  if (kind === 'agent') {
+  if (kind === 'connect') {
+    return (
+      <div className="xv-nav-art xv-nav-art--connect" aria-hidden="true">
+        <span className="xv-nav-art__serif">Connect</span>
+        <div className="xv-nav-connect-orbit">
+          <div className="xv-nav-connect-core">X</div>
+          {CONNECT_LOGOS.map((item, index) => (
+            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as React.CSSProperties} key={item.id}>
+              <BrandMark id={item.id} name={item.name} />
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (kind === 'develop') {
     return (
       <div className="xv-nav-art xv-nav-art--agent" aria-hidden="true">
-        <span className="xv-nav-art__serif is-muted">Start</span>
+        <span className="xv-nav-art__serif is-muted">Develop</span>
         <div className="xv-nav-art__terminal">
           <small>repo / customer-cloud</small>
           <b>Implement billing portal</b>
-          <i>✓ plan</i><i>✓ build</i><i>● verify</i>
+          <i>✓ inspect</i><i>✓ build</i><i>● verify</i>
         </div>
       </div>
     );
   }
 
-  if (kind === 'showcase') {
+  if (kind === 'explore') {
     return (
       <div className="xv-nav-art xv-nav-art--showcase" aria-hidden="true">
         <div className="xv-nav-art__stack"><i /><i /><i /><strong>05</strong></div>
         <span>Projects</span>
-      </div>
-    );
-  }
-
-  if (kind === 'docs') {
-    return (
-      <div className="xv-nav-art xv-nav-art--docs" aria-hidden="true">
-        <span className="xv-nav-art__brand">Xroga Docs</span>
-        <div className="xv-nav-art__search"><Search /><span>Search docs...</span></div>
-        <i /><i /><i />
       </div>
     );
   }
@@ -196,13 +225,20 @@ function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
   );
 }
 
-function MegaPanel({
-  menu,
-  onNavigate,
-}: {
-  menu: MegaMenu;
-  onNavigate: () => void;
-}) {
+function MegaLink({ item, onNavigate }: { item: MegaItem; onNavigate: () => void }) {
+  const Icon = item.icon;
+  return (
+    <Link href={item.href} onClick={onNavigate}>
+      <i className={item.logoId ? 'is-brand' : undefined}>
+        {item.logoId && item.logoName ? <BrandMark id={item.logoId} name={item.logoName} /> : Icon ? <Icon aria-hidden="true" /> : null}
+      </i>
+      <span><b>{item.label}</b><em>{item.note}</em></span>
+      <ArrowUpRight aria-hidden="true" />
+    </Link>
+  );
+}
+
+function MegaPanel({ menu, onNavigate }: { menu: MegaMenu; onNavigate: () => void }) {
   return (
     <div className="xv-nav-mega" role="group">
       <div className="xv-nav-mega__grid" aria-hidden="true" />
@@ -219,23 +255,11 @@ function MegaPanel({
         <section className="xv-nav-mega__links" aria-label={menu.eyebrow + ' links'}>
           <div>
             <small>Explore</small>
-            {menu.primary.map(({ href, label, note, icon: Icon }) => (
-              <Link href={href} key={href} onClick={onNavigate}>
-                <i><Icon aria-hidden="true" /></i>
-                <span><b>{label}</b><em>{note}</em></span>
-                <ArrowUpRight aria-hidden="true" />
-              </Link>
-            ))}
+            {menu.primary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
           </div>
           <div>
             <small>More</small>
-            {menu.secondary.map(({ href, label, note, icon: Icon }) => (
-              <Link href={href} key={href} onClick={onNavigate}>
-                <i><Icon aria-hidden="true" /></i>
-                <span><b>{label}</b><em>{note}</em></span>
-                <ArrowUpRight aria-hidden="true" />
-              </Link>
-            ))}
+            {menu.secondary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
           </div>
         </section>
 
@@ -338,7 +362,7 @@ export function PublicMarketingHeader() {
                   aria-current={pathname === item.href ? 'page' : undefined}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setActiveMega((current) => current === item.label ? null : item.label);
+                    setActiveMega((value) => value === item.label ? null : item.label);
                   }}
                   onFocus={() => setActiveMega(item.label)}
                 >
