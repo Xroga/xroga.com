@@ -222,6 +222,18 @@ export function HomepageCursorGlitter() {
 
     const handlePointerMove = (event: PointerEvent) => {
       if (event.pointerType && event.pointerType !== 'mouse') return;
+
+      const target = event.target as Element | null;
+      if (target?.closest?.('[data-public-marketing-header]')) {
+        latestPointer = null;
+        renderedPointer = null;
+        particles.length = 0;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        ctx.clearRect(0, 0, width, height);
+        return;
+      }
+
       latestPointer = {
         x: event.clientX,
         y: event.clientY,
