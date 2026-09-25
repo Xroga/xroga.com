@@ -236,3 +236,5 @@
 @media (prefers-reduced-motion:reduce){
   .root *,.root *::before,.root *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
+
+.dashboardSection,.websiteSection,.whySection,.planSection{position:relative;}
