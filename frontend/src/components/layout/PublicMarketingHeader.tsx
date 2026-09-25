@@ -30,7 +30,6 @@ import { useEffect, useRef, useState } from 'react';
 import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
 
 type MegaItem = {
@@ -38,8 +37,6 @@ type MegaItem = {
   label: string;
   note: string;
   icon?: typeof Sparkles;
-  logoId?: string;
-  logoName?: string;
 };
 
 type MegaMenu = {
@@ -97,14 +94,14 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
     title: 'Connect Xroga to the apps you already use.',
     description: 'Let Xroga retrieve data from supported connected apps and perform actions you explicitly request.',
     primary: [
-      { href: '/integrations', label: 'Gmail & Calendar', note: 'Email, schedules, and connected Google workflows.', logoId: 'gmail_google_calendar', logoName: 'Gmail' },
-      { href: '/integrations', label: 'Slack', note: 'Read and act in connected team workflows.', logoId: 'slack', logoName: 'Slack' },
-      { href: '/integrations', label: 'Notion', note: 'Work with connected workspace content.', logoId: 'notion', logoName: 'Notion' },
+      { href: '/integrations', label: 'Gmail & Calendar', note: 'Email, schedules, and connected Google workflows.', icon: Globe2 },
+      { href: '/integrations', label: 'Slack', note: 'Read and act in connected team workflows.', icon: Boxes },
+      { href: '/integrations', label: 'Notion', note: 'Work with connected workspace content.', icon: BookOpen },
     ],
     secondary: [
-      { href: '/integrations', label: 'GitHub', note: 'Repositories, project delivery, and code workflows.', logoId: 'github', logoName: 'GitHub' },
-      { href: '/integrations', label: 'Stripe', note: 'Supported billing and business workflows.', logoId: 'stripe', logoName: 'Stripe' },
-      { href: '/integrations', label: 'Vercel & Supabase', note: 'Deployment, data, authentication, and app infrastructure.', logoId: 'vercel', logoName: 'Vercel' },
+      { href: '/integrations', label: 'GitHub', note: 'Repositories, project delivery, and code workflows.', icon: GitBranch },
+      { href: '/integrations', label: 'Stripe', note: 'Supported billing and business workflows.', icon: AppWindow },
+      { href: '/integrations', label: 'Vercel & Supabase', note: 'Deployment, data, authentication, and app infrastructure.', icon: Rocket },
     ],
     ctaHref: '/integrations',
     ctaLabel: 'Explore All Integrations',
@@ -150,19 +147,66 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
   },
 };
 
-const CONNECT_LOGOS = [
-  { id: 'github', name: 'GitHub' },
-  { id: 'slack', name: 'Slack' },
-  { id: 'notion', name: 'Notion' },
-  { id: 'stripe', name: 'Stripe' },
-  { id: 'vercel', name: 'Vercel' },
-  { id: 'supabase', name: 'Supabase' },
-] as const;
+type ConnectBrand = {
+  name: string;
+  slug: string;
+  color: string;
+  category: string;
+};
 
-function BrandMark({ id, name }: { id: string; name: string }) {
-  const src = getIntegrationLogo(id, name);
-  if (!src) return <Boxes aria-hidden="true" />;
-  return <img src={src} alt="" loading="lazy" referrerPolicy="no-referrer" />;
+const CONNECT_PRIMARY_BRANDS: ConnectBrand[] = [
+  { name: 'GitHub', slug: 'github', color: '181717', category: 'Developer' },
+  { name: 'Gmail', slug: 'gmail', color: 'EA4335', category: 'Communication' },
+  { name: 'Google Calendar', slug: 'googlecalendar', color: '4285F4', category: 'Productivity' },
+  { name: 'Google Drive', slug: 'googledrive', color: '4285F4', category: 'Storage' },
+  { name: 'Slack', slug: 'slack', color: '4A154B', category: 'Communication' },
+  { name: 'Discord', slug: 'discord', color: '5865F2', category: 'Communication' },
+  { name: 'Notion', slug: 'notion', color: '000000', category: 'Workspace' },
+  { name: 'Linear', slug: 'linear', color: '5E6AD2', category: 'Project management' },
+  { name: 'Jira', slug: 'jira', color: '0052CC', category: 'Project management' },
+  { name: 'Asana', slug: 'asana', color: 'F06A6A', category: 'Project management' },
+  { name: 'Airtable', slug: 'airtable', color: '18BFFF', category: 'Data' },
+  { name: 'Stripe', slug: 'stripe', color: '635BFF', category: 'Payments' },
+  { name: 'Shopify', slug: 'shopify', color: '7AB55C', category: 'Commerce' },
+  { name: 'HubSpot', slug: 'hubspot', color: 'FF7A59', category: 'CRM' },
+  { name: 'Salesforce', slug: 'salesforce', color: '00A1E0', category: 'CRM' },
+  { name: 'Vercel', slug: 'vercel', color: '000000', category: 'Deployment' },
+  { name: 'Supabase', slug: 'supabase', color: '3FCF8E', category: 'Database' },
+  { name: 'Cloudflare', slug: 'cloudflare', color: 'F38020', category: 'Infrastructure' },
+  { name: 'Sentry', slug: 'sentry', color: '362D59', category: 'Monitoring' },
+  { name: 'Dropbox', slug: 'dropbox', color: '0061FF', category: 'Storage' },
+];
+
+const CONNECT_MORE_BRANDS: ConnectBrand[] = [
+  { name: 'OneDrive', slug: 'microsoftonedrive', color: '0078D4', category: 'Storage' },
+  { name: 'Box', slug: 'box', color: '0061D5', category: 'Storage' },
+  { name: 'Calendly', slug: 'calendly', color: '006BFF', category: 'Scheduling' },
+  { name: 'Mailchimp', slug: 'mailchimp', color: 'FFE01B', category: 'Marketing' },
+  { name: 'Twilio', slug: 'twilio', color: 'F22F46', category: 'Communication' },
+  { name: 'Postman', slug: 'postman', color: 'FF6C37', category: 'Developer' },
+  { name: 'MongoDB', slug: 'mongodb', color: '47A248', category: 'Database' },
+  { name: 'OpenAI', slug: 'openai', color: '412991', category: 'AI' },
+  { name: 'Figma', slug: 'figma', color: 'F24E1E', category: 'Design' },
+  { name: 'PayPal', slug: 'paypal', color: '003087', category: 'Payments' },
+];
+
+function BrandMark({ brand, compact = false }: { brand: ConnectBrand; compact?: boolean }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return <span className="xv-nav-brand-fallback" aria-hidden="true">{brand.name.slice(0, 1)}</span>;
+  }
+
+  return (
+    <img
+      src={\`https://cdn.simpleicons.org/\${brand.slug}/\${brand.color}\`}
+      alt=""
+      width={compact ? 18 : 22}
+      height={compact ? 18 : 22}
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
@@ -184,9 +228,9 @@ function MegaArt({ kind }: { kind: MegaMenu['art'] }) {
         <span className="xv-nav-art__serif">Connect</span>
         <div className="xv-nav-connect-orbit">
           <div className="xv-nav-connect-core">X</div>
-          {CONNECT_LOGOS.map((item, index) => (
-            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as React.CSSProperties} key={item.id}>
-              <BrandMark id={item.id} name={item.name} />
+          {CONNECT_PRIMARY_BRANDS.slice(0, 6).map((brand, index) => (
+            <span className="xv-nav-connect-logo" style={{ '--logo-index': index } as React.CSSProperties} key={brand.name}>
+              <BrandMark brand={brand} compact />
             </span>
           ))}
         </div>
@@ -229,9 +273,7 @@ function MegaLink({ item, onNavigate }: { item: MegaItem; onNavigate: () => void
   const Icon = item.icon;
   return (
     <Link href={item.href} onClick={onNavigate}>
-      <i className={item.logoId ? 'is-brand' : undefined}>
-        {item.logoId && item.logoName ? <BrandMark id={item.logoId} name={item.logoName} /> : Icon ? <Icon aria-hidden="true" /> : null}
-      </i>
+      <i>{Icon ? <Icon aria-hidden="true" /> : null}</i>
       <span><b>{item.label}</b><em>{item.note}</em></span>
       <ArrowUpRight aria-hidden="true" />
     </Link>
@@ -239,10 +281,12 @@ function MegaLink({ item, onNavigate }: { item: MegaItem; onNavigate: () => void
 }
 
 function MegaPanel({ menu, onNavigate }: { menu: MegaMenu; onNavigate: () => void }) {
+  const isConnect = menu.art === 'connect';
+
   return (
     <div className="xv-nav-mega" role="group">
       <div className="xv-nav-mega__grid" aria-hidden="true" />
-      <div className="xv-nav-mega__inner">
+      <div className={isConnect ? 'xv-nav-mega__inner xv-nav-mega__inner--connect' : 'xv-nav-mega__inner'}>
         <section className="xv-nav-mega__intro">
           <p>{menu.eyebrow}</p>
           <h2>{menu.title}</h2>
@@ -252,20 +296,60 @@ function MegaPanel({ menu, onNavigate }: { menu: MegaMenu; onNavigate: () => voi
           </Link>
         </section>
 
-        <section className="xv-nav-mega__links" aria-label={menu.eyebrow + ' links'}>
-          <div>
-            <small>Explore</small>
-            {menu.primary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
-          </div>
-          <div>
-            <small>More</small>
-            {menu.secondary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
-          </div>
-        </section>
+        {isConnect ? (
+          <section className="xv-nav-connect-catalog" aria-label="Popular Xroga integrations">
+            <div className="xv-nav-connect-catalog__head">
+              <div>
+                <small>POPULAR APPS & SERVICES</small>
+                <b>Connect your everyday stack</b>
+              </div>
+              <Link href="/integrations" onClick={onNavigate}>Explore all <ArrowUpRight aria-hidden="true" /></Link>
+            </div>
 
-        <aside className="xv-nav-mega__art">
-          <MegaArt kind={menu.art} />
-        </aside>
+            <div className="xv-nav-connect-grid">
+              {CONNECT_PRIMARY_BRANDS.map((brand) => (
+                <Link href="/integrations" className="xv-nav-connect-card" key={brand.name} onClick={onNavigate}>
+                  <i className="is-brand"><BrandMark brand={brand} /></i>
+                  <span><b>{brand.name}</b><em>{brand.category}</em></span>
+                  <ArrowUpRight aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
+
+            <div className="xv-nav-connect-more">
+              <small>AND MORE</small>
+              <div>
+                {CONNECT_MORE_BRANDS.map((brand) => (
+                  <Link href="/integrations" key={brand.name} title={brand.name} aria-label={brand.name} onClick={onNavigate}>
+                    <BrandMark brand={brand} compact />
+                  </Link>
+                ))}
+                <Link href="/integrations" className="xv-nav-connect-more__all" onClick={onNavigate}>
+                  + Explore all
+                </Link>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <>
+            <section className="xv-nav-mega__links" aria-label={menu.eyebrow + ' links'}>
+              <div>
+                <small>Explore</small>
+                {menu.primary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
+              </div>
+              <div>
+                <small>More</small>
+                {menu.secondary.map((item) => <MegaLink item={item} onNavigate={onNavigate} key={item.label} />)}
+              </div>
+            </section>
+
+            <aside className="xv-nav-mega__art">
+              <Link href={menu.ctaHref} className="xv-nav-mega__art-link" aria-label={menu.ctaLabel} onClick={onNavigate}>
+                <MegaArt kind={menu.art} />
+              </Link>
+            </aside>
+          </>
+        )}
       </div>
     </div>
   );
