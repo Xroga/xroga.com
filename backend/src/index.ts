@@ -246,12 +246,21 @@ app.use((_req, res) => {
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
-  if (!res.headersSent) {
-    res.status(500).json({
-      error: 'Internal server error',
-      code: 'INTERNAL_ERROR',
+  if (res.headersSent) return;
+
+  const requestError = err as Error & { status?: number; type?: string };
+  if (requestError.status === 413 || requestError.type === 'entity.too.large') {
+    res.status(413).json({
+      error: 'Request payload is too large.',
+      code: 'REQUEST_TOO_LARGE',
     });
+    return;
   }
+
+  res.status(500).json({
+    error: 'Internal server error',
+    code: 'INTERNAL_ERROR',
+  });
 });
 
 const server = createServer(app);
