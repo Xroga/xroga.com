@@ -1,4 +1,6 @@
 import {
+  GUEST_AUTH_INTENT_KEY,
+  GUEST_MIGRATION_MARKER_KEY,
   GUEST_SESSION_ID_KEY,
   GUEST_WORKSPACE_SNAPSHOT_KEY,
   GUEST_WORKSPACE_TTL_MS,
@@ -61,34 +63,65 @@ export function buildUserCacheScopeScript(userId: string) {
     var guestOwner=scopePrefix+'guest';
     var guestSnapshotKey=${JSON.stringify(GUEST_WORKSPACE_SNAPSHOT_KEY)};
     var guestSessionIdKey=${JSON.stringify(GUEST_SESSION_ID_KEY)};
+    var guestIntentKey=${JSON.stringify(GUEST_AUTH_INTENT_KEY)};
+    var guestMigrationKey=${JSON.stringify(GUEST_MIGRATION_MARKER_KEY)};
     var guestTtl=${JSON.stringify(GUEST_WORKSPACE_TTL_MS)};
     var previous=localStorage.getItem(ownerKey);
     var migratingGuest=userId!=='guest'&&previous===guestOwner;
     var guestRaw=migratingGuest?localStorage.getItem(guestSnapshotKey):null;
+    var guestIntentRaw=migratingGuest?localStorage.getItem(guestIntentKey):null;
     if(previous!==scopedOwner){
       var keys=${JSON.stringify(USER_SCOPED_STORAGE_KEYS)};
       for(var i=0;i<keys.length;i++){localStorage.removeItem(keys[i]);sessionStorage.removeItem(keys[i]);}
       if(typeof indexedDB!=='undefined'){
         ${JSON.stringify(USER_SCOPED_DATABASES)}.forEach(function(name){try{indexedDB.deleteDatabase(name);}catch(e){}});
       }
-      if(migratingGuest&&guestRaw){
-        try{
-          var guest=JSON.parse(guestRaw);
-          var updatedAt=Date.parse(guest.updatedAt||(guest.workspaceSession&&guest.workspaceSession.updatedAt)||'');
-          var fresh=Number.isFinite(updatedAt)&&(Date.now()-updatedAt)<=guestTtl;
-          var workspace=guest.workspaceSession;
-          if(fresh&&workspace&&Array.isArray(workspace.messages)&&workspace.messages.length){
-            localStorage.setItem('xroga_workspace_session',JSON.stringify(workspace));
-            localStorage.removeItem(guestSnapshotKey);
-            localStorage.removeItem(guestSessionIdKey);
-          }else if(!fresh){
-            localStorage.removeItem(guestSnapshotKey);
-            localStorage.removeItem(guestSessionIdKey);
-          }
-        }catch(e){
-          localStorage.removeItem(guestSnapshotKey);
-          localStorage.removeItem(guestSessionIdKey);
+      if(migratingGuest){
+        var migratedGuestId=null;
+        var migratedReason=null;
+        var restoredWorkspace=false;
+        var intent=null;
+        if(guestIntentRaw){
+          try{
+            var parsedIntent=JSON.parse(guestIntentRaw);
+            var intentCreated=Date.parse(parsedIntent.createdAt||'');
+            if(parsedIntent.version===1&&typeof parsedIntent.guestSessionId==='string'&&Number.isFinite(intentCreated)&&(Date.now()-intentCreated)<=guestTtl){
+              intent=parsedIntent;
+            }
+          }catch(e){}
         }
+        if(guestRaw){
+          try{
+            var guest=JSON.parse(guestRaw);
+            var updatedAt=Date.parse(guest.updatedAt||(guest.workspaceSession&&guest.workspaceSession.updatedAt)||'');
+            var fresh=Number.isFinite(updatedAt)&&(Date.now()-updatedAt)<=guestTtl;
+            var workspace=guest.workspaceSession;
+            var hasWorkspace=workspace&&Array.isArray(workspace.messages)&&(workspace.messages.length>0||String(workspace.prompt||'').trim().length>0);
+            if(fresh&&hasWorkspace&&typeof guest.guestSessionId==='string'){
+              localStorage.setItem('xroga_workspace_session',JSON.stringify(workspace));
+              migratedGuestId=guest.guestSessionId;
+              restoredWorkspace=true;
+            }
+          }catch(e){}
+        }
+        if(!migratedGuestId&&intent&&typeof intent.guestSessionId==='string'){
+          migratedGuestId=intent.guestSessionId;
+        }
+        if(intent&&migratedGuestId&&intent.guestSessionId===migratedGuestId&&typeof intent.reason==='string'){
+          migratedReason=intent.reason.slice(0,48);
+        }
+        if(migratedGuestId){
+          localStorage.setItem(guestMigrationKey,JSON.stringify({
+            version:1,
+            guestSessionId:migratedGuestId,
+            reason:migratedReason||undefined,
+            migratedAt:new Date().toISOString(),
+            restoredWorkspace:restoredWorkspace
+          }));
+        }
+        localStorage.removeItem(guestSnapshotKey);
+        localStorage.removeItem(guestSessionIdKey);
+        localStorage.removeItem(guestIntentKey);
       }
     }
     localStorage.setItem(ownerKey,scopedOwner);

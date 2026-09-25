@@ -21,6 +21,8 @@ import {
   TrendingUp,
   FolderGit2,
   LayoutTemplate,
+  LogIn,
+  UserPlus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -68,6 +70,7 @@ import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { suspendProjectWorkspacePersistence } from '@/lib/projectWorkspaceStorage';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate, type WorkspaceAuthGateReason } from '@/components/workspace/WorkspaceAuthGate';
+import { rememberGuestAuthIntent } from '@/lib/guestWorkspace';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -572,16 +575,28 @@ export function Sidebar({ displayName }: SidebarProps) {
   const railBottom = (
     <div className="xv-sidebar-rail-bottom mt-auto">
       {isGuest ? (
-        <HoverTip label="Save workspace" description="Create a free account to keep this conversation.">
-          <button
-            type="button"
-            onClick={() => requestAuthGate('history')}
-            aria-label="Save guest workspace"
-            className="grid h-9 w-9 place-items-center rounded-xl bg-[linear-gradient(135deg,#006aff,#67a4ff)] text-[11px] font-black text-white shadow-[0_8px_20px_rgba(0,106,255,0.22)]"
-          >
-            G
-          </button>
-        </HoverTip>
+        <div className="flex flex-col items-center gap-1.5">
+          <HoverTip label="Create account" description="Save this guest conversation and unlock the full workspace.">
+            <Link
+              href="/auth/signup?next=%2Fworkspace"
+              onClick={() => rememberGuestAuthIntent('history')}
+              aria-label="Create free account"
+              className="grid h-9 w-9 place-items-center rounded-xl bg-[linear-gradient(135deg,#006aff,#68a7ff)] text-white shadow-[0_8px_20px_rgba(0,106,255,0.22)] transition hover:-translate-y-0.5"
+            >
+              <UserPlus className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </HoverTip>
+          <HoverTip label="Sign in" description="Sign in and keep this guest conversation.">
+            <Link
+              href="/auth/login?next=%2Fworkspace"
+              onClick={() => rememberGuestAuthIntent('history')}
+              aria-label="Sign in"
+              className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--card-border)] bg-[var(--foreground)]/[0.035] text-[var(--foreground)] transition hover:bg-[var(--foreground)]/[0.08]"
+            >
+              <LogIn className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </HoverTip>
+        </div>
       ) : displayName ? (
         <div ref={profileRowRef} className="xv-sidebar-rail-profile">
           {incognito ? (
@@ -602,18 +617,36 @@ export function Sidebar({ displayName }: SidebarProps) {
 
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
-      {/* The plan link used to be a full-width button of its own above the profile,
-          which cost a whole row. It now rides in the profile line as a compact icon,
-          so the nav keeps every item while taking less height. */}
       {isGuest && navExpanded ? (
-        <button
-          type="button"
-          onClick={() => requestAuthGate('history')}
-          className="w-full rounded-xl border border-[#006aff]/20 bg-[#006aff]/[0.08] px-3 py-2.5 text-left transition hover:bg-[#006aff]/[0.13]"
-        >
-          <span className="block text-[12px] font-semibold text-[var(--foreground)]">Guest workspace</span>
-          <span className="mt-0.5 block text-[10px] leading-4 text-[var(--muted)]">Save this chat and continue for free →</span>
-        </button>
+        <div className="rounded-[14px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] p-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
+          <div className="flex items-center gap-2 px-0.5">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#006aff]/10 text-[#006aff]">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[11px] font-semibold text-[var(--foreground)]">Guest preview</span>
+              <span className="block truncate text-[9px] text-[var(--muted)]">Your chat follows you after auth.</span>
+            </span>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <Link
+              href="/auth/login?next=%2Fworkspace"
+              onClick={() => rememberGuestAuthIntent('history')}
+              className="flex min-h-8 items-center justify-center gap-1.5 rounded-[10px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-2 text-[10px] font-semibold text-[var(--foreground)] transition hover:bg-[var(--foreground)]/[0.07]"
+            >
+              <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+              Sign in
+            </Link>
+            <Link
+              href="/auth/signup?next=%2Fworkspace"
+              onClick={() => rememberGuestAuthIntent('history')}
+              className="flex min-h-8 items-center justify-center gap-1.5 rounded-[10px] bg-[linear-gradient(135deg,#006aff,#68a7ff)] px-2 text-[10px] font-bold text-white shadow-[0_7px_18px_rgba(0,106,255,0.18)] transition hover:-translate-y-px"
+            >
+              <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
+              Sign up
+            </Link>
+          </div>
+        </div>
       ) : displayName && navExpanded ? (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (

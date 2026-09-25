@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { Router, type Request } from 'express';
 import { z } from 'zod';
 
@@ -12,19 +12,36 @@ import {
   type ModelId,
 } from '../ai/models.js';
 import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { getRedis } from '../config/redis.js';
+import {
+  authMiddleware,
+  type AuthRequest,
+} from '../middleware/auth.js';
 
 export const GUEST_CHAT_PROMPT_LIMIT = 5;
 export const GUEST_CHAT_WINDOW_MS = 24 * 60 * 60_000;
 export const GUEST_CHAT_IP_WINDOW_MS = 15 * 60_000;
 export const GUEST_CHAT_IP_LIMIT = 10;
+export const GUEST_CHAT_TOKEN_BUDGET = 16_000;
+export const GUEST_CHAT_CONCURRENCY_TTL_MS = 45_000;
+export const GUEST_CHAT_CLAIM_TTL_MS = 24 * 60 * 60_000;
 
 interface RateBucket {
   count: number;
   resetsAt: number;
 }
 
+interface GuestLease {
+  token: string;
+  sessionId: string;
+  redisKey?: string;
+}
+
 const sessionBuckets = new Map<string, RateBucket>();
 const ipBuckets = new Map<string, RateBucket>();
+const tokenBuckets = new Map<string, RateBucket>();
+const activeSessions = new Map<string, { token: string; expiresAt: number }>();
+const claimedSessions = new Map<string, number>();
 
 const guestChatSchema = z.object({
   guestSessionId: z.string().uuid().optional(),
@@ -33,6 +50,10 @@ const guestChatSchema = z.object({
     role: z.enum(['user', 'assistant']),
     content: z.string().max(4_000),
   })).max(8).optional(),
+}).strict();
+
+const guestClaimSchema = z.object({
+  guestSessionId: z.string().uuid(),
 }).strict();
 
 const GUEST_SYSTEM = [
@@ -73,6 +94,35 @@ function consumeBucket(
   };
 }
 
+function consumeTokenBucket(
+  guestSessionId: string,
+  requestedTokens: number,
+  now: number,
+) {
+  const current = tokenBuckets.get(guestSessionId);
+  const bucket =
+    !current || current.resetsAt <= now
+      ? { count: 0, resetsAt: now + GUEST_CHAT_WINDOW_MS }
+      : current;
+
+  if (bucket.count + requestedTokens > GUEST_CHAT_TOKEN_BUDGET) {
+    tokenBuckets.set(guestSessionId, bucket);
+    return {
+      allowed: false as const,
+      remaining: Math.max(0, GUEST_CHAT_TOKEN_BUDGET - bucket.count),
+      resetsAt: bucket.resetsAt,
+    };
+  }
+
+  bucket.count += requestedTokens;
+  tokenBuckets.set(guestSessionId, bucket);
+  return {
+    allowed: true as const,
+    remaining: Math.max(0, GUEST_CHAT_TOKEN_BUDGET - bucket.count),
+    resetsAt: bucket.resetsAt,
+  };
+}
+
 function cleanExpired(now: number) {
   for (const [key, bucket] of sessionBuckets) {
     if (bucket.resetsAt <= now) sessionBuckets.delete(key);
@@ -80,12 +130,214 @@ function cleanExpired(now: number) {
   for (const [key, bucket] of ipBuckets) {
     if (bucket.resetsAt <= now) ipBuckets.delete(key);
   }
+  for (const [key, bucket] of tokenBuckets) {
+    if (bucket.resetsAt <= now) tokenBuckets.delete(key);
+  }
+  for (const [key, lease] of activeSessions) {
+    if (lease.expiresAt <= now) activeSessions.delete(key);
+  }
+  for (const [key, expiresAt] of claimedSessions) {
+    if (expiresAt <= now) claimedSessions.delete(key);
+  }
 }
 
 function guestClientAddress(req: Request): string {
   const flyClientIp = req.header('fly-client-ip')?.trim();
   if (flyClientIp) return flyClientIp.slice(0, 96);
   return (req.ip || req.socket.remoteAddress || 'unknown').slice(0, 96);
+}
+
+function stableAddressKey(address: string) {
+  return createHash('sha256').update(address || 'unknown').digest('hex').slice(0, 32);
+}
+
+function fixedWindow(now: number, windowMs: number) {
+  const start = Math.floor(now / windowMs) * windowMs;
+  return { start, resetsAt: start + windowMs };
+}
+
+async function redisIncrement(
+  key: string,
+  amount: number,
+  ttlMs: number,
+): Promise<number> {
+  const redis = getRedis();
+  if (!redis) throw new Error('redis_not_configured');
+  const result = await redis
+    .multi()
+    .incrby(key, amount)
+    .pexpire(key, ttlMs * 2)
+    .exec();
+  return Number(result?.[0]?.[1] ?? 0);
+}
+
+async function consumeGuestAllowanceDistributed(
+  guestSessionId: string,
+  clientAddress: string,
+  now = Date.now(),
+) {
+  const redis = getRedis();
+  if (!redis) return consumeGuestAllowance(guestSessionId, clientAddress, now);
+
+  try {
+    const ipWindow = fixedWindow(now, GUEST_CHAT_IP_WINDOW_MS);
+    const ipKey =
+      `xroga:guest:ip:${stableAddressKey(clientAddress)}:${ipWindow.start}`;
+    const ipCount = await redisIncrement(
+      ipKey,
+      1,
+      GUEST_CHAT_IP_WINDOW_MS,
+    );
+    if (ipCount > GUEST_CHAT_IP_LIMIT) {
+      return {
+        allowed: false as const,
+        reason: 'ip' as const,
+        remaining: 0,
+        resetsAt: ipWindow.resetsAt,
+      };
+    }
+
+    const sessionWindow = fixedWindow(now, GUEST_CHAT_WINDOW_MS);
+    const sessionKey =
+      `xroga:guest:session:${guestSessionId}:${sessionWindow.start}`;
+    const sessionCount = await redisIncrement(
+      sessionKey,
+      1,
+      GUEST_CHAT_WINDOW_MS,
+    );
+    if (sessionCount > GUEST_CHAT_PROMPT_LIMIT) {
+      return {
+        allowed: false as const,
+        reason: 'session' as const,
+        remaining: 0,
+        resetsAt: sessionWindow.resetsAt,
+      };
+    }
+
+    return {
+      allowed: true as const,
+      remaining: Math.max(0, GUEST_CHAT_PROMPT_LIMIT - sessionCount),
+      resetsAt: Math.max(sessionWindow.resetsAt, ipWindow.resetsAt),
+    };
+  } catch (error) {
+    console.warn('[guest/chat] Redis allowance fallback:', (error as Error).message);
+    return consumeGuestAllowance(guestSessionId, clientAddress, now);
+  }
+}
+
+async function consumeGuestTokenBudgetDistributed(
+  guestSessionId: string,
+  requestedTokens: number,
+  now = Date.now(),
+) {
+  const redis = getRedis();
+  if (!redis) return consumeGuestTokenBudget(guestSessionId, requestedTokens, now);
+
+  try {
+    const window = fixedWindow(now, GUEST_CHAT_WINDOW_MS);
+    const key =
+      `xroga:guest:tokens:${guestSessionId}:${window.start}`;
+    const used = await redisIncrement(key, requestedTokens, GUEST_CHAT_WINDOW_MS);
+    return {
+      allowed: used <= GUEST_CHAT_TOKEN_BUDGET,
+      remaining: Math.max(0, GUEST_CHAT_TOKEN_BUDGET - used),
+      resetsAt: window.resetsAt,
+    } as const;
+  } catch (error) {
+    console.warn('[guest/chat] Redis token-budget fallback:', (error as Error).message);
+    return consumeGuestTokenBudget(guestSessionId, requestedTokens, now);
+  }
+}
+
+async function acquireGuestLease(
+  guestSessionId: string,
+  now = Date.now(),
+): Promise<GuestLease | null> {
+  cleanExpired(now);
+  const redis = getRedis();
+  if (redis) {
+    try {
+      const token = randomUUID();
+      const redisKey = `xroga:guest:active:${guestSessionId}`;
+      const result = await redis.set(
+        redisKey,
+        token,
+        'PX',
+        GUEST_CHAT_CONCURRENCY_TTL_MS,
+        'NX',
+      );
+      if (result !== 'OK') return null;
+      return { token, sessionId: guestSessionId, redisKey };
+    } catch (error) {
+      console.warn('[guest/chat] Redis concurrency fallback:', (error as Error).message);
+    }
+  }
+
+  const existing = activeSessions.get(guestSessionId);
+  if (existing && existing.expiresAt > now) return null;
+  const token = randomUUID();
+  activeSessions.set(guestSessionId, {
+    token,
+    expiresAt: now + GUEST_CHAT_CONCURRENCY_TTL_MS,
+  });
+  return { token, sessionId: guestSessionId };
+}
+
+async function releaseGuestLease(lease: GuestLease) {
+  if (lease.redisKey) {
+    const redis = getRedis();
+    if (redis) {
+      try {
+        await redis.eval(
+          "if redis.call('get',KEYS[1])==ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end",
+          1,
+          lease.redisKey,
+          lease.token,
+        );
+        return;
+      } catch (error) {
+        console.warn('[guest/chat] Redis lease release fallback:', (error as Error).message);
+      }
+    }
+  }
+
+  const current = activeSessions.get(lease.sessionId);
+  if (current?.token === lease.token) activeSessions.delete(lease.sessionId);
+}
+
+async function isGuestSessionClaimed(guestSessionId: string, now = Date.now()) {
+  cleanExpired(now);
+  if ((claimedSessions.get(guestSessionId) ?? 0) > now) return true;
+
+  const redis = getRedis();
+  if (!redis) return false;
+  try {
+    return (await redis.exists(`xroga:guest:claimed:${guestSessionId}`)) > 0;
+  } catch (error) {
+    console.warn('[guest/chat] Redis claimed-session fallback:', (error as Error).message);
+    return false;
+  }
+}
+
+async function markGuestSessionClaimed(
+  guestSessionId: string,
+  userId: string,
+  now = Date.now(),
+) {
+  claimedSessions.set(guestSessionId, now + GUEST_CHAT_CLAIM_TTL_MS);
+
+  const redis = getRedis();
+  if (!redis) return;
+  try {
+    await redis.set(
+      `xroga:guest:claimed:${guestSessionId}`,
+      userId,
+      'PX',
+      GUEST_CHAT_CLAIM_TTL_MS,
+    );
+  } catch (error) {
+    console.warn('[guest/claim] Redis claim persistence fallback:', (error as Error).message);
+  }
 }
 
 export function consumeGuestAllowance(
@@ -97,7 +349,7 @@ export function consumeGuestAllowance(
 
   const ip = consumeBucket(
     ipBuckets,
-    clientAddress || 'unknown',
+    stableAddressKey(clientAddress || 'unknown'),
     GUEST_CHAT_IP_LIMIT,
     GUEST_CHAT_IP_WINDOW_MS,
     now,
@@ -134,9 +386,48 @@ export function consumeGuestAllowance(
   };
 }
 
+export function consumeGuestTokenBudget(
+  guestSessionId: string,
+  requestedTokens: number,
+  now = Date.now(),
+) {
+  cleanExpired(now);
+  return consumeTokenBucket(
+    guestSessionId,
+    Math.max(1, Math.floor(requestedTokens)),
+    now,
+  );
+}
+
+export function beginGuestConcurrencyForTest(
+  guestSessionId: string,
+  now = Date.now(),
+) {
+  cleanExpired(now);
+  const existing = activeSessions.get(guestSessionId);
+  if (existing && existing.expiresAt > now) return null;
+  const token = randomUUID();
+  activeSessions.set(guestSessionId, {
+    token,
+    expiresAt: now + GUEST_CHAT_CONCURRENCY_TTL_MS,
+  });
+  return token;
+}
+
+export function endGuestConcurrencyForTest(
+  guestSessionId: string,
+  token: string,
+) {
+  const current = activeSessions.get(guestSessionId);
+  if (current?.token === token) activeSessions.delete(guestSessionId);
+}
+
 export function resetGuestChatRateLimitsForTest() {
   sessionBuckets.clear();
   ipBuckets.clear();
+  tokenBuckets.clear();
+  activeSessions.clear();
+  claimedSessions.clear();
 }
 
 async function guestCompletion(messages: ChatMessage[]) {
@@ -163,6 +454,21 @@ async function guestCompletion(messages: ChatMessage[]) {
 
 const router = Router();
 
+router.post('/claim', authMiddleware, async (req: AuthRequest, res) => {
+  const parsed = guestClaimSchema.safeParse(req.body);
+  if (!parsed.success || !req.userId) {
+    res.status(400).json({
+      error: 'A valid guest session is required.',
+      code: 'INVALID_GUEST_CLAIM',
+    });
+    return;
+  }
+
+  await markGuestSessionClaimed(parsed.data.guestSessionId, req.userId);
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ ok: true });
+});
+
 router.post('/chat', async (req, res) => {
   const parsed = guestChatSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -174,9 +480,19 @@ router.post('/chat', async (req, res) => {
   }
 
   const guestSessionId = parsed.data.guestSessionId ?? randomUUID();
-  const allowance = consumeGuestAllowance(
+  if (await isGuestSessionClaimed(guestSessionId)) {
+    res.status(403).json({
+      error: 'This guest preview was already attached to an account. Continue in your signed-in workspace.',
+      code: 'GUEST_SESSION_CLAIMED',
+      guestSessionId,
+    });
+    return;
+  }
+
+  const clientAddress = guestClientAddress(req);
+  const allowance = await consumeGuestAllowanceDistributed(
     guestSessionId,
-    guestClientAddress(req),
+    clientAddress,
   );
 
   res.setHeader('Cache-Control', 'no-store');
@@ -212,11 +528,39 @@ router.post('/chat', async (req, res) => {
     { role: 'user', content: parsed.data.message },
   ];
 
-  if (estimateMessageTokens(messages) > 7_000) {
+  const estimatedInputTokens = estimateMessageTokens(messages);
+  if (estimatedInputTokens > 7_000) {
     res.status(413).json({
       error:
         'This guest conversation is too large. Send a shorter message or create a free account to continue.',
       code: 'GUEST_CONTEXT_TOO_LARGE',
+      guestSessionId,
+    });
+    return;
+  }
+
+  // Reserve the maximum possible answer as well as the estimated input. Failed
+  // provider calls still consume the reservation: retries must not become a way to
+  // bypass the guest budget.
+  const tokenBudget = await consumeGuestTokenBudgetDistributed(
+    guestSessionId,
+    estimatedInputTokens + 900,
+  );
+  if (!tokenBudget.allowed) {
+    res.status(429).json({
+      error:
+        'This guest preview used its safe token budget. Create a free Xroga account to keep the conversation and continue.',
+      code: 'GUEST_TOKEN_BUDGET_REACHED',
+      guestSessionId,
+    });
+    return;
+  }
+
+  const lease = await acquireGuestLease(guestSessionId);
+  if (!lease) {
+    res.status(429).json({
+      error: 'Finish the current guest reply before sending another message.',
+      code: 'GUEST_BUSY',
       guestSessionId,
     });
     return;
@@ -248,6 +592,8 @@ router.post('/chat', async (req, res) => {
         resetAt: new Date(allowance.resetsAt).toISOString(),
       },
     });
+  } finally {
+    await releaseGuestLease(lease);
   }
 });
 

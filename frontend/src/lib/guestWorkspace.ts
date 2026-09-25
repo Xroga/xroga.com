@@ -1,6 +1,9 @@
 export const GUEST_SESSION_ID_KEY = 'xroga_guest_session_id_v1';
 export const GUEST_WORKSPACE_SNAPSHOT_KEY = 'xroga_guest_workspace_v1';
+export const GUEST_AUTH_INTENT_KEY = 'xroga_guest_auth_intent_v1';
+export const GUEST_MIGRATION_MARKER_KEY = 'xroga_guest_migration_v1';
 export const GUEST_WORKSPACE_TTL_MS = 24 * 60 * 60_000;
+export const GUEST_MIGRATION_MARKER_TTL_MS = 30 * 60_000;
 
 type GuestMessage = {
   id: string;
@@ -20,6 +23,21 @@ export interface GuestWorkspaceSnapshot {
     sessionId?: string;
     updatedAt: string;
   };
+}
+
+export interface GuestAuthIntent {
+  version: 1;
+  guestSessionId: string;
+  reason: string;
+  createdAt: string;
+}
+
+export interface GuestMigrationMarker {
+  version: 1;
+  guestSessionId: string;
+  reason?: string;
+  migratedAt: string;
+  restoredWorkspace: boolean;
 }
 
 function validUuid(value: string | null | undefined): value is string {
@@ -46,6 +64,53 @@ export function getGuestSessionId(): string | undefined {
   }
 
   return undefined;
+}
+
+export function rememberGuestAuthIntent(reason: string) {
+  if (typeof window === 'undefined') return;
+  const guestSessionId = getGuestSessionId();
+  if (!guestSessionId) return;
+
+  const intent: GuestAuthIntent = {
+    version: 1,
+    guestSessionId,
+    reason: reason.slice(0, 48),
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    localStorage.setItem(GUEST_AUTH_INTENT_KEY, JSON.stringify(intent));
+  } catch {
+    /* Auth still works if storage is unavailable. */
+  }
+}
+
+export function loadGuestMigrationMarker(): GuestMigrationMarker | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(GUEST_MIGRATION_MARKER_KEY);
+    if (!raw) return null;
+    const marker = JSON.parse(raw) as GuestMigrationMarker;
+    const migratedAt = Date.parse(marker.migratedAt || '');
+    if (
+      marker.version !== 1 ||
+      !validUuid(marker.guestSessionId) ||
+      !Number.isFinite(migratedAt) ||
+      Date.now() - migratedAt > GUEST_MIGRATION_MARKER_TTL_MS
+    ) {
+      localStorage.removeItem(GUEST_MIGRATION_MARKER_KEY);
+      return null;
+    }
+    return marker;
+  } catch {
+    localStorage.removeItem(GUEST_MIGRATION_MARKER_KEY);
+    return null;
+  }
+}
+
+export function clearGuestMigrationMarker() {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(GUEST_MIGRATION_MARKER_KEY);
 }
 
 export function persistGuestWorkspaceSnapshotIfGuest(input: {

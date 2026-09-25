@@ -5,7 +5,9 @@ import {
   ArrowRight,
   CheckCircle2,
   LockKeyhole,
+  LogIn,
   Sparkles,
+  UserPlus,
   X,
 } from 'lucide-react';
 import {
@@ -25,6 +27,13 @@ import {
   withAuthTimeout,
 } from '@/lib/supabase/authErrors';
 import { requireGitHubProvider } from '@/lib/supabase/authProviders';
+import { apiFetch } from '@/lib/api';
+import {
+  clearGuestMigrationMarker,
+  loadGuestMigrationMarker,
+  rememberGuestAuthIntent,
+  type GuestMigrationMarker,
+} from '@/lib/guestWorkspace';
 
 export type WorkspaceAuthGateReason =
   | 'dashboard'
@@ -116,7 +125,7 @@ const GATE_COPY: Record<WorkspaceAuthGateReason, GateCopy> = {
     eyebrow: 'Save your work',
     title: 'Keep this conversation.',
     description:
-      'Guest mode is intentionally temporary. Create a free account before starting another terminal or opening saved history.',
+      'Your guest chat can stay exactly where it is. Sign in or create a free account before opening saved terminals or starting a separate workspace.',
     bullets: [
       'Keep the chat you already started',
       'Open saved terminals later',
@@ -158,6 +167,19 @@ const GATE_COPY: Record<WorkspaceAuthGateReason, GateCopy> = {
   },
 };
 
+const RESUME_LABELS: Partial<Record<WorkspaceAuthGateReason, string>> = {
+  dashboard: 'open your dashboard',
+  project: 'open projects',
+  integration: 'connect an app',
+  github: 'connect GitHub',
+  deploy: 'publish',
+  settings: 'open settings',
+  history: 'save or start another terminal',
+  upload: 'attach a file',
+  build: 'start the real build',
+  limit: 'continue in the full workspace',
+};
+
 type WorkspaceAuthGateContextValue = {
   requestAuthGate: (reason: WorkspaceAuthGateReason) => void;
   closeAuthGate: () => void;
@@ -181,11 +203,13 @@ export function WorkspaceAuthGateProvider({
     useState<WorkspaceAuthGateReason | null>(null);
   const [oauthLoading, setOauthLoading] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
+  const [resumeMarker, setResumeMarker] = useState<GuestMigrationMarker | null>(null);
   const primaryRef = useRef<HTMLAnchorElement>(null);
 
   const requestAuthGate = useCallback(
     (reason: WorkspaceAuthGateReason) => {
       if (identity.status !== 'guest') return;
+      rememberGuestAuthIntent(reason);
       setOauthError(null);
       setActiveReason(reason);
     },
@@ -215,10 +239,31 @@ export function WorkspaceAuthGateProvider({
   }, [activeReason, closeAuthGate]);
 
   useEffect(() => {
-    if (identity.status === 'authenticated' && activeReason) {
+    if (identity.status !== 'authenticated') return;
+    if (activeReason) {
       setActiveReason(null);
       setOauthError(null);
     }
+
+    const marker = loadGuestMigrationMarker();
+    if (!marker) return;
+    setResumeMarker(marker);
+
+    let cancelled = false;
+    void apiFetch<{ ok: boolean }>('/api/guest/claim', {
+      method: 'POST',
+      body: JSON.stringify({ guestSessionId: marker.guestSessionId }),
+    })
+      .then(() => {
+        if (!cancelled) clearGuestMigrationMarker();
+      })
+      .catch(() => {
+        // Keep the marker so the authenticated workspace retries the claim on reload.
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [identity.status, activeReason]);
 
   async function continueWithGitHub() {
@@ -263,6 +308,51 @@ export function WorkspaceAuthGateProvider({
     >
       {children}
 
+      {identity.status === 'authenticated' && resumeMarker ? (
+        <div
+          className="fixed inset-x-3 bottom-4 z-[420] mx-auto flex w-auto max-w-[620px] items-center gap-3 rounded-[18px] border border-[var(--card-border)] bg-[var(--card)]/95 p-3.5 text-[var(--foreground)] shadow-[0_20px_70px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:bottom-6 sm:px-4"
+          data-testid="guest-migration-resume"
+        >
+          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#006aff]/12 text-[#006aff]">
+            <CheckCircle2 className="h-[18px] w-[18px]" aria-hidden="true" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[12px] font-semibold">
+              {resumeMarker.restoredWorkspace
+                ? 'Guest conversation restored.'
+                : 'Account ready.'}
+            </p>
+            <p className="mt-0.5 truncate text-[10px] text-[var(--muted)] sm:text-[11px]">
+              {resumeMarker.reason && RESUME_LABELS[resumeMarker.reason as WorkspaceAuthGateReason]
+                ? `You were about to ${RESUME_LABELS[resumeMarker.reason as WorkspaceAuthGateReason]}. Nothing ran automatically.`
+                : 'Nothing from guest mode ran automatically. Continue when you are ready.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setResumeMarker(null);
+              window.setTimeout(() => {
+                document
+                  .querySelector<HTMLTextAreaElement>('[data-terminal-composer]')
+                  ?.focus();
+              }, 20);
+            }}
+            className="shrink-0 rounded-xl bg-[var(--foreground)] px-3 py-2 text-[11px] font-semibold text-[var(--background)] transition hover:opacity-85"
+          >
+            Continue
+          </button>
+          <button
+            type="button"
+            onClick={() => setResumeMarker(null)}
+            aria-label="Dismiss restored conversation notice"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[var(--muted)] transition hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)]"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      ) : null}
+
       {identity.status === 'guest' && copy ? (
         <div
           className="fixed inset-0 z-[500] flex items-center justify-center p-3 sm:p-6"
@@ -272,7 +362,7 @@ export function WorkspaceAuthGateProvider({
           <button
             type="button"
             aria-label="Close account prompt"
-            className="absolute inset-0 bg-black/55 backdrop-blur-[6px]"
+            className="absolute inset-0 bg-[#05070d]/65 backdrop-blur-xl"
             onClick={closeAuthGate}
           />
 
@@ -280,90 +370,151 @@ export function WorkspaceAuthGateProvider({
             role="dialog"
             aria-modal="true"
             aria-labelledby="workspace-auth-gate-title"
-            className="relative z-[1] w-full max-w-[520px] overflow-hidden rounded-[28px] border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] shadow-[0_28px_100px_rgba(0,0,0,0.38)]"
+            className="relative z-[1] w-full max-w-[720px] overflow-hidden rounded-[30px] border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] shadow-[0_36px_130px_rgba(0,0,0,0.48)] sm:rounded-[34px]"
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_28%_0%,rgba(0,106,255,0.28),transparent_62%)]"
-            />
-
-            <div className="relative p-5 sm:p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#006aff]/20 bg-[#006aff]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#006aff]">
-                  <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-                  {copy.eyebrow}
-                </div>
-                <button
-                  type="button"
-                  onClick={closeAuthGate}
-                  disabled={oauthLoading}
-                  className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-[var(--card-border)] text-[var(--muted)] transition hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)] disabled:opacity-50"
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4" aria-hidden="true" />
-                </button>
-              </div>
-
-              <h2
-                id="workspace-auth-gate-title"
-                className="mt-5 max-w-[430px] text-[26px] font-semibold leading-[1.05] tracking-[-0.035em] sm:text-[32px]"
-              >
-                {copy.title}
-              </h2>
-              <p className="mt-3 max-w-[450px] text-[13px] leading-6 text-[var(--muted)] sm:text-sm">
-                {copy.description}
-              </p>
-
-              <div className="mt-5 grid gap-2.5 rounded-[18px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] p-4">
-                {copy.bullets.map((item) => (
-                  <div key={item} className="flex items-start gap-2.5 text-[12px] leading-5">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#006aff]" aria-hidden="true" />
-                    <span>{item}</span>
+            <div className="grid sm:grid-cols-[220px_minmax(0,1fr)]">
+              <aside className="relative hidden min-h-[520px] overflow-hidden border-r border-[var(--card-border)] bg-[linear-gradient(155deg,rgba(0,106,255,0.18),rgba(0,106,255,0.045)_48%,rgba(255,255,255,0.02))] p-6 sm:flex sm:flex-col">
+                <div
+                  aria-hidden="true"
+                  className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-[#006aff]/18 blur-3xl"
+                />
+                <div className="relative">
+                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#006aff]/20 bg-[#006aff]/12 text-[#006aff] shadow-[0_10px_30px_rgba(0,106,255,0.12)]">
+                    <Sparkles className="h-5 w-5" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
+                  <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#006aff]">
+                    Guest → Xroga
+                  </p>
+                  <p className="mt-2 text-[20px] font-semibold leading-[1.1] tracking-[-0.025em]">
+                    Keep the thread.
+                    <br />
+                    Unlock the work.
+                  </p>
+                </div>
 
-              <div className="mt-5 grid gap-2.5">
-                <Link
-                  ref={primaryRef}
-                  href={signupHref}
-                  className="group flex min-h-12 items-center justify-center gap-2 rounded-[15px] bg-[linear-gradient(135deg,#006aff_0%,#2f7dff_52%,#67a4ff_100%)] px-4 text-[13px] font-bold text-white shadow-[0_12px_30px_rgba(0,106,255,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(0,106,255,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff]/60"
-                >
-                  Create free account
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-                </Link>
+                <div className="relative mt-auto space-y-3">
+                  {[
+                    ['01', 'Chat', 'Already here'],
+                    ['02', 'Account', 'Save the thread'],
+                    ['03', 'Build', 'Run with authority'],
+                  ].map(([step, label, note], index) => (
+                    <div key={step} className="flex items-center gap-3">
+                      <span
+                        className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl border text-[9px] font-bold ${index === 1
+                          ? 'border-[#006aff]/35 bg-[#006aff]/14 text-[#006aff]'
+                          : 'border-[var(--card-border)] bg-[var(--foreground)]/[0.035] text-[var(--muted)]'}`}
+                      >
+                        {step}
+                      </span>
+                      <span>
+                        <span className="block text-[11px] font-semibold">{label}</span>
+                        <span className="block text-[9px] text-[var(--muted)]">{note}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </aside>
 
-                <button
-                  type="button"
-                  onClick={() => void continueWithGitHub()}
-                  disabled={oauthLoading}
-                  className="flex min-h-12 items-center justify-center gap-2 rounded-[15px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.035] px-4 text-[13px] font-semibold transition hover:bg-[var(--foreground)]/[0.07] disabled:cursor-wait disabled:opacity-60"
-                >
-                  <GitHubIcon className="h-[18px] w-[18px]" />
-                  {oauthLoading ? 'Connecting…' : 'Continue with GitHub'}
-                </button>
-              </div>
+              <div className="relative p-5 sm:p-7">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-0 top-0 h-40 w-60 bg-[radial-gradient(circle_at_100%_0%,rgba(0,106,255,0.16),transparent_66%)]"
+                />
 
-              {oauthError ? (
-                <p
-                  role="alert"
-                  className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-[11px] leading-5 text-red-500"
-                >
-                  {oauthError}
-                </p>
-              ) : null}
+                <div className="relative flex items-start justify-between gap-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#006aff]/20 bg-[#006aff]/10 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-[#006aff]">
+                    <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                    {copy.eyebrow}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={closeAuthGate}
+                    disabled={oauthLoading}
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] text-[var(--muted)] transition hover:bg-[var(--foreground)]/[0.07] hover:text-[var(--foreground)] disabled:opacity-50"
+                    aria-label="Close"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[var(--muted)]">
-                <span className="inline-flex items-center gap-1.5">
-                  <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
-                  Your current guest conversation stays in this browser.
-                </span>
-                <Link
-                  href={loginHref}
-                  className="font-semibold text-[var(--foreground)] underline decoration-[var(--card-border)] underline-offset-4 hover:text-[#006aff]"
-                >
-                  Already have an account? Sign in
-                </Link>
+                <div className="relative mt-5">
+                  <h2
+                    id="workspace-auth-gate-title"
+                    className="max-w-[430px] text-[27px] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-[34px]"
+                  >
+                    {copy.title}
+                  </h2>
+                  <p className="mt-3 max-w-[450px] text-[12px] leading-5 text-[var(--muted)] sm:text-[13px] sm:leading-6">
+                    {copy.description}
+                  </p>
+                </div>
+
+                <div className="relative mt-5 grid gap-2">
+                  {copy.bullets.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-2.5 rounded-[13px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-3 py-2.5 text-[11px] leading-4"
+                    >
+                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#006aff]/10 text-[#006aff]">
+                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="relative mt-5 grid gap-2.5 sm:grid-cols-2">
+                  <Link
+                    ref={primaryRef}
+                    href={signupHref}
+                    className="group flex min-h-12 items-center justify-center gap-2 rounded-[15px] bg-[linear-gradient(135deg,#006aff_0%,#2d7dff_55%,#73adff_100%)] px-4 text-[12px] font-bold text-white shadow-[0_14px_32px_rgba(0,106,255,0.24)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,106,255,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff]/60 sm:col-span-2"
+                  >
+                    <UserPlus className="h-4 w-4" aria-hidden="true" />
+                    Create free account
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </Link>
+
+                  <Link
+                    href={loginHref}
+                    className="flex min-h-11 items-center justify-center gap-2 rounded-[14px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-4 text-[11px] font-semibold transition hover:bg-[var(--foreground)]/[0.07]"
+                  >
+                    <LogIn className="h-4 w-4" aria-hidden="true" />
+                    Sign in
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => void continueWithGitHub()}
+                    disabled={oauthLoading}
+                    className="flex min-h-11 items-center justify-center gap-2 rounded-[14px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-4 text-[11px] font-semibold transition hover:bg-[var(--foreground)]/[0.07] disabled:cursor-wait disabled:opacity-60"
+                  >
+                    <GitHubIcon className="h-[17px] w-[17px]" />
+                    {oauthLoading ? 'Connecting…' : 'GitHub'}
+                  </button>
+                </div>
+
+                {oauthError ? (
+                  <p
+                    role="alert"
+                    className="relative mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-[10px] leading-5 text-red-500"
+                  >
+                    {oauthError}
+                  </p>
+                ) : null}
+
+                <div className="relative mt-4 flex items-center justify-between gap-3 border-t border-[var(--card-border)] pt-4 text-[10px] text-[var(--muted)]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" />
+                    No restart. This guest chat stays here.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={closeAuthGate}
+                    className="shrink-0 font-semibold text-[var(--foreground)] transition hover:text-[#006aff]"
+                  >
+                    Continue as guest
+                  </button>
+                </div>
               </div>
             </div>
           </section>

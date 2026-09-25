@@ -8,7 +8,11 @@ import {
   USER_CACHE_SCOPE_VERSION,
   USER_SCOPED_DATABASES,
 } from './userScopedCache';
-import { GUEST_WORKSPACE_SNAPSHOT_KEY } from './guestWorkspace';
+import {
+  GUEST_AUTH_INTENT_KEY,
+  GUEST_MIGRATION_MARKER_KEY,
+  GUEST_WORKSPACE_SNAPSHOT_KEY,
+} from './guestWorkspace';
 
 function storage(initial: Record<string, string> = {}) {
   const values = new Map(Object.entries(initial));
@@ -94,6 +98,12 @@ test('migrates a fresh guest transcript into the authenticated workspace once', 
   const local = storage({
     [USER_CACHE_OWNER_KEY]: `${USER_CACHE_SCOPE_VERSION}:guest`,
     [GUEST_WORKSPACE_SNAPSHOT_KEY]: guestSnapshot,
+    [GUEST_AUTH_INTENT_KEY]: JSON.stringify({
+      version: 1,
+      guestSessionId: '33333333-3333-4333-8333-333333333333',
+      reason: 'build',
+      createdAt: new Date(now).toISOString(),
+    }),
     xroga_workspace_session: JSON.stringify(guestSession),
   });
   const session = storage();
@@ -114,5 +124,41 @@ test('migrates a fresh guest transcript into the authenticated workspace once', 
     JSON.parse(local.getItem('xroga_workspace_session') || '{}'),
     guestSession,
   );
+  assert.equal(local.getItem(GUEST_AUTH_INTENT_KEY), null);
+  assert.deepEqual(
+    JSON.parse(local.getItem(GUEST_MIGRATION_MARKER_KEY) || '{}'),
+    {
+      version: 1,
+      guestSessionId: '33333333-3333-4333-8333-333333333333',
+      reason: 'build',
+      restoredWorkspace: true,
+      migratedAt: JSON.parse(local.getItem(GUEST_MIGRATION_MARKER_KEY) || '{}').migratedAt,
+    },
+  );
   assert.deepEqual(deletedDatabases, [...USER_SCOPED_DATABASES]);
+});
+
+test('preserves a guest auth intent even when there is no transcript to restore', () => {
+  const now = Date.now();
+  const local = storage({
+    [USER_CACHE_OWNER_KEY]: `${USER_CACHE_SCOPE_VERSION}:guest`,
+    [GUEST_AUTH_INTENT_KEY]: JSON.stringify({
+      version: 1,
+      guestSessionId: '44444444-4444-4444-8444-444444444444',
+      reason: 'integration',
+      createdAt: new Date(now).toISOString(),
+    }),
+  });
+  const session = storage();
+
+  vm.runInNewContext(buildUserCacheScopeScript('signed-in-user'), {
+    localStorage: local,
+    sessionStorage: session,
+    indexedDB: { deleteDatabase: () => undefined },
+  });
+
+  const marker = JSON.parse(local.getItem(GUEST_MIGRATION_MARKER_KEY) || '{}');
+  assert.equal(marker.guestSessionId, '44444444-4444-4444-8444-444444444444');
+  assert.equal(marker.reason, 'integration');
+  assert.equal(marker.restoredWorkspace, false);
 });

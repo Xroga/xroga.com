@@ -26,9 +26,14 @@ const chat = readFileSync(
 test('workspace mounts one reusable guest auth gate around the interactive shell', () => {
   assert.match(shell, /<WorkspaceAuthGateProvider>/);
   assert.match(gate, /role="dialog"/);
-  assert.match(gate, /Your current guest conversation stays in this browser/);
+  assert.match(gate, /No restart\. This guest chat stays here/);
   assert.match(gate, /auth\/signup\?next=%2Fworkspace/);
   assert.match(gate, /auth\/login\?next=%2Fworkspace/);
+  assert.match(gate, /Create free account/);
+  assert.match(gate, />\s*Sign in\s*</);
+  assert.match(gate, /Continue as guest/);
+  assert.match(gate, /api\/guest\/claim/);
+  assert.match(gate, /Guest conversation restored/);
 });
 
 test('guest protected sidebar destinations stay in the workspace instead of navigating to login', () => {
@@ -37,6 +42,9 @@ test('guest protected sidebar destinations stay in the workspace instead of navi
   assert.match(sidebar, /dashboard\/integrations'\) return 'integration'/);
   assert.match(sidebar, /requestAuthGate\(gateReason\)/);
   assert.match(sidebar, /requestAuthGate\('history'\)/);
+  assert.match(sidebar, /Create free account/);
+  assert.match(sidebar, /Sign in/);
+  assert.match(sidebar, /Sign up/);
 });
 
 test('guest file and integration actions are gated before authenticated tools run', () => {

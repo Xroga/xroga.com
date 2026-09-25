@@ -123,6 +123,11 @@ app.use(cors(corsOptions));
 // Whop Standard Webhooks signatures cover the untouched raw body.
 app.use('/api/billing/webhook', billingWebhookRouter);
 
+// Guest preview is deliberately much smaller than authenticated upload/build
+// requests. Parse it first with a strict body ceiling so an anonymous caller never
+// reaches the general 10 MB JSON allowance.
+app.use('/api/guest', express.json({ limit: '32kb' }), guestChatRouter);
+
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/', (_req, res) => {
@@ -185,8 +190,6 @@ app.get('/api/config', (_req, res) => {
 });
 
 app.use('/chat', simpleChatRouter);
-// Guest preview is isolated from authenticated Phase 1, integrations, tools and builds.
-app.use('/api/guest', guestChatRouter);
 
 app.use('/api/swarm', authMiddleware, swarmRouter);
 app.use('/api/v1', authMiddleware, v1Router);
