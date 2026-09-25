@@ -34,7 +34,8 @@ test('workspace mounts one reusable guest auth gate around the interactive shell
 test('guest protected sidebar destinations stay in the workspace instead of navigating to login', () => {
   assert.match(sidebar, /guestGateReasonForHref/);
   assert.match(sidebar, /event\.preventDefault\(\)/);
-  assert.match(sidebar, /requestAuthGate\('integration'\)/);
+  assert.match(sidebar, /dashboard\/integrations'\) return 'integration'/);
+  assert.match(sidebar, /requestAuthGate\(gateReason\)/);
   assert.match(sidebar, /requestAuthGate\('history'\)/);
 });
 
