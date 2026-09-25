@@ -1,9 +1,9 @@
 export const PUBLIC_MARKETING_NAV = [
   { href: '/features', label: 'Product' },
-  { href: '/ai-app-builder', label: 'AI App Builder' },
-  { href: '/ai-coding-agent', label: 'AI Coding Agent' },
-  { href: '/showcase', label: 'Showcase' },
-  { href: '/docs', label: 'Docs' },
+  { href: '/build', label: 'Build' },
+  { href: '/integrations', label: 'Connect' },
+  { href: '/ai-coding-agent', label: 'Develop' },
+  { href: '/showcase', label: 'Explore' },
   { href: '/pricing', label: 'Pricing' },
 ] as const;
 
