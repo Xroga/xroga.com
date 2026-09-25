@@ -63,7 +63,7 @@ const GATE_COPY: Record<WorkspaceAuthGateReason, GateCopy> = {
     bullets: [
       'Keep this guest conversation',
       'See saved activity and usage',
-      'Continue from any device',
+      'Continue after sign-in',
     ],
   },
   project: {
@@ -129,7 +129,7 @@ const GATE_COPY: Record<WorkspaceAuthGateReason, GateCopy> = {
     bullets: [
       'Keep the chat you already started',
       'Open saved terminals later',
-      'Continue across browsers and devices',
+      'Continue in your signed-in workspace',
     ],
   },
   upload: {

@@ -55,5 +55,8 @@ test('guest file and integration actions are gated before authenticated tools ru
 
 test('reaching the guest chat limit opens the shared account gate', () => {
   assert.match(chat, /GUEST_LIMIT_REACHED/);
+  assert.match(chat, /GUEST_TOKEN_BUDGET_REACHED/);
+  assert.match(chat, /GUEST_CONTEXT_TOO_LARGE/);
+  assert.match(chat, /GUEST_SESSION_CLAIMED/);
   assert.match(chat, /requestAuthGate\('limit'\)/);
 });

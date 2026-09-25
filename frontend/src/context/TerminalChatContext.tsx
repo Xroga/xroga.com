@@ -2151,8 +2151,13 @@ const stopRequestedRunIdRef =
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return;
         const apiError = error instanceof ApiError ? error : null;
-        const limitReached =
-          String(apiError?.data?.code ?? '') === 'GUEST_LIMIT_REACHED';
+        const guestCode = String(apiError?.data?.code ?? '');
+        const limitReached = [
+          'GUEST_LIMIT_REACHED',
+          'GUEST_TOKEN_BUDGET_REACHED',
+          'GUEST_CONTEXT_TOO_LARGE',
+          'GUEST_SESSION_CLAIMED',
+        ].includes(guestCode);
         const message =
           error instanceof Error
             ? error.message
