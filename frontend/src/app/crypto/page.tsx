@@ -46,6 +46,7 @@ export const metadata: Metadata = buildMetadata({
     'Web3 app development',
     'blockchain app builder',
     'Web3 website builder',
+    'AI website generator',
     'AI dashboard builder',
     'AI SaaS builder',
     'dApp builder',
@@ -102,7 +103,7 @@ const FAQS = [
       'Yes. Xroga has a free plan with no card required, including limited access to the core building workspace, repository-aware edits, previews and verification. Paid capacity is available when you need more.',
   },
   {
-    q: 'Can Xroga build blockchain apps and dApps?',
+    q: 'Is Xroga a dApp builder?',
     a:
       'Xroga can help build supported Web3 and blockchain applications including wallet-facing interfaces, dApp front ends, dashboards, DAO software, analytics products, crypto SaaS and on-chain monitoring tools.',
   },
