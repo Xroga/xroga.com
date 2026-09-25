@@ -66,7 +66,7 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
     secondary: [
       { href: '/features', label: 'Verification', note: 'Tests, builds, evidence, and blockers.', icon: ShieldCheck },
       { href: '/integrations', label: 'Integrations', note: 'Connect apps and services to Xroga.', icon: Boxes },
-      { href: '/build-with/github', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch },
+      { href: '/github-ai-coding-agent', label: 'GitHub & ownership', note: 'Keep source code in repositories you control.', icon: GitBranch },
     ],
     ctaHref: '/features',
     ctaLabel: 'Explore Xroga',
@@ -117,7 +117,7 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
     description: 'Bring an existing repository and use Xroga for implementation, debugging, verification, and release preparation.',
     primary: [
       { href: '/ai-coding-agent', label: 'Existing projects', note: 'Understand and change a real codebase.', icon: Code2 },
-      { href: '/build-with/github', label: 'GitHub repositories', note: 'Work from connected repositories and branches.', icon: GitBranch },
+      { href: '/github-ai-coding-agent', label: 'GitHub repositories', note: 'Work from connected repositories and branches.', icon: GitBranch },
       { href: '/ai-coding-agent', label: 'Add features & fix bugs', note: 'Make focused changes without rebuilding everything.', icon: FileCode2 },
     ],
     secondary: [
