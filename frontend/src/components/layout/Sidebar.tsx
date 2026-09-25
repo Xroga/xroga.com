@@ -326,6 +326,12 @@ export function Sidebar({ displayName }: SidebarProps) {
   }, []);
 
   useEffect(() => {
+    if (!isGuest || !searchOpen) return;
+    setSearchOpen(false);
+    requestAuthGate('history');
+  }, [isGuest, searchOpen, requestAuthGate]);
+
+  useEffect(() => {
     document.body.classList.toggle('mobile-sidebar-open', mobileOpen);
     if (mobileOpen) {
       const prev = document.body.style.overflow;
@@ -462,7 +468,7 @@ export function Sidebar({ displayName }: SidebarProps) {
   if (incognito) {
     return (
       <>
-        <SidebarSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+        <SidebarSearchModal open={searchOpen && !isGuest} onClose={() => setSearchOpen(false)} />
         <AvatarPickerModal
           open={avatarPickerOpen}
           onClose={() => setAvatarPickerOpen(false)}
@@ -512,14 +518,6 @@ export function Sidebar({ displayName }: SidebarProps) {
       return;
     }
     handleNavClick();
-  }
-
-  function handleSearch() {
-    if (isGuest) {
-      requestAuthGate('history');
-      return;
-    }
-    setSearchOpen(true);
   }
 
   function handleNewChat() {
@@ -758,7 +756,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button
                   type="button"
-                  onClick={handleSearch}
+                  onClick={() => setSearchOpen(true)}
                   className="xv-sidebar-head-icon"
                   aria-label="Search"
                 >
@@ -795,7 +793,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 </button>
               </HoverTip>
               <HoverTip label="Search" description="Search projects, chats, and commands.">
-                <button type="button" onClick={handleSearch} aria-label="Search">
+                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
                   <AnimatedIcon icon={LocateFixedIcon} />
                 </button>
               </HoverTip>
@@ -939,7 +937,7 @@ export function Sidebar({ displayName }: SidebarProps) {
           >
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" onClick={handleSearch} aria-label="Search">
+          <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
             <AnimatedIcon icon={LocateFixedIcon} />
           </button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
