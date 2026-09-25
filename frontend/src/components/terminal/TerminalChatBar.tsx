@@ -365,7 +365,7 @@ export function TerminalChatBar() {
     }
     triggerComposerSignal(1800);
     setFiles((prev) => [...prev, ...incoming].slice(0, 4));
-  }, [triggerComposerSignal]);
+  }, [isGuest, requestAuthGate, triggerComposerSignal]);
 
   const requestFilePicker = useCallback(() => {
     if (isGuest) {
