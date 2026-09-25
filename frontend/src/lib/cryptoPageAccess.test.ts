@@ -53,19 +53,15 @@ test('every crypto route in the config resolves to a page that exists', () => {
   );
 });
 
-test('the crypto page renders in black whatever the stored theme is', () => {
+test('the crypto page inherits the shared four-theme system', () => {
+  assert.ok(
+    !PROVIDER.includes("startsWith('/crypto')"),
+    'the crypto route must not force a single theme',
+  );
   assert.match(
     PROVIDER,
-    /pathname\?\.startsWith\('\/crypto'\) \? \('black' as const\) : null/,
-    'the crypto route no longer forces its theme',
-  );
-  assert.match(PROVIDER, /const core = forcedTheme \?\? normalizeTheme\(theme\)/, 'the forced theme must win');
-  // Forced at render, not written to the store: the user's own choice comes back
-  // the moment they leave.
-  const at = PROVIDER.indexOf('forcedTheme');
-  assert.ok(
-    !/setTheme\('black'\)/.test(PROVIDER.slice(at, at + 600)),
-    'forcing the page theme must not overwrite the stored preference',
+    /const core = forcedTheme \?\? normalizeTheme\(theme\)/,
+    'theme normalization must remain the source of the active solid theme',
   );
 });
 
