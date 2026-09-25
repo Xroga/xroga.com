@@ -36,6 +36,7 @@ export function useBackgroundBuildJobs(
   onBuildComplete?: BuildCompleteHandler,
   onBuildFailed?: BuildFailedHandler,
   onBuildRecovered?: BuildRecoveryHandler,
+  enabled = true,
 ) {
   const setUnreadCount = useAppStore((s) => s.setUnreadCount);
   const setNotifications = useAppStore((s) => s.setNotifications);
@@ -47,6 +48,7 @@ export function useBackgroundBuildJobs(
   recoveredRef.current = onBuildRecovered;
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
 
     async function refreshNotifications() {
@@ -220,5 +222,5 @@ export function useBackgroundBuildJobs(
       window.removeEventListener('xroga-network-restored', onNetworkRestored);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [setNotifications, setUnreadCount]);
+  }, [enabled, setNotifications, setUnreadCount]);
 }
