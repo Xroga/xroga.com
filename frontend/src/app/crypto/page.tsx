@@ -30,21 +30,26 @@ import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
+import { CryptoSeoSections } from './CryptoSeoSections';
+import seoStyles from './crypto-seo.module.css';
 import styles from './crypto.module.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Crypto Builder — Build Web3 Apps & AI Agents',
+  title: 'Free AI App Builder for Web3 & Blockchain Apps',
   description:
-    'Build crypto agents, Web3 applications, DeFi dashboards, DAO tooling, on-chain monitoring and hackathon projects with Xroga AI.',
+    'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga. A blockchain app builder for Web3 development in real repositories. Start free.',
   path: '/crypto',
   keywords: [
-    'crypto builder',
-    'AI crypto agent builder',
-    'Web3 builder',
-    'DeFi app builder',
-    'on-chain analytics',
-    'crypto hackathon builder',
-    'AI Web3 development',
+    'free AI app builder',
+    'Web3 app',
+    'Web3 apps',
+    'Web3 app development',
+    'blockchain app builder',
+    'Web3 website builder',
+    'AI dashboard builder',
+    'AI SaaS builder',
+    'dApp builder',
+    'AI crypto builder',
   ],
 });
 
@@ -209,12 +214,12 @@ export default function CryptoPage() {
   const softwareLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Xroga Crypto Builder',
+    name: 'Xroga Web3 & Blockchain App Builder',
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Web',
     url: 'https://xroga.com/crypto',
     description:
-      'Build AI crypto agents, Web3 applications, DeFi products, on-chain analytics and hackathon projects with Xroga AI.',
+      'A free AI app builder for Web3 and blockchain projects, including dApps, DeFi dashboards, crypto SaaS, wallet tools and on-chain products.',
   };
 
   return (
@@ -233,22 +238,33 @@ export default function CryptoPage() {
         />
 
         <div className={styles.heroInner}>
-          {/* The badge said the page's own title back to it, directly above a headline
-              that says the same thing. */}
-          <h1 className={`xv-cb-h1 ${styles.heroTitle}`}>
-            AI Crypto Builder
+          <span className={`${styles.eyebrow} ${seoStyles.heroEyebrow}`}>
+            <Sparkles aria-hidden="true" />
+            FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO
+          </span>
+
+          <h1 className={`xv-cb-h1 ${styles.heroTitle} ${seoStyles.heroTitle}`}>
+            Build Web3 &amp; Blockchain Apps
             <br />
-            That <span>Ships</span>
+            <span>with AI</span>
           </h1>
 
           <p className={styles.heroSub}>
-            Build crypto agents, Web3 apps, DeFi dashboards,
-            DAO tooling and on-chain products in a real
-            repository. Xroga is for crypto product work,{' '}
-            <strong>
-              not only hackathons.
-            </strong>
+            Build Web3 apps, dApps, DeFi dashboards, crypto SaaS,
+            wallet tools and on-chain products with AI—in a real
+            repository you control.{' '}
+            <strong>Start free. Keep the code.</strong>
           </p>
+
+          <div className={seoStyles.heroTrust} aria-label="Xroga product advantages">
+            <span>Free to start</span>
+            <i />
+            <span>Real repository</span>
+            <i />
+            <span>Reviewable code</span>
+            <i />
+            <span>Verification before shipping</span>
+          </div>
 
           {/* The hero used to carry a "Start building" button between the subtitle and
               the console, linking to `#builder` — the console directly beneath it. It
@@ -309,15 +325,16 @@ export default function CryptoPage() {
             </span>
 
             <h2>
-              Everything You Need to
+              AI App Builder for Web3
               <br />
-              Build Crypto Products
+              &amp; Blockchain Products
             </h2>
           </div>
 
           <p>
-            A focused software loop from current research to
-            repository work, validation and publishing.
+            Turn Web3 product requirements into repository work,
+            supported integrations, validation and publishing
+            evidence without hiding the code.
           </p>
         </div>
 
@@ -378,6 +395,7 @@ export default function CryptoPage() {
 
       <section
         className={`${styles.section} ${styles.typesSection}`}
+        id="use-cases"
       >
         <div className={styles.sectionHeading}>
           <div>
@@ -386,16 +404,16 @@ export default function CryptoPage() {
             </span>
 
             <h2>
-              Built for Every Type
+              What Can You Build with
               <br />
-              of Crypto Product
+              a Web3 App Builder?
             </h2>
           </div>
 
           <p>
-            From focused research tools to full Web3
-            applications, the same repository-aware workflow
-            scales with the product.
+            From Web3 apps and dApps to DeFi dashboards, crypto
+            SaaS and on-chain tools, the same repository-aware
+            workflow scales with the product.
           </p>
         </div>
 
@@ -449,6 +467,8 @@ export default function CryptoPage() {
           </div>
         </div>
       </section>
+
+      <CryptoSeoSections />
 
       <section
         className={`${styles.section} ${styles.proofSection}`}
@@ -693,12 +713,13 @@ export default function CryptoPage() {
           </span>
 
           <h2>
-            Crypto Builder, without the vague claims.
+            Web3 &amp; Blockchain App Builder FAQs
           </h2>
 
           <p>
-            What this page can help you build, how shipping
-            works and where the boundaries are.
+            Direct answers about building Web3 apps with AI,
+            repository ownership, dashboards, SaaS, dApps and
+            shipping boundaries.
           </p>
 
           <Link href="/docs">
