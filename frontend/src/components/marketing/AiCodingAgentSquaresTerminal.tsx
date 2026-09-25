@@ -49,7 +49,7 @@ const THEMES: Record<ThemeName, ThemePalette> = {
 };
 
 const CFG = {
-  columns: 128,
+  columns: 96,
   speed: 15,
   fillThreshold: 0.3,
   dashHead: 0.1,
@@ -140,7 +140,7 @@ export function AiCodingAgentSquaresTerminal({
     };
 
     const rebuild = () => {
-      cols = width < 720 ? 78 : CFG.columns;
+      cols = width < 720 ? 62 : CFG.columns;
       rows = Math.max(44, Math.round(cols * (height / width) * 0.82));
 
       const count = rows * cols;
@@ -183,12 +183,9 @@ export function AiCodingAgentSquaresTerminal({
     };
 
     const render = (now: number) => {
-      if (!visible) {
-        raf = requestAnimationFrame(render);
-        return;
-      }
+      raf = 0;
+      if (!visible) return;
 
-      resize();
       ctx.clearRect(0, 0, width, height);
 
       mouse.x += (mouse.tx - mouse.x) * 0.07;
@@ -374,7 +371,7 @@ export function AiCodingAgentSquaresTerminal({
       }
 
       ctx.shadowBlur = 0;
-      raf = requestAnimationFrame(render);
+      if (visible) raf = requestAnimationFrame(render);
     };
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -406,6 +403,9 @@ export function AiCodingAgentSquaresTerminal({
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         visible = entry?.isIntersecting ?? true;
+        if (visible && !raf) {
+          raf = requestAnimationFrame(render);
+        }
       },
       { threshold: 0.01 },
     );
@@ -423,7 +423,7 @@ export function AiCodingAgentSquaresTerminal({
     });
 
     resize();
-    raf = requestAnimationFrame(render);
+    if (visible) raf = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(raf);
