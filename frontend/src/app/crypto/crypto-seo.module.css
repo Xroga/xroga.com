@@ -1,3 +1,65 @@
+
+.heroEyebrow {
+  color: rgba(239, 242, 255, 0.82) !important;
+  border-color: rgba(139, 154, 255, 0.24) !important;
+  background: rgba(6, 9, 18, 0.56) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 34px rgba(0,0,0,.16);
+}
+
+.heroEyebrow svg {
+  color: #91a2ff !important;
+}
+
+.heroTitle {
+  font-family: var(--font-claude-serif), "Arvo", Georgia, serif !important;
+  font-weight: 520 !important;
+  letter-spacing: -0.052em !important;
+  line-height: .98 !important;
+}
+
+.heroTitle span {
+  font-family: "Arvo", var(--font-claude-serif), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.heroTrust {
+  width: fit-content;
+  max-width: 100%;
+  margin: 19px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(225, 229, 244, 0.56);
+  font-family: "Manrope", var(--font-goga), sans-serif;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: .025em;
+}
+
+.heroTrust i {
+  width: 3px;
+  height: 3px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #7e90ff;
+  box-shadow: 0 0 10px rgba(111, 131, 255, .68);
+}
+
+@media (max-width: 640px) {
+  .heroTrust {
+    width: min(340px, 100%);
+    gap: 7px 9px;
+    font-size: 8px;
+  }
+
+  .heroTrust i:nth-of-type(2) {
+    display: none;
+  }
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 .seoRoot {
