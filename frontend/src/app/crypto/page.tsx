@@ -242,15 +242,58 @@ function FeatureArtwork({ index }: { index: number }) {
 }
 
 export default function CryptoPage() {
-  const softwareLd = {
+  const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Xroga Web3 & Blockchain App Builder',
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Web',
-    url: 'https://xroga.com/crypto',
-    description:
-      'A free AI app builder for Web3 and blockchain projects, including dApps, DeFi dashboards, crypto SaaS, wallet tools and on-chain products.',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': 'https://xroga.com/crypto#webpage',
+        url: 'https://xroga.com/crypto',
+        name: 'Free AI App Builder for Web3 & Blockchain Apps',
+        description:
+          'Build Web3 apps, dApps, crypto SaaS and DeFi dashboards with Xroga in real repositories you control.',
+        isPartOf: {
+          '@id': 'https://xroga.com/#website',
+        },
+        about: {
+          '@id': 'https://xroga.com/crypto#software',
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://xroga.com/crypto#software',
+        name: 'Xroga Web3 & Blockchain App Builder',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Web',
+        url: 'https://xroga.com/crypto',
+        description:
+          'A free AI app builder for Web3 and blockchain projects, including dApps, DeFi dashboards, crypto SaaS, wallet tools and on-chain products.',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          url: 'https://xroga.com/crypto#builder',
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://xroga.com/crypto#breadcrumb',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://xroga.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Web3 & Blockchain App Builder',
+            item: 'https://xroga.com/crypto',
+          },
+        ],
+      },
+    ],
   };
 
   return (
@@ -258,7 +301,7 @@ export default function CryptoPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(softwareLd).replace(/</g, '\\u003c'),
+          __html: JSON.stringify(structuredData).replace(/</g, '\\u003c'),
         }}
       />
 
