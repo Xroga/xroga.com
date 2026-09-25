@@ -1335,3 +1335,30 @@
     animation: none !important;
   }
 }
+
+
+/* Secondary integration logos: larger, clearer, and consistently visible. */
+.xv-nav-connect-more > div {
+  gap: .5rem;
+}
+
+.xv-nav-connect-more > div > a:not(.xv-nav-connect-more__all) {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.xv-nav-connect-more img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.xv-nav-connect-more .xv-nav-brand-fallback {
+  width: 22px;
+  height: 22px;
+  font-size: .68rem;
+}
+
