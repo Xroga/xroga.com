@@ -14,7 +14,8 @@ import {
 import { normalizeProviderError } from '../ai/providerRuntime.js';
 
 export const GUEST_CHAT_PROMPT_LIMIT = 5;
-export const GUEST_CHAT_WINDOW_MS = 15 * 60_000;
+export const GUEST_CHAT_WINDOW_MS = 24 * 60 * 60_000;
+export const GUEST_CHAT_IP_WINDOW_MS = 15 * 60_000;
 export const GUEST_CHAT_IP_LIMIT = 10;
 
 interface RateBucket {
@@ -49,12 +50,13 @@ function consumeBucket(
   buckets: Map<string, RateBucket>,
   key: string,
   limit: number,
+  windowMs: number,
   now: number,
 ): { allowed: boolean; remaining: number; resetsAt: number } {
   const current = buckets.get(key);
   const bucket =
     !current || current.resetsAt <= now
-      ? { count: 0, resetsAt: now + GUEST_CHAT_WINDOW_MS }
+      ? { count: 0, resetsAt: now + windowMs }
       : current;
 
   if (bucket.count >= limit) {
@@ -97,6 +99,7 @@ export function consumeGuestAllowance(
     ipBuckets,
     clientAddress || 'unknown',
     GUEST_CHAT_IP_LIMIT,
+    GUEST_CHAT_IP_WINDOW_MS,
     now,
   );
   if (!ip.allowed) {
@@ -112,6 +115,7 @@ export function consumeGuestAllowance(
     sessionBuckets,
     guestSessionId,
     GUEST_CHAT_PROMPT_LIMIT,
+    GUEST_CHAT_WINDOW_MS,
     now,
   );
   if (!session.allowed) {
