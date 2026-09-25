@@ -913,3 +913,216 @@
     transition:none!important;
   }
 }
+
+
+/* =========================================================
+   PUBLIC NAVIGATION V3 — blue Xroga system + Connect logos
+   ========================================================= */
+.xv-public-theme {
+  --nav-accent: #2563eb;
+  --nav-accent-2: #38bdf8;
+  --nav-accent-soft: rgba(37, 99, 235, .14);
+}
+
+.theme-black.xv-public-theme {
+  --nav-accent: #60a5fa;
+  --nav-accent-2: #22d3ee;
+  --nav-accent-soft: rgba(96, 165, 250, .15);
+}
+
+.theme-gray.xv-public-theme {
+  --nav-accent: #69a8ff;
+  --nav-accent-2: #38bdf8;
+  --nav-accent-soft: rgba(105, 168, 255, .14);
+}
+
+.theme-beige.xv-public-theme {
+  --nav-accent: #2563eb;
+  --nav-accent-2: #0ea5e9;
+  --nav-accent-soft: rgba(37, 99, 235, .12);
+}
+
+.xv-nav-mega__inner {
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--nav-accent) 24%, transparent),
+      transparent 24%,
+      transparent 68%,
+      color-mix(in srgb, var(--nav-accent-2) 20%, transparent)
+    ),
+    var(--nav-panel);
+}
+
+.xv-nav-mega__inner::before {
+  background:
+    radial-gradient(42% 60% at 92% 15%, color-mix(in srgb, var(--nav-accent-2) 18%, transparent), transparent 70%),
+    radial-gradient(34% 54% at 9% 88%, color-mix(in srgb, var(--nav-accent) 14%, transparent), transparent 72%),
+    linear-gradient(115deg, rgba(255,255,255,.08), transparent 24%, transparent 72%, rgba(255,255,255,.04));
+}
+
+.xv-nav-mega__inner::after {
+  background: radial-gradient(circle, color-mix(in srgb, var(--nav-accent-2) 24%, transparent), transparent 66%);
+}
+
+.xv-nav-mega__cta {
+  border-color: color-mix(in srgb, var(--nav-accent) 44%, var(--marketing-border));
+  background:
+    radial-gradient(58% 105% at 50% 115%, rgba(255,255,255,.22), transparent 62%),
+    linear-gradient(135deg, var(--nav-accent), var(--nav-accent-2));
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--nav-accent) 9%, transparent),
+    0 12px 28px color-mix(in srgb, var(--nav-accent) 22%, transparent),
+    inset 0 1px 8px rgba(255,255,255,.22);
+}
+
+.xv-nav-mega__cta:hover {
+  box-shadow:
+    0 0 0 8px color-mix(in srgb, var(--nav-accent-2) 11%, transparent),
+    0 18px 38px color-mix(in srgb, var(--nav-accent) 25%, transparent),
+    inset 0 1px 8px rgba(255,255,255,.3);
+}
+
+.xv-nav-mega__links a > i {
+  color: var(--nav-accent);
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--nav-accent) 8%, var(--marketing-surface)),
+      color-mix(in srgb, var(--nav-accent-2) 5%, var(--marketing-surface))
+    );
+}
+
+.xv-nav-mega__links a > i.is-brand {
+  overflow: hidden;
+  background: color-mix(in srgb, white 92%, var(--nav-accent) 8%);
+  border-color: color-mix(in srgb, var(--nav-accent) 22%, var(--marketing-border));
+}
+
+.xv-nav-mega__links a > i.is-brand img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.xv-nav-art__fan i,
+.xv-nav-art__fan b {
+  border-color: color-mix(in srgb, var(--nav-accent) 42%, var(--marketing-border));
+  background:
+    linear-gradient(145deg,
+      var(--nav-panel-strong),
+      color-mix(in srgb, var(--nav-accent) 11%, var(--nav-panel)),
+      color-mix(in srgb, var(--nav-accent-2) 7%, var(--nav-panel))
+    );
+}
+
+.xv-nav-art__stack i,
+.xv-nav-art__stack strong {
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--nav-accent) 17%, var(--nav-panel-strong)),
+      color-mix(in srgb, var(--nav-accent-2) 10%, var(--nav-panel-strong))
+    );
+}
+
+.xv-nav-art__cursor {
+  background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-2));
+}
+
+/* Connect visual uses actual integration brand marks from the repository logo map. */
+.xv-nav-art--connect {
+  background:
+    radial-gradient(circle at 50% 52%, color-mix(in srgb, var(--nav-accent) 14%, transparent), transparent 33%),
+    radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--nav-accent-2) 10%, transparent), transparent 28%),
+    var(--nav-panel-strong);
+}
+
+.xv-nav-connect-orbit {
+  position: absolute;
+  inset: 4.2rem .75rem .8rem;
+  border: 1px solid color-mix(in srgb, var(--nav-accent) 20%, var(--marketing-border));
+  border-radius: 50%;
+}
+
+.xv-nav-connect-orbit::before,
+.xv-nav-connect-orbit::after {
+  content: '';
+  position: absolute;
+  inset: 18%;
+  border: 1px dashed color-mix(in srgb, var(--nav-accent-2) 22%, var(--marketing-border));
+  border-radius: 50%;
+}
+
+.xv-nav-connect-orbit::after {
+  inset: 37%;
+  border-style: solid;
+  opacity: .75;
+}
+
+.xv-nav-connect-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%,-50%);
+  border: 1px solid color-mix(in srgb, var(--nav-accent) 44%, var(--marketing-border));
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-2));
+  color: #fff;
+  font: 800 1rem/1 var(--nav-sans);
+  box-shadow:
+    0 0 0 7px color-mix(in srgb, var(--nav-accent) 8%, transparent),
+    0 12px 28px color-mix(in srgb, var(--nav-accent) 20%, transparent);
+  z-index: 3;
+}
+
+.xv-nav-connect-logo {
+  --angle: calc(var(--logo-index) * 60deg);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  transform:
+    rotate(var(--angle))
+    translateX(78px)
+    rotate(calc(var(--angle) * -1))
+    translate(-50%,-50%);
+  border: 1px solid color-mix(in srgb, var(--nav-accent) 18%, var(--marketing-border));
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,.16);
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
+  z-index: 2;
+}
+
+.xv-nav-connect-logo img {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+.xv-nav-art--connect:hover .xv-nav-connect-logo {
+  transform:
+    rotate(var(--angle))
+    translateX(86px)
+    rotate(calc(var(--angle) * -1))
+    translate(-50%,-50%);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--nav-accent) 18%, rgba(0,0,0,.16));
+}
+
+.xv-nav-art--connect:hover .xv-nav-connect-core {
+  box-shadow:
+    0 0 0 10px color-mix(in srgb, var(--nav-accent-2) 10%, transparent),
+    0 16px 34px color-mix(in srgb, var(--nav-accent) 24%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-nav-connect-logo,
+  .xv-nav-connect-core {
+    transition: none !important;
+  }
+}
