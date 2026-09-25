@@ -67,6 +67,7 @@ import {
 import { runLightLaneChat } from '@/lib/runLightLaneChat';
 import { runGuestLaneChat } from '@/lib/runGuestLaneChat';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { GitHubBuildGateModal } from '@/components/terminal/GitHubBuildGateModal';
 import { VercelBuildGateModal } from '@/components/terminal/VercelBuildGateModal';
 import { GitHubActivationOverlay } from '@/components/terminal/GitHubActivationOverlay';
@@ -599,6 +600,7 @@ export function TerminalChatProvider({
   const pathname = usePathname();
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
+  const { requestAuthGate } = useWorkspaceAuthGate();
   const routeProjectId = pathname.match(/\/dashboard\/projects\/([^/]+)/)?.[1];
   const projectId = projectIdProp ?? routeProjectId;
   const incognito = usePrivacyStore((s) => s.incognito);
@@ -2081,6 +2083,11 @@ const stopRequestedRunIdRef =
         return;
       }
 
+      if (attachments?.length) {
+        requestAuthGate('upload');
+        return;
+      }
+
       const displayPrompt = userPrompt.trim();
       const userMessageId = crypto.randomUUID();
       const assistantId = crypto.randomUUID();
@@ -2111,27 +2118,6 @@ const stopRequestedRunIdRef =
       setSwarmStatusLabel('Guest preview');
       setPipelineMessage('Thinking in guest preview…');
       setAnimatingId(assistantId);
-
-      if (attachments?.length) {
-        setMessages((current) =>
-          current.map((message) =>
-            message.id === assistantId
-              ? {
-                  ...message,
-                  content:
-                    'File uploads are available after you create or sign in to a free Xroga account. I can still help with the text of your request here in guest preview.',
-                }
-              : message,
-          ),
-        );
-        lightBusyRef.current = false;
-        setLightLoading(false);
-        setSwarmRunning(false);
-        setPipelineMessage(null);
-        setSwarmStatusLabel(null);
-        setAnimatingId(null);
-        return;
-      }
 
       const history = buildCompletedChatHistory(
         messages.map((message) => ({
@@ -2184,6 +2170,7 @@ const stopRequestedRunIdRef =
           toast(
             'Guest preview complete — create a free account to continue without losing this chat.',
           );
+          requestAuthGate('limit');
         }
       } finally {
         lightBusyRef.current = false;
@@ -2195,7 +2182,7 @@ const stopRequestedRunIdRef =
         setAnimatingId(null);
       }
     },
-    [loading, messages, setSwarmRunning],
+    [loading, messages, requestAuthGate, setSwarmRunning],
   );
 
   /** Light lane while a heavy build runs — chat/planning without clearing todos. */

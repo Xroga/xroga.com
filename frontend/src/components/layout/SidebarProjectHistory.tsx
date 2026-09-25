@@ -40,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { projectContextKey } from '@/lib/projectContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 
 type RepoSession = {
   id: string;
@@ -162,6 +163,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
+  const { requestAuthGate } = useWorkspaceAuthGate();
   const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
@@ -661,9 +663,19 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       </div>
 
       {folders.length === 0 ? (
-        <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
-          Click New Terminal, select a GitHub repo, then chat — #1 terminal appears here and is saved to your account.
-        </p>
+        isGuest ? (
+          <button
+            type="button"
+            onClick={() => requestAuthGate('history')}
+            className="w-full rounded-lg px-2 py-2 text-left text-[10px] leading-relaxed text-[var(--muted)] transition hover:bg-[var(--foreground)]/5 hover:text-[var(--foreground)]"
+          >
+            This guest chat is temporary. Create a free account to save terminals and repository history →
+          </button>
+        ) : (
+          <p className="px-2 py-2 text-[10px] text-[var(--muted)] leading-relaxed">
+            Click New Terminal, select a GitHub repo, then chat — #1 terminal appears here and is saved to your account.
+          </p>
+        )
       ) : (
         <div className="xv-repos-scroll space-y-0.5 max-h-[280px] overflow-y-auto pr-1">
           {folders.map((folder) => {

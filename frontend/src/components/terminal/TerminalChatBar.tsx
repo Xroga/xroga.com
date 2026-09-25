@@ -29,6 +29,7 @@ import { shouldRouteToPhase1 } from '@/lib/phase1Routing';
 import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 
 const MIN_INPUT_H = 32;
 
@@ -48,6 +49,7 @@ function renameFile(file: File, newName: string) {
 export function TerminalChatBar() {
   const workspaceIdentity = useWorkspaceIdentity();
   const isGuest = workspaceIdentity.status === 'guest';
+  const { requestAuthGate } = useWorkspaceAuthGate();
   const {
     prompt,
     setPrompt,
@@ -124,7 +126,7 @@ export function TerminalChatBar() {
     return () => {
       if (composerSignalTimer.current !== null) window.clearTimeout(composerSignalTimer.current);
     };
-  }, [triggerComposerSignal]);
+  }, [isGuest, requestAuthGate, triggerComposerSignal]);
 
   useEffect(() => {
     if (uploading) triggerComposerSignal(1800);
@@ -345,6 +347,10 @@ export function TerminalChatBar() {
   /** Baseline prompt before the current mic session — speech replaces after baseline. */
   const addFiles = useCallback((list: FileList | null) => {
     if (!list?.length) return;
+    if (isGuest) {
+      requestAuthGate('upload');
+      return;
+    }
     const incoming = Array.from(list).filter(
       (f) =>
         f.type.startsWith('image/') ||
@@ -360,6 +366,14 @@ export function TerminalChatBar() {
     triggerComposerSignal(1800);
     setFiles((prev) => [...prev, ...incoming].slice(0, 4));
   }, [triggerComposerSignal]);
+
+  const requestFilePicker = useCallback(() => {
+    if (isGuest) {
+      requestAuthGate('upload');
+      return;
+    }
+    fileRef.current?.click();
+  }, [isGuest, requestAuthGate]);
 
   const handlePaste = useCallback(
     (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -461,6 +475,7 @@ export function TerminalChatBar() {
           onDragOver={(e: React.DragEvent) => {
             if (incognito) return;
             e.preventDefault();
+            if (isGuest) return;
             setDragOver(true);
             triggerComposerSignal(1500);
           }}
@@ -495,17 +510,21 @@ export function TerminalChatBar() {
           <form onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
             <ChatBarInputRow
               uploading={uploading}
-              onUploadClick={() => fileRef.current?.click()}
+              onUploadClick={requestFilePicker}
               hideUpload
               leadingExtras={
                 !incognito ? (
                   <ChatBarActionsMenu
                     className="shrink-0"
                     disabled={loading}
-                    onAddFiles={() => fileRef.current?.click()}
+                    onAddFiles={requestFilePicker}
                     /* Same dialog the removed pill opened, same event dispatched — the
                        trigger moved into the menu, the behaviour did not change. */
                     onOpenIntegrations={() => {
+                      if (isGuest) {
+                        requestAuthGate('integration');
+                        return;
+                      }
                       dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
                       setIntegrationsOpen(true);
                     }}
@@ -604,7 +623,7 @@ export function TerminalChatBar() {
               multiple
               className="hidden"
               onChange={(e) => addFiles(e.target.files)}
-              disabled={incognito}
+              disabled={incognito || isGuest}
             />
           </form>
         </ChatbarShell>

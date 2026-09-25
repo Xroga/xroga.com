@@ -16,6 +16,7 @@ import { normalizeTheme, skinForTheme } from '@/lib/theme';
 import { ShellIdentityProvider } from '@/components/layout/ShellIdentityContext';
 import { WorkspacePerformanceProbe } from '@/components/layout/WorkspacePerformanceProbe';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { WorkspaceAuthGateProvider } from '@/components/workspace/WorkspaceAuthGate';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -75,6 +76,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
       email={email ?? workspaceIdentity.email}
     >
       <WorkspacePerformanceProbe />
+      <WorkspaceAuthGateProvider>
       <TerminalChatProvider>
         <TerminalScrollProvider>
           <IncognitoFullscreenBackground />
@@ -144,6 +146,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
           </div>
         </TerminalScrollProvider>
       </TerminalChatProvider>
+      </WorkspaceAuthGateProvider>
     </ShellIdentityProvider>
   );
 }

@@ -66,6 +66,8 @@ import { SidebarNavScroller } from './SidebarNavScroller';
 import { ThemeToggle } from './ThemeToggle';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { suspendProjectWorkspacePersistence } from '@/lib/projectWorkspaceStorage';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useWorkspaceAuthGate, type WorkspaceAuthGateReason } from '@/components/workspace/WorkspaceAuthGate';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -238,6 +240,19 @@ interface SidebarProps {
   email?: string;
 }
 
+function guestGateReasonForHref(href: string): WorkspaceAuthGateReason | null {
+  const path = href.split('?')[0];
+  if (path === '/workspace' || path === '/showcase' || path === '/community' || path === '/pricing') {
+    return null;
+  }
+  if (path === '/dashboard/integrations') return 'integration';
+  if (path === '/dashboard/projects') return 'project';
+  if (path === '/dashboard/publish') return 'deploy';
+  if (path === '/settings') return 'settings';
+  if (path === '/dashboard') return 'dashboard';
+  return path.startsWith('/dashboard/') ? 'dashboard' : null;
+}
+
 function planLabel(tier?: string | null) {
   if (!tier || tier === 'unpaid' || tier === 'free') return 'Free';
   return 'Xroga Pro';
@@ -262,6 +277,9 @@ const HOVER_OPEN_DELAY_MS = 220;
 export function Sidebar({ displayName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const workspaceIdentity = useWorkspaceIdentity();
+  const isGuest = workspaceIdentity.status === 'guest';
+  const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
@@ -289,8 +307,16 @@ export function Sidebar({ displayName }: SidebarProps) {
   const isMobile = useIsMobile();
   const avatarUrl = profile?.avatar_url;
   const nameInitial = (profile?.display_name ?? displayName ?? 'U').charAt(0).toUpperCase();
-  const userName = incognito ? 'Incognito' : (profile?.display_name ?? displayName ?? 'User');
-  const userPlan = incognito ? 'Temporary session' : planLabel(planTier);
+  const userName = incognito
+    ? 'Incognito'
+    : isGuest
+      ? 'Guest workspace'
+      : (profile?.display_name ?? displayName ?? 'User');
+  const userPlan = incognito
+    ? 'Temporary session'
+    : isGuest
+      ? 'Preview session'
+      : planLabel(planTier);
 
   // A pending hover-to-open must not fire into a sidebar that is no longer mounted —
   // navigating away mid-hover would otherwise leave the timer to run and set state on
@@ -473,7 +499,35 @@ export function Sidebar({ displayName }: SidebarProps) {
     closeBrowser();
   }
 
+  function handleNavEntryClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    const gateReason = guestGateReasonForHref(href);
+    if (isGuest && gateReason) {
+      event.preventDefault();
+      event.stopPropagation();
+      handleNavClick();
+      requestAuthGate(gateReason);
+      return;
+    }
+    handleNavClick();
+  }
+
+  function handleSearch() {
+    if (isGuest) {
+      requestAuthGate('history');
+      return;
+    }
+    setSearchOpen(true);
+  }
+
   function handleNewChat() {
+    if (isGuest) {
+      handleNavClick();
+      requestAuthGate('history');
+      return;
+    }
     // Fresh blank workspace; prior #N is flushed to permanent storage inside startNewChat.
     startNewChat();
     // A new terminal is a clean composition state, not a blank transcript squeezed
@@ -519,7 +573,18 @@ export function Sidebar({ displayName }: SidebarProps) {
    */
   const railBottom = (
     <div className="xv-sidebar-rail-bottom mt-auto">
-      {displayName ? (
+      {isGuest ? (
+        <HoverTip label="Save workspace" description="Create a free account to keep this conversation.">
+          <button
+            type="button"
+            onClick={() => requestAuthGate('history')}
+            aria-label="Save guest workspace"
+            className="grid h-9 w-9 place-items-center rounded-xl bg-[linear-gradient(135deg,#006aff,#67a4ff)] text-[11px] font-black text-white shadow-[0_8px_20px_rgba(0,106,255,0.22)]"
+          >
+            G
+          </button>
+        </HoverTip>
+      ) : displayName ? (
         <div ref={profileRowRef} className="xv-sidebar-rail-profile">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -542,7 +607,16 @@ export function Sidebar({ displayName }: SidebarProps) {
       {/* The plan link used to be a full-width button of its own above the profile,
           which cost a whole row. It now rides in the profile line as a compact icon,
           so the nav keeps every item while taking less height. */}
-      {displayName && navExpanded && (
+      {isGuest && navExpanded ? (
+        <button
+          type="button"
+          onClick={() => requestAuthGate('history')}
+          className="w-full rounded-xl border border-[#006aff]/20 bg-[#006aff]/[0.08] px-3 py-2.5 text-left transition hover:bg-[#006aff]/[0.13]"
+        >
+          <span className="block text-[12px] font-semibold text-[var(--foreground)]">Guest workspace</span>
+          <span className="mt-0.5 block text-[10px] leading-4 text-[var(--muted)]">Save this chat and continue for free →</span>
+        </button>
+      ) : displayName && navExpanded ? (
         <div ref={profileRowRef} className="xv-sidebar-profile-row flex items-center gap-2 px-2 py-1.5 rounded-xl">
           {incognito ? (
             <IncognitoProfileBox size="sidebar" />
@@ -570,7 +644,7 @@ export function Sidebar({ displayName }: SidebarProps) {
           </HoverTip>
           <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 
@@ -684,7 +758,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               <HoverTip label="Search" description="Search projects, chats, and commands.">
                 <button
                   type="button"
-                  onClick={() => setSearchOpen(true)}
+                  onClick={handleSearch}
                   className="xv-sidebar-head-icon"
                   aria-label="Search"
                 >
@@ -721,7 +795,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 </button>
               </HoverTip>
               <HoverTip label="Search" description="Search projects, chats, and commands.">
-                <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+                <button type="button" onClick={handleSearch} aria-label="Search">
                   <AnimatedIcon icon={LocateFixedIcon} />
                 </button>
               </HoverTip>
@@ -729,7 +803,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <Link
                   href="/dashboard"
                   aria-label="Dashboard"
-                  onClick={handleNavClick}
+                  onClick={(event) => handleNavEntryClick(event, '/dashboard')}
                   className={cn(isActive('/dashboard') && 'is-active')}
                 >
                   <AnimatedIcon icon={LayoutGridIcon} />
@@ -739,7 +813,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <Link
                   href="/dashboard/projects"
                   aria-label="Projects"
-                  onClick={handleNavClick}
+                  onClick={(event) => handleNavEntryClick(event, '/dashboard/projects')}
                   className={cn(isActive('/dashboard/projects') && 'is-active')}
                 >
                   <AnimatedIcon icon={FolderOpenIcon} />
@@ -749,7 +823,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                 <Link
                   href="/dashboard/integrations"
                   aria-label="Integrations"
-                  onClick={handleNavClick}
+                  onClick={(event) => handleNavEntryClick(event, '/dashboard/integrations')}
                   className={cn(isActive('/dashboard/integrations') && 'is-active')}
                 >
                   <AnimatedIcon icon={ConnectIcon} />
@@ -799,7 +873,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                           <SidebarTip key={child.href} label={child.label} description={child.tip}>
                             <Link
                               href={child.href}
-                              onClick={handleNavClick}
+                              onClick={(event) => handleNavEntryClick(event, child.href)}
                               className={cn(isActive(child.href) && 'xv-active')}
                             >
                               <NavIcon entry={child} />
@@ -814,7 +888,7 @@ export function Sidebar({ displayName }: SidebarProps) {
                   <SidebarTip key={entry.href} label={entry.label} description={entry.tip}>
                     <Link
                       href={entry.href}
-                      onClick={handleNavClick}
+                      onClick={(event) => handleNavEntryClick(event, entry.href)}
                       className={cn(isActive(entry.href) && 'xv-active')}
                     >
                       <NavIcon entry={entry} />
@@ -865,7 +939,7 @@ export function Sidebar({ displayName }: SidebarProps) {
           >
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
+          <button type="button" onClick={handleSearch} aria-label="Search">
             <AnimatedIcon icon={LocateFixedIcon} />
           </button>
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
