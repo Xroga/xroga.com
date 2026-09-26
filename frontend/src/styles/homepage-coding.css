@@ -10345,3 +10345,177 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after{
   mask-image:linear-gradient(to bottom,#000,#000 54%,rgba(0,0,0,.62) 70%,transparent 90%);
   -webkit-mask-image:linear-gradient(to bottom,#000,#000 54%,rgba(0,0,0,.62) 70%,transparent 90%);
 }
+
+
+/* ==========================================================
+   BLACK THEME HOME CHATBAR — light cyan / violet glass field
+   Inspired by the supplied Uiverse references, scoped only to
+   the homepage Black theme. No workspace or other themes change.
+   ========================================================== */
+body.theme-black .xv-home-coding .xv-hc-prompt-shell{
+  position:relative;
+  isolation:isolate;
+  border:1px solid rgba(190,220,255,.92)!important;
+  border-radius:22px!important;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.96) 42%,
+      rgba(255,255,255,.70) 70%,
+      rgba(255,255,255,.16) 100%
+    ),
+    linear-gradient(
+      112deg,
+      #0ed2da 0%,
+      #73b9ff 38%,
+      #8173ee 68%,
+      #5f29c7 100%
+    )!important;
+  box-shadow:
+    0 18px 42px -22px rgba(54,118,255,.62),
+    0 8px 24px -18px rgba(14,210,218,.58),
+    inset 0 1px 0 rgba(255,255,255,1)!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-shell::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background-image:
+    linear-gradient(90deg,rgba(116,145,178,.24) 1px,transparent 1px);
+  background-size:50px 100%;
+  opacity:.72;
+  mask-image:linear-gradient(
+    to bottom,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.72) 42%,
+    rgba(0,0,0,0) 86%
+  );
+  -webkit-mask-image:linear-gradient(
+    to bottom,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.72) 42%,
+    rgba(0,0,0,0) 86%
+  );
+  clip-path:inset(0 round 22px);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-shell > *{
+  position:relative;
+  z-index:1;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-main{
+  position:relative;
+  padding:5px;
+  border:1px solid rgba(255,255,255,.95);
+  border-radius:18px;
+  background:linear-gradient(
+    135deg,
+    rgb(218,232,247) 0%,
+    rgb(214,229,247) 100%
+  );
+  box-shadow:
+    3px 3px 7px rgba(79,156,232,.34),
+    7px 9px 24px rgba(79,156,232,.24),
+    inset 0 1px 0 rgba(255,255,255,.96);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-main::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  z-index:-1;
+  border-radius:inherit;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.98) 0%,
+    rgba(211,232,255,.90) 100%
+  );
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-input{
+  min-height:3rem;
+  padding:.55rem .72rem;
+  border-radius:14px;
+  background:linear-gradient(
+    135deg,
+    rgb(239,247,255) 0%,
+    rgb(214,229,247) 100%
+  )!important;
+  color:#17324f!important;
+  caret-color:#2563eb;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-input:focus{
+  background:linear-gradient(
+    135deg,
+    rgb(247,251,255) 0%,
+    rgb(221,236,252) 100%
+  )!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-typewriter{
+  left:.87rem;
+  top:.9rem;
+  right:.85rem;
+  color:#6d8cab!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-caret{
+  background:#2f7cff!important;
+  box-shadow:0 0 10px rgba(47,124,255,.48);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-footer{
+  margin-top:.48rem;
+  padding:.3rem .1rem 0;
+  color:#24415e;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-integration{
+  border:1px solid rgba(125,170,220,.34);
+  background:rgba(245,250,255,.76);
+  color:#274764;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.94);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-integration-sep{
+  background:rgba(66,112,160,.34);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-footer .xv-cba-trigger,
+body.theme-black .xv-home-coding .xv-hc-prompt-footer .xv-mic-btn--home{
+  background:rgba(242,249,255,.66);
+  color:#315d87;
+  border:1px solid rgba(123,170,219,.24);
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-footer .xv-cba-trigger:hover:not(:disabled),
+body.theme-black .xv-home-coding .xv-hc-prompt-footer .xv-mic-btn--home:hover:not(:disabled){
+  background:rgba(255,255,255,.90);
+  color:#174e86;
+}
+
+body.theme-black .xv-home-coding .xv-hc-prompt-footer .xv-send--home,
+body.theme-black .xv-home-coding .xv-go-btn--home{
+  border:1px solid rgba(198,225,255,.92)!important;
+  background:linear-gradient(
+    135deg,
+    #76c8ff 0%,
+    #4f9cf4 45%,
+    #6c63e8 100%
+  )!important;
+  color:#ffffff!important;
+  box-shadow:
+    0 8px 20px rgba(79,156,232,.34),
+    inset 0 1px 0 rgba(255,255,255,.50)!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-eyebrow{
+  color:#000000!important;
+}
