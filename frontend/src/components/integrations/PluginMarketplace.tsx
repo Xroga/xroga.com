@@ -264,4 +264,200 @@ function SectionHeading({
   );
 }
 
-function Marke
+function MarketplaceEmpty({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] bg-[var(--surface-raised)] px-5 py-8 text-center">
+      <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+      <p className="mx-auto mt-1.5 max-w-xl text-sm leading-6 text-[var(--text-secondary)]">
+        {description}
+      </p>
+      {action ? <div className="mt-4">{action}</div> : null}
+    </div>
+  );
+}
+
+function PluginPreview({
+  plugin,
+  connecting,
+  onClose,
+  onConnect,
+}: {
+  plugin: MarketplacePlugin;
+  connecting: boolean;
+  onClose: () => void;
+  onConnect: (plugin: MarketplacePlugin) => void;
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[120] flex items-end justify-center bg-black/45 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="plugin-preview-title"
+        className="w-full max-w-lg overflow-hidden rounded-t-[24px] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-elevated sm:rounded-token-lg"
+      >
+        <header className="flex items-start gap-3 border-b border-[var(--border-subtle)] px-5 py-4">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-white p-2 text-black">
+            <IntegrationLogo
+              id={plugin.id}
+              name={plugin.name}
+              size={28}
+              src={plugin.logo}
+              className="max-h-full max-w-full object-contain"
+            />
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <h2
+              id="plugin-preview-title"
+              className="text-base font-semibold text-[var(--text-primary)]"
+            >
+              {plugin.name}
+            </h2>
+            <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+              {plugin.category}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-token-sm p-2 text-[var(--text-muted)] hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            aria-label="Close plugin preview"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </header>
+
+        <div className="space-y-5 px-5 py-5">
+          <p className="text-sm leading-6 text-[var(--text-secondary)]">
+            {plugin.description}
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+              <p className="text-xs font-semibold text-[var(--text-primary)]">
+                Status
+              </p>
+              <div className="mt-2">
+                <PluginStatus plugin={plugin} />
+              </div>
+            </div>
+
+            <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+              <p className="text-xs font-semibold text-[var(--text-primary)]">
+                Access
+              </p>
+              <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
+                Xroga uses only the capabilities you authorize. Sensitive actions can require confirmation.
+              </p>
+            </div>
+          </div>
+
+          {plugin.capabilityCount ? (
+            <p className="text-xs text-[var(--text-muted)]">
+              {plugin.capabilityCount} matching capabilities discovered.
+            </p>
+          ) : null}
+
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-token-sm border border-[var(--border-subtle)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              disabled={
+                connecting ||
+                plugin.availability !== 'available' ||
+                !plugin.connectable
+              }
+              onClick={() => onConnect(plugin)}
+              className="rounded-token-sm bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition-opacity disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              {connecting
+                ? 'Connecting…'
+                : plugin.source === 'credential'
+                  ? 'Configure'
+                  : plugin.connected
+                    ? 'Manage'
+                    : `Connect ${plugin.name}`}
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export function PluginMarketplace() {
+  const [view, setViewState] = useState<MarketplaceView>('discover');
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const [category, setCategory] = useState<PluginCategory | 'All'>('All');
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+  const [nativeConnected, setNativeConnected] = useState<Record<string, boolean>>({});
+  const [checkingNative, setCheckingNative] = useState(true);
+  const [connectConfigured, setConnectConfigured] = useState<boolean | null>(null);
+  const [remotePlugins, setRemotePlugins] = useState<MarketplacePlugin[]>([]);
+  const [semanticLoading, setSemanticLoading] = useState(false);
+  const [semanticError, setSemanticError] = useState<string | null>(null);
+  const [connectingId, setConnectingId] = useState<string | null>(null);
+  const [selectedPlugin, setSelectedPlugin] = useState<MarketplacePlugin | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
+  const connectSearchRef = useRef('');
+  const requestSequenceRef = useRef(0);
+
+  const setView = (next: MarketplaceView) => {
+    setViewState(next);
+    setVisibleCount(INITIAL_VISIBLE);
+
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (next === 'discover') url.searchParams.delete('view');
+      else url.searchParams.set('view', next);
+      window.history.replaceState({}, '', `${url.pathname}${url.search}`);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedView = params.get('view');
+    if (isMarketplaceView(requestedView)) {
+      setViewState(requestedView);
+    }
+
+    const github = params.get('github');
+    const vercel = params.get('vercel');
+    const supabase = params.get('supabase');
+    const composio = params.get('composio');
+    const message = params.get('message');
+
+    if (github === 'connected
