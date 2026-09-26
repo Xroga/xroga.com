@@ -619,21 +619,27 @@ export function Sidebar({ displayName }: SidebarProps) {
   const bottomSection = (
     <div className="p-2 mt-auto space-y-2 xv-sidebar-bottom">
       {isGuest && navExpanded ? (
-        <div className="rounded-[14px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] p-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
-          <div className="flex items-center gap-2 px-0.5">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#006aff]/10 text-[#006aff]">
+        <div className="rounded-[16px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] p-2.5 shadow-[0_10px_28px_rgba(0,0,0,0.05)]">
+          <button
+            type="button"
+            onClick={() => requestAuthGate('history')}
+            className="group flex w-full items-center gap-2.5 rounded-[12px] px-1 py-1 text-left transition hover:bg-[var(--foreground)]/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff]/45"
+            aria-label="Open guest account options"
+          >
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-[#006aff]/10 text-[#006aff] transition group-hover:bg-[#006aff]/15">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
-            <span className="min-w-0">
+            <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-semibold text-[var(--foreground)]">Guest preview</span>
-              <span className="block truncate text-[9px] text-[var(--muted)]">Your chat follows you after auth.</span>
+              <span className="block truncate text-[9px] text-[var(--muted)]">Click to save this chat and unlock Xroga.</span>
             </span>
-          </div>
+            <span className="text-[14px] leading-none text-[#006aff] transition-transform group-hover:translate-x-0.5" aria-hidden="true">›</span>
+          </button>
           <div className="mt-2 grid grid-cols-2 gap-1.5">
             <Link
               href="/auth/login?next=%2Fworkspace"
               onClick={() => rememberGuestAuthIntent('history')}
-              className="flex min-h-8 items-center justify-center gap-1.5 rounded-[10px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-2 text-[10px] font-semibold text-[var(--foreground)] transition hover:bg-[var(--foreground)]/[0.07]"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-[11px] border border-[var(--card-border)] bg-[var(--foreground)]/[0.025] px-2 text-[11px] font-semibold text-[var(--foreground)] transition hover:bg-[var(--foreground)]/[0.07]"
             >
               <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
               Sign in
@@ -641,7 +647,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             <Link
               href="/auth/signup?next=%2Fworkspace"
               onClick={() => rememberGuestAuthIntent('history')}
-              className="flex min-h-8 items-center justify-center gap-1.5 rounded-[10px] bg-[linear-gradient(135deg,#006aff,#68a7ff)] px-2 text-[10px] font-bold text-white shadow-[0_7px_18px_rgba(0,106,255,0.18)] transition hover:-translate-y-px"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-[11px] bg-[linear-gradient(135deg,#006aff,#68a7ff)] px-2 text-[11px] font-bold text-white shadow-[0_8px_20px_rgba(0,106,255,0.2)] transition hover:-translate-y-px"
             >
               <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
               Sign up
