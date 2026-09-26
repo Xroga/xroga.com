@@ -10260,3 +10260,88 @@ body .xv-home-coding .xv-closing-frame .xv-hc-mid-cta-copy h2 em {
     width: 100%;
   }
 }
+
+
+/* ==========================================================
+   BLACK THEME HOME — reuse the /crypto blue curtain backdrop
+   Background-only parity: homepage content/layout stays intact.
+   Source values intentionally mirror crypto-seo.module.css hero.
+   ========================================================== */
+body.theme-black .xv-home-coding{
+  background:#03050b!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image{
+  overflow:hidden!important;
+  isolation:isolate;
+  background:#03050b!important;
+  background-image:none!important;
+  background-size:auto!important;
+  background-position:0 0!important;
+  background-repeat:no-repeat!important;
+  filter:none!important;
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image::before{
+  content:"";
+  position:absolute;
+  inset:-70px -4% 90px;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,
+      rgba(31,77,255,.86) 0%,
+      rgba(15,44,181,.42) 4%,
+      transparent 8%,
+      rgba(32,72,255,.78) 13%,
+      rgba(80,72,255,.22) 17%,
+      transparent 22%,
+      rgba(34,75,255,.44) 27%,
+      transparent 32%,
+      rgba(51,84,255,.18) 38%,
+      transparent 44%,
+      rgba(0,0,0,.86) 48%,
+      rgba(0,0,0,.88) 52%,
+      transparent 57%,
+      rgba(84,53,255,.28) 63%,
+      transparent 68%,
+      rgba(49,72,255,.58) 74%,
+      transparent 80%,
+      rgba(96,48,255,.46) 86%,
+      rgba(36,65,255,.72) 93%,
+      rgba(19,53,222,.72) 100%),
+    radial-gradient(
+      ellipse at 50% -4%,
+      rgba(80,50,255,.5),
+      rgba(40,67,255,.18) 28%,
+      transparent 55%),
+    #03050b;
+  filter:blur(12px) saturate(1.08);
+  transform:scaleX(1.05);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.72) 72%,transparent 95%);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.72) 72%,transparent 95%);
+}
+
+body.theme-black .xv-home-coding .xv-hc-bg-image::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.82;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 26px,
+      rgba(98,120,255,.035) 27px,
+      rgba(112,128,255,.13) 28px,
+      rgba(47,72,255,.055) 31px,
+      transparent 35px 59px),
+    linear-gradient(
+      180deg,
+      rgba(44,72,255,.10),
+      rgba(7,10,19,.28) 44%,
+      #03050b 86%);
+  mask-image:linear-gradient(to bottom,#000,#000 54%,rgba(0,0,0,.62) 70%,transparent 90%);
+  -webkit-mask-image:linear-gradient(to bottom,#000,#000 54%,rgba(0,0,0,.62) 70%,transparent 90%);
+}
