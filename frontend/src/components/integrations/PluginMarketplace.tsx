@@ -1160,4 +1160,133 @@ export function PluginMarketplace() {
           {!searchActive ? (
             <section>
               <SectionHeading
-                title="A
+                title="All Plugins"
+                meta={`${allDiscoverPlugins.length} available`}
+              />
+              <PluginGrid
+                plugins={visiblePlugins}
+                connectingId={connectingId}
+                checkingNative={checkingNative}
+                onConnect={handleConnect}
+                onPreview={setSelectedPlugin}
+              />
+            </section>
+          ) : null}
+
+          {(query.trim() ? searchResults : allDiscoverPlugins).length >
+          visibleCount ? (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount((current) => current + INITIAL_VISIBLE)
+                }
+                className="rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+              >
+                Show more
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {view === 'connected' ? (
+        <section>
+          <SectionHeading
+            title="Connected Plugins"
+            meta={`${connectedPlugins.length} connected`}
+          />
+          {connectedPlugins.length ? (
+            <PluginGrid
+              plugins={connectedPlugins}
+              connectingId={connectingId}
+              checkingNative={checkingNative}
+              onConnect={handleConnect}
+              onPreview={setSelectedPlugin}
+            />
+          ) : (
+            <MarketplaceEmpty
+              title="No Plugins connected yet"
+              description="Browse Discover and connect the apps and services you use."
+              action={
+                <button
+                  type="button"
+                  onClick={() => setView('discover')}
+                  className="inline-flex items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                >
+                  Browse Plugins
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              }
+            />
+          )}
+        </section>
+      ) : null}
+
+      {view === 'developer' ? (
+        <div className="space-y-5">
+          <div>
+            <SectionHeading title="Developer Plugins" />
+            <p className="-mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+              Code, deployment, backend, and observability services used by Xroga projects.
+            </p>
+          </div>
+
+          <PluginGrid
+            plugins={developerPlugins}
+            connectingId={connectingId}
+            checkingNative={checkingNative}
+            onConnect={handleConnect}
+            onPreview={setSelectedPlugin}
+          />
+
+          <div className="flex flex-col gap-3 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                Ready to ship a project?
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Publishing stays separate from Plugins so deployment setup only appears when you need it.
+              </p>
+            </div>
+
+            <Link
+              href="/dashboard/publish"
+              className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3.5 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              Open Publish
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {view === 'custom' ? (
+        <div className="space-y-6">
+          <div>
+            <SectionHeading title="Custom Plugins" />
+            <p className="-mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+              Configure service credentials, API keys, and webhooks that Xroga can use for your projects.
+            </p>
+          </div>
+
+          <ConnectedServicesSection />
+          <CustomCredentialsSection />
+        </div>
+      ) : null}
+
+      {selectedPlugin ? (
+        <PluginPreview
+          plugin={selectedPlugin}
+          connecting={connectingId === selectedPlugin.id}
+          onClose={() => setSelectedPlugin(null)}
+          onConnect={handleConnect}
+        />
+      ) : null}
+
+      <footer className="border-t border-[var(--border-subtle)] pt-5 text-xs leading-5 text-[var(--text-muted)]">
+        Plugin availability can depend on provider configuration and your account permissions. Xroga keeps unrelated Plugins usable when one provider is unavailable.
+      </footer>
+    </div>
+  );
+}
