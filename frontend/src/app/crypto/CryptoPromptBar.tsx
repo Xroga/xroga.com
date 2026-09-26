@@ -217,12 +217,12 @@ export function CryptoPromptBar() {
               />
               <defs>
                 <linearGradient gradientTransform="rotate(50)" id="xv-uiv-search">
-                  <stop stopColor="#f8e7f8" offset="0%" />
-                  <stop stopColor="#b6a9b7" offset="50%" />
+                  <stop stopColor="#f8fcff" offset="0%" />
+                  <stop stopColor="#70baff" offset="50%" />
                 </linearGradient>
                 <linearGradient id="xv-uiv-search-line">
-                  <stop stopColor="#b6a9b7" offset="0%" />
-                  <stop stopColor="#837484" offset="50%" />
+                  <stop stopColor="#dff3ff" offset="0%" />
+                  <stop stopColor="#2e91ff" offset="50%" />
                 </linearGradient>
               </defs>
             </svg>

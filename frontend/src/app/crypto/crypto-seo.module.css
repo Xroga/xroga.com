@@ -1314,3 +1314,188 @@
     border-radius:24px;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Exact-code pass v4: mixed reference hero, wider white/blue Poda composer.  */
+/* -------------------------------------------------------------------------- */
+
+.heroTitle{
+  max-width:1040px;
+  margin:28px auto 18px;
+  font-size:clamp(56px,7.2vw,96px);
+  line-height:.9;
+  letter-spacing:-.052em;
+  font-style:normal;
+}
+.heroTitle .heroSansLine{
+  display:inline-block;
+  font-family:var(--ui)!important;
+  font-style:normal!important;
+  font-weight:400!important;
+  letter-spacing:-.058em!important;
+  color:#fff!important;
+}
+.heroTitle .heroSerifLine{
+  display:inline-block;
+  margin-top:.04em;
+  font-family:var(--editorial)!important;
+  font-style:normal!important;
+  font-weight:500!important;
+  letter-spacing:-.038em!important;
+}
+.heroTitle .heroSerifLine .heroMutedText{
+  color:rgba(255,255,255,.58)!important;
+  font-family:var(--editorial)!important;
+  font-style:normal!important;
+  font-weight:500!important;
+}
+.heroTitle .heroSerifLine .heroBrightText{
+  color:#fff!important;
+  font-family:var(--editorial)!important;
+  font-style:normal!important;
+  font-weight:500!important;
+}
+.heroSub{
+  color:rgba(255,255,255,.7);
+}
+
+/* Wider composer using real dimensions instead of transform scaling. */
+.heroConsole{
+  width:min(700px,100%);
+  min-height:92px;
+  margin-top:42px;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.heroConsole :global(#xv-uiv-poda){
+  transform:none!important;
+  width:100%;
+  min-height:82px;
+}
+.heroConsole :global(#xv-uiv-poda-main){
+  width:min(620px,calc(100vw - 60px))!important;
+  max-width:none!important;
+}
+.heroConsole :global(.xv-uiv-poda-input){
+  width:min(620px,calc(100vw - 60px))!important;
+  max-width:none!important;
+  box-sizing:border-box;
+  color:#fff!important;
+  padding-left:60px;
+  padding-right:62px;
+  font-size:17px;
+  font-weight:500;
+  letter-spacing:-.015em;
+}
+.heroConsole :global(.xv-uiv-poda-input::placeholder){
+  color:rgba(239,247,255,.9)!important;
+  opacity:1;
+}
+.heroConsole :global(#xv-uiv-poda-input-mask){
+  display:none!important;
+}
+.heroConsole :global(.xv-uiv-poda-white){
+  width:min(626px,calc(100vw - 54px))!important;
+  max-width:none!important;
+}
+.heroConsole :global(.xv-uiv-poda-border){
+  width:min(622px,calc(100vw - 58px))!important;
+  max-width:none!important;
+}
+.heroConsole :global(.xv-uiv-poda-darkBorderBg){
+  width:min(631px,calc(100vw - 49px))!important;
+  max-width:none!important;
+}
+.heroConsole :global(.xv-uiv-poda-glow){
+  width:min(680px,calc(100vw - 24px))!important;
+  max-width:none!important;
+}
+
+/* Replace purple/magenta motion with white + blue while keeping the original motion. */
+.heroConsole :global(#xv-uiv-poda-pink-mask){
+  background:#51a8ff!important;
+  opacity:.86;
+}
+.heroConsole :global(.xv-uiv-poda-white::before){
+  background-image:conic-gradient(
+    rgba(0,0,0,0) 0%,
+    #f8fcff,
+    rgba(0,0,0,0) 8%,
+    rgba(0,0,0,0) 50%,
+    #8fd0ff,
+    rgba(0,0,0,0) 58%
+  )!important;
+}
+.heroConsole :global(.xv-uiv-poda-border::before){
+  background-image:conic-gradient(
+    #1c191c,
+    #3d9cff 5%,
+    #1c191c 14%,
+    #1c191c 50%,
+    #f7fbff 60%,
+    #1c191c 64%
+  )!important;
+}
+.heroConsole :global(.xv-uiv-poda-darkBorderBg::before){
+  background-image:conic-gradient(
+    rgba(0,0,0,0),
+    #0959c8,
+    rgba(0,0,0,0) 10%,
+    rgba(0,0,0,0) 50%,
+    #dff3ff,
+    rgba(0,0,0,0) 60%
+  )!important;
+}
+.heroConsole :global(.xv-uiv-poda-glow::before){
+  background-image:conic-gradient(
+    #000,
+    #168cff 5%,
+    #000 38%,
+    #000 50%,
+    #f8fcff 60%,
+    #000 87%
+  )!important;
+}
+.heroConsole :global(#xv-uiv-poda-filter-icon){
+  background:linear-gradient(180deg,#10233f,#02060b,#0a315e)!important;
+}
+.heroConsole :global(.xv-uiv-poda-filterBorder::before){
+  background-image:conic-gradient(
+    rgba(0,0,0,0),
+    #dff4ff,
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0) 50%,
+    #2e91ff,
+    rgba(0,0,0,0) 100%
+  )!important;
+}
+.heroConsole :global(#xv-uiv-poda-filter-icon svg path){
+  stroke:#eaf7ff!important;
+}
+
+.devLayout > :global(.xv-sms-repo-scope){
+  align-self:center;
+  justify-self:center;
+}
+
+@media (max-width:960px){
+  .heroTitle{font-size:clamp(52px,9.5vw,80px)}
+  .heroConsole{width:min(650px,100%)}
+}
+@media (max-width:680px){
+  .heroTitle{
+    font-size:clamp(43px,12.8vw,61px);
+    line-height:.92;
+  }
+  .heroConsole{
+    width:100%;
+    min-height:82px;
+  }
+  .heroConsole :global(.xv-uiv-poda-input){
+    font-size:15px;
+    padding-left:52px;
+    padding-right:56px;
+  }
+}
