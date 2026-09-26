@@ -10346,25 +10346,55 @@ body.theme-black .xv-home-coding .xv-hc-bg-image::after{
   -webkit-mask-image:linear-gradient(to bottom,#000,#000 54%,rgba(0,0,0,.62) 70%,transparent 90%);
 }
 
-/* Black-theme hero eyebrow — light blue pill inspired by the supplied Uiverse
-   search surface. This does not affect the homepage composer/chatbar. */
+/* Black-theme hero eyebrow — reproduce the supplied Uiverse layered pill
+   around the existing label text. The homepage chatbar is untouched. */
 body.theme-black .xv-home-coding .xv-hc-eyebrow{
+  position:relative;
+  isolation:isolate;
   display:inline-flex;
   width:fit-content;
   align-items:center;
   justify-content:center;
-  padding:.58rem 1rem;
-  border:1px solid rgba(255,255,255,.96);
+  margin-left:0;
+  padding:.66rem 1.18rem;
+  border:0;
+  border-radius:999px;
+  background:linear-gradient(
+    135deg,
+    rgb(179,208,253) 0%,
+    rgb(164,202,248) 100%
+  );
+  color:#000000!important;
+  box-shadow:
+    rgba(79,156,232,.44) 3px 3px 5px 0,
+    rgba(79,156,232,.34) 5px 5px 20px 0;
+}
+
+body.theme-black .xv-home-coding .xv-hc-eyebrow::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  z-index:-1;
   border-radius:999px;
   background:linear-gradient(
     135deg,
     rgb(218,232,247) 0%,
     rgb(214,229,247) 100%
   );
-  color:#000000!important;
   box-shadow:
-    rgba(79,156,232,.38) 3px 3px 5px 0,
-    rgba(79,156,232,.28) 5px 5px 20px 0,
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 0 -1px 0 rgba(163,206,255,.72);
+    inset 0 1px 0 rgb(255,255,255),
+    inset 0 -1px 0 rgb(163,206,255);
+}
+
+body.theme-black .xv-home-coding .xv-hc-eyebrow::after{
+  content:"";
+  position:absolute;
+  inset:4px;
+  z-index:-2;
+  border-radius:999px;
+  background:linear-gradient(
+    0deg,
+    rgb(163,206,255) 0%,
+    rgb(211,232,255) 100%
+  );
 }
