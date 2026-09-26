@@ -727,4 +727,254 @@ export function PluginMarketplace() {
     const available = ranked.filter(
       (plugin) => plugin.availability !== 'coming_soon',
     );
-    return filterPluginsByCategory(available, categ
+    return filterPluginsByCategory(available, category);
+  }, [category, plugins, query]);
+
+  const allDiscoverPlugins = useMemo(
+    () =>
+      filterPluginsByCategory(
+        plugins.filter(
+          (plugin) => plugin.availability === 'available',
+        ),
+        category,
+      ),
+    [category, plugins],
+  );
+
+  const visiblePlugins = (
+    query.trim() ? searchResults : allDiscoverPlugins
+  ).slice(0, visibleCount);
+
+  async function connectComposio(plugin: MarketplacePlugin) {
+    setConnectingId(plugin.id);
+    setSemanticError(null);
+    clearOAuthResult();
+
+    const popup = window.open(
+      '',
+      'xroga-connect-oauth',
+      'width=600,height=760,resizable=yes,scrollbars=yes',
+    );
+
+    try {
+      let sessionId = sessionIdRef.current;
+      let toolkit: XrogaConnectToolkit | undefined;
+
+      if (plugin.toolkit && sessionId) {
+        toolkit = {
+          toolkit: plugin.toolkit,
+          name: plugin.name,
+          description: plugin.description,
+          logo: plugin.logo,
+          connected: Boolean(plugin.connected),
+        };
+      } else {
+        const searchText =
+          plugin.searchTerms[0] ||
+          `find ${plugin.name} capabilities`;
+
+        connectSearchRef.current = searchText;
+
+        const result = await xrogaConnect.search(
+          searchText,
+          sessionId ?? undefined,
+        );
+
+        sessionId = result.sessionId;
+        sessionIdRef.current = result.sessionId;
+
+        const discovered = pluginsFromSearch(
+          result.toolkits ?? [],
+          result.tools ?? [],
+        );
+
+        setRemotePlugins((current) =>
+          mergePlugins(current, discovered),
+        );
+
+        toolkit = (result.toolkits ?? []).find((item) =>
+          pluginMatchesToolkit(plugin, item),
+        );
+      }
+
+      if (!sessionId || !toolkit) {
+        throw new Error(
+          `${plugin.name} is not currently available through Xroga Connect.`,
+        );
+      }
+
+      if (toolkit.connected || plugin.connected) {
+        try {
+          popup?.close();
+        } catch {
+          // Ignore popup cleanup failures.
+        }
+
+        setRemotePlugins((current) =>
+          mergePlugins(current, [{ ...plugin, connected: true }]),
+        );
+        setConnectingId(null);
+        toast.success(`${plugin.name} is already connected`);
+        setView('connected');
+        return;
+      }
+
+      connectSearchRef.current =
+        plugin.searchTerms[0] ||
+        `find ${plugin.name} capabilities`;
+
+      const result = await xrogaConnect.link(
+        sessionId,
+        toolkit.toolkit,
+      );
+
+      if (!result.redirectUrl) {
+        throw new Error('Authorization link was not returned.');
+      }
+
+      if (popup) {
+        popup.location.href = result.redirectUrl;
+        popup.focus();
+      } else {
+        window.location.href = result.redirectUrl;
+      }
+    } catch (error) {
+      try {
+        popup?.close();
+      } catch {
+        // Ignore popup cleanup failures.
+      }
+
+      setConnectingId(null);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : `Could not connect ${plugin.name}`,
+      );
+    }
+  }
+
+  async function connectNative(plugin: MarketplacePlugin) {
+    if (plugin.connected) {
+      setView('developer');
+      setSelectedPlugin(null);
+      return;
+    }
+
+    setConnectingId(plugin.id);
+
+    try {
+      if (plugin.id === 'github') {
+        const { openGitHubOAuthPopup } = await import('@/lib/githubConnect');
+        const result = await openGitHubOAuthPopup();
+        if (!result.opened) {
+          throw new Error(
+            result.error || 'Could not start GitHub authorization.',
+          );
+        }
+        return;
+      }
+
+      if (plugin.id === 'vercel') {
+        const { openVercelOAuthPopup } = await import('@/lib/vercelConnect');
+        const result = await openVercelOAuthPopup();
+        if (!result.opened) {
+          throw new Error(
+            result.error || 'Could not start Vercel authorization.',
+          );
+        }
+        return;
+      }
+
+      if (plugin.id === 'supabase') {
+        const { openSupabaseOAuthPopup } = await import('@/lib/supabaseConnect');
+        const result = await openSupabaseOAuthPopup();
+        if (!result.opened) {
+          throw new Error(
+            result.error || 'Could not start Supabase authorization.',
+          );
+        }
+        return;
+      }
+
+      setView('developer');
+      setConnectingId(null);
+    } catch (error) {
+      setConnectingId(null);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : `Could not connect ${plugin.name}`,
+      );
+    }
+  }
+
+  function handleConnect(plugin: MarketplacePlugin) {
+    setSelectedPlugin(null);
+
+    if (plugin.source === 'credential') {
+      setView('custom');
+      return;
+    }
+
+    if (plugin.source === 'native') {
+      void connectNative(plugin);
+      return;
+    }
+
+    void connectComposio(plugin);
+  }
+
+  const searchActive = query.trim().length > 0;
+  const noSearchResults =
+    searchActive &&
+    !semanticLoading &&
+    searchResults.length === 0;
+
+  return (
+    <div className="space-y-8">
+      <header className="space-y-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-[28px]">
+              Plugins
+            </h1>
+            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+              Connect the tools Xroga can securely work with. Search by app or describe what you&apos;d like Xroga to do.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setView('custom')}
+            className="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold text-[var(--text-primary)] shadow-subtle hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add plugin
+          </button>
+        </div>
+
+        <div className="relative">
+          <label htmlFor="xroga-plugin-search" className="sr-only">
+            Search Plugins
+          </label>
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
+            aria-hidden="true"
+          />
+          <input
+            id="xroga-plugin-search"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setVisibleCount(INITIAL_VISIBLE);
+              if (view !== 'discover') setView('discover');
+            }}
+            placeholder="Search plugins or describe what you want Xroga to do…"
+            className="w-full rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-3.5 pl-11 pr-12 text-sm text-[var(--text-primary)] shadow-subtle outline-none transition-[border-color,box-shadow] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:shadow-[var(--focus-ring)]"
+          />
+          {semanticLoading ? (
+            <Loader2
+              className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-muted)]"
+              aria-label="Searching Plugins"
+   
