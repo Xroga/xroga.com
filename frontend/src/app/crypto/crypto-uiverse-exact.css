@@ -104,3 +104,303 @@
 @media (prefers-reduced-motion:reduce){
   .xv-uiv-site-skeleton,.xv-uiv-site-trace-flow{animation:none!important}
 }
+
+
+/* SelfMadeSystem repository card: source-faithful structure and animation, namespaced for /crypto. */
+.xv-sms-repo-scope{
+  width:100%;
+  min-height:340px;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.xv-sms-repo-filters{
+  position:absolute;
+  width:0;
+  height:0;
+  pointer-events:none;
+}
+.xv-sms-card-container{
+  position:relative;
+  width:400px;
+  height:300px;
+  border-radius:1em;
+  margin:0 2em;
+}
+.xv-sms-card-border{
+  position:absolute;
+  inset:0;
+  background:#0005;
+  border-radius:inherit;
+}
+.xv-sms-card{
+  position:absolute;
+  inset:.125em;
+  border-radius:.875em;
+  background:#111215;
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+  overflow:hidden;
+}
+.xv-sms-header{
+  background:#0b0d10;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  border-bottom:1px solid #1d1f23;
+}
+.xv-sms-top-header{
+  background:#0b0d10;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px 0;
+}
+.xv-sms-repo>span{
+  text-decoration:none;
+  color:#bebebe;
+  font-weight:300;
+  font-size:14px;
+}
+.xv-sms-repo{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:8px;
+}
+.xv-sms-repo-slash{
+  font-size:10px!important;
+  pointer-events:none;
+}
+.xv-sms-repo-name{
+  color:#fff!important;
+  font-weight:400!important;
+  position:relative;
+}
+.xv-sms-repo-owner{position:relative}
+.xv-sms-repo-owner::before,
+.xv-sms-repo-name::before{
+  content:"";
+  position:absolute;
+  inset:-2px -4px;
+  border-radius:6px;
+  background:hsl(0 0% 100% / 7%);
+  opacity:0;
+  transition:.3s;
+}
+.xv-sms-repo-owner:hover::before,
+.xv-sms-repo-name:hover::before{opacity:1}
+.xv-sms-gh-icon,
+.xv-sms-gh-icon svg{
+  height:2em;
+  fill:#fff;
+}
+.xv-sms-space{flex-grow:1}
+.xv-sms-icon{
+  cursor:pointer;
+  display:flex;
+  height:1.5em;
+  width:1.5em;
+  padding:.25em;
+  border-radius:.25em;
+  fill:#797d86;
+  outline:1px solid #303236;
+  transition:.3s;
+}
+.xv-sms-icon:hover{background:hsl(0 0% 100% / 7%)}
+.xv-sms-icon svg{
+  width:1em;
+  height:1em;
+}
+.xv-sms-btm-header{
+  display:flex;
+  flex-direction:row;
+  padding:0 10px;
+  gap:8px;
+  color:#fff;
+  fill:#fff;
+}
+.xv-sms-tab{
+  position:relative;
+  padding:4px 4px 12px;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:4px;
+  font-size:14px;
+  cursor:pointer;
+  isolation:isolate;
+}
+.xv-sms-tab-icon{
+  width:1em;
+  height:1.25em;
+  fill:#797d86;
+}
+.xv-sms-tab-active{border-bottom:2px solid #e98463}
+.xv-sms-tab::before{
+  content:"";
+  position:absolute;
+  background:#fff;
+  border-radius:8px;
+  opacity:0;
+  inset:0;
+  bottom:8px;
+  z-index:-1;
+  transition:.3s;
+}
+.xv-sms-tab:hover::before{opacity:.07}
+.xv-sms-content{
+  height:100%;
+  overflow:hidden;
+}
+.xv-sms-prs::-webkit-scrollbar{width:0}
+.xv-sms-prs{
+  margin:12px;
+  height:calc(100% - 24px);
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  border:1px solid #343539;
+  border-radius:6px;
+  overflow:auto;
+}
+.xv-sms-pr{
+  display:flex;
+  flex-direction:row;
+  gap:8px;
+  width:100%;
+  outline:1px solid #343539;
+  padding:8px;
+  box-sizing:border-box;
+}
+.xv-sms-checkbox{
+  position:relative;
+  width:1em;
+  height:1em;
+  border-radius:2px;
+  outline:1px solid #343539;
+  transition:.3s;
+}
+.xv-sms-checkbox:hover{background:hsl(0 0% 100% / 5%)}
+.xv-sms-checkbox:active{
+  outline-color:#2a2c2f;
+  background:hsl(0 0% 100% / 0%);
+}
+.xv-sms-card input:checked~.xv-sms-checkbox{outline-color:#797d86}
+.xv-sms-card input:checked~.xv-sms-checkbox:active{outline-color:#56585c}
+.xv-sms-card input:checked~.xv-sms-checkbox::before{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  width:4px;
+  height:8px;
+  border-bottom:2px solid;
+  border-right:2px solid;
+  border-color:#fff;
+  transform:translate(5.5px,2.5px) rotate(45deg);
+}
+.xv-sms-pr-icon{
+  display:flex;
+  width:1em;
+  height:1em;
+  fill:#63d188;
+  flex:0 0 auto;
+}
+.xv-sms-pr-icon svg{width:1em;height:1em}
+.xv-sms-pr-text{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.xv-sms-pr-title{
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.xv-sms-pr-title:hover{color:#4493f8}
+.xv-sms-pr-desc{
+  padding-left:2px;
+  font-size:10px;
+  color:#797d86;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.xv-sms-backdrop{
+  position:absolute;
+  inset:-100%;
+  background:radial-gradient(circle at 50% 50%,#0000 0,#0000 20%,#111111aa 50%);
+  background-size:3px 3px;
+  z-index:-1;
+}
+.xv-sms-spin{
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  overflow:hidden;
+}
+.xv-sms-spin-blur{filter:blur(3em) url(#xv-sms-unopaq)}
+.xv-sms-spin-intense{
+  inset:-.125em;
+  filter:blur(.5em) url(#xv-sms-unopaq2);
+  border-radius:.75em;
+}
+.xv-sms-spin-inside{
+  inset:-2px;
+  border-radius:inherit;
+  filter:blur(2px) url(#xv-sms-unopaq3);
+  z-index:0;
+}
+.xv-sms-spin::before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  animation:xv-sms-speen 8s cubic-bezier(.56,.15,.28,.86) infinite;
+}
+.xv-sms-spin-blur::before{
+  background:linear-gradient(-45deg,#f50,#0000 46% 54%,#05f);
+}
+.xv-sms-spin-intense::before{
+  background:linear-gradient(-45deg,#f95,#0000 35% 65%,#59f);
+}
+.xv-sms-spin-inside::before{
+  background:linear-gradient(-45deg,#fc9,#0000 35% 65%,#9cf);
+}
+@keyframes xv-sms-speen{
+  0%{rotate:10deg}
+  50%{rotate:190deg}
+  to{rotate:370deg}
+}
+.xv-sms-card input{display:none}
+.xv-sms-pfp{
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:1.75em;
+  height:1.75em;
+  border-radius:100%;
+  background-color:#fff1;
+  color:#d8dbe2;
+  font-size:10px;
+  font-weight:700;
+}
+@media (max-width:680px){
+  .xv-sms-repo-scope{
+    min-height:290px;
+    overflow:hidden;
+  }
+  .xv-sms-card-container{
+    transform:scale(.82);
+    transform-origin:center;
+    margin:0;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .xv-sms-spin::before{animation:none!important}
+}
