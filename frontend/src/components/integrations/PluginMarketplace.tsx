@@ -460,4 +460,271 @@ export function PluginMarketplace() {
     const composio = params.get('composio');
     const message = params.get('message');
 
-    if (github === 'connected
+    if (github === 'connected') {
+      setNativeConnected((current) => ({ ...current, github: true }));
+      toast.success(
+        params.get('username')
+          ? `GitHub connected as @${params.get('username')}`
+          : 'GitHub connected',
+      );
+    } else if (github === 'error' || github === 'missing_code') {
+      toast.error(message || 'GitHub authorization failed — try again');
+    }
+
+    if (vercel === 'connected') {
+      setNativeConnected((current) => ({ ...current, vercel: true }));
+      toast.success(
+        params.get('username')
+          ? `Vercel connected as @${params.get('username')}`
+          : 'Vercel connected',
+      );
+    } else if (
+      vercel === 'error' ||
+      vercel === 'missing_code'
+    ) {
+      toast.error(message || 'Vercel authorization failed — try again');
+    }
+
+    if (supabase === 'connected') {
+      setNativeConnected((current) => ({ ...current, supabase: true }));
+      toast.success('Supabase authorized');
+    } else if (
+      supabase === 'error' ||
+      supabase === 'missing_code'
+    ) {
+      toast.error(message || 'Supabase authorization failed — try again');
+    }
+
+    if (composio === 'connected') {
+      toast.success('Plugin connected to Xroga');
+    } else if (composio === 'error') {
+      toast.error(message || 'Plugin connection failed');
+    }
+
+    if (github || vercel || supabase || composio) {
+      const url = new URL(window.location.href);
+      [
+        'github',
+        'vercel',
+        'supabase',
+        'composio',
+        'message',
+        'username',
+        'pick',
+        'focus',
+      ].forEach((key) => url.searchParams.delete(key));
+      window.history.replaceState({}, '', `${url.pathname}${url.search}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    setCheckingNative(true);
+    void Promise.allSettled([
+      api.github.status(),
+      api.vercel.status(),
+      api.supabase.status(),
+    ]).then((results) => {
+      if (!active) return;
+
+      setNativeConnected({
+        github:
+          results[0].status === 'fulfilled' &&
+          Boolean(results[0].value.connected),
+        vercel:
+          results[1].status === 'fulfilled' &&
+          Boolean(results[1].value.connected),
+        supabase:
+          results[2].status === 'fulfilled' &&
+          Boolean(
+            results[2].value.connected ||
+            results[2].value.oauthConnected ||
+            results[2].value.provisioned ||
+            results[2].value.ready,
+          ),
+      });
+      setCheckingNative(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    void xrogaConnect
+      .status()
+      .then(async (status) => {
+        if (!active) return;
+        setConnectConfigured(status.configured);
+
+        if (!status.configured) return;
+
+        try {
+          const result = await xrogaConnect.search(
+            'email calendar files messages payments orders crm pages accounting issues monitoring',
+          );
+          if (!active) return;
+
+          sessionIdRef.current = result.sessionId;
+          setRemotePlugins(
+            pluginsFromSearch(result.toolkits ?? [], result.tools ?? []),
+          );
+        } catch {
+          // Bootstrap discovery is best-effort. Native Plugins remain usable.
+        }
+      })
+      .catch(() => {
+        if (active) setConnectConfigured(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(
+    () =>
+      subscribeOAuthResults((payload) => {
+        if (payload.type === 'xroga-composio-connected') {
+          setConnectingId(null);
+          toast.success('Plugin connected to Xroga');
+
+          const last = connectSearchRef.current;
+          if (last) {
+            void xrogaConnect
+              .search(last, sessionIdRef.current ?? undefined)
+              .then((result) => {
+                sessionIdRef.current = result.sessionId;
+                setRemotePlugins((current) =>
+                  mergePlugins(
+                    current,
+                    pluginsFromSearch(result.toolkits ?? [], result.tools ?? []),
+                  ),
+                );
+              })
+              .catch(() => {
+                // The OAuth succeeded; a refresh can recover metadata later.
+              });
+          }
+        }
+
+        if (payload.type === 'xroga-composio-error') {
+          setConnectingId(null);
+          toast.error(payload.message || 'Plugin connection failed');
+        }
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    const clean = deferredQuery.trim();
+    if (clean.length < 2 || connectConfigured !== true) {
+      setSemanticLoading(false);
+      setSemanticError(null);
+      return;
+    }
+
+    const sequence = ++requestSequenceRef.current;
+    const timer = window.setTimeout(() => {
+      setSemanticLoading(true);
+      setSemanticError(null);
+
+      void xrogaConnect
+        .search(clean, sessionIdRef.current ?? undefined)
+        .then((result) => {
+          if (sequence !== requestSequenceRef.current) return;
+
+          sessionIdRef.current = result.sessionId;
+          setRemotePlugins((current) =>
+            mergePlugins(
+              current,
+              pluginsFromSearch(result.toolkits ?? [], result.tools ?? []),
+            ),
+          );
+        })
+        .catch((error) => {
+          if (sequence !== requestSequenceRef.current) return;
+          setSemanticError(
+            error instanceof Error
+              ? error.message
+              : 'Live Plugin search is temporarily unavailable.',
+          );
+        })
+        .finally(() => {
+          if (sequence === requestSequenceRef.current) {
+            setSemanticLoading(false);
+          }
+        });
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [deferredQuery, connectConfigured]);
+
+  const plugins = useMemo(() => {
+    const merged = mergePlugins(PLUGIN_SEED, remotePlugins);
+
+    return merged.map((plugin) => {
+      if (plugin.source === 'native') {
+        return {
+          ...plugin,
+          connected: nativeConnected[plugin.id] ?? plugin.connected,
+        };
+      }
+
+      if (plugin.source === 'composio' && connectConfigured === false) {
+        return {
+          ...plugin,
+          availability: 'unavailable' as const,
+          connectable: false,
+          statusMessage: 'Business Plugins are temporarily unavailable.',
+        };
+      }
+
+      return plugin;
+    });
+  }, [connectConfigured, nativeConnected, remotePlugins]);
+
+  useEffect(() => {
+    if (!selectedPlugin) return;
+
+    const fresh = plugins.find((plugin) => plugin.id === selectedPlugin.id);
+    if (fresh && fresh !== selectedPlugin) setSelectedPlugin(fresh);
+  }, [plugins, selectedPlugin]);
+
+  const connectedPlugins = useMemo(
+    () => plugins.filter((plugin) => plugin.connected),
+    [plugins],
+  );
+
+  const popularPlugins = useMemo(
+    () =>
+      plugins
+        .filter(
+          (plugin) =>
+            plugin.popular &&
+            plugin.availability === 'available',
+        )
+        .slice(0, 6),
+    [plugins],
+  );
+
+  const developerPlugins = useMemo(
+    () =>
+      plugins.filter(
+        (plugin) =>
+          plugin.developer &&
+          plugin.availability === 'available',
+      ),
+    [plugins],
+  );
+
+  const searchResults = useMemo(() => {
+    const ranked = rankPlugins(plugins, query);
+    const available = ranked.filter(
+      (plugin) => plugin.availability !== 'coming_soon',
+    );
+    return filterPluginsByCategory(available, categ
