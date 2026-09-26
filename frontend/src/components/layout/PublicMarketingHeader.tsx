@@ -15,7 +15,6 @@ import {
   Globe2,
   LayoutDashboard,
   LayoutGrid,
-  LogIn,
   Menu,
   Rocket,
   Search,
@@ -369,6 +368,7 @@ export function PublicMarketingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -386,6 +386,39 @@ export function PublicMarketingHeader() {
     setMenuOpen(false);
     setActiveMega(null);
   }, [pathname]);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let frame = 0;
+
+    const syncHeaderToScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        const nextScrollY = window.scrollY;
+        const delta = nextScrollY - lastScrollY;
+
+        if (nextScrollY <= 16) {
+          setHeaderHidden(false);
+        } else if (Math.abs(delta) > 3) {
+          // Requested interaction: scrolling down reveals the header; scrolling up hides it.
+          setHeaderHidden(delta < 0);
+        }
+
+        lastScrollY = nextScrollY;
+        frame = 0;
+      });
+    };
+
+    window.addEventListener('scroll', syncHeaderToScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', syncHeaderToScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (menuOpen || activeMega) setHeaderHidden(false);
+  }, [menuOpen, activeMega]);
 
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -408,7 +441,12 @@ export function PublicMarketingHeader() {
   const accountHref = loggedIn ? '/workspace' : '/auth/login';
 
   return (
-    <header ref={rootRef} className="xv-marketing-header" data-public-marketing-header>
+    <header
+      ref={rootRef}
+      className="xv-marketing-header"
+      data-public-marketing-header
+      data-scroll-hidden={headerHidden ? 'true' : 'false'}
+    >
       <svg className="xv-nav-filter" aria-hidden="true">
         <defs>
           <filter id="xv-nav-turbulent-displace">
@@ -467,12 +505,37 @@ export function PublicMarketingHeader() {
         </nav>
 
         <div className="xv-marketing-header__actions">
-          <HomepageThemeSwitcher />
-          <button type="button" className="xv-marketing-header__account" onClick={() => router.push(accountHref)}>
-            {loggedIn ? <LayoutGrid aria-hidden="true" /> : <LogIn aria-hidden="true" />}
-            <span>{loggedIn ? 'Dashboard' : 'Sign in'}</span>
-          </button>
-          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary xv-marketing-header__cta" href="/auth/signup">Start free</Link>}
+          {loggedIn ? (
+            <>
+              <HomepageThemeSwitcher />
+              <button type="button" className="xv-marketing-header__account" onClick={() => router.push(accountHref)}>
+                <LayoutGrid aria-hidden="true" />
+                <span>Dashboard</span>
+              </button>
+            </>
+          ) : (
+            <Link className="xv-header-build-button xv-marketing-header__cta" href="/auth/signup">
+              <span className="xv-header-build-fold" aria-hidden="true" />
+              <span className="xv-header-build-points" aria-hidden="true">
+                {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
+              </span>
+              <span className="xv-header-build-inner">
+                <svg
+                  className="xv-header-build-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  aria-hidden="true"
+                >
+                  <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37" />
+                </svg>
+                Start Building Free
+              </span>
+            </Link>
+          )}
           <button
             type="button"
             className="xv-marketing-header__menu-button"
@@ -496,7 +559,7 @@ export function PublicMarketingHeader() {
         </nav>
         <div className="xv-marketing-mobile-menu__actions">
           <Link href={accountHref}>{loggedIn ? 'Dashboard' : 'Sign in'}</Link>
-          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/auth/signup">Start free</Link>}
+          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/auth/signup">Start Building Free</Link>}
         </div>
       </div>
     </header>

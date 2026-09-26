@@ -9,13 +9,20 @@ const EMBED_STYLE = `
   .showcase-intro { display: none !important; }
   .demo-shell { max-width: none !important; margin: 0 !important; padding: 0 !important; }
   .app { height: 100vh !important; min-height: 720px !important; border-radius: 28px !important; }
+  #autoplayNote { display: none !important; }
   @media (max-width: 880px) {
     .app { min-height: 760px !important; border-radius: 22px !important; }
   }
 </style>
 `;
 
-const SHOWCASE_HTML = SOURCE_HTML.replace('</head>', `${EMBED_STYLE}</head>`);
+const SHOWCASE_HTML = SOURCE_HTML
+  .replace('</head>', `${EMBED_STYLE}</head>`)
+  .replace(
+    '<div class="autoplay-note" id="autoplayNote">Autoplay · switches view every 60s · scrolls active page</div>',
+    '<div class="autoplay-note" id="autoplayNote" hidden aria-hidden="true"></div>',
+  )
+  .replace("toast(paused?'Autoplay paused':'Autoplay resumed')", 'void 0');
 
 export function GET() {
   return new Response(SHOWCASE_HTML, {
