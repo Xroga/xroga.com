@@ -1,4 +1,4 @@
-/** Shared permission-verified Vercel OAuth helpers for Integrations + deploy buttons. */
+/** Shared permission-verified Vercel OAuth helpers for Plugins + deploy buttons. */
 
 import {
   clearOAuthResult,
@@ -7,7 +7,7 @@ import {
 } from './oauthPopupResult';
 
 export const VERCEL_INTEGRATIONS_PATH =
-  '/dashboard/integrations?focus=vercel&vercel=setup#ship-setup';
+  '/dashboard/integrations?focus=vercel&vercel=setup';
 
 interface VercelOAuthDependencies {
   resolveUrl?: () => Promise<{ url: string; oauthConfigured: boolean }>;
@@ -21,7 +21,7 @@ export function isVercelSessionStoreError(message?: string): boolean {
   return /session store failed|storage fallback failed|Could not store OAuth session/i.test(message);
 }
 
-/** Leave chat/popup and open the Vercel setup section in Integrations. */
+/** Leave chat/popup and open the Vercel setup section in Plugins. */
 export function goToVercelIntegrations(opts?: { error?: string }): void {
   if (typeof window === 'undefined') return;
   try {
