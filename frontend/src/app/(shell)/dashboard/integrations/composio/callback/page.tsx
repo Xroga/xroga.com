@@ -96,7 +96,7 @@ function CallbackHandler() {
     }
 
     const successMessage =
-      'App connected to Xroga';
+      'Plugin connected to Xroga';
 
     setMessage(
       successMessage,
@@ -138,7 +138,7 @@ function CallbackHandler() {
       </p>
 
       <p className="max-w-sm text-xs leading-5 text-[var(--text-muted)]">
-        You can return to Xroga Integrations after this window closes.
+        You can return to Xroga Plugins after this window closes.
       </p>
     </div>
   );
