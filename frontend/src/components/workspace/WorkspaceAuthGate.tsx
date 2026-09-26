@@ -302,6 +302,32 @@ export function WorkspaceAuthGateProvider({
   const signupHref = '/auth/signup?next=%2Fworkspace';
   const loginHref = '/auth/login?next=%2Fworkspace';
 
+  const continueAfterAuth = useCallback(() => {
+    if (!resumeMarker) return;
+    const reason = resumeMarker.reason as WorkspaceAuthGateReason | undefined;
+    setResumeMarker(null);
+
+    const routeByReason: Partial<Record<WorkspaceAuthGateReason, string>> = {
+      dashboard: '/dashboard',
+      project: '/dashboard/projects',
+      integration: '/dashboard/integrations',
+      github: '/dashboard/integrations',
+      deploy: '/dashboard/publish',
+      settings: '/settings',
+    };
+    const route = reason ? routeByReason[reason] : undefined;
+    if (route) {
+      window.location.assign(route);
+      return;
+    }
+
+    window.setTimeout(() => {
+      document
+        .querySelector<HTMLTextAreaElement>('[data-terminal-composer]')
+        ?.focus();
+    }, 20);
+  }, [resumeMarker]);
+
   return (
     <WorkspaceAuthGateContext.Provider
       value={{ requestAuthGate, closeAuthGate, activeReason }}
@@ -330,14 +356,7 @@ export function WorkspaceAuthGateProvider({
           </div>
           <button
             type="button"
-            onClick={() => {
-              setResumeMarker(null);
-              window.setTimeout(() => {
-                document
-                  .querySelector<HTMLTextAreaElement>('[data-terminal-composer]')
-                  ?.focus();
-              }, 20);
-            }}
+            onClick={continueAfterAuth}
             className="shrink-0 rounded-xl bg-[var(--foreground)] px-3 py-2 text-[11px] font-semibold text-[var(--background)] transition hover:opacity-85"
           >
             Continue
