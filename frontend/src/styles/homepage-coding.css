@@ -9191,7 +9191,7 @@ body.theme-black .xv-home-coding .xv-hc-headline {
   max-width: 54rem;
   color: #f1f1ef;
   font-family: var(--font-claude-serif), var(--font-source-serif), Georgia, 'Times New Roman', serif;
-  font-size: clamp(3rem, 5vw, 5rem);
+  font-size: clamp(2.55rem, 4.35vw, 4.25rem);
   font-weight: 420;
   line-height: .98;
   letter-spacing: -.045em;
@@ -9303,7 +9303,7 @@ body.theme-black .xv-home-coding #ship-loop { scroll-margin-top: 1.25rem; }
   body.theme-black .xv-home-coding .xv-hc-header-inner { min-height: 58px; }
   body.theme-black .xv-home-coding .xv-hc-hero-main { justify-content: flex-start; padding: 3.4rem .8rem .8rem; }
   body.theme-black .xv-home-coding .xv-hc-eyebrow { font-size: .44rem; letter-spacing: .2em; }
-  body.theme-black .xv-home-coding .xv-hc-headline { max-width: 22rem; font-size: clamp(2.35rem, 11.4vw, 3.05rem); line-height: .97; }
+  body.theme-black .xv-home-coding .xv-hc-headline { max-width: 22rem; font-size: clamp(2.1rem, 10.2vw, 2.7rem); line-height: .97; }
   body.theme-black .xv-home-coding .xv-hc-hero-copy { max-width: 21rem; font-size: .78rem; line-height: 1.46; }
   body.theme-black .xv-home-coding .xv-hc-hero-actions { width: auto; }
   body.theme-black .xv-home-coding .xv-hc-hero-actions a { flex: 0 1 auto; min-height: 2.35rem; padding: .5rem .9rem; font-size: .62rem; }
