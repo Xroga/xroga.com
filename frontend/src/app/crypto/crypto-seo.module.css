@@ -1746,3 +1746,115 @@
   }
   .trustStrip span+span::before{display:none}
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Interactive DeFi / blockchain showcase — isolated source iframe.           */
+/* -------------------------------------------------------------------------- */
+
+.dashboardShowcaseSection{
+  width:min(1580px,calc(100% - 24px));
+  padding-top:96px;
+  padding-bottom:96px;
+}
+.dashboardShowcaseLead{
+  width:min(1120px,calc(100% - 16px));
+  margin:0 auto 34px;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);
+  gap:54px;
+  align-items:end;
+}
+.dashboardShowcaseLead .splitCopy h2{
+  max-width:760px;
+}
+.dashboardShowcaseLead .splitCopy p{
+  max-width:700px;
+  margin-top:18px;
+}
+.dashboardShowcaseActions{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:18px;
+  padding-bottom:2px;
+}
+.dashboardShowcaseActions .chipGrid{
+  margin:0;
+}
+.dashboardShowcaseFrame{
+  position:relative;
+  width:100%;
+  padding:1px;
+  border-radius:32px;
+  overflow:hidden;
+  background:
+    linear-gradient(120deg,rgba(114,255,208,.28),rgba(83,217,255,.1) 22%,rgba(255,255,255,.05) 48%,rgba(159,140,255,.12) 78%,rgba(186,255,69,.22)),
+    #080a0d;
+  box-shadow:
+    0 42px 110px rgba(0,0,0,.44),
+    0 0 0 1px rgba(255,255,255,.035),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+.dashboardShowcaseFrame::before{
+  content:"";
+  position:absolute;
+  inset:-18% 8% auto;
+  height:38%;
+  pointer-events:none;
+  background:radial-gradient(circle,rgba(83,217,255,.11),transparent 66%);
+  filter:blur(44px);
+  z-index:0;
+}
+.dashboardShowcaseFrame iframe{
+  position:relative;
+  z-index:1;
+  display:block;
+  width:100%;
+  height:clamp(760px,76vw,940px);
+  min-height:760px;
+  border:0;
+  border-radius:30px;
+  background:#050607;
+}
+:global(body.theme-white) .dashboardShowcaseFrame,
+:global(body.theme-beige) .dashboardShowcaseFrame{
+  box-shadow:
+    0 34px 90px rgba(18,28,42,.18),
+    0 0 0 1px rgba(14,27,44,.06);
+}
+
+@media (max-width:960px){
+  .dashboardShowcaseSection{
+    width:min(100% - 18px,1580px);
+  }
+  .dashboardShowcaseLead{
+    grid-template-columns:1fr;
+    gap:26px;
+  }
+  .dashboardShowcaseActions{
+    gap:16px;
+  }
+  .dashboardShowcaseFrame iframe{
+    height:820px;
+  }
+}
+@media (max-width:680px){
+  .dashboardShowcaseSection{
+    width:calc(100% - 12px);
+    padding-top:72px;
+    padding-bottom:72px;
+  }
+  .dashboardShowcaseLead{
+    width:calc(100% - 18px);
+    margin-bottom:24px;
+  }
+  .dashboardShowcaseFrame{
+    border-radius:24px;
+  }
+  .dashboardShowcaseFrame iframe{
+    min-height:760px;
+    height:760px;
+    border-radius:22px;
+  }
+}
