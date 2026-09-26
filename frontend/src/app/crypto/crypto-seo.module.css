@@ -1220,3 +1220,97 @@
   }
   .repoWindow{height:300px}
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Exact-code pass v3: Xroga-reference hero type, larger Poda, Vosoone loader. */
+/* -------------------------------------------------------------------------- */
+
+/* Match the supplied Xroga wordmark reference: high-contrast italic serif. */
+.heroTitle{
+  max-width:980px;
+  margin:28px auto 18px;
+  color:#fff!important;
+  font-family:var(--editorial);
+  font-size:clamp(56px,7vw,92px);
+  font-style:italic;
+  font-weight:500;
+  line-height:.88;
+  letter-spacing:-.045em;
+}
+.heroTitle span{
+  color:#fff!important;
+  font-family:var(--editorial)!important;
+  font-style:italic!important;
+  font-weight:500!important;
+  letter-spacing:-.045em!important;
+  text-shadow:none!important;
+}
+.heroSansLine,
+.heroSerifLine{
+  display:inline-block;
+  margin:0;
+  font-size:1em;
+}
+
+/* Keep the exact Poda design but render the whole component larger. */
+.heroConsole{
+  width:min(480px,100%);
+  min-height:96px;
+  margin-top:42px;
+  display:grid;
+  place-items:center;
+  overflow:visible;
+}
+.heroConsole :global(.xv-uiv-poda-form){
+  overflow:visible;
+}
+.heroConsole :global(#xv-uiv-poda){
+  transform:scale(1.32);
+  transform-origin:center;
+}
+
+/* Exact Vosoone visual for "Build the website — then build the product behind it." */
+.websiteBuildVisual{
+  width:min(520px,100%);
+  aspect-ratio:1/1;
+  justify-self:end;
+  overflow:hidden;
+  border-radius:32px;
+  background:#000;
+  box-shadow:0 30px 90px rgba(0,0,0,.28);
+}
+.websiteBuildVisual :global(.xv-uiv-site-main-container),
+.websiteBuildVisual :global(.xv-uiv-site-loader){
+  width:100%;
+  height:100%;
+}
+.websiteBuildVisual :global(svg){
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+@media (max-width:960px){
+  .websiteBuildVisual{
+    justify-self:center;
+    width:min(560px,100%);
+  }
+  .heroTitle{font-size:clamp(54px,10vw,80px)}
+  .heroConsole :global(#xv-uiv-poda){transform:scale(1.2)}
+}
+@media (max-width:680px){
+  .heroTitle{
+    font-size:clamp(44px,13vw,62px);
+    line-height:.9;
+  }
+  .heroConsole{
+    width:min(340px,100%);
+    min-height:78px;
+  }
+  .heroConsole :global(#xv-uiv-poda){transform:scale(1.05)}
+  .websiteBuildVisual{
+    width:100%;
+    border-radius:24px;
+  }
+}
