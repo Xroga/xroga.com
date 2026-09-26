@@ -33,6 +33,7 @@ import {
   ExactCryptoCardVisual,
   ExactFolderVisual,
   ExactMarketChartVisual,
+  ExactWebsiteBuildVisual,
 } from './CryptoExactVisuals';
 import './crypto-uiverse-exact.css';
 import styles from './crypto-seo.module.css';
@@ -600,26 +601,8 @@ export default function CryptoPage() {
             </p>
           </div>
 
-          <div className={styles.browserVisual} aria-hidden="true">
-            <div className={styles.browserBar}>
-              <i /><i /><i />
-              <span>protocol.xyz</span>
-            </div>
-            <div className={styles.browserHero}>
-              <div className={styles.browserSkeletonLg} />
-              <div className={styles.browserSkeletonSm} />
-              <div className={styles.browserButtons}>
-                <span />
-                <span />
-              </div>
-            </div>
-            <div className={styles.browserCards}>
-              <span />
-              <span />
-              <span />
-            </div>
-            <div className={styles.traceOne} />
-            <div className={styles.traceTwo} />
+          <div className={styles.websiteBuildVisual}>
+            <ExactWebsiteBuildVisual />
           </div>
         </div>
       </section>
