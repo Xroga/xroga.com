@@ -25,7 +25,6 @@ import {
   Boxes,
 } from 'lucide-react';
 
-import { Logo } from '@/components/layout/Logo';
 import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
@@ -347,13 +346,6 @@ export default function CryptoPage() {
             on-chain products with AI — inside a real repository you control.
           </p>
 
-          <div className={styles.heroActions}>
-            <GlowButton href="/auth/signup">Start Building Free</GlowButton>
-            <Link href="#what-you-can-build" className={styles.heroExploreButton}>
-              <span>See What You Can Build</span>
-            </Link>
-          </div>
-
           <div className={styles.heroConsole} id="builder">
             <CryptoPromptBar />
           </div>
@@ -641,11 +633,8 @@ export default function CryptoPage() {
         </div>
 
         <div className={styles.proofQuote}>
-          <span className={styles.proofLogo}>
-            <Logo href={null} variant="homepage" height={24} />
-          </span>
           <blockquote>
-            “A build is complete only after the required validation passes.”
+            “A build is complete only after the required validation passes. Start building a blockchain app for free with AI in minutes: describe the Web3 or crypto app in plain English, then turn the idea into reviewable code.”
           </blockquote>
           <small>From crypto idea to verified code.</small>
         </div>
@@ -679,7 +668,7 @@ export default function CryptoPage() {
             <div className={styles.planBadge}>START FREE</div>
             <p>XROGA AI</p>
             <div className={styles.price}><strong>$0</strong><span>to start</span></div>
-            <Link href="/auth/signup">Start building free <ArrowRight /></Link>
+            <GlowButton href="/auth/signup">Start building free</GlowButton>
             <ul>
               <li><Check /> Included AI usage</li>
               <li><Check /> Repository-aware edits</li>
@@ -722,8 +711,7 @@ export default function CryptoPage() {
       </section>
 
       <section className={styles.finalCta}>
-        <div className={styles.finalGlow} aria-hidden="true" />
-        <span className={styles.finalOrb}><Layers3 /></span>
+        <div className={styles.finalRain} aria-hidden="true" />
         <span className={styles.kicker}>FREE AI APP BUILDER · WEB3 · BLOCKCHAIN</span>
         <h2>Build your Web3 product with Xroga.</h2>
         <p>
