@@ -981,3 +981,242 @@
   .point,.repoSpin::before,.folderHint,.cryptoChart path{animation:none!important}
   .folderFile,.folderFront,.tiltShell>.productCard,.tiltShell>.tiltCard{transition:none!important}
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Exact-code pass v2: reference hero type + source-faithful Uiverse behavior. */
+/* The hero background rules above are intentionally untouched.                */
+/* -------------------------------------------------------------------------- */
+
+.heroInner{
+  width:min(900px,calc(100% - 40px));
+  padding-top:66px;
+}
+.seoEyebrow{
+  color:rgba(255,255,255,.72);
+  border-color:rgba(255,255,255,.16);
+  background:rgba(0,0,0,.24);
+}
+.heroTitle{
+  margin:30px auto 18px;
+  color:#fff!important;
+  font-family:var(--ui);
+  font-size:clamp(50px,6.4vw,82px);
+  line-height:.92;
+  letter-spacing:-.06em;
+  font-weight:500;
+}
+.heroTitle span{color:#fff!important;text-shadow:none!important}
+.heroSansLine{
+  display:inline-block;
+  font-family:var(--ui);
+  font-style:normal;
+  font-weight:500;
+  letter-spacing:-.065em;
+}
+.heroSerifLine{
+  display:inline-block;
+  margin-top:.02em;
+  font-family:var(--editorial);
+  font-size:1.08em;
+  font-style:italic;
+  font-weight:500;
+  letter-spacing:-.052em;
+}
+.heroSub{
+  max-width:610px;
+  color:rgba(255,255,255,.62);
+  font-size:12px;
+  line-height:1.72;
+}
+.heroActions{margin-top:26px}
+.heroConsole{
+  width:min(354px,100%);
+  margin-top:38px;
+}
+.trustStrip span{
+  color:rgba(255,255,255,.65);
+  border-color:rgba(255,255,255,.09);
+  background:rgba(0,0,0,.18);
+}
+
+/* Ensure the supplied primary button renders exactly even inside final CTA rules. */
+.root :global(.xv-uiv-button){
+  min-height:unset;
+  width:auto;
+  height:auto;
+  margin:0;
+  gap:0;
+  padding:12px 18px;
+  border:0;
+  border-radius:.75rem;
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%,rgba(223,113,255,.8) 0%,rgba(223,113,255,0) 100%),
+    linear-gradient(0deg,#7a5af8,#7a5af8);
+  color:#fff!important;
+  font-size:inherit;
+  font-weight:inherit;
+  box-shadow:none;
+}
+.root :global(.xv-uiv-button)>svg{display:none}
+.finalCta > :global(.xv-uiv-button){
+  min-height:unset;
+  padding:12px 18px;
+  border-radius:.75rem;
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%,rgba(223,113,255,.8) 0%,rgba(223,113,255,0) 100%),
+    linear-gradient(0deg,#7a5af8,#7a5af8);
+  font-size:inherit;
+  font-weight:inherit;
+}
+.finalCta > :global(.xv-uiv-button) :global(.xv-uiv-icon){
+  width:18px;
+  height:18px;
+}
+
+/* Exact folder component lives at the original source dimensions. */
+.freePanel{overflow:visible}
+.freePanel > :global(.xv-uiv-folder-scope){
+  min-width:360px;
+  min-height:360px;
+}
+:global(body.theme-white) .freePanel > :global(.xv-uiv-folder-scope),
+:global(body.theme-beige) .freePanel > :global(.xv-uiv-folder-scope){
+  filter:drop-shadow(0 24px 48px rgba(0,0,0,.16));
+}
+
+/* Source component stack: exact Vosoone card + exact Cobp chart. */
+.splitFeature{
+  grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);
+  gap:72px;
+}
+.dashboardExactStack{
+  position:relative;
+  min-height:430px;
+  width:100%;
+}
+.dashboardExactStack > :first-child{
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:2;
+}
+.dashboardExactStack > :last-child{
+  position:absolute;
+  right:0;
+  bottom:0;
+  z-index:1;
+  transform:scale(.84);
+  transform-origin:right bottom;
+}
+.dashboardExactStack::before{
+  content:"";
+  position:absolute;
+  inset:18% 12%;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.18),transparent 66%);
+  filter:blur(32px);
+  pointer-events:none;
+}
+:global(body.theme-white) .dashboardExactStack,
+:global(body.theme-beige) .dashboardExactStack{
+  filter:drop-shadow(0 24px 40px rgba(0,0,0,.13));
+}
+
+/* Source exact 10deg quadrant hover behavior, but with Xroga theme surfaces. */
+.tiltShell{perspective:1000px}
+.tiltHit:hover,.tiltHit:focus{transform:translateZ(50px)}
+.tiltHit:nth-child(1):hover~.productCard,
+.tiltHit:nth-child(1):hover~.tiltCard{
+  transform:rotateX(10deg) rotateY(-10deg) translateZ(0);
+  transform-origin:right bottom;
+  box-shadow:10px 20px var(--shadow);
+}
+.tiltHit:nth-child(2):hover~.productCard,
+.tiltHit:nth-child(2):hover~.tiltCard{
+  transform:rotateX(10deg) rotateY(10deg) translateZ(0);
+  transform-origin:left bottom;
+  box-shadow:-10px 20px var(--shadow);
+}
+.tiltHit:nth-child(3):hover~.productCard,
+.tiltHit:nth-child(3):hover~.tiltCard{
+  transform-origin:left top;
+  transform:rotateX(-10deg) rotateY(10deg) translateZ(0);
+  box-shadow:-10px -20px var(--shadow);
+}
+.tiltHit:nth-child(4):hover~.productCard,
+.tiltHit:nth-child(4):hover~.tiltCard{
+  transform-origin:right top;
+  transform:rotateX(-10deg) rotateY(-10deg) translateZ(0);
+  box-shadow:10px -20px var(--shadow);
+}
+.productCard,.tiltCard{
+  transition:all 300ms ease-out;
+  transform-origin:center center;
+  border-radius:10px;
+}
+
+/* SelfMadeSystem animated border filters, now using the supplied SVG filter matrix. */
+.repoFilters{
+  position:absolute;
+  width:0;
+  height:0;
+  pointer-events:none;
+}
+.repoWindow{
+  width:min(400px,100%);
+  height:300px;
+  margin:0 auto;
+  border-radius:1em;
+}
+.repoSpinBlur{filter:blur(3em) url(#crypto-unopaq)}
+.repoSpinIntense{filter:blur(.5em) url(#crypto-unopaq2)}
+.repoSpinInside{filter:blur(2px) url(#crypto-unopaq3)}
+.repoWindowTop{padding-top:10px}
+.repoRows{overflow:auto}
+
+/* Keep reference-image typography consistent from hero to final section. */
+.sectionHeading h2,.freeCopy h2,.splitCopy h2,.websiteCopy h2,.faqIntro h2,.finalCta h2,
+.statementCard h3,.productCard h3,.tiltCard h3,.whyGrid h3,.planSideCard h3{
+  font-family:var(--editorial);
+}
+.sectionHeading h2,.freeCopy h2,.splitCopy h2,.websiteCopy h2,.faqIntro h2,.finalCta h2{
+  font-style:normal;
+  font-weight:500;
+}
+.sectionHeading p,.freeCopy p,.splitCopy p,.websiteCopy p,.faqIntro p,.finalCta p,
+.statementCard p,.productCard p,.tiltCard p,.whyGrid p,.faqList p{
+  font-family:var(--ui);
+}
+.kicker,.seoEyebrow,.trustStrip,.miniPoints,.chipGrid,.finalTags{
+  font-family:var(--ui);
+}
+
+@media (max-width:960px){
+  .splitFeature{grid-template-columns:1fr;gap:42px}
+  .dashboardExactStack{width:min(560px,100%);margin:0 auto}
+  .heroTitle{font-size:clamp(50px,9vw,72px)}
+}
+@media (max-width:680px){
+  .heroInner{padding-top:48px}
+  .heroTitle{font-size:clamp(42px,13.5vw,58px);line-height:.94}
+  .heroSerifLine{font-size:1.04em}
+  .heroConsole{width:min(314px,100%)}
+  .freePanel > :global(.xv-uiv-folder-scope){
+    min-width:0;
+    min-height:290px;
+  }
+  .dashboardExactStack{
+    min-height:660px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+  }
+  .dashboardExactStack > :first-child,
+  .dashboardExactStack > :last-child{
+    position:relative;
+    inset:auto;
+    transform:none;
+  }
+  .repoWindow{height:300px}
+}
