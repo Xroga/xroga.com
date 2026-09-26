@@ -1,11 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, usePathname } from 'next/navigation';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
-import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 import { GeneralSettingsPanel } from '@/components/settings/GeneralSettingsPanel';
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
@@ -25,6 +25,7 @@ import { ConnectIcon } from '@/components/icons/animated/ConnectIcon';
 import { UserLockIcon } from '@/components/icons/animated/UserLockIcon';
 import { BellElectricIcon } from '@/components/icons/animated/BellElectricIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
+import { ArrowRight } from 'lucide-react';
 
 const CompanionCustomizer = dynamic(
   () => import('@/components/companion/CompanionCustomizer').then((module) => module.CompanionCustomizer),
@@ -46,6 +47,32 @@ const SECTIONS = [
   { id: 'security', label: 'Security', icon: <AnimatedIcon icon={UserLockIcon} size={16} intro={false} /> },
   { id: 'notifications', label: 'Notifications', icon: <AnimatedIcon icon={BellElectricIcon} size={16} intro={false} /> },
 ] as const satisfies readonly TabItem[];
+
+function PluginsSettingsSummary() {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-base font-semibold text-[var(--text-primary)]">Plugins</h2>
+        <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+          Manage the apps, developer tools and services Xroga can securely work with from the dedicated Plugins marketplace.
+        </p>
+      </div>
+
+      <Link
+        href="/dashboard/integrations"
+        className="flex items-center justify-between gap-3 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-4 transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--surface-raised)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <span>
+          <span className="block text-sm font-semibold text-[var(--text-primary)]">Open Plugins</span>
+          <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+            Discover, connect and manage Plugins without squeezing the marketplace into Settings.
+          </span>
+        </span>
+        <ArrowRight className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+      </Link>
+    </div>
+  );
+}
 
 export function SettingsView({ initialSection = 'general' }: { initialSection?: SettingsSectionId }) {
   const router = useRouter();
@@ -74,20 +101,10 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
         </div>
 
         <div className="flex flex-col gap-6 md:flex-row">
-          {/* Desktop: persistent left rail */}
           <nav className="hidden shrink-0 md:block md:w-52">
             <Tabs items={SECTIONS} activeId={section} onChange={setSection} orientation="vertical" idPrefix="xv-settings" />
           </nav>
 
-          {/*
-            Mobile/tablet: the same tabs as the desktop rail, laid out as one row that
-            scrolls under the finger.
-
-            This was a native select, chosen because a wrapping pill row turned nine
-            sections into three stacked rows. The row does not wrap now — it scrolls —
-            so the sections are all visible as sections rather than hidden behind a
-            control that has to be opened to find out what is in it.
-          */}
           <div className="xv-settings-sections md:hidden" role="group" aria-label="Section">
             <Tabs
               items={SECTIONS}
@@ -118,7 +135,7 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
             {section === 'privacy' && <PrivacySettingsPanel />}
             {section === 'data-ai' && <DataAiSettingsPanel email={email} />}
             {section === 'plan' && <PlanUsageSettingsPanel />}
-            {section === 'integrations' && <IntegrationsPanel />}
+            {section === 'integrations' && <PluginsSettingsSummary />}
             {section === 'security' && <SecuritySettingsPanel />}
             {section === 'notifications' && <NotificationsSettingsPanel />}
           </div>
