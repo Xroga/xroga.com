@@ -21,7 +21,6 @@ import {
   Sparkles,
   WalletCards,
   Workflow,
-  FileCode2,
   Boxes,
 } from 'lucide-react';
 
