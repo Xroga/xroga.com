@@ -2589,3 +2589,217 @@ body.theme-beige .xv-marketing-header__inner{
     padding-top:74px!important;
   }
 }
+
+
+/* =========================================================
+   PUBLIC HEADER V8 — compact segmented capsule
+   Reference direction: one soft floating shell, with a quiet
+   segmented track and a bright active tab. Theme-native only.
+   ========================================================= */
+.xv-marketing-header{
+  --xv-header-shell-bg:rgba(18,20,24,.76);
+  --xv-header-shell-border:rgba(255,255,255,.16);
+  --xv-header-track-bg:rgba(255,255,255,.07);
+  --xv-header-track-border:rgba(255,255,255,.08);
+  --xv-header-tab-text:rgba(255,255,255,.62);
+  --xv-header-tab-active-bg:rgba(255,255,255,.96);
+  --xv-header-tab-active-text:#14161a;
+  --xv-header-control-bg:rgba(255,255,255,.08);
+  --xv-header-control-border:rgba(255,255,255,.10);
+  top:12px!important;
+  width:min(calc(100% - 28px),1320px)!important;
+  padding:5px!important;
+  border:1px solid var(--xv-header-shell-border)!important;
+  border-radius:999px!important;
+  background:var(--xv-header-shell-bg)!important;
+  box-shadow:
+    0 14px 38px -24px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.14)!important;
+  backdrop-filter:blur(22px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(1.08)!important;
+}
+
+.xv-marketing-header__inner{
+  min-height:62px!important;
+  padding:5px 8px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+.xv-marketing-header__logo{
+  max-height:50px!important;
+}
+
+.xv-marketing-header__nav{
+  padding:4px!important;
+  gap:2px!important;
+  border:1px solid var(--xv-header-track-border)!important;
+  border-radius:999px!important;
+  background:var(--xv-header-track-bg)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 7px 18px -16px rgba(0,0,0,.42)!important;
+  backdrop-filter:blur(14px) saturate(1.04)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.04)!important;
+}
+
+.xv-marketing-header__nav > a,
+.xv-nav-trigger{
+  min-height:38px!important;
+  padding:.58rem .78rem!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:var(--xv-header-tab-text)!important;
+  box-shadow:none!important;
+  font-weight:650!important;
+  transition:
+    color .16s ease,
+    background .16s ease,
+    box-shadow .16s ease,
+    transform .16s ease!important;
+}
+
+.xv-nav-trigger svg{
+  opacity:.52!important;
+}
+
+.xv-nav-root[data-open='true'] .xv-nav-trigger,
+.xv-nav-trigger:hover,
+.xv-marketing-header__direct-link:hover,
+.xv-nav-trigger[aria-current='page'],
+.xv-marketing-header__direct-link[aria-current='page']{
+  background:var(--xv-header-tab-active-bg)!important;
+  color:var(--xv-header-tab-active-text)!important;
+  box-shadow:
+    0 5px 14px -10px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.72)!important;
+  transform:translateY(-1px);
+}
+
+.xv-nav-root[data-open='true'] .xv-nav-trigger svg,
+.xv-nav-trigger:hover svg,
+.xv-nav-trigger[aria-current='page'] svg{
+  opacity:.72!important;
+}
+
+.xv-nav-trigger::after,
+.xv-marketing-header__direct-link::after{
+  display:none!important;
+}
+
+.xv-marketing-header .xv-home-theme-trigger,
+.xv-marketing-header__account,
+.xv-marketing-header__menu-button{
+  border:1px solid var(--xv-header-control-border)!important;
+  background:var(--xv-header-control-bg)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+
+body.theme-black .xv-marketing-header{
+  --xv-header-shell-bg:rgba(12,14,18,.82);
+  --xv-header-shell-border:rgba(255,255,255,.18);
+  --xv-header-track-bg:rgba(255,255,255,.075);
+  --xv-header-track-border:rgba(255,255,255,.08);
+  --xv-header-tab-text:rgba(246,248,252,.62);
+  --xv-header-tab-active-bg:rgba(250,252,255,.96);
+  --xv-header-tab-active-text:#111318;
+  --xv-header-control-bg:rgba(255,255,255,.075);
+  --xv-header-control-border:rgba(255,255,255,.10);
+}
+
+body.theme-white .xv-marketing-header{
+  --xv-header-shell-bg:rgba(242,244,247,.86);
+  --xv-header-shell-border:rgba(255,255,255,.92);
+  --xv-header-track-bg:rgba(18,24,32,.045);
+  --xv-header-track-border:rgba(18,24,32,.045);
+  --xv-header-tab-text:rgba(31,35,41,.48);
+  --xv-header-tab-active-bg:rgba(255,255,255,.98);
+  --xv-header-tab-active-text:#16181c;
+  --xv-header-control-bg:rgba(255,255,255,.58);
+  --xv-header-control-border:rgba(23,28,35,.055);
+  box-shadow:
+    0 12px 32px -24px rgba(28,42,58,.22),
+    inset 0 1px 0 rgba(255,255,255,1)!important;
+}
+
+body.theme-gray .xv-marketing-header{
+  --xv-header-shell-bg:rgba(61,64,70,.84);
+  --xv-header-shell-border:rgba(255,255,255,.16);
+  --xv-header-track-bg:rgba(255,255,255,.085);
+  --xv-header-track-border:rgba(255,255,255,.07);
+  --xv-header-tab-text:rgba(246,247,249,.58);
+  --xv-header-tab-active-bg:rgba(248,249,251,.96);
+  --xv-header-tab-active-text:#25282d;
+  --xv-header-control-bg:rgba(255,255,255,.085);
+  --xv-header-control-border:rgba(255,255,255,.09);
+}
+
+body.theme-beige .xv-marketing-header{
+  --xv-header-shell-bg:rgba(235,226,211,.90);
+  --xv-header-shell-border:rgba(255,251,242,.84);
+  --xv-header-track-bg:rgba(91,70,49,.055);
+  --xv-header-track-border:rgba(91,70,49,.055);
+  --xv-header-tab-text:rgba(74,57,41,.52);
+  --xv-header-tab-active-bg:rgba(255,251,243,.98);
+  --xv-header-tab-active-text:#382b20;
+  --xv-header-control-bg:rgba(255,250,241,.58);
+  --xv-header-control-border:rgba(91,70,49,.07);
+  box-shadow:
+    0 12px 32px -24px rgba(91,70,49,.25),
+    inset 0 1px 0 rgba(255,255,255,.82)!important;
+}
+
+/* Homepage hero safety.
+   HomePage renders JSON-LD before HomepageClient, so :first-child never matched.
+   Scope directly to the homepage wrapper and move only hero content, not artwork. */
+.xv-public-marketing-content > .xv-homepage > .xv-hc-hero{
+  padding-top:102px!important;
+  box-sizing:border-box!important;
+}
+.xv-public-marketing-content > .xv-homepage > .xv-hc-hero .xv-hc-hero-main{
+  justify-content:flex-start!important;
+  padding-top:26px!important;
+}
+
+/* /crypto intentionally keeps its existing local header clearance untouched. */
+
+@media(max-width:980px){
+  .xv-marketing-header{
+    top:9px!important;
+    width:calc(100% - 18px)!important;
+    padding:4px!important;
+  }
+  .xv-marketing-header__inner{
+    min-height:58px!important;
+    padding:4px 7px!important;
+  }
+  .xv-public-marketing-content > .xv-homepage > .xv-hc-hero{
+    padding-top:88px!important;
+  }
+  .xv-public-marketing-content > .xv-homepage > .xv-hc-hero .xv-hc-hero-main{
+    padding-top:22px!important;
+  }
+}
+
+@media(max-width:640px){
+  .xv-marketing-header{
+    top:7px!important;
+    width:calc(100% - 10px)!important;
+    padding:3px!important;
+  }
+  .xv-marketing-header__inner{
+    min-height:54px!important;
+    padding:3px 5px!important;
+  }
+  .xv-public-marketing-content > .xv-homepage > .xv-hc-hero{
+    padding-top:76px!important;
+  }
+  .xv-public-marketing-content > .xv-homepage > .xv-hc-hero .xv-hc-hero-main{
+    padding-top:18px!important;
+  }
+}
