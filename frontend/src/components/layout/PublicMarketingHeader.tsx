@@ -508,9 +508,19 @@ export function PublicMarketingHeader() {
           {loggedIn ? (
             <>
               <HomepageThemeSwitcher />
-              <button type="button" className="xv-marketing-header__account" onClick={() => router.push(accountHref)}>
-                <LayoutGrid aria-hidden="true" />
-                <span>Dashboard</span>
+              <button
+                type="button"
+                className="xv-header-build-button xv-header-dashboard-button"
+                onClick={() => router.push(accountHref)}
+              >
+                <span className="xv-header-build-fold" aria-hidden="true" />
+                <span className="xv-header-build-points" aria-hidden="true">
+                  {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
+                </span>
+                <span className="xv-header-build-inner">
+                  <LayoutGrid className="xv-header-build-icon" aria-hidden="true" />
+                  Dashboard
+                </span>
               </button>
             </>
           ) : (
