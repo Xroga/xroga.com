@@ -1,66 +1,110 @@
 'use client';
 
-import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { VercelIcon } from '@/components/icons/animated/VercelIcon';
 
+function initialsFor(name: string): string {
+  const clean = name.trim();
+  if (!clean) return 'PL';
+
+  const parts = clean
+    .split(/\s+/g)
+    .filter(Boolean)
+    .slice(0, 2);
+
+  return parts
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
+    .slice(0, 2) || 'PL';
+}
+
 /**
- * One integration's mark, animated where we own the drawing.
+ * Brand mark used across Plugin surfaces.
  *
- * Every provider here is a brand SVG served as an image, and an image cannot move.
- * GitHub and Vercel are the two we have real components for, and they are also the two
- * that carry the most weight in this product — the repository connection and the
- * deployment target — so they draw themselves and run continuously. Everything else
- * falls through to its logo file unchanged.
- *
- * This exists as one component rather than a condition at each call site because there
- * are six of those, and the last time a mark was wired at only some of them the ones
- * that were missed stayed static without anything failing.
- *
- * `currentColor` is what makes both animated marks theme-aware: they take the ink of
- * whatever row they sit in rather than shipping a fixed black or white, which is the
- * whole reason the static `github.svg` looked wrong on half the themes.
+ * Native Xroga providers keep their animated glyphs. Other providers prefer
+ * explicit/provider metadata logos, then Xroga's known logo map. A deterministic
+ * initials fallback prevents broken-image placeholders from leaking into the UI.
  */
 export function IntegrationLogo({
   id,
   name,
   size = 18,
   className,
+  src,
 }: {
   id: string;
   name?: string;
   size?: number;
   className?: string;
+  src?: string;
 }) {
-  if (id === 'github') {
+  const [failed, setFailed] = useState(false);
+
+  const label = name ?? id;
+  const imageSrc = useMemo(
+    () => src || getIntegrationLogo(id, name),
+    [id, name, src],
+  );
+
+  useEffect(() => {
+    setFailed(false);
+  }, [imageSrc]);
+
+  if (id === 'github' && !src) {
     return (
-      <span className={cn('inline-flex items-center justify-center', className)} aria-hidden="true">
+      <span
+        className={cn('inline-flex items-center justify-center', className)}
+        aria-hidden="true"
+      >
         <GithubGlyphIcon size={size} />
       </span>
     );
   }
 
-  if (id === 'vercel') {
+  if (id === 'vercel' && !src) {
     return (
-      <span className={cn('inline-flex items-center justify-center', className)} aria-hidden="true">
+      <span
+        className={cn('inline-flex items-center justify-center', className)}
+        aria-hidden="true"
+      >
         <VercelIcon size={size} />
       </span>
     );
   }
 
-  const src = getIntegrationLogo(id, name);
-  if (!src) return null;
+  if (imageSrc && !failed) {
+    return (
+      <img
+        src={imageSrc}
+        alt=""
+        width={size}
+        height={size}
+        loading="lazy"
+        decoding="async"
+        className={cn('object-contain', className)}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
 
   return (
-    <Image
-      src={src}
-      alt={name ?? id}
-      width={size}
-      height={size}
-      className={className}
-      unoptimized
-    />
+    <span
+      className={cn(
+        'inline-flex items-center justify-center rounded-md bg-[var(--surface-inset)] font-bold tracking-tight text-[var(--text-primary)]',
+        className,
+      )}
+      style={{
+        width: size,
+        height: size,
+        fontSize: Math.max(8, Math.round(size * 0.36)),
+      }}
+      aria-label={`${label} logo`}
+      role="img"
+    >
+      {initialsFor(label)}
+    </span>
   );
 }
