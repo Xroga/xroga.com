@@ -977,4 +977,187 @@ export function PluginMarketplace() {
             <Loader2
               className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-muted)]"
               aria-label="Searching Plugins"
-   
+            />
+          ) : query ? (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-token-sm p-2 text-[var(--text-muted)] hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+              aria-label="Clear Plugin search"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
+
+        <nav
+          className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1"
+          aria-label="Plugin sections"
+        >
+          {VIEWS.map((item) => {
+            const active = view === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setView(item.id)}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'min-h-10 shrink-0 rounded-token-sm px-3.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                  active
+                    ? 'bg-[var(--surface-inset)] text-[var(--text-primary)] shadow-subtle'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--surface-inset)] hover:text-[var(--text-primary)]',
+                )}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3.5 py-3">
+          <ShieldCheck
+            className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]"
+            aria-hidden="true"
+          />
+          <p className="text-xs leading-5 text-[var(--text-secondary)]">
+            Xroga only takes actions you authorize. Sensitive actions may require confirmation.
+          </p>
+        </div>
+      </header>
+
+      {view === 'discover' ? (
+        <div className="space-y-8">
+          {semanticError && searchActive ? (
+            <div
+              role="status"
+              className="flex items-start gap-2 rounded-token-md border border-amber-500/25 bg-amber-500/5 px-3.5 py-3 text-sm text-[var(--text-secondary)]"
+            >
+              <CircleAlert
+                className="mt-0.5 h-4 w-4 shrink-0 text-amber-500"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-semibold text-[var(--text-primary)]">
+                  Live capability search is temporarily unavailable.
+                </p>
+                <p className="mt-0.5 text-xs leading-5">
+                  Local Plugin search still works. {semanticError}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {searchActive ? (
+            <section>
+              <SectionHeading
+                title="Search results"
+                meta={`${searchResults.length} ${searchResults.length === 1 ? 'Plugin' : 'Plugins'}`}
+              />
+
+              {noSearchResults ? (
+                <MarketplaceEmpty
+                  title={`No Plugin found for “${query.trim()}”`}
+                  description="Try another search, or share the Plugin you need with the Xroga community."
+                  action={
+                    <Link
+                      href="/community"
+                      className="inline-flex items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 py-2 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                    >
+                      Request a Plugin
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  }
+                />
+              ) : (
+                <PluginGrid
+                  plugins={visiblePlugins}
+                  connectingId={connectingId}
+                  checkingNative={checkingNative}
+                  onConnect={handleConnect}
+                  onPreview={setSelectedPlugin}
+                />
+              )}
+            </section>
+          ) : (
+            <>
+              <section>
+                <SectionHeading
+                  title="Connected"
+                  meta={
+                    connectedPlugins.length
+                      ? `${connectedPlugins.length} connected`
+                      : undefined
+                  }
+                />
+
+                {connectedPlugins.length ? (
+                  <PluginGrid
+                    plugins={connectedPlugins.slice(0, 6)}
+                    connectingId={connectingId}
+                    checkingNative={checkingNative}
+                    onConnect={handleConnect}
+                    onPreview={setSelectedPlugin}
+                  />
+                ) : checkingNative ? (
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {[0, 1, 2].map((item) => (
+                      <div
+                        key={item}
+                        className="h-[142px] animate-pulse rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <MarketplaceEmpty
+                    title="No Plugins connected yet"
+                    description="Connect the tools you use so Xroga can work with them when you ask."
+                  />
+                )}
+              </section>
+
+              <section>
+                <SectionHeading title="Popular" />
+                <PluginGrid
+                  plugins={popularPlugins}
+                  connectingId={connectingId}
+                  checkingNative={checkingNative}
+                  onConnect={handleConnect}
+                  onPreview={setSelectedPlugin}
+                />
+              </section>
+            </>
+          )}
+
+          <section>
+            <SectionHeading title="Categories" />
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+              {(['All', ...PLUGIN_CATEGORIES] as const).map((item) => {
+                const active = category === item;
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => {
+                      setCategory(item);
+                      setVisibleCount(INITIAL_VISIBLE);
+                    }}
+                    aria-pressed={active}
+                    className={cn(
+                      'min-h-9 shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                      active
+                        ? 'border-[var(--accent)]/35 bg-[var(--accent)]/10 text-[var(--text-primary)]'
+                        : 'border-[var(--border-subtle)] bg-[var(--surface-raised)] text-[var(--text-secondary)] hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]',
+                    )}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {!searchActive ? (
+            <section>
+              <SectionHeading
+                title="A
