@@ -68,10 +68,6 @@ export function HomepageClient() {
             <p className="xv-hc-eyebrow"><i /> AI APP BUILDER + CODING AGENT</p>
             <h1 className="xv-hc-headline">AI app builder that builds, tests and ships <em>code you own.</em></h1>
             <p className="xv-hc-hero-copy">Start from an idea or an existing repository. Xroga implements the product, runs applicable checks, and helps you ship through accounts you control.</p>
-            <div className="xv-hc-hero-actions">
-              <Link href={primaryHref} className="xv-hc-btn-primary xv-hc-btn-build">Build free <ArrowRight aria-hidden="true" /></Link>
-              <Link href="#ship-loop" className="xv-hc-btn-ghost">How it works</Link>
-            </div>
           </div>
 
           <div className="xv-hc-chat xv-home-chatbar-wrap">
