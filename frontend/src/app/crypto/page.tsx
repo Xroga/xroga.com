@@ -5,6 +5,7 @@ import { Cormorant_Garamond, Manrope } from 'next/font/google';
 import {
   ArrowRight,
   BarChart3,
+  Bitcoin,
   Blocks,
   Bot,
   Braces,
@@ -328,8 +329,10 @@ export default function CryptoPage() {
         <div className={styles.heroGlow} aria-hidden="true" />
         <div className={styles.heroInner}>
           <div className={styles.seoEyebrow}>
-            <Sparkles aria-hidden="true" />
-            FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO
+            <div className={styles.seoEyebrowInner}>
+              <Bitcoin aria-hidden="true" />
+              <span>FREE AI APP BUILDER · WEB3 · BLOCKCHAIN APPS · CRYPTO</span>
+            </div>
           </div>
 
           <h1 className={styles.heroTitle}>
@@ -348,9 +351,9 @@ export default function CryptoPage() {
 
           <div className={styles.heroActions}>
             <GlowButton href="/auth/signup">Start Building Free</GlowButton>
-            <GlowButton href="#what-you-can-build" secondary>
-              See What You Can Build
-            </GlowButton>
+            <Link href="#what-you-can-build" className={styles.heroExploreButton}>
+              <span>See What You Can Build</span>
+            </Link>
           </div>
 
           <div className={styles.heroConsole} id="builder">
