@@ -31,9 +31,7 @@ import { buildMetadata } from '@/lib/seo';
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
 import {
-  ExactCryptoCardVisual,
   ExactFolderVisual,
-  ExactMarketChartVisual,
   ExactWebsiteBuildVisual,
   ExactRepoPullRequestVisual,
 } from './CryptoExactVisuals';
@@ -498,13 +496,11 @@ export default function CryptoPage() {
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.dashboardSection}`}>
-        <div className={styles.splitFeature}>
-          <div className={styles.dashboardExactStack}>
-            <ExactCryptoCardVisual />
-            <ExactMarketChartVisual />
-          </div>
-
+      <section
+        className={`${styles.section} ${styles.dashboardShowcaseSection}`}
+        aria-label="Interactive DeFi and crypto analytics dashboard showcase"
+      >
+        <div className={styles.dashboardShowcaseLead}>
           <div className={styles.splitCopy}>
             <span className={styles.kicker}>AI DASHBOARD BUILDER</span>
             <h2>Build DeFi &amp; crypto analytics dashboards.</h2>
@@ -512,11 +508,23 @@ export default function CryptoPage() {
               Turn approved market, wallet, protocol and blockchain data into usable
               product experiences with interfaces, logic and data flows in the same repo.
             </p>
+          </div>
+
+          <div className={styles.dashboardShowcaseActions}>
             <div className={styles.chipGrid}>
               {DASHBOARD_EXAMPLES.map((item) => <span key={item}>{item}</span>)}
             </div>
             <GlowButton href="/auth/signup" secondary>Build a Crypto Dashboard</GlowButton>
           </div>
+        </div>
+
+        <div className={styles.dashboardShowcaseFrame}>
+          <iframe
+            title="BLACK HOLE VINFINTY — DeFi & Crypto Intelligence"
+            src="/showcase/black-hole-vinfinity-crypto"
+            loading="lazy"
+            allow="clipboard-write"
+          />
         </div>
       </section>
 
