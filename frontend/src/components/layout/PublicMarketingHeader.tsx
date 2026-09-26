@@ -459,7 +459,7 @@ export function PublicMarketingHeader() {
       <div className="xv-marketing-header__inner">
         <Logo href="/" variant="homepage" height={58} className="xv-marketing-header__logo" />
 
-        <nav className="xv-marketing-header__nav" aria-label="Primary navigation" onMouseLeave={() => setActiveMega(null)}>
+        <nav className="xv-marketing-header__nav" aria-label="Primary navigation">
           {PUBLIC_MARKETING_NAV.map((item) => {
             const mega = MEGA_MENUS[item.label];
             if (!mega) {
@@ -482,6 +482,7 @@ export function PublicMarketingHeader() {
                 data-open={isOpen}
                 key={item.href}
                 onMouseEnter={() => setActiveMega(item.label)}
+                onMouseLeave={() => setActiveMega((value) => value === item.label ? null : value)}
               >
                 <button
                   type="button"
