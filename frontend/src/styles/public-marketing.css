@@ -2516,9 +2516,9 @@ body.theme-beige .xv-marketing-header__inner{
 }
 .xv-marketing-header__nav::before{display:none!important}
 
-/* Fixed header safety: normal public pages reserve visual space; homepage and
-   /crypto keep their artwork under the header and handle copy spacing locally. */
-.xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
+/* Fixed header safety: every public route reserves visual space here except
+   /crypto, which keeps its artwork under the header and handles copy spacing locally. */
+.xv-public-marketing-content > :first-child:not([data-crypto-page]){
   padding-top:96px!important;
 }
 
@@ -2552,7 +2552,7 @@ body.theme-beige .xv-marketing-header__inner{
     padding:6px 8px!important;
     border-radius:25px!important;
   }
-  .xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
+  .xv-public-marketing-content > :first-child:not([data-crypto-page]){
     padding-top:84px!important;
   }
 }
@@ -2567,7 +2567,7 @@ body.theme-beige .xv-marketing-header__inner{
     padding:5px 6px!important;
     border-radius:21px!important;
   }
-  .xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
+  .xv-public-marketing-content > :first-child:not([data-crypto-page]){
     padding-top:74px!important;
   }
 }
