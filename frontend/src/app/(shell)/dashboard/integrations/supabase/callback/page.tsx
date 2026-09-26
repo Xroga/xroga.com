@@ -84,7 +84,7 @@ function CallbackHandler() {
           if (!window.opener || window.opener.closed) {
             const q = new URLSearchParams({ supabase: 'connected' });
             if (res.needsProjectPick) q.set('pick', '1');
-            router.replace(`/dashboard/integrations?${q.toString()}#ship-setup`);
+            router.replace(`/dashboard/integrations?${q.toString()}`);
           }
         }, 400);
       } catch (e) {
@@ -97,7 +97,7 @@ function CallbackHandler() {
     <div className="flex flex-col items-center justify-center min-h-[40vh] gap-3 px-4 text-center">
       <p className="text-[var(--muted)] font-mono text-sm">{message}</p>
       <p className="text-[11px] text-[var(--muted)] max-w-sm">
-        Keep this window open until it finishes. If it fails, go back to Integrations and click
+        Keep this window open until it finishes. If it fails, go back to Plugins and click
         Authorize Supabase again.
       </p>
     </div>
