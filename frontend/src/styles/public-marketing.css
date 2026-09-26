@@ -2518,8 +2518,26 @@ body.theme-beige .xv-marketing-header__inner{
 
 /* Fixed header safety: every public route reserves visual space here except
    /crypto, which keeps its artwork under the header and handles copy spacing locally. */
-.xv-public-marketing-content > :first-child:not([data-crypto-page]){
+.xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
   padding-top:96px!important;
+}
+
+/* Homepage-only fixed-header clearance.
+   Keep the homepage artwork behind the shared header, but start the actual hero copy
+   below the capsule. This is intentionally scoped away from /crypto. */
+.xv-public-marketing-content > .xv-homepage:first-child > .xv-hc-hero .xv-hc-hero-main{
+  justify-content:flex-start!important;
+  padding-top:160px!important;
+}
+@media(max-width:980px){
+  .xv-public-marketing-content > .xv-homepage:first-child > .xv-hc-hero .xv-hc-hero-main{
+    padding-top:140px!important;
+  }
+}
+@media(max-width:640px){
+  .xv-public-marketing-content > .xv-homepage:first-child > .xv-hc-hero .xv-hc-hero-main{
+    padding-top:112px!important;
+  }
 }
 
 /* Mega menus remain above the fixed capsule and retain a hover bridge. */
@@ -2552,7 +2570,7 @@ body.theme-beige .xv-marketing-header__inner{
     padding:6px 8px!important;
     border-radius:25px!important;
   }
-  .xv-public-marketing-content > :first-child:not([data-crypto-page]){
+  .xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
     padding-top:84px!important;
   }
 }
@@ -2567,7 +2585,7 @@ body.theme-beige .xv-marketing-header__inner{
     padding:5px 6px!important;
     border-radius:21px!important;
   }
-  .xv-public-marketing-content > :first-child:not([data-crypto-page]){
+  .xv-public-marketing-content > :first-child:not(.xv-homepage):not([data-crypto-page]){
     padding-top:74px!important;
   }
 }
