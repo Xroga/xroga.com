@@ -2036,3 +2036,15 @@
     padding-top:116px;
   }
 }
+
+
+/* Sticky shared header now owns its document-flow space.
+   Neutralize the previous /crypto-only fixed-header clearance. */
+.heroInner{
+  padding-top:66px;
+}
+@media (max-width:680px){
+  .heroInner{
+    padding-top:48px;
+  }
+}
