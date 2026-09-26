@@ -8,12 +8,12 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from 'react';
 import {
   ArrowRight,
   Check,
   ChevronRight,
-  Loader2,
   Plug,
   Search,
   ShieldCheck,
@@ -269,7 +269,7 @@ function PluginSection({
   title: string;
   description?: string;
   count?: number;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <section className="space-y-3">
@@ -296,7 +296,7 @@ function EmptyState({
 }: {
   title: string;
   body: string;
-  action?: React.ReactNode;
+  action?: ReactNode;
 }) {
   return (
     <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] bg-[var(--surface-raised)] px-5 py-8 text-center">
@@ -433,6 +433,7 @@ export function PluginMarketplace() {
 
   const [composioConfigured, setComposioConfigured] = useState<boolean | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
   const [livePlugins, setLivePlugins] = useState<PluginRecord[]>([]);
   const [semanticPlugins, setSemanticPlugins] = useState<PluginRecord[]>([]);
   const [semanticLoading, setSemanticLoading] = useState(false);
@@ -531,8 +532,9 @@ export function PluginMarketplace() {
       try {
         const result = await xrogaConnect.search(
           POPULAR_DISCOVERY_QUERY,
-          preferredSession ?? sessionId ?? undefined,
+          preferredSession ?? sessionIdRef.current ?? undefined,
         );
+        sessionIdRef.current = result.sessionId;
         setSessionId(result.sessionId);
         setLivePlugins((current) =>
           mergePluginRecords(current, searchPlugins(result)),
@@ -546,7 +548,7 @@ export function PluginMarketplace() {
         return null;
       }
     },
-    [sessionId],
+    [],
   );
 
   useEffect(() => {
@@ -688,6 +690,7 @@ export function PluginMarketplace() {
         .search(clean, sessionId ?? undefined)
         .then((result) => {
           if (!active) return;
+          sessionIdRef.current = result.sessionId;
           setSessionId(result.sessionId);
           const plugins = searchPlugins(result);
           setSemanticPlugins(plugins);
@@ -711,7 +714,7 @@ export function PluginMarketplace() {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [composioConfigured, deferredQuery, sessionId]);
+  }, [composioConfigured, deferredQuery]);
 
   useEffect(() => {
     setVisibleCount(30);
@@ -824,6 +827,7 @@ export function PluginMarketplace() {
 
   const mergeSearchResult = useCallback((result: XrogaConnectSearchResult) => {
     const plugins = searchPlugins(result);
+    sessionIdRef.current = result.sessionId;
     setSessionId(result.sessionId);
     setLivePlugins((current) => mergePluginRecords(current, plugins));
     return plugins;
