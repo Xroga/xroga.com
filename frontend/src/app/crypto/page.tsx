@@ -34,6 +34,7 @@ import {
   ExactFolderVisual,
   ExactMarketChartVisual,
   ExactWebsiteBuildVisual,
+  ExactRepoPullRequestVisual,
 } from './CryptoExactVisuals';
 import './crypto-uiverse-exact.css';
 import styles from './crypto-seo.module.css';
@@ -334,7 +335,10 @@ export default function CryptoPage() {
           <h1 className={styles.heroTitle}>
             <span className={styles.heroSansLine}>Build Web3 &amp; Blockchain</span>
             <br />
-            <span className={styles.heroSerifLine}>Apps with AI</span>
+            <span className={styles.heroSerifLine}>
+              <span className={styles.heroMutedText}>Apps with</span>{' '}
+              <span className={styles.heroBrightText}>AI</span>
+            </span>
           </h1>
 
           <p className={styles.heroSub}>
@@ -487,42 +491,7 @@ export default function CryptoPage() {
             })}
           </div>
 
-          <div className={styles.repoWindow} aria-hidden="true">
-            <svg className={styles.repoFilters} width="0" height="0" aria-hidden="true">
-              <filter id="crypto-unopaq" y="-100%" height="300%" x="-100%" width="300%">
-                <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 5 0" />
-              </filter>
-              <filter id="crypto-unopaq2" y="-100%" height="300%" x="-100%" width="300%">
-                <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 0" />
-              </filter>
-              <filter id="crypto-unopaq3" y="-100%" height="300%" x="-100%" width="300%">
-                <feColorMatrix values="1 0 0 1 0  0 1 0 1 0  0 0 1 1 0  0 0 0 2 0" />
-              </filter>
-            </svg>
-            <span className={`${styles.repoSpin} ${styles.repoSpinBlur}`} />
-            <span className={`${styles.repoSpin} ${styles.repoSpinIntense}`} />
-            <span className={styles.repoBackdrop} />
-            <span className={`${styles.repoSpin} ${styles.repoSpinInside}`} />
-            <div className={styles.repoWindowTop}>
-              <div><i /><i /><i /></div>
-              <span>xroga / protocol-console</span>
-              <small>main</small>
-            </div>
-            <div className={styles.repoTabs}>
-              <span className={styles.activeTab}>Code</span>
-              <span>Changes</span>
-              <span>Checks</span>
-            </div>
-            <div className={styles.repoRows}>
-              <span><CheckCircle2 /> app/dashboard/page.tsx <b>updated</b></span>
-              <span><CheckCircle2 /> lib/onchain/client.ts <b>updated</b></span>
-              <span><CheckCircle2 /> components/wallet.tsx <b>updated</b></span>
-              <span><CheckCircle2 /> tests/dashboard.test.ts <b>passed</b></span>
-            </div>
-            <div className={styles.repoStatusBar}>
-              <GitBranch /> 4 files changed · checks passing
-            </div>
-          </div>
+          <ExactRepoPullRequestVisual />
         </div>
       </section>
 
