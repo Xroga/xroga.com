@@ -30,6 +30,12 @@ import { buildMetadata } from '@/lib/seo';
 
 import '@/styles/homepage-coding.css';
 import { CryptoPromptBar } from './CryptoPromptBar';
+import {
+  ExactCryptoCardVisual,
+  ExactFolderVisual,
+  ExactMarketChartVisual,
+} from './CryptoExactVisuals';
+import './crypto-uiverse-exact.css';
 import styles from './crypto-seo.module.css';
 
 const manrope = Manrope({
@@ -206,23 +212,39 @@ function GlowButton({
   children: ReactNode;
   secondary?: boolean;
 }) {
+  if (secondary) {
+    return (
+      <Link href={href} className={styles.secondaryButton}>
+        <span>{children}</span>
+        <ArrowRight aria-hidden="true" />
+      </Link>
+    );
+  }
+
   return (
-    <Link
-      href={href}
-      className={secondary ? styles.secondaryButton : styles.glowButton}
-    >
-      {!secondary && (
-        <>
-          <span className={styles.buttonFold} aria-hidden="true" />
-          <span className={styles.pointsWrapper} aria-hidden="true">
-            {Array.from({ length: 10 }, (_, index) => (
-              <i className={styles.point} key={index} />
-            ))}
-          </span>
-        </>
-      )}
-      <span className={styles.buttonInner}>{children}</span>
-      <ArrowRight aria-hidden="true" />
+    <Link href={href} className="xv-uiv-button">
+      <span className="xv-uiv-fold" aria-hidden="true" />
+      <span className="xv-uiv-points_wrapper" aria-hidden="true">
+        {Array.from({ length: 10 }, (_, index) => (
+          <i className="xv-uiv-point" key={index} />
+        ))}
+      </span>
+      <span className="xv-uiv-inner">
+        <svg
+          className="xv-uiv-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.5"
+          aria-hidden="true"
+        >
+          <polyline points="13.18 1.37 13.18 9.64 21.45 9.64 10.82 22.63 10.82 14.36 2.55 14.36 13.18 1.37" />
+        </svg>
+        {children}
+      </span>
     </Link>
   );
 }
@@ -310,9 +332,9 @@ export default function CryptoPage() {
           </div>
 
           <h1 className={styles.heroTitle}>
-            <span className={styles.heroSerif}>Build Web3 &amp; Blockchain</span>
+            <span className={styles.heroSansLine}>Build Web3 &amp; Blockchain</span>
             <br />
-            <span className={styles.heroSans}>Apps with <em>AI</em></span>
+            <span className={styles.heroSerifLine}>Apps with AI</span>
           </h1>
 
           <p className={styles.heroSub}>
@@ -400,37 +422,7 @@ export default function CryptoPage() {
             <GlowButton href="/auth/signup">Start Free</GlowButton>
           </div>
 
-          <label className={styles.folderVisual}>
-            <input
-              type="checkbox"
-              className={styles.folderToggle}
-              aria-label="Open repository folder preview"
-            />
-            <span className={styles.folderHint}>Click to open</span>
-            <span className={styles.folderStage}>
-              <span className={styles.folderBack} />
-              <span className={styles.folderCards}>
-                <span className={`${styles.folderFile} ${styles.fileOne}`}>
-                  <FileCode2 />
-                  <span>app/page.tsx</span>
-                </span>
-                <span className={`${styles.folderFile} ${styles.fileTwo}`}>
-                  <Database />
-                  <span>data/web3.ts</span>
-                </span>
-                <span className={`${styles.folderFile} ${styles.fileThree}`}>
-                  <ShieldCheck />
-                  <span>checks/verify.ts</span>
-                </span>
-              </span>
-              <span className={styles.folderFront}>
-                <span>
-                  <GitBranch />
-                  <span>xroga/web3-product</span>
-                </span>
-              </span>
-            </span>
-          </label>
+          <ExactFolderVisual />
         </div>
       </section>
 
@@ -496,6 +488,17 @@ export default function CryptoPage() {
           </div>
 
           <div className={styles.repoWindow} aria-hidden="true">
+            <svg className={styles.repoFilters} width="0" height="0" aria-hidden="true">
+              <filter id="crypto-unopaq" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 5 0" />
+              </filter>
+              <filter id="crypto-unopaq2" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 0" />
+              </filter>
+              <filter id="crypto-unopaq3" y="-100%" height="300%" x="-100%" width="300%">
+                <feColorMatrix values="1 0 0 1 0  0 1 0 1 0  0 0 1 1 0  0 0 0 2 0" />
+              </filter>
+            </svg>
             <span className={`${styles.repoSpin} ${styles.repoSpinBlur}`} />
             <span className={`${styles.repoSpin} ${styles.repoSpinIntense}`} />
             <span className={styles.repoBackdrop} />
@@ -525,42 +528,9 @@ export default function CryptoPage() {
 
       <section className={`${styles.section} ${styles.dashboardSection}`}>
         <div className={styles.splitFeature}>
-          <div className={styles.dashboardVisual} aria-label="Interactive crypto dashboard preview">
-            <div className={styles.cryptoHeader}>
-              <span className={styles.cryptoLogo}>Xroga / Analytics</span>
-              <span className={styles.cryptoOpen}>Live product UI →</span>
-            </div>
-            <fieldset className={styles.cryptoSwitch}>
-              <input type="radio" id="xroga-btc" name="xroga-crypto-preview" defaultChecked />
-              <label htmlFor="xroga-btc">BTC</label>
-              <input type="radio" id="xroga-eth" name="xroga-crypto-preview" />
-              <label htmlFor="xroga-eth">ETH</label>
-              <input type="radio" id="xroga-sol" name="xroga-crypto-preview" />
-              <label htmlFor="xroga-sol">SOL</label>
-              <input type="radio" id="xroga-usdc" name="xroga-crypto-preview" />
-              <label htmlFor="xroga-usdc">USDC</label>
-              <span className={styles.cryptoSlider} aria-hidden="true" />
-            </fieldset>
-            <div className={styles.cryptoPriceInfos}>
-              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoBtc}`}>
-                <strong>$57,256.15</strong><span>12.458 BTC · +10.4%</span>
-              </div>
-              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoEth}`}>
-                <strong>$3,452.12</strong><span>34.123 ETH · +8.2%</span>
-              </div>
-              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoSol}`}>
-                <strong>$145.78</strong><span>150.78 SOL · +12.1%</span>
-              </div>
-              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoUsdc}`}>
-                <strong>$1.00</strong><span>10,000 USDC · 0.0%</span>
-              </div>
-            </div>
-            <div className={styles.cryptoChart}>
-              <svg className={styles.chartBtc} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,48 L5,45 L10,42 L15,38 L20,40 L25,35 L30,32 L35,28 L40,30 L45,25 L50,28 L55,22 L60,25 L65,20 L70,23 L75,18 L80,20 L85,15 L90,18 L95,12 L100,15 L100,50 L0,50 Z" /></svg>
-              <svg className={styles.chartEth} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,42 L8,40 L16,35 L24,37 L32,28 L40,30 L48,22 L56,24 L64,16 L72,19 L80,13 L88,16 L100,9 L100,50 L0,50 Z" /></svg>
-              <svg className={styles.chartSol} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,44 L10,39 L20,41 L30,30 L40,33 L50,24 L60,26 L70,17 L80,20 L90,10 L100,7 L100,50 L0,50 Z" /></svg>
-              <svg className={styles.chartUsdc} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,25 L100,25 L100,50 L0,50 Z" /></svg>
-            </div>
+          <div className={styles.dashboardExactStack}>
+            <ExactCryptoCardVisual />
+            <ExactMarketChartVisual />
           </div>
 
           <div className={styles.splitCopy}>
