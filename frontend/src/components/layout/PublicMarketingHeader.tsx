@@ -564,7 +564,11 @@ export function PublicMarketingHeader() {
       <div id="xv-public-mobile-menu" className="xv-marketing-mobile-menu" data-open={menuOpen}>
         <nav aria-label="Mobile navigation">
           {PUBLIC_MARKETING_NAV.map((item) => (
-            <Link key={item.href} href={item.href} aria-current={isCurrent ? 'page' : undefined}>
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={(pathname === item.href || (pathname === '/' && item.label === 'Product')) ? 'page' : undefined}
+            >
               {item.label}<ArrowUpRight aria-hidden="true" />
             </Link>
           ))}
