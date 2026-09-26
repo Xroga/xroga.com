@@ -2805,28 +2805,41 @@ body.theme-beige .xv-marketing-header{
 }
 
 
-/* Black theme header shell: white outer capsule + solid black inner surface.
-   Navigation/control button styling stays unchanged. */
+/* Black theme header: use the same blue-curtain family as the homepage hero.
+   White outer outline stays crisp; navigation/button behavior is unchanged. */
 body.theme-black .xv-marketing-header{
-  --xv-header-shell-bg:#ffffff;
-  --xv-header-shell-border:transparent;
-  border:0!important;
-  background:#ffffff!important;
+  --xv-header-shell-border:#ffffff;
+  border:2px solid #ffffff!important;
+  background:rgba(3,5,11,.72)!important;
   box-shadow:
-    0 12px 34px -14px rgba(0,0,0,.62),
-    0 3px 10px rgba(0,0,0,.20)!important;
+    0 14px 36px -15px rgba(0,0,0,.78),
+    0 5px 16px -8px rgba(58,92,255,.52),
+    inset 0 1px 0 rgba(255,255,255,.22)!important;
 }
 
 body.theme-black .xv-marketing-header__inner{
-  background:linear-gradient(
-    135deg,
-    rgb(218,232,247) 0%,
-    rgb(214,229,247) 100%
-  )!important;
-  border:1px solid rgba(255,255,255,.96)!important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(31,77,255,.88) 0%,
+      rgba(15,44,181,.56) 8%,
+      rgba(3,5,11,.94) 22%,
+      rgba(26,47,147,.72) 38%,
+      rgba(3,5,11,.98) 50%,
+      rgba(34,52,128,.68) 62%,
+      rgba(72,55,222,.62) 78%,
+      rgba(27,68,235,.84) 100%
+    ),
+    radial-gradient(
+      ellipse at 50% -20%,
+      rgba(255,255,255,.22) 0%,
+      rgba(95,112,255,.22) 24%,
+      rgba(3,5,11,0) 58%
+    ),
+    #03050b!important;
+  border:1px solid rgba(255,255,255,.28)!important;
   box-shadow:
-    rgba(79,156,232,.38) 3px 3px 5px 0,
-    rgba(79,156,232,.28) 5px 5px 20px 0,
-    inset 0 1px 0 rgba(255,255,255,.98),
-    inset 0 -1px 0 rgba(163,206,255,.72)!important;
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -1px 0 rgba(0,0,0,.78),
+    0 8px 22px -14px rgba(57,89,255,.82)!important;
 }
