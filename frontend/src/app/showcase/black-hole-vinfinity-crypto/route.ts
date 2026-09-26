@@ -4,8 +4,21 @@ const SOURCE_GZIP_BASE64 = 'H4sICK6Qt2oCA2JsYWNrLWhvbGUtdmluZmluaXR5LWNyeXB0by5o
 
 const SOURCE_HTML = gunzipSync(Buffer.from(SOURCE_GZIP_BASE64, 'base64')).toString('utf8');
 
+const EMBED_STYLE = `
+<style id="xroga-showcase-embed">
+  .showcase-intro { display: none !important; }
+  .demo-shell { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+  .app { height: 100vh !important; min-height: 720px !important; border-radius: 28px !important; }
+  @media (max-width: 880px) {
+    .app { min-height: 760px !important; border-radius: 22px !important; }
+  }
+</style>
+`;
+
+const SHOWCASE_HTML = SOURCE_HTML.replace('</head>', `${EMBED_STYLE}</head>`);
+
 export function GET() {
-  return new Response(SOURCE_HTML, {
+  return new Response(SHOWCASE_HTML, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'public, max-age=0, must-revalidate',
