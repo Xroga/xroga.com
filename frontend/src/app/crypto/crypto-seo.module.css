@@ -238,3 +238,746 @@
 }
 
 .dashboardSection,.websiteSection,.whySection,.planSection{position:relative;}
+
+
+/* -------------------------------------------------------------------------- */
+/* Editorial / Uiverse redesign layer — preserves the original hero backdrop. */
+/* -------------------------------------------------------------------------- */
+
+.root{
+  --editorial:var(--font-editorial), Georgia, "Times New Roman", serif;
+  --ui:var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --glow-a:rgba(var(--accent-rgb),.28);
+  --glow-b:rgba(207,48,170,.18);
+  --surface-glass:rgba(var(--page-bg-rgb),.68);
+  font-family:var(--ui);
+}
+.root::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-20;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(var(--accent-rgb),.08),transparent 26%),
+    radial-gradient(circle at 88% 62%,rgba(207,48,170,.055),transparent 30%);
+}
+.heroInner{
+  width:min(1040px,calc(100% - 40px));
+  padding-top:72px;
+}
+.seoEyebrow{
+  padding:7px 13px;
+  border-color:rgba(255,255,255,.18);
+  background:rgba(2,4,10,.42);
+  font-size:9px;
+  letter-spacing:.18em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 40px rgba(0,0,0,.22);
+}
+.heroTitle{
+  max-width:990px;
+  margin-top:32px;
+  font-family:var(--ui);
+  font-weight:500;
+  font-size:clamp(52px,7.7vw,104px);
+  line-height:.88;
+  letter-spacing:-.074em;
+}
+.heroSerif{
+  font-family:var(--editorial);
+  font-weight:500;
+  letter-spacing:-.055em;
+  font-size:1.05em;
+}
+.heroSans{
+  display:inline-block;
+  margin-top:.06em;
+  font-family:var(--ui);
+  font-weight:520;
+  letter-spacing:-.075em;
+}
+.heroSans em{
+  font-family:var(--editorial);
+  font-weight:500;
+  font-style:italic;
+  color:#c8ceff;
+  letter-spacing:-.045em;
+}
+.heroSub{
+  margin-top:28px;
+  max-width:650px;
+  font-size:13px;
+  line-height:1.72;
+  color:rgba(238,240,250,.72);
+}
+.heroActions{margin-top:28px;gap:12px}
+.heroConsole{
+  margin-top:42px;
+  filter:drop-shadow(0 26px 52px rgba(0,0,0,.32));
+}
+.trustStrip{
+  margin-top:24px;
+  gap:9px;
+}
+.trustStrip span{
+  min-height:29px;
+  padding:0 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(0,0,0,.18);
+  backdrop-filter:blur(12px);
+}
+
+/* Uiverse fold + particles button, adapted to Xroga theme tokens. */
+.glowButton{
+  --round:999px;
+  min-height:48px;
+  padding:0 21px;
+  border:0;
+  overflow:hidden;
+  isolation:isolate;
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%,rgba(179,133,255,.72) 0%,rgba(179,133,255,0) 100%),
+    linear-gradient(0deg,#7a5af8,#7a5af8);
+  color:#fff!important;
+  box-shadow:0 16px 42px rgba(91,72,210,.3),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.glowButton::before,.glowButton::after{
+  content:"";
+  position:absolute;
+  inset:var(--space);
+  border-radius:calc(var(--round) - var(--space));
+  transition:all .5s ease-in-out;
+  z-index:0;
+}
+.glowButton::before{
+  --space:1px;
+  background:linear-gradient(177.95deg,rgba(255,255,255,.19) 0%,rgba(255,255,255,0) 100%);
+}
+.glowButton::after{
+  --space:2px;
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%,rgba(223,113,255,.8) 0%,rgba(223,113,255,0) 100%),
+    linear-gradient(0deg,#6751e8,#7a5af8);
+  z-index:-1;
+}
+.buttonFold{
+  z-index:2;
+  position:absolute;
+  top:0;
+  right:0;
+  width:1rem;
+  height:1rem;
+  background:radial-gradient(100% 75% at 55%,rgba(223,113,255,.8),transparent);
+  box-shadow:0 0 3px rgba(0,0,0,.9);
+  border-bottom-left-radius:.5rem;
+  border-top-right-radius:var(--round);
+  transition:.5s ease-in-out;
+}
+.buttonFold::after{
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:150%;
+  height:150%;
+  transform:rotate(45deg) translateY(-18px);
+  background:rgba(245,245,248,.94);
+}
+.glowButton:hover .buttonFold{margin-top:-1rem;margin-right:-1rem}
+.pointsWrapper{
+  overflow:hidden;
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+}
+.point{
+  position:absolute;
+  bottom:-10px;
+  width:2px;
+  height:2px;
+  border-radius:999px;
+  background:#fff;
+  animation:floatingPoints infinite ease-in-out;
+  pointer-events:none;
+}
+.point:nth-child(1){left:10%;opacity:1;animation-duration:2.35s;animation-delay:.2s}
+.point:nth-child(2){left:30%;opacity:.7;animation-duration:2.5s;animation-delay:.5s}
+.point:nth-child(3){left:25%;opacity:.8;animation-duration:2.2s;animation-delay:.1s}
+.point:nth-child(4){left:44%;opacity:.6;animation-duration:2.05s}
+.point:nth-child(5){left:50%;opacity:1;animation-duration:1.9s}
+.point:nth-child(6){left:75%;opacity:.5;animation-duration:1.5s;animation-delay:1.5s}
+.point:nth-child(7){left:88%;opacity:.9;animation-duration:2.2s;animation-delay:.2s}
+.point:nth-child(8){left:58%;opacity:.8;animation-duration:2.25s;animation-delay:.2s}
+.point:nth-child(9){left:98%;opacity:.6;animation-duration:2.6s;animation-delay:.1s}
+.point:nth-child(10){left:65%;opacity:1;animation-duration:2.5s;animation-delay:.2s}
+@keyframes floatingPoints{
+  0%{transform:translateY(0)}
+  85%{opacity:0}
+  100%{transform:translateY(-55px);opacity:0}
+}
+.buttonInner{position:relative;z-index:3}
+.glowButton>svg{position:relative;z-index:3}
+.glowButton:active{transform:scale(.96)}
+
+/* Uiverse expanding fill button behavior for secondary CTAs. */
+.secondaryButton{
+  min-height:48px;
+  padding:0 20px;
+  overflow:hidden;
+  border:1px solid var(--line-strong);
+  background:transparent;
+  color:var(--text)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  isolation:isolate;
+}
+.secondaryButton::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:0;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(var(--accent-rgb),.22),rgba(207,48,170,.18));
+  transition:.5s ease;
+  z-index:-1;
+}
+.secondaryButton:hover::before{width:100%}
+
+/* Reference-image typography: editorial display + precise modern sans. */
+.section{
+  padding-top:110px;
+  padding-bottom:110px;
+}
+.sectionHeading{
+  align-items:start;
+  margin-bottom:46px;
+}
+.sectionHeading h2,.freeCopy h2,.splitCopy h2,.websiteCopy h2,.faqIntro h2,.finalCta h2{
+  font-family:var(--editorial);
+  font-weight:500;
+  font-size:clamp(42px,5.7vw,72px);
+  line-height:.93;
+  letter-spacing:-.052em;
+}
+.sectionHeading>p,.freeCopy>p,.splitCopy>p,.websiteCopy>p,.faqIntro>p,.finalCta>p{
+  font-family:var(--ui);
+  font-size:11px;
+  line-height:1.8;
+}
+.kicker{
+  letter-spacing:.18em;
+  font-size:8px;
+  font-weight:800;
+}
+.editorialLine,.proofQuote blockquote{
+  font-family:var(--editorial)!important;
+}
+.editorialLine{
+  font-size:24px!important;
+  line-height:1.06!important;
+}
+
+/* Intro cards: editorial poster language, less SaaS-template. */
+.introGrid{gap:14px}
+.statementCard{
+  min-height:320px;
+  padding:26px;
+  border-radius:18px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.018),transparent 55%),
+    radial-gradient(circle at 0 0,rgba(var(--accent-rgb),.15),transparent 42%),
+    var(--card);
+}
+.statementCard>span{letter-spacing:.16em}
+.statementCard h3{
+  margin-top:110px;
+  max-width:13ch;
+  font-family:var(--editorial);
+  font-size:30px;
+  line-height:.94;
+  letter-spacing:-.038em;
+  font-weight:500;
+}
+.statementCard p{font-size:9.5px;max-width:33ch}
+
+/* Exact quadrant-hover 3D mechanic from the supplied Uiverse card. */
+.tiltShell{
+  perspective:1000px;
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:220px;
+  border-radius:16px;
+}
+.tiltHit{
+  opacity:0;
+  position:absolute;
+  z-index:3;
+  width:50%;
+  height:50%;
+}
+.tiltHit:nth-child(1){top:0;left:0}
+.tiltHit:nth-child(2){top:0;right:0}
+.tiltHit:nth-child(3){bottom:0;right:0}
+.tiltHit:nth-child(4){bottom:0;left:0}
+.tiltHit:hover,.tiltHit:focus{transform:translateZ(50px)}
+.tiltShell>.productCard,.tiltShell>.tiltCard{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  transform-origin:center center;
+  transition:all 300ms ease-out;
+}
+.tiltHit:nth-child(1):hover~.productCard,.tiltHit:nth-child(1):hover~.tiltCard{transform:rotateX(7deg) rotateY(-7deg);transform-origin:right bottom;box-shadow:14px 22px 46px var(--shadow)}
+.tiltHit:nth-child(2):hover~.productCard,.tiltHit:nth-child(2):hover~.tiltCard{transform:rotateX(7deg) rotateY(7deg);transform-origin:left bottom;box-shadow:-14px 22px 46px var(--shadow)}
+.tiltHit:nth-child(3):hover~.productCard,.tiltHit:nth-child(3):hover~.tiltCard{transform:rotateX(-7deg) rotateY(7deg);transform-origin:left top;box-shadow:-14px -22px 46px var(--shadow)}
+.tiltHit:nth-child(4):hover~.productCard,.tiltHit:nth-child(4):hover~.tiltCard{transform:rotateX(-7deg) rotateY(-7deg);transform-origin:right top;box-shadow:14px -22px 46px var(--shadow)}
+.productGrid .tiltShell{min-height:250px}
+.productCard{
+  padding:24px;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 90% 0,rgba(var(--accent-rgb),.13),transparent 38%),
+    linear-gradient(180deg,rgba(255,255,255,.018),transparent 65%),var(--card);
+}
+.productCard h3{
+  margin-top:74px;
+  font-family:var(--editorial);
+  font-size:26px;
+  line-height:.96;
+  font-weight:500;
+}
+.productCard p{font-size:9.3px}
+.productIcon{border-radius:999px}
+
+/* Uiverse click-to-open folder behavior, adapted to the existing repository visual. */
+.folderVisual{
+  --back-fill:color-mix(in srgb,var(--accent) 72%,#12131a 28%);
+  --flap-fill:color-mix(in srgb,var(--accent) 52%,#161720 48%);
+  position:relative;
+  width:min(380px,100%);
+  height:300px;
+  display:block;
+  margin:auto;
+  perspective:1000px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.folderToggle{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+.folderStage{
+  position:absolute;
+  inset:0;
+  perspective:800px;
+}
+.folderHint{
+  position:absolute;
+  right:20px;
+  top:6px;
+  z-index:20;
+  color:var(--accent);
+  font-size:9px;
+  font-weight:800;
+  text-decoration:underline;
+  letter-spacing:.08em;
+  animation:folderHint 2.5s ease-in-out infinite;
+}
+@keyframes folderHint{50%{transform:translateY(6px)}}
+.folderBack{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  width:90%;
+  height:215px;
+  border-radius:26px;
+  background:var(--back-fill);
+  box-shadow:inset 0 0 6px 2px rgba(255,255,255,.17),0 34px 70px rgba(0,0,0,.28);
+}
+.folderCards{
+  position:absolute;
+  inset:0;
+}
+.folderFile{
+  position:absolute;
+  left:50%;
+  bottom:62px;
+  width:58%;
+  height:132px;
+  border-radius:18px;
+  padding:16px;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  color:#fff;
+  font-size:10px;
+  font-weight:800;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 12px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);
+  transition:transform .45s cubic-bezier(.2,.9,.3,1.15);
+}
+.folderFile svg{width:19px;height:19px}
+.fileOne{background:#ff5f6d;transform:translateX(-50%) translate(40px,-10px) rotate(10deg)}
+.fileTwo{background:#4facfe;transform:translateX(-50%) translate(3px,-20px) rotate(2deg);transition-delay:.02s}
+.fileThree{background:#8b5cf6;transform:translateX(-50%) translate(-40px,-22px) rotate(-5deg)}
+.folderVisual:hover .fileOne{transform:translateX(-50%) translate(40px,-30px) rotate(14deg);transition-delay:.12s}
+.folderVisual:hover .fileTwo{transform:translateX(-50%) translate(3px,-35px) rotate(-1deg);transition-delay:.06s}
+.folderVisual:hover .fileThree{transform:translateX(-50%) translate(-40px,-44px) rotate(-9deg)}
+.folderFront{
+  position:absolute;
+  left:50%;
+  bottom:9px;
+  width:92%;
+  height:192px;
+  transform:translateX(-50%) rotateX(-15deg);
+  transform-origin:bottom center;
+  transform-style:preserve-3d;
+  transition:transform .45s cubic-bezier(.2,.9,.3,1.1);
+  border-radius:26px;
+  background:linear-gradient(155deg,rgba(var(--accent-rgb),.78),var(--flap-fill));
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(6px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 28px 48px rgba(0,0,0,.24);
+}
+.folderFront>span{
+  position:absolute;
+  left:20px;
+  bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#fff;
+  font-size:10px;
+  font-weight:750;
+}
+.folderFront svg{width:14px;height:14px}
+.folderVisual:hover .folderFront{transform:translateX(-50%) rotateX(-45deg)}
+.folderToggle:checked~.folderHint{opacity:0}
+.folderToggle:checked~.folderStage .fileOne{transform:translateX(-50%) translate(70px,-146px) rotate(18deg)}
+.folderToggle:checked~.folderStage .fileTwo{transform:translateX(-50%) translate(0,-166px) rotate(-3deg)}
+.folderToggle:checked~.folderStage .fileThree{transform:translateX(-50%) translate(-65px,-155px) rotate(-14deg)}
+.folderToggle:checked~.folderStage .folderFront{transform:translateX(-50%) rotateX(-55deg)}
+
+/* Repository card: supplied Uiverse spinning-border mechanism. */
+.repoWindow{
+  isolation:isolate;
+  overflow:hidden;
+  border:0;
+  background:#111215;
+  border-radius:16px;
+  box-shadow:0 26px 70px rgba(0,0,0,.42);
+}
+.repoWindow::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  z-index:-1;
+  border-radius:14px;
+  background:#111215;
+}
+.repoSpin{
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  overflow:hidden;
+  pointer-events:none;
+}
+.repoSpin::before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  animation:repoSpeen 8s cubic-bezier(.56,.15,.28,.86) infinite;
+}
+.repoSpinBlur{filter:blur(3em)}
+.repoSpinIntense{inset:-2px;filter:blur(.5em);border-radius:14px}
+.repoSpinInside{inset:-2px;filter:blur(2px);z-index:-1}
+.repoSpinBlur::before{background:linear-gradient(-45deg,#f50,#0000 46% 54%,#05f)}
+.repoSpinIntense::before{background:linear-gradient(-45deg,#f95,#0000 35% 65%,#59f)}
+.repoSpinInside::before{background:linear-gradient(-45deg,#fc9,#0000 35% 65%,#9cf)}
+.repoBackdrop{
+  position:absolute;
+  inset:-100%;
+  z-index:-2;
+  background:radial-gradient(circle at 50% 50%,#0000 0,#0000 20%,#111111aa 50%);
+  background-size:3px 3px;
+}
+@keyframes repoSpeen{0%{rotate:10deg}50%{rotate:190deg}100%{rotate:370deg}}
+.repoWindowTop,.repoTabs,.repoRows,.repoStatusBar{position:relative;z-index:2}
+
+/* Interactive crypto card based directly on the supplied Vosoone component. */
+.dashboardVisual{
+  max-width:440px;
+  width:100%;
+  min-height:0;
+  margin:0 auto;
+  padding:24px;
+  border-radius:35px;
+  background:#000;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 30px 80px rgba(0,0,0,.48),0 0 70px rgba(var(--accent-rgb),.09);
+}
+.cryptoHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.cryptoLogo{font-family:var(--editorial);font-size:22px;font-weight:600}
+.cryptoOpen{font-size:8px;color:#888;transition:.3s ease}.cryptoOpen:hover{color:#fff}
+.cryptoSwitch{
+  position:relative;
+  display:flex;
+  background:#222;
+  border:0;
+  border-radius:20px;
+  padding:4px;
+  gap:8px;
+  margin:0 0 18px;
+  user-select:none;
+}
+.cryptoSwitch input{display:none}
+.cryptoSwitch label{
+  position:relative;
+  z-index:2;
+  flex:1;
+  text-align:center;
+  padding:9px 0;
+  border-radius:16px;
+  cursor:pointer;
+  color:#aaa;
+  font-size:8px;
+  font-weight:800;
+  transition:.3s;
+}
+.cryptoSwitch input:checked+label{color:#fff}
+.cryptoSlider{
+  position:absolute;
+  z-index:1;
+  top:4px;
+  bottom:4px;
+  left:4px;
+  width:calc((100% - 32px)/4);
+  border-radius:16px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(1px);
+  box-shadow:0 4px 8px rgba(0,0,0,.4),inset 0 -2px 4px rgba(255,255,255,.12);
+  transition:transform .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+.cryptoSwitch:has(#xroga-btc:checked) .cryptoSlider{transform:translateX(0)}
+.cryptoSwitch:has(#xroga-eth:checked) .cryptoSlider{transform:translateX(calc(100% + 8px))}
+.cryptoSwitch:has(#xroga-sol:checked) .cryptoSlider{transform:translateX(calc(200% + 16px))}
+.cryptoSwitch:has(#xroga-usdc:checked) .cryptoSlider{transform:translateX(calc(300% + 24px))}
+.cryptoPriceInfos{min-height:64px;margin:6px 0 18px}
+.cryptoPriceInfo{display:none}
+.cryptoPriceInfo strong{display:block;font-size:28px;letter-spacing:-.05em}
+.cryptoPriceInfo span{display:block;margin-top:4px;color:#6ed48e;font-size:9px;font-weight:700}
+.dashboardVisual:has(#xroga-btc:checked) .cryptoBtc,
+.dashboardVisual:has(#xroga-eth:checked) .cryptoEth,
+.dashboardVisual:has(#xroga-sol:checked) .cryptoSol,
+.dashboardVisual:has(#xroga-usdc:checked) .cryptoUsdc{display:block}
+.cryptoChart{
+  height:150px;
+  background:#11151a;
+  border-radius:15px;
+  position:relative;
+  overflow:hidden;
+}
+.cryptoChart::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.cryptoChart svg{width:100%;height:100%;display:none}
+.cryptoChart path{
+  stroke:#7cf29a;
+  stroke-width:.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:500;
+  stroke-dashoffset:500;
+  animation:cryptoDraw 3s forwards;
+  fill:rgba(52,211,153,.09);
+}
+@keyframes cryptoDraw{to{stroke-dashoffset:0}}
+.dashboardVisual:has(#xroga-btc:checked) .chartBtc,
+.dashboardVisual:has(#xroga-eth:checked) .chartEth,
+.dashboardVisual:has(#xroga-sol:checked) .chartSol,
+.dashboardVisual:has(#xroga-usdc:checked) .chartUsdc{display:block}
+
+/* SaaS cards keep the same 3D hit-map mechanic. */
+.saasGrid .tiltShell{min-height:300px}
+.tiltCard{
+  min-height:300px;
+  border-radius:18px;
+  padding:24px;
+  background:
+    linear-gradient(155deg,rgba(255,255,255,.025),transparent 55%),
+    radial-gradient(circle at 100% 0,rgba(var(--accent-rgb),.13),transparent 42%),var(--card);
+}
+.tiltCard h3{
+  margin-top:110px;
+  font-family:var(--editorial);
+  font-weight:500;
+  font-size:29px;
+  line-height:.94;
+}
+
+/* Browser frame receives the supplied trace-flow aesthetic. */
+.browserVisual{
+  border-radius:20px;
+  background:#080a0e;
+  border-color:#242833;
+  box-shadow:0 34px 80px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.025);
+}
+.browserVisual::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 0 40%,rgba(255,255,255,.06) 47%,rgba(255,255,255,.14) 50%,rgba(255,255,255,.05) 53%,transparent 60% 100%);
+  background-size:250% 250%;
+  background-position:100% 100%;
+  transition:background-position .7s cubic-bezier(.23,1,.32,1);
+}
+.browserVisual:hover::after{background-position:0 0}
+.traceOne,.traceTwo{height:1px;box-shadow:0 0 10px currentColor;filter:drop-shadow(0 0 8px currentColor) blur(.5px);color:#00ccff}
+
+/* Workflow becomes a visual branch rather than another generic grid. */
+.processGridFour{gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.processCard{
+  min-height:300px;
+  border:0;
+  border-right:1px solid var(--line);
+  border-radius:0;
+  background:transparent;
+}
+.processCard:last-child{border-right:0}
+.processCard h3{
+  font-family:var(--editorial);
+  font-size:34px;
+  font-weight:500;
+  letter-spacing:-.04em;
+}
+.processTop{margin-bottom:98px}
+.flowRail{margin-top:28px}
+
+/* Why / pricing / FAQ: quieter surfaces, stronger type. */
+.whyGrid{gap:12px}
+.whyGrid article{
+  min-height:250px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.018),transparent),var(--card);
+}
+.whyGrid h3{
+  margin-top:82px;
+  font-family:var(--editorial);
+  font-size:27px;
+  font-weight:500;
+  line-height:.96;
+}
+.proofQuote{
+  margin-top:42px;
+  padding:42px;
+  border-radius:22px;
+}
+.proofQuote blockquote{
+  font-size:clamp(28px,4vw,48px);
+  line-height:1.03;
+  letter-spacing:-.035em;
+}
+.planSideCard,.planMainCard{border-radius:20px}
+.planMainCard{
+  background:
+    linear-gradient(180deg,rgba(var(--accent-rgb),.14),transparent 44%),
+    radial-gradient(circle at 50% 0,rgba(207,48,170,.12),transparent 36%),var(--card);
+  overflow:visible;
+}
+.planMainCard::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  z-index:-1;
+  border-radius:22px;
+  background:linear-gradient(120deg,rgba(var(--accent-rgb),.9),transparent 28% 68%,rgba(207,48,170,.72));
+  filter:blur(7px);
+  opacity:.35;
+}
+.planSideCard h3{font-family:var(--editorial);font-size:30px;font-weight:500}
+.price strong{font-family:var(--editorial);font-weight:500;font-size:56px}
+.faqList summary{font-size:12px;min-height:68px}
+.faqList details p{font-size:10.5px}
+.finalCta{
+  min-height:560px;
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 50% 25%,rgba(var(--accent-rgb),.16),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.018),transparent),var(--panel);
+}
+.finalCta h2{
+  max-width:900px;
+  font-size:clamp(54px,7.5vw,90px);
+}
+.finalCta>p{max-width:590px}
+
+/* Light themes preserve the same structure without forcing a dark card everywhere. */
+:global(body.theme-white) .secondaryButton,
+:global(body.theme-beige) .secondaryButton{background:rgba(255,255,255,.34)}
+:global(body.theme-white) .statementCard,
+:global(body.theme-beige) .statementCard,
+:global(body.theme-white) .productCard,
+:global(body.theme-beige) .productCard,
+:global(body.theme-white) .tiltCard,
+:global(body.theme-beige) .tiltCard{box-shadow:0 20px 60px var(--shadow)}
+:global(body.theme-white) .repoWindow,
+:global(body.theme-beige) .repoWindow,
+:global(body.theme-white) .dashboardVisual,
+:global(body.theme-beige) .dashboardVisual,
+:global(body.theme-white) .browserVisual,
+:global(body.theme-beige) .browserVisual{box-shadow:0 28px 70px rgba(0,0,0,.2)}
+:global(body.theme-white) .editorialLine,
+:global(body.theme-beige) .editorialLine{color:var(--text)!important}
+
+@media (max-width:960px){
+  .heroTitle{font-size:clamp(54px,10vw,84px)}
+  .section{padding-top:88px;padding-bottom:88px}
+  .sectionHeading h2,.freeCopy h2,.splitCopy h2,.websiteCopy h2,.faqIntro h2,.finalCta h2{font-size:clamp(40px,8vw,60px)}
+  .productGrid .tiltShell{min-height:260px}
+  .saasGrid .tiltShell{min-height:280px}
+  .processGridFour{grid-template-columns:repeat(2,1fr)}
+  .processCard:nth-child(2){border-right:0}
+  .processCard:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:680px){
+  .heroInner{padding-top:54px}
+  .heroTitle{font-size:clamp(46px,14vw,66px);line-height:.9}
+  .heroSub{font-size:11.5px;margin-top:22px}
+  .section{padding-top:72px;padding-bottom:72px}
+  .sectionHeading h2,.freeCopy h2,.splitCopy h2,.websiteCopy h2,.faqIntro h2,.finalCta h2{font-size:44px}
+  .statementCard{min-height:270px}
+  .statementCard h3{margin-top:78px}
+  .folderVisual{height:280px}
+  .folderFile{width:64%}
+  .tiltShell{min-height:250px}
+  .processGridFour{grid-template-columns:1fr}
+  .processCard{border-right:0;border-bottom:1px solid var(--line)!important}
+  .processCard:last-child{border-bottom:0!important}
+  .dashboardVisual{padding:18px;border-radius:26px}
+  .cryptoLogo{font-size:19px}
+  .cryptoPriceInfo strong{font-size:24px}
+  .finalCta{min-height:480px}
+  .finalCta h2{font-size:52px}
+}
+@media (prefers-reduced-motion:reduce){
+  .point,.repoSpin::before,.folderHint,.cryptoChart path{animation:none!important}
+  .folderFile,.folderFront,.tiltShell>.productCard,.tiltShell>.tiltCard{transition:none!important}
+}
