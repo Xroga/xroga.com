@@ -2048,3 +2048,14 @@
     padding-top:48px;
   }
 }
+
+
+/* Fixed shared header: keep this hero artwork behind the nav without hiding copy. */
+.root[data-crypto-page]{padding-top:0!important}
+.root[data-crypto-page] .heroInner{padding-top:164px}
+@media(max-width:980px){
+  .root[data-crypto-page] .heroInner{padding-top:142px}
+}
+@media(max-width:680px){
+  .root[data-crypto-page] .heroInner{padding-top:126px}
+}

@@ -314,7 +314,7 @@ export default function CryptoPage() {
   };
 
   return (
-    <main className={`${styles.root} ${manrope.variable} ${editorial.variable}`}>
+    <main data-crypto-page className={`${styles.root} ${manrope.variable} ${editorial.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
