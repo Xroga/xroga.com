@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, usePathname } from 'next/navigation';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
-import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
+import Link from 'next/link';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 import { GeneralSettingsPanel } from '@/components/settings/GeneralSettingsPanel';
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
@@ -118,7 +118,28 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
             {section === 'privacy' && <PrivacySettingsPanel />}
             {section === 'data-ai' && <DataAiSettingsPanel email={email} />}
             {section === 'plan' && <PlanUsageSettingsPanel />}
-            {section === 'integrations' && <IntegrationsPanel />}
+            {section === 'integrations' && (
+              <div className="space-y-5">
+                <div>
+                  <h2 className="text-base font-semibold text-[var(--text-primary)]">Plugins</h2>
+                  <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                    Manage the apps, developer tools, and services Xroga can securely work with.
+                  </p>
+                </div>
+                <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-4 sm:p-5">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">Plugin marketplace</p>
+                  <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                    Browse Plugins, search by capability, connect accounts, and configure developer services from the dedicated Plugins page.
+                  </p>
+                  <Link
+                    href="/dashboard/integrations"
+                    className="mt-4 inline-flex min-h-10 items-center justify-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold text-[var(--text-primary)] shadow-subtle hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                  >
+                    Open Plugins →
+                  </Link>
+                </div>
+              </div>
+            )}
             {section === 'security' && <SecuritySettingsPanel />}
             {section === 'notifications' && <NotificationsSettingsPanel />}
           </div>
