@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { Arvo, Manrope } from 'next/font/google';
+import { Cormorant_Garamond, Manrope } from 'next/font/google';
 import {
   ArrowRight,
   BarChart3,
@@ -38,11 +38,12 @@ const manrope = Manrope({
   variable: '--font-manrope',
 });
 
-const arvo = Arvo({
+const editorial = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   display: 'swap',
-  variable: '--font-arvo',
+  variable: '--font-editorial',
 });
 
 export const metadata: Metadata = buildMetadata({
@@ -210,7 +211,17 @@ function GlowButton({
       href={href}
       className={secondary ? styles.secondaryButton : styles.glowButton}
     >
-      <span>{children}</span>
+      {!secondary && (
+        <>
+          <span className={styles.buttonFold} aria-hidden="true" />
+          <span className={styles.pointsWrapper} aria-hidden="true">
+            {Array.from({ length: 10 }, (_, index) => (
+              <i className={styles.point} key={index} />
+            ))}
+          </span>
+        </>
+      )}
+      <span className={styles.buttonInner}>{children}</span>
       <ArrowRight aria-hidden="true" />
     </Link>
   );
@@ -282,7 +293,7 @@ export default function CryptoPage() {
   };
 
   return (
-    <main className={`${styles.root} ${manrope.variable} ${arvo.variable}`}>
+    <main className={`${styles.root} ${manrope.variable} ${editorial.variable}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -299,9 +310,9 @@ export default function CryptoPage() {
           </div>
 
           <h1 className={styles.heroTitle}>
-            Build Web3 &amp; Blockchain
+            <span className={styles.heroSerif}>Build Web3 &amp; Blockchain</span>
             <br />
-            Apps with <span>AI</span>
+            <span className={styles.heroSans}>Apps with <em>AI</em></span>
           </h1>
 
           <p className={styles.heroSub}>
@@ -389,27 +400,37 @@ export default function CryptoPage() {
             <GlowButton href="/auth/signup">Start Free</GlowButton>
           </div>
 
-          <div className={styles.folderVisual} aria-hidden="true">
-            <div className={styles.folderBack} />
-            <div className={`${styles.folderFile} ${styles.fileOne}`}>
-              <FileCode2 />
-              <span>app/page.tsx</span>
-            </div>
-            <div className={`${styles.folderFile} ${styles.fileTwo}`}>
-              <Database />
-              <span>data/web3.ts</span>
-            </div>
-            <div className={`${styles.folderFile} ${styles.fileThree}`}>
-              <ShieldCheck />
-              <span>checks/verify.ts</span>
-            </div>
-            <div className={styles.folderFront}>
-              <div>
-                <GitBranch />
-                <span>xroga/web3-product</span>
-              </div>
-            </div>
-          </div>
+          <label className={styles.folderVisual}>
+            <input
+              type="checkbox"
+              className={styles.folderToggle}
+              aria-label="Open repository folder preview"
+            />
+            <span className={styles.folderHint}>Click to open</span>
+            <span className={styles.folderStage}>
+              <span className={styles.folderBack} />
+              <span className={styles.folderCards}>
+                <span className={`${styles.folderFile} ${styles.fileOne}`}>
+                  <FileCode2 />
+                  <span>app/page.tsx</span>
+                </span>
+                <span className={`${styles.folderFile} ${styles.fileTwo}`}>
+                  <Database />
+                  <span>data/web3.ts</span>
+                </span>
+                <span className={`${styles.folderFile} ${styles.fileThree}`}>
+                  <ShieldCheck />
+                  <span>checks/verify.ts</span>
+                </span>
+              </span>
+              <span className={styles.folderFront}>
+                <span>
+                  <GitBranch />
+                  <span>xroga/web3-product</span>
+                </span>
+              </span>
+            </span>
+          </label>
         </div>
       </section>
 
@@ -429,12 +450,18 @@ export default function CryptoPage() {
           {PRODUCT_TYPES.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className={styles.productCard}>
-                <div className={styles.productIcon}><Icon /></div>
-                <h3>{item.title}</h3>
-                <p>{item.copy}</p>
-                <span className={styles.cardArrow}><ArrowRight /></span>
-              </article>
+              <div key={item.title} className={styles.tiltShell}>
+                <span className={styles.tiltHit} />
+                <span className={styles.tiltHit} />
+                <span className={styles.tiltHit} />
+                <span className={styles.tiltHit} />
+                <article className={styles.productCard}>
+                  <div className={styles.productIcon}><Icon /></div>
+                  <h3>{item.title}</h3>
+                  <p>{item.copy}</p>
+                  <span className={styles.cardArrow}><ArrowRight /></span>
+                </article>
+              </div>
             );
           })}
         </div>
@@ -469,6 +496,10 @@ export default function CryptoPage() {
           </div>
 
           <div className={styles.repoWindow} aria-hidden="true">
+            <span className={`${styles.repoSpin} ${styles.repoSpinBlur}`} />
+            <span className={`${styles.repoSpin} ${styles.repoSpinIntense}`} />
+            <span className={styles.repoBackdrop} />
+            <span className={`${styles.repoSpin} ${styles.repoSpinInside}`} />
             <div className={styles.repoWindowTop}>
               <div><i /><i /><i /></div>
               <span>xroga / protocol-console</span>
@@ -494,28 +525,41 @@ export default function CryptoPage() {
 
       <section className={`${styles.section} ${styles.dashboardSection}`}>
         <div className={styles.splitFeature}>
-          <div className={styles.dashboardVisual} aria-hidden="true">
-            <div className={styles.dashboardTop}>
-              <div>
-                <span>Portfolio</span>
-                <strong>$84,320.18</strong>
+          <div className={styles.dashboardVisual} aria-label="Interactive crypto dashboard preview">
+            <div className={styles.cryptoHeader}>
+              <span className={styles.cryptoLogo}>Xroga / Analytics</span>
+              <span className={styles.cryptoOpen}>Live product UI →</span>
+            </div>
+            <fieldset className={styles.cryptoSwitch}>
+              <input type="radio" id="xroga-btc" name="xroga-crypto-preview" defaultChecked />
+              <label htmlFor="xroga-btc">BTC</label>
+              <input type="radio" id="xroga-eth" name="xroga-crypto-preview" />
+              <label htmlFor="xroga-eth">ETH</label>
+              <input type="radio" id="xroga-sol" name="xroga-crypto-preview" />
+              <label htmlFor="xroga-sol">SOL</label>
+              <input type="radio" id="xroga-usdc" name="xroga-crypto-preview" />
+              <label htmlFor="xroga-usdc">USDC</label>
+              <span className={styles.cryptoSlider} aria-hidden="true" />
+            </fieldset>
+            <div className={styles.cryptoPriceInfos}>
+              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoBtc}`}>
+                <strong>$57,256.15</strong><span>12.458 BTC · +10.4%</span>
               </div>
-              <small>LIVE DATA UI</small>
+              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoEth}`}>
+                <strong>$3,452.12</strong><span>34.123 ETH · +8.2%</span>
+              </div>
+              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoSol}`}>
+                <strong>$145.78</strong><span>150.78 SOL · +12.1%</span>
+              </div>
+              <div className={`${styles.cryptoPriceInfo} ${styles.cryptoUsdc}`}>
+                <strong>$1.00</strong><span>10,000 USDC · 0.0%</span>
+              </div>
             </div>
-            <div className={styles.assetTabs}>
-              <span className={styles.assetActive}>BTC</span>
-              <span>ETH</span>
-              <span>SOL</span>
-              <span>USDC</span>
-            </div>
-            <div className={styles.chartArea}>
-              <svg viewBox="0 0 420 150" preserveAspectRatio="none">
-                <path
-                  d="M0,130 C45,122 52,84 92,93 C132,103 135,56 177,68 C220,80 230,35 268,49 C307,64 326,24 360,38 C392,48 399,20 420,15"
-                  fill="none"
-                />
-              </svg>
-              <i /><i /><i /><i />
+            <div className={styles.cryptoChart}>
+              <svg className={styles.chartBtc} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,48 L5,45 L10,42 L15,38 L20,40 L25,35 L30,32 L35,28 L40,30 L45,25 L50,28 L55,22 L60,25 L65,20 L70,23 L75,18 L80,20 L85,15 L90,18 L95,12 L100,15 L100,50 L0,50 Z" /></svg>
+              <svg className={styles.chartEth} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,42 L8,40 L16,35 L24,37 L32,28 L40,30 L48,22 L56,24 L64,16 L72,19 L80,13 L88,16 L100,9 L100,50 L0,50 Z" /></svg>
+              <svg className={styles.chartSol} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,44 L10,39 L20,41 L30,30 L40,33 L50,24 L60,26 L70,17 L80,20 L90,10 L100,7 L100,50 L0,50 Z" /></svg>
+              <svg className={styles.chartUsdc} viewBox="0 0 100 50" preserveAspectRatio="none"><path d="M0,25 L100,25 L100,50 L0,50 Z" /></svg>
             </div>
           </div>
 
@@ -548,15 +592,21 @@ export default function CryptoPage() {
 
         <div className={styles.saasGrid}>
           {SAAS_EXAMPLES.map(([title, copy], index) => (
-            <article key={title} className={styles.tiltCard}>
-              <div className={styles.tiltTop}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <Layers3 />
-              </div>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-              <div className={styles.tiltLine} />
-            </article>
+            <div key={title} className={styles.tiltShell}>
+              <span className={styles.tiltHit} />
+              <span className={styles.tiltHit} />
+              <span className={styles.tiltHit} />
+              <span className={styles.tiltHit} />
+              <article className={styles.tiltCard}>
+                <div className={styles.tiltTop}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <Layers3 />
+                </div>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+                <div className={styles.tiltLine} />
+              </article>
+            </div>
           ))}
         </div>
       </section>
