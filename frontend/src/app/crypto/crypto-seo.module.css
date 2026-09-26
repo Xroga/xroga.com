@@ -2016,3 +2016,23 @@
 @media (prefers-reduced-motion:reduce){
   .finalRain{animation:none!important}
 }
+
+
+/* =========================================================
+   CRYPTO HERO HEADER CLEARANCE — 2026-09-26
+   Keep the hero artwork behind the floating header, but move
+   all readable/interactive hero content below its visual area.
+   ========================================================= */
+.heroInner{
+  padding-top:146px;
+}
+@media (max-width:980px){
+  .heroInner{
+    padding-top:132px;
+  }
+}
+@media (max-width:680px){
+  .heroInner{
+    padding-top:116px;
+  }
+}
