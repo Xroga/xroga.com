@@ -462,13 +462,14 @@ export function PublicMarketingHeader() {
         <nav className="xv-marketing-header__nav" aria-label="Primary navigation">
           {PUBLIC_MARKETING_NAV.map((item) => {
             const mega = MEGA_MENUS[item.label];
+            const isCurrent = pathname === item.href || (pathname === '/' && item.label === 'Product');
             if (!mega) {
               return (
                 <Link
                   className="xv-marketing-header__direct-link"
                   key={item.href}
                   href={item.href}
-                  aria-current={pathname === item.href ? 'page' : undefined}
+                  aria-current={isCurrent ? 'page' : undefined}
                 >
                   {item.label}
                 </Link>
@@ -489,7 +490,7 @@ export function PublicMarketingHeader() {
                   className="xv-nav-trigger"
                   aria-expanded={isOpen}
                   aria-haspopup="true"
-                  aria-current={pathname === item.href ? 'page' : undefined}
+                  aria-current={isCurrent ? 'page' : undefined}
                   onClick={(event) => {
                     event.stopPropagation();
                     setActiveMega((value) => value === item.label ? null : item.label);
@@ -563,7 +564,7 @@ export function PublicMarketingHeader() {
       <div id="xv-public-mobile-menu" className="xv-marketing-mobile-menu" data-open={menuOpen}>
         <nav aria-label="Mobile navigation">
           {PUBLIC_MARKETING_NAV.map((item) => (
-            <Link key={item.href} href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>
+            <Link key={item.href} href={item.href} aria-current={isCurrent ? 'page' : undefined}>
               {item.label}<ArrowUpRight aria-hidden="true" />
             </Link>
           ))}
