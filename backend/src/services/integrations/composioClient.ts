@@ -576,6 +576,19 @@ export function canUserAccessComposioToolkit(
   return clean.startsWith(xrogaCustomToolkitPrefix(userId));
 }
 
+export function canUserAccessComposioToolSlug(
+  userId: string,
+  toolSlug: string,
+): boolean {
+  const clean = toolSlug.trim().toLowerCase();
+
+  if (!clean.startsWith('custom_')) {
+    return true;
+  }
+
+  return clean.startsWith(xrogaCustomToolkitPrefix(userId));
+}
+
 export function filterComposioCatalogForUser(
   userId: string,
   items: XrogaConnectCatalogToolkit[],
