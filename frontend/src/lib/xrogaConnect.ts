@@ -152,6 +152,21 @@ export const xrogaConnect = {
   catalog: (opts?: {
     search?: string;
     category?: string;
+    group?:
+      | 'productivity'
+      | 'communication'
+      | 'engineering'
+      | 'ai-automation'
+      | 'sales-crm'
+      | 'commerce'
+      | 'marketing'
+      | 'finance'
+      | 'data-analytics'
+      | 'design-media'
+      | 'support'
+      | 'infrastructure'
+      | 'hr-recruiting'
+      | 'other';
     sortBy?: 'usage' | 'alphabetically';
     limit?: number;
     cursor?: string;
@@ -160,6 +175,7 @@ export const xrogaConnect = {
       `/api/integrations/xroga-connect/catalog${queryString({
         search: opts?.search,
         category: opts?.category,
+        group: opts?.group,
         sortBy: opts?.sortBy,
         limit: opts?.limit,
         cursor: opts?.cursor,
