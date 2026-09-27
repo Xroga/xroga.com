@@ -74,11 +74,11 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
   const route = source('frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx');
 
-  assert.match(marketplace, /href=\{\`\/dashboard\/integrations\/\$\{encodeURIComponent\(plugin\.id\)\}\`\}/);
+  assert.match(marketplace, /detailHref\(plugin\)/);
   assert.match(marketplace, /aria-label=\{\`Connect \$\{plugin\.name\}\`\}/);
-  assert.match(detail, /Try it with Xroga/);
+  assert.match(detail, /Real use cases/);
   assert.match(detail, /Advanced · all raw actions/);
-  assert.match(detail, /Access & safety/);
+  assert.match(detail, /Access, scopes & safety/);
   assert.match(route, /PluginDetail pluginId=/);
 });
 
@@ -88,9 +88,9 @@ test('Step 2 does not fake unsupported Composio disconnect or persistent Custom 
   const composio = source('backend/src/services/integrations/composioClient.ts');
 
   assert.match(composio, /enable_connection_removal:\s*false/);
-  assert.match(detail, /does not fake a Disconnect action/);
+  assert.match(detail, /definition\.source !== 'native'/);
   assert.match(marketplace, /Custom MCP server/);
-  assert.match(marketplace, /persistent custom MCP create\/update\/delete APIs/);
+  assert.match(marketplace, /does not fake persistent custom MCP storage/);
 });
 
 test('Step 2 exposes metadata-only action discovery and connected toolkit listing', () => {

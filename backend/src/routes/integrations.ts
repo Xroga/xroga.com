@@ -37,8 +37,14 @@ import {
   createComposioConnectionLink,
   createReadOnlyComposioSession,
   executeComposioReadTool,
+  getComposioCatalogToolkit,
+  getComposioToolDetails,
   isComposioConfigured,
+  listComposioCatalog,
+  listComposioCatalogCategories,
+  listComposioCatalogTools,
   listComposioToolkits,
+  listComposioTriggerTypes,
   listConnectedComposioToolkits,
   searchComposioActionTools,
   searchComposioTools,
@@ -1070,6 +1076,268 @@ router.get(
       mode:
         'read_only',
     });
+  },
+);
+
+/**
+ * Canonical Composio catalog for the Plugins marketplace.
+ *
+ * This is catalog metadata only. It never connects accounts or executes tools.
+ */
+router.get(
+  '/xroga-connect/catalog',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      search: z.string().trim().max(120).optional(),
+      category: z
+        .string()
+        .trim()
+        .max(120)
+        .optional(),
+      sortBy: z.enum(['usage', 'alphabetically']).optional().default('usage'),
+      limit: z.coerce.number().int().min(1).max(250).optional().default(120),
+      cursor: z.string().trim().max(1000).optional(),
+    });
+
+    const parsed = schema.safeParse(req.query);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const page = await listComposioCatalog({
+        ...parsed.data,
+        ...(parsed.data.search ? { search: parsed.data.search } : {}),
+        ...(parsed.data.category ? { category: parsed.data.category } : {}),
+        ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
+      });
+
+      res.json({
+        ok: true,
+        ...page,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/catalog-categories',
+  async (
+    _req: AuthRequest,
+    res,
+  ) => {
+    try {
+      const categories = await listComposioCatalogCategories();
+
+      res.json({
+        ok: true,
+        categories,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/catalog/:toolkit/tools',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(80)
+        .regex(/^[A-Za-z0-9_-]+$/),
+      limit: z.coerce.number().int().min(1).max(250).optional().default(250),
+      cursor: z.string().trim().max(1000).optional(),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+      ...req.query,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const page = await listComposioCatalogTools(
+        parsed.data.toolkit,
+        {
+          limit: parsed.data.limit,
+          ...(parsed.data.cursor
+            ? {
+                cursor: parsed.data.cursor,
+              }
+            : {}),
+        },
+      );
+
+      res.json({
+        ok: true,
+        ...page,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/catalog/:toolkit/triggers',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(80)
+        .regex(/^[A-Za-z0-9_-]+$/),
+      limit: z.coerce.number().int().min(1).max(50).optional().default(50),
+      cursor: z.string().trim().max(1000).optional(),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+      ...req.query,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const page = await listComposioTriggerTypes(
+        parsed.data.toolkit,
+        {
+          limit: parsed.data.limit,
+          ...(parsed.data.cursor
+            ? {
+                cursor: parsed.data.cursor,
+              }
+            : {}),
+        },
+      );
+
+      res.json({
+        ok: true,
+        ...page,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/catalog/:toolkit',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(80)
+        .regex(/^[A-Za-z0-9_-]+$/),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const toolkit = await getComposioCatalogToolkit(parsed.data.toolkit);
+
+      res.json({
+        ok: true,
+        toolkit,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+/**
+ * Full metadata for one Composio action.
+ *
+ * Used by the Advanced action inspector. This is metadata-only and never
+ * executes the tool or exposes provider credentials.
+ */
+router.get(
+  '/xroga-connect/tool-details/:toolSlug',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolSlug: z
+        .string()
+        .trim()
+        .min(3)
+        .max(200)
+        .regex(/^[A-Za-z0-9_-]+$/),
+    });
+
+    const parsed = schema.safeParse({
+      toolSlug: req.params.toolSlug,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const tool = await getComposioToolDetails(parsed.data.toolSlug);
+
+      res.json({
+        ok: true,
+        tool,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
   },
 );
 

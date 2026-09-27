@@ -2,9 +2,13 @@ const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const EXECUTE_TIMEOUT_MS = 30_000;
-const MAX_RESPONSE_SIZE = 2_000_000;
+const MAX_RESPONSE_SIZE = 8_000_000;
 const MAX_SEARCH_RESULTS = 20;
-const MAX_TOOLKIT_PAGE_SIZE = 50;
+const MAX_TOOLKIT_PAGE_SIZE = 100;
+const MAX_CATALOG_PAGE_SIZE = 250;
+const MAX_TRIGGER_PAGE_SIZE = 50;
+const COMPOSIO_CACHE_TTL_MS = 5 * 60 * 1_000;
+const MAX_COMPOSIO_CACHE_ENTRIES = 60;
 
 const READ_ONLY_TAG = 'readOnlyHint';
 const DESTRUCTIVE_TAG = 'destructiveHint';
@@ -96,6 +100,9 @@ interface ComposioSearchResponse {
     execution_guidance?: string;
     primary_tool_slugs?: string[];
     related_tool_slugs?: string[];
+    difficulty?: string;
+    recommended_plan_steps?: string[];
+    known_pitfalls?: string[];
     toolkits?: string[];
     error?: string;
   }>;
@@ -140,6 +147,97 @@ interface ComposioSessionToolkitResponse {
   total_items?: number;
 }
 
+interface ComposioCatalogCategory {
+  id?: string;
+  name?: string;
+}
+
+interface ComposioCatalogToolkitResponse {
+  slug?: string;
+  name?: string;
+  type?: string;
+  auth_schemes?: string[];
+  composio_managed_auth_schemes?: string[];
+  is_local_toolkit?: boolean;
+  no_auth?: boolean;
+  auth_guide_url?: string;
+  deprecated?: unknown;
+  meta?: {
+    created_at?: string;
+    updated_at?: string;
+    description?: string;
+    logo?: string;
+    app_url?: string;
+    categories?: ComposioCatalogCategory[];
+    triggers_count?: number;
+    tools_count?: number;
+    version?: string;
+  };
+}
+
+interface ComposioCatalogToolkitListResponse {
+  items?: ComposioCatalogToolkitResponse[];
+  next_cursor?: string | null;
+  total_pages?: number;
+  current_page?: number;
+  total_items?: number;
+}
+
+interface ComposioCatalogCategoryListResponse {
+  items?: ComposioCatalogCategory[];
+  next_cursor?: string | null;
+  total_pages?: number;
+  current_page?: number;
+  total_items?: number;
+}
+
+interface ComposioCatalogToolResponse {
+  slug?: string;
+  name?: string;
+  description?: string;
+  toolkit?: {
+    slug?: string;
+    name?: string;
+    logo?: string;
+  };
+  tags?: string[];
+  scopes?: string[];
+  no_auth?: boolean;
+  is_deprecated?: boolean;
+  version?: string;
+  important?: boolean;
+}
+
+interface ComposioCatalogToolListResponse {
+  items?: ComposioCatalogToolResponse[];
+  next_cursor?: string | null;
+  total_pages?: number;
+  current_page?: number;
+  total_items?: number;
+}
+
+interface ComposioTriggerTypeResponse {
+  slug?: string;
+  name?: string;
+  description?: string;
+  instructions?: string;
+  type?: string;
+  version?: string;
+  toolkit?: {
+    slug?: string;
+    name?: string;
+    logo?: string;
+  };
+}
+
+interface ComposioTriggerTypeListResponse {
+  items?: ComposioTriggerTypeResponse[];
+  next_cursor?: string | null;
+  total_pages?: number;
+  current_page?: number;
+  total_items?: number;
+}
+
 interface ComposioToolDetailsResponse {
   slug?: string;
   name?: string;
@@ -168,8 +266,14 @@ export interface ComposioExecuteResponse {
 export interface XrogaConnectTool {
   slug: string;
   toolkit: string;
+  name?: string;
   description?: string;
   inputSchema?: Record<string, unknown>;
+  scopes?: string[];
+  tags?: string[];
+  version?: string;
+  deprecated?: boolean;
+  important?: boolean;
   risk: XrogaConnectToolRisk;
   requiresConfirmation: boolean;
 }
@@ -196,12 +300,111 @@ export interface XrogaConnectToolkit {
   noAuth?: boolean;
 }
 
+export interface XrogaConnectSkill {
+  useCase?: string;
+  primaryToolSlugs: string[];
+  relatedToolSlugs: string[];
+  difficulty?: string;
+  recommendedPlanSteps: string[];
+  knownPitfalls: string[];
+}
+
 export interface XrogaConnectSearchResult {
   sessionId: string;
   mode: XrogaConnectMode;
   tools: XrogaConnectTool[];
   toolkits: XrogaConnectToolkit[];
   guidance?: string;
+  skill?: XrogaConnectSkill;
+}
+
+export interface XrogaConnectCatalogToolkit {
+  slug: string;
+  name: string;
+  type?: string;
+  authSchemes: string[];
+  managedAuthSchemes: string[];
+  noAuth: boolean;
+  authGuideUrl?: string;
+  description?: string;
+  logo?: string;
+  appUrl?: string;
+  categories: Array<{ id: string; name: string }>;
+  triggersCount: number;
+  toolsCount: number;
+  version?: string;
+  deprecated: boolean;
+}
+
+export interface XrogaConnectCatalogPage {
+  items: XrogaConnectCatalogToolkit[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
+}
+
+export interface XrogaConnectCatalogToolPage {
+  items: XrogaConnectTool[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
+}
+
+export interface XrogaConnectTriggerType {
+  slug: string;
+  name: string;
+  description?: string;
+  instructions?: string;
+  type?: string;
+  version?: string;
+}
+
+export interface XrogaConnectTriggerPage {
+  items: XrogaConnectTriggerType[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
+}
+
+const catalogCache = new Map<
+  string,
+  {
+    expiresAt: number;
+    value: unknown;
+  }
+>();
+
+async function cachedComposioValue<T>(
+  key: string,
+  load: () => Promise<T>,
+): Promise<T> {
+  const now = Date.now();
+  const cached = catalogCache.get(key);
+
+  if (cached && cached.expiresAt > now) {
+    return cached.value as T;
+  }
+
+  const value = await load();
+  catalogCache.set(key, {
+    expiresAt: now + COMPOSIO_CACHE_TTL_MS,
+    value,
+  });
+
+  for (const [cacheKey, item] of catalogCache) {
+    if (item.expiresAt <= now) catalogCache.delete(cacheKey);
+  }
+
+  while (catalogCache.size > MAX_COMPOSIO_CACHE_ENTRIES) {
+    const oldest = catalogCache.keys().next().value as string | undefined;
+    if (!oldest) break;
+    catalogCache.delete(oldest);
+  }
+
+  return value;
 }
 
 function getComposioApiKey(): string {
@@ -281,6 +484,61 @@ function cleanToolSlug(toolSlug: string): string {
   }
 
   return clean;
+}
+
+function mapCatalogToolkit(
+  item: ComposioCatalogToolkitResponse,
+): XrogaConnectCatalogToolkit | null {
+  const slug = item.slug?.trim().toLowerCase();
+
+  if (!slug) return null;
+
+  const name = item.name?.trim() || slug
+    .split(/[_-]+/g)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+
+  return {
+    slug,
+    name,
+    type: item.type,
+    authSchemes: Array.isArray(item.auth_schemes)
+      ? item.auth_schemes.filter((value): value is string => typeof value === 'string')
+      : [],
+    managedAuthSchemes: Array.isArray(item.composio_managed_auth_schemes)
+      ? item.composio_managed_auth_schemes.filter((value): value is string => typeof value === 'string')
+      : [],
+    noAuth: item.no_auth === true,
+    authGuideUrl: item.auth_guide_url,
+    description: item.meta?.description,
+    logo: item.meta?.logo,
+    appUrl: item.meta?.app_url,
+    categories: Array.isArray(item.meta?.categories)
+      ? item.meta!.categories!
+          .filter(
+            (category): category is { id: string; name: string } =>
+              typeof category.id === 'string' &&
+              category.id.length > 0 &&
+              typeof category.name === 'string' &&
+              category.name.length > 0,
+          )
+          .map((category) => ({
+            id: category.id,
+            name: category.name,
+          }))
+      : [],
+    triggersCount:
+      typeof item.meta?.triggers_count === 'number'
+        ? Math.max(0, item.meta.triggers_count)
+        : 0,
+    toolsCount:
+      typeof item.meta?.tools_count === 'number'
+        ? Math.max(0, item.meta.tools_count)
+        : 0,
+    version: item.meta?.version,
+    deprecated: Boolean(item.deprecated),
+  };
 }
 
 function toolTokens(toolSlug: string): string[] {
@@ -855,12 +1113,34 @@ export async function searchComposioTools(
       statusMessage: status.status_message,
     }));
 
+  const searchResult = response.results?.[0];
+
   return {
     sessionId: session.session_id,
     mode,
     tools,
     toolkits,
-    guidance: response.results?.[0]?.execution_guidance,
+    guidance: searchResult?.execution_guidance,
+    ...(searchResult
+      ? {
+          skill: {
+            useCase: searchResult.use_case,
+            primaryToolSlugs: Array.isArray(searchResult.primary_tool_slugs)
+              ? searchResult.primary_tool_slugs
+              : [],
+            relatedToolSlugs: Array.isArray(searchResult.related_tool_slugs)
+              ? searchResult.related_tool_slugs
+              : [],
+            difficulty: searchResult.difficulty,
+            recommendedPlanSteps: Array.isArray(searchResult.recommended_plan_steps)
+              ? searchResult.recommended_plan_steps
+              : [],
+            knownPitfalls: Array.isArray(searchResult.known_pitfalls)
+              ? searchResult.known_pitfalls
+              : [],
+          },
+        }
+      : {}),
   };
 }
 
@@ -891,43 +1171,71 @@ async function listSessionComposioToolkits(
 
   await assertComposioSession(userId, sessionId, mode);
 
-  const params = new URLSearchParams();
-  params.set('limit', String(MAX_TOOLKIT_PAGE_SIZE));
+  const toolkits = input.toolkits?.length
+    ? [...new Set(input.toolkits.map(cleanToolkit))]
+    : undefined;
 
-  if (input.connectedOnly) {
-    params.set('is_connected', 'true');
-  }
+  const collected: XrogaConnectToolkit[] = [];
+  let cursor: string | undefined;
+  let pages = 0;
 
-  if (input.toolkits?.length) {
-    const toolkits = [...new Set(input.toolkits.map(cleanToolkit))];
-    params.set('toolkits', toolkits.join(','));
-  }
+  do {
+    const params = new URLSearchParams();
+    params.set('limit', String(MAX_TOOLKIT_PAGE_SIZE));
 
-  const response = await composioRequest<ComposioSessionToolkitResponse>(
-    `/tool_router/session/${encodeURIComponent(
-      sessionId,
-    )}/toolkits?${params.toString()}`,
-  );
+    if (input.connectedOnly) {
+      params.set('is_connected', 'true');
+    }
 
-  return (response.items ?? [])
-    .filter(
-      (
-        item,
-      ): item is typeof item & {
-        slug: string;
-      } => typeof item.slug === 'string' && item.slug.length > 0,
-    )
-    .map((item) => ({
-      toolkit: item.slug,
-      name: item.name,
-      description: item.meta?.description,
-      logo: item.meta?.logo,
-      connected:
-        item.is_no_auth === true || Boolean(item.connected_account),
-      statusMessage: item.connected_account?.status,
-      noAuth:
-        item.is_no_auth === true || item.meta?.isNoAuth === true,
-    }));
+    if (toolkits?.length) {
+      params.set('toolkits', toolkits.join(','));
+    }
+
+    if (cursor) {
+      params.set('cursor', cursor);
+    }
+
+    const response = await composioRequest<ComposioSessionToolkitResponse>(
+      `/tool_router/session/${encodeURIComponent(
+        sessionId,
+      )}/toolkits?${params.toString()}`,
+    );
+
+    collected.push(
+      ...(response.items ?? [])
+        .filter(
+          (
+            item,
+          ): item is typeof item & {
+            slug: string;
+          } => typeof item.slug === 'string' && item.slug.length > 0,
+        )
+        .map((item) => ({
+          toolkit: item.slug,
+          name: item.name,
+          description: item.meta?.description,
+          logo: item.meta?.logo,
+          connected:
+            item.is_no_auth === true || Boolean(item.connected_account),
+          statusMessage: item.connected_account?.status,
+          noAuth:
+            item.is_no_auth === true || item.meta?.isNoAuth === true,
+        })),
+    );
+
+    cursor =
+      typeof response.next_cursor === 'string' && response.next_cursor.length > 0
+        ? response.next_cursor
+        : undefined;
+    pages += 1;
+
+    if (toolkits?.length) {
+      // Specific-toolkit lookups are expected to fit in one page.
+      break;
+    }
+  } while (cursor && pages < 30);
+
+  return collected;
 }
 
 export async function listComposioToolkits(
@@ -955,6 +1263,251 @@ export async function listConnectedComposioToolkits(
   return listSessionComposioToolkits(userId, {
     ...input,
     connectedOnly: true,
+  });
+}
+
+export async function listComposioCatalog(
+  input: {
+    search?: string;
+    category?: string;
+    sortBy?: 'usage' | 'alphabetically';
+    limit?: number;
+    cursor?: string;
+  } = {},
+): Promise<XrogaConnectCatalogPage> {
+  const params = new URLSearchParams();
+  const limit = Math.min(
+    Math.max(Math.trunc(input.limit ?? 120), 1),
+    MAX_CATALOG_PAGE_SIZE,
+  );
+
+  params.set('limit', String(limit));
+  params.set('sort_by', input.sortBy ?? 'usage');
+  params.set('managed_by', 'all');
+  params.set('include_deprecated', 'false');
+
+  if (input.search?.trim()) {
+    params.set('search', input.search.trim());
+  }
+
+  if (input.category?.trim()) {
+    params.set('category', input.category.trim());
+  }
+
+  if (input.cursor?.trim()) {
+    params.set('cursor', input.cursor.trim());
+  }
+
+  const cacheKey = `catalog:${params.toString()}`;
+
+  return cachedComposioValue(cacheKey, async () => {
+    const response = await composioRequest<ComposioCatalogToolkitListResponse>(
+      `/toolkits?${params.toString()}`,
+    );
+
+    const items = (response.items ?? [])
+      .map(mapCatalogToolkit)
+      .filter(
+        (item): item is XrogaConnectCatalogToolkit => Boolean(item),
+      );
+
+    return {
+      items,
+      ...(response.next_cursor
+        ? {
+            nextCursor: response.next_cursor,
+          }
+        : {}),
+      totalPages: response.total_pages,
+      currentPage: response.current_page,
+      totalItems:
+        typeof response.total_items === 'number'
+          ? response.total_items
+          : items.length,
+    };
+  });
+}
+
+export async function listComposioCatalogCategories(): Promise<
+  Array<{ id: string; name: string }>
+> {
+  return cachedComposioValue('catalog:categories', async () => {
+    const response =
+      await composioRequest<ComposioCatalogCategoryListResponse>(
+        '/toolkits/categories',
+      );
+
+    return (response.items ?? [])
+      .filter(
+        (item): item is { id: string; name: string } =>
+          typeof item.id === 'string' &&
+          item.id.length > 0 &&
+          typeof item.name === 'string' &&
+          item.name.length > 0,
+      )
+      .map((item) => ({
+        id: item.id,
+        name: item.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  });
+}
+
+export async function getComposioCatalogToolkit(
+  toolkitSlug: string,
+): Promise<XrogaConnectCatalogToolkit> {
+  const slug = cleanToolkit(toolkitSlug);
+
+  return cachedComposioValue(`catalog:toolkit:${slug}`, async () => {
+    const response = await composioRequest<ComposioCatalogToolkitResponse>(
+      `/toolkits/${encodeURIComponent(slug)}?version=latest`,
+    );
+
+    const toolkit = mapCatalogToolkit(response);
+
+    if (!toolkit) {
+      throw new ComposioClientError('Composio toolkit metadata was not found.', {
+        status: 404,
+        code: 'COMPOSIO_TOOLKIT_NOT_FOUND',
+      });
+    }
+
+    return toolkit;
+  });
+}
+
+export async function listComposioCatalogTools(
+  toolkitSlug: string,
+  input: {
+    limit?: number;
+    cursor?: string;
+  } = {},
+): Promise<XrogaConnectCatalogToolPage> {
+  const toolkit = cleanToolkit(toolkitSlug);
+  const limit = Math.min(
+    Math.max(Math.trunc(input.limit ?? 250), 1),
+    MAX_CATALOG_PAGE_SIZE,
+  );
+
+  const params = new URLSearchParams();
+  params.set('toolkit_slug', toolkit);
+  params.set('toolkit_versions', 'latest');
+  params.set('include_deprecated', 'false');
+  params.set('limit', String(limit));
+
+  if (input.cursor?.trim()) {
+    params.set('cursor', input.cursor.trim());
+  }
+
+  const cacheKey = `catalog:tools:${toolkit}:${params.toString()}`;
+
+  return cachedComposioValue(cacheKey, async () => {
+    const response = await composioRequest<ComposioCatalogToolListResponse>(
+      `/tools?${params.toString()}`,
+    );
+
+    const items = (response.items ?? [])
+      .filter(
+        (item): item is ComposioCatalogToolResponse & { slug: string } =>
+          typeof item.slug === 'string' && item.slug.length > 0,
+      )
+      .map((item) => {
+        const tags = Array.isArray(item.tags)
+          ? item.tags.filter((value): value is string => typeof value === 'string')
+          : [];
+        const risk = classifyComposioToolRisk(item.slug, tags);
+
+        return {
+          slug: item.slug,
+          toolkit: item.toolkit?.slug || toolkit,
+          name: item.name,
+          description: item.description,
+          scopes: Array.isArray(item.scopes)
+            ? item.scopes.filter((value): value is string => typeof value === 'string')
+            : [],
+          tags,
+          version: item.version,
+          deprecated: item.is_deprecated === true,
+          important: item.important === true,
+          risk,
+          requiresConfirmation: risk === 'destructive',
+        };
+      });
+
+    return {
+      items,
+      ...(response.next_cursor
+        ? {
+            nextCursor: response.next_cursor,
+          }
+        : {}),
+      totalPages: response.total_pages,
+      currentPage: response.current_page,
+      totalItems:
+        typeof response.total_items === 'number'
+          ? response.total_items
+          : items.length,
+    };
+  });
+}
+
+export async function listComposioTriggerTypes(
+  toolkitSlug: string,
+  input: {
+    limit?: number;
+    cursor?: string;
+  } = {},
+): Promise<XrogaConnectTriggerPage> {
+  const toolkit = cleanToolkit(toolkitSlug);
+  const limit = Math.min(
+    Math.max(Math.trunc(input.limit ?? MAX_TRIGGER_PAGE_SIZE), 1),
+    MAX_TRIGGER_PAGE_SIZE,
+  );
+
+  const params = new URLSearchParams();
+  params.set('toolkit_slugs', toolkit);
+  params.set('toolkit_versions', 'latest');
+  params.set('limit', String(limit));
+
+  if (input.cursor?.trim()) {
+    params.set('cursor', input.cursor.trim());
+  }
+
+  const cacheKey = `catalog:triggers:${toolkit}:${params.toString()}`;
+
+  return cachedComposioValue(cacheKey, async () => {
+    const response = await composioRequest<ComposioTriggerTypeListResponse>(
+      `/triggers_types?${params.toString()}`,
+    );
+
+    const items = (response.items ?? [])
+      .filter(
+        (item): item is ComposioTriggerTypeResponse & { slug: string } =>
+          typeof item.slug === 'string' && item.slug.length > 0,
+      )
+      .map((item) => ({
+        slug: item.slug,
+        name: item.name?.trim() || item.slug,
+        description: item.description,
+        instructions: item.instructions,
+        type: item.type,
+        version: item.version,
+      }));
+
+    return {
+      items,
+      ...(response.next_cursor
+        ? {
+            nextCursor: response.next_cursor,
+          }
+        : {}),
+      totalPages: response.total_pages,
+      currentPage: response.current_page,
+      totalItems:
+        typeof response.total_items === 'number'
+          ? response.total_items
+          : items.length,
+    };
   });
 }
 
