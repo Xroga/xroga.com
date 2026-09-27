@@ -477,7 +477,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
       if (!availability.configured) {
         if (definition.source !== 'native') {
-          setCapabilityError('Xroga Connect is not configured in this environment.');
+          setCapabilityError('Xroga Apps are not available in this environment.');
         }
         setLoadingCapabilities(false);
         return;
@@ -501,11 +501,14 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         source: current.source === 'native' ? 'native' : 'composio',
       }));
 
-      let activeSession = sessionId;
+      const customToolkit = metadata.slug.toUpperCase().startsWith('CUSTOM_');
+      let activeSession = customToolkit ? null : sessionId;
       if (!activeSession) {
-        const created = await xrogaConnect.session();
+        const created = await xrogaConnect.session(
+          customToolkit ? { toolkits: [metadata.slug] } : undefined,
+        );
         activeSession = created.sessionId;
-        setSessionId(created.sessionId);
+        if (!customToolkit) setSessionId(created.sessionId);
       }
 
       const [connectionResult, toolResult, triggerResult] = await Promise.allSettled([
@@ -685,7 +688,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
   async function connectComposio() {
     if (configured === false) {
-      throw new Error('Xroga Connect is temporarily unavailable.');
+      throw new Error('Xroga Apps are temporarily unavailable.');
     }
 
     const toolkitSlug = catalog?.slug || connectionToolkit?.toolkit;
@@ -693,11 +696,14 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       throw new Error(`${definition.name} does not have a current app connection identifier.`);
     }
 
-    let activeSession = sessionId;
+    const customToolkit = toolkitSlug.toUpperCase().startsWith('CUSTOM_');
+    let activeSession = customToolkit ? null : sessionId;
     if (!activeSession) {
-      const created = await xrogaConnect.session();
+      const created = await xrogaConnect.session(
+        customToolkit ? { toolkits: [toolkitSlug] } : undefined,
+      );
       activeSession = created.sessionId;
-      setSessionId(created.sessionId);
+      if (!customToolkit) setSessionId(created.sessionId);
     }
 
     const current = await xrogaConnect.toolkits(activeSession, {
@@ -1406,7 +1412,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 Xroga’s developer connection and AI-action connection are separate. The runtime can request the app connection when an AI action needs it.
               </p>
               <p className="mt-3 text-xs font-medium text-[var(--text-primary)]">
-                {composioConnected ? 'Xroga Connect ready' : 'Xroga Connect not connected'}
+                {composioConnected ? 'Xroga Apps ready' : 'Xroga App not connected'}
               </p>
               {!composioConnected && !catalog.noAuth ? (
                 <button

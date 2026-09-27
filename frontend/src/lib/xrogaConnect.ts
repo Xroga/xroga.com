@@ -86,6 +86,34 @@ export interface XrogaConnectCatalogPage {
   totalItems: number;
 }
 
+export type XrogaMarketplaceSectionId =
+  | 'small-business'
+  | 'productivity'
+  | 'creativity'
+  | 'developer-tools'
+  | 'business-operations'
+  | 'data-analytics'
+  | 'communication'
+  | 'travel'
+  | 'entertainment'
+  | 'other';
+
+export interface XrogaMarketplaceSection {
+  id: XrogaMarketplaceSectionId;
+  label: string;
+  totalItems: number;
+  items: XrogaConnectCatalogToolkit[];
+}
+
+export interface XrogaCustomMcp {
+  toolkit: string;
+  slug: string;
+  name: string;
+  serverUrl: string;
+  authMode: 'no_auth' | 'api_key' | 'dcr_oauth';
+  createdAt?: string;
+}
+
 export interface XrogaConnectCatalogToolPage {
   ok: boolean;
   items: XrogaConnectTool[];
@@ -139,14 +167,18 @@ export const xrogaConnect = {
       mode: XrogaConnectAvailabilityMode;
     }>('/api/integrations/xroga-connect/status'),
 
-  session: () =>
+  session: (opts?: { toolkits?: string[] }) =>
     apiFetch<{
       ok: boolean;
       sessionId: string;
       mode: XrogaConnectAvailabilityMode;
     }>('/api/integrations/xroga-connect/session', {
       method: 'POST',
-      body: JSON.stringify({}),
+      body: JSON.stringify(
+        opts?.toolkits?.length
+          ? { toolkits: opts.toolkits }
+          : {},
+      ),
     }),
 
   catalog: (opts?: {
@@ -187,6 +219,29 @@ export const xrogaConnect = {
       ok: boolean;
       categories: XrogaConnectCatalogCategory[];
     }>('/api/integrations/xroga-connect/catalog-categories'),
+
+  marketplaceSections: (previewLimit = 6) =>
+    apiFetch<{
+      ok: boolean;
+      sections: XrogaMarketplaceSection[];
+    }>(
+      `/api/integrations/xroga-connect/marketplace-sections${queryString({
+        previewLimit,
+      })}`,
+    ),
+
+  marketplaceSection: (
+    section: XrogaMarketplaceSectionId,
+    opts?: { limit?: number; cursor?: string },
+  ) =>
+    apiFetch<XrogaConnectCatalogPage>(
+      `/api/integrations/xroga-connect/marketplace-sections/${encodeURIComponent(
+        section,
+      )}${queryString({
+        limit: opts?.limit,
+        cursor: opts?.cursor,
+      })}`,
+    ),
 
   catalogToolkit: (toolkit: string) =>
     apiFetch<{
@@ -307,4 +362,52 @@ export const xrogaConnect = {
         toolkit,
       }),
     }),
+
+  customMcpList: () =>
+    apiFetch<{
+      ok: boolean;
+      items: XrogaCustomMcp[];
+    }>('/api/integrations/xroga-connect/custom-mcp'),
+
+  customMcpCreate: (input: {
+    name: string;
+    slug: string;
+    serverUrl: string;
+    authMode: 'no_auth' | 'api_key' | 'dcr_oauth';
+    discoveryUrl?: string;
+  }) =>
+    apiFetch<{
+      ok: boolean;
+      item: XrogaCustomMcp;
+      sync?: {
+        slug: string;
+        version?: string;
+        syncedCount?: number;
+      };
+      connectRequired: boolean;
+    }>('/api/integrations/xroga-connect/custom-mcp', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  customMcpSync: (toolkit: string) =>
+    apiFetch<{
+      ok: boolean;
+      slug: string;
+      version?: string;
+      syncedCount?: number;
+    }>(
+      `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(
+        toolkit,
+      )}/sync`,
+      { method: 'POST' },
+    ),
+
+  customMcpDelete: (toolkit: string) =>
+    apiFetch<{ ok: boolean }>(
+      `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(
+        toolkit,
+      )}`,
+      { method: 'DELETE' },
+    ),
 };

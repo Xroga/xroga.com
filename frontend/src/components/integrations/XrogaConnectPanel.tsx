@@ -551,7 +551,7 @@ export function XrogaConnectPanel() {
               aria-hidden="true"
             />
           }
-          title="Xroga Connect"
+          title="Xroga Apps"
           description="Connected business apps are temporarily unavailable."
         />
 
@@ -571,7 +571,7 @@ export function XrogaConnectPanel() {
             aria-hidden="true"
           />
         }
-        title="Xroga Connect"
+        title="Xroga Apps"
         description="Connect the apps you already use. Xroga can read their data and perform the actions you explicitly request."
       />
 

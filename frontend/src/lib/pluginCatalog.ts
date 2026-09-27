@@ -561,6 +561,12 @@ export function composioLogoUrl(
   return theme === 'dark' ? `${base}?theme=dark` : base;
 }
 
+export function toolkitLogoAssetUrl(toolkit: string): string {
+  return `https://cdn.jsdelivr.net/gh/ComposioHQ/logo-cdn@master/src/assets/${encodeURIComponent(
+    toolkit.toLowerCase(),
+  )}.svg`;
+}
+
 const CATEGORY_NAME_MAP: Array<{
   test: RegExp;
   label: string;
@@ -658,7 +664,7 @@ export function pluginFromCatalog(
     source: override?.source === 'native' ? 'native' : 'composio',
     toolkit: toolkit.slug,
     logo: toolkit.logo,
-    logoFallback: composioLogoUrl(toolkit.slug),
+    logoFallback: toolkitLogoAssetUrl(toolkit.slug),
     connected: Boolean(options.connected || toolkit.noAuth),
     noAuth: toolkit.noAuth,
     capabilityCount: toolkit.toolsCount,

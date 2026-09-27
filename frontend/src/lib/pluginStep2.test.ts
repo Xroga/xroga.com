@@ -82,15 +82,17 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
   assert.match(route, /PluginDetail pluginId=/);
 });
 
-test('Step 2 does not fake unsupported Composio disconnect or persistent Custom MCP', () => {
-  const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
+test('Step 2 keeps provider disconnect safe and Custom MCP is now backed by real routes', () => {
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
-  const composio = source('backend/src/services/integrations/composioClient.ts');
+  const runtime = source('backend/src/services/integrations/composioClient.ts');
+  const routes = source('backend/src/routes/integrations.ts');
+  const modal = source('frontend/src/components/integrations/AddPluginModal.tsx');
 
-  assert.match(composio, /enable_connection_removal:\s*false/);
+  assert.match(runtime, /enable_connection_removal:\s*false/);
   assert.match(detail, /definition\.source !== 'native'/);
-  assert.match(marketplace, /Custom MCP server/);
-  assert.match(marketplace, /does not fake persistent custom MCP storage/);
+  assert.match(routes, /\/xroga-connect\/custom-mcp/);
+  assert.match(modal, /Create Custom Plugin/);
+  assert.match(modal, /Sync tools/);
 });
 
 test('Step 2 exposes metadata-only action discovery and connected toolkit listing', () => {

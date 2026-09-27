@@ -17,7 +17,7 @@ const CONNECTABLE = [
  * web deployment connections — live exclusively in ConnectShipWizard so
  * connection state isn't shown or managed from two places at once.
  */
-export function ConnectedServicesSection() {
+export function ConnectedServicesSection({ compact = false }: { compact?: boolean } = {}) {
   const [customCount, setCustomCount] = useState(0);
   const vaultReady = hasVault();
 
@@ -30,11 +30,17 @@ export function ConnectedServicesSection() {
   }
 
   return (
-    <div className="glass-panel rounded-token-lg p-4 space-y-4">
+    <div
+      className={
+        compact
+          ? 'rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-3 space-y-3'
+          : 'glass-panel rounded-token-lg p-4 space-y-4'
+      }
+    >
       <SettingsPanelHeader
         icon={<Lock className="h-4 w-4 text-[var(--accent)]" aria-hidden="true" />}
         title="Optional connections"
-        description="Product services beyond the required GitHub + Vercel deploy path."
+        description="Optional product-service credentials and free providers for your apps."
       />
 
       <div className="space-y-2">

@@ -1,3 +1,10 @@
+import {
+  isCustomMcpToolkit,
+  listUserCustomMcps,
+  listUserCustomMcpToolkitSlugs,
+  ownsCustomMcpToolkit,
+} from './customMcpRegistry.js';
+
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -54,6 +61,10 @@ interface ComposioWorkbenchConfig {
 
 interface ComposioSessionConfig {
   user_id?: string;
+  toolkits?: {
+    enable?: string[];
+    disable?: string[];
+  };
   tags?: string[] | ComposioTagsConfig;
   search?: {
     enable?: boolean;
@@ -360,6 +371,41 @@ export type XrogaCatalogGroup =
   | 'hr-recruiting'
   | 'other';
 
+export type XrogaMarketplaceSectionId =
+  | 'small-business'
+  | 'productivity'
+  | 'creativity'
+  | 'developer-tools'
+  | 'business-operations'
+  | 'data-analytics'
+  | 'communication'
+  | 'travel'
+  | 'entertainment'
+  | 'other';
+
+export interface XrogaMarketplaceSection {
+  id: XrogaMarketplaceSectionId;
+  label: string;
+  totalItems: number;
+  items: XrogaConnectCatalogToolkit[];
+}
+
+export const XROGA_MARKETPLACE_SECTIONS: ReadonlyArray<{
+  id: XrogaMarketplaceSectionId;
+  label: string;
+}> = [
+  { id: 'small-business', label: 'Small Business' },
+  { id: 'productivity', label: 'Productivity' },
+  { id: 'creativity', label: 'Creativity' },
+  { id: 'developer-tools', label: 'Developer Tools' },
+  { id: 'business-operations', label: 'Business & Operations' },
+  { id: 'data-analytics', label: 'Data & Analytics' },
+  { id: 'communication', label: 'Communication' },
+  { id: 'travel', label: 'Travel' },
+  { id: 'entertainment', label: 'Entertainment' },
+  { id: 'other', label: 'Other' },
+];
+
 const XROGA_CATALOG_GROUP_PATTERNS: Array<{
   id: XrogaCatalogGroup;
   test: RegExp;
@@ -395,6 +441,129 @@ export function xrogaCatalogGroupFor(
   }
 
   return 'other';
+}
+
+function toolkitSearchText(toolkit: XrogaConnectCatalogToolkit): string {
+  return [
+    toolkit.name,
+    toolkit.slug,
+    toolkit.description,
+    ...toolkit.categories.map((category) => category.name),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+
+export function xrogaMarketplaceSectionFor(
+  toolkit: XrogaConnectCatalogToolkit,
+): XrogaMarketplaceSectionId {
+  const text = toolkitSearchText(toolkit);
+  const group = xrogaCatalogGroupFor(toolkit);
+
+  if (
+    /\b(travel|trip|flight|airline|airport|hotel|lodging|booking|tourism|navigation|maps?|transit|transport|rail|train|weather)\b/i.test(
+      text,
+    )
+  ) {
+    return 'travel';
+  }
+
+  if (
+    /\b(entertainment|music|podcast|spotify|movie|film|tv|streaming|gaming|game|chess|astrology|horoscope|sports|fantasy|ticketing)\b/i.test(
+      text,
+    )
+  ) {
+    return 'entertainment';
+  }
+
+  if (
+    group === 'design-media' ||
+    /\b(canva|figma|runway|image|video|audio|creative|design|3d|animation|photo|media)\b/i.test(
+      text,
+    )
+  ) {
+    return 'creativity';
+  }
+
+  if (
+    group === 'engineering' ||
+    group === 'infrastructure' ||
+    /\b(developer|devops|deploy|hosting|cloud|source control|github|gitlab|vercel|supabase|railway|render|monitoring|observability|scrape|search api|api tooling)\b/i.test(
+      text,
+    )
+  ) {
+    return 'developer-tools';
+  }
+
+  if (
+    group === 'data-analytics' ||
+    /\b(analytics|data|warehouse|business intelligence|tableau|power bi|posthog|mixpanel|amplitude|database|sql|blockchain data)\b/i.test(
+      text,
+    )
+  ) {
+    return 'data-analytics';
+  }
+
+  if (
+    group === 'communication' ||
+    /\b(slack|teams|discord|email|mail|messaging|chat|sms|phone|voice|meeting|calendar assistant)\b/i.test(
+      text,
+    )
+  ) {
+    return 'communication';
+  }
+
+  if (
+    group === 'productivity' ||
+    /\b(calendar|notion|task|todo|project management|documents?|notes?|office|workspace|drive|dropbox|forms?)\b/i.test(
+      text,
+    )
+  ) {
+    return 'productivity';
+  }
+
+  if (
+    group === 'sales-crm' ||
+    group === 'marketing' ||
+    group === 'hr-recruiting' ||
+    group === 'support' ||
+    /\b(crm|sales|marketing|seo|ads?|lead|customer support|recruit|human resources|operations|business operations)\b/i.test(
+      text,
+    )
+  ) {
+    return 'business-operations';
+  }
+
+  if (
+    group === 'commerce' ||
+    group === 'finance' ||
+    /\b(shopify|stripe|payments?|commerce|ecommerce|store|invoice|accounting|small business|inventory|shipping|quickbooks|xero)\b/i.test(
+      text,
+    )
+  ) {
+    return 'small-business';
+  }
+
+  return 'other';
+}
+
+export interface XrogaCustomMcpUpsertInput {
+  slug: string;
+  name: string;
+  serverUrl: string;
+  authMode: 'no_auth' | 'api_key' | 'dcr_oauth';
+  discoveryUrl?: string;
+}
+
+export interface XrogaCustomMcpUpsertResult {
+  slug: string;
+}
+
+export interface XrogaCustomMcpSyncResult {
+  slug: string;
+  version?: string;
+  syncedCount?: number;
 }
 
 export interface XrogaConnectCatalogToolPage {
@@ -945,6 +1114,7 @@ function validateReadOnlyConfig(
 async function createComposioSession(
   userId: string,
   mode: XrogaConnectMode,
+  requestedToolkits?: string[],
 ): Promise<ComposioSession> {
   const body: Record<string, unknown> = {
     user_id: composioUserId(userId),
@@ -964,6 +1134,27 @@ async function createComposioSession(
       enable_connection_removal: false,
     },
   };
+
+  const requested = requestedToolkits
+    ?.map((toolkit) => toolkit.trim().toUpperCase())
+    .filter(Boolean);
+
+  if (requested?.length) {
+    const customRequested = requested.filter((toolkit) => isCustomMcpToolkit(toolkit));
+
+    for (const toolkit of customRequested) {
+      if (!(await ownsCustomMcpToolkit(userId, toolkit))) {
+        throw new ComposioClientError('Custom Plugin not found.', {
+          status: 404,
+          code: 'CUSTOM_MCP_NOT_FOUND',
+        });
+      }
+    }
+
+    body.toolkits = {
+      enable: requested,
+    };
+  }
 
   if (mode === 'read') {
     body.tags = [READ_ONLY_TAG];
@@ -992,14 +1183,16 @@ async function createComposioSession(
 
 export async function createReadOnlyComposioSession(
   userId: string,
+  toolkits?: string[],
 ): Promise<ComposioSession> {
-  return createComposioSession(userId, 'read');
+  return createComposioSession(userId, 'read', toolkits);
 }
 
 export async function createActionComposioSession(
   userId: string,
+  toolkits?: string[],
 ): Promise<ComposioSession> {
-  return createComposioSession(userId, 'action');
+  return createComposioSession(userId, 'action', toolkits);
 }
 
 export async function getComposioSession(
@@ -1113,9 +1306,45 @@ export async function searchComposioTools(
   }
 
   const mode = input.mode ?? 'read';
+  const ownedCustomMcps = await listUserCustomMcps(userId);
+  const normalizedQuery = query
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const explicitlyNamedCustom = ownedCustomMcps.find((item) => {
+    const names = [
+      item.name,
+      item.toolkit.replace(/^CUSTOM_/, '').replace(/_/g, ' '),
+    ]
+      .map((value) =>
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim(),
+      )
+      .filter((value) => value.length >= 3);
+
+    return names.some(
+      (name) =>
+        normalizedQuery === name ||
+        normalizedQuery.includes(` ${name} `) ||
+        normalizedQuery.startsWith(`${name} `) ||
+        normalizedQuery.endsWith(` ${name}`),
+    );
+  });
+
   const session = input.sessionId
     ? await assertComposioSession(userId, input.sessionId, mode)
-    : await createComposioSession(userId, mode);
+    : await createComposioSession(
+        userId,
+        mode,
+        explicitlyNamedCustom ? [explicitlyNamedCustom.toolkit] : undefined,
+      );
+  const ownedCustomSlugs = new Set(
+    ownedCustomMcps.map((item) => item.toolkit.toUpperCase()),
+  );
 
   const response = await composioRequest<ComposioSearchResponse>(
     `/tool_router/session/${encodeURIComponent(session.session_id)}/search`,
@@ -1145,6 +1374,11 @@ export async function searchComposioTools(
       (tool) => !tool.tool_slug.toUpperCase().startsWith('COMPOSIO_'),
     )
     .filter(
+      (tool) =>
+        !isCustomMcpToolkit(tool.toolkit) ||
+        ownedCustomSlugs.has(tool.toolkit.toUpperCase()),
+    )
+    .filter(
       (tool) => mode === 'action' || !looksMutatingToolSlug(tool.tool_slug),
     )
     .slice(0, MAX_SEARCH_RESULTS)
@@ -1157,6 +1391,11 @@ export async function searchComposioTools(
       ): status is typeof status & {
         toolkit: string;
       } => Boolean(status.toolkit),
+    )
+    .filter(
+      (status) =>
+        !isCustomMcpToolkit(status.toolkit) ||
+        ownedCustomSlugs.has(status.toolkit.toUpperCase()),
     )
     .slice(0, MAX_SEARCH_RESULTS)
     .map((status) => ({
@@ -1382,6 +1621,85 @@ export async function listComposioCatalog(
 }
 
 
+async function listComposioCatalogUniverse(): Promise<XrogaConnectCatalogToolkit[]> {
+  return cachedComposioValue('catalog:universe:usage', async () => {
+    const items: XrogaConnectCatalogToolkit[] = [];
+    const seen = new Set<string>();
+    let cursor: string | undefined;
+    let pages = 0;
+
+    do {
+      const page = await listComposioCatalog({
+        sortBy: 'usage',
+        limit: MAX_CATALOG_PAGE_SIZE,
+        ...(cursor ? { cursor } : {}),
+      });
+
+      for (const toolkit of page.items) {
+        if (seen.has(toolkit.slug)) continue;
+        seen.add(toolkit.slug);
+        items.push(toolkit);
+      }
+
+      cursor = page.nextCursor;
+      pages += 1;
+    } while (cursor && pages < 30);
+
+    return items;
+  });
+}
+
+export async function listComposioMarketplaceSections(
+  previewLimit = 6,
+): Promise<XrogaMarketplaceSection[]> {
+  const universe = await listComposioCatalogUniverse();
+  const limit = Math.min(Math.max(Math.trunc(previewLimit), 2), 12);
+
+  return XROGA_MARKETPLACE_SECTIONS.map((section) => {
+    const items = universe.filter(
+      (toolkit) =>
+        toolkit.type !== 'custom' &&
+        xrogaMarketplaceSectionFor(toolkit) === section.id,
+    );
+
+    return {
+      ...section,
+      totalItems: items.length,
+      items: items.slice(0, limit),
+    };
+  }).filter((section) => section.totalItems > 0);
+}
+
+export async function listComposioMarketplaceSection(
+  input: {
+    section: XrogaMarketplaceSectionId;
+    limit?: number;
+    cursor?: string;
+  },
+): Promise<XrogaConnectCatalogPage> {
+  const universe = await listComposioCatalogUniverse();
+  const items = universe.filter(
+    (toolkit) =>
+      toolkit.type !== 'custom' &&
+      xrogaMarketplaceSectionFor(toolkit) === input.section,
+  );
+  const limit = Math.min(Math.max(Math.trunc(input.limit ?? 120), 1), MAX_CATALOG_PAGE_SIZE);
+  const offsetMatch = input.cursor?.match(/^xroga-section-(\d+)$/);
+  const offset = offsetMatch ? Number(offsetMatch[1]) : 0;
+  const pageItems = items.slice(offset, offset + limit);
+  const nextOffset = offset + pageItems.length;
+
+  return {
+    items: pageItems,
+    totalItems: items.length,
+    currentPage: Math.floor(offset / limit) + 1,
+    totalPages: Math.max(1, Math.ceil(items.length / limit)),
+    ...(nextOffset < items.length
+      ? { nextCursor: `xroga-section-${nextOffset}` }
+      : {}),
+  };
+}
+
 export async function listComposioCatalogGroup(
   input: {
     group: XrogaCatalogGroup;
@@ -1389,56 +1707,28 @@ export async function listComposioCatalogGroup(
     cursor?: string;
   },
 ): Promise<XrogaConnectCatalogPage> {
+  const universe = await listComposioCatalogUniverse();
+  const items = universe.filter(
+    (toolkit) => xrogaCatalogGroupFor(toolkit) === input.group,
+  );
   const limit = Math.min(
     Math.max(Math.trunc(input.limit ?? 120), 1),
     MAX_CATALOG_PAGE_SIZE,
   );
   const offsetMatch = input.cursor?.match(/^xroga-group-(\d+)$/);
   const offset = offsetMatch ? Number(offsetMatch[1]) : 0;
+  const pageItems = items.slice(offset, offset + limit);
+  const nextOffset = offset + pageItems.length;
 
-  return cachedComposioValue(
-    `catalog:group:${input.group}:all`,
-    async () => {
-      const items: XrogaConnectCatalogToolkit[] = [];
-      let cursor: string | undefined;
-      let pages = 0;
-
-      do {
-        const page = await listComposioCatalog({
-          sortBy: 'usage',
-          limit: MAX_CATALOG_PAGE_SIZE,
-          ...(cursor ? { cursor } : {}),
-        });
-
-        items.push(
-          ...page.items.filter(
-            (toolkit) => xrogaCatalogGroupFor(toolkit) === input.group,
-          ),
-        );
-
-        cursor = page.nextCursor;
-        pages += 1;
-      } while (cursor && pages < 20);
-
-      return {
-        items,
-        totalItems: items.length,
-      };
-    },
-  ).then((all) => {
-    const pageItems = all.items.slice(offset, offset + limit);
-    const nextOffset = offset + pageItems.length;
-
-    return {
-      items: pageItems,
-      totalItems: all.totalItems,
-      currentPage: Math.floor(offset / limit) + 1,
-      totalPages: Math.max(1, Math.ceil(all.totalItems / limit)),
-      ...(nextOffset < all.totalItems
-        ? { nextCursor: `xroga-group-${nextOffset}` }
-        : {}),
-    };
-  });
+  return {
+    items: pageItems,
+    totalItems: items.length,
+    currentPage: Math.floor(offset / limit) + 1,
+    totalPages: Math.max(1, Math.ceil(items.length / limit)),
+    ...(nextOffset < items.length
+      ? { nextCursor: `xroga-group-${nextOffset}` }
+      : {}),
+  };
 }
 
 export async function listComposioCatalogCategories(): Promise<
@@ -1675,6 +1965,143 @@ export async function getComposioToolDetails(
     risk,
     requiresConfirmation: risk === 'destructive',
   };
+}
+
+export async function upsertComposioCustomMcp(
+  input: XrogaCustomMcpUpsertInput,
+): Promise<XrogaCustomMcpUpsertResult> {
+  const slug = input.slug
+    .trim()
+    .toUpperCase()
+    .replace(/^CUSTOM_/, '')
+    .replace(/[^A-Z0-9_]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  if (slug.length < 2 || slug.length > 64) {
+    throw new ComposioClientError('Invalid Custom Plugin slug.', {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_SLUG',
+    });
+  }
+
+  const appUrl = new URL(input.serverUrl);
+  if (appUrl.protocol !== 'https:') {
+    throw new ComposioClientError('Custom MCP server must use HTTPS.', {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_URL',
+    });
+  }
+
+  let authScheme: Record<string, unknown>;
+
+  if (input.authMode === 'api_key') {
+    authScheme = {
+      mode: 'API_KEY',
+      headers: {
+        Authorization: 'Bearer {{generic_api_key}}',
+      },
+      api_key_field: {
+        display_name: 'API key',
+        description: 'API key or bearer token for this MCP server.',
+      },
+    };
+  } else if (input.authMode === 'dcr_oauth') {
+    if (!input.discoveryUrl) {
+      throw new ComposioClientError('OAuth discovery URL is required.', {
+        status: 400,
+        code: 'CUSTOM_MCP_DISCOVERY_REQUIRED',
+      });
+    }
+    const discoveryUrl = new URL(input.discoveryUrl);
+    if (discoveryUrl.protocol !== 'https:') {
+      throw new ComposioClientError('OAuth discovery URL must use HTTPS.', {
+        status: 400,
+        code: 'INVALID_CUSTOM_MCP_DISCOVERY_URL',
+      });
+    }
+    authScheme = {
+      mode: 'DCR_OAUTH',
+      discovery_url: discoveryUrl.toString(),
+    };
+  } else {
+    authScheme = {
+      mode: 'NO_AUTH',
+    };
+  }
+
+  const response = await composioRequest<{ slug?: string }>(
+    '/custom/toolkits/upsert',
+    {
+      method: 'POST',
+      body: {
+        slug,
+        toolkit_config: {
+          name: input.name.trim(),
+          app_url: appUrl.toString(),
+          auth_schemes: [authScheme],
+        },
+      },
+      timeoutMs: EXECUTE_TIMEOUT_MS,
+    },
+  );
+
+  if (!response.slug) {
+    throw new ComposioClientError('Custom Plugin registration did not return a toolkit.', {
+      status: 502,
+      code: 'CUSTOM_MCP_REGISTRATION_FAILED',
+    });
+  }
+
+  return {
+    slug: response.slug.toUpperCase(),
+  };
+}
+
+export async function syncComposioCustomMcp(
+  toolkitSlug: string,
+  connectedAccountId?: string,
+): Promise<XrogaCustomMcpSyncResult> {
+  const slug = toolkitSlug.trim().toUpperCase();
+
+  const response = await composioRequest<{
+    slug?: string;
+    version?: string;
+    synced_count?: number;
+  }>('/custom/toolkits/sync', {
+    method: 'POST',
+    body: {
+      slug,
+      ...(connectedAccountId ? { connected_account_id: connectedAccountId } : {}),
+    },
+    timeoutMs: EXECUTE_TIMEOUT_MS,
+  });
+
+  return {
+    slug: response.slug?.toUpperCase() || slug,
+    version: response.version,
+    syncedCount:
+      typeof response.synced_count === 'number' ? response.synced_count : undefined,
+  };
+}
+
+export async function deleteComposioCustomMcp(
+  toolkitSlug: string,
+): Promise<void> {
+  const slug = toolkitSlug.trim().toUpperCase();
+  if (!slug.startsWith('CUSTOM_')) {
+    throw new ComposioClientError('Only Custom Plugins can be removed here.', {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_SLUG',
+    });
+  }
+
+  await composioRequest<Record<string, unknown>>(
+    `/custom/toolkits/${encodeURIComponent(slug)}`,
+    {
+      method: 'DELETE',
+      timeoutMs: EXECUTE_TIMEOUT_MS,
+    },
+  );
 }
 
 export async function createComposioConnectionLink(
