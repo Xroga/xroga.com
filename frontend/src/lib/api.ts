@@ -3779,6 +3779,9 @@ export const api = {
             vercelConnected:
               boolean;
 
+            managedVercelAvailable?:
+              boolean;
+
             checklist:
               Array<{
                 id:
