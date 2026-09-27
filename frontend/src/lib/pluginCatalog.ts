@@ -447,11 +447,11 @@ export function capabilityGroupFor(tool: XrogaConnectTool): string {
   if (/order|product|inventory|fulfill|store/.test(haystack)) return 'Commerce';
   if (/issue|pull|branch|commit|repository|repo|code/.test(haystack)) return 'Engineering';
   if (/event|calendar|schedule|meeting/.test(haystack)) return 'Scheduling';
+  if (/delete|remove|archive/.test(haystack)) return 'Organize & remove';
   if (/message|thread|email|mail|channel|conversation/.test(haystack)) {
     if (/send|draft|create|reply|post/.test(haystack)) return 'Draft & send';
     return 'Search & read';
   }
-  if (/delete|remove|archive/.test(haystack)) return 'Organize & remove';
   if (/create|send|post|add/.test(haystack)) return 'Create & send';
   if (/update|edit|modify|set|assign/.test(haystack)) return 'Update & manage';
   if (/search|fetch|get|list|read|find|lookup/.test(haystack)) return 'Search & read';
