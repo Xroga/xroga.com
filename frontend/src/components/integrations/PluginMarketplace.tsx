@@ -1415,57 +1415,7 @@ export function PluginMarketplace() {
           </div>
 
           {semanticError ? (
-            <Dialog
-        open={addPluginOpen}
-        onClose={() => setAddPluginOpen(false)}
-        title="Add Plugin"
-        description={
-          globalCatalogTotal !== null
-            ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, or bring your own service credential.`
-            : 'Connect an Xroga App or bring your own service credential.'
-        }
-        className="max-w-[440px]"
-      >
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={focusPluginSearch}
-            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
-          >
-            <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-            <span>
-              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                Find an Xroga App
-              </strong>
-              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                Search by brand or describe a task. Xroga finds the app, real actions, triggers, and task plans that match.
-              </span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={openCredentials}
-            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
-          >
-            <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-            <span>
-              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                API key or webhook
-              </strong>
-              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                Use Xroga’s encrypted credential vault for services that are not connected through the app catalogue.
-              </span>
-            </span>
-          </button>
-
-          <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
-            <p className="text-xs leading-5 text-[var(--text-secondary)]">
-              Xroga Apps expose their real supported actions and triggers at runtime. Connected apps can be used by Xroga without turning this popup into another setup page.
-            </p>
-          </div>
-        </div>
-      </Dialog>
+            
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
               <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
@@ -1775,6 +1725,58 @@ export function PluginMarketplace() {
           ) : null}
         </>
       )}
+
+      <Dialog
+        open={addPluginOpen}
+        onClose={() => setAddPluginOpen(false)}
+        title="Add Plugin"
+        description={
+          globalCatalogTotal !== null
+            ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, or bring your own service credential.`
+            : 'Connect an Xroga App or bring your own service credential.'
+        }
+        className="max-w-[440px]"
+      >
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={focusPluginSearch}
+            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
+          >
+            <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+            <span>
+              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                Find an Xroga App
+              </strong>
+              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                Search by brand or describe a task. Xroga finds the app, real actions, triggers, and task plans that match.
+              </span>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={openCredentials}
+            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
+          >
+            <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+            <span>
+              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                API key or webhook
+              </strong>
+              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                Use Xroga’s encrypted credential vault for services that are not connected through the app catalogue.
+              </span>
+            </span>
+          </button>
+
+          <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
+            <p className="text-xs leading-5 text-[var(--text-secondary)]">
+              Xroga Apps expose their real supported actions and triggers at runtime. Connected apps can be used by Xroga without turning this popup into another setup page.
+            </p>
+          </div>
+        </div>
+      </Dialog>
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
