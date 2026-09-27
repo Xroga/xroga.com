@@ -483,6 +483,8 @@ export function PluginMarketplace() {
     }, 450);
 
     return () => window.clearTimeout(timer);
+  // sessionId is continuity state returned by search, not a reason to re-run the query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deferredQuery, composioConfigured]);
 
   const basePlugins = useMemo<RuntimePlugin[]>(
