@@ -3,9 +3,9 @@
 import { PanelLoader } from '@/components/ui/PanelLoader';
 import { useCallback, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
-import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
 import { Tabs, type TabItem } from '@/components/ui/Tabs';
 import { GeneralSettingsPanel } from '@/components/settings/GeneralSettingsPanel';
 import { PrivacySettingsPanel } from '@/components/settings/PrivacySettingsPanel';
@@ -118,7 +118,22 @@ export function SettingsView({ initialSection = 'general' }: { initialSection?: 
             {section === 'privacy' && <PrivacySettingsPanel />}
             {section === 'data-ai' && <DataAiSettingsPanel email={email} />}
             {section === 'plan' && <PlanUsageSettingsPanel />}
-            {section === 'integrations' && <IntegrationsPanel />}
+            {section === 'integrations' && (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Plugins</h3>
+                  <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                    Manage the apps, developer tools, and services Xroga can securely work with.
+                  </p>
+                </div>
+                <Link
+                  href="/dashboard/integrations"
+                  className="inline-flex min-h-10 items-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-4 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                >
+                  Open Plugins →
+                </Link>
+              </div>
+            )}
             {section === 'security' && <SecuritySettingsPanel />}
             {section === 'notifications' && <NotificationsSettingsPanel />}
           </div>
