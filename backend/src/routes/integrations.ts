@@ -42,6 +42,7 @@ import {
   isComposioConfigured,
   listComposioCatalog,
   listComposioCatalogCategories,
+  listComposioCatalogGroup,
   listComposioCatalogTools,
   listComposioToolkits,
   listComposioTriggerTypes,
@@ -1097,6 +1098,24 @@ router.get(
         .trim()
         .max(120)
         .optional(),
+      group: z
+        .enum([
+          'productivity',
+          'communication',
+          'engineering',
+          'ai-automation',
+          'sales-crm',
+          'commerce',
+          'marketing',
+          'finance',
+          'data-analytics',
+          'design-media',
+          'support',
+          'infrastructure',
+          'hr-recruiting',
+          'other',
+        ])
+        .optional(),
       sortBy: z.enum(['usage', 'alphabetically']).optional().default('usage'),
       limit: z.coerce.number().int().min(1).max(250).optional().default(120),
       cursor: z.string().trim().max(1000).optional(),
@@ -1113,12 +1132,19 @@ router.get(
     }
 
     try {
-      const page = await listComposioCatalog({
-        ...parsed.data,
-        ...(parsed.data.search ? { search: parsed.data.search } : {}),
-        ...(parsed.data.category ? { category: parsed.data.category } : {}),
-        ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
-      });
+      const page = parsed.data.group
+        ? await listComposioCatalogGroup({
+            group: parsed.data.group,
+            limit: parsed.data.limit,
+            ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
+          })
+        : await listComposioCatalog({
+            search: parsed.data.search,
+            category: parsed.data.category,
+            sortBy: parsed.data.sortBy,
+            limit: parsed.data.limit,
+            ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
+          });
 
       res.json({
         ok: true,
