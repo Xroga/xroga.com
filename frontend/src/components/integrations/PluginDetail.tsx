@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -12,23 +12,26 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
+  Sparkles,
   TriangleAlert,
+  Zap,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
+import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { api } from '@/lib/api';
 import {
   canonicalPluginId,
   genericPluginDefinition,
   groupCapabilities,
-  inferCategory,
   pluginDefinitionFor,
+  pluginFromCatalog,
+  prettyToolName,
   type ConnectionState,
   type NativePluginId,
   type PluginCapability,
-  type PluginDefinition,
   type PluginCapabilityGroup,
+  type PluginDefinition,
 } from '@/lib/pluginCatalog';
 import {
   clearOAuthResult,
@@ -36,8 +39,12 @@ import {
 } from '@/lib/oauthPopupResult';
 import {
   xrogaConnect,
+  type XrogaConnectCatalogToolkit,
+  type XrogaConnectSearchResult,
+  type XrogaConnectSkill,
   type XrogaConnectToolkit,
   type XrogaConnectTool,
+  type XrogaConnectTriggerType,
 } from '@/lib/xrogaConnect';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -56,37 +63,9 @@ function riskLabel(capability: PluginCapability) {
 }
 
 function RiskBadge({ capability }: { capability: PluginCapability }) {
-  const label = riskLabel(capability);
   return (
     <span className="inline-flex shrink-0 items-center rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)]">
-      {label}
-    </span>
-  );
-}
-
-function DetailLogo({
-  definition,
-  toolkit,
-}: {
-  definition: PluginDefinition;
-  toolkit: XrogaConnectToolkit | null;
-}) {
-  const [failed, setFailed] = useState(false);
-
-  if (toolkit?.logo && !failed) {
-    return (
-      <img
-        src={toolkit.logo}
-        alt=""
-        className="h-14 w-14 rounded-2xl border border-[var(--border-subtle)] bg-white object-contain p-2"
-        onError={() => setFailed(true)}
-      />
-    );
-  }
-
-  return (
-    <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-inset)]">
-      <IntegrationLogo id={definition.id} name={definition.name} size={31} />
+      {riskLabel(capability)}
     </span>
   );
 }
@@ -126,7 +105,7 @@ function CapabilityGroup({
         <span>
           <span className="block text-sm font-semibold text-[var(--text-primary)]">{group.name}</span>
           <span className="text-[11px] text-[var(--text-muted)]">
-            {visible.length} {visible.length === 1 ? 'capability' : 'capabilities'}
+            {visible.length.toLocaleString()} {visible.length === 1 ? 'action' : 'actions'}
           </span>
         </span>
         <ChevronDown
@@ -166,35 +145,95 @@ function CapabilityGroup({
   );
 }
 
+async function fetchAllTools(toolkit: string): Promise<{
+  items: XrogaConnectTool[];
+  total: number;
+}> {
+  const items: XrogaConnectTool[] = [];
+  let cursor: string | undefined;
+  let total = 0;
+  let pages = 0;
+
+  do {
+    const page = await xrogaConnect.catalogTools(toolkit, {
+      limit: 250,
+      cursor,
+    });
+    items.push(...page.items);
+    total = page.totalItems;
+    cursor = page.nextCursor;
+    pages += 1;
+  } while (cursor && pages < 20);
+
+  return {
+    items,
+    total: Math.max(total, items.length),
+  };
+}
+
+async function fetchAllTriggers(toolkit: string): Promise<{
+  items: XrogaConnectTriggerType[];
+  total: number;
+}> {
+  const items: XrogaConnectTriggerType[] = [];
+  let cursor: string | undefined;
+  let total = 0;
+  let pages = 0;
+
+  do {
+    const page = await xrogaConnect.catalogTriggers(toolkit, {
+      limit: 50,
+      cursor,
+    });
+    items.push(...page.items);
+    total = page.totalItems;
+    cursor = page.nextCursor;
+    pages += 1;
+  } while (cursor && pages < 20);
+
+  return {
+    items,
+    total: Math.max(total, items.length),
+  };
+}
+
 export function PluginDetail({ pluginId }: { pluginId: string }) {
   const router = useRouter();
   const setChatPrefill = useAppStore((state) => state.setChatPrefill);
   const initialDefinition = pluginDefinitionFor(pluginId) ?? genericPluginDefinition(pluginId);
 
   const [definition, setDefinition] = useState<PluginDefinition>(initialDefinition);
-  const [toolkit, setToolkit] = useState<XrogaConnectToolkit | null>(null);
+  const [catalog, setCatalog] = useState<XrogaConnectCatalogToolkit | null>(null);
+  const [connectionToolkit, setConnectionToolkit] = useState<XrogaConnectToolkit | null>(null);
   const [tools, setTools] = useState<XrogaConnectTool[]>([]);
+  const [toolsTotal, setToolsTotal] = useState(0);
+  const [triggers, setTriggers] = useState<XrogaConnectTriggerType[]>([]);
+  const [triggersTotal, setTriggersTotal] = useState(0);
   const [native, setNative] = useState<NativeSnapshot | null>(
     initialDefinition.source === 'native' ? { state: 'checking' } : null,
   );
   const [configured, setConfigured] = useState<boolean | null>(null);
-  const [loadingCapabilities, setLoadingCapabilities] = useState(
-    initialDefinition.source === 'composio',
-  );
+  const [loadingCapabilities, setLoadingCapabilities] = useState(true);
   const [capabilityError, setCapabilityError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [connectingComposio, setConnectingComposio] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [capabilityQuery, setCapabilityQuery] = useState('');
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['search-read']));
+  const [useCaseQuery, setUseCaseQuery] = useState('');
+  const [useCaseLoading, setUseCaseLoading] = useState(false);
+  const [useCaseError, setUseCaseError] = useState<string | null>(null);
+  const [skill, setSkill] = useState<XrogaConnectSkill | null>(null);
+  const [skillTools, setSkillTools] = useState<XrogaConnectTool[]>([]);
+  const [guidance, setGuidance] = useState<string | null>(null);
 
-  const connected =
-    definition.source === 'native'
-      ? native?.state === 'connected'
-      : Boolean(toolkit?.connected || toolkit?.noAuth);
-  const noAuth = Boolean(toolkit?.noAuth);
+  const nativeConnected = definition.source === 'native' && native?.state === 'connected';
+  const composioConnected = Boolean(connectionToolkit?.connected || connectionToolkit?.noAuth);
+  const connected = definition.source === 'native' ? nativeConnected : composioConnected;
+  const noAuth = Boolean(connectionToolkit?.noAuth || catalog?.noAuth);
 
   async function loadNative() {
     const id = definition.id as NativePluginId;
@@ -238,7 +277,34 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
     }
   }
 
-  async function loadComposio() {
+  async function resolveCatalogToolkit(): Promise<XrogaConnectCatalogToolkit | null> {
+    try {
+      return (await xrogaConnect.catalogToolkit(pluginId)).toolkit;
+    } catch {
+      const known = pluginDefinitionFor(pluginId);
+      if (!known) return null;
+
+      try {
+        const page = await xrogaConnect.catalog({
+          search: known.name,
+          sortBy: 'usage',
+          limit: 20,
+        });
+
+        return (
+          page.items.find(
+            (item) =>
+              canonicalPluginId(item.slug) === canonicalPluginId(known.id) ||
+              item.name.toLowerCase() === known.name.toLowerCase(),
+          ) ?? null
+        );
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  async function loadPlugin() {
     setLoadingCapabilities(true);
     setCapabilityError(null);
 
@@ -246,102 +312,78 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       const availability = await xrogaConnect.status();
       setConfigured(availability.configured);
 
+      if (definition.source === 'native') {
+        await loadNative();
+      }
+
       if (!availability.configured) {
-        setCapabilityError('Connected business apps are temporarily unavailable.');
-        setLoadingCapabilities(false);
-        return;
-      }
-
-      // Keep the read-mode session for connection state and OAuth linking.
-      const result = await xrogaConnect.search(
-        definition.query || `find ${definition.name} capabilities`,
-        sessionId ?? undefined,
-      );
-
-      setSessionId(result.sessionId);
-
-      const exact = (result.toolkits ?? []).find(
-        (item) =>
-          canonicalPluginId(`${item.name ?? ''} ${item.toolkit}`) ===
-          canonicalPluginId(definition.id),
-      );
-
-      const fallback =
-        !pluginDefinitionFor(pluginId) && (result.toolkits?.length ?? 0) === 1
-          ? result.toolkits[0]
-          : undefined;
-
-      let selected = exact ?? fallback ?? null;
-
-      if (!selected) {
-        if (!pluginDefinitionFor(pluginId)) {
-          setNotFound(true);
+        if (definition.source !== 'native') {
+          setCapabilityError('Xroga Connect is not configured in this environment.');
         }
-        setToolkit(null);
-        setTools([]);
         setLoadingCapabilities(false);
         return;
       }
 
-      // The toolkit-list endpoint returns richer metadata (name/logo/no-auth)
-      // than search statuses. Failure here does not block the detail experience.
-      try {
-        const metadata = await xrogaConnect.toolkits(result.sessionId, {
-          toolkits: [selected.toolkit],
-        });
-        selected =
-          metadata.toolkits.find((item) => item.toolkit === selected?.toolkit) ??
-          selected;
-      } catch {
-        // Search metadata is sufficient as a fallback.
+      const metadata = await resolveCatalogToolkit();
+
+      if (!metadata) {
+        if (!pluginDefinitionFor(pluginId)) setNotFound(true);
+        setLoadingCapabilities(false);
+        return;
       }
 
       setNotFound(false);
-      setToolkit(selected);
+      setCatalog(metadata);
 
-      if (!pluginDefinitionFor(pluginId)) {
-        const generic = genericPluginDefinition(pluginId);
-        setDefinition({
-          ...generic,
-          id: canonicalPluginId(`${selected.name ?? ''} ${selected.toolkit}`),
-          name: selected.name || generic.name,
-          description:
-            selected.description ||
-            selected.statusMessage ||
-            'Connect this app so Xroga can use its supported capabilities.',
-          longDescription:
-            selected.description ||
-            'Connect this app so Xroga can use its supported capabilities when you ask.',
-          category: inferCategory(
-            selected.name || generic.name,
-            selected.description,
-          ),
-          query: `find ${selected.name || selected.toolkit} capabilities`,
-        });
+      const runtime = pluginFromCatalog(metadata);
+      setDefinition((current) => ({
+        ...current,
+        ...runtime,
+        source: current.source === 'native' ? 'native' : 'composio',
+      }));
+
+      let activeSession = sessionId;
+      if (!activeSession) {
+        const created = await xrogaConnect.session();
+        activeSession = created.sessionId;
+        setSessionId(created.sessionId);
       }
 
-      // Capability discovery is metadata-only. Action-mode search includes
-      // write/destructive tools and their real risk labels, but executes nothing.
-      try {
-        const actionResult = await xrogaConnect.actionSearch(
-          definition.query || `find ${definition.name} capabilities`,
+      const [connectionResult, toolResult, triggerResult] = await Promise.allSettled([
+        xrogaConnect.toolkits(activeSession, {
+          toolkits: [metadata.slug],
+        }),
+        fetchAllTools(metadata.slug),
+        metadata.triggersCount > 0
+          ? fetchAllTriggers(metadata.slug)
+          : Promise.resolve({ items: [], total: 0 }),
+      ]);
+
+      if (connectionResult.status === 'fulfilled') {
+        setConnectionToolkit(
+          connectionResult.value.toolkits.find((item) => item.toolkit === metadata.slug) ?? null,
         );
-        setTools(
-          (actionResult.tools ?? []).filter(
-            (tool) => tool.toolkit === selected?.toolkit,
-          ),
-        );
-      } catch {
-        // Fall back to read-safe tools if action metadata is unavailable.
-        setTools(
-          (result.tools ?? []).filter(
-            (tool) => tool.toolkit === selected?.toolkit,
-          ),
-        );
+      }
+
+      if (toolResult.status === 'fulfilled') {
+        setTools(toolResult.value.items);
+        setToolsTotal(toolResult.value.total);
+      } else {
+        setTools([]);
+        setToolsTotal(metadata.toolsCount);
+        setCapabilityError('The action catalogue is temporarily unavailable.');
+      }
+
+      if (triggerResult.status === 'fulfilled') {
+        setTriggers(triggerResult.value.items);
+        setTriggersTotal(triggerResult.value.total);
+      } else {
+        setTriggers([]);
+        setTriggersTotal(metadata.triggersCount);
       }
     } catch (error) {
       setCapabilityError(
-        error instanceof Error ? error.message : 'Capabilities are temporarily unavailable.',
+        error instanceof Error ? error.message : 'Plugin metadata is temporarily unavailable.',
       );
     } finally {
       setLoadingCapabilities(false);
@@ -350,31 +392,35 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
   useEffect(() => {
     setDefinition(pluginDefinitionFor(pluginId) ?? genericPluginDefinition(pluginId));
+    setCatalog(null);
+    setConnectionToolkit(null);
+    setTools([]);
+    setTriggers([]);
+    setSkill(null);
+    setSkillTools([]);
+    setGuidance(null);
     setNotFound(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pluginId]);
 
   useEffect(() => {
-    if (definition.source === 'native') {
-      void loadNative();
-      return;
-    }
-
-    void loadComposio();
-    // The definition id is the stable detail identity; loading it once per detail is enough.
+    void loadPlugin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [definition.id, definition.source]);
+  }, [pluginId]);
 
   useEffect(
     () =>
       subscribeOAuthResults((payload) => {
         if (payload.type === 'xroga-composio-connected') {
           setConnecting(false);
+          setConnectingComposio(false);
           toast.success(`${definition.name} connected`);
-          void loadComposio();
+          void loadPlugin();
         }
 
         if (payload.type === 'xroga-composio-error') {
           setConnecting(false);
+          setConnectingComposio(false);
           toast.error(payload.message || `Could not connect ${definition.name}`);
         }
       }),
@@ -415,9 +461,47 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
     return summary;
   }, [tools]);
 
+  const scopes = useMemo(
+    () =>
+      [...new Set(tools.flatMap((tool) => tool.scopes ?? []).filter(Boolean))].sort(),
+    [tools],
+  );
+
+  const actionUseCases = useMemo(() => {
+    if (definition.examples?.length) {
+      return definition.examples.map((prompt) => ({
+        label: prompt,
+        prompt,
+      }));
+    }
+
+    const candidates = [
+      ...tools.filter((tool) => tool.important),
+      ...tools.filter((tool) => !tool.important),
+    ];
+
+    const seen = new Set<string>();
+    return candidates
+      .filter((tool) => {
+        if (seen.has(tool.slug)) return false;
+        seen.add(tool.slug);
+        return true;
+      })
+      .slice(0, 6)
+      .map((tool) => {
+        const action = tool.name || prettyToolName(tool);
+        return {
+          label: action,
+          prompt: `Use ${definition.name} to ${action.toLowerCase()}.${
+            tool.description ? ` ${tool.description}` : ''
+          }`,
+        };
+      });
+  }, [definition.examples, definition.name, tools]);
+
   async function connectNative() {
     const id = definition.id as NativePluginId;
-    sessionStorage.setItem('xroga-plugin-return', `/dashboard/integrations/${definition.id}`);
+    sessionStorage.setItem('xroga-plugin-return', `/dashboard/integrations/${pluginId}`);
 
     if (id === 'github') {
       const { url } = await api.github.oauthUrl();
@@ -444,31 +528,34 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
   async function connectComposio() {
     if (configured === false) {
-      throw new Error('Connected business apps are temporarily unavailable.');
+      throw new Error('Xroga Connect is temporarily unavailable.');
     }
 
-    let currentSession = sessionId;
-    let selectedToolkit = toolkit?.toolkit;
+    const toolkitSlug = catalog?.slug || connectionToolkit?.toolkit;
+    if (!toolkitSlug) {
+      throw new Error(`${definition.name} does not have a current Composio toolkit.`);
+    }
 
-    if (!currentSession || !selectedToolkit) {
-      const result = await xrogaConnect.search(
-        definition.query || `find ${definition.name} capabilities`,
-        currentSession ?? undefined,
+    let activeSession = sessionId;
+    if (!activeSession) {
+      const created = await xrogaConnect.session();
+      activeSession = created.sessionId;
+      setSessionId(created.sessionId);
+    }
+
+    const current = await xrogaConnect.toolkits(activeSession, {
+      toolkits: [toolkitSlug],
+    });
+    const currentToolkit = current.toolkits.find((item) => item.toolkit === toolkitSlug);
+
+    if (currentToolkit?.connected || currentToolkit?.noAuth) {
+      setConnectionToolkit(currentToolkit);
+      toast.success(
+        currentToolkit.noAuth
+          ? `${definition.name} is ready to use`
+          : `${definition.name} is already connected`,
       );
-      currentSession = result.sessionId;
-      setSessionId(result.sessionId);
-      const selected =
-        (result.toolkits ?? []).find(
-          (item) =>
-            canonicalPluginId(`${item.name ?? ''} ${item.toolkit}`) ===
-            canonicalPluginId(definition.id),
-        ) ?? result.toolkits?.[0];
-      selectedToolkit = selected?.toolkit;
-      if (selected) setToolkit(selected);
-    }
-
-    if (!currentSession || !selectedToolkit) {
-      throw new Error(`${definition.name} is not currently available to connect.`);
+      return;
     }
 
     clearOAuthResult();
@@ -480,7 +567,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
     );
 
     try {
-      const result = await xrogaConnect.link(currentSession, selectedToolkit);
+      const result = await xrogaConnect.link(activeSession, toolkitSlug);
       if (!result.redirectUrl) throw new Error('Authorization link was not returned.');
 
       if (popup) {
@@ -493,7 +580,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       try {
         popup?.close();
       } catch {
-        // No action needed if the browser already closed the popup.
+        // Browser may have already closed the popup.
       }
       throw error;
     }
@@ -510,6 +597,20 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       setConnecting(false);
       toast.error(
         error instanceof Error ? error.message : `Could not connect ${definition.name}`,
+      );
+    }
+  }
+
+  async function handleConnectComposio() {
+    if (connectingComposio) return;
+    setConnectingComposio(true);
+
+    try {
+      await connectComposio();
+    } catch (error) {
+      setConnectingComposio(false);
+      toast.error(
+        error instanceof Error ? error.message : `Could not connect ${definition.name} AI actions`,
       );
     }
   }
@@ -535,9 +636,44 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
     }
   }
 
-  function handleExample(example: string) {
-    setChatPrefill(example);
+  function handleExample(prompt: string) {
+    setChatPrefill(prompt);
     router.push('/workspace');
+  }
+
+  async function exploreUseCase() {
+    const clean = useCaseQuery.trim();
+    if (clean.length < 2) {
+      toast.error('Describe what you want Xroga to do');
+      return;
+    }
+
+    setUseCaseLoading(true);
+    setUseCaseError(null);
+
+    try {
+      const result: XrogaConnectSearchResult = await xrogaConnect.actionSearch(
+        `${definition.name}: ${clean}`,
+      );
+      const toolkitSlug = catalog?.slug;
+
+      setSkill(result.skill ?? null);
+      setGuidance(result.guidance ?? null);
+      setSkillTools(
+        toolkitSlug
+          ? result.tools.filter((tool) => tool.toolkit === toolkitSlug)
+          : result.tools,
+      );
+    } catch (error) {
+      setSkill(null);
+      setSkillTools([]);
+      setGuidance(null);
+      setUseCaseError(
+        error instanceof Error ? error.message : 'Could not analyze this use case.',
+      );
+    } finally {
+      setUseCaseLoading(false);
+    }
   }
 
   function toggleGroup(id: string) {
@@ -562,7 +698,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         <div className="mt-8 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-6">
           <h1 className="text-xl font-semibold text-[var(--text-primary)]">Plugin not found</h1>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            Xroga could not match this Plugin to the current supported catalogue.
+            Xroga could not match this route to the current live Composio catalogue.
           </p>
           <Link
             href="/dashboard/integrations"
@@ -578,7 +714,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
   const connectionLabel =
     definition.source === 'native'
       ? native?.accountLabel
-      : toolkit?.statusMessage || (connected ? 'Connected account' : undefined);
+      : connectionToolkit?.statusMessage || (composioConnected ? 'Connected account' : undefined);
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
@@ -594,7 +730,13 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         <main className="min-w-0 space-y-6">
           <section className="flex flex-col gap-5 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex min-w-0 items-start gap-4">
-              <DetailLogo definition={definition} toolkit={toolkit} />
+              <PluginBrandLogo
+                id={definition.id}
+                name={definition.name}
+                toolkit={catalog?.slug}
+                logo={catalog?.logo}
+                size="detail"
+              />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
@@ -603,59 +745,59 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
                     {definition.category}
                   </span>
+                  {catalog?.managedAuthSchemes.some((item) => /oauth/i.test(item)) ? (
+                    <span className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)]">
+                      Managed OAuth
+                    </span>
+                  ) : null}
                 </div>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
                   {definition.longDescription || definition.description}
                 </p>
-                {tools.length ? (
-                  <p className="mt-2 text-xs text-[var(--text-muted)]">
-                    {tools.length} {tools.length === 1 ? 'capability' : 'capabilities'} available
-                  </p>
-                ) : null}
+                <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-[var(--text-muted)]">
+                  {catalog ? (
+                    <>
+                      <span>{catalog.toolsCount.toLocaleString()} actions</span>
+                      <span>{catalog.triggersCount.toLocaleString()} triggers</span>
+                      {catalog.version ? <span>Version {catalog.version}</span> : null}
+                    </>
+                  ) : toolsTotal ? (
+                    <span>{toolsTotal.toLocaleString()} actions</span>
+                  ) : null}
+                </div>
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
-              {connected ? (
-                <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]">
-                  <Check className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
-                  {noAuth ? 'Ready to use' : 'Connected'}
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void handleConnect()}
-                  disabled={connecting || native?.state === 'checking'}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white disabled:opacity-55"
-                >
-                  {connecting || native?.state === 'checking' ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  )}
-                  {connecting ? 'Connecting…' : `Connect ${definition.name}`}
-                </button>
-              )}
-            </div>
+            {definition.source !== 'native' ? (
+              <button
+                type="button"
+                onClick={() => void handleConnect()}
+                disabled={connecting || connected || noAuth}
+                className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white disabled:cursor-default disabled:opacity-60"
+              >
+                {connecting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+                {noAuth ? 'Ready' : connected ? 'Connected' : 'Connect'}
+              </button>
+            ) : null}
           </section>
 
-          {definition.examples?.length ? (
+          {actionUseCases.length ? (
             <section>
               <div className="mb-3">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Try it with Xroga</h2>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Real use cases</h2>
                 <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                  Send a useful starting request to the existing Workspace composer.
+                  Curated examples when available; otherwise grounded in this Plugin’s current Composio action catalogue.
                 </p>
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
-                {definition.examples.map((example) => (
+                {actionUseCases.map((item) => (
                   <button
-                    key={example}
+                    key={item.prompt}
                     type="button"
-                    onClick={() => handleExample(example)}
+                    onClick={() => handleExample(item.prompt)}
                     className="group flex min-h-12 items-center justify-between gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-3 text-left text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                   >
-                    <span>{example}</span>
+                    <span>{item.label}</span>
                     <ChevronDown
                       className="h-4 w-4 -rotate-90 text-[var(--text-muted)] transition group-hover:translate-x-0.5"
                       aria-hidden="true"
@@ -666,12 +808,117 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
             </section>
           ) : null}
 
+          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
+            <div className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base font-semibold text-[var(--text-primary)]">
+                  Skills & task planning
+                </h2>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                  Describe a task. Xroga asks Composio’s live tool search for matching tools and, when a learned skill exists, its recommended plan and pitfalls.
+                </p>
+
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <input
+                    value={useCaseQuery}
+                    onChange={(event) => setUseCaseQuery(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') void exploreUseCase();
+                    }}
+                    placeholder={`What do you want to do with ${definition.name}?`}
+                    className="min-w-0 flex-1 rounded-token-sm border border-[var(--border-subtle)] bg-[var(--background)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
+                  />
+                  <button
+                    type="button"
+                    disabled={useCaseLoading}
+                    onClick={() => void exploreUseCase()}
+                    className="inline-flex min-h-10 items-center justify-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-xs font-semibold text-white disabled:opacity-50"
+                  >
+                    {useCaseLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Zap className="h-4 w-4" aria-hidden="true" />}
+                    Analyze task
+                  </button>
+                </div>
+
+                {useCaseError ? (
+                  <p className="mt-3 text-xs text-amber-600">{useCaseError}</p>
+                ) : null}
+
+                {skill || skillTools.length || guidance ? (
+                  <div className="mt-4 space-y-4 border-t border-[var(--border-subtle)] pt-4">
+                    {skill?.difficulty ? (
+                      <p className="text-xs text-[var(--text-secondary)]">
+                        Difficulty: <strong className="text-[var(--text-primary)]">{skill.difficulty}</strong>
+                      </p>
+                    ) : null}
+
+                    {skill?.recommendedPlanSteps.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-[var(--text-primary)]">Recommended plan</p>
+                        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-xs leading-5 text-[var(--text-secondary)]">
+                          {skill.recommendedPlanSteps.map((step) => (
+                            <li key={step}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    ) : guidance ? (
+                      <div>
+                        <p className="text-xs font-semibold text-[var(--text-primary)]">Execution guidance</p>
+                        <p className="mt-2 whitespace-pre-wrap text-xs leading-5 text-[var(--text-secondary)]">
+                          {guidance}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {skill?.knownPitfalls.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-[var(--text-primary)]">Known pitfalls</p>
+                        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-xs leading-5 text-[var(--text-secondary)]">
+                          {skill.knownPitfalls.map((pitfall) => (
+                            <li key={pitfall}>{pitfall}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {skillTools.length ? (
+                      <div>
+                        <p className="text-xs font-semibold text-[var(--text-primary)]">Matched actions</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {skillTools.slice(0, 8).map((tool) => (
+                            <span
+                              key={tool.slug}
+                              className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]"
+                            >
+                              {tool.name || prettyToolName(tool)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      onClick={() => handleExample(useCaseQuery.trim())}
+                      disabled={!useCaseQuery.trim()}
+                      className="inline-flex min-h-9 items-center rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] disabled:opacity-50"
+                    >
+                      Use this task in Workspace
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </section>
+
           <section>
             <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Capabilities</h2>
                 <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                  Human-readable groups backed by the Plugin’s real supported actions.
+                  {tools.length
+                    ? `${tools.length.toLocaleString()} loaded actions from the current Composio toolkit catalogue${toolsTotal > tools.length ? ` of ${toolsTotal.toLocaleString()}` : ''}.`
+                    : 'Live action metadata for this Plugin.'}
                 </p>
               </div>
               {tools.length > 8 ? (
@@ -687,28 +934,14 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                     id="plugin-capability-search"
                     value={capabilityQuery}
                     onChange={(event) => setCapabilityQuery(event.target.value)}
-                    placeholder={`Search ${definition.name} capabilities…`}
+                    placeholder={`Search ${definition.name} actions…`}
                     className="w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-2.5 pl-9 pr-3 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               ) : null}
             </div>
 
-            {definition.source === 'native' ? (
-              <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-                <p className="text-sm font-semibold text-[var(--text-primary)]">Used by Xroga for</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {(definition.nativeCapabilities ?? definition.developerUsage ?? []).map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-1.5 text-xs text-[var(--text-secondary)]"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : loadingCapabilities ? (
+            {loadingCapabilities ? (
               <div className="space-y-2" aria-label="Loading capabilities">
                 {[0, 1, 2].map((item) => (
                   <div
@@ -717,7 +950,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   />
                 ))}
               </div>
-            ) : capabilityError ? (
+            ) : capabilityError && !tools.length ? (
               <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
                 <div className="flex items-start gap-3">
                   <TriangleAlert className="mt-0.5 h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
@@ -728,7 +961,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                     <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">{capabilityError}</p>
                     <button
                       type="button"
-                      onClick={() => void loadComposio()}
+                      onClick={() => void loadPlugin()}
                       className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
                     >
                       <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
@@ -752,41 +985,92 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
             ) : (
               <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] p-5 text-sm text-[var(--text-secondary)]">
                 {capabilityQuery
-                  ? 'No capabilities match this search.'
-                  : 'No capabilities are available right now.'}
+                  ? 'No actions match this search.'
+                  : 'No action metadata is available right now.'}
               </div>
             )}
           </section>
+
+          {triggersTotal > 0 || triggers.length ? (
+            <section>
+              <div className="mb-3">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Triggers</h2>
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                  Events this toolkit can expose for automations and workflows.
+                </p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {triggers.map((trigger) => (
+                  <div
+                    key={trigger.slug}
+                    className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">{trigger.name}</p>
+                      {trigger.type ? (
+                        <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
+                          {trigger.type}
+                        </span>
+                      ) : null}
+                    </div>
+                    {trigger.description ? (
+                      <p className="mt-2 text-xs leading-5 text-[var(--text-secondary)]">
+                        {trigger.description}
+                      </p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+              {triggersTotal > triggers.length ? (
+                <p className="mt-2 text-[11px] text-[var(--text-muted)]">
+                  Showing {triggers.length.toLocaleString()} of {triggersTotal.toLocaleString()} trigger types.
+                </p>
+              ) : null}
+            </section>
+          ) : null}
 
           <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
             <div className="flex items-start gap-3">
               <ShieldCheck className="mt-0.5 h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
               <div className="min-w-0">
                 <h2 className="text-base font-semibold text-[var(--text-primary)]">
-                  Access & safety
+                  Access, scopes & safety
                 </h2>
-                {definition.source === 'native' ? (
-                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                    Xroga uses the existing provider authorization and its current confirmation rules. Connecting this Plugin does not bypass action safety or approval requirements.
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Read actions: <strong className="text-[var(--text-primary)]">{riskSummary.read}</strong>
                   </p>
-                ) : (
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <p className="text-xs text-[var(--text-secondary)]">
-                      Read actions: <strong className="text-[var(--text-primary)]">{riskSummary.read}</strong>
-                    </p>
-                    <p className="text-xs text-[var(--text-secondary)]">
-                      Write actions: <strong className="text-[var(--text-primary)]">{riskSummary.write}</strong>
-                    </p>
-                    <p className="text-xs text-[var(--text-secondary)]">
-                      Sensitive actions: <strong className="text-[var(--text-primary)]">{riskSummary.destructive}</strong>
-                    </p>
-                    <p className="text-xs text-[var(--text-secondary)]">
-                      Confirmation flagged: <strong className="text-[var(--text-primary)]">{riskSummary.confirmation}</strong>
-                    </p>
-                  </div>
-                )}
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Write actions: <strong className="text-[var(--text-primary)]">{riskSummary.write}</strong>
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Sensitive actions: <strong className="text-[var(--text-primary)]">{riskSummary.destructive}</strong>
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Confirmation flagged: <strong className="text-[var(--text-primary)]">{riskSummary.confirmation}</strong>
+                  </p>
+                </div>
+
+                {scopes.length ? (
+                  <details className="mt-4 rounded-token-md border border-[var(--border-subtle)]">
+                    <summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-[var(--text-primary)]">
+                      Provider scopes ({scopes.length})
+                    </summary>
+                    <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] p-3">
+                      {scopes.map((scope) => (
+                        <code
+                          key={scope}
+                          className="rounded bg-[var(--surface-inset)] px-2 py-1 text-[10px] text-[var(--text-secondary)]"
+                        >
+                          {scope}
+                        </code>
+                      ))}
+                    </div>
+                  </details>
+                ) : null}
+
                 <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
-                  Unknown actions are never presented as read-only. Provider authorization and Xroga’s server-side risk controls remain authoritative.
+                  Unknown actions are never presented as read-only. Xroga’s server-side read/write/destructive classification and confirmation flow remains authoritative.
                 </p>
               </div>
             </div>
@@ -795,15 +1079,22 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
           {tools.length ? (
             <details className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
               <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-[var(--text-primary)]">
-                Advanced · all raw actions
+                Advanced · all raw actions ({tools.length.toLocaleString()})
               </summary>
-              <div className="max-h-80 overflow-y-auto border-t border-[var(--border-subtle)]">
+              <div className="max-h-[520px] overflow-y-auto border-t border-[var(--border-subtle)]">
                 {tools.map((tool) => (
                   <div
                     key={tool.slug}
                     className="flex items-start justify-between gap-3 border-b border-[var(--border-subtle)] px-4 py-2.5 last:border-b-0"
                   >
-                    <code className="break-all text-[11px] text-[var(--text-secondary)]">{tool.slug}</code>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-[var(--text-primary)]">
+                        {tool.name || prettyToolName(tool)}
+                      </p>
+                      <code className="mt-0.5 block break-all text-[10px] text-[var(--text-muted)]">
+                        {tool.slug}
+                      </code>
+                    </div>
                     <span className="shrink-0 text-[10px] font-semibold text-[var(--text-muted)]">
                       {tool.requiresConfirmation
                         ? 'Confirmation'
@@ -818,108 +1109,177 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
           ) : null}
 
           <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">Permissions</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              {definition.source === 'native'
-                ? 'Exact access is controlled by the provider authorization Xroga already uses for this service.'
-                : 'The provider authorization screen controls the exact OAuth permissions. Xroga uses only supported capabilities exposed by the connected Plugin.'}
-            </p>
-            <p className="mt-2 text-xs text-[var(--text-muted)]">
-              Raw OAuth scopes are not displayed unless the current provider API returns them.
-            </p>
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">About</h2>
+            <dl className="mt-4 grid gap-4 text-xs sm:grid-cols-2">
+              <div>
+                <dt className="text-[var(--text-muted)]">Toolkit</dt>
+                <dd className="mt-1 font-medium text-[var(--text-primary)]">
+                  {catalog?.slug || pluginId}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[var(--text-muted)]">Version</dt>
+                <dd className="mt-1 font-medium text-[var(--text-primary)]">
+                  {catalog?.version || 'Current'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[var(--text-muted)]">Authentication</dt>
+                <dd className="mt-1 font-medium text-[var(--text-primary)]">
+                  {catalog?.noAuth
+                    ? 'No authorization required'
+                    : catalog?.managedAuthSchemes.length
+                      ? `Managed: ${catalog.managedAuthSchemes.join(', ')}`
+                      : catalog?.authSchemes.length
+                        ? catalog.authSchemes.join(', ')
+                        : definition.source === 'native'
+                          ? 'Xroga native'
+                          : 'Provider authorization'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[var(--text-muted)]">Categories</dt>
+                <dd className="mt-1 font-medium text-[var(--text-primary)]">
+                  {catalog?.categories.map((item) => item.name).join(', ') || definition.category}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {catalog?.appUrl ? (
+                <a
+                  href={catalog.appUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+                >
+                  Provider website
+                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+              ) : null}
+              {catalog?.authGuideUrl ? (
+                <a
+                  href={catalog.authGuideUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+                >
+                  Authentication guide
+                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+              ) : null}
+            </div>
           </section>
         </main>
 
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Connection</h2>
-
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+              {definition.source === 'native' ? 'Developer connection' : 'Connection'}
+            </h2>
             <div className="mt-3">
-              {definition.source === 'native' && native?.state === 'checking' ? (
-                <p className="inline-flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                  Checking connection…
-                </p>
-              ) : connected ? (
-                <>
-                  <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--text-primary)]">
-                    <Check className="h-4 w-4 text-[var(--accent)]" aria-hidden="true" />
-                    {noAuth ? 'Ready to use' : 'Connected'}
-                  </p>
-                  {connectionLabel ? (
-                    <p className="mt-1 break-words text-xs text-[var(--text-secondary)]">
-                      {connectionLabel}
-                    </p>
-                  ) : null}
-                  {native?.statusMessage && native.statusMessage !== connectionLabel ? (
-                    <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
-                      {native.statusMessage}
-                    </p>
-                  ) : null}
-                </>
-              ) : native?.state === 'needs_attention' ? (
-                <>
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">Reconnect required</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    {native.statusMessage || 'Authorization needs attention.'}
-                  </p>
-                </>
-              ) : native?.state === 'error' ? (
-                <>
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">Status unavailable</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    {native.statusMessage || 'Xroga could not check this connection.'}
-                  </p>
-                </>
-              ) : (
-                <p className="text-sm text-[var(--text-secondary)]">Not connected</p>
-              )}
-            </div>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {!noAuth ? (
-                <button
-                  type="button"
-                  onClick={() => void handleConnect()}
-                  disabled={connecting || native?.state === 'checking'}
-                  className="inline-flex min-h-9 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--accent)]/60 disabled:opacity-55"
-                >
-                  {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
-                  {connected ? 'Reconnect' : 'Connect'}
-                </button>
-              ) : null}
-
-              {connected && definition.source === 'native' ? (
-                <button
-                  type="button"
-                  onClick={() => setConfirmDisconnect(true)}
-                  className="inline-flex min-h-9 items-center rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-secondary)] hover:border-red-400/50 hover:text-red-400"
-                >
-                  Disconnect
-                </button>
-              ) : null}
-            </div>
-
-            {connected && definition.source === 'composio' && !noAuth ? (
-              <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-                Xroga Connect currently exposes reconnect/authorization but not a generic unlink operation, so this screen does not fake a Disconnect action.
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                {connected ? 'Connected' : native?.state === 'needs_attention' ? 'Needs attention' : noAuth ? 'Ready' : 'Not connected'}
               </p>
+              {connectionLabel ? (
+                <p className="mt-1 break-words text-xs text-[var(--text-secondary)]">{connectionLabel}</p>
+              ) : null}
+              {native?.statusMessage ? (
+                <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">{native.statusMessage}</p>
+              ) : null}
+            </div>
+
+            {definition.source === 'native' ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {!nativeConnected ? (
+                  <button
+                    type="button"
+                    disabled={connecting}
+                    onClick={() => void handleConnect()}
+                    className="inline-flex min-h-9 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+                  >
+                    {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
+                    {native?.state === 'needs_attention' ? 'Reconnect' : 'Connect'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDisconnect(true)}
+                    className="min-h-9 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
+                  >
+                    Disconnect
+                  </button>
+                )}
+              </div>
+            ) : !connected && !noAuth ? (
+              <button
+                type="button"
+                disabled={connecting}
+                onClick={() => void handleConnect()}
+                className="mt-4 inline-flex min-h-9 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+              >
+                {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
+                Connect
+              </button>
             ) : null}
           </section>
 
-          {definition.developer ? (
+          {definition.source === 'native' && catalog ? (
             <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Developer use</h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {(definition.developerUsage ?? []).map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)]"
-                  >
-                    {item}
-                  </span>
-                ))}
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">AI actions</h2>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Xroga’s developer connection and Composio AI-action connection are separate. The runtime can request the Composio connection when an AI action needs it.
+              </p>
+              <p className="mt-3 text-xs font-medium text-[var(--text-primary)]">
+                {composioConnected ? 'Xroga Connect ready' : 'Xroga Connect not connected'}
+              </p>
+              {!composioConnected && !catalog.noAuth ? (
+                <button
+                  type="button"
+                  disabled={connectingComposio}
+                  onClick={() => void handleConnectComposio()}
+                  className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] disabled:opacity-50"
+                >
+                  {connectingComposio ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
+                  Connect AI actions
+                </button>
+              ) : null}
+            </section>
+          ) : null}
+
+          {confirmDisconnect ? (
+            <section className="rounded-token-lg border border-amber-500/25 bg-amber-500/5 p-4">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                Disconnect {definition.name}?
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Xroga will stop using this native developer connection. External provider data is not deleted.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  disabled={disconnecting}
+                  onClick={() => void handleDisconnect()}
+                  className="min-h-9 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+                >
+                  {disconnecting ? 'Disconnecting…' : 'Disconnect'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDisconnect(false)}
+                  className="min-h-9 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
+                >
+                  Cancel
+                </button>
               </div>
+            </section>
+          ) : null}
+
+          {definition.developer ? (
+            <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-4">
+              <p className="text-xs font-semibold text-[var(--text-primary)]">Developer Plugin</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Publishing stays separate from Plugin capabilities.
+              </p>
               <Link
                 href={
                   definition.id === 'vercel' || definition.id === 'supabase'
@@ -928,79 +1288,15 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                       ? '/dashboard/publish?target=mobile'
                       : '/dashboard/publish'
                 }
-                className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
               >
                 Open Publish
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                <ChevronDown className="h-3 w-3 -rotate-90" aria-hidden="true" />
               </Link>
             </section>
           ) : null}
-
-          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">About</h2>
-            <dl className="mt-3 space-y-3 text-xs">
-              <div>
-                <dt className="text-[var(--text-muted)]">Provider</dt>
-                <dd className="mt-0.5 font-medium text-[var(--text-primary)]">
-                  {definition.provider || definition.name}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[var(--text-muted)]">Category</dt>
-                <dd className="mt-0.5 font-medium text-[var(--text-primary)]">{definition.category}</dd>
-              </div>
-              <div>
-                <dt className="text-[var(--text-muted)]">Connection</dt>
-                <dd className="mt-0.5 font-medium text-[var(--text-primary)]">
-                  {definition.source === 'native' ? 'Xroga native OAuth' : noAuth ? 'No authorization required' : 'OAuth / Xroga Connect'}
-                </dd>
-              </div>
-            </dl>
-          </section>
         </aside>
       </div>
-
-      {confirmDisconnect ? (
-        <div
-          className="fixed inset-0 z-[500] flex items-center justify-center bg-black/55 p-4"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.currentTarget === event.target) setConfirmDisconnect(false);
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="plugin-disconnect-title"
-            className="w-full max-w-sm rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5 shadow-2xl"
-          >
-            <h2 id="plugin-disconnect-title" className="text-base font-semibold text-[var(--text-primary)]">
-              Disconnect {definition.name}?
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Xroga will no longer use this connection. Existing Xroga projects are not deleted.
-            </p>
-            <div className="mt-5 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setConfirmDisconnect(false)}
-                className="min-h-10 rounded-token-sm border border-[var(--border-subtle)] px-4 text-sm font-semibold text-[var(--text-primary)]"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleDisconnect()}
-                disabled={disconnecting}
-                className="inline-flex min-h-10 items-center gap-2 rounded-token-sm bg-red-500 px-4 text-sm font-semibold text-white disabled:opacity-55"
-              >
-                {disconnecting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-                Disconnect
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
