@@ -38,6 +38,9 @@ import {
   createReadOnlyComposioSession,
   executeComposioReadTool,
   isComposioConfigured,
+  listComposioToolkits,
+  listConnectedComposioToolkits,
+  searchComposioActionTools,
   searchComposioTools,
 } from '../services/integrations/composioClient.js';
 
@@ -1169,6 +1172,116 @@ router.post(
         res,
         error,
       );
+    }
+  },
+);
+
+/**
+ * Search the full action-capability surface for Plugin detail views.
+ *
+ * This endpoint only returns metadata. It never executes a tool. Mutating and
+ * destructive tools still go through the existing execution confirmation path.
+ */
+router.post(
+  '/xroga-connect/action-search',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      query: z.string().trim().min(2).max(500),
+      sessionId: z
+        .string()
+        .trim()
+        .regex(/^trs_[A-Za-z0-9_-]+$/)
+        .optional(),
+    });
+
+    const parsed = schema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const result = await searchComposioActionTools(
+        req.userId!,
+        parsed.data,
+      );
+
+      res.json({
+        ok: true,
+        ...result,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+/**
+ * List real toolkit metadata from the current Xroga Connect session.
+ *
+ * Connected-only mode powers the Connected management view without guessing
+ * connection state from whichever providers happened to match a search query.
+ */
+router.post(
+  '/xroga-connect/toolkits',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      sessionId: z
+        .string()
+        .trim()
+        .regex(/^trs_[A-Za-z0-9_-]+$/),
+      connectedOnly: z.boolean().optional().default(false),
+      toolkits: z
+        .array(
+          z
+            .string()
+            .trim()
+            .min(2)
+            .max(80)
+            .regex(/^[A-Za-z0-9_-]+$/),
+        )
+        .max(100)
+        .optional(),
+    });
+
+    const parsed = schema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const input = {
+        sessionId: parsed.data.sessionId,
+        ...(parsed.data.toolkits
+          ? { toolkits: parsed.data.toolkits }
+          : {}),
+      };
+
+      const toolkits = parsed.data.connectedOnly
+        ? await listConnectedComposioToolkits(req.userId!, input)
+        : await listComposioToolkits(req.userId!, input);
+
+      res.json({
+        ok: true,
+        toolkits,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
     }
   },
 );
