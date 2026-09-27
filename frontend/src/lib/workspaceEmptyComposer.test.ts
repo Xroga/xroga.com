@@ -384,14 +384,12 @@ test('connection management reads real provider status and routes full managemen
         `api\\.${provider}\\.status\\(\\)`,
       ),
     );
-
-    assert.match(
-      INTEGRATIONS,
-      new RegExp(
-        `/dashboard/integrations/\\\\\${'{'}plugin.id\\\\\}`,
-      ),
-    );
   }
+
+  assert.match(
+    INTEGRATIONS,
+    /\/dashboard\/integrations\/\\\$\{plugin\.id\}/,
+  );
 
   assert.match(
     INTEGRATIONS,
