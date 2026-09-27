@@ -673,6 +673,7 @@ export function PluginMarketplace() {
     const vercel = params.get('vercel');
     const supabase = params.get('supabase');
     const composio = params.get('composio');
+    const pluginConnection = params.get('plugin');
     const message = params.get('message');
 
     if (github === 'connected') toast.success('GitHub connected');
@@ -690,10 +691,13 @@ export function PluginMarketplace() {
       toast.error(message || 'Supabase authorization failed');
     }
 
-    if (composio === 'connected') toast.success('Plugin connected to Xroga');
-    else if (composio === 'error') toast.error(message || 'Plugin connection failed');
+    if (pluginConnection === 'connected' || composio === 'connected') {
+      toast.success('Plugin connected to Xroga');
+    } else if (pluginConnection === 'error' || composio === 'error') {
+      toast.error(message || 'Plugin connection failed');
+    }
 
-    if (github || vercel || supabase || composio) {
+    if (github || vercel || supabase || composio || pluginConnection) {
       refreshNativeStatus();
 
       const returnPath = sessionStorage.getItem('xroga-plugin-return');
@@ -704,7 +708,7 @@ export function PluginMarketplace() {
       }
 
       const url = new URL(window.location.href);
-      ['github', 'vercel', 'supabase', 'composio', 'message', 'username', 'pick'].forEach((key) =>
+      ['github', 'vercel', 'supabase', 'composio', 'plugin', 'message', 'username', 'pick'].forEach((key) =>
         url.searchParams.delete(key),
       );
       window.history.replaceState({}, '', url.pathname + url.search);
