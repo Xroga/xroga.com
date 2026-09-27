@@ -405,14 +405,16 @@ export function AddPluginModal({
                               Connect
                             </button>
                           ) : null}
-                          <button
-                            type="button"
-                            disabled={busy !== null}
-                            onClick={() => void syncCustomMcp(item)}
-                            className="min-h-8 rounded-token-sm border border-[var(--border-subtle)] px-2.5 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50"
-                          >
-                            Sync tools
-                          </button>
+                          {item.authMode === 'no_auth' ? (
+                            <button
+                              type="button"
+                              disabled={busy !== null}
+                              onClick={() => void syncCustomMcp(item)}
+                              className="min-h-8 rounded-token-sm border border-[var(--border-subtle)] px-2.5 text-[11px] font-semibold text-[var(--text-primary)] disabled:opacity-50"
+                            >
+                              Sync tools
+                            </button>
+                          ) : null}
                           <a
                             href={`/dashboard/integrations/${encodeURIComponent(item.toolkit.toLowerCase())}`}
                             className="inline-flex min-h-8 items-center rounded-token-sm border border-[var(--border-subtle)] px-2.5 text-[11px] font-semibold text-[var(--text-primary)]"
