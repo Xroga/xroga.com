@@ -1558,6 +1558,11 @@ export async function searchComposioTools(
     .filter(
       (tool) => mode === 'action' || !looksMutatingToolSlug(tool.tool_slug),
     )
+    .filter(
+      (tool) =>
+        canUserAccessComposioToolkit(userId, tool.toolkit) &&
+        canUserAccessComposioToolSlug(userId, tool.tool_slug),
+    )
     .slice(0, MAX_SEARCH_RESULTS)
     .map((tool) => mapSearchTool(tool, mode));
 
@@ -1568,6 +1573,9 @@ export async function searchComposioTools(
       ): status is typeof status & {
         toolkit: string;
       } => Boolean(status.toolkit),
+    )
+    .filter((status) =>
+      canUserAccessComposioToolkit(userId, status.toolkit),
     )
     .slice(0, MAX_SEARCH_RESULTS)
     .map((status) => ({
@@ -1590,10 +1598,14 @@ export async function searchComposioTools(
           skill: {
             useCase: searchResult.use_case,
             primaryToolSlugs: Array.isArray(searchResult.primary_tool_slugs)
-              ? searchResult.primary_tool_slugs
+              ? searchResult.primary_tool_slugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(userId, slug),
+                )
               : [],
             relatedToolSlugs: Array.isArray(searchResult.related_tool_slugs)
-              ? searchResult.related_tool_slugs
+              ? searchResult.related_tool_slugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(userId, slug),
+                )
               : [],
             difficulty: searchResult.difficulty,
             recommendedPlanSteps: Array.isArray(searchResult.recommended_plan_steps)
@@ -1704,7 +1716,9 @@ async function listSessionComposioToolkits(
     }
   } while (cursor && pages < 30);
 
-  return collected;
+  return collected.filter((item) =>
+    canUserAccessComposioToolkit(userId, item.toolkit),
+  );
 }
 
 export async function listComposioToolkits(
