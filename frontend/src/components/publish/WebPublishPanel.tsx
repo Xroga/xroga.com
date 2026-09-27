@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Check, ExternalLink, Globe2 } from 'lucide-react';
+import { ArrowRight, Check, Copy, ExternalLink, Globe2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { CustomDomainPanel } from '@/components/publish/CustomDomainPanel';
 import {
@@ -173,15 +174,28 @@ export function WebPublishPanel({
                 <p className="mt-2 text-xs text-[var(--text-muted)]">Branch: {project.branch}</p>
               ) : null}
             </div>
-            <a
-              href={project.deployUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
-            >
-              Open site
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  void navigator.clipboard.writeText(project.deployUrl!);
+                  toast.success('URL copied');
+                }}
+                className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
+              >
+                <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                Copy URL
+              </button>
+              <a
+                href={project.deployUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)]"
+              >
+                Open site
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </section>
       ) : (
