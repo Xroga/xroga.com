@@ -344,6 +344,59 @@ export interface XrogaConnectCatalogPage {
   totalItems: number;
 }
 
+export type XrogaCatalogGroup =
+  | 'productivity'
+  | 'communication'
+  | 'engineering'
+  | 'ai-automation'
+  | 'sales-crm'
+  | 'commerce'
+  | 'marketing'
+  | 'finance'
+  | 'data-analytics'
+  | 'design-media'
+  | 'support'
+  | 'infrastructure'
+  | 'hr-recruiting'
+  | 'other';
+
+const XROGA_CATALOG_GROUP_PATTERNS: Array<{
+  id: XrogaCatalogGroup;
+  test: RegExp;
+}> = [
+  { id: 'communication', test: /communication|messaging|chat|email|mail|sms|phone|voice|social|community|video conference|meeting/i },
+  { id: 'sales-crm', test: /sales|crm|lead|customer|prospect|deal|pipeline|relationship/i },
+  { id: 'commerce', test: /commerce|ecommerce|e-commerce|store|shopping|payment|checkout|order|inventory|shipping|fulfillment/i },
+  { id: 'marketing', test: /marketing|advertis|campaign|seo|content marketing|newsletter|growth/i },
+  { id: 'finance', test: /finance|accounting|bank|billing|invoice|tax|expense|payroll|fintech/i },
+  { id: 'hr-recruiting', test: /human resource|\bhr\b|recruit|hiring|talent|employee|people ops|payroll/i },
+  { id: 'support', test: /support|service desk|help desk|helpdesk|ticket|customer service|success/i },
+  { id: 'design-media', test: /design|creative|media|image|video|audio|graphics|3d|cad|modeling|printing|animation|photo/i },
+  { id: 'ai-automation', test: /artificial intelligence|\bai\b|automation|workflow|agent|machine learning|llm|model|bot/i },
+  { id: 'engineering', test: /developer|engineering|devops|code|source control|git|monitor|observability|testing|security|incident|api/i },
+  { id: 'data-analytics', test: /data|analytics|database|spreadsheet|warehouse|bi|business intelligence|etl|sql|table/i },
+  { id: 'infrastructure', test: /cloud|infrastructure|hosting|storage|server|deployment|cdn|container|kubernetes|dns|network/i },
+  { id: 'productivity', test: /productivity|document|calendar|note|file|task|project management|office|workspace|forms|survey/i },
+];
+
+export function xrogaCatalogGroupFor(
+  toolkit: XrogaConnectCatalogToolkit,
+): XrogaCatalogGroup {
+  const haystack = [
+    toolkit.name,
+    toolkit.description,
+    ...toolkit.categories.map((category) => category.name),
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  for (const item of XROGA_CATALOG_GROUP_PATTERNS) {
+    if (item.test.test(haystack)) return item.id;
+  }
+
+  return 'other';
+}
+
 export interface XrogaConnectCatalogToolPage {
   items: XrogaConnectTool[];
   nextCursor?: string;
@@ -475,7 +528,7 @@ function cleanToolSlug(toolSlug: string): string {
 
   if (clean.toUpperCase().startsWith('COMPOSIO_')) {
     throw new ComposioClientError(
-      'Composio meta tools are not available through Xroga Connect.',
+      'Xroga internal integration tools are not exposed through Plugins.',
       {
         status: 403,
         code: 'COMPOSIO_META_TOOL_BLOCKED',
@@ -926,7 +979,7 @@ async function createComposioSession(
 
   if (!session.session_id || !session.session_id.startsWith('trs_')) {
     throw new ComposioClientError(
-      'Composio did not return a valid session.',
+      'Xroga Apps could not start a valid connection session.',
       {
         status: 502,
         code: 'COMPOSIO_SESSION_MISSING',
@@ -1328,6 +1381,66 @@ export async function listComposioCatalog(
   });
 }
 
+
+export async function listComposioCatalogGroup(
+  input: {
+    group: XrogaCatalogGroup;
+    limit?: number;
+    cursor?: string;
+  },
+): Promise<XrogaConnectCatalogPage> {
+  const limit = Math.min(
+    Math.max(Math.trunc(input.limit ?? 120), 1),
+    MAX_CATALOG_PAGE_SIZE,
+  );
+  const offsetMatch = input.cursor?.match(/^xroga-group-(\d+)$/);
+  const offset = offsetMatch ? Number(offsetMatch[1]) : 0;
+
+  return cachedComposioValue(
+    `catalog:group:${input.group}:all`,
+    async () => {
+      const items: XrogaConnectCatalogToolkit[] = [];
+      let cursor: string | undefined;
+      let pages = 0;
+
+      do {
+        const page = await listComposioCatalog({
+          sortBy: 'usage',
+          limit: MAX_CATALOG_PAGE_SIZE,
+          ...(cursor ? { cursor } : {}),
+        });
+
+        items.push(
+          ...page.items.filter(
+            (toolkit) => xrogaCatalogGroupFor(toolkit) === input.group,
+          ),
+        );
+
+        cursor = page.nextCursor;
+        pages += 1;
+      } while (cursor && pages < 20);
+
+      return {
+        items,
+        totalItems: items.length,
+      };
+    },
+  ).then((all) => {
+    const pageItems = all.items.slice(offset, offset + limit);
+    const nextOffset = offset + pageItems.length;
+
+    return {
+      items: pageItems,
+      totalItems: all.totalItems,
+      currentPage: Math.floor(offset / limit) + 1,
+      totalPages: Math.max(1, Math.ceil(all.totalItems / limit)),
+      ...(nextOffset < all.totalItems
+        ? { nextCursor: `xroga-group-${nextOffset}` }
+        : {}),
+    };
+  });
+}
+
 export async function listComposioCatalogCategories(): Promise<
   Array<{ id: string; name: string }>
 > {
@@ -1366,7 +1479,7 @@ export async function getComposioCatalogToolkit(
     const toolkit = mapCatalogToolkit(response);
 
     if (!toolkit) {
-      throw new ComposioClientError('Composio toolkit metadata was not found.', {
+      throw new ComposioClientError('Plugin metadata was not found.', {
         status: 404,
         code: 'COMPOSIO_TOOLKIT_NOT_FOUND',
       });
@@ -1525,7 +1638,7 @@ export async function getComposioToolDetails(
 
   if (!toolkit) {
     throw new ComposioClientError(
-      'Composio did not return tool metadata.',
+      'The app provider did not return action metadata.',
       {
         status: 502,
         code: 'COMPOSIO_TOOL_METADATA_MISSING',

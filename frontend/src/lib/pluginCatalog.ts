@@ -76,6 +76,27 @@ export const CATEGORY_ORDER = [
   'Infrastructure',
 ] as const;
 
+export const PLUGIN_CATEGORY_GROUPS = [
+  { id: '', label: 'All' },
+  { id: 'productivity', label: 'Productivity' },
+  { id: 'communication', label: 'Communication' },
+  { id: 'engineering', label: 'Engineering' },
+  { id: 'ai-automation', label: 'AI & Automation' },
+  { id: 'sales-crm', label: 'Sales & CRM' },
+  { id: 'commerce', label: 'Commerce' },
+  { id: 'marketing', label: 'Marketing' },
+  { id: 'finance', label: 'Finance' },
+  { id: 'data-analytics', label: 'Data & Analytics' },
+  { id: 'design-media', label: 'Design & Media' },
+  { id: 'support', label: 'Support' },
+  { id: 'infrastructure', label: 'Infrastructure' },
+  { id: 'hr-recruiting', label: 'HR & Recruiting' },
+  { id: 'other', label: 'Other' },
+] as const;
+
+export type PluginCategoryGroupId =
+  (typeof PLUGIN_CATEGORY_GROUPS)[number]['id'];
+
 export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
   {
     id: 'gmail',
@@ -544,32 +565,69 @@ const CATEGORY_NAME_MAP: Array<{
   test: RegExp;
   label: string;
 }> = [
-  { test: /developer|engineering|devops|code|monitor/i, label: 'Engineering' },
-  { test: /productivity|document|calendar|note|file/i, label: 'Productivity' },
-  { test: /communication|messaging|chat|social/i, label: 'Communication' },
-  { test: /sales|crm|lead|customer/i, label: 'Sales & CRM' },
-  { test: /commerce|ecommerce|payment|store/i, label: 'Commerce' },
-  { test: /marketing|advertis/i, label: 'Marketing' },
-  { test: /finance|accounting|bank/i, label: 'Finance' },
-  { test: /data|analytics|database|spreadsheet/i, label: 'Data & Analytics' },
-  { test: /cloud|infrastructure|hosting|storage/i, label: 'Infrastructure' },
-  { test: /support|service desk|customer support/i, label: 'Support' },
-  { test: /design|creative|media|image|video/i, label: 'Design & Media' },
+  { test: /communication|messaging|chat|email|mail|sms|phone|voice|social|community|video conference|meeting/i, label: 'Communication' },
+  { test: /sales|crm|lead|customer|prospect|deal|pipeline|relationship/i, label: 'Sales & CRM' },
+  { test: /commerce|ecommerce|e-commerce|store|shopping|payment|checkout|order|inventory|shipping|fulfillment/i, label: 'Commerce' },
+  { test: /marketing|advertis|campaign|seo|content marketing|newsletter|growth/i, label: 'Marketing' },
+  { test: /finance|accounting|bank|billing|invoice|tax|expense|payroll|fintech/i, label: 'Finance' },
+  { test: /human resource|\bhr\b|recruit|hiring|talent|employee|people ops|payroll/i, label: 'HR & Recruiting' },
+  { test: /support|service desk|help desk|helpdesk|ticket|customer service|success/i, label: 'Support' },
+  { test: /design|creative|media|image|video|audio|graphics|3d|cad|modeling|printing|animation|photo/i, label: 'Design & Media' },
+  { test: /artificial intelligence|\bai\b|automation|workflow|agent|machine learning|llm|model|bot/i, label: 'AI & Automation' },
+  { test: /developer|engineering|devops|code|source control|git|monitor|observability|testing|security|incident|api/i, label: 'Engineering' },
+  { test: /data|analytics|database|spreadsheet|warehouse|bi|business intelligence|etl|sql|table/i, label: 'Data & Analytics' },
+  { test: /cloud|infrastructure|hosting|storage|server|deployment|cdn|container|kubernetes|dns|network/i, label: 'Infrastructure' },
+  { test: /productivity|document|calendar|note|file|task|project management|office|workspace|forms|survey/i, label: 'Productivity' },
 ];
 
 export function catalogPrimaryCategory(
   toolkit: XrogaConnectCatalogToolkit,
 ): string {
-  const combined = toolkit.categories.map((category) => category.name).join(' ');
+  const combined = [
+    toolkit.name,
+    toolkit.description,
+    ...toolkit.categories.map((category) => category.name),
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   for (const item of CATEGORY_NAME_MAP) {
     if (item.test.test(combined)) return item.label;
   }
 
-  return toolkit.categories[0]?.name || inferCategory(
-    toolkit.name,
-    toolkit.description,
-  );
+  return inferCategory(toolkit.name, toolkit.description) === 'Other'
+    ? 'Other'
+    : inferCategory(toolkit.name, toolkit.description);
+}
+
+export function groundedUseCasePrompt(
+  tool: XrogaConnectTool,
+  pluginName: string,
+): string {
+  const action = tool.name || prettyToolName(tool);
+  const cleanAction = action.replace(/[.!?]+$/, '').trim();
+  const lower = cleanAction.toLowerCase();
+
+  if (/^(search|find|lookup)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} and show me the most relevant results.`;
+  }
+  if (/^(list|read|get|fetch|retrieve)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} and summarize what matters.`;
+  }
+  if (/^(create|add|draft|generate)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} from the details I provide.`;
+  }
+  if (/^(send|post|publish|reply)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} after I review the content.`;
+  }
+  if (/^(update|edit|modify|set|assign|move|rename)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} using the changes I give you.`;
+  }
+  if (/^(delete|remove|archive|revoke|cancel)\b/i.test(cleanAction)) {
+    return `Use ${pluginName} to ${lower} only after confirming with me.`;
+  }
+
+  return `Use ${pluginName} to ${lower}.`;
 }
 
 export function pluginFromCatalog(
