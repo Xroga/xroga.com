@@ -27,6 +27,7 @@ import { CustomCredentialsSection } from '@/components/integrations/CustomCreden
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { api } from '@/lib/api';
 import {
+  PLUGIN_CATEGORY_GROUPS,
   PLUGIN_DEFINITIONS,
   authSummary,
   canonicalPluginId,
@@ -45,7 +46,6 @@ import {
 } from '@/lib/oauthPopupResult';
 import {
   xrogaConnect,
-  type XrogaConnectCatalogCategory,
   type XrogaConnectCatalogToolkit,
   type XrogaConnectToolkit,
 } from '@/lib/xrogaConnect';
@@ -178,6 +178,90 @@ function PluginCard({
   );
 }
 
+function PluginListRow({
+  plugin,
+  connecting,
+  onConnect,
+}: {
+  plugin: RuntimePlugin;
+  connecting: boolean;
+  onConnect: (plugin: RuntimePlugin) => void;
+}) {
+  const checking = plugin.connectionState === 'checking';
+
+  return (
+    <div className="group flex min-h-[72px] items-center gap-3 border-b border-[var(--border-subtle)] py-3 last:border-b-0">
+      <Link
+        href={detailHref(plugin)}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-md focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <PluginBrandLogo
+          id={plugin.id}
+          name={plugin.name}
+          toolkit={plugin.toolkit}
+          logo={plugin.logo}
+          fallbackLogo={plugin.logoFallback}
+        />
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
+            {plugin.name}
+          </p>
+          <p className="mt-0.5 line-clamp-1 text-xs text-[var(--text-secondary)]">
+            {plugin.description}
+          </p>
+        </div>
+      </Link>
+
+      {plugin.connected || plugin.noAuth ? (
+        <Link
+          href={detailHref(plugin)}
+          aria-label={`Manage ${plugin.name}`}
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onConnect(plugin)}
+          disabled={connecting || checking}
+          aria-label={`Connect ${plugin.name}`}
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)] disabled:opacity-50"
+        >
+          {connecting || checking ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <span aria-hidden="true">+</span>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function PluginListGrid({
+  plugins,
+  connectingId,
+  onConnect,
+}: {
+  plugins: RuntimePlugin[];
+  connectingId: string | null;
+  onConnect: (plugin: RuntimePlugin) => void;
+}) {
+  return (
+    <div className="grid gap-x-10 lg:grid-cols-2">
+      {plugins.map((plugin) => (
+        <PluginListRow
+          key={plugin.toolkit || plugin.id}
+          plugin={plugin}
+          connecting={connectingId === (plugin.toolkit || plugin.id)}
+          onConnect={onConnect}
+        />
+      ))}
+    </div>
+  );
+}
+
 function PluginGrid({
   plugins,
   connectingId,
@@ -241,7 +325,6 @@ export function PluginMarketplace() {
   const [catalogTotal, setCatalogTotal] = useState<number | null>(null);
   const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
   const [catalogCursor, setCatalogCursor] = useState<string | undefined>();
-  const [categories, setCategories] = useState<XrogaConnectCatalogCategory[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogLoadingMore, setCatalogLoadingMore] = useState(false);
   const [catalogError, setCatalogError] = useState<string | null>(null);
@@ -349,7 +432,22 @@ export function PluginMarketplace() {
 
     try {
       const page = await xrogaConnect.catalog({
-        category: selectedCategory || undefined,
+        group: (selectedCategory || undefined) as
+          | 'productivity'
+          | 'communication'
+          | 'engineering'
+          | 'ai-automation'
+          | 'sales-crm'
+          | 'commerce'
+          | 'marketing'
+          | 'finance'
+          | 'data-analytics'
+          | 'design-media'
+          | 'support'
+          | 'infrastructure'
+          | 'hr-recruiting'
+          | 'other'
+          | undefined,
         sortBy: 'usage',
         limit: BROWSE_PAGE_SIZE,
         cursor,
@@ -372,7 +470,7 @@ export function PluginMarketplace() {
     } catch (error) {
       if (reset) {
         setCatalogError(
-          error instanceof Error ? error.message : 'The full Plugin catalogue is temporarily unavailable.',
+          error instanceof Error ? error.message : 'The Plugin catalogue is temporarily unavailable.',
         );
       }
     } finally {
@@ -398,12 +496,11 @@ export function PluginMarketplace() {
           return;
         }
 
-        const [catalogResult, categoryResult, sessionResult] = await Promise.allSettled([
+        const [catalogResult, sessionResult] = await Promise.allSettled([
           xrogaConnect.catalog({
             sortBy: 'usage',
             limit: BROWSE_PAGE_SIZE,
           }),
-          xrogaConnect.catalogCategories(),
           xrogaConnect.session(),
         ]);
 
@@ -416,13 +513,9 @@ export function PluginMarketplace() {
           setCatalogCursor(catalogResult.value.nextCursor);
           setCatalogError(null);
         } else {
-          setCatalogError('The full Plugin catalogue is temporarily unavailable.');
+          setCatalogError('The Plugin catalogue is temporarily unavailable.');
         }
         setCatalogLoading(false);
-
-        if (categoryResult.status === 'fulfilled') {
-          setCategories(categoryResult.value.categories);
-        }
 
         if (sessionResult.status === 'fulfilled') {
           setSessionId(sessionResult.value.sessionId);
@@ -710,7 +803,7 @@ export function PluginMarketplace() {
           name: item.name || generic.name,
           description:
             item.description ||
-            'Connected through Xroga Connect. Open the Plugin to inspect its live capabilities.',
+            'Connected to Xroga. Open the Plugin to inspect its live capabilities.',
           category: inferCategory(item.name || generic.name, item.description),
           toolkit: item.toolkit,
           logo: item.logo,
@@ -830,8 +923,18 @@ export function PluginMarketplace() {
     );
     const curated = browsePlugins.filter((plugin) => explicitlyPopular.has(plugin.id));
     const rest = browsePlugins.filter((plugin) => !explicitlyPopular.has(plugin.id));
-    return mergePlugins([...curated, ...rest]).slice(0, 9);
+    return mergePlugins([...curated, ...rest]).slice(0, 6);
   }, [browsePlugins]);
+
+  const explorePlugins = useMemo(() => {
+    const popularKeys = new Set(
+      popularPlugins.map((plugin) => plugin.toolkit || plugin.id),
+    );
+
+    return browsePlugins
+      .filter((plugin) => !popularKeys.has(plugin.toolkit || plugin.id))
+      .slice(0, 8);
+  }, [browsePlugins, popularPlugins]);
 
   const developerPlugins = useMemo(
     () =>
@@ -882,7 +985,7 @@ export function PluginMarketplace() {
 
     const toolkit = plugin.toolkit;
     if (!toolkit) {
-      throw new Error(`${plugin.name} does not have a valid Composio toolkit identifier.`);
+      throw new Error(`${plugin.name} does not have a valid app identifier.`);
     }
 
     let activeSession = sessionId;
@@ -972,7 +1075,7 @@ export function PluginMarketplace() {
             ) : null}
           </div>
           <p className="mt-1.5 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-            Browse the live Composio catalogue, connect the apps you use, and let Xroga discover the exact actions needed at runtime.
+            Browse Xroga Apps, connect the services you use, and let Xroga discover the exact actions needed at runtime.
           </p>
         </div>
 
@@ -1024,7 +1127,7 @@ export function PluginMarketplace() {
                 {searchPlugins.length
                   ? `${searchPlugins.length} matching Plugins — exact brands first, then capability matches.`
                   : searchLoading
-                    ? 'Searching the live catalogue and real capabilities…'
+                    ? 'Searching Xroga Apps and real capabilities…'
                     : `No Plugin matched “${deferredQuery}”.`}
               </p>
             </div>
@@ -1058,7 +1161,7 @@ export function PluginMarketplace() {
                 No Plugin found for “{deferredQuery}”
               </h3>
               <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-[var(--text-secondary)]">
-                Try a provider name or describe the task differently. Xroga searches the live Composio catalogue and runtime capability index.
+                Try an app name or describe the task differently. Xroga searches the full app catalogue and the live capability index.
               </p>
             </div>
           ) : (
@@ -1130,20 +1233,18 @@ export function PluginMarketplace() {
               </section>
 
               <section>
-                <div className="mb-3">
+                <div className="mb-2 flex items-center gap-1.5">
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">Popular</h2>
-                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                    High-usage Plugins from the live catalogue plus Xroga’s core developer services.
-                  </p>
+                  <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
                 </div>
                 {catalogLoading && !popularPlugins.length ? (
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid gap-x-10 lg:grid-cols-2">
                     {[0, 1, 2, 3, 4, 5].map((item) => (
-                      <div key={item} className="h-40 animate-pulse rounded-token-lg bg-[var(--surface-inset)]" />
+                      <div key={item} className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/40" />
                     ))}
                   </div>
                 ) : (
-                  <PluginGrid
+                  <PluginListGrid
                     plugins={popularPlugins}
                     connectingId={connectingId}
                     onConnect={handleConnect}
@@ -1151,73 +1252,51 @@ export function PluginMarketplace() {
                 )}
               </section>
 
+              {explorePlugins.length ? (
+                <section>
+                  <div className="mb-2 flex items-center gap-1.5">
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">Explore</h2>
+                    <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
+                  </div>
+                  <PluginListGrid
+                    plugins={explorePlugins}
+                    connectingId={connectingId}
+                    onConnect={handleConnect}
+                  />
+                </section>
+              ) : null}
+
               <section>
                 <div className="mb-3">
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">Categories</h2>
                   <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                    Filters come directly from the current Composio catalogue.
+                    Browse apps by clear Xroga categories.
                   </p>
                 </div>
-                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" role="group" aria-label="Plugin categories">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (selectedCategory === '') return;
-                      setSelectedCategory('');
-                      setCatalogLoading(true);
-                      void xrogaConnect
-                        .catalog({ sortBy: 'usage', limit: BROWSE_PAGE_SIZE })
-                        .then((page) => {
-                          setCatalogItems(page.items);
-                          setCatalogTotal(page.totalItems);
-                          setGlobalCatalogTotal(page.totalItems);
-                          setCatalogCursor(page.nextCursor);
-                          setCatalogError(null);
-                        })
-                        .catch(() => setCatalogError('The full Plugin catalogue is temporarily unavailable.'))
-                        .finally(() => setCatalogLoading(false));
-                    }}
-                    aria-pressed={selectedCategory === ''}
-                    className={
-                      selectedCategory === ''
-                        ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)]'
-                        : 'shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]'
-                    }
-                  >
-                    All
-                  </button>
-
-                  {categories.slice(0, 10).map((item) => (
+                <div
+                  className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
+                  role="group"
+                  aria-label="Plugin categories"
+                >
+                  {PLUGIN_CATEGORY_GROUPS.map((item) => (
                     <button
-                      key={item.id}
+                      key={item.id || 'all'}
                       type="button"
-                      onClick={() => setSelectedCategory(item.id)}
+                      onClick={() => {
+                        if (selectedCategory === item.id) return;
+                        setSelectedCategory(item.id);
+                        setCatalogLoading(true);
+                      }}
                       aria-pressed={selectedCategory === item.id}
                       className={
                         selectedCategory === item.id
                           ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)]'
-                          : 'shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]'
+                          : 'shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
                       }
                     >
-                      {item.name}
+                      {item.label}
                     </button>
                   ))}
-
-                  {categories.length > 10 ? (
-                    <select
-                      aria-label="More Plugin categories"
-                      value={categories.slice(0, 10).some((item) => item.id === selectedCategory) ? '' : selectedCategory}
-                      onChange={(event) => setSelectedCategory(event.target.value)}
-                      className="shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]"
-                    >
-                      <option value="">More categories…</option>
-                      {categories.slice(10).map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : null}
                 </div>
               </section>
 
@@ -1226,13 +1305,13 @@ export function PluginMarketplace() {
                   <div>
                     <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedCategory
-                        ? categories.find((item) => item.id === selectedCategory)?.name || 'Plugins'
+                        ? PLUGIN_CATEGORY_GROUPS.find((item) => item.id === selectedCategory)?.label || 'Plugins'
                         : 'All Plugins'}
                     </h2>
                     <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
                       {catalogTotal !== null
-                        ? `${catalogTotal.toLocaleString()} current Composio integrations`
-                        : 'Live Composio catalogue'}
+                        ? `${catalogTotal.toLocaleString()} apps available in this view`
+                        : 'Live Xroga Apps catalogue'}
                     </p>
                   </div>
                 </div>
@@ -1247,7 +1326,7 @@ export function PluginMarketplace() {
                         onClick={() => void loadCatalog(true)}
                         className="mt-2 text-xs font-semibold text-[var(--accent)] hover:underline"
                       >
-                        Retry live catalogue
+                        Retry catalogue
                       </button>
                     </div>
                   </div>
@@ -1296,7 +1375,7 @@ export function PluginMarketplace() {
               <div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                  Manage every active Xroga Connect account plus Xroga’s native developer connections.
+                  Manage every active Xroga App connection and native developer service.
                 </p>
               </div>
 
@@ -1369,7 +1448,7 @@ export function PluginMarketplace() {
               <div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Developer Plugins</h2>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-                  Developer, infrastructure, monitoring and data services from the same live catalogue. Publishing remains separate.
+                  Developer, infrastructure, monitoring and data services available to Xroga. Publishing remains separate.
                 </p>
               </div>
 
@@ -1413,7 +1492,7 @@ export function PluginMarketplace() {
                   <Search className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
                   <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">Search marketplace</p>
                   <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Search the complete current Composio catalogue.
+                    Search the complete Xroga Apps catalogue.
                   </p>
                 </button>
 
@@ -1449,7 +1528,7 @@ export function PluginMarketplace() {
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
         <p className="text-xs leading-5 text-[var(--text-secondary)]">
-          Every current Composio toolkit is discoverable at runtime. Xroga still keeps read/write/destructive classification and explicit confirmation for consequential actions.
+          Every available Xroga App can be discovered at runtime. Xroga still keeps read/write/destructive classification and explicit confirmation for consequential actions.
         </p>
       </div>
     </div>
