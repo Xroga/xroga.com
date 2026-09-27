@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plug } from 'lucide-react';
 
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
@@ -36,6 +36,11 @@ export function PluginBrandLogo({
     [logo, fallbackLogo, toolkit],
   );
   const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [id, logo, fallbackLogo, toolkit]);
+
   const dimension = size === 'detail' ? 'h-14 w-14 rounded-2xl p-2' : 'h-10 w-10 rounded-xl p-1.5';
   const iconSize = size === 'detail' ? 31 : 22;
 
