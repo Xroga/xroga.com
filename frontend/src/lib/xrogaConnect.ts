@@ -31,6 +31,7 @@ export interface XrogaConnectToolkit {
   description?: string;
   logo?: string;
   connected: boolean;
+  connectedAccountId?: string;
   statusMessage?: string;
   noAuth?: boolean;
 }
@@ -84,6 +85,27 @@ export interface XrogaConnectCatalogPage {
   totalPages?: number;
   currentPage?: number;
   totalItems: number;
+}
+
+export type XrogaCustomMcpAuthMode =
+  | 'none'
+  | 'api_key'
+  | 'dcr_oauth';
+
+export interface XrogaCustomMcpCreateInput {
+  name: string;
+  serverUrl: string;
+  authMode: XrogaCustomMcpAuthMode;
+  headerName?: string;
+  headerPrefix?: string;
+  discoveryUrl?: string;
+}
+
+export interface XrogaCustomMcpSyncResult {
+  ok: boolean;
+  slug: string;
+  version?: string;
+  syncedCount?: number;
 }
 
 export interface XrogaConnectCatalogToolPage {
@@ -307,4 +329,61 @@ export const xrogaConnect = {
         toolkit,
       }),
     }),
+
+  customMcp: {
+    list: () =>
+      apiFetch<{
+        ok: boolean;
+        items: XrogaConnectCatalogToolkit[];
+      }>('/api/integrations/xroga-connect/custom-mcp'),
+
+    create: (input: XrogaCustomMcpCreateInput) =>
+      apiFetch<{
+        ok: boolean;
+        slug: string;
+        toolkit?: XrogaConnectCatalogToolkit;
+        initialSync?: {
+          slug: string;
+          version?: string;
+          syncedCount?: number;
+        };
+      }>('/api/integrations/xroga-connect/custom-mcp', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+
+    sync: (
+      toolkit: string,
+      connectedAccountId?: string,
+    ) =>
+      apiFetch<XrogaCustomMcpSyncResult>(
+        `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(
+          toolkit,
+        )}/sync`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            ...(connectedAccountId
+              ? {
+                  connectedAccountId,
+                }
+              : {}),
+          }),
+        },
+      ),
+
+    remove: (toolkit: string) =>
+      apiFetch<{
+        ok: boolean;
+        slug: string;
+        deleted: boolean;
+      }>(
+        `/api/integrations/xroga-connect/custom-mcp/${encodeURIComponent(
+          toolkit,
+        )}`,
+        {
+          method: 'DELETE',
+        },
+      ),
+  },
 };
