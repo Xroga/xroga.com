@@ -694,8 +694,15 @@ export function PluginMarketplace() {
       browsePlugins.map((plugin) => plugin.toolkit).filter(Boolean),
     );
 
+    const nativeIds = new Set(nativePlugins.map((plugin) => plugin.id));
+
     return Object.values(toolkitConnections)
-      .filter((item) => item.connected && !existingToolkits.has(item.toolkit))
+      .filter(
+        (item) =>
+          item.connected &&
+          !existingToolkits.has(item.toolkit) &&
+          !nativeIds.has(canonicalPluginId(item.toolkit)),
+      )
       .map((item) => {
         const generic = genericPluginDefinition(item.toolkit);
         return {
@@ -713,7 +720,7 @@ export function PluginMarketplace() {
           statusMessage: item.statusMessage,
         };
       });
-  }, [browsePlugins, toolkitConnections]);
+  }, [browsePlugins, toolkitConnections, nativePlugins]);
 
   const allPlugins = useMemo(
     () => mergePlugins([...browsePlugins, ...connectedLongTail]),
@@ -724,13 +731,21 @@ export function PluginMarketplace() {
     const clean = deferredQuery.trim();
     if (!clean) return [];
 
+    const nativeIds = new Set(nativePlugins.map((plugin) => plugin.id));
+    const dynamicSearchPlugins = searchCatalogItems
+      .map(runtimeFromCatalog)
+      .filter((plugin) => !nativeIds.has(plugin.id));
+    const dynamicSemanticPlugins = semanticCatalogItems
+      .map(runtimeFromCatalog)
+      .filter((plugin) => !nativeIds.has(plugin.id));
+
     const source =
       clean.length < 2
         ? allPlugins
         : mergePlugins([
             ...nativePlugins,
-            ...searchCatalogItems.map(runtimeFromCatalog),
-            ...semanticCatalogItems.map(runtimeFromCatalog),
+            ...dynamicSearchPlugins,
+            ...dynamicSemanticPlugins,
           ]);
 
     const semantic = semanticToolkitSlugs;
