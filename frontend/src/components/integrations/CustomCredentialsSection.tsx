@@ -21,7 +21,7 @@ const TYPE_OPTIONS: { id: CredentialType; label: string; hint: string }[] = [
   { id: 'secret', label: 'Secret', hint: 'Generic secret token — hidden until you unlock.' },
 ];
 
-export function CustomCredentialsSection() {
+export function CustomCredentialsSection({ compact = false }: { compact?: boolean } = {}) {
   const [creds, setCreds] = useState<StoredCredential[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [type, setType] = useState<CredentialType>('api_key');
@@ -120,7 +120,13 @@ export function CustomCredentialsSection() {
       : null;
 
   return (
-    <div className="rounded-xl border border-[var(--card-border)]/60 bg-[var(--card)]/40 p-3 sm:p-4 space-y-2.5">
+    <div
+      className={
+        compact
+          ? 'rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-3 space-y-2.5'
+          : 'rounded-xl border border-[var(--card-border)]/60 bg-[var(--card)]/40 p-3 sm:p-4 space-y-2.5'
+      }
+    >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-sm font-bold flex items-center gap-1.5">
