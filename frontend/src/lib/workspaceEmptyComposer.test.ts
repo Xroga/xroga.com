@@ -386,9 +386,9 @@ test('connection management reads real provider status and routes full managemen
     );
   }
 
-  assert.match(
-    INTEGRATIONS,
-    /\/dashboard\/integrations\/\\\$\{plugin\.id\}/,
+  assert.equal(
+    INTEGRATIONS.includes('/dashboard/integrations/\${plugin.id}'),
+    true,
   );
 
   assert.match(
