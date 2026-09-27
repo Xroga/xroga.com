@@ -243,14 +243,18 @@ export function DesktopPublishPanel({
   project,
   onStartWorkspace,
   onRefresh,
+  githubConnected: githubConnectedOverride,
 }: {
   status?: PublishStatus['desktop'];
   project?: PublishProject | null;
   onStartWorkspace: (prompt: string) => void;
   onRefresh: () => void;
+  githubConnected?: boolean;
 }) {
   const githubConnected = Boolean(
-    status?.githubConnected ?? status?.checklist.find((item) => item.id === 'github')?.done,
+    status?.githubConnected ??
+      status?.checklist.find((item) => item.id === 'github')?.done ??
+      githubConnectedOverride,
   );
   const cscSaved = Boolean(status?.cscSaved);
   const notarizationSaved = Boolean(status?.notarizationSaved);
