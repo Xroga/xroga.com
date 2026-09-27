@@ -34,8 +34,13 @@ import {
 
 import {
   ComposioClientError,
+  canUserAccessComposioToolSlug,
+  canUserAccessComposioToolkit,
   createComposioConnectionLink,
   createReadOnlyComposioSession,
+  createUserCustomMcpToolkit,
+  deleteUserCustomMcpToolkit,
+  filterComposioCatalogForUser,
   executeComposioReadTool,
   getComposioCatalogToolkit,
   getComposioToolDetails,
@@ -45,10 +50,12 @@ import {
   listComposioCatalogGroup,
   listComposioCatalogTools,
   listComposioToolkits,
+  listUserCustomMcpToolkits,
   listComposioTriggerTypes,
   listConnectedComposioToolkits,
   searchComposioActionTools,
   searchComposioTools,
+  syncUserCustomMcpToolkit,
 } from '../services/integrations/composioClient.js';
 
 const router = Router();
@@ -1149,6 +1156,10 @@ router.get(
       res.json({
         ok: true,
         ...page,
+        items: filterComposioCatalogForUser(
+          req.userId!,
+          page.items,
+        ),
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1206,6 +1217,14 @@ router.get(
     }
 
     try {
+      if (!canUserAccessComposioToolkit(req.userId!, parsed.data.toolkit)) {
+        res.status(404).json({
+          ok: false,
+          error: 'Plugin not found.',
+        });
+        return;
+      }
+
       const page = await listComposioCatalogTools(
         parsed.data.toolkit,
         {
@@ -1259,6 +1278,14 @@ router.get(
     }
 
     try {
+      if (!canUserAccessComposioToolkit(req.userId!, parsed.data.toolkit)) {
+        res.status(404).json({
+          ok: false,
+          error: 'Plugin not found.',
+        });
+        return;
+      }
+
       const page = await listComposioTriggerTypes(
         parsed.data.toolkit,
         {
@@ -1309,7 +1336,23 @@ router.get(
     }
 
     try {
+      if (!canUserAccessComposioToolkit(req.userId!, parsed.data.toolkit)) {
+        res.status(404).json({
+          ok: false,
+          error: 'Plugin not found.',
+        });
+        return;
+      }
+
       const toolkit = await getComposioCatalogToolkit(parsed.data.toolkit);
+
+      if (!canUserAccessComposioToolkit(req.userId!, toolkit.slug)) {
+        res.status(404).json({
+          ok: false,
+          error: 'Plugin not found.',
+        });
+        return;
+      }
 
       res.json({
         ok: true,
@@ -1356,6 +1399,17 @@ router.get(
 
     try {
       const tool = await getComposioToolDetails(parsed.data.toolSlug);
+
+      if (
+        !canUserAccessComposioToolkit(req.userId!, tool.toolkit) ||
+        !canUserAccessComposioToolSlug(req.userId!, tool.slug)
+      ) {
+        res.status(404).json({
+          ok: false,
+          error: 'Action not found.',
+        });
+        return;
+      }
 
       res.json({
         ok: true,
@@ -1458,8 +1512,28 @@ router.post(
 
       res.json({
         ok: true,
-
         ...result,
+        tools: result.tools.filter(
+          (tool) =>
+            canUserAccessComposioToolkit(req.userId!, tool.toolkit) &&
+            canUserAccessComposioToolSlug(req.userId!, tool.slug),
+        ),
+        toolkits: result.toolkits.filter((toolkit) =>
+          canUserAccessComposioToolkit(req.userId!, toolkit.toolkit),
+        ),
+        ...(result.skill
+          ? {
+              skill: {
+                ...result.skill,
+                primaryToolSlugs: result.skill.primaryToolSlugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(req.userId!, slug),
+                ),
+                relatedToolSlugs: result.skill.relatedToolSlugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(req.userId!, slug),
+                ),
+              },
+            }
+          : {}),
       });
     } catch (error) {
       sendComposioError(
@@ -1510,6 +1584,27 @@ router.post(
       res.json({
         ok: true,
         ...result,
+        tools: result.tools.filter(
+          (tool) =>
+            canUserAccessComposioToolkit(req.userId!, tool.toolkit) &&
+            canUserAccessComposioToolSlug(req.userId!, tool.slug),
+        ),
+        toolkits: result.toolkits.filter((toolkit) =>
+          canUserAccessComposioToolkit(req.userId!, toolkit.toolkit),
+        ),
+        ...(result.skill
+          ? {
+              skill: {
+                ...result.skill,
+                primaryToolSlugs: result.skill.primaryToolSlugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(req.userId!, slug),
+                ),
+                relatedToolSlugs: result.skill.relatedToolSlugs.filter((slug) =>
+                  canUserAccessComposioToolSlug(req.userId!, slug),
+                ),
+              },
+            }
+          : {}),
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1572,7 +1667,173 @@ router.post(
 
       res.json({
         ok: true,
-        toolkits,
+        toolkits: toolkits.filter((toolkit) =>
+          canUserAccessComposioToolkit(req.userId!, toolkit.toolkit),
+        ),
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+/**
+ * User-scoped Custom MCP servers.
+ *
+ * The upstream project catalogue is shared, so every Xroga-created custom
+ * toolkit is namespaced by the authenticated user before it is registered.
+ */
+router.get(
+  '/xroga-connect/custom-mcp',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    try {
+      const items = await listUserCustomMcpToolkits(req.userId!);
+
+      res.json({
+        ok: true,
+        items,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.post(
+  '/xroga-connect/custom-mcp',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      name: z.string().trim().min(2).max(80),
+      serverUrl: z.string().trim().url().max(1000),
+      authMode: z.enum(['none', 'api_key', 'dcr_oauth']),
+      headerName: z.string().trim().min(1).max(80).optional(),
+      headerPrefix: z.string().max(80).optional(),
+      discoveryUrl: z.string().trim().url().max(1000).optional(),
+    });
+
+    const parsed = schema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const result = await createUserCustomMcpToolkit(
+        req.userId!,
+        parsed.data,
+      );
+
+      res.json({
+        ok: true,
+        ...result,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.post(
+  '/xroga-connect/custom-mcp/:toolkit/sync',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(120)
+        .regex(/^[A-Za-z0-9_-]+$/),
+      connectedAccountId: z
+        .string()
+        .trim()
+        .min(3)
+        .max(200)
+        .optional(),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+      connectedAccountId: req.body?.connectedAccountId,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const result = await syncUserCustomMcpToolkit(
+        req.userId!,
+        {
+          toolkit: parsed.data.toolkit,
+          ...(parsed.data.connectedAccountId
+            ? { connectedAccountId: parsed.data.connectedAccountId }
+            : {}),
+        },
+      );
+
+      res.json({
+        ok: true,
+        ...result,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.delete(
+  '/xroga-connect/custom-mcp/:toolkit',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(120)
+        .regex(/^[A-Za-z0-9_-]+$/),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const result = await deleteUserCustomMcpToolkit(
+        req.userId!,
+        parsed.data.toolkit,
+      );
+
+      res.json({
+        ok: true,
+        ...result,
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1622,6 +1883,14 @@ router.post(
           parsed.error.flatten(),
       });
 
+      return;
+    }
+
+    if (!canUserAccessComposioToolkit(req.userId!, parsed.data.toolkit)) {
+      res.status(404).json({
+        ok: false,
+        error: 'Plugin not found.',
+      });
       return;
     }
 
