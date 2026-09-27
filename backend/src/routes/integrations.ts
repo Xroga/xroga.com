@@ -1904,7 +1904,7 @@ router.post(
       `${frontendUrl.replace(
         /\/$/,
         '',
-      )}/dashboard/integrations/composio/callback`;
+      )}/dashboard/integrations/connect/callback`;
 
     try {
       const result =
