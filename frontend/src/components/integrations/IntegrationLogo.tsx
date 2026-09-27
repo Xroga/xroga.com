@@ -1,28 +1,21 @@
 'use client';
 
 import Image from 'next/image';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { VercelIcon } from '@/components/icons/animated/VercelIcon';
 
-/**
- * One integration's mark, animated where we own the drawing.
- *
- * Every provider here is a brand SVG served as an image, and an image cannot move.
- * GitHub and Vercel are the two we have real components for, and they are also the two
- * that carry the most weight in this product — the repository connection and the
- * deployment target — so they draw themselves and run continuously. Everything else
- * falls through to its logo file unchanged.
- *
- * This exists as one component rather than a condition at each call site because there
- * are six of those, and the last time a mark was wired at only some of them the ones
- * that were missed stayed static without anything failing.
- *
- * `currentColor` is what makes both animated marks theme-aware: they take the ink of
- * whatever row they sit in rather than shipping a fixed black or white, which is the
- * whole reason the static `github.svg` looked wrong on half the themes.
- */
+function initialsFor(name: string): string {
+  return name
+    .split(/\s+/g)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+}
+
 export function IntegrationLogo({
   id,
   name,
@@ -34,6 +27,10 @@ export function IntegrationLogo({
   size?: number;
   className?: string;
 }) {
+  const [failed, setFailed] = useState(false);
+  const label = name ?? id;
+  const initials = useMemo(() => initialsFor(label) || 'APP', [label]);
+
   if (id === 'github') {
     return (
       <span className={cn('inline-flex items-center justify-center', className)} aria-hidden="true">
@@ -50,16 +47,31 @@ export function IntegrationLogo({
     );
   }
 
-  const src = getIntegrationLogo(id, name);
-  if (!src) return null;
+  const src = failed ? undefined : getIntegrationLogo(id, label);
+
+  if (!src) {
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center justify-center rounded-md bg-[var(--accent-dim,var(--surface-inset))] font-bold tracking-wide text-[var(--accent)]',
+          className,
+        )}
+        style={{ width: size, height: size, fontSize: Math.max(8, Math.round(size * 0.42)) }}
+        aria-label={label}
+      >
+        {initials}
+      </span>
+    );
+  }
 
   return (
     <Image
       src={src}
-      alt={name ?? id}
+      alt={label}
       width={size}
       height={size}
-      className={className}
+      className={cn('object-contain', className)}
+      onError={() => setFailed(true)}
       unoptimized
     />
   );

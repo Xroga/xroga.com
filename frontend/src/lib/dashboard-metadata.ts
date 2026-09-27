@@ -93,10 +93,10 @@ export const PAGE_SEO = {
     '/dashboard/analytics'
   ),
   integrations: dashboardPageMetadata(
-    'Integrations',
-    'Connect GitHub and Vercel to Xroga AI Workspace. Sync product API keys securely into Vercel env.',
+    'Plugins',
+    'Connect the apps, developer tools, and services Xroga can securely work with.',
     '/dashboard/integrations',
-    ['Xroga integrations', 'GitHub AI', 'Vercel AI', 'sync API keys']
+    ['Xroga Plugins', 'AI plugins', 'GitHub AI', 'business apps']
   ),
   publish: dashboardPageMetadata(
     'Publish',
