@@ -37,6 +37,7 @@ import {
   createComposioConnectionLink,
   createReadOnlyComposioSession,
   executeComposioReadTool,
+  deleteComposioCustomMcp,
   getComposioCatalogToolkit,
   getComposioToolDetails,
   isComposioConfigured,
@@ -44,12 +45,27 @@ import {
   listComposioCatalogCategories,
   listComposioCatalogGroup,
   listComposioCatalogTools,
+  listComposioMarketplaceSection,
+  listComposioMarketplaceSections,
   listComposioToolkits,
   listComposioTriggerTypes,
   listConnectedComposioToolkits,
   searchComposioActionTools,
   searchComposioTools,
+  syncComposioCustomMcp,
+  upsertComposioCustomMcp,
 } from '../services/integrations/composioClient.js';
+
+import {
+  assertCustomMcpOwnership,
+  deleteUserCustomMcpRecord,
+  isCustomMcpToolkit,
+  listUserCustomMcps,
+  listUserCustomMcpToolkitSlugs,
+  saveUserCustomMcp,
+  userScopedCustomMcpSlug,
+  validatePublicMcpUrl,
+} from '../services/integrations/customMcpRegistry.js';
 
 const router = Router();
 
@@ -1056,7 +1072,7 @@ function sendComposioError(
     ok: false,
 
     error:
-      'Xroga Connect is temporarily unavailable.',
+      'Xroga Apps are temporarily unavailable.',
 
     code:
       'XROGA_CONNECT_ERROR',
@@ -1146,9 +1162,20 @@ router.get(
             ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
           });
 
+      const ownedCustom = new Set(
+        (await listUserCustomMcpToolkitSlugs(req.userId!)).map((slug) =>
+          slug.toLowerCase(),
+        ),
+      );
+
       res.json({
         ok: true,
         ...page,
+        items: page.items.filter(
+          (item) =>
+            item.type !== 'custom' ||
+            ownedCustom.has(item.slug.toLowerCase()),
+        ),
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1168,6 +1195,104 @@ router.get(
       res.json({
         ok: true,
         categories,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/marketplace-sections',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      previewLimit: z.coerce.number().int().min(2).max(12).optional().default(6),
+    });
+    const parsed = schema.safeParse(req.query);
+
+    if (!parsed.success) {
+      res.status(400).json({ ok: false, error: parsed.error.flatten() });
+      return;
+    }
+
+    try {
+      const [sections, ownedCustom] = await Promise.all([
+        listComposioMarketplaceSections(parsed.data.previewLimit),
+        listUserCustomMcpToolkitSlugs(req.userId!),
+      ]);
+      const owned = new Set(ownedCustom.map((slug) => slug.toLowerCase()));
+
+      res.json({
+        ok: true,
+        sections: sections.map((section) => ({
+          ...section,
+          items: section.items.filter(
+            (item) =>
+              item.type !== 'custom' ||
+              owned.has(item.slug.toLowerCase()),
+          ),
+        })),
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.get(
+  '/xroga-connect/marketplace-sections/:section',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      section: z.enum([
+        'small-business',
+        'productivity',
+        'creativity',
+        'developer-tools',
+        'business-operations',
+        'data-analytics',
+        'communication',
+        'travel',
+        'entertainment',
+        'other',
+      ]),
+      limit: z.coerce.number().int().min(1).max(250).optional().default(120),
+      cursor: z.string().trim().max(1000).optional(),
+    });
+    const parsed = schema.safeParse({
+      section: req.params.section,
+      ...req.query,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({ ok: false, error: parsed.error.flatten() });
+      return;
+    }
+
+    try {
+      const [page, ownedCustom] = await Promise.all([
+        listComposioMarketplaceSection({
+          section: parsed.data.section,
+          limit: parsed.data.limit,
+          ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
+        }),
+        listUserCustomMcpToolkitSlugs(req.userId!),
+      ]);
+      const owned = new Set(ownedCustom.map((slug) => slug.toLowerCase()));
+
+      res.json({
+        ok: true,
+        ...page,
+        items: page.items.filter(
+          (item) =>
+            item.type !== 'custom' ||
+            owned.has(item.slug.toLowerCase()),
+        ),
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1206,6 +1331,10 @@ router.get(
     }
 
     try {
+      if (isCustomMcpToolkit(parsed.data.toolkit)) {
+        await assertCustomMcpOwnership(req.userId!, parsed.data.toolkit);
+      }
+
       const page = await listComposioCatalogTools(
         parsed.data.toolkit,
         {
@@ -1259,6 +1388,10 @@ router.get(
     }
 
     try {
+      if (isCustomMcpToolkit(parsed.data.toolkit)) {
+        await assertCustomMcpOwnership(req.userId!, parsed.data.toolkit);
+      }
+
       const page = await listComposioTriggerTypes(
         parsed.data.toolkit,
         {
@@ -1309,6 +1442,10 @@ router.get(
     }
 
     try {
+      if (isCustomMcpToolkit(parsed.data.toolkit)) {
+        await assertCustomMcpOwnership(req.userId!, parsed.data.toolkit);
+      }
+
       const toolkit = await getComposioCatalogToolkit(parsed.data.toolkit);
 
       res.json({
@@ -1357,6 +1494,10 @@ router.get(
     try {
       const tool = await getComposioToolDetails(parsed.data.toolSlug);
 
+      if (isCustomMcpToolkit(tool.toolkit)) {
+        await assertCustomMcpOwnership(req.userId!, tool.toolkit);
+      }
+
       res.json({
         ok: true,
         tool,
@@ -1379,10 +1520,26 @@ router.post(
     req: AuthRequest,
     res,
   ) => {
+    const schema = z.object({
+      toolkits: z
+        .array(
+          z.string().trim().min(2).max(80).regex(/^[A-Za-z0-9_-]+$/),
+        )
+        .max(20)
+        .optional(),
+    });
+    const parsed = schema.safeParse(req.body ?? {});
+
+    if (!parsed.success) {
+      res.status(400).json({ ok: false, error: parsed.error.flatten() });
+      return;
+    }
+
     try {
       const session =
         await createReadOnlyComposioSession(
           req.userId!,
+          parsed.data.toolkits,
         );
 
       res.json({
@@ -1570,9 +1727,19 @@ router.post(
         ? await listConnectedComposioToolkits(req.userId!, input)
         : await listComposioToolkits(req.userId!, input);
 
+      const ownedCustom = new Set(
+        (await listUserCustomMcpToolkitSlugs(req.userId!)).map((slug) =>
+          slug.toLowerCase(),
+        ),
+      );
+
       res.json({
         ok: true,
-        toolkits,
+        toolkits: toolkits.filter(
+          (item) =>
+            !isCustomMcpToolkit(item.toolkit) ||
+            ownedCustom.has(item.toolkit.toLowerCase()),
+        ),
       });
     } catch (error) {
       sendComposioError(res, error);
@@ -1638,6 +1805,10 @@ router.post(
       )}/dashboard/integrations/composio/callback`;
 
     try {
+      if (isCustomMcpToolkit(parsed.data.toolkit)) {
+        await assertCustomMcpOwnership(req.userId!, parsed.data.toolkit);
+      }
+
       const result =
         await createComposioConnectionLink(
           req.userId!,
@@ -1664,6 +1835,138 @@ router.post(
         res,
         error,
       );
+    }
+  },
+);
+
+/**
+ * User-owned Custom MCP Plugins.
+ *
+ * The upstream toolkit is project-scoped, so every Xroga route keeps a
+ * per-user ownership record and refuses access to another user's custom slug.
+ */
+router.get(
+  '/xroga-connect/custom-mcp',
+  async (req: AuthRequest, res) => {
+    try {
+      const items = await listUserCustomMcps(req.userId!);
+      res.json({ ok: true, items });
+    } catch (error) {
+      res.status(500).json({
+        ok: false,
+        error: error instanceof Error ? error.message : 'Could not load Custom Plugins.',
+      });
+    }
+  },
+);
+
+router.post(
+  '/xroga-connect/custom-mcp',
+  async (req: AuthRequest, res) => {
+    const schema = z.object({
+      name: z.string().trim().min(2).max(80),
+      slug: z.string().trim().min(2).max(42),
+      serverUrl: z.string().trim().url().max(2048),
+      authMode: z.enum(['no_auth', 'api_key', 'dcr_oauth']).default('no_auth'),
+      discoveryUrl: z.string().trim().url().max(2048).optional(),
+    });
+    const parsed = schema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({ ok: false, error: parsed.error.flatten() });
+      return;
+    }
+
+    let registeredSlug: string | undefined;
+
+    try {
+      const serverUrl = validatePublicMcpUrl(parsed.data.serverUrl);
+      const discoveryUrl =
+        parsed.data.discoveryUrl && parsed.data.authMode === 'dcr_oauth'
+          ? validatePublicMcpUrl(parsed.data.discoveryUrl)
+          : parsed.data.discoveryUrl;
+      const scopedSlug = userScopedCustomMcpSlug(req.userId!, parsed.data.slug);
+
+      const registered = await upsertComposioCustomMcp({
+        slug: scopedSlug,
+        name: parsed.data.name,
+        serverUrl,
+        authMode: parsed.data.authMode,
+        ...(discoveryUrl ? { discoveryUrl } : {}),
+      });
+      registeredSlug = registered.slug;
+
+      const item = await saveUserCustomMcp(req.userId!, {
+        toolkit: registered.slug,
+        name: parsed.data.name,
+        serverUrl,
+        authMode: parsed.data.authMode,
+      });
+
+      let sync:
+        | { slug: string; version?: string; syncedCount?: number }
+        | undefined;
+
+      if (parsed.data.authMode === 'no_auth') {
+        try {
+          sync = await syncComposioCustomMcp(registered.slug);
+        } catch {
+          // Registration already triggers the initial sync. Manual retry stays available.
+        }
+      }
+
+      res.json({
+        ok: true,
+        item,
+        sync,
+        connectRequired: parsed.data.authMode !== 'no_auth',
+      });
+    } catch (error) {
+      if (registeredSlug) {
+        await deleteComposioCustomMcp(registeredSlug).catch(() => undefined);
+      }
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.post(
+  '/xroga-connect/custom-mcp/:toolkit/sync',
+  async (req: AuthRequest, res) => {
+    const toolkit = String(req.params.toolkit ?? '').trim();
+
+    try {
+      await assertCustomMcpOwnership(req.userId!, toolkit);
+      const result = await syncComposioCustomMcp(toolkit);
+      res.json({ ok: true, ...result });
+    } catch (error) {
+      const status = (error as Error & { status?: number }).status;
+      if (status === 404) {
+        res.status(404).json({ ok: false, error: 'Custom Plugin not found.' });
+        return;
+      }
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.delete(
+  '/xroga-connect/custom-mcp/:toolkit',
+  async (req: AuthRequest, res) => {
+    const toolkit = String(req.params.toolkit ?? '').trim();
+
+    try {
+      await assertCustomMcpOwnership(req.userId!, toolkit);
+      await deleteComposioCustomMcp(toolkit);
+      await deleteUserCustomMcpRecord(req.userId!, toolkit);
+      res.json({ ok: true });
+    } catch (error) {
+      const status = (error as Error & { status?: number }).status;
+      if (status === 404) {
+        res.status(404).json({ ok: false, error: 'Custom Plugin not found.' });
+        return;
+      }
+      sendComposioError(res, error);
     }
   },
 );
