@@ -2,7 +2,7 @@ const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const EXECUTE_TIMEOUT_MS = 30_000;
-const MAX_RESPONSE_SIZE = 2_000_000;
+const MAX_RESPONSE_SIZE = 8_000_000;
 const MAX_SEARCH_RESULTS = 20;
 const MAX_TOOLKIT_PAGE_SIZE = 100;
 const MAX_CATALOG_PAGE_SIZE = 250;
