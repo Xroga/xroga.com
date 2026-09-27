@@ -28,7 +28,6 @@ import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
 import {
-  PLUGIN_CATEGORY_GROUPS,
   PLUGIN_DEFINITIONS,
   authSummary,
   canonicalPluginId,
@@ -489,14 +488,9 @@ export function PluginMarketplace() {
   const [view, setViewState] = useState<PluginView>(() => viewFrom(searchParams.get('view')));
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const deferredQuery = useDeferredValue(query.trim());
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [catalogItems, setCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
-  const [catalogTotal, setCatalogTotal] = useState<number | null>(null);
   const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
-  const [catalogCursor, setCatalogCursor] = useState<string | undefined>();
   const [catalogLoading, setCatalogLoading] = useState(true);
-  const [catalogLoadingMore, setCatalogLoadingMore] = useState(false);
-  const [catalogError, setCatalogError] = useState<string | null>(null);
 
   const [searchCatalogItems, setSearchCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
   const [semanticCatalogItems, setSemanticCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
@@ -607,63 +601,6 @@ export function PluginMarketplace() {
     });
   };
 
-  async function loadCatalog(reset: boolean, cursor?: string) {
-    if (reset) {
-      setCatalogLoading(true);
-      setCatalogError(null);
-    } else {
-      setCatalogLoadingMore(true);
-    }
-
-    try {
-      const page = await xrogaConnect.catalog({
-        group: (selectedCategory || undefined) as
-          | 'productivity'
-          | 'communication'
-          | 'engineering'
-          | 'ai-automation'
-          | 'sales-crm'
-          | 'commerce'
-          | 'marketing'
-          | 'finance'
-          | 'data-analytics'
-          | 'design-media'
-          | 'support'
-          | 'infrastructure'
-          | 'hr-recruiting'
-          | 'other'
-          | undefined,
-        sortBy: 'usage',
-        limit: BROWSE_PAGE_SIZE,
-        cursor,
-      });
-
-      setCatalogItems((current) =>
-        reset
-          ? page.items
-          : [
-              ...current,
-              ...page.items.filter(
-                (item) => !current.some((existing) => existing.slug === item.slug),
-              ),
-            ],
-      );
-      setCatalogTotal(page.totalItems);
-      if (!selectedCategory) setGlobalCatalogTotal(page.totalItems);
-      setCatalogCursor(page.nextCursor);
-      setCatalogError(null);
-    } catch (error) {
-      if (reset) {
-        setCatalogError(
-          error instanceof Error ? error.message : 'The Plugin catalogue is temporarily unavailable.',
-        );
-      }
-    } finally {
-      setCatalogLoading(false);
-      setCatalogLoadingMore(false);
-    }
-  }
-
   useEffect(() => {
     refreshNativeStatus();
 
@@ -677,7 +614,6 @@ export function PluginMarketplace() {
 
         if (!availability.configured) {
           setCatalogLoading(false);
-          setCatalogError('Xroga Connect is not configured for this environment.');
           return;
         }
 
@@ -693,12 +629,7 @@ export function PluginMarketplace() {
 
         if (catalogResult.status === 'fulfilled') {
           setCatalogItems(catalogResult.value.items);
-          setCatalogTotal(catalogResult.value.totalItems);
           setGlobalCatalogTotal(catalogResult.value.totalItems);
-          setCatalogCursor(catalogResult.value.nextCursor);
-          setCatalogError(null);
-        } else {
-          setCatalogError('The Plugin catalogue is temporarily unavailable.');
         }
         setCatalogLoading(false);
 
@@ -718,20 +649,12 @@ export function PluginMarketplace() {
         if (!active) return;
         setComposioConfigured(false);
         setCatalogLoading(false);
-        setCatalogError('Xroga Connect is temporarily unavailable.');
       });
 
     return () => {
       active = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (composioConfigured !== true) return;
-    void loadCatalog(true);
-    // selectedCategory is the server-side Xroga category-group filter.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, composioConfigured]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
