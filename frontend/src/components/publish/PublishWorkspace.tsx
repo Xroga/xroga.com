@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box,
-  Check,
   GitBranch,
-  Loader2,
   LockKeyhole,
   Rocket,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { ChromePublishPanel } from '@/components/publish/ChromePublishPanel';
 import { DesktopPublishPanel } from '@/components/publish/DesktopPublishPanel';
@@ -201,6 +200,21 @@ export function PublishWorkspace() {
       setTargetState('web');
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const cws = searchParams.get('cws');
+    if (!cws) return;
+
+    if (cws === 'connected') toast.success('Chrome Web Store connected');
+    if (cws === 'error') toast.error(searchParams.get('message') || 'Chrome Web Store authorization failed');
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('cws');
+    params.delete('message');
+    params.delete('tab');
+    params.set('target', 'chrome');
+    router.replace(`/dashboard/publish?${params.toString()}`, { scroll: false });
+  }, [router, searchParams]);
 
   useEffect(() => {
     try {
@@ -424,6 +438,24 @@ export function PublishWorkspace() {
                   : 'neutral'
               }
             />
+            <PublishStatusBadge
+              label={
+                status?.mobile.expoTokenSaved
+                  ? status.mobile.expoTokenValid === true
+                    ? 'Expo verified'
+                    : 'Expo needs attention'
+                  : publishError && !status
+                    ? 'Expo status unavailable'
+                    : 'Expo setup'
+              }
+              tone={
+                status?.mobile.expoTokenValid === true
+                  ? 'success'
+                  : status?.mobile.expoTokenSaved
+                    ? 'warning'
+                    : 'neutral'
+              }
+            />
           </div>
         </div>
       </section>
@@ -435,8 +467,14 @@ export function PublishWorkspace() {
       />
 
       {publishError && !status ? (
-        <PublishError title="Publish status could not load" body={publishError} onRetry={() => void refresh()} />
-      ) : loading && !status ? (
+        <PublishError
+          title="Some Publish status is unavailable"
+          body="Provider checks that loaded successfully remain usable below. Retry to refresh the full Publish state."
+          onRetry={() => void refresh()}
+        />
+      ) : null}
+
+      {loading && !status ? (
         <PublishLoading />
       ) : (
         <div role="tabpanel" aria-label={`${target} publishing`}>
@@ -458,6 +496,7 @@ export function PublishWorkspace() {
               project={selectedProject}
               onStartWorkspace={startInWorkspace}
               onRefresh={() => void refresh()}
+              githubConnected={github?.connected}
             />
           ) : target === 'desktop' ? (
             <DesktopPublishPanel
@@ -465,12 +504,15 @@ export function PublishWorkspace() {
               project={selectedProject}
               onStartWorkspace={startInWorkspace}
               onRefresh={() => void refresh()}
+              githubConnected={github?.connected}
             />
           ) : (
             <MobilePublishPanel
               status={status?.mobile}
               easProjectId={status?.easProjectId}
               onRefresh={() => void refresh()}
+              githubConnected={github?.connected}
+              statusUnavailable={Boolean(publishError && !status)}
             />
           )}
         </div>
