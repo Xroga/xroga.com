@@ -156,14 +156,14 @@ async function fetchAllTools(toolkit: string): Promise<{
 
   do {
     const page = await xrogaConnect.catalogTools(toolkit, {
-      limit: 250,
+      limit: 100,
       cursor,
     });
     items.push(...page.items);
     total = page.totalItems;
     cursor = page.nextCursor;
     pages += 1;
-  } while (cursor && pages < 20);
+  } while (cursor && pages < 50);
 
   return {
     items,
