@@ -101,6 +101,64 @@ export const xrogaConnect = {
       },
     ),
 
+  actionSearch: (
+    query: string,
+    sessionId?: string,
+  ) =>
+    apiFetch<XrogaConnectSearchResult>(
+      '/api/integrations/xroga-connect/action-search',
+      {
+        method:
+          'POST',
+
+        body:
+          JSON.stringify(
+            {
+              query,
+
+              ...(sessionId
+                ? {
+                    sessionId,
+                  }
+                : {}),
+            },
+          ),
+      },
+    ),
+
+  toolkits: (
+    sessionId: string,
+    opts?: {
+      connectedOnly?: boolean;
+      toolkits?: string[];
+    },
+  ) =>
+    apiFetch<{
+      ok: boolean;
+      toolkits: XrogaConnectToolkit[];
+    }>(
+      '/api/integrations/xroga-connect/toolkits',
+      {
+        method:
+          'POST',
+
+        body:
+          JSON.stringify(
+            {
+              sessionId,
+              connectedOnly:
+                opts?.connectedOnly ?? false,
+              ...(opts?.toolkits?.length
+                ? {
+                    toolkits:
+                      opts.toolkits,
+                  }
+                : {}),
+            },
+          ),
+      },
+    ),
+
   link: (
     sessionId: string,
     toolkit: string,
