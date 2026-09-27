@@ -1139,10 +1139,10 @@ router.get(
             ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
           })
         : await listComposioCatalog({
-            search: parsed.data.search,
-            category: parsed.data.category,
             sortBy: parsed.data.sortBy,
             limit: parsed.data.limit,
+            ...(parsed.data.search ? { search: parsed.data.search } : {}),
+            ...(parsed.data.category ? { category: parsed.data.category } : {}),
             ...(parsed.data.cursor ? { cursor: parsed.data.cursor } : {}),
           });
 
