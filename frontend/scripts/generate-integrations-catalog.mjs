@@ -16,7 +16,7 @@ const CATALOG = {
     'CircleCI', 'Buildkite', 'Jenkins (CloudBees)', 'Fly.io', 'Coolify', 'Appwrite', 'QStash', 'Tinybird', 'ClickHouse',
     'SonarQube', 'Snyk', 'Dependabot', 'LaunchDarkly', 'Docker Hub', 'GHCR', 'JFrog', 'Sonatype Nexus', 'npm', 'PyPI', 'NuGet',
     'Hashnode', 'DEV.to', 'Medium', 'RapidAPI', 'Postman', 'Insomnia', 'Hoppscotch', 'Bruno', 'SwaggerHub', 'ReadMe', 'Stoplight',
-    'Mockoon', 'WireMock', 'GitHub Copilot', 'Cursor', 'Replit', 'Lovable', 'Bolt.new', 'Vercel v0', 'Magic Patterns', 'Databutton', 'Aider', 'Composio',
+    'Mockoon', 'WireMock', 'GitHub Copilot', 'Cursor', 'Replit', 'Lovable', 'Bolt.new', 'Vercel v0', 'Magic Patterns', 'Databutton', 'Aider', 'Xroga Apps',
   ],
   'Gaming & Consoles': [
     'Xbox (Series X/S & One)', 'PlayStation (PS5 & PS4)', 'Steam / PC', 'Nintendo Switch', 'Epic Games', 'Unity Gaming Services',
@@ -180,7 +180,7 @@ function slugify(name) {
     .slice(0, 60);
 }
 
-const CONNECTED = new Set(['github', 'supabase', 'upstash_redis', 'lemon_squeezy', 'cloudflare_r2', 'r2']);
+const CONNECTED = new Set(['github', 'supabase', 'upstash_redis', 'lemon_squeezy', 'cloudflare_r2', 'r2', 'xroga_apps']);
 const OAUTH = new Set([
   'github', 'gitlab', 'vercel', 'netlify', 'railway', 'digitalocean', 'heroku', 'render',
   'xbox_series_x_s_one', 'playstation_ps5_ps4', 'steam_pc', 'epic_games', 'twitter_x', 'linkedin',
@@ -196,6 +196,7 @@ const DESCRIPTIONS = {
   lemonsqueezy: 'Subscription billing (merchant of record)',
   cloudflare_r2: 'Object storage',
   r2: 'Object storage',
+  xroga_apps: 'Connect supported external apps and services through Xroga.',
   xbox_series_x_s_one: 'Xbox Store API — Series X|S & Xbox One',
   playstation_ps5_ps4: 'PlayStation Store — PS5 & PS4 unified API',
 };
