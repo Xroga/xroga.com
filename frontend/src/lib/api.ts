@@ -3779,9 +3779,6 @@ export const api = {
             vercelConnected:
               boolean;
 
-            managedVercelAvailable?:
-              boolean;
-
             checklist:
               Array<{
                 id:
@@ -6001,3 +5998,612 @@ export interface Phase1ChatResult {
 
   hackathonBrief?:
     HackathonBriefCardData;
+}
+
+export interface SemanticRequestPlan {
+  goalContract: {
+    version:
+      '1.0';
+
+    goal:
+      string;
+
+    desiredOutcome:
+      string;
+
+    semanticIntent:
+      | 'ANSWER'
+      | 'INVESTIGATE'
+      | 'PROPOSE'
+      | 'MODIFY'
+      | 'EXTERNAL_ACTION'
+      | 'MIXED';
+
+    constraints:
+      string[];
+
+    acceptance:
+      string[];
+
+    historyContext:
+      string[];
+
+    projectContext:
+      | {
+          repo:
+            string;
+
+          branch:
+            string;
+
+          projectRoot:
+            string;
+        }
+      | null;
+
+    deliverables:
+      Array<{
+        id:
+          string;
+
+        mediaType:
+          string;
+
+        description:
+          string;
+
+        required:
+          boolean;
+
+        acceptance:
+          string[];
+      }>;
+
+    requiredCapabilities:
+      string[];
+
+    requiredAuthorities:
+      string[];
+
+    freshnessRequirement:
+      | 'NONE'
+      | 'PREFERRED'
+      | 'CURRENT_REQUIRED';
+
+    sourcePolicy: {
+      mode:
+        | 'any'
+        | 'official_only';
+
+      scope:
+        | 'public_web'
+        | 'x';
+
+      officialDomains:
+        string[];
+    };
+
+    previewRequirement:
+      | 'NONE'
+      | 'PREFERRED'
+      | 'REQUIRED';
+
+    deploymentRequirement:
+      | 'NONE'
+      | 'REQUESTED';
+
+    risks:
+      string[];
+
+    confidence:
+      number;
+
+    blockers:
+      string[];
+
+    contextComplexity:
+      | 'low'
+      | 'medium'
+      | 'high'
+      | 'unknown';
+  };
+
+  dispatch:
+    | 'chat'
+    | 'build'
+    | 'blocked';
+
+  capabilityIds:
+    string[];
+
+  rationale:
+    string;
+
+  blockers:
+    string[];
+
+  usage:
+    TokenUsage;
+
+  directResponse?:
+    string;
+}
+
+export interface TaskItem {
+  id:
+    string;
+
+  cadence:
+    | 'daily'
+    | 'weekly'
+    | 'monthly'
+    | 'once'
+    | 'special';
+
+  title:
+    string;
+
+  description:
+    string;
+
+  platform?:
+    string;
+
+  frequency?:
+    string;
+
+  xrgReward:
+    number;
+
+  tokenBoost:
+    number;
+
+  verification:
+    | 'screenshot'
+    | 'screenshot_link'
+    | 'automatic';
+
+  requirements?:
+    string[];
+
+  examplePost?:
+    string;
+
+  completed:
+    boolean;
+
+  completedAt:
+    string |
+    null;
+
+  pendingReview:
+    boolean;
+}
+
+export interface ReferralProfile {
+  code:
+    string;
+
+  referralCount:
+    number;
+
+  discountPercent:
+    number;
+
+  lifetimeDiscountPercent:
+    number;
+
+  referredByCode:
+    string |
+    null;
+
+  shareUrl:
+    string;
+}
+
+export interface ReferralListItem {
+  id:
+    string;
+
+  referredLabel:
+    string;
+
+  createdAt:
+    string;
+
+  instantRewarded:
+    boolean;
+
+  retentionReleased:
+    boolean;
+}
+
+export interface ReferralSummary {
+  profile:
+    ReferralProfile;
+
+  referrals:
+    ReferralListItem[];
+
+  totalAiTokensEarned:
+    number;
+
+  totalXrgEarned:
+    number;
+
+  nextDiscountPercent:
+    number;
+}
+
+export interface CommunityPoolStatus {
+  poolBalance:
+    number;
+
+  accountAgeDays:
+    number;
+
+  remainingTokens:
+    number;
+
+  requestsThisMonth:
+    number;
+
+  maxRequestsPerMonth:
+    number;
+
+  maxPerMonth:
+    number;
+
+  requestAmount:
+    number;
+
+  eligible:
+    boolean;
+
+  eligibilityReasons:
+    string[];
+
+  nextAvailableAt:
+    string |
+    null;
+
+  history:
+    Array<{
+      id:
+        string;
+
+      amount:
+        number;
+
+      status:
+        string;
+
+      reason:
+        string |
+        null;
+
+      createdAt:
+        string;
+    }>;
+}
+
+export interface TokenDistributionPreview {
+  unusedTokens:
+    number;
+
+  manualTotal:
+    number;
+
+  autoTotal:
+    number;
+
+  rolloverAmount:
+    number;
+
+  shareAmount:
+    number;
+
+  autoPlatform:
+    number;
+
+  autoCommunity:
+    number;
+
+  autoHeavyUsers:
+    number;
+
+  autoBuilders:
+    number;
+
+  alreadyDistributed:
+    boolean;
+}
+
+export interface MarketplaceListing {
+  id:
+    string;
+
+  sellerId:
+    string;
+
+  sellerName:
+    string;
+
+  title:
+    string;
+
+  description:
+    string;
+
+  category:
+    string;
+
+  priceXrg:
+    number;
+
+  previewUrl:
+    string |
+    null;
+
+  tags:
+    string[];
+
+  status:
+    string;
+
+  salesCount:
+    number;
+
+  createdAt:
+    string;
+
+  owned?:
+    boolean;
+
+  purchased?:
+    boolean;
+}
+
+export interface MarketplaceStats {
+  totalListings:
+    number;
+
+  myListings:
+    number;
+
+  mySales:
+    number;
+
+  myPurchases:
+    number;
+}
+
+export interface CreateListingBody {
+  title:
+    string;
+
+  description:
+    string;
+
+  category:
+    string;
+
+  priceXrg:
+    number;
+
+  previewUrl?:
+    string;
+
+  tags?:
+    string[];
+}
+
+export interface InfluencerApplyBody {
+  followerCount:
+    number;
+
+  usernameSlug?:
+    string;
+
+  applicationNote?:
+    string;
+
+  socialLinks?:
+    Record<
+      string,
+      string
+    >;
+}
+
+export interface InfluencerDashboard {
+  status:
+    | 'none'
+    | 'pending'
+    | 'approved'
+    | 'rejected';
+
+  tier:
+    string |
+    null;
+
+  commissionPercent:
+    number;
+
+  followerCount:
+    number;
+
+  nextTier:
+    string |
+    null;
+
+  nextTierFollowers:
+    number |
+    null;
+
+  usernameSlug:
+    string |
+    null;
+
+  shareUrl:
+    string |
+    null;
+
+  stats: {
+    totalReferrals:
+      number;
+
+    activeReferrals:
+      number;
+
+    pendingReferrals:
+      number;
+
+    monthlyCommissionUsd:
+      number;
+
+    totalCommissionUsd:
+      number;
+
+    aiTokensEarned:
+      number;
+
+    xrgTokensEarned:
+      number;
+  };
+
+  perks:
+    string[];
+
+  tiers:
+    Array<{
+      tier:
+        string;
+
+      minFollowers:
+        number;
+
+      maxFollowers:
+        number |
+        null;
+
+      commissionPercent:
+        number;
+
+      aiTokensOneTime:
+        number;
+
+      xrgTokensOneTime:
+        number;
+
+      perks:
+        string[];
+    }>;
+}
+
+export interface AnalyticsDashboard {
+  generatedAt:
+    string;
+
+  user: {
+    tokensUsed:
+      number;
+
+    tokensRemaining:
+      number;
+
+    percentUsed:
+      number;
+
+    xrgBalance:
+      number;
+
+    referralCount:
+      number;
+
+    projectsCount:
+      number;
+
+    daysActiveThisMonth:
+      number;
+  };
+
+  platform: {
+    dau:
+      number;
+
+    mau:
+      number;
+
+    dauMauRatio:
+      number;
+
+    totalUsers:
+      number;
+
+    mrrUsd:
+      number;
+
+    arrUsd:
+      number;
+
+    communityPoolTokens:
+      number;
+
+    marketplaceListings:
+      number;
+
+    totalAiTokensConsumed:
+      number;
+
+    avgTokensPerUser:
+      number;
+  };
+
+  targets: {
+    dauMauTarget:
+      number;
+
+    churnTarget:
+      number;
+
+    mrrGrowthTarget:
+      number;
+
+    tokenUsageTarget:
+      number;
+
+    referralRateTarget:
+      number;
+
+    npsTarget:
+      number;
+  };
+
+  revenue: {
+    planTier:
+      string;
+
+    planPriceUsd:
+      number;
+
+    monthlyValueUsd:
+      number;
+
+    estimatedArrUsd:
+      number;
+  };
+
+  community: {
+    poolBalance:
+      number;
+
+    myReferrals:
+      number;
+
+    marketplaceSales:
+      number;
+
+    marketplacePurchases:
+      number;
+  };
+}
