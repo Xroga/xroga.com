@@ -1,22 +1,18 @@
-import {
-  apiFetch,
-} from '@/lib/api';
+import { apiFetch } from '@/lib/api';
 
 export interface XrogaConnectTool {
   slug: string;
   toolkit: string;
+  name?: string;
   description?: string;
-  inputSchema?: Record<
-    string,
-    unknown
-  >;
-  risk?:
-    | 'read'
-    | 'write'
-    | 'destructive'
-    | 'unknown';
-  requiresConfirmation?:
-    boolean;
+  inputSchema?: Record<string, unknown>;
+  scopes?: string[];
+  tags?: string[];
+  version?: string;
+  deprecated?: boolean;
+  important?: boolean;
+  risk?: 'read' | 'write' | 'destructive' | 'unknown';
+  requiresConfirmation?: boolean;
 }
 
 export interface XrogaConnectToolkit {
@@ -29,17 +25,82 @@ export interface XrogaConnectToolkit {
   noAuth?: boolean;
 }
 
+export interface XrogaConnectSkill {
+  useCase?: string;
+  primaryToolSlugs: string[];
+  relatedToolSlugs: string[];
+  difficulty?: string;
+  recommendedPlanSteps: string[];
+  knownPitfalls: string[];
+}
+
 export interface XrogaConnectSearchResult {
   ok: boolean;
   sessionId: string;
-  mode?:
-    | 'read'
-    | 'action';
-  tools:
-    XrogaConnectTool[];
-  toolkits:
-    XrogaConnectToolkit[];
+  mode?: 'read' | 'action';
+  tools: XrogaConnectTool[];
+  toolkits: XrogaConnectToolkit[];
   guidance?: string;
+  skill?: XrogaConnectSkill;
+}
+
+export interface XrogaConnectCatalogCategory {
+  id: string;
+  name: string;
+}
+
+export interface XrogaConnectCatalogToolkit {
+  slug: string;
+  name: string;
+  type?: string;
+  authSchemes: string[];
+  managedAuthSchemes: string[];
+  noAuth: boolean;
+  authGuideUrl?: string;
+  description?: string;
+  logo?: string;
+  appUrl?: string;
+  categories: XrogaConnectCatalogCategory[];
+  triggersCount: number;
+  toolsCount: number;
+  version?: string;
+  deprecated: boolean;
+}
+
+export interface XrogaConnectCatalogPage {
+  ok: boolean;
+  items: XrogaConnectCatalogToolkit[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
+}
+
+export interface XrogaConnectCatalogToolPage {
+  ok: boolean;
+  items: XrogaConnectTool[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
+}
+
+export interface XrogaConnectTriggerType {
+  slug: string;
+  name: string;
+  description?: string;
+  instructions?: string;
+  type?: string;
+  version?: string;
+}
+
+export interface XrogaConnectTriggerPage {
+  ok: boolean;
+  items: XrogaConnectTriggerType[];
+  nextCursor?: string;
+  totalPages?: number;
+  currentPage?: number;
+  totalItems: number;
 }
 
 export type XrogaConnectAvailabilityMode =
@@ -47,33 +108,98 @@ export type XrogaConnectAvailabilityMode =
   | 'connected_apps'
   | 'read_write';
 
+function queryString(
+  input: Record<string, string | number | undefined>,
+): string {
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(input)) {
+    if (value === undefined || value === '') continue;
+    params.set(key, String(value));
+  }
+
+  const query = params.toString();
+  return query ? `?${query}` : '';
+}
+
 export const xrogaConnect = {
   status: () =>
     apiFetch<{
       configured: boolean;
-      mode:
-        XrogaConnectAvailabilityMode;
-    }>(
-      '/api/integrations/xroga-connect/status',
-    ),
+      mode: XrogaConnectAvailabilityMode;
+    }>('/api/integrations/xroga-connect/status'),
 
   session: () =>
     apiFetch<{
       ok: boolean;
       sessionId: string;
-      mode:
-        XrogaConnectAvailabilityMode;
-    }>(
-      '/api/integrations/xroga-connect/session',
-      {
-        method:
-          'POST',
+      mode: XrogaConnectAvailabilityMode;
+    }>('/api/integrations/xroga-connect/session', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    }),
 
-        body:
-          JSON.stringify(
-            {},
-          ),
-      },
+  catalog: (opts?: {
+    search?: string;
+    category?: string;
+    sortBy?: 'usage' | 'alphabetically';
+    limit?: number;
+    cursor?: string;
+  }) =>
+    apiFetch<XrogaConnectCatalogPage>(
+      `/api/integrations/xroga-connect/catalog${queryString({
+        search: opts?.search,
+        category: opts?.category,
+        sortBy: opts?.sortBy,
+        limit: opts?.limit,
+        cursor: opts?.cursor,
+      })}`,
+    ),
+
+  catalogCategories: () =>
+    apiFetch<{
+      ok: boolean;
+      categories: XrogaConnectCatalogCategory[];
+    }>('/api/integrations/xroga-connect/catalog-categories'),
+
+  catalogToolkit: (toolkit: string) =>
+    apiFetch<{
+      ok: boolean;
+      toolkit: XrogaConnectCatalogToolkit;
+    }>(
+      `/api/integrations/xroga-connect/catalog/${encodeURIComponent(toolkit)}`,
+    ),
+
+  catalogTools: (
+    toolkit: string,
+    opts?: {
+      limit?: number;
+      cursor?: string;
+    },
+  ) =>
+    apiFetch<XrogaConnectCatalogToolPage>(
+      `/api/integrations/xroga-connect/catalog/${encodeURIComponent(
+        toolkit,
+      )}/tools${queryString({
+        limit: opts?.limit,
+        cursor: opts?.cursor,
+      })}`,
+    ),
+
+  catalogTriggers: (
+    toolkit: string,
+    opts?: {
+      limit?: number;
+      cursor?: string;
+    },
+  ) =>
+    apiFetch<XrogaConnectTriggerPage>(
+      `/api/integrations/xroga-connect/catalog/${encodeURIComponent(
+        toolkit,
+      )}/triggers${queryString({
+        limit: opts?.limit,
+        cursor: opts?.cursor,
+      })}`,
     ),
 
   search: (
@@ -83,21 +209,11 @@ export const xrogaConnect = {
     apiFetch<XrogaConnectSearchResult>(
       '/api/integrations/xroga-connect/search',
       {
-        method:
-          'POST',
-
-        body:
-          JSON.stringify(
-            {
-              query,
-
-              ...(sessionId
-                ? {
-                    sessionId,
-                  }
-                : {}),
-            },
-          ),
+        method: 'POST',
+        body: JSON.stringify({
+          query,
+          ...(sessionId ? { sessionId } : {}),
+        }),
       },
     ),
 
@@ -108,21 +224,11 @@ export const xrogaConnect = {
     apiFetch<XrogaConnectSearchResult>(
       '/api/integrations/xroga-connect/action-search',
       {
-        method:
-          'POST',
-
-        body:
-          JSON.stringify(
-            {
-              query,
-
-              ...(sessionId
-                ? {
-                    sessionId,
-                  }
-                : {}),
-            },
-          ),
+        method: 'POST',
+        body: JSON.stringify({
+          query,
+          ...(sessionId ? { sessionId } : {}),
+        }),
       },
     ),
 
@@ -136,28 +242,18 @@ export const xrogaConnect = {
     apiFetch<{
       ok: boolean;
       toolkits: XrogaConnectToolkit[];
-    }>(
-      '/api/integrations/xroga-connect/toolkits',
-      {
-        method:
-          'POST',
-
-        body:
-          JSON.stringify(
-            {
-              sessionId,
-              connectedOnly:
-                opts?.connectedOnly ?? false,
-              ...(opts?.toolkits?.length
-                ? {
-                    toolkits:
-                      opts.toolkits,
-                  }
-                : {}),
-            },
-          ),
-      },
-    ),
+    }>('/api/integrations/xroga-connect/toolkits', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId,
+        connectedOnly: opts?.connectedOnly ?? false,
+        ...(opts?.toolkits?.length
+          ? {
+              toolkits: opts.toolkits,
+            }
+          : {}),
+      }),
+    }),
 
   link: (
     sessionId: string,
@@ -168,19 +264,11 @@ export const xrogaConnect = {
       toolkit: string;
       redirectUrl: string;
       connectedAccountId?: string;
-    }>(
-      '/api/integrations/xroga-connect/link',
-      {
-        method:
-          'POST',
-
-        body:
-          JSON.stringify(
-            {
-              sessionId,
-              toolkit,
-            },
-          ),
-      },
-    ),
+    }>('/api/integrations/xroga-connect/link', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId,
+        toolkit,
+      }),
+    }),
 };
