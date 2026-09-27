@@ -11,23 +11,20 @@ import {
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Check,
+  ChevronDown,
   ChevronRight,
-  KeyRound,
   Loader2,
   Search,
-  Server,
   ShieldCheck,
   Sparkles,
   TriangleAlert,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
-import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
+import { AddPluginModal } from '@/components/integrations/AddPluginModal';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { api } from '@/lib/api';
 import {
-  PLUGIN_CATEGORY_GROUPS,
   PLUGIN_DEFINITIONS,
   authSummary,
   canonicalPluginId,
@@ -48,6 +45,8 @@ import {
   xrogaConnect,
   type XrogaConnectCatalogToolkit,
   type XrogaConnectToolkit,
+  type XrogaMarketplaceSection,
+  type XrogaMarketplaceSectionId,
 } from '@/lib/xrogaConnect';
 
 type NativeSnapshot = {
@@ -62,7 +61,7 @@ const BROWSE_PAGE_SIZE = 120;
 const SEARCH_PAGE_SIZE = 100;
 
 function viewFrom(value: string | null): PluginView {
-  if (value === 'connected' || value === 'developer' || value === 'custom') return value;
+  if (value === 'connected' || value === 'developer') return value;
   return 'discover';
 }
 
@@ -262,6 +261,76 @@ function PluginListGrid({
   );
 }
 
+function MarketplaceShelf({
+  section,
+  plugins,
+  expanded,
+  loading,
+  connectingId,
+  onToggle,
+  onConnect,
+}: {
+  section: XrogaMarketplaceSection;
+  plugins: RuntimePlugin[];
+  expanded: boolean;
+  loading: boolean;
+  connectingId: string | null;
+  onToggle: () => void;
+  onConnect: (plugin: RuntimePlugin) => void;
+}) {
+  return (
+    <section className="scroll-mt-6">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="mb-1 flex min-h-10 w-full items-center justify-between gap-3 rounded-md text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="text-[15px] font-semibold text-[var(--text-primary)] sm:text-base">
+            {section.label}
+          </span>
+          <span className="text-[11px] text-[var(--text-muted)]">
+            {section.totalItems.toLocaleString()}
+          </span>
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-[var(--text-muted)] transition-transform ${expanded ? 'rotate-180' : ''}`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {loading ? (
+        <div className="grid gap-x-10 lg:grid-cols-2">
+          {[0, 1, 2, 3, 4, 5].map((item) => (
+            <div
+              key={item}
+              className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+            />
+          ))}
+        </div>
+      ) : (
+        <PluginListGrid
+          plugins={plugins}
+          connectingId={connectingId}
+          onConnect={onConnect}
+        />
+      )}
+
+      {!expanded && section.totalItems > section.items.length ? (
+        <button
+          type="button"
+          onClick={onToggle}
+          className="mt-1 inline-flex min-h-8 items-center gap-1 text-[11px] font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+        >
+          See {section.label} and more
+          <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
 function PluginGrid({
   plugins,
   connectingId,
@@ -320,7 +389,15 @@ export function PluginMarketplace() {
   const [view, setViewState] = useState<PluginView>(() => viewFrom(searchParams.get('view')));
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const deferredQuery = useDeferredValue(query.trim());
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [addPluginOpen, setAddPluginOpen] = useState(
+    () => searchParams.get('view') === 'custom',
+  );
+  const [marketplaceSections, setMarketplaceSections] = useState<XrogaMarketplaceSection[]>([]);
+  const [expandedSection, setExpandedSection] = useState<XrogaMarketplaceSectionId | null>(null);
+  const [expandedSectionItems, setExpandedSectionItems] = useState<
+    Partial<Record<XrogaMarketplaceSectionId, XrogaConnectCatalogToolkit[]>>
+  >({});
+  const [expandedSectionLoading, setExpandedSectionLoading] = useState<XrogaMarketplaceSectionId | null>(null);
   const [catalogItems, setCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
   const [catalogTotal, setCatalogTotal] = useState<number | null>(null);
   const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
@@ -359,15 +436,8 @@ export function PluginMarketplace() {
   };
 
   const openCustom = () => {
-    setView('custom');
-    window.setTimeout(() => {
-      document.getElementById('custom-plugin-options')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, 0);
+    setAddPluginOpen(true);
   };
-
   const refreshNativeStatus = () => {
     void Promise.allSettled([
       api.github.status(),
@@ -432,22 +502,6 @@ export function PluginMarketplace() {
 
     try {
       const page = await xrogaConnect.catalog({
-        group: (selectedCategory || undefined) as
-          | 'productivity'
-          | 'communication'
-          | 'engineering'
-          | 'ai-automation'
-          | 'sales-crm'
-          | 'commerce'
-          | 'marketing'
-          | 'finance'
-          | 'data-analytics'
-          | 'design-media'
-          | 'support'
-          | 'infrastructure'
-          | 'hr-recruiting'
-          | 'other'
-          | undefined,
         sortBy: 'usage',
         limit: BROWSE_PAGE_SIZE,
         cursor,
@@ -464,7 +518,7 @@ export function PluginMarketplace() {
             ],
       );
       setCatalogTotal(page.totalItems);
-      if (!selectedCategory) setGlobalCatalogTotal(page.totalItems);
+      setGlobalCatalogTotal(page.totalItems);
       setCatalogCursor(page.nextCursor);
       setCatalogError(null);
     } catch (error) {
@@ -492,16 +546,17 @@ export function PluginMarketplace() {
 
         if (!availability.configured) {
           setCatalogLoading(false);
-          setCatalogError('Xroga Connect is not configured for this environment.');
+          setCatalogError('Xroga Apps are not available in this environment.');
           return;
         }
 
-        const [catalogResult, sessionResult] = await Promise.allSettled([
+        const [catalogResult, sessionResult, sectionsResult] = await Promise.allSettled([
           xrogaConnect.catalog({
             sortBy: 'usage',
             limit: BROWSE_PAGE_SIZE,
           }),
           xrogaConnect.session(),
+          xrogaConnect.marketplaceSections(6),
         ]);
 
         if (!active) return;
@@ -516,6 +571,10 @@ export function PluginMarketplace() {
           setCatalogError('The Plugin catalogue is temporarily unavailable.');
         }
         setCatalogLoading(false);
+
+        if (sectionsResult.status === 'fulfilled') {
+          setMarketplaceSections(sectionsResult.value.sections);
+        }
 
         if (sessionResult.status === 'fulfilled') {
           setSessionId(sessionResult.value.sessionId);
@@ -533,20 +592,13 @@ export function PluginMarketplace() {
         if (!active) return;
         setComposioConfigured(false);
         setCatalogLoading(false);
-        setCatalogError('Xroga Connect is temporarily unavailable.');
+        setCatalogError('Xroga Apps are temporarily unavailable.');
       });
 
     return () => {
       active = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (composioConfigured !== true) return;
-    void loadCatalog(true);
-    // selectedCategory is the server-side Xroga category-group filter.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, composioConfigured]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -832,14 +884,12 @@ export function PluginMarketplace() {
       .map(runtimeFromCatalog)
       .filter((plugin) => !nativeIds.has(plugin.id));
 
-    const source =
-      clean.length < 2
-        ? allPlugins
-        : mergePlugins([
-            ...nativePlugins,
-            ...dynamicSearchPlugins,
-            ...dynamicSemanticPlugins,
-          ]);
+    const source = mergePlugins([
+      ...allPlugins,
+      ...nativePlugins,
+      ...dynamicSearchPlugins,
+      ...dynamicSemanticPlugins,
+    ]);
 
     const semantic = semanticToolkitSlugs;
 
@@ -1044,6 +1094,56 @@ export function PluginMarketplace() {
     }
   }
 
+  async function toggleMarketplaceSection(section: XrogaMarketplaceSection) {
+    if (expandedSection === section.id) {
+      setExpandedSection(null);
+      return;
+    }
+
+    setExpandedSection(section.id);
+
+    if (expandedSectionItems[section.id]) return;
+
+    setExpandedSectionLoading(section.id);
+
+    try {
+      const items: XrogaConnectCatalogToolkit[] = [];
+      let cursor: string | undefined;
+      let pages = 0;
+
+      do {
+        const page = await xrogaConnect.marketplaceSection(section.id, {
+          limit: 250,
+          ...(cursor ? { cursor } : {}),
+        });
+
+        for (const item of page.items) {
+          if (!items.some((existing) => existing.slug === item.slug)) {
+            items.push(item);
+          }
+        }
+
+        cursor = page.nextCursor;
+        pages += 1;
+      } while (cursor && pages < 12);
+
+      setExpandedSectionItems((current) => ({
+        ...current,
+        [section.id]: items,
+      }));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : `Could not load ${section.label} Plugins`,
+      );
+    } finally {
+      setExpandedSectionLoading((current) =>
+        current === section.id ? null : current,
+      );
+    }
+  }
+
   async function handleConnect(plugin: RuntimePlugin) {
     if (connectingId || plugin.noAuth) return;
     const connectionKey = plugin.toolkit || plugin.id;
@@ -1141,7 +1241,16 @@ export function PluginMarketplace() {
           </div>
 
           {semanticError ? (
-            <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+            <AddPluginModal
+        open={addPluginOpen}
+        onClose={() => setAddPluginOpen(false)}
+        onSearch={(value) => {
+          setQuery(value);
+          setView('discover');
+        }}
+      />
+
+      <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
               <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
               <p className="text-xs leading-5 text-[var(--text-secondary)]">
                 Capability search is temporarily unavailable. Brand/catalogue search is still working.
@@ -1178,7 +1287,7 @@ export function PluginMarketplace() {
             className="flex gap-1 overflow-x-auto border-b border-[var(--border-subtle)] pb-px scrollbar-hide"
             aria-label="Plugin views"
           >
-            {(['discover', 'connected', 'developer', 'custom'] as PluginView[]).map((item) => (
+            {(['discover', 'connected', 'developer'] as PluginView[]).map((item) => (
               <button
                 key={item}
                 type="button"
@@ -1266,106 +1375,74 @@ export function PluginMarketplace() {
                 </section>
               ) : null}
 
-              <section>
-                <div className="mb-3">
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Categories</h2>
-                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                    Browse apps by clear Xroga categories.
+              <section className="space-y-2">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Browse by category</h2>
+                  <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
+                    A few useful apps are shown first. Open any category to reveal the full live category, then close it again when you are done.
                   </p>
-                </div>
-                <div
-                  className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
-                  role="group"
-                  aria-label="Plugin categories"
-                >
-                  {PLUGIN_CATEGORY_GROUPS.map((item) => (
-                    <button
-                      key={item.id || 'all'}
-                      type="button"
-                      onClick={() => {
-                        if (selectedCategory === item.id) return;
-                        setSelectedCategory(item.id);
-                        setCatalogLoading(true);
-                      }}
-                      aria-pressed={selectedCategory === item.id}
-                      className={
-                        selectedCategory === item.id
-                          ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)]'
-                          : 'shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
-                      }
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                      {selectedCategory
-                        ? PLUGIN_CATEGORY_GROUPS.find((item) => item.id === selectedCategory)?.label || 'Plugins'
-                        : 'All Plugins'}
-                    </h2>
-                    <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                      {catalogTotal !== null
-                        ? `${catalogTotal.toLocaleString()} apps available in this view`
-                        : 'Live Xroga Apps catalogue'}
-                    </p>
-                  </div>
                 </div>
 
                 {catalogError ? (
-                  <div className="mb-3 flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3" role="status">
+                  <div className="mb-4 flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3" role="status">
                     <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
                     <div>
                       <p className="text-xs leading-5 text-[var(--text-secondary)]">{catalogError}</p>
                       <button
                         type="button"
-                        onClick={() => void loadCatalog(true)}
+                        onClick={() => {
+                          void loadCatalog(true);
+                          void xrogaConnect
+                            .marketplaceSections(6)
+                            .then((result) => setMarketplaceSections(result.sections))
+                            .catch(() => undefined);
+                        }}
                         className="mt-2 text-xs font-semibold text-[var(--accent)] hover:underline"
                       >
-                        Retry catalogue
+                        Retry Plugins
                       </button>
                     </div>
                   </div>
                 ) : null}
 
-                {catalogLoading && !browsePlugins.length ? (
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {[0, 1, 2, 3, 4, 5].map((item) => (
-                      <div key={item} className="h-40 animate-pulse rounded-token-lg bg-[var(--surface-inset)]" />
+                {marketplaceSections.length ? (
+                  <div className="space-y-8">
+                    {marketplaceSections.map((section) => {
+                      const isExpanded = expandedSection === section.id;
+                      const catalog =
+                        isExpanded && expandedSectionItems[section.id]
+                          ? expandedSectionItems[section.id]!
+                          : section.items;
+                      const plugins = catalog.map(runtimeFromCatalog);
+
+                      return (
+                        <MarketplaceShelf
+                          key={section.id}
+                          section={section}
+                          plugins={plugins}
+                          expanded={isExpanded}
+                          loading={expandedSectionLoading === section.id}
+                          connectingId={connectingId}
+                          onToggle={() => void toggleMarketplaceSection(section)}
+                          onConnect={handleConnect}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : catalogLoading ? (
+                  <div className="space-y-7">
+                    {[0, 1, 2].map((section) => (
+                      <div key={section}>
+                        <div className="mb-2 h-5 w-36 animate-pulse rounded bg-[var(--surface-inset)]" />
+                        <div className="grid gap-x-10 lg:grid-cols-2">
+                          {[0, 1, 2, 3, 4, 5].map((item) => (
+                            <div key={item} className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35" />
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                ) : browsePlugins.length ? (
-                  <>
-                    <PluginGrid
-                      plugins={browsePlugins}
-                      connectingId={connectingId}
-                      onConnect={handleConnect}
-                    />
-                    {catalogCursor ? (
-                      <div className="mt-4 flex justify-center">
-                        <button
-                          type="button"
-                          disabled={catalogLoadingMore}
-                          onClick={() => void loadCatalog(false, catalogCursor)}
-                          className="inline-flex min-h-10 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--border-strong)] disabled:opacity-50"
-                        >
-                          {catalogLoadingMore ? (
-                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                          ) : null}
-                          Show more Plugins
-                        </button>
-                      </div>
-                    ) : null}
-                  </>
-                ) : (
-                  <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] p-5 text-sm text-[var(--text-secondary)]">
-                    No Plugins are available for this category right now.
-                  </div>
-                )}
+                ) : null}
               </section>
             </div>
           ) : null}
@@ -1474,54 +1551,6 @@ export function PluginMarketplace() {
             </section>
           ) : null}
 
-          {view === 'custom' ? (
-            <section id="custom-plugin-options" className="space-y-6 scroll-mt-8">
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Custom Plugins</h2>
-                <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-                  Use Xroga’s real credential and webhook support for services outside the built-in catalogue.
-                </p>
-              </div>
-
-              <div className="grid gap-3 md:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => setView('discover')}
-                  className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 text-left hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-                >
-                  <Search className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                  <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">Search marketplace</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Search the complete Xroga Apps catalogue.
-                  </p>
-                </button>
-
-                <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-                  <Server className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
-                  <div className="mt-3 flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">Custom MCP server</p>
-                    <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
-                      Unavailable
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Xroga does not fake persistent custom MCP storage while that backend surface is unavailable.
-                  </p>
-                </div>
-
-                <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-                  <KeyRound className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                  <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">API credentials & webhooks</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Available through Xroga’s existing encrypted credential vault.
-                  </p>
-                </div>
-              </div>
-
-              <ConnectedServicesSection />
-              <CustomCredentialsSection />
-            </section>
-          ) : null}
         </>
       )}
 
