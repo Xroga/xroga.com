@@ -98,3 +98,16 @@ test('Composio runtime remains server-authoritative and does not preload every t
   assert.match(composio, /classifyComposioToolRisk/);
   assert.match(composio, /COMPOSIO_ACTION_CONFIRMATION_REQUIRED/);
 });
+
+test('Xroga AI runtime still routes connected-app reads and actions through Composio', () => {
+  const phase1 = source('backend/src/routes/phase1.ts');
+  const businessRead = source('backend/src/services/integrations/businessRead.ts');
+  const businessAction = source('backend/src/services/integrations/businessAction.ts');
+
+  assert.match(phase1, /readBusinessData/);
+  assert.match(phase1, /prepareBusinessAction/);
+  assert.match(businessRead, /searchComposioTools/);
+  assert.match(businessRead, /executeComposioReadTool/);
+  assert.match(businessAction, /searchComposioActionTools/);
+  assert.match(businessAction, /executeComposioActionTool/);
+});
