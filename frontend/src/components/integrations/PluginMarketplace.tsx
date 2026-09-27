@@ -1674,7 +1674,7 @@ export function PluginMarketplace() {
                 ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, add a remote MCP server, or bring your own credential.`
                 : 'Connect an Xroga App, add a remote MCP server, or bring your own credential.'
         }
-        className="max-w-[460px]"
+        className="max-w-[440px]"
       >
         {addPluginMode === 'mcp' ? (
           <CustomMcpCreateForm
