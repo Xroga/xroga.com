@@ -542,9 +542,9 @@ export function PluginMarketplace() {
   }, []);
 
   useEffect(() => {
-    if (selectedCategory === '' || composioConfigured !== true) return;
+    if (composioConfigured !== true) return;
     void loadCatalog(true);
-    // selectedCategory is the server-side category filter.
+    // selectedCategory is the server-side Xroga category-group filter.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, composioConfigured]);
 
