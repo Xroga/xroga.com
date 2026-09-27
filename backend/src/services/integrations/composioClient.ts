@@ -528,7 +528,7 @@ function cleanToolSlug(toolSlug: string): string {
 
   if (clean.toUpperCase().startsWith('COMPOSIO_')) {
     throw new ComposioClientError(
-      'Composio meta tools are not available through Xroga Connect.',
+      'Xroga internal integration tools are not exposed through Plugins.',
       {
         status: 403,
         code: 'COMPOSIO_META_TOOL_BLOCKED',
@@ -979,7 +979,7 @@ async function createComposioSession(
 
   if (!session.session_id || !session.session_id.startsWith('trs_')) {
     throw new ComposioClientError(
-      'Composio did not return a valid session.',
+      'Xroga Apps could not start a valid connection session.',
       {
         status: 502,
         code: 'COMPOSIO_SESSION_MISSING',
@@ -1479,7 +1479,7 @@ export async function getComposioCatalogToolkit(
     const toolkit = mapCatalogToolkit(response);
 
     if (!toolkit) {
-      throw new ComposioClientError('Composio toolkit metadata was not found.', {
+      throw new ComposioClientError('Plugin metadata was not found.', {
         status: 404,
         code: 'COMPOSIO_TOOLKIT_NOT_FOUND',
       });
@@ -1638,7 +1638,7 @@ export async function getComposioToolDetails(
 
   if (!toolkit) {
     throw new ComposioClientError(
-      'Composio did not return tool metadata.',
+      'The app provider did not return action metadata.',
       {
         status: 502,
         code: 'COMPOSIO_TOOL_METADATA_MISSING',
