@@ -236,14 +236,18 @@ export function ChromePublishPanel({
   project,
   onStartWorkspace,
   onRefresh,
+  githubConnected: githubConnectedOverride,
 }: {
   status?: PublishStatus['chrome'];
   project?: PublishProject | null;
   onStartWorkspace: (prompt: string) => void;
   onRefresh: () => void;
+  githubConnected?: boolean;
 }) {
   const githubConnected = Boolean(
-    status?.githubConnected ?? status?.checklist.find((item) => item.id === 'github')?.done,
+    status?.githubConnected ??
+      status?.checklist.find((item) => item.id === 'github')?.done ??
+      githubConnectedOverride,
   );
   const cwsConnected = Boolean(status?.cwsConnected);
   const projectLabel = project
