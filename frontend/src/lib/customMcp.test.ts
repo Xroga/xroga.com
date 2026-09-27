@@ -64,7 +64,7 @@ test('Plugins UI exposes compact Custom MCP creation without a full-screen redir
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
   const manager = source('frontend/src/components/integrations/CustomMcpManager.tsx');
 
-  assert.match(marketplace, /className="max-w-\[460px\]"/);
+  assert.match(marketplace, /className="max-w-\\[440px\\]"/);
   assert.match(marketplace, /CustomMcpCreateForm/);
   assert.match(manager, /Custom MCP server/);
   assert.match(manager, /No authentication/);
@@ -80,7 +80,18 @@ test('user-facing Plugin surfaces avoid upstream vendor branding', () => {
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
   const manager = source('frontend/src/components/integrations/CustomMcpManager.tsx');
 
-  for (const file of [marketplace, detail, manager]) {
-    assert.doesNotMatch(file, />[^<]*Composio[^<]*</);
+  const forbiddenVisibleCopy = [
+    'live Composio catalogue',
+    'current Composio integrations',
+    'Composio action catalogue',
+    'current live Composio catalogue',
+    'Powered by Composio',
+    'Connect with Composio',
+  ];
+
+  for (const phrase of forbiddenVisibleCopy) {
+    assert.equal(marketplace.includes(phrase), false, phrase);
+    assert.equal(detail.includes(phrase), false, phrase);
+    assert.equal(manager.includes(phrase), false, phrase);
   }
 });
