@@ -363,7 +363,7 @@ test('full prompt expands the existing prompt bubble instead of rendering a dupl
 });
 
 
-test('connection management reads real provider status and starts provider authorization', () => {
+test('connection management reads real provider status and routes full management to Plugins', () => {
   for (
     const provider of [
       'github',
@@ -384,23 +384,21 @@ test('connection management reads real provider status and starts provider autho
         `api\\.${provider}\\.status\\(\\)`,
       ),
     );
-
-    assert.match(
-      INTEGRATIONS,
-      new RegExp(
-        `api\\.${provider}\\.oauthUrl\\(\\)`,
-      ),
-    );
   }
 
-  assert.match(
-    INTEGRATIONS,
-    /isConnected\s*\?\s*'Manage'\s*:\s*'Connect'/,
+  assert.equal(
+    INTEGRATIONS.includes('/dashboard/integrations/\${plugin.id}'),
+    true,
   );
 
   assert.match(
     INTEGRATIONS,
-    /CheckCircle2/,
+    /Manage Plugins/,
+  );
+
+  assert.match(
+    INTEGRATIONS,
+    /xrogaConnect\.search/,
   );
 });
 

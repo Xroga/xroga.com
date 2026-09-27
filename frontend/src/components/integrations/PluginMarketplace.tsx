@@ -8,20 +8,37 @@ import {
   useRef,
   useState,
 } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Check,
   ChevronRight,
   ExternalLink,
+  KeyRound,
   Loader2,
   Search,
+  Server,
   ShieldCheck,
+  TriangleAlert,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
+import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { api } from '@/lib/api';
+import {
+  CATEGORY_ORDER,
+  PLUGIN_DEFINITIONS,
+  POPULAR_HYDRATION_QUERY,
+  canonicalPluginId,
+  displayToolkitName,
+  genericPluginDefinition,
+  inferCategory,
+  type ConnectionState,
+  type NativePluginId,
+  type PluginView,
+  type RuntimePlugin,
+} from '@/lib/pluginCatalog';
 import {
   clearOAuthResult,
   subscribeOAuthResults,
@@ -32,260 +49,20 @@ import {
   type XrogaConnectTool,
 } from '@/lib/xrogaConnect';
 
-type PluginView =
-  | 'discover'
-  | 'connected'
-  | 'developer'
-  | 'custom';
-
-type NativePluginId =
-  | 'github'
-  | 'vercel'
-  | 'supabase';
-
-type ConnectionState =
-  | 'checking'
-  | 'connected'
-  | 'disconnected'
-  | 'error';
-
-type PluginSource =
-  | 'native'
-  | 'composio';
-
-type PluginDefinition = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  source: PluginSource;
-  query?: string;
-  popular?: boolean;
-  developer?: boolean;
-  keywords?: string[];
+type NativeSnapshot = {
+  state: ConnectionState;
+  accountLabel?: string;
+  statusMessage?: string;
 };
 
-type RuntimePlugin = PluginDefinition & {
-  toolkit?: string;
-  logo?: string;
-  connected: boolean;
-  connectionState?: ConnectionState;
-  capabilityCount?: number;
-};
+type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
-const CATEGORY_ORDER = [
-  'All',
-  'Productivity',
-  'Communication',
-  'Engineering',
-  'Sales & CRM',
-  'Commerce',
-  'Marketing',
-  'Finance',
-  'Data & Analytics',
-  'Infrastructure',
-] as const;
-
-const PLUGINS: PluginDefinition[] = [
-  {
-    id: 'gmail',
-    name: 'Gmail',
-    description: 'Search, read, draft and manage email.',
-    category: 'Productivity',
-    source: 'composio',
-    popular: true,
-    query: 'find Gmail email and message capabilities',
-    keywords: ['email', 'mail', 'inbox', 'reply', 'attachments'],
-  },
-  {
-    id: 'google-calendar',
-    name: 'Google Calendar',
-    description: 'Find, create and manage calendar events.',
-    category: 'Productivity',
-    source: 'composio',
-    popular: true,
-    query: 'find Google Calendar event capabilities',
-    keywords: ['calendar', 'schedule', 'meeting', 'events'],
-  },
-  {
-    id: 'google-drive',
-    name: 'Google Drive',
-    description: 'Find and work with files stored in Google Drive.',
-    category: 'Productivity',
-    source: 'composio',
-    popular: true,
-    query: 'find Google Drive file capabilities',
-    keywords: ['files', 'documents', 'storage', 'upload'],
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Work with messages, channels and team conversations.',
-    category: 'Communication',
-    source: 'composio',
-    popular: true,
-    query: 'find Slack message and channel capabilities',
-    keywords: ['messages', 'channels', 'team', 'chat'],
-  },
-  {
-    id: 'github',
-    name: 'GitHub',
-    description: 'Work with repositories, code, issues and pull requests.',
-    category: 'Engineering',
-    source: 'native',
-    popular: true,
-    developer: true,
-    keywords: ['repository', 'code', 'issue', 'pull request', 'git'],
-  },
-  {
-    id: 'notion',
-    name: 'Notion',
-    description: 'Search and manage pages, databases and workspace content.',
-    category: 'Productivity',
-    source: 'composio',
-    popular: true,
-    query: 'find Notion page and database capabilities',
-    keywords: ['pages', 'database', 'notes', 'documents'],
-  },
-  {
-    id: 'stripe',
-    name: 'Stripe',
-    description: 'Work with customers, invoices, billing and payments.',
-    category: 'Commerce',
-    source: 'composio',
-    popular: true,
-    query: 'find Stripe payment invoice and customer capabilities',
-    keywords: ['payments', 'invoice', 'billing', 'customer', 'subscription'],
-  },
-  {
-    id: 'shopify',
-    name: 'Shopify',
-    description: 'Work with store orders, products and customers.',
-    category: 'Commerce',
-    source: 'composio',
-    popular: true,
-    query: 'find Shopify order product and store capabilities',
-    keywords: ['orders', 'store', 'products', 'inventory', 'commerce'],
-  },
-  {
-    id: 'hubspot',
-    name: 'HubSpot',
-    description: 'Work with contacts, companies, deals and CRM activity.',
-    category: 'Sales & CRM',
-    source: 'composio',
-    popular: true,
-    query: 'find HubSpot contact company and deal capabilities',
-    keywords: ['crm', 'sales', 'contacts', 'deals', 'customers'],
-  },
-  {
-    id: 'airtable',
-    name: 'Airtable',
-    description: 'Find, create and update records in Airtable bases.',
-    category: 'Data & Analytics',
-    source: 'composio',
-    query: 'find Airtable record and base capabilities',
-    keywords: ['records', 'database', 'table', 'data'],
-  },
-  {
-    id: 'quickbooks',
-    name: 'QuickBooks',
-    description: 'Work with invoices, customers and accounting records.',
-    category: 'Finance',
-    source: 'composio',
-    query: 'find QuickBooks invoice customer and accounting capabilities',
-    keywords: ['invoice', 'accounting', 'customer', 'payment', 'finance'],
-  },
-  {
-    id: 'linear',
-    name: 'Linear',
-    description: 'Create, find and manage issues and projects.',
-    category: 'Engineering',
-    source: 'composio',
-    popular: true,
-    query: 'find Linear issue and project capabilities',
-    keywords: ['issues', 'projects', 'engineering', 'tasks'],
-  },
-  {
-    id: 'sentry',
-    name: 'Sentry',
-    description: 'Inspect errors, issues and application monitoring data.',
-    category: 'Engineering',
-    source: 'composio',
-    query: 'find Sentry error issue and monitoring capabilities',
-    keywords: ['errors', 'monitoring', 'issues', 'debugging'],
-  },
-  {
-    id: 'vercel',
-    name: 'Vercel',
-    description: 'Connect deployment infrastructure for web projects.',
-    category: 'Infrastructure',
-    source: 'native',
-    developer: true,
-    keywords: ['deploy', 'hosting', 'web', 'production'],
-  },
-  {
-    id: 'supabase',
-    name: 'Supabase',
-    description: 'Connect database, authentication, storage and realtime.',
-    category: 'Infrastructure',
-    source: 'native',
-    developer: true,
-    keywords: ['database', 'auth', 'storage', 'backend', 'realtime'],
-  },
-];
-
-const POPULAR_HYDRATION_QUERY =
-  'find capabilities for Gmail, Google Calendar, Google Drive, Slack, Stripe, Shopify, HubSpot, Notion, Airtable, QuickBooks, Linear, and Sentry';
-
-function canonicalPluginId(value: string): string {
-  const compact = value.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-  if (compact.includes('gmail')) return 'gmail';
-  if (compact.includes('googlecalendar') || compact === 'gcal') return 'google-calendar';
-  if (compact.includes('googledrive')) return 'google-drive';
-  if (compact.includes('slack')) return 'slack';
-  if (compact.includes('stripe')) return 'stripe';
-  if (compact.includes('shopify')) return 'shopify';
-  if (compact.includes('hubspot')) return 'hubspot';
-  if (compact.includes('notion')) return 'notion';
-  if (compact.includes('airtable')) return 'airtable';
-  if (compact.includes('quickbooks')) return 'quickbooks';
-  if (compact.includes('linear')) return 'linear';
-  if (compact.includes('sentry')) return 'sentry';
-  if (compact.includes('github')) return 'github';
-  if (compact.includes('vercel')) return 'vercel';
-  if (compact.includes('supabase')) return 'supabase';
-
-  return compact || value.toLowerCase();
+function viewFrom(value: string | null): PluginView {
+  if (value === 'connected' || value === 'developer' || value === 'custom') return value;
+  return 'discover';
 }
 
-function displayToolkitName(toolkit: string): string {
-  return toolkit
-    .split(/[_-]/g)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
-}
-
-function inferCategory(name: string, description = ''): string {
-  const haystack = `${name} ${description}`.toLowerCase();
-
-  if (/mail|calendar|drive|document|note/.test(haystack)) return 'Productivity';
-  if (/slack|discord|message|chat|communication/.test(haystack)) return 'Communication';
-  if (/github|gitlab|code|issue|monitor|sentry|developer/.test(haystack)) return 'Engineering';
-  if (/crm|sales|lead|deal|hubspot/.test(haystack)) return 'Sales & CRM';
-  if (/shop|payment|stripe|order|commerce/.test(haystack)) return 'Commerce';
-  if (/account|invoice|finance|quickbooks|xero/.test(haystack)) return 'Finance';
-  if (/analytics|data|table|airtable|database/.test(haystack)) return 'Data & Analytics';
-
-  return 'Other';
-}
-
-function PluginMark({
-  plugin,
-}: {
-  plugin: RuntimePlugin;
-}) {
+function PluginMark({ plugin }: { plugin: RuntimePlugin }) {
   const [failed, setFailed] = useState(false);
 
   if (plugin.logo && !failed) {
@@ -322,11 +99,17 @@ function PluginCard({
   onConnect: (plugin: RuntimePlugin) => void;
 }) {
   const checking = plugin.connectionState === 'checking';
+  const needsAttention =
+    plugin.connectionState === 'needs_attention' || plugin.connectionState === 'error';
 
   return (
-    <article className="group flex min-h-[142px] flex-col rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-subtle motion-reduce:transform-none">
+    <article className="group flex min-h-[156px] flex-col rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] hover:shadow-subtle motion-reduce:transform-none">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
+        <Link
+          href={`/dashboard/integrations/${encodeURIComponent(plugin.id)}`}
+          className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          aria-label={`View ${plugin.name} Plugin details`}
+        >
           <PluginMark plugin={plugin} />
           <div className="min-w-0">
             <h3 className="truncate text-[15px] font-semibold text-[var(--text-primary)]">
@@ -334,13 +117,21 @@ function PluginCard({
             </h3>
             <p className="mt-0.5 text-xs text-[var(--text-muted)]">{plugin.category}</p>
           </div>
-        </div>
+        </Link>
 
-        {plugin.connected ? (
+        {plugin.connected || plugin.noAuth ? (
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)]">
             <Check className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
-            Connected
+            {plugin.noAuth ? 'Ready' : 'Connected'}
           </span>
+        ) : needsAttention ? (
+          <Link
+            href={`/dashboard/integrations/${encodeURIComponent(plugin.id)}`}
+            className="inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-2.5 text-[11px] font-semibold text-[var(--text-primary)]"
+          >
+            <TriangleAlert className="h-3.5 w-3.5" aria-hidden="true" />
+            Review
+          </Link>
         ) : (
           <button
             type="button"
@@ -359,28 +150,38 @@ function PluginCard({
         )}
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm leading-5 text-[var(--text-secondary)]">
+      <Link
+        href={`/dashboard/integrations/${encodeURIComponent(plugin.id)}`}
+        className="mt-3 line-clamp-2 rounded-md text-sm leading-5 text-[var(--text-secondary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
         {plugin.description}
-      </p>
+      </Link>
 
       <div className="mt-auto flex items-end justify-between gap-2 pt-3">
-        <span className="text-[11px] text-[var(--text-muted)]">
-          {plugin.capabilityCount
-            ? `${plugin.capabilityCount} ${plugin.capabilityCount === 1 ? 'capability' : 'capabilities'}`
-            : plugin.source === 'native'
-              ? 'Xroga native'
-              : 'Xroga Connect'}
-        </span>
+        <div className="min-w-0">
+          {plugin.accountLabel ? (
+            <p className="truncate text-[11px] font-medium text-[var(--text-primary)]">
+              {plugin.accountLabel}
+            </p>
+          ) : null}
+          <p className="text-[11px] text-[var(--text-muted)]">
+            {plugin.capabilityCount
+              ? `${plugin.capabilityCount} ${plugin.capabilityCount === 1 ? 'capability' : 'capabilities'}`
+              : plugin.source === 'native'
+                ? 'Xroga native'
+                : plugin.noAuth
+                  ? 'No authorization required'
+                  : 'Xroga Connect'}
+          </p>
+        </div>
 
-        {plugin.developer ? (
-          <Link
-            href="/dashboard/publish"
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline"
-          >
-            Publish
-            <ChevronRight className="h-3 w-3" aria-hidden="true" />
-          </Link>
-        ) : null}
+        <Link
+          href={`/dashboard/integrations/${encodeURIComponent(plugin.id)}`}
+          className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline"
+        >
+          {plugin.connected ? 'Manage' : 'View details'}
+          <ChevronRight className="h-3 w-3" aria-hidden="true" />
+        </Link>
       </div>
     </article>
   );
@@ -410,32 +211,55 @@ function PluginGrid({
 }
 
 export function PluginMarketplace() {
-  const [view, setView] = useState<PluginView>('discover');
-  const [query, setQuery] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [view, setViewState] = useState<PluginView>(() => viewFrom(searchParams.get('view')));
+  const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const deferredQuery = useDeferredValue(query.trim());
   const [category, setCategory] = useState('All');
   const [visibleCount, setVisibleCount] = useState(12);
-  const [nativeState, setNativeState] = useState<Record<NativePluginId, ConnectionState>>({
-    github: 'checking',
-    vercel: 'checking',
-    supabase: 'checking',
+  const [nativeState, setNativeState] = useState<Record<NativePluginId, NativeSnapshot>>({
+    github: { state: 'checking' },
+    vercel: { state: 'checking' },
+    supabase: { state: 'checking' },
   });
   const [composioConfigured, setComposioConfigured] = useState<boolean | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [toolkitMap, setToolkitMap] = useState<Record<string, XrogaConnectToolkit>>({});
-  const [semanticToolkits, setSemanticToolkits] = useState<XrogaConnectToolkit[]>([]);
-  const [semanticTools, setSemanticTools] = useState<XrogaConnectTool[]>([]);
+  const [toolCountByToolkit, setToolCountByToolkit] = useState<Record<string, number>>({});
   const [semanticLoading, setSemanticLoading] = useState(false);
   const [semanticError, setSemanticError] = useState(false);
   const [connectingId, setConnectingId] = useState<string | null>(null);
   const [connectedOverrides, setConnectedOverrides] = useState<Record<string, boolean>>({});
+  const [connectedQuery, setConnectedQuery] = useState('');
+  const [connectedFilter, setConnectedFilter] = useState<ConnectedFilter>('all');
   const requestSeq = useRef(0);
+
+  function setView(next: PluginView) {
+    setViewState(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === 'discover') params.delete('view');
+    else params.set('view', next);
+    const suffix = params.toString();
+    router.replace(suffix ? `${pathname}?${suffix}` : pathname, { scroll: false });
+  }
+
+  function openCustom() {
+    setView('custom');
+    window.setTimeout(() => {
+      document.getElementById('custom-plugin-options')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 0);
+  }
 
   const refreshNativeStatus = () => {
     setNativeState((current) => ({
-      github: current.github === 'connected' ? 'connected' : 'checking',
-      vercel: current.vercel === 'connected' ? 'connected' : 'checking',
-      supabase: current.supabase === 'connected' ? 'connected' : 'checking',
+      github: current.github.state === 'connected' ? current.github : { state: 'checking' },
+      vercel: current.vercel.state === 'connected' ? current.vercel : { state: 'checking' },
+      supabase: current.supabase.state === 'connected' ? current.supabase : { state: 'checking' },
     }));
 
     void Promise.allSettled([
@@ -443,26 +267,39 @@ export function PluginMarketplace() {
       api.vercel.status(),
       api.supabase.status(),
     ]).then((results) => {
-      setNativeState({
-        github:
-          results[0].status === 'fulfilled'
-            ? results[0].value.connected
-              ? 'connected'
-              : 'disconnected'
-            : 'error',
-        vercel:
-          results[1].status === 'fulfilled'
-            ? results[1].value.connected
-              ? 'connected'
-              : 'disconnected'
-            : 'error',
-        supabase:
-          results[2].status === 'fulfilled'
-            ? results[2].value.connected
-              ? 'connected'
-              : 'disconnected'
-            : 'error',
-      });
+      const github =
+        results[0].status === 'fulfilled'
+          ? {
+              state: results[0].value.connected ? ('connected' as const) : ('disconnected' as const),
+              accountLabel:
+                results[0].value.connected && results[0].value.username
+                  ? `@${results[0].value.username}`
+                  : undefined,
+            }
+          : { state: 'error' as const, statusMessage: 'GitHub status unavailable' };
+
+      const vercel =
+        results[1].status === 'fulfilled'
+          ? {
+              state: results[1].value.connected
+                ? results[1].value.tokenValid === false
+                  ? ('needs_attention' as const)
+                  : ('connected' as const)
+                : ('disconnected' as const),
+              accountLabel: results[1].value.username || undefined,
+              statusMessage: results[1].value.warning || results[1].value.error,
+            }
+          : { state: 'error' as const, statusMessage: 'Vercel status unavailable' };
+
+      const supabase =
+        results[2].status === 'fulfilled'
+          ? {
+              state: results[2].value.connected ? ('connected' as const) : ('disconnected' as const),
+              statusMessage: results[2].value.message,
+            }
+          : { state: 'error' as const, statusMessage: 'Supabase status unavailable' };
+
+      setNativeState({ github, vercel, supabase });
     });
   };
 
@@ -481,19 +318,30 @@ export function PluginMarketplace() {
       return next;
     });
 
+    setToolCountByToolkit((current) => {
+      const next = { ...current };
+      const counts: Record<string, number> = {};
+
+      for (const tool of tools) {
+        counts[tool.toolkit] = (counts[tool.toolkit] ?? 0) + 1;
+      }
+
+      for (const [toolkit, count] of Object.entries(counts)) {
+        next[toolkit] = count;
+      }
+
+      return next;
+    });
+
     const connected: Record<string, boolean> = {};
     for (const item of toolkits) {
-      if (item.connected) {
+      if (item.connected || item.noAuth) {
         connected[canonicalPluginId(`${item.name ?? ''} ${item.toolkit}`)] = true;
       }
     }
 
     if (Object.keys(connected).length) {
       setConnectedOverrides((current) => ({ ...current, ...connected }));
-    }
-
-    if (tools.length) {
-      setSemanticTools(tools);
     }
   }
 
@@ -507,7 +355,6 @@ export function PluginMarketplace() {
       .then(async (status) => {
         if (!active) return;
         setComposioConfigured(status.configured);
-
         if (!status.configured) return;
 
         try {
@@ -515,8 +362,18 @@ export function PluginMarketplace() {
           if (!active) return;
           setSessionId(result.sessionId);
           absorbSearchResult(result.toolkits ?? [], result.tools ?? []);
+
+          try {
+            const connected = await xrogaConnect.toolkits(result.sessionId, {
+              connectedOnly: true,
+            });
+            if (!active) return;
+            absorbSearchResult(connected.toolkits ?? [], []);
+          } catch {
+            // Search-derived connection state remains available if toolkit listing fails.
+          }
         } catch {
-          // Catalogue remains useful from curated local metadata.
+          // Curated local metadata remains usable when live discovery is unavailable.
         }
       })
       .catch(() => {
@@ -558,13 +415,21 @@ export function PluginMarketplace() {
 
     if (github || vercel || supabase || composio) {
       refreshNativeStatus();
+
+      const returnPath = sessionStorage.getItem('xroga-plugin-return');
+      if (returnPath) {
+        sessionStorage.removeItem('xroga-plugin-return');
+        router.replace(returnPath);
+        return;
+      }
+
       const url = new URL(window.location.href);
       ['github', 'vercel', 'supabase', 'composio', 'message', 'username', 'pick'].forEach((key) =>
         url.searchParams.delete(key),
       );
       window.history.replaceState({}, '', url.pathname + url.search);
     }
-  }, []);
+  }, [router]);
 
   useEffect(
     () =>
@@ -589,7 +454,6 @@ export function PluginMarketplace() {
     const clean = deferredQuery;
 
     if (!composioConfigured || clean.length < 2) {
-      setSemanticToolkits([]);
       setSemanticError(false);
       return;
     }
@@ -604,8 +468,6 @@ export function PluginMarketplace() {
         .then((result) => {
           if (requestSeq.current !== seq) return;
           setSessionId(result.sessionId);
-          setSemanticToolkits(result.toolkits ?? []);
-          setSemanticTools(result.tools ?? []);
           absorbSearchResult(result.toolkits ?? [], result.tools ?? []);
         })
         .catch(() => {
@@ -618,60 +480,74 @@ export function PluginMarketplace() {
     }, 450);
 
     return () => window.clearTimeout(timer);
+  // sessionId is continuity state returned by search, not a reason to re-run the query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deferredQuery, composioConfigured]);
 
-  const basePlugins = useMemo<RuntimePlugin[]>(() => {
-    const toolCount = new Map<string, number>();
+  const basePlugins = useMemo<RuntimePlugin[]>(
+    () =>
+      PLUGIN_DEFINITIONS.map((plugin) => {
+        const toolkit = toolkitMap[plugin.id];
+        const native = plugin.source === 'native'
+          ? nativeState[plugin.id as NativePluginId]
+          : undefined;
 
-    for (const tool of semanticTools) {
-      toolCount.set(tool.toolkit, (toolCount.get(tool.toolkit) ?? 0) + 1);
-    }
-
-    return PLUGINS.map((plugin) => {
-      const toolkit = toolkitMap[plugin.id];
-      const native = plugin.source === 'native' ? nativeState[plugin.id as NativePluginId] : undefined;
-
-      return {
-        ...plugin,
-        toolkit: toolkit?.toolkit,
-        logo: toolkit?.logo,
-        connected:
-          plugin.source === 'native'
-            ? native === 'connected'
-            : Boolean(connectedOverrides[plugin.id] || toolkit?.connected),
-        connectionState: native,
-        capabilityCount: toolkit ? toolCount.get(toolkit.toolkit) : undefined,
-      };
-    });
-  }, [toolkitMap, semanticTools, nativeState, connectedOverrides]);
+        return {
+          ...plugin,
+          toolkit: toolkit?.toolkit,
+          logo: toolkit?.logo,
+          noAuth: toolkit?.noAuth,
+          connected:
+            plugin.source === 'native'
+              ? native?.state === 'connected'
+              : Boolean(connectedOverrides[plugin.id] || toolkit?.connected || toolkit?.noAuth),
+          connectionState: native?.state,
+          accountLabel:
+            plugin.source === 'native'
+              ? native?.accountLabel
+              : toolkit?.connected
+                ? toolkit.statusMessage
+                : undefined,
+          statusMessage: native?.statusMessage || toolkit?.statusMessage,
+          capabilityCount: toolkit?.toolkit ? toolCountByToolkit[toolkit.toolkit] : undefined,
+        };
+      }),
+    [toolkitMap, nativeState, connectedOverrides, toolCountByToolkit],
+  );
 
   const semanticPlugins = useMemo<RuntimePlugin[]>(() => {
     const baseIds = new Set(basePlugins.map((plugin) => plugin.id));
-    const countByToolkit = new Map<string, number>();
 
-    for (const tool of semanticTools) {
-      countByToolkit.set(tool.toolkit, (countByToolkit.get(tool.toolkit) ?? 0) + 1);
-    }
-
-    return semanticToolkits
+    // toolkitMap contains both search discoveries and the server's real
+    // connected-toolkit listing. Building dynamic cards from it ensures a
+    // long-tail connected Plugin remains visible even when it is not curated.
+    return Object.values(toolkitMap)
       .map((item) => {
         const name = item.name || displayToolkitName(item.toolkit);
         const id = canonicalPluginId(`${name} ${item.toolkit}`);
+        const generic = genericPluginDefinition(item.toolkit);
 
         return {
+          ...generic,
           id,
           name,
-          description: item.description || item.statusMessage || 'Connect this app so Xroga can use its available capabilities.',
+          description:
+            item.description ||
+            item.statusMessage ||
+            'Connect this app so Xroga can use its available capabilities.',
           category: inferCategory(name, item.description),
           source: 'composio' as const,
           toolkit: item.toolkit,
           logo: item.logo,
-          connected: Boolean(item.connected || connectedOverrides[id]),
-          capabilityCount: countByToolkit.get(item.toolkit),
+          noAuth: item.noAuth,
+          connected: Boolean(item.connected || item.noAuth || connectedOverrides[id]),
+          accountLabel: item.connected ? item.statusMessage : undefined,
+          statusMessage: item.statusMessage,
+          capabilityCount: toolCountByToolkit[item.toolkit],
         };
       })
       .filter((plugin) => !baseIds.has(plugin.id));
-  }, [semanticToolkits, semanticTools, basePlugins, connectedOverrides]);
+  }, [toolkitMap, basePlugins, connectedOverrides, toolCountByToolkit]);
 
   const allPlugins = useMemo(
     () => [...basePlugins, ...semanticPlugins],
@@ -685,13 +561,15 @@ export function PluginMarketplace() {
       if (category !== 'All' && plugin.category !== category) return false;
       if (!clean) return true;
 
-      const definition = PLUGINS.find((item) => item.id === plugin.id);
       const searchText = [
         plugin.name,
         plugin.description,
         plugin.category,
-        ...(definition?.keywords ?? []),
+        ...(plugin.keywords ?? []),
+        ...(plugin.examples ?? []),
+        plugin.accountLabel,
       ]
+        .filter(Boolean)
         .join(' ')
         .toLowerCase();
 
@@ -700,9 +578,44 @@ export function PluginMarketplace() {
   }, [allPlugins, category, deferredQuery, semanticPlugins]);
 
   const connectedPlugins = useMemo(
-    () => allPlugins.filter((plugin) => plugin.connected),
+    () =>
+      allPlugins.filter(
+        (plugin) =>
+          plugin.connected ||
+          plugin.noAuth ||
+          plugin.connectionState === 'needs_attention',
+      ),
     [allPlugins],
   );
+
+  const filteredConnected = useMemo(() => {
+    const clean = connectedQuery.trim().toLowerCase();
+
+    return connectedPlugins.filter((plugin) => {
+      if (connectedFilter === 'apps' && plugin.developer) return false;
+      if (connectedFilter === 'developer' && !plugin.developer) return false;
+      if (
+        connectedFilter === 'attention' &&
+        plugin.connectionState !== 'needs_attention' &&
+        plugin.connectionState !== 'error'
+      ) {
+        return false;
+      }
+
+      if (!clean) return true;
+
+      return [
+        plugin.name,
+        plugin.category,
+        plugin.accountLabel,
+        plugin.statusMessage,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(clean);
+    });
+  }, [connectedPlugins, connectedFilter, connectedQuery]);
 
   const popularPlugins = useMemo(
     () => basePlugins.filter((plugin) => plugin.popular).slice(0, 9),
@@ -712,6 +625,22 @@ export function PluginMarketplace() {
   const developerPlugins = useMemo(
     () => basePlugins.filter((plugin) => plugin.developer),
     [basePlugins],
+  );
+
+  const developerConnected = useMemo(
+    () =>
+      developerPlugins.filter(
+        (plugin) => plugin.connected || plugin.connectionState === 'needs_attention',
+      ),
+    [developerPlugins],
+  );
+
+  const developerAvailable = useMemo(
+    () =>
+      developerPlugins.filter(
+        (plugin) => !plugin.connected && plugin.connectionState !== 'needs_attention',
+      ),
+    [developerPlugins],
   );
 
   async function connectNative(plugin: RuntimePlugin) {
@@ -760,12 +689,17 @@ export function PluginMarketplace() {
 
       const exact =
         result.toolkits?.find(
-          (item) => canonicalPluginId(`${item.name ?? ''} ${item.toolkit}`) === plugin.id,
+          (item) =>
+            canonicalPluginId(`${item.name ?? ''} ${item.toolkit}`) === plugin.id,
         ) ?? result.toolkits?.[0];
 
-      if (exact?.connected) {
+      if (exact?.connected || exact?.noAuth) {
         setConnectedOverrides((current) => ({ ...current, [plugin.id]: true }));
-        toast.success(`${plugin.name} is already connected`);
+        toast.success(
+          exact.noAuth
+            ? `${plugin.name} is ready to use`
+            : `${plugin.name} is already connected`,
+        );
         return;
       }
 
@@ -786,10 +720,7 @@ export function PluginMarketplace() {
 
     try {
       const result = await xrogaConnect.link(activeSession, toolkit);
-
-      if (!result.redirectUrl) {
-        throw new Error('Authorization link was not returned.');
-      }
+      if (!result.redirectUrl) throw new Error('Authorization link was not returned.');
 
       if (popup) {
         popup.location.href = result.redirectUrl;
@@ -808,16 +739,12 @@ export function PluginMarketplace() {
   }
 
   async function handleConnect(plugin: RuntimePlugin) {
-    if (connectingId) return;
-
+    if (connectingId || plugin.noAuth) return;
     setConnectingId(plugin.id);
 
     try {
-      if (plugin.source === 'native') {
-        await connectNative(plugin);
-      } else {
-        await connectComposio(plugin);
-      }
+      if (plugin.source === 'native') await connectNative(plugin);
+      else await connectComposio(plugin);
     } catch (error) {
       setConnectingId(null);
       toast.error(error instanceof Error ? error.message : `Could not connect ${plugin.name}`);
@@ -834,22 +761,22 @@ export function PluginMarketplace() {
             Plugins
           </h1>
           <p className="mt-1.5 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-            Connect the tools Xroga can securely work with. Search by app or describe what you want Xroga to do.
+            Connect and manage the tools Xroga can securely work with. Search by app or describe what you want Xroga to do.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => setView('custom')}
+          onClick={openCustom}
           className="inline-flex min-h-10 items-center justify-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
         >
-          + Add plugin
+          + Add Plugin
         </button>
       </header>
 
       <div className="relative">
         <label htmlFor="plugin-marketplace-search" className="sr-only">
-          Search plugins
+          Search Plugins
         </label>
         <Search
           className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
@@ -862,13 +789,13 @@ export function PluginMarketplace() {
             setQuery(event.target.value);
             setVisibleCount(12);
           }}
-          placeholder="Search plugins or describe what you want Xroga to do…"
+          placeholder="Search Plugins or describe what you want Xroga to do…"
           className="w-full rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-3.5 pl-11 pr-12 text-sm text-[var(--text-primary)] shadow-subtle outline-none transition focus:border-[var(--accent)] focus-visible:shadow-[var(--focus-ring)]"
         />
         {semanticLoading ? (
           <Loader2
             className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-muted)]"
-            aria-label="Searching plugins"
+            aria-label="Searching Plugins"
           />
         ) : null}
       </div>
@@ -925,7 +852,7 @@ export function PluginMarketplace() {
               <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] bg-[var(--surface-inset)]/45 px-4 py-5">
                 <p className="text-sm font-medium text-[var(--text-primary)]">No Plugins connected yet.</p>
                 <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                  Browse below and connect the tools you use. GitHub is no longer required before other Plugins.
+                  Browse below and connect the tools you use. GitHub is not required before other Plugins.
                 </p>
               </div>
             )}
@@ -1034,22 +961,66 @@ export function PluginMarketplace() {
       ) : null}
 
       {view === 'connected' ? (
-        <section className="space-y-3">
+        <section className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
             <p className="mt-1 text-sm text-[var(--text-secondary)]">
-              A simple overview for Step 1. Full connection management comes in Step 2.
+              Manage the accounts and services currently available to Xroga.
             </p>
           </div>
-          {connectedPlugins.length ? (
+
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="relative">
+              <label htmlFor="connected-plugin-search" className="sr-only">
+                Search connected Plugins
+              </label>
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
+                aria-hidden="true"
+              />
+              <input
+                id="connected-plugin-search"
+                value={connectedQuery}
+                onChange={(event) => setConnectedQuery(event.target.value)}
+                placeholder="Search connected Plugins…"
+                className="w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-2.5 pl-9 pr-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
+              />
+            </div>
+            <div className="flex gap-1 overflow-x-auto" role="group" aria-label="Connected Plugin filters">
+              {([
+                ['all', 'All'],
+                ['apps', 'Apps'],
+                ['developer', 'Developer'],
+                ['attention', 'Needs attention'],
+              ] as Array<[ConnectedFilter, string]>).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setConnectedFilter(id)}
+                  aria-pressed={connectedFilter === id}
+                  className={
+                    connectedFilter === id
+                      ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)]'
+                      : 'shrink-0 rounded-full border border-[var(--border-subtle)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]'
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filteredConnected.length ? (
             <PluginGrid
-              plugins={connectedPlugins}
+              plugins={filteredConnected}
               connectingId={connectingId}
               onConnect={handleConnect}
             />
           ) : (
             <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] px-5 py-8">
-              <p className="text-sm font-medium text-[var(--text-primary)]">No Plugins connected yet.</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                {connectedPlugins.length ? 'No connected Plugins match this view.' : 'No Plugins connected yet.'}
+              </p>
               <button
                 type="button"
                 onClick={() => setView('discover')}
@@ -1063,36 +1034,94 @@ export function PluginMarketplace() {
       ) : null}
 
       {view === 'developer' ? (
-        <section className="space-y-4">
+        <section className="space-y-7">
           <div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Developer Plugins</h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
-              Connect the infrastructure Xroga uses for code, hosting and backend services.
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+              Infrastructure Xroga uses for code, hosting, backend services and monitoring. Publishing remains a separate workflow.
             </p>
           </div>
-          <PluginGrid
-            plugins={developerPlugins}
-            connectingId={connectingId}
-            onConnect={handleConnect}
-          />
+
+          {developerConnected.length ? (
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-[var(--text-primary)]">Connected</h3>
+              <PluginGrid
+                plugins={developerConnected}
+                connectingId={connectingId}
+                onConnect={handleConnect}
+              />
+            </div>
+          ) : null}
+
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-[var(--text-primary)]">Available</h3>
+            {developerAvailable.length ? (
+              <PluginGrid
+                plugins={developerAvailable}
+                connectingId={connectingId}
+                onConnect={handleConnect}
+              />
+            ) : (
+              <p className="rounded-token-lg border border-dashed border-[var(--border-subtle)] p-4 text-sm text-[var(--text-secondary)]">
+                All currently supported Developer Plugins are connected.
+              </p>
+            )}
+          </div>
+
           <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-xs leading-5 text-[var(--text-secondary)]">
-            Publishing stays separate from Plugins. Configure shipping and production targets from{' '}
+            Configure production targets, builds and shipping from{' '}
             <Link href="/dashboard/publish" className="font-semibold text-[var(--accent)] hover:underline">
               Publish
             </Link>
-            .
+            . Plugins only manages the provider connection and capabilities.
           </div>
         </section>
       ) : null}
 
       {view === 'custom' ? (
-        <section className="space-y-6">
+        <section id="custom-plugin-options" className="space-y-6 scroll-mt-8">
           <div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Custom Plugins</h2>
-            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
-              Use the credential and service connections Xroga already supports. The guided MCP/custom Plugin builder arrives in Step 2.
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+              Use Xroga’s real credential and webhook support for services outside the built-in catalogue.
             </p>
           </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <button
+              type="button"
+              onClick={() => setView('discover')}
+              className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 text-left hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            >
+              <Search className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
+              <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">Search marketplace</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Find a built-in or Xroga Connect Plugin first.
+              </p>
+            </button>
+
+            <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
+              <Server className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Custom MCP server</p>
+                <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
+                  Unavailable
+                </span>
+              </div>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Xroga’s current backend does not expose persistent custom MCP create/update/delete APIs, so this UI does not fake a saved MCP Plugin.
+              </p>
+            </div>
+
+            <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
+              <KeyRound className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
+              <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">API credentials & webhooks</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Fully available through Xroga’s existing encrypted credential vault below.
+              </p>
+            </div>
+          </div>
+
           <ConnectedServicesSection />
           <CustomCredentialsSection />
         </section>
