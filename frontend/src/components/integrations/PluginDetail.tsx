@@ -535,7 +535,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
     }
   }
 
-  function useExample(example: string) {
+  function handleExample(example: string) {
     setChatPrefill(example);
     router.push('/workspace');
   }
@@ -652,7 +652,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   <button
                     key={example}
                     type="button"
-                    onClick={() => useExample(example)}
+                    onClick={() => handleExample(example)}
                     className="group flex min-h-12 items-center justify-between gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-3 text-left text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                   >
                     <span>{example}</span>
