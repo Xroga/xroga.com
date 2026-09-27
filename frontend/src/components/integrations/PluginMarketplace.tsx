@@ -521,7 +521,10 @@ export function PluginMarketplace() {
   const semanticPlugins = useMemo<RuntimePlugin[]>(() => {
     const baseIds = new Set(basePlugins.map((plugin) => plugin.id));
 
-    return semanticToolkits
+    // toolkitMap contains both search discoveries and the server's real
+    // connected-toolkit listing. Building dynamic cards from it ensures a
+    // long-tail connected Plugin remains visible even when it is not curated.
+    return Object.values(toolkitMap)
       .map((item) => {
         const name = item.name || displayToolkitName(item.toolkit);
         const id = canonicalPluginId(`${name} ${item.toolkit}`);
@@ -547,7 +550,7 @@ export function PluginMarketplace() {
         };
       })
       .filter((plugin) => !baseIds.has(plugin.id));
-  }, [semanticToolkits, basePlugins, connectedOverrides, toolCountByToolkit]);
+  }, [toolkitMap, basePlugins, connectedOverrides, toolCountByToolkit]);
 
   const allPlugins = useMemo(
     () => [...basePlugins, ...semanticPlugins],
