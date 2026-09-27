@@ -38,10 +38,14 @@ export function MobilePublishPanel({
   status,
   easProjectId: initialEasProjectId,
   onRefresh,
+  githubConnected: githubConnectedOverride,
+  statusUnavailable = false,
 }: {
   status?: PublishStatus['mobile'];
   easProjectId?: string | null;
   onRefresh: () => void;
+  githubConnected?: boolean;
+  statusUnavailable?: boolean;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [expoToken, setExpoToken] = useState('');
@@ -266,7 +270,7 @@ export function MobilePublishPanel({
   }
 
   const githubConnected = Boolean(
-    status?.checklist.find((item) => item.id === 'github')?.done,
+    status?.checklist.find((item) => item.id === 'github')?.done ?? githubConnectedOverride,
   );
   const expoConnected = Boolean(status?.expoTokenSaved);
   const expoValid = status?.expoTokenValid === true;
@@ -310,11 +314,13 @@ export function MobilePublishPanel({
               label: 'Expo',
               done: expoConnected && expoValid,
               required: true,
-              hint: !expoConnected
-                ? 'Connect an Expo access token to start mobile builds.'
-                : expoValid
-                  ? 'Expo access is verified.'
-                  : 'The saved Expo token needs attention.',
+              hint: statusUnavailable
+                ? 'Expo publish status is temporarily unavailable. Other targets remain usable.'
+                : !expoConnected
+                  ? 'Connect an Expo access token to start mobile builds.'
+                  : expoValid
+                    ? 'Expo access is verified.'
+                    : 'The saved Expo token needs attention.',
             }}
           />
           <PublishRequirement
@@ -331,7 +337,7 @@ export function MobilePublishPanel({
         </div>
       </section>
 
-      {!expoConnected || !expoValid ? (
+      {!statusUnavailable && (!expoConnected || !expoValid) ? (
         <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
           <div className="flex items-start gap-3">
             <KeyRound className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden="true" />
