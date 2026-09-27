@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CheckCircle2, Circle, Globe, Loader2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
@@ -16,12 +16,22 @@ type DomainInfo = {
  * Attach a branded domain to the user's Vercel project and verify DNS.
  * Requires Domain write permission on the Vercel App.
  */
-export function CustomDomainPanel({ className }: { className?: string }) {
-  const [project, setProject] = useState('');
+export function CustomDomainPanel({
+  className,
+  initialProject,
+}: {
+  className?: string;
+  initialProject?: string;
+}) {
+  const [project, setProject] = useState(initialProject ?? '');
   const [domain, setDomain] = useState('');
   const [busy, setBusy] = useState(false);
   const [domains, setDomains] = useState<DomainInfo[]>([]);
   const [lastMessage, setLastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialProject && !project) setProject(initialProject);
+  }, [initialProject, project]);
 
   const refresh = useCallback(async () => {
     const slug = project.trim();

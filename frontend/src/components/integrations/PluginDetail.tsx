@@ -921,7 +921,13 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 ))}
               </div>
               <Link
-                href="/dashboard/publish"
+                href={
+                  definition.id === 'vercel' || definition.id === 'supabase'
+                    ? '/dashboard/publish?target=web'
+                    : definition.id === 'expo'
+                      ? '/dashboard/publish?target=mobile'
+                      : '/dashboard/publish'
+                }
                 className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline"
               >
                 Open Publish

@@ -5,6 +5,7 @@
 
 import { isGitHubConnected } from '../integrations/githubAuth.js';
 import { isVercelConnected } from '../integrations/vercelAuth.js';
+import { hasManagedVercelDeployment } from '../integrations/githubDeploy.js';
 import {
   getUserProviderKey,
   listUserProviderKeys,
@@ -26,6 +27,7 @@ export interface PublishStatus {
     ready: boolean;
     githubConnected: boolean;
     vercelConnected: boolean;
+    managedVercelAvailable: boolean;
     checklist: PublishChecklistItem[];
   };
   chrome: {
@@ -100,6 +102,7 @@ export async function verifyExpoToken(token: string): Promise<{
 }
 
 export async function getPublishStatus(userId: string): Promise<PublishStatus> {
+  const managedVercelAvailable = hasManagedVercelDeployment();
   const [githubConnected, vercelConnected, keys] = await Promise.all([
     isGitHubConnected(userId).catch(() => false),
     isVercelConnected(userId).catch(() => false),
@@ -149,11 +152,13 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
     },
     {
       id: 'vercel',
-      label: 'Connect Vercel',
-      done: vercelConnected,
+      label: 'Vercel publishing',
+      done: vercelConnected || managedVercelAvailable,
       required: true,
-      hint: 'Deploys go to your Vercel account (you pay hosting)',
-      href: '/dashboard/integrations',
+      hint: managedVercelAvailable
+        ? 'Xroga-managed Vercel publishing is available. A personal Vercel connection is optional.'
+        : 'Connect your Vercel account to authorize web deployments.',
+      href: '/dashboard/integrations/vercel',
     },
     {
       id: 'supabase',
@@ -299,9 +304,10 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
 
   return {
     web: {
-      ready: githubConnected && vercelConnected,
+      ready: githubConnected && (vercelConnected || managedVercelAvailable),
       githubConnected,
       vercelConnected,
+      managedVercelAvailable,
       checklist: webChecklist,
     },
     chrome: {
@@ -352,12 +358,10 @@ export async function getPublishStatus(userId: string): Promise<PublishStatus> {
         'Packaging + GitHub Releases upload + EAS workflow dispatch',
       ],
       userPays: [
-        'Chrome Web Store developer (~$5 one-time) if you list publicly',
-        'Google Play Console (~$25 one-time) for Android store',
-        'Apple Developer Program (~$99/yr) for iOS store',
-        'Expo EAS build minutes on your Expo account',
-        'Code signing certificates (desktop) if you need signed installs',
-        'Vercel hosting only for web apps',
+        'External developer/store fees may apply for public distribution',
+        'Expo EAS build usage stays on your Expo account',
+        'Code signing certificates stay on you when you need signed desktop installs',
+        'Hosting charges follow the active Vercel publishing mode and provider account',
       ],
     },
   };
