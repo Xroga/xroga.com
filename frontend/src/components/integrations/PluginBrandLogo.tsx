@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plug } from 'lucide-react';
-
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
-import { composioLogoUrl } from '@/lib/pluginCatalog';
+import { toolkitLogoAssetUrl } from '@/lib/pluginCatalog';
 
 export function PluginBrandLogo({
   id,
@@ -26,7 +24,7 @@ export function PluginBrandLogo({
       [
         logo,
         fallbackLogo,
-        toolkit ? composioLogoUrl(toolkit) : undefined,
+        toolkit ? toolkitLogoAssetUrl(toolkit) : undefined,
       ].filter(
         (value, index, all): value is string =>
           typeof value === 'string' &&
@@ -71,12 +69,20 @@ export function PluginBrandLogo({
     );
   }
 
+  const initials = name
+    .split(/\s+/g)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('') || 'APP';
+
   return (
     <span
-      className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)] text-[var(--text-muted)]`}
+      className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--accent-dim)] text-[var(--accent)] font-bold tracking-tight`}
       aria-label={name}
+      title={`${name} logo unavailable`}
     >
-      <Plug size={iconSize} aria-hidden="true" />
+      <span style={{ fontSize: Math.max(9, Math.round(iconSize * 0.48)) }}>{initials}</span>
     </span>
   );
 }
