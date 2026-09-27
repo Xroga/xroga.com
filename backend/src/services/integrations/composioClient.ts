@@ -8,6 +8,7 @@ const MAX_TOOLKIT_PAGE_SIZE = 100;
 const MAX_CATALOG_PAGE_SIZE = 250;
 const MAX_TRIGGER_PAGE_SIZE = 50;
 const COMPOSIO_CACHE_TTL_MS = 5 * 60 * 1_000;
+const MAX_COMPOSIO_CACHE_ENTRIES = 60;
 
 const READ_ONLY_TAG = 'readOnlyHint';
 const DESTRUCTIVE_TAG = 'destructiveHint';
@@ -393,10 +394,14 @@ async function cachedComposioValue<T>(
     value,
   });
 
-  if (catalogCache.size > 200) {
-    for (const [cacheKey, item] of catalogCache) {
-      if (item.expiresAt <= now) catalogCache.delete(cacheKey);
-    }
+  for (const [cacheKey, item] of catalogCache) {
+    if (item.expiresAt <= now) catalogCache.delete(cacheKey);
+  }
+
+  while (catalogCache.size > MAX_COMPOSIO_CACHE_ENTRIES) {
+    const oldest = catalogCache.keys().next().value as string | undefined;
+    if (!oldest) break;
+    catalogCache.delete(oldest);
   }
 
   return value;
@@ -1329,7 +1334,7 @@ export async function listComposioCatalogCategories(): Promise<
   return cachedComposioValue('catalog:categories', async () => {
     const response =
       await composioRequest<ComposioCatalogCategoryListResponse>(
-        '/toolkits/categories?limit=250',
+        '/toolkits/categories',
       );
 
     return (response.items ?? [])
