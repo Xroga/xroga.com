@@ -64,7 +64,7 @@ test('Plugins UI exposes compact Custom MCP creation without a full-screen redir
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
   const manager = source('frontend/src/components/integrations/CustomMcpManager.tsx');
 
-  assert.match(marketplace, /className="max-w-\\[440px\\]"/);
+  assert.match(marketplace, /className="max-w-\[440px\]"/);
   assert.match(marketplace, /CustomMcpCreateForm/);
   assert.match(manager, /Custom MCP server/);
   assert.match(manager, /No authentication/);
