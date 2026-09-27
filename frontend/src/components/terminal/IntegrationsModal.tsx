@@ -1,99 +1,55 @@
 'use client';
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import {
-  CheckCircle2,
-  ChevronDown,
-  Plug,
-  Search,
-  X,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import {
-  INTEGRATIONS,
-  INTEGRATION_CATEGORIES,
-} from '@/lib/integrations';
+import { useEffect, useMemo, useState } from 'react';
+import { Check, Loader2, Plug, X } from 'lucide-react';
 
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
-import { isConnectableIntegration } from '@/lib/connectableIntegrations';
-import { cn } from '@/lib/utils';
 import { api } from '@/lib/api';
+import { canonicalPluginId, POPULAR_HYDRATION_QUERY } from '@/lib/pluginCatalog';
+import { xrogaConnect } from '@/lib/xrogaConnect';
 
-interface IntegrationsModalProps {
-  open: boolean;
-  onClose: () => void;
-}
+type ModalPlugin = {
+  id: string;
+  name: string;
+  connected: boolean;
+  checking?: boolean;
+};
+
+const APP_IDS = ['gmail', 'slack', 'notion'] as const;
 
 export function IntegrationsModal({
   open,
   onClose,
-}: IntegrationsModalProps) {
-  const router = useRouter();
-
-  const [search, setSearch] =
-    useState('');
-
-  const [
-    comingSoonOpen,
-    setComingSoonOpen,
-  ] = useState(false);
-
-  const [connected, setConnected] =
-    useState<Record<string, boolean>>({});
-
-  const [checking, setChecking] =
-    useState(false);
-
-  const [
-    connectingGithub,
-    setConnectingGithub,
-  ] = useState(false);
-
-  /* ============================================================
-     ESCAPE TO CLOSE
-     ============================================================ */
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [native, setNative] = useState<ModalPlugin[]>([]);
+  const [apps, setApps] = useState<ModalPlugin[]>([]);
+  const [loadingApps, setLoadingApps] = useState(false);
 
   useEffect(() => {
     if (!open) return;
 
-    const onKey = (
-      event: KeyboardEvent,
-    ) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
     };
 
-    window.addEventListener(
-      'keydown',
-      onKey,
-    );
-
-    return () => {
-      window.removeEventListener(
-        'keydown',
-        onKey,
-      );
-    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
-
-  /* ============================================================
-     CONNECTION STATUS
-     ============================================================ */
 
   useEffect(() => {
     if (!open) return;
 
     let active = true;
 
-    setChecking(true);
+    setNative([
+      { id: 'github', name: 'GitHub', connected: false, checking: true },
+      { id: 'vercel', name: 'Vercel', connected: false, checking: true },
+      { id: 'supabase', name: 'Supabase', connected: false, checking: true },
+    ]);
 
     void Promise.allSettled([
       api.github.status(),
@@ -101,540 +57,150 @@ export function IntegrationsModal({
       api.supabase.status(),
     ]).then((results) => {
       if (!active) return;
-
-      setConnected({
-        github:
-          results[0].status ===
-            'fulfilled' &&
-          Boolean(
-            results[0].value.connected,
-          ),
-
-        vercel:
-          results[1].status ===
-            'fulfilled' &&
-          Boolean(
-            results[1].value.connected,
-          ),
-
-        supabase:
-          results[2].status ===
-            'fulfilled' &&
-          Boolean(
-            results[2].value.connected,
-          ),
-      });
-
-      setChecking(false);
+      setNative([
+        {
+          id: 'github',
+          name: 'GitHub',
+          connected: results[0].status === 'fulfilled' && Boolean(results[0].value.connected),
+        },
+        {
+          id: 'vercel',
+          name: 'Vercel',
+          connected: results[1].status === 'fulfilled' && Boolean(results[1].value.connected),
+        },
+        {
+          id: 'supabase',
+          name: 'Supabase',
+          connected: results[2].status === 'fulfilled' && Boolean(results[2].value.connected),
+        },
+      ]);
     });
+
+    setLoadingApps(true);
+    void xrogaConnect
+      .status()
+      .then(async (status) => {
+        if (!active || !status.configured) return;
+        const result = await xrogaConnect.search(POPULAR_HYDRATION_QUERY);
+        if (!active) return;
+
+        const map = new Map(
+          (result.toolkits ?? []).map((toolkit) => [
+            canonicalPluginId(`${toolkit.name ?? ''} ${toolkit.toolkit}`),
+            toolkit,
+          ]),
+        );
+
+        setApps(
+          APP_IDS.map((id) => ({
+            id,
+            name: id === 'gmail' ? 'Gmail' : id === 'slack' ? 'Slack' : 'Notion',
+            connected: Boolean(map.get(id)?.connected || map.get(id)?.noAuth),
+          })),
+        );
+      })
+      .catch(() => {
+        if (active) setApps([]);
+      })
+      .finally(() => {
+        if (active) setLoadingApps(false);
+      });
 
     return () => {
       active = false;
     };
   }, [open]);
 
-  /* ============================================================
-     SEARCH
-     ============================================================ */
+  const plugins = useMemo(() => [...native, ...apps], [native, apps]);
 
-  const filtered = useMemo(() => {
-    const query =
-      search
-        .toLowerCase()
-        .trim();
-
-    if (!query) {
-      return INTEGRATIONS;
-    }
-
-    return INTEGRATIONS.filter(
-      (plugin) =>
-        plugin.name
-          .toLowerCase()
-          .includes(query) ||
-        plugin.category
-          .toLowerCase()
-          .includes(query),
-    );
-  }, [search]);
-
-  const liveFiltered = useMemo(
-    () =>
-      filtered.filter((plugin) =>
-        isConnectableIntegration(
-          plugin.id,
-        ),
-      ),
-    [filtered],
-  );
-
-  const comingSoonFiltered =
-    useMemo(
-      () =>
-        filtered.filter(
-          (plugin) =>
-            !isConnectableIntegration(
-              plugin.id,
-            ),
-        ),
-      [filtered],
-    );
-
-  /* ============================================================
-     CONNECT / MANAGE
-     ============================================================ */
-
-  async function handleConnect(
-    id: string,
-    name: string,
-  ) {
-    if (
-      !isConnectableIntegration(id)
-    ) {
-      toast('Coming soon', {
-        icon: '⏳',
-      });
-
-      return;
-    }
-
-    if (connected[id]) {
-      onClose();
-
-      router.push(
-        '/dashboard/integrations',
-      );
-
-      return;
-    }
-
-    try {
-      if (id === 'github') {
-        setConnectingGithub(true);
-
-        const { url } =
-          await api.github.oauthUrl();
-
-        if (!url) {
-          throw new Error(
-            'GitHub authorization is not available.',
-          );
-        }
-
-        window.location.href = url;
-
-        return;
-      }
-
-      if (id === 'vercel') {
-        const {
-          url,
-          oauthConfigured,
-        } =
-          await api.vercel.oauthUrl();
-
-        if (
-          !oauthConfigured ||
-          !url
-        ) {
-          throw new Error(
-            'Vercel authorization is not configured.',
-          );
-        }
-
-        window.location.href = url;
-
-        return;
-      }
-
-      if (id === 'supabase') {
-        const {
-          url,
-          oauthConfigured,
-          message,
-        } =
-          await api.supabase.oauthUrl();
-
-        if (
-          !oauthConfigured ||
-          !url
-        ) {
-          throw new Error(
-            message ||
-              'Supabase authorization is not configured.',
-          );
-        }
-
-        window.location.href = url;
-
-        return;
-      }
-
-      onClose();
-
-      router.push(
-        '/dashboard/integrations',
-      );
-    } catch (error) {
-      setConnectingGithub(false);
-
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : `Could not connect ${name}`,
-      );
-    }
-  }
-
-  if (!open) {
-    return null;
-  }
-
-  /* ============================================================
-     CHECKING STATE
-     ============================================================ */
-
-  if (checking) {
-    return (
-      <div
-        className="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-backdrop"
-        onClick={onClose}
-      >
-        <div
-          className="w-full max-w-sm rounded-2xl modal-glass universe-fade-in p-6 text-center"
-          onClick={(event) =>
-            event.stopPropagation()
-          }
-          role="dialog"
-          aria-modal="true"
-          aria-label="Checking plugin connections"
-        >
-          <p className="text-sm text-[var(--muted)]">
-            Checking your plugins…
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  /* ============================================================
-     BEGINNER STATE
-     GitHub remains the first required connection.
-     ============================================================ */
-
-  if (!connected.github) {
-    return (
-      <div
-        className="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-backdrop"
-        onClick={onClose}
-      >
-        <div
-          className="w-full max-w-md rounded-2xl modal-glass universe-fade-in overflow-hidden"
-          onClick={(event) =>
-            event.stopPropagation()
-          }
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="xv-github-start-title"
-        >
-          <div className="flex justify-end px-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg p-2 hover:bg-white/10"
-              aria-label="Close plugins"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="px-6 pb-7 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
-              <IntegrationLogo
-                id="github"
-                name="GitHub"
-                size={30}
-              />
-            </div>
-
-            <h2
-              id="xv-github-start-title"
-              className="text-xl font-semibold"
-            >
-              Start with GitHub
-            </h2>
-
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">
-              Connect GitHub so Xroga
-              can create, save, and update
-              the projects you build.
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                void handleConnect(
-                  'github',
-                  'GitHub',
-                )
-              }
-              disabled={
-                connectingGithub
-              }
-              className="mt-6 w-full rounded-xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold transition-opacity disabled:opacity-60"
-            >
-              {connectingGithub
-                ? 'Connecting GitHub…'
-                : 'Connect GitHub'}
-            </button>
-
-            <p className="mt-3 text-xs text-[var(--muted)]">
-              You can add deployment,
-              database, and other plugins
-              later.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  /* ============================================================
-     PLUGINS MANAGER
-     ============================================================ */
+  if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-backdrop"
-      onClick={onClose}
+      className="fixed inset-0 z-[460] flex items-end justify-center bg-black/50 p-3 sm:items-center sm:p-6"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.currentTarget === event.target) onClose();
+      }}
     >
-      <div
-        className="w-full max-w-2xl max-h-[85vh] rounded-2xl modal-glass universe-fade-in flex flex-col overflow-hidden"
-        onClick={(event) =>
-          event.stopPropagation()
-        }
+      <section
         role="dialog"
         aria-modal="true"
-        aria-labelledby="xv-plugins-modal-title"
+        aria-labelledby="workspace-plugins-title"
+        className="w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-2xl"
       >
-        {/* ====================================================
-            HEADER
-            ==================================================== */}
-
-        <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
-          <h2
-            id="xv-plugins-modal-title"
-            className="font-semibold text-base"
-          >
-            Plugins
-          </h2>
-
-          <div className="relative flex-1">
-            <Search
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]"
-              aria-hidden="true"
-            />
-
-            <input
-              autoFocus
-              value={search}
-              onChange={(event) =>
-                setSearch(
-                  event.target.value,
-                )
-              }
-              placeholder="Search plugins..."
-              className="w-full rounded-xl bg-white/5 py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/40"
-            />
+        <header className="flex items-start justify-between gap-4 border-b border-[var(--border-subtle)] px-5 py-4">
+          <div>
+            <h2 id="workspace-plugins-title" className="text-base font-semibold text-[var(--text-primary)]">
+              Plugins
+            </h2>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+              Quick connection status. Open Plugins for discovery, capabilities and account management.
+            </p>
           </div>
-
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 hover:bg-white/10"
-            aria-label="Close plugins"
+            aria-label="Close Plugins"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
-        </div>
+        </header>
 
-        {/* ====================================================
-            PLUGIN LIST
-            ==================================================== */}
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {INTEGRATION_CATEGORIES.map(
-            (category) => {
-              const items =
-                liveFiltered.filter(
-                  (plugin) =>
-                    plugin.category ===
-                    category,
-                );
-
-              if (!items.length) {
-                return null;
-              }
-
-              return (
-                <div key={category}>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                    {category}
-                  </p>
-
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {items.map(
-                      (item) => {
-                        const isConnected =
-                          connected[
-                            item.id
-                          ] === true;
-
-                        return (
-                          <div
-                            key={
-                              item.id
-                            }
-                            className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.04] p-3 transition-colors hover:bg-white/[0.07]"
-                          >
-                            <div className="flex min-w-0 flex-1 items-center gap-3">
-                              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/10">
-                                <IntegrationLogo
-                                  id={
-                                    item.id
-                                  }
-                                  name={
-                                    item.name
-                                  }
-                                  size={
-                                    22
-                                  }
-                                  className="object-contain"
-                                />
-
-                                {isConnected ? (
-                                  <CheckCircle2
-                                    className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-[var(--card)] text-emerald-500"
-                                    aria-label="Connected"
-                                  />
-                                ) : null}
-                              </div>
-
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-medium">
-                                  {
-                                    item.name
-                                  }
-                                </p>
-
-                                <p className="text-[10px] text-[var(--muted)]">
-                                  {isConnected
-                                    ? 'Connected'
-                                    : 'Available'}
-                                </p>
-                              </div>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                void handleConnect(
-                                  item.id,
-                                  item.name,
-                                )
-                              }
-                              className="relative z-[1] flex shrink-0 items-center gap-1 rounded-lg border border-[var(--accent)]/35 bg-[var(--accent)]/15 px-2.5 py-1.5 text-[10px] font-bold text-[var(--foreground)] transition-colors hover:bg-[var(--accent)]/25"
-                            >
-                              <Plug className="h-3 w-3" />
-
-                              {isConnected
-                                ? 'Manage'
-                                : 'Connect'}
-                            </button>
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </div>
-              );
-            },
-          )}
-
-          {/* ==================================================
-              COMING SOON
-              ================================================== */}
-
-          {comingSoonFiltered.length >
-          0 ? (
-            <div className="overflow-hidden rounded-xl border border-white/[0.06]">
-              <button
-                type="button"
-                onClick={() =>
-                  setComingSoonOpen(
-                    (current) =>
-                      !current,
-                  )
-                }
-                aria-expanded={
-                  comingSoonOpen
-                }
-                className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-white/[0.03]"
+        <div className="max-h-[60vh] overflow-y-auto p-3">
+          <div className="space-y-1.5">
+            {plugins.map((plugin) => (
+              <Link
+                key={plugin.id}
+                href={`/dashboard/integrations/${plugin.id}`}
+                onClick={onClose}
+                className="flex min-h-12 items-center gap-3 rounded-xl border border-transparent px-3 py-2 transition hover:border-[var(--border-subtle)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               >
-                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
-                  Coming soon (
-                  {
-                    comingSoonFiltered.length
-                  }
-                  )
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-inset)]">
+                  <IntegrationLogo id={plugin.id} name={plugin.name} size={20} />
                 </span>
+                <span className="min-w-0 flex-1">
+                  <strong className="block truncate text-sm text-[var(--text-primary)]">{plugin.name}</strong>
+                  <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-[var(--text-muted)]">
+                    {plugin.checking ? (
+                      <>
+                        <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                        Checking
+                      </>
+                    ) : plugin.connected ? (
+                      <>
+                        <Check className="h-3 w-3 text-[var(--accent)]" aria-hidden="true" />
+                        Connected
+                      </>
+                    ) : (
+                      'Available'
+                    )}
+                  </span>
+                </span>
+              </Link>
+            ))}
 
-                <ChevronDown
-                  className={cn(
-                    'h-3.5 w-3.5 shrink-0 text-[var(--muted)] transition-transform',
-                    comingSoonOpen &&
-                      'rotate-180',
-                  )}
-                  aria-hidden="true"
-                />
-              </button>
-
-              {comingSoonOpen ? (
-                <div className="flex flex-wrap gap-1.5 border-t border-white/[0.06] p-3">
-                  {comingSoonFiltered.map(
-                    (item) => (
-                      <span
-                        key={
-                          item.id
-                        }
-                        className="rounded-md bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]"
-                      >
-                        {
-                          item.name
-                        }
-                      </span>
-                    ),
-                  )}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
+            {loadingApps && !apps.length ? (
+              <div className="flex min-h-12 items-center gap-2 px-3 text-xs text-[var(--text-muted)]">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Checking business Plugins…
+              </div>
+            ) : null}
+          </div>
         </div>
 
-        {/* ====================================================
-            FOOTER
-            ==================================================== */}
-
-        <div className="flex flex-col items-center justify-center gap-2 border-t border-white/10 px-5 py-3 sm:flex-row">
+        <footer className="border-t border-[var(--border-subtle)] p-3">
           <Link
             href="/dashboard/integrations"
             onClick={onClose}
-            className="w-full rounded-xl border border-[var(--accent)]/35 bg-[var(--accent)]/20 px-4 py-2 text-center text-sm font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--accent)]/30 sm:w-auto"
+            className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-white"
           >
-            Open Plugins →
+            <Plug className="h-4 w-4" aria-hidden="true" />
+            Manage Plugins
           </Link>
-        </div>
-      </div>
+        </footer>
+      </section>
     </div>
   );
 }
