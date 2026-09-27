@@ -31,7 +31,7 @@ function toolkit(
   };
 }
 
-test('Plugins expose a small human category system instead of raw provider category spam', () => {
+test('Plugins expose understandable category shelves instead of raw provider category spam', () => {
   assert.deepEqual(
     PLUGIN_CATEGORY_GROUPS.slice(0, 5).map((item) => item.label),
     ['All', 'Productivity', 'Communication', 'Engineering', 'AI & Automation'],
@@ -53,22 +53,23 @@ test('Plugins expose a small human category system instead of raw provider categ
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
-  assert.match(marketplace, /PLUGIN_CATEGORY_GROUPS\.map/);
+  assert.match(marketplace, /Browse by category/);
+  assert.match(marketplace, /MarketplaceShelf/);
   assert.doesNotMatch(marketplace, /categories\.slice\(0, 10\)/);
 });
 
-test('category filters query the complete catalog through server-side Xroga groups', () => {
+test('category shelves use the complete catalog through server-side Xroga grouping', () => {
   const route = source('backend/src/routes/integrations.ts');
   const service = source(
     'backend/src/services/integrations/composioClient.ts',
   );
   const client = source('frontend/src/lib/xrogaConnect.ts');
 
-  assert.match(route, /listComposioCatalogGroup/);
-  assert.match(route, /'design-media'/);
-  assert.match(service, /xrogaCatalogGroupFor/);
-  assert.match(service, /catalog:group:/);
-  assert.match(client, /group\?:/);
+  assert.match(route, /marketplace-sections/);
+  assert.match(service, /xrogaMarketplaceSectionFor/);
+  assert.match(service, /listComposioCatalogUniverse/);
+  assert.match(client, /marketplaceSections:/);
+  assert.match(client, /marketplaceSection:/);
 });
 
 test('search result mode stays above browse navigation', () => {
@@ -135,14 +136,15 @@ test('every Plugin can render grounded real use cases from current actions', () 
   assert.match(css, /var\(--surface-raised\)/);
 });
 
-test('brand logos use toolkit metadata then the official toolkit logo CDN and never fake a brand', () => {
+test('brand logos use toolkit metadata then direct provider-logo assets and never fake a brand', () => {
   const logo = source(
     'frontend/src/components/integrations/PluginBrandLogo.tsx',
   );
 
   assert.match(logo, /logo,/);
   assert.match(logo, /fallbackLogo,/);
-  assert.match(logo, /composioLogoUrl\(toolkit\)/);
-  assert.match(logo, /<Plug/);
+  assert.match(logo, /toolkitLogoAssetUrl\(toolkit\)/);
+  assert.match(logo, /logo unavailable/);
+  assert.doesNotMatch(logo, /<Plug/);
   assert.doesNotMatch(logo, /google\.com\/s2\/favicons/);
 });
