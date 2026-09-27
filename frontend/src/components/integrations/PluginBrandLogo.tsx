@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plug } from 'lucide-react';
-
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
 
@@ -61,22 +59,11 @@ export function PluginBrandLogo({
     );
   }
 
-  if (id === 'github' || id === 'vercel' || id === 'supabase') {
-    return (
-      <span
-        className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)]`}
-      >
-        <IntegrationLogo id={id} name={name} size={iconSize} />
-      </span>
-    );
-  }
-
   return (
     <span
-      className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)] text-[var(--text-muted)]`}
-      aria-label={name}
+      className={`${dimension} flex shrink-0 items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-inset)]`}
     >
-      <Plug size={iconSize} aria-hidden="true" />
+      <IntegrationLogo id={id} name={name} size={iconSize} />
     </span>
   );
 }

@@ -53,11 +53,18 @@ test('Plugins expose a small human category system instead of raw provider categ
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
-  assert.match(marketplace, /PLUGIN_CATEGORY_GROUPS\.map/);
+  assert.match(marketplace, /DISCOVERY_SECTIONS\.map/);
+  assert.match(marketplace, /Developer Tools/);
+  assert.match(marketplace, /Business & Operations/);
+  assert.match(marketplace, /Small Business/);
+  assert.match(marketplace, /Creativity/);
+  assert.match(marketplace, /Travel/);
+  assert.match(marketplace, /Entertainment/);
+  assert.match(marketplace, /aria-expanded=\{expanded\}/);
   assert.doesNotMatch(marketplace, /categories\.slice\(0, 10\)/);
 });
 
-test('category filters query the complete catalog through server-side Xroga groups', () => {
+test('expandable category sections query the complete catalog through server-side Xroga groups', () => {
   const route = source('backend/src/routes/integrations.ts');
   const service = source(
     'backend/src/services/integrations/composioClient.ts',
@@ -69,6 +76,13 @@ test('category filters query the complete catalog through server-side Xroga grou
   assert.match(service, /xrogaCatalogGroupFor/);
   assert.match(service, /catalog:group:/);
   assert.match(client, /group\?:/);
+
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+  assert.match(marketplace, /loadDiscoverySection/);
+  assert.match(marketplace, /limit: 250/);
+  assert.match(marketplace, /while \(cursor && pages < 20\)/);
 });
 
 test('search result mode stays above browse navigation', () => {
@@ -143,6 +157,20 @@ test('brand logos use toolkit metadata then the official toolkit logo CDN and ne
   assert.match(logo, /logo,/);
   assert.match(logo, /fallbackLogo,/);
   assert.match(logo, /composioLogoUrl\(toolkit\)/);
-  assert.match(logo, /<Plug/);
+  assert.match(logo, /IntegrationLogo/);
+  assert.doesNotMatch(logo, /<Plug/);
   assert.doesNotMatch(logo, /google\.com\/s2\/favicons/);
+});
+
+test('Add Plugin opens a compact in-page dialog instead of replacing the marketplace', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /title="Add Plugin"/);
+  assert.match(marketplace, /className="max-w-\[440px\]"/);
+  assert.match(marketplace, /Find an Xroga App/);
+  assert.match(marketplace, /API key or webhook/);
+  assert.match(marketplace, /setAddPluginOpen\(true\)/);
+  assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
 });

@@ -60,8 +60,9 @@ test('Step 4 makes Composio the canonical browsable catalog', () => {
   assert.match(client, /catalog:/);
   assert.match(client, /catalogCategories:/);
   assert.match(client, /catalogToolkit:/);
-  assert.match(marketplace, /catalogTotal\.toLocaleString\(\)/);
-  assert.match(marketplace, /Show more Plugins/);
+  assert.match(marketplace, /globalCatalogTotal\.toLocaleString\(\)/);
+  assert.match(marketplace, /DISCOVERY_SECTIONS/);
+  assert.match(marketplace, /loadDiscoverySection/);
 });
 
 test('search results render before browse navigation and use live capability search', () => {

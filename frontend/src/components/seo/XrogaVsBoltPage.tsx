@@ -55,8 +55,6 @@ const BOLT = {
 } as const;
 
 
-const COMPOSIO_TOOLKITS =
-  'https://docs.composio.dev/toolkits';
 
 
 const IMAGES = {
@@ -513,7 +511,7 @@ const FAQS = [
       'What is Xroga Connect?',
 
     answer:
-      'Xroga Connect is the customer-facing integration layer for supported external tools and services. Some connections can use third-party integration infrastructure such as Composio. Availability depends on provider support, credentials, permissions, and Xroga controls.',
+      'Xroga Connect is the customer-facing integration layer for supported external tools and services. Availability depends on the app, credentials, permissions, and Xroga safety controls.',
   },
 
   {
@@ -1631,24 +1629,11 @@ export function XrogaVsBoltPage() {
 
                 <p>
                   Xroga Connect is the customer-facing integration layer for
-                  supported external services. Some connections can be powered
-                  by integration infrastructure such as Composio. Xroga&apos;s
-                  product model distinguishes reading/searching from
-                  consequential actions that create, edit, send, delete, or
-                  publish something.
-                </p>
-
-                <p>
-                  Composio&apos;s upstream catalog currently lists more than
-                  1,500 toolkits, but that should not be interpreted as
-                  “every Composio integration is automatically enabled in
-                  Xroga.” Actual availability depends on Xroga support,
-                  provider permissions, authentication, and the action being
-                  requested.
-                  {' '}
-                  <SourceLink href={COMPOSIO_TOOLKITS}>
-                    Composio toolkit catalog
-                  </SourceLink>
+                  supported external services. Xroga&apos;s product model
+                  distinguishes reading/searching from consequential actions
+                  that create, edit, send, delete, or publish something.
+                  Actual availability depends on the app, provider permissions,
+                  authentication, and the action being requested.
                 </p>
 
                 <div className="xvb-chip-cloud">
@@ -2525,11 +2510,6 @@ export function XrogaVsBoltPage() {
                       </SourceLink>
                     </li>
 
-                    <li>
-                      <SourceLink href={COMPOSIO_TOOLKITS}>
-                        Composio toolkit catalog
-                      </SourceLink>
-                    </li>
                   </ul>
                 </div>
 

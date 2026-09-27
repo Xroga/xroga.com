@@ -350,6 +350,11 @@ export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
     keywords: ['deploy', 'hosting', 'web', 'production'],
     nativeCapabilities: ['Projects', 'Deployments', 'Environment access'],
     developerUsage: ['Web publishing'],
+    examples: [
+      'Show my recent deployments and which one is live.',
+      'Check whether this project is ready to deploy.',
+      'Open the production deployment for this project.',
+    ],
   },
   {
     id: 'supabase',
@@ -364,6 +369,11 @@ export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
     keywords: ['database', 'auth', 'storage', 'backend', 'realtime'],
     nativeCapabilities: ['Projects', 'Database setup', 'Authentication', 'Storage'],
     developerUsage: ['Project backend', 'Authentication', 'Storage'],
+    examples: [
+      'Show the Supabase project connected to this app.',
+      'Check whether database and authentication are ready.',
+      'Help me prepare the backend services this project needs.',
+    ],
   },
 ];
 
@@ -565,6 +575,8 @@ const CATEGORY_NAME_MAP: Array<{
   test: RegExp;
   label: string;
 }> = [
+  { test: /travel|flight|airline|hotel|booking|trip|tourism|maps?|navigation|location|route|rental car/i, label: 'Travel' },
+  { test: /entertainment|music|podcast|gaming|game|movie|film|streaming|sports|ticket|astrology|horoscope/i, label: 'Entertainment' },
   { test: /communication|messaging|chat|email|mail|sms|phone|voice|social|community|video conference|meeting/i, label: 'Communication' },
   { test: /sales|crm|lead|customer|prospect|deal|pipeline|relationship/i, label: 'Sales & CRM' },
   { test: /commerce|ecommerce|e-commerce|store|shopping|payment|checkout|order|inventory|shipping|fulfillment/i, label: 'Commerce' },

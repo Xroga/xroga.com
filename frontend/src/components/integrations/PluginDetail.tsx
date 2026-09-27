@@ -649,9 +649,17 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       .slice(0, 4)
       .map((tool) => {
         const action = tool.name || prettyToolName(tool);
+        const prompt = groundedUseCasePrompt(tool, definition.name);
+        const prefix = `Use ${definition.name} to `;
+        const groundedLabel = prompt.startsWith(prefix)
+          ? prompt
+              .slice(prefix.length)
+              .replace(/^./, (value) => value.toUpperCase())
+          : action;
+
         return {
-          label: action,
-          prompt: groundedUseCasePrompt(tool, definition.name),
+          label: groundedLabel,
+          prompt,
         };
       });
   }, [definition.examples, definition.name, tools]);
