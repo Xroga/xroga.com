@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -120,6 +122,24 @@ interface ComposioLinkResponse {
   link_token?: string;
   redirect_url?: string;
   connected_account_id?: string;
+}
+
+interface ComposioCustomToolkitUpsertResponse {
+  slug?: string;
+}
+
+interface ComposioCustomToolkitSyncResponse {
+  slug?: string;
+  version?: string;
+  synced_count?: number;
+}
+
+interface ComposioCustomToolkitDeleteResponse {
+  slug?: string;
+  deleted?: boolean;
+  revoke_job_ids?: string[];
+  auth_configs_soft_deleted?: number;
+  connected_accounts_soft_deleted?: number;
 }
 
 interface ComposioSessionToolkitResponse {
@@ -296,6 +316,7 @@ export interface XrogaConnectToolkit {
   description?: string;
   logo?: string;
   connected: boolean;
+  connectedAccountId?: string;
   statusMessage?: string;
   noAuth?: boolean;
 }
@@ -458,6 +479,383 @@ async function cachedComposioValue<T>(
   }
 
   return value;
+}
+
+export type XrogaCustomMcpAuthMode =
+  | 'none'
+  | 'api_key'
+  | 'dcr_oauth';
+
+export interface XrogaCustomMcpCreateInput {
+  name: string;
+  serverUrl: string;
+  authMode: XrogaCustomMcpAuthMode;
+  headerName?: string;
+  headerPrefix?: string;
+  discoveryUrl?: string;
+}
+
+export interface XrogaCustomMcpSyncResult {
+  slug: string;
+  version?: string;
+  syncedCount?: number;
+}
+
+function xrogaCustomUserToken(userId: string): string {
+  return createHash('sha256')
+    .update(userId.trim())
+    .digest('hex')
+    .slice(0, 12);
+}
+
+function cleanCustomMcpSlug(value: string): string {
+  const clean = value
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 42);
+
+  if (!clean) {
+    throw new ComposioClientError('Custom MCP name must contain letters or numbers.', {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_NAME',
+    });
+  }
+
+  return clean;
+}
+
+function validateCustomMcpUrl(value: string, field: string): string {
+  let url: URL;
+
+  try {
+    url = new URL(value);
+  } catch {
+    throw new ComposioClientError(`${field} must be a valid URL.`, {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_URL',
+    });
+  }
+
+  const localHttp =
+    url.protocol === 'http:' &&
+    (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
+
+  if (url.protocol !== 'https:' && !localHttp) {
+    throw new ComposioClientError(`${field} must use HTTPS.`, {
+      status: 400,
+      code: 'UNSAFE_CUSTOM_MCP_URL',
+    });
+  }
+
+  return url.toString();
+}
+
+export function xrogaCustomToolkitPrefix(userId: string): string {
+  return `custom_xroga_${xrogaCustomUserToken(userId)}_`;
+}
+
+function xrogaCustomToolkitRegistrationSlug(
+  userId: string,
+  name: string,
+): string {
+  return `XROGA_${xrogaCustomUserToken(userId).toUpperCase()}_${cleanCustomMcpSlug(name)}`;
+}
+
+export function canUserAccessComposioToolkit(
+  userId: string,
+  toolkitSlug: string,
+): boolean {
+  const clean = toolkitSlug.trim().toLowerCase();
+
+  if (!clean.startsWith('custom_')) {
+    return true;
+  }
+
+  return clean.startsWith(xrogaCustomToolkitPrefix(userId));
+}
+
+export function filterComposioCatalogForUser(
+  userId: string,
+  items: XrogaConnectCatalogToolkit[],
+): XrogaConnectCatalogToolkit[] {
+  return items.filter((item) =>
+    canUserAccessComposioToolkit(userId, item.slug),
+  );
+}
+
+function clearComposioCatalogCache(): void {
+  catalogCache.clear();
+}
+
+export async function listUserCustomMcpToolkits(
+  userId: string,
+): Promise<XrogaConnectCatalogToolkit[]> {
+  const prefix = xrogaCustomToolkitPrefix(userId);
+  const collected: XrogaConnectCatalogToolkit[] = [];
+  let cursor: string | undefined;
+  let pages = 0;
+
+  do {
+    const page = await listComposioCatalog({
+      sortBy: 'alphabetically',
+      limit: MAX_CATALOG_PAGE_SIZE,
+      ...(cursor ? { cursor } : {}),
+    });
+
+    for (const item of page.items) {
+      if (
+        item.slug.toLowerCase().startsWith(prefix) &&
+        !collected.some((existing) => existing.slug === item.slug)
+      ) {
+        collected.push(item);
+      }
+    }
+
+    cursor = page.nextCursor;
+    pages += 1;
+  } while (cursor && pages < 20);
+
+  return collected;
+}
+
+export async function createUserCustomMcpToolkit(
+  userId: string,
+  input: XrogaCustomMcpCreateInput,
+): Promise<{
+  slug: string;
+  toolkit?: XrogaConnectCatalogToolkit;
+  initialSync?: XrogaCustomMcpSyncResult;
+}> {
+  const name = input.name.trim().slice(0, 80);
+  if (name.length < 2) {
+    throw new ComposioClientError('Custom MCP name is too short.', {
+      status: 400,
+      code: 'INVALID_CUSTOM_MCP_NAME',
+    });
+  }
+
+  const serverUrl = validateCustomMcpUrl(input.serverUrl, 'Server URL');
+  const registrationSlug = xrogaCustomToolkitRegistrationSlug(userId, name);
+  const expectedSlug = `CUSTOM_${registrationSlug}`.toLowerCase();
+
+  const existing = await listUserCustomMcpToolkits(userId);
+  if (existing.some((item) => item.slug.toLowerCase() === expectedSlug)) {
+    throw new ComposioClientError(
+      'A Custom MCP with this name already exists. Remove it before changing its server or authentication mode.',
+      {
+        status: 409,
+        code: 'CUSTOM_MCP_ALREADY_EXISTS',
+      },
+    );
+  }
+
+  let authScheme: Record<string, unknown>;
+
+  if (input.authMode === 'api_key') {
+    const headerName = (input.headerName || 'Authorization').trim();
+    if (!/^[A-Za-z0-9-]{1,80}$/.test(headerName)) {
+      throw new ComposioClientError('API-key header name is invalid.', {
+        status: 400,
+        code: 'INVALID_CUSTOM_MCP_HEADER',
+      });
+    }
+
+    const prefix = (input.headerPrefix ?? 'Bearer ').slice(0, 80);
+    authScheme = {
+      mode: 'API_KEY',
+      headers: {
+        [headerName]: `${prefix}{{generic_api_key}}`,
+      },
+      api_key_field: {
+        display_name: 'API key',
+        description: `Credential sent through the ${headerName} header.`,
+      },
+    };
+  } else if (input.authMode === 'dcr_oauth') {
+    if (!input.discoveryUrl?.trim()) {
+      throw new ComposioClientError(
+        'OAuth discovery URL is required for DCR OAuth.',
+        {
+          status: 400,
+          code: 'CUSTOM_MCP_DISCOVERY_REQUIRED',
+        },
+      );
+    }
+
+    authScheme = {
+      mode: 'DCR_OAUTH',
+      discovery_url: validateCustomMcpUrl(
+        input.discoveryUrl,
+        'OAuth discovery URL',
+      ),
+    };
+  } else {
+    authScheme = {
+      mode: 'NO_AUTH',
+    };
+  }
+
+  const response =
+    await composioRequest<ComposioCustomToolkitUpsertResponse>(
+      '/custom/toolkits/upsert',
+      {
+        method: 'POST',
+        body: {
+          slug: registrationSlug,
+          toolkit_config: {
+            name,
+            app_url: serverUrl,
+            auth_schemes: [authScheme],
+          },
+        },
+      },
+    );
+
+  const slug = response.slug?.trim().toLowerCase();
+  if (!slug || !canUserAccessComposioToolkit(userId, slug)) {
+    throw new ComposioClientError(
+      'Custom MCP registration returned an invalid toolkit identifier.',
+      {
+        status: 502,
+        code: 'CUSTOM_MCP_INVALID_RESPONSE',
+      },
+    );
+  }
+
+  if (input.authMode !== 'none') {
+    await composioRequest('/auth_configs', {
+      method: 'POST',
+      body: {
+        toolkit: {
+          slug,
+        },
+        auth_config: {
+          type: 'use_custom_auth',
+          authScheme:
+            input.authMode === 'api_key'
+              ? 'API_KEY'
+              : 'DCR_OAUTH',
+          credentials: {},
+          is_enabled_for_tool_router: true,
+        },
+      },
+    });
+  }
+
+  clearComposioCatalogCache();
+
+  let initialSync: XrogaCustomMcpSyncResult | undefined;
+  if (input.authMode === 'none') {
+    try {
+      initialSync = await syncUserCustomMcpToolkit(userId, {
+        toolkit: slug,
+      });
+    } catch {
+      // Registration already starts the initial no-auth sync. A manual sync
+      // failure here must not discard a successfully registered server.
+    }
+  }
+
+  let toolkit: XrogaConnectCatalogToolkit | undefined;
+  try {
+    const resolved = await getComposioCatalogToolkit(slug);
+    if (canUserAccessComposioToolkit(userId, resolved.slug)) {
+      toolkit = resolved;
+    }
+  } catch {
+    // Upstream indexing can lag briefly after registration.
+  }
+
+  return {
+    slug,
+    ...(toolkit ? { toolkit } : {}),
+    ...(initialSync ? { initialSync } : {}),
+  };
+}
+
+export async function syncUserCustomMcpToolkit(
+  userId: string,
+  input: {
+    toolkit: string;
+    connectedAccountId?: string;
+  },
+): Promise<XrogaCustomMcpSyncResult> {
+  const toolkit = cleanToolkit(input.toolkit);
+
+  if (!canUserAccessComposioToolkit(userId, toolkit)) {
+    throw new ComposioClientError('Custom MCP was not found.', {
+      status: 404,
+      code: 'CUSTOM_MCP_NOT_FOUND',
+    });
+  }
+
+  const response =
+    await composioRequest<ComposioCustomToolkitSyncResponse>(
+      '/custom/toolkits/sync',
+      {
+        method: 'POST',
+        body: {
+          slug: toolkit,
+          ...(input.connectedAccountId
+            ? {
+                connected_account_id:
+                  input.connectedAccountId,
+              }
+            : {}),
+        },
+        timeoutMs: EXECUTE_TIMEOUT_MS,
+      },
+    );
+
+  clearComposioCatalogCache();
+
+  return {
+    slug: response.slug?.trim().toLowerCase() || toolkit,
+    ...(response.version
+      ? {
+          version: response.version,
+        }
+      : {}),
+    ...(typeof response.synced_count === 'number'
+      ? {
+          syncedCount: response.synced_count,
+        }
+      : {}),
+  };
+}
+
+export async function deleteUserCustomMcpToolkit(
+  userId: string,
+  toolkitSlug: string,
+): Promise<{
+  slug: string;
+  deleted: boolean;
+}> {
+  const toolkit = cleanToolkit(toolkitSlug);
+
+  if (!canUserAccessComposioToolkit(userId, toolkit)) {
+    throw new ComposioClientError('Custom MCP was not found.', {
+      status: 404,
+      code: 'CUSTOM_MCP_NOT_FOUND',
+    });
+  }
+
+  const response =
+    await composioRequest<ComposioCustomToolkitDeleteResponse>(
+      `/custom/toolkits/${encodeURIComponent(toolkit)}`,
+      {
+        method: 'DELETE',
+      },
+    );
+
+  clearComposioCatalogCache();
+
+  return {
+    slug: response.slug?.trim().toLowerCase() || toolkit,
+    deleted: response.deleted === true,
+  };
 }
 
 function getComposioApiKey(): string {
@@ -1270,6 +1668,11 @@ async function listSessionComposioToolkits(
           logo: item.meta?.logo,
           connected:
             item.is_no_auth === true || Boolean(item.connected_account),
+          ...(item.connected_account?.id
+            ? {
+                connectedAccountId: item.connected_account.id,
+              }
+            : {}),
           statusMessage: item.connected_account?.status,
           noAuth:
             item.is_no_auth === true || item.meta?.isNoAuth === true,
@@ -1755,7 +2158,13 @@ async function executeDiscoveredComposioTool(
     mode: input.mode,
   });
 
-  const allowed = discovery.tools.some((tool) => tool.slug === toolSlug);
+  const allowedTool = discovery.tools.find((tool) => tool.slug === toolSlug);
+  const allowed =
+    Boolean(allowedTool) &&
+    canUserAccessComposioToolkit(
+      userId,
+      allowedTool?.toolkit || '',
+    );
 
   if (!allowed) {
     throw new ComposioClientError(
