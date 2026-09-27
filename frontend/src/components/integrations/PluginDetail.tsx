@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
+  ChevronRight,
   ExternalLink,
   Loader2,
   RefreshCw,
@@ -23,6 +24,7 @@ import { api } from '@/lib/api';
 import {
   canonicalPluginId,
   genericPluginDefinition,
+  groundedUseCasePrompt,
   groupCapabilities,
   pluginDefinitionFor,
   pluginFromCatalog,
@@ -644,14 +646,12 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         seen.add(tool.slug);
         return true;
       })
-      .slice(0, 6)
+      .slice(0, 4)
       .map((tool) => {
         const action = tool.name || prettyToolName(tool);
         return {
           label: action,
-          prompt: `Use ${definition.name} to ${action.toLowerCase()}.${
-            tool.description ? ` ${tool.description}` : ''
-          }`,
+          prompt: groundedUseCasePrompt(tool, definition.name),
         };
       });
   }, [definition.examples, definition.name, tools]);
@@ -690,7 +690,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
     const toolkitSlug = catalog?.slug || connectionToolkit?.toolkit;
     if (!toolkitSlug) {
-      throw new Error(`${definition.name} does not have a current Composio toolkit.`);
+      throw new Error(`${definition.name} does not have a current app connection identifier.`);
     }
 
     let activeSession = sessionId;
@@ -877,7 +877,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         <div className="mt-8 rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-6">
           <h1 className="text-xl font-semibold text-[var(--text-primary)]">Plugin not found</h1>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            Xroga could not match this route to the current live Composio catalogue.
+            Xroga could not match this route to the current Xroga Apps catalogue.
           </p>
           <Link
             href="/dashboard/integrations"
@@ -961,28 +961,44 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
           </section>
 
           {actionUseCases.length ? (
-            <section>
-              <div className="mb-3">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Real use cases</h2>
-                <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                  Curated examples when available; otherwise grounded in this Plugin’s current Composio action catalogue.
-                </p>
-              </div>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {actionUseCases.map((item) => (
-                  <button
-                    key={item.prompt}
-                    type="button"
-                    onClick={() => handleExample(item.prompt)}
-                    className="group flex min-h-12 items-center justify-between gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 py-3 text-left text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-                  >
-                    <span>{item.label}</span>
-                    <ChevronDown
-                      className="h-4 w-4 -rotate-90 text-[var(--text-muted)] transition group-hover:translate-x-0.5"
-                      aria-hidden="true"
-                    />
-                  </button>
-                ))}
+            <section className="xv-plugin-usecases rounded-[18px] border border-[var(--border-subtle)] p-4 sm:p-6">
+              <div className="relative z-[1]">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Real use cases</h2>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                    Real things Xroga can do with this app, grounded in its current actions.
+                  </p>
+                </div>
+
+                <div className="mx-auto max-w-3xl space-y-3">
+                  {actionUseCases.slice(0, 4).map((item) => (
+                    <button
+                      key={item.prompt}
+                      type="button"
+                      onClick={() => handleExample(item.prompt)}
+                      className="xv-plugin-usecase-card group flex w-full min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] px-4 py-3 text-left text-sm text-[var(--text-primary)] shadow-subtle transition hover:-translate-y-0.5 hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] motion-reduce:transform-none"
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <PluginBrandLogo
+                          id={definition.id}
+                          name={definition.name}
+                          toolkit={catalog?.slug}
+                          logo={catalog?.logo}
+                          size="micro"
+                        />
+                        <span className="min-w-0 leading-5">
+                          <strong className="font-semibold text-[var(--accent)]">
+                            {definition.name}
+                          </strong>{' '}
+                          <span>{item.label}</span>
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--surface-inset)] text-[var(--text-primary)] transition group-hover:translate-x-0.5">
+                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </section>
           ) : null}
@@ -995,7 +1011,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   Skills & task planning
                 </h2>
                 <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                  Describe a task. Xroga asks Composio’s live tool search for matching tools and, when a learned skill exists, its recommended plan and pitfalls.
+                  Describe a task. Xroga searches the live action network for matching tools and, when a learned skill exists, shows its recommended plan and pitfalls.
                 </p>
 
                 <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -1096,7 +1112,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Capabilities</h2>
                 <p className="mt-1 text-xs text-[var(--text-secondary)]">
                   {tools.length
-                    ? `${tools.length.toLocaleString()} loaded actions from the current Composio toolkit catalogue${toolsTotal > tools.length ? ` of ${toolsTotal.toLocaleString()}` : ''}.`
+                    ? `${tools.length.toLocaleString()} loaded actions${toolsTotal > tools.length ? ` of ${toolsTotal.toLocaleString()}` : ''} from the current Xroga App.`
                     : 'Live action metadata for this Plugin.'}
                 </p>
               </div>
@@ -1387,7 +1403,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
             <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">AI actions</h2>
               <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                Xroga’s developer connection and Composio AI-action connection are separate. The runtime can request the Composio connection when an AI action needs it.
+                Xroga’s developer connection and AI-action connection are separate. The runtime can request the app connection when an AI action needs it.
               </p>
               <p className="mt-3 text-xs font-medium text-[var(--text-primary)]">
                 {composioConnected ? 'Xroga Connect ready' : 'Xroga Connect not connected'}
