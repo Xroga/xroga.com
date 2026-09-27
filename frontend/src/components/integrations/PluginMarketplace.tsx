@@ -228,7 +228,6 @@ export function PluginMarketplace() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [toolkitMap, setToolkitMap] = useState<Record<string, XrogaConnectToolkit>>({});
   const [toolCountByToolkit, setToolCountByToolkit] = useState<Record<string, number>>({});
-  const [semanticToolkits, setSemanticToolkits] = useState<XrogaConnectToolkit[]>([]);
   const [semanticLoading, setSemanticLoading] = useState(false);
   const [semanticError, setSemanticError] = useState(false);
   const [connectingId, setConnectingId] = useState<string | null>(null);
@@ -455,7 +454,6 @@ export function PluginMarketplace() {
     const clean = deferredQuery;
 
     if (!composioConfigured || clean.length < 2) {
-      setSemanticToolkits([]);
       setSemanticError(false);
       return;
     }
@@ -470,7 +468,6 @@ export function PluginMarketplace() {
         .then((result) => {
           if (requestSeq.current !== seq) return;
           setSessionId(result.sessionId);
-          setSemanticToolkits(result.toolkits ?? []);
           absorbSearchResult(result.toolkits ?? [], result.tools ?? []);
         })
         .catch(() => {
