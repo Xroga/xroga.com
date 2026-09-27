@@ -6,7 +6,11 @@ import {
   Check,
   Circle,
   ExternalLink,
+  Globe,
   Loader2,
+  Monitor,
+  Puzzle,
+  Smartphone,
   TriangleAlert,
 } from 'lucide-react';
 
@@ -191,10 +195,10 @@ export function PublishTargetTabs({
   statuses: Record<PublishTarget, { label: string; tone: 'success' | 'warning' | 'neutral' }>;
 }) {
   const items: Array<{ id: PublishTarget; label: string; icon: LucideIcon }> = [
-    { id: 'web', label: 'Web', icon: require('lucide-react').Globe },
-    { id: 'chrome', label: 'Chrome', icon: require('lucide-react').Puzzle },
-    { id: 'desktop', label: 'Desktop', icon: require('lucide-react').Monitor },
-    { id: 'mobile', label: 'Mobile', icon: require('lucide-react').Smartphone },
+    { id: 'web', label: 'Web', icon: Globe },
+    { id: 'chrome', label: 'Chrome', icon: Puzzle },
+    { id: 'desktop', label: 'Desktop', icon: Monitor },
+    { id: 'mobile', label: 'Mobile', icon: Smartphone },
   ];
 
   return (
