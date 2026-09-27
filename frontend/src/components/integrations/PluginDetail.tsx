@@ -251,6 +251,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         return;
       }
 
+      // Keep the read-mode session for connection state and OAuth linking.
       const result = await xrogaConnect.search(
         definition.query || `find ${definition.name} capabilities`,
         sessionId ?? undefined,
@@ -269,7 +270,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
           ? result.toolkits[0]
           : undefined;
 
-      const selected = exact ?? fallback ?? null;
+      let selected = exact ?? fallback ?? null;
 
       if (!selected) {
         if (!pluginDefinitionFor(pluginId)) {
@@ -281,14 +282,28 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         return;
       }
 
+      // The toolkit-list endpoint returns richer metadata (name/logo/no-auth)
+      // than search statuses. Failure here does not block the detail experience.
+      try {
+        const metadata = await xrogaConnect.toolkits(result.sessionId, {
+          toolkits: [selected.toolkit],
+        });
+        selected =
+          metadata.toolkits.find((item) => item.toolkit === selected?.toolkit) ??
+          selected;
+      } catch {
+        // Search metadata is sufficient as a fallback.
+      }
+
       setNotFound(false);
       setToolkit(selected);
 
       if (!pluginDefinitionFor(pluginId)) {
+        const generic = genericPluginDefinition(pluginId);
         setDefinition({
-          ...genericPluginDefinition(pluginId),
+          ...generic,
           id: canonicalPluginId(`${selected.name ?? ''} ${selected.toolkit}`),
-          name: selected.name || genericPluginDefinition(pluginId).name,
+          name: selected.name || generic.name,
           description:
             selected.description ||
             selected.statusMessage ||
@@ -296,16 +311,33 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
           longDescription:
             selected.description ||
             'Connect this app so Xroga can use its supported capabilities when you ask.',
-          category: initialDefinition.category,
+          category: inferCategory(
+            selected.name || generic.name,
+            selected.description,
+          ),
           query: `find ${selected.name || selected.toolkit} capabilities`,
         });
       }
 
-      setTools(
-        (result.tools ?? []).filter(
-          (tool) => tool.toolkit === selected.toolkit,
-        ),
-      );
+      // Capability discovery is metadata-only. Action-mode search includes
+      // write/destructive tools and their real risk labels, but executes nothing.
+      try {
+        const actionResult = await xrogaConnect.actionSearch(
+          definition.query || `find ${definition.name} capabilities`,
+        );
+        setTools(
+          (actionResult.tools ?? []).filter(
+            (tool) => tool.toolkit === selected?.toolkit,
+          ),
+        );
+      } catch {
+        // Fall back to read-safe tools if action metadata is unavailable.
+        setTools(
+          (result.tools ?? []).filter(
+            (tool) => tool.toolkit === selected?.toolkit,
+          ),
+        );
+      }
     } catch (error) {
       setCapabilityError(
         error instanceof Error ? error.message : 'Capabilities are temporarily unavailable.',
