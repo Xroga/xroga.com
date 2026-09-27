@@ -1657,7 +1657,9 @@ export async function listComposioMarketplaceSections(
 
   return XROGA_MARKETPLACE_SECTIONS.map((section) => {
     const items = universe.filter(
-      (toolkit) => xrogaMarketplaceSectionFor(toolkit) === section.id,
+      (toolkit) =>
+        toolkit.type !== 'custom' &&
+        xrogaMarketplaceSectionFor(toolkit) === section.id,
     );
 
     return {
@@ -1677,7 +1679,9 @@ export async function listComposioMarketplaceSection(
 ): Promise<XrogaConnectCatalogPage> {
   const universe = await listComposioCatalogUniverse();
   const items = universe.filter(
-    (toolkit) => xrogaMarketplaceSectionFor(toolkit) === input.section,
+    (toolkit) =>
+      toolkit.type !== 'custom' &&
+      xrogaMarketplaceSectionFor(toolkit) === input.section,
   );
   const limit = Math.min(Math.max(Math.trunc(input.limit ?? 120), 1), MAX_CATALOG_PAGE_SIZE);
   const offsetMatch = input.cursor?.match(/^xroga-section-(\d+)$/);
