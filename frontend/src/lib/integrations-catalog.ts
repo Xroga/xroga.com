@@ -383,10 +383,11 @@ export const INTEGRATION_CATALOG: Integration[] = [
     "status": "not_connected"
   },
   {
-    "id": "composio",
-    "name": "Composio",
+    "id": "xroga_apps",
+    "name": "Xroga Apps",
     "category": "Developer & Code",
-    "status": "not_connected"
+    "status": "connected",
+    "description": "Connect supported external apps and services through Xroga."
   },
   {
     "id": "xbox_series_x_s_one",
