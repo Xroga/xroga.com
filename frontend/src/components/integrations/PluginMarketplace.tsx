@@ -239,6 +239,7 @@ export function PluginMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [catalogItems, setCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
   const [catalogTotal, setCatalogTotal] = useState<number | null>(null);
+  const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
   const [catalogCursor, setCatalogCursor] = useState<string | undefined>();
   const [categories, setCategories] = useState<XrogaConnectCatalogCategory[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -410,6 +411,7 @@ export function PluginMarketplace() {
         if (catalogResult.status === 'fulfilled') {
           setCatalogItems(catalogResult.value.items);
           setCatalogTotal(catalogResult.value.totalItems);
+          setGlobalCatalogTotal(catalogResult.value.totalItems);
           setCatalogCursor(catalogResult.value.nextCursor);
           setCatalogError(null);
         } else {
@@ -947,9 +949,9 @@ export function PluginMarketplace() {
             <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-[28px]">
               Plugins
             </h1>
-            {catalogTotal !== null ? (
+            {globalCatalogTotal !== null ? (
               <span className="rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-secondary)]">
-                {catalogTotal.toLocaleString()} available
+                {globalCatalogTotal.toLocaleString()} available
               </span>
             ) : null}
           </div>
@@ -981,7 +983,7 @@ export function PluginMarketplace() {
           onChange={(event) => {
             const value = event.target.value;
             setQuery(value);
-            if (view !== 'discover') setViewState('discover');
+            if (view !== 'discover') setView('discover');
           }}
           placeholder="Search any app or describe what you want Xroga to do…"
           className="w-full rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-3.5 pl-11 pr-12 text-sm text-[var(--text-primary)] shadow-subtle outline-none transition focus:border-[var(--accent)] focus-visible:shadow-[var(--focus-ring)]"
@@ -1152,6 +1154,7 @@ export function PluginMarketplace() {
                         .then((page) => {
                           setCatalogItems(page.items);
                           setCatalogTotal(page.totalItems);
+                          setGlobalCatalogTotal(page.totalItems);
                           setCatalogCursor(page.nextCursor);
                           setCatalogError(null);
                         })
