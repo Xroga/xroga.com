@@ -38,6 +38,7 @@ import {
   createReadOnlyComposioSession,
   executeComposioReadTool,
   getComposioCatalogToolkit,
+  getComposioToolDetails,
   isComposioConfigured,
   listComposioCatalog,
   listComposioCatalogCategories,
@@ -1287,6 +1288,52 @@ router.get(
       res.json({
         ok: true,
         toolkit,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+/**
+ * Full metadata for one Composio action.
+ *
+ * Used by the Advanced action inspector. This is metadata-only and never
+ * executes the tool or exposes provider credentials.
+ */
+router.get(
+  '/xroga-connect/tool-details/:toolSlug',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolSlug: z
+        .string()
+        .trim()
+        .min(3)
+        .max(200)
+        .regex(/^[A-Za-z0-9_-]+$/),
+    });
+
+    const parsed = schema.safeParse({
+      toolSlug: req.params.toolSlug,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const tool = await getComposioToolDetails(parsed.data.toolSlug);
+
+      res.json({
+        ok: true,
+        tool,
       });
     } catch (error) {
       sendComposioError(res, error);
