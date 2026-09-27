@@ -15,6 +15,16 @@ export interface XrogaConnectTool {
   requiresConfirmation?: boolean;
 }
 
+export interface XrogaConnectToolDetails extends XrogaConnectTool {
+  humanDescription?: string;
+  outputSchema?: Record<string, unknown>;
+  scopeRequirements?: unknown;
+  noAuth: boolean;
+  deprecated: boolean;
+  scopes: string[];
+  tags: string[];
+}
+
 export interface XrogaConnectToolkit {
   toolkit: string;
   name?: string;
@@ -184,6 +194,16 @@ export const xrogaConnect = {
         limit: opts?.limit,
         cursor: opts?.cursor,
       })}`,
+    ),
+
+  toolDetails: (toolSlug: string) =>
+    apiFetch<{
+      ok: boolean;
+      tool: XrogaConnectToolDetails;
+    }>(
+      `/api/integrations/xroga-connect/tool-details/${encodeURIComponent(
+        toolSlug,
+      )}`,
     ),
 
   catalogTriggers: (
