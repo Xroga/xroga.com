@@ -19,7 +19,7 @@ export function PluginBrandLogo({
   toolkit?: string;
   logo?: string;
   fallbackLogo?: string;
-  size?: 'card' | 'detail';
+  size?: 'micro' | 'card' | 'detail';
 }) {
   const candidates = useMemo(
     () =>
@@ -41,8 +41,13 @@ export function PluginBrandLogo({
     setIndex(0);
   }, [id, logo, fallbackLogo, toolkit]);
 
-  const dimension = size === 'detail' ? 'h-14 w-14 rounded-2xl p-2' : 'h-10 w-10 rounded-xl p-1.5';
-  const iconSize = size === 'detail' ? 31 : 22;
+  const dimension =
+    size === 'detail'
+      ? 'h-14 w-14 rounded-2xl p-2'
+      : size === 'micro'
+        ? 'h-6 w-6 rounded-lg p-0.5'
+        : 'h-10 w-10 rounded-xl p-1.5';
+  const iconSize = size === 'detail' ? 31 : size === 'micro' ? 15 : 22;
 
   if (index < candidates.length) {
     return (
