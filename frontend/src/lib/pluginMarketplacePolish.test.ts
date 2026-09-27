@@ -157,7 +157,8 @@ test('brand logos use toolkit metadata then the official toolkit logo CDN and ne
   assert.match(logo, /logo,/);
   assert.match(logo, /fallbackLogo,/);
   assert.match(logo, /composioLogoUrl\(toolkit\)/);
-  assert.match(logo, /<Plug/);
+  assert.match(logo, /IntegrationLogo/);
+  assert.doesNotMatch(logo, /<Plug/);
   assert.doesNotMatch(logo, /google\.com\/s2\/favicons/);
 });
 
