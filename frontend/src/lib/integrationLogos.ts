@@ -44,48 +44,7 @@ export const INTEGRATION_LOGOS: Record<string, string> = {
   cloudflare_r2: 'https://cdn.simpleicons.org/cloudflare/F38020',
 };
 
-const DOMAIN_GUESS: Record<string, string> = {
-  jira: 'atlassian.com',
-  linear: 'linear.app',
-  asana: 'asana.com',
-  trello: 'trello.com',
-  notion: 'notion.so',
-  figma: 'figma.com',
-  miro: 'miro.com',
-  airtable: 'airtable.com',
-  salesforce: 'salesforce.com',
-  hubspot: 'hubspot.com',
-  zendesk: 'zendesk.com',
-  intercom: 'intercom.com',
-  docusign: 'docusign.com',
-  quickbooks_online: 'quickbooks.intuit.com',
-  xero: 'xero.com',
-  plaid: 'plaid.com',
-  twilio_standalone: 'twilio.com',
-  mongodb_atlas: 'mongodb.com',
-  snowflake: 'snowflake.com',
-  databricks: 'databricks.com',
-  algolia: 'algolia.com',
-  bitly: 'bitly.com',
-  canva: 'canva.com',
-  spotify: 'spotify.com',
-};
 
-function slugToDomain(id: string, name: string): string | null {
-  if (DOMAIN_GUESS[id]) return DOMAIN_GUESS[id];
-  const clean = name
-    .replace(/\(.*?\)/g, '')
-    .replace(/[^a-zA-Z0-9\s]/g, ' ')
-    .trim()
-    .split(/\s+/)[0]
-    ?.toLowerCase();
-  if (!clean || clean.length < 2) return null;
-  return `${clean}.com`;
-}
-
-export function getIntegrationLogo(id: string, name?: string): string | undefined {
-  if (INTEGRATION_LOGOS[id]) return INTEGRATION_LOGOS[id];
-  const domain = slugToDomain(id, name ?? id);
-  if (domain) return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-  return undefined;
+export function getIntegrationLogo(id: string): string | undefined {
+  return INTEGRATION_LOGOS[id];
 }
