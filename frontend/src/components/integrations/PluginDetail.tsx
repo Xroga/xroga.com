@@ -44,6 +44,7 @@ import {
   type XrogaConnectSkill,
   type XrogaConnectToolkit,
   type XrogaConnectTool,
+  type XrogaConnectToolDetails,
   type XrogaConnectTriggerType,
 } from '@/lib/xrogaConnect';
 import { useAppStore } from '@/store/useAppStore';
@@ -139,6 +140,162 @@ function CapabilityGroup({
               <RiskBadge capability={capability} />
             </div>
           ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function RawActionRow({
+  tool,
+}: {
+  tool: XrogaConnectTool;
+}) {
+  const [open, setOpen] = useState(false);
+  const [details, setDetails] = useState<XrogaConnectToolDetails | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function toggle() {
+    const next = !open;
+    setOpen(next);
+
+    if (!next || details || loading) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await xrogaConnect.toolDetails(tool.slug);
+      setDetails(result.tool);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : 'Could not load full action metadata.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const risk =
+    tool.requiresConfirmation
+      ? 'Confirmation'
+      : tool.risk === 'destructive'
+        ? 'Sensitive'
+        : tool.risk || 'Unknown';
+
+  return (
+    <div className="border-b border-[var(--border-subtle)] last:border-b-0">
+      <button
+        type="button"
+        onClick={() => void toggle()}
+        aria-expanded={open}
+        className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-[var(--text-primary)]">
+            {tool.name || prettyToolName(tool)}
+          </p>
+          <code className="mt-0.5 block break-all text-[10px] text-[var(--text-muted)]">
+            {tool.slug}
+          </code>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="text-[10px] font-semibold text-[var(--text-muted)]">
+            {risk}
+          </span>
+          {loading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--text-muted)]" aria-hidden="true" />
+          ) : (
+            <ChevronDown
+              className={`h-3.5 w-3.5 text-[var(--text-muted)] transition-transform ${
+                open ? 'rotate-180' : ''
+              }`}
+              aria-hidden="true"
+            />
+          )}
+        </div>
+      </button>
+
+      {open ? (
+        <div className="border-t border-[var(--border-subtle)] bg-[var(--surface-inset)]/45 px-4 py-4">
+          {error ? (
+            <p className="text-xs text-amber-600">{error}</p>
+          ) : details ? (
+            <div className="space-y-4">
+              {details.humanDescription || details.description ? (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Description
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                    {details.humanDescription || details.description}
+                  </p>
+                </div>
+              ) : null}
+
+              <div className="grid gap-3 text-xs sm:grid-cols-2">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Version
+                  </p>
+                  <p className="mt-1 text-[var(--text-primary)]">{details.version || 'Current'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Authorization
+                  </p>
+                  <p className="mt-1 text-[var(--text-primary)]">
+                    {details.noAuth ? 'No auth' : 'Connected provider account'}
+                  </p>
+                </div>
+              </div>
+
+              {details.scopes.length ? (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Scopes
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {details.scopes.map((scope) => (
+                      <code
+                        key={scope}
+                        className="rounded bg-[var(--surface-raised)] px-2 py-1 text-[10px] text-[var(--text-secondary)]"
+                      >
+                        {scope}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {details.inputSchema ? (
+                <details className="rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
+                  <summary className="cursor-pointer px-3 py-2 text-[11px] font-semibold text-[var(--text-primary)]">
+                    Input schema
+                  </summary>
+                  <pre className="max-h-72 overflow-auto border-t border-[var(--border-subtle)] p-3 text-[10px] leading-4 text-[var(--text-secondary)]">
+                    {JSON.stringify(details.inputSchema, null, 2)}
+                  </pre>
+                </details>
+              ) : null}
+
+              {details.outputSchema ? (
+                <details className="rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
+                  <summary className="cursor-pointer px-3 py-2 text-[11px] font-semibold text-[var(--text-primary)]">
+                    Output schema
+                  </summary>
+                  <pre className="max-h-72 overflow-auto border-t border-[var(--border-subtle)] p-3 text-[10px] leading-4 text-[var(--text-secondary)]">
+                    {JSON.stringify(details.outputSchema, null, 2)}
+                  </pre>
+                </details>
+              ) : null}
+            </div>
+          ) : (
+            <p className="text-xs text-[var(--text-secondary)]">Loading full action metadata…</p>
+          )}
         </div>
       ) : null}
     </div>
@@ -1105,26 +1262,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
               </summary>
               <div className="max-h-[520px] overflow-y-auto border-t border-[var(--border-subtle)]">
                 {tools.map((tool) => (
-                  <div
-                    key={tool.slug}
-                    className="flex items-start justify-between gap-3 border-b border-[var(--border-subtle)] px-4 py-2.5 last:border-b-0"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium text-[var(--text-primary)]">
-                        {tool.name || prettyToolName(tool)}
-                      </p>
-                      <code className="mt-0.5 block break-all text-[10px] text-[var(--text-muted)]">
-                        {tool.slug}
-                      </code>
-                    </div>
-                    <span className="shrink-0 text-[10px] font-semibold text-[var(--text-muted)]">
-                      {tool.requiresConfirmation
-                        ? 'Confirmation'
-                        : tool.risk === 'destructive'
-                          ? 'Sensitive'
-                          : tool.risk || 'Unknown'}
-                    </span>
-                  </div>
+                  <RawActionRow key={tool.slug} tool={tool} />
                 ))}
               </div>
             </details>
