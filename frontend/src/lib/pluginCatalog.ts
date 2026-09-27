@@ -1,4 +1,4 @@
-import type { XrogaConnectTool } from '@/lib/xrogaConnect';
+import type { XrogaConnectCatalogToolkit, XrogaConnectTool } from '@/lib/xrogaConnect';
 
 export type PluginView = 'discover' | 'connected' | 'developer' | 'custom';
 export type NativePluginId = 'github' | 'vercel' | 'supabase';
@@ -30,10 +30,19 @@ export type PluginDefinition = {
 export type RuntimePlugin = PluginDefinition & {
   toolkit?: string;
   logo?: string;
+  logoFallback?: string;
   connected: boolean;
   noAuth?: boolean;
   connectionState?: ConnectionState;
   capabilityCount?: number;
+  toolsCount?: number;
+  triggersCount?: number;
+  authSchemes?: string[];
+  managedAuthSchemes?: string[];
+  categories?: Array<{ id: string; name: string }>;
+  version?: string;
+  appUrl?: string;
+  authGuideUrl?: string;
   accountLabel?: string;
   statusMessage?: string;
 };
@@ -521,4 +530,140 @@ export function genericPluginDefinition(slug: string): PluginDefinition {
     query: `find ${name} capabilities`,
     keywords: [name.toLowerCase()],
   };
+}
+
+export function composioLogoUrl(
+  toolkit: string,
+  theme?: 'dark',
+): string {
+  const base = `https://logos.composio.dev/api/${encodeURIComponent(toolkit)}`;
+  return theme === 'dark' ? `${base}?theme=dark` : base;
+}
+
+const CATEGORY_NAME_MAP: Array<{
+  test: RegExp;
+  label: string;
+}> = [
+  { test: /developer|engineering|devops|code|monitor/i, label: 'Engineering' },
+  { test: /productivity|document|calendar|note|file/i, label: 'Productivity' },
+  { test: /communication|messaging|chat|social/i, label: 'Communication' },
+  { test: /sales|crm|lead|customer/i, label: 'Sales & CRM' },
+  { test: /commerce|ecommerce|payment|store/i, label: 'Commerce' },
+  { test: /marketing|advertis/i, label: 'Marketing' },
+  { test: /finance|accounting|bank/i, label: 'Finance' },
+  { test: /data|analytics|database|spreadsheet/i, label: 'Data & Analytics' },
+  { test: /cloud|infrastructure|hosting|storage/i, label: 'Infrastructure' },
+  { test: /support|service desk|customer support/i, label: 'Support' },
+  { test: /design|creative|media|image|video/i, label: 'Design & Media' },
+];
+
+export function catalogPrimaryCategory(
+  toolkit: XrogaConnectCatalogToolkit,
+): string {
+  const combined = toolkit.categories.map((category) => category.name).join(' ');
+
+  for (const item of CATEGORY_NAME_MAP) {
+    if (item.test.test(combined)) return item.label;
+  }
+
+  return toolkit.categories[0]?.name || inferCategory(
+    toolkit.name,
+    toolkit.description,
+  );
+}
+
+export function pluginFromCatalog(
+  toolkit: XrogaConnectCatalogToolkit,
+  options: {
+    connected?: boolean;
+    accountLabel?: string;
+    statusMessage?: string;
+  } = {},
+): RuntimePlugin {
+  const canonical = canonicalPluginId(toolkit.slug);
+  const override = PLUGIN_MAP.get(canonical);
+  const category = override?.category || catalogPrimaryCategory(toolkit);
+
+  return {
+    ...(override ?? genericPluginDefinition(toolkit.slug)),
+    id: canonical,
+    name: toolkit.name || override?.name || displayToolkitName(toolkit.slug),
+    description:
+      toolkit.description ||
+      override?.description ||
+      'Connect this app so Xroga can use its supported capabilities.',
+    longDescription:
+      override?.longDescription ||
+      toolkit.description ||
+      'Connect this app so Xroga can use its real supported capabilities when you ask.',
+    category,
+    source: override?.source === 'native' ? 'native' : 'composio',
+    toolkit: toolkit.slug,
+    logo: toolkit.logo,
+    logoFallback: composioLogoUrl(toolkit.slug),
+    connected: Boolean(options.connected || toolkit.noAuth),
+    noAuth: toolkit.noAuth,
+    capabilityCount: toolkit.toolsCount,
+    toolsCount: toolkit.toolsCount,
+    triggersCount: toolkit.triggersCount,
+    authSchemes: toolkit.authSchemes,
+    managedAuthSchemes: toolkit.managedAuthSchemes,
+    categories: toolkit.categories,
+    version: toolkit.version,
+    appUrl: toolkit.appUrl,
+    authGuideUrl: toolkit.authGuideUrl,
+    accountLabel: options.accountLabel,
+    statusMessage: options.statusMessage,
+    query:
+      override?.query ||
+      `find ${toolkit.name || displayToolkitName(toolkit.slug)} capabilities`,
+    keywords: [
+      ...(override?.keywords ?? []),
+      toolkit.slug,
+      toolkit.name,
+      ...toolkit.categories.map((item) => item.name),
+    ].filter(Boolean),
+  };
+}
+
+export function pluginSearchScore(
+  plugin: RuntimePlugin,
+  query: string,
+  semanticToolkitSlugs: ReadonlySet<string> = new Set(),
+): number {
+  const clean = query.trim().toLowerCase();
+  if (!clean) return 0;
+
+  const name = plugin.name.toLowerCase();
+  const toolkit = (plugin.toolkit || '').toLowerCase();
+  const id = plugin.id.toLowerCase();
+  const category = plugin.category.toLowerCase();
+  const description = plugin.description.toLowerCase();
+
+  let score = 0;
+
+  if (name === clean || toolkit === clean || id === clean) score += 10_000;
+  if (name.startsWith(clean) || toolkit.startsWith(clean)) score += 5_000;
+  if (name.includes(clean) || toolkit.includes(clean) || id.includes(clean)) score += 2_500;
+  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase() === clean)) score += 2_000;
+  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase().includes(clean))) score += 1_000;
+  if (category.includes(clean)) score += 500;
+  if (description.includes(clean)) score += 350;
+  if (semanticToolkitSlugs.has((plugin.toolkit || plugin.id).toLowerCase())) score += 300;
+  if (plugin.connected) score += 25;
+
+  return score;
+}
+
+export function authSummary(plugin: RuntimePlugin): string {
+  if (plugin.noAuth) return 'No auth';
+
+  const managed = plugin.managedAuthSchemes ?? [];
+  const auth = plugin.authSchemes ?? [];
+
+  if (managed.some((item) => /oauth/i.test(item))) return 'Managed OAuth';
+  if (auth.some((item) => /oauth/i.test(item))) return 'OAuth';
+  if (auth.some((item) => /api[_ -]?key/i.test(item))) return 'API key';
+  if (auth.length) return auth[0]!.replace(/[_-]+/g, ' ');
+  return plugin.source === 'native' ? 'Xroga native' : 'Connect';
 }
