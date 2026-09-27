@@ -1095,7 +1095,6 @@ router.get(
         .string()
         .trim()
         .max(120)
-        .regex(/^[A-Za-z0-9 _-]+$/)
         .optional(),
       sortBy: z.enum(['usage', 'alphabetically']).optional().default('usage'),
       limit: z.coerce.number().int().min(1).max(250).optional().default(120),
