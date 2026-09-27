@@ -87,6 +87,9 @@ test('every Plugin detail can load full live actions, triggers and Composio skil
   assert.match(detail, /recommendedPlanSteps/);
   assert.match(detail, /knownPitfalls/);
   assert.match(detail, /Advanced · all raw actions/);
+  assert.match(detail, /toolDetails/);
+  assert.match(detail, /Input schema/);
+  assert.match(detail, /Output schema/);
 });
 
 test('Composio runtime remains server-authoritative and does not preload every tool', () => {
@@ -110,4 +113,13 @@ test('Xroga AI runtime still routes connected-app reads and actions through Comp
   assert.match(businessRead, /executeComposioReadTool/);
   assert.match(businessAction, /searchComposioActionTools/);
   assert.match(businessAction, /executeComposioActionTool/);
+});
+
+test('full action schemas are metadata-only and loaded on demand', () => {
+  const route = source('backend/src/routes/integrations.ts');
+  const client = source('frontend/src/lib/xrogaConnect.ts');
+
+  assert.match(route, /\/xroga-connect\/tool-details\/:toolSlug/);
+  assert.match(route, /getComposioToolDetails/);
+  assert.match(client, /toolDetails:/);
 });
