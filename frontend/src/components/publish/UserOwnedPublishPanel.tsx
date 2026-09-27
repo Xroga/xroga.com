@@ -8,6 +8,6 @@ import { PublishWorkspace } from '@/components/publish/PublishWorkspace';
  * Step 3 moved the actual UI into target-specific components while preserving
  * the existing route and publish APIs.
  */
-export function UserOwnedPublishPanel() {
+export function UserOwnedPublishPanel(_props: { compact?: boolean } = {}) {
   return <PublishWorkspace />;
 }
