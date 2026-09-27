@@ -366,6 +366,7 @@ export function PluginMarketplace() {
             ],
       );
       setCatalogTotal(page.totalItems);
+      if (!selectedCategory) setGlobalCatalogTotal(page.totalItems);
       setCatalogCursor(page.nextCursor);
       setCatalogError(null);
     } catch (error) {
