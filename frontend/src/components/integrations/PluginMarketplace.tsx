@@ -321,7 +321,16 @@ export function PluginMarketplace() {
 
     setToolCountByToolkit((current) => {
       const next = { ...current };
-      for (const tool of tools) next[tool.toolkit] = (next[tool.toolkit] ?? 0) + 1;
+      const counts: Record<string, number> = {};
+
+      for (const tool of tools) {
+        counts[tool.toolkit] = (counts[tool.toolkit] ?? 0) + 1;
+      }
+
+      for (const [toolkit, count] of Object.entries(counts)) {
+        next[toolkit] = count;
+      }
+
       return next;
     });
 
@@ -354,6 +363,16 @@ export function PluginMarketplace() {
           if (!active) return;
           setSessionId(result.sessionId);
           absorbSearchResult(result.toolkits ?? [], result.tools ?? []);
+
+          try {
+            const connected = await xrogaConnect.toolkits(result.sessionId, {
+              connectedOnly: true,
+            });
+            if (!active) return;
+            absorbSearchResult(connected.toolkits ?? [], []);
+          } catch {
+            // Search-derived connection state remains available if toolkit listing fails.
+          }
         } catch {
           // Curated local metadata remains usable when live discovery is unavailable.
         }
@@ -464,7 +483,7 @@ export function PluginMarketplace() {
     }, 450);
 
     return () => window.clearTimeout(timer);
-  }, [deferredQuery, composioConfigured, sessionId]);
+  }, [deferredQuery, composioConfigured]);
 
   const basePlugins = useMemo<RuntimePlugin[]>(
     () =>
