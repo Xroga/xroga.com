@@ -24,6 +24,10 @@ import toast from 'react-hot-toast';
 
 import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
+import {
+  CustomMcpCreateForm,
+  CustomMcpManager,
+} from '@/components/integrations/CustomMcpManager';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
@@ -73,27 +77,6 @@ type DiscoverySection = {
 
 const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
-    id: 'developer-tools',
-    title: 'Developer Tools',
-    description: 'Code, deployment, infrastructure, monitoring and developer services.',
-    categories: ['Engineering', 'Infrastructure'],
-    groups: ['engineering', 'infrastructure'],
-  },
-  {
-    id: 'business-operations',
-    title: 'Business & Operations',
-    description: 'CRM, customer support, recruiting and day-to-day business systems.',
-    categories: ['Sales & CRM', 'Support', 'HR & Recruiting'],
-    groups: ['sales-crm', 'support', 'hr-recruiting'],
-  },
-  {
-    id: 'data-analytics',
-    title: 'Data & Analytics',
-    description: 'Databases, analytics, spreadsheets, BI and data platforms.',
-    categories: ['Data & Analytics'],
-    groups: ['data-analytics'],
-  },
-  {
     id: 'small-business',
     title: 'Small Business',
     description: 'Commerce, payments, finance and marketing tools for operating a business.',
@@ -113,6 +96,27 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     description: 'Design, image, video, audio, media and creative production tools.',
     categories: ['Design & Media'],
     groups: ['design-media'],
+  },
+  {
+    id: 'developer-tools',
+    title: 'Developer Tools',
+    description: 'Code, deployment, infrastructure, monitoring and developer services.',
+    categories: ['Engineering', 'Infrastructure'],
+    groups: ['engineering', 'infrastructure'],
+  },
+  {
+    id: 'business-operations',
+    title: 'Business & Operations',
+    description: 'CRM, customer support, recruiting and day-to-day business systems.',
+    categories: ['Sales & CRM', 'Support', 'HR & Recruiting'],
+    groups: ['sales-crm', 'support', 'hr-recruiting'],
+  },
+  {
+    id: 'data-analytics',
+    title: 'Data & Analytics',
+    description: 'Databases, analytics, spreadsheets, BI and data platforms.',
+    categories: ['Data & Analytics'],
+    groups: ['data-analytics'],
   },
   {
     id: 'communication',
@@ -149,7 +153,7 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     categories: ['Other'],
     groups: ['other'],
   },
-];
+]
 
 function viewFrom(value: string | null): PluginView {
   if (value === 'connected' || value === 'developer' || value === 'custom') return value;
@@ -512,6 +516,9 @@ export function PluginMarketplace() {
   const [connectedFilter, setConnectedFilter] = useState<ConnectedFilter>('all');
   const requestSeq = useRef(0);
   const [addPluginOpen, setAddPluginOpen] = useState(false);
+  const [addPluginMode, setAddPluginMode] = useState<
+    'menu' | 'mcp' | 'credentials'
+  >('menu');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
   const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
@@ -527,6 +534,7 @@ export function PluginMarketplace() {
   };
 
   const focusPluginSearch = () => {
+    setAddPluginMode('menu');
     setAddPluginOpen(false);
     setView('discover');
     window.setTimeout(() => {
@@ -537,6 +545,7 @@ export function PluginMarketplace() {
   };
 
   const openCredentials = () => {
+    setAddPluginMode('menu');
     setAddPluginOpen(false);
     setView('custom');
     window.setTimeout(() => {
@@ -664,6 +673,7 @@ export function PluginMarketplace() {
     const vercel = params.get('vercel');
     const supabase = params.get('supabase');
     const composio = params.get('composio');
+    const pluginConnection = params.get('plugin');
     const message = params.get('message');
 
     if (github === 'connected') toast.success('GitHub connected');
@@ -681,10 +691,13 @@ export function PluginMarketplace() {
       toast.error(message || 'Supabase authorization failed');
     }
 
-    if (composio === 'connected') toast.success('Plugin connected to Xroga');
-    else if (composio === 'error') toast.error(message || 'Plugin connection failed');
+    if (pluginConnection === 'connected' || composio === 'connected') {
+      toast.success('Plugin connected to Xroga');
+    } else if (pluginConnection === 'error' || composio === 'error') {
+      toast.error(message || 'Plugin connection failed');
+    }
 
-    if (github || vercel || supabase || composio) {
+    if (github || vercel || supabase || composio || pluginConnection) {
       refreshNativeStatus();
 
       const returnPath = sessionStorage.getItem('xroga-plugin-return');
@@ -695,7 +708,7 @@ export function PluginMarketplace() {
       }
 
       const url = new URL(window.location.href);
-      ['github', 'vercel', 'supabase', 'composio', 'message', 'username', 'pick'].forEach((key) =>
+      ['github', 'vercel', 'supabase', 'composio', 'plugin', 'message', 'username', 'pick'].forEach((key) =>
         url.searchParams.delete(key),
       );
       window.history.replaceState({}, '', url.pathname + url.search);
@@ -1273,7 +1286,10 @@ export function PluginMarketplace() {
 
         <button
           type="button"
-          onClick={() => setAddPluginOpen(true)}
+          onClick={() => {
+            setAddPluginMode('menu');
+            setAddPluginOpen(true);
+          }}
           className="inline-flex min-h-10 items-center justify-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
         >
           + Add Plugin
@@ -1598,47 +1614,45 @@ export function PluginMarketplace() {
               <div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Custom Plugins</h2>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-                  Use Xroga’s real credential and webhook support for services outside the built-in catalogue.
+                  Extend Xroga with your own remote MCP server, API credentials, or webhook without cluttering the main app directory.
                 </p>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => setView('discover')}
-                  className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 text-left hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-                >
-                  <Search className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                  <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">Search marketplace</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Search the complete Xroga Apps catalogue.
-                  </p>
-                </button>
+              <CustomMcpManager />
 
-                <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-                  <Server className="h-5 w-5 text-[var(--text-muted)]" aria-hidden="true" />
-                  <div className="mt-3 flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">Custom MCP server</p>
-                    <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
-                      Unavailable
-                    </span>
+              <details className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
+                <summary className="cursor-pointer list-none p-4 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                  <div className="flex items-center gap-3">
+                    <KeyRound className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">API keys & webhooks</p>
+                      <p className="mt-0.5 text-xs leading-5 text-[var(--text-secondary)]">
+                        Open the encrypted credential vault only when you need a service outside the app directory.
+                      </p>
+                    </div>
                   </div>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Xroga does not fake persistent custom MCP storage while that backend surface is unavailable.
-                  </p>
+                </summary>
+                <div className="space-y-5 border-t border-[var(--border-subtle)] p-4">
+                  <CustomCredentialsSection />
                 </div>
+              </details>
 
-                <div className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-                  <KeyRound className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                  <p className="mt-3 text-sm font-semibold text-[var(--text-primary)]">API credentials & webhooks</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                    Available through Xroga’s existing encrypted credential vault.
-                  </p>
+              <details className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
+                <summary className="cursor-pointer list-none p-4 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">Optional product credentials</p>
+                      <p className="mt-0.5 text-xs leading-5 text-[var(--text-secondary)]">
+                        Brevo, Cloudflare and other optional product-service credentials stay available without taking over the Plugins page.
+                      </p>
+                    </div>
+                  </div>
+                </summary>
+                <div className="border-t border-[var(--border-subtle)] p-4">
+                  <ConnectedServicesSection />
                 </div>
-              </div>
-
-              <ConnectedServicesSection />
-              <CustomCredentialsSection />
+              </details>
             </section>
           ) : null}
         </>
@@ -1646,54 +1660,112 @@ export function PluginMarketplace() {
 
       <Dialog
         open={addPluginOpen}
-        onClose={() => setAddPluginOpen(false)}
-        title="Add Plugin"
+        onClose={() => {
+          setAddPluginMode('menu');
+          setAddPluginOpen(false);
+        }}
+        title={addPluginMode === 'mcp' ? 'Add Custom MCP' : addPluginMode === 'credentials' ? 'Add credential' : 'Add Plugin'}
         description={
-          globalCatalogTotal !== null
-            ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, or bring your own service credential.`
-            : 'Connect an Xroga App or bring your own service credential.'
+          addPluginMode === 'mcp'
+            ? 'Turn a remote MCP server into a first-class Xroga Plugin.'
+            : addPluginMode === 'credentials'
+              ? 'Use the encrypted credential vault for services outside the app directory.'
+              : globalCatalogTotal !== null
+                ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, add a remote MCP server, or bring your own credential.`
+                : 'Connect an Xroga App, add a remote MCP server, or bring your own credential.'
         }
         className="max-w-[440px]"
       >
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={focusPluginSearch}
-            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
-          >
-            <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-            <span>
-              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                Find an Xroga App
-              </strong>
-              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                Search by brand or describe a task. Xroga finds the app, real actions, triggers, and task plans that match.
-              </span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={openCredentials}
-            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
-          >
-            <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-            <span>
-              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                API key or webhook
-              </strong>
-              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                Use Xroga’s encrypted credential vault for services that are not connected through the app catalogue.
-              </span>
-            </span>
-          </button>
-
-          <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
-            <p className="text-xs leading-5 text-[var(--text-secondary)]">
-              Xroga Apps expose their real supported actions and triggers at runtime. Connected apps can be used by Xroga without turning this popup into another setup page.
-            </p>
+        {addPluginMode === 'mcp' ? (
+          <CustomMcpCreateForm
+            onBack={() => setAddPluginMode('menu')}
+            onCreated={() => {
+              setAddPluginMode('menu');
+              setAddPluginOpen(false);
+              setView('custom');
+            }}
+          />
+        ) : addPluginMode === 'credentials' ? (
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setAddPluginMode('menu')}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            >
+              <ChevronRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
+              Back
+            </button>
+            <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+              <p className="text-xs font-semibold text-[var(--text-primary)]">Encrypted credential vault</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                Add API keys or webhooks only for services that are not already available as Xroga Apps. Your existing vault and Vercel-sync behavior stay unchanged.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={openCredentials}
+              className="inline-flex min-h-10 w-full items-center justify-center rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white"
+            >
+              Open credential vault
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={focusPluginSearch}
+              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
+            >
+              <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+              <span>
+                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                  Find an Xroga App
+                </strong>
+                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                  Search by brand or describe a task. Xroga finds matching apps, real actions, triggers and task plans.
+                </span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAddPluginMode('mcp')}
+              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
+            >
+              <Server className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+              <span>
+                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                  Custom MCP server
+                </strong>
+                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                  Register a remote HTTPS MCP server, connect authentication when required, and sync its tools into Xroga.
+                </span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAddPluginMode('credentials')}
+              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
+            >
+              <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+              <span>
+                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                  API key or webhook
+                </strong>
+                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                  Use Xroga’s encrypted credential vault for services outside the app directory.
+                </span>
+              </span>
+            </button>
+
+            <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
+              <p className="text-xs leading-5 text-[var(--text-secondary)]">
+                Xroga Apps expose their current actions and triggers at runtime, so the directory stays simple even when an app has hundreds of capabilities.
+              </p>
+            </div>
+          </div>
+        )}
       </Dialog>
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">

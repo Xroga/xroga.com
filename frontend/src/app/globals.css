@@ -8997,7 +8997,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   .xv-mobile-nav__label,
   .xv-mobile-nav__bar { transition: none; }
 }
-
 .xv-animated-icon-host { transition: color 180ms ease; }
 a:hover .xv-animated-icon-host,
 button:hover .xv-animated-icon-host { color: var(--accent); }
@@ -10997,7 +10996,6 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   .xv-cba-menu :is(.xv-cba-item__text) i { font-size: 9px; line-height: 1.25; }
   .xv-cba-menu :is(.xv-cba-kbd) { display: none; }
 }
-
 /* The compact launcher mirrors the workspace action palette: two short columns on
    desktop, one scan-friendly column on a phone. */
 .xv-cba-grid {
@@ -12997,7 +12995,6 @@ body.theme-black {
     inset(
       50%
     ) !important;
-
   white-space:
     nowrap !important;
 
@@ -13173,4 +13170,80 @@ body.theme-black {
 body.theme-black .xv-plugin-usecase-card,
 body.theme-gray .xv-plugin-usecase-card {
   background: color-mix(in srgb, var(--surface-raised) 82%, transparent);
+}
+
+/* Plugins · real-use-case canvas
+   Uiverse-inspired cyan/violet field, adapted to Xroga semantic surfaces so it
+   remains readable in White, Beige, Gray and Black themes. */
+.xv-plugin-usecases {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--surface-raised) 98%, transparent) 0%,
+      color-mix(in srgb, var(--surface-raised) 96%, transparent) 34%,
+      color-mix(in srgb, var(--surface-raised) 40%, transparent) 100%
+    ),
+    linear-gradient(110deg, #0ed2da 0%, #5f29c7 100%);
+}
+
+.xv-plugin-usecases::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--text-primary) 16%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 50px 100%;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 72%);
+  opacity: 0.38;
+}
+
+.xv-plugin-usecases::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 84%, rgba(14, 210, 218, 0.18), transparent 34%),
+    radial-gradient(circle at 84% 78%, rgba(95, 41, 199, 0.2), transparent 38%);
+}
+
+.xv-plugin-usecase-card {
+  position: relative;
+  z-index: 1;
+  background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+body.theme-white .xv-plugin-usecase-card,
+body.theme-beige .xv-plugin-usecase-card {
+  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
+}
+
+body.theme-gray .xv-plugin-usecases,
+body.theme-black .xv-plugin-usecases {
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--surface-raised) 98%, transparent) 0%,
+      color-mix(in srgb, var(--surface-raised) 94%, transparent) 38%,
+      color-mix(in srgb, var(--surface-raised) 46%, transparent) 100%
+    ),
+    linear-gradient(110deg, rgba(14, 210, 218, 0.72), rgba(95, 41, 199, 0.78));
+}
+
+body.theme-gray .xv-plugin-usecase-card,
+body.theme-black .xv-plugin-usecase-card {
+  background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+  border-color: color-mix(in srgb, var(--border-subtle) 82%, white 18%);
 }

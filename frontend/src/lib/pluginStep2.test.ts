@@ -82,15 +82,17 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
   assert.match(route, /PluginDetail pluginId=/);
 });
 
-test('Step 2 does not fake unsupported Composio disconnect or persistent Custom MCP', () => {
+test('Step 2 keeps connection removal conservative while Custom MCP now uses real lifecycle APIs', () => {
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
   const detail = source('frontend/src/components/integrations/PluginDetail.tsx');
-  const composio = source('backend/src/services/integrations/composioClient.ts');
+  const runtime = source('backend/src/services/integrations/composioClient.ts');
 
-  assert.match(composio, /enable_connection_removal:\s*false/);
+  assert.match(runtime, /enable_connection_removal:\s*false/);
   assert.match(detail, /definition\.source !== 'native'/);
   assert.match(marketplace, /Custom MCP server/);
-  assert.match(marketplace, /does not fake persistent custom MCP storage/);
+  assert.match(runtime, /createUserCustomMcpToolkit/);
+  assert.match(runtime, /syncUserCustomMcpToolkit/);
+  assert.match(runtime, /deleteUserCustomMcpToolkit/);
 });
 
 test('Step 2 exposes metadata-only action discovery and connected toolkit listing', () => {

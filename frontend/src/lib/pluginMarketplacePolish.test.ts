@@ -167,7 +167,7 @@ test('Add Plugin opens a compact in-page dialog instead of replacing the marketp
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
-  assert.match(marketplace, /title="Add Plugin"/);
+  assert.match(marketplace, /addPluginMode === 'mcp' \? 'Add Custom MCP'[\s\S]*: 'Add Plugin'/);
   assert.match(marketplace, /className="max-w-\[440px\]"/);
   assert.match(marketplace, /Find an Xroga App/);
   assert.match(marketplace, /API key or webhook/);

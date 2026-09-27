@@ -1,12 +1,20 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { GithubGlyphIcon } from '@/components/icons/animated/GithubGlyphIcon';
 import { VercelIcon } from '@/components/icons/animated/VercelIcon';
-import { Plug } from 'lucide-react';
+
+function initialsFor(name: string): string {
+  return name
+    .split(/\s+/g)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+}
 
 export function IntegrationLogo({
   id,
@@ -21,6 +29,7 @@ export function IntegrationLogo({
 }) {
   const [failed, setFailed] = useState(false);
   const label = name ?? id;
+  const initials = useMemo(() => initialsFor(label) || 'APP', [label]);
 
   if (id === 'github') {
     return (
@@ -44,13 +53,13 @@ export function IntegrationLogo({
     return (
       <span
         className={cn(
-          'inline-flex items-center justify-center rounded-md bg-[var(--surface-inset)] text-[var(--text-muted)]',
+          'inline-flex items-center justify-center rounded-md bg-[var(--surface-inset)] font-semibold tracking-tight text-[var(--text-secondary)]',
           className,
         )}
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, fontSize: Math.max(8, Math.round(size * 0.38)) }}
         aria-label={label}
       >
-        <Plug size={Math.max(12, Math.round(size * 0.72))} aria-hidden="true" />
+        {initials}
       </span>
     );
   }

@@ -159,7 +159,7 @@ function composioCallbackUrl():
       /\/$/,
       '',
     )}` +
-    '/dashboard/integrations/composio/callback'
+    '/dashboard/integrations/connect/callback'
   );
 }
 

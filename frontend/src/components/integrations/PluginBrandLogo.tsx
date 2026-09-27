@@ -3,6 +3,48 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { composioLogoUrl } from '@/lib/pluginCatalog';
+import { getIntegrationLogo } from '@/lib/integrationLogos';
+
+const SIMPLE_ICON_ALIASES: Record<string, string> = {
+  'google-calendar': 'googlecalendar',
+  googlecalendar: 'googlecalendar',
+  'google-drive': 'googledrive',
+  googledrive: 'googledrive',
+  quickbooks: 'quickbooks',
+  'microsoft-outlook': 'microsoftoutlook',
+  outlook: 'microsoftoutlook',
+  outlookemail: 'microsoftoutlook',
+  outlookcalendar: 'microsoftoutlook',
+  monday: 'mondaydotcom',
+  'monday-com': 'mondaydotcom',
+  microsoftpowerbi: 'powerbi',
+  powerbi: 'powerbi',
+  aws: 'amazonwebservices',
+  amazonaws: 'amazonwebservices',
+  googlemeet: 'googlemeet',
+};
+
+function simpleIconSlug(value: string): string {
+  const clean = value
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/\.com\b/g, 'dotcom')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return SIMPLE_ICON_ALIASES[clean] || SIMPLE_ICON_ALIASES[clean.replace(/-/g, '')] || clean.replace(/-/g, '');
+}
+
+function simpleIconCandidates(toolkit: string | undefined, name: string): string[] {
+  const slugs = [
+    toolkit ? simpleIconSlug(toolkit.replace(/^custom[_-]+/i, '')) : '',
+    simpleIconSlug(name),
+  ].filter(Boolean);
+
+  return [...new Set(slugs)].map(
+    (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/${encodeURIComponent(slug)}.svg`,
+  );
+}
 
 export function PluginBrandLogo({
   id,
@@ -23,6 +65,8 @@ export function PluginBrandLogo({
     () =>
       [
         logo,
+        getIntegrationLogo(id),
+        ...simpleIconCandidates(toolkit, name),
         fallbackLogo,
         toolkit ? composioLogoUrl(toolkit) : undefined,
       ].filter(
@@ -31,13 +75,13 @@ export function PluginBrandLogo({
           value.length > 0 &&
           all.indexOf(value) === index,
       ),
-    [logo, fallbackLogo, toolkit],
+    [id, logo, fallbackLogo, toolkit, name],
   );
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setIndex(0);
-  }, [id, logo, fallbackLogo, toolkit]);
+  }, [id, logo, fallbackLogo, toolkit, name]);
 
   const dimension =
     size === 'detail'
