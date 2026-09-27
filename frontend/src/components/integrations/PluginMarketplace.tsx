@@ -25,6 +25,7 @@ import toast from 'react-hot-toast';
 import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
 import {
   PLUGIN_CATEGORY_GROUPS,
@@ -37,6 +38,7 @@ import {
   pluginSearchScore,
   type ConnectionState,
   type NativePluginId,
+  type PluginCategoryGroupId,
   type PluginView,
   type RuntimePlugin,
 } from '@/lib/pluginCatalog';
@@ -58,8 +60,97 @@ type NativeSnapshot = {
 
 type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
-const BROWSE_PAGE_SIZE = 120;
+const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
+const CATEGORY_PREVIEW_LIMIT = 6;
+
+type DiscoverySection = {
+  id: string;
+  title: string;
+  description: string;
+  categories: string[];
+  groups: Exclude<PluginCategoryGroupId, ''>[];
+};
+
+const DISCOVERY_SECTIONS: DiscoverySection[] = [
+  {
+    id: 'developer-tools',
+    title: 'Developer Tools',
+    description: 'Code, deployment, infrastructure, monitoring and developer services.',
+    categories: ['Engineering', 'Infrastructure'],
+    groups: ['engineering', 'infrastructure'],
+  },
+  {
+    id: 'business-operations',
+    title: 'Business & Operations',
+    description: 'CRM, customer support, recruiting and day-to-day business systems.',
+    categories: ['Sales & CRM', 'Support', 'HR & Recruiting'],
+    groups: ['sales-crm', 'support', 'hr-recruiting'],
+  },
+  {
+    id: 'data-analytics',
+    title: 'Data & Analytics',
+    description: 'Databases, analytics, spreadsheets, BI and data platforms.',
+    categories: ['Data & Analytics'],
+    groups: ['data-analytics'],
+  },
+  {
+    id: 'small-business',
+    title: 'Small Business',
+    description: 'Commerce, payments, finance and marketing tools for operating a business.',
+    categories: ['Commerce', 'Finance', 'Marketing'],
+    groups: ['commerce', 'finance', 'marketing'],
+  },
+  {
+    id: 'productivity',
+    title: 'Productivity',
+    description: 'Calendar, documents, tasks, workspace and personal productivity apps.',
+    categories: ['Productivity'],
+    groups: ['productivity'],
+  },
+  {
+    id: 'creativity',
+    title: 'Creativity',
+    description: 'Design, image, video, audio, media and creative production tools.',
+    categories: ['Design & Media'],
+    groups: ['design-media'],
+  },
+  {
+    id: 'communication',
+    title: 'Communication',
+    description: 'Messaging, email, meetings, communities and collaboration.',
+    categories: ['Communication'],
+    groups: ['communication'],
+  },
+  {
+    id: 'ai-automation',
+    title: 'AI & Automation',
+    description: 'AI models, agents, automation and workflow tools.',
+    categories: ['AI & Automation'],
+    groups: ['ai-automation'],
+  },
+  {
+    id: 'travel',
+    title: 'Travel',
+    description: 'Flights, trips, navigation, booking and travel services.',
+    categories: ['Travel'],
+    groups: ['other'],
+  },
+  {
+    id: 'entertainment',
+    title: 'Entertainment',
+    description: 'Music, media, games, sports and entertainment services.',
+    categories: ['Entertainment'],
+    groups: ['other'],
+  },
+  {
+    id: 'other',
+    title: 'Other',
+    description: 'More supported apps that do not fit the main categories.',
+    categories: ['Other'],
+    groups: ['other'],
+  },
+];
 
 function viewFrom(value: string | null): PluginView {
   if (value === 'connected' || value === 'developer' || value === 'custom') return value;
@@ -285,6 +376,84 @@ function PluginGrid({
   );
 }
 
+function CategoryPluginSection({
+  section,
+  plugins,
+  expanded,
+  loading,
+  error,
+  connectingId,
+  onConnect,
+  onToggle,
+}: {
+  section: DiscoverySection;
+  plugins: RuntimePlugin[];
+  expanded: boolean;
+  loading: boolean;
+  error?: string;
+  connectingId: string | null;
+  onConnect: (plugin: RuntimePlugin) => void;
+  onToggle: () => void;
+}) {
+  const visible = expanded ? plugins : plugins.slice(0, CATEGORY_PREVIEW_LIMIT);
+
+  return (
+    <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="group mb-2 flex w-full items-start justify-between gap-4 rounded-md text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <div>
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
+              {section.title}
+            </h3>
+            <ChevronRight
+              className={`h-4 w-4 text-[var(--text-muted)] transition-transform ${expanded ? 'rotate-90' : ''}`}
+              aria-hidden="true"
+            />
+          </div>
+          <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+            {section.description}
+          </p>
+        </div>
+        {plugins.length ? (
+          <span className="shrink-0 pt-0.5 text-[11px] font-medium text-[var(--text-muted)]">
+            {expanded ? `${plugins.length.toLocaleString()} apps` : 'See all'}
+          </span>
+        ) : null}
+      </button>
+
+      {loading && !visible.length ? (
+        <div className="grid gap-x-10 lg:grid-cols-2" aria-label={`Loading ${section.title}`}>
+          {[0, 1, 2, 3, 4, 5].map((item) => (
+            <div
+              key={item}
+              className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+            />
+          ))}
+        </div>
+      ) : visible.length ? (
+        <PluginListGrid
+          plugins={visible}
+          connectingId={connectingId}
+          onConnect={onConnect}
+        />
+      ) : (
+        <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
+          {error
+            ? error
+            : expanded
+              ? 'No apps are currently classified in this category.'
+              : 'Open this category to load its supported apps.'}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function mergePlugins(
   plugins: RuntimePlugin[],
 ): RuntimePlugin[] {
@@ -348,6 +517,11 @@ export function PluginMarketplace() {
   const [connectedQuery, setConnectedQuery] = useState('');
   const [connectedFilter, setConnectedFilter] = useState<ConnectedFilter>('all');
   const requestSeq = useRef(0);
+  const [addPluginOpen, setAddPluginOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
+  const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
+  const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({});
 
   const setView = (next: PluginView) => {
     setViewState(next);
@@ -358,7 +532,18 @@ export function PluginMarketplace() {
     router.replace(suffix ? `${pathname}?${suffix}` : pathname, { scroll: false });
   };
 
-  const openCustom = () => {
+  const focusPluginSearch = () => {
+    setAddPluginOpen(false);
+    setView('discover');
+    window.setTimeout(() => {
+      const input = document.getElementById('plugin-marketplace-search') as HTMLInputElement | null;
+      input?.focus();
+      input?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 0);
+  };
+
+  const openCredentials = () => {
+    setAddPluginOpen(false);
     setView('custom');
     window.setTimeout(() => {
       document.getElementById('custom-plugin-options')?.scrollIntoView({
@@ -950,6 +1135,95 @@ export function PluginMarketplace() {
     [allPlugins],
   );
 
+  async function loadDiscoverySection(section: DiscoverySection) {
+    if (sectionLoading[section.id] || sectionCatalog[section.id]) return;
+
+    setSectionLoading((current) => ({ ...current, [section.id]: true }));
+    setSectionErrors((current) => {
+      const next = { ...current };
+      delete next[section.id];
+      return next;
+    });
+
+    try {
+      const collected: XrogaConnectCatalogToolkit[] = [];
+
+      for (const group of section.groups) {
+        let cursor: string | undefined;
+        let pages = 0;
+
+        do {
+          const page = await xrogaConnect.catalog({
+            group,
+            sortBy: 'usage',
+            limit: 250,
+            cursor,
+          });
+
+          for (const item of page.items) {
+            if (!collected.some((existing) => existing.slug === item.slug)) {
+              collected.push(item);
+            }
+          }
+
+          cursor = page.nextCursor;
+          pages += 1;
+        } while (cursor && pages < 20);
+      }
+
+      setSectionCatalog((current) => ({
+        ...current,
+        [section.id]: collected,
+      }));
+    } catch (error) {
+      setSectionErrors((current) => ({
+        ...current,
+        [section.id]:
+          error instanceof Error
+            ? error.message
+            : `Could not load ${section.title} apps.`,
+      }));
+    } finally {
+      setSectionLoading((current) => ({
+        ...current,
+        [section.id]: false,
+      }));
+    }
+  }
+
+  function toggleDiscoverySection(section: DiscoverySection) {
+    const isExpanded = expandedSections.has(section.id);
+
+    setExpandedSections((current) => {
+      const next = new Set(current);
+      if (isExpanded) next.delete(section.id);
+      else next.add(section.id);
+      return next;
+    });
+
+    if (!isExpanded && !sectionCatalog[section.id]) {
+      void loadDiscoverySection(section);
+    }
+  }
+
+  function pluginsForSection(section: DiscoverySection): RuntimePlugin[] {
+    const raw = sectionCatalog[section.id];
+    const source = raw
+      ? mergePlugins([
+          ...nativePlugins,
+          ...raw.map(runtimeFromCatalog),
+          ...connectedLongTail,
+        ])
+      : allPlugins;
+
+    return source
+      .filter((plugin) => section.categories.includes(plugin.category))
+      .sort((a, b) => {
+        if (a.connected !== b.connected) return a.connected ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+  }
+
   async function connectNative(plugin: RuntimePlugin) {
     const id = plugin.id as NativePluginId;
 
@@ -1081,7 +1355,7 @@ export function PluginMarketplace() {
 
         <button
           type="button"
-          onClick={openCustom}
+          onClick={() => setAddPluginOpen(true)}
           className="inline-flex min-h-10 items-center justify-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
         >
           + Add Plugin
@@ -1141,7 +1415,59 @@ export function PluginMarketplace() {
           </div>
 
           {semanticError ? (
-            <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+            <Dialog
+        open={addPluginOpen}
+        onClose={() => setAddPluginOpen(false)}
+        title="Add Plugin"
+        description={
+          globalCatalogTotal !== null
+            ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, or bring your own service credential.`
+            : 'Connect an Xroga App or bring your own service credential.'
+        }
+        className="max-w-[440px]"
+      >
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={focusPluginSearch}
+            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
+          >
+            <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+            <span>
+              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                Find an Xroga App
+              </strong>
+              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                Search by brand or describe a task. Xroga finds the app, real actions, triggers, and task plans that match.
+              </span>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={openCredentials}
+            className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
+          >
+            <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+            <span>
+              <strong className="block text-sm font-semibold text-[var(--text-primary)]">
+                API key or webhook
+              </strong>
+              <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
+                Use Xroga’s encrypted credential vault for services that are not connected through the app catalogue.
+              </span>
+            </span>
+          </button>
+
+          <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
+            <p className="text-xs leading-5 text-[var(--text-secondary)]">
+              Xroga Apps expose their real supported actions and triggers at runtime. Connected apps can be used by Xroga without turning this popup into another setup page.
+            </p>
+          </div>
+        </div>
+      </Dialog>
+
+      <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
               <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
               <p className="text-xs leading-5 text-[var(--text-secondary)]">
                 Capability search is temporarily unavailable. Brand/catalogue search is still working.
@@ -1150,7 +1476,7 @@ export function PluginMarketplace() {
           ) : null}
 
           {searchPlugins.length ? (
-            <PluginGrid
+            <PluginListGrid
               plugins={searchPlugins}
               connectingId={connectingId}
               onConnect={handleConnect}
@@ -1267,105 +1593,30 @@ export function PluginMarketplace() {
               ) : null}
 
               <section>
-                <div className="mb-3">
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Categories</h2>
-                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                    Browse apps by clear Xroga categories.
+                <div className="mb-5">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                    Browse by category
+                  </h2>
+                  <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
+                    A few of the most useful apps are shown first. Open any category to reveal the full supported set, then close it again to return to the compact view.
                   </p>
                 </div>
-                <div
-                  className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
-                  role="group"
-                  aria-label="Plugin categories"
-                >
-                  {PLUGIN_CATEGORY_GROUPS.map((item) => (
-                    <button
-                      key={item.id || 'all'}
-                      type="button"
-                      onClick={() => {
-                        if (selectedCategory === item.id) return;
-                        setSelectedCategory(item.id);
-                        setCatalogLoading(true);
-                      }}
-                      aria-pressed={selectedCategory === item.id}
-                      className={
-                        selectedCategory === item.id
-                          ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)]'
-                          : 'shrink-0 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
-                      }
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </section>
 
-              <section>
-                <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                      {selectedCategory
-                        ? PLUGIN_CATEGORY_GROUPS.find((item) => item.id === selectedCategory)?.label || 'Plugins'
-                        : 'All Plugins'}
-                    </h2>
-                    <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                      {catalogTotal !== null
-                        ? `${catalogTotal.toLocaleString()} apps available in this view`
-                        : 'Live Xroga Apps catalogue'}
-                    </p>
-                  </div>
-                </div>
-
-                {catalogError ? (
-                  <div className="mb-3 flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3" role="status">
-                    <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
-                    <div>
-                      <p className="text-xs leading-5 text-[var(--text-secondary)]">{catalogError}</p>
-                      <button
-                        type="button"
-                        onClick={() => void loadCatalog(true)}
-                        className="mt-2 text-xs font-semibold text-[var(--accent)] hover:underline"
-                      >
-                        Retry catalogue
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
-
-                {catalogLoading && !browsePlugins.length ? (
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {[0, 1, 2, 3, 4, 5].map((item) => (
-                      <div key={item} className="h-40 animate-pulse rounded-token-lg bg-[var(--surface-inset)]" />
-                    ))}
-                  </div>
-                ) : browsePlugins.length ? (
-                  <>
-                    <PluginGrid
-                      plugins={browsePlugins}
+                <div className="space-y-7">
+                  {DISCOVERY_SECTIONS.map((section) => (
+                    <CategoryPluginSection
+                      key={section.id}
+                      section={section}
+                      plugins={pluginsForSection(section)}
+                      expanded={expandedSections.has(section.id)}
+                      loading={Boolean(sectionLoading[section.id])}
+                      error={sectionErrors[section.id]}
                       connectingId={connectingId}
                       onConnect={handleConnect}
+                      onToggle={() => toggleDiscoverySection(section)}
                     />
-                    {catalogCursor ? (
-                      <div className="mt-4 flex justify-center">
-                        <button
-                          type="button"
-                          disabled={catalogLoadingMore}
-                          onClick={() => void loadCatalog(false, catalogCursor)}
-                          className="inline-flex min-h-10 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] hover:border-[var(--border-strong)] disabled:opacity-50"
-                        >
-                          {catalogLoadingMore ? (
-                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                          ) : null}
-                          Show more Plugins
-                        </button>
-                      </div>
-                    ) : null}
-                  </>
-                ) : (
-                  <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] p-5 text-sm text-[var(--text-secondary)]">
-                    No Plugins are available for this category right now.
-                  </div>
-                )}
+                  ))}
+                </div>
               </section>
             </div>
           ) : null}
