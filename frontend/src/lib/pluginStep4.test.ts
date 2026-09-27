@@ -26,12 +26,15 @@ function plugin(overrides: Partial<RuntimePlugin>): RuntimePlugin {
   };
 }
 
-test('Step 4 uses the official Composio logo CDN and never guesses a domain', () => {
+test('Step 4 keeps provider logos grounded and never guesses a domain', () => {
   assert.equal(composioLogoUrl('slack'), 'https://logos.composio.dev/api/slack');
 
   const logoSource = source('frontend/src/lib/integrationLogos.ts');
+  const brandLogo = source('frontend/src/components/integrations/PluginBrandLogo.tsx');
   assert.doesNotMatch(logoSource, /google\.com\/s2\/favicons/);
   assert.doesNotMatch(logoSource, /slugToDomain/);
+  assert.match(brandLogo, /toolkitLogoAssetUrl/);
+  assert.match(brandLogo, /logo unavailable/);
 });
 
 test('Plugin search ranks exact brand matches above capability-only matches', () => {
@@ -50,7 +53,7 @@ test('Plugin search ranks exact brand matches above capability-only matches', ()
   );
 });
 
-test('Step 4 makes Composio the canonical browsable catalog', () => {
+test('Step 4 makes the live app catalog the canonical browsable Plugin source', () => {
   const route = source('backend/src/routes/integrations.ts');
   const client = source('frontend/src/lib/xrogaConnect.ts');
   const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
@@ -60,8 +63,9 @@ test('Step 4 makes Composio the canonical browsable catalog', () => {
   assert.match(client, /catalog:/);
   assert.match(client, /catalogCategories:/);
   assert.match(client, /catalogToolkit:/);
-  assert.match(marketplace, /catalogTotal\.toLocaleString\(\)/);
-  assert.match(marketplace, /Show more Plugins/);
+  assert.match(marketplace, /marketplaceSections/);
+  assert.match(marketplace, /MarketplaceShelf/);
+  assert.match(marketplace, /Browse by category/);
 });
 
 test('search results render before browse navigation and use live capability search', () => {
