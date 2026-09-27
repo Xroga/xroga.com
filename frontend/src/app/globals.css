@@ -13122,3 +13122,55 @@ body.theme-black {
       normal !important;
   }
 }
+
+
+/* Plugin use-case showcase
+   Adapted from the user's requested cyan → violet gradient/grid treatment.
+   The foreground surface comes from Xroga theme tokens so the same component
+   remains readable on White, Beige, Gray and Black themes. */
+.xv-plugin-usecases {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--surface-raised) 98%, transparent) 0%,
+      color-mix(in srgb, var(--surface-raised) 96%, transparent) 38%,
+      color-mix(in srgb, var(--surface-raised) 28%, transparent) 100%
+    ),
+    linear-gradient(to right, #0ed2da, #5f29c7);
+}
+
+.xv-plugin-usecases::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--border-strong) 50%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 50px 100%;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0) 72%
+  );
+}
+
+.xv-plugin-usecase-card {
+  background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+body.theme-black .xv-plugin-usecase-card,
+body.theme-gray .xv-plugin-usecase-card {
+  background: color-mix(in srgb, var(--surface-raised) 82%, transparent);
+}
