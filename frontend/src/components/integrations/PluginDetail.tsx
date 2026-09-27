@@ -656,14 +656,36 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
         `${definition.name}: ${clean}`,
       );
       const toolkitSlug = catalog?.slug;
+      const matchedTools = toolkitSlug
+        ? result.tools.filter((tool) => tool.toolkit === toolkitSlug)
+        : result.tools;
+      const matchedToolkit =
+        !toolkitSlug ||
+        matchedTools.length > 0 ||
+        result.toolkits.some((item) => item.toolkit === toolkitSlug) ||
+        Boolean(
+          result.skill?.primaryToolSlugs.some((slug) =>
+            slug.toLowerCase().startsWith(`${toolkitSlug.toLowerCase()}_`),
+          ),
+        ) ||
+        Boolean(
+          result.skill?.relatedToolSlugs.some((slug) =>
+            slug.toLowerCase().startsWith(`${toolkitSlug.toLowerCase()}_`),
+          ),
+        );
 
-      setSkill(result.skill ?? null);
-      setGuidance(result.guidance ?? null);
-      setSkillTools(
-        toolkitSlug
-          ? result.tools.filter((tool) => tool.toolkit === toolkitSlug)
-          : result.tools,
-      );
+      if (!matchedToolkit) {
+        setSkill(null);
+        setSkillTools([]);
+        setGuidance(null);
+        setUseCaseError(
+          `No matching ${definition.name} workflow was found for this task. Try describing the task with more ${definition.name}-specific detail.`,
+        );
+      } else {
+        setSkill(result.skill ?? null);
+        setGuidance(result.guidance ?? null);
+        setSkillTools(matchedTools);
+      }
     } catch (error) {
       setSkill(null);
       setSkillTools([]);
