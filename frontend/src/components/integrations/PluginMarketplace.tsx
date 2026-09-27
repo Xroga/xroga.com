@@ -1038,11 +1038,14 @@ export function PluginMarketplace() {
       throw new Error(`${plugin.name} does not have a valid app identifier.`);
     }
 
-    let activeSession = sessionId;
+    const customToolkit = toolkit.toUpperCase().startsWith('CUSTOM_');
+    let activeSession = customToolkit ? null : sessionId;
     if (!activeSession) {
-      const created = await xrogaConnect.session();
+      const created = await xrogaConnect.session(
+        customToolkit ? { toolkits: [toolkit] } : undefined,
+      );
       activeSession = created.sessionId;
-      setSessionId(created.sessionId);
+      if (!customToolkit) setSessionId(created.sessionId);
     }
 
     const current = await xrogaConnect.toolkits(activeSession, {
@@ -1241,16 +1244,7 @@ export function PluginMarketplace() {
           </div>
 
           {semanticError ? (
-            <AddPluginModal
-        open={addPluginOpen}
-        onClose={() => setAddPluginOpen(false)}
-        onSearch={(value) => {
-          setQuery(value);
-          setView('discover');
-        }}
-      />
-
-      <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
+            <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
               <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
               <p className="text-xs leading-5 text-[var(--text-secondary)]">
                 Capability search is temporarily unavailable. Brand/catalogue search is still working.
@@ -1553,6 +1547,15 @@ export function PluginMarketplace() {
 
         </>
       )}
+
+      <AddPluginModal
+        open={addPluginOpen}
+        onClose={() => setAddPluginOpen(false)}
+        onSearch={(value) => {
+          setQuery(value);
+          setView('discover');
+        }}
+      />
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
