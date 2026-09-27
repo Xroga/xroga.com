@@ -1139,12 +1139,7 @@ export function PluginMarketplace() {
         ])
       : allPlugins;
 
-    return source
-      .filter((plugin) => section.categories.includes(plugin.category))
-      .sort((a, b) => {
-        if (a.connected !== b.connected) return a.connected ? -1 : 1;
-        return a.name.localeCompare(b.name);
-      });
+    return source.filter((plugin) => section.categories.includes(plugin.category));
   }
 
   async function connectNative(plugin: RuntimePlugin) {
