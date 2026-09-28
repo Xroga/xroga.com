@@ -79,9 +79,25 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
     id: 'small-business',
     title: 'Small Business',
-    description: 'Commerce, payments, finance and marketing tools for operating a business.',
-    categories: ['Commerce', 'Finance', 'Marketing'],
-    groups: ['commerce', 'finance', 'marketing'],
+    description: 'Everyday apps for payments, customers, marketing, files, teamwork and running a business.',
+    categories: [
+      'Commerce',
+      'Sales & CRM',
+      'Marketing',
+      'Finance',
+      'Productivity',
+      'Communication',
+      'Design & Media',
+    ],
+    groups: [
+      'commerce',
+      'sales-crm',
+      'marketing',
+      'finance',
+      'productivity',
+      'communication',
+      'design-media',
+    ],
   },
   {
     id: 'productivity',
@@ -107,9 +123,9 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
     id: 'business-operations',
     title: 'Business & Operations',
-    description: 'CRM, customer support, recruiting and day-to-day business systems.',
-    categories: ['Sales & CRM', 'Support', 'HR & Recruiting'],
-    groups: ['sales-crm', 'support', 'hr-recruiting'],
+    description: 'CRM, support, recruiting, commerce and operational systems.',
+    categories: ['Sales & CRM', 'Support', 'HR & Recruiting', 'Commerce', 'Marketing'],
+    groups: ['sales-crm', 'support', 'hr-recruiting', 'commerce', 'marketing'],
   },
   {
     id: 'data-analytics',
@@ -126,25 +142,60 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['communication'],
   },
   {
-    id: 'ai-automation',
-    title: 'AI & Automation',
-    description: 'AI models, agents, automation and workflow tools.',
-    categories: ['AI & Automation'],
-    groups: ['ai-automation'],
+    id: 'education-research',
+    title: 'Education & Research',
+    description: 'Learning, academic research, literature and knowledge tools.',
+    categories: ['Education & Research'],
+    groups: ['education-research'],
+  },
+  {
+    id: 'scientific-research',
+    title: 'Scientific Research',
+    description: 'Scientific literature, biology, chemistry, genomics and laboratory research.',
+    categories: ['Scientific Research'],
+    groups: ['scientific-research'],
+  },
+  {
+    id: 'security',
+    title: 'Security',
+    description: 'Security, privacy, malware, compliance and threat-analysis tools.',
+    categories: ['Security'],
+    groups: ['security'],
+  },
+  {
+    id: 'finance',
+    title: 'Finance',
+    description: 'Accounting, banking, invoices, market data and financial operations.',
+    categories: ['Finance'],
+    groups: ['finance'],
+  },
+  {
+    id: 'healthcare',
+    title: 'Healthcare',
+    description: 'Health, fitness, wellness, nutrition and medical-data tools.',
+    categories: ['Healthcare'],
+    groups: ['healthcare'],
   },
   {
     id: 'travel',
     title: 'Travel',
     description: 'Flights, trips, navigation, booking and travel services.',
     categories: ['Travel'],
-    groups: ['other'],
+    groups: ['travel'],
   },
   {
     id: 'entertainment',
     title: 'Entertainment',
     description: 'Music, media, games, sports and entertainment services.',
     categories: ['Entertainment'],
-    groups: ['other'],
+    groups: ['entertainment'],
+  },
+  {
+    id: 'ai-automation',
+    title: 'AI & Automation',
+    description: 'AI models, agents, automation and workflow tools.',
+    categories: ['AI & Automation'],
+    groups: ['ai-automation'],
   },
   {
     id: 'other',
@@ -284,7 +335,7 @@ function PluginListRow({
   const checking = plugin.connectionState === 'checking';
 
   return (
-    <div className="group flex min-h-[72px] items-center gap-3 border-b border-[var(--border-subtle)] py-3 last:border-b-0">
+    <div className="group flex min-h-[64px] items-center gap-3 border-b border-[var(--border-subtle)] py-2.5 last:border-b-0">
       <Link
         href={detailHref(plugin)}
         className="flex min-w-0 flex-1 items-center gap-3 rounded-md focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
@@ -297,10 +348,10 @@ function PluginListRow({
           fallbackLogo={plugin.logoFallback}
         />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
+          <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
             {plugin.name}
           </p>
-          <p className="mt-0.5 line-clamp-1 text-xs text-[var(--text-secondary)]">
+          <p className="mt-0.5 line-clamp-1 text-[11px] leading-4 text-[var(--text-secondary)]">
             {plugin.description}
           </p>
         </div>
@@ -418,9 +469,11 @@ function CategoryPluginSection({
               aria-hidden="true"
             />
           </div>
-          <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-            {section.description}
-          </p>
+          {expanded ? (
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
+              {section.description}
+            </p>
+          ) : null}
         </div>
         {plugins.length ? (
           <span className="shrink-0 pt-0.5 text-[11px] font-medium text-[var(--text-muted)]">

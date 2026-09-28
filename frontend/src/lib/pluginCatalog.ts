@@ -91,6 +91,12 @@ export const PLUGIN_CATEGORY_GROUPS = [
   { id: 'support', label: 'Support' },
   { id: 'infrastructure', label: 'Infrastructure' },
   { id: 'hr-recruiting', label: 'HR & Recruiting' },
+  { id: 'education-research', label: 'Education & Research' },
+  { id: 'scientific-research', label: 'Scientific Research' },
+  { id: 'security', label: 'Security' },
+  { id: 'healthcare', label: 'Healthcare' },
+  { id: 'travel', label: 'Travel' },
+  { id: 'entertainment', label: 'Entertainment' },
   { id: 'other', label: 'Other' },
 ] as const;
 
@@ -415,6 +421,12 @@ export function displayToolkitName(toolkit: string): string {
 export function inferCategory(name: string, description = ''): string {
   const haystack = `${name} ${description}`.toLowerCase();
 
+  if (/travel|flight|airline|hotel|booking|trip|tourism|navigation|route/.test(haystack)) return 'Travel';
+  if (/entertainment|music|podcast|gaming|game|movie|film|streaming|sports|astrology|horoscope|chess/.test(haystack)) return 'Entertainment';
+  if (/health|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|clinical/.test(haystack)) return 'Healthcare';
+  if (/scientific|science|biology|chemistry|genomic|genome|protein|molecular|laboratory|preprint/.test(haystack)) return 'Scientific Research';
+  if (/education|academic|learning|school|university|course|scholar|literature|research/.test(haystack)) return 'Education & Research';
+  if (/security|privacy|malware|threat|vulnerability|cyber|phishing|audit|compliance/.test(haystack)) return 'Security';
   if (/mail|calendar|drive|document|note/.test(haystack)) return 'Productivity';
   if (/slack|discord|message|chat|communication/.test(haystack)) return 'Communication';
   if (/github|gitlab|code|issue|monitor|sentry|developer/.test(haystack)) return 'Engineering';
@@ -576,7 +588,11 @@ const CATEGORY_NAME_MAP: Array<{
   label: string;
 }> = [
   { test: /travel|flight|airline|hotel|booking|trip|tourism|maps?|navigation|location|route|rental car/i, label: 'Travel' },
-  { test: /entertainment|music|podcast|gaming|game|movie|film|streaming|sports|ticket|astrology|horoscope/i, label: 'Entertainment' },
+  { test: /entertainment|music|podcast|gaming|game|movie|film|streaming|sports|ticket|astrology|horoscope|chess/i, label: 'Entertainment' },
+  { test: /health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|clinical|patient/i, label: 'Healthcare' },
+  { test: /scientific|science|biology|chemistry|genomic|genome|protein|molecular|laboratory|lab research|research paper|preprint/i, label: 'Scientific Research' },
+  { test: /education|academic|learning|school|university|course|scholar|literature|research|knowledge base/i, label: 'Education & Research' },
+  { test: /security|privacy|malware|threat|vulnerability|cyber|phishing|audit|compliance|domain security/i, label: 'Security' },
   { test: /communication|messaging|chat|email|mail|sms|phone|voice|social|community|video conference|meeting/i, label: 'Communication' },
   { test: /sales|crm|lead|customer|prospect|deal|pipeline|relationship/i, label: 'Sales & CRM' },
   { test: /commerce|ecommerce|e-commerce|store|shopping|payment|checkout|order|inventory|shipping|fulfillment/i, label: 'Commerce' },
