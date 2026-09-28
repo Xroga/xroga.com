@@ -70,10 +70,12 @@ export const CATEGORY_ORDER = [
   'Booking & Scheduling',
   'Sales & CRM',
   'Customer Support',
+  'Business & Operations',
   'Marketing & Growth',
   'Social Media',
   'Commerce & Payments',
   'Finance & Accounting',
+  'Blockchain & Crypto',
   'Data & Analytics',
   'Databases',
   'Maps & Location',
@@ -107,10 +109,12 @@ export const PLUGIN_CATEGORY_GROUPS = [
   { id: 'booking-scheduling', label: 'Booking & Scheduling' },
   { id: 'sales-crm', label: 'Sales & CRM' },
   { id: 'support', label: 'Customer Support' },
+  { id: 'business-operations', label: 'Business & Operations' },
   { id: 'marketing-growth', label: 'Marketing & Growth' },
   { id: 'social-media', label: 'Social Media' },
   { id: 'commerce-payments', label: 'Commerce & Payments' },
   { id: 'finance-accounting', label: 'Finance & Accounting' },
+  { id: 'blockchain-crypto', label: 'Blockchain & Crypto' },
   { id: 'data-analytics', label: 'Data & Analytics' },
   { id: 'databases', label: 'Databases' },
   { id: 'maps-location', label: 'Maps & Location' },
@@ -482,9 +486,11 @@ export function inferCategory(name: string, description = ''): string {
   if (/\b(education|academic|learning|university|course|scholar|literature|research paper)\b/.test(text)) return 'Education & Research';
   if (/\b(health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|patient)\b/.test(text)) return 'Healthcare & Fitness';
   if (/\b(music|podcast|gaming|game|movie|streaming|sports|astrology|horoscope|chess)\b/.test(text)) return 'Entertainment';
+  if (/\b(blockchain|crypto|cryptocurrency|web3|on-chain|onchain|wallet|token data)\b/.test(text)) return 'Blockchain & Crypto';
   if (/\b(marketing|advertis|campaign|seo|newsletter|growth|conversion)\b/.test(text)) return 'Marketing & Growth';
   if (/\b(support|helpdesk|service desk|customer service)\b/.test(text)) return 'Customer Support';
   if (/\b(crm|lead|prospect|sales pipeline|deal)\b/.test(text)) return 'Sales & CRM';
+  if (/\b(business operations|business management|erp|office management|professional services|operations platform)\b/.test(text)) return 'Business & Operations';
   if (/\b(payment|checkout|ecommerce|e-commerce|shopping|order|inventory|fulfillment)\b/.test(text)) return 'Commerce & Payments';
   if (/\b(accounting|banking|invoice|tax|expense|fintech|payroll)\b/.test(text)) return 'Finance & Accounting';
   if (/\b(analytics|dashboard|business intelligence|data warehouse|etl|reporting)\b/.test(text)) return 'Data & Analytics';
@@ -681,6 +687,7 @@ export function catalogPrimaryCategory(
   if (/\bdatabases?\b/.test(categories)) return 'Databases';
   if (/website\s*&\s*app building|website and app building|app builder|website builders|hosting/.test(categories)) return 'Deployment & Hosting';
   if (/security\s*&\s*identity|security and identity|risk management|compliance|audit management/.test(categories)) return 'Security';
+  if (/blockchain|crypto|cryptocurrency|web3|on-chain|onchain/.test(categories)) return 'Blockchain & Crypto';
   if (/developer tools|developer tools\s*&\s*devops|developer tools and devops|api testing/.test(categories)) return 'Developer Tools';
   if (/it operations|server monitoring|internet of things|networking|cloud infrastructure/.test(categories)) return 'Cloud & Infrastructure';
   if (/online courses/.test(categories)) return 'Education & Research';
@@ -691,6 +698,7 @@ export function catalogPrimaryCategory(
   if (/marketing|ads\s*&\s*conversion|ads and conversion|drip emails|email newsletters|event management|marketing automation|transactional email|url shortener|webinars|seo/.test(categories)) return 'Marketing & Growth';
   if (/customer support|\bsupport\b|customer appreciation|help desk|ticketing/.test(categories)) return 'Customer Support';
   if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b|lead management/.test(categories)) return 'Sales & CRM';
+  if (/business operations|business management|erp|office management|professional services|workflow management/.test(categories)) return 'Business & Operations';
   if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio|visual content generation/.test(categories)) return 'Design & Media';
   if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription/.test(categories)) return 'Content & Files';
   if (/human resources|hr talent\s*&\s*recruitment|hr talent and recruitment|recruiting|employee management/.test(categories)) return 'HR & Recruiting';
