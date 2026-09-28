@@ -351,6 +351,7 @@ export interface XrogaConnectCatalogToolkit {
   logo?: string;
   appUrl?: string;
   categories: Array<{ id: string; name: string }>;
+  xrogaGroup?: CanonicalXrogaCatalogGroup;
   triggersCount: number;
   toolsCount: number;
   version?: string;
@@ -372,8 +373,17 @@ export type XrogaCatalogGroup =
   | 'support'
   | 'commerce-payments'
   | 'marketing-growth'
+  | 'social-media'
   | 'booking-scheduling'
   | 'travel-hospitality'
+  | 'maps-location'
+  | 'web-search-scraping'
+  | 'weather-utilities'
+  | 'logistics-shipping'
+  | 'forms-surveys'
+  | 'legal-contracts'
+  | 'real-estate'
+  | 'food-restaurants'
   | 'finance-accounting'
   | 'data-analytics'
   | 'databases'
@@ -458,73 +468,129 @@ export function xrogaCatalogGroupFor(
   const categories = toolkitCategoryText(toolkit);
   const text = toolkitFallbackText(toolkit);
 
-  // Very specific verticals first so "hotel booking" is Travel while
-  // Calendly/Cal stay in Booking & Scheduling.
+  // Specific user intents come first. This keeps category labels aligned with
+  // the apps users expect to find there instead of letting broad provider
+  // categories (for example "productivity") swallow specialist apps.
+  if (
+    /maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories) ||
+    /\b(google maps|mapbox|geocod|geospatial|directions?|route planning|places api|location data)\b/.test(text)
+  ) return 'maps-location';
+
+  if (
+    /weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories) ||
+    /\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)
+  ) return 'weather-utilities';
+
+  // Hotels, airlines and trip platforms belong in Travel; appointment tools do not.
   if (
     /travel|flight|airline|hotel|hospitality|lodging|tourism|vacation|accommodation|rental car/.test(categories) ||
-    /\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|travel)\b/.test(text)
+    /\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|expedia|booking\.com|airbnb|agoda|travel)\b/.test(text)
   ) return 'travel-hospitality';
 
   if (
-    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation/.test(categories) ||
-    /\b(calendly|cal\.com|appointment|booking|scheduler|scheduling|reservation)\b/.test(text)
+    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
+    /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
   ) return 'booking-scheduling';
 
   if (
+    /shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories) ||
+    /\b(shippo|shipstation|easypost|aftership|shipping|logistics|courier|delivery|fleet|freight|carrier|warehouse|supply chain)\b/.test(text)
+  ) return 'logistics-shipping';
+
+  if (
+    /real estate|property management|property listings|mortgage/.test(categories) ||
+    /\b(real estate|property listing|property management|realtor|zillow|mortgage|estate agency)\b/.test(text)
+  ) return 'real-estate';
+
+  if (
+    /food|restaurants?|restaurant management|recipes?|dining/.test(categories) ||
+    /\b(restaurant|food delivery|menu|recipe|dining|opentable|doordash|ubereats|yelp)\b/.test(text)
+  ) return 'food-restaurants';
+
+  if (
+    /legal|contracts?|signatures?|e-signatures?|document signing/.test(categories) ||
+    /\b(legal|contract management|contract lifecycle|e-signature|electronic signature|docusign|pandadoc|ironclad)\b/.test(text)
+  ) return 'legal-contracts';
+
+  if (
+    /forms\s*&\s*surveys|forms and surveys|surveys?|questionnaires?|data collection/.test(categories) ||
+    /\b(typeform|jotform|surveymonkey|google forms|tally|form builder|survey|questionnaire)\b/.test(text)
+  ) return 'forms-surveys';
+
+  if (
+    /social media accounts|social media marketing|social media management|creator tools/.test(categories) ||
+    /\b(instagram|linkedin|twitter|x\.com|facebook pages|tiktok|social media|social posting|social network)\b/.test(text)
+  ) return 'social-media';
+
+  if (
+    /ai web scraping|web scraping|web search|search engine|browser automation|data extraction/.test(categories) ||
+    /\b(firecrawl|exa|apify|browser tool|scrapingbee|bright data|web scrape|web scraping|web search|browser automation|search the web)\b/.test(text)
+  ) return 'web-search-scraping';
+
+  if (
     /\bdatabases?\b/.test(categories) ||
-    /\b(postgres|postgresql|mysql|mongodb|mongo db|neon|planetscale|redis|supabase database|database platform|sql database)\b/.test(text)
+    /\b(postgres|postgresql|mysql|mongodb|mongo db|neon|planetscale|redis|supabase database|database platform|sql database|data store)\b/.test(text)
   ) return 'databases';
 
   if (
-    /website\s*&\s*app building|website and app building|app builder|website builders/.test(categories) ||
+    /website\s*&\s*app building|website and app building|app builder|website builders|hosting/.test(categories) ||
     /\b(vercel|netlify|render|railway|heroku|fly\.io|deployment platform|deploy apps?|build and deploy|web hosting|app hosting|serverless hosting)\b/.test(text)
   ) return 'deployment-hosting';
 
-  if (/security\s*&\s*identity|security and identity/.test(categories)) return 'security';
-  if (/developer tools/.test(categories)) return 'developer-tools';
-  if (/it operations|server monitoring|internet of things/.test(categories)) return 'cloud-infrastructure';
+  if (/security\s*&\s*identity|security and identity|risk management|compliance|audit management/.test(categories)) return 'security';
+  if (/developer tools|developer tools\s*&\s*devops|developer tools and devops|api testing/.test(categories)) return 'developer-tools';
+  if (/it operations|server monitoring|internet of things|networking|cloud infrastructure/.test(categories)) return 'cloud-infrastructure';
   if (/online courses/.test(categories)) return 'education-research';
 
   if (
-    /artificial intelligence|ai agents|ai assistants|ai chatbots|ai content generation|ai document extraction|ai meeting assistants|ai models|ai safety compliance detection|ai sales tools|ai web scraping|model context protocol/.test(categories)
+    /artificial intelligence|ai agents|ai assistants|ai chatbots|ai content generation|ai document extraction|ai meeting assistants|ai models|ai safety compliance detection|ai sales tools|model context protocol|creative automation/.test(categories)
   ) return 'ai-automation';
 
-  if (/business intelligence|analytics|dashboards/.test(categories)) return 'data-analytics';
-  if (/accounting|fundraising|proposal\s*&\s*invoice|proposal and invoice|taxes/.test(categories)) return 'finance-accounting';
-  if (/commerce|ecommerce|payment processing|reviews/.test(categories)) return 'commerce-payments';
+  if (/business intelligence|analytics|dashboards|product analytics|data analytics|reporting/.test(categories)) return 'data-analytics';
+  if (/accounting|fundraising|proposal\s*&\s*invoice|proposal and invoice|taxes|banking|expense management/.test(categories)) return 'finance-accounting';
+  if (/commerce|ecommerce|payment processing|reviews|retail/.test(categories)) return 'commerce-payments';
 
-  if (/social media accounts|social media marketing/.test(categories)) return 'marketing-growth';
-  if (/marketing|ads\s*&\s*conversion|ads and conversion|drip emails|email newsletters|event management|marketing automation|transactional email|url shortener|webinars/.test(categories)) {
+  if (/marketing|ads\s*&\s*conversion|ads and conversion|drip emails|email newsletters|event management|marketing automation|transactional email|url shortener|webinars|seo/.test(categories)) {
     return 'marketing-growth';
   }
 
-  if (/customer support|\bsupport\b|customer appreciation/.test(categories)) return 'support';
-  if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b/.test(categories)) return 'sales-crm';
+  if (/customer support|\bsupport\b|customer appreciation|help desk|ticketing/.test(categories)) return 'support';
+  if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b|lead management/.test(categories)) return 'sales-crm';
 
-  if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio/.test(categories)) return 'design-media';
-  if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription|signatures/.test(categories)) {
+  if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio|visual content generation/.test(categories)) return 'design-media';
+  if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription/.test(categories)) {
     return 'content-files';
   }
 
-  if (/human resources|hr talent\s*&\s*recruitment|hr talent and recruitment/.test(categories)) return 'hr-recruiting';
+  if (/human resources|hr talent\s*&\s*recruitment|hr talent and recruitment|recruiting|employee management/.test(categories)) return 'hr-recruiting';
+  if (/scientific research|biology|chemistry|genomics|bioinformatics/.test(categories)) return 'scientific-research';
   if (/\beducation\b/.test(categories)) return 'education-research';
 
-  if (/fitness/.test(categories)) return 'healthcare-fitness';
-  if (/gaming|lifestyle\s*&\s*entertainment|lifestyle and entertainment|news\s*&\s*lifestyle|news and lifestyle/.test(categories)) {
+  if (/fitness|healthcare|health|medical|wellness|nutrition/.test(categories)) return 'healthcare-fitness';
+  if (/gaming|lifestyle\s*&\s*entertainment|lifestyle and entertainment|news\s*&\s*lifestyle|news and lifestyle|music|sports/.test(categories)) {
     return 'entertainment';
   }
 
-  if (/phone\s*&\s*sms|phone and sms|team chat|team collaboration|video conferencing|communication|call tracking|\bemail\b|fax|notifications/.test(categories)) {
+  if (/phone\s*&\s*sms|phone and sms|team chat|team collaboration|video conferencing|communication|call tracking|\bemail\b|fax|notifications|messaging/.test(categories)) {
     return 'communication';
   }
 
   if (/calendar/.test(categories)) return 'booking-scheduling';
-  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software|forms\s*&\s*surveys|forms and surveys/.test(categories)) {
+  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software/.test(categories)) {
     return 'productivity';
   }
 
   // Long-tail fallbacks. These run only after official category signals.
-  if (/\b(security|privacy|malware|threat|vulnerability|cyber|phishing|compliance)\b/.test(text)) return 'security';
+  if (/\b(map|maps|geocoding|geospatial|location|navigation|directions)\b/.test(text)) return 'maps-location';
+  if (/\b(weather|forecast|climate|temperature)\b/.test(text)) return 'weather-utilities';
+  if (/\b(shipping|logistics|courier|delivery|fleet|freight|warehouse)\b/.test(text)) return 'logistics-shipping';
+  if (/\b(real estate|property|realtor|mortgage)\b/.test(text)) return 'real-estate';
+  if (/\b(restaurant|food|menu|recipe|dining)\b/.test(text)) return 'food-restaurants';
+  if (/\b(legal|contract|signature|signing)\b/.test(text)) return 'legal-contracts';
+  if (/\b(form builder|survey|questionnaire|data collection)\b/.test(text)) return 'forms-surveys';
+  if (/\b(social media|instagram|linkedin|twitter|tiktok|facebook page)\b/.test(text)) return 'social-media';
+  if (/\b(web scrape|web scraping|web search|browser automation|crawler|crawl the web)\b/.test(text)) return 'web-search-scraping';
+  if (/\b(security|privacy|malware|threat|vulnerability|cyber|phishing|compliance|audit)\b/.test(text)) return 'security';
   if (/\b(scientific|biology|chemistry|genomic|genome|protein|molecular|laboratory|preprint)\b/.test(text)) return 'scientific-research';
   if (/\b(education|academic|learning|university|course|scholar|literature|research paper)\b/.test(text)) return 'education-research';
   if (/\b(health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|patient)\b/.test(text)) return 'healthcare-fitness';
@@ -540,7 +606,7 @@ export function xrogaCatalogGroupFor(
   if (/\b(github|gitlab|developer|devops|source control|code review|api testing|observability)\b/.test(text)) return 'developer-tools';
   if (/\b(ai|agent|automation|workflow|llm|model context protocol|mcp)\b/.test(text)) return 'ai-automation';
   if (/\b(design|creative|image|video|audio|graphics|3d|cad|animation|photo)\b/.test(text)) return 'design-media';
-  if (/\b(document|file|storage|note|transcription|signature)\b/.test(text)) return 'content-files';
+  if (/\b(document|file|storage|note|transcription)\b/.test(text)) return 'content-files';
   if (/\b(email|messaging|chat|sms|phone|voice|meeting|conference)\b/.test(text)) return 'communication';
   if (/\b(calendar|task|project management|spreadsheet|workspace|productivity)\b/.test(text)) return 'productivity';
 
@@ -1103,7 +1169,7 @@ function mapCatalogToolkit(
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
 
-  return {
+  const toolkit: XrogaConnectCatalogToolkit = {
     slug,
     name,
     type: item.type,
@@ -1143,8 +1209,12 @@ function mapCatalogToolkit(
     version: item.meta?.version,
     deprecated: Boolean(item.deprecated),
   };
-}
 
+  return {
+    ...toolkit,
+    xrogaGroup: xrogaCatalogGroupFor(toolkit),
+  };
+}
 function toolTokens(toolSlug: string): string[] {
   return toolSlug
     .toUpperCase()
@@ -1983,7 +2053,8 @@ export async function listComposioCatalogGroup(
         items.push(
           ...page.items.filter(
             (toolkit) =>
-              xrogaCatalogGroupFor(toolkit) === canonicalXrogaCatalogGroup(input.group),
+              (toolkit.xrogaGroup ?? xrogaCatalogGroupFor(toolkit)) ===
+              canonicalXrogaCatalogGroup(input.group),
           ),
         );
 
