@@ -19,8 +19,14 @@ test('Discover uses a compact Installed shelf instead of connected cards', () =>
   assert.match(marketplace, /InstalledPluginsShelf/);
   assert.match(shelf, />\s*Installed\s*</);
   assert.match(shelf, /onMouseEnter/);
+  assert.match(shelf, /scheduleClose/);
+  assert.match(shelf, /size="detail"/);
+  assert.match(shelf, /bg-\[var\(--background\)\]/);
   assert.match(shelf, /Manage Plugin/);
+  assert.match(shelf, /buttonOnly showFullAccessShortcut/);
   assert.match(permission, /Default permission/);
+  assert.match(permission, /buttonOnly/);
+  assert.match(permission, /Full access/);
 });
 
 test('Plugin permission policy is persisted and enforced for ordinary writes', () => {
@@ -65,6 +71,7 @@ test('permission choices use honest Xroga approval wording', () => {
   assert.match(permission, /Full access/);
   assert.match(permission, /High trust/);
   assert.match(permission, /actions you explicitly ask Xroga to perform/);
+  assert.match(permission, /platform-enforced safeguards still apply/);
   assert.doesNotMatch(permission, /Composio/);
 });
 
