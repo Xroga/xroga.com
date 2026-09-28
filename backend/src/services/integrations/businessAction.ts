@@ -1426,18 +1426,23 @@ export async function executePreparedBusinessAction(
     );
 
   const highRiskNow =
-    input.plan
-      .requiresConfirmation ||
-    details.risk ===
-      'destructive' ||
-    details.risk ===
-      'unknown' ||
-    (
-      permissionMode !==
-        'low_risk' &&
-      details.risk ===
-        'write'
-    );
+    permissionMode ===
+      'full_access'
+      ? false
+      : (
+          input.plan
+            .requiresConfirmation ||
+          details.risk ===
+            'destructive' ||
+          details.risk ===
+            'unknown' ||
+          (
+            permissionMode !==
+              'low_risk' &&
+            details.risk ===
+              'write'
+          )
+        );
 
   if (
     highRiskNow &&
