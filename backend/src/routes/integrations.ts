@@ -1120,6 +1120,12 @@ router.get(
           'support',
           'infrastructure',
           'hr-recruiting',
+          'education-research',
+          'scientific-research',
+          'security',
+          'healthcare',
+          'travel',
+          'entertainment',
           'other',
         ])
         .optional(),
