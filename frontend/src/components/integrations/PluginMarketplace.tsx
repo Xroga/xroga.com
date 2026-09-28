@@ -66,7 +66,7 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
-const SEARCH_PREVIEW_LIMIT = 12;
+const SEARCH_PREVIEW_LIMIT = 10;
 const CATEGORY_PREVIEW_LIMIT = 6;
 const CATEGORY_EXPAND_STEP = 10;
 const OTHER_PREVIEW_LIMIT = 8;
@@ -101,26 +101,34 @@ const SMALL_BUSINESS_IDS = [
 const SECTION_PINNED_IDS: Record<string, string[]> = {
   'small-business': SMALL_BUSINESS_IDS,
   productivity: ['google-calendar', 'notion', 'gmail', 'google-drive', 'trello', 'asana'],
-  communication: ['slack', 'gmail', 'microsoftoutlook', 'zoom', 'discord'],
-  'sales-crm': ['hubspot', 'salesforce', 'pipedrive', 'close', 'attio'],
-  support: ['intercom', 'zendesk', 'freshdesk', 'gorgias'],
-  'commerce-payments': ['stripe', 'shopify', 'square', 'paypal', 'woocommerce'],
+  communication: ['slack', 'gmail', 'microsoftoutlook', 'zoom', 'discord', 'microsoftteams'],
+  'booking-scheduling': ['cal', 'calendly', 'google-calendar', 'acuityscheduling', 'squareappointments', 'savvycal'],
+  'sales-crm': ['hubspot', 'salesforce', 'pipedrive', 'close', 'attio', 'zoho'],
+  support: ['intercom', 'zendesk', 'freshdesk', 'gorgias', 'helpscout'],
   'marketing-growth': ['mailchimp', 'activecampaign', 'klaviyo', 'googleads', 'facebookads', 'semrush'],
-  'booking-scheduling': ['cal', 'calendly', 'google-calendar', 'acuityscheduling'],
-  'travel-hospitality': ['skyscanner', 'bookingcom', 'tripcom', 'googlemaps'],
-  'finance-accounting': ['quickbooks', 'xero', 'freshbooks', 'plaid', 'stripe'],
-  'data-analytics': ['posthog', 'mixpanel', 'amplitude', 'tableau', 'powerbi'],
+  'social-media': ['linkedin', 'instagram', 'twitter', 'tiktok', 'facebookpages', 'youtube'],
+  'commerce-payments': ['stripe', 'shopify', 'square', 'paypal', 'woocommerce', 'bigcommerce'],
+  'finance-accounting': ['quickbooks', 'xero', 'freshbooks', 'plaid', 'stripe', 'wise'],
+  'data-analytics': ['posthog', 'mixpanel', 'amplitude', 'tableau', 'powerbi', 'googleanalytics'],
   databases: ['supabase', 'postgresql', 'mongodb', 'neon', 'mysql', 'redis'],
-  'developer-tools': ['github', 'linear', 'sentry', 'gitlab', 'postman'],
-  'deployment-hosting': ['vercel', 'railway', 'render', 'netlify', 'heroku'],
-  'cloud-infrastructure': ['cloudflare', 'aws', 'digitalocean', 'datadog'],
-  'ai-automation': ['openai', 'anthropic', 'gemini', 'perplexityai'],
-  'content-files': ['google-drive', 'dropbox', 'box', 'onedrive', 'notion'],
-  'design-media': ['canva', 'figma', 'runway', 'invideo'],
-  'hr-recruiting': ['greenhouse', 'lever', 'workday', 'bamboohr'],
-  security: ['malwarebytes', 'cloudflare', 'snyk'],
+  'maps-location': ['googlemaps', 'mapbox', 'tomtom', 'here', 'radarlabs'],
+  'web-search-scraping': ['firecrawl', 'exa', 'apify', 'browsertool', 'scrapingbee', 'brightdata'],
+  'developer-tools': ['github', 'linear', 'sentry', 'gitlab', 'postman', 'jira'],
+  'deployment-hosting': ['vercel', 'railway', 'render', 'netlify', 'heroku', 'flyio'],
+  'cloud-infrastructure': ['cloudflare', 'aws', 'digitalocean', 'datadog', 'grafana', 'newrelic'],
+  'ai-automation': ['openai', 'anthropic', 'gemini', 'perplexityai', 'huggingface'],
+  'content-files': ['google-drive', 'dropbox', 'box', 'onedrive', 'notion', 'sharepoint'],
+  'design-media': ['canva', 'figma', 'runway', 'invideo', 'openart', 'higgsfield'],
+  'forms-surveys': ['typeform', 'jotform', 'surveymonkey', 'googleforms', 'tally'],
+  'hr-recruiting': ['greenhouse', 'lever', 'workday', 'bamboohr', 'deel'],
+  'logistics-shipping': ['shippo', 'shipstation', 'easypost', 'aftership', 'fedex', 'ups'],
+  'legal-contracts': ['docusign', 'pandadoc', 'ironclad', 'hellosign', 'dropboxsign'],
+  'real-estate': ['zillow', 'apex27', 'realtor', 'propertybase'],
+  'food-restaurants': ['opentable', 'yelp', 'doordash', 'ubereats', 'toast'],
+  'travel-hospitality': ['skyscanner', 'bookingcom', 'expedia', 'tripcom', 'airbnb', 'agoda'],
+  'weather-utilities': ['weathermap', 'openweathermap', 'ambientweather', 'weatherapi'],
+  security: ['malwarebytes', 'cloudflare', 'snyk', 'privacyhawk', 'radarlite'],
 };
-
 type DiscoverySection = {
   id: string;
   title: string;
@@ -154,6 +162,13 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['communication'],
   },
   {
+    id: 'booking-scheduling',
+    title: 'Booking & Scheduling',
+    description: 'Appointments, booking pages, availability, calendars and reservations.',
+    categories: ['Booking & Scheduling'],
+    groups: ['booking-scheduling'],
+  },
+  {
     id: 'sales-crm',
     title: 'Sales & CRM',
     description: 'Leads, contacts, deals, pipelines and customer relationships.',
@@ -168,13 +183,6 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['support'],
   },
   {
-    id: 'commerce-payments',
-    title: 'Commerce & Payments',
-    description: 'Payments, stores, orders, checkout, inventory and fulfillment.',
-    categories: ['Commerce & Payments'],
-    groups: ['commerce-payments'],
-  },
-  {
     id: 'marketing-growth',
     title: 'Marketing & Growth',
     description: 'SEO, ads, campaigns, newsletters, automation and growth tools.',
@@ -182,18 +190,18 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['marketing-growth'],
   },
   {
-    id: 'booking-scheduling',
-    title: 'Booking & Scheduling',
-    description: 'Appointments, booking pages, availability, events and reservations.',
-    categories: ['Booking & Scheduling'],
-    groups: ['booking-scheduling'],
+    id: 'social-media',
+    title: 'Social Media',
+    description: 'Publishing, engagement, analytics and social-network workflows.',
+    categories: ['Social Media'],
+    groups: ['social-media'],
   },
   {
-    id: 'travel-hospitality',
-    title: 'Travel & Hospitality',
-    description: 'Flights, hotels, trips, hospitality, maps and travel services.',
-    categories: ['Travel & Hospitality'],
-    groups: ['travel-hospitality'],
+    id: 'commerce-payments',
+    title: 'Commerce & Payments',
+    description: 'Payments, stores, orders, checkout, inventory and fulfillment.',
+    categories: ['Commerce & Payments'],
+    groups: ['commerce-payments'],
   },
   {
     id: 'finance-accounting',
@@ -215,6 +223,20 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     description: 'SQL, NoSQL, managed databases, data stores and backend data services.',
     categories: ['Databases'],
     groups: ['databases'],
+  },
+  {
+    id: 'maps-location',
+    title: 'Maps & Location',
+    description: 'Maps, places, geocoding, directions, routing and geospatial data.',
+    categories: ['Maps & Location'],
+    groups: ['maps-location'],
+  },
+  {
+    id: 'web-search-scraping',
+    title: 'Web Search & Scraping',
+    description: 'Search the web, crawl sites, extract data and automate browser research.',
+    categories: ['Web Search & Scraping'],
+    groups: ['web-search-scraping'],
   },
   {
     id: 'developer-tools',
@@ -259,11 +281,60 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['design-media'],
   },
   {
+    id: 'forms-surveys',
+    title: 'Forms & Surveys',
+    description: 'Forms, surveys, questionnaires, feedback and structured data collection.',
+    categories: ['Forms & Surveys'],
+    groups: ['forms-surveys'],
+  },
+  {
     id: 'hr-recruiting',
     title: 'HR & Recruiting',
     description: 'Hiring, recruiting, people operations and employee systems.',
     categories: ['HR & Recruiting'],
     groups: ['hr-recruiting'],
+  },
+  {
+    id: 'logistics-shipping',
+    title: 'Logistics & Shipping',
+    description: 'Shipping, carriers, delivery, tracking, fleet and logistics operations.',
+    categories: ['Logistics & Shipping'],
+    groups: ['logistics-shipping'],
+  },
+  {
+    id: 'legal-contracts',
+    title: 'Legal & Contracts',
+    description: 'Contracts, e-signatures, legal workflows and document approvals.',
+    categories: ['Legal & Contracts'],
+    groups: ['legal-contracts'],
+  },
+  {
+    id: 'real-estate',
+    title: 'Real Estate',
+    description: 'Properties, listings, real-estate operations and related services.',
+    categories: ['Real Estate'],
+    groups: ['real-estate'],
+  },
+  {
+    id: 'food-restaurants',
+    title: 'Food & Restaurants',
+    description: 'Restaurants, dining, menus, food services and delivery workflows.',
+    categories: ['Food & Restaurants'],
+    groups: ['food-restaurants'],
+  },
+  {
+    id: 'travel-hospitality',
+    title: 'Travel & Hospitality',
+    description: 'Flights, hotels, stays, trips, hospitality and travel services.',
+    categories: ['Travel & Hospitality'],
+    groups: ['travel-hospitality'],
+  },
+  {
+    id: 'weather-utilities',
+    title: 'Weather & Utilities',
+    description: 'Weather, forecasts, climate and other utility data services.',
+    categories: ['Weather & Utilities'],
+    groups: ['weather-utilities'],
   },
   {
     id: 'security',
