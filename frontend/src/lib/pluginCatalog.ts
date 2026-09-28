@@ -67,22 +67,31 @@ export const CATEGORY_ORDER = [
   'All',
   'Productivity',
   'Communication',
+  'Booking & Scheduling',
   'Sales & CRM',
   'Customer Support',
-  'Commerce & Payments',
   'Marketing & Growth',
-  'Booking & Scheduling',
-  'Travel & Hospitality',
+  'Social Media',
+  'Commerce & Payments',
   'Finance & Accounting',
   'Data & Analytics',
   'Databases',
+  'Maps & Location',
+  'Web Search & Scraping',
   'Developer Tools',
   'Deployment & Hosting',
   'Cloud & Infrastructure',
   'AI & Automation',
   'Content & Files',
   'Design & Media',
+  'Forms & Surveys',
   'HR & Recruiting',
+  'Logistics & Shipping',
+  'Legal & Contracts',
+  'Real Estate',
+  'Food & Restaurants',
+  'Travel & Hospitality',
+  'Weather & Utilities',
   'Security',
   'Education & Research',
   'Scientific Research',
@@ -95,22 +104,31 @@ export const PLUGIN_CATEGORY_GROUPS = [
   { id: '', label: 'All' },
   { id: 'productivity', label: 'Productivity' },
   { id: 'communication', label: 'Communication' },
+  { id: 'booking-scheduling', label: 'Booking & Scheduling' },
   { id: 'sales-crm', label: 'Sales & CRM' },
   { id: 'support', label: 'Customer Support' },
-  { id: 'commerce-payments', label: 'Commerce & Payments' },
   { id: 'marketing-growth', label: 'Marketing & Growth' },
-  { id: 'booking-scheduling', label: 'Booking & Scheduling' },
-  { id: 'travel-hospitality', label: 'Travel & Hospitality' },
+  { id: 'social-media', label: 'Social Media' },
+  { id: 'commerce-payments', label: 'Commerce & Payments' },
   { id: 'finance-accounting', label: 'Finance & Accounting' },
   { id: 'data-analytics', label: 'Data & Analytics' },
   { id: 'databases', label: 'Databases' },
+  { id: 'maps-location', label: 'Maps & Location' },
+  { id: 'web-search-scraping', label: 'Web Search & Scraping' },
   { id: 'developer-tools', label: 'Developer Tools' },
   { id: 'deployment-hosting', label: 'Deployment & Hosting' },
   { id: 'cloud-infrastructure', label: 'Cloud & Infrastructure' },
   { id: 'ai-automation', label: 'AI & Automation' },
   { id: 'content-files', label: 'Content & Files' },
   { id: 'design-media', label: 'Design & Media' },
+  { id: 'forms-surveys', label: 'Forms & Surveys' },
   { id: 'hr-recruiting', label: 'HR & Recruiting' },
+  { id: 'logistics-shipping', label: 'Logistics & Shipping' },
+  { id: 'legal-contracts', label: 'Legal & Contracts' },
+  { id: 'real-estate', label: 'Real Estate' },
+  { id: 'food-restaurants', label: 'Food & Restaurants' },
+  { id: 'travel-hospitality', label: 'Travel & Hospitality' },
+  { id: 'weather-utilities', label: 'Weather & Utilities' },
   { id: 'security', label: 'Security' },
   { id: 'education-research', label: 'Education & Research' },
   { id: 'scientific-research', label: 'Scientific Research' },
@@ -121,6 +139,12 @@ export const PLUGIN_CATEGORY_GROUPS = [
 
 export type PluginCategoryGroupId =
   (typeof PLUGIN_CATEGORY_GROUPS)[number]['id'];
+
+const XROGA_GROUP_LABELS: Record<string, string> = Object.fromEntries(
+  PLUGIN_CATEGORY_GROUPS
+    .filter((item) => item.id)
+    .map((item) => [item.id, item.label]),
+);
 
 export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
   {
@@ -440,11 +464,20 @@ export function displayToolkitName(toolkit: string): string {
 export function inferCategory(name: string, description = ''): string {
   const text = `${name} ${description}`.toLowerCase();
 
-  if (/\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|travel)\b/.test(text)) return 'Travel & Hospitality';
-  if (/\b(calendly|cal\.com|appointment|booking|scheduler|scheduling|reservation)\b/.test(text)) return 'Booking & Scheduling';
-  if (/\b(postgres|postgresql|mysql|mongodb|neon|planetscale|redis|database platform|sql database)\b/.test(text)) return 'Databases';
+  if (/\b(google maps|mapbox|geocod|geospatial|directions?|route planning|places api|location data)\b/.test(text)) return 'Maps & Location';
+  if (/\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)) return 'Weather & Utilities';
+  if (/\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|expedia|booking\.com|airbnb|agoda|travel)\b/.test(text)) return 'Travel & Hospitality';
+  if (/\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)) return 'Booking & Scheduling';
+  if (/\b(shippo|shipstation|easypost|aftership|shipping|logistics|courier|delivery|fleet|freight|carrier|warehouse|supply chain)\b/.test(text)) return 'Logistics & Shipping';
+  if (/\b(real estate|property listing|property management|realtor|zillow|mortgage|estate agency)\b/.test(text)) return 'Real Estate';
+  if (/\b(restaurant|food delivery|menu|recipe|dining|opentable|doordash|ubereats|yelp)\b/.test(text)) return 'Food & Restaurants';
+  if (/\b(legal|contract management|contract lifecycle|e-signature|electronic signature|docusign|pandadoc|ironclad)\b/.test(text)) return 'Legal & Contracts';
+  if (/\b(typeform|jotform|surveymonkey|google forms|tally|form builder|survey|questionnaire)\b/.test(text)) return 'Forms & Surveys';
+  if (/\b(instagram|linkedin|twitter|x\.com|facebook pages|tiktok|social media|social posting|social network)\b/.test(text)) return 'Social Media';
+  if (/\b(firecrawl|exa|apify|browser tool|scrapingbee|bright data|web scrape|web scraping|web search|browser automation|search the web)\b/.test(text)) return 'Web Search & Scraping';
+  if (/\b(postgres|postgresql|mysql|mongodb|neon|planetscale|redis|database platform|sql database|data store)\b/.test(text)) return 'Databases';
   if (/\b(vercel|netlify|render|railway|heroku|fly\.io|deployment platform|deploy apps?|web hosting|app hosting|serverless hosting)\b/.test(text)) return 'Deployment & Hosting';
-  if (/\b(security|privacy|malware|threat|vulnerability|cyber|phishing|compliance)\b/.test(text)) return 'Security';
+  if (/\b(security|privacy|malware|threat|vulnerability|cyber|phishing|compliance|audit)\b/.test(text)) return 'Security';
   if (/\b(scientific|biology|chemistry|genomic|genome|protein|molecular|laboratory|preprint)\b/.test(text)) return 'Scientific Research';
   if (/\b(education|academic|learning|university|course|scholar|literature|research paper)\b/.test(text)) return 'Education & Research';
   if (/\b(health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|patient)\b/.test(text)) return 'Healthcare & Fitness';
@@ -459,13 +492,12 @@ export function inferCategory(name: string, description = ''): string {
   if (/\b(github|gitlab|developer|devops|source control|code review|api testing|observability)\b/.test(text)) return 'Developer Tools';
   if (/\b(ai|agent|automation|workflow|llm|model context protocol|mcp)\b/.test(text)) return 'AI & Automation';
   if (/\b(design|creative|image|video|audio|graphics|3d|cad|animation|photo)\b/.test(text)) return 'Design & Media';
-  if (/\b(document|file|storage|note|transcription|signature)\b/.test(text)) return 'Content & Files';
+  if (/\b(document|file|storage|note|transcription)\b/.test(text)) return 'Content & Files';
   if (/\b(email|messaging|chat|sms|phone|voice|meeting|conference)\b/.test(text)) return 'Communication';
   if (/\b(calendar|task|project management|spreadsheet|workspace|productivity)\b/.test(text)) return 'Productivity';
 
   return 'Other';
 }
-
 function titleCase(value: string): string {
   return value
     .toLowerCase()
@@ -623,65 +655,55 @@ function catalogCategoryText(
 export function catalogPrimaryCategory(
   toolkit: XrogaConnectCatalogToolkit,
 ): string {
+  const serverLabel = toolkit.xrogaGroup
+    ? XROGA_GROUP_LABELS[toolkit.xrogaGroup]
+    : undefined;
+
+  // The backend classification is authoritative so a shelf label and the app's
+  // displayed category cannot drift apart. The local rules below are a
+  // backwards-compatible fallback during rolling deploys.
+  if (serverLabel) return serverLabel;
+
   const categories = catalogCategoryText(toolkit);
   const text = `${toolkit.name} ${toolkit.description ?? ''}`.toLowerCase();
 
-  if (
-    /travel|flight|airline|hotel|hospitality|lodging|tourism|vacation|accommodation|rental car/.test(categories) ||
-    /\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|travel)\b/.test(text)
-  ) return 'Travel & Hospitality';
-
-  if (
-    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation/.test(categories) ||
-    /\b(calendly|cal\.com|appointment|booking|scheduler|scheduling|reservation)\b/.test(text)
-  ) return 'Booking & Scheduling';
-
-  if (
-    /\bdatabases?\b/.test(categories) ||
-    /\b(postgres|postgresql|mysql|mongodb|neon|planetscale|redis|database platform|sql database)\b/.test(text)
-  ) return 'Databases';
-
-  if (
-    /website\s*&\s*app building|website and app building|app builder|website builders/.test(categories) ||
-    /\b(vercel|netlify|render|railway|heroku|fly\.io|deployment platform|deploy apps?|build and deploy|web hosting|app hosting|serverless hosting)\b/.test(text)
-  ) return 'Deployment & Hosting';
-
-  if (/security\s*&\s*identity|security and identity/.test(categories)) return 'Security';
-  if (/developer tools/.test(categories)) return 'Developer Tools';
-  if (/it operations|server monitoring|internet of things/.test(categories)) return 'Cloud & Infrastructure';
+  if (/maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories)) return 'Maps & Location';
+  if (/weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories)) return 'Weather & Utilities';
+  if (/travel|flight|airline|hotel|hospitality|lodging|tourism|vacation|accommodation|rental car/.test(categories)) return 'Travel & Hospitality';
+  if (/scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories)) return 'Booking & Scheduling';
+  if (/shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories)) return 'Logistics & Shipping';
+  if (/real estate|property management|property listings|mortgage/.test(categories)) return 'Real Estate';
+  if (/food|restaurants?|restaurant management|recipes?|dining/.test(categories)) return 'Food & Restaurants';
+  if (/legal|contracts?|signatures?|e-signatures?|document signing/.test(categories)) return 'Legal & Contracts';
+  if (/forms\s*&\s*surveys|forms and surveys|surveys?|questionnaires?|data collection/.test(categories)) return 'Forms & Surveys';
+  if (/social media accounts|social media marketing|social media management|creator tools/.test(categories)) return 'Social Media';
+  if (/ai web scraping|web scraping|web search|search engine|browser automation|data extraction/.test(categories)) return 'Web Search & Scraping';
+  if (/\bdatabases?\b/.test(categories)) return 'Databases';
+  if (/website\s*&\s*app building|website and app building|app builder|website builders|hosting/.test(categories)) return 'Deployment & Hosting';
+  if (/security\s*&\s*identity|security and identity|risk management|compliance|audit management/.test(categories)) return 'Security';
+  if (/developer tools|developer tools\s*&\s*devops|developer tools and devops|api testing/.test(categories)) return 'Developer Tools';
+  if (/it operations|server monitoring|internet of things|networking|cloud infrastructure/.test(categories)) return 'Cloud & Infrastructure';
   if (/online courses/.test(categories)) return 'Education & Research';
-
-  if (/artificial intelligence|ai agents|ai assistants|ai chatbots|ai content generation|ai document extraction|ai meeting assistants|ai models|ai safety compliance detection|ai sales tools|ai web scraping|model context protocol/.test(categories)) {
-    return 'AI & Automation';
-  }
-
-  if (/business intelligence|analytics|dashboards/.test(categories)) return 'Data & Analytics';
-  if (/accounting|fundraising|proposal\s*&\s*invoice|proposal and invoice|taxes/.test(categories)) return 'Finance & Accounting';
-  if (/commerce|ecommerce|payment processing|reviews/.test(categories)) return 'Commerce & Payments';
-  if (/marketing|ads\s*&\s*conversion|ads and conversion|drip emails|email newsletters|event management|marketing automation|social media accounts|social media marketing|transactional email|url shortener|webinars/.test(categories)) {
-    return 'Marketing & Growth';
-  }
-  if (/customer support|\bsupport\b|customer appreciation/.test(categories)) return 'Customer Support';
-  if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b/.test(categories)) return 'Sales & CRM';
-  if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio/.test(categories)) return 'Design & Media';
-  if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription|signatures/.test(categories)) {
-    return 'Content & Files';
-  }
-  if (/human resources|hr talent\s*&\s*recruitment|hr talent and recruitment/.test(categories)) return 'HR & Recruiting';
+  if (/artificial intelligence|ai agents|ai assistants|ai chatbots|ai content generation|ai document extraction|ai meeting assistants|ai models|ai safety compliance detection|ai sales tools|model context protocol|creative automation/.test(categories)) return 'AI & Automation';
+  if (/business intelligence|analytics|dashboards|product analytics|data analytics|reporting/.test(categories)) return 'Data & Analytics';
+  if (/accounting|fundraising|proposal\s*&\s*invoice|proposal and invoice|taxes|banking|expense management/.test(categories)) return 'Finance & Accounting';
+  if (/commerce|ecommerce|payment processing|reviews|retail/.test(categories)) return 'Commerce & Payments';
+  if (/marketing|ads\s*&\s*conversion|ads and conversion|drip emails|email newsletters|event management|marketing automation|transactional email|url shortener|webinars|seo/.test(categories)) return 'Marketing & Growth';
+  if (/customer support|\bsupport\b|customer appreciation|help desk|ticketing/.test(categories)) return 'Customer Support';
+  if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b|lead management/.test(categories)) return 'Sales & CRM';
+  if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio|visual content generation/.test(categories)) return 'Design & Media';
+  if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription/.test(categories)) return 'Content & Files';
+  if (/human resources|hr talent\s*&\s*recruitment|hr talent and recruitment|recruiting|employee management/.test(categories)) return 'HR & Recruiting';
+  if (/scientific research|biology|chemistry|genomics|bioinformatics/.test(categories)) return 'Scientific Research';
   if (/\beducation\b/.test(categories)) return 'Education & Research';
-  if (/fitness/.test(categories)) return 'Healthcare & Fitness';
-  if (/gaming|lifestyle\s*&\s*entertainment|lifestyle and entertainment|news\s*&\s*lifestyle|news and lifestyle/.test(categories)) return 'Entertainment';
-  if (/phone\s*&\s*sms|phone and sms|team chat|team collaboration|video conferencing|communication|call tracking|\bemail\b|fax|notifications/.test(categories)) {
-    return 'Communication';
-  }
+  if (/fitness|healthcare|health|medical|wellness|nutrition/.test(categories)) return 'Healthcare & Fitness';
+  if (/gaming|lifestyle\s*&\s*entertainment|lifestyle and entertainment|news\s*&\s*lifestyle|news and lifestyle|music|sports/.test(categories)) return 'Entertainment';
+  if (/phone\s*&\s*sms|phone and sms|team chat|team collaboration|video conferencing|communication|call tracking|\bemail\b|fax|notifications|messaging/.test(categories)) return 'Communication';
   if (/calendar/.test(categories)) return 'Booking & Scheduling';
-  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software|forms\s*&\s*surveys|forms and surveys/.test(categories)) {
-    return 'Productivity';
-  }
+  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software/.test(categories)) return 'Productivity';
 
   return inferCategory(toolkit.name, toolkit.description);
 }
-
 export function groundedUseCasePrompt(
   tool: XrogaConnectTool,
   pluginName: string,
