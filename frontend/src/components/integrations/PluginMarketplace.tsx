@@ -66,18 +66,59 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
+const SEARCH_PREVIEW_LIMIT = 12;
 const CATEGORY_PREVIEW_LIMIT = 6;
+const CATEGORY_EXPAND_STEP = 10;
 const OTHER_PREVIEW_LIMIT = 8;
 const FEATURED_PREVIEW_LIMIT = 6;
 const FEATURED_EXPANDED_LIMIT = 18;
 
+const SMALL_BUSINESS_IDS = [
+  'stripe',
+  'hubspot',
+  'shopify',
+  'canva',
+  'slack',
+  'figma',
+  'quickbooks',
+  'google-calendar',
+  'gmail',
+  'google-drive',
+  'notion',
+  'airtable',
+  'calendly',
+  'cal',
+  'xero',
+  'mailchimp',
+  'activecampaign',
+  'square',
+  'trello',
+  'asana',
+  'dropbox',
+  'zoom',
+];
+
 const SECTION_PINNED_IDS: Record<string, string[]> = {
-  'small-business': ['stripe', 'hubspot', 'shopify', 'canva', 'slack', 'figma'],
-  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive'],
-  creativity: ['canva', 'figma'],
-  'developer-tools': ['github', 'supabase', 'vercel'],
-  'business-operations': ['hubspot', 'shopify', 'slack'],
-  communication: ['slack', 'gmail'],
+  'small-business': SMALL_BUSINESS_IDS,
+  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive', 'trello', 'asana'],
+  communication: ['slack', 'gmail', 'microsoftoutlook', 'zoom', 'discord'],
+  'sales-crm': ['hubspot', 'salesforce', 'pipedrive', 'close', 'attio'],
+  support: ['intercom', 'zendesk', 'freshdesk', 'gorgias'],
+  'commerce-payments': ['stripe', 'shopify', 'square', 'paypal', 'woocommerce'],
+  'marketing-growth': ['mailchimp', 'activecampaign', 'klaviyo', 'googleads', 'facebookads', 'semrush'],
+  'booking-scheduling': ['cal', 'calendly', 'google-calendar', 'acuityscheduling'],
+  'travel-hospitality': ['skyscanner', 'bookingcom', 'tripcom', 'googlemaps'],
+  'finance-accounting': ['quickbooks', 'xero', 'freshbooks', 'plaid', 'stripe'],
+  'data-analytics': ['posthog', 'mixpanel', 'amplitude', 'tableau', 'powerbi'],
+  databases: ['supabase', 'postgresql', 'mongodb', 'neon', 'mysql', 'redis'],
+  'developer-tools': ['github', 'linear', 'sentry', 'gitlab', 'postman'],
+  'deployment-hosting': ['vercel', 'railway', 'render', 'netlify', 'heroku'],
+  'cloud-infrastructure': ['cloudflare', 'aws', 'digitalocean', 'datadog'],
+  'ai-automation': ['openai', 'anthropic', 'gemini', 'perplexityai'],
+  'content-files': ['google-drive', 'dropbox', 'box', 'onedrive', 'notion'],
+  'design-media': ['canva', 'figma', 'runway', 'invideo'],
+  'hr-recruiting': ['greenhouse', 'lever', 'workday', 'bamboohr'],
+  security: ['malwarebytes', 'cloudflare', 'snyk'],
 };
 
 type DiscoverySection = {
@@ -86,78 +127,155 @@ type DiscoverySection = {
   description: string;
   categories: string[];
   groups: Exclude<PluginCategoryGroupId, ''>[];
+  curatedIds?: string[];
 };
 
 const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
     id: 'small-business',
     title: 'Small Business',
-    description: 'Everyday apps for payments, customers, marketing, files, teamwork and running a business.',
-    categories: [
-      'Commerce',
-      'Sales & CRM',
-      'Marketing',
-      'Finance',
-      'Productivity',
-      'Communication',
-      'Design & Media',
-    ],
-    groups: [
-      'commerce',
-      'sales-crm',
-      'marketing',
-      'finance',
-      'productivity',
-      'communication',
-      'design-media',
-    ],
+    description: 'A focused set of useful apps for payments, customers, marketing, files, scheduling and teamwork.',
+    categories: [],
+    groups: [],
+    curatedIds: SMALL_BUSINESS_IDS,
   },
   {
     id: 'productivity',
     title: 'Productivity',
-    description: 'Calendar, documents, tasks, workspace and personal productivity apps.',
+    description: 'Calendar, tasks, projects, spreadsheets and workspace tools.',
     categories: ['Productivity'],
     groups: ['productivity'],
   },
   {
-    id: 'creativity',
-    title: 'Creativity',
-    description: 'Design, image, video, audio, media and creative production tools.',
-    categories: ['Design & Media'],
-    groups: ['design-media'],
-  },
-  {
-    id: 'developer-tools',
-    title: 'Developer Tools',
-    description: 'Code, deployment, infrastructure, monitoring and developer services.',
-    categories: ['Engineering', 'Infrastructure'],
-    groups: ['engineering', 'infrastructure'],
-  },
-  {
-    id: 'business-operations',
-    title: 'Business & Operations',
-    description: 'CRM, support, recruiting, commerce and operational systems.',
-    categories: ['Sales & CRM', 'Support', 'HR & Recruiting', 'Commerce', 'Marketing'],
-    groups: ['sales-crm', 'support', 'hr-recruiting', 'commerce', 'marketing'],
-  },
-  {
-    id: 'data-analytics',
-    title: 'Data & Analytics',
-    description: 'Databases, analytics, spreadsheets, BI and data platforms.',
-    categories: ['Data & Analytics'],
-    groups: ['data-analytics'],
-  },
-  {
     id: 'communication',
     title: 'Communication',
-    description: 'Messaging, email, meetings, communities and collaboration.',
+    description: 'Email, messaging, calls, meetings and team collaboration.',
     categories: ['Communication'],
     groups: ['communication'],
   },
   {
+    id: 'sales-crm',
+    title: 'Sales & CRM',
+    description: 'Leads, contacts, deals, pipelines and customer relationships.',
+    categories: ['Sales & CRM'],
+    groups: ['sales-crm'],
+  },
+  {
+    id: 'support',
+    title: 'Customer Support',
+    description: 'Help desks, tickets, customer service and support workflows.',
+    categories: ['Customer Support'],
+    groups: ['support'],
+  },
+  {
+    id: 'commerce-payments',
+    title: 'Commerce & Payments',
+    description: 'Payments, stores, orders, checkout, inventory and fulfillment.',
+    categories: ['Commerce & Payments'],
+    groups: ['commerce-payments'],
+  },
+  {
+    id: 'marketing-growth',
+    title: 'Marketing & Growth',
+    description: 'SEO, ads, campaigns, newsletters, automation and growth tools.',
+    categories: ['Marketing & Growth'],
+    groups: ['marketing-growth'],
+  },
+  {
+    id: 'booking-scheduling',
+    title: 'Booking & Scheduling',
+    description: 'Appointments, booking pages, availability, events and reservations.',
+    categories: ['Booking & Scheduling'],
+    groups: ['booking-scheduling'],
+  },
+  {
+    id: 'travel-hospitality',
+    title: 'Travel & Hospitality',
+    description: 'Flights, hotels, trips, hospitality, maps and travel services.',
+    categories: ['Travel & Hospitality'],
+    groups: ['travel-hospitality'],
+  },
+  {
+    id: 'finance-accounting',
+    title: 'Finance & Accounting',
+    description: 'Accounting, invoices, banking, expenses, tax and finance tools.',
+    categories: ['Finance & Accounting'],
+    groups: ['finance-accounting'],
+  },
+  {
+    id: 'data-analytics',
+    title: 'Data & Analytics',
+    description: 'Analytics, BI, dashboards, reporting and data platforms.',
+    categories: ['Data & Analytics'],
+    groups: ['data-analytics'],
+  },
+  {
+    id: 'databases',
+    title: 'Databases',
+    description: 'SQL, NoSQL, managed databases, data stores and backend data services.',
+    categories: ['Databases'],
+    groups: ['databases'],
+  },
+  {
+    id: 'developer-tools',
+    title: 'Developer Tools',
+    description: 'Source control, APIs, observability, testing and engineering tools.',
+    categories: ['Developer Tools'],
+    groups: ['developer-tools'],
+  },
+  {
+    id: 'deployment-hosting',
+    title: 'Deployment & Hosting',
+    description: 'Deploy, host and operate web apps, services and production builds.',
+    categories: ['Deployment & Hosting'],
+    groups: ['deployment-hosting'],
+  },
+  {
+    id: 'cloud-infrastructure',
+    title: 'Cloud & Infrastructure',
+    description: 'Cloud operations, CDN, DNS, servers, monitoring and infrastructure.',
+    categories: ['Cloud & Infrastructure'],
+    groups: ['cloud-infrastructure'],
+  },
+  {
+    id: 'ai-automation',
+    title: 'AI & Automation',
+    description: 'AI models, agents, MCP services, automation and workflow tools.',
+    categories: ['AI & Automation'],
+    groups: ['ai-automation'],
+  },
+  {
+    id: 'content-files',
+    title: 'Content & Files',
+    description: 'Documents, notes, storage, transcription and file-management services.',
+    categories: ['Content & Files'],
+    groups: ['content-files'],
+  },
+  {
+    id: 'design-media',
+    title: 'Design & Media',
+    description: 'Design, images, video, audio and creative production tools.',
+    categories: ['Design & Media'],
+    groups: ['design-media'],
+  },
+  {
+    id: 'hr-recruiting',
+    title: 'HR & Recruiting',
+    description: 'Hiring, recruiting, people operations and employee systems.',
+    categories: ['HR & Recruiting'],
+    groups: ['hr-recruiting'],
+  },
+  {
+    id: 'security',
+    title: 'Security',
+    description: 'Security, identity, privacy, compliance and threat-analysis tools.',
+    categories: ['Security'],
+    groups: ['security'],
+  },
+  {
     id: 'education-research',
     title: 'Education & Research',
-    description: 'Learning, academic research, literature and knowledge tools.',
+    description: 'Learning, courses, academic research, literature and knowledge tools.',
     categories: ['Education & Research'],
     groups: ['education-research'],
   },
@@ -169,32 +287,11 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['scientific-research'],
   },
   {
-    id: 'security',
-    title: 'Security',
-    description: 'Security, privacy, malware, compliance and threat-analysis tools.',
-    categories: ['Security'],
-    groups: ['security'],
-  },
-  {
-    id: 'finance',
-    title: 'Finance',
-    description: 'Accounting, banking, invoices, market data and financial operations.',
-    categories: ['Finance'],
-    groups: ['finance'],
-  },
-  {
-    id: 'healthcare',
-    title: 'Healthcare',
+    id: 'healthcare-fitness',
+    title: 'Healthcare & Fitness',
     description: 'Health, fitness, wellness, nutrition and medical-data tools.',
-    categories: ['Healthcare'],
-    groups: ['healthcare'],
-  },
-  {
-    id: 'travel',
-    title: 'Travel',
-    description: 'Flights, trips, navigation, booking and travel services.',
-    categories: ['Travel'],
-    groups: ['travel'],
+    categories: ['Healthcare & Fitness'],
+    groups: ['healthcare-fitness'],
   },
   {
     id: 'entertainment',
@@ -204,21 +301,13 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['entertainment'],
   },
   {
-    id: 'ai-automation',
-    title: 'AI & Automation',
-    description: 'AI models, agents, automation and workflow tools.',
-    categories: ['AI & Automation'],
-    groups: ['ai-automation'],
-  },
-  {
     id: 'other',
     title: 'Other',
-    description: 'More supported apps that do not fit the main categories.',
+    description: 'Every remaining supported Xroga App that does not fit the categories above.',
     categories: ['Other'],
     groups: ['other'],
   },
-]
-
+];
 function viewFrom(value: string | null): PluginView {
   if (value === 'connected' || value === 'developer' || value === 'custom') return value;
   return 'discover';
