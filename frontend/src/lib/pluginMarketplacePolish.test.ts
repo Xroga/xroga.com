@@ -181,10 +181,11 @@ test('Add Plugin opens a compact anchored menu before deeper setup dialogs', () 
   assert.match(marketplace, /role="menu"/);
   assert.match(marketplace, /aria-label="Add Plugin"/);
   assert.match(marketplace, /w-\[270px\]/);
-  assert.match(marketplace, /Find an Xroga App/);
+  assert.doesNotMatch(marketplace, /Find an Xroga App/);
   assert.match(marketplace, /Create MCP App/);
   assert.match(marketplace, /API key or webhook/);
   assert.match(marketplace, /open=\{addPluginOpen && addPluginMode !== 'menu'\}/);
+  assert.match(marketplace, /aria-label="Add new Plugin"/);
   assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
 });
 
@@ -210,6 +211,8 @@ test('category shelves stay compact, prioritize key brands, and keep all leftove
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
   assert.match(marketplace, /else next\.add\(section\.id\)/);
   assert.match(marketplace, /lg:grid-cols-2/);
+  assert.match(marketplace, /Explore/);
+  assert.match(marketplace, /\.slice\(0, 6\)/);
 });
 
 test('discover hydrates the full app metadata in the background without rendering one giant grid', () => {
@@ -220,6 +223,21 @@ test('discover hydrates the full app metadata in the background without renderin
   assert.match(marketplace, /while \(active && cursor && pages < 20\)/);
   assert.match(marketplace, /setCatalogItems\(\[\.\.\.hydrated\]\)/);
   assert.doesNotMatch(marketplace, />All Plugins</);
+});
+
+test('search and connected-management polish stay theme-safe and list-based', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+  const css = source('frontend/src/app/globals.css');
+
+  assert.match(marketplace, /xv-plugin-search-shell/);
+  assert.match(marketplace, /ConnectedPluginList/);
+  assert.match(marketplace, /PluginPermissionControl/);
+  assert.match(css, /\.xv-plugin-search-shell/);
+  assert.match(css, /body\.theme-black \.xv-plugin-search-shell/);
+  assert.match(css, /body\.theme-gray \.xv-plugin-search-shell/);
+  assert.match(css, /body\.theme-beige \.xv-plugin-search-shell/);
 });
 
 test('optional product credential shelf is removed from Plugins while the custom vault remains', () => {
