@@ -59,6 +59,8 @@ test('Plugins expose a small human category system instead of raw provider categ
   assert.match(marketplace, /Cloud & Infrastructure/);
   assert.match(marketplace, /Databases/);
   assert.match(marketplace, /Marketing & Growth/);
+  assert.match(marketplace, /Business & Operations/);
+  assert.match(marketplace, /Blockchain & Crypto/);
   assert.match(marketplace, /Booking & Scheduling/);
   assert.match(marketplace, /Travel & Hospitality/);
   assert.match(marketplace, /Maps & Location/);
@@ -232,6 +234,8 @@ test('expandable category sections query the complete catalog through server-sid
   assert.match(route, /'databases'/);
   assert.match(route, /'deployment-hosting'/);
   assert.match(route, /'marketing-growth'/);
+  assert.match(route, /'business-operations'/);
+  assert.match(route, /'blockchain-crypto'/);
   assert.match(route, /'social-media'/);
   assert.match(route, /'maps-location'/);
   assert.match(route, /'web-search-scraping'/);
