@@ -62,14 +62,17 @@ export function PluginBrandLogo({
   size?: 'micro' | 'card' | 'detail';
 }) {
   const candidates = useMemo(
-    () =>
-      [
+    () => {
+      const customToolkit = toolkit?.toLowerCase().startsWith('custom_') ?? false;
+
+      return [
         // Prefer Xroga's known first-party/local brand asset, then the official
         // toolkit logo CDN. Provider metadata can occasionally contain stale
-        // logo URLs, so it comes after the canonical CDN.
+        // logo URLs, so it comes after the canonical CDN. Custom MCP apps skip
+        // upstream generic branding and fall back to an honest Xroga initial.
         getIntegrationLogo(id),
-        toolkit ? composioLogoUrl(toolkit) : undefined,
-        logo,
+        toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
+        !customToolkit ? logo : undefined,
         ...simpleIconCandidates(toolkit, name),
         fallbackLogo,
       ].filter(
