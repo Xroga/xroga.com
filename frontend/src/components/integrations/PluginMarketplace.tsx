@@ -860,6 +860,8 @@ export function PluginMarketplace() {
   const [view, setViewState] = useState<PluginView>(() => viewFrom(searchParams.get('view')));
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const deferredQuery = useDeferredValue(query.trim());
+  const liveQuery = query.trim();
+  const [searchVisibleCount, setSearchVisibleCount] = useState(SEARCH_PREVIEW_LIMIT);
   const [catalogItems, setCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
   const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -895,6 +897,7 @@ export function PluginMarketplace() {
   const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
   const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
   const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({});
+  const [sectionVisibleCounts, setSectionVisibleCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!addPluginOpen || addPluginMode !== 'menu') return;
@@ -1356,7 +1359,7 @@ export function PluginMarketplace() {
   );
 
   const searchPlugins = useMemo(() => {
-    const clean = deferredQuery.trim();
+    const clean = liveQuery;
     if (!clean) return [];
 
     const nativeIds = new Set(nativePlugins.map((plugin) => plugin.id));
@@ -1367,14 +1370,15 @@ export function PluginMarketplace() {
       .map(runtimeFromCatalog)
       .filter((plugin) => !nativeIds.has(plugin.id));
 
-    const source =
-      clean.length < 2
-        ? allPlugins
-        : mergePlugins([
-            ...nativePlugins,
-            ...dynamicSearchPlugins,
-            ...dynamicSemanticPlugins,
-          ]);
+    // Keep the already-hydrated full catalogue in the candidate set while the
+    // debounced server search refines the result. This makes typing immediate
+    // and prevents a sparse remote response from collapsing to one app.
+    const source = mergePlugins([
+      ...allPlugins,
+      ...nativePlugins,
+      ...dynamicSearchPlugins,
+      ...dynamicSemanticPlugins,
+    ]);
 
     const semantic = semanticToolkitSlugs;
 
@@ -1402,7 +1406,7 @@ export function PluginMarketplace() {
     // runtimeFromCatalog intentionally reads latest connection state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    deferredQuery,
+    liveQuery,
     allPlugins,
     nativePlugins,
     searchCatalogItems,
@@ -1475,10 +1479,12 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.developer ||
-          plugin.category === 'Engineering' ||
-          plugin.category === 'Infrastructure' ||
+          plugin.category === 'Developer Tools' ||
+          plugin.category === 'Deployment & Hosting' ||
+          plugin.category === 'Cloud & Infrastructure' ||
+          plugin.category === 'Databases' ||
           plugin.categories?.some((category) =>
-            /developer|engineering|devops|cloud|infrastructure/i.test(category.name),
+            /developer|engineering|devops|cloud|infrastructure|database|server monitoring/i.test(category.name),
           ),
       ),
     [allPlugins],
@@ -1550,9 +1556,37 @@ export function PluginMarketplace() {
       return next;
     });
 
-    if (!isExpanded && !sectionCatalog[section.id]) {
+    setSectionVisibleCounts((current) => {
+      if (isExpanded) {
+        const next = { ...current };
+        delete next[section.id];
+        return next;
+      }
+      return {
+        ...current,
+        [section.id]:
+          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
+          CATEGORY_EXPAND_STEP,
+      };
+    });
+
+    if (
+      !isExpanded &&
+      section.groups.length > 0 &&
+      !sectionCatalog[section.id]
+    ) {
       void loadDiscoverySection(section);
     }
+  }
+
+  function showMoreDiscoverySection(section: DiscoverySection) {
+    setSectionVisibleCounts((current) => ({
+      ...current,
+      [section.id]:
+        (current[section.id] ??
+          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
+            CATEGORY_EXPAND_STEP) + CATEGORY_EXPAND_STEP,
+    }));
   }
 
   function pluginsForSection(section: DiscoverySection): RuntimePlugin[] {
@@ -1565,9 +1599,29 @@ export function PluginMarketplace() {
         ])
       : allPlugins;
 
+    if (section.curatedIds?.length) {
+      const allowed = new Set(section.curatedIds.map((id) => canonicalPluginId(id)));
+      const filtered = source.filter((plugin) =>
+        allowed.has(canonicalPluginId(plugin.toolkit || plugin.id)),
+      );
+      const rank = new Map(
+        section.curatedIds.map((id, index) => [canonicalPluginId(id), index]),
+      );
+
+      return [...filtered].sort((a, b) => {
+        const aRank =
+          rank.get(canonicalPluginId(a.toolkit || a.id)) ??
+          Number.POSITIVE_INFINITY;
+        const bRank =
+          rank.get(canonicalPluginId(b.toolkit || b.id)) ??
+          Number.POSITIVE_INFINITY;
+        return aRank - bRank;
+      });
+    }
+
     const claimedCategories = new Set(
       DISCOVERY_SECTIONS
-        .filter((item) => item.id !== 'other')
+        .filter((item) => item.id !== 'other' && !item.curatedIds?.length)
         .flatMap((item) => item.categories),
     );
 
@@ -1578,11 +1632,17 @@ export function PluginMarketplace() {
     );
 
     const pins = SECTION_PINNED_IDS[section.id] ?? [];
-    const pinRank = new Map(pins.map((id, index) => [id, index]));
+    const pinRank = new Map(
+      pins.map((id, index) => [canonicalPluginId(id), index]),
+    );
 
     return [...filtered].sort((a, b) => {
-      const aRank = pinRank.get(a.id) ?? Number.POSITIVE_INFINITY;
-      const bRank = pinRank.get(b.id) ?? Number.POSITIVE_INFINITY;
+      const aRank =
+        pinRank.get(canonicalPluginId(a.toolkit || a.id)) ??
+        Number.POSITIVE_INFINITY;
+      const bRank =
+        pinRank.get(canonicalPluginId(b.toolkit || b.id)) ??
+        Number.POSITIVE_INFINITY;
       if (aRank !== bRank) return aRank - bRank;
       return 0;
     });
@@ -1696,7 +1756,7 @@ export function PluginMarketplace() {
     }
   }
 
-  const searchMode = view === 'discover' && deferredQuery.length > 0;
+  const searchMode = view === 'discover' && liveQuery.length > 0;
 
   return (
     <div className="mx-auto w-full max-w-[1060px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
@@ -1787,6 +1847,7 @@ export function PluginMarketplace() {
             onChange={(event) => {
               const value = event.target.value;
               setQuery(value);
+              setSearchVisibleCount(SEARCH_PREVIEW_LIMIT);
               if (view !== 'discover') setView('discover');
             }}
             placeholder="Search any app or describe what you want Xroga to do…"
@@ -1815,7 +1876,7 @@ export function PluginMarketplace() {
                   ? `${searchPlugins.length} matching Plugins — exact brands first, then capability matches.`
                   : searchLoading
                     ? 'Searching Xroga Apps and real capabilities…'
-                    : `No Plugin matched “${deferredQuery}”.`}
+                    : `No Plugin matched “${liveQuery}”.`}
               </p>
             </div>
             <button
@@ -1839,15 +1900,30 @@ export function PluginMarketplace() {
           ) : null}
 
           {searchPlugins.length ? (
-            <PluginListGrid
-              plugins={searchPlugins}
-              connectingId={connectingId}
-              onConnect={handleConnect}
-            />
+            <>
+              <PluginListGrid
+                plugins={searchPlugins.slice(0, searchVisibleCount)}
+                connectingId={connectingId}
+                onConnect={handleConnect}
+              />
+              {searchPlugins.length > searchVisibleCount ? (
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSearchVisibleCount((current) => current + SEARCH_PREVIEW_LIMIT)
+                    }
+                    className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                  >
+                    Show more results
+                  </button>
+                </div>
+              ) : null}
+            </>
           ) : !searchLoading ? (
             <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] px-5 py-8 text-center">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                No Plugin found for “{deferredQuery}”
+                No Plugin found for “{liveQuery}”
               </h3>
               <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-[var(--text-secondary)]">
                 Try an app name or describe the task differently. Xroga searches the full app catalogue and the live capability index.
@@ -1948,11 +2024,18 @@ export function PluginMarketplace() {
                       section={section}
                       plugins={pluginsForSection(section)}
                       expanded={expandedSections.has(section.id)}
+                      visibleCount={
+                        sectionVisibleCounts[section.id] ??
+                        (section.id === 'other'
+                          ? OTHER_PREVIEW_LIMIT
+                          : CATEGORY_PREVIEW_LIMIT)
+                      }
                       loading={Boolean(sectionLoading[section.id])}
                       error={sectionErrors[section.id]}
                       connectingId={connectingId}
                       onConnect={handleConnect}
                       onToggle={() => toggleDiscoverySection(section)}
+                      onShowMore={() => showMoreDiscoverySection(section)}
                     />
                   ))}
                 </div>
