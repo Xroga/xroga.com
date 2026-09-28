@@ -74,6 +74,7 @@ export interface XrogaConnectCatalogToolkit {
   categories: XrogaConnectCatalogCategory[];
   xrogaGroup?:
     | 'productivity'
+    | 'project-management'
     | 'communication'
     | 'sales-crm'
     | 'support'
@@ -91,6 +92,7 @@ export interface XrogaConnectCatalogToolkit {
     | 'legal-contracts'
     | 'real-estate'
     | 'food-restaurants'
+    | 'hotels-stays'
     | 'finance-accounting'
     | 'blockchain-crypto'
     | 'data-analytics'
@@ -247,6 +249,7 @@ export const xrogaConnect = {
     category?: string;
     group?:
       | 'productivity'
+      | 'project-management'
       | 'communication'
       | 'sales-crm'
       | 'support'
@@ -264,6 +267,7 @@ export const xrogaConnect = {
       | 'legal-contracts'
       | 'real-estate'
       | 'food-restaurants'
+      | 'hotels-stays'
       | 'finance-accounting'
       | 'blockchain-crypto'
       | 'data-analytics'

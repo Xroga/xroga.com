@@ -1224,6 +1224,7 @@ router.get(
       group: z
         .enum([
           'productivity',
+          'project-management',
           'communication',
           'sales-crm',
           'support',
@@ -1241,6 +1242,7 @@ router.get(
           'legal-contracts',
           'real-estate',
           'food-restaurants',
+          'hotels-stays',
           'finance-accounting',
           'blockchain-crypto',
           'data-analytics',

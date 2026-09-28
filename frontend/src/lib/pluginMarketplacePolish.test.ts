@@ -34,7 +34,7 @@ function toolkit(
 test('Plugins expose a small human category system instead of raw provider category spam', () => {
   assert.deepEqual(
     PLUGIN_CATEGORY_GROUPS.slice(0, 5).map((item) => item.label),
-    ['All', 'Productivity', 'Communication', 'Booking & Scheduling', 'Sales & CRM'],
+    ['All', 'Productivity', 'Project Management', 'Communication', 'Booking & Scheduling'],
   );
 
   assert.equal(
@@ -62,7 +62,8 @@ test('Plugins expose a small human category system instead of raw provider categ
   assert.match(marketplace, /Business & Operations/);
   assert.match(marketplace, /Blockchain & Crypto/);
   assert.match(marketplace, /Booking & Scheduling/);
-  assert.match(marketplace, /Travel & Hospitality/);
+  assert.match(marketplace, /Hotels & Stays/);
+  assert.match(marketplace, /Travel & Transport/);
   assert.match(marketplace, /Maps & Location/);
   assert.match(marketplace, /Web Search & Scraping/);
   assert.match(marketplace, /Social Media/);
@@ -79,7 +80,7 @@ test('Plugins expose a small human category system instead of raw provider categ
   assert.match(marketplace, /Security/);
   assert.match(marketplace, /Finance/);
   assert.match(marketplace, /Healthcare & Fitness/);
-  assert.match(marketplace, /Travel & Hospitality/);
+  assert.match(marketplace, /Travel & Transport/);
   assert.match(marketplace, /Entertainment/);
   assert.match(marketplace, /aria-expanded=\{expanded\}/);
   assert.doesNotMatch(marketplace, /categories\.slice\(0, 10\)/);
@@ -211,7 +212,7 @@ test('search keeps the hydrated catalogue while remote capability results refine
 
   assert.match(marketplace, /const liveQuery = query\.trim\(\)/);
   assert.match(marketplace, /\.\.\.allPlugins/);
-  assert.match(marketplace, /SEARCH_PREVIEW_LIMIT = 10/);
+  assert.match(marketplace, /SEARCH_PREVIEW_LIMIT = 8/);
   assert.match(marketplace, /Show more results/);
   assert.match(marketplace, /setSearchVisibleCount\(SEARCH_PREVIEW_LIMIT\)/);
 });
@@ -360,7 +361,7 @@ test('upstream platform app is not exposed as an Xroga App', () => {
   assert.match(runtime, /return false/);
 });
 
-test('category shelves stay compact, prioritize key brands, and keep all leftovers in Other', () => {
+test('category shelves stay compact, prioritize key brands, and keep a progressive Other plus All Apps escape hatch', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
@@ -372,10 +373,11 @@ test('category shelves stay compact, prioritize key brands, and keep all leftove
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
   assert.match(marketplace, /SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
-  assert.match(marketplace, /section\.id === 'other' \? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT/);
+  assert.match(marketplace, /section\.id === 'other' \|\| section\.id === 'all-apps'/);
   assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
   assert.match(marketplace, /Show 10 more/);
   assert.match(marketplace, /section\.id === 'other'/);
+  assert.match(marketplace, /section\.id === 'all-apps'/);
   assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
   assert.match(marketplace, /else next\.add\(section\.id\)/);

@@ -368,6 +368,7 @@ export interface XrogaConnectCatalogPage {
 
 export type XrogaCatalogGroup =
   | 'productivity'
+  | 'project-management'
   | 'communication'
   | 'sales-crm'
   | 'support'
@@ -385,6 +386,7 @@ export type XrogaCatalogGroup =
   | 'legal-contracts'
   | 'real-estate'
   | 'food-restaurants'
+  | 'hotels-stays'
   | 'finance-accounting'
   | 'blockchain-crypto'
   | 'data-analytics'
@@ -483,16 +485,24 @@ export function xrogaCatalogGroupFor(
     /\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)
   ) return 'weather-utilities';
 
-  // Hotels, airlines and trip platforms belong in Travel; appointment tools do not.
-  if (
-    /travel|flight|airline|hotel|hospitality|lodging|tourism|vacation|accommodation|rental car/.test(categories) ||
-    /\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|expedia|booking\.com|airbnb|agoda|travel)\b/.test(text)
-  ) return 'travel-hospitality';
-
+  // Scheduling is checked before broad travel categories because provider
+  // taxonomies can be noisy. Cal/Calendly must never appear as travel apps.
   if (
     /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
     /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
   ) return 'booking-scheduling';
+
+  // Hotels/stays and travel/transport are intentionally split so location and
+  // weather utilities never leak into the travel shelf.
+  if (
+    /hotel|hospitality|lodging|accommodation|vacation rental|short-term rental/.test(categories) ||
+    /\b(hotel|hotels|lodging|accommodation|stay|stays|booking\.com|airbnb|agoda|hospitality)\b/.test(text)
+  ) return 'hotels-stays';
+
+  if (
+    /travel|flight|airline|tourism|transport|rail|rental car/.test(categories) ||
+    /\b(flight|flights|airline|airlines|tourism|trip\.com|skyscanner|expedia|travel|transport|rail|train|rental car)\b/.test(text)
+  ) return 'travel-hospitality';
 
   if (
     /shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories) ||
@@ -580,7 +590,10 @@ export function xrogaCatalogGroupFor(
   }
 
   if (/calendar/.test(categories)) return 'booking-scheduling';
-  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software/.test(categories)) {
+  if (/project management|product management|task management|work management|kanban|roadmap/.test(categories)) {
+    return 'project-management';
+  }
+  if (/productivity|bookmark managers|spreadsheets|time tracking software/.test(categories)) {
     return 'productivity';
   }
 
@@ -614,7 +627,8 @@ export function xrogaCatalogGroupFor(
   if (/\b(design|creative|image|video|audio|graphics|3d|cad|animation|photo)\b/.test(text)) return 'design-media';
   if (/\b(document|file|storage|note|transcription)\b/.test(text)) return 'content-files';
   if (/\b(email|messaging|chat|sms|phone|voice|meeting|conference)\b/.test(text)) return 'communication';
-  if (/\b(calendar|task|project management|spreadsheet|workspace|productivity)\b/.test(text)) return 'productivity';
+  if (/\b(project management|task management|project planning|kanban|roadmap|work management)\b/.test(text)) return 'project-management';
+  if (/\b(calendar|task|spreadsheet|workspace|productivity)\b/.test(text)) return 'productivity';
 
   return 'other';
 }
