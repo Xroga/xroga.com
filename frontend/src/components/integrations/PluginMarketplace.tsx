@@ -67,6 +67,9 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
 const CATEGORY_PREVIEW_LIMIT = 6;
+const OTHER_PREVIEW_LIMIT = 8;
+const FEATURED_PREVIEW_LIMIT = 6;
+const FEATURED_EXPANDED_LIMIT = 18;
 
 const SECTION_PINNED_IDS: Record<string, string[]> = {
   'small-business': ['stripe', 'hubspot', 'shopify', 'canva', 'slack', 'figma'],
@@ -540,6 +543,85 @@ function PluginGrid({
   );
 }
 
+function FeaturedPluginSection({
+  id,
+  title,
+  hint,
+  plugins,
+  expanded,
+  loading,
+  connectingId,
+  onConnect,
+  onToggle,
+}: {
+  id: 'popular' | 'explore';
+  title: string;
+  hint: string;
+  plugins: RuntimePlugin[];
+  expanded: boolean;
+  loading: boolean;
+  connectingId: string | null;
+  onConnect: (plugin: RuntimePlugin) => void;
+  onToggle: () => void;
+}) {
+  const visible = expanded
+    ? plugins.slice(0, FEATURED_EXPANDED_LIMIT)
+    : plugins.slice(0, FEATURED_PREVIEW_LIMIT);
+
+  return (
+    <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        aria-controls={`${id}-plugin-list`}
+        className="group mb-2 flex w-full items-center justify-between gap-4 rounded-md text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">
+            {title}
+          </h2>
+          <ChevronRight
+            className={`h-4 w-4 shrink-0 text-[var(--text-muted)] transition-transform ${expanded ? 'rotate-90' : ''}`}
+            aria-hidden="true"
+          />
+          <span className="truncate text-[10px] text-[var(--text-muted)]">{hint}</span>
+        </div>
+        {plugins.length ? (
+          <span className="shrink-0 text-[11px] font-medium text-[var(--text-muted)]">
+            {expanded
+              ? `${Math.min(plugins.length, FEATURED_EXPANDED_LIMIT).toLocaleString()} apps`
+              : 'See all'}
+          </span>
+        ) : null}
+      </button>
+
+      <div id={`${id}-plugin-list`}>
+        {loading && !visible.length ? (
+          <div className="grid gap-x-10 lg:grid-cols-2">
+            {[0, 1, 2, 3, 4, 5].map((item) => (
+              <div
+                key={item}
+                className="h-[64px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+              />
+            ))}
+          </div>
+        ) : visible.length ? (
+          <PluginListGrid
+            plugins={visible}
+            connectingId={connectingId}
+            onConnect={onConnect}
+          />
+        ) : (
+          <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
+            No apps are available in this section right now.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function CategoryPluginSection({
   section,
   plugins,
@@ -559,7 +641,9 @@ function CategoryPluginSection({
   onConnect: (plugin: RuntimePlugin) => void;
   onToggle: () => void;
 }) {
-  const visible = expanded ? plugins : plugins.slice(0, CATEGORY_PREVIEW_LIMIT);
+  const previewLimit =
+    section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT;
+  const visible = expanded ? plugins : plugins.slice(0, previewLimit);
 
   return (
     <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
@@ -684,6 +768,9 @@ export function PluginMarketplace() {
     'menu' | 'mcp' | 'credentials'
   >('menu');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [expandedFeatured, setExpandedFeatured] = useState<Set<'popular' | 'explore'>>(
+    new Set(),
+  );
   const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
   const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
   const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({});
@@ -1249,7 +1336,7 @@ export function PluginMarketplace() {
     );
     const curated = browsePlugins.filter((plugin) => explicitlyPopular.has(plugin.id));
     const rest = browsePlugins.filter((plugin) => !explicitlyPopular.has(plugin.id));
-    return mergePlugins([...curated, ...rest]).slice(0, 6);
+    return mergePlugins([...curated, ...rest]).slice(0, FEATURED_EXPANDED_LIMIT);
   }, [browsePlugins]);
 
   const explorePlugins = useMemo(() => {
@@ -1259,7 +1346,7 @@ export function PluginMarketplace() {
 
     return browsePlugins
       .filter((plugin) => !popularKeys.has(plugin.toolkit || plugin.id))
-      .slice(0, 6);
+      .slice(0, FEATURED_EXPANDED_LIMIT);
   }, [browsePlugins, popularPlugins]);
 
   const developerPlugins = useMemo(
@@ -1491,7 +1578,7 @@ export function PluginMarketplace() {
   const searchMode = view === 'discover' && deferredQuery.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1180px] space-y-8 px-2 sm:px-4 lg:px-7 xl:px-9">
+    <div className="mx-auto w-full max-w-[1060px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1683,49 +1770,53 @@ export function PluginMarketplace() {
                 onViewAll={() => setView('connected')}
               />
 
-              <section>
-                <div className="mb-2 flex items-center gap-1.5">
-                  <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Popular</h2>
-                  <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
-                  <span className="ml-1 text-[10px] text-[var(--text-muted)]">Most used</span>
-                </div>
-                {catalogLoading && !popularPlugins.length ? (
-                  <div className="grid gap-x-10 lg:grid-cols-2">
-                    {[0, 1, 2, 3, 4, 5].map((item) => (
-                      <div key={item} className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/40" />
-                    ))}
-                  </div>
-                ) : (
-                  <PluginListGrid
-                    plugins={popularPlugins}
-                    connectingId={connectingId}
-                    onConnect={handleConnect}
-                  />
-                )}
-              </section>
+              <FeaturedPluginSection
+                id="popular"
+                title="Popular"
+                hint="Most used"
+                plugins={popularPlugins}
+                expanded={expandedFeatured.has('popular')}
+                loading={catalogLoading}
+                connectingId={connectingId}
+                onConnect={handleConnect}
+                onToggle={() =>
+                  setExpandedFeatured((current) => {
+                    const next = new Set(current);
+                    if (next.has('popular')) next.delete('popular');
+                    else next.add('popular');
+                    return next;
+                  })
+                }
+              />
 
               {explorePlugins.length ? (
-                <section>
-                  <div className="mb-2 flex items-center gap-1.5">
-                    <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Explore</h2>
-                    <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
-                    <span className="ml-1 text-[10px] text-[var(--text-muted)]">Recommended</span>
-                  </div>
-                  <PluginListGrid
-                    plugins={explorePlugins}
-                    connectingId={connectingId}
-                    onConnect={handleConnect}
-                  />
-                </section>
+                <FeaturedPluginSection
+                  id="explore"
+                  title="Explore"
+                  hint="Recommended"
+                  plugins={explorePlugins}
+                  expanded={expandedFeatured.has('explore')}
+                  loading={catalogLoading}
+                  connectingId={connectingId}
+                  onConnect={handleConnect}
+                  onToggle={() =>
+                    setExpandedFeatured((current) => {
+                      const next = new Set(current);
+                      if (next.has('explore')) next.delete('explore');
+                      else next.add('explore');
+                      return next;
+                    })
+                  }
+                />
               ) : null}
 
               <section>
                 <div className="mb-5">
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                    Browse by category
+                  <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">
+                    Categories
                   </h2>
                   <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
-                    A few of the most useful apps are shown first. Open any category to reveal the full supported set, then close it again to return to the compact view.
+                    Browse a few relevant apps in each category. Open a category to reveal its full supported set, then close it to return to the compact directory.
                   </p>
                 </div>
 
@@ -1750,19 +1841,20 @@ export function PluginMarketplace() {
 
           {view === 'connected' ? (
             <section className="space-y-5">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
+                    <span className="rounded-full bg-[var(--surface-inset)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
+                      {connectedPlugins.length.toLocaleString()}
+                    </span>
+                  </div>
                   <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                    Manage active Xroga Apps and developer services without leaving this view.
+                    Manage every active Xroga App connection and native developer service.
                   </p>
                 </div>
-                <span className="text-xs font-medium text-[var(--text-muted)]">
-                  {connectedPlugins.length.toLocaleString()} connected
-                </span>
+                <PluginPermissionControl buttonOnly showFullAccessShortcut />
               </div>
-
-              <PluginPermissionControl />
 
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="relative">
