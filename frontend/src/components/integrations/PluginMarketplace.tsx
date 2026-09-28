@@ -28,6 +28,7 @@ import {
   CustomMcpManager,
 } from '@/components/integrations/CustomMcpManager';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { InstalledPluginsShelf } from '@/components/integrations/InstalledPluginsShelf';
 import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
 import {
@@ -1603,40 +1604,10 @@ export function PluginMarketplace() {
 
           {view === 'discover' ? (
             <div className="space-y-8">
-              <section>
-                <div className="mb-3 flex items-baseline justify-between gap-3">
-                  <div>
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected</h2>
-                    <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                      Plugins ready for Xroga to use.
-                    </p>
-                  </div>
-                  {connectedPlugins.length ? (
-                    <button
-                      type="button"
-                      onClick={() => setView('connected')}
-                      className="text-xs font-semibold text-[var(--accent)] hover:underline"
-                    >
-                      View all
-                    </button>
-                  ) : null}
-                </div>
-
-                {connectedPlugins.length ? (
-                  <PluginGrid
-                    plugins={connectedPlugins.slice(0, 3)}
-                    connectingId={connectingId}
-                    onConnect={handleConnect}
-                  />
-                ) : (
-                  <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] bg-[var(--surface-inset)]/45 px-4 py-5">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">No Plugins connected yet.</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                      Browse the live catalogue below and connect any supported app.
-                    </p>
-                  </div>
-                )}
-              </section>
+              <InstalledPluginsShelf
+                plugins={connectedPlugins}
+                onViewAll={() => setView('connected')}
+              />
 
               <section>
                 <div className="mb-2 flex items-center gap-1.5">
