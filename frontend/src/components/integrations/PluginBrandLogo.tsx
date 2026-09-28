@@ -64,9 +64,12 @@ export function PluginBrandLogo({
   const candidates = useMemo(
     () =>
       [
-        logo,
-        toolkit ? composioLogoUrl(toolkit) : undefined,
+        // Prefer Xroga's known first-party/local brand asset, then the official
+        // toolkit logo CDN. Provider metadata can occasionally contain stale
+        // logo URLs, so it comes after the canonical CDN.
         getIntegrationLogo(id),
+        toolkit ? composioLogoUrl(toolkit) : undefined,
+        logo,
         ...simpleIconCandidates(toolkit, name),
         fallbackLogo,
       ].filter(
