@@ -1497,12 +1497,12 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   </div>
                 </>
               ) : null}
-              {catalog?.appUrl ? (
+              {(definition.websiteUrl || catalog?.appUrl) ? (
                 <div className="flex items-start justify-between gap-4">
                   <dt className="text-[var(--text-muted)]">Website</dt>
                   <dd>
                     <a
-                      href={catalog.appUrl}
+                      href={definition.websiteUrl || catalog?.appUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
@@ -1513,6 +1513,50 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   </dd>
                 </div>
               ) : null}
+              {definition.privacyUrl ? (
+                <div className="flex items-start justify-between gap-4">
+                  <dt className="text-[var(--text-muted)]">Privacy policy</dt>
+                  <dd>
+                    <a
+                      href={definition.privacyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
+                    >
+                      View
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  </dd>
+                </div>
+              ) : null}
+              {definition.termsUrl ? (
+                <div className="flex items-start justify-between gap-4">
+                  <dt className="text-[var(--text-muted)]">Terms of service</dt>
+                  <dd>
+                    <a
+                      href={definition.termsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
+                    >
+                      View
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  </dd>
+                </div>
+              ) : null}
+              <div className="flex items-start justify-between gap-4">
+                <dt className="text-[var(--text-muted)]">Authorization supported</dt>
+                <dd className="max-w-[180px] text-right font-medium text-[var(--text-primary)]">
+                  {authorizationLabel}
+                </dd>
+              </div>
+              <div className="flex items-start justify-between gap-4">
+                <dt className="text-[var(--text-muted)]">Authorization used</dt>
+                <dd className="max-w-[180px] text-right font-medium text-[var(--text-primary)]">
+                  {connected || noAuth ? authorizationLabel : 'Not connected'}
+                </dd>
+              </div>
             </dl>
           </section>
 
@@ -1523,7 +1567,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 Xroga’s developer connection and AI-action connection are separate. The runtime can request the app connection when an AI action needs it.
               </p>
               <p className="mt-3 text-xs font-medium text-[var(--text-primary)]">
-                {composioConnected ? 'Xroga Connect ready' : 'Xroga Connect not connected'}
+                {composioConnected ? 'AI actions ready' : 'AI actions not connected'}
               </p>
               {!composioConnected && !catalog.noAuth ? (
                 <button
