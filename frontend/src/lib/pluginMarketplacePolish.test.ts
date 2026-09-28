@@ -173,16 +173,18 @@ test('brand logos use toolkit metadata then the official toolkit logo CDN and ne
   assert.doesNotMatch(logo, /google\.com\/s2\/favicons/);
 });
 
-test('Add Plugin opens a compact in-page dialog instead of replacing the marketplace', () => {
+test('Add Plugin opens a compact anchored menu before deeper setup dialogs', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
-  assert.match(marketplace, /addPluginMode === 'mcp' \? 'Add Custom MCP'[\s\S]*: 'Add Plugin'/);
-  assert.match(marketplace, /className="max-w-\[440px\]"/);
+  assert.match(marketplace, /role="menu"/);
+  assert.match(marketplace, /aria-label="Add Plugin"/);
+  assert.match(marketplace, /w-\[270px\]/);
   assert.match(marketplace, /Find an Xroga App/);
+  assert.match(marketplace, /Create MCP App/);
   assert.match(marketplace, /API key or webhook/);
-  assert.match(marketplace, /setAddPluginOpen\(true\)/);
+  assert.match(marketplace, /open=\{addPluginOpen && addPluginMode !== 'menu'\}/);
   assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
 });
 
@@ -195,14 +197,37 @@ test('upstream platform app is not exposed as an Xroga App', () => {
   assert.match(runtime, /return false/);
 });
 
-test('category shelves stay compact until the user expands them', () => {
+test('category shelves stay compact, prioritize key brands, and keep all leftovers in Other', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
   assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
+  assert.match(marketplace, /creativity: \['canva', 'figma'\]/);
   assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, CATEGORY_PREVIEW_LIMIT\)/);
+  assert.match(marketplace, /section\.id === 'other'/);
+  assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
   assert.match(marketplace, /else next\.add\(section\.id\)/);
   assert.match(marketplace, /lg:grid-cols-2/);
+});
+
+test('discover hydrates the full app metadata in the background without rendering one giant grid', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /while \(active && cursor && pages < 20\)/);
+  assert.match(marketplace, /setCatalogItems\(\[\.\.\.hydrated\]\)/);
+  assert.doesNotMatch(marketplace, />All Plugins</);
+});
+
+test('optional product credential shelf is removed from Plugins while the custom vault remains', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.doesNotMatch(marketplace, /ConnectedServicesSection/);
+  assert.doesNotMatch(marketplace, /Optional product credentials/);
+  assert.match(marketplace, /CustomCredentialsSection/);
 });
