@@ -1874,3 +1874,246 @@ router.post(
         ok: true,
         ...result,
       });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+router.delete(
+  '/xroga-connect/custom-mcp/:toolkit',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(120)
+        .regex(/^[A-Za-z0-9_-]+$/),
+    });
+
+    const parsed = schema.safeParse({
+      toolkit: req.params.toolkit,
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const result = await deleteUserCustomMcpToolkit(
+        req.userId!,
+        parsed.data.toolkit,
+      );
+
+      res.json({
+        ok: true,
+        ...result,
+      });
+    } catch (error) {
+      sendComposioError(res, error);
+    }
+  },
+);
+
+/**
+ * Create a Composio-managed
+ * OAuth/authentication link.
+ */
+router.post(
+  '/xroga-connect/link',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema =
+      z.object({
+        sessionId: z
+          .string()
+          .trim()
+          .regex(
+            /^trs_[A-Za-z0-9_-]+$/,
+          ),
+
+        toolkit: z
+          .string()
+          .trim()
+          .min(2)
+          .max(80)
+          .regex(
+            /^[A-Za-z0-9_-]+$/,
+          ),
+      });
+
+    const parsed =
+      schema.safeParse(
+        req.body,
+      );
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+
+        error:
+          parsed.error.flatten(),
+      });
+
+      return;
+    }
+
+    if (!canUserAccessComposioToolkit(req.userId!, parsed.data.toolkit)) {
+      res.status(404).json({
+        ok: false,
+        error: 'Plugin not found.',
+      });
+      return;
+    }
+
+    const frontendUrl =
+      process.env
+        .FRONTEND_URL
+        ?.trim() ||
+      'https://xroga.com';
+
+    const callbackUrl =
+      `${frontendUrl.replace(
+        /\/$/,
+        '',
+      )}/dashboard/integrations/connect/callback`;
+
+    try {
+      const result =
+        await createComposioConnectionLink(
+          req.userId!,
+          {
+            sessionId:
+              parsed.data
+                .sessionId,
+
+            toolkit:
+              parsed.data
+                .toolkit,
+
+            callbackUrl,
+          },
+        );
+
+      res.json({
+        ok: true,
+
+        ...result,
+      });
+    } catch (error) {
+      sendComposioError(
+        res,
+        error,
+      );
+    }
+  },
+);
+
+/**
+ * Execute ONLY a tool that
+ * survives the read-only session
+ * policy and re-discovery check.
+ */
+router.post(
+  '/xroga-connect/execute',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema =
+      z.object({
+        sessionId: z
+          .string()
+          .trim()
+          .regex(
+            /^trs_[A-Za-z0-9_-]+$/,
+          ),
+
+        useCase: z
+          .string()
+          .trim()
+          .min(2)
+          .max(500),
+
+        toolSlug: z
+          .string()
+          .trim()
+          .min(3)
+          .max(200)
+          .regex(
+            /^[A-Za-z0-9_-]+$/,
+          ),
+
+        arguments: z
+          .record(
+            z.string(),
+            z.unknown(),
+          )
+          .default({}),
+      });
+
+    const parsed =
+      schema.safeParse(
+        req.body,
+      );
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+
+        error:
+          parsed.error.flatten(),
+      });
+
+      return;
+    }
+
+    try {
+      const result =
+        await executeComposioReadTool(
+          req.userId!,
+          parsed.data,
+        );
+
+      res.json({
+        ok: true,
+
+        result,
+      });
+    } catch (error) {
+      sendComposioError(
+        res,
+        error,
+      );
+    }
+  },
+);
+
+/**
+ * Live-AI proxy stays retired —
+ * keys belong to the user's product
+ * on Vercel, not Xroga chat.
+ */
+router.use(
+  '/live-ai',
+  (_req, res) =>
+    retiredJson(res),
+);
+
+router.use(
+  '/search',
+  (_req, res) =>
+    retiredJson(res),
+);
+
+export default router;
