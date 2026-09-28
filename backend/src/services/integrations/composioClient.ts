@@ -371,6 +371,7 @@ export type XrogaCatalogGroup =
   | 'communication'
   | 'sales-crm'
   | 'support'
+  | 'business-operations'
   | 'commerce-payments'
   | 'marketing-growth'
   | 'social-media'
@@ -385,6 +386,7 @@ export type XrogaCatalogGroup =
   | 'real-estate'
   | 'food-restaurants'
   | 'finance-accounting'
+  | 'blockchain-crypto'
   | 'data-analytics'
   | 'databases'
   | 'developer-tools'
@@ -472,7 +474,7 @@ export function xrogaCatalogGroupFor(
   // the apps users expect to find there instead of letting broad provider
   // categories (for example "productivity") swallow specialist apps.
   if (
-    /maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories) ||
+    /\bmaps?\b|geocoding|geospatial|location intelligence|navigation|places/.test(categories) ||
     /\b(google maps|mapbox|geocod|geospatial|directions?|route planning|places api|location data)\b/.test(text)
   ) return 'maps-location';
 
@@ -538,6 +540,7 @@ export function xrogaCatalogGroupFor(
   ) return 'deployment-hosting';
 
   if (/security\s*&\s*identity|security and identity|risk management|compliance|audit management/.test(categories)) return 'security';
+  if (/blockchain|crypto|cryptocurrency|web3|on-chain|onchain/.test(categories)) return 'blockchain-crypto';
   if (/developer tools|developer tools\s*&\s*devops|developer tools and devops|api testing/.test(categories)) return 'developer-tools';
   if (/it operations|server monitoring|internet of things|networking|cloud infrastructure/.test(categories)) return 'cloud-infrastructure';
   if (/online courses/.test(categories)) return 'education-research';
@@ -556,6 +559,7 @@ export function xrogaCatalogGroupFor(
 
   if (/customer support|\bsupport\b|customer appreciation|help desk|ticketing/.test(categories)) return 'support';
   if (/sales\s*&\s*crm|sales and crm|contact management|\bcrm\b|lead management/.test(categories)) return 'sales-crm';
+  if (/business operations|business management|erp|office management|professional services|workflow management/.test(categories)) return 'business-operations';
 
   if (/images\s*&\s*design|images and design|video\s*&\s*audio|video and audio|visual content generation/.test(categories)) return 'design-media';
   if (/content\s*&\s*files|content and files|documents|file management\s*&\s*storage|file management and storage|notes|transcription/.test(categories)) {
@@ -591,6 +595,7 @@ export function xrogaCatalogGroupFor(
   if (/\b(social media|instagram|linkedin|twitter|tiktok|facebook page)\b/.test(text)) return 'social-media';
   if (/\b(web scrape|web scraping|web search|browser automation|crawler|crawl the web)\b/.test(text)) return 'web-search-scraping';
   if (/\b(security|privacy|malware|threat|vulnerability|cyber|phishing|compliance|audit)\b/.test(text)) return 'security';
+  if (/\b(blockchain|crypto|cryptocurrency|web3|on-chain|onchain|wallet|token data)\b/.test(text)) return 'blockchain-crypto';
   if (/\b(scientific|biology|chemistry|genomic|genome|protein|molecular|laboratory|preprint)\b/.test(text)) return 'scientific-research';
   if (/\b(education|academic|learning|university|course|scholar|literature|research paper)\b/.test(text)) return 'education-research';
   if (/\b(health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|patient)\b/.test(text)) return 'healthcare-fitness';
@@ -598,6 +603,7 @@ export function xrogaCatalogGroupFor(
   if (/\b(marketing|advertis|campaign|seo|newsletter|growth|conversion)\b/.test(text)) return 'marketing-growth';
   if (/\b(support|helpdesk|service desk|customer service)\b/.test(text)) return 'support';
   if (/\b(crm|lead|prospect|sales pipeline|deal)\b/.test(text)) return 'sales-crm';
+  if (/\b(business operations|business management|erp|office management|professional services|operations platform)\b/.test(text)) return 'business-operations';
   if (/\b(payment|checkout|ecommerce|e-commerce|shopping|order|inventory|fulfillment)\b/.test(text)) return 'commerce-payments';
   if (/\b(accounting|banking|invoice|tax|expense|fintech|payroll)\b/.test(text)) return 'finance-accounting';
   if (/\b(analytics|dashboard|business intelligence|data warehouse|etl|reporting)\b/.test(text)) return 'data-analytics';
