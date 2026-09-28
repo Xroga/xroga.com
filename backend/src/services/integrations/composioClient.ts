@@ -485,8 +485,15 @@ export function xrogaCatalogGroupFor(
     /\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)
   ) return 'weather-utilities';
 
-  // Hotels/stays and travel/transport are intentionally split so booking and
-  // location/weather utilities never leak into the travel shelf.
+  // Scheduling is checked before broad travel categories because provider
+  // taxonomies can be noisy. Cal/Calendly must never appear as travel apps.
+  if (
+    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
+    /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
+  ) return 'booking-scheduling';
+
+  // Hotels/stays and travel/transport are intentionally split so location and
+  // weather utilities never leak into the travel shelf.
   if (
     /hotel|hospitality|lodging|accommodation|vacation rental|short-term rental/.test(categories) ||
     /\b(hotel|hotels|lodging|accommodation|stay|stays|booking\.com|airbnb|agoda|hospitality)\b/.test(text)
@@ -496,11 +503,6 @@ export function xrogaCatalogGroupFor(
     /travel|flight|airline|tourism|transport|rail|rental car/.test(categories) ||
     /\b(flight|flights|airline|airlines|tourism|trip\.com|skyscanner|expedia|travel|transport|rail|train|rental car)\b/.test(text)
   ) return 'travel-hospitality';
-
-  if (
-    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
-    /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
-  ) return 'booking-scheduling';
 
   if (
     /shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories) ||
