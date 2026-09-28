@@ -78,7 +78,7 @@ test('Step 2 detail routing is explicit and Connect remains a separate action', 
   assert.match(marketplace, /aria-label=\{\`Connect \$\{plugin\.name\}\`\}/);
   assert.match(detail, /Real use cases/);
   assert.match(detail, /Advanced · all raw actions/);
-  assert.match(detail, /Access, scopes & safety/);
+  assert.match(detail, /Permissions & safety/);
   assert.match(route, /PluginDetail pluginId=/);
 });
 
