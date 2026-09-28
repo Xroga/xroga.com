@@ -66,7 +66,7 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
-const SEARCH_PREVIEW_LIMIT = 10;
+const SEARCH_PREVIEW_LIMIT = 8;
 const CATEGORY_PREVIEW_LIMIT = 6;
 const CATEGORY_EXPAND_STEP = 10;
 const OTHER_PREVIEW_LIMIT = 8;
@@ -74,17 +74,17 @@ const FEATURED_PREVIEW_LIMIT = 6;
 const FEATURED_EXPANDED_LIMIT = 18;
 
 const SMALL_BUSINESS_IDS = [
-  'stripe',
-  'hubspot',
   'shopify',
-  'canva',
-  'slack',
-  'figma',
+  'stripe',
   'quickbooks',
-  'google-calendar',
+  'hubspot',
   'gmail',
+  'google-calendar',
+  'slack',
   'google-drive',
   'notion',
+  'canva',
+  'figma',
   'airtable',
   'calendly',
   'cal',
@@ -100,7 +100,8 @@ const SMALL_BUSINESS_IDS = [
 
 const SECTION_PINNED_IDS: Record<string, string[]> = {
   'small-business': SMALL_BUSINESS_IDS,
-  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive', 'trello', 'asana'],
+  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive', 'dropbox', 'airtable'],
+  'project-management': ['monday', 'asana', 'trello', 'clickup', 'basecamp', 'todoist'],
   communication: ['slack', 'gmail', 'microsoftoutlook', 'zoom', 'discord', 'microsoftteams'],
   'booking-scheduling': ['cal', 'calendly', 'google-calendar', 'acuityscheduling', 'squareappointments', 'savvycal'],
   'sales-crm': ['hubspot', 'salesforce', 'pipedrive', 'close', 'attio', 'zoho'],
@@ -127,7 +128,8 @@ const SECTION_PINNED_IDS: Record<string, string[]> = {
   'legal-contracts': ['docusign', 'pandadoc', 'ironclad', 'hellosign', 'dropboxsign'],
   'real-estate': ['zillow', 'apex27', 'realtor', 'propertybase'],
   'food-restaurants': ['opentable', 'yelp', 'doordash', 'ubereats', 'toast'],
-  'travel-hospitality': ['skyscanner', 'bookingcom', 'expedia', 'tripcom', 'airbnb', 'agoda'],
+  'hotels-stays': ['bookingcom', 'airbnb', 'agoda', 'expedia', 'hotelscom', 'hostaway'],
+  'travel-hospitality': ['skyscanner', 'tripcom', 'turkishairlines', 'flightpoints', 'kiwi', 'rome2rio'],
   'weather-utilities': ['weathermap', 'openweathermap', 'ambientweather', 'weatherapi'],
   security: ['malwarebytes', 'cloudflare', 'snyk', 'privacyhawk', 'radarlite'],
 };
@@ -155,6 +157,13 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     description: 'Calendar, tasks, projects, spreadsheets and workspace tools.',
     categories: ['Productivity'],
     groups: ['productivity'],
+  },
+  {
+    id: 'project-management',
+    title: 'Project Management',
+    description: 'Projects, tasks, roadmaps, work management and team planning.',
+    categories: ['Project Management'],
+    groups: ['project-management'],
   },
   {
     id: 'communication',
@@ -339,10 +348,17 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['food-restaurants'],
   },
   {
+    id: 'hotels-stays',
+    title: 'Hotels & Stays',
+    description: 'Hotels, lodging, accommodation, vacation rentals and stay management.',
+    categories: ['Hotels & Stays'],
+    groups: ['hotels-stays'],
+  },
+  {
     id: 'travel-hospitality',
-    title: 'Travel & Hospitality',
-    description: 'Flights, hotels, stays, trips, hospitality and travel services.',
-    categories: ['Travel & Hospitality'],
+    title: 'Travel & Transport',
+    description: 'Flights, airlines, trips, transport and travel planning services.',
+    categories: ['Travel & Transport'],
     groups: ['travel-hospitality'],
   },
   {
@@ -390,9 +406,16 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
     id: 'other',
     title: 'Other',
-    description: 'Every remaining supported Xroga App that does not fit the categories above.',
+    description: 'Supported Xroga Apps that do not fit the focused categories above.',
     categories: ['Other'],
     groups: ['other'],
+  },
+  {
+    id: 'all-apps',
+    title: 'All Apps',
+    description: 'Browse the complete supported Xroga Apps catalogue in usage order.',
+    categories: [],
+    groups: [],
   },
 ];
 function viewFrom(value: string | null): PluginView {
@@ -822,16 +845,13 @@ function CategoryPluginSection({
   onShowMore: () => void;
 }) {
   const previewLimit =
-    section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT;
+    section.id === 'other' || section.id === 'all-apps'
+      ? OTHER_PREVIEW_LIMIT
+      : CATEGORY_PREVIEW_LIMIT;
   const visible = expanded
-    ? section.id === 'other'
-      ? plugins
-      : plugins.slice(0, Math.max(visibleCount, previewLimit + CATEGORY_EXPAND_STEP))
+    ? plugins.slice(0, Math.max(visibleCount, previewLimit + CATEGORY_EXPAND_STEP))
     : plugins.slice(0, previewLimit);
-  const hasMore =
-    expanded &&
-    section.id !== 'other' &&
-    visible.length < plugins.length;
+  const hasMore = expanded && visible.length < plugins.length;
 
   return (
     <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
@@ -860,11 +880,7 @@ function CategoryPluginSection({
         </div>
         {plugins.length ? (
           <span className="shrink-0 pt-0.5 text-[11px] font-medium text-[var(--text-muted)]">
-            {expanded
-              ? section.id === 'other'
-                ? `${plugins.length.toLocaleString()} apps`
-                : 'Close'
-              : 'See all'}
+            {expanded ? 'Close' : 'See all'}
           </span>
         ) : null}
       </button>
@@ -1652,8 +1668,9 @@ export function PluginMarketplace() {
       return {
         ...current,
         [section.id]:
-          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
-          CATEGORY_EXPAND_STEP,
+          (section.id === 'other' || section.id === 'all-apps'
+            ? OTHER_PREVIEW_LIMIT
+            : CATEGORY_PREVIEW_LIMIT) + CATEGORY_EXPAND_STEP,
       };
     });
 
@@ -1671,7 +1688,9 @@ export function PluginMarketplace() {
       ...current,
       [section.id]:
         (current[section.id] ??
-          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
+          (section.id === 'other' || section.id === 'all-apps'
+            ? OTHER_PREVIEW_LIMIT
+            : CATEGORY_PREVIEW_LIMIT) +
             CATEGORY_EXPAND_STEP) + CATEGORY_EXPAND_STEP,
     }));
   }
@@ -1685,6 +1704,10 @@ export function PluginMarketplace() {
           ...connectedLongTail,
         ])
       : allPlugins;
+
+    if (section.id === 'all-apps') {
+      return [...source];
+    }
 
     if (section.curatedIds?.length) {
       const allowed = new Set(section.curatedIds.map((id) => canonicalPluginId(id)));
@@ -1864,7 +1887,9 @@ export function PluginMarketplace() {
           </p>
         </div>
 
-        <div ref={addPluginMenuRef} className="relative self-start">
+        <div className="flex flex-wrap items-center gap-2 self-start">
+          <PluginPermissionControl buttonOnly showFullAccessShortcut />
+          <div ref={addPluginMenuRef} className="relative">
           <button
             type="button"
             aria-label="Add new Plugin"
@@ -1920,6 +1945,7 @@ export function PluginMarketplace() {
               </button>
             </div>
           ) : null}
+          </div>
         </div>
       </header>
 
@@ -2100,7 +2126,7 @@ export function PluginMarketplace() {
                     Categories
                   </h2>
                   <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
-                    Browse a few relevant apps in each category. Open a category to reveal its full supported set, then close it to return to the compact directory.
+                    Browse a few high-signal apps in each category. Open a category for 10 more at a time; close it to return to the compact directory. All Apps at the end keeps the complete catalogue reachable.
                   </p>
                 </div>
 
@@ -2113,7 +2139,7 @@ export function PluginMarketplace() {
                       expanded={expandedSections.has(section.id)}
                       visibleCount={
                         sectionVisibleCounts[section.id] ??
-                        (section.id === 'other'
+                        (section.id === 'other' || section.id === 'all-apps'
                           ? OTHER_PREVIEW_LIMIT
                           : CATEGORY_PREVIEW_LIMIT)
                       }
