@@ -715,24 +715,36 @@ function CategoryPluginSection({
   section,
   plugins,
   expanded,
+  visibleCount,
   loading,
   error,
   connectingId,
   onConnect,
   onToggle,
+  onShowMore,
 }: {
   section: DiscoverySection;
   plugins: RuntimePlugin[];
   expanded: boolean;
+  visibleCount: number;
   loading: boolean;
   error?: string;
   connectingId: string | null;
   onConnect: (plugin: RuntimePlugin) => void;
   onToggle: () => void;
+  onShowMore: () => void;
 }) {
   const previewLimit =
     section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT;
-  const visible = expanded ? plugins : plugins.slice(0, previewLimit);
+  const visible = expanded
+    ? section.id === 'other'
+      ? plugins
+      : plugins.slice(0, Math.max(visibleCount, previewLimit + CATEGORY_EXPAND_STEP))
+    : plugins.slice(0, previewLimit);
+  const hasMore =
+    expanded &&
+    section.id !== 'other' &&
+    visible.length < plugins.length;
 
   return (
     <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
@@ -740,6 +752,7 @@ function CategoryPluginSection({
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
+        aria-controls={`category-${section.id}-plugins`}
         className="group mb-2 flex w-full items-start justify-between gap-4 rounded-md text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
       >
         <div>
@@ -760,35 +773,54 @@ function CategoryPluginSection({
         </div>
         {plugins.length ? (
           <span className="shrink-0 pt-0.5 text-[11px] font-medium text-[var(--text-muted)]">
-            {expanded ? `${plugins.length.toLocaleString()} apps` : 'See all'}
+            {expanded
+              ? section.id === 'other'
+                ? `${plugins.length.toLocaleString()} apps`
+                : 'Close'
+              : 'See all'}
           </span>
         ) : null}
       </button>
 
-      {loading && !visible.length ? (
-        <div className="grid gap-x-10 lg:grid-cols-2" aria-label={`Loading ${section.title}`}>
-          {[0, 1, 2, 3, 4, 5].map((item) => (
-            <div
-              key={item}
-              className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+      <div id={`category-${section.id}-plugins`}>
+        {loading && !visible.length ? (
+          <div className="grid gap-x-10 lg:grid-cols-2" aria-label={`Loading ${section.title}`}>
+            {[0, 1, 2, 3, 4, 5].map((item) => (
+              <div
+                key={item}
+                className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+              />
+            ))}
+          </div>
+        ) : visible.length ? (
+          <>
+            <PluginListGrid
+              plugins={visible}
+              connectingId={connectingId}
+              onConnect={onConnect}
             />
-          ))}
-        </div>
-      ) : visible.length ? (
-        <PluginListGrid
-          plugins={visible}
-          connectingId={connectingId}
-          onConnect={onConnect}
-        />
-      ) : (
-        <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
-          {error
-            ? error
-            : expanded
-              ? 'No apps are currently classified in this category.'
-              : 'Open this category to load its supported apps.'}
-        </div>
-      )}
+            {hasMore ? (
+              <div className="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={onShowMore}
+                  className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                >
+                  Show 10 more
+                </button>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
+            {error
+              ? error
+              : expanded
+                ? 'No apps are currently classified in this category.'
+                : 'Open this category to load its supported apps.'}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
