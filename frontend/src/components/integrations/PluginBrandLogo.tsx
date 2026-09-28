@@ -65,10 +65,10 @@ export function PluginBrandLogo({
     () =>
       [
         logo,
+        toolkit ? composioLogoUrl(toolkit) : undefined,
         getIntegrationLogo(id),
         ...simpleIconCandidates(toolkit, name),
         fallbackLogo,
-        toolkit ? composioLogoUrl(toolkit) : undefined,
       ].filter(
         (value, index, all): value is string =>
           typeof value === 'string' &&

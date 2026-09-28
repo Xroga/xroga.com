@@ -89,7 +89,8 @@ test('Step 2 keeps connection removal conservative while Custom MCP now uses rea
 
   assert.match(runtime, /enable_connection_removal:\s*false/);
   assert.match(detail, /definition\.source !== 'native'/);
-  assert.match(marketplace, /Custom MCP server/);
+  assert.match(marketplace, /Create MCP App/);
+  assert.match(marketplace, /CustomMcpCreateForm/);
   assert.match(runtime, /createUserCustomMcpToolkit/);
   assert.match(runtime, /syncUserCustomMcpToolkit/);
   assert.match(runtime, /deleteUserCustomMcpToolkit/);

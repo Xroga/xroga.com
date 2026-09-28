@@ -13247,3 +13247,101 @@ body.theme-black .xv-plugin-usecase-card {
   background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
   border-color: color-mix(in srgb, var(--border-subtle) 82%, white 18%);
 }
+
+
+/* Plugins directory search — Uiverse-inspired, rebuilt around Xroga theme tokens. */
+.xv-plugin-search-shell {
+  position: relative;
+  width: 100%;
+  border-radius: 999px;
+  padding: 2px;
+  background:
+    linear-gradient(135deg, rgba(179, 208, 253, 0.96) 0%, rgba(95, 41, 199, 0.78) 100%);
+  box-shadow:
+    0 8px 22px rgba(79, 156, 232, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.xv-plugin-search-shell:focus-within {
+  box-shadow:
+    0 10px 28px rgba(79, 156, 232, 0.22),
+    0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.xv-plugin-search-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface-raised) 96%, #dbeafe 4%) 0%,
+      color-mix(in srgb, var(--surface-raised) 94%, #d8e5f7 6%) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--border-subtle) 75%, white 25%);
+  overflow: hidden;
+}
+
+.xv-plugin-search-input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0.78rem 1rem 0.78rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+.xv-plugin-search-input::placeholder {
+  color: color-mix(in srgb, var(--text-secondary) 72%, transparent);
+}
+
+.xv-plugin-search-icon {
+  display: inline-flex;
+  width: 46px;
+  height: 34px;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  color: color-mix(in srgb, var(--accent) 72%, var(--text-primary));
+  border-left: 1px solid color-mix(in srgb, var(--border-subtle) 72%, white 28%);
+}
+
+body.theme-beige .xv-plugin-search-shell {
+  background: linear-gradient(135deg, rgba(179, 208, 253, 0.88), rgba(95, 41, 199, 0.7));
+  box-shadow: 0 8px 22px rgba(88, 117, 168, 0.12);
+}
+
+body.theme-gray .xv-plugin-search-shell,
+body.theme-black .xv-plugin-search-shell {
+  background: linear-gradient(135deg, rgba(14, 210, 218, 0.66), rgba(95, 41, 199, 0.86));
+  box-shadow: 0 8px 24px rgba(26, 36, 64, 0.42);
+}
+
+body.theme-gray .xv-plugin-search-inner,
+body.theme-black .xv-plugin-search-inner {
+  background: color-mix(in srgb, var(--surface-raised) 94%, #16213a 6%);
+  border-color: color-mix(in srgb, var(--border-subtle) 84%, white 16%);
+}
+
+@media (max-width: 640px) {
+  .xv-plugin-search-inner {
+    min-height: 48px;
+  }
+
+  .xv-plugin-search-input {
+    padding-left: 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .xv-plugin-search-icon {
+    width: 42px;
+    flex-basis: 42px;
+  }
+}

@@ -1115,6 +1115,7 @@ router.patch(
         'always_ask',
         'read_only',
         'low_risk',
+        'full_access',
       ]),
     });
 

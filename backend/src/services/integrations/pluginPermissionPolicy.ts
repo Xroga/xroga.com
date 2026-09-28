@@ -6,7 +6,8 @@ import {
 export type PluginPermissionMode =
   | 'always_ask'
   | 'read_only'
-  | 'low_risk';
+  | 'low_risk'
+  | 'full_access';
 
 const PROVIDER = 'xroga_plugin_permission_policy';
 const DEFAULT_MODE: PluginPermissionMode = 'low_risk';
@@ -17,7 +18,8 @@ function isPluginPermissionMode(
   return (
     value === 'always_ask' ||
     value === 'read_only' ||
-    value === 'low_risk'
+    value === 'low_risk' ||
+    value === 'full_access'
   );
 }
 
