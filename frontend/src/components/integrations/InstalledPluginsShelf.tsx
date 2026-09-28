@@ -93,7 +93,7 @@ export function InstalledPluginsShelf({
 
                 {hovered ? (
                   <div
-                    className="absolute left-0 top-full z-50 mt-2 w-[min(360px,calc(100vw-48px))] rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 shadow-xl"
+                    className="absolute left-0 top-[calc(100%-2px)] z-50 w-[min(360px,calc(100vw-48px))] rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 shadow-xl"
                     role="group"
                   >
                     <div className="flex items-start gap-3">
