@@ -56,7 +56,7 @@ export function InstalledPluginsShelf({
       </div>
 
       {plugins.length ? (
-        <div className="flex items-start gap-3 overflow-x-auto overflow-y-visible pb-3 pt-1 scrollbar-hide">
+        <div className="flex flex-wrap items-start gap-3 pb-3 pt-1">
           {plugins.map((plugin) => {
             const key = plugin.toolkit || plugin.id;
             const hovered = hoveredKey === key;
@@ -94,7 +94,7 @@ export function InstalledPluginsShelf({
                 {hovered ? (
                   <div
                     className="absolute left-0 top-full z-50 mt-2 w-[min(360px,calc(100vw-48px))] rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4 shadow-xl"
-                    role="tooltip"
+                    role="group"
                   >
                     <div className="flex items-start gap-3">
                       <PluginBrandLogo
