@@ -685,8 +685,14 @@ export function catalogPrimaryCategory(
   const categories = catalogCategoryText(toolkit);
   const text = `${toolkit.name} ${toolkit.description ?? ''}`.toLowerCase();
 
-  if (/maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories)) return 'Maps & Location';
-  if (/weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories)) return 'Weather & Utilities';
+  if (
+    /maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories) ||
+    /\b(google maps|mapbox|geocod|geospatial|directions?|route planning|places api|location data)\b/.test(text)
+  ) return 'Maps & Location';
+  if (
+    /weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories) ||
+    /\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)
+  ) return 'Weather & Utilities';
   if (
     /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
     /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
