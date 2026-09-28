@@ -143,7 +143,8 @@ export type XrogaConnectAvailabilityMode =
 export type XrogaPluginPermissionMode =
   | 'always_ask'
   | 'read_only'
-  | 'low_risk';
+  | 'low_risk'
+  | 'full_access';
 
 function queryString(
   input: Record<string, string | number | undefined>,
