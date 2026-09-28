@@ -168,12 +168,11 @@ export interface BusinessActionAuthorization {
     true;
 
   /*
-   * Required for destructive, financial,
-   * permission-changing, cancellation,
-   * deletion, refund, transfer, etc.
+   * Used for the normal safety checkpoint on destructive, financial,
+   * permission-changing, cancellation, deletion, refund, transfer, etc.
    *
-   * Checkpoint 2 will bind this to a
-   * single-use persisted confirmation.
+   * A user-selected full-access Plugin policy can waive that extra
+   * checkpoint, but never the explicitUserAuthorization requirement above.
    */
   confirmedHighRisk?:
     true;
