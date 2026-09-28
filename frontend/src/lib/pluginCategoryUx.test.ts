@@ -7,7 +7,6 @@ import {
   catalogPrimaryCategory,
   pluginFromCatalog,
   pluginSearchScore,
-  type RuntimePlugin,
 } from './pluginCatalog';
 import type { XrogaConnectCatalogToolkit } from './xrogaConnect';
 
