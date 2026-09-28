@@ -188,6 +188,12 @@ export const xrogaConnect = {
       | 'support'
       | 'infrastructure'
       | 'hr-recruiting'
+      | 'education-research'
+      | 'scientific-research'
+      | 'security'
+      | 'healthcare'
+      | 'travel'
+      | 'entertainment'
       | 'other';
     sortBy?: 'usage' | 'alphabetically';
     limit?: number;
