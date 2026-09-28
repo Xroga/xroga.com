@@ -204,15 +204,21 @@ test('category shelves stay compact, prioritize key brands, and keep all leftove
   );
 
   assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
+  assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
+  assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
   assert.match(marketplace, /creativity: \['canva', 'figma'\]/);
-  assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, CATEGORY_PREVIEW_LIMIT\)/);
+  assert.match(marketplace, /section\.id === 'other' \? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT/);
+  assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, previewLimit\)/);
   assert.match(marketplace, /section\.id === 'other'/);
   assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
   assert.match(marketplace, /else next\.add\(section\.id\)/);
   assert.match(marketplace, /lg:grid-cols-2/);
-  assert.match(marketplace, /Explore/);
-  assert.match(marketplace, /\.slice\(0, 6\)/);
+  assert.match(marketplace, /FeaturedPluginSection/);
+  assert.match(marketplace, /id="popular"/);
+  assert.match(marketplace, /id="explore"/);
+  assert.match(marketplace, /expandedFeatured\.has\('popular'\)/);
+  assert.match(marketplace, /expandedFeatured\.has\('explore'\)/);
 });
 
 test('discover hydrates the full app metadata in the background without rendering one giant grid', () => {
@@ -223,6 +229,7 @@ test('discover hydrates the full app metadata in the background without renderin
   assert.match(marketplace, /while \(active && cursor && pages < 20\)/);
   assert.match(marketplace, /setCatalogItems\(\[\.\.\.hydrated\]\)/);
   assert.doesNotMatch(marketplace, />All Plugins</);
+  assert.match(marketplace, /max-w-\[1060px\]/);
 });
 
 test('search and connected-management polish stay theme-safe and list-based', () => {
