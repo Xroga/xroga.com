@@ -1330,7 +1330,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
             <h2 className="text-base font-semibold text-[var(--text-primary)]">About</h2>
             <dl className="mt-4 grid gap-4 text-xs sm:grid-cols-2">
               <div>
-                <dt className="text-[var(--text-muted)]">Toolkit</dt>
+                <dt className="text-[var(--text-muted)]">Plugin ID</dt>
                 <dd className="mt-1 font-medium text-[var(--text-primary)]">
                   {catalog?.slug || pluginId}
                 </dd>
