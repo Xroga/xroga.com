@@ -29,6 +29,7 @@ import {
 } from '@/components/integrations/CustomMcpManager';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { InstalledPluginsShelf } from '@/components/integrations/InstalledPluginsShelf';
+import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
 import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
 import {
@@ -1760,6 +1761,8 @@ export function PluginMarketplace() {
                   {connectedPlugins.length.toLocaleString()} connected
                 </span>
               </div>
+
+              <PluginPermissionControl />
 
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="relative">
