@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { ConnectedServicesSection } from '@/components/integrations/ConnectedServicesSection';
 import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import {
   CustomMcpCreateForm,
@@ -66,6 +65,15 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
 const CATEGORY_PREVIEW_LIMIT = 6;
+
+const SECTION_PINNED_IDS: Record<string, string[]> = {
+  'small-business': ['stripe', 'hubspot', 'shopify', 'canva', 'slack', 'figma'],
+  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive'],
+  creativity: ['canva', 'figma'],
+  'developer-tools': ['github', 'supabase', 'vercel'],
+  'business-operations': ['hubspot', 'shopify', 'slack'],
+  communication: ['slack', 'gmail'],
+};
 
 type DiscoverySection = {
   id: string;
@@ -568,6 +576,7 @@ export function PluginMarketplace() {
   const [connectedQuery, setConnectedQuery] = useState('');
   const [connectedFilter, setConnectedFilter] = useState<ConnectedFilter>('all');
   const requestSeq = useRef(0);
+  const addPluginMenuRef = useRef<HTMLDivElement | null>(null);
   const [addPluginOpen, setAddPluginOpen] = useState(false);
   const [addPluginMode, setAddPluginMode] = useState<
     'menu' | 'mcp' | 'credentials'
@@ -576,6 +585,27 @@ export function PluginMarketplace() {
   const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
   const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
   const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!addPluginOpen || addPluginMode !== 'menu') return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (target && !addPluginMenuRef.current?.contains(target)) {
+        setAddPluginOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setAddPluginOpen(false);
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [addPluginOpen, addPluginMode]);
 
   const setView = (next: PluginView) => {
     setViewState(next);
@@ -692,6 +722,36 @@ export function PluginMarketplace() {
         if (catalogResult.status === 'fulfilled') {
           setCatalogItems(catalogResult.value.items);
           setGlobalCatalogTotal(catalogResult.value.totalItems);
+
+          // Show the first usage-ranked page immediately, then quietly hydrate
+          // the remaining app metadata so every category (including Other)
+          // has a useful preview without rendering 1,500+ rows at once.
+          let cursor = catalogResult.value.nextCursor;
+          let pages = 1;
+          const hydrated = [...catalogResult.value.items];
+
+          while (active && cursor && pages < 20) {
+            try {
+              const page = await xrogaConnect.catalog({
+                sortBy: 'usage',
+                limit: BROWSE_PAGE_SIZE,
+                cursor,
+              });
+
+              for (const item of page.items) {
+                if (!hydrated.some((existing) => existing.slug === item.slug)) {
+                  hydrated.push(item);
+                }
+              }
+
+              setCatalogItems([...hydrated]);
+              cursor = page.nextCursor;
+              pages += 1;
+            } catch {
+              // Keep the already-loaded catalogue usable if background hydration fails.
+              break;
+            }
+          }
         }
         setCatalogLoading(false);
 
@@ -1205,7 +1265,27 @@ export function PluginMarketplace() {
         ])
       : allPlugins;
 
-    return source.filter((plugin) => section.categories.includes(plugin.category));
+    const claimedCategories = new Set(
+      DISCOVERY_SECTIONS
+        .filter((item) => item.id !== 'other')
+        .flatMap((item) => item.categories),
+    );
+
+    const filtered = source.filter((plugin) =>
+      section.id === 'other'
+        ? !claimedCategories.has(plugin.category)
+        : section.categories.includes(plugin.category),
+    );
+
+    const pins = SECTION_PINNED_IDS[section.id] ?? [];
+    const pinRank = new Map(pins.map((id, index) => [id, index]));
+
+    return [...filtered].sort((a, b) => {
+      const aRank = pinRank.get(a.id) ?? Number.POSITIVE_INFINITY;
+      const bRank = pinRank.get(b.id) ?? Number.POSITIVE_INFINITY;
+      if (aRank !== bRank) return aRank - bRank;
+      return 0;
+    });
   }
 
   async function connectNative(plugin: RuntimePlugin) {
@@ -1337,16 +1417,77 @@ export function PluginMarketplace() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setAddPluginMode('menu');
-            setAddPluginOpen(true);
-          }}
-          className="inline-flex min-h-10 items-center justify-center rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-        >
-          + Add Plugin
-        </button>
+        <div ref={addPluginMenuRef} className="relative self-start">
+          <button
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded={addPluginOpen && addPluginMode === 'menu'}
+            onClick={() => {
+              setAddPluginMode('menu');
+              setAddPluginOpen((open) => !open);
+            }}
+            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[var(--text-primary)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            Add
+            <ChevronRight
+              className={`h-3.5 w-3.5 transition-transform ${addPluginOpen && addPluginMode === 'menu' ? 'rotate-90' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
+
+          {addPluginOpen && addPluginMode === 'menu' ? (
+            <div
+              role="menu"
+              aria-label="Add Plugin"
+              className="absolute right-0 z-40 mt-2 w-[270px] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1.5 shadow-xl"
+            >
+              <button
+                type="button"
+                role="menuitem"
+                onClick={focusPluginSearch}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
+              >
+                <Search className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+                <span className="min-w-0">
+                  <strong className="block text-[13px] font-semibold">Find an Xroga App</strong>
+                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+                    Search the full app directory.
+                  </span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => setAddPluginMode('mcp')}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
+              >
+                <Server className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+                <span className="min-w-0">
+                  <strong className="block text-[13px] font-semibold">Create MCP App</strong>
+                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+                    Add your own remote MCP-compatible service.
+                  </span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={openCredentials}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
+              >
+                <KeyRound className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+                <span className="min-w-0">
+                  <strong className="block text-[13px] font-semibold">API key or webhook</strong>
+                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+                    Open Xroga’s encrypted credential vault.
+                  </span>
+                </span>
+              </button>
+            </div>
+          ) : null}
+        </div>
       </header>
 
       <div className="relative">
@@ -1690,29 +1831,13 @@ export function PluginMarketplace() {
                 </div>
               </details>
 
-              <details className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
-                <summary className="cursor-pointer list-none p-4 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">Optional product credentials</p>
-                      <p className="mt-0.5 text-xs leading-5 text-[var(--text-secondary)]">
-                        Brevo, Cloudflare and other optional product-service credentials stay available without taking over the Plugins page.
-                      </p>
-                    </div>
-                  </div>
-                </summary>
-                <div className="border-t border-[var(--border-subtle)] p-4">
-                  <ConnectedServicesSection />
-                </div>
-              </details>
             </section>
           ) : null}
         </>
       )}
 
       <Dialog
-        open={addPluginOpen}
+        open={addPluginOpen && addPluginMode !== 'menu'}
         onClose={() => {
           setAddPluginMode('menu');
           setAddPluginOpen(false);
