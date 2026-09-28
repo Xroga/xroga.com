@@ -60,3 +60,16 @@ test('permission choices use honest Xroga approval wording', () => {
   assert.match(shelf, /sensitive or uncertain actions still ask first/);
   assert.doesNotMatch(shelf, /Composio/);
 });
+
+
+test('no-auth apps stay Ready without appearing as Installed connections', () => {
+  const catalog = source('frontend/src/lib/pluginCatalog.ts');
+  const marketplace = source('frontend/src/components/integrations/PluginMarketplace.tsx');
+
+  assert.match(catalog, /connected: Boolean\(options\.connected\)/);
+  assert.doesNotMatch(catalog, /connected: Boolean\(options\.connected \|\| toolkit\.noAuth\)/);
+  assert.doesNotMatch(
+    marketplace,
+    /plugin\.connected \|\|\s*plugin\.noAuth \|\|\s*plugin\.connectionState === 'needs_attention'/,
+  );
+});
