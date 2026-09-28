@@ -416,6 +416,106 @@ function PluginListGrid({
   );
 }
 
+
+function ConnectedPluginRow({
+  plugin,
+}: {
+  plugin: RuntimePlugin;
+}) {
+  const needsAttention =
+    plugin.connectionState === 'needs_attention' ||
+    plugin.connectionState === 'error';
+
+  return (
+    <Link
+      href={detailHref(plugin)}
+      className="group flex min-h-[76px] items-center gap-4 px-4 py-3 transition hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] sm:px-5"
+      aria-label={`Manage ${plugin.name}`}
+    >
+      <PluginBrandLogo
+        id={plugin.id}
+        name={plugin.name}
+        toolkit={plugin.toolkit}
+        logo={plugin.logo}
+        fallbackLogo={plugin.logoFallback}
+        size="card"
+      />
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
+            {plugin.name}
+          </p>
+          <span className="text-[10px] font-medium text-[var(--text-muted)]">
+            {plugin.category}
+          </span>
+        </div>
+        <p className="mt-0.5 line-clamp-1 text-xs leading-5 text-[var(--text-secondary)]">
+          {plugin.description}
+        </p>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[var(--text-muted)]">
+          {plugin.accountLabel ? (
+            <span className="font-medium text-[var(--text-primary)]">
+              {plugin.accountLabel}
+            </span>
+          ) : null}
+          {plugin.toolsCount !== undefined ? (
+            <span>{plugin.toolsCount.toLocaleString()} actions</span>
+          ) : plugin.capabilityCount ? (
+            <span>{plugin.capabilityCount.toLocaleString()} actions</span>
+          ) : null}
+          {plugin.triggersCount ? (
+            <span>{plugin.triggersCount.toLocaleString()} triggers</span>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="hidden shrink-0 items-center gap-3 sm:flex">
+        <span
+          className={
+            needsAttention
+              ? 'inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/8 px-2.5 py-1 text-[10px] font-semibold text-amber-600'
+              : 'inline-flex items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[10px] font-semibold text-[var(--text-secondary)]'
+          }
+        >
+          {needsAttention ? (
+            <TriangleAlert className="h-3 w-3" aria-hidden="true" />
+          ) : (
+            <Check className="h-3 w-3 text-[var(--accent)]" aria-hidden="true" />
+          )}
+          {needsAttention ? 'Reconnect' : plugin.noAuth ? 'Ready' : 'Connected'}
+        </span>
+        <span className="text-xs font-semibold text-[var(--accent)]">
+          Manage
+        </span>
+        <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
+      </div>
+
+      <ChevronRight
+        className="h-4 w-4 shrink-0 text-[var(--text-muted)] sm:hidden"
+        aria-hidden="true"
+      />
+    </Link>
+  );
+}
+
+function ConnectedPluginList({
+  plugins,
+}: {
+  plugins: RuntimePlugin[];
+}) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] divide-y divide-[var(--border-subtle)]">
+      {plugins.map((plugin) => (
+        <ConnectedPluginRow
+          key={plugin.toolkit || plugin.id}
+          plugin={plugin}
+        />
+      ))}
+    </div>
+  );
+}
+
 function PluginGrid({
   plugins,
   connectingId,
@@ -615,17 +715,6 @@ export function PluginMarketplace() {
     else params.set('view', next);
     const suffix = params.toString();
     router.replace(suffix ? `${pathname}?${suffix}` : pathname, { scroll: false });
-  };
-
-  const focusPluginSearch = () => {
-    setAddPluginMode('menu');
-    setAddPluginOpen(false);
-    setView('discover');
-    window.setTimeout(() => {
-      const input = document.getElementById('plugin-marketplace-search') as HTMLInputElement | null;
-      input?.focus();
-      input?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 0);
   };
 
   const openCredentials = () => {
@@ -1169,7 +1258,7 @@ export function PluginMarketplace() {
 
     return browsePlugins
       .filter((plugin) => !popularKeys.has(plugin.toolkit || plugin.id))
-      .slice(0, 8);
+      .slice(0, 6);
   }, [browsePlugins, popularPlugins]);
 
   const developerPlugins = useMemo(
@@ -1401,7 +1490,7 @@ export function PluginMarketplace() {
   const searchMode = view === 'discover' && deferredQuery.length > 0;
 
   return (
-    <div className="space-y-7">
+    <div className="mx-auto w-full max-w-[1180px] space-y-8 px-2 sm:px-4 lg:px-7 xl:px-9">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1422,6 +1511,7 @@ export function PluginMarketplace() {
         <div ref={addPluginMenuRef} className="relative self-start">
           <button
             type="button"
+            aria-label="Add new Plugin"
             aria-haspopup="menu"
             aria-expanded={addPluginOpen && addPluginMode === 'menu'}
             onClick={() => {
@@ -1443,21 +1533,6 @@ export function PluginMarketplace() {
               aria-label="Add Plugin"
               className="absolute right-0 z-40 mt-2 w-[270px] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1.5 shadow-xl"
             >
-              <button
-                type="button"
-                role="menuitem"
-                onClick={focusPluginSearch}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
-              >
-                <Search className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
-                <span className="min-w-0">
-                  <strong className="block text-[13px] font-semibold">Find an Xroga App</strong>
-                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
-                    Search the full app directory.
-                  </span>
-                </span>
-              </button>
-
               <button
                 type="button"
                 role="menuitem"
@@ -1492,31 +1567,30 @@ export function PluginMarketplace() {
         </div>
       </header>
 
-      <div className="relative">
-        <label htmlFor="plugin-marketplace-search" className="sr-only">
-          Search Plugins
-        </label>
-        <Search
-          className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
-          aria-hidden="true"
-        />
-        <input
-          id="plugin-marketplace-search"
-          value={query}
-          onChange={(event) => {
-            const value = event.target.value;
-            setQuery(value);
-            if (view !== 'discover') setView('discover');
-          }}
-          placeholder="Search any app or describe what you want Xroga to do…"
-          className="w-full rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-3.5 pl-11 pr-12 text-sm text-[var(--text-primary)] shadow-subtle outline-none transition focus:border-[var(--accent)] focus-visible:shadow-[var(--focus-ring)]"
-        />
-        {searchLoading ? (
-          <Loader2
-            className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-muted)]"
-            aria-label="Searching Plugins"
+      <div className="xv-plugin-search-shell">
+        <div className="xv-plugin-search-inner">
+          <label htmlFor="plugin-marketplace-search" className="sr-only">
+            Search Plugins
+          </label>
+          <input
+            id="plugin-marketplace-search"
+            value={query}
+            onChange={(event) => {
+              const value = event.target.value;
+              setQuery(value);
+              if (view !== 'discover') setView('discover');
+            }}
+            placeholder="Search any app or describe what you want Xroga to do…"
+            className="xv-plugin-search-input"
           />
-        ) : null}
+          <span className="xv-plugin-search-icon" aria-hidden="true">
+            {searchLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+          </span>
+        </div>
       </div>
 
       {searchMode ? (
@@ -1610,8 +1684,9 @@ export function PluginMarketplace() {
 
               <section>
                 <div className="mb-2 flex items-center gap-1.5">
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Popular</h2>
+                  <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Popular</h2>
                   <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
+                  <span className="ml-1 text-[10px] text-[var(--text-muted)]">Most used</span>
                 </div>
                 {catalogLoading && !popularPlugins.length ? (
                   <div className="grid gap-x-10 lg:grid-cols-2">
@@ -1631,8 +1706,9 @@ export function PluginMarketplace() {
               {explorePlugins.length ? (
                 <section>
                   <div className="mb-2 flex items-center gap-1.5">
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">Explore</h2>
+                    <h2 className="text-[16px] font-semibold text-[var(--text-primary)]">Explore</h2>
                     <ChevronRight className="h-4 w-4 text-[var(--text-muted)]" aria-hidden="true" />
+                    <span className="ml-1 text-[10px] text-[var(--text-muted)]">Recommended</span>
                   </div>
                   <PluginListGrid
                     plugins={explorePlugins}
@@ -1673,11 +1749,16 @@ export function PluginMarketplace() {
 
           {view === 'connected' ? (
             <section className="space-y-5">
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                  Manage every active Xroga App connection and native developer service.
-                </p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Connected Plugins</h2>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    Manage active Xroga Apps and developer services without leaving this view.
+                  </p>
+                </div>
+                <span className="text-xs font-medium text-[var(--text-muted)]">
+                  {connectedPlugins.length.toLocaleString()} connected
+                </span>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -1722,11 +1803,7 @@ export function PluginMarketplace() {
               </div>
 
               {filteredConnected.length ? (
-                <PluginGrid
-                  plugins={filteredConnected}
-                  connectingId={connectingId}
-                  onConnect={handleConnect}
-                />
+                <ConnectedPluginList plugins={filteredConnected} />
               ) : (
                 <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] px-5 py-8">
                   <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -1818,37 +1895,28 @@ export function PluginMarketplace() {
         description={
           addPluginMode === 'mcp'
             ? 'Turn a remote MCP server into a first-class Xroga Plugin.'
-            : addPluginMode === 'credentials'
-              ? 'Use the encrypted credential vault for services outside the app directory.'
-              : globalCatalogTotal !== null
-                ? `Connect from ${globalCatalogTotal.toLocaleString()} available Xroga Apps, add a remote MCP server, or bring your own credential.`
-                : 'Connect an Xroga App, add a remote MCP server, or bring your own credential.'
+            : 'Use the encrypted credential vault for services outside the app directory.'
         }
         className="max-w-[440px]"
       >
         {addPluginMode === 'mcp' ? (
           <CustomMcpCreateForm
-            onBack={() => setAddPluginMode('menu')}
+            onBack={() => {
+              setAddPluginMode('menu');
+              setAddPluginOpen(false);
+            }}
             onCreated={() => {
               setAddPluginMode('menu');
               setAddPluginOpen(false);
               setView('custom');
             }}
           />
-        ) : addPluginMode === 'credentials' ? (
+        ) : (
           <div className="space-y-3">
-            <button
-              type="button"
-              onClick={() => setAddPluginMode('menu')}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            >
-              <ChevronRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
-              Back
-            </button>
             <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
               <p className="text-xs font-semibold text-[var(--text-primary)]">Encrypted credential vault</p>
               <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                Add API keys or webhooks only for services that are not already available as Xroga Apps. Your existing vault and Vercel-sync behavior stay unchanged.
+                Add API keys or webhooks only for services outside the Xroga Apps directory. Existing vault encryption and Vercel-sync behavior stay unchanged.
               </p>
             </div>
             <button
@@ -1858,62 +1926,6 @@ export function PluginMarketplace() {
             >
               Open credential vault
             </button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={focusPluginSearch}
-              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3 text-left transition hover:border-[var(--border-strong)]"
-            >
-              <Search className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-              <span>
-                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                  Find an Xroga App
-                </strong>
-                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                  Search by brand or describe a task. Xroga finds matching apps, real actions, triggers and task plans.
-                </span>
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAddPluginMode('mcp')}
-              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
-            >
-              <Server className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-              <span>
-                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                  Custom MCP server
-                </strong>
-                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                  Register a remote HTTPS MCP server, connect authentication when required, and sync its tools into Xroga.
-                </span>
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setAddPluginMode('credentials')}
-              className="flex w-full items-start gap-3 rounded-token-md border border-[var(--border-subtle)] p-3 text-left transition hover:border-[var(--border-strong)]"
-            >
-              <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-              <span>
-                <strong className="block text-sm font-semibold text-[var(--text-primary)]">
-                  API key or webhook
-                </strong>
-                <span className="mt-0.5 block text-xs leading-5 text-[var(--text-secondary)]">
-                  Use Xroga’s encrypted credential vault for services outside the app directory.
-                </span>
-              </span>
-            </button>
-
-            <div className="rounded-token-md border border-[var(--border-subtle)] px-3 py-2.5">
-              <p className="text-xs leading-5 text-[var(--text-secondary)]">
-                Xroga Apps expose their current actions and triggers at runtime, so the directory stays simple even when an app has hundreds of capabilities.
-              </p>
-            </div>
           </div>
         )}
       </Dialog>
