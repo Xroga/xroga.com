@@ -58,6 +58,11 @@ test('Plugins expose a small human category system instead of raw provider categ
   assert.match(marketplace, /Business & Operations/);
   assert.match(marketplace, /Small Business/);
   assert.match(marketplace, /Creativity/);
+  assert.match(marketplace, /Education & Research/);
+  assert.match(marketplace, /Scientific Research/);
+  assert.match(marketplace, /Security/);
+  assert.match(marketplace, /Finance/);
+  assert.match(marketplace, /Healthcare/);
   assert.match(marketplace, /Travel/);
   assert.match(marketplace, /Entertainment/);
   assert.match(marketplace, /aria-expanded=\{expanded\}/);
@@ -73,6 +78,12 @@ test('expandable category sections query the complete catalog through server-sid
 
   assert.match(route, /listComposioCatalogGroup/);
   assert.match(route, /'design-media'/);
+  assert.match(route, /'education-research'/);
+  assert.match(route, /'scientific-research'/);
+  assert.match(route, /'security'/);
+  assert.match(route, /'healthcare'/);
+  assert.match(route, /'travel'/);
+  assert.match(route, /'entertainment'/);
   assert.match(service, /xrogaCatalogGroupFor/);
   assert.match(service, /catalog:group:/);
   assert.match(client, /group\?:/);
@@ -173,4 +184,25 @@ test('Add Plugin opens a compact in-page dialog instead of replacing the marketp
   assert.match(marketplace, /API key or webhook/);
   assert.match(marketplace, /setAddPluginOpen\(true\)/);
   assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
+});
+
+test('upstream platform app is not exposed as an Xroga App', () => {
+  const runtime = source(
+    'backend/src/services/integrations/composioClient.ts',
+  );
+
+  assert.match(runtime, /clean === 'composio'/);
+  assert.match(runtime, /return false/);
+});
+
+test('category shelves stay compact until the user expands them', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
+  assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, CATEGORY_PREVIEW_LIMIT\)/);
+  assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
+  assert.match(marketplace, /else next\.add\(section\.id\)/);
+  assert.match(marketplace, /lg:grid-cols-2/);
 });
