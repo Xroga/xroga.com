@@ -20,6 +20,7 @@ import {
 import toast from 'react-hot-toast';
 
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
+import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
 import { api } from '@/lib/api';
 import {
   canonicalPluginId,
@@ -903,6 +904,25 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       ? native?.accountLabel
       : connectionToolkit?.statusMessage || (composioConnected ? 'Connected account' : undefined);
 
+  const permissionToolkit =
+    catalog?.slug ||
+    connectionToolkit?.toolkit ||
+    definition.id ||
+    pluginId;
+
+  const authorizationLabel =
+    definition.source === 'native'
+      ? 'OAuth'
+      : noAuth
+        ? 'No authorization required'
+        : catalog?.managedAuthSchemes.length
+          ? catalog.managedAuthSchemes.some((scheme) => /oauth/i.test(scheme))
+            ? 'OAuth'
+            : catalog.managedAuthSchemes.join(', ')
+          : catalog?.authSchemes.length
+            ? catalog.authSchemes.join(', ')
+            : 'Provider authorization';
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <Link
@@ -1378,7 +1398,16 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
               <p className="text-sm font-medium text-[var(--text-primary)]">
                 {connected ? 'Connected' : native?.state === 'needs_attention' ? 'Needs attention' : noAuth ? 'Ready' : 'Not connected'}
               </p>
-              {connectionLabel ? (
+              {connected && connectionLabel ? (
+                <div className="mt-2 rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Connected account
+                  </p>
+                  <p className="mt-1 break-words text-xs font-medium text-[var(--text-primary)]">
+                    {connectionLabel}
+                  </p>
+                </div>
+              ) : connectionLabel ? (
                 <p className="mt-1 break-words text-xs text-[var(--text-secondary)]">{connectionLabel}</p>
               ) : null}
               {native?.statusMessage ? (
@@ -1419,6 +1448,72 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 Connect
               </button>
             ) : null}
+          </section>
+
+          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Permission</h2>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+              Choose when Xroga should ask for an extra confirmation before using this Plugin.
+            </p>
+            <div className="mt-3">
+              <PluginPermissionControl
+                buttonOnly
+                toolkit={permissionToolkit}
+                pluginName={definition.name}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Information</h2>
+            <dl className="mt-3 space-y-3 text-xs">
+              <div className="flex items-start justify-between gap-4">
+                <dt className="text-[var(--text-muted)]">Category</dt>
+                <dd className="text-right font-medium text-[var(--text-primary)]">{definition.category}</dd>
+              </div>
+              {definition.provider ? (
+                <div className="flex items-start justify-between gap-4">
+                  <dt className="text-[var(--text-muted)]">Provider</dt>
+                  <dd className="text-right font-medium text-[var(--text-primary)]">{definition.provider}</dd>
+                </div>
+              ) : null}
+              <div className="flex items-start justify-between gap-4">
+                <dt className="text-[var(--text-muted)]">Authorization</dt>
+                <dd className="text-right font-medium text-[var(--text-primary)]">{authorizationLabel}</dd>
+              </div>
+              {catalog ? (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <dt className="text-[var(--text-muted)]">Actions</dt>
+                    <dd className="text-right font-medium text-[var(--text-primary)]">
+                      {catalog.toolsCount.toLocaleString()}
+                    </dd>
+                  </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <dt className="text-[var(--text-muted)]">Triggers</dt>
+                    <dd className="text-right font-medium text-[var(--text-primary)]">
+                      {catalog.triggersCount.toLocaleString()}
+                    </dd>
+                  </div>
+                </>
+              ) : null}
+              {catalog?.appUrl ? (
+                <div className="flex items-start justify-between gap-4">
+                  <dt className="text-[var(--text-muted)]">Website</dt>
+                  <dd>
+                    <a
+                      href={catalog.appUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
+                    >
+                      View
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
           </section>
 
           {definition.source === 'native' && catalog ? (
