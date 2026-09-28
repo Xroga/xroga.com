@@ -1936,7 +1936,7 @@ export function PluginMarketplace() {
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
         <p className="text-xs leading-5 text-[var(--text-secondary)]">
-          Every available Xroga App can be discovered at runtime. Xroga still keeps read/write/destructive classification and explicit confirmation for consequential actions.
+          Every available Xroga App can be discovered at runtime. Xroga keeps read/write/destructive classification, and your Default permission setting controls when an extra confirmation checkpoint is required.
         </p>
       </div>
     </div>
