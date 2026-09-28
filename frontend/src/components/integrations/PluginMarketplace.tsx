@@ -1119,7 +1119,6 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.connected ||
-          plugin.noAuth ||
           plugin.connectionState === 'needs_attention',
       ),
     [allPlugins],
