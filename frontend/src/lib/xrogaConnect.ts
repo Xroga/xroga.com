@@ -168,19 +168,31 @@ export const xrogaConnect = {
     }>('/api/integrations/xroga-connect/status'),
 
   permissionPolicy: {
-    get: () =>
+    get: (toolkit?: string) =>
       apiFetch<{
         ok: boolean;
         mode: XrogaPluginPermissionMode;
-      }>('/api/integrations/xroga-connect/permission-policy'),
+        toolkit?: string;
+      }>(
+        `/api/integrations/xroga-connect/permission-policy${queryString({
+          toolkit,
+        })}`,
+      ),
 
-    update: (mode: XrogaPluginPermissionMode) =>
+    update: (
+      mode: XrogaPluginPermissionMode,
+      toolkit?: string,
+    ) =>
       apiFetch<{
         ok: boolean;
         mode: XrogaPluginPermissionMode;
+        toolkit?: string;
       }>('/api/integrations/xroga-connect/permission-policy', {
         method: 'PATCH',
-        body: JSON.stringify({ mode }),
+        body: JSON.stringify({
+          mode,
+          ...(toolkit ? { toolkit } : {}),
+        }),
       }),
   },
 
