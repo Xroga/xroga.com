@@ -1422,6 +1422,7 @@ export async function executePreparedBusinessAction(
   const permissionMode =
     await getUserPluginPermissionMode(
       input.userId,
+      input.plan.toolkit,
     );
 
   const highRiskNow =
