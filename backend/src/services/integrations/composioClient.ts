@@ -379,12 +379,24 @@ export type XrogaCatalogGroup =
   | 'support'
   | 'infrastructure'
   | 'hr-recruiting'
+  | 'education-research'
+  | 'scientific-research'
+  | 'security'
+  | 'healthcare'
+  | 'travel'
+  | 'entertainment'
   | 'other';
 
 const XROGA_CATALOG_GROUP_PATTERNS: Array<{
   id: XrogaCatalogGroup;
   test: RegExp;
 }> = [
+  { id: 'travel', test: /travel|flight|airline|hotel|booking|trip|tourism|maps?|navigation|location|route|rental car/i },
+  { id: 'entertainment', test: /entertainment|music|podcast|gaming|game|movie|film|streaming|sports|ticket|astrology|horoscope|chess/i },
+  { id: 'healthcare', test: /health|healthcare|fitness|medical|workout|nutrition|calorie|wellness|garmin|fitbit|clinical|patient/i },
+  { id: 'scientific-research', test: /scientific|science|biology|chemistry|genomic|genome|protein|molecular|laboratory|lab research|research paper|preprint/i },
+  { id: 'education-research', test: /education|academic|learning|school|university|course|scholar|literature|research|knowledge base/i },
+  { id: 'security', test: /security|privacy|malware|threat|vulnerability|cyber|phishing|audit|compliance|domain security/i },
   { id: 'communication', test: /communication|messaging|chat|email|mail|sms|phone|voice|social|community|video conference|meeting/i },
   { id: 'sales-crm', test: /sales|crm|lead|customer|prospect|deal|pipeline|relationship/i },
   { id: 'commerce', test: /commerce|ecommerce|e-commerce|store|shopping|payment|checkout|order|inventory|shipping|fulfillment/i },
@@ -568,6 +580,12 @@ export function canUserAccessComposioToolkit(
   toolkitSlug: string,
 ): boolean {
   const clean = toolkitSlug.trim().toLowerCase();
+
+  // Keep the upstream platform itself out of Xroga's user-facing app directory.
+  // Xroga still uses the provider internally for runtime/catalog services.
+  if (clean === 'composio') {
+    return false;
+  }
 
   if (!clean.startsWith('custom_')) {
     return true;
