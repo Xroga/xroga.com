@@ -34,7 +34,7 @@ function toolkit(
 test('Plugins expose a small human category system instead of raw provider category spam', () => {
   assert.deepEqual(
     PLUGIN_CATEGORY_GROUPS.slice(0, 5).map((item) => item.label),
-    ['All', 'Productivity', 'Communication', 'Engineering', 'AI & Automation'],
+    ['All', 'Productivity', 'Communication', 'Sales & CRM', 'Customer Support'],
   );
 
   assert.equal(
@@ -55,18 +55,92 @@ test('Plugins expose a small human category system instead of raw provider categ
   );
   assert.match(marketplace, /DISCOVERY_SECTIONS\.map/);
   assert.match(marketplace, /Developer Tools/);
-  assert.match(marketplace, /Business & Operations/);
+  assert.match(marketplace, /Deployment & Hosting/);
+  assert.match(marketplace, /Cloud & Infrastructure/);
+  assert.match(marketplace, /Databases/);
+  assert.match(marketplace, /Marketing & Growth/);
+  assert.match(marketplace, /Booking & Scheduling/);
+  assert.match(marketplace, /Travel & Hospitality/);
   assert.match(marketplace, /Small Business/);
-  assert.match(marketplace, /Creativity/);
+  assert.match(marketplace, /Design & Media/);
   assert.match(marketplace, /Education & Research/);
   assert.match(marketplace, /Scientific Research/);
   assert.match(marketplace, /Security/);
   assert.match(marketplace, /Finance/);
-  assert.match(marketplace, /Healthcare/);
-  assert.match(marketplace, /Travel/);
+  assert.match(marketplace, /Healthcare & Fitness/);
+  assert.match(marketplace, /Travel & Hospitality/);
   assert.match(marketplace, /Entertainment/);
   assert.match(marketplace, /aria-expanded=\{expanded\}/);
   assert.doesNotMatch(marketplace, /categories\.slice\(0, 10\)/);
+});
+
+test('official category signals beat misleading app descriptions', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'cal',
+        name: 'Cal',
+        description: 'Meeting coordination and booking pages.',
+        categories: [
+          { id: 'scheduling-&-booking', name: 'Scheduling & Booking' },
+        ],
+      }),
+    ),
+    'Booking & Scheduling',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'microsoft_clarity',
+        name: 'Microsoft Clarity',
+        description: 'Analyze navigation and user behavior on websites.',
+        categories: [
+          { id: 'analytics', name: 'Analytics' },
+        ],
+      }),
+    ),
+    'Data & Analytics',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'browser_tool',
+        name: 'Browser Tool',
+        description: 'Automate web navigation and extraction.',
+        categories: [
+          { id: 'ai-web-scraping', name: 'AI Web Scraping' },
+        ],
+      }),
+    ),
+    'AI & Automation',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'postgresql',
+        name: 'PostgreSQL',
+        categories: [
+          { id: 'databases', name: 'Databases' },
+        ],
+      }),
+    ),
+    'Databases',
+  );
+});
+
+test('search keeps the hydrated catalogue while remote capability results refine it', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /const liveQuery = query\.trim\(\)/);
+  assert.match(marketplace, /\.\.\.allPlugins/);
+  assert.match(marketplace, /SEARCH_PREVIEW_LIMIT = 12/);
+  assert.match(marketplace, /Show more results/);
+  assert.match(marketplace, /setSearchVisibleCount\(SEARCH_PREVIEW_LIMIT\)/);
 });
 
 test('expandable category sections query the complete catalog through server-side Xroga groups', () => {
@@ -81,8 +155,12 @@ test('expandable category sections query the complete catalog through server-sid
   assert.match(route, /'education-research'/);
   assert.match(route, /'scientific-research'/);
   assert.match(route, /'security'/);
-  assert.match(route, /'healthcare'/);
-  assert.match(route, /'travel'/);
+  assert.match(route, /'healthcare-fitness'/);
+  assert.match(route, /'travel-hospitality'/);
+  assert.match(route, /'booking-scheduling'/);
+  assert.match(route, /'databases'/);
+  assert.match(route, /'deployment-hosting'/);
+  assert.match(route, /'marketing-growth'/);
   assert.match(route, /'entertainment'/);
   assert.match(service, /xrogaCatalogGroupFor/);
   assert.match(service, /catalog:group:/);
@@ -204,11 +282,15 @@ test('category shelves stay compact, prioritize key brands, and keep all leftove
   );
 
   assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
+  assert.match(marketplace, /CATEGORY_EXPAND_STEP = 10/);
   assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
   assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
-  assert.match(marketplace, /creativity: \['canva', 'figma'\]/);
+  assert.match(marketplace, /'design-media': \['canva', 'figma'/);
+  assert.match(marketplace, /SMALL_BUSINESS_IDS/);
+  assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /section\.id === 'other' \? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT/);
-  assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, previewLimit\)/);
+  assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
+  assert.match(marketplace, /Show 10 more/);
   assert.match(marketplace, /section\.id === 'other'/);
   assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
