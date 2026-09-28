@@ -52,10 +52,14 @@ export function PluginPermissionControl({
   compact = false,
   buttonOnly = false,
   showFullAccessShortcut = false,
+  toolkit,
+  pluginName,
 }: {
   compact?: boolean;
   buttonOnly?: boolean;
   showFullAccessShortcut?: boolean;
+  toolkit?: string;
+  pluginName?: string;
 }) {
   const [permissionMode, setPermissionMode] =
     useState<XrogaPluginPermissionMode>('low_risk');
@@ -68,7 +72,7 @@ export function PluginPermissionControl({
     let active = true;
 
     void xrogaConnect.permissionPolicy
-      .get()
+      .get(toolkit)
       .then((result) => {
         if (active) setPermissionMode(result.mode);
       })
@@ -80,7 +84,7 @@ export function PluginPermissionControl({
     return () => {
       active = false;
     };
-  }, []);
+  }, [toolkit]);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
@@ -105,9 +109,13 @@ export function PluginPermissionControl({
     setMenuOpen(false);
 
     try {
-      const result = await xrogaConnect.permissionPolicy.update(next);
+      const result = await xrogaConnect.permissionPolicy.update(next, toolkit);
       setPermissionMode(result.mode);
-      toast.success('Default Plugin permission updated');
+      toast.success(
+        toolkit
+          ? `${pluginName || 'Plugin'} permission updated`
+          : 'Default Plugin permission updated',
+      );
     } catch (error) {
       setPermissionMode(previous);
       toast.error(
@@ -127,7 +135,7 @@ export function PluginPermissionControl({
   const menu = menuOpen ? (
     <div
       role="menu"
-      aria-label="Default Plugin permission"
+      aria-label={toolkit ? `${pluginName || 'Plugin'} permission` : 'Default Plugin permission'}
       className="absolute right-0 z-[80] mt-2 w-[min(390px,calc(100vw-48px))] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--background)] p-1.5 shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
     >
       {PERMISSION_OPTIONS.map((option) => (
@@ -195,11 +203,18 @@ export function PluginPermissionControl({
           ) : (
             <ShieldCheck className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
           )}
-          <span>{selected.highTrust ? 'Full access' : 'Permissions'}</span>
+          <span>Permissions</span>
+          <span
+            className={
+              selected.highTrust
+                ? 'rounded-full border border-orange-500/25 bg-orange-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-orange-600'
+                : 'rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--text-secondary)]'
+            }
+          >
+            {selected.label}
+          </span>
           {!selected.highTrust && showFullAccessShortcut ? (
-            <span className="rounded-full border border-orange-500/25 bg-orange-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-orange-600">
-              Full access
-            </span>
+            <span className="sr-only">Full access is available in this menu</span>
           ) : null}
           <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
@@ -225,7 +240,7 @@ export function PluginPermissionControl({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-xs font-semibold text-[var(--text-primary)]">
-                Default permission
+                {toolkit ? 'Permission' : 'Default permission'}
               </p>
               {selected.highTrust ? (
                 <span className="inline-flex items-center gap-1 rounded-full border border-orange-500/35 bg-orange-500/10 px-2 py-0.5 text-[10px] font-semibold text-orange-600">
@@ -264,7 +279,9 @@ export function PluginPermissionControl({
 
       {!compact ? (
         <p className="mt-2 text-[10px] leading-4 text-[var(--text-muted)]">
-          Full access removes extra Xroga confirmation checkpoints only for actions you explicitly ask Xroga to perform; provider OAuth scopes, account permissions, and platform safeguards still apply.
+          {toolkit
+            ? `This setting applies to ${pluginName || 'this Plugin'}. Full access removes extra Xroga confirmation checkpoints only for actions you explicitly request; provider authorization and platform safeguards still apply.`
+            : 'Full access removes extra Xroga confirmation checkpoints only for actions you explicitly ask Xroga to perform; provider OAuth scopes, account permissions, and platform safeguards still apply.'}
         </p>
       ) : null}
     </div>

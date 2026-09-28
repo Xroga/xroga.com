@@ -23,13 +23,34 @@ function isPluginPermissionMode(
   );
 }
 
-export async function getUserPluginPermissionMode(
+function cleanToolkitPermissionKey(
+  toolkit?: string,
+): string | null {
+  const clean = toolkit
+    ?.trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 90);
+
+  return clean || null;
+}
+
+function providerForToolkit(
+  toolkit?: string,
+): string {
+  const clean = cleanToolkitPermissionKey(toolkit);
+  return clean ? `${PROVIDER}__${clean}` : PROVIDER;
+}
+
+async function loadMode(
   userId: string,
-): Promise<PluginPermissionMode> {
+  provider: string,
+): Promise<PluginPermissionMode | null> {
   try {
     const stored = await loadProviderToken(
       userId,
-      PROVIDER,
+      provider,
     );
 
     const metadataMode =
@@ -59,16 +80,47 @@ export async function getUserPluginPermissionMode(
     );
   }
 
-  return DEFAULT_MODE;
+  return null;
+}
+
+/**
+ * A toolkit-specific preference overrides the user's global Plugin default.
+ * When there is no override, the existing global setting remains authoritative.
+ */
+export async function getUserPluginPermissionMode(
+  userId: string,
+  toolkit?: string,
+): Promise<PluginPermissionMode> {
+  const cleanToolkit = cleanToolkitPermissionKey(toolkit);
+
+  if (cleanToolkit) {
+    const specific = await loadMode(
+      userId,
+      providerForToolkit(cleanToolkit),
+    );
+
+    if (specific) return specific;
+  }
+
+  return (
+    (await loadMode(
+      userId,
+      PROVIDER,
+    )) ?? DEFAULT_MODE
+  );
 }
 
 export async function setUserPluginPermissionMode(
   userId: string,
   mode: PluginPermissionMode,
+  toolkit?: string,
 ): Promise<PluginPermissionMode> {
+  const cleanToolkit = cleanToolkitPermissionKey(toolkit);
+  const provider = providerForToolkit(cleanToolkit ?? undefined);
+
   await storeProviderToken(
     userId,
-    PROVIDER,
+    provider,
     {
       /*
        * This row stores a preference, not a credential. oauthPkceStore is reused
@@ -78,6 +130,12 @@ export async function setUserPluginPermissionMode(
       metadata: {
         type: 'plugin_permission_policy',
         mode,
+        scope: cleanToolkit ? 'toolkit' : 'global',
+        ...(cleanToolkit
+          ? {
+              toolkit: cleanToolkit,
+            }
+          : {}),
         updated_at: new Date().toISOString(),
       },
     },

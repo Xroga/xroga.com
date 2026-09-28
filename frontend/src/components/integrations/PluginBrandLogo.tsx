@@ -61,22 +61,28 @@ export function PluginBrandLogo({
   fallbackLogo?: string;
   size?: 'micro' | 'card' | 'detail';
 }) {
-  const candidates = useMemo(
-    () =>
-      [
-        logo,
-        toolkit ? composioLogoUrl(toolkit) : undefined,
-        getIntegrationLogo(id),
-        ...simpleIconCandidates(toolkit, name),
-        fallbackLogo,
-      ].filter(
-        (value, index, all): value is string =>
-          typeof value === 'string' &&
-          value.length > 0 &&
-          all.indexOf(value) === index,
-      ),
-    [id, logo, fallbackLogo, toolkit, name],
-  );
+  const candidates = useMemo(() => {
+    const customToolkit =
+      toolkit?.toLowerCase().startsWith('custom_') ?? false;
+
+    return [
+      // Prefer Xroga's known first-party/local brand asset, then the official
+      // toolkit logo CDN. Provider metadata can occasionally contain stale
+      // logo URLs, so it comes after the canonical CDN. Custom MCP apps skip
+      // upstream generic branding and fall back to an honest Xroga initial.
+      getIntegrationLogo(id),
+      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
+      !customToolkit ? logo : undefined,
+      ...simpleIconCandidates(toolkit, name),
+      fallbackLogo,
+    ].filter(
+      (value, candidateIndex, all): value is string =>
+        typeof value === 'string' &&
+        value.length > 0 &&
+        all.indexOf(value) === candidateIndex,
+    );
+  }, [id, logo, fallbackLogo, toolkit, name]);
+
   const [index, setIndex] = useState(0);
 
   useEffect(() => {

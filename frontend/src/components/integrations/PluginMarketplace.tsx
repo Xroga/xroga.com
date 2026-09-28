@@ -66,98 +66,303 @@ type ConnectedFilter = 'all' | 'apps' | 'developer' | 'attention';
 
 const BROWSE_PAGE_SIZE = 250;
 const SEARCH_PAGE_SIZE = 100;
+const SEARCH_PREVIEW_LIMIT = 10;
 const CATEGORY_PREVIEW_LIMIT = 6;
+const CATEGORY_EXPAND_STEP = 10;
 const OTHER_PREVIEW_LIMIT = 8;
 const FEATURED_PREVIEW_LIMIT = 6;
 const FEATURED_EXPANDED_LIMIT = 18;
 
-const SECTION_PINNED_IDS: Record<string, string[]> = {
-  'small-business': ['stripe', 'hubspot', 'shopify', 'canva', 'slack', 'figma'],
-  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive'],
-  creativity: ['canva', 'figma'],
-  'developer-tools': ['github', 'supabase', 'vercel'],
-  'business-operations': ['hubspot', 'shopify', 'slack'],
-  communication: ['slack', 'gmail'],
-};
+const SMALL_BUSINESS_IDS = [
+  'stripe',
+  'hubspot',
+  'shopify',
+  'canva',
+  'slack',
+  'figma',
+  'quickbooks',
+  'google-calendar',
+  'gmail',
+  'google-drive',
+  'notion',
+  'airtable',
+  'calendly',
+  'cal',
+  'xero',
+  'mailchimp',
+  'activecampaign',
+  'square',
+  'trello',
+  'asana',
+  'dropbox',
+  'zoom',
+];
 
+const SECTION_PINNED_IDS: Record<string, string[]> = {
+  'small-business': SMALL_BUSINESS_IDS,
+  productivity: ['google-calendar', 'notion', 'gmail', 'google-drive', 'trello', 'asana'],
+  communication: ['slack', 'gmail', 'microsoftoutlook', 'zoom', 'discord', 'microsoftteams'],
+  'booking-scheduling': ['cal', 'calendly', 'google-calendar', 'acuityscheduling', 'squareappointments', 'savvycal'],
+  'sales-crm': ['hubspot', 'salesforce', 'pipedrive', 'close', 'attio', 'zoho'],
+  support: ['intercom', 'zendesk', 'freshdesk', 'gorgias', 'helpscout'],
+  'business-operations': ['airtable', 'monday', 'notion', 'asana', 'trello', 'odoo'],
+  'marketing-growth': ['mailchimp', 'activecampaign', 'klaviyo', 'googleads', 'facebookads', 'semrush'],
+  'social-media': ['linkedin', 'instagram', 'twitter', 'tiktok', 'facebookpages', 'youtube'],
+  'commerce-payments': ['stripe', 'shopify', 'square', 'paypal', 'woocommerce', 'bigcommerce'],
+  'finance-accounting': ['quickbooks', 'xero', 'freshbooks', 'plaid', 'stripe', 'wise'],
+  'blockchain-crypto': ['blockscout', 'alchemy', 'coinbase', 'etherscan', 'bitquery', 'moralis'],
+  'data-analytics': ['posthog', 'mixpanel', 'amplitude', 'tableau', 'powerbi', 'googleanalytics'],
+  databases: ['supabase', 'postgresql', 'mongodb', 'neon', 'mysql', 'redis'],
+  'maps-location': ['googlemaps', 'mapbox', 'tomtom', 'here', 'radarlabs'],
+  'web-search-scraping': ['firecrawl', 'exa', 'apify', 'browsertool', 'scrapingbee', 'brightdata'],
+  'developer-tools': ['github', 'linear', 'sentry', 'gitlab', 'postman', 'jira'],
+  'deployment-hosting': ['vercel', 'railway', 'render', 'netlify', 'heroku', 'flyio'],
+  'cloud-infrastructure': ['cloudflare', 'aws', 'digitalocean', 'datadog', 'grafana', 'newrelic'],
+  'ai-automation': ['openai', 'anthropic', 'gemini', 'perplexityai', 'huggingface'],
+  'content-files': ['google-drive', 'dropbox', 'box', 'onedrive', 'notion', 'sharepoint'],
+  'design-media': ['canva', 'figma', 'runway', 'invideo', 'openart', 'higgsfield'],
+  'forms-surveys': ['typeform', 'jotform', 'surveymonkey', 'googleforms', 'tally'],
+  'hr-recruiting': ['greenhouse', 'lever', 'workday', 'bamboohr', 'deel'],
+  'logistics-shipping': ['shippo', 'shipstation', 'easypost', 'aftership', 'fedex', 'ups'],
+  'legal-contracts': ['docusign', 'pandadoc', 'ironclad', 'hellosign', 'dropboxsign'],
+  'real-estate': ['zillow', 'apex27', 'realtor', 'propertybase'],
+  'food-restaurants': ['opentable', 'yelp', 'doordash', 'ubereats', 'toast'],
+  'travel-hospitality': ['skyscanner', 'bookingcom', 'expedia', 'tripcom', 'airbnb', 'agoda'],
+  'weather-utilities': ['weathermap', 'openweathermap', 'ambientweather', 'weatherapi'],
+  security: ['malwarebytes', 'cloudflare', 'snyk', 'privacyhawk', 'radarlite'],
+};
 type DiscoverySection = {
   id: string;
   title: string;
   description: string;
   categories: string[];
   groups: Exclude<PluginCategoryGroupId, ''>[];
+  curatedIds?: string[];
 };
 
 const DISCOVERY_SECTIONS: DiscoverySection[] = [
   {
     id: 'small-business',
     title: 'Small Business',
-    description: 'Everyday apps for payments, customers, marketing, files, teamwork and running a business.',
-    categories: [
-      'Commerce',
-      'Sales & CRM',
-      'Marketing',
-      'Finance',
-      'Productivity',
-      'Communication',
-      'Design & Media',
-    ],
-    groups: [
-      'commerce',
-      'sales-crm',
-      'marketing',
-      'finance',
-      'productivity',
-      'communication',
-      'design-media',
-    ],
+    description: 'A focused set of useful apps for payments, customers, marketing, files, scheduling and teamwork.',
+    categories: [],
+    groups: [],
+    curatedIds: SMALL_BUSINESS_IDS,
   },
   {
     id: 'productivity',
     title: 'Productivity',
-    description: 'Calendar, documents, tasks, workspace and personal productivity apps.',
+    description: 'Calendar, tasks, projects, spreadsheets and workspace tools.',
     categories: ['Productivity'],
     groups: ['productivity'],
   },
   {
-    id: 'creativity',
-    title: 'Creativity',
-    description: 'Design, image, video, audio, media and creative production tools.',
-    categories: ['Design & Media'],
-    groups: ['design-media'],
-  },
-  {
-    id: 'developer-tools',
-    title: 'Developer Tools',
-    description: 'Code, deployment, infrastructure, monitoring and developer services.',
-    categories: ['Engineering', 'Infrastructure'],
-    groups: ['engineering', 'infrastructure'],
-  },
-  {
-    id: 'business-operations',
-    title: 'Business & Operations',
-    description: 'CRM, support, recruiting, commerce and operational systems.',
-    categories: ['Sales & CRM', 'Support', 'HR & Recruiting', 'Commerce', 'Marketing'],
-    groups: ['sales-crm', 'support', 'hr-recruiting', 'commerce', 'marketing'],
-  },
-  {
-    id: 'data-analytics',
-    title: 'Data & Analytics',
-    description: 'Databases, analytics, spreadsheets, BI and data platforms.',
-    categories: ['Data & Analytics'],
-    groups: ['data-analytics'],
-  },
-  {
     id: 'communication',
     title: 'Communication',
-    description: 'Messaging, email, meetings, communities and collaboration.',
+    description: 'Email, messaging, calls, meetings and team collaboration.',
     categories: ['Communication'],
     groups: ['communication'],
   },
   {
+    id: 'booking-scheduling',
+    title: 'Booking & Scheduling',
+    description: 'Appointments, booking pages, availability, calendars and reservations.',
+    categories: ['Booking & Scheduling'],
+    groups: ['booking-scheduling'],
+  },
+  {
+    id: 'sales-crm',
+    title: 'Sales & CRM',
+    description: 'Leads, contacts, deals, pipelines and customer relationships.',
+    categories: ['Sales & CRM'],
+    groups: ['sales-crm'],
+  },
+  {
+    id: 'support',
+    title: 'Customer Support',
+    description: 'Help desks, tickets, customer service and support workflows.',
+    categories: ['Customer Support'],
+    groups: ['support'],
+  },
+  {
+    id: 'business-operations',
+    title: 'Business & Operations',
+    description: 'ERP, administration, professional services and operational workflow tools.',
+    categories: ['Business & Operations'],
+    groups: ['business-operations'],
+  },
+  {
+    id: 'marketing-growth',
+    title: 'Marketing & Growth',
+    description: 'SEO, ads, campaigns, newsletters, automation and growth tools.',
+    categories: ['Marketing & Growth'],
+    groups: ['marketing-growth'],
+  },
+  {
+    id: 'social-media',
+    title: 'Social Media',
+    description: 'Publishing, engagement, analytics and social-network workflows.',
+    categories: ['Social Media'],
+    groups: ['social-media'],
+  },
+  {
+    id: 'commerce-payments',
+    title: 'Commerce & Payments',
+    description: 'Payments, stores, orders, checkout, inventory and fulfillment.',
+    categories: ['Commerce & Payments'],
+    groups: ['commerce-payments'],
+  },
+  {
+    id: 'finance-accounting',
+    title: 'Finance & Accounting',
+    description: 'Accounting, invoices, banking, expenses, tax and finance tools.',
+    categories: ['Finance & Accounting'],
+    groups: ['finance-accounting'],
+  },
+  {
+    id: 'blockchain-crypto',
+    title: 'Blockchain & Crypto',
+    description: 'Blockchain data, wallets, networks and on-chain developer services.',
+    categories: ['Blockchain & Crypto'],
+    groups: ['blockchain-crypto'],
+  },
+  {
+    id: 'data-analytics',
+    title: 'Data & Analytics',
+    description: 'Analytics, BI, dashboards, reporting and data platforms.',
+    categories: ['Data & Analytics'],
+    groups: ['data-analytics'],
+  },
+  {
+    id: 'databases',
+    title: 'Databases',
+    description: 'SQL, NoSQL, managed databases, data stores and backend data services.',
+    categories: ['Databases'],
+    groups: ['databases'],
+  },
+  {
+    id: 'maps-location',
+    title: 'Maps & Location',
+    description: 'Maps, places, geocoding, directions, routing and geospatial data.',
+    categories: ['Maps & Location'],
+    groups: ['maps-location'],
+  },
+  {
+    id: 'web-search-scraping',
+    title: 'Web Search & Scraping',
+    description: 'Search the web, crawl sites, extract data and automate browser research.',
+    categories: ['Web Search & Scraping'],
+    groups: ['web-search-scraping'],
+  },
+  {
+    id: 'developer-tools',
+    title: 'Developer Tools',
+    description: 'Source control, APIs, observability, testing and engineering tools.',
+    categories: ['Developer Tools'],
+    groups: ['developer-tools'],
+  },
+  {
+    id: 'deployment-hosting',
+    title: 'Deployment & Hosting',
+    description: 'Deploy, host and operate web apps, services and production builds.',
+    categories: ['Deployment & Hosting'],
+    groups: ['deployment-hosting'],
+  },
+  {
+    id: 'cloud-infrastructure',
+    title: 'Cloud & Infrastructure',
+    description: 'Cloud operations, CDN, DNS, servers, monitoring and infrastructure.',
+    categories: ['Cloud & Infrastructure'],
+    groups: ['cloud-infrastructure'],
+  },
+  {
+    id: 'ai-automation',
+    title: 'AI & Automation',
+    description: 'AI models, agents, MCP services, automation and workflow tools.',
+    categories: ['AI & Automation'],
+    groups: ['ai-automation'],
+  },
+  {
+    id: 'content-files',
+    title: 'Content & Files',
+    description: 'Documents, notes, storage, transcription and file-management services.',
+    categories: ['Content & Files'],
+    groups: ['content-files'],
+  },
+  {
+    id: 'design-media',
+    title: 'Design & Media',
+    description: 'Design, images, video, audio and creative production tools.',
+    categories: ['Design & Media'],
+    groups: ['design-media'],
+  },
+  {
+    id: 'forms-surveys',
+    title: 'Forms & Surveys',
+    description: 'Forms, surveys, questionnaires, feedback and structured data collection.',
+    categories: ['Forms & Surveys'],
+    groups: ['forms-surveys'],
+  },
+  {
+    id: 'hr-recruiting',
+    title: 'HR & Recruiting',
+    description: 'Hiring, recruiting, people operations and employee systems.',
+    categories: ['HR & Recruiting'],
+    groups: ['hr-recruiting'],
+  },
+  {
+    id: 'logistics-shipping',
+    title: 'Logistics & Shipping',
+    description: 'Shipping, carriers, delivery, tracking, fleet and logistics operations.',
+    categories: ['Logistics & Shipping'],
+    groups: ['logistics-shipping'],
+  },
+  {
+    id: 'legal-contracts',
+    title: 'Legal & Contracts',
+    description: 'Contracts, e-signatures, legal workflows and document approvals.',
+    categories: ['Legal & Contracts'],
+    groups: ['legal-contracts'],
+  },
+  {
+    id: 'real-estate',
+    title: 'Real Estate',
+    description: 'Properties, listings, real-estate operations and related services.',
+    categories: ['Real Estate'],
+    groups: ['real-estate'],
+  },
+  {
+    id: 'food-restaurants',
+    title: 'Food & Restaurants',
+    description: 'Restaurants, dining, menus, food services and delivery workflows.',
+    categories: ['Food & Restaurants'],
+    groups: ['food-restaurants'],
+  },
+  {
+    id: 'travel-hospitality',
+    title: 'Travel & Hospitality',
+    description: 'Flights, hotels, stays, trips, hospitality and travel services.',
+    categories: ['Travel & Hospitality'],
+    groups: ['travel-hospitality'],
+  },
+  {
+    id: 'weather-utilities',
+    title: 'Weather & Utilities',
+    description: 'Weather, forecasts, climate and other utility data services.',
+    categories: ['Weather & Utilities'],
+    groups: ['weather-utilities'],
+  },
+  {
+    id: 'security',
+    title: 'Security',
+    description: 'Security, identity, privacy, compliance and threat-analysis tools.',
+    categories: ['Security'],
+    groups: ['security'],
+  },
+  {
     id: 'education-research',
     title: 'Education & Research',
-    description: 'Learning, academic research, literature and knowledge tools.',
+    description: 'Learning, courses, academic research, literature and knowledge tools.',
     categories: ['Education & Research'],
     groups: ['education-research'],
   },
@@ -169,32 +374,11 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['scientific-research'],
   },
   {
-    id: 'security',
-    title: 'Security',
-    description: 'Security, privacy, malware, compliance and threat-analysis tools.',
-    categories: ['Security'],
-    groups: ['security'],
-  },
-  {
-    id: 'finance',
-    title: 'Finance',
-    description: 'Accounting, banking, invoices, market data and financial operations.',
-    categories: ['Finance'],
-    groups: ['finance'],
-  },
-  {
-    id: 'healthcare',
-    title: 'Healthcare',
+    id: 'healthcare-fitness',
+    title: 'Healthcare & Fitness',
     description: 'Health, fitness, wellness, nutrition and medical-data tools.',
-    categories: ['Healthcare'],
-    groups: ['healthcare'],
-  },
-  {
-    id: 'travel',
-    title: 'Travel',
-    description: 'Flights, trips, navigation, booking and travel services.',
-    categories: ['Travel'],
-    groups: ['travel'],
+    categories: ['Healthcare & Fitness'],
+    groups: ['healthcare-fitness'],
   },
   {
     id: 'entertainment',
@@ -204,21 +388,13 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     groups: ['entertainment'],
   },
   {
-    id: 'ai-automation',
-    title: 'AI & Automation',
-    description: 'AI models, agents, automation and workflow tools.',
-    categories: ['AI & Automation'],
-    groups: ['ai-automation'],
-  },
-  {
     id: 'other',
     title: 'Other',
-    description: 'More supported apps that do not fit the main categories.',
+    description: 'Every remaining supported Xroga App that does not fit the categories above.',
     categories: ['Other'],
     groups: ['other'],
   },
-]
-
+];
 function viewFrom(value: string | null): PluginView {
   if (value === 'connected' || value === 'developer' || value === 'custom') return value;
   return 'discover';
@@ -626,24 +802,36 @@ function CategoryPluginSection({
   section,
   plugins,
   expanded,
+  visibleCount,
   loading,
   error,
   connectingId,
   onConnect,
   onToggle,
+  onShowMore,
 }: {
   section: DiscoverySection;
   plugins: RuntimePlugin[];
   expanded: boolean;
+  visibleCount: number;
   loading: boolean;
   error?: string;
   connectingId: string | null;
   onConnect: (plugin: RuntimePlugin) => void;
   onToggle: () => void;
+  onShowMore: () => void;
 }) {
   const previewLimit =
     section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT;
-  const visible = expanded ? plugins : plugins.slice(0, previewLimit);
+  const visible = expanded
+    ? section.id === 'other'
+      ? plugins
+      : plugins.slice(0, Math.max(visibleCount, previewLimit + CATEGORY_EXPAND_STEP))
+    : plugins.slice(0, previewLimit);
+  const hasMore =
+    expanded &&
+    section.id !== 'other' &&
+    visible.length < plugins.length;
 
   return (
     <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
@@ -651,6 +839,7 @@ function CategoryPluginSection({
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
+        aria-controls={`category-${section.id}-plugins`}
         className="group mb-2 flex w-full items-start justify-between gap-4 rounded-md text-left focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
       >
         <div>
@@ -671,35 +860,54 @@ function CategoryPluginSection({
         </div>
         {plugins.length ? (
           <span className="shrink-0 pt-0.5 text-[11px] font-medium text-[var(--text-muted)]">
-            {expanded ? `${plugins.length.toLocaleString()} apps` : 'See all'}
+            {expanded
+              ? section.id === 'other'
+                ? `${plugins.length.toLocaleString()} apps`
+                : 'Close'
+              : 'See all'}
           </span>
         ) : null}
       </button>
 
-      {loading && !visible.length ? (
-        <div className="grid gap-x-10 lg:grid-cols-2" aria-label={`Loading ${section.title}`}>
-          {[0, 1, 2, 3, 4, 5].map((item) => (
-            <div
-              key={item}
-              className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+      <div id={`category-${section.id}-plugins`}>
+        {loading && !visible.length ? (
+          <div className="grid gap-x-10 lg:grid-cols-2" aria-label={`Loading ${section.title}`}>
+            {[0, 1, 2, 3, 4, 5].map((item) => (
+              <div
+                key={item}
+                className="h-[72px] animate-pulse border-b border-[var(--border-subtle)] bg-[var(--surface-inset)]/35"
+              />
+            ))}
+          </div>
+        ) : visible.length ? (
+          <>
+            <PluginListGrid
+              plugins={visible}
+              connectingId={connectingId}
+              onConnect={onConnect}
             />
-          ))}
-        </div>
-      ) : visible.length ? (
-        <PluginListGrid
-          plugins={visible}
-          connectingId={connectingId}
-          onConnect={onConnect}
-        />
-      ) : (
-        <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
-          {error
-            ? error
-            : expanded
-              ? 'No apps are currently classified in this category.'
-              : 'Open this category to load its supported apps.'}
-        </div>
-      )}
+            {hasMore ? (
+              <div className="mt-4 flex justify-center">
+                <button
+                  type="button"
+                  onClick={onShowMore}
+                  className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                >
+                  Show 10 more
+                </button>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
+            {error
+              ? error
+              : expanded
+                ? 'No apps are currently classified in this category.'
+                : 'Open this category to load its supported apps.'}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -739,6 +947,8 @@ export function PluginMarketplace() {
   const [view, setViewState] = useState<PluginView>(() => viewFrom(searchParams.get('view')));
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '');
   const deferredQuery = useDeferredValue(query.trim());
+  const liveQuery = query.trim();
+  const [searchVisibleCount, setSearchVisibleCount] = useState(SEARCH_PREVIEW_LIMIT);
   const [catalogItems, setCatalogItems] = useState<XrogaConnectCatalogToolkit[]>([]);
   const [globalCatalogTotal, setGlobalCatalogTotal] = useState<number | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -774,6 +984,7 @@ export function PluginMarketplace() {
   const [sectionCatalog, setSectionCatalog] = useState<Record<string, XrogaConnectCatalogToolkit[]>>({});
   const [sectionLoading, setSectionLoading] = useState<Record<string, boolean>>({});
   const [sectionErrors, setSectionErrors] = useState<Record<string, string>>({});
+  const [sectionVisibleCounts, setSectionVisibleCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!addPluginOpen || addPluginMode !== 'menu') return;
@@ -1235,7 +1446,7 @@ export function PluginMarketplace() {
   );
 
   const searchPlugins = useMemo(() => {
-    const clean = deferredQuery.trim();
+    const clean = liveQuery;
     if (!clean) return [];
 
     const nativeIds = new Set(nativePlugins.map((plugin) => plugin.id));
@@ -1246,14 +1457,15 @@ export function PluginMarketplace() {
       .map(runtimeFromCatalog)
       .filter((plugin) => !nativeIds.has(plugin.id));
 
-    const source =
-      clean.length < 2
-        ? allPlugins
-        : mergePlugins([
-            ...nativePlugins,
-            ...dynamicSearchPlugins,
-            ...dynamicSemanticPlugins,
-          ]);
+    // Keep the already-hydrated full catalogue in the candidate set while the
+    // debounced server search refines the result. This makes typing immediate
+    // and prevents a sparse remote response from collapsing to one app.
+    const source = mergePlugins([
+      ...allPlugins,
+      ...nativePlugins,
+      ...dynamicSearchPlugins,
+      ...dynamicSemanticPlugins,
+    ]);
 
     const semantic = semanticToolkitSlugs;
 
@@ -1281,7 +1493,7 @@ export function PluginMarketplace() {
     // runtimeFromCatalog intentionally reads latest connection state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    deferredQuery,
+    liveQuery,
     allPlugins,
     nativePlugins,
     searchCatalogItems,
@@ -1354,10 +1566,12 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.developer ||
-          plugin.category === 'Engineering' ||
-          plugin.category === 'Infrastructure' ||
+          plugin.category === 'Developer Tools' ||
+          plugin.category === 'Deployment & Hosting' ||
+          plugin.category === 'Cloud & Infrastructure' ||
+          plugin.category === 'Databases' ||
           plugin.categories?.some((category) =>
-            /developer|engineering|devops|cloud|infrastructure/i.test(category.name),
+            /developer|engineering|devops|cloud|infrastructure|database|server monitoring/i.test(category.name),
           ),
       ),
     [allPlugins],
@@ -1429,9 +1643,37 @@ export function PluginMarketplace() {
       return next;
     });
 
-    if (!isExpanded && !sectionCatalog[section.id]) {
+    setSectionVisibleCounts((current) => {
+      if (isExpanded) {
+        const next = { ...current };
+        delete next[section.id];
+        return next;
+      }
+      return {
+        ...current,
+        [section.id]:
+          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
+          CATEGORY_EXPAND_STEP,
+      };
+    });
+
+    if (
+      !isExpanded &&
+      section.groups.length > 0 &&
+      !sectionCatalog[section.id]
+    ) {
       void loadDiscoverySection(section);
     }
+  }
+
+  function showMoreDiscoverySection(section: DiscoverySection) {
+    setSectionVisibleCounts((current) => ({
+      ...current,
+      [section.id]:
+        (current[section.id] ??
+          (section.id === 'other' ? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT) +
+            CATEGORY_EXPAND_STEP) + CATEGORY_EXPAND_STEP,
+    }));
   }
 
   function pluginsForSection(section: DiscoverySection): RuntimePlugin[] {
@@ -1444,9 +1686,29 @@ export function PluginMarketplace() {
         ])
       : allPlugins;
 
+    if (section.curatedIds?.length) {
+      const allowed = new Set(section.curatedIds.map((id) => canonicalPluginId(id)));
+      const filtered = source.filter((plugin) =>
+        allowed.has(canonicalPluginId(plugin.toolkit || plugin.id)),
+      );
+      const rank = new Map(
+        section.curatedIds.map((id, index) => [canonicalPluginId(id), index]),
+      );
+
+      return [...filtered].sort((a, b) => {
+        const aRank =
+          rank.get(canonicalPluginId(a.toolkit || a.id)) ??
+          Number.POSITIVE_INFINITY;
+        const bRank =
+          rank.get(canonicalPluginId(b.toolkit || b.id)) ??
+          Number.POSITIVE_INFINITY;
+        return aRank - bRank;
+      });
+    }
+
     const claimedCategories = new Set(
       DISCOVERY_SECTIONS
-        .filter((item) => item.id !== 'other')
+        .filter((item) => item.id !== 'other' && !item.curatedIds?.length)
         .flatMap((item) => item.categories),
     );
 
@@ -1457,11 +1719,17 @@ export function PluginMarketplace() {
     );
 
     const pins = SECTION_PINNED_IDS[section.id] ?? [];
-    const pinRank = new Map(pins.map((id, index) => [id, index]));
+    const pinRank = new Map(
+      pins.map((id, index) => [canonicalPluginId(id), index]),
+    );
 
     return [...filtered].sort((a, b) => {
-      const aRank = pinRank.get(a.id) ?? Number.POSITIVE_INFINITY;
-      const bRank = pinRank.get(b.id) ?? Number.POSITIVE_INFINITY;
+      const aRank =
+        pinRank.get(canonicalPluginId(a.toolkit || a.id)) ??
+        Number.POSITIVE_INFINITY;
+      const bRank =
+        pinRank.get(canonicalPluginId(b.toolkit || b.id)) ??
+        Number.POSITIVE_INFINITY;
       if (aRank !== bRank) return aRank - bRank;
       return 0;
     });
@@ -1575,7 +1843,7 @@ export function PluginMarketplace() {
     }
   }
 
-  const searchMode = view === 'discover' && deferredQuery.length > 0;
+  const searchMode = view === 'discover' && liveQuery.length > 0;
 
   return (
     <div className="mx-auto w-full max-w-[1060px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
@@ -1666,6 +1934,7 @@ export function PluginMarketplace() {
             onChange={(event) => {
               const value = event.target.value;
               setQuery(value);
+              setSearchVisibleCount(SEARCH_PREVIEW_LIMIT);
               if (view !== 'discover') setView('discover');
             }}
             placeholder="Search any app or describe what you want Xroga to do…"
@@ -1694,7 +1963,7 @@ export function PluginMarketplace() {
                   ? `${searchPlugins.length} matching Plugins — exact brands first, then capability matches.`
                   : searchLoading
                     ? 'Searching Xroga Apps and real capabilities…'
-                    : `No Plugin matched “${deferredQuery}”.`}
+                    : `No Plugin matched “${liveQuery}”.`}
               </p>
             </div>
             <button
@@ -1718,15 +1987,30 @@ export function PluginMarketplace() {
           ) : null}
 
           {searchPlugins.length ? (
-            <PluginListGrid
-              plugins={searchPlugins}
-              connectingId={connectingId}
-              onConnect={handleConnect}
-            />
+            <>
+              <PluginListGrid
+                plugins={searchPlugins.slice(0, searchVisibleCount)}
+                connectingId={connectingId}
+                onConnect={handleConnect}
+              />
+              {searchPlugins.length > searchVisibleCount ? (
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSearchVisibleCount((current) => current + SEARCH_PREVIEW_LIMIT)
+                    }
+                    className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                  >
+                    Show more results
+                  </button>
+                </div>
+              ) : null}
+            </>
           ) : !searchLoading ? (
             <div className="rounded-token-lg border border-dashed border-[var(--border-subtle)] px-5 py-8 text-center">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                No Plugin found for “{deferredQuery}”
+                No Plugin found for “{liveQuery}”
               </h3>
               <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-[var(--text-secondary)]">
                 Try an app name or describe the task differently. Xroga searches the full app catalogue and the live capability index.
@@ -1827,11 +2111,18 @@ export function PluginMarketplace() {
                       section={section}
                       plugins={pluginsForSection(section)}
                       expanded={expandedSections.has(section.id)}
+                      visibleCount={
+                        sectionVisibleCounts[section.id] ??
+                        (section.id === 'other'
+                          ? OTHER_PREVIEW_LIMIT
+                          : CATEGORY_PREVIEW_LIMIT)
+                      }
                       loading={Boolean(sectionLoading[section.id])}
                       error={sectionErrors[section.id]}
                       connectingId={connectingId}
                       onConnect={handleConnect}
                       onToggle={() => toggleDiscoverySection(section)}
+                      onShowMore={() => showMoreDiscoverySection(section)}
                     />
                   ))}
                 </div>

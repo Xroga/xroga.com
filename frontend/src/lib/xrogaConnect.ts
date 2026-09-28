@@ -72,6 +72,42 @@ export interface XrogaConnectCatalogToolkit {
   logo?: string;
   appUrl?: string;
   categories: XrogaConnectCatalogCategory[];
+  xrogaGroup?:
+    | 'productivity'
+    | 'communication'
+    | 'sales-crm'
+    | 'support'
+    | 'business-operations'
+    | 'commerce-payments'
+    | 'marketing-growth'
+    | 'social-media'
+    | 'booking-scheduling'
+    | 'travel-hospitality'
+    | 'maps-location'
+    | 'web-search-scraping'
+    | 'weather-utilities'
+    | 'logistics-shipping'
+    | 'forms-surveys'
+    | 'legal-contracts'
+    | 'real-estate'
+    | 'food-restaurants'
+    | 'finance-accounting'
+    | 'blockchain-crypto'
+    | 'data-analytics'
+    | 'databases'
+    | 'developer-tools'
+    | 'deployment-hosting'
+    | 'cloud-infrastructure'
+    | 'ai-automation'
+    | 'content-files'
+    | 'design-media'
+    | 'hr-recruiting'
+    | 'education-research'
+    | 'scientific-research'
+    | 'security'
+    | 'healthcare-fitness'
+    | 'entertainment'
+    | 'other';
   triggersCount: number;
   toolsCount: number;
   version?: string;
@@ -168,19 +204,31 @@ export const xrogaConnect = {
     }>('/api/integrations/xroga-connect/status'),
 
   permissionPolicy: {
-    get: () =>
+    get: (toolkit?: string) =>
       apiFetch<{
         ok: boolean;
         mode: XrogaPluginPermissionMode;
-      }>('/api/integrations/xroga-connect/permission-policy'),
+        toolkit?: string;
+      }>(
+        `/api/integrations/xroga-connect/permission-policy${queryString({
+          toolkit,
+        })}`,
+      ),
 
-    update: (mode: XrogaPluginPermissionMode) =>
+    update: (
+      mode: XrogaPluginPermissionMode,
+      toolkit?: string,
+    ) =>
       apiFetch<{
         ok: boolean;
         mode: XrogaPluginPermissionMode;
+        toolkit?: string;
       }>('/api/integrations/xroga-connect/permission-policy', {
         method: 'PATCH',
-        body: JSON.stringify({ mode }),
+        body: JSON.stringify({
+          mode,
+          ...(toolkit ? { toolkit } : {}),
+        }),
       }),
   },
 
@@ -200,24 +248,46 @@ export const xrogaConnect = {
     group?:
       | 'productivity'
       | 'communication'
-      | 'engineering'
-      | 'ai-automation'
       | 'sales-crm'
-      | 'commerce'
-      | 'marketing'
-      | 'finance'
-      | 'data-analytics'
-      | 'design-media'
       | 'support'
-      | 'infrastructure'
+      | 'business-operations'
+      | 'commerce-payments'
+      | 'marketing-growth'
+      | 'social-media'
+      | 'booking-scheduling'
+      | 'travel-hospitality'
+      | 'maps-location'
+      | 'web-search-scraping'
+      | 'weather-utilities'
+      | 'logistics-shipping'
+      | 'forms-surveys'
+      | 'legal-contracts'
+      | 'real-estate'
+      | 'food-restaurants'
+      | 'finance-accounting'
+      | 'blockchain-crypto'
+      | 'data-analytics'
+      | 'databases'
+      | 'developer-tools'
+      | 'deployment-hosting'
+      | 'cloud-infrastructure'
+      | 'ai-automation'
+      | 'content-files'
+      | 'design-media'
       | 'hr-recruiting'
       | 'education-research'
       | 'scientific-research'
       | 'security'
-      | 'healthcare'
-      | 'travel'
+      | 'healthcare-fitness'
       | 'entertainment'
-      | 'other';
+      | 'other'
+      | 'engineering'
+      | 'commerce'
+      | 'marketing'
+      | 'finance'
+      | 'infrastructure'
+      | 'healthcare'
+      | 'travel';
     sortBy?: 'usage' | 'alphabetically';
     limit?: number;
     cursor?: string;

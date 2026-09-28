@@ -41,7 +41,13 @@ test('Plugin permission policy is persisted and enforced for ordinary writes', (
   assert.match(service, /low_risk/);
   assert.match(service, /full_access/);
   assert.match(actions, /getUserPluginPermissionMode/);
+  assert.match(actions, /input\.plan\.toolkit/);
   assert.match(actions, /permissionMode ===[\s\S]*'full_access'/);
+  assert.match(service, /providerForToolkit/);
+  assert.match(service, /scope: cleanToolkit \? 'toolkit' : 'global'/);
+  assert.match(routes, /toolkit: z/);
+  assert.match(client, /get: \(toolkit\?: string\)/);
+  assert.match(client, /update:[\s\S]*toolkit\?: string/);
   assert.match(actions, /explicitUserAuthorization/);
   assert.match(client, /permissionPolicy:/);
   assert.match(client, /full_access/);
@@ -53,6 +59,10 @@ test('Plugin details show live provider permission scopes', () => {
   assert.match(detail, /Provider permissions/);
   assert.match(detail, /tools\.flatMap\(\(tool\) => tool\.scopes/);
   assert.match(detail, /read\/write\/sensitive classification/);
+  assert.match(detail, /PluginPermissionControl/);
+  assert.match(detail, /toolkit=\{permissionToolkit\}/);
+  assert.match(detail, />Information</);
+  assert.match(detail, /Connected account/);
 });
 
 test('upstream internal toolkits stay hidden from the Xroga Apps directory', () => {
@@ -71,6 +81,8 @@ test('permission choices use honest Xroga approval wording', () => {
   assert.match(permission, /Full access/);
   assert.match(permission, /High trust/);
   assert.match(permission, /actions you explicitly ask Xroga to perform/);
+  assert.match(permission, /This setting applies to/);
+  assert.match(permission, /<span>Permissions<\/span>/);
   assert.match(permission, /platform-enforced safeguards still apply/);
   assert.doesNotMatch(permission, /Composio/);
 });

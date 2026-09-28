@@ -34,7 +34,7 @@ function toolkit(
 test('Plugins expose a small human category system instead of raw provider category spam', () => {
   assert.deepEqual(
     PLUGIN_CATEGORY_GROUPS.slice(0, 5).map((item) => item.label),
-    ['All', 'Productivity', 'Communication', 'Engineering', 'AI & Automation'],
+    ['All', 'Productivity', 'Communication', 'Booking & Scheduling', 'Sales & CRM'],
   );
 
   assert.equal(
@@ -55,18 +55,165 @@ test('Plugins expose a small human category system instead of raw provider categ
   );
   assert.match(marketplace, /DISCOVERY_SECTIONS\.map/);
   assert.match(marketplace, /Developer Tools/);
+  assert.match(marketplace, /Deployment & Hosting/);
+  assert.match(marketplace, /Cloud & Infrastructure/);
+  assert.match(marketplace, /Databases/);
+  assert.match(marketplace, /Marketing & Growth/);
   assert.match(marketplace, /Business & Operations/);
+  assert.match(marketplace, /Blockchain & Crypto/);
+  assert.match(marketplace, /Booking & Scheduling/);
+  assert.match(marketplace, /Travel & Hospitality/);
+  assert.match(marketplace, /Maps & Location/);
+  assert.match(marketplace, /Web Search & Scraping/);
+  assert.match(marketplace, /Social Media/);
+  assert.match(marketplace, /Logistics & Shipping/);
+  assert.match(marketplace, /Forms & Surveys/);
+  assert.match(marketplace, /Legal & Contracts/);
+  assert.match(marketplace, /Real Estate/);
+  assert.match(marketplace, /Food & Restaurants/);
+  assert.match(marketplace, /Weather & Utilities/);
   assert.match(marketplace, /Small Business/);
-  assert.match(marketplace, /Creativity/);
+  assert.match(marketplace, /Design & Media/);
   assert.match(marketplace, /Education & Research/);
   assert.match(marketplace, /Scientific Research/);
   assert.match(marketplace, /Security/);
   assert.match(marketplace, /Finance/);
-  assert.match(marketplace, /Healthcare/);
-  assert.match(marketplace, /Travel/);
+  assert.match(marketplace, /Healthcare & Fitness/);
+  assert.match(marketplace, /Travel & Hospitality/);
   assert.match(marketplace, /Entertainment/);
   assert.match(marketplace, /aria-expanded=\{expanded\}/);
   assert.doesNotMatch(marketplace, /categories\.slice\(0, 10\)/);
+});
+
+test('official category signals beat misleading app descriptions', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'cal',
+        name: 'Cal',
+        description: 'Meeting coordination and booking pages.',
+        categories: [
+          { id: 'scheduling-&-booking', name: 'Scheduling & Booking' },
+        ],
+      }),
+    ),
+    'Booking & Scheduling',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'microsoft_clarity',
+        name: 'Microsoft Clarity',
+        description: 'Analyze navigation and user behavior on websites.',
+        categories: [
+          { id: 'analytics', name: 'Analytics' },
+        ],
+      }),
+    ),
+    'Data & Analytics',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'browser_tool',
+        name: 'Browser Tool',
+        description: 'Automate web navigation and extraction.',
+        categories: [
+          { id: 'ai-web-scraping', name: 'AI Web Scraping' },
+        ],
+      }),
+    ),
+    'Web Search & Scraping',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'postgresql',
+        name: 'PostgreSQL',
+        categories: [
+          { id: 'databases', name: 'Databases' },
+        ],
+      }),
+    ),
+    'Databases',
+  );
+});
+
+test('server-assigned Xroga category keeps shelf labels and app labels identical', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'misleading-example',
+        name: 'General Productivity Helper',
+        description: 'A broad app description that could fit many sections.',
+        xrogaGroup: 'booking-scheduling',
+        categories: [{ id: 'productivity', name: 'Productivity' }],
+      }),
+    ),
+    'Booking & Scheduling',
+  );
+});
+
+test('specialist categories keep common travel, maps, weather and social apps out of generic buckets', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'google_maps',
+        name: 'Google Maps',
+        categories: [{ id: 'maps', name: 'Maps' }],
+      }),
+    ),
+    'Maps & Location',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'weathermap',
+        name: 'OpenWeatherMap',
+        categories: [{ id: 'weather', name: 'Weather' }],
+      }),
+    ),
+    'Weather & Utilities',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'linkedin',
+        name: 'LinkedIn',
+        categories: [{ id: 'social-media-marketing', name: 'Social Media Marketing' }],
+      }),
+    ),
+    'Social Media',
+  );
+
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit({
+        slug: 'apex27',
+        name: 'Apex27',
+        description: 'Real estate agency software for property listings.',
+        categories: [{ id: 'real-estate', name: 'Real Estate' }],
+      }),
+    ),
+    'Real Estate',
+  );
+});
+
+test('search keeps the hydrated catalogue while remote capability results refine it', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /const liveQuery = query\.trim\(\)/);
+  assert.match(marketplace, /\.\.\.allPlugins/);
+  assert.match(marketplace, /SEARCH_PREVIEW_LIMIT = 10/);
+  assert.match(marketplace, /Show more results/);
+  assert.match(marketplace, /setSearchVisibleCount\(SEARCH_PREVIEW_LIMIT\)/);
 });
 
 test('expandable category sections query the complete catalog through server-side Xroga groups', () => {
@@ -81,8 +228,23 @@ test('expandable category sections query the complete catalog through server-sid
   assert.match(route, /'education-research'/);
   assert.match(route, /'scientific-research'/);
   assert.match(route, /'security'/);
-  assert.match(route, /'healthcare'/);
-  assert.match(route, /'travel'/);
+  assert.match(route, /'healthcare-fitness'/);
+  assert.match(route, /'travel-hospitality'/);
+  assert.match(route, /'booking-scheduling'/);
+  assert.match(route, /'databases'/);
+  assert.match(route, /'deployment-hosting'/);
+  assert.match(route, /'marketing-growth'/);
+  assert.match(route, /'business-operations'/);
+  assert.match(route, /'blockchain-crypto'/);
+  assert.match(route, /'social-media'/);
+  assert.match(route, /'maps-location'/);
+  assert.match(route, /'web-search-scraping'/);
+  assert.match(route, /'weather-utilities'/);
+  assert.match(route, /'logistics-shipping'/);
+  assert.match(route, /'forms-surveys'/);
+  assert.match(route, /'legal-contracts'/);
+  assert.match(route, /'real-estate'/);
+  assert.match(route, /'food-restaurants'/);
   assert.match(route, /'entertainment'/);
   assert.match(service, /xrogaCatalogGroupFor/);
   assert.match(service, /catalog:group:/);
@@ -204,11 +366,15 @@ test('category shelves stay compact, prioritize key brands, and keep all leftove
   );
 
   assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
+  assert.match(marketplace, /CATEGORY_EXPAND_STEP = 10/);
   assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
   assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
-  assert.match(marketplace, /creativity: \['canva', 'figma'\]/);
+  assert.match(marketplace, /'design-media': \['canva', 'figma'/);
+  assert.match(marketplace, /SMALL_BUSINESS_IDS/);
+  assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /section\.id === 'other' \? OTHER_PREVIEW_LIMIT : CATEGORY_PREVIEW_LIMIT/);
-  assert.match(marketplace, /expanded \? plugins : plugins\.slice\(0, previewLimit\)/);
+  assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
+  assert.match(marketplace, /Show 10 more/);
   assert.match(marketplace, /section\.id === 'other'/);
   assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);

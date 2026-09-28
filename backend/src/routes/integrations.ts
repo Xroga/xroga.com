@@ -1085,12 +1085,39 @@ router.get(
     req: AuthRequest,
     res,
   ) => {
+    const schema = z.object({
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(100)
+        .optional(),
+    });
+
+    const parsed = schema.safeParse(req.query);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
     try {
-      const mode = await getUserPluginPermissionMode(req.userId!);
+      const mode = await getUserPluginPermissionMode(
+        req.userId!,
+        parsed.data.toolkit,
+      );
 
       res.json({
         ok: true,
         mode,
+        ...(parsed.data.toolkit
+          ? {
+              toolkit: parsed.data.toolkit,
+            }
+          : {}),
       });
     } catch (error) {
       res.status(500).json({
@@ -1117,6 +1144,12 @@ router.patch(
         'low_risk',
         'full_access',
       ]),
+      toolkit: z
+        .string()
+        .trim()
+        .min(2)
+        .max(100)
+        .optional(),
     });
 
     const parsed = schema.safeParse(req.body);
@@ -1133,11 +1166,17 @@ router.patch(
       const mode = await setUserPluginPermissionMode(
         req.userId!,
         parsed.data.mode,
+        parsed.data.toolkit,
       );
 
       res.json({
         ok: true,
         mode,
+        ...(parsed.data.toolkit
+          ? {
+              toolkit: parsed.data.toolkit,
+            }
+          : {}),
       });
     } catch (error) {
       res.status(500).json({
@@ -1186,24 +1225,47 @@ router.get(
         .enum([
           'productivity',
           'communication',
-          'engineering',
-          'ai-automation',
           'sales-crm',
-          'commerce',
-          'marketing',
-          'finance',
-          'data-analytics',
-          'design-media',
           'support',
-          'infrastructure',
+          'business-operations',
+          'commerce-payments',
+          'marketing-growth',
+          'social-media',
+          'booking-scheduling',
+          'travel-hospitality',
+          'maps-location',
+          'web-search-scraping',
+          'weather-utilities',
+          'logistics-shipping',
+          'forms-surveys',
+          'legal-contracts',
+          'real-estate',
+          'food-restaurants',
+          'finance-accounting',
+          'blockchain-crypto',
+          'data-analytics',
+          'databases',
+          'developer-tools',
+          'deployment-hosting',
+          'cloud-infrastructure',
+          'ai-automation',
+          'content-files',
+          'design-media',
           'hr-recruiting',
           'education-research',
           'scientific-research',
           'security',
-          'healthcare',
-          'travel',
+          'healthcare-fitness',
           'entertainment',
           'other',
+          // Legacy aliases retained for already-loaded clients during deploys.
+          'engineering',
+          'commerce',
+          'marketing',
+          'finance',
+          'infrastructure',
+          'healthcare',
+          'travel',
         ])
         .optional(),
       sortBy: z.enum(['usage', 'alphabetically']).optional().default('usage'),
