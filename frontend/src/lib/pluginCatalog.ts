@@ -687,9 +687,18 @@ export function catalogPrimaryCategory(
 
   if (/maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories)) return 'Maps & Location';
   if (/weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories)) return 'Weather & Utilities';
-  if (/hotel|hospitality|lodging|accommodation|vacation rental|short-term rental/.test(categories)) return 'Hotels & Stays';
-  if (/travel|flight|airline|tourism|transport|rail|rental car/.test(categories)) return 'Travel & Transport';
-  if (/scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories)) return 'Booking & Scheduling';
+  if (
+    /scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories) ||
+    /\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)
+  ) return 'Booking & Scheduling';
+  if (
+    /hotel|hospitality|lodging|accommodation|vacation rental|short-term rental/.test(categories) ||
+    /\b(hotel|hotels|lodging|accommodation|stay|stays|booking\.com|airbnb|agoda|hospitality)\b/.test(text)
+  ) return 'Hotels & Stays';
+  if (
+    /travel|flight|airline|tourism|transport|rail|rental car/.test(categories) ||
+    /\b(flight|flights|airline|airlines|tourism|trip\.com|skyscanner|expedia|travel|transport|rail|train|rental car)\b/.test(text)
+  ) return 'Travel & Transport';
   if (/shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories)) return 'Logistics & Shipping';
   if (/real estate|property management|property listings|mortgage/.test(categories)) return 'Real Estate';
   if (/food|restaurants?|restaurant management|recipes?|dining/.test(categories)) return 'Food & Restaurants';
