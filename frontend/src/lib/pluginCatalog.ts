@@ -25,6 +25,9 @@ export type PluginDefinition = {
   examples?: string[];
   nativeCapabilities?: string[];
   developerUsage?: string[];
+  websiteUrl?: string;
+  privacyUrl?: string;
+  termsUrl?: string;
 };
 
 export type RuntimePlugin = PluginDefinition & {
@@ -66,6 +69,7 @@ export type PluginCapabilityGroup = {
 export const CATEGORY_ORDER = [
   'All',
   'Productivity',
+  'Project Management',
   'Communication',
   'Booking & Scheduling',
   'Sales & CRM',
@@ -92,7 +96,8 @@ export const CATEGORY_ORDER = [
   'Legal & Contracts',
   'Real Estate',
   'Food & Restaurants',
-  'Travel & Hospitality',
+  'Hotels & Stays',
+  'Travel & Transport',
   'Weather & Utilities',
   'Security',
   'Education & Research',
@@ -105,6 +110,7 @@ export const CATEGORY_ORDER = [
 export const PLUGIN_CATEGORY_GROUPS = [
   { id: '', label: 'All' },
   { id: 'productivity', label: 'Productivity' },
+  { id: 'project-management', label: 'Project Management' },
   { id: 'communication', label: 'Communication' },
   { id: 'booking-scheduling', label: 'Booking & Scheduling' },
   { id: 'sales-crm', label: 'Sales & CRM' },
@@ -131,7 +137,8 @@ export const PLUGIN_CATEGORY_GROUPS = [
   { id: 'legal-contracts', label: 'Legal & Contracts' },
   { id: 'real-estate', label: 'Real Estate' },
   { id: 'food-restaurants', label: 'Food & Restaurants' },
-  { id: 'travel-hospitality', label: 'Travel & Hospitality' },
+  { id: 'hotels-stays', label: 'Hotels & Stays' },
+  { id: 'travel-hospitality', label: 'Travel & Transport' },
   { id: 'weather-utilities', label: 'Weather & Utilities' },
   { id: 'security', label: 'Security' },
   { id: 'education-research', label: 'Education & Research' },
@@ -252,6 +259,9 @@ export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
       'Files',
     ],
     developerUsage: ['Code & repositories', 'Project updates'],
+    websiteUrl: 'https://github.com/',
+    privacyUrl: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement',
+    termsUrl: 'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service',
   },
   {
     id: 'notion',
@@ -470,7 +480,8 @@ export function inferCategory(name: string, description = ''): string {
 
   if (/\b(google maps|mapbox|geocod|geospatial|directions?|route planning|places api|location data)\b/.test(text)) return 'Maps & Location';
   if (/\b(weather|forecast|climate|temperature|time zone|timezone|currency converter)\b/.test(text)) return 'Weather & Utilities';
-  if (/\b(flight|airline|hotel|hospitality|lodging|tourism|trip\.com|skyscanner|expedia|booking\.com|airbnb|agoda|travel)\b/.test(text)) return 'Travel & Hospitality';
+  if (/\b(hotel|hotels|lodging|accommodation|stay|stays|airbnb|agoda|booking\.com|hospitality)\b/.test(text)) return 'Hotels & Stays';
+  if (/\b(flight|flights|airline|airlines|tourism|trip\.com|skyscanner|expedia|travel|transport|rail|train|rental car)\b/.test(text)) return 'Travel & Transport';
   if (/\b(calendly|cal\.com|appointment|booking page|scheduler|scheduling|meeting booking|availability management)\b/.test(text)) return 'Booking & Scheduling';
   if (/\b(shippo|shipstation|easypost|aftership|shipping|logistics|courier|delivery|fleet|freight|carrier|warehouse|supply chain)\b/.test(text)) return 'Logistics & Shipping';
   if (/\b(real estate|property listing|property management|realtor|zillow|mortgage|estate agency)\b/.test(text)) return 'Real Estate';
@@ -500,7 +511,8 @@ export function inferCategory(name: string, description = ''): string {
   if (/\b(design|creative|image|video|audio|graphics|3d|cad|animation|photo)\b/.test(text)) return 'Design & Media';
   if (/\b(document|file|storage|note|transcription)\b/.test(text)) return 'Content & Files';
   if (/\b(email|messaging|chat|sms|phone|voice|meeting|conference)\b/.test(text)) return 'Communication';
-  if (/\b(calendar|task|project management|spreadsheet|workspace|productivity)\b/.test(text)) return 'Productivity';
+  if (/\b(project management|task management|project planning|kanban|roadmap|work management)\b/.test(text)) return 'Project Management';
+  if (/\b(calendar|task|spreadsheet|workspace|productivity)\b/.test(text)) return 'Productivity';
 
   return 'Other';
 }
@@ -675,7 +687,8 @@ export function catalogPrimaryCategory(
 
   if (/maps?|geocoding|geospatial|location intelligence|navigation|places/.test(categories)) return 'Maps & Location';
   if (/weather|climate|forecast|time zones?|currency conversion|utilities/.test(categories)) return 'Weather & Utilities';
-  if (/travel|flight|airline|hotel|hospitality|lodging|tourism|vacation|accommodation|rental car/.test(categories)) return 'Travel & Hospitality';
+  if (/hotel|hospitality|lodging|accommodation|vacation rental|short-term rental/.test(categories)) return 'Hotels & Stays';
+  if (/travel|flight|airline|tourism|transport|rail|rental car/.test(categories)) return 'Travel & Transport';
   if (/scheduling\s*&\s*booking|scheduling and booking|appointment|reservation|calendar booking/.test(categories)) return 'Booking & Scheduling';
   if (/shipping|logistics|delivery|fleet|carrier|postal|warehouse|supply chain/.test(categories)) return 'Logistics & Shipping';
   if (/real estate|property management|property listings|mortgage/.test(categories)) return 'Real Estate';
@@ -708,7 +721,8 @@ export function catalogPrimaryCategory(
   if (/gaming|lifestyle\s*&\s*entertainment|lifestyle and entertainment|news\s*&\s*lifestyle|news and lifestyle|music|sports/.test(categories)) return 'Entertainment';
   if (/phone\s*&\s*sms|phone and sms|team chat|team collaboration|video conferencing|communication|call tracking|\bemail\b|fax|notifications|messaging/.test(categories)) return 'Communication';
   if (/calendar/.test(categories)) return 'Booking & Scheduling';
-  if (/productivity|bookmark managers|product management|project management|spreadsheets|task management|time tracking software/.test(categories)) return 'Productivity';
+  if (/project management|product management|task management|work management|kanban|roadmap/.test(categories)) return 'Project Management';
+  if (/productivity|bookmark managers|spreadsheets|time tracking software/.test(categories)) return 'Productivity';
 
   return inferCategory(toolkit.name, toolkit.description);
 }
@@ -812,14 +826,35 @@ export function pluginSearchScore(
 
   let score = 0;
 
-  if (name === clean || toolkit === clean || id === clean) score += 10_000;
-  if (name.startsWith(clean) || toolkit.startsWith(clean)) score += 5_000;
-  if (name.includes(clean) || toolkit.includes(clean) || id.includes(clean)) score += 2_500;
-  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase() === clean)) score += 2_000;
-  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase().includes(clean))) score += 1_000;
-  if (category.includes(clean)) score += 500;
-  if (description.includes(clean)) score += 350;
-  if (semanticToolkitSlugs.has((plugin.toolkit || plugin.id).toLowerCase())) score += 300;
+  if (name === clean || toolkit === clean || id === clean) score += 20_000;
+  if (name.startsWith(clean) || toolkit.startsWith(clean)) score += 8_000;
+  if (name.includes(clean) || toolkit.includes(clean) || id.includes(clean)) score += 4_000;
+  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase() === clean)) score += 3_000;
+  if ((plugin.keywords ?? []).some((keyword) => keyword.toLowerCase().includes(clean))) score += 1_500;
+
+  const tokens = clean
+    .split(/[^a-z0-9]+/g)
+    .filter((token) => token.length >= 2);
+  const keywordText = (plugin.keywords ?? []).join(' ').toLowerCase();
+  const tokenHaystack = [name, toolkit, id, category, description, keywordText].join(' ');
+
+  if (tokens.length) {
+    const matched = tokens.filter((token) => tokenHaystack.includes(token));
+    if (matched.length === tokens.length) score += 2_400;
+    score += matched.length * 450;
+    score += tokens.filter((token) => name.includes(token) || toolkit.includes(token)).length * 650;
+    score += tokens.filter((token) => category.includes(token)).length * 250;
+  }
+
+  if (category.includes(clean)) score += 800;
+  if (description.includes(clean)) score += 500;
+
+  // Capability search is deliberately strong once the user pauses typing so
+  // a natural-language task returns several relevant apps, not one opaque hit.
+  if (semanticToolkitSlugs.has((plugin.toolkit || plugin.id).toLowerCase())) {
+    score += tokens.length > 1 ? 3_500 : 1_800;
+  }
+
   if (plugin.connected) score += 25;
 
   return score;
