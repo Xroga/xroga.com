@@ -29,6 +29,11 @@ import {
 } from '../services/integrations/vercelAuth.js';
 
 import {
+  getUserPluginPermissionMode,
+  setUserPluginPermissionMode,
+} from '../services/integrations/pluginPermissionPolicy.js';
+
+import {
   syncUserVaultToVercel,
 } from '../services/integrations/githubDeploy.js';
 
@@ -1074,6 +1079,77 @@ function sendComposioError(
  * Lightweight availability
  * check for the frontend.
  */
+router.get(
+  '/xroga-connect/permission-policy',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    try {
+      const mode = await getUserPluginPermissionMode(req.userId!);
+
+      res.json({
+        ok: true,
+        mode,
+      });
+    } catch (error) {
+      res.status(500).json({
+        ok: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Could not load Plugin permissions.',
+      });
+    }
+  },
+);
+
+router.patch(
+  '/xroga-connect/permission-policy',
+  async (
+    req: AuthRequest,
+    res,
+  ) => {
+    const schema = z.object({
+      mode: z.enum([
+        'always_ask',
+        'read_only',
+        'low_risk',
+      ]),
+    });
+
+    const parsed = schema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        ok: false,
+        error: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    try {
+      const mode = await setUserPluginPermissionMode(
+        req.userId!,
+        parsed.data.mode,
+      );
+
+      res.json({
+        ok: true,
+        mode,
+      });
+    } catch (error) {
+      res.status(500).json({
+        ok: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Could not save Plugin permissions.',
+      });
+    }
+  },
+);
+
 router.get(
   '/xroga-connect/status',
   (_req, res) => {

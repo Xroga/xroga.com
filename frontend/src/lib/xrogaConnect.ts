@@ -140,6 +140,11 @@ export type XrogaConnectAvailabilityMode =
   | 'connected_apps'
   | 'read_write';
 
+export type XrogaPluginPermissionMode =
+  | 'always_ask'
+  | 'read_only'
+  | 'low_risk';
+
 function queryString(
   input: Record<string, string | number | undefined>,
 ): string {
@@ -160,6 +165,23 @@ export const xrogaConnect = {
       configured: boolean;
       mode: XrogaConnectAvailabilityMode;
     }>('/api/integrations/xroga-connect/status'),
+
+  permissionPolicy: {
+    get: () =>
+      apiFetch<{
+        ok: boolean;
+        mode: XrogaPluginPermissionMode;
+      }>('/api/integrations/xroga-connect/permission-policy'),
+
+    update: (mode: XrogaPluginPermissionMode) =>
+      apiFetch<{
+        ok: boolean;
+        mode: XrogaPluginPermissionMode;
+      }>('/api/integrations/xroga-connect/permission-policy', {
+        method: 'PATCH',
+        body: JSON.stringify({ mode }),
+      }),
+  },
 
   session: () =>
     apiFetch<{

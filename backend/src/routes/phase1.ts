@@ -1030,7 +1030,7 @@ router.post(
                   'Confirm external action',
 
                 message:
-                  'Review this high-risk action before Xroga executes it.',
+                  'Review this connected-app action before Xroga executes it.',
 
                 confirmationId:
                   confirmation.id,

@@ -687,7 +687,7 @@ export function pluginFromCatalog(
     toolkit: toolkit.slug,
     logo: toolkit.logo,
     logoFallback: composioLogoUrl(toolkit.slug),
-    connected: Boolean(options.connected || toolkit.noAuth),
+    connected: Boolean(options.connected),
     noAuth: toolkit.noAuth,
     capabilityCount: toolkit.toolsCount,
     toolsCount: toolkit.toolsCount,

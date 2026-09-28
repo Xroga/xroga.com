@@ -583,7 +583,12 @@ export function canUserAccessComposioToolkit(
 
   // Keep the upstream platform itself out of Xroga's user-facing app directory.
   // Xroga still uses the provider internally for runtime/catalog services.
-  if (clean === 'composio') {
+  if (
+    clean === 'composio' ||
+    clean.startsWith('composio_') ||
+    clean === 'code_interpreter' ||
+    clean === 'codeinterpreter'
+  ) {
     return false;
   }
 

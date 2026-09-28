@@ -35,6 +35,10 @@ import {
   type XrogaConnectToolRisk,
 } from './composioClient.js';
 
+import {
+  getUserPluginPermissionMode,
+} from './pluginPermissionPolicy.js';
+
 const MAX_USE_CASE_LENGTH = 500;
 const MAX_TOOL_CANDIDATES = 10;
 const MAX_SCHEMA_CHARS = 7_500;
@@ -1416,13 +1420,24 @@ export async function executePreparedBusinessAction(
     );
   }
 
+  const permissionMode =
+    await getUserPluginPermissionMode(
+      input.userId,
+    );
+
   const highRiskNow =
     input.plan
       .requiresConfirmation ||
     details.risk ===
       'destructive' ||
     details.risk ===
-      'unknown';
+      'unknown' ||
+    (
+      permissionMode !==
+        'low_risk' &&
+      details.risk ===
+        'write'
+    );
 
   if (
     highRiskNow &&
@@ -1438,7 +1453,9 @@ export async function executePreparedBusinessAction(
         input.plan,
 
       message:
-        `Confirm this exact action before Xroga executes it: ${input.plan.summary}`,
+        permissionMode === 'low_risk'
+          ? `Confirm this exact action before Xroga executes it: ${input.plan.summary}`
+          : `Your Plugin permission setting requires confirmation before Xroga executes this change: ${input.plan.summary}`,
     };
   }
 
