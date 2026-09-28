@@ -1237,7 +1237,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
               <ShieldCheck className="mt-0.5 h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
               <div className="min-w-0">
                 <h2 className="text-base font-semibold text-[var(--text-primary)]">
-                  Access, scopes & safety
+                  Permissions & safety
                 </h2>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <p className="text-xs text-[var(--text-secondary)]">
@@ -1254,12 +1254,18 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   </p>
                 </div>
 
-                {scopes.length ? (
-                  <details className="mt-4 rounded-token-md border border-[var(--border-subtle)]">
-                    <summary className="cursor-pointer px-3 py-2.5 text-xs font-semibold text-[var(--text-primary)]">
-                      Provider scopes ({scopes.length})
-                    </summary>
-                    <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] p-3">
+                <div className="mt-4 rounded-token-md border border-[var(--border-subtle)]">
+                  <div className="px-3 py-2.5">
+                    <p className="text-xs font-semibold text-[var(--text-primary)]">
+                      Provider permissions
+                      {scopes.length ? ` (${scopes.length})` : ''}
+                    </p>
+                    <p className="mt-1 text-[11px] leading-4 text-[var(--text-secondary)]">
+                      Xroga derives these permissions from the app’s current live action metadata. They are the exact scope strings exposed for the actions loaded above.
+                    </p>
+                  </div>
+                  {scopes.length ? (
+                    <div className="flex max-h-52 flex-wrap gap-2 overflow-y-auto border-t border-[var(--border-subtle)] p-3">
                       {scopes.map((scope) => (
                         <code
                           key={scope}
@@ -1269,8 +1275,16 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                         </code>
                       ))}
                     </div>
-                  </details>
-                ) : null}
+                  ) : (
+                    <div className="border-t border-[var(--border-subtle)] p-3">
+                      <p className="text-[11px] leading-4 text-[var(--text-secondary)]">
+                        {noAuth
+                          ? 'This app does not require an account authorization scope.'
+                          : 'This provider does not expose explicit OAuth scope strings in the current action metadata. The read/write/sensitive classification above still applies to every loaded action.'}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
                   Unknown actions are never presented as read-only. Xroga’s server-side read/write/destructive classification and confirmation flow remains authoritative.
