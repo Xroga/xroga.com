@@ -726,32 +726,34 @@ export function PluginMarketplace() {
           // Show the first usage-ranked page immediately, then quietly hydrate
           // the remaining app metadata so every category (including Other)
           // has a useful preview without rendering 1,500+ rows at once.
-          let cursor = catalogResult.value.nextCursor;
-          let pages = 1;
-          const hydrated = [...catalogResult.value.items];
+          void (async () => {
+            let cursor = catalogResult.value.nextCursor;
+            let pages = 1;
+            const hydrated = [...catalogResult.value.items];
 
-          while (active && cursor && pages < 20) {
-            try {
-              const page = await xrogaConnect.catalog({
-                sortBy: 'usage',
-                limit: BROWSE_PAGE_SIZE,
-                cursor,
-              });
+            while (active && cursor && pages < 20) {
+              try {
+                const page = await xrogaConnect.catalog({
+                  sortBy: 'usage',
+                  limit: BROWSE_PAGE_SIZE,
+                  cursor,
+                });
 
-              for (const item of page.items) {
-                if (!hydrated.some((existing) => existing.slug === item.slug)) {
-                  hydrated.push(item);
+                for (const item of page.items) {
+                  if (!hydrated.some((existing) => existing.slug === item.slug)) {
+                    hydrated.push(item);
+                  }
                 }
-              }
 
-              setCatalogItems([...hydrated]);
-              cursor = page.nextCursor;
-              pages += 1;
-            } catch {
-              // Keep the already-loaded catalogue usable if background hydration fails.
-              break;
+                if (active) setCatalogItems([...hydrated]);
+                cursor = page.nextCursor;
+                pages += 1;
+              } catch {
+                // Keep the already-loaded catalogue usable if background hydration fails.
+                break;
+              }
             }
-          }
+          })();
         }
         setCatalogLoading(false);
 
