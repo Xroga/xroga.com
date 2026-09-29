@@ -51,13 +51,11 @@ const PERMISSION_OPTIONS: Array<{
 export function PluginPermissionControl({
   compact = false,
   buttonOnly = false,
-  showFullAccessShortcut = false,
   toolkit,
   pluginName,
 }: {
   compact?: boolean;
   buttonOnly?: boolean;
-  showFullAccessShortcut?: boolean;
   toolkit?: string;
   pluginName?: string;
 }) {
@@ -136,7 +134,7 @@ export function PluginPermissionControl({
     <div
       role="menu"
       aria-label={toolkit ? `${pluginName || 'Plugin'} permission` : 'Default Plugin permission'}
-      className="xv-plugin-permission-menu absolute right-0 z-[80] mt-2 w-[min(330px,calc(100vw-32px))] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1 shadow-[0_18px_48px_rgba(0,0,0,0.18)]"
+      className="xv-plugin-permission-menu absolute right-0 z-[80] mt-2 w-[min(300px,calc(100vw-24px))] overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1 shadow-[0_16px_38px_rgba(0,0,0,0.18)]"
     >
       {PERMISSION_OPTIONS.map((option) => (
         <button
@@ -147,10 +145,10 @@ export function PluginPermissionControl({
           onClick={() => void updatePermission(option.id)}
           className={
             option.highTrust
-              ? 'flex w-full items-start gap-2.5 rounded-xl border border-orange-500/15 bg-orange-500/5 px-3 py-2 text-left transition hover:bg-orange-500/10'
+              ? 'flex w-full items-start gap-2 rounded-lg border border-orange-500/15 bg-orange-500/5 px-2.5 py-2 text-left transition hover:bg-orange-500/10'
               : permissionMode === option.id
-                ? 'flex w-full items-start gap-2.5 rounded-xl bg-[var(--surface-inset)] px-3 py-2 text-left transition'
-                : 'flex w-full items-start gap-2.5 rounded-xl px-3 py-2 text-left transition hover:bg-[var(--surface-inset)]'
+                ? 'flex w-full items-start gap-2 rounded-lg bg-[var(--surface-inset)] px-2.5 py-2 text-left transition'
+                : 'flex w-full items-start gap-2 rounded-lg px-2.5 py-2 text-left transition hover:bg-[var(--surface-inset)]'
           }
         >
           <span className="min-w-0 flex-1">
@@ -164,7 +162,7 @@ export function PluginPermissionControl({
                 </span>
               ) : null}
             </span>
-            <span className="mt-0.5 block text-[10px] leading-[1.35rem] text-[var(--text-secondary)]">
+            <span className="mt-0.5 block text-[10px] leading-4 text-[var(--text-secondary)]">
               {option.description}
             </span>
           </span>
@@ -215,9 +213,6 @@ export function PluginPermissionControl({
           >
             {selected.label}
           </span>
-          {!selected.highTrust && showFullAccessShortcut ? (
-            <span className="sr-only">Full access is available in this menu</span>
-          ) : null}
           <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
         {menu}

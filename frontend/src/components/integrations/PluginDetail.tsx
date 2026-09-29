@@ -14,7 +14,7 @@ import {
   Search,
   ShieldCheck,
   TriangleAlert,
-  Zap,
+  Play,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -997,7 +997,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   Describe a task. Xroga searches the live action network for matching tools and, when a learned skill exists, shows its recommended plan and pitfalls.
                 </p>
 
-                <div className="xv-plugin-task-input mt-4 flex items-center gap-2">
+                <div className="xv-plugin-task-input mt-4 flex max-w-3xl items-center gap-2">
                   <input
                     value={useCaseQuery}
                     onChange={(event) => setUseCaseQuery(event.target.value)}
@@ -1013,7 +1013,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                     onClick={() => void exploreUseCase()}
                     className="xv-plugin-task-submit inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full disabled:opacity-50"
                   >
-                    {useCaseLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Zap className="h-4 w-4" aria-hidden="true" />}
+                    {useCaseLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
                     <span className="sr-only">Analyze task</span>
                   </button>
                 </div>
@@ -1452,7 +1452,6 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
               <PluginPermissionControl
                 buttonOnly
-                showFullAccessShortcut
                 toolkit={permissionToolkit}
                 pluginName={definition.name}
               />

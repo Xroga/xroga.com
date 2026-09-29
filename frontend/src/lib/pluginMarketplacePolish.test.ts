@@ -330,6 +330,7 @@ test('brand logos use toolkit metadata then the official toolkit logo CDN and ne
 
   assert.match(logo, /logo,/);
   assert.match(logo, /fallbackLogo,/);
+  assert.ok(logo.indexOf('getIntegrationLogo(id)') < logo.indexOf('simpleIconCandidates(toolkit, name)'));
   assert.match(logo, /composioLogoUrl\(toolkit\)/);
   assert.match(logo, /IntegrationLogo/);
   assert.doesNotMatch(logo, /<Plug/);
@@ -368,7 +369,7 @@ test('category shelves stay compact, prioritize key brands, and keep the full ca
 
   assert.match(marketplace, /CATEGORY_PREVIEW_LIMIT = 6/);
   assert.match(marketplace, /CATEGORY_EXPAND_STEP = 10/);
-  assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
+  assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 6/);
   assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
   assert.match(marketplace, /'commerce-payments': \['stripe', 'shopify', 'whop'/);
@@ -401,6 +402,47 @@ test('discover hydrates the full app metadata in the background without renderin
   assert.match(marketplace, /setCatalogItems\(\[\.\.\.hydrated\]\)/);
   assert.doesNotMatch(marketplace, />All Plugins</);
   assert.match(marketplace, /max-w-\[1180px\]/);
+});
+
+test('Plugin toolbar keeps fullscreen inside the Plugin view controls and attention is actionable', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  const nav = marketplace.indexOf('aria-label="Plugin views"');
+  const fullscreen = marketplace.indexOf('aria-label={fullscreen ? \'Exit Plugins fullscreen\'');
+  const headerEnd = marketplace.indexOf('</header>');
+
+  assert.ok(nav >= 0);
+  assert.ok(fullscreen > nav);
+  assert.ok(fullscreen > headerEnd);
+  assert.match(
+    marketplace,
+    /connectedFilter === 'attention'[\s\S]*plugin\.connectionState !== 'needs_attention'/,
+  );
+  assert.doesNotMatch(
+    marketplace,
+    /connectedFilter === 'attention'[\s\S]{0,180}plugin\.connectionState !== 'error'/,
+  );
+  assert.doesNotMatch(
+    marketplace,
+    /const connectedPlugins[\s\S]{0,260}plugin\.connectionState === 'error'/,
+  );
+});
+
+test('Plugin permissions use one compact management control without duplicate shortcut copy', () => {
+  const detail = source(
+    'frontend/src/components/integrations/PluginDetail.tsx',
+  );
+  const control = source(
+    'frontend/src/components/integrations/PluginPermissionControl.tsx',
+  );
+
+  assert.equal((detail.match(/<PluginPermissionControl/g) ?? []).length, 1);
+  assert.match(detail, /buttonOnly/);
+  assert.doesNotMatch(detail, /showFullAccessShortcut/);
+  assert.doesNotMatch(control, /Full access is available in this menu/);
+  assert.match(control, /w-\[min\(300px,calc\(100vw-24px\)\)\]/);
 });
 
 test('search and connected-management polish stay theme-safe and list-based', () => {
