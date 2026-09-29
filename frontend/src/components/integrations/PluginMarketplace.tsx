@@ -898,7 +898,7 @@ function CategoryPluginSection({
               <button
                 type="button"
                 onClick={onToggle}
-                className="mt-3 inline-flex max-w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left text-[11px] font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                className="xv-plugin-show-more mt-3 inline-flex max-w-full items-center gap-2 px-4 py-2 text-left text-[11px] font-semibold focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                 aria-label={`See more ${section.title} Plugins`}
               >
                 <span className="flex -space-x-1">
@@ -1537,7 +1537,8 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.connected ||
-          plugin.connectionState === 'needs_attention',
+          plugin.connectionState === 'needs_attention' ||
+          plugin.connectionState === 'error',
       ),
     [allPlugins],
   );
