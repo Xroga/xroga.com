@@ -174,6 +174,12 @@ export function useBackgroundBuildJobs(
                   }
                 | null;
 
+            const resumableInterrupted =
+              output?.code ===
+                'BUILD_INTERRUPTED' &&
+              output?.resumable ===
+                true;
+
             failedRef.current?.({
               ...identity,
 
@@ -184,9 +190,7 @@ export function useBackgroundBuildJobs(
                 output?.code,
 
               resumable:
-                output
-                  ?.resumable ===
-                true,
+                resumableInterrupted,
 
               error:
                 run.status ===
