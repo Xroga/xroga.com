@@ -361,7 +361,7 @@ test('upstream platform app is not exposed as an Xroga App', () => {
   assert.match(runtime, /return false/);
 });
 
-test('category shelves stay compact, prioritize key brands, and keep a progressive Other plus All Apps escape hatch', () => {
+test('category shelves stay compact, prioritize key brands, and keep the full catalog reachable through expandable categories', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
@@ -373,11 +373,12 @@ test('category shelves stay compact, prioritize key brands, and keep a progressi
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
   assert.match(marketplace, /SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
-  assert.match(marketplace, /section\.id === 'other' \|\| section\.id === 'all-apps'/);
   assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
   assert.match(marketplace, /Show 10 more/);
   assert.match(marketplace, /section\.id === 'other'/);
-  assert.match(marketplace, /section\.id === 'all-apps'/);
+  assert.doesNotMatch(marketplace, /id: 'all-apps'/);
+  assert.match(marketplace, /See \{plugins/);
+  assert.match(marketplace, /and more/);
   assert.match(marketplace, /!claimedCategories\.has\(plugin\.category\)/);
   assert.match(marketplace, /if \(isExpanded\) next\.delete\(section\.id\)/);
   assert.match(marketplace, /else next\.add\(section\.id\)/);
@@ -397,7 +398,7 @@ test('discover hydrates the full app metadata in the background without renderin
   assert.match(marketplace, /while \(active && cursor && pages < 20\)/);
   assert.match(marketplace, /setCatalogItems\(\[\.\.\.hydrated\]\)/);
   assert.doesNotMatch(marketplace, />All Plugins</);
-  assert.match(marketplace, /max-w-\[1060px\]/);
+  assert.match(marketplace, /max-w-\[1180px\]/);
 });
 
 test('search and connected-management polish stay theme-safe and list-based', () => {
