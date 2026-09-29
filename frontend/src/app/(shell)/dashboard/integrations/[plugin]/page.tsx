@@ -1,5 +1,4 @@
 import { PluginDetail } from '@/components/integrations/PluginDetail';
-import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 
 export default async function PluginDetailPage({
   params,
@@ -8,9 +7,5 @@ export default async function PluginDetailPage({
 }) {
   const { plugin } = await params;
 
-  return (
-    <PageFullscreenFrame>
-      <PluginDetail pluginId={decodeURIComponent(plugin)} />
-    </PageFullscreenFrame>
-  );
+  return <PluginDetail pluginId={decodeURIComponent(plugin)} />;
 }
