@@ -1353,6 +1353,33 @@ export async function streamSwarmExecute(
       throw error;
     }
 
+    const reconnectableResumeControlError =
+      error instanceof
+        ApiError &&
+      [
+        'RUN_ALREADY_ACTIVE',
+        'RUN_ALREADY_COMPLETE',
+      ].includes(
+        String(
+          error.data
+            .code ??
+          '',
+        ),
+      );
+
+    if (
+      reconnectableResumeControlError &&
+      runId
+    ) {
+      return waitForPersistedSwarmRun(
+        runId,
+        token,
+        options,
+        finalText,
+        lastSequence,
+      );
+    }
+
     if (
       runId
     ) {
