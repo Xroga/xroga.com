@@ -30,21 +30,47 @@ const ORPHAN_GRACE_MS = 5 * 60_000;
 
 export type ReconcileReason = 'worker_restarted' | 'deploy_interrupted' | 'worker_lost';
 
-const REASON_TEXT: Record<ReconcileReason, string> = {
+const REASON_TEXT:
+  Record<
+    ReconcileReason,
+    string
+  > = {
   worker_restarted:
-    'The build stopped because the service restarted. No files were pushed and no deployment was created. Please run it again.',
+    'The build was interrupted because the service restarted. No files were pushed and no deployment was created by the interrupted operation. Retry to continue this exact build from its latest durable checkpoint.',
+
   deploy_interrupted:
-    'The build stopped because the service was updating. No files were pushed and no deployment was created. Please run it again.',
+    'The build was interrupted while Xroga was updating. No files were pushed and no deployment was created by the interrupted operation. Retry to continue this exact build from its latest durable checkpoint.',
+
   worker_lost:
-    'The build stopped unexpectedly and could not be recovered. No files were pushed and no deployment was created. Please run it again.',
+    'The build worker stopped unexpectedly. Xroga preserved the durable run evidence that was available. Retry to continue this exact build safely.',
 };
 
-export function reconcileOutput(reason: ReconcileReason): Record<string, unknown> {
+export function reconcileOutput(
+  reason:
+    ReconcileReason,
+): Record<
+  string,
+  unknown
+> {
   return {
-    type: 'error',
-    code: 'BUILD_INTERRUPTED',
+    type:
+      'error',
+
+    code:
+      'BUILD_INTERRUPTED',
+
     reason,
-    error: REASON_TEXT[reason],
+
+    resumable:
+      true,
+
+    resumeMode:
+      'same_run',
+
+    error:
+      REASON_TEXT[
+        reason
+      ],
   };
 }
 
