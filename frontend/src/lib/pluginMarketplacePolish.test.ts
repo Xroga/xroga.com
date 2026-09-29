@@ -374,6 +374,8 @@ test('category shelves stay compact, prioritize key brands, and keep the full ca
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
   assert.match(marketplace, /'commerce-payments': \['stripe', 'shopify', 'whop'/);
   assert.match(marketplace, /'deployment-hosting': \['vercel', 'railway', 'render', 'flyio'/);
+  assert.match(marketplace, /const pinnedPlugins = pins/);
+  assert.match(marketplace, /const candidates = mergePlugins\(\[\.\.\.pinnedPlugins, \.\.\.filtered\]\)/);
   assert.match(marketplace, /SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
@@ -404,18 +406,20 @@ test('discover hydrates the full app metadata in the background without renderin
   assert.match(marketplace, /max-w-\[1180px\]/);
 });
 
-test('Plugin toolbar keeps fullscreen inside the Plugin view controls and attention is actionable', () => {
+test('Plugin toolbar keeps fullscreen inside the Plugin segmented tab area and attention is actionable', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
   const nav = marketplace.indexOf('aria-label="Plugin views"');
+  const navEnd = marketplace.indexOf('</nav>', nav);
   const fullscreen = marketplace.indexOf('aria-label={fullscreen ? \'Exit Plugins fullscreen\'');
-  const headerEnd = marketplace.indexOf('</header>');
 
   assert.ok(nav >= 0);
+  assert.ok(navEnd > nav);
   assert.ok(fullscreen > nav);
-  assert.ok(fullscreen > headerEnd);
+  assert.ok(fullscreen < navEnd);
+  assert.match(marketplace, /xv-plugin-fullscreen-button--inline/);
   assert.match(
     marketplace,
     /connectedFilter === 'attention'[\s\S]*plugin\.connectionState !== 'needs_attention'/,
@@ -483,4 +487,14 @@ test('empty category placeholders are never shown and sparse Other is suppressed
   assert.match(marketplace, /section\.id === 'other' && sectionPlugins\.length < 4/);
   assert.doesNotMatch(marketplace, /Open this category to load its supported apps/);
   assert.doesNotMatch(marketplace, /No apps are currently classified in this category/);
+});
+
+
+test('Plugin detail does not render a generic fullscreen control outside Plugin content', () => {
+  const page = source(
+    'frontend/src/app/(shell)/dashboard/integrations/[plugin]/page.tsx',
+  );
+
+  assert.doesNotMatch(page, /PageFullscreenFrame/);
+  assert.match(page, /<PluginDetail pluginId=/);
 });
