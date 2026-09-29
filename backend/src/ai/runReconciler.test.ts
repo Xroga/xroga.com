@@ -42,13 +42,45 @@ test('a reconciled run never implies work reached GitHub or Vercel', () => {
   }
 });
 
-test('the user is told what to do next, without being asked to debug', () => {
-  for (const reason of REASONS) {
-    const message = String(reconcileOutput(reason).error);
-    assert.match(message, /Please run it again\./);
-    assert.doesNotMatch(message, /TypeScript|npm|install|terminal/i);
-  }
-});
+test(
+  'the user is given an exact same-run recovery action without being asked to debug',
+  () => {
+    for (
+      const reason of
+      REASONS
+    ) {
+      const output =
+        reconcileOutput(
+          reason,
+        );
+
+      const message =
+        String(
+          output.error,
+        );
+
+      assert.match(
+        message,
+        /Retry to continue this exact build/i,
+      );
+
+      assert.equal(
+        output.resumable,
+        true,
+      );
+
+      assert.equal(
+        output.resumeMode,
+        'same_run',
+      );
+
+      assert.doesNotMatch(
+        message,
+        /TypeScript|npm|install|terminal/i,
+      );
+    }
+  },
+);
 
 test('an interrupted build is distinguishable from a build that genuinely failed', () => {
   // BUILD_FAILED means Xroga tried and could not; BUILD_INTERRUPTED means it never
