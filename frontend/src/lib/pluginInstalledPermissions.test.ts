@@ -83,7 +83,7 @@ test('permission choices use honest Xroga approval wording', () => {
   assert.match(permission, /Explicitly requested actions can run without an extra Xroga confirmation/);
   assert.match(permission, /This setting applies to/);
   assert.match(permission, /<span>Permissions<\/span>/);
-  assert.match(permission, /platform-enforced safeguards still apply/);
+  assert.match(permission, /Provider and platform safeguards still apply/);
   assert.doesNotMatch(permission, /Composio/);
 });
 
