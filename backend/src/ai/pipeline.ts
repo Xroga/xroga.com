@@ -235,9 +235,16 @@ import {
   executableTasksFromRoutePlan,
   transitionTask,
 } from './executionRuntime.js';
+import {
+  appendMissingExecutionTasks,
+  recoverCanonicalExecutionStateForResume,
+} from '../synthesis/reliability/canonicalResume.js';
 import { describeVerificationState } from './verificationLifecycle.js';
 import { engineeringTaskHandlers } from './engineeringTasks.js';
-import { runUniversalSynthesisFoundation } from '../synthesis/foundation.js';
+import {
+  runUniversalSynthesisFoundation,
+  synthesisArtifactsFromCanonicalState,
+} from '../synthesis/foundation.js';
 import type {
   SoftwareRunEvent,
 } from './softwareAgent/runEvents.js';
@@ -1303,42 +1310,125 @@ if (
       ? { ...model, configured: true, credentialSource: 'user' as const }
       : model,
   );
+  const resolvedProjectId = meta?.githubTargetRepo?.includes('/')
+    ? projectContextKey({
+        repo: meta.githubTargetRepo,
+        branch: meta.githubTargetBranch || 'main',
+        projectRoot: meta.projectRoot || '/',
+      })
+    : opts.projectId;
+
   await loadRoutingOutcomes();
+
+  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? new SupabaseExecutionStateStore(opts.userId)
+    : new InMemoryExecutionStateStore();
+
+  const persistedExecutionState = meta?.resumeRun
+    ? await executionStore.load(runId)
+    : null;
+
+  const canonicalRecovery = persistedExecutionState
+    ? recoverCanonicalExecutionStateForResume(persistedExecutionState)
+    : null;
+
+  /*
+   * Exact resume uses the persisted canonical working snapshot rather than silently
+   * switching to whatever the repository looks like now.
+   */
+  const canonicalFiles = canonicalRecovery?.state.currentWorkingSnapshot.length
+    ? canonicalRecovery.state.currentWorkingSnapshot
+    : prior.files;
+
+  /*
+   * Use one canonical project identity across synthesis and UniversalExecution.
+   * UniversalExecution itself uses resolvedProjectId or run:<runId>.
+   */
+  const canonicalProjectId =
+    canonicalRecovery?.state.projectId ??
+    resolvedProjectId ??
+    `run:${runId}`;
+
   const intelligentPlan = createIntelligentRoutePlan({
     prompt: opts.prompt,
-    repositoryFiles: prior.files,
+    repositoryFiles: canonicalFiles,
     registry: runtimeRegistry,
   });
+
   const implementationTask = intelligentPlan.subtasks.find((task) =>
     ['multi_file_implementation', 'code_generation', 'bug_fixing', 'refactoring'].includes(
       task.taskClass,
     ),
   );
+
   const reviewerTask = intelligentPlan.subtasks.find((task) =>
     ['code_review', 'security_review'].includes(task.taskClass),
   );
+
   const reviewerModel = reviewerTask?.selectedModel ?? 'deepseek_v4_flash';
-  const executionStore = process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? new SupabaseExecutionStateStore(opts.userId)
-    : new InMemoryExecutionStateStore();
-  const synthesis = await runUniversalSynthesisFoundation({
-    prompt: opts.prompt,
-    projectId: meta?.githubTargetRepo || prior.projectName || runId,
-    runId,
-    repository: meta?.githubTargetRepo ? {
-      owner: meta.githubTargetRepo.split('/')[0] || '',
-      name: meta.githubTargetRepo.split('/')[1] || meta.githubTargetRepo,
-    } : null,
-    selectedBranch: meta?.githubTargetBranch || 'main',
-    files: prior.files,
-    store: executionStore,
-  });
+
+  const recoveredSynthesisArtifacts = canonicalRecovery
+    ? synthesisArtifactsFromCanonicalState(canonicalRecovery.state)
+    : null;
+
+  if (canonicalRecovery) {
+    emit({
+      agent: 'runtime',
+      status: canonicalRecovery.blockedUncertainTaskIds.length
+        ? 'resume_requires_reconciliation'
+        : 'resumed',
+      message: canonicalRecovery.blockedUncertainTaskIds.length
+        ? `Recovered the durable run. ${canonicalRecovery.blockedUncertainTaskIds.length} external side-effect task(s) require evidence reconciliation before replay.`
+        : `Recovered the durable run with ${canonicalRecovery.resumedTaskIds.length} task(s) ready to continue.`,
+      swarmStatusLabel: canonicalRecovery.blockedUncertainTaskIds.length
+        ? 'Recovered safely'
+        : 'Resumed',
+      swarmActivity: 'Durable recovery',
+      swarmTodos: todosForBuild('route', 'omit'),
+    });
+  }
+
+  const synthesis =
+    canonicalRecovery && recoveredSynthesisArtifacts
+      ? {
+          state: canonicalRecovery.state,
+          artifacts: recoveredSynthesisArtifacts,
+        }
+      : await runUniversalSynthesisFoundation({
+          prompt: opts.prompt,
+          projectId: canonicalProjectId,
+          runId,
+          repository: meta?.githubTargetRepo
+            ? {
+                owner: meta.githubTargetRepo.split('/')[0] || '',
+                name:
+                  meta.githubTargetRepo.split('/')[1] ||
+                  meta.githubTargetRepo,
+              }
+            : null,
+          selectedBranch: meta?.githubTargetBranch || 'main',
+          files: canonicalFiles,
+          store: executionStore,
+          ...(canonicalRecovery
+            ? {
+                existingState: canonicalRecovery.state,
+              }
+            : {}),
+        });
+
   const executionState = synthesis.state;
-  executionState.requiredCapabilities = [...new Set([
-    ...executionState.requiredCapabilities,
-    ...intelligentPlan.classification.requiredCapabilities,
-  ])];
-  executionState.tasks.push(...executableTasksFromRoutePlan(intelligentPlan));
+
+  executionState.requiredCapabilities = [
+    ...new Set([
+      ...executionState.requiredCapabilities,
+      ...intelligentPlan.classification.requiredCapabilities,
+    ]),
+  ];
+
+  appendMissingExecutionTasks(
+    executionState,
+    executableTasksFromRoutePlan(intelligentPlan),
+  );
 
   // Engineering tasks run through the canonical scheduler.
   //
@@ -1359,7 +1449,7 @@ if (
     executionState,
     engineeringTaskHandlers({
       classification: intelligentPlan.classification,
-      files: prior.files,
+      files: canonicalFiles,
       repository: meta?.githubTargetRepo ?? null,
     }),
   ).catch((error) => {
@@ -1432,13 +1522,6 @@ if (
   // that normalized key both keeps arbitrary workspace builds eligible and isolates two
   // branches or monorepo roots of the same repository. `opts.projectId` remains the
   // compatibility identity only for a project that has no repository context yet.
-  const resolvedProjectId = meta?.githubTargetRepo?.includes('/')
-    ? projectContextKey({
-        repo: meta.githubTargetRepo,
-        branch: meta.githubTargetBranch || 'main',
-        projectRoot: meta.projectRoot || '/',
-      })
-    : opts.projectId;
 
   // Which path this run took, and why, recorded on the run itself.
   //
