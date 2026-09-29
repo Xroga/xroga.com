@@ -1576,7 +1576,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                   type="button"
                   disabled={connectingComposio}
                   onClick={() => void handleConnectComposio()}
-                  className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-token-sm border border-[var(--border-subtle)] px-3 text-xs font-semibold text-[var(--text-primary)] disabled:opacity-50"
+                  className="xv-plugin-connect-btn mt-3 inline-flex min-h-9 items-center gap-2 px-3 text-xs font-semibold disabled:opacity-50"
                 >
                   {connectingComposio ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
                   Connect AI actions
