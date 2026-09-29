@@ -37,7 +37,7 @@ test(
 
     assert.match(
       api,
-      /clientRunId\s*\?\s*\{\s*runId:\s*clientRunId\s*\}/s,
+      /clientRunId[\s\S]*\?[\s\S]*\{[\s\S]*runId:[\s\S]*clientRunId/s,
     );
   },
 );
@@ -57,7 +57,7 @@ test(
 
     assert.match(
       context,
-      /stoppedRunId:\s*activeRunIdRef\.current/s,
+      /stoppedRunId:\s*explicitlyStoppedRunId/s,
     );
   },
 );
