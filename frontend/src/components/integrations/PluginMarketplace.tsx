@@ -12,8 +12,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Check,
   ChevronRight,
-  KeyRound,
   Loader2,
+  Maximize2,
+  Minimize2,
   Search,
   Server,
   ShieldCheck,
@@ -22,14 +23,12 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import { CustomCredentialsSection } from '@/components/integrations/CustomCredentialsSection';
 import {
   CustomMcpCreateForm,
   CustomMcpManager,
 } from '@/components/integrations/CustomMcpManager';
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { InstalledPluginsShelf } from '@/components/integrations/InstalledPluginsShelf';
-import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
 import { Dialog } from '@/components/ui/Dialog';
 import { api } from '@/lib/api';
 import {
@@ -109,7 +108,7 @@ const SECTION_PINNED_IDS: Record<string, string[]> = {
   'business-operations': ['airtable', 'monday', 'notion', 'asana', 'trello', 'odoo'],
   'marketing-growth': ['mailchimp', 'activecampaign', 'klaviyo', 'googleads', 'facebookads', 'semrush'],
   'social-media': ['linkedin', 'instagram', 'twitter', 'tiktok', 'facebookpages', 'youtube'],
-  'commerce-payments': ['stripe', 'shopify', 'square', 'paypal', 'woocommerce', 'bigcommerce'],
+  'commerce-payments': ['stripe', 'shopify', 'whop', 'paypal', 'square', 'woocommerce'],
   'finance-accounting': ['quickbooks', 'xero', 'freshbooks', 'plaid', 'stripe', 'wise'],
   'blockchain-crypto': ['blockscout', 'alchemy', 'coinbase', 'etherscan', 'bitquery', 'moralis'],
   'data-analytics': ['posthog', 'mixpanel', 'amplitude', 'tableau', 'powerbi', 'googleanalytics'],
@@ -117,7 +116,7 @@ const SECTION_PINNED_IDS: Record<string, string[]> = {
   'maps-location': ['googlemaps', 'mapbox', 'tomtom', 'here', 'radarlabs'],
   'web-search-scraping': ['firecrawl', 'exa', 'apify', 'browsertool', 'scrapingbee', 'brightdata'],
   'developer-tools': ['github', 'linear', 'sentry', 'gitlab', 'postman', 'jira'],
-  'deployment-hosting': ['vercel', 'railway', 'render', 'netlify', 'heroku', 'flyio'],
+  'deployment-hosting': ['vercel', 'railway', 'render', 'flyio', 'netlify', 'heroku'],
   'cloud-infrastructure': ['cloudflare', 'aws', 'digitalocean', 'datadog', 'grafana', 'newrelic'],
   'ai-automation': ['openai', 'anthropic', 'gemini', 'perplexityai', 'huggingface'],
   'content-files': ['google-drive', 'dropbox', 'box', 'onedrive', 'notion', 'sharepoint'],
@@ -477,7 +476,7 @@ function PluginCard({
             onClick={() => onConnect(plugin)}
             disabled={connecting || checking}
             aria-label={`Connect ${plugin.name}`}
-            className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-token-sm border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--accent)]/60 hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] disabled:cursor-not-allowed disabled:opacity-55"
+            className="xv-plugin-connect-button inline-flex min-h-9 shrink-0 items-center gap-1.5 px-3 py-1.5 text-xs font-semibold focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] disabled:cursor-not-allowed disabled:opacity-55"
           >
             {connecting || checking ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
@@ -576,7 +575,7 @@ function PluginListRow({
           onClick={() => onConnect(plugin)}
           disabled={connecting || checking}
           aria-label={`Connect ${plugin.name}`}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)] disabled:opacity-50"
+          className="xv-plugin-connect-icon inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg disabled:opacity-50"
         >
           {connecting || checking ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -761,7 +760,7 @@ function FeaturedPluginSection({
     : plugins.slice(0, FEATURED_PREVIEW_LIMIT);
 
   return (
-    <section className="border-b border-[var(--border-subtle)] pb-7 last:border-b-0">
+    <section className="border-b border-[var(--border-subtle)] pb-6 last:border-b-0">
       <button
         type="button"
         onClick={onToggle}
@@ -932,22 +931,14 @@ function CategoryPluginSection({
                 <button
                   type="button"
                   onClick={onShowMore}
-                  className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                  className="xv-plugin-show-more inline-flex min-h-10 items-center px-5 text-xs font-semibold"
                 >
                   Show 10 more
                 </button>
               </div>
             ) : null}
           </>
-        ) : (
-          <div className="rounded-token-md border border-dashed border-[var(--border-subtle)] px-4 py-4 text-xs leading-5 text-[var(--text-secondary)]">
-            {error
-              ? error
-              : expanded
-                ? 'No apps are currently classified in this category.'
-                : 'Open this category to load its supported apps.'}
-          </div>
-        )}
+) : null}
       </div>
     </section>
   );
@@ -1015,9 +1006,8 @@ export function PluginMarketplace() {
   const requestSeq = useRef(0);
   const addPluginMenuRef = useRef<HTMLDivElement | null>(null);
   const [addPluginOpen, setAddPluginOpen] = useState(false);
-  const [addPluginMode, setAddPluginMode] = useState<
-    'menu' | 'mcp' | 'credentials'
-  >('menu');
+  const [addPluginMode, setAddPluginMode] = useState<'menu' | 'mcp'>('menu');
+  const [fullscreen, setFullscreen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [expandedFeatured, setExpandedFeatured] = useState<Set<'popular' | 'explore'>>(
     new Set(),
@@ -1057,17 +1047,10 @@ export function PluginMarketplace() {
     router.replace(suffix ? `${pathname}?${suffix}` : pathname, { scroll: false });
   };
 
-  const openCredentials = () => {
-    setAddPluginMode('menu');
-    setAddPluginOpen(false);
-    setView('custom');
-    window.setTimeout(() => {
-      document.getElementById('custom-plugin-options')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, 0);
-  };
+  useEffect(() => {
+    document.body.classList.toggle('xv-page-fullscreen-active', fullscreen);
+    return () => document.body.classList.remove('xv-page-fullscreen-active');
+  }, [fullscreen]);
 
   const refreshNativeStatus = () => {
     void Promise.allSettled([
@@ -1549,7 +1532,8 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.connected ||
-          plugin.connectionState === 'needs_attention',
+          plugin.connectionState === 'needs_attention' ||
+          plugin.connectionState === 'error',
       ),
     [allPlugins],
   );
@@ -1890,9 +1874,16 @@ export function PluginMarketplace() {
   const searchMode = view === 'discover' && liveQuery.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1180px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+    <div
+      className={
+        fullscreen
+          ? 'xv-plugins-fullscreen fixed inset-0 z-[200] overflow-y-auto bg-[var(--background)] px-4 py-5 sm:px-6 lg:px-8'
+          : 'mx-auto w-full max-w-[1180px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8'
+      }
+    >
+      <div className={fullscreen ? 'mx-auto w-full max-w-[1180px] space-y-8' : 'contents'}>
+      <header className="flex flex-col gap-4 border-b border-[var(--border-subtle)] pb-5 xl:flex-row xl:items-center xl:justify-between">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-[28px]">
               Plugins
@@ -1908,94 +1899,81 @@ export function PluginMarketplace() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 self-start">
-          <PluginPermissionControl buttonOnly showFullAccessShortcut />
+        <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
+          <div className="xv-plugin-search-compact min-w-0 flex-1 xl:w-[310px] xl:flex-none">
+            <label htmlFor="plugin-marketplace-search" className="sr-only">
+              Search Plugins
+            </label>
+            <Search className="pointer-events-none h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+            <input
+              id="plugin-marketplace-search"
+              value={query}
+              onChange={(event) => {
+                const value = event.target.value;
+                setQuery(value);
+                setSearchVisibleCount(SEARCH_PREVIEW_LIMIT);
+                if (view !== 'discover') setView('discover');
+              }}
+              placeholder="Search apps or describe a task…"
+              className="min-w-0 flex-1 bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
+            />
+            {searchLoading ? <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[var(--accent)]" aria-hidden="true" /> : null}
+          </div>
+
           <div ref={addPluginMenuRef} className="relative">
+            <button
+              type="button"
+              aria-label="Add new Plugin"
+              aria-haspopup="menu"
+              aria-expanded={addPluginOpen && addPluginMode === 'menu'}
+              onClick={() => {
+                setAddPluginMode('menu');
+                setAddPluginOpen((open) => !open);
+              }}
+              className="xv-add-plugin-button"
+            >
+              Add new plugin
+              <ChevronRight
+                className={`h-3.5 w-3.5 transition-transform ${addPluginOpen && addPluginMode === 'menu' ? 'rotate-90' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+
+            {addPluginOpen && addPluginMode === 'menu' ? (
+              <div
+                role="menu"
+                aria-label="Add Plugin"
+                className="absolute right-0 z-40 mt-2 w-[260px] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1.5 shadow-xl"
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => setAddPluginMode('mcp')}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
+                >
+                  <Server className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
+                  <span className="min-w-0">
+                    <strong className="block text-[13px] font-semibold">Create MCP Plugin</strong>
+                    <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+                      Connect your own remote MCP-compatible service.
+                    </span>
+                  </span>
+                </button>
+              </div>
+            ) : null}
+          </div>
+
           <button
             type="button"
-            aria-label="Add new Plugin"
-            aria-haspopup="menu"
-            aria-expanded={addPluginOpen && addPluginMode === 'menu'}
-            onClick={() => {
-              setAddPluginMode('menu');
-              setAddPluginOpen((open) => !open);
-            }}
-            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[var(--text-primary)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            onClick={() => setFullscreen((value) => !value)}
+            className="xv-plugin-fullscreen-button"
+            aria-label={fullscreen ? 'Exit Plugins fullscreen' : 'Open Plugins fullscreen'}
           >
-            Add
-            <ChevronRight
-              className={`h-3.5 w-3.5 transition-transform ${addPluginOpen && addPluginMode === 'menu' ? 'rotate-90' : ''}`}
-              aria-hidden="true"
-            />
+            {fullscreen ? <Minimize2 className="h-4 w-4" aria-hidden="true" /> : <Maximize2 className="h-4 w-4" aria-hidden="true" />}
+            <span>{fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span>
           </button>
-
-          {addPluginOpen && addPluginMode === 'menu' ? (
-            <div
-              role="menu"
-              aria-label="Add Plugin"
-              className="absolute right-0 z-40 mt-2 w-[270px] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1.5 shadow-xl"
-            >
-              <button
-                type="button"
-                role="menuitem"
-                onClick={() => setAddPluginMode('mcp')}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
-              >
-                <Server className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
-                <span className="min-w-0">
-                  <strong className="block text-[13px] font-semibold">Create MCP App</strong>
-                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
-                    Add your own remote MCP-compatible service.
-                  </span>
-                </span>
-              </button>
-
-              <button
-                type="button"
-                role="menuitem"
-                onClick={openCredentials}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-inset)]"
-              >
-                <KeyRound className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
-                <span className="min-w-0">
-                  <strong className="block text-[13px] font-semibold">API key or webhook</strong>
-                  <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
-                    Open Xroga’s encrypted credential vault.
-                  </span>
-                </span>
-              </button>
-            </div>
-          ) : null}
-          </div>
         </div>
       </header>
-
-      <div className="xv-plugin-search-shell">
-        <div className="xv-plugin-search-inner">
-          <label htmlFor="plugin-marketplace-search" className="sr-only">
-            Search Plugins
-          </label>
-          <input
-            id="plugin-marketplace-search"
-            value={query}
-            onChange={(event) => {
-              const value = event.target.value;
-              setQuery(value);
-              setSearchVisibleCount(SEARCH_PREVIEW_LIMIT);
-              if (view !== 'discover') setView('discover');
-            }}
-            placeholder="Search any app or describe what you want Xroga to do…"
-            className="xv-plugin-search-input"
-          />
-          <span className="xv-plugin-search-icon" aria-hidden="true">
-            {searchLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
-          </span>
-        </div>
-      </div>
 
       {searchMode ? (
         <section className="space-y-4">
@@ -2073,21 +2051,14 @@ export function PluginMarketplace() {
         </section>
       ) : (
         <>
-          <nav
-            className="flex gap-1 overflow-x-auto border-b border-[var(--border-subtle)] pb-px scrollbar-hide"
-            aria-label="Plugin views"
-          >
+          <nav className="xv-plugin-segmented-nav" aria-label="Plugin views">
             {(['discover', 'connected', 'developer', 'custom'] as PluginView[]).map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => setView(item)}
                 aria-current={view === item ? 'page' : undefined}
-                className={
-                  view === item
-                    ? 'shrink-0 border-b-2 border-[var(--accent)] px-3 py-2.5 text-sm font-semibold text-[var(--text-primary)]'
-                    : 'shrink-0 border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                }
+                className={view === item ? 'xv-plugin-segmented-item xv-plugin-segmented-item--active' : 'xv-plugin-segmented-item'}
               >
                 {item.charAt(0).toUpperCase() + item.slice(1)}
               </button>
@@ -2152,26 +2123,32 @@ export function PluginMarketplace() {
                 </div>
 
                 <div className="space-y-7">
-                  {DISCOVERY_SECTIONS.map((section) => (
-                    <CategoryPluginSection
-                      key={section.id}
-                      section={section}
-                      plugins={pluginsForSection(section)}
-                      expanded={expandedSections.has(section.id)}
-                      visibleCount={
-                        sectionVisibleCounts[section.id] ??
-                        (section.id === 'other'
-                          ? OTHER_PREVIEW_LIMIT
-                          : CATEGORY_PREVIEW_LIMIT)
-                      }
-                      loading={Boolean(sectionLoading[section.id])}
-                      error={sectionErrors[section.id]}
-                      connectingId={connectingId}
-                      onConnect={handleConnect}
-                      onToggle={() => toggleDiscoverySection(section)}
-                      onShowMore={() => showMoreDiscoverySection(section)}
-                    />
-                  ))}
+                  {DISCOVERY_SECTIONS.map((section) => {
+                    const sectionPlugins = pluginsForSection(section);
+                    if (!sectionPlugins.length) return null;
+                    if (section.id === 'other' && sectionPlugins.length < 4) return null;
+
+                    return (
+                      <CategoryPluginSection
+                        key={section.id}
+                        section={section}
+                        plugins={sectionPlugins}
+                        expanded={expandedSections.has(section.id)}
+                        visibleCount={
+                          sectionVisibleCounts[section.id] ??
+                          (section.id === 'other'
+                            ? OTHER_PREVIEW_LIMIT
+                            : CATEGORY_PREVIEW_LIMIT)
+                        }
+                        loading={Boolean(sectionLoading[section.id])}
+                        error={sectionErrors[section.id]}
+                        connectingId={connectingId}
+                        onConnect={handleConnect}
+                        onToggle={() => toggleDiscoverySection(section)}
+                        onShowMore={() => showMoreDiscoverySection(section)}
+                      />
+                    );
+                  })}
                 </div>
               </section>
             </div>
@@ -2191,7 +2168,6 @@ export function PluginMarketplace() {
                     Manage every active Xroga App connection and native developer service.
                   </p>
                 </div>
-                <PluginPermissionControl buttonOnly showFullAccessShortcut />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -2211,7 +2187,7 @@ export function PluginMarketplace() {
                     className="w-full rounded-token-sm border border-[var(--border-subtle)] bg-[var(--surface-raised)] py-2.5 pl-9 pr-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
                   />
                 </div>
-                <div className="flex gap-1 overflow-x-auto" role="group" aria-label="Connected Plugin filters">
+                <div className="xv-plugin-filter-tabs" role="group" aria-label="Connected Plugin filters">
                   {([
                     ['all', 'All'],
                     ['apps', 'Apps'],
@@ -2223,11 +2199,7 @@ export function PluginMarketplace() {
                       type="button"
                       onClick={() => setConnectedFilter(id)}
                       aria-pressed={connectedFilter === id}
-                      className={
-                        connectedFilter === id
-                          ? 'shrink-0 rounded-full border border-[var(--accent)] bg-[var(--accent-dim)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)]'
-                          : 'shrink-0 rounded-full border border-[var(--border-subtle)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]'
-                      }
+                      className={connectedFilter === id ? 'xv-plugin-filter-item xv-plugin-filter-item--active' : 'xv-plugin-filter-item'}
                     >
                       {label}
                     </button>
@@ -2290,28 +2262,13 @@ export function PluginMarketplace() {
               <div>
                 <h2 className="text-lg font-semibold text-[var(--text-primary)]">Custom Plugins</h2>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-                  Extend Xroga with your own remote MCP server, API credentials, or webhook without cluttering the main app directory.
+                  Extend Xroga with your own remote MCP server without cluttering the main app directory.
                 </p>
               </div>
 
               <CustomMcpManager />
 
-              <details className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)]">
-                <summary className="cursor-pointer list-none p-4 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
-                  <div className="flex items-center gap-3">
-                    <KeyRound className="h-5 w-5 text-[var(--accent)]" aria-hidden="true" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">API keys & webhooks</p>
-                      <p className="mt-0.5 text-xs leading-5 text-[var(--text-secondary)]">
-                        Open the encrypted credential vault only when you need a service outside the app directory.
-                      </p>
-                    </div>
-                  </div>
-                </summary>
-                <div className="space-y-5 border-t border-[var(--border-subtle)] p-4">
-                  <CustomCredentialsSection />
-                </div>
-              </details>
+
 
             </section>
           ) : null}
@@ -2324,50 +2281,29 @@ export function PluginMarketplace() {
           setAddPluginMode('menu');
           setAddPluginOpen(false);
         }}
-        title={addPluginMode === 'mcp' ? 'Add Custom MCP' : addPluginMode === 'credentials' ? 'Add credential' : 'Add Plugin'}
-        description={
-          addPluginMode === 'mcp'
-            ? 'Turn a remote MCP server into a first-class Xroga Plugin.'
-            : 'Use the encrypted credential vault for services outside the app directory.'
-        }
+        title="Add Custom MCP"
+        description="Turn a remote MCP server into a first-class Xroga Plugin."
         className="max-w-[440px]"
       >
-        {addPluginMode === 'mcp' ? (
-          <CustomMcpCreateForm
-            onBack={() => {
-              setAddPluginMode('menu');
-              setAddPluginOpen(false);
-            }}
-            onCreated={() => {
-              setAddPluginMode('menu');
-              setAddPluginOpen(false);
-              setView('custom');
-            }}
-          />
-        ) : (
-          <div className="space-y-3">
-            <div className="rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
-              <p className="text-xs font-semibold text-[var(--text-primary)]">Encrypted credential vault</p>
-              <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-                Add API keys or webhooks only for services outside the Xroga Apps directory. Existing vault encryption and Vercel-sync behavior stay unchanged.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={openCredentials}
-              className="inline-flex min-h-10 w-full items-center justify-center rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white"
-            >
-              Open credential vault
-            </button>
-          </div>
-        )}
+        <CustomMcpCreateForm
+          onBack={() => {
+            setAddPluginMode('menu');
+            setAddPluginOpen(false);
+          }}
+          onCreated={() => {
+            setAddPluginMode('menu');
+            setAddPluginOpen(false);
+            setView('custom');
+          }}
+        />
       </Dialog>
 
       <div className="flex items-start gap-2 rounded-token-md border border-[var(--border-subtle)] bg-[var(--surface-inset)] p-3">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden="true" />
         <p className="text-xs leading-5 text-[var(--text-secondary)]">
-          Every available Xroga App can be discovered at runtime. Xroga keeps read/write/destructive classification, and your Default permission setting controls when an extra confirmation checkpoint is required.
+          Every available Xroga App can be discovered at runtime. Xroga keeps read/write/destructive classification, and per-Plugin permissions control when an extra confirmation checkpoint is required.
         </p>
+      </div>
       </div>
     </div>
   );
