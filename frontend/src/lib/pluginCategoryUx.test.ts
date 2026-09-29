@@ -121,6 +121,28 @@ test('hotel and project apps have dedicated user-facing categories', () => {
   );
 });
 
+
+test('requested prominent brands stay in the expected category previews', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('whop', 'Whop', 'Sell digital products and manage payments.', ['Business']),
+    ),
+    'Commerce & Payments',
+  );
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('canva', 'Canva', 'Create and edit designs.', ['Productivity']),
+    ),
+    'Design & Media',
+  );
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('flyio', 'Fly.io', 'Deploy apps globally.', ['Developer Tools']),
+    ),
+    'Deployment & Hosting',
+  );
+});
+
 test('search ranks exact brands first while natural-language needs can match several apps', () => {
   const exact = pluginFromCatalog(
     toolkit('calendly', 'Calendly', 'Appointment scheduling and booking.', ['Scheduling & Booking']),
@@ -162,15 +184,19 @@ test('directory stays category-first with compact previews and no giant catch-al
   assert.match(marketplace, /Show 10 more/);
 });
 
-test('global and per-Plugin permission controls remain available', () => {
+test('permissions are shown once beside installed management and once per Plugin detail', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+  const shelf = source(
+    'frontend/src/components/integrations/InstalledPluginsShelf.tsx',
   );
   const detail = source(
     'frontend/src/components/integrations/PluginDetail.tsx',
   );
 
-  assert.match(marketplace, /PluginPermissionControl buttonOnly showFullAccessShortcut/);
+  assert.doesNotMatch(marketplace, /PluginPermissionControl/);
+  assert.match(shelf, /PluginPermissionControl buttonOnly showFullAccessShortcut/);
   assert.match(detail, /toolkit={permissionToolkit}/);
   assert.match(detail, /Authorization supported/);
   assert.match(detail, /Authorization used/);

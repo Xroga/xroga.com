@@ -323,32 +323,44 @@ test('every Plugin can render grounded real use cases from current actions', () 
   assert.match(css, /var\(--surface-raised\)/);
 });
 
-test('brand logos use toolkit metadata then the official toolkit logo CDN and never fake a brand', () => {
+test('brand logos prefer curated and official icon sources before provider fallbacks', () => {
   const logo = source(
     'frontend/src/components/integrations/PluginBrandLogo.tsx',
   );
+  const curated = source(
+    'frontend/src/lib/integrationLogos.ts',
+  );
 
-  assert.match(logo, /logo,/);
-  assert.match(logo, /fallbackLogo,/);
+  assert.match(logo, /getIntegrationLogo\(id\)/);
+  assert.match(logo, /simpleIconCandidates\(toolkit, name\)/);
   assert.match(logo, /composioLogoUrl\(toolkit\)/);
-  assert.match(logo, /IntegrationLogo/);
+  assert.ok(
+    logo.indexOf('simpleIconCandidates(toolkit, name)') <
+      logo.indexOf('composioLogoUrl(toolkit)'),
+  );
+  assert.match(curated, /github: '\/brand\/logos\/github\.svg'/);
+  assert.match(curated, /openai: '\/brand\/logos\/openai\.svg'/);
+  assert.match(curated, /googlegemini/);
+  assert.match(curated, /canva/);
+  assert.match(curated, /flydotio/);
+  assert.match(curated, /whop/);
   assert.doesNotMatch(logo, /<Plug/);
-  assert.doesNotMatch(logo, /google\.com\/s2\/favicons/);
+  assert.doesNotMatch(curated, /google\.com\/s2\/favicons/);
 });
 
-test('Add Plugin opens a compact anchored menu before deeper setup dialogs', () => {
+test('Add new plugin stays compact and exposes only the Custom MCP path', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
   assert.match(marketplace, /role="menu"/);
-  assert.match(marketplace, /aria-label="Add Plugin"/);
-  assert.match(marketplace, /w-\[270px\]/);
-  assert.doesNotMatch(marketplace, /Find an Xroga App/);
-  assert.match(marketplace, /Create MCP App/);
-  assert.match(marketplace, /API key or webhook/);
-  assert.match(marketplace, /open=\{addPluginOpen && addPluginMode !== 'menu'\}/);
   assert.match(marketplace, /aria-label="Add new Plugin"/);
+  assert.match(marketplace, /w-\[250px\]/);
+  assert.match(marketplace, />\s*Add new plugin\s*</);
+  assert.match(marketplace, /Create MCP Plugin/);
+  assert.match(marketplace, /open=\{addPluginOpen && addPluginMode === 'mcp'\}/);
+  assert.doesNotMatch(marketplace, /API key or webhook/);
+  assert.doesNotMatch(marketplace, /CustomCredentialsSection/);
   assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
 });
 
@@ -371,11 +383,16 @@ test('category shelves stay compact, prioritize key brands, and keep the full ca
   assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
   assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
+  assert.match(marketplace, /'commerce-payments': \['stripe', 'shopify', 'whop'/);
+  assert.match(marketplace, /'deployment-hosting': \['vercel', 'railway', 'render', 'flyio'/);
   assert.match(marketplace, /SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
   assert.match(marketplace, /Show 10 more/);
   assert.match(marketplace, /section\.id === 'other'/);
+  assert.match(marketplace, /specialtyBackfill/);
+  assert.match(marketplace, /catalogHydrated/);
+  assert.doesNotMatch(marketplace, /Open this category to load its supported apps/);
   assert.doesNotMatch(marketplace, /id: 'all-apps'/);
   assert.match(marketplace, /See \{plugins/);
   assert.match(marketplace, /and more/);
@@ -405,23 +422,33 @@ test('search and connected-management polish stay theme-safe and list-based', ()
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
+  const shelf = source(
+    'frontend/src/components/integrations/InstalledPluginsShelf.tsx',
+  );
   const css = source('frontend/src/app/globals.css');
 
   assert.match(marketplace, /xv-plugin-search-shell/);
+  assert.match(marketplace, /xv-plugin-search-compact/);
   assert.match(marketplace, /ConnectedPluginList/);
-  assert.match(marketplace, /PluginPermissionControl/);
+  assert.doesNotMatch(marketplace, /PluginPermissionControl/);
+  assert.match(shelf, /PluginPermissionControl/);
+  assert.match(marketplace, /xv-plugin-segmented/);
+  assert.match(marketplace, /connectionState === 'error'/);
   assert.match(css, /\.xv-plugin-search-shell/);
+  assert.match(css, /\.xv-plugin-segmented/);
   assert.match(css, /body\.theme-black \.xv-plugin-search-shell/);
   assert.match(css, /body\.theme-gray \.xv-plugin-search-shell/);
   assert.match(css, /body\.theme-beige \.xv-plugin-search-shell/);
 });
 
-test('optional product credential shelf is removed from Plugins while the custom vault remains', () => {
+test('credential-vault UI is fully removed from the Plugins surface', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
 
   assert.doesNotMatch(marketplace, /ConnectedServicesSection/);
   assert.doesNotMatch(marketplace, /Optional product credentials/);
-  assert.match(marketplace, /CustomCredentialsSection/);
+  assert.doesNotMatch(marketplace, /CustomCredentialsSection/);
+  assert.doesNotMatch(marketplace, /API keys & webhooks/);
+  assert.doesNotMatch(marketplace, /API key or webhook/);
 });

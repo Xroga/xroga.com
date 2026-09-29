@@ -673,6 +673,18 @@ function catalogCategoryText(
 export function catalogPrimaryCategory(
   toolkit: XrogaConnectCatalogToolkit,
 ): string {
+  const compactSlug = canonicalPluginId(toolkit.slug);
+  const explicitCategory =
+    compactSlug === 'whop'
+      ? 'Commerce & Payments'
+      : compactSlug === 'canva'
+        ? 'Design & Media'
+        : compactSlug === 'flyio' || compactSlug === 'flydotio'
+          ? 'Deployment & Hosting'
+          : undefined;
+
+  if (explicitCategory) return explicitCategory;
+
   const serverLabel = toolkit.xrogaGroup
     ? XROGA_GROUP_LABELS[toolkit.xrogaGroup]
     : undefined;

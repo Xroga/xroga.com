@@ -9,7 +9,7 @@ export default async function PluginDetailPage({
   const { plugin } = await params;
 
   return (
-    <PageFullscreenFrame>
+    <PageFullscreenFrame showToggle={false}>
       <PluginDetail pluginId={decodeURIComponent(plugin)} />
     </PageFullscreenFrame>
   );
