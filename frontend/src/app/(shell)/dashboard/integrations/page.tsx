@@ -7,7 +7,7 @@ export const metadata = PAGE_SEO.integrations;
 
 export default function IntegrationsPage() {
   return (
-    <PageFullscreenFrame>
+    <PageFullscreenFrame showToggle={false}>
       <div className="mx-auto w-full max-w-7xl">
         <Suspense
           fallback={
