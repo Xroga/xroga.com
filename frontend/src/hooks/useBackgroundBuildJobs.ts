@@ -156,7 +156,9 @@ export function useBackgroundBuildJobs(
               ...identity,
               runId: job.runId,
               code: output?.code,
-              resumable: output?.resumable === true,
+              resumable:
+                output?.code === 'BUILD_INTERRUPTED' &&
+                output?.resumable === true,
               error:
                 run.status === 'cancelled'
                   ? 'Build stopped.'
