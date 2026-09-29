@@ -162,7 +162,7 @@ test('directory stays category-first with compact previews and no giant catch-al
   assert.match(marketplace, /Show 10 more/);
 });
 
-test('global and per-Plugin permission controls remain available', () => {
+test('permissions live only in per-Plugin management', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
@@ -170,7 +170,7 @@ test('global and per-Plugin permission controls remain available', () => {
     'frontend/src/components/integrations/PluginDetail.tsx',
   );
 
-  assert.match(marketplace, /PluginPermissionControl buttonOnly showFullAccessShortcut/);
+  assert.doesNotMatch(marketplace, /PluginPermissionControl buttonOnly showFullAccessShortcut/);
   assert.match(detail, /toolkit={permissionToolkit}/);
   assert.match(detail, /Authorization supported/);
   assert.match(detail, /Authorization used/);
