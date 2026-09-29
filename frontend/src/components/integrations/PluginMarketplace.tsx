@@ -68,7 +68,7 @@ const SEARCH_PAGE_SIZE = 100;
 const SEARCH_PREVIEW_LIMIT = 8;
 const CATEGORY_PREVIEW_LIMIT = 6;
 const CATEGORY_EXPAND_STEP = 10;
-const OTHER_PREVIEW_LIMIT = 8;
+const OTHER_PREVIEW_LIMIT = 6;
 const FEATURED_PREVIEW_LIMIT = 6;
 const FEATURED_EXPANDED_LIMIT = 18;
 
@@ -1552,8 +1552,7 @@ export function PluginMarketplace() {
       if (connectedFilter === 'developer' && !plugin.developer) return false;
       if (
         connectedFilter === 'attention' &&
-        plugin.connectionState !== 'needs_attention' &&
-        plugin.connectionState !== 'error'
+        plugin.connectionState !== 'needs_attention'
       ) {
         return false;
       }
@@ -1969,15 +1968,6 @@ export function PluginMarketplace() {
             ) : null}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setFullscreen((value) => !value)}
-            className="xv-plugin-fullscreen-button"
-            aria-label={fullscreen ? 'Exit Plugins fullscreen' : 'Open Plugins fullscreen'}
-          >
-            {fullscreen ? <Minimize2 className="h-4 w-4" aria-hidden="true" /> : <Maximize2 className="h-4 w-4" aria-hidden="true" />}
-            <span>{fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span>
-          </button>
         </div>
       </header>
 
@@ -2057,19 +2047,35 @@ export function PluginMarketplace() {
         </section>
       ) : (
         <>
-          <nav className="xv-plugin-segmented-nav" aria-label="Plugin views">
-            {(['discover', 'connected', 'developer', 'custom'] as PluginView[]).map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setView(item)}
-                aria-current={view === item ? 'page' : undefined}
-                className={view === item ? 'xv-plugin-segmented-item xv-plugin-segmented-item--active' : 'xv-plugin-segmented-item'}
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-              </button>
-            ))}
-          </nav>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <nav className="xv-plugin-segmented-nav" aria-label="Plugin views">
+              {(['discover', 'connected', 'developer', 'custom'] as PluginView[]).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setView(item)}
+                  aria-current={view === item ? 'page' : undefined}
+                  className={view === item ? 'xv-plugin-segmented-item xv-plugin-segmented-item--active' : 'xv-plugin-segmented-item'}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </button>
+              ))}
+            </nav>
+
+            <button
+              type="button"
+              onClick={() => setFullscreen((value) => !value)}
+              className="xv-plugin-fullscreen-button self-start sm:self-auto"
+              aria-label={fullscreen ? 'Exit Plugins fullscreen' : 'Open Plugins fullscreen'}
+            >
+              {fullscreen ? (
+                <Minimize2 className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Maximize2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              <span>{fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span>
+            </button>
+          </div>
 
           {view === 'discover' ? (
             <div className="space-y-8">
