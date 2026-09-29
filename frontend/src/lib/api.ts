@@ -608,9 +608,14 @@ async function waitForPersistedSwarmRun(
       const output =
         run.output as
           | {
-              error?: string;
+              error?:
+                string;
 
-              code?: string;
+              code?:
+                string;
+
+              resumable?:
+                boolean;
 
               nextUnlockAt?:
                 | string
@@ -629,8 +634,16 @@ async function waitForPersistedSwarmRun(
             output?.code ??
             'BUILD_FAILED',
 
+          resumable:
+            output
+              ?.resumable ===
+            true,
+
+          runId,
+
           nextUnlockAt:
-            output?.nextUnlockAt,
+            output
+              ?.nextUnlockAt,
         },
       );
     }
@@ -1325,8 +1338,17 @@ export async function streamSwarmExecute(
     if (
       error instanceof
         ApiError &&
-      error.data.code ===
-        'STREAM_PROTOCOL_ERROR'
+      [
+        'STREAM_PROTOCOL_ERROR',
+        'RUN_NOT_FOUND',
+        'RUN_RESUME_CONFLICT',
+      ].includes(
+        String(
+          error.data
+            .code ??
+          '',
+        ),
+      )
     ) {
       throw error;
     }
