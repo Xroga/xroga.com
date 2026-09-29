@@ -343,10 +343,10 @@ test('Add Plugin opens a compact anchored menu before deeper setup dialogs', () 
 
   assert.match(marketplace, /role="menu"/);
   assert.match(marketplace, /aria-label="Add Plugin"/);
-  assert.match(marketplace, /w-\[270px\]/);
+  assert.match(marketplace, /w-\[260px\]/);
   assert.doesNotMatch(marketplace, /Find an Xroga App/);
-  assert.match(marketplace, /Create MCP App/);
-  assert.match(marketplace, /API key or webhook/);
+  assert.match(marketplace, /Create MCP Plugin/);
+  assert.doesNotMatch(marketplace, /API key or webhook/);
   assert.match(marketplace, /open=\{addPluginOpen && addPluginMode !== 'menu'\}/);
   assert.match(marketplace, /aria-label="Add new Plugin"/);
   assert.doesNotMatch(marketplace, /router\.push\('\/dashboard\/integrations\/custom/);
@@ -371,6 +371,8 @@ test('category shelves stay compact, prioritize key brands, and keep the full ca
   assert.match(marketplace, /OTHER_PREVIEW_LIMIT = 8/);
   assert.match(marketplace, /FEATURED_EXPANDED_LIMIT = 18/);
   assert.match(marketplace, /'design-media': \['canva', 'figma'/);
+  assert.match(marketplace, /'commerce-payments': \['stripe', 'shopify', 'whop'/);
+  assert.match(marketplace, /'deployment-hosting': \['vercel', 'railway', 'render', 'flyio'/);
   assert.match(marketplace, /SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /curatedIds: SMALL_BUSINESS_IDS/);
   assert.match(marketplace, /plugins\.slice\(0, Math\.max\(visibleCount, previewLimit \+ CATEGORY_EXPAND_STEP\)\)/);
@@ -407,13 +409,16 @@ test('search and connected-management polish stay theme-safe and list-based', ()
   );
   const css = source('frontend/src/app/globals.css');
 
-  assert.match(marketplace, /xv-plugin-search-shell/);
+  assert.match(marketplace, /xv-plugin-search-compact/);
   assert.match(marketplace, /ConnectedPluginList/);
-  assert.match(marketplace, /PluginPermissionControl/);
-  assert.match(css, /\.xv-plugin-search-shell/);
-  assert.match(css, /body\.theme-black \.xv-plugin-search-shell/);
-  assert.match(css, /body\.theme-gray \.xv-plugin-search-shell/);
-  assert.match(css, /body\.theme-beige \.xv-plugin-search-shell/);
+  assert.doesNotMatch(marketplace, /PluginPermissionControl/);
+  assert.match(css, /\.xv-plugin-search-compact/);
+  assert.match(css, /\.xv-plugin-segmented-nav/);
+  assert.match(css, /\.xv-plugin-connect-button/);
+  assert.match(css, /body\.theme-white \.xv-plugin-search-compact/);
+  assert.match(css, /body\.theme-black \.xv-plugin-search-compact/);
+  assert.match(css, /body\.theme-gray \.xv-plugin-search-compact/);
+  assert.match(css, /body\.theme-beige \.xv-plugin-search-compact/);
 });
 
 test('optional product credential shelf is removed from Plugins while the custom vault remains', () => {
@@ -423,5 +428,17 @@ test('optional product credential shelf is removed from Plugins while the custom
 
   assert.doesNotMatch(marketplace, /ConnectedServicesSection/);
   assert.doesNotMatch(marketplace, /Optional product credentials/);
-  assert.match(marketplace, /CustomCredentialsSection/);
+  assert.doesNotMatch(marketplace, /CustomCredentialsSection/);
+  assert.doesNotMatch(marketplace, /API keys & webhooks/);
+});
+
+test('empty category placeholders are never shown and sparse Other is suppressed', () => {
+  const marketplace = source(
+    'frontend/src/components/integrations/PluginMarketplace.tsx',
+  );
+
+  assert.match(marketplace, /if \(!sectionPlugins\.length\) return null/);
+  assert.match(marketplace, /section\.id === 'other' && sectionPlugins\.length < 4/);
+  assert.doesNotMatch(marketplace, /Open this category to load its supported apps/);
+  assert.doesNotMatch(marketplace, /No apps are currently classified in this category/);
 });

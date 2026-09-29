@@ -1,14 +1,12 @@
 import { Suspense } from 'react';
 import { IntegrationsPanel } from '@/components/integrations/IntegrationsPanel';
-import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 import { PAGE_SEO } from '@/lib/dashboard-metadata';
 
 export const metadata = PAGE_SEO.integrations;
 
 export default function IntegrationsPage() {
   return (
-    <PageFullscreenFrame>
-      <div className="mx-auto w-full max-w-7xl">
+    <div className="mx-auto w-full max-w-7xl">
         <Suspense
           fallback={
             <div className="space-y-4" aria-label="Loading Plugins">
@@ -24,7 +22,6 @@ export default function IntegrationsPage() {
         >
           <IntegrationsPanel />
         </Suspense>
-      </div>
-    </PageFullscreenFrame>
+    </div>
   );
 }

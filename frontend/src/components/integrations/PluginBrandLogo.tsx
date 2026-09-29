@@ -22,6 +22,19 @@ const SIMPLE_ICON_ALIASES: Record<string, string> = {
   aws: 'amazonwebservices',
   amazonaws: 'amazonwebservices',
   googlemeet: 'googlemeet',
+  github: 'github',
+  openai: 'openai',
+  gemini: 'googlegemini',
+  googlegemini: 'googlegemini',
+  canva: 'canva',
+  whop: 'whop',
+  flyio: 'flydotio',
+  'fly-io': 'flydotio',
+  flydotio: 'flydotio',
+  supabase: 'supabase',
+  vercel: 'vercel',
+  shopify: 'shopify',
+  stripe: 'stripe',
 };
 
 function simpleIconSlug(value: string): string {
@@ -42,7 +55,7 @@ function simpleIconCandidates(toolkit: string | undefined, name: string): string
   ].filter(Boolean);
 
   return [...new Set(slugs)].map(
-    (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/${encodeURIComponent(slug)}.svg`,
+    (slug) => `https://cdn.simpleicons.org/${encodeURIComponent(slug)}`,
   );
 }
 
@@ -66,14 +79,14 @@ export function PluginBrandLogo({
       toolkit?.toLowerCase().startsWith('custom_') ?? false;
 
     return [
-      // Prefer Xroga's known first-party/local brand asset, then the official
-      // toolkit logo CDN. Provider metadata can occasionally contain stale
-      // logo URLs, so it comes after the canonical CDN. Custom MCP apps skip
-      // upstream generic branding and fall back to an honest Xroga initial.
+      // Prefer the open-source Simple Icons brand set for recognizable companies.
+      // If a brand is not represented there, fall back to Xroga's curated asset,
+      // live provider metadata, then the provider logo service. Custom MCP apps
+      // never borrow an unrelated mark and fall back to honest initials.
+      ...(!customToolkit ? simpleIconCandidates(toolkit, name) : []),
       getIntegrationLogo(id),
-      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
       !customToolkit ? logo : undefined,
-      ...simpleIconCandidates(toolkit, name),
+      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
       fallbackLogo,
     ].filter(
       (value, candidateIndex, all): value is string =>

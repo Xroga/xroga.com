@@ -463,6 +463,11 @@ export function canonicalPluginId(value: string): string {
   if (compact.includes('github')) return 'github';
   if (compact.includes('vercel')) return 'vercel';
   if (compact.includes('supabase')) return 'supabase';
+  if (compact === 'whop' || compact.includes('whop')) return 'whop';
+  if (compact === 'canva' || compact.includes('canva')) return 'canva';
+  if (compact === 'flyio' || compact === 'fly' || compact.includes('flyio')) return 'flyio';
+  if (compact === 'openai' || compact.includes('openai')) return 'openai';
+  if (compact === 'gemini' || compact.includes('googlegemini')) return 'gemini';
 
   return compact || value.toLowerCase();
 }
