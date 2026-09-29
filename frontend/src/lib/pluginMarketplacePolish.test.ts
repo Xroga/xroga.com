@@ -424,6 +424,10 @@ test('Plugin toolbar keeps fullscreen inside the Plugin view controls and attent
     marketplace,
     /connectedFilter === 'attention'[\s\S]{0,180}plugin\.connectionState !== 'error'/,
   );
+  assert.doesNotMatch(
+    marketplace,
+    /const connectedPlugins[\s\S]{0,260}plugin\.connectionState === 'error'/,
+  );
 });
 
 test('Plugin permissions use one compact management control without duplicate shortcut copy', () => {
