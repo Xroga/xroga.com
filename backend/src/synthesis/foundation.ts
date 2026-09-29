@@ -48,6 +48,106 @@ export interface UniversalSynthesisResult {
   artifacts: UniversalSynthesisArtifacts;
 }
 
+export function synthesisArtifactsFromCanonicalState(
+  state:
+    CanonicalExecutionState,
+): UniversalSynthesisArtifacts | null {
+  const manifest =
+    state.productManifest;
+
+  const productDefinition =
+    manifest.productDefinition as
+      | ProductDefinitionV1
+      | undefined;
+
+  const capabilityGraph =
+    manifest.capabilityGraph as
+      | DynamicCapabilityGraph
+      | undefined;
+
+  const compiledPlan =
+    manifest.compiledCapabilityPlan as
+      | CompiledCapabilityPlan
+      | undefined;
+
+  const architecture =
+    manifest.architecture as
+      | ArchitectureDecision
+      | undefined;
+
+  const framework =
+    manifest.framework as
+      | FrameworkAdapter
+      | undefined;
+
+  const dependencyInventoryState =
+    manifest.dependencyInventory as
+      | ReturnType<
+          typeof dependencyInventory
+        >
+      | undefined;
+
+  const operationsManifest =
+    manifest.operationsManifest as
+      | GeneratedProductOperationsManifest
+      | undefined;
+
+  const verificationPlan =
+    manifest.verificationPlan as
+      | VerificationPlan
+      | undefined;
+
+  const evidenceHash =
+    typeof manifest
+      .synthesisEvidenceHash ===
+      'string'
+      ? manifest
+          .synthesisEvidenceHash
+      : '';
+
+  if (
+    !productDefinition ||
+    !capabilityGraph ||
+    !compiledPlan ||
+    !architecture ||
+    !framework ||
+    !dependencyInventoryState ||
+    !operationsManifest ||
+    !verificationPlan ||
+    !evidenceHash
+  ) {
+    return null;
+  }
+
+  return {
+    schemaVersion:
+      '1.0.0',
+
+    migrationPath: [
+      '1.0.0 is the initial universal-synthesis artifact schema',
+    ],
+
+    productDefinition,
+
+    capabilityGraph,
+
+    compiledPlan,
+
+    architecture,
+
+    framework,
+
+    dependencyInventory:
+      dependencyInventoryState,
+
+    operationsManifest,
+
+    verificationPlan,
+
+    evidenceHash,
+  };
+}
+
 const stages = [
   ['synthesis-understand', 'Derive a versioned product definition from the requested outcome and repository', 'synthesis_understanding', []],
   ['synthesis-capabilities', 'Build and validate the dynamic capability graph', 'synthesis_capability_graph', ['synthesis-understand']],
@@ -95,25 +195,87 @@ export async function runUniversalSynthesisFoundation(input: {
   runId: string;
   files: ProjectFile[];
   store: ExecutionStateStore;
+  existingState?:
+    CanonicalExecutionState;
   repository?: CanonicalExecutionState['repository'];
   selectedBranch?: string;
   startingCommitSha?: string | null;
   onEvent?: (event: ExecutionEvent) => void;
 }): Promise<UniversalSynthesisResult> {
-  let definition: ProductDefinitionV1 | undefined;
-  let graph: DynamicCapabilityGraph | undefined;
-  let architecture: ArchitectureDecision | undefined;
-  let framework: FrameworkAdapter | undefined;
-  let compiledPlan: CompiledCapabilityPlan | undefined;
-  let inventory: ReturnType<typeof dependencyInventory> | undefined;
-  let operationsManifest: GeneratedProductOperationsManifest | undefined;
-  let verificationPlan: VerificationPlan | undefined;
+  const state =
+    input.existingState ??
+    createCanonicalExecutionState({
+      projectId:
+        input.projectId,
 
-  const state = createCanonicalExecutionState({
-    projectId: input.projectId, runId: input.runId, repository: input.repository,
-    selectedBranch: input.selectedBranch, startingCommitSha: input.startingCommitSha,
-    files: input.files, tasks: createSynthesisStageTasks(),
-  });
+      runId:
+        input.runId,
+
+      repository:
+        input.repository,
+
+      selectedBranch:
+        input.selectedBranch,
+
+      startingCommitSha:
+        input.startingCommitSha,
+
+      files:
+        input.files,
+
+      tasks:
+        createSynthesisStageTasks(),
+    });
+
+  let definition =
+    state.productManifest
+      .productDefinition as
+      | ProductDefinitionV1
+      | undefined;
+
+  let graph =
+    state.productManifest
+      .capabilityGraph as
+      | DynamicCapabilityGraph
+      | undefined;
+
+  let architecture =
+    state.productManifest
+      .architecture as
+      | ArchitectureDecision
+      | undefined;
+
+  let framework =
+    state.productManifest
+      .framework as
+      | FrameworkAdapter
+      | undefined;
+
+  let compiledPlan =
+    state.productManifest
+      .compiledCapabilityPlan as
+      | CompiledCapabilityPlan
+      | undefined;
+
+  let inventory =
+    state.productManifest
+      .dependencyInventory as
+      | ReturnType<
+          typeof dependencyInventory
+        >
+      | undefined;
+
+  let operationsManifest =
+    state.productManifest
+      .operationsManifest as
+      | GeneratedProductOperationsManifest
+      | undefined;
+
+  let verificationPlan =
+    state.productManifest
+      .verificationPlan as
+      | VerificationPlan
+      | undefined;
 
   const handlers: Record<string, TaskHandler> = {
     synthesis_understanding: async () => {
@@ -173,13 +335,21 @@ export async function runUniversalSynthesisFoundation(input: {
   await new ExecutionScheduler(input.store, input.onEvent).run(state, handlers);
   const failed = state.tasks.find((task) => task.status !== 'completed');
   if (failed) throw new Error(`universal synthesis failed at ${failed.id}: ${failed.blocker ?? failed.status}`);
-  if (!definition || !graph || !compiledPlan || !architecture || !framework || !inventory || !operationsManifest || !verificationPlan) throw new Error('universal synthesis did not produce all artifacts');
+  const artifacts =
+    synthesisArtifactsFromCanonicalState(
+      state,
+    );
+
+  if (
+    !artifacts
+  ) {
+    throw new Error(
+      'universal synthesis did not produce all artifacts',
+    );
+  }
+
   return {
     state,
-    artifacts: {
-      schemaVersion: '1.0.0', migrationPath: ['1.0.0 is the initial universal-synthesis artifact schema'], productDefinition: definition, capabilityGraph: graph,
-      compiledPlan, architecture, framework, dependencyInventory: inventory, operationsManifest, verificationPlan,
-      evidenceHash: String(state.productManifest.synthesisEvidenceHash),
-    },
+    artifacts,
   };
 }
