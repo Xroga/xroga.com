@@ -92,18 +92,9 @@ router.post('/execute', async (req: AuthRequest, res) => {
   // forever. A client-supplied ID (any v4-shaped UUID; a malformed one is ignored, not
   // trusted) means the browser always knows what to poll for, independent of whether
   // this connection ever delivers a single byte.
-  const runId =
-    isValidClientRunId(
-      req.body?.runId,
-    )
-      ? req.body.runId
-      : randomUUID();
+  const runId = isValidClientRunId(req.body?.runId) ? req.body.runId : randomUUID();
 
-  if (
-    activeBuildControllers.has(
-      runId,
-    )
-  ) {
+  if (activeBuildControllers.has(runId)) {
     sendSSE(
       res,
 
