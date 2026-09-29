@@ -1330,6 +1330,8 @@ export async function streamSwarmExecute(
       throw error;
     }
 
+    // RUN_ALREADY_ACTIVE and RUN_ALREADY_COMPLETE deliberately fall through to
+    // waitForPersistedSwarmRun so this client reconnects to the real worker/result.
     if (
       error instanceof
         ApiError &&
