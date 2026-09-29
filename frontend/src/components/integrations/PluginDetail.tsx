@@ -1452,6 +1452,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
               <PluginPermissionControl
                 buttonOnly
+                showFullAccessShortcut
                 toolkit={permissionToolkit}
                 pluginName={definition.name}
               />
