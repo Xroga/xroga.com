@@ -672,9 +672,7 @@ export async function runImplementationAsCanonicalTask(
     new InMemoryExecutionStateStore();
 
   const persisted =
-    await store.load(
-      input.runId,
-    );
+    await store.load(input.runId);
 
   const recovered =
     persisted
