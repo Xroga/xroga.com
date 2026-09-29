@@ -25,25 +25,25 @@ const PERMISSION_OPTIONS: Array<{
     id: 'always_ask',
     label: 'Always ask',
     description:
-      'Every state-changing Plugin action asks for confirmation. Read-only access still runs only from an explicit request.',
+      'Ask before every change. Read-only requests can still run when you explicitly ask.',
   },
   {
     id: 'read_only',
     label: 'Allow read-only tools',
     description:
-      'Read-only Plugin requests can run directly. Every external change asks for confirmation.',
+      'Read requests can run directly. Every external change still asks first.',
   },
   {
     id: 'low_risk',
     label: 'Allow low-risk tools',
     description:
-      'Read-only and ordinary requested changes can run directly; sensitive or uncertain actions still ask first.',
+      'Routine requested actions can run directly. Sensitive or uncertain actions still ask first.',
   },
   {
     id: 'full_access',
     label: 'Full access',
     description:
-      'Every Plugin action you explicitly request can run without an extra Xroga confirmation, including sensitive or destructive actions. Provider OAuth scopes, account permissions, and platform-enforced safeguards still apply.',
+      'Explicitly requested actions can run without an extra Xroga confirmation. Provider and platform safeguards still apply.',
     highTrust: true,
   },
 ];
@@ -136,7 +136,7 @@ export function PluginPermissionControl({
     <div
       role="menu"
       aria-label={toolkit ? `${pluginName || 'Plugin'} permission` : 'Default Plugin permission'}
-      className="absolute right-0 z-[80] mt-2 w-[min(390px,calc(100vw-48px))] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--background)] p-1.5 shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
+      className="xv-plugin-permission-menu absolute right-0 z-[80] mt-2 w-[min(330px,calc(100vw-32px))] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-1 shadow-[0_18px_48px_rgba(0,0,0,0.18)]"
     >
       {PERMISSION_OPTIONS.map((option) => (
         <button
@@ -147,8 +147,10 @@ export function PluginPermissionControl({
           onClick={() => void updatePermission(option.id)}
           className={
             option.highTrust
-              ? 'flex w-full items-start gap-3 rounded-xl border border-orange-500/15 bg-orange-500/5 px-3 py-2.5 text-left transition hover:bg-orange-500/10'
-              : 'flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-[var(--surface-inset)]'
+              ? 'flex w-full items-start gap-2.5 rounded-xl border border-orange-500/15 bg-orange-500/5 px-3 py-2 text-left transition hover:bg-orange-500/10'
+              : permissionMode === option.id
+                ? 'flex w-full items-start gap-2.5 rounded-xl bg-[var(--surface-inset)] px-3 py-2 text-left transition'
+                : 'flex w-full items-start gap-2.5 rounded-xl px-3 py-2 text-left transition hover:bg-[var(--surface-inset)]'
           }
         >
           <span className="min-w-0 flex-1">
@@ -162,7 +164,7 @@ export function PluginPermissionControl({
                 </span>
               ) : null}
             </span>
-            <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+            <span className="mt-0.5 block text-[10px] leading-[1.35rem] text-[var(--text-secondary)]">
               {option.description}
             </span>
           </span>
@@ -192,8 +194,8 @@ export function PluginPermissionControl({
           onClick={() => setMenuOpen((open) => !open)}
           className={
             selected.highTrust
-              ? 'inline-flex min-h-9 items-center gap-2 rounded-full border border-orange-500/45 bg-orange-500/12 px-3 text-xs font-semibold text-orange-600 transition hover:bg-orange-500/18 disabled:opacity-55'
-              : 'inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)] disabled:opacity-55'
+              ? 'inline-flex min-h-9 items-center gap-1.5 rounded-full border border-orange-500/40 bg-orange-500/10 px-3 text-[11px] font-semibold text-orange-600 transition hover:bg-orange-500/15 disabled:opacity-55'
+              : 'inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 text-[11px] font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-raised)] disabled:opacity-55'
           }
         >
           {permissionLoading || permissionSaving ? (
