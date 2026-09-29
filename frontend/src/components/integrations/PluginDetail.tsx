@@ -13,7 +13,6 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
-  Sparkles,
   TriangleAlert,
   Zap,
 } from 'lucide-react';
@@ -21,6 +20,7 @@ import toast from 'react-hot-toast';
 
 import { PluginBrandLogo } from '@/components/integrations/PluginBrandLogo';
 import { PluginPermissionControl } from '@/components/integrations/PluginPermissionControl';
+import { PageFullscreenToggle } from '@/components/layout/PageFullscreenFrame';
 import { api } from '@/lib/api';
 import {
   canonicalPluginId,
@@ -878,7 +878,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
       <div className="mx-auto max-w-3xl py-10">
         <Link
           href="/dashboard/integrations"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] hover:underline"
+          className="xv-plugin-back-btn inline-flex min-h-9 items-center gap-2 px-3 text-sm font-semibold"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Plugins
@@ -925,13 +925,16 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
-      <Link
-        href="/dashboard/integrations"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] hover:underline"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        Plugins
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Link
+          href="/dashboard/integrations"
+          className="xv-plugin-back-btn inline-flex min-h-9 items-center gap-2 px-3 text-sm font-semibold"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          Plugins
+        </Link>
+        <PageFullscreenToggle compact />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <main className="min-w-0 space-y-6">
@@ -980,7 +983,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 type="button"
                 onClick={() => void handleConnect()}
                 disabled={connecting || connected || noAuth}
-                className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white disabled:cursor-default disabled:opacity-60"
+                className="xv-plugin-connect-btn inline-flex min-h-10 shrink-0 items-center justify-center gap-2 px-4 text-sm font-semibold disabled:cursor-default disabled:opacity-60"
               >
                 {connecting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
                 {noAuth ? 'Ready' : connected ? 'Connected' : 'Connect'}
@@ -988,61 +991,16 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
             ) : null}
           </section>
 
-          {actionUseCases.length ? (
-            <section className="xv-plugin-usecases rounded-[18px] border border-[var(--border-subtle)] p-4 sm:p-6">
-              <div className="relative z-[1]">
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Real use cases</h2>
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                    Real things Xroga can do with this app, grounded in its current actions.
-                  </p>
-                </div>
-
-                <div className="mx-auto max-w-3xl space-y-3">
-                  {actionUseCases.slice(0, 4).map((item) => (
-                    <button
-                      key={item.prompt}
-                      type="button"
-                      onClick={() => handleExample(item.prompt)}
-                      className="xv-plugin-usecase-card group flex w-full min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] px-4 py-3 text-left text-sm text-[var(--text-primary)] shadow-subtle transition hover:-translate-y-0.5 hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] motion-reduce:transform-none"
-                    >
-                      <span className="flex min-w-0 items-center gap-3">
-                        <PluginBrandLogo
-                          id={definition.id}
-                          name={definition.name}
-                          toolkit={catalog?.slug}
-                          logo={catalog?.logo}
-                          size="micro"
-                        />
-                        <span className="min-w-0 leading-5">
-                          <strong className="font-semibold text-[var(--accent)]">
-                            {definition.name}
-                          </strong>{' '}
-                          <span>{item.label}</span>
-                        </span>
-                      </span>
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--surface-inset)] text-[var(--text-primary)] transition group-hover:translate-x-0.5">
-                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </section>
-          ) : null}
-
-          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-5">
-            <div className="flex items-start gap-3">
-              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <h2 className="text-base font-semibold text-[var(--text-primary)]">
+          <section className="xv-plugin-task-planner rounded-[18px] border border-[var(--border-subtle)] p-4 sm:p-5">
+            <div className="min-w-0">
+                <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                   Skills & task planning
                 </h2>
                 <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
                   Describe a task. Xroga searches the live action network for matching tools and, when a learned skill exists, shows its recommended plan and pitfalls.
                 </p>
 
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <div className="xv-plugin-task-shell mt-3">
                   <input
                     value={useCaseQuery}
                     onChange={(event) => setUseCaseQuery(event.target.value)}
@@ -1050,16 +1008,22 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                       if (event.key === 'Enter') void exploreUseCase();
                     }}
                     placeholder={`What do you want to do with ${definition.name}?`}
-                    className="min-w-0 flex-1 rounded-token-sm border border-[var(--border-subtle)] bg-[var(--background)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)]"
+                    className="xv-plugin-task-input"
                   />
                   <button
                     type="button"
                     disabled={useCaseLoading}
                     onClick={() => void exploreUseCase()}
-                    className="inline-flex min-h-10 items-center justify-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-xs font-semibold text-white disabled:opacity-50"
+                    className="xv-plugin-task-action"
+                    aria-label="Analyze task"
+                    title="Analyze task"
                   >
-                    {useCaseLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Zap className="h-4 w-4" aria-hidden="true" />}
-                    Analyze task
+                    {useCaseLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Zap className="h-4 w-4" aria-hidden="true" />
+                    )}
+                    <span className="sr-only">Analyze task</span>
                   </button>
                 </div>
 
@@ -1130,9 +1094,53 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                     </button>
                   </div>
                 ) : null}
-              </div>
             </div>
           </section>
+
+          {actionUseCases.length ? (
+            <section className="xv-plugin-usecases rounded-[18px] border border-[var(--border-subtle)] p-4 sm:p-6">
+              <div className="relative z-[1]">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Real use cases</h2>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                    Real things Xroga can do with this app, grounded in its current actions.
+                  </p>
+                </div>
+
+                <div className="mx-auto max-w-3xl space-y-3">
+                  {actionUseCases.slice(0, 4).map((item) => (
+                    <button
+                      key={item.prompt}
+                      type="button"
+                      onClick={() => handleExample(item.prompt)}
+                      className="xv-plugin-usecase-card group flex w-full min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-[var(--border-subtle)] px-4 py-3 text-left text-sm text-[var(--text-primary)] shadow-subtle transition hover:-translate-y-0.5 hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] motion-reduce:transform-none"
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <PluginBrandLogo
+                          id={definition.id}
+                          name={definition.name}
+                          toolkit={catalog?.slug}
+                          logo={catalog?.logo}
+                          size="micro"
+                        />
+                        <span className="min-w-0 leading-5">
+                          <strong className="font-semibold text-[var(--accent)]">
+                            {definition.name}
+                          </strong>{' '}
+                          <span>{item.label}</span>
+                        </span>
+                      </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--surface-inset)] text-[var(--text-primary)] transition group-hover:translate-x-0.5">
+                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+
 
           <section>
             <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -1422,7 +1430,7 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                     type="button"
                     disabled={connecting}
                     onClick={() => void handleConnect()}
-                    className="inline-flex min-h-9 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+                    className="xv-plugin-connect-btn inline-flex min-h-9 items-center gap-2 px-3 text-xs font-semibold disabled:opacity-50"
                   >
                     {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
                     {native?.state === 'needs_attention' ? 'Reconnect' : 'Connect'}
@@ -1442,20 +1450,14 @@ export function PluginDetail({ pluginId }: { pluginId: string }) {
                 type="button"
                 disabled={connecting}
                 onClick={() => void handleConnect()}
-                className="mt-4 inline-flex min-h-9 items-center gap-2 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+                className="xv-plugin-connect-btn mt-4 inline-flex min-h-9 items-center gap-2 px-3 text-xs font-semibold disabled:opacity-50"
               >
                 {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
                 Connect
               </button>
             ) : null}
-          </section>
 
-          <section className="rounded-token-lg border border-[var(--border-subtle)] bg-[var(--surface-raised)] p-4">
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Permission</h2>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-              Choose when Xroga should ask for an extra confirmation before using this Plugin.
-            </p>
-            <div className="mt-3">
+            <div className="mt-4 border-t border-[var(--border-subtle)] pt-3">
               <PluginPermissionControl
                 buttonOnly
                 toolkit={permissionToolkit}
