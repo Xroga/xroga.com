@@ -25,25 +25,25 @@ const PERMISSION_OPTIONS: Array<{
     id: 'always_ask',
     label: 'Always ask',
     description:
-      'Ask before every state-changing action. Read-only requests stay available.',
+      'Ask before every change. Read-only requests can still run when you explicitly ask.',
   },
   {
     id: 'read_only',
     label: 'Allow read-only tools',
     description:
-      'Read actions can run directly. Writes and external changes still ask first.',
+      'Read requests can run directly. Every external change still asks first.',
   },
   {
     id: 'low_risk',
     label: 'Allow low-risk tools',
     description:
-      'Routine requested changes can run directly. Sensitive actions still ask first.',
+      'Routine requested actions can run directly. Sensitive or uncertain actions still ask first.',
   },
   {
     id: 'full_access',
     label: 'Full access',
     description:
-      'Explicitly requested actions can run without an extra Xroga confirmation. Provider safeguards still apply.',
+      'Explicitly requested actions can run without an extra Xroga confirmation. Provider and platform safeguards still apply.',
     highTrust: true,
   },
 ];
