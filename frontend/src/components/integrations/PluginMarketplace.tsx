@@ -1754,7 +1754,22 @@ export function PluginMarketplace() {
       pins.map((id, index) => [canonicalPluginId(id), index]),
     );
 
-    return [...filtered].sort((a, b) => {
+    // Pinned brands are an explicit Xroga merchandising decision. Include them
+    // even when an upstream provider ships stale/noisy category metadata, then
+    // keep the remaining live catalogue items in their normal category order.
+    const pinnedPlugins = pins
+      .map((id) =>
+        source.find(
+          (plugin) =>
+            canonicalPluginId(plugin.toolkit || plugin.id) ===
+            canonicalPluginId(id),
+        ),
+      )
+      .filter((plugin): plugin is RuntimePlugin => Boolean(plugin));
+
+    const candidates = mergePlugins([...pinnedPlugins, ...filtered]);
+
+    return candidates.sort((a, b) => {
       const aRank =
         pinRank.get(canonicalPluginId(a.toolkit || a.id)) ??
         Number.POSITIVE_INFINITY;
@@ -2045,7 +2060,7 @@ export function PluginMarketplace() {
         </section>
       ) : (
         <>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0">
             <nav className="xv-plugin-segmented-nav" aria-label="Plugin views">
               {(['discover', 'connected', 'developer', 'custom'] as PluginView[]).map((item) => (
                 <button
@@ -2058,21 +2073,20 @@ export function PluginMarketplace() {
                   {item.charAt(0).toUpperCase() + item.slice(1)}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => setFullscreen((value) => !value)}
+                className="xv-plugin-fullscreen-button xv-plugin-fullscreen-button--inline"
+                aria-label={fullscreen ? 'Exit Plugins fullscreen' : 'Open Plugins fullscreen'}
+              >
+                {fullscreen ? (
+                  <Minimize2 className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span>{fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span>
+              </button>
             </nav>
-
-            <button
-              type="button"
-              onClick={() => setFullscreen((value) => !value)}
-              className="xv-plugin-fullscreen-button self-start sm:self-auto"
-              aria-label={fullscreen ? 'Exit Plugins fullscreen' : 'Open Plugins fullscreen'}
-            >
-              {fullscreen ? (
-                <Minimize2 className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Maximize2 className="h-4 w-4" aria-hidden="true" />
-              )}
-              <span>{fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span>
-            </button>
           </div>
 
           {view === 'discover' ? (
