@@ -22,6 +22,14 @@ const SIMPLE_ICON_ALIASES: Record<string, string> = {
   aws: 'amazonwebservices',
   amazonaws: 'amazonwebservices',
   googlemeet: 'googlemeet',
+  flyio: 'flydotio',
+  'fly-io': 'flydotio',
+  microsoftteams: 'microsoftteams',
+  openai: 'openai',
+  gemini: 'googlegemini',
+  googlegemini: 'googlegemini',
+  canva: 'canva',
+  whop: 'whop',
 };
 
 function simpleIconSlug(value: string): string {
@@ -71,9 +79,9 @@ export function PluginBrandLogo({
       // logo URLs, so it comes after the canonical CDN. Custom MCP apps skip
       // upstream generic branding and fall back to an honest Xroga initial.
       getIntegrationLogo(id),
-      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
-      !customToolkit ? logo : undefined,
       ...simpleIconCandidates(toolkit, name),
+      !customToolkit ? logo : undefined,
+      toolkit && !customToolkit ? composioLogoUrl(toolkit) : undefined,
       fallbackLogo,
     ].filter(
       (value, candidateIndex, all): value is string =>
