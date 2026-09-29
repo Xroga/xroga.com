@@ -1887,7 +1887,7 @@ export function PluginMarketplace() {
           : 'mx-auto w-full max-w-[1180px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8'
       }
     >
-      <div className={fullscreen ? 'mx-auto w-full max-w-[1180px] space-y-8' : 'contents'}>
+      <div className={fullscreen ? 'mx-auto w-full max-w-[1180px] space-y-8' : 'space-y-8'}>
       <header className="flex flex-col gap-4 border-b border-[var(--border-subtle)] pb-5 xl:flex-row xl:items-center xl:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -2031,7 +2031,7 @@ export function PluginMarketplace() {
                     onClick={() =>
                       setSearchVisibleCount((current) => current + SEARCH_PREVIEW_LIMIT)
                     }
-                    className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-4 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+                    className="xv-plugin-show-more inline-flex min-h-10 items-center px-5 text-xs font-semibold"
                   >
                     Show more results
                   </button>
