@@ -42,7 +42,6 @@ export const INTEGRATION_LOGOS: Record<string, string> = {
   zoom: 'https://cdn.simpleicons.org/zoom',
   mailchimp: 'https://cdn.simpleicons.org/mailchimp',
   salesforce: 'https://cdn.simpleicons.org/salesforce',
-  whop: 'https://cdn.simpleicons.org/whop',
   discord: 'https://cdn.simpleicons.org/discord/5865F2',
   jira: 'https://cdn.simpleicons.org/jira/0052CC',
   asana: 'https://cdn.simpleicons.org/asana/F06A6A',
