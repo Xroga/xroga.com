@@ -44,6 +44,10 @@ import type { ValidationReport } from './universalFlow.js';
 import { ENGINEERING_ROLES } from '../ai/engineeringRoles.js';
 import { assertCodingModel } from '../ai/providerPolicy.js';
 import type { ModelId } from '../ai/models.js';
+import {
+  recoverCanonicalExecutionStateForResume,
+  UNCERTAIN_SIDE_EFFECT_PREFIX,
+} from './reliability/canonicalResume.js';
 
 function contentHash(value: unknown): string {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -623,58 +627,249 @@ export class CanonicalTaskFailure extends Error {
  * and an outright failure from that. Preserving the throw keeps this a migration of *where*
  * the work runs rather than a change to what the run does when it fails.
  */
-export async function runImplementationAsCanonicalTask(input: {
-  projectId: string;
-  runId: string;
-  repository?: CanonicalExecutionState['repository'];
-  selectedBranch?: string;
-  startingCommitSha?: string | null;
-  existingFiles?: readonly ProjectFile[];
-  task: ImplementationTaskInput;
-  implement: ImplementFn;
-  store?: ExecutionStateStore;
-  signal?: AbortSignal;
-}): Promise<CanonicalImplementationResult> {
-  const node = implementationTaskNode(input.task);
-  const state = createCanonicalExecutionState({
-    projectId: input.projectId,
-    runId: input.runId,
-    repository: input.repository ?? null,
-    selectedBranch: input.selectedBranch ?? 'main',
-    startingCommitSha: input.startingCommitSha ?? null,
-    files: [...(input.existingFiles ?? [])],
-    requiredCapabilities: ['coding'],
-    tasks: [node],
-  });
+export async function runImplementationAsCanonicalTask(
+  input: {
+    projectId:
+      string;
 
-  const store = input.store ?? new InMemoryExecutionStateStore();
-  const finished = await new ExecutionScheduler(store).run(
-    state,
-    universalTaskHandlers({ implement: input.implement }),
-    input.signal,
-  );
+    runId:
+      string;
 
-  const executed = finished.tasks.find((candidate) => candidate.id === IMPLEMENTATION_TASK_ID)!;
-  if (executed.status !== 'completed') {
-    // The scheduler's blocker states *which* rule failed, not why. For a rejected file set
-    // that reads "produced evidence but did not pass its validation rule", which sends
-    // whoever is debugging to the scheduler rather than to the generation. The handler's
-    // evidence summary carries the actual reason, so both are reported.
-    const detail = executed.evidence.at(-1)?.summary;
-    const blocker = executed.blocker ?? `implementation task ended ${executed.status}`;
-    const persistedFailure = (executed.output as {
-      failure?: { code?: string; safeReasons?: readonly string[] };
-    } | undefined)?.failure;
+    repository?:
+      CanonicalExecutionState[
+        'repository'
+      ];
+
+    selectedBranch?:
+      string;
+
+    startingCommitSha?:
+      string | null;
+
+    existingFiles?:
+      readonly ProjectFile[];
+
+    task:
+      ImplementationTaskInput;
+
+    implement:
+      ImplementFn;
+
+    store?:
+      ExecutionStateStore;
+
+    signal?:
+      AbortSignal;
+  },
+): Promise<CanonicalImplementationResult> {
+  const node =
+    implementationTaskNode(
+      input.task,
+    );
+
+  const store =
+    input.store ??
+    new InMemoryExecutionStateStore();
+
+  const persisted =
+    await store.load(
+      input.runId,
+    );
+
+  const recovered =
+    persisted
+      ? recoverCanonicalExecutionStateForResume(
+          persisted,
+        ).state
+      : null;
+
+  const state =
+    recovered ??
+    createCanonicalExecutionState({
+      projectId:
+        input.projectId,
+
+      runId:
+        input.runId,
+
+      repository:
+        input.repository ??
+        null,
+
+      selectedBranch:
+        input.selectedBranch ??
+        'main',
+
+      startingCommitSha:
+        input.startingCommitSha ??
+        null,
+
+      files: [
+        ...(
+          input.existingFiles ??
+          []
+        ),
+      ],
+
+      requiredCapabilities: [
+        'coding',
+      ],
+
+      tasks: [
+        node,
+      ],
+    });
+
+  if (
+    state.projectId !==
+    input.projectId
+  ) {
     throw new CanonicalTaskFailure(
-      detail ? `${blocker} — ${detail}` : blocker,
-      executed.id,
-      executed.status,
-      persistedFailure,
+      'The durable execution state belongs to a different project.',
+      node.id,
+      'blocked',
+
+      {
+        code:
+          'CANONICAL_RESUME_IDENTITY_MISMATCH',
+
+        safeReasons: [
+          'The durable run project identity no longer matches the requested project.',
+        ],
+      },
     );
   }
 
-  const output = executed.output as { files?: readonly ProjectFile[] } | undefined;
-  return { files: output?.files ?? [], task: executed, state: finished };
+  let executed =
+    state.tasks.find(
+      (
+        candidate,
+      ) =>
+        candidate.id ===
+        IMPLEMENTATION_TASK_ID,
+    );
+
+  if (
+    !executed
+  ) {
+    state.tasks.push(
+      node,
+    );
+
+    executed =
+      node;
+  }
+
+  if (
+    executed.status !==
+    'completed'
+  ) {
+    const finished =
+      await new ExecutionScheduler(
+        store,
+      ).run(
+        state,
+
+        universalTaskHandlers({
+          implement:
+            input.implement,
+        }),
+
+        input.signal,
+      );
+
+    executed =
+      finished.tasks.find(
+        (
+          candidate,
+        ) =>
+          candidate.id ===
+          IMPLEMENTATION_TASK_ID,
+      )!;
+
+    if (
+      executed.status !==
+      'completed'
+    ) {
+      const detail =
+        executed.evidence
+          .at(
+            -1,
+          )
+          ?.summary;
+
+      const blocker =
+        executed.blocker ??
+        `implementation task ended ${executed.status}`;
+
+      const persistedFailure =
+        (
+          executed.output as
+            | {
+                failure?: {
+                  code?:
+                    string;
+
+                  safeReasons?:
+                    readonly string[];
+                };
+              }
+            | undefined
+        )
+          ?.failure;
+
+      throw new CanonicalTaskFailure(
+        detail
+          ? `${blocker} — ${detail}`
+          : blocker,
+
+        executed.id,
+
+        executed.status,
+
+        persistedFailure,
+      );
+    }
+
+    const output =
+      executed.output as
+        | {
+            files?:
+              readonly ProjectFile[];
+          }
+        | undefined;
+
+    return {
+      files:
+        output?.files ??
+        [],
+
+      task:
+        executed,
+
+      state:
+        finished,
+    };
+  }
+
+  const output =
+    executed.output as
+      | {
+          files?:
+            readonly ProjectFile[];
+        }
+      | undefined;
+
+  return {
+    files:
+      output?.files ??
+      [],
+
+    task:
+      executed,
+
+    state,
+  };
 }
 
 /**
@@ -709,6 +904,25 @@ async function runTaskOnState(input: {
   // make repair unable to prove it worked.
   const existing = input.state.tasks.find((task) => task.id === input.node.id);
   if (existing?.status === 'completed') return existing;
+
+  if (
+    existing
+      ?.status ===
+      'blocked' &&
+    existing.blocker
+      ?.startsWith(
+        UNCERTAIN_SIDE_EFFECT_PREFIX,
+      )
+  ) {
+    /*
+     * A process died after an external side effect began.
+     *
+     * Never replace this with a fresh ready node and blindly execute it
+     * again. The caller receives the blocked task and must reconcile
+     * external evidence first.
+     */
+    return existing;
+  }
 
   input.state.tasks = [...input.state.tasks.filter((task) => task.id !== input.node.id), input.node];
 
