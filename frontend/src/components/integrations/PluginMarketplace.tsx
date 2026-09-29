@@ -895,6 +895,12 @@ function CategoryPluginSection({
               onConnect={onConnect}
             />
 
+            {error && expanded ? (
+              <p className="mt-2 text-[11px] leading-4 text-amber-600">
+                More apps could not be loaded right now. The apps already shown remain available.
+              </p>
+            ) : null}
+
             {!expanded && plugins.length > previewLimit ? (
               <button
                 type="button"
@@ -938,7 +944,7 @@ function CategoryPluginSection({
               </div>
             ) : null}
           </>
-) : null}
+        ) : null}
       </div>
     </section>
   );
