@@ -143,7 +143,7 @@ test('search ranks exact brands first while natural-language needs can match sev
   assert.ok(calendarNeed > travelNeed);
 });
 
-test('directory stays category-first with compact previews and a complete All Apps escape hatch', () => {
+test('directory stays category-first with compact previews and no giant catch-all shelf', () => {
   const marketplace = source(
     'frontend/src/components/integrations/PluginMarketplace.tsx',
   );
@@ -154,7 +154,9 @@ test('directory stays category-first with compact previews and a complete All Ap
   assert.match(marketplace, /title: 'Booking & Scheduling'/);
   assert.match(marketplace, /title: 'Hotels & Stays'/);
   assert.match(marketplace, /title: 'Project Management'/);
-  assert.match(marketplace, /title: 'All Apps'/);
+  assert.doesNotMatch(marketplace, /title: 'All Apps'/);
+  assert.match(marketplace, /title: 'Other'/);
+  assert.match(marketplace, /See \{plugins/);
   assert.match(marketplace, /const CATEGORY_PREVIEW_LIMIT = 6/);
   assert.match(marketplace, /const CATEGORY_EXPAND_STEP = 10/);
   assert.match(marketplace, /Show 10 more/);
