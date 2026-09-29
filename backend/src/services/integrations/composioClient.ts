@@ -471,6 +471,13 @@ export function xrogaCatalogGroupFor(
 ): CanonicalXrogaCatalogGroup {
   const categories = toolkitCategoryText(toolkit);
   const text = toolkitFallbackText(toolkit);
+  const slug = toolkit.slug.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Keep high-signal brands in the shelves users expect even when an upstream
+  // provider applies a broad or surprising category label.
+  if (slug.includes('whop')) return 'commerce-payments';
+  if (slug.includes('canva')) return 'design-media';
+  if (slug === 'flyio' || slug.startsWith('flyio')) return 'deployment-hosting';
 
   // Specific user intents come first. This keeps category labels aligned with
   // the apps users expect to find there instead of letting broad provider
