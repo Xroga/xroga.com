@@ -37,7 +37,7 @@ test(
 
     assert.match(
       api,
-      /clientRunId\s*\?\s*\{\s*runId:\s*clientRunId\s*\}/s,
+      /clientRunId[\s\S]*\?[\s\S]*\{[\s\S]*runId:[\s\S]*clientRunId/s,
     );
   },
 );
@@ -57,7 +57,7 @@ test(
 
     assert.match(
       context,
-      /stoppedRunId:\s*activeRunIdRef\.current/s,
+      /stoppedRunId:\s*explicitlyStoppedRunId/s,
     );
   },
 );
@@ -110,6 +110,62 @@ test(
     assert.match(
       context,
       /runId:\s*resumeRunId/s,
+    );
+  },
+);
+
+
+test(
+  'an interrupted durable run becomes a same-run Retry card',
+  () => {
+    const context =
+      source(
+        '../../context/TerminalChatContext.tsx',
+      );
+
+    const background =
+      source(
+        '../../hooks/useBackgroundBuildJobs.ts',
+      );
+
+    const api =
+      source(
+        '../api.ts',
+      );
+
+    assert.match(
+      background,
+      /BUILD_INTERRUPTED/,
+    );
+
+    assert.match(
+      background,
+      /resumable/,
+    );
+
+    assert.match(
+      context,
+      /BUILD_INTERRUPTED/,
+    );
+
+    assert.match(
+      context,
+      /stoppedRunId/,
+    );
+
+    assert.match(
+      context,
+      /buildStopped\s*:\s*true/,
+    );
+
+    assert.match(
+      api,
+      /RUN_ALREADY_ACTIVE/,
+    );
+
+    assert.match(
+      api,
+      /waitForPersistedSwarmRun/,
     );
   },
 );

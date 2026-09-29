@@ -612,6 +612,8 @@ async function waitForPersistedSwarmRun(
 
               code?: string;
 
+              resumable?: boolean;
+
               nextUnlockAt?:
                 | string
                 | null;
@@ -628,6 +630,12 @@ async function waitForPersistedSwarmRun(
           code:
             output?.code ??
             'BUILD_FAILED',
+
+          resumable:
+            output?.resumable ===
+            true,
+
+          runId,
 
           nextUnlockAt:
             output?.nextUnlockAt,
@@ -1322,11 +1330,21 @@ export async function streamSwarmExecute(
       throw error;
     }
 
+    // RUN_ALREADY_ACTIVE and RUN_ALREADY_COMPLETE deliberately fall through to
+    // waitForPersistedSwarmRun so this client reconnects to the real worker/result.
     if (
       error instanceof
         ApiError &&
-      error.data.code ===
-        'STREAM_PROTOCOL_ERROR'
+      [
+        'STREAM_PROTOCOL_ERROR',
+        'RUN_NOT_FOUND',
+        'RUN_RESUME_CONFLICT',
+      ].includes(
+        String(
+          error.data.code ??
+          '',
+        ),
+      )
     ) {
       throw error;
     }

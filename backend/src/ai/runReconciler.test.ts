@@ -32,9 +32,8 @@ test('every reason produces a typed, interrupted outcome', () => {
   }
 });
 
-test('a reconciled run never implies work reached GitHub or Vercel', () => {
-  // The whole point: the user must know nothing shipped.
-  for (const reason of REASONS) {
+test('restart and deploy interruption copy does not claim uncertain publication', () => {
+  for (const reason of ['worker_restarted', 'deploy_interrupted'] as const) {
     const message = String(reconcileOutput(reason).error);
     assert.match(message, /No files were pushed/);
     assert.match(message, /no deployment was created/);
@@ -42,10 +41,14 @@ test('a reconciled run never implies work reached GitHub or Vercel', () => {
   }
 });
 
-test('the user is told what to do next, without being asked to debug', () => {
+test('the user is given an exact same-run recovery action without being asked to debug', () => {
   for (const reason of REASONS) {
-    const message = String(reconcileOutput(reason).error);
-    assert.match(message, /Please run it again\./);
+    const output = reconcileOutput(reason);
+    const message = String(output.error);
+
+    assert.match(message, /Retry to continue this exact build/i);
+    assert.equal(output.resumable, true);
+    assert.equal(output.resumeMode, 'same_run');
     assert.doesNotMatch(message, /TypeScript|npm|install|terminal/i);
   }
 });

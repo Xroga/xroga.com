@@ -387,7 +387,7 @@ function isMutationOperation(task: ExecutableTaskNode): boolean {
  * blindly. Paying for the remainder of one bounded write is cheaper than not knowing what
  * the repository contains.
  */
-function isUninterruptibleOperation(task: ExecutableTaskNode): boolean {
+export function isUninterruptibleOperation(task: ExecutableTaskNode): boolean {
   return isMutationOperation(task) || /publish|commit|deploy/i.test(task.operationType);
 }
 

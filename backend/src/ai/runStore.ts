@@ -148,94 +148,130 @@ export async function resumeRunDurable(
   prompt: string,
   runId: string,
 ): Promise<SwarmRunRecord> {
-  const existing =
-    await getRunAsync(runId);
+  const codedError = (code: string, message: string) => {
+    const error = new Error(message) as Error & { code: string };
+    error.code = code;
+    return error;
+  };
 
-  if (
-    !existing ||
-    existing.userId !== userId
-  ) {
-    const error =
-      new Error(
-        'The build checkpoint could not be found for this account.',
-      ) as Error & {
-        code?: string;
-      };
+  const existing = await getRunAsync(runId);
 
-    error.code = 'RUN_NOT_FOUND';
-
-    throw error;
+  if (!existing || existing.userId !== userId) {
+    throw codedError(
+      'RUN_NOT_FOUND',
+      'The build checkpoint could not be found for this account.',
+    );
   }
 
-  /*
-   * Never launch a second worker against a run that Xroga still regards
-   * as active.
-   */
   if (existing.status === 'running') {
-    const error =
-      new Error(
-        'This build is already running. Reconnect to the existing run instead of starting another worker.',
-      ) as Error & {
-        code?: string;
-      };
-
-    error.code = 'RUN_ALREADY_ACTIVE';
-
-    throw error;
+    throw codedError(
+      'RUN_ALREADY_ACTIVE',
+      'This build is already running. Reconnect to the existing run instead of starting another worker.',
+    );
   }
 
-  /*
-   * A completely successful run has nothing to resume.
-   *
-   * New product changes should receive a new run id instead.
-   */
   if (existing.status === 'complete') {
-    const error =
-      new Error(
-        'This build already completed. Start a new update request instead of resuming it.',
-      ) as Error & {
-        code?: string;
-      };
+    throw codedError(
+      'RUN_ALREADY_COMPLETE',
+      'This build already completed. Reconnect to its result instead of starting another worker.',
+    );
+  }
 
-    error.code = 'RUN_ALREADY_COMPLETE';
+  if (existing.status !== 'error' && existing.status !== 'cancelled') {
+    throw codedError(
+      'RUN_RESUME_CONFLICT',
+      'This build is not in a resumable state.',
+    );
+  }
 
-    throw error;
+  const canonicalPrompt = existing.prompt.trim()
+    ? existing.prompt
+    : prompt.trim().slice(0, 8_000);
+
+  const canonicalOutput = isEngineeringArtifact(existing.output)
+    ? existing.output
+    : null;
+
+  /*
+   * In production this UPDATE is the worker claim.
+   *
+   * The status predicate makes the transition atomic across API machines:
+   * error/cancelled -> running. Only one process can win.
+   */
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    await ensureShipLoopSchema();
+
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('swarm_runs')
+      .update({
+        status: 'running',
+        prompt: canonicalPrompt,
+        output: canonicalOutput,
+        completed_at: null,
+      })
+      .eq('id', runId)
+      .eq('user_id', userId)
+      .in('status', ['error', 'cancelled'])
+      .select('id');
+
+    if (error) {
+      throw new Error(`Platform run-resume claim failed: ${error.message}`);
+    }
+
+    if (!data?.length) {
+      /*
+       * Another API process may have won the claim between our read and conditional
+       * UPDATE. Clear the local cache before checking the authoritative row.
+       */
+      runs.delete(runId);
+      const latest = await getRunAsync(runId);
+
+      if (!latest || latest.userId !== userId) {
+        throw codedError(
+          'RUN_NOT_FOUND',
+          'The build checkpoint could not be found for this account.',
+        );
+      }
+
+      if (latest.status === 'running') {
+        throw codedError(
+          'RUN_ALREADY_ACTIVE',
+          'This build is already running. Reconnect to the existing run instead of starting another worker.',
+        );
+      }
+
+      if (latest.status === 'complete') {
+        throw codedError(
+          'RUN_ALREADY_COMPLETE',
+          'This build already completed. Reconnect to its result instead of starting another worker.',
+        );
+      }
+
+      throw codedError(
+        'RUN_RESUME_CONFLICT',
+        'The build changed state while Xroga was trying to resume it.',
+      );
+    }
   }
 
   const resumed: SwarmRunRecord = {
     ...existing,
-
-    /*
-     * Keep the original request as the canonical run title when it
-     * exists. The new continuation prompt still reaches the pipeline
-     * separately.
-     */
-    prompt:
-      existing.prompt.trim()
-        ? existing.prompt
-        : prompt
-            .trim()
-            .slice(0, 8_000),
-
+    prompt: canonicalPrompt,
     status: 'running',
-
-    /*
-     * Preserve a real artifact if one was already emitted before the
-     * interruption. A plain error payload is cleared so reconnecting
-     * clients do not mistake the old failure for the current run.
-     */
-    output:
-      isEngineeringArtifact(existing.output)
-        ? existing.output
-        : null,
-
+    output: canonicalOutput,
     completed_at: null,
   };
 
   runs.set(runId, resumed);
   touchUser(userId, runId);
 
-  await persistToSupabase(resumed);
+  /*
+   * Local/test environments have no Supabase claim above.
+   */
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    await persistToSupabase(resumed);
+  }
 
   return resumed;
 }
