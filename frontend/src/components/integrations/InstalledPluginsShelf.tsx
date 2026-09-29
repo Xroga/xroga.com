@@ -84,15 +84,17 @@ export function InstalledPluginsShelf({
 
         <div className="flex flex-wrap items-center gap-2">
           {plugins.length ? (
-            <button
-              type="button"
-              onClick={onViewAll}
-              className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
-            >
-              Manage all
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onViewAll}
+                className="inline-flex min-h-9 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface-raised)] px-3 text-xs font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-inset)]"
+              >
+                Manage all
+              </button>
+              <PluginPermissionControl buttonOnly showFullAccessShortcut />
+            </>
           ) : null}
-          <PluginPermissionControl buttonOnly showFullAccessShortcut />
         </div>
       </div>
 
