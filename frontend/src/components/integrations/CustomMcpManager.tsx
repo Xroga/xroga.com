@@ -137,7 +137,7 @@ export function CustomMcpCreateForm({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          className="xv-plugin-back-button inline-flex items-center gap-1.5 text-xs font-semibold"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Back
@@ -233,7 +233,7 @@ export function CustomMcpCreateForm({
         type="button"
         disabled={busy}
         onClick={() => void create()}
-        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-token-sm bg-[var(--accent)] px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="xv-plugin-connect-button inline-flex min-h-10 w-full items-center justify-center gap-2 px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Server className="h-4 w-4" aria-hidden="true" />}
         {busy ? 'Creating…' : 'Create Plugin'}
@@ -469,7 +469,7 @@ export function CustomMcpManager() {
                           type="button"
                           disabled={busy !== null}
                           onClick={() => void connect(item)}
-                          className="inline-flex min-h-9 items-center gap-1.5 rounded-token-sm bg-[var(--accent)] px-3 text-xs font-semibold text-white disabled:opacity-50"
+                          className="xv-plugin-connect-button inline-flex min-h-9 items-center gap-1.5 px-3 text-xs font-semibold disabled:opacity-50"
                         >
                           {connectBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />}
                           Connect
