@@ -454,7 +454,7 @@ describe(
         assert.match(
           canonicalTasks,
 
-          /store\.load\(\s*input\.runId\s*\)/s,
+          /store\.load\(\s*input\.runId,?\s*\)/s,
         );
 
         assert.match(
