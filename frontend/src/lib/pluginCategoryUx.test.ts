@@ -121,6 +121,28 @@ test('hotel and project apps have dedicated user-facing categories', () => {
   );
 });
 
+
+test('requested prominent brands stay in the expected category previews', () => {
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('whop', 'Whop', 'Sell digital products and manage payments.', ['Business']),
+    ),
+    'Commerce & Payments',
+  );
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('canva', 'Canva', 'Create and edit designs.', ['Productivity']),
+    ),
+    'Design & Media',
+  );
+  assert.equal(
+    catalogPrimaryCategory(
+      toolkit('flyio', 'Fly.io', 'Deploy apps globally.', ['Developer Tools']),
+    ),
+    'Deployment & Hosting',
+  );
+});
+
 test('search ranks exact brands first while natural-language needs can match several apps', () => {
   const exact = pluginFromCatalog(
     toolkit('calendly', 'Calendly', 'Appointment scheduling and booking.', ['Scheduling & Booking']),
