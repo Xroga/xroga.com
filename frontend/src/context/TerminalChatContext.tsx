@@ -4379,7 +4379,10 @@ active.applyBuild({
               message.id === assistantId
                 ? {
                     ...message,
-                    content: err.message,
+                    content:
+                      err instanceof Error
+                        ? err.message
+                        : 'Build interrupted safely. Retry continues the same durable run.',
                     buildStopped: true,
                     stoppedRunId: interruptedRunId,
                     originalBuildPrompt:
