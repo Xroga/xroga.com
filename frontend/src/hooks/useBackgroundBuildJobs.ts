@@ -28,7 +28,23 @@ type BuildRecoveryHandler = (params: BuildJobIdentity & {
   events: NonNullable<Awaited<ReturnType<typeof api.swarm.getRun>>['events']>;
 }) => void;
 
-type BuildFailedHandler = (params: BuildJobIdentity & { error: string }) => void;
+type BuildFailedHandler =
+  (
+    params:
+      BuildJobIdentity & {
+        error:
+          string;
+
+        runId?:
+          string;
+
+        code?:
+          string;
+
+        resumable?:
+          boolean;
+      },
+  ) => void;
 
 const POLL_MS = 8000;
 
@@ -134,15 +150,50 @@ export function useBackgroundBuildJobs(
               runStatus: 'error',
               output: run.output,
             });
-          } else if (run.status === 'error' || run.status === 'cancelled') {
-            removePendingBuildJob(job.assistantMessageId);
-            const output = run.output as { error?: string } | null;
+          } else if (
+            run.status ===
+              'error' ||
+            run.status ===
+              'cancelled'
+          ) {
+            removePendingBuildJob(
+              job.assistantMessageId,
+            );
+
+            const output =
+              run.output as
+                | {
+                    error?:
+                      string;
+
+                    code?:
+                      string;
+
+                    resumable?:
+                      boolean;
+                  }
+                | null;
+
             failedRef.current?.({
               ...identity,
+
+              runId:
+                job.runId,
+
+              code:
+                output?.code,
+
+              resumable:
+                output
+                  ?.resumable ===
+                true,
+
               error:
-                run.status === 'cancelled'
+                run.status ===
+                  'cancelled'
                   ? 'Build stopped.'
-                  : output?.error ?? 'Build failed.',
+                  : output?.error ??
+                    'Build failed.',
             });
           }
         } catch {
