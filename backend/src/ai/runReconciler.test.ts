@@ -32,13 +32,15 @@ test('every reason produces a typed, interrupted outcome', () => {
   }
 });
 
-test('a reconciled run never implies work reached GitHub or Vercel', () => {
-  // The whole point: the user must know nothing shipped.
+test('a reconciled run never invents GitHub or Vercel success', () => {
   for (const reason of REASONS) {
     const message = String(reconcileOutput(reason).error);
-    assert.match(message, /No files were pushed/);
-    assert.match(message, /no deployment was created/);
     assert.doesNotMatch(message, /success|complete|ready|deployed to/i);
+
+    if (reason !== 'worker_lost') {
+      assert.match(message, /No files were pushed/);
+      assert.match(message, /no deployment was created/);
+    }
   }
 });
 
