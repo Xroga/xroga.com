@@ -25,25 +25,25 @@ const PERMISSION_OPTIONS: Array<{
     id: 'always_ask',
     label: 'Always ask',
     description:
-      'Every state-changing Plugin action asks for confirmation. Read-only access still runs only from an explicit request.',
+      'Ask before every Plugin action that changes external data.',
   },
   {
     id: 'read_only',
     label: 'Allow read-only tools',
     description:
-      'Read-only Plugin requests can run directly. Every external change asks for confirmation.',
+      'Run read-only requests directly. Ask before every external change.',
   },
   {
     id: 'low_risk',
     label: 'Allow low-risk tools',
     description:
-      'Read-only and ordinary requested changes can run directly; sensitive or uncertain actions still ask first.',
+      'Run reads and ordinary requested changes. Ask before sensitive or uncertain actions.',
   },
   {
     id: 'full_access',
     label: 'Full access',
     description:
-      'Every Plugin action you explicitly request can run without an extra Xroga confirmation, including sensitive or destructive actions. Provider OAuth scopes, account permissions, and platform-enforced safeguards still apply.',
+      'Run explicitly requested actions without extra Xroga confirmation. Provider permissions and platform safeguards still apply.',
     highTrust: true,
   },
 ];
@@ -136,7 +136,7 @@ export function PluginPermissionControl({
     <div
       role="menu"
       aria-label={toolkit ? `${pluginName || 'Plugin'} permission` : 'Default Plugin permission'}
-      className="absolute right-0 z-[80] mt-2 w-[min(390px,calc(100vw-48px))] overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--background)] p-1.5 shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
+      className="absolute right-0 z-[80] mt-2 w-[min(340px,calc(100vw-32px))] overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--background)] p-1 shadow-[0_18px_50px_rgba(0,0,0,0.22)]"
     >
       {PERMISSION_OPTIONS.map((option) => (
         <button
@@ -147,8 +147,8 @@ export function PluginPermissionControl({
           onClick={() => void updatePermission(option.id)}
           className={
             option.highTrust
-              ? 'flex w-full items-start gap-3 rounded-xl border border-orange-500/15 bg-orange-500/5 px-3 py-2.5 text-left transition hover:bg-orange-500/10'
-              : 'flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-[var(--surface-inset)]'
+              ? 'flex w-full items-start gap-3 rounded-lg border border-orange-500/15 bg-orange-500/5 px-2.5 py-2 text-left transition hover:bg-orange-500/10'
+              : 'flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition hover:bg-[var(--surface-inset)]'
           }
         >
           <span className="min-w-0 flex-1">
@@ -162,7 +162,7 @@ export function PluginPermissionControl({
                 </span>
               ) : null}
             </span>
-            <span className="mt-0.5 block text-[11px] leading-4 text-[var(--text-secondary)]">
+            <span className="mt-0.5 block text-[10px] leading-[15px] text-[var(--text-secondary)]">
               {option.description}
             </span>
           </span>
@@ -249,7 +249,7 @@ export function PluginPermissionControl({
                 </span>
               ) : null}
             </div>
-            <p className="mt-0.5 max-w-3xl text-[11px] leading-4 text-[var(--text-secondary)]">
+            <p className="mt-0.5 max-w-3xl text-[10px] leading-[15px] text-[var(--text-secondary)]">
               {selected.description}
             </p>
           </div>
