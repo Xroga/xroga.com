@@ -75,15 +75,14 @@ test('upstream internal toolkits stay hidden from the Xroga Apps directory', () 
 test('permission choices use honest Xroga approval wording', () => {
   const permission = source('frontend/src/components/integrations/PluginPermissionControl.tsx');
 
-  assert.match(permission, /Every state-changing Plugin action asks for confirmation/);
-  assert.match(permission, /Every external change asks for confirmation/);
-  assert.match(permission, /sensitive or uncertain actions still ask first/);
+  assert.match(permission, /Ask before every Plugin action that changes external data/);
+  assert.match(permission, /Run read-only requests directly/);
+  assert.match(permission, /Ask before sensitive or uncertain actions/);
   assert.match(permission, /Full access/);
   assert.match(permission, /High trust/);
-  assert.match(permission, /actions you explicitly ask Xroga to perform/);
+  assert.match(permission, /Provider permissions and platform safeguards still apply/);
   assert.match(permission, /This setting applies to/);
   assert.match(permission, /<span>Permissions<\/span>/);
-  assert.match(permission, /platform-enforced safeguards still apply/);
   assert.doesNotMatch(permission, /Composio/);
 });
 
