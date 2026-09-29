@@ -92,8 +92,46 @@ router.post('/execute', async (req: AuthRequest, res) => {
   // forever. A client-supplied ID (any v4-shaped UUID; a malformed one is ignored, not
   // trusted) means the browser always knows what to poll for, independent of whether
   // this connection ever delivers a single byte.
-  const runId = isValidClientRunId(req.body?.runId) ? req.body.runId : randomUUID();
-  let streamConnected = true;
+  const runId =
+    isValidClientRunId(
+      req.body?.runId,
+    )
+      ? req.body.runId
+      : randomUUID();
+
+  if (
+    activeBuildControllers.has(
+      runId,
+    )
+  ) {
+    sendSSE(
+      res,
+
+      {
+        event:
+          'error',
+
+        data: {
+          error:
+            'This build is already running. Reconnecting to the existing run.',
+
+          code:
+            'RUN_ALREADY_ACTIVE',
+
+          runId,
+        },
+      },
+    );
+
+    endSSE(
+      res,
+    );
+
+    return;
+  }
+
+  let streamConnected =
+    true;
   const keepalive = setInterval(() => {
     if (streamConnected && !res.writableEnded) {
       sendSSE(res, { event: 'progress', data: { keepalive: true, message: 'Working…' } });
@@ -239,20 +277,70 @@ router.post('/execute', async (req: AuthRequest, res) => {
           ? 'MODEL_CAP_REACHED'
           : e.code === 'BUILD_CANCELLED'
             ? 'BUILD_CANCELLED'
+            : e.code ===
+                'RUN_ALREADY_ACTIVE'
+              ? 'RUN_ALREADY_ACTIVE'
+            : e.code ===
+                'RUN_ALREADY_COMPLETE'
+              ? 'RUN_ALREADY_COMPLETE'
+            : e.code ===
+                'RUN_NOT_FOUND'
+              ? 'RUN_NOT_FOUND'
+            : e.code ===
+                'RUN_RESUME_CONFLICT'
+              ? 'RUN_RESUME_CONFLICT'
             : 'BUILD_FAILED';
+
+    const resumeControlError =
+      [
+        'RUN_ALREADY_ACTIVE',
+        'RUN_ALREADY_COMPLETE',
+        'RUN_NOT_FOUND',
+        'RUN_RESUME_CONFLICT',
+      ].includes(
+        code,
+      );
     // CAPACITY_UNAVAILABLE is a pacing cap that lifts on its own — it is not a "buy
     // more" moment the way running out of the plan entirely is, so it does not carry
     // the same payment link, and nextUnlockAt (when the cap genuinely caused this) rides
     // along so the run knows when to say "try again" without naming a dollar amount.
     const nextUnlockAt = code === 'CAPACITY_UNAVAILABLE' ? e.nextUnlockAt ?? undefined : undefined;
-    failRun(runId, e.message || 'Build failed', code === 'BUILD_CANCELLED' ? 'cancelled' : 'error', {
-      code,
-      nextUnlockAt,
-    });
-    await persistRunState(runId).catch((persistError) => {
-      console.warn('[swarm] failed-run persistence:', (persistError as Error).message);
-    });
-    if (clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
+    if (
+      !resumeControlError
+    ) {
+      failRun(
+        runId,
+        e.message ||
+          'Build failed',
+
+        code ===
+          'BUILD_CANCELLED'
+          ? 'cancelled'
+          : 'error',
+
+        {
+          code,
+          nextUnlockAt,
+        },
+      );
+
+      await persistRunState(
+        runId,
+      ).catch(
+        (
+          persistError,
+        ) => {
+          console.warn(
+            '[swarm] failed-run persistence:',
+            (
+              persistError as
+                Error
+            ).message,
+          );
+        },
+      );
+    }
+    if (!resumeControlError && clientMeta?.assistantMessageId && code !== 'BUILD_CANCELLED') {
       void notifyBuildFailed(userId, {
         projectName: 'Xroga project',
         prompt: prompt.trim(),
