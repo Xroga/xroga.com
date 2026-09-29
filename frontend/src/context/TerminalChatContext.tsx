@@ -4452,6 +4452,12 @@ active.applyBuild({
                 .runId
             : null;
 
+        const interruptedMessage =
+          err instanceof
+            Error
+            ? err.message
+            : 'Build interrupted.';
+
         if (
           interruptedRunId
         ) {
@@ -4506,7 +4512,7 @@ active.applyBuild({
                         ...message,
 
                         content:
-                          err.message,
+                          interruptedMessage,
 
                         buildStopped:
                           true,
