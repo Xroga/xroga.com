@@ -23,7 +23,7 @@ test('Discover uses a compact Installed shelf instead of connected cards', () =>
   assert.match(shelf, /size="detail"/);
   assert.match(shelf, /bg-\[var\(--background\)\]/);
   assert.match(shelf, /Manage Plugin/);
-  assert.match(shelf, /buttonOnly showFullAccessShortcut/);
+  assert.doesNotMatch(shelf, /PluginPermissionControl/);
   assert.match(permission, /Default permission/);
   assert.match(permission, /buttonOnly/);
   assert.match(permission, /Full access/);
@@ -75,12 +75,12 @@ test('upstream internal toolkits stay hidden from the Xroga Apps directory', () 
 test('permission choices use honest Xroga approval wording', () => {
   const permission = source('frontend/src/components/integrations/PluginPermissionControl.tsx');
 
-  assert.match(permission, /Every state-changing Plugin action asks for confirmation/);
-  assert.match(permission, /Every external change asks for confirmation/);
-  assert.match(permission, /sensitive or uncertain actions still ask first/);
+  assert.match(permission, /Ask before every change/);
+  assert.match(permission, /Every external change still asks first/);
+  assert.match(permission, /Sensitive or uncertain actions still ask first/);
   assert.match(permission, /Full access/);
   assert.match(permission, /High trust/);
-  assert.match(permission, /actions you explicitly ask Xroga to perform/);
+  assert.match(permission, /Explicitly requested actions can run without an extra Xroga confirmation/);
   assert.match(permission, /This setting applies to/);
   assert.match(permission, /<span>Permissions<\/span>/);
   assert.match(permission, /platform-enforced safeguards still apply/);
