@@ -13527,6 +13527,28 @@ body.theme-beige .xv-plugin-filter-item--active {
   cursor: pointer;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
+.xv-plugin-fullscreen-button--inline {
+  flex: 0 0 auto;
+  min-height: 36px;
+  margin-left: .2rem;
+  border-color: color-mix(in srgb, #fff 20%, transparent);
+  padding: 0 .85rem;
+  color: #111214;
+  background: #fff;
+}
+.xv-plugin-fullscreen-button--inline::after {
+  background: #fff;
+}
+body.theme-black .xv-plugin-fullscreen-button--inline,
+body.theme-gray .xv-plugin-fullscreen-button--inline {
+  color: var(--text-primary);
+  background: var(--surface-raised);
+}
+body.theme-black .xv-plugin-fullscreen-button--inline::after,
+body.theme-gray .xv-plugin-fullscreen-button--inline::after {
+  background: var(--surface-raised);
+}
+
 .xv-plugin-fullscreen-button::after {
   content: "";
   position: absolute;
