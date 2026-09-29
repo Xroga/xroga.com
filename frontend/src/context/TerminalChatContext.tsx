@@ -830,7 +830,16 @@ const stopRequestedRunIdRef =
         )
       );
     },
-    ({ assistantMessageId, userMessageId, userPrompt, startedAt, error }) => {
+    ({
+      assistantMessageId,
+      userMessageId,
+      userPrompt,
+      startedAt,
+      error,
+      runId,
+      code,
+      resumable,
+    }) => {
       setMessages((messages) =>
         reconcilePendingBuildTranscript(messages, {
           assistantMessageId,
@@ -846,13 +855,44 @@ const stopRequestedRunIdRef =
       heavyJobActiveRef.current = false;
       setHeavyAssistantId(null);
       setSwarmRunning(false);
+
+      if (
+        code === 'BUILD_INTERRUPTED' &&
+        resumable === true &&
+        runId
+      ) {
+        setSwarmStatusLabel('Interrupted');
+        setPipelineMessage(
+          'Build interrupted safely. Retry continues the same durable run.',
+        );
+        setMessages((current) =>
+          current.map((message) =>
+            message.id === assistantMessageId
+              ? {
+                  ...message,
+                  content: error,
+                  buildStopped: true,
+                  stoppedRunId: runId,
+                  originalBuildPrompt: userPrompt,
+                  githubRepoName: getSelectedRepoContext()?.repo,
+                }
+              : message,
+          ),
+        );
+        toast(
+          'Build interrupted safely — Retry continues the same build.',
+          { icon: '↻' },
+        );
+        return;
+      }
+
       toast.error(error.slice(0, 120) || 'Build failed');
-      setMessages((m) =>
-        m.map((msg) =>
-          msg.id === assistantMessageId
-            ? { ...msg, content: error, featureOutput: undefined }
-            : msg
-        )
+      setMessages((current) =>
+        current.map((message) =>
+          message.id === assistantMessageId
+            ? { ...message, content: error, featureOutput: undefined }
+            : message,
+        ),
       );
     },
     ({ assistantMessageId, userMessageId, userPrompt, startedAt, runId, status, events }) => {
@@ -4304,6 +4344,64 @@ active.applyBuild({
           );
           return;
         }
+        const interruptedData =
+          err instanceof ApiError
+            ? (err.data as {
+                code?: unknown;
+                resumable?: unknown;
+                runId?: unknown;
+              })
+            : null;
+
+        const interruptedRunId =
+          interruptedData?.code === 'BUILD_INTERRUPTED' &&
+          interruptedData?.resumable === true &&
+          typeof interruptedData?.runId === 'string'
+            ? interruptedData.runId
+            : null;
+
+        if (interruptedRunId) {
+          removePendingBuildJob(assistantId);
+          activeRunIdRef.current = null;
+          setHeavyLoading(false);
+          setHeavyBuildActive(false);
+          heavyBuildActiveRef.current = false;
+          heavyJobActiveRef.current = false;
+          setHeavyAssistantId(null);
+          setSwarmRunning(false);
+          setSwarmStatusLabel('Interrupted');
+          setPipelineMessage(
+            'Build interrupted safely. Retry continues the same durable run.',
+          );
+
+          setMessages((current) =>
+            current.map((message) =>
+              message.id === assistantId
+                ? {
+                    ...message,
+                    content: err.message,
+                    buildStopped: true,
+                    stoppedRunId: interruptedRunId,
+                    originalBuildPrompt:
+                      lastTurnRef.current?.text ||
+                      displayPrompt,
+                    githubRepoName: getSelectedRepoContext()?.repo,
+                    stoppedTodos: liveBuildSnapshotRef.current.todos.length
+                      ? [...liveBuildSnapshotRef.current.todos]
+                      : message.stoppedTodos,
+                  }
+                : message,
+            ),
+          );
+
+          toast(
+            'Build interrupted safely — Retry continues from the latest durable checkpoint.',
+            { icon: '↻' },
+          );
+
+          return;
+        }
+
         dispatchCompanionEvent({
           type: 'task_failure',
           message: 'The current operation failed. Xroga preserved any valid work already produced.',
