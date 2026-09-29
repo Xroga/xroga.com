@@ -410,13 +410,6 @@ const DISCOVERY_SECTIONS: DiscoverySection[] = [
     categories: ['Other'],
     groups: ['other'],
   },
-  {
-    id: 'all-apps',
-    title: 'All Apps',
-    description: 'Browse the complete supported Xroga Apps catalogue in usage order.',
-    categories: [],
-    groups: [],
-  },
 ];
 function viewFrom(value: string | null): PluginView {
   if (value === 'connected' || value === 'developer' || value === 'custom') return value;
@@ -845,7 +838,7 @@ function CategoryPluginSection({
   onShowMore: () => void;
 }) {
   const previewLimit =
-    section.id === 'other' || section.id === 'all-apps'
+    section.id === 'other'
       ? OTHER_PREVIEW_LIMIT
       : CATEGORY_PREVIEW_LIMIT;
   const visible = expanded
@@ -902,6 +895,38 @@ function CategoryPluginSection({
               connectingId={connectingId}
               onConnect={onConnect}
             />
+
+            {!expanded && plugins.length > previewLimit ? (
+              <button
+                type="button"
+                onClick={onToggle}
+                className="mt-3 inline-flex max-w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left text-[11px] font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                aria-label={`See more ${section.title} Plugins`}
+              >
+                <span className="flex -space-x-1">
+                  {plugins.slice(previewLimit, previewLimit + 3).map((plugin) => (
+                    <PluginBrandLogo
+                      key={plugin.toolkit || plugin.id}
+                      id={plugin.id}
+                      name={plugin.name}
+                      toolkit={plugin.toolkit}
+                      logo={plugin.logo}
+                      fallbackLogo={plugin.logoFallback}
+                      size="micro"
+                    />
+                  ))}
+                </span>
+                <span className="truncate">
+                  See {plugins
+                    .slice(previewLimit, previewLimit + 2)
+                    .map((plugin) => plugin.name)
+                    .join(', ')}
+                  {plugins.length > previewLimit + 2 ? ', and more' : ''}
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
+              </button>
+            ) : null}
+
             {hasMore ? (
               <div className="mt-4 flex justify-center">
                 <button
@@ -1668,7 +1693,7 @@ export function PluginMarketplace() {
       return {
         ...current,
         [section.id]:
-          (section.id === 'other' || section.id === 'all-apps'
+          (section.id === 'other'
             ? OTHER_PREVIEW_LIMIT
             : CATEGORY_PREVIEW_LIMIT) + CATEGORY_EXPAND_STEP,
       };
@@ -1688,7 +1713,7 @@ export function PluginMarketplace() {
       ...current,
       [section.id]:
         (current[section.id] ??
-          (section.id === 'other' || section.id === 'all-apps'
+          (section.id === 'other'
             ? OTHER_PREVIEW_LIMIT
             : CATEGORY_PREVIEW_LIMIT) +
             CATEGORY_EXPAND_STEP) + CATEGORY_EXPAND_STEP,
@@ -1704,10 +1729,6 @@ export function PluginMarketplace() {
           ...connectedLongTail,
         ])
       : allPlugins;
-
-    if (section.id === 'all-apps') {
-      return [...source];
-    }
 
     if (section.curatedIds?.length) {
       const allowed = new Set(section.curatedIds.map((id) => canonicalPluginId(id)));
@@ -1869,7 +1890,7 @@ export function PluginMarketplace() {
   const searchMode = view === 'discover' && liveQuery.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1060px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
+    <div className="mx-auto w-full max-w-[1180px] space-y-8 px-3 sm:px-5 lg:px-7 xl:px-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -2126,7 +2147,7 @@ export function PluginMarketplace() {
                     Categories
                   </h2>
                   <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-secondary)]">
-                    Browse a few high-signal apps in each category. Open a category for 10 more at a time; close it to return to the compact directory. All Apps at the end keeps the complete catalogue reachable.
+                    Browse Plugins by what they help you do. Each category starts compact; click its heading to reveal more apps, and click again to collapse it.
                   </p>
                 </div>
 
@@ -2139,7 +2160,7 @@ export function PluginMarketplace() {
                       expanded={expandedSections.has(section.id)}
                       visibleCount={
                         sectionVisibleCounts[section.id] ??
-                        (section.id === 'other' || section.id === 'all-apps'
+                        (section.id === 'other'
                           ? OTHER_PREVIEW_LIMIT
                           : CATEGORY_PREVIEW_LIMIT)
                       }
