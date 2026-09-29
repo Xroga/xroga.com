@@ -618,8 +618,7 @@ function ConnectedPluginRow({
   plugin: RuntimePlugin;
 }) {
   const needsAttention =
-    plugin.connectionState === 'needs_attention' ||
-    plugin.connectionState === 'error';
+    plugin.connectionState === 'needs_attention';
 
   return (
     <Link
@@ -1538,8 +1537,7 @@ export function PluginMarketplace() {
       allPlugins.filter(
         (plugin) =>
           plugin.connected ||
-          plugin.connectionState === 'needs_attention' ||
-          plugin.connectionState === 'error',
+          plugin.connectionState === 'needs_attention',
       ),
     [allPlugins],
   );
