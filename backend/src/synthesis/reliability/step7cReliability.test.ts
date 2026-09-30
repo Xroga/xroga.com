@@ -602,32 +602,32 @@ describe(
 
         assert.match(
           improvement,
-          /\.eq\s*\(\s*['"]user_id['"]\s*,\s*userId\s*\)/s,
+          /\.eq\s*\(\s*['"]user_id['"]\s*,\s*userId\s*,?\s*\)/s,
         );
 
         assert.match(
           improvement,
-          /\.gte\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*\)/s,
+          /\.gte\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*,?\s*\)/s,
         );
 
         assert.match(
           improvement,
-          /\.limit\s*\(\s*MAX_IMPROVEMENT_ROWS\s*\)/s,
+          /\.limit\s*\(\s*MAX_IMPROVEMENT_ROWS\s*,?\s*\)/s,
         );
 
         assert.match(
           routing,
-          /\.eq\(\s*['"]user_id['"]\s*,\s*userId\s*\)/s,
+          /\.eq\s*\(\s*['"]user_id['"]\s*,\s*userId\s*,?\s*\)/s,
         );
 
         assert.match(
           routing,
-          /\.gte\(\s*['"]updated_at['"]\s*,\s*cutoff\s*\)/s,
+          /\.gte\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*,?\s*\)/s,
         );
 
         assert.match(
           routing,
-          /\.limit\s*\(\s*MAX_ROWS\s*\)/s,
+          /\.limit\s*\(\s*MAX_ROWS\s*,?\s*\)/s,
         );
       },
     );
@@ -647,7 +647,7 @@ describe(
 
         assert.match(
           memory,
-          /\.delete\s*\(\s*\)[\s\S]*\.eq\s*\(\s*['"]user_id['"]\s*,\s*outcome\.userId\s*\)[\s\S]*\.lt\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*\)/s,
+          /\.delete\s*\(\s*\)[\s\S]*\.eq\s*\(\s*['"]user_id['"]\s*,\s*outcome\.userId\s*,?\s*\)[\s\S]*\.lt\s*\(\s*['"]updated_at['"]\s*,\s*cutoff\s*,?\s*\)/s,
         );
       },
     );
