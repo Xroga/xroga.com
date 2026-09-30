@@ -6,6 +6,9 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
 import { redactOperationsValue } from '../operations/operationsEngine.js';
+import {
+  recordTerminalBuildOutcomeFailOpen,
+} from './buildOutcomeMemory.js';
 
 export interface SwarmRunEvent {
   sequence: number;
@@ -35,6 +38,44 @@ const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
 const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+function rememberTerminalOutcome(
+  rec:
+    SwarmRunRecord,
+): void {
+  if (
+    rec.status ===
+    'running'
+  ) {
+    return;
+  }
+
+  void recordTerminalBuildOutcomeFailOpen({
+    runId:
+      rec.id,
+
+    userId:
+      rec.userId,
+
+    terminalStatus:
+      rec.status,
+
+    featureCategory:
+      rec.featureCategory,
+
+    iterationCount:
+      rec.iteration_count,
+
+    createdAt:
+      rec.created_at,
+
+    completedAt:
+      rec.completed_at,
+
+    output:
+      rec.output,
+  });
+}
 
 function schedulePersist(rec: SwarmRunRecord) {
   if (persistTimers.has(rec.id)) return;
@@ -300,8 +341,18 @@ export function completeRun(
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
 
-  runs.set(runId, rec);
-  flushPersist(rec);
+  runs.set(
+    runId,
+    rec,
+  );
+
+  flushPersist(
+    rec,
+  );
+
+  rememberTerminalOutcome(
+    rec,
+  );
 
   return rec;
 }
@@ -374,8 +425,18 @@ export function failRun(
 
   rec.iteration_count += 1;
 
-  runs.set(runId, rec);
-  flushPersist(rec);
+  runs.set(
+    runId,
+    rec,
+  );
+
+  flushPersist(
+    rec,
+  );
+
+  rememberTerminalOutcome(
+    rec,
+  );
 
   return rec;
 }
@@ -768,6 +829,31 @@ export async function requestRunCancellation(
       hot,
     );
   }
+
+  void recordTerminalBuildOutcomeFailOpen({
+    runId,
+
+    userId,
+
+    terminalStatus:
+      'cancelled',
+
+    featureCategory:
+      hot?.featureCategory,
+
+    iterationCount:
+      hot?.iteration_count ??
+      0,
+
+    createdAt:
+      hot?.created_at,
+
+    completedAt:
+      cancelledAt,
+
+    output:
+      cancelledOutput,
+  });
 
   return true;
 }
