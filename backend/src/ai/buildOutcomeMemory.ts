@@ -827,6 +827,466 @@ function safeText(
   );
 }
 
+function safeIdentifiers(
+  value:
+    unknown,
+
+  maximum =
+    12,
+): string[] {
+  if (
+    !Array.isArray(
+      value,
+    )
+  ) {
+    return [];
+  }
+
+  return [
+    ...new Set(
+      value
+        .map(
+          (
+            item,
+          ) =>
+            safeText(
+              item,
+              100,
+            ),
+        )
+        .filter(
+          (
+            item,
+          ): item is string =>
+            Boolean(
+              item,
+            ),
+        )
+        .slice(
+          0,
+          maximum,
+        ),
+    ),
+  ];
+}
+
+function failureDomainFor(
+  category:
+    BuildFailureCategory,
+): BuildFailureDomain {
+  if (
+    category ===
+    'none'
+  ) {
+    return 'none';
+  }
+
+  if (
+    category ===
+      'provider' ||
+    category ===
+      'capacity'
+  ) {
+    return 'provider';
+  }
+
+  if (
+    category ===
+    'platform'
+  ) {
+    return 'platform';
+  }
+
+  if (
+    category ===
+      'publication' ||
+    category ===
+      'deployment'
+  ) {
+    return 'delivery';
+  }
+
+  if (
+    category ===
+      'user_cancelled' ||
+    category ===
+      'user_configuration' ||
+    category ===
+      'policy'
+  ) {
+    return 'user';
+  }
+
+  return 'project';
+}
+
+function failureStageFor(
+  category:
+    BuildFailureCategory,
+): BuildFailureStage {
+  switch (
+    category
+  ) {
+    case 'none':
+      return 'none';
+
+    case 'dependency':
+      return 'dependency';
+
+    case 'compile':
+      return 'build';
+
+    case 'test':
+      return 'test';
+
+    case 'preview':
+      return 'browser';
+
+    case 'runtime':
+      return 'runtime';
+
+    case 'verification':
+      return 'verification';
+
+    case 'publication':
+      return 'publication';
+
+    case 'deployment':
+      return 'deployment';
+
+    case 'architecture':
+      return 'planning';
+
+    case 'integration':
+      return 'implementation';
+
+    default:
+      return 'unknown';
+  }
+}
+
+function phaseStatus(
+  output:
+    Record<
+      string,
+      unknown
+    > | null,
+
+  key:
+    string,
+): string | null {
+  const lifecycle =
+    record(
+      output
+        ?.projectRunState,
+    );
+
+  const phase =
+    record(
+      lifecycle?.[key],
+    );
+
+  return safeText(
+    phase?.status,
+    40,
+  );
+}
+
+function statusBoolean(
+  status:
+    string | null,
+): boolean | null {
+  if (
+    status ===
+    'succeeded'
+  ) {
+    return true;
+  }
+
+  if (
+    status ===
+      'failed' ||
+    status ===
+      'blocked' ||
+    status ===
+      'cancelled'
+  ) {
+    return false;
+  }
+
+  return null;
+}
+
+function browserOutcome(
+  output:
+    Record<
+      string,
+      unknown
+    > | null,
+): boolean | null {
+  const browser =
+    record(
+      output
+        ?.browserVerification,
+    );
+
+  const direct =
+    booleanField(
+      browser?.verified,
+    ) ??
+    booleanField(
+      browser?.ok,
+    ) ??
+    booleanField(
+      browser?.passed,
+    );
+
+  if (
+    direct !==
+    null
+  ) {
+    return direct;
+  }
+
+  const status =
+    safeText(
+      browser?.status,
+      40,
+    );
+
+  if (
+    status ===
+      'passed' ||
+    status ===
+      'succeeded' ||
+    status ===
+      'ready'
+  ) {
+    return true;
+  }
+
+  if (
+    status ===
+      'failed' ||
+    status ===
+      'blocked' ||
+    status ===
+      'error'
+  ) {
+    return false;
+  }
+
+  return null;
+}
+
+function sanitizedLearningContext(
+  output:
+    Record<
+      string,
+      unknown
+    > | null,
+) {
+  const context =
+    record(
+      output
+        ?.learningContext,
+    );
+
+  const decision =
+    record(
+      context
+        ?.learningDecision,
+    );
+
+  return {
+    taxonomyId:
+      safeText(
+        context?.taxonomyId,
+        100,
+      ),
+
+    productSurface:
+      safeText(
+        context?.surface,
+        80,
+      ),
+
+    productSubtype:
+      safeText(
+        context?.subtype,
+        100,
+      ),
+
+    domainCategory:
+      safeText(
+        context?.domain,
+        100,
+      ),
+
+    recipeId:
+      safeText(
+        context?.recipeId,
+        120,
+      ),
+
+    goldenExampleIds:
+      safeIdentifiers(
+        context
+          ?.goldenExampleIds,
+      ),
+
+    framework:
+      safeText(
+        context?.framework,
+        100,
+      ),
+
+    runtime:
+      safeText(
+        context?.runtime,
+        100,
+      ),
+
+    adapterId:
+      safeText(
+        context?.adapterId,
+        120,
+      ),
+
+    learningDecision:
+      decision
+        ? {
+            recipePreferenceApplied:
+              booleanField(
+                decision
+                  .recipePreferenceApplied,
+              ) ===
+              true,
+
+            goldenExamplePreferenceApplied:
+              booleanField(
+                decision
+                  .goldenExamplePreferenceApplied,
+              ) ===
+              true,
+
+            recipeSampleSize:
+              nonNegativeInt(
+                decision
+                  .recipeSampleSize,
+              ),
+
+            recipeConfidence:
+              nullableNumber(
+                decision
+                  .recipeConfidence,
+              ),
+
+            goldenSampleSize:
+              nonNegativeInt(
+                decision
+                  .goldenSampleSize,
+              ),
+
+            goldenConfidence:
+              nullableNumber(
+                decision
+                  .goldenConfidence,
+              ),
+          }
+        : null,
+  };
+}
+
+function learningEligibility(
+  input: {
+    readonly verified:
+      boolean;
+
+    readonly failureCategory:
+      BuildFailureCategory;
+
+    readonly failureDomain:
+      BuildFailureDomain;
+  },
+): {
+  readonly eligible:
+    boolean;
+
+  readonly reason:
+    string | null;
+} {
+  if (
+    input.verified &&
+    (
+      input.failureCategory ===
+        'none' ||
+      input.failureDomain ===
+        'delivery'
+    )
+  ) {
+    return {
+      eligible:
+        true,
+
+      reason:
+        null,
+    };
+  }
+
+  if (
+    input.failureDomain ===
+      'project' &&
+    [
+      'verification',
+      'compile',
+      'test',
+      'preview',
+      'dependency',
+      'runtime',
+      'architecture',
+      'integration',
+    ].includes(
+      input.failureCategory,
+    )
+  ) {
+    return {
+      eligible:
+        true,
+
+      reason:
+        null,
+    };
+  }
+
+  const reason =
+    input.failureCategory ===
+      'user_cancelled'
+      ? 'user_cancelled'
+      : input.failureCategory ===
+          'interrupted'
+        ? 'interrupted'
+        : input.failureDomain ===
+            'provider'
+          ? 'provider_or_capacity'
+          : input.failureDomain ===
+              'platform'
+            ? 'platform_failure'
+            : input.failureDomain ===
+                'user'
+              ? 'user_or_policy'
+              : input.verified
+                ? 'delivery_only'
+                : 'unverified';
+
+  return {
+    eligible:
+      false,
+
+    reason,
+  };
+}
+
 export function sanitizeRoutingOutcome(
   outcome:
     RoutingOutcome,
