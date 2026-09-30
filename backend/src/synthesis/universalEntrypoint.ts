@@ -84,6 +84,11 @@ import {
 } from '../ai/measuredEvidence.js';
 
 import {
+  applyBuildOutcomeRoutingMemory,
+  type BuildOutcomeRoutingMemory,
+} from '../ai/buildOutcomeRoutingMemory.js';
+
+import {
   MODELS,
   type ModelId,
 } from '../ai/models.js';
@@ -387,6 +392,9 @@ export async function tryUniversalBuild(
 
     writeTarget?:
       ActiveProjectContext;
+
+    routingMemory?:
+      BuildOutcomeRoutingMemory;
 
     goalContext?:
       Pick<
@@ -935,7 +943,7 @@ const measuredEvidence =
           ),
     });
 
-  const orderedCandidates:
+  const measuredCandidates:
     readonly string[] =
     measured.modelId
       ? [
@@ -972,6 +980,15 @@ const measuredEvidence =
                 model.modelId,
             ),
         ];
+
+  const memoryAdjusted =
+    applyBuildOutcomeRoutingMemory(
+      measuredCandidates,
+      input.routingMemory,
+    );
+
+  const orderedCandidates =
+    memoryAdjusted.candidates;
 
   const primaryModelId =
     orderedCandidates[0] as
@@ -1238,9 +1255,15 @@ repairResultMode:
         fallbackModelIds,
 
       reason:
-        measured.measured
-          ? `selected on measured evidence — ${measured.reason}`
-          : `selected on prior — ${route.reason} (${measured.reason})`,
+        `${
+          measured.measured
+            ? `selected on measured evidence — ${measured.reason}`
+            : `selected on prior — ${route.reason} (${measured.reason})`
+        }${
+          memoryAdjusted.applied
+            ? `; outcome memory — ${memoryAdjusted.reason}`
+            : ''
+        }`,
 
       excluded:
         route.excluded,

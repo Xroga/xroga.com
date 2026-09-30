@@ -226,6 +226,7 @@ import { normalizeProviderError, recordModelValidation } from './providerRuntime
 import { classifyFailure } from '../lib/recoveryPlanner.js';
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
+import { loadBuildOutcomeRoutingMemory } from './buildOutcomeRoutingMemory.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
 import {
@@ -1269,6 +1270,10 @@ if (
   }
 
   const baseRoute = routePrompt(opts.prompt);
+  const buildOutcomeRoutingMemory =
+    await loadBuildOutcomeRoutingMemory(
+      opts.userId,
+    );
   // Reads the user's repository over the GitHub API — routinely the longest single
   // wait before the build starts, and previously invisible.
   emit({ ...startupProgress('repository'), swarmTodos: todosForBuild('route', 'omit') });
@@ -1635,6 +1640,9 @@ const universalRequestPrompt =
 
     projectId: resolvedProjectId,
     prompt: universalRequestPrompt,
+
+    routingMemory:
+      buildOutcomeRoutingMemory,
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
@@ -2768,7 +2776,9 @@ publicationReason:
     prompt: opts.prompt,
     legacyModel: route.builder,
     repositoryFileCount: prior.files?.length,
-    previousFailures: 0,
+    previousFailures:
+      buildOutcomeRoutingMemory
+        .consecutiveFailures,
   });
   trace.setMeta({ buildRoute: { source: buildSelection.source, reason: buildSelection.reason } });
 
