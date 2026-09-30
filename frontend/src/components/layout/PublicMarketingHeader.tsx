@@ -81,7 +81,7 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
     secondary: [
       { href: '/build', label: 'Extensions, APIs & tools', note: 'Browser extensions, APIs, automations, and utilities.', icon: Boxes },
       { href: '/game-builder', label: 'Games', note: 'Build supported playable web experiences.', icon: Rocket },
-      { href: '/crypto-builder', label: 'Web3 & crypto', note: 'Build supported Web3 product experiences.', icon: Sparkles },
+      { href: '/crypto', label: 'Web3 & crypto', note: 'Build supported Web3 product experiences.', icon: Sparkles },
     ],
     ctaHref: '/build',
     ctaLabel: 'Explore What You Can Build',
@@ -507,10 +507,9 @@ export function PublicMarketingHeader() {
         </nav>
 
         <div className="xv-marketing-header__actions">
+          <HomepageThemeSwitcher />
           {loggedIn ? (
-            <>
-              <HomepageThemeSwitcher />
-              <button
+            <button
                 type="button"
                 className="xv-header-build-button xv-header-dashboard-button"
                 onClick={() => router.push(accountHref)}
@@ -524,7 +523,6 @@ export function PublicMarketingHeader() {
                   Dashboard
                 </span>
               </button>
-            </>
           ) : (
             <Link className="xv-header-build-button xv-marketing-header__cta" href="/auth/signup">
               <span className="xv-header-build-fold" aria-hidden="true" />
