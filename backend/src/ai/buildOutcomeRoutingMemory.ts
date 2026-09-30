@@ -97,6 +97,11 @@ function failureCategory(
       'deployment',
       'policy',
       'platform',
+      'dependency',
+      'runtime',
+      'architecture',
+      'integration',
+      'user_configuration',
       'unknown',
     ];
 
