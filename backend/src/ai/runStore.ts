@@ -330,6 +330,19 @@ export function completeRun(
 
   if (!rec) return null;
 
+  /*
+   * Finalization is a one-way state transition. A late duplicate callback,
+   * stale catch block, or repeated client completion must not increment
+   * iteration_count, overwrite terminal evidence, or record another learning
+   * outcome. A resumed run explicitly transitions back to running first.
+   */
+  if (
+    rec.status !==
+    'running'
+  ) {
+    return rec;
+  }
+
   rec.status =
     data.success === false
       ? 'error'
@@ -373,6 +386,19 @@ export function failRun(
   const rec = runs.get(runId);
 
   if (!rec) return null;
+
+  /*
+   * Preserve the first truthful terminal result. This prevents a late failure
+   * handler from rewriting a completed/cancelled run, and prevents duplicate
+   * terminal side effects. Exact resume re-opens a run through
+   * resumeRunDurable(), which moves it back to running before finalization.
+   */
+  if (
+    rec.status !==
+    'running'
+  ) {
+    return rec;
+  }
 
   rec.status = status;
 
@@ -745,6 +771,14 @@ export async function requestRunCancellation(
   if (
     hot &&
     hot.userId !== userId
+  ) {
+    return false;
+  }
+
+  if (
+    hot &&
+    hot.status !==
+      'running'
   ) {
     return false;
   }
