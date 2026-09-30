@@ -239,6 +239,18 @@ export interface BuildOutcomeRecord {
 
     readonly goldenConfidence:
       number | null;
+
+    readonly modelPreferenceApplied:
+      boolean;
+
+    readonly modelSampleSize:
+      number;
+
+    readonly modelConfidence:
+      number | null;
+
+    readonly verificationPriorityApplied:
+      boolean;
   } | null;
 
   readonly iterationCount:
@@ -1268,6 +1280,32 @@ function sanitizedLearningContext(
                 decision
                   .goldenConfidence,
               ),
+
+            modelPreferenceApplied:
+              booleanField(
+                decision
+                  .modelPreferenceApplied,
+              ) ===
+              true,
+
+            modelSampleSize:
+              nonNegativeInt(
+                decision
+                  .modelSampleSize,
+              ),
+
+            modelConfidence:
+              nullableNumber(
+                decision
+                  .modelConfidence,
+              ),
+
+            verificationPriorityApplied:
+              booleanField(
+                decision
+                  .verificationPriorityApplied,
+              ) ===
+              true,
           }
         : null,
   };
