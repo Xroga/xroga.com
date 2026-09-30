@@ -1539,7 +1539,7 @@ if (
   //
   // `routeProject` is pure and reads the same flags `tryUniversalBuild` reads, so calling
   // it here reports the real decision rather than a second guess at it.
-  const universalDecision = routeProject(resolvedProjectId);
+  const universalDecision = routeProject(canonicalProjectId);
   emit({
     agent: 'router',
     status: 'universal_routing',
@@ -1549,7 +1549,7 @@ if (
     universalPath: universalDecision.useUniversal,
     universalShadow: universalDecision.shadow,
     universalReason: universalDecision.reason,
-    projectIdPresent: Boolean(resolvedProjectId),
+    projectIdPresent: Boolean(canonicalProjectId),
     // Named separately so "the client sent it" and "we recovered it from the repository"
     // stay distinguishable — they fail for different reasons and need different fixes.
     projectIdFromClient: Boolean(opts.projectId),
@@ -1638,7 +1638,7 @@ const universalRequestPrompt =
           }
         : undefined,
 
-    projectId: resolvedProjectId,
+    projectId: canonicalProjectId,
     prompt: universalRequestPrompt,
 
     routingMemory:

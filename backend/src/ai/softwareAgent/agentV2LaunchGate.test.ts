@@ -102,7 +102,7 @@ test(
 
     assert.match(
       fly,
-      /UNIVERSAL_AGENT_ENABLED\s*=\s*['"]default['"]/,
+      /UNIVERSAL_AGENT_ENABLED\s*=\s*['"]retirement['"]/,
     );
 
     assert.match(
@@ -181,12 +181,7 @@ test(
      */
     assert.doesNotMatch(
       adapter,
-      /runLegacy\s*\?\.\s*\(/,
-    );
-
-    assert.doesNotMatch(
-      adapter,
-      /await\s+input\.runLegacy\s*\(/,
+      /runLegacy/,
     );
   },
 );

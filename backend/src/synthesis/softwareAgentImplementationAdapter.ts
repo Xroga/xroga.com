@@ -127,10 +127,6 @@ forceContinueFromCheckpoint?:
   checkpointStore?:
     SoftwareAgentCheckpointStore;
 
-  runLegacy?: () =>
-    Promise<
-      readonly ProjectFile[]
-    >;
 }
 
 const DEFINITELY_NON_BROWSER_SURFACES =

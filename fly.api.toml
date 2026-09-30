@@ -11,10 +11,10 @@ primary_region = 'iad'
 [env]
   PORT = '8080'
   NODE_ENV = 'production'
-  UNIVERSAL_AGENT_ENABLED = 'default'
-  # Also keeps a legacy `enabled` secret override fully rolled out. Fly secrets take
-  # precedence over this file, so the percentage must be explicit until that old
-  # non-sensitive mode value is removed by an operator.
+  UNIVERSAL_AGENT_ENABLED = 'retirement'
+  # Retirement mode makes Universal Agent V2 the normal production path. The old
+  # whole-project builder remains available only for an explicit operator rollback by
+  # changing UNIVERSAL_AGENT_ENABLED to `legacy`; it is no longer the normal fallback.
   UNIVERSAL_AGENT_PERCENTAGE = '100'
   FRONTEND_URL = 'https://xroga.com'
   GITHUB_OAUTH_CALLBACK_URL = 'https://xroga.com/dashboard/integrations/github/callback'

@@ -39,10 +39,6 @@ import {
 
 
 import {
-  implementCoherently,
-} from './coherentImplementation.js';
-
-import {
   executeUniversalRun,
   type UniversalExecutionResult,
 } from './universalExecution.js';
@@ -1065,46 +1061,6 @@ const measuredEvidence =
                   onEvent:
                     input.onEvent,
 
-                  /*
-                   * The legacy implementation is still present, but it is
-                   * now behind SoftwareAgentRuntime's selector rather than
-                   * being hard-wired as the production implementation.
-                   */
-                  runLegacy:
-                    () =>
-                      implementCoherently(
-                        {
-                          brief,
-
-                          originalRequest:
-                          executionPrompt,
-
-                          candidates:
-                            orderedCandidates.map(
-                              (
-                                modelId,
-                              ) => ({
-                                modelId,
-                              }),
-                            ),
-
-                          existingFiles,
-
-                          signal,
-
-                          onTelemetry:
-                            (
-                              record,
-                            ) => {
-                              console.info(
-                                '[builder_model_call]',
-                                JSON.stringify(
-                                  record,
-                                ),
-                              );
-                            },
-                        },
-                      ),
                 },
               ),
 
