@@ -388,17 +388,25 @@ export function failRun(
   if (!rec) return null;
 
   /*
-   * Preserve the first truthful terminal result. This prevents a late failure
-   * handler from rewriting a completed/cancelled run, and prevents duplicate
-   * terminal side effects. Exact resume re-opens a run through
-   * resumeRunDurable(), which moves it back to running before finalization.
+   * Completion is authoritative and cancellation stays cancelled. An existing
+   * error may still be enriched with a later concrete failure reason, or
+   * corrected to an explicit cancellation, because the pipeline historically
+   * persists a blocked engineering artifact before a late transport/provider
+   * failure becomes known. Those terminal corrections do not consume another
+   * iteration and never overwrite a successful completion.
    */
   if (
-    rec.status !==
-    'running'
+    rec.status ===
+      'complete' ||
+    rec.status ===
+      'cancelled'
   ) {
     return rec;
   }
+
+  const terminalCorrection =
+    rec.status ===
+      'error';
 
   rec.status = status;
 
@@ -447,9 +455,18 @@ export function failRun(
         };
 
   rec.completed_at =
-    new Date().toISOString();
+    terminalCorrection &&
+    rec.completed_at
+      ? rec.completed_at
+      : new Date()
+          .toISOString();
 
-  rec.iteration_count += 1;
+  if (
+    !terminalCorrection
+  ) {
+    rec.iteration_count +=
+      1;
+  }
 
   runs.set(
     runId,
