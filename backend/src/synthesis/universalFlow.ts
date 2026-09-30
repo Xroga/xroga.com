@@ -108,7 +108,7 @@ export interface UniversalRunPlan {
  * a type error makes a test failure meaningless; build last because there is no point
  * building code that fails its own tests.
  */
-const PHASES: readonly ValidationPhase[] = ['install', 'lint', 'typecheck', 'test', 'build', 'package'];
+const PHASES: readonly LearnedValidationPhase[] = ['install', 'lint', 'typecheck', 'test', 'build', 'package'];
 
 function validationsFor(
   components:
