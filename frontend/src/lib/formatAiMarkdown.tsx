@@ -17,12 +17,12 @@ import {
   ApiError,
   api,
   apiFetch,
-} from '@/lib/api';
+} from './api';
 
 import {
   clearOAuthResult,
   subscribeOAuthResults,
-} from '@/lib/oauthPopupResult';
+} from './oauthPopupResult';
 
 function joinClasses(
   ...values:
