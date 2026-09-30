@@ -16,8 +16,8 @@ test('one activation operation owns repository selection and compatibility write
   assert.match(REPO, /getState\(\)\.activateProjectContext\(ctx\)/);
   assert.match(REPO, /saveSelectedRepoContext = activateProjectContext/);
   assert.match(STORE, /activeProjectContextKey/);
-  assert.match(STORE, /projectStates: Record<string, ProjectWorkspaceSnapshot>/);
-  assert.match(STORE, /activeTaskSessionByProject: Record<string, string \| null>/);
+  assert.match(STORE, /projectStates:\s*Record<\s*string,\s*ProjectWorkspaceSnapshot\s*>/s);
+  assert.match(STORE, /activeTaskSessionByProject:\s*Record<\s*string,\s*string\s*\|\s*null\s*>/s);
 });
 
 test('canonical project activation clears stale fresh-product intent', () => {
@@ -47,7 +47,7 @@ test('restoring an engineering task rehydrates Project edits without crossing pr
     CHAT.indexOf('async function restoreProjectWorkspaceFromMessages'),
     CHAT.indexOf('function lastUserPromptNear'),
   );
-  assert.match(restore, /\.find\(isRenderableArtifact\)/);
+  assert.match(restore, /\.find\(\s*isRenderableArtifact,?\s*\)/s);
   assert.match(restore, /engineeringArtifactWorkspaceProjection\(engineeringArtifact\)/);
   assert.match(restore, /projection\.repo !== repositoryName/);
   assert.match(restore, /sameProjectContext\(workspace\.activeProjectContext, target\)/);
@@ -56,13 +56,13 @@ test('restoring an engineering task rehydrates Project edits without crossing pr
 
 test('outgoing write metadata is asserted against the visible canonical context', () => {
   assert.match(CHAT, /assertActiveProjectTarget\(\{/);
-  assert.match(CHAT, /githubTargetRepo: stickyTargetRepo/);
-  assert.match(CHAT, /githubTargetBranch: stickyTargetBranch/);
-  assert.match(CHAT, /projectRoot: activeBuildContext\?\.projectRoot \|\| '\/'/);
+  assert.match(CHAT, /githubTargetRepo:\s*stickyTargetRepo/);
+  assert.match(CHAT, /githubTargetBranch:\s*stickyTargetBranch/);
+  assert.match(CHAT, /projectRoot:\s*activeBuildContext\?\.projectRoot\s*\|\|\s*'\/'/);
 });
 
 test('same-context activation is a no-op and async restoration is version guarded', () => {
-  assert.match(STORE, /if \(!result\.changed\) return/);
+  assert.match(STORE, /if\s*\(\s*!result\.changed\s*\)\s*\{\s*return/s);
   assert.match(STORE, /isCurrentProjectTransition/);
   assert.match(STORE, /completeProjectContextRestore/);
   assert.match(STORE, /current\.transitionVersion > 0/);
