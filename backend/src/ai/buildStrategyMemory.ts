@@ -469,8 +469,12 @@ function candidateEvidence(
   const successes =
     rows.filter(
       (observation) =>
-        observation.success &&
-        observation.verified,
+        observation.verified &&
+        (
+          observation.success ||
+          observation.failureDomain ===
+            'delivery'
+        ),
     ).length;
 
   return {
