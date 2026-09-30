@@ -734,6 +734,81 @@ export function classifyBuildFailure(
     };
   }
 
+  const phaseReached =
+    safeText(
+      input.output
+        ?.phaseReached,
+      40,
+    );
+
+  if (
+    input.terminalStatus ===
+      'error' &&
+    (
+      phaseReached ===
+        'architecture' ||
+      phaseReached ===
+        'spec' ||
+      phaseReached ===
+        'planning'
+    )
+  ) {
+    return {
+      category:
+        'architecture',
+
+      code,
+    };
+  }
+
+  if (
+    input.terminalStatus ===
+      'error' &&
+    phaseReached ===
+      'implementation'
+  ) {
+    return {
+      category:
+        'runtime',
+
+      code,
+    };
+  }
+
+  if (
+    input.terminalStatus ===
+      'error' &&
+    (
+      phaseReached ===
+        'validation' ||
+      phaseReached ===
+        'repair' ||
+      phaseReached ===
+        'review'
+    )
+  ) {
+    return {
+      category:
+        'verification',
+
+      code,
+    };
+  }
+
+  if (
+    input.terminalStatus ===
+      'error' &&
+    phaseReached ===
+      'commit'
+  ) {
+    return {
+      category:
+        'publication',
+
+      code,
+    };
+  }
+
   if (
     input.terminalStatus ===
     'complete'
