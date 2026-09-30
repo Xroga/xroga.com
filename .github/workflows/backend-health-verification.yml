@@ -12,6 +12,7 @@ name: Backend health verification
 # that writes belongs in a separate workflow with its own controls.
 on:
   workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: read
