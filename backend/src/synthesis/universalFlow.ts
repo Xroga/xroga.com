@@ -92,6 +92,12 @@ export interface UniversalRunPlan {
   readonly blockers: readonly string[];
   /** Set when an unrecognised toolchain needs §12 discovery before anything can run. */
   readonly discovery: RuntimeCapabilitySpec | null;
+
+  readonly learningDecision?: {
+    readonly verificationPriorityApplied:
+      boolean;
+  };
+
   readonly summary: string;
 }
 
@@ -313,6 +319,16 @@ export function planUniversalRun(input: {
     status,
     blockers,
     discovery,
+
+    learningDecision: {
+      verificationPriorityApplied:
+        validationPhases.join(
+          '|',
+        ) !==
+        PHASES.join(
+          '|',
+        ),
+    },
 
     summary:
       describeRun({
