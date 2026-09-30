@@ -65,7 +65,7 @@ test('same-context activation is a no-op and async restoration is version guarde
   assert.match(STORE, /if\s*\(\s*!result\.changed\s*\)\s*\{\s*return/s);
   assert.match(STORE, /isCurrentProjectTransition/);
   assert.match(STORE, /completeProjectContextRestore/);
-  assert.match(STORE, /current\.transitionVersion > 0/);
+  assert.match(STORE, /current\s*\.transitionVersion\s*>\s*0/s);
 });
 
 test('passive repository refresh cannot reset the canonical branch', () => {
