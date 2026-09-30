@@ -20,6 +20,12 @@
  */
 
 import type { ProjectFile } from '../ai/patches.js';
+
+import {
+  prioritizeValidationPhases,
+  type BuildStrategyMemory,
+  type LearnedValidationPhase,
+} from '../ai/buildStrategyMemory.js';
 import {
   buildContractPlanningText,
   type BuildContract,
@@ -86,6 +92,12 @@ export interface UniversalRunPlan {
   readonly blockers: readonly string[];
   /** Set when an unrecognised toolchain needs §12 discovery before anything can run. */
   readonly discovery: RuntimeCapabilitySpec | null;
+
+  readonly learningDecision?: {
+    readonly verificationPriorityApplied:
+      boolean;
+  };
+
   readonly summary: string;
 }
 
@@ -96,13 +108,20 @@ export interface UniversalRunPlan {
  * a type error makes a test failure meaningless; build last because there is no point
  * building code that fails its own tests.
  */
-const PHASES: readonly ValidationPhase[] = ['install', 'lint', 'typecheck', 'test', 'build', 'package'];
+const PHASES: readonly LearnedValidationPhase[] = ['install', 'lint', 'typecheck', 'test', 'build', 'package'];
 
-function validationsFor(components: readonly DetectedComponent[]): readonly PlannedValidation[] {
+function validationsFor(
+  components:
+    readonly DetectedComponent[],
+
+  phases:
+    readonly LearnedValidationPhase[] =
+    PHASES,
+): readonly PlannedValidation[] {
   const validations: PlannedValidation[] = [];
   for (const component of components) {
     const sandboxImage = sandboxImageFor(component);
-    for (const phase of PHASES) {
+    for (const phase of phases) {
       for (const command of commandsFor(component, phase)) {
         validations.push({
           componentRoot: component.root,
@@ -132,6 +151,9 @@ export function planUniversalRun(input: {
   projectId?: string | null;
   runId?: string | null;
   buildContract?: BuildContract | null;
+
+  learningMemory?:
+    BuildStrategyMemory;
 }): UniversalRunPlan {
   const files =
     input.files ??
@@ -175,6 +197,9 @@ export function planUniversalRun(input: {
           ) =>
             declaration.surface,
         ),
+
+      learningMemory:
+        input.learningMemory,
     });
 
   const architecture =
@@ -227,7 +252,40 @@ export function planUniversalRun(input: {
   }
 
   const composition = files.length ? detectComposition(files) : { components: [], unclaimedRoots: [], polyglot: false };
-  const validations = validationsFor(composition.components);
+
+  const validationPhases =
+    prioritizeValidationPhases(
+      PHASES as
+        readonly LearnedValidationPhase[],
+
+      {
+        taxonomyId:
+          productIntelligence
+            .classification
+            ?.taxonomyId ??
+          null,
+
+        surface:
+          productIntelligence
+            .classification
+            ?.surface ??
+          null,
+
+        subtype:
+          productIntelligence
+            .classification
+            ?.subtype ??
+          null,
+      },
+
+      input.learningMemory,
+    );
+
+  const validations =
+    validationsFor(
+      composition.components,
+      validationPhases,
+    );
 
   // Discovery engages only when a repository holds something no adapter can build. A
   // greenfield request has nothing to discover.
@@ -261,6 +319,16 @@ export function planUniversalRun(input: {
     status,
     blockers,
     discovery,
+
+    learningDecision: {
+      verificationPriorityApplied:
+        validationPhases.join(
+          '|',
+        ) !==
+        PHASES.join(
+          '|',
+        ),
+    },
 
     summary:
       describeRun({

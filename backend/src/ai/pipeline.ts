@@ -228,6 +228,7 @@ import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
 import { loadBuildOutcomeRoutingMemory } from './buildOutcomeRoutingMemory.js';
 import { loadBuildImprovementMemory } from './buildImprovementMemory.js';
+import { loadBuildStrategyMemory } from './buildStrategyMemory.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
 import {
@@ -1274,12 +1275,17 @@ if (
   const [
     buildOutcomeRoutingMemory,
     buildImprovementMemory,
+    buildStrategyMemory,
   ] = await Promise.all([
     loadBuildOutcomeRoutingMemory(
       opts.userId,
     ),
 
     loadBuildImprovementMemory(
+      opts.userId,
+    ),
+
+    loadBuildStrategyMemory(
       opts.userId,
     ),
   ]);
@@ -1655,6 +1661,10 @@ const universalRequestPrompt =
 
     improvementMemory:
       buildImprovementMemory,
+
+    strategyMemory:
+      buildStrategyMemory,
+
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
@@ -2092,6 +2102,121 @@ publicationReason:
         buildContract,
 
         projectRunState,
+
+        learningContext:
+          result.plan
+            ? {
+                taxonomyId:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.taxonomyId ??
+                  null,
+
+                surface:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.surface ??
+                  null,
+
+                subtype:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.subtype ??
+                  null,
+
+                domain:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.domain ??
+                  null,
+
+                recipeId:
+                  result.plan
+                    .productIntelligence
+                    .recipe
+                    ?.id ??
+                  null,
+
+                goldenExampleIds:
+                  result.plan
+                    .productIntelligence
+                    .goldenExamples
+                    .map(
+                      (
+                        example,
+                      ) =>
+                        example.id,
+                    ),
+
+                framework:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.framework ??
+                  null,
+
+                runtime:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.runtime ??
+                  null,
+
+                adapterId:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.adapterId ??
+                  null,
+
+                verificationPhases: [
+                  ...new Set(
+                    result.plan
+                      .validations
+                      .map(
+                        (
+                          validation,
+                        ) =>
+                          validation.phase,
+                      ),
+                  ),
+                ],
+
+                learningDecision: {
+                  ...result.plan
+                    .productIntelligence
+                    .learningDecision,
+
+                  modelPreferenceApplied:
+                    universal.routing
+                      .learningDecision
+                      ?.modelPreferenceApplied ??
+                    false,
+
+                  modelSampleSize:
+                    universal.routing
+                      .learningDecision
+                      ?.modelSampleSize ??
+                    0,
+
+                  modelConfidence:
+                    universal.routing
+                      .learningDecision
+                      ?.modelConfidence ??
+                    null,
+
+                  verificationPriorityApplied:
+                    result.plan
+                      .learningDecision
+                      ?.verificationPriorityApplied ??
+                    false,
+                },
+              }
+            : null,
 
                 ...(softwareProject
           ? {

@@ -11,9 +11,15 @@ import type {
 } from './architecturePlan.js';
 
 import {
-  selectBuildRecipe,
+  candidateBuildRecipes,
   type BuildRecipe,
 } from './buildRecipes.js';
+
+import {
+  preferGoldenExampleIds,
+  preferRecipeIds,
+  type BuildStrategyMemory,
+} from '../ai/buildStrategyMemory.js';
 
 import {
   compileProductFilePlan,
@@ -54,6 +60,26 @@ export interface PreparedProductIntelligence {
 
   readonly goldenExamples:
     readonly GoldenExample[];
+
+  readonly learningDecision: {
+    readonly recipePreferenceApplied:
+      boolean;
+
+    readonly goldenExamplePreferenceApplied:
+      boolean;
+
+    readonly recipeSampleSize:
+      number;
+
+    readonly recipeConfidence:
+      number | null;
+
+    readonly goldenSampleSize:
+      number;
+
+    readonly goldenConfidence:
+      number | null;
+  };
 }
 
 export interface ProductIntelligencePlan
@@ -78,6 +104,9 @@ export function prepareProductIntelligence(
 
     explicitDomain?:
       string | null;
+
+    learningMemory?:
+      BuildStrategyMemory;
   },
 ): PreparedProductIntelligence {
   const classification =
@@ -95,13 +124,57 @@ export function prepareProductIntelligence(
         input.explicitDomain,
     });
 
-  const recipe =
-    selectBuildRecipe({
+  const recipeCandidates =
+    candidateBuildRecipes({
       classification,
 
       surfaces:
         input.surfaces,
     });
+
+  const strategyContext = {
+    taxonomyId:
+      classification
+        ?.taxonomyId ??
+      null,
+
+    surface:
+      classification
+        ?.surface ??
+      input.surfaces[0] ??
+      null,
+
+    subtype:
+      classification
+        ?.subtype ??
+      null,
+  };
+
+  const recipeDecision =
+    preferRecipeIds(
+      recipeCandidates.map(
+        (
+          recipe,
+        ) =>
+          recipe.id,
+      ),
+
+      strategyContext,
+
+      input.learningMemory,
+    );
+
+  const recipe =
+    recipeCandidates.find(
+      (
+        candidate,
+      ) =>
+        candidate.id ===
+        recipeDecision
+          .candidates[0],
+    ) ??
+    recipeCandidates[0] ??
+    null;
 
   const nichePack =
     selectNichePack({
@@ -111,20 +184,89 @@ export function prepareProductIntelligence(
       classification,
     });
 
-  const goldenExamples =
+  const compatibleGoldenExamples =
     selectGoldenExamples({
       classification,
       recipe,
       nichePack,
       limit:
+        24,
+    });
+
+  const goldenDecision =
+    preferGoldenExampleIds(
+      compatibleGoldenExamples
+        .map(
+          (
+            example,
+          ) =>
+            example.id,
+        ),
+
+      strategyContext,
+
+      input.learningMemory,
+    );
+
+  const goldenExamples =
+    selectGoldenExamples({
+      classification,
+      recipe,
+      nichePack,
+      preferredIds:
+        goldenDecision.candidates,
+      limit:
         2,
     });
+
+  if (
+    recipeDecision.applied ||
+    goldenDecision.applied
+  ) {
+    console.info(
+      '[learning_selector_applied]',
+      JSON.stringify({
+        component:
+          'product_intelligence',
+        taxonomyId:
+          strategyContext.taxonomyId,
+        recipePreferenceApplied:
+          recipeDecision.applied,
+        goldenExamplePreferenceApplied:
+          goldenDecision.applied,
+        recipeSampleSize:
+          recipeDecision.sampleSize,
+        goldenSampleSize:
+          goldenDecision.sampleSize,
+      }),
+    );
+  }
 
   return {
     classification,
     recipe,
     nichePack,
     goldenExamples,
+
+    learningDecision: {
+      recipePreferenceApplied:
+        recipeDecision.applied,
+
+      goldenExamplePreferenceApplied:
+        goldenDecision.applied,
+
+      recipeSampleSize:
+        recipeDecision.sampleSize,
+
+      recipeConfidence:
+        recipeDecision.confidence,
+
+      goldenSampleSize:
+        goldenDecision.sampleSize,
+
+      goldenConfidence:
+        goldenDecision.confidence,
+    },
   };
 }
 

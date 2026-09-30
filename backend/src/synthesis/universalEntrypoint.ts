@@ -89,6 +89,10 @@ import {
   type BuildImprovementMemory,
 } from '../ai/buildImprovementMemory.js';
 
+import type {
+  BuildStrategyMemory,
+} from '../ai/buildStrategyMemory.js';
+
 import {
   MODELS,
   type ModelId,
@@ -165,6 +169,17 @@ export interface UniversalBuildOutcome {
     readonly evidenceSource?:
       | 'measured'
       | 'unavailable';
+
+    readonly learningDecision?: {
+      readonly modelPreferenceApplied:
+        boolean;
+
+      readonly modelSampleSize:
+        number;
+
+      readonly modelConfidence:
+        number | null;
+    };
   };
 }
 
@@ -399,6 +414,9 @@ export async function tryUniversalBuild(
 
     improvementMemory?:
       BuildImprovementMemory;
+
+    strategyMemory?:
+      BuildStrategyMemory;
 
     goalContext?:
       Pick<
@@ -1221,6 +1239,9 @@ repairResultMode:
 
       executionStore:
         input.executionStore,
+
+      learningMemory:
+        input.strategyMemory,
     });
 
   return {
@@ -1263,6 +1284,19 @@ repairResultMode:
 
       evidenceSource:
         measuredEvidence.source,
+
+      learningDecision: {
+        modelPreferenceApplied:
+          improvementAdjusted.applied,
+
+        modelSampleSize:
+          improvementAdjusted
+            .preferredSampleSize,
+
+        modelConfidence:
+          improvementAdjusted
+            .preferredConfidence,
+      },
     },
   };
 }
