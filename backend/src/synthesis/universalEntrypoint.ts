@@ -169,6 +169,17 @@ export interface UniversalBuildOutcome {
     readonly evidenceSource?:
       | 'measured'
       | 'unavailable';
+
+    readonly learningDecision?: {
+      readonly modelPreferenceApplied:
+        boolean;
+
+      readonly modelSampleSize:
+        number;
+
+      readonly modelConfidence:
+        number | null;
+    };
   };
 }
 
@@ -1273,6 +1284,19 @@ repairResultMode:
 
       evidenceSource:
         measuredEvidence.source,
+
+      learningDecision: {
+        modelPreferenceApplied:
+          improvementAdjusted.applied,
+
+        modelSampleSize:
+          improvementAdjusted
+            .preferredSampleSize,
+
+        modelConfidence:
+          improvementAdjusted
+            .preferredConfidence,
+      },
     },
   };
 }
