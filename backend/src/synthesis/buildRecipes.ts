@@ -2265,6 +2265,82 @@ export function buildRecipe(
   );
 }
 
+export function candidateBuildRecipes(
+  input: {
+    classification:
+      ProductClassification | null;
+
+    surfaces:
+      readonly ProductSurface[];
+  },
+): readonly BuildRecipe[] {
+  const deterministic =
+    selectBuildRecipe(
+      input,
+    );
+
+  if (
+    !deterministic
+  ) {
+    return [];
+  }
+
+  /*
+   * Product taxonomy remains authoritative over history.
+   *
+   * When taxonomy names an exact default recipe, learning does not get a
+   * competing candidate set at all. Historical evidence may only break ties
+   * inside an already-ambiguous deterministic classification.
+   */
+  if (
+    input.classification
+      ?.defaultRecipeId
+  ) {
+    return [
+      deterministic,
+    ];
+  }
+
+  const subtype =
+    input.classification
+      ?.subtype;
+
+  const compatible =
+    RECIPES.filter(
+      (
+        recipe,
+      ) =>
+        recipe.surfaces.some(
+          (
+            surface,
+          ) =>
+            input.surfaces
+              .includes(
+                surface,
+              ),
+        ) &&
+        (
+          !subtype ||
+          recipe.subtypes
+            .includes(
+              subtype,
+            )
+        ),
+    );
+
+  return [
+    deterministic,
+
+    ...compatible.filter(
+      (
+        recipe,
+      ) =>
+        recipe.id !==
+        deterministic.id,
+    ),
+  ];
+}
+
 export function selectBuildRecipe(
   input: {
     classification:
