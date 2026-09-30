@@ -89,6 +89,10 @@ import {
   type BuildImprovementMemory,
 } from '../ai/buildImprovementMemory.js';
 
+import type {
+  BuildStrategyMemory,
+} from '../ai/buildStrategyMemory.js';
+
 import {
   MODELS,
   type ModelId,
@@ -399,6 +403,9 @@ export async function tryUniversalBuild(
 
     improvementMemory?:
       BuildImprovementMemory;
+
+    strategyMemory?:
+      BuildStrategyMemory;
 
     goalContext?:
       Pick<
