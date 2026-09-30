@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 
 import {
   applyBuildOutcomeRoutingMemory,
+  MIN_ROUTING_SAMPLE_SIZE,
   summarizeBuildOutcomeRows,
 } from './buildOutcomeRoutingMemory.js';
 
@@ -197,48 +198,47 @@ describe(
       'deprioritizes repeatedly failing models without removing the fallback',
       () => {
         const memory =
-          summarizeBuildOutcomeRows([
-            {
-              success:
-                false,
+          summarizeBuildOutcomeRows(
+            Array.from(
+              {
+                length:
+                  MIN_ROUTING_SAMPLE_SIZE,
+              },
 
-              failure_category:
-                'compile',
+              (
+                _,
+                index,
+              ) => ({
+                success:
+                  false,
 
-              model_telemetry: [
-                {
-                  modelId:
-                    'model-a',
-                },
-              ],
+                failure_category:
+                  index % 2 === 0
+                    ? 'compile'
+                    : 'test',
 
-              updated_at:
-                '2026-09-30T12:00:00.000Z',
-            },
+                model_telemetry: [
+                  {
+                    modelId:
+                      'model-a',
+                  },
+                ],
 
-            {
-              success:
-                false,
+                updated_at:
+                  new Date(
+                    Date.parse(
+                      '2026-09-30T12:00:00.000Z',
+                    ) -
+                    index *
+                      60_000,
+                  ).toISOString(),
+              }),
+            ),
 
-              failure_category:
-                'test',
-
-              model_telemetry: [
-                {
-                  modelId:
-                    'model-a',
-                },
-              ],
-
-              updated_at:
-                '2026-09-30T11:00:00.000Z',
-            },
-          ],
-
-          Date.parse(
-            '2026-09-30T13:00:00.000Z',
-          ),
-        );
+            Date.parse(
+              '2026-09-30T13:00:00.000Z',
+            ),
+          );
 
         const adjusted =
           applyBuildOutcomeRoutingMemory(
