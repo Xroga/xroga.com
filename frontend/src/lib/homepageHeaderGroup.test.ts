@@ -26,5 +26,6 @@ test('the canonical header owns desktop and mobile navigation', () => {
 test('theme and account controls use the same shared public header', () => {
   assert.match(HEADER, /<HomepageThemeSwitcher \/>/);
   assert.match(HEADER, /loggedIn \? 'Dashboard' : 'Sign in'/);
-  assert.match(HEADER, /href="\/auth\/signup">Start free/);
+  assert.match(HEADER, /href="\/auth\/signup"/);
+  assert.match(HEADER, /Start Building Free/);
 });
