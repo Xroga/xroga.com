@@ -1823,6 +1823,87 @@ implements BuildOutcomeStore {
             failure_code:
               outcome.failureCode,
 
+            failure_domain:
+              outcome.failureDomain,
+
+            failure_stage:
+              outcome.failureStage,
+
+            verified:
+              outcome.verified,
+
+            taxonomy_id:
+              outcome.taxonomyId,
+
+            product_surface:
+              outcome.productSurface,
+
+            product_subtype:
+              outcome.productSubtype,
+
+            domain_category:
+              outcome.domainCategory,
+
+            recipe_id:
+              outcome.recipeId,
+
+            golden_example_ids:
+              outcome.goldenExampleIds,
+
+            framework:
+              outcome.framework,
+
+            runtime:
+              outcome.runtime,
+
+            adapter_id:
+              outcome.adapterId,
+
+            generated_file_count:
+              outcome.generatedFileCount,
+
+            verification_attempts:
+              outcome.verificationAttempts,
+
+            repair_rounds:
+              outcome.repairRounds,
+
+            build_passed:
+              outcome.buildPassed,
+
+            test_passed:
+              outcome.testPassed,
+
+            browser_passed:
+              outcome.browserPassed,
+
+            runtime_passed:
+              outcome.runtimePassed,
+
+            saved_project_ready:
+              outcome.savedProjectReady,
+
+            publication_requested:
+              outcome.publicationRequested,
+
+            publication_succeeded:
+              outcome.publicationSucceeded,
+
+            deployment_requested:
+              outcome.deploymentRequested,
+
+            deployment_succeeded:
+              outcome.deploymentSucceeded,
+
+            learning_eligible:
+              outcome.learningEligible,
+
+            learning_exclusion_reason:
+              outcome.learningExclusionReason,
+
+            learning_decision:
+              outcome.learningDecision,
+
             iteration_count:
               outcome.iterationCount,
 
