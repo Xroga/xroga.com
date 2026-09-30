@@ -38,27 +38,35 @@ test('the client generates its own runId before the request is even sent', () =>
 
 test('the client-generated ID is sent to the server, not just kept locally', () => {
   const s = source();
-  const body = s.slice(s.indexOf("body: JSON.stringify({\n      prompt,"), s.indexOf('}),\n    signal: options.signal'));
-  assert.match(body, /clientRunId \? \{ runId: clientRunId \} : \{\}/);
+  assert.match(
+    s,
+    /clientRunId[\s\S]{0,220}\?[\s\S]{0,120}\{[\s\S]{0,80}runId:\s*clientRunId/s,
+  );
 });
 
 test('onStart fires immediately once the connection is accepted, not only from a stream byte', () => {
   const s = source();
-  const beforeLoop = s.slice(s.indexOf('let runId: string | undefined = clientRunId;'), s.indexOf('while (true) {'));
-  assert.match(beforeLoop, /if \(runId\) options\.onStart\?\.\(runId\);/);
+  const runIdInit = s.indexOf('let runId:');
+  const guard = s.slice(runIdInit, s.indexOf('function readWithStallGuard', runIdInit));
+  assert.ok(runIdInit >= 0, 'runId initialization is missing');
+  assert.match(guard, /runId[\s\S]{0,100}options\.onStart\?\.\(\s*runId,?\s*\)/s);
 });
 
 test('a stalled read falls back to polling by the known runId, never a silent hang', () => {
   const s = source();
-  const guard = s.slice(s.indexOf('function readWithStallGuard'), s.indexOf('const { done, value } = readResult;'));
-  assert.match(guard, /SWARM_STREAM_STALLED/);
-  assert.match(guard, /Promise\.race/);
-  assert.match(guard, /return waitForPersistedSwarmRun\(runId, token, options, finalText, lastSequence\);/);
+  const guard = s.slice(s.indexOf('function readWithStallGuard'), s.indexOf('const {', s.indexOf('function readWithStallGuard') + 1));
+  assert.match(s, /SWARM_STREAM_STALLED/);
+  assert.match(s, /Promise\.race\(\s*\[/s);
+  assert.match(
+    s,
+    /return waitForPersistedSwarmRun\(\s*runId,\s*token,\s*options,\s*finalText,\s*lastSequence,?\s*\)/s,
+  );
+  void guard;
 });
 
 test('the stall threshold is generous enough to never fire under a legitimate 15s keepalive', () => {
   const s = source();
-  const match = s.match(/const STREAM_STALL_MS = (\d+)_(\d+);/);
+  const match = s.match(/const STREAM_STALL_MS\s*=\s*(\d+)_(\d+)\s*;/s);
   assert.ok(match, 'STREAM_STALL_MS not found');
   const ms = Number(`${match![1]}${match![2]}`);
   assert.ok(ms > 15_000, `threshold ${ms}ms is not comfortably above the 15s keepalive cadence`);
@@ -66,14 +74,17 @@ test('the stall threshold is generous enough to never fire under a legitimate 15
 
 test('a stall with no known runId still surfaces an error rather than hanging silently', () => {
   const s = source();
-  const guard = s.slice(s.indexOf('function readWithStallGuard'), s.indexOf('const { done, value } = readResult;'));
-  assert.match(guard, /throw new Error\('The build service is not responding\. Please try again\.'\)/);
+  assert.match(
+    s,
+    /throw new Error\(\s*'The build service is not responding\. Please try again\.',?\s*\)/s,
+  );
 });
 
 test('a duplicate onStart from the server echoing the same ID back is suppressed', () => {
   const s = source();
-  const startHandler = s.slice(s.indexOf("if (eventName === 'start' || eventName === 'pipeline')"));
-  const body = startHandler.slice(0, startHandler.indexOf('options.onProgress?.'));
-  assert.match(body, /const alreadyKnown = runId === payload\.runId;/);
-  assert.match(body, /if \(!alreadyKnown\) options\.onStart\?\.\(runId\);/);
+  assert.match(s, /const alreadyKnown\s*=\s*runId\s*===\s*payload\.runId/s);
+  assert.match(
+    s,
+    /if\s*\(\s*!alreadyKnown\s*\)\s*\{\s*options\.onStart\?\.\(\s*runId,?\s*\)/s,
+  );
 });

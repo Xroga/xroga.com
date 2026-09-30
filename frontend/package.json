@@ -6,7 +6,7 @@
     "postinstall": "node ../scripts/enforce-next-postcss.mjs",
     "dev": "next dev",
     "build": "next build",
-    "test": "cd .. && tsx --test \"frontend/src/**/*.test.ts\"",
+    "test": "cd .. && tsx --tsconfig frontend/tsconfig.json --test \"frontend/src/**/*.test.ts\"",
     "start": "next start",
     "lint": "next lint"
   },

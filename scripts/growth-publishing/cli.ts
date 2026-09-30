@@ -83,13 +83,14 @@ async function main() {
     const files = value('files')?.split(',').filter(Boolean) ?? await changedFiles();
     const changed = await mapChangedFilesToUrls(files); const source = await loadPublicationSource();
     const paths = [...new Set([...changed.directlyChangedUrls, ...changed.dependentUrls])];
-    const plan = paths.map((url) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => item.path === url)!; const manifest = source.manifests.find((item) => item.file === record?.manifestSource)?.manifest; return { url, ...evaluatePublicationEligibility(record, manifest) }; });
+    const publicationPaths = paths.filter((url) => INDEXABLE_PUBLIC_URLS.some((item) => item.path === url));
+    const plan = publicationPaths.map((url) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => item.path === url)!; const manifest = source.manifests.find((item) => item.file === record.manifestSource)?.manifest; return { url, ...evaluatePublicationEligibility(record, manifest) }; });
     const result: Record<string, unknown> = { mode: flag('submit-indexnow') ? 'AUTHORIZED_SUBMISSION' : 'DRY_RUN', files, changed, plan, productSync: classifyProductChange(files) };
     if (flag('verify')) {
-      const live = await verify(paths); result.live = live;
+      const live = await verify(publicationPaths); result.live = live;
       const eligible = live.results.flatMap((verification) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => `${live.baseUrl}${item.path}` === verification.url); return record && indexNowEligibility(record, verification, true).eligible ? [record.canonical!] : []; });
       result.indexNow = await submitIndexNow(eligible, { dryRun: !flag('submit-indexnow') });
-      result.google = paths.map((path) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => item.path === path)!; return googleDiscoveryState(record, true, true); });
+      result.google = publicationPaths.map((path) => { const record = INDEXABLE_PUBLIC_URLS.find((item) => item.path === path)!; return googleDiscoveryState(record, true, true); });
     }
     if (!flag('dry-run')) await writeArtifact('publication-plan.json', result);
     print(result); if (plan.some((item) => item.status === 'PUBLICATION_BLOCKED')) process.exitCode = 2; return;

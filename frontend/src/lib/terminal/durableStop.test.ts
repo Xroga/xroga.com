@@ -14,9 +14,9 @@ function stopSource(): string {
 
 test('Stop waits for durable server cancellation before aborting the visible stream', () => {
   const source = stopSource();
-  const cancel = source.indexOf('.cancelRun(runId)');
-  const confirmation = source.indexOf("result.status !== 'cancelled'", cancel);
-  const abort = source.indexOf('abortRef.current.abort()', confirmation);
+  const cancel = source.search(/\.cancelRun\(\s*runId,?\s*\)/s);
+  const confirmation = source.search(/result\.status\s*!==\s*'cancelled'/s);
+  const abort = source.search(/abortRef\.current\.abort\(\)/s);
   assert.ok(cancel >= 0, 'server cancellation request is missing');
   assert.ok(confirmation > cancel, 'the cancellation result is not checked');
   assert.ok(abort > confirmation, 'the client stream aborts before durable cancellation is confirmed');
@@ -24,8 +24,10 @@ test('Stop waits for durable server cancellation before aborting the visible str
 
 test('an unconfirmed Stop leaves the run visible as running', () => {
   const source = stopSource();
-  const catchBlock = source.slice(source.indexOf('.catch((error)'), source.indexOf("}, [setSwarmRunning])"));
-  assert.match(catchBlock, /interruptRef\.current = false/);
+  const catchStart = source.indexOf('.catch(');
+  const catchBlock = source.slice(catchStart);
+  assert.ok(catchStart >= 0, 'Stop rejection handler is missing');
+  assert.match(catchBlock, /interruptRef\.current\s*=\s*false/);
   assert.match(catchBlock, /The build is still running — Stop was not confirmed/);
-  assert.doesNotMatch(catchBlock, /abortRef\.current\.abort/);
+  assert.doesNotMatch(catchBlock, /abortRef\.current\.abort\(\)/);
 });

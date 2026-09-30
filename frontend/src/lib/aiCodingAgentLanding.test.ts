@@ -169,7 +169,8 @@ test('the demonstration panels say they are demonstrations', () => {
 
 test('the page uses the real Logo component', () => {
   assert.ok(SOURCE.includes("from '@/components/layout/Logo'"), 'the brand mark must be the real one');
-  assert.ok(!/<svg[^>]*>[\s\S]*?[Xx]roga/.test(SOURCE), 'the wordmark must never be redrawn inline');
+  const inlineWordmarkSvg = /<svg\b(?:(?!<\/svg>)[\s\S])*?[Xx]roga(?:(?!<\/svg>)[\s\S])*?<\/svg>/;
+  assert.ok(!inlineWordmarkSvg.test(SOURCE), 'the wordmark must never be redrawn inline');
 });
 
 test('the green palette cannot leak off this page', () => {

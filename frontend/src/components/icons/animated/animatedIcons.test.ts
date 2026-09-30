@@ -343,8 +343,11 @@ test('the shared public header owns the homepage theme and account controls', ()
   assert.ok(!/<Palette\b/.test(SWITCHER), 'the static palette is back');
 
   assert.match(HEADER, /<HomepageThemeSwitcher \/>/, 'the public header lost the canonical theme control');
-  assert.match(HEADER, /loggedIn \? <LayoutGrid/, 'the signed-in Dashboard action lost its grid');
-  assert.ok(!/LayoutDashboard/.test(HEADER), 'the alternate dashboard glyph is back');
+  const dashboardAt = HEADER.indexOf('xv-header-dashboard-button');
+  assert.ok(dashboardAt >= 0, 'the signed-in Dashboard action is gone');
+  const dashboardControl = HEADER.slice(dashboardAt, HEADER.indexOf('</button>', dashboardAt));
+  assert.match(dashboardControl, /<LayoutGrid\b/, 'the signed-in Dashboard action lost its grid');
+  assert.doesNotMatch(dashboardControl, /<LayoutDashboard\b/, 'the Dashboard control uses the wrong glyph');
 });
 
 /**
