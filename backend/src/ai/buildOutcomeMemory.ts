@@ -12,7 +12,7 @@ import {
 } from './learningPolicy.js';
 
 export const BUILD_OUTCOME_SCHEMA_VERSION =
-  '1.0.0' as const;
+  '1.1.0' as const;
 
 export type BuildTerminalStatus =
   | 'complete'
@@ -33,6 +33,33 @@ export type BuildFailureCategory =
   | 'deployment'
   | 'policy'
   | 'platform'
+  | 'dependency'
+  | 'runtime'
+  | 'architecture'
+  | 'integration'
+  | 'user_configuration'
+  | 'unknown';
+
+export type BuildFailureDomain =
+  | 'none'
+  | 'project'
+  | 'provider'
+  | 'platform'
+  | 'user'
+  | 'delivery';
+
+export type BuildFailureStage =
+  | 'none'
+  | 'planning'
+  | 'implementation'
+  | 'dependency'
+  | 'build'
+  | 'test'
+  | 'browser'
+  | 'runtime'
+  | 'verification'
+  | 'publication'
+  | 'deployment'
   | 'unknown';
 
 export interface SanitizedModelTelemetry {
@@ -115,6 +142,104 @@ export interface BuildOutcomeRecord {
 
   readonly failureCode:
     string | null;
+
+  readonly failureDomain:
+    BuildFailureDomain;
+
+  readonly failureStage:
+    BuildFailureStage;
+
+  readonly verified:
+    boolean;
+
+  readonly taxonomyId:
+    string | null;
+
+  readonly productSurface:
+    string | null;
+
+  readonly productSubtype:
+    string | null;
+
+  readonly domainCategory:
+    string | null;
+
+  readonly recipeId:
+    string | null;
+
+  readonly goldenExampleIds:
+    readonly string[];
+
+  readonly framework:
+    string | null;
+
+  readonly runtime:
+    string | null;
+
+  readonly adapterId:
+    string | null;
+
+  readonly generatedFileCount:
+    number | null;
+
+  readonly verificationAttempts:
+    number | null;
+
+  readonly repairRounds:
+    number;
+
+  readonly buildPassed:
+    boolean | null;
+
+  readonly testPassed:
+    boolean | null;
+
+  readonly browserPassed:
+    boolean | null;
+
+  readonly runtimePassed:
+    boolean | null;
+
+  readonly savedProjectReady:
+    boolean;
+
+  readonly publicationRequested:
+    boolean;
+
+  readonly publicationSucceeded:
+    boolean;
+
+  readonly deploymentRequested:
+    boolean;
+
+  readonly deploymentSucceeded:
+    boolean;
+
+  readonly learningEligible:
+    boolean;
+
+  readonly learningExclusionReason:
+    string | null;
+
+  readonly learningDecision: {
+    readonly recipePreferenceApplied:
+      boolean;
+
+    readonly goldenExamplePreferenceApplied:
+      boolean;
+
+    readonly recipeSampleSize:
+      number;
+
+    readonly recipeConfidence:
+      number | null;
+
+    readonly goldenSampleSize:
+      number;
+
+    readonly goldenConfidence:
+      number | null;
+  } | null;
 
   readonly iterationCount:
     number;
