@@ -2103,6 +2103,96 @@ publicationReason:
 
         projectRunState,
 
+        learningContext:
+          result.plan
+            ? {
+                taxonomyId:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.taxonomyId ??
+                  null,
+
+                surface:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.surface ??
+                  null,
+
+                subtype:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.subtype ??
+                  null,
+
+                domain:
+                  result.plan
+                    .productIntelligence
+                    .classification
+                    ?.domain ??
+                  null,
+
+                recipeId:
+                  result.plan
+                    .productIntelligence
+                    .recipe
+                    ?.id ??
+                  null,
+
+                goldenExampleIds:
+                  result.plan
+                    .productIntelligence
+                    .goldenExamples
+                    .map(
+                      (
+                        example,
+                      ) =>
+                        example.id,
+                    ),
+
+                framework:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.framework ??
+                  null,
+
+                runtime:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.runtime ??
+                  null,
+
+                adapterId:
+                  result.plan
+                    .architecture
+                    .components[0]
+                    ?.adapterId ??
+                  null,
+
+                verificationPhases: [
+                  ...new Set(
+                    result.plan
+                      .validations
+                      .map(
+                        (
+                          validation,
+                        ) =>
+                          validation.phase,
+                      ),
+                  ),
+                ],
+
+                learningDecision:
+                  result.plan
+                    .productIntelligence
+                    .learningDecision,
+              }
+            : null,
+
                 ...(softwareProject
           ? {
               softwareProject,
