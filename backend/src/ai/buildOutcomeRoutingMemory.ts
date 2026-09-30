@@ -6,6 +6,10 @@ import type {
   BuildFailureCategory,
 } from './buildOutcomeMemory.js';
 
+import {
+  isLearningEnabled,
+} from './learningPolicy.js';
+
 export const BUILD_OUTCOME_ROUTING_SCHEMA_VERSION =
   '1.0.0' as const;
 
@@ -210,7 +214,7 @@ export function summarizeBuildOutcomeRows(
           if (
             !row.updated_at
           ) {
-            return true;
+            return false;
           }
 
           const timestamp =
@@ -219,9 +223,14 @@ export function summarizeBuildOutcomeRows(
             );
 
           return (
-            !Number.isFinite(
+            Number.isFinite(
               timestamp,
-            ) ||
+            ) &&
+            timestamp <=
+              now +
+                5 *
+                60 *
+                1000 &&
             now -
               timestamp <=
               MAX_AGE_MS
@@ -437,11 +446,19 @@ export async function loadBuildOutcomeRoutingMemory(
     string,
 ): Promise<BuildOutcomeRoutingMemory> {
   if (
+    !isLearningEnabled() ||
     !process.env
       .SUPABASE_SERVICE_ROLE_KEY
   ) {
     return unavailable();
   }
+
+  const cutoff =
+    new Date(
+      Date.now() -
+      MAX_AGE_MS,
+    )
+      .toISOString();
 
   try {
     const {
@@ -458,6 +475,10 @@ export async function loadBuildOutcomeRoutingMemory(
         .eq(
           'user_id',
           userId,
+        )
+        .gte(
+          'updated_at',
+          cutoff,
         )
         .order(
           'updated_at',
@@ -483,18 +504,13 @@ export async function loadBuildOutcomeRoutingMemory(
       ) as
         StoredBuildOutcomeRow[],
     );
-  } catch (
-    error
-  ) {
+  } catch {
     console.warn(
-      '[buildOutcomeRoutingMemory] load skipped:',
-
-      error instanceof
-        Error
-        ? error.message
-        : String(
-            error,
-          ),
+      '[learning_store_unavailable]',
+      JSON.stringify({
+        component:
+          'build_outcome_routing',
+      }),
     );
 
     return unavailable();
@@ -517,6 +533,21 @@ export function applyBuildOutcomeRoutingMemory(
   readonly reason:
     string;
 } {
+  if (
+    !isLearningEnabled()
+  ) {
+    return {
+      candidates:
+        [...candidates],
+
+      applied:
+        false,
+
+      reason:
+        'learning disabled',
+    };
+  }
+
   if (
     !memory ||
     memory.source !==

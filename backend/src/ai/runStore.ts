@@ -330,6 +330,19 @@ export function completeRun(
 
   if (!rec) return null;
 
+  /*
+   * Finalization is a one-way state transition. A late duplicate callback,
+   * stale catch block, or repeated client completion must not increment
+   * iteration_count, overwrite terminal evidence, or record another learning
+   * outcome. A resumed run explicitly transitions back to running first.
+   */
+  if (
+    rec.status !==
+    'running'
+  ) {
+    return rec;
+  }
+
   rec.status =
     data.success === false
       ? 'error'
@@ -373,6 +386,27 @@ export function failRun(
   const rec = runs.get(runId);
 
   if (!rec) return null;
+
+  /*
+   * Completion is authoritative and cancellation stays cancelled. An existing
+   * error may still be enriched with a later concrete failure reason, or
+   * corrected to an explicit cancellation, because the pipeline historically
+   * persists a blocked engineering artifact before a late transport/provider
+   * failure becomes known. Those terminal corrections do not consume another
+   * iteration and never overwrite a successful completion.
+   */
+  if (
+    rec.status ===
+      'complete' ||
+    rec.status ===
+      'cancelled'
+  ) {
+    return rec;
+  }
+
+  const terminalCorrection =
+    rec.status ===
+      'error';
 
   rec.status = status;
 
@@ -421,9 +455,18 @@ export function failRun(
         };
 
   rec.completed_at =
-    new Date().toISOString();
+    terminalCorrection &&
+    rec.completed_at
+      ? rec.completed_at
+      : new Date()
+          .toISOString();
 
-  rec.iteration_count += 1;
+  if (
+    !terminalCorrection
+  ) {
+    rec.iteration_count +=
+      1;
+  }
 
   runs.set(
     runId,
@@ -745,6 +788,22 @@ export async function requestRunCancellation(
   if (
     hot &&
     hot.userId !== userId
+  ) {
+    return false;
+  }
+
+  /*
+   * Without durable storage the hot record is authoritative. In production,
+   * however, another API process may have resumed the same run after this
+   * process cached an older terminal copy, so the conditional Supabase UPDATE
+   * below remains the source of truth.
+   */
+  if (
+    !process.env
+      .SUPABASE_SERVICE_ROLE_KEY &&
+    hot &&
+    hot.status !==
+      'running'
   ) {
     return false;
   }

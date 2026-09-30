@@ -6,6 +6,10 @@ import type {
   BuildFailureCategory,
 } from './buildOutcomeMemory.js';
 
+import {
+  isLearningEnabled,
+} from './learningPolicy.js';
+
 export const BUILD_IMPROVEMENT_MEMORY_SCHEMA_VERSION =
   '1.0.0' as const;
 
@@ -550,6 +554,12 @@ export async function loadBuildImprovementMemory(
 ): Promise<
   BuildImprovementMemory
 > {
+  if (
+    !isLearningEnabled()
+  ) {
+    return unavailable();
+  }
+
   const target =
     source ??
     (
@@ -923,6 +933,33 @@ export function applyBuildImprovementMemory(
     uniqueCandidates(
       candidates,
     );
+
+  if (
+    !isLearningEnabled()
+  ) {
+    return {
+      candidates:
+        original,
+
+      applied:
+        false,
+
+      reason:
+        'learning disabled',
+
+      preferredModel:
+        null,
+
+      preferredSampleSize:
+        0,
+
+      preferredConfidence:
+        null,
+
+      deprioritizedModels:
+        [],
+    };
+  }
 
   if (
     original.length <=

@@ -152,7 +152,7 @@ describe(
               ],
 
               updated_at:
-                null,
+                '2026-09-30T12:00:00.000Z',
             },
 
             {
@@ -170,9 +170,14 @@ describe(
               ],
 
               updated_at:
-                null,
+                '2026-09-30T11:00:00.000Z',
             },
-          ]);
+          ],
+
+          Date.parse(
+            '2026-09-30T13:00:00.000Z',
+          ),
+        );
 
         assert.equal(
           memory
@@ -208,7 +213,7 @@ describe(
               ],
 
               updated_at:
-                null,
+                '2026-09-30T12:00:00.000Z',
             },
 
             {
@@ -226,9 +231,14 @@ describe(
               ],
 
               updated_at:
-                null,
+                '2026-09-30T11:00:00.000Z',
             },
-          ]);
+          ],
+
+          Date.parse(
+            '2026-09-30T13:00:00.000Z',
+          ),
+        );
 
         const adjusted =
           applyBuildOutcomeRoutingMemory(
