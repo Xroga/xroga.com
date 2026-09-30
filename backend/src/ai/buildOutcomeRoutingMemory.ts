@@ -14,7 +14,10 @@ export const BUILD_OUTCOME_ROUTING_SCHEMA_VERSION =
   '1.0.0' as const;
 
 const MAX_ROWS =
-  12;
+  60;
+
+export const MIN_ROUTING_SAMPLE_SIZE =
+  20;
 
 const MAX_AGE_MS =
   30 *
@@ -557,6 +560,8 @@ export function applyBuildOutcomeRoutingMemory(
     !memory ||
     memory.source !==
       'measured' ||
+    memory.sampleCount <
+      MIN_ROUTING_SAMPLE_SIZE ||
     memory
       .deprioritizedModels
       .length ===
@@ -570,7 +575,13 @@ export function applyBuildOutcomeRoutingMemory(
         false,
 
       reason:
-        'no recent repeated model failure signal',
+        memory &&
+        memory.source ===
+          'measured' &&
+        memory.sampleCount <
+          MIN_ROUTING_SAMPLE_SIZE
+          ? 'insufficient routing sample; deterministic order retained'
+          : 'no recent repeated model failure signal',
     };
   }
 
