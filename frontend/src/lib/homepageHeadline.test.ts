@@ -11,9 +11,8 @@ test('the first screen states the product category and ownership value', () => {
   assert.match(PAGE, /AI APP BUILDER \+ CODING AGENT/);
   assert.match(PAGE, /<h1 className="xv-hc-headline">AI app builder that builds, tests and ships <em>code you own\.<\/em><\/h1>/);
   assert.match(PAGE, /existing repository/);
-  assert.match(PAGE, /Build free/);
-  assert.match(PAGE, /href="#ship-loop"[^>]*>How it works/);
-  assert.doesNotMatch(PAGE, /href="#ship-loop"[^>]*>[^<]*<(?:Play|Video)/);
+  assert.match(PAGE, /<HomepageChatBar \/>/);
+  assert.match(PAGE, /aria-label="Products Xroga can build"/);
 });
 
 test('the black homepage owns responsive cinematic art without changing the chatbar component', () => {
