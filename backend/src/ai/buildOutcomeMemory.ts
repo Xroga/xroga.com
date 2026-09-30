@@ -7,6 +7,10 @@ import {
   type RoutingOutcome,
 } from './routingOutcomes.js';
 
+import {
+  BUILD_OUTCOME_RETENTION_MS,
+} from './learningPolicy.js';
+
 export const BUILD_OUTCOME_SCHEMA_VERSION =
   '1.0.0' as const;
 
@@ -952,7 +956,52 @@ implements BuildOutcomeStore {
       error
     ) {
       throw new Error(
-        `BuildOutcome persistence failed: ${error.message}`,
+        'BuildOutcome persistence failed',
+      );
+    }
+
+    /*
+     * Keep evaluation memory finite. Selection uses much tighter row/time
+     * bounds, while this longer retention window preserves enough aggregate
+     * history for quality evaluation without becoming an indefinite archive.
+     *
+     * Cleanup is best-effort and user-scoped; a cleanup outage must never turn
+     * an otherwise recorded build outcome into a user-visible build failure.
+     */
+    const cutoff =
+      new Date(
+        Date.now() -
+        BUILD_OUTCOME_RETENTION_MS,
+      )
+        .toISOString();
+
+    const {
+      error:
+        retentionError,
+    } =
+      await supabase
+        .from(
+          'build_outcomes',
+        )
+        .delete()
+        .eq(
+          'user_id',
+          outcome.userId,
+        )
+        .lt(
+          'updated_at',
+          cutoff,
+        );
+
+    if (
+      retentionError
+    ) {
+      console.warn(
+        '[learning_store_unavailable]',
+        JSON.stringify({
+          component:
+            'build_outcome_retention',
+        }),
       );
     }
   }
@@ -991,19 +1040,30 @@ export async function recordBuildOutcomeFailOpen(
         outcome,
       );
 
-    return true;
-  } catch (
-    error
-  ) {
-    console.warn(
-      '[buildOutcomeMemory] recording skipped:',
+    console.info(
+      '[learning_outcome_recorded]',
+      JSON.stringify({
+        runId:
+          outcome.runId,
+        featureCategory:
+          outcome.featureCategory,
+        failureCategory:
+          outcome.failureCategory,
+        schemaVersion:
+          outcome.schemaVersion,
+      }),
+    );
 
-      error instanceof
-        Error
-        ? error.message
-        : String(
-            error,
-          ),
+    return true;
+  } catch {
+    console.warn(
+      '[learning_store_unavailable]',
+      JSON.stringify({
+        component:
+          'build_outcome_record',
+        runId:
+          outcome.runId,
+      }),
     );
 
     return false;
