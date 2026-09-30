@@ -334,6 +334,9 @@ export function selectGoldenExamples(
 
     limit?:
       number;
+
+    preferredIds?:
+      readonly string[];
   },
 ): readonly GoldenExample[] {
   const taxonomyId =
@@ -389,6 +392,13 @@ export function selectGoldenExamples(
         return {
           example,
           score,
+
+          preference:
+            input.preferredIds
+              ?.indexOf(
+                example.id,
+              ) ??
+            -1,
         };
       },
     )
@@ -403,9 +413,37 @@ export function selectGoldenExamples(
       (
         left,
         right,
-      ) =>
-        right.score -
-        left.score,
+      ) => {
+        const leftPreferred =
+          left.preference >=
+          0;
+
+        const rightPreferred =
+          right.preference >=
+          0;
+
+        if (
+          leftPreferred !==
+          rightPreferred
+        ) {
+          return leftPreferred
+            ? -1
+            : 1;
+        }
+
+        if (
+          leftPreferred &&
+          rightPreferred &&
+          left.preference !==
+            right.preference
+        ) {
+          return left.preference -
+            right.preference;
+        }
+
+        return right.score -
+          left.score;
+      },
     )
     .slice(
       0,
