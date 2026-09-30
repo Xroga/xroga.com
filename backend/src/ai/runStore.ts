@@ -792,7 +792,15 @@ export async function requestRunCancellation(
     return false;
   }
 
+  /*
+   * Without durable storage the hot record is authoritative. In production,
+   * however, another API process may have resumed the same run after this
+   * process cached an older terminal copy, so the conditional Supabase UPDATE
+   * below remains the source of truth.
+   */
   if (
+    !process.env
+      .SUPABASE_SERVICE_ROLE_KEY &&
     hot &&
     hot.status !==
       'running'
