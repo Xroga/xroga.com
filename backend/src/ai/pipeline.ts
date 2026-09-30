@@ -2186,10 +2186,35 @@ publicationReason:
                   ),
                 ],
 
-                learningDecision:
-                  result.plan
+                learningDecision: {
+                  ...result.plan
                     .productIntelligence
                     .learningDecision,
+
+                  modelPreferenceApplied:
+                    universal.routing
+                      .learningDecision
+                      ?.modelPreferenceApplied ??
+                    false,
+
+                  modelSampleSize:
+                    universal.routing
+                      .learningDecision
+                      ?.modelSampleSize ??
+                    0,
+
+                  modelConfidence:
+                    universal.routing
+                      .learningDecision
+                      ?.modelConfidence ??
+                    null,
+
+                  verificationPriorityApplied:
+                    result.plan
+                      .learningDecision
+                      ?.verificationPriorityApplied ??
+                    false,
+                },
               }
             : null,
 
