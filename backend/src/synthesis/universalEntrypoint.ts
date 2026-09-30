@@ -1228,6 +1228,9 @@ repairResultMode:
 
       executionStore:
         input.executionStore,
+
+      learningMemory:
+        input.strategyMemory,
     });
 
   return {
