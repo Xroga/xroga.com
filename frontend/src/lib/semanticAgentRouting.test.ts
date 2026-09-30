@@ -6,9 +6,9 @@ const context = readFileSync(new URL('../context/TerminalChatContext.tsx', impor
 
 test('the terminal asks the authenticated semantic planner for the execution path', () => {
   assert.match(context, /api\.phase1\.plan\(/);
-  assert.match(context, /semanticPlan\.dispatch === 'chat'/);
-  assert.match(context, /semanticPlan\.dispatch === 'build'/);
-  assert.match(context, /semanticPlan\.dispatch === 'blocked'/);
+  assert.match(context, /semanticPlan\.dispatch\s*===\s*'chat'/);
+  assert.match(context, /semanticPlan\.dispatch\s*===\s*'build'/);
+  assert.match(context, /semanticPlan\.dispatch\s*===\s*'blocked'/);
   assert.match(context, /semanticPlan\.directResponse/);
 });
 
@@ -24,7 +24,7 @@ test('keyword guesses cannot pre-empt or override the authenticated semantic pla
 });
 
 test('a semantic build failure cannot be disguised as a generic chat fallback', () => {
-  assert.match(context, /semanticBuildPlanned = runSwarmBuild/);
-  assert.match(context, /codeBuildActive \|\| semanticBuildPlanned/);
+  assert.match(context, /semanticBuildPlanned\s*=\s*runSwarmBuild/);
+  assert.match(context, /codeBuildActive\s*\|\|\s*semanticBuildPlanned/);
   assert.match(context, /Request could not start/);
 });
