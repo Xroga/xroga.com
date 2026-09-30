@@ -17,7 +17,7 @@ test('AI responses use a plain factual status instead of an execution card', () 
   // rows rather than only the newest one. The old single-line version was invisible
   // until the first event arrived, which is the blank terminal users reported.
   assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} \/>/);
-  assert.match(liveActivity, /data-testid={isLatest \? 'ai-processing-status' : undefined}/);
+  assert.match(liveActivity, /data-testid=\{\s*isLatest\s*\?\s*'ai-processing-status'\s*:\s*undefined\s*\}/s);
   assert.match(liveActivity, /event\.text/);
 });
 
@@ -30,7 +30,7 @@ test('the live transcript renders only received rows plus one honest waiting lin
   assert.doesNotMatch(code, /progress-?bar|percent|Math\.round\([^)]*100/i);
   // Rows come from run state; the component may not synthesise one.
   assert.match(liveActivity, /run\.events/);
-  assert.match(liveActivity, /waitingLine\(elapsed\)/);
+  assert.match(liveActivity, /waitingLine\(\s*elapsed,?\s*\)/s);
 });
 
 test('AI response renderers contain no cursor, reveal, or pulse animation', () => {
