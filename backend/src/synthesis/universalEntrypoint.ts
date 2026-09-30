@@ -85,6 +85,11 @@ import {
 } from '../ai/buildOutcomeRoutingMemory.js';
 
 import {
+  applyBuildImprovementMemory,
+  type BuildImprovementMemory,
+} from '../ai/buildImprovementMemory.js';
+
+import {
   MODELS,
   type ModelId,
 } from '../ai/models.js';
@@ -391,6 +396,9 @@ export async function tryUniversalBuild(
 
     routingMemory?:
       BuildOutcomeRoutingMemory;
+
+    improvementMemory?:
+      BuildImprovementMemory;
 
     goalContext?:
       Pick<
@@ -983,8 +991,30 @@ const measuredEvidence =
       input.routingMemory,
     );
 
+  /*
+   * Step 7B.3 safe reuse runs only after deterministic/capability routing,
+   * measured evidence and 7B.2 outcome routing have already produced the
+   * authorized candidate chain. It may reorder that chain when sanitized
+   * evidence is sufficiently strong; it cannot add or remove a model.
+   */
+  const improvementAdjusted =
+    applyBuildImprovementMemory(
+      memoryAdjusted.candidates,
+
+      {
+        taskClass:
+          'multi_file_implementation',
+
+        requiredCapabilities:
+          goalContract
+            .requiredCapabilities,
+      },
+
+      input.improvementMemory,
+    );
+
   const orderedCandidates =
-    memoryAdjusted.candidates;
+    improvementAdjusted.candidates;
 
   const primaryModelId =
     orderedCandidates[0] as
@@ -1218,6 +1248,10 @@ repairResultMode:
         }${
           memoryAdjusted.applied
             ? `; outcome memory — ${memoryAdjusted.reason}`
+            : ''
+        }${
+          improvementAdjusted.applied
+            ? `; safe reuse — ${improvementAdjusted.reason}`
             : ''
         }`,
 
