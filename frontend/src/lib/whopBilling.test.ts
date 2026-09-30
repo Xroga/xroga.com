@@ -9,8 +9,8 @@ const success = read('../components/billing/BillingSuccessExperience.tsx');
 const api = read('./api.ts');
 
 test('public billing has exactly Free and Xroga Pro with honest prices', () => {
-  assert.match(plans, /name: 'Free'[\s\S]*priceLabel: '\$0'/);
-  assert.match(plans, /name: 'Xroga Pro'[\s\S]*priceLabel: '\$25'/);
+  assert.match(plans, /name:\s*'Free'[\s\S]*priceLabel:\s*'\$0'/);
+  assert.match(plans, /name:\s*'Xroga Pro'[\s\S]*priceLabel:\s*'\$25'/);
   assert.doesNotMatch(plans, /\$19|trial|promotion/i);
 });
 
