@@ -415,16 +415,89 @@ function categoryFromCode(
 
   if (
     code.includes(
-      'PROVIDER',
+      'USER_CONFIG',
     ) ||
     code.includes(
-      'MODEL_',
+      'MISSING_CONFIG',
+    ) ||
+    code.includes(
+      'CONFIGURATION',
     ) ||
     code.includes(
       'API_KEY',
     )
   ) {
+    return 'user_configuration';
+  }
+
+  if (
+    code.includes(
+      'PROVIDER',
+    ) ||
+    code.includes(
+      'MODEL_',
+    )
+  ) {
     return 'provider';
+  }
+
+  if (
+    code.includes(
+      'REGISTRY',
+    ) ||
+    code.includes(
+      'DEPENDENCY',
+    ) ||
+    code.includes(
+      'INSTALL',
+    ) ||
+    code.includes(
+      'PACKAGE_MANAGER',
+    )
+  ) {
+    return 'dependency';
+  }
+
+  if (
+    code.includes(
+      'ARCHITECTURE',
+    ) ||
+    code.includes(
+      'NO_ADAPTER',
+    ) ||
+    code.includes(
+      'UNSUPPORTED_PRODUCT',
+    )
+  ) {
+    return 'architecture';
+  }
+
+  if (
+    code.includes(
+      'INTEGRATION',
+    ) ||
+    code.includes(
+      'OAUTH',
+    ) ||
+    code.includes(
+      'CONNECTOR',
+    )
+  ) {
+    return 'integration';
+  }
+
+  if (
+    code.includes(
+      'RUNTIME',
+    ) ||
+    code.includes(
+      'PROCESS_',
+    ) ||
+    code.includes(
+      'HEALTH_CHECK',
+    )
+  ) {
+    return 'runtime';
   }
 
   if (
