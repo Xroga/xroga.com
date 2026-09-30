@@ -194,7 +194,7 @@ describe(
       () => {
         const fly =
           source(
-            '../../../fly.api.toml',
+            '../../../../fly.api.toml',
           );
 
         assert.match(
