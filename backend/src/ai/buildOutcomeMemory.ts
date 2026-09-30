@@ -1480,6 +1480,131 @@ export function buildOutcomeFromTerminalRun(
         sanitizeRoutingOutcome,
       );
 
+  const learningContext =
+    sanitizedLearningContext(
+      input.output,
+    );
+
+  const verificationStatus =
+    phaseStatus(
+      input.output,
+      'verification',
+    );
+
+  const persistenceStatus =
+    phaseStatus(
+      input.output,
+      'persistence',
+    );
+
+  const publicationStatus =
+    phaseStatus(
+      input.output,
+      'publication',
+    );
+
+  const deploymentStatus =
+    phaseStatus(
+      input.output,
+      'deployment',
+    );
+
+  const runtimeStatus =
+    phaseStatus(
+      input.output,
+      'runtime',
+    );
+
+  const verified =
+    booleanField(
+      input.output
+        ?.verified,
+    ) ===
+      true ||
+    verificationStatus ===
+      'succeeded' ||
+    routing.some(
+      (
+        outcome,
+      ) =>
+        outcome.finalVerificationOk ===
+        true,
+    );
+
+  const failureDomain =
+    failureDomainFor(
+      failure.category,
+    );
+
+  const failureStage =
+    failureStageFor(
+      failure.category,
+    );
+
+  const eligibility =
+    learningEligibility({
+      verified,
+      failureCategory:
+        failure.category,
+      failureDomain,
+    });
+
+  const compile =
+    record(
+      input.output
+        ?.compile,
+    );
+
+  const tests =
+    record(
+      input.output
+        ?.tests,
+    );
+
+  const generatedFiles =
+    Array.isArray(
+      input.output
+        ?.generatedFiles,
+    )
+      ? input.output
+          ?.generatedFiles
+      : Array.isArray(
+          input.output
+            ?.projectFiles,
+        )
+        ? input.output
+            ?.projectFiles
+        : null;
+
+  const rawVerificationAttempts =
+    input.output
+      ?.verificationAttempts;
+
+  const verificationAttempts =
+    typeof rawVerificationAttempts ===
+        'number' &&
+      Number.isFinite(
+        rawVerificationAttempts,
+      )
+      ? nonNegativeInt(
+          rawVerificationAttempts,
+        )
+      : null;
+
+  const repairRounds =
+    routing.reduce(
+      (
+        maximum,
+        outcome,
+      ) =>
+        Math.max(
+          maximum,
+          outcome.repairLoops,
+        ),
+
+      0,
+    );
+
   return {
     schemaVersion:
       BUILD_OUTCOME_SCHEMA_VERSION,
@@ -1513,6 +1638,117 @@ export function buildOutcomeFromTerminalRun(
 
     failureCode:
       failure.code,
+
+    failureDomain,
+
+    failureStage,
+
+    verified,
+
+    taxonomyId:
+      learningContext
+        .taxonomyId,
+
+    productSurface:
+      learningContext
+        .productSurface,
+
+    productSubtype:
+      learningContext
+        .productSubtype,
+
+    domainCategory:
+      learningContext
+        .domainCategory,
+
+    recipeId:
+      learningContext
+        .recipeId,
+
+    goldenExampleIds:
+      learningContext
+        .goldenExampleIds,
+
+    framework:
+      learningContext
+        .framework,
+
+    runtime:
+      learningContext
+        .runtime,
+
+    adapterId:
+      learningContext
+        .adapterId,
+
+    generatedFileCount:
+      generatedFiles
+        ? generatedFiles.length
+        : null,
+
+    verificationAttempts,
+
+    repairRounds,
+
+    buildPassed:
+      booleanField(
+        compile?.ok,
+      ),
+
+    testPassed:
+      booleanField(
+        tests?.ok,
+      ),
+
+    browserPassed:
+      browserOutcome(
+        input.output,
+      ),
+
+    runtimePassed:
+      statusBoolean(
+        runtimeStatus,
+      ),
+
+    savedProjectReady:
+      persistenceStatus ===
+        'succeeded' ||
+      Boolean(
+        record(
+          input.output
+            ?.projectRevision,
+        ),
+      ),
+
+    publicationRequested:
+      publicationStatus !==
+        null &&
+      publicationStatus !==
+        'not_requested',
+
+    publicationSucceeded:
+      publicationStatus ===
+        'succeeded',
+
+    deploymentRequested:
+      deploymentStatus !==
+        null &&
+      deploymentStatus !==
+        'not_requested',
+
+    deploymentSucceeded:
+      deploymentStatus ===
+        'succeeded',
+
+    learningEligible:
+      eligibility.eligible,
+
+    learningExclusionReason:
+      eligibility.reason,
+
+    learningDecision:
+      learningContext
+        .learningDecision,
 
     iterationCount:
       nonNegativeInt(
