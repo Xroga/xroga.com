@@ -316,7 +316,7 @@ describe(
         const prepared =
           prepareProductIntelligence({
             text:
-              'Build a one-page SaaS landing page',
+              'Build a one-page marketing landing page for a dental clinic',
 
             surfaces: [
               'web_frontend',
