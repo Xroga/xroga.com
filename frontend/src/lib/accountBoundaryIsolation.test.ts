@@ -16,11 +16,15 @@ test('logout clears in-memory project state and pauses persistence before storag
 });
 
 test('account-boundary reset discards every saved context and task association', () => {
-  const reset = store.slice(store.indexOf('resetForAccountBoundary: () => set'), store.indexOf("}, { name: 'xroga-project-workspace'"));
-  assert.match(reset, /activeProjectContext: null/);
-  assert.match(reset, /activeTaskSessionId: null/);
-  assert.match(reset, /activeTaskSessionByProject: \{\}/);
-  assert.match(reset, /projectStates: \{\}/);
+  const start = store.indexOf('resetForAccountBoundary:');
+  const end = store.indexOf("name:", start);
+  const reset = store.slice(start, end);
+  assert.ok(start >= 0 && end > start, 'account-boundary reset could not be located');
+  assert.match(reset, /activeProjectContext:\s*null/);
+  assert.match(reset, /activeProjectContextKey:\s*null/);
+  assert.match(reset, /activeTaskSessionId:\s*null/);
+  assert.match(reset, /activeTaskSessionByProject:\s*\{\s*\}/);
+  assert.match(reset, /projectStates:\s*\{\s*\}/);
 });
 
 test('project persistence refuses another account owner even if IndexedDB deletion races hydration', () => {
