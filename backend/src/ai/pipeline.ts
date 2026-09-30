@@ -228,6 +228,7 @@ import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
 import { loadBuildOutcomeRoutingMemory } from './buildOutcomeRoutingMemory.js';
 import { loadBuildImprovementMemory } from './buildImprovementMemory.js';
+import { loadBuildStrategyMemory } from './buildStrategyMemory.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
 import {
@@ -1274,12 +1275,17 @@ if (
   const [
     buildOutcomeRoutingMemory,
     buildImprovementMemory,
+    buildStrategyMemory,
   ] = await Promise.all([
     loadBuildOutcomeRoutingMemory(
       opts.userId,
     ),
 
     loadBuildImprovementMemory(
+      opts.userId,
+    ),
+
+    loadBuildStrategyMemory(
       opts.userId,
     ),
   ]);
@@ -1655,6 +1661,10 @@ const universalRequestPrompt =
 
     improvementMemory:
       buildImprovementMemory,
+
+    strategyMemory:
+      buildStrategyMemory,
+
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
