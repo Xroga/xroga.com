@@ -197,6 +197,11 @@ describe(
             '../../../../fly.api.toml',
           );
 
+        const workflow =
+          source(
+            '../../../../.github/workflows/fly-deploy.yml',
+          );
+
         assert.match(
           fly,
           /UNIVERSAL_AGENT_ENABLED\s*=\s*['"]retirement['"]/,
@@ -210,6 +215,16 @@ describe(
         assert.doesNotMatch(
           fly,
           /UNIVERSAL_AGENT_ENABLED\s*=\s*['"]default['"]/,
+        );
+
+        assert.match(
+          workflow,
+          /universalMode:\s*['"]retirement['"]/,
+        );
+
+        assert.doesNotMatch(
+          workflow,
+          /universalMode:\s*['"]default['"]/,
         );
       },
     );

@@ -344,7 +344,7 @@ jobs:
           const evidence = {
             commit: process.env.GITHUB_SHA,
             builderVersion: 'agent-v2',
-            universalMode: 'default',
+            universalMode: 'retirement',
             universalPercentage: 100,
             backendCompiled: true,
             backendTestsPassed: true,
