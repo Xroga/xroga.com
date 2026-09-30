@@ -227,6 +227,7 @@ import { classifyFailure } from '../lib/recoveryPlanner.js';
 import { explicitlyDisablesResearch } from '../lib/taskClassifier.js';
 import { loadRoutingOutcomes, recordRoutingOutcome } from './routingOutcomes.js';
 import { loadBuildOutcomeRoutingMemory } from './buildOutcomeRoutingMemory.js';
+import { loadBuildImprovementMemory } from './buildImprovementMemory.js';
 import { getRuntimeModelRegistry } from './modelCapabilityRegistry.js';
 import { prepareFocusedContext } from './contextPreparation.js';
 import {
@@ -1270,10 +1271,18 @@ if (
   }
 
   const baseRoute = routePrompt(opts.prompt);
-  const buildOutcomeRoutingMemory =
-    await loadBuildOutcomeRoutingMemory(
+  const [
+    buildOutcomeRoutingMemory,
+    buildImprovementMemory,
+  ] = await Promise.all([
+    loadBuildOutcomeRoutingMemory(
       opts.userId,
-    );
+    ),
+
+    loadBuildImprovementMemory(
+      opts.userId,
+    ),
+  ]);
   // Reads the user's repository over the GitHub API — routinely the longest single
   // wait before the build starts, and previously invisible.
   emit({ ...startupProgress('repository'), swarmTodos: todosForBuild('route', 'omit') });
@@ -1643,6 +1652,9 @@ const universalRequestPrompt =
 
     routingMemory:
       buildOutcomeRoutingMemory,
+
+    improvementMemory:
+      buildImprovementMemory,
     // Repository evidence must cross the universal boundary. Without it an update to an
     // existing Python, Rust, Go, or unknown project is planned as a greenfield product and
     // can acquire an invented surface instead of preserving the repository's toolchain.
