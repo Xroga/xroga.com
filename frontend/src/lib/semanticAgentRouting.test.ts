@@ -9,7 +9,7 @@ test('the terminal asks the authenticated semantic planner for the execution pat
   assert.match(context, /semanticPlan\.dispatch\s*===\s*'chat'/);
   assert.match(context, /semanticPlan\.dispatch\s*===\s*'build'/);
   assert.match(context, /semanticPlan\.dispatch\s*===\s*'blocked'/);
-  assert.match(context, /semanticPlan\.directResponse/);
+  assert.match(context, /semanticPlan\s*\.directResponse/);
 });
 
 test('the production dispatch no longer uses the browser keyword phase-one router', () => {
