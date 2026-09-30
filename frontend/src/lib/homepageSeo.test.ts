@@ -6,6 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const ROUTE = read('../app/page.tsx');
 const CLIENT = read('../components/homepage/HomepageClient.tsx');
 const PUBLIC_NAV = read('./publicMarketing.ts');
+const HEADER = read('../components/layout/PublicMarketingHeader.tsx');
 const FAQ = read('./homepageFaq.ts');
 const SEO = read('./seo.ts');
 const PRICING = read('../components/homepage/HomepagePricingPreview.tsx');
@@ -27,8 +28,10 @@ test('homepage uses canonical Free and Xroga Pro product truth', () => {
 });
 
 test('homepage navigation points only to current canonical destinations', () => {
-  for (const destination of ['/ai-app-builder', '/ai-coding-agent', '/docs', '/pricing']) {
-    assert.ok(PUBLIC_NAV.includes(destination), `${destination} is missing`);
+  for (const destination of ['/features', '/build', '/integrations', '/ai-coding-agent', '/showcase', '/pricing']) {
+    assert.ok(PUBLIC_NAV.includes(destination), `${destination} is missing from primary navigation`);
   }
-  assert.doesNotMatch(PUBLIC_NAV, /href:\s*'\/crypto-builder'/);
+  assert.match(HEADER, /href:\s*'\/docs'/);
+  assert.match(HEADER, /href:\s*'\/crypto'/);
+  assert.doesNotMatch(`${PUBLIC_NAV}\n${HEADER}`, /href:\s*'\/crypto-builder'/);
 });
