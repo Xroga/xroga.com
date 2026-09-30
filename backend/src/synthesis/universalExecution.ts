@@ -25,6 +25,10 @@
 import type {
   BuildContract,
 } from './buildContract.js';
+
+import type {
+  BuildStrategyMemory,
+} from '../ai/buildStrategyMemory.js';
 import { buildFileTrail, type ProjectFile } from '../ai/patches.js';
 import { planUniversalRun, runValidationPlan, mayClaimVerified, type UniversalRunPlan, type ValidationRunner } from './universalFlow.js';
 import { deriveSecurityControls, securityRoutingRequirement, type SecurityControl } from './securityControls.js';
@@ -245,6 +249,10 @@ export async function executeUniversalRun(input: {
     selectedModel: ModelId | null;
     provider: string | null;
   };
+
+  learningMemory?:
+    BuildStrategyMemory;
+
   signal?: AbortSignal;
 }): Promise<UniversalExecutionResult> {
     const evidence:
@@ -277,6 +285,9 @@ export async function executeUniversalRun(input: {
       buildContract:
         input.buildContract ??
         null,
+
+      learningMemory:
+        input.learningMemory,
     });
 
   const record = (phase: ExecutionPhase, statement: string, detail: string) =>
