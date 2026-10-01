@@ -10,6 +10,10 @@ import type {
 } from '../softwareProject.js';
 
 import {
+  isLivePreviewMutationEvent,
+} from './agentBridge.js';
+
+import {
   planLivePreview,
 } from './plan.js';
 
@@ -51,6 +55,40 @@ function project(
 describe(
   'Step 4 live Preview',
   () => {
+    it(
+      'synchronizes every Agent V2 file mutation into live Preview',
+      () => {
+        for (
+          const type of [
+            'file.created',
+            'file.updated',
+            'file.deleted',
+            'file.renamed',
+          ] as const
+        ) {
+          assert.equal(
+            isLivePreviewMutationEvent({
+              type,
+            } as Parameters<
+              typeof isLivePreviewMutationEvent
+            >[0]),
+            true,
+            `${type} must synchronize the interactive runtime`,
+          );
+        }
+
+        assert.equal(
+          isLivePreviewMutationEvent({
+            type:
+              'file.read',
+          } as Parameters<
+            typeof isLivePreviewMutationEvent
+          >[0]),
+          false,
+        );
+      },
+    );
+
     it(
       'plans a dependency-free static browser Preview',
       () => {
