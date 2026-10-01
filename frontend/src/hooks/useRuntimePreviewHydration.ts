@@ -13,6 +13,45 @@ import {
   useLiveBuildStore,
 } from '@/store/useLiveBuildStore';
 
+import {
+  useProjectWorkspaceStore,
+} from '@/store/useProjectWorkspaceStore';
+
+export function runtimePreviewHydrationTarget(
+  workspaceProjectId:
+    string | null,
+
+  activeProjectContextKey:
+    string | null,
+
+  persistedPreviewProjectId:
+    string | null,
+): string | null {
+  if (
+    workspaceProjectId
+      ?.trim()
+  ) {
+    return workspaceProjectId
+      .trim();
+  }
+
+  /*
+   * A selected canonical project context without a project id is still
+   * restoring. Never let an older local Preview cross that boundary.
+   */
+  if (
+    activeProjectContextKey
+  ) {
+    return null;
+  }
+
+  return (
+    persistedPreviewProjectId
+      ?.trim() ||
+    null
+  );
+}
+
 export function useRuntimePreviewHydration():
   void {
   const preview =
@@ -31,6 +70,22 @@ export function useRuntimePreviewHydration():
         state.setPreview,
     );
 
+  const workspaceProjectId =
+    useProjectWorkspaceStore(
+      (
+        state,
+      ) =>
+        state.projectId,
+    );
+
+  const activeProjectContextKey =
+    useProjectWorkspaceStore(
+      (
+        state,
+      ) =>
+        state.activeProjectContextKey,
+    );
+
   const checkedProject =
     useRef<
       string | null
@@ -39,9 +94,13 @@ export function useRuntimePreviewHydration():
     );
 
   const projectId =
-    preview
-      ?.projectId ??
-    null;
+    runtimePreviewHydrationTarget(
+      workspaceProjectId,
+      activeProjectContextKey,
+      preview
+        ?.projectId ??
+        null,
+    );
 
   useEffect(
     () => {
@@ -57,6 +116,16 @@ export function useRuntimePreviewHydration():
       checkedProject.current =
         projectId;
 
+      if (
+        preview &&
+        preview.projectId !==
+          projectId
+      ) {
+        setPreview(
+          null,
+        );
+      }
+
       let cancelled =
         false;
 
@@ -69,7 +138,23 @@ export function useRuntimePreviewHydration():
             next,
           ) => {
             if (
-              cancelled
+              cancelled ||
+              runtimePreviewHydrationTarget(
+                useProjectWorkspaceStore
+                  .getState()
+                  .projectId,
+
+                useProjectWorkspaceStore
+                  .getState()
+                  .activeProjectContextKey,
+
+                useLiveBuildStore
+                  .getState()
+                  .preview
+                  ?.projectId ??
+                  null,
+              ) !==
+                projectId
             ) {
               return;
             }
@@ -128,6 +213,7 @@ export function useRuntimePreviewHydration():
 
     [
       projectId,
+      preview,
       setPreview,
     ],
   );

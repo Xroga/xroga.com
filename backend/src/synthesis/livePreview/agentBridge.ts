@@ -54,7 +54,9 @@ export function isLivePreviewMutationEvent(
     event.type ===
       'file.updated' ||
     event.type ===
-      'file.deleted'
+      'file.deleted' ||
+    event.type ===
+      'file.renamed'
   );
 }
 

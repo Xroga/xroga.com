@@ -33,6 +33,10 @@ import {
   type LivePreviewDescriptor,
 } from '../synthesis/livePreview/types.js';
 
+import {
+  livePreviewStatusFromFacts,
+} from '../synthesis/livePreview/status.js';
+
 const router =
   Router();
 
@@ -436,48 +440,123 @@ router.get(
     plan.command,
   );
 
+      const runtime =
+        createProjectRuntimeManager(
+          userId,
+        );
+
+      let session =
+        binding
+          ? await store
+              .loadSession(
+                userId,
+                binding.sessionId,
+              )
+          : null;
+
+      let runtimeRunning =
+        false;
+
+      if (
+        session &&
+        session.runtimeClass ===
+          'interactive' &&
+        session.status ===
+          'running'
+      ) {
+        try {
+          session =
+            await runtime
+              .restore(
+                session.sessionId,
+              );
+
+          runtimeRunning =
+            true;
+        } catch {
+          runtimeRunning =
+            false;
+
+          await revokeLivePreviewGrants({
+            userId,
+            projectId,
+            sessionId:
+              session.sessionId,
+          }).catch(
+            () =>
+              undefined,
+          );
+        }
+      }
+
       let processId:
         string | null =
         null;
 
       if (
-  binding &&
-  plan.process
-) {
-        const session =
-          await store
-            .loadSession(
-              userId,
-              binding
-                .sessionId,
-            );
-
-        processId =
-          [...(
-            session
-              ?.processes ??
-            []
-          )]
+        runtimeRunning &&
+        session &&
+        plan.process
+      ) {
+        const process =
+          [...session.processes]
             .reverse()
             .find(
               (
-                process,
+                item,
               ) =>
-                process.status ===
+                item.status ===
                   'running' &&
-                (
-                  process.port ===
-                    3000 ||
-                  process.port ==
-                    null
-                ),
-            )
-            ?.processId ??
+                item.port ===
+                  plan.process
+                    ?.port,
+            ) ??
           null;
+
+        if (
+          process
+        ) {
+          const probe =
+            await runtime
+              .exec(
+                session.sessionId,
+                {
+                  command:
+                    'kill',
+
+                  args: [
+                    '-0',
+                    String(
+                      process.pid,
+                    ),
+                  ],
+
+                  networkPolicy:
+                    'none',
+
+                  timeoutMs:
+                    5_000,
+                },
+              )
+              .catch(
+                () =>
+                  null,
+              );
+
+          if (
+            probe
+              ?.exitCode ===
+            0
+          ) {
+            processId =
+              process.processId;
+          }
+        }
       }
 
       const grant =
-  binding &&
+  runtimeRunning &&
+  session &&
   plan.process?.port !=
     null
     ? await getLatestLivePreviewGrant({
@@ -486,10 +565,27 @@ router.get(
               projectId,
 
               sessionId:
-                binding
+                session
                   .sessionId,
             })
           : null;
+
+      if (
+        runtimeRunning &&
+        plan.process &&
+        !processId
+      ) {
+        await revokeLivePreviewGrants({
+          userId,
+          projectId,
+          sessionId:
+            session
+              ?.sessionId,
+        }).catch(
+          () =>
+            undefined,
+        );
+      }
 
       const preview:
         LivePreviewDescriptor = {
@@ -506,26 +602,41 @@ router.get(
           plan.kind,
 
         status:
-  !runnable
-    ? 'not_applicable'
-    : binding
-      ? (
-          binding.status ===
-            'running'
-            ? 'ready'
-            : 'stopped'
-        )
-      : 'stopped',
+          livePreviewStatusFromFacts({
+            runnable,
+
+            runtimeRunning,
+
+            processRequired:
+              Boolean(
+                plan.process,
+              ),
+
+            processRunning:
+              Boolean(
+                processId,
+              ),
+
+            publicGrantRequired:
+              plan.process
+                ?.port !=
+              null,
+
+            publicGrantAvailable:
+              Boolean(
+                grant,
+              ),
+          }),
 
         sessionId:
-          binding
+          session
             ?.sessionId ??
           null,
 
         processId,
 
         providerId:
-          binding
+          session
             ?.providerId ??
           null,
 
@@ -550,7 +661,7 @@ router.get(
           plan.message,
 
         updatedAt:
-          binding
+          session
             ?.updatedAt ??
           revision.createdAt,
       };
