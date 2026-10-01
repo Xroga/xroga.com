@@ -517,6 +517,105 @@ export class ProjectRuntimeManager {
     return updated;
   }
 
+  /**
+   * Synchronize an interactive runtime to a complete canonical workspace.
+   *
+   * This is deliberately separate from writeFiles, whose patch semantics are
+   * useful to lower-level callers. Preview restoration always supplies a full
+   * SoftwareProject snapshot, so paths missing from that snapshot must be
+   * physically removed before the new revision is exposed.
+   */
+  async replaceFiles(
+    sessionId:
+      string,
+
+    files:
+      readonly ProjectFile[],
+  ): Promise<ProjectRuntimeSession> {
+    const session =
+      await this.session(
+        sessionId,
+      );
+
+    const provider =
+      this.provider(
+        session.providerId,
+      );
+
+    const nextPaths =
+      new Set(
+        files.map(
+          (file) =>
+            file.path,
+        ),
+      );
+
+    const removed =
+      session.knownFiles.filter(
+        (path) =>
+          !nextPaths.has(
+            path,
+          ),
+      );
+
+    await provider.deleteFiles(
+      session,
+      removed,
+    );
+
+    await provider.writeFiles(
+      session,
+      files,
+    );
+
+    const updated:
+      ProjectRuntimeSession = {
+      ...session,
+
+      knownFiles:
+        [...nextPaths]
+          .sort(),
+
+      workspaceRevision:
+        session.workspaceRevision +
+        1,
+
+      updatedAt:
+        new Date()
+          .toISOString(),
+    };
+
+    await this.store.saveSession(
+      updated,
+    );
+
+    await this.store.appendEvent({
+      userId:
+        this.userId,
+
+      projectId:
+        session.projectId,
+
+      sessionId:
+        session.sessionId,
+
+      eventType:
+        'runtime.workspace_replaced',
+
+      payload: {
+        paths:
+          updated.knownFiles,
+
+        removed,
+
+        workspaceRevision:
+          updated.workspaceRevision,
+      },
+    });
+
+    return updated;
+  }
+
   async exec(
     sessionId:
       string,

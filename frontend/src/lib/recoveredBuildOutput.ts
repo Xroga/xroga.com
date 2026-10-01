@@ -1,4 +1,4 @@
-import { isRenderableArtifact } from './engineeringArtifact';
+import { artifactProjectId, isRenderableArtifact } from './engineeringArtifact';
 import { deriveLandingOutcome } from './landingOutcome';
 import type {
   FileTrailItem,
@@ -10,7 +10,7 @@ type Output = Record<string, unknown>;
 
 type WorkspaceSnapshot = Pick<
   ProjectWorkspaceState,
-  'repo' | 'branch' | 'projectName' | 'html' | 'css' | 'js'
+  'projectId' | 'repo' | 'branch' | 'projectName' | 'html' | 'css' | 'js'
 >;
 
 export type RecoveredWorkspaceBuild = Parameters<ProjectWorkspaceState['applyBuild']>[0];
@@ -125,6 +125,7 @@ export function recoveredLandingWorkspaceBuild(
     : undefined;
 
   return {
+    projectId: artifactProjectId(output) ?? current.projectId,
     repo,
     branch: text(output.githubBranch).trim() || selected?.branch || current.branch || 'main',
     projectName,
@@ -132,6 +133,7 @@ export function recoveredLandingWorkspaceBuild(
     css,
     js,
     projectFiles: sourceFiles(output.projectFiles),
+    replaceProjectFiles: output.projectFilesMode === 'snapshot',
     deployUrl,
     githubRepoUrl: text(output.githubRepoUrl).trim() || null,
     commitSha: text(output.commitSha).trim() || null,
@@ -139,7 +141,7 @@ export function recoveredLandingWorkspaceBuild(
     changesSummary: stringArray(output.changesSummary),
     fileTrail: fileTrail(output.fileTrail),
     previousFiles,
-    openPreview: true,
+    openPreview: html.trim().length > 0,
     terminalLine: outcome.terminalLine,
   };
 }

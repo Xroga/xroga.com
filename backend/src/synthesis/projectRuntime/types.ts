@@ -490,6 +490,16 @@ export interface ProjectRuntimeProvider {
   ):
     Promise<void>;
 
+  /** Remove paths that are no longer part of the canonical workspace. */
+  deleteFiles(
+    session:
+      ProjectRuntimeSession,
+
+    paths:
+      readonly string[],
+  ):
+    Promise<void>;
+
   readFile(
     session:
       ProjectRuntimeSession,

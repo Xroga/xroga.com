@@ -101,7 +101,11 @@ import {
   engineeringArtifactWorkspaceProjection,
   isRenderableArtifact,
 } from '@/lib/engineeringArtifact';
-import { projectContextForRequest, sameProjectContext } from '@/lib/projectContext';
+import {
+  projectContextForRequest,
+  projectIdForRequest,
+  sameProjectContext,
+} from '@/lib/projectContext';
 
 const GENERIC_SWARM_FALLBACK =
   "I'm putting the finishing touches on this — here's a helpful answer while XROGA keeps working in the background.";
@@ -2974,9 +2978,11 @@ if (
     resumeRunId,
 
   projectId:
-    freshProductIntent
-      ? undefined
-      : projectId,
+    projectIdForRequest(
+      useProjectWorkspaceStore.getState().projectId,
+      projectId,
+      freshProductIntent,
+    ),
           signal: controller.signal,
           compact: useCompactPipeline,
           accessToken,
@@ -3293,6 +3299,7 @@ githubTargetRepo:
                 ws.projectName ||
                 'Your project';
               ws.applyBuild({
+                projectId: artifactProjectId(output),
                 projectName,
                 html: String(output.html ?? ''),
                 css: String(output.css ?? ''),
@@ -3308,6 +3315,8 @@ githubTargetRepo:
                         flag: 'generated' as const,
                       }))
                   : undefined,
+                replaceProjectFiles:
+                  (output as { projectFilesMode?: unknown }).projectFilesMode === 'snapshot',
                 status: 'updating',
                 changesSummary: Array.isArray(output.changesSummary)
                   ? (output.changesSummary as string[])
@@ -3697,6 +3706,7 @@ active.applyBuild({
                     repoContext?.branch ||
                     'main',
                   projectName,
+                  projectId: artifactProjectId(output),
                   html,
                   css,
                   js,
@@ -3712,6 +3722,8 @@ active.applyBuild({
                           flag: 'generated' as const,
                         }))
                     : undefined,
+                  replaceProjectFiles:
+                    (output as { projectFilesMode?: unknown }).projectFilesMode === 'snapshot',
                   deployUrl:
                     (typeof (output as { deployUrl?: string }).deployUrl === 'string' &&
                     (output as { deployUrl: string }).deployUrl.trim()

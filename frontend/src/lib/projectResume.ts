@@ -1,11 +1,12 @@
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { ChatMessage } from '@/context/TerminalChatContext';
-import { api, type Project } from '@/lib/api';
+import { api, type Project, type ProjectFile } from '@/lib/api';
 import { getSelectedRepoContext, saveSelectedRepoContext } from '@/lib/repoContext';
 import { resumeToDashboard } from '@/lib/workspacePersistence';
 import { notifyGithubRepoContext } from '@/lib/githubProjectEvents';
 import { loadTerminalHistoryEntry } from '@/lib/terminalSessionStorage';
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
+import { projectContextKey } from '@/lib/projectContext';
 
 export interface GithubProjectSession {
   project: Project;
@@ -13,6 +14,30 @@ export interface GithubProjectSession {
   messages: ChatMessage[];
   sessionId: string;
   branch: string;
+}
+
+/** Recover the latest stored revision of each path without assuming a web framework. */
+export function projectFilesForResume(
+  files: ProjectFile[],
+): Array<{ path: string; content: string }> {
+  return [
+    ...new Map(
+      [...files]
+        .sort((left, right) => {
+          const version = (left.version ?? 0) - (right.version ?? 0);
+          return version || Date.parse(left.created_at) - Date.parse(right.created_at);
+        })
+        .map((file) => [
+          (file.file_name || file.file_path || '').trim(),
+          {
+            path: (file.file_name || file.file_path || '').trim(),
+            content: file.content ?? '',
+          },
+        ]),
+    ).values(),
+  ]
+    .filter((file) => file.path.length > 0)
+    .sort((left, right) => left.path.localeCompare(right.path));
 }
 
 /** Load messages + prompt for continuing a GitHub-linked project. */
@@ -64,20 +89,30 @@ export async function loadGithubProjectSession(
         const lastUser = [...msgs].reverse().find((m) => m.role === 'user');
         if (lastUser?.content?.trim()) prompt = lastUser.content.trim();
       }
-      // Restore sandbox preview from stored project files when messages lack featureOutput
+      // Restore the complete saved workspace when messages lack featureOutput.
       const files = detail.project_files ?? [];
       const byName = (n: string) =>
-        files.find((f) => (f.file_path || f.file_name || '').toLowerCase().endsWith(n))?.content ?? '';
+        files.find((f) => (f.file_name || f.file_path || '').toLowerCase().endsWith(n))?.content ?? '';
       const html = byName('index.html') || byName('.html');
       const css = byName('styles.css') || byName('.css');
       const js = byName('script.js') || byName('.js');
-      if (html?.trim()) {
+      const projectFiles = projectFilesForResume(files);
+      if (projectFiles.some((file) => file.content.trim().length > 0)) {
+        const canonicalProjectId = project.github_repo_name?.includes('/')
+          ? projectContextKey({
+              repo: project.github_repo_name,
+              branch,
+              projectRoot:
+                selected?.repo === project.github_repo_name ? selected.projectRoot : '/',
+            })
+          : undefined;
         const landingMsg: ChatMessage = {
           id: `landing-${project.id}`,
           role: 'assistant',
           content: '',
           featureOutput: {
             type: 'landing_page',
+            projectId: canonicalProjectId,
             html,
             css: css || '',
             js: js || '',
@@ -86,6 +121,8 @@ export async function loadGithubProjectSession(
             githubRepoUrl: project.github_repo_url,
             githubPushConfirmed: true,
             deployUrl: '',
+            projectFiles,
+            projectFilesMode: 'snapshot',
           },
           createdAt: Date.now(),
         };

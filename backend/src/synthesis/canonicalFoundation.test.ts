@@ -108,6 +108,23 @@ test(
 test(
   'existing project continuation becomes modify + follow_up',
   () => {
+    const firstRun =
+      createBuildContract({
+        projectId:
+          'project-2',
+
+        runId:
+          'run-1',
+
+        sourcePrompt:
+          'create the initial project',
+
+        goal,
+
+        existingFileCount:
+          0,
+      });
+
     const contract =
       createBuildContract({
         projectId:
@@ -137,6 +154,101 @@ test(
       contract.projectMode,
       'follow_up',
     );
+
+    assert.equal(
+      contract.projectId,
+      firstRun.projectId,
+    );
+
+    assert.notEqual(
+      contract.runId,
+      firstRun.runId,
+    );
+  },
+);
+
+test(
+  'SoftwareProject full snapshot does not resurrect deleted or renamed-away paths',
+  () => {
+    const contract =
+      createBuildContract({
+        projectId:
+          'project-snapshot',
+
+        runId:
+          'run-snapshot',
+
+        sourcePrompt:
+          'rename a module and remove obsolete code',
+
+        goal,
+
+        existingFileCount:
+          3,
+
+        continuation:
+          true,
+      });
+
+    const lifecycle =
+      deriveProjectRunState({
+        outcome:
+          'completed',
+
+        phaseReached:
+          'complete',
+
+        verified:
+          true,
+
+        fileCount:
+          3,
+
+        commitSha:
+          null,
+
+        reason:
+          'verified',
+
+        blockers: [],
+
+        publicationRequested:
+          false,
+
+        deploymentRequested:
+          false,
+      });
+
+    const project =
+      createSoftwareProject({
+        contract,
+
+        files: [
+          { path: 'src/b.ts', content: 'renamed' },
+          { path: 'src/app.ts', content: 'after' },
+          { path: 'src/new.ts', content: 'new' },
+        ],
+
+        fileTrail: [
+          { path: 'src/old.ts', before: 'old', after: '', added: 0, removed: 1, action: 'deleted' },
+          { path: 'src/a.ts', before: 'renamed', after: '', added: 0, removed: 1, action: 'deleted' },
+          { path: 'src/b.ts', before: '', after: 'renamed', added: 1, removed: 0, action: 'created' },
+          { path: 'src/app.ts', before: 'before', after: 'after', added: 1, removed: 1, action: 'modified' },
+          { path: 'src/new.ts', before: '', after: 'new', added: 1, removed: 0, action: 'created' },
+        ],
+
+        lifecycle,
+        verified: true,
+        reason: 'verified',
+        blockers: [],
+      });
+
+    assert.deepEqual(
+      project.workspace.files.map((file) => file.path),
+      ['src/app.ts', 'src/b.ts', 'src/new.ts'],
+    );
+    assert.deepEqual(project.changeSet.deleted, ['src/old.ts', 'src/a.ts']);
+    assert.deepEqual(project.changeSet.created, ['src/b.ts', 'src/new.ts']);
   },
 );
 
