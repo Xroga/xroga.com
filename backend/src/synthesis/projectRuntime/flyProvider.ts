@@ -1084,6 +1084,47 @@ export class FlyProjectRuntimeProvider
     }
   }
 
+  async deleteFiles(
+    session:
+      ProjectRuntimeSession,
+
+    paths:
+      readonly string[],
+  ): Promise<void> {
+    if (
+      paths.length ===
+      0
+    ) {
+      return;
+    }
+
+    const targets =
+      paths.map(
+        (path) =>
+          shellQuote(
+            runtimePath(
+              path,
+            ),
+          ),
+      );
+
+    const result =
+      await this.execRaw(
+        session,
+
+        `rm -f -- ${targets.join(' ')}`,
+      );
+
+    if (
+      result.exitCode !==
+      0
+    ) {
+      throw new Error(
+        `Could not remove stale runtime files: ${result.stderr}`,
+      );
+    }
+  }
+
   async readFile(
     session:
       ProjectRuntimeSession,

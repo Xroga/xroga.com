@@ -249,6 +249,23 @@ class FakePersistentProvider
     }
   }
 
+  async deleteFiles(
+    _session:
+      ProjectRuntimeSession,
+
+    paths:
+      readonly string[],
+  ): Promise<void> {
+    for (
+      const path of
+      paths
+    ) {
+      this.files.delete(
+        path,
+      );
+    }
+  }
+
   async readFile(
     _session:
       ProjectRuntimeSession,
@@ -715,6 +732,119 @@ describe(
             'a.txt',
             'b.txt',
           ],
+        );
+      },
+    );
+
+    it(
+      'synchronizes the interactive runtime to the canonical full workspace',
+      async () => {
+        const store =
+          new InMemoryProjectRuntimeStore();
+
+        const provider =
+          new FakePersistentProvider();
+
+        const runtime =
+          new ProjectRuntimeManager(
+            'user-snapshot',
+            store,
+            [provider],
+          );
+
+        const session =
+          await runtime.create({
+            projectId:
+              'project-stable',
+
+            runtimeClass:
+              'interactive',
+
+            files: [
+              {
+                path:
+                  'src/old.ts',
+
+                content:
+                  'old',
+              },
+
+              {
+                path:
+                  'src/a.ts',
+
+                content:
+                  'renamed',
+              },
+
+              {
+                path:
+                  'src/app.ts',
+
+                content:
+                  'before',
+              },
+            ],
+          });
+
+        const updated =
+          await runtime.replaceFiles(
+            session.sessionId,
+            [
+              {
+                path:
+                  'src/b.ts',
+
+                content:
+                  'renamed',
+              },
+
+              {
+                path:
+                  'src/app.ts',
+
+                content:
+                  'after',
+              },
+
+              {
+                path:
+                  'src/new.ts',
+
+                content:
+                  'new',
+              },
+            ],
+          );
+
+        assert.deepEqual(
+          updated.knownFiles,
+          [
+            'src/app.ts',
+            'src/b.ts',
+            'src/new.ts',
+          ],
+        );
+
+        assert.equal(
+          provider.files.has(
+            'src/old.ts',
+          ),
+          false,
+        );
+
+        assert.equal(
+          provider.files.has(
+            'src/a.ts',
+          ),
+          false,
+        );
+
+        assert.equal(
+          provider.files.get(
+            'src/b.ts',
+          ),
+          'renamed',
         );
       },
     );

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { assertProjectTarget, isCurrentProjectTransition, normalizeProjectContext, projectContextForRequest, projectContextKey, transitionProjectState } from './projectContext';
+import { assertProjectTarget, isCurrentProjectTransition, normalizeProjectContext, projectContextForRequest, projectContextKey, projectIdForRequest, transitionProjectState } from './projectContext';
 
 type State = { name: string; files: string[]; deployUrl: string | null; commit: string | null; undo: string | null; preview: string | null; loads: number };
 const clean = (): State => ({ name: '', files: [], deployUrl: null, commit: null, undo: null, preview: null, loads: 0 });
@@ -60,4 +60,10 @@ test('a fresh product request cannot inherit the previously active project targe
   const active = target('arbitrary-owner/existing-system', 'release/not-main', '/apps/worker');
   assert.equal(projectContextForRequest(active, true), null);
   assert.deepEqual(projectContextForRequest(active, false), normalizeProjectContext(active));
+});
+
+test('normal follow-up uses the canonical workspace project id and a fresh product uses none', () => {
+  assert.equal(projectIdForRequest('run:stable-project', 'legacy-route-id', false), 'run:stable-project');
+  assert.equal(projectIdForRequest(null, 'legacy-route-id', false), 'legacy-route-id');
+  assert.equal(projectIdForRequest('run:stable-project', 'legacy-route-id', true), undefined);
 });

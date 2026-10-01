@@ -8,6 +8,7 @@ import {
 } from './recoveredBuildOutput';
 
 const current = {
+  projectId: 'run:orbit-coffee',
   repo: 'Xroga/orbit-coffee',
   branch: 'main',
   projectName: 'Orbit Coffee',
@@ -87,7 +88,7 @@ test('reload selects the newest assistant landing artifact that owns real source
       { role: 'assistant', featureOutput: { type: 'landing_page' } },
       { role: 'assistant', featureOutput: newest },
     ]),
-    newest
+    newest,
   );
 });
 
@@ -97,6 +98,41 @@ test('reload ignores non-assistant and source-less landing markers', () => {
       { role: 'user', featureOutput: { type: 'landing_page', html: '<main>not output</main>' } },
       { role: 'assistant', featureOutput: { type: 'landing_page' } },
     ]),
-    null
+    null,
+  );
+});
+
+test('durable landing recovery preserves canonical identity and full-snapshot semantics', () => {
+  const recovered = recoveredLandingWorkspaceBuild(
+    {
+      type: 'landing_page',
+      projectId: 'run:canonical-project',
+      projectName: 'Recovered project',
+      html: '<!doctype html><html><body>Recovered project output</body></html>',
+      css: '',
+      js: '',
+      projectFilesMode: 'snapshot',
+      projectFiles: [
+        { path: 'src/b.ts', content: 'renamed' },
+        { path: 'src/app.ts', content: 'after' },
+      ],
+    },
+    {
+      projectId: 'run:older-project',
+      repo: null,
+      branch: 'main',
+      projectName: 'Old',
+      html: '',
+      css: '',
+      js: '',
+    },
+  );
+
+  assert.ok(recovered);
+  assert.equal(recovered.projectId, 'run:canonical-project');
+  assert.equal(recovered.replaceProjectFiles, true);
+  assert.deepEqual(
+    recovered.projectFiles?.map((file) => file.path),
+    ['src/b.ts', 'src/app.ts'],
   );
 });

@@ -1089,10 +1089,31 @@ function staticPreview(
 
 export function artifactProjectId(
   artifact:
-    EngineeringArtifact,
+    unknown,
 ): string | null {
+  if (
+    !artifact ||
+    typeof artifact !==
+      'object'
+  ) {
+    return null;
+  }
+
+  const value =
+    artifact as EngineeringArtifact & {
+      projectId?: unknown;
+    };
+
+  if (
+    typeof value.projectId ===
+      'string' &&
+    value.projectId.trim()
+  ) {
+    return value.projectId.trim();
+  }
+
   const softwareProjectId =
-    artifact
+    value
       .softwareProject
       ?.projectId;
 
@@ -1105,7 +1126,7 @@ export function artifactProjectId(
   }
 
   const buildContractId =
-    artifact
+    value
       .buildContract
       ?.projectId;
 

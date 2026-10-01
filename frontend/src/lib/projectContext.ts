@@ -63,6 +63,27 @@ export function projectContextForRequest(
   return freshProductIntent || !active ? null : normalizeProjectContext(active);
 }
 
+/**
+ * Resolve the one project identity an outgoing build request may carry.
+ *
+ * A workspace project id is the canonical identity returned by the build
+ * runtime. Route ids are only a compatibility source for the legacy project
+ * detail page. A brand-new product intentionally starts without either id.
+ */
+export function projectIdForRequest(
+  workspaceProjectId: string | null | undefined,
+  routeProjectId: string | null | undefined,
+  freshProductIntent: boolean,
+): string | undefined {
+  if (freshProductIntent) return undefined;
+
+  const canonical = workspaceProjectId?.trim();
+  if (canonical) return canonical;
+
+  const compatibility = routeProjectId?.trim();
+  return compatibility || undefined;
+}
+
 export function assertProjectTarget(
   active: ProjectContextIdentity | null,
   target: ProjectTargetInput,

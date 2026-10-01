@@ -57,6 +57,20 @@ test('non-artifacts are rejected', () => {
   }
 });
 
+test('canonical project identity survives legacy and structured output envelopes', () => {
+  assert.equal(artifactProjectId({ projectId: 'run:legacy-envelope' }), 'run:legacy-envelope');
+  assert.equal(
+    artifactProjectId(
+      artifact({
+        softwareProject: {
+          projectId: 'run:software-project',
+        } as EngineeringArtifact['softwareProject'],
+      }),
+    ),
+    'run:software-project',
+  );
+});
+
 // ---------------------------------------------------------------------------
 // Phase 9.6 — the text fallback carries real engineering information
 // ---------------------------------------------------------------------------

@@ -1037,11 +1037,9 @@ export const useProjectWorkspaceStore =
                     );
 
                   const incomingFiles =
-                    payload
-                      .projectFiles
-                      ?.length
-                      ? payload
-                          .projectFiles
+                    payload.projectFiles !==
+                    undefined
+                      ? payload.projectFiles
                       : landingFiles(
                           payload.html,
 

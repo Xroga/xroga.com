@@ -660,7 +660,7 @@ export async function startOrRefreshLivePreview(
     } else {
       session =
         await runtime
-          .writeFiles(
+          .replaceFiles(
             session.sessionId,
 
             input.project
