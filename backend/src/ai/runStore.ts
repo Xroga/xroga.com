@@ -2,6 +2,10 @@
  * Swarm run history — hot in-memory + Supabase persistence (survives restarts).
  */
 
+import {
+  randomUUID,
+} from 'node:crypto';
+
 import { getSupabaseAdmin } from '../config/supabase.js';
 import { isEngineeringArtifact } from './engineeringArtifact.js';
 import { ensureShipLoopSchema } from '../db/ensureShipLoopSchema.js';
@@ -38,6 +42,140 @@ const userIndex = new Map<string, string[]>();
 const MAX_PER_USER = 40;
 const MAX_EVENTS_PER_RUN = 1000;
 const persistTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+const RUN_WORKER_ID =
+  randomUUID();
+
+const RUN_HEARTBEAT_MS =
+  30_000;
+
+const locallyOwnedRunIds =
+  new Set<string>();
+
+const heartbeatTimers =
+  new Map<
+    string,
+    ReturnType<
+      typeof setInterval
+    >
+  >();
+
+export function currentRunWorkerId(): string {
+  return RUN_WORKER_ID;
+}
+
+async function persistRunHeartbeat(
+  runId:
+    string,
+): Promise<void> {
+  if (
+    !process.env
+      .SUPABASE_SERVICE_ROLE_KEY ||
+    !locallyOwnedRunIds
+      .has(
+        runId,
+      )
+  ) {
+    return;
+  }
+
+  const {
+    error,
+  } =
+    await getSupabaseAdmin()
+      .from(
+        'swarm_runs',
+      )
+      .update({
+        heartbeat_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        'id',
+        runId,
+      )
+      .eq(
+        'status',
+        'running',
+      )
+      .eq(
+        'worker_id',
+        RUN_WORKER_ID,
+      );
+
+  if (
+    error
+  ) {
+    console.warn(
+      '[runStore] heartbeat failed:',
+      error.message,
+    );
+  }
+}
+
+function claimLocalRun(
+  runId:
+    string,
+): void {
+  locallyOwnedRunIds
+    .add(
+      runId,
+    );
+
+  if (
+    heartbeatTimers
+      .has(
+        runId,
+      )
+  ) {
+    return;
+  }
+
+  const timer =
+    setInterval(
+      () => {
+        void persistRunHeartbeat(
+          runId,
+        );
+      },
+      RUN_HEARTBEAT_MS,
+    );
+
+  timer.unref?.();
+
+  heartbeatTimers.set(
+    runId,
+    timer,
+  );
+}
+
+function releaseLocalRun(
+  runId:
+    string,
+): void {
+  locallyOwnedRunIds
+    .delete(
+      runId,
+    );
+
+  const timer =
+    heartbeatTimers.get(
+      runId,
+    );
+
+  if (
+    timer
+  ) {
+    clearInterval(
+      timer,
+    );
+  }
+
+  heartbeatTimers.delete(
+    runId,
+  );
+}
 
 function rememberTerminalOutcome(
   rec:
@@ -113,6 +251,20 @@ function touchUser(userId: string, runId: string) {
       run.userId === userId &&
       !next.includes(id)
     ) {
+      // The per-user history cap is a presentation/cache concern. It must never
+      // evict a run this worker is still executing, because that would also drop
+      // its durable lease heartbeat and let another process reap live work.
+      if (
+        run.status === 'running' &&
+        locallyOwnedRunIds.has(id)
+      ) {
+        continue;
+      }
+
+      releaseLocalRun(
+        id,
+      );
+
       runs.delete(id);
     }
   }
@@ -138,6 +290,9 @@ function createRunHot(
 
   runs.set(runId, rec);
   touchUser(userId, runId);
+  claimLocalRun(
+    runId,
+  );
 
   return rec;
 }
@@ -250,6 +405,11 @@ export async function resumeRunDurable(
         prompt: canonicalPrompt,
         output: canonicalOutput,
         completed_at: null,
+        worker_id:
+          RUN_WORKER_ID,
+        heartbeat_at:
+          new Date()
+            .toISOString(),
       })
       .eq('id', runId)
       .eq('user_id', userId)
@@ -306,6 +466,9 @@ export async function resumeRunDurable(
 
   runs.set(runId, resumed);
   touchUser(userId, runId);
+  claimLocalRun(
+    runId,
+  );
 
   /*
    * Local/test environments have no Supabase claim above.
@@ -353,6 +516,10 @@ export function completeRun(
   rec.tokenUsage = data.tokenUsage;
   rec.completed_at = new Date().toISOString();
   rec.iteration_count += 1;
+
+  releaseLocalRun(
+    runId,
+  );
 
   runs.set(
     runId,
@@ -467,6 +634,10 @@ export function failRun(
     rec.iteration_count +=
       1;
   }
+
+  releaseLocalRun(
+    runId,
+  );
 
   runs.set(
     runId,
@@ -838,6 +1009,12 @@ export async function requestRunCancellation(
 
           completed_at:
             cancelledAt,
+
+          worker_id:
+            null,
+
+          heartbeat_at:
+            null,
         })
         .eq(
           'id',
@@ -886,6 +1063,10 @@ export async function requestRunCancellation(
     runs.set(
       runId,
       hot,
+    );
+
+    releaseLocalRun(
+      runId,
     );
   }
 
@@ -974,13 +1155,16 @@ export function activeRunIds(): string[] {
   const active: string[] = [];
 
   for (
-    const [
-      id,
-      run,
-    ] of runs
+    const id of
+    locallyOwnedRunIds
   ) {
+    const run =
+      runs.get(
+        id,
+      );
+
     if (
-      run.status ===
+      run?.status ===
       'running'
     ) {
       active.push(id);
@@ -1318,6 +1502,31 @@ async function persistToSupabase(
 
           last_sequence:
             rec.lastSequence,
+
+          ...(
+            rec.status !==
+              'running'
+              ? {
+                  worker_id:
+                    null,
+
+                  heartbeat_at:
+                    null,
+                }
+              : locallyOwnedRunIds
+                  .has(
+                    rec.id,
+                  )
+                ? {
+                    worker_id:
+                      RUN_WORKER_ID,
+
+                    heartbeat_at:
+                      new Date()
+                        .toISOString(),
+                  }
+                : {}
+          ),
         },
 
         {

@@ -46,7 +46,10 @@ import { ensureGithubSchema } from './db/ensureGithubSchema.js';
 import { ensureTerminalSessionsSchema } from './db/ensureTerminalSessionsSchema.js';
 import { ensureMessageSharesSchema } from './db/ensureMessageSharesSchema.js';
 import { ensurePhase1Schema } from './db/ensurePhase1Schema.js';
-import { activeRunIds } from './ai/runStore.js';
+import {
+  activeRunIds,
+  currentRunWorkerId,
+} from './ai/runStore.js';
 import { failInFlightRuns, reconcileOrphanedRuns } from './ai/runReconciler.js';
 import { ensureShipLoopSchema } from './db/ensureShipLoopSchema.js';
 import { hydrateProviderHealth } from './ai/providerRuntime.js';
@@ -305,9 +308,8 @@ server.listen(port, '0.0.0.0', () => {
     .catch((err) => {
       console.warn('[providerRuntime] Health hydration skipped:', (err as Error).message);
     });
-  // Anything still `running` belongs to a process that no longer exists — the live
-  // run map is in memory, so a fresh process owns nothing. Left alone these sit at
-  // `running` forever; one production row did so for over fourteen hours.
+  // Reconcile only stale durable worker leases. During a rolling deploy the outgoing
+  // API may still own a long build, so a row being old and `running` is not enough.
   void reconcileOrphanedRuns().catch((err) => {
     console.warn('[runReconciler] Startup reconcile skipped:', (err as Error).message);
   });
@@ -346,7 +348,14 @@ async function shutdown(signal: NodeJS.Signals) {
   const active = activeRunIds();
   if (active.length) {
     console.warn(`[shutdown] ${signal}: failing ${active.length} in-flight run(s) before exit`);
-    await failInFlightRuns(active, 'deploy_interrupted').catch((err) => {
+    await failInFlightRuns(
+      active,
+      'deploy_interrupted',
+      {
+        workerId:
+          currentRunWorkerId(),
+      },
+    ).catch((err) => {
       console.warn('[shutdown] could not fail in-flight runs:', (err as Error).message);
     });
   }
