@@ -3,10 +3,17 @@ import { test } from 'node:test';
 import {
   ACTIVE_RUN_STATUSES,
   failInFlightRuns,
+  orphanLeaseFilter,
   reconcileOrphanedRuns,
   reconcileOutput,
   type ReconcileReason,
 } from './runReconciler.js';
+
+import {
+  activeRunIds,
+  completeRun,
+  createRun,
+} from './runStore.js';
 
 /**
  * Cover for orphaned-run reconciliation.
@@ -35,9 +42,83 @@ test('every reason produces a typed, interrupted outcome', () => {
 test('restart and deploy interruption copy does not claim uncertain publication', () => {
   for (const reason of ['worker_restarted', 'deploy_interrupted'] as const) {
     const message = String(reconcileOutput(reason).error);
-    assert.match(message, /No files were pushed/);
-    assert.match(message, /no deployment was created/);
-    assert.doesNotMatch(message, /success|complete|ready|deployed to/i);
+    assert.match(message, /did not record a completed publication or deployment/i);
+    assert.match(message, /Check any connected provider/i);
+    assert.doesNotMatch(message, /No files were pushed|no deployment was created/i);
+    assert.doesNotMatch(
+      message,
+      /publication succeeded|deployment succeeded|successfully deployed|deployed to/i,
+    );
+  }
+});
+
+test('orphan reconciliation selects only stale leases and legacy stale rows', () => {
+  const cutoff =
+    '2026-10-02T00:00:00.000Z';
+
+  assert.equal(
+    orphanLeaseFilter(
+      cutoff,
+    ),
+    `heartbeat_at.lt.${cutoff},and(heartbeat_at.is.null,created_at.lt.${cutoff})`,
+  );
+});
+
+test('only runs created by this worker are held for shutdown', () => {
+  const runId =
+    `00000000-0000-4000-8000-${Date.now().toString().padStart(12, '0').slice(-12)}`;
+
+  createRun(
+    '00000000-0000-4000-8000-000000000001',
+    'worker ownership fixture',
+    runId,
+  );
+
+  assert.equal(
+    activeRunIds()
+      .includes(
+        runId,
+      ),
+    true,
+  );
+
+  completeRun(
+    runId,
+    {
+      output: {
+        type:
+          'engineering',
+      },
+    },
+  );
+
+  assert.equal(
+    activeRunIds()
+      .includes(
+        runId,
+      ),
+    false,
+  );
+});
+
+test('the history cache cap cannot evict a run that this worker still owns', () => {
+  const runIds = Array.from(
+    { length: 41 },
+    (_, index) =>
+      `00000000-0000-4000-8000-${String(100_000 + index).padStart(12, '0')}`,
+  );
+
+  for (const runId of runIds) {
+    createRun(
+      '00000000-0000-4000-8000-000000000002',
+      'worker cache-cap fixture',
+      runId,
+    );
+  }
+
+  for (const runId of runIds) {
+    assert.equal(activeRunIds().includes(runId), true);
+    completeRun(runId, { output: { type: 'engineering' } });
   }
 });
 

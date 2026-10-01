@@ -8,11 +8,11 @@ import { getSupabaseAdmin } from '../config/supabase.js';
  * killed mid-flight by an ordinary API deploy — in both cases the row stayed
  * `running` forever and the user was left watching nothing.
  *
- * The fix needs no schema change, because of how run state already works: the
- * live run map is *in process memory*. If this process has just started, it owns
- * no runs, so every row still marked `running` belongs to a worker that no longer
- * exists. That is a complete and sound definition of "orphaned" — no lease column,
- * no heartbeat table, no migration, and nothing to keep in sync.
+ * Production can briefly have more than one API process during a rolling deploy.
+ * Therefore `running` and age alone are not proof of an orphan: the outgoing
+ * process may still own a long build. Each active worker now holds an opaque lease
+ * and renews a bounded heartbeat. Reconciliation touches only stale leases (plus
+ * legacy rows that predate the lease migration).
  *
  * Two moments matter:
  *
@@ -32,9 +32,9 @@ export type ReconcileReason = 'worker_restarted' | 'deploy_interrupted' | 'worke
 
 const REASON_TEXT: Record<ReconcileReason, string> = {
   worker_restarted:
-    'The build was interrupted because the service restarted. No files were pushed and no deployment was created by the interrupted operation. Retry to continue this exact build from its latest durable checkpoint.',
+    'The build was interrupted because its worker stopped. Xroga did not record a completed publication or deployment for the interrupted operation. Check any connected provider first. Retry to continue this exact build from its latest durable checkpoint.',
   deploy_interrupted:
-    'The build was interrupted while Xroga was updating. No files were pushed and no deployment was created by the interrupted operation. Retry to continue this exact build from its latest durable checkpoint.',
+    'The build was interrupted while Xroga was updating. Xroga did not record a completed publication or deployment for the interrupted operation. Check any connected provider first. Retry to continue this exact build from its latest durable checkpoint.',
   worker_lost:
     'The build worker stopped unexpectedly. Xroga preserved the durable run evidence that was available. Retry to continue this exact build safely.',
 };
@@ -52,6 +52,16 @@ export function reconcileOutput(reason: ReconcileReason): Record<string, unknown
 
 /** Statuses that mean "a worker should be actively holding this run". */
 export const ACTIVE_RUN_STATUSES = ['running'] as const;
+
+export function orphanLeaseFilter(
+  cutoff:
+    string,
+): string {
+  return (
+    `heartbeat_at.lt.${cutoff},` +
+    `and(heartbeat_at.is.null,created_at.lt.${cutoff})`
+  );
+}
 
 /**
  * Marks runs abandoned by a previous process as failed.
@@ -72,9 +82,15 @@ export async function reconcileOrphanedRuns(opts: { graceMs?: number } = {}): Pr
       status: 'error',
       output: reconcileOutput('worker_restarted'),
       completed_at: new Date().toISOString(),
+      worker_id: null,
+      heartbeat_at: null,
     })
     .in('status', ACTIVE_RUN_STATUSES as unknown as string[])
-    .lt('created_at', cutoff)
+    .or(
+      orphanLeaseFilter(
+        cutoff,
+      ),
+    )
     .select('id');
 
   if (error) {
@@ -99,25 +115,44 @@ export async function reconcileOrphanedRuns(opts: { graceMs?: number } = {}): Pr
 export async function failInFlightRuns(
   runIds: readonly string[],
   reason: ReconcileReason,
-  opts: { timeoutMs?: number } = {},
+  opts: {
+    timeoutMs?: number;
+    workerId?: string;
+  } = {},
 ): Promise<number> {
   if (!runIds.length || !process.env.SUPABASE_SERVICE_ROLE_KEY) return 0;
   const timeoutMs = opts.timeoutMs ?? 3_000;
   const supabase = getSupabaseAdmin();
 
-  const update = supabase
+  let update = supabase
     .from('swarm_runs')
     .update({
       status: 'error',
       output: reconcileOutput(reason),
       completed_at: new Date().toISOString(),
+      worker_id: null,
+      heartbeat_at: null,
     })
     .in('id', [...runIds])
-    .in('status', ACTIVE_RUN_STATUSES as unknown as string[])
-    .select('id');
+    .in('status', ACTIVE_RUN_STATUSES as unknown as string[]);
+
+  if (
+    opts.workerId
+  ) {
+    update =
+      update.eq(
+        'worker_id',
+        opts.workerId,
+      );
+  }
+
+  const request =
+    update.select(
+      'id',
+    );
 
   const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs));
-  const result = await Promise.race([update, timeout]);
+  const result = await Promise.race([request, timeout]);
   if (!result || 'error' in result === false) return 0;
   const { data, error } = result as { data: { id: string }[] | null; error: { message: string } | null };
   if (error) {
