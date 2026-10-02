@@ -205,7 +205,9 @@ describe('software-build planner correction', () => {
       {
         goalContract: misroutedGoal,
         dispatch: 'chat',
-        capabilityIds: ['business.action'],
+        // The API boundary must not rely on this projection agreeing with the
+        // goal contract. A stale/partial projection was the production bug.
+        capabilityIds: ['conversation.respond'],
         rationale: 'model-selected external action',
         blockers: [],
         usage: {

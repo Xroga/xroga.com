@@ -113,9 +113,8 @@ export function enforceExplicitExecutionControls(
   if (
     controls.previewRequirement !==
       'REQUIRED' ||
-    !plan.capabilityIds.includes(
-      'business.action',
-    )
+    plan.dispatch !==
+      'chat'
   ) {
     return plan;
   }
