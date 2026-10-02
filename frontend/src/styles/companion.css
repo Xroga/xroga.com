@@ -459,3 +459,62 @@ img.xv-companion-renderer[data-operation='idle'] { animation-duration: 14s; }
      simply not shown rather than left as a stuck artefact. */
   .xv-companion-laptop { display: none; }
 }
+
+
+/* ============================================================
+   Workspace gutter companion
+   ------------------------------------------------------------
+   Reuses the existing composer companion — no duplicate Smoky.
+   On wide desktop it moves into the real right-side canvas gap;
+   narrower layouts and terminal fullscreen keep the safe composer
+   anchor that already exists.
+   ============================================================ */
+@media (min-width: 1440px) {
+  body:not(.xv-terminal-fullscreen-active)
+  .xv-terminal-dock
+  .xv-companion-composer-anchor {
+    position: fixed;
+    top: calc(var(--xv-shell-top, 18px) + 66px);
+    right: max(6px, calc((var(--xv-shell-right, 40px) - 28px) / 2));
+    bottom: auto;
+    z-index: 145;
+    width: 28px;
+    align-items: center;
+    gap: .02rem;
+    pointer-events: auto;
+  }
+
+  body:not(.xv-terminal-fullscreen-active)
+  .xv-terminal-dock
+  .xv-companion--composer
+  .xv-companion-trigger {
+    width: 28px;
+  }
+
+  body:not(.xv-terminal-fullscreen-active)
+  .xv-terminal-dock
+  .xv-companion-blackhole {
+    width: 28px;
+    max-width: 28px;
+  }
+
+  body:not(.xv-terminal-fullscreen-active)
+  .xv-terminal-dock
+  .xv-companion-blackhole > button {
+    width: 28px;
+    max-width: 28px;
+    min-height: .75rem;
+    overflow: hidden;
+    font-size: .42rem;
+    text-align: center;
+  }
+
+  body:not(.xv-terminal-fullscreen-active)
+  .xv-terminal-dock
+  .xv-companion--composer
+  .xv-companion-panel {
+    top: calc(100% + .55rem);
+    right: 0;
+    bottom: auto;
+  }
+}

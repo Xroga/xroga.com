@@ -23,7 +23,7 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
     <button
       type="button"
       onClick={() => setFullscreen((v) => !v)}
-      className="xv-footer-pill !text-xs flex items-center gap-1.5 shrink-0 !text-[var(--foreground)]"
+      className="xv-page-fullscreen-toggle"
       aria-label={fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
     >
       {fullscreen ? (
@@ -38,19 +38,20 @@ export function PageFullscreenFrame({ children, className }: PageFullscreenFrame
     </button>
   );
 
+  const frame = (
+    <div className="xv-page-frame">
+      <div className="xv-page-frame-toolbar">{toggle}</div>
+      <div className={cn('xv-page-frame-content', className)}>{children}</div>
+    </div>
+  );
+
   if (fullscreen) {
     return (
-      <div className="xv-fullscreen-overlay fixed inset-0 z-[200] overflow-y-auto bg-[var(--background)] p-4 sm:p-6 lg:p-8">
-        <div className="flex justify-end mb-4 sticky top-0 z-10">{toggle}</div>
-        <div className={cn('max-w-6xl mx-auto', className)}>{children}</div>
+      <div className="xv-fullscreen-overlay xv-page-fullscreen-stage fixed inset-0 z-[200]">
+        <div className="xv-page-surface xv-page-surface--fullscreen">{frame}</div>
       </div>
     );
   }
 
-  return (
-    <>
-      <div className="flex justify-end mb-3 -mt-1">{toggle}</div>
-      <div className={cn(className)}>{children}</div>
-    </>
-  );
+  return frame;
 }
