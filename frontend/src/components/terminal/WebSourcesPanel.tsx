@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLink, Play } from 'lucide-react';
+import { ExternalLink, Globe2, Play } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,7 @@ function domainFromUrl(url: string): string {
 }
 
 function faviconForDomain(domain: string): string {
-  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=32`;
 }
 
 function displayDomain(item: WebSourceItem): string {
@@ -36,72 +36,53 @@ function isYoutube(item: WebSourceItem): boolean {
 
 const externalImageLoader = ({ src }: { src: string }) => src;
 
-function SourceCard({ item }: { item: WebSourceItem }) {
+function SourceRow({ item }: { item: WebSourceItem }) {
   const domain = displayDomain(item);
-  const yt = isYoutube(item);
-  const channel = item.channelTitle ?? item.snippet.split('—')[0]?.trim();
+  const youtube = isYoutube(item);
+  const sourceLabel = youtube && item.channelTitle ? item.channelTitle : domain;
 
   return (
     <a
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex gap-3 rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/70 p-3 hover:border-[var(--accent)]/45 hover:bg-[var(--accent)]/[0.04] transition-all shadow-sm"
+      className="group flex min-w-0 items-start gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-[var(--foreground)]/[0.045] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/45"
     >
-      {item.thumbnailUrl ? (
-        <div className="relative shrink-0">
-          <Image
-            src={item.thumbnailUrl}
-            alt=""
-            width={72}
-            height={52}
-            loader={externalImageLoader}
-            unoptimized
-            className="w-[4.5rem] h-[3.25rem] rounded-lg object-cover bg-black/20 ring-1 ring-black/10"
-          />
-          {yt && (
-            <span className="absolute inset-0 flex items-center justify-center">
-              <span className="rounded-full bg-black/55 p-1">
-                <Play className="w-3 h-3 text-white fill-white" />
-              </span>
-            </span>
-          )}
-        </div>
-      ) : (
-        <div className="w-11 h-11 rounded-lg bg-white dark:bg-white/10 flex items-center justify-center shrink-0 ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
+      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-md bg-[var(--foreground)]/[0.045]">
+        {youtube ? (
+          <Play className="h-3 w-3 text-red-500/80" aria-hidden="true" />
+        ) : (
           <Image
             src={faviconForDomain(domain)}
             alt=""
-            width={24}
-            height={24}
+            width={16}
+            height={16}
             loader={externalImageLoader}
             unoptimized
-            className="w-6 h-6 object-contain"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
+            className="h-4 w-4 object-contain"
+            onError={(event) => {
+              (event.target as HTMLImageElement).style.display = 'none';
             }}
           />
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-[10px] font-medium text-[var(--muted)] truncate">
-            {yt && channel ? channel : domain}
-          </span>
-          <ExternalLink className="w-3 h-3 opacity-40 group-hover:opacity-80 shrink-0 transition-opacity" />
-        </div>
-        <p className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+        )}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <span className="truncate text-[11px] text-[var(--muted)]">{sourceLabel}</span>
+          <ExternalLink
+            className="h-3 w-3 shrink-0 opacity-35 transition-opacity group-hover:opacity-70"
+            aria-hidden="true"
+          />
+        </span>
+        <span className="mt-0.5 block text-[12px] font-medium leading-snug text-[var(--foreground)]/82">
           {item.title}
-        </p>
-        {item.snippet && !yt && (
-          <p className="text-[11px] text-[var(--muted)] line-clamp-2 mt-1 leading-relaxed">{item.snippet}</p>
-        )}
-        {yt && item.snippet.includes('—') && (
-          <p className="text-[11px] text-[var(--muted)] line-clamp-2 mt-1 leading-relaxed">
-            {item.snippet.split('—').slice(1).join('—').trim()}
-          </p>
-        )}
-      </div>
+        </span>
+        {item.snippet ? (
+          <span className="mt-0.5 block line-clamp-2 text-[11px] leading-relaxed text-[var(--muted)]">
+            {item.snippet}
+          </span>
+        ) : null}
+      </span>
     </a>
   );
 }
@@ -115,36 +96,18 @@ export function WebSourcesPanel({
 }) {
   if (!sources?.length) return null;
 
-  const youtube = sources.filter(isYoutube).slice(0, 2);
-  const web = sources.filter((s) => !isYoutube(s));
-
   return (
-    <div className={cn('mt-4 space-y-3', className)}>
-      {youtube.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] flex items-center gap-1.5">
-            <Play className="w-3 h-3 text-red-500/80" />
-            Recommended on YouTube
-          </p>
-          <div className="grid gap-2.5 sm:grid-cols-2">
-            {youtube.map((s) => (
-              <SourceCard key={s.url} item={s} />
-            ))}
-          </div>
-        </div>
-      )}
-      {web.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-            Sources referenced
-          </p>
-          <div className="grid gap-2.5 sm:grid-cols-2">
-            {web.map((s) => (
-              <SourceCard key={s.url} item={s} />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+    <details className={cn('group/sources mt-3 max-w-2xl', className)}>
+      <summary className="flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-md px-1 py-1 text-[11px] font-medium text-[var(--foreground)]/55 transition-colors hover:text-[var(--foreground)]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/45 [&::-webkit-details-marker]:hidden">
+        <Globe2 className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>Sources</span>
+        <span className="tabular-nums text-[var(--foreground)]/38">{sources.length}</span>
+      </summary>
+      <div className="mt-1.5 max-w-xl space-y-0.5 border-l border-[var(--border-subtle)] pl-2">
+        {sources.map((source) => (
+          <SourceRow key={source.url} item={source} />
+        ))}
+      </div>
+    </details>
   );
 }
