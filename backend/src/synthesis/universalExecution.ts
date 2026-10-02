@@ -430,6 +430,73 @@ export async function executeUniversalRun(input: {
   if (!files.length) {
     return fail('failed', 'implementation', 'the implementation step produced no files', plan);
   }
+
+  /*
+   * A model tool call is not evidence that the project changed. In particular, writing
+   * byte-identical content can populate Agent V2's attempted-write evidence while leaving
+   * the canonical workspace unchanged. Letting that snapshot continue would validate the
+   * previous product and report those old checks as proof of the newly requested product.
+   *
+   * Compare the two canonical snapshots here, at the system-owned truth boundary. Give the
+   * same Agent/run/checkpoint one bounded opportunity to repair the no-op, then fail
+   * truthfully before any validation, Preview, review or publication can inherit evidence
+   * from the old project.
+   */
+  let implementationTrail = buildFileTrail(
+    [...existingFiles],
+    [...files],
+  );
+
+  if (implementationTrail.length === 0 && input.adapters.repair) {
+    const noOpFailure =
+      'Implementation produced no project changes. Apply the requested product changes to the current workspace.';
+
+    record('implementation', 'implementation produced no project changes', noOpFailure);
+
+    const repairOutcome = implementationState
+      ? await runRepairAsCanonicalTask({
+          state: implementationState,
+          objective: 'Apply the requested implementation after a no-op result',
+          selectedModel: input.implementationRouting?.selectedModel ?? null,
+          provider: input.implementationRouting?.provider ?? null,
+          failureCount: 1,
+          repair: () => input.adapters.repair!({ plan, failures: [noOpFailure], files }),
+          store: input.executionStore,
+          signal: input.signal,
+        })
+      : {
+          files: await input.adapters.repair({ plan, failures: [noOpFailure], files }),
+          task: null,
+        };
+
+    if (repairOutcome.files) {
+      files = repairOutcome.files;
+      implementationTrail = buildFileTrail(
+        [...existingFiles],
+        [...files],
+      );
+
+      if (implementationTrail.length > 0) {
+        record(
+          'repair',
+          'no-op implementation repaired',
+          `${implementationTrail.length} real project change(s) produced`,
+        );
+      }
+    }
+  }
+
+  if (implementationTrail.length === 0) {
+    return fail(
+      'failed',
+      'implementation',
+      'Implementation did not change the project. The existing project was preserved, and its old checks were not accepted as proof of this request.',
+      plan,
+      ['No project changes were produced.'],
+      files,
+    );
+  }
+
   record(
     'implementation',
     'project snapshot prepared',

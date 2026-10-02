@@ -103,6 +103,71 @@ describe('typed implementation failures remain truthful at the public boundary',
     assert.match(result.reason, /no repository changes were published/);
     assert.doesNotMatch(result.reason, /openrouter|safety/i);
   });
+
+  it('never accepts an unchanged existing product as a successful implementation', async () => {
+    const existingFiles = [
+      f('index.html', '<h1>Previous product</h1>'),
+      f('tests/app.test.js', 'assertPreviousProduct()'),
+    ];
+    let validationCalls = 0;
+    let reviewCalls = 0;
+
+    const result = await executeUniversalRun({
+      prompt: 'Create a different responsive appointment application with tests',
+      owner,
+      runId: 'run-no-op-implementation',
+      flags: enabled,
+      existingFiles,
+      adapters: adapters({
+        implement: async () => existingFiles,
+        repair: undefined,
+        runValidation: async () => {
+          validationCalls += 1;
+          return { exitCode: 0, stdout: 'old tests pass', stderr: '' };
+        },
+        review: async () => {
+          reviewCalls += 1;
+          return { approved: true, findings: [] };
+        },
+      }),
+    });
+
+    assert.equal(result.outcome, 'failed');
+    assert.equal(result.phaseReached, 'implementation');
+    assert.match(result.reason, /did not change the project/i);
+    assert.deepEqual(result.blockers, ['No project changes were produced.']);
+    assert.equal(validationCalls, 0, 'old-project checks must not validate a new request');
+    assert.equal(reviewCalls, 0);
+    assert.equal(result.mutationBegan, false);
+  });
+
+  it('gives the same run one bounded repair for a no-op implementation', async () => {
+    const existingFiles = [f('index.html', '<h1>Previous product</h1>')];
+    let repairCalls = 0;
+
+    const result = await executeUniversalRun({
+      prompt: 'Create a responsive appointment application',
+      owner,
+      runId: 'run-no-op-repair',
+      flags: enabled,
+      existingFiles,
+      adapters: adapters({
+        implement: async () => existingFiles,
+        repair: async ({ failures, files }) => {
+          repairCalls += 1;
+          assert.match(failures[0] ?? '', /no project changes/i);
+          assert.deepEqual(files, existingFiles);
+          return [f('index.html', '<h1>Appointment booking</h1>')];
+        },
+      }),
+    });
+
+    assert.equal(repairCalls, 1);
+    assert.equal(result.outcome, 'completed');
+    assert.ok(result.evidence.some((entry) =>
+      entry.phase === 'repair' && /no-op implementation repaired/i.test(entry.statement),
+    ));
+  });
 });
 
 describe('a complete enabled run', () => {
