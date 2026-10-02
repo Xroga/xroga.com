@@ -1772,6 +1772,7 @@ const stopRequestedRunIdRef =
       },
     );
 }, [
+  loading,
   setSwarmRunning,
 ]);
 
@@ -3032,8 +3033,8 @@ if (
 ) {
   gotEvent = true;
           fullReply = semanticPlan.blockers.length
-            ? `I can't complete that with the capabilities or authorization currently available: ${semanticPlan.blockers.join(' · ')}`
-            : 'I could not match this request to an available, authorized capability.';
+            ? 'I can\'t complete that yet because a required connection, permission, or supported action is unavailable. Check the connection prompt and try again.'
+            : 'I can\'t complete that request with the currently available connections and actions.';
           setMessages((current) => current.map((message) =>
             message.id === assistantId ? { ...message, content: fullReply, agent: 'Xroga AI' } : message
           ));
