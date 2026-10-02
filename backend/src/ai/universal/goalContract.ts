@@ -598,15 +598,15 @@ export function normalizePlannerDecisionCandidate(
    * omits an optional JSON field, so a malformed plan cannot erase the
    * user's requested verification or add a forbidden deployment.
    */
-  const explicitlyRequiresPreview =
-    /\b(?:create|generate|produce|provide|show|open|start|run|include|give(?:\s+me)?)\s+(?:me\s+)?(?:an?\s+)?(?:live\s+|responsive\s+|working\s+|runnable\s+)?preview\b/i.test(
-      input.message,
-    );
+  const {
+    previewRequirement:
+      explicitPreviewRequirement,
 
-  const explicitlyForbidsDeployment =
-    /\b(?:do\s+not|don't|without|no)\s+(?:a\s+|any\s+)?deploy(?:ment|ing)?\b/i.test(
-      input.message,
-    );
+    deploymentForbidden:
+      explicitlyForbidsDeployment,
+  } = explicitExecutionControls(
+    input.message,
+  );
 
   const suppliedSource =
     decision.sourcePolicy &&
@@ -739,8 +739,9 @@ export function normalizePlannerDecisionCandidate(
     },
 
     previewRequirement:
-      explicitlyRequiresPreview
-        ? 'REQUIRED'
+      explicitPreviewRequirement ===
+        'REQUIRED'
+        ? explicitPreviewRequirement
         : enumValue(
             decision
               .previewRequirement,
@@ -788,6 +789,39 @@ deploymentRequirement:
             .trim()
             .toLowerCase()
         : 'unknown',
+  };
+}
+
+/**
+ * Reads only explicit Xroga execution controls. This is deliberately not an
+ * application-domain or intent classifier: it cannot decide what to build,
+ * which framework to use, or whether a connected-app action is appropriate.
+ */
+export function explicitExecutionControls(
+  message: string,
+): {
+  previewRequirement:
+    | 'NONE'
+    | 'REQUIRED';
+
+  deploymentForbidden:
+    boolean;
+} {
+  const previewRequirement =
+    /\b(?:create|generate|produce|provide|show|open|start|run|include|give(?:\s+me)?)\s+(?:me\s+)?(?:an?\s+)?(?:live\s+|responsive\s+|working\s+|runnable\s+)?preview\b/i.test(
+      message,
+    )
+      ? 'REQUIRED'
+      : 'NONE';
+
+  const deploymentForbidden =
+    /\b(?:do\s+not|don't|without|no)\s+(?:a\s+|any\s+)?deploy(?:ment|ing)?\b/i.test(
+      message,
+    );
+
+  return {
+    previewRequirement,
+    deploymentForbidden,
   };
 }
 

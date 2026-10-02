@@ -35,6 +35,7 @@ import {
 } from '../black-hole/structuredOutput.js';
 
 import {
+  explicitExecutionControls,
   goalContractSchema,
   normalizeGoalContractCandidate,
   normalizePlannerDecisionCandidate,
@@ -90,6 +91,98 @@ export interface SemanticRequestPlan {
    */
   readonly directResponse?:
     string;
+}
+
+/**
+ * Final API-boundary invariant for explicit product controls.
+ *
+ * The model remains responsible for semantic interpretation. The server owns
+ * execution safety: Xroga Connect cannot satisfy a requested project Preview,
+ * so an otherwise schema-valid Connect plan is converted to the canonical
+ * software execution capability set before it can reach an external tool.
+ */
+export function enforceExplicitExecutionControls(
+  plan: SemanticRequestPlan,
+  message: string,
+): SemanticRequestPlan {
+  const controls =
+    explicitExecutionControls(
+      message,
+    );
+
+  if (
+    controls.previewRequirement !==
+      'REQUIRED' ||
+    !plan.capabilityIds.includes(
+      'business.action',
+    )
+  ) {
+    return plan;
+  }
+
+  const capabilityIds = [
+    ...new Set([
+      ...plan.capabilityIds.filter(
+        (id) =>
+          id !== 'business.action' &&
+          id !== 'business.read' &&
+          id !== 'conversation.respond',
+      ),
+
+      'software.implement',
+      'validation.run',
+
+      ...(plan.goalContract
+        .projectContext
+        ? [
+            'repository.read',
+            'repository.write',
+          ]
+        : []),
+    ]),
+  ];
+
+  const requiredAuthorities = [
+    ...new Set(
+      capabilityIds.flatMap(
+        (id) =>
+          universalCapabilityRegistry
+            .get(
+              id,
+            )
+            ?.requiredAuthorities ??
+          [],
+      ),
+    ),
+  ];
+
+  const goalContract =
+    goalContractSchema.parse({
+      ...plan.goalContract,
+      semanticIntent:
+        'MODIFY',
+      previewRequirement:
+        'REQUIRED',
+      deploymentRequirement:
+        controls.deploymentForbidden
+          ? 'NONE'
+          : plan.goalContract
+              .deploymentRequirement,
+      requiredCapabilities:
+        capabilityIds,
+      requiredAuthorities,
+    });
+
+  return {
+    ...plan,
+    goalContract,
+    dispatch:
+      'build',
+    capabilityIds,
+    rationale:
+      'An explicit project Preview requires the canonical software implementation and validation runtime.',
+    blockers: [],
+  };
 }
 
 export const SEMANTIC_PLANNER_DEFAULT_TOTAL_TIMEOUT_MS =
