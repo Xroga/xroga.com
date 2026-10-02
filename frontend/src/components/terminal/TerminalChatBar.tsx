@@ -30,6 +30,8 @@ import { requiresGitHubForBuild } from '@/lib/messageHelpers';
 import { composerMaxHeightForViewport } from '@/lib/chatComposerSizing';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
+import { X } from 'lucide-react';
+import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 
 const MIN_INPUT_H = 32;
 
@@ -58,6 +60,11 @@ export function TerminalChatBar() {
     stop,
   } = useTerminalChat();
   const hydrated = useHydrated();
+  const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
+  const activeArtifactTitle = useXrogaArtifactContext((state) => state.activeArtifactTitle);
+  const artifactSelections = useXrogaArtifactContext((state) => state.selections);
+  const removeArtifactSelection = useXrogaArtifactContext((state) => state.removeSelection);
+  const clearArtifactContext = useXrogaArtifactContext((state) => state.clear);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const fileRef = useRef<HTMLInputElement>(null);
@@ -317,8 +324,9 @@ export function TerminalChatBar() {
       useComposerToolsStore.getState().rules,
       useComposerToolsStore.getState().enabledSkills,
     );
+    const artifactPreamble = incognito ? '' : buildArtifactContextPreamble(useXrogaArtifactContext.getState());
     await submit(
-      promptText && preamble ? `${preamble}${promptText}` : promptText,
+      promptText ? `${preamble}${artifactPreamble}${promptText}` : promptText,
       false,
       false,
       attachments,
@@ -488,6 +496,11 @@ export function TerminalChatBar() {
           }}
         >
           <ChatBarDragOverlay active={!incognito && dragOver} />
+
+          {hydrated && !incognito && (activeArtifactId || artifactSelections.length > 0) ? <div className="flex max-w-full gap-1.5 overflow-x-auto px-3 pt-2" aria-label="Attached artifact context">
+            {activeArtifactId ? <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border)] bg-black/[0.035] px-2.5 py-1 text-[11px] dark:bg-white/[0.05]">Artifact: {activeArtifactTitle ?? activeArtifactId}<button type="button" onClick={clearArtifactContext} aria-label="Remove artifact context"><X className="h-3 w-3" /></button></span> : null}
+            {artifactSelections.map((selection) => <span key={selection.blockId} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px]">{selection.label}<button type="button" onClick={() => removeArtifactSelection(selection.blockId)} aria-label={`Remove ${selection.label}`}><X className="h-3 w-3" /></button></span>)}
+          </div> : null}
 
           {/* The toolbar row above the input is gone.
               It carried Black Hole, Integrations, GitHub and Vercel as chips and

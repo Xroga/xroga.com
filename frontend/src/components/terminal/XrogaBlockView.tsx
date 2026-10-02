@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
+import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
 import { AlertCircle, Check, Clock3, ExternalLink, FileCheck2, LoaderCircle, PlugZap, TriangleAlert } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
@@ -9,6 +9,8 @@ import { InlineCopyButton } from '@/components/ui/InlineCopyButton';
 import { isRenderableArtifact } from '@/lib/engineeringArtifact';
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/lib/xrogaBlocks';
+import { XrogaArtifactHeader } from './XrogaArtifactHeader';
+import { XrogaDeveloperInspector } from './XrogaDeveloperInspector';
 
 type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
 
@@ -30,6 +32,8 @@ export function renderBlock(block: XrogaBlock): ReactNode {
   const Renderer = getRenderer(block.type);
   return <Renderer block={block} />;
 }
+
+const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
 
 function TextRenderer({ block }: { block: XrogaBlock }) {
   if (!['narrative', 'notice', 'status', 'error', 'empty-state'].includes(block.type)) return null;
@@ -88,7 +92,7 @@ function ReceiptRenderer({ block }: { block: XrogaBlock }) {
 }
 
 function ContentRenderer({ block }: { block: XrogaBlock }) {
-  if (!['code', 'diff', 'terminal', 'file'].includes(block.type) || !('content' in block)) return null;
+  if (block.type !== 'code' && block.type !== 'diff' && block.type !== 'terminal' && block.type !== 'file') return null;
   return <section className="max-w-[820px] overflow-hidden rounded-xl border border-[var(--border)]"><header className="flex min-h-10 items-center justify-between gap-3 border-b border-[var(--border)] px-3"><span className="truncate text-xs font-medium">{block.title ?? block.path ?? block.type}</span><InlineCopyButton value={block.content} /></header><pre className="max-h-96 overflow-auto whitespace-pre-wrap p-3 font-mono text-[13px] leading-5">{block.content}</pre></section>;
 }
 
@@ -126,10 +130,11 @@ for (const type of ['code', 'diff', 'terminal', 'file'] as const) registerRender
 registerRenderer('connection-request', ConnectionRenderer);
 registerRenderer('website', WebsiteRenderer);
 registerRenderer('artifact', ArtifactRenderer);
+for (const type of ['metric', 'metric-group', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
 export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
-  return <section className="space-y-3 py-2" aria-label="Xroga output">{output.blocks.map((candidate) => {
+  return <section className="space-y-3 py-2" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
-    return <div key={candidate.id}>{block ? renderBlock(block) : <UnknownBlockRenderer block={candidate} />}</div>;
-  })}</section>;
+    return <div key={candidate.id}>{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div>;
+  })}<XrogaDeveloperInspector output={output} /></section>;
 }
