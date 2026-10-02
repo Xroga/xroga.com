@@ -205,7 +205,10 @@ function TechnicalEvidence({ event }: { event: TerminalEvent }) {
           </div>
         ))}
         {event.body ? (
-          <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--foreground)]/[0.035] p-2 font-mono text-[10px] leading-relaxed text-[var(--foreground)]/60">
+          <pre
+            className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--foreground)]/[0.035] p-2 font-mono text-[10px] leading-relaxed text-[var(--foreground)]/60"
+            data-testid="terminal-event-body"
+          >
             {event.body}
           </pre>
         ) : null}
