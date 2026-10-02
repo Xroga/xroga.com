@@ -118,14 +118,6 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
 
       const first = lines[0]!;
 
-      if (isFirst && pIdx === 0 && blocks.length === 0) {
-        blocks.push({ type: 'headline', text: first });
-        if (lines.length > 1) {
-          blocks.push({ type: 'paragraph', text: lines.slice(1).join('\n') });
-        }
-        return;
-      }
-
       if (isCalloutLine(first)) {
         const { label, rest } = splitCallout(first);
         blocks.push({
@@ -329,14 +321,11 @@ function BlockView({ block }: { block: XrogaBlock }) {
       );
     case 'math-answer':
       return (
-        <div className="xv-math-answer rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[0.08] to-transparent px-4 py-3.5 space-y-2">
-          <p className="text-[12px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Final answer</p>
-          <div className="xv-math-equation">
-            <MathEquation
-              text={block.text}
-              className="text-[18px] sm:text-[20px] font-medium text-[var(--foreground)]"
-            />
-          </div>
+        <div className="xv-math-equation py-1.5">
+          <MathEquation
+            text={block.text}
+            className="text-[17px] sm:text-[18px] font-medium text-[var(--foreground)]"
+          />
         </div>
       );
     case 'callout': {
