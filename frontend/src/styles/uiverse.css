@@ -2826,9 +2826,9 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 /* ============================================================
    XROGA — UNIFIED APPLICATION CANVAS
    ------------------------------------------------------------
-   One calm rounded app surface, generous breathing room, and
-   compact controls. The sidebar keeps its own geometry; the
-   workspace/page canvas has a separate responsive content gutter.
+   One calm rounded app surface with a tight outside frame and
+   compact controls. The sidebar keeps its own geometry; useful
+   breathing room now lives inside the workspace content.
    ============================================================ */
 
 :root {
@@ -3151,8 +3151,8 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     --xv-app-gutter: 4px;
     --xv-app-seam: 4px;
     --xv-app-radius: 14px;
-    --xv-content-gutter-inline: 6px;
-    --xv-content-gutter-block: 6px;
+    --xv-content-gutter-inline: 4px;
+    --xv-content-gutter-block: 4px;
     --xv-fullscreen-gutter: 4px;
   }
 
