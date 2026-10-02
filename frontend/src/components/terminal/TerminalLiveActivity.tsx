@@ -1,133 +1,329 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Check, CircleX, Clock3, FileText, Globe2, LoaderCircle, Rocket, Search, SquareTerminal } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  Check,
+  CircleHelp,
+  CircleX,
+  Clock3,
+  Code2,
+  Database,
+  FileText,
+  Globe2,
+  LoaderCircle,
+  MonitorSmartphone,
+  PlugZap,
+  Rocket,
+  Search,
+  ShieldCheck,
+  SquareTerminal,
+  Workflow,
+  type LucideIcon,
+} from 'lucide-react';
 
-import { cn } from '@/lib/utils';
 import type { TerminalEvent, TerminalRunState } from '@/lib/terminal/terminalEvent';
-import { formatElapsed, shouldShowWaitingLine, waitingLine } from '@/lib/terminal/liveActivityText';
+import {
+  PENDING_REVEAL_DELAY_MS,
+  formatElapsed,
+  pendingActivityLabel,
+} from '@/lib/terminal/liveActivityText';
 
-const VISIBLE_ROWS = 10;
+type ActivityKind =
+  | 'respond'
+  | 'search'
+  | 'source'
+  | 'file'
+  | 'code'
+  | 'command'
+  | 'test'
+  | 'browser'
+  | 'database'
+  | 'connection'
+  | 'automation'
+  | 'deploy'
+  | 'verify'
+  | 'approval'
+  | 'waiting'
+  | 'complete'
+  | 'error';
 
-const LEVEL_CLASS: Record<TerminalEvent['level'], string> = {
-  info: 'text-[var(--muted)]',
-  warn: 'text-amber-500',
-  error: 'text-red-500',
-  success: 'text-emerald-500',
-};
+const MAX_COLLAPSED_ROWS = 3;
 
-function seconds(fromMs: number, nowMs: number): number {
-  return Math.max(0, Math.floor((nowMs - fromMs) / 1000));
+function metadataString(event: TerminalEvent, key: string): string | null {
+  const value = event.canonical?.metadata?.[key];
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
 }
 
-function EventIcon({ event, active }: { event: TerminalEvent; active: boolean }) {
-  const type = event.canonical?.type ?? '';
-  const props = { className: cn('h-4 w-4 shrink-0', active && event.level === 'info' && 'motion-safe:animate-spin'), 'aria-hidden': true as const };
-  if (event.level === 'error' || type.endsWith('.failed')) return <CircleX {...props} />;
-  if (event.level === 'success' || type.endsWith('.completed')) return <Check {...props} />;
-  if (type.includes('file') || event.text.toLowerCase().includes('file')) return <FileText {...props} />;
-  if (type.includes('tool') || event.text.toLowerCase().match(/command|test|build/)) return <SquareTerminal {...props} />;
-  if (type.includes('artifact') || event.text.toLowerCase().includes('preview')) return <Globe2 {...props} />;
-  if (type === 'receipt.created' || event.text.toLowerCase().includes('deploy')) return <Rocket {...props} />;
-  if (type.endsWith('.waiting')) return <Clock3 {...props} />;
-  if (event.text.toLowerCase().includes('search')) return <Search {...props} />;
-  return <LoaderCircle {...props} />;
+function activityKind(event: TerminalEvent): ActivityKind {
+  const explicit = metadataString(event, 'presentationKind');
+  if (
+    explicit === 'respond' ||
+    explicit === 'search' ||
+    explicit === 'source' ||
+    explicit === 'file' ||
+    explicit === 'code' ||
+    explicit === 'command' ||
+    explicit === 'test' ||
+    explicit === 'browser' ||
+    explicit === 'database' ||
+    explicit === 'connection' ||
+    explicit === 'automation' ||
+    explicit === 'deploy' ||
+    explicit === 'verify' ||
+    explicit === 'approval' ||
+    explicit === 'waiting' ||
+    explicit === 'complete' ||
+    explicit === 'error'
+  ) {
+    return explicit;
+  }
+
+  if (event.level === 'error' || event.kind === 'failure') return 'error';
+  if (event.kind === 'permission') return 'connection';
+  if (event.kind === 'result' || event.level === 'success') return 'complete';
+
+  const canonicalType = event.canonical?.type ?? '';
+  if (canonicalType.startsWith('connection.')) return 'connection';
+  if (canonicalType.startsWith('approval.')) return 'approval';
+  if (canonicalType.startsWith('verification.')) return 'verify';
+  if (canonicalType.startsWith('file.')) return 'file';
+  if (canonicalType.startsWith('tool.')) return 'command';
+  if (canonicalType.startsWith('receipt.')) return 'complete';
+
+  const text = event.text.toLowerCase();
+  if (/\b(search|research|find current|looking up)\b/.test(text)) return 'search';
+  if (/\b(source|evidence|reference)\b/.test(text)) return 'source';
+  if (/\b(file|repository|project context|project files)\b/.test(text)) return 'file';
+  if (/\b(test|check|validate|validation|compile|build check)\b/.test(text)) return 'test';
+  if (/\b(command|terminal|npm |pnpm |yarn )\b/.test(text)) return 'command';
+  if (/\b(code|implement|updat(?:e|ing)|patch|edit(?:ing)?)\b/.test(text)) return 'code';
+  if (/\b(browser|preview|viewport|responsive)\b/.test(text)) return 'browser';
+  if (/\b(database|sql|schema|record)\b/.test(text)) return 'database';
+  if (/\b(connect|authori[sz]|oauth|permission)\b/.test(text)) return 'connection';
+  if (/\b(workflow|automation|schedule|trigger)\b/.test(text)) return 'automation';
+  if (/\b(deploy|publish|release|shipping)\b/.test(text)) return 'deploy';
+  if (/\b(verify|verified|security|scan)\b/.test(text)) return 'verify';
+  if (/\b(wait|queued|reconnect)\b/.test(text)) return 'waiting';
+  return 'respond';
+}
+
+function iconFor(kind: ActivityKind): LucideIcon {
+  switch (kind) {
+    case 'search': return Search;
+    case 'source': return Globe2;
+    case 'file': return FileText;
+    case 'code': return Code2;
+    case 'command': return SquareTerminal;
+    case 'test': return ShieldCheck;
+    case 'browser': return MonitorSmartphone;
+    case 'database': return Database;
+    case 'connection': return PlugZap;
+    case 'automation': return Workflow;
+    case 'deploy': return Rocket;
+    case 'verify': return ShieldCheck;
+    case 'approval': return CircleHelp;
+    case 'waiting': return Clock3;
+    case 'complete': return Check;
+    case 'error': return CircleX;
+    default: return LoaderCircle;
+  }
+}
+
+function publicActivityText(event: TerminalEvent): string {
+  let text = event.text.trim();
+
+  text = text
+    .replace(/^\[[^\]]+\]\s*/, '')
+    .replace(/^(?:xroga\s+)?(?:architect|builder|reviewer|qa|compiler|security|converter|researcher|router)\s*[:\-–—]?\s*/i, '')
+    .replace(/planning the build route/gi, 'Planning the work')
+    .replace(/loading project memory/gi, 'Loading project context')
+    .replace(/checking your available actions/gi, 'Checking availability')
+    .replace(/request received/gi, 'Starting')
+    .replace(/run complete/gi, 'Complete')
+    .replace(/run finished with errors/gi, 'Could not complete the task');
+
+  if (/still waiting on .* to return code/i.test(text)) {
+    const duration = text.match(/\(([^)]+)\)\.?$/)?.[1];
+    return duration ? `Waiting for generated code · ${duration}` : 'Waiting for generated code';
+  }
+
+  return text || 'Working';
+}
+
+function semanticKey(event: TerminalEvent): string {
+  return (
+    event.canonical?.activityId ||
+    event.canonical?.eventId ||
+    `${activityKind(event)}:${publicActivityText(event).toLowerCase()}`
+  );
+}
+
+function coalescedRows(events: TerminalEvent[]): TerminalEvent[] {
+  const result: TerminalEvent[] = [];
+  const indexByKey = new Map<string, number>();
+
+  for (const event of events) {
+    if (event.kind === 'output' || event.kind === 'artifact' || event.kind === 'session') continue;
+    const key = semanticKey(event);
+    const existing = indexByKey.get(key);
+    if (existing == null) {
+      indexByKey.set(key, result.length);
+      result.push(event);
+    } else {
+      result[existing] = event;
+    }
+  }
+
+  return result;
 }
 
 function TechnicalEvidence({ event }: { event: TerminalEvent }) {
   const canonical = event.canonical;
   const metadata = canonical?.metadata ?? {};
-  const rows = [
-    canonical?.toolCallId ? ['Command ID', canonical.toolCallId] : null,
-    typeof metadata.durationMs === 'number' ? ['Duration', formatElapsed(Math.floor(metadata.durationMs / 1000))] : null,
+  const rows: Array<[string, string] | null> = [
+    typeof metadata.durationMs === 'number'
+      ? ['Duration', formatElapsed(Math.floor(metadata.durationMs / 1000))]
+      : null,
     typeof metadata.exitCode === 'number' ? ['Exit code', String(metadata.exitCode)] : null,
     typeof metadata.filePath === 'string' ? ['File', metadata.filePath] : null,
-    typeof metadata.runtimeSessionId === 'string' ? ['Runtime', metadata.runtimeSessionId] : null,
     canonical?.evidenceRefs?.length ? ['Evidence', canonical.evidenceRefs.join(', ')] : null,
-  ].filter((row): row is string[] => Boolean(row));
+  ];
 
-  if (!event.body && rows.length === 0) return null;
+  const evidence = rows.filter((row): row is [string, string] => Boolean(row));
+  if (!event.body && evidence.length === 0) return null;
+
   return (
-    <details className="mb-2 ml-6 mt-1 max-w-[760px] text-[11px] text-[var(--muted)]">
-      <summary className="cursor-pointer select-none rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]">Developer details</summary>
-      <div className="mt-1 rounded-lg border border-[var(--card-border)]/50 bg-[var(--foreground)]/[0.035] p-2.5">
-        {rows.map(([label, value]) => <p key={label}><span className="font-medium text-[var(--foreground)]/75">{label}</span> · {value}</p>)}
-        {event.body ? <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] leading-4" data-testid="terminal-event-body">{event.body}</pre> : null}
+    <details className="ml-6 mt-1 text-[11px] text-[var(--foreground)]/55">
+      <summary className="w-fit cursor-pointer select-none rounded px-1 py-0.5 hover:text-[var(--foreground)]/75">
+        Details
+      </summary>
+      <div className="mt-1.5 space-y-1 border-l border-[var(--border-subtle)] pl-3">
+        {evidence.map(([label, value]) => (
+          <div key={label} className="flex min-w-0 gap-2">
+            <span className="shrink-0 text-[var(--foreground)]/40">{label}</span>
+            <span className="min-w-0 break-all font-mono">{value}</span>
+          </div>
+        ))}
+        {event.body ? (
+          <pre
+            className="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--foreground)]/[0.035] p-2 font-mono text-[10px] leading-relaxed text-[var(--foreground)]/60"
+            data-testid="terminal-event-body"
+          >
+            {event.body}
+          </pre>
+        ) : null}
       </div>
     </details>
   );
 }
 
-function importantAnnouncement(event: TerminalEvent | undefined): string | null {
-  const type = event?.canonical?.type;
-  if (!event || !type) return null;
-  if (type === 'run.started') return 'Task started';
-  if (type === 'connection.required' || type === 'approval.requested') return 'Approval required';
-  if (type === 'run.completed') return 'Task completed';
-  if (type === 'run.failed') return 'Task failed';
-  return null;
+function ActivityRow({
+  event,
+  current,
+}: {
+  event: TerminalEvent;
+  current: boolean;
+}) {
+  const kind = activityKind(event);
+  const failed = kind === 'error';
+  const completed = !current || kind === 'complete' || event.level === 'success';
+  const Icon = failed ? CircleX : completed ? Check : iconFor(kind);
+  const animate = current && !failed && !completed && (kind === 'respond' || kind === 'waiting');
+
+  return (
+    <div className="py-0.5" data-testid="terminal-activity-row">
+      <div className="flex min-w-0 items-start gap-2 text-[12px] leading-5">
+        <Icon
+          className={[
+            'mt-0.5 h-3.5 w-3.5 shrink-0',
+            failed
+              ? 'text-red-500'
+              : completed
+                ? 'text-emerald-500/85'
+                : 'text-[var(--accent)]',
+            animate ? 'motion-safe:animate-spin' : '',
+          ].join(' ')}
+          aria-hidden="true"
+        />
+        <span className={completed ? 'text-[var(--foreground)]/58' : 'text-[var(--foreground)]/82'}>
+          {publicActivityText(event)}
+        </span>
+      </div>
+      <TechnicalEvidence event={event} />
+    </div>
+  );
 }
 
-interface TerminalLiveActivityProps {
-  run: TerminalRunState;
-  /** Injected in tests; production reads the client clock. */
-  now?: number;
-}
-
-/** Structured activity derived only from received run events. */
-export function TerminalLiveActivity({ run, now }: TerminalLiveActivityProps) {
-  const [tick, setTick] = useState<number | null>(null);
+export function TerminalLiveActivity({ run }: { run: TerminalRunState }) {
+  const [showPending, setShowPending] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const rows = useMemo(() => coalescedRows(run.events), [run.events]);
 
   useEffect(() => {
-    if (!run.active || run.startedAt == null) {
-      setTick(null);
-      return;
-    }
-    setTick(Date.now());
-    const timer = window.setInterval(() => setTick(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [run.active, run.startedAt]);
+    setShowPending(false);
+    if (!run.active || rows.length > 0) return;
 
-  const rows = run.events
-    .filter((event) => event.kind !== 'output' && event.kind !== 'result')
-    .slice(-VISIBLE_ROWS);
+    const timer = window.setTimeout(() => {
+      setShowPending(true);
+    }, PENDING_REVEAL_DELAY_MS);
 
-  if (!run.active) return null;
+    return () => window.clearTimeout(timer);
+  }, [run.active, run.startedAt, rows.length]);
 
-  const clock = now ?? tick;
-  const elapsed = run.startedAt != null && clock != null ? seconds(run.startedAt, clock) : 0;
+  if (!run.active && rows.length === 0) return null;
 
   if (rows.length === 0) {
-    if (!shouldShowWaitingLine(elapsed)) return null;
+    if (!showPending) return null;
+
     return (
-      <div className="my-2 flex w-full max-w-xl items-center gap-3 rounded-2xl border border-[var(--card-border)]/65 bg-[var(--foreground)]/[0.025] px-3.5 py-3 shadow-sm" role="status" aria-live="polite" data-testid="terminal-live-activity">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--card-border)]/55 bg-[var(--accent)]/10 text-[var(--accent)]" aria-hidden="true">
-          <LoaderCircle className="h-[18px] w-[18px] motion-safe:animate-spin" />
-        </span>
-        <span className="min-w-0 flex-1"><span className="block text-[12px] font-semibold text-[var(--foreground)]">Xroga is on it</span><span className="mt-0.5 block text-[11px] text-[var(--foreground)]/55" data-testid="terminal-waiting-line">{waitingLine(elapsed)}</span></span>
-        <span className="shrink-0 rounded-full border border-[var(--card-border)]/55 px-2 py-0.5 font-mono text-[10px] text-[var(--foreground)]/45" data-testid="terminal-elapsed">{formatElapsed(elapsed)}</span>
+      <div
+        className="my-1.5 flex w-fit items-center gap-2 text-[12px] text-[var(--foreground)]/60"
+        role="status"
+        aria-live="polite"
+        data-testid="terminal-live-activity"
+      >
+        <LoaderCircle
+          className="h-3.5 w-3.5 text-[var(--accent)] motion-safe:animate-spin"
+          aria-hidden="true"
+        />
+        <span data-testid="terminal-waiting-line">{pendingActivityLabel()}</span>
       </div>
     );
   }
 
-  const announcement = importantAnnouncement(rows.at(-1));
+  const visibleRows = expanded ? rows : rows.slice(-MAX_COLLAPSED_ROWS);
 
   return (
-    <div className="xv-term-live text-xs" data-testid="terminal-live-activity">
-      <span className="sr-only" role="status" aria-live="polite">{announcement}</span>
-      {rows.map((event, index) => {
-        const isLatest = index === rows.length - 1;
-        return (
-          <div key={event.canonical?.eventId ?? event.seq} className="min-w-0">
-            <p className={cn('xv-term-liveline gap-2', !isLatest && 'xv-term-liveline--past')} data-testid={isLatest ? 'ai-processing-status' : undefined}>
-              <EventIcon event={event} active={isLatest && run.active} />
-              <span className={cn('min-w-0 break-words', LEVEL_CLASS[event.level])}>{event.source ? `${event.source}: ` : ''}{event.text}</span>
-              {isLatest ? <span className="xv-term-liveclock" data-testid="terminal-elapsed">{formatElapsed(elapsed)}</span> : null}
-            </p>
-            <TechnicalEvidence event={event} />
-          </div>
-        );
-      })}
+    <div
+      className="my-1.5 w-full max-w-xl"
+      role="status"
+      aria-live="polite"
+      data-testid="terminal-live-activity"
+    >
+      <div className="space-y-0.5">
+        {visibleRows.map((event, index) => {
+          const absoluteIndex = expanded
+            ? index
+            : rows.length - visibleRows.length + index;
+          return (
+            <ActivityRow
+              key={event.canonical?.eventId ?? `${event.seq}-${event.rawEvent}`}
+              event={event}
+              current={run.active && absoluteIndex === rows.length - 1}
+            />
+          );
+        })}
+      </div>
+
+      {rows.length > MAX_COLLAPSED_ROWS ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((value) => !value)}
+          className="mt-1 ml-5 rounded px-1 py-0.5 text-[11px] font-medium text-[var(--foreground)]/48 transition-colors hover:text-[var(--foreground)]/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/45"
+        >
+          {expanded ? 'Show less' : 'View activity'}
+        </button>
+      ) : null}
     </div>
   );
 }

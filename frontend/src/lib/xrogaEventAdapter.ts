@@ -37,7 +37,23 @@ function genericType(rawEvent: string, payload: Record<string, unknown>): XrogaE
   }
 }
 
-function genericStatus(type: XrogaEventType): XrogaEventStatus {
+function genericStatus(
+  type: XrogaEventType,
+  payload: Record<string, unknown>,
+): XrogaEventStatus {
+  const presentationStatus = text(payload.presentationStatus);
+  if (
+    presentationStatus === 'pending' ||
+    presentationStatus === 'running' ||
+    presentationStatus === 'waiting' ||
+    presentationStatus === 'completed' ||
+    presentationStatus === 'failed' ||
+    presentationStatus === 'cancelled' ||
+    presentationStatus === 'interrupted'
+  ) {
+    return presentationStatus;
+  }
+
   if (type.endsWith('.failed')) return 'failed';
   if (type.endsWith('.completed') || type === 'artifact.completed') return 'completed';
   if (type.endsWith('.cancelled')) return 'cancelled';
@@ -104,7 +120,7 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
     sequence: rawSequence,
     timestamp: software?.createdAt ?? new Date(input.timestamp).toISOString(),
     type,
-    status: software ? softwareStatus(software, type) : genericStatus(type),
+    status: software ? softwareStatus(software, type) : genericStatus(type, input.payload),
     title: input.title,
     summary: input.summary ?? undefined,
     source: software ? 'software-agent-v2' : 'swarm-sse',
@@ -113,6 +129,12 @@ export function adaptToXrogaEvent(input: XrogaEventAdapterInput): XrogaCanonical
     artifactRefs: evidence?.previewId ? [evidence.previewId] : undefined,
     metadata: {
       rawEvent: input.rawEvent,
+      ...(text(input.payload.presentationKind)
+        ? { presentationKind: text(input.payload.presentationKind)! }
+        : {}),
+      ...(text(input.payload.presentationStatus)
+        ? { presentationStatus: text(input.payload.presentationStatus)! }
+        : {}),
       ...(evidence?.filePath ? { filePath: evidence.filePath } : {}),
       ...(evidence?.exitCode != null ? { exitCode: evidence.exitCode } : {}),
       ...(evidence?.durationMs != null ? { durationMs: evidence.durationMs } : {}),

@@ -13,6 +13,7 @@ import { ShareIcon } from '@/components/icons/animated/ShareIcon';
 import { Trash2Icon } from '@/components/icons/animated/Trash2Icon';
 import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
+import { serializeAssistantCopy } from '@/lib/copyText';
 import toast from 'react-hot-toast';
 
 interface MessageBubbleActionsProps {
@@ -38,9 +39,9 @@ export function MessageBubbleActions({
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(content);
+      const value = role === 'assistant' ? serializeAssistantCopy(content) : content;
+      await navigator.clipboard.writeText(value);
       setCopied(true);
-      toast.success('Copied');
       setTimeout(() => setCopied(false), 1500);
     } catch {
       toast.error('Copy failed');
@@ -59,7 +60,7 @@ export function MessageBubbleActions({
     <>
     <div
       className={cn(
-        'mt-1.5 flex w-fit flex-wrap items-center gap-0.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-raised)]/85 p-0.5 opacity-100 shadow-sm backdrop-blur sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition-opacity',
+        'mt-1 flex w-fit flex-wrap items-center gap-0.5 rounded-lg p-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition-opacity',
         role === 'user' ? 'ml-auto justify-end' : 'justify-start'
       )}
     >

@@ -83,7 +83,15 @@ function LinkRenderer({ block }: { block: XrogaBlock }) {
 
 function ApprovalRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'approval') return null;
-  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><h3 className="font-medium">{block.approval.title}</h3>{block.approval.description ? <p className="mt-1 text-[var(--muted)]">{block.approval.description}</p> : null}<p className="mt-2 text-xs text-[var(--muted)]">Action: {block.approval.action} · {block.approval.status}</p></section>;
+  const status =
+    block.approval.status === 'pending'
+      ? 'Waiting for your approval'
+      : block.approval.status === 'approved'
+        ? 'Approved'
+        : block.approval.status === 'declined'
+          ? 'Declined'
+          : 'Resolved';
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><h3 className="font-medium">{block.approval.title}</h3>{block.approval.description ? <p className="mt-1 text-[var(--muted)]">{block.approval.description}</p> : null}<p className="mt-2 text-xs text-[var(--muted)]">{status}</p></section>;
 }
 
 function ReceiptRenderer({ block }: { block: XrogaBlock }) {
@@ -98,7 +106,7 @@ function ContentRenderer({ block }: { block: XrogaBlock }) {
 
 function ConnectionRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'connection-request') return null;
-  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><div className="flex items-center gap-2"><PlugZap className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">Connect {block.service}</h3></div><p className="mt-1 text-[var(--muted)]">{block.reason}</p><p className="mt-2 text-xs">Required for {block.capability}. Action: {block.action}.</p></section>;
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><div className="flex items-center gap-2"><PlugZap className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">Connect {block.service}</h3></div><p className="mt-1 text-[var(--muted)]">{block.reason}</p>{block.resumeContext ? <p className="mt-2 text-xs text-[var(--muted)]">Next: {block.resumeContext}</p> : <p className="mt-2 text-xs text-[var(--muted)]">After you connect, Xroga will continue this task.</p>}</section>;
 }
 
 function WebsiteRenderer({ block }: { block: XrogaBlock }) {
