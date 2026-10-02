@@ -56,6 +56,8 @@ export interface TerminalEvent {
   at: number;
   /** Raw backend event name, retained so a row can be traced to its origin. */
   rawEvent: string;
+  /** Source-neutral semantic event used by new Xroga surfaces. */
+  canonical?: import('../xrogaEvent').XrogaCanonicalEvent;
 }
 
 export interface TerminalRunState {

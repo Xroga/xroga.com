@@ -1,0 +1,135 @@
+'use client';
+
+import type { ComponentType, LazyExoticComponent, ReactNode } from 'react';
+import { AlertCircle, Check, Clock3, ExternalLink, FileCheck2, LoaderCircle, PlugZap, TriangleAlert } from 'lucide-react';
+
+import { EngineeringArtifactView } from './EngineeringArtifactView';
+import { LegacyLandingOutputView } from './LegacyLandingOutputView';
+import { InlineCopyButton } from '@/components/ui/InlineCopyButton';
+import { isRenderableArtifact } from '@/lib/engineeringArtifact';
+import { safeArtifactUri } from '@/lib/universalOutput';
+import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/lib/xrogaBlocks';
+
+type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
+
+const renderers = new Map<string, BlockRenderer>();
+
+export function registerRenderer(type: XrogaBlock['type'], renderer: BlockRenderer): void {
+  renderers.set(type, renderer);
+}
+
+export function canRender(type: string): boolean {
+  return renderers.has(type);
+}
+
+export function getRenderer(type: string): BlockRenderer {
+  return renderers.get(type) ?? UnknownBlockRenderer;
+}
+
+export function renderBlock(block: XrogaBlock): ReactNode {
+  const Renderer = getRenderer(block.type);
+  return <Renderer block={block} />;
+}
+
+function TextRenderer({ block }: { block: XrogaBlock }) {
+  if (!['narrative', 'notice', 'status', 'error', 'empty-state'].includes(block.type)) return null;
+  const tone = 'tone' in block ? block.tone : undefined;
+  const Icon = block.type === 'error' || tone === 'danger' ? AlertCircle : tone === 'warning' ? TriangleAlert : tone === 'success' ? Check : null;
+  return (
+    <section className="flex max-w-[820px] gap-2.5 rounded-xl py-1 text-sm text-[var(--foreground)]" role={block.type === 'error' ? 'alert' : undefined}>
+      {Icon ? <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> : null}
+      <div>
+        {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
+        <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
+      </div>
+    </section>
+  );
+}
+
+function ListRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'plan' && block.type !== 'activity') return null;
+  return (
+    <section className="max-w-[820px] space-y-2 py-1">
+      {block.title ? <h3 className="text-sm font-medium text-[var(--foreground)]">{block.title}</h3> : null}
+      <ul className="space-y-1.5" aria-label={block.title ?? block.type}>
+        {block.items.map((item) => {
+          const Icon = item.status === 'completed' ? Check : item.status === 'failed' ? AlertCircle : item.status === 'waiting' ? Clock3 : LoaderCircle;
+          return <li key={item.id} className="flex gap-2 text-sm"><Icon className={`mt-0.5 h-4 w-4 shrink-0 ${item.status === 'running' ? 'motion-safe:animate-spin' : ''}`} aria-hidden="true" /><span>{item.label}{item.detail ? <span className="ml-2 text-xs text-[var(--muted)]">{item.detail}</span> : null}</span></li>;
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function EvidenceRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'evidence') return null;
+  return (
+    <details className="max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm">
+      <summary className="flex cursor-pointer list-none items-center gap-2 font-medium"><FileCheck2 className="h-4 w-4" aria-hidden="true" />{block.evidence.title}</summary>
+      {block.evidence.summary ? <p className="mt-2 text-[var(--muted)]">{block.evidence.summary}</p> : null}
+      {block.evidence.locator ? <code className="mt-2 block break-all text-xs">{block.evidence.locator}</code> : null}
+    </details>
+  );
+}
+
+function LinkRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'citation' && block.type !== 'source') return null;
+  return <a href={block.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-[var(--accent)] underline-offset-4 hover:underline">{block.label}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a>;
+}
+
+function ApprovalRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'approval') return null;
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><h3 className="font-medium">{block.approval.title}</h3>{block.approval.description ? <p className="mt-1 text-[var(--muted)]">{block.approval.description}</p> : null}<p className="mt-2 text-xs text-[var(--muted)]">Action: {block.approval.action} · {block.approval.status}</p></section>;
+}
+
+function ReceiptRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'receipt') return null;
+  return <section className="max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm"><div className="flex items-center gap-2"><Check className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">{block.receipt.action}</h3></div><p className="mt-1 text-[var(--muted)]">{block.receipt.target} · {block.receipt.service} · {block.receipt.status}</p>{block.receipt.viewUrl ? <a href={block.receipt.viewUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[var(--accent)]">View result<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : null}</section>;
+}
+
+function ContentRenderer({ block }: { block: XrogaBlock }) {
+  if (!['code', 'diff', 'terminal', 'file'].includes(block.type) || !('content' in block)) return null;
+  return <section className="max-w-[820px] overflow-hidden rounded-xl border border-[var(--border)]"><header className="flex min-h-10 items-center justify-between gap-3 border-b border-[var(--border)] px-3"><span className="truncate text-xs font-medium">{block.title ?? block.path ?? block.type}</span><InlineCopyButton value={block.content} /></header><pre className="max-h-96 overflow-auto whitespace-pre-wrap p-3 font-mono text-[13px] leading-5">{block.content}</pre></section>;
+}
+
+function ConnectionRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'connection-request') return null;
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><div className="flex items-center gap-2"><PlugZap className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">Connect {block.service}</h3></div><p className="mt-1 text-[var(--muted)]">{block.reason}</p><p className="mt-2 text-xs">Required for {block.capability}. Action: {block.action}.</p></section>;
+}
+
+function WebsiteRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'website') return null;
+  if (block.artifactKind === 'engineering' && isRenderableArtifact(block.artifact)) return <EngineeringArtifactView artifact={block.artifact} />;
+  if (block.artifactKind === 'legacy-landing' && block.artifact && typeof block.artifact === 'object') return <LegacyLandingOutputView output={block.artifact as Record<string, unknown>} />;
+  return <UnknownBlockRenderer block={block} />;
+}
+
+function ArtifactRenderer({ block }: { block: XrogaBlock }) {
+  if (block.type !== 'artifact') return null;
+  const uri = safeArtifactUri(block.uri);
+  const source = uri ?? (block.inline && !block.mediaType.startsWith('text/') ? `data:${block.mediaType};base64,${block.inline}` : null);
+  return <article className="max-w-[820px] rounded-xl border border-[var(--border)] p-3"><header className="flex items-center justify-between gap-3"><span className="truncate text-sm font-medium">{block.name}</span><span className="text-xs text-[var(--muted)]">{block.mediaType}</span></header>{source && block.mediaType.startsWith('image/') ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={source} alt={block.name} className="mt-2 max-h-72 rounded-lg object-contain" /> : null}{source && block.mediaType.startsWith('audio/') ? <audio src={source} controls className="mt-2 w-full" /> : null}{source && block.mediaType.startsWith('video/') ? <video src={source} controls className="mt-2 max-h-72 w-full rounded-lg" /> : null}{block.inline && block.mediaType.startsWith('text/') ? <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-lg bg-black/5 p-2 text-xs dark:bg-white/5">{block.inline}</pre> : null}{uri && !block.mediaType.match(/^(image|audio|video|text)\//) ? <a href={uri} className="mt-2 inline-flex text-sm text-[var(--accent)]" download>Download artifact</a> : null}{block.metadataOnly ? <p className="mt-2 text-xs text-[var(--muted)]">Metadata only. Open Files or task details to inspect this artifact.</p> : null}</article>;
+}
+
+export function UnknownBlockRenderer({ block }: { block: XrogaBlock }) {
+  return <section className="max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm text-[var(--muted)]"><p>{block.title ?? 'This output is not previewable yet.'}</p><p className="mt-1 text-xs">Open task details to inspect the saved output.</p></section>;
+}
+
+for (const type of ['narrative', 'notice', 'status', 'error', 'empty-state'] as const) registerRenderer(type, TextRenderer);
+for (const type of ['plan', 'activity'] as const) registerRenderer(type, ListRenderer);
+registerRenderer('evidence', EvidenceRenderer);
+registerRenderer('citation', LinkRenderer);
+registerRenderer('source', LinkRenderer);
+registerRenderer('approval', ApprovalRenderer);
+registerRenderer('receipt', ReceiptRenderer);
+for (const type of ['code', 'diff', 'terminal', 'file'] as const) registerRenderer(type, ContentRenderer);
+registerRenderer('connection-request', ConnectionRenderer);
+registerRenderer('website', WebsiteRenderer);
+registerRenderer('artifact', ArtifactRenderer);
+
+export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
+  return <section className="space-y-3 py-2" aria-label="Xroga output">{output.blocks.map((candidate) => {
+    const block = parseXrogaBlock(candidate);
+    return <div key={candidate.id}>{block ? renderBlock(block) : <UnknownBlockRenderer block={candidate} />}</div>;
+  })}</section>;
+}

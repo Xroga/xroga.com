@@ -29,6 +29,10 @@ import {
   capacityUnavailableLine,
 } from '../capacityMessage';
 
+import {
+  adaptToXrogaEvent,
+} from '../xrogaEventAdapter';
+
 /**
  * Raw payload as received from the network.
  *
@@ -809,10 +813,28 @@ export function adaptTerminalEvent(
 
     source?:
       string | null,
+
+    softwareEvent?:
+      SoftwareRunEvent | null,
   ) => {
+    const safeText =
+      redactTerminalText(
+        text,
+      );
+
+    const safeBody =
+      body
+        ? redactTerminalText(
+            body,
+          )
+        : null;
+
+    const rowSequence =
+      ++seq;
+
     rows.push({
       seq:
-        ++seq,
+        rowSequence,
 
       kind,
 
@@ -832,21 +854,40 @@ export function adaptTerminalEvent(
        * Agent V2 already redacts public command output on the backend.
        */
       text:
-        redactTerminalText(
-          text,
-        ),
+        safeText,
 
       body:
-        body
-          ? redactTerminalText(
-              body,
-            )
-          : null,
+        safeBody,
 
       at,
 
       rawEvent:
         event,
+
+      canonical:
+        adaptToXrogaEvent({
+          rawEvent:
+            event,
+
+          payload,
+
+          sequence:
+            rowSequence,
+
+          timestamp:
+            at,
+
+          title:
+            safeText,
+
+          summary:
+            safeBody,
+
+          softwareEvent,
+
+          offset:
+            rows.length,
+        }),
     });
   };
 
@@ -919,6 +960,7 @@ export function adaptTerminalEvent(
         display.text,
         display.body,
         'builder',
+        softwareEvent,
       );
 
       return rows;

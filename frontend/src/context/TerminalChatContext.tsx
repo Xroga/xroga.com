@@ -459,7 +459,7 @@ export interface ChatMessage {
     siteDomain?: string;
   }>;
   hackathonBrief?: import('@/lib/hackathonBrief').HackathonBriefCardData;
-  /** Behind-the-scenes reasoning steps shown after response */
+  /** Public, factual activity summaries derived from client or backend events. */
   thinkingSteps?: string[];
   thoughtMs?: number;
   /** User stopped mid-build — show Retry card, keep in history */
@@ -538,7 +538,6 @@ interface TerminalChatContextValue {
   imageProgressStep: string | null;
   imageAttempts: Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>;
   followUps: string[];
-  reasoning: string | null;
   dag: Array<{ id: string; description: string; agent: string }> | null;
   pipelineCompact: boolean;
   swarmNegotiationPhase: number | null;
@@ -637,7 +636,6 @@ export function TerminalChatProvider({
     Array<{ imageUrl: string; provider: string; matchScore: number; issues?: string[] }>
   >([]);
   const [followUps, setFollowUps] = useState<string[]>([]);
-  const [reasoning, setReasoning] = useState<string | null>(null);
   const [dag, setDag] = useState<Array<{ id: string; description: string; agent: string }> | null>(null);
   const [pipelineCompact, setPipelineCompact] = useState(false);
   const [swarmNegotiationPhase, setSwarmNegotiationPhase] = useState<number | null>(null);
@@ -1244,7 +1242,6 @@ const stopRequestedRunIdRef =
       setSwarmAnalysis(null);
       setSwarmActivityLog([]);
       setFollowUps([]);
-      setReasoning(null);
       setDag(null);
 
       setSessionId(opts.sessionId);
@@ -2514,7 +2511,6 @@ const stopRequestedRunIdRef =
       setImageProgressStep(null);
       setImageAttempts([]);
       setFollowUps([]);
-      setReasoning(null);
       setDag(null);
 
       // Never wipe live build todos unless this submit is starting a heavy build.
@@ -3257,7 +3253,8 @@ githubTargetRepo:
               skipGithubGateRef.current = false;
             }
             const ev = event as SwarmProgressEvent & { dag?: typeof dag; thinking?: string };
-            if (ev.thinking && !useCompactPipeline) setReasoning(ev.thinking);
+            // Provider `thinking` is private model working and is deliberately not
+            // copied into client state. Visible activity comes from factual events.
             if (ev.dag && !useCompactPipeline) setDag(ev.dag);
           },
           onDelta: (delta) => {
@@ -4648,7 +4645,6 @@ setTimeout(processNextInQueue, 50);
 
         terminalRun,
         followUps,
-        reasoning,
         dag,
         submit,
         stop,

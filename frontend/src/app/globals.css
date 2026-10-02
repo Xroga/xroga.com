@@ -8322,18 +8322,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
 /* Earlier rows recede rather than disappear: the transcript stays readable while the
    newest line remains the one the eye lands on. */
 .xv-term-liveline--past { opacity: 0.55; }
-.xv-term-livedot {
-  flex: none;
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-top: 0.1rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--foreground) 35%, transparent);
-}
-.xv-term-livedot--active {
-  background: var(--accent);
-  animation: xv-term-livepulse 1.4s ease-in-out infinite;
-}
 .xv-term-liveclock {
   margin-left: auto;
   padding-left: 0.6rem;
@@ -8342,14 +8330,6 @@ body.xv-terminal-fullscreen-active .xv-terminal-header {
   color: var(--muted);
   opacity: 0.75;
 }
-@keyframes xv-term-livepulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .xv-term-livedot--active { animation: none; }
-}
-
 /* ---- skin picker */
 
 .xv-skin-trigger {

@@ -58,7 +58,7 @@ function resolveApiUrl(): string {
     process.env.NODE_ENV ===
     'development'
   ) {
-    return 'http://localhost:4000';
+    return 'http://localhost:8080';
   }
 
   return 'https://xroga-api.fly.dev';

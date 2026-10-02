@@ -1,14 +1,15 @@
 'use client';
 
-import { TerminalBuildReport } from './TerminalBuildReport';
-import { VIDEO_REMOVED_MESSAGE } from '@/lib/videoRemoved';
-import type { FileTrailItem } from '@/store/useProjectWorkspaceStore';
-import { deriveLandingOutcome } from '@/lib/landingOutcome';
-import { isRenderableArtifact } from '@/lib/engineeringArtifact';
-import { EngineeringArtifactView } from './EngineeringArtifactView';
-import { isUniversalOutput } from '@/lib/universalOutput';
-import { UniversalOutputView } from './UniversalOutputView';
+import { XrogaOutputView } from './XrogaBlockView';
+import { adaptOutputToXrogaDocument } from '@/lib/xrogaOutputAdapters';
 
+/**
+ * Compatibility boundary for persisted and current task outputs.
+ *
+ * Historical shapes remain accepted, but every supported shape is adapted to
+ * canonical Xroga blocks before presentation. Unknown shapes receive a safe,
+ * explicit fallback rather than crashing or disappearing.
+ */
 export function FeatureOutputView({
   output,
   onDelete: _onDelete,
@@ -23,100 +24,17 @@ export function FeatureOutputView({
   void _onDelete;
   void _messageId;
   void _onPreviewUpdate;
+
   if (!output || typeof output !== 'object') return null;
-  const o = output as Record<string, unknown>;
+  const row = output as Record<string, unknown>;
+  if (row.type === 'chat' && typeof row.content === 'string') return null;
 
-  if (isUniversalOutput(output)) return <UniversalOutputView output={output} />;
-  if (isUniversalOutput(o.outputEnvelope)) return <UniversalOutputView output={o.outputEnvelope} />;
-
-  // Engineering results are checked first. They were previously unrecognised entirely — this
-  // component fell off the end of its branch list and rendered nothing for a run that had
-  // produced real files and a real commit.
-  if (isRenderableArtifact(output)) {
-    return <EngineeringArtifactView artifact={output} />;
-  }
-
-  if (o.type === 'video_studio' || o.type === 'video_job_pending') {
-    return (
-      <p className="text-sm text-[var(--foreground)]/85 py-1">{VIDEO_REMOVED_MESSAGE}</p>
-    );
-  }
-
-  if (o.type === 'image_blocked' || o.type === 'image') {
-    return (
-      <p className="text-sm text-[var(--muted)] py-1">
-        Legacy image generation has been removed while we rebuild the AI system.
-      </p>
-    );
-  }
-
-  if (o.type === 'landing_page') {
-    // Prefer updateTrail on the message; if featureOutput still carries build data, render terminal report (no card).
-    const isUpdate = o.isUpdate === true;
-    const projectName = typeof o.projectName === 'string' ? o.projectName : 'Project';
-    const userPrompt = typeof o.userPrompt === 'string' ? o.userPrompt : undefined;
-    const changes = Array.isArray(o.changesSummary)
-      ? (o.changesSummary as string[])
-      : undefined;
-    const files = (
-      Array.isArray(o.fileTrail) ? (o.fileTrail as FileTrailItem[]) : []
-    )
-      .filter((f) => f && typeof f.path === 'string')
-      .map((f) => ({
-        path: f.path,
-        before: typeof f.before === 'string' ? f.before : '',
-        after: typeof f.after === 'string' ? f.after : '',
-        added: Number(f.added) || 0,
-        removed: Number(f.removed) || 0,
-      }));
-
-    const outcome = deriveLandingOutcome(o, { projectName, isUpdate });
-    const statusLines = [...outcome.statusLines];
-    const liveUrl =
-      (typeof o.deployUrl === 'string' &&
-        /^https:\/\//i.test(o.deployUrl.trim()) &&
-        o.deployUrl.trim()) ||
-      (typeof o.vercelPreviewUrl === 'string' &&
-        /^https:\/\//i.test(o.vercelPreviewUrl.trim()) &&
-        o.vercelPreviewUrl.trim()) ||
-      '';
-    if (o.usedSurgicalPatches) statusLines.push('Patches · surgical SEARCH/REPLACE');
-    const envSync = o.envSync as { ok?: boolean; error?: string } | undefined;
-    if (envSync && envSync.ok === false) {
-      statusLines.push(
-        `Env sync · failed${envSync.error ? ` (${String(envSync.error).slice(0, 80)})` : ''}`
-      );
-    }
-    const qa = o.qa as { issues?: string[] } | undefined;
-
-    return (
-      <TerminalBuildReport
-        headline={outcome.headline}
-        projectName={projectName}
-        userPrompt={userPrompt}
-        changes={changes}
-        files={files}
-        statusLines={statusLines}
-        githubUrl={typeof o.githubRepoUrl === 'string' ? o.githubRepoUrl : null}
-        githubLabel={o.githubPushConfirmed === true ? 'GitHub commit' : 'GitHub target · not pushed'}
-        deployUrl={liveUrl || null}
-        deployLabel={
-          o.deployVerified === true ? 'Verified live on Vercel' : 'Open unverified deployment'
-        }
-        completionNote={outcome.completionNote}
-        qaIssues={qa?.issues}
-        isUpdate={isUpdate}
-      />
-    );
-  }
-
-  if (o.type === 'chat' && typeof o.content === 'string') {
-    return null; // chat content rendered as ModernResponseText
-  }
+  const canonical = adaptOutputToXrogaDocument(output);
+  if (canonical) return <XrogaOutputView output={canonical} />;
 
   return (
-    <p className="py-1 text-sm text-[var(--muted)]">
-      Xroga produced an output this client cannot preview yet. Open the task details to inspect it.
+    <p className="max-w-[820px] py-1 text-sm text-[var(--muted)]" role="status">
+      Xroga saved an output this client cannot preview yet. Open task details to inspect it.
     </p>
   );
 }
