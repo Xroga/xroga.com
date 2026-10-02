@@ -9,6 +9,7 @@ import { RuntimeFailure } from './universal/runtimeFailure.js';
 
 export type ProviderFailureKind =
   | 'authentication'
+  | 'capacity'
   | 'rate_limit'
   | 'timeout'
   | 'context_limit'
@@ -86,6 +87,11 @@ export function normalizeProviderError(error: unknown): NormalizedProviderError 
 
   let kind: ProviderFailureKind = 'unknown';
   if (namedAbort) kind = 'cancelled';
+  else if (
+    code === 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' ||
+    code === 'OUT_OF_TOKENS' ||
+    /monthly ai credit exhausted|unlocked ai capacity|ai capacity could not be reserved/.test(lower)
+  ) kind = 'capacity';
   else if (status === 401 || status === 403 || /invalid (?:api )?key|unauthori[sz]ed|authentication/.test(lower)) kind = 'authentication';
   else if (status === 429 || /rate.?limit|too many requests/.test(lower)) kind = 'rate_limit';
   else if (/timeout|timed out|etimedout/.test(lower)) kind = 'timeout';
@@ -282,6 +288,31 @@ export async function executeWithProviderFallback<T>(input: {
           ? normalizeProviderError(Object.assign(new Error('Provider request timed out'), { code: 'ETIMEDOUT' }))
           : normalizeProviderError(error);
         failures.push(normalized);
+
+        /* Account capacity is shared by every model route. Walking fallbacks cannot
+         * make capacity appear and only hides the actionable reason. */
+        if (normalized.kind === 'capacity') {
+          const value = error as { message?: unknown; nextUnlockAt?: unknown };
+          const message =
+            typeof value?.message === 'string' && value.message.trim()
+              ? value.message.trim()
+              : 'AI capacity is unavailable for this build right now.';
+
+          throw new RuntimeFailure(
+            'CAPABILITY_TEMPORARILY_UNAVAILABLE',
+            message,
+            {
+              retryable: true,
+              cause: error,
+              details: {
+                ...(typeof value?.nextUnlockAt === 'string'
+                  ? { nextUnlockAt: value.nextUnlockAt }
+                  : {}),
+              },
+            },
+          );
+        }
+
         if (input.recordHealth !== false) {
           recordModelExecution(modelId, { ok: false, latencyMs: Date.now() - started, error });
         }

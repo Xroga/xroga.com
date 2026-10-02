@@ -1068,6 +1068,18 @@ checkpointStore,
           'returning workspace to outer universal verification',
       }),
     );
+
+    /* Existing/bootstrap files are not implementation output. If the Agent stopped
+     * before changing the canonical workspace, propagate its real provider/capacity
+     * failure instead of validating the old product as candidate work. */
+    if (!runtime.result.workspace.hasChanges()) {
+      throw softwareAgentFailure({
+        failureMessage:
+          runtime.result.failureMessage ??
+          'Software Agent V2 stopped before changing the project.',
+        blockers: runtime.result.blockers,
+      });
+    }
   }
 
   return files;
