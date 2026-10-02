@@ -29,6 +29,7 @@ import {
 } from '../ai/providerBudget.js';
 
 import {
+  enforceExplicitExecutionControls,
   planExplicitProjectBuild,
   planSemanticRequest,
 } from '../ai/universal/semanticRequestPlanner.js';
@@ -563,7 +564,10 @@ router.post(
         );
 
       return res.json(
-        plan,
+        enforceExplicitExecutionControls(
+          plan,
+          message,
+        ),
       );
     } catch (err) {
       const error =

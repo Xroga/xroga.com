@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
 import {
   dispatchForGoal,
+  enforceExplicitExecutionControls,
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
@@ -187,6 +188,48 @@ describe('software-build planner correction', () => {
     assert.equal(contract.previewRequirement, 'REQUIRED');
     assert.equal(contract.deploymentRequirement, 'NONE');
     assert.deepEqual(contract.requiredCapabilities, [
+      'software.implement',
+      'validation.run',
+    ]);
+  });
+
+  it('enforces explicit product controls at the API boundary before Connect can execute', () => {
+    const misroutedGoal = goal({
+      semanticIntent: 'EXTERNAL_ACTION',
+      previewRequirement: 'NONE',
+      deploymentRequirement: 'REQUESTED',
+      requiredCapabilities: ['business.action'],
+    });
+
+    const corrected = enforceExplicitExecutionControls(
+      {
+        goalContract: misroutedGoal,
+        dispatch: 'chat',
+        capabilityIds: ['business.action'],
+        rationale: 'model-selected external action',
+        blockers: [],
+        usage: {
+          inputTokensUsed: 0,
+          outputTokensUsed: 0,
+          totalTokensUsed: 0,
+          inputTokensRemaining: 1,
+          outputTokensRemaining: 1,
+          totalTokensRemaining: 1,
+          percentUsed: 0,
+          quotaPeriodStart: '2026-10-01',
+          emergencyTokensAvailable: false,
+          emergencyTokensClaimedThisMonth: false,
+          totalLimit: 1,
+          planTier: 'free',
+        },
+      },
+      'Produce a compact scheduling portal with automated checks. Give me a runnable Preview without deploying it.',
+    );
+
+    assert.equal(corrected.dispatch, 'build');
+    assert.equal(corrected.goalContract.previewRequirement, 'REQUIRED');
+    assert.equal(corrected.goalContract.deploymentRequirement, 'NONE');
+    assert.deepEqual(corrected.capabilityIds, [
       'software.implement',
       'validation.run',
     ]);
