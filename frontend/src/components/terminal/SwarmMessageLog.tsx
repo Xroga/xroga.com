@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { Play } from 'lucide-react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -80,7 +81,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, continueStoppedResponse, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -489,6 +490,16 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             }}
                             onRetry={() => void retryStoppedBuild(msg.id)}
                           />
+                        ) : null}
+                        {msg.responseStopped && msg.stoppedResponseFullText ? (
+                          <button
+                            type="button"
+                            onClick={() => void continueStoppedResponse(msg.id)}
+                            className="inline-flex w-fit items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--foreground)]/72 transition-colors hover:bg-[var(--foreground)]/[0.045] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/45"
+                          >
+                            <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                            Continue
+                          </button>
                         ) : null}
                         {msg.capacityUnavailable ? (
                           <CapacityUnavailableCard
