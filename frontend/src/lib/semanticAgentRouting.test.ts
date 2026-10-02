@@ -7,9 +7,9 @@ const context = readFileSync(new URL('../context/TerminalChatContext.tsx', impor
 test('the terminal asks the authenticated semantic planner for the execution path', () => {
   assert.match(context, /api\.phase1\.plan\(/);
   assert.match(context, /semanticPlan\.dispatch\s*===\s*'chat'/);
-  assert.match(context, /semanticPlan\.dispatch\s*===\s*'build'/);
   assert.match(context, /semanticPlan\.dispatch\s*===\s*'blocked'/);
   assert.match(context, /semanticPlan\s*\.directResponse/);
+  assert.match(context, /requiresSoftwareExecution\(\s*semanticPlan/);
 });
 
 test('the production dispatch no longer uses the browser keyword phase-one router', () => {

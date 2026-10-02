@@ -87,6 +87,7 @@ import {
   updatePendingBuildSequence,
 } from '@/lib/pendingBuildJobs';
 import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
+import { requiresSoftwareExecution } from '@/lib/semanticExecution';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
@@ -2746,8 +2747,14 @@ const explicitResume =
     resumeRunId,
   );
 
+const semanticSoftwareExecution =
+  requiresSoftwareExecution(
+    semanticPlan,
+  );
+
 const directResponse =
-  explicitResume
+  explicitResume ||
+  semanticSoftwareExecution
     ? ''
     : semanticPlan
         .directResponse
@@ -2756,14 +2763,14 @@ const directResponse =
 
 const usePhase1Engine =
   !explicitResume &&
+  !semanticSoftwareExecution &&
   semanticPlan.dispatch ===
     'chat' &&
   !directResponse;
 
 let runSwarmBuild =
   explicitResume ||
-  semanticPlan.dispatch ===
-    'build';
+  semanticSoftwareExecution;
 
 semanticBuildPlanned =
   runSwarmBuild;
