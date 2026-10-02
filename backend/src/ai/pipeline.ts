@@ -46,6 +46,8 @@ import {
   DOC_SYSTEM,
   VISION_SYSTEM,
   incrementalUpdateContext,
+  isPublicCapabilityQuestion,
+  PUBLIC_CAPABILITY_RESPONSE,
   researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
@@ -1035,6 +1037,17 @@ export async function runChatPipeline(opts: {
     const err = new Error('USE_BUILD_PIPELINE');
     (err as Error & { code?: string }).code = 'USE_BUILD_PIPELINE';
     throw err;
+  }
+
+  if (route.kind === 'chat' && isPublicCapabilityQuestion(opts.prompt)) {
+    return {
+      response: PUBLIC_CAPABILITY_RESPONSE,
+      intent: 'chat',
+      usage: usageToTokenUsage(initialUsage),
+      webSources: [],
+      modelId: route.builder,
+      route,
+    };
   }
 
   let research: ResearchBundle | null = null;
