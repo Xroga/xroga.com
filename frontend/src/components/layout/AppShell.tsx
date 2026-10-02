@@ -138,7 +138,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                   isDashboard
                     ? 'xv-workspace-main flex-1 min-h-0 overflow-hidden'
                     : isFramedAppPage
-                      ? 'flex-1 min-h-0 overflow-hidden xv-main-scroll-under-header'
+                      ? 'flex-1 min-h-0 overflow-hidden'
                       : [
                           'flex-1 overflow-y-auto overflow-x-hidden xv-main-scroll-under-header',
                           'p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8',

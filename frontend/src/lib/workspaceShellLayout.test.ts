@@ -143,15 +143,17 @@ test('the workspace route stops the page from scrolling at all', () => {
   assert.match(SHELL, /'xv-workspace-main flex-1 min-h-0 overflow-hidden'/);
 });
 
-test('the shell keeps one radius and one hairline border', () => {
+test('the shell keeps one radius without a visible outline', () => {
   const shell = rule('.xv-workspace-shell') ?? '';
   assert.match(shell, /border-radius:\s*16px/);
-  assert.match(shell, /border:\s*1px solid rgba\(255, 255, 255, 0\.055\)/);
+  assert.match(shell, /border:\s*0/);
+  assert.match(shell, /box-shadow:\s*var\(--xv-app-window-shadow\)/);
 
-  // The workspace pane is divided, never boxed. A full border is the second card.
+  // Project edits is now an inset rounded tool surface inside that shell.
   const panel = rule('.xv-workspace-panel') ?? '';
-  assert.match(panel, /border-left:\s*1px solid/);
-  assert.equal(/^\s*border:\s/m.test(panel), false, 'the workspace pane grew a full border again');
+  assert.match(panel, /border:\s*0/);
+  assert.match(panel, /border-radius:\s*14px/);
+  assert.match(panel, /box-shadow:\s*0 3px 12px/);
 });
 
 test('the title bar is outside the scrolling container', () => {

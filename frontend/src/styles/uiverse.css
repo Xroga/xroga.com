@@ -2826,22 +2826,22 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 /* ============================================================
    XROGA — UNIFIED APPLICATION CANVAS
    ------------------------------------------------------------
-   One calm rounded app surface, generous breathing room, and
-   compact controls. The sidebar keeps its own geometry; the
-   workspace/page canvas has a separate responsive content gutter.
+   One calm rounded app surface with a tight outside frame and
+   compact controls. The sidebar keeps its own geometry; useful
+   breathing room now lives inside the workspace content.
    ============================================================ */
 
 :root {
-  --xv-content-gutter-inline: 8px;
-  --xv-content-gutter-block: 8px;
+  --xv-content-gutter-inline: 4px;
+  --xv-content-gutter-block: 4px;
   --xv-app-canvas-max: 1680px;
   --xv-fullscreen-gutter: 4px;
 }
 
 @media (min-width: 640px) {
   :root {
-    --xv-content-gutter-inline: 14px;
-    --xv-content-gutter-block: 14px;
+    --xv-content-gutter-inline: 5px;
+    --xv-content-gutter-block: 5px;
   }
 }
 
@@ -2854,9 +2854,9 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     --xv-sidebar-inset: var(--xv-app-gutter);
     --xv-sidebar-radius: 14px;
 
-    --xv-content-gutter-inline: clamp(24px, 2.25vw, 40px);
-    --xv-content-gutter-block: 18px;
-    --xv-fullscreen-gutter: 14px;
+    --xv-content-gutter-inline: 4px;
+    --xv-content-gutter-block: 4px;
+    --xv-fullscreen-gutter: 8px;
   }
 
   .xv-app-stage:not(.xv-app-stage--fullscreen) {
@@ -2895,10 +2895,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     min-height: 0 !important;
     margin: 0 auto !important;
     background: var(--xv-app-canvas, var(--app-panel)) !important;
-    border:
-      1px
-      solid
-      var(--app-panel-border, var(--border-subtle)) !important;
+    border: 0 !important;
     border-radius: var(--xv-app-radius) !important;
     box-shadow: var(--xv-app-window-shadow) !important;
     overflow: hidden !important;
@@ -2912,9 +2909,12 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
   .xv-terminal-panel,
-  .xv-terminal-scroll,
-  .xv-dev-workspace {
+  .xv-terminal-scroll {
     background: transparent !important;
+  }
+
+  .xv-terminal-scroll {
+    padding-inline: clamp(24px, 2.15vw, 36px) !important;
   }
 
   .xv-workspace-header {
@@ -2922,10 +2922,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     padding: 0.55rem 0.75rem;
     background: transparent !important;
     border-radius: 0 !important;
-    border-bottom:
-      1px
-      solid
-      color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    border-bottom: 0 !important;
     box-shadow: none !important;
   }
 
@@ -3046,10 +3043,10 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   min-width: 0;
   min-height: 0;
   margin-inline: auto;
-  padding: clamp(14px, 1.8vw, 24px);
+  padding: clamp(12px, 1.25vw, 18px);
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid var(--app-panel-border, var(--border-subtle));
+  border: 0;
   border-radius: var(--xv-app-radius);
   background: var(--xv-app-canvas, var(--app-panel));
   box-shadow: var(--xv-app-window-shadow);
@@ -3072,11 +3069,11 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  min-height: 34px;
-  margin: calc(clamp(14px, 1.8vw, 24px) * -1)
-          calc(clamp(14px, 1.8vw, 24px) * -1)
-          10px;
-  padding: 8px clamp(14px, 1.8vw, 24px) 4px;
+  min-height: 28px;
+  margin: calc(clamp(12px, 1.25vw, 18px) * -1)
+          calc(clamp(12px, 1.25vw, 18px) * -1)
+          4px;
+  padding: 4px clamp(12px, 1.25vw, 18px) 0;
   background: var(--xv-app-canvas, var(--app-panel));
 }
 
@@ -3124,6 +3121,27 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   overscroll-behavior: contain;
 }
 
+
+/* Project edits is an inset rounded tool surface inside the workspace window. */
+.xv-workspace-body[data-workspace-open='true'] .xv-workspace-panel {
+  margin: 8px 8px 8px 4px;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background:
+    color-mix(in srgb, var(--xv-app-canvas, var(--app-panel)) 94%, var(--foreground) 6%) !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10) !important;
+  overflow: hidden;
+}
+
+.xv-workspace-body[data-workspace-open='true'] .xv-workspace-panel::before {
+  display: none !important;
+}
+
+.xv-workspace-body[data-workspace-open='true'] .xv-ws-tabs {
+  border-bottom: 0 !important;
+  padding-inline: 0.65rem;
+}
+
 /* ============================================================
    MOBILE / TABLET
    ============================================================ */
@@ -3133,8 +3151,8 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     --xv-app-gutter: 4px;
     --xv-app-seam: 4px;
     --xv-app-radius: 14px;
-    --xv-content-gutter-inline: 6px;
-    --xv-content-gutter-block: 6px;
+    --xv-content-gutter-inline: 4px;
+    --xv-content-gutter-block: 4px;
     --xv-fullscreen-gutter: 4px;
   }
 
@@ -3160,13 +3178,13 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
   .xv-page-surface {
-    padding: 14px;
+    padding: 12px;
     border-radius: var(--xv-app-radius);
   }
 
   .xv-page-frame-toolbar {
-    margin: -14px -14px 8px;
-    padding: 7px 14px 3px;
+    margin: -12px -12px 4px;
+    padding: 4px 12px 0;
   }
 
   .xv-page-fullscreen-stage {
