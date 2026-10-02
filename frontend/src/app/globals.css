@@ -11502,6 +11502,10 @@ body.theme-beige {
      measure from it, which is what keeps their edges aligned at every width. */
   --xv-app-gutter: 8px;
   --xv-app-radius: 12px;
+  --xv-app-canvas: var(--app-panel);
+  --xv-app-window-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.18),
+    0 3px 12px rgba(0, 0, 0, 0.08);
   /* The seam between the two panels, as opposed to the gutter around the frame.
      They were the same value, so the channel down the middle measured twice the
      outer margin — the sidebar's own inset plus the stage's padding — and read as a
@@ -11633,7 +11637,11 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
    important one at any specificity, and a doubled class scores (0,2,0) and loses:
    that was the first attempt here, and it looked correct on the light themes while
    changing nothing on the dark ones. Three classes score (0,3,0) and win. */
-.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
+.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell {
+  border-color: var(--app-panel-border) !important;
+  box-shadow: var(--xv-app-window-shadow) !important;
+}
+
 .xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
 .xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
   border-color: var(--app-panel-border) !important;
