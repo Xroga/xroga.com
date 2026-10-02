@@ -2824,113 +2824,360 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 /* ============================================================
-   XROGA — KIMI-LIKE WORKSPACE FRAME
-   Tight outer gutter + one clean application window
+   XROGA — UNIFIED APPLICATION CANVAS
+   ------------------------------------------------------------
+   One calm rounded app surface, generous breathing room, and
+   compact controls. The sidebar keeps its own geometry; the
+   workspace/page canvas has a separate responsive content gutter.
    ============================================================ */
 
-@media (min-width: 1024px) {
+:root {
+  --xv-content-gutter-inline: 8px;
+  --xv-content-gutter-block: 8px;
+  --xv-app-canvas-max: 1680px;
+  --xv-fullscreen-gutter: 4px;
+}
 
+@media (min-width: 640px) {
   :root {
+    --xv-content-gutter-inline: 14px;
+    --xv-content-gutter-block: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    /* Keep sidebar spacing independent from the larger main-canvas gutter. */
     --xv-app-gutter: 4px;
     --xv-app-seam: 4px;
-    --xv-app-radius: 14px;
-
+    --xv-app-radius: 18px;
     --xv-sidebar-inset: var(--xv-app-gutter);
-    --xv-sidebar-radius: var(--xv-app-radius);
+    --xv-sidebar-radius: 14px;
+
+    --xv-content-gutter-inline: clamp(24px, 2.25vw, 40px);
+    --xv-content-gutter-block: 18px;
+    --xv-fullscreen-gutter: 14px;
   }
 
-  /*
-   * OUTER STAGE
-   *
-   * This is only the spacing wrapper.
-   * Do NOT give it another border/card/background.
-   */
-  .xv-app-stage {
+  .xv-app-stage:not(.xv-app-stage--fullscreen) {
     width: 100% !important;
     min-width: 0 !important;
-
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
     margin: 0 !important;
-    padding: var(--xv-app-gutter) !important;
-
+    padding:
+      var(--xv-content-gutter-block)
+      var(--xv-content-gutter-inline) !important;
     background: transparent !important;
-
     border: 0 !important;
     border-radius: 0 !important;
-
     box-shadow: none !important;
-
     overflow: hidden;
+    box-sizing: border-box;
   }
 
-  /*
-   * ACTUAL WORKSPACE WINDOW
-   *
-   * One Kimi-like rounded frame.
-   */
+  .xv-app-stage--fullscreen {
+    padding: var(--xv-fullscreen-gutter) !important;
+  }
+
+  body.xv-terminal-fullscreen-active .xv-terminal-dock {
+    left: var(--xv-fullscreen-gutter) !important;
+    right: var(--xv-fullscreen-gutter) !important;
+  }
+
   .xv-workspace-shell {
-    width: 100% !important;
+    width: min(100%, var(--xv-app-canvas-max)) !important;
     height: 100% !important;
-
-    margin: 0 !important;
-
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    background: var(--xv-app-canvas, var(--app-panel)) !important;
     border:
       1px
       solid
       var(--app-panel-border, var(--border-subtle)) !important;
-
     border-radius: var(--xv-app-radius) !important;
-
-    box-shadow: none !important;
-
+    box-shadow: var(--xv-app-window-shadow) !important;
     overflow: hidden !important;
   }
 
-  /*
-   * Keep all inner panes inside the one rounded window.
-   */
   .xv-workspace-body,
-  .xv-terminal-panel {
+  .xv-terminal-panel,
+  .xv-terminal-scroll,
+  .xv-dev-workspace {
     min-width: 0 !important;
   }
 
-  /*
-   * Header belongs inside the shell;
-   * don't give it another floating-card appearance.
-   */
+  .xv-terminal-panel,
+  .xv-terminal-scroll,
+  .xv-dev-workspace {
+    background: transparent !important;
+  }
+
   .xv-workspace-header {
+    min-height: 44px;
+    padding: 0.55rem 0.75rem;
+    background: transparent !important;
     border-radius: 0 !important;
+    border-bottom:
+      1px
+      solid
+      color-mix(in srgb, var(--foreground) 7%, transparent) !important;
     box-shadow: none !important;
   }
 
-  /*
-   * Very small seam between fixed sidebar and workspace.
-   */
   .xv-sidebar-root + .xv-app-stage,
   .xv-sidebar-root ~ .xv-app-stage {
     margin-left: 0 !important;
   }
 }
 
+/* Compact, integrated workspace chrome. */
+.xv-term-lights {
+  gap: 5px !important;
+}
+
+.xv-term-lights i {
+  width: 7px !important;
+  height: 7px !important;
+  opacity: 0.86;
+}
+
+.xv-ws-launch,
+.xv-term-iconbtn,
+.xv-page-fullscreen-toggle {
+  min-height: 30px;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--text-secondary, var(--muted)) !important;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.xv-ws-launch {
+  height: 30px !important;
+  padding-inline: 0.6rem !important;
+}
+
+.xv-term-iconbtn {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.xv-ws-launch:hover,
+.xv-term-iconbtn:hover,
+.xv-page-fullscreen-toggle:hover {
+  background:
+    color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+  color: var(--foreground) !important;
+}
+
+.xv-ws-launch[aria-pressed='true'],
+.xv-page-fullscreen-toggle[aria-pressed='true'] {
+  background:
+    color-mix(in srgb, var(--foreground) 10%, transparent) !important;
+  color: var(--foreground) !important;
+}
+
+.xv-ws-launch:focus-visible,
+.xv-term-iconbtn:focus-visible,
+.xv-page-fullscreen-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 68%, transparent);
+  outline-offset: 2px;
+}
+
+.xv-ws-tabs {
+  background: transparent !important;
+  border-bottom:
+    1px
+    solid
+    color-mix(in srgb, var(--foreground) 6%, transparent) !important;
+}
+
+.xv-ws-tab,
+.xv-ws-device {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent;
+}
+
+.xv-ws-tab:hover,
+.xv-ws-device:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  color: var(--foreground);
+}
+
+.xv-ws-tab.is-active,
+.xv-ws-device.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent) !important;
+  color: var(--accent) !important;
+}
+
+/* ============================================================
+   AUTHENTICATED DASHBOARD / SETTINGS APPLICATION SURFACE
+   ============================================================ */
+
+.xv-page-stage {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding:
+    var(--xv-content-gutter-block)
+    var(--xv-content-gutter-inline);
+  background: var(--stage-ground, var(--background));
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.xv-page-surface {
+  width: min(100%, var(--xv-app-canvas-max));
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin-inline: auto;
+  padding: clamp(14px, 1.8vw, 24px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--app-panel-border, var(--border-subtle));
+  border-radius: var(--xv-app-radius);
+  background: var(--xv-app-canvas, var(--app-panel));
+  box-shadow: var(--xv-app-window-shadow);
+  box-sizing: border-box;
+  overscroll-behavior: contain;
+}
+
+.xv-page-frame {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.xv-page-frame-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 34px;
+  margin: calc(clamp(14px, 1.8vw, 24px) * -1)
+          calc(clamp(14px, 1.8vw, 24px) * -1)
+          10px;
+  padding: 8px clamp(14px, 1.8vw, 24px) 4px;
+  background: var(--xv-app-canvas, var(--app-panel));
+}
+
+.xv-page-frame-content {
+  min-width: 0;
+}
+
+.xv-page-fullscreen-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 30px;
+  padding: 0 0.62rem;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.xv-page-fullscreen-stage {
+  padding: var(--xv-fullscreen-gutter) !important;
+  background: var(--background) !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+.xv-page-surface--fullscreen {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  padding: clamp(14px, 1.8vw, 24px);
+  overflow: hidden;
+}
+
+.xv-page-surface--fullscreen .xv-page-frame {
+  height: 100%;
+  min-height: 0;
+}
+
+.xv-page-surface--fullscreen .xv-page-frame-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
 
 /* ============================================================
    MOBILE / TABLET
-   Keep a little breathing room
    ============================================================ */
 
 @media (max-width: 1023px) {
-
   :root {
     --xv-app-gutter: 4px;
     --xv-app-seam: 4px;
     --xv-app-radius: 14px;
+    --xv-content-gutter-inline: 6px;
+    --xv-content-gutter-block: 6px;
+    --xv-fullscreen-gutter: 4px;
   }
 
-  .xv-app-stage {
-    padding: 4px !important;
+  .xv-app-stage:not(.xv-app-stage--fullscreen) {
+    padding:
+      var(--xv-content-gutter-block)
+      var(--xv-content-gutter-inline) !important;
+  }
+
+  .xv-app-stage--fullscreen {
+    padding: var(--xv-fullscreen-gutter) !important;
   }
 
   .xv-workspace-shell {
-    border-radius: 14px !important;
+    border-radius: var(--xv-app-radius) !important;
+  }
+
+  .xv-page-stage {
+    padding:
+      var(--xv-content-gutter-block)
+      var(--xv-content-gutter-inline)
+      calc(var(--xv-content-gutter-block) + 4.75rem);
+  }
+
+  .xv-page-surface {
+    padding: 14px;
+    border-radius: var(--xv-app-radius);
+  }
+
+  .xv-page-frame-toolbar {
+    margin: -14px -14px 8px;
+    padding: 7px 14px 3px;
+  }
+
+  .xv-page-fullscreen-stage {
+    padding:
+      max(var(--xv-fullscreen-gutter), env(safe-area-inset-top))
+      var(--xv-fullscreen-gutter)
+      max(var(--xv-fullscreen-gutter), env(safe-area-inset-bottom)) !important;
+  }
+
+  .xv-page-surface--fullscreen {
+    padding: 12px;
   }
 }
 
