@@ -6,6 +6,7 @@ import {
   executeHedgedPlannerFallback,
   interpreterModelOrder,
   planExplicitProjectBuild,
+  plannerContractCoherenceError,
   protocolSocialResponse,
   resolveStructuredGoalContract,
   selectPlannerRoutes,
@@ -73,6 +74,19 @@ describe('semantic request dispatch', () => {
     assert.equal(dispatchForGoal(goal({ semanticIntent: 'EXTERNAL_ACTION' }), ['conversation.respond']), 'blocked');
   });
 
+  it('rejects a connected-app action that claims it can produce a software Preview', () => {
+    const inconsistent = goal({
+      semanticIntent: 'EXTERNAL_ACTION',
+      previewRequirement: 'REQUIRED',
+      requiredCapabilities: ['business.action'],
+    });
+
+    assert.match(
+      plannerContractCoherenceError(inconsistent) ?? '',
+      /cannot create a project Preview/i,
+    );
+  });
+
   it('registers user-facing read, response, research, implementation, validation, and write capabilities', () => {
     const ids = new Set(universalCapabilityRegistry.list().map((item) => String(item.id)));
     for (const id of ['attachment.analyze', 'conversation.respond', 'research.public-web', 'research.x', 'repository.read', 'repository.write', 'software.implement', 'validation.run']) {
@@ -90,6 +104,44 @@ describe('semantic request dispatch', () => {
     const planner = readFileSync(new URL('./semanticRequestPlanner.ts', import.meta.url), 'utf8');
     assert.match(planner, /\['model:execute', 'sandbox:execute'\]/);
     assert.doesNotMatch(planner, /authorities\.add\('deploy:execute'\)/);
+  });
+});
+
+describe('software-build planner correction', () => {
+  it('corrects a domain-shaped business action into software implementation before execution', async () => {
+    const attempts: Array<string | undefined> = [];
+    const contract = await resolveStructuredGoalContract(async (hint) => {
+      attempts.push(hint);
+
+      if (!hint) {
+        return JSON.stringify({
+          ...goal({
+            goal: 'Create an interactive scheduling product',
+            desiredOutcome: 'A responsive application with validation and automated checks',
+            semanticIntent: 'EXTERNAL_ACTION',
+            previewRequirement: 'REQUIRED',
+            deploymentRequirement: 'NONE',
+            requiredCapabilities: ['business.action'],
+          }),
+        });
+      }
+
+      return JSON.stringify({
+        ...goal({
+          goal: 'Create an interactive scheduling product',
+          desiredOutcome: 'A responsive application with validation and automated checks',
+          semanticIntent: 'MODIFY',
+          previewRequirement: 'REQUIRED',
+          deploymentRequirement: 'NONE',
+          requiredCapabilities: ['software.implement', 'validation.run'],
+        }),
+      });
+    });
+
+    assert.equal(attempts.length, 2);
+    assert.match(attempts[1] ?? '', /business\.action cannot create a project Preview/i);
+    assert.deepEqual(contract.requiredCapabilities, ['software.implement', 'validation.run']);
+    assert.equal(dispatchForGoal(contract, contract.requiredCapabilities), 'build');
   });
 });
 
