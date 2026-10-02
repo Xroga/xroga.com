@@ -759,6 +759,21 @@ router.post(
             'business.action',
           );
 
+      if (
+        requiresBusinessAction &&
+        semanticGoal.data.previewRequirement ===
+          'REQUIRED'
+      ) {
+        throw new RuntimeFailure(
+          'PLANNER_SCHEMA_INVALID',
+          'This software Preview request reached an incompatible connected-app execution contract. Please retry so Xroga can rebuild the execution plan.',
+          {
+            status: 409,
+            retryable: true,
+          },
+        );
+      }
+
       /*
        * Attachment analysis uses a separate
        * vision/document trust boundary.
