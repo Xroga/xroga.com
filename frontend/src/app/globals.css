@@ -9570,12 +9570,9 @@ body.theme-beige {
   border-radius: 16px;
   overflow: hidden;
   isolation: isolate;
-  /* Almost invisible on purpose. A card outline here is what made two panes read as
-     two documents; the shape should be carried by the shadow and the ground. */
-  border: 1px solid rgba(255, 255, 255, 0.055);
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  /* The window is carried by radius plus restrained elevation, not an outline. */
+  border: 0;
+  box-shadow: var(--xv-app-window-shadow);
 }
 
 @media (max-width: 639px) {
@@ -9591,10 +9588,8 @@ body.theme-beige {
 .terminal-skin-light.xv-workspace-shell,
 .terminal-skin-light-grid.xv-workspace-shell,
 .terminal-skin-solar.xv-workspace-shell {
-  border-color: rgba(15, 23, 42, 0.09);
-  box-shadow:
-    0 24px 70px rgba(15, 23, 42, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-color: transparent;
+  box-shadow: var(--xv-app-window-shadow);
 }
 
 .xv-workspace-shell--incognito {
@@ -9814,7 +9809,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  padding: 18px 14px 24px;
+  padding: 18px 18px 24px;
   /* Room for the composer, which is fixed over the bottom of the shell. Without it the
      last few lines of a build report sit permanently behind the chatbar. */
   padding-bottom: calc(var(--xv-chatbar-height, 112px) + 64px);
@@ -9848,7 +9843,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 
 @media (min-width: 1024px) {
   .xv-terminal-scroll {
-    padding: 28px 22px 36px;
+    padding: 26px 30px 36px;
     padding-bottom: calc(var(--xv-chatbar-height, 112px) + 104px);
   }
 }
@@ -9902,18 +9897,18 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   isolation: isolate;
   min-width: 0;
   min-height: 0;
-  background: transparent;
-  /* Divided by a hairline and a little depth. Not bordered — a border on all four
-     sides is precisely what makes it look like a second card. */
-  border-left: 1px solid rgba(255, 255, 255, 0.055);
-  box-shadow: -16px 0 42px rgba(0, 0, 0, 0.16);
+  background: color-mix(in srgb, var(--app-panel) 94%, var(--foreground) 6%);
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+  overflow: hidden;
   animation: xv-workspace-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .terminal-skin-light .xv-workspace-panel,
 .terminal-skin-light-grid .xv-workspace-panel,
 .terminal-skin-solar .xv-workspace-panel {
-  border-left-color: rgba(15, 23, 42, 0.08);
-  box-shadow: -16px 0 42px rgba(15, 23, 42, 0.06);
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
 }
 
 @media (max-width: 1023px) {
@@ -11504,8 +11499,8 @@ body.theme-beige {
   --xv-app-radius: 12px;
   --xv-app-canvas: var(--app-panel);
   --xv-app-window-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.18),
-    0 3px 12px rgba(0, 0, 0, 0.08);
+    0 5px 18px rgba(0, 0, 0, 0.10),
+    0 1px 4px rgba(0, 0, 0, 0.06);
   /* The seam between the two panels, as opposed to the gutter around the frame.
      They were the same value, so the channel down the middle measured twice the
      outer margin — the sidebar's own inset plus the stage's padding — and read as a
@@ -11637,16 +11632,15 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
    important one at any specificity, and a doubled class scores (0,2,0) and loses:
    that was the first attempt here, and it looked correct on the light themes while
    changing nothing on the dark ones. Three classes score (0,3,0) and win. */
-.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
 .xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
 .xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
   border-color: var(--app-panel-border) !important;
   box-shadow: none !important;
 }
 
-/* The unified-canvas layout gives the workspace a real physical gutter, so it can
-   carry a restrained window shadow without creating the old sidebar/workspace seam. */
+/* The workspace itself has no outline: a small shadow and rounded clipping carry it. */
 .xv-workspace-shell.xv-workspace-shell.xv-workspace-shell {
+  border: 0 !important;
   box-shadow: var(--xv-app-window-shadow) !important;
 }
 
