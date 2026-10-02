@@ -24,6 +24,48 @@ describe('provider runtime health', () => {
     assert.equal(normalizeProviderError({ status: 503, message: 'unavailable' }).retryable, true);
   });
 
+  it('keeps account capacity distinct from provider outages', () => {
+    const pacing = normalizeProviderError(Object.assign(
+      new Error("Today's unlocked AI capacity is fully in use."),
+      { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' },
+    ));
+    const monthly = normalizeProviderError(Object.assign(
+      new Error('Monthly AI credit exhausted — wait for the next rollover.'),
+      { code: 'OUT_OF_TOKENS' },
+    ));
+
+    assert.equal(pacing.kind, 'capacity');
+    assert.equal(pacing.retryable, false);
+    assert.equal(monthly.kind, 'capacity');
+    assert.equal(monthly.retryable, false);
+  });
+
+  it('stops the fallback chain immediately when shared account capacity is unavailable', async () => {
+    const calls: string[] = [];
+
+    await assert.rejects(
+      executeWithProviderFallback({
+        routes: ['deepseek_v4_flash', 'glm_5_3_flash'],
+        maximumAttemptsPerRoute: 1,
+        execute: async (model) => {
+          calls.push(model);
+          throw Object.assign(
+            new Error("Today's unlocked AI capacity is fully in use."),
+            { code: 'PAID_PROVIDER_CAPACITY_UNAVAILABLE' },
+          );
+        },
+      }),
+      (error: unknown) => {
+        const value = error as { code?: unknown; message?: unknown };
+        assert.equal(value.code, 'CAPABILITY_TEMPORARILY_UNAVAILABLE');
+        assert.match(String(value.message), /capacity/i);
+        return true;
+      },
+    );
+
+    assert.deepEqual(calls, ['deepseek_v4_flash']);
+  });
+
   it('opens a circuit after repeated failures and recovers after the window', () => {
     recordModelExecution('glm_5_3', { ok: false, latencyMs: 10, error: new Error('timeout') }, 1);
     recordModelExecution('glm_5_3', { ok: false, latencyMs: 10, error: new Error('timeout') }, 2);
