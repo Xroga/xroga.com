@@ -592,6 +592,22 @@ export function normalizePlannerDecisionCandidate(
         .freshnessRequirement,
     );
 
+  /*
+   * Preview and deployment are product control directives, not semantic
+   * routing hints. Preserve an explicit directive even when the planner
+   * omits an optional JSON field, so a malformed plan cannot erase the
+   * user's requested verification or add a forbidden deployment.
+   */
+  const explicitlyRequiresPreview =
+    /\b(?:create|generate|produce|provide|show|open|start|run|include|give(?:\s+me)?)\s+(?:me\s+)?(?:an?\s+)?(?:live\s+|responsive\s+|working\s+|runnable\s+)?preview\b/i.test(
+      input.message,
+    );
+
+  const explicitlyForbidsDeployment =
+    /\b(?:do\s+not|don't|without|no)\s+(?:a\s+|any\s+)?deploy(?:ment|ing)?\b/i.test(
+      input.message,
+    );
+
   const suppliedSource =
     decision.sourcePolicy &&
     typeof decision
@@ -723,11 +739,13 @@ export function normalizePlannerDecisionCandidate(
     },
 
     previewRequirement:
-  enumValue(
-    decision
-      .previewRequirement,
-  ) ??
-  'NONE',
+      explicitlyRequiresPreview
+        ? 'REQUIRED'
+        : enumValue(
+            decision
+              .previewRequirement,
+          ) ??
+          'NONE',
 
 publicationRequirement:
   enumValue(
@@ -737,11 +755,13 @@ publicationRequirement:
   'NONE',
 
 deploymentRequirement:
-      enumValue(
-        decision
-          .deploymentRequirement,
-      ) ??
-      'NONE',
+      explicitlyForbidsDeployment
+        ? 'NONE'
+        : enumValue(
+            decision
+              .deploymentRequirement,
+          ) ??
+          'NONE',
 
     risks:
       strings(

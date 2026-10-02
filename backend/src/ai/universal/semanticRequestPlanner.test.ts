@@ -17,7 +17,11 @@ import {
   SEMANTIC_PLANNER_ROUTE_TIMEOUT_MS,
   unresolvedGoalBlockers,
 } from './semanticRequestPlanner.js';
-import { goalContractSchema, type GoalContract } from './goalContract.js';
+import {
+  goalContractSchema,
+  normalizePlannerDecisionCandidate,
+  type GoalContract,
+} from './goalContract.js';
 import { readFileSync } from 'node:fs';
 
 function goal(overrides: Partial<GoalContract> = {}): GoalContract {
@@ -142,6 +146,50 @@ describe('software-build planner correction', () => {
     assert.match(attempts[1] ?? '', /business\.action cannot create a project Preview/i);
     assert.deepEqual(contract.requiredCapabilities, ['software.implement', 'validation.run']);
     assert.equal(dispatchForGoal(contract, contract.requiredCapabilities), 'build');
+  });
+
+  it('preserves explicit Preview and no-deploy controls when the planner omits them', async () => {
+    let attempts = 0;
+    const interpretation = {
+      message:
+        'Create a lightweight reservation portal with validation and tests. Create a Preview, but do not deploy it.',
+      history: [],
+      attachments: [],
+      projectContext: null,
+    };
+
+    const contract = await resolveStructuredGoalContract(
+      async (hint) => {
+        attempts += 1;
+
+        return JSON.stringify(
+          hint
+            ? {
+                semanticIntent: 'MODIFY',
+                requiredCapabilities: ['software.implement', 'validation.run'],
+                freshnessRequirement: 'NONE',
+                deploymentRequirement: 'REQUESTED',
+                confidence: 0.9,
+              }
+            : {
+                semanticIntent: 'EXTERNAL_ACTION',
+                requiredCapabilities: ['business.action'],
+                freshnessRequirement: 'NONE',
+                confidence: 0.8,
+              },
+        );
+      },
+      1,
+      (value) => normalizePlannerDecisionCandidate(value, interpretation),
+    );
+
+    assert.equal(attempts, 2);
+    assert.equal(contract.previewRequirement, 'REQUIRED');
+    assert.equal(contract.deploymentRequirement, 'NONE');
+    assert.deepEqual(contract.requiredCapabilities, [
+      'software.implement',
+      'validation.run',
+    ]);
   });
 });
 
