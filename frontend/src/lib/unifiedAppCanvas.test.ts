@@ -10,8 +10,8 @@ const APP_SHELL = read('../components/layout/AppShell.tsx');
 const PAGE_FRAME = read('../components/layout/PageFullscreenFrame.tsx');
 
 test('workspace keeps the outside frame tight and moves breathing room inside', () => {
-  assert.match(UIVERSE, /--xv-content-gutter-inline:\s*6px/);
-  assert.match(UIVERSE, /--xv-content-gutter-block:\s*6px/);
+  assert.match(UIVERSE, /--xv-content-gutter-inline:\s*4px/);
+  assert.match(UIVERSE, /--xv-content-gutter-block:\s*4px/);
   assert.match(
     UIVERSE,
     /\.xv-terminal-scroll\s*\{\s*padding-inline:\s*clamp\(24px, 2\.15vw, 36px\)\s*!important/,
