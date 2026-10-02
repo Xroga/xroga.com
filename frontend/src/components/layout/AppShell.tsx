@@ -45,6 +45,11 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
   const resyncTerminalSkin = useThemeStore((s) => s.setTerminalSkinAuto);
   const pathname = usePathname();
   const isDashboard = pathname === '/workspace';
+  const isFramedAppPage =
+    pathname === '/dashboard' ||
+    pathname.startsWith('/dashboard/') ||
+    pathname === '/settings' ||
+    pathname.startsWith('/settings/');
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const effectiveSidebarOpen = hydrated ? sidebarOpen : true;
@@ -132,13 +137,21 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                   'relative z-[1]',
                   isDashboard
                     ? 'xv-workspace-main flex-1 min-h-0 overflow-hidden'
-                    : [
-                        'flex-1 overflow-y-auto overflow-x-hidden xv-main-scroll-under-header',
-                        'p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8',
-                      ]
+                    : isFramedAppPage
+                      ? 'flex-1 min-h-0 overflow-hidden xv-main-scroll-under-header'
+                      : [
+                          'flex-1 overflow-y-auto overflow-x-hidden xv-main-scroll-under-header',
+                          'p-3 sm:p-6 lg:p-8 pb-24 lg:pb-8',
+                        ]
                 )}
               >
-                {children}
+                {isFramedAppPage ? (
+                  <div className="xv-page-stage">
+                    <div className="xv-page-surface">{children}</div>
+                  </div>
+                ) : (
+                  children
+                )}
               </main>
               <TerminalDock />
             </div>
