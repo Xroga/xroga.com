@@ -236,6 +236,49 @@ describe('software-build planner correction', () => {
       'validation.run',
     ]);
   });
+
+  it('repairs a build dispatch whose goal contract still points at Connect', () => {
+    const corrected = enforceExplicitExecutionControls(
+      {
+        goalContract: goal({
+          semanticIntent: 'EXTERNAL_ACTION',
+          previewRequirement: 'REQUIRED',
+          deploymentRequirement: 'NONE',
+          requiredCapabilities: ['business.action'],
+        }),
+        dispatch: 'build',
+        capabilityIds: ['software.implement', 'validation.run'],
+        rationale: 'inconsistent planner projections',
+        blockers: [],
+        directResponse: 'I will use the connected scheduling service.',
+        usage: {
+          inputTokensUsed: 0,
+          outputTokensUsed: 0,
+          totalTokensUsed: 0,
+          inputTokensRemaining: 1,
+          outputTokensRemaining: 1,
+          totalTokensRemaining: 1,
+          percentUsed: 0,
+          quotaPeriodStart: '2026-10-01',
+          emergencyTokensAvailable: false,
+          emergencyTokensClaimedThisMonth: false,
+          totalLimit: 1,
+          planTier: 'free',
+        },
+      },
+      'Make a responsive clinic scheduler with tests. Create a Preview, but do not deploy it.',
+    );
+
+    assert.equal(corrected.dispatch, 'build');
+    assert.equal(corrected.directResponse, undefined);
+    assert.equal(corrected.goalContract.semanticIntent, 'MODIFY');
+    assert.equal(corrected.goalContract.previewRequirement, 'REQUIRED');
+    assert.equal(corrected.goalContract.deploymentRequirement, 'NONE');
+    assert.deepEqual(corrected.goalContract.requiredCapabilities, [
+      'software.implement',
+      'validation.run',
+    ]);
+  });
 });
 
 describe('semantic authority blockers', () => {

@@ -113,8 +113,8 @@ export function enforceExplicitExecutionControls(
   if (
     controls.previewRequirement !==
       'REQUIRED' ||
-    plan.dispatch !==
-      'chat'
+    plan.dispatch ===
+      'blocked'
   ) {
     return plan;
   }
@@ -181,6 +181,8 @@ export function enforceExplicitExecutionControls(
     rationale:
       'An explicit project Preview requires the canonical software implementation and validation runtime.',
     blockers: [],
+    directResponse:
+      undefined,
   };
 }
 
