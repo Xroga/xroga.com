@@ -1891,7 +1891,7 @@ router.post(
             result.confirmation,
 
           response:
-            `Done — ${result.confirmation.summary}`,
+            `Done. ${result.confirmation.summary}`,
 
           toolkit:
             result.execution
