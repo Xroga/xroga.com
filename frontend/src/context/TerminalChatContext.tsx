@@ -464,6 +464,10 @@ export interface ChatMessage {
   thoughtMs?: number;
   /** User stopped mid-build — show Retry card, keep in history */
 buildStopped?: boolean;
+  /** User stopped a non-build response after some or all content had already arrived. */
+  responseStopped?: boolean;
+  /** Full fetched response retained locally so Continue can append from the exact stop point. */
+  stoppedResponseFullText?: string;
 
 /**
  * Durable backend run whose Agent V2 checkpoint this Retry card resumes.
@@ -556,6 +560,8 @@ interface TerminalChatContextValue {
   stop: () => void;
   /** Continue a stopped build from checkpoint + GitHub (not from scratch) */
   retryStoppedBuild: (assistantMessageId: string) => Promise<void>;
+  /** Continue a locally stopped response when the already-received remainder is available. */
+  continueStoppedResponse: (assistantMessageId: string) => Promise<void>;
   retryWithFullPower: (assistantMessageId: string) => Promise<void>;
   startNewChat: () => void;
   /** Restore session from workspace (e.g. jump from AI Media) */
@@ -1589,6 +1595,46 @@ const stopRequestedRunIdRef =
   if (
     !runId
   ) {
+    const localController =
+      abortRef.current ??
+      lightAbortRef.current;
+
+    if (
+      localController &&
+      loading
+    ) {
+      interruptRef.current =
+        true;
+
+      stopRequestedRunIdRef.current =
+        null;
+
+      localController.abort();
+
+      setLightLoading(
+        false,
+      );
+
+      setSwarmRunning(
+        false,
+      );
+
+      setSwarmStatusLabel(
+        'Stopped',
+      );
+
+      setPipelineMessage(
+        'Stopped',
+      );
+
+      dispatchTerminalRun({
+        type:
+          'interrupted',
+      });
+
+      return;
+    }
+
     interruptRef.current =
       false;
 
@@ -1596,7 +1642,7 @@ const stopRequestedRunIdRef =
       null;
 
     toast.error(
-      'Restoring the build connection. Try Stop again in a moment.',
+      'There is no active response to stop.',
     );
 
     return;
@@ -1890,6 +1936,162 @@ const stopRequestedRunIdRef =
       messages,
     ],
   );
+
+  const continueStoppedResponse =
+    useCallback(
+      async (
+        assistantMessageId:
+          string,
+      ) => {
+        const message =
+          messages.find(
+            (item) =>
+              item.id ===
+                assistantMessageId &&
+              item.responseStopped,
+          );
+
+        if (
+          !message?.stoppedResponseFullText
+        ) {
+          toast.error(
+            'This response cannot be continued from the exact stop point.',
+          );
+          return;
+        }
+
+        const fullText =
+          message.stoppedResponseFullText;
+
+        const currentText =
+          message.content;
+
+        if (
+          fullText ===
+          currentText
+        ) {
+          setMessages((current) =>
+            current.map((item) =>
+              item.id ===
+                assistantMessageId
+                ? {
+                    ...item,
+                    responseStopped:
+                      false,
+                    stoppedResponseFullText:
+                      undefined,
+                  }
+                : item,
+            ),
+          );
+          return;
+        }
+
+        const exactRemainder =
+          fullText.startsWith(
+            currentText,
+          )
+            ? fullText.slice(
+                currentText.length,
+              )
+            : null;
+
+        if (
+          exactRemainder ==
+          null
+        ) {
+          setMessages((current) =>
+            current.map((item) =>
+              item.id ===
+                assistantMessageId
+                ? {
+                    ...item,
+                    content:
+                      fullText,
+                    responseStopped:
+                      false,
+                    stoppedResponseFullText:
+                      undefined,
+                  }
+                : item,
+            ),
+          );
+          return;
+        }
+
+        const continuationController =
+          new AbortController();
+
+        abortRef.current =
+          continuationController;
+
+        setLightLoading(
+          true,
+        );
+
+        setAnimatingId(
+          assistantMessageId,
+        );
+
+        try {
+          await streamTextReveal(
+            exactRemainder,
+            (partial) => {
+              setMessages((current) =>
+                current.map((item) =>
+                  item.id ===
+                    assistantMessageId
+                    ? {
+                        ...item,
+                        content:
+                          currentText +
+                          partial,
+                      }
+                    : item,
+                ),
+              );
+            },
+            continuationController.signal,
+          );
+
+          setMessages((current) =>
+            current.map((item) =>
+              item.id ===
+                assistantMessageId
+                ? {
+                    ...item,
+                    content:
+                      fullText,
+                    responseStopped:
+                      false,
+                    stoppedResponseFullText:
+                      undefined,
+                  }
+                : item,
+            ),
+          );
+        } finally {
+          setLightLoading(
+            false,
+          );
+
+          setAnimatingId(
+            null,
+          );
+
+          if (
+            abortRef.current ===
+            continuationController
+          ) {
+            abortRef.current =
+              null;
+          }
+        }
+      },
+      [
+        messages,
+      ],
+    );
 
   /**
    * "Use full power now" — switches the account off the daily drip and onto Full
@@ -2908,7 +3110,13 @@ if (
           setThinkingSteps([...thinkingStepsRef.current]);
 
           try {
-            const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
+            const result = await api.phase1.chat(
+              displayPrompt,
+              history,
+              attachments,
+              semanticPlan.goalContract,
+              controller.signal,
+            );
             gotEvent = true;
             fullReply = (result.response || '').trim();
 
@@ -4396,10 +4604,26 @@ active.applyBuild({
       type: 'task_interrupted',
 
       message:
-        'You interrupted the current operation.',
+        'You stopped the current response.',
 
       source: 'runtime',
     });
+
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === assistantId
+          ? {
+              ...message,
+              responseStopped: true,
+              stoppedResponseFullText:
+                fullReply &&
+                fullReply.length > message.content.length
+                  ? fullReply
+                  : undefined,
+            }
+          : message,
+      ),
+    );
 
     interruptRef.current =
       false;
@@ -4407,7 +4631,7 @@ active.applyBuild({
     stopRequestedRunIdRef.current =
       null;
 
-    cleanupInProgressAssistant();
+    setAnimatingId(null);
 
     return;
   }
@@ -4725,6 +4949,7 @@ setTimeout(processNextInQueue, 50);
         submit,
         stop,
         retryStoppedBuild,
+        continueStoppedResponse,
         retryWithFullPower,
         startNewChat,
         hydrateFromSession,
