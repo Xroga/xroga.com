@@ -794,6 +794,26 @@ export async function resolveStructuredGoalContract(
             };
           }
 
+          if (
+            parsed.success
+          ) {
+            const coherenceError =
+              plannerContractCoherenceError(
+                parsed.data,
+              );
+
+            if (
+              coherenceError
+            ) {
+              return {
+                valid: false,
+
+                error:
+                  coherenceError,
+              };
+            }
+          }
+
           return parsed.success
             ? {
                 valid: true,
@@ -848,6 +868,53 @@ export async function resolveStructuredGoalContract(
       },
     },
   );
+}
+
+/**
+ * Rejects cross-field planner decisions that are individually schema-valid
+ * but cannot describe one executable request.
+ *
+ * Xroga Connect mutates an already connected business application. It cannot
+ * produce a project Preview, publish source code, or deploy a generated
+ * product. Those requirements belong to the software runtime. Keeping this
+ * invariant at the structured boundary gives the planner one bounded chance
+ * to correct its capability selection before any external tool is called.
+ */
+export function plannerContractCoherenceError(
+  goal: GoalContract,
+): string | null {
+  const hasBusinessAction =
+    goal.requiredCapabilities.includes(
+      'business.action',
+    );
+
+  if (
+    !hasBusinessAction
+  ) {
+    return null;
+  }
+
+  if (
+    goal.semanticIntent !==
+      'EXTERNAL_ACTION' &&
+    goal.semanticIntent !==
+      'MIXED'
+  ) {
+    return 'business.action is valid only for an explicit connected-app state change; select the capability that produces the requested outcome';
+  }
+
+  if (
+    goal.previewRequirement !==
+      'NONE' ||
+    goal.publicationRequirement !==
+      'NONE' ||
+    goal.deploymentRequirement !==
+      'NONE'
+  ) {
+    return 'business.action cannot create a project Preview, publish source code, or deploy software; select software.implement and the applicable verification capability';
+  }
+
+  return null;
 }
 
 /**
@@ -1342,7 +1409,7 @@ export async function planSemanticRequest(
     );
 
   const system =
-    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization without mutation. Never upgrade a read request into an action. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
+    `Understand the user's current goal from the full conversation and context. Return one strict JSON semantic decision, not the full internal contract. Do not use product modes, keyword categories, framework guesses, or a default website/build route. Choose the smallest READY capability set that can genuinely produce the requested outcome. Read-only analysis must remain read-only. Select business.action only when the user explicitly asks Xroga to change external business-app state; use business.read for retrieval, search, inspection, listing, or summarization without mutation. A request to create or change software requires software.implement even when the software models concepts that also exist in connected apps, such as records, schedules, messages, payments, or files. Xroga Connect acts on an existing external account; it does not create a requested software product, project Preview, source publication, or deployment. Never upgrade a read request into an action. A project being present is context, not evidence of modification intent. The server owns project identity and authorities; do not return or invent either. Use blockers only for essential missing user input, AUTH_REQUIRED, PROVIDER_UNAVAILABLE, TEMPORARILY_UNAVAILABLE, or UNSUPPORTED capability. Never call information current unless freshnessRequirement is PREFERRED or CURRENT_REQUIRED.\n\n${currentProductTruth(
       authorities,
     )}\n\nRequired JSON fields: semanticIntent=ANSWER|INVESTIGATE|PROPOSE|MODIFY|EXTERNAL_ACTION|MIXED; requiredCapabilities=[registered ids]; freshnessRequirement=NONE|PREFERRED|CURRENT_REQUIRED. Optional fields: goal; desiredOutcome; constraints[]; acceptance[]; sourcePolicy={mode:any|official_only,scope:public_web|x,officialDomains:[]}; previewRequirement=NONE|PREFERRED|REQUIRED; publicationRequirement=NONE|REQUESTED; deploymentRequirement=NONE|REQUESTED; risks[]; confidence=0..1; blockers[]; contextComplexity=low|medium|high|unknown.\n\nRegistered capabilities and request-time readiness:\n${JSON.stringify(
       availableSummary,
