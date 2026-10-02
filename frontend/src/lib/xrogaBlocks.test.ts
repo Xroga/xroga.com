@@ -65,7 +65,8 @@ test('copy and activity UI use Lucide semantics and contain no dot status elemen
   assert.match(copy, /<Copy/);
   assert.match(copy, /Copied/);
   assert.doesNotMatch(activity, /xv-term-livedot/);
-  assert.match(activity, /EventIcon/);
+  assert.match(activity, /function iconFor/);
+  assert.match(activity, /function ActivityRow/);
   assert.match(activity, /aria-live="polite"/);
 });
 
