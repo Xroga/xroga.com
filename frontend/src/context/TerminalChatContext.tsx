@@ -2585,7 +2585,7 @@ const stopRequestedRunIdRef =
       startTerminalRun();
 
       thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent && !codeBuildActive) setPipelineMessage('Thinking…');
+        if (!gotEvent && !codeBuildActive) setPipelineMessage('Responding');
       }, 1500);
 
       try {
@@ -2843,29 +2843,105 @@ if (
           heavyBuildActiveRef.current = false;
           setSwarmTodos([]);
           setSwarmNegotiationPhase(null);
-          const mathPrompt = isMathQueryPrompt(displayPrompt);
-          setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Composing your answer…');
-          setSwarmStatusLabel('XROGA AI');
-          setSwarmActiveAgent('architect');
-          thinkingStepsRef.current = mathPrompt
-            ? [
-                'Reading your math problem',
-                'Working through each step',
-                'Formatting a clear solution',
-              ]
-            : [
-                'Understanding your question',
-                'Composing a structured response',
-              ];
-          setThinkingSteps([...thinkingStepsRef.current]);
-          pushSwarmTerminalLine(
-            mathPrompt ? 'Math solver → step-by-step solution…' : 'Composing a clear answer…'
+
+          const phase1Capabilities = new Set(
+            semanticPlan.goalContract.requiredCapabilities ?? [],
           );
+          const researchTurn =
+            phase1Capabilities.has('research.public-web') ||
+            phase1Capabilities.has('research.x') ||
+            semanticPlan.goalContract.freshnessRequirement !== 'NONE';
+          const businessReadTurn = phase1Capabilities.has('business.read');
+          const businessActionTurn = phase1Capabilities.has('business.action');
+          const attachmentTurn = phase1Capabilities.has('attachment.analyze');
+          const mathPrompt = isMathQueryPrompt(displayPrompt);
+
+          if (researchTurn) {
+            setPipelineMessage('Searching the web');
+            pushTerminalEvent('progress', {
+              message: 'Searching the web',
+              presentationKind: 'search',
+              presentationStatus: 'running',
+              activityId: 'research',
+            });
+          } else if (businessActionTurn) {
+            setPipelineMessage('Preparing the connected app action');
+            pushTerminalEvent('progress', {
+              message: 'Preparing the connected app action',
+              presentationKind: 'connection',
+              presentationStatus: 'running',
+              activityId: 'connected-app',
+            });
+          } else if (businessReadTurn) {
+            setPipelineMessage('Checking your connected apps');
+            pushTerminalEvent('progress', {
+              message: 'Checking your connected apps',
+              presentationKind: 'connection',
+              presentationStatus: 'running',
+              activityId: 'connected-app',
+            });
+          } else if (attachmentTurn) {
+            setPipelineMessage('Reading the attachment');
+            pushTerminalEvent('progress', {
+              message: 'Reading the attachment',
+              presentationKind: 'file',
+              presentationStatus: 'running',
+              activityId: 'attachment',
+            });
+          } else {
+            setPipelineMessage(mathPrompt ? 'Working through the math' : 'Responding');
+          }
+
+          setSwarmStatusLabel('XROGA AI');
+          setSwarmActiveAgent(null);
+          thinkingStepsRef.current = researchTurn
+            ? ['Searching the web']
+            : businessActionTurn
+              ? ['Preparing the connected app action']
+              : businessReadTurn
+                ? ['Checking your connected apps']
+                : attachmentTurn
+                  ? ['Reading the attachment']
+                  : mathPrompt
+                    ? ['Working through the math']
+                    : [];
+          setThinkingSteps([...thinkingStepsRef.current]);
 
           try {
             const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
             gotEvent = true;
             fullReply = (result.response || '').trim();
+
+            if (researchTurn) {
+              const sourceCount = result.webSources?.length ?? 0;
+              pushTerminalEvent('progress', {
+                message: sourceCount > 0
+                  ? `Research complete · ${sourceCount} source${sourceCount === 1 ? '' : 's'}`
+                  : 'Research complete',
+                presentationKind: 'complete',
+                presentationStatus: 'completed',
+                activityId: 'research',
+              });
+            } else if (businessActionTurn || businessReadTurn) {
+              const connectionNeeded = /connection_required|provider_choice/i.test(result.intent ?? '');
+              pushTerminalEvent('progress', {
+                message: connectionNeeded
+                  ? 'Connection needed to continue'
+                  : businessActionTurn
+                    ? 'Connected app action ready'
+                    : 'Connected app request complete',
+                presentationKind: connectionNeeded ? 'connection' : 'complete',
+                presentationStatus: connectionNeeded ? 'waiting' : 'completed',
+                activityId: 'connected-app',
+              });
+            } else if (attachmentTurn) {
+              pushTerminalEvent('progress', {
+                message: 'Attachment ready',
+                presentationKind: 'complete',
+                presentationStatus: 'completed',
+                activityId: 'attachment',
+              });
+            }
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
             if (!fullReply) {
               fullReply =
