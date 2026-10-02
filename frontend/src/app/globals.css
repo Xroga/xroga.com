@@ -11637,15 +11637,17 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
    important one at any specificity, and a doubled class scores (0,2,0) and loses:
    that was the first attempt here, and it looked correct on the light themes while
    changing nothing on the dark ones. Three classes score (0,3,0) and win. */
-.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell {
-  border-color: var(--app-panel-border) !important;
-  box-shadow: var(--xv-app-window-shadow) !important;
-}
-
+.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell,
 .xv-sidebar-floating.xv-sidebar-floating.xv-sidebar-floating,
 .xv-sidebar-floating--mobile.xv-sidebar-floating--mobile.xv-sidebar-floating--mobile {
   border-color: var(--app-panel-border) !important;
   box-shadow: none !important;
+}
+
+/* The unified-canvas layout gives the workspace a real physical gutter, so it can
+   carry a restrained window shadow without creating the old sidebar/workspace seam. */
+.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell {
+  box-shadow: var(--xv-app-window-shadow) !important;
 }
 
 /* ═══ Post-signup onboarding ═══════════════════════════════════════════════════
