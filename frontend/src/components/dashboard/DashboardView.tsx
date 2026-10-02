@@ -156,11 +156,16 @@ export function DashboardView() {
       // pane is display:none — a zero-width rect. Falling back to the shell keeps the
       // composer spanning the window instead of collapsing to a sliver.
       const paneBox = pane.getBoundingClientRect();
-      const box = paneBox.width > 0 ? paneBox : shell.getBoundingClientRect();
+      const shellBox = shell.getBoundingClientRect();
+      const box = paneBox.width > 0 ? paneBox : shellBox;
       root.style.setProperty('--xv-pane-left', `${Math.round(box.left)}px`);
       root.style.setProperty('--xv-pane-right', `${Math.round(window.innerWidth - box.right)}px`);
       root.style.setProperty('--xv-pane-top', `${Math.round(box.top)}px`);
       root.style.setProperty('--xv-pane-bottom', `${Math.round(window.innerHeight - box.bottom)}px`);
+      root.style.setProperty('--xv-shell-left', `${Math.round(shellBox.left)}px`);
+      root.style.setProperty('--xv-shell-right', `${Math.round(window.innerWidth - shellBox.right)}px`);
+      root.style.setProperty('--xv-shell-top', `${Math.round(shellBox.top)}px`);
+      root.style.setProperty('--xv-shell-bottom', `${Math.round(window.innerHeight - shellBox.bottom)}px`);
     };
     sync();
     const observer = new ResizeObserver(sync);
@@ -174,6 +179,10 @@ export function DashboardView() {
       root.style.removeProperty('--xv-pane-right');
       root.style.removeProperty('--xv-pane-top');
       root.style.removeProperty('--xv-pane-bottom');
+      root.style.removeProperty('--xv-shell-left');
+      root.style.removeProperty('--xv-shell-right');
+      root.style.removeProperty('--xv-shell-top');
+      root.style.removeProperty('--xv-shell-bottom');
     };
   }, [workspaceOpen, fullscreen]);
 
