@@ -4943,6 +4943,9 @@ concurrency:
 
         goalContract?:
           SemanticRequestPlan['goalContract'],
+
+        signal?:
+          AbortSignal,
       ) =>
         apiFetch<
           Phase1ChatResult
@@ -4952,6 +4955,8 @@ concurrency:
           {
             method:
               'POST',
+
+            signal,
 
             body:
               JSON.stringify({
