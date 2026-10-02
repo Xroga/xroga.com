@@ -107,12 +107,12 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
   let cursor = 0;
   let match: RegExpExecArray | null;
 
-  const pushText = (raw: string, isFirst: boolean) => {
+  const pushText = (raw: string) => {
     const text = sanitizePlainAiText(raw).trim();
     if (!text) return;
 
     const paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
-    paragraphs.forEach((para, pIdx) => {
+    paragraphs.forEach((para) => {
       const lines = para.split('\n').map((l) => l.trim()).filter(Boolean);
       if (!lines.length) return;
 
@@ -205,17 +205,15 @@ export function parseXrogaBlocks(content: string): XrogaBlock[] {
     });
   };
 
-  let isFirstText = true;
   while ((match = codeRe.exec(normalized)) !== null) {
     if (match.index > cursor) {
-      pushText(normalized.slice(cursor, match.index), isFirstText);
-      isFirstText = false;
+      pushText(normalized.slice(cursor, match.index));
     }
     blocks.push({ type: 'code', language: match[1] || undefined, body: match[2]?.trim() ?? '' });
     cursor = match.index + match[0].length;
   }
   if (cursor < normalized.length) {
-    pushText(normalized.slice(cursor), isFirstText);
+    pushText(normalized.slice(cursor));
   }
 
   return blocks;
