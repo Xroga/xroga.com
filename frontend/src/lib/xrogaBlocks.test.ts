@@ -68,6 +68,9 @@ test('copy and activity UI use Lucide semantics and contain no dot status elemen
   assert.match(activity, /function iconFor/);
   assert.match(activity, /function ActivityRow/);
   assert.match(activity, /aria-live="polite"/);
+  const blockView = readFileSync(new URL('../components/terminal/XrogaBlockView.tsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(blockView, /Required for \{block\.capability\}/);
+  assert.doesNotMatch(blockView, /Action: \{block\.approval\.action\}/);
 });
 
 test('TerminalChatContext does not retain provider private reasoning in client state', () => {
