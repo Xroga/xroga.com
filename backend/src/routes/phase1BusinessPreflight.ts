@@ -24,57 +24,8 @@ import {
   confirmBusinessAction,
 } from '../services/integrations/businessActionConfirmations.js';
 
-import {
-  listConnectedComposioToolkits,
-  searchComposioActionTools,
-  type XrogaConnectTool,
-} from '../services/integrations/composioClient.js';
-
 const router =
   Router();
-
-const NATIVE_INFRA_TOOLKITS =
-  new Set([
-    'github',
-    'vercel',
-    'supabase',
-  ]);
-
-const MUTATION_LANGUAGE =
-  /\b(?:send|reply|create|add|update|edit|delete|remove|archive|unarchive|upload|publish|unpublish|move|rename|invite|grant|revoke|refund|transfer|charge|pay|cancel|schedule|reschedule|post|react|mark|set|enable|disable|approve|reject|accept|decline|submit|close|reopen|assign|unassign|fulfill|ship|pause|resume)\b/i;
-
-const WORD_STOPLIST =
-  new Set([
-    'a',
-    'an',
-    'and',
-    'are',
-    'as',
-    'at',
-    'be',
-    'by',
-    'for',
-    'from',
-    'in',
-    'into',
-    'is',
-    'it',
-    'my',
-    'now',
-    'of',
-    'on',
-    'or',
-    'please',
-    'that',
-    'the',
-    'this',
-    'to',
-    'using',
-    'via',
-    'with',
-    'you',
-    'your',
-  ]);
 
 interface PendingConfirmationRow {
   id: string;
@@ -117,32 +68,7 @@ function displayToolkitName(
     );
 }
 
-function normalizeWords(
-  value: string,
-): string[] {
-  return (
-    value
-      .replace(
-        /([a-z])([A-Z])/g,
-        '$1 $2',
-      )
-      .toLowerCase()
-      .match(
-        /[a-z0-9]+/g,
-      ) ??
-    []
-  )
-    .filter(
-      (word) =>
-        word.length >=
-          3 &&
-        !WORD_STOPLIST.has(
-          word,
-        ),
-    );
-}
-
-function explicitConfirmationIntent(
+export function explicitConfirmationIntent(
   message: string,
 ):
   | 'confirm'
@@ -251,100 +177,6 @@ async function latestPendingConfirmation(
     ) ??
     null
   );
-}
-
-function actionToolScore(
-  message: string,
-  tool: XrogaConnectTool,
-): number {
-  const messageWords =
-    new Set(
-      normalizeWords(
-        message,
-      ),
-    );
-
-  const toolWords =
-    new Set(
-      normalizeWords(
-        [
-          tool.slug,
-          tool.toolkit,
-          tool.description ??
-            '',
-        ].join(
-          ' ',
-        ),
-      ),
-    );
-
-  let overlap =
-    0;
-
-  for (
-    const word of
-      messageWords
-  ) {
-    if (
-      toolWords.has(
-        word,
-      )
-    ) {
-      overlap +=
-        1;
-    }
-  }
-
-  const toolkitWords =
-    normalizeWords(
-      tool.toolkit,
-    );
-
-  if (
-    toolkitWords.some(
-      (word) =>
-        messageWords.has(
-          word,
-        ),
-    )
-  ) {
-    overlap +=
-      2;
-  }
-
-  return overlap;
-}
-
-async function authoritativeConnected(
-  userId: string,
-  sessionId: string,
-  toolkit: string,
-): Promise<boolean> {
-  try {
-    const connected =
-      await listConnectedComposioToolkits(
-        userId,
-        {
-          sessionId,
-          mode:
-            'action',
-          toolkits: [
-            toolkit,
-          ],
-        },
-      );
-
-    return connected.some(
-      (item) =>
-        item.connected &&
-        item.toolkit
-          .toLowerCase() ===
-          toolkit
-            .toLowerCase(),
-    );
-  } catch {
-    return false;
-  }
 }
 
 async function makeBusinessPlan(
@@ -470,17 +302,15 @@ async function makeBusinessPlan(
 }
 
 /**
- * Confirmation continuity and a narrow
- * Xroga Connect action fast path.
+ * Confirmation continuity for an already
+ * prepared Xroga Connect action.
  *
  * This router is mounted before the normal
  * semantic planner. It handles only:
  *
- * 1. explicit confirmation/cancellation of
- *    the authenticated user's latest pending
- *    high-risk action; or
- * 2. high-confidence connected-app mutations
- *    that Composio itself semantically matches.
+ * It handles only explicit confirmation or
+ * cancellation of the authenticated user's
+ * latest pending high-risk action.
  *
  * Everything else falls through unchanged to
  * the normal semantic planner.
@@ -626,123 +456,7 @@ router.post(
       }
     }
 
-    if (
-      message.length >
-        500 ||
-      /^\/build\b/i.test(
-        message,
-      ) ||
-      !MUTATION_LANGUAGE.test(
-        message,
-      )
-    ) {
-      return next();
-    }
-
-    try {
-      const discovery =
-        await searchComposioActionTools(
-          userId,
-          {
-            query:
-              message,
-          },
-        );
-
-      const candidates =
-        discovery.tools
-          .filter(
-            (tool) =>
-              tool.risk !==
-                'read' &&
-              !NATIVE_INFRA_TOOLKITS.has(
-                tool.toolkit
-                  .toLowerCase(),
-              ),
-          )
-          .map(
-            (tool) => ({
-              tool,
-              score:
-                actionToolScore(
-                  message,
-                  tool,
-                ),
-            }),
-          )
-          .sort(
-            (
-              left,
-              right,
-            ) =>
-              right.score -
-              left.score,
-          );
-
-      const best =
-        candidates[0];
-
-      if (
-        !best ||
-        best.score <=
-          0
-      ) {
-        return next();
-      }
-
-      let highConfidence =
-        best.score >=
-        2;
-
-      if (
-        !highConfidence &&
-        best.score ===
-          1 &&
-        best.tool.risk ===
-          'destructive'
-      ) {
-        highConfidence =
-          await authoritativeConnected(
-            userId,
-            discovery.sessionId,
-            best.tool.toolkit,
-          );
-      }
-
-      if (
-        !highConfidence
-      ) {
-        return next();
-      }
-
-      return res.json(
-        await makeBusinessPlan(
-          userId,
-          message,
-          {
-            rationale:
-              `Xroga Connect matched this explicit state-changing request to the ${best.tool.toolkit} action surface before the general planner.`,
-
-            confidence:
-              Math.min(
-                0.99,
-                0.88 +
-                  best.score *
-                    0.03,
-              ),
-          },
-        ),
-      );
-    } catch {
-      /*
-       * The preflight is deliberately
-       * best-effort. A Composio lookup
-       * problem must never replace the
-       * canonical semantic planner with
-       * a new failure mode.
-       */
-      return next();
-    }
+    return next();
   },
 );
 
