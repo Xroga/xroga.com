@@ -8,20 +8,18 @@ function source(relativeUrl: string): string {
   return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
-test('AI responses use a plain factual status instead of an execution card', () => {
+test('AI responses use only received activity instead of an execution card or client-authored wait copy', () => {
   const messageLog = source('../../components/terminal/SwarmMessageLog.tsx');
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
 
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
-  // The status line moved into `TerminalLiveActivity`, which renders the last few real
-  // rows rather than only the newest one. The old single-line version was invisible
-  // until the first event arrived, which is the blank terminal users reported.
-  assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} pendingLabel=\{pipelineMessage\} \/>/);
+  assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} \/>/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
   assert.match(liveActivity, /aria-label="Xroga activity"/);
+  assert.doesNotMatch(liveActivity, /pendingLabel|waitingLine|terminal-waiting-line/);
 });
 
-test('the live transcript renders only received rows plus one honest waiting line', () => {
+test('the live transcript renders only received rows', () => {
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
 
   // No progress bar, no percentage, no invented step list — the failure modes the
@@ -30,8 +28,15 @@ test('the live transcript renders only received rows plus one honest waiting lin
   assert.doesNotMatch(code, /progress-?bar|percent|Math\.round\([^)]*100/i);
   // Rows come from run state; the component may not synthesise one.
   assert.match(liveActivity, /run\.events/);
-  assert.match(liveActivity, /waitingLine\(\)/);
   assert.doesNotMatch(liveActivity, /Xroga is on it|terminal-elapsed|Developer details/);
+});
+
+test('chat lanes do not invent thinking or composing status callbacks', () => {
+  const guest = source('../runGuestLaneChat.ts');
+  const light = source('../runLightLaneChat.ts');
+  const combined = `${guest}\n${light}`;
+
+  assert.doesNotMatch(combined, /onStatus|Thinking in guest preview|Understanding your request|Composing your answer/);
 });
 
 test('AI response renderers contain no cursor, reveal, or pulse animation', () => {

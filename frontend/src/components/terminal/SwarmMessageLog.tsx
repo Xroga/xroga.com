@@ -80,7 +80,7 @@ function transcriptScrollRoot(): HTMLElement {
 }
 
 export function SwarmMessageLog({ compact, incognito = false, chromeless = false }: SwarmMessageLogProps) {
-  const { messages, sessionRestoring, loading, animatingId, pipelineMessage, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
+  const { messages, sessionRestoring, loading, animatingId, swarmNegotiationPhase, swarmTodos, terminalRun, setPrompt, deleteTurn, deleteUserTurn, updateFeatureOutput, retryStoppedBuild, retryWithFullPower, heavyBuildActive, heavyAssistantId } =
     useTerminalChat();
   const [rollbackId, setRollbackId] = useState<string | null>(null);
   const workspaceRepo = useProjectWorkspaceStore((s) => s.repo);
@@ -175,7 +175,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
       scrollToBottom('smooth');
     }
-  }, [messages, loading, pipelineMessage, scrollToBottom]);
+  }, [messages, loading, scrollToBottom]);
 
   useEffect(() => {
     const session = loadWorkspaceSession();
@@ -471,12 +471,10 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {/* The live transcript. Previously this was one dim line
-                            showing only the newest event, which rendered as nothing at
-                            all until the first event arrived — the blank terminal a
-                            user reported after sending a build prompt. */}
+                        {/* Real backend activity only. Before the first event, the
+                            assistant row stays quiet instead of inventing a phase. */}
                         {loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
-                          <TerminalLiveActivity run={terminalRun} pendingLabel={pipelineMessage} />
+                          <TerminalLiveActivity run={terminalRun} />
                         ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard

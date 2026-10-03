@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 const IMAGE_STEPS = ['classifying', 'enhancing', 'painting', 'verifying', 'reviewing', 'complete'] as const;
 
 const IMAGE_LABELS: Record<string, string> = {
-  classifying: 'Understanding your request',
+  classifying: 'Classifying the image request',
   enhancing: 'Enhancing your prompt',
   painting: 'Generating your image',
   verifying: 'Verifying match to your prompt',
@@ -43,7 +43,6 @@ export function TextGeneratingAnimation({
   const steps = mode === 'video' ? VIDEO_STEPS : IMAGE_STEPS;
   const labels = mode === 'video' ? VIDEO_LABELS : IMAGE_LABELS;
   const [dots, setDots] = useState('');
-  const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
     const dotTimer = setInterval(() => {
@@ -52,20 +51,10 @@ export function TextGeneratingAnimation({
     return () => clearInterval(dotTimer);
   }, []);
 
-  useEffect(() => {
-    if (step) {
-      const idx = (steps as readonly string[]).indexOf(step);
-      if (idx >= 0) setActiveStep(idx);
-      return;
-    }
-    const timer = setInterval(() => {
-      setActiveStep((s) => (s + 1) % steps.length);
-    }, 2800);
-    return () => clearInterval(timer);
-  }, [step, steps]);
+  const activeStep = step ? (steps as readonly string[]).indexOf(step) : -1;
 
   const displayLabel =
-    message ?? labels[step ?? steps[activeStep]] ?? (mode === 'video' ? 'Generating your video' : 'Generating your image');
+    message ?? (step ? labels[step] : null) ?? (mode === 'video' ? 'Generating your video' : 'Generating your image');
 
   return (
     <div
@@ -79,7 +68,7 @@ export function TextGeneratingAnimation({
           {displayLabel}
           <span className="inline-block w-4 text-left text-[#60a5fa]">{dots}</span>
         </p>
-        <div className="flex items-center justify-center gap-1.5 flex-wrap max-w-xs">
+        {activeStep >= 0 ? <div className="flex items-center justify-center gap-1.5 flex-wrap max-w-xs">
           {steps.map((s, i) => (
             <span
               key={s}
@@ -89,7 +78,7 @@ export function TextGeneratingAnimation({
               )}
             />
           ))}
-        </div>
+        </div> : null}
         {sublabel && <p className="text-[11px] text-[var(--muted)]">{sublabel}</p>}
       </div>
     </div>

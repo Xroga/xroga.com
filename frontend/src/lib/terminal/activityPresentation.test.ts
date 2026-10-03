@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { coalesceActivity, hasInternalPresentationLeak, presentTerminalEvent, publicActivityText } from './activityPresentation';
+import { coalesceActivity, hasInternalPresentationLeak, isGenericPlaceholderActivity, presentTerminalEvent, publicActivityText } from './activityPresentation';
 import type { TerminalEvent } from './terminalEvent';
 
 function event(seq: number, text: string, type = 'activity.updated', activityId?: string): TerminalEvent {
@@ -49,4 +49,23 @@ test('activity updates coalesce by stable activity identity', () => {
   ]);
   assert.equal(rows.length, 1);
   assert.equal(rows[0]?.label, 'Reading sources');
+});
+
+test('generic simulated thinking copy is never presented as real activity', () => {
+  for (const text of [
+    'Thinking…',
+    'Understanding your request…',
+    'Analyzing your question',
+    'Composing a clear response',
+    'Composing your answer…',
+  ]) {
+    assert.equal(isGenericPlaceholderActivity(text), true, text);
+  }
+
+  const rows = coalesceActivity([
+    event(1, 'Understanding your request…'),
+    event(2, 'Searching the web', 'activity.started', 'research-1'),
+    event(3, 'Reading sources', 'activity.updated', 'research-1'),
+  ]);
+  assert.deepEqual(rows.map((row) => row.label), ['Reading sources']);
 });

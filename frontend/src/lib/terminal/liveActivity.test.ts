@@ -2,12 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
-  WAITING_LINE_AFTER_MS,
-  shouldShowWaitingLine,
-  waitingLine,
-} from './liveActivityText';
-
-import {
   terminalRunReducer,
 } from './terminalRunReducer';
 
@@ -168,62 +162,7 @@ test(
 );
 
 test(
-  'the client waiting copy is neutral across chat, apps and builds',
-  () => {
-    const line =
-      waitingLine();
-
-    assert.match(
-      line,
-      /responding/i,
-    );
-
-    assert.doesNotMatch(
-      line,
-      /build service|provider|model|composio|gmail|slack|%/i,
-    );
-  },
-);
-
-test('the waiting copy is one stable factual line', () => {
-  assert.equal(waitingLine(), 'Responding');
-});
-
-test(
-  'no notice is shown for a gap nobody notices',
-  () => {
-    assert.equal(
-      shouldShowWaitingLine(
-        0,
-      ),
-      false,
-    );
-
-    assert.equal(
-      shouldShowWaitingLine(
-        399,
-      ),
-      false,
-    );
-
-    assert.equal(
-      shouldShowWaitingLine(
-        WAITING_LINE_AFTER_MS,
-      ),
-      true,
-    );
-
-    assert.equal(
-      shouldShowWaitingLine(
-        30_000,
-      ),
-      true,
-    );
-  },
-);
-
-test(
-  'the first backend event replaces the client-only waiting state',
+  'the first backend event is the first visible activity state',
   () => {
     let state =
       terminalRunReducer(

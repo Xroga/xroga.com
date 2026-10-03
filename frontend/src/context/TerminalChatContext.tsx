@@ -731,7 +731,6 @@ const submittedRequestLimit =
       })
       .catch(() => {});
   }, [setTokenUsage, setPlanInfo]);
-  const thinkingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const activeRunIdRef = useRef<string | null>(null);
   const autoRanRef = useRef(false);
@@ -1926,10 +1925,6 @@ const stopRequestedRunIdRef =
 
   const startNewChat = useCallback(() => {
     abortRef.current?.abort();
-    if (thinkingTimerRef.current) {
-      clearTimeout(thinkingTimerRef.current);
-      thinkingTimerRef.current = null;
-    }
     if (!usePrivacyStore.getState().incognito && messages.length > 0) {
       // Keep prior chat under the selected GitHub repo (#N) in permanent account storage
       // BEFORE wiping the live workspace — so clicking #1 later restores exact history.
@@ -2158,7 +2153,7 @@ const stopRequestedRunIdRef =
       lightBusyRef.current = true;
       setSwarmRunning(true);
       setSwarmStatusLabel('Guest preview');
-      setPipelineMessage('Thinking in guest preview…');
+      setPipelineMessage(null);
       setAnimatingId(assistantId);
 
       const history = buildCompletedChatHistory(
@@ -2179,7 +2174,6 @@ const stopRequestedRunIdRef =
           prompt: displayPrompt,
           history,
           signal: controller.signal,
-          onStatus: setPipelineMessage,
           onPartial: (partial) => {
             setMessages((current) =>
               current.map((message) =>
@@ -2542,15 +2536,6 @@ const stopRequestedRunIdRef =
         (isTrivialPrompt(userPrompt) || isSimpleChat(userPrompt));
       setPipelineCompact(useCompactPipeline);
 
-      if (!codeBuildActive && !useCompactPipeline && !startingHeavyJob) {
-        thinkingStepsRef.current = [
-          'Analyzing your question',
-          'Composing a clear response',
-        ];
-        setThinkingSteps([...thinkingStepsRef.current]);
-        setPipelineMessage('Composing your answer…');
-      }
-
       if (startingHeavyBuild) {
         setSwarmNegotiationPhase(0);
         setSwarmStatusLabel('Connected');
@@ -2575,7 +2560,6 @@ const stopRequestedRunIdRef =
         void requestBuildNotificationPermission();
       }
 
-      let gotEvent = false;
       let fullReply = '';
       let buildHadVisibleResult = false;
       let semanticBuildPlanned = false;
@@ -2584,15 +2568,11 @@ const stopRequestedRunIdRef =
 
       startTerminalRun();
 
-      thinkingTimerRef.current = setTimeout(() => {
-        if (!gotEvent && !codeBuildActive) setPipelineMessage('Thinking…');
-      }, 1500);
-
       try {
         // Paint assistant row immediately — don't wait on auth before the bubble appears
         setMessages((m) => [...m, { id: assistantId, role: 'assistant', content: '', createdAt: Date.now() }]);
         setAnimatingId(assistantId);
-        setPipelineMessage('Understanding your request…');
+        setPipelineMessage(null);
 
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -2798,7 +2778,6 @@ semanticBuildPlanned =
         }
 
         if (directResponse) {
-          gotEvent = true;
           fullReply = directResponse;
           setMessages((current) => current.map((message) =>
             message.id === assistantId
@@ -2828,7 +2807,6 @@ if (
   semanticPlan.dispatch ===
     'blocked'
 ) {
-  gotEvent = true;
           fullReply = semanticPlan.blockers.length
             ? `I can't complete that with the capabilities or authorization currently available: ${semanticPlan.blockers.join(' · ')}`
             : 'I could not match this request to an available, authorized capability.';
@@ -2845,33 +2823,14 @@ if (
           setSwarmNegotiationPhase(null);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
           const needsCurrentSources = semanticPlan.goalContract.freshnessRequirement !== 'NONE';
-          setPipelineMessage(
-            mathPrompt
-              ? 'Working through the math…'
-              : needsCurrentSources
-                ? 'Starting research'
-                : 'Responding',
-          );
+          setPipelineMessage(mathPrompt ? 'Solving the requested calculation' : needsCurrentSources ? 'Retrieving current sources' : null);
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
-          thinkingStepsRef.current = mathPrompt
-            ? [
-                'Reading your math problem',
-                'Working through each step',
-                'Formatting a clear solution',
-              ]
-            : [
-                'Understanding your question',
-                'Composing a structured response',
-              ];
-          setThinkingSteps([...thinkingStepsRef.current]);
-          pushSwarmTerminalLine(
-            mathPrompt ? 'Math solver → step-by-step solution…' : 'Composing a clear answer…'
-          );
+          thinkingStepsRef.current = [];
+          setThinkingSteps([]);
 
           try {
             const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
-            gotEvent = true;
             fullReply = (result.response || '').trim();
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
             if (!fullReply) {
@@ -3064,13 +3023,8 @@ githubTargetRepo:
             setSwarmStatusLabel('Reconnecting');
           },
           onProgress: (event) => {
-            gotEvent = true;
             if (typeof event.sequence === 'number') {
               updatePendingBuildSequence(assistantId, event.sequence);
-            }
-            if (thinkingTimerRef.current) {
-              clearTimeout(thinkingTimerRef.current);
-              thinkingTimerRef.current = null;
             }
             const swarmEv = event as SwarmProgressEvent;
                         useLiveBuildStore
@@ -3269,7 +3223,6 @@ githubTargetRepo:
             // Only suppress stream text during intentional product builds (landing card path).
             // Broader codeBuildActive was swallowing chat/error replies → blank bubbles.
             if (startingHeavyBuild) return;
-            gotEvent = true;
             fullReply += delta;
             bufferedDelta += delta;
             if (!deltaTimer) deltaTimer = setTimeout(flushBufferedDelta, 32);
@@ -3284,7 +3237,6 @@ githubTargetRepo:
               landingHtml.length > 40 ||
               (Array.isArray(gen) && gen.length > 0);
             if (!hasFiles) return;
-            gotEvent = true;
             buildHadVisibleResult = true;
             setPipelineMessage('Preview ready — finishing GitHub / Vercel…');
             setMessages((m) =>
@@ -4496,10 +4448,6 @@ active.applyBuild({
         // to 'interrupted'. A run left marked active would spin forever with nothing
         // behind it — the exact failure the old fixed checklist had.
         dispatchTerminalRun({ type: 'stream-closed' });
-        if (thinkingTimerRef.current) {
-          clearTimeout(thinkingTimerRef.current);
-          thinkingTimerRef.current = null;
-        }
         const turn = lastTurnRef.current;
         if (turn && !interruptRef.current) {
           const thoughtMs = Date.now() - thinkingStartedAtRef.current;

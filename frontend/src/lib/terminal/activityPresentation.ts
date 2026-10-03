@@ -17,6 +17,7 @@ export interface XrogaActivityPresentation {
 }
 
 const INTERNAL_MARKERS = /\b(?:business\.(?:read|action)|research\.(?:public-web|x)|software\.implement|repository\.(?:read|write)|validation\.run|attachment\.analyze|requiredAuthorities|selectedModel|fallbackModels|toolCallId|runtimeSessionId|provider route|sandbox:execute|model:execute)\b/gi;
+const GENERIC_PLACEHOLDER = /^(?:thinking|understanding (?:your|the) request|analyzing your (?:question|request)|composing (?:your|a|the) (?:(?:clear|structured) )?(?:answer|response|reply)|working on (?:it|your request))(?:\.{3}|…)?$/i;
 
 export function hasInternalPresentationLeak(value: string): boolean {
   INTERNAL_MARKERS.lastIndex = 0;
@@ -32,6 +33,11 @@ export function publicActivityText(value: string): string {
     .replace(/\s{2,}/g, ' ')
     .replace(/^\s*[·:,-]+|[·:,-]+\s*$/g, '')
     .trim();
+}
+
+/** Generic client/legacy filler is not evidence that any operation occurred. */
+export function isGenericPlaceholderActivity(value: string): boolean {
+  return GENERIC_PLACEHOLDER.test(publicActivityText(value));
 }
 
 function kindFor(event: TerminalEvent): XrogaActivityKind {
@@ -74,7 +80,7 @@ function statusFor(event: TerminalEvent): XrogaActivityStatus {
 
 function fallbackLabel(kind: XrogaActivityKind): string {
   const labels: Record<XrogaActivityKind, string> = {
-    respond: 'Responding', understand: 'Understanding your request', search: 'Searching the web',
+    respond: 'Response started', understand: 'Plan updated', search: 'Searching the web',
     'open-source': 'Opening a source', 'read-source': 'Reading sources', compare: 'Comparing evidence',
     summarize: 'Summarizing findings', 'read-file': 'Inspecting project files', 'write-file': 'Updating project files',
     code: 'Implementing changes', command: 'Running a command', test: 'Running tests', browser: 'Checking the preview',
@@ -103,6 +109,7 @@ export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivit
   const positions = new Map<string, number>();
   for (const event of events) {
     if (event.kind === 'output' || event.kind === 'result') continue;
+    if (isGenericPlaceholderActivity(event.text)) continue;
     const row = presentTerminalEvent(event);
     const key = event.canonical?.activityId || `${row.kind}:${row.label.toLowerCase()}`;
     const previous = positions.get(key);

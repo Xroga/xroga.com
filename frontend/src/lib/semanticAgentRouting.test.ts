@@ -20,7 +20,7 @@ test('the production dispatch no longer uses the browser keyword phase-one route
 test('keyword guesses cannot pre-empt or override the authenticated semantic plan', () => {
   assert.doesNotMatch(context, /if \(\s*!websiteBuildStart/);
   assert.doesNotMatch(context, /if \(isWebsiteBuildPrompt\(displayPrompt\) \|\| requiresGitHubForBuild\(displayPrompt\)\)/);
-  assert.match(context, /Understanding your request…/);
+  assert.doesNotMatch(context, /setPipelineMessage\(['"](?:Thinking|Understanding your request|Composing your answer)/);
 });
 
 test('a semantic build failure cannot be disguised as a generic chat fallback', () => {

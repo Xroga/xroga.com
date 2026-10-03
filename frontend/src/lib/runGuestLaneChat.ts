@@ -34,10 +34,7 @@ export async function runGuestLaneChat(opts: {
   history: GuestLaneHistoryTurn[];
   signal: AbortSignal;
   onPartial: (partial: string) => void;
-  onStatus?: (message: string) => void;
 }): Promise<GuestLaneResult> {
-  opts.onStatus?.('Thinking in guest preview…');
-
   const response = await fetch(`${API_URL}/api/guest/chat`, {
     method: 'POST',
     headers: {

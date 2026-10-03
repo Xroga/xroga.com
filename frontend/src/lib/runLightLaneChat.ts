@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { api, ApiError } from '@/lib/api';
 import { streamTextReveal } from '@/lib/streamText';
-import { isMathQueryPrompt } from '@/lib/mathDetect';
 
 export interface LightLaneHistoryTurn {
   role: 'user' | 'assistant';
@@ -41,15 +40,12 @@ export async function runLightLaneChat(opts: {
   projectContext?: { repo: string; branch: string; projectRoot: string } | null;
   signal: AbortSignal;
   onPartial: (partial: string) => void;
-  onStatus?: (message: string) => void;
 }): Promise<LightLaneChatResult> {
   const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
   if (!session?.access_token) throw new Error('Please sign in to chat.');
-
-  opts.onStatus?.('Understanding your request…');
 
   try {
     const plan = await api.phase1.plan(opts.prompt, opts.history, undefined, opts.projectContext ?? null);
@@ -71,8 +67,6 @@ export async function runLightLaneChat(opts: {
       await streamTextReveal(response, opts.onPartial, opts.signal);
       return { response, usage: plan.usage };
     }
-    const mathPrompt = isMathQueryPrompt(opts.prompt);
-    opts.onStatus?.(mathPrompt ? 'Working through the math…' : 'Composing your answer…');
     const result = await api.phase1.chat(opts.prompt, opts.history, undefined, plan.goalContract);
     await streamTextReveal(result.response, opts.onPartial, opts.signal);
     return result;
