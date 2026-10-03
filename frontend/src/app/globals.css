@@ -3156,7 +3156,22 @@ body.theme-gray * {
   .xv-sidebar-rail-profile {
     position: relative;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--card) 96%, var(--foreground) 2%);
+    box-shadow: 0 10px 26px -24px rgba(0, 0, 0, 0.62);
+  }
+  .xv-sidebar-rail-profile .xv-profile-quick-trigger {
+    display: grid;
+    width: 28px;
+    height: 26px;
+    padding: 0;
+    place-items: center;
   }
   /* `.xv-sidebar-rail-action` is gone with the plan and settings buttons it styled.
      Left behind it would be a rule with nothing to match, and an invitation to put
@@ -3742,6 +3757,12 @@ body.theme-gray * {
       0 0 0 1px color-mix(in srgb, var(--foreground) 5%, transparent),
       0 18px 44px -12px rgba(0, 0, 0, 0.5),
       0 4px 12px -4px rgba(0, 0, 0, 0.28);
+  }
+  #xv-profile-quick-menu {
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
   }
   .xv-pqm-tile {
     color: var(--accent);
@@ -10352,7 +10373,7 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   padding-inline: 14px;
   /* Clears the shell's bottom corner. The context strip under the composer is the
      lowest thing on the screen, and at 14px its text sat on the curve. */
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
 }
 
 /* ---- empty workspace: the composer is the starting point -----------------

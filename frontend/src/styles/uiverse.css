@@ -2870,7 +2870,9 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     margin: 0 !important;
     padding:
       var(--xv-content-gutter-block)
-      var(--xv-content-gutter-inline) !important;
+      var(--xv-content-gutter-inline)
+      var(--xv-content-gutter-block)
+      0 !important;
     background: transparent !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -3035,6 +3037,131 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   background: var(--stage-ground, var(--background));
   overflow: hidden;
   box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .xv-page-stage:not(.xv-page-fullscreen-stage) {
+    padding:
+      var(--xv-content-gutter-block)
+      var(--xv-content-gutter-inline)
+      var(--xv-content-gutter-block)
+      0;
+  }
+}
+
+/* Sidebar utility flyouts live above the app canvas instead of widening the rail. */
+.xv-sidebar-hover-menu {
+  width: min(286px, calc(100vw - 24px));
+  animation: xv-sidebar-menu-in 150ms ease-out both;
+}
+
+.xv-sidebar-hover-menu__card {
+  overflow: hidden;
+  padding: 7px;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  box-shadow: 0 18px 46px -18px rgba(0, 0, 0, 0.48), 0 3px 12px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(20px) saturate(145%);
+}
+
+.xv-sidebar-hover-menu__eyebrow {
+  padding: 5px 9px 7px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.xv-sidebar-hover-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 9px;
+  border-radius: 11px;
+  color: var(--foreground);
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.xv-sidebar-hover-menu__item:hover,
+.xv-sidebar-hover-menu__item:focus-visible,
+.xv-sidebar-hover-menu__item.is-active {
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+  outline: none;
+}
+
+.xv-sidebar-hover-menu__icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  flex: none;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.xv-sidebar-hover-menu__item strong,
+.xv-sidebar-hover-menu__item small { display: block; }
+.xv-sidebar-hover-menu__item strong { font-size: 11px; line-height: 1.25; }
+.xv-sidebar-hover-menu__item small {
+  overflow: hidden;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.xv-explore-trigger > svg { color: var(--muted); }
+
+@keyframes xv-sidebar-menu-in {
+  from { opacity: 0; transform: translateX(-4px) scale(0.985); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.xv-profile-row-trigger {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px;
+  border-radius: 9px;
+  color: var(--foreground);
+  transition: background 140ms ease;
+}
+
+.xv-profile-row-trigger:hover,
+.xv-profile-row-trigger:focus-visible {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent) !important;
+  outline: none;
+}
+
+.xv-profile-upgrade-chip {
+  display: inline-flex;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.xv-profile-menu-caret {
+  color: var(--muted);
+  font-size: 15px;
+  transition: transform 140ms ease;
+}
+
+.xv-profile-row-trigger[aria-expanded='true'] .xv-profile-menu-caret { transform: rotate(90deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-sidebar-hover-menu { animation: none; }
 }
 
 .xv-page-surface {

@@ -38,6 +38,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
           <Toaster
             position="top-right"
             toastOptions={{
+              duration: 5000,
               style: {
                 background: 'var(--card)',
                 color: 'var(--foreground)',

@@ -13,7 +13,7 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeft,
-  Zap,
+  Ellipsis,
   MessageCirclePlus,
   Terminal,
   Rocket,
@@ -31,6 +31,7 @@ import { SidebarSearchModal } from './SidebarSearchModal';
 import { SidebarProjectHistory } from './SidebarProjectHistory';
 import { HoverTip } from '@/components/ui/HoverTip';
 import { SidebarTip } from '@/components/ui/SidebarTip';
+import { SidebarHoverMenu } from '@/components/ui/SidebarHoverMenu';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import {
   SIDEBAR_MAX_WIDTH,
@@ -201,7 +202,7 @@ const navItems: NavEntry[] = [
     motion: 'sweep' as const,
     icon: Compass,
     animated: TelescopeIcon,
-    tip: 'Showcase templates, the community, and feedback.',
+    tip: 'Showcase templates, community, feedback, and settings.',
     children: [
       {
         href: '/showcase',
@@ -227,15 +228,15 @@ const navItems: NavEntry[] = [
         animated: SmileIcon,
         tip: 'Tell us what is working and what is not.',
       },
+      {
+        href: '/settings',
+        motion: 'shake' as const,
+        label: 'Settings',
+        icon: Settings,
+        animated: CogIcon,
+        tip: 'Theme, terminal skin, account, and preferences.',
+      },
     ],
-  },
-  {
-    href: '/settings',
-    motion: 'shake' as const,
-    label: 'Settings',
-    icon: Settings,
-    animated: CogIcon,
-    tip: 'Theme, terminal skin, account, and preferences.',
   },
 ];
 
@@ -606,7 +607,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             <UserProfileBox
               url={avatarUrl}
               initial={nameInitial}
-              size="sidebar"
+              size="sidebarCompact"
               onClick={() => setAvatarPickerOpen(true)}
             />
           )}
@@ -662,25 +663,21 @@ export function Sidebar({ displayName }: SidebarProps) {
           <UserProfileBox
             url={avatarUrl}
             initial={nameInitial}
-            size="sidebar"
+            size="sidebarCompact"
             onClick={() => setAvatarPickerOpen(true)}
           />
           )}
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-medium xv-sidebar-profile-name truncate leading-tight">{userName}</p>
-            <p className="text-[11px] xv-sidebar-profile-plan truncate">{userPlan}</p>
-          </div>
-          <HoverTip label="Xroga AI plan" description="View plans and upgrade your subscription.">
-            <Link
-              href="/pricing"
-              onClick={() => setMobileOpen(false)}
-              aria-label="View Xroga AI plan"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--foreground)] text-[var(--background)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
-            >
-              <Zap className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
-          </HoverTip>
-          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
+          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef}>
+            <span className="min-w-0 flex-1 text-left">
+              <span className="block truncate text-[12px] font-medium leading-tight xv-sidebar-profile-name">{userName}</span>
+              {userPlan === 'Free' ? (
+                <span className="xv-profile-upgrade-chip">Upgrade to Pro</span>
+              ) : (
+                <span className="block truncate text-[10px] xv-sidebar-profile-plan">{userPlan}</span>
+              )}
+            </span>
+            <span className="xv-profile-menu-caret" aria-hidden="true">›</span>
+          </ProfileQuickMenu>
         </div>
       ) : null}
     </div>
@@ -726,17 +723,17 @@ export function Sidebar({ displayName }: SidebarProps) {
               {navExpanded ? (
                 <Logo
                   href={logoHref}
-                  height={36}
+                  height={42}
                   variant="sidebarFull"
-                  className="!h-[36px] !w-[96px]"
+                  className="!h-[42px] !w-[112px]"
                   onClick={handleNavClick}
                 />
               ) : (
                 <Logo
                   href={logoHref}
-                  height={40}
+                  height={44}
                   variant="sidebar"
-                  className="!h-10 !w-10"
+                  className="!h-11 !w-11"
                   onClick={handleNavClick}
                 />
               )}
@@ -855,7 +852,40 @@ export function Sidebar({ displayName }: SidebarProps) {
         >
           <div className="xv-sidebar-menu">
               {navItems.map((entry) =>
-                isGroup(entry) ? (
+                isGroup(entry) && entry.id === 'explore' ? (
+                  <SidebarHoverMenu
+                    key={entry.id}
+                    trigger={
+                      <button
+                        type="button"
+                        className={cn('xv-nav-group__trigger xv-explore-trigger', groupHasActive(entry) && 'xv-active')}
+                        aria-label="Explore"
+                      >
+                        <Ellipsis className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span>Explore</span>
+                      </button>
+                    }
+                  >
+                    <div className="xv-sidebar-hover-menu__card">
+                      <p className="xv-sidebar-hover-menu__eyebrow">Explore Xroga</p>
+                      {entry.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          role="menuitem"
+                          onClick={(event) => handleNavEntryClick(event, child.href)}
+                          className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}
+                        >
+                          <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
+                          <span className="min-w-0">
+                            <strong>{child.label}</strong>
+                            <small>{child.tip}</small>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </SidebarHoverMenu>
+                ) : isGroup(entry) ? (
                   <div key={entry.id} className="xv-nav-group">
                     {/* The two group headers were the only rows in the nav without a
                         styled tip — they carried a native `title`, which appears after

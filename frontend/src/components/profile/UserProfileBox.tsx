@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const SIZE_CLASS = {
   sidebar: 'w-11 h-11 sm:w-12 sm:h-12',
-  sidebarCompact: 'w-9 h-9',
+  sidebarCompact: 'w-8 h-8',
   terminal: 'w-8 h-8 sm:w-9 sm:h-9',
   terminalCompact: 'w-7 h-7',
 } as const;

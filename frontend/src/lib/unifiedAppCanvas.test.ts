@@ -19,6 +19,17 @@ test('workspace keeps a visible outside frame and preserves breathing room insid
   assert.match(UIVERSE, /--xv-sidebar-inset:\s*var\(--xv-app-gutter\)/);
 });
 
+test('desktop pages meet the sidebar edge while retaining top, right, and bottom framing', () => {
+  assert.match(
+    UIVERSE,
+    /\.xv-app-stage:not\(\.xv-app-stage--fullscreen\)\s*\{[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0\s*!important/,
+  );
+  assert.match(
+    UIVERSE,
+    /\.xv-page-stage:not\(\.xv-page-fullscreen-stage\)\s*\{[\s\S]*?padding:\s*var\(--xv-content-gutter-block\)\s*var\(--xv-content-gutter-inline\)\s*var\(--xv-content-gutter-block\)\s*0/,
+  );
+});
+
 test('workspace is rounded with a quiet outline and restrained elevation', () => {
   assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*border:\s*1px solid var\(--app-panel-border\)\s*!important/);
   assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*border-radius:\s*var\(--xv-app-radius\)\s*!important/);

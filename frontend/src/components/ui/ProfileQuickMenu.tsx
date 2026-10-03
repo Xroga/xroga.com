@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
@@ -13,6 +13,9 @@ import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { SmileIcon } from '@/components/icons/animated/SmileIcon';
 import { UserStarIcon } from '@/components/icons/animated/UserStarIcon';
 import { ShieldCheckIcon } from '@/components/icons/animated/ShieldCheckIcon';
+import { FileTextIcon } from '@/components/icons/animated/FileTextIcon';
+import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
+import { GlobeLockIcon } from '@/components/icons/animated/GlobeLockIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import { LogoutButton } from '@/components/ui/Uiverse';
 import { useAppStore } from '@/store/useAppStore';
@@ -75,6 +78,27 @@ const ITEMS = [
     animated: UserStarIcon,
     href: '/about',
   },
+  {
+    key: 'blog',
+    label: 'Blog',
+    desc: 'Product updates, guides, and practical ideas',
+    animated: FileTextIcon,
+    href: '/blog',
+  },
+  {
+    key: 'help',
+    label: 'Help',
+    desc: 'Documentation and answers when you need them',
+    animated: LightbulbIcon,
+    href: '/docs',
+  },
+  {
+    key: 'privacy',
+    label: 'Privacy',
+    desc: 'How Xroga protects and handles your information',
+    animated: GlobeLockIcon,
+    href: '/privacy',
+  },
 ];
 
 const MENU_WIDTH = 272;
@@ -83,9 +107,11 @@ const VIEWPORT_PAD = 16;
 interface ProfileQuickMenuProps {
   onLogout?: () => void;
   anchorRef?: React.RefObject<HTMLElement | null>;
+  children?: ReactNode;
+  triggerClassName?: string;
 }
 
-export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps) {
+export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassName }: ProfileQuickMenuProps) {
   const [open, setOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [communityOpenCount, setCommunityOpenCount] = useState<number | null>(null);
@@ -113,15 +139,14 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
       const menuH = menu.offsetHeight || 300;
       const gap = 12;
 
-      let left = trigger.left;
-      let top = trigger.top - menuH - gap;
+      let left = trigger.right + gap;
+      let top = trigger.bottom - menuH;
 
-      if (top < VIEWPORT_PAD) {
-        top = trigger.bottom + gap;
-      }
-
-      if (left + menuW > window.innerWidth - VIEWPORT_PAD) {
-        left = window.innerWidth - menuW - VIEWPORT_PAD;
+      if (left + menuW > window.innerWidth - VIEWPORT_PAD) left = trigger.left - menuW - gap;
+      if (window.innerWidth < 640) {
+        left = trigger.left;
+        top = trigger.top - menuH - gap;
+        if (top < VIEWPORT_PAD) top = trigger.bottom + gap;
       }
       left = Math.max(VIEWPORT_PAD, left);
 
@@ -143,8 +168,15 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
       if (menuRef.current?.contains(t)) return;
       setOpen(false);
     }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
     document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
   }, [open]);
 
   function handleItem(item: (typeof ITEMS)[number]) {
@@ -162,16 +194,20 @@ export function ProfileQuickMenu({ onLogout, anchorRef }: ProfileQuickMenuProps)
         ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
-        className="xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
+        className={children
+          ? `xv-profile-quick-trigger xv-profile-row-trigger ${triggerClassName ?? ''}`
+          : `xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0 ${triggerClassName ?? ''}`}
         aria-label="Account menu"
         title="Account menu"
         aria-expanded={open}
       >
+        {children ?? <>
         {/* Sliders, not a chevron: a chevron points somewhere and this opens a panel
             of controls in place. It was a wand before that, which suggested an effect
             rather than a menu. The tracks slide apart when it is opened or hovered,
             which is the picture of a panel of controls being reached for. */}
         <AnimatedIcon icon={SlidersHorizontalIcon} />
+        </>}
       </button>
 
       {open &&
