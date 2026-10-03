@@ -2832,30 +2832,30 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
    ============================================================ */
 
 :root {
-  --xv-content-gutter-inline: 4px;
-  --xv-content-gutter-block: 4px;
+  --xv-content-gutter-inline: 6px;
+  --xv-content-gutter-block: 6px;
   --xv-app-canvas-max: 1680px;
   --xv-fullscreen-gutter: 4px;
 }
 
 @media (min-width: 640px) {
   :root {
-    --xv-content-gutter-inline: 5px;
-    --xv-content-gutter-block: 5px;
+    --xv-content-gutter-inline: 8px;
+    --xv-content-gutter-block: 8px;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
     /* Keep sidebar spacing independent from the larger main-canvas gutter. */
-    --xv-app-gutter: 4px;
-    --xv-app-seam: 4px;
-    --xv-app-radius: 18px;
+    --xv-app-gutter: 12px;
+    --xv-app-seam: 8px;
+    --xv-app-radius: 20px;
     --xv-sidebar-inset: var(--xv-app-gutter);
     --xv-sidebar-radius: 14px;
 
-    --xv-content-gutter-inline: 4px;
-    --xv-content-gutter-block: 4px;
+    --xv-content-gutter-inline: 16px;
+    --xv-content-gutter-block: var(--xv-app-gutter);
     --xv-fullscreen-gutter: 8px;
   }
 
@@ -2895,7 +2895,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     min-height: 0 !important;
     margin: 0 auto !important;
     background: var(--xv-app-canvas, var(--app-panel)) !important;
-    border: 0 !important;
+    border: 1px solid var(--app-panel-border) !important;
     border-radius: var(--xv-app-radius) !important;
     box-shadow: var(--xv-app-window-shadow) !important;
     overflow: hidden !important;
@@ -3046,7 +3046,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   padding: clamp(12px, 1.25vw, 18px);
   overflow-y: auto;
   overflow-x: hidden;
-  border: 0;
+  border: 1px solid var(--app-panel-border);
   border-radius: var(--xv-app-radius);
   background: var(--xv-app-canvas, var(--app-panel));
   box-shadow: var(--xv-app-window-shadow);
@@ -3151,8 +3151,8 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     --xv-app-gutter: 4px;
     --xv-app-seam: 4px;
     --xv-app-radius: 14px;
-    --xv-content-gutter-inline: 4px;
-    --xv-content-gutter-block: 4px;
+    --xv-content-gutter-inline: 6px;
+    --xv-content-gutter-block: 6px;
     --xv-fullscreen-gutter: 4px;
   }
 

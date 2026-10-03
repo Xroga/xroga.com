@@ -341,8 +341,8 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 });
 
 test('workspace transcript keeps balanced responsive gutters', () => {
-  assert.match(CSS, /\.xv-terminal-body--flush\s*\{[^}]*padding:\s*0 clamp\(0\.75rem, 4vw, 4rem\)/);
-  assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*78rem/);
+  assert.match(CSS, /\.xv-terminal-body--flush\s*\{[^}]*padding:\s*0 clamp\(1rem, 6vw, 6rem\)/);
+  assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*56rem/);
 });
 
 

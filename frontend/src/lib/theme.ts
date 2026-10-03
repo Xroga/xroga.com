@@ -50,6 +50,8 @@ export const MOBILE_BG = '/backgrounds/bg-desktop-1-infinity.webp';
 /** Homepage + workspace header only (not sidebar). */
 export const HEADER_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
 export const HOMEPAGE_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
+/** White-letter wordmark for Black and Gray surfaces; the orb remains unchanged. */
+export const DARK_SURFACE_WORDMARK_LOGO_URL = '/brand/xroga-orb-wordmark-dark-v3.webp';
 /** Local copies avoid a third-party image host delaying or partially painting shell chrome. */
 export const SIDEBAR_FULL_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
 export const SIDEBAR_LOGO_URL = '/brand/xroga-orb-mark-v2.webp';

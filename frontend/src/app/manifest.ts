@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#02070d',
     theme_color: '#02070d',
     icons: [
-      { src: '/icon.png', sizes: '64x64', type: 'image/png' },
-      { src: '/brand/xroga-orb-mark-v2.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
+      { src: '/icon.png', sizes: '512x512', type: 'image/png' },
+      { src: '/brand/xroga-orb-mark-v2.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
     ],
   };
 }

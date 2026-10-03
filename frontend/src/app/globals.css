@@ -9939,13 +9939,13 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
 }
 .xv-terminal-body--flush {
   box-sizing: border-box;
-  padding: 0 clamp(0.75rem, 4vw, 4rem);
+  padding: 0 clamp(1rem, 6vw, 6rem);
   border-radius: 0;
   overflow: visible;
 }
 .xv-terminal-body--flush .xv-terminal-turn {
   width: 100%;
-  max-width: 78rem;
+  max-width: 56rem;
   margin-inline: auto;
 }
 
@@ -11558,8 +11558,8 @@ body.theme-beige {
   --xv-app-radius: 12px;
   --xv-app-canvas: var(--app-panel);
   --xv-app-window-shadow:
-    0 5px 18px rgba(0, 0, 0, 0.10),
-    0 1px 4px rgba(0, 0, 0, 0.06);
+    0 2px 8px rgba(0, 0, 0, 0.07),
+    0 1px 2px rgba(0, 0, 0, 0.04);
   /* The seam between the two panels, as opposed to the gutter around the frame.
      They were the same value, so the channel down the middle measured twice the
      outer margin — the sidebar's own inset plus the stage's padding — and read as a
@@ -11697,11 +11697,19 @@ body.theme-beige { --app-panel: #fdf6e3; --app-panel-border: rgba(70, 60, 45, 0.
   box-shadow: none !important;
 }
 
-/* The workspace itself has no outline: a small shadow and rounded clipping carry it. */
+/* A quiet one-pixel edge makes the rounded application window readable on every theme. */
 .xv-workspace-shell.xv-workspace-shell.xv-workspace-shell {
-  border: 0 !important;
+  border: 1px solid var(--app-panel-border) !important;
   box-shadow: var(--xv-app-window-shadow) !important;
 }
+
+/* The supplied blue wordmark belongs on light surfaces; dark surfaces use the
+   matching transparent asset with white lettering so the name never disappears. */
+.xv-brand-wordmark--dark-surface { display: none; }
+body.theme-black .xv-brand-wordmark--light-surface,
+body.theme-gray .xv-brand-wordmark--light-surface { display: none; }
+body.theme-black .xv-brand-wordmark--dark-surface,
+body.theme-gray .xv-brand-wordmark--dark-surface { display: block; }
 
 /* ═══ Post-signup onboarding ═══════════════════════════════════════════════════
    Scoped under `.xv-onb`. Onboarding renders outside the app shell and sets its own

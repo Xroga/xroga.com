@@ -35,6 +35,7 @@ test('theme and account controls use the same shared public header', () => {
 test('full and compact Xroga branding use the supplied shared assets', () => {
   assert.match(THEME, /HEADER_LOGO_URL = '\/brand\/xroga-orb-wordmark-v2\.webp'/);
   assert.match(THEME, /SIDEBAR_FULL_LOGO_URL = '\/brand\/xroga-orb-wordmark-v2\.webp'/);
+  assert.match(THEME, /DARK_SURFACE_WORDMARK_LOGO_URL = '\/brand\/xroga-orb-wordmark-dark-v3\.webp'/);
   assert.match(THEME, /SIDEBAR_LOGO_URL = '\/brand\/xroga-orb-mark-v2\.webp'/);
   assert.match(SIDEBAR, /variant="sidebarFull"/);
   assert.match(SIDEBAR, /variant="sidebar"/);

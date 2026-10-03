@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+  DARK_SURFACE_WORDMARK_LOGO_URL,
   HEADER_LOGO_URL,
   HOMEPAGE_LOGO_URL,
   SIDEBAR_FULL_LOGO_URL,
@@ -35,6 +36,7 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
         : variant === 'sidebarFull'
           ? height * (8 / 3)
           : height;
+  const usesWordmark = variant !== 'sidebar';
 
   const inner = (
     <div
@@ -50,11 +52,25 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
         alt="Xroga"
         width={Math.round(width)}
         height={Math.round(height)}
-        className="object-contain object-left h-full w-full"
+        className={cn(
+          'object-contain object-left h-full w-full',
+          usesWordmark && 'xv-brand-wordmark xv-brand-wordmark--light-surface',
+        )}
         style={{ background: 'transparent' }}
         unoptimized={src.startsWith('http')}
         priority
       />
+      {usesWordmark ? (
+        <Image
+          src={DARK_SURFACE_WORDMARK_LOGO_URL}
+          alt=""
+          aria-hidden="true"
+          width={Math.round(width)}
+          height={Math.round(height)}
+          className="xv-brand-wordmark xv-brand-wordmark--dark-surface absolute inset-0 h-full w-full object-contain object-left"
+          priority
+        />
+      ) : null}
     </div>
   );
 

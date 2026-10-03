@@ -9,9 +9,9 @@ const COMPANION = read('../styles/companion.css');
 const APP_SHELL = read('../components/layout/AppShell.tsx');
 const PAGE_FRAME = read('../components/layout/PageFullscreenFrame.tsx');
 
-test('workspace keeps the outside frame tight and moves breathing room inside', () => {
-  assert.match(UIVERSE, /--xv-content-gutter-inline:\s*4px/);
-  assert.match(UIVERSE, /--xv-content-gutter-block:\s*4px/);
+test('workspace keeps a visible outside frame and preserves breathing room inside', () => {
+  assert.match(UIVERSE, /--xv-content-gutter-inline:\s*16px/);
+  assert.match(UIVERSE, /--xv-content-gutter-block:\s*var\(--xv-app-gutter\)/);
   assert.match(
     UIVERSE,
     /\.xv-terminal-scroll\s*\{\s*padding-inline:\s*clamp\(24px, 2\.15vw, 36px\)\s*!important/,
@@ -19,12 +19,12 @@ test('workspace keeps the outside frame tight and moves breathing room inside', 
   assert.match(UIVERSE, /--xv-sidebar-inset:\s*var\(--xv-app-gutter\)/);
 });
 
-test('workspace is rounded without an outline and uses only restrained elevation', () => {
-  assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*border:\s*0\s*!important/);
+test('workspace is rounded with a quiet outline and restrained elevation', () => {
+  assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*border:\s*1px solid var\(--app-panel-border\)\s*!important/);
   assert.match(UIVERSE, /\.xv-workspace-shell\s*\{[\s\S]*border-radius:\s*var\(--xv-app-radius\)\s*!important/);
   assert.match(
     CSS,
-    /--xv-app-window-shadow:[\s\S]*0 5px 18px rgba\(0, 0, 0, 0\.10\)[\s\S]*0 1px 4px rgba\(0, 0, 0, 0\.06\)/,
+    /--xv-app-window-shadow:[\s\S]*0 2px 8px rgba\(0, 0, 0, 0\.07\)[\s\S]*0 1px 2px rgba\(0, 0, 0, 0\.04\)/,
   );
   assert.match(UIVERSE, /\.xv-workspace-header\s*\{[\s\S]*border-bottom:\s*0\s*!important/);
 });
@@ -33,7 +33,7 @@ test('dashboard and settings no longer inherit the obsolete six-rem top gap', ()
   assert.match(APP_SHELL, /isFramedAppPage[\s\S]*\? 'flex-1 min-h-0 overflow-hidden'/);
   const framed = APP_SHELL.slice(APP_SHELL.indexOf(': isFramedAppPage'), APP_SHELL.indexOf(': [', APP_SHELL.indexOf(': isFramedAppPage')));
   assert.doesNotMatch(framed, /xv-main-scroll-under-header/);
-  assert.match(UIVERSE, /\.xv-page-surface\s*\{[\s\S]*border:\s*0;/);
+  assert.match(UIVERSE, /\.xv-page-surface\s*\{[\s\S]*border:\s*1px solid var\(--app-panel-border\);/);
 });
 
 test('page fullscreen control lives inside the page surface in both states', () => {

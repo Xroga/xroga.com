@@ -734,9 +734,9 @@ export function Sidebar({ displayName }: SidebarProps) {
               ) : (
                 <Logo
                   href={logoHref}
-                  height={34}
+                  height={40}
                   variant="sidebar"
-                  className="!h-[34px] !w-[34px]"
+                  className="!h-10 !w-10"
                   onClick={handleNavClick}
                 />
               )}

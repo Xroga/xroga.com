@@ -249,7 +249,7 @@ test('the collapsed controls share one compact solid rail surface', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Sidebar edge + outline-free workspace window
+// Sidebar edge + subtle workspace outline
 // ---------------------------------------------------------------------------
 
 test('the sidebar still draws its shared edge from one variable', () => {
@@ -263,13 +263,13 @@ test('the sidebar still draws its shared edge from one variable', () => {
   assert.ok(rule.includes('.xv-sidebar-floating--mobile'), 'mobile sidebar lost the shared edge contract');
 });
 
-test('the workspace window is outline-free and carries only restrained elevation', () => {
+test('the workspace window carries a subtle shared edge and restrained elevation', () => {
   const selector = '.xv-workspace-shell.xv-workspace-shell.xv-workspace-shell';
   const at = CSS.indexOf(selector);
   assert.notEqual(at, -1, 'the workspace override is gone');
   const open = CSS.indexOf('{', at);
   const rule = CSS.slice(at, CSS.indexOf('}', open) + 1);
-  assert.match(rule, /border:\s*0\s*!important/);
+  assert.match(rule, /border:\s*1px solid var\(--app-panel-border\)\s*!important/);
   assert.match(rule, /box-shadow:\s*var\(--xv-app-window-shadow\)\s*!important/);
 });
 
@@ -278,7 +278,7 @@ test('the workspace override still outranks terminal-skin border rules', () => {
   const at = CSS.indexOf(selector);
   const head = CSS.slice(at, CSS.indexOf('{', at));
   const repeats = head.trim().split('.').filter((part) => part === 'xv-workspace-shell').length;
-  assert.ok(repeats >= 3, 'workspace outline reset lost the specificity required to beat skin borders');
+  assert.ok(repeats >= 3, 'workspace edge override lost the specificity required to beat skin borders');
 });
 
 test('the shared sidebar edge remains visible against the matching ground', () => {
