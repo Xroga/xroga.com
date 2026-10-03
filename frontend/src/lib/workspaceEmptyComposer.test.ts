@@ -321,7 +321,7 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /showJumpToLatest \? 'Go to latest conversation' : 'Go to first conversation'/,
+    /showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'/,
   );
 
   assert.match(
@@ -331,13 +331,16 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
 
   assert.match(
     DOCK,
-    /xv-conversation-navigator__arrow/,
+    /<ArrowUp className="xv-conversation-navigator__arrow"/,
   );
 
   assert.match(
     CSS,
-    /\.xv-conversation-navigator\.is-direction-up\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
+    /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
+
+  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?border-radius:\s*0\.72rem/);
+  assert.match(DOCK, /showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'/);
 });
 
 test('workspace transcript keeps balanced responsive gutters', () => {

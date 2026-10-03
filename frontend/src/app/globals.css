@@ -8033,29 +8033,35 @@ body.theme-gray .xv-rp-loader {
 
 
 
-/* One quiet context-aware control lives above the active composer. At the latest
-   turn it points up; scrolling into history rotates it down toward the newest turn. */
+/* One context-aware pill lives above the active composer. At the latest turn it
+   offers the top; while reading history it turns down toward the newest turn. */
 .xv-conversation-navigator {
   --xv-navigator-rotation: 0deg;
   position: absolute;
   z-index: 18;
   left: 50%;
-  top: -2.2rem;
-  width: 2rem;
-  height: 2rem;
-  padding: 0.25rem;
+  top: -2.45rem;
+  display: inline-flex;
+  width: auto;
+  min-width: 7.25rem;
+  height: 2.125rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  padding: 0 0.72rem;
   transform: translateX(-50%);
   border: 1px solid color-mix(in srgb, var(--foreground) 24%, transparent);
-  border-radius: 50%;
+  border-radius: 0.72rem;
   background: color-mix(in srgb, var(--app-panel) 74%, transparent);
   color: color-mix(in srgb, var(--foreground) 72%, transparent);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   box-shadow: 0 4px 16px color-mix(in srgb, #000 16%, transparent);
   cursor: pointer;
-  transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 .xv-conversation-navigator:hover {
+  transform: translate(-50%, -3px);
   border-color: color-mix(in srgb, var(--accent) 58%, transparent);
   background: color-mix(in srgb, var(--app-panel) 84%, var(--accent) 16%);
   color: var(--accent);
@@ -8065,47 +8071,31 @@ body.theme-gray .xv-rp-loader {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
-.xv-conversation-navigator:active { transform: translateX(-50%) scale(0.94); }
-.xv-conversation-navigator.is-direction-up { --xv-navigator-rotation: 180deg; }
+.xv-conversation-navigator:active { transform: translate(-50%, 2px) scale(0.98); }
+.xv-conversation-navigator.is-direction-up { --xv-navigator-rotation: 0deg; }
 .xv-conversation-navigator.is-direction-down {
-  --xv-navigator-rotation: 0deg;
+  --xv-navigator-rotation: 180deg;
   border-color: color-mix(in srgb, var(--accent) 58%, transparent);
   color: var(--accent);
 }
 .xv-conversation-navigator__arrow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 1.125rem;
-  height: 0.625rem;
-  transform: translate(-50%, -50%) rotate(var(--xv-navigator-rotation));
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: none;
+  stroke-width: 2.1;
+  transform: rotate(var(--xv-navigator-rotation));
   transition: transform 700ms cubic-bezier(0.86, 0, 0.07, 1);
 }
-.xv-conversation-navigator__arrow::before,
-.xv-conversation-navigator__arrow::after {
-  content: '';
-  position: absolute;
-  top: 0.22rem;
-  width: 0.625rem;
-  height: 0.125rem;
-  border-radius: 999px;
-  background: currentColor;
-  transition: transform 700ms cubic-bezier(0.86, 0, 0.07, 1);
-}
-.xv-conversation-navigator__arrow::before {
-  left: 0.04rem;
-  transform: rotate(40deg);
-  transform-origin: 100% 100%;
-}
-.xv-conversation-navigator__arrow::after {
-  right: 0.04rem;
-  transform: rotate(-40deg);
-  transform-origin: 0 100%;
+.xv-conversation-navigator__label {
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 @media (prefers-reduced-motion: reduce) {
-  .xv-conversation-navigator__arrow,
-  .xv-conversation-navigator__arrow::before,
-  .xv-conversation-navigator__arrow::after { transition-duration: 0.01ms; }
+  .xv-conversation-navigator,
+  .xv-conversation-navigator__arrow { transition-duration: 0.01ms; }
 }
 .xv-welcome-editorial > em::after {
   content: '';

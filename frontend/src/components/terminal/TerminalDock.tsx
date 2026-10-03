@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { ArrowUp } from 'lucide-react';
 
 import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
@@ -279,10 +280,13 @@ export function TerminalDock() {
                           ? scrollToLatest('smooth')
                           : scrollToFirst('smooth')
                       }
-                      aria-label={showJumpToLatest ? 'Go to latest conversation' : 'Go to first conversation'}
-                      title={showJumpToLatest ? 'Latest conversation' : 'First conversation'}
+                      aria-label={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
+                      title={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
                     >
-                      <span className="xv-conversation-navigator__arrow" aria-hidden="true" />
+                      <ArrowUp className="xv-conversation-navigator__arrow" aria-hidden="true" />
+                      <span className="xv-conversation-navigator__label">
+                        {showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
+                      </span>
                     </button>
                   ) : null}
 
