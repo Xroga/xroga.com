@@ -111,7 +111,7 @@ export function FirstRunShipChecklist({ className }: { className?: string }) {
       done: allReady,
       href: '/workspace',
       cta: allReady ? 'Ready' : 'Finish GitHub + Vercel first',
-      logo: '/brand/xroga-mark.png',
+      logo: '/brand/xroga-orb-mark-v2.webp',
     },
   ];
 

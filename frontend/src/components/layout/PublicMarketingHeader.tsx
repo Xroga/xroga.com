@@ -524,7 +524,7 @@ export function PublicMarketingHeader() {
                 </span>
               </button>
           ) : (
-            <Link className="xv-header-build-button xv-marketing-header__cta" href="/auth/signup">
+            <Link className="xv-header-build-button xv-marketing-header__cta" href="/workspace">
               <span className="xv-header-build-fold" aria-hidden="true" />
               <span className="xv-header-build-points" aria-hidden="true">
                 {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
@@ -573,7 +573,7 @@ export function PublicMarketingHeader() {
         </nav>
         <div className="xv-marketing-mobile-menu__actions">
           <Link href={accountHref}>{loggedIn ? 'Dashboard' : 'Sign in'}</Link>
-          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/auth/signup">Start Building Free</Link>}
+          {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/workspace">Start Building Free</Link>}
         </div>
       </div>
     </header>

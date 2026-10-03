@@ -55,7 +55,7 @@ export function ProcessingLogo({
   alt = 'Xroga',
 }: ProcessingLogoProps) {
   const [failed, setFailed] = useState(false);
-  const width = variant === 'homepage' ? height * 2.8 : variant === 'header' ? height * 2.2 : height;
+  const width = variant === 'homepage' || variant === 'header' ? height * (8 / 3) : height;
   const src = VARIANT_SRC[variant];
 
   // Ignore legacy `processing` — callers render ResearchPagesLoader instead.

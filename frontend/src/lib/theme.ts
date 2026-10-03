@@ -48,12 +48,12 @@ export const DESKTOP_BG = DESKTOP_BG_SLIDESHOW[0];
 export const MOBILE_BG = '/backgrounds/bg-desktop-1-infinity.webp';
 
 /** Homepage + workspace header only (not sidebar). */
-export const HEADER_LOGO_URL = '/brand/xroga-home-workspace.png';
-export const HOMEPAGE_LOGO_URL = '/brand/xroga-home-workspace.png';
+export const HEADER_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
+export const HOMEPAGE_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
 /** Local copies avoid a third-party image host delaying or partially painting shell chrome. */
-export const SIDEBAR_FULL_LOGO_URL = '/brand/xroga-home-workspace.png';
-export const SIDEBAR_LOGO_URL = '/brand/xroga-mark.png';
-export const AI_RESPONSE_LOGO_URL = '/brand/xroga-mark.png';
+export const SIDEBAR_FULL_LOGO_URL = '/brand/xroga-orb-wordmark-v2.webp';
+export const SIDEBAR_LOGO_URL = '/brand/xroga-orb-mark-v2.webp';
+export const AI_RESPONSE_LOGO_URL = '/brand/xroga-orb-mark-v2.webp';
 
 export type TerminalSkin =
   | 'dark'

@@ -26,14 +26,14 @@ export function Logo({ href = '/dashboard', height = 50, className, variant = 'h
       : variant === 'sidebar'
         ? SIDEBAR_LOGO_URL
         : HEADER_LOGO_URL;
-  // Wide wordmarks retain their natural banner space; the folded rail stays square.
+  // The supplied wordmark is an 8:3 transparent banner; the folded rail stays square.
   const width =
     variant === 'homepage'
-      ? height * 3.6
+      ? height * (8 / 3)
       : variant === 'header'
-        ? height * 3.2
+        ? height * (8 / 3)
         : variant === 'sidebarFull'
-          ? height * 2
+          ? height * (8 / 3)
           : height;
 
   const inner = (

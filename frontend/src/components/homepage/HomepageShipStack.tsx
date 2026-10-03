@@ -18,7 +18,7 @@ type Stage = (typeof STAGES)[number]['id'];
 const PROMPT = 'Build a customer analytics platform with authentication, subscriptions, analytics, and admin controls.';
 
 function PromptScene({ typed }: { typed: number }) {
-  return <div className="xv-loop-chat"><header><Image src="/brand/xroga-mark.png" width={28} height={28} alt="Xroga" /><span><b>New product</b><small>Black Hole V∞</small></span></header><div className="xv-loop-chat-space"><p>{PROMPT.slice(0, typed)}<i /></p></div><footer><button type="button" aria-label="Attach files"><Paperclip /></button><button type="button">Integrations <span /></button><button type="button" aria-label="Voice input"><Mic /></button><button type="button" aria-label="Send prompt" className="is-send"><Send /></button></footer></div>;
+  return <div className="xv-loop-chat"><header><Image src="/brand/xroga-orb-mark-v2.webp" width={28} height={28} alt="Xroga" /><span><b>New product</b><small>Black Hole V∞</small></span></header><div className="xv-loop-chat-space"><p>{PROMPT.slice(0, typed)}<i /></p></div><footer><button type="button" aria-label="Attach files"><Paperclip /></button><button type="button">Integrations <span /></button><button type="button" aria-label="Voice input"><Mic /></button><button type="button" aria-label="Send prompt" className="is-send"><Send /></button></footer></div>;
 }
 
 function BuildScene() {
@@ -70,7 +70,7 @@ export function HomepageShipStack() {
     <div className="xv-real-loop__inner">
       <header className="xv-real-loop__heading"><p><i /> THE XROGA SHIP LOOP</p><h2 id="ship-heading">From prompt to <em>production.</em></h2><span>Watch one product move through visible states: describe, build, verify, review, ship, and iterate.</span></header>
       <div className="xv-real-loop__stage" aria-live="polite">
-        <div className="xv-real-loop__stagebar"><span><Image src="/brand/xroga-mark.png" width={26} height={26} alt="" /><b>{STAGES[stageIndex].label}</b><small>{STAGES[stageIndex].detail}</small></span><div><button type="button" onClick={()=>setPlaying(value=>!value)} aria-label={playing?'Pause animation':'Play animation'}>{playing?<CirclePause />:<CirclePlay />}</button><button type="button" onClick={replay} aria-label="Replay animation"><RefreshCw /></button></div></div>
+        <div className="xv-real-loop__stagebar"><span><Image src="/brand/xroga-orb-mark-v2.webp" width={26} height={26} alt="" /><b>{STAGES[stageIndex].label}</b><small>{STAGES[stageIndex].detail}</small></span><div><button type="button" onClick={()=>setPlaying(value=>!value)} aria-label={playing?'Pause animation':'Play animation'}>{playing?<CirclePause />:<CirclePlay />}</button><button type="button" onClick={replay} aria-label="Replay animation"><RefreshCw /></button></div></div>
         <div className={`xv-real-loop__scene is-${stage}`} key={stage}>{stage==='prompt'&&<PromptScene typed={typed}/>} {stage==='build'&&<BuildScene/>} {stage==='validate'&&<ValidateScene/>} {stage==='github'&&<GitHubScene/>} {stage==='preview'&&<PreviewScene/>}</div>
         <nav className="xv-real-loop__rail" aria-label="Build animation stages">{STAGES.map((item,index)=><button key={item.id} type="button" onClick={()=>selectStage(index)} className={index===stageIndex?'is-active':index<stageIndex?'is-done':''}><i>{index<stageIndex?<Check />:String(index+1).padStart(2,'0')}</i><span><b>{item.label}</b><small>{item.detail}</small></span></button>)}</nav>
       </div>

@@ -77,7 +77,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
     return (
       <main className="grid min-h-screen place-items-center bg-[#f4f4f1] px-4 text-[#111] dark:bg-[#090a0d] dark:text-[#f5f5f3]">
         <section className="w-full max-w-sm rounded-[24px] bg-white p-6 text-center shadow-[0_30px_90px_-60px_rgba(0,0,0,.5)] dark:bg-[#111318]">
-          <Image src="/brand/xroga-mark.png" alt="" width={34} height={34} className="mx-auto mb-4 rounded-xl" />
+          <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={34} height={34} className="mx-auto mb-4 rounded-xl" />
           <h1 className="text-lg font-semibold">This share is private</h1>
           <p className="mt-2 text-sm leading-6 text-black/55 dark:text-white/55">Only the Xroga account that created it can open this page.</p>
           <Link href={`/auth/login?next=${next}`} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[#111] px-4 text-xs font-semibold text-white dark:bg-white dark:text-[#111]">Continue with the owner account</Link>
@@ -92,7 +92,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
       <div className="mx-auto w-full max-w-3xl">
         <header className="mb-4 flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-sm dark:border-white/10 dark:bg-[#111318]">
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
-            <Image src="/brand/xroga-mark.png" alt="" width={24} height={24} className="rounded-lg" />
+            <Image src="/brand/xroga-orb-mark-v2.webp" alt="" width={24} height={24} className="rounded-lg" />
             Xroga
           </Link>
           <span className="rounded-full bg-black/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[.12em] text-black/55 dark:bg-white/10 dark:text-white/55">

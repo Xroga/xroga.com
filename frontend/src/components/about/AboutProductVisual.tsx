@@ -22,7 +22,7 @@ export function AboutProductVisual({ variant, className }: { variant: VisualVari
         <div className="ab-pv-hero-body">
           <div className="ab-pv-command"><span>YOU</span><p>Build a customer portal and ship it.</p></div>
           <div className="ab-pv-agent">
-            <Image src="/brand/xroga-mark.png" width={28} height={28} alt="" />
+            <Image src="/brand/xroga-orb-mark-v2.webp" width={28} height={28} alt="" />
             <div><span>XROGA / BUILD 0841</span><strong>Implementing the product loop</strong></div>
             <b>RUNNING <i /></b>
           </div>
@@ -50,7 +50,7 @@ export function AboutProductVisual({ variant, className }: { variant: VisualVari
             </li>
           ))}
         </ol>
-        <footer><Image src="/brand/xroga-mark.png" width={24} height={24} alt="" /><span><b>One prompt. One repository.</b><small>The loop keeps its context.</small></span></footer>
+        <footer><Image src="/brand/xroga-orb-mark-v2.webp" width={24} height={24} alt="" /><span><b>One prompt. One repository.</b><small>The loop keeps its context.</small></span></footer>
       </div>
     );
   }

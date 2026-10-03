@@ -75,7 +75,7 @@ export function MarketingFooter() {
 
         <section className="xv-marketing-footer__main-card">
           <div className="xv-marketing-footer__floating-mark" aria-hidden="true">
-            <Image src="/brand/xroga-mark-192.png" width={92} height={92} alt="" />
+            <Image src="/brand/xroga-orb-mark-v2.webp" width={92} height={92} alt="" />
           </div>
 
           <nav className="xv-marketing-footer__nav" aria-label="Footer navigation">

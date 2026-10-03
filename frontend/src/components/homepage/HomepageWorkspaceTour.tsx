@@ -144,7 +144,7 @@ export function HomepageIntegrationOrbit({ loggedIn }: { loggedIn: boolean }) {
   return (
     <div className="xv-connection-dock" aria-label="Xroga integrations">
       <div className="xv-connection-dock__orbit">
-        <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-mark-192.png" alt="Xroga" width={74} height={74} /></Link>
+        <Link href={loggedIn ? '/dashboard/integrations' : '/auth/signup'} className="xv-connection-dock__core" aria-label="Open Xroga integrations"><Image src="/brand/xroga-orb-mark-v2.webp" alt="Xroga" width={74} height={74} /></Link>
         {CONNECTIONS.map((item, index) => <div key={item.id} className={`xv-connection-dock__node xv-connection-dock__node--${index + 1} is-${item.tone}`} title={`${item.name}${item.tone === 'soon' ? ' · Soon' : ''}`}>{item.id === 'byok' ? <KeyRound aria-label="Bring your own API key" /> : <IntegrationLogo id={item.id} name={item.name} size={27} />}{item.tone === 'soon' ? <small>Soon</small> : null}</div>)}
       </div>
     </div>

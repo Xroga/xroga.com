@@ -8012,27 +8012,80 @@ body.theme-gray .xv-rp-loader {
 
 
 
-/* One quiet two-way control lives above the active composer. Its upper and lower
-   halves are separate targets even though they read as one animated glyph. */
+/* One quiet context-aware control lives above the active composer. At the latest
+   turn it points up; scrolling into history rotates it down toward the newest turn. */
 .xv-conversation-navigator {
+  --xv-navigator-rotation: 0deg;
   position: absolute;
   z-index: 18;
   left: 50%;
   top: -2.2rem;
-  width: 31px;
-  height: 31px;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem;
   transform: translateX(-50%);
   border: 1px solid color-mix(in srgb, var(--foreground) 24%, transparent);
   border-radius: 50%;
+  background: color-mix(in srgb, var(--app-panel) 74%, transparent);
   color: color-mix(in srgb, var(--foreground) 72%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 4px 16px color-mix(in srgb, #000 16%, transparent);
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
-.xv-conversation-navigator > div { position: absolute; inset: 0; pointer-events: none; }
-.xv-conversation-navigator > button { position: absolute; z-index: 1; left: 2px; width: 25px; height: 13px; border: 0; background: transparent; cursor: pointer; }
-.xv-conversation-navigator > button:first-of-type { top: 2px; border-radius: 999px 999px 4px 4px; }
-.xv-conversation-navigator > button:last-of-type { bottom: 2px; border-radius: 4px 4px 999px 999px; }
-.xv-conversation-navigator > button:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.xv-conversation-navigator > button:active { background: var(--accent); }
-.xv-conversation-navigator.is-away-from-latest { border-color: color-mix(in srgb, var(--accent) 58%, transparent); color: var(--accent); }
+.xv-conversation-navigator:hover {
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  background: color-mix(in srgb, var(--app-panel) 84%, var(--accent) 16%);
+  color: var(--accent);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.xv-conversation-navigator:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.xv-conversation-navigator:active { transform: translateX(-50%) scale(0.94); }
+.xv-conversation-navigator.is-direction-up { --xv-navigator-rotation: 180deg; }
+.xv-conversation-navigator.is-direction-down {
+  --xv-navigator-rotation: 0deg;
+  border-color: color-mix(in srgb, var(--accent) 58%, transparent);
+  color: var(--accent);
+}
+.xv-conversation-navigator__arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.125rem;
+  height: 0.625rem;
+  transform: translate(-50%, -50%) rotate(var(--xv-navigator-rotation));
+  transition: transform 700ms cubic-bezier(0.86, 0, 0.07, 1);
+}
+.xv-conversation-navigator__arrow::before,
+.xv-conversation-navigator__arrow::after {
+  content: '';
+  position: absolute;
+  top: 0.22rem;
+  width: 0.625rem;
+  height: 0.125rem;
+  border-radius: 999px;
+  background: currentColor;
+  transition: transform 700ms cubic-bezier(0.86, 0, 0.07, 1);
+}
+.xv-conversation-navigator__arrow::before {
+  left: 0.04rem;
+  transform: rotate(40deg);
+  transform-origin: 100% 100%;
+}
+.xv-conversation-navigator__arrow::after {
+  right: 0.04rem;
+  transform: rotate(-40deg);
+  transform-origin: 0 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-conversation-navigator__arrow,
+  .xv-conversation-navigator__arrow::before,
+  .xv-conversation-navigator__arrow::after { transition-duration: 0.01ms; }
+}
 .xv-welcome-editorial > em::after {
   content: '';
   position: absolute;
@@ -9885,9 +9938,15 @@ body.xv-workspace-expanded-active .xv-terminal-dock {
   overflow: visible;
 }
 .xv-terminal-body--flush {
-  padding: 0;
+  box-sizing: border-box;
+  padding: 0 clamp(0.75rem, 4vw, 4rem);
   border-radius: 0;
   overflow: visible;
+}
+.xv-terminal-body--flush .xv-terminal-turn {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
 }
 
 /* ---- the workspace pane --------------------------------------------------- */

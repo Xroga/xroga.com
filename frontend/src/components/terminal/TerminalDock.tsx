@@ -24,7 +24,6 @@ import {
 } from '@/components/dashboard/DashboardWelcome';
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
-import { ChevronsUpDownIcon } from '@/components/icons/animated/ChevronsUpDownIcon';
 import { WorkspaceConnectionsStrip } from './WorkspaceConnectionsStrip';
 
 const FULLSCREEN_BUILD_COMMANDS = [
@@ -269,42 +268,22 @@ export function TerminalDock() {
 
                   {messages.length > 0 &&
                   !incognito ? (
-                    <div
+                    <button
+                      type="button"
                       className={cn(
                         'xv-conversation-navigator',
-
-                        showJumpToLatest &&
-                          'is-away-from-latest'
+                        showJumpToLatest ? 'is-direction-down' : 'is-direction-up'
                       )}
-                      aria-label="Conversation position"
+                      onClick={() =>
+                        showJumpToLatest
+                          ? scrollToLatest('smooth')
+                          : scrollToFirst('smooth')
+                      }
+                      aria-label={showJumpToLatest ? 'Go to latest conversation' : 'Go to first conversation'}
+                      title={showJumpToLatest ? 'Latest conversation' : 'First conversation'}
                     >
-                      <ChevronsUpDownIcon
-                        size={19}
-                        aria-hidden="true"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          scrollToFirst(
-                            'smooth'
-                          )
-                        }
-                        aria-label="Go to first conversation"
-                        title="First conversation"
-                      />
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          scrollToLatest(
-                            'smooth'
-                          )
-                        }
-                        aria-label="Go to latest conversation"
-                        title="Latest conversation"
-                      />
-                    </div>
+                      <span className="xv-conversation-navigator__arrow" aria-hidden="true" />
+                    </button>
                   ) : null}
 
                   {showStarterExperience &&

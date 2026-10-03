@@ -308,7 +308,7 @@ assert.match(
 });
 
 
-test('a conversation exposes one compact navigator for its first and latest turns', () => {
+test('a conversation exposes one context-aware navigator that follows scroll position', () => {
   assert.match(
     DOCK,
     /messages\.length\s*>\s*0\s*&&\s*!incognito/,
@@ -316,28 +316,33 @@ test('a conversation exposes one compact navigator for its first and latest turn
 
   assert.match(
     DOCK,
-    /cn\(\s*'xv-conversation-navigator'/,
+    /'xv-conversation-navigator'/,
   );
 
   assert.match(
     DOCK,
-    /aria-label="Go to first conversation"/,
+    /showJumpToLatest \? 'Go to latest conversation' : 'Go to first conversation'/,
   );
 
   assert.match(
     DOCK,
-    /aria-label="Go to latest conversation"/,
+    /showJumpToLatest\s*\? scrollToLatest\('smooth'\)\s*:\s*scrollToFirst\('smooth'\)/,
   );
 
   assert.match(
     DOCK,
-    /<ChevronsUpDownIcon/,
+    /xv-conversation-navigator__arrow/,
   );
 
   assert.match(
     CSS,
-    /\.xv-conversation-navigator\s*\{[^}]*border-radius:\s*50%/,
+    /\.xv-conversation-navigator\.is-direction-up\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
+});
+
+test('workspace transcript keeps balanced responsive gutters', () => {
+  assert.match(CSS, /\.xv-terminal-body--flush\s*\{[^}]*padding:\s*0 clamp\(0\.75rem, 4vw, 4rem\)/);
+  assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*78rem/);
 });
 
 

@@ -10,7 +10,7 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const SOFTWARE_ID = `${SITE_URL}/#software`;
 export const FOUNDER_ID = `${SITE_URL}/#founder`;
 export const LOGO_ID = `${SITE_URL}/#logo`;
-export const FAVICON_URL = `${SITE_URL}/brand/xroga-mark-192.png`;
+export const FAVICON_URL = `${SITE_URL}/brand/xroga-orb-mark-v2.png`;
 export const OG_IMAGE_URL = 'https://xroga.com/opengraph-image';
 export const OFFICIAL_SOCIAL_URLS = [ABOUT_SOCIALS.x, ABOUT_SOCIALS.github] as const;
 

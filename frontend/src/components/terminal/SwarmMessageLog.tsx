@@ -432,7 +432,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 ref={(el) => { messageRefs.current[msg.id] = el; }}
                 data-turn-id={msg.role === 'user' ? msg.id : undefined}
                 className={cn(
-                  'group flex gap-2',
+                  'xv-terminal-turn group flex gap-2',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                   msg.role === 'system' && 'justify-center',
                   searchHit === msg.id && 'ring-1 ring-[#006aff]/40 rounded-lg'
