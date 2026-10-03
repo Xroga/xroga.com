@@ -94,7 +94,9 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
     ? cloneElement(trigger as ReactElement<Record<string, unknown>>, {
         'aria-expanded': open,
         'aria-haspopup': 'menu',
-        onClick: () => setOpen((value) => !value),
+        // Focus fires before click. Both paths must converge on open; toggling here
+        // opened on focus and immediately closed again for mouse and touch users.
+        onClick: () => setOpen(true),
         onFocus: () => setOpen(true),
       })
     : trigger;

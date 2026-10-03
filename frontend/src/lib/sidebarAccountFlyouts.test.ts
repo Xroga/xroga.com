@@ -16,6 +16,8 @@ test('Explore is a portalled hover-safe menu with all requested destinations', (
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
+  assert.match(HOVER_MENU, /onClick: \(\) => setOpen\(true\)/);
+  assert.doesNotMatch(HOVER_MENU, /onClick: \(\) => setOpen\(\(value\) => !value\)/);
   for (const label of ['Showcase', 'Community', 'Share Feedback', 'Settings']) {
     assert.match(SIDEBAR, new RegExp(`label: '${label}'`));
   }
