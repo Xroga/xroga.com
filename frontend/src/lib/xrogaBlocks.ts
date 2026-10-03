@@ -89,6 +89,8 @@ const connectionBlock = blockBase.extend({
   type: z.literal('connection-request'),
   service: z.string().min(1),
   reason: z.string().min(1),
+  access: z.string().optional(),
+  next: z.string().optional(),
   capability: z.string().min(1),
   action: z.string().min(1),
   resumeContext: z.string().optional(),

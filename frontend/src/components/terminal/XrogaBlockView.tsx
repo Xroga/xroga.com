@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
-import { AlertCircle, Check, Clock3, ExternalLink, FileCheck2, LoaderCircle, PlugZap, TriangleAlert } from 'lucide-react';
+import { AlertCircle, Check, CircleHelp, Clock3, ExternalLink, FileCheck2, LoaderCircle, PlugZap, TriangleAlert } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
 import { LegacyLandingOutputView } from './LegacyLandingOutputView';
@@ -10,7 +10,6 @@ import { isRenderableArtifact } from '@/lib/engineeringArtifact';
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/lib/xrogaBlocks';
 import { XrogaArtifactHeader } from './XrogaArtifactHeader';
-import { XrogaDeveloperInspector } from './XrogaDeveloperInspector';
 
 type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
 
@@ -83,7 +82,7 @@ function LinkRenderer({ block }: { block: XrogaBlock }) {
 
 function ApprovalRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'approval') return null;
-  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><h3 className="font-medium">{block.approval.title}</h3>{block.approval.description ? <p className="mt-1 text-[var(--muted)]">{block.approval.description}</p> : null}<p className="mt-2 text-xs text-[var(--muted)]">Action: {block.approval.action} · {block.approval.status}</p></section>;
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm" aria-label="Approval required"><div className="flex items-center gap-2"><CircleHelp className="h-4 w-4 text-amber-500" aria-hidden="true" /><h3 className="font-medium">{block.approval.title}</h3></div>{block.approval.description ? <p className="mt-1 text-[var(--muted)]">{block.approval.description}</p> : null}<p className="mt-2 text-xs font-medium text-[var(--muted)]">{block.approval.status === 'requested' ? 'Review this action before Xroga continues.' : `Approval ${block.approval.status}.`}</p></section>;
 }
 
 function ReceiptRenderer({ block }: { block: XrogaBlock }) {
@@ -98,7 +97,7 @@ function ContentRenderer({ block }: { block: XrogaBlock }) {
 
 function ConnectionRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'connection-request') return null;
-  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm"><div className="flex items-center gap-2"><PlugZap className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">Connect {block.service}</h3></div><p className="mt-1 text-[var(--muted)]">{block.reason}</p><p className="mt-2 text-xs">Required for {block.capability}. Action: {block.action}.</p></section>;
+  return <section className="max-w-[820px] rounded-xl border border-amber-500/35 p-3 text-sm" aria-label={`Connect ${block.service}`}><div className="flex items-center gap-2"><PlugZap className="h-4 w-4 text-amber-500" aria-hidden="true" /><h3 className="font-medium">Connect {block.service}</h3></div><dl className="mt-3 grid gap-2 text-[13px]"><div><dt className="font-medium">Why</dt><dd className="text-[var(--muted)]">{block.reason}</dd></div><div><dt className="font-medium">Access</dt><dd className="text-[var(--muted)]">{block.access ?? `Only the ${block.service} data you authorize.`}</dd></div><div><dt className="font-medium">Next</dt><dd className="text-[var(--muted)]">{block.next ?? `Xroga will continue your request after ${block.service} is connected.`}</dd></div></dl></section>;
 }
 
 function WebsiteRenderer({ block }: { block: XrogaBlock }) {
@@ -136,5 +135,5 @@ export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
   return <section className="space-y-3 py-2" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
     return <div key={candidate.id}>{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div>;
-  })}<XrogaDeveloperInspector output={output} /></section>;
+  })}</section>;
 }

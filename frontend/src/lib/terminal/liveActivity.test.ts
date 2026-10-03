@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
-  WAITING_LINE_AFTER_SECONDS,
-  formatElapsed,
+  WAITING_LINE_AFTER_MS,
   shouldShowWaitingLine,
   waitingLine,
 } from './liveActivityText';
@@ -172,13 +171,11 @@ test(
   'the client waiting copy is neutral across chat, apps and builds',
   () => {
     const line =
-      waitingLine(
-        3,
-      );
+      waitingLine();
 
     assert.match(
       line,
-      /getting things ready/i,
+      /responding/i,
     );
 
     assert.doesNotMatch(
@@ -188,31 +185,9 @@ test(
   },
 );
 
-test(
-  'the waiting copy progresses without inventing execution steps',
-  () => {
-    assert.equal(
-      waitingLine(
-        3,
-      ),
-      'Getting things ready…',
-    );
-
-    assert.equal(
-      waitingLine(
-        12,
-      ),
-      'Working on your request…',
-    );
-
-    assert.equal(
-      waitingLine(
-        30,
-      ),
-      'Still working on your request…',
-    );
-  },
-);
+test('the waiting copy is one stable factual line', () => {
+  assert.equal(waitingLine(), 'Responding');
+});
 
 test(
   'no notice is shown for a gap nobody notices',
@@ -226,63 +201,23 @@ test(
 
     assert.equal(
       shouldShowWaitingLine(
-        1,
+        399,
       ),
       false,
     );
 
     assert.equal(
       shouldShowWaitingLine(
-        WAITING_LINE_AFTER_SECONDS,
+        WAITING_LINE_AFTER_MS,
       ),
       true,
     );
 
     assert.equal(
       shouldShowWaitingLine(
-        30,
+        30_000,
       ),
       true,
-    );
-  },
-);
-
-test(
-  'elapsed formatting reads naturally',
-  () => {
-    assert.equal(
-      formatElapsed(
-        0,
-      ),
-      '0s',
-    );
-
-    assert.equal(
-      formatElapsed(
-        59,
-      ),
-      '59s',
-    );
-
-    assert.equal(
-      formatElapsed(
-        60,
-      ),
-      '1m',
-    );
-
-    assert.equal(
-      formatElapsed(
-        61,
-      ),
-      '1m 1s',
-    );
-
-    assert.equal(
-      formatElapsed(
-        600,
-      ),
-      '10m',
     );
   },
 );

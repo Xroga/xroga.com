@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { universalCapabilityRegistry } from '../../capabilities/index.js';
-import { currentProductTruth } from './productTruth.js';
+import { currentProductTruth, currentPublicProductTruth } from './productTruth.js';
 import { resolveRequestAuthorities } from './semanticRequestPlanner.js';
 
 test('the canonical registry distinguishes authorization, provider availability, and unsupported capabilities', () => {
@@ -27,6 +27,13 @@ test('Xroga product truth comes from the execution registry and states authoriza
   assert.match(truth, /Preview is verification evidence/);
   assert.match(truth, /separate from deployment/);
   assert.doesNotMatch(truth, /api[_-]?key\s*=/i);
+});
+
+test('customer-facing Xroga truth uses human capability language without internal IDs', () => {
+  const truth = currentPublicProductTruth(new Set(['model:execute', 'sandbox:execute']));
+  assert.match(truth, /Conversation response/);
+  assert.match(truth, /connect or authorize/i);
+  assert.doesNotMatch(truth, /conversation\.respond|software\.implement|repository\.(?:read|write)|research\.public-web|business\.(?:read|action)|model:execute|sandbox:execute/);
 });
 
 test('repository authority is user-specific and pure conversation performs no GitHub authorization lookup', async () => {

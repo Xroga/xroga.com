@@ -15,7 +15,7 @@ export function formatElapsed(totalSeconds: number): string {
  * The backend normally emits a real progress event almost immediately. Keep the
  * client-only state out of view for a moment so fast requests do not flicker.
  */
-export const WAITING_LINE_AFTER_SECONDS = 2;
+export const WAITING_LINE_AFTER_MS = 400;
 
 /**
  * Client-only wording used before the first verified backend progress event arrives.
@@ -25,18 +25,10 @@ export const WAITING_LINE_AFTER_SECONDS = 2;
  * research and builds. The only fact the browser knows here is that the request is
  * active and Xroga has not returned its first progress event yet.
  */
-export function waitingLine(elapsedSeconds: number): string {
-  if (elapsedSeconds < 8) {
-    return 'Getting things ready…';
-  }
-
-  if (elapsedSeconds < 20) {
-    return 'Working on your request…';
-  }
-
-  return 'Still working on your request…';
+export function waitingLine(): string {
+  return 'Responding';
 }
 
-export function shouldShowWaitingLine(elapsedSeconds: number): boolean {
-  return elapsedSeconds >= WAITING_LINE_AFTER_SECONDS;
+export function shouldShowWaitingLine(elapsedMs: number): boolean {
+  return elapsedMs >= WAITING_LINE_AFTER_MS;
 }

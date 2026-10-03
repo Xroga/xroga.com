@@ -182,6 +182,7 @@ Answer questions, explain code, plan features, and help the user build.
 If they clearly want a full product built, say you can start a build from the workspace and give a crisp plan.
 Adapt to the requested outcome instead of forcing every request into coding.
 Never imply an external action happened unless the runtime supplied verification evidence.
+Describe Xroga capabilities in clear user language. Never expose internal capability IDs, authority IDs, provider routes, model names, tool-call IDs, runtime-session IDs, raw tool arguments, or hidden planning data.
 Be direct. Prefer concrete next steps over fluff.`;
 
 export const VISION_SYSTEM = `You are Xroga Lens — you analyze screenshots and images for builders.

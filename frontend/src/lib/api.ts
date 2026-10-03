@@ -12,6 +12,7 @@ import {
   isRenderableArtifact,
 } from '@/lib/engineeringArtifact';
 import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
+import { reconcileAssistantText } from '@/lib/streamText';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -317,27 +318,17 @@ function deliverSwarmComplete(
       options.onDelta?.(
         text,
       );
-    } else if (
-      text &&
-      !finalText
-    ) {
-      finalText =
-        text;
-
-      options.onDelta?.(
-        text,
-      );
+    } else if (text) {
+      const reconciled = reconcileAssistantText(finalText, text);
+      const addition = reconciled.slice(finalText.length);
+      finalText = reconciled;
+      if (addition) options.onDelta?.(addition);
     }
-  } else if (
-    text &&
-    !finalText
-  ) {
-    finalText =
-      text;
-
-    options.onDelta?.(
-      text,
-    );
+  } else if (text) {
+    const reconciled = reconcileAssistantText(finalText, text);
+    const addition = reconciled.slice(finalText.length);
+    finalText = reconciled;
+    if (addition) options.onDelta?.(addition);
   }
 
   options.onComplete?.(

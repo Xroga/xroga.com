@@ -14,6 +14,7 @@ import { Trash2Icon } from '@/components/icons/animated/Trash2Icon';
 import { MessageShareModal } from './MessageShareModal';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import { serializeAssistantCopy } from '@/lib/assistantCopy';
 
 interface MessageBubbleActionsProps {
   role: 'user' | 'assistant';
@@ -38,7 +39,9 @@ export function MessageBubbleActions({
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(content);
+      await navigator.clipboard.writeText(
+        role === 'assistant' ? serializeAssistantCopy(content) : content,
+      );
       setCopied(true);
       toast.success('Copied');
       setTimeout(() => setCopied(false), 1500);

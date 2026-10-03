@@ -1,4 +1,4 @@
-import { currentProductTruth } from '../ai/universal/productTruth.js';
+import { currentPublicProductTruth } from '../ai/universal/productTruth.js';
 
 /** "What can you do?" fast-path backed by the server capability registry. */
 export function isCapabilitiesQuery(input: string): boolean {
@@ -16,5 +16,5 @@ export function isCapabilitiesQuery(input: string): boolean {
 }
 
 export function getXrogaCapabilitiesResponse(): string {
-  return `✨ What Xroga can execute\n\n${currentProductTruth()}\n\nTell me the outcome you want; Xroga will select the smallest available capability set and report any real authorization or provider blocker.`;
+  return `What Xroga can do\n\n${currentPublicProductTruth()}\n\nTell me the outcome you want. Xroga will use the smallest available set of tools and explain any connection or authorization it needs.`;
 }

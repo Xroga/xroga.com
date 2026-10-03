@@ -2844,7 +2844,14 @@ if (
           setSwarmTodos([]);
           setSwarmNegotiationPhase(null);
           const mathPrompt = isMathQueryPrompt(displayPrompt);
-          setPipelineMessage(mathPrompt ? 'Working through the math…' : 'Composing your answer…');
+          const needsCurrentSources = semanticPlan.goalContract.freshnessRequirement !== 'NONE';
+          setPipelineMessage(
+            mathPrompt
+              ? 'Working through the math…'
+              : needsCurrentSources
+                ? 'Starting research'
+                : 'Responding',
+          );
           setSwarmStatusLabel('XROGA AI');
           setSwarmActiveAgent('architect');
           thinkingStepsRef.current = mathPrompt

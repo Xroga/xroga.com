@@ -16,9 +16,9 @@ test('AI responses use a plain factual status instead of an execution card', () 
   // The status line moved into `TerminalLiveActivity`, which renders the last few real
   // rows rather than only the newest one. The old single-line version was invisible
   // until the first event arrived, which is the blank terminal users reported.
-  assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} \/>/);
-  assert.match(liveActivity, /data-testid=\{\s*isLatest\s*\?\s*'ai-processing-status'\s*:\s*undefined\s*\}/s);
-  assert.match(liveActivity, /event\.text/);
+  assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} pendingLabel=\{pipelineMessage\} \/>/);
+  assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
+  assert.match(liveActivity, /aria-label="Xroga activity"/);
 });
 
 test('the live transcript renders only received rows plus one honest waiting line', () => {
@@ -30,7 +30,8 @@ test('the live transcript renders only received rows plus one honest waiting lin
   assert.doesNotMatch(code, /progress-?bar|percent|Math\.round\([^)]*100/i);
   // Rows come from run state; the component may not synthesise one.
   assert.match(liveActivity, /run\.events/);
-  assert.match(liveActivity, /waitingLine\(\s*elapsed,?\s*\)/s);
+  assert.match(liveActivity, /waitingLine\(\)/);
+  assert.doesNotMatch(liveActivity, /Xroga is on it|terminal-elapsed|Developer details/);
 });
 
 test('AI response renderers contain no cursor, reveal, or pulse animation', () => {
@@ -41,4 +42,10 @@ test('AI response renderers contain no cursor, reveal, or pulse animation', () =
   const combined = `${response}\n${buildReport}\n${plain}\n${markdown}`;
 
   assert.doesNotMatch(combined, /animate-|style\.animation|xv-stream-cursor|xv-response-in/);
+});
+
+test('normal output does not append internal developer identifiers', () => {
+  const output = source('../../components/terminal/XrogaBlockView.tsx');
+
+  assert.doesNotMatch(output, /XrogaDeveloperInspector|Developer details/);
 });

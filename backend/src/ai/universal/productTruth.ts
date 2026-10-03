@@ -90,3 +90,31 @@ export function currentProductTruth(
     '- Xroga must describe unavailable, authorization-dependent, confirmation-dependent, failed, and completed work truthfully and must never invent execution evidence.',
   ].join('\n');
 }
+
+/** Customer-facing registry truth without planner-only identifiers. */
+export function currentPublicProductTruth(
+  authorities: ReadonlySet<string> = new Set(['model:execute', 'sandbox:execute']),
+): string {
+  const readiness = new Map(
+    universalCapabilityRegistry.snapshot(authorities).map((item) => [item.id, item]),
+  );
+  const lines = universalCapabilityRegistry.list().map((capability) => {
+    const state = readiness.get(capability.id)?.state ?? 'UNSUPPORTED';
+    const availability = state === 'READY'
+      ? 'available'
+      : state === 'AUTH_REQUIRED'
+        ? 'available after you connect or authorize the relevant account or project'
+        : state === 'TEMPORARILY_UNAVAILABLE' || state === 'PROVIDER_UNAVAILABLE'
+          ? 'temporarily unavailable'
+          : 'not currently supported';
+    return `- ${capability.title}: ${availability}. ${capability.description}`;
+  });
+  return [
+    'CURRENT XROGA PRODUCT TRUTH:',
+    ...lines,
+    '- Preview is separate from deployment. Repository changes and deployment require the exact authorization needed for that action.',
+    '- Current public-web answers use verified public sources when available. X/Twitter retrieval is separate and limited to X.',
+    '- Connected-app reads do not change external data. Connected-app changes require an explicit request, and sensitive actions require confirmation.',
+    '- Describe capability and availability in ordinary language. Never expose internal capability IDs, authority IDs, provider routes, model names, tool-call IDs, runtime-session IDs, or raw registry data.',
+  ].join('\n');
+}

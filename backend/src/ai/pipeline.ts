@@ -149,7 +149,7 @@ import type { UniversalOutputEnvelope } from './universal/outputEnvelope.js';
 import { projectContextKey } from './universal/projectContext.js';
 import { routeProject } from '../config/universalAgentFlags.js';
 import { goalContractSchema, type GoalContract } from './universal/goalContract.js';
-import { currentProductTruth } from './universal/productTruth.js';
+import { currentPublicProductTruth } from './universal/productTruth.js';
 import { RuntimeFailure } from './universal/runtimeFailure.js';
 import { resolveStructuredGoalContract } from './universal/semanticRequestPlanner.js';
 import { atomicGitHubCommit, type UniversalCommitRecord } from '../synthesis/universalCommit.js';
@@ -1109,7 +1109,7 @@ export async function runChatPipeline(opts: {
   if (research?.sources.length) truthAuthorities.add('network:public-read');
   const result = await callBuilderStream(
     route.builder,
-    [{ role: 'system', content: `${CHAT_SYSTEM}\n\n${currentProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
+    [{ role: 'system', content: `${CHAT_SYSTEM}\n\n${currentPublicProductTruth(truthAuthorities)}` }, ...historyMsgs, { role: 'user', content: userContent }],
     {
       userId: opts.userId,
       maxTokens: route.kind === 'research' ? researchAnswerMaxTokens(opts.prompt) : 4096,

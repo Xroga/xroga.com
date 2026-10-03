@@ -12,25 +12,6 @@ import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
-/**
- * Route structural markdown and interactive Xroga links through the markdown renderer.
- *
- * Xroga Connect persists interactive cards as safe markdown links so they survive
- * transcript reloads. If a response contains only one of those links, treating it as
- * plain text exposes implementation syntax such as `[Review action](...)` to users.
- */
-function hasMarkdown(content: string): boolean {
-  return (
-    /^#{1,4}\s/m.test(content) ||
-    /^\|.+\|/m.test(content) ||
-    /^[-*•]\s/m.test(content) ||
-    /^>\s/m.test(content) ||
-    /\[[^\]]+\]\((?:\/xroga\/tool-ui\?payload=|\/dashboard\/actions\/confirm\/|https?:\/\/[^)\s]+)[^)]*\)/i.test(
-      content,
-    )
-  );
-}
-
 /** Modern AI response — professional markdown or structured plain text */
 export function ModernResponseText({
   content,
@@ -87,14 +68,14 @@ export function ModernResponseText({
     <div
       className={cn('xv-response-text', streaming && 'xv-streaming')}
     >
-      {hasMarkdown(safeContent) && !isMathSolutionContent(safeContent) ? (
-        <FormattedAiMarkdown content={safeContent} streaming={streaming} />
-      ) : (
+      {isMathSolutionContent(safeContent) ? (
         <PlainAiResponse
           content={safeContent}
           streaming={streaming}
-          mathMode={isMathSolutionContent(safeContent)}
+          mathMode
         />
+      ) : (
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} />
       )}
     </div>
   );

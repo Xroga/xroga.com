@@ -65,7 +65,7 @@ test('copy and activity UI use Lucide semantics and contain no dot status elemen
   assert.match(copy, /<Copy/);
   assert.match(copy, /Copied/);
   assert.doesNotMatch(activity, /xv-term-livedot/);
-  assert.match(activity, /EventIcon/);
+  assert.match(activity, /ActivityRow/);
   assert.match(activity, /aria-live="polite"/);
 });
 
@@ -73,4 +73,19 @@ test('TerminalChatContext does not retain provider private reasoning in client s
   const context = readFileSync(new URL('../context/TerminalChatContext.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(context, /setReasoning|ev\.thinking/);
   assert.match(context, /private model working/);
+});
+
+test('connection and approval renderers do not expose internal capability or action IDs', () => {
+  const view = readFileSync(new URL('../components/terminal/XrogaBlockView.tsx', import.meta.url), 'utf8');
+  const connectionStart = view.indexOf('function ConnectionRenderer');
+  const connectionEnd = view.indexOf('function WebsiteRenderer', connectionStart);
+  const connection = view.slice(connectionStart, connectionEnd);
+  assert.match(connection, />Why</);
+  assert.match(connection, />Access</);
+  assert.match(connection, />Next</);
+  assert.doesNotMatch(connection, /block\.capability|block\.action/);
+
+  const approvalStart = view.indexOf('function ApprovalRenderer');
+  const approvalEnd = view.indexOf('function ReceiptRenderer', approvalStart);
+  assert.doesNotMatch(view.slice(approvalStart, approvalEnd), /block\.approval\.action/);
 });

@@ -476,7 +476,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             all until the first event arrived — the blank terminal a
                             user reported after sending a build prompt. */}
                         {loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
-                          <TerminalLiveActivity run={terminalRun} />
+                          <TerminalLiveActivity run={terminalRun} pendingLabel={pipelineMessage} />
                         ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard

@@ -304,6 +304,11 @@ test(
         'frontend/src/components/terminal/TerminalLiveActivity.tsx',
       );
 
+    const activityPresentation =
+      repoFile(
+        'frontend/src/lib/terminal/activityPresentation.ts',
+      );
+
     assert.match(
       adapter,
       /softwareAgentV2/,
@@ -341,12 +346,17 @@ test(
 
     assert.match(
       activity,
-      /event\.body/,
+      /coalesceActivity\(run\.events\)/,
     );
 
     assert.match(
-      activity,
-      /terminal-event-body/,
+      activityPresentation,
+      /presentTerminalEvent\(event\)/,
+    );
+
+    assert.match(
+      activityPresentation,
+      /publicActivityText\(event\.text\)/,
     );
   },
 );
