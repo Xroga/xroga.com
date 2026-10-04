@@ -207,7 +207,6 @@ export function ChatBarSendButton({
 }) {
   const loading = isSendLoading(state) && !stopping;
   const busy = !loading && (stopping || isSendBusy(state));
-  const done = !busy && !loading && state === 'launched';
 
   /**
    * One button across every state rather than swapping in a separate stop button.
@@ -237,7 +236,7 @@ export function ChatBarSendButton({
         surface === 'homepage' && 'xv-send--home',
         surface === 'incognito' && 'xv-send--incognito'
       )}
-      data-state={loading ? 'sending' : busy ? 'busy' : done ? 'done' : 'idle'}
+      data-state={loading ? 'sending' : busy ? 'busy' : 'idle'}
       aria-label={loading ? loadingLabel : busy ? 'Stop response' : idleLabel}
       title={loading ? 'Sending…' : busy ? 'Stop' : idleLabel}
       aria-live="polite"

@@ -3182,6 +3182,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 .xv-page-frame {
+  position: relative;
   width: 100%;
   min-width: 0;
   min-height: 100%;
@@ -3190,22 +3191,23 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
 }
 
 .xv-page-frame-toolbar {
-  position: sticky;
+  position: absolute;
   top: 0;
+  right: 0;
   z-index: 12;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  min-height: 28px;
-  margin: calc(clamp(12px, 1.25vw, 18px) * -1)
-          calc(clamp(12px, 1.25vw, 18px) * -1)
-          4px;
-  padding: 4px clamp(12px, 1.25vw, 18px) 0;
-  background: var(--xv-app-canvas, var(--app-panel));
+  width: auto;
+  min-height: 30px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .xv-page-frame-content {
   min-width: 0;
+  padding-top: 34px;
 }
 
 .xv-page-fullscreen-toggle {
@@ -3310,8 +3312,8 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   }
 
   .xv-page-frame-toolbar {
-    margin: -12px -12px 4px;
-    padding: 4px 12px 0;
+    margin: 0;
+    padding: 0;
   }
 
   .xv-page-fullscreen-stage {

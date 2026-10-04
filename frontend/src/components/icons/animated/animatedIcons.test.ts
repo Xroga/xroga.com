@@ -226,16 +226,16 @@ test('no static lucide glyph is left at a control that was given an animated one
 /**
  * The send button is a state machine, not one glyph. Only `idle` became the ship's
  * wheel: `sending` shows a request in flight and refuses a second submit,
- * `thinking` is the Stop control for a streaming response, and `launched` is the
- * confirmation. Replacing the whole icon would have taken the ability to stop a
- * response away with it.
+ * `thinking` is the Stop control for a streaming response, while `launched` returns
+ * to rest instead of flashing a green success state unrelated to the response.
  */
 test('the send button takes the wheel at rest and keeps the rest of its states', () => {
   assert.match(SEND, /icon=\{ShipWheelIcon\}/, 'the idle send glyph is not the wheel');
-  assert.match(SEND, /if \(!loading && !busy && !done\)/, 'the wheel is not scoped to idle');
-  for (const kept of ['LeafLoader', 'xv-sendicon__sweep', 'xv-sendicon__stop', 'xv-sendicon__check']) {
+  assert.match(SEND, /if \(!loading && !busy\)/, 'the wheel is not scoped to non-busy states');
+  for (const kept of ['LeafLoader', 'xv-sendicon__sweep', 'xv-sendicon__stop']) {
     assert.ok(SEND.includes(kept), `the send button lost ${kept}`);
   }
+  assert.ok(!SEND.includes('xv-sendicon__check'), 'the green post-send check returned');
 });
 
 
@@ -329,7 +329,7 @@ test('the workspace launcher opens Project edits, with a pen', () => {
 /*
  * The homepage header uses the product's icons, not its own.
  *
- * Theme and Dashboard sit in one segmented pill beside the wordmark, and they were
+ * Theme and Workspace sit in one segmented pill beside the wordmark, and they were
  * the last two static lucide glyphs on a control the reader meets before anything
  * else. The palette and the grid are the same components the sidebar, the collapsed
  * rail and the mobile bottom bar use for those destinations, so a place looks like
@@ -343,11 +343,11 @@ test('the shared public header owns the homepage theme and account controls', ()
   assert.ok(!/<Palette\b/.test(SWITCHER), 'the static palette is back');
 
   assert.match(HEADER, /<HomepageThemeSwitcher \/>/, 'the public header lost the canonical theme control');
-  const dashboardAt = HEADER.indexOf('xv-header-dashboard-button');
-  assert.ok(dashboardAt >= 0, 'the signed-in Dashboard action is gone');
-  const dashboardControl = HEADER.slice(dashboardAt, HEADER.indexOf('</button>', dashboardAt));
-  assert.match(dashboardControl, /<LayoutGrid\b/, 'the signed-in Dashboard action lost its grid');
-  assert.doesNotMatch(dashboardControl, /<LayoutDashboard\b/, 'the Dashboard control uses the wrong glyph');
+  const workspaceAt = HEADER.indexOf('xv-header-dashboard-button');
+  assert.ok(workspaceAt >= 0, 'the signed-in Workspace action is gone');
+  const workspaceControl = HEADER.slice(workspaceAt, HEADER.indexOf('</button>', workspaceAt));
+  assert.match(workspaceControl, /<TerminalSquare\b/, 'the signed-in Workspace action lost its terminal glyph');
+  assert.match(workspaceControl, /Workspace/, 'the account action still uses the Dashboard label');
 });
 
 /**

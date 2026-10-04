@@ -6,6 +6,7 @@ import { AppProviders } from '@/components/providers/AppProviders';
 import { UserCacheScopeBootstrap } from '@/components/bootstrap/UserCacheScopeBootstrap';
 import { WorkspaceIdentityProvider } from '@/components/layout/WorkspaceIdentityContext';
 import { normalizeOnboarding, shouldRouteToOnboarding } from '@/lib/onboarding';
+import { resolveUserDisplayName } from '@/lib/userDisplayName';
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -19,19 +20,21 @@ export default async function WorkspaceLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (user) {
-    const { data: profile } = await supabase
+  const profile = user
+    ? (await supabase
       .from('profiles')
-      .select('onboarding')
+      .select('onboarding, display_name')
       .eq('id', user.id)
-      .single();
+      .single()).data
+    : null;
 
+  if (user) {
     if (profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
       redirect('/onboarding');
     }
   }
 
-  const displayName = user?.email?.split('@')[0] ?? 'Guest';
+  const displayName = resolveUserDisplayName(user, profile?.display_name, 'Guest');
   const status = user ? 'authenticated' : 'guest';
 
   return (

@@ -13,8 +13,6 @@ type Particle = {
   life: number;
   maxLife: number;
   alpha: number;
-  spin: number;
-  spinSpeed: number;
 };
 
 type PointerSample = {
@@ -23,12 +21,15 @@ type PointerSample = {
   time: number;
 };
 
-const MAX_PARTICLES = 760;
-const BASE_EMIT = 12;
-const FAST_EMIT = 22;
-const TRAIL_SPACING = 11;
-const MAX_SEGMENT_POINTS = 7;
-const DPR_CAP = 1.25;
+// Keep this decorative layer comfortably below the frame budget. The previous
+// settings could draw 760 particles and repeatedly emit more than 150 per pointer
+// event, which made cursor movement compete with navigation and page animation.
+const MAX_PARTICLES = 180;
+const BASE_EMIT = 3;
+const FAST_EMIT = 6;
+const TRAIL_SPACING = 20;
+const MAX_SEGMENT_POINTS = 3;
+const DPR_CAP = 1;
 
 function currentTheme(): ThemeName {
   if (document.body.classList.contains('theme-beige')) return 'beige';
@@ -67,8 +68,6 @@ function emitBurst(
       life,
       maxLife: life,
       alpha: 0.45 + Math.random() * 0.55,
-      spin: Math.random() * Math.PI,
-      spinSpeed: (Math.random() - 0.5) * 0.003,
     });
   }
 }
@@ -185,17 +184,11 @@ export function HomepageCursorGlitter() {
         particle.y += particle.vy * delta;
         particle.vx *= 0.986;
         particle.vy *= 0.986;
-        particle.spin += particle.spinSpeed * delta;
-
         const scale = 0.72 + (1 - age) * 0.48;
         const size = Math.max(1, particle.size * scale);
 
-        ctx.save();
-        ctx.translate(particle.x, particle.y);
-        ctx.rotate(particle.spin);
         ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
-        ctx.fillRect(-size / 2, -size / 2, size, size);
-        ctx.restore();
+        ctx.fillRect(particle.x - size / 2, particle.y - size / 2, size, size);
 
         particles[writeIndex] = particle;
         writeIndex += 1;

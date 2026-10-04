@@ -1147,8 +1147,7 @@ body.theme-gray * {
    * shadow: the header is a thing now, not an arrangement.
    */
   .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/white-heaven-horizon-20260831.webp');
-    --xv-mobile-header-position: center;
+    --xv-mobile-header-surface: linear-gradient(135deg, #ffffff 0%, #eef4fb 52%, #dce8f5 100%);
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1162,7 +1161,7 @@ body.theme-gray * {
     padding: 0.2rem 0.35rem 0.2rem 0.25rem;
     border-radius: 18px;
     border: 1px solid color-mix(in srgb, var(--card-border) 82%, var(--foreground) 18%);
-    background: color-mix(in srgb, var(--card) 32%, transparent);
+    background: var(--xv-mobile-header-surface);
     box-shadow: 0 14px 36px -22px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.18);
     pointer-events: auto;
   }
@@ -1175,28 +1174,20 @@ body.theme-gray * {
     pointer-events: none;
   }
   .xv-mobile-workspace-pill::before {
-    background-image: var(--xv-mobile-header-art);
-    background-position: var(--xv-mobile-header-position);
-    background-size: cover;
-    opacity: 1;
-    filter: saturate(0.9) contrast(1.04);
-    transform: scale(1.015);
+    background: var(--xv-mobile-header-surface);
   }
   .xv-mobile-workspace-pill::after {
     z-index: -1;
     background: linear-gradient(90deg, color-mix(in srgb, var(--card) 22%, transparent), transparent 34% 68%, color-mix(in srgb, var(--card) 18%, transparent));
   }
   body.theme-beige .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/beige-architecture-20260830.webp');
-    --xv-mobile-header-position: center 56%;
+    --xv-mobile-header-surface: linear-gradient(135deg, #fffaf1 0%, #efe3cf 52%, #dcc7a8 100%);
   }
   body.theme-gray .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/gray-skyline-20260830.webp');
-    --xv-mobile-header-position: center 86%;
+    --xv-mobile-header-surface: linear-gradient(135deg, #4a4d54 0%, #303238 54%, #22242a 100%);
   }
   body.theme-black .xv-mobile-workspace-pill {
-    --xv-mobile-header-art: url('/workspace/mobile-header/black-coder-universe-20260830.webp');
-    --xv-mobile-header-position: center 50%;
+    --xv-mobile-header-surface: linear-gradient(135deg, #151b28 0%, #090c12 54%, #111827 100%);
   }
   .xv-mobile-workspace-logo {
     width: 102px !important;
@@ -1214,8 +1205,6 @@ body.theme-gray * {
     border-radius: 999px;
     background: color-mix(in srgb, var(--card) 70%, transparent);
     box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.58), inset 0 1px 0 color-mix(in srgb, var(--foreground) 7%, transparent);
-    backdrop-filter: blur(9px) saturate(1.08);
-    -webkit-backdrop-filter: blur(9px) saturate(1.08);
     pointer-events: auto;
   }
   .xv-mobile-workspace-actions button {
@@ -8040,7 +8029,7 @@ body.theme-gray .xv-rp-loader {
   position: absolute;
   z-index: 18;
   left: 50%;
-  top: -2.45rem;
+  top: -2.75rem;
   display: inline-flex;
   width: 2.25rem;
   min-width: 2.25rem;
@@ -8053,8 +8042,8 @@ body.theme-gray .xv-rp-loader {
   border-radius: 0.62rem;
   background: color-mix(in srgb, var(--app-panel) 78%, transparent);
   color: color-mix(in srgb, var(--foreground) 78%, transparent);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(130%) blur(8px);
+  backdrop-filter: saturate(130%) blur(8px);
   box-shadow: 0 4px 16px color-mix(in srgb, #000 16%, transparent);
   cursor: pointer;
   transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
@@ -9391,15 +9380,6 @@ body.theme-beige {
   color: var(--text-primary, var(--foreground));
   box-shadow: inset 0 0 0 1px var(--border-subtle, var(--card-border));
 }
-/* Complete: a single confirming pop, in green rather than the accent so the
-   difference from idle is legible without reading the glyph. */
-.xv-send[data-state='done'] {
-  background: linear-gradient(160deg, #22c55e 0%, #16a34a 100%);
-  color: #fff;
-  animation: xv-send-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes xv-send-pop { 0% { transform: scale(0.86); } 55% { transform: scale(1.08); } 100% { transform: scale(1); } }
-
 /* --------------------------------------------------------- the send glyph */
 .xv-sendicon { display: grid; place-items: center; }
 /* Direct child only. The idle state is now an `AnimatedIcon`, which renders its own
@@ -9413,8 +9393,7 @@ body.theme-beige {
 .xv-sendicon__head,
 .xv-sendicon__track,
 .xv-sendicon__sweep,
-.xv-sendicon__stop,
-.xv-sendicon__check { opacity: 0; transition: opacity 160ms ease; }
+.xv-sendicon__stop { opacity: 0; transition: opacity 160ms ease; }
 
 .xv-sendicon[data-state='idle'] .xv-sendicon__trail,
 .xv-sendicon[data-state='idle'] .xv-sendicon__head { opacity: 1; }
@@ -9423,7 +9402,6 @@ body.theme-beige {
 .xv-sendicon[data-state='busy'] .xv-sendicon__sweep { opacity: 1; }
 .xv-sendicon[data-state='busy'] .xv-sendicon__stop { opacity: 1; }
 
-.xv-sendicon[data-state='done'] .xv-sendicon__check { opacity: 1; }
 
 /* ------------------------------------------------------------- leaf preloader
    Eight curved petals ringing an invisible circle. One transform animates: the
@@ -9470,12 +9448,6 @@ body.theme-beige {
 .xv-sendicon[data-state='busy'] .xv-sendicon__stop { animation: xv-sendicon-breathe 1.4s ease-in-out infinite; transform-origin: 12px 12px; }
 @keyframes xv-sendicon-breathe { 50% { scale: 0.78; opacity: 0.75; } }
 
-/* The check draws itself once on arrival rather than appearing whole. */
-.xv-sendicon[data-state='done'] .xv-sendicon__check {
-  stroke-dasharray: 100;
-  animation: xv-sendicon-draw 380ms cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-@keyframes xv-sendicon-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 
 /* Hover nudges the trail forward, which is the one flourish on the resting state. */
 .xv-send:hover:not(:disabled) .xv-sendicon[data-state='idle'] .xv-sendicon__head { animation: xv-sendicon-nudge 620ms ease-out; }
@@ -9624,13 +9596,10 @@ body.theme-beige {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Each state stays visually distinct — the ring, the check, and the colour all
-     remain — but nothing loops, sweeps, or pops. */
+  /* Each working state stays visually distinct, but nothing loops or sweeps. */
   .xv-send__glow,
-  .xv-send[data-state='done'],
   .xv-sendicon__sweep,
   .xv-sendicon[data-state='busy'] .xv-sendicon__stop,
-  .xv-sendicon[data-state='done'] .xv-sendicon__check,
   .xv-send:hover:not(:disabled) .xv-sendicon[data-state='idle'] .xv-sendicon__head { animation: none; }
   .xv-sendicon__sweep { stroke-dasharray: 100; opacity: 0.35; }
 }
@@ -14119,7 +14088,8 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
 
 /* One reusable two-stage beta notice across public and authenticated surfaces. */
 .xv-beta-banner {
-  position: relative;
+  position: sticky;
+  top: 0.35rem;
   z-index: 45;
   display: flex;
   width: min(calc(100% - 16px), 1240px);
@@ -14129,17 +14099,19 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
   gap: 10px;
   margin: 7px auto 0;
   padding: 6px 38px 6px 14px;
-  border: 1px solid color-mix(in srgb, var(--foreground) 13%, transparent);
+  border: 1px solid color-mix(in srgb, #e5484d 58%, transparent);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--card) 82%, transparent);
-  color: var(--foreground);
-  box-shadow: 0 8px 28px -20px rgba(0, 0, 0, .5);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
+  background: color-mix(in srgb, #e5484d 10%, var(--card) 90%);
+  color: color-mix(in srgb, #b4232d 82%, var(--foreground) 18%);
+  box-shadow: 0 8px 24px -20px rgba(180, 35, 45, .55);
   font-size: 11px;
   line-height: 1.35;
 }
 .xv-beta-banner--compact { width: calc(100% - 14px); flex: none; margin-top: 5px; }
+.xv-public-marketing-shell > .xv-beta-banner {
+  top: 5.75rem;
+  z-index: 1390;
+}
 .xv-beta-banner__message { animation: xv-beta-message-in 300ms ease both; text-align: center; }
 .xv-beta-banner__cta {
   display: inline-flex;
@@ -14148,12 +14120,12 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
   gap: 5px;
   padding: 5px 8px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--accent) 13%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, #e5484d 14%, transparent);
+  color: #c92f38;
   font-size: 10px;
   font-weight: 700;
 }
-.xv-beta-banner__cta:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.xv-beta-banner__cta:hover { background: color-mix(in srgb, #e5484d 22%, transparent); }
 .xv-beta-banner__cta svg { width: 12px; height: 12px; }
 .xv-beta-banner__close {
   position: absolute;
@@ -14173,6 +14145,8 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
 
 @media (max-width: 700px) {
   .xv-beta-banner { justify-content: flex-start; font-size: 10px; text-align: left; }
+  .xv-public-marketing-shell > .xv-beta-banner,
+  .xv-main-column > .xv-beta-banner--compact { top: 4.75rem; }
   .xv-beta-banner__message { text-align: left; }
   .xv-beta-banner__cta { padding-inline: 6px; }
   .xv-pqm-submenu { top: 64px; right: 8px !important; left: auto !important; width: 228px; }
@@ -14185,23 +14159,40 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
 /* Final cascade locks for mounted workspace controls. Keep these after every legacy
    skin block so a later historical selector cannot reintroduce the reported UI. */
 .xv-dashboard-welcome--composer .xv-welcome-editorial {
-  gap: .28rem !important;
-  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif !important;
-  font-size: clamp(1.45rem, 2.25vw, 1.82rem) !important;
-  font-weight: 300 !important;
-  letter-spacing: -.055em !important;
-  line-height: .94 !important;
-  text-transform: uppercase !important;
+  gap: .32rem !important;
+  font-family: var(--font-goga), var(--font-inter), system-ui, sans-serif !important;
+  font-size: clamp(1.65rem, 2.8vw, 2.25rem) !important;
+  font-weight: 760 !important;
+  letter-spacing: -.06em !important;
+  line-height: .98 !important;
+  text-transform: none !important;
 }
 .xv-dashboard-welcome--composer .xv-welcome-editorial > span,
 .xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
   color: var(--text-primary) !important;
   font-family: inherit !important;
-  font-weight: 300 !important;
-  text-transform: uppercase !important;
+  font-weight: 760 !important;
+  text-transform: none !important;
 }
 .xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
-  color: var(--text-secondary) !important;
+  color: #e5484d !important;
+}
+
+/* Long histories skip paint and layout work for turns outside the viewport while
+   retaining their estimated size, keeping scrolling responsive during large builds. */
+.xv-terminal-turn {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 180px;
+}
+
+@media (max-width: 1023px), (pointer: coarse) {
+  .xv-beta-banner,
+  .xv-conversation-navigator,
+  .xv-marketing-mobile-menu[data-open='true'] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .xv-homepage-cursor-glitter { display: none !important; }
 }
 .xv-cba-trigger { width: 32px; height: 32px; border-radius: 9px; }
 .xv-cba-trigger .xv-animated-nav-icon,

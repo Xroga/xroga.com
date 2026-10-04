@@ -132,7 +132,7 @@ test('the bottom dock mirrors the compact rounded top header', () => {
   assert.match(active, /color: var\(--background\)/, 'the active label does not invert with its theme');
 });
 
-test('the mobile header is one textured glass frame around the mark and controls', () => {
+test('the mobile header is one lightweight theme surface around the mark and controls', () => {
   assert.match(SIDEBAR, /xv-mobile-workspace-pill/, 'the header is two floating elements again');
   const pill = CSS.slice(
     CSS.indexOf('.xv-mobile-workspace-pill {'),
@@ -142,14 +142,10 @@ test('the mobile header is one textured glass frame around the mark and controls
   assert.match(pill, /border-radius: 18px;/, 'the header lost its compact rounded frame');
   assert.match(pill, /pointer-events: auto;/, 'the pill cannot be touched');
   assert.match(pill, /justify-content: space-between;/, 'the mark and the controls are no longer opposed');
-  assert.match(pill, /--xv-mobile-header-art: url\('\/workspace\/mobile-header\/white-heaven-horizon-20260831\.webp'\)/);
-  assert.match(pill, /background-image: var\(--xv-mobile-header-art\)/);
-  for (const [theme, asset] of [
-    ['beige', 'beige-architecture-20260830.webp'],
-    ['gray', 'gray-skyline-20260830.webp'],
-    ['black', 'black-coder-universe-20260830.webp'],
-  ]) {
-    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{[\\s\\S]*?${asset}`));
+  assert.match(pill, /--xv-mobile-header-surface: linear-gradient/);
+  assert.doesNotMatch(pill, /background-image|mobile-header\//);
+  for (const theme of ['beige', 'gray', 'black']) {
+    assert.match(CSS, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{[\\s\\S]*?--xv-mobile-header-surface: linear-gradient`));
   }
 });
 /**

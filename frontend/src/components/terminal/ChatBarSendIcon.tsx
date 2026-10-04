@@ -15,8 +15,8 @@ import { ShipWheelIcon } from '@/components/icons/animated/ShipWheelIcon';
  *   sending   → the leaf preloader, while the submit request is in flight
  *   thinking  → a stop square inside a sweeping ring; the button is the stop
  *               control while a response streams back
- *   launched  → a check that draws itself once, then the state machine in
- *               TerminalChatBar returns to idle after 1.4s
+ *   launched  → the resting send control; completion is represented in the
+ *               conversation instead of by a transient green check
  *
  * `sending` and `thinking` are deliberately different pictures. They used to share
  * the stop treatment, but they are not the same thing to a user: during `sending`
@@ -59,18 +59,18 @@ export function ChatBarSendIcon({
 }) {
   const loading = isSendLoading(state);
   const busy = isSendBusy(state) && !loading;
-  const done = state === 'launched';
 
   /*
    * Idle is the ship's wheel, which turns as it is reached for.
    *
    * Only idle. The other three states are not decoration: `sending` must show that
    * a request is in flight and refuse a second submit, `thinking` is the Stop
-   * control for a streaming response, and `launched` is the confirmation. Replacing
+   * control for a streaming response. `launched` intentionally returns to the
+   * resting wheel instead of showing an unrelated success check. Replacing
    * the whole glyph with one wheel would have taken the ability to stop a response
    * away with it, so those keep the state machine drawn below.
    */
-  if (!loading && !busy && !done) {
+  if (!loading && !busy) {
     return (
       <span className={`xv-sendicon ${className ?? ''}`} data-state="idle" style={{ width: size, height: size }}>
         <AnimatedIcon icon={ShipWheelIcon} size={size} />
@@ -95,7 +95,7 @@ export function ChatBarSendIcon({
   return (
     <span
       className={`xv-sendicon ${className ?? ''}`}
-      data-state={busy ? 'busy' : done ? 'done' : 'idle'}
+      data-state={busy ? 'busy' : 'idle'}
       style={{ width: size, height: size }}
     >
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -133,16 +133,6 @@ export function ChatBarSendIcon({
         />
         <rect className="xv-sendicon__stop" x="9" y="9" width="6" height="6" rx="1.6" fill="currentColor" />
 
-        {/* complete — a check that draws once */}
-        <path
-          className="xv-sendicon__check"
-          d="m6.5 12.4 3.6 3.6 7.4-7.9"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          pathLength={100}
-        />
       </svg>
     </span>
   );

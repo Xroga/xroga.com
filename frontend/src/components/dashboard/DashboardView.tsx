@@ -5,7 +5,6 @@ import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
 import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
 import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
-import { DashboardWelcome } from '@/components/dashboard/DashboardWelcome';
 import {
   useThemeStore,
   WORKSPACE_MAX_WIDTH,
@@ -209,7 +208,6 @@ export function DashboardView() {
       data-conversation={hasConversation ? 'true' : 'false'}
     >
       <ApiConnectionBanner />
-      <DashboardWelcome hidden={fullscreen || !hasConversation} />
       <SwarmMessageLog chromeless incognito={incognito} />
     </div>
   );

@@ -662,7 +662,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             <span className="min-w-0 flex-1 text-left">
               <span className="block truncate text-[12px] font-medium leading-tight xv-sidebar-profile-name">{userName}</span>
               {userPlan === 'Free' ? (
-                <span className="xv-profile-upgrade-chip">Upgrade to Pro</span>
+                <span className="xv-profile-upgrade-chip" title="Compare plans and upgrade">Premium</span>
               ) : (
                 <span className="block truncate text-[10px] xv-sidebar-profile-plan">{userPlan}</span>
               )}

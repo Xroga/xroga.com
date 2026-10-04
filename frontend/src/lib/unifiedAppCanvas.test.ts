@@ -53,6 +53,8 @@ test('page fullscreen control lives inside the page surface in both states', () 
     PAGE_FRAME,
     /xv-page-fullscreen-stage[\s\S]*xv-page-surface xv-page-surface--fullscreen[\s\S]*\{frame\}/,
   );
+  assert.match(UIVERSE, /\.xv-page-frame-toolbar\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?right:\s*0;/);
+  assert.match(UIVERSE, /\.xv-page-frame-toolbar\s*\{[\s\S]*?background:\s*transparent;/);
 });
 
 test('Project edits is a rounded inset surface inside the workspace', () => {

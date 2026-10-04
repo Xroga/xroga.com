@@ -14,8 +14,11 @@ export function BetaExpectationBanner({ compact = false }: { compact?: boolean }
   useEffect(() => {
     if (window.sessionStorage.getItem(DISMISSED_KEY) === '1') return;
     setVisible(true);
-    const timer = window.setTimeout(() => setStage('ideas'), 7_000);
-    return () => window.clearTimeout(timer);
+    const timer = window.setInterval(
+      () => setStage((current) => current === 'expectations' ? 'ideas' : 'expectations'),
+      7_000,
+    );
+    return () => window.clearInterval(timer);
   }, []);
 
   if (!visible) return null;

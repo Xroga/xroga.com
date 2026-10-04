@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { UserCacheScopeBootstrap } from '@/components/bootstrap/UserCacheScopeBootstrap';
 import { normalizeOnboarding, shouldRouteToOnboarding } from '@/lib/onboarding';
 import { WorkspaceIdentityProvider } from '@/components/layout/WorkspaceIdentityContext';
+import { resolveUserDisplayName } from '@/lib/userDisplayName';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -35,7 +36,7 @@ export default async function ShellLayout({
    */
   const { data: profile } = await supabase
     .from('profiles')
-    .select('onboarding')
+    .select('onboarding, display_name')
     .eq('id', user.id)
     .single();
 
@@ -43,7 +44,7 @@ export default async function ShellLayout({
     redirect('/onboarding');
   }
 
-  const displayName = user.email?.split('@')[0] ?? 'there';
+  const displayName = resolveUserDisplayName(user, profile?.display_name);
 
   return (
     <>

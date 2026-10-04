@@ -42,7 +42,7 @@ test('tips and ordinary notifications dismiss after five seconds', () => {
 test('avatar editing and account navigation remain separate controls', () => {
   assert.match(SIDEBAR, /size="sidebarCompact"[\s\S]*?onClick=\{\(\) => setAvatarPickerOpen\(true\)\}/);
   assert.match(SIDEBAR, /<ProfileQuickMenu[\s\S]*?displayName=\{userName\}[\s\S]*?email=\{email\}/);
-  assert.match(SIDEBAR, /xv-profile-upgrade-chip[\s\S]*?Upgrade to Pro/);
+  assert.match(SIDEBAR, /xv-profile-upgrade-chip[\s\S]*?Premium/);
 });
 
 test('account popup groups destinations and displays authenticated identity', () => {
@@ -57,14 +57,17 @@ test('account popup groups destinations and displays authenticated identity', ()
   assert.match(PROFILE_MENU, /event\.key !== 'Escape'/);
 });
 
-test('the beta banner rotates after seven seconds and is mounted on public and app surfaces', () => {
+test('the beta banner continuously alternates every seven seconds and is mounted after shared headers', () => {
   assert.match(BETA_BANNER, /7_000/);
+  assert.match(BETA_BANNER, /setInterval/);
+  assert.match(BETA_BANNER, /current === 'expectations' \? 'ideas' : 'expectations'/);
   assert.match(BETA_BANNER, /Xroga is live and open to explore/);
   assert.match(BETA_BANNER, /Have an idea for Xroga\?/);
   assert.match(BETA_BANNER, /Share Your Idea/);
   assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
   assert.match(APP_SHELL, /<BetaExpectationBanner compact \/>/);
+  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[^}]*top:\s*5\.75rem;[^}]*z-index:\s*1390;/);
 });
 
 test('composer retains a small bottom breathing space', () => {

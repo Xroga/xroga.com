@@ -110,17 +110,13 @@ test('personalization exposes every terminal palette and keeps automatic theme m
   assert.doesNotMatch(PANEL, /setTerminalSkin\(skinForTheme/);
 });
 
-test('mobile workspace headers use a distinct project-bound scene for every surface', () => {
-  for (const asset of [
-    'white-heaven-horizon-20260831.webp',
-    'black-coder-universe-20260830.webp',
-    'gray-skyline-20260830.webp',
-    'beige-architecture-20260830.webp',
-  ]) {
-    assert.ok(code.includes(asset), `${asset} is not wired into the mobile header`);
+test('mobile workspace headers use lightweight theme colour surfaces', () => {
+  for (const theme of ['white', 'black', 'gray', 'beige']) {
+    if (theme === 'white') assert.match(code, /--xv-mobile-header-surface:\s*linear-gradient/);
+    else assert.match(code, new RegExp(`body\\.theme-${theme} \\.xv-mobile-workspace-pill \\{[\\s\\S]*?--xv-mobile-header-surface:\\s*linear-gradient`));
   }
   assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*background:\s*color-mix\(in srgb, var\(--card\) 70%/);
-  assert.match(code, /xv-mobile-workspace-actions\s*\{[^}]*backdrop-filter:\s*blur\(9px\)/);
+  assert.doesNotMatch(code, /mobile-header\/[\w-]+\.webp/);
 });
 
 test('the default accent is the theme ink, not a colour', () => {

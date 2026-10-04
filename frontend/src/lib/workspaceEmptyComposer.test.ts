@@ -350,6 +350,11 @@ test('workspace transcript keeps balanced responsive gutters', () => {
   assert.match(CSS, /\.xv-terminal-body--flush \.xv-terminal-turn\s*\{[^}]*max-width:\s*56rem/);
 });
 
+test('the live transcript does not mount the starter headline as a scrolling wall', () => {
+  assert.doesNotMatch(DASHBOARD, /<DashboardWelcome/);
+  assert.match(DOCK, /<DashboardWelcome\s+composer\s*\/>/);
+});
+
 
 test('full prompt expands the existing prompt bubble instead of rendering a duplicate box', () => {
   assert.match(
@@ -847,8 +852,8 @@ test('the empty workspace uses an editorial action lockup above the canonical co
     /first[\s\S]*last[\s\S]*model you will ever need/i,
   );
 
-  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial\s*\{[^}]*font-family:\s*"Arial Narrow"[^}]*font-weight:\s*300 !important[^}]*text-transform:\s*uppercase !important/);
-  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial \.xv-welcome-editorial__build\s*\{[^}]*color:\s*var\(--text-secondary\) !important/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial\s*\{[^}]*font-family:\s*var\(--font-goga\)[^}]*font-weight:\s*760 !important[^}]*text-transform:\s*none !important/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial \.xv-welcome-editorial__build\s*\{[^}]*color:\s*#e5484d !important/);
 });
 
 test('default monochrome accents keep primary buttons legible in dark themes', () => {

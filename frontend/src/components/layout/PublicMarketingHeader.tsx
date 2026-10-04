@@ -14,14 +14,12 @@ import {
   GitBranch,
   Globe2,
   LayoutDashboard,
-  LayoutGrid,
   Menu,
   Rocket,
   Search,
   ShieldCheck,
   Sparkles,
   TerminalSquare,
-  WandSparkles,
   Workflow,
   X,
 } from 'lucide-react';
@@ -519,8 +517,8 @@ export function PublicMarketingHeader() {
                   {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
                 </span>
                 <span className="xv-header-build-inner">
-                  <LayoutGrid className="xv-header-build-icon" aria-hidden="true" />
-                  Dashboard
+                  <TerminalSquare className="xv-header-build-icon" aria-hidden="true" />
+                  Workspace
                 </span>
               </button>
           ) : (
@@ -572,7 +570,7 @@ export function PublicMarketingHeader() {
           ))}
         </nav>
         <div className="xv-marketing-mobile-menu__actions">
-          <Link href={accountHref}>{loggedIn ? 'Dashboard' : 'Sign in'}</Link>
+          <Link href={accountHref}>{loggedIn ? 'Workspace' : 'Sign in'}</Link>
           {!loggedIn && <Link className="xv-marketing-button xv-marketing-button--primary" href="/workspace">Start Building Free</Link>}
         </div>
       </div>
