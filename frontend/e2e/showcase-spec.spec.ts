@@ -483,76 +483,30 @@ test('showcase surfaces stay readable in every Xroga theme', async ({ page }) =>
 
 /* ------------------------------------------------------- homepage structure */
 
-test('the homepage showcase section sits directly after the hero', async ({ page }) => {
+test('the outcome engine sits directly after the homepage hero', async ({ page }) => {
   await page.goto('/');
 
   const order = await page.evaluate(() => {
-    const hero =
-      document.querySelector(
-        '.xv-hc-hero'
-      );
+    const hero = document.querySelector('.xv-hc-hero');
+    const outcome = document.querySelector('.xv-oe');
 
-    const showcase =
-      document
-        .getElementById(
-          'showcase-home-heading'
-        )
-        ?.closest('section');
+    if (!hero || !outcome) return null;
 
-    if (!hero || !showcase) {
-      return null;
-    }
-
-    // Node.DOCUMENT_POSITION_FOLLOWING === 4
-    const follows = Boolean(
-      hero.compareDocumentPosition(
-        showcase
-      ) & 4
-    );
-
-    const between = [
-      ...document.querySelectorAll(
-        'section'
-      ),
-    ].filter((node) => {
-      const afterHero = Boolean(
-        hero.compareDocumentPosition(
-          node
-        ) & 4
-      );
-
-      const beforeShowcase =
-        Boolean(
-          showcase.compareDocumentPosition(
-            node
-          ) & 2
-        );
-
-      return (
-        afterHero &&
-        beforeShowcase &&
-        !hero.contains(node) &&
-        !showcase.contains(node)
-      );
+    const follows = Boolean(hero.compareDocumentPosition(outcome) & 4);
+    const between = [...document.querySelectorAll('section')].filter((node) => {
+      const afterHero = Boolean(hero.compareDocumentPosition(node) & 4);
+      const beforeOutcome = Boolean(outcome.compareDocumentPosition(node) & 2);
+      return afterHero && beforeOutcome && !hero.contains(node) && !outcome.contains(node);
     }).length;
 
-    return {
-      follows,
-      between,
-    };
+    return { follows, between };
   });
 
   expect(order).not.toBeNull();
-
-  expect(
-    order!.follows
-  ).toBe(true);
-
-  expect(
-    order!.between,
-    'no section should sit between the hero and the showcase'
-  ).toBe(0);
+  expect(order!.follows).toBe(true);
+  expect(order!.between, 'no section should sit between the hero and outcome engine').toBe(0);
 });
+
 
 test('the plan capacity section is gone from the homepage', async ({ page }) => {
   await page.goto('/');
