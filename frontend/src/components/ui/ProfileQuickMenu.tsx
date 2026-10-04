@@ -82,7 +82,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
   const [pos, setPos] = useState({ top: 0, left: 0, submenuSide: 'right' as 'left' | 'right' });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const submenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const submenuCloseTimer = useRef<number | null>(null);
   const router = useRouter();
 
   function cancelSubmenuClose() {
