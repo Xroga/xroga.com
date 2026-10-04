@@ -56,7 +56,7 @@ const rotatingPrompts = [problems[1].prompt,problems[4].prompt,problems[9].promp
 function AppLogo({app}:{app:AppNode}) {
   const [broken,setBroken]=useState(false);
   return <span className="xv-oe-logo" aria-hidden="true">
-    {!broken ? <img src={\`https://cdn.simpleicons.org/\${app.slug}/111827\`} alt="" loading="lazy" onError={()=>setBroken(true)} /> :
+    {!broken ? <img src={`https://cdn.simpleicons.org/${app.slug}`} alt="" loading="lazy" onError={()=>setBroken(true)} /> :
       <b>{app.name.split(/\s+/).map(x=>x[0]).slice(0,2).join('')}</b>}
   </span>;
 }
@@ -67,7 +67,7 @@ function positionFor(i:number){
   const counts=[18,20,15];
   const angle=(index/(counts[ring]||18))*Math.PI*2+ring*.47+i*.035;
   const rx=[30,40,46][ring], ry=[24,37,42][ring];
-  return {left:\`\${50+Math.cos(angle)*rx}%\`,top:\`\${49+Math.sin(angle)*ry}%\`,far:ring===2};
+  return {left:`${50+Math.cos(angle)*rx}%`,top:`${49+Math.sin(angle)*ry}%`,far:ring===2};
 }
 
 export function XrogaOutcomeEngine() {
@@ -142,7 +142,7 @@ export function XrogaOutcomeEngine() {
             <div><button type="button" title="Attachments are enabled by the production task contract"><Paperclip/> <span>Attach</span></button><button type="button" title="Connections are requested only when a task needs them"><PlugZap/> <span>Connect apps</span></button><span className="xv-oe-mode">AUTO ROUTING</span></div>
             <button className="xv-oe-start" type="button" disabled={!prompt.trim()||submitState==='loading'} onClick={()=>void startTask()}>{submitState==='loading'?'Starting…':'Start task'}<ArrowRight/></button>
           </div>
-          <div className={\`xv-oe-submit-note is-\${submitState}\`} role="status" aria-live="polite">
+          <div className={`xv-oe-submit-note is-${submitState}`} role="status" aria-live="polite">
             {submitState==='error'&&'The workspace could not be opened. No task was started and no success state was fabricated.'}
             {submitState==='success'&&'Request handed to Xroga’s production workspace flow. The workspace will start it after authentication and runtime checks.'}
           </div>
@@ -165,10 +165,10 @@ export function XrogaOutcomeEngine() {
         <div className="xv-oe-universe" ref={stageRef}>
           <svg className="xv-oe-beams" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true">
             <defs><linearGradient id="oeBeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="var(--hc-blue)" stopOpacity=".05"/><stop offset=".5" stopColor="var(--hc-blue)" stopOpacity=".55"/><stop offset="1" stopColor="var(--hc-blue)" stopOpacity=".05"/></linearGradient></defs>
-            {apps.slice(0,36).map((_,i)=>{const p=positionFor(i);const x=parseFloat(p.left)*12,y=parseFloat(p.top)*7;return <path key={i} d={\`M600 350 Q \${(600+x)/2+(i%2?24:-24)} \${(350+y)/2} \${x} \${y}\`} className={i%5===0?'is-live':''}/>})}
+            {apps.slice(0,36).map((_,i)=>{const p=positionFor(i);const x=parseFloat(p.left)*12,y=parseFloat(p.top)*7;return <path key={i} d={`M600 350 Q ${(600+x)/2+(i%2?24:-24)} ${(350+y)/2} ${x} ${y}`} className={i%5===0?'is-live':''}/>})}
           </svg>
           <div className="xv-oe-core"><i/><i/><i/><div><b>X</b><strong>Xroga</strong><small>routes the work</small></div></div>
-          {apps.map((app,i)=>{const p=positionFor(i);const match=category==='All'||app.category===category;return <button key={app.name} type="button" className={\`xv-oe-node \${p.far?'is-far':''} \${match?'':'is-dim'}\`} style={{left:p.left,top:p.top,animationDelay:\`-\${(i%9)*.4}s\`}} onMouseEnter={()=>setHovered(app)} onMouseLeave={()=>setHovered(null)} onFocus={()=>setHovered(app)} onBlur={()=>setHovered(null)} aria-label={\`\${app.name}, \${app.category}\`}><AppLogo app={app}/>{app.connected&&<span className="xv-oe-connected"/>}</button>})}
+          {apps.map((app,i)=>{const p=positionFor(i);const match=category==='All'||app.category===category;return <button key={app.name} type="button" className={`xv-oe-node ${p.far?'is-far':''} ${match?'':'is-dim'}`} style={{left:p.left,top:p.top,animationDelay:`-${(i%9)*.4}s`}} onMouseEnter={()=>setHovered(app)} onMouseLeave={()=>setHovered(null)} onFocus={()=>setHovered(app)} onBlur={()=>setHovered(null)} aria-label={`${app.name}, ${app.category}`}><AppLogo app={app}/>{app.connected&&<span className="xv-oe-connected"/>}</button>})}
           {hovered&&<div className="xv-oe-tooltip"><strong>{hovered.name}</strong><p>Available through the Xroga integration layer when the required account, permissions and tool are connected.</p><span>{hovered.category} · connect when needed</span></div>}
           <div className="xv-oe-universe-caption">YOUR APPS <i/> YOUR APIs <i/> YOUR MCPS <i/> ONE WORKSPACE</div>
         </div>
@@ -186,7 +186,7 @@ export function XrogaOutcomeEngine() {
             <div className="xv-oe-scenario-copy"><span>{scenario.kicker}</span><h3>{scenario.title}</h3><p>{scenario.description}</p><div><button type="button" onClick={playExample}><Play/> {playing?'Restart example':'View example workflow'}</button><small>Example only — no fake execution</small></div><ul><li><ShieldCheck/> Real backend events only</li><li><LockKeyhole/> Approval gates for sensitive actions</li></ul></div>
             <div className="xv-oe-flow">
               <header><span><i className={playing?'is-live':step>=scenario.steps.length?'is-done':''}/><strong>{playing?'Example workflow playing':step>=scenario.steps.length?'Example complete':'Example ready'}</strong></span><small>{playing?'Illustration only':step>=scenario.steps.length?'No real task was executed':'Select “View example workflow”'}</small></header>
-              <div className="xv-oe-flow-steps">{scenario.steps.map((s,i)=><div key={s.label} className={\`xv-oe-flow-step \${i===step&&playing?'is-active':''} \${i<step||(!playing&&step>=scenario.steps.length)?'is-done':''} \${s.approval?'is-approval':''}\`}><span>{iconForStep(s.label)}</span><div><strong>{s.label}</strong><small>{s.detail}</small></div><em>{s.approval?'approval':i<step?'example':i===step&&playing?'active':'waiting'}</em></div>)}</div>
+              <div className="xv-oe-flow-steps">{scenario.steps.map((s,i)=><div key={s.label} className={`xv-oe-flow-step ${i===step&&playing?'is-active':''} ${i<step||(!playing&&step>=scenario.steps.length)?'is-done':''} ${s.approval?'is-approval':''}`}><span>{iconForStep(s.label)}</span><div><strong>{s.label}</strong><small>{s.detail}</small></div><em>{s.approval?'approval':i<step?'example':i===step&&playing?'active':'waiting'}</em></div>)}</div>
               <footer><span>i</span><p><strong>Truthful by default</strong> This canvas is explicitly an explanatory example. A live task should advance only from SSE, WebSocket or polling events emitted by Xroga’s real execution backend.</p></footer>
             </div>
           </div>
