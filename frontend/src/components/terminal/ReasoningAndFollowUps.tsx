@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { cn } from '@/lib/utils';
 import {
   extractImagesFromContent,
@@ -13,7 +14,7 @@ import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
 
 /** Modern AI response — professional markdown or structured plain text */
-export function ModernResponseText({
+export const ModernResponseText = memo(function ModernResponseText({
   content,
   streaming,
 }: {
@@ -79,4 +80,4 @@ export function ModernResponseText({
       )}
     </div>
   );
-}
+});

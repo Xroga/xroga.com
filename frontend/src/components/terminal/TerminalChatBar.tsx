@@ -21,6 +21,7 @@ import { autocorrectText } from '@/lib/chatSuggestions';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { dispatchCompanionEvent } from '@/lib/companion';
+import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
@@ -573,6 +574,7 @@ export function TerminalChatBar() {
                 textareaRef.current?.focus();
               }}
               surface={incognito ? 'incognito' : 'dashboard'}
+              trailingExtras={!incognito ? <CompanionComposerAnchor /> : null}
               compactGo={!!draft.trim()}
               sendState={sendState}
               stopping={loading}

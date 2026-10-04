@@ -112,7 +112,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 isDashboard ? 'h-full min-h-0' : 'min-h-screen'
               )}
             >
-              <BetaExpectationBanner compact />
+              {!isDashboard ? <BetaExpectationBanner compact /> : null}
               {/*
                 No page header here any more.
                 

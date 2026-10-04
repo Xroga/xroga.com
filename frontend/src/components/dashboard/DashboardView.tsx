@@ -22,6 +22,7 @@ import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
 import { MinimizeIcon } from '@/components/icons/animated/MinimizeIcon';
 import { markFreshTerminalIntent } from '@/lib/repoContext';
 import { BillingSuccessExperience } from '@/components/billing/BillingSuccessExperience';
+import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
 
 
 /**
@@ -229,13 +230,13 @@ export function DashboardView() {
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
         <header className="xv-workspace-header" data-testid="terminal-identity-header">
+          <WorkspaceIdentityMenu incognito={incognito} />
+
           <span className="xv-term-lights" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
-
-          <WorkspaceIdentityMenu incognito={incognito} />
 
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>
@@ -260,6 +261,8 @@ export function DashboardView() {
             </div>
           )}
         </header>
+
+        <BetaExpectationBanner compact />
 
         <div
           ref={bodyRef}

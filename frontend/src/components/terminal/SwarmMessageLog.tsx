@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useDeferredValue, useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -175,7 +175,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     if (finished && stickToBottomRef.current && !userScrolledUpRef.current) {
       scrollToBottom('smooth');
     }
-  }, [messages, loading, scrollToBottom]);
+  }, [loading, scrollToBottom]);
 
   useEffect(() => {
     const session = loadWorkspaceSession();
@@ -197,6 +197,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
     () => messages.filter((m) => !(m.role === 'system' && m.agent)),
     [messages]
   );
+  // Streaming updates arrive in small batches. Transcript paint is intentionally
+  // non-urgent so typing, stop controls, menus, and scrolling remain responsive.
+  const renderedMessages = useDeferredValue(visibleMessages);
 
   const promptByAssistantId = useMemo(() => {
     const prompts = new Map<string, string>();
@@ -209,22 +212,25 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   }, [visibleMessages]);
 
   const chatTurns = useMemo(() => buildChatTurns(visibleMessages), [visibleMessages]);
+  const chatTurnIds = useMemo(() => chatTurns.map((turn) => turn.id), [chatTurns]);
+  const chatTurnIdsKey = chatTurnIds.join('|');
+  const firstTurnId = chatTurnIds[0] ?? null;
 
   const scrollToFirst = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    const firstTurn = chatTurns[0];
-    if (firstTurn) messageRefs.current[firstTurn.id]?.scrollIntoView({ behavior, block: 'start' });
+    if (firstTurnId) messageRefs.current[firstTurnId]?.scrollIntoView({ behavior, block: 'start' });
     else transcriptScrollRoot().scrollTo({ top: 0, behavior });
     stickToBottomRef.current = false;
     userScrolledUpRef.current = true;
     setShowJumpToLatest(true);
-  }, [chatTurns, setShowJumpToLatest]);
+  }, [firstTurnId, setShowJumpToLatest]);
 
   useEffect(() => {
     registerScrollToFirst(scrollToFirst);
   }, [registerScrollToFirst, scrollToFirst]);
 
   useEffect(() => {
-    if (chatTurns.length === 0) {
+    const stableTurnIds = chatTurnIdsKey ? chatTurnIdsKey.split('|') : [];
+    if (stableTurnIds.length === 0) {
       setActiveTurnId(null);
       return;
     }
@@ -246,11 +252,11 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
 
         let bestId: string | null = null;
         let bestRatio = 0;
-        for (const turn of chatTurns) {
-          const ratio = ratios.get(turn.id) ?? 0;
+        for (const turnId of stableTurnIds) {
+          const ratio = ratios.get(turnId) ?? 0;
           if (ratio > bestRatio) {
             bestRatio = ratio;
-            bestId = turn.id;
+            bestId = turnId;
           }
         }
         if (bestId) setActiveTurnId(bestId);
@@ -262,13 +268,15 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
       }
     );
 
-    for (const turn of chatTurns) {
-      const el = messageRefs.current[turn.id];
+    for (const turnId of stableTurnIds) {
+      const el = messageRefs.current[turnId];
       if (el) observer.observe(el);
     }
 
     return () => observer.disconnect();
-  }, [chatTurns]);
+  // Prompt IDs are stable while assistant text streams. Rebuilding and re-observing
+  // the complete history for every token made long conversations progressively lag.
+  }, [chatTurnIdsKey]);
 
   function jumpToTurn(turnId: string) {
     messageRefs.current[turnId]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -339,13 +347,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             complaint this replaces. */}
         {chromeless ? null : (
         <div className="xv-terminal-header" data-testid="terminal-identity-header">
+          <WorkspaceIdentityMenu incognito={isIncognito} />
+
           <span className="xv-term-lights" aria-hidden="true">
             <i />
             <i />
             <i />
           </span>
-
-          <WorkspaceIdentityMenu incognito={isIncognito} />
 
           {isIncognito ? (
             <span className="xv-term-badge">Private · not saved</span>
@@ -415,7 +423,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             </div>
           )}
 
-          {visibleMessages.map((msg) => {
+          {renderedMessages.map((msg) => {
             const isLastAssistant = msg.id === lastAssistantId && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
             const isImageOutput =

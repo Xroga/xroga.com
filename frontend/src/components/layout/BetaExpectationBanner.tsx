@@ -29,19 +29,19 @@ export function BetaExpectationBanner({ compact = false }: { compact?: boolean }
   }
 
   return (
-    <aside className={cn('xv-beta-banner', compact && 'xv-beta-banner--compact')} aria-live="polite">
-      <div key={stage} className="xv-beta-banner__message">
-        {stage === 'expectations' ? (
-          <span><strong>Xroga is live and open to explore</strong><span aria-hidden="true"> — </span>we’re still building, so some features may not work perfectly yet.</span>
-        ) : (
-          <span><strong>Have an idea for Xroga?</strong><span aria-hidden="true"> </span>Share it with us — we may build it next.</span>
-        )}
+    <aside className={cn('xv-beta-banner', compact && 'xv-beta-banner--compact')}>
+      <div className="xv-beta-banner__message" aria-live="polite">
+        <span key={stage}>
+          {stage === 'expectations' ? (
+            <><strong>Xroga is live and open to explore</strong><span aria-hidden="true"> — </span>we’re still building, so some features may not work perfectly yet.</>
+          ) : (
+            <><strong>Have an idea for Xroga?</strong><span aria-hidden="true"> </span>Share it with us — we may build it next.</>
+          )}
+        </span>
       </div>
-      {stage === 'ideas' ? (
-        <Link href="/community?compose=feedback" className="xv-beta-banner__cta">
-          <Lightbulb aria-hidden="true" /> Share Your Idea
-        </Link>
-      ) : null}
+      <Link href="/community?compose=feedback" className={cn('xv-beta-banner__cta', stage === 'ideas' && 'is-visible')} aria-hidden={stage !== 'ideas'} tabIndex={stage === 'ideas' ? 0 : -1}>
+        <Lightbulb aria-hidden="true" /> Share Your Idea
+      </Link>
       <button type="button" className="xv-beta-banner__close" onClick={dismiss} aria-label="Dismiss Xroga notice">
         <X aria-hidden="true" />
       </button>

@@ -14251,6 +14251,135 @@ body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split {
   right: var(--xv-pane-right, 42%) !important;
   overflow-x: clip;
 }
+
+/* October workspace polish: stable notices, editorial identity, theme-native tools,
+   and a compact upgrade action. Kept at the end so legacy skin rules cannot win. */
+.xv-beta-banner {
+  height: 38px;
+  min-height: 38px;
+  contain: layout paint;
+}
+.xv-beta-banner__message {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xv-beta-banner__cta {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, background 140ms ease;
+}
+.xv-beta-banner__cta.is-visible {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.xv-dashboard-welcome--composer .xv-welcome-editorial {
+  gap: clamp(.22rem, .65vw, .55rem) !important;
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+  font-size: clamp(1.8rem, 3.25vw, 3rem) !important;
+  font-weight: 320 !important;
+  letter-spacing: -.065em !important;
+  line-height: .9 !important;
+  text-transform: uppercase !important;
+}
+.xv-dashboard-welcome--composer .xv-welcome-editorial > span,
+.xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
+  color: var(--foreground) !important;
+  font-weight: 320 !important;
+  text-transform: uppercase !important;
+}
+.xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
+  opacity: .58;
+}
+
+.xv-upgrade-action {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  min-width: 96px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: radial-gradient(65% 80% at 50% 110%, rgba(223,113,255,.86), transparent), linear-gradient(135deg,#7655f6,#5267ee);
+  color: #fff;
+  box-shadow: inset 0 1px rgba(255,255,255,.24), 0 7px 18px -11px rgba(86,74,230,.9);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.xv-upgrade-action--compact { min-width: 72px; height: 24px; padding-inline: 9px; border-radius: 8px; }
+.xv-upgrade-action__inner { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 720; line-height: 1; }
+.xv-upgrade-action--compact .xv-upgrade-action__inner { font-size: 9px; }
+.xv-upgrade-action__inner svg { width: 14px; height: 14px; }
+.xv-upgrade-action--compact .xv-upgrade-action__inner svg { width: 11px; height: 11px; }
+.xv-upgrade-action__fold { position: absolute; z-index: 3; top: 0; right: 0; width: 12px; height: 12px; border-bottom-left-radius: 6px; background: rgba(239,211,255,.7); box-shadow: 0 0 3px rgba(0,0,0,.35); transition: transform 260ms ease; }
+.xv-upgrade-action__fold::after { content: ''; position: absolute; inset: -2px; transform: translate(6px,-6px) rotate(45deg); background: var(--card); }
+.xv-upgrade-action__points { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.xv-upgrade-action__points i { position: absolute; bottom: -4px; left: calc(8% + var(--point-x, 0%)); width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: 0; }
+.xv-upgrade-action__points i:nth-child(2) { left: 20%; }.xv-upgrade-action__points i:nth-child(3) { left: 30%; }.xv-upgrade-action__points i:nth-child(4) { left: 40%; }.xv-upgrade-action__points i:nth-child(5) { left: 50%; }.xv-upgrade-action__points i:nth-child(6) { left: 60%; }.xv-upgrade-action__points i:nth-child(7) { left: 70%; }.xv-upgrade-action__points i:nth-child(8) { left: 80%; }.xv-upgrade-action__points i:nth-child(9) { left: 88%; }.xv-upgrade-action__points i:nth-child(10) { left: 94%; }
+button:hover .xv-upgrade-action, button:focus-visible .xv-upgrade-action { transform: translateY(-1px); box-shadow: inset 0 1px rgba(255,255,255,.28), 0 10px 24px -11px rgba(86,74,230,.95); }
+button:hover .xv-upgrade-action__fold, button:focus-visible .xv-upgrade-action__fold { transform: translate(8px,-8px); }
+button:hover .xv-upgrade-action__points i, button:focus-visible .xv-upgrade-action__points i { animation: xv-upgrade-points 1.45s ease-in-out infinite; }
+button:hover .xv-upgrade-action__points i:nth-child(2n), button:focus-visible .xv-upgrade-action__points i:nth-child(2n) { animation-delay: .18s; }
+button:hover .xv-upgrade-action__points i:nth-child(3n), button:focus-visible .xv-upgrade-action__points i:nth-child(3n) { animation-delay: .35s; }
+@keyframes xv-upgrade-points { 0% { transform: translateY(0); opacity: 0; } 18% { opacity: .9; } 100% { transform: translateY(-38px); opacity: 0; } }
+.xv-pqm-premium { justify-content: center; padding: 2px !important; background: transparent !important; }
+.xv-pqm-premium .xv-upgrade-action { width: 100%; }
+
+.xv-cba-menu {
+  border-color: color-mix(in srgb, var(--foreground) 13%, transparent) !important;
+  background: color-mix(in srgb, var(--card) 96%, transparent) !important;
+  color: var(--foreground) !important;
+}
+.xv-cba-item,
+body.theme-white .xv-cba-item,
+body.theme-beige .xv-cba-item { color: color-mix(in srgb, var(--foreground) 84%, transparent) !important; }
+.xv-cba-item:hover,
+body.theme-white .xv-cba-item:hover,
+body.theme-beige .xv-cba-item:hover,
+.xv-cba-item--command:hover,
+.xv-cba-item--plan:hover,
+.xv-cba-item--debug:hover { background: color-mix(in srgb, var(--foreground) 7%, transparent) !important; color: var(--foreground) !important; }
+.xv-cba-item__text b,
+body.theme-white .xv-cba-item__text b,
+body.theme-beige .xv-cba-item__text b { color: var(--foreground) !important; }
+.xv-cba-item__text i,
+body.theme-white .xv-cba-item__text i,
+body.theme-beige .xv-cba-item__text i { color: var(--muted) !important; }
+.xv-cba-kbd,
+body.theme-white .xv-cba-kbd,
+body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color-mix(in srgb, var(--foreground) 5%, transparent) !important; border-color: color-mix(in srgb, var(--foreground) 9%, transparent) !important; }
+
+@media (max-width: 1023px) {
+  .xv-workspace-header {
+    background: linear-gradient(110deg, color-mix(in srgb, var(--card) 96%, #79b5ff 4%), color-mix(in srgb, var(--card) 91%, #8a70ff 9%), color-mix(in srgb, var(--card) 96%, #73d7dd 4%)) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent) !important;
+  }
+  body.theme-black .xv-workspace-header,
+  body.theme-gray .xv-workspace-header {
+    background: linear-gradient(110deg, color-mix(in srgb, var(--card) 94%, #174a7c 6%), color-mix(in srgb, var(--card) 91%, #43306f 9%), color-mix(in srgb, var(--card) 95%, #18565d 5%)) !important;
+  }
+  .xv-workspace-header-tools .xv-ws-launch span { display: none !important; }
+  .xv-workspace-header-tools .xv-ws-launch { width: 30px !important; padding: 0 !important; justify-content: center; }
+}
+
+@media (max-width: 700px) {
+  .xv-beta-banner { height: 48px; min-height: 48px; padding-left: 10px; gap: 5px; }
+  .xv-beta-banner__message { font-size: 9px; line-height: 1.25; white-space: normal; }
+  .xv-beta-banner__cta { width: 58px; justify-content: center; padding-inline: 4px; font-size: 8px; line-height: 1.15; text-align: center; }
+  .xv-dashboard-welcome--composer .xv-welcome-editorial { font-size: clamp(1.42rem, 7.4vw, 2rem) !important; letter-spacing: -.06em !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-upgrade-action__points i { animation: none !important; }
+}
 body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split .xv-terminal-dock-inner {
   width: min(760px, calc(100% - 20px)) !important;
   max-width: calc(100% - 20px) !important;

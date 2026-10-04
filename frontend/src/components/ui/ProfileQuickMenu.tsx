@@ -4,7 +4,6 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
-import { AtomIcon } from '@/components/icons/animated/AtomIcon';
 import { LogoutIcon } from '@/components/icons/animated/LogoutIcon';
 import { SlidersHorizontalIcon } from '@/components/icons/animated/SlidersHorizontalIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
@@ -17,6 +16,7 @@ import { FileTextIcon } from '@/components/icons/animated/FileTextIcon';
 import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
 import { GlobeLockIcon } from '@/components/icons/animated/GlobeLockIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
+import { UpgradeActionButton } from '@/components/ui/UpgradeActionButton';
 import { createClient } from '@/lib/supabase/client';
 
 type MenuItem = {
@@ -193,7 +193,7 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
               <span className="min-w-0"><strong>{accountName}</strong>{email ? <small>{email}</small> : null}<em>{provider} account</em></span>
             </div>
             <button type="button" data-menu-key="plan" className="xv-pqm-premium" onClick={() => { setOpen(false); router.push('/pricing'); }}>
-              <AnimatedIcon icon={AtomIcon} size={15} intro={false} /><span><strong>Premium</strong><small>Compare plans and upgrade</small></span>
+              <UpgradeActionButton />
             </button>
             <div className="xv-pqm-primary" role="menu" aria-label="Account options">
               {GROUPS.map((group) => {

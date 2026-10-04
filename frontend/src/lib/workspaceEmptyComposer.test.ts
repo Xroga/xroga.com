@@ -6,11 +6,11 @@ const read = (path: string) =>
   readFileSync(new URL(path, import.meta.url), 'utf8');
 
 const DOCK = read('../components/terminal/TerminalDock.tsx');
+const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const WELCOME = read('../components/dashboard/DashboardWelcome.tsx');
 const IDEAS = read('../components/dashboard/WorkspaceStarterIdeas.tsx');
 const TEMPLATES = read('../components/dashboard/WorkspaceShowcaseStarts.tsx');
 const SIDEBAR = read('../components/layout/Sidebar.tsx');
-const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const REPO = read('../components/terminal/RepoContextBar.tsx');
 const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
 const CONNECTIONS = read('../components/terminal/WorkspaceConnectionsStrip.tsx');
@@ -460,16 +460,18 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
 });
 
 
-test('the desktop companion stays attached outside the canonical composer', () => {
+test('the companion and model identity sit beside the microphone inside the canonical composer', () => {
   assert.doesNotMatch(
     CSS,
     /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/,
   );
 
   assert.match(
-    DOCK,
-    /<CompanionComposerAnchor \/>[\s\S]*?<TerminalChatBar \/>/,
+    CHATBAR,
+    /trailingExtras=\{!incognito \? <CompanionComposerAnchor \/> : null\}/,
   );
+
+  assert.doesNotMatch(DOCK, /<CompanionComposerAnchor \/>/);
 
   assert.match(
     CSS,

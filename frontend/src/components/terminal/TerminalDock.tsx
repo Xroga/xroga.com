@@ -8,7 +8,6 @@ import { TerminalChatBar } from './TerminalChatBar';
 import { RepoContextBar } from './RepoContextBar';
 import { ChatbarQueueOutside } from './ChatbarQueueOutside';
 
-import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 import { useTerminalScroll } from '@/context/TerminalScrollContext';
 import { useThemeStore } from '@/store/useThemeStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
@@ -295,10 +294,6 @@ export function TerminalDock() {
                         displayName
                       }
                     />
-                  ) : null}
-
-                  {!incognito ? (
-                    <CompanionComposerAnchor />
                   ) : null}
 
                  <TerminalChatBar />

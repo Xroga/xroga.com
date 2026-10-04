@@ -11,6 +11,8 @@ const PROVIDERS = read('../components/providers/RootProviders.tsx');
 const BETA_BANNER = read('../components/layout/BetaExpectationBanner.tsx');
 const PUBLIC_CHROME = read('../components/layout/PublicMarketingChrome.tsx');
 const APP_SHELL = read('../components/layout/AppShell.tsx');
+const DASHBOARD_VIEW = read('../components/dashboard/DashboardView.tsx');
+const UPGRADE_ACTION = read('../components/ui/UpgradeActionButton.tsx');
 const CSS = read('../app/globals.css');
 
 test('Explore is a portalled hover-safe menu with all requested destinations', () => {
@@ -42,14 +44,17 @@ test('tips and ordinary notifications dismiss after five seconds', () => {
 test('avatar editing and account navigation remain separate controls', () => {
   assert.match(SIDEBAR, /size="sidebarCompact"[\s\S]*?onClick=\{\(\) => setAvatarPickerOpen\(true\)\}/);
   assert.match(SIDEBAR, /<ProfileQuickMenu[\s\S]*?displayName=\{userName\}[\s\S]*?email=\{email\}/);
-  assert.match(SIDEBAR, /xv-profile-upgrade-chip[\s\S]*?Premium/);
+  assert.match(SIDEBAR, /<UpgradeActionButton compact \/>/);
+  assert.match(UPGRADE_ACTION, /xv-upgrade-action__fold/);
+  assert.match(UPGRADE_ACTION, /Array\.from\(\{ length: 10 \}/);
 });
 
 test('account popup groups destinations and displays authenticated identity', () => {
   for (const label of ['Profile', 'Personalization', 'Settings', 'Community', 'Feedback', 'Xroga AI & CEO', 'Blog', 'Help', 'Privacy']) {
     assert.match(PROFILE_MENU, new RegExp(`label: '${label}'`));
   }
-  assert.match(PROFILE_MENU, /<strong>Premium<\/strong>/);
+  assert.match(PROFILE_MENU, /<UpgradeActionButton \/>/);
+  assert.doesNotMatch(PROFILE_MENU, /<strong>Premium<\/strong>/);
   assert.match(PROFILE_MENU, /data\.user\?\.app_metadata\?\.provider/);
   assert.match(PROFILE_MENU, /\{email \? <small>\{email\}<\/small> : null\}/);
   assert.match(PROFILE_MENU, /xv-pqm-submenu/);
@@ -66,7 +71,8 @@ test('the beta banner continuously alternates every seven seconds and is mounted
   assert.match(BETA_BANNER, /Share Your Idea/);
   assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
-  assert.match(APP_SHELL, /<BetaExpectationBanner compact \/>/);
+  assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
+  assert.match(DASHBOARD_VIEW, /<\/header>[\s\S]*?<BetaExpectationBanner compact \/>/);
   assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[^}]*top:\s*5\.75rem;[^}]*z-index:\s*1390;/);
   assert.match(CSS, /body\.theme-black \.xv-beta-banner,[\s\S]*?body\.theme-gray \.xv-beta-banner\s*\{[^}]*color:\s*#ffb4b8;/);
 });

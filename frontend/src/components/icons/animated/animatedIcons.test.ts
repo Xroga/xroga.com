@@ -398,7 +398,7 @@ test('every account menu row carries an animated icon', () => {
     assert.ok(at > 0, `the ${key} row is gone`);
     assert.match(MENU.slice(at, at + 220), new RegExp(`animated: ${icon},`), `${key} lost ${icon}`);
   }
-  assert.match(MENU, /data-menu-key="plan"[\s\S]{0,220}icon=\{AtomIcon\}/, 'Premium lost AtomIcon');
+  assert.match(MENU, /data-menu-key="plan"[\s\S]{0,220}<UpgradeActionButton \/>/, 'the plan row lost its animated upgrade action');
   assert.match(MENU, /xv-pqm-logout[\s\S]{0,260}icon=\{LogoutIcon\}/, 'Logout lost LogoutIcon');
   assert.ok(!/from 'lucide-react'/.test(MENU), 'a static glyph is back in the account menu');
   assert.ok(!/'icon' in item/.test(MENU), 'the static branch is back, and can hide an unwired icon');
