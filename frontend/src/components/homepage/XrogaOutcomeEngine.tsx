@@ -2,6 +2,9 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { PENDING_PROMPT_KEY } from '@/lib/constants';
+import { autocorrectText } from '@/lib/chatSuggestions';
+import { createClient } from '@/lib/supabase/client';
 import {
   ArrowRight, Paperclip, PlugZap, Search, Users, Mail, Headphones,
   Code2, BarChart3, Megaphone, Workflow, ShoppingBag, Rocket, ShieldCheck,
@@ -91,16 +94,15 @@ export function XrogaOutcomeEngine() {
   const filtered=useMemo(()=>category==='All'?apps:apps.filter(a=>a.category===category),[category]);
 
   async function startTask(){
-    const value=prompt.trim(); if(!value)return;
+    const value=autocorrectText(prompt.trim()); if(!value)return;
     setSubmitState('loading');
     try{
-      const response=await fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:value,attachments:[],connectedAccounts:[],source:'homepage-outcome-engine'})});
-      if(!response.ok) throw new Error('task api unavailable');
-      const data=await response.json();
-      if(data?.success!==true||!data?.taskId) throw new Error('task not confirmed');
+      localStorage.setItem(PENDING_PROMPT_KEY,value);
+      const { data }=await createClient().auth.getSession();
+      const target=data.session?'/workspace':'/auth/signup';
+      const opened=window.open(target,'_blank','noopener,noreferrer');
+      if(!opened) throw new Error('workspace popup blocked');
       setSubmitState('success');
-      const target=data.workspaceUrl||\`/workspace?task=\${encodeURIComponent(data.taskId)}\`;
-      window.open(target,'_blank','noopener,noreferrer');
     }catch{
       setSubmitState('error');
     }
@@ -141,8 +143,8 @@ export function XrogaOutcomeEngine() {
             <button className="xv-oe-start" type="button" disabled={!prompt.trim()||submitState==='loading'} onClick={()=>void startTask()}>{submitState==='loading'?'Starting…':'Start task'}<ArrowRight/></button>
           </div>
           <div className={\`xv-oe-submit-note is-\${submitState}\`} role="status" aria-live="polite">
-            {submitState==='error'&&'Execution backend is not connected in this preview. No task was started and no success state was fabricated.'}
-            {submitState==='success'&&'Task accepted. Opening the confirmed workspace…'}
+            {submitState==='error'&&'The workspace could not be opened. No task was started and no success state was fabricated.'}
+            {submitState==='success'&&'Request handed to Xroga’s production workspace flow. The workspace will start it after authentication and runtime checks.'}
           </div>
         </div>
 
