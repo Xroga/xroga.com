@@ -14247,12 +14247,12 @@ body.theme-beige .xv-cba-kbd {
   background: rgba(255, 255, 255, .06);
   border-color: rgba(255, 255, 255, .09);
 }
-body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split:not(.xv-terminal-dock--fullscreen) {
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split {
   left: var(--xv-pane-left, 0px) !important;
   right: var(--xv-pane-right, 42%) !important;
   overflow-x: clip;
 }
-body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split .xv-terminal-dock-inner {
   width: min(760px, calc(100% - 20px)) !important;
   max-width: calc(100% - 20px) !important;
   padding-inline: 10px !important;

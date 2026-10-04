@@ -230,5 +230,15 @@ test('opening Project edits keeps the chatbar inside the terminal pane', () => {
     /\.xv-terminal-dock--workspace-split\s*\{[\s\S]*?right:\s*var\(--xv-pane-right, 42%\) !important;/,
     'the Project edits state no longer stops the composer at the terminal pane edge',
   );
+  assert.match(
+    code,
+    /body:not\(\.xv-workspace-expanded-active\) \.xv-terminal-dock--workspace-split\s*\{[\s\S]*?right:\s*var\(--xv-pane-right, 42%\) !important;/,
+    'fullscreen Project edits must keep the same measured terminal-pane boundary',
+  );
+  assert.doesNotMatch(
+    code,
+    /\.xv-terminal-dock--workspace-split:not\(\.xv-terminal-dock--fullscreen\)/,
+    'fullscreen must not opt out of Project edits composer containment',
+  );
   assert.match(code, /@media \(max-width: 1023px\)[\s\S]*?\.xv-terminal-dock--workspace-split \{ display: none !important; \}/);
 });
