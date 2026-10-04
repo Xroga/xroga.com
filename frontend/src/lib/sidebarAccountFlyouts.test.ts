@@ -68,6 +68,7 @@ test('the beta banner continuously alternates every seven seconds and is mounted
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
   assert.match(APP_SHELL, /<BetaExpectationBanner compact \/>/);
   assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[^}]*top:\s*5\.75rem;[^}]*z-index:\s*1390;/);
+  assert.match(CSS, /body\.theme-black \.xv-beta-banner,[\s\S]*?body\.theme-gray \.xv-beta-banner\s*\{[^}]*color:\s*#ffb4b8;/);
 });
 
 test('composer retains a small bottom breathing space', () => {

@@ -14108,6 +14108,14 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
   line-height: 1.35;
 }
 .xv-beta-banner--compact { width: calc(100% - 14px); flex: none; margin-top: 5px; }
+body.theme-black .xv-beta-banner,
+body.theme-gray .xv-beta-banner {
+  border-color: rgba(255, 112, 120, .62);
+  background: color-mix(in srgb, #e5484d 18%, var(--card) 82%);
+  color: #ffb4b8;
+}
+body.theme-black .xv-beta-banner__cta,
+body.theme-gray .xv-beta-banner__cta { color: #ffc4c7; }
 .xv-public-marketing-shell > .xv-beta-banner {
   top: 5.75rem;
   z-index: 1390;
