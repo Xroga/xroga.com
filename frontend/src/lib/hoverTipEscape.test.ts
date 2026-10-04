@@ -114,15 +114,14 @@ test('clicking does not strand a tip on screen', () => {
 // Every section explains itself
 // ---------------------------------------------------------------------------
 
-test('the collapsible nav groups have a styled tip like every other row', () => {
+test('grouped nav destinations use the shared hover-safe flyout', () => {
   const groupBranch = SIDEBAR.slice(
     SIDEBAR.indexOf('isGroup(entry) ? ('),
-    SIDEBAR.indexOf('xv-nav-group__items'),
+    SIDEBAR.indexOf(') : (', SIDEBAR.indexOf('isGroup(entry) ? (')),
   );
   assert.notEqual(groupBranch, '', 'the nav group branch is gone');
-  assert.match(groupBranch, /<SidebarTip label=\{entry\.label\} description=\{entry\.tip\}>/);
-  // The native tooltip it used to rely on appears after a much longer delay and in the
-  // browser's own chrome, so it is not a substitute.
+  assert.match(groupBranch, /<SidebarHoverMenu/);
+  assert.match(groupBranch, /xv-sidebar-hover-menu__item/);
   assert.equal(/title=\{entry\.tip\}/.test(groupBranch), false, 'the native title attribute came back');
 });
 

@@ -8,7 +8,7 @@ export const metadata = PAGE_SEO.publish;
 export default function PublishPage() {
   return (
     <PageFullscreenFrame>
-      <div className="mx-auto w-full max-w-7xl space-y-4">
+      <div className="w-full max-w-none space-y-4">
         <Suspense fallback={<div className="animate-pulse h-48 bg-white/5 rounded-xl" />}>
           <UserOwnedPublishPanel />
         </Suspense>

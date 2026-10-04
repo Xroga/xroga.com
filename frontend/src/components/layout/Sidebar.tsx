@@ -279,7 +279,7 @@ const EDGE_DRAG_THRESHOLD_PX = 4;
  */
 const HOVER_OPEN_DELAY_MS = 220;
 
-export function Sidebar({ displayName }: SidebarProps) {
+export function Sidebar({ displayName, email }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const workspaceIdentity = useWorkspaceIdentity();
@@ -288,7 +288,6 @@ export function Sidebar({ displayName }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
   /** Set when a press on the edge toggle became a resize, so the click is ignored. */
@@ -488,9 +487,6 @@ export function Sidebar({ displayName }: SidebarProps) {
     );
   }
 
-  const toggleGroup = (id: string) =>
-    setOpenGroups((current) => ({ ...current, [id]: !(current[id] ?? false) }));
-
   const isActive = (href: string) => {
     if (href === '/workspace') return pathname === '/workspace';
     if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/dashboard/';
@@ -500,11 +496,6 @@ export function Sidebar({ displayName }: SidebarProps) {
   };
 
   const groupHasActive = (group: NavGroup) => group.children.some((c) => isActive(c.href));
-  /* A group holding the current route opens by default — otherwise the user lands on
-     a page whose own nav entry is hidden inside a collapsed row. An explicit toggle
-     always wins over that default. */
-  const isGroupOpen = (group: NavGroup) => openGroups[group.id] ?? groupHasActive(group);
-
   function handleNavClick() {
     closeMobile();
     closeBrowser();
@@ -611,7 +602,7 @@ export function Sidebar({ displayName }: SidebarProps) {
               onClick={() => setAvatarPickerOpen(true)}
             />
           )}
-          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} />
+          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} displayName={userName} email={email} />
         </div>
       ) : null}
     </div>
@@ -667,7 +658,7 @@ export function Sidebar({ displayName }: SidebarProps) {
             onClick={() => setAvatarPickerOpen(true)}
           />
           )}
-          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef}>
+          <ProfileQuickMenu onLogout={handleLogout} anchorRef={profileRowRef} displayName={userName} email={email}>
             <span className="min-w-0 flex-1 text-left">
               <span className="block truncate text-[12px] font-medium leading-tight xv-sidebar-profile-name">{userName}</span>
               {userPlan === 'Free' ? (
@@ -886,44 +877,36 @@ export function Sidebar({ displayName }: SidebarProps) {
                     </div>
                   </SidebarHoverMenu>
                 ) : isGroup(entry) ? (
-                  <div key={entry.id} className="xv-nav-group">
-                    {/* The two group headers were the only rows in the nav without a
-                        styled tip — they carried a native `title`, which appears after
-                        a much longer delay, in the browser's own chrome, and looks
-                        like nothing else in the sidebar. Every row explains itself the
-                        same way now. */}
-                    <SidebarTip label={entry.label} description={entry.tip}>
+                  <SidebarHoverMenu
+                    key={entry.id}
+                    trigger={
                       <button
                         type="button"
-                        onClick={() => toggleGroup(entry.id)}
                         className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
-                        aria-expanded={isGroupOpen(entry)}
+                        aria-label={entry.label}
                       >
                         <NavIcon entry={entry} />
                         <span>{entry.label}</span>
-                        <ChevronDown
-                          className={cn('xv-nav-group__chev h-3.5 w-3.5', isGroupOpen(entry) && 'is-open')}
-                          aria-hidden="true"
-                        />
+                        <ChevronDown className="xv-nav-group__chev h-3.5 w-3.5" aria-hidden="true" />
                       </button>
-                    </SidebarTip>
-                    {isGroupOpen(entry) && (
-                      <div className="xv-nav-group__items">
-                        {entry.children.map((child) => (
-                          <SidebarTip key={child.href} label={child.label} description={child.tip}>
-                            <Link
-                              href={child.href}
-                              onClick={(event) => handleNavEntryClick(event, child.href)}
-                              className={cn(isActive(child.href) && 'xv-active')}
-                            >
-                              <NavIcon entry={child} />
-                              <span>{child.label}</span>
-                            </Link>
-                          </SidebarTip>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    }
+                  >
+                    <div className="xv-sidebar-hover-menu__card">
+                      <p className="xv-sidebar-hover-menu__eyebrow">{entry.label}</p>
+                      {entry.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          role="menuitem"
+                          onClick={(event) => handleNavEntryClick(event, child.href)}
+                          className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}
+                        >
+                          <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
+                          <span className="min-w-0"><strong>{child.label}</strong><small>{child.tip}</small></span>
+                        </Link>
+                      ))}
+                    </div>
+                  </SidebarHoverMenu>
                 ) : (
                   <SidebarTip key={entry.href} label={entry.label} description={entry.tip}>
                     <Link

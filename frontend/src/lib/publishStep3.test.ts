@@ -28,7 +28,7 @@ test('Step 3 keeps Publish canonical and persists target in the URL', () => {
   const page = source('frontend/src/app/(shell)/dashboard/publish/page.tsx');
   const workspace = source('frontend/src/components/publish/PublishWorkspace.tsx');
 
-  assert.match(page, /max-w-7xl/);
+  assert.match(page, /w-full max-w-none/);
   assert.match(workspace, /searchParams\.get\('target'\)/);
   assert.match(workspace, /searchParams\.get\('tab'\)/);
   assert.match(workspace, /params\.set\('target', next\)/);

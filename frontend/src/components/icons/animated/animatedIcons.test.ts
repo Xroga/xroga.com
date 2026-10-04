@@ -387,7 +387,6 @@ test('the settings sections each carry their own animated icon', () => {
 test('every account menu row carries an animated icon', () => {
   const MENU = read('../../ui/ProfileQuickMenu.tsx');
   for (const [key, icon] of [
-    ['plan', 'AtomIcon'],
     ['profile', 'UserRoundPenIcon'],
     ['personalization', 'PaletteIcon'],
     ['settings', 'CogIcon'],
@@ -399,13 +398,10 @@ test('every account menu row carries an animated icon', () => {
     assert.ok(at > 0, `the ${key} row is gone`);
     assert.match(MENU.slice(at, at + 220), new RegExp(`animated: ${icon},`), `${key} lost ${icon}`);
   }
+  assert.match(MENU, /data-menu-key="plan"[\s\S]{0,220}icon=\{AtomIcon\}/, 'Premium lost AtomIcon');
+  assert.match(MENU, /xv-pqm-logout[\s\S]{0,260}icon=\{LogoutIcon\}/, 'Logout lost LogoutIcon');
   assert.ok(!/from 'lucide-react'/.test(MENU), 'a static glyph is back in the account menu');
   assert.ok(!/'icon' in item/.test(MENU), 'the static branch is back, and can hide an unwired icon');
-
-  // Logout is in a different file — the menu renders the shared button.
-  const UIVERSE = read('../../ui/Uiverse.tsx');
-  assert.match(UIVERSE, /icon=\{LogoutIcon\}/, 'the logout button lost its arrow');
-  assert.ok(!/viewBox="0 0 512 512"/.test(UIVERSE), 'the solid Font Awesome mark is back');
 });
 
 /**

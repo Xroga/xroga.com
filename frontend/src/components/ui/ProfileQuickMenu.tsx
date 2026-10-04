@@ -3,158 +3,137 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
+import { AnimatedIcon, type AnimatedIconComponent } from '@/components/icons/animated/AnimatedIcon';
+import { AtomIcon } from '@/components/icons/animated/AtomIcon';
+import { LogoutIcon } from '@/components/icons/animated/LogoutIcon';
 import { SlidersHorizontalIcon } from '@/components/icons/animated/SlidersHorizontalIcon';
 import { PaletteIcon } from '@/components/icons/animated/PaletteIcon';
 import { CogIcon } from '@/components/icons/animated/CogIcon';
-import { AtomIcon } from '@/components/icons/animated/AtomIcon';
 import { UserRoundPenIcon } from '@/components/icons/animated/UserRoundPenIcon';
 import { UsersRoundIcon } from '@/components/icons/animated/UsersRoundIcon';
 import { SmileIcon } from '@/components/icons/animated/SmileIcon';
 import { UserStarIcon } from '@/components/icons/animated/UserStarIcon';
-import { ShieldCheckIcon } from '@/components/icons/animated/ShieldCheckIcon';
 import { FileTextIcon } from '@/components/icons/animated/FileTextIcon';
 import { LightbulbIcon } from '@/components/icons/animated/LightbulbIcon';
 import { GlobeLockIcon } from '@/components/icons/animated/GlobeLockIcon';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-import { LogoutButton } from '@/components/ui/Uiverse';
-import { useAppStore } from '@/store/useAppStore';
-import { communityApi } from '@/lib/community';
+import { createClient } from '@/lib/supabase/client';
 
-/**
- * The account items come first.
- *
- * This menu opened off the profile row but carried none of the things a profile menu
- * is opened for — the plan, the account, settings — so reaching any of them meant
- * leaving the sidebar and hunting for them elsewhere.
- */
-const ITEMS = [
+type MenuItem = {
+  key: string;
+  label: string;
+  desc: string;
+  animated: AnimatedIconComponent;
+  href?: string;
+  action?: 'feedback';
+};
+
+const GROUPS: Array<{
+  key: 'account' | 'discover' | 'company';
+  label: string;
+  desc: string;
+  animated: AnimatedIconComponent;
+  items: MenuItem[];
+}> = [
   {
-    key: 'plan',
-    label: 'Upgrade plan',
-    desc: 'Compare plans and change your subscription',
-    animated: AtomIcon,
-    href: '/pricing',
+    key: 'account', label: 'Account', desc: 'Profile and preferences', animated: UserRoundPenIcon,
+    items: [
+      { key: 'profile', label: 'Profile', desc: 'Name, avatar, and account details', animated: UserRoundPenIcon, href: '/settings?tab=profile' },
+      { key: 'personalization', label: 'Personalization', desc: 'Theme, terminal skin, and companion', animated: PaletteIcon, href: '/settings?tab=personalization' },
+      { key: 'settings', label: 'Settings', desc: 'Workspace and account preferences', animated: CogIcon, href: '/settings' },
+    ],
   },
   {
-    key: 'profile',
-    label: 'Profile',
-    desc: 'Your name, avatar, and account details',
-    animated: UserRoundPenIcon,
-    href: '/settings?tab=profile',
+    key: 'discover', label: 'Discover', desc: 'Community and product updates', animated: UsersRoundIcon,
+    items: [
+      { key: 'community', label: 'Community', desc: 'Ideas, questions, and solutions', animated: UsersRoundIcon, href: '/community' },
+      { key: 'feedback', label: 'Feedback', desc: 'Share your Xroga experience', animated: SmileIcon, action: 'feedback' },
+      { key: 'blog', label: 'Blog', desc: 'Product updates, guides, and ideas', animated: FileTextIcon, href: '/blog' },
+    ],
   },
   {
-    key: 'personalization',
-    label: 'Personalization',
-    desc: 'Theme, terminal skin, and the companion',
-    animated: PaletteIcon,
-    href: '/settings?tab=personalization',
-  },
-  {
-    key: 'settings',
-    label: 'Settings',
-    desc: 'Account, workspace, and preferences',
-    animated: CogIcon,
-    href: '/settings',
-  },
-  {
-    key: 'community',
-    label: 'Community',
-    desc: 'Share ideas, questions, and working solutions',
-    animated: UsersRoundIcon,
-    href: '/community',
-  },
-  {
-    key: 'feedback',
-    label: 'Feedback',
-    desc: 'Share your Xroga experience',
-    animated: SmileIcon,
-    action: 'feedback' as const,
-  },
-  {
-    key: 'about',
-    label: 'Xroga AI & CEO',
-    desc: 'Our story and mission',
-    animated: UserStarIcon,
-    href: '/about',
-  },
-  {
-    key: 'blog',
-    label: 'Blog',
-    desc: 'Product updates, guides, and practical ideas',
-    animated: FileTextIcon,
-    href: '/blog',
-  },
-  {
-    key: 'help',
-    label: 'Help',
-    desc: 'Documentation and answers when you need them',
-    animated: LightbulbIcon,
-    href: '/docs',
-  },
-  {
-    key: 'privacy',
-    label: 'Privacy',
-    desc: 'How Xroga protects and handles your information',
-    animated: GlobeLockIcon,
-    href: '/privacy',
+    key: 'company', label: 'Xroga', desc: 'Company, help, and privacy', animated: UserStarIcon,
+    items: [
+      { key: 'about', label: 'Xroga AI & CEO', desc: 'Our story and mission', animated: UserStarIcon, href: '/about' },
+      { key: 'help', label: 'Help', desc: 'Documentation and answers', animated: LightbulbIcon, href: '/docs' },
+      { key: 'privacy', label: 'Privacy', desc: 'How Xroga handles your information', animated: GlobeLockIcon, href: '/privacy' },
+    ],
   },
 ];
 
-const MENU_WIDTH = 272;
-const VIEWPORT_PAD = 16;
+const MENU_WIDTH = 244;
+const SUBMENU_WIDTH = 254;
+const VIEWPORT_PAD = 12;
 
 interface ProfileQuickMenuProps {
   onLogout?: () => void;
   anchorRef?: React.RefObject<HTMLElement | null>;
   children?: ReactNode;
   triggerClassName?: string;
+  displayName?: string;
+  email?: string;
 }
 
-export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassName }: ProfileQuickMenuProps) {
+export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassName, displayName, email }: ProfileQuickMenuProps) {
   const [open, setOpen] = useState(false);
+  const [activeGroup, setActiveGroup] = useState<(typeof GROUPS)[number]['key'] | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [communityOpenCount, setCommunityOpenCount] = useState<number | null>(null);
-  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const [provider, setProvider] = useState('Xroga');
+  const [pos, setPos] = useState({ top: 0, left: 0, submenuSide: 'right' as 'left' | 'right' });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const submenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
-  const role = useAppStore((state) => state.profile?.role);
-  const canManageCommunity = role === 'moderator' || role === 'admin' || role === 'owner';
+
+  function cancelSubmenuClose() {
+    if (submenuCloseTimer.current) window.clearTimeout(submenuCloseTimer.current);
+    submenuCloseTimer.current = null;
+  }
+
+  function scheduleSubmenuClose() {
+    cancelSubmenuClose();
+    submenuCloseTimer.current = window.setTimeout(() => setActiveGroup(null), 180);
+  }
 
   useEffect(() => {
-    if (!canManageCommunity) { setCommunityOpenCount(null); return; }
-    void communityApi.summary().then((value) => setCommunityOpenCount(typeof value.open === 'number' ? value.open : null)).catch(() => setCommunityOpenCount(null));
-  }, [canManageCommunity]);
+    if (!open || provider !== 'Xroga') return;
+    let live = true;
+    void createClient().auth.getUser().then(({ data }) => {
+      if (!live) return;
+      const value = data.user?.app_metadata?.provider;
+      if (typeof value === 'string' && value.trim()) {
+        setProvider(value === 'github' ? 'GitHub' : value[0]!.toUpperCase() + value.slice(1));
+      }
+    }).catch(() => undefined);
+    return () => { live = false; };
+  }, [open, provider]);
+
+  useEffect(() => () => {
+    if (submenuCloseTimer.current) window.clearTimeout(submenuCloseTimer.current);
+  }, []);
 
   useLayoutEffect(() => {
     if (!open) return;
-
     function placeMenu() {
       const trigger = anchorRef?.current?.getBoundingClientRect() ?? btnRef.current?.getBoundingClientRect();
       const menu = menuRef.current;
       if (!trigger || !menu) return;
-
       const menuW = menu.offsetWidth || MENU_WIDTH;
       const menuH = menu.offsetHeight || 300;
-      const gap = 12;
-
+      const gap = 10;
       let left = trigger.right + gap;
-      let top = trigger.bottom - menuH;
-
-      if (left + menuW > window.innerWidth - VIEWPORT_PAD) left = trigger.left - menuW - gap;
-      if (window.innerWidth < 640) {
-        left = trigger.left;
-        top = trigger.top - menuH - gap;
-        if (top < VIEWPORT_PAD) top = trigger.bottom + gap;
+      let submenuSide: 'left' | 'right' = 'right';
+      if (left + menuW + SUBMENU_WIDTH + gap > window.innerWidth - VIEWPORT_PAD) {
+        left = trigger.left - menuW - gap;
+        submenuSide = 'left';
       }
-      left = Math.max(VIEWPORT_PAD, left);
-
-      top = Math.max(VIEWPORT_PAD, Math.min(top, window.innerHeight - menuH - VIEWPORT_PAD));
-
-      setPos({ top, left });
+      if (window.innerWidth < 700) {
+        left = Math.max(VIEWPORT_PAD, Math.min(trigger.left, window.innerWidth - menuW - VIEWPORT_PAD));
+        submenuSide = 'left';
+      }
+      const top = Math.max(VIEWPORT_PAD, Math.min(trigger.bottom - menuH, window.innerHeight - menuH - VIEWPORT_PAD));
+      setPos({ top, left: Math.max(VIEWPORT_PAD, left), submenuSide });
     }
-
     placeMenu();
     window.addEventListener('resize', placeMenu);
     return () => window.removeEventListener('resize', placeMenu);
@@ -162,122 +141,98 @@ export function ProfileQuickMenu({ onLogout, anchorRef, children, triggerClassNa
 
   useEffect(() => {
     if (!open) return;
-    function onDoc(e: MouseEvent) {
-      const t = e.target as Node;
-      if (btnRef.current?.contains(t)) return;
-      if (menuRef.current?.contains(t)) return;
+    function closeOutside(event: PointerEvent) {
+      const target = event.target as Node;
+      if (btnRef.current?.contains(target) || menuRef.current?.contains(target)) return;
       setOpen(false);
+      setActiveGroup(null);
     }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
+    function closeWithEscape(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      setOpen(false);
+      setActiveGroup(null);
     }
-    document.addEventListener('mousedown', onDoc);
-    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeWithEscape);
     return () => {
-      document.removeEventListener('mousedown', onDoc);
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeWithEscape);
     };
   }, [open]);
 
-  function handleItem(item: (typeof ITEMS)[number]) {
+  function handleItem(item: MenuItem) {
     setOpen(false);
-    if (item.action === 'feedback') {
-      setFeedbackOpen(true);
-      return;
-    }
-    if (item.href) router.push(item.href);
+    setActiveGroup(null);
+    if (item.action === 'feedback') setFeedbackOpen(true);
+    else if (item.href) router.push(item.href);
   }
+
+  const selectedGroup = GROUPS.find((group) => group.key === activeGroup);
+  const accountName = displayName?.trim() || email?.split('@')[0] || 'Xroga user';
 
   return (
     <>
       <button
         ref={btnRef}
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((value) => !value)}
         className={children
           ? `xv-profile-quick-trigger xv-profile-row-trigger ${triggerClassName ?? ''}`
-          : `xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0 ${triggerClassName ?? ''}`}
+          : `xv-profile-quick-trigger p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] ${triggerClassName ?? ''}`}
         aria-label="Account menu"
-        title="Account menu"
         aria-expanded={open}
       >
-        {children ?? <>
-        {/* Sliders, not a chevron: a chevron points somewhere and this opens a panel
-            of controls in place. It was a wand before that, which suggested an effect
-            rather than a menu. The tracks slide apart when it is opened or hovered,
-            which is the picture of a panel of controls being reached for. */}
-        <AnimatedIcon icon={SlidersHorizontalIcon} />
-        </>}
+        {children ?? <AnimatedIcon icon={SlidersHorizontalIcon} size={15} intro={false} />}
       </button>
 
-      {open &&
-        createPortal(
-          <>
-            <div className="fixed inset-0 z-[298]" onClick={() => setOpen(false)} aria-hidden />
-            <div
-              ref={menuRef}
-              id="xv-profile-quick-menu"
-              className="fixed z-[300] w-[min(296px,calc(100vw-32px))] animate-in fade-in slide-in-from-bottom-2 duration-200"
-              style={{ top: pos.top, left: pos.left }}
-            >
-              {/* The card carries its edge with a shadow and a hairline ring rather than
-                  a drawn border: at 272px with a plain border and a flat shadow it read
-                  as a dropdown from a decade ago. */}
-              <div className="xv-pqm-card rounded-[18px] border border-[var(--card-border)]/70 bg-[var(--card)] backdrop-blur-xl overflow-visible">
-                <p className="text-[9px] uppercase tracking-[0.14em] text-[var(--muted)] px-3.5 pt-3 pb-1.5 font-semibold">
-                  Account
-                </p>
-                <ul className="p-1.5 space-y-0.5">
-                  {ITEMS.map((item) => {
-                    /* Every row is animated now — there is no static branch left to
-                       fall back to, and keeping one invites the next icon to land in it
-                       and quietly not move. */
-                    const Animated = item.animated;
-                    return (
-                      <li key={item.key}>
-                        <button
-                          type="button"
-                          onClick={() => handleItem(item)}
-                          className="xv-pqm-row w-full flex items-center gap-3 px-2.5 py-2 rounded-[13px] text-left transition-colors"
-                        >
-                          {/* The glyph sits on its own tinted tile. Loose against the
-                              text it left the labels starting at four different optical
-                              positions as the icons changed width. */}
-                          {/* Each one draws its own motion — the atom's shells turn, the
-                              palette inks its dots in, the star is awarded — so they are
-                              components rather than lucide glyphs and take no
-                              `strokeWidth`. `intro={false}`: the menu is a popover, and
-                              seven icons playing the moment it opens is a flinch. */}
-                          <span className="xv-pqm-tile grid h-7 w-7 shrink-0 place-items-center rounded-[9px]">
-                            <AnimatedIcon icon={Animated} size={15} intro={false} />
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-xs font-semibold leading-snug">{item.label}</p>
-                            <p className="text-[10px] text-[var(--muted)] leading-snug">{item.desc}</p>
-                          </div>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-                {canManageCommunity && (
-                  <div className="border-t border-[var(--card-border)]/50 p-1.5">
-                    <button type="button" onClick={() => { setOpen(false); router.push('/admin/community'); }} className="flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-[var(--accent)]/10">
-                      <span className="mt-0.5 shrink-0 text-[var(--accent)]"><AnimatedIcon icon={ShieldCheckIcon} size={16} intro={false} /></span>
-                      <div className="min-w-0 flex-1"><p className="flex items-center justify-between gap-2 text-xs font-semibold"><span>Admin Dashboard</span>{communityOpenCount !== null && <span className="rounded-full bg-[var(--accent)] px-1.5 py-0.5 text-[9px] text-white" aria-label={`${communityOpenCount} open community posts`}>{communityOpenCount}</span>}</p><p className="text-[10px] text-[var(--muted)]">Manage community and official replies</p></div>
-                    </button>
-                  </div>
-                )}
-                {onLogout && (
-                  <div className="p-2.5 border-t border-[var(--card-border)]/50">
-                    <LogoutButton onClick={() => { setOpen(false); onLogout(); }} />
-                  </div>
-                )}
-              </div>
+      {open && typeof document !== 'undefined' ? createPortal(
+        <div ref={menuRef} id="xv-profile-quick-menu" className="xv-pqm-shell fixed z-[330]" style={{ top: pos.top, left: pos.left }} onMouseLeave={scheduleSubmenuClose}>
+          <div className="xv-pqm-card" onMouseEnter={cancelSubmenuClose}>
+            <div className="xv-pqm-identity">
+              <span className="xv-pqm-avatar" aria-hidden="true">{accountName.charAt(0).toUpperCase()}</span>
+              <span className="min-w-0"><strong>{accountName}</strong>{email ? <small>{email}</small> : null}<em>{provider} account</em></span>
             </div>
-          </>,
-          document.body
-        )}
+            <button type="button" data-menu-key="plan" className="xv-pqm-premium" onClick={() => { setOpen(false); router.push('/pricing'); }}>
+              <AnimatedIcon icon={AtomIcon} size={15} intro={false} /><span><strong>Premium</strong><small>Compare plans and upgrade</small></span>
+            </button>
+            <div className="xv-pqm-primary" role="menu" aria-label="Account options">
+              {GROUPS.map((group) => {
+                const GroupIcon = group.animated;
+                return (
+                  <button key={group.key} type="button" role="menuitem" className={activeGroup === group.key ? 'is-active' : undefined}
+                    onMouseEnter={() => { cancelSubmenuClose(); setActiveGroup(group.key); }} onFocus={() => setActiveGroup(group.key)} onClick={() => setActiveGroup(group.key)}
+                    aria-haspopup="menu" aria-expanded={activeGroup === group.key}>
+                    <span className="xv-pqm-tile"><AnimatedIcon icon={GroupIcon} size={14} intro={false} /></span>
+                    <span><strong>{group.label}</strong><small>{group.desc}</small></span>
+                    <span className="xv-pqm-chevron" aria-hidden="true">›</span>
+                  </button>
+                );
+              })}
+              {onLogout ? (
+                <button type="button" role="menuitem" className="xv-pqm-logout" onClick={() => { setOpen(false); onLogout(); }}>
+                  <span className="xv-pqm-tile"><AnimatedIcon icon={LogoutIcon} size={14} intro={false} /></span><span><strong>Logout</strong><small>Sign out of this account</small></span>
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          {selectedGroup ? (
+            <div className={`xv-pqm-submenu is-${pos.submenuSide}`} role="menu" aria-label={`${selectedGroup.label} options`}
+              onMouseEnter={() => { cancelSubmenuClose(); setActiveGroup(selectedGroup.key); }} onMouseLeave={scheduleSubmenuClose}>
+              <p>{selectedGroup.label}</p>
+              {selectedGroup.items.map((item) => {
+                const ItemIcon = item.animated;
+                return (
+                  <button key={item.key} type="button" role="menuitem" onClick={() => handleItem(item)}>
+                    <span className="xv-pqm-tile"><AnimatedIcon icon={ItemIcon} size={14} intro={false} /></span>
+                    <span><strong>{item.label}</strong><small>{item.desc}</small></span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>, document.body,
+      ) : null}
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>

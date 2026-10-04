@@ -2832,16 +2832,16 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
    ============================================================ */
 
 :root {
-  --xv-content-gutter-inline: 6px;
-  --xv-content-gutter-block: 6px;
+  --xv-content-gutter-inline: 4px;
+  --xv-content-gutter-block: 5px;
   --xv-app-canvas-max: 1680px;
   --xv-fullscreen-gutter: 4px;
 }
 
 @media (min-width: 640px) {
   :root {
-    --xv-content-gutter-inline: 8px;
-    --xv-content-gutter-block: 8px;
+    --xv-content-gutter-inline: 5px;
+    --xv-content-gutter-block: 6px;
   }
 }
 
@@ -2854,8 +2854,8 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
     --xv-sidebar-inset: var(--xv-app-gutter);
     --xv-sidebar-radius: 14px;
 
-    --xv-content-gutter-inline: 16px;
-    --xv-content-gutter-block: var(--xv-app-gutter);
+    --xv-content-gutter-inline: 7px;
+    --xv-content-gutter-block: 7px;
     --xv-fullscreen-gutter: 8px;
   }
 

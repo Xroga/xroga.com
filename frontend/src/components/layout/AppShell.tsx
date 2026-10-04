@@ -17,6 +17,7 @@ import { ShellIdentityProvider } from '@/components/layout/ShellIdentityContext'
 import { WorkspacePerformanceProbe } from '@/components/layout/WorkspacePerformanceProbe';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { WorkspaceAuthGateProvider } from '@/components/workspace/WorkspaceAuthGate';
+import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -111,6 +112,7 @@ export function AppShell({ children, displayName, email }: AppShellProps) {
                 isDashboard ? 'h-full min-h-0' : 'min-h-screen'
               )}
             >
+              <BetaExpectationBanner compact />
               {/*
                 No page header here any more.
                 

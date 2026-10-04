@@ -281,12 +281,10 @@ export function TerminalDock() {
                           : scrollToFirst('smooth')
                       }
                       aria-label={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
-                      title={showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
+                      title={showJumpToLatest ? 'Latest' : 'Top'}
+                      data-tooltip={showJumpToLatest ? 'Latest' : 'Top'}
                     >
                       <ArrowUp className="xv-conversation-navigator__arrow" aria-hidden="true" />
-                      <span className="xv-conversation-navigator__label">
-                        {showJumpToLatest ? 'Scroll to latest' : 'Scroll to top'}
-                      </span>
                     </button>
                   ) : null}
 

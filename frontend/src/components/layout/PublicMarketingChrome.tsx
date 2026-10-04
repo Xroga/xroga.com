@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { MarketingFooter } from '@/components/layout/MarketingFooter';
 import { PublicMarketingHeader } from '@/components/layout/PublicMarketingHeader';
 import { isPublicMarketingPath } from '@/lib/publicMarketing';
+import { BetaExpectationBanner } from '@/components/layout/BetaExpectationBanner';
 
 export function PublicMarketingChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,6 +13,7 @@ export function PublicMarketingChrome({ children }: { children: React.ReactNode 
   return (
     <div className="xv-public-marketing-shell">
       <PublicMarketingHeader />
+      <BetaExpectationBanner />
       <div className="xv-public-marketing-content">{children}</div>
       <MarketingFooter />
     </div>

@@ -339,8 +339,9 @@ test('a conversation exposes one context-aware navigator that follows scroll pos
     /\.xv-conversation-navigator\.is-direction-down\s*\{[^}]*--xv-navigator-rotation:\s*180deg/,
   );
 
-  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?border-radius:\s*0\.72rem/);
-  assert.match(DOCK, /showJumpToLatest \? 'Scroll to latest' : 'Scroll to top'/);
+  assert.match(CSS, /\.xv-conversation-navigator\s*\{[\s\S]*?width:\s*2\.25rem[\s\S]*?border-radius:\s*0\.62rem/);
+  assert.match(DOCK, /data-tooltip=\{showJumpToLatest \? 'Latest' : 'Top'\}/);
+  assert.doesNotMatch(DOCK, /xv-conversation-navigator__label/);
 });
 
 test('workspace transcript keeps balanced responsive gutters', () => {
