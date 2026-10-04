@@ -245,7 +245,7 @@
 /* -------------------------------------------------------------------------- */
 
 .root{
-  --editorial:var(--font-editorial), Georgia, "Times New Roman", serif;
+  --editorial:var(--font-claude-serif), Georgia, "Times New Roman", serif;
   --ui:var(--font-manrope), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --glow-a:rgba(var(--accent-rgb),.28);
   --glow-b:rgba(207,48,170,.18);
