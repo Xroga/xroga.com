@@ -22,6 +22,7 @@ import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 import { HomepageCursorGlitter } from '@/components/homepage/HomepageCursorGlitter';
+import { XrogaOutcomeEngine } from '@/components/homepage/XrogaOutcomeEngine';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
 const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Browser extensions', 'APIs', 'Desktop apps', 'Automations', 'CLIs', 'Libraries', 'Data pipelines'] as const;
@@ -86,6 +87,7 @@ export function HomepageClient() {
         </div>
       </section>
 
+      <XrogaOutcomeEngine />
       <HomepageWorkspaceTour loggedIn={loggedIn} />
       <div id="product"><HomepageAllInOne /></div>
       <div className="xv-system-combined" aria-label="Xroga intelligence and build system"><XrogaIntelligenceSection /><HomepageStackStudio /></div>
