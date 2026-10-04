@@ -14257,3 +14257,18 @@ body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split .xv-t
   max-width: calc(100% - 20px) !important;
   padding-inline: 10px !important;
 }
+/* The fullscreen frame also sets both dock edges with `!important`. Keep this
+   combined state more specific so compiled media-rule ordering cannot let the
+   composer cover Project edits. The measured pane edges remain the authority. */
+body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active)
+  .xv-terminal-dock--workspace-split.xv-terminal-dock--fullscreen {
+  left: var(--xv-pane-left, 0px) !important;
+  right: var(--xv-pane-right, 42%) !important;
+}
+body.xv-terminal-fullscreen-active:not(.xv-workspace-expanded-active)
+  .xv-terminal-dock--workspace-split.xv-terminal-dock--fullscreen
+  .xv-terminal-dock-inner {
+  width: min(760px, calc(100% - 20px)) !important;
+  max-width: calc(100% - 20px) !important;
+  padding-inline: 10px !important;
+}

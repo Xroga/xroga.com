@@ -240,5 +240,10 @@ test('opening Project edits keeps the chatbar inside the terminal pane', () => {
     /\.xv-terminal-dock--workspace-split:not\(\.xv-terminal-dock--fullscreen\)/,
     'fullscreen must not opt out of Project edits composer containment',
   );
+  assert.match(
+    code,
+    /body\.xv-terminal-fullscreen-active:not\(\.xv-workspace-expanded-active\)[\s\S]*?\.xv-terminal-dock--workspace-split\.xv-terminal-dock--fullscreen\s*\{[\s\S]*?right:\s*var\(--xv-pane-right, 42%\) !important;/,
+    'the combined fullscreen and Project edits state must outrank the fullscreen frame edges',
+  );
   assert.match(code, /@media \(max-width: 1023px\)[\s\S]*?\.xv-terminal-dock--workspace-split \{ display: none !important; \}/);
 });
