@@ -1,0 +1,806 @@
+.page {
+  min-height: 100dvh;
+  padding: 28px;
+  color: var(--foreground);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(0, 106, 255, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 8%, rgba(15, 23, 42, 0.05), transparent 24%),
+    var(--background);
+  position: relative;
+  overflow: hidden;
+}
+
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.demoShell {
+  position: relative;
+  z-index: 1;
+  width: min(1220px, 100%);
+  height: calc(100dvh - 56px);
+  min-height: 720px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--background) 94%, transparent);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.1), 0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+.sidebar {
+  padding: 20px 16px 18px;
+  border-right: 1px solid var(--card-border);
+  background: color-mix(in srgb, var(--surface-inset) 65%, var(--background));
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 4px 18px;
+}
+
+.brandMark,
+.assistantAvatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--foreground);
+  color: var(--background);
+  font-weight: 800;
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.brandRow div:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.brandRow strong {
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.brandRow span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sidebarIntro {
+  padding: 14px 4px 18px;
+  border-top: 1px solid var(--card-border);
+}
+
+.sidebarIntro h1 {
+  margin: 0;
+  font-family: var(--ui-font, var(--font-goga));
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.sidebarIntro p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.scenarioNav {
+  display: grid;
+  gap: 5px;
+}
+
+.scenarioButton,
+.scenarioActive {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  padding: 10px 11px;
+  text-align: left;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.scenarioButton:hover {
+  background: var(--surface-inset);
+}
+
+.scenarioActive {
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--card-border));
+  background: color-mix(in srgb, var(--accent) 6%, var(--background));
+}
+
+.scenarioButton span,
+.scenarioActive span {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.scenarioButton small,
+.scenarioActive small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.sidebarNote {
+  margin-top: auto;
+  display: flex;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--background);
+}
+
+.sidebarNote svg {
+  margin-top: 1px;
+  flex: 0 0 auto;
+}
+
+.sidebarNote p {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.workspace {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 62px minmax(0, 1fr) auto;
+  background: var(--background);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.topbar > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.topbarEyebrow {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.topbar strong {
+  font-size: 13px;
+}
+
+.topbarActions {
+  display: flex;
+  gap: 7px;
+}
+
+.topbarActions button,
+.responseActions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+  transition: background 130ms ease, border-color 130ms ease;
+}
+
+.topbarActions button:hover,
+.responseActions button:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-inset);
+}
+
+.stopButton {
+  color: var(--danger) !important;
+}
+
+.chatViewport {
+  overflow-y: auto;
+  min-height: 0;
+  padding: 36px 26px 80px;
+}
+
+.chatColumn {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.userRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+
+.userBubble {
+  max-width: min(72%, 570px);
+  padding: 11px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.assistantRow {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 13px;
+  align-items: start;
+}
+
+.assistantAvatar {
+  position: sticky;
+  top: 0;
+}
+
+.assistantBody {
+  min-width: 0;
+}
+
+.neutralWorking {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.neutralWorking svg {
+  color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+
+.liveActivity {
+  width: min(560px, 100%);
+  margin-bottom: 14px;
+  padding: 13px 14px 9px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface-inset) 64%, var(--background));
+}
+
+.activityHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 7px;
+}
+
+.activityHeader > span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.activityHeader small {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) 9%, var(--background));
+  color: var(--accent);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.activityList,
+.activityCompact {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activityCompact {
+  padding: 3px 11px 10px;
+}
+
+.activityRow {
+  min-height: 31px;
+  display: grid;
+  grid-template-columns: 17px 17px minmax(0, 1fr);
+  gap: 7px;
+  align-items: start;
+  position: relative;
+}
+
+.activityRail {
+  width: 17px;
+  height: 31px;
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.activityLine {
+  position: absolute;
+  top: 17px;
+  bottom: -1px;
+  width: 1px;
+  background: var(--card-border);
+}
+
+.activityRow:last-child .activityLine {
+  display: none;
+}
+
+.statusIconDone,
+.statusIconActive,
+.statusIconPending {
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--background);
+}
+
+.statusIconDone {
+  color: var(--accent);
+}
+
+.statusIconActive {
+  color: var(--accent);
+}
+
+.statusIconActive svg {
+  animation: spin 0.9s linear infinite;
+}
+
+.statusIconPending {
+  border: 1px solid var(--card-border);
+  transform: scale(0.55);
+}
+
+.activityKind {
+  margin-top: 1px;
+  color: var(--muted);
+}
+
+.activityText {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding-top: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+.activityText small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.activityPending {
+  opacity: 0.42;
+}
+
+.activityDone {
+  opacity: 0.62;
+}
+
+.activityActive {
+  opacity: 1;
+}
+
+.activityActive .activityText > span {
+  color: var(--foreground);
+  font-weight: 620;
+}
+
+.toolCard {
+  width: min(590px, 100%);
+  margin: 10px 0 14px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 11px;
+  background: var(--background);
+}
+
+.toolHeader {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+}
+
+.toolIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.toolIdentity > span:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
+.toolBadgeRunning,
+.toolBadgeDone {
+  min-height: 18px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.toolBadgeRunning {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--background));
+}
+
+.toolBadgeDone {
+  color: var(--success);
+  background: var(--success-dim);
+}
+
+.toolBody {
+  padding: 11px 12px 12px;
+  border-top: 1px solid var(--card-border);
+  display: grid;
+  gap: 9px;
+  background: var(--surface-inset);
+}
+
+.toolBody > div {
+  display: grid;
+  gap: 5px;
+}
+
+.toolBody span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.toolBody code {
+  overflow-x: auto;
+  padding: 8px 9px;
+  border: 1px solid var(--card-border);
+  border-radius: 7px;
+  background: var(--background);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.toolHeader svg:last-child,
+.completedDisclosure > button svg:last-child {
+  transition: transform 150ms ease;
+}
+
+.answerBlock {
+  max-width: 690px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 1.72;
+}
+
+.answerBlock p {
+  display: inline;
+  margin: 0;
+}
+
+.streamCursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.08em;
+  background: var(--accent);
+  animation: blink 0.82s step-end infinite;
+}
+
+.completedDisclosure {
+  width: min(590px, 100%);
+  margin-top: 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.completedDisclosure > button {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 0;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 620;
+}
+
+.completedDisclosure > button span {
+  flex: 1;
+}
+
+.completedDisclosure > button > svg:first-child {
+  color: var(--accent);
+}
+
+.sourcesWrap {
+  width: min(650px, 100%);
+  margin-top: 18px;
+}
+
+.sourcesTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.sourcesTitle span {
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.sourcesTitle small {
+  display: inline-grid;
+  min-width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--surface-inset);
+  font-size: 9px;
+}
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.sourceCard {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  min-height: 58px;
+  padding: 9px;
+  border: 1px solid var(--card-border);
+  border-radius: 9px;
+  background: var(--background);
+}
+
+.sourceIndex {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--background));
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.sourceCard > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.sourceCard strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 10.5px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceCard small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.responseActions {
+  display: flex;
+  gap: 5px;
+  margin-top: 14px;
+}
+
+.responseActions button {
+  min-height: 29px;
+  font-size: 10px;
+}
+
+.stoppedState {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 22%, var(--card-border));
+  border-radius: 8px;
+  color: var(--danger);
+  background: var(--danger-dim);
+  font-size: 10.5px;
+}
+
+.composerPreview {
+  padding: 12px 22px 14px;
+  border-top: 1px solid var(--card-border);
+  background: linear-gradient(to top, var(--background) 68%, color-mix(in srgb, var(--background) 90%, transparent));
+}
+
+.composer {
+  width: min(760px, 100%);
+  min-height: 46px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 7px 6px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 13px;
+  background: var(--background);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.composer > span {
+  flex: 1;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.composer button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.composerPreview > p {
+  margin: 6px auto 0;
+  width: min(760px, 100%);
+  color: var(--muted);
+  text-align: center;
+  font-size: 8.5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding: 0;
+  }
+
+  .demoShell {
+    height: 100dvh;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .workspace {
+    min-height: 100dvh;
+  }
+
+  .chatViewport {
+    padding: 26px 16px 88px;
+  }
+
+  .topbar {
+    padding: 0 15px;
+  }
+
+  .composerPreview {
+    padding: 10px 12px 12px;
+  }
+
+  .userBubble {
+    max-width: 88%;
+  }
+}
+
+@media (max-width: 560px) {
+  .sourceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbarActions button {
+    padding-inline: 8px;
+  }
+
+  .topbarActions button:not(.stopButton) {
+    font-size: 0;
+    gap: 0;
+  }
+
+  .topbarActions button:not(.stopButton) svg {
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
