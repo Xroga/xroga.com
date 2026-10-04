@@ -116,7 +116,14 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-home-companion-copy span { display: block; font-size: .48rem; letter-spacing: .13em; color: var(--hc-blue); font-weight: 800; }
 .xv-home-companion-copy strong { display: block; color: var(--hc-ink); font-size: .92rem; margin-top: .25rem; }
 .xv-home-companion-copy p { color: var(--hc-muted); font-size: .72rem; line-height: 1.45; margin-top: .25rem; }
-.xv-companion-composer-anchor { position: relative; z-index: 20; display: inline-flex; flex-direction: row; align-items: center; gap: .28rem; pointer-events: auto; }
+.xv-companion-composer-anchor {
+  position: absolute;
+  right: .6rem;
+  bottom: calc(100% + .18rem);
+  z-index: 20;
+  display: block;
+  pointer-events: auto;
+}
 .xv-companion-blackhole > button {
   min-height: 1.45rem;
   margin: 0;
@@ -140,7 +147,7 @@ body.theme-black .xv-companion { --xv-companion-highlight: #e8f7ff; --xv-compani
 .xv-companion-blackhole > button,
 .xv-companion-blackhole > button span,
 .xv-companion-blackhole > button svg { color: var(--foreground) !important; }
-.xv-companion--composer .xv-companion-trigger { width: 3.55rem; }
+.xv-companion--composer .xv-companion-trigger { width: 4.15rem; }
 .xv-companion--floating { position: fixed; right: 1rem; bottom: calc(5.25rem + env(safe-area-inset-bottom)); z-index: 150; }
 
 .xv-companion-customizer { display: grid; gap: 1rem; }
@@ -209,8 +216,8 @@ button:hover > .xv-animated-nav-icon { transform: translateY(-2px) rotate(-7deg)
   .xv-companion--hero .xv-companion-trigger { width: 6rem; }
   .xv-companion--hero .xv-companion-panel { position: fixed; left: .75rem; right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom)); transform: none; width: auto; }
   .xv-companion--composer .xv-companion-panel { position: fixed; left: .75rem; right: .75rem; bottom: calc(5.8rem + env(safe-area-inset-bottom)); width: auto; }
-  .xv-companion-composer-anchor { gap: .18rem; }
-  .xv-companion--composer .xv-companion-trigger { width: 3rem; }
+  .xv-companion-composer-anchor { right: .45rem; bottom: calc(100% + .12rem); }
+  .xv-companion--composer .xv-companion-trigger { width: 3.45rem; }
   .xv-companion-blackhole > button { min-height: 1.3rem; padding: 0; font-size: .6rem; }
   .xv-companion-settings-grid { grid-template-columns: 1fr; }
   .xv-companion-customizer-intro { align-items: flex-start; }

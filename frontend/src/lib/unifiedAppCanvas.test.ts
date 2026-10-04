@@ -72,9 +72,9 @@ test('Project edits is a rounded inset surface inside the workspace', () => {
   );
 });
 
-test('Smoky stays attached to the composer inside the workspace', () => {
-  assert.match(COMPANION, /\.xv-companion-composer-anchor\s*\{[^}]*position:\s*relative/);
-  assert.match(COMPANION, /\.xv-companion-composer-anchor\s*\{[^}]*display:\s*inline-flex/);
+test('Smoky stays attached just outside the composer surface inside the workspace', () => {
+  assert.match(COMPANION, /\.xv-companion-composer-anchor\s*\{[^}]*position:\s*absolute/);
+  assert.match(COMPANION, /\.xv-companion-composer-anchor\s*\{[^}]*bottom:\s*calc\(100%/);
   assert.doesNotMatch(
     COMPANION,
     /body:not\(\.xv-terminal-fullscreen-active\)[\s\S]*\.xv-companion-composer-anchor\s*\{[^}]*position:\s*fixed/,

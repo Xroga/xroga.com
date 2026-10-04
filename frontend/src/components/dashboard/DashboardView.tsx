@@ -230,13 +230,14 @@ export function DashboardView() {
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
         <header className="xv-workspace-header" data-testid="terminal-identity-header">
-          <WorkspaceIdentityMenu incognito={incognito} />
-
-          <span className="xv-term-lights" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
+          <div className="xv-workspace-identity-cluster">
+            <WorkspaceIdentityMenu incognito={incognito} />
+            <span className="xv-term-lights" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
 
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>

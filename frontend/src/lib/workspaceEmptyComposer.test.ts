@@ -460,18 +460,15 @@ test('repository updates cannot resize or bounce the whole workspace dock', () =
 });
 
 
-test('the companion and model identity sit beside the microphone inside the canonical composer', () => {
+test('the companion sits outside the composer while model identity stays beside the primary action', () => {
   assert.doesNotMatch(
     CSS,
     /\.xv-terminal-dock--idle \.xv-companion-composer-anchor/,
   );
 
-  assert.match(
-    CHATBAR,
-    /trailingExtras=\{!incognito \? <CompanionComposerAnchor \/> : null\}/,
-  );
-
-  assert.doesNotMatch(DOCK, /<CompanionComposerAnchor \/>/);
+  assert.doesNotMatch(CHATBAR, /<CompanionComposerAnchor \/>/);
+  assert.match(CHATBAR, /<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
+  assert.match(DOCK, /!incognito \? <CompanionComposerAnchor \/> : null/);
 
   assert.match(
     CSS,

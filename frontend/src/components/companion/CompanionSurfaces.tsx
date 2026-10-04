@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import { XrogaCompanion } from './XrogaCompanion';
-import { BlackHoleVButton } from '@/components/terminal/BlackHoleVButton';
 import { useCompanionStore } from '@/store/useCompanionStore';
 
 export function HomepageCompanionStage() {
@@ -28,7 +27,6 @@ export function CompanionComposerAnchor() {
   return (
     <div className="xv-companion-composer-anchor">
       <XrogaCompanion variant="composer" />
-      <BlackHoleVButton compact className="xv-companion-blackhole" />
     </div>
   );
 }

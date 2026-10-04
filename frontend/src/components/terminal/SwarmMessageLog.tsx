@@ -347,13 +347,14 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
             complaint this replaces. */}
         {chromeless ? null : (
         <div className="xv-terminal-header" data-testid="terminal-identity-header">
-          <WorkspaceIdentityMenu incognito={isIncognito} />
-
-          <span className="xv-term-lights" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
+          <div className="xv-workspace-identity-cluster">
+            <WorkspaceIdentityMenu incognito={isIncognito} />
+            <span className="xv-term-lights" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
 
           {isIncognito ? (
             <span className="xv-term-badge">Private · not saved</span>

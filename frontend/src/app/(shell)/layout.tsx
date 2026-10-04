@@ -18,8 +18,6 @@ export default async function ShellLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect('/auth/login');
-
   /*
    * A signed-in account that has not finished setup is sent to finish it, so
    * onboarding is not something only a fresh signup can ever see — someone who
@@ -34,29 +32,37 @@ export default async function ShellLayout({
    * problem and not one onboarding should turn into a redirect loop — the shell
    * renders and the account is left alone.
    */
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('onboarding, display_name')
-    .eq('id', user.id)
-    .single();
+  const profile = user
+    ? (await supabase
+      .from('profiles')
+      .select('onboarding, display_name')
+      .eq('id', user.id)
+      .single()).data
+    : null;
 
-  if (profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
+  if (user && profile && shouldRouteToOnboarding(normalizeOnboarding(profile.onboarding))) {
     redirect('/onboarding');
   }
 
-  const displayName = resolveUserDisplayName(user, profile?.display_name);
+  const displayName = resolveUserDisplayName(user, profile?.display_name, 'Guest');
+  const status = user ? 'authenticated' : 'guest';
 
   return (
     <>
-      <UserCacheScopeBootstrap userId={user.id} />
+      <UserCacheScopeBootstrap userId={user?.id ?? 'guest'} />
       <WorkspaceIdentityProvider
-        status="authenticated"
-        userId={user.id}
+        status={status}
+        userId={user?.id}
         displayName={displayName}
-        email={user.email ?? undefined}
+        email={user?.email ?? undefined}
       >
         <AppProviders>
-          <AppShell displayName={displayName} email={user.email ?? undefined}>{children}</AppShell>
+          <AppShell
+            displayName={user ? displayName : undefined}
+            email={user?.email ?? undefined}
+          >
+            {children}
+          </AppShell>
         </AppProviders>
       </WorkspaceIdentityProvider>
     </>

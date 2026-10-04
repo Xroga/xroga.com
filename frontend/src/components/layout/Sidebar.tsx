@@ -247,16 +247,11 @@ interface SidebarProps {
 }
 
 function guestGateReasonForHref(href: string): WorkspaceAuthGateReason | null {
-  const path = href.split('?')[0];
-  if (path === '/workspace' || path === '/showcase' || path === '/community' || path === '/pricing') {
-    return null;
-  }
-  if (path === '/dashboard/integrations') return 'integration';
-  if (path === '/dashboard/projects') return 'project';
-  if (path === '/dashboard/publish') return 'deploy';
-  if (path === '/settings') return 'settings';
-  if (path === '/dashboard') return 'dashboard';
-  return path.startsWith('/dashboard/') ? 'dashboard' : null;
+  // Navigation is intentionally public: guests can inspect every product area.
+  // Account-bound actions inside those destinations own their own auth gates.
+  // Keeping this helper makes that policy explicit at the single navigation seam.
+  void href;
+  return null;
 }
 
 function planLabel(tier?: string | null) {

@@ -9,6 +9,10 @@ test('keeps public and authentication routes available', () => {
     '/pricing/start',
     '/workspace',
     '/workspace/',
+    '/dashboard',
+    '/dashboard/operations',
+    '/dashboard/integrations',
+    '/settings',
     '/community',
     '/community/9d0c98dc-6c8c-4f24-8a2b-4ddd50ed802e',
     '/docs/getting-started',
@@ -55,10 +59,7 @@ test('keeps public and authentication routes available', () => {
 
 test('keeps application and API routes protected', () => {
   for (const path of [
-    '/dashboard',
-    '/dashboard/operations',
     '/api/operations/portfolio',
-    '/settings',
     '/workspace/arbitrary-project',
     '/admin/arbitrary-tool',
     '/onboarding',

@@ -6,6 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const DOCK = read('../components/terminal/TerminalDock.tsx');
 const REPO = read('../components/terminal/RepoContextBar.tsx');
 const COMPANION = read('../components/companion/CompanionSurfaces.tsx');
+const CHATBAR = read('../components/terminal/TerminalChatBar.tsx');
 const COMPANION_RUNTIME = read('../components/companion/XrogaCompanion.tsx');
 const GLOBALS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 const COMPANION_CSS = read('../styles/companion.css').replace(/\/\*[\s\S]*?\*\//g, '');
@@ -16,10 +17,11 @@ function rule(css: string, selector: string): string {
   return css.slice(start, css.indexOf('}', start) + 1);
 }
 
-test('Black Hole V is attached to the composer companion, not the repo strip', () => {
+test('Black Hole V sits beside the primary composer action, not the repo strip or character', () => {
   const strip = DOCK.slice(DOCK.indexOf('xv-chatbar-context-strip'), DOCK.indexOf('</div>', DOCK.indexOf('xv-chatbar-context-strip')));
   assert.doesNotMatch(strip, /BlackHoleVButton/, 'Black Hole V still creates a wide gap in the repo row');
-  assert.match(COMPANION, /<XrogaCompanion variant="composer" \/>[\s\S]*<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
+  assert.doesNotMatch(COMPANION, /BlackHoleVButton/);
+  assert.match(CHATBAR, /<ChatBarActionsMenu[\s\S]*<BlackHoleVButton compact className="xv-companion-blackhole" \/>/);
   assert.doesNotMatch(COMPANION, /xv-companion-composer-label|>Smoky</, 'the companion name is still printed over the workspace');
   assert.doesNotMatch(COMPANION_RUNTIME, /message:\s*'Smoky\b/, 'the workspace status still exposes the companion name');
 });
@@ -46,18 +48,18 @@ test('mobile keeps clear short actions, repository, and branch in one compact ro
   assert.match(mobile, /\.xv-repo-chip--compact \.xv-repo-branch\s*\{[^}]*display:\s*block/);
 });
 
-test('the companion cluster keeps Black Hole V readable beside the larger character', () => {
+test('the external companion and compact Black Hole control stay readable', () => {
   const chip = rule(COMPANION_CSS, '.xv-companion-blackhole > button {');
   assert.match(chip, /background:\s*transparent/);
   assert.match(chip, /border:\s*0/);
   assert.match(chip, /box-shadow:\s*none/);
   assert.match(chip, /font-size:\s*\.68rem/);
   const anchor = rule(COMPANION_CSS, '.xv-companion-composer-anchor {');
-  assert.match(anchor, /position:\s*relative/);
+  assert.match(anchor, /position:\s*absolute/);
   assert.match(anchor, /z-index:\s*20/);
-  assert.match(anchor, /flex-direction:\s*row/);
+  assert.match(anchor, /bottom:\s*calc\(100%/);
   const mobile = COMPANION_CSS.slice(COMPANION_CSS.indexOf('@media (max-width: 640px)'));
-  assert.match(mobile, /\.xv-companion--composer \.xv-companion-trigger\s*\{[^}]*width:\s*3rem/);
+  assert.match(mobile, /\.xv-companion--composer \.xv-companion-trigger\s*\{[^}]*width:\s*3\.45rem/);
   assert.match(mobile, /\.xv-companion-blackhole > button\s*\{[^}]*font-size:\s*\.6rem/);
 });
 

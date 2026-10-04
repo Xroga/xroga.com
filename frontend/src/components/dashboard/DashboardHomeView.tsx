@@ -19,6 +19,7 @@ const LOW_CAPACITY_PERCENT = 30;
 import { api, type DashboardSummary } from '@/lib/api';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 
 const ACTION_LABELS: Record<string, string> = {
   swarm_completed: 'Build completed',
@@ -65,20 +66,59 @@ function PercentBar({ value, label }: { value: number | null; label: string }) {
 }
 
 export function DashboardHomeView() {
+  const identity = useWorkspaceIdentity();
+  const isGuest = identity.status === 'guest';
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const load = useCallback(() => {
+    if (isGuest) {
+      setLoading(false);
+      setError(false);
+      return;
+    }
     setLoading(true);
     setError(false);
     api.dashboard.summary()
       .then(setSummary)
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [isGuest]);
 
   useEffect(() => { load(); }, [load]);
+
+  if (isGuest) {
+    return (
+      <div className="mx-auto max-w-6xl space-y-6 universe-fade-in">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Explore the Xroga workspace before creating an account.
+            </p>
+          </div>
+          <Link href="/workspace" className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:underline">
+            Open Workspace <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </header>
+        <div className="grid gap-4 md:grid-cols-3">
+          <WidgetCard title="Workspace" icon={ActivityIcon}>
+            <p className="text-sm text-[var(--muted)]">Try a few free guest chats, explore ideas, and see how Xroga works.</p>
+            <Link href="/workspace" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Start a guest chat</Link>
+          </WidgetCard>
+          <WidgetCard title="Projects" icon={BatteryChargingIcon}>
+            <p className="text-sm text-[var(--muted)]">Browse the project area. Saving repositories and durable work requires an account.</p>
+            <Link href="/dashboard/projects" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Explore Projects</Link>
+          </WidgetCard>
+          <WidgetCard title="Plugins" icon={CreditCardIcon}>
+            <p className="text-sm text-[var(--muted)]">Browse available apps freely. Connecting or using one asks you to sign in.</p>
+            <Link href="/dashboard/integrations" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Browse Plugins</Link>
+          </WidgetCard>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

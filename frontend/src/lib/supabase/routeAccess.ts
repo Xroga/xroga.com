@@ -22,6 +22,11 @@ const PUBLIC_API_PATHS = new Set([
   '/api/showcase/aura/health',
 ]);
 
+const GUEST_BROWSE_PREFIXES = [
+  '/dashboard',
+  '/settings',
+];
+
 /**
  * Whether the middleware has to ask the auth server who the visitor is.
  *
@@ -49,6 +54,11 @@ export function isPublicPath(pathname: string): boolean {
   // The exact workspace route is the guest product surface. Nested workspace routes
   // stay protected so future project-specific URLs cannot accidentally inherit guest access.
   if (pathname === '/workspace' || pathname === '/workspace/') return true;
+  // Guests may inspect the product shell and its pages. Mutations still require
+  // authenticated backend endpoints and explicit client-side action gates.
+  if (GUEST_BROWSE_PREFIXES.some((prefix) =>
+    pathname === prefix || pathname.startsWith(`${prefix}/`)
+  )) return true;
   // This route reports authenticated=false as JSON; middleware must not replace
   // that contract with an HTML login redirect for signed-out callers.
   if (pathname.startsWith('/api/')) return PUBLIC_API_PATHS.has(pathname);

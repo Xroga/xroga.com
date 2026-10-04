@@ -54,6 +54,8 @@ import {
   type XrogaConnectCatalogToolkit,
   type XrogaConnectToolkit,
 } from '@/lib/xrogaConnect';
+import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 
 type NativeSnapshot = {
   state: ConnectionState;
@@ -977,6 +979,9 @@ function mergePlugins(
 }
 
 export function PluginMarketplace() {
+  const identity = useWorkspaceIdentity();
+  const { requestAuthGate } = useWorkspaceAuthGate();
+  const isGuest = identity.status === 'guest';
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -1112,9 +1117,16 @@ export function PluginMarketplace() {
   };
 
   useEffect(() => {
-    refreshNativeStatus();
-
     let active = true;
+
+    if (!isGuest) refreshNativeStatus();
+    else {
+      setNativeState({
+        github: { state: 'disconnected' },
+        vercel: { state: 'disconnected' },
+        supabase: { state: 'disconnected' },
+      });
+    }
 
     void xrogaConnect
       .status()
@@ -1132,7 +1144,7 @@ export function PluginMarketplace() {
             sortBy: 'usage',
             limit: BROWSE_PAGE_SIZE,
           }),
-          xrogaConnect.session(),
+          isGuest ? Promise.resolve(null) : xrogaConnect.session(),
         ]);
 
         if (!active) return;
@@ -1175,7 +1187,7 @@ export function PluginMarketplace() {
         }
         setCatalogLoading(false);
 
-        if (sessionResult.status === 'fulfilled') {
+        if (sessionResult.status === 'fulfilled' && sessionResult.value) {
           setSessionId(sessionResult.value.sessionId);
           try {
             const connected = await xrogaConnect.toolkits(sessionResult.value.sessionId, {
@@ -1196,7 +1208,7 @@ export function PluginMarketplace() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [isGuest]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -1876,6 +1888,10 @@ export function PluginMarketplace() {
   }
 
   async function handleConnect(plugin: RuntimePlugin) {
+    if (isGuest) {
+      requestAuthGate('integration');
+      return;
+    }
     if (connectingId || plugin.noAuth) return;
     const connectionKey = plugin.toolkit || plugin.id;
     setConnectingId(connectionKey);
@@ -1945,6 +1961,10 @@ export function PluginMarketplace() {
               aria-haspopup="menu"
               aria-expanded={addPluginOpen && addPluginMode === 'menu'}
               onClick={() => {
+                if (isGuest) {
+                  requestAuthGate('integration');
+                  return;
+                }
                 setAddPluginMode('menu');
                 setAddPluginOpen((open) => !open);
               }}

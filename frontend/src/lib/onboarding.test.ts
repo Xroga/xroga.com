@@ -111,7 +111,7 @@ test('the shell sends unfinished accounts to onboarding without looping', () => 
    * otherwise read as `not_started`, redirect to onboarding, and — since onboarding
    * reads the same missing row — bounce straight back.
    */
-  assert.match(SHELL, /if \(profile && shouldRouteToOnboarding/, 'a missing profile must not loop');
+  assert.match(SHELL, /if \(user && profile && shouldRouteToOnboarding/, 'a guest or missing profile must not loop');
   // And the page itself refuses to re-ask an account that already answered.
   assert.match(PAGE, /if \(!shouldRouteToOnboarding\(state\)\) redirect\('\/workspace'\)/);
 });

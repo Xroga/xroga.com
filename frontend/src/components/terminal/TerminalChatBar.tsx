@@ -21,7 +21,7 @@ import { autocorrectText } from '@/lib/chatSuggestions';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { dispatchCompanionEvent } from '@/lib/companion';
-import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
+import { BlackHoleVButton } from './BlackHoleVButton';
 import toast from 'react-hot-toast';
 import { checkRepoWorkspaceReady } from '@/lib/repoWorkspaceGate';
 import { ensureSelectedRepoFolder } from '@/lib/repoSessionsIndex';
@@ -528,10 +528,11 @@ export function TerminalChatBar() {
               hideUpload
               leadingExtras={
                 !incognito ? (
-                  <ChatBarActionsMenu
-                    className="shrink-0"
-                    disabled={loading}
-                    onAddFiles={requestFilePicker}
+                  <div className="xv-chatbar-primary-tools">
+                    <ChatBarActionsMenu
+                      className="shrink-0"
+                      disabled={loading}
+                      onAddFiles={requestFilePicker}
                     /* Same dialog the removed pill opened, same event dispatched — the
                        trigger moved into the menu, the behaviour did not change. */
                     onOpenIntegrations={() => {
@@ -542,8 +543,8 @@ export function TerminalChatBar() {
                       dispatchCompanionEvent({ type: 'integration_connecting', message: 'Opening your authorised integrations.', source: 'runtime' });
                       setIntegrationsOpen(true);
                     }}
-                    connectorsNeedingAttention={[githubConnected, vercelConnected].filter((c) => !c).length}
-                    onInsert={(text, options) => {
+                      connectorsNeedingAttention={[githubConnected, vercelConnected].filter((c) => !c).length}
+                      onInsert={(text, options) => {
                       // Fills the composer and focuses it. Deliberately not auto-sent:
                       // these are scaffolds the user finishes, and sending a
                       // half-written prompt would burn a real run.
@@ -559,8 +560,10 @@ export function TerminalChatBar() {
                           textarea.setSelectionRange(0, options.selectionLength);
                         }
                       }, 20);
-                    }}
-                  />
+                      }}
+                    />
+                    <BlackHoleVButton compact className="xv-companion-blackhole" />
+                  </div>
                 ) : null
               }
               onTranscript={(text) => {
@@ -574,7 +577,6 @@ export function TerminalChatBar() {
                 textareaRef.current?.focus();
               }}
               surface={incognito ? 'incognito' : 'dashboard'}
-              trailingExtras={!incognito ? <CompanionComposerAnchor /> : null}
               compactGo={!!draft.trim()}
               sendState={sendState}
               stopping={loading}

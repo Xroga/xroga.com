@@ -14359,15 +14359,53 @@ body.theme-beige .xv-cba-kbd { color: var(--muted) !important; background: color
 
 @media (max-width: 1023px) {
   .xv-workspace-header {
-    background: linear-gradient(110deg, color-mix(in srgb, var(--card) 96%, #79b5ff 4%), color-mix(in srgb, var(--card) 91%, #8a70ff 9%), color-mix(in srgb, var(--card) 96%, #73d7dd 4%)) !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent) !important;
-  }
-  body.theme-black .xv-workspace-header,
-  body.theme-gray .xv-workspace-header {
-    background: linear-gradient(110deg, color-mix(in srgb, var(--card) 94%, #174a7c 6%), color-mix(in srgb, var(--card) 91%, #43306f 9%), color-mix(in srgb, var(--card) 95%, #18565d 5%)) !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
   }
   .xv-workspace-header-tools .xv-ws-launch span { display: none !important; }
-  .xv-workspace-header-tools .xv-ws-launch { width: 30px !important; padding: 0 !important; justify-content: center; }
+  .xv-workspace-header-tools .xv-ws-launch {
+    display: inline-flex !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    padding: 0 !important;
+    justify-content: center;
+    color: var(--foreground) !important;
+    opacity: .82 !important;
+  }
+}
+
+.xv-workspace-identity-cluster {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: .45rem;
+}
+.xv-workspace-identity-cluster .xv-term-lights {
+  display: inline-flex !important;
+  gap: 3px !important;
+}
+.xv-workspace-identity-cluster .xv-term-lights i {
+  width: 5px !important;
+  height: 5px !important;
+}
+.xv-chatbar-primary-tools {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: .45rem;
+}
+.xv-chatbar-primary-tools .xv-companion-blackhole > button {
+  min-height: 1.8rem;
+  padding: .24rem .38rem;
+  border-radius: .48rem;
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  font-size: .68rem;
+  letter-spacing: -.01em;
+}
+.xv-chatbar-primary-tools .xv-companion-blackhole > button:hover,
+.xv-chatbar-primary-tools .xv-companion-blackhole > button:focus-visible {
+  background: color-mix(in srgb, var(--foreground) 9%, transparent);
 }
 
 @media (max-width: 700px) {

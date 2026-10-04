@@ -36,10 +36,10 @@ test('workspace mounts one reusable guest auth gate around the interactive shell
   assert.match(gate, /Guest conversation restored/);
 });
 
-test('guest protected sidebar destinations stay in the workspace instead of navigating to login', () => {
+test('guest sidebar destinations remain browseable while account-bound actions stay gated', () => {
   assert.match(sidebar, /guestGateReasonForHref/);
-  assert.match(sidebar, /event\.preventDefault\(\)/);
-  assert.match(sidebar, /dashboard\/integrations'\) return 'integration'/);
+  assert.match(sidebar, /Navigation is intentionally public/);
+  assert.match(sidebar, /return null/);
   assert.match(sidebar, /requestAuthGate\(gateReason\)/);
   assert.match(sidebar, /requestAuthGate\('history'\)/);
   assert.match(sidebar, /Create free account/);

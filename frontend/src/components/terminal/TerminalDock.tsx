@@ -25,6 +25,7 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 import { useShellIdentity } from '@/components/layout/ShellIdentityContext';
 import { WorkspaceConnectionsStrip } from './WorkspaceConnectionsStrip';
+import { CompanionComposerAnchor } from '@/components/companion/CompanionSurfaces';
 
 const FULLSCREEN_BUILD_COMMANDS = [
   '/ launch-ready product from one clear brief',
@@ -265,6 +266,8 @@ export function TerminalDock() {
               <div className="xv-kimi-composer-frame">
 
                 <div className="xv-chatbar-stack relative">
+
+                  {!incognito ? <CompanionComposerAnchor /> : null}
 
                   {messages.length > 0 &&
                   !incognito ? (

@@ -36,7 +36,7 @@ export function UserProfileBox({
   );
 
   const boxClass = cn(
-    'xv-user-profile-box rounded-lg overflow-hidden shrink-0 ring-1 ring-white/12 bg-black/20',
+    'xv-user-profile-box rounded-full overflow-hidden shrink-0 ring-1 ring-[var(--card-border)] bg-black/20',
     SIZE_CLASS[size],
     className
   );
