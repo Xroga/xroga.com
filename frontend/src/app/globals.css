@@ -8059,6 +8059,167 @@ body.theme-gray .xv-rp-loader {
   cursor: pointer;
   transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
+
+/* ==========================================================================
+   Workspace interaction polish
+   --------------------------------------------------------------------------
+   These rules intentionally live at the end of the cascade: the workspace has
+   accumulated theme and responsive layers, and these are the shared contracts
+   for the mounted composer surfaces rather than another component-local skin.
+   ========================================================================== */
+
+/* Default monochrome accents are light on Black and Gray. Buttons drawn with that
+   accent therefore need dark ink; custom coloured accents continue using their own
+   established contrast treatment. */
+.xv-accent-action {
+  color: #fff;
+}
+html[data-accent='default'] body.theme-black .xv-accent-action,
+html[data-accent='default'] body.theme-gray .xv-accent-action {
+  color: #080808;
+}
+
+/* Compact two-panel plugin launcher, positioned just above the composer instead of
+   taking over the whole workspace as a centered modal. */
+.xv-plugins-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 460;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 12px max(92px, calc(var(--xv-shell-bottom, 0px) + 86px));
+  background: rgba(0, 0, 0, .08);
+}
+.xv-plugins-popover {
+  width: min(590px, calc(100vw - 24px));
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 14px;
+  background: rgba(18, 18, 20, .94);
+  color: rgba(255, 255, 255, .92);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(20px) saturate(145%);
+}
+.xv-plugins-popover__header {
+  display: flex;
+  gap: 7px;
+  padding: 7px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.xv-plugins-popover__search {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .065);
+  color: rgba(255, 255, 255, .58);
+}
+.xv-plugins-popover__search svg,
+.xv-plugins-popover__close svg { width: 14px; height: 14px; }
+.xv-plugins-popover__search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+}
+.xv-plugins-popover__search input::placeholder { color: rgba(255, 255, 255, .42); }
+.xv-plugins-popover__close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: rgba(255, 255, 255, .58);
+}
+.xv-plugins-popover__close:hover { background: rgba(255, 255, 255, .075); color: #fff; }
+.xv-plugins-popover__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(180px, .7fr);
+  max-height: min(360px, 55dvh);
+}
+.xv-plugins-popover__primary {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  overflow-y: auto;
+  padding: 8px;
+}
+.xv-plugins-popover__eyebrow {
+  margin: 0;
+  padding: 3px 5px 5px;
+  color: rgba(255, 255, 255, .4);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.xv-plugins-popover__item {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 7px;
+  border-radius: 9px;
+  color: inherit;
+}
+.xv-plugins-popover__item:hover { background: rgba(255, 255, 255, .07); }
+.xv-plugins-popover__logo {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  flex: none;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .08);
+}
+.xv-plugins-popover__name { min-width: 0; flex: 1; }
+.xv-plugins-popover__name strong { display: block; font-size: 11px; font-weight: 620; }
+.xv-plugins-popover__name small { display: flex; align-items: center; gap: 3px; color: rgba(255, 255, 255, .45); font-size: 9px; }
+.xv-plugins-popover__plus { width: 13px; height: 13px; color: rgba(255, 255, 255, .48); }
+.xv-plugins-popover__loading,
+.xv-plugins-popover__empty { padding: 9px 7px; color: rgba(255, 255, 255, .48); font-size: 10px; }
+.xv-plugins-popover__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+  border-left: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, .025);
+}
+.xv-plugins-popover__aside > strong { font-size: 12px; }
+.xv-plugins-popover__aside > span { color: rgba(255, 255, 255, .48); font-size: 9px; line-height: 1.45; }
+.xv-plugins-popover__browse {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .07);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 620;
+}
+.xv-plugins-popover__browse:hover { background: rgba(255, 255, 255, .11); }
+.xv-plugins-popover__browse svg { width: 13px; height: 13px; }
+@media (max-width: 639px) {
+  .xv-plugins-popover-backdrop { padding: 8px 8px 78px; }
+  .xv-plugins-popover__body { grid-template-columns: minmax(0, 1fr); }
+  .xv-plugins-popover__aside { border-top: 1px solid rgba(255, 255, 255, .08); border-left: 0; }
+}
 .xv-conversation-navigator:hover {
   transform: translate(-50%, -3px);
   border-color: color-mix(in srgb, var(--foreground) 45%, transparent);
@@ -14019,4 +14180,80 @@ body.theme-gray .xv-plugin-fullscreen-button--inline::after {
 
 @media (prefers-reduced-motion: reduce) {
   .xv-beta-banner__message { animation: none; }
+}
+
+/* Final cascade locks for mounted workspace controls. Keep these after every legacy
+   skin block so a later historical selector cannot reintroduce the reported UI. */
+.xv-dashboard-welcome--composer .xv-welcome-editorial {
+  gap: .28rem !important;
+  font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif !important;
+  font-size: clamp(1.45rem, 2.25vw, 1.82rem) !important;
+  font-weight: 300 !important;
+  letter-spacing: -.055em !important;
+  line-height: .94 !important;
+  text-transform: uppercase !important;
+}
+.xv-dashboard-welcome--composer .xv-welcome-editorial > span,
+.xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
+  color: var(--text-primary) !important;
+  font-family: inherit !important;
+  font-weight: 300 !important;
+  text-transform: uppercase !important;
+}
+.xv-dashboard-welcome--composer .xv-welcome-editorial .xv-welcome-editorial__build {
+  color: var(--text-secondary) !important;
+}
+.xv-cba-trigger { width: 32px; height: 32px; border-radius: 9px; }
+.xv-cba-trigger .xv-animated-nav-icon,
+.xv-cba-trigger svg { width: 16px !important; height: 16px !important; }
+.xv-cba-menu {
+  width: min(480px, calc(100vw - 18px)) !important;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--composer-menu-surface, #121214) 94%, transparent) !important;
+  color: rgba(255, 255, 255, .92);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .26);
+  backdrop-filter: blur(18px) saturate(145%);
+}
+.xv-cba-grid { gap: 3px 5px; }
+.xv-cba-item,
+body.theme-white .xv-cba-item,
+body.theme-beige .xv-cba-item {
+  min-height: 34px;
+  padding: 5px 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, .82);
+}
+.xv-cba-item:hover,
+body.theme-white .xv-cba-item:hover,
+body.theme-beige .xv-cba-item:hover,
+.xv-cba-item--command:hover,
+.xv-cba-item--plan:hover,
+.xv-cba-item--debug:hover { background: rgba(255, 255, 255, .075); color: #fff; }
+.xv-cba-item--command,
+.xv-cba-item--plan,
+.xv-cba-item--debug { background: transparent; }
+.xv-cba-item__text b,
+body.theme-white .xv-cba-item__text b,
+body.theme-beige .xv-cba-item__text b { color: rgba(255, 255, 255, .92); }
+.xv-cba-item__text i,
+body.theme-white .xv-cba-item__text i,
+body.theme-beige .xv-cba-item__text i { color: rgba(255, 255, 255, .5); }
+.xv-cba-kbd,
+body.theme-white .xv-cba-kbd,
+body.theme-beige .xv-cba-kbd {
+  color: rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .09);
+}
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split:not(.xv-terminal-dock--fullscreen) {
+  left: var(--xv-pane-left, 0px) !important;
+  right: var(--xv-pane-right, 42%) !important;
+  overflow-x: clip;
+}
+body:not(.xv-workspace-expanded-active) .xv-terminal-dock--workspace-split:not(.xv-terminal-dock--fullscreen) .xv-terminal-dock-inner {
+  width: min(760px, calc(100% - 20px)) !important;
+  max-width: calc(100% - 20px) !important;
+  padding-inline: 10px !important;
 }

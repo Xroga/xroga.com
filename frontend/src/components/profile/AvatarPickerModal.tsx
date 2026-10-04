@@ -202,7 +202,7 @@ export function AvatarPickerModal({
             type="button"
             disabled={uploading || !!picking}
             onClick={() => fileRef.current?.click()}
-            className="flex w-full items-center justify-center gap-2 rounded-token-md bg-[var(--accent)] py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            className="xv-accent-action flex w-full items-center justify-center gap-2 rounded-token-md bg-[var(--accent)] py-3.5 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           >
             {uploading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Upload className="h-4 w-4" aria-hidden="true" />}
             {uploading ? 'Uploading…' : 'Upload custom photo'}

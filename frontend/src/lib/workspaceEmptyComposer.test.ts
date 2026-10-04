@@ -16,6 +16,7 @@ const DASHBOARD = read('../components/dashboard/DashboardView.tsx');
 const CONNECTIONS = read('../components/terminal/WorkspaceConnectionsStrip.tsx');
 const INTEGRATIONS = read('../components/terminal/IntegrationsModal.tsx');
 const PRIVACY = read('../components/settings/PrivacySettingsPanel.tsx');
+const AVATAR_PICKER = read('../components/profile/AvatarPickerModal.tsx');
 const CSS = read('../app/globals.css').replace(/\/\*[\s\S]*?\*\//g, '');
 
 test('an empty terminal centers the one canonical composer without duplicate suggestion tabs', () => {
@@ -404,6 +405,10 @@ test('connection management reads real provider status and routes full managemen
     INTEGRATIONS,
     /Manage Plugins/,
   );
+
+  assert.match(INTEGRATIONS, /placeholder="Search plugins…"/);
+  assert.match(INTEGRATIONS, /xv-plugins-popover__body/);
+  assert.match(INTEGRATIONS, /Browse all/);
 
   assert.match(
     INTEGRATIONS,
@@ -841,6 +846,14 @@ test('the empty workspace uses an editorial action lockup above the canonical co
     WELCOME,
     /first[\s\S]*last[\s\S]*model you will ever need/i,
   );
+
+  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial\s*\{[^}]*font-family:\s*"Arial Narrow"[^}]*font-weight:\s*300 !important[^}]*text-transform:\s*uppercase !important/);
+  assert.match(CSS, /\.xv-dashboard-welcome--composer \.xv-welcome-editorial \.xv-welcome-editorial__build\s*\{[^}]*color:\s*var\(--text-secondary\) !important/);
+});
+
+test('default monochrome accents keep primary buttons legible in dark themes', () => {
+  assert.match(AVATAR_PICKER, /className="xv-accent-action[^"]*bg-\[var\(--accent\)\]/);
+  assert.match(CSS, /html\[data-accent='default'\] body\.theme-black \.xv-accent-action,[\s\S]*?body\.theme-gray \.xv-accent-action\s*\{[^}]*color:\s*#080808/);
 });
 
 

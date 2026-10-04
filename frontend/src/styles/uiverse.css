@@ -2529,19 +2529,19 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
   .xv-sidebar-menu .xv-hover-tip-wrap > a,
 
   .xv-sidebar-menu .xv-nav-group__trigger {
-    min-height: 34px !important;
+    min-height: 30px !important;
 
     width: 100%;
 
     padding:
       0
-      10px !important;
+      8px !important;
 
     display: flex !important;
 
     align-items: center !important;
 
-    gap: 9px !important;
+    gap: 8px !important;
 
     color: var(--muted) !important;
 
@@ -2560,7 +2560,7 @@ body.theme-beige .xv-connect-btn .xv-connect-content {
       Arial,
       sans-serif !important;
 
-    font-size: 13px !important;
+    font-size: 12px !important;
 
     font-weight: 450 !important;
 

@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
  * The toolbar was already at capacity — Black Hole, integrations, GitHub, Vercel, and
  * it scrolls horizontally on a phone. Adding four more chips inline would have made
  * the bar unusable, which is exactly what you asked me to avoid. One `+` opens a menu
- * instead, so the resting bar gains a single 28px control.
+ * instead, so the resting bar gains a single compact control.
  *
  * A dot on the trigger marks that rules or packs are active, because a prompt being
  * silently modified is worse than no feature at all.
@@ -94,7 +94,7 @@ export function ChatBarActionsMenu({
           position: 'fixed',
           left: rect.left,
           right: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top - 1),
+          bottom: Math.max(8, window.innerHeight - rect.top + 8),
           width: rect.width,
           maxHeight: Math.min(panel === 'menu' ? 390 : 304, Math.max(150, rect.top - 8)),
         });
@@ -104,8 +104,8 @@ export function ChatBarActionsMenu({
       setMenuStyle({
         position: 'fixed',
         left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
-        bottom: Math.max(8, window.innerHeight - rect.top - 1),
-        width,
+        bottom: Math.max(8, window.innerHeight - rect.top + 8),
+        width: Math.min(width, 480),
         maxHeight: Math.min(panel === 'menu' ? 330 : 340, Math.max(176, rect.top - 12)),
       });
     };
@@ -138,10 +138,9 @@ export function ChatBarActionsMenu({
   }
 
   return (
-    /* Deliberately not a positioning context. The menu is anchored to the composer
-       surface itself so it can sit flush against its top edge with no gap; anchoring
-       it here would pin it to a 28px button in the middle of the composer's bottom
-       row, which is what made it read as a detached popup. */
+    /* Deliberately not a positioning context. The portal is measured from the full
+       composer surface and keeps a small visual gap; anchoring it here would pin it
+       to one button in the middle of the composer's bottom row. */
     <div ref={rootRef} className={cn('xv-cba-root shrink-0', className)}>
       <button
         type="button"
@@ -158,7 +157,7 @@ export function ChatBarActionsMenu({
             marked the open state came from the plus reading as a close cross when
             rotated; this glyph is not a cross, so the open state is carried by
             `data-open` in the stylesheet instead. */}
-        <AnimatedIcon icon={CirclePlayIcon} size={12} />
+        <AnimatedIcon icon={CirclePlayIcon} size={16} />
         {activeCount > 0 && <span className="xv-cba-dot" aria-hidden="true" />}
       </button>
 

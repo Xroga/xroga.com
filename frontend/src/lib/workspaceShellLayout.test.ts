@@ -13,11 +13,9 @@ import { readFileSync } from 'node:fs';
  *    corners squared off. The fix is an ownership rule — exactly one element scrolls,
  *    and it is inside the shell, not the shell and not the page.
  *
- * 2. **The `+` menu floated.** It sat 8px above a 28px button in the middle of the
- *    composer's bottom row, which is why it read as an unrelated popup. The fix is one
- *    offset (`bottom: calc(100% - 1px)`) against one anchor (the composer surface).
- *    Any positive offset, or any positioned element between the menu and the composer,
- *    puts the gap back.
+ * 2. **The actions menu floated from the wrong control.** It used the small trigger as
+ *    its anchor, rather than the composer surface. The mounted portal now measures the
+ *    composer and keeps one deliberate 8px visual separation from it.
  *
  * The scroll-ownership rule is modelled below rather than described: a real nested
  * layout with a real overflow decision, checked for which element absorbs a scroll.
@@ -204,15 +202,10 @@ test('the transcript renders chromeless inside the shell and framed everywhere e
 // The plus menu is part of the composer
 // ---------------------------------------------------------------------------
 
-test('the menu shares an edge with the composer — no gap at any width', () => {
-  const menu = rule('.xv-cba-menu') ?? '';
-  assert.match(menu, /bottom:\s*calc\(100% - 1px\)/, 'the menu no longer overlaps the composer border');
-  assert.match(menu, /left:\s*0/);
-  assert.match(menu, /margin:\s*0/);
-
-  // The specific regressions: any positive offset reopens the gap.
-  assert.equal(/bottom:\s*calc\(100% \+/.test(menu), false, 'a positive offset came back');
-  assert.equal(/margin-bottom:\s*[1-9]/.test(menu), false, 'a bottom margin came back');
+test('the menu keeps a small deliberate gap above the composer', () => {
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 8/);
+  assert.match(CSS, /\.xv-cba-menu\s*\{[\s\S]*?border-radius:\s*13px/);
+  assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
 
 test('the menu is anchored to the composer, not to the plus button', () => {
@@ -220,7 +213,7 @@ test('the menu is anchored to the composer, not to the plus button', () => {
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
   assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
   assert.match(MENU, /left:\s*rect\.left/);
-  assert.match(MENU, /window\.innerHeight - rect\.top - 1/);
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 8/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
@@ -233,7 +226,7 @@ test('opening the menu overlays the terminal instead of resizing anything', () =
 
 test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /const mobile = window\.innerWidth < 640/);
-  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top - 1\)/);
+  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top \+ 8\)/);
   assert.match(MENU, /width:\s*rect\.width/);
   assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 390 : 304, Math\.max\(150, rect\.top - 8\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);

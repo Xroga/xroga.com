@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { Check, Loader2, Plug, X } from 'lucide-react';
+import { ArrowUpRight, Check, Loader2, Plus, Search, X } from 'lucide-react';
 
 import { IntegrationLogo } from '@/components/integrations/IntegrationLogo';
 import { api } from '@/lib/api';
@@ -28,9 +28,12 @@ export function IntegrationsModal({
   const [native, setNative] = useState<ModalPlugin[]>([]);
   const [apps, setApps] = useState<ModalPlugin[]>([]);
   const [loadingApps, setLoadingApps] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     if (!open) return;
+
+    setQuery('');
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -111,13 +114,19 @@ export function IntegrationsModal({
     };
   }, [open]);
 
-  const plugins = useMemo(() => [...native, ...apps], [native, apps]);
+  const plugins = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    const all = [...native, ...apps];
+    return normalized
+      ? all.filter((plugin) => plugin.name.toLowerCase().includes(normalized))
+      : all;
+  }, [native, apps, query]);
 
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[460] flex items-end justify-center bg-black/50 p-3 sm:items-center sm:p-6"
+      className="xv-plugins-popover-backdrop"
       role="presentation"
       onMouseDown={(event) => {
         if (event.currentTarget === event.target) onClose();
@@ -127,42 +136,46 @@ export function IntegrationsModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="workspace-plugins-title"
-        className="w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-2xl"
+        className="xv-plugins-popover"
       >
-        <header className="flex items-start justify-between gap-4 border-b border-[var(--border-subtle)] px-5 py-4">
-          <div>
-            <h2 id="workspace-plugins-title" className="text-base font-semibold text-[var(--text-primary)]">
-              Plugins
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
-              Quick connection status. Open Plugins for discovery, capabilities and account management.
-            </p>
-          </div>
+        <h2 id="workspace-plugins-title" className="sr-only">Plugins</h2>
+        <header className="xv-plugins-popover__header">
+          <label className="xv-plugins-popover__search">
+            <Search aria-hidden="true" />
+            <span className="sr-only">Search plugins</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search plugins…"
+              autoFocus
+            />
+          </label>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close Plugins"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+            className="xv-plugins-popover__close"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </header>
 
-        <div className="max-h-[60vh] overflow-y-auto p-3">
-          <div className="space-y-1.5">
+        <div className="xv-plugins-popover__body">
+          <div className="xv-plugins-popover__primary">
+            <p className="xv-plugins-popover__eyebrow">Plugins</p>
             {plugins.map((plugin) => (
               <Link
                 key={plugin.id}
                 href={`/dashboard/integrations/${plugin.id}`}
                 onClick={onClose}
-                className="flex min-h-12 items-center gap-3 rounded-xl border border-transparent px-3 py-2 transition hover:border-[var(--border-subtle)] hover:bg-[var(--surface-inset)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                className="xv-plugins-popover__item"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-inset)]">
-                  <IntegrationLogo id={plugin.id} name={plugin.name} size={20} />
+                <span className="xv-plugins-popover__logo">
+                  <IntegrationLogo id={plugin.id} name={plugin.name} size={16} />
                 </span>
-                <span className="min-w-0 flex-1">
-                  <strong className="block truncate text-sm text-[var(--text-primary)]">{plugin.name}</strong>
-                  <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-[var(--text-muted)]">
+                <span className="xv-plugins-popover__name">
+                  <strong>{plugin.name}</strong>
+                  <small>
                     {plugin.checking ? (
                       <>
                         <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
@@ -176,30 +189,37 @@ export function IntegrationsModal({
                     ) : (
                       'Available'
                     )}
-                  </span>
+                  </small>
                 </span>
+                <Plus aria-hidden="true" className="xv-plugins-popover__plus" />
               </Link>
             ))}
 
             {loadingApps && !apps.length ? (
-              <div className="flex min-h-12 items-center gap-2 px-3 text-xs text-[var(--text-muted)]">
+              <div className="xv-plugins-popover__loading">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                 Checking business Plugins…
               </div>
             ) : null}
+            {!loadingApps && plugins.length === 0 ? (
+              <p className="xv-plugins-popover__empty">No matching plugins.</p>
+            ) : null}
           </div>
-        </div>
 
-        <footer className="border-t border-[var(--border-subtle)] p-3">
-          <Link
-            href="/dashboard/integrations"
-            onClick={onClose}
-            className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-white"
-          >
-            <Plug className="h-4 w-4" aria-hidden="true" />
-            Manage Plugins
-          </Link>
-        </footer>
+          <aside className="xv-plugins-popover__aside">
+            <p className="xv-plugins-popover__eyebrow">Manage</p>
+            <strong>Connect more tools</strong>
+            <span>Browse capabilities and choose which accounts Xroga may use.</span>
+            <Link
+              href="/dashboard/integrations"
+              onClick={onClose}
+              className="xv-plugins-popover__browse"
+            >
+              Manage Plugins · Browse all
+              <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </aside>
+        </div>
       </section>
     </div>
   );

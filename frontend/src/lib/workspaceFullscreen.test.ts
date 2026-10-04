@@ -108,14 +108,12 @@ test('the plus menu is a compact two-column launcher rather than a composer-wide
   const at = code.indexOf('.xv-cba-grid {');
   assert.notEqual(at, -1, 'the grid has no styles');
 
-  const media = code.indexOf('@media (min-width: 640px)', at);
-  const block = code.slice(media, media + 360);
-  assert.match(block, /width:\s*min\(520px, 100%\)/, 'the desktop panel should remain bounded');
+  assert.match(code, /\.xv-cba-menu\s*\{[\s\S]*?width:\s*min\(480px, calc\(100vw - 18px\)\) !important/, 'the desktop panel should remain compact');
   assert.match(MENU, /const width = Math\.min\(rect\.width, 520\)/, 'runtime width should match the CSS cap');
+  assert.match(MENU, /width:\s*Math\.min\(width, 480\)/, 'runtime width should enforce the compact cap');
   assert.ok(MENU.indexOf('<b>Add files or photos</b>') < MENU.indexOf('<b>Integrations</b>'), 'upload should lead the action palette');
 
-  const base = code.slice(at, code.indexOf('}', at));
-  assert.match(base, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the desktop launcher needs two compact columns');
+  assert.match(code, /\.xv-cba-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/, 'the desktop launcher needs two compact columns');
 });
 
 test('an empty fullscreen terminal shows rotating build-command inspiration', () => {
