@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
 import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
@@ -33,6 +33,7 @@ import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityConte
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
 import { X } from 'lucide-react';
 import { buildArtifactContextPreamble, useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
+import { XrogaVoiceControl } from './XrogaVoiceControl';
 
 const MIN_INPUT_H = 32;
 
@@ -59,6 +60,7 @@ export function TerminalChatBar() {
     loading,
     submit,
     stop,
+    messages,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -70,6 +72,7 @@ export function TerminalChatBar() {
   const incognito = hydrated && incognitoRaw;
   const fileRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   /**
    * Cursor-style typing: local draft owns keystrokes so the swarm tree does not
@@ -117,6 +120,14 @@ export function TerminalChatBar() {
     reason: 'not_connected' | 'no_repo_selected';
     message: string;
   }>({ open: false, reason: 'not_connected', message: '' });
+
+  const latestAssistantMessage = useMemo(
+    () =>
+      [...messages]
+        .reverse()
+        .find((message) => message.role === 'assistant' && message.content.trim().length > 0),
+    [messages],
+  );
 
   const triggerComposerSignal = useCallback((duration = 1200) => {
     setComposerSignal(true);
@@ -335,6 +346,39 @@ export function TerminalChatBar() {
     if (!loading) setSendState('launched');
   }
 
+  const handleVoiceCommand = useCallback(
+    async (spokenText: string) => {
+      const text = spokenText.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+
+      const normalized = text.toLocaleLowerCase();
+      const stopCommand =
+        /^(?:stop|stop working|cancel|cancel that|halt|pause|bas|بس|رک جاؤ|بند کرو|रुको|रुक जाओ|बंद करो|detener|para|parar|توقف|قف)$/i.test(
+          normalized,
+        );
+
+      if (loading && stopCommand) {
+        stop();
+        setSendState('idle');
+        return;
+      }
+
+      setDraft(text);
+      draftRef.current = text;
+      setPrompt(text);
+      lastExternalPrompt.current = text;
+      triggerComposerSignal(1400);
+
+      // Voice and typing deliberately converge on the same form submit path.
+      // requestSubmit preserves every existing repo/billing/queue/attachment gate
+      // instead of inventing a second voice-only execution path.
+      window.requestAnimationFrame(() => {
+        formRef.current?.requestSubmit();
+      });
+    },
+    [loading, setPrompt, stop, triggerComposerSignal],
+  );
+
   async function applyStyleFromFile(file: File, stylePrompt: string) {
     if (!(await ensureRepoWorkspace(stylePrompt))) return;
     setUploading(true);
@@ -521,7 +565,7 @@ export function TerminalChatBar() {
           />
           )}
 
-          <form onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
+          <form ref={formRef} onSubmit={handleSubmit} className="px-2 sm:px-2.5 py-0.5 sm:py-1 xv-chatbar-input-form">
             <ChatBarInputRow
               uploading={uploading}
               onUploadClick={requestFilePicker}
@@ -566,9 +610,21 @@ export function TerminalChatBar() {
                   </div>
                 ) : null
               }
+              hideMicrophone={!incognito}
+              trailingExtras={
+                !incognito ? (
+                  <XrogaVoiceControl
+                    loading={loading}
+                    latestAssistantId={latestAssistantMessage?.id}
+                    latestAssistantText={latestAssistantMessage?.content}
+                    onVoiceCommand={handleVoiceCommand}
+                  />
+                ) : null
+              }
               onTranscript={(text) => {
-                // Append rather than replace, so dictating after typing keeps
-                // whatever the user already wrote.
+                // Incognito keeps the existing click-to-dictate control; hands-free
+                // voice is disabled there because it intentionally keeps no persistent
+                // voice state or background listener.
                 setDraft((current) => {
                   const next = current.trim() ? `${current.trim()} ${text}` : text;
                   draftRef.current = next;
