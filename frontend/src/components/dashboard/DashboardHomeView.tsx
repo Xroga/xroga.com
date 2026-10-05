@@ -20,6 +20,7 @@ import { api, type DashboardSummary } from '@/lib/api';
 import { formatSafeDate, formatSafeDistance, safeDate } from '@/lib/safeDates';
 import { cn } from '@/lib/utils';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { normalizeCapacityPercent } from '@/lib/capacityPercent';
 
 const ACTION_LABELS: Record<string, string> = {
   swarm_completed: 'Build completed',
@@ -51,15 +52,18 @@ function WidgetCard({ title, icon: Icon, children, className }: {
 }
 
 function PercentBar({ value, label }: { value: number | null; label: string }) {
-  if (value == null) return <p className="text-sm text-[var(--muted)]">{label}: unavailable</p>;
+  const normalized = normalizeCapacityPercent(value);
+  if (normalized == null) {
+    return <p className="text-sm text-[var(--muted)]">{label}: unavailable</p>;
+  }
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-3 text-sm">
         <span>{label}</span>
-        <strong>{value}%</strong>
+        <strong>{normalized}%</strong>
       </div>
       <div className="h-2 rounded-full bg-[var(--foreground)]/10 overflow-hidden">
-        <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+        <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${normalized}%` }} />
       </div>
     </div>
   );
