@@ -4,6 +4,7 @@ export type PendingExecutionIntent =
   | 'analysis'
   | 'document'
   | 'code'
+  | 'data'
   | 'business';
 
 const GREETING_ONLY =
@@ -15,8 +16,11 @@ const RESEARCH =
 const DOCUMENT =
   /\b(?:pdf|docx?|document|attachment|uploaded file|spreadsheet|xlsx?|csv|slides?|pptx?|contract|resume|cv|read (?:the )?file|analy[sz]e (?:the )?(?:file|document)|summari[sz]e (?:the )?(?:file|document))\b/i;
 
+const DATA =
+  /\b(?:database|sql|postgres|postgresql|supabase|query (?:the )?database|query data|records?|table|dataset)\b/i;
+
 const BUSINESS =
-  /\b(?:gmail|email|slack|notion|hubspot|salesforce|calendar|google drive|drive|crm|linear|jira|asana|trello|shopify|stripe|database|sql|postgres|postgresql|supabase|query (?:the )?database|send (?:an )?email|schedule|connected app|business app)\b/i;
+  /\b(?:gmail|email|slack|notion|hubspot|salesforce|calendar|google drive|drive|crm|linear|jira|asana|trello|shopify|stripe|send (?:an )?email|schedule|connected app|business app)\b/i;
 
 const CODE =
   /\b(?:(?:inspect|debug|fix|edit|change|update|build|create|implement|test|verify|run)\b[\s\S]{0,60}\b(?:repo|repository|codebase|code|component|file|files|website|site|landing page|app|dashboard|tests?|browser)|find (?:the )?(?:bug|cause|component|file)|run (?:the )?(?:tests?|build))\b/i;
@@ -46,6 +50,7 @@ export function pendingExecutionIntent(input: {
   if (input.researchActive || RESEARCH.test(prompt)) return 'research';
   if (DOCUMENT.test(prompt)) return 'document';
   if (CODE.test(prompt)) return 'code';
+  if (DATA.test(prompt)) return 'data';
   if (BUSINESS.test(prompt)) return 'business';
   if (ANALYSIS.test(prompt)) return 'analysis';
   return 'chat';
@@ -59,6 +64,8 @@ export function pendingExecutionLabel(intent: PendingExecutionIntent): string {
       return 'Preparing document analysis';
     case 'code':
       return 'Preparing workspace';
+    case 'data':
+      return 'Preparing data query';
     case 'business':
       return 'Preparing connected app';
     case 'analysis':
