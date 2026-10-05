@@ -32,7 +32,7 @@ test('voice onboarding requires microphone and speaker interaction before hands-
 test('wake-word recognition is foreground hands-free and task output can speak back', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /const WAKE_WORD = \/\\\\bxroga\\\\b\/i/);
+  assert.ok(voice.includes('const WAKE_WORD = /\\bxroga\\b/i;'));
   assert.match(voice, /recognition\.continuous = true/);
   assert.match(voice, /recognition\.interimResults = true/);
   assert.match(voice, /wakeActiveRef\.current = true/);
@@ -46,7 +46,7 @@ test('voice settings expose language, tone, voice preference, replies and notifi
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   for (const language of ['ur-PK', 'hi-IN', 'ar-SA', 'es-ES', 'pt-BR', 'id-ID', 'tr-TR']) {
-    assert.match(store, new RegExp(language.replace('-', '\\\\-')));
+    assert.ok(store.includes(language), 'missing voice language ' + language);
   }
   for (const tone of ['warm', 'calm', 'professional', 'energetic']) {
     assert.match(store, new RegExp("'" + tone + "'"));
