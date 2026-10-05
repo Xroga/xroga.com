@@ -1,23 +1,28 @@
 'use client';
 
+import Image from 'next/image';
 import {
   Bell,
   BellOff,
   Check,
   ChevronDown,
+  CirclePause,
   Globe2,
   Mic2,
+  Play,
   Settings2,
   Sparkles,
+  Square,
   Volume2,
   VolumeX,
   Waves,
   X,
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
+import { transcribeVoiceAudio } from '@/lib/voiceApi';
 import {
   XROGA_VOICE_LANGUAGES,
   useVoicePrefsStore,
@@ -30,6 +35,8 @@ type VoiceMode =
   | 'off'
   | 'armed'
   | 'listening'
+  | 'paused'
+  | 'transcribing'
   | 'processing'
   | 'speaking'
   | 'denied'
@@ -68,21 +75,30 @@ const FEMALE_VOICE_HINT =
 const MALE_VOICE_HINT =
   /\b(?:male|man|david|mark|daniel|thomas|fred|aaron|guy|jorge|diego|rishi)\b/i;
 
-const WAKE_WORD = /\bxroga\b/i;
-const WAKE_PREFIX =
-  /^(?:(?:hi|hey|hello|salam|salaam|assalam(?:u|o)?\s*alaikum|hola|oi|olá|namaste|bonjour|merhaba)\s+)?xroga[\s,.:;!?-]*/i;
+/*
+ * Speech engines do not agree on an invented brand token. Chrome has been observed
+ * to return "Acroga", "X Roga", or "ex roga" for the same spoken wake phrase.
+ * These are recognition aliases only; the product name rendered to the user remains
+ * exactly "Xroga".
+ */
+const WAKE_ALIAS_SOURCE = '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga)';
+const WAKE_WORD = new RegExp('\\b' + WAKE_ALIAS_SOURCE + '\\b', 'i');
+const LEADING_WAKE_ECHO = new RegExp(
+  '^(?:[\\s,.:;!?-]*(?:' + WAKE_ALIAS_SOURCE + '))+[\\s,.:;!?-]*',
+  'i',
+);
 
 const GREETINGS: Record<string, string> = {
-  en: "Hi, I'm Xroga. Say Xroga, then tell me what you want me to do.",
-  ur: 'السلام علیکم، میں ایکسروگا ہوں۔ ایکسروگا کہیں، پھر مجھے بتائیں آپ کیا کروانا چاہتے ہیں۔',
-  hi: 'नमस्ते, मैं Xroga हूँ। Xroga कहें, फिर बताएं कि आप मुझसे क्या करवाना चाहते हैं।',
-  ar: 'مرحباً، أنا Xroga. قل Xroga ثم أخبرني بما تريد مني أن أفعله.',
-  es: 'Hola, soy Xroga. Di Xroga y luego dime qué quieres que haga.',
-  pt: 'Olá, eu sou a Xroga. Diga Xroga e depois me diga o que você quer que eu faça.',
-  id: 'Halo, saya Xroga. Ucapkan Xroga, lalu beri tahu apa yang ingin Anda kerjakan.',
-  tr: 'Merhaba, ben Xroga. Xroga deyin ve sonra ne yapmamı istediğinizi söyleyin.',
-  fr: 'Bonjour, je suis Xroga. Dites Xroga, puis dites-moi ce que vous voulez que je fasse.',
-  de: 'Hallo, ich bin Xroga. Sagen Sie Xroga und dann, was ich für Sie tun soll.',
+  en: "Hi, I'm X Roga. Say X Roga, then tell me what you want me to do.",
+  ur: 'السلام علیکم، میں ایکس روگا ہوں۔ ایکس روگا کہیں، پھر مجھے بتائیں آپ کیا کروانا چاہتے ہیں۔',
+  hi: 'नमस्ते, मैं X Roga हूँ। X Roga कहें, फिर बताएं कि आप मुझसे क्या करवाना चाहते हैं।',
+  ar: 'مرحباً، أنا X Roga. قل X Roga ثم أخبرني بما تريد مني أن أفعله.',
+  es: 'Hola, soy X Roga. Di X Roga y luego dime qué quieres que haga.',
+  pt: 'Olá, eu sou a X Roga. Diga X Roga e depois me diga o que você quer que eu faça.',
+  id: 'Halo, saya X Roga. Ucapkan X Roga, lalu beri tahu apa yang ingin Anda kerjakan.',
+  tr: 'Merhaba, ben X Roga. X Roga deyin ve sonra ne yapmamı istediğinizi söyleyin.',
+  fr: 'Bonjour, je suis X Roga. Dites X Roga, puis dites-moi ce que vous voulez que je fasse.',
+  de: 'Hallo, ich bin X Roga. Sagen Sie X Roga und dann, was ich für Sie tun soll.',
 };
 
 const TONE_SETTINGS: Record<VoiceTone, { rate: number; pitch: number }> = {
@@ -114,13 +130,17 @@ function greetingFor(language: VoiceLanguage): string {
 
 function sanitizeSpeech(text: string): string {
   return text
-    .replace(/\x60\x60\x60[\s\S]*?\x60\x60\x60/g, ' ')
-    .replace(/\x60([^\x60]+)\x60/g, '$1')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
     .replace(/https?:\/\/\S+/g, ' ')
     .replace(/[#>*_~|]/g, ' ')
     .replace(/\[(.*?)\]\([^)]*\)/g, '$1')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function speechSafeText(text: string): string {
+  return sanitizeSpeech(text).replace(/\bXroga\b/gi, 'X Roga');
 }
 
 function pickVoice(
@@ -142,8 +162,19 @@ function pickVoice(
   return candidates.find((voice) => voice.default) ?? candidates[0] ?? null;
 }
 
-function stripWakeWord(text: string): string {
-  return text.replace(WAKE_PREFIX, '').trim();
+function extractWakeCommand(text: string): string | null {
+  const clean = text.replace(/\s+/g, ' ').trim();
+  const match = WAKE_WORD.exec(clean);
+  if (!match) return null;
+  return clean
+    .slice(match.index + match[0].length)
+    .replace(LEADING_WAKE_ECHO, '')
+    .trim();
+}
+
+function directCommand(text: string): string {
+  const wakeCommand = extractWakeCommand(text);
+  return wakeCommand === null ? text.replace(/\s+/g, ' ').trim() : wakeCommand;
 }
 
 function modeLabel(mode: VoiceMode): string {
@@ -152,6 +183,10 @@ function modeLabel(mode: VoiceMode): string {
       return 'Voice on';
     case 'listening':
       return 'Listening';
+    case 'paused':
+      return 'Paused';
+    case 'transcribing':
+      return 'Transcribing';
     case 'processing':
       return 'Working';
     case 'speaking':
@@ -171,29 +206,36 @@ function Waveform({
   level,
   speaking,
   compact = false,
+  large = false,
 }: {
   level: number;
   speaking?: boolean;
   compact?: boolean;
+  large?: boolean;
 }) {
-  const bars = compact ? 5 : 11;
+  const bars = large ? 23 : compact ? 5 : 11;
   return (
     <span
-      className={cn('xv-voice-wave', compact && 'xv-voice-wave--compact', speaking && 'is-speaking')}
+      className={cn(
+        'xv-voice-wave',
+        compact && 'xv-voice-wave--compact',
+        large && 'xv-voice-wave--large',
+        speaking && 'is-speaking',
+      )}
       aria-hidden="true"
     >
       {Array.from({ length: bars }, (_, index) => {
         const center = (bars - 1) / 2;
         const weight = 1 - Math.abs(index - center) / Math.max(center, 1);
         const height = speaking
-          ? 22 + ((index * 17) % 46)
-          : 12 + Math.min(84, level * (45 + weight * 52));
+          ? 20 + ((index * 19) % 68)
+          : 10 + Math.min(90, level * (52 + weight * 74));
         return (
           <i
             key={index}
             style={{
-              transform: 'scaleY(' + Math.max(0.16, height / 100) + ')',
-              animationDelay: String(-index * 55) + 'ms',
+              transform: 'scaleY(' + Math.max(0.12, height / 100) + ')',
+              animationDelay: String(-index * 42) + 'ms',
             }}
           />
         );
@@ -246,16 +288,28 @@ function SelectRow({
   );
 }
 
+function recorderMimeType(): string | undefined {
+  if (typeof MediaRecorder === 'undefined') return undefined;
+  for (const mime of ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']) {
+    if (MediaRecorder.isTypeSupported(mime)) return mime;
+  }
+  return undefined;
+}
+
 export function XrogaVoiceControl({
   loading,
   latestAssistantId,
   latestAssistantText,
   onVoiceCommand,
+  onVoiceDraft,
+  onStopRun,
 }: {
   loading: boolean;
   latestAssistantId?: string;
   latestAssistantText?: string;
   onVoiceCommand: (transcript: string) => void | Promise<void>;
+  onVoiceDraft?: (transcript: string) => void;
+  onStopRun?: () => void;
 }) {
   const {
     language,
@@ -265,7 +319,6 @@ export function XrogaVoiceControl({
     autoSpeak,
     notificationsEnabled,
     onboardingComplete,
-    onboardingDismissed,
     setLanguage,
     setTone,
     setVoiceGender,
@@ -289,10 +342,11 @@ export function XrogaVoiceControl({
   >('default');
   const [liveTranscript, setLiveTranscript] = useState('');
   const [level, setLevel] = useState(0);
+  const [voiceError, setVoiceError] = useState('');
+  const [voiceStage, setVoiceStage] = useState<HTMLElement | null>(null);
 
   const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
   const recognitionRestartRef = useRef<number | null>(null);
@@ -305,6 +359,11 @@ export function XrogaVoiceControl({
   const sawActiveRunRef = useRef(false);
   const loadingRef = useRef(loading);
 
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recorderChunksRef = useRef<Blob[]>([]);
+  const recorderResolveRef = useRef<((blob: Blob | null) => void) | null>(null);
+  const directCaptureRef = useRef(false);
+
   const currentLanguage = effectiveLanguage(language);
 
   useEffect(() => {
@@ -313,7 +372,7 @@ export function XrogaVoiceControl({
 
   useEffect(() => {
     setMounted(true);
-    setOnboardingOpen(!onboardingComplete && !onboardingDismissed);
+    setVoiceStage(document.querySelector<HTMLElement>('[data-xroga-voice-stage]'));
     setRecognitionSupported(Boolean(getSpeechRecognitionConstructor()));
     setSpeechOutputSupported(
       'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined',
@@ -327,7 +386,7 @@ export function XrogaVoiceControl({
     updateVoices();
     window.speechSynthesis?.addEventListener?.('voiceschanged', updateVoices);
     return () => window.speechSynthesis?.removeEventListener?.('voiceschanged', updateVoices);
-  }, [onboardingComplete, onboardingDismissed]);
+  }, []);
 
   const stopMeter = useCallback(() => {
     if (animationFrameRef.current !== null) {
@@ -347,17 +406,16 @@ export function XrogaVoiceControl({
     const context = new AudioContextCtor();
     const analyser = context.createAnalyser();
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.72;
+    analyser.smoothingTimeConstant = 0.68;
     context.createMediaStreamSource(stream).connect(analyser);
     audioContextRef.current = context;
-    analyserRef.current = analyser;
 
     const bins = new Uint8Array(analyser.frequencyBinCount);
     const tick = () => {
       analyser.getByteFrequencyData(bins);
       let sum = 0;
       for (let index = 0; index < bins.length; index += 1) sum += bins[index] ?? 0;
-      setLevel(Math.min(1, sum / Math.max(1, bins.length) / 110));
+      setLevel(Math.min(1, sum / Math.max(1, bins.length) / 105));
       animationFrameRef.current = requestAnimationFrame(tick);
     };
     animationFrameRef.current = requestAnimationFrame(tick);
@@ -369,7 +427,6 @@ export function XrogaVoiceControl({
     streamRef.current = null;
     void audioContextRef.current?.close().catch(() => undefined);
     audioContextRef.current = null;
-    analyserRef.current = null;
     setMicReady(false);
   }, [stopMeter]);
 
@@ -380,6 +437,7 @@ export function XrogaVoiceControl({
     }
     if (!navigator.mediaDevices?.getUserMedia) {
       setMode('unavailable');
+      setVoiceError('This browser cannot open the microphone.');
       return false;
     }
 
@@ -394,6 +452,7 @@ export function XrogaVoiceControl({
       });
       streamRef.current = stream;
       setMicReady(true);
+      setVoiceError('');
       startMeter(stream);
       return true;
     } catch (error) {
@@ -401,6 +460,11 @@ export function XrogaVoiceControl({
         error instanceof DOMException &&
         (error.name === 'NotAllowedError' || error.name === 'SecurityError');
       setMode(denied ? 'denied' : 'error');
+      setVoiceError(
+        denied
+          ? 'Microphone access is blocked. Allow it in your browser and try again.'
+          : 'Xroga could not open the microphone.',
+      );
       setMicReady(false);
       return false;
     }
@@ -415,9 +479,51 @@ export function XrogaVoiceControl({
       if (abort) recognitionRef.current?.abort();
       else recognitionRef.current?.stop();
     } catch {
-      // Already stopped by the browser.
+      // The browser may already have ended the recognition session.
     }
     recognitionRef.current = null;
+  }, []);
+
+  const stopRecorder = useCallback(async (): Promise<Blob | null> => {
+    const recorder = recorderRef.current;
+    if (!recorder || recorder.state === 'inactive') return null;
+
+    return new Promise<Blob | null>((resolve) => {
+      recorderResolveRef.current = resolve;
+      try {
+        recorder.stop();
+      } catch {
+        recorderResolveRef.current = null;
+        resolve(null);
+      }
+    });
+  }, []);
+
+  const startRecorder = useCallback((stream: MediaStream) => {
+    if (typeof MediaRecorder === 'undefined') return;
+    const mimeType = recorderMimeType();
+
+    try {
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      recorderChunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) recorderChunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        const blob = recorderChunksRef.current.length
+          ? new Blob(recorderChunksRef.current, { type: recorder.mimeType || mimeType || 'audio/webm' })
+          : null;
+        recorderChunksRef.current = [];
+        recorderRef.current = null;
+        const resolve = recorderResolveRef.current;
+        recorderResolveRef.current = null;
+        resolve?.(blob);
+      };
+      recorder.start(250);
+      recorderRef.current = recorder;
+    } catch {
+      recorderRef.current = null;
+    }
   }, []);
 
   const submitCommand = useCallback(async () => {
@@ -425,32 +531,37 @@ export function XrogaVoiceControl({
       window.clearTimeout(commandTimerRef.current);
       commandTimerRef.current = null;
     }
+
     const command = commandBufferRef.current.replace(/\s+/g, ' ').trim();
     commandBufferRef.current = '';
     wakeActiveRef.current = false;
-    setLiveTranscript('');
+    directCaptureRef.current = false;
+    void stopRecorder();
+
     if (!command) {
       setMode(handsFreeEnabled ? 'armed' : 'off');
+      setLiveTranscript('');
       return;
     }
+
+    setLiveTranscript(command);
+    onVoiceDraft?.(command);
     setMode('processing');
+    setVoiceError('');
     await onVoiceCommand(command);
-  }, [handsFreeEnabled, onVoiceCommand]);
+  }, [handsFreeEnabled, onVoiceCommand, onVoiceDraft, stopRecorder]);
 
   const scheduleCommand = useCallback(() => {
     if (commandTimerRef.current !== null) window.clearTimeout(commandTimerRef.current);
     commandTimerRef.current = window.setTimeout(() => {
       void submitCommand();
-    }, 950);
+    }, 1050);
   }, [submitCommand]);
 
   const startRecognition = useCallback(() => {
     if (!handsFreeEnabled || recognitionPausedRef.current || recognitionRef.current) return;
     const Recognition = getSpeechRecognitionConstructor();
-    if (!Recognition) {
-      setMode('unavailable');
-      return;
-    }
+    if (!Recognition) return;
 
     const recognition = new Recognition();
     recognition.continuous = true;
@@ -458,36 +569,69 @@ export function XrogaVoiceControl({
     recognition.lang = currentLanguage;
 
     recognition.onstart = () => {
-      if (!wakeActiveRef.current) setMode(loadingRef.current ? 'processing' : 'armed');
+      if (directCaptureRef.current || wakeActiveRef.current) setMode('listening');
+      else if (!loadingRef.current) setMode('armed');
     };
 
     recognition.onresult = (event) => {
       for (let index = event.resultIndex; index < event.results.length; index += 1) {
         const result = event.results[index];
-        const transcript = (result[0]?.transcript ?? '').trim();
+        const transcript = (result[0]?.transcript ?? '').replace(/\s+/g, ' ').trim();
         if (!transcript) continue;
 
         if (!result.isFinal) {
-          setLiveTranscript(transcript);
+          if (directCaptureRef.current || wakeActiveRef.current) {
+            const draft = directCaptureRef.current ? directCommand(transcript) : extractWakeCommand(transcript);
+            const shown = draft === null ? '' : draft;
+            setLiveTranscript(shown || 'Listening…');
+            if (shown) onVoiceDraft?.(shown);
+          } else {
+            const wake = extractWakeCommand(transcript);
+            if (wake !== null) {
+              wakeActiveRef.current = true;
+              setMode('listening');
+              setLiveTranscript(wake || 'Listening…');
+              if (wake) onVoiceDraft?.(wake);
+            }
+          }
+          continue;
+        }
+
+        if (directCaptureRef.current) {
+          const command = directCommand(transcript);
+          if (!command) {
+            setLiveTranscript('Listening…');
+            continue;
+          }
+          commandBufferRef.current = (commandBufferRef.current + ' ' + command).trim();
+          setLiveTranscript(commandBufferRef.current);
+          onVoiceDraft?.(commandBufferRef.current);
+          scheduleCommand();
           continue;
         }
 
         if (!wakeActiveRef.current) {
-          if (!WAKE_WORD.test(transcript)) {
+          const command = extractWakeCommand(transcript);
+          if (command === null) {
             setLiveTranscript('');
             continue;
           }
           wakeActiveRef.current = true;
           setMode('listening');
-          const command = stripWakeWord(transcript);
           commandBufferRef.current = command;
-          setLiveTranscript(command);
-          if (command) scheduleCommand();
+          setLiveTranscript(command || 'Listening…');
+          if (command) {
+            onVoiceDraft?.(command);
+            scheduleCommand();
+          }
           continue;
         }
 
-        commandBufferRef.current = (commandBufferRef.current + ' ' + transcript).trim();
+        const command = directCommand(transcript);
+        if (!command) continue;
+        commandBufferRef.current = (commandBufferRef.current + ' ' + command).trim();
         setLiveTranscript(commandBufferRef.current);
+        onVoiceDraft?.(commandBufferRef.current);
         scheduleCommand();
       }
     };
@@ -495,18 +639,28 @@ export function XrogaVoiceControl({
     recognition.onerror = (event) => {
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         setMode('denied');
+        setVoiceError('Microphone access is blocked.');
         setHandsFreeEnabled(false);
-      } else if (event.error === 'audio-capture') {
+        return;
+      }
+      if (event.error === 'audio-capture') {
         setMode('unavailable');
-      } else if (!recognitionPausedRef.current && handsFreeEnabled) {
+        setVoiceError('No microphone is available.');
+        return;
+      }
+      // During direct capture, the MediaRecorder + backend transcription path remains
+      // active even if browser speech recognition reports no-speech/network errors.
+      if (directCaptureRef.current) return;
+      if (!recognitionPausedRef.current && handsFreeEnabled && event.error !== 'no-speech') {
         setMode('error');
+        setVoiceError('Browser speech recognition stopped. Tap the waveform to talk now.');
       }
     };
 
     recognition.onend = () => {
       recognitionRef.current = null;
       if (!handsFreeEnabled || recognitionPausedRef.current) return;
-      recognitionRestartRef.current = window.setTimeout(() => startRecognition(), 350);
+      recognitionRestartRef.current = window.setTimeout(() => startRecognition(), 300);
     };
 
     recognitionRef.current = recognition;
@@ -514,13 +668,97 @@ export function XrogaVoiceControl({
       recognition.start();
     } catch {
       recognitionRef.current = null;
-      setMode('unavailable');
     }
-  }, [currentLanguage, handsFreeEnabled, scheduleCommand, setHandsFreeEnabled]);
+  }, [
+    currentLanguage,
+    handsFreeEnabled,
+    onVoiceDraft,
+    scheduleCommand,
+    setHandsFreeEnabled,
+  ]);
+
+  const beginDirectCapture = useCallback(async () => {
+    const ready = await ensureMicrophone();
+    if (!ready) return false;
+
+    directCaptureRef.current = true;
+    wakeActiveRef.current = true;
+    commandBufferRef.current = '';
+    setLiveTranscript('Listening…');
+    onVoiceDraft?.('');
+    setMode('listening');
+    setVoiceError('');
+
+    if (streamRef.current && (!recorderRef.current || recorderRef.current.state === 'inactive')) {
+      startRecorder(streamRef.current);
+    }
+    if (handsFreeEnabled && !recognitionRef.current && !recognitionPausedRef.current) {
+      window.setTimeout(() => startRecognition(), 40);
+    }
+    return true;
+  }, [ensureMicrophone, handsFreeEnabled, onVoiceDraft, startRecognition, startRecorder]);
+
+  const finishDirectCapture = useCallback(async () => {
+    if (!directCaptureRef.current) return;
+    directCaptureRef.current = false;
+
+    if (commandTimerRef.current !== null) {
+      window.clearTimeout(commandTimerRef.current);
+      commandTimerRef.current = null;
+    }
+
+    const browserCommand = commandBufferRef.current.replace(/\s+/g, ' ').trim();
+    const recorded = await stopRecorder();
+
+    if (browserCommand) {
+      commandBufferRef.current = browserCommand;
+      await submitCommand();
+      return;
+    }
+
+    if (!recorded || recorded.size < 512) {
+      wakeActiveRef.current = false;
+      setMode(handsFreeEnabled ? 'armed' : 'off');
+      setLiveTranscript('');
+      setVoiceError('I did not hear enough audio. Tap Talk and try again.');
+      return;
+    }
+
+    setMode('transcribing');
+    setLiveTranscript('Transcribing…');
+    try {
+      const transcript = await transcribeVoiceAudio(recorded, language);
+      const command = directCommand(transcript);
+      if (!command) {
+        wakeActiveRef.current = true;
+        directCaptureRef.current = true;
+        setMode('listening');
+        setLiveTranscript('I heard Xroga. Keep talking…');
+        if (streamRef.current) startRecorder(streamRef.current);
+        return;
+      }
+      commandBufferRef.current = command;
+      setLiveTranscript(command);
+      onVoiceDraft?.(command);
+      await submitCommand();
+    } catch (error) {
+      wakeActiveRef.current = false;
+      setMode('error');
+      setLiveTranscript('');
+      setVoiceError(error instanceof Error ? error.message : 'Could not transcribe that audio.');
+    }
+  }, [
+    handsFreeEnabled,
+    language,
+    onVoiceDraft,
+    startRecorder,
+    stopRecorder,
+    submitCommand,
+  ]);
 
   const speak = useCallback(
     (rawText: string, onDone?: () => void) => {
-      const text = sanitizeSpeech(rawText);
+      const text = speechSafeText(rawText);
       if (!text || !('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
         onDone?.();
         return;
@@ -541,7 +779,7 @@ export function XrogaVoiceControl({
       const finish = () => {
         recognitionPausedRef.current = false;
         setMode(handsFreeEnabled ? 'armed' : 'off');
-        if (handsFreeEnabled) window.setTimeout(() => startRecognition(), 250);
+        if (handsFreeEnabled) window.setTimeout(() => startRecognition(), 240);
         onDone?.();
       };
 
@@ -553,52 +791,85 @@ export function XrogaVoiceControl({
     [currentLanguage, handsFreeEnabled, startRecognition, stopRecognition, tone, voiceGender],
   );
 
-  const enableHandsFree = useCallback(async () => {
-    if (!getSpeechRecognitionConstructor()) {
-      setMode('unavailable');
-      return false;
-    }
+  const enableHandsFree = useCallback(async (listenImmediately = false) => {
     const ready = await ensureMicrophone();
     if (!ready) return false;
+
+    recognitionPausedRef.current = false;
     setHandsFreeEnabled(true);
-    setMode('armed');
+    setMode(listenImmediately ? 'listening' : 'armed');
+    setVoiceError('');
+    if (listenImmediately) {
+      window.setTimeout(() => void beginDirectCapture(), 30);
+    }
     return true;
-  }, [ensureMicrophone, setHandsFreeEnabled]);
+  }, [beginDirectCapture, ensureMicrophone, setHandsFreeEnabled]);
 
   const disableHandsFree = useCallback(() => {
     setHandsFreeEnabled(false);
     wakeActiveRef.current = false;
+    directCaptureRef.current = false;
     commandBufferRef.current = '';
     setLiveTranscript('');
     recognitionPausedRef.current = true;
     stopRecognition(true);
+    void stopRecorder();
     window.speechSynthesis?.cancel();
     releaseMicrophone();
     setMode('off');
-  }, [releaseMicrophone, setHandsFreeEnabled, stopRecognition]);
+  }, [releaseMicrophone, setHandsFreeEnabled, stopRecognition, stopRecorder]);
+
+  const pauseVoice = useCallback(() => {
+    recognitionPausedRef.current = true;
+    stopRecognition(true);
+    if (recorderRef.current?.state === 'recording') {
+      try {
+        recorderRef.current.pause();
+      } catch {
+        // Browser may not support pausing this recorder.
+      }
+    }
+    setMode('paused');
+  }, [stopRecognition]);
+
+  const resumeVoice = useCallback(() => {
+    recognitionPausedRef.current = false;
+    if (recorderRef.current?.state === 'paused') {
+      try {
+        recorderRef.current.resume();
+      } catch {
+        // Browser may not support resuming this recorder.
+      }
+    }
+    setMode(directCaptureRef.current ? 'listening' : 'armed');
+    window.setTimeout(() => startRecognition(), 40);
+  }, [startRecognition]);
 
   useEffect(() => {
     if (!mounted) return;
+
     if (handsFreeEnabled) {
-      recognitionPausedRef.current = false;
+      recognitionPausedRef.current = mode === 'paused' || mode === 'speaking';
       void ensureMicrophone().then((ready) => {
-        if (ready) startRecognition();
+        if (ready && !recognitionPausedRef.current) startRecognition();
       });
     } else {
       recognitionPausedRef.current = true;
       stopRecognition(true);
-      releaseMicrophone();
-      setMode('off');
+      if (!onboardingOpen) releaseMicrophone();
+      setMode((current) => (['denied', 'unavailable', 'error'].includes(current) ? current : 'off'));
     }
+
     return () => {
       stopRecognition(true);
       if (commandTimerRef.current !== null) window.clearTimeout(commandTimerRef.current);
     };
   }, [
-    handsFreeEnabled,
-    mounted,
-    currentLanguage,
     ensureMicrophone,
+    handsFreeEnabled,
+    mode,
+    mounted,
+    onboardingOpen,
     releaseMicrophone,
     startRecognition,
     stopRecognition,
@@ -608,12 +879,13 @@ export function XrogaVoiceControl({
     if (!handsFreeEnabled) return;
     if (loading) {
       sawActiveRunRef.current = true;
-      if (mode !== 'speaking' && mode !== 'listening') setMode('processing');
+      if (mode !== 'speaking' && mode !== 'listening' && mode !== 'paused') setMode('processing');
       return;
     }
     if (sawActiveRunRef.current && mode === 'processing') {
       sawActiveRunRef.current = false;
       setMode('armed');
+      setLiveTranscript('');
     }
   }, [handsFreeEnabled, loading, mode]);
 
@@ -664,12 +936,14 @@ export function XrogaVoiceControl({
 
   useEffect(() => {
     return () => {
+      recognitionPausedRef.current = true;
       stopRecognition(true);
+      void stopRecorder();
       releaseMicrophone();
       window.speechSynthesis?.cancel();
       if (commandTimerRef.current !== null) window.clearTimeout(commandTimerRef.current);
     };
-  }, [releaseMicrophone, stopRecognition]);
+  }, [releaseMicrophone, stopRecognition, stopRecorder]);
 
   const requestNotifications = useCallback(async () => {
     if (!('Notification' in window)) {
@@ -689,10 +963,12 @@ export function XrogaVoiceControl({
     ) {
       setSpeakerReady(false);
       setSpeechOutputSupported(false);
+      setVoiceError('Speech output is unavailable in this browser.');
       return;
     }
     setSpeechOutputSupported(true);
     setSpeakerReady(true);
+    setVoiceError('');
     speak(greetingFor(language), () => {
       if (!handsFreeEnabled) setMode('off');
     });
@@ -703,31 +979,61 @@ export function XrogaVoiceControl({
       const ready = await ensureMicrophone();
       if (!ready) return;
     }
+    if (!speakerReady && speechOutputSupported) {
+      testSpeaker();
+      return;
+    }
     setOnboardingComplete(true);
     setOnboardingDismissed(false);
     setOnboardingOpen(false);
-    await enableHandsFree();
+    await enableHandsFree(false);
   }, [
     enableHandsFree,
     ensureMicrophone,
     micReady,
     setOnboardingComplete,
     setOnboardingDismissed,
+    speakerReady,
+    speechOutputSupported,
+    testSpeaker,
   ]);
 
-  const StatusIcon = useMemo(() => {
-    if (mode === 'speaking') return Volume2;
-    if (mode === 'listening') return Waves;
-    if (mode === 'processing') return Sparkles;
-    if (mode === 'denied' || mode === 'error' || mode === 'unavailable') return VolumeX;
-    return Mic2;
-  }, [mode]);
+  const openSetup = useCallback(() => {
+    setVoiceError('');
+    setOnboardingOpen(true);
+  }, []);
+
+  const primaryButton = useCallback(() => {
+    if (!handsFreeEnabled) {
+      if (!onboardingComplete) openSetup();
+      else void enableHandsFree(true);
+      return;
+    }
+    if (mode === 'paused') {
+      resumeVoice();
+      return;
+    }
+    if (directCaptureRef.current || mode === 'listening') {
+      void finishDirectCapture();
+      return;
+    }
+    void beginDirectCapture();
+  }, [
+    beginDirectCapture,
+    enableHandsFree,
+    finishDirectCapture,
+    handsFreeEnabled,
+    mode,
+    onboardingComplete,
+    openSetup,
+    resumeVoice,
+  ]);
 
   const onboarding = onboardingOpen && mounted
     ? createPortal(
         <div className="xv-voice-onboarding-backdrop" role="presentation">
           <section
-            className="xv-voice-onboarding"
+            className="xv-voice-onboarding xv-voice-onboarding--compact"
             role="dialog"
             aria-modal="true"
             aria-labelledby="xv-voice-onboarding-title"
@@ -735,7 +1041,7 @@ export function XrogaVoiceControl({
             <button
               type="button"
               className="xv-voice-onboarding__close"
-              aria-label="Not now"
+              aria-label="Close voice setup"
               onClick={() => {
                 setOnboardingDismissed(true);
                 setOnboardingOpen(false);
@@ -744,36 +1050,29 @@ export function XrogaVoiceControl({
               <X className="h-4 w-4" aria-hidden />
             </button>
 
-            <div className="xv-voice-orb" aria-hidden>
-              <span />
-              <span />
-              <span />
+            <div className="xv-voice-setup-brand">
+              <Image
+                src="/brand/xroga-orb-mark-v2.webp"
+                width={54}
+                height={54}
+                alt=""
+                priority
+              />
             </div>
-
             <div className="text-center">
-              <p className="xv-voice-kicker">HANDS-FREE XROGA</p>
-              <h2 id="xv-voice-onboarding-title">Talk to Xroga naturally</h2>
+              <p className="xv-voice-kicker">XROGA VOICE</p>
+              <h2 id="xv-voice-onboarding-title">Turn on hands-free voice</h2>
               <p>
-                Enable your microphone once. While this workspace is open, say <strong>“Xroga”</strong>,
-                then tell it what you want done. Voice requests use the same Xroga agents, evidence,
-                Stop controls, billing, and durable execution as typed requests.
+                Allow the mic, hear Xroga once, then say <strong>“X Roga”</strong> or tap Talk.
               </p>
             </div>
 
-            {!recognitionSupported ? (
-              <p className="xv-voice-warning">
-                This browser does not expose continuous speech recognition. Hands-free Xroga
-                cannot be enabled here yet; typed Xroga remains fully available.
-              </p>
-            ) : null}
-            {!speechOutputSupported ? (
-              <p className="xv-voice-warning">
-                This browser does not expose speech output. You can keep using typed Xroga,
-                or open Xroga in a browser with Web Speech support.
-              </p>
-            ) : null}
+            <div className="xv-voice-setup-preview" aria-hidden>
+              <Image src="/brand/xroga-orb-mark-v2.webp" width={30} height={30} alt="" />
+              <Waveform level={micReady ? Math.max(level, 0.08) : 0.04} large />
+            </div>
 
-            <div className="xv-voice-permission-grid">
+            <div className="xv-voice-permission-grid xv-voice-permission-grid--compact">
               <button
                 type="button"
                 className={cn('xv-voice-permission', micReady && 'is-ready')}
@@ -781,8 +1080,8 @@ export function XrogaVoiceControl({
               >
                 <span className="xv-voice-permission__icon"><Mic2 aria-hidden /></span>
                 <span>
-                  <strong>{micReady ? 'Microphone ready' : 'Enable microphone'}</strong>
-                  <small>Needed to hear “Xroga” and your request.</small>
+                  <strong>{micReady ? 'Microphone ready' : 'Allow microphone'}</strong>
+                  <small>{micReady ? 'Xroga can hear you.' : 'Required for voice input.'}</small>
                 </span>
                 {micReady ? <Check className="h-4 w-4" aria-hidden /> : null}
               </button>
@@ -794,8 +1093,8 @@ export function XrogaVoiceControl({
               >
                 <span className="xv-voice-permission__icon"><Volume2 aria-hidden /></span>
                 <span>
-                  <strong>{speakerReady ? 'Speaker tested' : 'Hear Xroga first'}</strong>
-                  <small>Xroga will explain how hands-free mode works.</small>
+                  <strong>{speakerReady ? 'Xroga voice tested' : 'Hear Xroga'}</strong>
+                  <small>Confirms the speaker and the X Roga pronunciation.</small>
                 </span>
                 {speakerReady ? <Check className="h-4 w-4" aria-hidden /> : null}
               </button>
@@ -818,9 +1117,9 @@ export function XrogaVoiceControl({
                       ? 'Notifications ready'
                       : notificationPermission === 'denied'
                         ? 'Notifications blocked'
-                        : 'Enable notifications'}
+                        : 'Task notifications'}
                   </strong>
-                  <small>Optional: know when a long task finishes in another tab.</small>
+                  <small>Optional for long-running tasks.</small>
                 </span>
                 {notificationPermission === 'granted' ? <Check className="h-4 w-4" aria-hidden /> : null}
               </button>
@@ -839,6 +1138,14 @@ export function XrogaVoiceControl({
               </select>
             </div>
 
+            {voiceError ? <p className="xv-voice-warning">{voiceError}</p> : null}
+            {!recognitionSupported ? (
+              <p className="xv-voice-note">
+                Wake-word listening is limited in this browser. Tap Talk still uses Xroga&apos;s
+                authenticated server transcription fallback.
+              </p>
+            ) : null}
+
             <div className="xv-voice-onboarding__footer">
               <button
                 type="button"
@@ -848,26 +1155,119 @@ export function XrogaVoiceControl({
                   setOnboardingOpen(false);
                 }}
               >
-                Not now
+                Cancel
               </button>
               <button
                 type="button"
                 className="xv-voice-primary"
                 onClick={() => void finishOnboarding()}
-                disabled={!recognitionSupported || !speechOutputSupported || !micReady || !speakerReady}
+                disabled={!micReady || (speechOutputSupported && !speakerReady)}
               >
                 <Waves className="h-4 w-4" aria-hidden />
-                Finish & turn on voice
+                Turn on voice
               </button>
             </div>
-
-            <p className="xv-voice-privacy">
-              Your browser controls microphone permission. Xroga only activates hands-free commands
-              after hearing the wake word while this page is open.
-            </p>
           </section>
         </div>,
         document.body,
+      )
+    : null;
+
+  const sessionStage = voiceStage && handsFreeEnabled
+    ? createPortal(
+        <div
+          className={cn(
+            'xv-voice-session-bar',
+            mode === 'listening' && 'is-listening',
+            mode === 'speaking' && 'is-speaking',
+            mode === 'processing' && 'is-processing',
+            mode === 'paused' && 'is-paused',
+          )}
+          data-testid="xroga-voice-session"
+        >
+          <button
+            type="button"
+            className="xv-voice-session__orb"
+            onClick={() => {
+              if (mode === 'paused') resumeVoice();
+              else if (!loading && mode !== 'speaking') void beginDirectCapture();
+            }}
+            aria-label={mode === 'paused' ? 'Resume Xroga voice' : 'Talk to Xroga now'}
+          >
+            <Image src="/brand/xroga-orb-mark-v2.webp" width={34} height={34} alt="" />
+          </button>
+
+          <div className="xv-voice-session__copy">
+            <strong>{modeLabel(mode)}</strong>
+            <span>
+              {mode === 'armed'
+                ? 'Say “X Roga” or tap the waveform to talk now'
+                : mode === 'listening'
+                  ? liveTranscript || 'Listening…'
+                  : mode === 'transcribing'
+                    ? 'Turning your speech into a real Xroga request…'
+                    : mode === 'processing'
+                      ? 'Running through Xroga agents…'
+                      : mode === 'speaking'
+                        ? 'Xroga is speaking'
+                        : mode === 'paused'
+                          ? 'Microphone paused'
+                          : voiceError || 'Voice is ready'}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className="xv-voice-session__wave-button"
+            onClick={() => {
+              if (mode === 'paused') resumeVoice();
+              else if (directCaptureRef.current) void finishDirectCapture();
+              else if (!loading && mode !== 'speaking') void beginDirectCapture();
+            }}
+            aria-label={directCaptureRef.current ? 'Finish voice input' : 'Talk to Xroga now'}
+          >
+            <Waveform
+              level={mode === 'paused' ? 0 : level}
+              speaking={mode === 'speaking'}
+              large
+            />
+          </button>
+
+          <div className="xv-voice-session__controls">
+            <button
+              type="button"
+              onClick={mode === 'paused' ? resumeVoice : pauseVoice}
+              aria-label={mode === 'paused' ? 'Resume voice' : 'Pause voice'}
+              title={mode === 'paused' ? 'Resume voice' : 'Pause voice'}
+            >
+              {mode === 'paused'
+                ? <Play className="h-4 w-4" aria-hidden />
+                : <CirclePause className="h-4 w-4" aria-hidden />}
+            </button>
+            {directCaptureRef.current ? (
+              <button
+                type="button"
+                onClick={() => void finishDirectCapture()}
+                aria-label="Finish voice input"
+                title="Done talking"
+              >
+                <Check className="h-4 w-4" aria-hidden />
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => {
+                if (loading) onStopRun?.();
+                disableHandsFree();
+              }}
+              aria-label={loading ? 'Stop Xroga task and voice' : 'Turn off Xroga voice'}
+              title={loading ? 'Stop task and voice' : 'Turn off voice'}
+            >
+              <Square className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
+            </button>
+          </div>
+        </div>,
+        voiceStage,
       )
     : null;
 
@@ -879,22 +1279,32 @@ export function XrogaVoiceControl({
           className={cn(
             'xv-voice-toggle',
             handsFreeEnabled && 'is-on',
-            ['listening', 'processing', 'speaking'].includes(mode) && 'is-active',
+            ['listening', 'transcribing', 'processing', 'speaking'].includes(mode) && 'is-active',
             ['denied', 'error', 'unavailable'].includes(mode) && 'is-error',
           )}
           aria-pressed={handsFreeEnabled}
-          onClick={() => {
-            if (handsFreeEnabled) disableHandsFree();
-            else if (!onboardingComplete) setOnboardingOpen(true);
-            else void enableHandsFree();
-          }}
-          title={handsFreeEnabled ? 'Turn off hands-free Xroga' : 'Turn on hands-free Xroga'}
+          onClick={primaryButton}
+          title={
+            handsFreeEnabled
+              ? directCaptureRef.current
+                ? 'Finish voice input'
+                : 'Talk to Xroga now'
+              : 'Turn on Xroga voice'
+          }
         >
           <span className="xv-voice-toggle__icon">
-            <StatusIcon className="h-4 w-4" aria-hidden />
+            {mode === 'speaking'
+              ? <Volume2 className="h-4 w-4" aria-hidden />
+              : mode === 'processing' || mode === 'transcribing'
+                ? <Sparkles className="h-4 w-4" aria-hidden />
+                : mode === 'error' || mode === 'denied' || mode === 'unavailable'
+                  ? <VolumeX className="h-4 w-4" aria-hidden />
+                  : <Mic2 className="h-4 w-4" aria-hidden />}
           </span>
           <span className="xv-voice-toggle__label">{modeLabel(mode)}</span>
-          {handsFreeEnabled ? <Waveform level={level} speaking={mode === 'speaking'} compact /> : null}
+          {handsFreeEnabled ? (
+            <Waveform level={mode === 'paused' ? 0 : level} speaking={mode === 'speaking'} compact />
+          ) : null}
         </button>
 
         <button
@@ -904,7 +1314,10 @@ export function XrogaVoiceControl({
           aria-expanded={settingsOpen}
           onClick={() => setSettingsOpen((open) => !open)}
         >
-          <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', settingsOpen && 'rotate-180')} aria-hidden />
+          <ChevronDown
+            className={cn('h-3.5 w-3.5 transition-transform', settingsOpen && 'rotate-180')}
+            aria-hidden
+          />
         </button>
 
         {settingsOpen ? (
@@ -912,7 +1325,7 @@ export function XrogaVoiceControl({
             <div className="xv-voice-settings-panel__head">
               <span>
                 <Settings2 className="h-4 w-4" aria-hidden />
-                Voice settings
+                Voice
               </span>
               <button type="button" onClick={() => setSettingsOpen(false)} aria-label="Close voice settings">
                 <X className="h-4 w-4" aria-hidden />
@@ -920,25 +1333,13 @@ export function XrogaVoiceControl({
             </div>
 
             <div className="xv-voice-live">
-              <div className={cn('xv-voice-orb xv-voice-orb--small', handsFreeEnabled && 'is-live')} aria-hidden>
-                <span />
-                <span />
-                <span />
-              </div>
+              <Image src="/brand/xroga-orb-mark-v2.webp" width={38} height={38} alt="" />
               <span className="min-w-0 flex-1">
                 <strong>{modeLabel(mode)}</strong>
                 <small>
-                  {mode === 'armed'
-                    ? 'Say “Xroga”, then speak your request.'
-                    : mode === 'listening'
-                      ? liveTranscript || 'I’m listening…'
-                      : mode === 'processing'
-                        ? 'Your request is running through the same Xroga backend.'
-                        : mode === 'speaking'
-                          ? 'Xroga is speaking the completed response.'
-                          : handsFreeEnabled
-                            ? 'Hands-free mode is active.'
-                            : 'Hands-free mode is off.'}
+                  {handsFreeEnabled
+                    ? 'Say “X Roga” for hands-free, or tap Talk for immediate dictation.'
+                    : 'Voice is off.'}
                 </small>
               </span>
               <Waveform level={level} speaking={mode === 'speaking'} />
@@ -952,8 +1353,8 @@ export function XrogaVoiceControl({
                   label="Hands-free Xroga"
                   onChange={(checked) => {
                     if (checked) {
-                      if (!onboardingComplete) setOnboardingOpen(true);
-                      else void enableHandsFree();
+                      if (!onboardingComplete) openSetup();
+                      else void enableHandsFree(false);
                     } else {
                       disableHandsFree();
                     }
@@ -1011,31 +1412,25 @@ export function XrogaVoiceControl({
             </div>
 
             <div className="xv-voice-settings-actions">
+              <button type="button" onClick={() => void beginDirectCapture()}>
+                <Mic2 className="h-4 w-4" aria-hidden />
+                Talk now
+              </button>
               <button type="button" onClick={testSpeaker}>
                 <Volume2 className="h-4 w-4" aria-hidden />
-                Test voice
+                Test Xroga
               </button>
-              <button type="button" onClick={() => setOnboardingOpen(true)}>
+              <button type="button" onClick={openSetup}>
                 <Sparkles className="h-4 w-4" aria-hidden />
                 Setup
               </button>
             </div>
 
-            {mode === 'unavailable' ? (
-              <p className="xv-voice-warning">
-                Hands-free speech recognition is not available in this browser. Use a current
-                Chromium-based browser or keep typing; Xroga’s normal chat remains unchanged.
-              </p>
-            ) : null}
-            {mode === 'denied' ? (
-              <p className="xv-voice-warning">
-                Microphone access is blocked. Allow microphone access for this site in your browser,
-                then turn Voice on again.
-              </p>
-            ) : null}
+            {voiceError ? <p className="xv-voice-warning">{voiceError}</p> : null}
           </div>
         ) : null}
       </div>
+      {sessionStage}
       {onboarding}
     </>
   );
