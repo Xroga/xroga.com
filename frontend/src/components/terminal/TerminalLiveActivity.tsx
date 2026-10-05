@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Brain, CheckCircle2, ChevronDown, CircleHelp, CirclePause, CircleX, Clock3, Code2, Database,
-  FilePen, FileText, FlaskConical, Globe2, Link2, LoaderCircle, MessageCircle,
-  MonitorSmartphone, Plug, PlugZap, Rocket, Search, ShieldCheck, SquareTerminal,
-  TriangleAlert, Workflow, type LucideIcon,
+  FilePen, FileText, FlaskConical, Globe2, Link2, MonitorSmartphone, Plug, PlugZap, Rocket,
+  Search, ShieldCheck, SquareTerminal, TriangleAlert, Workflow, type LucideIcon,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -14,12 +13,19 @@ import {
   type XrogaActivityKind,
   type XrogaActivityPresentation,
 } from '@/lib/terminal/activityPresentation';
+import type { PendingExecutionIntent } from '@/lib/terminal/executionIntent';
 import type { TerminalRunState } from '@/lib/terminal/terminalEvent';
+import {
+  ExecutionBranch,
+  ExecutionPulse,
+  ExecutionShimmerText,
+  SearchGlobe,
+} from './ExecutionMotion';
 
-const DEFAULT_VISIBLE_ROWS = 3;
+const DEFAULT_VISIBLE_ROWS = 4;
 
 const ICONS: Record<XrogaActivityKind, LucideIcon> = {
-  respond: MessageCircle,
+  respond: CheckCircle2,
   understand: Brain,
   search: Search,
   'open-source': Globe2,
@@ -48,6 +54,54 @@ const ICONS: Record<XrogaActivityKind, LucideIcon> = {
   error: CircleX,
 };
 
+type TaskFamily = 'research' | 'document' | 'build' | 'app' | 'analysis' | 'general';
+
+function familyForKind(kind: XrogaActivityKind): TaskFamily {
+  if (['search', 'open-source', 'read-source', 'compare', 'summarize'].includes(kind)) return 'research';
+  if (['read-file', 'upload', 'download'].includes(kind)) return 'document';
+  if (['write-file', 'code', 'command', 'test', 'browser', 'deploy', 'verify'].includes(kind)) return 'build';
+  if (['connected-app-read', 'connected-app-write', 'automation', 'database', 'approval', 'connection'].includes(kind)) return 'app';
+  if (kind === 'understand') return 'analysis';
+  return 'general';
+}
+
+function stateLabel(input: {
+  active: boolean;
+  latest: XrogaActivityPresentation;
+  errors: number;
+  stopped: boolean;
+}): string {
+  if (input.errors > 0) return 'Needs attention';
+  if (input.stopped) return 'Stopped';
+  if (input.latest.status === 'waiting') {
+    if (input.latest.kind === 'approval') return 'Waiting for approval';
+    if (input.latest.kind === 'connection') return 'Connection needed';
+    return 'Waiting';
+  }
+
+  const family = familyForKind(input.latest.kind);
+  if (!input.active) {
+    if (family === 'research') return 'Research complete';
+    if (family === 'document') return 'Document review complete';
+    if (family === 'build') return 'Build work complete';
+    if (family === 'app') return 'Action complete';
+    if (family === 'analysis') return 'Analysis complete';
+    return 'Complete';
+  }
+
+  if (family === 'research') return 'Researching';
+  if (family === 'document') return 'Reading';
+  if (family === 'build') return input.latest.kind === 'test' ? 'Testing' : input.latest.kind === 'deploy' ? 'Deploying' : input.latest.kind === 'verify' ? 'Verifying' : 'Building';
+  if (family === 'app') {
+    if (input.latest.kind === 'connected-app-read') return 'Reading app data';
+    if (input.latest.kind === 'connected-app-write') return 'Updating app';
+    if (input.latest.kind === 'database') return 'Querying data';
+    return 'Running action';
+  }
+  if (family === 'analysis') return 'Working through it';
+  return 'Working';
+}
+
 function durationLabel(ms?: number): string | null {
   if (ms == null || !Number.isFinite(ms) || ms < 0) return null;
   if (ms < 1000) return Math.max(1, Math.round(ms)) + 'ms';
@@ -69,82 +123,93 @@ function receiptLabel(value: string): string {
   return value.length > 72 ? value.slice(0, 69) + '…' : value;
 }
 
-function ActivityRow({ row, current }: { row: XrogaActivityPresentation; current: boolean }) {
+function PendingIntentGlyph({ intent }: { intent: PendingExecutionIntent }) {
+  if (intent === 'research') return <SearchGlobe />;
+  const Icon =
+    intent === 'document'
+      ? FileText
+      : intent === 'code'
+        ? Code2
+        : intent === 'business'
+          ? PlugZap
+          : Brain;
+  return <Icon className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />;
+}
+
+function ActivityRow({
+  row,
+  current,
+  last,
+}: {
+  row: XrogaActivityPresentation;
+  current: boolean;
+  last: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const Icon = ICONS[row.kind];
   const receipts = [...(row.evidenceRefs ?? []), ...(row.artifactRefs ?? [])];
   const duration = durationLabel(row.durationMs);
   const expandable = Boolean(row.body || row.detail || receipts.length);
+  const complete = row.status === 'complete';
 
   return (
-    <li
-      className={cn(
-        'rounded-xl border transition-colors',
-        current
-          ? 'border-[var(--accent)]/25 bg-[var(--accent)]/[0.045]'
-          : 'border-transparent hover:border-[var(--card-border)]/55 hover:bg-[var(--foreground)]/[0.025]'
-      )}
-    >
+    <li className="xv-exec-row" data-current={current ? 'true' : 'false'}>
+      <ExecutionBranch active={current && row.status === 'active'} complete={complete} last={last} />
+
       <button
         type="button"
         disabled={!expandable}
         onClick={() => expandable && setOpen((value) => !value)}
         className={cn(
-          'flex w-full min-w-0 items-start gap-2.5 px-2.5 py-2 text-left',
-          !expandable && 'cursor-default'
+          'flex w-full min-w-0 items-start gap-2 py-1.5 text-left',
+          expandable
+            ? 'hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/45'
+            : 'cursor-default',
         )}
         aria-expanded={expandable ? open : undefined}
       >
         <span
           className={cn(
-            'mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-lg',
-            current
-              ? 'bg-[var(--accent)]/12 text-[var(--accent)]'
-              : 'bg-[var(--foreground)]/[0.045] text-[var(--muted)]'
+            'xv-exec-row-icon mt-0.5 grid h-5 w-5 shrink-0 place-items-center text-[var(--muted)]',
+            current && 'text-[var(--accent)]',
           )}
         >
           <Icon className="h-3.5 w-3.5" aria-hidden />
         </span>
 
         <span className="min-w-0 flex-1">
-          <span className="flex min-w-0 items-center gap-1.5">
-            <span
-              className={cn(
-                'truncate text-[12px] font-medium leading-5',
-                !current && 'text-[var(--foreground)]/82'
-              )}
-            >
+          <span className="flex min-w-0 items-center gap-2">
+            <span className="truncate text-[12px] font-medium leading-5 text-[var(--foreground)]/88">
               {row.label}
             </span>
+            {current && row.status === 'active' ? <ExecutionPulse className="scale-[0.72]" /> : null}
             {row.detail ? (
               <span className="hidden truncate text-[10px] text-[var(--muted)] sm:inline">
                 {row.detail}
               </span>
             ) : null}
           </span>
-          <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[9px] text-[var(--muted)]">
-            {duration ? <span>{duration}</span> : null}
-            {receipts.length ? (
-              <span className="inline-flex items-center gap-1">
-                <Link2 className="h-2.5 w-2.5" aria-hidden />
-                {receipts.length} {receipts.length === 1 ? 'receipt' : 'receipts'}
-              </span>
-            ) : null}
-            {row.status === 'waiting' ? <span>waiting</span> : null}
-            {row.status === 'cancelled' ? <span>cancelled</span> : null}
-            {row.status === 'interrupted' ? <span>interrupted</span> : null}
-          </span>
+
+          {(duration || receipts.length || row.status !== 'active') ? (
+            <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[9px] text-[var(--muted)]">
+              {duration ? <span>{duration}</span> : null}
+              {receipts.length ? (
+                <span className="inline-flex items-center gap-1">
+                  <Link2 className="h-2.5 w-2.5" aria-hidden />
+                  {receipts.length} {receipts.length === 1 ? 'receipt' : 'receipts'}
+                </span>
+              ) : null}
+              {row.status === 'waiting' ? <span>waiting</span> : null}
+              {row.status === 'cancelled' ? <span>cancelled</span> : null}
+              {row.status === 'interrupted' ? <span>interrupted</span> : null}
+              {row.status === 'error' ? <span>failed</span> : null}
+              {row.status === 'warning' ? <span>needs attention</span> : null}
+            </span>
+          ) : null}
         </span>
 
-        <span
-          className={cn(
-            'mt-1 flex shrink-0 items-center gap-1 text-[var(--muted)]',
-            current && 'text-[var(--accent)]'
-          )}
-        >
-          {current && row.status === 'active' ? (
-            <LoaderCircle className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden />
-          ) : row.status === 'complete' ? (
+        <span className="mt-1 flex shrink-0 items-center gap-1 text-[var(--muted)]">
+          {complete ? (
             <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
           ) : row.status === 'error' ? (
             <CircleX className="h-3.5 w-3.5" aria-hidden />
@@ -154,9 +219,7 @@ function ActivityRow({ row, current }: { row: XrogaActivityPresentation; current
             <CirclePause className="h-3.5 w-3.5" aria-hidden />
           ) : row.status === 'waiting' ? (
             <Clock3 className="h-3.5 w-3.5" aria-hidden />
-          ) : (
-            <CheckCircle2 className="h-3.5 w-3.5 opacity-45" aria-hidden />
-          )}
+          ) : null}
           {expandable ? (
             <ChevronDown
               className={cn('h-3 w-3 transition-transform', open && 'rotate-180')}
@@ -167,19 +230,14 @@ function ActivityRow({ row, current }: { row: XrogaActivityPresentation; current
       </button>
 
       {expandable && open ? (
-        <div className="mx-2.5 mb-2.5 ml-11 overflow-hidden rounded-lg border border-[var(--card-border)]/55 bg-[var(--background)]/45">
+        <div className="mb-2 ml-7 border-l border-[var(--card-border)]/45 pl-3">
           {row.body ? (
-            <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words px-2.5 py-2 font-mono text-[10px] leading-4 text-[var(--foreground)]/78">
+            <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-words py-1.5 font-mono text-[10px] leading-4 text-[var(--foreground)]/78">
               {row.body}
             </pre>
           ) : null}
           {receipts.length ? (
-            <div
-              className={cn(
-                'grid gap-1 px-2.5 py-2 text-[10px]',
-                row.body && 'border-t border-[var(--card-border)]/45'
-              )}
-            >
+            <div className="grid gap-1 py-1.5 text-[10px]">
               {receipts.map((receipt, index) => (
                 <div key={receipt + index} className="flex min-w-0 items-start gap-2">
                   <span className="inline-flex w-14 shrink-0 items-center gap-1 text-[var(--muted)]">
@@ -204,110 +262,58 @@ interface TerminalLiveActivityProps {
   activity?: readonly XrogaActivityPresentation[];
   /** Transient request-lifecycle UI shown before the first observable event arrives. */
   pending?: boolean;
-  /** Intent changes only the icon/wording; it never creates persisted execution evidence. */
-  pendingKind?: 'respond' | 'search' | 'code';
+  /** Intent affects presentation only; it never becomes persisted execution evidence. */
+  pendingIntent?: PendingExecutionIntent;
   pendingLabel?: string;
 }
 
 /**
  * Public execution trace derived only from observable events.
- * This intentionally never exposes or fabricates private model chain-of-thought.
+ * Transient pre-event feedback is deliberately cardless and is never persisted.
  */
 export function TerminalLiveActivity({
   run,
   activity,
   pending = false,
-  pendingKind = 'respond',
+  pendingIntent = 'chat',
   pendingLabel,
 }: TerminalLiveActivityProps) {
   const [expanded, setExpanded] = useState(false);
   const [now, setNow] = useState(() => Date.now());
-  const [mountedAt] = useState(() => Date.now());
 
   const rows = useMemo(
     () => (activity ? [...activity] : run ? coalesceActivity(run.events) : []),
-    [activity, run]
+    [activity, run],
   );
   const active = Boolean(run?.active || pending);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || rows.length === 0) return;
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
-  }, [active]);
+  }, [active, rows.length]);
 
   if (rows.length === 0) {
     if (!pending) return null;
 
-    const PendingIcon =
-      pendingKind === 'search' ? Search : pendingKind === 'code' ? Code2 : MessageCircle;
-    const label =
-      pendingLabel ??
-      (pendingKind === 'search'
-        ? 'Preparing research'
-        : pendingKind === 'code'
-          ? 'Starting work'
-          : 'Responding');
-    const elapsed = durationLabel(Math.max(0, now - (run?.startedAt ?? mountedAt)));
+    const label = pendingLabel ?? 'Responding';
+    const plainChat = pendingIntent === 'chat';
 
     return (
-      <section
-        className="my-1.5 max-w-2xl overflow-hidden rounded-2xl border border-[var(--card-border)]/65 bg-[var(--card)]/45 shadow-sm"
-        aria-label="Xroga activity"
+      <div
+        className={cn('my-1.5 max-w-2xl', plainChat ? 'xv-exec-inline xv-exec-inline--chat' : 'xv-exec-inline')}
+        aria-label="Response status"
         data-testid="terminal-live-activity"
         data-state="pending"
+        data-intent={pendingIntent}
       >
         <span className="sr-only" role="status" aria-live="polite">
           {label}
         </span>
-
-        <div className="flex items-center gap-2.5 px-3 py-2.5">
-          <span className="relative grid h-8 w-8 shrink-0 place-items-center">
-            <span
-              className="absolute inset-0 rounded-xl bg-[var(--accent)]/12 motion-safe:animate-ping"
-              aria-hidden
-            />
-            <span className="relative grid h-7 w-7 place-items-center rounded-lg bg-[var(--accent)]/12 text-[var(--accent)]">
-              <PendingIcon className="h-4 w-4 motion-safe:animate-pulse" aria-hidden />
-            </span>
-          </span>
-
-          <span className="min-w-0 flex-1">
-            <span className="flex items-center gap-2">
-              <span className="text-[12px] font-semibold text-[var(--foreground)]">{label}</span>
-              <span className="inline-flex items-center gap-1" aria-hidden>
-                <span
-                  className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce"
-                  style={{ animationDelay: '-300ms' }}
-                />
-                <span
-                  className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce"
-                  style={{ animationDelay: '-150ms' }}
-                />
-                <span className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce" />
-              </span>
-            </span>
-            <span className="mt-0.5 flex items-center gap-2 text-[9px] text-[var(--muted)]">
-              <span>Connected · awaiting first update</span>
-              {elapsed ? (
-                <span className="inline-flex items-center gap-1">
-                  <Clock3 className="h-2.5 w-2.5" aria-hidden />
-                  {elapsed}
-                </span>
-              ) : null}
-            </span>
-          </span>
-
-          <LoaderCircle
-            className="h-4 w-4 shrink-0 text-[var(--accent)] motion-safe:animate-spin"
-            aria-hidden
-          />
-        </div>
-
-        <div className="h-px overflow-hidden bg-[var(--card-border)]/35" aria-hidden>
-          <div className="h-full w-full bg-[var(--accent)]/35 motion-safe:animate-pulse" />
-        </div>
-      </section>
+        {plainChat ? null : <PendingIntentGlyph intent={pendingIntent} />}
+        <ExecutionShimmerText className="text-[12px] font-medium">{label}</ExecutionShimmerText>
+        {plainChat ? null : <ExecutionPulse className="ml-0.5 scale-[0.72]" />}
+      </div>
     );
   }
 
@@ -318,34 +324,22 @@ export function TerminalLiveActivity({
   const lastAt = active ? now : Math.max(...rows.map((row) => row.updatedAt));
   const elapsed = durationLabel(Math.max(0, lastAt - firstAt));
   const receipts = new Set(
-    rows.flatMap((row) => [...(row.evidenceRefs ?? []), ...(row.artifactRefs ?? [])])
+    rows.flatMap((row) => [...(row.evidenceRefs ?? []), ...(row.artifactRefs ?? [])]),
   ).size;
-
-  const state = active
-    ? latest.status === 'waiting'
-      ? 'Waiting'
-      : 'Working'
-    : errors > 0 || run?.outcome === 'failure'
-      ? 'Needs attention'
-      : run?.outcome === 'interrupted' ||
-          rows.some((row) => row.status === 'cancelled' || row.status === 'interrupted')
-        ? 'Stopped'
-        : 'Worked';
-
+  const stopped =
+    run?.outcome === 'interrupted' ||
+    rows.some((row) => row.status === 'cancelled' || row.status === 'interrupted');
+  const state = stateLabel({ active, latest, errors, stopped });
   const visible = expanded ? rows : rows.slice(-DEFAULT_VISIBLE_ROWS);
-  const HeaderIcon = active
-    ? LoaderCircle
-    : errors > 0
-      ? CircleX
-      : state === 'Stopped'
-        ? CirclePause
-        : CheckCircle2;
+  const family = familyForKind(latest.kind);
 
   return (
     <section
-      className="my-1.5 max-w-2xl overflow-hidden rounded-2xl border border-[var(--card-border)]/65 bg-[var(--card)]/45 shadow-sm"
-      aria-label="Xroga activity"
+      className="my-1.5 max-w-2xl"
+      aria-label="Execution activity"
       data-testid="terminal-live-activity"
+      data-state={active ? 'active' : 'settled'}
+      data-family={family}
     >
       <span className="sr-only" role="status" aria-live="polite">
         {latest.label}
@@ -354,69 +348,70 @@ export function TerminalLiveActivity({
       <button
         type="button"
         onClick={() => setExpanded((value) => !value)}
-        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left hover:bg-[var(--foreground)]/[0.025] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]"
+        className="flex w-full items-center gap-2 py-1 text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/45"
         aria-expanded={expanded}
       >
-        <span
-          className={cn(
-            'grid h-7 w-7 shrink-0 place-items-center rounded-lg',
-            active
-              ? 'bg-[var(--accent)]/12 text-[var(--accent)]'
-              : 'bg-[var(--foreground)]/[0.055] text-[var(--foreground)]/72'
-          )}
-        >
-          <HeaderIcon
-            className={cn('h-4 w-4', active && 'motion-safe:animate-spin')}
-            aria-hidden
-          />
-        </span>
+        {active && family === 'research' ? (
+          <SearchGlobe />
+        ) : active ? (
+          <ExecutionPulse />
+        ) : errors > 0 ? (
+          <CircleX className="h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden />
+        ) : stopped ? (
+          <CirclePause className="h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden />
+        ) : (
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden />
+        )}
+
         <span className="min-w-0 flex-1">
           <span className="flex min-w-0 items-center gap-1.5">
-            <span className="text-[12px] font-semibold text-[var(--foreground)]">{state}</span>
+            {active ? (
+              <ExecutionShimmerText className="text-[12px] font-semibold">{state}</ExecutionShimmerText>
+            ) : (
+              <span className="text-[12px] font-semibold text-[var(--foreground)]">{state}</span>
+            )}
             <span className="truncate text-[10px] text-[var(--muted)]">{latest.label}</span>
           </span>
           <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9px] text-[var(--muted)]">
-            <span>
-              {rows.length} {rows.length === 1 ? 'action' : 'actions'}
-            </span>
+            <span>{rows.length} {rows.length === 1 ? 'action' : 'actions'}</span>
             {complete > 0 ? <span>{complete} complete</span> : null}
-            {receipts > 0 ? (
-              <span>
-                {receipts} {receipts === 1 ? 'receipt' : 'receipts'}
-              </span>
-            ) : null}
-            {elapsed ? (
-              <span className="inline-flex items-center gap-1">
-                <Clock3 className="h-2.5 w-2.5" aria-hidden />
-                {elapsed}
-              </span>
-            ) : null}
+            {receipts > 0 ? <span>{receipts} {receipts === 1 ? 'receipt' : 'receipts'}</span> : null}
+            {elapsed ? <span>{elapsed}</span> : null}
           </span>
         </span>
+
         <ChevronDown
           className={cn(
             'h-4 w-4 shrink-0 text-[var(--muted)] transition-transform',
-            expanded && 'rotate-180'
+            expanded && 'rotate-180',
           )}
           aria-hidden
         />
       </button>
 
-      <ol className="space-y-0.5 border-t border-[var(--card-border)]/45 p-1.5">
-        {visible.map((row) => (
-          <ActivityRow key={row.id} row={row} current={active && row.id === latest.id} />
+      <ol className="mt-1 space-y-0.5">
+        {visible.map((row, index) => (
+          <ActivityRow
+            key={row.id}
+            row={row}
+            current={active && row.id === latest.id}
+            last={index === visible.length - 1}
+          />
         ))}
       </ol>
 
       {!expanded && rows.length > DEFAULT_VISIBLE_ROWS ? (
-        <div className="border-t border-[var(--card-border)]/35 px-3 py-1.5 text-[9px] text-[var(--muted)]">
-          {rows.length - DEFAULT_VISIBLE_ROWS} earlier actions hidden · open Working for the full
-          trace
-        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="ml-[30px] mt-1 text-[9px] text-[var(--muted)] hover:text-[var(--foreground)]"
+        >
+          {rows.length - DEFAULT_VISIBLE_ROWS} earlier actions · show full trace
+        </button>
       ) : null}
 
       {expanded ? (
-        <div className="border-t border-[var(--card-border)]/35 px-3 py-1.5 text-[9px] text-[var(--muted)]">
+        <div className="ml-[30px] mt-1 text-[9px] text-[var(--muted)]">
           Observable execution only · private model reasoning is never shown
         </div>
       ) : null}
