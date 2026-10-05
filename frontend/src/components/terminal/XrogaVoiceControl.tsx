@@ -301,8 +301,13 @@ export function XrogaVoiceControl({
   const lastSpokenAssistantRef = useRef<string | undefined>(undefined);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
   const sawActiveRunRef = useRef(false);
+  const loadingRef = useRef(loading);
 
   const currentLanguage = effectiveLanguage(language);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
 
   useEffect(() => {
     setMounted(true);
@@ -447,7 +452,7 @@ export function XrogaVoiceControl({
     recognition.lang = currentLanguage;
 
     recognition.onstart = () => {
-      if (!wakeActiveRef.current) setMode('armed');
+      if (!wakeActiveRef.current) setMode(loadingRef.current ? 'processing' : 'armed');
     };
 
     recognition.onresult = (event) => {
