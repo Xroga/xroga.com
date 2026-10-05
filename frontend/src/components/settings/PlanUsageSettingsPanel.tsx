@@ -133,7 +133,11 @@ export function PlanUsageSettingsPanel() {
                   <Progress className="mt-2" value={availableNow} tone="success" label="Available now" />
                 )}
               </div>
-              <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Next unlock" value={dateTime(status.entitlement.nextUnlockAt)} />
+              <StatTile
+                icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />}
+                label={status.plan === 'free' ? 'Monthly reset' : 'Next unlock'}
+                value={dateTime(status.plan === 'free' ? status.renewalPeriodEnd : status.entitlement.nextUnlockAt)}
+              />
             </div>
             );
           })()}
