@@ -315,6 +315,13 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const lightResearchWait =
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
+  const pendingActivityKind = codeBuildActive ? 'code' : showResearchPages ? 'search' : 'respond';
+  const pendingActivityLabel =
+    pendingActivityKind === 'search'
+      ? 'Preparing research'
+      : pendingActivityKind === 'code'
+        ? 'Starting work'
+        : 'Responding';
 
   function handleSuggestion(text: string) {
     setPrompt(text);
@@ -480,12 +487,18 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                   ) : (
                     <>
                       <div className="py-1 text-left space-y-2">
-                        {/* Real backend activity only. Before the first event, the
-                            assistant row stays quiet instead of inventing a phase. */}
+                        {/* The pending shell is transient request-lifecycle feedback only.
+                            It is never persisted as execution evidence. Real canonical
+                            activity replaces it as soon as the backend emits a step. */}
                         {msg.executionActivity?.length ? (
                           <TerminalLiveActivity activity={msg.executionActivity} />
                         ) : loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
-                          <TerminalLiveActivity run={terminalRun} />
+                          <TerminalLiveActivity
+                            run={terminalRun}
+                            pending
+                            pendingKind={pendingActivityKind}
+                            pendingLabel={pendingActivityLabel}
+                          />
                         ) : null}
                         {msg.buildStopped ? (
                           <StoppedBuildResumeCard
