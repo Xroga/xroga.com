@@ -25,8 +25,10 @@ test('voice onboarding requires microphone and speaker interaction before hands-
   assert.match(voice, /noiseSuppression:\s*true/);
   assert.match(voice, /Hear Xroga first/);
   assert.match(voice, /Enable notifications/);
-  assert.match(voice, /disabled=\{!micReady \|\| !speakerReady\}/);
+  assert.match(voice, /disabled=\{!recognitionSupported \|\| !speechOutputSupported \|\| !micReady \|\| !speakerReady\}/);
   assert.match(voice, /Finish & turn on voice/);
+  assert.match(voice, /continuous speech recognition/);
+  assert.match(voice, /speech output/);
 });
 
 test('wake-word recognition is foreground hands-free and task output can speak back', () => {
