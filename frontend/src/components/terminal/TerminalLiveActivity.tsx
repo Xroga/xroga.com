@@ -202,21 +202,33 @@ function ActivityRow({ row, current }: { row: XrogaActivityPresentation; current
 interface TerminalLiveActivityProps {
   run?: TerminalRunState;
   activity?: readonly XrogaActivityPresentation[];
+  /** Transient request-lifecycle UI shown before the first observable event arrives. */
+  pending?: boolean;
+  /** Intent changes only the icon/wording; it never creates persisted execution evidence. */
+  pendingKind?: 'respond' | 'search' | 'code';
+  pendingLabel?: string;
 }
 
 /**
  * Public execution trace derived only from observable events.
  * This intentionally never exposes or fabricates private model chain-of-thought.
  */
-export function TerminalLiveActivity({ run, activity }: TerminalLiveActivityProps) {
+export function TerminalLiveActivity({
+  run,
+  activity,
+  pending = false,
+  pendingKind = 'respond',
+  pendingLabel,
+}: TerminalLiveActivityProps) {
   const [expanded, setExpanded] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [mountedAt] = useState(() => Date.now());
 
   const rows = useMemo(
     () => (activity ? [...activity] : run ? coalesceActivity(run.events) : []),
     [activity, run]
   );
-  const active = Boolean(run?.active);
+  const active = Boolean(run?.active || pending);
 
   useEffect(() => {
     if (!active) return;
@@ -224,7 +236,80 @@ export function TerminalLiveActivity({ run, activity }: TerminalLiveActivityProp
     return () => window.clearInterval(timer);
   }, [active]);
 
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    if (!pending) return null;
+
+    const PendingIcon =
+      pendingKind === 'search' ? Search : pendingKind === 'code' ? Code2 : MessageCircle;
+    const label =
+      pendingLabel ??
+      (pendingKind === 'search'
+        ? 'Preparing research'
+        : pendingKind === 'code'
+          ? 'Starting work'
+          : 'Responding');
+    const elapsed = durationLabel(Math.max(0, now - (run?.startedAt ?? mountedAt)));
+
+    return (
+      <section
+        className="my-1.5 max-w-2xl overflow-hidden rounded-2xl border border-[var(--card-border)]/65 bg-[var(--card)]/45 shadow-sm"
+        aria-label="Xroga activity"
+        data-testid="terminal-live-activity"
+        data-state="pending"
+      >
+        <span className="sr-only" role="status" aria-live="polite">
+          {label}
+        </span>
+
+        <div className="flex items-center gap-2.5 px-3 py-2.5">
+          <span className="relative grid h-8 w-8 shrink-0 place-items-center">
+            <span
+              className="absolute inset-0 rounded-xl bg-[var(--accent)]/12 motion-safe:animate-ping"
+              aria-hidden
+            />
+            <span className="relative grid h-7 w-7 place-items-center rounded-lg bg-[var(--accent)]/12 text-[var(--accent)]">
+              <PendingIcon className="h-4 w-4 motion-safe:animate-pulse" aria-hidden />
+            </span>
+          </span>
+
+          <span className="min-w-0 flex-1">
+            <span className="flex items-center gap-2">
+              <span className="text-[12px] font-semibold text-[var(--foreground)]">{label}</span>
+              <span className="inline-flex items-center gap-1" aria-hidden>
+                <span
+                  className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce"
+                  style={{ animationDelay: '-300ms' }}
+                />
+                <span
+                  className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce"
+                  style={{ animationDelay: '-150ms' }}
+                />
+                <span className="h-1 w-1 rounded-full bg-[var(--accent)] motion-safe:animate-bounce" />
+              </span>
+            </span>
+            <span className="mt-0.5 flex items-center gap-2 text-[9px] text-[var(--muted)]">
+              <span>Connected · awaiting first update</span>
+              {elapsed ? (
+                <span className="inline-flex items-center gap-1">
+                  <Clock3 className="h-2.5 w-2.5" aria-hidden />
+                  {elapsed}
+                </span>
+              ) : null}
+            </span>
+          </span>
+
+          <LoaderCircle
+            className="h-4 w-4 shrink-0 text-[var(--accent)] motion-safe:animate-spin"
+            aria-hidden
+          />
+        </div>
+
+        <div className="h-px overflow-hidden bg-[var(--card-border)]/35" aria-hidden>
+          <div className="h-full w-full bg-[var(--accent)]/35 motion-safe:animate-pulse" />
+        </div>
+      </section>
+    );
+  }
 
   const latest = rows.at(-1)!;
   const errors = rows.filter((row) => row.status === 'error').length;
