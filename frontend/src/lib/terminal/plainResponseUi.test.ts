@@ -8,27 +8,31 @@ function source(relativeUrl: string): string {
   return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
-test('AI responses use only received activity instead of an execution card or client-authored wait copy', () => {
+test('AI responses show immediate transient lifecycle feedback before real activity arrives', () => {
   const messageLog = source('../../components/terminal/SwarmMessageLog.tsx');
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
 
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
-  assert.match(messageLog, /<TerminalLiveActivity run=\{terminalRun\} \/>/);
+  assert.match(messageLog, /pendingKind=\{pendingActivityKind\}/);
+  assert.match(messageLog, /pendingLabel=\{pendingActivityLabel\}/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
+  assert.match(liveActivity, /if \(!pending\) return null/);
+  assert.match(liveActivity, /Connected · awaiting first update/);
+  assert.match(liveActivity, /motion-safe:animate-(?:ping|pulse|bounce|spin)/);
   assert.match(liveActivity, /aria-label="Xroga activity"/);
-  assert.doesNotMatch(liveActivity, /pendingLabel|waitingLine|terminal-waiting-line/);
+  assert.doesNotMatch(liveActivity, /private model reasoning|chain-of-thought is being generated/i);
 });
 
-test('the live transcript renders only received rows', () => {
+test('the live transcript keeps pending UI separate from received execution rows', () => {
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
 
-  // No progress bar, no percentage, no invented step list — the failure modes the
-  // execution card was removed for.
+  // No percentage or invented execution step list. The pending shell is explicitly
+  // transient and the durable rows still come only from run.events.
   const code = liveActivity.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, '');
-  assert.doesNotMatch(code, /progress-?bar|percent|Math\.round\([^)]*100/i);
-  // Rows come from run state; the component may not synthesise one.
+  assert.doesNotMatch(code, /percent|Math\.round\([^)]*100/i);
   assert.match(liveActivity, /run\.events/);
-  assert.doesNotMatch(liveActivity, /Xroga is on it|terminal-elapsed|Developer details/);
+  assert.match(liveActivity, /data-state="pending"/);
+  assert.doesNotMatch(liveActivity, /Developer details/);
 });
 
 test('chat lanes do not invent thinking or composing status callbacks', () => {
