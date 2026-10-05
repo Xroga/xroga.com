@@ -300,6 +300,7 @@ export function XrogaVoiceControl({
   const commandTimerRef = useRef<number | null>(null);
   const lastSpokenAssistantRef = useRef<string | undefined>(undefined);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
+  const sawActiveRunRef = useRef(false);
 
   const currentLanguage = effectiveLanguage(language);
 
@@ -592,8 +593,15 @@ export function XrogaVoiceControl({
 
   useEffect(() => {
     if (!handsFreeEnabled) return;
-    if (loading && mode !== 'speaking' && mode !== 'listening') setMode('processing');
-    if (!loading && mode === 'processing') setMode('armed');
+    if (loading) {
+      sawActiveRunRef.current = true;
+      if (mode !== 'speaking' && mode !== 'listening') setMode('processing');
+      return;
+    }
+    if (sawActiveRunRef.current && mode === 'processing') {
+      sawActiveRunRef.current = false;
+      setMode('armed');
+    }
   }, [handsFreeEnabled, loading, mode]);
 
   useEffect(() => {
