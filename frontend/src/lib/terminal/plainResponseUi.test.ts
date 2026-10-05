@@ -8,18 +8,23 @@ function source(relativeUrl: string): string {
   return readFileSync(new URL(relativeUrl, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 }
 
-test('AI responses show immediate transient lifecycle feedback before real activity arrives', () => {
+test('AI responses use cardless task-aware transient feedback before real activity arrives', () => {
   const messageLog = source('../../components/terminal/SwarmMessageLog.tsx');
   const liveActivity = source('../../components/terminal/TerminalLiveActivity.tsx');
+  const motion = source('../../components/terminal/ExecutionMotion.tsx');
 
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
-  assert.match(messageLog, /pendingKind=\{pendingActivityKind\}/);
+  assert.match(messageLog, /pendingIntent=\{pendingIntent\}/);
   assert.match(messageLog, /pendingLabel=\{pendingActivityLabel\}/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
   assert.match(liveActivity, /if \(!pending\) return null/);
-  assert.match(liveActivity, /Connected · awaiting first update/);
-  assert.match(liveActivity, /motion-safe:animate-(?:ping|pulse|bounce|spin)/);
-  assert.match(liveActivity, /aria-label="Xroga activity"/);
+  assert.match(liveActivity, /xv-exec-inline--chat/);
+  assert.match(liveActivity, /ExecutionShimmerText/);
+  assert.match(liveActivity, /SearchGlobe/);
+  assert.match(motion, /ExecutionPulse/);
+  assert.doesNotMatch(liveActivity, /Connected · awaiting first update/);
+  assert.doesNotMatch(liveActivity, /rounded-2xl border border-\[var\(--card-border\)\]/);
+  assert.match(liveActivity, /aria-label="Execution activity"/);
   assert.match(liveActivity, /private model reasoning is never shown/i);
   assert.doesNotMatch(liveActivity, /chain-of-thought is being generated|generating private model reasoning/i);
 });
@@ -33,6 +38,7 @@ test('the live transcript keeps pending UI separate from received execution rows
   assert.doesNotMatch(code, /percent|Math\.round\([^)]*100/i);
   assert.match(liveActivity, /run\.events/);
   assert.match(liveActivity, /data-state="pending"/);
+  assert.match(liveActivity, /data-intent=\{pendingIntent\}/);
   assert.doesNotMatch(liveActivity, /Developer details/);
 });
 
