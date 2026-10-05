@@ -5115,7 +5115,10 @@ html[data-reduced-motion='true'] .xv-voice-toggle.is-active .xv-voice-toggle__ic
 html[data-reduced-motion='true'] .xv-voice-wave.is-speaking i,
 html[data-reduced-motion='true'] .xv-voice-orb,
 html[data-reduced-motion='true'] .xv-voice-orb::before,
-html[data-reduced-motion='true'] .xv-voice-primary,
+html[data-reduced-motion='true'] .xv-voice-primary {
+  animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .xv-voice-toggle.is-active::before,
   .xv-voice-toggle.is-active .xv-voice-toggle__icon,
