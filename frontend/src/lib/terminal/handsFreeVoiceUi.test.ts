@@ -21,10 +21,10 @@ test('voice speech visibly enters the same canonical composer and submit path as
 test('wake recognition accepts real STT variants while the visible brand stays Xroga', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /x\\s\*roga/);
-  assert.match(voice, /ex\\s\*roga/);
-  assert.match(voice, /acroga/);
-  assert.match(voice, /zroga/);
+  assert.ok(voice.includes("x\\\\s*roga"));
+  assert.ok(voice.includes("ex\\\\s*roga"));
+  assert.ok(voice.includes('acroga'));
+  assert.ok(voice.includes('zroga'));
   assert.match(voice, /extractWakeCommand/);
   assert.match(voice, /The product name rendered to the user remains/);
   assert.match(voice, /replace\(\/\\bXroga\\b\/gi, 'X Roga'\)/);
