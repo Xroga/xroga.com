@@ -20,7 +20,8 @@ test('AI responses show immediate transient lifecycle feedback before real activ
   assert.match(liveActivity, /Connected · awaiting first update/);
   assert.match(liveActivity, /motion-safe:animate-(?:ping|pulse|bounce|spin)/);
   assert.match(liveActivity, /aria-label="Xroga activity"/);
-  assert.doesNotMatch(liveActivity, /private model reasoning|chain-of-thought is being generated/i);
+  assert.match(liveActivity, /private model reasoning is never shown/i);
+  assert.doesNotMatch(liveActivity, /chain-of-thought is being generated|generating private model reasoning/i);
 });
 
 test('the live transcript keeps pending UI separate from received execution rows', () => {
