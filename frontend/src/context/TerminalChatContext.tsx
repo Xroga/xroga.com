@@ -10,7 +10,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { EMPTY_RUN_STATE, type TerminalRunState } from '@/lib/terminal/terminalEvent';
+import { EMPTY_RUN_STATE, type TerminalEvent, type TerminalRunState } from '@/lib/terminal/terminalEvent';
+import { coalesceActivity, type XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 import { adaptTerminalEvent } from '@/lib/terminal/terminalEventAdapter';
 import { terminalRunReducer } from '@/lib/terminal/terminalRunReducer';
 import { usePathname } from 'next/navigation';
@@ -462,6 +463,8 @@ export interface ChatMessage {
   /** Public, factual activity summaries derived from client or backend events. */
   thinkingSteps?: string[];
   thoughtMs?: number;
+  /** Persisted public execution receipts. Never contains private chain-of-thought. */
+  executionActivity?: XrogaActivityPresentation[];
   /** User stopped mid-build — show Retry card, keep in history */
 buildStopped?: boolean;
 
@@ -656,16 +659,19 @@ export function TerminalChatProvider({
    */
   const [terminalRun, dispatchTerminalRun] = useReducer(terminalRunReducer, EMPTY_RUN_STATE);
   const terminalSeqRef = useRef(0);
+  const terminalEventsRef = useRef<TerminalEvent[]>([]);
 
   const pushTerminalEvent = useCallback((event: string, payload: Record<string, unknown>) => {
     const rows = adaptTerminalEvent(event, payload, { fromSeq: terminalSeqRef.current });
     if (rows.length === 0) return;
+    terminalEventsRef.current = [...terminalEventsRef.current, ...rows];
     terminalSeqRef.current = rows[rows.length - 1].seq;
     dispatchTerminalRun({ type: 'events', events: rows });
   }, []);
 
   const startTerminalRun = useCallback(() => {
     terminalSeqRef.current = 0;
+    terminalEventsRef.current = [];
     dispatchTerminalRun({ type: 'run-started' });
   }, []);
   const [githubGateOpen, setGithubGateOpen] = useState(false);
@@ -4203,6 +4209,11 @@ active.applyBuild({
             thoughtMs:
               Date.now() -
               thinkingStartedAtRef.current,
+
+            executionActivity: (() => {
+              const snapshot = coalesceActivity(terminalEventsRef.current);
+              return snapshot.length ? snapshot : message.executionActivity;
+            })(),
           };
         });
 
@@ -4452,6 +4463,7 @@ active.applyBuild({
         if (turn && !interruptRef.current) {
           const thoughtMs = Date.now() - thinkingStartedAtRef.current;
           const steps = [...thinkingStepsRef.current];
+          const executionActivity = coalesceActivity(terminalEventsRef.current);
           setMessages((m) =>
             m.map((msg) => {
               if (msg.id !== turn.assistantId) return msg;
@@ -4460,6 +4472,7 @@ active.applyBuild({
                 content: msg.content,
                 thinkingSteps: steps.length ? steps : msg.thinkingSteps,
                 thoughtMs: thoughtMs > 0 ? thoughtMs : msg.thoughtMs,
+                executionActivity: executionActivity.length ? executionActivity : msg.executionActivity,
               };
             })
           );
