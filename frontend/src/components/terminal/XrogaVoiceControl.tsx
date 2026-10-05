@@ -559,7 +559,7 @@ export function XrogaVoiceControl({
     wakeActiveRef.current = false;
     commandBufferRef.current = '';
     setLiveTranscript('');
-    recognitionPausedRef.current = false;
+    recognitionPausedRef.current = true;
     stopRecognition(true);
     window.speechSynthesis?.cancel();
     releaseMicrophone();
@@ -569,10 +569,12 @@ export function XrogaVoiceControl({
   useEffect(() => {
     if (!mounted) return;
     if (handsFreeEnabled) {
+      recognitionPausedRef.current = false;
       void ensureMicrophone().then((ready) => {
         if (ready) startRecognition();
       });
     } else {
+      recognitionPausedRef.current = true;
       stopRecognition(true);
       releaseMicrophone();
       setMode('off');
@@ -603,6 +605,12 @@ export function XrogaVoiceControl({
       setMode('armed');
     }
   }, [handsFreeEnabled, loading, mode]);
+
+  useEffect(() => {
+    if (!handsFreeEnabled && latestAssistantId) {
+      lastSpokenAssistantRef.current = latestAssistantId;
+    }
+  }, [handsFreeEnabled, latestAssistantId]);
 
   useEffect(() => {
     if (
