@@ -136,6 +136,15 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(workspaceShell).toBeVisible();
   await expect(terminalDock).toBeVisible();
   await expect(composerInput).toBeVisible();
+
+  // First-run hands-free voice onboarding is product UI, not a test obstruction.
+  // Prove that a new account sees it, then decline without granting device
+  // permissions so the rest of this cross-browser suite remains deterministic.
+  const voiceOnboarding = page.getByRole('dialog', { name: 'Talk to Xroga naturally' });
+  await expect(voiceOnboarding).toBeVisible();
+  await voiceOnboarding.getByRole('button', { name: 'Not now' }).last().click();
+  await expect(voiceOnboarding).toHaveCount(0);
+
   await expect(page.locator('.xv-route-loader')).toHaveCount(0);
   // Workspace owns the whole canvas: no coloured/transparent header row reserves
   // height above the greeting, and recent sessions stay in Projects rather than
@@ -685,6 +694,8 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // it now carries this label, so a page-wide locator asserts something nobody meant.
   await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
+  await expect(canonicalComposer.getByRole('button', { name: /Turn on hands-free Xroga/i })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Voice settings' })).toBeVisible();
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
@@ -875,5 +886,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerMicrophone: 'removed', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'hands_free_control_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
