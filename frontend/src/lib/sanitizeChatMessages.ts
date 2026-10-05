@@ -9,6 +9,35 @@ function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   return raw as HackathonBriefCardData;
 }
 
+function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
+  if (!Array.isArray(raw)) return undefined;
+  const kinds = new Set([
+    'respond', 'understand', 'search', 'open-source', 'read-source', 'compare', 'summarize',
+    'read-file', 'write-file', 'code', 'command', 'test', 'browser', 'database',
+    'connected-app-read', 'connected-app-write', 'automation', 'upload', 'download',
+    'deploy', 'verify', 'approval', 'connection', 'waiting', 'complete', 'warning', 'error',
+  ]);
+  const statuses = new Set([
+    'active', 'complete', 'waiting', 'warning', 'error', 'cancelled', 'interrupted',
+  ]);
+  const items = raw
+    .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object')
+    .filter((item) =>
+      typeof item.id === 'string' &&
+      typeof item.kind === 'string' &&
+      kinds.has(item.kind) &&
+      typeof item.label === 'string' &&
+      typeof item.status === 'string' &&
+      statuses.has(item.status) &&
+      typeof item.startedAt === 'number' &&
+      Number.isFinite(item.startedAt) &&
+      typeof item.updatedAt === 'number' &&
+      Number.isFinite(item.updatedAt)
+    )
+    .slice(-80) as ChatMessage['executionActivity'];
+  return items?.length ? items : undefined;
+}
+
 function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
   if (!Array.isArray(raw)) return undefined;
   const items = raw
@@ -94,6 +123,7 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         featureOutput,
         thinkingSteps,
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
+        executionActivity: sanitizeExecutionActivity(m.executionActivity),
         webSources: sanitizeWebSources(m.webSources),
         hackathonBrief: sanitizeHackathonBrief(m.hackathonBrief),
       };
