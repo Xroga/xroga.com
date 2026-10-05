@@ -393,7 +393,7 @@ export function TerminalLiveActivity({
         ) : null}
 
         <div className="xv-exec-header">
-          {plainChat ? null : <UniversalExecutionOrb />}
+          <UniversalExecutionOrb />
           <span className="min-w-0 flex-1">
             <ExecutionShimmerText className="xv-exec-header__state">{label}</ExecutionShimmerText>
             {capabilities.length ? (
