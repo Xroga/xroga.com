@@ -96,6 +96,8 @@ export function unlockedEntitlementMicroUsd(input: {
   pacing: 'balanced_month' | 'full_access';
   purpose: BudgetPurpose;
   acceleratedUnlockMicroUsd?: number;
+  /** The active cycle's real ceiling. Defaults to the paid/shared ceiling for callers that do not supply one. */
+  entitlementMicroUsd?: number;
 }): number {
   const elapsed = input.now.getTime() - input.startsAt.getTime();
   if (elapsed < 0) return 0;
@@ -105,10 +107,19 @@ export function unlockedEntitlementMicroUsd(input: {
     ? 5_500_000
     : day >= 22 ? 5_500_000 : day >= 15 ? 4_125_000 : day >= 8 ? 2_750_000 : 1_375_000;
   const completion = input.purpose === 'completion' ? 2_500_000 : 0;
+  const entitlement = asSafeInteger(
+    input.entitlementMicroUsd ?? SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
+  );
   return Math.min(
-    SHARED_PROVIDER_ENTITLEMENT_MICRO_USD,
+    entitlement,
     Math.max(daily + complexity, input.acceleratedUnlockMicroUsd ?? 0) + completion,
   );
+}
+
+function boundedPercent(numerator: number, denominator: number): number | null {
+  if (!Number.isFinite(denominator) || denominator <= 0) return null;
+  const percent = (Math.max(0, numerator) / denominator) * 100;
+  return Math.min(100, Math.max(0, Math.round(percent * 10) / 10));
 }
 
 function hasDurableStore(): boolean {
@@ -180,6 +191,7 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
     const unlocked = unlockedEntitlementMicroUsd({
       startsAt: new Date(row.starts_at), now, pacing: row.pacing, purpose: 'daily_work',
       acceleratedUnlockMicroUsd: Number(row.accelerated_unlock_micro_usd),
+      entitlementMicroUsd: entitlement,
     });
     const state: EntitlementStatus['state'] = expired && row.cycle_kind === 'promotion'
       ? 'promotional_expired'
@@ -191,11 +203,15 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
       pacing: row.pacing,
       startsAt: row.starts_at,
       endsAt: row.ends_at,
-      nextUnlockAt: row.pacing === 'balanced_month' && !expired
-        ? nextCycleUnlock(new Date(row.starts_at), now, new Date(row.ends_at))
-        : null,
-      capacityRemainingPercent: entitlement > 0 ? Math.max(0, Math.round(((entitlement - committed) / entitlement) * 1000) / 10) : null,
-      availableNowPercent: entitlement > 0 ? Math.max(0, Math.round(((unlocked - committed) / entitlement) * 1000) / 10) : null,
+      nextUnlockAt:
+        row.pacing === 'balanced_month' &&
+        !expired &&
+        unlocked < entitlement &&
+        committed < entitlement
+          ? nextCycleUnlock(new Date(row.starts_at), now, new Date(row.ends_at))
+          : null,
+      capacityRemainingPercent: boundedPercent(entitlement - committed, entitlement),
+      availableNowPercent: boundedPercent(Math.min(unlocked, entitlement) - committed, entitlement),
       promotionActivationDeadline: deadline,
       requiresCard: row.cycle_kind === 'paid',
       autoChargesAtPromotionEnd: false,
@@ -215,6 +231,7 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
     pacing: cycle.pacing,
     purpose: 'daily_work',
     acceleratedUnlockMicroUsd: cycle.acceleratedUnlockMicroUsd,
+    entitlementMicroUsd: cycle.entitlement,
   });
   return {
     state: now >= cycle.endsAt
@@ -222,9 +239,15 @@ export async function getProviderEntitlementStatus(userId: string): Promise<Enti
       : cycle.kind === 'free' ? 'free_active' : cycle.kind === 'promotion' ? 'promotional_active' : 'paid_active',
     pacing: cycle.pacing,
     startsAt: cycle.startsAt.toISOString(), endsAt: cycle.endsAt.toISOString(),
-    nextUnlockAt: nextCycleUnlock(cycle.startsAt, now, cycle.endsAt),
-    capacityRemainingPercent: Math.max(0, Math.round(((cycle.entitlement - committed) / cycle.entitlement) * 1000) / 10),
-    availableNowPercent: Math.max(0, Math.round(((Math.min(unlocked, cycle.entitlement) - committed) / cycle.entitlement) * 1000) / 10),
+    nextUnlockAt:
+      cycle.pacing === 'balanced_month' &&
+      now < cycle.endsAt &&
+      unlocked < cycle.entitlement &&
+      committed < cycle.entitlement
+        ? nextCycleUnlock(cycle.startsAt, now, cycle.endsAt)
+        : null,
+    capacityRemainingPercent: boundedPercent(cycle.entitlement - committed, cycle.entitlement),
+    availableNowPercent: boundedPercent(Math.min(unlocked, cycle.entitlement) - committed, cycle.entitlement),
     promotionActivationDeadline: deadline,
     requiresCard: cycle.kind === 'paid',
     autoChargesAtPromotionEnd: false,
@@ -323,6 +346,7 @@ export async function reserveProviderBudget(input: {
     pacing: cycle.pacing,
     purpose,
     acceleratedUnlockMicroUsd: cycle.acceleratedUnlockMicroUsd,
+    entitlementMicroUsd: cycle.entitlement,
   });
   if (cycle.settled + cycle.reserved + amount > unlocked) {
     // This is the exact check that refused the reservation, so it is the source of

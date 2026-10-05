@@ -10,6 +10,7 @@ import Link from 'next/link';
 
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { normalizeCapacityPercent } from '@/lib/capacityPercent';
 
 type Entitlement = {
   state: string;
@@ -201,19 +202,9 @@ function UsageBar({
    * "you have none left", which would be a different
    * and incorrect claim.
    */
-  const known =
-    typeof value === 'number' &&
-    Number.isFinite(value);
-
-  const clamped = known
-    ? Math.max(
-        0,
-        Math.min(
-          100,
-          value,
-        ),
-      )
-    : 0;
+  const normalized = normalizeCapacityPercent(value);
+  const known = normalized != null;
+  const clamped = normalized ?? 0;
 
   return (
     <div className="xv-companion-usage__row">

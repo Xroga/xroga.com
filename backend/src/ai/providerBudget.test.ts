@@ -70,3 +70,28 @@ test('verified payment cycle becomes the active paid entitlement', async () => {
   assert.equal(status.state, 'paid_active');
   assert.equal((await getProviderEntitlementStatus('paid-user')).requiresCard, true);
 });
+
+
+test('free entitlement projections never exceed the active cycle ceiling', () => {
+  const startsAt = new Date('2026-09-01T00:00:00.000Z');
+  const now = new Date('2026-09-25T00:00:00.000Z');
+  assert.equal(
+    unlockedEntitlementMicroUsd({
+      startsAt,
+      now,
+      pacing: 'balanced_month',
+      purpose: 'daily_work',
+      entitlementMicroUsd: 1_650_000,
+    }),
+    1_650_000,
+  );
+});
+
+test('free in-memory status is bounded to 100 percent and does not advertise fake future unlocks', async () => {
+  resetProviderBudgetMemoryForTests();
+  const status = await getProviderEntitlementStatus('free-cap-user');
+  assert.equal(status.state, 'free_active');
+  assert.ok(status.capacityRemainingPercent != null && status.capacityRemainingPercent <= 100);
+  assert.equal(status.availableNowPercent, 100);
+  assert.equal(status.nextUnlockAt, null);
+});

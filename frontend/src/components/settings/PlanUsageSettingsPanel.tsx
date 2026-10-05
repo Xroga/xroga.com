@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Progress } from '@/components/ui/Progress';
 import { SettingsCard, SettingsDivider, SettingsPanelHeader, SettingsStack } from '@/components/settings/SettingsPrimitives';
+import { normalizeCapacityPercent } from '@/lib/capacityPercent';
 
 type BillingStatus = Awaited<ReturnType<typeof api.billing.status>>;
 
@@ -98,7 +99,14 @@ export function PlanUsageSettingsPanel() {
             </Badge>
           </div>
 
-          {status && (
+          {status && (() => {
+            const capacityRemaining = normalizeCapacityPercent(
+              status.entitlement.capacityRemainingPercent,
+            );
+            const availableNow = normalizeCapacityPercent(
+              status.entitlement.availableNowPercent,
+            );
+            return (
             <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
               <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Period ends" value={dateTime(status.renewalPeriodEnd)} />
               <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
@@ -107,10 +115,10 @@ export function PlanUsageSettingsPanel() {
                 </span>
                 <p className="text-xs text-[var(--text-secondary)]">Monthly capacity remaining</p>
                 <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
-                  {status.entitlement.capacityRemainingPercent == null ? 'Unavailable' : `${status.entitlement.capacityRemainingPercent}%`}
+                  {capacityRemaining == null ? 'Unavailable' : `${capacityRemaining}%`}
                 </p>
-                {status.entitlement.capacityRemainingPercent != null && (
-                  <Progress className="mt-2" value={status.entitlement.capacityRemainingPercent} label="Monthly capacity remaining" />
+                {capacityRemaining != null && (
+                  <Progress className="mt-2" value={capacityRemaining} label="Monthly capacity remaining" />
                 )}
               </div>
               <div className="rounded-token-md border border-[var(--border-subtle)] p-3">
@@ -119,15 +127,20 @@ export function PlanUsageSettingsPanel() {
                 </span>
                 <p className="text-xs text-[var(--text-secondary)]">Available now</p>
                 <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">
-                  {status.entitlement.availableNowPercent == null ? 'Unavailable' : `${status.entitlement.availableNowPercent}%`}
+                  {availableNow == null ? 'Unavailable' : `${availableNow}%`}
                 </p>
-                {status.entitlement.availableNowPercent != null && (
-                  <Progress className="mt-2" value={status.entitlement.availableNowPercent} tone="success" label="Available now" />
+                {availableNow != null && (
+                  <Progress className="mt-2" value={availableNow} tone="success" label="Available now" />
                 )}
               </div>
-              <StatTile icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />} label="Next unlock" value={dateTime(status.entitlement.nextUnlockAt)} />
+              <StatTile
+                icon={<CalendarClock className="h-4 w-4" aria-hidden="true" />}
+                label={status.plan === 'free' ? 'Monthly reset' : 'Next unlock'}
+                value={dateTime(status.plan === 'free' ? status.renewalPeriodEnd : status.entitlement.nextUnlockAt)}
+              />
             </div>
-          )}
+            );
+          })()}
 
           {status?.entitlement.pacing && status.plan !== 'free' && (
             <>
