@@ -140,7 +140,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // Voice setup is intentionally user-initiated: entering Workspace must not throw a
   // full-screen permission modal over the product. The compact card opens from the
   // chatbar and no device permission is requested until its microphone row is clicked.
-  const voiceToggle = terminalDock.getByRole('button', { name: 'Turn on Xroga voice' });
+  const voiceToggle = terminalDock.getByRole('button', { name: 'Voice off' });
   await expect(voiceToggle).toBeVisible();
   await voiceToggle.click();
   const voiceOnboarding = page.getByRole('dialog', { name: 'Turn on hands-free voice' });
@@ -700,7 +700,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // it now carries this label, so a page-wide locator asserts something nobody meant.
   await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
-  await expect(canonicalComposer.getByRole('button', { name: 'Turn on Xroga voice' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Voice off' })).toBeVisible();
   await expect(canonicalComposer.getByRole('button', { name: 'Voice settings' })).toBeVisible();
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
