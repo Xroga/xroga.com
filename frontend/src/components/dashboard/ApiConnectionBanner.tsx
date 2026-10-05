@@ -13,21 +13,20 @@ export function ApiConnectionBanner() {
   const [issue, setIssue] = useState<string | null>(null);
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
     fetch(`${API_URL}/health`, { cache: 'no-store' })
       .then((r) => r.json() as Promise<HealthResponse>)
       .then((data) => {
         if (data.authConfigured === false) {
-        setIssue(
-          'API is missing SUPABASE_URL on Fly.io. Set your Supabase Project URL (https://xxx.supabase.co) — chat will fail until then.'
-        );
+          setIssue('Local API authentication is not configured.');
         }
       })
       .catch(() => {
-        setIssue('Cannot reach the API. Check NEXT_PUBLIC_API_URL on Vercel.');
+        setIssue('Local API is unavailable.');
       });
   }, []);
 
-  if (!issue) return null;
+  if (process.env.NODE_ENV !== 'development' || !issue) return null;
 
   return (
     /* `text-amber-100` is a near-white cream: legible on a dark surface, invisible on a
