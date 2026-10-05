@@ -117,6 +117,7 @@ export function ChatBarInputRow({
       )}
     >
       <div className="w-full min-w-0 relative">{children}</div>
+      <div data-xroga-voice-stage="" className="xv-voice-session-stage" />
       <div className="xv-chatbar-tools flex items-center gap-1.5 w-full">
         {leadingExtras}
         {!hideUpload && (
