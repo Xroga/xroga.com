@@ -147,7 +147,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(voiceOnboarding).toBeVisible();
   await expect(voiceOnboarding.getByText('Allow microphone', { exact: true })).toBeVisible();
   await expect(voiceOnboarding.getByText('Hear Xroga', { exact: true })).toBeVisible();
-  await expect(voiceOnboarding.getByText('Task notifications', { exact: true })).toBeVisible();
+  await expect(voiceOnboarding.getByRole('button', { name: /notifications/i })).toBeVisible();
   await voiceOnboarding.getByRole('button', { name: 'Cancel' }).click();
   await expect(voiceOnboarding).toHaveCount(0);
 
