@@ -197,7 +197,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     expect(shellNow.y, `the shell moved at offset ${offset}`).toBeCloseTo(shellBox.y, 0);
     expect(shellNow.x, `the shell moved at offset ${offset}`).toBeCloseTo(shellBox.x, 0);
     expect(shellBox.y, 'the shell lost its inset from the browser edge').toBeGreaterThan(0);
-    await expect(shell).toHaveCSS('border-radius', /^(?:14|16)px$/);
+    await expect(shell).toHaveCSS('border-radius', '20px');
     const headerNow = (await terminalHeader.boundingBox())!;
     expect(headerNow.y, `the title bar scrolled away at offset ${offset}`).toBeCloseTo(headerBefore.y, 0);
   }
