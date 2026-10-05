@@ -379,6 +379,17 @@ export function TerminalChatBar() {
     [loading, setPrompt, stop, triggerComposerSignal],
   );
 
+  const handleVoiceDraft = useCallback(
+    (spokenText: string) => {
+      const text = spokenText.replace(/\s+/g, ' ').trimStart();
+      setDraft(text);
+      draftRef.current = text;
+      lastExternalPrompt.current = text;
+      triggerComposerSignal(700);
+    },
+    [triggerComposerSignal],
+  );
+
   async function applyStyleFromFile(file: File, stylePrompt: string) {
     if (!(await ensureRepoWorkspace(stylePrompt))) return;
     setUploading(true);
@@ -618,6 +629,11 @@ export function TerminalChatBar() {
                     latestAssistantId={latestAssistantMessage?.id}
                     latestAssistantText={latestAssistantMessage?.content}
                     onVoiceCommand={handleVoiceCommand}
+                    onVoiceDraft={handleVoiceDraft}
+                    onStopRun={() => {
+                      stop();
+                      setSendState('idle');
+                    }}
                   />
                 ) : null
               }

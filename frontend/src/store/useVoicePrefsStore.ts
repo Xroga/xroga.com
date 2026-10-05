@@ -71,18 +71,20 @@ export const useVoicePrefsStore = create<VoicePrefsState>()(
     }),
     {
       name: 'xroga-voice-prefs',
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         const state = (persisted ?? {}) as Partial<VoicePrefsState>;
         return {
           voiceGender: state.voiceGender ?? 'auto',
           tone: state.tone ?? 'warm',
           language: state.language ?? 'auto',
-          handsFreeEnabled: state.handsFreeEnabled ?? false,
+          // v2 shipped before the repaired transcription/wake pipeline. Force one
+          // clean opt-in so a stale "enabled" flag cannot leave a user with a dead mic.
+          handsFreeEnabled: false,
           autoSpeak: state.autoSpeak ?? true,
           notificationsEnabled: state.notificationsEnabled ?? false,
-          onboardingComplete: state.onboardingComplete ?? false,
-          onboardingDismissed: state.onboardingDismissed ?? false,
+          onboardingComplete: false,
+          onboardingDismissed: false,
         } satisfies Partial<VoicePrefsState>;
       },
     },

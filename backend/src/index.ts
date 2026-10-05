@@ -64,6 +64,7 @@ import {
 } from './sandbox/sandboxRuntime.js';
 import projectRuntimeRouter from './routes/projectRuntime.js';
 import deliveryRouter from './routes/delivery.js';
+import voiceRouter from './routes/voice.js';
 import {
   attachRuntimePreviewWebSocketGateway,
   runtimePreviewGateway,
@@ -221,6 +222,7 @@ app.get('/metrics', authMiddleware, adminMiddleware, (_req, res) => {
   res.setHeader('Content-Type', 'text/plain; version=0.0.4');
   res.send(`${getMetricsText()}${getSupabaseCounterText()}`);
 });
+app.use('/api/voice', authMiddleware, voiceRouter);
 app.use('/api/chat', authMiddleware, chatRouter);
 app.use('/api/projects', authMiddleware, projectsRouter);
 app.use('/api/terminal-sessions', authMiddleware, terminalSessionsRouter);
