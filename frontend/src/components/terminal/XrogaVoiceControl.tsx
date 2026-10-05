@@ -1283,6 +1283,15 @@ export function XrogaVoiceControl({
             ['denied', 'error', 'unavailable'].includes(mode) && 'is-error',
           )}
           aria-pressed={handsFreeEnabled}
+          aria-label={
+            handsFreeEnabled
+              ? directCaptureRef.current || mode === 'listening'
+                ? 'Finish voice input'
+                : mode === 'paused'
+                  ? 'Resume Xroga voice'
+                  : 'Talk to Xroga now'
+              : 'Turn on Xroga voice'
+          }
           onClick={primaryButton}
           title={
             handsFreeEnabled
