@@ -45,7 +45,7 @@ test('transient presentation follows the requested kind of work without recordin
   );
   assert.equal(
     pendingExecutionIntent({ prompt: 'Query the database and summarize the relevant records.' }),
-    'business',
+    'data',
   );
   assert.equal(
     pendingExecutionIntent({ prompt: 'hello', codeBuildActive: true }),
@@ -61,6 +61,7 @@ test('labels describe preparation, not fabricated completed work', () => {
   assert.equal(pendingExecutionLabel('research'), 'Preparing research');
   assert.equal(pendingExecutionLabel('document'), 'Preparing document analysis');
   assert.equal(pendingExecutionLabel('code'), 'Preparing workspace');
+  assert.equal(pendingExecutionLabel('data'), 'Preparing data query');
   assert.equal(pendingExecutionLabel('business'), 'Preparing connected app');
   assert.equal(pendingExecutionLabel('analysis'), 'Working through the problem');
 });
