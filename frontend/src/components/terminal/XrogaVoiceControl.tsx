@@ -282,6 +282,8 @@ export function XrogaVoiceControl({
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [micReady, setMicReady] = useState(false);
   const [speakerReady, setSpeakerReady] = useState(false);
+  const [recognitionSupported, setRecognitionSupported] = useState(false);
+  const [speechOutputSupported, setSpeechOutputSupported] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<
     NotificationPermission | 'unsupported'
   >('default');
@@ -312,6 +314,10 @@ export function XrogaVoiceControl({
   useEffect(() => {
     setMounted(true);
     setOnboardingOpen(!onboardingComplete && !onboardingDismissed);
+    setRecognitionSupported(Boolean(getSpeechRecognitionConstructor()));
+    setSpeechOutputSupported(
+      'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined',
+    );
     if ('Notification' in window) setNotificationPermission(Notification.permission);
     else setNotificationPermission('unsupported');
 
@@ -677,6 +683,15 @@ export function XrogaVoiceControl({
   }, [setNotificationsEnabled]);
 
   const testSpeaker = useCallback(() => {
+    if (
+      !('speechSynthesis' in window) ||
+      typeof SpeechSynthesisUtterance === 'undefined'
+    ) {
+      setSpeakerReady(false);
+      setSpeechOutputSupported(false);
+      return;
+    }
+    setSpeechOutputSupported(true);
     setSpeakerReady(true);
     speak(greetingFor(language), () => {
       if (!handsFreeEnabled) setMode('off');
@@ -744,6 +759,19 @@ export function XrogaVoiceControl({
                 Stop controls, billing, and durable execution as typed requests.
               </p>
             </div>
+
+            {!recognitionSupported ? (
+              <p className="xv-voice-warning">
+                This browser does not expose continuous speech recognition. Hands-free Xroga
+                cannot be enabled here yet; typed Xroga remains fully available.
+              </p>
+            ) : null}
+            {!speechOutputSupported ? (
+              <p className="xv-voice-warning">
+                This browser does not expose speech output. You can keep using typed Xroga,
+                or open Xroga in a browser with Web Speech support.
+              </p>
+            ) : null}
 
             <div className="xv-voice-permission-grid">
               <button
@@ -826,7 +854,7 @@ export function XrogaVoiceControl({
                 type="button"
                 className="xv-voice-primary"
                 onClick={() => void finishOnboarding()}
-                disabled={!micReady || !speakerReady}
+                disabled={!recognitionSupported || !speechOutputSupported || !micReady || !speakerReady}
               >
                 <Waves className="h-4 w-4" aria-hidden />
                 Finish & turn on voice
