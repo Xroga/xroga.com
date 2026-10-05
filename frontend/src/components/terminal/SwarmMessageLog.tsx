@@ -16,6 +16,10 @@ import { UpdateFileTrail } from './UpdateFileTrail';
 import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
+import {
+  pendingExecutionIntent,
+  pendingExecutionLabel,
+} from '@/lib/terminal/executionIntent';
 import { UserPromptBubble } from '@/components/settings/PrivacySettingsPanel';
 import { generateMessageSuggestions } from '@/lib/messageHelpers';
 import { IncognitoProfileBox } from '@/components/incognito/IncognitoProfileBox';
@@ -315,13 +319,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
   const lightResearchWait =
     loading && !heavyBuildActive && promptWantsLiveResearch(lastUserText);
   const showResearchPages = lightResearchWait || researchTodoActive;
-  const pendingActivityKind = codeBuildActive ? 'code' : showResearchPages ? 'search' : 'respond';
-  const pendingActivityLabel =
-    pendingActivityKind === 'search'
-      ? 'Preparing research'
-      : pendingActivityKind === 'code'
-        ? 'Starting work'
-        : 'Responding';
+  const pendingIntent = pendingExecutionIntent({
+    prompt: lastUserText,
+    codeBuildActive,
+    researchActive: showResearchPages,
+  });
+  const pendingActivityLabel = pendingExecutionLabel(pendingIntent);
 
   function handleSuggestion(text: string) {
     setPrompt(text);
@@ -496,7 +499,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           <TerminalLiveActivity
                             run={terminalRun}
                             pending
-                            pendingKind={pendingActivityKind}
+                            pendingIntent={pendingIntent}
                             pendingLabel={pendingActivityLabel}
                           />
                         ) : null}
