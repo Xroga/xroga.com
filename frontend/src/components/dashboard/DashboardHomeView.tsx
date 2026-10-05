@@ -185,8 +185,24 @@ export function DashboardHomeView() {
         >
           <PercentBar label="Capacity remaining" value={entitlement.capacityRemainingPercent} />
           <PercentBar label="Available now" value={entitlement.availableNowPercent} />
-          <p className="text-xs text-[var(--muted)] capitalize">Pacing: {entitlement.pacing?.replace(/_/g, ' ') ?? 'not active'}</p>
-          {entitlement.nextUnlockAt && <p className="text-xs text-[var(--muted)]">Next unlock: {formatSafeDate(entitlement.nextUnlockAt, 'MMM d, h:mm a')}</p>}
+          {entitlement.state === 'free_active' ? (
+            <p className="text-xs text-[var(--muted)]">
+              Free monthly capacity is available immediately for this cycle.
+            </p>
+          ) : (
+            <p className="text-xs text-[var(--muted)] capitalize">
+              Pacing: {entitlement.pacing?.replace(/_/g, ' ') ?? 'not active'}
+            </p>
+          )}
+          {entitlement.state === 'free_active' && entitlement.endsAt ? (
+            <p className="text-xs text-[var(--muted)]">
+              Monthly reset: {formatSafeDate(entitlement.endsAt, 'MMM d, h:mm a')}
+            </p>
+          ) : entitlement.nextUnlockAt ? (
+            <p className="text-xs text-[var(--muted)]">
+              Next unlock: {formatSafeDate(entitlement.nextUnlockAt, 'MMM d, h:mm a')}
+            </p>
+          ) : null}
           <Link href="/dashboard/billing" className="inline-flex text-xs font-semibold text-[var(--accent)] hover:underline">Review Plan & Usage</Link>
         </WidgetCard>
 
