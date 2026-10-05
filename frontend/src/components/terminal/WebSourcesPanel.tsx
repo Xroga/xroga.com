@@ -46,7 +46,7 @@ function SourceCard({ item }: { item: WebSourceItem }) {
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex gap-3 rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/70 p-3 hover:border-[var(--accent)]/45 hover:bg-[var(--accent)]/[0.04] transition-all shadow-sm"
+      className="xv-web-source-card group flex gap-4 rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/70 p-4 hover:border-[var(--accent)]/45 hover:bg-[var(--accent)]/[0.04] transition-all shadow-sm"
     >
       {item.thumbnailUrl ? (
         <div className="relative shrink-0">
@@ -85,19 +85,19 @@ function SourceCard({ item }: { item: WebSourceItem }) {
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-[10px] font-medium text-[var(--muted)] truncate">
+          <span className="xv-web-source-card__domain font-medium text-[var(--muted)] truncate">
             {yt && channel ? channel : domain}
           </span>
           <ExternalLink className="w-3 h-3 opacity-40 group-hover:opacity-80 shrink-0 transition-opacity" />
         </div>
-        <p className="text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
+        <p className="xv-web-source-card__title font-semibold line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
           {item.title}
         </p>
         {item.snippet && !yt && (
-          <p className="text-[11px] text-[var(--muted)] line-clamp-2 mt-1 leading-relaxed">{item.snippet}</p>
+          <p className="xv-web-source-card__snippet text-[var(--muted)] line-clamp-2 mt-1">{item.snippet}</p>
         )}
         {yt && item.snippet.includes('—') && (
-          <p className="text-[11px] text-[var(--muted)] line-clamp-2 mt-1 leading-relaxed">
+          <p className="xv-web-source-card__snippet text-[var(--muted)] line-clamp-2 mt-1">
             {item.snippet.split('—').slice(1).join('—').trim()}
           </p>
         )}
@@ -119,10 +119,10 @@ export function WebSourcesPanel({
   const web = sources.filter((s) => !isYoutube(s));
 
   return (
-    <div className={cn('mt-4 space-y-3', className)}>
+    <div className={cn('xv-web-sources space-y-4', className)}>
       {youtube.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)] flex items-center gap-1.5">
+          <p className="xv-web-sources__label font-semibold uppercase tracking-wider text-[var(--muted)] flex items-center gap-1.5">
             <Play className="w-3 h-3 text-red-500/80" />
             Recommended on YouTube
           </p>
@@ -135,7 +135,7 @@ export function WebSourcesPanel({
       )}
       {web.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+          <p className="xv-web-sources__label font-semibold uppercase tracking-wider text-[var(--muted)]">
             Sources referenced
           </p>
           <div className="grid gap-2.5 sm:grid-cols-2">
