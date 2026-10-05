@@ -6,7 +6,7 @@ export type XrogaActivityKind =
   | 'connected-app-read' | 'connected-app-write' | 'automation' | 'upload' | 'download'
   | 'deploy' | 'verify' | 'approval' | 'connection' | 'waiting' | 'complete' | 'warning' | 'error';
 
-export type XrogaActivityStatus = 'active' | 'complete' | 'waiting' | 'warning' | 'error';
+export type XrogaActivityStatus = 'active' | 'complete' | 'waiting' | 'warning' | 'error' | 'cancelled' | 'interrupted';
 
 export interface XrogaActivityPresentation {
   id: string;
@@ -14,6 +14,12 @@ export interface XrogaActivityPresentation {
   label: string;
   detail?: string;
   status: XrogaActivityStatus;
+  body?: string;
+  startedAt: number;
+  updatedAt: number;
+  durationMs?: number;
+  evidenceRefs?: string[];
+  artifactRefs?: string[];
 }
 
 const INTERNAL_MARKERS = /\b(?:business\.(?:read|action)|research\.(?:public-web|x)|software\.implement|repository\.(?:read|write)|validation\.run|attachment\.analyze|requiredAuthorities|selectedModel|fallbackModels|toolCallId|runtimeSessionId|provider route|sandbox:execute|model:execute)\b/gi;
@@ -57,7 +63,12 @@ function kindFor(event: TerminalEvent): XrogaActivityKind {
   if (type.includes('preview') || type.includes('browser') || /\bpreview|browser\b/.test(value)) return 'browser';
   if (type.includes('deployment') || /\bdeploy(?:ing|ment)?\b/.test(value)) return 'deploy';
   if (type.includes('command') || type.includes('process') || /\bcommand|terminal\b/.test(value)) return 'command';
+  if (/\b(database|sql|supabase|postgres|querying data)\b/.test(value)) return 'database';
+  if (/\b(upload(?:ing|ed)?|attaching)\b/.test(value)) return 'upload';
+  if (/\b(download(?:ing|ed)?|exporting)\b/.test(value)) return 'download';
+  if (/\b(workflow|automation|scheduled task)\b/.test(value)) return 'automation';
   if (/\bsearch(?:ing)?(?: the)? web|web search\b/.test(value)) return 'search';
+  if (/\b(opening|opened) (?:a )?source\b/.test(value)) return 'open-source';
   if (/\breading sources?\b/.test(value)) return 'read-source';
   if (/\bcomparing (?:the )?(?:results|sources|evidence)\b/.test(value)) return 'compare';
   if (/\bsummari[sz](?:e|ing)\b/.test(value)) return 'summarize';
@@ -71,6 +82,8 @@ function kindFor(event: TerminalEvent): XrogaActivityKind {
 
 function statusFor(event: TerminalEvent): XrogaActivityStatus {
   const status = event.canonical?.status;
+  if (status === 'cancelled') return 'cancelled';
+  if (status === 'interrupted') return 'interrupted';
   if (event.level === 'error' || status === 'failed') return 'error';
   if (event.level === 'warn') return 'warning';
   if (status === 'completed' || event.level === 'success') return 'complete';
@@ -96,11 +109,32 @@ function fallbackLabel(kind: XrogaActivityKind): string {
 export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresentation {
   const kind = kindFor(event);
   const safe = publicActivityText(event.text);
+  const label = safe || fallbackLabel(kind);
+  const canonicalAt = event.canonical?.timestamp ? Date.parse(event.canonical.timestamp) : Number.NaN;
+  const at = Number.isFinite(canonicalAt) ? canonicalAt : event.at;
+  const rawDetail =
+    typeof event.canonical?.metadata?.filePath === 'string'
+      ? event.canonical.metadata.filePath
+      : event.canonical?.summary ?? '';
+  const detail = publicActivityText(rawDetail);
+  const body = publicActivityText(event.canonical?.details ?? event.body ?? '');
+  const duration = event.canonical?.metadata?.durationMs;
+
   return {
-    id: event.canonical?.activityId ?? event.canonical?.eventId ?? String(event.seq),
+    id: event.canonical?.activityId ?? event.canonical?.toolCallId ?? event.canonical?.eventId ?? String(event.seq),
     kind,
-    label: safe || fallbackLabel(kind),
+    label,
+    detail: detail && detail.toLowerCase() !== label.toLowerCase() ? detail : undefined,
     status: statusFor(event),
+    body: body || undefined,
+    startedAt: at,
+    updatedAt: at,
+    durationMs:
+      typeof duration === 'number' && Number.isFinite(duration) && duration >= 0
+        ? duration
+        : undefined,
+    evidenceRefs: event.canonical?.evidenceRefs?.filter(Boolean),
+    artifactRefs: event.canonical?.artifactRefs?.filter(Boolean),
   };
 }
 
@@ -111,13 +145,26 @@ export function coalesceActivity(events: readonly TerminalEvent[]): XrogaActivit
     if (event.kind === 'output' || event.kind === 'result') continue;
     if (isGenericPlaceholderActivity(event.text)) continue;
     const row = presentTerminalEvent(event);
-    const key = event.canonical?.activityId || `${row.kind}:${row.label.toLowerCase()}`;
+    const key = event.canonical?.activityId || event.canonical?.toolCallId || `${row.kind}:${row.label.toLowerCase()}`;
     const previous = positions.get(key);
     if (previous == null) {
       positions.set(key, rows.length);
       rows.push(row);
     } else {
-      rows[previous] = { ...rows[previous], ...row, id: rows[previous].id };
+      const prior = rows[previous];
+      const startedAt = Math.min(prior.startedAt, row.startedAt);
+      const updatedAt = Math.max(prior.updatedAt, row.updatedAt);
+      const terminal = row.status !== 'active' && row.status !== 'waiting';
+      rows[previous] = {
+        ...prior,
+        ...row,
+        id: prior.id,
+        startedAt,
+        updatedAt,
+        durationMs: row.durationMs ?? (terminal ? Math.max(0, updatedAt - startedAt) : prior.durationMs),
+        evidenceRefs: [...new Set([...(prior.evidenceRefs ?? []), ...(row.evidenceRefs ?? [])])],
+        artifactRefs: [...new Set([...(prior.artifactRefs ?? []), ...(row.artifactRefs ?? [])])],
+      };
     }
   }
   return rows;
