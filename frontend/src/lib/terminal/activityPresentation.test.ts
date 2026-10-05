@@ -87,4 +87,6 @@ test('public execution rows keep duration and evidence receipts for persisted ac
   assert.equal(rows[0]?.durationMs, 1500);
   assert.deepEqual(rows[0]?.evidenceRefs, ['abcdef0123456789abcdef']);
   assert.equal(rows[0]?.detail, 'frontend/src/app.tsx');
+  assert.equal(rows[0]?.startedAt, 1000);
+  assert.equal(rows[0]?.updatedAt, 2500);
 });
