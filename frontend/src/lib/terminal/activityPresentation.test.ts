@@ -90,3 +90,34 @@ test('public execution rows keep duration and evidence receipts for persisted ac
   assert.equal(rows[0]?.startedAt, 1000);
   assert.equal(rows[0]?.updatedAt, 2500);
 });
+
+
+test('structured research metadata surfaces the real query and result count', () => {
+  const search = event(3000, 'Searching the web', 'activity.started', 'search-1');
+  search.canonical = {
+    ...search.canonical!,
+    metadata: {
+      query: 'latest Next.js changes 2026',
+      resultCount: 8,
+    },
+  };
+  const row = presentTerminalEvent(search);
+  assert.equal(row.kind, 'search');
+  assert.equal(row.detail, 'latest Next.js changes 2026 · 8 results');
+});
+
+test('structured tool metadata surfaces real commands and connected-app operations', () => {
+  const command = event(4000, 'Running command', 'tool.started', 'cmd-1');
+  command.canonical = {
+    ...command.canonical!,
+    metadata: { command: 'npm test' },
+  };
+  assert.equal(presentTerminalEvent(command).detail, 'npm test');
+
+  const app = event(5000, 'Updating Slack', 'activity.started', 'slack-1');
+  app.canonical = {
+    ...app.canonical!,
+    metadata: { service: 'Slack', operation: 'send message', target: '#launch' },
+  };
+  assert.equal(presentTerminalEvent(app).detail, 'Slack');
+});

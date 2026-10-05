@@ -17,6 +17,7 @@ import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import {
+  isQuickConversationPrompt,
   pendingExecutionIntent,
   pendingExecutionLabel,
 } from '@/lib/terminal/executionIntent';
@@ -444,6 +445,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
               !isIncognito && showSuggestions && !isImageOutput
                 ? generateMessageSuggestions(lastUserText, msg.content)
                 : null;
+            const messagePrompt = promptByAssistantId.get(msg.id) || lastUserText;
+            const suppressGreetingActivity = isQuickConversationPrompt(messagePrompt);
 
             return (
               <div
@@ -494,13 +497,19 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                             It is never persisted as execution evidence. Real canonical
                             activity replaces it as soon as the backend emits a step. */}
                         {msg.executionActivity?.length ? (
-                          <TerminalLiveActivity activity={msg.executionActivity} />
-                        ) : loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
+                          <TerminalLiveActivity
+                            activity={msg.executionActivity}
+                            requestText={messagePrompt}
+                          />
+                        ) : loading &&
+                          msg.id === (buildPanelMessageId ?? animatingId) &&
+                          !suppressGreetingActivity ? (
                           <TerminalLiveActivity
                             run={terminalRun}
                             pending
                             pendingIntent={pendingIntent}
                             pendingLabel={pendingActivityLabel}
+                            requestText={messagePrompt}
                           />
                         ) : null}
                         {msg.buildStopped ? (

@@ -32,6 +32,22 @@ test('transient presentation follows the requested kind of work without recordin
     'analysis',
   );
   assert.equal(
+    pendingExecutionIntent({ prompt: 'Explain why the sky is blue.' }),
+    'analysis',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Inspect this repo and find the cause of the bug.' }),
+    'code',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Build a responsive landing page, run it, test it, and verify it in the browser.' }),
+    'code',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Query the database and summarize the relevant records.' }),
+    'data',
+  );
+  assert.equal(
     pendingExecutionIntent({ prompt: 'hello', codeBuildActive: true }),
     'code',
   );
@@ -45,6 +61,7 @@ test('labels describe preparation, not fabricated completed work', () => {
   assert.equal(pendingExecutionLabel('research'), 'Preparing research');
   assert.equal(pendingExecutionLabel('document'), 'Preparing document analysis');
   assert.equal(pendingExecutionLabel('code'), 'Preparing workspace');
+  assert.equal(pendingExecutionLabel('data'), 'Preparing data query');
   assert.equal(pendingExecutionLabel('business'), 'Preparing connected app');
   assert.equal(pendingExecutionLabel('analysis'), 'Working through the problem');
 });

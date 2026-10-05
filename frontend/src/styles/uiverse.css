@@ -3943,3 +3943,489 @@ body.theme-black .xv-sidebar-root {
     stroke-dashoffset: 0;
   }
 }
+
+
+/* ==========================================================
+   EXECUTION EVIDENCE UI V2
+   Real request + real event evidence + task-specific motion.
+   ========================================================== */
+
+.xv-exec-orb {
+  --xv-exec-orb-size: 34px;
+  --xv-exec-orb-red: red;
+  --xv-exec-orb-blue: blue;
+  --xv-exec-orb-yellow: yellow;
+  --xv-exec-orb-cyan: cyan;
+  --xv-exec-orb-white: white;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--xv-exec-orb-size);
+  height: var(--xv-exec-orb-size);
+  flex: 0 0 var(--xv-exec-orb-size);
+  overflow: hidden;
+  border-radius: 50%;
+  isolation: isolate;
+}
+
+.xv-exec-orb__sphere,
+.xv-exec-orb__sphere::before,
+.xv-exec-orb__sphere::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.xv-exec-orb__sphere {
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,255,.78) 20%,
+      rgba(255,255,255,.34) 50%,
+      rgba(255,255,255,0) 70%
+    ),
+    linear-gradient(120deg, var(--xv-exec-orb-red) 20%, var(--xv-exec-orb-blue) 80%);
+  box-shadow:
+    inset -2px -2px 5px var(--xv-exec-orb-cyan),
+    inset 3px 0 7px var(--xv-exec-orb-yellow),
+    0 0 16px rgba(0, 122, 255, .24);
+  animation:
+    xv-exec-orb-rotation 2s linear infinite,
+    xv-exec-orb-colorize 2s ease-in-out infinite;
+}
+
+.xv-exec-orb__sphere::after {
+  content: "";
+  z-index: -1;
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255,255,255,.7) 0%,
+      rgba(255,255,255,.5) 30%,
+      rgba(255,255,255,0) 70%
+    ),
+    linear-gradient(120deg, var(--xv-exec-orb-red) 20%, var(--xv-exec-orb-blue) 80%);
+  filter: blur(3px);
+  animation:
+    xv-exec-orb-rotation 2s linear infinite,
+    xv-exec-orb-colorblur 2s ease-in-out infinite;
+}
+
+.xv-exec-orb > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: xv-exec-orb-rotation 3s cubic-bezier(.7,.6,.3,.4) infinite;
+}
+
+.xv-exec-orb__waves-fill {
+  fill: var(--xv-exec-orb-white);
+}
+
+.xv-exec-wave {
+  stroke-width: 7px;
+}
+
+.xv-exec-wave--one {
+  animation: xv-exec-wave-one 1s cubic-bezier(.7,.6,.3,.4) infinite;
+}
+.xv-exec-wave--two {
+  animation: xv-exec-wave-two 1s cubic-bezier(.7,.6,.3,.4) -.5s infinite reverse;
+}
+.xv-exec-wave--three {
+  animation: xv-exec-wave-one 1s cubic-bezier(.7,.6,.3,.4) -.5s infinite;
+}
+.xv-exec-wave--four {
+  animation: xv-exec-wave-two 1s cubic-bezier(.7,.6,.3,.4) infinite reverse;
+}
+
+@keyframes xv-exec-wave-one {
+  0% { d: path("M5,50 C10,50 15,50 20,50 C25,50 30,50 95,50"); }
+  50% { d: path("M5,50 C25,50 30,20 50,20 C70,20 75,50 95,50"); }
+  100% { d: path("M5,50 C70,50 75,50 80,50 C85,50 90,50 95,50"); }
+}
+@keyframes xv-exec-wave-two {
+  0% { d: path("M5,50 C10,50 15,50 20,50 C25,50 30,50 95,50"); }
+  50% { d: path("M5,50 C25,50 30,80 50,80 C70,80 75,50 95,50"); }
+  100% { d: path("M5,50 C70,50 75,50 80,50 C85,50 90,50 95,50"); }
+}
+@keyframes xv-exec-orb-rotation {
+  to { transform: rotate(360deg); }
+}
+@keyframes xv-exec-orb-colorize {
+  0%,100% { filter: hue-rotate(0deg); }
+  20% { filter: hue-rotate(-30deg); }
+  40% { filter: hue-rotate(-60deg); }
+  60% { filter: hue-rotate(-90deg); }
+  80% { filter: hue-rotate(-45deg); }
+}
+@keyframes xv-exec-orb-colorblur {
+  0%,100% { filter: hue-rotate(0deg) blur(3px); }
+  20% { filter: hue-rotate(-30deg) blur(3px); }
+  40% { filter: hue-rotate(-60deg) blur(3px); }
+  60% { filter: hue-rotate(-90deg) blur(3px); }
+  80% { filter: hue-rotate(-45deg) blur(3px); }
+}
+
+.xv-exec-search-scan {
+  position: relative;
+  display: inline-block;
+  width: 82px;
+  height: 34px;
+  flex: 0 0 82px;
+}
+
+.xv-exec-search-scan__bars {
+  position: absolute;
+  left: 14px;
+  right: 0;
+  top: 8px;
+  display: grid;
+  gap: 7px;
+}
+
+.xv-exec-search-scan__bars > span {
+  display: block;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    rgb(161, 94, 255),
+    rgb(217, 190, 255),
+    rgb(161, 94, 255)
+  );
+  background-size: 200% 100%;
+  animation: xv-exec-search-bar 3s ease-in-out infinite alternate-reverse;
+}
+.xv-exec-search-scan__bars > span:last-child {
+  width: 52%;
+}
+
+.xv-exec-search-scan > svg {
+  position: absolute;
+  left: -8px;
+  top: 0;
+  width: 38px;
+  height: 42px;
+  overflow: visible;
+  animation: xv-exec-search-magnifier 3s ease-in-out infinite alternate-reverse;
+}
+.xv-exec-search-scan > svg circle,
+.xv-exec-search-scan > svg line {
+  stroke: rgb(162, 55, 255);
+}
+.xv-exec-search-scan > svg circle {
+  fill: rgba(98, 65, 142, .238);
+}
+
+@keyframes xv-exec-search-bar {
+  from { background-position: left; }
+  to { background-position: right; }
+}
+@keyframes xv-exec-search-magnifier {
+  from { transform: translateX(0) rotate(70deg); }
+  to { transform: translateX(50px) rotate(10deg); }
+}
+
+.xv-exec-stalled-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 16px;
+}
+.xv-exec-stalled-dots > span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: xv-exec-stalled-bounce 1s ease-in-out infinite;
+}
+.xv-exec-stalled-dots > span:nth-child(1) { background:#007aff; animation-delay:0s; }
+.xv-exec-stalled-dots > span:nth-child(2) { background:#ff2d55; animation-delay:.25s; }
+.xv-exec-stalled-dots > span:nth-child(3) { background:#34c759; animation-delay:.5s; }
+.xv-exec-stalled-dots > span:nth-child(4) { background:#ff9500; animation-delay:.75s; }
+
+@keyframes xv-exec-stalled-bounce {
+  0%,40%,100% { transform: scale(1); }
+  20% { transform: scale(1.2); }
+}
+
+/* 2x assistant answer typography, without zooming user bubbles or workspace chrome. */
+.xv-response-text,
+.xv-xroga-response {
+  font-size: 28px !important;
+  line-height: 1.55 !important;
+}
+.xv-response-text :where(p, li, blockquote, td, th),
+.xv-xroga-response :where(p, li, blockquote, td, th) {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+.xv-xroga-response h2,
+.xv-xroga-response .xv-headline {
+  font-size: clamp(2.1rem, 5vw, 2.5rem) !important;
+  line-height: 1.2 !important;
+}
+.xv-xroga-response h3 {
+  font-size: clamp(1.8rem, 4vw, 2.2rem) !important;
+}
+.xv-xroga-response h4 {
+  font-size: clamp(1.55rem, 3.4vw, 1.9rem) !important;
+}
+
+@media (min-width: 640px) {
+  .xv-response-text,
+  .xv-xroga-response {
+    font-size: 30px !important;
+  }
+}
+
+/* Larger evidence UI: request, status, real actions, receipts and sources. */
+.xv-exec-trace {
+  max-width: 980px;
+  margin-block: 12px;
+}
+.xv-exec-request {
+  margin-bottom: 8px;
+}
+.xv-exec-request__eyebrow {
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  font-weight: 700;
+}
+.xv-exec-request__text {
+  margin-top: 3px;
+  font-size: 22px;
+  line-height: 1.38;
+  font-weight: 650;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+.xv-exec-capability-line,
+.xv-exec-proof-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  margin-top: 7px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.xv-exec-capability-line > span,
+.xv-exec-proof-line > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.xv-exec-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding-block: 8px;
+  text-align: left;
+}
+.xv-exec-header__state {
+  font-size: 23px !important;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.xv-exec-header__latest {
+  font-size: 17px !important;
+  line-height: 1.35;
+}
+.xv-exec-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 4px;
+  font-size: 14px !important;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.xv-exec-row {
+  min-height: 58px;
+  padding-left: 36px;
+}
+.xv-exec-row > button {
+  gap: 10px;
+  padding-block: 9px;
+}
+.xv-exec-row-icon {
+  width: 26px !important;
+  height: 26px !important;
+  transition: transform 160ms ease, color 160ms ease;
+}
+.xv-exec-row-icon svg {
+  width: 19px !important;
+  height: 19px !important;
+}
+.xv-exec-row:hover .xv-exec-row-icon {
+  transform: scale(1.08) rotate(-3deg);
+  color: var(--accent);
+}
+.xv-exec-row-label {
+  font-size: 20px !important;
+  line-height: 1.35 !important;
+}
+.xv-exec-row-detail {
+  display: block;
+  margin-top: 2px;
+  font-size: 15px !important;
+  line-height: 1.35;
+  color: var(--muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.xv-exec-row-meta,
+.xv-exec-disclaimer,
+.xv-exec-earlier {
+  font-size: 14px !important;
+  line-height: 1.35;
+}
+.xv-exec-row-body,
+.xv-exec-receipt {
+  font-size: 17px !important;
+  line-height: 1.55 !important;
+}
+.xv-exec-inline {
+  min-height: 48px;
+  gap: 12px;
+  font-size: 22px;
+}
+.xv-exec-inline .xv-exec-shimmer {
+  font-size: 22px !important;
+  line-height: 1.35;
+}
+
+/* Web source cards are part of the AI answer, so scale their reading text too. */
+.xv-web-sources {
+  margin-top: 22px;
+}
+.xv-web-sources__label {
+  font-size: 16px !important;
+}
+.xv-web-source-card__domain {
+  font-size: 15px !important;
+}
+.xv-web-source-card__title {
+  font-size: 22px !important;
+  line-height: 1.32 !important;
+}
+.xv-web-source-card__snippet {
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+}
+
+/* Build/update summaries are response evidence, not app chrome. */
+.xv-build-report {
+  font-size: 24px !important;
+}
+.xv-build-report__headline {
+  font-size: 26px !important;
+}
+.xv-update-trail {
+  font-size: 22px !important;
+}
+.xv-update-trail__headline {
+  font-size: 26px !important;
+}
+
+@media (max-width: 639px) {
+  .xv-response-text,
+  .xv-xroga-response {
+    font-size: 28px !important;
+  }
+  .xv-exec-request__text {
+    font-size: 19px;
+  }
+  .xv-exec-header__state {
+    font-size: 20px !important;
+  }
+  .xv-exec-row-label {
+    font-size: 18px !important;
+  }
+  .xv-exec-search-scan {
+    width: 70px;
+    transform: scale(.9);
+    transform-origin: left center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-exec-orb__sphere,
+  .xv-exec-orb__sphere::after,
+  .xv-exec-orb > svg,
+  .xv-exec-wave,
+  .xv-exec-search-scan__bars > span,
+  .xv-exec-search-scan > svg,
+  .xv-exec-stalled-dots > span {
+    animation: none !important;
+  }
+}
+
+
+/* Structured assistant blocks follow the same enlarged response scale. */
+.xv-ai-output-block {
+  font-size: 22px;
+  line-height: 1.5;
+}
+.xv-ai-output-block :where(p, li, summary, a, button, dt, dd, code, span) {
+  font-size: 20px !important;
+  line-height: 1.45 !important;
+}
+.xv-ai-output-block :where(h3) {
+  font-size: 24px !important;
+  line-height: 1.3 !important;
+}
+.xv-ai-output-block :where(pre) {
+  font-size: 18px !important;
+  line-height: 1.5 !important;
+}
+
+.xv-build-report :where(p, li, a, button, span) {
+  font-size: 20px !important;
+  line-height: 1.45 !important;
+}
+.xv-build-report :where(pre) {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+.xv-build-report__headline {
+  font-size: 26px !important;
+  line-height: 1.3 !important;
+}
+
+.xv-update-trail :where(p, li, button, span) {
+  font-size: 19px !important;
+  line-height: 1.45 !important;
+}
+.xv-update-trail :where(pre) {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+.xv-update-trail__headline {
+  font-size: 26px !important;
+  line-height: 1.3 !important;
+}
+
+@media (max-width: 639px) {
+  .xv-ai-output-block {
+    font-size: 19px;
+  }
+  .xv-ai-output-block :where(p, li, summary, a, button, dt, dd, code, span) {
+    font-size: 18px !important;
+  }
+  .xv-ai-output-block :where(h3) {
+    font-size: 22px !important;
+  }
+  .xv-build-report :where(p, li, a, button, span),
+  .xv-update-trail :where(p, li, button, span) {
+    font-size: 18px !important;
+  }
+}

@@ -16,12 +16,21 @@ test('AI responses use cardless task-aware transient feedback before real activi
   assert.doesNotMatch(messageLog, /TerminalRunStream|ResearchPagesLoader|waiting for first event/);
   assert.match(messageLog, /pendingIntent=\{pendingIntent\}/);
   assert.match(messageLog, /pendingLabel=\{pendingActivityLabel\}/);
+  assert.match(messageLog, /requestText=\{messagePrompt\}/);
+  assert.match(messageLog, /isQuickConversationPrompt\(messagePrompt\)/);
   assert.match(liveActivity, /coalesceActivity\(run\.events\)/);
   assert.match(liveActivity, /if \(!pending\) return null/);
-  assert.match(liveActivity, /xv-exec-inline--chat/);
+  assert.match(liveActivity, /requestText/);
+  assert.match(liveActivity, /Your request/);
   assert.match(liveActivity, /ExecutionShimmerText/);
-  assert.match(liveActivity, /SearchGlobe/);
+  assert.match(liveActivity, /SearchScanner/);
+  assert.match(liveActivity, /UniversalExecutionOrb/);
+  assert.match(liveActivity, /StalledDots/);
+  assert.match(liveActivity, /STALLED_AFTER_MS/);
   assert.match(motion, /ExecutionPulse/);
+  assert.match(motion, /SearchScanner/);
+  assert.match(motion, /UniversalExecutionOrb/);
+  assert.match(motion, /StalledDots/);
   assert.doesNotMatch(liveActivity, /Connected · awaiting first update/);
   assert.doesNotMatch(liveActivity, /rounded-2xl border border-\[var\(--card-border\)\]/);
   assert.match(liveActivity, /aria-label="Execution activity"/);
@@ -64,4 +73,33 @@ test('normal output does not append internal developer identifiers', () => {
   const output = source('../../components/terminal/XrogaBlockView.tsx');
 
   assert.doesNotMatch(output, /XrogaDeveloperInspector|Developer details/);
+});
+
+
+test('assistant response and execution evidence use the enlarged v2 reading scale', () => {
+  const uiverse = source('../../styles/uiverse.css');
+  const sources = source('../../components/terminal/WebSourcesPanel.tsx');
+
+  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response\s*\{[\s\S]*?font-size:\s*28px\s*!important/);
+  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*30px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*23px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*20px\s*!important/);
+  assert.match(sources, /xv-web-source-card__title/);
+  assert.match(sources, /xv-web-source-card__snippet/);
+});
+
+test('execution motion contains universal, research and delayed-update states', () => {
+  const motion = source('../../components/terminal/ExecutionMotion.tsx');
+  const uiverse = source('../../styles/uiverse.css');
+
+  assert.match(motion, /UniversalExecutionOrb/);
+  assert.match(motion, /SearchScanner/);
+  assert.match(motion, /StalledDots/);
+  assert.match(uiverse, /--xv-exec-orb-red:\s*red/);
+  assert.match(uiverse, /--xv-exec-orb-blue:\s*blue/);
+  assert.match(uiverse, /\.xv-exec-search-scan/);
+  assert.match(uiverse, /#007aff/);
+  assert.match(uiverse, /#ff2d55/);
+  assert.match(uiverse, /#34c759/);
+  assert.match(uiverse, /#ff9500/);
 });

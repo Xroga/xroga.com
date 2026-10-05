@@ -74,8 +74,8 @@ export function TerminalBuildReport({
   rollingBack,
 }: TerminalBuildReportData) {
   return (
-    <div className="my-1.5 space-y-2 text-left font-mono text-[12px] leading-relaxed">
-      <p className="text-[13px] font-sans font-medium text-[var(--foreground)]">{headline}</p>
+    <div className="xv-build-report my-2 space-y-3 text-left font-mono leading-relaxed">
+      <p className="xv-build-report__headline font-sans font-medium text-[var(--foreground)]">{headline}</p>
       {projectName ? (
         <p className="text-[var(--muted)]">
           <span className="text-[var(--foreground)]/50">project</span> {projectName}

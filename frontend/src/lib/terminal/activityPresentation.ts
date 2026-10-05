@@ -106,16 +106,85 @@ function fallbackLabel(kind: XrogaActivityKind): string {
   return labels[kind];
 }
 
+function metadataText(
+  event: TerminalEvent,
+  keys: readonly string[],
+): string | undefined {
+  const metadata = event.canonical?.metadata;
+  if (!metadata) return undefined;
+  for (const key of keys) {
+    const value = metadata[key];
+    if (typeof value === 'string' && value.trim()) {
+      const safe = publicActivityText(value);
+      if (safe) return safe;
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return String(value);
+    }
+  }
+  return undefined;
+}
+
+function structuredDetail(event: TerminalEvent, kind: XrogaActivityKind): string {
+  const byKind: Partial<Record<XrogaActivityKind, readonly string[]>> = {
+    search: ['query', 'searchQuery', 'q', 'term', 'resultCount'],
+    'open-source': ['sourceTitle', 'title', 'url', 'sourceUrl', 'domain'],
+    'read-source': ['sourceTitle', 'title', 'url', 'sourceUrl', 'domain'],
+    compare: ['comparison', 'query', 'sourceCount'],
+    summarize: ['topic', 'sourceCount'],
+    'read-file': ['filePath', 'path', 'fileName'],
+    'write-file': ['filePath', 'path', 'fileName'],
+    code: ['filePath', 'path', 'component', 'operation'],
+    command: ['command', 'cmd', 'script'],
+    test: ['testName', 'suite', 'command', 'check'],
+    browser: ['url', 'route', 'page', 'target'],
+    database: ['query', 'table', 'database', 'operation'],
+    'connected-app-read': ['service', 'operation', 'target', 'resource'],
+    'connected-app-write': ['service', 'operation', 'target', 'resource'],
+    automation: ['workflow', 'automation', 'operation'],
+    upload: ['filePath', 'path', 'fileName'],
+    download: ['filePath', 'path', 'fileName', 'url'],
+    deploy: ['deploymentUrl', 'url', 'environment', 'target'],
+    verify: ['check', 'target', 'url', 'route'],
+    approval: ['operation', 'target', 'service'],
+    connection: ['service', 'provider'],
+  };
+
+  const direct = metadataText(event, byKind[kind] ?? []);
+  if (direct) {
+    const count = event.canonical?.metadata?.resultCount;
+    if (
+      kind === 'search' &&
+      typeof count === 'number' &&
+      Number.isFinite(count) &&
+      !direct.includes(String(count))
+    ) {
+      return `${direct} · ${count} ${count === 1 ? 'result' : 'results'}`;
+    }
+    return direct;
+  }
+
+  const fallback = metadataText(event, [
+    'filePath',
+    'query',
+    'url',
+    'domain',
+    'service',
+    'operation',
+    'command',
+    'path',
+    'target',
+  ]);
+  return fallback ?? event.canonical?.summary ?? '';
+}
+
 export function presentTerminalEvent(event: TerminalEvent): XrogaActivityPresentation {
   const kind = kindFor(event);
   const safe = publicActivityText(event.text);
   const label = safe || fallbackLabel(kind);
   const canonicalAt = event.canonical?.timestamp ? Date.parse(event.canonical.timestamp) : Number.NaN;
   const at = Number.isFinite(canonicalAt) ? canonicalAt : event.at;
-  const rawDetail =
-    typeof event.canonical?.metadata?.filePath === 'string'
-      ? event.canonical.metadata.filePath
-      : event.canonical?.summary ?? '';
+  const rawDetail = structuredDetail(event, kind);
   const detail = publicActivityText(rawDetail);
   const body = publicActivityText(event.canonical?.details ?? event.body ?? '');
   const duration = event.canonical?.metadata?.durationMs;
