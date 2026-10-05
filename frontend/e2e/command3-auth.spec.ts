@@ -183,7 +183,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(transcript).toHaveAttribute('data-conversation', 'false');
   await expect(transcript).toHaveCSS('overflow-y', 'hidden');
   await expect(shell).toHaveCSS('overflow', 'hidden');
-  await expect(shell).toHaveCSS('border-radius', /^(?:14|16)px$/);
+  await expect(shell).toHaveCSS('border-radius', '20px');
 
   for (const offset of [100, 500, 1000, 10_000]) {
     await transcript.evaluate((el, top) => { el.scrollTop = top; }, offset);
