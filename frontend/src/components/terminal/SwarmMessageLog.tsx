@@ -482,7 +482,9 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       <div className="py-1 text-left space-y-2">
                         {/* Real backend activity only. Before the first event, the
                             assistant row stays quiet instead of inventing a phase. */}
-                        {loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
+                        {msg.executionActivity?.length ? (
+                          <TerminalLiveActivity activity={msg.executionActivity} />
+                        ) : loading && msg.id === (buildPanelMessageId ?? animatingId) ? (
                           <TerminalLiveActivity run={terminalRun} />
                         ) : null}
                         {msg.buildStopped ? (

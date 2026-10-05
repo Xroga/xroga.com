@@ -69,3 +69,24 @@ test('generic simulated thinking copy is never presented as real activity', () =
   ]);
   assert.deepEqual(rows.map((row) => row.label), ['Reading sources']);
 });
+
+
+test('public execution rows keep duration and evidence receipts for persisted activity UI', () => {
+  const started = event(1000, 'Running tests', 'activity.started', 'test-1');
+  const finished = event(2500, 'Tests passed', 'activity.completed', 'test-1');
+  finished.level = 'success';
+  finished.canonical = {
+    ...finished.canonical!,
+    status: 'completed',
+    evidenceRefs: ['abcdef0123456789abcdef'],
+    metadata: { durationMs: 1500, filePath: 'frontend/src/app.tsx' },
+  };
+  const rows = coalesceActivity([started, finished]);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0]?.status, 'complete');
+  assert.equal(rows[0]?.durationMs, 1500);
+  assert.deepEqual(rows[0]?.evidenceRefs, ['abcdef0123456789abcdef']);
+  assert.equal(rows[0]?.detail, 'frontend/src/app.tsx');
+  assert.equal(rows[0]?.startedAt, 1000);
+  assert.equal(rows[0]?.updatedAt, 2500);
+});

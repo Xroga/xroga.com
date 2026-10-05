@@ -1,12 +1,45 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
 import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
+import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   if (!raw || typeof raw !== 'object') return undefined;
   const b = raw as Record<string, unknown>;
   if (typeof b.name !== 'string' || typeof b.sponsor !== 'string') return undefined;
   return raw as HackathonBriefCardData;
+}
+
+function isPersistedExecutionActivity(item: unknown): item is XrogaActivityPresentation {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
+  const value = item as Record<string, unknown>;
+  const kinds = new Set([
+    'respond', 'understand', 'search', 'open-source', 'read-source', 'compare', 'summarize',
+    'read-file', 'write-file', 'code', 'command', 'test', 'browser', 'database',
+    'connected-app-read', 'connected-app-write', 'automation', 'upload', 'download',
+    'deploy', 'verify', 'approval', 'connection', 'waiting', 'complete', 'warning', 'error',
+  ]);
+  const statuses = new Set([
+    'active', 'complete', 'waiting', 'warning', 'error', 'cancelled', 'interrupted',
+  ]);
+  return (
+    typeof value.id === 'string' &&
+    typeof value.kind === 'string' &&
+    kinds.has(value.kind) &&
+    typeof value.label === 'string' &&
+    typeof value.status === 'string' &&
+    statuses.has(value.status) &&
+    typeof value.startedAt === 'number' &&
+    Number.isFinite(value.startedAt) &&
+    typeof value.updatedAt === 'number' &&
+    Number.isFinite(value.updatedAt)
+  );
+}
+
+function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
+  if (!Array.isArray(raw)) return undefined;
+  const items = raw.filter(isPersistedExecutionActivity).slice(-80);
+  return items.length ? items : undefined;
 }
 
 function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
@@ -94,6 +127,7 @@ export function sanitizeChatMessages(messages: unknown): ChatMessage[] {
         featureOutput,
         thinkingSteps,
         thoughtMs: typeof m.thoughtMs === 'number' ? m.thoughtMs : undefined,
+        executionActivity: sanitizeExecutionActivity(m.executionActivity),
         webSources: sanitizeWebSources(m.webSources),
         hackathonBrief: sanitizeHackathonBrief(m.hackathonBrief),
       };
