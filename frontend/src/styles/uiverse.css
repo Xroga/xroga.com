@@ -4339,7 +4339,7 @@ body.theme-black .xv-sidebar-root {
 @media (max-width: 639px) {
   .xv-response-text,
   .xv-xroga-response {
-    font-size: 24px !important;
+    font-size: 28px !important;
   }
   .xv-exec-request__text {
     font-size: 19px;
