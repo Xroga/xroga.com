@@ -16,10 +16,13 @@ const DOCUMENT =
   /\b(?:pdf|docx?|document|attachment|uploaded file|spreadsheet|xlsx?|csv|slides?|pptx?|contract|resume|cv|read (?:the )?file|analy[sz]e (?:the )?(?:file|document)|summari[sz]e (?:the )?(?:file|document))\b/i;
 
 const BUSINESS =
-  /\b(?:gmail|email|slack|notion|hubspot|salesforce|calendar|google drive|drive|crm|linear|jira|asana|trello|shopify|stripe|send (?:an )?email|schedule|connected app|business app)\b/i;
+  /\b(?:gmail|email|slack|notion|hubspot|salesforce|calendar|google drive|drive|crm|linear|jira|asana|trello|shopify|stripe|database|sql|postgres|postgresql|supabase|query (?:the )?database|send (?:an )?email|schedule|connected app|business app)\b/i;
+
+const CODE =
+  /\b(?:(?:inspect|debug|fix|edit|change|update|build|create|implement|test|verify|run)\b[\s\S]{0,60}\b(?:repo|repository|codebase|code|component|file|files|website|site|landing page|app|dashboard|tests?|browser)|find (?:the )?(?:bug|cause|component|file)|run (?:the )?(?:tests?|build))\b/i;
 
 const ANALYSIS =
-  /\b(?:reason|solve|problem|calculate|evaluate|diagnose|debug|compare|decide|strategy|plan|analy[sz]e|explain why|figure out|investigate)\b/i;
+  /\b(?:reason|solve|problem|calculate|evaluate|diagnose|compare|decide|strategy|plan|analy[sz]e|explain|figure out|investigate)\b/i;
 
 export function isQuickConversationPrompt(prompt: string): boolean {
   const value = prompt.trim();
@@ -42,6 +45,7 @@ export function pendingExecutionIntent(input: {
   if (input.codeBuildActive) return 'code';
   if (input.researchActive || RESEARCH.test(prompt)) return 'research';
   if (DOCUMENT.test(prompt)) return 'document';
+  if (CODE.test(prompt)) return 'code';
   if (BUSINESS.test(prompt)) return 'business';
   if (ANALYSIS.test(prompt)) return 'analysis';
   return 'chat';
