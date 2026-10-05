@@ -150,8 +150,8 @@ export function ChatPromptQueue({
       </div>
       <p className="text-[9px] text-[var(--muted)] px-0.5">
         {heavyBuildActive
-          ? 'Chat & planning stay open. Queued builds start after the current one — never kills an in-progress build.'
-          : 'Sends automatically when the current response finishes. Hold pauses a queued build.'}
+          ? 'Your active build is protected. New builds queue; lightweight chat and planning can continue alongside it.'
+          : 'Sending while a response is active queues the next request. Shift+Enter can replace a lightweight answer; durable builds stay protected.'}
       </p>
     </div>
   );
