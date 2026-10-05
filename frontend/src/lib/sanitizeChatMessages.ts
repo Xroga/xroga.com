@@ -1,6 +1,7 @@
 import type { ChatMessage } from '@/context/TerminalChatContext';
 
 import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
+import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -9,8 +10,9 @@ function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   return raw as HackathonBriefCardData;
 }
 
-function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
-  if (!Array.isArray(raw)) return undefined;
+function isPersistedExecutionActivity(item: unknown): item is XrogaActivityPresentation {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
+  const value = item as Record<string, unknown>;
   const kinds = new Set([
     'respond', 'understand', 'search', 'open-source', 'read-source', 'compare', 'summarize',
     'read-file', 'write-file', 'code', 'command', 'test', 'browser', 'database',
@@ -20,22 +22,24 @@ function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity
   const statuses = new Set([
     'active', 'complete', 'waiting', 'warning', 'error', 'cancelled', 'interrupted',
   ]);
-  const items = raw
-    .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object')
-    .filter((item) =>
-      typeof item.id === 'string' &&
-      typeof item.kind === 'string' &&
-      kinds.has(item.kind) &&
-      typeof item.label === 'string' &&
-      typeof item.status === 'string' &&
-      statuses.has(item.status) &&
-      typeof item.startedAt === 'number' &&
-      Number.isFinite(item.startedAt) &&
-      typeof item.updatedAt === 'number' &&
-      Number.isFinite(item.updatedAt)
-    )
-    .slice(-80) as ChatMessage['executionActivity'];
-  return items?.length ? items : undefined;
+  return (
+    typeof value.id === 'string' &&
+    typeof value.kind === 'string' &&
+    kinds.has(value.kind) &&
+    typeof value.label === 'string' &&
+    typeof value.status === 'string' &&
+    statuses.has(value.status) &&
+    typeof value.startedAt === 'number' &&
+    Number.isFinite(value.startedAt) &&
+    typeof value.updatedAt === 'number' &&
+    Number.isFinite(value.updatedAt)
+  );
+}
+
+function sanitizeExecutionActivity(raw: unknown): ChatMessage['executionActivity'] {
+  if (!Array.isArray(raw)) return undefined;
+  const items = raw.filter(isPersistedExecutionActivity).slice(-80);
+  return items.length ? items : undefined;
 }
 
 function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
