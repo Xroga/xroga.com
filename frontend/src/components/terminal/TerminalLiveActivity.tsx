@@ -213,8 +213,8 @@ export function TerminalLiveActivity({ run, activity }: TerminalLiveActivityProp
   const [now, setNow] = useState(() => Date.now());
 
   const rows = useMemo(
-    () => (activity ? [...activity] : coalesceActivity(run?.events ?? [])),
-    [activity, run?.events]
+    () => (activity ? [...activity] : run ? coalesceActivity(run.events) : []),
+    [activity, run]
   );
   const active = Boolean(run?.active);
 
