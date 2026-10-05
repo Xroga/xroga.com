@@ -4,7 +4,6 @@ import { SwarmMessageLog } from '@/components/terminal/SwarmMessageLog';
 import { DevWorkspacePanel } from '@/components/terminal/DevWorkspacePanel';
 import { TerminalSkinPicker } from '@/components/terminal/TerminalSkinPicker';
 import { WorkspaceLauncher } from '@/components/terminal/WorkspaceLauncher';
-import { ApiConnectionBanner } from '@/components/dashboard/ApiConnectionBanner';
 import {
   useThemeStore,
   WORKSPACE_MAX_WIDTH,
@@ -208,7 +207,6 @@ export function DashboardView() {
       data-testid="terminal-scroll"
       data-conversation={hasConversation ? 'true' : 'false'}
     >
-      <ApiConnectionBanner />
       <SwarmMessageLog chromeless incognito={incognito} />
     </div>
   );
