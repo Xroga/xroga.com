@@ -74,3 +74,32 @@ test('normal output does not append internal developer identifiers', () => {
 
   assert.doesNotMatch(output, /XrogaDeveloperInspector|Developer details/);
 });
+
+
+test('assistant response and execution evidence use the enlarged v2 reading scale', () => {
+  const uiverse = source('../../styles/uiverse.css');
+  const sources = source('../../components/terminal/WebSourcesPanel.tsx');
+
+  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response\s*\{[\s\S]*?font-size:\s*28px\s*!important/);
+  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*30px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*23px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*20px\s*!important/);
+  assert.match(sources, /xv-web-source-card__title/);
+  assert.match(sources, /xv-web-source-card__snippet/);
+});
+
+test('execution motion contains universal, research and delayed-update states', () => {
+  const motion = source('../../components/terminal/ExecutionMotion.tsx');
+  const uiverse = source('../../styles/uiverse.css');
+
+  assert.match(motion, /UniversalExecutionOrb/);
+  assert.match(motion, /SearchScanner/);
+  assert.match(motion, /StalledDots/);
+  assert.match(uiverse, /--xv-exec-orb-red:\s*red/);
+  assert.match(uiverse, /--xv-exec-orb-blue:\s*blue/);
+  assert.match(uiverse, /\.xv-exec-search-scan/);
+  assert.match(uiverse, /#007aff/);
+  assert.match(uiverse, /#ff2d55/);
+  assert.match(uiverse, /#34c759/);
+  assert.match(uiverse, /#ff9500/);
+});
