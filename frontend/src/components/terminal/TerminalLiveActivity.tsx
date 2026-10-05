@@ -93,6 +93,7 @@ function familyForIntent(intent: PendingExecutionIntent): TaskFamily {
   if (intent === 'research') return 'research';
   if (intent === 'document') return 'document';
   if (intent === 'code') return 'build';
+  if (intent === 'data') return 'app';
   if (intent === 'business') return 'app';
   if (intent === 'analysis') return 'analysis';
   return 'general';
@@ -171,6 +172,7 @@ function capabilitiesForIntent(intent: PendingExecutionIntent): string[] {
   if (intent === 'research') return ['Web search', 'Open sources', 'Read sources', 'Compare evidence'];
   if (intent === 'document') return ['Read document', 'Extract evidence', 'Compare sections', 'Summarize'];
   if (intent === 'code') return ['Inspect files', 'Edit code', 'Run commands', 'Test', 'Verify'];
+  if (intent === 'data') return ['Query database', 'Inspect records', 'Check fields', 'Summarize results'];
   if (intent === 'business') return ['Read connected app', 'Prepare action', 'Request approval', 'Record receipt'];
   if (intent === 'analysis') return ['Work the problem', 'Check constraints', 'Verify result'];
   return [];
@@ -195,6 +197,21 @@ function evidenceSummary(rows: readonly XrogaActivityPresentation[]): string[] {
   if (completed) output.push(`${completed} complete`);
   if (receipts) output.push(`${receipts} ${receipts === 1 ? 'receipt' : 'receipts'}`);
   return output;
+}
+
+function PendingIntentGlyph({ intent }: { intent: PendingExecutionIntent }) {
+  if (intent === 'research') return <Search className="h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />;
+  const Icon =
+    intent === 'document'
+      ? FileText
+      : intent === 'code'
+        ? Code2
+        : intent === 'data'
+          ? Database
+          : intent === 'business'
+            ? PlugZap
+            : Brain;
+  return <Icon className="h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />;
 }
 
 function ActivityRow({
@@ -394,6 +411,7 @@ export function TerminalLiveActivity({
 
         <div className="xv-exec-header">
           <UniversalExecutionOrb />
+          <PendingIntentGlyph intent={pendingIntent} />
           <span className="min-w-0 flex-1">
             <ExecutionShimmerText className="xv-exec-header__state">{label}</ExecutionShimmerText>
             {capabilities.length ? (
