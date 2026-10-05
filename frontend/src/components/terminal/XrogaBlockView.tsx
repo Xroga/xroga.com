@@ -132,7 +132,7 @@ registerRenderer('artifact', ArtifactRenderer);
 for (const type of ['metric', 'metric-group', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
 export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
-  return <section className="space-y-3 py-2" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
+  return <section className="xv-ai-output-block space-y-4 py-3" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
     return <div key={candidate.id}>{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div>;
   })}</section>;
