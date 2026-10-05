@@ -32,6 +32,22 @@ test('transient presentation follows the requested kind of work without recordin
     'analysis',
   );
   assert.equal(
+    pendingExecutionIntent({ prompt: 'Explain why the sky is blue.' }),
+    'analysis',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Inspect this repo and find the cause of the bug.' }),
+    'code',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Build a responsive landing page, run it, test it, and verify it in the browser.' }),
+    'code',
+  );
+  assert.equal(
+    pendingExecutionIntent({ prompt: 'Query the database and summarize the relevant records.' }),
+    'business',
+  );
+  assert.equal(
     pendingExecutionIntent({ prompt: 'hello', codeBuildActive: true }),
     'code',
   );
