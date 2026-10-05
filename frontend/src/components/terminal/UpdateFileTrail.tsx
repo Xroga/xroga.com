@@ -53,8 +53,8 @@ export function UpdateFileTrail({
   rollingBack?: boolean;
 }) {
   return (
-    <div className="my-1.5 space-y-2 text-left animate-in fade-in slide-in-from-bottom-1 duration-300">
-      <p className="text-[13px] font-medium text-[var(--foreground)]/90">{headline}</p>
+    <div className="xv-update-trail my-2 space-y-3 text-left animate-in fade-in slide-in-from-bottom-1 duration-300">
+      <p className="xv-update-trail__headline font-medium text-[var(--foreground)]/90">{headline}</p>
       {changes?.length ? (
         <ul className="space-y-0.5 text-[12px] text-[var(--foreground)]/75 list-disc pl-4">
           {changes.map((c) => (
