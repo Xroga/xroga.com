@@ -26,7 +26,7 @@ test('wake recognition accepts real STT variants while the visible brand stays X
   assert.ok(voice.includes('acroga'));
   assert.ok(voice.includes('zroga'));
   assert.match(voice, /extractWakeCommand/);
-  assert.match(voice, /The product name rendered to the user remains/);
+  assert.match(voice, /product name rendered to the user remains/i);
   assert.match(voice, /replace\(\/\\bXroga\\b\/gi, 'X Roga'\)/);
 });
 
