@@ -125,15 +125,15 @@ export const LogoLoop = memo(
     width = '100%',
     logoHeight = 28,
     gap = 32,
-    pauseOnHover,
-    hoverSpeed,
+    pauseOnHover = undefined,
+    hoverSpeed = undefined,
     fadeOut = false,
-    fadeOutColor,
+    fadeOutColor = undefined,
     scaleOnHover = false,
-    renderItem,
+    renderItem = undefined,
     ariaLabel = 'Partner logos',
-    className,
-    style
+    className = '',
+    style = undefined
   }) => {
     const containerRef = useRef(null);
     const trackRef = useRef(null);
