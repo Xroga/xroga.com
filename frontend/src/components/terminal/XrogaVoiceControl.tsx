@@ -648,7 +648,7 @@ export function XrogaVoiceControl({
         startRecorder(streamRef.current);
       }
     },
-    [composerText, emitVoiceText, setMode, startRecorder],
+    [emitVoiceText, setMode, startRecorder],
   );
 
   const pauseCapture = useCallback(() => {
