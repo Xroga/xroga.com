@@ -115,7 +115,26 @@ function KnowledgeCard() {
       setFrameHeight(Math.max(270, Math.min(460, Math.ceil(measuredHeight))));
     };
     window.addEventListener('message', onFrameMessage);
-    return () => window.removeEventListener('message', onFrameMessage);
+
+    const synchronizeCardTheme = () => {
+      const classes = document.body.classList;
+      const theme = classes.contains('theme-black') ? 'black' :
+        classes.contains('theme-gray') ? 'gray' :
+        classes.contains('theme-beige') ? 'beige' : 'white';
+      frameRef.current?.contentWindow?.postMessage({ source: 'xroga-card-theme', theme }, '*');
+    };
+    const frame = frameRef.current;
+    frame?.addEventListener('load', synchronizeCardTheme);
+    const themeObserver = new MutationObserver(synchronizeCardTheme);
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    synchronizeCardTheme();
+    const syncDelay = window.setTimeout(synchronizeCardTheme, 700);
+    return () => {
+      window.removeEventListener('message', onFrameMessage);
+      themeObserver.disconnect();
+      frame?.removeEventListener('load', synchronizeCardTheme);
+      window.clearTimeout(syncDelay);
+    };
   }, []);
 
   return (
