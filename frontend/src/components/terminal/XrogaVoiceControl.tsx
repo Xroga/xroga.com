@@ -67,6 +67,7 @@ interface BrowserSpeechRecognition {
 }
 
 type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
+type RecognitionPurpose = 'wake' | 'capture';
 
 /*
  * Xroga is a coined brand name, so speech engines routinely return near-phonetic
@@ -272,7 +273,8 @@ function recognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
   return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
-function recognitionLanguage(): string {
+function recognitionLanguage(language: string): string {
+  if (language && language !== 'auto') return language;
   if (typeof navigator === 'undefined') return 'en-US';
   return navigator.language || 'en-US';
 }
@@ -427,6 +429,7 @@ export function XrogaVoiceControl({
   onStopRun?: () => void;
 }) {
   const {
+    language,
     handsFreeEnabled,
     setHandsFreeEnabled,
     setOnboardingComplete,
@@ -444,6 +447,8 @@ export function XrogaVoiceControl({
   const audioContextRef = useRef<AudioContext | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const recognitionPurposeRef = useRef<RecognitionPurpose>('wake');
+  const recognitionGenerationRef = useRef(0);
   const restartTimerRef = useRef<number | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recorderChunksRef = useRef<Blob[]>([]);
