@@ -168,3 +168,16 @@ test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga varia
   assert.match(voice, /new RegExp\(WAKE_ALIAS_SOURCE, 'iu'\)/);
   assert.doesNotMatch(voice, /\?<!/);
 });
+
+
+test('Stop and Done commit visible dictation immediately and late refinement cannot overwrite a new turn', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /const captureSessionRef = useRef\(0\)/);
+  assert.match(voice, /captureSessionRef\.current \+= 1/);
+  assert.match(voice, /composerTextRef\.current = localFullText/);
+  assert.match(voice, /onVoiceDraft\(localFullText\)/);
+  assert.match(voice, /captureSessionRef\.current !== sessionId/);
+  assert.match(voice, /composerTextRef\.current !== localFullText/);
+  assert.match(voice, /void transcribe\(\)\.then/);
+});
