@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import '@/styles/homepage-capabilities.css';
 import { Globe } from '@/components/magicui/globe';
 import { HomepageIntegrationConstellation } from '@/components/homepage/integrations/HomepageIntegrationConstellation';
+import ShinyText from '@/components/homepage/integrations/ShinyText';
 
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
@@ -43,83 +44,109 @@ function IntegrationsCard() {
       <div className="xcap-visual xcap-visual--integrations">
         <HomepageIntegrationConstellation />
       </div>
-      <Copy
-        eyebrow="ONE AI WORKSPACE"
-        title="1,500+ ways to"
-        muted="get work done."
-        description="Connect business apps, developer tools, APIs and custom MCPs in one workspace."
-      />
+      <div className="xcap-copy xcap-copy--shiny">
+        <span className="xcap-eyebrow">ONE AI WORKSPACE</span>
+        <h3>
+          <ShinyText
+            text="1,500+ ways to"
+            speed={2.4}
+            delay={0.25}
+            color="var(--xcap-shiny-primary)"
+            shineColor="var(--xcap-shiny-highlight)"
+            spread={118}
+          />
+          <span>
+            <ShinyText
+              text="get work done."
+              speed={2.4}
+              delay={0.7}
+              color="var(--xcap-shiny-secondary)"
+              shineColor="var(--xcap-shiny-highlight)"
+              spread={118}
+            />
+          </span>
+        </h3>
+        <p>
+          <ShinyText
+            text="Connect business apps, developer tools, APIs and custom MCPs in one workspace."
+            speed={3.2}
+            delay={1.15}
+            color="var(--xcap-shiny-body)"
+            shineColor="var(--xcap-shiny-highlight)"
+            spread={112}
+          />
+        </p>
+      </div>
     </Card>
   );
 }
 
 function KnowledgeCard() {
-  const frameRef = useRef<HTMLIFrameElement>(null);
-  const [frameHeight, setFrameHeight] = useState(305);
+  const routes = [
+    {
+      request: 'Audit this repo, fix checkout, and prove the build works.',
+      tools: ['Code', 'Browser', 'Tests'],
+      result: 'Patch ready · checks passed',
+    },
+    {
+      request: 'Compare the pipeline with CRM data and draft the follow-up.',
+      tools: ['CRM', 'Files', 'Web'],
+      result: 'Differences reconciled · follow-up ready',
+    },
+    {
+      request: 'Read these contracts and surface the renewal risks.',
+      tools: ['Files', 'Research', 'Report'],
+      result: 'Risk summary ready · sources attached',
+    },
+  ] as const;
+  const [routeIndex, setRouteIndex] = useState(0);
 
   useEffect(() => {
-    const onFrameMessage = (event: MessageEvent) => {
-      if (event.source !== frameRef.current?.contentWindow) return;
-      const payload = event.data;
-      if (!payload || payload.source !== 'xroga-clarity-workflow') return;
-      const measuredHeight = Number(payload.height);
-      if (!Number.isFinite(measuredHeight)) return;
-      setFrameHeight(Math.max(270, Math.min(460, Math.ceil(measuredHeight))));
-    };
-    window.addEventListener('message', onFrameMessage);
-    return () => window.removeEventListener('message', onFrameMessage);
-  }, []);
+    const timer = window.setInterval(() => {
+      setRouteIndex((index) => (index + 1) % routes.length);
+    }, 2800);
+    return () => window.clearInterval(timer);
+  }, [routes.length]);
 
-  useEffect(() => {
-    const syncFrameTheme = () => {
-      const body = document.body;
-      const theme = body.classList.contains('theme-black')
-        ? 'black'
-        : body.classList.contains('theme-gray')
-          ? 'gray'
-          : body.classList.contains('theme-beige')
-            ? 'beige'
-            : 'black';
-      frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
-    };
-
-    const observer = new MutationObserver(syncFrameTheme);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    const timer = window.setTimeout(syncFrameTheme, 0);
-    return () => {
-      window.clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, []);
+  const route = routes[routeIndex];
 
   return (
     <Card className="xcap-card--knowledge">
-      <iframe
-        ref={frameRef}
-        className="xcap-clarity-frame"
-        src="/demos/xroga-clarity-workflow.html"
-        title="Interactive Xroga workflow demonstration: automation, code, research, web, chats and files"
-        sandbox="allow-scripts"
-        loading="eager"
-        scrolling="no"
-        onLoad={() => {
-          const body = document.body;
-          const theme = body.classList.contains('theme-black')
-            ? 'black'
-            : body.classList.contains('theme-gray')
-              ? 'gray'
-              : body.classList.contains('theme-beige')
-                ? 'beige'
-                : 'black';
-          frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
-        }}
-        style={{ height: frameHeight }}
-      />
+      <div className="xcap-orchestrator-visual" aria-label="Xroga automatically chooses the tools needed for each request">
+        <div className="xcap-orchestrator-topbar">
+          <span><i /> Xroga routing</span>
+          <small>live</small>
+        </div>
+
+        <div className="xcap-orchestrator-request" key={`request-${routeIndex}`}>
+          <small>YOU ASK</small>
+          <strong>{route.request}</strong>
+        </div>
+
+        <div className="xcap-orchestrator-path" key={`tools-${routeIndex}`}>
+          <span className="xcap-orchestrator-node is-xroga">X</span>
+          <i aria-hidden="true" />
+          <div>
+            {route.tools.map((tool, index) => (
+              <span key={tool} style={{ '--route-delay': `${index * 90}ms` } as CSSProperties}>{tool}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="xcap-orchestrator-result" key={`result-${routeIndex}`}>
+          <span>✓</span>
+          <div><small>FINISHED RESULT</small><strong>{route.result}</strong></div>
+        </div>
+
+        <div className="xcap-orchestrator-progress" aria-hidden="true">
+          {routes.map((_, index) => <span className={index === routeIndex ? 'is-active' : ''} key={index} />)}
+        </div>
+      </div>
       <Copy
-        eyebrow="AUTOMATION · CODE · RESEARCH · WEB · CHATS · FILES"
+        eyebrow="REQUEST · ROUTE · EXECUTE · VERIFY"
         title="One request."
-        muted="Six ways to work."
-        description="Explore automations, coding, research, web browsing, chats and files. Watch each example move from request to result."
+        muted="Whatever the work takes."
+        description="Xroga chooses the tools the job needs, coordinates the work, and returns one finished result."
       />
     </Card>
   );
@@ -127,47 +154,36 @@ function KnowledgeCard() {
 
 function WorkingCard() {
   const [phase, setPhase] = useState<'before' | 'working' | 'verified'>('before');
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const order: Array<'before' | 'working' | 'verified'> = ['before', 'working', 'verified'];
     const timer = window.setInterval(() => {
       setPhase((current) => order[(order.indexOf(current) + 1) % order.length]);
-    }, 5200);
+    }, 3400);
     return () => window.clearInterval(timer);
   }, []);
 
-  const copyExample = async () => {
-    try {
-      await navigator.clipboard.writeText('Find 100 dental clinics, enrich the owners, verify the data, and prepare outreach.');
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
-    } catch {
-      setCopied(false);
-    }
-  };
-
   return (
     <Card className="xcap-card--working">
-      <div className="xcap-workflow-demo" aria-label="Example Xroga workflow from request to verified outcome">
+      <div className="xcap-workflow-demo xcap-code-workflow" aria-label="Coding experience from a broken project to a verified working product">
         <div className="xcap-workflow-topline">
           <div>
-            <span className="xcap-workflow-kicker">EXAMPLE WORKFLOW</span>
-            <strong>Request → work → verified result</strong>
+            <span className="xcap-workflow-kicker">CODING EXPERIENCE</span>
+            <strong>Prompt → code → tests → working product</strong>
           </div>
-          <span className="xcap-workflow-live"><i /> Auto demo</span>
+          <span className="xcap-workflow-live"><i /> Live build demo</span>
         </div>
 
-        <div className="xcap-workflow-radio-inputs" role="tablist" aria-label="Workflow stages">
+        <div className="xcap-workflow-radio-inputs" role="tablist" aria-label="Coding stages">
           {([
             ['before', 'BEFORE'],
-            ['working', 'WORKING'],
+            ['working', 'BUILDING'],
             ['verified', 'VERIFIED'],
           ] as const).map(([value, label]) => (
             <label className="xcap-workflow-radio" key={value}>
               <input
                 type="radio"
-                name="xcap-workflow-stage"
+                name="xcap-code-stage"
                 checked={phase === value}
                 onChange={() => setPhase(value)}
               />
@@ -176,51 +192,42 @@ function WorkingCard() {
           ))}
         </div>
 
+        <div className="xcap-code-request">
+          <span>&gt; xroga</span>
+          <strong>Build a polished checkout, fix the broken payment flow, and verify it end-to-end.</strong>
+        </div>
+
         <div className="xcap-workflow-stage" data-phase={phase} key={phase}>
           {phase === 'before' && (
-            <div className="xcap-terminal-card">
-              <div className="xcap-terminal-wrap">
-                <div className="xcap-terminal">
-                  <hgroup className="xcap-terminal-head">
-                    <p className="xcap-terminal-title">
-                      <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M7 15L10 12L7 9M13 15H17M7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21Z" />
-                      </svg>
-                      Xroga request
-                    </p>
-                    <button type="button" className="xcap-copy-toggle" onClick={copyExample} aria-label="Copy example request">
-                      {copied ? '✓' : (
-                        <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                          <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-                        </svg>
-                      )}
-                    </button>
-                  </hgroup>
-                  <div className="xcap-terminal-body">
-                    <pre className="xcap-terminal-pre">
-                      <code>&gt;&nbsp;</code>
-                      <code>xroga&nbsp;</code>
-                      <code data-cmd='run "Find 100 dental clinics, enrich owners, verify data, prepare outreach."' className="xcap-terminal-cmd" />
-                    </pre>
-                  </div>
+            <div className="xcap-code-before-panel">
+              <div className="xcap-code-panel-head">
+                <div><span /><span /><span /></div>
+                <strong>Before Xroga · project scan</strong>
+                <small>3 blocking issues</small>
+              </div>
+              <div className="xcap-code-before-grid">
+                <div className="xcap-broken-files">
+                  <p><b>src/app/checkout/page.tsx</b><span>Type error · paymentResult missing</span></p>
+                  <p><b>src/lib/stripe.ts</b><span>Webhook signature path broken</span></p>
+                  <p><b>src/components/PayButton.tsx</b><span>Submit state can lock the UI</span></p>
                 </div>
+                <pre className="xcap-broken-code"><code><span>41</span> const total = cart.total.toFixed(2){'\n'}<span>42</span> const payment = await createPayment(total){'\n'}<em>   ~~~~~~~~~ cart.total may be undefined</em></code></pre>
               </div>
             </div>
           )}
 
           {phase === 'working' && (
-            <div className="xcap-ui-loader xcap-term" role="status" aria-label="Xroga working through the example request">
+            <div className="xcap-ui-loader xcap-term" role="status" aria-label="Xroga building and verifying the project">
               <div className="xcap-term-bar">
                 <span className="xcap-term-dot" /><span className="xcap-term-dot" /><span className="xcap-term-dot" />
-                <div className="xcap-term-title">xroga.run</div>
+                <div className="xcap-term-title">xroga.build</div>
               </div>
               <div className="xcap-term-body">
-                <div className="xcap-term-line"><b>$</b> execute verified workflow</div>
-                <div className="xcap-term-line xcap-term-muted">› searching current business sources…</div>
-                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> 100 clinics mapped</div>
-                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> decision makers enriched</div>
-                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-run">●</span> verifying contacts + preparing outreach <span className="xcap-term-cursor" aria-hidden="true" /></div>
+                <div className="xcap-term-line"><b>$</b> inspect repo --task checkout</div>
+                <div className="xcap-term-line xcap-term-muted">› mapping payment flow and affected files…</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> patching checkout + Stripe path</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> repairing loading + error states</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-run">●</span> typecheck · tests · browser verification <span className="xcap-term-cursor" aria-hidden="true" /></div>
                 <div className="xcap-term-progress"><span className="xcap-term-fill" /><span className="xcap-term-glint" aria-hidden="true" /></div>
               </div>
             </div>
@@ -228,16 +235,16 @@ function WorkingCard() {
 
           {phase === 'verified' && (
             <div className="xcap-verified-terminal">
-              <div className="xcap-verified-bar"><span><i /><i /><i /></span><b>Verified outcome</b><small>example complete</small></div>
+              <div className="xcap-verified-bar"><span><i /><i /><i /></span><b>Working product</b><small>verified</small></div>
               <div className="xcap-verified-body">
-                <p className="xcap-verified-command">&gt; xroga verify --result</p>
-                <p style={{ '--verify-delay': '0ms' } as CSSProperties}>✔ Research sources checked</p>
-                <p style={{ '--verify-delay': '420ms' } as CSSProperties}>✔ 100 business records structured</p>
-                <p style={{ '--verify-delay': '840ms' } as CSSProperties}>✔ Owner/contact fields validated</p>
-                <p style={{ '--verify-delay': '1260ms' } as CSSProperties}>✔ Personalized outreach prepared</p>
-                <div className="xcap-verified-result" style={{ '--verify-delay': '1680ms' } as CSSProperties}>
+                <p className="xcap-verified-command">&gt; xroga verify --checkout</p>
+                <p style={{ '--verify-delay': '0ms' } as CSSProperties}>✔ 3 files repaired</p>
+                <p style={{ '--verify-delay': '220ms' } as CSSProperties}>✔ TypeScript check passed</p>
+                <p style={{ '--verify-delay': '440ms' } as CSSProperties}>✔ Checkout tests passed</p>
+                <p style={{ '--verify-delay': '660ms' } as CSSProperties}>✔ Browser flow completed</p>
+                <div className="xcap-verified-result" style={{ '--verify-delay': '880ms' } as CSSProperties}>
                   <span>Ready</span>
-                  <strong>100 verified leads · outreach package prepared</strong>
+                  <strong>Checkout works · verified preview ready</strong>
                 </div>
               </div>
             </div>
