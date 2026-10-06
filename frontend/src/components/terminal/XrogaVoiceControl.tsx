@@ -66,7 +66,10 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  */
 const WAKE_ALIAS_SOURCE =
   '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|کس\\s*روگا|ایکس\\s*روگا)';
-const WAKE_WORD = new RegExp('\\b' + WAKE_ALIAS_SOURCE + '\\b', 'iu');
+const WAKE_WORD = new RegExp(
+  '(?<![\\p{L}\\p{N}])' + WAKE_ALIAS_SOURCE + '(?![\\p{L}\\p{N}])',
+  'iu',
+);
 
 const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   send: [
