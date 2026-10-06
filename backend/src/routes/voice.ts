@@ -48,63 +48,75 @@ router.post(
     const language = languageForTranscription(req.header('x-xroga-language'));
 
     try {
-      const form = new FormData();
-      form.append(
-        'file',
-        new Blob([audio], { type: mime }),
-        `xroga-voice.${extensionForMime(mime)}`,
+      const configuredModel = process.env.OPENAI_TRANSCRIBE_MODEL?.trim();
+      const models = Array.from(
+        new Set(
+          [
+            configuredModel || 'gpt-transcribe',
+            'gpt-4o-mini-transcribe',
+          ].filter(Boolean),
+        ),
       );
-      form.append(
-        'model',
-        process.env.OPENAI_TRANSCRIBE_MODEL?.trim() || 'gpt-4o-mini-transcribe',
-      );
-      form.append(
-        'prompt',
-        'The product name is Xroga, spelled X-r-o-g-a and pronounced "X Roga". ' +
-          'If the speaker says X Roga, ex roga, Acroga, or a close speech-recognition variant, ' +
-          'transcribe the brand name as Xroga. Preserve the rest of the utterance faithfully.',
-      );
-      if (language) form.append('language', language);
 
-      const upstream = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: form,
-      });
+      let lastProviderError = '';
+      for (const model of models) {
+        const form = new FormData();
+        form.append(
+          'file',
+          new Blob([audio], { type: mime }),
+          `xroga-voice.${extensionForMime(mime)}`,
+        );
+        form.append('model', model);
+        form.append(
+          'prompt',
+          'Xroga is a product name spelled X-r-o-g-a and pronounced "X Roga". ' +
+            'Normalize close recognition variants such as X Roga, ex roga, Acroga, A croga, ' +
+            'or Zroga to Xroga. Preserve the speaker\'s original language, code-switching, ' +
+            'punctuation, names, numbers, and technical terms faithfully.',
+        );
+        if (language && model !== 'gpt-transcribe') form.append('language', language);
 
-      const body = (await upstream.json().catch(() => null)) as
-        | { text?: unknown; error?: { message?: unknown } }
-        | null;
+        const upstream = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: form,
+        });
 
-      if (!upstream.ok) {
-        const message =
-          typeof body?.error?.message === 'string'
-            ? body.error.message
-            : `Speech provider returned ${upstream.status}`;
-        console.warn('[voice] transcription failed:', message);
-        res.status(502).json({
-          error: 'Could not transcribe that audio. Please try again.',
-          code: 'VOICE_TRANSCRIPTION_FAILED',
+        const body = (await upstream.json().catch(() => null)) as
+          | { text?: unknown; error?: { message?: unknown } }
+          | null;
+
+        if (!upstream.ok) {
+          lastProviderError =
+            typeof body?.error?.message === 'string'
+              ? body.error.message
+              : `Speech provider returned ${upstream.status}`;
+          console.warn(`[voice] transcription failed on ${model}:`, lastProviderError);
+          continue;
+        }
+
+        const text = typeof body?.text === 'string' ? body.text.trim() : '';
+        if (!text) {
+          lastProviderError = 'No speech was detected.';
+          continue;
+        }
+
+        res.json({
+          text,
+          provider: 'openai',
+          model,
         });
         return;
       }
 
-      const text = typeof body?.text === 'string' ? body.text.trim() : '';
-      if (!text) {
-        res.status(422).json({
-          error: 'No speech was detected.',
-          code: 'VOICE_NO_SPEECH',
-        });
-        return;
-      }
-
-      res.json({
-        text,
-        provider: 'openai',
-        model: process.env.OPENAI_TRANSCRIBE_MODEL?.trim() || 'gpt-4o-mini-transcribe',
+      console.warn('[voice] all transcription models failed:', lastProviderError);
+      res.status(502).json({
+        error: 'Could not transcribe that audio. Please try again.',
+        code: 'VOICE_TRANSCRIPTION_FAILED',
       });
+      return;
     } catch (error) {
       console.error('[voice] transcription exception:', error);
       res.status(502).json({
