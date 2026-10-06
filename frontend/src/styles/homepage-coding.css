@@ -10398,3 +10398,30 @@ body.theme-black .xv-home-coding .xv-hc-eyebrow::after{
     rgb(211,232,255) 100%
   );
 }
+
+
+/* v-home-hero-scope-20261006
+   The artwork belongs only to the hero. All following homepage sections render
+   against their own theme surfaces instead of sharing a fixed wallpaper. */
+.xv-home-coding{
+  position:relative;
+  background:var(--hc-bg);
+}
+.xv-home-coding .xv-hc-hero{
+  isolation:isolate;
+}
+.xv-home-coding .xv-hc-hero > .xv-hc-bg-image{
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+body.theme-white .xv-home-coding{
+  --hc-bg:#ffffff!important;
+  background:#ffffff!important;
+}
+body.theme-white .xv-home-coding > :not(.xv-hc-hero){
+  background-color:#ffffff;
+}
