@@ -32,12 +32,20 @@ type VoiceControlAction =
   | 'send'
   | 'cancel';
 
+interface BrowserSpeechRecognitionAlternative {
+  transcript: string;
+  confidence?: number;
+}
+
+interface BrowserSpeechRecognitionResultLike {
+  isFinal: boolean;
+  length?: number;
+  [index: number]: BrowserSpeechRecognitionAlternative;
+}
+
 interface BrowserSpeechRecognitionEvent {
   resultIndex: number;
-  results: ArrayLike<{
-    isFinal: boolean;
-    0: { transcript: string };
-  }>;
+  results: ArrayLike<BrowserSpeechRecognitionResultLike>;
 }
 
 interface BrowserSpeechRecognitionErrorEvent {
@@ -48,6 +56,7 @@ interface BrowserSpeechRecognition {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
+  maxAlternatives?: number;
   onstart: (() => void) | null;
   onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
   onerror: ((event: BrowserSpeechRecognitionErrorEvent) => void) | null;
@@ -266,6 +275,23 @@ function recognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
 function recognitionLanguage(): string {
   if (typeof navigator === 'undefined') return 'en-US';
   return navigator.language || 'en-US';
+}
+
+function recognitionCandidates(result: BrowserSpeechRecognitionResultLike): string[] {
+  const count = Math.max(1, Math.min(result.length ?? 1, 5));
+  const candidates: string[] = [];
+  for (let index = 0; index < count; index += 1) {
+    const transcript = cleanSpeech(result[index]?.transcript ?? '');
+    if (transcript && !candidates.includes(transcript)) candidates.push(transcript);
+  }
+  return candidates;
+}
+
+function wakeCandidate(result: BrowserSpeechRecognitionResultLike): string | null {
+  for (const candidate of recognitionCandidates(result)) {
+    if (extractWakeCommand(candidate) !== null) return candidate;
+  }
+  return null;
 }
 
 function cleanSpeech(text: string): string {
@@ -692,7 +718,21 @@ export function XrogaVoiceControl({
       }
 
       const serverControl = serverText ? controlAtEnd(serverText) : null;
-      if (serverControl) serverText = serverControl.content;
+      let shouldSend = send;
+      if (serverControl) {
+        if (serverControl.action === 'send') shouldSend = true;
+        if (serverControl.action === 'cancel') {
+          captureActiveRef.current = false;
+          finalizingRef.current = false;
+          wakeSeedRef.current = '';
+          browserTextRef.current = '';
+          onVoiceDraft(baselineRef.current);
+          baselineRef.current = '';
+          setMode(enabledRef.current ? 'armed' : 'off');
+          return;
+        }
+        serverText = serverControl.content;
+      }
 
       const browserText = cleanSpeech(browserTextRef.current);
       const seed = cleanSpeech(wakeSeedRef.current);
@@ -723,7 +763,7 @@ export function XrogaVoiceControl({
         setMode(enabledRef.current ? 'armed' : 'off');
       }
 
-      if (send && fullText) {
+      if (shouldSend && fullText) {
         await onVoiceSend(fullText);
       } else if (!fullText) {
         setErrorMessage('No speech detected. Try again.');
@@ -818,6 +858,7 @@ export function XrogaVoiceControl({
     const recognition = new Recognition();
     recognition.continuous = true;
     recognition.interimResults = true;
+    recognition.maxAlternatives = 5;
     recognition.lang = recognitionLanguage();
 
     recognition.onstart = () => {
@@ -829,10 +870,12 @@ export function XrogaVoiceControl({
 
       for (let index = event.resultIndex; index < event.results.length; index += 1) {
         const result = event.results[index];
-        const transcript = cleanSpeech(result[0]?.transcript ?? '');
-        if (!transcript) continue;
+        const candidates = recognitionCandidates(result);
+        if (!candidates.length) continue;
 
         if (!captureActiveRef.current) {
+          const transcript = wakeCandidate(result);
+          if (!transcript) continue;
           const wakeCommand = extractWakeCommand(transcript);
           if (wakeCommand === null) continue;
 
@@ -845,6 +888,9 @@ export function XrogaVoiceControl({
           activateCapture(wakeCommand);
           continue;
         }
+
+        const transcript = candidates[0] ?? '';
+        if (!transcript) continue;
 
         if (!result.isFinal) {
           if (modeRef.current !== 'paused') {
@@ -1091,7 +1137,7 @@ export function XrogaVoiceControl({
         }
       >
         <AudioLinesIcon
-          size={21}
+          size={24}
           active={captureVisible}
           aria-hidden="true"
         />
