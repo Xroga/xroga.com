@@ -5698,3 +5698,217 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+
+/* ==========================================================
+   VOICE V7 — simple English click-to-dictate
+   No wake word, settings, voice reply, or automatic send.
+   ========================================================== */
+
+.xv-chatbar-row-modern:has(.xv-simple-voice-session) > .xv-chatbar-tools {
+  display: none;
+}
+
+.xv-simple-voice-session {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 5px 7px;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+  color: var(--foreground);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--foreground) 1.5%, transparent),
+      color-mix(in srgb, #8b5cf6 3%, transparent) 50%,
+      color-mix(in srgb, var(--foreground) 1.5%, transparent)
+    );
+}
+.xv-simple-voice-session.is-paused {
+  opacity: .82;
+}
+.xv-simple-voice-session.is-finalizing {
+  opacity: .72;
+}
+
+.xv-simple-voice-main {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.xv-simple-voice-transcript {
+  min-width: 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--foreground) 62%, var(--muted));
+  font-size: 9.5px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.xv-simple-voice-wave {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+}
+.xv-simple-voice-wave i {
+  display: block;
+  width: 2px;
+  height: 23px;
+  flex: 1 1 0;
+  min-width: 1px;
+  max-width: 3px;
+  border-radius: 999px;
+  transform-origin: center;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--foreground) 88%, #fff),
+      color-mix(in srgb, var(--foreground) 36%, var(--muted))
+    );
+  opacity: .72;
+  box-shadow: 0 0 4px color-mix(in srgb, var(--foreground) 10%, transparent);
+  transition: transform 70ms linear, opacity 110ms ease;
+}
+.xv-simple-voice-wave:not(.is-paused) i {
+  animation: xv-simple-voice-bar 880ms ease-in-out infinite alternate;
+}
+.xv-simple-voice-wave.is-paused i {
+  transform: scaleY(.08) !important;
+  opacity: .25;
+}
+
+.xv-simple-voice-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.xv-simple-voice-control {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--foreground) 76%, var(--muted));
+  background: color-mix(in srgb, var(--card) 75%, transparent);
+  cursor: pointer;
+  transition:
+    transform 130ms ease,
+    color 130ms ease,
+    border-color 130ms ease,
+    background 130ms ease;
+}
+.xv-simple-voice-control:hover:not(:disabled) {
+  transform: translateY(-1px);
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+.xv-simple-voice-control:disabled {
+  cursor: wait;
+  opacity: .45;
+}
+.xv-simple-voice-cancel {
+  color: var(--muted);
+  border-color: transparent;
+  background: transparent;
+}
+.xv-simple-voice-stop {
+  color: #fff;
+  border-color: color-mix(in srgb, #fff 12%, #111827);
+  background: color-mix(in srgb, #111827 94%, var(--foreground));
+}
+.xv-simple-voice-stop:hover:not(:disabled) {
+  color: #fff;
+  border-color: color-mix(in srgb, #8b5cf6 24%, #111827);
+  background: color-mix(in srgb, #111827 90%, #8b5cf6);
+}
+
+/* The idle mic is only the animated AudioLines glyph—no ring, circle or pill. */
+.xv-voice-icon-only,
+.xv-voice-icon-only:hover,
+.xv-voice-icon-only:active,
+.xv-voice-icon-only:focus,
+.xv-voice-icon-only:focus-visible,
+.xv-voice-icon-only.is-listening,
+.xv-voice-icon-only.is-error {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  padding: 3px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.xv-voice-icon-only::before,
+.xv-voice-icon-only::after {
+  display: none !important;
+  content: none !important;
+}
+.xv-voice-icon-only > div,
+.xv-voice-icon-only svg {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.xv-voice-icon-only:hover {
+  color: var(--foreground);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, #8b5cf6 24%, transparent));
+}
+.xv-voice-icon-only.is-error {
+  color: #ef4444 !important;
+}
+
+@keyframes xv-simple-voice-bar {
+  0% { opacity: .5; }
+  100% { opacity: .88; }
+}
+
+@media (max-width: 640px) {
+  .xv-simple-voice-session {
+    gap: 5px;
+    padding-inline: 5px;
+  }
+  .xv-simple-voice-wave {
+    gap: 1.5px;
+  }
+  .xv-simple-voice-wave i:nth-child(3n) {
+    display: none;
+  }
+  .xv-simple-voice-transcript {
+    font-size: 8.5px;
+  }
+}
+
+@media (max-width: 430px) {
+  .xv-simple-voice-wave i:nth-child(2n) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-simple-voice-wave i,
+  .xv-simple-voice-control,
+  .xv-voice-icon-only {
+    animation: none !important;
+    transition: none !important;
+  }
+}
