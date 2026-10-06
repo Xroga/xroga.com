@@ -4,9 +4,7 @@ import Image from 'next/image';
 import {
   siGoogledrive,
   siGmail,
-  siGooglecalendar,
-  siSlack,
-  siGithub,
+  siGooglecalendar,  siGithub,
   siGitlab,
   siNotion,
   siHubspot,
@@ -20,28 +18,18 @@ import {
   siJira,
   siAsana,
   siTrello,
-  siFigma,
-  siCanva,
-  siCloudflare,
-  siNetlify,
-  siOpenai,
-  siAnthropic,
+  siFigma,  siCloudflare,
+  siNetlify,  siAnthropic,
   siPaypal,
   siQuickbooks,
   siLinear,
   siSentry,
   siBrevo,
   siRailway,
-  siDigitalocean,
-  siHeroku,
-  siRender,
+  siDigitalocean,  siRender,
   siLemonsqueezy,
   siFlydotio,
-  siGooglegemini,
-  siMicrosoftoutlook,
-  siMicrosoftteams,
-  siMondaydotcom,
-  siPosthog,
+  siGooglegemini,  siPosthog,
 } from 'simple-icons';
 import type { CSSProperties } from 'react';
 
@@ -50,13 +38,18 @@ import ElectricLogo from './ElectricLogo';
 import LogoLoop from './LogoLoop';
 
 type Mark = { path: string; hex: string; title: string; slug: string };
-type PluginMark = { name: string; mark: Mark };
+type PluginGraphic =
+  | { name: string; mark: Mark; src?: never }
+  | { name: string; src: string; mark?: never };
 
-const PRIMARY_PLUGINS: readonly PluginMark[] = [
+const LEGACY_ICON = (slug: string) =>
+  `https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${slug}.svg`;
+
+const PRIMARY_PLUGINS: readonly PluginGraphic[] = [
   { name: 'Google Drive', mark: siGoogledrive },
   { name: 'Gmail', mark: siGmail },
   { name: 'Google Calendar', mark: siGooglecalendar },
-  { name: 'Slack', mark: siSlack },
+  { name: 'Slack', src: LEGACY_ICON('slack') },
   { name: 'GitHub', mark: siGithub },
   { name: 'GitLab', mark: siGitlab },
   { name: 'Notion', mark: siNotion },
@@ -72,13 +65,13 @@ const PRIMARY_PLUGINS: readonly PluginMark[] = [
   { name: 'Asana', mark: siAsana },
   { name: 'Trello', mark: siTrello },
   { name: 'Figma', mark: siFigma },
-  { name: 'Canva', mark: siCanva },
+  { name: 'Canva', src: LEGACY_ICON('canva') },
 ];
 
-const LOOP_PLUGINS: readonly PluginMark[] = [
+const LOOP_PLUGINS: readonly PluginGraphic[] = [
   { name: 'Cloudflare', mark: siCloudflare },
   { name: 'Netlify', mark: siNetlify },
-  { name: 'OpenAI', mark: siOpenai },
+  { name: 'OpenAI', src: LEGACY_ICON('openai') },
   { name: 'Anthropic', mark: siAnthropic },
   { name: 'PayPal', mark: siPaypal },
   { name: 'QuickBooks', mark: siQuickbooks },
@@ -87,34 +80,45 @@ const LOOP_PLUGINS: readonly PluginMark[] = [
   { name: 'Brevo', mark: siBrevo },
   { name: 'Railway', mark: siRailway },
   { name: 'DigitalOcean', mark: siDigitalocean },
-  { name: 'Heroku', mark: siHeroku },
+  { name: 'Heroku', src: LEGACY_ICON('heroku') },
   { name: 'Render', mark: siRender },
   { name: 'Lemon Squeezy', mark: siLemonsqueezy },
   { name: 'Fly.io', mark: siFlydotio },
   { name: 'Gemini', mark: siGooglegemini },
-  { name: 'Microsoft Outlook', mark: siMicrosoftoutlook },
-  { name: 'Microsoft Teams', mark: siMicrosoftteams },
-  { name: 'monday.com', mark: siMondaydotcom },
+  { name: 'Microsoft Outlook', src: LEGACY_ICON('microsoftoutlook') },
+  { name: 'Microsoft Teams', src: LEGACY_ICON('microsoftteams') },
+  { name: 'monday.com', src: LEGACY_ICON('mondaydotcom') },
   { name: 'PostHog', mark: siPosthog },
 ];
 
-function BrandMark({ mark }: { mark: Mark }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" style={{ color: `#${mark.hex}` }}>
-      <path fill="currentColor" d={mark.path} />
-    </svg>
-  );
+function BrandGraphic({ plugin }: { plugin: PluginGraphic }) {
+  if (plugin.mark) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" style={{ color: `#${plugin.mark.hex}` }}>
+        <path fill="currentColor" d={plugin.mark.path} />
+      </svg>
+    );
+  }
+  return <img src={plugin.src} alt="" loading="eager" decoding="async" draggable={false} />;
 }
 
-const loopItems = LOOP_PLUGINS.map((plugin) => ({
-  node: (
-    <span className="xcap-loop-logo-shell" title={plugin.name}>
-      <BrandMark mark={plugin.mark} />
-    </span>
-  ),
-  title: plugin.name,
-  ariaLabel: plugin.name,
-}));
+const loopItems = LOOP_PLUGINS.map((plugin) =>
+  plugin.mark
+    ? {
+        node: (
+          <span className="xcap-loop-logo-shell" title={plugin.name}>
+            <BrandGraphic plugin={plugin} />
+          </span>
+        ),
+        title: plugin.name,
+        ariaLabel: plugin.name,
+      }
+    : {
+        src: plugin.src,
+        alt: plugin.name,
+        title: plugin.name,
+      }
+);
 
 export function HomepageIntegrationConstellation() {
   return (
@@ -148,7 +152,7 @@ export function HomepageIntegrationConstellation() {
               aria-label={plugin.name}
             >
               <span className="xcap-constellation-counter" style={{ transform: `rotate(${-angle}deg)` }}>
-                <BrandMark mark={plugin.mark} />
+                <BrandGraphic plugin={plugin} />
               </span>
             </span>
           );
