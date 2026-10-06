@@ -140,12 +140,12 @@ test('server transcription prefers keyword-guided current transcription and fall
 });
 
 
-test('server fallback can still honor a spoken send or cancel command', () => {
+test('authoritative transcription can still honor spoken send or cancel commands', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /if \(serverControl\.action === 'send'\) shouldSend = true/);
-  assert.match(voice, /if \(serverControl\.action === 'cancel'\)/);
-  assert.match(voice, /refined\.shouldSend && refined\.fullText/);
+  assert.match(voice, /if \(control\.action === 'send'\) shouldSend = true/);
+  assert.match(voice, /if \(control\.action === 'cancel'\) shouldCancel = true/);
+  assert.match(voice, /if \(shouldSend && fullText && !shouldCancel\)/);
 });
 
 
