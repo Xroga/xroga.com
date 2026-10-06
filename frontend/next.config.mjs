@@ -81,7 +81,8 @@ const framableSecurityHeaders = [
 // preview paths rather than relying on header-override ordering.
 const PREVIEW_SOURCE = '/showcase/:slug/preview';
 const CRYPTO_SHOWCASE_SOURCE = '/showcase/black-hole-vinfinity-crypto';
-const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$)).*)';
+const CLARITY_DEMO_SOURCE = '/demos/xroga-clarity-workflow.html';
+const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$)).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -100,6 +101,7 @@ const nextConfig = {
       { source: '/about', headers: freshMarketingHeaders },
       { source: PREVIEW_SOURCE, headers: framableSecurityHeaders },
       { source: CRYPTO_SHOWCASE_SOURCE, headers: framableSecurityHeaders },
+      { source: CLARITY_DEMO_SOURCE, headers: framableSecurityHeaders },
       { source: NON_PREVIEW_SOURCE, headers: securityHeaders },
     ];
   },
