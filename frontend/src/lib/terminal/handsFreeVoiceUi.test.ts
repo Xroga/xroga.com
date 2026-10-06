@@ -25,8 +25,8 @@ test('voice is one icon, not the retired voice-off pill or settings menu', () =>
 test('wake word accepts Xroga recognition variants and activates capture', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.ok(voice.includes("x\\\\s*roga"));
-  assert.ok(voice.includes("ex\\\\s*roga"));
+  assert.ok(voice.includes("x[\\\\s-]*roga"));
+  assert.ok(voice.includes("ex[\\\\s-]*roga"));
   assert.ok(voice.includes('acroga'));
   assert.ok(voice.includes('zroga'));
   assert.match(voice, /extractWakeCommand/);
@@ -145,7 +145,7 @@ test('server fallback can still honor a spoken send or cancel command', () => {
 
   assert.match(voice, /if \(serverControl\.action === 'send'\) shouldSend = true/);
   assert.match(voice, /if \(serverControl\.action === 'cancel'\)/);
-  assert.match(voice, /if \(shouldSend && fullText\)/);
+  assert.match(voice, /refined\.shouldSend && refined\.fullText/);
 });
 
 
@@ -164,7 +164,7 @@ test('interim speech is never lost when Stop or Done happens before a final brow
 test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga variants', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /x\[\\s-\]\*roga/);
+  assert.ok(voice.includes("x[\\\\s-]*roga"));
   assert.match(voice, /new RegExp\(WAKE_ALIAS_SOURCE, 'iu'\)/);
   assert.doesNotMatch(voice, /\?<!/);
 });
