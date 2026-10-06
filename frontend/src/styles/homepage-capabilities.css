@@ -541,3 +541,260 @@ body.theme-beige .xcap-card--global .xcap-visual{filter:none!important}
     transition:none!important;
   }
 }
+
+
+/* V8: editorial left heading/right CTA, legible serif cards, fitted branded ecosystem,
+   and white-theme cyan/violet gradient only on cards one and three. */
+.xcap-section-top{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:clamp(12px,3vw,42px)!important;
+  min-height:112px!important;
+  margin-bottom:24px!important;
+}
+.xcap-section-title{
+  justify-self:auto!important;
+  text-align:left!important;
+  white-space:normal!important;
+  text-wrap:balance!important;
+  font-size:clamp(29px,3vw,43px)!important;
+  letter-spacing:-.035em!important;
+  line-height:1.09!important;
+}
+.xcap-section-action{justify-self:auto!important;flex:0 0 auto;margin-left:auto!important}
+.xcap-card .xcap-copy h3,
+.xcap-card--working .xcap-copy h3,
+.xcap-card--everyone .xcap-copy h3,
+.xcap-card--knowledge .xcap-copy h3{
+  font-family:"Iowan Old Style",Baskerville,"Palatino Linotype","Book Antiqua",Georgia,serif!important;
+  font-weight:400!important;
+  font-size:clamp(30px,2.45vw,41px)!important;
+  letter-spacing:-.045em!important;
+  line-height:1.025!important;
+}
+.xcap-card .xcap-copy h3 span{
+  font-family:inherit!important;
+  font-weight:400!important;
+  color:var(--muted)!important;
+  opacity:.93;
+}
+.xcap-card .xcap-copy p{
+  font-size:12.5px!important;
+  line-height:1.46!important;
+  margin-top:9px!important;
+}
+.xcap-card .xcap-eyebrow{font-size:9px!important;letter-spacing:.12em!important}
+@media(min-width:1051px){
+  .xcap-grid{grid-template-rows:minmax(515px,auto) minmax(392px,auto)!important}
+}
+.xcap-card--knowledge{
+  border:0!important;
+  box-shadow:none!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  align-content:stretch!important;
+}
+.xcap-card--knowledge .xcap-copy{
+  position:relative!important;
+  z-index:3!important;
+  align-self:end!important;
+  padding:12px 10px 17px!important;
+}
+.xcap-card--knowledge .xcap-clarity-frame{
+  position:relative!important;
+  z-index:2!important;
+  background:transparent!important;
+  border:0!important;
+  max-width:100%!important;
+}
+.xcap-card--integrations .xcap-visual{
+  position:relative;
+  min-height:338px;
+  overflow:hidden;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  background:radial-gradient(circle at 50% 44%,rgba(130,161,254,.17),rgba(244,246,253,.90) 53%,rgba(246,248,251,.96))!important;
+}
+.xcap-app-ecosystem{
+  position:absolute;
+  left:50%;
+  top:45%;
+  width:310px;
+  height:310px;
+  transform:translate(-50%,-50%);
+  isolation:isolate;
+}
+.xcap-app-rings{position:absolute;inset:0;pointer-events:none}
+.xcap-app-rings i{
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  border:1px dashed rgba(72,90,125,.17);
+}
+.xcap-app-rings i:nth-child(2){
+  width:260px;
+  height:260px;
+  border:1px dashed rgba(72,90,125,.14);
+  animation:xcapBrandOrbitStroke 45s linear infinite;
+}
+@keyframes xcapBrandOrbitStroke{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.xcap-app-node{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  top:50%;
+  width:32px;
+  height:32px;
+  transform:translate(calc(-50% + var(--app-x)),calc(-50% + var(--app-y)));
+  animation:xcapLogoPulse 4.8s ease-in-out infinite alternate;
+  animation-delay:var(--app-delay);
+}
+.xcap-app-node.is-inner{width:35px;height:35px;z-index:4}
+@keyframes xcapLogoPulse{
+  0%{filter:drop-shadow(0 0 0 rgba(59,130,246,0));opacity:.85}
+  100%{filter:drop-shadow(0 3px 7px rgba(62,85,162,.13));opacity:1}
+}
+.xcap-brand-logo{
+  display:grid;
+  place-items:center;
+  height:100%;
+  width:100%;
+  padding:5px;
+  border-radius:11px;
+  background:#fff;
+  border:1px solid rgba(24,42,82,.08);
+  box-shadow:0 5px 15px rgba(35,52,88,.12);
+}
+.xcap-app-node.is-inner .xcap-brand-logo{border-radius:12px}
+.xcap-brand-logo img{width:100%!important;height:100%!important;object-fit:contain!important}
+.xcap-xroga-core{
+  position:absolute;
+  left:50%;
+  top:50%;
+  z-index:6;
+  transform:translate(-50%,-50%);
+  width:59px;
+  height:59px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 0 0 7px rgba(255,255,255,.35),0 12px 32px rgba(38,56,95,.2);
+}
+.xcap-xroga-core img{width:39px;height:39px;object-fit:contain}
+.xcap-card--integrations .xcap-integration-pills{
+  position:absolute;
+  left:12px!important;
+  right:12px!important;
+  bottom:8px!important;
+  z-index:8;
+  gap:7px!important;
+}
+.xcap-card--integrations .xcap-integration-pills span{font-size:9px!important;padding:6px 10px!important}
+body.theme-black .xcap-card--integrations .xcap-visual,
+body.theme-gray .xcap-card--integrations .xcap-visual{
+  filter:none!important;
+  background:radial-gradient(circle at center,rgba(78,91,137,.32),#1a1f2a 66%,#14171f)!important;
+}
+body.theme-black .xcap-app-rings i,
+body.theme-gray .xcap-app-rings i{border-color:rgba(181,194,230,.16)!important}
+/* The provided kencode7 background concept is applied to white-theme cards 1 & 3 only. */
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--knowledge{
+  background:
+    linear-gradient(to bottom,#fff 0%,#fff 40%,rgba(255,255,255,.57) 100%),
+    linear-gradient(to right,#0ed2da,#5f29c7)!important;
+  border:0!important;
+  box-shadow:0 10px 35px rgba(36,69,110,.07)!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global::after,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--knowledge::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  background-image:linear-gradient(90deg,#ccc 1px,transparent 1px);
+  background-size:50px 100%;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0) 70%);
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0) 70%);
+  pointer-events:none;
+  opacity:.45;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global .xcap-visual{
+  background:transparent!important;
+  z-index:1;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global .xcap-copy h3 span,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--knowledge .xcap-copy h3 span{
+  color:#4b5369!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global .xcap-copy p,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--knowledge .xcap-copy p{
+  color:#283c50!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--global .xcap-eyebrow,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-section .xcap-card--knowledge .xcap-eyebrow{
+  color:#48647b!important;
+}
+body.theme-black .xcap-card--knowledge,
+body.theme-gray .xcap-card--knowledge{
+  background:radial-gradient(circle at 60% -5%,#212942 0%,#141820 44%,#101318 100%)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+body.theme-beige .xcap-card--knowledge{
+  border:0!important;
+}
+@media(min-width:1051px) and (max-width:1200px){
+  .xcap-card .xcap-copy h3,
+  .xcap-card--knowledge .xcap-copy h3{font-size:clamp(28px,2.8vw,34px)!important}
+  .xcap-app-ecosystem{transform:translate(-50%,-50%) scale(.92)}
+}
+@media(max-width:1050px){
+  .xcap-section-top{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:20px!important;
+  }
+  .xcap-section-title{text-align:left!important}
+  .xcap-card--integrations .xcap-visual{min-height:340px}
+  .xcap-card--knowledge{min-height:480px!important}
+  .xcap-grid{grid-auto-rows:auto!important}
+}
+@media(max-width:820px){
+  .xcap-section-top{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:16px!important;
+    min-height:0!important;
+  }
+  .xcap-section-title{order:0;align-self:start!important;text-align:left!important}
+  .xcap-section-action{order:1;align-self:flex-end!important;margin-left:auto!important}
+}
+@media(max-width:720px){
+  .xcap-grid{grid-template-rows:none!important}
+  .xcap-card{height:auto}
+  .xcap-card--integrations .xcap-visual{min-height:340px}
+  .xcap-card--knowledge{height:auto!important;min-height:0!important}
+  .xcap-card .xcap-copy h3,
+  .xcap-card--working .xcap-copy h3,
+  .xcap-card--everyone .xcap-copy h3,
+  .xcap-card--knowledge .xcap-copy h3{
+    font-size:clamp(33px,7.4vw,43px)!important;
+  }
+}
+@media(max-width:360px){
+  .xcap-app-ecosystem{transform:translate(-50%,-50%) scale(.88)}
+  .xcap-section-title{font-size:clamp(23px,6vw,27px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .xcap-app-node,.xcap-app-rings i{animation:none!important}
+}
