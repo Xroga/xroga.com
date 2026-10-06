@@ -177,7 +177,7 @@ test('Stop and Done wait for one authoritative transcription before arming the n
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.match(voice, /setMode\('transcribing'\)/);
-  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, language\)/);
   assert.match(voice, /const sourceText = cleanSpeech\(transcribed \|\| fallbackVoiceText\)/);
   assert.match(voice, /browserTextRef\.current = ''/);
   assert.match(voice, /interimTextRef\.current = ''/);
@@ -234,7 +234,7 @@ test('Stop Done and Send freeze live recognition before authoritative audio fina
     voice,
     /setMode\('transcribing'\);[\s\S]{0,260}stopRecognition\(\);[\s\S]{0,140}const audio = await stopRecorder\(\)/,
   );
-  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, language\)/);
   assert.doesNotMatch(voice, /void transcribe\(\)\.then/);
 });
 
