@@ -142,3 +142,24 @@ test('server fallback can still honor a spoken send or cancel command', () => {
   assert.match(voice, /if \(serverControl\.action === 'cancel'\)/);
   assert.match(voice, /if \(shouldSend && fullText\)/);
 });
+
+
+test('interim speech is never lost when Stop or Done happens before a final browser segment', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /const interimTextRef = useRef\(''\)/);
+  assert.match(voice, /interimTextRef\.current = cleanSpeech\(preview\)/);
+  assert.match(
+    voice,
+    /mergeWakeSeed\(browserTextRef\.current, interimTextRef\.current\)/,
+  );
+  assert.match(voice, /interimTextRef\.current = ''/);
+});
+
+test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga variants', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /x\[\\s-\]\*roga/);
+  assert.match(voice, /new RegExp\(WAKE_ALIAS_SOURCE, 'iu'\)/);
+  assert.doesNotMatch(voice, /\?<!/);
+});
