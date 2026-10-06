@@ -458,7 +458,6 @@ export function XrogaVoiceControl({
   // visibly dictated before a final SpeechRecognition segment arrives.
   const interimTextRef = useRef('');
   const composerTextRef = useRef(composerText);
-  const captureSessionRef = useRef(0);
 
   const setMode = useCallback((next: VoiceMode) => {
     modeRef.current = next;
@@ -636,7 +635,6 @@ export function XrogaVoiceControl({
   const activateCapture = useCallback(
     (seed = '') => {
       if (captureActiveRef.current || finalizingRef.current) return;
-      captureSessionRef.current += 1;
       baselineRef.current = composerTextRef.current.trim();
       wakeSeedRef.current = cleanSpeech(seed);
       browserTextRef.current = cleanSpeech(seed);
