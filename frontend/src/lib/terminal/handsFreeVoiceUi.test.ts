@@ -203,3 +203,11 @@ test('voice draft keeps both visible composer and canonical prompt synchronized'
   assert.match(chatbar, /draftRef\.current = text/);
   assert.match(chatbar, /setPrompt\(text\)/);
 });
+
+test('exact spoken controls never leak control words into the composer', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /const finalVoiceText = control/);
+  assert.match(voice, /\? refinedVoiceText/);
+  assert.match(voice, /: refinedVoiceText \|\| fallbackVoiceText/);
+});
