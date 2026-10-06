@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import '@/styles/homepage-capabilities.css';
 import Image from 'next/image';
@@ -103,22 +103,40 @@ function IntegrationsCard() {
 }
 
 function KnowledgeCard() {
-  const [report, setReport] = useState(0);
-  const reports = [['18 sources', 'Research complete'], ['6 files', 'Analysis complete'], ['1 report', 'Ready to review']] as const;
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const [frameHeight, setFrameHeight] = useState(430);
+
   useEffect(() => {
-    const timer = window.setInterval(() => setReport((value) => (value + 1) % reports.length), 2400);
-    return () => window.clearInterval(timer);
+    const onFrameMessage = (event: MessageEvent) => {
+      if (event.source !== frameRef.current?.contentWindow) return;
+      const payload = event.data;
+      if (!payload || payload.source !== 'xroga-clarity-workflow') return;
+      const measuredHeight = Number(payload.height);
+      if (!Number.isFinite(measuredHeight)) return;
+      setFrameHeight(Math.max(380, Math.min(640, Math.ceil(measuredHeight))));
+    };
+    window.addEventListener('message', onFrameMessage);
+    return () => window.removeEventListener('message', onFrameMessage);
   }, []);
+
   return (
     <Card className="xcap-card--knowledge">
-      <div className="xcap-visual xcap-visual--knowledge" aria-hidden="true">
-        <div className="xcap-doc xcap-doc--one"><span>PDF</span><b>brief.pdf</b><small>Market notes</small></div>
-        <div className="xcap-doc xcap-doc--two"><span>XLS</span><b>pipeline.xlsx</b><small>418 rows</small></div>
-        <div className="xcap-doc xcap-doc--three"><span>WEB</span><b>Live research</b><small>Current sources</small></div>
-        <div className="xcap-scan"><i /><i /><b>Analyzing files + live sources</b></div>
-        <div className="xcap-report" key={report}><span>✓</span><div><b>{reports[report][1]}</b><small>Notification + full report</small></div><strong>{reports[report][0]}</strong></div>
-      </div>
-      <Copy eyebrow="FILES · WEB · CHATS · RESEARCH" title="Bring the messy stuff." muted="Get clarity back." description="Read files, search current information, compare evidence and return a finished report." />
+      <iframe
+        ref={frameRef}
+        className="xcap-clarity-frame"
+        src="/demos/xroga-clarity-workflow.html"
+        title="Interactive Xroga workflow demonstration: automation, code, research, web, chats and files"
+        sandbox="allow-scripts"
+        loading="eager"
+        scrolling="no"
+        style={{ height: frameHeight }}
+      />
+      <Copy
+        eyebrow="AUTOMATION · CODE · RESEARCH · WEB · CHATS · FILES"
+        title="One request."
+        muted="Six ways to work."
+        description="Explore automations, coding, research, web browsing, chats and files. Watch each example move from request to result."
+      />
     </Card>
   );
 }
