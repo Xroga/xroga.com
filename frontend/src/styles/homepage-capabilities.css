@@ -278,3 +278,68 @@ body.theme-beige .xcap-card--global .xcap-visual{filter:none!important}
   .xcap-xroga-tool-logo{width:60px;height:60px}
   .xcap-xroga-tool-logo img{width:36px;height:36px}
 }
+
+
+/* v6 — faithful interactive Clarity HTML demo embedded in the third React card.
+   Tabs and playback controls are outside the visual panel, but inside this card. */
+@media (min-width:1051px){
+  .xcap-grid{grid-template-rows:620px 392px}
+}
+.xcap-card--knowledge{
+  display:grid!important;
+  grid-template-rows:auto auto!important;
+  align-content:start!important;
+  gap:0!important;
+  overflow:hidden;
+}
+.xcap-clarity-frame{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  border:0;
+  border-radius:0;
+  overflow:hidden;
+  background:transparent;
+  flex-shrink:0;
+}
+.xcap-card--knowledge .xcap-copy{
+  align-self:start;
+  position:relative;
+  padding:15px 6px 8px!important;
+}
+.xcap-card--knowledge .xcap-copy h3{
+  font-size:clamp(33px,2.55vw,44px);
+  line-height:.94;
+  letter-spacing:-.058em;
+}
+.xcap-card--knowledge .xcap-copy h3 span{color:#8b929d}
+.xcap-card--knowledge .xcap-copy p{
+  font-size:12px;
+  line-height:1.45;
+  margin-top:10px;
+  max-width:46ch;
+}
+.xcap-card--knowledge .xcap-eyebrow{
+  font-size:9px;
+  line-height:1.35;
+  letter-spacing:.095em;
+}
+@media (max-width:1050px){
+  .xcap-card--knowledge{min-height:590px}
+}
+@media (max-width:720px){
+  .xcap-card--knowledge{
+    min-height:610px;
+    height:auto;
+  }
+  .xcap-card--knowledge .xcap-copy{
+    padding:16px 8px 12px!important;
+  }
+  .xcap-card--knowledge .xcap-copy h3{
+    font-size:clamp(34px,8vw,43px);
+  }
+  .xcap-card--knowledge .xcap-copy p{
+    font-size:12.5px;
+  }
+}
