@@ -346,22 +346,10 @@ export function TerminalChatBar() {
     if (!loading) setSendState('launched');
   }
 
-  const handleVoiceCommand = useCallback(
+  const handleVoiceSend = useCallback(
     async (spokenText: string) => {
       const text = spokenText.replace(/\s+/g, ' ').trim();
       if (!text) return;
-
-      const normalized = text.toLocaleLowerCase();
-      const stopCommand =
-        /^(?:stop|stop working|cancel|cancel that|halt|pause|bas|بس|رک جاؤ|بند کرو|रुको|रुक जाओ|बंद करो|detener|para|parar|توقف|قف)$/i.test(
-          normalized,
-        );
-
-      if (loading && stopCommand) {
-        stop();
-        setSendState('idle');
-        return;
-      }
 
       setDraft(text);
       draftRef.current = text;
@@ -369,14 +357,14 @@ export function TerminalChatBar() {
       lastExternalPrompt.current = text;
       triggerComposerSignal(1400);
 
-      // Voice and typing deliberately converge on the same form submit path.
-      // requestSubmit preserves every existing repo/billing/queue/attachment gate
-      // instead of inventing a second voice-only execution path.
+      // Voice and typing deliberately converge on the same canonical form submit
+      // path. Wake-word dictation only produces text; sending still crosses every
+      // existing repo/billing/queue/attachment gate here.
       window.requestAnimationFrame(() => {
         formRef.current?.requestSubmit();
       });
     },
-    [loading, setPrompt, stop, triggerComposerSignal],
+    [setPrompt, triggerComposerSignal],
   );
 
   const handleVoiceDraft = useCallback(
@@ -626,10 +614,9 @@ export function TerminalChatBar() {
                 !incognito ? (
                   <XrogaVoiceControl
                     loading={loading}
-                    latestAssistantId={latestAssistantMessage?.id}
-                    latestAssistantText={latestAssistantMessage?.content}
-                    onVoiceCommand={handleVoiceCommand}
+                    composerText={draft}
                     onVoiceDraft={handleVoiceDraft}
+                    onVoiceSend={handleVoiceSend}
                     onStopRun={() => {
                       stop();
                       setSendState('idle');
