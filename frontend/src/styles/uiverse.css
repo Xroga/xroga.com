@@ -5445,18 +5445,6 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   color: #ef4444;
   background: color-mix(in srgb, #ef4444 6%, transparent);
 }
-.xv-voice-armed-dot {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 6px;
-  height: 6px;
-  border: 1.5px solid var(--card);
-  border-radius: 999px;
-  background: #22c55e;
-  box-shadow: 0 0 8px color-mix(in srgb, #22c55e 60%, transparent);
-}
-
 .xv-voice-session-stage:empty {
   display: none;
 }
