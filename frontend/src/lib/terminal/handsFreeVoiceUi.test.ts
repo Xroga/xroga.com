@@ -25,8 +25,8 @@ test('voice is one icon, not the retired voice-off pill or settings menu', () =>
 test('wake word accepts Xroga recognition variants and activates capture', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.ok(voice.includes("x\\\\s*roga"));
-  assert.ok(voice.includes("ex\\\\s*roga"));
+  assert.ok(voice.includes("x[\\\\s-]*roga"));
+  assert.ok(voice.includes("ex[\\\\s-]*roga"));
   assert.ok(voice.includes('acroga'));
   assert.ok(voice.includes('zroga'));
   assert.match(voice, /extractWakeCommand/);
@@ -126,12 +126,17 @@ test('voice final segments de-duplicate wake-seed text and understand polite com
   }
 });
 
-test('server transcription prefers the current recommended model and falls back safely', () => {
+test('server transcription prefers keyword-guided current transcription and falls back safely', () => {
   const backend = source('../../../../backend/src/routes/voice.ts');
 
-  assert.match(backend, /configuredModel \|\| 'gpt-4o-transcribe'/);
+  assert.match(backend, /configuredModel \|\| 'gpt-transcribe'/);
+  assert.match(backend, /'gpt-4o-transcribe'/);
   assert.match(backend, /'gpt-4o-mini-transcribe'/);
-  assert.match(backend, /Preserve the speaker\\'s original language, code-switching/);
+  assert.match(backend, /keywords\[\]/);
+  assert.match(backend, /'Xroga'/);
+  assert.match(backend, /'X Roga'/);
+  assert.match(backend, /response_format', 'json'/);
+  assert.match(backend, /temperature', '0'/);
 });
 
 
@@ -140,5 +145,39 @@ test('server fallback can still honor a spoken send or cancel command', () => {
 
   assert.match(voice, /if \(serverControl\.action === 'send'\) shouldSend = true/);
   assert.match(voice, /if \(serverControl\.action === 'cancel'\)/);
-  assert.match(voice, /if \(shouldSend && fullText\)/);
+  assert.match(voice, /refined\.shouldSend && refined\.fullText/);
+});
+
+
+test('interim speech is never lost when Stop or Done happens before a final browser segment', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /const interimTextRef = useRef\(''\)/);
+  assert.match(voice, /interimTextRef\.current = cleanSpeech\(preview\)/);
+  assert.match(
+    voice,
+    /mergeWakeSeed\(browserTextRef\.current, interimTextRef\.current\)/,
+  );
+  assert.match(voice, /interimTextRef\.current = ''/);
+});
+
+test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga variants', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.ok(voice.includes("x[\\\\s-]*roga"));
+  assert.match(voice, /new RegExp\(WAKE_ALIAS_SOURCE, 'iu'\)/);
+  assert.doesNotMatch(voice, /\?<!/);
+});
+
+
+test('Stop and Done commit visible dictation immediately and late refinement cannot overwrite a new turn', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /const captureSessionRef = useRef\(0\)/);
+  assert.match(voice, /captureSessionRef\.current \+= 1/);
+  assert.match(voice, /composerTextRef\.current = localFullText/);
+  assert.match(voice, /onVoiceDraft\(localFullText\)/);
+  assert.match(voice, /captureSessionRef\.current !== sessionId/);
+  assert.match(voice, /composerTextRef\.current !== localFullText/);
+  assert.match(voice, /void transcribe\(\)\.then/);
 });

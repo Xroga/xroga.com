@@ -74,14 +74,14 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  * "Xroga".
  */
 const WAKE_ALIAS_SOURCE =
-  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|' +
+  '(?:x[\\s-]*roga|ex[\\s-]*roga|acroga|a[\\s-]*croga|zroga|xroga|eks[\\s-]*roga|' +
   'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|ਐਕਸ\\s*ਰੋਗਾ|إكس\\s*روجا|اكس\\s*روجا|' +
   'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
   'エックス\\s*ロガ)';
-const WAKE_WORD = new RegExp(
-  '(?<![\\p{L}\\p{N}])' + WAKE_ALIAS_SOURCE + '(?![\\p{L}\\p{N}])',
-  'iu',
-);
+// Do not use lookbehind here: wake detection must work in every browser that
+// exposes SpeechRecognition. The brand aliases are specific enough that a direct
+// Unicode-insensitive search is both safer and more compatible.
+const WAKE_WORD = new RegExp(WAKE_ALIAS_SOURCE, 'iu');
 
 const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   send: [
@@ -453,6 +453,12 @@ export function XrogaVoiceControl({
   const baselineRef = useRef('');
   const wakeSeedRef = useRef('');
   const browserTextRef = useRef('');
+  // Browser recognizers often keep the newest words as interim text for a second
+  // or two. Keep that text in state so Stop/Done can never erase what the user
+  // visibly dictated before a final SpeechRecognition segment arrives.
+  const interimTextRef = useRef('');
+  const composerTextRef = useRef(composerText);
+  const captureSessionRef = useRef(0);
 
   const setMode = useCallback((next: VoiceMode) => {
     modeRef.current = next;
@@ -462,6 +468,10 @@ export function XrogaVoiceControl({
   useEffect(() => {
     enabledRef.current = handsFreeEnabled;
   }, [handsFreeEnabled]);
+
+  useEffect(() => {
+    composerTextRef.current = composerText;
+  }, [composerText]);
 
   useEffect(() => {
     setMounted(true);
@@ -621,9 +631,11 @@ export function XrogaVoiceControl({
   const activateCapture = useCallback(
     (seed = '') => {
       if (captureActiveRef.current || finalizingRef.current) return;
-      baselineRef.current = composerText.trim();
+      captureSessionRef.current += 1;
+      baselineRef.current = composerTextRef.current.trim();
       wakeSeedRef.current = cleanSpeech(seed);
       browserTextRef.current = cleanSpeech(seed);
+      interimTextRef.current = '';
       captureActiveRef.current = true;
       setMode('listening');
       setErrorMessage('');
@@ -663,6 +675,7 @@ export function XrogaVoiceControl({
     finalizingRef.current = false;
     wakeSeedRef.current = '';
     browserTextRef.current = '';
+    interimTextRef.current = '';
     await stopRecorder();
     stopRecognition();
     releaseMicrophone();
@@ -682,6 +695,7 @@ export function XrogaVoiceControl({
       finalizingRef.current = false;
       wakeSeedRef.current = '';
       browserTextRef.current = '';
+      interimTextRef.current = '';
       onVoiceDraft(baselineRef.current);
       baselineRef.current = '';
 
@@ -704,68 +718,128 @@ export function XrogaVoiceControl({
     }) => {
       if (!captureActiveRef.current || finalizingRef.current) return;
 
+      const sessionId = captureSessionRef.current;
+      const baseText = baselineRef.current;
+      const seed = cleanSpeech(wakeSeedRef.current);
+      const browserText = cleanSpeech(
+        mergeWakeSeed(browserTextRef.current, interimTextRef.current),
+      );
+      const localVoiceText = cleanSpeech(browserText || seed);
+      const localFullText = mergeText(baseText, localVoiceText);
+
       finalizingRef.current = true;
-      setMode('transcribing');
+      if (send || !localFullText) setMode('transcribing');
       const audio = await stopRecorder();
 
-      let serverText = '';
-      if (audio && audio.size >= 512) {
-        try {
-          serverText = await transcribeVoiceAudio(audio, 'auto');
-        } catch {
-          // Browser recognition remains a zero-extra-roundtrip fallback.
-        }
-      }
+      const clearCaptureState = () => {
+        captureActiveRef.current = false;
+        finalizingRef.current = false;
+        wakeSeedRef.current = '';
+        browserTextRef.current = '';
+        interimTextRef.current = '';
+        baselineRef.current = '';
+      };
 
-      const serverControl = serverText ? controlAtEnd(serverText) : null;
-      let shouldSend = send;
-      if (serverControl) {
-        if (serverControl.action === 'send') shouldSend = true;
-        if (serverControl.action === 'cancel') {
-          captureActiveRef.current = false;
-          finalizingRef.current = false;
-          wakeSeedRef.current = '';
-          browserTextRef.current = '';
-          onVoiceDraft(baselineRef.current);
-          baselineRef.current = '';
+      const settleVisualState = async () => {
+        if (disableAfter) {
+          enabledRef.current = false;
+          setHandsFreeEnabled(false);
+          stopRecognition();
+          releaseMicrophone();
+          setMode('off');
+        } else {
           setMode(enabledRef.current ? 'armed' : 'off');
-          return;
         }
-        serverText = serverControl.content;
+      };
+
+      const transcribe = async (): Promise<{
+        fullText: string;
+        shouldSend: boolean;
+        cancel: boolean;
+      }> => {
+        let serverText = '';
+        if (audio && audio.size >= 512) {
+          try {
+            serverText = await transcribeVoiceAudio(audio, 'auto');
+          } catch {
+            // Preserve the browser/interim transcript if the accuracy pass is unavailable.
+          }
+        }
+
+        const serverControl = serverText ? controlAtEnd(serverText) : null;
+        let shouldSend = send;
+        if (serverControl) {
+          if (serverControl.action === 'send') shouldSend = true;
+          if (serverControl.action === 'cancel') {
+            return { fullText: baseText, shouldSend: false, cancel: true };
+          }
+          serverText = serverControl.content;
+        }
+
+        const refinedVoiceText = cleanSpeech(
+          serverText
+            ? mergeWakeSeed(seed, stripWakeWord(serverText))
+            : localVoiceText,
+        );
+        return {
+          fullText: mergeText(baseText, refinedVoiceText),
+          shouldSend,
+          cancel: false,
+        };
+      };
+
+      // Stop/Done should feel instant. Commit the words the browser already heard,
+      // close the waveform, and refine them asynchronously. A late response may only
+      // update the draft if the user has not started another voice turn or edited it.
+      if (!send && localFullText) {
+        clearCaptureState();
+        composerTextRef.current = localFullText;
+        onVoiceDraft(localFullText);
+        await settleVisualState();
+
+        if (audio && audio.size >= 512 && !disableAfter) {
+          void transcribe().then(async (refined) => {
+            if (captureSessionRef.current !== sessionId) return;
+            if (composerTextRef.current !== localFullText) return;
+
+            if (refined.cancel) {
+              composerTextRef.current = baseText;
+              onVoiceDraft(baseText);
+              return;
+            }
+
+            if (refined.fullText && refined.fullText !== localFullText) {
+              composerTextRef.current = refined.fullText;
+              onVoiceDraft(refined.fullText);
+            }
+            if (refined.shouldSend && refined.fullText) {
+              await onVoiceSend(refined.fullText);
+            }
+          });
+        }
+        return;
       }
 
-      const browserText = cleanSpeech(browserTextRef.current);
-      const seed = cleanSpeech(wakeSeedRef.current);
-      let voiceText = serverText
-        ? mergeWakeSeed(seed, stripWakeWord(serverText))
-        : browserText || seed;
+      const refined = await transcribe();
+      clearCaptureState();
 
-      voiceText = cleanSpeech(voiceText);
-      const fullText = mergeText(baselineRef.current, voiceText);
-
-      captureActiveRef.current = false;
-      finalizingRef.current = false;
-      wakeSeedRef.current = '';
-      browserTextRef.current = '';
-      baselineRef.current = '';
-
-      if (fullText) {
-        onVoiceDraft(fullText);
+      if (refined.cancel) {
+        composerTextRef.current = baseText;
+        onVoiceDraft(baseText);
+        await settleVisualState();
+        return;
       }
 
-      if (disableAfter) {
-        enabledRef.current = false;
-        setHandsFreeEnabled(false);
-        stopRecognition();
-        releaseMicrophone();
-        setMode('off');
-      } else {
-        setMode(enabledRef.current ? 'armed' : 'off');
+      if (refined.fullText) {
+        composerTextRef.current = refined.fullText;
+        onVoiceDraft(refined.fullText);
       }
 
-      if (shouldSend && fullText) {
-        await onVoiceSend(fullText);
-      } else if (!fullText) {
+      await settleVisualState();
+
+      if (refined.shouldSend && refined.fullText) {
+        await onVoiceSend(refined.fullText);
+      } else if (!refined.fullText) {
         setErrorMessage('No speech detected. Try again.');
       }
     },
@@ -783,6 +857,7 @@ export function XrogaVoiceControl({
   const handleFinalSegment = useCallback(
     (rawTranscript: string) => {
       const transcript = stripWakeWord(rawTranscript);
+      interimTextRef.current = '';
       const control = controlAtEnd(transcript);
 
       if (modeRef.current === 'paused') {
@@ -897,7 +972,15 @@ export function XrogaVoiceControl({
             const partial = stripWakeWord(transcript);
             const control = controlAtEnd(partial);
             const preview = control ? control.content : partial;
-            emitVoiceText(mergeText(browserTextRef.current, preview));
+            interimTextRef.current = cleanSpeech(preview);
+            emitVoiceText(mergeText(browserTextRef.current, interimTextRef.current));
+
+            // Exact voice-control phrases should feel immediate. Only fire a control
+            // from interim recognition when it contains no dictated content, which
+            // prevents a sentence such as "do not stop" from accidentally stopping.
+            if (control && !control.content) {
+              handleFinalSegment(partial);
+            }
           }
           continue;
         }
@@ -972,6 +1055,8 @@ export function XrogaVoiceControl({
 
   const manualTalk = useCallback(async () => {
     if (captureActiveRef.current || finalizingRef.current) return;
+    setErrorMessage('');
+    interimTextRef.current = '';
 
     if (!enabledRef.current) {
       await enableAndCapture();

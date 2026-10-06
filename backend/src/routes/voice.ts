@@ -52,7 +52,8 @@ router.post(
       const models = Array.from(
         new Set(
           [
-            configuredModel || 'gpt-4o-transcribe',
+            configuredModel || 'gpt-transcribe',
+            'gpt-4o-transcribe',
             'gpt-4o-mini-transcribe',
           ].filter(Boolean),
         ),
@@ -67,14 +68,21 @@ router.post(
           `xroga-voice.${extensionForMime(mime)}`,
         );
         form.append('model', model);
-        form.append(
-          'prompt',
-          'Xroga is a product name spelled X-r-o-g-a and pronounced "X Roga". ' +
-            'Normalize close recognition variants such as X Roga, ex roga, Acroga, A croga, ' +
-            'or Zroga to Xroga. Preserve the speaker\'s original language, code-switching, ' +
-            'punctuation, names, numbers, and technical terms faithfully.',
-        );
-        if (language && model !== 'gpt-transcribe') form.append('language', language);
+        form.append('response_format', 'json');
+        form.append('temperature', '0');
+
+        if (model === 'gpt-transcribe') {
+          form.append('keywords[]', 'Xroga');
+          form.append('keywords[]', 'X Roga');
+          if (language) form.append('languages[]', language);
+        } else {
+          form.append(
+            'prompt',
+            'Product name: Xroga, pronounced "X Roga". Preserve the original language, ' +
+              'code-switching, punctuation, names, numbers, and technical terms faithfully.',
+          );
+          if (language) form.append('language', language);
+        }
 
         const upstream = await fetch('https://api.openai.com/v1/audio/transcriptions', {
           method: 'POST',
