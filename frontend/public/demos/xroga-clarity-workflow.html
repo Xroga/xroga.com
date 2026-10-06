@@ -178,6 +178,104 @@ html,body {overflow-x:hidden!important}
  .spin,.run-meter span,.work-row,.sim-pointer,.blue-dot {animation:none!important}
 }
 </style>
+
+<style id="xroga-parent-theme-v3">
+/* Make the embedded workflow feel native to the parent theme instead of like a pasted image. */
+html[data-parent-theme="black"] body,
+html[data-parent-theme="gray"] body{background:transparent!important;color:#eef3fb}
+html[data-parent-theme="black"] .radio-inputs,
+html[data-parent-theme="gray"] .radio-inputs{
+  background:rgba(255,255,255,.035)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html[data-parent-theme="black"] .radio .name,
+html[data-parent-theme="gray"] .radio .name{color:#8994a5!important}
+html[data-parent-theme="black"] .radio input:checked+.name,
+html[data-parent-theme="gray"] .radio input:checked+.name{
+  background:#20252d!important;color:#f8fbff!important;box-shadow:none!important
+}
+html[data-parent-theme="black"] .animation-panel,
+html[data-parent-theme="gray"] .animation-panel{
+  border:0!important;
+  background:
+    radial-gradient(ellipse at 82% 0%,rgba(60,113,211,.14) 0%,transparent 55%),
+    linear-gradient(150deg,#151b23,#0e1218)!important;
+  box-shadow:none!important;
+}
+html[data-parent-theme="black"] .chatbar,
+html[data-parent-theme="gray"] .chatbar,
+html[data-parent-theme="black"] .working-box,
+html[data-parent-theme="gray"] .working-box,
+html[data-parent-theme="black"] .result-box,
+html[data-parent-theme="gray"] .result-box{
+  background:#121820!important;
+  border-color:rgba(255,255,255,.08)!important;
+  box-shadow:none!important;
+}
+html[data-parent-theme="black"] #userQuery,
+html[data-parent-theme="gray"] #userQuery{color:#f4f7fb!important}
+html[data-parent-theme="black"] #userQuery::placeholder,
+html[data-parent-theme="gray"] #userQuery::placeholder{color:#657184!important}
+html[data-parent-theme="black"] .work-title,
+html[data-parent-theme="gray"] .work-title,
+html[data-parent-theme="black"] .result-head-main strong,
+html[data-parent-theme="gray"] .result-head-main strong,
+html[data-parent-theme="black"] .row-copy strong,
+html[data-parent-theme="gray"] .row-copy strong,
+html[data-parent-theme="black"] .browser-title,
+html[data-parent-theme="gray"] .browser-title{
+  color:#eaf0f8!important;
+}
+html[data-parent-theme="black"] .work-row,
+html[data-parent-theme="gray"] .work-row,
+html[data-parent-theme="black"] .result-head-main small,
+html[data-parent-theme="gray"] .result-head-main small,
+html[data-parent-theme="black"] .row-copy span,
+html[data-parent-theme="gray"] .row-copy span,
+html[data-parent-theme="black"] .result-bottom,
+html[data-parent-theme="gray"] .result-bottom{
+  color:#8492a6!important;
+}
+html[data-parent-theme="black"] .result-head,
+html[data-parent-theme="gray"] .result-head{border-bottom-color:rgba(255,255,255,.07)!important}
+html[data-parent-theme="black"] .mini-row,
+html[data-parent-theme="gray"] .mini-row,
+html[data-parent-theme="black"] .mini-stat,
+html[data-parent-theme="gray"] .mini-stat,
+html[data-parent-theme="black"] .browser-mini,
+html[data-parent-theme="gray"] .browser-mini,
+html[data-parent-theme="black"] .browser-field,
+html[data-parent-theme="gray"] .browser-field{
+  background:#171e28!important;border-color:rgba(255,255,255,.07)!important
+}
+html[data-parent-theme="black"] .browser-bar,
+html[data-parent-theme="gray"] .browser-bar{
+  background:#10161e!important;border-bottom-color:rgba(255,255,255,.07)!important;color:#718096!important
+}
+html[data-parent-theme="black"] .browser-bar span,
+html[data-parent-theme="gray"] .browser-bar span{background:#171e28!important;color:#8090a7!important}
+html[data-parent-theme="black"] .quote-row,
+html[data-parent-theme="gray"] .quote-row{background:#152035!important;color:#aab8cc!important}
+html[data-parent-theme="black"] .run-meter,
+html[data-parent-theme="gray"] .run-meter{background:#273243!important}
+html[data-parent-theme="black"] .clear,
+html[data-parent-theme="gray"] .clear{color:#718096!important}
+html[data-parent-theme="black"] .clear:hover,
+html[data-parent-theme="gray"] .clear:hover{background:#1c2530!important;color:#d7e1ef!important}
+html[data-parent-theme="black"] .demo-pill,
+html[data-parent-theme="gray"] .demo-pill,
+html[data-parent-theme="black"] .row-chip,
+html[data-parent-theme="gray"] .row-chip{
+  background:#172a47!important;color:#83b4ff!important
+}
+/* Beige remains warm/light while preserving the same compact layout. */
+html[data-parent-theme="beige"] .radio-inputs{background:#eee6da!important;border-color:#e6dac8!important}
+html[data-parent-theme="beige"] .animation-panel{
+  background:radial-gradient(ellipse at 82% 12%,#efe1cf 0%,transparent 56%),linear-gradient(150deg,#fbf7f0,#eee5d8)!important;
+  border-color:#ded1bf!important;
+}
+</style>
 </head>
 <body>
 <main class="site-demo" aria-label="Clarity feature demo">
@@ -353,5 +451,20 @@ html,body {overflow-x:hidden!important}
   requestAnimationFrame(announceSize);
 })();
 </script>
+
+<script id="xroga-parent-theme-bridge-v3">
+(() => {
+  const applyParentTheme = (theme) => {
+    if (!['white','black','gray','beige'].includes(theme)) return;
+    document.documentElement.dataset.parentTheme = theme;
+  };
+  window.addEventListener('message', (event) => {
+    const payload = event.data;
+    if (!payload || payload.source !== 'xroga-parent-theme') return;
+    applyParentTheme(payload.theme);
+  });
+})();
+</script>
+
 </body>
 </html>
