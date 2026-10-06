@@ -763,9 +763,12 @@ export function XrogaVoiceControl({
           ? mergeWakeSeed(seed, stripWakeWord(dictatedText))
           : '',
       );
+      const finalVoiceText = control
+        ? refinedVoiceText
+        : refinedVoiceText || fallbackVoiceText;
       const fullText = shouldCancel
         ? baseText
-        : mergeText(baseText, refinedVoiceText || fallbackVoiceText);
+        : mergeText(baseText, finalVoiceText);
 
       // Reset every per-recording buffer before exposing the next armed session.
       // This makes second/third/etc. recordings independent and deterministic.
