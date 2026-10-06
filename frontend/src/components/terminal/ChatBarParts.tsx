@@ -116,7 +116,7 @@ export function ChatBarInputRow({
         surface === 'homepage' && 'xv-chatbar-row--home'
       )}
     >
-      <div className="w-full min-w-0 relative">{children}</div>
+      <div className="xv-chatbar-compose-field w-full min-w-0 relative">{children}</div>
       <div data-xroga-voice-stage="" className="xv-voice-session-stage" />
       <div className="xv-chatbar-tools flex items-center gap-1.5 w-full">
         {leadingExtras}
