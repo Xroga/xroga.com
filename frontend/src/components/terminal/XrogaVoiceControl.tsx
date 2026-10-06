@@ -67,6 +67,7 @@ interface BrowserSpeechRecognition {
 }
 
 type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
+type RecognitionPurpose = 'wake' | 'capture';
 
 /*
  * Xroga is a coined brand name, so speech engines routinely return near-phonetic
@@ -272,7 +273,8 @@ function recognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
   return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
-function recognitionLanguage(): string {
+function recognitionLanguage(language: string): string {
+  if (language && language !== 'auto') return language;
   if (typeof navigator === 'undefined') return 'en-US';
   return navigator.language || 'en-US';
 }
@@ -427,6 +429,7 @@ export function XrogaVoiceControl({
   onStopRun?: () => void;
 }) {
   const {
+    language,
     handsFreeEnabled,
     setHandsFreeEnabled,
     setOnboardingComplete,
@@ -444,7 +447,10 @@ export function XrogaVoiceControl({
   const audioContextRef = useRef<AudioContext | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const recognitionPurposeRef = useRef<RecognitionPurpose>('wake');
+  const recognitionGenerationRef = useRef(0);
   const restartTimerRef = useRef<number | null>(null);
+  const restartRecognitionRef = useRef<(purpose?: RecognitionPurpose) => void>(() => undefined);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recorderChunksRef = useRef<Blob[]>([]);
   const recorderResolveRef = useRef<((audio: Blob | null) => void) | null>(null);
@@ -554,16 +560,18 @@ export function XrogaVoiceControl({
   }, [setMode, startMeter]);
 
   const stopRecognition = useCallback(() => {
+    recognitionGenerationRef.current += 1;
     if (restartTimerRef.current !== null) {
       window.clearTimeout(restartTimerRef.current);
       restartTimerRef.current = null;
     }
+    const current = recognitionRef.current;
+    recognitionRef.current = null;
     try {
-      recognitionRef.current?.abort();
+      current?.abort();
     } catch {
       // Browser may already have closed it.
     }
-    recognitionRef.current = null;
   }, []);
 
   const stopRecorder = useCallback(async (): Promise<Blob | null> => {
@@ -647,6 +655,14 @@ export function XrogaVoiceControl({
       if (streamRef.current) {
         startRecorder(streamRef.current);
       }
+
+      // Chrome/Safari can reuse result indices after a recognizer survives across
+      // multiple dictation turns. Start a brand-new capture recognizer every time.
+      window.setTimeout(() => {
+        if (captureActiveRef.current && !finalizingRef.current) {
+          restartRecognitionRef.current('capture');
+        }
+      }, 70);
     },
     [emitVoiceText, setMode, startRecorder],
   );
@@ -706,6 +722,7 @@ export function XrogaVoiceControl({
         await disableVoice();
       } else {
         setMode(enabledRef.current ? 'armed' : 'off');
+        if (enabledRef.current) restartRecognitionRef.current('wake');
       }
     },
     [disableVoice, onVoiceDraft, setMode, stopRecorder],
@@ -734,6 +751,10 @@ export function XrogaVoiceControl({
       finalizingRef.current = true;
       captureActiveRef.current = false;
       setMode('transcribing');
+
+      // Recorded audio is the authority after Stop/Done. Freeze live recognition so
+      // no late event can leak into this result or into the next voice turn.
+      stopRecognition();
       const audio = await stopRecorder();
 
       let transcribed = '';
@@ -788,6 +809,7 @@ export function XrogaVoiceControl({
         setMode('off');
       } else {
         setMode(enabledRef.current ? 'armed' : 'off');
+        if (enabledRef.current) restartRecognitionRef.current('wake');
       }
 
       if (shouldSend && fullText && !shouldCancel) {
