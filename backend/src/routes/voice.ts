@@ -70,17 +70,21 @@ router.post(
         form.append('model', model);
         form.append('response_format', 'json');
         form.append('temperature', '0');
+        form.append('chunking_strategy', 'auto');
+
+        const transcriptionPrompt =
+          'Product name: Xroga, pronounced "X Roga". Preserve the speaker\'s original language, ' +
+          'code-switching, punctuation, names, numbers, commands, and technical terms faithfully. ' +
+          'Do not translate. If speech sounds like Acroga, X Roga, ex roga, or zroga and refers ' +
+          'to the product wake word, transcribe the brand name as Xroga.';
 
         if (model === 'gpt-transcribe') {
           form.append('keywords[]', 'Xroga');
           form.append('keywords[]', 'X Roga');
+          form.append('prompt', transcriptionPrompt);
           if (language) form.append('languages[]', language);
         } else {
-          form.append(
-            'prompt',
-            'Product name: Xroga, pronounced "X Roga". Preserve the original language, ' +
-              'code-switching, punctuation, names, numbers, and technical terms faithfully.',
-          );
+          form.append('prompt', transcriptionPrompt);
           if (language) form.append('language', language);
         }
 
@@ -93,7 +97,11 @@ router.post(
         });
 
         const body = (await upstream.json().catch(() => null)) as
-          | { text?: unknown; error?: { message?: unknown } }
+          | {
+              text?: unknown;
+              languages?: Array<{ code?: unknown }>;
+              error?: { message?: unknown };
+            }
           | null;
 
         if (!upstream.ok) {
@@ -115,6 +123,11 @@ router.post(
           text,
           provider: 'openai',
           model,
+          languages: Array.isArray(body?.languages)
+            ? body.languages
+                .map((entry) => (typeof entry?.code === 'string' ? entry.code : ''))
+                .filter(Boolean)
+            : [],
         });
         return;
       }
