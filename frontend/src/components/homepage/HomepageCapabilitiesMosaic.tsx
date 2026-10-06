@@ -122,7 +122,7 @@ function KnowledgeCard() {
           ? 'gray'
           : body.classList.contains('theme-beige')
             ? 'beige'
-            : 'white';
+            : 'black';
       frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
     };
 
@@ -153,7 +153,7 @@ function KnowledgeCard() {
               ? 'gray'
               : body.classList.contains('theme-beige')
                 ? 'beige'
-                : 'white';
+                : 'black';
           frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
         }}
         style={{ height: frameHeight }}
