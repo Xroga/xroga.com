@@ -66,7 +66,7 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  */
 const WAKE_ALIAS_SOURCE =
   '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|' +
-  'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|إكس\\s*روجا|اكس\\s*روجا|' +
+  'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|ਐਕਸ\\s*ਰੋਗਾ|إكس\\s*روجا|اكس\\s*روجا|' +
   'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
   'エックス\\s*ロガ)';
 const WAKE_WORD = new RegExp(
@@ -94,6 +94,8 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'run it',
     'bhej do',
     'بھیج دو',
+    'بھج دو',
+    'ਭੇਜ ਦਿਓ',
     'ارسال',
     'ارسل',
     'أرسل',
@@ -121,6 +123,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'بس',
     'رک جاؤ',
     'رکیں',
+    'ਰੁਕੋ',
     'रुको',
     'रुक जाओ',
     'para',
@@ -147,6 +150,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'im done',
     'ختم',
     'ہو گیا',
+    'ਹੋ ਗਿਆ',
     'हो गया',
     'समाप्त',
     'انتهيت',
@@ -172,6 +176,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'وقف',
     'توقف مؤقت',
     'رکو',
+    'ਠਹਿਰੋ',
     'रुकना',
     'ठहरो',
     'pausa',
@@ -193,6 +198,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'keep going',
     'جاری رکھو',
     'جاری رکھیں',
+    'ਜਾਰੀ ਰੱਖੋ',
     'जारी रखो',
     'تابع',
     'استمر',
@@ -214,6 +220,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
     'forget it',
     'منسوخ',
     'چھوڑ دو',
+    'ਰੱਦ ਕਰੋ',
     'रद्द',
     'छोड़ दो',
     'الغاء',
