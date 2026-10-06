@@ -12,3 +12,50 @@ body.theme-beige .xcap-section{--page:#f2e2c8;--ink:#211c18;--muted:#74685e;--li
 @media(max-width:1050px){.xcap-grid{grid-template-columns:1fr 1fr;grid-template-rows:none}.xcap-card{min-height:420px}.xcap-card--working{grid-column:span 2}.xcap-card--everyone{grid-column:span 2;min-height:390px}}
 @media(max-width:720px){.xcap-section{padding:12px 10px 24px}.xcap-grid{grid-template-columns:1fr;gap:12px}.xcap-card,.xcap-card--working,.xcap-card--everyone{grid-column:auto;min-height:500px;border-radius:24px}.xcap-visual{margin:9px 9px 0}.xcap-copy{padding:17px 18px 20px}.xcap-copy h3,.xcap-card--working .xcap-copy h3,.xcap-card--everyone .xcap-copy h3{font-size:39px}.xcap-workspace{grid-template-columns:1fr;grid-template-rows:30px auto auto;height:90%;overflow:hidden}.xcap-workspace-top{grid-column:1}.xcap-prompt,.xcap-steps{margin:8px 10px}.xcap-visual--working>button{right:14px;bottom:10px}}
 @media(prefers-reduced-motion:reduce){.xcap-section *, .xcap-section *::before,.xcap-section *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+/* Magic UI Globe demo — first capability card */
+.xcap-magic-globe-demo{
+  position:relative;
+  display:flex;
+  width:auto;
+  max-width:none;
+  min-height:0;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:hidden;
+  padding:18px 0 0;
+  background:#fff!important;
+  border:1px solid rgba(15,15,15,.08);
+  isolation:isolate;
+}
+.xcap-magic-globe-title{
+  position:relative;
+  z-index:3;
+  margin:0;
+  padding-top:2px;
+  background:linear-gradient(180deg,#050505 12%,#777 58%,#c7c7c7 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:clamp(66px,7.1vw,104px);
+  font-weight:600;
+  line-height:.82;
+  letter-spacing:-.065em;
+  white-space:pre-wrap;
+  text-align:center;
+  pointer-events:none;
+}
+.xcap-magic-globe-demo .top-28{top:92px}
+.xcap-magic-globe-demo .max-w-150{max-width:600px}
+.xcap-magic-globe-demo canvas{display:block;width:100%;height:100%}
+.xcap-magic-globe-shade{
+  z-index:2;
+  background:radial-gradient(circle at 50% 200%,rgba(0,0,0,.20),rgba(255,255,255,0) 64%);
+}
+body.theme-black .xcap-card--global .xcap-magic-globe-demo,
+body.theme-gray .xcap-card--global .xcap-magic-globe-demo,
+body.theme-beige .xcap-card--global .xcap-magic-globe-demo{filter:none!important;background:#fff!important}
+@media(max-width:720px){
+  .xcap-magic-globe-title{font-size:78px}
+  .xcap-magic-globe-demo .top-28{top:104px}
+}
