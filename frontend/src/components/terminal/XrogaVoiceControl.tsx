@@ -67,7 +67,7 @@ const STOP_COMMANDS = new Set([
 ]);
 
 const SEND_COMMANDS = new Set([
-  'send', 'send it', 'send now', 'enter', 'go', 'start now', 'submit',
+  'send', 'send it', 'send now', 'enter', 'enter now', 'go', 'start now', 'submit',
   'بھیج دو', 'ارسال کرو', 'بھیجیں', 'اب بھیج دو',
   'भेज दो', 'भेजें', 'अभी भेजो',
   'أرسل', 'ارسل', 'أرسل الآن', 'ارسل الآن',
@@ -585,6 +585,9 @@ export function XrogaVoiceControl({
 
     if (send && fullText.trim()) {
       await onVoiceSend(fullText);
+      // Sending clears the composer through the normal chat path. Re-arm after that
+      // transition so a second "Xroga..." request works without touching the icon.
+      window.setTimeout(armWakeWord, 700);
     } else {
       window.setTimeout(armWakeWord, 220);
     }
