@@ -10,7 +10,11 @@ function source(relativePath: string): string {
 test('voice is one icon, not the retired voice-off pill or settings menu', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
+  const icon = source('../../components/terminal/AudioLinesIcon.tsx');
   assert.match(voice, /xv-voice-icon-only/);
+  assert.match(voice, /<AudioLinesIcon/);
+  assert.match(icon, /motion\.path/);
+  assert.match(icon, /M10 3v18/);
   assert.match(voice, /aria-label=\{/);
   assert.doesNotMatch(voice, /xv-voice-settings-panel/);
   assert.doesNotMatch(voice, /xv-voice-settings-trigger/);
@@ -44,6 +48,7 @@ test('real microphone amplitude drives the full inline chatbar waveform', () => 
   assert.match(parts, /xv-chatbar-compose-field/);
   assert.match(css, /:has\(\.xv-voice-capture-bar\)/);
   assert.match(css, /\.xv-voice-line-wave/);
+  assert.match(css, /\.xv-voice-icon-only\s*\{[\s\S]*?border:\s*0;/);
 });
 
 test('manual voice controls expose pause stop done cancel and send without auto-send', () => {
@@ -56,6 +61,7 @@ test('manual voice controls expose pause stop done cancel and send without auto-
   assert.match(voice, /Send voice message/);
   assert.match(voice, /finalizeCapture\(\{ send: false \}\)/);
   assert.match(voice, /finalizeCapture\(\{ send: true \}\)/);
+  assert.doesNotMatch(voice, /Done with voice and keep text[\s\S]{0,240}disableAfter:\s*true/);
 });
 
 test('spoken stop send enter and start-now controls are recognized', () => {
@@ -104,4 +110,23 @@ test('voice execution never creates a second Xroga agent backend', () => {
 
   assert.doesNotMatch(voice, /streamSwarmExecute|\/api\/swarm\/execute|\/api\/chat/);
   assert.match(voice, /onVoiceSend/);
+});
+
+
+test('voice final segments de-duplicate wake-seed text and understand polite commands', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /browserTextRef\.current = mergeWakeSeed\(browserTextRef\.current, clean\)/);
+  assert.match(voice, /isPoliteControlPrefix/);
+  for (const phrase of ["'send it now'", "'go ahead'", "'stop now'", "'pause now'", "'resume now'"]) {
+    assert.ok(voice.includes(phrase), 'missing resilient control phrase ' + phrase);
+  }
+});
+
+test('server transcription prefers the current recommended model and falls back safely', () => {
+  const backend = source('../../../../backend/src/routes/voice.ts');
+
+  assert.match(backend, /configuredModel \|\| 'gpt-transcribe'/);
+  assert.match(backend, /'gpt-4o-mini-transcribe'/);
+  assert.match(backend, /Preserve the speaker\\'s original language, code-switching/);
 });
