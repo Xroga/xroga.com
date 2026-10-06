@@ -78,7 +78,7 @@ const WAKE_ALIAS_SOURCE =
   '(?:x[\\s-]*roga|ex[\\s-]*roga|acroga|a[\\s-]*croga|zroga|xroga|eks[\\s-]*roga|' +
   'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|ਐਕਸ\\s*ਰੋਗਾ|إكس\\s*روجا|اكس\\s*روجا|' +
   'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
-  'エックス\\s*ロガ)';
+  'এক্স\\s*রোগা|艾克斯\\s*罗加|艾克斯\\s*羅加|엑스\\s*로가|エックス\\s*ロガ)';
 // Do not use lookbehind here: wake detection must work in every browser that
 // exposes SpeechRecognition. The brand aliases are specific enough that a direct
 // Unicode-insensitive search is both safer and more compatible.
@@ -760,7 +760,7 @@ export function XrogaVoiceControl({
       let transcribed = '';
       if (audio && audio.size >= 512) {
         try {
-          transcribed = await transcribeVoiceAudio(audio, 'auto');
+          transcribed = await transcribeVoiceAudio(audio, language);
         } catch {
           // Browser recognition remains a resilient fallback when server STT is
           // temporarily unavailable.
