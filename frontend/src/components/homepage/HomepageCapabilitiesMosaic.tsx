@@ -3,14 +3,22 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import '@/styles/homepage-capabilities.css';
+import Image from 'next/image';
 import { Globe } from '@/components/magicui/globe';
+import { getIntegrationLogo } from '@/lib/integrationLogos';
+import { SIDEBAR_LOGO_URL } from '@/lib/theme';
 
 const INTEGRATIONS = [
-  ['googledrive', 'Google Drive'], ['gmail', 'Gmail'], ['slack', 'Slack'], ['github', 'GitHub'], ['notion', 'Notion'],
-  ['microsoftteams', 'Microsoft Teams'], ['salesforce', 'Salesforce'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'], ['shopify', 'Shopify'],
-  ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'], ['dropbox', 'Dropbox'], ['trello', 'Trello'],
-  ['zoom', 'Zoom'], ['discord', 'Discord'], ['linkedin', 'LinkedIn'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'],
+  ['google-drive', 'Google Drive'], ['gmail', 'Gmail'], ['slack', 'Slack'], ['github', 'GitHub'],
+  ['notion', 'Notion'], ['microsoftteams', 'Microsoft Teams'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'],
+  ['shopify', 'Shopify'], ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'],
+  ['dropbox', 'Dropbox'], ['trello', 'Trello'], ['discord', 'Discord'], ['jira', 'Jira'],
+  ['asana', 'Asana'], ['figma', 'Figma'], ['zapier', 'Zapier'], ['canva', 'Canva'],
 ] as const;
+
+const INTEGRATION_GROUPS = Array.from({ length: 5 }, (_, groupIndex) =>
+  INTEGRATIONS.slice(groupIndex * 4, groupIndex * 4 + 4)
+);
 
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
@@ -34,39 +42,12 @@ function Copy({ eyebrow, title, muted, description }: { eyebrow: string; title: 
   );
 }
 
-function IntegrationLogo({ slug, label }: { slug: string; label: string }) {
+function IntegrationLogo({ id, label, size }: { id: string; label: string; size: 'sm' | 'md' }) {
+  const logo = getIntegrationLogo(id);
   return (
-    <span className="xcap-logo" title={label} aria-label={label}>
-      <img
-        src={`https://cdn.simpleicons.org/${slug}`}
-        alt=""
-        loading="lazy"
-        onError={(event) => {
-          const image = event.currentTarget;
-          image.style.display = 'none';
-          const parent = image.parentElement;
-          if (parent && !parent.querySelector('b')) {
-            const fallback = document.createElement('b');
-            fallback.textContent = label.slice(0, 2).toUpperCase();
-            parent.appendChild(fallback);
-          }
-        }}
-      />
+    <span className={`xcap-tool-logo xcap-tool-logo--${size}`} title={label} aria-label={label}>
+      {logo ? <img src={logo} alt={label} loading="lazy" /> : <b>{label.slice(0, 2).toUpperCase()}</b>}
     </span>
-  );
-}
-
-function OrbitRing({ items, radius, duration, reverse = false }: { items: readonly (readonly [string, string])[]; radius: number; duration: number; reverse?: boolean }) {
-  return (
-    <div className={`xcap-orbit-ring${reverse ? ' is-reverse' : ''}`} style={{ '--radius': `${radius}px`, '--duration': `${duration}s` } as CSSProperties}>
-      <div className="xcap-orbit-rotor">
-        {items.map(([slug, label], index) => (
-          <div className="xcap-orbit-item" key={slug} style={{ '--angle': `${(360 / items.length) * index}deg` } as CSSProperties}>
-            <div className="xcap-orbit-counter"><IntegrationLogo slug={slug} label={label} /></div>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -86,16 +67,35 @@ function GlobalCard() {
 }
 
 function IntegrationsCard() {
+  const [group, setGroup] = useState(0);
+  const current = INTEGRATION_GROUPS[group % INTEGRATION_GROUPS.length];
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setGroup((value) => value + 1), 2600);
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <Card className="xcap-card--integrations">
       <div className="xcap-visual xcap-visual--integrations">
-        <div className="xcap-orbit-stage" aria-label="20 popular integrations orbiting Xroga">
-          <OrbitRing items={INTEGRATIONS.slice(12, 20)} radius={106} duration={34} />
-          <OrbitRing items={INTEGRATIONS.slice(5, 12)} radius={77} duration={27} reverse />
-          <OrbitRing items={INTEGRATIONS.slice(0, 5)} radius={49} duration={19} />
-          <div className="xcap-orbit-core"><strong>X</strong><b>XROGA</b><span>Custom MCP</span></div>
+        <div className="xcap-tool-stage" aria-label="20 popular Xroga integrations">
+          <div className="xcap-tool-row" key={group}>
+            <IntegrationLogo id={current[0][0]} label={current[0][1]} size="sm" />
+            <IntegrationLogo id={current[1][0]} label={current[1][1]} size="md" />
+            <span className="xcap-xroga-tool-logo" title="Xroga">
+              <Image src={SIDEBAR_LOGO_URL} alt="Xroga" width={36} height={36} priority={false} />
+            </span>
+            <IntegrationLogo id={current[2][0]} label={current[2][1]} size="md" />
+            <IntegrationLogo id={current[3][0]} label={current[3][1]} size="sm" />
+          </div>
+          <div className="xcap-tool-scanner" aria-hidden="true">
+            <i />
+            <span>
+              {Array.from({ length: 12 }).map((_, index) => <b key={index} style={{ '--dust': index } as CSSProperties} />)}
+            </span>
+          </div>
         </div>
-        <div className="xcap-integration-pills"><span>20 shown</span><span>1,500+ plugins</span><span>Custom MCP</span></div>
+        <div className="xcap-integration-pills"><span>20 real apps</span><span>1,500+ plugins</span><span>Custom MCP</span></div>
       </div>
       <Copy eyebrow="ONE AI WORKSPACE" title="1,500+ ways to" muted="get work done." description="Connect business apps, developer tools, APIs and custom MCPs in one workspace." />
     </Card>
