@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import '@/styles/homepage-capabilities.css';
+import { Globe } from '@/components/magicui/globe';
 
 const INTEGRATIONS = [
   ['googledrive', 'Google Drive'], ['gmail', 'Gmail'], ['slack', 'Slack'], ['github', 'GitHub'], ['notion', 'Notion'],
@@ -11,7 +12,6 @@ const INTEGRATIONS = [
   ['zoom', 'Zoom'], ['discord', 'Discord'], ['linkedin', 'LinkedIn'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'],
 ] as const;
 
-const LANGUAGES = ['العربية', 'اردو', 'हिन्दी', 'Español', '中文', 'Français', '日本語', 'Português'];
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
 const RUNS = [
@@ -73,20 +73,12 @@ function OrbitRing({ items, radius, duration, reverse = false }: { items: readon
 function GlobalCard() {
   return (
     <Card className="xcap-card--global">
-      <div className="xcap-visual xcap-visual--global" aria-hidden="true">
-        <div className="xcap-globe-wrap">
-          <div className="xcap-globe">
-            <i className="xcap-globe-grid xcap-globe-grid--a" />
-            <i className="xcap-globe-grid xcap-globe-grid--b" />
-            <i className="xcap-globe-grid xcap-globe-grid--c" />
-            <span className="xcap-marker xcap-marker--1" />
-            <span className="xcap-marker xcap-marker--2" />
-            <span className="xcap-marker xcap-marker--3" />
-            <span className="xcap-marker xcap-marker--4" />
-          </div>
-        </div>
-        <div className="xcap-language-marquee"><div>{[...LANGUAGES, ...LANGUAGES].map((language, index) => <span key={`${language}-${index}`}>{language}</span>)}</div></div>
-        <div className="xcap-voice"><span>●</span><div>{Array.from({ length: 18 }).map((_, index) => <i key={index} style={{ '--i': index } as CSSProperties} />)}</div><b>Speak naturally</b></div>
+      <div className="xcap-visual xcap-visual--global xcap-magic-globe-demo bg-background relative flex size-full max-w-lg items-center justify-center overflow-hidden rounded-lg border px-40 pt-8 pb-40 md:pb-60">
+        <span className="xcap-magic-globe-title pointer-events-none bg-linear-to-b from-black to-gray-300/80 bg-clip-text text-center text-8xl leading-none font-semibold whitespace-pre-wrap text-transparent dark:from-white dark:to-slate-900/10">
+          Globe
+        </span>
+        <Globe className="top-28" />
+        <div className="xcap-magic-globe-shade pointer-events-none absolute inset-0 h-full bg-[radial-gradient(circle_at_50%_200%,rgba(0,0,0,0.2),rgba(255,255,255,0))]" />
       </div>
       <Copy eyebrow="GLOBAL · MULTILINGUAL · VOICE" title="Work in your language." muted="Anywhere." description="Type or speak naturally. Xroga works in the language you already use." />
     </Card>
