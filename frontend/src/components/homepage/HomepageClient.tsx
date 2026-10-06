@@ -56,15 +56,14 @@ export function HomepageClient() {
 
   return (
   <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
-    <div
-      className="xv-hc-bg-image"
-      style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }}
-      aria-hidden
-    />
-
     <HomepageCursorGlitter />
 
     <section className="xv-hc-hero">
+      <div
+        className="xv-hc-bg-image"
+        style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }}
+        aria-hidden
+      />
         <div className="xv-hc-hero-main">
           <div className="xv-hc-headline-block">
             <p className="xv-hc-eyebrow"><i /> AI APP BUILDER + CODING AGENT</p>
