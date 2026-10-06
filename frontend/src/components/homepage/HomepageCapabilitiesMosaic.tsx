@@ -13,7 +13,7 @@ const INTEGRATIONS = [
   ['gitlab', 'GitLab'], ['notion', 'Notion'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'], ['shopify', 'Shopify'],
   ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'], ['dropbox', 'Dropbox'], ['discord', 'Discord'],
   ['jira', 'Jira'], ['asana', 'Asana'], ['trello', 'Trello'], ['figma', 'Figma'], ['canva', 'Canva'],
-  ['cloudflare', 'Cloudflare'], ['aws', 'AWS'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'], ['paypal', 'PayPal'],
+  ['cloudflare', 'Cloudflare'], ['netlify', 'Netlify'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'], ['paypal', 'PayPal'],
 ] as const;
 
 
