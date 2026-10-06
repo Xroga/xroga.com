@@ -5416,43 +5416,34 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   height: 32px;
   flex: 0 0 32px;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--foreground) 13%, transparent);
-  border-radius: 999px;
-  color: var(--muted);
-  background: color-mix(in srgb, var(--card) 84%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent);
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--foreground) 68%, var(--muted));
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   transition:
     transform 150ms ease,
     color 150ms ease,
-    border-color 150ms ease,
-    background 150ms ease,
-    box-shadow 150ms ease;
+    background 150ms ease;
 }
 .xv-voice-icon-only:hover {
   transform: translateY(-1px);
   color: var(--foreground);
-  border-color: color-mix(in srgb, #8b5cf6 34%, var(--card-border));
-  background: color-mix(in srgb, #8b5cf6 7%, var(--card));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #fff 12%, transparent),
-    0 6px 18px color-mix(in srgb, #6366f1 9%, transparent);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 .xv-voice-icon-only.is-armed {
-  color: color-mix(in srgb, #8b5cf6 82%, var(--foreground));
-  border-color: color-mix(in srgb, #8b5cf6 28%, var(--card-border));
+  color: color-mix(in srgb, #8b5cf6 78%, var(--foreground));
 }
 .xv-voice-icon-only.is-listening {
   color: #22d3ee;
-  border-color: color-mix(in srgb, #22d3ee 40%, var(--card-border));
-  background:
-    radial-gradient(circle at 30% 25%, color-mix(in srgb, #fff 11%, transparent), transparent 50%),
-    color-mix(in srgb, #0f172a 88%, var(--card));
+  background: color-mix(in srgb, #22d3ee 7%, transparent);
   animation: xv-voice-icon-listen 1.7s ease-in-out infinite;
 }
 .xv-voice-icon-only.is-error {
   color: #ef4444;
-  border-color: color-mix(in srgb, #ef4444 36%, var(--card-border));
+  background: color-mix(in srgb, #ef4444 6%, transparent);
 }
 .xv-voice-armed-dot {
   position: absolute;
@@ -5623,8 +5614,8 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   100% { opacity: .9; }
 }
 @keyframes xv-voice-icon-listen {
-  0%, 100% { box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent), 0 0 0 0 color-mix(in srgb, #22d3ee 0%, transparent); }
-  50% { box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 13%, transparent), 0 0 0 4px color-mix(in srgb, #22d3ee 8%, transparent); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1px) scale(1.04); }
 }
 
 @media (max-width: 640px) {

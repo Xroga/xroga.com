@@ -3,7 +3,6 @@
 import {
   ArrowUp,
   Check,
-  Mic2,
   Pause,
   Play,
   Square,
@@ -14,6 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
+import { AudioLinesIcon } from './AudioLinesIcon';
 import { useVoicePrefsStore } from '@/store/useVoicePrefsStore';
 
 type VoiceMode =
@@ -65,7 +65,10 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  * "Xroga".
  */
 const WAKE_ALIAS_SOURCE =
-  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|کس\\s*روگا|ایکس\\s*روگا)';
+  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|' +
+  'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|إكس\\s*روجا|اكس\\s*روجا|' +
+  'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
+  'エックス\\s*ロガ)';
 const WAKE_WORD = new RegExp(
   '(?<![\\p{L}\\p{N}])' + WAKE_ALIAS_SOURCE + '(?![\\p{L}\\p{N}])',
   'iu',
@@ -75,12 +78,20 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   send: [
     'send',
     'send it',
+    'send now',
+    'send it now',
     'submit',
+    'submit it',
     'enter',
+    'enter it',
     'enter now',
     'go',
+    'go ahead',
+    'start',
+    'start it',
     'start now',
     'now start',
+    'run it',
     'bhej do',
     'بھیج دو',
     'ارسال',
@@ -104,7 +115,9 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   ],
   stop: [
     'stop',
+    'stop now',
     'stop recording',
+    'stop listening',
     'بس',
     'رک جاؤ',
     'رکیں',
@@ -126,7 +139,9 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   ],
   done: [
     'done',
+    'done now',
     'finish',
+    'finish now',
     'finished',
     'i am done',
     'im done',
@@ -151,6 +166,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   ],
   pause: [
     'pause',
+    'pause now',
     'hold',
     'hold on',
     'وقف',
@@ -171,6 +187,7 @@ const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   ],
   resume: [
     'resume',
+    'resume now',
     'continue',
     'carry on',
     'keep going',
@@ -267,6 +284,14 @@ function trimControlPunctuation(text: string): string {
   return text.replace(/[\s,.:;!?،۔…-]+$/gu, '').trim();
 }
 
+function isPoliteControlPrefix(text: string): boolean {
+  const normalized = cleanSpeech(text).toLocaleLowerCase();
+  if (!normalized) return true;
+  return /^(?:please|okay|ok|hey|xroga|thanks|thank you|now|just|kindly|براہ کرم|اچھا|ٹھیک ہے|اب|कृपया|ठीक है|अब|من فضلك|حسنًا|الآن|por favor|vale|ahora|s'il vous plaît|bitte|jetzt|per favore|ora|lütfen|şimdi|tolong|sekarang)$/iu.test(
+    normalized,
+  );
+}
+
 function controlAtEnd(text: string): {
   action: VoiceControlAction;
   content: string;
@@ -283,9 +308,12 @@ function controlAtEnd(text: string): {
     const boundaryIndex = lower.length - candidate.phrase.length - 1;
     if (boundaryIndex >= 0 && /[\p{L}\p{N}]/u.test(lower[boundaryIndex] ?? '')) continue;
 
+    const prefix = trimControlPunctuation(
+      clean.slice(0, clean.length - candidate.phrase.length),
+    );
     return {
       action: candidate.action,
-      content: trimControlPunctuation(clean.slice(0, clean.length - candidate.phrase.length)),
+      content: isPoliteControlPrefix(prefix) ? '' : prefix,
     };
   }
 
@@ -551,7 +579,7 @@ export function XrogaVoiceControl({
     (segment: string) => {
       const clean = stripWakeWord(segment);
       if (!clean) return;
-      browserTextRef.current = mergeText(browserTextRef.current, clean);
+      browserTextRef.current = mergeWakeSeed(browserTextRef.current, clean);
       emitVoiceText(browserTextRef.current);
     },
     [emitVoiceText],
@@ -725,7 +753,7 @@ export function XrogaVoiceControl({
           return;
         }
         if (control.action === 'done') {
-          void finalizeCapture({ send: false, disableAfter: true });
+          void finalizeCapture({ send: false });
           return;
         }
         if (control.action === 'send') {
@@ -752,7 +780,7 @@ export function XrogaVoiceControl({
           void finalizeCapture({ send: false });
           break;
         case 'done':
-          void finalizeCapture({ send: false, disableAfter: true });
+          void finalizeCapture({ send: false });
           break;
         case 'send':
           void finalizeCapture({ send: true });
@@ -1008,7 +1036,7 @@ export function XrogaVoiceControl({
               <button
                 type="button"
                 className="xv-voice-capture-button"
-                onClick={() => void finalizeCapture({ send: false, disableAfter: true })}
+                onClick={() => void finalizeCapture({ send: false })}
                 aria-label="Done with voice and keep text"
                 title="Done"
                 disabled={mode === 'transcribing'}
@@ -1055,8 +1083,14 @@ export function XrogaVoiceControl({
             : errorMessage || 'Enable voice, then say “Xroga” anytime'
         }
       >
-        <Mic2 className="h-4 w-4" aria-hidden />
-        {handsFreeEnabled ? <span className="xv-voice-armed-dot" aria-hidden /> : null}
+        <AudioLinesIcon
+          size={21}
+          active={captureVisible}
+          aria-hidden="true"
+        />
+        {handsFreeEnabled && !captureVisible ? (
+          <span className="xv-voice-armed-dot" aria-hidden />
+        ) : null}
       </button>
 
       <span className="sr-only" aria-live="polite">
