@@ -60,7 +60,6 @@ export function TerminalChatBar() {
     loading,
     submit,
     stop,
-    messages,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
