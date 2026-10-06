@@ -82,7 +82,8 @@ const framableSecurityHeaders = [
 const PREVIEW_SOURCE = '/showcase/:slug/preview';
 const CRYPTO_SHOWCASE_SOURCE = '/showcase/black-hole-vinfinity-crypto';
 const CLARITY_DEMO_SOURCE = '/demos/xroga-clarity-workflow.html';
-const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$)).*)';
+const BROWSER_EMPLOYEES_DEMO_SOURCE = '/demos/xroga-browser-employees-exact.html';
+const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/black-hole-vinfinity-crypto$|demos/xroga-clarity-workflow[.]html$|demos/xroga-browser-employees-exact[.]html$)).*)';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -102,6 +103,7 @@ const nextConfig = {
       { source: PREVIEW_SOURCE, headers: framableSecurityHeaders },
       { source: CRYPTO_SHOWCASE_SOURCE, headers: framableSecurityHeaders },
       { source: CLARITY_DEMO_SOURCE, headers: framableSecurityHeaders },
+      { source: BROWSER_EMPLOYEES_DEMO_SOURCE, headers: framableSecurityHeaders },
       { source: NON_PREVIEW_SOURCE, headers: securityHeaders },
     ];
   },
