@@ -68,9 +68,6 @@ router.post(
           `xroga-voice.${extensionForMime(mime)}`,
         );
         form.append('model', model);
-        form.append('response_format', 'json');
-        form.append('temperature', '0');
-        form.append('chunking_strategy', 'auto');
 
         const transcriptionPrompt =
           'Product name: Xroga, pronounced "X Roga". Preserve the speaker\'s original language, ' +
