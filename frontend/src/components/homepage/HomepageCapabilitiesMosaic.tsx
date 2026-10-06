@@ -104,7 +104,7 @@ function IntegrationsCard() {
 
 function KnowledgeCard() {
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const [frameHeight, setFrameHeight] = useState(430);
+  const [frameHeight, setFrameHeight] = useState(305);
 
   useEffect(() => {
     const onFrameMessage = (event: MessageEvent) => {
@@ -113,7 +113,7 @@ function KnowledgeCard() {
       if (!payload || payload.source !== 'xroga-clarity-workflow') return;
       const measuredHeight = Number(payload.height);
       if (!Number.isFinite(measuredHeight)) return;
-      setFrameHeight(Math.max(380, Math.min(640, Math.ceil(measuredHeight))));
+      setFrameHeight(Math.max(270, Math.min(460, Math.ceil(measuredHeight))));
     };
     window.addEventListener('message', onFrameMessage);
     return () => window.removeEventListener('message', onFrameMessage);
