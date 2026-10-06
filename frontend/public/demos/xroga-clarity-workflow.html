@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#090b10" />
+<title>Clarity — Automation-first Interactive Workflow Card</title>
+<style>
+:root{--accent:#3478f6;--ice:#edf4ff;--ink:#162138;--muted:#61718a;--line:#d9e2ef}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{background:#06080c;color:#f7f9fe;display:grid;place-items:center;padding:25px 14px;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.site-demo{width:min(500px,100%)}
+/* Tabs are deliberately outside the feature card */
+.radio-inputs{display:flex;gap:3px;flex-wrap:wrap;padding:5px;background:#e9ebf0;border:1px solid #e9edf4;border-radius:12px;box-shadow:0 3px 18px #0003;margin-bottom:12px;align-items:center}
+.radio{position:relative;flex:1;min-width:0}
+.radio input{position:absolute;opacity:0;inset:0;cursor:pointer;width:100%;height:100%;margin:0}
+.radio .name{display:flex;min-height:36px;align-items:center;justify-content:center;border-radius:8px;color:#536174;font-size:10px;letter-spacing:.035em;font-weight:800;white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s;user-select:none;pointer-events:none}
+.radio input:checked+.name{background:#fff;box-shadow:0 2px 6px #1521321c;color:#122039;font-weight:900}
+.radio input:focus-visible+.name{outline:2px solid #4086ff;outline-offset:1px}
+/* Card matches supplied visual */
+.feature-card{padding:13px 13px 23px;border:1px solid #30343a;border-radius:24px;background:linear-gradient(153deg,#161a1f 0%,#0c0f12 90%);box-shadow:0 28px 72px #0009,0 0 30px #1b3e7310}
+.animation-panel{height:280px;position:relative;overflow:hidden;border:1px solid #cbd6e3;border-radius:15px;background:radial-gradient(ellipse at 82% 12%,#dceafe 0%,transparent 56%),linear-gradient(150deg,#eef3f8,#dfe6ef);color:var(--ink);isolation:isolate}
+.panel-head{position:absolute;z-index:2;top:12px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:10px;font-weight:800;color:#596e89}
+.panel-head .phase-name{display:flex;align-items:center;gap:6px}
+.blue-dot{display:block;width:6px;height:6px;background:#3b82f6;border-radius:50%;box-shadow:0 0 0 3px #a8c8ff66}
+.scene-count{color:#426495;font-size:10px;font-variant-numeric:tabular-nums}
+.composer-shell{position:absolute;z-index:6;left:14px;right:14px;top:37px;transform-origin:50% 50%;transition:transform .55s cubic-bezier(.2,.8,.2,1),filter .35s}
+.animation-panel[data-phase="type"] .composer-shell{transform:translateY(65px) scale(1.027)}
+.animation-panel[data-phase="work"] .composer-shell,.animation-panel[data-phase="result"] .composer-shell{transform:translateY(0) scale(1)}
+.chatbar{height:54px;display:flex;align-items:center;gap:8px;border-radius:13px;border:1px solid #bbcbe0;background:#fff;box-shadow:0 5px 15px #38547418;padding:6px 7px 6px 12px;transition:box-shadow .35s,border-color .35s}
+.animation-panel[data-phase="type"] .chatbar,.animation-panel[data-phase="custom"] .chatbar{border-color:#71a9ff;box-shadow:0 10px 26px #3478f52e,0 0 0 3px #9ac4ff5b}
+.composer-icon{flex:none;color:#3478f6;font-size:17px}
+#userQuery{flex:1;min-width:0;width:100%;border:0;background:transparent;outline:0;color:#152039;font-size:11.7px;font-weight:700;letter-spacing:-.012em;white-space:nowrap;text-overflow:ellipsis}
+#userQuery::placeholder{color:#8a9bb3;font-weight:600}
+.clear{border:0;background:transparent;color:#8697aa;width:23px;height:30px;display:grid;place-items:center;font-size:17px;border-radius:5px}
+.clear:hover{background:#eaf1fa;color:#425875}
+.submit{flex:none;width:34px;height:34px;border:0;background:#14233c;color:white;border-radius:9px;font-size:21px;display:grid;place-items:center;line-height:1;transition:background .2s,transform .2s}
+.submit:hover,.submit.pulse{background:#3478f6;transform:scale(1.06)}
+.composer-note{position:absolute;left:1px;right:0;top:59px;color:#73849a;font-size:9px;font-weight:750;letter-spacing:.025em;transition:opacity .25s}
+.animation-panel[data-phase="work"] .composer-note,.animation-panel[data-phase="result"] .composer-note{opacity:0}
+.status-area{position:absolute;left:14px;right:14px;top:102px;bottom:10px;z-index:1;opacity:0;transform:translateY(9px);pointer-events:none;transition:opacity .28s,transform .35s}
+.animation-panel[data-phase="work"] .status-area,.animation-panel[data-phase="result"] .status-area,.animation-panel[data-phase="custom"] .status-area{opacity:1;transform:translateY(0);pointer-events:auto}
+.working-box,.result-box{position:absolute;inset:0;background:#fff;border:1px solid #cad7e7;border-radius:11px;box-shadow:0 5px 18px #28436919;overflow:hidden;transition:opacity .4s,transform .4s}
+.working-box{padding:14px 15px;opacity:0;transform:translateY(8px)}
+.result-box{opacity:0;transform:translateY(12px) scale(.985)}
+.animation-panel[data-phase="work"] .working-box{opacity:1;transform:translateY(0)}
+.animation-panel[data-phase="result"] .result-box,.animation-panel[data-phase="custom"] .result-box{opacity:1;transform:translateY(0) scale(1)}
+.work-title{display:flex;gap:9px;align-items:center;font-size:12px;color:#223452;font-weight:850}
+.spin{border:2px solid #d0def1;border-top-color:#2e75ef;border-radius:50%;width:16px;height:16px;animation:spin .75s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.work-steps{display:grid;gap:8px;margin-top:13px}
+.work-row{display:flex;gap:7px;align-items:center;font-size:10.5px;color:#5e7087;font-weight:720;opacity:0;animation:workappear .35s forwards}
+.work-row:nth-child(2){animation-delay:.4s}.work-row:nth-child(3){animation-delay:.85s}
+.work-row i{width:13px;height:13px;border-radius:50%;background:#e8f1ff;color:#3377e4;display:grid;place-items:center;font-style:normal;font-size:9px;flex:none}
+@keyframes workappear{to{opacity:1}}
+.run-meter{height:4px;background:#e7effa;border-radius:8px;margin-top:13px;overflow:hidden}
+.run-meter span{display:block;width:0;height:100%;background:linear-gradient(90deg,#60a5fa,#1d4ed8);animation:fill 1.7s ease forwards}
+@keyframes fill{to{width:100%}}
+/* Result cards: compact but legible */
+.result-head{padding:6px 9px 6px;border-bottom:1px solid #e9eff6;display:flex;align-items:center;gap:7px}
+.result-check{background:#e7f0ff;color:#2a6ede;border-radius:6px;width:22px;height:22px;display:grid;place-items:center;font-size:13px;font-weight:900;flex:none}
+.result-head-main{min-width:0;flex:1}.result-head-main strong{font-size:11.3px;color:#17243d;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result-head-main small{color:#798aa0;display:block;font-size:9px;margin-top:2px;font-weight:650}
+.demo-pill{font-size:8px;letter-spacing:.025em;color:#3967aa;font-weight:900;border-radius:5px;background:#edf4ff;padding:4px 5px;white-space:nowrap}
+.result-content{padding:6px 9px}
+.row-list{display:grid;gap:4px}
+.mini-row{display:flex;align-items:flex-start;gap:7px;padding:4px 6px;border-radius:7px;background:#f7f9fc;border:1px solid #ebf0f6}
+.row-icon{flex:none;width:18px;height:18px;border-radius:5px;background:#eaf2ff;color:#326cce;display:grid;place-items:center;font-size:9px;font-weight:900}
+.row-copy{flex:1;min-width:0}.row-copy strong{display:block;font-size:10px;line-height:1.2;color:#253953}.row-copy span{display:block;color:#77869b;font-size:9px;line-height:1.2;margin-top:1px}
+.row-chip{flex:none;font-size:8px;color:#3969ad;background:#eaf2ff;padding:3px 5px;border-radius:5px;font-weight:850}
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px}
+.mini-stat{text-align:center;padding:6px 3px;border:1px solid #e4ebf5;border-radius:6px;background:#f6f9ff}.mini-stat b{display:block;color:#1f4e9c;font-size:14px;line-height:1.1}.mini-stat small{display:block;margin-top:3px;font-size:8px;color:#6f8099}
+.quote-row{background:#f4f8ff;border-left:2px solid #2d77e7;border-radius:5px;padding:7px 8px;font-size:10px;line-height:1.35;font-weight:650;color:#40516a;margin-bottom:6px}
+.code-mini{background:#111a2c;border-radius:7px;padding:9px 10px;color:#dbeafe;font:10px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow:hidden}.code-mini .remove{color:#fca5a5}.code-mini .add{color:#93c5fd}.code-mini .dim{color:#7186a6}
+.result-bottom{font-size:8px;color:#6a7e98;margin-top:3px;display:flex;align-items:center;gap:5px}
+/* Embedded simulated browser with moving pointer */
+.browser-mini{position:relative;height:96px;border:1px solid #dce6f2;border-radius:7px;overflow:hidden;background:#fbfdff}
+.browser-bar{height:18px;background:#f0f4fa;border-bottom:1px solid #e1e7f0;display:flex;align-items:center;gap:4px;padding:0 7px;color:#778ba5;font-size:8px}.browser-bar i{width:5px;height:5px;border-radius:50%;background:#c4cfe0}.browser-bar span{padding:3px 6px;background:white;border-radius:4px;margin-left:5px;flex:1;color:#67809f}
+.browser-body{padding:5px 7px;display:grid;gap:4px}.browser-title{display:flex;justify-content:space-between;gap:5px;align-items:center;font-size:9px;font-weight:850;color:#22334b}.browser-title em{font-size:8px;font-style:normal;color:#2e6ed5;background:#e8f1ff;border-radius:4px;padding:3px 5px}
+.browser-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}.browser-field{border:1px solid #dbe5f1;border-radius:5px;padding:3px 5px;background:#fff}.browser-field small{display:block;color:#8190a4;font-size:7.5px}.browser-field strong{color:#263950;font-size:8.5px;display:block;margin-top:2px}.browser-field.active{border-color:#3478f6;background:#edf4ff}
+.browser-button{justify-self:end;background:#225fca;color:#fff;padding:4px 9px;border-radius:5px;font-size:9px;font-weight:850;border:0}.browser-button.active{box-shadow:0 0 0 3px #9fc3ff}
+.sim-pointer{position:absolute;z-index:8;left:0;top:0;width:20px;height:23px;pointer-events:none;opacity:0;filter:drop-shadow(0 2px 2px #20345755);transition:transform .65s cubic-bezier(.18,.7,.32,1),opacity .2s}.sim-pointer.visible{opacity:1}.sim-pointer svg{display:block;width:100%;height:100%}.sim-pointer.click:after{content:"";position:absolute;left:4px;top:3px;border:2px solid #2563eb;border-radius:50%;width:10px;height:10px;animation:pulse-click .48s ease forwards}@keyframes pulse-click{to{transform:scale(2.5);opacity:0}}
+/* Caption lower half of dark card */
+.card-copy{padding:17px 7px 0}
+.eyebrow{color:#b3bbc7;font-size:10px;letter-spacing:.11em;font-weight:900;line-height:1.5;margin-bottom:7px}
+.card-copy h1{font-size:clamp(30px,6.2vw,39px);line-height:1.02;font-weight:710;letter-spacing:-.065em;margin:0}.card-copy h1 span{color:#aab2be}
+.card-copy p{font-size:12.4px;line-height:1.46;font-weight:520;color:#aeb7c3;max-width:410px;margin:10px 0 0}
+/* tabs index and controls sit outside animation card */
+.demo-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px 0;color:#8394ab;font-size:11px}
+.counter{display:flex;align-items:center;gap:7px;font-variant-numeric:tabular-nums}.dots{display:flex;gap:5px}.dots button{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:#4a5565;transition:width .2s,background .2s}.dots button.current{width:20px;border-radius:6px;background:#76adff}
+.control-buttons{display:flex;gap:6px}.control-buttons button{background:#151a23;border:1px solid #303b4e;color:#b9c6d9;border-radius:7px;padding:6px 9px;font-size:10px;font-weight:800}.control-buttons button:hover{background:#243248;color:#fff}
+@media(max-width:450px){.site-demo{width:100%}.feature-card{padding:10px 10px 20px}.animation-panel{height:274px}.card-copy h1{font-size:clamp(29px,8vw,36px)}.radio-inputs{gap:2px}.radio .name{font-size:8.5px;min-height:34px}.panel-head{font-size:9px}.composer-shell{left:10px;right:10px}.status-area{left:10px;right:10px}.chatbar{padding-left:9px}#userQuery{font-size:10.7px}.eyebrow{font-size:9px}.card-copy p{font-size:12px}}
+@media(max-width:345px){.radio-inputs{display:grid;grid-template-columns:repeat(3,1fr)}.radio{width:100%}.animation-panel{height:279px}.radio .name{font-size:9px}.row-copy strong{font-size:9px}.row-copy span{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.spin,.run-meter span,.work-row,.blue-dot{animation:none!important}.composer-shell,.working-box,.result-box,.status-area{transition:none!important}}
+</style>
+
+<style id="xroga-clarity-embed-style">
+/* Xroga embeds the supplied native interactive demo inside the third React card.
+   The original tab system, workflow data, browser simulation and timers are unchanged. */
+html,body{min-height:0;height:auto;overflow:hidden}
+body{display:block;place-items:initial;padding:0!important;margin:0!important;background:transparent!important}
+.site-demo{width:100%;max-width:none}
+.feature-card{padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+.radio-inputs{width:100%;margin-bottom:10px;box-shadow:none}
+.animation-panel{height:312px;border-radius:14px}
+.demo-controls{margin-top:9px;background:#111a28;border:1px solid #293649;border-radius:10px;padding:8px 9px;color:#b9c7da;flex-wrap:wrap;row-gap:8px}
+.control-buttons{margin-left:auto}
+.control-buttons button{background:#1a2535;border-color:#364457;color:#d3def0}
+.control-buttons button:focus-visible,.dots button:focus-visible{outline:2px solid #79abff;outline-offset:2px}
+@media(max-width:450px){
+  .animation-panel{height:315px}
+  .radio-inputs{gap:2px;margin-bottom:9px;padding:4px}
+  .radio .name{font-size:clamp(8px,2.2vw,10px)}
+  .demo-controls{font-size:10px}
+  .control-buttons button{font-size:9px;padding:6px 7px}
+}
+@media(max-width:345px){
+  .radio-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .animation-panel{height:326px}
+  .demo-controls{justify-content:center}
+  .control-buttons{margin:0}
+}
+</style>
+</head>
+<body>
+<main class="site-demo" aria-label="Clarity feature demo">
+  <div class="radio-inputs" role="tablist" aria-label="Select AI workflow">
+    <label class="radio"><input type="radio" name="workflow" value="automate" checked role="tab" aria-label="Automation"><span class="name">AUTOMATION</span></label>
+    <label class="radio"><input type="radio" name="workflow" value="code" role="tab" aria-label="Code"><span class="name">CODE</span></label>
+    <label class="radio"><input type="radio" name="workflow" value="research" role="tab" aria-label="Research"><span class="name">RESEARCH</span></label>
+    <label class="radio"><input type="radio" name="workflow" value="web" role="tab" aria-label="Web"><span class="name">WEB</span></label>
+    <label class="radio"><input type="radio" name="workflow" value="chats" role="tab" aria-label="Chats"><span class="name">CHATS</span></label>
+    <label class="radio"><input type="radio" name="workflow" value="files" role="tab" aria-label="Files"><span class="name">FILES</span></label>
+  </div>
+  <div class="feature-card">
+    <div class="animation-panel" id="panel" data-phase="type">
+      <div class="panel-head"><span class="phase-name"><i class="blue-dot"></i><span id="phaseLabel">Typing request…</span></span><span class="scene-count" id="sceneCount">01 / 03</span></div>
+      <div class="composer-shell" id="composerShell">
+        <div class="chatbar">
+          <span class="composer-icon" aria-hidden="true">✦</span>
+          <input id="userQuery" aria-label="Edit or enter a query and press Enter" placeholder="Ask anything…" autocomplete="off" spellcheck="false">
+          <button type="button" class="clear" id="clearQuery" aria-label="Clear query">×</button>
+          <button type="button" class="submit" id="sendQuery" aria-label="Run query">↑</button>
+        </div>
+        <div class="composer-note" id="composerNote">Type your own request or watch a sample workflow</div>
+      </div>
+      <div class="status-area" aria-live="polite" aria-atomic="true">
+        <div class="working-box" id="workingBox"></div>
+        <div class="result-box" id="resultBox"></div>
+      </div>
+    </div>
+  </div>
+  <div class="demo-controls">
+    <span class="counter"><span id="exampleLabel">Example 1 of 3</span><span class="dots" id="sceneDots" aria-label="Choose example"></span></span>
+    <div class="control-buttons"><button type="button" id="prevExample" aria-label="Previous example">‹ Prev</button><button type="button" id="replayExample">↻ Replay</button><button type="button" id="nextExample" aria-label="Next example">Next ›</button></div>
+  </div>
+</main>
+<script>
+(()=>{
+  const $=(selector)=>document.querySelector(selector);
+  const panel=$('#panel'),input=$('#userQuery'),resultBox=$('#resultBox'),workingBox=$('#workingBox');
+  const phaseLabel=$('#phaseLabel'),sceneCount=$('#sceneCount'),exampleLabel=$('#exampleLabel'),sceneDots=$('#sceneDots');
+  const controls=[...document.querySelectorAll('input[name="workflow"]')];
+  const order=['automate','code','research','web','chats','files'];
+  // All case-study content is explicitly illustrative. No external systems are contacted.
+  const cases={
+    files:[
+      {query:'Compare our Q3 deck with the latest budget',work:['Opening strategy.pdf and forecast.xlsx','Aligning assumptions by quarter','Flagging inconsistent figures'],result:{title:'Two inconsistencies found',sub:'Strategy deck × financial forecast',badge:'2 flags',rows:[['PDF','Revenue target: $1.4m','Q3 strategy, slide 12',''],['XLS','Budget forecast: $1.1m','Forecast sheet, row 31','Conflict'],['↳','Next step','Confirm the updated forecast before review','Action']]}},
+      {query:'Summarize these customer interview notes',work:['Grouping notes by theme','Counting recurring feedback','Drafting a prioritized summary'],result:{title:'Customer insights grouped',sub:'18 interview notes · sample analysis',badge:'3 themes',rows:[['01','Onboarding friction','11 mentions of slow setup','High'],['02','Reporting requests','8 requests for one-click exports','Medium'],['03','Pricing confusion','6 mentions of plan differences','Review']]}},
+      {query:'Find deadlines across these contracts',work:['Reading contract terms','Extracting renewal windows','Building an action list'],result:{title:'Renewals and deadlines',sub:'6 contract PDFs · sample extraction',badge:'3 dates',rows:[['PDF','Vendor A — Nov 16','Notice due 30 days before renewal','Soon'],['PDF','Agency B — Dec 02','Auto-renewal unless cancelled','Review'],['PDF','Cloud C — Jan 08','Annual renewal window','Track']]}}
+    ],
+    web:[
+      {query:'Read this link and verify its biggest claims',work:['Opening pasted article','Tracing claims to original sources','Separating supported from disputed'],result:{title:'Web page fact-check',sub:'example.com/report · illustrative sources',badge:'3 checks',rows:[['✓','Product launch date','Confirmed in the official announcement','Verified'],['?','Market-share figure','Source is older than the article claims','Caution'],['↗','Original documentation','Linked to the underlying report','Source']]}},
+      {query:'Compare competitor pricing this month',work:['Opening three pricing pages','Normalizing annual vs monthly plans','Highlighting feature and price differences'],result:{title:'Pricing comparison',sub:'Sample pricing · not live quotes',badge:'3 plans',rows:[['A','$49 / month','Unlimited seats · basic analytics',''],['B','$59 / month','5 seats · advanced reporting',''],['C','$79 / month','Unlimited seats · API access','']] }},
+      {query:'Summarize this help-center article',work:['Parsing page headings','Extracting actionable instructions','Preparing short cited notes'],result:{title:'Article distilled',sub:'Sample help-center content',badge:'3 steps',rows:[['01','Check prerequisites','Account owner must enable access',''],['02','Open integrations','Select the target workspace',''],['03','Verify connection','Run the sample sync and check logs','']]}}
+    ],
+    chats:[
+      {query:'What did we decide about the product beta?',work:['Finding relevant discussions','Ordering messages by date','Resolving superseded decisions'],result:{title:'Latest decision recovered',sub:'Sample project conversations',badge:'3 decisions',rows:[['✓','Beta moved to Nov 18','Latest team conversation','Confirmed'],['✓','Enterprise-first rollout','Agreed during planning','Confirmed'],['!','Migration owner','No owner assigned yet','Open']]}},
+      {query:'Show the action items from last week',work:['Reviewing meeting threads','Identifying owners and due dates','Removing completed items'],result:{title:'Action items recovered',sub:'Example conversation summary',badge:'3 tasks',rows:[['01','Refresh landing-page copy','Aisha · due Tuesday','Active'],['02','Approve design assets','Noah · due Wednesday','Active'],['03','Validate tracking','Team · awaiting access','Blocked']]}},
+      {query:'Continue where we stopped yesterday',work:['Reconstructing recent context','Locating unfinished deliverables','Preparing the next concrete step'],result:{title:'Project context restored',sub:'Example previous work',badge:'Resume',rows:[['↳','Last completed','Home page structure finalized',''],['↳','Currently in progress','Account setup and onboarding',''],['➜','Next task','Connect the analytics events','Ready']]}}
+    ],
+    research:[
+      {query:'Research three CRM tools for our team',work:['Collecting vendor capabilities','Comparing costs and limitations','Ranking by team requirements'],result:{title:'Vendor comparison ready',sub:'Example evaluation, not purchasing advice',badge:'3 tools',rows:[['A','CRM A · $39 / user','Automations and integrations','Fit'],['B','CRM B · $25 / user','Simple pipeline, limited API','Budget'],['C','CRM C · $65 / user','Advanced reporting, steep setup','Power']]}},
+      {query:'Turn these sources into a research brief',work:['Extracting evidence from files','Cross-checking web references','Building a structured summary'],result:{title:'Research brief prepared',sub:'Illustrative cross-source synthesis',badge:'4 sources',rows:[['01','What is supported','Consistent across primary sources','Strong'],['02','What is uncertain','Forecasts disagree on adoption rate','Mixed'],['03','What to do next','Validate assumptions before launch','Action']]}},
+      {query:'Find risks before we launch this product',work:['Identifying operational dependencies','Evaluating severity and likelihood','Prioritizing mitigation actions'],result:{title:'Launch risk register',sub:'Example product assessment',badge:'3 risks',rows:[['!','Payment retries','High impact if failed charges recur','High'],['!','Onboarding abandonment','Medium impact on activation','Medium'],['✓','Support coverage','Mitigation owner has been assigned','Tracked']]}}
+    ],
+    code:[
+      {query:'Debug this project API TypeError',work:['Inspecting the reported stack trace','Comparing endpoint response and parser','Preparing a minimal patch'],result:{kind:'code',title:'Root cause located',sub:'Illustrative patch · not executed',badge:'Patch',code:'<span class="dim">// src/loadProject.ts</span>\n<span class="remove">- return response.data.id;</span>\n<span class="add">+ return response.project.id;</span>',foot:'Response shape changed: data → project'}},
+      {query:'Continue my existing React project',work:['Reading folder structure','Reviewing pending TODOs','Planning the next implementation'],result:{title:'Existing project mapped',sub:'Sample project context',badge:'3 items',rows:[['▣','src/pages/Dashboard.tsx','Table filtering left incomplete','TODO'],['▣','src/api/client.ts','Integration already configured','Ready'],['✓','Next commit','Add empty state and filter tests','Plan']]}},
+      {query:'Start a new project from this idea',work:['Choosing a minimal architecture','Defining app routes and data model','Scaffolding initial files'],result:{kind:'code',title:'New project structure',sub:'Illustrative starter · not written to disk',badge:'Scaffold',code:'<span class="add">+ src/app/page.tsx</span>\n<span class="add">+ src/components/Search.tsx</span>\n<span class="add">+ src/lib/api.ts</span>',foot:'Ready for implementation after connecting a workspace'}}
+    ],
+    automate:[
+      {query:'Set up Meta ads for a dental clinic',work:['Opening the campaign setup preview','Selecting leads objective and audience','Reviewing budget and tracking'],result:{kind:'browser',browser:'ads',title:'Meta ads draft prepared',sub:'Sample browser automation',badge:'Review',foot:'Campaign awaits human approval; no ads were published.'}},
+      {query:'Find 100 leads and prepare personalized emails',work:['Searching for matching companies','Checking available contact information','Drafting tailored outreach for approval'],result:{kind:'funnel',title:'Lead outreach workflow',sub:'Illustrative funnel · not actual results',badge:'100 leads',metrics:[['100','leads'],['82','drafts'],['4','meetings*'],['1','client*']],foot:'*Illustrative conversions. No emails sent and no real client closed.'}},
+      {query:'Investigate checkout errors in the browser',work:['Opening the checkout test page','Reproducing the payment failure','Capturing evidence and drafting a bug ticket'],result:{kind:'browser',browser:'qa',title:'Checkout issue reproduced',sub:'Sample browser QA automation',badge:'Bug found',foot:'Example report prepared; no live checkout was modified.'}}
+    ]
+  };
+  let mode='automate',index=0,pinned=false,token=0,typing=false,custom=false;
+  const wait=(ms)=>new Promise(resolve=>setTimeout(resolve,ms));
+  const escapeHtml=(s)=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function setPhase(phase,text){panel.dataset.phase=phase;phaseLabel.textContent=text}
+  function stop(){token++;typing=false}
+  function renderWorking(c){workingBox.innerHTML=`<div class="work-title"><i class="spin"></i><span>${escapeHtml(c.workTitle||'Working through the request…')}</span></div><div class="work-steps">${c.work.map(s=>`<div class="work-row"><i>✓</i>${escapeHtml(s)}</div>`).join('')}</div><div class="run-meter"><span></span></div>`}
+  function renderResult(r){
+    const rows=r.rows?`<div class="row-list">${r.rows.map(row=>`<div class="mini-row"><div class="row-icon">${escapeHtml(row[0])}</div><div class="row-copy"><strong>${escapeHtml(row[1])}</strong><span>${escapeHtml(row[2])}</span></div>${row[3]?`<span class="row-chip">${escapeHtml(row[3])}</span>`:''}</div>`).join('')}</div>`:'';
+    let body=rows;
+    if(r.kind==='code')body=`<div class="code-mini">${r.code.replaceAll('\\n','<br>')}</div>`;
+    if(r.kind==='funnel')body=`<div class="mini-stats">${r.metrics.map(m=>`<div class="mini-stat"><b>${escapeHtml(m[0])}</b><small>${escapeHtml(m[1])}</small></div>`).join('')}</div><div class="quote-row">Prospect identified → contact checked → email personalized → follow-up sequence → reply reviewed</div>`;
+    if(r.kind==='browser')body=browserMarkup(r.browser);
+    resultBox.innerHTML=`<div class="result-head"><span class="result-check">✓</span><span class="result-head-main"><strong>${escapeHtml(r.title)}</strong><small>${escapeHtml(r.sub||'')}</small></span><span class="demo-pill">${escapeHtml(r.badge||'SAMPLE')}</span></div><div class="result-content">${body}${r.foot?`<div class="result-bottom">ⓘ ${escapeHtml(r.foot)}</div>`:''}</div>`;
+  }
+  function browserMarkup(which){
+    if(which==='ads')return `<div class="browser-mini" id="miniBrowser"><div class="browser-bar"><i></i><i></i><i></i><span>adsmanager.facebook.com · DEMO</span></div><div class="browser-body"><div class="browser-title">New lead campaign <em>Draft</em></div><div class="browser-fields"><div class="browser-field" id="browserTargetA"><small>Objective</small><strong>Leads</strong></div><div class="browser-field" id="browserTargetB"><small>Daily budget</small><strong>$25 / day</strong></div></div><button type="button" class="browser-button" id="browserTargetC">Review setup →</button></div><div class="sim-pointer" id="simPointer"><svg viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 L2 22 L8.4 17 L12.5 26 L17 23.7 L13 15.2 L21 15.5 Z" fill="#17263c" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>`;
+    return `<div class="browser-mini" id="miniBrowser"><div class="browser-bar"><i></i><i></i><i></i><span>checkout-demo.example · TEST</span></div><div class="browser-body"><div class="browser-title">Checkout QA <em>Test session</em></div><div class="browser-fields"><div class="browser-field" id="browserTargetA"><small>Subtotal</small><strong>$89.00</strong></div><div class="browser-field" id="browserTargetB"><small>Payment state</small><strong>Token expired</strong></div></div><button type="button" class="browser-button" id="browserTargetC">Inspect failure →</button></div><div class="sim-pointer" id="simPointer"><svg viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 L2 22 L8.4 17 L12.5 26 L17 23.7 L13 15.2 L21 15.5 Z" fill="#17263c" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></div></div>`;
+  }
+  async function animateBrowser(id){
+    const root=$('#miniBrowser');if(!root)return;
+    const cursor=$('#simPointer');const targets=['browserTargetA','browserTargetB','browserTargetC'];
+    await wait(200);
+    for(const targetId of targets){
+      if(id!==token||!root.isConnected)return;
+      const target=document.getElementById(targetId);if(!target)return;
+      const box=target.getBoundingClientRect(),parent=root.getBoundingClientRect();
+      cursor.classList.add('visible');
+      cursor.style.transform=`translate(${Math.round(box.left-parent.left+box.width*.55)}px,${Math.round(box.top-parent.top+box.height*.48)}px)`;
+      await wait(690);if(id!==token)return;
+      target.classList.add('active');cursor.classList.add('click');
+      await wait(300);cursor.classList.remove('click');await wait(230);
+    }
+  }
+  function syncUI(){
+    controls.forEach(r=>{r.checked=r.value===mode;r.setAttribute('aria-selected',String(r.value===mode))});
+    sceneCount.textContent=`${String(index+1).padStart(2,'0')} / 03`;
+    exampleLabel.textContent=`Example ${index+1} of 3`;
+    sceneDots.innerHTML=cases[mode].map((_,j)=>`<button type="button" data-index="${j}" aria-label="View example ${j+1}" class="${j===index?'current':''}"></button>`).join('');
+  }
+  async function startScene(){
+    const id=++token,c=cases[mode][index];custom=false;syncUI();
+    input.value='';workingBox.innerHTML='';resultBox.innerHTML='';setPhase('type','Typing request…');
+    // Initial focused search bar; native input remains editable throughout.
+    typing=true;
+    const ms=Math.max(16,Math.min(36,1050/c.query.length));
+    for(let pos=0;pos<c.query.length;pos++){
+      if(id!==token)return;
+      input.value+=c.query[pos];
+      await wait(ms);
+    }
+    typing=false;if(id!==token)return;
+    $('#sendQuery').classList.add('pulse');await wait(400);$('#sendQuery').classList.remove('pulse');if(id!==token)return;
+    renderWorking(c);setPhase('work','Working on your request…');
+    await wait(2250);if(id!==token)return;
+    renderResult(c.result);setPhase('result','Result ready · sample');
+    if(c.result.kind==='browser')animateBrowser(id);
+    await wait(c.result.kind==='browser'?4100:3300);if(id!==token)return;
+    // Once visitors select a mode, cycle only that mode's 3 examples.
+    index=(index+1)%3;
+    if(index===0&&!pinned)mode=order[(order.indexOf(mode)+1)%order.length];
+    startScene();
+  }
+  function chooseMode(name){if(!cases[name])return;stop();pinned=true;mode=name;index=0;startScene()}
+  async function submitCustom(){
+    const text=input.value.trim();if(!text)return;
+    stop();pinned=true;custom=true;const id=token;
+    const c={workTitle:'Preparing your request…',work:['Reading the entered instruction','Selecting the relevant workflow','Preparing a preview response']};
+    renderWorking(c);setPhase('work','Processing entered request…');
+    await wait(1500);if(id!==token)return;
+    // No live actions are performed. Explicitly distinguish custom input from sample outputs.
+    renderResult({title:'Your request is ready',sub:'Custom query · local preview',badge:'PREVIEW',rows:[['›','Request received',text.length>64?text.slice(0,64)+'…':text,''],['↗','Workflow selected',mode.toUpperCase()+' · connect a real workspace to execute',''],['i','No live actions','This demo does not access accounts, send email or run ads','Safe']]});
+    setPhase('custom','Custom request · preview only');
+  }
+  controls.forEach(r=>r.addEventListener('change',()=>chooseMode(r.value)));
+  sceneDots.addEventListener('click',e=>{const btn=e.target.closest('button[data-index]');if(!btn)return;stop();pinned=true;index=Number(btn.dataset.index);startScene()});
+  $('#prevExample').addEventListener('click',()=>{stop();pinned=true;index=(index+2)%3;startScene()});
+  $('#nextExample').addEventListener('click',()=>{stop();pinned=true;index=(index+1)%3;startScene()});
+  $('#replayExample').addEventListener('click',()=>{stop();pinned=true;startScene()});
+  input.addEventListener('input',()=>{stop();pinned=true;custom=true;workingBox.innerHTML='';resultBox.innerHTML='';setPhase('type','Your query · press Enter to run');panel.dataset.phase='type'});
+  input.addEventListener('focus',()=>{if(!typing&&!custom){stop();pinned=true;custom=true;panel.dataset.phase='type';phaseLabel.textContent='Edit the query, then press Enter'}});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitCustom()}});
+  $('#sendQuery').addEventListener('click',submitCustom);
+  $('#clearQuery').addEventListener('click',()=>{stop();custom=true;pinned=true;input.value='';workingBox.innerHTML='';resultBox.innerHTML='';setPhase('type','Type a request to begin');input.focus()});
+  // Start automatic demo when page opens.
+  startScene();
+})();
+</script>
+
+<script>
+(() => {
+  const announceSize = () => {
+    const el = document.querySelector('.site-demo');
+    if (!el) return;
+    window.parent.postMessage({
+      source: 'xroga-clarity-workflow',
+      height: Math.ceil(el.getBoundingClientRect().height) + 4
+    }, '*');
+  };
+  const el = document.querySelector('.site-demo');
+  if ('ResizeObserver' in window && el) new ResizeObserver(announceSize).observe(el);
+  window.addEventListener('load', announceSize);
+  requestAnimationFrame(announceSize);
+})();
+</script>
+</body>
+</html>
