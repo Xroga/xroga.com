@@ -122,6 +122,62 @@ body{display:block;place-items:initial;padding:0!important;margin:0!important;ba
   .control-buttons{margin:0}
 }
 </style>
+
+<style id="xroga-compact-chat-animation-v2">
+/* Six mode tabs remain OUTSIDE the animation panel. The bottom example controller is gone. */
+html,body {overflow-x:hidden!important}
+.site-demo {width:100%!important;max-width:none!important}
+.radio-inputs {margin-bottom:9px!important;padding:4px!important;gap:2px!important;box-shadow:none!important}
+.radio .name {min-height:32px!important;font-size:clamp(7px,1.02vw,9px)!important;letter-spacing:.012em!important}
+.feature-card {padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.animation-panel {height:246px!important;max-height:246px!important;border-radius:13px!important}
+.panel-head {display:none!important}
+.composer-shell {z-index:6!important;top:50%!important;left:11px!important;right:11px!important;transition:opacity .26s ease,transform .32s ease!important}
+.animation-panel[data-phase="type"] .composer-shell {
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;
+  transform:translateY(-50%) scale(1)!important;
+}
+.animation-panel[data-phase="work"] .composer-shell,
+.animation-panel[data-phase="result"] .composer-shell,
+.animation-panel[data-phase="custom"] .composer-shell {
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+  transform:translateY(-85%) scale(.96)!important;
+}
+.composer-note {display:none!important}
+.chatbar {height:54px;max-width:100%;box-shadow:0 14px 35px #3478f530!important}
+.status-area {top:8px!important;left:9px!important;right:9px!important;bottom:8px!important}
+.animation-panel[data-phase="type"] .status-area {opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.animation-panel[data-phase="work"] .status-area,
+.animation-panel[data-phase="result"] .status-area,
+.animation-panel[data-phase="custom"] .status-area {opacity:1!important;visibility:visible!important}
+.working-box {padding:18px 17px!important}
+.result-head {padding:8px 10px 7px!important}
+.result-content {padding:8px 10px!important}
+.row-list {gap:5px!important}
+.browser-mini {height:119px!important}
+.radio input:focus-visible + .name {outline:2px solid #3478f6!important;outline-offset:1px}
+@media(max-width:450px){
+ .animation-panel{height:258px!important;max-height:258px!important}
+ .radio-inputs{gap:2px!important}
+ .radio .name{font-size:clamp(7px,2.15vw,9px)!important;padding-inline:1px}
+ .composer-shell{left:8px!important;right:8px!important}
+ .status-area{left:7px!important;right:7px!important}
+ #userQuery{font-size:11px!important}
+ .result-head-main strong{font-size:10.5px!important}
+ .mini-row{padding:5px!important}
+ .row-copy strong{font-size:9.5px!important}
+ .row-copy span{font-size:8.5px!important}
+}
+@media(max-width:345px){
+ .radio-inputs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .radio .name{font-size:9px!important}
+ .animation-panel{height:266px!important;max-height:266px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .composer-shell,.working-box,.result-box,.status-area{transition:none!important}
+ .spin,.run-meter span,.work-row,.sim-pointer,.blue-dot {animation:none!important}
+}
+</style>
 </head>
 <body>
 <main class="site-demo" aria-label="Clarity feature demo">
@@ -135,7 +191,7 @@ body{display:block;place-items:initial;padding:0!important;margin:0!important;ba
   </div>
   <div class="feature-card">
     <div class="animation-panel" id="panel" data-phase="type">
-      <div class="panel-head"><span class="phase-name"><i class="blue-dot"></i><span id="phaseLabel">Typing request…</span></span><span class="scene-count" id="sceneCount">01 / 03</span></div>
+      <div class="panel-head"><span class="phase-name"><i class="blue-dot"></i><span id="phaseLabel">Typing request…</span></span></div>
       <div class="composer-shell" id="composerShell">
         <div class="chatbar">
           <span class="composer-icon" aria-hidden="true">✦</span>
@@ -151,16 +207,12 @@ body{display:block;place-items:initial;padding:0!important;margin:0!important;ba
       </div>
     </div>
   </div>
-  <div class="demo-controls">
-    <span class="counter"><span id="exampleLabel">Example 1 of 3</span><span class="dots" id="sceneDots" aria-label="Choose example"></span></span>
-    <div class="control-buttons"><button type="button" id="prevExample" aria-label="Previous example">‹ Prev</button><button type="button" id="replayExample">↻ Replay</button><button type="button" id="nextExample" aria-label="Next example">Next ›</button></div>
-  </div>
 </main>
 <script>
 (()=>{
   const $=(selector)=>document.querySelector(selector);
   const panel=$('#panel'),input=$('#userQuery'),resultBox=$('#resultBox'),workingBox=$('#workingBox');
-  const phaseLabel=$('#phaseLabel'),sceneCount=$('#sceneCount'),exampleLabel=$('#exampleLabel'),sceneDots=$('#sceneDots');
+  const phaseLabel=$('#phaseLabel');
   const controls=[...document.querySelectorAll('input[name="workflow"]')];
   const order=['automate','code','research','web','chats','files'];
   // All case-study content is explicitly illustrative. No external systems are contacted.
@@ -231,9 +283,6 @@ body{display:block;place-items:initial;padding:0!important;margin:0!important;ba
   }
   function syncUI(){
     controls.forEach(r=>{r.checked=r.value===mode;r.setAttribute('aria-selected',String(r.value===mode))});
-    sceneCount.textContent=`${String(index+1).padStart(2,'0')} / 03`;
-    exampleLabel.textContent=`Example ${index+1} of 3`;
-    sceneDots.innerHTML=cases[mode].map((_,j)=>`<button type="button" data-index="${j}" aria-label="View example ${j+1}" class="${j===index?'current':''}"></button>`).join('');
   }
   async function startScene(){
     const id=++token,c=cases[mode][index];custom=false;syncUI();
@@ -268,12 +317,16 @@ body{display:block;place-items:initial;padding:0!important;margin:0!important;ba
     // No live actions are performed. Explicitly distinguish custom input from sample outputs.
     renderResult({title:'Your request is ready',sub:'Custom query · local preview',badge:'PREVIEW',rows:[['›','Request received',text.length>64?text.slice(0,64)+'…':text,''],['↗','Workflow selected',mode.toUpperCase()+' · connect a real workspace to execute',''],['i','No live actions','This demo does not access accounts, send email or run ads','Safe']]});
     setPhase('custom','Custom request · preview only');
+    await wait(3400);
+    if(id!==token)return;
+    custom=false;
+    input.value='';
+    resultBox.innerHTML='';
+    workingBox.innerHTML='';
+    setPhase('type','Ready for another request');
+
   }
   controls.forEach(r=>r.addEventListener('change',()=>chooseMode(r.value)));
-  sceneDots.addEventListener('click',e=>{const btn=e.target.closest('button[data-index]');if(!btn)return;stop();pinned=true;index=Number(btn.dataset.index);startScene()});
-  $('#prevExample').addEventListener('click',()=>{stop();pinned=true;index=(index+2)%3;startScene()});
-  $('#nextExample').addEventListener('click',()=>{stop();pinned=true;index=(index+1)%3;startScene()});
-  $('#replayExample').addEventListener('click',()=>{stop();pinned=true;startScene()});
   input.addEventListener('input',()=>{stop();pinned=true;custom=true;workingBox.innerHTML='';resultBox.innerHTML='';setPhase('type','Your query · press Enter to run');panel.dataset.phase='type'});
   input.addEventListener('focus',()=>{if(!typing&&!custom){stop();pinned=true;custom=true;panel.dataset.phase='type';phaseLabel.textContent='Edit the query, then press Enter'}});
   input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitCustom()}});
