@@ -268,13 +268,10 @@ export function XrogaVoiceControl({
       publishLiveDraft(finalTextRef.current, interim);
     };
 
-    recognition.onerror = (event) => {
-      // Keep recording even if browser recognition has a transient failure.
-      // The final MediaRecorder audio is still transcribed by the authenticated
-      // backend when the user presses Stop.
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setMode('error');
-      }
+    recognition.onerror = (_event) => {
+      // Browser recognition is only the live-caption path. Never tear down an
+      // active recording because that service hiccups: MediaRecorder keeps the
+      // audio and Stop still performs the authoritative backend transcription.
     };
 
     recognition.onend = () => {
