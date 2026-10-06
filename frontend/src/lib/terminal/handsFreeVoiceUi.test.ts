@@ -33,6 +33,8 @@ test('wake word accepts Xroga recognition variants and activates capture', () =>
   assert.match(voice, /activateCapture\(wakeCommand\)/);
   assert.match(voice, /recognition\.continuous = true/);
   assert.match(voice, /recognition\.interimResults = true/);
+  assert.match(voice, /recognition\.maxAlternatives = 5/);
+  assert.match(voice, /wakeCandidate\(result\)/);
 });
 
 test('real microphone amplitude drives the full inline chatbar waveform', () => {
@@ -48,7 +50,8 @@ test('real microphone amplitude drives the full inline chatbar waveform', () => 
   assert.match(parts, /xv-chatbar-compose-field/);
   assert.match(css, /:has\(\.xv-voice-capture-bar\)/);
   assert.match(css, /\.xv-voice-line-wave/);
-  assert.match(css, /\.xv-voice-icon-only\s*\{[\s\S]*?border:\s*0;/);
+  assert.match(css, /\.xv-voice-icon-only\s*\{[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;/);
+  assert.match(css, /\.xv-voice-icon-only\.is-listening\s*\{[\s\S]*?background:\s*transparent;/);
 });
 
 test('manual voice controls expose pause stop done cancel and send without auto-send', () => {
@@ -126,7 +129,16 @@ test('voice final segments de-duplicate wake-seed text and understand polite com
 test('server transcription prefers the current recommended model and falls back safely', () => {
   const backend = source('../../../../backend/src/routes/voice.ts');
 
-  assert.match(backend, /configuredModel \|\| 'gpt-transcribe'/);
+  assert.match(backend, /configuredModel \|\| 'gpt-4o-transcribe'/);
   assert.match(backend, /'gpt-4o-mini-transcribe'/);
   assert.match(backend, /Preserve the speaker\\'s original language, code-switching/);
+});
+
+
+test('server fallback can still honor a spoken send or cancel command', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /if \(serverControl\.action === 'send'\) shouldSend = true/);
+  assert.match(voice, /if \(serverControl\.action === 'cancel'\)/);
+  assert.match(voice, /if \(shouldSend && fullText\)/);
 });
