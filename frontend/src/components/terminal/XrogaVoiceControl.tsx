@@ -103,7 +103,8 @@ export function XrogaVoiceControl({
   composerText: string;
   onVoiceDraft: (transcript: string) => void;
 }) {
-  const [mode, setMode] = useState<VoiceMode>('idle');
+  const [mode, setModeState] = useState<VoiceMode>('idle');
+  const modeRef = useRef<VoiceMode>('idle');
   const [level, setLevel] = useState(0);
   const [voiceStage, setVoiceStage] = useState<HTMLElement | null>(null);
   const [previewText, setPreviewText] = useState('');
@@ -124,6 +125,11 @@ export function XrogaVoiceControl({
   useEffect(() => {
     composerTextRef.current = composerText;
   }, [composerText]);
+
+  const setMode = useCallback((next: VoiceMode) => {
+    modeRef.current = next;
+    setModeState(next);
+  }, []);
 
   useEffect(() => {
     setVoiceStage(document.querySelector<HTMLElement>('[data-xroga-voice-stage]'));
@@ -273,9 +279,9 @@ export function XrogaVoiceControl({
 
     recognition.onend = () => {
       recognitionRef.current = null;
-      if (!endingRef.current && mode === 'listening') {
+      if (!endingRef.current && modeRef.current === 'listening') {
         window.setTimeout(() => {
-          if (!endingRef.current) startRecognition();
+          if (!endingRef.current && modeRef.current === 'listening') startRecognition();
         }, 120);
       }
     };
@@ -286,7 +292,7 @@ export function XrogaVoiceControl({
     } catch {
       recognitionRef.current = null;
     }
-  }, [mode, publishLiveDraft]);
+  }, [publishLiveDraft]);
 
   const ensureMicrophone = useCallback(async () => {
     if (streamRef.current?.active) return streamRef.current;
