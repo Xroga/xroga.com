@@ -1,46 +1,22 @@
 'use client';
 
-import {
-  ArrowUp,
-  Check,
-  Pause,
-  Play,
-  Square,
-  X,
-} from 'lucide-react';
+import { Pause, Play, Square, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { transcribeVoiceAudio } from '@/lib/voiceApi';
 import { AudioLinesIcon } from './AudioLinesIcon';
-import { useVoicePrefsStore } from '@/store/useVoicePrefsStore';
 
-type VoiceMode =
-  | 'off'
-  | 'armed'
-  | 'listening'
-  | 'paused'
-  | 'transcribing'
-  | 'error';
-
-type VoiceControlAction =
-  | 'pause'
-  | 'resume'
-  | 'stop'
-  | 'done'
-  | 'send'
-  | 'cancel';
+type VoiceMode = 'idle' | 'listening' | 'paused' | 'finalizing' | 'error';
 
 interface BrowserSpeechRecognitionAlternative {
   transcript: string;
-  confidence?: number;
 }
 
 interface BrowserSpeechRecognitionResultLike {
   isFinal: boolean;
-  length?: number;
-  [index: number]: BrowserSpeechRecognitionAlternative;
+  0: BrowserSpeechRecognitionAlternative;
 }
 
 interface BrowserSpeechRecognitionEvent {
@@ -56,7 +32,6 @@ interface BrowserSpeechRecognition {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
-  maxAlternatives?: number;
   onstart: (() => void) | null;
   onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
   onerror: ((event: BrowserSpeechRecognitionErrorEvent) => void) | null;
@@ -67,202 +42,6 @@ interface BrowserSpeechRecognition {
 }
 
 type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
-type RecognitionPurpose = 'wake' | 'capture';
-
-/*
- * Xroga is a coined brand name, so speech engines routinely return near-phonetic
- * spellings. These aliases are recognition-only. The product is always rendered as
- * "Xroga".
- */
-const WAKE_ALIAS_SOURCE =
-  '(?:x[\\s-]*roga|ex[\\s-]*roga|acroga|a[\\s-]*croga|zroga|xroga|eks[\\s-]*roga|' +
-  'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|ਐਕਸ\\s*ਰੋਗਾ|إكس\\s*روجا|اكس\\s*روجا|' +
-  'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
-  'এক্স\\s*রোগা|艾克斯\\s*罗加|艾克斯\\s*羅加|엑스\\s*로가|エックス\\s*ロガ)';
-// Do not use lookbehind here: wake detection must work in every browser that
-// exposes SpeechRecognition. The brand aliases are specific enough that a direct
-// Unicode-insensitive search is both safer and more compatible.
-const WAKE_WORD = new RegExp(WAKE_ALIAS_SOURCE, 'iu');
-
-const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
-  send: [
-    'send',
-    'send it',
-    'send now',
-    'send it now',
-    'submit',
-    'submit it',
-    'enter',
-    'enter it',
-    'enter now',
-    'go',
-    'go ahead',
-    'start',
-    'start it',
-    'start now',
-    'now start',
-    'run it',
-    'bhej do',
-    'بھیج دو',
-    'بھج دو',
-    'ਭੇਜ ਦਿਓ',
-    'ارسال',
-    'ارسل',
-    'أرسل',
-    'भेज दो',
-    'भेजें',
-    'envia',
-    'envíalo',
-    'enviar',
-    'manda',
-    'envoyer',
-    'senden',
-    'invia',
-    'gönder',
-    'kirim',
-    ' পাঠাও',
-    '发送',
-    '送信',
-    '보내',
-  ],
-  stop: [
-    'stop',
-    'stop now',
-    'stop recording',
-    'stop listening',
-    'بس',
-    'رک جاؤ',
-    'رکیں',
-    'ਰੁਕੋ',
-    'रुको',
-    'रुक जाओ',
-    'para',
-    'parar',
-    'detener',
-    'pare',
-    'arrête',
-    'stopp',
-    'stoppen',
-    'dur',
-    'berhenti',
-    'থামো',
-    '停止',
-    'やめて',
-    '중지',
-  ],
-  done: [
-    'done',
-    'done now',
-    'finish',
-    'finish now',
-    'finished',
-    'i am done',
-    'im done',
-    'ختم',
-    'ہو گیا',
-    'ਹੋ ਗਿਆ',
-    'हो गया',
-    'समाप्त',
-    'انتهيت',
-    'تم',
-    'listo',
-    'terminé',
-    'pronto',
-    'fini',
-    'fertig',
-    'finito',
-    'tamam',
-    'selesai',
-    'শেষ',
-    '完成',
-    '完了',
-    '완료',
-  ],
-  pause: [
-    'pause',
-    'pause now',
-    'hold',
-    'hold on',
-    'وقف',
-    'توقف مؤقت',
-    'رکو',
-    'ਠਹਿਰੋ',
-    'रुकना',
-    'ठहरो',
-    'pausa',
-    'pausar',
-    'pausez',
-    'pausieren',
-    'duraklat',
-    'jeda',
-    'বিরতি',
-    '暂停',
-    '一時停止',
-    '일시정지',
-  ],
-  resume: [
-    'resume',
-    'resume now',
-    'continue',
-    'carry on',
-    'keep going',
-    'جاری رکھو',
-    'جاری رکھیں',
-    'ਜਾਰੀ ਰੱਖੋ',
-    'जारी रखो',
-    'تابع',
-    'استمر',
-    'continuar',
-    'continua',
-    'continuez',
-    'fortsetzen',
-    'devam',
-    'lanjut',
-    'চালিয়ে যাও',
-    '继续',
-    '再開',
-    '계속',
-  ],
-  cancel: [
-    'cancel',
-    'discard',
-    'never mind',
-    'forget it',
-    'منسوخ',
-    'چھوڑ دو',
-    'ਰੱਦ ਕਰੋ',
-    'रद्द',
-    'छोड़ दो',
-    'الغاء',
-    'إلغاء',
-    'cancelar',
-    'cancela',
-    'annuler',
-    'abbrechen',
-    'annulla',
-    'iptal',
-    'batal',
-    'বাতিল',
-    '取消',
-    'キャンセル',
-    '취소',
-  ],
-};
-
-const TASK_STOP_PHRASES = new Set([
-  'stop task',
-  'stop working',
-  'cancel task',
-  'cancel build',
-  'stop build',
-  'halt task',
-]);
-
-const CONTROL_MATCH_ORDER = (
-  Object.entries(CONTROL_PHRASES) as Array<[VoiceControlAction, string[]]>
-).flatMap(([action, phrases]) =>
-  phrases.map((phrase) => ({ action, phrase: phrase.trim().toLocaleLowerCase() })),
-).sort((a, b) => b.phrase.length - a.phrase.length);
 
 function recognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
   if (typeof window === 'undefined') return null;
@@ -273,86 +52,8 @@ function recognitionConstructor(): BrowserSpeechRecognitionConstructor | null {
   return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
-function recognitionLanguage(language: string): string {
-  if (language && language !== 'auto') return language;
-  if (typeof navigator === 'undefined') return 'en-US';
-  return navigator.language || 'en-US';
-}
-
-function recognitionCandidates(result: BrowserSpeechRecognitionResultLike): string[] {
-  const count = Math.max(1, Math.min(result.length ?? 1, 5));
-  const candidates: string[] = [];
-  for (let index = 0; index < count; index += 1) {
-    const transcript = cleanSpeech(result[index]?.transcript ?? '');
-    if (transcript && !candidates.includes(transcript)) candidates.push(transcript);
-  }
-  return candidates;
-}
-
-function wakeCandidate(result: BrowserSpeechRecognitionResultLike): string | null {
-  for (const candidate of recognitionCandidates(result)) {
-    if (extractWakeCommand(candidate) !== null) return candidate;
-  }
-  return null;
-}
-
 function cleanSpeech(text: string): string {
   return text.replace(/\s+/g, ' ').trim();
-}
-
-function extractWakeCommand(text: string): string | null {
-  const clean = cleanSpeech(text);
-  const match = WAKE_WORD.exec(clean);
-  if (!match) return null;
-  return clean
-    .slice(match.index + match[0].length)
-    .replace(/^[\s,.:;!?،۔-]+/u, '')
-    .trim();
-}
-
-function stripWakeWord(text: string): string {
-  const command = extractWakeCommand(text);
-  return command === null ? cleanSpeech(text) : command;
-}
-
-function trimControlPunctuation(text: string): string {
-  return text.replace(/[\s,.:;!?،۔…-]+$/gu, '').trim();
-}
-
-function isPoliteControlPrefix(text: string): boolean {
-  const normalized = cleanSpeech(text).toLocaleLowerCase();
-  if (!normalized) return true;
-  return /^(?:please|okay|ok|hey|xroga|thanks|thank you|now|just|kindly|براہ کرم|اچھا|ٹھیک ہے|اب|कृपया|ठीक है|अब|من فضلك|حسنًا|الآن|por favor|vale|ahora|s'il vous plaît|bitte|jetzt|per favore|ora|lütfen|şimdi|tolong|sekarang)$/iu.test(
-    normalized,
-  );
-}
-
-function controlAtEnd(text: string): {
-  action: VoiceControlAction;
-  content: string;
-} | null {
-  const clean = trimControlPunctuation(cleanSpeech(text));
-  const lower = clean.toLocaleLowerCase();
-
-  for (const candidate of CONTROL_MATCH_ORDER) {
-    if (lower === candidate.phrase) {
-      return { action: candidate.action, content: '' };
-    }
-
-    if (!lower.endsWith(candidate.phrase)) continue;
-    const boundaryIndex = lower.length - candidate.phrase.length - 1;
-    if (boundaryIndex >= 0 && /[\p{L}\p{N}]/u.test(lower[boundaryIndex] ?? '')) continue;
-
-    const prefix = trimControlPunctuation(
-      clean.slice(0, clean.length - candidate.phrase.length),
-    );
-    return {
-      action: candidate.action,
-      content: isPoliteControlPrefix(prefix) ? '' : prefix,
-    };
-  }
-
-  return null;
 }
 
 function mergeText(base: string, voice: string): string {
@@ -360,19 +61,6 @@ function mergeText(base: string, voice: string): string {
   const right = cleanSpeech(voice);
   if (!left) return right;
   if (!right) return left;
-  return `${left} ${right}`;
-}
-
-function mergeWakeSeed(seed: string, transcript: string): string {
-  const left = cleanSpeech(seed);
-  const right = cleanSpeech(transcript);
-  if (!left) return right;
-  if (!right) return left;
-
-  const a = left.toLocaleLowerCase();
-  const b = right.toLocaleLowerCase();
-  if (b.includes(a)) return right;
-  if (a.includes(b)) return left;
   return `${left} ${right}`;
 }
 
@@ -390,96 +78,54 @@ function recorderMimeType(): string | undefined {
 }
 
 function VoiceWave({ level, paused }: { level: number; paused: boolean }) {
-  const bars = 52;
+  const bars = 54;
   return (
-    <span className={cn('xv-voice-line-wave', paused && 'is-paused')} aria-hidden="true">
+    <span className={cn('xv-simple-voice-wave', paused && 'is-paused')} aria-hidden="true">
       {Array.from({ length: bars }, (_, index) => {
-        const phase = (index * 17) % 31;
-        const centerWeight = 1 - Math.abs(index - (bars - 1) / 2) / ((bars - 1) / 2);
-        const live = paused ? 0 : Math.max(0.03, level);
+        const center = (bars - 1) / 2;
+        const centerWeight = 1 - Math.abs(index - center) / Math.max(center, 1);
+        const phase = ((index * 19) % 37) / 100;
+        const live = paused ? 0 : Math.max(0.025, level);
         const scale = Math.max(
           0.08,
-          Math.min(1, 0.12 + live * (0.7 + centerWeight * 0.72) + phase / 150),
+          Math.min(1, 0.12 + live * (0.72 + centerWeight * 0.68) + phase),
         );
-        return (
-          <i
-            key={index}
-            style={{
-              transform: `scaleY(${scale})`,
-              animationDelay: `${-index * 24}ms`,
-            }}
-          />
-        );
+        return <i key={index} style={{ transform: `scaleY(${scale})` }} />;
       })}
     </span>
   );
 }
 
 export function XrogaVoiceControl({
-  loading,
   composerText,
   onVoiceDraft,
-  onVoiceSend,
-  onStopRun,
 }: {
-  loading: boolean;
   composerText: string;
   onVoiceDraft: (transcript: string) => void;
-  onVoiceSend: (transcript: string) => void | Promise<void>;
-  onStopRun?: () => void;
 }) {
-  const {
-    language,
-    handsFreeEnabled,
-    setHandsFreeEnabled,
-    setOnboardingComplete,
-  } = useVoicePrefsStore();
-
-  const [mounted, setMounted] = useState(false);
-  const [mode, setModeState] = useState<VoiceMode>('off');
+  const [mode, setMode] = useState<VoiceMode>('idle');
   const [level, setLevel] = useState(0);
   const [voiceStage, setVoiceStage] = useState<HTMLElement | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [previewText, setPreviewText] = useState('');
 
-  const modeRef = useRef<VoiceMode>('off');
-  const enabledRef = useRef(handsFreeEnabled);
+  const composerTextRef = useRef(composerText);
+  const baselineRef = useRef('');
+  const finalTextRef = useRef('');
+  const interimTextRef = useRef('');
   const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
-  const recognitionPurposeRef = useRef<RecognitionPurpose>('wake');
-  const recognitionGenerationRef = useRef(0);
-  const restartTimerRef = useRef<number | null>(null);
-  const restartRecognitionRef = useRef<(purpose?: RecognitionPurpose) => void>(() => undefined);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recorderChunksRef = useRef<Blob[]>([]);
   const recorderResolveRef = useRef<((audio: Blob | null) => void) | null>(null);
-  const captureActiveRef = useRef(false);
-  const finalizingRef = useRef(false);
-  const baselineRef = useRef('');
-  const wakeSeedRef = useRef('');
-  const browserTextRef = useRef('');
-  // Browser recognizers often keep the newest words as interim text for a second
-  // or two. Keep that text in state so Stop/Done can never erase what the user
-  // visibly dictated before a final SpeechRecognition segment arrives.
-  const interimTextRef = useRef('');
-  const composerTextRef = useRef(composerText);
-
-  const setMode = useCallback((next: VoiceMode) => {
-    modeRef.current = next;
-    setModeState(next);
-  }, []);
-
-  useEffect(() => {
-    enabledRef.current = handsFreeEnabled;
-  }, [handsFreeEnabled]);
+  const endingRef = useRef(false);
 
   useEffect(() => {
     composerTextRef.current = composerText;
   }, [composerText]);
 
   useEffect(() => {
-    setMounted(true);
     setVoiceStage(document.querySelector<HTMLElement>('[data-xroga-voice-stage]'));
   }, []);
 
@@ -501,7 +147,7 @@ export function XrogaVoiceControl({
     const context = new AudioContextCtor();
     const analyser = context.createAnalyser();
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.68;
+    analyser.smoothingTimeConstant = 0.7;
     context.createMediaStreamSource(stream).connect(analyser);
     audioContextRef.current = context;
 
@@ -524,53 +170,14 @@ export function XrogaVoiceControl({
     audioContextRef.current = null;
   }, [stopMeter]);
 
-  const ensureMicrophone = useCallback(async () => {
-    if (streamRef.current?.active) return true;
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setMode('error');
-      setErrorMessage('Microphone is unavailable in this browser.');
-      return false;
-    }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          channelCount: 1,
-        },
-      });
-      streamRef.current = stream;
-      startMeter(stream);
-      setErrorMessage('');
-      return true;
-    } catch (error) {
-      const blocked =
-        error instanceof DOMException &&
-        (error.name === 'NotAllowedError' || error.name === 'SecurityError');
-      setMode('error');
-      setErrorMessage(
-        blocked
-          ? 'Allow microphone access to use Xroga voice.'
-          : 'Xroga could not open the microphone.',
-      );
-      return false;
-    }
-  }, [setMode, startMeter]);
-
-  const stopRecognition = useCallback(() => {
-    recognitionGenerationRef.current += 1;
-    if (restartTimerRef.current !== null) {
-      window.clearTimeout(restartTimerRef.current);
-      restartTimerRef.current = null;
-    }
-    const current = recognitionRef.current;
+  const stopRecognition = useCallback((abort = true) => {
+    const recognition = recognitionRef.current;
     recognitionRef.current = null;
     try {
-      current?.abort();
+      if (abort) recognition?.abort();
+      else recognition?.stop();
     } catch {
-      // Browser may already have closed it.
+      // The browser may already have closed this recognition session.
     }
   }, []);
 
@@ -618,612 +225,246 @@ export function XrogaVoiceControl({
     }
   }, []);
 
-  const emitVoiceText = useCallback(
-    (voiceText: string) => {
-      const fullText = mergeText(baselineRef.current, voiceText);
-      // Keep the imperative ref synchronized immediately. Waiting for React to
-      // round-trip the prop created repeated-session races where a second recording
-      // could start from stale composer text.
+  const publishLiveDraft = useCallback(
+    (finalText: string, interimText = '') => {
+      const voice = cleanSpeech([finalText, interimText].filter(Boolean).join(' '));
+      const fullText = mergeText(baselineRef.current, voice);
       composerTextRef.current = fullText;
+      setPreviewText(voice);
       onVoiceDraft(fullText);
     },
     [onVoiceDraft],
   );
 
-  const appendBrowserText = useCallback(
-    (segment: string) => {
-      const clean = stripWakeWord(segment);
-      if (!clean) return;
-      browserTextRef.current = mergeWakeSeed(browserTextRef.current, clean);
-      emitVoiceText(browserTextRef.current);
-    },
-    [emitVoiceText],
-  );
+  const startRecognition = useCallback(() => {
+    const Recognition = recognitionConstructor();
+    if (!Recognition) return;
 
-  const activateCapture = useCallback(
-    (seed = '') => {
-      if (captureActiveRef.current || finalizingRef.current) return;
-      baselineRef.current = composerTextRef.current.trim();
-      wakeSeedRef.current = cleanSpeech(seed);
-      browserTextRef.current = cleanSpeech(seed);
-      interimTextRef.current = '';
-      captureActiveRef.current = true;
-      setMode('listening');
-      setErrorMessage('');
-      emitVoiceText(browserTextRef.current);
+    const recognition = new Recognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
 
-      if (streamRef.current) {
-        startRecorder(streamRef.current);
+    recognition.onresult = (event) => {
+      let interim = '';
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        const result = event.results[index];
+        const transcript = cleanSpeech(result[0]?.transcript ?? '');
+        if (!transcript) continue;
+        if (result.isFinal) {
+          finalTextRef.current = mergeText(finalTextRef.current, transcript);
+        } else {
+          interim = mergeText(interim, transcript);
+        }
       }
 
-      // Chrome/Safari can reuse result indices after a recognizer survives across
-      // multiple dictation turns. Start a brand-new capture recognizer every time.
-      window.setTimeout(() => {
-        if (captureActiveRef.current && !finalizingRef.current) {
-          restartRecognitionRef.current('capture');
-        }
-      }, 70);
-    },
-    [emitVoiceText, setMode, startRecorder],
-  );
+      interimTextRef.current = interim;
+      publishLiveDraft(finalTextRef.current, interim);
+    };
 
-  const pauseCapture = useCallback(() => {
-    if (!captureActiveRef.current || finalizingRef.current) return;
+    recognition.onerror = (event) => {
+      // Keep recording even if browser recognition has a transient failure.
+      // The final MediaRecorder audio is still transcribed by the authenticated
+      // backend when the user presses Stop.
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        setMode('error');
+      }
+    };
+
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      if (!endingRef.current && mode === 'listening') {
+        window.setTimeout(() => {
+          if (!endingRef.current) startRecognition();
+        }, 120);
+      }
+    };
+
+    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+    }
+  }, [mode, publishLiveDraft]);
+
+  const ensureMicrophone = useCallback(async () => {
+    if (streamRef.current?.active) return streamRef.current;
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMode('error');
+      return null;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          channelCount: 1,
+        },
+      });
+      streamRef.current = stream;
+      startMeter(stream);
+      return stream;
+    } catch {
+      setMode('error');
+      return null;
+    }
+  }, [startMeter]);
+
+  const startVoice = useCallback(async () => {
+    if (mode === 'listening' || mode === 'paused' || mode === 'finalizing') return;
+
+    const stream = await ensureMicrophone();
+    if (!stream) return;
+
+    baselineRef.current = composerTextRef.current.trim();
+    finalTextRef.current = '';
+    interimTextRef.current = '';
+    endingRef.current = false;
+    setPreviewText('');
+    setMode('listening');
+
+    startRecorder(stream);
+    startRecognition();
+  }, [ensureMicrophone, mode, startRecognition, startRecorder]);
+
+  const pauseVoice = useCallback(() => {
+    if (mode !== 'listening') return;
+    stopRecognition(false);
     try {
       if (recorderRef.current?.state === 'recording') recorderRef.current.pause();
     } catch {
-      // Some browsers do not implement recorder pause; the UI can still ignore speech.
+      // Some browsers do not expose MediaRecorder pause.
     }
     setMode('paused');
-  }, [setMode]);
+  }, [mode, stopRecognition]);
 
-  const resumeCapture = useCallback(() => {
-    if (!captureActiveRef.current || finalizingRef.current) return;
+  const resumeVoice = useCallback(() => {
+    if (mode !== 'paused') return;
     try {
       if (recorderRef.current?.state === 'paused') recorderRef.current.resume();
     } catch {
-      // Recorder will continue through browser recognition even if resume is unsupported.
+      // Continue with browser recognition even if the recorder could not resume.
     }
     setMode('listening');
-  }, [setMode]);
+    window.setTimeout(() => startRecognition(), 30);
+  }, [mode, startRecognition]);
 
-  const disableVoice = useCallback(async () => {
-    enabledRef.current = false;
-    setHandsFreeEnabled(false);
-    captureActiveRef.current = false;
-    finalizingRef.current = false;
-    wakeSeedRef.current = '';
-    browserTextRef.current = '';
-    interimTextRef.current = '';
+  const cancelVoice = useCallback(async () => {
+    endingRef.current = true;
+    stopRecognition(true);
     await stopRecorder();
-    stopRecognition();
-    releaseMicrophone();
-    setMode('off');
-  }, [releaseMicrophone, setHandsFreeEnabled, setMode, stopRecognition, stopRecorder]);
-
-  const cancelCapture = useCallback(
-    async (disableAfter = false) => {
-      if (!captureActiveRef.current && !finalizingRef.current) {
-        if (disableAfter) await disableVoice();
-        return;
-      }
-
-      finalizingRef.current = true;
-      await stopRecorder();
-      captureActiveRef.current = false;
-      finalizingRef.current = false;
-      wakeSeedRef.current = '';
-      browserTextRef.current = '';
-      interimTextRef.current = '';
-      onVoiceDraft(baselineRef.current);
-      baselineRef.current = '';
-
-      if (disableAfter) {
-        await disableVoice();
-      } else {
-        setMode(enabledRef.current ? 'armed' : 'off');
-        if (enabledRef.current) restartRecognitionRef.current('wake');
-      }
-    },
-    [disableVoice, onVoiceDraft, setMode, stopRecorder],
-  );
-
-  const finalizeCapture = useCallback(
-    async ({
-      send,
-      disableAfter = false,
-    }: {
-      send: boolean;
-      disableAfter?: boolean;
-    }) => {
-      if (!captureActiveRef.current || finalizingRef.current) return;
-
-      const baseText = baselineRef.current;
-      const seed = cleanSpeech(wakeSeedRef.current);
-      const browserText = cleanSpeech(
-        mergeWakeSeed(browserTextRef.current, interimTextRef.current),
-      );
-      const fallbackVoiceText = cleanSpeech(browserText || seed);
-
-      // Final text is authoritative only after this recording is closed. This avoids
-      // the old "instant local draft + late async rewrite" race that could make the
-      // next voice turn appear not to transcribe.
-      finalizingRef.current = true;
-      captureActiveRef.current = false;
-      setMode('transcribing');
-
-      // Recorded audio is the authority after Stop/Done. Freeze live recognition so
-      // no late event can leak into this result or into the next voice turn.
-      stopRecognition();
-      const audio = await stopRecorder();
-
-      let transcribed = '';
-      if (audio && audio.size >= 512) {
-        try {
-          transcribed = await transcribeVoiceAudio(audio, language);
-        } catch {
-          // Browser recognition remains a resilient fallback when server STT is
-          // temporarily unavailable.
-        }
-      }
-
-      const sourceText = cleanSpeech(transcribed || fallbackVoiceText);
-      const control = sourceText ? controlAtEnd(sourceText) : null;
-      let shouldSend = send;
-      let shouldCancel = false;
-      let dictatedText = sourceText;
-
-      if (control) {
-        if (control.action === 'send') shouldSend = true;
-        if (control.action === 'cancel') shouldCancel = true;
-        dictatedText = control.content;
-      }
-
-      const refinedVoiceText = cleanSpeech(
-        dictatedText
-          ? mergeWakeSeed(seed, stripWakeWord(dictatedText))
-          : '',
-      );
-      const finalVoiceText = control
-        ? refinedVoiceText
-        : refinedVoiceText || fallbackVoiceText;
-      const fullText = shouldCancel
-        ? baseText
-        : mergeText(baseText, finalVoiceText);
-
-      // Reset every per-recording buffer before exposing the next armed session.
-      // This makes second/third/etc. recordings independent and deterministic.
-      wakeSeedRef.current = '';
-      browserTextRef.current = '';
-      interimTextRef.current = '';
-      baselineRef.current = '';
-      finalizingRef.current = false;
-      composerTextRef.current = fullText;
-      onVoiceDraft(fullText);
-
-      if (disableAfter) {
-        enabledRef.current = false;
-        setHandsFreeEnabled(false);
-        stopRecognition();
-        releaseMicrophone();
-        setMode('off');
-      } else {
-        setMode(enabledRef.current ? 'armed' : 'off');
-        if (enabledRef.current) restartRecognitionRef.current('wake');
-      }
-
-      if (shouldSend && fullText && !shouldCancel) {
-        await onVoiceSend(fullText);
-      } else if (!fullText && !shouldCancel) {
-        setErrorMessage('No speech detected. Try again.');
-      }
-    },
-    [
-      onVoiceDraft,
-      onVoiceSend,
-      releaseMicrophone,
-      setHandsFreeEnabled,
-      setMode,
-      stopRecognition,
-      stopRecorder,
-    ],
-  );
-
-  const handleFinalSegment = useCallback(
-    (rawTranscript: string) => {
-      const transcript = stripWakeWord(rawTranscript);
-      interimTextRef.current = '';
-      const control = controlAtEnd(transcript);
-
-      if (modeRef.current === 'paused') {
-        if (!control) return;
-        if (control.action === 'resume') {
-          resumeCapture();
-          return;
-        }
-        if (control.action === 'cancel') {
-          void cancelCapture(false);
-          return;
-        }
-        if (control.action === 'stop') {
-          void finalizeCapture({ send: false });
-          return;
-        }
-        if (control.action === 'done') {
-          void finalizeCapture({ send: false });
-          return;
-        }
-        if (control.action === 'send') {
-          void finalizeCapture({ send: true });
-        }
-        return;
-      }
-
-      if (!control) {
-        appendBrowserText(transcript);
-        return;
-      }
-
-      if (control.content) appendBrowserText(control.content);
-
-      switch (control.action) {
-        case 'pause':
-          pauseCapture();
-          break;
-        case 'resume':
-          resumeCapture();
-          break;
-        case 'stop':
-          void finalizeCapture({ send: false });
-          break;
-        case 'done':
-          void finalizeCapture({ send: false });
-          break;
-        case 'send':
-          void finalizeCapture({ send: true });
-          break;
-        case 'cancel':
-          void cancelCapture(false);
-          break;
-      }
-    },
-    [
-      appendBrowserText,
-      cancelCapture,
-      finalizeCapture,
-      pauseCapture,
-      resumeCapture,
-    ],
-  );
-
-  const startRecognition = useCallback(
-    (
-      purpose: RecognitionPurpose = captureActiveRef.current ? 'capture' : 'wake',
-      force = false,
-    ) => {
-      if (!enabledRef.current) return;
-
-      if (recognitionRef.current) {
-        if (!force && recognitionPurposeRef.current === purpose) return;
-        stopRecognition();
-      }
-
-      const Recognition = recognitionConstructor();
-      if (!Recognition) {
-        // Tap-to-talk still works through MediaRecorder + server transcription.
-        if (!captureActiveRef.current) setMode('armed');
-        return;
-      }
-
-      if (restartTimerRef.current !== null) {
-        window.clearTimeout(restartTimerRef.current);
-        restartTimerRef.current = null;
-      }
-
-      const generation = recognitionGenerationRef.current + 1;
-      recognitionGenerationRef.current = generation;
-      recognitionPurposeRef.current = purpose;
-
-      const recognition = new Recognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 5;
-      recognition.lang = recognitionLanguage(language);
-
-      recognition.onstart = () => {
-        if (generation !== recognitionGenerationRef.current) return;
-        if (purpose === 'capture' && captureActiveRef.current) {
-          if (modeRef.current !== 'paused') setMode('listening');
-          return;
-        }
-        if (!captureActiveRef.current && modeRef.current !== 'paused') setMode('armed');
-      };
-
-      recognition.onresult = (event) => {
-        if (generation !== recognitionGenerationRef.current || finalizingRef.current) return;
-
-        for (let index = event.resultIndex; index < event.results.length; index += 1) {
-          const result = event.results[index];
-          const candidates = recognitionCandidates(result);
-          if (!candidates.length) continue;
-
-          if (!captureActiveRef.current) {
-            const transcript = wakeCandidate(result);
-            if (!transcript) continue;
-            const wakeCommand = extractWakeCommand(transcript);
-            if (wakeCommand === null) continue;
-
-            const lowerWakeCommand = trimControlPunctuation(wakeCommand).toLocaleLowerCase();
-            if (loading && TASK_STOP_PHRASES.has(lowerWakeCommand)) {
-              onStopRun?.();
-              continue;
-            }
-
-            activateCapture(wakeCommand);
-            continue;
-          }
-
-          const transcript = candidates[0] ?? '';
-          if (!transcript) continue;
-
-          if (!result.isFinal) {
-            if (modeRef.current !== 'paused') {
-              const partial = stripWakeWord(transcript);
-              const control = controlAtEnd(partial);
-              const preview = control ? control.content : partial;
-              interimTextRef.current = cleanSpeech(preview);
-              emitVoiceText(mergeText(browserTextRef.current, interimTextRef.current));
-
-              // Exact standalone controls feel immediate without stealing ordinary
-              // phrases such as "do not stop the animation".
-              if (control && !control.content) {
-                handleFinalSegment(partial);
-              }
-            }
-            continue;
-          }
-
-          handleFinalSegment(transcript);
-        }
-      };
-
-      recognition.onerror = (event) => {
-        if (generation !== recognitionGenerationRef.current) return;
-
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          setErrorMessage('Allow microphone access to use Xroga voice.');
-          enabledRef.current = false;
-          setHandsFreeEnabled(false);
-          setMode('error');
-          return;
-        }
-
-        if (event.error === 'audio-capture') {
-          setErrorMessage('No microphone is available.');
-          setMode('error');
-          return;
-        }
-
-        if (event.error !== 'no-speech' && event.error !== 'network') {
-          setErrorMessage(
-            captureActiveRef.current
-              ? 'Live captions paused; your recorded audio is still safe.'
-              : 'Wake listening paused. Xroga is reconnecting.',
-          );
-        }
-      };
-
-      recognition.onend = () => {
-        if (generation !== recognitionGenerationRef.current) return;
-        recognitionRef.current = null;
-        if (!enabledRef.current || finalizingRef.current) return;
-
-        const nextPurpose: RecognitionPurpose =
-          captureActiveRef.current ? 'capture' : 'wake';
-        restartTimerRef.current = window.setTimeout(
-          () => startRecognition(nextPurpose, true),
-          220,
-        );
-      };
-
-      recognitionRef.current = recognition;
-      try {
-        recognition.start();
-      } catch {
-        if (generation !== recognitionGenerationRef.current) return;
-        recognitionRef.current = null;
-        if (!enabledRef.current || finalizingRef.current) return;
-        restartTimerRef.current = window.setTimeout(
-          () => startRecognition(purpose, true),
-          360,
-        );
-      }
-    },
-    [
-      activateCapture,
-      emitVoiceText,
-      handleFinalSegment,
-      language,
-      loading,
-      onStopRun,
-      setHandsFreeEnabled,
-      setMode,
-      stopRecognition,
-    ],
-  );
-
-  useEffect(() => {
-    restartRecognitionRef.current = (purpose: RecognitionPurpose = 'wake') => {
-      stopRecognition();
-      if (!enabledRef.current) return;
-      restartTimerRef.current = window.setTimeout(
-        () => startRecognition(purpose, true),
-        80,
-      );
-    };
-  }, [startRecognition, stopRecognition]);
-
-  const enableAndCapture = useCallback(async () => {
-    const ready = await ensureMicrophone();
-    if (!ready) return;
-
-    enabledRef.current = true;
-    setHandsFreeEnabled(true);
-    setOnboardingComplete(true);
-    setMode('armed');
-    activateCapture('');
-  }, [
-    activateCapture,
-    ensureMicrophone,
-    setHandsFreeEnabled,
-    setMode,
-    setOnboardingComplete,
-    startRecognition,
-  ]);
-
-  const manualTalk = useCallback(async () => {
-    if (captureActiveRef.current || finalizingRef.current) return;
-    setErrorMessage('');
+    onVoiceDraft(baselineRef.current);
+    composerTextRef.current = baselineRef.current;
+    finalTextRef.current = '';
     interimTextRef.current = '';
+    setPreviewText('');
+    releaseMicrophone();
+    setMode('idle');
+  }, [onVoiceDraft, releaseMicrophone, stopRecognition, stopRecorder]);
 
-    if (!enabledRef.current) {
-      await enableAndCapture();
-      return;
+  const finishVoice = useCallback(async () => {
+    if (endingRef.current || (mode !== 'listening' && mode !== 'paused')) return;
+    endingRef.current = true;
+    setMode('finalizing');
+
+    stopRecognition(false);
+    const browserVoice = cleanSpeech(
+      [finalTextRef.current, interimTextRef.current].filter(Boolean).join(' '),
+    );
+    const audio = await stopRecorder();
+
+    let finalVoice = browserVoice;
+    if (audio && audio.size >= 512) {
+      try {
+        const authoritative = cleanSpeech(await transcribeVoiceAudio(audio));
+        if (authoritative) finalVoice = authoritative;
+      } catch {
+        // Do not erase what the user already saw in the composer if the
+        // final server pass is unavailable.
+      }
     }
 
-    const ready = await ensureMicrophone();
-    if (!ready) return;
-    activateCapture('');
-  }, [activateCapture, enableAndCapture, ensureMicrophone]);
+    const fullText = mergeText(baselineRef.current, finalVoice);
+    composerTextRef.current = fullText;
+    onVoiceDraft(fullText);
 
-  useEffect(() => {
-    if (!mounted) return;
-
-    if (!handsFreeEnabled) {
-      enabledRef.current = false;
-      if (!captureActiveRef.current) setMode('off');
-      return;
-    }
-
-    enabledRef.current = true;
-    void ensureMicrophone().then((ready) => {
-      if (!ready) return;
-      setMode(captureActiveRef.current ? modeRef.current : 'armed');
-      startRecognition(captureActiveRef.current ? 'capture' : 'wake');
-    });
-  }, [
-    ensureMicrophone,
-    handsFreeEnabled,
-    mounted,
-    setMode,
-    startRecognition,
-  ]);
+    finalTextRef.current = '';
+    interimTextRef.current = '';
+    setPreviewText('');
+    releaseMicrophone();
+    endingRef.current = false;
+    setMode('idle');
+  }, [mode, onVoiceDraft, releaseMicrophone, stopRecognition, stopRecorder]);
 
   useEffect(() => {
     return () => {
-      enabledRef.current = false;
-      if (restartTimerRef.current !== null) window.clearTimeout(restartTimerRef.current);
-      stopRecognition();
+      endingRef.current = true;
+      stopRecognition(true);
       void stopRecorder();
       releaseMicrophone();
     };
   }, [releaseMicrophone, stopRecognition, stopRecorder]);
 
-  const captureVisible =
-    captureActiveRef.current ||
-    mode === 'listening' ||
-    mode === 'paused' ||
-    mode === 'transcribing';
+  const active = mode === 'listening' || mode === 'paused' || mode === 'finalizing';
 
-  const captureBar =
-    mounted && voiceStage && captureVisible
-      ? createPortal(
-          <div
-            className={cn(
-              'xv-voice-capture-bar',
-              mode === 'paused' && 'is-paused',
-              mode === 'transcribing' && 'is-transcribing',
-            )}
-            data-testid="xroga-voice-capture"
-            aria-label={
-              mode === 'paused'
-                ? 'Xroga voice paused'
-                : mode === 'transcribing'
-                  ? 'Xroga is transcribing'
-                  : 'Xroga is listening'
-            }
+  const session = voiceStage && active
+    ? createPortal(
+        <div
+          className={cn(
+            'xv-simple-voice-session',
+            mode === 'paused' && 'is-paused',
+            mode === 'finalizing' && 'is-finalizing',
+          )}
+          data-testid="xroga-voice-session"
+        >
+          <button
+            type="button"
+            className="xv-simple-voice-control xv-simple-voice-cancel"
+            onClick={() => void cancelVoice()}
+            aria-label="Cancel voice typing"
+            disabled={mode === 'finalizing'}
           >
-            <button
-              type="button"
-              className="xv-voice-capture-button xv-voice-capture-cancel"
-              onClick={() => void cancelCapture(true)}
-              aria-label="Close voice and discard this dictation"
-              title="Close voice"
-            >
-              <X className="h-4 w-4" aria-hidden />
-            </button>
+            <X className="h-4 w-4" aria-hidden />
+          </button>
 
-            <button
-              type="button"
-              className="xv-voice-wave-button"
-              onClick={mode === 'paused' ? resumeCapture : pauseCapture}
-              aria-label={mode === 'paused' ? 'Resume voice' : 'Pause voice'}
-              title={mode === 'paused' ? 'Resume' : 'Pause'}
-            >
-              <VoiceWave level={mode === 'transcribing' ? 0.08 : level} paused={mode === 'paused'} />
-            </button>
-
-            <div className="xv-voice-capture-actions">
-              <button
-                type="button"
-                className="xv-voice-capture-button"
-                onClick={mode === 'paused' ? resumeCapture : pauseCapture}
-                aria-label={mode === 'paused' ? 'Resume voice' : 'Pause voice'}
-                title={mode === 'paused' ? 'Resume' : 'Pause'}
-                disabled={mode === 'transcribing'}
-              >
-                {mode === 'paused'
-                  ? <Play className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
-                  : <Pause className="h-3.5 w-3.5" fill="currentColor" aria-hidden />}
-              </button>
-
-              <button
-                type="button"
-                className="xv-voice-capture-button"
-                onClick={() => void finalizeCapture({ send: false })}
-                aria-label="Stop recording and keep text"
-                title="Stop"
-                disabled={mode === 'transcribing'}
-              >
-                <Square className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
-              </button>
-
-              <button
-                type="button"
-                className="xv-voice-capture-button"
-                onClick={() => void finalizeCapture({ send: false })}
-                aria-label="Done with voice and keep text"
-                title="Done"
-                disabled={mode === 'transcribing'}
-              >
-                <Check className="h-4 w-4" aria-hidden />
-              </button>
-
-              <button
-                type="button"
-                className="xv-voice-capture-button xv-voice-capture-send"
-                onClick={() => void finalizeCapture({ send: true })}
-                aria-label="Send voice message"
-                title="Send"
-                disabled={mode === 'transcribing'}
-              >
-                <ArrowUp className="h-4 w-4" strokeWidth={2.6} aria-hidden />
-              </button>
+          <div className="xv-simple-voice-main" aria-live="polite">
+            <div className="xv-simple-voice-transcript">
+              {mode === 'finalizing'
+                ? 'Finishing transcription…'
+                : previewText || (mode === 'paused' ? 'Paused' : 'Listening…')}
             </div>
-          </div>,
-          voiceStage,
-        )
-      : null;
+            <VoiceWave level={level} paused={mode === 'paused' || mode === 'finalizing'} />
+          </div>
+
+          <div className="xv-simple-voice-actions">
+            <button
+              type="button"
+              className="xv-simple-voice-control"
+              onClick={mode === 'paused' ? resumeVoice : pauseVoice}
+              aria-label={mode === 'paused' ? 'Resume voice typing' : 'Pause voice typing'}
+              disabled={mode === 'finalizing'}
+            >
+              {mode === 'paused'
+                ? <Play className="h-4 w-4" aria-hidden />
+                : <Pause className="h-4 w-4" aria-hidden />}
+            </button>
+            <button
+              type="button"
+              className="xv-simple-voice-control xv-simple-voice-stop"
+              onClick={() => void finishVoice()}
+              aria-label="Stop voice typing and keep text"
+              disabled={mode === 'finalizing'}
+            >
+              <Square className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
+            </button>
+          </div>
+        </div>,
+        voiceStage,
+      )
+    : null;
 
   return (
     <>
@@ -1231,45 +472,19 @@ export function XrogaVoiceControl({
         type="button"
         className={cn(
           'xv-voice-icon-only',
-          handsFreeEnabled && 'is-armed',
-          captureVisible && 'is-listening',
+          active && 'is-listening',
           mode === 'error' && 'is-error',
         )}
-        onClick={() => void manualTalk()}
-        aria-label={
-          handsFreeEnabled
-            ? 'Talk to Xroga'
-            : 'Enable Xroga voice'
-        }
-        aria-pressed={handsFreeEnabled}
-        title={
-          handsFreeEnabled
-            ? 'Voice ready — say “Xroga” or click to talk'
-            : errorMessage || 'Enable voice, then say “Xroga” anytime'
-        }
+        onClick={() => {
+          if (mode === 'idle' || mode === 'error') void startVoice();
+          else if (mode === 'listening' || mode === 'paused') void finishVoice();
+        }}
+        aria-label={active ? 'Stop voice typing and keep text' : 'Start voice typing'}
+        title={active ? 'Stop voice typing' : 'Voice typing'}
       >
-        <AudioLinesIcon
-          size={28}
-          active={captureVisible}
-          aria-hidden="true"
-        />
-
+        <AudioLinesIcon size={28} active={mode === 'listening'} />
       </button>
-
-      <span className="sr-only" aria-live="polite">
-        {errorMessage ||
-          (mode === 'armed'
-            ? 'Xroga wake word is ready'
-            : mode === 'listening'
-              ? 'Listening'
-              : mode === 'paused'
-                ? 'Voice paused'
-                : mode === 'transcribing'
-                  ? 'Transcribing voice'
-                  : '')}
-      </span>
-
-      {captureBar}
+      {session}
     </>
   );
 }
