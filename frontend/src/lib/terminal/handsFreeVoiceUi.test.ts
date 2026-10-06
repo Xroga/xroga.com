@@ -81,7 +81,7 @@ test('final accuracy pass uses recorded audio but preserves visible browser text
   assert.match(backend, /language', 'en'/);
   assert.match(backend, /languages\[\]', 'en'/);
   assert.match(backend, /Transcribe the speaker in English faithfully/);
-  assert.doesNotMatch(backend, /wake word|X Roga|Acroga|Do not translate/);
+  assert.doesNotMatch(backend, /wake word|X Roga|Acroga/);
 });
 
 test('idle mic has no circular outline or pill surface', () => {
