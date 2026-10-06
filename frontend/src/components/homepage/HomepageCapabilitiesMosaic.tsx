@@ -9,16 +9,13 @@ import { getIntegrationLogo } from '@/lib/integrationLogos';
 import { SIDEBAR_LOGO_URL } from '@/lib/theme';
 
 const INTEGRATIONS = [
-  ['google-drive', 'Google Drive'], ['gmail', 'Gmail'], ['slack', 'Slack'], ['github', 'GitHub'],
-  ['notion', 'Notion'], ['microsoftteams', 'Microsoft Teams'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'],
-  ['shopify', 'Shopify'], ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'],
-  ['dropbox', 'Dropbox'], ['trello', 'Trello'], ['discord', 'Discord'], ['jira', 'Jira'],
-  ['asana', 'Asana'], ['figma', 'Figma'], ['zapier', 'Zapier'], ['canva', 'Canva'],
+  ['google-drive', 'Google Drive'], ['gmail', 'Gmail'], ['google-calendar', 'Google Calendar'], ['slack', 'Slack'], ['github', 'GitHub'],
+  ['gitlab', 'GitLab'], ['notion', 'Notion'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'], ['shopify', 'Shopify'],
+  ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'], ['dropbox', 'Dropbox'], ['discord', 'Discord'],
+  ['jira', 'Jira'], ['asana', 'Asana'], ['trello', 'Trello'], ['figma', 'Figma'], ['canva', 'Canva'],
+  ['cloudflare', 'Cloudflare'], ['aws', 'AWS'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'], ['paypal', 'PayPal'],
 ] as const;
 
-const INTEGRATION_GROUPS = Array.from({ length: 5 }, (_, groupIndex) =>
-  INTEGRATIONS.slice(groupIndex * 4, groupIndex * 4 + 4)
-);
 
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
@@ -67,27 +64,24 @@ function GlobalCard() {
 }
 
 function IntegrationsCard() {
-  const [group, setGroup] = useState(0);
-  const current = INTEGRATION_GROUPS[group % INTEGRATION_GROUPS.length];
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setGroup((value) => value + 1), 2600);
-    return () => window.clearInterval(timer);
-  }, []);
-
   return (
     <Card className="xcap-card--integrations">
       <div className="xcap-visual xcap-visual--integrations">
-        <div className="xcap-tool-stage" aria-label="20 popular Xroga integrations">
-          <div className="xcap-tool-row" key={group}>
-            <IntegrationLogo id={current[0][0]} label={current[0][1]} size="sm" />
-            <IntegrationLogo id={current[1][0]} label={current[1][1]} size="md" />
-            <span className="xcap-xroga-tool-logo" title="Xroga">
-              <Image src={SIDEBAR_LOGO_URL} alt="Xroga" width={36} height={36} priority={false} />
-            </span>
-            <IntegrationLogo id={current[2][0]} label={current[2][1]} size="md" />
-            <IntegrationLogo id={current[3][0]} label={current[3][1]} size="sm" />
+        <div className="xcap-integration-cloud" aria-label="25 popular Xroga integrations">
+          <div className="xcap-integration-grid">
+            {INTEGRATIONS.map(([id, label], index) => (
+              <span
+                className="xcap-integration-cell"
+                key={id}
+                style={{ '--logo-index': index } as CSSProperties}
+              >
+                <IntegrationLogo id={id} label={label} size={index % 6 === 0 ? 'md' : 'sm'} />
+              </span>
+            ))}
           </div>
+          <span className="xcap-xroga-cloud-logo" title="Xroga">
+            <Image src={SIDEBAR_LOGO_URL} alt="Xroga" width={32} height={32} priority={false} />
+          </span>
           <div className="xcap-tool-scanner" aria-hidden="true">
             <i />
             <span>
@@ -95,7 +89,7 @@ function IntegrationsCard() {
             </span>
           </div>
         </div>
-        <div className="xcap-integration-pills"><span>20 real apps</span><span>1,500+ plugins</span><span>Custom MCP</span></div>
+        <div className="xcap-integration-pills"><span>1,500+ plugins</span><span>Custom MCP</span></div>
       </div>
       <Copy eyebrow="ONE AI WORKSPACE" title="1,500+ ways to" muted="get work done." description="Connect business apps, developer tools, APIs and custom MCPs in one workspace." />
     </Card>
@@ -119,6 +113,28 @@ function KnowledgeCard() {
     return () => window.removeEventListener('message', onFrameMessage);
   }, []);
 
+  useEffect(() => {
+    const syncFrameTheme = () => {
+      const body = document.body;
+      const theme = body.classList.contains('theme-black')
+        ? 'black'
+        : body.classList.contains('theme-gray')
+          ? 'gray'
+          : body.classList.contains('theme-beige')
+            ? 'beige'
+            : 'white';
+      frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
+    };
+
+    const observer = new MutationObserver(syncFrameTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    const timer = window.setTimeout(syncFrameTheme, 0);
+    return () => {
+      window.clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <Card className="xcap-card--knowledge">
       <iframe
@@ -129,6 +145,17 @@ function KnowledgeCard() {
         sandbox="allow-scripts"
         loading="eager"
         scrolling="no"
+        onLoad={() => {
+          const body = document.body;
+          const theme = body.classList.contains('theme-black')
+            ? 'black'
+            : body.classList.contains('theme-gray')
+              ? 'gray'
+              : body.classList.contains('theme-beige')
+                ? 'beige'
+                : 'white';
+          frameRef.current?.contentWindow?.postMessage({ source: 'xroga-parent-theme', theme }, '*');
+        }}
         style={{ height: frameHeight }}
       />
       <Copy
@@ -181,6 +208,7 @@ export function HomepageCapabilitiesMosaic() {
   return (
     <section className="xcap-section" aria-label="What Xroga can handle">
       <div className="xcap-section-top">
+        <h2 className="xcap-section-title">Build and Manage AI Agents<br />for Real-World Tasks</h2>
         <div className="xcap-section-action">
           <a href="/workspace" className="xcap-noise-container" aria-label="Start For Free in Xroga workspace">
             <span className="xcap-gradient-layer xcap-gradient-1" aria-hidden="true" />
@@ -193,8 +221,6 @@ export function HomepageCapabilitiesMosaic() {
             </span>
           </a>
         </div>
-        <h2 className="xcap-section-title">Build and Manage AI Agents<br />for Real-World Tasks</h2>
-        <span className="xcap-section-balance" aria-hidden="true" />
       </div>
       <div className="xcap-grid">
         <GlobalCard />
