@@ -778,3 +778,95 @@ body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge 
   .xcap-integration-cloud .xcap-tool-logo--sm{width:28px;height:28px}
   .xcap-integration-cloud .xcap-tool-logo--md{width:32px;height:32px}
 }
+
+
+/* v9: TODAY-DROPS card type + black first-row cards in white theme. */
+.xcap-copy h3,
+.xcap-card--working .xcap-copy h3,
+.xcap-card--everyone .xcap-copy h3,
+.xcap-card--knowledge .xcap-copy h3,
+.xcap-card--global .xcap-copy h3{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-weight:300!important;
+  line-height:.89!important;
+  letter-spacing:-.058em!important;
+}
+.xcap-card--global .xcap-copy h3,
+.xcap-card--integrations .xcap-copy h3,
+.xcap-card--knowledge .xcap-copy h3{
+  font-size:clamp(33px,2.55vw,43px)!important;
+}
+.xcap-card--working .xcap-copy h3,
+.xcap-card--everyone .xcap-copy h3{
+  font-size:clamp(38px,3.25vw,50px)!important;
+}
+
+/* In white theme, the top three capability cards are black with white copy. */
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge{
+  background:#08090b!important;
+  color:#f7f8fa!important;
+  border-color:rgba(255,255,255,.10)!important;
+  box-shadow:2px 4px 16px rgba(255,255,255,.045) inset!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global::after,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge::after{
+  display:none!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-copy,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-copy,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-copy{
+  color:#f7f8fa!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-eyebrow,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-eyebrow,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-eyebrow{
+  color:#8f96a3!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-copy h3,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-copy h3,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-copy h3{
+  color:#f7f8fa!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-copy h3 span,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-copy h3 span,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-copy h3 span{
+  color:#8d929c!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-copy p,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-copy p,
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-copy p{
+  color:#a2a8b2!important;
+}
+
+/* Keep the visual areas consistent with the black shells. */
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-magic-globe-demo{
+  background:#0b0d10!important;
+  border-color:rgba(255,255,255,.06)!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--global .xcap-magic-globe-title{
+  background:linear-gradient(180deg,#ffffff 10%,#b9bec7 58%,#575e69 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--integrations .xcap-visual--integrations{
+  background:#101319!important;
+}
+body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge .xcap-clarity-frame{
+  background:#0d1015!important;
+  border:0!important;
+}
+
+@media(max-width:720px){
+  .xcap-card--global .xcap-copy h3,
+  .xcap-card--integrations .xcap-copy h3,
+  .xcap-card--knowledge .xcap-copy h3{
+    font-size:clamp(33px,9vw,42px)!important;
+  }
+  .xcap-card--working .xcap-copy h3,
+  .xcap-card--everyone .xcap-copy h3{
+    font-size:clamp(36px,10vw,46px)!important;
+  }
+}
