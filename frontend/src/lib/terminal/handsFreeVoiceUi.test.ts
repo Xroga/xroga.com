@@ -126,12 +126,17 @@ test('voice final segments de-duplicate wake-seed text and understand polite com
   }
 });
 
-test('server transcription prefers the current recommended model and falls back safely', () => {
+test('server transcription prefers keyword-guided current transcription and falls back safely', () => {
   const backend = source('../../../../backend/src/routes/voice.ts');
 
-  assert.match(backend, /configuredModel \|\| 'gpt-4o-transcribe'/);
+  assert.match(backend, /configuredModel \|\| 'gpt-transcribe'/);
+  assert.match(backend, /'gpt-4o-transcribe'/);
   assert.match(backend, /'gpt-4o-mini-transcribe'/);
-  assert.match(backend, /Preserve the speaker\\'s original language, code-switching/);
+  assert.match(backend, /keywords\[\]/);
+  assert.match(backend, /'Xroga'/);
+  assert.match(backend, /'X Roga'/);
+  assert.match(backend, /response_format', 'json'/);
+  assert.match(backend, /temperature', '0'/);
 });
 
 
