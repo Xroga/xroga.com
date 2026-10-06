@@ -7,18 +7,18 @@ function source(relativePath: string): string {
   return fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 }
 
-test('voice speech visibly enters the same canonical composer and submit path as typing', () => {
-  const chatbar = source('../../components/terminal/TerminalChatBar.tsx');
+test('voice is one icon, not the retired voice-off pill or settings menu', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(chatbar, /<XrogaVoiceControl\b/);
-  assert.match(chatbar, /onVoiceCommand=\{handleVoiceCommand\}/);
-  assert.match(chatbar, /onVoiceDraft=\{handleVoiceDraft\}/);
-  assert.match(chatbar, /formRef\.current\?\.requestSubmit\(\)/);
-  assert.match(chatbar, /Voice and typing deliberately converge on the same form submit path/);
-  assert.match(chatbar, /setDraft\(text\)/);
+  assert.match(voice, /xv-voice-icon-only/);
+  assert.match(voice, /aria-label=\{/);
+  assert.doesNotMatch(voice, /xv-voice-settings-panel/);
+  assert.doesNotMatch(voice, /xv-voice-settings-trigger/);
+  assert.doesNotMatch(voice, /Voice off/);
+  assert.doesNotMatch(voice, /SpeechSynthesisUtterance/);
 });
 
-test('wake recognition accepts real STT variants while the visible brand stays Xroga', () => {
+test('wake word accepts Xroga recognition variants and activates capture', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.ok(voice.includes("x\\\\s*roga"));
@@ -26,79 +26,82 @@ test('wake recognition accepts real STT variants while the visible brand stays X
   assert.ok(voice.includes('acroga'));
   assert.ok(voice.includes('zroga'));
   assert.match(voice, /extractWakeCommand/);
-  assert.match(voice, /product name rendered to the user remains/i);
-  assert.match(voice, /replace\(\/\\bXroga\\b\/gi, 'X Roga'\)/);
+  assert.match(voice, /activateCapture\(wakeCommand\)/);
+  assert.match(voice, /recognition\.continuous = true/);
+  assert.match(voice, /recognition\.interimResults = true/);
 });
 
-test('voice has real microphone metering, live chatbar waveform, pause, finish and stop controls', () => {
+test('real microphone amplitude drives the full inline chatbar waveform', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
   const parts = source('../../components/terminal/ChatBarParts.tsx');
   const css = source('../../styles/uiverse.css');
 
   assert.match(voice, /createAnalyser\(\)/);
   assert.match(voice, /getByteFrequencyData\(bins\)/);
-  assert.match(voice, /large \? 23/);
-  assert.match(voice, /CirclePause/);
-  assert.match(voice, /Finish voice input/);
-  assert.match(voice, /Stop Xroga task and voice/);
+  assert.match(voice, /const bars = 52/);
+  assert.match(voice, /xv-voice-capture-bar/);
   assert.match(parts, /data-xroga-voice-stage/);
-  assert.match(css, /\.xv-voice-session-bar/);
-  assert.match(css, /\.xv-voice-wave--large/);
+  assert.match(parts, /xv-chatbar-compose-field/);
+  assert.match(css, /:has\(\.xv-voice-capture-bar\)/);
+  assert.match(css, /\.xv-voice-line-wave/);
 });
 
-test('tap-to-talk records audio and has authenticated server transcription fallback', () => {
+test('manual voice controls expose pause stop done cancel and send without auto-send', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /Pause/);
+  assert.match(voice, /Stop recording and keep text/);
+  assert.match(voice, /Done with voice and keep text/);
+  assert.match(voice, /Close voice and discard this dictation/);
+  assert.match(voice, /Send voice message/);
+  assert.match(voice, /finalizeCapture\(\{ send: false \}\)/);
+  assert.match(voice, /finalizeCapture\(\{ send: true \}\)/);
+});
+
+test('spoken stop send enter and start-now controls are recognized', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  for (const phrase of [
+    "'stop'",
+    "'send it'",
+    "'enter'",
+    "'start now'",
+    "'now start'",
+    "'pause'",
+    "'resume'",
+    "'done'",
+  ]) {
+    assert.ok(voice.includes(phrase), 'missing spoken control ' + phrase);
+  }
+  assert.match(voice, /controlAtEnd/);
+});
+
+test('native-language final transcription uses authenticated server auto detection', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
   const api = source('../voiceApi.ts');
 
   assert.match(voice, /new MediaRecorder/);
-  assert.match(voice, /transcribeVoiceAudio\(recorded, language\)/);
+  assert.match(voice, /transcribeVoiceAudio\(audio, 'auto'\)/);
   assert.match(api, /getAccessToken/);
   assert.match(api, /\/api\/voice\/transcribe/);
-  assert.match(api, /Authorization:/);
   assert.match(api, /X-Xroga-Language/);
 });
 
-test('compact setup uses the existing Xroga orb and does not auto-open on workspace entry', () => {
-  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
-
-  assert.match(voice, /xroga-orb-mark-v2\.webp/);
-  assert.match(voice, /xv-voice-onboarding--compact/);
-  assert.match(voice, /Allow microphone/);
-  assert.match(voice, /Hear Xroga/);
-  assert.match(voice, /Task notifications/);
-  assert.match(voice, /setOnboardingOpen\(true\)/);
-  assert.doesNotMatch(voice, /setOnboardingOpen\(!onboardingComplete/);
-});
-
-test('voice settings keep language, voice preference, tone, spoken replies and notifications', () => {
-  const store = source('../../store/useVoicePrefsStore.ts');
-  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
-
-  for (const language of ['ur-PK', 'hi-IN', 'ar-SA', 'es-ES', 'pt-BR', 'id-ID', 'tr-TR']) {
-    assert.ok(store.includes(language), 'missing voice language ' + language);
-  }
-  for (const tone of ['warm', 'calm', 'professional', 'energetic']) {
-    assert.match(store, new RegExp("'" + tone + "'"));
-  }
-  assert.match(voice, /Prefer female/);
-  assert.match(voice, /Prefer male/);
-  assert.match(voice, /Speak replies/);
-  assert.match(voice, /Task notifications/);
-});
-
-test('voice runtime reset prevents stale v2 enabled state from masquerading as a working mic', () => {
-  const store = source('../../store/useVoicePrefsStore.ts');
-  assert.match(store, /version: 3/);
-  assert.match(store, /handsFreeEnabled: false/);
-  assert.match(store, /onboardingComplete: false/);
-});
-
-test('voice request execution still belongs to Xroga agents, not a second chat backend', () => {
-  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+test('voice text stays in the canonical composer until explicit send', () => {
   const chatbar = source('../../components/terminal/TerminalChatBar.tsx');
 
-  assert.doesNotMatch(voice, /streamSwarmExecute|\/api\/swarm\/execute|\/api\/chat/);
+  assert.match(chatbar, /composerText=\{draft\}/);
+  assert.match(chatbar, /onVoiceDraft=\{handleVoiceDraft\}/);
+  assert.match(chatbar, /onVoiceSend=\{handleVoiceSend\}/);
+  assert.match(chatbar, /formRef\.current\?\.requestSubmit\(\)/);
+  assert.match(chatbar, /Voice and typing deliberately converge|Voice and typing deliberately converge|same canonical form submit/);
   assert.match(chatbar, /await submit\(/);
   assert.match(chatbar, /ensureRepoWorkspace/);
-  assert.match(chatbar, /onVoiceCommand=\{handleVoiceCommand\}/);
+});
+
+test('voice execution never creates a second Xroga agent backend', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.doesNotMatch(voice, /streamSwarmExecute|\/api\/swarm\/execute|\/api\/chat/);
+  assert.match(voice, /onVoiceSend/);
 });
