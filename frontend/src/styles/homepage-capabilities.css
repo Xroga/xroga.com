@@ -870,3 +870,91 @@ body:not(.theme-black):not(.theme-gray):not(.theme-beige) .xcap-card--knowledge 
     font-size:clamp(36px,10vw,46px)!important;
   }
 }
+
+
+/* v10: white-theme precision + gradient section heading + larger clean card copy. */
+body.theme-white .xcap-section{
+  --page:#ffffff!important;
+  background:#ffffff!important;
+}
+
+/* Match the metallic Global treatment without increasing the section heading scale. */
+.xcap-section-title{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:-.058em!important;
+  background:linear-gradient(180deg,#ffffff 2%,#d9dbe0 28%,#8d929b 72%,#4b5058 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent!important;
+}
+body.theme-white .xcap-section-title,
+body.theme-beige .xcap-section-title{
+  background:linear-gradient(180deg,#080808 4%,#343434 42%,#8b8b8b 78%,#c8c8c8 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent!important;
+}
+
+/* Card 2 stays light in white theme. Cards 1 and 3 remain the dark contrast pair. */
+body.theme-white .xcap-card--integrations{
+  background:#ffffff!important;
+  color:#0a0a0a!important;
+  border-color:rgba(15,23,42,.12)!important;
+  box-shadow:none!important;
+}
+body.theme-white .xcap-card--integrations .xcap-visual--integrations{
+  background:#f8f8f8!important;
+}
+body.theme-white .xcap-card--integrations .xcap-copy,
+body.theme-white .xcap-card--integrations .xcap-copy h3{
+  color:#0a0a0a!important;
+}
+body.theme-white .xcap-card--integrations .xcap-copy h3 span{
+  color:#777b82!important;
+}
+body.theme-white .xcap-card--integrations .xcap-eyebrow{
+  color:#737780!important;
+}
+body.theme-white .xcap-card--integrations .xcap-copy p{
+  color:#292d33!important;
+}
+
+/* The explanatory lines are intentionally more legible than before: larger,
+   no glow/shadow, and high-contrast per card. */
+.xcap-card--global .xcap-copy p,
+.xcap-card--integrations .xcap-copy p,
+.xcap-card--knowledge .xcap-copy p{
+  font-size:14px!important;
+  line-height:1.48!important;
+  font-weight:400!important;
+  letter-spacing:-.01em!important;
+  text-shadow:none!important;
+  filter:none!important;
+  max-width:48ch!important;
+}
+body.theme-white .xcap-card--global .xcap-copy p,
+body.theme-white .xcap-card--knowledge .xcap-copy p{
+  color:#f4f5f7!important;
+}
+body.theme-white .xcap-card--integrations .xcap-copy p{
+  color:#24272c!important;
+}
+
+/* No residual card-copy shadows in any theme. */
+.xcap-copy,
+.xcap-copy h3,
+.xcap-copy h3 span,
+.xcap-copy p,
+.xcap-eyebrow{
+  text-shadow:none!important;
+}
+
+@media(max-width:720px){
+  .xcap-card--global .xcap-copy p,
+  .xcap-card--integrations .xcap-copy p,
+  .xcap-card--knowledge .xcap-copy p{
+    font-size:13.5px!important;
+    line-height:1.46!important;
+  }
+}
