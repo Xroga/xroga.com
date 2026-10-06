@@ -52,7 +52,7 @@ router.post(
       const models = Array.from(
         new Set(
           [
-            configuredModel || 'gpt-transcribe',
+            configuredModel || 'gpt-4o-transcribe',
             'gpt-4o-mini-transcribe',
           ].filter(Boolean),
         ),
