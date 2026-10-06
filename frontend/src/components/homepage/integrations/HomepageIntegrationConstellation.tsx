@@ -145,7 +145,7 @@ export function HomepageIntegrationConstellation() {
           <span
             className={`xcap-constellation-item is-${ring}`}
             key={plugin.name}
-            style={{ '--orbit-angle': `${angle}deg` } as CSSProperties}
+            style={{ '--orbit-angle': `${angle}deg`, '--counter-angle': `${-angle}deg` } as CSSProperties}
             title={plugin.name}
             aria-label={plugin.name}
           >
