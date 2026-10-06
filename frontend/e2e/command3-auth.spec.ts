@@ -137,9 +137,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock).toBeVisible();
   await expect(composerInput).toBeVisible();
 
-  // Voice is intentionally one icon. Browser microphone permission is requested only
-  // after the user clicks it; there is no product modal or retired Voice-off pill.
-  const voiceToggle = terminalDock.getByRole('button', { name: 'Enable Xroga voice' });
+  // Voice is intentionally one click-to-dictate icon. There is no wake-word
+  // listener, settings menu, language selector, or product permission modal.
+  const voiceToggle = terminalDock.getByRole('button', { name: 'Start voice typing' });
   await expect(voiceToggle).toBeVisible();
   await expect(terminalDock.getByText('Voice off', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('dialog', { name: /voice/i })).toHaveCount(0);

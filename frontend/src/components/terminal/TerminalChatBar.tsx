@@ -337,27 +337,6 @@ export function TerminalChatBar() {
     if (!loading) setSendState('launched');
   }
 
-  const handleVoiceSend = useCallback(
-    async (spokenText: string) => {
-      const text = spokenText.replace(/\s+/g, ' ').trim();
-      if (!text) return;
-
-      setDraft(text);
-      draftRef.current = text;
-      setPrompt(text);
-      lastExternalPrompt.current = text;
-      triggerComposerSignal(1400);
-
-      // Voice and typing deliberately converge on the same canonical form submit
-      // path. Wake-word dictation only produces text; sending still crosses every
-      // existing repo/billing/queue/attachment gate here.
-      window.requestAnimationFrame(() => {
-        formRef.current?.requestSubmit();
-      });
-    },
-    [setPrompt, triggerComposerSignal],
-  );
-
   const handleVoiceDraft = useCallback(
     (spokenText: string) => {
       const text = spokenText.replace(/\s+/g, ' ').trimStart();
@@ -605,21 +584,14 @@ export function TerminalChatBar() {
               trailingExtras={
                 !incognito ? (
                   <XrogaVoiceControl
-                    loading={loading}
                     composerText={draft}
                     onVoiceDraft={handleVoiceDraft}
-                    onVoiceSend={handleVoiceSend}
-                    onStopRun={() => {
-                      stop();
-                      setSendState('idle');
-                    }}
                   />
                 ) : null
               }
               onTranscript={(text) => {
-                // Incognito keeps the existing click-to-dictate control; hands-free
-                // voice is disabled there because it intentionally keeps no persistent
-                // voice state or background listener.
+                // Incognito keeps the existing one-shot microphone control; the
+                // dashboard voice surface is intentionally not mounted there.
                 setDraft((current) => {
                   const next = current.trim() ? `${current.trim()} ${text}` : text;
                   draftRef.current = next;
