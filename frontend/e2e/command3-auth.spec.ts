@@ -137,19 +137,12 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock).toBeVisible();
   await expect(composerInput).toBeVisible();
 
-  // Voice setup is intentionally user-initiated: entering Workspace must not throw a
-  // full-screen permission modal over the product. The compact card opens from the
-  // chatbar and no device permission is requested until its microphone row is clicked.
-  const voiceToggle = terminalDock.getByRole('button', { name: 'Turn on Xroga voice' });
+  // Voice is intentionally one icon. Browser microphone permission is requested only
+  // after the user clicks it; there is no product modal or retired Voice-off pill.
+  const voiceToggle = terminalDock.getByRole('button', { name: 'Enable Xroga voice' });
   await expect(voiceToggle).toBeVisible();
-  await voiceToggle.click();
-  const voiceOnboarding = page.getByRole('dialog', { name: 'Turn on hands-free voice' });
-  await expect(voiceOnboarding).toBeVisible();
-  await expect(voiceOnboarding.getByText('Allow microphone', { exact: true })).toBeVisible();
-  await expect(voiceOnboarding.getByText('Hear Xroga', { exact: true })).toBeVisible();
-  await expect(voiceOnboarding.getByRole('button', { name: /notifications/i })).toBeVisible();
-  await voiceOnboarding.getByRole('button', { name: 'Cancel' }).click();
-  await expect(voiceOnboarding).toHaveCount(0);
+  await expect(terminalDock.getByText('Voice off', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: /voice/i })).toHaveCount(0);
 
   await expect(page.locator('.xv-route-loader')).toHaveCount(0);
   // Workspace owns the whole canvas: no coloured/transparent header row reserves
@@ -700,7 +693,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // it now carries this label, so a page-wide locator asserts something nobody meant.
   await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
-  await expect(canonicalComposer.getByRole('button', { name: 'Turn on Xroga voice' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Enable Xroga voice' })).toBeVisible();
   await expect(canonicalComposer.getByRole('button', { name: 'Voice settings' })).toBeVisible();
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
@@ -892,5 +885,5 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(page).toHaveURL(/\/auth\/login/);
   const loggedOut = await browserSession(page); expect(loggedOut).toEqual({ status: 401, authenticated: false });
   await mkdir('test-results', { recursive: true });
-  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'hands_free_control_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
+  await writeFile('test-results/command3-auth-evidence.json', JSON.stringify({ projectRef: new URL(supabaseUrl).hostname.split('.')[0], expectedRelease: expectedRelease || null, expectedWebRelease: expectedWebRelease || null, webRelease: webRelease.body.release ?? 'unavailable', apiRelease: apiRelease.release ?? 'unavailable', frontendArtifactEquivalent: expectedWebRelease !== expectedRelease ? 'verified_by_zero_frontend_diff' : 'exact_release', login: 'verified', sessionRefresh: 'verified', authenticatedRoutes: routeChecks.length, responsiveViewports: 3, persistentWorkspaceShell: 'verified', workspaceMetrics, hardRefreshDraftRestore: 'verified', offlineShellContinuity: 'verified', userCacheIsolation: 'verified', prepaintTheme: 'verified', companionComposer: 'verified', canonicalComposerProductChips: 'removed', canonicalComposerVoice: 'wake_word_icon_verified', companionProfilePersistence, operationsApi: allowed.status, crossTenantApi: denied.status, notificationsApi: notifications.status, unreadNotificationsApi: unreadNotifications.status, billingCheckout, billingTransaction: 'not_submitted', initialRealCharge: 0, logout: loggedOut.status, fixtureIsolation: 'temporary users, projects, billing cycles, and companion preferences cascade-deleted', observedAt: new Date().toISOString() }, null, 2));
 });
