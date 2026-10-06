@@ -4,13 +4,6 @@ const router = Router();
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 
-function languageForTranscription(raw: string | undefined): string | undefined {
-  const value = raw?.trim();
-  if (!value || value === 'auto') return undefined;
-  const primary = value.split('-')[0]?.toLowerCase();
-  return primary && /^[a-z]{2,3}$/.test(primary) ? primary : undefined;
-}
-
 function extensionForMime(mime: string): string {
   if (/mp4|m4a/i.test(mime)) return 'm4a';
   if (/mpeg|mp3/i.test(mime)) return 'mp3';
@@ -45,7 +38,6 @@ router.post(
     }
 
     const mime = req.header('content-type')?.split(';')[0]?.trim() || 'audio/webm';
-    const language = languageForTranscription(req.header('x-xroga-language'));
 
     try {
       const configuredModel = process.env.OPENAI_TRANSCRIBE_MODEL?.trim();
@@ -70,19 +62,15 @@ router.post(
         form.append('model', model);
 
         const transcriptionPrompt =
-          'Product name: Xroga, pronounced "X Roga". Preserve the speaker\'s original language, ' +
-          'code-switching, punctuation, names, numbers, commands, and technical terms faithfully. ' +
-          'Do not translate. If speech sounds like Acroga, X Roga, ex roga, or zroga and refers ' +
-          'to the product wake word, transcribe the brand name as Xroga.';
+          'Transcribe the speaker in English faithfully. Preserve punctuation, names, numbers, ' +
+          'commands, product names, and technical terms. Do not translate, summarize, or answer.';
 
         if (model === 'gpt-transcribe') {
-          form.append('keywords[]', 'Xroga');
-          form.append('keywords[]', 'X Roga');
           form.append('prompt', transcriptionPrompt);
-          if (language) form.append('languages[]', language);
+          form.append('languages[]', 'en');
         } else {
           form.append('prompt', transcriptionPrompt);
-          if (language) form.append('language', language);
+          form.append('language', 'en');
         }
 
         const upstream = await fetch('https://api.openai.com/v1/audio/transcriptions', {
@@ -94,11 +82,7 @@ router.post(
         });
 
         const body = (await upstream.json().catch(() => null)) as
-          | {
-              text?: unknown;
-              languages?: Array<{ code?: unknown }>;
-              error?: { message?: unknown };
-            }
+          | { text?: unknown; error?: { message?: unknown } }
           | null;
 
         if (!upstream.ok) {
@@ -120,11 +104,7 @@ router.post(
           text,
           provider: 'openai',
           model,
-          languages: Array.isArray(body?.languages)
-            ? body.languages
-                .map((entry) => (typeof entry?.code === 'string' ? entry.code : ''))
-                .filter(Boolean)
-            : [],
+          language: 'en',
         });
         return;
       }
@@ -134,7 +114,6 @@ router.post(
         error: 'Could not transcribe that audio. Please try again.',
         code: 'VOICE_TRANSCRIPTION_FAILED',
       });
-      return;
     } catch (error) {
       console.error('[voice] transcription exception:', error);
       res.status(502).json({
