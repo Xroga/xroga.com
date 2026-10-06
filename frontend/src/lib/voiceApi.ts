@@ -1,10 +1,6 @@
 import { API_URL, ApiError, getAccessToken } from '@/lib/api';
-import type { VoiceLanguage } from '@/store/useVoicePrefsStore';
 
-export async function transcribeVoiceAudio(
-  audio: Blob,
-  language: VoiceLanguage,
-): Promise<string> {
+export async function transcribeVoiceAudio(audio: Blob): Promise<string> {
   const token = await getAccessToken();
   if (!token) throw new ApiError('Please sign in to use voice input.', 401);
 
@@ -13,7 +9,6 @@ export async function transcribeVoiceAudio(
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': audio.type || 'audio/webm',
-      'X-Xroga-Language': language,
     },
     body: audio,
   });
