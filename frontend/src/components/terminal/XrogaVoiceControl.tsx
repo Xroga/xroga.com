@@ -654,9 +654,13 @@ export function XrogaVoiceControl({
       }
 
       // A fresh recognition session per dictation turn avoids Chrome/Safari reusing
-      // stale result indices after Stop/Done and is what makes the second, third,
-      // and later voice turns behave like the first.
-      restartRecognitionRef.current('capture');
+      // stale result indices after Stop/Done. Delay the restart very slightly so a
+      // wake-word result handler can finish before its recognizer is replaced.
+      window.setTimeout(() => {
+        if (captureActiveRef.current && !finalizingRef.current) {
+          restartRecognitionRef.current('capture');
+        }
+      }, 70);
     },
     [emitVoiceText, setMode, startRecorder],
   );
@@ -914,118 +918,175 @@ export function XrogaVoiceControl({
     ],
   );
 
-  const startRecognition = useCallback(() => {
-    if (!enabledRef.current || recognitionRef.current) return;
-    const Recognition = recognitionConstructor();
-    if (!Recognition) {
-      // Manual tap-to-talk still works through MediaRecorder + server transcription.
-      if (!captureActiveRef.current) setMode('armed');
-      return;
-    }
+  const startRecognition = useCallback(
+    (
+      purpose: RecognitionPurpose = captureActiveRef.current ? 'capture' : 'wake',
+      force = false,
+    ) => {
+      if (!enabledRef.current) return;
 
-    const recognition = new Recognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 5;
-    recognition.lang = recognitionLanguage();
+      if (recognitionRef.current) {
+        if (!force && recognitionPurposeRef.current === purpose) return;
+        stopRecognition();
+      }
 
-    recognition.onstart = () => {
-      if (!captureActiveRef.current && modeRef.current !== 'paused') setMode('armed');
-    };
+      const Recognition = recognitionConstructor();
+      if (!Recognition) {
+        // Manual recording still works through MediaRecorder + authenticated server
+        // transcription even when the browser has no SpeechRecognition implementation.
+        if (!captureActiveRef.current) setMode('armed');
+        return;
+      }
 
-    recognition.onresult = (event) => {
-      if (finalizingRef.current) return;
+      if (restartTimerRef.current !== null) {
+        window.clearTimeout(restartTimerRef.current);
+        restartTimerRef.current = null;
+      }
 
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
-        const result = event.results[index];
-        const candidates = recognitionCandidates(result);
-        if (!candidates.length) continue;
+      const generation = recognitionGenerationRef.current + 1;
+      recognitionGenerationRef.current = generation;
+      recognitionPurposeRef.current = purpose;
 
-        if (!captureActiveRef.current) {
-          const transcript = wakeCandidate(result);
-          if (!transcript) continue;
-          const wakeCommand = extractWakeCommand(transcript);
-          if (wakeCommand === null) continue;
+      const recognition = new Recognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 5;
+      recognition.lang = recognitionLanguage(language);
 
-          const lowerWakeCommand = trimControlPunctuation(wakeCommand).toLocaleLowerCase();
-          if (loading && TASK_STOP_PHRASES.has(lowerWakeCommand)) {
-            onStopRun?.();
+      recognition.onstart = () => {
+        if (generation !== recognitionGenerationRef.current) return;
+        if (purpose === 'capture' && captureActiveRef.current) {
+          if (modeRef.current !== 'paused') setMode('listening');
+          return;
+        }
+        if (!captureActiveRef.current && modeRef.current !== 'paused') setMode('armed');
+      };
+
+      recognition.onresult = (event) => {
+        if (generation !== recognitionGenerationRef.current || finalizingRef.current) return;
+
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          const result = event.results[index];
+          const candidates = recognitionCandidates(result);
+          if (!candidates.length) continue;
+
+          if (!captureActiveRef.current) {
+            const transcript = wakeCandidate(result);
+            if (!transcript) continue;
+            const wakeCommand = extractWakeCommand(transcript);
+            if (wakeCommand === null) continue;
+
+            const lowerWakeCommand = trimControlPunctuation(wakeCommand).toLocaleLowerCase();
+            if (loading && TASK_STOP_PHRASES.has(lowerWakeCommand)) {
+              onStopRun?.();
+              continue;
+            }
+
+            activateCapture(wakeCommand);
             continue;
           }
 
-          activateCapture(wakeCommand);
-          continue;
-        }
+          const transcript = candidates[0] ?? '';
+          if (!transcript) continue;
 
-        const transcript = candidates[0] ?? '';
-        if (!transcript) continue;
+          if (!result.isFinal) {
+            if (modeRef.current !== 'paused') {
+              const partial = stripWakeWord(transcript);
+              const control = controlAtEnd(partial);
+              const preview = control ? control.content : partial;
+              interimTextRef.current = cleanSpeech(preview);
+              emitVoiceText(mergeText(browserTextRef.current, interimTextRef.current));
 
-        if (!result.isFinal) {
-          if (modeRef.current !== 'paused') {
-            const partial = stripWakeWord(transcript);
-            const control = controlAtEnd(partial);
-            const preview = control ? control.content : partial;
-            interimTextRef.current = cleanSpeech(preview);
-            emitVoiceText(mergeText(browserTextRef.current, interimTextRef.current));
-
-            // Exact voice-control phrases should feel immediate. Only fire a control
-            // from interim recognition when it contains no dictated content, which
-            // prevents a sentence such as "do not stop" from accidentally stopping.
-            if (control && !control.content) {
-              handleFinalSegment(partial);
+              // Voice-only control phrases can act immediately; dictated text is never
+              // thrown away just because a control word appears at the end.
+              if (control && !control.content) {
+                handleFinalSegment(partial);
+              }
             }
+            continue;
           }
-          continue;
+
+          handleFinalSegment(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        if (generation !== recognitionGenerationRef.current) return;
+
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          setErrorMessage('Allow microphone access to use Xroga voice.');
+          enabledRef.current = false;
+          setHandsFreeEnabled(false);
+          setMode('error');
+          return;
         }
 
-        handleFinalSegment(transcript);
-      }
-    };
+        if (event.error === 'audio-capture') {
+          setErrorMessage('No microphone is available.');
+          setMode('error');
+          return;
+        }
 
-    recognition.onerror = (event) => {
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setErrorMessage('Allow microphone access to use Xroga voice.');
-        enabledRef.current = false;
-        setHandsFreeEnabled(false);
-        setMode('error');
-        return;
-      }
+        // no-speech/network are routine browser recognizer interruptions. The current
+        // turn remains recorded and the recognizer is recreated below.
+        if (event.error !== 'no-speech' && event.error !== 'network') {
+          setErrorMessage(
+            captureActiveRef.current
+              ? 'Live captions paused; the recording is still safe.'
+              : 'Wake listening paused. Xroga is reconnecting.',
+          );
+        }
+      };
 
-      if (event.error === 'audio-capture') {
-        setErrorMessage('No microphone is available.');
-        setMode('error');
-        return;
-      }
+      recognition.onend = () => {
+        if (generation !== recognitionGenerationRef.current) return;
+        recognitionRef.current = null;
+        if (!enabledRef.current || finalizingRef.current) return;
 
-      // Chrome frequently emits no-speech/network between wake phrases. That is not
-      // a product failure; onend restarts the lightweight wake listener.
-      if (event.error !== 'no-speech' && event.error !== 'network') {
-        setErrorMessage('Wake listening paused. Tap the mic to continue.');
-      }
-    };
+        const nextPurpose: RecognitionPurpose =
+          captureActiveRef.current ? 'capture' : 'wake';
+        restartTimerRef.current = window.setTimeout(
+          () => startRecognition(nextPurpose, true),
+          220,
+        );
+      };
 
-    recognition.onend = () => {
-      recognitionRef.current = null;
+      recognitionRef.current = recognition;
+      try {
+        recognition.start();
+      } catch {
+        if (generation !== recognitionGenerationRef.current) return;
+        recognitionRef.current = null;
+        if (!enabledRef.current || finalizingRef.current) return;
+        restartTimerRef.current = window.setTimeout(
+          () => startRecognition(purpose, true),
+          360,
+        );
+      }
+    },
+    [
+      activateCapture,
+      emitVoiceText,
+      handleFinalSegment,
+      language,
+      loading,
+      onStopRun,
+      setHandsFreeEnabled,
+      setMode,
+      stopRecognition,
+    ],
+  );
+
+  useEffect(() => {
+    restartRecognitionRef.current = (purpose: RecognitionPurpose = 'wake') => {
+      stopRecognition();
       if (!enabledRef.current) return;
-      restartTimerRef.current = window.setTimeout(() => startRecognition(), 260);
+      restartTimerRef.current = window.setTimeout(
+        () => startRecognition(purpose, true),
+        80,
+      );
     };
-
-    recognitionRef.current = recognition;
-    try {
-      recognition.start();
-    } catch {
-      recognitionRef.current = null;
-      restartTimerRef.current = window.setTimeout(() => startRecognition(), 420);
-    }
-  }, [
-    activateCapture,
-    emitVoiceText,
-    handleFinalSegment,
-    loading,
-    onStopRun,
-    setHandsFreeEnabled,
-    setMode,
-  ]);
+  }, [startRecognition, stopRecognition]);
 
   const enableAndCapture = useCallback(async () => {
     const ready = await ensureMicrophone();
@@ -1035,7 +1096,6 @@ export function XrogaVoiceControl({
     setHandsFreeEnabled(true);
     setOnboardingComplete(true);
     setMode('armed');
-    startRecognition();
     activateCapture('');
   }, [
     activateCapture,
@@ -1058,9 +1118,8 @@ export function XrogaVoiceControl({
 
     const ready = await ensureMicrophone();
     if (!ready) return;
-    startRecognition();
     activateCapture('');
-  }, [activateCapture, enableAndCapture, ensureMicrophone, startRecognition]);
+  }, [activateCapture, enableAndCapture, ensureMicrophone]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -1075,7 +1134,7 @@ export function XrogaVoiceControl({
     void ensureMicrophone().then((ready) => {
       if (!ready) return;
       setMode(captureActiveRef.current ? modeRef.current : 'armed');
-      startRecognition();
+      startRecognition(captureActiveRef.current ? 'capture' : 'wake');
     });
   }, [
     ensureMicrophone,
