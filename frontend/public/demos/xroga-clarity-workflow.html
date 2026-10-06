@@ -178,6 +178,194 @@ html,body {overflow-x:hidden!important}
  .spin,.run-meter span,.work-row,.sim-pointer,.blue-dot {animation:none!important}
 }
 </style>
+
+<style id="xroga-clarity-theme-v8">
+/* Embedded card is a native animated application, not a framed screenshot. */
+.site-demo,.feature-card{background:transparent!important}
+.animation-panel{
+  border:0!important;
+  box-shadow:none!important;
+  background:radial-gradient(circle at 78% 15%,rgba(186,208,246,.65),transparent 54%),linear-gradient(145deg,#eef4fb,#e2edf8)!important;
+  overflow:hidden!important;
+}
+.radio-inputs{background:rgba(241,245,253,.86)!important;border:0!important}
+.radio .name{font-weight:750!important}
+.result-box{
+  inset:7px 6px auto!important;
+  height:auto!important;
+  min-height:160px!important;
+  max-height:calc(100% - 14px)!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,#fff,#fafdff)!important;
+  box-shadow:0 12px 25px rgba(35,69,124,.11)!important;
+  overflow:hidden!important;
+}
+.working-box{
+  inset:8px 6px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,#fff,#f8fbff)!important;
+  box-shadow:0 12px 25px rgba(35,69,124,.10)!important;
+}
+.result-box::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#65a8ff,#947afc,transparent);
+  background-size:200% 100%;
+  animation:xrogaResultLight 4s linear infinite;
+}
+@keyframes xrogaResultLight{to{background-position:200% 0}}
+.mini-row{
+  border:0!important;
+  border-left:2px solid rgba(78,137,231,.22)!important;
+  background:rgba(241,246,255,.88)!important;
+  animation:xrogaResultRow .45s cubic-bezier(.22,.8,.2,1) both;
+}
+.mini-row:nth-child(2){animation-delay:.13s}
+.mini-row:nth-child(3){animation-delay:.24s}
+@keyframes xrogaResultRow{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.result-head{border-bottom:1px solid rgba(31,79,142,.06)!important}
+.browser-mini{border:0!important;box-shadow:inset 0 0 0 1px rgba(80,110,150,.08)}
+.animation-panel[data-phase="work"] .working-box,.animation-panel[data-phase="result"] .result-box{will-change:opacity,transform}
+html[data-xroga-theme="black"] .radio-inputs,
+html[data-xroga-theme="gray"] .radio-inputs{
+  background:#1e2430!important;
+  border:0!important;
+}
+html[data-xroga-theme="black"] .radio .name,
+html[data-xroga-theme="gray"] .radio .name{color:#b4c3d8!important}
+html[data-xroga-theme="black"] .radio input:checked+.name,
+html[data-xroga-theme="gray"] .radio input:checked+.name{
+  background:#344157!important;
+  box-shadow:inset 0 0 0 1px rgba(146,173,219,.17)!important;
+  color:#f8fbff!important;
+}
+html[data-xroga-theme="black"] .animation-panel,
+html[data-xroga-theme="gray"] .animation-panel{
+  border:0!important;
+  background:radial-gradient(ellipse at 78% 10%,rgba(68,91,143,.32),transparent 62%),linear-gradient(154deg,#1b2638,#10141d)!important;
+}
+html[data-xroga-theme="black"] .chatbar,
+html[data-xroga-theme="gray"] .chatbar{
+  background:#1b283b!important;
+  border:1px solid #344766!important;
+  box-shadow:0 10px 28px rgba(15,40,90,.22)!important;
+}
+html[data-xroga-theme="black"] #userQuery,
+html[data-xroga-theme="gray"] #userQuery{
+  color:#f4f8ff!important;
+}
+html[data-xroga-theme="black"] #userQuery::placeholder,
+html[data-xroga-theme="gray"] #userQuery::placeholder{color:#b1bbca!important}
+html[data-xroga-theme="black"] .clear,
+html[data-xroga-theme="gray"] .clear{color:#aeb8c9!important}
+html[data-xroga-theme="black"] .result-box,
+html[data-xroga-theme="gray"] .result-box{
+  background:linear-gradient(152deg,#222d40,#192230)!important;
+  border:0!important;
+  box-shadow:0 16px 30px rgba(0,0,0,.18)!important;
+}
+html[data-xroga-theme="black"] .working-box,
+html[data-xroga-theme="gray"] .working-box{
+  background:linear-gradient(145deg,#222d40,#19212f)!important;
+  border:0!important;
+  box-shadow:0 16px 30px rgba(0,0,0,.17)!important;
+}
+html[data-xroga-theme="black"] .work-title,
+html[data-xroga-theme="gray"] .work-title,
+html[data-xroga-theme="black"] .result-head-main strong,
+html[data-xroga-theme="gray"] .result-head-main strong,
+html[data-xroga-theme="black"] .row-copy strong,
+html[data-xroga-theme="gray"] .row-copy strong,
+html[data-xroga-theme="black"] .browser-title,
+html[data-xroga-theme="gray"] .browser-title{
+  color:#ecf4ff!important;
+}
+html[data-xroga-theme="black"] .work-row,
+html[data-xroga-theme="gray"] .work-row,
+html[data-xroga-theme="black"] .result-head-main small,
+html[data-xroga-theme="gray"] .result-head-main small,
+html[data-xroga-theme="black"] .row-copy span,
+html[data-xroga-theme="gray"] .row-copy span,
+html[data-xroga-theme="black"] .result-bottom,
+html[data-xroga-theme="gray"] .result-bottom{
+  color:#b4c3d8!important;
+}
+html[data-xroga-theme="black"] .result-head,
+html[data-xroga-theme="gray"] .result-head{
+  border-bottom-color:rgba(187,210,255,.08)!important;
+}
+html[data-xroga-theme="black"] .mini-row,
+html[data-xroga-theme="gray"] .mini-row{
+  background:rgba(151,183,244,.075)!important;
+  border:0!important;
+  border-left:2px solid rgba(114,161,255,.36)!important;
+}
+html[data-xroga-theme="black"] .row-icon,
+html[data-xroga-theme="gray"] .row-icon,
+html[data-xroga-theme="black"] .row-chip,
+html[data-xroga-theme="gray"] .row-chip{
+  background:#273d5c!important;
+  color:#c8e1ff!important;
+}
+html[data-xroga-theme="black"] .demo-pill,
+html[data-xroga-theme="gray"] .demo-pill,
+html[data-xroga-theme="black"] .result-check,
+html[data-xroga-theme="gray"] .result-check{
+  background:#28456f!important;
+  color:#dbeeff!important;
+}
+html[data-xroga-theme="black"] .mini-stat,
+html[data-xroga-theme="gray"] .mini-stat,
+html[data-xroga-theme="black"] .quote-row,
+html[data-xroga-theme="gray"] .quote-row{
+  background:#243145!important;
+  border-color:#3a4b65!important;
+  color:#deebff!important;
+}
+html[data-xroga-theme="black"] .mini-stat b,
+html[data-xroga-theme="gray"] .mini-stat b{color:#93c5fd!important}
+html[data-xroga-theme="black"] .mini-stat small,
+html[data-xroga-theme="gray"] .mini-stat small{color:#bfd0e4!important}
+html[data-xroga-theme="black"] .browser-mini,
+html[data-xroga-theme="gray"] .browser-mini{
+  background:#141e2c!important;
+  border:0!important;
+  box-shadow:inset 0 0 0 1px rgba(126,164,235,.12)!important;
+}
+html[data-xroga-theme="black"] .browser-bar,
+html[data-xroga-theme="gray"] .browser-bar{
+  background:#223047!important;
+  border-bottom-color:#314059!important;
+  color:#b4c3d8!important;
+}
+html[data-xroga-theme="black"] .browser-bar span,
+html[data-xroga-theme="gray"] .browser-bar span,
+html[data-xroga-theme="black"] .browser-field,
+html[data-xroga-theme="gray"] .browser-field{
+  background:#27364c!important;
+  border-color:#394f6d!important;
+  color:#dbe7f8!important;
+}
+html[data-xroga-theme="black"] .browser-field strong,
+html[data-xroga-theme="gray"] .browser-field strong{color:#eef5ff!important}
+html[data-xroga-theme="black"] .browser-field small,
+html[data-xroga-theme="gray"] .browser-field small{color:#aabbd3!important}
+html[data-xroga-theme="beige"] .animation-panel{
+  border:0!important;
+  background:linear-gradient(148deg,#f4eee5,#e8e1d7)!important;
+}
+html[data-xroga-theme="beige"] .radio-inputs{
+  background:#ece6dc!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .mini-row,.result-box::before{animation:none!important}
+}
+</style>
+
 </head>
 <body>
 <main class="site-demo" aria-label="Clarity feature demo">
@@ -352,6 +540,15 @@ html,body {overflow-x:hidden!important}
   window.addEventListener('load', announceSize);
   requestAnimationFrame(announceSize);
 })();
+</script>
+
+<script>
+window.addEventListener('message', function onXrogaCardThemeMessage(event) {
+  if (event.source !== window.parent || !event.data || event.data.source !== 'xroga-card-theme') return;
+  var theme = event.data.theme;
+  if (!['white','black','gray','beige'].includes(theme)) return;
+  document.documentElement.setAttribute('data-xroga-theme', theme);
+});
 </script>
 </body>
 </html>
