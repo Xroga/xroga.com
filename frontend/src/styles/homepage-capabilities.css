@@ -27,26 +27,32 @@ body.theme-beige .xcap-section{--page:#f2e2c8;--ink:#211c18;--muted:#74685e;--li
   border:1px solid rgba(15,15,15,.08);
   isolation:isolate;
 }
+.xcap-card--global .xcap-copy{padding-top:13px;padding-bottom:17px}
+.xcap-card--global .xcap-copy h3{font-size:clamp(31px,2.15vw,40px)}
+.xcap-card--global .xcap-copy p{margin-top:8px;font-size:11.5px;line-height:1.38}
 .xcap-magic-globe-title{
   position:relative;
   z-index:3;
   margin:0;
-  padding-top:2px;
+  padding-top:0;
   background:linear-gradient(180deg,#050505 12%,#777 58%,#c7c7c7 100%);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
   font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:clamp(66px,7.1vw,104px);
+  font-size:clamp(58px,5.4vw,78px);
   font-weight:600;
-  line-height:.82;
+  line-height:.86;
   letter-spacing:-.065em;
   white-space:pre-wrap;
   text-align:center;
   pointer-events:none;
 }
-.xcap-magic-globe-demo .top-28{top:92px}
-.xcap-magic-globe-demo .max-w-150{max-width:600px}
+.xcap-magic-globe-demo .xcap-globe-component{
+  top:56px!important;
+  width:min(330px,88%)!important;
+  max-width:330px!important;
+}
 .xcap-magic-globe-demo canvas{display:block;width:100%;height:100%}
 .xcap-magic-globe-shade{
   z-index:2;
@@ -55,7 +61,14 @@ body.theme-beige .xcap-section{--page:#f2e2c8;--ink:#211c18;--muted:#74685e;--li
 body.theme-black .xcap-card--global .xcap-magic-globe-demo,
 body.theme-gray .xcap-card--global .xcap-magic-globe-demo,
 body.theme-beige .xcap-card--global .xcap-magic-globe-demo{filter:none!important;background:#fff!important}
+@media(min-width:1051px){
+  .xcap-card--global{grid-template-rows:minmax(205px,1fr) auto}
+}
+@media(max-width:1050px) and (min-width:721px){
+  .xcap-magic-globe-title{font-size:68px}
+  .xcap-magic-globe-demo .xcap-globe-component{top:64px!important;width:min(350px,86%)!important;max-width:350px!important}
+}
 @media(max-width:720px){
-  .xcap-magic-globe-title{font-size:78px}
-  .xcap-magic-globe-demo .top-28{top:104px}
+  .xcap-magic-globe-title{font-size:68px}
+  .xcap-magic-globe-demo .xcap-globe-component{top:66px!important;width:min(330px,88%)!important;max-width:330px!important}
 }
