@@ -137,6 +137,9 @@ test('server transcription prefers keyword-guided current transcription and fall
   assert.match(backend, /'X Roga'/);
   assert.match(backend, /response_format', 'json'/);
   assert.match(backend, /temperature', '0'/);
+  assert.match(backend, /chunking_strategy', 'auto'/);
+  assert.match(backend, /Do not translate/);
+  assert.match(backend, /languages:/);
 });
 
 
@@ -210,4 +213,34 @@ test('exact spoken controls never leak control words into the composer', () => {
   assert.match(voice, /const finalVoiceText = control/);
   assert.match(voice, /\? refinedVoiceText/);
   assert.match(voice, /: refinedVoiceText \|\| fallbackVoiceText/);
+});
+
+test('each wake and dictation phase owns a fresh browser recognizer', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /type RecognitionPurpose = 'wake' \| 'capture'/);
+  assert.match(voice, /recognitionPurposeRef/);
+  assert.match(voice, /recognitionGenerationRef/);
+  assert.match(voice, /generation !== recognitionGenerationRef\.current/);
+  assert.match(voice, /restartRecognitionRef\.current\('capture'\)/);
+  assert.match(voice, /restartRecognitionRef\.current\('wake'\)/);
+  assert.match(voice, /startRecognition\(nextPurpose, true\)/);
+});
+
+test('Stop Done and Send freeze live recognition before authoritative audio finalization', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(
+    voice,
+    /setMode\('transcribing'\);[\s\S]{0,260}stopRecognition\(\);[\s\S]{0,140}const audio = await stopRecorder\(\)/,
+  );
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.doesNotMatch(voice, /void transcribe\(\)\.then/);
+});
+
+test('browser live captions follow the chosen or device language', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /recognitionLanguage\(language\)/);
+  assert.match(voice, /if \(language && language !== 'auto'\) return language/);
 });
