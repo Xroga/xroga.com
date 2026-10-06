@@ -19,12 +19,6 @@ const INTEGRATIONS = [
 
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
-const RUNS = [
-  ['Find 100 dental clinics, enrich the owners, and prepare outreach.', ['Understand the outcome', 'Search live sources', 'Connect business tools', 'Prepare verified result']],
-  ['Read these files, research the market, and send me the final report.', ['Read files and chats', 'Research current web', 'Compare evidence', 'Return the report']],
-  ['Fix checkout, test it on mobile, and ship the verified change.', ['Inspect the project', 'Implement the fix', 'Run browser checks', 'Prepare release']],
-] as const;
-
 function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return <article className={`xcap-card ${className}`}>{children}</article>;
 }
@@ -169,25 +163,124 @@ function KnowledgeCard() {
 }
 
 function WorkingCard() {
-  const [run, setRun] = useState(0);
-  const current = RUNS[run % RUNS.length];
+  const [phase, setPhase] = useState<'before' | 'working' | 'verified'>('before');
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
-    const timer = window.setInterval(() => setRun((value) => value + 1), 9200);
+    const order: Array<'before' | 'working' | 'verified'> = ['before', 'working', 'verified'];
+    const timer = window.setInterval(() => {
+      setPhase((current) => order[(order.indexOf(current) + 1) % order.length]);
+    }, 5200);
     return () => window.clearInterval(timer);
   }, []);
+
+  const copyExample = async () => {
+    try {
+      await navigator.clipboard.writeText('Find 100 dental clinics, enrich the owners, verify the data, and prepare outreach.');
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
     <Card className="xcap-card--working">
-      <div className="xcap-visual xcap-visual--working" key={run}>
-        <div className="xcap-workspace">
-          <div className="xcap-workspace-top"><span><i /> <i /> <i /></span><b>Xroga execution</b><small>live example</small></div>
-          <div className="xcap-prompt"><span className="xcap-sphere" /><div><small>You asked Xroga</small><b>{current[0]}</b></div></div>
-          <div className="xcap-steps">
-            {current[1].map((step, index) => <p key={step} style={{ '--delay': `${index * 1.15}s` } as CSSProperties}><span>{index + 1}</span>{step}<i>{index === current[1].length - 1 ? '✓' : '→'}</i></p>)}
+      <div className="xcap-workflow-demo" aria-label="Example Xroga workflow from request to verified outcome">
+        <div className="xcap-workflow-topline">
+          <div>
+            <span className="xcap-workflow-kicker">EXAMPLE WORKFLOW</span>
+            <strong>Request → work → verified result</strong>
           </div>
+          <span className="xcap-workflow-live"><i /> Auto demo</span>
         </div>
-        <button type="button" onClick={() => setRun((value) => value + 1)}>✦ Run another example</button>
+
+        <div className="xcap-workflow-radio-inputs" role="tablist" aria-label="Workflow stages">
+          {([
+            ['before', 'BEFORE'],
+            ['working', 'WORKING'],
+            ['verified', 'VERIFIED'],
+          ] as const).map(([value, label]) => (
+            <label className="xcap-workflow-radio" key={value}>
+              <input
+                type="radio"
+                name="xcap-workflow-stage"
+                checked={phase === value}
+                onChange={() => setPhase(value)}
+              />
+              <span className="xcap-workflow-radio-name">{label}</span>
+            </label>
+          ))}
+        </div>
+
+        <div className="xcap-workflow-stage" data-phase={phase} key={phase}>
+          {phase === 'before' && (
+            <div className="xcap-terminal-card">
+              <div className="xcap-terminal-wrap">
+                <div className="xcap-terminal">
+                  <hgroup className="xcap-terminal-head">
+                    <p className="xcap-terminal-title">
+                      <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 15L10 12L7 9M13 15H17M7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21Z" />
+                      </svg>
+                      Xroga request
+                    </p>
+                    <button type="button" className="xcap-copy-toggle" onClick={copyExample} aria-label="Copy example request">
+                      {copied ? '✓' : (
+                        <svg fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                          <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                        </svg>
+                      )}
+                    </button>
+                  </hgroup>
+                  <div className="xcap-terminal-body">
+                    <pre className="xcap-terminal-pre">
+                      <code>&gt;&nbsp;</code>
+                      <code>xroga&nbsp;</code>
+                      <code data-cmd='run "Find 100 dental clinics, enrich owners, verify data, prepare outreach."' className="xcap-terminal-cmd" />
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {phase === 'working' && (
+            <div className="xcap-ui-loader xcap-term" role="status" aria-label="Xroga working through the example request">
+              <div className="xcap-term-bar">
+                <span className="xcap-term-dot" /><span className="xcap-term-dot" /><span className="xcap-term-dot" />
+                <div className="xcap-term-title">xroga.run</div>
+              </div>
+              <div className="xcap-term-body">
+                <div className="xcap-term-line"><b>$</b> execute verified workflow</div>
+                <div className="xcap-term-line xcap-term-muted">› searching current business sources…</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> 100 clinics mapped</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-ok">✓</span> decision makers enriched</div>
+                <div className="xcap-term-line"><span className="xcap-term-tag xcap-term-run">●</span> verifying contacts + preparing outreach <span className="xcap-term-cursor" aria-hidden="true" /></div>
+                <div className="xcap-term-progress"><span className="xcap-term-fill" /><span className="xcap-term-glint" aria-hidden="true" /></div>
+              </div>
+            </div>
+          )}
+
+          {phase === 'verified' && (
+            <div className="xcap-verified-terminal">
+              <div className="xcap-verified-bar"><span><i /><i /><i /></span><b>Verified outcome</b><small>example complete</small></div>
+              <div className="xcap-verified-body">
+                <p className="xcap-verified-command">&gt; xroga verify --result</p>
+                <p style={{ '--verify-delay': '0ms' } as CSSProperties}>✔ Research sources checked</p>
+                <p style={{ '--verify-delay': '420ms' } as CSSProperties}>✔ 100 business records structured</p>
+                <p style={{ '--verify-delay': '840ms' } as CSSProperties}>✔ Owner/contact fields validated</p>
+                <p style={{ '--verify-delay': '1260ms' } as CSSProperties}>✔ Personalized outreach prepared</p>
+                <div className="xcap-verified-result" style={{ '--verify-delay': '1680ms' } as CSSProperties}>
+                  <span>Ready</span>
+                  <strong>100 verified leads · outreach package prepared</strong>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      <Copy eyebrow="PROMPT → ACTION → VERIFIED OUTCOME" title="Tell Xroga what" muted="needs to happen." description="One request can trigger research, files, tools, approvals, execution and verification." />
     </Card>
   );
 }
