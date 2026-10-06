@@ -90,7 +90,7 @@ test('native-language final transcription uses authenticated server auto detecti
   const api = source('../voiceApi.ts');
 
   assert.match(voice, /new MediaRecorder/);
-  assert.match(voice, /transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /transcribeVoiceAudio\(audio, language\)/);
   assert.match(api, /getAccessToken/);
   assert.match(api, /\/api\/voice\/transcribe/);
   assert.match(api, /X-Xroga-Language/);
@@ -135,11 +135,11 @@ test('server transcription prefers keyword-guided current transcription and fall
   assert.match(backend, /keywords\[\]/);
   assert.match(backend, /'Xroga'/);
   assert.match(backend, /'X Roga'/);
-  assert.match(backend, /response_format', 'json'/);
-  assert.match(backend, /temperature', '0'/);
-  assert.match(backend, /chunking_strategy', 'auto'/);
   assert.match(backend, /Do not translate/);
-  assert.match(backend, /languages:/);
+  assert.match(backend, /keywords\[\]/);
+  assert.match(backend, /languages\[\]/);
+  assert.doesNotMatch(backend, /chunking_strategy/);
+  assert.doesNotMatch(backend, /temperature', '0'/);
 });
 
 
@@ -177,7 +177,7 @@ test('Stop and Done wait for one authoritative transcription before arming the n
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.match(voice, /setMode\('transcribing'\)/);
-  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, language\)/);
   assert.match(voice, /const sourceText = cleanSpeech\(transcribed \|\| fallbackVoiceText\)/);
   assert.match(voice, /browserTextRef\.current = ''/);
   assert.match(voice, /interimTextRef\.current = ''/);
@@ -234,7 +234,7 @@ test('Stop Done and Send freeze live recognition before authoritative audio fina
     voice,
     /setMode\('transcribing'\);[\s\S]{0,260}stopRecognition\(\);[\s\S]{0,140}const audio = await stopRecorder\(\)/,
   );
-  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, language\)/);
   assert.doesNotMatch(voice, /void transcribe\(\)\.then/);
 });
 
@@ -243,4 +243,17 @@ test('browser live captions follow the chosen or device language', () => {
 
   assert.match(voice, /recognitionLanguage\(language\)/);
   assert.match(voice, /if \(language && language !== 'auto'\) return language/);
+});
+
+
+test('voice transcription language header is allowed through production API CORS', () => {
+  const backend = source('../../../../backend/src/index.ts');
+  assert.match(backend, /allowedHeaders:\s*\[[^\]]*'X-Xroga-Language'/s);
+});
+
+test('wake aliases include Bengali Chinese and Korean Xroga variants', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+  assert.ok(voice.includes('এক্স\\\\s*রোগা'));
+  assert.ok(voice.includes('艾克斯\\\\s*罗加'));
+  assert.ok(voice.includes('엑스\\\\s*로가'));
 });
