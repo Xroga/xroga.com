@@ -137,8 +137,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(terminalDock).toBeVisible();
   await expect(composerInput).toBeVisible();
 
-  // Voice is intentionally one click-to-dictate icon. There is no wake-word
-  // listener, settings menu, language selector, or product permission modal.
+  // Voice is intentionally one icon with no settings pill or product permission modal.
+  // After the browser has granted mic access once, the same icon can also arm the
+  // lightweight Xroga wake listener while manual click-to-dictate remains available.
   const voiceToggle = terminalDock.getByRole('button', { name: 'Start voice typing' });
   await expect(voiceToggle).toBeVisible();
   await expect(terminalDock.getByText('Voice off', { exact: true })).toHaveCount(0);

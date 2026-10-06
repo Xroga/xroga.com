@@ -5912,3 +5912,241 @@ html[data-reduced-motion='true'] .xv-voice-primary {
     transition: none !important;
   }
 }
+
+
+/* ==========================================================
+   VOICE V8 — wake + multilingual inline voice
+   ChatGPT-style inline capture: X | waveform | pause | stop | send.
+   ========================================================== */
+
+.xv-chatbar-row-modern:has(.xv-voice-v8-session) .xv-chatbar-compose-field,
+.xv-chatbar-row-modern:has(.xv-voice-v8-session) > .xv-chatbar-tools {
+  display: none;
+}
+
+.xv-voice-v8-session {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-height: 48px;
+  padding: 5px 6px;
+  color: var(--foreground);
+  background: transparent;
+}
+
+.xv-voice-v8-session.is-paused {
+  opacity: .78;
+}
+
+.xv-voice-v8-session.is-finalizing {
+  opacity: .68;
+}
+
+.xv-voice-v8-control,
+.xv-voice-v8-wave-button {
+  border: 0;
+  outline: 0;
+  color: inherit;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.xv-voice-v8-control {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  padding: 0;
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--foreground) 76%, var(--muted));
+  cursor: pointer;
+  transition:
+    transform 130ms ease,
+    color 130ms ease,
+    background 130ms ease;
+}
+
+.xv-voice-v8-control:hover:not(:disabled) {
+  transform: translateY(-1px);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.xv-voice-v8-control:disabled {
+  cursor: wait;
+  opacity: .42;
+}
+
+.xv-voice-v8-cancel {
+  color: var(--muted);
+}
+
+.xv-voice-v8-send {
+  color: #fff;
+  background: color-mix(in srgb, #111827 95%, var(--foreground));
+  box-shadow: 0 2px 8px color-mix(in srgb, #020617 18%, transparent);
+}
+
+.xv-voice-v8-send:hover:not(:disabled) {
+  color: #fff;
+  background: color-mix(in srgb, #111827 88%, #8b5cf6);
+}
+
+.xv-voice-v8-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.xv-voice-v8-wave-button {
+  display: flex;
+  min-width: 0;
+  height: 34px;
+  align-items: center;
+  justify-content: stretch;
+  padding: 0 2px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.xv-voice-v8-wave-button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--foreground) 2.5%, transparent);
+}
+
+.xv-voice-v8-wave {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.xv-voice-v8-wave i {
+  display: block;
+  width: 2px;
+  height: 27px;
+  flex: 1 1 0;
+  min-width: 1px;
+  max-width: 3px;
+  border-radius: 999px;
+  transform-origin: center;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--foreground) 92%, #fff),
+      color-mix(in srgb, var(--foreground) 44%, var(--muted))
+    );
+  opacity: .78;
+  transition: transform 66ms linear, opacity 110ms ease;
+}
+
+.xv-voice-v8-wave:not(.is-paused) i {
+  animation: xv-voice-v8-breathe 820ms ease-in-out infinite alternate;
+}
+
+.xv-voice-v8-wave.is-paused i {
+  transform: scaleY(.07) !important;
+  opacity: .24;
+}
+
+/* Mic icon = only the supplied AudioLines glyph. No circle, ring, outline, pill, or halo. */
+.xv-voice-icon-only,
+.xv-voice-icon-only:hover,
+.xv-voice-icon-only:active,
+.xv-voice-icon-only:focus,
+.xv-voice-icon-only:focus-visible,
+.xv-voice-icon-only.is-armed,
+.xv-voice-icon-only.is-listening,
+.xv-voice-icon-only.is-error {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  padding: 3px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.xv-voice-icon-only::before,
+.xv-voice-icon-only::after {
+  display: none !important;
+  content: none !important;
+}
+
+.xv-voice-icon-only > div,
+.xv-voice-icon-only svg {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.xv-voice-icon-only:hover {
+  color: var(--foreground);
+  filter: none;
+}
+
+.xv-voice-icon-only.is-armed {
+  color: color-mix(in srgb, #8b5cf6 78%, var(--foreground)) !important;
+}
+
+.xv-voice-icon-only.is-listening {
+  color: #22d3ee !important;
+  filter: none !important;
+}
+
+.xv-voice-icon-only.is-error {
+  color: #ef4444 !important;
+}
+
+@keyframes xv-voice-v8-breathe {
+  from { opacity: .58; }
+  to { opacity: .92; }
+}
+
+@media (max-width: 640px) {
+  .xv-voice-v8-session {
+    grid-template-columns: auto minmax(70px, 1fr) auto;
+    gap: 5px;
+    padding-inline: 4px;
+  }
+  .xv-voice-v8-wave {
+    gap: 1.5px;
+  }
+  .xv-voice-v8-wave i:nth-child(3n) {
+    display: none;
+  }
+  .xv-voice-v8-actions {
+    gap: 1px;
+  }
+  .xv-voice-v8-control {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 430px) {
+  .xv-voice-v8-wave i:nth-child(2n) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-voice-v8-wave i,
+  .xv-voice-v8-control,
+  .xv-voice-icon-only {
+    animation: none !important;
+    transition: none !important;
+  }
+}

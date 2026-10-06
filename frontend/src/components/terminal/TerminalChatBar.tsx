@@ -349,6 +349,22 @@ export function TerminalChatBar() {
     [setPrompt, triggerComposerSignal],
   );
 
+  const handleVoiceSend = useCallback(
+    (spokenText: string) => {
+      const text = spokenText.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      setDraft(text);
+      draftRef.current = text;
+      setPrompt(text);
+      lastExternalPrompt.current = text;
+      triggerComposerSignal(900);
+      window.requestAnimationFrame(() => {
+        formRef.current?.requestSubmit();
+      });
+    },
+    [setPrompt, triggerComposerSignal],
+  );
+
   async function applyStyleFromFile(file: File, stylePrompt: string) {
     if (!(await ensureRepoWorkspace(stylePrompt))) return;
     setUploading(true);
@@ -586,6 +602,7 @@ export function TerminalChatBar() {
                   <XrogaVoiceControl
                     composerText={draft}
                     onVoiceDraft={handleVoiceDraft}
+                    onVoiceSend={handleVoiceSend}
                   />
                 ) : null
               }
