@@ -74,14 +74,14 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  * "Xroga".
  */
 const WAKE_ALIAS_SOURCE =
-  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|' +
+  '(?:x[\\s-]*roga|ex[\\s-]*roga|acroga|a[\\s-]*croga|zroga|xroga|eks[\\s-]*roga|' +
   'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|ਐਕਸ\\s*ਰੋਗਾ|إكس\\s*روجا|اكس\\s*روجا|' +
   'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
   'エックス\\s*ロガ)';
-const WAKE_WORD = new RegExp(
-  '(?<![\\p{L}\\p{N}])' + WAKE_ALIAS_SOURCE + '(?![\\p{L}\\p{N}])',
-  'iu',
-);
+// Do not use lookbehind here: wake detection must work in every browser that
+// exposes SpeechRecognition. The brand aliases are specific enough that a direct
+// Unicode-insensitive search is both safer and more compatible.
+const WAKE_WORD = new RegExp(WAKE_ALIAS_SOURCE, 'iu');
 
 const CONTROL_PHRASES: Record<VoiceControlAction, string[]> = {
   send: [
@@ -453,6 +453,10 @@ export function XrogaVoiceControl({
   const baselineRef = useRef('');
   const wakeSeedRef = useRef('');
   const browserTextRef = useRef('');
+  // Browser recognizers often keep the newest words as interim text for a second
+  // or two. Keep that text in state so Stop/Done can never erase what the user
+  // visibly dictated before a final SpeechRecognition segment arrives.
+  const interimTextRef = useRef('');
 
   const setMode = useCallback((next: VoiceMode) => {
     modeRef.current = next;
@@ -624,6 +628,7 @@ export function XrogaVoiceControl({
       baselineRef.current = composerText.trim();
       wakeSeedRef.current = cleanSpeech(seed);
       browserTextRef.current = cleanSpeech(seed);
+      interimTextRef.current = '';
       captureActiveRef.current = true;
       setMode('listening');
       setErrorMessage('');
@@ -663,6 +668,7 @@ export function XrogaVoiceControl({
     finalizingRef.current = false;
     wakeSeedRef.current = '';
     browserTextRef.current = '';
+    interimTextRef.current = '';
     await stopRecorder();
     stopRecognition();
     releaseMicrophone();
@@ -682,6 +688,7 @@ export function XrogaVoiceControl({
       finalizingRef.current = false;
       wakeSeedRef.current = '';
       browserTextRef.current = '';
+      interimTextRef.current = '';
       onVoiceDraft(baselineRef.current);
       baselineRef.current = '';
 
@@ -734,7 +741,9 @@ export function XrogaVoiceControl({
         serverText = serverControl.content;
       }
 
-      const browserText = cleanSpeech(browserTextRef.current);
+      const browserText = cleanSpeech(
+        mergeWakeSeed(browserTextRef.current, interimTextRef.current),
+      );
       const seed = cleanSpeech(wakeSeedRef.current);
       let voiceText = serverText
         ? mergeWakeSeed(seed, stripWakeWord(serverText))
@@ -747,6 +756,7 @@ export function XrogaVoiceControl({
       finalizingRef.current = false;
       wakeSeedRef.current = '';
       browserTextRef.current = '';
+      interimTextRef.current = '';
       baselineRef.current = '';
 
       if (fullText) {
@@ -783,6 +793,7 @@ export function XrogaVoiceControl({
   const handleFinalSegment = useCallback(
     (rawTranscript: string) => {
       const transcript = stripWakeWord(rawTranscript);
+      interimTextRef.current = '';
       const control = controlAtEnd(transcript);
 
       if (modeRef.current === 'paused') {
@@ -897,7 +908,15 @@ export function XrogaVoiceControl({
             const partial = stripWakeWord(transcript);
             const control = controlAtEnd(partial);
             const preview = control ? control.content : partial;
-            emitVoiceText(mergeText(browserTextRef.current, preview));
+            interimTextRef.current = cleanSpeech(preview);
+            emitVoiceText(mergeText(browserTextRef.current, interimTextRef.current));
+
+            // Exact voice-control phrases should feel immediate. Only fire a control
+            // from interim recognition when it contains no dictated content, which
+            // prevents a sentence such as "do not stop" from accidentally stopping.
+            if (control && !control.content) {
+              handleFinalSegment(partial);
+            }
           }
           continue;
         }
@@ -972,6 +991,8 @@ export function XrogaVoiceControl({
 
   const manualTalk = useCallback(async () => {
     if (captureActiveRef.current || finalizingRef.current) return;
+    setErrorMessage('');
+    interimTextRef.current = '';
 
     if (!enabledRef.current) {
       await enableAndCapture();
