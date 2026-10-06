@@ -153,7 +153,7 @@ const ElectricLogo = ({
   cursorIntensity = 0.75,
   cursorRadius = 100,
   className = '',
-  style,
+  style = undefined,
 }) => {
   const containerRef = useRef(null);
   const propsRef = useRef({});
