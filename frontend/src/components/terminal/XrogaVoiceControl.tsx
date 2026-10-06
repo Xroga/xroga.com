@@ -1095,9 +1095,7 @@ export function XrogaVoiceControl({
           active={captureVisible}
           aria-hidden="true"
         />
-        {handsFreeEnabled && !captureVisible ? (
-          <span className="xv-voice-armed-dot" aria-hidden />
-        ) : null}
+
       </button>
 
       <span className="sr-only" aria-live="polite">
