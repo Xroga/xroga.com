@@ -1438,3 +1438,329 @@ body.theme-white .xcap-card--working{
     transform:none!important;
   }
 }
+
+
+/* v12: electric integration constellation
+   Xroga is the controller at center; 20 primary integrations are visibly connected,
+   and 20 additional real brand marks continuously loop below. */
+.xcap-card--integrations .xcap-visual--integrations{
+  min-height:318px!important;
+  height:auto!important;
+  overflow:hidden!important;
+  border:0!important;
+  position:relative!important;
+}
+.xcap-integration-modern{
+  --integration-loop-fade:#f8f8f8;
+  position:absolute;
+  inset:0;
+  container-type:inline-size;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) 58px;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(77,133,255,.12),transparent 29%),
+    radial-gradient(circle at 50% 42%,rgba(255,255,255,.96),rgba(247,248,251,.94) 58%,rgba(242,244,248,.96) 100%);
+}
+.xcap-constellation{
+  --center-y:44%;
+  --outer-radius:clamp(100px,28cqw,126px);
+  --inner-radius:clamp(70px,19cqw,87px);
+  position:relative;
+  min-height:0;
+  overflow:visible;
+}
+.xcap-connection-field{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+}
+.xcap-connection-beam{
+  position:absolute;
+  left:50%;
+  top:var(--center-y);
+  width:var(--inner-radius);
+  height:1px;
+  transform-origin:left center;
+  transform:rotate(var(--beam-angle));
+  background:linear-gradient(90deg,rgba(76,141,255,.72),rgba(121,174,255,.38) 55%,rgba(76,141,255,0));
+  opacity:.48;
+  filter:drop-shadow(0 0 4px rgba(76,141,255,.36));
+}
+.xcap-connection-beam.is-outer{width:var(--outer-radius);opacity:.38}
+.xcap-connection-beam::after{
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:0;
+  width:38%;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#8fc6ff,transparent);
+  filter:blur(.2px) drop-shadow(0 0 5px #5e9cff);
+  animation:xcapBeamCurrent 2.2s linear infinite;
+  animation-delay:var(--beam-delay);
+}
+@keyframes xcapBeamCurrent{
+  from{transform:translateX(-15%);opacity:0}
+  16%{opacity:1}
+  72%{opacity:.9}
+  to{transform:translateX(235%);opacity:0}
+}
+
+.xcap-constellation-item{
+  position:absolute;
+  left:50%;
+  top:var(--center-y);
+  z-index:3;
+  width:0;
+  height:0;
+  transform:rotate(var(--orbit-angle)) translateX(var(--inner-radius));
+  animation:xcapConstellationFloat 3.8s ease-in-out infinite;
+  animation-delay:var(--float-delay);
+}
+.xcap-constellation-item.is-outer{
+  transform:rotate(var(--orbit-angle)) translateX(var(--outer-radius));
+}
+.xcap-constellation-counter{
+  position:absolute;
+  left:-18px;
+  top:-18px;
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:rgba(255,255,255,.98);
+  border:1px solid rgba(15,23,42,.08);
+  box-shadow:0 10px 22px rgba(20,31,52,.12);
+  transition:transform .24s ease,box-shadow .24s ease;
+}
+.xcap-constellation-item.is-outer .xcap-constellation-counter{
+  left:-20px;
+  top:-20px;
+  width:40px;
+  height:40px;
+}
+.xcap-constellation-counter svg{
+  width:19px;
+  height:19px;
+  display:block;
+}
+.xcap-constellation-item.is-outer .xcap-constellation-counter svg{
+  width:21px;
+  height:21px;
+}
+.xcap-constellation-item:hover{z-index:8}
+.xcap-constellation-item:hover .xcap-constellation-counter{
+  box-shadow:0 13px 30px rgba(54,100,207,.23),0 0 0 4px rgba(76,141,255,.08);
+}
+@keyframes xcapConstellationFloat{
+  0%,100%{margin-top:0}
+  50%{margin-top:-4px}
+}
+
+.xcap-xroga-controller{
+  position:absolute;
+  left:50%;
+  top:var(--center-y);
+  z-index:7;
+  width:132px;
+  height:132px;
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  isolation:isolate;
+}
+.xcap-electric-layer{
+  position:absolute;
+  inset:-26px;
+  z-index:1;
+  pointer-events:auto;
+  opacity:.98;
+}
+.xcap-xroga-controller-plate{
+  position:relative;
+  z-index:3;
+  width:88px;
+  height:88px;
+  display:grid;
+  place-items:center;
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 32% 22%,rgba(255,255,255,.98),rgba(243,247,255,.94) 60%,rgba(224,234,255,.92));
+  border:1px solid rgba(76,141,255,.19);
+  box-shadow:
+    0 22px 45px rgba(24,64,150,.22),
+    0 0 0 7px rgba(94,156,255,.055),
+    inset 0 1px rgba(255,255,255,.9);
+}
+.xcap-xroga-controller-plate img{
+  width:66px!important;
+  height:66px!important;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 18px rgba(38,65,126,.18));
+}
+.xcap-controller-label{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  bottom:3px;
+  transform:translateX(-50%);
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(8,12,22,.84);
+  color:#dbe9ff;
+  font-size:6.5px;
+  font-weight:800;
+  letter-spacing:.16em;
+  white-space:nowrap;
+  box-shadow:0 0 16px rgba(76,141,255,.22);
+}
+
+.xcap-more-plugins{
+  position:relative;
+  z-index:9;
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  padding:7px 9px 8px;
+  border-top:1px solid rgba(22,32,49,.065);
+  background:rgba(248,248,248,.82);
+  backdrop-filter:blur(12px);
+}
+.xcap-more-plugins-label{
+  padding-left:3px;
+  color:#737a87;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  text-transform:uppercase;
+}
+.xcap-extra-logo-loop{
+  --logoloop-fadeColor:var(--integration-loop-fade);
+  min-width:0;
+  overflow:hidden;
+}
+.xcap-extra-logo-loop .logoloop__item{
+  display:flex;
+  align-items:center;
+}
+.xcap-loop-logo-shell{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.075);
+  box-shadow:0 6px 16px rgba(20,31,52,.09);
+}
+.xcap-loop-logo-shell svg{
+  width:19px;
+  height:19px;
+  display:block;
+}
+
+/* White theme: clear white integration card with subtle blue connection energy. */
+body.theme-white .xcap-card--integrations .xcap-integration-modern{
+  --integration-loop-fade:#f8f8f8;
+}
+body.theme-white .xcap-card--integrations .xcap-more-plugins{
+  background:rgba(248,248,248,.9);
+}
+
+/* Dark and gray themes keep every brand mark readable on white logo pucks. */
+body.theme-black .xcap-card--integrations .xcap-integration-modern,
+body.theme-gray .xcap-card--integrations .xcap-integration-modern{
+  --integration-loop-fade:#101319;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(52,107,255,.2),transparent 31%),
+    radial-gradient(circle at 50% 42%,#1d222d,#101319 58%,#0b0d11 100%);
+}
+body.theme-black .xcap-card--integrations .xcap-more-plugins,
+body.theme-gray .xcap-card--integrations .xcap-more-plugins{
+  background:rgba(16,19,25,.9);
+  border-top-color:rgba(255,255,255,.065);
+}
+body.theme-black .xcap-card--integrations .xcap-more-plugins-label,
+body.theme-gray .xcap-card--integrations .xcap-more-plugins-label{
+  color:#818b9d;
+}
+body.theme-black .xcap-card--integrations .xcap-connection-beam,
+body.theme-gray .xcap-card--integrations .xcap-connection-beam{
+  opacity:.55;
+}
+body.theme-beige .xcap-card--integrations .xcap-integration-modern{
+  --integration-loop-fade:#f0ece5;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(92,128,235,.13),transparent 31%),
+    linear-gradient(160deg,#fffdf9,#eee8df);
+}
+body.theme-beige .xcap-card--integrations .xcap-more-plugins{
+  background:rgba(240,236,229,.9);
+}
+
+@media(max-width:1050px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:330px!important}
+  .xcap-integration-modern{grid-template-rows:minmax(0,1fr) 58px}
+  .xcap-constellation{
+    --outer-radius:clamp(112px,30cqw,138px);
+    --inner-radius:clamp(78px,21cqw,94px);
+  }
+}
+@media(max-width:720px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:318px!important}
+  .xcap-integration-modern{grid-template-rows:minmax(0,1fr) 54px}
+  .xcap-constellation{
+    --center-y:45%;
+    --outer-radius:clamp(102px,31cqw,120px);
+    --inner-radius:clamp(70px,21cqw,84px);
+  }
+  .xcap-constellation-counter{
+    left:-16px;top:-16px;width:32px;height:32px;
+  }
+  .xcap-constellation-item.is-outer .xcap-constellation-counter{
+    left:-18px;top:-18px;width:36px;height:36px;
+  }
+  .xcap-constellation-counter svg{width:17px;height:17px}
+  .xcap-constellation-item.is-outer .xcap-constellation-counter svg{width:19px;height:19px}
+  .xcap-xroga-controller{width:118px;height:118px}
+  .xcap-xroga-controller-plate{width:78px;height:78px;border-radius:23px}
+  .xcap-xroga-controller-plate img{width:58px!important;height:58px!important}
+  .xcap-electric-layer{inset:-23px}
+  .xcap-more-plugins{
+    grid-template-columns:1fr;
+    gap:2px;
+    padding:5px 7px 6px;
+  }
+  .xcap-more-plugins-label{display:none}
+  .xcap-loop-logo-shell{width:32px;height:32px}
+  .xcap-loop-logo-shell svg{width:17px;height:17px}
+}
+@media(max-width:390px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:304px!important}
+  .xcap-constellation{
+    --outer-radius:96px;
+    --inner-radius:66px;
+  }
+  .xcap-constellation-counter{
+    left:-15px;top:-15px;width:30px;height:30px;
+  }
+  .xcap-constellation-item.is-outer .xcap-constellation-counter{
+    left:-16px;top:-16px;width:32px;height:32px;
+  }
+  .xcap-xroga-controller{width:108px;height:108px}
+  .xcap-xroga-controller-plate{width:70px;height:70px}
+  .xcap-xroga-controller-plate img{width:52px!important;height:52px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .xcap-connection-beam::after,
+  .xcap-constellation-item{
+    animation:none!important;
+  }
+}
