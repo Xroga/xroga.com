@@ -450,6 +450,7 @@ export function XrogaVoiceControl({
   const recognitionPurposeRef = useRef<RecognitionPurpose>('wake');
   const recognitionGenerationRef = useRef(0);
   const restartTimerRef = useRef<number | null>(null);
+  const restartRecognitionRef = useRef<(purpose?: RecognitionPurpose) => void>(() => undefined);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recorderChunksRef = useRef<Blob[]>([]);
   const recorderResolveRef = useRef<((audio: Blob | null) => void) | null>(null);
@@ -560,16 +561,18 @@ export function XrogaVoiceControl({
   }, [setMode, startMeter]);
 
   const stopRecognition = useCallback(() => {
+    recognitionGenerationRef.current += 1;
     if (restartTimerRef.current !== null) {
       window.clearTimeout(restartTimerRef.current);
       restartTimerRef.current = null;
     }
+    const current = recognitionRef.current;
+    recognitionRef.current = null;
     try {
-      recognitionRef.current?.abort();
+      current?.abort();
     } catch {
       // Browser may already have closed it.
     }
-    recognitionRef.current = null;
   }, []);
 
   const stopRecorder = useCallback(async (): Promise<Blob | null> => {
@@ -649,8 +652,13 @@ export function XrogaVoiceControl({
       if (streamRef.current) {
         startRecorder(streamRef.current);
       }
+
+      // A fresh recognition session per dictation turn avoids Chrome/Safari reusing
+      // stale result indices after Stop/Done and is what makes the second, third,
+      // and later voice turns behave like the first.
+      restartRecognitionRef.current('capture');
     },
-    [composerText, emitVoiceText, setMode, startRecorder],
+    [emitVoiceText, setMode, startRecorder],
   );
 
   const pauseCapture = useCallback(() => {
@@ -733,7 +741,12 @@ export function XrogaVoiceControl({
       const localFullText = mergeText(baseText, localVoiceText);
 
       finalizingRef.current = true;
-      if (send || !localFullText) setMode('transcribing');
+      setMode('transcribing');
+
+      // Freeze browser recognition before finalizing the audio. The recorded stream is
+      // authoritative from this point onward; no late browser event may leak into the
+      // next voice turn.
+      stopRecognition();
       const audio = await stopRecorder();
 
       const clearCaptureState = () => {
@@ -793,38 +806,9 @@ export function XrogaVoiceControl({
         };
       };
 
-      // Stop/Done should feel instant. Commit the words the browser already heard,
-      // close the waveform, and refine them asynchronously. A late response may only
-      // update the draft if the user has not started another voice turn or edited it.
-      if (!send && localFullText) {
-        clearCaptureState();
-        composerTextRef.current = localFullText;
-        onVoiceDraft(localFullText);
-        await settleVisualState();
-
-        if (audio && audio.size >= 512 && !disableAfter) {
-          void transcribe().then(async (refined) => {
-            if (captureSessionRef.current !== sessionId) return;
-            if (composerTextRef.current !== localFullText) return;
-
-            if (refined.cancel) {
-              composerTextRef.current = baseText;
-              onVoiceDraft(baseText);
-              return;
-            }
-
-            if (refined.fullText && refined.fullText !== localFullText) {
-              composerTextRef.current = refined.fullText;
-              onVoiceDraft(refined.fullText);
-            }
-            if (refined.shouldSend && refined.fullText) {
-              await onVoiceSend(refined.fullText);
-            }
-          });
-        }
-        return;
-      }
-
+      // Stop/Done finalizes from the recorded audio first. Browser speech remains a
+      // live preview/fallback, while gpt-transcribe is the accuracy path for accents,
+      // code-switching, native languages, names, numbers, and repeated sessions.
       const refined = await transcribe();
       clearCaptureState();
 
@@ -846,6 +830,10 @@ export function XrogaVoiceControl({
         await onVoiceSend(refined.fullText);
       } else if (!refined.fullText) {
         setErrorMessage('No speech detected. Try again.');
+      }
+
+      if (!disableAfter && enabledRef.current) {
+        restartRecognitionRef.current('wake');
       }
     },
     [
