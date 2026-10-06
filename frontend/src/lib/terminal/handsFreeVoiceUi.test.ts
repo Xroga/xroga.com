@@ -170,14 +170,36 @@ test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga varia
 });
 
 
-test('Stop and Done commit visible dictation immediately and late refinement cannot overwrite a new turn', () => {
+test('Stop and Done wait for one authoritative transcription before arming the next voice turn', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /const captureSessionRef = useRef\(0\)/);
-  assert.match(voice, /captureSessionRef\.current \+= 1/);
-  assert.match(voice, /composerTextRef\.current = localFullText/);
-  assert.match(voice, /onVoiceDraft\(localFullText\)/);
-  assert.match(voice, /captureSessionRef\.current !== sessionId/);
-  assert.match(voice, /composerTextRef\.current !== localFullText/);
-  assert.match(voice, /void transcribe\(\)\.then/);
+  assert.match(voice, /setMode\('transcribing'\)/);
+  assert.match(voice, /transcribed = await transcribeVoiceAudio\(audio, 'auto'\)/);
+  assert.match(voice, /const sourceText = cleanSpeech\(transcribed \|\| fallbackVoiceText\)/);
+  assert.match(voice, /browserTextRef\.current = ''/);
+  assert.match(voice, /interimTextRef\.current = ''/);
+  assert.match(voice, /baselineRef\.current = ''/);
+  assert.match(voice, /composerTextRef\.current = fullText/);
+  assert.match(voice, /onVoiceDraft\(fullText\)/);
+  assert.doesNotMatch(voice, /void transcribe\(\)\.then/);
+});
+
+
+test('audio-lines mic has no circular outline or pill surface', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+  const css = source('../../styles/uiverse.css');
+
+  assert.match(voice, /<AudioLinesIcon[\s\S]*?size=\{28\}/);
+  assert.match(css, /Voice v6 icon hard reset/);
+  assert.match(css, /border-radius:\s*0\s*!important/);
+  assert.match(css, /outline:\s*0\s*!important/);
+  assert.match(css, /box-shadow:\s*none\s*!important/);
+});
+
+test('voice draft keeps both visible composer and canonical prompt synchronized', () => {
+  const chatbar = source('../../components/terminal/TerminalChatBar.tsx');
+
+  assert.match(chatbar, /setDraft\(text\)/);
+  assert.match(chatbar, /draftRef\.current = text/);
+  assert.match(chatbar, /setPrompt\(text\)/);
 });
