@@ -3,19 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import '@/styles/homepage-capabilities.css';
-import Image from 'next/image';
 import { Globe } from '@/components/magicui/globe';
-import { getIntegrationLogo } from '@/lib/integrationLogos';
-import { SIDEBAR_LOGO_URL } from '@/lib/theme';
-
-const INTEGRATIONS = [
-  ['google-drive', 'Google Drive'], ['gmail', 'Gmail'], ['google-calendar', 'Google Calendar'], ['slack', 'Slack'], ['github', 'GitHub'],
-  ['gitlab', 'GitLab'], ['notion', 'Notion'], ['hubspot', 'HubSpot'], ['stripe', 'Stripe'], ['shopify', 'Shopify'],
-  ['vercel', 'Vercel'], ['supabase', 'Supabase'], ['airtable', 'Airtable'], ['dropbox', 'Dropbox'], ['discord', 'Discord'],
-  ['jira', 'Jira'], ['asana', 'Asana'], ['trello', 'Trello'], ['figma', 'Figma'], ['canva', 'Canva'],
-  ['cloudflare', 'Cloudflare'], ['netlify', 'Netlify'], ['openai', 'OpenAI'], ['anthropic', 'Anthropic'], ['paypal', 'PayPal'],
-] as const;
-
+import { HomepageIntegrationConstellation } from '@/components/homepage/integrations/HomepageIntegrationConstellation';
 
 const PROBLEMS = ['I can’t code this', 'Research takes all day', 'My tools don’t talk', 'I need more leads', 'Ship this app', 'Update my CRM'];
 const PERSONAS = ['Founder', 'Developer', 'Teacher', 'Sales', 'Agency', 'Creator'];
@@ -30,15 +19,6 @@ function Copy({ eyebrow, title, muted, description }: { eyebrow: string; title: 
       <h3>{title}<span>{muted}</span></h3>
       <p>{description}</p>
     </div>
-  );
-}
-
-function IntegrationLogo({ id, label, size }: { id: string; label: string; size: 'sm' | 'md' }) {
-  const logo = getIntegrationLogo(id);
-  return (
-    <span className={`xcap-tool-logo xcap-tool-logo--${size}`} title={label} aria-label={label}>
-      {logo ? <img src={logo} alt={label} loading="lazy" /> : <b>{label.slice(0, 2).toUpperCase()}</b>}
-    </span>
   );
 }
 
@@ -61,31 +41,14 @@ function IntegrationsCard() {
   return (
     <Card className="xcap-card--integrations">
       <div className="xcap-visual xcap-visual--integrations">
-        <div className="xcap-integration-cloud" aria-label="25 popular Xroga integrations">
-          <div className="xcap-integration-grid">
-            {INTEGRATIONS.map(([id, label], index) => (
-              <span
-                className="xcap-integration-cell"
-                key={id}
-                style={{ '--logo-index': index } as CSSProperties}
-              >
-                <IntegrationLogo id={id} label={label} size={index % 6 === 0 ? 'md' : 'sm'} />
-              </span>
-            ))}
-          </div>
-          <span className="xcap-xroga-cloud-logo" title="Xroga">
-            <Image src={SIDEBAR_LOGO_URL} alt="Xroga" width={32} height={32} priority={false} />
-          </span>
-          <div className="xcap-tool-scanner" aria-hidden="true">
-            <i />
-            <span>
-              {Array.from({ length: 12 }).map((_, index) => <b key={index} style={{ '--dust': index } as CSSProperties} />)}
-            </span>
-          </div>
-        </div>
-        <div className="xcap-integration-pills"><span>1,500+ plugins</span><span>Custom MCP</span></div>
+        <HomepageIntegrationConstellation />
       </div>
-      <Copy eyebrow="ONE AI WORKSPACE" title="1,500+ ways to" muted="get work done." description="Connect business apps, developer tools, APIs and custom MCPs in one workspace." />
+      <Copy
+        eyebrow="ONE AI WORKSPACE"
+        title="1,500+ ways to"
+        muted="get work done."
+        description="Connect business apps, developer tools, APIs and custom MCPs in one workspace."
+      />
     </Card>
   );
 }
