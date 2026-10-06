@@ -958,3 +958,483 @@ body.theme-white .xcap-card--integrations .xcap-copy p{
     line-height:1.46!important;
   }
 }
+
+
+/* v11: terminal workflow replacement — uses the supplied Uiverse interaction patterns
+   for BEFORE / WORKING / VERIFIED and gives the former copy area back to the demo. */
+@media(min-width:1051px){
+  .xcap-grid{grid-template-rows:472px 410px!important}
+}
+.xcap-card--working{
+  grid-column:span 2;
+  grid-template-rows:1fr!important;
+  padding:12px!important;
+  overflow:hidden;
+}
+.xcap-card--working .xcap-copy{display:none!important}
+
+.xcap-workflow-demo{
+  height:100%;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr);
+  gap:10px;
+  padding:13px;
+  border-radius:14px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 2%,rgba(45,91,255,.18),transparent 29%),
+    radial-gradient(circle at 88% 100%,rgba(85,70,255,.13),transparent 34%),
+    #080a0f;
+  border:1px solid rgba(255,255,255,.075);
+  color:#fff;
+}
+.xcap-workflow-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-width:0;
+}
+.xcap-workflow-topline>div{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.xcap-workflow-kicker{
+  flex:none;
+  color:#72a8ff;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.15em;
+}
+.xcap-workflow-topline strong{
+  overflow:hidden;
+  color:#f4f6f8;
+  font:500 clamp(15px,1.45vw,20px)/1.05 "Helvetica Neue",Helvetica,Arial,sans-serif;
+  letter-spacing:-.035em;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.xcap-workflow-live{
+  flex:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#8c95a5;
+  font-size:9px;
+  white-space:nowrap;
+}
+.xcap-workflow-live i{
+  width:6px;height:6px;border-radius:50%;
+  background:#57d59b;
+  box-shadow:0 0 10px rgba(87,213,155,.7);
+}
+
+/* Exact 00Kubi radio-input interaction, namespaced for the homepage. */
+.xcap-workflow-radio-inputs{
+  position:relative;
+  display:flex;
+  flex-wrap:wrap;
+  border-radius:.5rem;
+  background:#eee;
+  box-sizing:border-box;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06);
+  padding:.25rem;
+  width:min(100%,390px);
+  font-size:12px;
+}
+.xcap-workflow-radio{flex:1 1 auto;text-align:center}
+.xcap-workflow-radio input{display:none}
+.xcap-workflow-radio-name{
+  display:flex;
+  cursor:pointer;
+  align-items:center;
+  justify-content:center;
+  border-radius:.5rem;
+  border:0;
+  padding:.45rem .65rem;
+  color:rgba(51,65,85,1);
+  transition:all .15s ease-in-out;
+  font-size:9px;
+  font-weight:750;
+  letter-spacing:.08em;
+}
+.xcap-workflow-radio input:checked + .xcap-workflow-radio-name{
+  position:relative;
+  background:#fff;
+  font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  animation:xcapWorkflowSelect .3s ease;
+}
+.xcap-workflow-radio:hover .xcap-workflow-radio-name{background:rgba(255,255,255,.5)}
+.xcap-workflow-radio input:checked + .xcap-workflow-radio-name::before,
+.xcap-workflow-radio input:checked + .xcap-workflow-radio-name::after{
+  content:"";
+  position:absolute;
+  width:4px;height:4px;border-radius:50%;
+  background:#3b82f6;
+  opacity:0;
+  animation:xcapWorkflowParticles .5s ease forwards;
+}
+.xcap-workflow-radio input:checked + .xcap-workflow-radio-name::before{top:-8px;left:50%;--direction:-10px}
+.xcap-workflow-radio input:checked + .xcap-workflow-radio-name::after{bottom:-8px;left:50%;--direction:10px}
+@keyframes xcapWorkflowSelect{
+  0%{transform:scale(.95)}
+  50%{transform:scale(1.05)}
+  100%{transform:scale(1)}
+}
+@keyframes xcapWorkflowParticles{
+  0%{opacity:0;transform:translateX(-50%) translateY(0)}
+  50%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) translateY(var(--direction))}
+}
+
+.xcap-workflow-stage{
+  min-height:0;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.07);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),
+    #050608;
+  padding:12px;
+}
+
+/* Supplied drewsephski terminal shell, adapted only by namespacing and responsive sizing. */
+.xcap-terminal-card{
+  width:min(100%,760px);
+  padding:.75rem;
+  overflow:hidden;
+  border:.25px solid #c5c5c5;
+  border-radius:20px;
+  background-color:navy;
+  backdrop-filter:blur(800px);
+  box-shadow:0 0 40px 15px rgba(0,72,255,.34);
+  min-width:0;
+}
+.xcap-terminal-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  position:relative;
+  z-index:10;
+  border:.5px solid #525252;
+  border-radius:10px;
+  overflow:hidden;
+}
+.xcap-terminal{
+  display:flex;
+  flex-direction:column;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+.xcap-terminal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  overflow:hidden;
+  min-height:40px;
+  padding-inline:12px;
+  background:#202425;
+}
+.xcap-terminal-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  height:2.5rem;
+  margin:0;
+  user-select:none;
+  font-size:12px;
+  font-weight:600;
+  color:#8e8e8e;
+}
+.xcap-terminal-title>svg{width:18px;height:18px;color:#006adc}
+.xcap-copy-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:29px;
+  min-height:29px;
+  padding:.3rem;
+  border:.65px solid darkgrey;
+  margin-left:auto;
+  border-radius:6px;
+  background:#202425;
+  color:#8e8e8e;
+  cursor:pointer;
+  box-shadow:0 0 15px deepskyblue;
+  font-size:12px;
+}
+.xcap-copy-toggle>svg{width:15px;height:15px;box-shadow:0 0 40px 2.5px blue}
+.xcap-terminal-body{
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  padding:1.05rem 1rem;
+  line-height:20px;
+  color:white;
+  background:black;
+  white-space:nowrap;
+}
+.xcap-terminal-pre{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  min-width:0;
+  margin:0;
+  white-space:pre;
+  overflow:hidden;
+  font-size:clamp(10px,1.05vw,15px);
+}
+.xcap-terminal-pre code:nth-child(1){color:#575757}
+.xcap-terminal-pre code:nth-child(2){color:#e34ba9}
+.xcap-terminal-cmd{
+  height:19px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  min-width:0;
+}
+.xcap-terminal-cmd::before{
+  content:attr(data-cmd);
+  position:relative;
+  display:block;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  background:transparent;
+  animation:xcapTerminalInputs 5.2s steps(78) infinite;
+}
+.xcap-terminal-cmd::after{
+  content:"_";
+  position:relative;
+  display:block;
+  height:100%;
+  overflow:hidden;
+  border-right:.15em solid #e34ba9;
+  animation:xcapTerminalCursor .5s step-end infinite alternate,xcapTerminalBlinking .4s infinite;
+}
+@keyframes xcapTerminalBlinking{
+  20%,80%{transform:scaleY(1)}
+  50%{transform:scaleY(0)}
+}
+@keyframes xcapTerminalCursor{50%{border-right-color:transparent}}
+@keyframes xcapTerminalInputs{
+  0%,8%{width:0}
+  65%,90%{width:68ch}
+  100%{width:0}
+}
+
+/* Supplied egehan_1415 build loader, namespaced. */
+.xcap-ui-loader{
+  width:min(100%,690px);
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  box-shadow:0 28px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+  backdrop-filter:blur(12px);
+  position:relative;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+.xcap-term-bar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+}
+.xcap-term-dot{
+  width:10px;height:10px;border-radius:999px;
+  background:rgba(255,255,255,.16);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.xcap-term-title{
+  margin-left:auto;
+  font:700 12px/1 ui-sans-serif,system-ui;
+  color:rgba(255,255,255,.7);
+  letter-spacing:.2px;
+}
+.xcap-term-body{
+  padding:14px 14px 16px;
+  color:rgba(255,255,255,.8);
+  font-size:12px;
+  line-height:1.55;
+}
+.xcap-term-line{margin:6px 0}
+.xcap-term-line b{color:rgba(255,255,255,.92)}
+.xcap-term-muted{color:rgba(255,255,255,.6)}
+.xcap-term-tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;height:18px;border-radius:6px;
+  margin-right:8px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  font-weight:800;font-size:11px;
+}
+.xcap-term-ok{box-shadow:0 0 22px rgba(110,231,255,.12)}
+.xcap-term-run{box-shadow:0 0 22px rgba(176,140,255,.12)}
+.xcap-term-cursor{
+  display:inline-block;
+  width:10px;height:14px;margin-left:8px;border-radius:3px;
+  background:linear-gradient(135deg,rgba(110,231,255,.95),rgba(176,140,255,.85));
+  opacity:.65;
+  animation:xcapTermBlink 1s steps(2,end) infinite;
+}
+.xcap-term-progress{
+  margin-top:12px;
+  height:8px;
+  border-radius:999px;
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+}
+.xcap-term-fill{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(110,231,255,0),rgba(110,231,255,.55),rgba(176,140,255,.55),rgba(110,231,255,0));
+  transform:translateX(-70%);
+  animation:xcapTermFlow 1.05s cubic-bezier(.2,.8,.2,1) infinite;
+}
+.xcap-term-glint{
+  position:absolute;inset:-30% -40%;
+  background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.12) 22%,rgba(255,255,255,.28) 28%,transparent 40%);
+  transform:translateX(-55%);
+  animation:xcapTermGlint 1.05s cubic-bezier(.2,.8,.2,1) infinite;
+  mix-blend-mode:screen;
+}
+@keyframes xcapTermFlow{
+  0%{transform:translateX(-75%);opacity:.55}
+  50%{opacity:1}
+  100%{transform:translateX(75%);opacity:.55}
+}
+@keyframes xcapTermGlint{
+  0%{transform:translateX(-60%);opacity:0}
+  20%{opacity:1}
+  100%{transform:translateX(60%);opacity:0}
+}
+@keyframes xcapTermBlink{
+  0%,100%{opacity:.2}
+  50%{opacity:.85}
+}
+
+/* Magic-UI-style terminal result cadence: lines reveal one by one. */
+.xcap-verified-terminal{
+  width:min(100%,700px);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;
+  background:#07090d;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+.xcap-verified-bar{
+  min-height:38px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 11px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:#11151c;
+}
+.xcap-verified-bar>span{display:flex;gap:5px}
+.xcap-verified-bar i{width:7px;height:7px;border-radius:50%;background:#5b6470}
+.xcap-verified-bar b{font-size:10px;color:#aab2be}
+.xcap-verified-bar small{justify-self:end;font-size:8px;color:#687383}
+.xcap-verified-body{padding:13px 15px 14px;font-size:11px;line-height:1.55}
+.xcap-verified-command{margin:0 0 7px;color:#8aaeff!important}
+.xcap-verified-body>p:not(.xcap-verified-command),
+.xcap-verified-result{
+  opacity:0;
+  transform:translateY(4px);
+  animation:xcapVerifiedReveal .4s ease forwards;
+  animation-delay:var(--verify-delay);
+}
+.xcap-verified-body>p{margin:4px 0;color:#66e3a4}
+.xcap-verified-result{
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 10px;
+  border:1px solid rgba(102,227,164,.17);
+  border-radius:10px;
+  background:rgba(102,227,164,.06);
+}
+.xcap-verified-result span{
+  padding:4px 7px;border-radius:999px;background:#183c2b;color:#73eab0;
+  font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+}
+.xcap-verified-result strong{font-size:10px;color:#eef6f1}
+@keyframes xcapVerifiedReveal{to{opacity:1;transform:none}}
+
+body.theme-white .xcap-card--working{
+  background:#090b10!important;
+  border-color:rgba(0,0,0,.12)!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:1050px){
+  .xcap-card--working{min-height:400px}
+}
+@media(max-width:720px){
+  .xcap-card--working{
+    grid-column:auto;
+    min-height:390px;
+    padding:9px!important;
+  }
+  .xcap-workflow-demo{
+    padding:10px;
+    gap:8px;
+  }
+  .xcap-workflow-topline>div{display:block}
+  .xcap-workflow-kicker{display:block;margin-bottom:3px}
+  .xcap-workflow-topline strong{font-size:15px}
+  .xcap-workflow-live{font-size:8px}
+  .xcap-workflow-radio-inputs{width:100%}
+  .xcap-workflow-radio-name{padding:.42rem .3rem;font-size:8px}
+  .xcap-workflow-stage{padding:9px}
+  .xcap-terminal-card{padding:.52rem;border-radius:15px}
+  .xcap-terminal-head{min-height:36px}
+  .xcap-terminal-title{height:2.2rem;font-size:10px}
+  .xcap-terminal-body{padding:.85rem .75rem}
+  .xcap-terminal-pre{font-size:9px}
+  .xcap-term-body{font-size:10px;padding:11px 11px 12px}
+  .xcap-term-bar{padding:10px}
+  .xcap-verified-body{font-size:9.5px;padding:11px}
+}
+@media(max-width:390px){
+  .xcap-workflow-topline strong{font-size:13px}
+  .xcap-workflow-stage{padding:7px}
+  .xcap-terminal-pre{font-size:8px}
+  .xcap-terminal-cmd::before{animation-name:xcapTerminalInputsMobile}
+  @keyframes xcapTerminalInputsMobile{
+    0%,8%{width:0}
+    65%,90%{width:48ch}
+    100%{width:0}
+  }
+  .xcap-verified-result{align-items:flex-start;flex-direction:column;gap:5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .xcap-workflow-radio input:checked + .xcap-workflow-radio-name,
+  .xcap-workflow-radio input:checked + .xcap-workflow-radio-name::before,
+  .xcap-workflow-radio input:checked + .xcap-workflow-radio-name::after,
+  .xcap-terminal-cmd::before,
+  .xcap-terminal-cmd::after,
+  .xcap-term-cursor,
+  .xcap-term-fill,
+  .xcap-term-glint,
+  .xcap-verified-body>p,
+  .xcap-verified-result{
+    animation:none!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+}
