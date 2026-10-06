@@ -22,7 +22,7 @@ interface AudioLinesIconProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const AudioLinesIcon = forwardRef<AudioLinesIconHandle, AudioLinesIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 20, active = false, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, active = false, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
 
@@ -69,7 +69,7 @@ const AudioLinesIcon = forwardRef<AudioLinesIconHandle, AudioLinesIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="1.8"
+          strokeWidth="2"
           viewBox="0 0 24 24"
           width={size}
           xmlns="http://www.w3.org/2000/svg"
