@@ -1,3 +1,3 @@
-retry-production-deploy: 2026-10-06T23:59+05:00
-source: voice-v7-recognizer-reset-20261006
-release: b1a5e895614d99643dc7fd44a78a4a50834161bd
+retry-production-deploy: 2026-10-07T00:16+05:00
+source: voice-v8-final-runtime-20261007
+release: 21426683df068cb7e7a2a0d57c43c3ffd38d09ef
