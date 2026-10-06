@@ -25,8 +25,8 @@ test('Xroga wake word accepts realistic recognition variants and can seed the sp
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.match(voice, /WAKE_ALIAS_SOURCE/);
-  assert.match(voice, /x\\s\*roga/);
-  assert.match(voice, /ex\\s\*roga/);
+  assert.ok(voice.includes('x\\\\s*roga'));
+  assert.ok(voice.includes('ex\\\\s*roga'));
   assert.match(voice, /acroga/);
   assert.match(voice, /zroga/);
   assert.match(voice, /extractWakeCommand/);
