@@ -5418,7 +5418,8 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  outline: none;
   color: color-mix(in srgb, var(--foreground) 68%, var(--muted));
   background: transparent;
   box-shadow: none;
@@ -5426,24 +5427,31 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   transition:
     transform 150ms ease,
     color 150ms ease,
-    background 150ms ease;
+    filter 150ms ease;
 }
 .xv-voice-icon-only:hover {
   transform: translateY(-1px);
   color: var(--foreground);
-  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  background: transparent;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, #8b5cf6 22%, transparent));
+}
+.xv-voice-icon-only:focus-visible {
+  color: var(--foreground);
+  outline: 1px solid color-mix(in srgb, #8b5cf6 60%, transparent);
+  outline-offset: 2px;
 }
 .xv-voice-icon-only.is-armed {
   color: color-mix(in srgb, #8b5cf6 78%, var(--foreground));
+  background: transparent;
 }
 .xv-voice-icon-only.is-listening {
   color: #22d3ee;
-  background: color-mix(in srgb, #22d3ee 7%, transparent);
+  background: transparent;
   animation: xv-voice-icon-listen 1.7s ease-in-out infinite;
 }
 .xv-voice-icon-only.is-error {
   color: #ef4444;
-  background: color-mix(in srgb, #ef4444 6%, transparent);
+  background: transparent;
 }
 .xv-voice-session-stage:empty {
   display: none;
