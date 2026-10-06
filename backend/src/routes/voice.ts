@@ -44,9 +44,9 @@ router.post(
       const models = Array.from(
         new Set(
           [
-            configuredModel || 'gpt-transcribe',
+            configuredModel || 'gpt-4o-mini-transcribe',
             'gpt-4o-transcribe',
-            'gpt-4o-mini-transcribe',
+            'whisper-1',
           ].filter(Boolean),
         ),
       );
@@ -60,18 +60,14 @@ router.post(
           `xroga-voice.${extensionForMime(mime)}`,
         );
         form.append('model', model);
-
-        const transcriptionPrompt =
-          'Transcribe the speaker in English faithfully. Preserve punctuation, names, numbers, ' +
-          'commands, product names, and technical terms. Do not translate, summarize, or answer.';
-
-        if (model === 'gpt-transcribe') {
-          form.append('prompt', transcriptionPrompt);
-          form.append('languages[]', 'en');
-        } else {
-          form.append('prompt', transcriptionPrompt);
-          form.append('language', 'en');
-        }
+        form.append(
+          'prompt',
+          'Transcribe the speaker faithfully in the language they actually use. ' +
+            'Do not translate, summarize, answer, or rewrite. Preserve punctuation, numbers, ' +
+            'names, commands, product names, and technical terms. The product name is Xroga, ' +
+            'spelled X-r-o-g-a and commonly pronounced "X Roga". If the speaker says X Roga, ' +
+            'ex roga, Acroga, or a close recognition variant, write the brand as Xroga.',
+        );
 
         const upstream = await fetch('https://api.openai.com/v1/audio/transcriptions', {
           method: 'POST',
@@ -82,7 +78,7 @@ router.post(
         });
 
         const body = (await upstream.json().catch(() => null)) as
-          | { text?: unknown; error?: { message?: unknown } }
+          | { text?: unknown; error?: { message?: unknown }; language?: unknown }
           | null;
 
         if (!upstream.ok) {
@@ -104,7 +100,10 @@ router.post(
           text,
           provider: 'openai',
           model,
-          language: 'en',
+          language:
+            typeof body?.language === 'string' && body.language.trim()
+              ? body.language.trim()
+              : 'auto',
         });
         return;
       }
