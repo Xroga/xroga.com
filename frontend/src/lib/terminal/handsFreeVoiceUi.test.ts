@@ -137,6 +137,9 @@ test('server transcription prefers keyword-guided current transcription and fall
   assert.match(backend, /'X Roga'/);
   assert.match(backend, /response_format', 'json'/);
   assert.match(backend, /temperature', '0'/);
+  assert.match(backend, /chunking_strategy', 'auto'/);
+  assert.match(backend, /Do not translate/);
+  assert.match(backend, /languages:/);
 });
 
 
@@ -170,14 +173,39 @@ test('wake detection avoids regex lookbehind and accepts hyphenated X-Roga varia
 });
 
 
-test('Stop and Done commit visible dictation immediately and late refinement cannot overwrite a new turn', () => {
+test('Stop and Done use recorded audio as final authority and then restore a fresh wake listener', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /const captureSessionRef = useRef\(0\)/);
-  assert.match(voice, /captureSessionRef\.current \+= 1/);
-  assert.match(voice, /composerTextRef\.current = localFullText/);
-  assert.match(voice, /onVoiceDraft\(localFullText\)/);
-  assert.match(voice, /captureSessionRef\.current !== sessionId/);
-  assert.match(voice, /composerTextRef\.current !== localFullText/);
-  assert.match(voice, /void transcribe\(\)\.then/);
+  assert.match(voice, /setMode\('transcribing'\)/);
+  assert.match(voice, /stopRecognition\(\);[\s\S]{0,180}const audio = await stopRecorder\(\)/);
+  assert.match(voice, /const refined = await transcribe\(\)/);
+  assert.match(voice, /restartRecognitionRef\.current\('wake'\)/);
+  assert.doesNotMatch(voice, /void transcribe\(\)\.then/);
+});
+
+test('every voice turn recreates recognition so later recordings behave like the first', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /type RecognitionPurpose = 'wake' \| 'capture'/);
+  assert.match(voice, /recognitionGenerationRef/);
+  assert.match(voice, /recognitionPurposeRef/);
+  assert.match(voice, /generation !== recognitionGenerationRef\.current/);
+  assert.match(voice, /restartRecognitionRef\.current\('capture'\)/);
+  assert.match(voice, /startRecognition\(nextPurpose, true\)/);
+});
+
+test('browser recognition follows the selected or device language while server finalization remains auto-detect', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+
+  assert.match(voice, /recognitionLanguage\(language\)/);
+  assert.match(voice, /transcribeVoiceAudio\(audio, 'auto'\)/);
+});
+
+test('audio-lines mic keeps an outline-free modern focus treatment', () => {
+  const css = source('../../styles/uiverse.css');
+
+  assert.match(
+    css,
+    /\.xv-voice-icon-only:focus-visible\s*\{[\s\S]*?outline:\s*none;[\s\S]*?box-shadow:\s*none;/,
+  );
 });
