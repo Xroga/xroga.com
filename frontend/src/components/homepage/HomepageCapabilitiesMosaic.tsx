@@ -180,6 +180,22 @@ function EveryoneCard() {
 export function HomepageCapabilitiesMosaic() {
   return (
     <section className="xcap-section" aria-label="What Xroga can handle">
+      <div className="xcap-section-top">
+        <div className="xcap-section-action">
+          <a href="/workspace" className="xcap-noise-container" aria-label="Start For Free in Xroga workspace">
+            <span className="xcap-gradient-layer xcap-gradient-1" aria-hidden="true" />
+            <span className="xcap-gradient-layer xcap-gradient-2" aria-hidden="true" />
+            <span className="xcap-gradient-layer xcap-gradient-3" aria-hidden="true" />
+            <span className="xcap-top-strip" aria-hidden="true" />
+            <span className="xcap-noise-overlay" aria-hidden="true" />
+            <span className="xcap-content-wrapper">
+              <span className="xcap-publish-btn">Start For Free <span aria-hidden="true">→</span></span>
+            </span>
+          </a>
+        </div>
+        <h2 className="xcap-section-title">Build and Manage AI Agents<br />for Real-World Tasks</h2>
+        <span className="xcap-section-balance" aria-hidden="true" />
+      </div>
       <div className="xcap-grid">
         <GlobalCard />
         <IntegrationsCard />
