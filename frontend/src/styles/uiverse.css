@@ -5437,8 +5437,9 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 }
 .xv-voice-icon-only:focus-visible {
   color: var(--foreground);
-  outline: 1px solid color-mix(in srgb, #8b5cf6 60%, transparent);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, #8b5cf6 32%, transparent));
 }
 .xv-voice-icon-only.is-armed {
   color: color-mix(in srgb, #8b5cf6 78%, var(--foreground));
