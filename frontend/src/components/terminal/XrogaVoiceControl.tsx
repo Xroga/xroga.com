@@ -65,7 +65,10 @@ type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
  * "Xroga".
  */
 const WAKE_ALIAS_SOURCE =
-  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|کس\\s*روگا|ایکس\\s*روگا)';
+  '(?:x\\s*roga|ex\\s*roga|acroga|a\\s*croga|zroga|xroga|eks\\s*roga|' +
+  'کس\\s*روگا|ایکس\\s*روگا|اِکس\\s*روگا|إكس\\s*روجا|اكس\\s*روجا|' +
+  'एक्स\\s*रोगा|एक्स\\s*रोगा|equis\\s*roga|xis\\s*roga|iks\\s*roga|' +
+  'エックス\\s*ロガ)';
 const WAKE_WORD = new RegExp(
   '(?<![\\p{L}\\p{N}])' + WAKE_ALIAS_SOURCE + '(?![\\p{L}\\p{N}])',
   'iu',
