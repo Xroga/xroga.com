@@ -899,6 +899,92 @@ svg{display:block}
     scroll-behavior:auto !important;
   }}
 </style>
+
+<style id="xroga-browser-v2-guidance">
+/* Latest requested visual-only refinements. */
+html,body{cursor:default!important}
+body *{cursor:default!important}
+
+/* Square overall frame with the light diagonal-hatch outline from the reference. */
+.xroga-browser{
+  border:1px solid transparent!important;
+  border-radius:0!important;
+  background:
+    linear-gradient(var(--x-bg),var(--x-bg)) padding-box,
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,.16) 0 1px,
+      rgba(255,255,255,.025) 1px 6px
+    ) border-box!important;
+  box-shadow:none!important;
+}
+
+/* TODAY / DROPS reference: thin modern grotesk, smaller and cleaner. */
+.xroga-hero h1,
+.xroga-copy h2{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-style:normal!important;
+  font-weight:300!important;
+  line-height:.91!important;
+  letter-spacing:-.055em!important;
+  text-transform:none;
+}
+.xroga-hero h1{
+  max-width:360px!important;
+  font-size:clamp(26px,2.75vw,36px)!important;
+}
+.xroga-copy h2{
+  max-width:365px!important;
+  font-size:clamp(27px,3vw,41px)!important;
+}
+.xroga-hero h1 em,
+.xroga-copy h2 em{
+  font-family:inherit!important;
+  font-style:normal!important;
+  font-weight:300!important;
+  color:#aeb3ba;
+}
+
+/* Replace the orange accent family with blue. */
+.xroga-kicker::before{
+  background:#2f7df6!important;
+  box-shadow:0 0 14px rgba(47,125,246,.48)!important;
+}
+.xroga-visual{
+  background:radial-gradient(
+    125% 125% at -2% 101%,
+    rgba(24,76,210,1) 10.5%,
+    rgba(47,125,246,1) 16%,
+    rgba(74,145,255,1) 17.5%,
+    rgba(107,166,255,1) 25%,
+    rgba(153,184,244,1) 40%,
+    rgba(178,187,231,1) 65%,
+    rgba(148,201,233,1) 100%
+  )!important;
+}
+.spin::before{
+  background:conic-gradient(
+    from 0deg,
+    transparent 0deg 34deg,
+    rgba(255,255,255,.86) 58deg,
+    rgba(110,184,255,.92) 94deg,
+    rgba(255,255,255,.22) 132deg,
+    rgba(47,125,246,.94) 190deg,
+    rgba(158,199,255,.58) 230deg,
+    rgba(255,255,255,.20) 278deg,
+    transparent 324deg 360deg
+  )!important;
+}
+
+/* Preserve interactions but never swap the user's native cursor to pointer/grab. */
+button,.tab,.xroga-btn{cursor:default!important}
+
+@media(max-width:720px){
+  .xroga-hero h1{font-size:clamp(25px,8vw,33px)!important}
+  .xroga-copy h2{font-size:clamp(27px,8.4vw,36px)!important}
+}
+</style>
+
 </head>
 
 <body>
