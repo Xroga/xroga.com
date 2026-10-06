@@ -335,14 +335,16 @@ export function XrogaVoiceControl({
 
   const pauseVoice = useCallback(() => {
     if (mode !== 'listening') return;
+    // Flip state before stopping recognition so its async onend handler cannot
+    // restart a fresh recognizer during a deliberate pause.
+    setMode('paused');
     stopRecognition(false);
     try {
       if (recorderRef.current?.state === 'recording') recorderRef.current.pause();
     } catch {
       // Some browsers do not expose MediaRecorder pause.
     }
-    setMode('paused');
-  }, [mode, stopRecognition]);
+  }, [mode, setMode, stopRecognition]);
 
   const resumeVoice = useCallback(() => {
     if (mode !== 'paused') return;
