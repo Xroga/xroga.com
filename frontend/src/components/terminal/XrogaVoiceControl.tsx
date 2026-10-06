@@ -458,7 +458,6 @@ export function XrogaVoiceControl({
   // visibly dictated before a final SpeechRecognition segment arrives.
   const interimTextRef = useRef('');
   const composerTextRef = useRef(composerText);
-  const captureSessionRef = useRef(0);
 
   const setMode = useCallback((next: VoiceMode) => {
     modeRef.current = next;
@@ -613,7 +612,12 @@ export function XrogaVoiceControl({
 
   const emitVoiceText = useCallback(
     (voiceText: string) => {
-      onVoiceDraft(mergeText(baselineRef.current, voiceText));
+      const fullText = mergeText(baselineRef.current, voiceText);
+      // Keep the imperative ref synchronized immediately. Waiting for React to
+      // round-trip the prop created repeated-session races where a second recording
+      // could start from stale composer text.
+      composerTextRef.current = fullText;
+      onVoiceDraft(fullText);
     },
     [onVoiceDraft],
   );
@@ -631,7 +635,6 @@ export function XrogaVoiceControl({
   const activateCapture = useCallback(
     (seed = '') => {
       if (captureActiveRef.current || finalizingRef.current) return;
-      captureSessionRef.current += 1;
       baselineRef.current = composerTextRef.current.trim();
       wakeSeedRef.current = cleanSpeech(seed);
       browserTextRef.current = cleanSpeech(seed);
@@ -645,7 +648,7 @@ export function XrogaVoiceControl({
         startRecorder(streamRef.current);
       }
     },
-    [composerText, emitVoiceText, setMode, startRecorder],
+    [emitVoiceText, setMode, startRecorder],
   );
 
   const pauseCapture = useCallback(() => {
@@ -718,128 +721,78 @@ export function XrogaVoiceControl({
     }) => {
       if (!captureActiveRef.current || finalizingRef.current) return;
 
-      const sessionId = captureSessionRef.current;
       const baseText = baselineRef.current;
       const seed = cleanSpeech(wakeSeedRef.current);
       const browserText = cleanSpeech(
         mergeWakeSeed(browserTextRef.current, interimTextRef.current),
       );
-      const localVoiceText = cleanSpeech(browserText || seed);
-      const localFullText = mergeText(baseText, localVoiceText);
+      const fallbackVoiceText = cleanSpeech(browserText || seed);
 
+      // Final text is authoritative only after this recording is closed. This avoids
+      // the old "instant local draft + late async rewrite" race that could make the
+      // next voice turn appear not to transcribe.
       finalizingRef.current = true;
-      if (send || !localFullText) setMode('transcribing');
+      captureActiveRef.current = false;
+      setMode('transcribing');
       const audio = await stopRecorder();
 
-      const clearCaptureState = () => {
-        captureActiveRef.current = false;
-        finalizingRef.current = false;
-        wakeSeedRef.current = '';
-        browserTextRef.current = '';
-        interimTextRef.current = '';
-        baselineRef.current = '';
-      };
-
-      const settleVisualState = async () => {
-        if (disableAfter) {
-          enabledRef.current = false;
-          setHandsFreeEnabled(false);
-          stopRecognition();
-          releaseMicrophone();
-          setMode('off');
-        } else {
-          setMode(enabledRef.current ? 'armed' : 'off');
+      let transcribed = '';
+      if (audio && audio.size >= 512) {
+        try {
+          transcribed = await transcribeVoiceAudio(audio, 'auto');
+        } catch {
+          // Browser recognition remains a resilient fallback when server STT is
+          // temporarily unavailable.
         }
-      };
-
-      const transcribe = async (): Promise<{
-        fullText: string;
-        shouldSend: boolean;
-        cancel: boolean;
-      }> => {
-        let serverText = '';
-        if (audio && audio.size >= 512) {
-          try {
-            serverText = await transcribeVoiceAudio(audio, 'auto');
-          } catch {
-            // Preserve the browser/interim transcript if the accuracy pass is unavailable.
-          }
-        }
-
-        const serverControl = serverText ? controlAtEnd(serverText) : null;
-        let shouldSend = send;
-        if (serverControl) {
-          if (serverControl.action === 'send') shouldSend = true;
-          if (serverControl.action === 'cancel') {
-            return { fullText: baseText, shouldSend: false, cancel: true };
-          }
-          serverText = serverControl.content;
-        }
-
-        const refinedVoiceText = cleanSpeech(
-          serverText
-            ? mergeWakeSeed(seed, stripWakeWord(serverText))
-            : localVoiceText,
-        );
-        return {
-          fullText: mergeText(baseText, refinedVoiceText),
-          shouldSend,
-          cancel: false,
-        };
-      };
-
-      // Stop/Done should feel instant. Commit the words the browser already heard,
-      // close the waveform, and refine them asynchronously. A late response may only
-      // update the draft if the user has not started another voice turn or edited it.
-      if (!send && localFullText) {
-        clearCaptureState();
-        composerTextRef.current = localFullText;
-        onVoiceDraft(localFullText);
-        await settleVisualState();
-
-        if (audio && audio.size >= 512 && !disableAfter) {
-          void transcribe().then(async (refined) => {
-            if (captureSessionRef.current !== sessionId) return;
-            if (composerTextRef.current !== localFullText) return;
-
-            if (refined.cancel) {
-              composerTextRef.current = baseText;
-              onVoiceDraft(baseText);
-              return;
-            }
-
-            if (refined.fullText && refined.fullText !== localFullText) {
-              composerTextRef.current = refined.fullText;
-              onVoiceDraft(refined.fullText);
-            }
-            if (refined.shouldSend && refined.fullText) {
-              await onVoiceSend(refined.fullText);
-            }
-          });
-        }
-        return;
       }
 
-      const refined = await transcribe();
-      clearCaptureState();
+      const sourceText = cleanSpeech(transcribed || fallbackVoiceText);
+      const control = sourceText ? controlAtEnd(sourceText) : null;
+      let shouldSend = send;
+      let shouldCancel = false;
+      let dictatedText = sourceText;
 
-      if (refined.cancel) {
-        composerTextRef.current = baseText;
-        onVoiceDraft(baseText);
-        await settleVisualState();
-        return;
+      if (control) {
+        if (control.action === 'send') shouldSend = true;
+        if (control.action === 'cancel') shouldCancel = true;
+        dictatedText = control.content;
       }
 
-      if (refined.fullText) {
-        composerTextRef.current = refined.fullText;
-        onVoiceDraft(refined.fullText);
+      const refinedVoiceText = cleanSpeech(
+        dictatedText
+          ? mergeWakeSeed(seed, stripWakeWord(dictatedText))
+          : '',
+      );
+      const finalVoiceText = control
+        ? refinedVoiceText
+        : refinedVoiceText || fallbackVoiceText;
+      const fullText = shouldCancel
+        ? baseText
+        : mergeText(baseText, finalVoiceText);
+
+      // Reset every per-recording buffer before exposing the next armed session.
+      // This makes second/third/etc. recordings independent and deterministic.
+      wakeSeedRef.current = '';
+      browserTextRef.current = '';
+      interimTextRef.current = '';
+      baselineRef.current = '';
+      finalizingRef.current = false;
+      composerTextRef.current = fullText;
+      onVoiceDraft(fullText);
+
+      if (disableAfter) {
+        enabledRef.current = false;
+        setHandsFreeEnabled(false);
+        stopRecognition();
+        releaseMicrophone();
+        setMode('off');
+      } else {
+        setMode(enabledRef.current ? 'armed' : 'off');
       }
 
-      await settleVisualState();
-
-      if (refined.shouldSend && refined.fullText) {
-        await onVoiceSend(refined.fullText);
-      } else if (!refined.fullText) {
+      if (shouldSend && fullText && !shouldCancel) {
+        await onVoiceSend(fullText);
+      } else if (!fullText && !shouldCancel) {
         setErrorMessage('No speech detected. Try again.');
       }
     },
@@ -1222,7 +1175,7 @@ export function XrogaVoiceControl({
         }
       >
         <AudioLinesIcon
-          size={24}
+          size={28}
           active={captureVisible}
           aria-hidden="true"
         />

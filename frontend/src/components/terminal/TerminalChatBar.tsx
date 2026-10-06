@@ -60,7 +60,6 @@ export function TerminalChatBar() {
     loading,
     submit,
     stop,
-    messages,
   } = useTerminalChat();
   const hydrated = useHydrated();
   const activeArtifactId = useXrogaArtifactContext((state) => state.activeArtifactId);
@@ -364,10 +363,11 @@ export function TerminalChatBar() {
       const text = spokenText.replace(/\s+/g, ' ').trimStart();
       setDraft(text);
       draftRef.current = text;
+      setPrompt(text);
       lastExternalPrompt.current = text;
       triggerComposerSignal(700);
     },
-    [triggerComposerSignal],
+    [setPrompt, triggerComposerSignal],
   );
 
   async function applyStyleFromFile(file: File, stylePrompt: string) {
