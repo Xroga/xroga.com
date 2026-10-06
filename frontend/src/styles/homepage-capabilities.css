@@ -1764,3 +1764,602 @@ body.theme-beige .xcap-card--integrations .xcap-more-plugins{
     animation:none!important;
   }
 }
+
+
+/* v13: smooth integration orbits, shiny integration copy, faster orchestration,
+   and a product-like prompt-to-code workflow. */
+.xcap-card--integrations{
+  --xcap-shiny-primary:#f3f4f6;
+  --xcap-shiny-secondary:#8e949f;
+  --xcap-shiny-body:#b3b8c1;
+  --xcap-shiny-highlight:#ffffff;
+}
+body.theme-white .xcap-card--integrations{
+  --xcap-shiny-primary:#111318;
+  --xcap-shiny-secondary:#6f747d;
+  --xcap-shiny-body:#31363d;
+  --xcap-shiny-highlight:#9da3ad;
+}
+body.theme-beige .xcap-card--integrations{
+  --xcap-shiny-primary:#151515;
+  --xcap-shiny-secondary:#77736e;
+  --xcap-shiny-body:#3f3b37;
+  --xcap-shiny-highlight:#a49e97;
+}
+.xcap-copy--shiny h3>.shiny-text,
+.xcap-copy--shiny h3>span>.shiny-text{
+  display:block;
+}
+.xcap-copy--shiny p>.shiny-text{
+  display:inline;
+}
+
+.xcap-card--integrations .xcap-visual--integrations{
+  min-height:310px!important;
+}
+.xcap-integration-modern{
+  grid-template-rows:minmax(0,1fr) 52px!important;
+}
+.xcap-constellation{
+  --center-y:50%;
+  --outer-radius:clamp(94px,25cqw,108px);
+  --inner-radius:clamp(66px,18cqw,76px);
+  overflow:hidden!important;
+}
+.xcap-orbit-ring{
+  position:absolute;
+  left:50%;
+  top:var(--center-y);
+  z-index:2;
+  width:0;
+  height:0;
+  transform-origin:0 0;
+  will-change:transform;
+}
+.xcap-orbit-ring.is-outer{animation:xcapOrbitOuter 30s linear infinite}
+.xcap-orbit-ring.is-inner{animation:xcapOrbitInner 22s linear infinite}
+@keyframes xcapOrbitOuter{to{transform:rotate(360deg)}}
+@keyframes xcapOrbitInner{to{transform:rotate(-360deg)}}
+
+.xcap-orbit-ring .xcap-connection-beam{
+  left:0!important;
+  top:0!important;
+  transform-origin:left center!important;
+  transform:rotate(var(--beam-angle))!important;
+}
+.xcap-orbit-ring .xcap-connection-beam.is-outer{width:var(--outer-radius)!important}
+.xcap-orbit-ring .xcap-connection-beam.is-inner{width:var(--inner-radius)!important}
+.xcap-orbit-ring .xcap-connection-beam::after{
+  animation-duration:2.6s!important;
+}
+
+.xcap-orbit-ring .xcap-constellation-item{
+  left:0!important;
+  top:0!important;
+  margin:0!important;
+  animation:none!important;
+  transform:rotate(var(--orbit-angle)) translateX(var(--inner-radius))!important;
+}
+.xcap-orbit-ring .xcap-constellation-item.is-outer{
+  transform:rotate(var(--orbit-angle)) translateX(var(--outer-radius))!important;
+}
+.xcap-orbit-ring .xcap-constellation-counter{
+  transform:rotate(var(--counter-angle));
+  will-change:transform;
+}
+.xcap-orbit-ring.is-outer .xcap-constellation-counter{
+  animation:xcapKeepOuterUpright 30s linear infinite;
+}
+.xcap-orbit-ring.is-inner .xcap-constellation-counter{
+  animation:xcapKeepInnerUpright 22s linear infinite;
+}
+@keyframes xcapKeepOuterUpright{
+  from{transform:rotate(var(--counter-angle))}
+  to{transform:rotate(calc(var(--counter-angle) - 360deg))}
+}
+@keyframes xcapKeepInnerUpright{
+  from{transform:rotate(var(--counter-angle))}
+  to{transform:rotate(calc(var(--counter-angle) + 360deg))}
+}
+.xcap-constellation-counter,
+.xcap-loop-logo-shell{
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+.xcap-constellation-counter svg,
+.xcap-loop-logo-shell svg,
+.xcap-remote-brand-mark{
+  width:19px;
+  height:19px;
+  display:block;
+  flex:none;
+}
+.xcap-constellation-item.is-outer .xcap-constellation-counter svg,
+.xcap-constellation-item.is-outer .xcap-remote-brand-mark{
+  width:21px;
+  height:21px;
+}
+.xcap-remote-brand-mark{
+  background:var(--brand-color);
+  -webkit-mask-image:var(--brand-src);
+  mask-image:var(--brand-src);
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+}
+
+.xcap-xroga-controller{
+  top:var(--center-y)!important;
+  width:134px!important;
+  height:134px!important;
+}
+.xcap-electric-layer{
+  inset:-22px!important;
+}
+.xcap-xroga-controller-plate{
+  width:94px!important;
+  height:94px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.xcap-xroga-controller-plate img{
+  width:78px!important;
+  height:78px!important;
+  filter:drop-shadow(0 0 13px rgba(68,134,255,.34))!important;
+}
+.xcap-controller-label{
+  bottom:-1px!important;
+  background:rgba(8,12,22,.72)!important;
+  box-shadow:0 0 13px rgba(76,141,255,.18)!important;
+}
+
+.xcap-more-plugins{
+  display:block!important;
+  overflow:hidden!important;
+  padding:7px 8px 8px!important;
+  border-top:1px solid rgba(255,255,255,.055)!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+}
+body.theme-white .xcap-card--integrations .xcap-more-plugins,
+body.theme-beige .xcap-card--integrations .xcap-more-plugins{
+  border-top-color:rgba(15,23,42,.075)!important;
+  background:transparent!important;
+}
+.xcap-more-plugins-label{display:none!important}
+.xcap-extra-logo-loop{
+  width:100%!important;
+  overflow:hidden!important;
+  padding:1px 0!important;
+}
+.xcap-loop-logo-shell{
+  width:34px!important;
+  height:34px!important;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,.08);
+  box-shadow:0 5px 14px rgba(20,31,52,.1);
+}
+.xcap-loop-logo-shell .xcap-remote-brand-mark{
+  width:18px;
+  height:18px;
+}
+
+/* Card 3: no "six ways" ceiling and no slow iframe/tab wall. */
+.xcap-card--knowledge{
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) auto!important;
+  align-content:stretch!important;
+  min-height:0!important;
+  gap:0!important;
+}
+.xcap-orchestrator-visual{
+  position:relative;
+  min-height:0;
+  margin:12px 12px 0;
+  padding:14px;
+  border-radius:18px;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto auto minmax(64px,1fr) auto auto;
+  gap:9px;
+  color:#f5f7fb;
+  background:
+    radial-gradient(circle at 72% 18%,rgba(65,117,255,.2),transparent 28%),
+    radial-gradient(circle at 18% 88%,rgba(89,218,191,.09),transparent 27%),
+    #0a0d13;
+  border:1px solid rgba(255,255,255,.075);
+}
+.xcap-orchestrator-visual::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 49.6%,rgba(110,154,255,.07) 50%,transparent 50.4%),
+    linear-gradient(0deg,transparent 49.6%,rgba(110,154,255,.045) 50%,transparent 50.4%);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.72),transparent 80%);
+}
+.xcap-orchestrator-topbar,
+.xcap-orchestrator-request,
+.xcap-orchestrator-path,
+.xcap-orchestrator-result,
+.xcap-orchestrator-progress{
+  position:relative;
+  z-index:2;
+}
+.xcap-orchestrator-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#8790a0;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.xcap-orchestrator-topbar span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+.xcap-orchestrator-topbar i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#6ce0ad;
+  box-shadow:0 0 10px rgba(108,224,173,.8);
+}
+.xcap-orchestrator-topbar small{
+  font-size:7px;
+  color:#677185;
+}
+.xcap-orchestrator-request{
+  padding:10px 11px;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.075);
+  animation:xcapRouteIn .32s ease both;
+}
+.xcap-orchestrator-request small,
+.xcap-orchestrator-result small{
+  display:block;
+  margin-bottom:4px;
+  color:#72809a;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+.xcap-orchestrator-request strong{
+  display:block;
+  color:#eef2f8;
+  font:500 clamp(11px,1.05vw,14px)/1.32 "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:-.02em;
+}
+.xcap-orchestrator-path{
+  display:grid;
+  grid-template-columns:38px minmax(24px,1fr) auto;
+  align-items:center;
+  gap:8px;
+  min-height:64px;
+}
+.xcap-orchestrator-node{
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  color:#dce9ff;
+  font-size:17px;
+  font-weight:300;
+  background:linear-gradient(145deg,#1e4bff,#6e7cff);
+  box-shadow:0 0 24px rgba(67,109,255,.32);
+}
+.xcap-orchestrator-path>i{
+  height:1px;
+  background:linear-gradient(90deg,#5f8dff,rgba(95,141,255,.15));
+  overflow:visible;
+  position:relative;
+}
+.xcap-orchestrator-path>i::after{
+  content:"";
+  position:absolute;
+  top:-1px;
+  width:18px;
+  height:3px;
+  border-radius:999px;
+  background:#9dc0ff;
+  box-shadow:0 0 9px #6ca1ff;
+  animation:xcapRoutePulse 1.25s linear infinite;
+}
+.xcap-orchestrator-path>div{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:6px;
+}
+.xcap-orchestrator-path>div span{
+  padding:6px 8px;
+  border-radius:999px;
+  color:#b7c7df;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.075);
+  font-size:8px;
+  font-weight:700;
+  opacity:0;
+  transform:translateY(4px);
+  animation:xcapRouteChip .3s ease forwards;
+  animation-delay:var(--route-delay);
+}
+.xcap-orchestrator-result{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 10px;
+  border-radius:11px;
+  background:rgba(92,221,164,.055);
+  border:1px solid rgba(92,221,164,.14);
+  animation:xcapRouteIn .35s .14s ease both;
+}
+.xcap-orchestrator-result>span{
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:#153a2a;
+  color:#7be4ad;
+  font-size:11px;
+  font-weight:800;
+}
+.xcap-orchestrator-result strong{
+  display:block;
+  color:#dcf4e7;
+  font-size:9px;
+  font-weight:700;
+}
+.xcap-orchestrator-progress{
+  display:flex;
+  gap:4px;
+}
+.xcap-orchestrator-progress span{
+  height:2px;
+  flex:1;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+}
+.xcap-orchestrator-progress span.is-active{
+  background:#76a2ff;
+  box-shadow:0 0 8px rgba(118,162,255,.5);
+}
+@keyframes xcapRoutePulse{
+  from{left:0;opacity:0}
+  18%{opacity:1}
+  to{left:calc(100% - 18px);opacity:0}
+}
+@keyframes xcapRouteChip{to{opacity:1;transform:none}}
+@keyframes xcapRouteIn{
+  from{opacity:.4;transform:translateY(5px)}
+  to{opacity:1;transform:none}
+}
+.xcap-card--knowledge .xcap-copy{
+  padding:14px 18px 18px!important;
+}
+.xcap-card--knowledge .xcap-copy h3{
+  font-size:clamp(30px,2.35vw,42px)!important;
+}
+.xcap-card--knowledge .xcap-copy p{
+  margin-top:9px!important;
+  font-size:12.5px!important;
+}
+
+/* Card 4: a real coding/product sequence instead of the previous lead-generation automation. */
+.xcap-code-workflow{
+  grid-template-rows:auto auto auto minmax(0,1fr)!important;
+  gap:8px!important;
+}
+.xcap-code-request{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:10px;
+  overflow:hidden;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.07);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+.xcap-code-request span{
+  flex:none;
+  color:#7aa7ff;
+  font-size:9px;
+  font-weight:700;
+}
+.xcap-code-request strong{
+  min-width:0;
+  overflow:hidden;
+  color:#cbd3df;
+  font-size:9px;
+  font-weight:500;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.xcap-code-before-panel{
+  width:min(100%,760px);
+  overflow:hidden;
+  border-radius:14px;
+  background:#080b10;
+  border:1px solid rgba(255,255,255,.085);
+  box-shadow:0 24px 70px rgba(0,0,0,.32);
+}
+.xcap-code-panel-head{
+  min-height:36px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  padding:0 10px;
+  background:#11151c;
+  border-bottom:1px solid rgba(255,255,255,.065);
+}
+.xcap-code-panel-head>div{display:flex;gap:5px}
+.xcap-code-panel-head>div span{
+  width:7px;height:7px;border-radius:50%;background:#59616d;
+}
+.xcap-code-panel-head strong{
+  color:#9ba6b5;
+  font:700 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.xcap-code-panel-head small{
+  justify-self:end;
+  color:#ff7b88;
+  font-size:8px;
+  font-weight:700;
+}
+.xcap-code-before-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(0,.9fr);
+  gap:9px;
+  padding:10px;
+}
+.xcap-broken-files{
+  display:grid;
+  gap:6px;
+}
+.xcap-broken-files p{
+  margin:0;
+  padding:7px 8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.055);
+}
+.xcap-broken-files b,
+.xcap-broken-files span{
+  display:block;
+}
+.xcap-broken-files b{
+  color:#e3e8ef;
+  font:600 8.5px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.xcap-broken-files span{
+  margin-top:3px;
+  color:#ff8d99;
+  font-size:7.5px;
+}
+.xcap-broken-code{
+  min-width:0;
+  margin:0;
+  padding:10px;
+  border-radius:9px;
+  overflow:hidden;
+  background:#030405;
+  color:#b9c3d0;
+  border:1px solid rgba(255,255,255,.055);
+  font:500 8px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;
+  white-space:pre-wrap;
+}
+.xcap-broken-code span{color:#5d6672}
+.xcap-broken-code em{
+  color:#ff7d8a;
+  font-style:normal;
+}
+.xcap-code-workflow .xcap-workflow-stage{
+  padding:9px!important;
+}
+.xcap-code-workflow .xcap-term-body{
+  padding:11px 12px 12px!important;
+}
+.xcap-code-workflow .xcap-term-line{
+  margin:4px 0!important;
+}
+.xcap-code-workflow .xcap-verified-body{
+  padding:10px 12px 11px!important;
+}
+.xcap-code-workflow .xcap-verified-body>p{
+  margin:3px 0!important;
+}
+
+@media(max-width:1050px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:316px!important}
+  .xcap-card--knowledge{min-height:0!important}
+  .xcap-orchestrator-visual{min-height:250px}
+}
+@media(max-width:720px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:300px!important}
+  .xcap-constellation{
+    --outer-radius:92px;
+    --inner-radius:64px;
+  }
+  .xcap-xroga-controller{
+    width:116px!important;
+    height:116px!important;
+  }
+  .xcap-xroga-controller-plate{
+    width:80px!important;
+    height:80px!important;
+  }
+  .xcap-xroga-controller-plate img{
+    width:66px!important;
+    height:66px!important;
+  }
+  .xcap-orchestrator-visual{
+    min-height:242px;
+    margin:10px 10px 0;
+    padding:11px;
+  }
+  .xcap-orchestrator-path{
+    grid-template-columns:34px minmax(18px,1fr) auto;
+  }
+  .xcap-orchestrator-node{
+    width:32px;height:32px;border-radius:10px;font-size:15px;
+  }
+  .xcap-card--knowledge .xcap-copy{
+    padding:13px 14px 16px!important;
+  }
+  .xcap-card--knowledge .xcap-copy h3{
+    font-size:clamp(31px,8.6vw,40px)!important;
+  }
+  .xcap-code-before-grid{
+    grid-template-columns:1fr;
+  }
+  .xcap-broken-code{
+    display:none;
+  }
+  .xcap-code-request strong{
+    font-size:8.5px;
+  }
+}
+@media(max-width:390px){
+  .xcap-card--integrations .xcap-visual--integrations{min-height:286px!important}
+  .xcap-constellation{
+    --outer-radius:84px;
+    --inner-radius:58px;
+  }
+  .xcap-constellation-counter{
+    width:29px!important;height:29px!important;left:-14.5px!important;top:-14.5px!important;
+  }
+  .xcap-constellation-item.is-outer .xcap-constellation-counter{
+    width:31px!important;height:31px!important;left:-15.5px!important;top:-15.5px!important;
+  }
+  .xcap-constellation-counter svg,
+  .xcap-remote-brand-mark{
+    width:16px!important;height:16px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .xcap-orbit-ring,
+  .xcap-orbit-ring .xcap-constellation-counter,
+  .xcap-orchestrator-path>i::after,
+  .xcap-orchestrator-request,
+  .xcap-orchestrator-result,
+  .xcap-orchestrator-path>div span{
+    animation:none!important;
+  }
+}
