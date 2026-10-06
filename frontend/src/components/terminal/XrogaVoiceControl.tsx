@@ -1174,7 +1174,7 @@ export function XrogaVoiceControl({
         }
       >
         <AudioLinesIcon
-          size={24}
+          size={28}
           active={captureVisible}
           aria-hidden="true"
         />
