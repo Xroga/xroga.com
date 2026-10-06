@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTerminalChat } from '@/context/TerminalChatContext';
 import { ChatBarActionsMenu } from './ChatBarActionsMenu';
 import { buildComposerPreamble, useComposerToolsStore } from '@/store/useComposerToolsStore';
@@ -120,14 +120,6 @@ export function TerminalChatBar() {
     reason: 'not_connected' | 'no_repo_selected';
     message: string;
   }>({ open: false, reason: 'not_connected', message: '' });
-
-  const latestAssistantMessage = useMemo(
-    () =>
-      [...messages]
-        .reverse()
-        .find((message) => message.role === 'assistant' && message.content.trim().length > 0),
-    [messages],
-  );
 
   const triggerComposerSignal = useCallback((duration = 1200) => {
     setComposerSignal(true);
