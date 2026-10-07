@@ -35,9 +35,18 @@ const SETTINGS = read('../components/settings/SettingsView.tsx');
 const PROFILE_MENU = read('../components/ui/ProfileQuickMenu.tsx');
 const THEME_STORE = read('../store/useThemeStore.ts');
 const BOOTSTRAP = read('./storageBootstrapScript.ts');
+const ROOT_LAYOUT = read('../app/layout.tsx');
 
 /** CSS with comments stripped, so prose about a rule cannot satisfy a search for it. */
 const code = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
+
+test('black is the first-visit theme while valid saved choices remain supported', () => {
+  assert.match(THEME_STORE, /theme:\s*'black'/);
+  assert.match(BOOTSTRAP, /var core = 'black'/);
+  assert.match(THEME, /return 'black';/);
+  assert.match(ROOT_LAYOUT, /className=\{`theme-black/);
+  assert.match(BOOTSTRAP, /t === 'black'.*t === 'gray'.*t === 'white'.*t === 'beige'/);
+});
 
 test('the font stacks are declared where the font variables exist', () => {
   // On `html` they resolve to nothing and the setting silently does nothing.

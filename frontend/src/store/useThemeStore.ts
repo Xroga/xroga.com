@@ -97,7 +97,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'white',
+      theme: 'black',
       sidebarOpen: true,
       sidebarPinned: true,
       sidebarWidth: SIDEBAR_DEFAULT_WIDTH,

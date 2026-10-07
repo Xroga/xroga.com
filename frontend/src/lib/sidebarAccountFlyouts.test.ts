@@ -62,18 +62,16 @@ test('account popup groups destinations and displays authenticated identity', ()
   assert.match(PROFILE_MENU, /event\.key !== 'Escape'/);
 });
 
-test('the beta banner continuously alternates every seven seconds and is mounted after shared headers', () => {
-  assert.match(BETA_BANNER, /7_000/);
-  assert.match(BETA_BANNER, /setInterval/);
-  assert.match(BETA_BANNER, /current === 'expectations' \? 'ideas' : 'expectations'/);
-  assert.match(BETA_BANNER, /Xroga is live and open to explore/);
-  assert.match(BETA_BANNER, /Have an idea for Xroga\?/);
-  assert.match(BETA_BANNER, /Share Your Idea/);
+test('the beta banner is a compact stable notice mounted after shared headers', () => {
+  assert.doesNotMatch(BETA_BANNER, /setInterval|7_000|stage/);
+  assert.match(BETA_BANNER, /Early access/);
+  assert.match(BETA_BANNER, /Some features are still improving/);
+  assert.match(BETA_BANNER, /> Feedback/);
   assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
   assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
   assert.match(DASHBOARD_VIEW, /<\/header>[\s\S]*?<BetaExpectationBanner compact \/>/);
-  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[^}]*top:\s*5\.75rem;[^}]*z-index:\s*1390;/);
+  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[\s\S]*position:\s*absolute !important;[\s\S]*height:\s*28px !important/);
   assert.match(CSS, /body\.theme-black \.xv-beta-banner,[\s\S]*?body\.theme-gray \.xv-beta-banner\s*\{[^}]*color:\s*#ffb4b8;/);
 });
 

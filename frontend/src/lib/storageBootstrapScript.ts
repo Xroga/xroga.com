@@ -4,7 +4,7 @@ export function storageBootstrapScript(): string {
   try {
     var themeKey = 'xroga-theme';
     var raw = localStorage.getItem(themeKey);
-    var core = 'white';
+    var core = 'black';
     var accent = 'default';
     var sidebarFont = 'default';
     var workspaceFont = 'default';
@@ -29,11 +29,11 @@ export function storageBootstrapScript(): string {
             if (t === 'black' || t === 'gray' || t === 'white' || t === 'beige') {
               core = t;
             } else {
-              state.theme = 'white';
-              state.terminalSkin = 'light';
+              state.theme = 'black';
+              state.terminalSkin = 'dark';
               state.slideshowEnabled = false;
               dirty = true;
-              core = 'white';
+              core = 'black';
             }
             if (/^(default|blue|emerald|violet|coral|amber|cyan|rose)$/.test(state.accent || '')) accent = state.accent;
             if (/^(modern|classic|mono)$/.test(state.fontPreference || '')) font = state.fontPreference;
@@ -69,13 +69,13 @@ export function storageBootstrapScript(): string {
     document.documentElement.setAttribute('data-density', density);
     document.documentElement.setAttribute('data-reduced-motion', reducedMotion ? 'true' : 'false');
     document.documentElement.setAttribute('data-high-contrast', highContrast ? 'true' : 'false');
-    document.documentElement.style.backgroundColor = surfaces[core] || '#ffffff';
+    document.documentElement.style.backgroundColor = surfaces[core] || '#000000';
     document.documentElement.style.setProperty('--xv-boot-sidebar-width', sidebarOpen ? sidebarWidth + 'px' : '0px');
     var applyBody = function() {
       if (!document.body) return;
       document.body.classList.remove('theme-image','theme-white','theme-black','theme-gray','theme-beige','xv-deep-work-shell');
       document.body.classList.add('theme-' + core);
-      document.body.style.backgroundColor = surfaces[core] || '#ffffff';
+      document.body.style.backgroundColor = surfaces[core] || '#000000';
       document.body.style.backgroundImage = '';
     };
     if (document.body) applyBody();

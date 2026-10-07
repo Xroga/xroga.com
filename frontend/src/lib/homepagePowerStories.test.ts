@@ -18,17 +18,20 @@ test('the six-part capability story follows browser employees and precedes the w
   assert.match(stories, /<section className="xps-story xps-story--inputs"/);
 });
 
-test('the six sections cover input, research, devices, agents, automation, and verified shipping', () => {
+test('the six sections lead with direct headlines and large working surfaces', () => {
   for (const phrase of [
-    'START WITH ANYTHING',
-    'RESEARCH WITH RECEIPTS',
-    'BUILD FOR EVERY SCREEN',
-    'A TEAM BEHIND ONE REQUEST',
-    'CONNECT · AUTOMATE · GROW',
-    'VERIFY, THEN SHIP',
+    'Connect the tools you already use',
+    'Search broadly.',
+    'Build for every screen.',
+    'A managed AI team.',
+    'Hand off the busywork.',
+    'Then ship.',
   ]) {
     assert.ok(stories.includes(phrase), `${phrase} is missing`);
   }
+  assert.doesNotMatch(stories, /START WITH ANYTHING|Bring the context|Xroga finds the path/);
+  assert.match(stories, /xps-mini-browser__headline/);
+  assert.match(stories, /xps-story__heading/);
   assert.match(stories, /task graph → sandbox → evidence → tests → browser → review → repair → approval → commit/);
   assert.match(stories, /1,500\+ apps, APIs, and custom MCP connections/);
 });

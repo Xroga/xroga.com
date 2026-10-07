@@ -52,9 +52,7 @@ import '@/styles/homepage-power-stories.css';
 
 type StoryProps = {
   index: number;
-  eyebrow: string;
   title: ReactNode;
-  copy: string;
   children: ReactNode;
   className?: string;
 };
@@ -222,15 +220,13 @@ function CompareSurface() {
   );
 }
 
-function StorySection({ index, eyebrow, title, copy, children, className = '' }: StoryProps) {
+function StorySection({ index, title, children, className = '' }: StoryProps) {
   return (
     <section className={`xps-story ${className}`} aria-labelledby={`xps-title-${index}`}>
-      <div className="xps-story__copy">
+      <header className="xps-story__heading">
         <span className="xps-story__number">0{index}</span>
-        <p className="xps-story__eyebrow">{eyebrow}</p>
         <h2 id={`xps-title-${index}`}>{title}</h2>
-        <p>{copy}</p>
-      </div>
+      </header>
       <div className="xps-story__stage">{children}</div>
     </section>
   );
@@ -248,8 +244,8 @@ function ProgressDots({ count, active, label }: { count: number; active: number;
 
 export function HomepagePowerStories() {
   const suiteRef = useRef<HTMLDivElement>(null);
-  const [inputIndex, setInputIndex] = useState(0);
-  const [researchIndex, setResearchIndex] = useState(0);
+  const [inputIndex, setInputIndex] = useState(2);
+  const [researchIndex, setResearchIndex] = useState(2);
   const [deviceIndex, setDeviceIndex] = useState(0);
   const [automationIndex, setAutomationIndex] = useState(0);
   const [shippingIndex, setShippingIndex] = useState(0);
@@ -325,27 +321,17 @@ export function HomepagePowerStories() {
   return (
     <section className="xps-band" aria-label="Explore everything Xroga can do">
     <div ref={suiteRef} className="xps-suite">
-      <header className="xps-suite__intro">
-        <p>ONE AI WORKSPACE · SIX CONNECTED SYSTEMS</p>
-        <h2 aria-label="Connect your tools, ask in plain words, and hand off the busywork">
-          <span className={automationIndex === 0 ? 'is-active' : ''}>Connect the tools you already use <sup>01</sup></span>
-          <span className={automationIndex === 1 ? 'is-active' : ''}>Ask anything in plain words <sup>02</sup></span>
-          <span className={automationIndex === 2 ? 'is-active' : ''}>Hand off the busywork <sup>03</sup></span>
-        </h2>
-        <span>From an idea, file, link, or existing repository to tested work you can inspect and own.</span>
-      </header>
-
       <section className="xps-story xps-story--inputs" aria-labelledby="xps-title-1">
-        <div className="xps-story__copy">
-          <span className="xps-story__number">01</span>
-          <div>
-            <p className="xps-story__eyebrow">START WITH ANYTHING</p>
-            <h2 id="xps-title-1">Bring the context. <em>Xroga finds the path.</em></h2>
-            <p>Type, speak, upload, paste, or point Xroga at the source. Your request and evidence stay together in one workspace.</p>
-          </div>
-        </div>
         <div className="xps-story__stage">
         <div className="xps-mini-browser xps-pixel-surface">
+          <header className="xps-mini-browser__headline">
+            <p>ONE AI WORKSPACE · SIX CONNECTED SYSTEMS</p>
+            <h2 id="xps-title-1" aria-label="Connect your tools, ask in plain words, and hand off the busywork">
+              <span className={automationIndex === 0 ? 'is-active' : ''}>Connect the tools you already use <sup>01</sup></span>
+              <span className={automationIndex === 1 ? 'is-active' : ''}>Ask anything in plain words <sup>02</sup></span>
+              <span className={automationIndex === 2 ? 'is-active' : ''}>Hand off the busywork <sup>03</sup></span>
+            </h2>
+          </header>
           <div className="xps-mini-browser__tabs" aria-hidden="true">
             <span className="is-active"><i /> Xroga workspace</span>
             <span><i /> Connected tools</span>
@@ -401,9 +387,7 @@ export function HomepagePowerStories() {
 
       <StorySection
         index={2}
-        eyebrow="RESEARCH WITH RECEIPTS"
         title={<>Search broadly.<br /><em>Answer precisely.</em></>}
-        copy="Research the web, X, documentation, competitors, APIs, repositories, PDFs, and video transcripts—then receive a concise result with traceable sources."
         className="xps-story--research"
       >
         <div className="xps-research-demo xps-pixel-surface" key={research.query}>
@@ -425,9 +409,7 @@ export function HomepagePowerStories() {
 
       <StorySection
         index={3}
-        eyebrow="BUILD FOR EVERY SCREEN"
-        title={<>One workspace.<br /><em>Every product surface.</em></>}
-        copy="Start fresh or continue from an existing GitHub repository. Build websites, mobile apps, desktop software, extensions, APIs, CLIs, and internal tools."
+        title={<>Build for every screen.<br /><em>One responsive workspace.</em></>}
         className="xps-story--devices"
       >
         <div className="xps-device-demo">
@@ -461,9 +443,7 @@ export function HomepagePowerStories() {
 
       <StorySection
         index={4}
-        eyebrow="A TEAM BEHIND ONE REQUEST"
-        title={<>You set the goal.<br /><em>Xroga manages the work.</em></>}
-        copy="A manager routes each task to focused AI employees while policy and budget controls feed the same evidence-owning runtime."
+        title={<>One goal.<br /><em>A managed AI team.</em></>}
         className="xps-story--agents"
       >
         <div className="xps-agent-map xps-pixel-surface">
@@ -490,9 +470,7 @@ export function HomepagePowerStories() {
 
       <StorySection
         index={5}
-        eyebrow="CONNECT · AUTOMATE · GROW"
         title={<>Hand off the busywork.<br /><em>Keep the control.</em></>}
-        copy="Install plugin packs, connect custom MCPs, or describe a workflow. Automate research, outreach, meetings, publishing, SEO, AEO, GEO, and recurring operations."
         className="xps-story--automate"
       >
         <div className="xps-automation-demo">
@@ -536,9 +514,7 @@ export function HomepagePowerStories() {
 
       <StorySection
         index={6}
-        eyebrow="VERIFY, THEN SHIP"
-        title={<>Production is a process.<br /><em>Xroga shows the proof.</em></>}
-        copy="Preview, test, review, repair, approve, and publish through infrastructure you control—including domains, payments, integrations, and supported app-store delivery."
+        title={<>Verify. Review.<br /><em>Then ship.</em></>}
         className="xps-story--ship"
       >
         <div className="xps-ship-demo">

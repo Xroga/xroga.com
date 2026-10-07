@@ -155,7 +155,7 @@ export const CUSTOM_MOBILE_BG_KEY = 'xroga_custom_mobile_bg';
 export const SLIDESHOW_ENABLED_KEY = 'xroga_slideshow_enabled';
 export const SLIDESHOW_FROZEN_INDEX_KEY = 'xroga_slideshow_frozen_index';
 
-/** Solid product surfaces; white remains the default. */
+/** Solid product surfaces; black is the first-visit default. */
 export const THEME_OPTIONS: { id: CoreThemeId; label: string; description: string }[] = [
   { id: 'beige', label: 'Beige', description: 'Warm and calm' },
   { id: 'white', label: 'White', description: 'Bright · clean writing' },
@@ -192,10 +192,10 @@ export function isAccentId(value: unknown): value is AccentId {
   return ACCENT_OPTIONS.some((option) => option.id === value);
 }
 
-/** Map legacy `image` / deep-work → white */
+/** Map legacy or invalid values to the black first-visit default. */
 export function normalizeTheme(theme: ThemeId | string | null | undefined): CoreThemeId {
   if (theme === 'black' || theme === 'gray' || theme === 'beige' || theme === 'white') return theme;
-  return 'white';
+  return 'black';
 }
 
 export function skinForTheme(theme: ThemeId | string | null | undefined): TerminalSkin {

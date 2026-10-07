@@ -71,5 +71,5 @@ test('scroll reveal is progressive and reduced motion stays still', () => {
   assert.match(CSS, /0% \{ opacity: 0\.3; transform: translate3d\(0, 74px, 0\) scale\(0\.985\); filter: blur\(10px\); \}/);
   assert.match(CSS, /100% \{ opacity: 0\.72; transform: translate3d\(0, -42px, 0\) scale\(0\.992\); filter: blur\(2\.5px\); \}/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*xv-stack-studio__track \{ animation: none !important/);
-  assert.match(CSS, /html:has\(\.xv-home-coding\) \{ scroll-behavior: smooth; \}/);
+  assert.match(CSS, /html:has\(\.xv-home-coding\) \{ scroll-behavior: auto; \}/);
 });

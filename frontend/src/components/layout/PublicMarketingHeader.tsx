@@ -366,7 +366,7 @@ export function PublicMarketingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [headerHidden, setHeaderHidden] = useState(false);
+  const [headerCompressed, setHeaderCompressed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -386,27 +386,17 @@ export function PublicMarketingHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
     let frame = 0;
 
     const syncHeaderToScroll = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
-        const nextScrollY = window.scrollY;
-        const delta = nextScrollY - lastScrollY;
-
-        if (nextScrollY <= 16) {
-          setHeaderHidden(false);
-        } else if (Math.abs(delta) > 3) {
-          // Requested interaction: scrolling down reveals the header; scrolling up hides it.
-          setHeaderHidden(delta < 0);
-        }
-
-        lastScrollY = nextScrollY;
+        setHeaderCompressed(window.scrollY > 72);
         frame = 0;
       });
     };
 
+    syncHeaderToScroll();
     window.addEventListener('scroll', syncHeaderToScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', syncHeaderToScroll);
@@ -415,7 +405,7 @@ export function PublicMarketingHeader() {
   }, []);
 
   useEffect(() => {
-    if (menuOpen || activeMega) setHeaderHidden(false);
+    setHeaderCompressed(menuOpen || Boolean(activeMega) ? false : window.scrollY > 72);
   }, [menuOpen, activeMega]);
 
   useEffect(() => {
@@ -443,7 +433,7 @@ export function PublicMarketingHeader() {
       ref={rootRef}
       className="xv-marketing-header"
       data-public-marketing-header
-      data-scroll-hidden={headerHidden ? 'true' : 'false'}
+      data-compressed={headerCompressed ? 'true' : 'false'}
     >
       <svg className="xv-nav-filter" aria-hidden="true">
         <defs>
