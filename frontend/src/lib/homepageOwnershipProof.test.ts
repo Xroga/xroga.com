@@ -6,9 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const PAGE = read('../components/homepage/HomepageClient.tsx');
 const PROOF = read('../components/homepage/HomepageOwnershipProof.tsx');
 const AUDIENCE = read('../components/homepage/HomepageAudienceSlider.tsx');
-const COMPANION = read('../components/companion/CompanionSurfaces.tsx');
 const CSS = read('../styles/homepage-coding.css');
-const COMPANION_CSS = read('../styles/companion.css');
 
 test('the audience selector is the last product section before FAQ', () => {
   assert.doesNotMatch(PROOF, /THE REAL GAP IS AFTER THE PROMPT|THE DIFFERENCE IS WHAT YOU KEEP/);
@@ -76,9 +74,9 @@ test('audience controls and copy stay compact across desktop and mobile', () => 
   assert.match(CSS, /xv-audience__tabs button\s*\{[\s\S]*min-height:\s*58px/);
 });
 
-test('Smoky remains attached to the homepage chatbar', () => {
-  assert.doesNotMatch(COMPANION, /xroga-smoky-position|pointermove|onPointerDown/);
-  assert.match(COMPANION, /<div className="xv-home-companion-stage">/);
-  assert.match(COMPANION_CSS, /\.xv-home-companion-stage\s*\{[^}]*position:\s*absolute/);
-  assert.doesNotMatch(COMPANION_CSS, /\.xv-home-companion-stage\s*\{[^}]*position:\s*fixed/);
+test('the homepage hero stays focused on the product prompt without character art', () => {
+  assert.doesNotMatch(PAGE, /HomepageCompanionStage|useCompanionStore|hydrateCompanion/);
+  assert.match(PAGE, /<HomepageChatBar \/>/);
+  assert.match(PAGE, /AI APP BUILDER \+ CODING AGENT/);
+  assert.match(CSS, /\.xv-home-coding \.xv-hc-prompt-shell[\s\S]*box-shadow:none!important/);
 });

@@ -15,9 +15,18 @@ const homepageJsonLd = buildWebPageJsonLd({
   description: PRODUCT_ONE_LINER,
 });
 
+const homepageScrollBootstrap = `
+  if (!window.location.hash) {
+    window.history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+    document.documentElement.classList.add('xv-home-scroll-lock');
+  }
+`;
+
 export default function HomePage() {
   return (
     <>
+      <script dangerouslySetInnerHTML={{ __html: homepageScrollBootstrap }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd).replace(/</g, '\\u003c') }} />
       <HomepageClient />
     </>

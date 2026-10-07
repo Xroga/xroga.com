@@ -10462,3 +10462,58 @@ body.theme-black .xv-home-coding > :not(.xv-hc-hero){
   z-index:1;
   background:#050607!important;
 }
+
+/* Hero clarity: a readable label and flat controls, without character art or
+   soft shadows competing with the product statement. */
+.xv-home-coding .xv-hc-headline,
+.xv-home-coding .xv-hc-hero-copy,
+.xv-home-coding .xv-hc-eyebrow,
+.xv-home-coding .xv-hc-prompt-shell,
+.xv-home-coding .xv-home-chatbar-wrap{
+  text-shadow:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+.xv-home-coding .xv-hc-eyebrow,
+body.theme-black .xv-home-coding .xv-hc-eyebrow{
+  position:relative;
+  isolation:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  width:fit-content;
+  margin:0 0 .85rem;
+  padding:.45rem .68rem;
+  border:1px solid rgba(96,165,250,.55);
+  border-radius:7px;
+  background:rgba(3,8,18,.8);
+  color:#dbeafe!important;
+  font-size:clamp(.66rem,.9vw,.78rem);
+  font-weight:800;
+  letter-spacing:.12em;
+  box-shadow:none!important;
+}
+.xv-home-coding .xv-hc-eyebrow::before,
+.xv-home-coding .xv-hc-eyebrow::after{
+  display:none!important;
+}
+.xv-home-coding .xv-hc-eyebrow i,
+body.theme-black .xv-home-coding .xv-hc-eyebrow i{
+  display:block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#60a5fa;
+  box-shadow:none!important;
+}
+.xv-home-coding .xv-hc-prompt-shell{
+  border-color:rgba(148,163,184,.32)!important;
+}
+
+@media(max-width:640px){
+  .xv-home-coding .xv-hc-eyebrow,
+  body.theme-black .xv-home-coding .xv-hc-eyebrow{
+    font-size:.58rem;
+    letter-spacing:.1em;
+  }
+}

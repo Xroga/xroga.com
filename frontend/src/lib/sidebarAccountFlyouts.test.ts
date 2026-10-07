@@ -62,17 +62,24 @@ test('account popup groups destinations and displays authenticated identity', ()
   assert.match(PROFILE_MENU, /event\.key !== 'Escape'/);
 });
 
-test('the beta banner is a compact stable notice mounted after shared headers', () => {
-  assert.doesNotMatch(BETA_BANNER, /setInterval|7_000|stage/);
+test('the beta banner starts at the hero and becomes a compact hover notice after scrolling', () => {
+  assert.doesNotMatch(BETA_BANNER, /setInterval|scrollIntoView|sessionStorage/);
+  assert.match(BETA_BANNER, /TOP_NOTICE_DURATION_MS = 5_000/);
+  assert.match(BETA_BANNER, /window\.scrollY > CORNER_NOTICE_SCROLL_Y/);
+  assert.match(BETA_BANNER, /xv-beta-banner--top/);
+  assert.match(BETA_BANNER, /xv-beta-banner--corner/);
   assert.match(BETA_BANNER, /Early access/);
-  assert.match(BETA_BANNER, /Some features are still improving/);
-  assert.match(BETA_BANNER, /> Feedback/);
+  assert.match(BETA_BANNER, /Xroga is live while we finish a few features/);
+  assert.match(BETA_BANNER, /Report an issue/);
   assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
   assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
   assert.match(DASHBOARD_VIEW, /<\/header>[\s\S]*?<BetaExpectationBanner compact \/>/);
-  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner\s*\{[\s\S]*position:\s*absolute !important;[\s\S]*height:\s*28px !important/);
-  assert.match(CSS, /body\.theme-black \.xv-beta-banner,[\s\S]*?body\.theme-gray \.xv-beta-banner\s*\{[^}]*color:\s*#ffb4b8;/);
+  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--top\s*\{[\s\S]*position:\s*absolute !important/);
+  assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--corner\s*\{[\s\S]*position:\s*fixed !important/);
+  assert.match(CSS, /\.xv-beta-banner--corner:hover[\s\S]*width:\s*min\(390px/);
+  assert.match(CSS, /background:\s*#080808 !important;[\s\S]*color:\s*#fff !important/);
+  assert.match(CSS, /\.xv-beta-banner__cta,[\s\S]*background:\s*#dc2626 !important/);
 });
 
 test('composer retains a small bottom breathing space', () => {
