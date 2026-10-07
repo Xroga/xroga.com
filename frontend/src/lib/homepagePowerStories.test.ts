@@ -34,8 +34,19 @@ test('the story deck is interactive, responsive, and motion-safe', () => {
   assert.match(stories, /role="tablist"/);
   assert.match(stories, /aria-selected=/);
   assert.match(stories, /prefers-reduced-motion: reduce/);
-  assert.match(css, /@media \(max-width: 860px\)/);
-  assert.match(css, /@media \(max-width: 580px\)/);
+  assert.match(css, /@media \(max-width: 900px\)/);
+  assert.match(css, /@media \(max-width: 620px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /content-visibility:\s*auto/);
+});
+
+test('the redesign is one connected editorial system rather than a stack of dashboard cards', () => {
+  assert.match(stories, /Connect the tools you already use/);
+  assert.match(stories, /Ask anything in plain words/);
+  assert.match(stories, /Hand off the busywork/);
+  assert.match(stories, /xps-input-demo__frame/);
+  assert.match(stories, /xps-automation-demo__panels/);
+  assert.match(css, /--xps-black:\s*#080908/);
+  assert.match(css, /\.xps-story\s*\{[\s\S]*border-radius:\s*0/);
+  assert.match(css, /\.xps-automation-demo__panels\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
 });

@@ -135,8 +135,12 @@ export function HomepagePowerStories() {
     <div className="xps-suite" aria-label="Explore everything Xroga can do">
       <header className="xps-suite__intro">
         <p>ONE AI WORKSPACE · SIX CONNECTED SYSTEMS</p>
-        <h2>From anything you have<br />to anything you can <em>ship.</em></h2>
-        <span>Compact, connected, and built to keep the system—not a model—responsible for the truth.</span>
+        <h2 aria-label="Connect your tools, ask in plain words, and hand off the busywork">
+          <span className={automationIndex === 0 ? 'is-active' : ''}>Connect the tools you already use <sup>01</sup></span>
+          <span className={automationIndex === 1 ? 'is-active' : ''}>Ask anything in plain words <sup>02</sup></span>
+          <span className={automationIndex === 2 ? 'is-active' : ''}>Hand off the busywork <sup>03</sup></span>
+        </h2>
+        <span>From an idea, file, link, or existing repository to tested work you can inspect and own.</span>
       </header>
 
       <StorySection
@@ -147,18 +151,28 @@ export function HomepagePowerStories() {
         className="xps-story--inputs"
       >
         <div className="xps-input-demo">
-          <div className="xps-input-demo__orbit" aria-hidden="true">
-            {INPUTS.map((item, index) => {
-              const Icon = item.icon;
-              return <span className={index === inputIndex ? 'is-active' : ''} key={item.label}><Icon /></span>;
-            })}
-            <b>X</b>
+          <div className="xps-input-demo__frame xps-input-demo__orbit" aria-hidden="true">
+            <small>01 · CONTEXT</small>
+            <div>
+              {INPUTS.map((item, index) => {
+                const Icon = item.icon;
+                return <span className={index === inputIndex ? 'is-active' : ''} key={item.label}><Icon /></span>;
+              })}
+              <b>X</b>
+            </div>
           </div>
-          <div className="xps-input-demo__result" key={activeInput.label}>
+          <div className="xps-input-demo__frame xps-input-demo__ask" key={`ask-${activeInput.label}`}>
+            <small>02 · ASK</small>
+            <div><span>{activeInput.detail}</span><i><ActiveInputIcon /></i></div>
+          </div>
+          <div className="xps-input-demo__frame xps-input-demo__result" key={activeInput.label}>
+            <small>03 · READY</small>
             <span><ActiveInputIcon /> INPUT RECEIVED</span>
-            <strong>{activeInput.label}</strong>
-            <p>{activeInput.detail}</p>
-            <div><i /> Context ready <Check aria-hidden="true" /></div>
+            <div className="xps-input-demo__checks">
+              <p>Context understood <Check aria-hidden="true" /></p>
+              <p>Useful tools selected <Check aria-hidden="true" /></p>
+              <p>Next action prepared <Check aria-hidden="true" /></p>
+            </div>
           </div>
           <div className="xps-selector" role="tablist" aria-label="Ways to start with Xroga">
             {INPUTS.map((item, index) => (
@@ -235,19 +249,20 @@ export function HomepagePowerStories() {
         className="xps-story--automate"
       >
         <div className="xps-automation-demo">
-          <div className="xps-automation-demo__steps" role="tablist" aria-label="Connected automation stages">
+          <div className="xps-automation-demo__panels" role="tablist" aria-label="Connected automation stages">
             {AUTOMATION_STEPS.map((step, index) => (
-              <button type="button" role="tab" aria-selected={automationIndex === index} onClick={() => setAutomationIndex(index)} key={step.label}><span>0{index + 1}</span><strong>{step.label}</strong><i /></button>
+              <button type="button" role="tab" aria-selected={automationIndex === index} onClick={() => setAutomationIndex(index)} key={step.label}>
+                <span className="xps-automation-demo__visual">
+                  <step.icon />
+                  {index === 0 ? <i className="xps-tool-cloud"><b>Mail</b><b>CRM</b><b>Docs</b><b>Git</b><b>SEO</b></i> : null}
+                  {index === 1 ? <i className="xps-ask-line">Ask anything… <Send /></i> : null}
+                  {index === 2 ? <i className="xps-task-list"><b>3 sources updated</b><b>Summary drafted ✓</b><b>Report ready ✓</b></i> : null}
+                </span>
+                <span className="xps-automation-demo__label"><small>0{index + 1}</small><strong>{step.label}</strong><em>{step.detail}</em><i /></span>
+              </button>
             ))}
           </div>
-          <div className="xps-automation-demo__scene" key={automation.label}>
-            <div className="xps-automation-demo__icon"><ActiveAutomationIcon /></div>
-            <small>{automation.label.toUpperCase()}</small>
-            <strong>{automation.title}</strong>
-            <p>{automation.detail}</p>
-            <div className="xps-app-cloud" aria-hidden="true"><span>CRM</span><span>Mail</span><span>Calendar</span><span>Docs</span><span>SEO</span><span>Custom MCP</span></div>
-          </div>
-          <div className="xps-growth-strip"><Search /><span>Research</span><FileCode2 /><span>Publish</span><CircleDollarSign /><span>Grow</span><Send /><span>Report</span></div>
+          <div className="xps-growth-strip" key={automation.label}><ActiveAutomationIcon /><strong>{automation.title}</strong><span>{automation.detail}</span><Search /><span>Research</span><FileCode2 /><span>Publish</span><CircleDollarSign /><span>Grow</span></div>
         </div>
       </StorySection>
 
