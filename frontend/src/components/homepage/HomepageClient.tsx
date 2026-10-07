@@ -21,7 +21,6 @@ import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipP
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
-import { HomepageCursorGlitter } from '@/components/homepage/HomepageCursorGlitter';
 import { HomepageCapabilitiesMosaic } from '@/components/homepage/HomepageCapabilitiesMosaic';
 import { HomepageBrowserEmployeesExact } from '@/components/homepage/HomepageBrowserEmployeesExact';
 import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
@@ -57,8 +56,6 @@ export function HomepageClient() {
 
   return (
   <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
-    <HomepageCursorGlitter />
-
     <section className="xv-hc-hero">
       <div
         className="xv-hc-bg-image"

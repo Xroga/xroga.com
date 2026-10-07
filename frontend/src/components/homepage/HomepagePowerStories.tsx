@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, FormEvent, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -127,8 +127,6 @@ const DEVICES = [
   { label: 'Extensions', icon: Puzzle, screen: 'Browser side panel', detail: 'Chrome extension experiences' },
 ];
 
-const EMPLOYEES = ['Developer', 'Designer', 'Researcher', 'Analyst', 'QA', 'DevOps', 'Browser', 'Workflow', 'Support'];
-
 const AUTOMATION_STEPS = [
   { label: 'Connect', title: 'Bring your tools', detail: '1,500+ apps, APIs, and custom MCP connections.', icon: Boxes },
   { label: 'Ask', title: 'Describe the outcome', detail: 'Xroga selects the useful tools and a safe workflow.', icon: MessageSquareText },
@@ -141,6 +139,88 @@ const SHIPPING_STEPS = [
   { label: 'Review', icon: ShieldCheck, detail: 'Inspect evidence and approvals' },
   { label: 'Ship', icon: Cloud, detail: 'Publish through accounts you control' },
 ];
+
+const AGENT_GROUPS = [
+  { label: 'Product build', roles: ['Developer', 'Designer', 'QA'] },
+  { label: 'Knowledge work', roles: ['Researcher', 'Analyst', 'Support'] },
+  { label: 'Operations', roles: ['Browser', 'Workflow', 'DevOps'] },
+];
+
+const AUTOMATION_CARDS = [
+  { kicker: '01 · RESEARCH', title: 'Account brief ready', detail: '14 sources checked · citations attached' },
+  { kicker: '02 · OUTREACH', title: 'Personalized drafts prepared', detail: '12 contacts · approval required' },
+  { kicker: '03 · REPORT', title: 'Weekly operations digest', detail: '7 workflows · all systems healthy' },
+];
+
+const CODE_TABS = [
+  {
+    label: 'app.tsx',
+    lines: [
+      <><span className="xps-code-keyword">export function</span> <span className="xps-code-name">Workspace</span>() {'{'}</>,
+      <>&nbsp;&nbsp;<span className="xps-code-keyword">return</span> &lt;<span className="xps-code-name">Build</span> verified /&gt;;</>,
+      <> {'}'}</>,
+    ],
+  },
+  {
+    label: 'workflow.ts',
+    lines: [
+      <><span className="xps-code-keyword">const</span> release = <span className="xps-code-name">await</span> verify({'{'}</>,
+      <>&nbsp;&nbsp;tests: <span className="xps-code-string">&apos;passed&apos;</span>,</>,
+      <>&nbsp;&nbsp;approval: <span className="xps-code-string">&apos;required&apos;</span>,</>,
+      <> {'}'});</>,
+    ],
+  },
+  {
+    label: 'release.spec.ts',
+    lines: [
+      <><span className="xps-code-name">test</span>(<span className="xps-code-string">&apos;ships with proof&apos;</span>, () =&gt; {'{'}</>,
+      <>&nbsp;&nbsp;expect(receipt.status).toBe(<span className="xps-code-string">&apos;ready&apos;</span>);</>,
+      <> {'}'});</>,
+    ],
+  },
+];
+
+function StatusMark({ label, complete = false }: { label: string; complete?: boolean }) {
+  return (
+    <span className={`xps-status-mark ${complete ? 'is-complete' : ''}`}>
+      <i aria-hidden="true">{complete ? <Check /> : null}</i>
+      <span>{label}</span>
+    </span>
+  );
+}
+
+function LatticeStatus({ label }: { label: string }) {
+  return (
+    <span className="xps-lattice-status" role="status">
+      <i aria-hidden="true">{Array.from({ length: 9 }, (_, index) => <b key={index} />)}</i>
+      <span>{label}</span>
+      <time>2.4s</time>
+    </span>
+  );
+}
+
+function CompareSurface() {
+  const handleInput = (event: FormEvent<HTMLInputElement>) => {
+    event.currentTarget.parentElement?.style.setProperty('--xps-compare', `${event.currentTarget.value}%`);
+  };
+
+  return (
+    <div className="xps-compare-surface" style={{ '--xps-compare': '58%' } as CSSProperties}>
+      <div className="xps-compare-surface__before">
+        <small>RAW INPUT</small>
+        <span>52 pages</span><span>9 open questions</span><span>Unsorted evidence</span>
+      </div>
+      <div className="xps-compare-surface__after">
+        <small>GROUNDED RESULT</small>
+        <StatusMark label="Sources reconciled" complete />
+        <StatusMark label="Claims cited" complete />
+        <StatusMark label="Decision brief ready" complete />
+      </div>
+      <input type="range" min="20" max="80" defaultValue="58" onInput={handleInput} aria-label="Compare raw research with the grounded result" />
+      <i aria-hidden="true" />
+    </div>
+  );
+}
 
 function StorySection({ index, eyebrow, title, copy, children, className = '' }: StoryProps) {
   return (
@@ -173,39 +253,64 @@ export function HomepagePowerStories() {
   const [deviceIndex, setDeviceIndex] = useState(0);
   const [automationIndex, setAutomationIndex] = useState(0);
   const [shippingIndex, setShippingIndex] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => {
-      setInputIndex((value) => (value + 1) % INPUTS.length);
-      setResearchIndex((value) => (value + 1) % RESEARCH_SCENES.length);
-      setDeviceIndex((value) => (value + 1) % DEVICES.length);
-      setAutomationIndex((value) => (value + 1) % AUTOMATION_STEPS.length);
-      setShippingIndex((value) => (value + 1) % SHIPPING_STEPS.length);
-    }, 4200);
-    return () => window.clearInterval(timer);
-  }, []);
+  const [codeTab, setCodeTab] = useState(0);
 
   useEffect(() => {
     const suite = suiteRef.current;
     if (!suite || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const stories = Array.from(suite.querySelectorAll<HTMLElement>('.xps-story'));
+    let suiteInView = false;
+    let timer = 0;
     suite.classList.add('xps-motion-ready');
+
+    const stopTimer = () => {
+      if (!timer) return;
+      window.clearInterval(timer);
+      timer = 0;
+    };
+
+    const startTimer = () => {
+      if (timer || !suiteInView || document.hidden) return;
+      timer = window.setInterval(() => {
+        setInputIndex((value) => (value + 1) % INPUTS.length);
+        setResearchIndex((value) => (value + 1) % RESEARCH_SCENES.length);
+        setDeviceIndex((value) => (value + 1) % DEVICES.length);
+        setAutomationIndex((value) => (value + 1) % AUTOMATION_STEPS.length);
+        setShippingIndex((value) => (value + 1) % SHIPPING_STEPS.length);
+      }, 5200);
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
+          if (entry.target === suite) {
+            suiteInView = entry.isIntersecting;
+            if (suiteInView) startTimer();
+            else stopTimer();
+            return;
+          }
+
+          entry.target.classList.toggle('is-inview', entry.isIntersecting);
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
         });
       },
-      { threshold: 0.16, rootMargin: '0px 0px -8% 0px' },
+      { threshold: 0.08, rootMargin: '12% 0px 12% 0px' },
     );
 
+    const handleVisibility = () => {
+      if (document.hidden) stopTimer();
+      else startTimer();
+    };
+
+    observer.observe(suite);
     stories.forEach((story) => observer.observe(story));
-    return () => observer.disconnect();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      stopTimer();
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const activeInput = INPUTS[inputIndex];
@@ -240,6 +345,14 @@ export function HomepagePowerStories() {
           </div>
         </div>
         <div className="xps-story__stage">
+        <div className="xps-mini-browser xps-pixel-surface">
+          <div className="xps-mini-browser__tabs" aria-hidden="true">
+            <span className="is-active"><i /> Xroga workspace</span>
+            <span><i /> Connected tools</span>
+            <b>+</b>
+            <em><i /><i /><i /></em>
+          </div>
+          <div className="xps-mini-browser__url" aria-hidden="true"><span>https://xroga.com/workspace</span></div>
         <div className="xps-input-demo">
           <article className="xps-input-demo__card xps-input-demo__connect">
             <div className="xps-input-demo__visual" aria-label="Connected business and developer apps">
@@ -277,6 +390,7 @@ export function HomepagePowerStories() {
             <div className="xps-input-demo__caption"><small>03</small><strong>Automate</strong><p>See changing workflow outputs, completed actions, evidence, and approvals.</p><i /></div>
           </article>
         </div>
+        </div>
         <div className="xps-selector" role="tablist" aria-label="Ways to start with Xroga">
           {INPUTS.map((item, index) => (
             <button type="button" role="tab" aria-selected={inputIndex === index} onClick={() => setInputIndex(index)} key={item.label}>{item.label}</button>
@@ -292,13 +406,18 @@ export function HomepagePowerStories() {
         copy="Research the web, X, documentation, competitors, APIs, repositories, PDFs, and video transcripts—then receive a concise result with traceable sources."
         className="xps-story--research"
       >
-        <div className="xps-research-demo" key={research.query}>
+        <div className="xps-research-demo xps-pixel-surface" key={research.query}>
+          <div className="xps-research-demo__thinking">
+            <LatticeStatus label="Thinking across sources" />
+            <span>Evidence trace open <i aria-hidden="true">⌄</i></span>
+          </div>
           <div className="xps-research-demo__query"><Search aria-hidden="true" /><span>{research.query}</span><kbd>↵</kbd></div>
           <div className="xps-research-demo__flow">
             {research.sources.map((source, index) => (
               <div style={{ '--xps-delay': `${index * 140}ms` } as CSSProperties} key={source}><Globe2 aria-hidden="true" /><span>{source}</span><i /></div>
             ))}
           </div>
+          <CompareSurface />
           <div className="xps-research-demo__report"><FileText aria-hidden="true" /><div><small>FINISHED OUTPUT</small><strong>{research.result}</strong><span>12 sources · checked moments ago</span></div><CheckCircle2 aria-hidden="true" /></div>
           <ProgressDots count={RESEARCH_SCENES.length} active={researchIndex} label="Research example progress" />
         </div>
@@ -320,7 +439,21 @@ export function HomepagePowerStories() {
           </div>
           <div className="xps-device-demo__canvas" key={device.label}>
             <div className="xps-device-demo__signal"><i /><i /><i /></div>
-            <div className="xps-device-demo__screen"><ActiveDeviceIcon aria-hidden="true" /><small>BUILD TARGET</small><strong>{device.screen}</strong><span>{device.detail}</span><div><Check /> Responsive preview ready</div></div>
+            <div className={`xps-device-shell is-${device.label.toLowerCase()}`}>
+              <div className="xps-device-shell__lid">
+                <div className="xps-device-shell__chrome" aria-hidden="true"><i /><i /><i /><span>xroga://preview</span></div>
+                <div className="xps-device-demo__screen">
+                  <ActiveDeviceIcon aria-hidden="true" />
+                  <small>BUILD TARGET</small>
+                  <strong>{device.screen}</strong>
+                  <span>{device.detail}</span>
+                  <div><Check /> Responsive preview ready</div>
+                </div>
+              </div>
+              <div className="xps-device-shell__base" aria-hidden="true" />
+              <i className="xps-device-shell__notch" aria-hidden="true" />
+              <i className="xps-device-shell__button" aria-hidden="true" />
+            </div>
             <div className="xps-device-demo__mini"><Smartphone /><Tablet /><Laptop /></div>
           </div>
         </div>
@@ -333,11 +466,22 @@ export function HomepagePowerStories() {
         copy="A manager routes each task to focused AI employees while policy and budget controls feed the same evidence-owning runtime."
         className="xps-story--agents"
       >
-        <div className="xps-agent-map">
+        <div className="xps-agent-map xps-pixel-surface">
           <div className="xps-agent-map__intent"><small>USER INTENT</small><strong>“Build this” · “Do this” · “Fix this”</strong></div>
-          <div className="xps-agent-map__manager"><Bot /><span><small>XROGA MANAGER</small><strong>Plan · route · supervise</strong></span><i /></div>
-          <div className="xps-agent-map__employees" aria-label="Available AI employee roles">
-            {EMPLOYEES.map((employee, index) => <span style={{ '--employee-delay': `${index * 80}ms` } as CSSProperties} key={employee}>{employee}</span>)}
+          <div className="xps-agent-map__manager"><Bot /><span><small>XROGA MANAGER</small><strong>Plan · route · supervise</strong></span><LatticeStatus label="Routing" /><i /></div>
+          <div className="xps-branch-menu" aria-label="Available AI employee roles">
+            {AGENT_GROUPS.map((group, groupIndex) => (
+              <div className="xps-branch-menu__group" key={group.label}>
+                <strong><i />{group.label}</strong>
+                <div>
+                  {group.roles.map((role, roleIndex) => (
+                    <span className={groupIndex === 0 && roleIndex === 0 ? 'is-active' : ''} key={role}>
+                      <i aria-hidden="true" />{role}<small>{roleIndex === 0 ? 'active' : 'ready'}</small>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <div className="xps-agent-map__bus"><Network /><span>AGENT BUS</span><i>ACP</i><i>MCP</i><i>Skills</i></div>
           <div className="xps-agent-map__runtime"><Braces /><span>task graph → sandbox → evidence → tests → browser → review → repair → approval → commit</span></div>
@@ -365,6 +509,27 @@ export function HomepagePowerStories() {
               </button>
             ))}
           </div>
+          <div className="xps-automation-premium">
+            <div className="xps-radio-island" role="radiogroup" aria-label="Automation schedule">
+              <input type="radio" name="xps-cadence" id="xps-now" defaultChecked />
+              <input type="radio" name="xps-cadence" id="xps-day" />
+              <input type="radio" name="xps-cadence" id="xps-week" />
+              <span aria-hidden="true" />
+              <label htmlFor="xps-now">Now</label>
+              <label htmlFor="xps-day">Daily</label>
+              <label htmlFor="xps-week">Weekly</label>
+            </div>
+            <div className="xps-card-swap" aria-label="Live automation outputs">
+              {AUTOMATION_CARDS.map((card, index) => (
+                <article className="xps-automation-card" style={{ '--xps-card-index': index } as CSSProperties} key={card.kicker}>
+                  <small>{card.kicker}</small>
+                  <strong>{card.title}</strong>
+                  <span>{card.detail}</span>
+                  <StatusMark label={index === 0 ? 'Working' : 'Queued'} complete={index === 2} />
+                </article>
+              ))}
+            </div>
+          </div>
           <div className="xps-growth-strip" key={automation.label}><ActiveAutomationIcon /><strong>{automation.title}</strong><span>{automation.detail}</span><Search /><span>Research</span><FileCode2 /><span>Publish</span><CircleDollarSign /><span>Grow</span></div>
         </div>
       </StorySection>
@@ -377,6 +542,21 @@ export function HomepagePowerStories() {
         className="xps-story--ship"
       >
         <div className="xps-ship-demo">
+          <div className="xps-code-window">
+            <div className="xps-code-window__titlebar">
+              <span><i /><i /><i /></span>
+              <strong>xroga · release workspace</strong>
+              <small>verified</small>
+            </div>
+            <div className="xps-code-window__tabs" role="tablist" aria-label="Release workspace files">
+              {CODE_TABS.map((tab, index) => (
+                <button type="button" role="tab" aria-selected={codeTab === index} onClick={() => setCodeTab(index)} key={tab.label}>{tab.label}</button>
+              ))}
+            </div>
+            <pre className="xps-code-window__panel" aria-live="polite">
+              {CODE_TABS[codeTab].lines.map((line, index) => <code key={index}><i>{index + 1}</i>{line}</code>)}
+            </pre>
+          </div>
           <div className="xps-ship-demo__pipeline">
             {SHIPPING_STEPS.map((step, index) => {
               const Icon = step.icon;
@@ -402,7 +582,7 @@ export function HomepagePowerStories() {
 
       <footer className="xps-suite__footer">
         <div><Wrench /><span><strong>Start with an idea—or a real repository.</strong> Xroga keeps the work, evidence, and delivery in one place.</span></div>
-        <Link href="/workspace">Explore the workspace <span aria-hidden="true">→</span></Link>
+        <Link className="xps-repo-button" href="/workspace"><BrandMark mark={siGithub} /><span>Build from GitHub</span><b>→</b></Link>
       </footer>
     </div>
     </section>

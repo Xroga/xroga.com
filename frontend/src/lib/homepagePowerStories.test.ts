@@ -80,3 +80,35 @@ test('the redesign is one connected editorial system rather than a stack of dash
   assert.match(homepageCss, /\.xv-home-coding \.xv-hc-hero > \.xv-hc-bg-image\s*\{[\s\S]*position:\s*absolute!important/);
   assert.doesNotMatch(css, /filter:\s*blur/);
 });
+
+test('the supplied premium interaction ideas are adapted into all six native product scenes', () => {
+  for (const hook of [
+    'xps-mini-browser',
+    'xps-lattice-status',
+    'xps-compare-surface',
+    'xps-device-shell',
+    'xps-branch-menu',
+    'xps-radio-island',
+    'xps-card-swap',
+    'xps-code-window',
+    'xps-status-mark',
+    'xps-repo-button',
+  ]) {
+    assert.ok(stories.includes(hook), `${hook} is missing`);
+    assert.ok(css.includes(`.${hook}`), `${hook} has no styling`);
+  }
+  assert.match(stories, /Build from GitHub/);
+  assert.match(stories, /Compare raw research with the grounded result/);
+  assert.match(css, /--xps-signal:\s*#4f8cff/);
+  assert.match(css, /\.xps-mini-browser,[\s\S]*border-radius:\s*0/);
+});
+
+test('homepage motion is viewport-scoped and no cursor particle canvas competes with scrolling', () => {
+  assert.doesNotMatch(page, /HomepageCursorGlitter/);
+  assert.match(stories, /suiteInView/);
+  assert.match(stories, /document\.hidden/);
+  assert.match(stories, /stopTimer\(\)/);
+  assert.match(stories, /classList\.toggle\('is-inview'/);
+  assert.match(css, /\.xps-motion-ready \.xps-story:not\(\.is-inview\)[\s\S]*animation-play-state:\s*paused !important/);
+  assert.doesNotMatch(stories, /gsap|requestAnimationFrame|getUserMedia|<canvas/);
+});
