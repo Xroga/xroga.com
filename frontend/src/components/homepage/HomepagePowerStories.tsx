@@ -4,6 +4,20 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
+  siDiscord,
+  siDropbox,
+  siFigma,
+  siGithub,
+  siGmail,
+  siGooglecalendar,
+  siGoogledrive,
+  siHubspot,
+  siNotion,
+  siStripe,
+  siVercel,
+  type SimpleIcon,
+} from 'simple-icons';
+import {
   Bot,
   Boxes,
   Braces,
@@ -51,6 +65,54 @@ const INPUTS: Array<{ label: string; icon: LucideIcon; detail: string }> = [
   { label: 'Links & APIs', icon: Link2, detail: 'Share documentation, repositories, websites, videos, and API references.' },
   { label: 'No idea yet', icon: Sparkles, detail: 'Ask Xroga to generate and refine useful product ideas with you.' },
 ];
+
+const CONNECT_APPS: Array<{ mark: SimpleIcon; position: string }> = [
+  { mark: siGmail, position: 'app-1' },
+  { mark: siGooglecalendar, position: 'app-2' },
+  { mark: siGoogledrive, position: 'app-3' },
+  { mark: siGithub, position: 'app-4' },
+  { mark: siNotion, position: 'app-5' },
+  { mark: siHubspot, position: 'app-6' },
+  { mark: siStripe, position: 'app-7' },
+  { mark: siFigma, position: 'app-8' },
+  { mark: siDropbox, position: 'app-9' },
+  { mark: siDiscord, position: 'app-10' },
+];
+
+const INPUT_EXAMPLES = [
+  {
+    prompt: 'What did we agree on last week?',
+    brands: [siGmail, siNotion],
+    status: 'Updating 3 sources',
+    tasks: ['Summary email drafted', '2 follow-ups opened', 'Meeting notes updated'],
+  },
+  {
+    prompt: 'Turn these references into a product plan',
+    brands: [siFigma, siGithub],
+    status: 'Building from your context',
+    tasks: ['Design system mapped', 'Build plan created', 'Review checklist ready'],
+  },
+  {
+    prompt: 'Fix checkout and verify the deployment',
+    brands: [siGithub, siVercel],
+    status: 'Running the workflow',
+    tasks: ['Issue reproduced', 'Patch and tests completed', 'Preview deployment ready'],
+  },
+  {
+    prompt: 'Find our best leads and prepare outreach',
+    brands: [siHubspot, siGmail],
+    status: 'Preparing the handoff',
+    tasks: ['12 leads enriched', 'Personalized drafts created', 'Approval report ready'],
+  },
+];
+
+function BrandMark({ mark }: { mark: SimpleIcon }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-label={mark.title} role="img" style={{ color: `#${mark.hex}` }}>
+      <path fill="currentColor" d={mark.path} />
+    </svg>
+  );
+}
 
 const RESEARCH_SCENES = [
   { query: 'Compare our launch against the strongest competitors', sources: ['Public web', 'Competitor sites', 'Product docs'], result: 'Cited opportunity report' },
@@ -125,6 +187,7 @@ export function HomepagePowerStories() {
 
   const activeInput = INPUTS[inputIndex];
   const ActiveInputIcon = activeInput.icon;
+  const inputExample = INPUT_EXAMPLES[inputIndex];
   const research = RESEARCH_SCENES[researchIndex];
   const device = DEVICES[deviceIndex];
   const ActiveDeviceIcon = device.icon;
@@ -143,44 +206,60 @@ export function HomepagePowerStories() {
         <span>From an idea, file, link, or existing repository to tested work you can inspect and own.</span>
       </header>
 
-      <StorySection
-        index={1}
-        eyebrow="START WITH ANYTHING"
-        title={<>Bring the context.<br /><em>Xroga finds the path.</em></>}
-        copy="Type, speak, upload, paste, or point Xroga at the source. Your request and evidence stay together in one workspace."
-        className="xps-story--inputs"
-      >
-        <div className="xps-input-demo">
-          <div className="xps-input-demo__frame xps-input-demo__orbit" aria-hidden="true">
-            <small>01 · CONTEXT</small>
-            <div>
-              {INPUTS.map((item, index) => {
-                const Icon = item.icon;
-                return <span className={index === inputIndex ? 'is-active' : ''} key={item.label}><Icon /></span>;
-              })}
-              <b>X</b>
-            </div>
-          </div>
-          <div className="xps-input-demo__frame xps-input-demo__ask" key={`ask-${activeInput.label}`}>
-            <small>02 · ASK</small>
-            <div><span>{activeInput.detail}</span><i><ActiveInputIcon /></i></div>
-          </div>
-          <div className="xps-input-demo__frame xps-input-demo__result" key={activeInput.label}>
-            <small>03 · READY</small>
-            <span><ActiveInputIcon /> INPUT RECEIVED</span>
-            <div className="xps-input-demo__checks">
-              <p>Context understood <Check aria-hidden="true" /></p>
-              <p>Useful tools selected <Check aria-hidden="true" /></p>
-              <p>Next action prepared <Check aria-hidden="true" /></p>
-            </div>
-          </div>
-          <div className="xps-selector" role="tablist" aria-label="Ways to start with Xroga">
-            {INPUTS.map((item, index) => (
-              <button type="button" role="tab" aria-selected={inputIndex === index} onClick={() => setInputIndex(index)} key={item.label}>{item.label}</button>
-            ))}
+      <section className="xps-story xps-story--inputs" aria-labelledby="xps-title-1">
+        <div className="xps-story__copy">
+          <span className="xps-story__number">01</span>
+          <div>
+            <p className="xps-story__eyebrow">START WITH ANYTHING</p>
+            <h2 id="xps-title-1">Bring the context. <em>Xroga finds the path.</em></h2>
+            <p>Type, speak, upload, paste, or point Xroga at the source. Your request and evidence stay together in one workspace.</p>
           </div>
         </div>
-      </StorySection>
+        <div className="xps-story__stage">
+        <div className="xps-input-demo">
+          <article className="xps-input-demo__card xps-input-demo__connect">
+            <div className="xps-input-demo__visual" aria-label="Connected business and developer apps">
+              {CONNECT_APPS.map((app) => (
+                <span className={app.position} key={app.mark.title}><BrandMark mark={app.mark} /></span>
+              ))}
+              <div className="xps-input-demo__mic" aria-hidden="true">
+                <Mic2 />
+                <i /><i /><i /><i />
+              </div>
+            </div>
+            <div className="xps-input-demo__caption"><small>01</small><strong>Connect</strong><p>Bring your apps, files, voice, links, and existing work into one request.</p><i /></div>
+          </article>
+
+          <article className="xps-input-demo__card xps-input-demo__ask" key={`ask-${inputExample.prompt}`}>
+            <div className="xps-input-demo__visual">
+              <div className="xps-input-demo__chatbar">
+                <span>{inputExample.prompt}</span>
+                <button type="button" aria-label="Send example prompt"><ActiveInputIcon /></button>
+              </div>
+            </div>
+            <div className="xps-input-demo__caption"><small>02</small><strong>Ask</strong><p>Ask in plain words. Xroga understands the outcome and selects the useful context.</p><i /></div>
+          </article>
+
+          <article className="xps-input-demo__card xps-input-demo__result" key={`result-${inputExample.status}`}>
+            <div className="xps-input-demo__visual">
+              <div className="xps-input-demo__status">
+                <span><Workflow /> {inputExample.status}</span>
+                <div>{inputExample.brands.map((mark) => <BrandMark mark={mark} key={mark.title} />)}</div>
+              </div>
+              <div className="xps-input-demo__checks">
+                {inputExample.tasks.map((task, index) => <p style={{ '--xps-delay': `${index * 100}ms` } as CSSProperties} key={task}>{task}<Check aria-hidden="true" /></p>)}
+              </div>
+            </div>
+            <div className="xps-input-demo__caption"><small>03</small><strong>Automate</strong><p>See changing workflow outputs, completed actions, evidence, and approvals.</p><i /></div>
+          </article>
+        </div>
+        <div className="xps-selector" role="tablist" aria-label="Ways to start with Xroga">
+          {INPUTS.map((item, index) => (
+            <button type="button" role="tab" aria-selected={inputIndex === index} onClick={() => setInputIndex(index)} key={item.label}>{item.label}</button>
+          ))}
+        </div>
+        </div>
+      </section>
 
       <StorySection
         index={2}

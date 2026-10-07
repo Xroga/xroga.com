@@ -12,7 +12,8 @@ test('the six-part capability story follows browser employees and precedes the w
   const powerStories = page.indexOf('<HomepagePowerStories />');
   const workspace = page.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
   assert.ok(browser !== -1 && browser < powerStories && powerStories < workspace);
-  assert.equal((stories.match(/<StorySection/g) ?? []).length, 6);
+  assert.equal((stories.match(/<StorySection/g) ?? []).length, 5);
+  assert.match(stories, /<section className="xps-story xps-story--inputs"/);
 });
 
 test('the six sections cover input, research, devices, agents, automation, and verified shipping', () => {
@@ -44,9 +45,14 @@ test('the redesign is one connected editorial system rather than a stack of dash
   assert.match(stories, /Connect the tools you already use/);
   assert.match(stories, /Ask anything in plain words/);
   assert.match(stories, /Hand off the busywork/);
-  assert.match(stories, /xps-input-demo__frame/);
+  assert.match(stories, /xps-input-demo__card/);
+  assert.match(stories, /CONNECT_APPS\.map/);
+  assert.match(stories, /INPUT_EXAMPLES/);
   assert.match(stories, /xps-automation-demo__panels/);
   assert.match(css, /--xps-black:\s*#080908/);
+  assert.match(css, /\.xps-suite\s*\{[\s\S]*border-radius:\s*0/);
+  assert.match(css, /\.xps-story--inputs\s*\{[\s\S]*background:\s*var\(--xps-black\)/);
+  assert.match(css, /\.xps-input-demo\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
   assert.match(css, /\.xps-story\s*\{[\s\S]*border-radius:\s*0/);
   assert.match(css, /\.xps-automation-demo__panels\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
 });
