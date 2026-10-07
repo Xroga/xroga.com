@@ -970,6 +970,7 @@ body.theme-white .xcap-card--integrations .xcap-copy p{
   grid-template-rows:1fr!important;
   padding:12px!important;
   overflow:hidden;
+  overflow-anchor:none;
 }
 .xcap-card--working .xcap-copy{display:none!important}
 
@@ -988,6 +989,7 @@ body.theme-white .xcap-card--integrations .xcap-copy p{
     #080a0f;
   border:1px solid rgba(255,255,255,.075);
   color:#fff;
+  overflow-anchor:none;
 }
 .xcap-workflow-topline{
   display:flex;

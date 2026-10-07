@@ -9604,44 +9604,23 @@ body.theme-beige {
   .xv-sendicon__sweep { stroke-dasharray: 100; opacity: 0.35; }
 }
 
-@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  html[data-xroga-pointer='true'],
-  html[data-xroga-pointer='true'] body,
-  html[data-xroga-pointer='true'] a,
-  html[data-xroga-pointer='true'] button,
-  html[data-xroga-pointer='true'] input,
-  html[data-xroga-pointer='true'] textarea,
-  html[data-xroga-pointer='true'] select,
-  html[data-xroga-pointer='true'] [role='button'],
-  html[data-xroga-pointer='true'] * { cursor: none !important; }
-}
-.xv-light-pointer {
+.xv-pointer-click-feedback {
   position: fixed;
-  inset: 0 auto auto 0;
   z-index: 2147483646;
-  width: 24px;
-  height: 24px;
-  color: var(--accent, #006aff);
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--accent, #006aff);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent, #006aff) 12%, transparent);
   opacity: 0;
   pointer-events: none;
   will-change: transform;
-  contain: strict;
-  transition: opacity 80ms linear;
+  contain: layout paint style;
 }
-.xv-light-pointer[data-visible='true'] { opacity: 1; }
-.xv-light-pointer__resize { display: none; }
-.xv-light-pointer[data-mode='resize'] .xv-light-pointer__default { display: none; }
-.xv-light-pointer[data-mode='resize'] .xv-light-pointer__resize { display: block; }
-.xv-light-pointer[data-mode='resize'] {
-  width: 28px;
-  height: 28px;
-  color: var(--accent, #006aff);
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-pointer-click-feedback { display: none; }
 }
-.xv-light-pointer__rays { opacity: 0.28; transform-origin: 8px 8px; }
-.xv-light-pointer[data-clicking='true'] .xv-light-pointer__body { animation: xv-pointer-press 260ms ease-out; transform-origin: 12px 12px; }
-.xv-light-pointer[data-clicking='true'] .xv-light-pointer__rays { animation: xv-pointer-rays 360ms ease-out; }
-@keyframes xv-pointer-press { 50% { transform: translateY(1px) scale(.94); } }
-@keyframes xv-pointer-rays { 0% { opacity: 0; transform: scale(.65); } 45% { opacity: 1; transform: scale(1.18); } 100% { opacity: .28; transform: scale(1); } }
 
 .xv-cba-kbd {
   margin-left: auto;
@@ -14200,7 +14179,6 @@ body.theme-gray .xv-beta-banner__cta { color: #ffc4c7; }
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
-  .xv-homepage-cursor-glitter { display: none !important; }
 }
 .xv-cba-trigger { width: 32px; height: 32px; border-radius: 9px; }
 .xv-cba-trigger .xv-animated-nav-icon,

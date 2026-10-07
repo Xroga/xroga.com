@@ -155,14 +155,6 @@ function KnowledgeCard() {
 function WorkingCard() {
   const [phase, setPhase] = useState<'before' | 'working' | 'verified'>('before');
 
-  useEffect(() => {
-    const order: Array<'before' | 'working' | 'verified'> = ['before', 'working', 'verified'];
-    const timer = window.setInterval(() => {
-      setPhase((current) => order[(order.indexOf(current) + 1) % order.length]);
-    }, 3400);
-    return () => window.clearInterval(timer);
-  }, []);
-
   return (
     <Card className="xcap-card--working">
       <div className="xcap-workflow-demo xcap-code-workflow" aria-label="Coding experience from a broken project to a verified working product">
