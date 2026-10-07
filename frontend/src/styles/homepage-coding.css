@@ -8968,7 +8968,13 @@ body .xv-home-coding .xv-hc-mid-cta-inner .xv-hc-mid-cta-copy h2{
   100% { opacity: 0.72; transform: translate3d(0, -42px, 0) scale(0.992); filter: blur(2.5px); }
 }
 
-html:has(.xv-home-coding) { scroll-behavior: smooth; }
+/* Never animate browser scroll restoration or anchor navigation. Smooth global
+   scrolling made reloads and back/forward navigation drift through the page. */
+html:has(.xv-home-coding),
+html:has(.xv-home-coding) body {
+  scroll-behavior: auto;
+  overflow-anchor: none;
+}
 
 @supports (animation-timeline: view()) {
   .xv-home-coding :is(.xv-wt, .xv-editorial-showcase, .xv-real-loop, .xv-er, .xv-endgame-frame, .xv-closing-frame) {
