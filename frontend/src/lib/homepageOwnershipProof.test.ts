@@ -20,12 +20,20 @@ test('the audience selector is the last product section before FAQ', () => {
   assert.doesNotMatch(PAGE.slice(audience, faq), /<Homepage(?:Showcase|ShipStack|EnterpriseProof|WorkspaceTour)/);
 });
 
-test('workspace follows the hero and intelligence follows the workspace', () => {
+test('capabilities, browser employees, workspace, and intelligence follow the hero in order', () => {
   const heroEnd = PAGE.indexOf('</section>', PAGE.indexOf('className="xv-hc-hero"'));
+  const capabilities = PAGE.indexOf('<HomepageCapabilitiesMosaic />');
+  const browserEmployees = PAGE.indexOf('<HomepageBrowserEmployeesExact />');
   const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
   const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
-  assert.ok(heroEnd !== -1 && heroEnd < workspace && workspace < intelligence);
-  assert.doesNotMatch(PAGE.slice(heroEnd, workspace), /<Homepage[A-Z]/);
+  assert.ok(
+    heroEnd !== -1 &&
+      heroEnd < capabilities &&
+      capabilities < browserEmployees &&
+      browserEmployees < workspace &&
+      workspace < intelligence,
+    'the approved homepage product sections must render in their canonical order',
+  );
 });
 
 test('the audience selector covers founders, developers, non-coders, and teams', () => {

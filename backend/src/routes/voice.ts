@@ -56,7 +56,7 @@ router.post(
         const form = new FormData();
         form.append(
           'file',
-          new Blob([audio], { type: mime }),
+          new Blob([new Uint8Array(audio)], { type: mime }),
           `xroga-voice.${extensionForMime(mime)}`,
         );
         form.append('model', model);
