@@ -10425,3 +10425,15 @@ body.theme-white .xv-home-coding{
 body.theme-white .xv-home-coding > :not(.xv-hc-hero){
   background-color:#ffffff;
 }
+
+/* Hero artwork is scoped to the hero in every theme. The rest of the page owns
+   an opaque surface so artwork can never show through section margins. */
+body.theme-beige .xv-home-coding > :not(.xv-hc-hero){
+  background-color:#f1eadc;
+}
+body.theme-gray .xv-home-coding > :not(.xv-hc-hero){
+  background-color:#d9dbde;
+}
+body.theme-black .xv-home-coding > :not(.xv-hc-hero){
+  background-color:#030303;
+}

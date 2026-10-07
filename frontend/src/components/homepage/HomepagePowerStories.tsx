@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   siDiscord,
@@ -167,6 +167,7 @@ function ProgressDots({ count, active, label }: { count: number; active: number;
 }
 
 export function HomepagePowerStories() {
+  const suiteRef = useRef<HTMLDivElement>(null);
   const [inputIndex, setInputIndex] = useState(0);
   const [researchIndex, setResearchIndex] = useState(0);
   const [deviceIndex, setDeviceIndex] = useState(0);
@@ -185,6 +186,28 @@ export function HomepagePowerStories() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const suite = suiteRef.current;
+    if (!suite || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const stories = Array.from(suite.querySelectorAll<HTMLElement>('.xps-story'));
+    suite.classList.add('xps-motion-ready');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.16, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    stories.forEach((story) => observer.observe(story));
+    return () => observer.disconnect();
+  }, []);
+
   const activeInput = INPUTS[inputIndex];
   const ActiveInputIcon = activeInput.icon;
   const inputExample = INPUT_EXAMPLES[inputIndex];
@@ -195,7 +218,7 @@ export function HomepagePowerStories() {
   const ActiveAutomationIcon = automation.icon;
 
   return (
-    <div className="xps-suite" aria-label="Explore everything Xroga can do">
+    <div ref={suiteRef} className="xps-suite" aria-label="Explore everything Xroga can do">
       <header className="xps-suite__intro">
         <p>ONE AI WORKSPACE · SIX CONNECTED SYSTEMS</p>
         <h2 aria-label="Connect your tools, ask in plain words, and hand off the busywork">

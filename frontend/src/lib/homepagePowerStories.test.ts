@@ -6,6 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf
 const page = read('../components/homepage/HomepageClient.tsx');
 const stories = read('../components/homepage/HomepagePowerStories.tsx');
 const css = read('../styles/homepage-power-stories.css');
+const homepageCss = read('../styles/homepage-coding.css');
 
 test('the six-part capability story follows browser employees and precedes the workspace tour', () => {
   const browser = page.indexOf('<HomepageBrowserEmployeesExact />');
@@ -39,6 +40,10 @@ test('the story deck is interactive, responsive, and motion-safe', () => {
   assert.match(css, /@media \(max-width: 620px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /content-visibility:\s*auto/);
+  assert.match(stories, /new IntersectionObserver/);
+  assert.match(stories, /observer\.disconnect\(\)/);
+  assert.match(stories, /xps-motion-ready/);
+  assert.match(css, /\.xps-motion-ready \.xps-story\.is-visible/);
 });
 
 test('the redesign is one connected editorial system rather than a stack of dashboard cards', () => {
@@ -55,4 +60,9 @@ test('the redesign is one connected editorial system rather than a stack of dash
   assert.match(css, /\.xps-input-demo\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
   assert.match(css, /\.xps-story\s*\{[\s\S]*border-radius:\s*0/);
   assert.match(css, /\.xps-automation-demo__panels\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
+  assert.match(css, /\.xps-input-demo__card,[\s\S]*background:\s*#080908/);
+  assert.match(css, /\.xps-story::before\s*\{[\s\S]*display:\s*none/);
+  for (const theme of ['white', 'beige', 'gray', 'black']) {
+    assert.match(homepageCss, new RegExp(`body\\.theme-${theme} \\.xv-home-coding > :not\\(\\.xv-hc-hero\\)`));
+  }
 });
