@@ -218,7 +218,8 @@ export function HomepagePowerStories() {
   const ActiveAutomationIcon = automation.icon;
 
   return (
-    <div ref={suiteRef} className="xps-suite" aria-label="Explore everything Xroga can do">
+    <section className="xps-band" aria-label="Explore everything Xroga can do">
+    <div ref={suiteRef} className="xps-suite">
       <header className="xps-suite__intro">
         <p>ONE AI WORKSPACE · SIX CONNECTED SYSTEMS</p>
         <h2 aria-label="Connect your tools, ask in plain words, and hand off the busywork">
@@ -404,5 +405,6 @@ export function HomepagePowerStories() {
         <Link href="/workspace">Explore the workspace <span aria-hidden="true">→</span></Link>
       </footer>
     </div>
+    </section>
   );
 }

@@ -5,6 +5,7 @@ import { test } from 'node:test';
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const page = read('../components/homepage/HomepageClient.tsx');
 const stories = read('../components/homepage/HomepagePowerStories.tsx');
+const browserEmployees = read('../components/homepage/HomepageBrowserEmployeesExact.tsx');
 const css = read('../styles/homepage-power-stories.css');
 const homepageCss = read('../styles/homepage-coding.css');
 
@@ -54,8 +55,17 @@ test('the redesign is one connected editorial system rather than a stack of dash
   assert.match(stories, /CONNECT_APPS\.map/);
   assert.match(stories, /INPUT_EXAMPLES/);
   assert.match(stories, /xps-automation-demo__panels/);
+  assert.match(stories, /className="xps-band"/);
+  assert.match(css, /\.xps-band\s*\{[\s\S]*background:\s*#050607 !important/);
   assert.match(css, /--xps-black:\s*#080908/);
-  assert.match(css, /\.xps-suite\s*\{[\s\S]*border-radius:\s*0/);
+  assert.match(css, /\.xps-suite\s*\{[\s\S]*width:\s*min\(1180px,[\s\S]*border-radius:\s*0/);
+  assert.match(css, /repeating-linear-gradient\([\s\S]*135deg,[\s\S]*rgba\(255,255,255,\.16\)/);
+  assert.match(css, /box-shadow:\s*none/);
+  assert.match(browserEmployees, /useState\(640\)/);
+  assert.match(browserEmployees, /Math\.max\(420, Math\.min\(2600/);
+  assert.doesNotMatch(browserEmployees, /Math\.max\(720/);
+  assert.match(css, /--xps-signal:\s*#4f8cff/);
+  assert.match(css, /\.xps-suite, \.xps-suite \*\s*\{\s*text-shadow:\s*none !important/);
   assert.match(css, /\.xps-story--inputs\s*\{[\s\S]*background:\s*var\(--xps-black\)/);
   assert.match(css, /\.xps-input-demo\s*\{[\s\S]*grid-template-columns:\s*repeat\(3, 1fr\)/);
   assert.match(css, /\.xps-story\s*\{[\s\S]*border-radius:\s*0/);
@@ -65,4 +75,8 @@ test('the redesign is one connected editorial system rather than a stack of dash
   for (const theme of ['white', 'beige', 'gray', 'black']) {
     assert.match(homepageCss, new RegExp(`body\\.theme-${theme} \\.xv-home-coding > :not\\(\\.xv-hc-hero\\)`));
   }
+  assert.match(homepageCss, /\.xv-home-coding > :not\(\.xv-hc-hero\)\s*\{\s*background-image:\s*none!important/);
+  assert.match(css, /body\.theme-white \.xv-home-coding\.xv-homepage\s*\{[\s\S]*background-image:\s*none !important/);
+  assert.match(homepageCss, /\.xv-home-coding \.xv-hc-hero > \.xv-hc-bg-image\s*\{[\s\S]*position:\s*absolute!important/);
+  assert.doesNotMatch(css, /filter:\s*blur/);
 });

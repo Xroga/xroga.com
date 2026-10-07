@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export function HomepageBrowserEmployeesExact() {
   const frameRef = useRef<HTMLIFrameElement>(null);
-  const [frameHeight, setFrameHeight] = useState(860);
+  const [frameHeight, setFrameHeight] = useState(640);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -13,7 +13,7 @@ export function HomepageBrowserEmployeesExact() {
       if (!payload || payload.source !== 'xroga-browser-employees-exact') return;
       const nextHeight = Number(payload.height);
       if (!Number.isFinite(nextHeight)) return;
-      setFrameHeight(Math.max(720, Math.min(2600, Math.ceil(nextHeight))));
+      setFrameHeight(Math.max(420, Math.min(2600, Math.ceil(nextHeight))));
     };
 
     window.addEventListener('message', onMessage);
