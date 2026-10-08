@@ -38,7 +38,7 @@ function MetricCard({ metric }: { metric: Metric }) {
 
 function MetricRenderer({ block }: { block: Extract<RichBlock, { type: 'metric' | 'metric-group' }> }) {
   const metrics = block.type === 'metric' ? [block.metric] : block.metrics;
-  return <Surface title={block.title} description={block.description} state={block.state}><div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">{metrics.map((metric) => <MetricCard key={metric.id} metric={metric} />)}</div></Surface>;
+  return <Surface title={block.title} description={block.description} state={block.state}><div className="xv-response-metric-grid grid gap-3 p-4">{metrics.map((metric) => <MetricCard key={metric.id} metric={metric} />)}</div></Surface>;
 }
 
 function valueText(value: unknown): string { return value === null || value === undefined ? '' : String(value); }

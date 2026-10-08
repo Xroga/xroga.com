@@ -32,7 +32,7 @@ function Surface({
 function CardGridRenderer({ block }: { block: Extract<StructuredBlock, { type: 'card-grid' }> }) {
   return (
     <Surface title={block.title ?? 'Results'} description={block.description} state={block.state}>
-      <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="xv-response-card-grid grid gap-3 p-4">
         {block.cards.map((card) => {
           const href = card.url ? safeArtifactUri(card.url) : null;
           const image = card.imageUrl ? safeArtifactUri(card.imageUrl) : null;

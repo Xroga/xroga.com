@@ -80,12 +80,13 @@ test('assistant response and execution evidence use the compact professional rea
   const uiverse = source('../../styles/uiverse.css');
   const sources = source('../../components/terminal/WebSourcesPanel.tsx');
 
-  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response[\s\S]*?font-size:\s*15px\s*!important/);
-  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*16px\s*!important/);
+  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response[\s\S]*?font-size:\s*16px\s*!important/);
+  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*17px\s*!important/);
   assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*15px\s*!important/);
   assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*13px\s*!important/);
   assert.match(uiverse, /\.xv-ai-output-block \.xv-response-surface\s*\{/);
-  assert.match(uiverse, /\.xv-ai-output-block \.xv-response-chart\s*\{[\s\S]*?height:\s*clamp\(210px, 32vw, 250px\)/);
+  assert.match(uiverse, /\.xv-ai-output-block \.xv-response-chart\s*\{[\s\S]*?height:\s*clamp\(220px, 32vw, 270px\)/);
+  assert.match(uiverse, /\.xv-ai-output-block \.xv-response-card-grid,[\s\S]*?grid-template-columns:\s*repeat\(auto-fit/);
   assert.match(sources, /xv-web-source-card__title/);
   assert.match(sources, /xv-web-source-card__snippet/);
 });

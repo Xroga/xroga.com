@@ -4151,14 +4151,13 @@ body.theme-black .xv-sidebar-root {
   20% { transform: scale(1.2); }
 }
 
-/* Compact assistant reading scale. This deliberately replaces the former 2x
-   typography: responses stay legible, but no longer dominate the workspace. */
+/* Assistant answer typography stays comfortable on narrow and wide screens. */
 .xv-response-text,
 .xv-xroga-response,
 .xv-response-text .xv-formatted-response,
 .xv-xroga-response .xv-formatted-response {
-  font-size: 15px !important;
-  line-height: 1.58 !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
 }
 .xv-response-text :where(p, li, blockquote, td, th),
 .xv-xroga-response :where(p, li, blockquote, td, th) {
@@ -4188,7 +4187,7 @@ body.theme-black .xv-sidebar-root {
   .xv-xroga-response,
   .xv-response-text .xv-formatted-response,
   .xv-xroga-response .xv-formatted-response {
-    font-size: 16px !important;
+    font-size: 17px !important;
   }
 }
 
@@ -4383,75 +4382,55 @@ body.theme-black .xv-sidebar-root {
 }
 
 
-/* Professional structured-output system: compact, responsive and interactive. */
+/* Shared response surface. Width comes from the chat pane, not the viewport. */
 .xv-ai-output-block {
-  --xv-output-border: color-mix(in srgb, var(--foreground) 13%, transparent);
-  --xv-output-border-strong: color-mix(in srgb, var(--foreground) 20%, transparent);
-  --xv-output-fill: color-mix(in srgb, var(--background) 94%, var(--foreground) 6%);
-  --xv-output-hover: color-mix(in srgb, var(--accent) 7%, transparent);
   display: grid;
   width: 100%;
   max-width: 900px;
-  gap: 10px;
-  padding-block: 8px;
-  font-size: 13px;
-  line-height: 1.45;
+  gap: 12px;
+  padding-block: 6px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 .xv-ai-output-block > div {
   min-width: 0;
 }
-.xv-ai-output-block :where(p, li, summary, a, button, dt, dd, code, span, label, input, output) {
-  font-size: 13px !important;
-  line-height: 1.45 !important;
+.xv-ai-output-block :where(p, li, summary, a, button, dt, dd, label, input, output) {
+  line-height: 1.5;
 }
 .xv-ai-output-block :where(h3) {
-  font-size: 15px !important;
-  line-height: 1.3 !important;
-  letter-spacing: -.012em;
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: -.01em;
 }
 .xv-ai-output-block :where(pre) {
-  font-size: 12px !important;
-  line-height: 1.48 !important;
+  font-size: 12px;
+  line-height: 1.5;
   scrollbar-width: thin;
 }
+.xv-ai-output-block :where([class~="text-[10px]"], [class~="text-[11px]"]) {
+  font-size: 11px !important;
+}
 .xv-ai-output-block .xv-response-surface {
-  position: relative;
-  isolation: isolate;
   width: 100%;
   max-width: 900px !important;
-  border-color: var(--xv-output-border) !important;
-  border-radius: 14px !important;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--background) 97%, var(--foreground) 3%), var(--xv-output-fill)) !important;
-  box-shadow:
-    0 10px 28px -24px color-mix(in srgb, var(--foreground) 42%, transparent),
-    inset 0 1px 0 color-mix(in srgb, #fff 9%, transparent) !important;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-.xv-ai-output-block .xv-response-surface::before {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 14px;
-  width: 52px;
-  height: 1px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 12%, transparent));
-  content: '';
-  pointer-events: none;
+  border-color: color-mix(in srgb, var(--foreground) 15%, transparent) !important;
+  border-radius: 12px !important;
+  background: var(--background) !important;
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--foreground) 5%, transparent) !important;
 }
 .xv-ai-output-block .xv-response-surface > header {
-  min-height: 42px;
-  padding: 9px 12px !important;
-  border-color: var(--xv-output-border) !important;
-  background: color-mix(in srgb, var(--foreground) 2.5%, transparent);
+  min-height: 44px;
+  padding: 10px 14px !important;
+  border-color: color-mix(in srgb, var(--foreground) 10%, transparent) !important;
+  background: color-mix(in srgb, var(--foreground) 2%, var(--background));
 }
 .xv-ai-output-block .xv-response-surface > header h3 {
-  font-weight: 680;
+  font-weight: 650;
 }
 .xv-ai-output-block .xv-response-surface > header p {
-  margin-top: 2px !important;
-  color: color-mix(in srgb, var(--muted) 88%, transparent);
+  margin-top: 2px;
+  color: var(--muted);
 }
 .xv-ai-output-block .xv-response-surface :where([class~="p-5"], [class~="p-4"]) {
   padding: 12px !important;
@@ -4471,19 +4450,13 @@ body.theme-black .xv-sidebar-root {
 .xv-ai-output-block .xv-response-surface :where([class~="gap-3"]) {
   gap: 9px !important;
 }
-.xv-ai-output-block .xv-response-surface :where([class~="rounded-2xl"]) {
-  border-radius: 14px !important;
-}
-.xv-ai-output-block .xv-response-surface :where([class~="rounded-xl"]) {
-  border-radius: 10px !important;
-}
 .xv-ai-output-block .xv-response-surface :where([class~="text-3xl"]) {
-  font-size: 1.55rem !important;
-  line-height: 1.15 !important;
+  font-size: 1.65rem !important;
+  line-height: 1.2 !important;
 }
 .xv-ai-output-block .xv-response-surface :where([class~="text-2xl"]) {
-  font-size: 1.3rem !important;
-  line-height: 1.18 !important;
+  font-size: 1.4rem !important;
+  line-height: 1.2 !important;
 }
 .xv-ai-output-block .xv-response-surface :where([class~="text-xl"]) {
   font-size: 1.08rem !important;
@@ -4495,40 +4468,38 @@ body.theme-black .xv-sidebar-root {
   -webkit-tap-highlight-color: transparent;
 }
 .xv-ai-output-block .xv-response-surface :where(button, a, summary) {
-  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
 }
 .xv-ai-output-block .xv-response-surface :where(button, a, summary):focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 72%, #fff 28%);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.xv-ai-output-block .xv-response-surface :where(button:not(:disabled), summary, a):hover {
-  border-color: color-mix(in srgb, var(--accent) 34%, var(--xv-output-border)) !important;
+.xv-ai-output-block .xv-response-surface :where(button, a, summary) {
+  cursor: pointer;
 }
-.xv-ai-output-block .xv-response-surface article[class*="border"],
-.xv-ai-output-block .xv-response-surface [role="treeitem"] {
-  border-color: var(--xv-output-border) !important;
-  transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
+.xv-ai-output-block .xv-response-surface button:disabled {
+  cursor: not-allowed;
 }
-.xv-ai-output-block .xv-response-surface article[class*="border"]:hover,
-.xv-ai-output-block .xv-response-surface [role="treeitem"]:hover {
-  border-color: color-mix(in srgb, var(--accent) 28%, var(--xv-output-border)) !important;
-  background: var(--xv-output-hover) !important;
+.xv-ai-output-block .xv-response-surface :where(button:not(:disabled), summary, a):hover,
+.xv-ai-output-block .xv-response-surface article[class*="border"]:hover {
+  background: color-mix(in srgb, var(--accent) 5%, var(--background));
 }
 .xv-ai-output-block .xv-response-surface table {
   font-variant-numeric: tabular-nums;
 }
-.xv-ai-output-block .xv-response-surface thead {
-  backdrop-filter: blur(10px);
+.xv-ai-output-block .xv-response-card-grid,
+.xv-ai-output-block .xv-response-metric-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
 }
 .xv-ai-output-block .xv-response-chart {
-  height: clamp(210px, 32vw, 250px) !important;
+  height: clamp(220px, 32vw, 270px) !important;
 }
 .xv-ai-output-block .recharts-text,
 .xv-ai-output-block .recharts-legend-item-text {
-  font-size: 11px !important;
+  font-size: 12px !important;
 }
 .xv-ai-output-block input:not([type="checkbox"]):not([type="radio"]) {
-  min-height: 36px;
+  min-height: 38px;
 }
 .xv-ai-output-block input[type="checkbox"],
 .xv-ai-output-block input[type="radio"] {
@@ -4563,28 +4534,20 @@ body.theme-black .xv-sidebar-root {
 
 @media (max-width: 639px) {
   .xv-ai-output-block {
-    gap: 8px;
-    padding-block: 6px;
-    font-size: 12px;
-  }
-  .xv-ai-output-block :where(p, li, summary, a, button, dt, dd, code, span, label, input, output) {
-    font-size: 12px !important;
-  }
-  .xv-ai-output-block :where(h3) {
-    font-size: 14px !important;
+    gap: 10px;
+    font-size: 14px;
   }
   .xv-ai-output-block .xv-response-surface {
-    border-radius: 12px !important;
+    border-radius: 10px !important;
   }
   .xv-ai-output-block .xv-response-surface > header {
-    min-height: 38px;
-    padding: 8px 10px !important;
+    padding: 10px 12px !important;
   }
   .xv-ai-output-block .xv-response-surface :where([class~="p-5"], [class~="p-4"]) {
-    padding: 10px !important;
+    padding: 12px !important;
   }
   .xv-ai-output-block .xv-response-chart {
-    height: 200px !important;
+    height: 220px !important;
   }
   .xv-build-report :where(p, li, a, button, span),
   .xv-update-trail :where(p, li, button, span) {
@@ -4592,25 +4555,9 @@ body.theme-black .xv-sidebar-root {
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .xv-ai-output-block .xv-response-surface:hover {
-    border-color: var(--xv-output-border-strong) !important;
-    box-shadow:
-      0 16px 34px -28px color-mix(in srgb, var(--foreground) 52%, transparent),
-      inset 0 1px 0 color-mix(in srgb, #fff 11%, transparent) !important;
-    transform: translateY(-1px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .xv-ai-output-block .xv-response-surface,
-  .xv-ai-output-block .xv-response-surface :where(button, a, summary),
-  .xv-ai-output-block .xv-response-surface article[class*="border"],
-  .xv-ai-output-block .xv-response-surface [role="treeitem"] {
+  .xv-ai-output-block .xv-response-surface :where(button, a, summary) {
     transition: none !important;
-  }
-  .xv-ai-output-block .xv-response-surface:hover {
-    transform: none !important;
   }
 }
 
