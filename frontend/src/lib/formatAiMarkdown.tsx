@@ -12,6 +12,7 @@ import ReactMarkdown, {
 } from 'react-markdown';
 
 import remarkGfm from 'remark-gfm';
+import { remarkSourceCitations, safeSourceUrl, type CitationSource } from './xrogaCitations';
 
 import {
   ApiError,
@@ -1548,9 +1549,35 @@ const components:
     ),
   };
 
+function CitationChip({ number, source }: { number: number; source: CitationSource }) {
+  const [open, setOpen] = useState(false);
+  const url = safeSourceUrl(source.url);
+  if (!url) return <span>[{number}]</span>;
+  return (
+    <span className="group/citation relative inline-flex align-baseline">
+      <button
+        type="button"
+        aria-label={`Preview source ${number}: ${source.title}`}
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+        onKeyDown={(event) => { if (event.key === 'Escape') setOpen(false); }}
+        className="rounded border border-[var(--accent)]/25 bg-[var(--accent)]/10 px-1 text-[11px] font-semibold text-[var(--accent)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+      >
+        [{number}]
+      </button>
+      <span className={`${open ? 'visible opacity-100' : 'invisible opacity-0'} absolute bottom-full left-0 z-40 mb-2 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-3 text-left text-xs shadow-lg transition-opacity group-hover/citation:visible group-hover/citation:opacity-100 group-focus-within/citation:visible group-focus-within/citation:opacity-100`}>
+        <span className="block font-semibold text-[var(--foreground)]">{source.title}</span>
+        {source.snippet ? <span className="mt-1 block line-clamp-3 text-[var(--muted)]">{source.snippet}</span> : null}
+        <a href={url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-medium text-[var(--accent)] underline">Open source {number}</a>
+      </span>
+    </span>
+  );
+}
+
 export function FormattedAiMarkdown({
   content,
   className,
+  sources,
 }: {
   content:
     string;
@@ -1558,7 +1585,18 @@ export function FormattedAiMarkdown({
     boolean;
   className?:
     string;
+  sources?: CitationSource[];
 }) {
+  const sourceComponents: Components = sources?.length ? {
+    ...components,
+    a: ({ href, children, ...props }) => {
+      const match = typeof children === 'string' ? /^\[(\d{1,2})\]$/.exec(children) : null;
+      const number = match ? Number(match[1]) : 0;
+      const source = number > 0 ? sources[number - 1] : undefined;
+      if (source && href === safeSourceUrl(source.url)) return <CitationChip number={number} source={source} />;
+      return React.createElement(components.a as React.ElementType, { href, ...props }, children);
+    },
+  } : components;
   return (
     <div
       className={joinClasses(
@@ -1569,13 +1607,14 @@ export function FormattedAiMarkdown({
       <ReactMarkdown
         remarkPlugins={[
           remarkGfm,
+          ...(sources?.length ? [remarkSourceCitations(sources)] : []),
         ]}
         skipHtml
         urlTransform={
           safeMarkdownUrl
         }
         components={
-          components
+          sourceComponents
         }
       >
         {content}

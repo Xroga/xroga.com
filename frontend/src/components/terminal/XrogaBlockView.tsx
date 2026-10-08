@@ -9,6 +9,7 @@ import { InlineCopyButton } from '@/components/ui/InlineCopyButton';
 import { isRenderableArtifact } from '@/lib/engineeringArtifact';
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/lib/xrogaBlocks';
+import { applyDocumentEdit } from '@/lib/xrogaDocumentEdits';
 import { XrogaArtifactHeader } from './XrogaArtifactHeader';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 
@@ -28,7 +29,8 @@ export function getRenderer(type: string): BlockRenderer {
   return renderers.get(type) ?? UnknownBlockRenderer;
 }
 
-export function renderBlock(block: XrogaBlock): ReactNode {
+export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string) => void): ReactNode {
+  if (block.type === 'document') return <RichBlockRenderer block={block} onDocumentSave={onDocumentSave} />;
   const Renderer = getRenderer(block.type);
   return <Renderer block={block} />;
 }
@@ -165,9 +167,13 @@ registerRenderer('artifact', ArtifactRenderer);
 registerRenderer('decision-matrix', DecisionMatrixRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
-export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
+export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void }) {
   return <section className="xv-ai-output-block space-y-4 py-3" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
-    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
+    const saveDocument = onChange && block?.type === 'document' ? (content: string) => {
+      const next = applyDocumentEdit(output, block.id, content);
+      if (next) onChange(next);
+    } : undefined;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

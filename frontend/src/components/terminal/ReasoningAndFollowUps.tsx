@@ -10,6 +10,7 @@ import {
   isFailedImageContent,
 } from '@/lib/parseImageContent';
 import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
+import type { CitationSource } from '@/lib/xrogaCitations';
 import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
@@ -25,9 +26,11 @@ function ResponseBody({ children, streaming }: { children: ReactNode; streaming?
 export const ModernResponseText = memo(function ModernResponseText({
   content,
   streaming,
+  sources,
 }: {
   content: string;
   streaming?: boolean;
+  sources?: CitationSource[];
 }) {
   const safeContent = typeof content === 'string' ? content : '';
 
@@ -54,7 +57,7 @@ export const ModernResponseText = memo(function ModernResponseText({
       <ResponseBody streaming={streaming}>
         <div className="space-y-2">
           {textOnly && (
-            <FormattedAiMarkdown content={textOnly} streaming={streaming} />
+            <FormattedAiMarkdown content={textOnly} streaming={streaming} sources={sources} />
           )}
 
           {images.map((img, i) => (
@@ -82,7 +85,7 @@ export const ModernResponseText = memo(function ModernResponseText({
           mathMode
         />
       ) : (
-        <FormattedAiMarkdown content={safeContent} streaming={streaming} />
+        <FormattedAiMarkdown content={safeContent} streaming={streaming} sources={sources} />
       )}
     </ResponseBody>
   );

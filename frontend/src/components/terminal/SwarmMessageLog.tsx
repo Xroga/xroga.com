@@ -16,6 +16,7 @@ import { UpdateFileTrail } from './UpdateFileTrail';
 import { WebSourcesPanel } from './WebSourcesPanel';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
+import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
 import {
   isQuickConversationPrompt,
   pendingExecutionIntent,
@@ -602,6 +603,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           loading &&
                           !msg.content?.trim() ? null : (
                           <ModernResponseText
+                            sources={msg.webSources}
                             content={
                               msg.content?.trim()
                                 ? msg.content
@@ -634,7 +636,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       {msg.content && (
                         <MessageBubbleActions
                           role="assistant"
-                          content={msg.content}
+                          content={[msg.content, shareableDocumentText(msg.featureOutput)].filter(Boolean).join('\n\n')}
                           messageId={msg.id}
                           prompt={promptByAssistantId.get(msg.id)}
                           onDelete={() => deleteTurn(msg.id)}
@@ -643,7 +645,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                       {!msg.content && msg.featureOutput && (
                         <MessageBubbleActions
                           role="assistant"
-                          content=""
+                          content={shareableDocumentText(msg.featureOutput)}
                           messageId={msg.id}
                           prompt={promptByAssistantId.get(msg.id)}
                           onDelete={() => deleteTurn(msg.id)}

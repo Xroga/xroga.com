@@ -288,7 +288,13 @@ const imageBlock = richBase.extend({ type: z.literal('image'), image: mediaItem 
 const audioBlock = richBase.extend({ type: z.literal('audio'), audio: mediaItem });
 const videoBlock = richBase.extend({ type: z.literal('video'), video: mediaItem });
 const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
-const documentBlock = richBase.extend({ type: z.literal('document'), content: z.string(), format: z.enum(['markdown', 'text']).default('markdown'), version: z.number().int().positive().optional() });
+const documentBlock = richBase.extend({
+  type: z.literal('document'),
+  content: z.string(),
+  format: z.enum(['markdown', 'text']).default('markdown'),
+  version: z.number().int().positive().optional(),
+  revisions: z.array(z.object({ version: z.number().int().positive(), content: z.string().max(200_000), savedAt: z.string() })).max(20).optional(),
+});
 const spreadsheetBlock = richBase.extend({ type: z.literal('spreadsheet'), ...tableShape, formulas: z.record(z.string(), z.string()).optional() });
 const presentationBlock = richBase.extend({ type: z.literal('presentation'), slides: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), body: z.string().optional(), bullets: z.array(z.string()).optional(), imageUrl: z.string().url().optional() })).min(1) });
 const boardBlock = richBase.extend({ type: z.literal('board'), columns: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), items: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), detail: z.string().optional() })) })) });

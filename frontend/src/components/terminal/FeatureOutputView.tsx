@@ -13,8 +13,8 @@ import { adaptOutputToXrogaDocument } from '@/lib/xrogaOutputAdapters';
 export function FeatureOutputView({
   output,
   onDelete: _onDelete,
-  messageId: _messageId,
-  onPreviewUpdate: _onPreviewUpdate,
+  messageId,
+  onPreviewUpdate,
 }: {
   output: unknown;
   onDelete?: () => void;
@@ -22,15 +22,13 @@ export function FeatureOutputView({
   onPreviewUpdate?: (messageId: string, output: unknown) => void;
 }) {
   void _onDelete;
-  void _messageId;
-  void _onPreviewUpdate;
 
   if (!output || typeof output !== 'object') return null;
   const row = output as Record<string, unknown>;
   if (row.type === 'chat' && typeof row.content === 'string') return null;
 
   const canonical = adaptOutputToXrogaDocument(output);
-  if (canonical) return <XrogaOutputView output={canonical} />;
+  if (canonical) return <XrogaOutputView output={canonical} onChange={messageId && onPreviewUpdate ? (next) => onPreviewUpdate(messageId, next) : undefined} />;
 
   return (
     <p className="max-w-[820px] py-1 text-sm text-[var(--muted)]" role="status">

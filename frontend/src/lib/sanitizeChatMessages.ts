@@ -2,6 +2,7 @@ import type { ChatMessage } from '@/context/TerminalChatContext';
 
 import type { HackathonBriefCardData } from '@/lib/hackathonBrief';
 import type { XrogaActivityPresentation } from '@/lib/terminal/activityPresentation';
+import { safeSourceUrl } from '@/lib/xrogaCitations';
 
 function sanitizeHackathonBrief(raw: unknown): ChatMessage['hackathonBrief'] {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -51,11 +52,11 @@ function sanitizeWebSources(raw: unknown): ChatMessage['webSources'] {
       url: typeof s.url === 'string' ? s.url : '',
       snippet: typeof s.snippet === 'string' ? s.snippet : '',
       source: typeof s.source === 'string' ? s.source : 'web',
-      thumbnailUrl: typeof s.thumbnailUrl === 'string' ? s.thumbnailUrl : undefined,
+      thumbnailUrl: typeof s.thumbnailUrl === 'string' ? safeSourceUrl(s.thumbnailUrl) ?? undefined : undefined,
       siteDomain: typeof s.siteDomain === 'string' ? s.siteDomain : undefined,
       channelTitle: typeof s.channelTitle === 'string' ? s.channelTitle : undefined,
     }))
-    .filter((s) => s.url.startsWith('http'));
+    .filter((s) => safeSourceUrl(s.url) !== null);
   return items.length ? items : undefined;
 }
 

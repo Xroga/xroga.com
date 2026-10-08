@@ -3,6 +3,7 @@
 import { ExternalLink, Play } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { safeSourceUrl } from '@/lib/xrogaCitations';
 
 export interface WebSourceItem {
   title: string;
@@ -36,22 +37,23 @@ function isYoutube(item: WebSourceItem): boolean {
 
 const externalImageLoader = ({ src }: { src: string }) => src;
 
-function SourceCard({ item }: { item: WebSourceItem }) {
+function SourceCard({ item, number }: { item: WebSourceItem; number: number }) {
   const domain = displayDomain(item);
   const yt = isYoutube(item);
   const channel = item.channelTitle ?? item.snippet.split('—')[0]?.trim();
+  const thumbnailUrl = item.thumbnailUrl ? safeSourceUrl(item.thumbnailUrl) : null;
 
   return (
     <a
-      href={item.url}
+      href={safeSourceUrl(item.url) ?? undefined}
       target="_blank"
       rel="noopener noreferrer"
       className="xv-web-source-card group flex gap-4 rounded-xl border border-[var(--card-border)]/80 bg-[var(--card)]/70 p-4 hover:border-[var(--accent)]/45 hover:bg-[var(--accent)]/[0.04] transition-all shadow-sm"
     >
-      {item.thumbnailUrl ? (
+      {thumbnailUrl ? (
         <div className="relative shrink-0">
           <Image
-            src={item.thumbnailUrl}
+            src={thumbnailUrl}
             alt=""
             width={72}
             height={52}
@@ -85,6 +87,7 @@ function SourceCard({ item }: { item: WebSourceItem }) {
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 mb-0.5">
+          <span className="shrink-0 font-semibold text-[var(--accent)]">[{number}]</span>
           <span className="xv-web-source-card__domain font-medium text-[var(--muted)] truncate">
             {yt && channel ? channel : domain}
           </span>
@@ -115,8 +118,9 @@ export function WebSourcesPanel({
 }) {
   if (!sources?.length) return null;
 
-  const youtube = sources.filter(isYoutube).slice(0, 2);
-  const web = sources.filter((s) => !isYoutube(s));
+  const numbered = sources.map((item, index) => ({ item, number: index + 1 })).filter(({ item }) => safeSourceUrl(item.url));
+  const youtube = numbered.filter(({ item }) => isYoutube(item)).slice(0, 2);
+  const web = numbered.filter(({ item }) => !isYoutube(item));
 
   return (
     <div className={cn('xv-web-sources space-y-4', className)}>
@@ -127,8 +131,8 @@ export function WebSourcesPanel({
             Recommended on YouTube
           </p>
           <div className="grid gap-2.5 sm:grid-cols-2">
-            {youtube.map((s) => (
-              <SourceCard key={s.url} item={s} />
+            {youtube.map(({ item, number }) => (
+              <SourceCard key={`${number}-${item.url}`} item={item} number={number} />
             ))}
           </div>
         </div>
@@ -139,8 +143,8 @@ export function WebSourcesPanel({
             Sources referenced
           </p>
           <div className="grid gap-2.5 sm:grid-cols-2">
-            {web.map((s) => (
-              <SourceCard key={s.url} item={s} />
+            {web.map(({ item, number }) => (
+              <SourceCard key={`${number}-${item.url}`} item={item} number={number} />
             ))}
           </div>
         </div>

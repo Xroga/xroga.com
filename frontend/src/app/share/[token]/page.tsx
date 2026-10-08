@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
+import { SharedAnswerDownloads } from '@/components/terminal/SharedAnswerDownloads';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,6 +111,7 @@ export default async function MessageSharePage({ params }: { params: Promise<{ t
           <section className="px-5 py-6 sm:px-8 sm:py-8">
             <p className="mb-3 text-[10px] font-semibold uppercase tracking-[.16em] text-black/45 dark:text-white/45">Response</p>
             <p className="whitespace-pre-wrap text-[15px] leading-7 text-black/90 dark:text-white/90">{share.response}</p>
+            <SharedAnswerDownloads response={share.response} />
           </section>
         </article>
 
