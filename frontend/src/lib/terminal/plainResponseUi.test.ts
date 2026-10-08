@@ -76,14 +76,16 @@ test('normal output does not append internal developer identifiers', () => {
 });
 
 
-test('assistant response and execution evidence use the enlarged v2 reading scale', () => {
+test('assistant response and execution evidence use the compact professional reading scale', () => {
   const uiverse = source('../../styles/uiverse.css');
   const sources = source('../../components/terminal/WebSourcesPanel.tsx');
 
-  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response\s*\{[\s\S]*?font-size:\s*28px\s*!important/);
-  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*30px\s*!important/);
-  assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*23px\s*!important/);
-  assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*20px\s*!important/);
+  assert.match(uiverse, /\.xv-response-text,[\s\S]*?\.xv-xroga-response[\s\S]*?font-size:\s*15px\s*!important/);
+  assert.match(uiverse, /@media \(min-width:\s*640px\)[\s\S]*?\.xv-response-text,[\s\S]*?font-size:\s*16px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-header__state\s*\{[\s\S]*?font-size:\s*15px\s*!important/);
+  assert.match(uiverse, /\.xv-exec-row-label\s*\{[\s\S]*?font-size:\s*13px\s*!important/);
+  assert.match(uiverse, /\.xv-ai-output-block \.xv-response-surface\s*\{/);
+  assert.match(uiverse, /\.xv-ai-output-block \.xv-response-chart\s*\{[\s\S]*?height:\s*clamp\(210px, 32vw, 250px\)/);
   assert.match(sources, /xv-web-source-card__title/);
   assert.match(sources, /xv-web-source-card__snippet/);
 });

@@ -23,10 +23,10 @@ function Surface({
   description?: string;
   state?: StructuredBlock['state'];
 }) {
-  if (state === 'loading') return <section className="max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
-  if (state === 'empty') return <section className="max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
-  if (state === 'error' || state === 'unsupported') return <section className="max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
-  return <section className="max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
+  if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin motion-reduce:animate-none" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
+  if (state === 'empty') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted)]">No data is available for this output.</section>;
+  if (state === 'error' || state === 'unsupported') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-amber-500/35 p-5 text-sm" role="status"><TriangleAlert className="mr-2 inline h-4 w-4" aria-hidden="true" />{state === 'unsupported' ? 'This output cannot be previewed in this workspace yet.' : 'This output could not be rendered.'}</section>;
+  return <section className="xv-response-surface max-w-[960px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 shadow-sm">{title || description ? <header className="border-b border-[var(--border)] px-4 py-3">{title ? <h3 className="text-sm font-semibold">{title}</h3> : null}{description ? <p className="mt-0.5 text-xs text-[var(--muted)]">{description}</p> : null}</header> : null}{children}</section>;
 }
 
 function CardGridRenderer({ block }: { block: Extract<StructuredBlock, { type: 'card-grid' }> }) {

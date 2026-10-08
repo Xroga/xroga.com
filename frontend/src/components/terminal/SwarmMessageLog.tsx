@@ -473,8 +473,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                 )}
                 <div
                   className={cn(
-                    'min-w-0 max-w-[85%] w-full',
-                    msg.role === 'user' && 'text-right',
+                    'min-w-0 w-full',
+                    msg.role === 'user' ? 'max-w-[85%] text-right' : 'max-w-full',
                     msg.role === 'system' && (AGENT_STYLES[msg.agent ?? ''] ?? 'text-[var(--muted)] text-center max-w-full')
                   )}
                 >
