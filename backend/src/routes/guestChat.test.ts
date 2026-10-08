@@ -10,8 +10,16 @@ import {
   GUEST_CHAT_PROMPT_LIMIT,
   GUEST_CHAT_TOKEN_BUDGET,
   GUEST_CHAT_WINDOW_MS,
+  GUEST_SYSTEM,
   resetGuestChatRateLimitsForTest,
 } from './guestChat.js';
+
+test('guest chat requires structured components for explicit visual requests', () => {
+  assert.match(GUEST_SYSTEM, /MUST add the corresponding data-only fenced block labelled xroga-ui/);
+  assert.match(GUEST_SYSTEM, /Never imitate these outputs with ASCII art/);
+  assert.match(GUEST_SYSTEM, /"type":"calculator"/);
+  assert.match(GUEST_SYSTEM, /"type":"progress-group"/);
+});
 
 test('guest chat allows only the bounded preview count per session', () => {
   resetGuestChatRateLimitsForTest();

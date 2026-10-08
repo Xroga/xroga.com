@@ -2,10 +2,17 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  CHAT_SYSTEM,
   incrementalUpdateContext,
   researchAnswerMaxTokens,
   researchSynthesisPrompt,
 } from './prompts.js';
+
+test('chat requires real structured UI for explicit visual requests', () => {
+  assert.match(CHAT_SYSTEM, /MUST include the corresponding xroga-ui block/);
+  assert.match(CHAT_SYSTEM, /Never imitate a progress bar, calculator/);
+  assert.match(CHAT_SYSTEM, /ASCII art or plain-text diagrams/);
+});
 
 test('incremental update context preserves requested sections beyond the old 6k cutoff', () => {
   const tail = '<section id="roasted-this-week"><h2>Roasted this week</h2></section>';
