@@ -162,6 +162,29 @@ const comparisonBlock = richBase.extend({
     metrics: z.record(z.string(), scalarValue),
   })).min(2).max(6),
 });
+export const decisionMatrixBlock = richBase.extend({
+  type: z.literal('decision-matrix'),
+  criteria: z.array(z.object({
+    id: z.string().min(1), label: z.string().min(1), weight: z.number().min(0).max(10),
+    description: z.string().optional(),
+  })).min(1).max(8),
+  options: z.array(z.object({
+    id: z.string().min(1), label: z.string().min(1),
+    scores: z.record(z.string(), z.number().min(0).max(10)),
+    detail: z.string().optional(),
+  })).min(2).max(12),
+}).superRefine((matrix, context) => {
+  const criterionIds = matrix.criteria.map((criterion) => criterion.id);
+  const optionIds = matrix.options.map((option) => option.id);
+  if (new Set(criterionIds).size !== criterionIds.length || new Set(optionIds).size !== optionIds.length) {
+    context.addIssue({ code: 'custom', message: 'Decision matrix IDs must be unique.' });
+  }
+  for (const option of matrix.options) {
+    if (criterionIds.some((id) => !Object.hasOwn(option.scores, id))) {
+      context.addIssue({ code: 'custom', message: `Option ${option.id} is missing a criterion score.` });
+    }
+  }
+});
 const keyValueBlock = richBase.extend({
   type: z.literal('key-value'),
   items: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), value: scalarValue, detail: z.string().optional() })).min(1),
@@ -276,7 +299,7 @@ export const xrogaBlockSchema = z.discriminatedUnion('type', [
   textBlock, listBlock, evidenceBlock, linkBlock, approvalBlock, receiptBlock,
   contentBlock, connectionBlock, websiteBlock, artifactBlock,
   metricBlock, metricGroupBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
-  gaugeBlock, comparisonBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
+  gaugeBlock, comparisonBlock, decisionMatrixBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
   tabsBlock, accordionBlock, fileTreeBlock, calendarBlock, sourceListBlock,
   cardGridBlock, treeBlock, jsonBlock, apiRequestBlock,
   tableBlock, chartBlock, timelineBlock, graphBlock, mapBlock,

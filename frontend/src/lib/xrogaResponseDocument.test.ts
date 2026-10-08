@@ -132,3 +132,37 @@ test('malformed and executable rich payloads are hidden and rejected', () => {
   assert.equal(enhanceAiResponse(executable, 'bad-2').content, 'Safe answer.');
   assert.equal(stripXrogaUiProtocol('Visible\n```xroga-ui\n{"type":"chart"'), 'Visible');
 });
+
+test('decision matrix is validated and unknown formats have an honest fallback', () => {
+  const response = [
+    'Compare the options below.',
+    '```xroga-ui',
+    JSON.stringify({ type: 'decision-matrix', title: 'Choose a vendor', criteria: [
+      { id: 'cost', label: 'Cost', weight: 2 }, { id: 'quality', label: 'Quality', weight: 3 },
+    ], options: [
+      { id: 'a', label: 'A', scores: { cost: 8, quality: 7 } },
+      { id: 'b', label: 'B', scores: { cost: 6, quality: 9 } },
+    ] }),
+    '```',
+    '```xroga-ui',
+    JSON.stringify({ type: 'holographic-realtime-market-cube', title: 'Unsupported view' }),
+    '```',
+  ].join('\n');
+  const result = enhanceAiResponse(response, 'matrix-message');
+  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'decision-matrix', 'notice']);
+  assert.match(JSON.stringify(result.output?.blocks[2]), /not a supported Xroga response format/);
+});
+
+test('decision matrix rejects incomplete or out-of-range scores', () => {
+  const invalid = `\`\`\`xroga-ui\n${JSON.stringify({ type: 'decision-matrix', criteria: [{ id: 'cost', label: 'Cost', weight: 1 }], options: [{ id: 'a', label: 'A', scores: { cost: 11 } }, { id: 'b', label: 'B', scores: { cost: 4 } }] })}\n\`\`\``;
+  assert.equal(enhanceAiResponse(invalid, 'invalid-matrix').output, undefined);
+  const incomplete = `\`\`\`xroga-ui\n${JSON.stringify({ type: 'decision-matrix', criteria: [{ id: 'cost', label: 'Cost', weight: 1 }], options: [{ id: 'a', label: 'A', scores: {} }, { id: 'b', label: 'B', scores: { cost: 4 } }] })}\n\`\`\``;
+  assert.equal(enhanceAiResponse(incomplete, 'incomplete-matrix').output, undefined);
+});
+
+test('deep executable payloads cannot bypass the data-only boundary', () => {
+  let nested: Record<string, unknown> = { onClick: 'run()' };
+  for (let index = 0; index < 15; index += 1) nested = { child: nested };
+  const content = `\`\`\`xroga-ui\n${JSON.stringify({ type: 'json', data: nested })}\n\`\`\``;
+  assert.equal(enhanceAiResponse(content, 'deep-payload').output, undefined);
+});

@@ -6,10 +6,12 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Funnel, FunnelChart, LabelList, Legend, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Circle, Copy, ExternalLink, FileText, LoaderCircle, Minus, Search, TriangleAlert } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Circle, Copy, Download, ExternalLink, FileText, LoaderCircle, Minus, Search, TriangleAlert } from 'lucide-react';
 
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { shouldVirtualizeRows } from '@/lib/xrogaPresentation';
+import { csvFilename, tableToCsv } from '@/lib/xrogaCsv';
+import { downloadExportedFile, exportDocumentDocx, exportDocumentPdf, exportPresentationPptx, exportTableXlsx, type XrogaExportFile } from '@/lib/xrogaFileExports';
 import { useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
 import { XrogaOrganizerBlockView } from './XrogaOrganizerBlockView';
@@ -23,6 +25,19 @@ type ChartBlock = Extract<XrogaBlock, { type: 'chart' }>;
 type Metric = Extract<XrogaBlock, { type: 'metric' }>['metric'];
 
 const CHART_COLORS = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626'];
+
+function ExportButton({ label, create }: { label: string; create: () => Promise<XrogaExportFile> }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const handleDownload = async () => {
+    setBusy(true);
+    setError('');
+    try { downloadExportedFile(await create()); }
+    catch (failure) { setError(failure instanceof Error ? failure.message : 'Export failed. Please try again.'); }
+    finally { setBusy(false); }
+  };
+  return <span className="inline-flex flex-col items-start gap-1"><button type="button" disabled={busy} onClick={() => void handleDownload()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />{busy ? 'Preparing…' : label}</button>{error ? <span role="alert" className="max-w-64 text-xs text-red-500">{error}</span> : null}</span>;
+}
 
 function Surface({ children, title, description, state = 'ready' }: { children: React.ReactNode; title?: string; description?: string; state?: RichBlock['state'] }) {
   if (state === 'loading') return <section className="xv-response-surface max-w-[960px] rounded-2xl border border-[var(--border)] p-5" aria-busy="true"><LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" /><span className="sr-only">Loading output</span></section>;
@@ -60,12 +75,23 @@ function TableRenderer({ block }: { block: TableBlock }) {
   const bottomSpacer = largeDataset && virtualItems.length ? virtual.getTotalSize() - virtualItems[virtualItems.length - 1].end : 0;
   const selectedIds = Object.keys(rowSelection).filter((key) => rowSelection[key]);
   const useSelection = () => addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'rows', label: `${selectedIds.length} selected row${selectedIds.length === 1 ? '' : 's'} from ${block.title ?? 'table'}`, recordIds: selectedIds });
-  const copyCsv = async () => { const csv = [block.columns.map((c) => c.label), ...block.rows.map((row) => block.columns.map((c) => JSON.stringify(valueText(row[c.key]))))].map((row) => row.join(',')).join('\n'); await navigator.clipboard.writeText(csv); };
+  const csv = () => tableToCsv(block.columns, block.rows);
+  const copyCsv = async () => { await navigator.clipboard.writeText(csv()); };
+  const downloadCsv = () => {
+    const url = URL.createObjectURL(new Blob(['\uFEFF', csv()], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = csvFilename(block.title ?? 'table');
+    anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
   return <Surface title={block.title ?? (block.type === 'spreadsheet' ? 'Spreadsheet' : block.type === 'database' ? 'Database' : 'Table')} description={block.description} state={block.state}>
     <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
       {block.searchable !== false ? <label className="relative min-w-44 flex-1"><Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted)]" aria-hidden="true" /><span className="sr-only">Search table</span><input value={filter} onChange={(event) => setFilter(event.target.value)} placeholder="Search rows" className="h-9 w-full rounded-lg border border-[var(--border)] bg-transparent pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-blue-500" /></label> : null}
       {selectedIds.length ? <button type="button" onClick={useSelection} className="h-9 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5">Use {selectedIds.length} as context</button> : null}
       <button type="button" onClick={() => void copyCsv()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5"><Copy className="h-3.5 w-3.5" aria-hidden="true" />Copy CSV</button>
+      <button type="button" onClick={downloadCsv} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5"><Download className="h-3.5 w-3.5" aria-hidden="true" />Download CSV</button>
+      <ExportButton label="Download XLSX" create={() => exportTableXlsx(block)} />
     </div>
     <div ref={scrollRef} className="max-h-[440px] overflow-auto">
       <table className="w-full min-w-[560px] border-collapse text-left text-sm"><thead className="sticky top-0 z-10 bg-[var(--background)]"><tr>{block.selectable !== false ? <th className="w-10 border-b border-[var(--border)] p-3"><span className="sr-only">Select</span></th> : null}{table.getHeaderGroups()[0]?.headers.map((header) => <th key={header.id} className="border-b border-[var(--border)] p-3 text-xs font-semibold"><button type="button" onClick={header.column.getToggleSortingHandler()} className="inline-flex items-center gap-1">{flexRender(header.column.columnDef.header, header.getContext())}{header.column.getIsSorted() ? (header.column.getIsSorted() === 'asc' ? ' ↑' : ' ↓') : null}</button></th>)}</tr></thead>
@@ -106,9 +132,9 @@ function MediaRenderer({ block }: { block: Extract<RichBlock, { type: 'gallery' 
 
 function MapRenderer({ block }: { block: Extract<RichBlock, { type: 'map' }> }) { return <Surface title={block.title ?? 'Locations'} description={block.description} state={block.state}><ul className="grid gap-2 p-4 sm:grid-cols-2">{block.locations.map((location) => <li key={location.id} className="rounded-xl border border-[var(--border)] p-3"><span className="text-sm font-medium">{location.label}</span>{location.detail ? <p className="text-xs text-[var(--muted)]">{location.detail}</p> : null}{location.latitude !== undefined && location.longitude !== undefined ? <a href={`https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.longitude}`} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--accent)]">Open map<ExternalLink className="h-3 w-3" /></a> : null}</li>)}</ul></Surface>; }
 
-function DocumentRenderer({ block }: { block: Extract<RichBlock, { type: 'document' }> }) { return <Surface title={block.title ?? 'Document'} description={block.description} state={block.state}><article className="prose prose-sm max-w-none p-5 text-[var(--foreground)] dark:prose-invert">{block.format === 'markdown' ? <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={(url) => safeArtifactUri(url) ?? ''}>{block.content}</ReactMarkdown> : <p className="whitespace-pre-wrap">{block.content}</p>}</article></Surface>; }
+function DocumentRenderer({ block }: { block: Extract<RichBlock, { type: 'document' }> }) { return <Surface title={block.title ?? 'Document'} description={block.description} state={block.state}><div className="flex flex-wrap gap-2 border-b border-[var(--border)] p-3"><ExportButton label="Download DOCX" create={() => exportDocumentDocx(block)} /><ExportButton label="Download PDF" create={() => exportDocumentPdf(block)} /></div><article className="prose prose-sm max-w-none p-5 text-[var(--foreground)] dark:prose-invert">{block.format === 'markdown' ? <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={(url) => safeArtifactUri(url) ?? ''}>{block.content}</ReactMarkdown> : <p className="whitespace-pre-wrap">{block.content}</p>}</article></Surface>; }
 
-function PresentationRenderer({ block }: { block: Extract<RichBlock, { type: 'presentation' }> }) { const [active, setActive] = useState(0); const slide = block.slides[active]; return <Surface title={block.title ?? 'Presentation'} description={block.description} state={block.state}><div className="aspect-video min-h-60 p-6 sm:p-10">{slide ? <article><p className="text-xs text-[var(--muted)]">Slide {active + 1} of {block.slides.length}</p><h4 className="mt-4 text-2xl font-semibold">{slide.title}</h4>{slide.body ? <p className="mt-3 text-sm text-[var(--muted)]">{slide.body}</p> : null}{slide.bullets ? <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">{slide.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : null}</article> : null}</div><footer className="flex justify-between border-t border-[var(--border)] p-3"><button type="button" disabled={active === 0} onClick={() => setActive((index) => index - 1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs disabled:opacity-40">Previous</button><button type="button" disabled={active >= block.slides.length - 1} onClick={() => setActive((index) => index + 1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs disabled:opacity-40">Next</button></footer></Surface>; }
+function PresentationRenderer({ block }: { block: Extract<RichBlock, { type: 'presentation' }> }) { const [active, setActive] = useState(0); const slide = block.slides[active]; return <Surface title={block.title ?? 'Presentation'} description={block.description} state={block.state}><div className="border-b border-[var(--border)] p-3"><ExportButton label="Download PPTX" create={() => exportPresentationPptx(block)} /></div><div className="aspect-video min-h-60 p-6 sm:p-10">{slide ? <article><p className="text-xs text-[var(--muted)]">Slide {active + 1} of {block.slides.length}</p><h4 className="mt-4 text-2xl font-semibold">{slide.title}</h4>{slide.body ? <p className="mt-3 text-sm text-[var(--muted)]">{slide.body}</p> : null}{slide.bullets ? <ul className="mt-4 list-disc space-y-2 pl-5 text-sm">{slide.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : null}</article> : null}</div><footer className="flex justify-between border-t border-[var(--border)] p-3"><button type="button" disabled={active === 0} onClick={() => setActive((index) => index - 1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs disabled:opacity-40">Previous</button><button type="button" disabled={active >= block.slides.length - 1} onClick={() => setActive((index) => index + 1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs disabled:opacity-40">Next</button></footer></Surface>; }
 
 function BoardRenderer({ block }: { block: Extract<RichBlock, { type: 'board' }> }) { return <Surface title={block.title ?? 'Board'} description={block.description} state={block.state}><div className="grid auto-cols-[minmax(220px,1fr)] grid-flow-col gap-3 overflow-x-auto p-4">{block.columns.map((column) => <section key={column.id} className="rounded-xl bg-black/[0.035] p-3 dark:bg-white/[0.04]"><h4 className="text-xs font-semibold uppercase tracking-wide">{column.title}</h4><div className="mt-3 space-y-2">{column.items.map((item) => <article key={item.id} className="rounded-lg border border-[var(--border)] bg-[var(--background)] p-3"><p className="text-sm font-medium">{item.title}</p>{item.detail ? <p className="mt-1 text-xs text-[var(--muted)]">{item.detail}</p> : null}</article>)}</div></section>)}</div></Surface>; }
 

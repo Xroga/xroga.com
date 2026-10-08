@@ -1,16 +1,9 @@
 import { adaptTrustedA2uiBlock } from './xrogaA2uiAdapter';
+import { modelBlockCapabilitySet } from './xrogaCapabilityManifest';
 import type { XrogaBlock, XrogaOutputDocument } from './xrogaBlocks';
 
 const XROGA_UI_FENCE = /```xroga-ui\s*\n?([\s\S]*?)```/gi;
 const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
-const RICH_TYPES = new Set([
-  'notice', 'status', 'error', 'empty-state', 'code', 'diff', 'terminal', 'file', 'citation', 'source',
-  'metric', 'metric-group', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice',
-  'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation',
-  'board', 'database', 'pdf', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge',
-  'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking',
-  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request',
-]);
 const UNSAFE_KEYS = new Set(['html', 'script', 'onclick', 'actionurl', '__proto__', 'prototype', 'constructor']);
 const MAX_PROTOCOL_CHARS = 50_000;
 const MAX_RICH_BLOCKS = 8;
@@ -34,7 +27,8 @@ export function stripXrogaUiProtocol(content: string): string {
 }
 
 function containsUnsafeKey(value: unknown, depth = 0): boolean {
-  if (depth > 12 || value === null || typeof value !== 'object') return false;
+  if (depth > 12) return true;
+  if (value === null || typeof value !== 'object') return false;
   if (Array.isArray(value)) return value.some((item) => containsUnsafeKey(item, depth + 1));
   return Object.entries(value as Record<string, unknown>).some(
     ([key, nested]) => UNSAFE_KEYS.has(key.toLowerCase()) || containsUnsafeKey(nested, depth + 1),
@@ -48,7 +42,18 @@ function safeIdPart(value: string): string {
 function canonicalRichBlock(value: unknown, documentId: string, index: number): XrogaBlock | null {
   if (!value || typeof value !== 'object' || Array.isArray(value) || containsUnsafeKey(value)) return null;
   const input = value as Record<string, unknown>;
-  if (typeof input.type !== 'string' || !RICH_TYPES.has(input.type)) return null;
+  if (typeof input.type !== 'string') return null;
+  if (!modelBlockCapabilitySet.has(input.type)) {
+    if (!/^[a-z][a-z0-9-]{1,63}$/.test(input.type)) return null;
+    return {
+      schemaVersion: 1,
+      id: `${safeIdPart(documentId)}-unsupported-${index + 1}`,
+      type: 'notice',
+      title: 'Output format unavailable',
+      text: `${input.type} is not a supported Xroga response format. The answer remains available as text.`,
+      tone: 'warning',
+    };
+  }
   const candidate = {
     ...input,
     schemaVersion: 1,

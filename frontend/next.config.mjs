@@ -87,6 +87,14 @@ const NON_PREVIEW_SOURCE = '/((?!(?:$|about$|showcase/[^/]+/preview$|showcase/bl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack(config, { isServer, webpack }) {
+    if (!isServer) {
+      // PptxGenJS guards these Node-only imports at runtime, but webpack still
+      // attempts to resolve their node: specifiers in the browser bundle.
+      config.plugins.push(new webpack.IgnorePlugin({ resourceRegExp: /^node:(fs|https)$/ }));
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.postimg.cc' },

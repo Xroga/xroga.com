@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
-import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, LoaderCircle, MapPin, MessageSquareText, PlugZap, Search, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
+import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, LoaderCircle, MapPin, MessageSquareText, PlugZap, Search, SlidersHorizontal, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
 import { LegacyLandingOutputView } from './LegacyLandingOutputView';
@@ -34,6 +34,7 @@ export function renderBlock(block: XrogaBlock): ReactNode {
 }
 
 const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
+const DecisionMatrixRenderer = lazy(() => import('./XrogaDecisionMatrixView').then((module) => ({ default: module.XrogaDecisionMatrixView })));
 const CustomLucideIcon = lazy(() => import('./XrogaLucideIcon').then((module) => ({ default: module.XrogaLucideIcon })));
 
 const typeIcons: Partial<Record<XrogaBlock['type'], LucideIcon>> = {
@@ -50,6 +51,7 @@ const typeIcons: Partial<Record<XrogaBlock['type'], LucideIcon>> = {
   map: MapPin, form: ListChecks, choice: ListChecks, gallery: Image, image: Image,
   audio: AudioLines, video: Video, dashboard: LayoutDashboard, document: FileText,
   spreadsheet: Table2, presentation: LayoutDashboard, board: LayoutDashboard, database: Table2, pdf: FileText,
+  'decision-matrix': SlidersHorizontal,
 };
 
 function ResponseBlockIcon({ block }: { block: XrogaBlock }) {
@@ -106,7 +108,8 @@ function EvidenceRenderer({ block }: { block: XrogaBlock }) {
 
 function LinkRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'citation' && block.type !== 'source') return null;
-  return <a href={block.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-[var(--accent)] underline-offset-4 hover:underline">{block.label}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a>;
+  const href = safeArtifactUri(block.url);
+  return href ? <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-[var(--accent)] underline-offset-4 hover:underline">{block.label}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : <span className="text-sm text-[var(--muted)]">{block.label} · unsafe source link omitted</span>;
 }
 
 function ApprovalRenderer({ block }: { block: XrogaBlock }) {
@@ -116,7 +119,8 @@ function ApprovalRenderer({ block }: { block: XrogaBlock }) {
 
 function ReceiptRenderer({ block }: { block: XrogaBlock }) {
   if (block.type !== 'receipt') return null;
-  return <section className="xv-response-surface max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm"><div className="flex items-center gap-2"><Check className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">{block.receipt.action}</h3></div><p className="mt-1 text-[var(--muted)]">{block.receipt.target} · {block.receipt.service} · {block.receipt.status}</p>{block.receipt.viewUrl ? <a href={block.receipt.viewUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[var(--accent)]">View result<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : null}</section>;
+  const href = safeArtifactUri(block.receipt.viewUrl);
+  return <section className="xv-response-surface max-w-[820px] rounded-xl border border-[var(--border)] p-3 text-sm"><div className="flex items-center gap-2"><Check className="h-4 w-4" aria-hidden="true" /><h3 className="font-medium">{block.receipt.action}</h3></div><p className="mt-1 text-[var(--muted)]">{block.receipt.target} · {block.receipt.service} · {block.receipt.status}</p>{href ? <a href={href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-[var(--accent)]">View result<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></a> : null}</section>;
 }
 
 function ContentRenderer({ block }: { block: XrogaBlock }) {
@@ -158,6 +162,7 @@ for (const type of ['code', 'diff', 'terminal', 'file'] as const) registerRender
 registerRenderer('connection-request', ConnectionRenderer);
 registerRenderer('website', WebsiteRenderer);
 registerRenderer('artifact', ArtifactRenderer);
+registerRenderer('decision-matrix', DecisionMatrixRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
 export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
