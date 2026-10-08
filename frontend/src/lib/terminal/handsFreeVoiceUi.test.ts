@@ -21,28 +21,24 @@ test('voice uses the supplied AudioLines icon with no pill, circle, settings, or
   assert.match(css, /box-shadow:\s*none\s*!important/);
 });
 
-test('Xroga wake word accepts realistic recognition variants and can seed the spoken request', () => {
+test('voice never enables a hidden wake listener after permission or page load', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
-  assert.match(voice, /WAKE_ALIAS_SOURCE/);
-  assert.ok(voice.includes('x\\\\s*roga'));
-  assert.ok(voice.includes('ex\\\\s*roga'));
-  assert.match(voice, /acroga/);
-  assert.match(voice, /zroga/);
-  assert.match(voice, /extractWakeCommand/);
-  assert.match(voice, /startVoiceRef\.current\(seed\)/);
-  assert.match(voice, /WAKE_STORAGE_KEY/);
+  assert.doesNotMatch(voice, /WAKE_STORAGE_KEY|armWakeWord|extractWakeCommand/);
+  assert.match(voice, /captureGenerationRef/);
+  assert.match(voice, /acceptMicStream\(stream\.getTracks\(\), generation/);
+  assert.match(voice, /modeRef\.current !== 'listening' \|\| endingRef\.current \|\| !streamRef\.current\?\.active/);
 });
 
-test('voice capture streams live browser recognition into the actual composer and resets every session', () => {
+test('voice capture keeps captions separate from the editable typed draft', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
   const chatbar = source('../../components/terminal/TerminalChatBar.tsx');
 
   assert.match(voice, /recognition\.interimResults = true/);
   assert.match(voice, /recognition\.continuous = true/);
   assert.match(voice, /publishLiveDraft\(finalTextRef\.current, interim\)/);
-  assert.match(voice, /baselineRef\.current = composerTextRef\.current\.trim\(\)/);
-  assert.match(voice, /seedTextRef\.current = cleanSpeech\(seed\)/);
+  assert.match(voice, /setPreviewText\(captureText\)/);
+  assert.match(voice, /mergeText\(composerTextRef\.current, finalVoice\)/);
   assert.match(voice, /finalTextRef\.current = ''/);
   assert.match(voice, /interimTextRef\.current = ''/);
   assert.match(chatbar, /onVoiceDraft=\{handleVoiceDraft\}/);
@@ -110,11 +106,33 @@ test('voice send uses the exact same canonical form submit path as typed chat', 
   assert.match(chatbar, /ensureRepoWorkspace/);
 });
 
-test('final server failure never erases the browser transcript already visible to the user', () => {
+test('final server failure preserves browser captions and the current typed draft', () => {
   const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
 
   assert.match(voice, /let finalVoice = browserVoice/);
   assert.match(voice, /catch \{[\s\S]*Preserve the browser text already visible/);
-  assert.match(voice, /const fullText = mergeText\(baselineRef\.current, finalVoice\)/);
+  assert.match(voice, /const fullText = mergeText\(composerTextRef\.current, finalVoice\)/);
   assert.match(voice, /onVoiceDraft\(fullText\)/);
+});
+
+test('voice conversation has separate audio, session, and build controls', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+  assert.match(voice, /Start voice conversation/);
+  assert.match(voice, /speechSynthesis\.speak\(utterance\)/);
+  assert.match(voice, /End voice conversation/);
+  assert.match(voice, /Stop response audio without cancelling work/);
+  assert.match(voice, /Cancel build/);
+  assert.match(voice, /requiresVoiceReview\(finalTextRef\.current\)/);
+  assert.match(voice, /await onVoiceSend\(fullText\)/);
+  const end = voice.slice(voice.indexOf('const endConversation ='), voice.indexOf('const startConversation ='));
+  assert.doesNotMatch(end, /\bstop\(\)|cancelRun/);
+  assert.match(voice, /document\.addEventListener\('visibilitychange', closeOnBackground\)/);
+});
+
+test('live captions expose explicit language choices without changing server auto-detection', () => {
+  const voice = source('../../components/terminal/XrogaVoiceControl.tsx');
+  assert.match(voice, /recognition\.lang = speechLanguage === 'auto'/);
+  for (const language of ['en-US', 'ur-PK', 'hi-IN', 'ar-SA']) {
+    assert.ok(voice.includes(`value="${language}"`));
+  }
 });
