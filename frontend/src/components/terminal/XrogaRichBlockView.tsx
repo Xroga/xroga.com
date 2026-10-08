@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Circle, Copy, ExternalLink, FileText, LoaderCircle, Minus, Search, TriangleAlert } from 'lucide-react';
@@ -12,6 +12,7 @@ import { safeArtifactUri } from '@/lib/universalOutput';
 import { shouldVirtualizeRows } from '@/lib/xrogaPresentation';
 import { useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
+import { XrogaOrganizerBlockView } from './XrogaOrganizerBlockView';
 import { XrogaUtilityBlockView } from './XrogaUtilityBlockView';
 
 type RichType = 'metric' | 'metric-group' | 'table' | 'chart' | 'timeline' | 'graph' | 'map' | 'form' | 'choice' | 'gallery' | 'image' | 'audio' | 'video' | 'dashboard' | 'document' | 'spreadsheet' | 'presentation' | 'board' | 'database' | 'pdf';
@@ -78,7 +79,13 @@ function ChartRenderer({ block }: { block: ChartBlock }) {
   const addSelection = useXrogaArtifactContext((state) => state.addSelection);
   const common = { data: block.data, margin: { top: 8, right: 16, left: 0, bottom: 8 }, onClick: (state: { activeLabel?: string | number }) => { if (state?.activeLabel !== undefined) addSelection({ artifactId: block.artifactId ?? block.id, blockId: block.id, kind: 'chart-point', label: `${block.xKey}: ${state.activeLabel}`, recordIds: [String(state.activeLabel)] }); } };
   const children = <><CartesianGrid strokeDasharray="3 3" opacity={0.22} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis tick={{ fontSize: 11 }} /><Tooltip /><Legend />{block.series.map((series, index) => block.chartType === 'bar' ? <Bar key={series.key} dataKey={series.key} name={series.label} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} /> : block.chartType === 'area' ? <Area key={series.key} dataKey={series.key} name={series.label} stroke={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} fillOpacity={0.18} /> : <Line key={series.key} dataKey={series.key} name={series.label} stroke={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} strokeWidth={2} dot={false} />)}</>;
-  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state}><div className="h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{block.chartType === 'bar' ? <BarChart {...common}>{children}</BarChart> : block.chartType === 'area' ? <AreaChart {...common}>{children}</AreaChart> : <LineChart {...common}>{children}</LineChart>}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
+  const primary = block.series[0];
+  const chart = block.chartType === 'pie' || block.chartType === 'donut'
+    ? <PieChart><Tooltip /><Legend /><Pie data={block.data} dataKey={primary?.key} nameKey={block.xKey} innerRadius={block.chartType === 'donut' ? 58 : 0} outerRadius={92} paddingAngle={2}>{block.data.map((_, index) => <Cell key={`${block.id}-slice-${index}`} fill={primary?.color ?? CHART_COLORS[index % CHART_COLORS.length]} />)}</Pie></PieChart>
+    : block.chartType === 'scatter'
+      ? <ScatterChart {...common}><CartesianGrid strokeDasharray="3 3" opacity={0.22} /><XAxis dataKey={block.xKey} tick={{ fontSize: 11 }} /><YAxis dataKey={primary?.key} tick={{ fontSize: 11 }} /><Tooltip cursor={{ strokeDasharray: '3 3' }} /><Legend />{block.series.map((series, index) => <Scatter key={series.key} name={series.label} data={block.data} fill={series.color ?? CHART_COLORS[index % CHART_COLORS.length]} />)}</ScatterChart>
+      : block.chartType === 'bar' ? <BarChart {...common}>{children}</BarChart> : block.chartType === 'area' ? <AreaChart {...common}>{children}</AreaChart> : <LineChart {...common}>{children}</LineChart>;
+  return <Surface title={block.title ?? 'Chart'} description={block.description} state={block.state}><div className="h-72 w-full p-3" role="img" aria-label={block.summary}><ResponsiveContainer width="100%" height="100%">{chart}</ResponsiveContainer></div><p className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--muted)]">{block.summary}. Select a chart point to use it as context.</p></Surface>;
 }
 
 function TimelineRenderer({ block }: { block: Extract<RichBlock, { type: 'timeline' }> }) { return <Surface title={block.title ?? 'Timeline'} description={block.description} state={block.state}><ol className="space-y-0 p-4">{block.events.map((event) => <li key={event.id} className="relative grid grid-cols-[20px_1fr] gap-3 pb-5 last:pb-0"><div className="flex flex-col items-center"><Circle className="h-4 w-4 fill-current" aria-hidden="true" /><span className="h-full w-px bg-[var(--border)] last:hidden" /></div><div><p className="text-xs text-[var(--muted)]">{event.date}</p><h4 className="text-sm font-medium">{event.title}</h4>{event.detail ? <p className="mt-1 text-sm text-[var(--muted)]">{event.detail}</p> : null}</div></li>)}</ol></Surface>; }
@@ -105,6 +112,7 @@ function PdfRenderer({ block }: { block: Extract<RichBlock, { type: 'pdf' }> }) 
 function DashboardRenderer({ block }: { block: Extract<RichBlock, { type: 'dashboard' }> }) { return <Surface title={block.title ?? 'Dashboard'} description={block.description} state={block.state}><div className="space-y-4 p-4">{block.metrics?.length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{block.metrics.map((metric) => <MetricCard key={metric.id} metric={metric} />)}</div> : null}{block.charts?.map((chart) => <ChartRenderer key={chart.id} block={{ schemaVersion: 1, type: 'chart', ...chart }} />)}{block.tables?.map((table) => <TableRenderer key={table.id} block={{ schemaVersion: 1, type: 'table', ...table }} />)}</div></Surface>; }
 
 export function XrogaRichBlockView({ block }: { block: XrogaBlock }) {
+  if (['tabs', 'accordion', 'file-tree', 'calendar', 'source-list'].includes(block.type)) return <XrogaOrganizerBlockView block={block} />;
   if (['progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking'].includes(block.type)) return <XrogaUtilityBlockView block={block} />;
   if (block.type === 'metric' || block.type === 'metric-group') return <MetricRenderer block={block} />;
   if (block.type === 'table' || block.type === 'spreadsheet' || block.type === 'database') return <TableRenderer block={block} />;

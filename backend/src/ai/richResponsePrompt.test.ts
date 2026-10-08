@@ -13,4 +13,15 @@ test('chat answers may request safe rich output without fabricating visual data'
   assert.match(CHAT_SYSTEM, /calculator/i);
   assert.match(CHAT_SYSTEM, /calculation breakdown/i);
   assert.match(CHAT_SYSTEM, /scorecard/i);
+  assert.match(CHAT_SYSTEM, /file tree/i);
+  assert.match(CHAT_SYSTEM, /accordion/i);
+  assert.match(CHAT_SYSTEM, /source list/i);
+  assert.match(CHAT_SYSTEM, /"type":"diff"/i);
+  assert.match(CHAT_SYSTEM, /"chartType":"donut"/i);
+});
+
+test('every compact rich-output example is strict JSON', () => {
+  const examples = CHAT_SYSTEM.split('\n').map((line) => line.trim()).filter((line) => line.startsWith('{'));
+  assert.ok(examples.length >= 10);
+  for (const example of examples) assert.doesNotThrow(() => JSON.parse(example));
 });

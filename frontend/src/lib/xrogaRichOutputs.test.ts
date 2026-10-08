@@ -15,6 +15,7 @@ test('presentation intent follows structured result shape instead of prompt keyw
   assert.equal(resolvePresentationIntent({ mimeType: 'application/pdf' }), 'pdf');
   assert.equal(resolvePresentationIntent({ kind: 'dashboard' }), 'dashboard');
   assert.equal(resolvePresentationIntent({ kind: 'calculator' }), 'calculator');
+  assert.equal(resolvePresentationIntent({ kind: 'file-tree' }), 'file-tree');
   assert.equal(resolvePresentationIntent({ kind: 'unknown' }), 'artifact');
 });
 
@@ -33,6 +34,11 @@ test('all Step 2 rich block families validate with truthful minimum data', () =>
     { ...base, type: 'steps', steps: [{ id: 's', title: 'Plan', status: 'current' }] },
     { ...base, type: 'scorecard', scores: [{ id: 'q', label: 'Quality', score: 92, max: 100 }] },
     { ...base, type: 'ranking', entries: [{ id: 'r', label: 'Option A', value: 94 }] },
+    { ...base, type: 'tabs', tabs: [{ id: 'summary', label: 'Summary', content: 'Ready' }] },
+    { ...base, type: 'accordion', items: [{ id: 'q', title: 'What changed?', content: 'The flow was repaired.' }] },
+    { ...base, type: 'file-tree', entries: [{ id: 'f', name: 'app.ts', path: 'src/app.ts', kind: 'file', status: 'modified' }] },
+    { ...base, type: 'calendar', events: [{ id: 'e', title: 'Release', start: '2026-10-09T10:00:00Z' }] },
+    { ...base, type: 'source-list', sources: [{ id: 's', title: 'Documentation', url: 'https://example.com/docs' }] },
     { ...base, type: 'table', columns: [{ key: 'name', label: 'Name' }], rows: [{ name: 'Ada' }] },
     { ...base, type: 'chart', chartType: 'line', xKey: 'month', data: [{ month: 'Jan', value: 2 }], series: [{ key: 'value', label: 'Value' }], summary: 'Value by month' },
     { ...base, type: 'timeline', events: [{ id: 'e', title: 'Started', date: '2026-10-03' }] },
@@ -69,6 +75,8 @@ test('reserved Step 1 rich blocks migrate from the historical data envelope', ()
 
 test('A2UI adapter is allowlisted, schema checked, and rejects executable payloads', () => {
   assert.ok(adaptTrustedA2uiBlock({ ...base, type: 'metric', metric: { id: 'm', label: 'Users', value: 12 } }));
+  assert.ok(adaptTrustedA2uiBlock({ ...base, type: 'diff', content: '- old\n+ new', path: 'src/app.ts' }));
+  assert.ok(adaptTrustedA2uiBlock({ ...base, type: 'tabs', tabs: [{ id: 'a', label: 'Summary', content: 'Ready' }] }));
   assert.equal(adaptTrustedA2uiBlock({ ...base, type: 'metric', metric: { id: 'm', label: 'Users', value: 12 }, onClick: 'steal()' }), null);
   assert.equal(adaptTrustedA2uiBlock({ ...base, type: 'iframe', url: 'javascript:alert(1)' }), null);
 });
@@ -93,4 +101,7 @@ test('large data threshold and lazy renderer keep simple chat light', () => {
   assert.match(rich, /from 'recharts'/);
   assert.match(rich, /skipHtml/);
   assert.match(rich, /XrogaUtilityBlockView/);
+  assert.match(rich, /XrogaOrganizerBlockView/);
+  assert.match(rich, /PieChart/);
+  assert.match(rich, /ScatterChart/);
 });

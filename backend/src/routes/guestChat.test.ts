@@ -19,6 +19,10 @@ test('guest chat requires structured components for explicit visual requests', (
   assert.match(GUEST_SYSTEM, /Never imitate these outputs with ASCII art/);
   assert.match(GUEST_SYSTEM, /"type":"calculator"/);
   assert.match(GUEST_SYSTEM, /"type":"progress-group"/);
+  assert.match(GUEST_SYSTEM, /"type":"tabs"/);
+  assert.match(GUEST_SYSTEM, /"type":"file-tree"/);
+  assert.match(GUEST_SYSTEM, /"type":"source-list"/);
+  assert.match(GUEST_SYSTEM, /"type":"diff"/);
 });
 
 test('guest chat allows only the bounded preview count per session', () => {

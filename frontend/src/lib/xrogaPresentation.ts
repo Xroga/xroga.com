@@ -23,7 +23,7 @@ type IntentInput = {
 export function resolvePresentationIntent(input: IntentInput): PresentationIntent {
   const kind = input.kind?.toLowerCase();
   const mime = input.mimeType?.toLowerCase();
-  if (kind && ['progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking'].includes(kind)) return kind as PresentationIntent;
+  if (kind && ['progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list'].includes(kind)) return kind as PresentationIntent;
   if (kind === 'dashboard') return 'dashboard';
   if (kind === 'spreadsheet') return 'spreadsheet';
   if (kind === 'database') return 'database';

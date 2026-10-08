@@ -72,6 +72,29 @@ test('validated utility blocks become interactive response output', () => {
   assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'calculator']);
 });
 
+test('organizer and developer blocks become live response output', () => {
+  const response = [
+    'The implementation is organized below.',
+    '```xroga-ui',
+    JSON.stringify({
+      type: 'tabs',
+      title: 'Implementation',
+      tabs: [
+        { id: 'summary', label: 'Summary', content: 'Checkout repaired.' },
+        { id: 'tests', label: 'Tests', content: 'All checks passed.' },
+      ],
+    }),
+    '```',
+    '```xroga-ui',
+    JSON.stringify({ type: 'diff', title: 'Patch', path: 'src/checkout.ts', content: '- broken\n+ repaired' }),
+    '```',
+  ].join('\n');
+  const result = enhanceAiResponse(response, 'message-organizer');
+
+  assert.equal(result.content, 'The implementation is organized below.');
+  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'tabs', 'diff']);
+});
+
 test('malformed and executable rich payloads are hidden and rejected', () => {
   const malformed = 'Safe answer.\n```xroga-ui\n{"type":"chart"\n```';
   const executable = `Safe answer.\n\`\`\`xroga-ui\n${JSON.stringify({

@@ -1,10 +1,12 @@
 import { parseXrogaBlock, type XrogaBlock } from './xrogaBlocks';
 
 const ALLOWED_A2UI_TYPES = new Set<XrogaBlock['type']>([
-  'narrative', 'notice', 'status', 'error', 'empty-state', 'metric', 'metric-group', 'table', 'chart',
+  'narrative', 'notice', 'status', 'error', 'empty-state', 'code', 'diff', 'terminal', 'file',
+  'citation', 'source', 'metric', 'metric-group', 'table', 'chart',
   'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard',
   'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf', 'progress', 'progress-group',
   'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking',
+  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list',
 ]);
 
 /** Safe A2UI boundary: data-only canonical blocks, no scripts, HTML, or arbitrary actions. */
