@@ -93,6 +93,7 @@ import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
 import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
 import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
+import { enhanceAiResponse, stripXrogaUiProtocol } from '@/lib/xrogaResponseDocument';
 import {
   latestRecoverableLandingOutput,
   recoveredLandingWorkspaceBuild,
@@ -2176,7 +2177,7 @@ const stopRequestedRunIdRef =
       lightAbortRef.current = controller;
 
       try {
-        await runGuestLaneChat({
+        const result = await runGuestLaneChat({
           prompt: displayPrompt,
           history,
           signal: controller.signal,
@@ -2184,12 +2185,18 @@ const stopRequestedRunIdRef =
             setMessages((current) =>
               current.map((message) =>
                 message.id === assistantId
-                  ? { ...message, content: partial, agent: 'Xroga AI' }
+                  ? { ...message, content: stripXrogaUiProtocol(partial), agent: 'Xroga AI' }
                   : message,
               ),
             );
           },
         });
+        const enhanced = enhanceAiResponse(result.response, assistantId);
+        setMessages((current) => current.map((message) =>
+          message.id === assistantId
+            ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI' }
+            : message
+        ));
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return;
         const apiError = error instanceof ApiError ? error : null;
@@ -2287,12 +2294,18 @@ const stopRequestedRunIdRef =
             setMessages((m) =>
               m.map((msg) =>
                 msg.id === assistantId
-                  ? { ...msg, content: partial, agent: 'Xroga AI Brain' }
+                  ? { ...msg, content: stripXrogaUiProtocol(partial), agent: 'Xroga AI Brain' }
                   : msg
               )
             );
           },
         });
+        const enhanced = enhanceAiResponse(result.response, assistantId);
+        setMessages((current) => current.map((message) =>
+          message.id === assistantId
+            ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI Brain' }
+            : message
+        ));
         if (result.webSources?.length || result.hackathonBrief) {
           setMessages((m) =>
             m.map((msg) =>
@@ -2784,10 +2797,11 @@ semanticBuildPlanned =
         }
 
         if (directResponse) {
-          fullReply = directResponse;
+          const enhanced = enhanceAiResponse(directResponse, assistantId);
+          fullReply = enhanced.content;
           setMessages((current) => current.map((message) =>
             message.id === assistantId
-              ? { ...message, content: directResponse, agent: 'Xroga AI' }
+              ? { ...message, content: enhanced.content, featureOutput: enhanced.output, agent: 'Xroga AI' }
               : message
           ));
           setPipelineMessage(null);
@@ -2837,7 +2851,8 @@ if (
 
           try {
             const result = await api.phase1.chat(displayPrompt, history, attachments, semanticPlan.goalContract);
-            fullReply = (result.response || '').trim();
+            const rawReply = (result.response || '').trim();
+            fullReply = rawReply;
             // Empty Phase 1 must never leave a blank bubble or silently change execution paths.
             if (!fullReply) {
               fullReply =
@@ -2853,7 +2868,7 @@ if (
                       msg.id === assistantId
                         ? {
                             ...msg,
-                            content: partial,
+                            content: stripXrogaUiProtocol(partial),
                             agent: 'Xroga AI Brain',
                             webSources: result.webSources,
                             hackathonBrief: result.hackathonBrief,
@@ -2864,6 +2879,21 @@ if (
                 },
                 controller.signal
               );
+
+              const enhanced = enhanceAiResponse(fullReply, assistantId);
+              fullReply = enhanced.content;
+              setMessages((current) => current.map((message) =>
+                message.id === assistantId
+                  ? {
+                      ...message,
+                      content: enhanced.content,
+                      featureOutput: enhanced.output,
+                      agent: 'Xroga AI Brain',
+                      webSources: result.webSources,
+                      hackathonBrief: result.hackathonBrief,
+                    }
+                  : message
+              ));
 
               if (result.webSources?.length || result.hackathonBrief) {
                 setMessages((m) =>

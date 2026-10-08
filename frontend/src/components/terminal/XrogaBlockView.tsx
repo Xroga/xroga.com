@@ -10,6 +10,7 @@ import { isRenderableArtifact } from '@/lib/engineeringArtifact';
 import { safeArtifactUri } from '@/lib/universalOutput';
 import { parseXrogaBlock, type XrogaBlock, type XrogaOutputDocument } from '@/lib/xrogaBlocks';
 import { XrogaArtifactHeader } from './XrogaArtifactHeader';
+import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 
 type BlockRenderer = ComponentType<{ block: XrogaBlock }> | LazyExoticComponent<ComponentType<{ block: XrogaBlock }>>;
 
@@ -43,7 +44,11 @@ function TextRenderer({ block }: { block: XrogaBlock }) {
       {Icon ? <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> : null}
       <div>
         {block.title ? <h3 className="font-medium">{block.title}</h3> : null}
-        <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
+        {block.type === 'narrative' ? (
+          <div className="xv-response-text"><FormattedAiMarkdown content={block.text} /></div>
+        ) : (
+          <p className="whitespace-pre-wrap leading-6">{'text' in block ? block.text : ''}</p>
+        )}
       </div>
     </section>
   );
