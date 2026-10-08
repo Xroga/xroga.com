@@ -49,6 +49,29 @@ test('validated xroga-ui blocks become live rich output without leaking protocol
   assert.doesNotMatch(JSON.stringify(result.output), /xroga-ui/);
 });
 
+test('validated utility blocks become interactive response output', () => {
+  const response = [
+    'Adjust the inputs to explore the estimate.',
+    '```xroga-ui',
+    JSON.stringify({
+      type: 'calculator',
+      title: 'Revenue estimate',
+      operation: 'product',
+      inputs: [
+        { id: 'price', label: 'Price', value: 25, unit: 'USD' },
+        { id: 'customers', label: 'Customers', value: 40 },
+      ],
+      resultLabel: 'Revenue',
+      resultUnit: 'USD',
+    }),
+    '```',
+  ].join('\n');
+  const result = enhanceAiResponse(response, 'message-utility');
+
+  assert.equal(result.content, 'Adjust the inputs to explore the estimate.');
+  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'calculator']);
+});
+
 test('malformed and executable rich payloads are hidden and rejected', () => {
   const malformed = 'Safe answer.\n```xroga-ui\n{"type":"chart"\n```';
   const executable = `Safe answer.\n\`\`\`xroga-ui\n${JSON.stringify({

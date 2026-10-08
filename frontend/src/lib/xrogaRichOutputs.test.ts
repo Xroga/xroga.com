@@ -14,6 +14,7 @@ test('presentation intent follows structured result shape instead of prompt keyw
   assert.equal(resolvePresentationIntent({ rows: [{ month: 'Jan', value: 2 }], series: [{ key: 'value' }] }), 'chart');
   assert.equal(resolvePresentationIntent({ mimeType: 'application/pdf' }), 'pdf');
   assert.equal(resolvePresentationIntent({ kind: 'dashboard' }), 'dashboard');
+  assert.equal(resolvePresentationIntent({ kind: 'calculator' }), 'calculator');
   assert.equal(resolvePresentationIntent({ kind: 'unknown' }), 'artifact');
 });
 
@@ -21,6 +22,17 @@ test('all Step 2 rich block families validate with truthful minimum data', () =>
   const blocks = [
     { ...base, type: 'metric', metric: { id: 'm', label: 'Users', value: 12 } },
     { ...base, type: 'metric-group', metrics: [{ id: 'm', label: 'Users', value: 12 }] },
+    { ...base, type: 'progress', progress: { id: 'p', label: 'Build', value: 72, max: 100 } },
+    { ...base, type: 'progress-group', items: [{ id: 'p', label: 'Build', value: 72, max: 100 }] },
+    { ...base, type: 'calculator', operation: 'sum', inputs: [{ id: 'a', label: 'Amount', value: 12 }], resultLabel: 'Total' },
+    { ...base, type: 'calculation', steps: [{ id: 's', label: 'Subtotal', value: 12 }], result: 12 },
+    { ...base, type: 'gauge', label: 'Quality', value: 82, min: 0, max: 100 },
+    { ...base, type: 'comparison', options: [{ id: 'a', label: 'A', metrics: { Price: 12 } }, { id: 'b', label: 'B', metrics: { Price: 15 } }] },
+    { ...base, type: 'key-value', items: [{ id: 'k', label: 'Status', value: 'Ready' }] },
+    { ...base, type: 'checklist', items: [{ id: 'c', label: 'Build', status: 'completed' }] },
+    { ...base, type: 'steps', steps: [{ id: 's', title: 'Plan', status: 'current' }] },
+    { ...base, type: 'scorecard', scores: [{ id: 'q', label: 'Quality', score: 92, max: 100 }] },
+    { ...base, type: 'ranking', entries: [{ id: 'r', label: 'Option A', value: 94 }] },
     { ...base, type: 'table', columns: [{ key: 'name', label: 'Name' }], rows: [{ name: 'Ada' }] },
     { ...base, type: 'chart', chartType: 'line', xKey: 'month', data: [{ month: 'Jan', value: 2 }], series: [{ key: 'value', label: 'Value' }], summary: 'Value by month' },
     { ...base, type: 'timeline', events: [{ id: 'e', title: 'Started', date: '2026-10-03' }] },
@@ -80,4 +92,5 @@ test('large data threshold and lazy renderer keep simple chat light', () => {
   assert.match(rich, /@tanstack\/react-virtual/);
   assert.match(rich, /from 'recharts'/);
   assert.match(rich, /skipHtml/);
+  assert.match(rich, /XrogaUtilityBlockView/);
 });

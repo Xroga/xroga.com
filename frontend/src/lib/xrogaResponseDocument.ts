@@ -6,7 +6,8 @@ const TABLE_DIVIDER = /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/;
 const RICH_TYPES = new Set([
   'metric', 'metric-group', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice',
   'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation',
-  'board', 'database', 'pdf',
+  'board', 'database', 'pdf', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge',
+  'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking',
 ]);
 const UNSAFE_KEYS = new Set(['html', 'script', 'onclick', 'actionurl', '__proto__', 'prototype', 'constructor']);
 const MAX_PROTOCOL_CHARS = 50_000;

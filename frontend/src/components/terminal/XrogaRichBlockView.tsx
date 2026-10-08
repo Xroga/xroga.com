@@ -12,6 +12,7 @@ import { safeArtifactUri } from '@/lib/universalOutput';
 import { shouldVirtualizeRows } from '@/lib/xrogaPresentation';
 import { useXrogaArtifactContext } from '@/lib/xrogaArtifactContext';
 import type { XrogaBlock } from '@/lib/xrogaBlocks';
+import { XrogaUtilityBlockView } from './XrogaUtilityBlockView';
 
 type RichType = 'metric' | 'metric-group' | 'table' | 'chart' | 'timeline' | 'graph' | 'map' | 'form' | 'choice' | 'gallery' | 'image' | 'audio' | 'video' | 'dashboard' | 'document' | 'spreadsheet' | 'presentation' | 'board' | 'database' | 'pdf';
 type RichBlock = Extract<XrogaBlock, { type: RichType }>;
@@ -104,6 +105,7 @@ function PdfRenderer({ block }: { block: Extract<RichBlock, { type: 'pdf' }> }) 
 function DashboardRenderer({ block }: { block: Extract<RichBlock, { type: 'dashboard' }> }) { return <Surface title={block.title ?? 'Dashboard'} description={block.description} state={block.state}><div className="space-y-4 p-4">{block.metrics?.length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{block.metrics.map((metric) => <MetricCard key={metric.id} metric={metric} />)}</div> : null}{block.charts?.map((chart) => <ChartRenderer key={chart.id} block={{ schemaVersion: 1, type: 'chart', ...chart }} />)}{block.tables?.map((table) => <TableRenderer key={table.id} block={{ schemaVersion: 1, type: 'table', ...table }} />)}</div></Surface>; }
 
 export function XrogaRichBlockView({ block }: { block: XrogaBlock }) {
+  if (['progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking'].includes(block.type)) return <XrogaUtilityBlockView block={block} />;
   if (block.type === 'metric' || block.type === 'metric-group') return <MetricRenderer block={block} />;
   if (block.type === 'table' || block.type === 'spreadsheet' || block.type === 'database') return <TableRenderer block={block} />;
   if (block.type === 'chart') return <ChartRenderer block={block} />;

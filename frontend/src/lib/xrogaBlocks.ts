@@ -122,6 +122,11 @@ const metricItem = z.object({
   id: z.string().min(1), label: z.string().min(1), value: z.union([z.string(), z.number()]),
   unit: z.string().optional(), change: z.number().optional(), trend: z.enum(['up', 'down', 'flat']).optional(),
 });
+const progressItem = z.object({
+  id: z.string().min(1), label: z.string().min(1), value: z.number(), max: z.number().positive().default(100),
+  detail: z.string().optional(), unit: z.string().optional(), color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  status: z.enum(['pending', 'running', 'completed', 'failed']).optional(),
+});
 const tableShape = {
   columns: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), type: z.enum(['text', 'number', 'date', 'boolean', 'url']).optional() })).min(1),
   rows: z.array(dataRow), datasetId: z.string().optional(), searchable: z.boolean().optional(), selectable: z.boolean().optional(),
@@ -129,6 +134,53 @@ const tableShape = {
 
 const metricBlock = richBase.extend({ type: z.literal('metric'), metric: metricItem });
 const metricGroupBlock = richBase.extend({ type: z.literal('metric-group'), metrics: z.array(metricItem).min(1) });
+const progressBlock = richBase.extend({ type: z.literal('progress'), progress: progressItem });
+const progressGroupBlock = richBase.extend({ type: z.literal('progress-group'), items: z.array(progressItem).min(1) });
+const calculatorBlock = richBase.extend({
+  type: z.literal('calculator'),
+  operation: z.enum(['sum', 'difference', 'product', 'quotient', 'average', 'percentage', 'percentage-change', 'minimum', 'maximum']),
+  inputs: z.array(z.object({
+    id: z.string().min(1), label: z.string().min(1), value: z.number(), min: z.number().optional(),
+    max: z.number().optional(), step: z.number().positive().optional(), unit: z.string().optional(),
+  })).min(1).max(12),
+  resultLabel: z.string().min(1), resultUnit: z.string().optional(), precision: z.number().int().min(0).max(8).optional(),
+});
+const calculationBlock = richBase.extend({
+  type: z.literal('calculation'), formula: z.string().optional(),
+  steps: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), expression: z.string().optional(), value: z.union([z.string(), z.number()]) })).min(1),
+  result: z.union([z.string(), z.number()]), resultLabel: z.string().optional(), unit: z.string().optional(),
+});
+const gaugeBlock = richBase.extend({
+  type: z.literal('gauge'), label: z.string().min(1), value: z.number(), min: z.number(), max: z.number(),
+  unit: z.string().optional(), target: z.number().optional(), detail: z.string().optional(),
+});
+const comparisonBlock = richBase.extend({
+  type: z.literal('comparison'),
+  options: z.array(z.object({
+    id: z.string().min(1), label: z.string().min(1), description: z.string().optional(), recommended: z.boolean().optional(),
+    metrics: z.record(z.string(), scalarValue),
+  })).min(2).max(6),
+});
+const keyValueBlock = richBase.extend({
+  type: z.literal('key-value'),
+  items: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), value: scalarValue, detail: z.string().optional() })).min(1),
+});
+const checklistBlock = richBase.extend({
+  type: z.literal('checklist'),
+  items: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), detail: z.string().optional(), status: z.enum(['pending', 'running', 'completed', 'failed', 'blocked']) })).min(1),
+});
+const stepsBlock = richBase.extend({
+  type: z.literal('steps'), currentStepId: z.string().optional(),
+  steps: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), description: z.string().optional(), status: z.enum(['pending', 'current', 'completed', 'failed']).optional() })).min(1),
+});
+const scorecardBlock = richBase.extend({
+  type: z.literal('scorecard'),
+  scores: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), score: z.number(), max: z.number().positive(), detail: z.string().optional() })).min(1),
+});
+const rankingBlock = richBase.extend({
+  type: z.literal('ranking'),
+  entries: z.array(z.object({ id: z.string().min(1), label: z.string().min(1), value: z.number(), unit: z.string().optional(), detail: z.string().optional() })).min(1),
+});
 const tableBlock = richBase.extend({ type: z.literal('table'), ...tableShape });
 const chartBlock = richBase.extend({
   type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar']), data: z.array(dataRow), xKey: z.string().min(1),
@@ -159,7 +211,9 @@ const pdfBlock = richBase.extend({ type: z.literal('pdf'), name: z.string().min(
 export const xrogaBlockSchema = z.discriminatedUnion('type', [
   textBlock, listBlock, evidenceBlock, linkBlock, approvalBlock, receiptBlock,
   contentBlock, connectionBlock, websiteBlock, artifactBlock,
-  metricBlock, metricGroupBlock, tableBlock, chartBlock, timelineBlock, graphBlock, mapBlock,
+  metricBlock, metricGroupBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
+  gaugeBlock, comparisonBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
+  tableBlock, chartBlock, timelineBlock, graphBlock, mapBlock,
   formBlock, choiceBlock, galleryBlock, imageBlock, audioBlock, videoBlock, dashboardBlock,
   documentBlock, spreadsheetBlock, presentationBlock, boardBlock, databaseBlock, pdfBlock,
 ]);

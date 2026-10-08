@@ -9,4 +9,8 @@ test('chat answers may request safe rich output without fabricating visual data'
   assert.match(CHAT_SYSTEM, /strict JSON only/i);
   assert.match(CHAT_SYSTEM, /No HTML, scripts, callbacks, actions/i);
   assert.match(CHAT_SYSTEM, /normal Markdown table/i);
+  assert.match(CHAT_SYSTEM, /progress view/i);
+  assert.match(CHAT_SYSTEM, /calculator/i);
+  assert.match(CHAT_SYSTEM, /calculation breakdown/i);
+  assert.match(CHAT_SYSTEM, /scorecard/i);
 });
