@@ -11,6 +11,8 @@ test('chat answers may request safe rich output without fabricating visual data'
   assert.match(CHAT_SYSTEM, /normal Markdown table/i);
   assert.match(CHAT_SYSTEM, /progress view/i);
   assert.match(CHAT_SYSTEM, /calculator/i);
+  assert.match(CHAT_SYSTEM, /full installed Lucide catalog/i);
+  assert.match(CHAT_SYSTEM, /Do not decorate responses with emoji/i);
   assert.match(CHAT_SYSTEM, /calculation breakdown/i);
   assert.match(CHAT_SYSTEM, /scorecard/i);
   assert.match(CHAT_SYSTEM, /file tree/i);

@@ -138,7 +138,7 @@ function FilePreviewModal({
                   onApplyStyle(file, aiPrompt);
                   onClose();
                 } else {
-                  toast('AI style transfer — attach image and send from chatbar', { icon: '✨' });
+                  toast('AI style transfer — attach image and send from chatbar', { icon: <Sparkles className="h-4 w-4" aria-hidden="true" /> });
                 }
               }}
               className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#006aff]/15 text-[#006aff] text-xs font-bold"

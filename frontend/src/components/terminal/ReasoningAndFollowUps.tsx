@@ -1,6 +1,7 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, type ReactNode } from 'react';
+import { MessageSquareText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   extractImagesFromContent,
@@ -12,6 +13,13 @@ import { FormattedAiMarkdown } from '@/lib/formatAiMarkdown';
 import { PlainAiResponse } from '@/lib/plainAiText';
 import { isMathSolutionContent } from '@/lib/mathDetect';
 import { ImageStudioCard } from './ImageStudioCard';
+
+function ResponseBody({ children, streaming }: { children: ReactNode; streaming?: boolean }) {
+  return <div className={cn('xv-response-text flex min-w-0 items-start gap-2.5', streaming && 'xv-streaming')}>
+    <MessageSquareText className="mt-1 h-4 w-4 shrink-0 text-[var(--muted)]" aria-hidden="true" />
+    <div className="min-w-0 flex-1">{children}</div>
+  </div>;
+}
 
 /** Modern AI response — professional markdown or structured plain text */
 export const ModernResponseText = memo(function ModernResponseText({
@@ -33,42 +41,40 @@ export const ModernResponseText = memo(function ModernResponseText({
 
   if (isFailedImageContent(safeContent) && images.length === 0) {
     return (
-      <div className="xv-response-text">
+      <ResponseBody streaming={streaming}>
         <p className="whitespace-pre-wrap text-[13px] text-red-300/90">
           {textOnly || safeContent}
         </p>
-      </div>
+      </ResponseBody>
     );
   }
 
   if (images.length > 0) {
     return (
-      <div
-        className={cn('xv-response-text space-y-2', streaming && 'xv-streaming')}
-      >
-        {textOnly && (
-          <FormattedAiMarkdown content={textOnly} streaming={streaming} />
-        )}
+      <ResponseBody streaming={streaming}>
+        <div className="space-y-2">
+          {textOnly && (
+            <FormattedAiMarkdown content={textOnly} streaming={streaming} />
+          )}
 
-        {images.map((img, i) => (
-          <ImageStudioCard
-            key={`studio-img-${i}`}
-            data={{
-              type: 'image',
-              imageUrl: img.url,
-              provider,
-              prompt: img.alt !== 'Generated image' ? img.alt : undefined,
-            }}
-          />
-        ))}
-      </div>
+          {images.map((img, i) => (
+            <ImageStudioCard
+              key={`studio-img-${i}`}
+              data={{
+                type: 'image',
+                imageUrl: img.url,
+                provider,
+                prompt: img.alt !== 'Generated image' ? img.alt : undefined,
+              }}
+            />
+          ))}
+        </div>
+      </ResponseBody>
     );
   }
 
   return (
-    <div
-      className={cn('xv-response-text', streaming && 'xv-streaming')}
-    >
+    <ResponseBody streaming={streaming}>
       {isMathSolutionContent(safeContent) ? (
         <PlainAiResponse
           content={safeContent}
@@ -78,6 +84,6 @@ export const ModernResponseText = memo(function ModernResponseText({
       ) : (
         <FormattedAiMarkdown content={safeContent} streaming={streaming} />
       )}
-    </div>
+    </ResponseBody>
   );
 });

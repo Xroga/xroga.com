@@ -39,6 +39,7 @@ import {
 import { useProjectWorkspaceStore } from '@/store/useProjectWorkspaceStore';
 import { WorkspaceLauncher } from './WorkspaceLauncher';
 import toast from 'react-hot-toast';
+import { Lightbulb, TriangleAlert } from 'lucide-react';
 import { WorkspaceIdentityMenu } from './WorkspaceIdentityMenu';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { ExpandIcon } from '@/components/icons/animated/ExpandIcon';
@@ -329,7 +330,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
 
   function handleSuggestion(text: string) {
     setPrompt(text);
-    toast('Suggestion added — press GO', { icon: '💡' });
+    toast('Suggestion added — press GO', { icon: <Lightbulb className="h-4 w-4" aria-hidden="true" /> });
   }
 
   return (
@@ -569,7 +570,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                                           toast.success('Undo complete on GitHub');
                                         }
                                         if (result.warning) {
-                                          toast(result.warning, { icon: '⚠️' });
+                                          toast(result.warning, { icon: <TriangleAlert className="h-4 w-4" aria-hidden="true" /> });
                                         }
                                       } catch (err) {
                                         toast.error((err as Error).message || 'Undo failed');
@@ -618,8 +619,8 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                                           lastUserText
                                         );
                                       return updateAsk
-                                        ? '⚠️ No preview was delivered for this update. Send again — we patch your selected GitHub project files, not a brand-new site.'
-                                        : '⚠️ No preview was delivered for this build. Send again — we will generate a real preview for your selected repo (or sandbox if push fails).';
+                                        ? 'No preview was delivered for this update. Send again — we patch your selected GitHub project files, not a brand-new site.'
+                                        : 'No preview was delivered for this build. Send again — we will generate a real preview for your selected repo (or sandbox if push fails).';
                                     })()
                                   : msg.content
                             }

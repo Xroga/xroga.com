@@ -187,7 +187,7 @@ export function WorkspaceIdentityMenu({ incognito = false }: { incognito?: boole
       } else {
         toast.success('Undo complete on GitHub');
       }
-      if (result.warning) toast(result.warning, { icon: '⚠️' });
+      if (result.warning) toast(result.warning, { icon: <AlertTriangle className="h-4 w-4" aria-hidden="true" /> });
     } catch (error) {
       toast.error((error as Error).message || 'Undo failed');
     } finally {

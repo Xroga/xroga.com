@@ -3595,7 +3595,7 @@ active.applyBuild({
               if (!hasRenderableLanding) {
                 // Empty landing payload after spend — never leave a blank "No response" bubble
                 const failMsg =
-                  '⚠️ **Build finished without a preview.** Tokens were used, but no HTML was returned. Tap Retry — we will ship a sandbox site from your prompt.';
+                  '**Build finished without a preview.** Tokens were used, but no HTML was returned. Tap Retry — we will ship a sandbox site from your prompt.';
                 fullReply = failMsg;
                 dispatchCompanionEvent({
                   type: 'task_failure',
@@ -4004,7 +4004,7 @@ active.applyBuild({
                   (existing.featureOutput as { type?: string }).type === 'landing_page';
                 if (hasLanding) return m;
                 const buildError =
-                  '⚠️ **Build could not finish.** Connect GitHub under Integrations, then try again.';
+                  '**Build could not finish.** Connect GitHub under Integrations, then try again.';
                 fullReply = buildError;
                 return m.map((msg) => (msg.id === assistantId ? { ...msg, content: buildError } : msg));
               });
@@ -4100,7 +4100,7 @@ active.applyBuild({
               fo?.type === 'landing_page' && typeof fo.html === 'string' && fo.html.trim().length > 40;
             if (existing?.content?.trim() || foOk) return m;
             const fallback = codeBuildActive
-              ? '⚠️ **Build ended without a preview.** Tap **Retry** or send the prompt again — if a GitHub repo is already selected, you should not need the Connect popup.'
+              ? '**Build ended without a preview.** Tap **Retry** or send the prompt again — if a GitHub repo is already selected, you should not need the Connect popup.'
               : 'I could not finish that reply. Please send your question again — advice and research answers should appear here in the terminal.';
             fullReply = fallback;
             return m.map((msg) =>
@@ -4353,7 +4353,7 @@ active.applyBuild({
                     ...msg,
                     content:
                       msg.content?.trim() ||
-                      '⚠️ **Token quota reached.** Upgrade your plan to continue building.',
+                      '**Token quota reached.** Upgrade your plan to continue building.',
                   }
                 : msg
             )
@@ -4440,7 +4440,7 @@ active.applyBuild({
                     ...msg,
                     content:
                       msg.content?.trim() ||
-                      '⚠️ **Ship connection interrupted** after your preview was ready. Check GitHub for pushed files, or tap Retry to finish deploy.',
+                      '**Ship connection interrupted** after your preview was ready. Check GitHub for pushed files, or tap Retry to finish deploy.',
                     featureOutput: msg.featureOutput,
                   }
                 : msg

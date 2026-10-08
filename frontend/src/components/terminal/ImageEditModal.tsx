@@ -121,7 +121,7 @@ export function ImageEditModal({
     const prompt = buildImageEditPrompt(action, previewSrc, editPrompt.trim() || undefined);
     setPrompt(prompt);
     onClose();
-    toast('Edit queued — press GO', { icon: '✨' });
+    toast('Edit queued — press GO', { icon: <Sparkles className="h-4 w-4" aria-hidden="true" /> });
   }
 
   function handleChatSubmit(e: React.FormEvent) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
-import { AlertCircle, Check, CircleHelp, Clock3, ExternalLink, FileCheck2, LoaderCircle, PlugZap, TriangleAlert } from 'lucide-react';
+import { Activity, AlertCircle, AudioLines, BarChart3, Braces, Calculator, CalendarDays, Check, CircleHelp, Clock3, Code2, ExternalLink, FileCheck2, FileText, FolderTree, Gauge, Globe2, Image, LayoutDashboard, ListChecks, LoaderCircle, MapPin, MessageSquareText, PlugZap, Search, Sparkles, Table2, TriangleAlert, Video, type LucideIcon } from 'lucide-react';
 
 import { EngineeringArtifactView } from './EngineeringArtifactView';
 import { LegacyLandingOutputView } from './LegacyLandingOutputView';
@@ -34,6 +34,30 @@ export function renderBlock(block: XrogaBlock): ReactNode {
 }
 
 const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
+const CustomLucideIcon = lazy(() => import('./XrogaLucideIcon').then((module) => ({ default: module.XrogaLucideIcon })));
+
+const typeIcons: Partial<Record<XrogaBlock['type'], LucideIcon>> = {
+  narrative: MessageSquareText, notice: CircleHelp, status: Activity, error: AlertCircle, 'empty-state': Search,
+  plan: ListChecks, activity: Activity, evidence: FileCheck2, citation: ExternalLink, source: ExternalLink,
+  approval: CircleHelp, receipt: Check, code: Code2, diff: Code2, terminal: Code2, file: FileText,
+  'connection-request': PlugZap, website: Globe2, artifact: FileText,
+  metric: BarChart3, 'metric-group': BarChart3, progress: Activity, 'progress-group': Activity,
+  calculator: Calculator, calculation: Calculator, gauge: Gauge, comparison: BarChart3, 'key-value': ListChecks,
+  checklist: ListChecks, steps: ListChecks, scorecard: Gauge, ranking: BarChart3,
+  tabs: LayoutDashboard, accordion: ListChecks, 'file-tree': FolderTree, calendar: CalendarDays,
+  'source-list': ExternalLink, 'card-grid': LayoutDashboard, tree: FolderTree, json: Braces,
+  'api-request': Code2, table: Table2, chart: BarChart3, timeline: Clock3, graph: FolderTree,
+  map: MapPin, form: ListChecks, choice: ListChecks, gallery: Image, image: Image,
+  audio: AudioLines, video: Video, dashboard: LayoutDashboard, document: FileText,
+  spreadsheet: Table2, presentation: LayoutDashboard, board: LayoutDashboard, database: Table2, pdf: FileText,
+};
+
+function ResponseBlockIcon({ block }: { block: XrogaBlock }) {
+  const Fallback = typeIcons[block.type] ?? Sparkles;
+  return <span className="xv-response-block-icon mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)]" aria-hidden="true">
+    {block.icon ? <Suspense fallback={<Fallback className="h-4 w-4" />}><CustomLucideIcon name={block.icon} fallback={Fallback} /></Suspense> : <Fallback className="h-4 w-4" />}
+  </span>;
+}
 
 function TextRenderer({ block }: { block: XrogaBlock }) {
   if (!['narrative', 'notice', 'status', 'error', 'empty-state'].includes(block.type)) return null;
@@ -139,6 +163,6 @@ for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'cal
 export function XrogaOutputView({ output }: { output: XrogaOutputDocument }) {
   return <section className="xv-ai-output-block space-y-4 py-3" aria-label="Xroga output">{output.artifact ? <XrogaArtifactHeader artifact={output.artifact} status={output.status} /> : null}{output.blocks.map((candidate) => {
     const block = parseXrogaBlock(candidate);
-    return <div key={candidate.id}>{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div>;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

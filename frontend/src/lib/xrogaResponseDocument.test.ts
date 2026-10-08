@@ -56,6 +56,7 @@ test('validated utility blocks become interactive response output', () => {
     JSON.stringify({
       type: 'calculator',
       title: 'Revenue estimate',
+      icon: 'calculator',
       operation: 'product',
       inputs: [
         { id: 'price', label: 'Price', value: 25, unit: 'USD' },
@@ -70,6 +71,7 @@ test('validated utility blocks become interactive response output', () => {
 
   assert.equal(result.content, 'Adjust the inputs to explore the estimate.');
   assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'calculator']);
+  assert.equal(result.output?.blocks[1]?.icon, 'calculator');
 });
 
 test('organizer and developer blocks become live response output', () => {
