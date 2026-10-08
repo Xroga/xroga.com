@@ -9,7 +9,7 @@ const RICH_TYPES = new Set([
   'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation',
   'board', 'database', 'pdf', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge',
   'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking',
-  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list',
+  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request',
 ]);
 const UNSAFE_KEYS = new Set(['html', 'script', 'onclick', 'actionurl', '__proto__', 'prototype', 'constructor']);
 const MAX_PROTOCOL_CHARS = 50_000;

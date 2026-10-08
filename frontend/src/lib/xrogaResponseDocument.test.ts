@@ -95,6 +95,28 @@ test('organizer and developer blocks become live response output', () => {
   assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'tabs', 'diff']);
 });
 
+test('cards, trees, JSON, and API exchanges become live response output', () => {
+  const response = [
+    'Here are the structured results.',
+    '```xroga-ui',
+    JSON.stringify({ type: 'card-grid', title: 'Options', cards: [{ id: 'a', title: 'Option A', metrics: { Score: 94 } }] }),
+    '```',
+    '```xroga-ui',
+    JSON.stringify({ type: 'tree', title: 'Team', nodes: [{ id: 'lead', label: 'Lead' }, { id: 'dev', label: 'Developer', parentId: 'lead' }] }),
+    '```',
+    '```xroga-ui',
+    JSON.stringify({ type: 'json', title: 'Payload', data: { ok: true } }),
+    '```',
+    '```xroga-ui',
+    JSON.stringify({ type: 'api-request', title: 'Health check', method: 'GET', url: '/api/health', status: 200, responseBody: '{"ok":true}' }),
+    '```',
+  ].join('\n');
+  const result = enhanceAiResponse(response, 'message-structured');
+
+  assert.equal(result.content, 'Here are the structured results.');
+  assert.deepEqual(result.output?.blocks.map((block) => block.type), ['narrative', 'card-grid', 'tree', 'json', 'api-request']);
+});
+
 test('malformed and executable rich payloads are hidden and rejected', () => {
   const malformed = 'Safe answer.\n```xroga-ui\n{"type":"chart"\n```';
   const executable = `Safe answer.\n\`\`\`xroga-ui\n${JSON.stringify({

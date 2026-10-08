@@ -6,7 +6,7 @@ const ALLOWED_A2UI_TYPES = new Set<XrogaBlock['type']>([
   'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard',
   'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf', 'progress', 'progress-group',
   'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking',
-  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list',
+  'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request',
 ]);
 
 /** Safe A2UI boundary: data-only canonical blocks, no scripts, HTML, or arbitrary actions. */

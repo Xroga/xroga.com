@@ -216,9 +216,37 @@ const sourceListBlock = richBase.extend({
     domain: z.string().optional(), excerpt: z.string().optional(), publishedAt: z.string().optional(),
   })).min(1).max(100),
 });
+const cardGridBlock = richBase.extend({
+  type: z.literal('card-grid'),
+  cards: z.array(z.object({
+    id: z.string().min(1), title: z.string().min(1), subtitle: z.string().optional(),
+    description: z.string().optional(), badge: z.string().optional(), imageUrl: z.string().url().optional(),
+    url: z.string().url().optional(), actionLabel: z.string().optional(),
+    metrics: z.record(z.string(), scalarValue).optional(),
+  })).min(1).max(24),
+});
+const treeBlock = richBase.extend({
+  type: z.literal('tree'),
+  nodes: z.array(z.object({
+    id: z.string().min(1), label: z.string().min(1), parentId: z.string().optional(),
+    detail: z.string().optional(), status: z.string().optional(),
+  })).min(1).max(300),
+});
+const jsonBlock = richBase.extend({
+  type: z.literal('json'),
+  data: z.record(z.string(), z.unknown()),
+});
+const apiRequestBlock = richBase.extend({
+  type: z.literal('api-request'),
+  method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']),
+  url: z.string().min(1), status: z.number().int().min(100).max(599).optional(),
+  durationMs: z.number().nonnegative().optional(), language: z.string().optional(),
+  requestHeaders: z.record(z.string(), z.string()).optional(), responseHeaders: z.record(z.string(), z.string()).optional(),
+  requestBody: z.string().optional(), responseBody: z.string().optional(),
+});
 const tableBlock = richBase.extend({ type: z.literal('table'), ...tableShape });
 const chartBlock = richBase.extend({
-  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter']), data: z.array(dataRow), xKey: z.string().min(1),
+  type: z.literal('chart'), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1),
   series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional() })).min(1),
   datasetId: z.string().optional(), summary: z.string().min(1),
 });
@@ -235,7 +263,7 @@ const galleryBlock = richBase.extend({ type: z.literal('gallery'), items: z.arra
 const imageBlock = richBase.extend({ type: z.literal('image'), image: mediaItem });
 const audioBlock = richBase.extend({ type: z.literal('audio'), audio: mediaItem });
 const videoBlock = richBase.extend({ type: z.literal('video'), video: mediaItem });
-const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
+const dashboardBlock = richBase.extend({ type: z.literal('dashboard'), metrics: z.array(metricItem).optional(), charts: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), chartType: z.enum(['line', 'area', 'bar', 'pie', 'donut', 'scatter', 'radar', 'funnel']), data: z.array(dataRow), xKey: z.string().min(1), series: z.array(z.object({ key: z.string().min(1), label: z.string().min(1), color: z.string().optional() })).min(1), summary: z.string().min(1) })).optional(), tables: z.array(z.object({ id: z.string().min(1), title: z.string().optional(), ...tableShape })).optional() });
 const documentBlock = richBase.extend({ type: z.literal('document'), content: z.string(), format: z.enum(['markdown', 'text']).default('markdown'), version: z.number().int().positive().optional() });
 const spreadsheetBlock = richBase.extend({ type: z.literal('spreadsheet'), ...tableShape, formulas: z.record(z.string(), z.string()).optional() });
 const presentationBlock = richBase.extend({ type: z.literal('presentation'), slides: z.array(z.object({ id: z.string().min(1), title: z.string().min(1), body: z.string().optional(), bullets: z.array(z.string()).optional(), imageUrl: z.string().url().optional() })).min(1) });
@@ -249,6 +277,7 @@ export const xrogaBlockSchema = z.discriminatedUnion('type', [
   metricBlock, metricGroupBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
   gaugeBlock, comparisonBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
   tabsBlock, accordionBlock, fileTreeBlock, calendarBlock, sourceListBlock,
+  cardGridBlock, treeBlock, jsonBlock, apiRequestBlock,
   tableBlock, chartBlock, timelineBlock, graphBlock, mapBlock,
   formBlock, choiceBlock, galleryBlock, imageBlock, audioBlock, videoBlock, dashboardBlock,
   documentBlock, spreadsheetBlock, presentationBlock, boardBlock, databaseBlock, pdfBlock,

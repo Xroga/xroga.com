@@ -16,8 +16,15 @@ test('chat answers may request safe rich output without fabricating visual data'
   assert.match(CHAT_SYSTEM, /file tree/i);
   assert.match(CHAT_SYSTEM, /accordion/i);
   assert.match(CHAT_SYSTEM, /source list/i);
+  assert.match(CHAT_SYSTEM, /"type":"card-grid"/i);
+  assert.match(CHAT_SYSTEM, /"type":"tree"/i);
+  assert.match(CHAT_SYSTEM, /"type":"json"/i);
+  assert.match(CHAT_SYSTEM, /"type":"api-request"/i);
   assert.match(CHAT_SYSTEM, /"type":"diff"/i);
   assert.match(CHAT_SYSTEM, /"chartType":"donut"/i);
+  assert.match(CHAT_SYSTEM, /"chartType":"radar"/i);
+  assert.match(CHAT_SYSTEM, /"chartType":"funnel"/i);
+  assert.match(CHAT_SYSTEM, /authorization headers, cookies, tokens, or secrets/i);
 });
 
 test('every compact rich-output example is strict JSON', () => {

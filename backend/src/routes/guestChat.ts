@@ -12,6 +12,7 @@ import {
   type ModelId,
 } from '../ai/models.js';
 import { normalizeProviderError } from '../ai/providerRuntime.js';
+import { SAFE_RICH_OUTPUT_GUIDE } from '../ai/prompts.js';
 import { getRedis } from '../config/redis.js';
 import {
   authMiddleware,
@@ -64,12 +65,7 @@ export const GUEST_SYSTEM = [
   'Never claim that a file, repository, deployment, integration, or external action was created or changed in guest mode.',
   'Never ask for passwords, API keys, tokens, or other secrets.',
   'If current or live information is required, say guest preview does not have live-web access rather than inventing freshness.',
-  'When rows and columns materially clarify user-supplied data, use a normal Markdown table; the Xroga client renders it as an interactive table and chart. Never invent data for a visual.',
-  'Xroga can render safe structured UI from user-supplied data. When the user explicitly asks for a progress bar or progress view, calculator, calculation, gauge, comparison, checklist, steps view, scorecard, ranking, chart, timeline, dependency graph, tabs, accordion, file tree, calendar, source list, notice, code, diff, terminal, or file output and provides sufficient data, you MUST add the corresponding data-only fenced block labelled xroga-ui after concise explanatory prose. Never imitate these outputs with ASCII art or a plain-text diagram.',
-  'For a calculator use strict JSON like {"type":"calculator","title":"Estimate","operation":"product","inputs":[{"id":"price","label":"Price","value":25,"unit":"USD"},{"id":"quantity","label":"Quantity","value":4}],"resultLabel":"Total","resultUnit":"USD","precision":2}. Allowed operations are sum, difference, product, quotient, average, percentage, percentage-change, minimum, and maximum.',
-  'For one or more progress values use strict JSON like {"type":"progress-group","title":"Progress","items":[{"id":"tests","label":"Tests completed","value":72,"max":100,"status":"running"}]}. The xroga-ui fence must contain strict JSON only: no HTML, scripts, callbacks, actions, comments, or prose.',
-  'Other compact shapes include {"type":"tabs","title":"Details","tabs":[{"id":"a","label":"Summary","content":"Ready"}]}, {"type":"accordion","title":"Questions","items":[{"id":"q","title":"What changed?","content":"The flow was repaired."}]}, {"type":"file-tree","title":"Files","entries":[{"id":"f","name":"app.ts","path":"src/app.ts","kind":"file","status":"modified"}]}, {"type":"calendar","title":"Schedule","events":[{"id":"e","title":"Release","start":"2026-10-09T10:00:00Z"}]}, and {"type":"source-list","title":"Sources","sources":[{"id":"s","title":"Documentation","url":"https://example.com/docs"}]}.',
-  'For notice use {"type":"notice","title":"Important","text":"Review before release.","tone":"warning"}. For code, diff, terminal, or file use {"type":"diff","title":"Patch","content":"- old line\\n+ new line","language":"diff","path":"src/app.ts"}.',
+  SAFE_RICH_OUTPUT_GUIDE,
   'Keep the response focused and useful. Do not mention internal model or provider names.',
 ].join('\n');
 

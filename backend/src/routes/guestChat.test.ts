@@ -15,13 +15,15 @@ import {
 } from './guestChat.js';
 
 test('guest chat requires structured components for explicit visual requests', () => {
-  assert.match(GUEST_SYSTEM, /MUST add the corresponding data-only fenced block labelled xroga-ui/);
-  assert.match(GUEST_SYSTEM, /Never imitate these outputs with ASCII art/);
+  assert.match(GUEST_SYSTEM, /MUST include the corresponding xroga-ui block/);
+  assert.match(GUEST_SYSTEM, /Never imitate a progress bar, calculator.*with ASCII art/);
   assert.match(GUEST_SYSTEM, /"type":"calculator"/);
   assert.match(GUEST_SYSTEM, /"type":"progress-group"/);
   assert.match(GUEST_SYSTEM, /"type":"tabs"/);
   assert.match(GUEST_SYSTEM, /"type":"file-tree"/);
   assert.match(GUEST_SYSTEM, /"type":"source-list"/);
+  assert.match(GUEST_SYSTEM, /"type":"card-grid"/);
+  assert.match(GUEST_SYSTEM, /"type":"api-request"/);
   assert.match(GUEST_SYSTEM, /"type":"diff"/);
 });
 

@@ -39,8 +39,14 @@ test('all Step 2 rich block families validate with truthful minimum data', () =>
     { ...base, type: 'file-tree', entries: [{ id: 'f', name: 'app.ts', path: 'src/app.ts', kind: 'file', status: 'modified' }] },
     { ...base, type: 'calendar', events: [{ id: 'e', title: 'Release', start: '2026-10-09T10:00:00Z' }] },
     { ...base, type: 'source-list', sources: [{ id: 's', title: 'Documentation', url: 'https://example.com/docs' }] },
+    { ...base, type: 'card-grid', cards: [{ id: 'c', title: 'Option A', metrics: { Score: 94 } }] },
+    { ...base, type: 'tree', nodes: [{ id: 'root', label: 'Lead' }, { id: 'child', label: 'Developer', parentId: 'root' }] },
+    { ...base, type: 'json', data: { ok: true, count: 2 } },
+    { ...base, type: 'api-request', method: 'GET', url: '/api/health', status: 200, responseBody: '{"ok":true}' },
     { ...base, type: 'table', columns: [{ key: 'name', label: 'Name' }], rows: [{ name: 'Ada' }] },
     { ...base, type: 'chart', chartType: 'line', xKey: 'month', data: [{ month: 'Jan', value: 2 }], series: [{ key: 'value', label: 'Value' }], summary: 'Value by month' },
+    { ...base, type: 'chart', chartType: 'radar', xKey: 'area', data: [{ area: 'Quality', score: 92 }], series: [{ key: 'score', label: 'Score' }], summary: 'Coverage' },
+    { ...base, type: 'chart', chartType: 'funnel', xKey: 'stage', data: [{ stage: 'Visit', value: 100 }], series: [{ key: 'value', label: 'Users' }], summary: 'Conversion' },
     { ...base, type: 'timeline', events: [{ id: 'e', title: 'Started', date: '2026-10-03' }] },
     { ...base, type: 'graph', nodes: [{ id: 'a', label: 'A' }], edges: [] },
     { ...base, type: 'map', locations: [{ id: 'p', label: 'Office', latitude: 40, longitude: -74 }] },
@@ -102,6 +108,9 @@ test('large data threshold and lazy renderer keep simple chat light', () => {
   assert.match(rich, /skipHtml/);
   assert.match(rich, /XrogaUtilityBlockView/);
   assert.match(rich, /XrogaOrganizerBlockView/);
+  assert.match(rich, /XrogaStructuredBlockView/);
   assert.match(rich, /PieChart/);
   assert.match(rich, /ScatterChart/);
+  assert.match(rich, /RadarChart/);
+  assert.match(rich, /FunnelChart/);
 });
