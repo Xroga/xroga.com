@@ -14434,3 +14434,13 @@ html.xv-home-scroll-lock body {
 @media (prefers-reduced-motion: reduce) {
   .xv-public-marketing-shell > .xv-beta-banner { animation: none !important; transition: none !important; }
 }
+.xv-notification-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 55%, transparent) transparent;
+}
+.xv-notification-scroll::-webkit-scrollbar { width: 6px; }
+.xv-notification-scroll::-webkit-scrollbar-track { background: transparent; }
+.xv-notification-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
+}

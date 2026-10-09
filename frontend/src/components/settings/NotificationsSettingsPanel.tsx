@@ -21,7 +21,7 @@ export function NotificationsSettingsPanel() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setBrowserNotify(localStorage.getItem(BROWSER_NOTIFY_PROJECT_READY_KEY) !== '0');
+    setBrowserNotify(typeof Notification !== 'undefined' && Notification.permission === 'granted' && localStorage.getItem(BROWSER_NOTIFY_PROJECT_READY_KEY) !== '0');
     setStackNotify(notificationPreference(NOTIFICATION_STACK_KEY));
     setSoundNotify(notificationPreference(NOTIFICATION_SOUND_KEY));
     setPermission(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);

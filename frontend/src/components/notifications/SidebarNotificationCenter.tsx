@@ -58,7 +58,7 @@ export function SidebarNotificationCenter({ open, onClose }: Pick<Props, 'open' 
       <span className="text-[10px] uppercase tracking-[.12em] text-[var(--muted)]">Recent activity</span>
       <button type="button" onClick={() => void markAllRead()} disabled={busy || unread === 0} className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:underline disabled:opacity-40"><CheckCheck className="h-3 w-3" /> Mark all read</button>
     </div>
-    <div className="min-h-0 flex-1 overflow-y-auto p-2">
+    <div className="xv-notification-scroll min-h-0 flex-1 overflow-y-auto p-2">
       {notifications.length === 0 ? <div className="px-3 py-10 text-center text-xs text-[var(--muted)]">No notifications yet. Real task updates will appear here.</div> : notifications.map((n) => <button key={n.id} type="button" onClick={() => void openNotification(n)} className={`mb-1 flex w-full items-start gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-[var(--foreground)]/[.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${n.read ? '' : 'bg-[var(--foreground)]/[.045]'}`}>
         <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${toneClass[notificationTone(n)]}`} aria-hidden="true" />
         <span className="min-w-0 flex-1"><span className="block text-xs font-semibold leading-snug">{n.title}</span><span className="mt-1 block text-[11px] leading-relaxed text-[var(--muted)] line-clamp-3">{n.message}</span><span className="mt-1.5 flex gap-2 text-[10px] text-[var(--muted)]"><span>{notificationStatus(n)}</span><span>·</span><span>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span></span></span>
