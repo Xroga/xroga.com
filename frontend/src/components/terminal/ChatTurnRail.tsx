@@ -2,20 +2,32 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ChatTurn {
   id: string;
   label: string;
+  summary: string;
+  detail?: string;
 }
 
-const COLLAPSED_MAX = 10;
-
-function clip(text: string, max = 36): string {
+function clip(text: string, max: number): string {
   const line = text.replace(/\s+/g, ' ').trim();
-  if (line.length <= max) return line;
-  return `${line.slice(0, max - 1)}…`;
+  return line.length <= max ? line : `${line.slice(0, max - 1)}…`;
+}
+
+function responsePreview(content: string): Pick<ChatTurn, 'summary' | 'detail'> {
+  const lines = content
+    .replace(/```[\s\S]*?```/g, ' Code details are in the response. ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .split(/\n+/)
+    .map((line) => line.replace(/^\s*(?:#{1,6}\s+|>\s*)/, '').replace(/[*_`]/g, '').trim())
+    .filter(Boolean);
+  const summary = lines.find((line) => !/^(?:[-•]|\d+\.)\s/.test(line)) ?? lines[0] ?? '';
+  const detail = lines.find((line) => /^(?:[-•]|\d+\.)\s/.test(line))?.replace(/^(?:[-•]|\d+\.)\s*/, '');
+  return { summary: clip(summary, 112), detail: detail ? clip(detail, 100) : undefined };
 }
 
 interface ChatTurnRailProps {
@@ -25,173 +37,104 @@ interface ChatTurnRailProps {
   className?: string;
 }
 
+/** A quiet full-height conversation map, not a second scrolling chat panel. */
 export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRailProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => new Set());
+  const [left, setLeft] = useState(8);
   const [mounted, setMounted] = useState(false);
-
-  const previewTurn = useMemo(
-    () => turns.find((t) => t.id === (hoveredId ?? activeId)) ?? turns[turns.length - 1],
-    [turns, hoveredId, activeId]
-  );
-
-  const collapsedTurns = useMemo(() => {
-    if (turns.length <= COLLAPSED_MAX) return turns;
-    return turns.slice(-COLLAPSED_MAX);
-  }, [turns]);
 
   useEffect(() => {
     setMounted(true);
+    const scrollRoot = document.querySelector<HTMLElement>('.xv-terminal-scroll')
+      ?? document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto');
+    const place = () => setLeft(Math.max(8, Math.round((scrollRoot?.getBoundingClientRect().left ?? 0) + 8)));
+    place();
+    const observer = scrollRoot ? new ResizeObserver(place) : null;
+    if (scrollRoot) observer?.observe(scrollRoot);
+    window.addEventListener('resize', place);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', place);
+    };
   }, []);
 
-  useEffect(() => {
-    if (turns.length < 2) {
-      setExpanded(false);
-      setHoveredId(null);
-    }
-  }, [turns.length]);
+  const hoveredIndex = useMemo(() => turns.findIndex((turn) => turn.id === hoveredId), [turns, hoveredId]);
+  const hoveredTurn = hoveredIndex >= 0 ? turns[hoveredIndex] : null;
 
-  if (turns.length < 2 || !mounted) return null;
+  if (!mounted || turns.length < 2) return null;
 
-  const activeIndex = Math.max(0, turns.findIndex((turn) => turn.id === activeId));
-  const jumpRelative = (offset: -1 | 1) => {
-    const next = turns[Math.min(turns.length - 1, Math.max(0, activeIndex + offset))];
-    if (next) onJump(next.id);
+  const toggleBookmark = (id: string) => {
+    setBookmarkedIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const rail = (
-    <div
-      className={cn(
-        'xv-chat-turn-rail xv-chat-turn-rail--dock hidden lg:flex flex-col items-end pointer-events-auto',
-        expanded && 'xv-chat-turn-rail--expanded',
-        className
-      )}
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => {
-        setExpanded(false);
-        setHoveredId(null);
-      }}
-      onFocusCapture={() => setExpanded(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) {
-          setExpanded(false);
-          setHoveredId(null);
-        }
-      }}
-      role="navigation"
+  return createPortal(
+    <nav
+      className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock hidden lg:block', className)}
+      style={{ left }}
       aria-label="Conversation turn navigation"
+      onMouseLeave={() => setHoveredId(null)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null);
+      }}
     >
-      {expanded ? (
-        <div className="xv-chat-turn-flyout flex flex-col items-stretch w-full min-w-0">
-          {previewTurn ? (
-            <div className="xv-chat-turn-preview mb-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)]/95 px-3 py-2 text-[11px] leading-snug text-[var(--foreground)] shadow-lg backdrop-blur-md">
-              {previewTurn.label}
-            </div>
-          ) : null}
-
-          <div className="xv-chat-turn-panel rounded-2xl border border-[var(--card-border)]/80 bg-[var(--card)]/55 backdrop-blur-md shadow-lg overflow-hidden">
-            <div className="max-h-[min(52vh,420px)] overflow-y-auto py-2 px-1.5 space-y-0.5 scrollbar-thin">
-              {turns.map((turn) => {
-                const active = turn.id === activeId;
-                return (
-                  <button
-                    key={turn.id}
-                    type="button"
-                    onMouseEnter={() => setHoveredId(turn.id)}
-                    onFocus={() => setHoveredId(turn.id)}
-                    onClick={() => onJump(turn.id)}
-                    className={cn(
-                      'xv-chat-turn-row group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors',
-                      active && 'xv-chat-turn-row--active',
-                      active
-                        ? 'font-semibold'
-                        : 'text-[var(--muted)] hover:bg-white/5 hover:text-[var(--foreground)]'
-                    )}
-                    aria-label={`Jump to: ${clip(turn.label, 80)}`}
-                  >
-                    <span
-                      className={cn(
-                        'min-w-0 flex-1 text-[10px] leading-snug',
-                        active ? 'font-semibold' : 'font-medium opacity-85'
-                      )}
-                    >
-                      {clip(turn.label)}
-                    </span>
-                    <span
-                      className={cn(
-                        'xv-chat-turn-row-tick shrink-0 rounded-full',
-                        active && 'xv-chat-turn-row-tick--active'
-                      )}
-                    />
-                  </button>
-                );
-              })}
-            </div>
+      <div className="xv-chat-turn-track" aria-hidden="true" />
+      {turns.map((turn, index) => (
+        <button
+          key={turn.id}
+          type="button"
+          className={cn('xv-chat-turn-tick', turn.id === activeId && 'xv-chat-turn-tick--active')}
+          style={{ top: `${((index + 0.5) / turns.length) * 100}%` }}
+          onMouseEnter={() => setHoveredId(turn.id)}
+          onFocus={() => setHoveredId(turn.id)}
+          onClick={() => onJump(turn.id)}
+          aria-label={`Jump to: ${clip(turn.label, 80)}`}
+          aria-current={turn.id === activeId ? 'location' : undefined}
+        >
+          <span aria-hidden="true" />
+        </button>
+      ))}
+      {hoveredTurn ? (
+        <div
+          className="xv-chat-turn-preview"
+          style={{ '--xv-preview-position': `${((hoveredIndex + 0.5) / turns.length) * 100}%` } as React.CSSProperties}
+        >
+          <div className="xv-chat-turn-preview-heading">
+            <strong title={hoveredTurn.label}>{clip(hoveredTurn.label, 50)}</strong>
+            <button
+              type="button"
+              className="xv-chat-turn-bookmark"
+              onClick={() => toggleBookmark(hoveredTurn.id)}
+              aria-label={bookmarkedIds.has(hoveredTurn.id) ? 'Remove turn bookmark' : 'Bookmark turn'}
+              aria-pressed={bookmarkedIds.has(hoveredTurn.id)}
+            >
+              <Bookmark aria-hidden="true" fill={bookmarkedIds.has(hoveredTurn.id) ? 'currentColor' : 'none'} />
+            </button>
           </div>
+          <p>{hoveredTurn.summary || 'Waiting for Xroga’s response…'}</p>
+          {hoveredTurn.detail ? <p className="xv-chat-turn-preview-detail"><span aria-hidden="true">•</span>{hoveredTurn.detail}</p> : null}
         </div>
       ) : null}
-
-      <div className="xv-chat-turn-collapsed flex flex-col items-center justify-center">
-        <button
-          type="button"
-          className="xv-chat-turn-nav"
-          onClick={() => jumpRelative(-1)}
-          disabled={activeIndex <= 0}
-          aria-label="Jump to previous prompt"
-          title="Previous prompt"
-        >
-          <ChevronUp aria-hidden="true" />
-        </button>
-        <div className="xv-chat-turn-track">
-          {collapsedTurns.map((turn) => {
-            const active = turn.id === activeId;
-            return (
-              <button
-                key={`tick-${turn.id}`}
-                type="button"
-                onMouseEnter={() => setHoveredId(turn.id)}
-                onClick={() => onJump(turn.id)}
-                title={clip(turn.label, 60)}
-                aria-label={`Jump to prompt ${clip(turn.label, 40)}`}
-                className={cn(
-                  'xv-chat-turn-tick',
-                  active && 'xv-chat-turn-tick--active'
-                )}
-              >
-                <span aria-hidden="true" />
-              </button>
-            );
-          })}
-          {turns.length > COLLAPSED_MAX ? (
-            <span className="xv-chat-turn-more" title="Hover to see all prompts">
-              +{turns.length - COLLAPSED_MAX}
-            </span>
-          ) : null}
-        </div>
-        <button
-          type="button"
-          className="xv-chat-turn-nav"
-          onClick={() => jumpRelative(1)}
-          disabled={activeIndex >= turns.length - 1}
-          aria-label="Jump to next prompt"
-          title="Next prompt"
-        >
-          <ChevronDown aria-hidden="true" />
-        </button>
-      </div>
-    </div>
+    </nav>,
+    document.body,
   );
-
-  return createPortal(rail, document.body);
 }
 
-export function buildChatTurns(
-  messages: Array<{ id: string; role: string; content: string }>
-): ChatTurn[] {
-  return messages
-    .filter((m) => m.role === 'user' && m.content.trim())
-    .map((m) => ({
-      id: m.id,
-      label: m.content.trim(),
-    }));
+export function buildChatTurns(messages: Array<{ id: string; role: string; content: string }>): ChatTurn[] {
+  const turns: ChatTurn[] = [];
+  let current: ChatTurn | null = null;
+  for (const message of messages) {
+    if (message.role === 'user' && message.content.trim()) {
+      current = { id: message.id, label: message.content.trim(), summary: '' };
+      turns.push(current);
+    } else if (message.role === 'assistant' && current && !current.summary && message.content.trim()) {
+      Object.assign(current, responsePreview(message.content));
+    }
+  }
+  return turns;
 }
