@@ -62,7 +62,7 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
   const hoveredIndex = useMemo(() => turns.findIndex((turn) => turn.id === hoveredId), [turns, hoveredId]);
   const hoveredTurn = hoveredIndex >= 0 ? turns[hoveredIndex] : null;
 
-  if (!mounted || turns.length < 2) return null;
+  if (!mounted || turns.length === 0) return null;
 
   const toggleBookmark = (id: string) => {
     setBookmarkedIds((previous) => {
@@ -83,7 +83,6 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
         if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null);
       }}
     >
-      <div className="xv-chat-turn-track" aria-hidden="true" />
       {turns.map((turn, index) => (
         <button
           key={turn.id}

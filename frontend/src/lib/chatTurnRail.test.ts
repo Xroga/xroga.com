@@ -17,7 +17,12 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(RAIL, /Bookmark turn/);
   assert.doesNotMatch(RAIL, /ChevronUp|ChevronDown|xv-chat-turn-panel|xv-chat-turn-collapsed/);
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*position:\s*fixed[^}]*top:\s*8px/);
-  assert.match(CSS, /\.xv-chat-turn-track\s*\{[\s\S]*?repeating-linear-gradient/);
+  assert.doesNotMatch(RAIL, /xv-chat-turn-track/);
+  assert.doesNotMatch(CSS, /\.xv-chat-turn-track\s*\{/);
+  assert.match(CSS, /\.xv-chat-turn-rail--dock\s*\{[^}]*background:\s*transparent/);
+  assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*pointer-events:\s*none/);
+  assert.match(CSS, /\.xv-chat-turn-tick\s*\{[^}]*pointer-events:\s*auto/);
+  assert.match(RAIL, /turns\.length === 0/);
   assert.match(CSS, /\.xv-chat-turn-tick--active > span\s*\{[^}]*width:\s*30px[^}]*background:\s*#e5e5e5/);
   assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*left:\s*40px[^}]*width:\s*min\(322px/);
   assert.doesNotMatch(CSS, /--xv-turn-blue/);
