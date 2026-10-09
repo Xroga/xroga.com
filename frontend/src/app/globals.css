@@ -14444,3 +14444,14 @@ html.xv-home-scroll-lock body {
   border-radius: 999px;
   background: color-mix(in srgb, var(--muted) 45%, transparent);
 }
+.xv-sidebar-notification-edge {
+  position: absolute;
+  top: 13px;
+  right: 44px;
+  z-index: 80;
+  align-items: center;
+}
+.xv-sidebar-notification-edge > button {
+  width: 30px;
+  height: 30px;
+}

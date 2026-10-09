@@ -24,7 +24,6 @@ import {
   Sparkles,
   LogIn,
   UserPlus,
-  Bell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -304,7 +303,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
   const profile = useAppStore((s) => s.profile);
-  const unreadNotifications = useAppStore((s) => s.unreadCount);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
@@ -767,6 +765,10 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               <HoverTip label="Theme" description="Choose the workspace theme.">
                 <ThemeToggle />
               </HoverTip>
+              {isMobile && mobileOpen && !isGuest && !incognito ? (
+                /* Keep the bell directly beside the drawer close control on phones. */
+                <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} />
+              ) : null}
               {isMobile && mobileOpen ? (
                 /* The same 28px borderless square as New, Search and Theme beside it.
                    Its own default is a 36px outlined button, which is right in a
@@ -843,11 +845,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           className="xv-sidebar-nav-scroll h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
           <div className="xv-sidebar-menu">
-              {!isGuest && !incognito && <button type="button" onClick={() => setNotificationsOpen(true)} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-[var(--foreground)] hover:bg-[var(--foreground)]/[.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500" aria-label={`Notifications${unreadNotifications ? `, ${unreadNotifications} unread` : ''}`}>
-                <Bell className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="flex-1">Notifications</span>
-                {unreadNotifications > 0 && <span className="rounded-full bg-rose-500/15 px-1.5 text-[10px] font-semibold text-rose-400">{unreadNotifications}</span>}
-              </button>}
               {navItems.map((entry) =>
                 isGroup(entry) && entry.id === 'explore' ? (
                   <SidebarHoverMenu
@@ -971,7 +968,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
             <AnimatedIcon icon={LocateFixedIcon} />
           </button>
-          {!isGuest && !incognito && <SidebarNotificationButton open={notificationsOpen} onToggle={() => { setMobileOpen(true); setNotificationsOpen(true); }} compact />}
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>
@@ -1026,6 +1022,11 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             className="xv-sidebar-resize-handle hidden lg:flex"
           >
             <span aria-hidden="true" />
+          </div>
+        ) : null}
+        {effectiveSidebarOpen && !isGuest && !incognito && !terminalFullscreen ? (
+          <div className="xv-sidebar-notification-edge hidden lg:flex">
+            <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} compact />
           </div>
         ) : null}
         {/*
