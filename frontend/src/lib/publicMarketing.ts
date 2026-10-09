@@ -16,6 +16,7 @@ const PRIVATE_PREFIXES = [
   '/onboarding',
   '/share',
   '/ref',
+  '/os-preview',
 ] as const;
 
 /** Public pages receive the brand system; application and private surfaces never do. */

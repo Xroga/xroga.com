@@ -56,6 +56,7 @@ const MEGA_MENUS: Partial<Record<(typeof PUBLIC_MARKETING_NAV)[number]['label'],
       { href: '/features', label: 'Overview', note: 'See the full Xroga product.', icon: Sparkles },
       { href: '/software', label: 'Workspace', note: 'Chat, build, inspect, preview, and iterate.', icon: LayoutDashboard },
       { href: '/features', label: 'Xroga Intelligence', note: 'Plan and coordinate software work.', icon: Workflow },
+      { href: '/os-preview', label: 'Explore Xroga OS', note: 'Try the labelled, interactive product preview.', icon: AppWindow },
     ],
     secondary: [
       { href: '/features', label: 'Verification', note: 'Tests, builds, evidence, and blockers.', icon: ShieldCheck },
@@ -558,6 +559,7 @@ export function PublicMarketingHeader() {
               {item.label}<ArrowUpRight aria-hidden="true" />
             </Link>
           ))}
+          <Link href="/os-preview" onClick={() => setMenuOpen(false)}>Explore Xroga OS<ArrowUpRight aria-hidden="true" /></Link>
         </nav>
         <div className="xv-marketing-mobile-menu__actions">
           <Link href={accountHref}>{loggedIn ? 'Workspace' : 'Sign in'}</Link>

@@ -1,0 +1,3 @@
+# Command 2 handoff (not executed)
+
+Start from the reviewed Command 1 branch only after its deployment and security checks are accepted. Keep the public simulation isolated. Evaluate a task dependency editor with XYFlow and **one** code editor (Monaco or CodeMirror), measuring bundle and mobile behavior. Real worker and workflow adapters must use server authorization and existing canonical terminal events; never replace Xroga's SSE or approval transport with a UI kit. Founder diagnostics remain disconnected until a separately reviewed founder-exclusive API is in place. Do not claim Command 2 scope is implemented here.
