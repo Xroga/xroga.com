@@ -32,8 +32,8 @@ test('conversation map matches the left dash rail and hover card reference', () 
 });
 
 test('chat lines stay in sequence and center vertically in the workspace', () => {
-  assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [394.5, 405.5]);
-  assert.equal(turnMarkerTop(11, 12, 800), 460.5);
+  assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [396, 404]);
+  assert.equal(turnMarkerTop(11, 12, 800), 444);
   assert.equal(turnMarkerTop(0, 1, 800), 400);
   assert.ok(turnMarkerTop(99, 100, 800) < 800);
   assert.match(RAIL, /style=\{\{ top: turnMarkerTop\(index, visibleTurns\.length, railHeight\) \}\}/);

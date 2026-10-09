@@ -26,7 +26,7 @@ function clip(text: string, max: number): string {
 /** Center real turns vertically, keeping a tight sequence and compressing only when needed. */
 export function turnMarkerTop(index: number, count: number, railHeight: number): number {
   // Leave room for the hover preview at both ends so it can stay centered on its tick.
-  const step = count > 1 ? Math.min(11, Math.max(1, (railHeight - 144) / (count - 1))) : 11;
+  const step = count > 1 ? Math.min(8, Math.max(1, (railHeight - 144) / (count - 1))) : 8;
   const start = (railHeight - step * Math.max(0, count - 1)) / 2;
   return start + index * step;
 }
