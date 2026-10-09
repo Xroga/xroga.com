@@ -1,0 +1,174 @@
+.orb {
+  --d: var(--orb, 320px);
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  perspective: 1000px;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  animation: emerge 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.orb img { -webkit-user-drag: none; }
+.orb[data-drag] { cursor: grab; }
+.orb[data-drag]:active { cursor: grabbing; }
+@keyframes emerge {
+  from { opacity: 0; filter: blur(10px); transform: scale(0.93); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+
+/* Deep cobalt underfill: low, broad, no halo around the whole orb (§37) */
+.under {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -14%;
+  height: 32%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(40, 104, 255, 0.28), rgba(115, 87, 232, 0.08) 55%, transparent 80%);
+  filter: blur(14px);
+}
+
+/* Idle (V10 §23): almost imperceptible, ≤1.5° yaw and ≤1° pitch over 22 s, uneven so it never reads as a pendulum */
+.idle { animation: idle 22s ease-in-out infinite; }
+@keyframes idle {
+  0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
+  23% { transform: rotateY(1.2deg) rotateX(-0.4deg); }
+  41% { transform: rotateY(0.4deg) rotateX(0.9deg); }
+  64% { transform: rotateY(-1.5deg) rotateX(0.3deg); }
+  82% { transform: rotateY(-0.5deg) rotateX(-0.8deg); }
+}
+@property --xz { syntax: '<length>'; inherits: true; initial-value: 16px; }
+.idle,
+.turn,
+.ringLag,
+.ringTurn { position: absolute; inset: 0; transform-style: preserve-3d; }
+.body {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.body > img,
+.ringLag,
+.rimWrap,
+.xWrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.back {
+  transform: translateZ(-24px) scale(1.01);
+  opacity: 0.9;
+  filter: drop-shadow(0 26px 34px rgba(0, 0, 0, 0.6));
+  transition: transform 700ms cubic-bezier(0.22, 0.9, 0.24, 1), opacity 700ms linear;
+}
+.body > img.slice {
+  transform: translateZ(var(--z));
+  filter: brightness(var(--b)) saturate(1.1);
+}
+.full {
+  transform: translateZ(0);
+  transition: transform 700ms cubic-bezier(0.22, 0.9, 0.24, 1);
+}
+.rimWrap {
+  transform: translateZ(7px);
+  transition: transform 900ms cubic-bezier(0.22, 0.9, 0.24, 1);
+  border-radius: 50%;
+}
+.rim { width: 100%; height: 100%; }
+/* Structural beats (V6 §23): only when Xroga receives, creates, connects or verifies. */
+.orb[data-beat='absorb'] .full { transform: translateZ(6px) scale(1.012); } /* a tiny breath as intent is absorbed */
+.orb[data-beat='absorb'] .rimWrap { transform: translateZ(10px) rotate(9deg) scale(1.012); }
+.orb[data-beat='absorb'] .back { transform: translateZ(-34px) scale(1.03); opacity: 1; }
+.orb[data-beat='absorb'] { --xz: 19px; }
+.orb[data-beat='create'] .rimWrap { transform: translateZ(8px) rotate(-6deg); }
+.orb[data-beat='create'] .full { transform: translateZ(3px); }
+.orb[data-beat='connect'] .rimWrap { transform: translateZ(8px) rotate(4deg); }
+.orb[data-beat='verify'] .rimWrap { transform: translateZ(7px) rotate(0deg) scale(1.006); }
+/* Native work (V12 §14): Xroga answers itself; the X lifts inside the lens, nothing leaves the orb */
+.orb[data-beat='native'] { --xz: 17px; }
+.orb[data-beat='native'] .rimWrap { transform: translateZ(8px) rotate(-2deg); }
+
+/* Iridescent film confined to the rim, shifting with the viewing angle (§38) */
+.film {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, rgba(101, 229, 244, 0.32), rgba(115, 87, 232, 0.28), rgba(220, 130, 240, 0.24), rgba(40, 104, 255, 0.18), rgba(101, 229, 244, 0.32));
+  mix-blend-mode: screen;
+  -webkit-mask: radial-gradient(circle, transparent 0 79%, #000 82% 97%, transparent 98.5%);
+  mask: radial-gradient(circle, transparent 0 79%, #000 82% 97%, transparent 98.5%);
+  opacity: 0.55;
+}
+
+.xWrap { transition: filter 700ms cubic-bezier(0.16, 1, 0.3, 1); }
+.x { width: 100%; height: 100%; }
+.orb[data-beat='absorb'] .xWrap { filter: brightness(1.35) drop-shadow(0 0 14px rgba(101, 229, 244, 0.55)); }
+.orb[data-beat='native'] .xWrap { filter: brightness(1.12) drop-shadow(0 0 8px rgba(152, 180, 200, 0.3)); }
+.orb[data-beat='verify'] .xWrap { filter: brightness(1.15) drop-shadow(0 0 10px rgba(101, 229, 244, 0.35)); }
+
+/* Specular highlight: independent of rotation */
+.spec {
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  transform: translateZ(20px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+/* Studio light travelling across convex glass every ~15 s (§39) */
+.sweep {
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  transform: translateZ(21px);
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(circle, #000 64%, transparent 72%);
+  mask: radial-gradient(circle, #000 64%, transparent 72%);
+}
+.sweep::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: -60%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: rotate(18deg);
+  animation: sweep 15s cubic-bezier(0.65, 0, 0.35, 1) 4s infinite;
+}
+@keyframes sweep {
+  0% { left: -60%; }
+  14% { left: 130%; }
+  100% { left: 130%; }
+}
+
+/* Rim light on the side where work leaves (create, left) or a tool arrives (connect, right) */
+.flare {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform: translateZ(22px);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 360ms linear;
+  -webkit-mask: radial-gradient(circle, transparent 0 80%, #000 86% 97%, transparent 99%);
+  mask: radial-gradient(circle, transparent 0 80%, #000 86% 97%, transparent 99%);
+}
+.flare[data-side='left'] { background: radial-gradient(40% 46% at 2% 50%, rgba(101, 229, 244, 0.9), transparent 70%); }
+.flare[data-side='right'] { background: radial-gradient(40% 46% at 98% 50%, rgba(101, 229, 244, 0.9), transparent 70%); }
+.orb[data-beat='create'] .flare[data-side='left'],
+.orb[data-beat='connect'] .flare[data-side='right'] { opacity: 1; }
+
+.orb[data-reduced],
+.orb[data-reduced] .full,
+.orb[data-reduced] .idle,
+.orb[data-reduced] .sweep::before { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .orb, .full, .idle, .sweep::before { animation: none !important; }
+}

@@ -4,7 +4,8 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
-import { HomepageChatBar } from '@/components/terminal/HomepageChatBar';
+import { S00Hero } from '@/components/homepage-next/phase1/S00Hero';
+import '@/components/homepage-next/tokens.css';
 import { HomepageShipStack } from '@/components/homepage/HomepageShipStack';
 import { HomepageEnterpriseProof } from '@/components/homepage/HomepageEnterpriseProof';
 import { HomepageFaqSection } from '@/components/homepage/HomepageFaqSection';
@@ -23,8 +24,6 @@ import { HomepageCapabilitiesMosaic } from '@/components/homepage/HomepageCapabi
 import { HomepageBrowserEmployeesExact } from '@/components/homepage/HomepageBrowserEmployeesExact';
 import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
-
-const HERO_CATEGORIES = ['Websites', 'SaaS', 'Dashboards', 'Internal tools', 'Mobile apps', 'Browser extensions', 'APIs', 'Desktop apps', 'Automations', 'CLIs', 'Libraries', 'Data pipelines'] as const;
 
 export function HomepageClient() {
   const router = useRouter();
@@ -105,33 +104,10 @@ export function HomepageClient() {
 
   return (
   <div className="xv-homepage xv-home-coding min-h-screen flex flex-col">
-    <section className="xv-hc-hero">
-      <div
-        className="xv-hc-bg-image"
-        style={{ backgroundImage: 'url("/backgrounds/xroga-clean-horizon.png")' }}
-        aria-hidden
-      />
-        <div className="xv-hc-hero-main">
-          <div className="xv-hc-headline-block">
-            <p className="xv-hc-eyebrow"><i /> AI APP BUILDER + CODING AGENT</p>
-            <h1 className="xv-hc-headline">AI app builder that builds, tests and ships <em>code you own.</em></h1>
-            <p className="xv-hc-hero-copy">Start from an idea or an existing repository. Xroga implements the product, runs applicable checks, and helps you ship through accounts you control.</p>
-          </div>
-
-          <div className="xv-hc-chat xv-home-chatbar-wrap">
-            <HomepageChatBar />
-          </div>
-          <div className="xv-hc-category-strip" aria-label="Products Xroga can build">
-            <div className="xv-hc-category-track">
-              {[false, true].map((duplicate) => (
-                <ul className="xv-hc-category-group" aria-hidden={duplicate || undefined} key={duplicate ? 'duplicate' : 'primary'}>
-                  {HERO_CATEGORIES.map((category) => <li key={category}>{category}</li>)}
-                </ul>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+    {/* S00: the final locked hero (docs/homepage-implementation/S00_FINAL_LOCK.md) */}
+    <div className="hpx-root">
+      <S00Hero />
+    </div>
 
       <HomepageCapabilitiesMosaic />
       <HomepageBrowserEmployeesExact />

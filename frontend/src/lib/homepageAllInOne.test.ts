@@ -41,17 +41,6 @@ test('workflow animation cleans up its timer and respects reduced motion', () =>
   assert.match(CSS, /prefers-reduced-motion: reduce[\s\S]*\.xv-home-coding \.xv-uw__workspace/);
 });
 
-test('all hero themes share rails, glass controls, and a moving category strip', () => {
-  assert.match(CSS, /body:not\(\.theme-black\) \.xv-home-coding \.xv-hc-hero::before/);
-  assert.match(CSS, /body:not\(\.theme-black\) \.xv-home-coding \.xv-hc-hero-actions a[\s\S]*backdrop-filter/);
-  assert.match(PAGE, /xv-hc-category-track/);
-  assert.match(PAGE, /Browser extensions/);
-  assert.match(PAGE, /Data pipelines/);
-  assert.match(CSS, /@keyframes xv-category-marquee/);
-  assert.match(CSS, /animation: xv-category-marquee 34s linear infinite/);
-  assert.match(CSS, /xv-hc-category-group\[aria-hidden='true'\]/);
-});
-
 test('the section remains in the homepage typography and theme system', () => {
   assert.match(COMPONENT, /What can you build <em>with Xroga\?<\/em>/);
   assert.doesNotMatch(COMPONENT, /style=\{\{/);

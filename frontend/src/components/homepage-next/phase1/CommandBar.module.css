@@ -1,0 +1,117 @@
+/* Smoked glass command bar (S00 V3 §13): 660–720 × 62–66, radius 18–20, pearl send button. */
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(var(--bar-w, 700px), 100% - 32px);
+  height: var(--bar-h, 64px);
+  margin: 0 auto;
+  padding: 0 9px 0 20px;
+  border-radius: 19px;
+  background:
+    linear-gradient(180deg, rgba(242, 240, 234, 0.07), rgba(242, 240, 234, 0.02) 60%),
+    rgba(11, 15, 24, 0.78);
+  box-shadow:
+    inset 0 0 0 1px rgba(242, 240, 234, 0.11),
+    inset 0 1px 0 rgba(242, 240, 234, 0.12),
+    0 28px 60px -28px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(6, 8, 13, 0.6);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  transition: box-shadow 260ms linear;
+}
+/* Faint prism edge along the top, sampled from the orb rim */
+.bar::before {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(101, 229, 244, 0.45), rgba(115, 87, 232, 0.4), transparent);
+  pointer-events: none;
+}
+.bar[data-focused] {
+  box-shadow:
+    inset 0 0 0 1px rgba(101, 229, 244, 0.42),
+    inset 0 1px 0 rgba(242, 240, 234, 0.12),
+    0 28px 60px -28px rgba(0, 0, 0, 0.95),
+    0 0 0 5px rgba(40, 104, 255, 0.1);
+}
+.mark { flex: none; border-radius: 50%; }
+.field { position: relative; flex: 1; min-width: 0; height: 100%; }
+.input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: none;
+  font: 450 16px/1 var(--hpx-font-sans);
+  color: var(--hpx-pearl);
+}
+.input::placeholder { color: var(--hpx-steel); }
+/* the whole bar carries the visible focus state ([data-focused]); no second ring inside it */
+.bar .input:focus-visible { outline: none; }
+.example {
+  /* V9 commands are full objectives: they may wrap to three lines inside the bar, never truncate mid-thought */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  line-height: 1.3;
+  font-size: 14px;
+  color: var(--hpx-silver);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  pointer-events: none;
+}
+.example[data-general] { color: #8b94a3; }
+.send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfaf6, #e4e1d8);
+  box-shadow: inset 0 1px 0 #fff, 0 6px 14px -6px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), filter 200ms linear;
+}
+.bar[data-pulse] .send { animation: press 420ms cubic-bezier(0.16, 1, 0.3, 1); }
+.bar[data-pulse] .example { animation: leave 700ms cubic-bezier(0.55, 0, 0.25, 1) both; }
+@keyframes press { 30% { transform: scale(0.92); filter: brightness(1.12); } }
+@keyframes leave { 0% { opacity: 1; } 40% { opacity: 1; color: #f2f0ea; } 100% { opacity: 0.55; } }
+.send:hover { filter: brightness(1.05); transform: translateX(1px); }
+.send:focus-visible { outline: 2px solid var(--hpx-ice); outline-offset: 3px; }
+.send svg { width: 18px; height: 18px; fill: none; stroke: var(--hpx-ink); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+/* visually hidden, specific enough that the production page's global label styles cannot reposition it */
+.field > .srOnly,
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .bar { height: 58px; border-radius: 18px; padding-left: 16px; }
+  .send { width: 42px; height: 42px; border-radius: 13px; }
+  .input { font-size: 15px; }
+  .example { font-size: 12.5px; -webkit-line-clamp: 3; line-height: 1.25; }
+}
+/* the smallest phones give the command text the icon's room so the short command never clips (V10 §34) */
+@media (max-width: 380px) {
+  .mark { display: none; }
+  .bar { padding-left: 14px; gap: 8px; }
+}

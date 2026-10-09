@@ -1,0 +1,207 @@
+.hero {
+  --orb: clamp(230px, min(34svh, 22vw), 304px);
+  /* height of the fixed site header the hero sits under */
+  --s00-nav: 64px;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  /* nested clipping (V10 §37): the background layer clips itself; the stage and controls stay visible,
+     and only horizontal spill is clipped so focus rings and labels are never cut */
+  overflow-x: clip;
+  background: #050506;
+  color: var(--hpx-pearl);
+}
+
+/* ---------- Background: React Bits Micro Slats, swell profile (V10 §8–§14) ---------- */
+.bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.fallback {
+  position: absolute;
+  inset: 0;
+  /* Black titanium at rest (V12 §17–§18): slat bodies, one raised swell with a metallic crest and a warm
+     reflection. The reduced-motion and weak-device field; neutral metal, no colour of its own. */
+  background:
+    radial-gradient(42% 26% at 62% 58%, rgba(200, 192, 178, 0.07), transparent 70%),
+    radial-gradient(60% 34% at 40% 46%, rgba(98, 106, 114, 0.16), transparent 72%),
+    radial-gradient(90% 60% at 50% 55%, rgba(41, 45, 51, 0.55), transparent 75%),
+    repeating-linear-gradient(180deg, transparent 0 25px, #050506 25px 28px),
+    repeating-linear-gradient(90deg, #15171b 0 10px, #090a0c 10px 13px),
+    #050506;
+  -webkit-mask: radial-gradient(75% 85% at 50% 50%, #000 35%, rgba(0, 0, 0, 0.55) 75%, rgba(0, 0, 0, 0.3));
+  mask: radial-gradient(75% 85% at 50% 50%, #000 35%, rgba(0, 0, 0, 0.55) 75%, rgba(0, 0, 0, 0.3));
+}
+.slats {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: bgIn 1200ms linear 100ms forwards;
+  /* the field stays alive everywhere; only the far edges ease off so it never outranks the orb (V10 §45) */
+  -webkit-mask: radial-gradient(80% 90% at 50% 52%, #000 0%, #000 50%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.45) 100%);
+  mask: radial-gradient(80% 90% at 50% 52%, #000 0%, #000 50%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.45) 100%);
+}
+@keyframes bgIn { to { opacity: 1; } }
+/* Event light (V12 §21), over both the WebGL field and the CSS fallback. The field itself stays neutral
+   metal; for under a second at a time it catches a little of the orb's own spectrum: a cool blue-white as a
+   call leaves Xroga, an ice crest on verification, a warm pearl as the work object forms or ships. */
+.eventLight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(var(--ew, 34%) var(--eh, 40%) at var(--ex, 50%) var(--ey, 56%), var(--etint, rgba(200, 192, 178, 0.1)), transparent 70%);
+  mix-blend-mode: screen;
+  transition: --ex 1200ms cubic-bezier(0.22, 0.9, 0.24, 1), --ew 1200ms cubic-bezier(0.22, 0.9, 0.24, 1), opacity 900ms linear;
+}
+@property --ex { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+@property --ew { syntax: '<percentage>'; inherits: false; initial-value: 34%; }
+.hero[data-bg='compress'] .eventLight { --ew: 18%; --etint: rgba(200, 192, 178, 0.12); opacity: 1; }
+.hero[data-bg='create'] .eventLight { --ex: 30%; --ew: 30%; --etint: rgba(200, 192, 178, 0.1); opacity: 1; }
+.hero[data-bg='wave'] .eventLight { --ex: 66%; --ew: 26%; --etint: rgba(152, 180, 200, 0.16); opacity: 1; }
+.hero[data-bg='verify'] .eventLight { --ew: 24%; --etint: rgba(196, 226, 240, 0.16); opacity: 1; animation: verifyPulse 900ms cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes verifyPulse { 40% { --ew: 30%; } }
+.hero[data-bg='publish'] .eventLight { --ex: 16%; --ew: 22%; --etint: rgba(242, 238, 230, 0.12); opacity: 1; }
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* readability behind the headline and the bar, without killing the field */
+    linear-gradient(180deg, rgba(5, 5, 6, 0.85) 0%, rgba(5, 5, 6, 0.45) 24%, transparent 38%, transparent 72%, rgba(5, 5, 6, 0.4) 84%, rgba(5, 5, 6, 0.85) 100%);
+}
+
+/* ---------- Layout ---------- */
+.inner {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  min-height: 100svh;
+  padding: calc(var(--s00-nav) + clamp(20px, 4.4svh, 52px)) 16px clamp(24px, 4.6svh, 52px);
+  box-sizing: border-box;
+}
+.copy { display: grid; justify-items: center; gap: clamp(10px, 1.6svh, 16px); text-align: center; }
+/* V12 §3–§5: one warm pearl line, no gradient, set by type and air alone */
+.titleWrap { position: relative; }
+.title {
+  margin: 0;
+  font-size: min(clamp(2.5rem, 1rem + 3.9vw, 4.75rem), 8.2svh);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-weight: 560;
+  color: #f2f0ea;
+  font-kerning: normal;
+}
+.title > span { display: inline-block; white-space: nowrap; }
+/* ShinyText, restrained: a copy of the line that is transparent except for one soft band, laid over the
+   static text, so the base contrast never drops. It runs once and unmounts. */
+.sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: transparent;
+  background: linear-gradient(105deg, transparent 0 44%, rgba(222, 232, 242, 0.55) 47%, #fff 50%, rgba(255, 248, 236, 0.55) 53%, transparent 56% 100%);
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: sheen 1300ms cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+@keyframes sheen { to { background-position: 0% 0; } }
+
+/* V12 §6–§9: fixed lead, one capability phrase that changes with the scene */
+.capability {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  font-size: min(clamp(1.2rem, 0.75rem + 0.9vw, 1.6rem), 3.6svh);
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  font-weight: 470;
+}
+.lead { color: #a29e95; }
+.slot {
+  display: grid;
+  padding: 0.18em 0.2em;
+  margin: -0.18em 0;
+  /* a soft vertical mask so the phrase change reads as one optical move, never a crossfade */
+  -webkit-mask: linear-gradient(180deg, transparent 0, #000 0.22em, #000 calc(100% - 0.22em), transparent 100%);
+  mask: linear-gradient(180deg, transparent 0, #000 0.22em, #000 calc(100% - 0.22em), transparent 100%);
+}
+.phrase {
+  grid-area: 1 / 1;
+  justify-self: center;
+  position: relative;
+  white-space: nowrap;
+  color: #ebe7de;
+  font-weight: 540;
+}
+.phrase[data-leg='out'] { animation: phraseOut 300ms cubic-bezier(0.4, 0, 0.7, 1) both; }
+.phrase[data-leg='in'] { animation: phraseIn 420ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both; }
+@keyframes phraseOut { to { opacity: 0; transform: translateY(-8px); filter: blur(2px); } }
+@keyframes phraseIn { from { opacity: 0; transform: translateY(10px); filter: blur(2px); } }
+/* reduced motion: the same two-line lockup with one static summary phrase, which may wrap on phones */
+.capability[data-reduced] .phrase { white-space: normal; text-wrap: balance; }
+.capability > .srOnly,
+.srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.stageWrap {
+  align-self: center;
+  width: 100%;
+  margin: clamp(10px, 2.6svh, 34px) 0 clamp(10px, 2.2svh, 28px);
+}
+.action {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), translate 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.action[data-in] { opacity: 1; translate: 0 0; }
+.proof {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  font-size: 13.5px;
+  color: #8b94a3;
+}
+.count { color: #f2f0ea; font-weight: 540; font-variant-numeric: tabular-nums; }
+.sep { width: 3px; height: 3px; border-radius: 50%; background: var(--hpx-steel); }
+
+/* ---------- Responsive (V6 §41–§43) ---------- */
+@media (max-height: 760px) and (min-width: 1000px) {
+  .hero { --orb: clamp(236px, 37svh, 256px); }
+  .inner { padding-top: calc(var(--s00-nav) + 14px); padding-bottom: 14px; }
+  .copy { gap: 8px; }
+  .title { font-size: min(clamp(2.4rem, 1rem + 3.9vw, 4.2rem), 8.6svh); }
+  .stageWrap { margin: 8px 0 10px; }
+  .action { --bar-w: 600px; --bar-h: 58px; gap: 10px; }
+}
+@media (max-width: 999px) {
+  .hero { --orb: 230px; }
+  .title { font-size: 3.15rem; }
+}
+@media (max-width: 639px) {
+  .hero { --orb: 150px; --s00-nav: 60px; }
+  /* phones: "Xroga for / everything." (V12 §4), never a smaller phrase font than reads well (V12 §32) */
+  .title { font-size: clamp(2.5rem, 11vw, 2.9rem); line-height: 1; }
+  .capability { font-size: 1.12rem; }
+  .inner { padding-top: calc(var(--s00-nav) + 22px); }
+  .stageWrap { margin: 8px 0 10px; }
+  .copy { gap: 8px; }
+  .sep { display: none; }
+  .proof { flex-direction: column; gap: 2px; text-align: center; font-size: 12.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slats { animation: none; opacity: 1; }
+  .action { transition: none; opacity: 1; translate: none; }
+}
+
+/* Production homepage (V12 §2): the hero sits under the site's own marketing header, which is taller than
+   the lab header, so only the top offset changes. */
+:global(.xv-home-coding) .hero { --s00-nav: 88px; }
+@media (max-width: 999px) { :global(.xv-home-coding) .hero { --s00-nav: 81px; } }
+@media (max-width: 639px) { :global(.xv-home-coding) .hero { --s00-nav: 71px; } }

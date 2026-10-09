@@ -202,7 +202,8 @@
   .xv-hc-hero-copy,
   .xv-hc-pixel-kicker,
   .xv-hc-community-motto
-) {
+):not(.hpx-root *) {
+  /* the S00 hero (.hpx-root) owns its own layering and type; the particle halo stays out of it */
   position: relative;
   z-index: 3;
   text-shadow:
@@ -218,7 +219,7 @@
   .xv-hc-btn-ghost,
   .xv-hc-community-tabs > a,
   .xv-hc-community-tabs > button
-) {
+):not(.hpx-root *) {
   position: relative;
   z-index: 4;
   isolation: isolate;

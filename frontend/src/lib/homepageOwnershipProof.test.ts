@@ -19,7 +19,7 @@ test('the audience selector is the last product section before FAQ', () => {
 });
 
 test('capabilities, browser employees, workspace, and intelligence follow the hero in order', () => {
-  const heroEnd = PAGE.indexOf('</section>', PAGE.indexOf('className="xv-hc-hero"'));
+  const heroEnd = PAGE.indexOf('<S00Hero />');
   const capabilities = PAGE.indexOf('<HomepageCapabilitiesMosaic />');
   const browserEmployees = PAGE.indexOf('<HomepageBrowserEmployeesExact />');
   const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
@@ -76,7 +76,5 @@ test('audience controls and copy stay compact across desktop and mobile', () => 
 
 test('the homepage hero stays focused on the product prompt without character art', () => {
   assert.doesNotMatch(PAGE, /HomepageCompanionStage|useCompanionStore|hydrateCompanion/);
-  assert.match(PAGE, /<HomepageChatBar \/>/);
-  assert.match(PAGE, /AI APP BUILDER \+ CODING AGENT/);
-  assert.match(CSS, /\.xv-home-coding \.xv-hc-prompt-shell[\s\S]*box-shadow:none!important/);
+  assert.match(PAGE, /<S00Hero \/>/);
 });

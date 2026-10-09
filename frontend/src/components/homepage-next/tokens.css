@@ -1,0 +1,172 @@
+/*
+ * Xroga homepage — Phase 1 design tokens (Checkpoint 1).
+ * Source of truth: XROGA_PHASE1_FINAL_MASTER_SUPERSEDING_SPEC §3, §4, §11, §21, §24;
+ * neutrals and light re-derived from the orb per XROGA_S00_HERO_SENIOR_STUDIO_REBUILD_V3 §31.
+ * Supersedes every earlier --hpx-* value (the blue-led dark system and the cream system).
+ *
+ * Namespaced under .hpx-root so nothing collides with the app's --background/--foreground.
+ */
+.hpx-root {
+  /* ---- Mineral neutrals (§3) ---- */
+  --hpx-obsidian: #06080d; /* page canvas */
+  --hpx-graphite: #0b0f18; /* main structural surface */
+  --hpx-gunmetal: #171c1f; /* secondary solid material */
+  --hpx-petrol: #10292b; /* environmental depth only, never a large fill */
+  --hpx-aubergine: #141024; /* shadow/reflection tint only */
+  --hpx-ivory: #f2f0ea; /* Warm Pearl: typography */
+  --hpx-pearl: #f2f0ea;
+  --hpx-ink: #06080d; /* hero outer canvas */
+  --hpx-stage: #0b1731; /* hero inner stage wash */
+  --hpx-glacier: #9bcdd3; /* cool reflection */
+  --hpx-amethyst: #a79af3; /* secondary atmospheric light */ /* primary large text; never a large fill */
+  --hpx-silver: #aab2bf; /* secondary copy */
+  --hpx-steel: #657080; /* structural lines, inactive labels >=13px. 4.1:1 carbon, 3.6:1 gunmetal: never sole carrier of meaning */
+
+  /* ---- V3 orb-derived light (S00 V3 §31): every hue sampled from the Xroga orb ---- */
+  --hpx-navy: #0b1731; /* navy glass */
+  --hpx-violet-carbon: #141024;
+  --hpx-orb-cobalt: #2868ff;
+  --hpx-ice: #65e5f4;
+  --hpx-aqua: #28c8e8;
+  --hpx-prism: #7357e8;
+  --hpx-magenta: #dc82f0;
+  --hpx-slat-base: #070910;
+
+  /* ---- Accent roles: emitted light, never paint (§3) ---- */
+  --hpx-jade: #7ad6bc; /* Mineral Jade */ /* execution, live work, success, evidence pulse */
+  --hpx-iris: #887deb; /* intelligence, orchestration, route selection */
+  --hpx-teal: #4f9e98; /* connected systems; semantic use only */
+  --hpx-amber: #c6924c; /* approval only */ /* approval, conflict, external dependency, "needs you" */
+  --hpx-red: #d0675c; /* real destructive/error state only */
+
+  /* Hairlines and fills derived from ivory, so structure stays neutral */
+  --hpx-hair: rgba(236, 233, 226, 0.07);
+  --hpx-hair-2: rgba(236, 233, 226, 0.12);
+  --hpx-hair-3: rgba(236, 233, 226, 0.2);
+  --hpx-fill-1: rgba(236, 233, 226, 0.03);
+  --hpx-fill-2: rgba(236, 233, 226, 0.055);
+
+  /* Local light: one per accent, small radius, low alpha. No full-screen bloom. */
+  --hpx-emit-jade: 0 0 0 1px rgba(114, 208, 182, 0.55), 0 0 16px -4px rgba(114, 208, 182, 0.4);
+  --hpx-emit-iris: 0 0 0 1px rgba(136, 125, 235, 0.5), 0 0 18px -4px rgba(136, 125, 235, 0.38);
+  --hpx-emit-teal: 0 0 0 1px rgba(79, 158, 152, 0.55), 0 0 14px -4px rgba(79, 158, 152, 0.35);
+  --hpx-emit-amber: 0 0 0 1px rgba(198, 144, 78, 0.6), 0 0 14px -4px rgba(198, 144, 78, 0.38);
+
+  /* ---- Atmosphere (§4): matte carbon + mineral wash + static micro-grain ---- */
+  --hpx-wash:
+    radial-gradient(42% 52% at 64% 46%, rgba(16, 41, 43, 0.55), transparent 72%),
+    radial-gradient(34% 40% at 74% 30%, rgba(136, 125, 235, 0.05), transparent 70%),
+    radial-gradient(50% 45% at 30% 85%, rgba(24, 20, 38, 0.6), transparent 75%);
+  --hpx-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --hpx-grain-opacity: 0.035; /* static; never animated (§24) */
+
+  /* ---- Materials ---- */
+  /* Machined plate: the Core and folio shells. Lit from the top-left edge. */
+  --hpx-mat-plate: linear-gradient(158deg, #1a2128 0%, #10151a 42%, #0b0f13 100%);
+  --hpx-mat-plate-edge: inset 0 1px 0 rgba(236, 233, 226, 0.09), inset 0 0 0 1px rgba(236, 233, 226, 0.05);
+  /* Smoked plane: objective capsule, inner glass of folios. Used sparingly, not everywhere. */
+  --hpx-mat-smoke: linear-gradient(180deg, rgba(26, 33, 40, 0.72), rgba(13, 17, 21, 0.78));
+  --hpx-mat-smoke-edge: inset 0 1px 0 rgba(236, 233, 226, 0.1), inset 0 0 0 1px rgba(236, 233, 226, 0.07);
+  --hpx-smoke-blur: 10px;
+  /* Recessed groove: rails, docking channels, the engraved X. */
+  --hpx-mat-groove: linear-gradient(180deg, #05070a, #0c1014);
+  --hpx-mat-groove-edge: inset 0 1px 1px rgba(0, 0, 0, 0.7), inset 0 -1px 0 rgba(236, 233, 226, 0.06);
+  /* Depth: objects sit in space, not on a page. */
+  --hpx-shadow-1: 0 1px 0 rgba(0, 0, 0, 0.4), 0 10px 24px -12px rgba(0, 0, 0, 0.7);
+  --hpx-shadow-2: 0 2px 0 rgba(0, 0, 0, 0.35), 0 34px 70px -28px rgba(0, 0, 0, 0.85);
+  /* Mechanical corner cut (folios, capsule): asymmetric, not a rounded card */
+  --hpx-cut: 14px;
+  --hpx-cut-sm: 7px;
+  --hpx-r-1: 3px;
+  --hpx-r-2: 6px;
+  --hpx-r-3: 10px;
+  --hpx-r-pill: 999px; /* controls only */
+
+  /* ---- Type (§5, §7, §16, §19, §24) ---- */
+  --hpx-font-sans: var(--font-inter), system-ui, sans-serif;
+  --hpx-font-mono: var(--font-xv-mono), ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* Inter's optical-size axis gives the display cut without loading another face. */
+  --hpx-opsz-display: 'opsz' 32;
+  --hpx-opsz-text: 'opsz' 16;
+
+  /* Hero H1: ~40px at 390, ~65px at 1150, 72px cap at >=1440 */
+  --hpx-t-display: clamp(2.5rem, 1.1rem + 4.1vw, 4.5rem);
+  --hpx-t-display-lh: 1.02;
+  --hpx-t-display-track: -0.032em;
+  /* S01 title */
+  --hpx-t-title: clamp(2rem, 1rem + 2.6vw, 3.25rem);
+  --hpx-t-title-lh: 1.06;
+  --hpx-t-title-track: -0.024em;
+  /* Folio title 26–34px */
+  --hpx-t-folio: clamp(1.625rem, 1.15rem + 0.62vw, 2.125rem);
+  --hpx-t-folio-lh: 1.08;
+  /* Lead copy 17–19px; never ivory on carbon for long copy (§24) */
+  --hpx-t-lead: clamp(1.0625rem, 0.98rem + 0.18vw, 1.1875rem);
+  --hpx-t-lead-lh: 1.5;
+  --hpx-t-body: 0.9375rem;
+  --hpx-t-body-lh: 1.55;
+  --hpx-t-nav: 0.90625rem; /* 14.5px */
+  /* Mono labels 11–13px, caps, tracked */
+  --hpx-t-label: 0.75rem;
+  --hpx-t-label-sm: 0.6875rem;
+  --hpx-t-label-track: 0.09em;
+
+  /* ---- Space: 4px base ---- */
+  --hpx-s-1: 4px;
+  --hpx-s-2: 8px;
+  --hpx-s-3: 12px;
+  --hpx-s-4: 16px;
+  --hpx-s-5: 24px;
+  --hpx-s-6: 32px;
+  --hpx-s-7: 48px;
+  --hpx-s-8: 64px;
+  --hpx-s-9: 96px;
+  --hpx-s-10: 128px;
+  --hpx-gutter: clamp(16px, 3.4vw, 64px);
+  --hpx-header-h: 74px; /* §5: 72–76 */
+
+  /* ---- Motion (§21). Different families on purpose; never one duration for everything. ---- */
+  --hpx-d-ui: 260ms; /* inner UI 180–350 */
+  --hpx-d-text: 420ms; /* text masks 300–500 */
+  --hpx-d-pulse: 460ms; /* connection pulses 350–550 */
+  --hpx-d-heavy: 900ms; /* heavy folios 700–1100 */
+  --hpx-d-camera: 1250ms; /* camera / large spatial 900–1600 */
+  --hpx-ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* decelerate, no overshoot */
+  --hpx-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --hpx-ease-heavy: cubic-bezier(0.22, 0.9, 0.24, 1); /* damped mass */
+  --hpx-ease-in: cubic-bezier(0.55, 0, 0.75, 0.25); /* exits only */
+
+  color: var(--hpx-ivory);
+  background: var(--hpx-obsidian);
+  font-family: var(--hpx-font-sans);
+  font-variation-settings: var(--hpx-opsz-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.hpx-root *,
+.hpx-root *::before,
+.hpx-root *::after {
+  box-sizing: border-box;
+}
+
+/* The app's global heading colours (theme-black) would override ours otherwise. */
+.hpx-root :is(h1, h2, h3, h4, p) {
+  color: inherit;
+  margin: 0;
+}
+
+.hpx-root :focus-visible {
+  outline: 2px solid var(--hpx-ivory);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hpx-root {
+    --hpx-d-ui: 1ms;
+    --hpx-d-text: 1ms;
+    --hpx-d-pulse: 1ms;
+    --hpx-d-heavy: 180ms; /* short fades/depth shifts only (§24) */
+    --hpx-d-camera: 180ms;
+  }
+}
