@@ -29,9 +29,10 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.doesNotMatch(CSS, /--xv-turn-blue/);
 });
 
-test('chat lines stay in sequence instead of spreading two turns across the screen', () => {
-  assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [12, 23]);
-  assert.equal(turnMarkerTop(11, 12, 800), 133);
+test('chat lines stay in sequence and center vertically in the workspace', () => {
+  assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [394.5, 405.5]);
+  assert.equal(turnMarkerTop(11, 12, 800), 460.5);
+  assert.equal(turnMarkerTop(0, 1, 800), 400);
   assert.ok(turnMarkerTop(99, 100, 800) < 800);
   assert.match(RAIL, /style=\{\{ top: turnMarkerTop\(index, visibleTurns\.length, railHeight\) \}\}/);
 });

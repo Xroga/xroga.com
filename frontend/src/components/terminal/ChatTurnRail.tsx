@@ -24,10 +24,11 @@ function clip(text: string, max: number): string {
   return line.length <= max ? line : `${line.slice(0, max - 1)}…`;
 }
 
-/** Keep real turns in a tight sequence, compressing only if the list exceeds the viewport. */
+/** Center real turns vertically, keeping a tight sequence and compressing only when needed. */
 export function turnMarkerTop(index: number, count: number, railHeight: number): number {
   const step = count > 1 ? Math.min(11, Math.max(1, (railHeight - 24) / (count - 1))) : 11;
-  return 12 + index * step;
+  const start = (railHeight - step * Math.max(0, count - 1)) / 2;
+  return start + index * step;
 }
 
 function responsePreview(content: string): Pick<ChatTurn, 'summary' | 'detail'> {
