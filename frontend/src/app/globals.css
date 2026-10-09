@@ -3818,10 +3818,6 @@ body.theme-gray * {
     background: #505050;
     transition: width 150ms ease, background-color 150ms ease;
   }
-  .xv-chat-turn-tick[data-rhythm='1'] > span { width: 23px; }
-  .xv-chat-turn-tick[data-rhythm='2'] > span { width: 17px; }
-  .xv-chat-turn-tick[data-rhythm='3'] > span { width: 11px; }
-  .xv-chat-turn-tick[data-rhythm='4'] > span { width: 22px; }
   .xv-chat-turn-tick--active > span {
     background: #a3a3a3;
   }
@@ -3831,7 +3827,7 @@ body.theme-gray * {
   }
   .xv-chat-turn-tick:hover > span,
   .xv-chat-turn-tick:focus-visible > span {
-    width: 25px;
+    width: 22px;
     background: #ededed;
   }
   .xv-chat-turn-preview {

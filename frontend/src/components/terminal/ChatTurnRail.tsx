@@ -97,7 +97,6 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
           key={turn.id}
           type="button"
           className={cn('xv-chat-turn-tick', turn.id === activeId && 'xv-chat-turn-tick--active')}
-          data-rhythm={index % 12 < 4 ? index % 12 + 1 : 'normal'}
           style={{ top: turnMarkerTop(index, visibleTurns.length, railHeight) }}
           onMouseEnter={() => setHoveredId(turn.id)}
           onFocus={() => setHoveredId(turn.id)}

@@ -23,11 +23,9 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*pointer-events:\s*none/);
   assert.match(CSS, /\.xv-chat-turn-tick\s*\{[^}]*pointer-events:\s*auto/);
   assert.match(RAIL, /visibleTurns\.length === 0/);
-  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='1'\] > span\s*\{\s*width:\s*23px/);
-  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='2'\] > span\s*\{\s*width:\s*17px/);
-  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='3'\] > span\s*\{\s*width:\s*11px/);
-  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='4'\] > span\s*\{\s*width:\s*22px/);
-  assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*25px/);
+  assert.match(CSS, /\.xv-chat-turn-tick > span\s*\{[^}]*width:\s*5px[^}]*height:\s*1px/);
+  assert.doesNotMatch(RAIL + CSS, /data-rhythm/);
+  assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*22px/);
   assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*top:\s*var\(--xv-preview-position\)[^}]*left:\s*30px[^}]*width:\s*min\(280px/);
   assert.match(RAIL, /turnMarkerTop\(hoveredIndex, visibleTurns\.length, railHeight\)/);
   assert.doesNotMatch(CSS, /--xv-turn-blue/);
