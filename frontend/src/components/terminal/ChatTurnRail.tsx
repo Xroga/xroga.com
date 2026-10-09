@@ -17,6 +17,12 @@ function clip(text: string, max: number): string {
   return line.length <= max ? line : `${line.slice(0, max - 1)}…`;
 }
 
+/** Keep real turns in a tight sequence, compressing only if the list exceeds the viewport. */
+export function turnMarkerTop(index: number, count: number, railHeight: number): number {
+  const step = count > 1 ? Math.min(11, Math.max(1, (railHeight - 24) / (count - 1))) : 11;
+  return 12 + index * step;
+}
+
 function responsePreview(content: string): Pick<ChatTurn, 'summary' | 'detail'> {
   const lines = content
     .replace(/```[\s\S]*?```/g, ' Code details are in the response. ')
@@ -42,13 +48,17 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => new Set());
   const [left, setLeft] = useState(8);
+  const [railHeight, setRailHeight] = useState(800);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const scrollRoot = document.querySelector<HTMLElement>('.xv-terminal-scroll')
       ?? document.querySelector<HTMLElement>('main.flex-1.overflow-y-auto');
-    const place = () => setLeft(Math.max(8, Math.round((scrollRoot?.getBoundingClientRect().left ?? 0) + 8)));
+    const place = () => {
+      setLeft(Math.max(8, Math.round((scrollRoot?.getBoundingClientRect().left ?? 0) + 8)));
+      setRailHeight(Math.max(48, window.innerHeight - 16));
+    };
     place();
     const observer = scrollRoot ? new ResizeObserver(place) : null;
     if (scrollRoot) observer?.observe(scrollRoot);
@@ -88,7 +98,7 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
           key={turn.id}
           type="button"
           className={cn('xv-chat-turn-tick', turn.id === activeId && 'xv-chat-turn-tick--active')}
-          style={{ top: `${((index + 0.5) / turns.length) * 100}%` }}
+          style={{ top: turnMarkerTop(index, turns.length, railHeight) }}
           onMouseEnter={() => setHoveredId(turn.id)}
           onFocus={() => setHoveredId(turn.id)}
           onClick={() => onJump(turn.id)}
@@ -101,7 +111,7 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
       {hoveredTurn ? (
         <div
           className="xv-chat-turn-preview"
-          style={{ '--xv-preview-position': `${((hoveredIndex + 0.5) / turns.length) * 100}%` } as React.CSSProperties}
+          style={{ '--xv-preview-position': `${turnMarkerTop(hoveredIndex, turns.length, railHeight)}px` } as React.CSSProperties}
         >
           <div className="xv-chat-turn-preview-heading">
             <strong title={hoveredTurn.label}>{clip(hoveredTurn.label, 50)}</strong>

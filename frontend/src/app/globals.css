@@ -3818,6 +3818,10 @@ body.theme-gray * {
     background: #686868;
     transition: width 150ms ease, background-color 150ms ease;
   }
+  .xv-chat-turn-tick--active > span {
+    width: 10px;
+    background: #a3a3a3;
+  }
   .xv-chat-turn-tick:hover,
   .xv-chat-turn-tick:focus-visible {
     outline: 0;
@@ -3827,14 +3831,10 @@ body.theme-gray * {
     width: 27px;
     background: #ededed;
   }
-  .xv-chat-turn-tick--active > span {
-    width: 30px;
-    background: #e5e5e5;
-  }
   .xv-chat-turn-preview {
     position: absolute;
     top: clamp(68px, var(--xv-preview-position), calc(100% - 68px));
-    left: 40px;
+    left: 38px;
     width: min(322px, calc(100vw - 100px));
     max-height: 132px;
     overflow: hidden;

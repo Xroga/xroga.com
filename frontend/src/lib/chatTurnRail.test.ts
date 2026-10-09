@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { buildChatTurns } from '../components/terminal/ChatTurnRail';
+import { buildChatTurns, turnMarkerTop } from '../components/terminal/ChatTurnRail';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const RAIL = read('../components/terminal/ChatTurnRail.tsx');
@@ -23,9 +23,17 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*pointer-events:\s*none/);
   assert.match(CSS, /\.xv-chat-turn-tick\s*\{[^}]*pointer-events:\s*auto/);
   assert.match(RAIL, /turns\.length === 0/);
-  assert.match(CSS, /\.xv-chat-turn-tick--active > span\s*\{[^}]*width:\s*30px[^}]*background:\s*#e5e5e5/);
-  assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*left:\s*40px[^}]*width:\s*min\(322px/);
+  assert.match(CSS, /\.xv-chat-turn-tick--active > span\s*\{[^}]*width:\s*10px[^}]*background:\s*#a3a3a3/);
+  assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*27px/);
+  assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*left:\s*38px[^}]*width:\s*min\(322px/);
   assert.doesNotMatch(CSS, /--xv-turn-blue/);
+});
+
+test('chat lines stay in sequence instead of spreading two turns across the screen', () => {
+  assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [12, 23]);
+  assert.equal(turnMarkerTop(11, 12, 800), 133);
+  assert.ok(turnMarkerTop(99, 100, 800) < 800);
+  assert.match(RAIL, /style=\{\{ top: turnMarkerTop\(index, turns\.length, railHeight\) \}\}/);
 });
 
 test('hover cards pair each prompt with its own answer and omit code blocks', () => {
