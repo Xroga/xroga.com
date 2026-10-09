@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { buildChatTurns, turnMarkerTop } from '../components/terminal/ChatTurnRail';
+import { buildChatTurns, MAX_VISIBLE_CHAT_TURNS, turnMarkerTop, visibleChatTurns } from '../components/terminal/ChatTurnRail';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 const RAIL = read('../components/terminal/ChatTurnRail.tsx');
@@ -22,7 +22,7 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(CSS, /\.xv-chat-turn-rail--dock\s*\{[^}]*background:\s*transparent/);
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*pointer-events:\s*none/);
   assert.match(CSS, /\.xv-chat-turn-tick\s*\{[^}]*pointer-events:\s*auto/);
-  assert.match(RAIL, /turns\.length === 0/);
+  assert.match(RAIL, /visibleTurns\.length === 0/);
   assert.match(CSS, /\.xv-chat-turn-tick--active > span\s*\{[^}]*width:\s*10px[^}]*background:\s*#a3a3a3/);
   assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*27px/);
   assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*left:\s*38px[^}]*width:\s*min\(322px/);
@@ -33,7 +33,20 @@ test('chat lines stay in sequence instead of spreading two turns across the scre
   assert.deepEqual([turnMarkerTop(0, 2, 800), turnMarkerTop(1, 2, 800)], [12, 23]);
   assert.equal(turnMarkerTop(11, 12, 800), 133);
   assert.ok(turnMarkerTop(99, 100, 800) < 800);
-  assert.match(RAIL, /style=\{\{ top: turnMarkerTop\(index, turns\.length, railHeight\) \}\}/);
+  assert.match(RAIL, /style=\{\{ top: turnMarkerTop\(index, visibleTurns\.length, railHeight\) \}\}/);
+});
+
+test('the history rail grows with real turns and caps at the latest 50', () => {
+  const turns = Array.from({ length: 75 }, (_, index) => ({
+    id: `turn-${index}`,
+    label: `Prompt ${index}`,
+    summary: '',
+  }));
+  assert.equal(MAX_VISIBLE_CHAT_TURNS, 50);
+  assert.equal(visibleChatTurns(turns.slice(0, 2)).length, 2);
+  assert.equal(visibleChatTurns(turns).length, 50);
+  assert.equal(visibleChatTurns(turns)[0]?.id, 'turn-25');
+  assert.equal(visibleChatTurns(turns).at(-1)?.id, 'turn-74');
 });
 
 test('hover cards pair each prompt with its own answer and omit code blocks', () => {

@@ -12,6 +12,13 @@ export interface ChatTurn {
   detail?: string;
 }
 
+export const MAX_VISIBLE_CHAT_TURNS = 50;
+
+/** Show only real conversation turns, keeping the latest 50 navigable in the rail. */
+export function visibleChatTurns(turns: ChatTurn[]): ChatTurn[] {
+  return turns.length > MAX_VISIBLE_CHAT_TURNS ? turns.slice(-MAX_VISIBLE_CHAT_TURNS) : turns;
+}
+
 function clip(text: string, max: number): string {
   const line = text.replace(/\s+/g, ' ').trim();
   return line.length <= max ? line : `${line.slice(0, max - 1)}…`;
@@ -69,10 +76,11 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
     };
   }, []);
 
-  const hoveredIndex = useMemo(() => turns.findIndex((turn) => turn.id === hoveredId), [turns, hoveredId]);
-  const hoveredTurn = hoveredIndex >= 0 ? turns[hoveredIndex] : null;
+  const visibleTurns = useMemo(() => visibleChatTurns(turns), [turns]);
+  const hoveredIndex = useMemo(() => visibleTurns.findIndex((turn) => turn.id === hoveredId), [visibleTurns, hoveredId]);
+  const hoveredTurn = hoveredIndex >= 0 ? visibleTurns[hoveredIndex] : null;
 
-  if (!mounted || turns.length === 0) return null;
+  if (!mounted || visibleTurns.length === 0) return null;
 
   const toggleBookmark = (id: string) => {
     setBookmarkedIds((previous) => {
@@ -93,12 +101,12 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
         if (!event.currentTarget.contains(event.relatedTarget)) setHoveredId(null);
       }}
     >
-      {turns.map((turn, index) => (
+      {visibleTurns.map((turn, index) => (
         <button
           key={turn.id}
           type="button"
           className={cn('xv-chat-turn-tick', turn.id === activeId && 'xv-chat-turn-tick--active')}
-          style={{ top: turnMarkerTop(index, turns.length, railHeight) }}
+          style={{ top: turnMarkerTop(index, visibleTurns.length, railHeight) }}
           onMouseEnter={() => setHoveredId(turn.id)}
           onFocus={() => setHoveredId(turn.id)}
           onClick={() => onJump(turn.id)}

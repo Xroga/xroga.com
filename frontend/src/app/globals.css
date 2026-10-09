@@ -9738,38 +9738,11 @@ body.theme-beige {
 /* ---- the body: two internal panes ---------------------------------------- */
 
 .xv-workspace-body {
-  position: relative;
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   transition: grid-template-columns 280ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Keep project identity with the workspace itself, not in the persistent top chrome. */
-.xv-workspace-identity-dock {
-  position: absolute;
-  z-index: 8;
-  inset-inline-start: 0.8rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  max-width: min(15rem, calc(100% - 1.6rem));
-  pointer-events: auto;
-}
-.xv-workspace-identity-dock {
-  padding: 0.25rem 0.45rem;
-  border: 1px solid color-mix(in srgb, currentColor 11%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--term-chrome, #0b0d12) 82%, transparent);
-  backdrop-filter: blur(8px);
-}
-@media (max-width: 639px) {
-  .xv-workspace-identity-dock {
-    inset-inline-start: 0.5rem;
-    max-width: calc(100% - 1rem);
-  }
 }
 
 @media (min-width: 1024px) {

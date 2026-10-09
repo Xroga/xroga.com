@@ -228,6 +228,15 @@ export function DashboardView() {
             container on purpose: a title bar that scrolls away with the history is a
             document header, not a window chrome. */}
         <header className="xv-workspace-header" data-testid="terminal-identity-header">
+          <div className="xv-workspace-identity-cluster">
+            <WorkspaceIdentityMenu incognito={incognito} />
+            <span className="xv-term-lights" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+
           {incognito ? (
             <span className="xv-term-badge">Private · not saved</span>
           ) : (
@@ -260,9 +269,6 @@ export function DashboardView() {
           data-workspace-open={workspaceOpen ? 'true' : 'false'}
           style={{ '--xv-workspace-width': `${workspaceWidth}%` } as React.CSSProperties}
         >
-          <div className="xv-workspace-identity-dock" data-testid="workspace-identity-dock">
-            <WorkspaceIdentityMenu incognito={incognito} />
-          </div>
           <div className="xv-terminal-panel" ref={paneRef}>
             {terminalPane}
           </div>
