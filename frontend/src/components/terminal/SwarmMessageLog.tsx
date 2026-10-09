@@ -14,6 +14,8 @@ import { StoppedBuildResumeCard } from './StoppedBuildResumeCard';
 import { CapacityUnavailableCard } from './CapacityUnavailableCard';
 import { UpdateFileTrail } from './UpdateFileTrail';
 import { WebSourcesPanel } from './WebSourcesPanel';
+import { webSourcesToRichResults } from '@/lib/xrogaWebResultAdapter';
+import { XrogaOutputView } from './XrogaBlockView';
 import { isCodeBuildProcessing } from '@/lib/codeBuildProcessing';
 import { promptWantsLiveResearch } from '@/lib/researchWait';
 import { shareableDocumentText } from '@/lib/xrogaShareableOutput';
@@ -438,6 +440,7 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
           )}
 
           {renderedMessages.map((msg) => {
+            const sourcedResults = !msg.featureOutput && msg.webSources?.length ? webSourcesToRichResults(msg.webSources, msg.id) : null;
             const isLastAssistant = msg.id === lastAssistantId && !loading;
             const showSuggestions = isLastAssistant && msg.role === 'assistant';
             const isImageOutput =
@@ -630,7 +633,12 @@ export function SwarmMessageLog({ compact, incognito = false, chromeless = false
                           />
                         )}
                         {msg.webSources && msg.webSources.length > 0 ? (
-                          <WebSourcesPanel sources={msg.webSources} />
+                          <>
+                            {sourcedResults ? (
+                              <ChatErrorBoundary><XrogaOutputView output={{ schemaVersion: 1, id: `web-result-output-${msg.id}`, status: 'completed', blocks: [sourcedResults] }} /></ChatErrorBoundary>
+                            ) : null}
+                            <WebSourcesPanel sources={msg.webSources} />
+                          </>
                         ) : null}
                       </div>
                       {msg.content && (

@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Activity, AppWindow, ArrowLeft, ArrowUpRight, Blocks, BookOpen, Bot, Braces, CalendarClock, ChevronRight, CircleHelp, Code2, Compass, Folder, Globe2, HardDrive, Menu, PanelLeftClose, Play, Settings2 } from 'lucide-react';
+import { Activity, AppWindow, ArrowLeft, ArrowUpRight, Blocks, BookOpen, Bot, Braces, CalendarClock, ChevronRight, CircleHelp, Code2, Compass, Folder, Globe2, HardDrive, Layers3, Menu, PanelLeftClose, Play, Settings2 } from 'lucide-react';
 import { PREVIEW_DESTINATIONS, PREVIEW_GROUPS } from '@/lib/osPreviewNavigation';
 
 const ICONS: Record<string, typeof AppWindow> = {
   workspace: AppWindow, projects: Folder, coding: Code2, browser: Globe2, automations: CalendarClock,
   employees: Bot, 'work-packs': Blocks, genome: Braces, artifacts: BookOpen, drive: HardDrive, insights: Activity, settings: Settings2,
+  'rich-results': Layers3,
 };
 
 export function OsPreviewShell({ children, context = 'Product preview' }: { children: React.ReactNode; context?: string }) {

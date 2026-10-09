@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { xrogaRichResultSchema } from './xrogaRichResults';
 
 export const XROGA_BLOCK_SCHEMA_VERSION = 1 as const;
 
@@ -249,6 +250,11 @@ const cardGridBlock = richBase.extend({
     metrics: z.record(z.string(), scalarValue).optional(),
   })).min(1).max(24),
 });
+const richResultsBlock = richBase.extend({
+  type: z.literal('rich-results'),
+  items: z.array(xrogaRichResultSchema).min(1).max(35),
+  presentation: z.enum(['compact', 'horizontal', 'visual', 'editorial', 'ticket', 'comparison', 'list', 'grid']).optional(),
+});
 const treeBlock = richBase.extend({
   type: z.literal('tree'),
   nodes: z.array(z.object({
@@ -307,7 +313,7 @@ export const xrogaBlockSchema = z.discriminatedUnion('type', [
   metricBlock, metricGroupBlock, progressBlock, progressGroupBlock, calculatorBlock, calculationBlock,
   gaugeBlock, comparisonBlock, decisionMatrixBlock, keyValueBlock, checklistBlock, stepsBlock, scorecardBlock, rankingBlock,
   tabsBlock, accordionBlock, fileTreeBlock, calendarBlock, sourceListBlock,
-  cardGridBlock, treeBlock, jsonBlock, apiRequestBlock,
+  cardGridBlock, richResultsBlock, treeBlock, jsonBlock, apiRequestBlock,
   tableBlock, chartBlock, timelineBlock, graphBlock, mapBlock,
   formBlock, choiceBlock, galleryBlock, imageBlock, audioBlock, videoBlock, dashboardBlock,
   documentBlock, spreadsheetBlock, presentationBlock, boardBlock, databaseBlock, pdfBlock,

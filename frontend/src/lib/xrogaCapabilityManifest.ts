@@ -5,7 +5,7 @@ export const modelBlockCapabilities = [
   'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation',
   'board', 'database', 'pdf', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge',
   'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion',
-  'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request',
+  'file-tree', 'calendar', 'source-list', 'card-grid', 'rich-results', 'tree', 'json', 'api-request',
   'decision-matrix',
 ] as const;
 
