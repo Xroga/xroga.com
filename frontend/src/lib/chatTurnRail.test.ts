@@ -14,7 +14,7 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(RAIL, /onClick=\{\(\) => onJump\(turn.id\)\}/);
   assert.match(RAIL, /aria-current=\{turn.id === activeId \? 'location'/);
   assert.match(RAIL, /xv-chat-turn-preview-heading/);
-  assert.match(RAIL, /Bookmark turn/);
+  assert.doesNotMatch(RAIL, /Bookmark|bookmarkedIds|toggleBookmark/);
   assert.doesNotMatch(RAIL, /ChevronUp|ChevronDown|xv-chat-turn-panel|xv-chat-turn-collapsed/);
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*position:\s*fixed[^}]*top:\s*8px/);
   assert.doesNotMatch(RAIL, /xv-chat-turn-track/);
@@ -23,9 +23,13 @@ test('conversation map matches the left dash rail and hover card reference', () 
   assert.match(CSS, /\.xv-chat-turn-rail\s*\{[^}]*pointer-events:\s*none/);
   assert.match(CSS, /\.xv-chat-turn-tick\s*\{[^}]*pointer-events:\s*auto/);
   assert.match(RAIL, /visibleTurns\.length === 0/);
-  assert.match(CSS, /\.xv-chat-turn-tick--active > span\s*\{[^}]*width:\s*10px[^}]*background:\s*#a3a3a3/);
-  assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*27px/);
-  assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*left:\s*38px[^}]*width:\s*min\(322px/);
+  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='1'\] > span\s*\{\s*width:\s*23px/);
+  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='2'\] > span\s*\{\s*width:\s*17px/);
+  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='3'\] > span\s*\{\s*width:\s*11px/);
+  assert.match(CSS, /\.xv-chat-turn-tick\[data-rhythm='4'\] > span\s*\{\s*width:\s*22px/);
+  assert.match(CSS, /\.xv-chat-turn-tick:hover > span,[\s\S]*?width:\s*25px/);
+  assert.match(CSS, /\.xv-chat-turn-preview\s*\{[^}]*top:\s*var\(--xv-preview-position\)[^}]*left:\s*30px[^}]*width:\s*min\(280px/);
+  assert.match(RAIL, /turnMarkerTop\(hoveredIndex, visibleTurns\.length, railHeight\)/);
   assert.doesNotMatch(CSS, /--xv-turn-blue/);
 });
 

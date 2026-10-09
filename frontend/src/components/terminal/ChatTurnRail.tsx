@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ChatTurn {
@@ -26,7 +25,8 @@ function clip(text: string, max: number): string {
 
 /** Center real turns vertically, keeping a tight sequence and compressing only when needed. */
 export function turnMarkerTop(index: number, count: number, railHeight: number): number {
-  const step = count > 1 ? Math.min(11, Math.max(1, (railHeight - 24) / (count - 1))) : 11;
+  // Leave room for the hover preview at both ends so it can stay centered on its tick.
+  const step = count > 1 ? Math.min(11, Math.max(1, (railHeight - 144) / (count - 1))) : 11;
   const start = (railHeight - step * Math.max(0, count - 1)) / 2;
   return start + index * step;
 }
@@ -54,7 +54,6 @@ interface ChatTurnRailProps {
 /** A quiet full-height conversation map, not a second scrolling chat panel. */
 export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRailProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => new Set());
   const [left, setLeft] = useState(8);
   const [railHeight, setRailHeight] = useState(800);
   const [mounted, setMounted] = useState(false);
@@ -83,15 +82,6 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
 
   if (!mounted || visibleTurns.length === 0) return null;
 
-  const toggleBookmark = (id: string) => {
-    setBookmarkedIds((previous) => {
-      const next = new Set(previous);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
   return createPortal(
     <nav
       className={cn('xv-chat-turn-rail xv-chat-turn-rail--dock hidden lg:block', className)}
@@ -107,6 +97,7 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
           key={turn.id}
           type="button"
           className={cn('xv-chat-turn-tick', turn.id === activeId && 'xv-chat-turn-tick--active')}
+          data-rhythm={index % 12 < 4 ? index % 12 + 1 : 'normal'}
           style={{ top: turnMarkerTop(index, visibleTurns.length, railHeight) }}
           onMouseEnter={() => setHoveredId(turn.id)}
           onFocus={() => setHoveredId(turn.id)}
@@ -120,19 +111,10 @@ export function ChatTurnRail({ turns, activeId, onJump, className }: ChatTurnRai
       {hoveredTurn ? (
         <div
           className="xv-chat-turn-preview"
-          style={{ '--xv-preview-position': `${turnMarkerTop(hoveredIndex, turns.length, railHeight)}px` } as React.CSSProperties}
+          style={{ '--xv-preview-position': `${turnMarkerTop(hoveredIndex, visibleTurns.length, railHeight)}px` } as React.CSSProperties}
         >
           <div className="xv-chat-turn-preview-heading">
             <strong title={hoveredTurn.label}>{clip(hoveredTurn.label, 50)}</strong>
-            <button
-              type="button"
-              className="xv-chat-turn-bookmark"
-              onClick={() => toggleBookmark(hoveredTurn.id)}
-              aria-label={bookmarkedIds.has(hoveredTurn.id) ? 'Remove turn bookmark' : 'Bookmark turn'}
-              aria-pressed={bookmarkedIds.has(hoveredTurn.id)}
-            >
-              <Bookmark aria-hidden="true" fill={bookmarkedIds.has(hoveredTurn.id) ? 'currentColor' : 'none'} />
-            </button>
           </div>
           <p>{hoveredTurn.summary || 'Waiting for Xroga’s response…'}</p>
           {hoveredTurn.detail ? <p className="xv-chat-turn-preview-detail"><span aria-hidden="true">•</span>{hoveredTurn.detail}</p> : null}

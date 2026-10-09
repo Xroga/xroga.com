@@ -3701,7 +3701,7 @@ body.theme-gray * {
   .xv-chat-turn-rail {
     position: fixed;
     top: 8px;
-    width: 38px;
+    width: 30px;
     height: calc(100dvh - 16px);
     z-index: 44;
     color: #d7d7d7;
@@ -3800,7 +3800,7 @@ body.theme-gray * {
     position: absolute;
     left: 0;
     display: grid;
-    width: 38px;
+    width: 30px;
     height: 11px;
     place-items: center;
     border: 0;
@@ -3811,15 +3811,18 @@ body.theme-gray * {
   }
   .xv-chat-turn-tick > span {
     display: block;
-    width: 10px;
-    height: 2px;
+    width: 5px;
+    height: 1px;
     margin-right: auto;
-    margin-left: 6px;
-    background: #686868;
+    margin-left: 4px;
+    background: #505050;
     transition: width 150ms ease, background-color 150ms ease;
   }
+  .xv-chat-turn-tick[data-rhythm='1'] > span { width: 23px; }
+  .xv-chat-turn-tick[data-rhythm='2'] > span { width: 17px; }
+  .xv-chat-turn-tick[data-rhythm='3'] > span { width: 11px; }
+  .xv-chat-turn-tick[data-rhythm='4'] > span { width: 22px; }
   .xv-chat-turn-tick--active > span {
-    width: 10px;
     background: #a3a3a3;
   }
   .xv-chat-turn-tick:hover,
@@ -3828,17 +3831,18 @@ body.theme-gray * {
   }
   .xv-chat-turn-tick:hover > span,
   .xv-chat-turn-tick:focus-visible > span {
-    width: 27px;
+    width: 25px;
     background: #ededed;
   }
   .xv-chat-turn-preview {
     position: absolute;
-    top: clamp(68px, var(--xv-preview-position), calc(100% - 68px));
-    left: 38px;
-    width: min(322px, calc(100vw - 100px));
+    top: var(--xv-preview-position);
+    left: 30px;
+    box-sizing: border-box;
+    width: min(280px, calc(100vw - 80px));
     max-height: 132px;
     overflow: hidden;
-    padding: 12px 12px 11px;
+    padding: 10px;
     border: 1px solid #2a2a2a;
     border-radius: 13px;
     background: #1b1b1b;
@@ -3850,7 +3854,6 @@ body.theme-gray * {
   .xv-chat-turn-preview-heading {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
   }
   .xv-chat-turn-preview-heading strong {
     flex: 1;
@@ -3879,24 +3882,8 @@ body.theme-gray * {
     padding-left: 4px;
   }
   .xv-chat-turn-preview-detail span { flex: 0 0 auto; }
-  .xv-chat-turn-bookmark {
-    display: grid;
-    width: 18px;
-    height: 18px;
-    flex: 0 0 18px;
-    place-items: center;
-    border: 0;
-    background: transparent;
-    color: #9a9a9a;
-    cursor: pointer;
-  }
-  .xv-chat-turn-bookmark svg { width: 14px; height: 14px; stroke-width: 1.6; }
-  .xv-chat-turn-bookmark:hover,
-  .xv-chat-turn-bookmark:focus-visible,
-  .xv-chat-turn-bookmark[aria-pressed='true'] { color: #f0f0f0; }
-  .xv-chat-turn-bookmark:focus-visible { outline: 1px solid #f0f0f0; outline-offset: 2px; }
   @media (max-width: 1280px) {
-    .xv-chat-turn-preview { width: min(290px, calc(100vw - 100px)); }
+    .xv-chat-turn-preview { width: min(260px, calc(100vw - 80px)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .xv-chat-turn-tick > span { transition: none; }
