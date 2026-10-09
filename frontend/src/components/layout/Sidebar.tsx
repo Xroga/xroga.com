@@ -24,6 +24,7 @@ import {
   Sparkles,
   LogIn,
   UserPlus,
+  Bell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -74,6 +75,7 @@ import { suspendProjectWorkspacePersistence } from '@/lib/projectWorkspaceStorag
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate, type WorkspaceAuthGateReason } from '@/components/workspace/WorkspaceAuthGate';
 import { rememberGuestAuthIntent } from '@/lib/guestWorkspace';
+import { SidebarNotificationButton, SidebarNotificationCenter } from '@/components/notifications/SidebarNotificationCenter';
 
 /**
  * The sidebar nav, as a mix of links and groups.
@@ -283,6 +285,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const { requestAuthGate } = useWorkspaceAuthGate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const navScrollRef = useRef<HTMLDivElement>(null);
   const profileRowRef = useRef<HTMLDivElement>(null);
@@ -301,6 +304,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const terminalFullscreenRaw = useThemeStore((s) => s.terminalFullscreen);
   const planTier = useAppStore((s) => s.planTier);
   const profile = useAppStore((s) => s.profile);
+  const unreadNotifications = useAppStore((s) => s.unreadCount);
   const incognitoRaw = usePrivacyStore((s) => s.incognito);
   const incognito = hydrated && incognitoRaw;
   const terminalFullscreen = hydrated && terminalFullscreenRaw;
@@ -826,18 +830,24 @@ export function Sidebar({ displayName, email }: SidebarProps) {
               <HoverTip label="Theme" description="Choose the workspace theme.">
                 <ThemeToggle placement="right-start" />
               </HoverTip>
+              {!isGuest && !incognito && <SidebarNotificationButton open={notificationsOpen} onToggle={() => { if (!effectiveSidebarOpen) toggleSidebar(); setNotificationsOpen((value) => !value); }} compact />}
             </div>
           )}
         </div>
 
       </div>
 
-      {navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
+      {navExpanded && notificationsOpen ? <SidebarNotificationCenter open onClose={() => setNotificationsOpen(false)} /> : navExpanded ? <SidebarNavScroller targetRef={navScrollRef} className="flex-1 min-h-0">
         <nav
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
           <div className="xv-sidebar-menu">
+              {!isGuest && !incognito && <button type="button" onClick={() => setNotificationsOpen(true)} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-[var(--foreground)] hover:bg-[var(--foreground)]/[.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500" aria-label={`Notifications${unreadNotifications ? `, ${unreadNotifications} unread` : ''}`}>
+                <Bell className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="flex-1">Notifications</span>
+                {unreadNotifications > 0 && <span className="rounded-full bg-rose-500/15 px-1.5 text-[10px] font-semibold text-rose-400">{unreadNotifications}</span>}
+              </button>}
               {navItems.map((entry) =>
                 isGroup(entry) && entry.id === 'explore' ? (
                   <SidebarHoverMenu
@@ -961,6 +971,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
             <AnimatedIcon icon={LocateFixedIcon} />
           </button>
+          {!isGuest && !incognito && <SidebarNotificationButton open={notificationsOpen} onToggle={() => { setMobileOpen(true); setNotificationsOpen(true); }} compact />}
           <button type="button" onClick={handleNewChat} aria-label="New Terminal">
             <AnimatedIcon icon={NewTerminalIcon} size={16} intro={false} />
           </button>

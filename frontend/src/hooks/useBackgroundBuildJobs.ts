@@ -8,7 +8,6 @@ import {
   updatePendingBuildSequence,
   type PendingBuildJob,
 } from '@/lib/pendingBuildJobs';
-import { showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
 import { useAppStore } from '@/store/useAppStore';
 import { isRecoverableBuildOutput } from '@/lib/recoveredBuildOutput';
 
@@ -114,11 +113,6 @@ export function useBackgroundBuildJobs(
           }
           if (run.status === 'complete' || run.status === 'completed') {
             removePendingBuildJob(job.assistantMessageId);
-            showBuildBrowserNotification({
-              title: 'Your Xroga project is complete!',
-              body: 'The persisted build finished while you were away.',
-              tag: `build-${job.runId}`,
-            });
             completeRef.current?.({
               ...identity,
               runStatus: 'complete',
@@ -131,11 +125,6 @@ export function useBackgroundBuildJobs(
             });
           } else if (run.status === 'error' && isRecoverableBuildOutput(run.output)) {
             removePendingBuildJob(job.assistantMessageId);
-            showBuildBrowserNotification({
-              title: 'Your Xroga build finished with evidence',
-              body: 'The generated work was restored. Review the exact shipping blocker in Workspace.',
-              tag: `build-evidence-${job.runId}`,
-            });
             completeRef.current?.({
               ...identity,
               runStatus: 'error',
@@ -187,11 +176,6 @@ export function useBackgroundBuildJobs(
 
         if (kind === 'build_ready') {
           removePendingBuildJob(job.assistantMessageId);
-          showBuildBrowserNotification({
-            title: match.title,
-            body: match.message,
-            tag: `build-${job.assistantMessageId}`,
-          });
           completeRef.current?.({
             assistantMessageId: job.assistantMessageId,
             userMessageId: job.userMessageId,
@@ -209,11 +193,6 @@ export function useBackgroundBuildJobs(
           });
         } else if (kind === 'build_failed') {
           removePendingBuildJob(job.assistantMessageId);
-          showBuildBrowserNotification({
-            title: match.title,
-            body: match.message,
-            tag: `build-fail-${job.assistantMessageId}`,
-          });
           failedRef.current?.({
             assistantMessageId: job.assistantMessageId,
             userMessageId: job.userMessageId,

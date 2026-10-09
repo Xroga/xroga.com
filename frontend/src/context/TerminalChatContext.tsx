@@ -90,8 +90,7 @@ import {
 import { dispatchCompanionEvent, operationFromProgress } from '@/lib/companion';
 import { requiresSoftwareExecution } from '@/lib/semanticExecution';
 import { useBackgroundBuildJobs } from '@/hooks/useBackgroundBuildJobs';
-import { useBuildCompletionAlerts } from '@/hooks/useBuildCompletionAlerts';
-import { requestBuildNotificationPermission, showBuildBrowserNotification } from '@/lib/buildBrowserNotify';
+import { requestBuildNotificationPermission } from '@/lib/buildBrowserNotify';
 import { deriveLandingOutcome } from '@/lib/landingOutcome';
 import { enhanceAiResponse, stripXrogaUiProtocol } from '@/lib/xrogaResponseDocument';
 import {
@@ -947,7 +946,8 @@ const stopRequestedRunIdRef =
     !isGuest,
   );
 
-  useBuildCompletionAlerts(!isGuest);
+  // NotificationExperience owns polling and alerts; this hook previously marked
+  // completion notifications read before the user had opened them.
 
   // Restore the visible build shell synchronously from durable local identity. The
   // network poll still supplies authoritative events/output, but users should never
@@ -3742,15 +3742,6 @@ active.applyBuild({
                 });
               });
 
-              const browserOutcome = deriveLandingOutcome(output, {
-                projectName,
-                isUpdate: reusePreview,
-              });
-              showBuildBrowserNotification({
-                title: browserOutcome.headline,
-                body: browserOutcome.completionNote,
-                tag: `build-done-${assistantId}`,
-              });
               setMessages((m) => {
                 const paths = Array.isArray((output as { updatedFiles?: string[] }).updatedFiles)
                   ? ((output as { updatedFiles?: string[] }).updatedFiles as string[]).slice(0, 6)

@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { usePrivacyStore } from '@/store/usePrivacyStore';
 import { tokenUsageFromSummary } from '@/lib/tokenUsageFromSummary';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
+import { NotificationExperience } from '@/components/notifications/NotificationExperience';
 
 const FETCH_TIMEOUT_MS = 8000;
 
@@ -27,8 +28,6 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   const workspaceIdentity = useWorkspaceIdentity();
   const setTokenUsage = useAppStore((s) => s.setTokenUsage);
   const setPlanInfo = useAppStore((s) => s.setPlanInfo);
-  const setUnreadCount = useAppStore((s) => s.setUnreadCount);
-  const setNotifications = useAppStore((s) => s.setNotifications);
   const setProfile = useAppStore((s) => s.setProfile);
 
   useEffect(() => {
@@ -69,14 +68,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       secondaryRunning = true;
       try {
         const results = await Promise.allSettled([
-          withTimeout(api.notifications.unreadCount()),
-          withTimeout(api.notifications.list()),
           withTimeout(api.profile.get()),
         ]);
         if (cancelled) return;
-        if (results[0].status === 'fulfilled') setUnreadCount(results[0].value.count);
-        if (results[1].status === 'fulfilled') setNotifications(results[1].value.slice(0, 5));
-        if (results[2].status === 'fulfilled') setProfile(results[2].value);
+        if (results[0].status === 'fulfilled') setProfile(results[0].value);
       } finally {
         secondaryRunning = false;
       }
@@ -101,7 +96,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [workspaceIdentity.status, setTokenUsage, setPlanInfo, setUnreadCount, setNotifications, setProfile]);
+  }, [workspaceIdentity.status, setTokenUsage, setPlanInfo, setProfile]);
 
-  return <>{children}</>;
+  return <>{children}<NotificationExperience /></>;
 }
