@@ -568,7 +568,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(expandedWordmark).toBeVisible();
   await expect(expandedWordmark.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
     'src',
-    /(?:\\/brand\\/|%2Fbrand%2F)xroga-orb-wordmark-v2\\.webp/,
+    /xroga-orb-wordmark-v2[.]webp/,
   );
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
@@ -582,10 +582,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    */
   await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
-  // Same next/image encoding as the expanded-sidebar assertion above.
+  // Collapsed rail uses the current square icon asset, not the retired PNG.
   await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
     'src',
-    /(?:\/brand\/|%2Fbrand%2F)xroga-mark\.png/,
+    /xroga-orb-mark-v2[.]webp/,
   );
   const collapsedSidebarSurface = await desktopSidebar
     .locator('.xv-sidebar-floating')
