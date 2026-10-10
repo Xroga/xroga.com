@@ -17,8 +17,10 @@ export const SPLIT = 0.5;
 
 /** Chapter-local schedule (fractions of a chapter). Starting targets from the brief, tuned on review. */
 export const SCHEDULE = {
-  stackRise: [0, 0.12],
-  fan: [0.12, 0.32],
+  /* copy clearance: the heading leaves first; the stack holds below it until the copy is gone, then rises */
+  heading: [0.01, 0.1],
+  stackRise: [0.1, 0.19],
+  fan: [0.15, 0.32],
   flipStart: 0.32,
   flipStagger: 0.052,
   flipLength: 0.13,
@@ -28,7 +30,6 @@ export const SCHEDULE = {
   gather: [0.885, 0.965],
   exit: [0.97, 1.08],
   enter: [-0.09, 0.08],
-  heading: [0.1, 0.26],
 } as const;
 
 /** Chapter B turns 06 first, then 05, 07, 08; at rest it still reads 05, 06, 07, 08 from left to right. */
@@ -49,6 +50,8 @@ export interface DeckLayout {
   rowY: number;
   /** how far below its row position the deck waits during the intro */
   introDrop: number;
+  /** bottom of the heading and support line, in stage px (measured in the browser) */
+  headBottom: number;
   /** top inset that keeps everything clear of the sticky site header */
   navInset: number;
 }
@@ -62,7 +65,27 @@ const RATIO = 1.55;
 const MIN_H = 468;
 
 /** Computed fit: card size from the viewport, never a transform-scaled layout. */
-export function computeLayout(vw: number, vh: number): DeckLayout & { mode: DeckMode } {
+/** Space kept between the bottom of the support line and the highest point of the intro stack. */
+export const COPY_CLEARANCE = 24;
+/** Default heading bottom (stage px) until the real one is measured in the browser. */
+export const HEADING_BOTTOM_ESTIMATE = NAV_INSET + 210;
+
+/**
+ * How far below its row position the intro stack must wait so that its highest point (scaled stack, deepest card
+ * offset, tilt) stays below the heading and support line. No upper clamp: on short viewports the deck simply starts
+ * lower and peeks in from the bottom, rather than rising into the copy.
+ */
+export function introDropFor(rowY: number, H: number, W: number, headBottom: number): number {
+  const stackTop = 0.9 * (H / 2) + 21 + Math.sin((5 * Math.PI) / 180) * (W / 2) + 4;
+  return Math.max(60, headBottom + COPY_CLEARANCE + stackTop - rowY);
+}
+
+/** The same layout with the measured heading bottom. */
+export function withHeading<T extends DeckLayout>(L: T, headBottom: number): T {
+  return { ...L, headBottom, introDrop: introDropFor(L.rowY, L.H, L.W, headBottom) };
+}
+
+export function computeLayout(vw: number, vh: number, headBottom = HEADING_BOTTOM_ESTIMATE): DeckLayout & { mode: DeckMode } {
   const gap = vw >= 1360 ? 22 : 16;
   const availW = Math.min(vw - 112, 1280);
   let W = Math.min(290, Math.floor((availW - 3 * gap) / 4));
@@ -71,10 +94,9 @@ export function computeLayout(vw: number, vh: number): DeckLayout & { mode: Deck
   const H = Math.min(Math.max(Math.round(W * RATIO), MIN_H), availH);
   if (H < Math.round(W * RATIO)) W = Math.round(H / RATIO);
   const rowY = NAV_INSET + CHAPTER_ROW + availH / 2;
-  const headingBottom = NAV_INSET + 152;
-  const introDrop = clamp(headingBottom + 40 - (rowY - H / 2), 120, H * 0.62);
+  const introDrop = introDropFor(rowY, H, W, headBottom);
   const mode: DeckMode = vw >= 1100 && vh >= 620 && W >= 236 ? 'deck' : 'carousel';
-  return { vw, vh, W, H, gap, rowY, introDrop, navInset: NAV_INSET, mode };
+  return { vw, vh, W, H, gap, rowY, introDrop, headBottom, navInset: NAV_INSET, mode };
 }
 
 export interface CardPose {
@@ -179,7 +201,7 @@ function poseA(i: number, u: number, L: DeckLayout): CardPose {
   const c = i - 1.5;
   const S = SCHEDULE;
   const stack: Pose = { x: -33 + i * 22, y: L.introDrop - i * 7, z: -i * 14, rx: 4, ry: 0, rz: -5 + i * 3.4, s: 0.9, o: 1 };
-  const risen: Pose = { ...stack, y: L.introDrop * 0.45 - i * 7 };
+  const risen: Pose = { ...stack, y: Math.min(L.introDrop, 60) * 0.45 - i * 7 };
   const fan: Pose = { x: c * L.W * 0.94, y: c * c * 9 + 10, z: -Math.abs(c) * 16 - i * 2, rx: 3, ry: -c * 7, rz: c * 6.4, s: 0.9, o: 1 };
   const rest = restPose(i, L);
 

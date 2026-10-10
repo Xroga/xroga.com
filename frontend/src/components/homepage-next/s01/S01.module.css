@@ -11,7 +11,7 @@
   z-index: 1;
   /* continues the hero's near-black (#050506) into the section base without a seam */
   /* a neutral coal field (#0d1017) rising out of the hero's near-black over ~480px, so there is no seam */
-  background: linear-gradient(180deg, #050506 0, #090b10 220px, #0d1017 480px, #0d1017 calc(100% - 320px), #050607 100%);
+  background: linear-gradient(180deg, #050608 0, #0a0c12 220px, #10131b 500px, #10131b calc(100% - 340px), #050607 100%);
   color: var(--ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: clip;
@@ -37,12 +37,26 @@
 }
 
 /* ------------------------------------------------------------------------------- heading (shared typography) */
+/* a small vision kicker: an aspiration, deliberately quieter than the heading */
 .label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
   font-family: var(--font-xv-mono), ui-monospace, monospace;
   font-size: 12px;
-  letter-spacing: 0.16em;
-  color: var(--muted);
+  letter-spacing: 0.2em;
+  color: #a9afbd;
+}
+.label::before,
+.label::after {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(119, 137, 238, 0.6));
+}
+.label::after {
+  transform: scaleX(-1);
 }
 .title {
   margin: 12px 0 0;
@@ -61,7 +75,7 @@
 }
 .intro {
   margin: 14px auto 0;
-  max-width: 640px;
+  max-width: 660px;
   font-size: 17px;
   line-height: 1.5;
   color: var(--sub);
@@ -85,9 +99,11 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(48% 40% at 22% 70%, rgba(25, 28, 39, 0.9), transparent 72%),
-    radial-gradient(44% 38% at 80% 64%, rgba(34, 33, 43, 0.75), transparent 72%),
-    radial-gradient(70% 30% at 50% calc(var(--rowY) + var(--chh) * 0.62), rgba(18, 21, 30, 0.95), transparent 80%);
+    radial-gradient(52% 44% at 20% 66%, rgba(25, 28, 39, 0.95), transparent 72%),
+    radial-gradient(46% 40% at 82% 60%, rgba(34, 33, 43, 0.8), transparent 72%),
+    /* a soft floor bounce under the row, so the cards stand on something */
+    radial-gradient(46% 16% at 50% calc(var(--rowY) + var(--chh) * 0.56), rgba(150, 160, 190, 0.07), transparent 78%),
+    radial-gradient(72% 30% at 50% calc(var(--rowY) + var(--chh) * 0.64), rgba(20, 23, 33, 0.95), transparent 80%);
 }
 /* light pools behind the cards only. The container is moved and scaled per frame (transform only) to sit on the
    visible cards: centred on the stack, wider on the fan, and shifted with chapter B. */
@@ -110,7 +126,7 @@
   top: -300px;
   width: 1000px;
   height: 560px;
-  background: radial-gradient(closest-side, rgba(96, 108, 178, 0.13), rgba(96, 108, 178, 0.05) 55%, transparent);
+  background: radial-gradient(closest-side, rgba(119, 137, 238, 0.11), rgba(119, 137, 238, 0.04) 55%, transparent);
 }
 /* a neutral warm titanium bounce, lower and offset right */
 .lights i[data-pool='warm'] {
@@ -167,12 +183,13 @@
   letter-spacing: 0.1em;
   color: var(--muted);
 }
+/* the labels swap in sequence (A is gone before B appears), so they never overlap */
 .chapterName[data-ch='A'] {
-  opacity: calc(1 - var(--mix, 0));
+  opacity: clamp(0, 1 - var(--mix, 0) * 2, 1);
   transform: translateY(calc(-50% - var(--mix, 0) * 10px));
 }
 .chapterName[data-ch='B'] {
-  opacity: var(--mix, 0);
+  opacity: clamp(0, var(--mix, 0) * 2 - 1, 1);
   transform: translateY(calc(-50% + (1 - var(--mix, 0)) * 10px));
 }
 .meter {

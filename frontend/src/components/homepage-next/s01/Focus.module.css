@@ -1,0 +1,486 @@
+/*
+ * The Explore focus card. The dialog is a transparent full-viewport layer; the card flies inside it. The reverse is
+ * the same Obsidian Titanium material as the deck backs, laid out for reading, with its own scroll area.
+ */
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  color: #ebe9e5;
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.dialog::backdrop {
+  background: transparent;
+}
+/* the deck stays visible, dimmed, so the visitor keeps their place */
+.dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 6, 9, 0.62);
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+.dialog[data-phase='opening'] .dim,
+.dialog[data-phase='open'] .dim {
+  opacity: 1;
+}
+.stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1700px;
+  pointer-events: none;
+}
+.fly {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  pointer-events: auto;
+  will-change: transform;
+}
+.frontFace,
+.back {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.frontFace {
+  overflow: visible;
+  /* a flat 2D copy of the card front, just in front of the back plane, so backface culling applies to it */
+  transform: translateZ(1px);
+}
+.dialog[data-phase='open'] .frontFace {
+  visibility: hidden;
+}
+.frontScale {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.back {
+  left: 0;
+  width: 100%;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+  background:
+    radial-gradient(110% 40% at 18% -4%, rgba(150, 168, 214, 0.12), transparent 62%),
+    radial-gradient(80% 40% at 90% 108%, rgba(119, 137, 238, 0.08), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 2px, rgba(0, 0, 0, 0.05) 2px 3px),
+    linear-gradient(162deg, #232a3a 0%, #1b2130 36%, #171b27 64%, #10131c 100%);
+  box-shadow: inset 0 0 0 1px rgba(123, 153, 217, 0.22), inset 0 1px 0 rgba(223, 211, 198, 0.14);
+}
+.fly[data-reduced] .back {
+  transform: none;
+}
+.fly[data-reduced] {
+  transform: none;
+}
+/* no filter on .fly: a filter flattens preserve-3d and would disable backface culling (mirrored faces) */
+/* the deck engraving stays as a quiet watermark behind the reading surface */
+.pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.18;
+  pointer-events: none;
+}
+.pattern path,
+.pattern circle {
+  fill: none;
+  stroke: rgba(57, 65, 84, 0.9);
+  stroke-width: 0.5;
+  vector-effect: non-scaling-stroke;
+}
+/* one restrained edge tracer when the details arrive */
+.tracer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.tracer::before,
+.tracer::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 40%, rgba(206, 214, 245, 0.7) 47%, #ffffff 50%, rgba(150, 140, 230, 0.55) 53%, transparent 60%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  opacity: 0;
+}
+.tracer::before {
+  top: 0;
+}
+.tracer::after {
+  bottom: 0;
+}
+.dialog[data-phase='open'] .tracer::before,
+.dialog[data-phase='open'] .tracer::after {
+  animation: focusTrace 900ms cubic-bezier(0.45, 0, 0.2, 1) 80ms both;
+}
+@keyframes focusTrace {
+  0% { background-position: 120% 0; opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { background-position: -20% 0; opacity: 0; }
+}
+
+.head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 14px 28px;
+  border-bottom: 1px solid rgba(123, 153, 217, 0.14);
+}
+.num {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: #8f99ad;
+}
+.dialog.dialog .title {
+  margin: 6px 0 0;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.026em;
+  font-weight: 640;
+  font-variation-settings: 'opsz' 32;
+  color: #f0eee9 !important;
+  text-shadow: none !important;
+  outline: none;
+}
+.close {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(236, 233, 226, 0.18);
+  border-radius: 999px;
+  background: rgba(236, 233, 226, 0.05);
+  color: #ebe9e5;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 560;
+  cursor: pointer;
+}
+.close svg {
+  width: 16px;
+  height: 16px;
+}
+.scroll {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 28px 24px;
+  /* a soft fade at the bottom says there is more to read */
+  -webkit-mask: linear-gradient(#000 calc(100% - 28px), transparent);
+  mask: linear-gradient(#000 calc(100% - 28px), transparent);
+}
+.scroll:focus-visible {
+  outline: 2px solid rgba(155, 205, 211, 0.6);
+  outline-offset: -4px;
+}
+.dialog.dialog :is(h2, h3, h4, p) {
+  text-shadow: none !important;
+  z-index: auto !important;
+}
+.benefit {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: #d8dbe1;
+}
+.includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.includes li {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(236, 233, 226, 0.14);
+  background: rgba(236, 233, 226, 0.04);
+  font-size: 13.5px;
+  color: #c9cdd4;
+}
+.outcome {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--accent);
+  border-radius: 4px;
+  background: rgba(236, 233, 226, 0.04);
+}
+.outcome small {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8f99ad;
+}
+.outcome p {
+  margin: 4px 0 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #ebe9e5;
+}
+.dialog.dialog .sub {
+  margin: 24px 0 0;
+  font-size: 12.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #a9afbd !important;
+}
+.how {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.how li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(123, 153, 217, 0.16);
+  border-radius: 6px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: #d8dbe1;
+}
+.how i {
+  font-style: normal;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--accent);
+}
+.groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+.group {
+  padding: 14px;
+  border: 1px solid rgba(123, 153, 217, 0.14);
+  border-radius: 8px;
+  background: rgba(10, 13, 20, 0.35);
+}
+.dialog.dialog .group h4 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 620;
+  color: #f0eee9 !important;
+}
+.group p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #a9afbd;
+}
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.examples li {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 14%, rgba(236, 233, 226, 0.04));
+  font-size: 13px;
+  color: #dfe2e8;
+}
+.points {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.points li {
+  position: relative;
+  padding: 6px 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #d8dbe1;
+}
+.points li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 14px;
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0.8;
+}
+.truth {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.truth li {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(123, 153, 217, 0.12);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #d8dbe1;
+}
+.status {
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(236, 233, 226, 0.2);
+}
+.truth li[data-status='available'] .status {
+  border-color: rgba(160, 220, 235, 0.45);
+  color: #cfeef6;
+}
+.truth li[data-status='connection'] .status {
+  border-color: rgba(167, 154, 243, 0.5);
+  color: #d4cdfb;
+}
+.truth li[data-status='limited'] .status {
+  border-color: rgba(214, 162, 94, 0.55);
+  color: #e3bb85;
+}
+.truth li[data-status='planned'] .status {
+  color: #a9afbd;
+}
+.example {
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(236, 233, 226, 0.12);
+  border-left: 2px solid var(--accent);
+  border-radius: 6px;
+  background: rgba(236, 233, 226, 0.035);
+  font-size: 15px;
+  line-height: 1.5;
+  color: #ebe9e5;
+}
+.fine {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: #8f99ad;
+}
+.foot {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 24px 18px;
+  border-top: 1px solid rgba(123, 153, 217, 0.14);
+}
+.secondary,
+.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.secondary {
+  border: 1px solid rgba(236, 233, 226, 0.18);
+  background: transparent;
+  color: #ebe9e5;
+}
+.primary {
+  border: 0;
+  background: #ece9e2;
+  color: #101215;
+}
+.primary svg {
+  width: 16px;
+  height: 16px;
+}
+.primary:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+.close:focus-visible,
+.secondary:focus-visible,
+.primary:focus-visible {
+  outline: 2px solid #9bcdd3;
+  outline-offset: 2px;
+}
+/* the legacy homepage stylesheet blurs every button; never inside the focus card */
+.dialog.dialog :is(button) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+  z-index: auto !important;
+}
+
+@media (max-width: 640px) {
+  .head {
+    padding: 16px 14px 12px 18px;
+  }
+  .dialog.dialog .title {
+    font-size: 25px;
+  }
+  .close span {
+    display: none;
+  }
+  .close {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .scroll {
+    padding: 14px 18px 20px;
+  }
+  .how {
+    grid-template-columns: 1fr 1fr;
+  }
+  .groups {
+    grid-template-columns: 1fr;
+  }
+  .foot {
+    padding: 12px 14px calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dim {
+    transition: none;
+  }
+  .tracer {
+    display: none;
+  }
+}

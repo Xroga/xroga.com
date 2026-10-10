@@ -37,7 +37,12 @@ export interface Capability {
   stages: [string, string, string, string];
   result: string;
   reverseTitle: string;
-  clusters: [string, string, string, string];
+  /** a representative outcome, shown first on the detail reverse */
+  outcome: string;
+  /** how it works in principle, in four short beats */
+  how: [string, string, string, string];
+  /** the detail reverse: grouped capabilities. `points` index into `details`, so every detail sentence is shown */
+  groups: { label: string; text: string; examples: string[]; points: number[] }[];
   details: string[];
   example: string;
   truth: { status: TruthStatus; text: string }[];
@@ -46,9 +51,10 @@ export interface Capability {
 }
 
 export const SECTION = {
-  label: '01 / CAPABILITIES',
-  title: 'What you can do with Xroga.',
-  intro: 'Build software, test products, automate work, research, manage data, launch, grow and keep things moving.',
+  /** an aspiration, not a claim: Xroga is building toward it */
+  kicker: 'BUILDING TOWARD SUPERINTELLIGENCE',
+  title: 'Beyond answers. Into real work.',
+  intro: 'Explore the capabilities that turn complex requests into working products, verified actions, clearer decisions and work that keeps moving.',
   chapters: {
     A: { name: 'Create and execute', range: '01 to 04' },
     B: { name: 'Understand and grow', range: '05 to 08' },
@@ -68,11 +74,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Structure', 'Logic', 'Test', 'Ready'],
     result: 'Release-ready build',
     reverseTitle: 'From a brief to a working product.',
-    clusters: [
-      'Websites, SaaS and custom software',
-      'AI agents, APIs and business systems',
-      'Existing codebases and redesigns',
-      'Login, database, payments and tests',
+    outcome: 'A client portal with sign-in, billing, admin permissions, and tested critical flows.',
+    how: ['You describe the product', 'Xroga plans the structure', 'Builds and tests it', 'You get a preview and the code'],
+    groups: [
+      { label: 'Products', text: 'Substantial working software, not snippets.', examples: ['SaaS', 'Web apps', 'Client portals', 'Internal systems', 'Dashboards'], points: [0] },
+      { label: 'Product foundations', text: 'The parts real products need underneath.', examples: ['Frontend', 'Backend', 'Sign-in and roles', 'Data and APIs'], points: [3] },
+      { label: 'Improvement', text: 'Work on what you already have.', examples: ['Feature changes', 'Debugging', 'Refactoring', 'Design to code'], points: [1, 2] },
+      { label: 'Quality and delivery', text: 'Checked before it reaches you.', examples: ['Tests', 'Verification evidence', 'Preview', 'Release preparation'], points: [4, 5] },
     ],
     details: [
       'Build websites, marketplaces, dashboards, booking systems, customer portals, web apps, full-stack SaaS, AI products, and supported games or Web3 projects.',
@@ -101,11 +109,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Open', 'Test', 'Fix', 'Retest'],
     result: 'Critical flow checked',
     reverseTitle: 'See what actually works.',
-    clusters: [
-      'Navigate sites and supported apps',
-      'Test signup, login and checkout',
-      'Find broken flows and diagnose bugs',
-      'Repair, rerun and report evidence',
+    outcome: 'Find why checkout fails, fix the issue and re-run the customer journey.',
+    how: ['You name the journey', 'Xroga runs it step by step', 'Isolates and fixes the failure', 'Reruns it and reports evidence'],
+    groups: [
+      { label: 'Browser actions', text: 'Real interaction with web interfaces, where supported.', examples: ['Navigate', 'Click and type', 'Fill forms', 'Inspect'], points: [0, 3] },
+      { label: 'Product quality', text: 'The journeys your customers actually take.', examples: ['Sign-up', 'Login', 'Checkout', 'Responsive views'], points: [1] },
+      { label: 'Issue handling', text: 'From a symptom to its cause.', examples: ['Reproduce', 'Isolate', 'Diagnose', 'Fix within permissions'], points: [2] },
+      { label: 'Verification', text: 'Proof, not a claim.', examples: ['Repeat the test', 'Capture evidence', 'Passed and blocked steps'], points: [4] },
     ],
     details: [
       'Click, type, navigate, inspect forms, and perform authorized browser tasks in supported sessions.',
@@ -133,11 +143,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Request', 'Coordinate', 'Approve', 'Update'],
     result: 'Records updated',
     reverseTitle: 'Work across the tools you already use.',
-    clusters: [
-      'Customers, leads and follow-ups',
-      'Email, calendars, CRM and support',
-      'Approvals, triggers and reusable flows',
-      'Travel, bookings and daily operations',
+    outcome: 'Set up a clinic workflow that handles new enquiries, books visits and requests approval where needed.',
+    how: ['You describe the routine', 'Xroga maps the steps', 'Runs them, pausing for approval', 'Records stay up to date'],
+    groups: [
+      { label: 'Front office', text: 'The everyday work around customers.', examples: ['Enquiries', 'Intake', 'Scheduling', 'Follow-ups'], points: [0] },
+      { label: 'Operations', text: 'Repeatable processes and handoffs.', examples: ['Approval flows', 'Templates', 'Reports', 'Travel research'], points: [2, 3] },
+      { label: 'Connections', text: 'Optional, through the tools you already use.', examples: ['Inbox', 'Calendar', 'CRM', 'Support desk'], points: [1] },
+      { label: 'Oversight', text: 'You stay in control of sensitive steps.', examples: ['Approvals', 'Audit trail', 'Resumable work', 'Exceptions'], points: [4, 5] },
     ],
     details: [
       'Handle customer inquiries, qualifying leads, booking appointments, reminders, no-shows, customer records, and follow-up workflows.',
@@ -166,11 +178,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Prepare', 'Build', 'Check', 'Submit'],
     result: 'Ready for release review',
     reverseTitle: 'From working product to launch.',
-    clusters: [
-      'Web deployment and domain setup',
-      'Chrome extensions and mobile builds',
-      'Desktop packaging where supported',
-      'Release checks and store preparation',
+    outcome: 'Expand an existing product to web, a browser extension and mobile while keeping a shared core.',
+    how: ['You choose the surfaces', 'Xroga adapts the product', 'Builds and tests each one', 'Prepares release, you approve'],
+    groups: [
+      { label: 'Web', text: 'Web products and release preparation.', examples: ['Previews', 'Domains', 'HTTPS', 'Environments'], points: [0] },
+      { label: 'Browser extensions', text: 'Packaging and store preparation.', examples: ['Chrome extension', 'Store listing', 'Review checklist'], points: [1] },
+      { label: 'Mobile and desktop', text: 'Within the toolchains the project supports.', examples: ['iOS', 'Android', 'Desktop packages'], points: [2] },
+      { label: 'Shared core and submission', text: 'One backend, honest release status.', examples: ['Shared sign-in', 'Shared data', 'Readiness checks', 'Store requirements'], points: [3, 4, 5] },
     ],
     details: [
       'Prepare web deployments, previews, domains, DNS, HTTPS, environments, and authorized publishing.',
@@ -199,11 +213,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Collect', 'Compare', 'Rank', 'Brief'],
     result: 'Evidence-backed brief',
     reverseTitle: 'Go beyond a simple web search.',
-    clusters: [
-      'Web, X and supported research sources',
-      'Competitors and market opportunities',
-      'Startup, hackathon and travel research',
-      'Comparisons with sources and context',
+    outcome: 'Find underserved market problems and produce a ranked, evidence-backed product brief.',
+    how: ['You ask the question', 'Xroga splits it into angles', 'Weighs and compares evidence', 'Returns a ranked, cited brief'],
+    groups: [
+      { label: 'Discovery', text: 'Wide, current and specific.', examples: ['Web', 'Communities', 'Competitors', 'Documentation'], points: [0, 1, 2, 4] },
+      { label: 'Synthesis', text: 'Evidence, not a pile of links.', examples: ['Compare claims', 'Resolve contradictions', 'Summarize files'], points: [3, 5] },
+      { label: 'Decisions', text: 'Clear next steps you can act on.', examples: ['Ranked opportunities', 'Tradeoffs', 'Cited briefs'], points: [] },
+      { label: 'Repeatable research', text: 'Turn a good method into ongoing project work.', examples: ['Saved questions', 'Follow-up research', 'Project briefs'], points: [] },
     ],
     details: [
       'Search public sources, documents, websites and appropriate supported connected information.',
@@ -232,11 +248,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Inspect', 'Match', 'Validate', 'Review'],
     result: 'Changes ready for review',
     reverseTitle: 'Turn information into useful work.',
-    clusters: [
-      'PDFs, docs, images and spreadsheets',
-      'Analysis, reports and file transforms',
-      'Database queries, mapping and cleanup',
-      'Validation, review and project context',
+    outcome: 'Clean a customer export, explain what changed and hold uncertain records for review.',
+    how: ['You share the file or database', 'Xroga inspects and maps it', 'Applies safe changes', 'Holds anything uncertain for you'],
+    groups: [
+      { label: 'Files', text: 'Documents, tables, exports and records.', examples: ['PDF and Word', 'CSV and spreadsheets', 'Databases', 'Screenshots'], points: [0, 2] },
+      { label: 'Analysis', text: 'Find what is wrong before changing anything.', examples: ['Schema checks', 'Duplicates', 'Broken links', 'Gaps'], points: [3] },
+      { label: 'Transformations', text: 'Clean, consistent and ready to use.', examples: ['Dedupe', 'Normalize', 'Extract', 'Summarize'], points: [1] },
+      { label: 'Controls', text: 'Nothing uncertain is applied silently.', examples: ['Original kept', 'Diff and audit', 'Human review', 'Provenance'], points: [4, 5] },
     ],
     details: [
       'Read and compare supported PDFs, Word documents, CSVs, spreadsheets, screenshots and code files.',
@@ -265,11 +283,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Measure', 'Identify', 'Improve', 'Review'],
     result: 'Next experiment prepared',
     reverseTitle: 'Keep improving after launch.',
-    clusters: [
-      'Search and AI-search visibility',
-      'Audience research and customer leads',
-      'Campaigns, launch and distribution',
-      'Conversion, pricing and analytics',
+    outcome: 'Identify where signups drop off, prepare an experiment and plan how to measure it.',
+    how: ['You share the goal', 'Xroga finds the constraint', 'Prepares the experiment', 'You review the measurement plan'],
+    groups: [
+      { label: 'Research and prioritization', text: 'Where growth is actually blocked.', examples: ['Audiences', 'Search visibility', 'Conversion steps'], points: [0, 1] },
+      { label: 'Execution', text: 'Prepared work, launched with your approval.', examples: ['Campaigns', 'Landing pages', 'Email', 'Content'], points: [2] },
+      { label: 'Measurement', text: 'Evidence when analytics are connected.', examples: ['Funnels', 'Experiments', 'Retention', 'Pricing'], points: [3, 5] },
+      { label: 'Iteration', text: 'Decide what to change next.', examples: ['Next experiment', 'Priorities', 'Follow-up'], points: [4] },
     ],
     details: [
       'Analyze keywords, search visibility, competitors and AI-search or brand mentions where supported.',
@@ -298,11 +318,13 @@ export const CAPABILITIES: Capability[] = [
     stages: ['Assign', 'Track', 'Review', 'Resume'],
     result: 'Project context preserved',
     reverseTitle: 'The work does not end at launch.',
-    clusters: [
-      'Continue existing project work',
-      'Specialized workers and assignments',
-      'Approvals, reports and operations',
-      'Reusable skills, tools and history',
+    outcome: 'Return to a multi-step project, see the last verified result and continue where it stopped.',
+    how: ['You return to a project', 'Xroga restores the context', 'Continues permitted work', 'Pauses where you must approve'],
+    groups: [
+      { label: 'Continuity', text: 'Projects that remember.', examples: ['History', 'Saved context', 'Files', 'Decisions'], points: [0] },
+      { label: 'Execution states', text: 'Always clear what is happening.', examples: ['In progress', 'Waiting', 'In review', 'Done'], points: [1, 2] },
+      { label: 'Follow-ups', text: 'Unfinished work does not get lost.', examples: ['Open tasks', 'Procedures', 'Project health'], points: [3, 4] },
+      { label: 'Governance', text: 'You keep the keys.', examples: ['Checkpoints', 'Evidence', 'Permissions', 'Audit status'], points: [5, 6] },
     ],
     details: [
       'Reopen projects with their history, files, authorized tool connections, and relevant task state.',

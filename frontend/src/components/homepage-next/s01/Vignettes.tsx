@@ -259,21 +259,25 @@ const SURFACES: { k: string; label: string; final: { text: string; tone: Tone } 
 function Launch({ step }: Props) {
   return (
     <div className={`${v.scene} ${v.launch}`} {...flags(step)}>
-      {SURFACES.map((s) => (
-        <div key={s.k} className={v.surface} data-k={s.k}>
-          <span className={v.device}>
-            <i className={v.avatar}>A</i>
-            <i className={v.line} />
-            <i className={v.line} data-short />
-          </span>
-          <b>{s.label}</b>
-          <Swap
-            step={step}
-            className={v.sState}
-            texts={[{ at: 0, text: 'Planned', tone: 'plan' }, { at: 2, text: 'Built', tone: 'run' }, { at: 3, text: 'Tested', tone: 'ok' }, { at: 4, ...s.final }]}
-          />
-        </div>
-      ))}
+      <div className={v.platforms}>
+        {SURFACES.map((s) => (
+          <div key={s.k} className={v.surface} data-k={s.k}>
+            <span className={v.deviceSlot}>
+              <span className={v.device}>
+                <i className={v.avatar}>A</i>
+                <i className={v.line} />
+                <i className={v.line} data-short />
+              </span>
+            </span>
+            <b>{s.label}</b>
+            <Swap
+              step={step}
+              className={v.sState}
+              texts={[{ at: 0, text: 'Planned', tone: 'plan' }, { at: 2, text: 'Built', tone: 'run' }, { at: 3, text: 'Tested', tone: 'ok' }, { at: 4, ...s.final }]}
+            />
+          </div>
+        ))}
+      </div>
       <div className={v.backbone}>
         <span>Shared sign-in</span>
         <i />

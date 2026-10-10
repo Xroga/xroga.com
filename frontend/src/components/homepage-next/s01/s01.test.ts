@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION } from './capabilities.data';
-import { B_FLIP_ORDER, computeLayout, deckFrame, restProgress, SPLIT, type DeckFrame } from './deckMotion';
+import { B_FLIP_ORDER, COPY_CLEARANCE, computeLayout, deckFrame, introDropFor, restProgress, SCHEDULE, SPLIT, withHeading, type DeckFrame } from './deckMotion';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
 /** Source of one top-level function in a file (CRLF or LF). */
@@ -29,11 +29,15 @@ test('exactly eight unique capabilities with the approved titles, numbers and ch
   assert.deepEqual(CAPABILITIES.map((c) => c.chapter).join(''), 'AAAABBBB');
   for (const c of CAPABILITIES) {
     assert.equal(c.stages.length, 4, c.id);
-    assert.equal(c.clusters.length, 4, c.id);
+    assert.equal(c.groups.length, 4, c.id);
     assert.ok(c.details.length >= 5 && c.truth.length >= 2, c.id);
   }
-  assert.equal(SECTION.title, 'What you can do with Xroga.');
-  assert.equal(SECTION.intro, 'Build software, test products, automate work, research, manage data, launch, grow and keep things moving.');
+  assert.equal(SECTION.kicker, 'BUILDING TOWARD SUPERINTELLIGENCE');
+  assert.equal(SECTION.title, 'Beyond answers. Into real work.');
+  assert.equal(
+    SECTION.intro,
+    'Explore the capabilities that turn complex requests into working products, verified actions, clearer decisions and work that keeps moving.',
+  );
   assert.deepEqual(
     CAPABILITIES.map((c) => c.benefit),
     [
@@ -58,7 +62,7 @@ const allCopy = () =>
   JSON.stringify({ CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION }) +
   read('./Vignettes.tsx') +
   read('./CapabilityCard.tsx') +
-  read('./CapabilityDetails.tsx') +
+  read('./CapabilityFocus.tsx') +
   read('./S01CapabilityDeck.tsx');
 
 test('no em or en dash in any S01 copy', () => {
@@ -197,40 +201,116 @@ test('reduced motion: a static grid with every card readable, no pinned track, n
   assert.match(deck, /const mode: Mode = reduce \? 'static' : L\.mode;/);
   assert.match(deck, /flat=\{mode === 'static'\}/);
   assert.match(deck, /CAPABILITIES\.map\(\(\) => \(mode === 'static' \? 4 : 0\)\)/, 'static cards show their finished demo');
+  assert.match(deck, /reduced=\{!!reduce \|\| view\.mode === 'static'\}/, 'Explore opens without the turn');
   const card = read('./Card.module.css');
-  assert.match(card, /\.card\[data-flat\] \.body,[\s\S]*?transform: none;/);
-  assert.match(card, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(card, /\.card\[data-flat\] \.body \{[\s\S]*?transform: none;/);
+  assert.match(card, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tracer \{\s*display: none;/);
   assert.match(read('./Vignettes.module.css'), /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(read('./CapabilityFocus.tsx'), /if \(reduced\) \{\s*done\(\);/);
 });
 
-test('accessible contract: real buttons, one exposed face, modal dialog with Escape and focus return', () => {
+test('Explore: one click lifts that card, turns it and shows its details on the reverse; no drawer', () => {
   const card = read('./CapabilityCard.tsx');
   assert.doesNotMatch(card, /<div[^>]*onClick/);
-  assert.match(card, /aria-hidden=\{flipped \|\| undefined\} ref=\{inertRef\(flipped\)\}/);
-  assert.match(card, /aria-hidden=\{!flipped \|\| undefined\} ref=\{inertRef\(!flipped\)\}/);
   assert.match(card, /aria-haspopup="dialog"/);
-  const det = read('./CapabilityDetails.tsx');
-  assert.match(det, /el\.showModal\(\)/);
-  assert.match(det, /onCancel=\{\(e\) => \{\s*e\.preventDefault\(\);\s*onClose\(\);/);
-  assert.match(det, /aria-label="Close details"/);
-  assert.match(det, /aria-labelledby="s01-details-title"/);
+  // the click never reaches deck, drag or scroll handlers, and the back face is never interactive
+  assert.match(card, /onPointerDown=\{\(e\) => e\.stopPropagation\(\)\}/);
+  assert.match(card, /data-face="back" aria-hidden>/);
+  assert.equal([...fnBody(card, 'CapabilityCard').matchAll(/data-face="back"[\s\S]*?<\/div>\s*<\/div>/g)][0][0].includes('<button'), false);
+  const focus = read('./CapabilityFocus.tsx');
+  assert.match(focus, /dialog\.showModal\(\)/);
+  assert.match(focus, /onCancel=\{\(e\) => \{\s*e\.preventDefault\(\);\s*close\(\);/, 'Escape turns the card back');
+  assert.match(focus, /aria-label="Back to cards"/);
+  assert.match(focus, /rotateY\(180deg\)/);
+  assert.match(focus, /request\.source\.style\.visibility = 'hidden'/, 'the same physical card leaves the deck');
+  assert.match(focus, /request\?\.trigger\.focus\(\{ preventScroll: true \}\)/, 'focus returns to Explore');
+  assert.ok(Number(focus.match(/FOCUS_OPEN_MS = (\d+)/)![1]) >= 500 && Number(focus.match(/FOCUS_OPEN_MS = (\d+)/)![1]) <= 800);
+  // a filter on the flying card would flatten preserve-3d and mirror the faces
+  const css = read('./Focus.module.css');
+  const fly = css.slice(css.indexOf('.fly {'), css.indexOf('}', css.indexOf('.fly {')));
+  assert.doesNotMatch(fly, /filter/);
+  assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ''), /\.fly[^{]*\{[^}]*filter:/);
+  assert.match(css, /backface-visibility: hidden/);
+  assert.match(css, /\.scroll \{[\s\S]*?overflow-y: auto;[\s\S]*?overscroll-behavior: contain;/, 'details scroll inside the card');
+  // one card at a time
   const deck = read('./S01CapabilityDeck.tsx');
-  assert.match(deck, /t\.focus\(\{ preventScroll: true \}\)/, 'focus returns to the trigger');
+  assert.match(deck, /if \(focusRef\.current\) return;/);
+  assert.doesNotMatch(deck, /CapabilityDetails/);
   assert.match(deck, /aria-label="Previous capability"/);
   assert.match(deck, /aria-label="Next capability"/);
   assert.match(read('./S01.module.css'), /\.controls button \{[\s\S]*?width: 48px;[\s\S]*?height: 48px;/, '44px+ touch targets');
 });
 
+test('every drawer detail survives on the reverse: each detail sentence is placed in exactly one group', () => {
+  for (const c of CAPABILITIES) {
+    const placed = c.groups.flatMap((g) => g.points).sort((a, b) => a - b);
+    assert.deepEqual(placed, c.details.map((_, i) => i), `${c.id} places every detail once`);
+    for (const g of c.groups) assert.ok(g.examples.length >= 2 && g.examples.length <= 5 && g.text.length > 10, `${c.id} ${g.label}`);
+    assert.ok(c.outcome.length > 30 && c.how.length === 4, c.id);
+    assert.ok(c.truth.length >= 2 && c.chips.length >= 4, c.id);
+  }
+  const focus = read('./CapabilityFocus.tsx');
+  for (const field of ['cap.benefit', 'cap.chips', 'cap.outcome', 'cap.how', 'cap.groups', 'cap.details[n]', 'cap.truth', 'cap.example', 'cap.reverseTitle']) {
+    assert.ok(focus.includes(field), `focus card shows ${field}`);
+  }
+});
+
+test('copy: the old section strings are gone and superintelligence is an aspiration only', () => {
+  const copy = allCopy();
+  assert.doesNotMatch(copy, /01 \/ CAPABILITIES|What you can do with Xroga|What can Xroga take on/);
+  assert.doesNotMatch(copy, /\b(is|are|first|achieved|world's) superintelligen|\bAGI\b/i);
+  assert.match(SECTION.kicker, /^BUILDING TOWARD /);
+  // the heading is the section H2; the page keeps a single H1 in the hero
+  assert.match(read('./S01CapabilityDeck.tsx'), /<h2 id="s01-title"/);
+  assert.doesNotMatch(read('./S01CapabilityDeck.tsx') + read('./CapabilityCard.tsx') + read('./CapabilityFocus.tsx'), /<h1/);
+});
+
+test('copy clearance: the intro stack never rises into the heading, and the heading leaves before the stack rises', () => {
+  for (const [w, h, head] of [[1440, 900, 300], [1440, 690, 300], [1280, 800, 300], [1150, 666, 300]]) {
+    const L = withHeading(computeLayout(w, h), head);
+    for (let p = 0; p <= SCHEDULE.fan[1] * SPLIT; p += 0.002) {
+      const f = deckFrame(p, L);
+      const top = Math.min(...f.cards.filter((c) => c.o > 0.001).map((c) => L.rowY + c.y - c.s * (L.H / 2) - Math.abs(Math.sin((c.rz * Math.PI) / 180)) * (L.W / 2)));
+      // while the copy is still visible, every card top stays below it with the clearance
+      if (f.heading < 0.98) assert.ok(top >= head + COPY_CLEARANCE - 1, `${w}x${h} p=${p.toFixed(3)}: card top ${top.toFixed(0)} under copy ${head}`);
+    }
+  }
+  assert.ok(SCHEDULE.heading[1] <= SCHEDULE.stackRise[0], 'the heading is gone before the stack rises');
+  assert.ok(introDropFor(500, 450, 290, 300) > 0);
+});
+
+test('Launch Anywhere surfaces have plausible, distinct proportions', () => {
+  const css = read('./Vignettes.module.css');
+  assert.match(css, /grid-template-columns: 1\.6fr 1fr 0\.78fr 0\.78fr;/, 'a wide browser, a medium popup, two phones');
+  assert.match(css, /\.surface\[data-k='web'\] \.device \{[\s\S]*?aspect-ratio: 16 \/ 10;/);
+  assert.match(css, /\.surface\[data-k='ext'\] \.device \{[\s\S]*?aspect-ratio: 4 \/ 5;/);
+  assert.match(css, /\.surface\[data-k='ios'\] \.device,\s*\.surface\[data-k='and'\] \.device \{[\s\S]*?aspect-ratio: 9 \/ 17;/);
+});
+
+test('edge tracer: event-driven, masked to the rim, never on a loop, off for reduced motion', () => {
+  const css = read('./Card.module.css');
+  const tracer = css.slice(css.indexOf('.tracer {'), css.indexOf('}', css.indexOf('.tracer {')));
+  assert.match(tracer, /pointer-events: none;/);
+  assert.match(css, /\.tracer::before,\s*\.tracer::after \{[\s\S]*?height: 1\.5px;/, 'hairlines on the rim only');
+  assert.doesNotMatch(css, /tracer[AB] [^;]*infinite/);
+  const ms = [...css.matchAll(/animation: tracer[AB] (\d+)ms/g)].map((m) => Number(m[1]));
+  assert.ok(ms.length >= 2 && ms.every((v) => v >= 450 && v <= 900), `tracer lasts ${ms}`);
+  assert.match(read('./S01CapabilityDeck.tsx'), /card\.dataset\.trace = card\.dataset\.trace === 'a' \? 'b' : 'a'/);
+});
+
 test('try-in-Xroga uses the verified workspace hand-off, never a fake action', () => {
-  const det = read('./CapabilityDetails.tsx');
-  assert.match(det, /localStorage\.setItem\(PENDING_PROMPT_KEY, prompt\)/);
-  assert.match(det, /submission\(cap\.example, signedIn\)/);
+  const focus = read('./CapabilityFocus.tsx');
+  assert.match(focus, /localStorage\.setItem\(PENDING_PROMPT_KEY, prompt\)/);
+  assert.match(focus, /submission\(cap\.example, signedIn\)/);
+  assert.match(focus, /catch \{\s*\/\/ no auth client available[^\n]*\n\s*go\(false\);/, 'falls back to sign-up');
 });
 
 test('one timeline, no drift: the deck has no timers, listeners are removed, offscreen work stops', () => {
   const deck = read('./S01CapabilityDeck.tsx');
   const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
-  assert.doesNotMatch(stage, /setTimeout|setInterval/);
+  // the only timer replays one card's demo on request; card poses never depend on it
+  assert.equal((stage.match(/setTimeout|setInterval/g) ?? []).length, 1, 'one replay timer');
+  assert.match(stage, /return \(\) => window\.clearTimeout\(id\);/, 'and it is cleaned up');
   assert.match(stage, /deckFrame\(clamp\(-r\.top \/ dist\), layout\)/);
   assert.match(stage, /new IntersectionObserver/);
   assert.match(stage, /window\.removeEventListener\('scroll', onScroll\)/);
@@ -239,7 +319,7 @@ test('one timeline, no drift: the deck has no timers, listeners are removed, off
 });
 
 test('S01 styles stay inside S01 and the homepage composes it between the hero and browser employees', () => {
-  for (const f of ['./S01.module.css', './Card.module.css', './Vignettes.module.css', './Details.module.css']) {
+  for (const f of ['./S01.module.css', './Card.module.css', './Vignettes.module.css', './Focus.module.css']) {
     const css = read(f);
     assert.doesNotMatch(css, /:global/, f);
     assert.doesNotMatch(css, /^(html|body|h[1-6]|header|nav|\.xv-)/m, f);
@@ -294,4 +374,10 @@ test('offstage cards are inert and the chapter meter offers keyboard navigation 
   // no per-frame blur filters on the stage (shadows soften through opacity and scale only)
   assert.doesNotMatch(deck, /style\.filter/);
   assert.match(read('./S01.module.css'), /backdrop-filter: none !important;/, 'legacy homepage button blur is removed inside S01');
+});
+
+test('chapter labels swap in sequence and never overlap', () => {
+  const css = read('./S01.module.css');
+  assert.match(css, /\.chapterName\[data-ch='A'\] \{\s*opacity: clamp\(0, 1 - var\(--mix, 0\) \* 2, 1\);/);
+  assert.match(css, /\.chapterName\[data-ch='B'\] \{\s*opacity: clamp\(0, var\(--mix, 0\) \* 2 - 1, 1\);/);
 });

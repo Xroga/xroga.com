@@ -1,36 +1,34 @@
 'use client';
 /**
- * S01 Capability Deck: "What can Xroga take on?"
+ * S01 Capability Deck: "Beyond answers. Into real work."
  *
  * Three presentations of the same eight cards, chosen from the viewport and motion preference:
  *  - deck      (desktop): a sticky stage whose every pose comes from deckFrame(sectionProgress). Normal document
  *               scroll drives it, so it is reversible, never scroll-jacked, and a jump lands on a complete state.
  *  - carousel  (tablet, phone): one or two readable cards with Previous / Next controls and native swipe.
  *  - static    (reduced motion): every card readable at once in a grid, no 3D turning, no pinned scroll.
- * Spec: docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md
+ * Explore lifts the clicked card out of any presentation, turns it over and shows its details (CapabilityFocus).
+ * Spec: docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md and the S01 closeout briefs.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, FocusEvent, PointerEvent as ReactPointerEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { ArrowLeft, ArrowRight, History, MessageSquare, MonitorSmartphone, Plug, Route, ShieldCheck } from 'lucide-react';
 import { CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION, type CapabilityId } from './capabilities.data';
 import { CapabilityCard } from './CapabilityCard';
-import { CapabilityDetails } from './CapabilityDetails';
-import { TRACK_VH, clamp, computeLayout, deckFrame, restProgress, type DeckLayout } from './deckMotion';
+import { CapabilityFocus, type FocusRequest } from './CapabilityFocus';
+import { TRACK_VH, clamp, computeLayout, deckFrame, restProgress, withHeading, type DeckLayout } from './deckMotion';
 import s from './S01.module.css';
 
 type Mode = 'deck' | 'carousel' | 'static';
 
-function useFlips() {
-  const [flipped, setFlipped] = useState<Partial<Record<CapabilityId, boolean>>>({});
-  const toggle = useCallback((id: CapabilityId) => setFlipped((f) => ({ ...f, [id]: !f[id] })), []);
-  return { flipped, toggle };
-}
+/** Replay timing: one demo step every 800 ms, then the finished state stays. */
+const REPLAY_STEP_MS = 800;
 
 function Heading({ inStage }: { inStage?: boolean }) {
   return (
     <>
-      <p className={s.label}>{SECTION.label}</p>
+      <p className={s.label}>{SECTION.kicker}</p>
       <h2 id="s01-title" className={s.title}>
         {SECTION.title}
       </h2>
@@ -45,16 +43,15 @@ function Heading({ inStage }: { inStage?: boolean }) {
 
 interface StageProps {
   layout: DeckLayout;
-  flipped: Partial<Record<CapabilityId, boolean>>;
-  onFlip: (id: CapabilityId) => void;
   onExplore: (id: CapabilityId, trigger: HTMLButtonElement) => void;
+  /** the card currently lifted into the focus view */
   detail: CapabilityId | null;
 }
 
 const transformOf = (c: { x: number; y: number; z: number; rx: number; ry: number; rz: number; s: number }) =>
   `translate3d(${c.x.toFixed(2)}px, ${c.y.toFixed(2)}px, ${c.z.toFixed(2)}px) rotateX(${c.rx.toFixed(2)}deg) rotateZ(${c.rz.toFixed(2)}deg) rotateY(${(c.ry + 180).toFixed(2)}deg) scale(${c.s.toFixed(4)})`;
 
-function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
+function DeckStage({ layout: base, onExplore, detail }: StageProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
@@ -64,6 +61,32 @@ function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
   const [steps, setSteps] = useState<number[]>(() => CAPABILITIES.map(() => 0));
   const readableRef = useRef<boolean[]>(CAPABILITIES.map(() => false));
   const [chapter, setChapter] = useState<'A' | 'B'>('A');
+  // a manual replay of one card's demo; it never moves the deck, and scrolling the card out of rest cancels it
+  const [replay, setReplay] = useState<{ i: number; step: number } | null>(null);
+  const replayRef = useRef(replay);
+  replayRef.current = replay;
+
+  // The intro stack must stay below the real heading, so the layout uses the measured bottom of the support line.
+  const [headBottom, setHeadBottom] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const head = headRef.current;
+    if (!head) return;
+    const measure = () => setHeadBottom(head.offsetTop + head.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(head);
+    return () => ro.disconnect();
+  }, []);
+  const layout = useMemo(() => (headBottom === null ? base : withHeading(base, headBottom)), [base, headBottom]);
+
+  useEffect(() => {
+    if (!replay) return;
+    const id = window.setTimeout(
+      () => setReplay((r) => (r && r.step < 4 ? { ...r, step: r.step + 1 } : null)),
+      replay.step < 4 ? REPLAY_STEP_MS : 1600,
+    );
+    return () => window.clearTimeout(id);
+  }, [replay]);
 
   useEffect(() => {
     let raf = 0;
@@ -76,6 +99,7 @@ function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
       const r = track.getBoundingClientRect();
       const dist = Math.max(1, r.height - window.innerHeight);
       const f = deckFrame(clamp(-r.top / dist), layout);
+      let landed = 0;
       f.cards.forEach((c, i) => {
         const el = slotRefs.current[i];
         if (!el) return;
@@ -96,6 +120,17 @@ function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
         el.style.setProperty('--glintO', Math.pow(clamp((graze - 0.82) / 0.18), 1.4).toFixed(3));
         if (c.readable) el.setAttribute('data-readable', '');
         else el.removeAttribute('data-readable');
+        // a real beat: the card has just come to rest face up, so one tracer runs along its rim (cards reach rest
+        // one after another, so they never flash together)
+        if (c.readable && !readableRef.current[i]) {
+          const card = el.querySelector('article');
+          if (card) {
+            // cards that land in the same frame (a fast scroll) are staggered, so they never flash together
+            card.style.setProperty('--trace-delay', `${landed++ * 160}ms`);
+            card.dataset.trace = card.dataset.trace === 'a' ? 'b' : 'a';
+          }
+        }
+        if (!c.readable && replayRef.current?.i === i) setReplay(null);
         readableRef.current[i] = c.readable;
         const sh = shadowRefs.current[i];
         if (sh) {
@@ -173,14 +208,19 @@ function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
     requestAnimationFrame(() =>
       requestAnimationFrame(() =>
         document
-          .querySelector<HTMLButtonElement>(`[data-capability="${first}"] [data-face]:not([aria-hidden]) button`)
+          .querySelector<HTMLButtonElement>(`[data-capability="${first}"] [data-face="front"] button`)
           ?.focus({ preventScroll: true }),
       ),
     );
   };
 
-  /** Keyboard users reach a card that is still face down: bring its chapter to rest first. */
+  /**
+   * Keyboard users reach a card that is still face down: bring its chapter to rest first. Pointer focus never moves
+   * the page: a mouse press on a card that is still settling must not scroll it out from under the click (this was
+   * the cause of Explore sometimes needing a second click).
+   */
   const onFocus = (e: FocusEvent<HTMLOListElement>) => {
+    if (!(e.target as HTMLElement).matches(':focus-visible')) return;
     const li = (e.target as HTMLElement).closest('li[data-index]') as HTMLElement | null;
     const track = trackRef.current;
     if (!li || !track) return;
@@ -255,11 +295,10 @@ function DeckStage({ layout, flipped, onFlip, onExplore, detail }: StageProps) {
             >
               <CapabilityCard
                 cap={cap}
-                step={steps[i]}
-                flipped={!!flipped[cap.id]}
+                step={replay?.i === i ? replay.step : steps[i]}
                 expanded={detail === cap.id}
-                onFlip={() => onFlip(cap.id)}
                 onExplore={(t) => onExplore(cap.id, t)}
+                onReplay={() => setReplay({ i, step: 0 })}
               />
             </li>
           ))}
@@ -299,12 +338,13 @@ interface GalleryProps extends Omit<StageProps, 'layout'> {
   mode: 'carousel' | 'static';
 }
 
-function Gallery({ mode, flipped, onFlip, onExplore, detail }: GalleryProps) {
+function Gallery({ mode, onExplore, detail }: GalleryProps) {
   const railRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState<Set<number>>(() => new Set());
   const [entered, setEntered] = useState<Set<number>>(() => new Set());
   const [steps, setSteps] = useState<number[]>(() => CAPABILITIES.map(() => (mode === 'static' ? 4 : 0)));
+  const [playNonce, setPlayNonce] = useState(0);
 
   // which cards are on screen: they turn face up once, and only they play their short demo
   useEffect(() => {
@@ -359,7 +399,12 @@ function Gallery({ mode, flipped, onFlip, onExplore, detail }: GalleryProps) {
       });
     }, 850);
     return () => window.clearInterval(id);
-  }, [inView, mode]);
+  }, [inView, mode, playNonce]);
+
+  const replayCard = (i: number) => {
+    setSteps((prev) => prev.map((st, k) => (k === i ? 0 : st)));
+    setPlayNonce((n) => n + 1);
+  };
 
   const onRailScroll = () => {
     const rail = railRef.current;
@@ -388,10 +433,9 @@ function Gallery({ mode, flipped, onFlip, onExplore, detail }: GalleryProps) {
           <CapabilityCard
             cap={cap}
             step={steps[i]}
-            flipped={!!flipped[cap.id]}
             expanded={detail === cap.id}
-            onFlip={() => onFlip(cap.id)}
             onExplore={(t) => onExplore(cap.id, t)}
+            onReplay={mode === 'static' ? undefined : () => replayCard(i)}
             flat={mode === 'static'}
           />
         </div>
@@ -490,9 +534,8 @@ function PlatformStrip() {
 export function S01CapabilityDeck() {
   const reduce = useReducedMotion();
   const [view, setView] = useState<{ mode: Mode; layout: DeckLayout | null }>({ mode: 'deck', layout: null });
-  const { flipped, toggle } = useFlips();
-  const [detail, setDetail] = useState<CapabilityId | null>(null);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [focus, setFocus] = useState<FocusRequest | null>(null);
+  const focusRef = useRef<FocusRequest | null>(null);
 
   useEffect(() => {
     let raf = 0;
@@ -519,21 +562,26 @@ export function S01CapabilityDeck() {
     };
   }, [reduce]);
 
+  // one focus card at a time: repeated or rapid clicks while one is open or animating are ignored
   const onExplore = useCallback((id: CapabilityId, trigger: HTMLButtonElement) => {
-    triggerRef.current = trigger;
-    setDetail(id);
+    if (focusRef.current) return;
+    const source = trigger.closest('article') as HTMLElement | null;
+    if (!source) return;
+    const req = { id, trigger, source };
+    focusRef.current = req;
+    setFocus(req);
   }, []);
-  const onClose = useCallback(() => {
-    setDetail(null);
-    const t = triggerRef.current;
-    // return focus to the button that opened the drawer (its face may have changed while it was open)
+  const onClosed = useCallback(() => {
+    const t = focusRef.current?.trigger;
+    focusRef.current = null;
+    setFocus(null);
+    // return focus to the Explore button that opened the card (again after React commits, in case it moved)
     requestAnimationFrame(() => {
-      if (t && t.isConnected && !t.closest('[inert]')) t.focus({ preventScroll: true });
-      else document.querySelector<HTMLButtonElement>(`[data-capability] button[aria-expanded]`)?.blur();
+      if (t && t.isConnected && document.activeElement !== t) t.focus({ preventScroll: true });
     });
   }, []);
 
-  const shared = useMemo(() => ({ flipped, onFlip: toggle, onExplore, detail }), [flipped, toggle, onExplore, detail]);
+  const shared = useMemo(() => ({ onExplore, detail: focus?.id ?? null }), [onExplore, focus]);
 
   return (
     <section id="capabilities" className={s.section} aria-labelledby="s01-title" data-mode={view.mode}>
@@ -550,7 +598,7 @@ export function S01CapabilityDeck() {
         <Gallery mode={view.mode} {...shared} />
       )}
       <PlatformStrip />
-      <CapabilityDetails id={detail} onClose={onClose} onNavigate={setDetail} />
+      <CapabilityFocus request={focus} reduced={!!reduce || view.mode === 'static'} onClosed={onClosed} />
     </section>
   );
 }

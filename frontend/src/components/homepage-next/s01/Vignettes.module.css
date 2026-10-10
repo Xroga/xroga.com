@@ -14,7 +14,7 @@
   --ease: cubic-bezier(0.55, 0, 0.16, 1);
   position: absolute;
   inset: 0;
-  font-size: 10px;
+  font-size: 10.5px;
   line-height: 1.22;
   color: var(--ink);
   letter-spacing: 0;
@@ -35,7 +35,7 @@
 }
 .scene code {
   font-family: var(--font-xv-mono), ui-monospace, monospace;
-  font-size: 9px;
+  font-size: 9.5px;
 }
 
 /* ---- shared primitives ---- */
@@ -62,14 +62,14 @@
 }
 .bar span {
   margin-left: 4px;
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .tag {
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -134,7 +134,7 @@
   background: rgba(13, 20, 25, 0.96);
   color: var(--ok);
   font-weight: 620;
-  font-size: 10px;
+  font-size: 10.5px;
   white-space: nowrap;
   opacity: 0;
   transform: translateY(5px);
@@ -163,11 +163,11 @@
   gap: 2px;
   padding: 4px 5px;
   border-right: 1px solid var(--hair);
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
 }
 .uiNav b {
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 650;
   color: var(--ink);
   margin-bottom: 1px;
@@ -180,7 +180,7 @@
   flex-direction: column;
   justify-content: space-around;
   padding: 3px 5px;
-  font-size: 9px;
+  font-size: 9.5px;
 }
 .uiRows span {
   display: flex;
@@ -224,7 +224,7 @@
 }
 .roles i {
   font-style: normal;
-  font-size: 8.5px;
+  font-size: 9px;
   padding: 0 3px;
   border-radius: 2px;
   background: rgba(236, 233, 226, 0.07);
@@ -233,7 +233,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 9.5px;
   white-space: nowrap;
 }
 .rel i {
@@ -321,7 +321,7 @@
   align-items: center;
   gap: 3px;
   white-space: nowrap;
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
 }
 .check i {
@@ -333,7 +333,7 @@
 }
 .checkState {
   flex-basis: 100%;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 560;
 }
 .build[data-s3] .check i {
@@ -368,7 +368,7 @@
   padding: 2px 0 2px 11px;
   border-radius: 3px;
   background: rgba(236, 233, 226, 0.04);
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
   white-space: nowrap;
   transition: color 300ms ease, background-color 300ms ease;
@@ -446,10 +446,10 @@
   border: 1px solid var(--hair);
   border-radius: 3px;
   background: rgba(236, 233, 226, 0.03);
-  font-size: 9.5px;
+  font-size: 10px;
 }
 .field small {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--muted);
 }
 .field > i {
@@ -468,14 +468,14 @@
   background: #e8e5de;
   color: #121418;
   font-weight: 650;
-  font-size: 9.5px;
+  font-size: 10px;
 }
 .sDone {
   align-items: center;
   justify-content: center;
 }
 .sDone b {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 640;
   color: var(--ok);
 }
@@ -553,7 +553,7 @@
   right: 7px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 9.5px;
+  font-size: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -613,12 +613,16 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 600;
   white-space: nowrap;
 }
+.node > .swap > span {
+  white-space: normal;
+  line-height: 1.15;
+}
 .node > .swap {
-  font-size: 9px;
+  font-size: 9.5px;
 }
 .n1,
 .n4 {
@@ -699,35 +703,40 @@
 }
 
 /* ================================================================ 04 Launch Anywhere */
+/* one row of plausible surfaces on a shared baseline: a wide browser, a medium extension popup and two restrained
+   phones. Column widths follow the devices, so nothing is squeezed into identical tall slivers. */
+.platforms {
+  left: 3%;
+  right: 3%;
+  top: 4%;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.78fr 0.78fr;
+  column-gap: 6px;
+  align-items: start;
+}
 .surface {
-  top: 3%;
-  width: 23%;
-  height: 62%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
   gap: 2px;
+  min-width: 0;
   text-align: center;
 }
-.surface[data-k='web'] {
-  left: 1%;
-}
-.surface[data-k='ext'] {
-  left: 26%;
-}
-.surface[data-k='ios'] {
-  left: 51%;
-}
-.surface[data-k='and'] {
-  left: 76%;
+.deviceSlot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 62px;
+  margin-bottom: 4px;
 }
 .surface b {
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .sState {
-  font-size: 8.5px;
+  font-size: 10px;
   justify-items: center;
   width: 100%;
   min-height: 2.3em;
@@ -735,7 +744,7 @@
 }
 .sState > span {
   white-space: normal;
-  line-height: 1.12;
+  line-height: 1.15;
 }
 .device {
   position: relative;
@@ -743,41 +752,43 @@
   flex-direction: column;
   gap: 3px;
   padding: 6px 5px 4px;
-  margin-bottom: auto;
-  border: 1px solid rgba(236, 233, 226, 0.26);
-  background: linear-gradient(180deg, rgba(236, 233, 226, 0.08), rgba(236, 233, 226, 0.02));
-  transform: scale(0.7);
+  border: 1px solid rgba(236, 233, 226, 0.28);
+  background: linear-gradient(180deg, rgba(236, 233, 226, 0.09), rgba(236, 233, 226, 0.02));
+  transform: scale(0.72);
+  transform-origin: 50% 100%;
   opacity: 0.4;
   transition: transform 520ms var(--ease), opacity 420ms ease, border-color 300ms ease;
 }
-/* distinct silhouettes: a wide browser, a small extension popup, an iPhone with a notch, an Android with a punch hole */
 .surface[data-k='web'] .device {
-  width: 92%;
-  height: 52%;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 62px;
   border-radius: 3px;
-  border-top-width: 5px;
+  border-top-width: 6px;
 }
 .surface[data-k='ext'] .device {
-  width: 62%;
-  height: 56%;
-  border-radius: 3px;
+  width: 74%;
+  aspect-ratio: 4 / 5;
+  max-height: 56px;
+  border-radius: 4px;
 }
 .surface[data-k='ios'] .device,
 .surface[data-k='and'] .device {
-  width: 44%;
-  height: 72%;
-  border-radius: 6px;
-  padding-top: 9px;
+  width: 72%;
+  max-width: 34px;
+  aspect-ratio: 9 / 17;
+  border-radius: 7px;
+  padding: 9px 4px 4px;
 }
 .surface[data-k='and'] .device {
-  border-radius: 3px;
+  border-radius: 4px;
 }
 .surface[data-k='ios'] .device::before {
   content: '';
   position: absolute;
-  left: 32%;
-  right: 32%;
-  top: 2px;
+  left: 30%;
+  right: 30%;
+  top: 3px;
   height: 3px;
   border-radius: 2px;
   background: rgba(236, 233, 226, 0.3);
@@ -786,7 +797,7 @@
   content: '';
   position: absolute;
   left: 50%;
-  top: 2px;
+  top: 3px;
   width: 3px;
   height: 3px;
   margin-left: -1.5px;
@@ -794,13 +805,13 @@
   background: rgba(236, 233, 226, 0.35);
 }
 .avatar {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: rgba(236, 233, 226, 0.12);
-  font-size: 6.5px;
+  font-size: 7px;
   font-style: normal;
   font-weight: 700;
   transition: background-color 300ms ease, color 300ms ease;
@@ -844,7 +855,7 @@
   border: 1px solid var(--hair);
   border-radius: 4px;
   background: rgba(236, 233, 226, 0.03);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -888,7 +899,7 @@
   place-items: center;
   border-radius: 3px;
   background: color-mix(in srgb, var(--accent) 30%, transparent);
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 700;
   flex: none;
 }
@@ -913,7 +924,7 @@
   padding: 2px 4px;
   border-radius: 3px;
   text-align: center;
-  font-size: 9px;
+  font-size: 9.5px;
   white-space: nowrap;
   background: rgba(236, 233, 226, 0.05);
 }
@@ -951,7 +962,7 @@
   padding: 3px 5px;
   border: 1px solid var(--hair);
   border-radius: 3px;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 560;
   white-space: nowrap;
   overflow: hidden;
@@ -961,7 +972,7 @@
 .sigA small,
 .sigB small {
   display: block;
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 400;
   color: var(--muted);
 }
@@ -976,7 +987,7 @@
   left: 50%;
   top: 22%;
   transform: translateX(-50%);
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--amber);
 }
 .weigh {
@@ -984,7 +995,7 @@
   left: 4%;
   right: 4%;
   bottom: 9%;
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -1024,18 +1035,18 @@
   transform: translateY(8px);
 }
 .brief b {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 640;
 }
 .brief span {
   display: flex;
   align-items: baseline;
   gap: 6px;
-  font-size: 10px;
+  font-size: 10.5px;
 }
 .brief i {
   font-style: normal;
-  font-size: 8.5px;
+  font-size: 9px;
   width: 12px;
   height: 12px;
   display: inline-grid;
@@ -1046,7 +1057,7 @@
   flex: none;
 }
 .brief sup {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--accent);
   margin-left: auto;
   font-family: var(--font-xv-mono), ui-monospace, monospace;
@@ -1069,7 +1080,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 9.5px;
 }
 .file {
   font-family: var(--font-xv-mono), ui-monospace, monospace;
@@ -1100,7 +1111,7 @@
   padding: 1px 5px;
   border-radius: 3px;
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-  font-size: 8.5px;
+  font-size: 9px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1136,12 +1147,12 @@
   height: 15px;
   padding: 0 5px;
   border-bottom: 1px solid rgba(236, 233, 226, 0.06);
-  font-size: 9px;
+  font-size: 9.5px;
   transition: background-color 300ms ease, opacity 360ms ease, box-shadow 300ms ease;
 }
 .tr[data-head] {
   height: 13px;
-  font-size: 8px;
+  font-size: 8.5px;
   letter-spacing: 0.04em;
   color: var(--muted);
 }
@@ -1206,7 +1217,7 @@
 .audit {
   left: 3%;
   top: 77%;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 560;
 }
 .data .result {
@@ -1226,7 +1237,7 @@
   padding: 2px 4px;
   border-radius: 3px;
   text-align: center;
-  font-size: 9px;
+  font-size: 9.5px;
   white-space: nowrap;
   border: 1px solid var(--hair);
   color: var(--muted);
@@ -1249,7 +1260,7 @@
   grid-template-columns: 24% 1fr 17%;
   align-items: center;
   gap: 5px;
-  font-size: 9.5px;
+  font-size: 10px;
   transition: opacity 300ms ease;
 }
 .fstage span {
@@ -1288,7 +1299,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--muted);
   opacity: 0;
 }
@@ -1312,19 +1323,19 @@
   opacity: 0.35;
 }
 .exp b {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 640;
 }
 .expMail {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--muted);
   white-space: nowrap;
 }
 .exp > .swap {
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 560;
 }
 .grow[data-s3] .exp {
@@ -1364,7 +1375,7 @@
 }
 .chartLabel {
   display: block;
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -1387,11 +1398,11 @@
   white-space: nowrap;
 }
 .project b {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 640;
 }
 .project span {
-  font-size: 8.5px;
+  font-size: 9px;
   color: var(--muted);
 }
 .queue {
@@ -1412,7 +1423,7 @@
   border: 1px solid var(--hair);
   border-radius: 4px;
   background: rgba(236, 233, 226, 0.03);
-  font-size: 9.5px;
+  font-size: 10px;
   transition: border-color 300ms ease;
 }
 .job > i {
@@ -1423,7 +1434,7 @@
   place-items: center;
   border-radius: 3px;
   background: color-mix(in srgb, var(--accent) 22%, transparent);
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 700;
 }
 .job > span:not(.swap) {
@@ -1432,7 +1443,7 @@
   text-overflow: ellipsis;
 }
 .job > .swap {
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 560;
   justify-items: end;
 }
@@ -1450,7 +1461,7 @@
   border: 1px solid rgba(217, 166, 95, 0.55);
   background: rgba(30, 22, 12, 0.95);
   color: var(--amber);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 560;
   white-space: nowrap;
   opacity: 0;

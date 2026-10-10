@@ -65,3 +65,31 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
 - S00 unchanged in production: one H1 `Xroga for everything.`, weight 580, `ss07` and `cv11`, colour rgb(230,227,220),
   shine delay 600 ms and cycle 3300 ms.
 - Production screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-final\1440x900-prod\` and `390x844-prod\`.
+
+## Closeout pass (2026-10-11, interaction, motion, copy and QA brief)
+- Copy: kicker `BUILDING TOWARD SUPERINTELLIGENCE` (an aspiration, never a claim), H2 `Beyond answers. Into real work.`,
+  support line as briefed. `01 / CAPABILITIES` and `What you can do with Xroga.` are gone. The hero H1 is the only H1.
+- Scroll collision (recording 01, ~00:02): root cause was a fixed intro drop computed from an assumed heading height
+  (`NAV_INSET + 152`), clamped to at most 62% of the card height, while the heading began fading only at 10% of the
+  chapter, after the stack had already started rising. Fix: the stage measures the real bottom of the support line
+  (ResizeObserver), the intro stack waits below it with a 24px clearance and no upper clamp, and the heading now leaves
+  (1% to 10%) before the stack rises (10% to 19%). Verified by sampling 76 positions per viewport (forward, reverse and
+  fine intro steps) at 1440x900, 1440x690, 1280x800 and 1150x666: zero card/copy intersections.
+- Explore: the side drawer is removed. One click lifts that card out of the deck, carries it to the centre, turns it over
+  (760 ms) and shows the details on its Obsidian Titanium reverse, which scrolls internally. Modal dialog: page inert,
+  focus inside, Escape and "Back to cards" turn it back, focus returns to Explore. Every former drawer sentence is placed
+  in one of four groups per card (tested). Intermittent second-click cause addressed: pointer focus no longer scrolls
+  the page (keyboard focus only), and Explore stops propagation to the deck.
+- Card controls: Explore is a visible pill button; the replay control restarts that card's demo only.
+- Launch Anywhere: a proportioned grid (wide browser 16:10, popup 4:5, two 9:17 phones) on a shared baseline.
+- Vignette type lifted by about half a point throughout; statuses wrap rather than clip.
+- Light: a rim tracer (two hairlines, top and bottom) runs once when a card comes to rest or on hover/focus, 820 ms,
+  staggered 160 ms when several cards land in one frame; off under reduced motion. Gallery charcoal `#10131b`, graphite
+  volumes, a floor bounce under the row.
+- Chapter labels swap in sequence and never overlap.
+- Validation: 25 S01 tests, 961 of 961 frontend tests, lint clean, typecheck 27 pre-existing `src/lib` errors only,
+  build passes. Browser: 31 of 31 Explore checks (first click on all eight cards, keyboard Enter/Space, Tab inside,
+  rapid clicks, chapter nav blocked, outside click, replay, angled card after scrolling, Try in Xroga, phone tap,
+  reduced motion). Scroll on this laptop (Intel Iris Xe, Chrome): median 16.6 ms, p95 16.8 ms, same as a later section.
+- Known, out of scope: `HomepageShowcase` reports a hydration attribute mismatch under reduced motion.
+- Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-last-mile\`.
