@@ -689,8 +689,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // it now carries this label, so a page-wide locator asserts something nobody meant.
   await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
-  await expect(canonicalComposer.getByRole('button', { name: 'Enable Xroga voice' })).toBeVisible();
-  await expect(canonicalComposer.getByRole('button', { name: 'Voice settings' })).toBeVisible();
+  // The current voice controls use accessible names from XrogaVoiceControl.
+  await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Voice options' })).toBeVisible();
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }
