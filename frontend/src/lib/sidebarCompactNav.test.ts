@@ -20,17 +20,23 @@ test('primary navigation retains the requested order and does not duplicate old 
   assert.doesNotMatch(table, /id: 'launch'|id: 'explore'/);
   assert.doesNotMatch(table, /href: '\/os-preview'/);
 });
-test('planned automation and Drive features are not navigable links', () => {
-  assert.match(NAV, /if \(child\.planned\)/);
-  assert.match(NAV, /role="menuitem" aria-disabled="true"/);
+test('planned capabilities stay clickable as informative sections', () => {
+  assert.doesNotMatch(NAV, /aria-disabled="true"/);
+  assert.doesNotMatch(NAV, /href: '#'/);
+  assert.match(NAV, /href: '\/dashboard\/automations#workflows'/);
+  assert.match(NAV, /href: '\/dashboard\/library#xroga-drive'/);
+  assert.match(NAV, /href: '\/showcase', label: 'Templates'/);
   for (const label of ['Workflows', 'Scheduled Tasks', 'AI Employees', 'Work Packs', 'Run History',
     'My Files', 'Artifacts', 'Skills', 'Xroga Drive']) {
     assert.match(NAV, new RegExp("label: '" + label + "'"));
   }
-  assert.match(NAV, /href: '\/showcase', label: 'Templates'/);
+  assert.match(NAV, /LucideWorkflowIcon/);
+  assert.match(NAV, /LucideFoldersIcon/);
+  assert.doesNotMatch(NAV, /ChevronDown/);
 });
+
 test('compact width preserves stored preferences and popover accessibility', () => {
-  assert.match(STORE, /SIDEBAR_DEFAULT_WIDTH = 232/);
+  assert.match(STORE, /SIDEBAR_DEFAULT_WIDTH = 216/);
   assert.match(STORE, /typeof state\.sidebarWidth === 'number'/);
   assert.match(CSS, /xv-sidebar-nav-v2/);
   assert.match(CSS, /min-height: 44px/);

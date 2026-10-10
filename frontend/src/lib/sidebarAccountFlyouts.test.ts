@@ -23,7 +23,8 @@ test('More consolidates legacy groups and uses the portalled flyout', () => {
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
-  assert.match(HOVER_MENU, /onClick: \(\) => setOpen\(true\)/);
+  assert.match(HOVER_MENU, /if \(!event\.defaultPrevented\) setOpen\(true\)/);
+  assert.match(HOVER_MENU, /onClick\?\.\(event\)/);
   for (const label of ['Operations', 'Growth', 'Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
     assert.match(SIDEBAR, new RegExp("label: '" + label + "'"));
   }
@@ -34,7 +35,8 @@ test('Automations and Library are coming soon and Publish is direct', () => {
   assert.match(SIDEBAR, /id: 'automations'/);
   assert.match(SIDEBAR, /id: 'library'/);
   assert.match(SIDEBAR, /newSection: true/);
-  assert.match(SIDEBAR, /aria-disabled="true"/);
+  assert.doesNotMatch(SIDEBAR, /aria-disabled="true"/);
+  assert.match(SIDEBAR, /\/dashboard\/automations#workflows/);
   assert.match(SIDEBAR, /xv-sidebar-new-badge/);
   assert.match(SIDEBAR, /href: '\/dashboard\/publish'/);
   assert.match(SIDEBAR, /aria-label=\{entry\.label\}/);

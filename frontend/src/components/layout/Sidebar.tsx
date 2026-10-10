@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  ChevronDown,
   Compass,
   LayoutDashboard,
   MessageSquarePlus,
@@ -36,6 +35,17 @@ import {
   HardDrive,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { WorkflowIcon as LucideWorkflowIcon } from '@/components/icons/animated/lucide-animated/workflow';
+import { ClockIcon as LucideClockIcon } from '@/components/icons/animated/lucide-animated/clock';
+import { BotIcon as LucideBotIcon } from '@/components/icons/animated/lucide-animated/bot';
+import { BlocksIcon as LucideBlocksIcon } from '@/components/icons/animated/lucide-animated/blocks';
+import { HistoryIcon as LucideHistoryIcon } from '@/components/icons/animated/lucide-animated/history';
+import { FoldersIcon as LucideFoldersIcon } from '@/components/icons/animated/lucide-animated/folders';
+import { FolderOpenIcon as LucideFolderOpenIcon } from '@/components/icons/animated/lucide-animated/folder-open';
+import { FileTextIcon as LucideFileTextIcon } from '@/components/icons/animated/lucide-animated/file-text';
+import { LayersIcon as LucideLayersIcon } from '@/components/icons/animated/lucide-animated/layers';
+import { BookTextIcon as LucideBookTextIcon } from '@/components/icons/animated/lucide-animated/book-text';
+import { HardDriveDownloadIcon as LucideHardDriveIcon } from '@/components/icons/animated/lucide-animated/hard-drive-download';
 import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { SidebarProjectHistory } from './SidebarProjectHistory';
@@ -119,6 +129,7 @@ type NavLink = {
 
 type NavGroup = {
   id: string;
+  href?: string;
   label: string;
   icon: typeof LayoutDashboard;
   animated?: AnimatedIconComponent;
@@ -148,25 +159,25 @@ const navItems: NavEntry[] = [
   { href: '/dashboard/projects', motion: 'flip' as const, label: 'Projects', icon: FolderGit2, animated: FolderOpenIcon, tip: 'Open connected repositories and their workspaces.' },
   { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
-    id: 'automations', label: 'Automations', icon: Workflow, newSection: true,
+    id: 'automations', href: '/dashboard/automations', label: 'Automations', icon: Workflow, animated: LucideWorkflowIcon, newSection: true,
     tip: 'Workflows, scheduling, AI Employees, and work packs are coming soon.',
     children: [
-      { href: '#', label: 'Workflows', icon: Workflow, tip: 'Coming soon · Connected workflows', planned: true },
-      { href: '#', label: 'Scheduled Tasks', icon: CalendarClock, tip: 'Coming soon · Repeated work', planned: true },
-      { href: '#', label: 'AI Employees', icon: Bot, tip: 'Coming soon · Specialist workers', planned: true },
-      { href: '#', label: 'Work Packs', icon: Package, tip: 'Coming soon · Reusable work', planned: true },
-      { href: '#', label: 'Run History', icon: History, tip: 'Coming soon · Unified automation history', planned: true },
+      { href: '/dashboard/automations#workflows', label: 'Workflows', icon: Workflow, animated: LucideWorkflowIcon, tip: 'Coming soon · Connected workflows', planned: true },
+      { href: '/dashboard/automations#scheduled-tasks', label: 'Scheduled Tasks', icon: CalendarClock, animated: LucideClockIcon, tip: 'Coming soon · Repeated work', planned: true },
+      { href: '/dashboard/automations#ai-employees', label: 'AI Employees', icon: Bot, animated: LucideBotIcon, tip: 'Coming soon · Specialist workers', planned: true },
+      { href: '/dashboard/automations#work-packs', label: 'Work Packs', icon: Package, animated: LucideBlocksIcon, tip: 'Coming soon · Reusable work', planned: true },
+      { href: '/dashboard/automations#run-history', label: 'Run History', icon: History, animated: LucideHistoryIcon, tip: 'Coming soon · Unified automation history', planned: true },
     ],
   },
   {
-    id: 'library', label: 'Library', icon: Library, newSection: true,
+    id: 'library', href: '/dashboard/library', label: 'Library', icon: Library, animated: LucideFoldersIcon, newSection: true,
     tip: 'Files, artifacts, skills and Xroga Drive will arrive here.',
     children: [
-      { href: '#', label: 'My Files', icon: Files, tip: 'Coming soon · Stored files', planned: true },
-      { href: '#', label: 'Artifacts', icon: FileText, tip: 'Coming soon · Saved deliverables', planned: true },
-      { href: '/showcase', label: 'Templates', icon: LayoutTemplate, tip: 'Browse existing Xroga templates.' },
-      { href: '#', label: 'Skills', icon: BookOpen, tip: 'Coming soon · Reusable capabilities', planned: true },
-      { href: '#', label: 'Xroga Drive', icon: HardDrive, tip: 'Coming soon · Persistent personal storage', planned: true },
+      { href: '/dashboard/library#my-files', label: 'My Files', icon: Files, animated: LucideFolderOpenIcon, tip: 'Coming soon · Stored files', planned: true },
+      { href: '/dashboard/library#artifacts', label: 'Artifacts', icon: FileText, animated: LucideFileTextIcon, tip: 'Coming soon · Saved deliverables', planned: true },
+      { href: '/showcase', label: 'Templates', icon: LayoutTemplate, animated: LucideLayersIcon, tip: 'Browse existing Xroga templates.' },
+      { href: '/dashboard/library#skills', label: 'Skills', icon: BookOpen, animated: LucideBookTextIcon, tip: 'Coming soon · Reusable capabilities', planned: true },
+      { href: '/dashboard/library#xroga-drive', label: 'Xroga Drive', icon: HardDrive, animated: LucideHardDriveIcon, tip: 'Coming soon · Persistent personal storage', planned: true },
     ],
   },
   { href: '/dashboard/publish', motion: 'launch' as const, label: 'Publish', icon: Rocket, animated: RocketIcon, tip: 'Ship web, extensions, desktop and mobile through your accounts.' },
@@ -401,7 +412,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const asideWidth: number | string = effectiveSidebarOpen
     ? hydrated
       ? sidebarWidth
-      : 'var(--xv-boot-sidebar-width, 232px)'
+      : 'var(--xv-boot-sidebar-width, 216px)'
     : 64;
   const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
@@ -435,7 +446,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     return true;
   };
 
-  const groupHasActive = (group: NavGroup) => group.children.some((c) => !c.planned && isActive(c.href));
+  const groupHasActive = (group: NavGroup) => (group.href ? isActive(group.href) : false) || group.children.some((c) => isActive(c.href));
   function handleNavClick() {
     closeMobile();
     closeBrowser();
@@ -456,24 +467,19 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     handleNavClick();
   }
 
-  /** Planned capabilities are information, not links to fictional services. */
+  /** Unreleased capabilities are openable previews, not simulated execution. */
   function renderMenuChild(child: NavLink) {
-    if (child.planned) return (
-      <div role="menuitem" aria-disabled="true" className="xv-sidebar-hover-menu__item xv-sidebar-hover-menu__planned">
-        <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
-        <span className="min-w-0 flex-1"><strong>{child.label}</strong><small>{child.tip}</small></span>
-        <span className="xv-sidebar-soon">Soon</span>
-      </div>
-    );
     return (
       <Link href={child.href} role="menuitem"
         onClick={(event) => handleNavEntryClick(event, child.href)}
         className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}>
         <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
-        <span className="min-w-0"><strong>{child.label}</strong><small>{child.tip}</small></span>
+        <span className="min-w-0 flex-1"><strong>{child.label}</strong><small>{child.tip}</small></span>
+        {child.planned ? <span className="xv-sidebar-soon">Soon</span> : null}
       </Link>
     );
   }
+
 
   function handleNewChat() {
     if (isGuest) {
@@ -831,12 +837,12 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   <SidebarHoverMenu
                     key={entry.id}
                     trigger={
-                      <button type="button" className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
+                      <Link href={entry.href ?? '/workspace'} onClick={(event) => handleNavEntryClick(event, entry.href ?? '/workspace')}
+                        className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
                         <span>{entry.label}</span>
                         {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
-                        <ChevronDown className="xv-nav-group__chev h-3.5 w-3.5" aria-hidden="true" />
-                      </button>
+                      </Link>
                     }
                   >
                     <div className="xv-sidebar-hover-menu__card xv-sidebar-compact-flyout">

@@ -6340,8 +6340,6 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 .xv-sidebar-compact-flyout .xv-sidebar-hover-menu__icon { width: 26px; height: 26px; }
 .xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item strong { font-size: 11px; }
 .xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item small { font-size: 9px; white-space: normal; line-height: 1.35; }
-.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__planned { cursor: not-allowed; opacity: 0.72; }
-.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__planned:hover { background: transparent; }
 .xv-sidebar-soon { font-size: 9px; color: var(--muted); margin-left: auto; flex: none; }
 .xv-sidebar-menu-divider { margin-top: 6px; border-top: 1px solid var(--card-border); padding-top: 11px; }
 @media (max-width: 1023px) {
@@ -6351,4 +6349,26 @@ html[data-reduced-motion='true'] .xv-voice-primary {
 @media (prefers-reduced-motion: reduce) {
   .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
   .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { transition: none; }
+}
+
+
+/* Sidebar v3, desktop density only. Mobile touch targets stay 44px. */
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger {
+  min-height: 31px;
+  padding: 5px 8px;
+  gap: 7px;
+  font-size: 11.75px;
+  font-weight: 550;
+}
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger {
+  text-decoration: none;
+  border-radius: 999rem;
+}
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger .xv-sidebar-new-badge { margin-left: auto; font-size: 8px; }
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger svg { flex: none; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item { cursor: pointer; }
+@media (max-width: 1023px) {
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { min-height: 44px; }
 }

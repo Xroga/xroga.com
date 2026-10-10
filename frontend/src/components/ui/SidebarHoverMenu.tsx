@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 interface SidebarHoverMenuProps {
@@ -24,6 +25,7 @@ const POINTER_BRIDGE_MS = 180;
 
 /** A portalled sidebar flyout that remains open while the pointer crosses to it. */
 export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverMenuProps) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const anchorRef = useRef<HTMLSpanElement>(null);
@@ -40,6 +42,9 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
   }
 
   useEffect(() => () => cancelClose(), []);
+
+  // Keep an open flyout from lingering when a linked main section navigates.
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -111,7 +116,10 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
         'aria-haspopup': 'menu',
         // Focus fires before click. Both paths must converge on open; toggling here
         // opened on focus and immediately closed again for mouse and touch users.
-        onClick: () => setOpen(true),
+        onClick: (event: React.MouseEvent<HTMLElement>) => {
+          (trigger.props as { onClick?: (event: React.MouseEvent<HTMLElement>) => void }).onClick?.(event);
+          if (!event.defaultPrevented) setOpen(true);
+        },
         onFocus: () => setOpen(true),
         onKeyDown: (event: React.KeyboardEvent) => {
           if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
