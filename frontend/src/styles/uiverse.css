@@ -6308,3 +6308,47 @@ html[data-reduced-motion='true'] .xv-voice-primary {
     transition: none !important;
   }
 }
+
+
+/* Focused sidebar density pass. Keep workspace typography and user widths untouched. */
+.xv-sidebar-menu.xv-sidebar-nav-v2 { gap: 1px; }
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger {
+  box-sizing: border-box;
+  min-height: 34px;
+  padding: 6px 10px;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.25;
+  font-weight: 550;
+}
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { width: 100%; }
+.xv-sidebar-new-badge {
+  margin-left: auto;
+  padding: 2px 4px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__chev { margin-left: 0; }
+.xv-sidebar-compact-flyout { width: min(260px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item { min-height: 37px; padding: 6px 8px; gap: 8px; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__icon { width: 26px; height: 26px; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item strong { font-size: 11px; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__item small { font-size: 9px; white-space: normal; line-height: 1.35; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__planned { cursor: not-allowed; opacity: 0.72; }
+.xv-sidebar-compact-flyout .xv-sidebar-hover-menu__planned:hover { background: transparent; }
+.xv-sidebar-soon { font-size: 9px; color: var(--muted); margin-left: auto; flex: none; }
+.xv-sidebar-menu-divider { margin-top: 6px; border-top: 1px solid var(--card-border); padding-top: 11px; }
+@media (max-width: 1023px) {
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { transition: none; }
+}
