@@ -1,7 +1,8 @@
 # S00 Hero: final lock
 
-**Status: RECONSTRUCTED, PENDING PRODUCTION VERIFICATION** (final closeout, 2026-10-10). The V12 lock of
-2026-10-09 was reopened for the final defects; this becomes `S00: LOCKED` only after the live homepage is verified.
+**S00: LOCKED** (final closeout, 2026-10-10). Production commit `3c83cb87` on `main`, deployed by Vercel and verified on
+https://xroga.com at 1440×900 and 390×844 (section 16). The V12 lock of 2026-10-09 was reopened for the final defects and
+is superseded by this one.
 
 S00 is the first screen of the homepage. It is mounted once, at the top of `/`, from
 `frontend/src/components/homepage/HomepageClient.tsx`, and it replaces the previous production hero completely. There is no
@@ -286,3 +287,28 @@ black-titanium surface (rgba(8,9,11,0.78), quiet warm edge, light blur), 16px fr
 removed). The header's own transform (centring and scroll-hide) is untouched. The early-access notice sits under the
 header. The hero offset is 104px on desktop, 100px on tablet and 96px on phones, so the H1 never meets the header or the
 notice (measured at 1440, 1150, 1024, 768, 430, 390 and 360).
+
+## 16. Production verification (2026-10-10)
+
+Commit `3c83cb87` (`fix(homepage): finalize S00 hero orchestration and visual system`), rebased onto `origin/main`
+`98e0ee60` and pushed without force; Vercel production deployment completed. A full live loop was sampled on
+https://xroga.com (about every 120ms, stills only) at both sizes:
+
+| Check | 1440×900 | 390×844 |
+|---|---|---|
+| Scene order | SaaS, QA, dental, research, cross-platform, cleanup, growth, back to SaaS | same |
+| Right-side modes | Tools for this job, Research sources, Cleanup plan | same |
+| More than one target lit, or a lit target without its route | 0 frames | 0 frames |
+| Proof line | absent | absent |
+| Horizontal scroll | none | none |
+| H1 colour / shine layers | rgb(230, 227, 220) / 1 | same |
+| Header | rgba(8, 9, 11, 0.78), top 16px, 56px tall | top 10px, 54px tall |
+| H1 top / command bar bottom | 144px / 859px | 118px / 805px |
+
+Validation before the push (on the combined `main`): 47 hero tests and 102 hero plus homepage tests pass, the full
+frontend suite passes (935), lint has 0 errors, the production build passes, and typecheck reports the 27 pre-existing
+errors in seven unrelated `src/lib` test files only.
+
+**Known unrelated issues (outside S00):** `HomepageIntegrationConstellation` (a later section) requests three icons from
+`simple-icons@13.21.0` on jsDelivr that return 404 (Microsoft Outlook, Microsoft Teams, monday.com); these are the only
+console errors on the page. The pending-prompt loss on fresh signup (section 14) is unchanged.
