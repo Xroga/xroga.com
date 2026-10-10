@@ -23,7 +23,8 @@ test('More consolidates legacy groups and uses the portalled flyout', () => {
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
-  assert.match(HOVER_MENU, /onClick: \(\) => setOpen\(true\)/);
+  assert.match(HOVER_MENU, /if \(!event\.defaultPrevented\) setOpen\(true\)/);
+  assert.match(HOVER_MENU, /onClick\?\.\(event\)/);
   for (const label of ['Operations', 'Growth', 'Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
     assert.match(SIDEBAR, new RegExp("label: '" + label + "'"));
   }
