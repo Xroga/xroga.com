@@ -1,7 +1,8 @@
 # S00 Hero: final lock
 
-**S00: LOCKED** (final closeout, 2026-10-10). Production commit `3c83cb87` on `main`, deployed by Vercel and verified on
-https://xroga.com at 1440×900 and 390×844 (section 16). The V12 lock of 2026-10-09 was reopened for the final defects and
+**S00: LOCKED** (final closeout, 2026-10-10). Production commit `b4c7e92c` on `main` (headline typography and cadence
+micro-patch, section 17, on top of the closeout `3c83cb87`), deployed by Vercel and verified on https://xroga.com at
+1440×900 and 390×844 (sections 16 and 17). The V12 lock of 2026-10-09 was reopened for the final defects and
 is superseded by this one.
 
 S00 is the first screen of the homepage. It is mounted once, at the top of `/`, from
@@ -255,7 +256,7 @@ chunk, not server-rendered.
 
 ## 12. Tests
 
-- `frontend/src/components/homepage-next/phase1/orchestration.test.ts`: 47 hero tests (sequence, cadence, dwell, no empty
+- `frontend/src/components/homepage-next/phase1/orchestration.test.ts`: 48 hero tests (sequence, cadence, dwell, no empty
   panel, phrase binding across two loops, one H1 shine, right-side modes and no stale mode, native research and cleanup
   with no provider, dental order, provider correctness, lit target equals endpoint across two loops, signal grammar, QA
   causality, orb rings, reduced motion, clock, bar). With `tokens.test.ts` and `lib/homepage*.test.ts`: 102 pass.
@@ -305,7 +306,7 @@ https://xroga.com (about every 120ms, stills only) at both sizes:
 | Header | rgba(8, 9, 11, 0.78), top 16px, 56px tall | top 10px, 54px tall |
 | H1 top / command bar bottom | 144px / 859px | 118px / 805px |
 
-Validation before the push (on the combined `main`): 47 hero tests and 102 hero plus homepage tests pass, the full
+Validation before the push (on the combined `main`): 48 hero tests and 102 hero plus homepage tests pass, the full
 frontend suite passes (935), lint has 0 errors, the production build passes, and typecheck reports the 27 pre-existing
 errors in seven unrelated `src/lib` test files only.
 
@@ -336,3 +337,12 @@ full QA chain). Scene and phrase durations: SaaS 5.95s, QA 7.8s, dental 5.1s, re
 cleanup 5.95s, growth 5.55s; loop 42.05s. QA stays longest because failure, diagnosis, native repair, commit, payment
 re-test, verification and release each need their causal gap. The phrase change is now 420ms (old phrase out in 220ms,
 new phrase in over 300ms from 120ms); the capability line has no shine.
+
+Production verification of `b4c7e92c` (one live loop sampled at each size, stills only): the H1 text is exactly
+`Xroga for everything.` at weight 580 with `Xroga` at 710, `opsz` 32, `ss07` and `cv11`, colour rgb(230, 227, 220); one
+shine layer with a 0.6s delay and a 3.3s cycle; scene order SaaS, QA, dental, research, cross-platform, cleanup, growth,
+back to SaaS; all three right-side modes; 0 frames with more than one lit target or a lit target off its route; no proof
+line; no horizontal scroll; header unchanged (16px inset, 56px on desktop). Measured phrase durations at 390: QA 7.84s,
+dental 5.09s, research 6.61s, cross-platform 5.14s, cleanup 5.86s, growth 5.58s (sampling error about ±0.25s). The only
+console errors remain the known later-section icon 404s. Tests at this commit: 48 hero, 103 hero plus homepage, 936 full
+frontend; lint 0 errors; build passes; typecheck unchanged at 27 pre-existing errors outside S00.
