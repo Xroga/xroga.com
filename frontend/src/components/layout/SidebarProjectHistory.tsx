@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
@@ -54,6 +54,7 @@ type RepoSession = {
   kind: 'local' | 'cloud';
   terminalNumber: number;
   entry?: TerminalHistoryEntry;
+  preview?: string;
 };
 
 type RepoFolder = {
@@ -166,6 +167,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const { requestAuthGate } = useWorkspaceAuthGate();
   const { restoreTerminalSession, startNewChat, messages, sessionId, prompt } = useTerminalChat();
   const [entries, setEntries] = useState<TerminalHistoryEntry[]>([]);
+  const [allHistory, setAllHistory] = useState<TerminalHistoryEntry[]>([]);
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
   const [cloudSessions, setCloudSessions] = useState<CloudTerminalSessionSummary[]>([]);
   const [selectedContextKey, setSelectedContextKey] = useState<string | null>(null);
   const [repoFilter, setRepoFilter] = useState<RepoFilter>('latest');
@@ -187,6 +190,32 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
    *
    * Refs give the same values without making the callback unstable.
    */
+  // Local account-scoped pins; cross-device pin sync is not yet supported.
+  const pinStorageKey = !isGuest && workspaceIdentity.userId
+    ? 'xroga_sidebar_pins_v1:' + workspaceIdentity.userId : null;
+
+  useEffect(() => {
+    if (!pinStorageKey) { setPinnedIds([]); return; }
+    function read() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(pinStorageKey!) || '[]');
+        setPinnedIds(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string').slice(0, 200) : []);
+      } catch { setPinnedIds([]); }
+    }
+    read();
+    window.addEventListener('storage', read);
+    return () => window.removeEventListener('storage', read);
+  }, [pinStorageKey]);
+
+  function togglePin(id: string) {
+    if (!pinStorageKey) return;
+    setPinnedIds(prev => {
+      const next = prev.includes(id) ? prev.filter(value => value !== id) : [id, ...prev].slice(0, 200);
+      try { localStorage.setItem(pinStorageKey, JSON.stringify(next)); } catch { /* storage unavailable */ }
+      return next;
+    });
+  }
+
   const messagesRef = useRef(messages);
   const sessionIdRef = useRef(sessionId);
   const promptRef = useRef(prompt);
@@ -197,6 +226,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   const refreshLocal = useCallback(() => {
     if (isGuest) {
       setEntries([]);
+      setAllHistory([]);
       setCloudSessions([]);
       const ws = loadWorkspaceSession();
       setActiveSessionId(ws?.sessionId ?? sessionIdRef.current ?? null);
@@ -215,6 +245,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
         flushCloud: true,
       });
     }
+    setAllHistory(loadTerminalHistory().filter((e) => e.id && e.messageCount > 0));
     const synced = syncRepoTerminalSessions();
     let nextEntries =
       synced.length
@@ -481,7 +512,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       return bT - aT;
     });
 
-    if (repoFilter === 'latest') foldersList = foldersList.slice(0, 12);
+    // The single parent scrollbar reaches all repositories; no 12-folder truncation.
     if (repoFilter === 'current') foldersList = foldersList.filter((folder) => folder.key === selectedContextKey);
     return foldersList;
   }, [entries, cloudSessions, repoFilter, selectedContextKey]);
@@ -547,7 +578,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       const branch = session.githubBranch || 'main';
       const repo = session.githubRepoName;
       if (!repo?.includes('/')) {
-        router.push('/workspace');
+        if (session.entry?.messages?.length) await applyRestore(session.entry, 'main');
+        else { router.push('/workspace'); toast('The saved conversation is unavailable on this device'); }
         return;
       }
 
@@ -630,6 +662,62 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
     }
   }
 
+  /** A single deduplicated history across local caches and account cloud sessions. */
+  const savedConversations = useMemo((): RepoSession[] => {
+    const map = new Map<string, RepoSession>();
+    for (const e of [...allHistory, ...entries]) {
+      if (!e.id || e.messageCount <= 0) continue;
+      const repo = e.githubRepoName?.includes('/') ? e.githubRepoName : undefined;
+      map.set(e.id, {
+        id: e.id, title: e.title, preview: e.prompt || e.preview, updatedAt: e.updatedAt,
+        status: e.status, githubRepoName: repo, githubBranch: e.githubBranch || 'main',
+        projectRoot: e.projectRoot || '/', cloudSynced: Boolean(repo && cachedTerminalNumber(e.id)),
+        kind: 'local', terminalNumber: repo ? cachedTerminalNumber(e.id) ?? 0 : 0, entry: e,
+      });
+    }
+    for (const c of cloudSessions) {
+      if (!c.id || c.messageCount <= 0) continue;
+      const previous = map.get(c.id);
+      if (previous) {
+        map.set(c.id, { ...previous, preview: previous.preview || c.preview, cloudSynced: true,
+          terminalNumber: c.terminalNumber || previous.terminalNumber,
+          updatedAt: Date.parse(c.updatedAt) > Date.parse(previous.updatedAt) ? c.updatedAt : previous.updatedAt });
+      } else {
+        map.set(c.id, { id: c.id, title: c.title, preview: c.preview, updatedAt: c.updatedAt,
+          githubRepoName: c.githubRepoName, githubBranch: c.githubBranch || 'main',
+          projectRoot: '/', cloudSynced: true, kind: 'cloud', terminalNumber: c.terminalNumber,
+          status: c.status as TerminalHistoryStatus });
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
+  }, [allHistory, entries, cloudSessions]);
+  const pinnedConversations = useMemo(() => savedConversations.filter(s => pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
+  const recentConversations = useMemo(() => savedConversations.filter(s => !pinnedIds.includes(s.id)), [savedConversations, pinnedIds]);
+
+  function conversationTitle(session: RepoSession) {
+    const title = session.title?.trim() || '';
+    const contextual = (session.entry?.prompt || session.preview || '').trim();
+    return ((/^#\d+\s+terminal$/i.test(title) && contextual ? contextual : title || contextual || 'Untitled conversation')).slice(0, 180);
+  }
+  function renderConversationRow(session: RepoSession, pinned: boolean) {
+    return (
+      <div key={session.id} className="group flex min-w-0 items-center gap-1 rounded-lg hover:bg-[var(--foreground)]/[0.05]">
+        <button type="button" className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-[10.5px] text-[var(--foreground)]/85 hover:text-[var(--foreground)]"
+          onClick={() => void openSession(session)} disabled={busyId === session.id} title={conversationTitle(session)}>
+          <span className="block truncate">{conversationTitle(session)}</span>
+        </button>
+        {pinStorageKey ? (
+          <button type="button" onClick={() => togglePin(session.id)}
+            aria-label={pinned ? 'Unpin conversation' : 'Pin conversation'} aria-pressed={pinned}
+            title={pinned ? 'Unpin conversation' : 'Pin conversation'}
+            className="shrink-0 rounded-md p-1.5 text-[var(--muted)] opacity-70 transition-opacity hover:text-[var(--foreground)] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:opacity-0 sm:group-hover:opacity-100">
+            {pinned ? <PinOff size={12} aria-hidden="true" /> : <Pin size={12} aria-hidden="true" />}
+          </button>
+        ) : null}
+      </div>
+    );
+  }
+
   if (!expanded) return null;
 
   return (
@@ -677,7 +765,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           </p>
         )
       ) : (
-        <div className="xv-repos-scroll space-y-0.5 max-h-[280px] overflow-y-auto pr-1">
+        <div className="xv-repos-scroll space-y-0.5 pr-1">
           {folders.map((folder) => {
             const isOpen = openFolders[folder.key] !== false;
             // A repository under the filter is a fork point, not a folder: the glyph
@@ -776,6 +864,22 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
           })}
         </div>
       )}
+      {!isGuest ? (
+        <>
+          <section className="mt-3" aria-label="Pinned conversations">
+            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Pinned</h2>
+            {pinnedConversations.length
+              ? pinnedConversations.map(s => renderConversationRow(s, true))
+              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Pin chats from Recents for quick access.</p>}
+          </section>
+          <section className="mt-3" aria-label="Recent conversations">
+            <h2 className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[var(--muted)]">Recents</h2>
+            {recentConversations.length
+              ? recentConversations.map(s => renderConversationRow(s, false))
+              : <p className="px-2 py-1 text-[10px] text-[var(--muted)]">Your conversations will appear here.</p>}
+          </section>
+        </>
+      ) : null}
     </div>
   );
 }

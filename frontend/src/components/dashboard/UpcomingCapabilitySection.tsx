@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, CircleDot, Layers3 } from 'lucide-react';
+import { ArrowUpRight, Layers3 } from 'lucide-react';
 import { PageFullscreenFrame } from '@/components/layout/PageFullscreenFrame';
 
 export type Capability = { id: string; name: string; summary: string; status?: 'Available' | 'Coming soon'; href?: string };
@@ -31,8 +31,7 @@ export function UpcomingCapabilitySection({ title, description, entries }: { tit
                 <span className="rounded-full border border-[var(--card-border)] px-2 py-1 text-[10px] font-medium text-[var(--muted)]">{item.status ?? 'Coming soon'}</span>
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{item.summary}</p>
-              {item.href ? <Link className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline" href={item.href}>Open existing feature <ArrowUpRight size={13} aria-hidden="true" /></Link>
-                : <span className="mt-4 inline-flex items-center gap-1 text-xs text-[var(--muted)]"><CircleDot size={12} aria-hidden="true" /> Preview this section</span>}
+              {item.href ? <Link className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline" href={item.href}>Open existing feature <ArrowUpRight size={13} aria-hidden="true" /></Link> : null}
             </section>
           ))}
         </div>
