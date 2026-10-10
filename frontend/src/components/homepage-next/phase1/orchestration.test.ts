@@ -60,8 +60,14 @@ test('copy: the H1 exactly, no stale headline, no eyebrow or support paragraph, 
   assert.ok(!/gradient|background-clip/.test(titleRule), 'no gradient on the H1 text itself');
   assert.match(titleRule, /color: #e6e3dc/);
   const hero = read('S00Hero.tsx');
-  assert.match(hero, /<h1 id="s00-title" className=\{s\.title\}>\s*\{\/\*[^*]*\*\/\}\s*<span>\{TITLE\[0\]\}<\/span> <span>\{TITLE\[1\]\}<\/span>\s*<\/h1>/, 'the H1 is the title alone');
+  assert.match(hero, /<h1 id="s00-title" className=\{s\.title\}>\s*\{\/\*[^*]*\*\/\}\s*<TitleText \/>\s*<\/h1>/, 'the H1 is the title alone');
   assert.match(hero, /COPY\.title\.slice\(0, COPY\.title\.lastIndexOf\(' '\)\)/);
+  // the rendered text is exactly the title: brand word + rest of the first line + space + last word
+  assert.match(hero, /const BRAND = COPY\.title\.slice\(0, COPY\.title\.indexOf\(' '\)\);/);
+  assert.match(hero, /<span className=\{s\.brand\}>\{BRAND\}<\/span>\s*\{TITLE\[0\]\.slice\(BRAND\.length\)\}\s*<\/span>\{' '\}\s*<span>\{TITLE\[1\]\}<\/span>/);
+  const brand = COPY.title.slice(0, COPY.title.indexOf(' '));
+  const line = COPY.title.slice(0, COPY.title.lastIndexOf(' '));
+  assert.equal(`${brand}${line.slice(brand.length)} ${COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)}`, 'Xroga for everything.');
   const src = ['copy.ts', 'S00Hero.tsx', 'Capability.tsx', 'Stage.tsx', 'WorkObject.tsx', 'CommandBar.tsx', 'Toolset.tsx'].map(read).join('\n');
   for (const stale of ['Build. Run. Grow.', 'Give Xroga the outcome', 'It executes the digital work', 'The AI execution layer for digital work', 'AI that gets the work done', 'Xroga handles the whole job', 'AI execution workspace', 'integrations available', 'Connect tools when the job needs them', 'shown from']) {
     assert.ok(!src.includes(stale), `stale copy: ${stale}`);
@@ -113,7 +119,11 @@ test('final scene sequence: seven scenes, one loop, no separate rest', () => {
 
 test('cadence: scenes run about 5 to 8.5 s, the loop about 35 to 45 s', () => {
   for (const v of VIGNETTES) assert.ok(v.len >= 4800 && v.len <= 8500, `${v.id} runs ${v.len} ms`);
-  assert.ok(vignette('cleanup').len >= 6000 && vignette('cleanup').len <= 6500, 'cleanup has room for its data story');
+  assert.ok(vignette('cleanup').len >= 5800 && vignette('cleanup').len <= 6500, 'cleanup has room for its data story');
+  // the capability phrase changes with the scene: most hold about 5 to 6 s, none but QA more than 6.5 s
+  for (const v of VIGNETTES) if (v.id !== 'qa') assert.ok(v.len <= 6500, `${v.id} phrase holds ${v.len} ms`);
+  assert.ok(vignette('qa').len <= 8000, 'QA keeps its full causal chain without idle holds');
+  assert.ok(VIGNETTES.filter((v) => v.len >= 4800 && v.len <= 6000).length >= 5, 'most phrases change every 4.8 to 6 s');
   const span = LOOP - LEAD;
   assert.ok(span >= 35000 && span <= 45000, `loop ${span} ms`);
   const mean = span / VIGNETTES.length;
@@ -183,7 +193,23 @@ test('one H1 shine system: a CSS band over a static base, none under reduced mot
   const css = read('S00Hero.module.css');
   const hero = read('S00Hero.tsx');
   assert.ok(!/\.sheen\b/.test(css + hero + read('Capability.tsx')), 'the old custom sheen is gone');
-  assert.match(css, /\.shine \{[\s\S]*?background-clip: text[\s\S]*?animation: shine 5s/, 'one band, about every 5 s');
+  const anim = css.match(/animation: shine ([\d.]+)s cubic-bezier\([^)]*\) ([\d.]+)s infinite;/);
+  assert.ok(anim, 'one band on a repeating cycle');
+  const [cycle, delay] = [Number(anim![1]), Number(anim![2])];
+  assert.ok(cycle >= 3.2 && cycle <= 3.6, `shine cycle ${cycle}s`);
+  assert.ok(delay >= 0.5 && delay <= 0.8, `first shine after ${delay}s`);
+  const kf = css.match(/@keyframes shine \{\s*0% \{ background-position: 85% 0; \}\s*([\d.]+)%, 100% \{ background-position: 15% 0; \}\s*\}/);
+  assert.ok(kf, 'one continuous pass, then a rest');
+  const pass = (Number(kf![1]) / 100) * cycle;
+  assert.ok(pass >= 1.0 && pass <= 1.3, `one pass takes ${pass.toFixed(2)}s`);
+  assert.ok(cycle - pass >= 1.8 && cycle - pass <= 2.2, `rest ${(cycle - pass).toFixed(2)}s`);
+  // Xroga Display: bundled Inter at its display size, heavier brand word, verified features only
+  const title = css.slice(css.indexOf('.title {'), css.indexOf('}', css.indexOf('.title {')));
+  assert.match(title, /font-variation-settings: 'opsz' 32;/);
+  assert.match(title, /font-feature-settings: 'ss07' 1, 'cv11' 1;/);
+  const brandWeight = Number(css.match(/\.brand \{ font-weight: (\d+);/)![1]);
+  const restWeight = Number(title.match(/font-weight: (\d+);/)![1]);
+  assert.ok(brandWeight >= 650 && brandWeight <= 720 && restWeight >= 560 && restWeight <= 620 && brandWeight > restWeight, 'Xroga stronger than the rest');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.shine \{ display: none; \}/);
   assert.match(css, /:global\(\.xv-home-coding\) \.hero h1\.title \{ color: #e6e3dc !important; \}/, 'the homepage ink rule cannot wash the base out');
   assert.match(hero, /\{!reduced && \(\s*<span className=\{`\$\{s\.title\} \$\{s\.shine\}`\} aria-hidden="true">/);
@@ -473,7 +499,7 @@ test('later passes restart at the first scene without the headline lead', () => 
   assert.equal(perfTime(LOOP + 10).firstPass, false);
   assert.equal(frameAt(LOOP + 10).vignette, 'saas');
   assert.equal(frameAt(LOOP + 10).leaving, 'growth', 'the loop is continuous: growth folds into the next SaaS');
-  assert.equal(frameKey(frameAt(timeOf('saas', 5900))), frameKey(frameAt(timeOf('saas', 5950))), 'a quiet moment does not re-render');
+  assert.equal(frameKey(frameAt(timeOf('saas', 5600))), frameKey(frameAt(timeOf('saas', 5650))), 'a quiet moment does not re-render');
 });
 
 test('one orchestration clock: no intervals, and only the clock and the background own a frame loop', () => {
@@ -677,4 +703,15 @@ test('breadth: rack cards are real catalog integrations, varied across scenes, a
     const called = new Set(toolRoutes(vignette(f.vignette)).map((r) => r.target));
     for (const p of [...f.active, ...f.used, ...f.routes.map((r) => r.target)]) assert.ok(called.has(p as never), `${p} shown as used at ${c}`);
   }
+});
+
+test('phrase change is quick: about 350 to 450 ms, through the existing mask, with no phrase shine', () => {
+  assert.ok(PHRASE_MS >= 350 && PHRASE_MS <= 450, `${PHRASE_MS} ms`);
+  const css = read('S00Hero.module.css');
+  const out = Number(css.match(/\.phrase\[data-leg='out'\] \{ animation: phraseOut (\d+)ms/)![1]);
+  const inn = css.match(/\.phrase\[data-leg='in'\] \{ animation: phraseIn (\d+)ms [^)]*\) (\d+)ms both;/)!;
+  const settled = Number(inn[1]) + Number(inn[2]);
+  assert.ok(out <= 300, `old phrase leaves in ${out} ms`);
+  assert.ok(settled >= 350 && settled <= 450, `new phrase settles at ${settled} ms`);
+  assert.ok(settled <= PHRASE_MS, 'the mask window covers the whole change');
 });

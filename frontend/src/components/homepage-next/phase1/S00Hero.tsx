@@ -19,6 +19,17 @@ import s from './S00Hero.module.css';
 import './s00-header.css';
 
 const TITLE = [COPY.title.slice(0, COPY.title.lastIndexOf(' ')), COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)] as const;
+/** The brand word carries the heavier, tighter Xroga Display cut; the rest of the line stays in the same family. */
+const BRAND = COPY.title.slice(0, COPY.title.indexOf(' '));
+const TitleText = () => (
+  <>
+    <span>
+      <span className={s.brand}>{BRAND}</span>
+      {TITLE[0].slice(BRAND.length)}
+    </span>{' '}
+    <span>{TITLE[1]}</span>
+  </>
+);
 
 const XrogaSlats = dynamic(() => import('./XrogaSlats'), { ssr: false });
 
@@ -130,13 +141,13 @@ export function S00Hero() {
           <div className={s.titleWrap}>
             <h1 id="s00-title" className={s.title}>
               {/* one line on desktop; phones break after "for" (V12 §4) */}
-              <span>{TITLE[0]}</span> <span>{TITLE[1]}</span>
+              <TitleText />
             </h1>
-            {/* the single H1 shine: a narrow band of light crosses the finished line about every 5 s; the
-                base text underneath never changes, and reduced motion renders none of this */}
+            {/* the single H1 shine: a band of light crosses the finished line in about 1.15 s, every 3.3 s;
+                the base text underneath never changes, and reduced motion renders none of this */}
             {!reduced && (
               <span className={`${s.title} ${s.shine}`} aria-hidden="true">
-                <span>{TITLE[0]}</span> <span>{TITLE[1]}</span>
+                <TitleText />
               </span>
             )}
           </div>

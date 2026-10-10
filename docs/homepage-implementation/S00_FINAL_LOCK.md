@@ -312,3 +312,27 @@ errors in seven unrelated `src/lib` test files only.
 **Known unrelated issues (outside S00):** `HomepageIntegrationConstellation` (a later section) requests three icons from
 `simple-icons@13.21.0` on jsDelivr that return 404 (Microsoft Outlook, Microsoft Teams, monday.com); these are the only
 console errors on the page. The pending-prompt loss on fresh signup (section 14) is unchanged.
+
+## 17. Headline typography and cadence micro-patch (2026-10-10)
+
+Reopened after the lock for three refinements only; everything else (background, orb, signals, routing, racks,
+research, cleanup, header, command bar, stage, responsive structure) is unchanged and supersedes nothing above except
+the values below.
+
+**Xroga Display.** The H1 text is still exactly `Xroga for everything.`. It uses the bundled Inter Variable (no new
+font, no CDN, no dependency) at its display optical size: `font-variation-settings: 'opsz' 32`, weight 580, tracking
+-0.04em, line height 0.96, with `font-feature-settings: 'ss07' 1, 'cv11' 1` (square period, single-storey a; both
+verified to change the rendered phrase, `cv13` was tested and dropped). The brand word `Xroga` is its own span at weight
+710 and -0.052em, on the same baseline. Base colour unchanged: #e6e3dc. Reduced motion keeps the typography.
+
+**Shine.** One CSS band over the static line, first pass 0.6s after paint, one pass of 1.15s from outside left to
+outside right, then a 2.15s rest: a 3.3s cycle. About 170px of visible light at 1440 with a ~30px white core; leading
+edge a faint steel graphite (rgba 120, 130, 142 at 0.5) then ice, trailing edge a faint Xroga cyan (rgba 130, 215, 235 at
+0.3) then violet pearl (rgba 210, 190, 240 at 0.26). No glow, no colour on the base, none under reduced motion.
+
+**Cadence.** The scene front was tightened (intent at 150ms, object at 1000ms, first state at 1100ms, swap gate at
+1100ms) and idle holds removed, with every causal rule kept (calls at least 900ms apart, results held at least 900ms, the
+full QA chain). Scene and phrase durations: SaaS 5.95s, QA 7.8s, dental 5.1s, research 6.35s, cross-platform 5.35s,
+cleanup 5.95s, growth 5.55s; loop 42.05s. QA stays longest because failure, diagnosis, native repair, commit, payment
+re-test, verification and release each need their causal gap. The phrase change is now 420ms (old phrase out in 220ms,
+new phrase in over 300ms from 120ms); the capability line has no shine.

@@ -81,20 +81,25 @@
 .copy { display: grid; justify-items: center; gap: clamp(10px, 1.6svh, 16px); text-align: center; }
 /* One warm pearl line, no gradient on the text itself, set by type and air alone */
 .titleWrap { position: relative; }
+/* Xroga Display: the bundled Inter Variable at its display optical size, with a heavier and tighter brand word,
+   a square period (ss07) and a single-storey a (cv11). Same family throughout, one baseline. */
 .title {
   margin: 0;
   font-size: min(clamp(2.5rem, 1rem + 3.9vw, 4.75rem), 8.2svh);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
-  font-weight: 560;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 580;
+  font-variation-settings: 'opsz' 32;
+  font-feature-settings: 'ss07' 1, 'cv11' 1;
   /* warm pearl: strongly readable at rest, and one step below white so the passing light can be seen */
   color: #e6e3dc;
   font-kerning: normal;
 }
+.brand { font-weight: 710; letter-spacing: -0.052em; }
 .title > span { display: inline-block; white-space: nowrap; }
 /* The H1 shine: a copy of the line that is transparent except for one narrow band of light, laid over the
    static pearl text so the base never dims. The band waits outside the left edge, crosses the whole line,
-   leaves on the right, then rests before the next pass (about every 5 s). No glow, and no colour on the base.
+   leaves on the right, then rests before the next pass (every 3.3 s). No glow, and no colour on the base.
    With a 300% wide gradient the band centre sits at 1.5W - 2W * position, so 85% is fully left of the text and
    15% fully right of it. */
 .shine {
@@ -102,21 +107,21 @@
   inset: 0;
   pointer-events: none;
   color: transparent;
-  /* about 140px of visible light at 1440 (each 1% of the 300% gradient is ~20px). It reads as white light: a white
-     core, ice shoulders, then a faint Xroga cyan and, trailing, a faint violet pearl, the orb's spectrum caught at the
-     very edge of the band only */
+  /* about 170px of visible material light at 1440 (each 1% of the 300% gradient is ~20px), with a ~30px white core.
+     Leading edge (right, the direction of travel): a faint steel-graphite contrast, then ice; trailing edge: a faint
+     Xroga cyan, then violet pearl. It reads as white light crossing one material line, with no glow */
   background-image: linear-gradient(
     112deg,
     transparent 0%,
-    transparent 45.6%,
-    rgba(210, 190, 240, 0.22) 46.6%,
-    rgba(130, 215, 235, 0.24) 47.6%,
-    rgba(216, 232, 242, 0.55) 48.6%,
-    #ffffff 49.6%,
-    #ffffff 50.4%,
-    rgba(216, 232, 242, 0.55) 51.4%,
-    rgba(130, 215, 235, 0.2) 52.4%,
-    transparent 53.6%,
+    transparent 45.9%,
+    rgba(210, 190, 240, 0.26) 46.8%,
+    rgba(130, 215, 235, 0.3) 47.8%,
+    rgba(222, 232, 240, 0.6) 48.8%,
+    #ffffff 49.3%,
+    #ffffff 50.7%,
+    rgba(228, 234, 240, 0.6) 51.4%,
+    rgba(120, 130, 142, 0.5) 52.6%,
+    transparent 54%,
     transparent 100%
   );
   background-size: 300% 100%;
@@ -124,11 +129,12 @@
   background-position: 85% 0;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: shine 5s cubic-bezier(0.45, 0.05, 0.35, 1) 1.2s infinite;
+  /* one pass of 1.15 s, then a 2.15 s rest: a 3.3 s cycle, the first pass 0.6 s after paint */
+  animation: shine 3.3s cubic-bezier(0.42, 0, 0.32, 1) 0.6s infinite;
 }
 @keyframes shine {
-  0%, 12% { background-position: 85% 0; }
-  58%, 100% { background-position: 15% 0; }
+  0% { background-position: 85% 0; }
+  34.85%, 100% { background-position: 15% 0; }
 }
 
 /* V12 §6–§9: fixed lead, one capability phrase that changes with the scene */
@@ -158,8 +164,9 @@
   color: #ebe7de;
   font-weight: 540;
 }
-.phrase[data-leg='out'] { animation: phraseOut 300ms cubic-bezier(0.4, 0, 0.7, 1) both; }
-.phrase[data-leg='in'] { animation: phraseIn 420ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both; }
+/* a quick change: the old phrase leaves in 220 ms, the new one arrives from 120 ms and has settled by 420 ms */
+.phrase[data-leg='out'] { animation: phraseOut 220ms cubic-bezier(0.4, 0, 0.7, 1) both; }
+.phrase[data-leg='in'] { animation: phraseIn 300ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both; }
 @keyframes phraseOut { to { opacity: 0; transform: translateY(-8px); filter: blur(2px); } }
 @keyframes phraseIn { from { opacity: 0; transform: translateY(10px); filter: blur(2px); } }
 /* reduced motion: the same two-line lockup with one static summary phrase, which may wrap on phones */

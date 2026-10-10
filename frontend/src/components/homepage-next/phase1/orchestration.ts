@@ -103,108 +103,108 @@ const ROUTE_MS = SIGNAL.end;
 /** Native hand-off: Xroga's own result travels to the work object just before it changes. */
 export const HOP = { before: 450, after: 150 } as const;
 
-const INTENT = 200;
-const CREATE = 1150;
-const FIRST = 1250; // the first visible state lands as the object unfolds: never an empty panel
+const INTENT = 150;
+const CREATE = 1000;
+const FIRST = 1100; // the first visible state lands as the object unfolds: never an empty panel
 
 export const VIGNETTES: readonly Vignette[] = [
   {
     id: 'saas',
-    len: 6100,
+    len: 5950,
     mode: 'tools',
     set: ['supabase', 'stripe', 'github', 'vercel', 'linear', 'cloudflare'],
     intentAt: INTENT,
     createAt: CREATE,
     steps: [
       { at: FIRST, fx: 'shell', cap: 'native' },
-      { at: 2500, fx: 'auth', cap: 'auth', tool: 'supabase' },
-      { at: 3400, fx: 'billing', cap: 'payments', tool: 'stripe' },
-      { at: 4300, fx: 'repo', cap: 'source-control', tool: 'github' },
-      { at: 5200, fx: 'live', cap: 'deployment', tool: 'vercel' },
+      { at: 2350, fx: 'auth', cap: 'auth', tool: 'supabase' },
+      { at: 3250, fx: 'billing', cap: 'payments', tool: 'stripe' },
+      { at: 4150, fx: 'repo', cap: 'source-control', tool: 'github' },
+      { at: 5050, fx: 'live', cap: 'deployment', tool: 'vercel' },
     ],
   },
   {
     id: 'qa',
-    len: 8450,
+    len: 7800,
     mode: 'tools',
     set: ['sentry', 'github', 'stripe', 'vercel', 'zendesk', 'mixpanel'],
     intentAt: INTENT,
     createAt: CREATE,
-    verifyAt: 6900,
+    verifyAt: 6250,
     cursor: [
-      [1300, 'email'],
-      [1450, 'pay'],
-      [1550, 'hover'],
-      [1700, 'press'],
-      [1900, 'rest'],
-      [4950, 'pay'],
-      [5050, 'hover'],
-      [5200, 'press'],
-      [5400, 'rest'],
-      [5850, 'away'],
+      [1150, 'email'],
+      [1300, 'pay'],
+      [1400, 'hover'],
+      [1550, 'press'],
+      [1750, 'rest'],
+      [4300, 'pay'],
+      [4400, 'hover'],
+      [4550, 'press'],
+      [4750, 'rest'],
+      [5200, 'away'],
     ],
     steps: [
       { at: FIRST, fx: 'start', cap: 'browser' },
-      { at: 1900, fx: 'failed', cap: 'browser' },
+      { at: 1750, fx: 'failed', cap: 'browser' },
       // each tool is called only once its cause exists: Sentry once the browser has seen the failure, GitHub once
       // Xroga has repaired the code itself (the commit call leaves as the repair lands), Stripe after the re-press
-      { at: 3150, fx: 'isolated', cap: 'monitoring', tool: 'sentry' },
-      { at: 3800, fx: 'repaired', cap: 'native', hop: true },
-      { at: 5050, fx: 'committed', cap: 'source-control', tool: 'github' },
-      { at: 6450, fx: 'paid', cap: 'payments', tool: 'stripe' },
-      { at: 6900, fx: 'verified', cap: 'browser' },
-      { at: 7550, fx: 'released', cap: 'deployment', tool: 'vercel' },
+      { at: 3000, fx: 'isolated', cap: 'monitoring', tool: 'sentry' },
+      { at: 3650, fx: 'repaired', cap: 'native', hop: true },
+      { at: 4900, fx: 'committed', cap: 'source-control', tool: 'github' },
+      { at: 5800, fx: 'paid', cap: 'payments', tool: 'stripe' },
+      { at: 6250, fx: 'verified', cap: 'browser' },
+      { at: 6900, fx: 'released', cap: 'deployment', tool: 'vercel' },
     ],
   },
   {
     id: 'clinic',
-    len: 5350,
+    len: 5100,
     mode: 'tools',
     set: ['googlecalendar', 'hubspot', 'gmail', 'calendly', 'intercom', 'asana'],
     intentAt: INTENT,
     createAt: CREATE,
     steps: [
       { at: FIRST, fx: 'inquiry', cap: 'native' },
-      { at: 1950, fx: 'qualified', cap: 'native' },
-      { at: 2650, fx: 'booked', cap: 'calendar', tool: 'googlecalendar' },
-      { at: 3550, fx: 'crm', cap: 'crm', tool: 'hubspot' },
-      { at: 4450, fx: 'followup', cap: 'email', tool: 'gmail' },
+      { at: 1750, fx: 'qualified', cap: 'native' },
+      { at: 2400, fx: 'booked', cap: 'calendar', tool: 'googlecalendar' },
+      { at: 3300, fx: 'crm', cap: 'crm', tool: 'hubspot' },
+      { at: 4200, fx: 'followup', cap: 'email', tool: 'gmail' },
     ],
   },
   {
     id: 'research',
-    len: 6600,
+    len: 6350,
     mode: 'sources',
     set: [],
     intentAt: INTENT,
     createAt: CREATE,
     steps: [
       { at: FIRST, fx: 'plan', cap: 'native' },
-      { at: 2500, fx: 'x', cap: 'research', source: 'x' },
-      { at: 3400, fx: 'reddit', cap: 'research', source: 'reddit' },
-      { at: 4300, fx: 'google', cap: 'research', source: 'google' },
-      { at: 4950, fx: 'compare', cap: 'native', hop: true },
-      { at: 5650, fx: 'rank', cap: 'native', hop: true },
+      { at: 2350, fx: 'x', cap: 'research', source: 'x' },
+      { at: 3250, fx: 'reddit', cap: 'research', source: 'reddit' },
+      { at: 4150, fx: 'google', cap: 'research', source: 'google' },
+      { at: 4800, fx: 'compare', cap: 'native', hop: true },
+      { at: 5450, fx: 'rank', cap: 'native', hop: true },
     ],
   },
   {
     id: 'platforms',
-    len: 5600,
+    len: 5350,
     mode: 'tools',
     set: ['supabase', 'github', 'figma', 'neon', 'railway', 'openai'],
     intentAt: INTENT,
     createAt: CREATE,
     steps: [
       { at: FIRST, fx: 'inspected', cap: 'native' },
-      { at: 2500, fx: 'core', cap: 'database', tool: 'supabase' },
-      { at: 3200, fx: 'variants', cap: 'native', hop: true },
-      { at: 3900, fx: 'built', cap: 'source-control', tool: 'github' },
-      { at: 4600, fx: 'destinations', cap: 'native' },
+      { at: 2350, fx: 'core', cap: 'database', tool: 'supabase' },
+      { at: 3050, fx: 'variants', cap: 'native', hop: true },
+      { at: 3750, fx: 'built', cap: 'source-control', tool: 'github' },
+      { at: 4450, fx: 'destinations', cap: 'native' },
     ],
   },
   {
     id: 'cleanup',
-    len: 6500,
+    len: 5950,
     mode: 'plan',
     set: [],
     intentAt: INTENT,
@@ -212,27 +212,27 @@ export const VIGNETTES: readonly Vignette[] = [
     steps: [
       // scan, find, then four transformations Xroga hands to the table, then a validation pass over the result
       { at: FIRST, fx: 'scanned', cap: 'native' },
-      { at: 1950, fx: 'found', cap: 'native' },
-      { at: 2650, fx: 'merged', cap: 'native', hop: true },
-      { at: 3300, fx: 'fixed', cap: 'native', hop: true },
-      { at: 3950, fx: 'normalized', cap: 'native', hop: true },
-      { at: 4600, fx: 'held', cap: 'native', hop: true },
-      { at: 5300, fx: 'validated', cap: 'native' },
+      { at: 1750, fx: 'found', cap: 'native' },
+      { at: 2400, fx: 'merged', cap: 'native', hop: true },
+      { at: 3050, fx: 'fixed', cap: 'native', hop: true },
+      { at: 3700, fx: 'normalized', cap: 'native', hop: true },
+      { at: 4350, fx: 'held', cap: 'native', hop: true },
+      { at: 5000, fx: 'validated', cap: 'native' },
     ],
   },
   {
     id: 'growth',
-    len: 5700,
+    len: 5550,
     mode: 'tools',
     set: ['semrush', 'posthog', 'mailchimp', 'googleads', 'instagram', 'youtube'],
     intentAt: INTENT,
     createAt: CREATE,
     steps: [
       { at: FIRST, fx: 'audit', cap: 'native' },
-      { at: 2500, fx: 'search', cap: 'seo', tool: 'semrush' },
-      { at: 3400, fx: 'funnel', cap: 'analytics', tool: 'posthog' },
-      { at: 4100, fx: 'constraint', cap: 'native', hop: true },
-      { at: 4800, fx: 'launched', cap: 'email', tool: 'mailchimp' },
+      { at: 2350, fx: 'search', cap: 'seo', tool: 'semrush' },
+      { at: 3250, fx: 'funnel', cap: 'analytics', tool: 'posthog' },
+      { at: 3950, fx: 'constraint', cap: 'native', hop: true },
+      { at: 4650, fx: 'launched', cap: 'email', tool: 'mailchimp' },
     ],
   },
 ];
@@ -243,11 +243,11 @@ export const ORDER: readonly VignetteId[] = ['saas', 'qa', 'clinic', 'research',
 export const LEAD = 1000; // headline holds before the first scene (first pass only)
 export const TURN_MS = 1100; // orb transition between scenes
 export const SWAP_AT = 450; // the right side changes in the final part of the turn
-export const SWAP_MS = 800;
+export const SWAP_MS = 650;
 export const INTENT_MS = 750;
 const LEAVE_MS = 500;
-/** Capability rotator: a 600 ms mask change. */
-export const PHRASE_MS = 600;
+/** Capability rotator: a quick 420 ms mask change (old phrase out in 220 ms, new one in from 120 ms). */
+export const PHRASE_MS = 420;
 /** Orb wave: one restrained ring per event. */
 export const WAVE_MS = 900;
 
