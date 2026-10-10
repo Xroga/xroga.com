@@ -6372,3 +6372,15 @@ html[data-reduced-motion='true'] .xv-voice-primary {
   .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
   .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { min-height: 44px; }
 }
+
+
+/* Sidebar-only compact text and spacing, preserving mobile minimum tap targets. */
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger {
+  min-height: 30px; padding: 4px 7px; gap: 7px; font-size: 11px; font-weight: 540;
+}
+.xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-new-badge { font-size: 7.5px; }
+@media (max-width: 1023px) {
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-sidebar-tip-wrap > a,
+  .xv-sidebar-menu.xv-sidebar-nav-v2 .xv-nav-group__trigger { min-height: 44px; }
+}

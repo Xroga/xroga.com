@@ -14455,3 +14455,16 @@ html.xv-home-scroll-lock body {
   width: 30px;
   height: 30px;
 }
+
+
+/* One native draggable thumb for sidebar nav, repo terminals, pins and recents. */
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track {
+  scrollbar-width: thin !important;
+  scrollbar-color: color-mix(in srgb, var(--muted) 60%, transparent) transparent !important;
+  overscroll-behavior-y: contain;
+}
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar { display: block !important; width: 6px !important; height: 0 !important; }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-track { background: color-mix(in srgb, var(--muted) 8%, transparent); border-radius: 999px; }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 58%, transparent); border-radius: 999px; }
+.xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 84%, transparent); }
+.xv-repos-scroll { overflow: visible !important; max-height: none !important; }
