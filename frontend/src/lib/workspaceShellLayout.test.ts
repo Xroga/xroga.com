@@ -203,7 +203,7 @@ test('the transcript renders chromeless inside the shell and framed everywhere e
 // ---------------------------------------------------------------------------
 
 test('the menu keeps a small deliberate gap above the composer', () => {
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 8/);
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 11/);
   assert.match(CSS, /\.xv-cba-menu\s*\{[\s\S]*?border-radius:\s*13px/);
   assert.doesNotMatch(MENU, /window\.innerHeight - rect\.top - 1/);
 });
@@ -213,7 +213,7 @@ test('the menu is anchored to the composer, not to the plus button', () => {
   assert.match(MENU, /className=\{cn\('xv-cba-root shrink-0', className\)\}/);
   assert.match(MENU, /closest<HTMLElement>\('\.xv-chatbar-solid'\)/);
   assert.match(MENU, /left:\s*rect\.left/);
-  assert.match(MENU, /window\.innerHeight - rect\.top \+ 8/);
+  assert.match(MENU, /window\.innerHeight - rect\.top \+ 11/);
 });
 
 test('opening the menu overlays the terminal instead of resizing anything', () => {
@@ -226,7 +226,7 @@ test('opening the menu overlays the terminal instead of resizing anything', () =
 
 test('mobile composer panels attach above the chatbar and stay compact', () => {
   assert.match(MENU, /const mobile = window\.innerWidth < 640/);
-  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top \+ 8\)/);
+  assert.match(MENU, /position:\s*'fixed'[\s\S]*left:\s*rect\.left[\s\S]*bottom:\s*Math\.max\(8, window\.innerHeight - rect\.top \+ 11\)/);
   assert.match(MENU, /width:\s*rect\.width/);
   assert.match(MENU, /maxHeight:\s*Math\.min\(panel === 'menu' \? 390 : 304, Math\.max\(150, rect\.top - 8\)\)/);
   assert.match(MENU, /menuRef\.current\?\.contains\(target\)/);
