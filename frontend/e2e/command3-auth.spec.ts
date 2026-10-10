@@ -408,7 +408,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   ).toBeLessThan(40);
   // Back to the expanded sidebar for the assertions that follow.
   await rail.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+    [aria-label="Xroga"]
     .hover();
   await page.waitForTimeout(900);
   await expect(rail).not.toHaveClass(/is-collapsed/);
@@ -448,7 +448,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * silently start hovering a nav link if the order ever changed.
    */
   const sidebarMark = rail.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) });
+    [aria-label="Xroga"];
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
   // Longer than the hover-intent delay, which is deliberately not instant.
@@ -566,7 +566,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // overlap the logo; do not look for the removed text-only test-id.
   const expandedWordmark = desktopSidebar.locator('.xv-sidebar-brand').getByRole('link', { name: 'Xroga' });
   await expect(expandedWordmark).toBeVisible();
-  await expect(expandedWordmark.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+  await expect(expandedWordmark.locator('img[alt="Xroga"]')).toHaveAttribute(
     'src',
     /xroga-orb-wordmark-v2[.]webp/,
   );
@@ -583,7 +583,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
   // Collapsed rail uses the current square icon asset, not the retired PNG.
-  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+  await expect(desktopSidebar.locator('.xv-sidebar-brand img[alt="Xroga"]')).toHaveAttribute(
     'src',
     /xroga-orb-mark-v2[.]webp/,
   );
@@ -611,7 +611,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * and took the whole spec to its timeout.
    */
   await desktopSidebar.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+    [aria-label="Xroga"]
     .hover();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
 
