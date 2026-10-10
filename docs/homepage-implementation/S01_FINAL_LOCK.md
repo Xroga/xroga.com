@@ -1,6 +1,6 @@
 # S01 Capability Deck: final record
 
-**Status:** release candidate, pending production verification (updated below after deploy).
+**Status:** S01 CLOSED. Production commit `3e9c67ed`, deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11.
 
 Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreography) and
 `XROGA_S01_FINAL_PREMIUM_POLISH_AND_MAIN_HANDOFF.md` (final art direction). Both are founder documents kept outside Git.
@@ -52,3 +52,16 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
   a later section measured the same, so part of the change from the earlier 33 ms is machine state. Removed costs: 16
   backdrop-blurred buttons in the 3D deck and a per-frame blur filter on the contact shadows.
 - Screenshots (outside Git): `C:\Users\hp\XrogaReferences\Analysis\s01-final\`.
+
+## Production verification (https://xroga.com, commit 3e9c67ed)
+- The new section was live about two minutes after the push (automatic Vercel deployment from `main`; no manual deploy).
+- 1440x900: deck mode; full sequence from intro stack to chapter B rest; dark backs; chapters A and B rest readable;
+  drawer opens, Escape closes it and focus returns to its trigger. 390x844: carousel mode. No horizontal overflow and no
+  console errors at either size; no failed requests.
+- Interaction suite on production: offstage chapter B cards inert while chapter A rests; Tab from card 04 reaches the
+  chapter buttons, Enter on "Show cards 05 to 08" focuses card 05; pointer chapter buttons work; keyboard turn keeps
+  focus; "Try this request in Xroga" stores the request and opens signup; phone Next and Previous work, back faces are
+  not focusable, and a vertical touch swipe over a card scrolls the page as much as over plain content (285 px each).
+- S00 unchanged in production: one H1 `Xroga for everything.`, weight 580, `ss07` and `cv11`, colour rgb(230,227,220),
+  shine delay 600 ms and cycle 3300 ms.
+- Production screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-final\1440x900-prod\` and `390x844-prod\`.
