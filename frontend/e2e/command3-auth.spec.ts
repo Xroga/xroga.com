@@ -407,8 +407,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'the account sits near the top of the rail rather than at its foot',
   ).toBeLessThan(40);
   // Back to the expanded sidebar for the assertions that follow.
-  await rail.locator('.xv-sidebar-brand a')
-    [aria-label="Xroga"]
+  await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await page.waitForTimeout(900);
   await expect(rail).not.toHaveClass(/is-collapsed/);
@@ -447,8 +446,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * row: the rail carries Dashboard and Projects now, so a positional match would
    * silently start hovering a nav link if the order ever changed.
    */
-  const sidebarMark = rail.locator('.xv-sidebar-brand a')
-    [aria-label="Xroga"];
+  const sidebarMark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
   // Longer than the hover-intent delay, which is deliberately not instant.
@@ -610,8 +608,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * apart for one job — so clicking it here waited for an element that never appears
    * and took the whole spec to its timeout.
    */
-  await desktopSidebar.locator('.xv-sidebar-brand a')
-    [aria-label="Xroga"]
+  await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
 
