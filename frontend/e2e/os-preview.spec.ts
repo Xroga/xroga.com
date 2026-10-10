@@ -31,7 +31,7 @@ test('alternate approval path and controls are real, not static labels', async (
   await expect(page.getByText('No receipt yet.')).toBeVisible();
 });
 
-test('mobile navigation has a usable coming-soon destination and keyboard escape', async ({ page }) => {
+test('mobile navigation has an interactive browser destination and keyboard escape', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/os-preview');
   await page.getByRole('button', { name: 'Open preview navigation' }).click();
@@ -40,8 +40,8 @@ test('mobile navigation has a usable coming-soon destination and keyboard escape
   await expect(page.getByRole('button', { name: 'Open preview navigation' })).toHaveAttribute('aria-expanded', 'false');
   await page.getByRole('button', { name: 'Open preview navigation' }).click();
   await page.locator('aside[aria-label="Xroga OS preview navigation"] a[href="/os-preview/browser"]').click();
-  await expect(page.getByText('Coming soon — no live operation is available from this screen.')).toBeVisible();
-  await expect(page.getByRole('button', { name: /not available yet/i })).toBeDisabled();
+  await expect(page.getByRole('heading', { name: 'Browser Operator' })).toBeVisible();
+  await expect(page.getByText('Demo experience — no real work or external changes are performed.')).toBeVisible();
 });
 
 test('signed-out founder URL fails closed', async ({ page }) => {
@@ -52,7 +52,8 @@ test('signed-out founder URL fails closed', async ({ page }) => {
 });
 
 test('all public preview destinations resolve without horizontal overflow at target widths', async ({ page }) => {
-  const sections = ['workspace', 'projects', 'coding', 'browser', 'automations', 'employees', 'work-packs', 'genome', 'artifacts', 'drive', 'insights', 'settings'];
+  test.setTimeout(180_000);
+  const sections = ['overview','workspace', 'projects','activity','coding', 'browser','research', 'automations', 'employees', 'work-packs', 'genome','experience','skills', 'artifacts', 'drive', 'insights','models','bench', 'settings','help'];
   for (const section of sections) {
     const response = await page.goto(`/os-preview/${section}`);
     expect(response?.status(), section).toBe(200);

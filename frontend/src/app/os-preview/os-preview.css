@@ -126,3 +126,33 @@ a.os-card:hover { border-color: color-mix(in srgb, var(--foreground) 38%, transp
 .os-search-wrap input { border: 0; background: transparent; padding-left: 0; }
 @media (max-width: 850px) { .os-founder-layout { grid-template-columns: 1fr; }.os-founder-tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--os-line); padding-bottom: 8px; }.os-founder-tab { white-space: nowrap; }.os-founder-filters { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .os-founder-filters { grid-template-columns: 1fr; } }
+.os-nav-group-toggle { width: calc(100% - 24px); display: flex; align-items: center; justify-content: space-between; border: 0; background: transparent; cursor: pointer; text-align: left; }
+.os-nav-group-toggle:hover { color: var(--foreground); }
+.os-command-content { margin: 20px 0 32px; }
+.os-actions-top { margin: 0 0 15px; }
+.os-story-trail { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0; }
+.os-story-trail a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--os-line); border-radius: 9px; background: var(--card); font-size: 12px; font-weight: 650; }
+.os-story-trail a:hover { background: var(--os-faint); }
+.os-story-trail span { color: var(--os-muted); font: 700 10px var(--font-mono); }
+.os-workbench { display: grid; grid-template-columns: minmax(160px,.52fr) minmax(0,1.55fr) minmax(220px,.8fr); gap: 12px; align-items: start; }
+.os-workbench .os-panel + .os-panel { margin-top: 0; }
+.os-file-list,.os-catalog-grid { display: grid; gap: 7px; }
+.os-file-list button,.os-catalog-item { display: grid; gap: 5px; width: 100%; padding: 12px; border: 1px solid var(--os-line); border-radius: 9px; background: var(--background); color: var(--foreground); text-align: left; font-size: 12px; cursor: pointer; }
+.os-file-list button:hover,.os-file-list button.is-current,.os-catalog-item:hover,.os-catalog-item.is-current { background: var(--os-faint); border-color: color-mix(in srgb, var(--foreground) 35%, transparent); }
+.os-catalog-item strong { font-size: 13px; }
+.os-catalog-item small { color: var(--os-muted); line-height: 1.5; }
+.os-code-compare { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.os-code-compare pre { overflow: auto; min-height: 145px; padding: 14px; border: 1px solid var(--os-line); border-radius: 9px; background: var(--os-faint); color: var(--foreground); font: 12px/1.6 var(--font-mono); }
+.os-browser-chrome { padding: 9px 13px; border: 1px solid var(--os-line); border-radius: 8px 8px 0 0; color: var(--os-muted); font: 11px var(--font-mono); }
+.os-browser-page { padding: 22px; border: 1px solid var(--os-line); border-top: 0; border-radius: 0 0 8px 8px; background: var(--os-faint); }
+.os-browser-field { margin: 8px 0; padding: 10px; border: 1px solid var(--os-line); border-radius: 8px; font-size: 12px; }
+.os-check { display: flex; align-items: start; gap: 8px; margin-top: 15px; font-size: 12px; line-height: 1.5; }
+.os-workflow-list { display: grid; gap: 8px; padding: 0; list-style: none; }
+.os-workflow-list li { display: flex; align-items: center; gap: 8px; border: 1px solid var(--os-line); border-radius: 9px; padding: 8px; }
+.os-workflow-select { display: grid; gap: 4px; flex: 1; border: 0; background: none; color: var(--foreground); text-align: left; cursor: pointer; }
+.os-workflow-select span { color: var(--os-muted); font: 10px var(--font-mono); text-transform: uppercase; }
+.os-workflow-select small { color: var(--os-muted); }
+.os-workflow-list li > div { display: grid; gap: 4px; }
+.os-workflow-list li > div button { min-width: 28px; min-height: 25px; border: 1px solid var(--os-line); border-radius: 5px; background: var(--background); color: var(--foreground); cursor: pointer; }
+@media (max-width: 1150px) { .os-workbench { grid-template-columns: minmax(160px,.55fr) minmax(0,1.45fr); }.os-workbench .os-panel:last-child { grid-column: 1/-1; } }
+@media (max-width: 690px) { .os-workbench,.os-code-compare { grid-template-columns: 1fr; }.os-workbench .os-panel:last-child { grid-column: auto; } }

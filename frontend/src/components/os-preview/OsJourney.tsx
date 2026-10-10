@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, CirclePause, CirclePlay, ClipboardCheck, ExternalLink, Info, RotateCcw, SkipForward } from 'lucide-react';
 import { OsPreviewShell } from './OsPreviewShell';
 import { PREVIEW_FIXTURES, advancePreviewRun, createPreviewReceipt, createPreviewRun, type PreviewEnding, type PreviewScenario } from '@/lib/osPreview';
+import { useOsCommand2Store } from '@/store/useOsCommand2Store';
 
 const SCENARIOS: Array<{ id: PreviewScenario; label: string }> = [
   { id: 'clinic', label: 'Clinic booking website' },
@@ -26,6 +27,8 @@ const outcomeCopy: Record<PreviewEnding, string> = {
 };
 
 export function OsJourney() {
+  const setDemoStory = useOsCommand2Store((state) => state.setStory);
+  const advanceDemo = useOsCommand2Store((state) => state.advance);
   const [scenario, setScenario] = useState<PreviewScenario>('clinic');
   const [ending, setEnding] = useState<PreviewEnding>('verified');
   const [goal, setGoal] = useState(PREVIEW_FIXTURES.clinic.goal);
@@ -50,6 +53,7 @@ export function OsJourney() {
   const receipt = createPreviewReceipt(run);
 
   function changeScenario(next: PreviewScenario) {
+    setDemoStory(next === 'code-repair' ? 'repair' : next === 'crm-operations' ? 'browser-crm' : 'clinic');
     setScenario(next);
     setGoal(PREVIEW_FIXTURES[next].goal);
     setConstraints(PREVIEW_FIXTURES[next].constraints.join('\n'));
@@ -57,7 +61,7 @@ export function OsJourney() {
     setRun(createPreviewRun(next));
   }
 
-  function start() { if (reviewed) setRun({ ...advancePreviewRun(createPreviewRun(scenario, ending)), paused: false }); }
+  function start() { if (reviewed) { advanceDemo(scenario === 'code-repair' ? 'repair' : scenario === 'crm-operations' ? 'browser-crm' : 'clinic'); setRun({ ...advancePreviewRun(createPreviewRun(scenario, ending)), paused: false }); } }
   function reset() { setRun(createPreviewRun(scenario, ending)); setReviewed(false); }
 
   return <OsPreviewShell context="Interactive journey">
