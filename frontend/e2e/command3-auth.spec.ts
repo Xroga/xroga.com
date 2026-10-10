@@ -571,8 +571,15 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
-  // Current expanded sidebar has brand and utilities on the same row.
-  expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x + 2);
+  // Depending on responsive layout, utilities can be beside or below the mark.
+  // In either case they must not visually overlap.
+  const separatedHorizontally =
+    expandedLogoBox!.x + expandedLogoBox!.width <= brandToolbarBox.x + 2 ||
+    brandToolbarBox.x + brandToolbarBox.width <= expandedLogoBox!.x + 2;
+  const separatedVertically =
+    expandedLogoBox!.y + expandedLogoBox!.height <= brandToolbarBox.y + 2 ||
+    brandToolbarBox.y + brandToolbarBox.height <= expandedLogoBox!.y + 2;
+  expect(separatedHorizontally || separatedVertically).toBe(true);
   /*
    * Scoped to the desktop edge toggle rather than matched by name across the page:
    * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
