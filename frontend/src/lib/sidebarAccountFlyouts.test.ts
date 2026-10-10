@@ -15,25 +15,30 @@ const DASHBOARD_VIEW = read('../components/dashboard/DashboardView.tsx');
 const UPGRADE_ACTION = read('../components/ui/UpgradeActionButton.tsx');
 const CSS = read('../app/globals.css');
 
-test('Explore is a portalled hover-safe menu with all requested destinations', () => {
-  assert.match(SIDEBAR, /entry\.id === 'explore'/);
-  assert.match(SIDEBAR, /<Ellipsis[\s\S]*?<span>Explore<\/span>/);
+test('More consolidates legacy groups and uses the portalled flyout', () => {
+  assert.match(SIDEBAR, /entry\.id === 'more'/);
+  assert.match(SIDEBAR, /<Ellipsis[\s\S]*?<span>More<\/span>/);
+  assert.match(SIDEBAR, /OPERATIONS &amp; GROWTH/);
+  assert.match(SIDEBAR, /DISCOVER/);
   assert.match(HOVER_MENU, /createPortal/);
   assert.match(HOVER_MENU, /onMouseEnter=\{cancelClose\}/);
   assert.match(HOVER_MENU, /onMouseLeave=\{scheduleClose\}/);
   assert.match(HOVER_MENU, /onClick: \(\) => setOpen\(true\)/);
-  for (const label of ['Showcase', 'Community', 'Share Feedback', 'Settings']) {
-    assert.match(SIDEBAR, new RegExp(`label: '${label}'`));
+  for (const label of ['Operations', 'Growth', 'Settings', 'Explore', 'Showcase', 'Community', 'Share Feedback']) {
+    assert.match(SIDEBAR, new RegExp("label: '" + label + "'"));
   }
+  assert.doesNotMatch(SIDEBAR, /label: 'Explore Xroga OS'/);
 });
 
-test('Launch and Growth uses the same right-side hover flyout', () => {
+test('Automations and Library are coming soon and Publish is direct', () => {
+  assert.match(SIDEBAR, /id: 'automations'/);
+  assert.match(SIDEBAR, /id: 'library'/);
+  assert.match(SIDEBAR, /newSection: true/);
+  assert.match(SIDEBAR, /aria-disabled="true"/);
+  assert.match(SIDEBAR, /xv-sidebar-new-badge/);
+  assert.match(SIDEBAR, /href: '\/dashboard\/publish'/);
   assert.match(SIDEBAR, /aria-label=\{entry\.label\}/);
-  assert.match(SIDEBAR, /<p className="xv-sidebar-hover-menu__eyebrow">\{entry\.label\}<\/p>/);
-  for (const label of ['Publish', 'Operations', 'Growth']) {
-    assert.match(SIDEBAR, new RegExp(`label: '${label}'`));
-  }
-  assert.doesNotMatch(SIDEBAR, /toggleGroup\(entry\.id\)/);
+  assert.match(SIDEBAR, /<SidebarHoverMenu/);
 });
 
 test('tips and ordinary notifications dismiss after five seconds', () => {

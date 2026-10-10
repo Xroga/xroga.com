@@ -178,7 +178,7 @@ test('the sidebar nav rows carry their animated icons', () => {
     ["'Workspace'", 'TerminalIcon'],
     ["'Dashboard'", 'LayoutGridIcon'],
     ["'Plugins'", 'ConnectIcon'],
-    ["'Launch & Growth'", 'RocketIcon'],
+    ["'Publish'", 'RocketIcon'],
     ["'Explore'", 'TelescopeIcon'],
     ["'Settings'", 'CogIcon'],
   ]) {

@@ -24,6 +24,16 @@ import {
   Sparkles,
   LogIn,
   UserPlus,
+  Workflow,
+  Library,
+  CalendarClock,
+  Bot,
+  Package,
+  History,
+  Files,
+  FileText,
+  BookOpen,
+  HardDrive,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from './Logo';
@@ -104,6 +114,7 @@ type NavLink = {
   animated?: AnimatedIconComponent;
   tip: string;
   motion?: NavIconMotion;
+  planned?: boolean;
 };
 
 type NavGroup = {
@@ -114,6 +125,7 @@ type NavGroup = {
   tip: string;
   motion?: NavIconMotion;
   children: NavLink[];
+  newSection?: boolean;
 };
 
 type NavEntry = NavLink | NavGroup;
@@ -131,119 +143,43 @@ function NavIcon({ entry }: { entry: NavEntry }) {
 }
 
 const navItems: NavEntry[] = [
+  { href: '/workspace', motion: 'blink' as const, label: 'Workspace', icon: Terminal, animated: TerminalIcon, tip: 'Main workspace — build and chat with Xroga AI.' },
+  { href: '/dashboard', motion: 'pulse' as const, label: 'Dashboard', icon: LayoutDashboard, animated: LayoutGridIcon, tip: 'Recent activity, billing, plan, and usage.' },
+  { href: '/dashboard/projects', motion: 'flip' as const, label: 'Projects', icon: FolderGit2, animated: FolderOpenIcon, tip: 'Open connected repositories and their workspaces.' },
+  { href: '/dashboard/integrations', motion: 'pulse' as const, label: 'Plugins', icon: Link2, animated: ConnectIcon, tip: 'Connect GitHub, Slack, databases, and tools.' },
   {
-    href: '/workspace',
-    motion: 'blink' as const,
-    label: 'Workspace',
-    icon: Terminal,
-    animated: TerminalIcon,
-    tip: 'Main workspace — build and chat with Xroga AI.',
-  },
-  {
-    href: '/dashboard',
-    motion: 'pulse' as const,
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-    animated: LayoutGridIcon,
-    tip: 'Recent activity, billing, plan, and usage.',
-  },
-  
-  {
-    href: '/dashboard/projects',
-    motion: 'flip' as const,
-    label: 'Projects',
-    icon: FolderGit2,
-    animated: FolderOpenIcon,
-    tip: 'Open connected repositories, projects, and their durable Xroga workspaces.',
-  },
-  {
-    href: '/dashboard/integrations',
-    motion: 'pulse' as const,
-    label: 'Plugins',
-    icon: Link2,
-    animated: ConnectIcon,
-    tip: 'Connect GitHub, Slack, databases, and tools.',
-  },
-  {
-    id: 'launch',
-    label: 'Launch & Growth',
-    motion: 'launch' as const,
-    icon: Rocket,
-    animated: RocketIcon,
-    tip: 'Operations, growth, and publishing.',
+    id: 'automations', label: 'Automations', icon: Workflow, newSection: true,
+    tip: 'Workflows, scheduling, AI Employees, and work packs are coming soon.',
     children: [
-      {
-        href: '/dashboard/publish',
-        motion: 'launch' as const,
-        label: 'Publish',
-        icon: Rocket,
-        animated: RocketIcon,
-        tip: 'Ship web (Vercel), Chrome extension, desktop installers, or mobile (Expo) on your accounts.',
-      },
-      {
-        href: '/dashboard/operations',
-        motion: 'pulse' as const,
-        label: 'Operations',
-        icon: Activity,
-        animated: HeartPulseIcon,
-        tip: 'Inspect real product health, releases, incidents, approvals, and operational evidence.',
-      },
-      {
-        href: '/dashboard/growth',
-        motion: 'grow' as const,
-        label: 'Growth',
-        icon: TrendingUp,
-        animated: ChartColumnIncreasingIcon,
-        tip: 'Evidence-backed activation, recommendations, campaigns, messaging, referrals, experiments, and attribution.',
-      },
+      { href: '#', label: 'Workflows', icon: Workflow, tip: 'Coming soon · Connected workflows', planned: true },
+      { href: '#', label: 'Scheduled Tasks', icon: CalendarClock, tip: 'Coming soon · Repeated work', planned: true },
+      { href: '#', label: 'AI Employees', icon: Bot, tip: 'Coming soon · Specialist workers', planned: true },
+      { href: '#', label: 'Work Packs', icon: Package, tip: 'Coming soon · Reusable work', planned: true },
+      { href: '#', label: 'Run History', icon: History, tip: 'Coming soon · Unified automation history', planned: true },
     ],
   },
   {
-    id: 'explore',
-    label: 'Explore',
-    motion: 'sweep' as const,
-    icon: Compass,
-    animated: TelescopeIcon,
-    tip: 'Showcase templates, community, feedback, and settings.',
+    id: 'library', label: 'Library', icon: Library, newSection: true,
+    tip: 'Files, artifacts, skills and Xroga Drive will arrive here.',
     children: [
-      {
-        href: '/os-preview',
-        label: 'Explore Xroga OS',
-        icon: Compass,
-        tip: 'A clearly labelled preview of the planned Xroga OS experience.',
-      },
-      {
-        href: '/showcase',
-        motion: 'flip' as const,
-        label: 'Showcase',
-        icon: LayoutTemplate,
-        animated: AirplayIcon,
-        tip: 'Reusable Xroga templates — preview a complete product, then customise it into your own project.',
-      },
-      {
-        href: '/community',
-        motion: 'pulse' as const,
-        label: 'Community',
-        icon: MessageCirclePlus,
-        animated: UsersRoundIcon,
-        tip: 'Share feedback, report bugs, request features, and help other Xroga builders.',
-      },
-      {
-        href: '/community?compose=feedback',
-        motion: 'pulse' as const,
-        label: 'Share Feedback',
-        icon: MessageSquarePlus,
-        animated: SmileIcon,
-        tip: 'Tell us what is working and what is not.',
-      },
-      {
-        href: '/settings',
-        motion: 'shake' as const,
-        label: 'Settings',
-        icon: Settings,
-        animated: CogIcon,
-        tip: 'Theme, terminal skin, account, and preferences.',
-      },
+      { href: '#', label: 'My Files', icon: Files, tip: 'Coming soon · Stored files', planned: true },
+      { href: '#', label: 'Artifacts', icon: FileText, tip: 'Coming soon · Saved deliverables', planned: true },
+      { href: '/showcase', label: 'Templates', icon: LayoutTemplate, tip: 'Browse existing Xroga templates.' },
+      { href: '#', label: 'Skills', icon: BookOpen, tip: 'Coming soon · Reusable capabilities', planned: true },
+      { href: '#', label: 'Xroga Drive', icon: HardDrive, tip: 'Coming soon · Persistent personal storage', planned: true },
+    ],
+  },
+  { href: '/dashboard/publish', motion: 'launch' as const, label: 'Publish', icon: Rocket, animated: RocketIcon, tip: 'Ship web, extensions, desktop and mobile through your accounts.' },
+  {
+    id: 'more', label: 'More', icon: Ellipsis, tip: 'Operations, growth, settings and community.',
+    children: [
+      { href: '/dashboard/operations', label: 'Operations', icon: Activity, animated: HeartPulseIcon, tip: 'Releases, health and approvals.' },
+      { href: '/dashboard/growth', label: 'Growth', icon: TrendingUp, animated: ChartColumnIncreasingIcon, tip: 'Campaigns, experiments and attribution.' },
+      { href: '/settings', label: 'Settings', icon: Settings, animated: CogIcon, tip: 'Theme, account and preferences.' },
+      { href: '/features', label: 'Explore', icon: Compass, animated: TelescopeIcon, tip: 'Explore what Xroga can do.' },
+      { href: '/showcase', label: 'Showcase', icon: LayoutTemplate, animated: AirplayIcon, tip: 'Explore reusable product templates.' },
+      { href: '/community', label: 'Community', icon: MessageCirclePlus, animated: UsersRoundIcon, tip: 'Connect with other builders.' },
+      { href: '/community?compose=feedback', label: 'Share Feedback', icon: MessageSquarePlus, animated: SmileIcon, tip: 'Tell us what can improve.' },
     ],
   },
 ];
@@ -465,7 +401,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
   const asideWidth: number | string = effectiveSidebarOpen
     ? hydrated
       ? sidebarWidth
-      : 'var(--xv-boot-sidebar-width, 248px)'
+      : 'var(--xv-boot-sidebar-width, 232px)'
     : 64;
   const navExpanded = isMobile ? mobileOpen : effectiveSidebarOpen;
 
@@ -499,7 +435,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
     return true;
   };
 
-  const groupHasActive = (group: NavGroup) => group.children.some((c) => isActive(c.href));
+  const groupHasActive = (group: NavGroup) => group.children.some((c) => !c.planned && isActive(c.href));
   function handleNavClick() {
     closeMobile();
     closeBrowser();
@@ -518,6 +454,25 @@ export function Sidebar({ displayName, email }: SidebarProps) {
       return;
     }
     handleNavClick();
+  }
+
+  /** Planned capabilities are information, not links to fictional services. */
+  function renderMenuChild(child: NavLink) {
+    if (child.planned) return (
+      <div role="menuitem" aria-disabled="true" className="xv-sidebar-hover-menu__item xv-sidebar-hover-menu__planned">
+        <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
+        <span className="min-w-0 flex-1"><strong>{child.label}</strong><small>{child.tip}</small></span>
+        <span className="xv-sidebar-soon">Soon</span>
+      </div>
+    );
+    return (
+      <Link href={child.href} role="menuitem"
+        onClick={(event) => handleNavEntryClick(event, child.href)}
+        className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}>
+        <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
+        <span className="min-w-0"><strong>{child.label}</strong><small>{child.tip}</small></span>
+      </Link>
+    );
   }
 
   function handleNewChat() {
@@ -850,38 +805,25 @@ export function Sidebar({ displayName, email }: SidebarProps) {
           ref={navScrollRef}
           className="xv-sidebar-nav-scroll h-full p-2 overflow-y-auto overflow-x-hidden min-h-0"
         >
-          <div className="xv-sidebar-menu">
+          <div className="xv-sidebar-menu xv-sidebar-nav-v2">
               {navItems.map((entry) =>
-                isGroup(entry) && entry.id === 'explore' ? (
+                isGroup(entry) && entry.id === 'more' ? (
                   <SidebarHoverMenu
                     key={entry.id}
                     trigger={
-                      <button
-                        type="button"
-                        className={cn('xv-nav-group__trigger xv-explore-trigger', groupHasActive(entry) && 'xv-active')}
-                        aria-label="Explore"
-                      >
+                      <button type="button" className={cn('xv-nav-group__trigger xv-explore-trigger', groupHasActive(entry) && 'xv-active')} aria-label="More">
                         <Ellipsis className="h-4 w-4 shrink-0" aria-hidden="true" />
-                        <span>Explore</span>
+                        <span>More</span>
                       </button>
                     }
                   >
-                    <div className="xv-sidebar-hover-menu__card">
-                      <p className="xv-sidebar-hover-menu__eyebrow">Explore Xroga</p>
-                      {entry.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          role="menuitem"
-                          onClick={(event) => handleNavEntryClick(event, child.href)}
-                          className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}
-                        >
-                          <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
-                          <span className="min-w-0">
-                            <strong>{child.label}</strong>
-                            <small>{child.tip}</small>
-                          </span>
-                        </Link>
+                    <div className="xv-sidebar-hover-menu__card xv-sidebar-compact-flyout">
+                      {entry.children.map((child, index) => (
+                        <div key={child.label}>
+                          {index === 0 ? <p className="xv-sidebar-hover-menu__eyebrow">OPERATIONS &amp; GROWTH</p> : null}
+                          {index === 3 ? <p className="xv-sidebar-hover-menu__eyebrow xv-sidebar-menu-divider">DISCOVER</p> : null}
+                          {renderMenuChild(child)}
+                        </div>
                       ))}
                     </div>
                   </SidebarHoverMenu>
@@ -889,46 +831,31 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   <SidebarHoverMenu
                     key={entry.id}
                     trigger={
-                      <button
-                        type="button"
-                        className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')}
-                        aria-label={entry.label}
-                      >
+                      <button type="button" className={cn('xv-nav-group__trigger', groupHasActive(entry) && 'xv-active')} aria-label={entry.label}>
                         <NavIcon entry={entry} />
                         <span>{entry.label}</span>
+                        {entry.newSection ? <span className="xv-sidebar-new-badge">NEW</span> : null}
                         <ChevronDown className="xv-nav-group__chev h-3.5 w-3.5" aria-hidden="true" />
                       </button>
                     }
                   >
-                    <div className="xv-sidebar-hover-menu__card">
-                      <p className="xv-sidebar-hover-menu__eyebrow">{entry.label}</p>
-                      {entry.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          role="menuitem"
-                          onClick={(event) => handleNavEntryClick(event, child.href)}
-                          className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}
-                        >
-                          <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
-                          <span className="min-w-0"><strong>{child.label}</strong><small>{child.tip}</small></span>
-                        </Link>
-                      ))}
+                    <div className="xv-sidebar-hover-menu__card xv-sidebar-compact-flyout">
+                      <p className="xv-sidebar-hover-menu__eyebrow">{entry.label} · {entry.newSection ? 'COMING SOON' : 'MENU'}</p>
+                      {entry.children.map((child) => <div key={child.label}>{renderMenuChild(child)}</div>)}
                     </div>
                   </SidebarHoverMenu>
                 ) : (
                   <SidebarTip key={entry.href} label={entry.label} description={entry.tip}>
-                    <Link
-                      href={entry.href}
+                    <Link href={entry.href}
                       onClick={(event) => handleNavEntryClick(event, entry.href)}
-                      className={cn(isActive(entry.href) && 'xv-active')}
-                    >
+                      className={cn(isActive(entry.href) && 'xv-active')}>
                       <NavIcon entry={entry} />
                       <span>{entry.label}</span>
                     </Link>
                   </SidebarTip>
                 ),
               )}
+
           </div>
           <SidebarProjectHistory expanded={navExpanded} />
         </nav>

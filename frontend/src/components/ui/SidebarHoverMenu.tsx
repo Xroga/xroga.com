@@ -80,15 +80,30 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
       setOpen(false);
     }
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        anchorRef.current?.querySelector<HTMLElement>('button')?.focus();
+      }
+    }
+    function onFocusIn(event: FocusEvent) {
+      const target = event.target as Node;
+      if (anchorRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('focusin', onFocusIn);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('focusin', onFocusIn);
     };
   }, [open]);
+
+  function focusMenu() {
+    setOpen(true);
+    window.requestAnimationFrame(() => menuRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])')?.focus());
+  }
 
   const triggerWithState = isValidElement(trigger)
     ? cloneElement(trigger as ReactElement<Record<string, unknown>>, {
@@ -98,6 +113,12 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
         // opened on focus and immediately closed again for mouse and touch users.
         onClick: () => setOpen(true),
         onFocus: () => setOpen(true),
+        onKeyDown: (event: React.KeyboardEvent) => {
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            focusMenu();
+          }
+        },
       })
     : trigger;
 

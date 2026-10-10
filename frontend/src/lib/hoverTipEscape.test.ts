@@ -121,7 +121,8 @@ test('grouped nav destinations use the shared hover-safe flyout', () => {
   );
   assert.notEqual(groupBranch, '', 'the nav group branch is gone');
   assert.match(groupBranch, /<SidebarHoverMenu/);
-  assert.match(groupBranch, /xv-sidebar-hover-menu__item/);
+  assert.match(groupBranch, /renderMenuChild\(child\)/);
+  assert.match(SIDEBAR, /xv-sidebar-hover-menu__item/);
   assert.equal(/title=\{entry\.tip\}/.test(groupBranch), false, 'the native title attribute came back');
 });
 
@@ -129,9 +130,8 @@ test('no sidebar entry is left without a description to show', () => {
   // `animated:` sits between `icon` and `tip` on the rows that carry a purpose-built
   // animated glyph, so it has to be optional here — without it this matched only the
   // five rows that do not have one and stopped checking the rest.
-  const entries = [
-    ...SIDEBAR.matchAll(/label: '([^']+)',\s*\n\s*icon: \w+,\s*\n(?:\s*animated: \w+,\s*\n)?\s*tip: '([^']*)'/g),
-  ];
+  const nav = SIDEBAR.slice(SIDEBAR.indexOf('const navItems: NavEntry[] = ['), SIDEBAR.indexOf('interface SidebarProps'));
+  const entries = [...nav.matchAll(/label: '([^']+)'[\s\S]*?tip: '([^']+)'/g)];
   assert.ok(entries.length >= 11, `expected the nav table, found ${entries.length} entries`);
   for (const [, label, tip] of entries) {
     assert.ok(tip.trim().length > 0, `"${label}" has an empty tip`);
