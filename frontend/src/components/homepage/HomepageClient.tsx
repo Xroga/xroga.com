@@ -20,7 +20,7 @@ import { HomepageOwnershipProof } from '@/components/homepage/HomepageOwnershipP
 import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
-import { HomepageCapabilitiesMosaic } from '@/components/homepage/HomepageCapabilitiesMosaic';
+import { S01CapabilityDeck } from '@/components/homepage-next/s01/S01CapabilityDeck';
 import { HomepageBrowserEmployeesExact } from '@/components/homepage/HomepageBrowserEmployeesExact';
 import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
@@ -109,7 +109,8 @@ export function HomepageClient() {
       <S00Hero />
     </div>
 
-      <HomepageCapabilitiesMosaic />
+      {/* S01: capability deck (docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md) */}
+      <S01CapabilityDeck />
       <HomepageBrowserEmployeesExact />
       <HomepagePowerStories />
       <HomepageWorkspaceTour loggedIn={loggedIn} />

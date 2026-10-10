@@ -1,0 +1,1531 @@
+/*
+ * S01 vignettes. Every scene is laid out in percentages of its demo window and changes state only through the
+ * cumulative step flags (data-s1 to data-s4) and the Swap statuses. Transitions are short and decelerating; nothing
+ * loops, so a card at rest is completely still.
+ */
+.scene {
+  --ink: #ebe8e1;
+  --muted: #9aa1ac;
+  --dim: #6f7682;
+  --hair: rgba(236, 233, 226, 0.11);
+  --amber: #d9a65f;
+  --ok: #bfe9f3;
+  --run: #c7c1f5;
+  --ease: cubic-bezier(0.55, 0, 0.16, 1);
+  position: absolute;
+  inset: 0;
+  font-size: 10px;
+  line-height: 1.22;
+  color: var(--ink);
+  letter-spacing: 0;
+}
+.scene *,
+.scene *::before,
+.scene *::after {
+  box-sizing: border-box;
+}
+.scene > * {
+  position: absolute;
+  transition:
+    opacity 420ms var(--ease),
+    transform 520ms var(--ease),
+    border-color 320ms ease,
+    background-color 320ms ease,
+    color 320ms ease;
+}
+.scene code {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 9px;
+}
+
+/* ---- shared primitives ---- */
+.panel {
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: #10141b;
+  overflow: hidden;
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--hair);
+  background: rgba(236, 233, 226, 0.035);
+}
+.bar i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(236, 233, 226, 0.22);
+}
+.bar span {
+  margin-left: 4px;
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tag {
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nm {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  fill: currentColor;
+}
+.mGmail {
+  fill: #ea4335;
+}
+.mCal {
+  fill: #4285f4;
+}
+.mCrm {
+  fill: #ff7a59;
+}
+.mPh {
+  fill: #f9bd2b;
+}
+.mMc {
+  fill: #ffe01b;
+}
+/* Swap: stacked statuses, only the current one is shown; the box never changes size */
+.swap {
+  display: inline-grid;
+  vertical-align: middle;
+}
+.swap > span {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 280ms ease, transform 360ms var(--ease);
+  color: var(--dim);
+}
+.swap > span[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+.swap > span[data-tone='ok'] {
+  color: var(--ok);
+}
+.swap > span[data-tone='wait'] {
+  color: var(--amber);
+}
+.swap > span[data-tone='run'] {
+  color: var(--run);
+}
+.swap > span[data-tone='plan'] {
+  color: var(--muted);
+}
+/* the final result pill, shared by every scene; it lands only on step 4 */
+.result {
+  right: 3%;
+  bottom: 3%;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(160, 220, 235, 0.5);
+  background: rgba(13, 20, 25, 0.96);
+  color: var(--ok);
+  font-weight: 620;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(5px);
+}
+.scene[data-s4] .result {
+  opacity: 1;
+  transform: none;
+  transition-delay: 260ms;
+}
+
+/* ================================================================ 01 Build: structure, logic, test, ready */
+.ui {
+  left: 3%;
+  top: 3%;
+  width: 49%;
+  height: 58%;
+}
+.uiBody {
+  display: grid;
+  grid-template-columns: 37% 1fr;
+  height: calc(100% - 14px);
+}
+.uiNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 5px;
+  border-right: 1px solid var(--hair);
+  font-size: 9px;
+  color: var(--muted);
+}
+.uiNav b {
+  font-size: 9.5px;
+  font-weight: 650;
+  color: var(--ink);
+  margin-bottom: 1px;
+}
+.uiNav span[data-on] {
+  color: var(--ink);
+}
+.uiRows {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 3px 5px;
+  font-size: 9px;
+}
+.uiRows span {
+  display: flex;
+  justify-content: space-between;
+  gap: 3px;
+  white-space: nowrap;
+}
+.uiRows em {
+  font-style: normal;
+  color: var(--muted);
+}
+.uiRows em[data-tone='ok'] {
+  color: var(--ok);
+}
+.auth,
+.api,
+.db {
+  left: 56%;
+  width: 41%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 6px;
+}
+.auth {
+  top: 3%;
+  height: 17%;
+}
+.api {
+  top: 23.5%;
+  height: 20%;
+}
+.db {
+  top: 47%;
+  height: 14%;
+}
+.roles {
+  display: flex;
+  gap: 3px;
+}
+.roles i {
+  font-style: normal;
+  font-size: 8.5px;
+  padding: 0 3px;
+  border-radius: 2px;
+  background: rgba(236, 233, 226, 0.07);
+}
+.rel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.rel i {
+  flex: 1;
+  height: 1px;
+  background: var(--hair);
+}
+/* step 0: an architecture plan, dashed and unfilled */
+.build .ui,
+.build .auth,
+.build .api,
+.build .db {
+  border-style: dashed;
+  background: transparent;
+}
+.build .ui > *,
+.build .auth > :not(.tag),
+.build .api > :not(.tag),
+.build .db > :not(.tag) {
+  opacity: 0.25;
+  transition: opacity 400ms ease;
+}
+/* Structure: modules become real surfaces */
+.build[data-s1] .ui,
+.build[data-s1] .auth,
+.build[data-s1] .api,
+.build[data-s1] .db {
+  border-style: solid;
+  background: #10141b;
+}
+.build[data-s1] .ui > *,
+.build[data-s1] .auth > *,
+.build[data-s1] .api > *,
+.build[data-s1] .db > * {
+  opacity: 1;
+}
+.build[data-s1] .rel i {
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+/* Logic: the critical path lights auth, then the API, then the interface */
+.path {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.path path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  opacity: 0.8;
+  transition: stroke-dashoffset 900ms var(--ease);
+}
+.build[data-s2] .path path {
+  stroke-dashoffset: 0;
+}
+.build[data-s2] .auth {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.build[data-s2] .api {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  transition-delay: 220ms;
+}
+.build[data-s2] .ui {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  transition-delay: 440ms;
+}
+.checks {
+  left: 3%;
+  top: 65%;
+  width: 94%;
+  height: 21%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  column-gap: 8px;
+  row-gap: 2px;
+  padding: 0 7px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  font-size: 9px;
+  color: var(--muted);
+}
+.check i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 233, 226, 0.3);
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+.checkState {
+  flex-basis: 100%;
+  font-size: 9.5px;
+  font-weight: 560;
+}
+.build[data-s3] .check i {
+  border-color: var(--run);
+}
+.build[data-s3] .check[data-i='0'] i {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+.build[data-s4] .check i {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+.build[data-s4] .check {
+  color: var(--ink);
+}
+
+/* ================================================================ 02 Browser & Testing */
+.rail {
+  left: 3%;
+  right: 3%;
+  top: 2%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rail li {
+  position: relative;
+  padding: 2px 0 2px 11px;
+  border-radius: 3px;
+  background: rgba(236, 233, 226, 0.04);
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 300ms ease, background-color 300ms ease;
+}
+.rail li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: rgba(236, 233, 226, 0.22);
+  transition: background-color 300ms ease;
+}
+.browser[data-s1] .rail li:is([data-k='cart'], [data-k='details']) {
+  color: var(--ink);
+}
+.browser[data-s1] .rail li:is([data-k='cart'], [data-k='details'])::before {
+  background: var(--ok);
+}
+.browser[data-s2] .rail li[data-k='pay'] {
+  color: var(--amber);
+  background: rgba(217, 166, 95, 0.12);
+}
+.browser[data-s2] .rail li[data-k='pay']::before {
+  background: var(--amber);
+}
+.browser[data-s4] .rail li:is([data-k='pay'], [data-k='done']) {
+  color: var(--ink);
+  background: rgba(236, 233, 226, 0.04);
+}
+.browser[data-s4] .rail li:is([data-k='pay'], [data-k='done'])::before {
+  background: var(--ok);
+}
+/* the routed test marker drops from the failing rail step to the exact field that fails */
+.marker {
+  left: 62%;
+  top: 12%;
+  width: 1px;
+  height: 31%;
+  background: linear-gradient(var(--amber), rgba(217, 166, 95, 0.2));
+  transform-origin: top;
+  transform: scaleY(0);
+}
+.browser[data-s2] .marker {
+  transform: scaleY(1);
+  transition-delay: 300ms;
+}
+.browser[data-s4] .marker {
+  opacity: 0;
+}
+.win {
+  left: 3%;
+  top: 15%;
+  width: 94%;
+  height: 58%;
+}
+.screen {
+  position: absolute;
+  inset: 14px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8%;
+  opacity: 0;
+  transition: opacity 360ms ease;
+}
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 6px;
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  background: rgba(236, 233, 226, 0.03);
+  font-size: 9.5px;
+}
+.field small {
+  font-size: 8px;
+  color: var(--muted);
+}
+.field > i {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  color: var(--ok);
+}
+.pay {
+  margin-top: 1px;
+  padding: 3px 0;
+  text-align: center;
+  border-radius: 3px;
+  background: #e8e5de;
+  color: #121418;
+  font-weight: 650;
+  font-size: 9.5px;
+}
+.sDone {
+  align-items: center;
+  justify-content: center;
+}
+.sDone b {
+  font-size: 11px;
+  font-weight: 640;
+  color: var(--ok);
+}
+.sDone span {
+  color: var(--muted);
+}
+.browser .sDetails {
+  opacity: 1;
+}
+.browser[data-s2] .sDetails {
+  opacity: 0;
+}
+.browser[data-s2] .sPay {
+  opacity: 1;
+}
+.browser[data-s4] .sPay {
+  opacity: 0;
+}
+.browser[data-s4] .sDone {
+  opacity: 1;
+}
+.browser[data-s2] .verify {
+  border-color: rgba(217, 166, 95, 0.6);
+}
+.isolate {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: calc(14px + 36%);
+  height: 30%;
+  border: 1px dashed rgba(217, 166, 95, 0.85);
+  border-radius: 4px;
+  box-shadow: 0 0 0 300px rgba(6, 8, 11, 0.5);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.browser[data-s3] .isolate {
+  opacity: 1;
+}
+.browser[data-s4] .isolate {
+  opacity: 0;
+}
+.cursor {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 30%;
+  top: 40%;
+  fill: #f3f1ec;
+  stroke: #0b0d11;
+  stroke-width: 1;
+  transition: left 620ms var(--ease), top 620ms var(--ease), opacity 300ms ease;
+}
+.browser[data-s1] .cursor {
+  left: 60%;
+  top: 62%;
+}
+.browser[data-s2] .cursor {
+  left: 55%;
+  top: 86%;
+}
+.browser[data-s3] .cursor,
+.browser[data-s4] .cursor {
+  opacity: 0;
+}
+.cause {
+  left: 3%;
+  top: 76%;
+  width: 94%;
+  height: 21%;
+}
+.cause > span {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+.cause b {
+  color: var(--amber);
+  font-weight: 600;
+}
+.cause code {
+  color: var(--accent);
+  margin-right: 3px;
+}
+.browser[data-s2] .causeA {
+  opacity: 0.6;
+  color: var(--muted);
+}
+.browser[data-s3] .causeA {
+  top: 30%;
+  opacity: 1;
+  color: var(--ink);
+}
+.browser[data-s3] .causeB {
+  top: 72%;
+  opacity: 1;
+}
+.browser[data-s4] .causeA,
+.browser[data-s4] .causeB {
+  opacity: 0;
+}
+.browser[data-s4] .causeC {
+  opacity: 1;
+  color: var(--ok);
+}
+.browser .result {
+  bottom: auto;
+  top: 31%;
+}
+
+/* ================================================================ 03 Automate Work */
+.node {
+  width: 29.5%;
+  height: 34%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 5px;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: rgba(236, 233, 226, 0.025);
+  opacity: 0.55;
+  overflow: hidden;
+}
+.node b {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.node > .swap {
+  font-size: 9px;
+}
+.n1,
+.n4 {
+  left: 3%;
+}
+.n2,
+.n5 {
+  left: 35.5%;
+}
+.n3,
+.n6 {
+  left: 68%;
+}
+.n1,
+.n2,
+.n3 {
+  top: 4%;
+}
+.n4,
+.n5,
+.n6 {
+  top: 49%;
+}
+.n1 {
+  opacity: 1;
+}
+.flow {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.flow path {
+  fill: none;
+  stroke: rgba(236, 233, 226, 0.18);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 300ms ease;
+}
+.automate[data-s1] :is(.n1, .n2) {
+  opacity: 1;
+}
+.automate[data-s1] .n2 {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.automate[data-s1] .flow [data-seg='1'] {
+  stroke: var(--accent);
+}
+.automate[data-s2] :is(.n3, .n4) {
+  opacity: 1;
+}
+.automate[data-s2] .n3 {
+  border-color: rgba(217, 166, 95, 0.6);
+  background: rgba(217, 166, 95, 0.06);
+}
+.automate[data-s2] .flow :is([data-seg='2'], [data-seg='3']) {
+  stroke: var(--accent);
+}
+.automate[data-s3] .n3,
+.automate[data-s3] .n4 {
+  border-color: rgba(160, 220, 235, 0.42);
+  background: rgba(236, 233, 226, 0.025);
+}
+.automate[data-s4] :is(.n5, .n6) {
+  opacity: 1;
+  border-color: rgba(160, 220, 235, 0.42);
+}
+.automate[data-s4] .flow :is([data-seg='4'], [data-seg='5']) {
+  stroke: var(--accent);
+}
+.automate .result {
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, 5px);
+}
+.automate[data-s4] .result {
+  transform: translate(-50%, 0);
+}
+
+/* ================================================================ 04 Launch Anywhere */
+.surface {
+  top: 3%;
+  width: 23%;
+  height: 62%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  text-align: center;
+}
+.surface[data-k='web'] {
+  left: 1%;
+}
+.surface[data-k='ext'] {
+  left: 26%;
+}
+.surface[data-k='ios'] {
+  left: 51%;
+}
+.surface[data-k='and'] {
+  left: 76%;
+}
+.surface b {
+  font-size: 9.5px;
+  font-weight: 600;
+}
+.sState {
+  font-size: 8.5px;
+  justify-items: center;
+  width: 100%;
+  min-height: 2.3em;
+  align-items: start;
+}
+.sState > span {
+  white-space: normal;
+  line-height: 1.12;
+}
+.device {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 5px 4px;
+  margin-bottom: auto;
+  border: 1px solid rgba(236, 233, 226, 0.26);
+  background: linear-gradient(180deg, rgba(236, 233, 226, 0.08), rgba(236, 233, 226, 0.02));
+  transform: scale(0.7);
+  opacity: 0.4;
+  transition: transform 520ms var(--ease), opacity 420ms ease, border-color 300ms ease;
+}
+/* distinct silhouettes: a wide browser, a small extension popup, an iPhone with a notch, an Android with a punch hole */
+.surface[data-k='web'] .device {
+  width: 92%;
+  height: 52%;
+  border-radius: 3px;
+  border-top-width: 5px;
+}
+.surface[data-k='ext'] .device {
+  width: 62%;
+  height: 56%;
+  border-radius: 3px;
+}
+.surface[data-k='ios'] .device,
+.surface[data-k='and'] .device {
+  width: 44%;
+  height: 72%;
+  border-radius: 6px;
+  padding-top: 9px;
+}
+.surface[data-k='and'] .device {
+  border-radius: 3px;
+}
+.surface[data-k='ios'] .device::before {
+  content: '';
+  position: absolute;
+  left: 32%;
+  right: 32%;
+  top: 2px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(236, 233, 226, 0.3);
+}
+.surface[data-k='and'] .device::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 3px;
+  height: 3px;
+  margin-left: -1.5px;
+  border-radius: 50%;
+  background: rgba(236, 233, 226, 0.35);
+}
+.avatar {
+  width: 9px;
+  height: 9px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(236, 233, 226, 0.12);
+  font-size: 6.5px;
+  font-style: normal;
+  font-weight: 700;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+.line {
+  height: 2px;
+  width: 80%;
+  border-radius: 1px;
+  background: rgba(236, 233, 226, 0.14);
+}
+.line[data-short] {
+  width: 55%;
+}
+.launch[data-s1] .device {
+  transform: none;
+  opacity: 1;
+}
+.launch[data-s1] .surface[data-k='ext'] .device {
+  transition-delay: 70ms;
+}
+.launch[data-s1] .surface[data-k='ios'] .device {
+  transition-delay: 140ms;
+}
+.launch[data-s1] .surface[data-k='and'] .device {
+  transition-delay: 210ms;
+}
+/* the same signed-in state appears on every surface once they are built from the shared core */
+.launch[data-s2] .avatar {
+  background: var(--accent);
+  color: #0b0e13;
+}
+.backbone {
+  left: 3%;
+  right: 3%;
+  top: 70%;
+  height: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: rgba(236, 233, 226, 0.03);
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.backbone i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--dim);
+}
+.launch[data-s2] .backbone {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--ink);
+}
+.launch .result {
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, 5px);
+}
+.launch[data-s4] .result {
+  transform: translate(-50%, 0);
+}
+
+/* ================================================================ 05 Research & Decide */
+.q {
+  left: 3%;
+  right: 3%;
+  top: 3%;
+  height: 15%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 7px;
+  font-weight: 560;
+  white-space: nowrap;
+}
+.q i {
+  font-style: normal;
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  font-size: 8.5px;
+  font-weight: 700;
+  flex: none;
+}
+.angles,
+.families {
+  left: 3%;
+  right: 3%;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+.angles {
+  top: 22%;
+}
+.families {
+  top: 35%;
+}
+.angles span,
+.families span {
+  flex: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 9px;
+  white-space: nowrap;
+  background: rgba(236, 233, 226, 0.05);
+}
+.angles span {
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.families span {
+  color: var(--muted);
+}
+.families b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.research[data-s1] .angles,
+.research[data-s1] .families {
+  opacity: 1;
+  transform: none;
+}
+.research[data-s1] .families {
+  transition-delay: 160ms;
+}
+.compare {
+  left: 3%;
+  right: 3%;
+  top: 49%;
+  height: 46%;
+  opacity: 0;
+  transform: translateY(6px);
+}
+.sigA,
+.sigB {
+  position: absolute;
+  top: 8%;
+  width: 41%;
+  padding: 3px 5px;
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 560;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color 300ms ease, opacity 300ms ease;
+}
+.sigA small,
+.sigB small {
+  display: block;
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.sigA {
+  left: 4%;
+}
+.sigB {
+  right: 4%;
+}
+.conflict {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: var(--amber);
+}
+.weigh {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 9%;
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.research[data-s2] .compare {
+  opacity: 1;
+  transform: none;
+}
+.research[data-s3] .sigA {
+  opacity: 0.4;
+}
+.research[data-s3] .sigB {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.research[data-s3] .conflict {
+  color: var(--muted);
+}
+.research[data-s3] .weigh {
+  opacity: 1;
+  color: var(--ink);
+}
+.brief {
+  left: 3%;
+  right: 3%;
+  top: 22%;
+  height: 58%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  opacity: 0;
+  transform: translateY(8px);
+}
+.brief b {
+  font-size: 10px;
+  font-weight: 640;
+}
+.brief span {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 10px;
+}
+.brief i {
+  font-style: normal;
+  font-size: 8.5px;
+  width: 12px;
+  height: 12px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--hair);
+  color: var(--muted);
+  flex: none;
+}
+.brief sup {
+  font-size: 8px;
+  color: var(--accent);
+  margin-left: auto;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+}
+.research[data-s4] .brief {
+  opacity: 1;
+  transform: none;
+  transition-delay: 160ms;
+}
+.research[data-s4] :is(.angles, .families, .compare) {
+  opacity: 0;
+}
+
+/* ================================================================ 06 Files & Data */
+.fileBar {
+  left: 3%;
+  right: 3%;
+  top: 2%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+}
+.file {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.safe {
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(160, 220, 235, 0.4);
+  color: var(--ok);
+  white-space: nowrap;
+}
+.mapping {
+  left: 3%;
+  right: 3%;
+  top: 13%;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+.mapping span {
+  flex: 1;
+  min-width: 0;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  font-size: 8.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mapping i {
+  font-style: normal;
+  color: var(--muted);
+  margin: 0 2px;
+}
+.mapping b {
+  color: var(--ok);
+  font-weight: 600;
+}
+.data[data-s1] .mapping {
+  opacity: 1;
+  transform: none;
+}
+.table {
+  left: 3%;
+  right: 3%;
+  top: 25%;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: #10141b;
+  overflow: hidden;
+}
+.tr {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 1.35fr 0.85fr 0.9fr;
+  column-gap: 4px;
+  align-items: center;
+  height: 15px;
+  padding: 0 5px;
+  border-bottom: 1px solid rgba(236, 233, 226, 0.06);
+  font-size: 9px;
+  transition: background-color 300ms ease, opacity 360ms ease, box-shadow 300ms ease;
+}
+.tr[data-head] {
+  height: 13px;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.cell {
+  display: grid;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.was,
+.now {
+  grid-area: 1 / 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 360ms ease, transform 420ms var(--ease), filter 360ms ease;
+}
+.now {
+  opacity: 0;
+  transform: translateY(5px);
+}
+.cell[data-empty] .was,
+.cell[data-empty] .now {
+  color: var(--dim);
+  font-style: italic;
+}
+/* Inspect: each issue is flagged in the cell it concerns (dotted amber underline) */
+.data[data-s1] .cell[data-flag] .was,
+.data[data-s1] .cell[data-flag] .now {
+  color: var(--amber);
+  text-decoration: underline dotted rgba(217, 166, 95, 0.8);
+  text-underline-offset: 2px;
+}
+/* Match: deterministic merge of the duplicate (same email and account) into the row above it */
+.data[data-s2] .tr[data-kind='dup'] {
+  opacity: 0.4;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.data[data-s2] .tr[data-kind='dup'] .cell .was,
+.data[data-s2] .tr[data-kind='dup'] .cell .now {
+  color: var(--ink);
+  text-decoration: line-through;
+  text-decoration-color: rgba(236, 233, 226, 0.45);
+}
+/* Validate: casing normalized in place, alignment unchanged */
+.data[data-s3] .cell[data-changes] .was {
+  opacity: 0;
+  transform: translateY(-5px);
+  filter: blur(1px);
+}
+.data[data-s3] .cell[data-changes] .now {
+  opacity: 1;
+  transform: none;
+  color: var(--ok);
+}
+/* Review: uncertain records are held, never applied blindly */
+.data[data-s4] .cell[data-changes] .now {
+  color: var(--ink);
+}
+.data[data-s4] .tr:is([data-kind='ref'], [data-kind='amb']) {
+  background: rgba(217, 166, 95, 0.1);
+  box-shadow: inset 2px 0 0 var(--amber);
+}
+.audit {
+  left: 3%;
+  top: 77%;
+  font-size: 9.5px;
+  font-weight: 560;
+}
+.data .result {
+  bottom: 3%;
+}
+
+/* ================================================================ 07 Grow Your Business */
+.opps {
+  left: 3%;
+  right: 3%;
+  top: 2%;
+  display: flex;
+  gap: 4px;
+}
+.opps span {
+  flex: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 9px;
+  white-space: nowrap;
+  border: 1px solid var(--hair);
+  color: var(--muted);
+  transition: border-color 300ms ease, color 300ms ease;
+}
+.grow[data-s2] .opps span[data-pick] {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  color: var(--ink);
+}
+.funnel {
+  left: 3%;
+  right: 3%;
+  top: 17%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fstage {
+  display: grid;
+  grid-template-columns: 24% 1fr 17%;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  transition: opacity 300ms ease;
+}
+.fstage span {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.fstage b {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+  transition: opacity 300ms ease;
+}
+.fstage i {
+  height: 8px;
+  border-radius: 2px;
+  width: var(--w);
+  background: linear-gradient(90deg, rgba(236, 233, 226, 0.32), rgba(236, 233, 226, 0.15));
+  transition: background 300ms ease;
+}
+.grow[data-s1] .fstage b {
+  opacity: 1;
+}
+.grow[data-s2] .fstage:not(.narrow) {
+  opacity: 0.45;
+}
+.grow[data-s2] .narrow span {
+  color: var(--ink);
+}
+.grow[data-s2] .narrow i {
+  background: var(--amber);
+}
+.why {
+  left: 3%;
+  top: 46%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9.5px;
+  color: var(--muted);
+  opacity: 0;
+}
+.grow[data-s1] .why {
+  opacity: 0.6;
+}
+.grow[data-s2] .why {
+  opacity: 1;
+  color: var(--amber);
+}
+.exp {
+  left: 3%;
+  top: 57%;
+  width: 48%;
+  height: 39%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 7px;
+  opacity: 0.35;
+}
+.exp b {
+  font-size: 10px;
+  font-weight: 640;
+}
+.expMail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.exp > .swap {
+  font-size: 9.5px;
+  font-weight: 560;
+}
+.grow[data-s3] .exp {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.chart {
+  left: 54%;
+  top: 57%;
+  width: 43%;
+  height: 39%;
+  padding: 3px 4px 0;
+  opacity: 0.35;
+}
+.chart svg {
+  width: 100%;
+  height: 70%;
+  overflow: visible;
+}
+.chart path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1.4;
+}
+.chart path[data-k='base'] {
+  stroke: rgba(236, 233, 226, 0.55);
+}
+.chart path[data-k='next'] {
+  stroke: var(--accent);
+  stroke-dasharray: 3 3;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.chart path[data-k='now'] {
+  stroke: rgba(236, 233, 226, 0.2);
+  stroke-width: 1;
+}
+.chartLabel {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.grow[data-s4] .chart {
+  opacity: 1;
+}
+.grow[data-s4] .chart path[data-k='next'] {
+  opacity: 1;
+}
+
+/* ================================================================ 08 Keep Work Running */
+.project {
+  left: 3%;
+  top: 2%;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.project b {
+  font-size: 10px;
+  font-weight: 640;
+}
+.project span {
+  font-size: 8.5px;
+  color: var(--muted);
+}
+.queue {
+  left: 3%;
+  right: 3%;
+  top: 14%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.job {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: rgba(236, 233, 226, 0.03);
+  font-size: 9.5px;
+  transition: border-color 300ms ease;
+}
+.job > i {
+  font-style: normal;
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: 8px;
+  font-weight: 700;
+}
+.job > span:not(.swap) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.job > .swap {
+  font-size: 9px;
+  font-weight: 560;
+  justify-items: end;
+}
+.continue[data-s1] .job:nth-child(3) {
+  border-color: rgba(217, 166, 95, 0.5);
+}
+.continue[data-s3] .job:nth-child(3) {
+  border-color: rgba(160, 220, 235, 0.4);
+}
+.gate {
+  left: 3%;
+  bottom: 3%;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(217, 166, 95, 0.55);
+  background: rgba(30, 22, 12, 0.95);
+  color: var(--amber);
+  font-size: 9.5px;
+  font-weight: 560;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(5px);
+}
+.continue[data-s1] .gate {
+  opacity: 0.6;
+  transform: none;
+}
+.continue[data-s2] .gate {
+  opacity: 1;
+}
+.continue[data-s3] .gate {
+  opacity: 0;
+}
+
+/* ---- compact demo windows (the 1150px desktop deck and the narrowest phones) ---- */
+@container (max-width: 236px) {
+  .scene {
+    font-size: 9.5px;
+  }
+  .uiBody {
+    grid-template-columns: 0 1fr;
+  }
+  .uiNav {
+    visibility: hidden;
+  }
+  .roles i:nth-child(3) {
+    display: none;
+  }
+  .api code,
+  .roles i,
+  .check,
+  .rel {
+    font-size: 8px;
+  }
+  .checks {
+    column-gap: 5px;
+  }
+  .node {
+    padding: 0 4px;
+  }
+  .node b {
+    font-size: 9px;
+  }
+  .node > .swap {
+    font-size: 8px;
+  }
+  .nm {
+    width: 8px;
+    height: 8px;
+  }
+  .tr {
+    font-size: 8.5px;
+    column-gap: 3px;
+  }
+  .rail li {
+    font-size: 8.5px;
+    padding-left: 10px;
+  }
+  .surface b {
+    font-size: 8.5px;
+  }
+  .sState {
+    font-size: 8px;
+  }
+  .backbone {
+    font-size: 8px;
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene > *,
+  .scene * {
+    transition: none !important;
+  }
+}
