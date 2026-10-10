@@ -36,6 +36,7 @@ export function renderBlock(block: XrogaBlock, onDocumentSave?: (content: string
 }
 
 const RichBlockRenderer = lazy(() => import('./XrogaRichBlockView').then((module) => ({ default: module.XrogaRichBlockView })));
+const RichResultsRenderer = lazy(() => import('./XrogaRichResultsView').then((module) => ({ default: module.XrogaRichResultsView })));
 const DecisionMatrixRenderer = lazy(() => import('./XrogaDecisionMatrixView').then((module) => ({ default: module.XrogaDecisionMatrixView })));
 const CustomLucideIcon = lazy(() => import('./XrogaLucideIcon').then((module) => ({ default: module.XrogaLucideIcon })));
 
@@ -165,6 +166,7 @@ registerRenderer('connection-request', ConnectionRenderer);
 registerRenderer('website', WebsiteRenderer);
 registerRenderer('artifact', ArtifactRenderer);
 registerRenderer('decision-matrix', DecisionMatrixRenderer);
+registerRenderer('rich-results', RichResultsRenderer);
 for (const type of ['metric', 'metric-group', 'progress', 'progress-group', 'calculator', 'calculation', 'gauge', 'comparison', 'key-value', 'checklist', 'steps', 'scorecard', 'ranking', 'tabs', 'accordion', 'file-tree', 'calendar', 'source-list', 'card-grid', 'tree', 'json', 'api-request', 'table', 'chart', 'timeline', 'graph', 'map', 'form', 'choice', 'gallery', 'image', 'audio', 'video', 'dashboard', 'document', 'spreadsheet', 'presentation', 'board', 'database', 'pdf'] as const) registerRenderer(type, RichBlockRenderer);
 
 export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocument; onChange?: (next: XrogaOutputDocument) => void }) {
@@ -174,6 +176,6 @@ export function XrogaOutputView({ output, onChange }: { output: XrogaOutputDocum
       const next = applyDocumentEdit(output, block.id, content);
       if (next) onChange(next);
     } : undefined;
-    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
+    return <div key={candidate.id} className="flex min-w-0 items-start gap-2.5">{block && block.type !== 'rich-results' ? <ResponseBlockIcon block={block} /> : null}<div className="min-w-0 flex-1">{block ? <Suspense fallback={<div className="h-24 max-w-[960px] animate-pulse rounded-2xl border border-[var(--border)] bg-black/5 dark:bg-white/5" />}>{renderBlock(block, saveDocument)}</Suspense> : <UnknownBlockRenderer block={candidate} />}</div></div>;
   })}</section>;
 }

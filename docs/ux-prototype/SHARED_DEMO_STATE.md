@@ -1,0 +1,7 @@
+# Shared Command 2 demo state
+
+`frontend/src/lib/osCommand2.ts` defines three fictional project IDs (`clinic`, `browser-crm`, `repair`), ten employee roles, seven assets (including rejected-license and incompatible examples), an initial workflow graph, validation and deterministic stage progression. `frontend/src/store/useOsCommand2Store.ts` is the single preview-only browser store. It persists under `xroga-os-command2-demo-v1`, explicitly rehydrates on the preview shell client, and never calls Xroga's project APIs, Supabase or worker endpoints. Reset affects this namespace only. Browser storage is not durable or account-bound.
+
+The workspace selects a project and simulated budget; Genome and Employees persist the chosen demo asset and specialist; the Builder persists a sample patch decision; Browser and Workflow persist example progress; Research persists one fictional saved finding; Experience persists a sample review decision. Cross-links follow the same three project IDs. The Command 1 journey now syncs its chosen scenario and start event into this store, but its editable goal and run timeline remain local to the journey component. This is a known consistency limit, not a production outcome engine.
+
+No real execution, model, CRM, repository, file upload, connector, payment, deployment or certified experience results are represented. The founder Frontier example is not stored in the public demo store and is rendered only after the existing server gate.

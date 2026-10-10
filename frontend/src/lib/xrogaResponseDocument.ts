@@ -43,6 +43,9 @@ function canonicalRichBlock(value: unknown, documentId: string, index: number): 
   if (!value || typeof value !== 'object' || Array.isArray(value) || containsUnsafeKey(value)) return null;
   const input = value as Record<string, unknown>;
   if (typeof input.type !== 'string') return null;
+  // A model-authored data fence is not a transaction receipt. Only a separately
+  // authenticated server adapter may emit a confirmed result.
+  if (input.type === 'rich-results' && Array.isArray(input.items) && input.items.some((item) => item && typeof item === 'object' && (item as { status?: unknown }).status === 'confirmed')) return null;
   if (!modelBlockCapabilitySet.has(input.type)) {
     if (!/^[a-z][a-z0-9-]{1,63}$/.test(input.type)) return null;
     return {
