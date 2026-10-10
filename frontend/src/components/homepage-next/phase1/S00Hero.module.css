@@ -79,7 +79,7 @@
   box-sizing: border-box;
 }
 .copy { display: grid; justify-items: center; gap: clamp(10px, 1.6svh, 16px); text-align: center; }
-/* V12 §3–§5: one warm pearl line, no gradient, set by type and air alone */
+/* One warm pearl line, no gradient on the text itself, set by type and air alone */
 .titleWrap { position: relative; }
 .title {
   margin: 0;
@@ -87,25 +87,49 @@
   line-height: 0.98;
   letter-spacing: -0.035em;
   font-weight: 560;
-  color: #f2f0ea;
+  /* warm pearl: strongly readable at rest, and one step below white so the passing light can be seen */
+  color: #e6e3dc;
   font-kerning: normal;
 }
 .title > span { display: inline-block; white-space: nowrap; }
-/* ShinyText, restrained: a copy of the line that is transparent except for one soft band, laid over the
-   static text, so the base contrast never drops. It runs once and unmounts. */
-.sheen {
+/* The H1 shine: a copy of the line that is transparent except for one narrow band of light, laid over the
+   static pearl text so the base never dims. The band waits outside the left edge, crosses the whole line,
+   leaves on the right, then rests before the next pass (about every 5 s). No glow, and no colour on the base.
+   With a 300% wide gradient the band centre sits at 1.5W - 2W * position, so 85% is fully left of the text and
+   15% fully right of it. */
+.shine {
   position: absolute;
   inset: 0;
   pointer-events: none;
   color: transparent;
-  background: linear-gradient(105deg, transparent 0 44%, rgba(222, 232, 242, 0.55) 47%, #fff 50%, rgba(255, 248, 236, 0.55) 53%, transparent 56% 100%);
-  background-size: 260% 100%;
-  background-position: 100% 0;
+  /* about 140px of visible light at 1440 (each 1% of the 300% gradient is ~20px). It reads as white light: a white
+     core, ice shoulders, then a faint Xroga cyan and, trailing, a faint violet pearl, the orb's spectrum caught at the
+     very edge of the band only */
+  background-image: linear-gradient(
+    112deg,
+    transparent 0%,
+    transparent 45.6%,
+    rgba(210, 190, 240, 0.22) 46.6%,
+    rgba(130, 215, 235, 0.24) 47.6%,
+    rgba(216, 232, 242, 0.55) 48.6%,
+    #ffffff 49.6%,
+    #ffffff 50.4%,
+    rgba(216, 232, 242, 0.55) 51.4%,
+    rgba(130, 215, 235, 0.2) 52.4%,
+    transparent 53.6%,
+    transparent 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: 85% 0;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: sheen 1300ms cubic-bezier(0.45, 0, 0.25, 1) both;
+  animation: shine 5s cubic-bezier(0.45, 0.05, 0.35, 1) 1.2s infinite;
 }
-@keyframes sheen { to { background-position: 0% 0; } }
+@keyframes shine {
+  0%, 12% { background-position: 85% 0; }
+  58%, 100% { background-position: 15% 0; }
+}
 
 /* V12 §6–§9: fixed lead, one capability phrase that changes with the scene */
 .capability {
@@ -150,34 +174,21 @@
 .action {
   display: grid;
   justify-items: center;
-  gap: 14px;
   width: 100%;
   opacity: 0;
   translate: 0 10px;
   transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), translate 700ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .action[data-in] { opacity: 1; translate: 0 0; }
-.proof {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px 12px;
-  font-size: 13.5px;
-  color: #8b94a3;
-}
-.count { color: #f2f0ea; font-weight: 540; font-variant-numeric: tabular-nums; }
-.sep { width: 3px; height: 3px; border-radius: 50%; background: var(--hpx-steel); }
 
 /* ---------- Responsive (V6 §41–§43) ---------- */
 @media (max-height: 760px) and (min-width: 1000px) {
   .hero { --orb: clamp(236px, 37svh, 256px); }
-  .inner { padding-top: calc(var(--s00-nav) + 14px); padding-bottom: 14px; }
+  .inner { padding-top: calc(var(--s00-nav) + 20px); padding-bottom: 12px; }
   .copy { gap: 8px; }
   .title { font-size: min(clamp(2.4rem, 1rem + 3.9vw, 4.2rem), 8.6svh); }
   .stageWrap { margin: 8px 0 10px; }
-  .action { --bar-w: 600px; --bar-h: 58px; gap: 10px; }
+  .action { --bar-w: 600px; --bar-h: 58px; }
 }
 @media (max-width: 999px) {
   .hero { --orb: 230px; }
@@ -191,17 +202,20 @@
   .inner { padding-top: calc(var(--s00-nav) + 22px); }
   .stageWrap { margin: 8px 0 10px; }
   .copy { gap: 8px; }
-  .sep { display: none; }
-  .proof { flex-direction: column; gap: 2px; text-align: center; font-size: 12.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .slats { animation: none; opacity: 1; }
+  .shine { display: none; }
   .action { transition: none; opacity: 1; translate: none; }
 }
 
-/* Production homepage (V12 §2): the hero sits under the site's own marketing header, which is taller than
-   the lab header, so only the top offset changes. */
-:global(.xv-home-coding) .hero { --s00-nav: 88px; }
-@media (max-width: 999px) { :global(.xv-home-coding) .hero { --s00-nav: 81px; } }
-@media (max-width: 639px) { :global(.xv-home-coding) .hero { --s00-nav: 71px; } }
+/* On the homepage the hero sits under the floating site header (s00-header.css): a 16px inset plus a 56px surface
+   on desktop, with the temporary early-access notice right under it. The offset clears both, so the headline
+   always has its own air below the header. */
+:global(.xv-home-coding) .hero { --s00-nav: 104px; }
+/* the site's homepage stylesheet forces every h1 to its ink with !important; the hero keeps its own pearl so
+   the passing light stays visible (white over near-white would read as nothing) */
+:global(.xv-home-coding) .hero h1.title { color: #e6e3dc !important; }
+@media (max-width: 999px) { :global(.xv-home-coding) .hero { --s00-nav: 100px; } }
+@media (max-width: 639px) { :global(.xv-home-coding) .hero { --s00-nav: 96px; } }

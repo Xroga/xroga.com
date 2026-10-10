@@ -1,6 +1,6 @@
 .rack {
-  --uw: clamp(126px, 10.9vw, 156px);
-  --uh: clamp(44px, 3.9vw, 54px);
+  --uw: clamp(126px, 12.2vw, 178px);
+  --uh: clamp(46px, 4vw, 58px);
   display: grid;
   gap: 12px;
   width: max-content;
@@ -17,13 +17,23 @@
   box-shadow: 0 0 18px 6px rgba(5, 5, 6, 0.55);
 }
 .title {
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #aab2bf;
   font-weight: 560;
 }
-.count { font-size: 12.5px; color: #7d8796; font-variant-numeric: tabular-nums; }
+/* the heading changes with the mode: a short rise, never a flash */
+.title[data-changing] { animation: titleIn 520ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both; }
+@keyframes titleIn { from { opacity: 0; transform: translateY(4px); filter: blur(2px); } }
+
+/* one footprint for all three modes: the leaving layer and the arriving layer share the same cell */
+.body { display: grid; }
+.layer { grid-area: 1 / 1; min-width: 0; }
+.layer[data-phase='out'] { animation: layerOut 380ms cubic-bezier(0.4, 0, 1, 1) both; pointer-events: none; }
+.layer[data-phase='in'] { animation: layerIn 560ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both; }
+@keyframes layerOut { to { opacity: 0; transform: translateX(-6px); filter: blur(2px); } }
+@keyframes layerIn { from { opacity: 0; transform: translateX(8px); filter: blur(3px); } }
 
 .grid {
   display: grid;
@@ -66,7 +76,9 @@
   border-radius: 9px;
   background: rgba(242, 240, 234, 0.06);
 }
-.mark { width: 18px; height: 18px; fill: var(--brand); }
+.mark { width: 18px; height: 18px; fill: var(--brand); color: var(--brand); }
+/* a line icon (the neutral Web globe): drawn with its stroke, never filled */
+.mark.stroke { fill: none; stroke: currentColor; }
 .name {
   font-size: clamp(12.5px, 0.95vw, 13.5px);
   line-height: 1.12;
@@ -97,20 +109,22 @@
 .name { transition: opacity 500ms linear, filter 500ms linear; }
 .unit .logo { filter: saturate(0.45) brightness(0.9); opacity: 0.8; }
 .unit .name { opacity: 0.78; }
-.unit[data-used] .logo,
+/* previously used: brand colour returns a little, a small neutral check, no cyan and no lift */
+.unit[data-used] .logo { filter: saturate(0.7) brightness(0.95); opacity: 0.92; }
+.unit[data-used] .name { opacity: 0.88; }
+.unit[data-used]:not([data-active]) .tick { transform: scale(1); width: 5px; height: 5px; background: rgba(242, 240, 234, 0.38); box-shadow: none; }
+/* the current call: full colour, the only cyan edge and the only local light in the rack */
 .unit[data-active] .logo { filter: none; opacity: 1; }
-.unit[data-used] .name,
 .unit[data-active] .name { opacity: 1; }
 .rack[data-native] .unit:not([data-used]):not([data-active]) .logo { opacity: 0.7; }
-.rack[data-native] .title,
-.rack[data-native] .count { opacity: 0.8; }
-.title,
-.count { transition: opacity 500ms linear; }
+.rack[data-native] .title { opacity: 0.8; }
+.title { transition: opacity 500ms linear; }
 
-/* In use: lift a few px, brand colour at full strength, cyan tick */
+/* In use: lift a few px, brand colour at full strength, a clear cyan edge and a little local light */
 .unit[data-active] {
   transform: translate3d(-3px, -3px, 14px);
-  box-shadow: inset 0 0 0 1px rgba(101, 229, 244, 0.42), inset 0 1px 0 rgba(242, 240, 234, 0.12), 0 18px 30px -16px rgba(0, 0, 0, 0.95);
+  background: linear-gradient(180deg, rgba(101, 229, 244, 0.08), rgba(101, 229, 244, 0.02)), rgba(13, 14, 17, 0.97);
+  box-shadow: inset 0 0 0 1px rgba(101, 229, 244, 0.7), inset 0 1px 0 rgba(242, 240, 234, 0.14), 0 0 24px -8px rgba(101, 229, 244, 0.5), 0 18px 30px -16px rgba(0, 0, 0, 0.95);
 }
 .unit[data-active] .tick { transform: scale(1); }
 .unit:hover .logo,
@@ -131,6 +145,61 @@
   to { opacity: 1; transform: none; filter: none; }
 }
 
+/* Research sources: name plus what Xroga is reading it for; the sub-line changes once the source is read */
+.rack[data-mode='sources'] { --uw: clamp(160px, 12.2vw, 178px); }
+.label { display: grid; gap: 1px; min-width: 0; }
+.sub { font-size: 11.5px; line-height: 1.15; color: #8b94a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: subIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.unit[data-used] .sub { color: #9decf2; }
+@keyframes subIn { from { opacity: 0; transform: translateY(3px); } }
+
+/* Cleanup plan: Xroga's own changes, applied in order on one quiet spine. Nothing here is a provider. */
+.planWrap { display: grid; gap: 10px; width: calc(var(--uw) * 2 + 10px); }
+.plan { position: relative; display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.plan::before { content: ''; position: absolute; left: 13px; top: 18px; bottom: 18px; width: 1px; background: rgba(242, 240, 234, 0.1); }
+.plan li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--uh);
+  padding: 7px 14px 7px 7px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(242, 238, 230, 0.05), rgba(242, 238, 230, 0.012)), rgba(13, 14, 17, 0.96);
+  box-shadow: inset 0 0 0 1px rgba(242, 240, 234, 0.08), 0 14px 28px -18px rgba(0, 0, 0, 0.9);
+  opacity: 0.4;
+  transition: opacity 400ms linear, box-shadow 300ms linear, background 300ms linear;
+}
+.plan li[data-shown] { opacity: 0.7; animation: rowIn 480ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i) * 70ms); }
+.plan li[data-state='on'] { opacity: 1; box-shadow: inset 0 0 0 1px rgba(101, 229, 244, 0.5), 0 18px 30px -16px rgba(0, 0, 0, 0.95); }
+.plan li[data-state='done'],
+.plan li[data-state='review'] { opacity: 1; }
+.plan li[data-state='review'] { box-shadow: inset 0 0 0 1px rgba(242, 192, 107, 0.45); }
+.node { position: relative; z-index: 1; flex: none; width: 13px; height: 13px; margin-left: 7px; border-radius: 50%; background: #0d0e11; box-shadow: inset 0 0 0 1.5px rgba(242, 240, 234, 0.3); transition: background 300ms linear, box-shadow 300ms linear; }
+.plan li[data-state='on'] .node { box-shadow: inset 0 0 0 1.5px #65e5f4, 0 0 8px rgba(101, 229, 244, 0.55); }
+.plan li[data-state='done'] .node { background: #9decf2 radial-gradient(circle, #0d0e11 0 26%, transparent 28%); box-shadow: 0 0 6px rgba(157, 236, 242, 0.5); }
+.plan li[data-state='review'] .node { background: #f2c06b; box-shadow: 0 0 6px rgba(242, 192, 107, 0.45); }
+.planBody { display: grid; gap: 1px; min-width: 0; }
+.planBody small { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8b94a3; }
+.planBody b { display: flex; align-items: baseline; gap: 7px; min-width: 0; font-size: clamp(12.5px, 0.95vw, 13.5px); font-weight: 540; color: #e9e7e0; white-space: nowrap; }
+.planBody em { font-style: normal; font-size: 11.5px; color: #8b94a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.from { color: #b7bcc4; overflow: hidden; text-overflow: ellipsis; }
+.arrow { flex: none; color: #6b7482; }
+.to { overflow: hidden; text-overflow: ellipsis; }
+.plan li[data-state='done'] .from { color: #8b94a3; text-decoration: line-through; text-decoration-color: rgba(242, 240, 234, 0.3); }
+.plan li[data-state='done'] .to { color: #9decf2; }
+.plan li[data-state='review'] .to,
+.plan li[data-state='review'] em { color: #f2c06b; }
+@keyframes rowIn { from { opacity: 0; transform: translateX(8px); } }
+.validation { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; padding: 0 4px; font-size: 11.5px; color: #8b94a3; animation: rowIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.validation span::before { content: '✓ '; color: #9decf2; }
+.validation b { margin-left: auto; font-weight: 560; color: #c9f6fa; }
+
+/* Phones: the plan reads as one line, the step being applied and how far along it is */
+.planLine { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 14px; background: rgba(13, 14, 17, 0.96); box-shadow: inset 0 0 0 1px rgba(101, 229, 244, 0.32); font-size: 14px; color: #e9e7e0; }
+.planLine em { font-style: normal; color: #9decf2; font-variant-numeric: tabular-nums; }
+.planLine i { font-style: normal; color: #6b7482; }
+
 /* Phones: three logos in a row, names dropped, marks large enough to recognise (V6 §41) */
 .rack[data-count='3'] .grid { grid-template-columns: repeat(3, 48px); grid-auto-rows: 48px; gap: 14px; justify-content: center; }
 .rack[data-count='3'] { justify-items: center; width: 100%; }
@@ -138,9 +207,16 @@
 .rack[data-count='3'] .unit { grid-template-columns: 1fr; padding: 0; justify-items: center; border-radius: 14px; }
 .rack[data-count='3'] .logo { background: none; }
 .rack[data-count='3'] .mark { width: 22px; height: 22px; }
-.rack[data-count='3'] .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.rack[data-count='3'] .name,
+.rack[data-count='3'] .sub { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.rack[data-count='3'] .body { justify-items: center; width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
   .grid[data-swapping],
-  .unit[data-state] { animation-duration: 1ms; animation-delay: 0ms; }
+  .unit[data-state],
+  .layer[data-phase],
+  .title[data-changing],
+  .plan li,
+  .validation,
+  .sub { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }

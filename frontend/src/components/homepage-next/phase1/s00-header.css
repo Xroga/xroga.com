@@ -1,0 +1,112 @@
+/*
+ * The site header, restyled to belong to the S00 hero on the homepage only. Every selector requires the
+ * homepage content (`.xv-home-coding`) inside the marketing shell, so other marketing pages keep their header.
+ * Material: a floating black-titanium surface with a quiet warm edge; the CTA is the only blue control.
+ * Geometry: inset 16px from the top, at most 1200px wide, about 56px tall. The hero's top offset
+ * (`--s00-nav` in S00Hero.module.css) is derived from these numbers.
+ * Only material, size and offsets change here; the header's own transform (centring and scroll-hide) is untouched.
+ */
+
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header {
+  top: 16px !important;
+  width: min(calc(100% - 48px), 1200px) !important;
+  padding: 3px !important;
+  border: 1px solid rgba(232, 226, 214, 0.1) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(242, 238, 230, 0.035), rgba(242, 238, 230, 0.008)), rgba(8, 9, 11, 0.78) !important;
+  box-shadow:
+    0 18px 40px -26px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(242, 238, 230, 0.07) !important;
+  backdrop-filter: blur(18px) saturate(1.05) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__inner {
+  min-height: 48px !important;
+  padding: 2px 6px 2px 10px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__logo {
+  height: 40px !important;
+  width: auto !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__logo img {
+  height: 40px !important;
+  width: auto !important;
+}
+
+/* the link group: a barely-there titanium track, no blue */
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__nav {
+  padding: 3px !important;
+  border: 1px solid rgba(232, 226, 214, 0.07) !important;
+  border-radius: 12px !important;
+  background: rgba(242, 238, 230, 0.025) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__nav::before { display: none !important; }
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-nav-trigger,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__nav > a {
+  min-height: 34px !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(222, 218, 210, 0.66) !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-nav-trigger:hover,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-nav-root[data-open='true'] .xv-nav-trigger,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-nav-trigger[aria-current='page'],
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__nav > a:hover,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__nav > a[aria-current='page'] {
+  background: rgba(242, 238, 230, 0.08) !important;
+  color: #f2efe8 !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-nav-trigger::after,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__direct-link::after { display: none !important; }
+
+/* the CTA keeps Xroga blue, without the halo */
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-header-build-button {
+  border-radius: 11px !important;
+  background: linear-gradient(180deg, #2b72ec, #1a5bd4) !important;
+  box-shadow:
+    0 6px 16px -10px rgba(26, 91, 212, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-header-build-points { display: none !important; }
+
+/* the theme switch and the phone menu button sit on the same quiet material */
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-home-theme-trigger,
+.xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__menu-button {
+  background: rgba(242, 238, 230, 0.04) !important;
+  border: 1px solid rgba(232, 226, 214, 0.09) !important;
+  box-shadow: none !important;
+}
+
+/* the temporary early-access notice sits just under the header, never on the headline */
+.xv-public-marketing-shell:has(.xv-home-coding) > .xv-beta-banner--top {
+  top: 82px !important;
+}
+
+@media (max-width: 980px) {
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header {
+    top: 12px !important;
+    width: calc(100% - 32px) !important;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) > .xv-beta-banner--top { top: 76px !important; }
+}
+@media (max-width: 640px) {
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header {
+    top: 10px !important;
+    width: calc(100% - 20px) !important;
+    border-radius: 16px !important;
+  }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__inner { min-height: 46px !important; }
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__logo,
+  .xv-public-marketing-shell:has(.xv-home-coding) .xv-marketing-header__logo img { height: 36px !important; width: auto !important; }
+  .xv-public-marketing-shell:has(.xv-home-coding) > .xv-beta-banner--top { top: 70px !important; }
+}

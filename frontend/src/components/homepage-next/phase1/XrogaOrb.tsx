@@ -30,11 +30,14 @@ const SLICES = [4, 8, 12, 16, 20];
 
 export function XrogaOrb({
   beat,
+  wave = null,
   turn,
   reduced,
   allowDrag,
 }: {
   beat: OrbBeatName;
+  /** One restrained ring per product event: intent arrives, an answer returns, the work completes. */
+  wave?: { key: string; kind: "in" | "back" | "done" } | null;
   /** A transition turn between jobs (key changes per transition). */
   turn: { key: string; dir: 1 | -1 } | null;
   reduced: boolean;
@@ -204,6 +207,10 @@ export function XrogaOrb({
       aria-label="Xroga"
     >
       <div className={s.under} aria-hidden="true" />
+      {/* the ring lives outside the turning body, so it expands from Xroga's fixed centre */}
+      {wave && !reduced && (
+        <i key={wave.key} className={s.wave} data-kind={wave.kind} aria-hidden="true" />
+      )}
       <div className={s.idle}>
         <div ref={turnRef} className={s.turn}>
           <motion.div className={s.body} style={{ transform }}>

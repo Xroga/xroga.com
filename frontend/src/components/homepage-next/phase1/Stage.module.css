@@ -6,12 +6,15 @@
   grid-template-areas: 'left centre right';
   align-items: center;
   column-gap: clamp(36px, 4.4vw, 64px);
-  width: min(1120px, 100%);
+  width: min(1240px, 100%);
+  /* work-object scale: ~400 px wide at 1440, never smaller than its 318 px layout on wide screens */
+  --wk: 1.26;
   margin: 0 auto;
 }
 .left { grid-area: left; justify-self: end; transform: translateY(6px); position: relative; z-index: 2; }
-@media (max-width: 1299px) { .stage { --wk: 0.88; } }
-@media (max-height: 760px) and (min-width: 1000px) { .stage { --wk: 0.84; } }
+@media (max-width: 1399px) { .stage { --wk: 1.14; } }
+@media (max-width: 1199px) { .stage { --wk: 1; } }
+@media (max-height: 760px) and (min-width: 1000px) { .stage { --wk: 1.02; } }
 .centre { grid-area: centre; position: relative; z-index: 2; }
 .right { grid-area: right; justify-self: start; transform: translateY(-4px); position: relative; z-index: 2; }
 
@@ -23,14 +26,14 @@
   row-gap: 22px;
   column-gap: 28px;
 }
-.stage[data-mode='tablet'] { --wk: 0.92; }
+.stage[data-mode='tablet'] { --wk: 1; }
 .stage[data-mode='tablet'] .centre { justify-self: center; }
 .stage[data-mode='tablet'] .left,
 .stage[data-mode='tablet'] .right { transform: none; }
 
 /* Phones: orb, work object, then three logos (V6 §41) */
 .stage[data-mode='mobile'] {
-  --wk: 0.94;
+  --wk: 1;
   grid-template-columns: 1fr;
   grid-template-areas: 'centre' 'left' 'right';
   row-gap: 10px;
@@ -48,28 +51,29 @@
   pointer-events: none;
   z-index: 1;
 }
-/* Signals (V10 §17–§21): ice mint, one packet per leg, gone once the result has landed. */
+/* Signals: ice mint, one bright packet per leg so the direction reads, gone once the result has landed. */
 .filament {
   fill: none;
-  stroke: rgba(168, 237, 224, 0.55);
-  stroke-width: 1.2;
+  stroke: rgba(176, 238, 228, 0.72);
+  stroke-width: 1.5;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   animation: draw 280ms cubic-bezier(0.16, 1, 0.3, 1) both, fade 900ms linear both;
 }
-.filament[data-leg='result'] { stroke: rgba(168, 237, 224, 0.42); animation-delay: 850ms, 850ms; animation-duration: 220ms, 550ms; }
-.filament[data-leg='create'] { stroke: rgba(168, 237, 224, 0.4); animation: draw 600ms cubic-bezier(0.16, 1, 0.3, 1) both, fade 1200ms linear both; }
+.filament[data-leg='result'] { stroke: rgba(176, 238, 228, 0.6); animation-delay: 850ms, 850ms; animation-duration: 220ms, 550ms; }
+.filament[data-leg='create'] { stroke: rgba(176, 238, 228, 0.55); animation: draw 600ms cubic-bezier(0.16, 1, 0.3, 1) both, fade 900ms linear both; }
+.filament[data-leg='native'] { stroke: rgba(176, 238, 228, 0.55); animation: draw 260ms cubic-bezier(0.16, 1, 0.3, 1) 40ms both, fade 600ms linear both; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes fade { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
 .packet {
   fill: none;
-  stroke: #e9fbf6;
-  stroke-width: 2.6;
+  stroke: #f2fffb;
+  stroke-width: 3.2;
   stroke-linecap: round;
-  stroke-dasharray: 0.035 1.2;
-  stroke-dashoffset: 0.035;
+  stroke-dasharray: 0.05 1.2;
+  stroke-dashoffset: 0.05;
   opacity: 0;
-  filter: drop-shadow(0 0 3px rgba(168, 237, 224, 0.95));
+  filter: drop-shadow(0 0 4px rgba(168, 237, 224, 1)) drop-shadow(0 0 9px rgba(101, 229, 244, 0.45));
   /* intent: 750 ms from the bar into Xroga, fading slightly as it enters */
   animation: travel 750ms cubic-bezier(0.45, 0, 0.3, 1) both;
 }
@@ -77,14 +81,19 @@
 .packet[data-leg='back'] { animation-name: travelBack; animation-duration: 300ms; animation-delay: 550ms; } /* provider → Xroga */
 .packet[data-leg='result'] { animation-duration: 250ms; animation-delay: 850ms; } /* Xroga → work object, arrives at 1100 */
 .packet[data-leg='create'] { animation-duration: 700ms; animation-delay: 80ms; }
+.packet[data-leg='native'] { animation-duration: 420ms; animation-delay: 40ms; } /* Xroga → work object, lands just before the change */
 @keyframes travel {
-  0% { stroke-dashoffset: 0.035; opacity: 0; }
+  0% { stroke-dashoffset: 0.05; opacity: 0; }
   12%, 85% { opacity: 1; }
-  100% { stroke-dashoffset: -1.035; opacity: 0; }
+  100% { stroke-dashoffset: -1.05; opacity: 0; }
 }
 @keyframes travelBack {
-  0% { stroke-dashoffset: -1.035; opacity: 0; }
+  0% { stroke-dashoffset: -1.05; opacity: 0; }
   12%, 85% { opacity: 1; }
-  100% { stroke-dashoffset: 0.035; opacity: 0; }
+  100% { stroke-dashoffset: 0.05; opacity: 0; }
 }
 
+
+/* a call that a newer call has replaced: it finishes as a faint trace so only the current route reads as live */
+.lines g { transition: opacity 200ms linear; }
+.lines g[data-superseded] { opacity: 0.14; }

@@ -1,10 +1,10 @@
 'use client';
 
 /**
- * The left side of the stage: what Xroga is producing (V9 §42). Each job has its own silhouette:
- * an app shell, a browser, an operations graph, a product spread across platforms, a research view
- * and a growth loop. Every tool used on the right changes something visible here. Objects are laid
- * out once at 318 × 197 and scaled per breakpoint.
+ * The left side of the stage: what Xroga is producing. Each job has its own silhouette: an app shell,
+ * a browser, an operations graph, an idea-research board, a product spread across platforms, a customer
+ * table being cleaned and a growth loop. Every external call and every native step changes something
+ * visible here. Objects are laid out once at 318 × 197 and scaled per breakpoint.
  */
 import Image from 'next/image';
 import { DESTINATIONS, type DestinationId } from './destinationMarks';
@@ -36,6 +36,16 @@ function Status({ text, tone }: { text: string; tone: 'idle' | 'live' | 'ok' | '
   );
 }
 
+/** The small Xroga badge that marks work Xroga does itself. */
+function XrogaChip({ label, on = true }: { label: string; on?: boolean }) {
+  return (
+    <span className={s.worker} data-on={on || undefined}>
+      <Image src="/homepage/orb/xroga-orb-icon.webp" alt="" width={14} height={14} />
+      {label}
+    </span>
+  );
+}
+
 const latest = <K extends string>(fx: Fx, order: readonly K[]): K | undefined => [...order].reverse().find((k) => fx.has(k));
 
 /* ---------- Brief: the input the SaaS is built from ---------- */
@@ -63,11 +73,11 @@ function Brief({ sending }: { sending: boolean }) {
   );
 }
 
-/* ---------- Production SaaS (V9 §5–§9) ---------- */
-const SAAS_ORDER = ['shell', 'auth', 'billing', 'roles', 'analytics', 'repo', 'tested', 'monitored', 'live'] as const;
-function Saas({ fx, cursor }: { fx: Fx; cursor: string | null }) {
+/* ---------- Production SaaS ---------- */
+const SAAS_ORDER = ['shell', 'auth', 'billing', 'repo', 'live'] as const;
+function Saas({ fx }: { fx: Fx }) {
   const st = latest(fx, SAAS_ORDER) ?? 'shell';
-  const navOn = [fx.has('shell'), fx.has('billing'), fx.has('roles'), fx.has('analytics')];
+  const navOn = [fx.has('shell'), fx.has('billing'), fx.has('shell'), fx.has('live')];
   return (
     <div className={s.window} data-kind="saas" data-done={fx.has('live') || undefined}>
       <div className={s.rail}>
@@ -97,7 +107,7 @@ function Saas({ fx, cursor }: { fx: Fx; cursor: string | null }) {
         <div className={s.saasMain}>
           <div className={s.saasTop}>
             <b>{W.saas.title}</b>
-            <span className={s.btn} data-hover={cursor === 'test' || undefined} data-pressed={cursor === 'press' || undefined} data-done={fx.has('tested') || undefined}>
+            <span className={s.btn} data-done={fx.has('live') || undefined}>
               {W.saas.test}
             </span>
           </div>
@@ -114,14 +124,14 @@ function Saas({ fx, cursor }: { fx: Fx; cursor: string | null }) {
                 {W.saas.plan}
               </span>
             )}
-            {fx.has('roles') && (
+            {fx.has('shell') && (
               <span className={s.roles}>
                 {W.saas.roles.map((r) => (
                   <i key={r}>{r}</i>
                 ))}
               </span>
             )}
-            {fx.has('analytics') && (
+            {fx.has('live') && (
               <svg className={s.bars} viewBox="0 0 60 22" aria-hidden="true">
                 {[6, 10, 8, 14, 12, 18, 20].map((h, i) => (
                   <rect key={i} x={i * 8 + 1} y={22 - h} width="5" height={h} rx="1" style={{ animationDelay: `${i * 40}ms` }} />
@@ -132,19 +142,17 @@ function Saas({ fx, cursor }: { fx: Fx; cursor: string | null }) {
         </div>
       </div>
       <Status text={W.saas.status[st]} tone={fx.has('live') ? 'ok' : 'live'} />
-      {cursor && <span className={s.cursor} data-pos={`saas-${cursor}`} aria-hidden="true" />}
-      {fx.has('tested') && !fx.has('monitored') && <span className={s.sweep} aria-hidden="true" />}
       {fx.has('live') && <span className={s.outPulse} aria-hidden="true" />}
     </div>
   );
 }
 
-/* ---------- Browser QA, diagnosis and repair (V9 §19–§21) ---------- */
-const QA_ORDER = ['start', 'emailOk', 'failed', 'isolated', 'repaired', 'committed', 'paid', 'onboarding', 'verified', 'released'] as const;
+/* ---------- Browser QA, diagnosis and repair ---------- */
+const QA_ORDER = ['start', 'failed', 'isolated', 'repaired', 'committed', 'paid', 'verified', 'released'] as const;
 function Qa({ fx, cursor }: { fx: Fx; cursor: string | null }) {
   const st = latest(fx, QA_ORDER) ?? 'start';
   const broken = fx.has('failed') && !fx.has('repaired');
-  const onStep2 = fx.has('onboarding');
+  const onStep2 = fx.has('verified');
   const tone = broken ? 'fail' : fx.has('verified') ? 'ok' : 'live';
   return (
     <div className={s.window} data-kind="qa" data-done={fx.has('released') || undefined}>
@@ -172,8 +180,8 @@ function Qa({ fx, cursor }: { fx: Fx; cursor: string | null }) {
         </div>
         {!onStep2 ? (
           <div className={s.form}>
-            <span className={s.field} data-focus={cursor === 'email' || undefined} data-ok={fx.has('emailOk') || undefined}>
-              {fx.has('start') ? W.qa.email : ''}
+            <span className={s.field} data-focus={cursor === 'email' || undefined} data-ok={fx.has('failed') || cursor === 'pay' || undefined}>
+              {W.qa.email}
             </span>
             <span className={s.field}>{W.qa.card}</span>
             <span
@@ -214,64 +222,95 @@ function Qa({ fx, cursor }: { fx: Fx; cursor: string | null }) {
   );
 }
 
-/* ---------- Dental clinic operations, run by a Xroga worker (V9 §10–§14, V8 §17–§20) ---------- */
-const CLINIC_NODES: { id: string; fx: string; mark?: ProviderId; x: number; y: number; w: number }[] = [
-  { id: 'inquiry', fx: 'inquiry', mark: 'intercom', x: 6, y: 50, w: 94 },
-  { id: 'qualified', fx: 'qualified', x: 106, y: 50, w: 114 },
-  { id: 'booked', fx: 'booked', mark: 'googlecalendar', x: 226, y: 50, w: 90 },
-  { id: 'crm', fx: 'crm', mark: 'hubspot', x: 226, y: 100, w: 90 },
-  { id: 'followup', fx: 'followup', mark: 'gmail', x: 106, y: 100, w: 114 },
-  { id: 'report', fx: 'report', mark: 'notion', x: 6, y: 100, w: 94 },
+/* ---------- Dental clinic front desk, run by a Xroga worker ---------- */
+const CLINIC_ORDER = ['inquiry', 'qualified', 'booked', 'crm', 'followup'] as const;
+const CLINIC_NODES: { id: (typeof CLINIC_ORDER)[number]; mark?: ProviderId; col: 0 | 1; row: number }[] = [
+  { id: 'inquiry', col: 0, row: 0 },
+  { id: 'qualified', col: 0, row: 1 },
+  { id: 'booked', mark: 'googlecalendar', col: 1, row: 0 },
+  { id: 'crm', mark: 'hubspot', col: 1, row: 1 },
+  { id: 'followup', mark: 'gmail', col: 1, row: 2 },
 ];
 function Clinic({ fx }: { fx: Fx }) {
-  const pending = fx.has('pending') && !fx.has('approved');
+  const st = latest(fx, CLINIC_ORDER) ?? 'inquiry';
   return (
     <div className={s.ops}>
       <div className={s.opsHead}>
-        <span className={s.worker} data-on={fx.has('assigned') || undefined}>
-          <Image src="/homepage/orb/xroga-orb-icon.webp" alt="" width={14} height={14} />
-          {W.clinic.worker}
-        </span>
+        <XrogaChip label={W.clinic.worker} on={fx.has('inquiry')} />
         <b>{W.clinic.title}</b>
       </div>
       <svg className={s.opsLinks} viewBox="0 0 318 150" aria-hidden="true">
-        <path d="M100 63h6M220 63h6" data-on={fx.has('qualified') || undefined} />
-        <path d="M271 76v24" data-on={fx.has('crm') || undefined} />
-        <path d="M226 113h-6M106 113h-6" data-on={fx.has('report') || undefined} />
+        <path d="M76 70v8" data-on={fx.has('qualified') || undefined} />
+        <path d="M140 91h14q4 0 4-4v-26q0-4 4-4h12" data-on={fx.has('booked') || undefined} />
+        <path d="M241 70v8" data-on={fx.has('crm') || undefined} />
+        <path d="M241 104v8" data-on={fx.has('followup') || undefined} />
       </svg>
       {CLINIC_NODES.map((n) => {
-        const on = fx.has(n.fx);
-        const label = W.clinic.nodes[n.id as keyof typeof W.clinic.nodes];
+        const on = fx.has(n.id);
         return (
-          <span key={n.id} className={s.node} data-on={on || undefined} style={{ left: n.x, top: n.y, width: n.w }}>
+          <span key={n.id} className={s.node} data-on={on || undefined} data-col={n.col} style={{ top: 44 + n.row * 34 }}>
             {n.mark && <Mark id={n.mark} className={s.nodeMark} />}
-            {label}
+            {W.clinic.nodes[n.id]}
           </span>
         );
       })}
-      {(pending || fx.has('approved')) && (
-        <span className={s.approval} data-ok={fx.has('approved') || undefined}>
-          {pending ? W.clinic.pending : W.clinic.approved}
-        </span>
-      )}
-      {fx.has('nextrun') && (
-        <span className={s.nextRun}>
-          <i />
-          {W.clinic.nextrun}
-        </span>
-      )}
+      <Status text={W.clinic.status[st]} tone={fx.has('followup') ? 'ok' : 'live'} />
     </div>
   );
 }
 
-/* ---------- One product across web, Chrome, iOS and Android (V9 §15–§18) ---------- */
-const PLAT_ORDER = ['inspected', 'core', 'extension', 'ios', 'android', 'sync', 'built', 'tested', 'destinations'] as const;
+/* ---------- Native research: Xroga plans, reads the sources, compares and ranks ---------- */
+const RESEARCH_ORDER = ['plan', 'x', 'reddit', 'google', 'compare', 'rank'] as const;
+function Research({ fx }: { fx: Fx }) {
+  const st = latest(fx, RESEARCH_ORDER) ?? 'plan';
+  const reading = fx.has('x');
+  // each research step is pending, active or done; the third one resolves into the ranked result
+  const state = (i: number): 'todo' | 'on' | 'done' => {
+    const done = [reading, fx.has('compare'), fx.has('rank')][i];
+    const on = [fx.has('plan'), reading, fx.has('compare')][i];
+    return done ? 'done' : on ? 'on' : 'todo';
+  };
+  return (
+    <div className={s.research}>
+      <div className={s.opsHead}>
+        <XrogaChip label="Xroga" />
+        <b>{W.research.title}</b>
+      </div>
+      {fx.has('rank') ? (
+        <ol className={s.ideas}>
+          {W.research.ideas.map((idea, i) => (
+            <li key={idea.title} style={{ animationDelay: `${i * 90}ms` }}>
+              <em>{i + 1}</em>
+              <span>
+                <b>{idea.title}</b>
+                <small>{idea.why}</small>
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <ul className={s.plan}>
+          {W.research.steps.map((step, i) => (
+            <li key={step} data-state={state(i)}>
+              <i aria-hidden="true" />
+              {step}
+            </li>
+          ))}
+        </ul>
+      )}
+      <Status text={W.research.status[st]} tone={fx.has('rank') ? 'ok' : 'live'} />
+    </div>
+  );
+}
+
+/* ---------- One product across web, Chrome, iOS and Android ---------- */
+const PLAT_ORDER = ['inspected', 'core', 'variants', 'built', 'destinations'] as const;
 function Platforms({ fx }: { fx: Fx }) {
   const st = latest(fx, PLAT_ORDER) ?? 'inspected';
-  const tested = fx.has('tested');
+  const tested = fx.has('built');
   const ready = fx.has('destinations');
   return (
-    <div className={s.plat} data-sync={fx.has('sync') || undefined}>
+    <div className={s.plat} data-sync={fx.has('built') || undefined}>
       <div className={s.web} data-scan={(fx.has('inspected') && !fx.has('core')) || undefined}>
         <span className={s.webRail} />
         <b>{W.platforms.web}</b>
@@ -279,29 +318,27 @@ function Platforms({ fx }: { fx: Fx }) {
         <i />
         {tested && <em className={s.check} />}
       </div>
-      {fx.has('extension') && (
-        <div className={s.popup}>
-          <span>{W.platforms.extension}</span>
-          <i />
-          <i />
-          {tested && <em className={s.check} />}
-        </div>
-      )}
-      {fx.has('ios') && (
-        <div className={s.phone} data-os="ios">
-          <span>{W.platforms.ios}</span>
-          <i />
-          <i />
-          {tested && <em className={s.check} />}
-        </div>
-      )}
-      {fx.has('android') && (
-        <div className={s.phone} data-os="android">
-          <span>{W.platforms.android}</span>
-          <i />
-          <i />
-          {tested && <em className={s.check} />}
-        </div>
+      {fx.has('variants') && (
+        <>
+          <div className={s.popup}>
+            <span>{W.platforms.extension}</span>
+            <i />
+            <i />
+            {tested && <em className={s.check} />}
+          </div>
+          <div className={s.phone} data-os="ios">
+            <span>{W.platforms.ios}</span>
+            <i />
+            <i />
+            {tested && <em className={s.check} />}
+          </div>
+          <div className={s.phone} data-os="android">
+            <span>{W.platforms.android}</span>
+            <i />
+            <i />
+            {tested && <em className={s.check} />}
+          </div>
+        </>
       )}
       {fx.has('core') && (
         <div className={s.core}>
@@ -324,103 +361,117 @@ function Platforms({ fx }: { fx: Fx }) {
   );
 }
 
-/* ---------- AI research product, native first (V9 §22–§25) ---------- */
-function Research({ fx }: { fx: Fx }) {
-  if (fx.has('product')) {
-    return (
-      <div className={s.research} data-product>
-        <span className={s.ask}>{W.research.product}</span>
-        <div className={s.answer}>
-          <b>{W.research.answer}</b>
-          <span>
-            <sup>1</sup>
-            <sup>2</sup>
-          </span>
-          <i />
-          <i />
-        </div>
-        <span className={s.memory}>{W.research.memory}</span>
-        <Status text={W.research.status} tone="ok" />
-      </div>
-    );
-  }
+/* ---------- Native cleanup of a customer table ---------- */
+const CLEAN_ORDER = ['scanned', 'found', 'merged', 'fixed', 'normalized', 'held', 'validated'] as const;
+type Cell = { v: string; fixed?: string; fx?: string };
+const ROWS: { id: string; dup?: 'keep' | 'drop'; review?: boolean; cells: [Cell, Cell, Cell, Cell] }[] = [
+  { id: 'ana', dup: 'keep', cells: [{ v: 'Ana Ruiz' }, { v: 'ana@northwind.app' }, { v: 'Northwind' }, { v: 'Active' }] },
+  { id: 'ana2', dup: 'drop', cells: [{ v: 'Ana Ruiz' }, { v: 'ana@northwind.app' }, { v: 'northwind' }, { v: 'Active' }] },
+  { id: 'ben', cells: [{ v: 'Ben Okafor' }, { v: 'Ben@Acme,com', fixed: 'ben@acme.com', fx: 'fixed' }, { v: 'Acme' }, { v: 'Trial' }] },
+  { id: 'chen', cells: [{ v: 'Chen Li' }, { v: 'chen@lumen.io' }, { v: 'LUMEN', fixed: 'Lumen', fx: 'normalized' }, { v: 'active', fixed: 'Active', fx: 'normalized' }] },
+  { id: 'dana', review: true, cells: [{ v: 'Dana Moss' }, { v: '' }, { v: 'Brightside' }, { v: 'Lead' }] },
+];
+function Cleanup({ fx }: { fx: Fx }) {
+  const st = latest(fx, CLEAN_ORDER) ?? 'scanned';
+  const found = fx.has('found');
+  const valid = fx.has('validated');
+  // the pass Xroga is running is named on the table while it runs; once it is done the table speaks for itself
+  const pass = !found ? W.cleanup.passes.scanned : !fx.has('merged') ? W.cleanup.passes.found : null;
   return (
-    <div className={s.research}>
-      <div className={s.sources}>
-        {fx.has('files') && (
-          <span className={s.source} data-conflict={fx.has('conflict') || undefined}>
-            <Mark id="googledrive" className={s.inline} />
-            {W.research.files}
+    <div className={s.table} data-scan={(fx.has('scanned') && !found) || undefined} data-valid={valid || undefined}>
+      <div className={s.opsHead}>
+        <XrogaChip label="Xroga" />
+        {pass ? (
+          <span key={pass} className={s.pass}>
+            {pass}
           </span>
-        )}
-        {fx.has('web') && (
-          <span className={s.source} data-conflict={fx.has('conflict') || undefined}>
-            <Mark id="perplexity" className={s.inline} />
-            {W.research.web}
-          </span>
+        ) : (
+          <b key={valid ? 'clean' : 'file'} className={s.file} data-clean={valid || undefined}>
+            {valid ? W.cleanup.cleanFile : W.cleanup.file}
+          </b>
         )}
       </div>
-      {fx.has('conflict') && <span className={s.conflict}>{W.research.conflict}</span>}
-      {fx.has('synthesis') && <span className={s.synth}>{W.research.synthesis}</span>}
-      {fx.has('memory') && <span className={s.memory}>{W.research.memory}</span>}
-      {fx.has('brief') && (
-        <div className={s.decision}>
-          <b>{W.research.brief}</b>
-          <span>
-            {W.research.briefLine}
-            <sup>1</sup>
-            <sup>2</sup>
+      <div className={s.grid} role="presentation">
+        {W.cleanup.columns.map((c) => (
+          <span key={c} className={s.th}>
+            {c}
           </span>
-        </div>
-      )}
+        ))}
+        {ROWS.map((r) => {
+          const merged = r.dup && fx.has('merged');
+          return (
+            <div
+              key={r.id}
+              className={s.tr}
+              data-dup={(r.dup && found && !merged) || undefined}
+              data-merged={(r.dup === 'drop' && merged) || undefined}
+              data-canonical={(r.dup === 'keep' && merged && !valid) || undefined}
+              data-review={(r.review && fx.has('held')) || undefined}
+            >
+              {r.cells.map((c, i) => {
+                const done = c.fx !== undefined && fx.has(c.fx);
+                const bad = found && !done && (c.fx !== undefined || (r.dup === 'drop' && i === 2) || (r.review && i === 1 && !fx.has('held')));
+                const review = r.review && i === 1 && fx.has('held');
+                return (
+                  <span key={i} className={s.td} data-bad={bad || undefined} data-done={done || undefined} data-review={review || undefined}>
+                    {/* a corrected cell morphs: the old value leaves upward as the new one arrives */}
+                    {done && <s className={s.was} aria-hidden="true">{c.v}</s>}
+                    <span key={done ? 'new' : review ? 'review' : 'old'} className={s.val}>
+                      {review ? W.cleanup.review : done ? c.fixed : c.v}
+                    </span>
+                  </span>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+      <Status text={W.cleanup.status[st]} tone={valid ? 'ok' : found ? 'warn' : 'live'} />
     </div>
   );
 }
 
-/* ---------- Growth after launch (V9 §26–§28) ---------- */
+/* ---------- Growth after launch ---------- */
+const GROWTH_ORDER = ['audit', 'search', 'funnel', 'constraint', 'launched'] as const;
 const SIGNALS: { fx: string; mark: ProviderId; key: keyof typeof WORK_COPY.growth.signals; w: number }[] = [
   { fx: 'search', mark: 'semrush', key: 'search', w: 62 },
-  { fx: 'ads', mark: 'googleads', key: 'ads', w: 48 },
   { fx: 'funnel', mark: 'posthog', key: 'funnel', w: 22 },
 ];
 function Growth({ fx }: { fx: Fx }) {
+  const st = latest(fx, GROWTH_ORDER) ?? 'audit';
   return (
     <div className={s.growth}>
       <div className={s.signals}>
-        {SIGNALS.map((g) =>
-          fx.has(g.fx) ? (
-            <span key={g.fx} className={s.signal} data-constraint={(g.fx === 'funnel' && fx.has('constraint')) || undefined}>
+        {SIGNALS.map((g) => {
+          const on = fx.has(g.fx);
+          return (
+            <span key={g.fx} className={s.signal} data-on={on || undefined} data-constraint={(g.fx === 'funnel' && fx.has('constraint')) || undefined}>
               <Mark id={g.mark} className={s.inline} />
               <em>{W.growth.signals[g.key]}</em>
-              <i style={{ width: `${g.w}%` }} />
+              <i style={{ width: on ? `${g.w}%` : '0%' }} />
             </span>
-          ) : null,
-        )}
+          );
+        })}
       </div>
       {fx.has('constraint') && <span className={s.constraint}>{W.growth.constraint}</span>}
-      <div className={s.actionRow}>
-        {fx.has('decision') && <span className={s.decisionChip}>{W.growth.decision}</span>}
-        {fx.has('launched') && (
-          <span className={s.launched}>
-            <Mark id="mailchimp" className={s.inline} />
-            {W.growth.launched}
-          </span>
-        )}
-      </div>
-      {fx.has('measuring') && (
-        <div className={s.measure}>
-          <svg viewBox="0 0 120 26" aria-hidden="true">
-            <path d="M1 22 L20 21 L38 20 L52 21 L66 16 L82 13 L98 9 L119 4" pathLength={1} />
-          </svg>
-          <span>{W.growth.measuring}</span>
-        </div>
+      {fx.has('launched') && (
+        <>
+          <div className={s.actionRow}>
+            <span className={s.decisionChip}>{W.growth.decision}</span>
+            <span className={s.launched}>
+              <Mark id="mailchimp" className={s.inline} />
+              {W.growth.launched}
+            </span>
+          </div>
+          <div className={s.measure}>
+            <svg viewBox="0 0 120 26" aria-hidden="true">
+              <path d="M1 22 L20 21 L38 20 L52 21 L66 16 L82 13 L98 9 L119 4" pathLength={1} />
+            </svg>
+            <span>{W.growth.measuring}</span>
+          </div>
+        </>
       )}
-      {fx.has('nextreview') && (
-        <span className={s.nextRun}>
-          <i />
-          {W.growth.nextreview}
-        </span>
-      )}
+      <Status text={W.growth.status[st]} tone={fx.has('launched') ? 'ok' : fx.has('constraint') ? 'warn' : 'live'} />
     </div>
   );
 }
@@ -430,15 +481,17 @@ function Render({ kind, fx, cursor, sending }: { kind: WorkKind; fx: Fx; cursor:
     case 'brief':
       return <Brief sending={sending} />;
     case 'saas':
-      return <Saas fx={fx} cursor={cursor} />;
+      return <Saas fx={fx} />;
     case 'qa':
       return <Qa fx={fx} cursor={cursor} />;
     case 'clinic':
       return <Clinic fx={fx} />;
-    case 'platforms':
-      return <Platforms fx={fx} />;
     case 'research':
       return <Research fx={fx} />;
+    case 'platforms':
+      return <Platforms fx={fx} />;
+    case 'cleanup':
+      return <Cleanup fx={fx} />;
     case 'growth':
       return <Growth fx={fx} />;
   }

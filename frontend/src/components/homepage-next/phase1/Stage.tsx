@@ -19,6 +19,8 @@ interface Geo {
   out: Box;
   /** Measured endpoint of each provider currently in the rack, keyed by provider id. */
   providers: Record<string, Box>;
+  /** Measured endpoint of each research source currently shown, keyed by source id. */
+  sources: Record<string, Box>;
   barTop: number;
 }
 
@@ -111,17 +113,26 @@ export function Stage({
       const o = rel(orbRef.current, base);
       const bar = barRef.current?.getBoundingClientRect();
       // endpoints come from the provider's own element (its untransformed slot), found by provider id
+      // only the arriving layer carries these ids, so a leaving tile or a hidden mode is never an endpoint
       const providers: Record<string, Box> = {};
+      const sources: Record<string, Box> = {};
       root.current
         .querySelectorAll<HTMLElement>("[data-provider]")
         .forEach((el) => {
           const id = el.dataset.provider;
           if (id && el.parentElement) providers[id] = rel(el.parentElement, base);
         });
+      root.current
+        .querySelectorAll<HTMLElement>("[data-source]")
+        .forEach((el) => {
+          const id = el.dataset.source;
+          if (id && el.parentElement) sources[id] = rel(el.parentElement, base);
+        });
       setGeo({
         orb: { x: o.x + o.w / 2, y: o.y + o.h / 2, r: o.w / 2 },
         out: rel(outRef.current, base),
         providers,
+        sources,
         barTop: bar ? bar.top - base.top : o.y + o.h + 80,
       });
     };
@@ -138,10 +149,12 @@ export function Stage({
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [count, barRef, frame.vignette, frame.set, routeKey]);
+  }, [count, barRef, frame.vignette, frame.set, frame.mode, routeKey]);
 
   const active = new Set<string>(frame.active);
   const used = new Set<string>(frame.used);
+  const reading = new Set<string>(frame.reading);
+  const found = new Set<string>(frame.found);
   const toOrb: [number, number] = geo
     ? [
         geo.orb.x - (geo.out.x + geo.out.w / 2),
@@ -166,6 +179,7 @@ export function Stage({
       <div ref={orbRef} className={s.centre}>
         <XrogaOrb
           beat={frame.orb}
+          wave={frame.wave}
           turn={frame.turn}
           reduced={reduced}
           allowDrag={mode === "desk"}
@@ -174,10 +188,15 @@ export function Stage({
 
       <div className={s.right}>
         <Toolset
+          mode={frame.mode}
+          prevMode={frame.prevMode}
           set={frame.set}
           prevSet={frame.prevSet}
           active={active}
           used={used}
+          reading={reading}
+          found={found}
+          effects={new Set(frame.effects)}
           count={count}
         />
       </div>
@@ -202,17 +221,20 @@ export function Stage({
             </g>
           )}
           {frame.routes.map((r) => {
-            // the endpoint is the element of the provider this action lights; no element, no line
-            const end = geo.providers[r.tool];
+            // the endpoint is the element of the provider or source this action lights; no element, no line
+            const pool = r.kind === "tool" ? geo.providers : geo.sources;
+            const end = pool[r.target];
             if (!end) return null;
-            const call = callPath(end, geo.orb, Object.values(geo.providers));
+            const call = callPath(end, geo.orb, Object.values(pool));
             const hop = createPath(geo.out, geo.orb, mode);
             return (
               <g
                 key={r.id}
-                data-signal="tool"
-                data-tool={r.tool}
+                data-signal={r.kind}
+                data-target={r.target}
                 data-action={r.id}
+                // a newer call has started: this one fades to a trace and is no longer the selected target
+                data-superseded={r.superseded || undefined}
               >
                 {/* B. tool call out to the provider, and its answer back along the same path */}
                 <path
@@ -254,6 +276,25 @@ export function Stage({
               </g>
             );
           })}
+          {/* D. native hand-off: Xroga gives its own result to the work object, no provider involved */}
+          {frame.hop && (
+            <g key={`h-${frame.hop}`} data-signal="native" data-action={frame.hop}>
+              <path
+                d={createPath(geo.out, geo.orb, mode)}
+                pathLength={1}
+                className={s.filament}
+                data-leg="native"
+                vectorEffect="non-scaling-stroke"
+              />
+              <path
+                d={createPath(geo.out, geo.orb, mode)}
+                pathLength={1}
+                className={s.packet}
+                data-leg="native"
+                vectorEffect="non-scaling-stroke"
+              />
+            </g>
+          )}
           {frame.createLine && (
             <g key={`c-${frame.vignette}-${frame.orb}`} data-signal="create">
               <path

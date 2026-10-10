@@ -2,8 +2,8 @@
 
 /**
  * The secondary line (V12 §6–§9): a fixed "One workspace to" and one capability phrase for the current
- * scene. The phrase changes under a short vertical mask, then catches a single sweep of light once it has
- * settled. Both are driven by the orchestration clock, so the line can never disagree with the stage.
+ * scene. The phrase changes under a short vertical mask, driven by the orchestration clock, so the line can
+ * never disagree with the stage. The H1 carries the hero's only shine.
  * Screen readers get one static sentence instead of a carousel.
  */
 import { COPY, PHRASES, PHRASES_MOBILE, type PhraseKey } from './copy';
@@ -12,13 +12,11 @@ import s from './S00Hero.module.css';
 export function Capability({
   phrase,
   prevPhrase,
-  shine,
   mobile,
   reduced,
 }: {
   phrase: PhraseKey;
   prevPhrase: PhraseKey | null;
-  shine: boolean;
   mobile: boolean;
   reduced: boolean;
 }) {
@@ -49,11 +47,6 @@ export function Capability({
         )}
         <span key={phrase} className={s.phrase} data-leg={prevPhrase ? 'in' : undefined}>
           {text[phrase]}
-          {shine && (
-            <span className={s.sheen} aria-hidden="true">
-              {text[phrase]}
-            </span>
-          )}
         </span>
       </span>
     </p>

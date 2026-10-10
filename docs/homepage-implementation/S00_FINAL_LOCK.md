@@ -1,6 +1,7 @@
 # S00 Hero: final lock
 
-**Status: LOCKED** (V12 production lock, 2026-10-09)
+**Status: RECONSTRUCTED, PENDING PRODUCTION VERIFICATION** (final closeout, 2026-10-10). The V12 lock of
+2026-10-09 was reopened for the final defects; this becomes `S00: LOCKED` only after the live homepage is verified.
 
 S00 is the first screen of the homepage. It is mounted once, at the top of `/`, from
 `frontend/src/components/homepage/HomepageClient.tsx`, and it replaces the previous production hero completely. There is no
@@ -16,10 +17,9 @@ Changing anything below needs a new founder brief. S01 and every later section a
 | Fixed lead | **One workspace to** |
 | Capability phrase | One phrase per scene (section 2); only this phrase changes |
 | Reduced-motion phrase | One workspace to **build, operate and keep work moving** |
-| Proof | **1,603 integrations available** |
-| Qualifier | Use Xroga directly. Connect tools when the job needs them. |
 
-There is no eyebrow and no support paragraph. Visible hero copy contains no long dashes. The old headlines ("Give Xroga the
+There is no eyebrow, no support paragraph and no proof line: the integrations line ("1,603 integrations available · Use
+Xroga directly. Connect tools when the job needs them.") was removed in the final closeout and must not return. Visible hero copy contains no long dashes. The old headlines ("Give Xroga the
 outcome.", "It executes the digital work.", "AI app builder that builds, tests and ships code you own.") are gone from all live
 hero code.
 
@@ -28,101 +28,101 @@ growth), with the V10 short versions on phones.
 
 ### H1 typography
 
-The H1 uses the site's grotesk at weight 560, line height 0.98 and tracking -0.035em, in warm pearl `#f2f0ea`, with no
-gradient and no glow. Measured sizes:
+The H1 uses the site's grotesk at weight 560, line height 0.98 and tracking -0.035em, in warm pearl `#e6e3dc`, with no
+gradient and no glow on the text itself. The site's homepage stylesheet forces every `h1` to its ink with `!important`; a
+scoped hero rule keeps the pearl, because white light over near-white text cannot be seen. Sizes are unchanged from V12
+(72px at 1440, 43px at 390, two lines on phones).
 
-| Viewport | Size | Lines |
-|---|---|---|
-| 1440×900 | 72px | 1 |
-| 1280×720 | 62px | 1 |
-| 1150×666 | 57px | 1 |
-| 1024×768 | 56px | 1 |
-| 768×1024 | 50px | 1 |
-| 430×932 | 46px | 2 |
-| 390×844 | 43px | 2 |
-| 360×800 | 40px | 2 |
+### Shine
 
-### ShinyText
+Final treatment: a band of about 140px at 1440 at a 112° angle over the #e6e3dc base. It reads as white light: a white
+core, ice shoulders (rgba 216, 232, 242 at 0.55), a faint Xroga cyan edge (rgba 130, 215, 235 at 0.2 to 0.24) and a
+trailing violet-pearl edge (rgba 210, 190, 240 at 0.22). Colour exists only inside the moving band; the base returns to
+pearl after every pass. Earlier notes below about a narrower band are superseded.
 
-The shine is a transparent copy of the text laid over the static line, with one soft band about 26% wide. It never lowers base
-contrast and it unmounts after each sweep.
-
-- The H1 sweeps once at 1.0s and once more at 9.0s, on the first pass only. It never loops.
-- The capability phrase sweeps once, 350ms after each change has settled, and never while it is moving.
-- One clock schedules both, so the H1 and the phrase never shine together (tested).
+One shine system, on the H1 only. A transparent copy of the line carries one narrow band of neutral light (white core,
+no hue, no glow) and sits over the static text, so the base never dims. The band waits outside the left edge, crosses
+the whole line, leaves on the right and rests, about every 5 s (5 s cycle, sweep about 2.3 s, first pass after 1.2 s).
+The motion follows the founder's reference sweep; its dim base colours were not used. The capability phrase has no
+shine. Reduced motion renders no shine layer at all. Measured at 1440: the band lifts letter cores by up to about 40
+levels over the base.
 
 ## 2. Capability rotator
 
 | Scene | Phrase (desktop) | Phone variant |
 |---|---|---|
 | Production SaaS | build production software | build production software |
-| Dental clinic | automate real business operations | automate business operations |
 | Browser QA and repair | test and repair product flows | repair product flows |
+| Dental clinic | automate real business operations | automate business operations |
+| Native research | research, compare and decide | research and decide |
 | Cross-platform | ship across web, Chrome, iOS and Android | ship across platforms |
-| AI research product | research, compare and decide | research and decide |
+| Native database cleanup | keep important work running | keep work running |
 | Growth OS | grow what you launch | grow what you launch |
-| Rest / continuity | keep important work running | keep work running |
 
-The lead sits on its own line so it never moves. The phrase changes under a soft vertical mask in 600ms:
-
-- The old phrase moves -8px, fades and blurs to 2px over 300ms.
-- The new phrase enters from +10px with a 2px blur, starting at 180ms, so the two overlap by 120ms.
-- There is no bounce, typewriter or scramble.
-
-The phrase comes from the same frame as the scene, so it cannot show a capability unrelated to the work object. Screen readers
-get one static sentence instead of the carousel.
+The lead never moves; the phrase changes under a 600ms soft vertical mask exactly when the scene changes. There is no
+rest scene, so the phrase always belongs to the work object on stage (tested every 50ms across two loops).
 
 ## 3. Scenarios
 
-The six scenarios run in two cycles of about 30s each, followed by a rest:
+Seven scenes in one continuous loop, no rest: SaaS (6.1s), browser QA (8.45s), dental (5.35s), native research (6.6s),
+cross-platform (5.6s), native cleanup (6.5s), growth (5.7s). Loop 44.3s. QA is longest because it carries test, failure,
+diagnosis, native repair, commit, re-test, verification and release; cleanup carries scan, findings, four
+transformations and a validation pass. External calls in a scene are at least 900ms apart, so each call leaves only once
+the previous answer is back in Xroga and its result is on the work object. A 1s headline lead runs on the first pass
+only. Every scene shows its first state as the object unfolds from Xroga (no empty panel) and holds its result at least
+0.9s. At 1440 the work object is about 400px wide; work-object text is 10.5px or larger at layout size (scaled 1.26x on
+wide desktop), right-side names 12.5px or larger.
 
-- **Cycle A:** Production SaaS, then Browser QA and repair, then Dental clinic operations, then a 6s rest.
-- **Cycle B:** Cross-platform release, then AI research product, then Growth OS, then a 6s rest.
+The right side has three modes in one place, with one footprint:
 
-The left side shows the work object, the centre shows the Xroga orb and the right side shows six tools for the job. The bottom
-holds the command bar and the proof line.
+| Mode | Heading | Used by | Content |
+|---|---|---|---|
+| tools | TOOLS FOR THIS JOB | SaaS, QA, dental, cross-platform, growth | six catalog tools; only the one the step needs lights |
+| sources | RESEARCH SOURCES | native research | X, Reddit, Google, Web: evidence Xroga reads, never "connected" |
+| plan | CLEANUP PLAN | native cleanup | four rows that show the change: Duplicate (2 records → 1 canonical row), Email (Ben@Acme,com → ben@acme.com), Normalize (LUMEN, active → Lumen, Active), Review (Dana Moss → Held for approval); then a validation line (Duplicates clear, Formats valid, Fields normalized, Cleaned copy ready) |
+
+On a mode change the old content leaves as one layer with no endpoint ids and the new layer arrives in the final part of
+the orb turn; no old rack remains underneath.
 
 ## 4. Action model and provider routing
 
-Every micro-step is one `HeroAction` (`orchestration.ts`). The fields are:
+Every micro-step is one `HeroAction` (`orchestration.ts`) with `id`, `sceneId`, `capability`, `providerId` (`null` for
+Xroga's own work), `sourceId` (research only) and `resultState`. The same action drives the highlight, the endpoint
+(found by `data-provider` or `data-source` with the same id), the route and the work-object change.
 
-- `id` and `sceneId`
-- `capability`: one of native, source-control, database, auth, payments, deployment, monitoring, browser, crm, calendar, email,
-  docs, research, analytics, seo or growth
-- `providerId`: `null` when Xroga does the step itself
-- `resultState`
-
-The same action drives four things:
-
-- **Highlight.** The rack lights the provider named by the live route.
-- **Endpoint.** The signal layer finds the endpoint element by `data-provider` with that same id.
-- **Route.** The route carries the action id.
-- **Result.** The work object changes to the action's `resultState`.
-
-| Scene | Provider steps | Native steps |
+| Scene | External steps | Xroga's own steps |
 |---|---|---|
-| SaaS | Supabase for auth, Stripe for billing, GitHub for source, Sentry for monitoring, Vercel for deployment | app shell, roles, analytics, critical-flow test (browser) |
-| QA | Sentry for diagnosis, GitHub for the fix commit, Stripe for the payment, Vercel for the release | browser test, failure, repair, re-test, verification |
-| Dental | Gmail for the inquiry and the follow-up, Google Calendar for booking, HubSpot for the CRM, Notion for the report | assignment, qualification, approval, next run |
-| Cross-platform | Supabase for the shared core, GitHub for builds, Sentry for monitoring | inspection, extension, iOS and Android builds, state sync, store packages |
-| Research | Google Drive for the files, Perplexity for the web | conflict, synthesis, project memory, brief, product |
-| Growth | Semrush for SEO, Google Ads for paid, PostHog for the funnel, Mailchimp for email | constraint, decision, measuring, next review |
+| SaaS | Supabase auth, Stripe billing, GitHub source, Vercel release | app shell and roles |
+| QA | Sentry diagnosis (after the browser sees the failure), GitHub commit (only after Xroga's own repair lands), Stripe payment (after the re-press), Vercel release | browser test, failure, repair, verification |
+| Dental | Google Calendar booking, HubSpot CRM, Gmail follow-up | inquiry, qualification |
+| Research | sources X, Reddit, Google | planning, comparison, ranking |
+| Cross-platform | Supabase shared core, GitHub release source | inspection, app variants, store packages (destinations, not providers) |
+| Cleanup | none | schema scan, duplicate check and field validation, merge, email repair, normalization, review hold, validation |
+| Growth | Semrush search, PostHog funnel, Mailchimp sequence | audit, constraint |
 
-These rules hold, and each one is tested:
+**Tool racks.** Each tool scene shows six catalog integrations. The tools a step really calls lead the rack (so they show
+on tablets too); the other slots show further relevant integrations from Xroga's catalog to convey breadth, and are
+display only: never called, never wired, never lit. SaaS: Supabase, Stripe, GitHub, Vercel + Linear, Cloudflare. QA:
+Sentry, GitHub, Stripe, Vercel + Zendesk, Mixpanel. Dental: Google Calendar, HubSpot, Gmail + Calendly, Intercom, Asana.
+Cross-platform: Supabase, GitHub + Figma, Neon, Railway, OpenAI. Growth: Semrush, PostHog, Mailchimp + Google Ads,
+Instagram, YouTube. 25 distinct integrations across the loop; any two scenes share at most three cards; every card is
+checked against `lib/integrations-catalog.ts` by a test.
 
-- **Native steps.** A native step never routes and never lights a provider. The orb plays a short inner `native` beat instead.
-- **Stores.** The Chrome Web Store, App Store and Google Play are release destinations only, never providers.
-- **Causal order.**
-  1. The provider is already in the rack. No route starts before the rack swap finishes at 1250ms.
-  2. Xroga selects it, and it lights at route start.
-  3. The call packet leaves 100ms later and reaches the provider at 550ms.
-  4. The answer returns by 850ms.
-  5. The result pulse reaches the work object at 1100ms.
-  6. The object changes at 1250ms.
-  7. The provider settles at 1000ms.
-- **Density.** At most three providers are lit and at most three signal paths are visible.
-- **Fresh geometry.** Endpoints are re-measured when the scene, the rack, a route, the viewport or the fonts change. A leaving
-  unit is never an endpoint.
+Every external action has an explicit tested expectation (action id → capability → provider), tools shown but not
+needed are never called, and only the newest call is selected: an older call loses its highlight at once and fades as a
+faint trace. A previously used tool keeps only a small neutral check, never the cyan edge or light of the current call.
+
+Tested rules: native steps never route or light anything; the lit target is always the route endpoint (sampled every
+25ms across two loops); no route starts before the swap settles; at most three signal paths; the work object changes
+150ms after the result pulse arrives; stores are destinations only.
+
+Signals: call 0 to 550ms, answer back 550 to 850ms, result pulse 850 to 1100ms, change at 1250ms. Native hand-offs draw
+Xroga to the work object just before the change. Filaments and packets are brighter than V12 (bright head, two-layer
+glow) and are gone after the result lands.
+
+Orb reactions are event-linked only: a concentric ring when the intent arrives, a softer ring when the first answer
+returns, a completion ring on the final result, the lens brightening on intent, plus the existing absorb, create,
+connect, verify and native beats. Rings never loop.
 
 ## 5. Background
 
@@ -199,9 +199,11 @@ Its beats are absorb, create, connect, verify and native, and it never spins ful
 
 ## 8. Responsive rules
 
-The audit covered 1440×900, 1280×720, 1150×666, 1024×768, 768×1024, 430×932, 390×844 and 360×800, on both `/` and `/lab/home`,
-for ten moments across all six scenes and the rest. It found no horizontal scroll and nothing clipped: H1, phrase, work object,
-orb, rack, names, bar, send button and proof all fit.
+The final-closeout audit covered 1440×900, 1280×720, 1150×666, 1024×768, 768×1024, 430×932, 390×844 and 360×800 on `/`,
+across the seven scenes and the three right-side modes. It found no horizontal scroll and no clipped visible text: H1,
+phrase, work object, orb, right side, bar and send button all fit. Source tiles widen to 160px at narrow desktop widths
+so their sub-labels never truncate. Phones show the cleanup plan as one line (current step and progress) and three
+source or tool marks with names kept as accessible names.
 
 - Routes never cross the H1 or the capability line.
 - The hero fits the first viewport at every size.
@@ -252,49 +254,35 @@ chunk, not server-rendered.
 
 ## 12. Tests
 
-- `frontend/src/components/homepage-next/phase1/orchestration.test.ts`: 39 hero tests with `tokens.test.ts`, run with
-  `npx tsx --test frontend/src/components/homepage-next/phase1/*.test.ts`. V12 adds tests for:
-  - the exact H1 and stale-headline removal
-  - the fixed lead, the seven phrases and the phone variants
-  - phrase-to-scene mapping
-  - one text-light event at a time
-  - the HeroAction model and `providerId: null`
-  - highlight, endpoint and result from one action
-  - provider routing per scene
-  - stores as destinations only
-  - providers visible before selection
-  - review controls kept out of production
-- `frontend/src/lib/homepageHeadline.test.ts`, `homepageOwnershipProof.test.ts` and `homepageAllInOne.test.ts` now lock the
-  single S00 mount and the removal of the old hero. The later-section order is unchanged.
-- The full frontend suite (878 tests) passes. Lint passes. Typecheck reports no errors in hero or homepage files; 27 errors exist
-  in unrelated test files and were there before this work. Backend and frontend production builds pass.
+- `frontend/src/components/homepage-next/phase1/orchestration.test.ts`: 47 hero tests (sequence, cadence, dwell, no empty
+  panel, phrase binding across two loops, one H1 shine, right-side modes and no stale mode, native research and cleanup
+  with no provider, dental order, provider correctness, lit target equals endpoint across two loops, signal grammar, QA
+  causality, orb rings, reduced motion, clock, bar). With `tokens.test.ts` and `lib/homepage*.test.ts`: 102 pass.
+- Full frontend suite: 916 pass. Lint: 0 errors. Production build passes. Typecheck: 27 errors, all pre-existing in
+  unrelated `src/lib` test files, none in S00 or homepage files.
+- Live QA (local Chrome, dev server): two full loops sampled about every 170ms showed no lit target without its route, no
+  empty work object, no proof line, the phrase in step with the scene and the right-side mode following within the swap
+  window. Interaction checks (orb drag, focus, typing, blur, resize at four sizes) kept typed text and the clock running,
+  with no horizontal scroll and no page errors.
 
 ## 13. Final screenshots
 
-All are in `docs/homepage-implementation/s00-final/` and were taken from the production route `/`:
-
-1. `01-1440-rest.png`
-2. `02-1440-saas-build.png`
-3. `03-1440-saas-provider-call-stripe.png`
-4. `04-1440-qa-failure.png`
-5. `05-1440-qa-repair.png`
-6. `06-1440-dental-calendar-active.png`: Google Calendar lit, route to Google Calendar, during booking
-7. `07-1440-dental-crm-hubspot-active.png`: HubSpot lit, route to HubSpot, during the CRM update
-8. `08-1440-cross-platform.png`
-9. `09-1440-research-native-first.png`
-10. `10-1440-growth.png`
-11. `11-1440-active-rotator.png`
-12. `12-1440-bright-background-provider-readability.png`
-13. `13-1440-focused-command-bar.png`
-14. `14-1150x666.png`
-15. `15-768x1024.png`
-16. `16-390x844.png`
-17. `17-1440-reduced-motion.png`
-
-Event frames are frozen with `?at=` and their signal animations are paused at the exact route age, so the lit provider and the
-route endpoint shown are the same action. They are reproducible with `frontend/scripts/s00-final-capture.mjs`.
+`frontend/scripts/s00-final-capture.mjs` defines the 21-frame set for the final timeline (SaaS, QA, dental Calendar /
+HubSpot / Gmail active, research planning / source active / ranked result, cross-platform, cleanup dirty / plan /
+result, growth, bright-background readability, focused bar, 1150, 768, 390, reduced motion). The images in
+`s00-final/` predate the final closeout and are regenerated from the production route at lock time.
 
 ## 14. Known issue outside S00
 
 `userScopedCache.ts` can clear `xroga_pending_prompt` on a fresh signup, so a prompt typed before signing up may not
 auto-submit. This is outside the hero and has not been fixed here.
+
+## 15. Homepage header (founder exception to the S00-only scope)
+
+`phase1/s00-header.css`, imported by the hero, restyles the shared marketing header on the homepage only (every
+selector requires `.xv-public-marketing-shell:has(.xv-home-coding)`; other pages are unchanged). It is a floating
+black-titanium surface (rgba(8,9,11,0.78), quiet warm edge, light blur), 16px from the top, at most 1200px wide and about
+56px tall, with muted nav links, a pearl active state and the "Start Building Free" CTA as the only blue control (halo
+removed). The header's own transform (centring and scroll-hide) is untouched. The early-access notice sits under the
+header. The hero offset is 104px on desktop, 100px on tablet and 96px on phones, so the H1 never meets the header or the
+notice (measured at 1440, 1150, 1024, 768, 430, 390 and 360).

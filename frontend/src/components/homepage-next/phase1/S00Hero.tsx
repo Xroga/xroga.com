@@ -1,9 +1,9 @@
 'use client';
 
 /**
- * S00, the hero (V9 positioning and vignettes, V8 continuity and truth, V7 interaction, on the V6 shell).
- * Left: what Xroga is producing. Centre: the exact Xroga orb. Right: six tools chosen for the job.
- * Bottom: a working command bar. Six serious jobs across two cycles, no visible chapter names.
+ * S00, the hero. Left: what Xroga is producing. Centre: the exact Xroga orb. Right: the context for the
+ * job (tools, research sources or a cleanup plan). Bottom: a working command bar. Seven serious jobs in one
+ * continuous loop, no visible chapter names.
  */
 import dynamic from 'next/dynamic';
 import { useReducedMotion } from 'motion/react';
@@ -15,6 +15,8 @@ import type { BgBeat } from './orchestration';
 import { Stage, type StageMode } from './Stage';
 import { reviewParam, useOrchestration } from './useOrchestration';
 import s from './S00Hero.module.css';
+// the homepage header restyled to belong to this hero (homepage-scoped, see the file header)
+import './s00-header.css';
 
 const TITLE = [COPY.title.slice(0, COPY.title.lastIndexOf(' ')), COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)] as const;
 
@@ -130,9 +132,10 @@ export function S00Hero() {
               {/* one line on desktop; phones break after "for" (V12 §4) */}
               <span>{TITLE[0]}</span> <span>{TITLE[1]}</span>
             </h1>
-            {/* one restrained sweep of light over the static line, never a loop (V12 §5) */}
-            {frame.shine === 'title' && !reduced && (
-              <span key={`shine-${frame.t >= 5000}`} className={`${s.title} ${s.sheen}`} aria-hidden="true">
+            {/* the single H1 shine: a narrow band of light crosses the finished line about every 5 s; the
+                base text underneath never changes, and reduced motion renders none of this */}
+            {!reduced && (
+              <span className={`${s.title} ${s.shine}`} aria-hidden="true">
                 <span>{TITLE[0]}</span> <span>{TITLE[1]}</span>
               </span>
             )}
@@ -140,7 +143,6 @@ export function S00Hero() {
           <Capability
             phrase={frame.phrase}
             prevPhrase={frame.prevPhrase}
-            shine={frame.shine === 'phrase'}
             mobile={mode === 'mobile'}
             reduced={reduced}
           />
@@ -152,11 +154,6 @@ export function S00Hero() {
 
         <div className={s.action} data-in={frame.barIn || undefined}>
           <CommandBar request={reduced ? null : mode === 'mobile' ? (frame.vignette ? COMMANDS_MOBILE[frame.vignette] : null) : frame.prompt} pulse={frame.intent !== null} barRef={barRef} />
-          <p className={s.proof}>
-            <span className={s.count}>{COPY.proof}</span>
-            <span className={s.sep} aria-hidden="true" />
-            <span>{COPY.qualifier}</span>
-          </p>
         </div>
       </div>
     </section>
