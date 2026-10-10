@@ -333,10 +333,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * on both sides, so a gap that grows past the gutter still fails. Zero would fail
    * too: that is the old edge-to-edge layout coming back.
    */
-  // Read from the page rather than hardcoded: the gutter is 8px below `lg` and 14px
-  // above it, so a fixed number here would assert the wrong frame on a narrow runner.
+  // Fullscreen deliberately uses its own gutter, not the regular app gutter:
+  // on desktop --xv-fullscreen-gutter=8px while --xv-app-gutter=12px.
+  // Assert the actual fullscreen inset, keeping the test responsive.
   const GUTTER = await page.evaluate(() => parseFloat(
-    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-app-gutter'),
+    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-fullscreen-gutter'),
   ));
   expect(GUTTER, 'the frame gutter is not set').toBeGreaterThan(0);
   const fsShell = (await shell.boundingBox())!;
