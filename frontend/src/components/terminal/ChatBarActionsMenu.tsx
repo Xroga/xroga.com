@@ -94,7 +94,7 @@ export function ChatBarActionsMenu({
           position: 'fixed',
           left: rect.left,
           right: 'auto',
-          bottom: Math.max(8, window.innerHeight - rect.top + 8),
+          bottom: Math.max(8, window.innerHeight - rect.top + 11),
           width: rect.width,
           maxHeight: Math.min(panel === 'menu' ? 390 : 304, Math.max(150, rect.top - 8)),
         });
@@ -104,7 +104,7 @@ export function ChatBarActionsMenu({
       setMenuStyle({
         position: 'fixed',
         left: Math.min(Math.max(8, rect.left), window.innerWidth - width - 8),
-        bottom: Math.max(8, window.innerHeight - rect.top + 8),
+        bottom: Math.max(8, window.innerHeight - rect.top + 11),
         width: Math.min(width, 480),
         maxHeight: Math.min(panel === 'menu' ? 330 : 340, Math.max(176, rect.top - 12)),
       });
