@@ -18,9 +18,9 @@ import {
 } from '@/lib/theme';
 import { recoverCorruptStorage } from '@/lib/storageRecovery';
 
-export const SIDEBAR_MIN_WIDTH = 224;
+export const SIDEBAR_MIN_WIDTH = 208;
 export const SIDEBAR_MAX_WIDTH = 380;
-export const SIDEBAR_DEFAULT_WIDTH = 232;
+export const SIDEBAR_DEFAULT_WIDTH = 216;
 
 /**
  * The workspace pane's share of the split, as a percentage of the shell.

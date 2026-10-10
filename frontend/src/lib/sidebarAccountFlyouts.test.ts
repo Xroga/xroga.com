@@ -34,7 +34,8 @@ test('Automations and Library are coming soon and Publish is direct', () => {
   assert.match(SIDEBAR, /id: 'automations'/);
   assert.match(SIDEBAR, /id: 'library'/);
   assert.match(SIDEBAR, /newSection: true/);
-  assert.match(SIDEBAR, /aria-disabled="true"/);
+  assert.doesNotMatch(SIDEBAR, /aria-disabled="true"/);
+  assert.match(SIDEBAR, /\/dashboard\/automations#workflows/);
   assert.match(SIDEBAR, /xv-sidebar-new-badge/);
   assert.match(SIDEBAR, /href: '\/dashboard\/publish'/);
   assert.match(SIDEBAR, /aria-label=\{entry\.label\}/);

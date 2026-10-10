@@ -111,7 +111,10 @@ export function SidebarHoverMenu({ trigger, children, className }: SidebarHoverM
         'aria-haspopup': 'menu',
         // Focus fires before click. Both paths must converge on open; toggling here
         // opened on focus and immediately closed again for mouse and touch users.
-        onClick: () => setOpen(true),
+        onClick: (event: React.MouseEvent<HTMLElement>) => {
+          (trigger.props as { onClick?: (event: React.MouseEvent<HTMLElement>) => void }).onClick?.(event);
+          if (!event.defaultPrevented) setOpen(true);
+        },
         onFocus: () => setOpen(true),
         onKeyDown: (event: React.KeyboardEvent) => {
           if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
