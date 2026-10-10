@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
     return { rules: [{ userAgent: '*', disallow: '/' }] };
   }
 
-  const privatePaths = ['/api/', '/dashboard/', '/workspace', '/settings', '/admin', '/auth/', '/onboarding', '/preview/', '/terminal/'];
+  const privatePaths = ['/api/', '/dashboard/', '/workspace', '/settings', '/admin', '/auth/', '/onboarding', '/preview/', '/terminal/', '/os-preview/founder'];
   const publicSearchCrawlers = ['Googlebot', 'bingbot', 'OAI-SearchBot', 'PerplexityBot', 'Claude-SearchBot'];
   return {
     rules: [

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { hasPublicImageBackground, isPublicMarketingPath, PUBLIC_THEME_BACKGROUNDS } from './publicMarketing';
 
 test('public chrome excludes product, auth, private and preview surfaces', () => {
-  for (const path of ['/workspace', '/dashboard/projects/anything', '/admin', '/settings', '/auth/login', '/share/token', '/showcase/example/preview']) {
+  for (const path of ['/workspace', '/dashboard/projects/anything', '/admin', '/settings', '/auth/login', '/share/token', '/showcase/example/preview', '/os-preview', '/os-preview/founder']) {
     assert.equal(isPublicMarketingPath(path), false, path);
   }
   for (const path of ['/', '/features/ai-chat', '/ai-coding-agent', '/pricing', '/blog/arbitrary-slug', '/terms']) {

@@ -237,16 +237,18 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await showChatbar.click();
   await expect(composerInput).toBeVisible();
 
-  // The `+` menu is an upward extension of the composer, not a popup near it. The
-  // proof is geometric: its bottom edge must overlap the composer's top edge, so the
-  // two share a border rather than being separated by a visible gap.
+  // The portal intentionally floats 8 px above the composer (see
+  // ChatBarActionsMenu's rect-based bottom offset). Keep its positioning close,
+  // horizontally anchored, and consistent with the actual interface contract.
   const composerSurface = terminalDock.locator('.xv-chatbar-solid');
   await terminalDock.locator('.xv-cba-trigger').first().click();
   const plusMenu = page.locator('.xv-cba-menu');
   await expect(plusMenu).toBeVisible();
   const menuBox = (await plusMenu.boundingBox())!;
   const composerBox = (await composerSurface.boundingBox())!;
-  expect(composerBox.y - (menuBox.y + menuBox.height)).toBeLessThanOrEqual(0);
+  const composerGap = composerBox.y - (menuBox.y + menuBox.height);
+  expect(composerGap).toBeGreaterThanOrEqual(4);
+  expect(composerGap).toBeLessThanOrEqual(12);
   expect(Math.abs(menuBox.x - composerBox.x)).toBeLessThanOrEqual(2);
   expect(menuBox.width).toBeLessThanOrEqual(composerBox.width);
 
@@ -331,10 +333,11 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * on both sides, so a gap that grows past the gutter still fails. Zero would fail
    * too: that is the old edge-to-edge layout coming back.
    */
-  // Read from the page rather than hardcoded: the gutter is 8px below `lg` and 14px
-  // above it, so a fixed number here would assert the wrong frame on a narrow runner.
+  // Fullscreen deliberately uses its own gutter, not the regular app gutter:
+  // on desktop --xv-fullscreen-gutter=8px while --xv-app-gutter=12px.
+  // Assert the actual fullscreen inset, keeping the test responsive.
   const GUTTER = await page.evaluate(() => parseFloat(
-    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-app-gutter'),
+    getComputedStyle(document.querySelector('.xv-app-stage')!).getPropertyValue('--xv-fullscreen-gutter'),
   ));
   expect(GUTTER, 'the frame gutter is not set').toBeGreaterThan(0);
   const fsShell = (await shell.boundingBox())!;
@@ -404,8 +407,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
     'the account sits near the top of the rail rather than at its foot',
   ).toBeLessThan(40);
   // Back to the expanded sidebar for the assertions that follow.
-  await rail.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+  await rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await page.waitForTimeout(900);
   await expect(rail).not.toHaveClass(/is-collapsed/);
@@ -444,8 +446,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * row: the rail carries Dashboard and Projects now, so a positional match would
    * silently start hovering a nav link if the order ever changed.
    */
-  const sidebarMark = rail.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) });
+  const sidebarMark = rail.locator('.xv-sidebar-brand a[aria-label="Xroga"]');
   await expect(sidebarMark).toHaveCount(1);
   await sidebarMark.hover();
   // Longer than the hover-intent delay, which is deliberately not instant.
@@ -558,32 +559,27 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
-  // Expanded navigation deliberately uses the lightweight text wordmark; the collapsed rail
-  // below still uses the square image mark. Verify the current accessible brand control rather
-  // than requiring the retired wide image implementation.
-  const expandedWordmark = desktopSidebar.getByTestId('xroga-sidebar-wordmark');
-  await expect(expandedWordmark).toHaveAccessibleName('Xroga');
-  await expect(expandedWordmark).toHaveText('Xroga');
-  // Geometry must be measured against the product font rather than whichever fallback font
-  // happens to win the first CI paint. The fallback can be nearly square even though the
-  // settled wordmark is the intended wide mark.
-  await page.evaluate(() => document.fonts.ready);
+  // Expanded navigation now uses the accessible image wordmark supplied by Logo.
+  // Verify the brand link, correct source, and that the adjacent toolbar does not
+  // overlap the logo; do not look for the removed text-only test-id.
+  const expandedWordmark = desktopSidebar.locator('.xv-sidebar-brand').getByRole('link', { name: 'Xroga' });
+  await expect(expandedWordmark).toBeVisible();
+  await expect(expandedWordmark.locator('img[alt="Xroga"]')).toHaveAttribute(
+    'src',
+    /xroga-orb-wordmark-v2[.]webp/,
+  );
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  // The old floor here was 96px — the wordmark's full natural width. That only held while
-  // the logo was allowed to overflow the brand row: it rendered at 100px, ran underneath
-  // the utility card, and showed through behind the first icon. A floor of 96 now *requires*
-  // that defect, so it is replaced by the two things it was standing in for.
-  //
-  // The expanded control is already proven to be the text wordmark above, while the collapsed
-  // rail is independently proven to use the square image mark below. Do not impose an arbitrary
-  // width on the intentionally compact current wordmark; verify the real overlap invariant.
-  // It must stay out from under the toolbar — the actual reported defect, which
-  // the width floor never checked. The current expanded header intentionally places the
-  // utility controls on the row below the wordmark, so assert the layout invariant in
-  // the direction the UI now uses instead of assuming the retired side-by-side design.
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
-  expect(expandedLogoBox!.y + expandedLogoBox!.height).toBeLessThanOrEqual(brandToolbarBox.y);
+  // Depending on responsive layout, utilities can be beside or below the mark.
+  // In either case they must not visually overlap.
+  const separatedHorizontally =
+    expandedLogoBox!.x + expandedLogoBox!.width <= brandToolbarBox.x + 2 ||
+    brandToolbarBox.x + brandToolbarBox.width <= expandedLogoBox!.x + 2;
+  const separatedVertically =
+    expandedLogoBox!.y + expandedLogoBox!.height <= brandToolbarBox.y + 2 ||
+    brandToolbarBox.y + brandToolbarBox.height <= expandedLogoBox!.y + 2;
+  expect(separatedHorizontally || separatedVertically).toBe(true);
   /*
    * Scoped to the desktop edge toggle rather than matched by name across the page:
    * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
@@ -591,10 +587,10 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    */
   await page.locator('.xv-sidebar-edge-toggle').click();
   await expect(desktopSidebar).toHaveCSS('width', '64px');
-  // Same next/image encoding as the expanded-sidebar assertion above.
-  await expect(desktopSidebar.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+  // Collapsed rail uses the current square icon asset, not the retired PNG.
+  await expect(desktopSidebar.locator('.xv-sidebar-brand img[alt="Xroga"]')).toHaveAttribute(
     'src',
-    /(?:\/brand\/|%2Fbrand%2F)xroga-mark\.png/,
+    /xroga-orb-mark-v2[.]webp/,
   );
   const collapsedSidebarSurface = await desktopSidebar
     .locator('.xv-sidebar-floating')
@@ -619,8 +615,7 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
    * apart for one job — so clicking it here waited for an element that never appears
    * and took the whole spec to its timeout.
    */
-  await desktopSidebar.locator('.xv-sidebar-brand a')
-    .filter({ has: page.getByRole('img', { name: 'Xroga' }) })
+  await desktopSidebar.locator('.xv-sidebar-brand a[aria-label="Xroga"]')
     .hover();
   await expect(desktopSidebar).not.toHaveCSS('width', '64px');
 
@@ -694,8 +689,9 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   // it now carries this label, so a page-wide locator asserts something nobody meant.
   await expect(companion.getByRole('button', { name: 'Start voice input' })).toHaveCount(0);
   const canonicalComposer = page.locator('.xv-terminal-dock');
-  await expect(canonicalComposer.getByRole('button', { name: 'Enable Xroga voice' })).toBeVisible();
-  await expect(canonicalComposer.getByRole('button', { name: 'Voice settings' })).toBeVisible();
+  // The current voice controls use accessible names from XrogaVoiceControl.
+  await expect(canonicalComposer.getByRole('button', { name: 'Start voice typing' })).toBeVisible();
+  await expect(canonicalComposer.getByRole('button', { name: 'Voice options' })).toBeVisible();
   for (const removedChip of ['Website', 'Chatbot', 'SaaS', 'Mobile', 'Extension', 'Desktop']) {
     await expect(canonicalComposer.getByRole('button', { name: removedChip, exact: true })).toHaveCount(0);
   }

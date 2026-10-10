@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('public X-companion, themes, plan story, and accessibility are connected', async ({ page }) => {
+test('current public S00 homepage, themes and reduced-motion accessibility are connected', async ({ page }) => {
   await page.addInitScript(() => {
     class TestSpeechRecognition {
       lang = 'en-US';
@@ -18,7 +18,7 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
     (window as typeof window & { SpeechRecognition?: typeof TestSpeechRecognition }).SpeechRecognition = TestSpeechRecognition;
   });
   await page.goto('/');
-  await expect(page.getByTestId('xroga-companion-hero')).toBeVisible();
+  await expect(page.locator('#s00-title')).toBeVisible();
 
   // The "Capacity designed to finish work" plan section was removed from the homepage
   // by request, so its assertions are gone. Plan detail now lives on /pricing and
@@ -31,16 +31,11 @@ test('public X-companion, themes, plan story, and accessibility are connected', 
     await expect(page.locator('body')).toHaveClass(new RegExp(`theme-${theme.toLowerCase()}`));
   }
 
-  // Smoky opens usage on click. The old control panel stays removed — companion
-  // preferences live in Settings and dictation belongs to the composer — and the
-  // speech synthesis it carried is still gone.
-  await expect(page.getByRole('button', { name: /show usage/i }).first()).toBeVisible();
+  // The public homepage now renders S00Hero rather than the retired
+  // HomepageCompanionStage. Assert actual public interactions without restoring
+  // an obsolete companion just to satisfy a stale regression test.
+  await expect(page.getByRole('button', { name: /get started/i }).first()).toBeVisible();
   await expect(page.getByRole('region', { name: /companion panel/ })).toHaveCount(0);
-
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent('xroga:companion-event', {
-    detail: { type: 'runtime_progress', operation: 'testing', message: 'Running the real validation command', source: 'runtime' },
-  })));
-  await expect(page.getByTestId('xroga-companion-hero')).toHaveAttribute('data-operation', 'testing');
 
   await page.evaluate(() => {
     const stored = JSON.parse(localStorage.getItem('xroga-theme') ?? '{}');

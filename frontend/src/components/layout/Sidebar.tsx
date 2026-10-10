@@ -207,6 +207,12 @@ const navItems: NavEntry[] = [
     tip: 'Showcase templates, community, feedback, and settings.',
     children: [
       {
+        href: '/os-preview',
+        label: 'Explore Xroga OS',
+        icon: Compass,
+        tip: 'A clearly labelled preview of the planned Xroga OS experience.',
+      },
+      {
         href: '/showcase',
         motion: 'flip' as const,
         label: 'Showcase',

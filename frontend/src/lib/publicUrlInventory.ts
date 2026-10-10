@@ -140,7 +140,9 @@ export function buildPublicUrlInventory(): PublicUrlRecord[] {
 
   const nonIndexable: PublicUrlRecord[] = [
     ['/workspace', 'PRIVATE'], ['/dashboard', 'PRIVATE'], ['/settings', 'PRIVATE'], ['/admin', 'PRIVATE'],
+    ['/os-preview/founder', 'PRIVATE'],
     ['/auth/login', 'PRIVATE'], ['/auth/signup', 'PRIVATE'], ['/auth/github/callback', 'PRIVATE'], ['/onboarding', 'PRIVATE'], ['/preview', 'PRIVATE'], ['/terminal', 'PRIVATE'],
+    ['/os-preview', 'PUBLIC_NOINDEX'], ['/os-preview/[section]', 'PUBLIC_NOINDEX'], ['/os-preview/journey', 'PUBLIC_NOINDEX'], ['/os-preview/access-denied', 'PUBLIC_NOINDEX'],
     ['/image', 'PUBLIC_NOINDEX'], ['/cybersecurity', 'PUBLIC_NOINDEX'], ['/community/[postId]', 'PUBLIC_NOINDEX'], ['/ref/[code]', 'PUBLIC_NOINDEX'], ['/share/[token]', 'PUBLIC_NOINDEX'], ['/api', 'SYSTEM'], ['/robots.txt', 'SYSTEM'],
     ['/sitemap.xml', 'SYSTEM'], ['/llms.txt', 'SYSTEM'], ['/blog/feed.xml', 'SYSTEM'],
     ['/research/feed.xml', 'SYSTEM'], ['/changelog/feed.xml', 'SYSTEM'],

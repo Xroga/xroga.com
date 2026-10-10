@@ -49,6 +49,9 @@ test('keeps public and authentication routes available', () => {
     '/api/release',
     '/api/showcase/aura/chat',
     '/api/showcase/aura/health',
+    '/os-preview',
+    '/os-preview/journey',
+    '/os-preview/coding',
     // Unknown document routes must be handled by Next's not-found boundary, not
     // misclassified as private and redirected to login.
     '/definitely-not-a-real-xroga-route',
@@ -62,6 +65,8 @@ test('keeps application and API routes protected', () => {
     '/api/operations/portfolio',
     '/workspace/arbitrary-project',
     '/admin/arbitrary-tool',
+    '/os-preview/founder',
+    '/os-preview/founder/diagnostics',
     '/onboarding',
     '/api/arbitrary-private-endpoint',
   ]) {
