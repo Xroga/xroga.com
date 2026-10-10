@@ -1,6 +1,6 @@
 # S01 Capability Deck: final record
 
-**Status:** S01 CLOSED. Production commit `3e9c67ed`, deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11.
+**Status:** S01 LOCKED. Production commit `418a23f0` (closeout pass), deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. First release: `3e9c67ed`.
 
 Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreography) and
 `XROGA_S01_FINAL_PREMIUM_POLISH_AND_MAIN_HANDOFF.md` (final art direction). Both are founder documents kept outside Git.
@@ -93,3 +93,15 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
   reduced motion). Scroll on this laptop (Intel Iris Xe, Chrome): median 16.6 ms, p95 16.8 ms, same as a later section.
 - Known, out of scope: `HomepageShowcase` reports a hydration attribute mismatch under reduced motion.
 - Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-last-mile\`.
+
+### Production verification of 418a23f0 (https://xroga.com)
+- Live about five minutes after the push (automatic deployment; no manual deploy).
+- Geometry: 0 card/copy intersections in 76 samples each at 1440x900, 1440x690 and 1150x666; no covered buttons at
+  either chapter rest.
+- Explore: 31 of 31 checks pass once the page has fully loaded. Run immediately after DOMContentLoaded, the first card
+  saw the page jump to the top: that is the existing homepage hero scroll guard in `HomepageClient` (it resets to the
+  hero until the first real input) racing the test's programmatic scroll, not S01. A visitor reaches S01 by scrolling,
+  which satisfies the guard. Left unchanged (outside S01).
+- Evidence capture at 1440, 1150, 768, 430, 390, 360 and reduced motion: no overflow, no console errors.
+- S00 unchanged: one H1 `Xroga for everything.`, weight 580, colour rgb(230,227,220), shine 600 ms / 3300 ms.
+- Production screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-last-mile\production\`.
