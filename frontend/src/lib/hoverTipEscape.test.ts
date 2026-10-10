@@ -131,7 +131,7 @@ test('no sidebar entry is left without a description to show', () => {
   // animated glyph, so it has to be optional here — without it this matched only the
   // five rows that do not have one and stopped checking the rest.
   const nav = SIDEBAR.slice(SIDEBAR.indexOf('const navItems: NavEntry[] = ['), SIDEBAR.indexOf('interface SidebarProps'));
-  const entries = [...nav.matchAll(/label: '([^']+)'[\\s\\S]*?tip: '([^']+)'/g)];
+  const entries = [...nav.matchAll(/label: '([^']+)'[\s\S]*?tip: '([^']+)'/g)];
   assert.ok(entries.length >= 11, `expected the nav table, found ${entries.length} entries`);
   for (const [, label, tip] of entries) {
     assert.ok(tip.trim().length > 0, `"${label}" has an empty tip`);
