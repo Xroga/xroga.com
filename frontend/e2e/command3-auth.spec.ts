@@ -561,32 +561,20 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   await expect(desktopSidebar.getByRole('button', { name: 'New Terminal' })).toBeVisible();
   await expect(desktopSidebar.getByRole('separator', { name: 'Resize sidebar' })).toBeVisible();
   await expect(desktopSidebar.getByRole('button', { name: 'Change theme' })).toBeVisible();
-  // Expanded navigation deliberately uses the lightweight text wordmark; the collapsed rail
-  // below still uses the square image mark. Verify the current accessible brand control rather
-  // than requiring the retired wide image implementation.
-  const expandedWordmark = desktopSidebar.getByTestId('xroga-sidebar-wordmark');
-  await expect(expandedWordmark).toHaveAccessibleName('Xroga');
-  await expect(expandedWordmark).toHaveText('Xroga');
-  // Geometry must be measured against the product font rather than whichever fallback font
-  // happens to win the first CI paint. The fallback can be nearly square even though the
-  // settled wordmark is the intended wide mark.
-  await page.evaluate(() => document.fonts.ready);
+  // Expanded navigation now uses the accessible image wordmark supplied by Logo.
+  // Verify the brand link, correct source, and that the adjacent toolbar does not
+  // overlap the logo; do not look for the removed text-only test-id.
+  const expandedWordmark = desktopSidebar.locator('.xv-sidebar-brand').getByRole('link', { name: 'Xroga' });
+  await expect(expandedWordmark).toBeVisible();
+  await expect(expandedWordmark.getByRole('img', { name: 'Xroga' })).toHaveAttribute(
+    'src',
+    /(?:\\/brand\\/|%2Fbrand%2F)xroga-orb-wordmark-v2\\.webp/,
+  );
   const expandedLogoBox = await expandedWordmark.boundingBox();
   expect(expandedLogoBox).not.toBeNull();
-  // The old floor here was 96px — the wordmark's full natural width. That only held while
-  // the logo was allowed to overflow the brand row: it rendered at 100px, ran underneath
-  // the utility card, and showed through behind the first icon. A floor of 96 now *requires*
-  // that defect, so it is replaced by the two things it was standing in for.
-  //
-  // The expanded control is already proven to be the text wordmark above, while the collapsed
-  // rail is independently proven to use the square image mark below. Do not impose an arbitrary
-  // width on the intentionally compact current wordmark; verify the real overlap invariant.
-  // It must stay out from under the toolbar — the actual reported defect, which
-  // the width floor never checked. The current expanded header intentionally places the
-  // utility controls on the row below the wordmark, so assert the layout invariant in
-  // the direction the UI now uses instead of assuming the retired side-by-side design.
   const brandToolbarBox = (await desktopSidebar.locator('.xv-sidebar-header-actions').boundingBox())!;
-  expect(expandedLogoBox!.y + expandedLogoBox!.height).toBeLessThanOrEqual(brandToolbarBox.y);
+  // Current expanded sidebar has brand and utilities on the same row.
+  expect(expandedLogoBox!.x + expandedLogoBox!.width).toBeLessThanOrEqual(brandToolbarBox.x + 2);
   /*
    * Scoped to the desktop edge toggle rather than matched by name across the page:
    * the mobile trigger carries a sidebar label too, and a page-wide lookup resolves
