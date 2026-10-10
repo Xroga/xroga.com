@@ -47,21 +47,21 @@ const RocketIcon = forwardRef<RocketIconHandle, RocketIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {
     const controls = useAnimation();
     const reduced = useReducedMotion();
-    const controlled = useRef(false);
+    const isControlled = useRef(false);
 
     useImperativeHandle(ref, () => {
-      controlled.current = true;
+      isControlled.current = true;
       return {
         startAnimation: () => controls.start(reduced ? 'normal' : 'animate'),
         stopAnimation: () => controls.start('normal'),
       };
     });
     const enter = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-      if (controlled.current) onMouseEnter?.(event);
+      if (isControlled.current) onMouseEnter?.(event);
       else if (!reduced) controls.start('animate');
     }, [controls, onMouseEnter, reduced]);
     const leave = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-      if (controlled.current) onMouseLeave?.(event);
+      if (isControlled.current) onMouseLeave?.(event);
       else controls.start('normal');
     }, [controls, onMouseLeave]);
 
