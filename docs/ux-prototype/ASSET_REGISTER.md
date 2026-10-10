@@ -22,3 +22,7 @@ Repository metadata and commit IDs were checked against GitHub's repository and 
 | [dequelabs/axe-core](https://github.com/dequelabs/axe-core) | MPL-2.0 | `44f5b6c5ef14bb02659bf3a47f6ef04d83dd2faa` | Later automated accessibility audit candidate. | Deferred; license obligations and test integration to review. |
 
 Next.js 16/Tailwind 4 dashboard templates are design references only, not adopted. Their dependency stacks would conflict with the current Next.js 15/Tailwind 3 application. No repository was cloned or globally initialized.
+
+## Command 2 review (2026-10-10)
+
+The [dnd-kit repository](https://github.com/clauderic/dnd-kit) is MIT at `e522d9c6a3cbe39e6e980ee3b6fd7a78f238ab94`. It was evaluated for drag-and-drop reordering but not installed: the initial workflow editor uses native buttons and explicit up/down controls, which remain usable with keyboard and touch without a new drag runtime. The other Command 2 candidates above were rechecked at the same source commits; no source code was copied and no new package was installed. XYFlow could add a canvas later but would not replace the accessible list editor. Monaco and resizable panels were deferred because the preview uses a small read-only code comparison and responsive CSS; their bundles would add cost before a real code-editing use case is approved. Existing TanStack packages remain installed at the versions recorded above. Tremor, shadcn/ui and Radix were treated as pattern references; the preview keeps Xroga's theme and native controls.

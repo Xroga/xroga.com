@@ -3,7 +3,7 @@ import type { PreviewFeatureAvailability } from './osPreview';
 export interface PreviewDestination {
   slug: string;
   label: string;
-  group: 'Start' | 'Your work' | 'Capabilities' | 'Library';
+  group: 'Work' | 'Create' | 'Automate' | 'Explore' | 'Insights' | 'Account';
   availability: PreviewFeatureAvailability;
   benefit: string;
   detail: string;
@@ -11,23 +11,28 @@ export interface PreviewDestination {
 }
 
 export const PREVIEW_DESTINATIONS: PreviewDestination[] = [
-  { slug: 'workspace', label: 'Workspace', group: 'Your work', availability: 'available-now', benefit: 'Start with your outcome, then work with Xroga in one place.', detail: 'The existing workspace is available today for chat, projects and supported execution. This OS preview does not change its behavior.', liveHref: '/workspace' },
-  { slug: 'projects', label: 'Projects', group: 'Your work', availability: 'available-now', benefit: 'Return to your saved work.', detail: 'The current Projects area holds account-bound workspaces and repository context. Sign-in may be needed for private actions.', liveHref: '/dashboard/projects' },
-  { slug: 'coding', label: 'Coding', group: 'Capabilities', availability: 'interactive-preview', benefit: 'See how a software outcome could become a reviewable plan.', detail: 'Try the code-repair fixture in the Command 1 simulator. No repository is read or changed.' },
-  { slug: 'rich-results', label: 'Rich answer gallery', group: 'Capabilities', availability: 'interactive-preview', benefit: 'Explore sourced result cards across many kinds of answers.', detail: 'Test illustrative response cards using the same renderer as ordinary Xroga chat.' },
-  { slug: 'browser', label: 'Browser', group: 'Capabilities', availability: 'coming-soon', benefit: 'Review web actions before they happen.', detail: 'The future Browser Worker will show proposed navigation, evidence and approvals in one inspectable flow.' },
-  { slug: 'automations', label: 'Automations', group: 'Capabilities', availability: 'coming-soon', benefit: 'Turn repeat work into a controlled routine.', detail: 'Intended for scheduled and triggered workflows with clear scopes, approvals and history.' },
-  { slug: 'employees', label: 'AI Employees', group: 'Capabilities', availability: 'coming-soon', benefit: 'Bring the right specialist to each task.', detail: 'A future roster for focused work roles and supervised handoffs, not active workers in this preview.' },
-  { slug: 'work-packs', label: 'Work Packs', group: 'Capabilities', availability: 'coming-soon', benefit: 'Reuse the shape of successful work.', detail: 'Planned repeatable outcome templates with inputs, checks and approval points.' },
-  { slug: 'genome', label: 'Genome', group: 'Library', availability: 'coming-soon', benefit: 'Understand how a product was made.', detail: 'App Genome is a planned reusable product blueprint with decisions and dependencies.' },
-  { slug: 'artifacts', label: 'Artifacts', group: 'Library', availability: 'coming-soon', benefit: 'Keep deliverables and their proof together.', detail: 'Planned artifact library with versions, source links and acceptance records.' },
-  { slug: 'drive', label: 'Xroga Drive', group: 'Library', availability: 'coming-soon', benefit: 'Find your working files in one place.', detail: 'Planned account-bound file organization. No new file service is connected in Command 1.' },
-  { slug: 'insights', label: 'Insights', group: 'Library', availability: 'coming-soon', benefit: 'Know what work changed and what needs attention.', detail: 'Planned evidence-backed usage and quality views. There are no live analytics numbers in this preview.' },
-  { slug: 'settings', label: 'Settings', group: 'Your work', availability: 'available-now', benefit: 'Make the current workspace yours.', detail: 'Existing settings let you adjust supported account and appearance preferences.', liveHref: '/settings' },
+  { slug:'overview', label:'Overview', group:'Work', availability:'interactive-preview', benefit:'Understand the whole outcome.', detail:'A shared example of request, plan, review and result.' },
+  { slug:'workspace', label:'Workspace', group:'Work', availability:'interactive-preview', benefit:'Shape a clear outcome.', detail:'Choose a sample project and inspect its simulated plan.', liveHref:'/workspace' },
+  { slug:'projects', label:'Projects', group:'Work', availability:'interactive-preview', benefit:'Move between sample projects.', detail:'These example projects are separate from your real account projects.', liveHref:'/dashboard/projects' },
+  { slug:'activity', label:'Activity', group:'Work', availability:'interactive-preview', benefit:'Follow the example timeline.', detail:'Local demo milestones only; no production activity feed.' },
+  { slug:'coding', label:'Software Builder', group:'Create', availability:'interactive-preview', benefit:'Inspect a sample build or repair.', detail:'Review example files, a proposed diff and deterministic test results.' },
+  { slug:'browser', label:'Browser Operator', group:'Create', availability:'interactive-preview', benefit:'See bounded browser steps.', detail:'Try a deterministic CRM browser example with approval and retry.' },
+  { slug:'research', label:'Research', group:'Create', availability:'interactive-preview', benefit:'Inspect claims and uncertainty.', detail:'Fictional example evidence; not live web research.' },
+  { slug:'artifacts', label:'Artifacts', group:'Create', availability:'interactive-preview', benefit:'Inspect example deliverables.', detail:'Local previews only; no durable upload or external share.' },
+  { slug:'drive', label:'Drive', group:'Create', availability:'coming-soon', benefit:'Organize durable project files.', detail:'R2 uploads, backups and signed sharing are not connected.' },
+  { slug:'automations', label:'Workflows', group:'Automate', availability:'interactive-preview', benefit:'Design an approval-first workflow.', detail:'Edit and validate a local graph; no schedule or webhook is created.' },
+  { slug:'employees', label:'AI Employees', group:'Automate', availability:'interactive-preview', benefit:'Review the right specialist.', detail:'Browse example roles and permissions; no worker is assigned.' },
+  { slug:'work-packs', label:'Work Packs', group:'Automate', availability:'interactive-preview', benefit:'Bundle a repeatable example.', detail:'Choose a local pack; no real team or job is created.' },
+  { slug:'genome', label:'Xroga Genome', group:'Explore', availability:'interactive-preview', benefit:'Reuse a trusted foundation.', detail:'Inspect demo assets, compatibility and license rejection.' },
+  { slug:'experience', label:'Experience Engine', group:'Explore', availability:'interactive-preview', benefit:'Turn a verified pattern into a candidate.', detail:'Review privacy and trust on fictional examples; no procedure is certified.' },
+  { slug:'skills', label:'Skills & Integrations', group:'Explore', availability:'interactive-preview', benefit:'Explore capabilities and permissions.', detail:'A preview catalog; no MCP server is installed or connected.' },
+  { slug:'rich-results', label:'Rich answers', group:'Explore', availability:'interactive-preview', benefit:'Explore structured answer cards.', detail:'The gallery uses sample fixtures; real chat uses its existing renderer.' },
+  { slug:'bench', label:'XrogaBench', group:'Insights', availability:'interactive-preview', benefit:'Compare example strategies.', detail:'Illustrative measurements only, never production benchmarks.' },
+  { slug:'models', label:'Model Strategy', group:'Insights', availability:'interactive-preview', benefit:'Review a proposed model mix.', detail:'Sample routing tradeoffs without real provider calls.' },
+  { slug:'insights', label:'Usage & Budgets', group:'Insights', availability:'interactive-preview', benefit:'Understand a sample budget.', detail:'Demo numbers are not billing or production usage.' },
+  { slug:'settings', label:'Settings', group:'Account', availability:'interactive-preview', benefit:'Control the preview.', detail:'Reset demo data and review availability; real account settings remain separate.', liveHref:'/settings' },
+  { slug:'help', label:'Help', group:'Account', availability:'interactive-preview', benefit:'Understand what is real.', detail:'A guide to the live workspace versus this preview.' },
 ];
 
-export const PREVIEW_GROUPS = ['Your work', 'Capabilities', 'Library'] as const;
-
-export function previewDestination(slug: string): PreviewDestination | undefined {
-  return PREVIEW_DESTINATIONS.find((item) => item.slug === slug);
-}
+export const PREVIEW_GROUPS = ['Work','Create','Automate','Explore','Insights','Account'] as const;
+export function previewDestination(slug: string) { return PREVIEW_DESTINATIONS.find((item) => item.slug === slug); }
