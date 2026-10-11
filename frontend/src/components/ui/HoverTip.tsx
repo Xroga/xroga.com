@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 
@@ -40,31 +40,32 @@ const VIEWPORT_MARGIN = 8;
  */
 export function HoverTip({
   label,
-  description,
   children,
   className,
   side = 'right',
   block = false,
 }: HoverTipProps) {
   const [visible, setVisible] = useState(false);
-  const [detail, setDetail] = useState(false);
   const [position, setPosition] = useState<TipPosition>({ top: 0, left: 0, ready: false });
   const anchorRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLSpanElement>(null);
   const labelTimer = useRef<ReturnType<typeof setTimeout>>();
-  const detailTimer = useRef<ReturnType<typeof setTimeout>>();
+  const dismissTimer = useRef<ReturnType<typeof setTimeout>>();
 
   function clearTimers() {
     clearTimeout(labelTimer.current);
-    clearTimeout(detailTimer.current);
+    clearTimeout(dismissTimer.current);
   }
 
   function onEnter() {
-    labelTimer.current = setTimeout(() => setVisible(true), 280);
-    if (description) {
-      detailTimer.current = setTimeout(() => setDetail(true), 900);
-    }
+    clearTimers();
+    labelTimer.current = setTimeout(() => {
+      setVisible(true);
+      dismissTimer.current = setTimeout(() => setVisible(false), 4_000);
+    }, 200);
   }
+
+  useEffect(() => () => clearTimers(), []);
 
   /**
    * Focus opens a tip for keyboard users, but a *click* also focuses — and a pointer
@@ -86,14 +87,12 @@ export function HoverTip({
   function onLeave() {
     clearTimers();
     setVisible(false);
-    setDetail(false);
     setPosition((current) => ({ ...current, ready: false }));
   }
 
   /**
    * Place the tip beside the trigger, then pull it back inside the viewport if the
-   * preferred side does not fit. Measuring the tip itself rather than assuming a size
-   * is what makes the second step correct once the description expands it.
+   * preferred side does not fit. Measuring the compact label keeps it on screen.
    */
   const place = useCallback(() => {
     const anchor = anchorRef.current?.getBoundingClientRect();
@@ -135,8 +134,7 @@ export function HoverTip({
   }, [side]);
 
   // Layout effect, not effect: the tip is painted at its final coordinates on the same
-  // frame it appears, so it never flashes at the top-left corner first. `detail` is a
-  // dependency because expanding the description changes the height it is centred on.
+  // frame it appears, so it never flashes at the top-left corner first.
   useLayoutEffect(() => {
     if (!visible) return;
     place();
@@ -146,7 +144,7 @@ export function HoverTip({
       window.removeEventListener('scroll', place, true);
       window.removeEventListener('resize', place);
     };
-  }, [visible, detail, place]);
+  }, [visible, place]);
 
   return (
     <span
@@ -178,17 +176,9 @@ export function HoverTip({
                 // still giving it a box.
                 visibility: position.ready ? 'visible' : 'hidden',
               }}
-              className={cn(
-                'z-[300] pointer-events-none xv-hover-tip',
-                detail && description ? 'xv-hover-tip-detail' : ''
-              )}
+              className="z-[300] pointer-events-none xv-hover-tip"
             >
               <span className="block font-semibold text-[11px] whitespace-nowrap">{label}</span>
-              {detail && description && (
-                <span className="block text-[10px] opacity-85 mt-1 max-w-[200px] whitespace-normal leading-snug">
-                  {description}
-                </span>
-              )}
             </span>,
             document.body
           )

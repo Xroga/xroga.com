@@ -50,7 +50,6 @@ import { Logo } from './Logo';
 import { SidebarSearchModal } from './SidebarSearchModal';
 import { SidebarProjectHistory } from './SidebarProjectHistory';
 import { HoverTip } from '@/components/ui/HoverTip';
-import { SidebarTip } from '@/components/ui/SidebarTip';
 import { SidebarHoverMenu } from '@/components/ui/SidebarHoverMenu';
 import { ProfileQuickMenu } from '@/components/ui/ProfileQuickMenu';
 import { UpgradeActionButton } from '@/components/ui/UpgradeActionButton';
@@ -474,7 +473,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
         onClick={(event) => handleNavEntryClick(event, child.href)}
         className={cn('xv-sidebar-hover-menu__item', isActive(child.href) && 'is-active')}>
         <span className="xv-sidebar-hover-menu__icon"><NavIcon entry={child} /></span>
-        <span className="min-w-0 flex-1"><strong>{child.label}</strong><small>{child.tip}</small></span>
+        <span className="min-w-0 flex-1"><strong>{child.label}</strong></span>
         {child.planned ? <span className="xv-sidebar-soon">Soon</span> : null}
       </Link>
     );
@@ -746,7 +745,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
             </div>
           ) : (
             <div className="xv-sidebar-collapsed-actions" aria-label="Workspace shortcuts">
-              <HoverTip label="Workspace" description="Return to the active workspace terminal.">
                 <Link
                   href="/workspace"
                   aria-label="Workspace"
@@ -755,7 +753,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={TerminalIcon} />
                 </Link>
-              </HoverTip>
               <HoverTip label="New terminal" description="Start a fresh workspace terminal.">
                 <button type="button" onClick={handleNewChat} aria-label="New Terminal">
                   <AnimatedIcon icon={NewTerminalIcon} />
@@ -766,7 +763,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   <AnimatedIcon icon={LocateFixedIcon} />
                 </button>
               </HoverTip>
-              <HoverTip label="Dashboard" description="Recent activity, billing, plan, and usage.">
                 <Link
                   href="/dashboard"
                   aria-label="Dashboard"
@@ -775,8 +771,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={LayoutGridIcon} />
                 </Link>
-              </HoverTip>
-              <HoverTip label="Projects" description="Open connected repositories and their workspaces.">
                 <Link
                   href="/dashboard/projects"
                   aria-label="Projects"
@@ -785,8 +779,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={FolderOpenIcon} />
                 </Link>
-              </HoverTip>
-              <HoverTip label="Integrations" description="Connect GitHub, Vercel, and other tools.">
                 <Link
                   href="/dashboard/integrations"
                   aria-label="Integrations"
@@ -795,7 +787,6 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={ConnectIcon} />
                 </Link>
-              </HoverTip>
               <HoverTip label="Theme" description="Choose the workspace theme.">
                 <ThemeToggle placement="right-start" />
               </HoverTip>
@@ -851,14 +842,14 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                     </div>
                   </SidebarHoverMenu>
                 ) : (
-                  <SidebarTip key={entry.href} label={entry.label} description={entry.tip}>
+                  <span key={entry.href} className="relative block w-full xv-sidebar-tip-wrap">
                     <Link href={entry.href}
                       onClick={(event) => handleNavEntryClick(event, entry.href)}
                       className={cn(isActive(entry.href) && 'xv-active')}>
                       <NavIcon entry={entry} />
                       <span>{entry.label}</span>
                     </Link>
-                  </SidebarTip>
+                  </span>
                 ),
               )}
 
