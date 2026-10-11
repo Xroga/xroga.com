@@ -1,6 +1,6 @@
 # S01 Capability Deck: final record
 
-**Status:** S01 LOCKED. Production commit `634845c9` (founder-defects pass), deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. Earlier releases: `3e9c67ed`, `418a23f0`.
+**Status:** S01 CLOSED. Final production commit `040d8303`, deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. Earlier releases: `3e9c67ed`, `418a23f0`, `634845c9`.
 
 Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreography) and
 `XROGA_S01_FINAL_PREMIUM_POLISH_AND_MAIN_HANDOFF.md` (final art direction). Both are founder documents kept outside Git.
@@ -137,3 +137,19 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
 - Not verified: a complete new signup carrying the Try in Xroga request through to the workspace (the request is
   stored and the signup page opens; the account creation step was not run).
 - Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-defects\`.
+
+## Final closeout (2026-10-11, commit 040d8303)
+- Heading copy, exactly as approved: eyebrow `EXPLORE XROGA'S CAPABILITIES`; H2 line 1 `Artificial Intelligence was
+  the beginning.` (0.6 of the H2 size, softer tone); H2 line 2 `Super Intelligence is the vision.` (dominant, 60 px at
+  1440, 30 px at 390); statement `One workspace. A world of possibilities.`; the approved description. Super
+  Intelligence is presented as the vision, not an achieved capability. The previous vision line and its light pass are
+  removed; no new animation was added.
+- Explore detail card: the duplicate bottom-left `Back to cards` button is removed. The top-right control, Escape,
+  focus return and `Try in Xroga` are unchanged.
+- Verified locally and on production at 1894x896, 1440x900, 1440x690, 1150x666, 768x1024, 430x932, 390x844 and
+  360x800: all approved copy present, no clipping, no card/heading overlap, no horizontal overflow, one H1; exactly one
+  visible Back button; opened and closed by mouse (desktop) and touch (phones), keyboard Enter, Space, Tab to Back and
+  Escape, with focus returning to Explore. Production real clicks at 1894x896: 20 of 20 opened.
+- Tests: 30 S01 tests, 974 of 974 frontend tests, lint clean, typecheck 27 pre-existing `src/lib` errors only, build
+  passes.
+- Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-close\`.
