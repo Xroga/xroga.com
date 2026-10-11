@@ -13,12 +13,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, FocusEvent, PointerEvent as ReactPointerEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { ArrowLeft, ArrowRight, History, MessageSquare, MonitorSmartphone, Plug, Route, ShieldCheck } from 'lucide-react';
-import { CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION, type CapabilityId } from './capabilities.data';
+import dynamic from 'next/dynamic';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { CAPABILITIES, SECTION, type CapabilityId } from './capabilities.data';
 import { CapabilityCard } from './CapabilityCard';
 import { CapabilityFocus, type FocusRequest } from './CapabilityFocus';
 import { TRACK_VH, clamp, computeLayout, deckFrame, restProgress, withHeading, type DeckLayout } from './deckMotion';
 import s from './S01.module.css';
+
+/* the star field loads only with the desktop deck, and never on the server */
+const GalaxyField = dynamic(() => import('./GalaxyField').then((m) => m.GalaxyField), { ssr: false });
 
 type Mode = 'deck' | 'carousel' | 'static';
 
@@ -30,7 +34,9 @@ function Heading({ inStage }: { inStage?: boolean }) {
     <>
       <p className={s.identifier}>{SECTION.identifier}</p>
       <h2 id="s01-title" className={s.title}>
-        <span className={s.titleLead}>{SECTION.title.lead}</span> <span className={s.titleMain}>{SECTION.title.main}</span>
+        <span className={s.titleLead}>{SECTION.title.lead}</span> <span className={s.titleMain} data-text={SECTION.title.main}>
+          {SECTION.title.main}
+        </span>
       </h2>
       <p className={s.statement}>{SECTION.statement}</p>
       <p className={s.intro} data-stage={inStage || undefined}>
@@ -52,7 +58,7 @@ interface StageProps {
 const transformOf = (c: { x: number; y: number; z: number; rx: number; ry: number; rz: number; s: number }) =>
   `translate3d(${c.x.toFixed(2)}px, ${c.y.toFixed(2)}px, ${c.z.toFixed(2)}px) rotateX(${c.rx.toFixed(2)}deg) rotateZ(${c.rz.toFixed(2)}deg) rotateY(${(c.ry + 180).toFixed(2)}deg) scale(${c.s.toFixed(4)})`;
 
-function DeckStage({ layout: base, onExplore, detail }: StageProps) {
+function DeckStage({ layout: base, onExplore, detail, reduced }: StageProps & { reduced: boolean }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
@@ -269,6 +275,7 @@ function DeckStage({ layout: base, onExplore, detail }: StageProps) {
         <header ref={headRef} className={s.head}>
           <Heading inStage />
         </header>
+        <GalaxyField className={s.galaxy} reduced={reduced} />
         <div ref={lightRef} className={s.lights} aria-hidden>
           <i data-pool="cool" />
           <i data-pool="warm" />
@@ -505,39 +512,25 @@ function Gallery({ mode, onExplore, detail }: GalleryProps) {
   );
 }
 
-/* ------------------------------------------------------------------------------------------- continuity strip */
-
-const PLATFORM_ICONS = [MessageSquare, Route, Plug, MonitorSmartphone, ShieldCheck, History];
-
-function PlatformStrip() {
-  return (
-    <div className={s.platform} aria-labelledby="s01-platform-title">
-      <h3 id="s01-platform-title" className={s.platformTitle}>
-        {PLATFORM_TITLE}
-      </h3>
-      <ul className={s.platformList}>
-        {PLATFORM.map((item, i) => {
-          const Icon = PLATFORM_ICONS[i];
-          return (
-            <li key={item.title}>
-              <Icon aria-hidden className={s.platformIcon} />
-              <b>{item.title}</b>
-              <span>{item.text}</span>
-            </li>
-          );
-        })}
-      </ul>
-      <p className={s.note}>{SECTION.note}</p>
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------------------------------------------ section */
 
 export function S01CapabilityDeck() {
   const reduce = useReducedMotion();
   const [view, setView] = useState<{ mode: Mode; layout: DeckLayout | null }>({ mode: 'deck', layout: null });
   const [focus, setFocus] = useState<FocusRequest | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const title = sectionRef.current?.querySelector('#s01-title');
+    if (!title || !sectionRef.current) return;
+    const section = sectionRef.current;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) section.setAttribute('data-shine', '');
+      else section.removeAttribute('data-shine');
+    });
+    io.observe(title);
+    return () => io.disconnect();
+    // the deck replaces the first-paint heading once it has measured, so the observer re-attaches then
+  }, [view.mode, !!view.layout]);
   const focusRef = useRef<FocusRequest | null>(null);
 
   useEffect(() => {
@@ -587,9 +580,9 @@ export function S01CapabilityDeck() {
   const shared = useMemo(() => ({ onExplore, detail: focus?.id ?? null }), [onExplore, focus]);
 
   return (
-    <section id="capabilities" className={s.section} aria-labelledby="s01-title" data-mode={view.mode}>
+    <section ref={sectionRef} id="capabilities" className={s.section} aria-labelledby="s01-title" data-mode={view.mode}>
       {view.mode === 'deck' && view.layout ? (
-        <DeckStage layout={view.layout} {...shared} />
+        <DeckStage layout={view.layout} {...shared} reduced={!!reduce} />
       ) : view.mode === 'deck' ? (
         // first paint before measuring: a static heading so the section never renders empty
         <div className={s.flow}>
@@ -600,7 +593,6 @@ export function S01CapabilityDeck() {
       ) : (
         <Gallery mode={view.mode} {...shared} />
       )}
-      <PlatformStrip />
       <CapabilityFocus request={focus} reduced={!!reduce || view.mode === 'static'} onClosed={onClosed} />
     </section>
   );

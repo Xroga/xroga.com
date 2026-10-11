@@ -25,8 +25,8 @@ test('the canonical header owns desktop and mobile navigation', () => {
   assert.match(HEADER, /event\.key === 'Escape'/);
 });
 
-test('theme and account controls use the same shared public header', () => {
-  assert.match(HEADER, /<HomepageThemeSwitcher \/>/);
+test('the shared public header has account controls and no theme control', () => {
+  assert.doesNotMatch(HEADER, /HomepageThemeSwitcher|Change website theme/);
   assert.match(HEADER, /loggedIn \? 'Workspace' : 'Sign in'/);
   assert.match(HEADER, /href="\/workspace"/);
   assert.match(HEADER, /Start Building Free/);

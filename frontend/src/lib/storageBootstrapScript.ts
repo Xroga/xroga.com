@@ -1,7 +1,16 @@
+import { MARKETING_THEME, PRIVATE_PREFIXES } from './publicMarketing';
+
 /** Runs before React hydrates — prevents corrupt localStorage from crashing the app */
 export function storageBootstrapScript(): string {
   return `(function(){
   try {
+    // Public marketing routes always render the approved dark theme (mirrors isPublicMarketingPath).
+    var path = location.pathname || '/';
+    var privatePrefixes = ${JSON.stringify(PRIVATE_PREFIXES)};
+    // (no regex literal here: inside this template string its backslashes would be eaten)
+    var seg = path.split('/');
+    var isPreview = seg[1] === 'showcase' && !!seg[2] && seg[3] === 'preview';
+    var isMarketing = !isPreview && !privatePrefixes.some(function(p) { return path === p || path.indexOf(p + '/') === 0; });
     var themeKey = 'xroga-theme';
     var raw = localStorage.getItem(themeKey);
     var core = 'black';
@@ -54,6 +63,7 @@ export function storageBootstrapScript(): string {
         }
       }
     }
+    if (isMarketing) core = '${MARKETING_THEME}';
     var surfaces = { white: '#ffffff', gray: '#1a1a1a', black: '#000000', beige: '#f4eddf' };
     document.documentElement.setAttribute('data-theme', core);
     document.documentElement.setAttribute('data-accent', accent);

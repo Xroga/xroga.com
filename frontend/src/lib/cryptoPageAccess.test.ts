@@ -56,7 +56,7 @@ test('every crypto route in the config resolves to a page that exists', () => {
 test('the crypto page renders in black whatever the stored theme is', () => {
   assert.match(
     PROVIDER,
-    /pathname\?\.startsWith\('\/crypto'\) \? \('black' as const\) : null/,
+    /pathname\?\.startsWith\('\/crypto'\) \|\| \(pathname && isPublicMarketingPath\(pathname\)\) \? MARKETING_THEME : null/,
     'the crypto route no longer forces its theme',
   );
   assert.match(PROVIDER, /const core = forcedTheme \?\? normalizeTheme\(theme\)/, 'the forced theme must win');

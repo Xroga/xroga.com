@@ -24,7 +24,6 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { HomepageThemeSwitcher } from '@/components/companion/HomepageThemeSwitcher';
 import { Logo } from '@/components/layout/Logo';
 import { createClient } from '@/lib/supabase/client';
 import { PUBLIC_MARKETING_NAV } from '@/lib/publicMarketing';
@@ -495,7 +494,6 @@ export function PublicMarketingHeader() {
         </nav>
 
         <div className="xv-marketing-header__actions">
-          <HomepageThemeSwitcher />
           {loggedIn ? (
             <button
                 type="button"

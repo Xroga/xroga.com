@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION } from './capabilities.data';
+import { CAPABILITIES, SECTION } from './capabilities.data';
 import { B_FLIP_ORDER, COPY_CLEARANCE, computeLayout, deckFrame, introDropFor, restProgress, SCHEDULE, SPLIT, withHeading, type DeckFrame } from './deckMotion';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -56,12 +56,10 @@ test('exactly eight unique capabilities with the approved titles, numbers and ch
   assert.deepEqual(CAPABILITIES[0].stages, ['Structure', 'Logic', 'Test', 'Ready']);
   // every Try request asks for serious, multi-stage work (several clauses, not a one-line chatbot question)
   for (const c of CAPABILITIES) assert.ok(c.example.length >= 110 && /,/.test(c.example), `${c.id} example is multi-stage`);
-  assert.equal(PLATFORM_TITLE, 'One workspace. More ways to work.');
-  assert.equal(PLATFORM.length, 6);
 });
 
 const allCopy = () =>
-  JSON.stringify({ CAPABILITIES, PLATFORM, PLATFORM_TITLE, SECTION }) +
+  JSON.stringify({ CAPABILITIES, SECTION }) +
   read('./Vignettes.tsx') +
   read('./CapabilityCard.tsx') +
   read('./CapabilityFocus.tsx') +
@@ -415,7 +413,7 @@ test('face sweep: a clipped band across the card face, transform only, event-dri
 test('heading: two-line H2 with the vision line dominant; the detail card has a single Back to cards control', () => {
   const css = read('./S01.module.css');
   assert.match(css, /\.titleLead \{[\s\S]*?font-size: 0\.6em;/, 'the first line is smaller than the vision line');
-  assert.match(read('./S01CapabilityDeck.tsx'), /<span className=\{s\.titleLead\}>\{SECTION\.title\.lead\}<\/span> <span className=\{s\.titleMain\}>\{SECTION\.title\.main\}<\/span>/);
+  assert.match(read('./S01CapabilityDeck.tsx'), /<span className=\{s\.titleLead\}>\{SECTION\.title\.lead\}<\/span> <span className=\{s\.titleMain\} data-text=\{SECTION\.title\.main\}>\s*\{SECTION\.title\.main\}\s*<\/span>/);
   const focus = read('./CapabilityFocus.tsx');
   assert.equal((focus.match(/Back to cards/g) ?? []).length, 2, 'one button: its aria-label and its visible text');
   assert.match(focus, /<header className=\{f\.head\}>[\s\S]*?aria-label="Back to cards"/);
@@ -433,4 +431,53 @@ test('no readable face ever passes over another: face-up cards never overlap any
       for (let i = 1; i < up.length; i++) assert.ok(up[i - 1][1] - up[i][0] <= 1, `${w}x${h} p=${p.toFixed(3)} faces overlap`);
     }
   }
+});
+
+test('Super Intelligence shine: an overlay band over full-strength text, one pass then a long rest, only on screen', () => {
+  const css = read('./S01.module.css');
+  const after = css.slice(css.indexOf('.titleMain::after {'), css.indexOf('}', css.indexOf('.titleMain::after {')));
+  assert.match(after, /content: attr\(data-text\) \/ '';/, 'the copy is not read twice by screen readers');
+  assert.match(after, /pointer-events: none;/);
+  assert.match(after, /animation-play-state: paused;/);
+  assert.match(css, /\.section\[data-shine\] \.titleMain::after \{\s*animation-play-state: running;/);
+  const [, cycle] = css.match(/animation: visionShine ([\d.]+)s/)!;
+  const [, passPct] = css.match(/@keyframes visionShine \{\s*0% \{[^}]*\}\s*([\d.]+)%, 100%/)!;
+  const pass = (Number(passPct) / 100) * Number(cycle);
+  assert.ok(pass >= 1 && pass <= 1.4, `pass ${pass}s`);
+  assert.ok(Number(cycle) - pass >= 7 && Number(cycle) - pass <= 11, `rest ${Number(cycle) - pass}s`);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.titleMain::after \{\s*display: none;/);
+  // the resting text keeps its full colour (no transparent fill on the line itself)
+  const main = css.slice(css.indexOf('.titleMain {'), css.indexOf('}', css.indexOf('.titleMain {')));
+  assert.doesNotMatch(main, /transparent|opacity/);
+});
+
+test('one S01 narrative: no separate six-item strip or footer disclaimer; its useful points live in card details', () => {
+  const deck = read('./S01CapabilityDeck.tsx');
+  assert.doesNotMatch(deck, /PlatformStrip|One workspace\. More ways to work|SECTION\.note/);
+  assert.doesNotMatch(read('./S01.module.css'), /\.platform/);
+  const all = CAPABILITIES.flatMap((c) => c.details).join(' ');
+  for (const idea of [/ordinary words, typed or by voice/, /custom MCP servers when a job needs them/, /desktop, laptop or phone browser/, /models and tools/]) {
+    assert.match(all, idea);
+  }
+  assert.equal(CAPABILITIES.length, 8);
+});
+
+test('Galaxy field: budgeted, behind the cards, never takes the pointer, released on unmount', () => {
+  const g = read('./GalaxyField.tsx');
+  assert.match(g, /GALAXY_SCALE = 0\.5;/);
+  assert.match(g, /GALAXY_FRAME_MS = 1000 \/ 30;/);
+  assert.match(g, /new IntersectionObserver/);
+  assert.match(g, /document\.hidden/);
+  assert.match(g, /if \(reduced\) \{\s*draw\(4000\);/, 'reduced motion: one static frame');
+  assert.match(g, /GALAXY_PROBE_LIMIT_MS/);
+  assert.match(g, /loseContext\(\)/);
+  assert.doesNotMatch(g, /mousemove|addEventListener\('mouse/);
+  assert.match(g, /saturation: 0\.12,/);
+  const css = read('./S01.module.css');
+  assert.match(css, /\.galaxy \{[\s\S]*?pointer-events: none;[\s\S]*?mask-image/);
+  const deck = read('./S01CapabilityDeck.tsx');
+  assert.match(deck, /dynamic\(\(\) => import\('\.\/GalaxyField'\)[\s\S]*?ssr: false/);
+  const stage = deck.slice(deck.indexOf('function DeckStage('), deck.indexOf('function Gallery('));
+  assert.ok(stage.indexOf('<GalaxyField') < stage.indexOf('<ol className={s.deck}'), 'the field is behind the cards');
+  assert.doesNotMatch(deck.slice(deck.indexOf('function Gallery(')), /<GalaxyField/, 'no WebGL field on phones and tablets');
 });

@@ -69,8 +69,7 @@
   color: var(--ink);
   text-wrap: balance;
 }
-.section.section .title,
-.section.section .platformTitle {
+.section.section .title {
   color: #f0eee9 !important;
 }
 .titleLead {
@@ -82,8 +81,70 @@
   color: #c3c8d2;
 }
 .titleMain {
+  position: relative;
+  /* the line box hugs the text, so the light band is sized to the words rather than the full row */
+  width: fit-content;
+  margin-inline: auto;
+  /* the same warm-pearl base as the S00 headline: full strength, one step below white so the light can be seen */
+  color: #e6e3dc;
   display: block;
   margin-top: 0.1em;
+}
+/* the vision shine: a copy of the line, transparent except for one feathered silver-to-ice band, laid over the
+   resting text, which never dims. One pass of about 1.2 s, then a 9 s rest; it runs only while the heading is on
+   screen, and not at all under reduced motion. */
+.titleMain::after {
+  content: attr(data-text) / '';
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* material light: a steel leading edge, an ice shoulder, a white core and a faint lavender trail, so the band reads
+     against near-white letters */
+  background: linear-gradient(
+    104deg,
+    transparent 0%,
+    transparent 44.5%,
+    rgba(178, 160, 240, 0.55) 46%,
+    rgba(150, 200, 255, 0.9) 47.6%,
+    #ffffff 48.8%,
+    #ffffff 50.2%,
+    rgba(170, 210, 250, 0.9) 51.6%,
+    rgba(96, 108, 132, 0.85) 53.4%,
+    transparent 54.5%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: 125% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+  animation: visionShine 10.2s cubic-bezier(0.45, 0, 0.25, 1) 0.5s infinite;
+  animation-play-state: paused;
+}
+.section[data-shine] .titleMain::after {
+  animation-play-state: running;
+}
+@keyframes visionShine {
+  0% { background-position: 125% 0; }
+  12%, 100% { background-position: -25% 0; }
+}
+/* the star field sits behind everything on the stage, kept out of the heading area and faded at the edges */
+.galaxy {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
+  mask-image: radial-gradient(80% 70% at 50% 62%, #000 30%, transparent 85%);
+  transition: opacity 600ms ease;
+}
+.galaxy[data-state='off'] {
+  opacity: 0;
+}
+.galaxy canvas {
+  display: block;
 }
 .statement {
   margin: 16px 0 0;
@@ -467,76 +528,6 @@
   transition: none;
 }
 
-/* ------------------------------------------------------------------------------------------ continuity strip */
-.platform {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 72px 56px 104px;
-}
-.platformTitle {
-  margin: 0;
-  font-size: clamp(24px, 1rem + 1.2vw, 32px);
-  line-height: 1.15;
-  letter-spacing: -0.024em;
-  font-weight: 600;
-  font-variation-settings: 'opsz' 32;
-}
-.platformList {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0;
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--hair);
-}
-.platformList li {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 20px 18px 4px 0;
-}
-.platformList li + li {
-  padding-left: 18px;
-  border-left: 1px solid var(--hair);
-}
-.platformIcon {
-  width: 18px;
-  height: 18px;
-  color: #9bcdd3;
-  margin-bottom: 4px;
-}
-.platformList b {
-  font-size: 16px;
-  font-weight: 600;
-}
-.platformList span {
-  font-size: 14.5px;
-  line-height: 1.45;
-  color: var(--sub);
-}
-.note {
-  margin: 32px 0 0;
-  font-size: 13.5px;
-  color: var(--muted);
-}
-
-@media (max-width: 1099px) {
-  .platform {
-    padding: 56px 32px 88px;
-  }
-  .platformList {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .platformList li,
-  .platformList li + li {
-    padding: 18px 16px 16px 0;
-    border-left: 0;
-  }
-  .platformList li:nth-child(n + 4) {
-    border-top: 1px solid var(--hair);
-  }
-}
 @media (max-width: 640px) {
   /* the identifier stays on one line on phones */
   .identifier {
@@ -555,18 +546,12 @@
   .intro {
     font-size: 16px;
   }
-  .platform {
-    padding: 48px 20px 72px;
-  }
-  .platformList {
-    grid-template-columns: 1fr;
-  }
-  .platformList li + li {
-    border-top: 1px solid var(--hair);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .titleMain::after {
+    display: none;
+  }
   .turnIn,
   .dots i {
     transition: none;

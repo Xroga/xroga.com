@@ -342,7 +342,8 @@ test('the shared public header owns the homepage theme and account controls', ()
   assert.match(SWITCHER, /icon=\{PaletteIcon\}/, 'the homepage theme control lost the palette');
   assert.ok(!/<Palette\b/.test(SWITCHER), 'the static palette is back');
 
-  assert.match(HEADER, /<HomepageThemeSwitcher \/>/, 'the public header lost the canonical theme control');
+  // the public marketing site has one appearance: no theme control in its header (the workspace keeps its own)
+  assert.doesNotMatch(HEADER, /<HomepageThemeSwitcher \/>/, 'the public header shows a theme control again');
   const workspaceAt = HEADER.indexOf('xv-header-dashboard-button');
   assert.ok(workspaceAt >= 0, 'the signed-in Workspace action is gone');
   const workspaceControl = HEADER.slice(workspaceAt, HEADER.indexOf('</button>', workspaceAt));

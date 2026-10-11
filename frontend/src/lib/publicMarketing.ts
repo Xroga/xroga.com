@@ -7,7 +7,7 @@ export const PUBLIC_MARKETING_NAV = [
   { href: '/pricing', label: 'Pricing' },
 ] as const;
 
-const PRIVATE_PREFIXES = [
+export const PRIVATE_PREFIXES = [
   '/workspace',
   '/dashboard',
   '/admin',
@@ -18,6 +18,12 @@ const PRIVATE_PREFIXES = [
   '/ref',
   '/os-preview',
 ] as const;
+
+/**
+ * The public marketing site has exactly one appearance: the approved Xroga dark (Black Titanium) theme. A theme the
+ * visitor chose inside the workspace stays stored and is used there; it is never applied to these routes.
+ */
+export const MARKETING_THEME = 'black' as const;
 
 /** Public pages receive the brand system; application and private surfaces never do. */
 export function isPublicMarketingPath(pathname: string): boolean {

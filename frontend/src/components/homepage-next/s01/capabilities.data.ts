@@ -80,7 +80,7 @@ export const CAPABILITIES: Capability[] = [
     outcome: 'A client portal with sign-in, billing, admin permissions, and tested critical flows.',
     how: ['You describe the product', 'Xroga plans the structure', 'Builds and tests it', 'You get a preview and the code'],
     groups: [
-      { label: 'Products', text: 'Substantial working software, not snippets.', examples: ['SaaS', 'Web apps', 'Client portals', 'Internal systems', 'Dashboards'], points: [0] },
+      { label: 'Products', text: 'Substantial working software, not snippets.', examples: ['SaaS', 'Web apps', 'Client portals', 'Internal systems', 'Dashboards'], points: [0, 6] },
       { label: 'Product foundations', text: 'The parts real products need underneath.', examples: ['Frontend', 'Backend', 'Sign-in and roles', 'Data and APIs'], points: [3] },
       { label: 'Improvement', text: 'Work on what you already have.', examples: ['Feature changes', 'Debugging', 'Refactoring', 'Design to code'], points: [1, 2] },
       { label: 'Quality and delivery', text: 'Checked before it reaches you.', examples: ['Tests', 'Verification evidence', 'Preview', 'Release preparation'], points: [4, 5] },
@@ -92,6 +92,7 @@ export const CAPABILITIES: Capability[] = [
       'Set up backend APIs, databases, authentication, payments, and connected services where supported.',
       'Repair bugs, improve code, test functionality, and deliver editable outputs.',
       'Keep user ownership and external infrastructure permissions clear.',
+      'Describe what you want in ordinary words, typed or by voice where supported; no technical brief is needed.',
     ],
     example: 'Build a client portal for my logistics company with staff roles, shipment tracking, invoicing and an admin API. Test the critical paths and prepare it for release.',
     truth: [
@@ -151,7 +152,7 @@ export const CAPABILITIES: Capability[] = [
     groups: [
       { label: 'Front office', text: 'The everyday work around customers.', examples: ['Enquiries', 'Intake', 'Scheduling', 'Follow-ups'], points: [0] },
       { label: 'Operations', text: 'Repeatable processes and handoffs.', examples: ['Approval flows', 'Templates', 'Reports', 'Travel research'], points: [2, 3] },
-      { label: 'Connections', text: 'Optional, through the tools you already use.', examples: ['Inbox', 'Calendar', 'CRM', 'Support desk'], points: [1] },
+      { label: 'Connections', text: 'Optional, through the tools you already use.', examples: ['Inbox', 'Calendar', 'CRM', 'Support desk'], points: [1, 6] },
       { label: 'Oversight', text: 'You stay in control of sensitive steps.', examples: ['Approvals', 'Audit trail', 'Resumable work', 'Exceptions'], points: [4, 5] },
     ],
     details: [
@@ -161,6 +162,7 @@ export const CAPABILITIES: Capability[] = [
       'Let users create workflow templates or adapt approved templates where available.',
       'Provide approval requests for sensitive actions, with explicit permission and visible results.',
       'Recurring and scheduled operations are described at their current maturity, never as unattended work that is already live.',
+      'Use integrations, APIs and custom MCP servers when a job needs them. Many tasks need no connection at all.',
     ],
     example: 'Set up a front desk workflow for my dental clinic: qualify new inquiries, ask me before sending forms, book the visit in our calendar, update the patient record and draft the follow-up.',
     truth: [
@@ -324,7 +326,7 @@ export const CAPABILITIES: Capability[] = [
     outcome: 'Return to a multi-step project, see the last verified result and continue where it stopped.',
     how: ['You return to a project', 'Xroga restores the context', 'Continues permitted work', 'Pauses where you must approve'],
     groups: [
-      { label: 'Continuity', text: 'Projects that remember.', examples: ['History', 'Saved context', 'Files', 'Decisions'], points: [0] },
+      { label: 'Continuity', text: 'Projects that remember.', examples: ['History', 'Saved context', 'Files', 'Decisions'], points: [0, 7] },
       { label: 'Execution states', text: 'Always clear what is happening.', examples: ['In progress', 'Waiting', 'In review', 'Done'], points: [1, 2] },
       { label: 'Follow-ups', text: 'Unfinished work does not get lost.', examples: ['Open tasks', 'Procedures', 'Project health'], points: [3, 4] },
       { label: 'Governance', text: 'You keep the keys.', examples: ['Checkpoints', 'Evidence', 'Permissions', 'Audit status'], points: [5, 6] },
@@ -337,6 +339,7 @@ export const CAPABILITIES: Capability[] = [
       'Review deployment records, project health, incidents and maintenance workflows as their rollout permits.',
       'Keep the user in control of accounts, permissions, code, and customer data.',
       'Coordinate appropriate AI models and tools without requiring nontechnical users to understand internal routing.',
+      'Return to the same project from a desktop, laptop or phone browser.',
     ],
     example: 'Keep my product launch on track: list open tasks, prepare the weekly progress report, flag anything waiting on my approval and pick up where we left off.',
     truth: [
@@ -347,15 +350,3 @@ export const CAPABILITIES: Capability[] = [
     accent: '#c9d6e6',
   },
 ];
-
-/** The concluding strip of S01. The integration count is deliberately absent: the catalog is a build catalog,
- * not a count of live connectors (PUBLIC-CLAIM-VERIFICATION.md, "Hundreds of runtime integrations"). */
-export const PLATFORM: { title: string; text: string }[] = [
-  { title: 'Ask naturally', text: 'Describe your task in ordinary words or supported voice input.' },
-  { title: 'Smart execution', text: 'Xroga selects suitable AI models and capabilities.' },
-  { title: 'Connect apps', text: 'Use integrations, APIs and custom MCPs when needed.' },
-  { title: 'Across devices', text: 'Work from desktop, laptop or mobile.' },
-  { title: 'Stay in control', text: 'Review sensitive actions and keep ownership of your work.' },
-  { title: 'Keep your context', text: 'Return to projects without starting over.' },
-];
-export const PLATFORM_TITLE = 'One workspace. More ways to work.';

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { useThemeStore } from '@/store/useThemeStore';
 import { normalizeTheme, skinForTheme, THEME_SURFACE } from '@/lib/theme';
+import { isPublicMarketingPath, MARKETING_THEME } from '@/lib/publicMarketing';
 
 /**
  * Solid themes only: white | gray | black.
@@ -33,7 +34,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
    * Forced here rather than by writing `black` into the store, so the user's own
    * choice is untouched and comes back the moment they leave the page.
    */
-  const forcedTheme = pathname?.startsWith('/crypto') ? ('black' as const) : null;
+  // The public marketing site has a single approved appearance (see MARKETING_THEME); the stored choice is kept
+  // for the workspace and returns as soon as the visitor goes there.
+  const forcedTheme = pathname?.startsWith('/crypto') || (pathname && isPublicMarketingPath(pathname)) ? MARKETING_THEME : null;
 
   // Migrate legacy image/deep-work → white once
   useEffect(() => {

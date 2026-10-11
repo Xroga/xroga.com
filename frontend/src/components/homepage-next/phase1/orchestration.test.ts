@@ -207,9 +207,18 @@ test('one H1 shine system: a CSS band over a static base, none under reduced mot
   const title = css.slice(css.indexOf('.title {'), css.indexOf('}', css.indexOf('.title {')));
   assert.match(title, /font-variation-settings: 'opsz' 32;/);
   assert.match(title, /font-feature-settings: 'ss07' 1, 'cv11' 1;/);
-  const brandWeight = Number(css.match(/\.brand \{ font-weight: (\d+);/)![1]);
+  // Xroga signature: the brand word in the bundled Syne at a heavy weight; the rest in the tuned Inter cut
+  const brand = css.slice(css.indexOf('.brand {'), css.indexOf('}', css.indexOf('.brand {')));
+  assert.match(brand, /font-family: var\(--font-remixa\)/);
+  const brandWeight = Number(brand.match(/font-weight: (\d+);/)![1]);
   const restWeight = Number(title.match(/font-weight: (\d+);/)![1]);
-  assert.ok(brandWeight >= 650 && brandWeight <= 720 && restWeight >= 560 && restWeight <= 620 && brandWeight > restWeight, 'Xroga stronger than the rest');
+  assert.ok(brandWeight >= 700 && brandWeight <= 800 && restWeight >= 560 && restWeight <= 620 && brandWeight > restWeight, 'Xroga stronger than the rest');
+  // warm-titanium metal on the base text only: every stop near white, so resting contrast stays high
+  const metal = css.match(/\.title:not\(\.shine\) > span \{[\s\S]*?linear-gradient\(180deg, ([^;]+)\);/)!;
+  for (const hex of metal[1].match(/#[0-9a-f]{6}/gi)!) {
+    const [r, g, b] = [1, 3, 5].map((k) => parseInt(hex.slice(k, k + 2), 16));
+    assert.ok(0.2126 * r + 0.7152 * g + 0.0722 * b >= 190, `${hex} too dark for the headline`);
+  }
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.shine \{ display: none; \}/);
   assert.match(css, /:global\(\.xv-home-coding\) \.hero h1\.title \{ color: #e6e3dc !important; \}/, 'the homepage ink rule cannot wash the base out');
   assert.match(hero, /\{!reduced && \(\s*<span className=\{`\$\{s\.title\} \$\{s\.shine\}`\} aria-hidden="true">/);

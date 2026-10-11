@@ -95,8 +95,28 @@
   color: #e6e3dc;
   font-kerning: normal;
 }
-.brand { font-weight: 710; letter-spacing: -0.052em; }
+/* Xroga signature: the brand word is set in the bundled Syne (OFL) at a heavy weight, wide and engineered, while
+   "for everything." stays in the tuned Inter display cut, so the line reads as one sentence with a branded lead. */
+.brand {
+  font-family: var(--font-remixa), var(--font-inter), system-ui, sans-serif;
+  font-weight: 760;
+  letter-spacing: -0.03em;
+  font-feature-settings: normal;
+  margin-right: 0.04em;
+}
 .title > span { display: inline-block; white-space: nowrap; }
+/* Warm-titanium metal: each line carries its own vertical gradient (light at the top edge, a restrained graphite
+   band low in the letters), clipped to the glyphs. Every stop stays near white, so resting contrast stays high;
+   the saturated colour belongs to the orb and to the passing shine only. */
+.title:not(.shine) > span {
+  background-image: linear-gradient(180deg, #f8f6f1 0%, #eeece7 42%, #d6d8de 68%, #eceae5 84%, #c8cbd2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* room so descenders (g, y) keep their metal */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
 /* The H1 shine: a copy of the line that is transparent except for one narrow band of light, laid over the
    static pearl text so the base never dims. The band waits outside the left edge, crosses the whole line,
    leaves on the right, then rests before the next pass (every 3.3 s). No glow, and no colour on the base.
