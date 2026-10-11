@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { FolderOpen, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
+import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
@@ -41,7 +41,6 @@ import { loadWorkspaceSession } from '@/lib/workspacePersistence';
 import { projectContextKey } from '@/lib/projectContext';
 import { useWorkspaceIdentity } from '@/components/layout/WorkspaceIdentityContext';
 import { useWorkspaceAuthGate } from '@/components/workspace/WorkspaceAuthGate';
-import { HoverTip } from '@/components/ui/HoverTip';
 
 type RepoSession = {
   id: string;
@@ -155,53 +154,6 @@ function RepositoryFilterPopover({
 function repoLabel(full: string): string {
   if (!full.includes('/')) return full;
   return full.split('/')[1] || full;
-}
-
-/**
- * Conversation tick: visually a single horizontal line, with its entire touch/focus
- * target still usable. The portal tooltip keeps titles readable without putting
- * cards or background fills inside the history rail.
- */
-function HistoryTick({
-  label, description, active = false, pinned = false, disabled = false,
-  onOpen, onPin,
-}: {
-  label: string;
-  description?: string;
-  active?: boolean;
-  pinned?: boolean;
-  disabled?: boolean;
-  onOpen: () => void;
-  onPin?: () => void;
-}) {
-  return (
-    <div className="xv-history-tick-row">
-      <HoverTip label={label} description={description} side="right">
-        <button
-          type="button"
-          aria-label={'Open ' + label}
-          aria-current={active ? 'true' : undefined}
-          disabled={disabled}
-          onClick={onOpen}
-          className={cn('xv-history-tick', active && 'is-active', pinned && 'is-pinned')}
-        >
-          <span className="xv-history-tick__mark" aria-hidden="true" />
-        </button>
-      </HoverTip>
-      {onPin ? (
-        <button
-          type="button"
-          onClick={onPin}
-          aria-label={pinned ? 'Unpin conversation' : 'Pin conversation'}
-          aria-pressed={pinned}
-          className="xv-history-tick__pin"
-          title={pinned ? 'Unpin conversation' : 'Pin conversation'}
-        >
-          {pinned ? <PinOff size={11} aria-hidden="true" /> : <Pin size={11} aria-hidden="true" />}
-        </button>
-      ) : null}
-    </div>
-  );
 }
 
 /**
@@ -485,7 +437,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
         title: cloudTerminalLabel(s.terminalNumber),
-        preview: s.preview,
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
@@ -505,7 +456,6 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       push(e.githubRepoName, e.githubBranch || 'main', e.projectRoot || '/', {
         id: e.id,
         title: cloudTerminalLabel(n),
-        preview: e.prompt || e.preview,
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
@@ -751,23 +701,27 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
   }
   function renderConversationRow(session: RepoSession, pinned: boolean) {
     return (
-      <HistoryTick
-        key={session.id}
-        label={conversationTitle(session)}
-        description={[session.preview, formatCompactAgo(session.updatedAt)].filter(Boolean).join(' · ')}
-        active={session.id === activeSessionId}
-        pinned={pinned}
-        disabled={busyId === session.id}
-        onOpen={() => void openSession(session)}
-        onPin={pinStorageKey ? () => togglePin(session.id) : undefined}
-      />
+      <div key={session.id} className="group flex min-w-0 items-center gap-1 rounded-lg hover:bg-[var(--foreground)]/[0.05]">
+        <button type="button" className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-[10.5px] text-[var(--foreground)]/85 hover:text-[var(--foreground)]"
+          onClick={() => void openSession(session)} disabled={busyId === session.id} title={conversationTitle(session)}>
+          <span className="block truncate">{conversationTitle(session)}</span>
+        </button>
+        {pinStorageKey ? (
+          <button type="button" onClick={() => togglePin(session.id)}
+            aria-label={pinned ? 'Unpin conversation' : 'Pin conversation'} aria-pressed={pinned}
+            title={pinned ? 'Unpin conversation' : 'Pin conversation'}
+            className="shrink-0 rounded-md p-1.5 text-[var(--muted)] opacity-70 transition-opacity hover:text-[var(--foreground)] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:opacity-0 sm:group-hover:opacity-100">
+            {pinned ? <PinOff size={12} aria-hidden="true" /> : <Pin size={12} aria-hidden="true" />}
+          </button>
+        ) : null}
+      </div>
     );
   }
 
   if (!expanded) return null;
 
   return (
-    <div className="xv-history-rail mt-2 mb-1 px-1.5">
+    <div className="mt-2 mb-1 px-1.5">
       <div className="relative flex items-center justify-between gap-1 px-1.5 mb-1.5">
         <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">
           Repositories
@@ -878,16 +832,29 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                     folder.sessions.map((session) => {
                       const isActiveSession = session.id === activeSessionId;
                       return (
-                        <HistoryTick
+                        <button
                           key={session.id}
-                          label={conversationTitle(session).slice(0, 58)}
-                          description={[session.entry?.prompt || session.preview || session.githubRepoName, formatCompactAgo(session.updatedAt)].filter(Boolean).join(' · ').slice(0, 240)}
-                          active={isActiveSession}
+                          type="button"
                           disabled={busyId === session.id}
-                          onOpen={() => void openSession(session)}
-                          pinned={pinnedIds.includes(session.id)}
-                          onPin={pinStorageKey ? () => togglePin(session.id) : undefined}
-                        />
+                          onClick={() => void openSession(session)}
+                          className={cn(
+                            'w-full flex items-center gap-1.5 rounded-md pl-6 pr-2 py-1.5 transition-colors',
+                            'hover:bg-[var(--foreground)]/8',
+                            (isActiveRepo || isActiveSession) && 'bg-[var(--foreground)]/[0.04]',
+                            isActiveSession && 'ring-1 ring-[var(--accent)]/25'
+                          )}
+                        >
+                          <p className="flex-1 min-w-0 text-left text-[11px] font-semibold text-[var(--foreground)]/90 truncate leading-snug">
+                            {session.title}
+                          </p>
+                          <GitBranch className="h-2.5 w-2.5 text-violet-400 shrink-0" />
+                          {session.cloudSynced ? (
+                            <Cloud className="h-2.5 w-2.5 text-[var(--muted)] shrink-0 opacity-70" />
+                          ) : null}
+                          <span className="text-[9px] text-[var(--muted)] shrink-0 tabular-nums min-w-[1.5rem] text-right">
+                            {formatCompactAgo(session.updatedAt)}
+                          </span>
+                        </button>
                       );
                     })
                   )
