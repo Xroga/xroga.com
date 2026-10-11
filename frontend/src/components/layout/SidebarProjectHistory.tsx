@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { Cloud, FolderOpen, GitBranch, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
+import { FolderOpen, ChevronDown, ChevronRight, Pin, PinOff } from 'lucide-react';
 import { AnimatedIcon } from '@/components/icons/animated/AnimatedIcon';
 import { FilterIcon } from '@/components/icons/animated/FilterIcon';
 import { GitForkIcon } from '@/components/icons/animated/GitForkIcon';
