@@ -97,12 +97,30 @@
 }
 /* Xroga signature: the brand word is set in the bundled Syne (OFL) at a heavy weight, wide and engineered, while
    "for everything." stays in the tuned Inter display cut, so the line reads as one sentence with a branded lead. */
+/* Xroga: the tuned Inter display cut at a heavy weight, tight and confident, with optical kerning around Xr/og/ga */
 .brand {
-  font-family: var(--font-remixa), var(--font-inter), system-ui, sans-serif;
-  font-weight: 760;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+/* "for": quieter and lighter, on the same baseline, with optical space to both neighbours */
+.joiner {
+  font-weight: 430;
+  letter-spacing: -0.025em;
+  margin-left: 0.02em;
+}
+/* "everything.": a true italic serif (Newsreader Italic at its display optical size). It is set a little larger so its
+   x-height meets the sans, shares the baseline, and keeps room for the italic overhang and the period. */
+.signature {
+  font-family: var(--font-claude-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 460;
+  font-variation-settings: 'opsz' 72;
   font-feature-settings: normal;
-  margin-right: 0.04em;
+  font-size: 1.14em;
+  letter-spacing: -0.012em;
+  line-height: 0.84;
+  padding-right: 0.06em;
+  margin-left: 0.02em;
 }
 .title > span { display: inline-block; white-space: nowrap; }
 /* Warm-titanium metal: each line carries its own vertical gradient (light at the top edge, a restrained graphite
@@ -117,9 +135,21 @@
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
 }
+/* the quiet "for" carries a softer pearl, and "everything." a slightly more silvery sheen; one material throughout */
+.title:not(.shine) .joiner {
+  background-image: linear-gradient(180deg, #e4e3df 0%, #d3d5da 55%, #b9bdc5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.title:not(.shine) > .signature {
+  background-image: linear-gradient(176deg, #fbfaf7 0%, #edeef1 38%, #cfd3db 62%, #eef0f3 80%, #c3c8d1 100%);
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
 /* The H1 shine: a copy of the line that is transparent except for one narrow band of light, laid over the
    static pearl text so the base never dims. The band waits outside the left edge, crosses the whole line,
-   leaves on the right, then rests before the next pass (every 3.3 s). No glow, and no colour on the base.
+   leaves on the right, then rests before the next pass (every 5.4 s). No glow, and no colour on the base.
    With a 300% wide gradient the band centre sits at 1.5W - 2W * position, so 85% is fully left of the text and
    15% fully right of it. */
 .shine {
@@ -149,12 +179,12 @@
   background-position: 85% 0;
   -webkit-background-clip: text;
   background-clip: text;
-  /* one pass of 1.15 s, then a 2.15 s rest: a 3.3 s cycle, the first pass 0.6 s after paint */
-  animation: shine 3.3s cubic-bezier(0.42, 0, 0.32, 1) 0.6s infinite;
+  /* one pass of 1.4 s, then a 4 s rest: a 5.4 s cycle, the first pass 0.6 s after paint */
+  animation: shine 5.4s cubic-bezier(0.42, 0, 0.32, 1) 0.6s infinite;
 }
 @keyframes shine {
   0% { background-position: 85% 0; }
-  34.85%, 100% { background-position: 15% 0; }
+  25.9%, 100% { background-position: 15% 0; }
 }
 
 /* V12 §6–§9: fixed lead, one capability phrase that changes with the scene */

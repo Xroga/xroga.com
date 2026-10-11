@@ -19,15 +19,19 @@ import s from './S00Hero.module.css';
 import './s00-header.css';
 
 const TITLE = [COPY.title.slice(0, COPY.title.lastIndexOf(' ')), COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)] as const;
-/** The brand word carries the heavier, tighter Xroga Display cut; the rest of the line stays in the same family. */
+/**
+ * One sentence in three voices, inside the single H1: the brand word in a heavy engineered sans, a quiet "for", and
+ * the signature "everything." in a true italic serif (Newsreader Italic, bundled, OFL). The text content stays exactly
+ * "Xroga for everything."
+ */
 const BRAND = COPY.title.slice(0, COPY.title.indexOf(' '));
 const TitleText = () => (
   <>
     <span>
       <span className={s.brand}>{BRAND}</span>
-      {TITLE[0].slice(BRAND.length)}
+      <span className={s.joiner}>{TITLE[0].slice(BRAND.length)}</span>
     </span>{' '}
-    <span>{TITLE[1]}</span>
+    <span className={s.signature}>{TITLE[1]}</span>
   </>
 );
 
@@ -143,7 +147,7 @@ export function S00Hero() {
               {/* one line on desktop; phones break after "for" (V12 §4) */}
               <TitleText />
             </h1>
-            {/* the single H1 shine: a band of light crosses the finished line in about 1.15 s, every 3.3 s;
+            {/* the single H1 shine: a band of light crosses the finished line in about 1.4 s, every 5.4 s;
                 the base text underneath never changes, and reduced motion renders none of this */}
             {!reduced && (
               <span className={`${s.title} ${s.shine}`} aria-hidden="true">

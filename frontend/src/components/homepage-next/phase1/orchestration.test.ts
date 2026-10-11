@@ -64,7 +64,7 @@ test('copy: the H1 exactly, no stale headline, no eyebrow or support paragraph, 
   assert.match(hero, /COPY\.title\.slice\(0, COPY\.title\.lastIndexOf\(' '\)\)/);
   // the rendered text is exactly the title: brand word + rest of the first line + space + last word
   assert.match(hero, /const BRAND = COPY\.title\.slice\(0, COPY\.title\.indexOf\(' '\)\);/);
-  assert.match(hero, /<span className=\{s\.brand\}>\{BRAND\}<\/span>\s*\{TITLE\[0\]\.slice\(BRAND\.length\)\}\s*<\/span>\{' '\}\s*<span>\{TITLE\[1\]\}<\/span>/);
+  assert.match(hero, /<span className=\{s\.brand\}>\{BRAND\}<\/span>\s*<span className=\{s\.joiner\}>\{TITLE\[0\]\.slice\(BRAND\.length\)\}<\/span>\s*<\/span>\{' '\}\s*<span className=\{s\.signature\}>\{TITLE\[1\]\}<\/span>/);
   const brand = COPY.title.slice(0, COPY.title.indexOf(' '));
   const line = COPY.title.slice(0, COPY.title.lastIndexOf(' '));
   assert.equal(`${brand}${line.slice(brand.length)} ${COPY.title.slice(COPY.title.lastIndexOf(' ') + 1)}`, 'Xroga for everything.');
@@ -196,20 +196,27 @@ test('one H1 shine system: a CSS band over a static base, none under reduced mot
   const anim = css.match(/animation: shine ([\d.]+)s cubic-bezier\([^)]*\) ([\d.]+)s infinite;/);
   assert.ok(anim, 'one band on a repeating cycle');
   const [cycle, delay] = [Number(anim![1]), Number(anim![2])];
-  assert.ok(cycle >= 3.2 && cycle <= 3.6, `shine cycle ${cycle}s`);
+  assert.ok(cycle >= 4 && cycle <= 7.8, `shine cycle ${cycle}s`);
   assert.ok(delay >= 0.5 && delay <= 0.8, `first shine after ${delay}s`);
   const kf = css.match(/@keyframes shine \{\s*0% \{ background-position: 85% 0; \}\s*([\d.]+)%, 100% \{ background-position: 15% 0; \}\s*\}/);
   assert.ok(kf, 'one continuous pass, then a rest');
   const pass = (Number(kf![1]) / 100) * cycle;
-  assert.ok(pass >= 1.0 && pass <= 1.3, `one pass takes ${pass.toFixed(2)}s`);
-  assert.ok(cycle - pass >= 1.8 && cycle - pass <= 2.2, `rest ${(cycle - pass).toFixed(2)}s`);
+  // approved: a visible crossing of about 1.0 to 1.8 s, then about 3 to 6 s of calm
+  assert.ok(pass >= 1.0 && pass <= 1.8, `one pass takes ${pass.toFixed(2)}s`);
+  assert.ok(cycle - pass >= 3 && cycle - pass <= 6, `rest ${(cycle - pass).toFixed(2)}s`);
   // Xroga Display: bundled Inter at its display size, heavier brand word, verified features only
   const title = css.slice(css.indexOf('.title {'), css.indexOf('}', css.indexOf('.title {')));
   assert.match(title, /font-variation-settings: 'opsz' 32;/);
   assert.match(title, /font-feature-settings: 'ss07' 1, 'cv11' 1;/);
   // Xroga signature: the brand word in the bundled Syne at a heavy weight; the rest in the tuned Inter cut
   const brand = css.slice(css.indexOf('.brand {'), css.indexOf('}', css.indexOf('.brand {')));
-  assert.match(brand, /font-family: var\(--font-remixa\)/);
+  assert.doesNotMatch(brand, /font-family/, 'Xroga stays in the tuned Inter display cut');
+  // "everything.": a true italic serif from the bundled Newsreader (OFL), never faux italic or a skew
+  const sig = css.slice(css.indexOf('.signature {'), css.indexOf('}', css.indexOf('.signature {')));
+  assert.match(sig, /font-family: var\(--font-claude-serif\)/);
+  assert.match(sig, /font-style: italic;/);
+  assert.doesNotMatch(css, /skew/);
+  assert.match(read('../../../lib/fonts.ts'), /NewsreaderVariable-Italic\.ttf', style: 'italic'/);
   const brandWeight = Number(brand.match(/font-weight: (\d+);/)![1]);
   const restWeight = Number(title.match(/font-weight: (\d+);/)![1]);
   assert.ok(brandWeight >= 700 && brandWeight <= 800 && restWeight >= 560 && restWeight <= 620 && brandWeight > restWeight, 'Xroga stronger than the rest');
