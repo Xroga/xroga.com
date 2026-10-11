@@ -37,9 +37,7 @@
 }
 
 /* ------------------------------------------------------------------------------- heading (shared typography) */
-/* The heading block reads in three tiers: the section identifier, the vision line, then the H2. The vision line
-   states a direction ("building toward"), and gives the word superintelligence a refined emphasis: a heavier cut,
-   wide tracking, a cool pearl tone and a slow light pass that runs once every eight seconds. */
+/* The heading block: the identifier, a two-line H2 (the second line dominant), a short statement, then the description. */
 .identifier {
   display: inline-flex;
   align-items: center;
@@ -60,52 +58,10 @@
 .identifier::after {
   transform: scaleX(-1);
 }
-.vision {
-  margin: 14px 0 0;
-  font-size: clamp(14px, 0.62rem + 0.65vw, 18px);
-  line-height: 1.3;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-.visionLead {
-  font-weight: 450;
-  color: #b9bfcc;
-}
-.visionWord {
-  position: relative;
-  display: inline-block;
-  font-weight: 680;
-  letter-spacing: 0.22em;
-  color: #e4e8f6;
-}
-/* the light pass: a copy of the word in a pearl-to-violet gradient, revealed by a moving window */
-.visionWord::after {
-  content: attr(data-text) / '';
-  position: absolute;
-  inset: 0;
-  color: transparent;
-  background: linear-gradient(100deg, transparent 0%, transparent 40%, #ffffff 47%, #c9d3ff 50%, #b6a8f2 53%, transparent 60%, transparent 100%);
-  background-size: 260% 100%;
-  background-position: 120% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: visionPass 8s cubic-bezier(0.45, 0, 0.25, 1) 0.9s infinite;
-  pointer-events: none;
-}
-@keyframes visionPass {
-  0% { background-position: 120% 0; }
-  18%, 100% { background-position: -20% 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .visionWord::after {
-    animation: none;
-    display: none;
-  }
-}
 .title {
-  margin: 14px 0 0;
-  font-size: clamp(31px, 1.2rem + 3vw, 64px);
-  line-height: 1.02;
+  margin: 16px 0 0;
+  font-size: clamp(30px, 1.1rem + 2.9vw, 60px);
+  line-height: 1.04;
   letter-spacing: -0.036em;
   font-weight: 600;
   font-variation-settings: 'opsz' 32;
@@ -116,6 +72,26 @@
 .section.section .title,
 .section.section .platformTitle {
   color: #f0eee9 !important;
+}
+.titleLead {
+  display: block;
+  font-size: 0.6em;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  font-weight: 540;
+  color: #c3c8d2;
+}
+.titleMain {
+  display: block;
+  margin-top: 0.1em;
+}
+.statement {
+  margin: 16px 0 0;
+  font-size: clamp(17px, 0.85rem + 0.5vw, 21px);
+  line-height: 1.3;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 .intro {
   margin: 14px auto 0;
@@ -562,6 +538,17 @@
   }
 }
 @media (max-width: 640px) {
+  /* the identifier stays on one line on phones */
+  .identifier {
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+  }
+  .identifier::before,
+  .identifier::after {
+    width: 14px;
+  }
   .flow {
     padding: 88px 20px 8px;
   }

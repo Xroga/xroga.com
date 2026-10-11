@@ -29,15 +29,10 @@ function Heading({ inStage }: { inStage?: boolean }) {
   return (
     <>
       <p className={s.identifier}>{SECTION.identifier}</p>
-      <p className={s.vision}>
-        <span className={s.visionLead}>{SECTION.vision.lead}</span>{' '}
-        <span className={s.visionWord} data-text={SECTION.vision.word}>
-          {SECTION.vision.word}
-        </span>
-      </p>
       <h2 id="s01-title" className={s.title}>
-        {SECTION.title}
+        <span className={s.titleLead}>{SECTION.title.lead}</span> <span className={s.titleMain}>{SECTION.title.main}</span>
       </h2>
+      <p className={s.statement}>{SECTION.statement}</p>
       <p className={s.intro} data-stage={inStage || undefined}>
         {SECTION.intro}
       </p>

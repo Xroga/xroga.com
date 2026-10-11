@@ -32,13 +32,14 @@ test('exactly eight unique capabilities with the approved titles, numbers and ch
     assert.equal(c.groups.length, 4, c.id);
     assert.ok(c.details.length >= 5 && c.truth.length >= 2, c.id);
   }
-  assert.equal(SECTION.identifier, 'XROGA FEATURES');
-  assert.deepEqual(SECTION.vision, { lead: 'Building toward', word: 'superintelligence' });
-  assert.equal(SECTION.title, 'The power behind Xroga.');
+  assert.equal(SECTION.identifier, "EXPLORE XROGA'S CAPABILITIES");
+  assert.deepEqual(SECTION.title, { lead: 'Artificial Intelligence was the beginning.', main: 'Super Intelligence is the vision.' });
+  assert.equal(SECTION.statement, 'One workspace. A world of possibilities.');
   assert.equal(
     SECTION.intro,
-    'From creating software and exploring the web to running business operations, researching opportunities, working with data and launching products, Xroga brings many kinds of work into one place.',
+    "Xroga is being built to bring powerful capabilities together, taking work beyond a single prompt, tool or specialty. Explore what it can accomplish today and the intelligence we're working toward.",
   );
+
   assert.deepEqual(
     CAPABILITIES.map((c) => c.benefit),
     [
@@ -260,7 +261,7 @@ test('copy: the old section strings are gone and superintelligence is an aspirat
   const copy = allCopy();
   assert.doesNotMatch(copy, /01 \/ CAPABILITIES|What you can do with Xroga|Beyond answers. Into real work|What can Xroga take on/);
   assert.doesNotMatch(copy, /\b(is|are|first|achieved|world's) superintelligen|\bAGI\b/i);
-  assert.equal(SECTION.vision.lead, 'Building toward');
+  assert.match(SECTION.title.main, /is the vision\.$/, 'Super Intelligence is presented as the vision, not an achievement');
   // the heading is the section H2; the page keeps a single H1 in the hero
   assert.match(read('./S01CapabilityDeck.tsx'), /<h2 id="s01-title"/);
   assert.doesNotMatch(read('./S01CapabilityDeck.tsx') + read('./CapabilityCard.tsx') + read('./CapabilityFocus.tsx'), /<h1/);
@@ -411,12 +412,14 @@ test('face sweep: a clipped band across the card face, transform only, event-dri
   assert.match(read('./S01CapabilityDeck.tsx'), /card\.dataset\.dir = i % 2 \? 'up' : 'down';/);
 });
 
-test('vision line: superintelligence is emphasised as a direction, with a restrained single light pass', () => {
+test('heading: two-line H2 with the vision line dominant; the detail card has a single Back to cards control', () => {
   const css = read('./S01.module.css');
-  assert.match(css, /\.visionWord \{[\s\S]*?font-weight: 680;/);
-  assert.match(css, /animation: visionPass 8s/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.visionWord::after \{\s*animation: none;/);
-  assert.match(read('./S01CapabilityDeck.tsx'), /<p className=\{s\.identifier\}>\{SECTION\.identifier\}<\/p>/);
+  assert.match(css, /\.titleLead \{[\s\S]*?font-size: 0\.6em;/, 'the first line is smaller than the vision line');
+  assert.match(read('./S01CapabilityDeck.tsx'), /<span className=\{s\.titleLead\}>\{SECTION\.title\.lead\}<\/span> <span className=\{s\.titleMain\}>\{SECTION\.title\.main\}<\/span>/);
+  const focus = read('./CapabilityFocus.tsx');
+  assert.equal((focus.match(/Back to cards/g) ?? []).length, 2, 'one button: its aria-label and its visible text');
+  assert.match(focus, /<header className=\{f\.head\}>[\s\S]*?aria-label="Back to cards"/);
+  assert.doesNotMatch(read('./Focus.module.css'), /\.secondary/);
 });
 
 test('no readable face ever passes over another: face-up cards never overlap anywhere in the scroll', () => {

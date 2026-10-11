@@ -53,11 +53,11 @@ export interface Capability {
 export const SECTION = {
   /** an aspiration, not a claim: Xroga is building toward it */
   /** the section identifier */
-  identifier: 'XROGA FEATURES',
-  /** the vision line: a direction Xroga is building toward, never a claim that it is already there */
-  vision: { lead: 'Building toward', word: 'superintelligence' },
-  title: 'The power behind Xroga.',
-  intro: 'From creating software and exploring the web to running business operations, researching opportunities, working with data and launching products, Xroga brings many kinds of work into one place.',
+  identifier: "EXPLORE XROGA'S CAPABILITIES",
+  /** the H2 in two lines: where AI started, and Super Intelligence as Xroga's vision (a direction, not a claim) */
+  title: { lead: 'Artificial Intelligence was the beginning.', main: 'Super Intelligence is the vision.' },
+  statement: 'One workspace. A world of possibilities.',
+  intro: "Xroga is being built to bring powerful capabilities together, taking work beyond a single prompt, tool or specialty. Explore what it can accomplish today and the intelligence we're working toward.",
   chapters: {
     A: { name: 'Create and execute', range: '01 to 04' },
     B: { name: 'Understand and grow', range: '05 to 08' },

@@ -304,9 +304,6 @@ export function CapabilityFocus({ request, reduced, onClosed }: { request: Focus
                 <p className={f.fine}>{SECTION.note}</p>
               </div>
               <footer className={f.foot}>
-                <button type="button" className={f.secondary} onClick={close}>
-                  Back to cards
-                </button>
                 <button type="button" className={f.primary} onClick={tryRequest} disabled={sending}>
                   {sending ? 'Opening Xroga' : 'Try in Xroga'}
                   <ArrowRight aria-hidden />

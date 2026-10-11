@@ -397,12 +397,11 @@
 .foot {
   position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
   padding: 14px 24px 18px;
   border-top: 1px solid rgba(123, 153, 217, 0.14);
 }
-.secondary,
 .primary {
   display: inline-flex;
   align-items: center;
@@ -414,11 +413,6 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-}
-.secondary {
-  border: 1px solid rgba(236, 233, 226, 0.18);
-  background: transparent;
-  color: #ebe9e5;
 }
 .primary {
   border: 0;
@@ -434,7 +428,6 @@
   cursor: progress;
 }
 .close:focus-visible,
-.secondary:focus-visible,
 .primary:focus-visible {
   outline: 2px solid #9bcdd3;
   outline-offset: 2px;
