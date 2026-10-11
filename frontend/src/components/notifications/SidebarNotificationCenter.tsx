@@ -15,7 +15,7 @@ interface Props { open: boolean; onToggle: () => void; onClose: () => void; comp
 
 export function SidebarNotificationButton({ open, onToggle, compact = false }: Pick<Props, 'open' | 'onToggle' | 'compact'>) {
   const unread = useAppStore((s) => s.unreadCount);
-  return <button type="button" onClick={onToggle} aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} aria-expanded={open} className={compact ? 'relative grid h-9 w-9 place-items-center rounded-lg text-[var(--foreground)] hover:bg-[var(--foreground)]/[.08]' : 'xv-sidebar-head-icon relative'} title="Notifications">
+  return <button type="button" onClick={onToggle} aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} aria-expanded={open} className={compact ? 'relative grid h-9 w-9 place-items-center rounded-lg text-[var(--foreground)] hover:bg-[var(--foreground)]/[.08]' : 'xv-sidebar-head-icon relative'}>
     <Bell className="h-4 w-4" aria-hidden="true" />
     {unread > 0 && <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-[var(--card)]" aria-hidden="true" />}
   </button>;

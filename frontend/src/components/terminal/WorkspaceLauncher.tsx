@@ -30,8 +30,8 @@ export function WorkspaceLauncher({ className }: { className?: string }) {
         onClick={() => setChatbarHidden(!chatbarHidden)}
         className="xv-ws-launch xv-ws-launch--icon"
         aria-pressed={chatbarHidden}
-        title={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
         aria-label={chatbarHidden ? 'Show the chatbar' : 'Hide the chatbar'}
+        data-short-tip={chatbarHidden ? 'Show chatbar' : 'Hide chatbar'}
       >
         {/* A closing eye rather than a pair of panel-slide glyphs. Those said a
             panel would move; this says the thing stops being looked at — which is

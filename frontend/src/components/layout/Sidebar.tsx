@@ -717,7 +717,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   untouched; these hairlines just divide them the way a segmented control
                   divides its segments. */}
               <span className="xv-toolbar-sep" aria-hidden="true" />
-              <HoverTip label="Search" description="Search projects, chats, and commands.">
+              <HoverTip label="Search" description="Search projects, chats, and commands." side="bottom">
                 <button
                   type="button"
                   onClick={() => setSearchOpen(true)}
@@ -728,12 +728,14 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 </button>
               </HoverTip>
               <span className="xv-toolbar-sep" aria-hidden="true" />
-              <HoverTip label="Theme" description="Choose the workspace theme.">
+              <HoverTip label="Theme" description="Choose the workspace theme." side="bottom">
                 <ThemeToggle />
               </HoverTip>
               {isMobile && mobileOpen && !isGuest && !incognito ? (
                 /* Keep the bell directly beside the drawer close control on phones. */
-                <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} />
+                <HoverTip label="Notifications" side="bottom">
+                  <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} />
+                </HoverTip>
               ) : null}
               {isMobile && mobileOpen ? (
                 /* The same 28px borderless square as New, Search and Theme beside it.
@@ -758,7 +760,7 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                   <AnimatedIcon icon={NewTerminalIcon} />
                 </button>
               </HoverTip>
-              <HoverTip label="Search" description="Search projects, chats, and commands.">
+              <HoverTip label="Search" description="Search projects, chats, and commands." side="bottom">
                 <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
                   <AnimatedIcon icon={LocateFixedIcon} />
                 </button>
@@ -787,10 +789,10 @@ export function Sidebar({ displayName, email }: SidebarProps) {
                 >
                   <AnimatedIcon icon={ConnectIcon} />
                 </Link>
-              <HoverTip label="Theme" description="Choose the workspace theme.">
+              <HoverTip label="Theme" description="Choose the workspace theme." side="bottom">
                 <ThemeToggle placement="right-start" />
               </HoverTip>
-              {!isGuest && !incognito && <SidebarNotificationButton open={notificationsOpen} onToggle={() => { if (!effectiveSidebarOpen) toggleSidebar(); setNotificationsOpen((value) => !value); }} compact />}
+              {!isGuest && !incognito && <HoverTip label="Notifications" side="bottom"><SidebarNotificationButton open={notificationsOpen} onToggle={() => { if (!effectiveSidebarOpen) toggleSidebar(); setNotificationsOpen((value) => !value); }} compact /></HoverTip>}
             </div>
           )}
         </div>
@@ -956,7 +958,9 @@ export function Sidebar({ displayName, email }: SidebarProps) {
         ) : null}
         {effectiveSidebarOpen && !isGuest && !incognito && !terminalFullscreen ? (
           <div className="xv-sidebar-notification-edge hidden lg:flex">
-            <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} compact />
+            <HoverTip label="Notifications" side="bottom">
+              <SidebarNotificationButton open={notificationsOpen} onToggle={() => setNotificationsOpen((value) => !value)} compact />
+            </HoverTip>
           </div>
         ) : null}
         {/*

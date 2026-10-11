@@ -6,6 +6,8 @@ const NAV = read('../components/layout/Sidebar.tsx');
 const FLYOUT = read('../components/ui/SidebarHoverMenu.tsx');
 const CSS = read('../styles/uiverse.css');
 const STORE = read('../store/useThemeStore.ts');
+const LAUNCHER = read('../components/terminal/WorkspaceLauncher.tsx');
+const NOTIFICATIONS = read('../components/notifications/SidebarNotificationCenter.tsx');
 
 test('primary navigation retains the requested order and does not duplicate old groups', () => {
   const table = NAV.slice(NAV.indexOf('const navItems: NavEntry[] = ['), NAV.indexOf('interface SidebarProps'));
@@ -45,4 +47,12 @@ test('compact width preserves stored preferences and popover accessibility', () 
   assert.match(FLYOUT, /onFocusIn/);
   assert.match(FLYOUT, /event\.key === 'Escape'/);
   assert.match(FLYOUT, /requestAnimationFrame/);
+});
+
+test('utility hints sit below their icons and the eye names the chatbar', () => {
+  assert.equal((NAV.match(/<HoverTip label="Search"[^>]*side="bottom"/g) ?? []).length, 2);
+  assert.equal((NAV.match(/<HoverTip label="Theme"[^>]*side="bottom"/g) ?? []).length, 2);
+  assert.equal((NAV.match(/<HoverTip label="Notifications" side="bottom"/g) ?? []).length, 3);
+  assert.match(LAUNCHER, /data-short-tip=\{chatbarHidden \? 'Show chatbar' : 'Hide chatbar'\}/);
+  assert.doesNotMatch(NOTIFICATIONS, /title="Notifications"/);
 });
