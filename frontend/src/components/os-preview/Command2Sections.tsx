@@ -30,7 +30,8 @@ function ProjectPicker() {
 }
 
 function StoryTrail({ story }: { story: DemoStory }) {
-  return <nav className="os-story-trail" aria-label="Related example screens">{LINKS[story].map((step, index) => <Link href={step.href} key={`${step.href}-${index}`}><span>{String(index + 1).padStart(2,'0')}</span>{step.label}<ArrowRight size={14} /></Link>)}</nav>;
+  const journey = story === 'repair' ? 'code-repair' : story === 'browser-crm' ? 'crm-operations' : 'clinic';
+  return <nav className="os-story-trail" aria-label="Related example screens">{LINKS[story].map((step, index) => <Link href={step.href === '/os-preview/journey' ? `${step.href}?scenario=${journey}` : step.href} key={`${step.href}-${index}`}><span>{String(index + 1).padStart(2,'0')}</span>{step.label}<ArrowRight size={14} /></Link>)}</nav>;
 }
 
 function Workspace() {
@@ -42,7 +43,9 @@ function Workspace() {
   const assetId = useOsCommand2Store((s) => s.assetId);
   const employeeId = useOsCommand2Store((s) => s.employeeId);
   const workPack = useOsCommand2Store((s) => s.workPack);
-  const project = DEMO_PROJECTS.find((p) => p.id === story)!;
+  const draftGoal = useOsCommand2Store((s) => s.journeyDrafts[story]?.goal);
+  const baseProject = DEMO_PROJECTS.find((p) => p.id === story)!;
+  const project = { ...baseProject, goal: draftGoal?.trim() || baseProject.goal };
   return <><div className="os-split"><section className="os-panel"><span className="os-eyebrow">Outcome manager · demo</span><ProjectPicker/><h2>{project.goal}</h2><p>Outcome compiler → manager → plan → specialists → example execution → simulated verification → usable concept.</p><div className="os-field"><label htmlFor="os-budget">Illustrative budget: {budget} demo credits</label><input id="os-budget" type="range" min="1" max="100" value={budget} onChange={(event) => setBudget(Number(event.target.value))} /></div><p className="os-small">This is not model pricing, a reservation, or billing. Lower budgets would require a narrower real plan.</p><div className="os-actions"><button className="os-button os-button-primary" onClick={() => advance(story)} disabled={stages[story] === 'example-complete'}>Advance local example <ArrowRight size={15}/></button><Link className="os-button" href="/os-preview/journey">Review detailed plan</Link></div></section><section className="os-panel"><span className="os-eyebrow">Shared example state</span><h2>Stage: {stages[story].replaceAll('-',' ')}</h2><ul className="os-list"><li><strong>Selected foundation</strong><small>{DEMO_ASSETS.find((a) => a.id === assetId)?.name ?? 'None selected'}</small></li><li><strong>Selected specialist</strong><small>{DEMO_EMPLOYEES.find((e) => e.id === employeeId)?.name ?? 'None selected'}</small></li><li><strong>Selected work pack</strong><small>{workPack.replaceAll('-',' ')}</small></li><li><strong>Evidence</strong><small>Real acceptance checks have not been run.</small></li></ul></section></div><section className="os-section"><div className="os-section-head"><div><span className="os-eyebrow">One connected workspace</span><h2>Follow the example across screens.</h2></div></div><StoryTrail story={story}/></section></>;
 }
 

@@ -2,6 +2,10 @@ import type { Response, NextFunction } from 'express';
 import { getSupabaseAdmin } from '../config/supabase.js';
 import type { AuthRequest } from './auth.js';
 
+export function canReadAdminOperations(role: unknown): boolean {
+  return role === 'admin' || role === 'owner';
+}
+
 export async function adminMiddleware(
   req: AuthRequest,
   res: Response,
@@ -20,7 +24,7 @@ export async function adminMiddleware(
       .eq('id', req.userId)
       .maybeSingle();
 
-    if (profile?.role === 'admin' || profile?.role === 'owner') {
+    if (canReadAdminOperations(profile?.role)) {
       next();
       return;
     }

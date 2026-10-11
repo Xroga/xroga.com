@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Activity, AppWindow, ArrowLeft, ArrowUpRight, Blocks, BookOpen, Bot, Braces, CalendarClock, ChevronDown, ChevronRight, CircleHelp, Code2, Compass, Folder, Globe2, HardDrive, Layers3, Menu, PanelLeftClose, Play, Settings2, ShieldCheck, FlaskConical, GitBranch, LifeBuoy } from 'lucide-react';
 import { PREVIEW_DESTINATIONS, PREVIEW_GROUPS } from '@/lib/osPreviewNavigation';
 import { useOsCommand2Store } from '@/store/useOsCommand2Store';
@@ -18,13 +18,21 @@ export function OsPreviewShell({ children, context = 'Product preview' }: { chil
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [closedGroups, setClosedGroups] = useState<string[]>([]);
+  const openerRef = useRef<HTMLButtonElement>(null);
+  const drawerCloseRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { void useOsCommand2Store.persist.rehydrate(); }, []);
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
   useEffect(() => {
     if (!menuOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') setMenuOpen(false); };
+    drawerCloseRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        window.requestAnimationFrame(() => openerRef.current?.focus());
+      }
+    };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
@@ -32,11 +40,11 @@ export function OsPreviewShell({ children, context = 'Product preview' }: { chil
   return (
     <div className="os-preview">
       <a className="os-skip" href="#os-main">Skip to content</a>
-      {menuOpen ? <button className="os-backdrop" aria-label="Close preview navigation" onClick={() => setMenuOpen(false)} /> : null}
+      {menuOpen ? <button className="os-backdrop" aria-label="Close preview navigation" onClick={() => { setMenuOpen(false); openerRef.current?.focus(); }} /> : null}
       <aside className={`os-sidebar ${menuOpen ? 'is-open' : ''}`} aria-label="Xroga OS preview navigation">
         <div className="os-sidebar-top">
           <Link href="/os-preview" className="os-wordmark" aria-label="Xroga OS preview home"><span className="os-brand-mark">X</span><span>Xroga <b>OS</b></span></Link>
-          <button className="os-icon-button os-drawer-close" type="button" onClick={() => setMenuOpen(false)} aria-label="Close preview navigation"><PanelLeftClose size={18} /></button>
+          <button ref={drawerCloseRef} className="os-icon-button os-drawer-close" type="button" onClick={() => { setMenuOpen(false); openerRef.current?.focus(); }} aria-label="Close preview navigation"><PanelLeftClose size={18} /></button>
         </div>
         <div className="os-sidebar-scroll">
           <p className="os-nav-label">Start here</p>
@@ -57,7 +65,7 @@ export function OsPreviewShell({ children, context = 'Product preview' }: { chil
       </aside>
       <div className="os-stage">
         <header className="os-topbar">
-          <button className="os-icon-button os-menu-toggle" type="button" aria-label="Open preview navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
+          <button ref={openerRef} className="os-icon-button os-menu-toggle" type="button" aria-label="Open preview navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
           <div className="os-breadcrumb"><Link href="/os-preview">Xroga OS</Link><ChevronRight size={14} aria-hidden="true" /><span>{context}</span></div>
           <Link className="os-back-link" href="/workspace" prefetch={false}><ArrowLeft size={15} /> Current workspace</Link>
         </header>

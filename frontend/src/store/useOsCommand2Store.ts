@@ -7,6 +7,7 @@ import { DEMO_PROJECTS, INITIAL_WORKFLOW, nextDemoStage, type DemoNodeKind, type
 interface Command2State {
   story: DemoStory;
   stages: Record<DemoStory, DemoStage>;
+  journeyDrafts: Partial<Record<DemoStory, { goal?: string; constraints?: string; deliverables?: Record<string, string> }>>;
   assetId: string;
   employeeId: string;
   workPack: string;
@@ -22,6 +23,8 @@ interface Command2State {
   selectedArtifact: string;
   savedFinding: string | null;
   setStory: (story: DemoStory) => void;
+  setJourneyText: (story: DemoStory, field: 'goal' | 'constraints', value: string) => void;
+  setJourneyDeliverable: (story: DemoStory, id: string, title: string) => void;
   advance: (story: DemoStory) => void;
   setAsset: (id: string) => void;
   setEmployee: (id: string) => void;
@@ -47,6 +50,7 @@ interface Command2State {
 const initial = () => ({
   story: 'clinic' as DemoStory,
   stages: { clinic:'request', 'browser-crm':'request', repair:'request' } as Record<DemoStory, DemoStage>,
+  journeyDrafts: {},
   assetId: 'booking-foundation', employeeId: 'frontend-engineer', workPack: 'dental-clinic', budget: 18,
   selectedFile: 'src/BookingForm.tsx', patchDecision: 'pending' as const,
   browserStep: 0, browserPaused: true, browserApproved: false,
@@ -57,6 +61,8 @@ const initial = () => ({
 export const useOsCommand2Store = create<Command2State>()(persist((set) => ({
   ...initial(),
   setStory: (story) => { const project = DEMO_PROJECTS.find((item) => item.id === story)!; set({ story, assetId:project.proposedAsset, employeeId:project.proposedEmployee, selectedArtifact:project.artifact, selectedFile: story === 'repair' ? 'src/checkout.ts' : 'src/BookingForm.tsx' }); },
+  setJourneyText: (story, field, value) => set((state) => ({ journeyDrafts: { ...state.journeyDrafts, [story]: { ...state.journeyDrafts[story], [field]: value } } })),
+  setJourneyDeliverable: (story, id, title) => set((state) => ({ journeyDrafts: { ...state.journeyDrafts, [story]: { ...state.journeyDrafts[story], deliverables: { ...state.journeyDrafts[story]?.deliverables, [id]: title } } } })),
   advance: (story) => set((state) => ({ stages: { ...state.stages, [story]: nextDemoStage(state.stages[story]) } })),
   setAsset: (assetId) => set({ assetId }),
   setEmployee: (employeeId) => set({ employeeId }),

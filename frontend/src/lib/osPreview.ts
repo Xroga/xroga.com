@@ -9,6 +9,7 @@ export interface PreviewTaskNode { id: string; title: string; role: string; depe
 export interface PreviewRunEvent { id: string; step: number; status: PreviewUserFacingStatus; title: string; detail: string }
 export interface PreviewApproval { id: string; service: string; reason: string; required: boolean }
 export interface PreviewEvidence { id: string; title: string; requirement: string; demoState: 'not-executed' }
+export interface PreviewSampleEvidence { criterion: string; passed: boolean; note: 'Fixture-only check; no real execution' }
 export interface PreviewArtifact { id: string; title: string; kind: 'website' | 'patch' | 'workflow'; summary: string }
 export interface PreviewOutcomeContract {
   id: PreviewScenario;
@@ -22,8 +23,8 @@ export interface PreviewOutcomeContract {
   artifact: PreviewArtifact;
   budget: { label: string; amount: number; unit: 'demo credits' };
 }
-export interface PreviewRunState { scenario: PreviewScenario; ending: PreviewEnding; status: PreviewUserFacingStatus; step: number; events: PreviewRunEvent[]; paused: boolean }
-export interface PreviewReceipt { label: 'DEMO / NOT EXECUTED'; scenario: PreviewScenario; status: PreviewUserFacingStatus; evidence: PreviewEvidence[]; completedSteps: number; actualExternalChanges: 0 }
+export interface PreviewRunState { scenario: PreviewScenario; ending: PreviewEnding; status: PreviewUserFacingStatus; step: number; events: PreviewRunEvent[]; sampleEvidence: PreviewSampleEvidence[]; paused: boolean }
+export interface PreviewReceipt { label: 'DEMO / NOT EXECUTED'; scenario: PreviewScenario; status: PreviewUserFacingStatus; evidence: PreviewEvidence[]; sampleEvidence: PreviewSampleEvidence[]; completedSteps: number; actualExternalChanges: 0 }
 
 export const PREVIEW_FIXTURES: Record<PreviewScenario, PreviewOutcomeContract> = {
   clinic: {
@@ -71,7 +72,13 @@ export const PREVIEW_FIXTURES: Record<PreviewScenario, PreviewOutcomeContract> =
 };
 
 export function createPreviewRun(scenario: PreviewScenario, ending: PreviewEnding = 'verified'): PreviewRunState {
-  return { scenario, ending, status: 'draft', step: 0, events: [], paused: true };
+  return { scenario, ending, status: 'draft', step: 0, events: [], sampleEvidence: [], paused: true };
+}
+
+function hasPassingSampleEvidence(run: PreviewRunState): boolean {
+  const criteria = PREVIEW_FIXTURES[run.scenario].acceptanceCriteria;
+  return criteria.length > 0 && run.sampleEvidence.length === criteria.length
+    && criteria.every((criterion, index) => run.sampleEvidence[index]?.criterion === criterion && run.sampleEvidence[index].passed);
 }
 
 const STAGES: PreviewUserFacingStatus[] = ['queued', 'working', 'validating'];
@@ -80,20 +87,23 @@ const STAGE_TITLES = ['Plan accepted for simulation', 'Sample work in progress',
 export function advancePreviewRun(run: PreviewRunState): PreviewRunState {
   if (run.step >= 4) return run;
   const nextStep = run.step + 1;
-  const status = nextStep === 4 ? run.ending : STAGES[nextStep - 1];
+  const sampleEvidence = nextStep === 3 ? PREVIEW_FIXTURES[run.scenario].acceptanceCriteria.map((criterion, index) => ({ criterion, passed: run.ending === 'verified' || (run.ending === 'partially-complete' && index === 0), note: 'Fixture-only check; no real execution' as const })) : run.sampleEvidence;
+  const checkedRun = { ...run, sampleEvidence };
+  const status = nextStep === 4 ? (run.ending === 'verified' && !hasPassingSampleEvidence(checkedRun) ? 'unable-to-complete' : run.ending) : STAGES[nextStep - 1];
   const title = nextStep === 4
-    ? ({ verified: 'Demo path complete', 'needs-approval': 'Approval would be needed', 'partially-complete': 'Some steps need follow-up', 'unable-to-complete': 'Demo cannot continue' } as const)[run.ending]
+    ? ({ verified: 'Demo path complete', 'needs-approval': 'Approval would be needed', 'partially-complete': 'Some steps need follow-up', 'unable-to-complete': 'Demo cannot continue' } as const)[status as PreviewEnding]
     : STAGE_TITLES[nextStep - 1];
   const detail = nextStep === 4
     ? 'This is a simulated result. No real tools ran, no evidence was collected, and no external changes were made.'
     : 'Illustrative event only. No live worker, service, or provider was contacted.';
   const event: PreviewRunEvent = { id: `${run.scenario}-${nextStep}`, step: nextStep, status, title, detail };
-  return { ...run, step: nextStep, status, events: [...run.events, event], paused: nextStep === 4 ? true : run.paused };
+  return { ...run, step: nextStep, status, events: [...run.events, event], sampleEvidence, paused: nextStep === 4 ? true : run.paused };
 }
 
 export function createPreviewReceipt(run: PreviewRunState): PreviewReceipt | null {
   if (run.step !== 4) return null;
-  return { label: 'DEMO / NOT EXECUTED', scenario: run.scenario, status: run.status, evidence: PREVIEW_FIXTURES[run.scenario].evidence, completedSteps: run.step, actualExternalChanges: 0 };
+  const status = run.status === 'verified' && !hasPassingSampleEvidence(run) ? 'unable-to-complete' : run.status;
+  return { label: 'DEMO / NOT EXECUTED', scenario: run.scenario, status, evidence: PREVIEW_FIXTURES[run.scenario].evidence, sampleEvidence: run.sampleEvidence, completedSteps: run.step, actualExternalChanges: 0 };
 }
 
 /** The only service adapter in Command 1. Future live adapters must be separate and server-authorized. */

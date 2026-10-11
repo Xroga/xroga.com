@@ -6,6 +6,9 @@ import { ArrowLeft, CirclePause, CirclePlay, ClipboardCheck, ExternalLink, Info,
 import { OsPreviewShell } from './OsPreviewShell';
 import { PREVIEW_FIXTURES, advancePreviewRun, createPreviewReceipt, createPreviewRun, type PreviewEnding, type PreviewScenario } from '@/lib/osPreview';
 import { useOsCommand2Store } from '@/store/useOsCommand2Store';
+import type { DemoStory } from '@/lib/osCommand2';
+
+const storyForScenario = (value: PreviewScenario): DemoStory => value === 'code-repair' ? 'repair' : value === 'crm-operations' ? 'browser-crm' : 'clinic';
 
 const SCENARIOS: Array<{ id: PreviewScenario; label: string }> = [
   { id: 'clinic', label: 'Clinic booking website' },
@@ -29,12 +32,24 @@ const outcomeCopy: Record<PreviewEnding, string> = {
 export function OsJourney() {
   const setDemoStory = useOsCommand2Store((state) => state.setStory);
   const advanceDemo = useOsCommand2Store((state) => state.advance);
+  const drafts = useOsCommand2Store((state) => state.journeyDrafts);
+  const setJourneyText = useOsCommand2Store((state) => state.setJourneyText);
+  const setJourneyDeliverable = useOsCommand2Store((state) => state.setJourneyDeliverable);
   const [scenario, setScenario] = useState<PreviewScenario>('clinic');
   const [ending, setEnding] = useState<PreviewEnding>('verified');
   const [goal, setGoal] = useState(PREVIEW_FIXTURES.clinic.goal);
   const [constraints, setConstraints] = useState(PREVIEW_FIXTURES.clinic.constraints.join('\n'));
   const [reviewed, setReviewed] = useState(false);
   const [run, setRun] = useState(() => createPreviewRun('clinic'));
+  const story = storyForScenario(scenario);
+  const savedGoal = drafts[story]?.goal;
+  const savedConstraints = drafts[story]?.constraints;
+
+  useEffect(() => {
+    if (run.step > 0) return;
+    setGoal(savedGoal ?? PREVIEW_FIXTURES[scenario].goal);
+    setConstraints(savedConstraints ?? PREVIEW_FIXTURES[scenario].constraints.join('\n'));
+  }, [scenario, savedGoal, savedConstraints, run.step]);
 
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get('scenario');
@@ -49,29 +64,31 @@ export function OsJourney() {
     return () => window.clearTimeout(timer);
   }, [run]);
 
-  const fixture = PREVIEW_FIXTURES[scenario];
+  const baseFixture = PREVIEW_FIXTURES[scenario];
+  const fixture = { ...baseFixture, deliverables: baseFixture.deliverables.map((item) => ({ ...item, title: drafts[story]?.deliverables?.[item.id] ?? item.title })) };
   const receipt = createPreviewReceipt(run);
 
   function changeScenario(next: PreviewScenario) {
-    setDemoStory(next === 'code-repair' ? 'repair' : next === 'crm-operations' ? 'browser-crm' : 'clinic');
+    setDemoStory(storyForScenario(next));
     setScenario(next);
-    setGoal(PREVIEW_FIXTURES[next].goal);
-    setConstraints(PREVIEW_FIXTURES[next].constraints.join('\n'));
+    setGoal(drafts[storyForScenario(next)]?.goal ?? PREVIEW_FIXTURES[next].goal);
+    setConstraints(drafts[storyForScenario(next)]?.constraints ?? PREVIEW_FIXTURES[next].constraints.join('\n'));
     setReviewed(false);
     setRun(createPreviewRun(next));
   }
 
-  function start() { if (reviewed) { advanceDemo(scenario === 'code-repair' ? 'repair' : scenario === 'crm-operations' ? 'browser-crm' : 'clinic'); setRun({ ...advancePreviewRun(createPreviewRun(scenario, ending)), paused: false }); } }
+  function start() { if (reviewed) { advanceDemo(story); setRun({ ...advancePreviewRun(createPreviewRun(scenario, ending)), paused: false }); } }
   function reset() { setRun(createPreviewRun(scenario, ending)); setReviewed(false); }
 
   return <OsPreviewShell context="Interactive journey">
     <div className="os-page-heading"><span className="os-status os-status--interactive-preview">Interactive preview</span><h1>See the work before it happens.</h1><p className="os-lead">Shape a request, review the plan, and step through a fully local example. Every event and receipt below is simulated.</p></div>
     <div className="os-demo-banner" role="note"><Info size={18} /> Demo experience — no real work or external changes are performed.</div>
+    <div onInputCapture={(event) => { const field = event.target as HTMLTextAreaElement; if (field.id === 'os-goal' || field.id === 'os-constraints') setJourneyText(story, field.id === 'os-goal' ? 'goal' : 'constraints', field.value); }}>
     <div className="os-journey-steps" aria-label="Journey stages">{['Define outcome','Review plan','Permissions','Simulate','Inspect result'].map((step, index) => <span className={`os-step-pill ${index === (run.step === 0 ? 0 : run.step === 4 ? 4 : 3) ? 'is-current' : ''}`} key={step}>{String(index + 1).padStart(2,'0')} {step}</span>)}</div>
 
     <div className="os-split">
       <div>
-        <section className="os-panel"><span className="os-eyebrow">01 / Define</span><h2 style={{ marginTop: 11 }}>What should the outcome be?</h2><div className="os-field"><label htmlFor="os-scenario">Example</label><select id="os-scenario" value={scenario} onChange={(event) => changeScenario(event.target.value as PreviewScenario)}>{SCENARIOS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></div><div className="os-field"><label htmlFor="os-goal">Goal</label><textarea id="os-goal" value={goal} onChange={(event) => setGoal(event.target.value)} maxLength={320} disabled={run.step > 0} /></div><div className="os-field"><label htmlFor="os-constraints">Constraints — one per line</label><textarea id="os-constraints" value={constraints} onChange={(event) => setConstraints(event.target.value)} maxLength={500} disabled={run.step > 0} /></div><p className="os-small">Your edits stay in this page. The fixture plan below is an example, not a generated answer to your custom text.</p></section>
+        <section className="os-panel"><span className="os-eyebrow">01 / Define</span><h2 style={{ marginTop: 11 }}>What should the outcome be?</h2><div className="os-field"><label htmlFor="os-scenario">Example</label><select id="os-scenario" value={scenario} onChange={(event) => changeScenario(event.target.value as PreviewScenario)}>{SCENARIOS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></div><div className="os-field"><label htmlFor="os-goal">Goal</label><textarea id="os-goal" value={goal} onChange={(event) => setGoal(event.target.value)} maxLength={320} disabled={run.step > 0} /></div><div className="os-field"><label htmlFor="os-constraints">Constraints — one per line</label><textarea id="os-constraints" value={constraints} onChange={(event) => setConstraints(event.target.value)} maxLength={500} disabled={run.step > 0} /></div><p className="os-small">Your draft is saved only in this browser preview and shown in the example workspace. The task plan remains a fixed fixture, not an AI-generated response to your text.</p></section>
         <section className="os-panel"><span className="os-eyebrow">02 / Outcome contract</span><h2 style={{ marginTop: 11 }}>A plan you can inspect</h2><p><strong>Goal:</strong> {goal.trim() || 'Add a goal to continue.'}</p><h3>Deliverables</h3><ul className="os-list">{fixture.deliverables.map((item) => <li key={item.id}><strong>{item.title}</strong><small>{item.detail}</small></li>)}</ul><h3 style={{ marginTop: 20 }}>Acceptance criteria</h3><ul className="os-list">{fixture.acceptanceCriteria.map((criterion) => <li key={criterion}>{criterion}</li>)}</ul><details style={{ marginTop: 17 }}><summary style={{ cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>Constraints and scope</summary><ul className="os-list">{constraints.split('\n').filter(Boolean).map((constraint, index) => <li key={`${index}-${constraint}`}>{constraint}</li>)}</ul></details></section>
         <section className="os-panel"><span className="os-eyebrow">03 / Proposed work</span><h2 style={{ marginTop: 11 }}>Sequence, not a black box</h2><ol className="os-list" style={{ paddingLeft: 0 }}>{fixture.tasks.map((task, index) => <li key={task.id}><strong>{String(index + 1).padStart(2,'0')} · {task.title}</strong><small>{task.role} · {task.description}</small><details><summary className="os-small" style={{ cursor: 'pointer' }}>Advanced detail</summary><small>Depends on: {task.dependsOn.length ? task.dependsOn.join(', ') : 'none'} · Example task ID: {task.id}</small></details></li>)}</ol><p className="os-small">{fixture.budget.label}: {fixture.budget.amount} {fixture.budget.unit}. This is a demo number, not usage or a quote.</p></section>
       </div>
@@ -81,7 +98,10 @@ export function OsJourney() {
         <section className="os-panel"><span className="os-eyebrow">Event timeline</span>{run.events.length ? <ol className="os-timeline" style={{ marginTop: 21 }}>{run.events.map((event) => <li className="os-timeline-item" key={event.id}><strong>{event.title}</strong><p>{event.detail}</p><details><summary className="os-small" style={{ cursor: 'pointer' }}>Event detail</summary><p className="os-small">Step {event.step} · {event.status} · {event.id}</p></details></li>)}</ol> : <div className="os-empty-state" style={{ marginTop: 15, padding: '29px 15px' }}><CirclePause size={24} /><h2>Ready when you are</h2><p>Review the permissions above, then start the sample run.</p></div>}</section>
       </div>
     </div>
-    <section className="os-section" style={{ marginTop: 24 }}><div className="os-section-head"><div><span className="os-eyebrow">06 / Result</span><h2>Show the work and the proof gap.</h2></div><p>Only real execution can satisfy these evidence requirements. The preview is explicit about what remains unverified.</p></div><div className="os-split"><div className="os-panel"><h2>{fixture.artifact.title}</h2><p>{fixture.artifact.summary}</p><div className="os-preview-mock" aria-label="Sample artifact concept"><header>EXAMPLE ARTIFACT · NOT DEPLOYED</header><div className="os-preview-mock-body">{scenario === 'clinic' ? <><span className="os-eyebrow">Sample clinic</span><h3>Care, on your schedule.</h3><p>Sample appointment slots illustrate the design direction.</p><div className="os-mock-slots"><span>Monday · 10:00</span><span>Tuesday · 14:30</span><span>Friday · 09:15</span></div></> : <><span className="os-eyebrow">{fixture.artifact.kind} concept</span><h3>{fixture.artifact.title}</h3><p>{fixture.artifact.summary}</p></>}</div></div></div><div className="os-panel"><h2>Evidence required for real work</h2><ul className="os-list">{fixture.evidence.map((evidence) => <li key={evidence.id}><strong>{evidence.title} · NOT EXECUTED</strong><small>{evidence.requirement}</small></li>)}</ul></div></div>{receipt ? <div className="os-receipt" role="status" style={{ marginTop: 18 }}><span className="os-receipt-label">{receipt.label}</span><h3 style={{ margin: '9px 0' }}>{receipt.status.replaceAll('-', ' ')} · simulated outcome</h3><p style={{ fontSize: 13, lineHeight: 1.6 }}>{outcomeCopy[ending]}</p><p className="os-small">External changes: {receipt.actualExternalChanges}. Real evidence collected: 0. This receipt is a demonstration only.</p></div> : <div className="os-demo-banner" style={{ marginTop: 18 }}><ClipboardCheck size={18} /> No receipt yet. Run the simulation to see a labelled example result.</div>}</section>
+    <section className="os-panel" aria-label="Edit example deliverables" style={{ marginTop: 18 }}><span className="os-eyebrow">Editable outcome draft</span><h2>Adjust the deliverables</h2><p>These titles are local demo preferences shared with the preview workspace. The task plan remains a fixed illustrative fixture, not a generated plan for your edits.</p>{fixture.deliverables.map((item) => <div className="os-field" key={item.id}><label htmlFor={`os-deliverable-${item.id}`}>{item.detail}</label><input id={`os-deliverable-${item.id}`} value={item.title} maxLength={90} disabled={run.step > 0} onChange={(event) => setJourneyDeliverable(story, item.id, event.target.value)} /></div>)}</section>
+    <section className="os-section" style={{ marginTop: 24 }}><div className="os-section-head"><div><span className="os-eyebrow">06 / Result</span><h2>Show the work and the proof gap.</h2></div><p>Only real execution can satisfy these evidence requirements. The preview is explicit about what remains unverified.</p></div><div className="os-split"><div className="os-panel"><h2>{fixture.artifact.title}</h2><p>{fixture.artifact.summary}</p><div className="os-preview-mock" aria-label="Sample artifact concept"><header>EXAMPLE ARTIFACT · NOT DEPLOYED</header><div className="os-preview-mock-body">{scenario === 'clinic' ? <><span className="os-eyebrow">Sample clinic</span><h3>Care, on your schedule.</h3><p>Sample appointment slots illustrate the design direction.</p><div className="os-mock-slots"><span>Monday · 10:00</span><span>Tuesday · 14:30</span><span>Friday · 09:15</span></div></> : <><span className="os-eyebrow">{fixture.artifact.kind} concept</span><h3>{fixture.artifact.title}</h3><p>{fixture.artifact.summary}</p></>}</div></div></div><div className="os-panel"><h2>Evidence required for real work</h2><ul className="os-list">{fixture.evidence.map((evidence) => <li key={evidence.id}><strong>{evidence.title} · NOT EXECUTED</strong><small>{evidence.requirement}</small></li>)}</ul></div></div>{receipt ? <div className="os-receipt" role="status" style={{ marginTop: 18 }}><span className="os-receipt-label">{receipt.label}</span><h3 style={{ margin: '9px 0' }}>{receipt.status.replaceAll('-', ' ')} · simulated outcome</h3><p style={{ fontSize: 13, lineHeight: 1.6 }}>{outcomeCopy[receipt.status as PreviewEnding]}</p><p className="os-small">External changes: {receipt.actualExternalChanges}. Real evidence collected: 0. This receipt is a demonstration only.</p></div> : <div className="os-demo-banner" style={{ marginTop: 18 }}><ClipboardCheck size={18} /> No receipt yet. Run the simulation to see a labelled example result.</div>}</section>
+    {run.sampleEvidence.length > 0 ? <section className="os-panel" style={{ marginTop: 18 }} aria-label="Simulated acceptance evidence"><span className="os-eyebrow">Fixture-only acceptance record</span><h2>What the sample checked</h2><ul className="os-list">{run.sampleEvidence.map((item) => <li key={item.criterion}><strong>{item.passed ? 'PASS · simulated' : 'NOT PASSED · simulated'}</strong><small>{item.criterion} · {item.note}</small></li>)}</ul><p className="os-small">These are deterministic fixture assessments, not real browser, provider or delivery evidence.</p></section> : null}
     <div className="os-actions"><Link className="os-button" href="/os-preview"><ArrowLeft size={15} /> Preview home</Link><Link className="os-button" href="/workspace">Explore the current workspace <ExternalLink size={15} /></Link></div>
+    </div>
   </OsPreviewShell>;
 }
