@@ -1,6 +1,6 @@
 # S01 Capability Deck: final record
 
-**Status:** S01 CLOSED. Final production commit `040d8303`, deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. Earlier releases: `3e9c67ed`, `418a23f0`, `634845c9`.
+**Status:** S01 CLOSED. Final production commit `a0a51f46` (single-theme and typography release), deployed automatically by Vercel from `main` and verified live on https://xroga.com on 2026-10-11.
 
 Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreography) and
 `XROGA_S01_FINAL_PREMIUM_POLISH_AND_MAIN_HANDOFF.md` (final art direction). Both are founder documents kept outside Git.
@@ -153,3 +153,35 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
 - Tests: 30 S01 tests, 974 of 974 frontend tests, lint clean, typecheck 27 pre-existing `src/lib` errors only, build
   passes.
 - Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-close\`.
+
+## Final S00 + S01 single-theme and typography release (2026-10-11, verified live)
+Status: **verified live**. `main` = `a0a51f46` (commits `79f8f97e` single dark marketing theme, metallic S00 headline,
+S01 polish; `a0a51f46` approved italic-serif headline), fast-forwarded from `9b760388`, deployed automatically by
+Vercel and verified on https://xroga.com.
+
+- Single marketing theme: every public marketing route renders the approved dark theme from first paint (boot script)
+  through hydration and client navigation (ThemeProvider), whatever theme is stored. The stored choice is untouched and
+  still applies in the authenticated workspace. The public header no longer has a theme control. Verified live for
+  stored White, Beige, Gray and Black x OS light/dark x desktop/phone (16 of 16).
+- S00 headline (exact text `Xroga for everything.`, one H1): `Xroga` in the heavy Inter display cut, a quieter `for`,
+  and `everything.` in the bundled Newsreader Italic (OFL, true italic, opsz 72) on one baseline, with one
+  warm-titanium metal finish and a slightly more silvery sheen on the italic. The single H1 shine now crosses in about
+  1.4 s with a 4 s rest (5.4 s cycle, first pass at 0.6 s); none under reduced motion. Fits from 320 px without
+  overflow; phones break as `Xroga for / everything.`.
+- S01: one eyebrow `EXPLORE XROGA'S CAPABILITIES`; the AI to Super Intelligence copy unchanged; a visible light pass
+  across `Super Intelligence is the vision.` (about 1.2 s, then about 9 s rest, only while the heading is on screen,
+  none under reduced motion). The separate `One workspace. More ways to work.` strip and its disclaimer are removed;
+  its useful points live in card details (voice and ordinary words in Build Software; optional integrations, APIs and
+  custom MCP in Automate Work; any device in Keep Work Running). A budgeted React Bits Galaxy field (half resolution,
+  30 fps cap, paused offscreen and when hidden, static under reduced motion, frame-rate probe fallback) sits behind
+  the desktop deck only.
+- Validation on the integrated commit: 984 of 984 frontend tests, lint clean, typecheck 27 pre-existing `src/lib`
+  test errors only, production build passes (homepage first load unchanged). Browser: real clicks 60 of 60 opened,
+  31 of 31 Explore acceptance checks, Explore and the single Back control at every size 320 to 1894, 0 card/copy
+  collisions, reduced motion static with all 8 cards. Scroll on Intel Iris Xe (headed Chrome): S01 median 16.6 ms,
+  p95 16.9 to 17.2 ms with the Galaxy live, matching production without it.
+- Known limitation outside S00/S01, not changed: the next section's demo
+  (`public/demos/xroga-browser-employees-exact.html`) calls `scrollIntoView` on tab autoplay, which scrolls the parent
+  page about 540 px when it is partly in view. Reproduced on production before this release; more noticeable on
+  phones now that S01 is shorter. A one-line fix in that section awaits founder approval.
+- Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s00-final-type\REVIEW\`.
