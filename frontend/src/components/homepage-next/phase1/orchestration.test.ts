@@ -193,17 +193,23 @@ test('one H1 shine system: a CSS band over a static base, none under reduced mot
   const css = read('S00Hero.module.css');
   const hero = read('S00Hero.tsx');
   assert.ok(!/\.sheen\b/.test(css + hero + read('Capability.tsx')), 'the old custom sheen is gone');
-  const anim = css.match(/animation: shine ([\d.]+)s cubic-bezier\([^)]*\) ([\d.]+)s infinite;/);
-  assert.ok(anim, 'one band on a repeating cycle');
-  const [cycle, delay] = [Number(anim![1]), Number(anim![2])];
-  assert.ok(cycle >= 4 && cycle <= 7.8, `shine cycle ${cycle}s`);
-  assert.ok(delay >= 0.5 && delay <= 0.8, `first shine after ${delay}s`);
-  const kf = css.match(/@keyframes shine \{\s*0% \{ background-position: 85% 0; \}\s*([\d.]+)%, 100% \{ background-position: 15% 0; \}\s*\}/);
-  assert.ok(kf, 'one continuous pass, then a rest');
-  const pass = (Number(kf![1]) / 100) * cycle;
-  // approved: a visible crossing of about 1.0 to 1.8 s, then about 3 to 6 s of calm
+  // one CSS pass, started by the hero for each crossing, so nothing animates (or repaints) between passes
+  const anim = css.match(/\.shine\[data-pass\] \{ animation: shine ([\d.]+)s cubic-bezier\([^)]*\) both; \}/);
+  assert.ok(anim, 'one band per pass');
+  assert.match(css, /@keyframes shine \{\s*0% \{ background-position: 85% 0; \}\s*100% \{ background-position: 15% 0; \}\s*\}/, 'one continuous pass');
+  assert.doesNotMatch(css, /animation: shine[^;]*infinite/, 'no endless shine animation');
+  const pass = Number(anim![1]);
+  const sched = hero.match(/SHINE = \{ firstMs: (\d+), restMs: (\d+) \}/);
+  assert.ok(sched, 'the hero owns the shine schedule');
+  const [first, rest] = [Number(sched![1]) / 1000, Number(sched![2]) / 1000];
+  // approved: a visible crossing of about 1.0 to 1.8 s, then about 3 to 6 s of calm, the first soon after paint
   assert.ok(pass >= 1.0 && pass <= 1.8, `one pass takes ${pass.toFixed(2)}s`);
-  assert.ok(cycle - pass >= 3 && cycle - pass <= 6, `rest ${(cycle - pass).toFixed(2)}s`);
+  assert.ok(rest >= 3 && rest <= 6, `rest ${rest.toFixed(2)}s`);
+  assert.ok(pass + rest >= 4 && pass + rest <= 7.8, `shine cycle ${pass + rest}s`);
+  assert.ok(first >= 0.5 && first <= 0.8, `first shine after ${first}s`);
+  // passes stop while the hero is off screen or the tab is hidden
+  assert.match(hero, /new IntersectionObserver[\s\S]*?visibilitychange[\s\S]*?el\.setAttribute\('data-pass', ''\)|el\.setAttribute\('data-pass', ''\)[\s\S]*?new IntersectionObserver[\s\S]*?visibilitychange/);
+  assert.match(hero, /if \(onScreen && !document\.hidden\) el\.setAttribute\('data-pass', ''\)/);
   // Xroga Display: bundled Inter at its display size, heavier brand word, verified features only
   const title = css.slice(css.indexOf('.title {'), css.indexOf('}', css.indexOf('.title {')));
   assert.match(title, /font-variation-settings: 'opsz' 32;/);
@@ -228,7 +234,7 @@ test('one H1 shine system: a CSS band over a static base, none under reduced mot
   }
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.shine \{ display: none; \}/);
   assert.match(css, /:global\(\.xv-home-coding\) \.hero h1\.title \{ color: #e6e3dc !important; \}/, 'the homepage ink rule cannot wash the base out');
-  assert.match(hero, /\{!reduced && \(\s*<span className=\{`\$\{s\.title\} \$\{s\.shine\}`\} aria-hidden="true">/);
+  assert.match(hero, /\{!reduced && \(\s*<span ref=\{shine\} className=\{`\$\{s\.title\} \$\{s\.shine\}`\} aria-hidden="true">/);
   const shineRule = css.slice(css.indexOf('.shine {'), css.indexOf('}', css.indexOf('.shine {')));
   assert.ok(!/opacity|filter|text-shadow/.test(shineRule), 'the band never dims the base or glows');
   assert.ok(!/#(?:[0-9a-f]{6})/i.test(shineRule.replace(/#ffffff/gi, '')), 'the core is white');
@@ -668,6 +674,35 @@ test('hierarchy: a previously used tool never keeps the active cyan edge or ligh
   assert.ok(usedRules.length >= 2);
   for (const [, sel, body] of usedRules) assert.ok(!/101, 229, 244|translate3d/.test(body), `${sel.trim()} looks active`);
   assert.match(css, /\.unit\[data-active\] \{[\s\S]*?rgba\(101, 229, 244, 0\.7\)/, 'the current call has the strongest edge');
+});
+
+test('headline metal reaches every glyph: paint boxes extend past ascenders, descenders and the italic overhang', () => {
+  const css = read('S00Hero.module.css');
+  const em = (v: string) => v.trim().split(/\s+/).map((x) => Number(x.replace('em', '')));
+  // background-clip: text paints only inside each span's box; with the tight display line-height the glyphs
+  // reach past it, so the box is padded out and the space handed back with equal negative margins
+  const base = css.match(/\.title:not\(\.shine\) > span \{[\s\S]*?padding: ([^;]+);\s*margin: ([^;]+);/)!;
+  const [pt, px, pb] = em(base[1]);
+  const [mt, mx, mb] = em(base[2]);
+  assert.ok(pt >= 0.28 && pb >= 0.3 && px >= 0.1, `base paint box ${base[1]}`);
+  assert.deepEqual([mt, mx, mb], [-pt, -px, -pb], 'layout unchanged');
+  const sig = css.match(/\.title:not\(\.shine\) > \.signature \{[\s\S]*?padding: ([^;]+);\s*margin: ([^;]+);/)!;
+  const [st, sr, sb, sl] = em(sig[1]);
+  const [smt, smr, smb, sml] = em(sig[2]);
+  assert.ok(st >= 0.36 && sb >= 0.4 && sl >= 0.12 && sr >= 0.18, `italic paint box ${sig[1]}`);
+  // the italic keeps its 0.06em period room and 0.02em lead-in in the layout, the same as the shine copy
+  assert.ok(Math.abs(sr + smr - 0.06) < 1e-9 && Math.abs(sl + sml - 0.02) < 1e-9 && smt === -st && smb === -sb, `italic margins ${sig[2]}`);
+  // the shine layer covers the same reach, with matching padding so the copy stays over the base line
+  const shine = css.slice(css.indexOf('.shine {'), css.indexOf('}', css.indexOf('.shine {')));
+  assert.match(shine, /inset: -0\.42em -0\.2em;\s*\/\*[\s\S]*?\*\/\s*padding: 0\.42em 0\.2em;|inset: -0\.42em -0\.2em;\s*padding: 0\.42em 0\.2em;/);
+});
+
+test('hero motion stays off the main thread between events: the orb sweep is a compositor translate', () => {
+  const orb = read('XrogaOrb.module.css');
+  const kf = orb.match(/@keyframes sweep \{([\s\S]*?)\n\}/)![1];
+  assert.match(kf, /translate: 0 0;/);
+  assert.match(kf, /translate: 558\.82% 0;/, 'same travel as -60% to 130% of the lens for a 34% band');
+  assert.doesNotMatch(kf, /left:/, 'no per-frame layout');
 });
 
 test('header: restyled for the homepage only, without touching its transform', () => {

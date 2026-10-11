@@ -28,7 +28,11 @@ export function BetaExpectationBanner({ compact = false }: { compact?: boolean }
     };
   }, [compact]);
 
-  if (!visible || (!compact && topExpired && !scrolled)) return null;
+  if (!visible) return null;
+  // Between the top notice expiring and the visitor scrolling, keep the notice mounted but hidden. It sits
+  // high in the page shell, so removing and re-inserting it on the first scroll restyled the whole page in
+  // one frame (a visible hitch); toggling its own display only restyles the notice.
+  const parked = !compact && topExpired && !scrolled;
 
   function dismiss() {
     setVisible(false);
@@ -43,6 +47,7 @@ export function BetaExpectationBanner({ compact = false }: { compact?: boolean }
         !compact && scrolled && 'xv-beta-banner--corner',
       )}
       aria-label="Xroga early access notice"
+      style={parked ? { display: 'none' } : undefined}
     >
       <AlertTriangle className="xv-beta-banner__alert-icon" aria-hidden="true" />
       <div className="xv-beta-banner__message">

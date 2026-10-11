@@ -37,6 +37,52 @@ const TitleText = () => (
 
 const XrogaSlats = dynamic(() => import('./XrogaSlats'), { ssr: false });
 
+/** The H1 shine schedule: the first pass 0.6 s after paint, then one 1.4 s pass (CSS) after every 4 s rest. */
+export const SHINE = { firstMs: 600, restMs: 4000 } as const;
+
+/**
+ * Runs the H1 shine one pass at a time by setting `data-pass` on the shine layer (no React render). Between
+ * passes nothing animates, and no pass starts while the hero is off screen or the tab is hidden.
+ */
+function useShinePasses(hero: React.RefObject<HTMLElement | null>, shine: React.RefObject<HTMLElement | null>, enabled: boolean) {
+  useEffect(() => {
+    const el = shine.current;
+    const root = hero.current;
+    if (!enabled || !el || !root) return;
+    let timer = 0;
+    let onScreen = true;
+    const schedule = (ms: number) => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (onScreen && !document.hidden) el.setAttribute('data-pass', '');
+      }, ms);
+    };
+    const ended = () => {
+      el.removeAttribute('data-pass');
+      schedule(SHINE.restMs);
+    };
+    const io = new IntersectionObserver(([e]) => {
+      const was = onScreen;
+      onScreen = e.isIntersecting;
+      if (onScreen && !was && !el.hasAttribute('data-pass')) schedule(SHINE.firstMs);
+    });
+    const vis = () => {
+      if (!document.hidden && !el.hasAttribute('data-pass')) schedule(SHINE.firstMs);
+    };
+    el.addEventListener('animationend', ended);
+    document.addEventListener('visibilitychange', vis);
+    io.observe(root);
+    schedule(SHINE.firstMs);
+    return () => {
+      window.clearTimeout(timer);
+      io.disconnect();
+      el.removeEventListener('animationend', ended);
+      document.removeEventListener('visibilitychange', vis);
+      el.removeAttribute('data-pass');
+    };
+  }, [hero, shine, enabled]);
+}
+
 function useMode(): StageMode {
   const [mode, setMode] = useState<StageMode>('desk');
   useEffect(() => {
@@ -77,6 +123,8 @@ export function S00Hero() {
   useEffect(() => setReduced(!!prefersReduced), [prefersReduced]);
   const mode = useMode();
   const { frame, playing } = useOrchestration(root, reduced);
+  const shine = useRef<HTMLSpanElement>(null);
+  useShinePasses(root, shine, !reduced);
   // Static CSS slats instead of WebGL when the device can't hold the frame budget. Review only (see
   // reviewParam): ?bg=off for profiling, ?bg=gl keeps WebGL on GPU-less capture machines.
   const [bgOff, setBgOff] = useState(false);
@@ -150,7 +198,7 @@ export function S00Hero() {
             {/* the single H1 shine: a band of light crosses the finished line in about 1.4 s, every 5.4 s;
                 the base text underneath never changes, and reduced motion renders none of this */}
             {!reduced && (
-              <span className={`${s.title} ${s.shine}`} aria-hidden="true">
+              <span ref={shine} className={`${s.title} ${s.shine}`} aria-hidden="true">
                 <TitleText />
               </span>
             )}

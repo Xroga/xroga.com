@@ -140,10 +140,12 @@
   transform: rotate(18deg);
   animation: sweep 15s cubic-bezier(0.65, 0, 0.35, 1) 4s infinite;
 }
+/* the same travel as left -60% to 130% of the lens (190% of the lens is 558.82% of the 34% wide band), as a
+   compositor translate, so the sweep never lays out or repaints the page */
 @keyframes sweep {
-  0% { left: -60%; }
-  14% { left: 130%; }
-  100% { left: 130%; }
+  0% { translate: 0 0; }
+  14% { translate: 558.82% 0; }
+  100% { translate: 558.82% 0; }
 }
 
 /* Rim light on the side where work leaves (create, left) or a tool arrives (connect, right) */

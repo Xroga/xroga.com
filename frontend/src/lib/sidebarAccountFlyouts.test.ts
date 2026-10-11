@@ -80,6 +80,11 @@ test('the beta banner starts at the hero and becomes a compact hover notice afte
   assert.match(BETA_BANNER, /Report an issue/);
   assert.match(BETA_BANNER, /aria-label="Dismiss Xroga notice"/);
   assert.match(PUBLIC_CHROME, /<BetaExpectationBanner \/>/);
+  // the expired top notice stays mounted but hidden until the first scroll: re-inserting it high in the shell
+  // restyled the whole page in one frame
+  assert.match(BETA_BANNER, /const parked = !compact && topExpired && !scrolled;/);
+  assert.match(BETA_BANNER, /style=\{parked \? \{ display: 'none' \} : undefined\}/);
+  assert.doesNotMatch(BETA_BANNER, /topExpired && !scrolled\)\) return null/);
   assert.match(APP_SHELL, /!isDashboard \? <BetaExpectationBanner compact \/>/);
   assert.match(DASHBOARD_VIEW, /<\/header>[\s\S]*?<BetaExpectationBanner compact \/>/);
   assert.match(CSS, /\.xv-public-marketing-shell > \.xv-beta-banner--top\s*\{[\s\S]*position:\s*absolute !important/);

@@ -131,9 +131,12 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  /* room so descenders (g, y) keep their metal */
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  /* background-clip: text only paints inside the span's own box, and with the display line-height the ascenders
+     (t, h, the i dot), the descenders (g, y) and the italic overhang reach past it: that ink would be transparent
+     and the slats would show through it. Pad the paint box well past every glyph and give the space back with
+     negative margins, so layout is unchanged and every letter is solid metal. */
+  padding: 0.3em 0.14em 0.34em;
+  margin: -0.3em -0.14em -0.34em;
 }
 /* the quiet "for" carries a softer pearl, and "everything." a slightly more silvery sheen; one material throughout */
 .title:not(.shine) .joiner {
@@ -141,11 +144,15 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* inline, so vertical padding only grows the paint area: room for the f ascender */
+  padding-block: 0.3em;
 }
+/* the italic sits in a short line box (line-height 0.84 at 1.14em) and leans right: a taller paint box, with the
+   0.06em period room kept in the layout */
 .title:not(.shine) > .signature {
   background-image: linear-gradient(176deg, #fbfaf7 0%, #edeef1 38%, #cfd3db 62%, #eef0f3 80%, #c3c8d1 100%);
-  padding-bottom: 0.14em;
-  margin-bottom: -0.14em;
+  padding: 0.38em 0.2em 0.42em 0.14em;
+  margin: -0.38em -0.14em -0.42em -0.12em;
 }
 /* The H1 shine: a copy of the line that is transparent except for one narrow band of light, laid over the
    static pearl text so the base never dims. The band waits outside the left edge, crosses the whole line,
@@ -154,7 +161,10 @@
    15% fully right of it. */
 .shine {
   position: absolute;
-  inset: 0;
+  /* the light is painted on this box, so it reaches past the H1 box to every ascender and descender; the matching
+     padding keeps the copy exactly over the base line */
+  inset: -0.42em -0.2em;
+  padding: 0.42em 0.2em;
   pointer-events: none;
   color: transparent;
   /* about 170px of visible material light at 1440 (each 1% of the 300% gradient is ~20px), with a ~30px white core.
@@ -179,12 +189,13 @@
   background-position: 85% 0;
   -webkit-background-clip: text;
   background-clip: text;
-  /* one pass of 1.4 s, then a 4 s rest: a 5.4 s cycle, the first pass 0.6 s after paint */
-  animation: shine 5.4s cubic-bezier(0.42, 0, 0.32, 1) 0.6s infinite;
 }
+/* One pass of 1.4 s. The hero schedules each pass (first 0.6 s after paint, then after a 4 s rest, only while
+   the hero is on screen), so between passes nothing animates and the headline is not repainted every frame. */
+.shine[data-pass] { animation: shine 1.4s cubic-bezier(0.42, 0, 0.32, 1) both; }
 @keyframes shine {
   0% { background-position: 85% 0; }
-  25.9%, 100% { background-position: 15% 0; }
+  100% { background-position: 15% 0; }
 }
 
 /* V12 §6–§9: fixed lead, one capability phrase that changes with the scene */
