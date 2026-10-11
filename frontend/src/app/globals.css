@@ -14447,7 +14447,7 @@ html.xv-home-scroll-lock body {
   z-index: 80;
   align-items: center;
 }
-.xv-sidebar-notification-edge > button {
+.xv-sidebar-notification-edge > .xv-hover-tip-wrap > button {
   width: 30px;
   height: 30px;
 }
