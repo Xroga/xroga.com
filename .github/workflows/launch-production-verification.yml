@@ -14,7 +14,6 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       PLAYWRIGHT_BASE_URL: https://xroga.com
       E2E_BACKEND_URL: https://xroga-api.fly.dev
       LAUNCH_BILLING_API_URL: https://xroga-api.fly.dev
@@ -31,7 +30,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY; do
             if [ -z "${!name:-}" ]; then echo "missing_required_variable=$name"; exit 1; fi
           done
           test "$NEXT_PUBLIC_SUPABASE_URL" = "https://nzenxdfumxrnsmybazmo.supabase.co"
@@ -60,16 +59,17 @@ jobs:
           npm ci --workspaces=false
           npm ci --prefix frontend --workspaces=false
           npx playwright install --with-deps chromium
-      - name: Verify exact production release, authentication, and tenant isolation
+      # Production verification must not create fixture users/projects or hold a service-role key.
+      # Authenticated tenant tests belong only in command3-auth-browser.yml with a dedicated TEST project.
+      - name: Verify exact production release and public routes
         working-directory: frontend
-        run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/launch-public.spec.ts e2e/companion-public.spec.ts
+        run: node ../node_modules/@playwright/test/cli.js test e2e/launch-public.spec.ts e2e/companion-public.spec.ts
       - name: Upload redacted production evidence
         if: always()
         uses: actions/upload-artifact@v5
         with:
           name: production-launch-browser-evidence-${{ github.sha }}
           path: |
-            frontend/test-results/command3-auth-evidence.json
             frontend/test-results/**/test-failed-*.png
           if-no-files-found: warn
           retention-days: 30

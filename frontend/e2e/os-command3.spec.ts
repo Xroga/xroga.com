@@ -56,6 +56,29 @@ test('public preview does not deliver founder fixture code in its loaded scripts
   expect(scripts.join('\n')).not.toContain('Fictional user pain signal');
 });
 
+test('browser example requires an explicit recovery or denial before any sample postcondition', async ({ page }) => {
+  const forbidden: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('example.crm.invalid') || (request.method() !== 'GET' && request.url().includes('/api/'))) forbidden.push(request.url());
+  });
+  await page.goto('/os-preview/browser');
+  await page.getByRole('checkbox', { name: /only this local simulation/ }).check();
+  for (let index = 0; index < 4; index += 1) await page.getByRole('button', { name: 'Step through example' }).click();
+  await expect(page.getByText('Recovery choice required; the failure cannot be stepped past.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Step through example' })).toBeDisabled();
+  await page.getByLabel('Example failure').selectOption('selector');
+  await expect(page.getByText(/fictional page target no longer matches/)).toBeVisible();
+  await page.getByRole('button', { name: 'Stop with blocked result' }).click();
+  await expect(page.getByText(/Blocked example. No CRM change was made/)).toBeVisible();
+  await page.getByRole('button', { name: 'Replay browser example' }).click();
+  await page.getByRole('checkbox', { name: /only this local simulation/ }).check();
+  for (let index = 0; index < 4; index += 1) await page.getByRole('button', { name: 'Step through example' }).click();
+  await page.getByRole('button', { name: 'Use bounded visual fallback' }).click();
+  await page.getByRole('button', { name: 'Step through example' }).click();
+  await expect(page.getByText('Example postcondition reviewed after bounded fallback. DEMO / NOT EXECUTED.')).toBeVisible();
+  expect(forbidden).toEqual([]);
+});
+
 test('preview routes remain usable at narrow width and show truthful coming-soon state', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/os-preview/drive');

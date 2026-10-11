@@ -37,6 +37,11 @@ async function browserSession(page: import('@playwright/test').Page): Promise<{ 
 }
 
 test.beforeAll(async () => {
+  const isolatedRef = process.env.E2E_ISOLATED_PROJECT_REF?.trim();
+  const actualHost = new URL(supabaseUrl).hostname;
+  if (!isolatedRef || isolatedRef === 'nzenxdfumxrnsmybazmo' || actualHost !== `${isolatedRef}.supabase.co`) {
+    throw new Error('Authenticated fixture tests require a dedicated isolated TEST Supabase project; production is forbidden.');
+  }
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   const outsider = await admin.auth.admin.createUser({ email: outsiderEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });
   if (owner.error || outsider.error || !owner.data.user || !outsider.data.user) throw new Error('Temporary verified test users could not be created');

@@ -11,7 +11,7 @@ All `/os-preview` routes are noindex. “Interactive preview” means browser-lo
 | `/os-preview/projects` | Public · interactive preview | Project cards and open link | Implemented & partly tested |
 | `/os-preview/activity` | Public · interactive preview | Project cards and related-screen links | Partly implemented: no rich event feed |
 | `/os-preview/coding` | Public · interactive preview | Fixture, file search/tree, before/after, accept/reject, deterministic example test | Implemented & tested: repair happy/failed paths; no actual test/PR |
-| `/os-preview/browser` | Public · interactive preview | Strategy, local approval, step/pause/retry | Partly implemented: timeout example; selector fallback and verified recovery not yet complete |
+| `/os-preview/browser` | Public · interactive preview | Strategy, local approval, step/pause/retry/replay, timeout or selector fixture, explicit bounded fallback/denial | Implemented & tested local recovery; no real browser worker or external writes |
 | `/os-preview/research` | Public · interactive preview | Search/select/save/reopen fictional finding | Implemented & partly tested; no real sources |
 | `/os-preview/artifacts` | Public · interactive preview | Project/folder list, filter, preview, page-local duplicate | Partly implemented: no persistent version browser |
 | `/os-preview/drive` | Public · Coming soon | Explanatory page and working link to example workspace | Implemented & tested as Coming soon; no quota or upload |

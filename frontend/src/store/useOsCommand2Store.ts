@@ -17,6 +17,8 @@ interface Command2State {
   browserStep: number;
   browserPaused: boolean;
   browserApproved: boolean;
+  browserRecovery: 'unselected' | 'fallback' | 'denied';
+  browserFailure: 'timeout' | 'selector';
   workflow: DemoWorkflowNode[];
   workflowResult: 'not-run' | 'passed-demo' | 'needs-review';
   experienceDecision: 'pending' | 'approved-demo' | 'rejected-demo';
@@ -34,8 +36,11 @@ interface Command2State {
   setPatchDecision: (value: Command2State['patchDecision']) => void;
   browserNext: () => void;
   browserRetry: () => void;
+  resetBrowser: () => void;
   setBrowserPaused: (value: boolean) => void;
   setBrowserApproved: (value: boolean) => void;
+  setBrowserRecovery: (value: Command2State['browserRecovery']) => void;
+  setBrowserFailure: (value: Command2State['browserFailure']) => void;
   addNode: (kind: DemoNodeKind) => void;
   updateNode: (id: string, changes: Partial<Pick<DemoWorkflowNode, 'label' | 'detail' | 'next'>>) => void;
   removeNode: (id: string) => void;
@@ -53,7 +58,7 @@ const initial = () => ({
   journeyDrafts: {},
   assetId: 'booking-foundation', employeeId: 'frontend-engineer', workPack: 'dental-clinic', budget: 18,
   selectedFile: 'src/BookingForm.tsx', patchDecision: 'pending' as const,
-  browserStep: 0, browserPaused: true, browserApproved: false,
+  browserStep: 0, browserPaused: true, browserApproved: false, browserRecovery: 'unselected' as const, browserFailure: 'timeout' as const,
   workflow: INITIAL_WORKFLOW.map((node) => ({ ...node })), workflowResult: 'not-run' as const,
   experienceDecision: 'pending' as const, selectedArtifact: 'booking-concept', savedFinding: null,
 });
@@ -70,10 +75,14 @@ export const useOsCommand2Store = create<Command2State>()(persist((set) => ({
   setBudget: (budget) => set({ budget: Math.max(1, Math.min(100, budget)) }),
   setFile: (selectedFile) => set({ selectedFile }),
   setPatchDecision: (patchDecision) => set({ patchDecision }),
-  browserNext: () => set((state) => ({ browserStep: Math.min(5, state.browserStep + 1) })),
-  browserRetry: () => set((state) => ({ browserStep: Math.max(1, state.browserStep - 1), browserPaused: true })),
+  browserNext: () => set((state) => state.browserApproved && state.browserRecovery !== 'denied' && (state.browserStep !== 4 || state.browserRecovery === 'fallback')
+    ? { browserStep: Math.min(5, state.browserStep + 1) } : state),
+  browserRetry: () => set((state) => ({ browserStep: Math.max(1, state.browserStep - 1), browserPaused: true, browserRecovery: 'unselected' })),
+  resetBrowser: () => set({ browserStep: 0, browserPaused: true, browserApproved: false, browserRecovery: 'unselected', browserFailure: 'timeout' }),
   setBrowserPaused: (browserPaused) => set({ browserPaused }),
   setBrowserApproved: (browserApproved) => set({ browserApproved }),
+  setBrowserRecovery: (browserRecovery) => set({ browserRecovery, browserPaused: true }),
+  setBrowserFailure: (browserFailure) => set({ browserFailure, browserRecovery: 'unselected' }),
   addNode: (kind) => set((state) => {
     if (state.workflow.length >= 24) return state;
     const id = `demo-${kind}-${Math.max(0,...state.workflow.map((node) => Number(node.id.match(/\d+$/)?.[0] ?? 0))) + 1}`;
