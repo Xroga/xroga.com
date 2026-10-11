@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
+
+requireFounderPreviewSession();
 
 for (const state of [
   { route: '/os-preview', width: 1440, height: 900, label: 'overview desktop' },

@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { OsPreviewShell } from '@/components/os-preview/OsPreviewShell';
 import { Command2Section } from '@/components/os-preview/Command2Sections';
-import { PREVIEW_DESTINATIONS, previewDestination } from '@/lib/osPreviewNavigation';
+import { previewDestination } from '@/lib/osPreviewNavigation';
 
-export function generateStaticParams() { return PREVIEW_DESTINATIONS.filter((item) => item.slug !== 'rich-results').map((item) => ({ section: item.slug })); }
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export default async function OsPreviewSection({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;

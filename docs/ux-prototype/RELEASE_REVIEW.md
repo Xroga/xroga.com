@@ -1,5 +1,7 @@
 # Command 3 release review
 
+> Access-policy amendment: [FOUNDER_ONLY_RELEASE.md](FOUNDER_ONLY_RELEASE.md) makes all `/os-preview` routes founder-only. The guest-preview checks below describe the prior policy and are not evidence that the new gate is live. `/workspace` is unchanged.
+
 ## Review artifact and deployment boundary
 
 - Branch: `feat/xroga-os-command-3`, based on actual merged Command 1/1.5/2 work on `origin/main` (`ef65b267` at branch creation).

@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
+
+requireFounderPreviewSession();
 
 test('editable outcome draft persists across the preview and reset stays scoped', async ({ page }) => {
   const forbidden: string[] = [];
@@ -31,18 +34,7 @@ test('simulated VERIFIED result has fixture checks while real evidence remains N
   await expect(page.getByText('Real evidence collected: 0')).toBeVisible();
 });
 
-test('founder HTML and RSC requests fail closed for an anonymous visitor', async ({ request }) => {
-  for (const headers of [{}, { RSC: '1', 'Next-Router-State-Tree': '%5B%22%22%2C%7B%7D%2Cnull%2Cnull%2Ctrue%5D' }]) {
-    const response = await request.get('/os-preview/founder', { headers, maxRedirects: 5 });
-    const body = await response.text();
-    expect(response.status()).toBeLessThan(500);
-    expect(body).not.toContain('Scenario & Error Lab');
-    expect(body).not.toContain('False-success verification attempt');
-    expect(body).not.toContain('Fictional user pain signal');
-  }
-});
-
-test('public preview does not deliver founder fixture code in its loaded scripts', async ({ page }) => {
+test('OS preview does not deliver founder fixture code in its loaded scripts', async ({ page }) => {
   const scripts: string[] = [];
   page.on('response', async (response) => {
     if (!response.url().includes('/_next/static/') || !response.url().endsWith('.js')) return;

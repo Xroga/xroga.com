@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
+
+requireFounderPreviewSession();
 
 test('preview fits five widths and four existing themes without horizontal overflow', async ({ page }) => {
   test.setTimeout(180_000);

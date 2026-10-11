@@ -9,7 +9,7 @@ const PROTECTED_PREFIXES = [
   '/admin',
   '/dashboard',
   '/onboarding',
-  '/os-preview/founder',
+  '/os-preview',
   '/preview',
   '/settings',
   '/terminal',

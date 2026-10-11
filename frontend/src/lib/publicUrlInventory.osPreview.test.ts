@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PUBLIC_URL_INVENTORY } from './publicUrlInventory';
 
-test('OS preview routes are inventoried without becoming indexable', () => {
+test('OS preview routes are inventoried as private and never indexable', () => {
   const expected = new Map([
-    ['/os-preview', 'PUBLIC_NOINDEX'],
-    ['/os-preview/[section]', 'PUBLIC_NOINDEX'],
-    ['/os-preview/journey', 'PUBLIC_NOINDEX'],
-    ['/os-preview/access-denied', 'PUBLIC_NOINDEX'],
+    ['/os-preview', 'PRIVATE'],
+    ['/os-preview/[section]', 'PRIVATE'],
+    ['/os-preview/journey', 'PRIVATE'],
+    ['/os-preview/rich-results', 'PRIVATE'],
+    ['/os-preview/access-denied', 'PRIVATE'],
     ['/os-preview/founder', 'PRIVATE'],
   ]);
   for (const [path, classification] of expected) {
