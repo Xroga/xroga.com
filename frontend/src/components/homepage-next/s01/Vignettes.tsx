@@ -117,67 +117,74 @@ function Build({ step }: Props) {
   );
 }
 
-/* ---------------------------------------------------------- 02 Browser & Testing: a multi-step checkout journey */
+/* ------------------------------------------------- 02 Browser & Testing: a client portal access flow, tested and fixed */
+const ACCESS_STEPS = ['Invite', 'Accept', 'Sign in', 'Dashboard'];
+
 function Browser({ step }: Props) {
   return (
     <div className={`${v.scene} ${v.browser}`} {...flags(step)}>
       <ol className={v.rail}>
-        <li data-k="cart">Cart</li>
-        <li data-k="details">Details</li>
-        <li data-k="pay">Payment</li>
-        <li data-k="done">Done</li>
+        {ACCESS_STEPS.map((label, i) => (
+          <li key={label} data-k={i}>
+            {label}
+          </li>
+        ))}
       </ol>
       <span className={v.marker} />
       <div className={`${v.panel} ${v.win}`}>
         <div className={v.bar}>
           <i />
           <i />
-          <span>shop.example/checkout</span>
+          <Swap
+            step={step}
+            className={v.url}
+            texts={[
+              { at: 0, text: 'portal.example/invite' },
+              { at: 2, text: 'portal.example/dashboard' },
+            ]}
+          />
         </div>
-        <div className={`${v.screen} ${v.sDetails}`}>
+        <div className={`${v.screen} ${v.sInvite}`}>
+          <b>You are invited to Northwind</b>
           <span className={v.field}>
-            <small>Email</small>ana@example.com<i>✓</i>
+            <small>Email</small>sam@client.co<i>✓</i>
           </span>
-          <span className={v.field}>
-            <small>Address</small>12 Harbour St<i>✓</i>
+          <span className={v.cta}>Accept invitation</span>
+        </div>
+        <div className={`${v.screen} ${v.sDenied}`}>
+          <span className={v.code}>403</span>
+          <b>No access to Dashboard</b>
+          <span className={v.evidence}>role: viewer · needs dashboard:read</span>
+        </div>
+        <div className={`${v.screen} ${v.sDash}`}>
+          <b>Dashboard</b>
+          <span className={v.tiles}>
+            <i>
+              <small>Shipments</small>128
+            </i>
+            <i>
+              <small>Invoices</small>14
+            </i>
+            <i>
+              <small>Team</small>6
+            </i>
           </span>
         </div>
-        <div className={`${v.screen} ${v.sPay}`}>
-          <span className={v.field}>
-            <small>Card</small>•••• 4242
-          </span>
-          <span className={`${v.field} ${v.verify}`}>
-            <small>Card verification</small>
-            <Swap
-              step={step}
-              texts={[
-                { at: 0, text: 'Waiting' },
-                { at: 2, text: 'Never returns', tone: 'wait' },
-                { at: 4, text: 'Returned', tone: 'ok' },
-              ]}
-            />
-          </span>
-          <span className={v.pay}>Pay $48.00</span>
-        </div>
-        <div className={`${v.screen} ${v.sDone}`}>
-          <b>Order confirmed</b>
-          <span>#1042 · receipt sent</span>
-        </div>
-        <span className={v.isolate} />
         <svg className={v.cursor} viewBox="0 0 16 16" aria-hidden>
           <path d="M2 1.5 13 8.2l-4.9.9 2.6 5-1.8.9-2.6-5L2.4 13z" />
         </svg>
       </div>
-      <div className={`${v.panel} ${v.cause}`}>
-        <span className={v.causeA}>
-          <b>Root cause</b> card check returns no redirect
+      <div className={`${v.panel} ${v.diag}`}>
+        <span className={v.dWait}>Running the invite journey</span>
+        <span className={v.dCause}>
+          <b>Cause</b> invites get viewer, not member
         </span>
-        <span className={v.causeB}>
-          <code>fix</code> pass return_url to the check
+        <span className={v.dFix}>
+          <code>fix</code> invite role <s>viewer</s> member
         </span>
-        <span className={v.causeC}>Same path rerun: 4 of 4 steps passed</span>
+        <span className={v.dPass}>Retested: 4/4 steps passed</span>
       </div>
-      <div className={v.result}>Flow verified</div>
+      <div className={v.result}>Access flow verified</div>
     </div>
   );
 }

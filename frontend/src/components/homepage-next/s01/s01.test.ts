@@ -32,11 +32,12 @@ test('exactly eight unique capabilities with the approved titles, numbers and ch
     assert.equal(c.groups.length, 4, c.id);
     assert.ok(c.details.length >= 5 && c.truth.length >= 2, c.id);
   }
-  assert.equal(SECTION.kicker, 'BUILDING TOWARD SUPERINTELLIGENCE');
-  assert.equal(SECTION.title, 'Beyond answers. Into real work.');
+  assert.equal(SECTION.identifier, 'XROGA FEATURES');
+  assert.deepEqual(SECTION.vision, { lead: 'Building toward', word: 'superintelligence' });
+  assert.equal(SECTION.title, 'The power behind Xroga.');
   assert.equal(
     SECTION.intro,
-    'Explore the capabilities that turn complex requests into working products, verified actions, clearer decisions and work that keeps moving.',
+    'From creating software and exploring the web to running business operations, researching opportunities, working with data and launching products, Xroga brings many kinds of work into one place.',
   );
   assert.deepEqual(
     CAPABILITIES.map((c) => c.benefit),
@@ -87,7 +88,7 @@ test('each vignette ends on its own result, paired with the right card', () => {
   const v = read('./Vignettes.tsx');
   const finals: Record<string, string> = {
     Build: 'Release-ready build',
-    Browser: 'Flow verified',
+    Browser: 'Access flow verified',
     Automate: 'Records updated',
     Launch: 'Ready for release review',
     Research: 'Evidence-backed brief',
@@ -204,7 +205,7 @@ test('reduced motion: a static grid with every card readable, no pinned track, n
   assert.match(deck, /reduced=\{!!reduce \|\| view\.mode === 'static'\}/, 'Explore opens without the turn');
   const card = read('./Card.module.css');
   assert.match(card, /\.card\[data-flat\] \.body \{[\s\S]*?transform: none;/);
-  assert.match(card, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tracer \{\s*display: none;/);
+  assert.match(card, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.tracer,\s*\.sweep \{\s*display: none;/);
   assert.match(read('./Vignettes.module.css'), /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(read('./CapabilityFocus.tsx'), /if \(reduced\) \{\s*done\(\);/);
 });
@@ -257,9 +258,9 @@ test('every drawer detail survives on the reverse: each detail sentence is place
 
 test('copy: the old section strings are gone and superintelligence is an aspiration only', () => {
   const copy = allCopy();
-  assert.doesNotMatch(copy, /01 \/ CAPABILITIES|What you can do with Xroga|What can Xroga take on/);
+  assert.doesNotMatch(copy, /01 \/ CAPABILITIES|What you can do with Xroga|Beyond answers. Into real work|What can Xroga take on/);
   assert.doesNotMatch(copy, /\b(is|are|first|achieved|world's) superintelligen|\bAGI\b/i);
-  assert.match(SECTION.kicker, /^BUILDING TOWARD /);
+  assert.equal(SECTION.vision.lead, 'Building toward');
   // the heading is the section H2; the page keeps a single H1 in the hero
   assert.match(read('./S01CapabilityDeck.tsx'), /<h2 id="s01-title"/);
   assert.doesNotMatch(read('./S01CapabilityDeck.tsx') + read('./CapabilityCard.tsx') + read('./CapabilityFocus.tsx'), /<h1/);
@@ -380,4 +381,53 @@ test('chapter labels swap in sequence and never overlap', () => {
   const css = read('./S01.module.css');
   assert.match(css, /\.chapterName\[data-ch='A'\] \{\s*opacity: clamp\(0, 1 - var\(--mix, 0\) \* 2, 1\);/);
   assert.match(css, /\.chapterName\[data-ch='B'\] \{\s*opacity: clamp\(0, var\(--mix, 0\) \* 2 - 1, 1\);/);
+});
+
+test('Explore hit testing: only the visible front face takes the pointer, never the 3D containers', () => {
+  // root cause of the founder's dead Explore button: the preserve-3d slot captured pointerup/click when the
+  // tilted face dropped behind its plane
+  const deck = read('./S01.module.css');
+  assert.match(deck, /\.slot \{[\s\S]*?pointer-events: none;/);
+  const card = read('./Card.module.css');
+  assert.match(card, /\.front \{[\s\S]*?pointer-events: auto;/);
+  assert.match(card, /\.card,\s*\.body,\s*\.back,\s*\.edge \{\s*pointer-events: none;/);
+});
+
+test('Browser & Testing is a portal access flow: navigate, detect, diagnose, fix, retest, verify', () => {
+  const body = fnBody(read('./Vignettes.tsx'), 'Browser');
+  assert.doesNotMatch(body, /Order confirmed|checkout|Pay \$/i);
+  for (const s of ['403', 'No access to Dashboard', 'Cause', 'fix', 'Retested: 4/4 steps passed', 'Access flow verified']) assert.ok(body.includes(s), s);
+  assert.match(read('./Vignettes.tsx'), /const ACCESS_STEPS = \['Invite', 'Accept', 'Sign in', 'Dashboard'\];/);
+});
+
+test('face sweep: a clipped band across the card face, transform only, event-driven, staggered and directional', () => {
+  const css = read('./Card.module.css');
+  assert.match(css, /\.sweep \{[\s\S]*?overflow: hidden;[\s\S]*?pointer-events: none;/);
+  for (const k of ['sweepDownA', 'sweepDownB', 'sweepUpA', 'sweepUpB']) assert.ok(css.slice(css.indexOf(`@keyframes ${k} {`)).split('}\n}')[0].includes('translate3d'), k);
+  const ms = [...css.matchAll(/animation: sweep\w+ (\d+)ms/g)].map((m) => Number(m[1]));
+  assert.ok(ms.length >= 2 && ms.every((v) => v >= 650 && v <= 950), `sweep ${ms}`);
+  assert.doesNotMatch(css, /sweep\w+ [^;]*infinite/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.sweep \{\s*display: none;/);
+  assert.match(read('./S01CapabilityDeck.tsx'), /card\.dataset\.dir = i % 2 \? 'up' : 'down';/);
+});
+
+test('vision line: superintelligence is emphasised as a direction, with a restrained single light pass', () => {
+  const css = read('./S01.module.css');
+  assert.match(css, /\.visionWord \{[\s\S]*?font-weight: 680;/);
+  assert.match(css, /animation: visionPass 8s/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.visionWord::after \{\s*animation: none;/);
+  assert.match(read('./S01CapabilityDeck.tsx'), /<p className=\{s\.identifier\}>\{SECTION\.identifier\}<\/p>/);
+});
+
+test('no readable face ever passes over another: face-up cards never overlap anywhere in the scroll', () => {
+  for (const [w, h] of [[1894, 896], [1440, 900], [1440, 690], [1280, 800], [1150, 666]]) {
+    const L = withHeading(computeLayout(w, h), 300);
+    for (let p = 0; p <= 1; p += 0.001) {
+      const up = deckFrame(p, L).cards
+        .filter((c) => c.o > 0.5 && c.flip > 0.5)
+        .map((c) => { const half = (L.W / 2) * Math.abs(Math.cos((c.ry * Math.PI) / 180)) * c.s; return [c.x - half, c.x + half]; })
+        .sort((a, b) => a[0] - b[0]);
+      for (let i = 1; i < up.length; i++) assert.ok(up[i - 1][1] - up[i][0] <= 1, `${w}x${h} p=${p.toFixed(3)} faces overlap`);
+    }
+  }
 });

@@ -1,6 +1,6 @@
 'use client';
 /**
- * S01 Capability Deck: "Beyond answers. Into real work."
+ * S01 Capability Deck: "The power behind Xroga."
  *
  * Three presentations of the same eight cards, chosen from the viewport and motion preference:
  *  - deck      (desktop): a sticky stage whose every pose comes from deckFrame(sectionProgress). Normal document
@@ -28,7 +28,13 @@ const REPLAY_STEP_MS = 800;
 function Heading({ inStage }: { inStage?: boolean }) {
   return (
     <>
-      <p className={s.label}>{SECTION.kicker}</p>
+      <p className={s.identifier}>{SECTION.identifier}</p>
+      <p className={s.vision}>
+        <span className={s.visionLead}>{SECTION.vision.lead}</span>{' '}
+        <span className={s.visionWord} data-text={SECTION.vision.word}>
+          {SECTION.vision.word}
+        </span>
+      </p>
       <h2 id="s01-title" className={s.title}>
         {SECTION.title}
       </h2>
@@ -127,6 +133,8 @@ function DeckStage({ layout: base, onExplore, detail }: StageProps) {
           if (card) {
             // cards that land in the same frame (a fast scroll) are staggered, so they never flash together
             card.style.setProperty('--trace-delay', `${landed++ * 160}ms`);
+            // neighbouring cards sweep in opposite directions, so the row never moves as one stripe
+            card.dataset.dir = i % 2 ? 'up' : 'down';
             card.dataset.trace = card.dataset.trace === 'a' ? 'b' : 'a';
           }
         }

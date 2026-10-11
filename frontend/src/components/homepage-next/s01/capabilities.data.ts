@@ -52,9 +52,12 @@ export interface Capability {
 
 export const SECTION = {
   /** an aspiration, not a claim: Xroga is building toward it */
-  kicker: 'BUILDING TOWARD SUPERINTELLIGENCE',
-  title: 'Beyond answers. Into real work.',
-  intro: 'Explore the capabilities that turn complex requests into working products, verified actions, clearer decisions and work that keeps moving.',
+  /** the section identifier */
+  identifier: 'XROGA FEATURES',
+  /** the vision line: a direction Xroga is building toward, never a claim that it is already there */
+  vision: { lead: 'Building toward', word: 'superintelligence' },
+  title: 'The power behind Xroga.',
+  intro: 'From creating software and exploring the web to running business operations, researching opportunities, working with data and launching products, Xroga brings many kinds of work into one place.',
   chapters: {
     A: { name: 'Create and execute', range: '01 to 04' },
     B: { name: 'Understand and grow', range: '05 to 08' },
@@ -105,11 +108,11 @@ export const CAPABILITIES: Capability[] = [
     title: 'Browser & Testing',
     benefit: 'Check important user journeys, find problems and verify the fixes.',
     chips: ['Browser actions', 'Testing', 'Repairs', 'Verification'],
-    demoLabel: 'Real user journey',
-    stages: ['Open', 'Test', 'Fix', 'Retest'],
-    result: 'Critical flow checked',
+    demoLabel: 'Client portal access flow',
+    stages: ['Navigate', 'Detect', 'Fix', 'Retest'],
+    result: 'Access flow verified',
     reverseTitle: 'See what actually works.',
-    outcome: 'Find why checkout fails, fix the issue and re-run the customer journey.',
+    outcome: 'Find why invited users cannot reach their dashboard, fix the cause and rerun the same access journey.',
     how: ['You name the journey', 'Xroga runs it step by step', 'Isolates and fixes the failure', 'Reruns it and reports evidence'],
     groups: [
       { label: 'Browser actions', text: 'Real interaction with web interfaces, where supported.', examples: ['Navigate', 'Click and type', 'Fill forms', 'Inspect'], points: [0, 3] },
@@ -124,7 +127,7 @@ export const CAPABILITIES: Capability[] = [
       'Use browser actions when ordinary APIs are insufficient, subject to actual service readiness and permission.',
       'Report what was tested, what failed, and whether it passed, without inventing evidence.',
     ],
-    example: 'Test my checkout from cart to confirmation, including the card verification step. Find the root cause of any failure, fix it and run the same path again.',
+    example: 'Test our client portal from invitation to dashboard, including sign-in and permissions. Find the root cause of any failure, fix it and run the same journey again.',
     truth: [
       { status: 'available', text: 'Real builds and tests run in an isolated runtime, and results report what actually passed.' },
       { status: 'connection', text: 'Browser-verified previews run on products Xroga builds, once the preview is authorized.' },

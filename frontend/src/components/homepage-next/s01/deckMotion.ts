@@ -218,9 +218,12 @@ function poseA(i: number, u: number, L: DeckLayout): CardPose {
   pose.z += Math.sin(Math.PI * f) * 84;
   pose.rx += Math.sin(Math.PI * f) * 3;
 
-  // collect: 04 first, back to the patterned side, then the gathered deck recedes upward into depth
-  const g = travel(seg(u, S.gather[0] + (3 - i) * 0.012, S.gather[1] + (3 - i) * 0.012));
-  const back = turn(seg(u, S.gather[0] + (3 - i) * 0.012, S.gather[1] + (3 - i) * 0.012));
+  // collect: 04 first. Each card turns to its patterned back in place first and only slides into the stack once it is
+  // past edge-on, so no readable face ever passes over a neighbour; then the gathered deck recedes upward into depth.
+  const g0 = S.gather[0] + (3 - i) * 0.012;
+  const g1 = S.gather[1] + (3 - i) * 0.012;
+  const back = turn(seg(u, g0, g0 + (g1 - g0) * 0.45));
+  const g = travel(seg(u, g0 + (g1 - g0) * 0.25, g1));
   const gathered: Pose = { x: c * 16, y: -10 - i * 4, z: -i * 12, rx: 4, ry: 180 + 0, rz: -3 + i * 2, s: 0.94, o: 1 };
   const ryBefore = pose.ry;
   pose = mix(pose, gathered, g);

@@ -37,29 +37,73 @@
 }
 
 /* ------------------------------------------------------------------------------- heading (shared typography) */
-/* a small vision kicker: an aspiration, deliberately quieter than the heading */
-.label {
+/* The heading block reads in three tiers: the section identifier, the vision line, then the H2. The vision line
+   states a direction ("building toward"), and gives the word superintelligence a refined emphasis: a heavier cut,
+   wide tracking, a cool pearl tone and a slow light pass that runs once every eight seconds. */
+.identifier {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   margin: 0;
   font-family: var(--font-xv-mono), ui-monospace, monospace;
   font-size: 12px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.24em;
   color: #a9afbd;
 }
-.label::before,
-.label::after {
+.identifier::before,
+.identifier::after {
   content: '';
-  width: 22px;
+  width: 26px;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(119, 137, 238, 0.6));
 }
-.label::after {
+.identifier::after {
   transform: scaleX(-1);
 }
+.vision {
+  margin: 14px 0 0;
+  font-size: clamp(14px, 0.62rem + 0.65vw, 18px);
+  line-height: 1.3;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.visionLead {
+  font-weight: 450;
+  color: #b9bfcc;
+}
+.visionWord {
+  position: relative;
+  display: inline-block;
+  font-weight: 680;
+  letter-spacing: 0.22em;
+  color: #e4e8f6;
+}
+/* the light pass: a copy of the word in a pearl-to-violet gradient, revealed by a moving window */
+.visionWord::after {
+  content: attr(data-text) / '';
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: linear-gradient(100deg, transparent 0%, transparent 40%, #ffffff 47%, #c9d3ff 50%, #b6a8f2 53%, transparent 60%, transparent 100%);
+  background-size: 260% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: visionPass 8s cubic-bezier(0.45, 0, 0.25, 1) 0.9s infinite;
+  pointer-events: none;
+}
+@keyframes visionPass {
+  0% { background-position: 120% 0; }
+  18%, 100% { background-position: -20% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visionWord::after {
+    animation: none;
+    display: none;
+  }
+}
 .title {
-  margin: 12px 0 0;
+  margin: 14px 0 0;
   font-size: clamp(31px, 1.2rem + 3vw, 64px);
   line-height: 1.02;
   letter-spacing: -0.036em;
@@ -75,7 +119,7 @@
 }
 .intro {
   margin: 14px auto 0;
-  max-width: 660px;
+  max-width: 720px;
   font-size: 17px;
   line-height: 1.5;
   color: var(--sub);
@@ -284,7 +328,11 @@
   margin-top: calc(var(--chh) / -2);
   transform-style: preserve-3d;
   will-change: transform;
-  pointer-events: auto;
+  /* Chrome hit-tests a preserve-3d box at its own plane. The front face sits only half a card thickness in front of
+     it, so when the card tilts (hover, settle) part of the face drops behind that plane and this invisible box
+     captured pointerup and click: Explore "did nothing". The 3D containers never take the pointer; only the visible
+     front face does (Card.module.css). */
+  pointer-events: none;
   --o: 0;
 }
 

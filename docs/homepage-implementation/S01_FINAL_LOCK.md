@@ -105,3 +105,26 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
 - Evidence capture at 1440, 1150, 768, 430, 390, 360 and reduced motion: no overflow, no console errors.
 - S00 unchanged: one H1 `Xroga for everything.`, weight 580, colour rgb(230,227,220), shine 600 ms / 3300 ms.
 - Production screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-last-mile\production\`.
+
+## Founder-reported defects pass (2026-10-11, second brief)
+- Explore root cause (reproduced on production with headed Chrome, wheel scrolling from the hero and real mouse
+  clicks at 1894x896: 13 of 20 clicks opened nothing). Event trace: `pointerdown` reached the Explore button, but
+  `pointerup` and `click` landed on the card's `li` slot. The slot is a `preserve-3d` container; Chrome hit-tests it
+  at its own plane, and the front face sits only half a card thickness in front of it. When a card tilts (hover lift,
+  settle tilt) part of the face drops behind that plane, so the invisible slot captured the release and the click
+  never reached the button. Fix: the slot, card, body, back and edges never take the pointer; only the front face
+  does. After the fix: 100 of 100 real clicks opened the clicked card (1894x896, 1440x900, 1440x690, 1150x666 and
+  125% zoom; plain, after hover, after a one-second pause, after reverse scrolling), plus clicks during the last part
+  of a flip on all four chapter A cards.
+- Copy: identifier `XROGA FEATURES`, vision line `Building toward superintelligence` (the word set heavier with a
+  single slow light pass every 8 s, off under reduced motion), H2 `The power behind Xroga.`, support paragraph as
+  briefed.
+- Browser & Testing: the checkout and `Order confirmed` story is replaced by a client portal access flow: invite,
+  accept, sign in, dashboard; the dashboard step fails with 403 and the evidence is marked; cause (invites assign the
+  viewer role), fix (member), the same journey rerun, `Retested: 4/4 steps passed`, `Access flow verified`.
+- Face sweep: a feathered specular band with one fine filament crosses the whole front face (900 ms, clipped,
+  transform only, pointer-events none), once when a card comes to rest; neighbouring cards sweep in opposite
+  directions and concurrent sweeps are staggered 160 ms. Off under reduced motion.
+- Collision found and fixed: while chapter A collected (p about 0.46) readable faces slid over each other by up to
+  116 px, because the turn back and the slide ran together. Each card now turns to its back before it slides. A test
+  checks that face-up cards never overlap anywhere in the scroll at five viewports.

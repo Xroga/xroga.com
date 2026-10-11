@@ -352,6 +352,8 @@
 }
 
 /* ================================================================ 02 Browser & Testing */
+/* A client portal access journey: four steps on a rail, a browser window showing the step under test, and a diagnosis
+   strip. Navigate (s1), detect the failing step (s2), diagnose and fix (s3), rerun the same journey (s4). */
 .rail {
   left: 3%;
   right: 3%;
@@ -365,7 +367,7 @@
 }
 .rail li {
   position: relative;
-  padding: 2px 0 2px 11px;
+  padding: 2px 0 2px 12px;
   border-radius: 3px;
   background: rgba(236, 233, 226, 0.04);
   font-size: 9.5px;
@@ -385,33 +387,34 @@
   background: rgba(236, 233, 226, 0.22);
   transition: background-color 300ms ease;
 }
-.browser[data-s1] .rail li:is([data-k='cart'], [data-k='details']) {
+.browser[data-s1] .rail li:is([data-k='0'], [data-k='1'], [data-k='2']) {
   color: var(--ink);
 }
-.browser[data-s1] .rail li:is([data-k='cart'], [data-k='details'])::before {
+.browser[data-s1] .rail li:is([data-k='0'], [data-k='1'], [data-k='2'])::before {
   background: var(--ok);
 }
-.browser[data-s2] .rail li[data-k='pay'] {
+/* the one failing step, and only that one */
+.browser[data-s2] .rail li[data-k='3'] {
   color: var(--amber);
   background: rgba(217, 166, 95, 0.12);
 }
-.browser[data-s2] .rail li[data-k='pay']::before {
+.browser[data-s2] .rail li[data-k='3']::before {
   background: var(--amber);
 }
-.browser[data-s4] .rail li:is([data-k='pay'], [data-k='done']) {
+.browser[data-s4] .rail li[data-k='3'] {
   color: var(--ink);
-  background: rgba(236, 233, 226, 0.04);
+  background: rgba(160, 220, 235, 0.08);
 }
-.browser[data-s4] .rail li:is([data-k='pay'], [data-k='done'])::before {
+.browser[data-s4] .rail li[data-k='3']::before {
   background: var(--ok);
 }
-/* the routed test marker drops from the failing rail step to the exact field that fails */
+/* an evidence marker drops from the failing step into the window */
 .marker {
-  left: 62%;
+  left: 83%;
   top: 12%;
   width: 1px;
-  height: 31%;
-  background: linear-gradient(var(--amber), rgba(217, 166, 95, 0.2));
+  height: 7%;
+  background: var(--amber);
   transform-origin: top;
   transform: scaleY(0);
 }
@@ -426,17 +429,27 @@
   left: 3%;
   top: 15%;
   width: 94%;
-  height: 58%;
+  height: 52%;
+}
+.url {
+  margin-left: 4px;
+  font-size: 9.5px;
+  color: var(--muted);
 }
 .screen {
   position: absolute;
   inset: 14px 0 0 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 4px;
-  padding: 6px 8%;
+  padding: 4px 8%;
   opacity: 0;
   transition: opacity 360ms ease;
+}
+.screen b {
+  font-size: 11px;
+  font-weight: 620;
 }
 .field {
   position: relative;
@@ -460,8 +473,7 @@
   font-style: normal;
   color: var(--ok);
 }
-.pay {
-  margin-top: 1px;
+.cta {
   padding: 3px 0;
   text-align: center;
   border-radius: 3px;
@@ -470,84 +482,99 @@
   font-weight: 650;
   font-size: 10px;
 }
-.sDone {
-  align-items: center;
-  justify-content: center;
+.sDenied {
+  align-items: flex-start;
 }
-.sDone b {
-  font-size: 11.5px;
-  font-weight: 640;
-  color: var(--ok);
+.code {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 10px;
+  padding: 0 5px;
+  border-radius: 3px;
+  border: 1px solid rgba(217, 166, 95, 0.6);
+  color: var(--amber);
 }
-.sDone span {
+.sDenied b {
+  color: var(--amber);
+}
+.evidence {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 9.5px;
   color: var(--muted);
 }
-.browser .sDetails {
+.browser[data-s3] .evidence {
+  color: var(--ink);
+  background: rgba(217, 166, 95, 0.12);
+  outline: 1px dashed rgba(217, 166, 95, 0.75);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.tiles i {
+  display: flex;
+  flex-direction: column;
+  padding: 3px 5px;
+  border: 1px solid var(--hair);
+  border-radius: 3px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 620;
+}
+.tiles small {
+  font-size: 8.5px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.browser .sInvite {
   opacity: 1;
 }
-.browser[data-s2] .sDetails {
+.browser[data-s2] .sInvite {
   opacity: 0;
 }
-.browser[data-s2] .sPay {
+.browser[data-s2] .sDenied {
   opacity: 1;
 }
-.browser[data-s4] .sPay {
+.browser[data-s4] .sDenied {
   opacity: 0;
 }
-.browser[data-s4] .sDone {
+.browser[data-s4] .sDash {
   opacity: 1;
-}
-.browser[data-s2] .verify {
-  border-color: rgba(217, 166, 95, 0.6);
-}
-.isolate {
-  position: absolute;
-  left: 6%;
-  right: 6%;
-  top: calc(14px + 36%);
-  height: 30%;
-  border: 1px dashed rgba(217, 166, 95, 0.85);
-  border-radius: 4px;
-  box-shadow: 0 0 0 300px rgba(6, 8, 11, 0.5);
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-.browser[data-s3] .isolate {
-  opacity: 1;
-}
-.browser[data-s4] .isolate {
-  opacity: 0;
 }
 .cursor {
   position: absolute;
   width: 12px;
   height: 12px;
-  left: 30%;
+  left: 70%;
   top: 40%;
   fill: #f3f1ec;
   stroke: #0b0d11;
   stroke-width: 1;
   transition: left 620ms var(--ease), top 620ms var(--ease), opacity 300ms ease;
 }
+/* the pointer moves only when it changes the step: onto Accept, then onto the dashboard link on the rerun */
 .browser[data-s1] .cursor {
-  left: 60%;
-  top: 62%;
+  left: 52%;
+  top: 78%;
 }
-.browser[data-s2] .cursor {
-  left: 55%;
-  top: 86%;
-}
-.browser[data-s3] .cursor,
-.browser[data-s4] .cursor {
+.browser[data-s2] .cursor,
+.browser[data-s3] .cursor {
   opacity: 0;
 }
-.cause {
-  left: 3%;
-  top: 76%;
-  width: 94%;
-  height: 21%;
+.browser[data-s4] .cursor {
+  left: 30%;
+  top: 70%;
+  opacity: 1;
 }
-.cause > span {
+.diag {
+  left: 3%;
+  top: 70%;
+  width: 94%;
+  height: 16%;
+}
+.diag > span {
   position: absolute;
   left: 7px;
   right: 7px;
@@ -560,38 +587,41 @@
   opacity: 0;
   transition: opacity 320ms ease;
 }
-.cause b {
+.diag b {
   color: var(--amber);
   font-weight: 600;
 }
-.cause code {
+.diag code {
   color: var(--accent);
   margin-right: 3px;
 }
-.browser[data-s2] .causeA {
-  opacity: 0.6;
+.diag s {
+  color: var(--dim);
+}
+.dWait {
   color: var(--muted);
 }
-.browser[data-s3] .causeA {
-  top: 30%;
-  opacity: 1;
-  color: var(--ink);
-}
-.browser[data-s3] .causeB {
-  top: 72%;
+.browser:not([data-s2]) .dWait {
   opacity: 1;
 }
-.browser[data-s4] .causeA,
-.browser[data-s4] .causeB {
-  opacity: 0;
+.browser[data-s2]:not([data-s3]) .dCause {
+  opacity: 1;
 }
-.browser[data-s4] .causeC {
+.browser[data-s3]:not([data-s4]) .dFix {
+  opacity: 1;
+}
+.browser[data-s4] .dPass {
   opacity: 1;
   color: var(--ok);
 }
 .browser .result {
-  bottom: auto;
-  top: 31%;
+  left: 50%;
+  right: auto;
+  bottom: 2%;
+  transform: translate(-50%, 5px);
+}
+.browser[data-s4] .result {
+  transform: translate(-50%, 0);
 }
 
 /* ================================================================ 03 Automate Work */

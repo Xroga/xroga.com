@@ -131,6 +131,9 @@ export function CapabilityCard({ cap, step, expanded, onExplore, onReplay, flat,
           </div>
           <span className={c.glint} aria-hidden />
           <span className={c.tracer} aria-hidden />
+          <span className={c.sweep} aria-hidden>
+            <i />
+          </span>
         </div>
 
         <div className={c.back} data-face="back" aria-hidden>
