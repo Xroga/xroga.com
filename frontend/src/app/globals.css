@@ -859,26 +859,36 @@ body.theme-gray * {
   }
 
   .xv-hover-tip {
-    background: rgba(15, 23, 42, 0.95);
-    color: #f8fafc;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 6px 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(12px);
+    background: #050505;
+    color: #ffffff;
+    border: 1px solid #343434;
+    border-radius: 6px;
+    padding: 5px 8px;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.24);
     animation: universe-fade-in 0.2s ease forwards;
   }
 
-  .xv-hover-tip-detail {
-    padding: 8px 12px;
-    max-width: 220px;
+  body.theme-white .xv-hover-tip {
+    background: #050505;
+    color: #ffffff;
+    border-color: #343434;
   }
 
-  body.theme-white .xv-hover-tip {
-    background: rgba(255, 255, 255, 0.98);
-    color: #0f172a;
-    border-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  .xv-compact-app-tooltip {
+    position: fixed;
+    z-index: 350;
+    pointer-events: none;
+    max-width: 180px;
+    padding: 5px 8px;
+    border: 1px solid #343434;
+    border-radius: 6px;
+    background: #050505;
+    color: #ffffff;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.24);
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .xv-analytics-card {
@@ -8119,32 +8129,6 @@ html[data-accent='default'] body.theme-gray .xv-accent-action {
   background: color-mix(in srgb, var(--foreground) 88%, transparent);
   color: var(--background);
   box-shadow: 0 8px 22px color-mix(in srgb, #000 20%, transparent);
-}
-.xv-conversation-navigator::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 0.48rem);
-  padding: 0.34rem 0.58rem;
-  transform: translateX(-50%) scale(0.82);
-  transform-origin: 50% 100%;
-  border: 1px solid color-mix(in srgb, var(--foreground) 16%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--app-panel) 92%, transparent);
-  color: var(--foreground);
-  box-shadow: 0 6px 18px color-mix(in srgb, #000 16%, transparent);
-  font-size: 0.65rem;
-  font-weight: 650;
-  line-height: 1;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease, transform 160ms ease;
-}
-.xv-conversation-navigator:hover::after,
-.xv-conversation-navigator:focus-visible::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
 }
 .xv-conversation-navigator:focus-visible {
   outline: 2px solid var(--accent);

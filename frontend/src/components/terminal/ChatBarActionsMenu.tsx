@@ -151,7 +151,7 @@ export function ChatBarActionsMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="More composer actions"
-        title="Plan, debug, skills, and rules"
+        data-short-tip="More actions"
       >
         {/* The ring draws itself and the symbol lands inside it. The 45deg turn that
             marked the open state came from the plus reading as a close cross when

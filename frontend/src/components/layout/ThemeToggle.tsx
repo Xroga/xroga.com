@@ -66,7 +66,6 @@ export function ThemeToggle({ className, placement = 'bottom-end' }: ThemeToggle
         }}
         className="xv-theme-toggle inline-flex h-8 w-8 items-center justify-center rounded-lg glass-panel hover:border-[var(--accent)]/40 transition-colors"
         aria-label="Change theme"
-        title="Change theme"
         aria-expanded={open}
         aria-haspopup="menu"
       >
