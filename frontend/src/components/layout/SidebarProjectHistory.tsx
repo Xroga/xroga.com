@@ -485,6 +485,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       push(s.githubRepoName, s.githubBranch || 'main', '/', {
         id: s.id,
         title: cloudTerminalLabel(s.terminalNumber),
+        preview: s.preview,
         updatedAt: s.updatedAt,
         status: (s.status as TerminalHistoryStatus) || 'complete',
         githubRepoName: s.githubRepoName,
@@ -504,6 +505,7 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
       push(e.githubRepoName, e.githubBranch || 'main', e.projectRoot || '/', {
         id: e.id,
         title: cloudTerminalLabel(n),
+        preview: e.prompt || e.preview,
         updatedAt: e.updatedAt,
         status: e.status,
         githubRepoName: e.githubRepoName,
@@ -878,8 +880,8 @@ export function SidebarProjectHistory({ expanded }: { expanded: boolean }) {
                       return (
                         <HistoryTick
                           key={session.id}
-                          label={session.title}
-                          description={[session.entry?.prompt || session.entry?.preview || session.preview || session.githubRepoName, formatCompactAgo(session.updatedAt)].filter(Boolean).join(' · ')}
+                          label={conversationTitle(session).slice(0, 58)}
+                          description={[session.entry?.prompt || session.preview || session.githubRepoName, formatCompactAgo(session.updatedAt)].filter(Boolean).join(' · ').slice(0, 240)}
                           active={isActiveSession}
                           disabled={busyId === session.id}
                           onOpen={() => void openSession(session)}
