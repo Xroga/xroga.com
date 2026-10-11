@@ -31,7 +31,7 @@ test('repository terminals precede pinned and recent conversations with account-
   assert.match(HISTORY, /aria-label=\{pinned \? 'Unpin conversation' : 'Pin conversation'\}/);
   assert.match(HISTORY, /savedConversations\.filter\(s => !pinnedIds\.includes\(s\.id\)\)/);
   assert.doesNotMatch(HISTORY, /foldersList = foldersList\.slice\(0, 12\)/);
-  assert.match(HISTORY, /onClick=\{\(\) => void openSession\(session\)\}/);
+  assert.match(HISTORY, /onOpen=\{\(\) => void openSession\(session\)\}/);
 });
 
 test('sidebar font changes are scoped, with full-size touch targets on mobile', () => {
@@ -53,4 +53,22 @@ test('Publish rocket preserves user-provided floating and morphing-flame animati
   assert.match(ROCKET, /repeat: Infinity/);
   assert.match(ROCKET, /useReducedMotion/);
   assert.match(ROCKET, /motion\/react-m/);
+});
+
+
+test('history rows render as unobtrusive lines, not labels or filled cards', () => {
+  assert.match(HISTORY, /function HistoryTick\(/);
+  assert.match(HISTORY, /xv-history-tick__mark/);
+  assert.match(HISTORY, /<HoverTip label=\{label\} description=\{description\} side="right">/);
+  assert.match(HISTORY, /aria-label=\{'Open ' \+ label\}/);
+  assert.match(HISTORY, /active=\{isActiveSession\}/);
+  assert.match(HISTORY, /pinned=\{pinnedIds\.includes\(session\.id\)\}/);
+  assert.match(HISTORY, /onOpen=\{\(\) => void openSession\(session\)\}/);
+  assert.doesNotMatch(HISTORY, /hover:bg-\[var\(--foreground\)\]\/\[0\.05\]/);
+  assert.doesNotMatch(HISTORY, /max-h-\[280px\]/);
+  assert.match(GLOBAL, /\.xv-history-rail \.xv-history-tick__mark/);
+  assert.match(GLOBAL, /width: 11px/);
+  assert.match(GLOBAL, /width: 25px/);
+  assert.match(GLOBAL, /background: transparent !important/);
+  assert.match(GLOBAL, /@media \(hover: none\)/);
 });

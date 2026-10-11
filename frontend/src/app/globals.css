@@ -14468,3 +14468,100 @@ html.xv-home-scroll-lock body {
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 58%, transparent); border-radius: 999px; }
 .xv-sidebar-nav-scroll.xv-sidebar-scroll-track::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--muted) 84%, transparent); }
 .xv-repos-scroll { overflow: visible !important; max-height: none !important; }
+
+
+/* Conversation history ticks — screenshot-style minimalist line rail.
+   Only history item triggers are affected; normal sidebar nav stays unchanged. */
+.xv-history-rail .xv-history-tick-row {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  min-height: 15px;
+  margin: 1px 0;
+  gap: 3px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.xv-history-rail .xv-history-tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 32px;
+  height: 15px;
+  padding: 0 0 0 4px;
+  margin: 0;
+  border: 0 !important;
+  outline-offset: 1px;
+  border-radius: 0;
+  box-shadow: none !important;
+  background: transparent !important;
+  cursor: pointer;
+}
+.xv-history-rail .xv-history-tick__mark {
+  display: block;
+  width: 11px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--foreground) 22%, transparent);
+  transition: width 140ms ease, background-color 140ms ease, opacity 140ms ease;
+}
+.xv-history-rail .xv-history-tick:hover,
+.xv-history-rail .xv-history-tick:focus-visible,
+.xv-history-rail .xv-history-tick:active,
+.xv-history-rail .xv-history-tick.is-active {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.xv-history-rail .xv-history-tick:hover .xv-history-tick__mark,
+.xv-history-rail .xv-history-tick:focus-visible .xv-history-tick__mark {
+  width: 18px;
+  background: color-mix(in srgb, var(--foreground) 72%, transparent);
+}
+.xv-history-rail .xv-history-tick.is-active .xv-history-tick__mark {
+  width: 25px;
+  height: 2px;
+  background: var(--foreground);
+}
+.xv-history-rail .xv-history-tick.is-pinned:not(.is-active) .xv-history-tick__mark {
+  width: 15px;
+  background: color-mix(in srgb, var(--foreground) 45%, transparent);
+}
+.xv-history-rail .xv-history-tick:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0;
+}
+.xv-history-rail .xv-history-tick:disabled { cursor: wait; opacity: 0.5; }
+.xv-history-rail .xv-history-tick__pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 15px;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+.xv-history-rail .xv-history-tick-row:hover .xv-history-tick__pin,
+.xv-history-rail .xv-history-tick-row:focus-within .xv-history-tick__pin {
+  opacity: 0.85;
+}
+.xv-history-rail .xv-history-tick__pin:focus-visible {
+  opacity: 1;
+  outline: 1px solid var(--accent);
+}
+@media (hover: none) {
+  .xv-history-rail .xv-history-tick { height: 28px; }
+  .xv-history-rail .xv-history-tick-row { min-height: 28px; }
+  .xv-history-rail .xv-history-tick__pin { height: 28px; opacity: 0.75; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xv-history-rail .xv-history-tick__mark,
+  .xv-history-rail .xv-history-tick__pin { transition: none; }
+}
