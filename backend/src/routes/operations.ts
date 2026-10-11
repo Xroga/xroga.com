@@ -5,6 +5,7 @@ import { getSupabaseAdmin } from '../config/supabase.js';
 import { isQueueSystemReady } from '../config/jobQueues.js';
 import { computePlatformReady } from '../lib/platformReady.js';
 import type { AuthRequest } from '../middleware/auth.js';
+import { adminMiddleware } from '../middleware/admin.js';
 import { OperationsService, OperationsServiceError } from '../operations/operationsService.js';
 import { evaluateReadiness, safeConfigurationStatus, type ReadinessCheck } from '../operations/productionOperations.js';
 
@@ -56,7 +57,9 @@ function currentChecks(): ReadinessCheck[] {
   ];
 }
 
-router.get('/readiness', async (_req, res) => {
+// Operational evidence is not a tenant project resource. Preserve the established
+// admin/owner access policy here; the founder preview still does not consume it.
+router.get('/readiness', adminMiddleware, async (_req, res) => {
   const checks = currentChecks();
   try {
     const { data, error } = await getSupabaseAdmin().from('production_evidence').select('id,kind,status,summary,reference,observed_at').order('observed_at', { ascending: false }).limit(50);

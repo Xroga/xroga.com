@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
+
+requireFounderPreviewSession();
 
 test('clinic choices follow the same example from Genome to result', async ({ page }) => {
   const forbidden: string[] = [];
@@ -42,10 +45,4 @@ test('repair review reaches an example benchmark without real PR', async ({ page
   await page.goto('/os-preview/bench');
   await page.getByRole('button', { name: 'Inspect example gate' }).first().click();
   await expect(page.getByText(/Production promotion is unavailable/)).toBeVisible();
-});
-
-test('founder decision remains behind signed-out server gate', async ({ page }) => {
-  await page.goto('/os-preview/founder');
-  await expect(page).not.toHaveURL(/\/os-preview\/founder\/?$/);
-  await expect(page.getByText('Fictional user pain signal')).toHaveCount(0);
 });

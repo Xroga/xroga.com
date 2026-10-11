@@ -43,14 +43,6 @@ export const INITIAL_WORKFLOW: DemoWorkflowNode[] = [
   { id:'output-1', kind:'output', label:'Prepare draft', detail:'Produce a local sample draft, not a sent message.', next:null },
 ];
 
-export const FOUNDER_DEMO_FLOW = [
-  { id:'pain', title:'Fictional user pain signal', detail:'Example clinic staff need a clearer booking handoff. Source: internal demo fixture; confidence: illustrative only.' },
-  { id:'repository', title:'Potential repository approach', detail:'Evaluate an accessible booking foundation. No live repository was inspected for this fixture.' },
-  { id:'license', title:'License and compatibility review', detail:'Confirm actual source rights and Next 15 / Tailwind 3 compatibility before any import.' },
-  { id:'experiment', title:'Sandbox experiment', detail:'Test keyboard flow, dependency fit and privacy sanitization in isolation; not executed here.' },
-  { id:'decision', title:'Founder decision', detail:'Choose a future evaluation or reject pending review. No implementation follows automatically.' },
-] as const;
-
 export function validateDemoWorkflow(nodes: DemoWorkflowNode[]): string[] {
   const errors: string[] = [];
   const ids = new Set(nodes.map((node) => node.id));

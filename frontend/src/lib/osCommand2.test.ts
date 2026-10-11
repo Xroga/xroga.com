@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { DEMO_ASSETS, DEMO_PROJECTS, FOUNDER_DEMO_FLOW, INITIAL_WORKFLOW, nextDemoStage, validateDemoWorkflow } from './osCommand2';
+import { DEMO_ASSETS, DEMO_PROJECTS, INITIAL_WORKFLOW, nextDemoStage, validateDemoWorkflow } from './osCommand2';
 import { PREVIEW_DESTINATIONS } from './osPreviewNavigation';
 
 test('clinic story has a consistent asset, worker, artifact and deterministic progression', () => {
@@ -28,9 +28,4 @@ test('workflow dry-run validation detects missing approval, broken links and cyc
 test('public navigation contains no founder destination or diagnostics payload', () => {
   assert.equal(PREVIEW_DESTINATIONS.some((item) => /founder|diagnostic/i.test(item.slug)), false);
   assert.equal(DEMO_ASSETS.find((asset) => asset.id === 'restricted-kit')?.trust, 'rejected-license');
-});
-
-test('founder fictional story includes pain, repository, license, experiment and decision', () => {
-  assert.deepEqual(FOUNDER_DEMO_FLOW.map((step) => step.id), ['pain','repository','license','experiment','decision']);
-  assert.ok(FOUNDER_DEMO_FLOW.every((step) => !/https?:\/\//.test(step.detail)));
 });

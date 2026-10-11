@@ -1,4 +1,7 @@
 import { expect, test } from '@playwright/test';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
+
+requireFounderPreviewSession();
 
 test('gallery renders actual chat output with sample label and working controls', async ({ page }) => {
   const forbidden: string[] = [];

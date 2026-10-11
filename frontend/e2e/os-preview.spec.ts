@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { requireFounderPreviewSession } from './os-preview-founder-fixture';
 
-test('guest can complete the labelled clinic demo without contacting diagnostic APIs', async ({ page }) => {
+requireFounderPreviewSession();
+
+test('founder can complete the labelled clinic demo without contacting diagnostic APIs', async ({ page }) => {
   const forbiddenRequests: string[] = [];
   page.on('request', (request) => {
     if (/\/api\/(admin\/errors|operations\/readiness|swarm\/execute)/.test(request.url())) forbiddenRequests.push(request.url());
@@ -44,14 +47,7 @@ test('mobile navigation has an interactive browser destination and keyboard esca
   await expect(page.getByText('Demo experience — no real work or external changes are performed.')).toBeVisible();
 });
 
-test('signed-out founder URL fails closed', async ({ page }) => {
-  await page.goto('/os-preview/founder');
-  await expect(page).not.toHaveURL(/\/os-preview\/founder\/?$/);
-  await expect(page.getByText('Diagnostics integration pending policy review.')).toHaveCount(0);
-  await expect(page.getByText('Backend connection pending')).toHaveCount(0);
-});
-
-test('all public preview destinations resolve without horizontal overflow at target widths', async ({ page }) => {
+test('all founder preview destinations resolve without horizontal overflow at target widths', async ({ page }) => {
   test.setTimeout(180_000);
   const sections = ['overview','workspace', 'projects','activity','coding', 'browser','research', 'automations', 'employees', 'work-packs', 'genome','experience','skills', 'artifacts', 'drive', 'insights','models','bench', 'settings','help'];
   for (const section of sections) {

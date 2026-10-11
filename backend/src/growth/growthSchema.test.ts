@@ -12,6 +12,7 @@ function readText(relativePath: string): string {
 
 const migration = readText('supabase/migrations/20260727071619_command3c_growth_runtime.sql');
 const workflow = readText('.github/workflows/command3-auth-browser.yml');
+const productionWorkflow = readText('.github/workflows/launch-production-verification.yml');
 const browserTest = readText('frontend/e2e/command3-auth.spec.ts');
 const config = readText('frontend/src/lib/supabase/config.ts');
 const sitemap = readText('frontend/src/app/sitemap.ts');
@@ -36,11 +37,18 @@ test('messaging, referrals and experiments enforce truthful state', () => {
   assert.match(migration, /uq_growth_message_campaign_recipient/);
 });
 
-test('authenticated workflow uses protected secrets and deletes temporary users', () => {
-  assert.match(workflow, /secrets\.NEXT_PUBLIC_SUPABASE_ANON_KEY/);
-  assert.match(workflow, /secrets\.SUPABASE_SERVICE_ROLE_KEY/);
+test('authenticated workflow uses isolated TEST secrets, fails closed, and deletes temporary users', () => {
+  assert.match(workflow, /secrets\.E2E_SUPABASE_URL/);
+  assert.match(workflow, /secrets\.E2E_SUPABASE_ANON_KEY/);
+  assert.match(workflow, /secrets\.E2E_SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(workflow, /vars\.E2E_ISOLATED_PROJECT_REF/);
+  assert.match(workflow, /missing_required_variable/);
+  assert.doesNotMatch(workflow, /secrets\.SUPABASE_SERVICE_ROLE_KEY/);
+  assert.doesNotMatch(workflow, /--request PATCH/);
+  assert.match(browserTest, /dedicated isolated TEST Supabase project/);
   assert.match(browserTest, /deleteUser/);
   assert.doesNotMatch(workflow, /sb_publishable_[A-Za-z0-9_-]{10,}/);
+  assert.doesNotMatch(productionWorkflow, /SUPABASE_SERVICE_ROLE_KEY|command3-auth\.spec\.ts/);
 });
 
 test('frontend accepts publishable keys, rejects server keys, and private routes stay out of sitemap', () => {
