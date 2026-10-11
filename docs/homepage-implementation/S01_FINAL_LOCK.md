@@ -1,6 +1,6 @@
 # S01 Capability Deck: final record
 
-**Status:** S01 LOCKED. Production commit `418a23f0` (closeout pass), deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. First release: `3e9c67ed`.
+**Status:** S01 LOCKED. Production commit `634845c9` (founder-defects pass), deployed automatically by Vercel from `main` and verified on https://xroga.com on 2026-10-11. Earlier releases: `3e9c67ed`, `418a23f0`.
 
 Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreography) and
 `XROGA_S01_FINAL_PREMIUM_POLISH_AND_MAIN_HANDOFF.md` (final art direction). Both are founder documents kept outside Git.
@@ -128,3 +128,12 @@ Specs: `XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md` (structure, content, choreogr
 - Collision found and fixed: while chapter A collected (p about 0.46) readable faces slid over each other by up to
   116 px, because the turn back and the slide ran together. Each card now turns to its back before it slides. A test
   checks that face-up cards never overlap anywhere in the scroll at five viewports.
+- Validation on the candidate: 30 S01 tests, 974 of 974 frontend tests, lint clean, typecheck 27 pre-existing
+  `src/lib` errors only, build passes. Scroll (Intel Iris Xe, Chrome, 1440x900): S01 median 16.6 ms, same as a later
+  section in the same run.
+- Production (634845c9 on https://xroga.com): real clicks 20 of 20 opened at 1894x896, 1440x900 and 1150x666; clicks
+  during the last part of a flip opened all four chapter A cards; 31 of 31 Explore acceptance checks; 0 copy
+  collisions at 1894x896 and 1440x690.
+- Not verified: a complete new signup carrying the Try in Xroga request through to the workspace (the request is
+  stored and the signup page opens; the account creation step was not run).
+- Screenshots: `C:\Users\hp\XrogaReferences\Analysis\s01-defects\`.
