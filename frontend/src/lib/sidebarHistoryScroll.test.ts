@@ -31,7 +31,7 @@ test('repository terminals precede pinned and recent conversations with account-
   assert.match(HISTORY, /aria-label=\{pinned \? 'Unpin conversation' : 'Pin conversation'\}/);
   assert.match(HISTORY, /savedConversations\.filter\(s => !pinnedIds\.includes\(s\.id\)\)/);
   assert.doesNotMatch(HISTORY, /foldersList = foldersList\.slice\(0, 12\)/);
-  assert.match(HISTORY, /onClick=\{\(\) => void openSession\(session\)\}/);
+  assert.match(HISTORY, /onOpen=\{\(\) => void openSession\(session\)\}/);
 });
 
 test('sidebar font changes are scoped, with full-size touch targets on mobile', () => {
