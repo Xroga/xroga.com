@@ -1,0 +1,600 @@
+/* The S02 computer: a machined titanium display with a graphite stand, an Xroga desktop, floating app windows,
+   the result window and a glass dock. Depth comes from layered shadows and one gentle camera push. */
+.computer {
+  --desk-h: clamp(470px, calc(100svh - 350px), 580px);
+  --dock-room: 104px;
+  position: relative;
+  margin: 0 auto;
+  max-width: 1188px;
+  animation: settle 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: 50% 100%;
+}
+@keyframes settle {
+  from { opacity: 0; transform: perspective(1100px) rotateX(4deg) translateY(16px); }
+}
+.bezel {
+  position: relative;
+  padding: 11px;
+  border-radius: 26px;
+  /* machined titanium: a brushed band, a lit top edge and a dark chamfer */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 18%),
+    linear-gradient(100deg, #2b3039 0%, #3b414c 22%, #23272f 48%, #343a44 74%, #22262d 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 50px 90px -40px rgba(0, 0, 0, 0.95),
+    0 30px 120px -50px rgba(53, 92, 214, 0.45);
+}
+.screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #04060b;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.stand {
+  position: relative;
+  height: 26px;
+  margin: 0 auto;
+  width: 46%;
+  background:
+    radial-gradient(60% 120% at 50% 0%, rgba(150, 170, 220, 0.16), transparent 70%),
+    radial-gradient(50% 90% at 50% 10%, rgba(0, 0, 0, 0.7), transparent 80%);
+}
+
+/* ------------------------------------------------------------------------------------------------ menu bar */
+.menubar {
+  position: relative;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  height: 36px;
+  padding: 0 16px;
+  background: rgba(9, 11, 18, 0.82);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  font: 500 13px/1 var(--font-inter), system-ui, sans-serif;
+  color: #c9cfda;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 650;
+  color: #eef1f6;
+}
+.ask {
+  justify-self: center;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation: askIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ask b {
+  margin-right: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: color-mix(in oklab, var(--accent) 34%, #141a28);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 55%, transparent);
+}
+@keyframes askIn {
+  from { opacity: 0; transform: translateY(5px); }
+}
+.clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #8e97a8;
+  font-variant-numeric: tabular-nums;
+}
+.clock i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #60d6a0;
+  box-shadow: 0 0 8px rgba(96, 214, 160, 0.8);
+}
+
+/* ------------------------------------------------------------------------------------------------- desktop */
+.desk {
+  position: relative;
+  height: var(--desk-h);
+  container-type: size;
+}
+/* the wallpaper: deep glass in the orb's own colours (cobalt, ice, violet), dark enough to keep the work first */
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(70% 90% at 12% 112%, rgba(40, 92, 255, 0.55), transparent 62%),
+    radial-gradient(60% 70% at 96% -8%, rgba(132, 86, 240, 0.42), transparent 64%),
+    radial-gradient(40% 30% at 62% 100%, rgba(96, 210, 240, 0.22), transparent 70%),
+    conic-gradient(from 210deg at 38% 60%, rgba(14, 22, 52, 0.9), rgba(7, 10, 24, 0.95) 30%, rgba(24, 16, 52, 0.9) 60%, rgba(8, 12, 30, 0.95)),
+    #070a16;
+}
+.wallpaper::after {
+  /* a soft refraction streak, as if light passed through the orb */
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  background: linear-gradient(118deg, transparent 38%, rgba(160, 200, 255, 0.07) 46%, rgba(180, 160, 255, 0.05) 52%, transparent 60%);
+}
+.computer[data-mode='workforce'] .wallpaper {
+  background:
+    radial-gradient(60% 80% at 8% 100%, color-mix(in oklab, var(--accent) 42%, transparent), transparent 62%),
+    radial-gradient(60% 70% at 96% -8%, rgba(132, 86, 240, 0.32), transparent 64%),
+    conic-gradient(from 210deg at 38% 60%, rgba(14, 22, 52, 0.92), rgba(7, 10, 24, 0.96) 30%, rgba(24, 16, 52, 0.9) 60%, rgba(8, 12, 30, 0.96)),
+    #070a16;
+  transition: background 600ms linear;
+}
+.desk[data-mode='workforce'] {
+  background: #07080d;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  animation: sceneIn 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+}
+
+/* --------------------------------------------------------------------------------------------- app window */
+.window {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 20px;
+  bottom: var(--dock-room);
+  border-radius: 13px;
+  overflow: hidden;
+  background: #0c0f16;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 40px 80px -30px rgba(0, 0, 0, 0.95),
+    0 12px 30px -12px rgba(0, 0, 0, 0.7);
+}
+.cam {
+  position: absolute;
+  inset: 0;
+  transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.chrome {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  height: 42px;
+  padding: 0 12px 0 14px;
+  background: linear-gradient(180deg, #171b25, #12151d);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  font: 500 13px/1 var(--font-inter), system-ui, sans-serif;
+  color: #c7cdd8;
+}
+.lights {
+  display: inline-flex;
+  gap: 7px;
+}
+.lights i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #3a3f4b;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+.lights i:nth-child(1) { background: #e9665f; }
+.lights i:nth-child(2) { background: #e6b24c; }
+.lights i:nth-child(3) { background: #5cc36a; }
+.tabStrip {
+  display: flex;
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 14px 0 11px;
+  border-radius: 9px;
+  background: #1f2430;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  color: #e6e9ef;
+  white-space: nowrap;
+}
+.tab i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+.url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9px;
+  background: #0b0e14;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  color: #b8bfcc;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.url svg {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  fill: none;
+  stroke: #7ec79a;
+  stroke-width: 1.3;
+}
+.title {
+  justify-self: center;
+  font-weight: 600;
+  color: #d7dce5;
+}
+.driver {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 11px 0 8px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #dfe8ff;
+  background: rgba(69, 137, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(69, 137, 255, 0.4);
+  white-space: nowrap;
+}
+.driver i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 8px var(--c);
+}
+.window[data-kind='workspace'] .driver {
+  color: #fff;
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+.viewport {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42px;
+  bottom: 0;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.viewport[data-scroll] {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* ------------------------------------------------------------------------------------------- the result */
+.outcome {
+  position: absolute;
+  z-index: 35;
+  right: 18px;
+  bottom: calc(var(--dock-room) + 14px);
+  width: 344px;
+  padding: 16px 16px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), rgba(13, 16, 24, 0.97);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 34px 70px -24px rgba(0, 0, 0, 0.95);
+  opacity: 0;
+  transform: translateX(26px) scale(0.98);
+  transition: opacity 360ms linear, transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.outcome[data-show] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.outcomeHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 650 16px/1.2 var(--font-inter), system-ui, sans-serif;
+  color: #f4f6fa;
+}
+.outcome ul {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.outcome li {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 8px;
+  font: 500 13.5px/1.4 var(--font-inter), system-ui, sans-serif;
+  color: #cdd3dd;
+}
+.outcome li i {
+  margin-top: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.outcome li[data-mark='pass'] i { background: #60d6a0; box-shadow: 0 0 8px rgba(96, 214, 160, 0.55); }
+.outcome li[data-mark='fail'] i { background: #ff6e66; box-shadow: 0 0 8px rgba(255, 110, 102, 0.6); }
+.outcome li[data-mark='wait'] i { background: #e5aa59; box-shadow: 0 0 8px rgba(229, 170, 89, 0.6); }
+.outcome li[data-mark='note'] i { background: transparent; box-shadow: inset 0 0 0 2px #7e8aa0; }
+.gate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.gate span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 13px/1.3 var(--font-inter), system-ui, sans-serif;
+  color: #f0d29d;
+}
+.gate[data-state='review'] span { color: #b9c9ff; }
+.gate span i {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+.again {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  font: 600 12.5px/1 var(--font-inter), system-ui, sans-serif;
+  color: #dfe5f0;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.again:hover { background: rgba(255, 255, 255, 0.11); }
+.again:focus-visible { outline: 2px solid #4589ff; outline-offset: 2px; }
+
+/* ------------------------------------------------------------------------------------------------- dock */
+.desk > .dock {
+  position: absolute;
+  z-index: 38;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.dockShelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 10px 6px;
+  border-radius: 22px;
+  /* dense glass instead of a live backdrop blur: the scene behind animates, and a blur over it roughly halves the frame budget */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)), rgba(16, 19, 30, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 24px 50px -20px rgba(0, 0, 0, 0.9);
+  pointer-events: auto;
+  max-width: calc(100% - 24px);
+}
+.dockItem {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 64px;
+  padding: 4px 8px 6px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: #a6aebc;
+  cursor: pointer;
+  transition: color 180ms linear, background 180ms linear;
+}
+.dockItem[data-kind='mission'] {
+  min-width: 132px;
+}
+.dockItem:hover {
+  color: #eef1f6;
+  background: rgba(255, 255, 255, 0.05);
+}
+.dockItem:focus-visible {
+  outline: 2px solid var(--accent, #4589ff);
+  outline-offset: 1px;
+}
+.dockItem[aria-pressed='true'] {
+  color: #ffffff;
+}
+.dockItem[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent, #4589ff);
+  box-shadow: 0 0 8px var(--accent, #4589ff);
+}
+.dockLabel {
+  font: 600 12.5px/1.2 var(--font-inter), system-ui, sans-serif;
+  white-space: nowrap;
+}
+.appIcon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  color: #dfe7ff;
+  background: linear-gradient(160deg, #2a3350, #151a29);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 18px -8px rgba(0, 0, 0, 0.8);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms linear;
+}
+.appIcon[data-id='bug'] { background: linear-gradient(160deg, #3a2a3a, #1b1622); color: #ffb3ad; }
+.appIcon[data-id='ads'] { background: linear-gradient(160deg, #2b3a2a, #151d18); color: #b5f0b7; }
+.appIcon[data-id='extension'] { background: linear-gradient(160deg, #23324d, #121a2b); color: #a9c9ff; }
+.appIcon[data-id='article'] { background: linear-gradient(160deg, #3a3426, #1d1a13); color: #f2d9a3; }
+.appIcon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dockItem:hover .appIcon,
+.dockItem[aria-pressed='true'] .appIcon {
+  transform: translateY(-4px);
+}
+.dockItem[aria-pressed='true'] .appIcon {
+  box-shadow: inset 0 0 0 1.5px rgba(120, 170, 255, 0.85), 0 12px 24px -8px rgba(69, 137, 255, 0.6);
+}
+/* ------------------------------------------------------------------------------------------------ narrow */
+@media (max-width: 900px) {
+  .outcome {
+    left: 18px;
+    right: 18px;
+    width: auto;
+  }
+}
+@media (max-width: 720px) {
+  .computer {
+    --desk-h: 560px;
+    --dock-room: 14px;
+  }
+  .bezel {
+    padding: 7px;
+    border-radius: 20px;
+  }
+  .screen {
+    border-radius: 14px;
+  }
+  .menubar {
+    grid-template-columns: 1fr auto;
+    height: auto;
+    padding: 10px 12px;
+    row-gap: 6px;
+  }
+  .brand {
+    display: none;
+  }
+  .clock {
+    display: none;
+  }
+  .ask {
+    grid-column: 1 / -1;
+    justify-self: start;
+    white-space: normal;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .ask b {
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  /* phones, Browser mode: the mission dock becomes a swipeable row above the screen */
+  .desk {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    container-type: inline-size;
+  }
+  .desk > .dock {
+    position: relative;
+    order: -1;
+    bottom: auto;
+    justify-content: flex-start;
+    padding: 10px 0 2px;
+  }
+  .dockShelf {
+    max-width: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin: 0 10px;
+    border-radius: 18px;
+  }
+  .dockShelf::-webkit-scrollbar {
+    display: none;
+  }
+  .dockItem {
+    scroll-snap-align: start;
+  }
+  .dockItem[data-kind='mission'] {
+    min-width: 108px;
+  }
+  .dockItem[data-kind='mission'] .dockLabel {
+    white-space: normal;
+    text-align: center;
+    font-size: 12px;
+    max-width: 100px;
+  }
+  .scene {
+    position: relative;
+    inset: auto;
+    min-height: 520px;
+  }
+  .window {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    margin: 12px 10px 10px;
+    height: 470px;
+  }
+  .url {
+    display: none;
+  }
+  .chrome {
+    grid-template-columns: auto 1fr auto;
+  }
+  .outcome {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 0 10px 12px;
+    display: none;
+  }
+  .outcome[data-show] {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .computer,
+  .scene,
+  .ask {
+    animation: none !important;
+  }
+  .cam,
+  .outcome,
+  .appIcon {
+    transition: none !important;
+  }
+}

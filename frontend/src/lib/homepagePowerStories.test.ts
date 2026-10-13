@@ -10,7 +10,7 @@ const css = read('../styles/homepage-power-stories.css');
 const homepageCss = read('../styles/homepage-coding.css');
 
 test('the six-part capability story follows browser employees and precedes the workspace tour', () => {
-  const browser = page.indexOf('<HomepageBrowserEmployeesExact />');
+  const browser = page.indexOf('<S02Work loggedIn={loggedIn} />');
   const powerStories = page.indexOf('<HomepagePowerStories />');
   const workspace = page.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
   assert.ok(browser !== -1 && browser < powerStories && powerStories < workspace);

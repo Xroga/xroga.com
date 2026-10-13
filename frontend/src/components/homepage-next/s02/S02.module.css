@@ -1,0 +1,300 @@
+/* S02: Xroga in action (V9). The section continues S01's near-black (#050607) into a graphite room with one soft
+   cobalt key light behind the computer and a faint floor bounce under it. Heading and switch share S01's type. */
+.section {
+  --ink: #eef0f4;
+  --sub: #a7afbd;
+  --muted: #8b93a2;
+  --hair: rgba(226, 232, 245, 0.1);
+  --x-blue: #4589ff;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, #050607 0, #080a10 260px, #0b0e15 60%, #090b11 calc(100% - 160px), #050607 100%);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: clip;
+  isolation: isolate;
+}
+/* the homepage stylesheet adds halos, blurs and stacking to every heading and button; S02 owns its own */
+.section.section :is(h1, h2, h3, h4, h5, h6, p, small, label) {
+  text-shadow: none !important;
+  z-index: auto !important;
+}
+.section.section :is(button, [role='button']) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  isolation: auto !important;
+  z-index: auto !important;
+}
+.ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 34% at 50% 58%, rgba(53, 92, 214, 0.16), transparent 70%),
+    radial-gradient(30% 18% at 50% 96%, rgba(98, 126, 210, 0.1), transparent 75%);
+}
+.inner {
+  position: relative;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(28px, 4svh, 56px) 24px clamp(32px, 4.5svh, 56px);
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------------------------------------------- heading */
+.head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+}
+.copy {
+  display: grid;
+  justify-items: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #a9afbd;
+}
+.eyebrow::before,
+.eyebrow::after {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(119, 137, 238, 0.6));
+}
+.eyebrow::after {
+  transform: scaleX(-1);
+}
+.title {
+  margin: 12px 0 0;
+  font-size: clamp(30px, 0.9rem + 2.3vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.034em;
+  font-weight: 600;
+  font-variation-settings: 'opsz' 32;
+  font-feature-settings: 'ss07' 1, 'cv11' 1;
+  text-wrap: balance;
+}
+.section.section .title {
+  color: #eeece7 !important;
+}
+.lede {
+  margin: 10px 0 0;
+  max-width: 560px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--sub);
+}
+
+/* the mode switch: a titanium capsule with a sliding glass thumb */
+.switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), #0d1018;
+  box-shadow: inset 0 0 0 1px rgba(226, 232, 245, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+}
+.thumb {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc(50% - 5px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2a3550, #1b2338);
+  box-shadow: inset 0 0 0 1px rgba(140, 170, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 6px 18px -8px rgba(69, 137, 255, 0.55);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.switch[data-mode='workforce'] .thumb {
+  transform: translateX(100%);
+}
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: 560 15px/1 var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.005em;
+  color: #9aa3b2;
+  cursor: pointer;
+  transition: color 200ms linear;
+}
+.tab[aria-selected='true'] {
+  color: #f3f5f9;
+}
+.tab:focus-visible {
+  outline: 2px solid var(--x-blue);
+  outline-offset: 2px;
+}
+.tabIcon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  position: relative;
+}
+.tabIcon[data-k='browser']::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  top: 4px;
+  height: 1.5px;
+  background: currentColor;
+}
+.tabIcon[data-k='workforce'] {
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #b9e3ff, #3f7bff 55%, #6a43d8);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+/* ---------------------------------------------------------------------------------------------------- stage */
+.stage {
+  position: relative;
+  margin-top: clamp(16px, 2.6svh, 26px);
+}
+.hold {
+  height: calc(clamp(470px, calc(100svh - 350px), 580px) + 84px);
+  border-radius: 26px;
+  background: #0b0e15;
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 0 6px;
+}
+.disclosure {
+  font-family: var(--font-xv-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #7f8898;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font: 560 14.5px/1 var(--font-inter), system-ui, sans-serif;
+  color: #eef1f6;
+  text-decoration: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)), #121725;
+  box-shadow: inset 0 0 0 1px rgba(140, 170, 255, 0.28), 0 10px 26px -14px rgba(69, 137, 255, 0.6);
+  transition: box-shadow 200ms linear, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(160, 190, 255, 0.5), 0 14px 30px -14px rgba(69, 137, 255, 0.8);
+}
+.cta:focus-visible {
+  outline: 2px solid var(--x-blue);
+  outline-offset: 3px;
+}
+.cta svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* wide screens: the copy and the switch share one row, so the whole computer fits under the heading */
+@media (min-width: 960px) {
+  .head {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    justify-items: stretch;
+    text-align: left;
+    gap: 32px;
+    max-width: 1188px;
+    margin: 0 auto;
+  }
+  .copy {
+    justify-items: start;
+  }
+  .eyebrow::before {
+    display: none;
+  }
+  .title {
+    margin-top: 10px;
+    font-size: clamp(32px, 0.6rem + 2.2vw, 44px);
+  }
+  .lede {
+    margin-top: 8px;
+    max-width: 620px;
+  }
+}
+@media (max-width: 720px) {
+  .inner {
+    padding-inline: 12px;
+  }
+  .lede {
+    font-size: 15px;
+  }
+  .switch {
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+  }
+  .tab {
+    padding: 0 8px;
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+  .foot {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 10px;
+  }
+}
+@media (max-width: 360px) {
+  .tab {
+    gap: 6px;
+    padding: 0 6px;
+    font-size: 12.5px;
+  }
+  .tabIcon {
+    display: none;
+  }
+  .title {
+    font-size: 27px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb,
+  .cta {
+    transition: none;
+  }
+}

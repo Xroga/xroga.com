@@ -21,7 +21,7 @@ import { HomepageStackStudio } from '@/components/homepage/HomepageStackStudio';
 import { HomepageAllInOne } from '@/components/homepage/HomepageAllInOne';
 import { HomepagePricingPreview } from '@/components/homepage/HomepagePricingPreview';
 import { S01CapabilityDeck } from '@/components/homepage-next/s01/S01CapabilityDeck';
-import { HomepageBrowserEmployeesExact } from '@/components/homepage/HomepageBrowserEmployeesExact';
+import { S02Work } from '@/components/homepage-next/s02/S02Work';
 import { HomepagePowerStories } from '@/components/homepage/HomepagePowerStories';
 import { AiCodingAgentSquaresTerminal } from '@/components/marketing/AiCodingAgentSquaresTerminal';
 
@@ -111,7 +111,8 @@ export function HomepageClient() {
 
       {/* S01: capability deck (docs/homepage-implementation/XROGA_S01_CAPABILITY_DECK_CLAUDE_BRIEF.md) */}
       <S01CapabilityDeck />
-      <HomepageBrowserEmployeesExact />
+      {/* S02: Browser Automation and AI Employees (docs/homepage-implementation/XROGA_S02_FINAL_CLAUDE_IMPLEMENTATION_BRIEF.md) */}
+      <S02Work loggedIn={loggedIn} />
       <HomepagePowerStories />
       <HomepageWorkspaceTour loggedIn={loggedIn} />
       <div id="product"><HomepageAllInOne /></div>

@@ -21,7 +21,7 @@ test('the audience selector is the last product section before FAQ', () => {
 test('capabilities, browser employees, workspace, and intelligence follow the hero in order', () => {
   const heroEnd = PAGE.indexOf('<S00Hero />');
   const capabilities = PAGE.indexOf('<S01CapabilityDeck />');
-  const browserEmployees = PAGE.indexOf('<HomepageBrowserEmployeesExact />');
+  const browserEmployees = PAGE.indexOf('<S02Work loggedIn={loggedIn} />');
   const workspace = PAGE.indexOf('<HomepageWorkspaceTour loggedIn={loggedIn} />');
   const intelligence = PAGE.indexOf('<XrogaIntelligenceSection />');
   assert.ok(
