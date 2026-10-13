@@ -21,6 +21,11 @@ export async function updateSession(request: NextRequest) {
   const isPublicPage = isPublicPath(pathname);
   let supabaseResponse = NextResponse.next({ request });
 
+  // This private binary route independently server-validates getUser before any API read.
+  // Let it return safe JSON 401/503, never redirect a signed link into a login URL.
+  // It is NOT a public-route grant; cookies alone or possession of the URL cannot authorize it.
+  if(pathname.startsWith('/api/private-files/'))return supabaseResponse;
+
   /*
    * Nothing below can change the response for a public, non-auth path, so the auth
    * round trip that used to happen here is skipped entirely — client included. For a

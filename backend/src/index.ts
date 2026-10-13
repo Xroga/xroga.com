@@ -89,7 +89,9 @@ app.use(
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
-app.use(morgan('dev'));
+// Never record signed capability/OAuth/query credentials in request URLs.
+morgan.token('safe-path',req=>req.url?.split('?')[0]??'/');
+app.use(morgan(':method :safe-path :status :response-time ms'));
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,

@@ -14,7 +14,7 @@ const password = `C3!${randomUUID()}aA9`;
 const ownerEmail = `command3-owner-${run}@example.com`;
 const outsiderEmail = `command3-outsider-${run}@example.invalid`;
 const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = '';
+let ownerId = ''; let outsiderId = ''; let ownerProjectId = ''; let outsiderProjectId = ''; let privateFileId=''; let foreignFileId='';
 
 test.setTimeout(180_000);
 
@@ -77,6 +77,13 @@ test.beforeAll(async () => {
   if (projects.error || !projects.data) throw new Error('Isolated tenant fixtures could not be created');
   ownerProjectId = projects.data.find((item) => item.user_id === ownerId)!.id;
   outsiderProjectId = projects.data.find((item) => item.user_id === outsiderId)!.id;
+  const files=await admin.from('project_files').insert([
+    {project_id:ownerProjectId,file_name:'private-browser-fixture.txt',content:'PRIVATE_BROWSER_FIXTURE_ONLY'},
+    {project_id:outsiderProjectId,file_name:'foreign-browser-fixture.txt',content:'FOREIGN_BROWSER_CANARY'},
+  ]).select('id,project_id');
+  if(files.error || files.data?.length!==2)throw new Error('Private file browser fixtures could not be created');
+  privateFileId=files.data.find(item=>item.project_id===ownerProjectId)!.id;
+  foreignFileId=files.data.find(item=>item.project_id===outsiderProjectId)!.id;
 });
 
 test.afterAll(async () => {
@@ -791,6 +798,34 @@ test('real Supabase login persists, Operations works, cross-tenant access is den
   const allowed = await fetch(`${backendUrl}/api/operations/products/${ownerProjectId}`, { headers: { Authorization: browserBearer } });
   const denied = await fetch(`${backendUrl}/api/operations/products/${outsiderProjectId}`, { headers: { Authorization: browserBearer } });
   expect(allowed.status).toBe(200); expect(denied.status).toBe(403);
+  // Real SSR cookie authentication -> canonical API owner boundary -> durable local PG text.
+  // No mocked transport and no R2 writes. Signed links do not authorize a different account.
+  const privateDelivery=await page.evaluate(async({project,file,foreignProject,foreignFile})=>{
+    const own=await fetch(`/api/private-files/${project}/${file}`,{cache:'no-store'});
+    const denied=await fetch(`/api/private-files/${foreignProject}/${foreignFile}`,{cache:'no-store'});
+    return {own:own.status,body:await own.text(),cache:own.headers.get('cache-control'),foreign:denied.status,foreignBody:await denied.text()};
+  },{project:ownerProjectId,file:privateFileId,foreignProject:outsiderProjectId,foreignFile:foreignFileId});
+  expect(privateDelivery.own).toBe(200);expect(privateDelivery.body).toBe('PRIVATE_BROWSER_FIXTURE_ONLY');
+  expect(privateDelivery.cache).toContain('no-store');expect(privateDelivery.foreign).toBe(404);
+  expect(privateDelivery.foreignBody).not.toContain('FOREIGN_BROWSER_CANARY');
+  const signedResponse=await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/link`,{method:'POST',headers:{Authorization:browserBearer,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:60})});
+  expect(signedResponse.status).toBe(200);const signed=await signedResponse.json() as {url:string};
+  expect((await page.request.get(signed.url)).status()).toBe(200);
+  const anonymous=await page.context().browser()!.newContext();
+  try{expect((await anonymous.request.get(new URL(signed.url,page.url()).href)).status()).toBe(401);}finally{await anonymous.close();}
+  expect((await fetch(`${backendUrl}/api/projects/${ownerProjectId}/files/${privateFileId}/links`,{method:'DELETE',headers:{Authorization:browserBearer}})).status).toBe(200);
+  expect((await page.request.get(signed.url)).status()).toBe(404);
+  await page.goto(`/dashboard/projects/${ownerProjectId}`);
+  await expect(page.getByRole('link',{name:'Download selected file'})).toHaveAttribute('href',`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  await expect(page.getByRole('button',{name:'Download All'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Copy 60-second link'}).click();
+  const timedLink=page.getByLabel('Temporary owner-only link');await expect(timedLink).toBeVisible();
+  const copied=await timedLink.inputValue();expect(new URL(copied).pathname).toBe(`/api/private-files/${ownerProjectId}/${privateFileId}`);
+  expect((await page.request.get(copied)).status()).toBe(200);
+  await page.getByRole('button',{name:'Revoke timed links'}).click();
+  await expect(page.getByRole('status')).toContainText('Timed links revoked');
+  expect((await page.request.get(copied)).status()).toBe(404);
+  await page.goto('/dashboard/operations');
   const notifications = await fetch(`${backendUrl}/api/notifications`, { headers: { Authorization: browserBearer } });
   const unreadNotifications = await fetch(`${backendUrl}/api/notifications/unread-count`, { headers: { Authorization: browserBearer } });
   expect(notifications.status).toBe(200);

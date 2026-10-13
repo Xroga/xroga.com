@@ -22,6 +22,9 @@ import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
 import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
+import { storeProjectFile } from '../services/storage/projectFiles.js';
+import { ownedFile } from '../services/storage/privateFileDelivery.js';
+import { signFileLink } from '../services/storage/fileDeliveryPolicy.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -75,6 +78,66 @@ test('actual API ignores client owner and rejects foreign project/file access an
   const payload: unknown = await created.json();
   assert.ok(payload && typeof payload === 'object' && 'user_id' in payload);
   assert.equal(payload.user_id,owner.id);
+});
+
+test('real durable database file delivery is owner-only, bounded, expiring and atomically revocable',async()=>{
+  const [owner,other]=users;
+  const saved=await storeProjectFile(owner.id,owner.project,'private-fixture.txt','PRIVATE_FILE_FIXTURE_ONLY','text/plain','other');
+  const path=`/api/projects/${owner.project}/files/${saved.id}`;
+  assert.equal((await request(`${path}/download`)).status,401);
+  for(const suffix of ['/download','/link','/links'])assert.equal((await request(`${path}${suffix}`,other.token,suffix==='/link'?'POST':suffix==='/links'?'DELETE':'GET',suffix==='/link'?{}:undefined)).status,404);
+  const direct=await request(`${path}/download`,owner.token);assert.equal(direct.status,200);assert.equal(await direct.text(),'PRIVATE_FILE_FIXTURE_ONLY');
+  assert.match(direct.headers.get('cache-control')!,/no-store/);assert.equal(direct.headers.get('x-content-type-options'),'nosniff');
+  assert.equal((await request(`${path}/link`,owner.token,'POST',{expiresIn:301})).status,400);
+  assert.equal((await request(`${path}/link`,owner.token,'POST',{expiresIn:60,userId:other.id})).status,400);
+  const created=await request(`${path}/link`,owner.token,'POST',{expiresIn:60});assert.equal(created.status,200);
+  const link=await created.json() as {url:string;expiresAt:string};
+  const token=new URL(link.url,'http://127.0.0.1').searchParams.get('link')!;assert.ok(token);
+  assert.equal((await request(`${path}/download?link=${encodeURIComponent(token)}`,owner.token)).status,200);
+  assert.equal((await request(`${path}/download?link=${encodeURIComponent(token)}`,other.token)).status,404);
+  assert.equal((await request(`${path}/download?link=`,owner.token)).status,404);
+  assert.equal((await request(`${path}/download?link=${encodeURIComponent(token.slice(0,-3)+'abc')}`,owner.token)).status,404);
+  const row=await ownedFile(owner.context,owner.project,saved.id,admin);
+  const expired=await signFileLink(owner.context,row,1,Date.now()-10_000);
+  assert.equal((await request(`${path}/download?link=${encodeURIComponent(expired.token)}`,owner.token)).status,404);
+  const revocations=await Promise.all(Array.from({length:4},()=>request(`${path}/links`,owner.token,'DELETE')));
+  assert.ok(revocations.every(response=>response.status===200));
+  const updated=await admin.from('project_files').select('delivery_version').eq('id',saved.id).single();assert.equal(updated.error,null);assert.equal(updated.data?.delivery_version,row.delivery_version+4);
+  assert.equal((await request(`${path}/download?link=${encodeURIComponent(token)}`,owner.token)).status,404);
+  assert.equal((await request(`${path}/download`,owner.token)).status,200);
+  const range=await fetch(`${api}${path}/download`,{headers:{Authorization:`Bearer ${owner.token}`,Range:'bytes=0-6'}});assert.equal(range.status,206);assert.equal(await range.text(),'PRIVATE');
+  assert.equal((await fetch(`${api}${path}/download`,{headers:{Authorization:`Bearer ${owner.token}`,Range:'bytes=999-1000'}})).status,416);
+});
+
+test('real RLS and metadata trigger deny client delivery forgery while preserving legitimate content edits',async()=>{
+  const [owner,other]=users;
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const ownEdit=await client.from('project_files').update({content:'legitimate isolated edit'}).eq('id',owner.file).select('id');assert.equal(ownEdit.error,null);assert.equal(ownEdit.data?.length,1);
+  const foreignEdit=await client.from('project_files').update({content:'forbidden edit'}).eq('id',other.file).select('id');assert.equal(foreignEdit.error,null);assert.equal(foreignEdit.data?.length,0);
+  for(const patch of [{delivery_version:9},{storage_metadata:{provider:'database',ownerId:owner.id}}])assert.ok((await client.from('project_files').update(patch).eq('id',owner.file)).error);
+  assert.ok((await client.from('project_files').insert({project_id:owner.project,file_name:'forged',storage_metadata:{ownerId:owner.id}})).error);
+  assert.ok((await client.from('project_files').insert({project_id:other.project,file_name:'foreign'})).error);
+  assert.ok((await client.rpc('revoke_project_file_links',{p_project_id:owner.project,p_file_id:owner.file,p_owner_id:owner.id})).error);
+  const anon=createClient(url,process.env.SUPABASE_ANON_KEY!,{auth:{persistSession:false,autoRefreshToken:false}});
+  assert.ok((await anon.rpc('revoke_project_file_links',{p_project_id:owner.project,p_file_id:owner.file,p_owner_id:owner.id})).error);
+  const mismatch=await admin.from('project_files').update({storage_metadata:{ownerId:other.id}}).eq('id',owner.file);assert.ok(mismatch.error);
+  const foreign=await admin.rpc('revoke_project_file_links',{p_project_id:other.project,p_file_id:other.file,p_owner_id:owner.id});assert.equal(foreign.error,null);assert.equal(foreign.data,null);
+});
+
+test('unconfigured binary storage issues no durable receipt and legacy public or data URLs are not delivered',async()=>{
+  const [owner]=users;
+  assert.equal(process.env.CLOUDFLARE_R2_PRIVATE_BUCKET,undefined);
+  const filename=`missing-private-store-${randomUUID()}.bin`;
+  await assert.rejects(storeProjectFile(owner.id,owner.project,filename,Buffer.from('FICTIONAL_BINARY'),'application/octet-stream','other'),{status:503});
+  const rows=await admin.from('project_files').select('id').eq('project_id',owner.project).eq('file_name',filename);assert.equal(rows.error,null);assert.deepEqual(rows.data,[]);
+  for(const file_url of ['https://public.example.invalid/private-object','data:text/plain,NOT_DURABLE']) {
+    const id=await insert('project_files',{project_id:owner.project,file_name:'legacy-no-private-copy',file_url,content:null});
+    const delivery=await request(`/api/projects/${owner.project}/files/${id}/download`,owner.token);assert.equal(delivery.status,503);
+    const safe=await delivery.text();assert.ok(!safe.includes(file_url));assert.ok(!safe.includes('stack'));
+    assert.equal((await request(`/api/projects/${owner.project}/files/${id}/link`,owner.token,'POST',{})).status,503);
+    const listing=await request(`/api/projects/${owner.project}/files`,owner.token);const list=await listing.json() as Array<Record<string,unknown>>;
+    const record=list.find(row=>row.id===id)!;assert.equal(record.file_url,null);assert.ok(!('storage_metadata' in record));assert.ok(!('delivery_version' in record));
+  }
 });
 test('real run persistence concurrent collision never transfers the durable owner',async()=>{
   const [owner,other]=users,id=randomUUID();

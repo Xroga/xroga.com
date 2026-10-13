@@ -1,5 +1,7 @@
 # Batch 01 staged-security readiness — blocked, no deployment authorization
 
+2026-10-14 continuation supersedes older source observations below: canonical private-file adapter/signed links/revocation are implemented locally and covered by new real disposable-DB/browser test definitions; actual R2/staging acceptance is still blocked. Stage-only canonical build admission is prepared with exact reviewed origins/SHA and negative tests, not deployed. Revised on-demand vs separated cost/lifetime/network/teardown options: `STAGING_COST_OPTIONS.md`. Earlier “adapter required”/“origin unsupported” descriptions are historical baseline findings, NOT the current code status. Whole Command 007 remains incomplete and no resource creation/canary/deployment/merge is authorized.
+
 Observed 2026-10-14 local date using read-only repository/GitHub/Vercel metadata. No cloud resource, credential, DNS, production data or deployment was changed.
 
 ## Actual resource findings

@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `9fbd989548df908242a42e8c8726284fa4565c2c`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `5b6bf95a033cd3dbe4fa54432e1c427d87719186`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -9,8 +9,8 @@ Source SHA: `9fbd989548df908242a42e8c8726284fa4565c2c`; source/config hashes are
 | supabase | Supabase | ACTIVE | nzenxdfumxrnsmybazmo.supabase.co | Observed evidence explicitly scoped below; not full journey certification |
 | supabase-legacy | Supabase | LEGACY | lztqfktsahpzitybthld.supabase.co | Observed evidence explicitly scoped below; not full journey certification |
 | redis | Redis / BullMQ | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
-| r2 | Cloudflare R2 (S3-compatible) | CONFIGURED_BUT_UNVERIFIED | *.r2.cloudflarestorage.com, *.r2.dev | NOT_INDEPENDENTLY_VERIFIED |
-| local-media | API filesystem / data URL fallback | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
+| r2 | Cloudflare R2 (S3-compatible) | CONFIGURED_BUT_UNVERIFIED | *.r2.cloudflarestorage.com, api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
+| local-media | Retained legacy API filesystem cache | LEGACY | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
 | fly-sandbox | Fly Machines / existing remote worker adapters | CONFIGURED_BUT_UNVERIFIED | api.machines.dev | Observed evidence explicitly scoped below; not full journey certification |
 | credential-store | Existing Supabase-backed vault / private storage mirror | CONFIGURED_BUT_UNVERIFIED | Unknown/not applicable | NOT_INDEPENDENTLY_VERIFIED |
 | browserbase | Browserbase | CONFIGURED_BUT_UNVERIFIED | www.browserbase.com | NOT_INDEPENDENTLY_VERIFIED |
@@ -27,7 +27,6 @@ Source SHA: `9fbd989548df908242a42e8c8726284fa4565c2c`; source/config hashes are
 | endpoint-api-m-sandbox-paypal-com | Source-defined endpoint api-m.sandbox.paypal.com | CONFIGURED_BUT_UNVERIFIED | api-m.sandbox.paypal.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-apify-com | Source-defined endpoint api.apify.com | CONFIGURED_BUT_UNVERIFIED | api.apify.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-cartesia-ai | Source-defined endpoint api.cartesia.ai | CONFIGURED_BUT_UNVERIFIED | api.cartesia.ai | NOT_INDEPENDENTLY_VERIFIED |
-| endpoint-api-cloudflare-com | Source-defined endpoint api.cloudflare.com | CONFIGURED_BUT_UNVERIFIED | api.cloudflare.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dev-runwayml-com | Source-defined endpoint api.dev.runwayml.com | CONFIGURED_BUT_UNVERIFIED | api.dev.runwayml.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-dicebear-com | Source-defined endpoint api.dicebear.com | CONFIGURED_BUT_UNVERIFIED | api.dicebear.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-api-elevenlabs-io | Source-defined endpoint api.elevenlabs.io | CONFIGURED_BUT_UNVERIFIED | api.elevenlabs.io | NOT_INDEPENDENTLY_VERIFIED |
@@ -117,6 +116,7 @@ Source SHA: `9fbd989548df908242a42e8c8726284fa4565c2c`; source/config hashes are
 | endpoint-pollinations-ai | Source-defined endpoint pollinations.ai | CONFIGURED_BUT_UNVERIFIED | pollinations.ai | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-polygon-technology | Source-defined endpoint polygon.technology | CONFIGURED_BUT_UNVERIFIED | polygon.technology | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-posthog-com | Source-defined endpoint posthog.com | CONFIGURED_BUT_UNVERIFIED | posthog.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-public-example-invalid | Source-defined endpoint public.example.invalid | CONFIGURED_BUT_UNVERIFIED | public.example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-railway-app | Source-defined endpoint railway.app | CONFIGURED_BUT_UNVERIFIED | railway.app | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-react-dev | Source-defined endpoint react.dev | CONFIGURED_BUT_UNVERIFIED | react.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-schema-org | Source-defined endpoint schema.org | CONFIGURED_BUT_UNVERIFIED | schema.org | NOT_INDEPENDENTLY_VERIFIED |
@@ -188,7 +188,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 ## Risks and incomplete evidence
 
 - P1 TEST_REALM_PIN: Production realm stays pinned; an explicit isolated CI build is now admitted, but real authenticated E2E configuration and verification remain blocked. Owner command: 007; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
-- P1 EPHEMERAL_ARTIFACT_FALLBACK: R2 failures can fall back to local files or data URLs; durable-storage claims/quota/ownership need proof. Owner command: 007–010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
+- P1 EPHEMERAL_ARTIFACT_FALLBACK: Canonical file fallback removed; legacy cached/public objects not migrated and full private R2/staging durability/quota acceptance remains blocked. Owner command: 007–010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 EPHEMERAL_BUDGET_FALLBACK: Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. Guest rate/token/concurrency/claim limits fall back from Redis to maps. UniversalCostLedger is explicitly in-process; BillingService also defines process-only fulfilled-payment deduplication. Restart/cross-process accounting cannot rely on these stores. Owner command: 008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 RUN_PERSISTENCE_GAP: Run persistence returns without service-role configuration and scheduled writes swallow failures; hot run maps are not durable evidence of saved history. Owner command: 007–008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P1 UNIVERSAL_MEMORY_ADMISSION: universalStore defaults to owner-keyed memory without a client; runtime-store and operational evidence/idempotency map implementations also exist. Durable production admission/caller reachability must be proved, not inferred from class names. Owner command: 007–008; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
@@ -198,7 +198,7 @@ Frontend release 3b2bad and API release 41665b legitimately differ: the initial 
 - P1 RELEASE_CONTROLS_UNENFORCED: Observed main and Production/Preview lack platform protection/restrictions; mandatory user release gates still apply. Owner command: 010; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 - P2 HOST_TOOLCHAIN_DRIFT: Vercel project configured Node 24.x; canonical CI/API image is 22.21.1; Fly host test workflow has no explicit setup-node. Owner command: 006; RECORDED_PRE_EXISTING_RISK_NOT_WAIVED.
 
-672 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
+671 scoped memory/filesystem candidates are retained for semantic review. Static collections and scratch writes are not automatically unsafe fallbacks; the candidate inventory is not blanket durability certification. All consequential persistence/authority callers require the later security gates. Production/Preview environment protection and main rulesets were inspected as empty; user-mandated release gates still apply. Cloud Run/Jobs/Cloudflare Workers hosting remains proposed; no migration is authorized.
 
 ## Boundaries
 

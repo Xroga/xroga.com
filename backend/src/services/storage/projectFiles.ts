@@ -1,104 +1,36 @@
+import { randomUUID } from 'node:crypto';
 import { getSupabaseAdmin } from '../../config/supabase.js';
-import { uploadToR2, buildR2Key, buildPlaybackUrl, downloadFromR2, type R2UploadResult } from '../../lib/r2.js';
-import { saveLocalMedia, readLocalMedia } from './localMediaCache.js';
+import { uploadToR2,buildR2Key,removeNewR2Object } from '../../lib/r2.js';
 import { createTenantContext } from '../../security/tenantContext.js';
 import { requireOwnedProject } from '../../security/ownership.js';
+import { FileDeliveryError,digestBytes,privateFileUrl,storageMetadataSchema,MAX_PRIVATE_FILE_BYTES,type PrivateStorageMetadata } from './fileDeliveryPolicy.js';
 
-export interface StoredFile {
-  id: string;
-  fileName: string;
-  fileUrl: string;
-  fileType: 'code' | 'video' | 'image' | 'audio' | 'pdf' | 'other';
-  projectId?: string;
-}
-
-export async function storeProjectFile(
-  userId: string,
-  projectId: string,
-  filename: string,
-  content: Buffer | string,
-  contentType: string,
-  fileType: StoredFile['fileType']
-): Promise<StoredFile> {
-  // Existing server build caller carries the owner. Recheck the project before any upload/write.
-  const context = createTenantContext({ userId, via: 'persisted_owner' });
-  await requireOwnedProject(context, projectId);
-  const key = buildR2Key(userId, filename);
-  let r2Result: R2UploadResult;
-
-  try {
-    r2Result = await uploadToR2(key, content, contentType);
-  } catch (err) {
-    console.error('[Storage] R2 upload failed, using data URL fallback:', (err as Error).message);
-    const base64 = (typeof content === 'string' ? Buffer.from(content) : content).toString('base64');
-    r2Result = {
-      key,
-      publicUrl: `data:${contentType};base64,${base64}`,
-      bucket: 'local-fallback',
-    };
+export interface StoredFile {id:string;fileName:string;fileUrl:string;fileType:'code'|'video'|'image'|'audio'|'pdf'|'other';projectId?:string}
+export async function storeProjectFile(userId:string,projectId:string,filename:string,content:Buffer|string,contentType:string,fileType:StoredFile['fileType']): Promise<StoredFile> {
+  const context=createTenantContext({userId,via:'persisted_owner'});
+  await requireOwnedProject(context,projectId);
+  const id=randomUUID(),bytes=Buffer.isBuffer(content)?content:Buffer.from(content);
+  if(!filename.trim() || filename.length>200 || bytes.length>MAX_PRIVATE_FILE_BYTES || !['code','video','image','audio','pdf','other'].includes(fileType) || !storageMetadataSchema.safeParse({provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType}).success)throw new FileDeliveryError(400,'INVALID_FILE');
+  let metadata:PrivateStorageMetadata;
+  let inline:string|null=null;
+  if(typeof content==='string' && content.length<50000) {
+    // Explicit primary durable database storage, NOT an upload failure/local fallback.
+    inline=content;metadata={provider:'database',ownerId:userId,size:bytes.length,sha256:digestBytes(bytes),contentType};
+  } else {
+    const object=await uploadToR2(buildR2Key(userId,filename),bytes,contentType,userId);
+    metadata={...object,provider:'private_r2',ownerId:userId};
   }
-
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('project_files')
-    .insert({
-      project_id: projectId,
-      file_name: filename,
-      file_path: key,
-      file_type: fileType,
-      file_url: r2Result.publicUrl,
-      content: typeof content === 'string' && content.length < 50000 ? content : null,
-    })
-    .select()
-    .single();
-
-  if (error || !data) {
-    throw new Error(`Failed to record project file: ${error?.message}`);
-  }
-
-  return {
-    id: data.id,
-    fileName: filename,
-    fileUrl: r2Result.publicUrl,
-    fileType,
-    projectId,
-  };
-}
-
-export async function storeUserFile(
-  userId: string,
-  filename: string,
-  content: Buffer | string,
-  contentType: string
-): Promise<{ fileUrl: string; playbackUrl: string; key: string }> {
-  const key = buildR2Key(userId, filename);
-  const playbackUrl = buildPlaybackUrl(key);
-  const buffer = typeof content === 'string' ? Buffer.from(content) : content;
-
-  try {
-    const result = await uploadToR2(key, buffer, contentType);
-    return { fileUrl: result.publicUrl, playbackUrl, key: result.key };
-  } catch (err) {
-    console.error('[Storage] R2 upload failed, using local cache:', (err as Error).message);
-    try {
-      await saveLocalMedia(key, buffer, contentType);
-      // HTTP stream URL works in browser and survives session storage (unlike data URLs)
-      return { fileUrl: playbackUrl, playbackUrl, key };
-    } catch (cacheErr) {
-      console.error('[Storage] Local cache failed:', (cacheErr as Error).message);
-      const base64 = buffer.toString('base64');
-      const dataUrl = `data:${contentType};base64,${base64}`;
-      return { fileUrl: dataUrl, playbackUrl: dataUrl, key };
+  metadata=storageMetadataSchema.parse(metadata);
+  const fileUrl=privateFileUrl(projectId,id);
+  const {data,error}=await getSupabaseAdmin().from('project_files').insert({id,project_id:projectId,file_name:filename,file_path:metadata.key??filename,file_type:fileType,file_url:fileUrl,content:inline,storage_metadata:metadata}).select('id').single();
+  if(error || !data) {
+    if(metadata.provider==='private_r2') {
+      try{await removeNewR2Object(metadata.key!,userId,metadata.bucket!);}catch{console.warn('[private-files] newly uploaded object needs authorized cleanup; no file receipt issued');}
     }
+    throw new FileDeliveryError(503,'FILE_RECORD_WRITE_UNAVAILABLE');
   }
+  return {id:data.id,fileName:filename,fileUrl,fileType,projectId};
 }
-
-export async function readStoredFile(key: string): Promise<{ buffer: Buffer; contentType: string }> {
-  try {
-    return await downloadFromR2(key);
-  } catch (r2Err) {
-    const local = await readLocalMedia(key);
-    if (local) return local;
-    throw r2Err;
-  }
-}
+/** Retired unscoped media paths have no active callers; never fabricate durable delivery. */
+export async function storeUserFile(_userId:string,_filename:string,_content:Buffer|string,_contentType:string): Promise<{fileUrl:string;playbackUrl:string;key:string}> {throw new FileDeliveryError(503,'PROJECT_FILE_SCOPE_REQUIRED');}
+export async function readStoredFile(_key:string): Promise<{buffer:Buffer;contentType:string}> {throw new FileDeliveryError(404,'PROJECT_FILE_SCOPE_REQUIRED');}

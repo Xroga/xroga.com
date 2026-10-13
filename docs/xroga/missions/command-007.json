@@ -10,6 +10,26 @@
   "risk": "high",
   "scope": "Canonical server tenant context, scoped ownership hardening, safe errors, build-only isolated auth issuer, observed schema/caller audit and restrictive migration; acceptance incomplete",
   "changedFiles": [
+    "backend/src/services/storage/fileDeliveryPolicy.ts",
+    "backend/src/services/storage/privateFileDelivery.ts",
+    "backend/src/services/storage/fileDeliveryPolicy.test.ts",
+    "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+    "frontend/src/components/projects/FilePreview.tsx",
+    "frontend/src/components/projects/ProjectDetailView.tsx",
+    "frontend/src/lib/privateFileUrl.ts",
+    "frontend/src/lib/privateFileUrl.test.ts",
+    "frontend/src/lib/supabase/stagingAuthBuild.test.ts",
+    "frontend/src/lib/supabase/middleware.ts",
+    "supabase/migrations/20261013221254_private_project_file_delivery.sql",
+    "scripts/security/full-supabase-history.mjs",
+    "scripts/security/disposable-supabase.mjs",
+    "scripts/ci/ignore-vercel-build.mjs",
+    "scripts/ci/ignore-vercel-build.test.mjs",
+    "scripts/ci/postcss-resolution.test.mjs",
+    "scripts/enforce-next-postcss.mjs",
+    "docs/xroga/security/PRIVATE_FILE_DELIVERY.md",
+    "docs/xroga/security/PR_803_CONFLICT_PLAN.md",
+    "docs/xroga/security/STAGING_COST_OPTIONS.md",
     "scripts/security/staging-preflight.mjs",
     "scripts/security/staging-preflight.test.mjs",
     "scripts/security/r2-private-check.mjs",
@@ -101,10 +121,11 @@
   "schemaImpact": {
     "changed": true,
     "migrations": [
-      "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql"
+      "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
+      "supabase/migrations/20261013221254_private_project_file_delivery.sql"
     ],
     "rollout": "Expand-only staged restrictive policies; do not apply production until full isolated history/upgrade/E2E/staging gates pass",
-    "rollback": "Drop exact eleven new guards on their ten named tables; retain all existing RLS/policies, no data deletion"
+    "rollback": "Revert private delivery entry points first, retain expanded metadata/data and all prior RLS. Any scoped SQL rollback needs separate review; never re-enable unsafe public/local fallback or delete existing files"
   },
   "securityImpact": {
     "auth": {
@@ -120,12 +141,12 @@
       "description": "No new approval grant or authority engine"
     },
     "credentials": {
-      "changed": false,
-      "description": "No production keys read/rotated/cut over; existing vault deferred to 009"
+      "changed": true,
+      "description": "Dedicated server-only file-link signing key and private bucket metadata-read scope; per-run CI key only. No production keys read/rotated/cut over; existing vault deferred to 009"
     },
     "egress": {
-      "changed": false,
-      "description": "No new provider transport, upload only after parent-owner check; broader central guard deferred to 010"
+      "changed": true,
+      "description": "Canonical private R2 adapter performs fixed-origin read-only metadata verification before scoped S3 operations; no public/local fallback or caller URL fetch. No actual cloud calls performed; broader central gate deferred to 010"
     },
     "cost": {
       "changed": false,

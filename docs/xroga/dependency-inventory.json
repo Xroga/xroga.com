@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9fbd989548df908242a42e8c8726284fa4565c2c",
+  "source_sha": "5b6bf95a033cd3dbe4fa54432e1c427d87719186",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -30,6 +30,7 @@
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPPORT_PHONE",
+        "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "VERCEL_ENV",
         "VERCEL_GIT_COMMIT_SHA"
@@ -79,7 +80,6 @@
       "region": "iad in checked-in manifest; live region not independently queried",
       "auth_mechanism": "Existing server Supabase/JWT middleware; tenant/role correctness is Command 007 acceptance, not inferred from liveness",
       "secret_names": [
-        "API_PUBLIC_URL",
         "FLY_APP_NAME",
         "FRONTEND_URL",
         "GITHUB_SHA",
@@ -250,62 +250,65 @@
     {
       "dependency_id": "r2",
       "provider": "Cloudflare R2 (S3-compatible)",
-      "purpose": "Existing object upload/download adapter, not Cloudflare Workers hosting",
+      "purpose": "Canonical private project object upload/owner delivery; not Cloudflare Workers hosting",
       "environment": "PRODUCTION",
       "state": "CONFIGURED_BUT_UNVERIFIED",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
         "backend/src/lib/r2.ts",
-        "backend/src/services/storage/projectFiles.ts"
+        "backend/src/services/storage/projectFiles.ts",
+        "backend/src/services/storage/privateFileDelivery.ts",
+        "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
       "hostnames": [
         "*.r2.cloudflarestorage.com",
-        "*.r2.dev"
+        "api.cloudflare.com"
       ],
       "resource_id": null,
-      "region": "auto in S3 adapter; account/bucket deployment not queried",
-      "auth_mechanism": "S3 access/secret credential pair by name only",
+      "region": "auto default jurisdiction in S3 adapter; actual account/private bucket not verified",
+      "auth_mechanism": "Bucket-scoped S3 plus separate metadata-read token and dedicated account-bound application link key; values not retrieved",
       "secret_names": [
-        "CLOUDFLARE_ACCOUNT_ID",
         "CLOUDFLARE_R2_ACCESS_KEY",
         "CLOUDFLARE_R2_ACCOUNT_ID",
         "CLOUDFLARE_R2_BUCKET",
-        "CLOUDFLARE_R2_PUBLIC_URL",
+        "CLOUDFLARE_R2_METADATA_READ_TOKEN",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "CLOUDFLARE_R2_SECRET_KEY"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
       ],
       "outbound_dependencies": [],
-      "health_readiness": "No current provider probe; default bucket xroga-assets is source configuration only",
+      "health_readiness": "Explicit private bucket required; fail closed on unknown/public domain configuration; actual R2/staging acceptance blocked",
       "timeout": "Adapter-specific; no fabricated central timeout",
       "retry_policy": "Source-specific; no live retry test claimed",
       "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
       "data_classification": "User data may be involved; tenant scope requires independent checks",
       "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "Existing local-media/data-URL fallback; high-risk durability gap",
+      "fallback_behaviour": "No public/local/data-URL success fallback; explicit durable database text or verified private R2 only; actual R2 acceptance pending",
       "observability_source": [
         "backend/src/lib/r2.ts",
-        "backend/src/services/storage/projectFiles.ts"
+        "backend/src/services/storage/projectFiles.ts",
+        "backend/src/services/storage/privateFileDelivery.ts",
+        "backend/src/services/storage/fileDeliveryPolicy.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
     },
     {
       "dependency_id": "local-media",
-      "provider": "API filesystem / data URL fallback",
-      "purpose": "Existing R2 failure fallback; local files are not durable cloud storage",
+      "provider": "Retained legacy API filesystem cache",
+      "purpose": "Legacy cache helper is not canonical durable file delivery; public/data/local success fallbacks removed from projectFiles",
       "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "state": "LEGACY",
       "runtime_owner": "backend/API or explicitly proposed component",
       "config_sources": [
-        "backend/src/services/storage/projectFiles.ts",
         "backend/src/services/storage/localMediaCache.ts"
       ],
       "hostnames": [],
       "resource_id": null,
       "region": "API host; default /tmp/xroga-media",
-      "auth_mechanism": "Caller/key ownership must be checked independently; source path is not authorization",
+      "auth_mechanism": "Legacy unscoped media delivery disabled; no durable receipt or active canonical caller claimed",
       "secret_names": [
         "MEDIA_CACHE_DIR"
       ],
@@ -313,7 +316,7 @@
         "api or named source callers; operational reachability not inferred"
       ],
       "outbound_dependencies": [],
-      "health_readiness": "No durability/replication evidence; local-cache/data-URL fallbacks are reported high risk",
+      "health_readiness": "Retained legacy helper; existing objects/public links require separate approved migration and privacy review",
       "timeout": "Adapter-specific; no fabricated central timeout",
       "retry_policy": "Source-specific; no live retry test claimed",
       "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
@@ -321,7 +324,6 @@
       "failure_mode": "Safe user-facing failure required; internal details restricted",
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
-        "backend/src/services/storage/projectFiles.ts",
         "backend/src/services/storage/localMediaCache.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
@@ -544,14 +546,17 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
         "E2E_ISOLATED_PROJECT_REF",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
+        "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
         "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NODE_ENV",
         "SUPABASE_ANON_KEY",
@@ -563,14 +568,18 @@
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
         "VERCEL_ENV",
+        "VERCEL_GIT_COMMIT_SHA",
         "VERCEL_OAUTH_CALLBACK_URL",
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
         "XB01_DISPOSABLE_SUPABASE",
         "XB01_LOCAL_DATABASE_URL",
+        "XROGA_DEPLOYMENT_ENVIRONMENT",
         "XROGA_ISOLATED_AUTH_BUILD",
-        "XROGA_SANDBOX_BROWSER_IMAGE"
+        "XROGA_RELEASE_SHA",
+        "XROGA_SANDBOX_BROWSER_IMAGE",
+        "XROGA_STAGING_AUTH_BUILD"
       ],
       "inbound_callers": [
         "api or named source callers; operational reachability not inferred"
@@ -945,40 +954,6 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "backend/src/lib/audioProviders.ts"
-      ],
-      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
-      "evidence_ids": []
-    },
-    {
-      "dependency_id": "endpoint-api-cloudflare-com",
-      "provider": "Source-defined endpoint api.cloudflare.com",
-      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
-      "environment": "PRODUCTION",
-      "state": "CONFIGURED_BUT_UNVERIFIED",
-      "runtime_owner": "backend/API or explicitly proposed component",
-      "config_sources": [
-        "backend/src/synthesis/integrations/dnsProviderRuntime.ts"
-      ],
-      "hostnames": [
-        "api.cloudflare.com"
-      ],
-      "resource_id": null,
-      "region": "Not verified",
-      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
-      "secret_names": [],
-      "inbound_callers": [
-        "api or named source callers; operational reachability not inferred"
-      ],
-      "outbound_dependencies": [],
-      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
-      "timeout": "Adapter-specific; no fabricated central timeout",
-      "retry_policy": "Source-specific; no live retry test claimed",
-      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
-      "data_classification": "User data may be involved; tenant scope requires independent checks",
-      "failure_mode": "Safe user-facing failure required; internal details restricted",
-      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
-      "observability_source": [
-        "backend/src/synthesis/integrations/dnsProviderRuntime.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -3087,6 +3062,7 @@
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
         "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
         "E2E_BACKEND_URL",
         "SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY",
@@ -4281,6 +4257,49 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/components/homepage-next/phase1/providerMarks.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-public-example-invalid",
+      "provider": "Source-defined endpoint public.example.invalid",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "hostnames": [
+        "public.example.invalid"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "CLOUDFLARE_R2_PRIVATE_BUCKET",
+        "E2E_BACKEND_URL",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6608,25 +6627,6 @@
       ]
     },
     {
-      "name": "API_PUBLIC_URL",
-      "consuming_sources": [
-        "backend/src/lib/r2.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "RUNTIME_CONFIGURATION",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "api"
-      ]
-    },
-    {
       "name": "AUPHONIC_API_KEY",
       "consuming_sources": [
         "backend/src/config/envSecrets.ts",
@@ -6827,26 +6827,8 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
-        "endpoint-example-invalid"
-      ]
-    },
-    {
-      "name": "CLOUDFLARE_ACCOUNT_ID",
-      "consuming_sources": [
-        "backend/src/lib/r2.ts"
-      ],
-      "environments": [
-        "backend/operator or inherited system context"
-      ],
-      "secret_class": "PUBLIC_IDENTIFIER",
-      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
-      "requiredness": "OPTIONAL_OR_DEFAULTED",
-      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
-      "mechanisms": [
-        "STATIC_ENV_READER"
-      ],
-      "dependency_ids": [
-        "r2"
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -6907,9 +6889,29 @@
       ]
     },
     {
-      "name": "CLOUDFLARE_R2_PUBLIC_URL",
+      "name": "CLOUDFLARE_R2_METADATA_READ_TOKEN",
       "consuming_sources": [
         "backend/src/lib/r2.ts"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "SERVER_CREDENTIAL",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "CONDITIONAL_ON_CAPABILITY",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "r2"
+      ]
+    },
+    {
+      "name": "CLOUDFLARE_R2_PRIVATE_BUCKET",
+      "consuming_sources": [
+        "backend/src/lib/r2.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -6922,7 +6924,10 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "r2"
+        "r2",
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -7249,7 +7254,8 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
-        "endpoint-example-invalid"
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -7441,7 +7447,8 @@
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
         "backend/src/services/publish/chromeWebStore.ts",
-        "backend/src/services/referralService.ts"
+        "backend/src/services/referralService.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -8620,8 +8627,10 @@
     {
       "name": "NEXT_PUBLIC_API_URL",
       "consuming_sources": [
+        "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
         "frontend/src/app/share/[token]/page.tsx",
-        "frontend/src/lib/api.ts"
+        "frontend/src/lib/api.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
         "frontend build/browser/SSR"
@@ -8635,6 +8644,7 @@
       ],
       "dependency_ids": [
         "frontend",
+        "endpoint-127-0-0-1",
         "endpoint-localhost"
       ]
     },
@@ -8761,6 +8771,26 @@
       ],
       "dependency_ids": [
         "frontend"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_XROGA_AUTH_BASE_URL",
+      "consuming_sources": [
+        "frontend/src/lib/supabase/config.ts"
+      ],
+      "environments": [
+        "frontend build/browser/SSR"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "frontend",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -9390,7 +9420,8 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
-        "endpoint-example-invalid"
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -9632,6 +9663,7 @@
         "endpoint-example-invalid",
         "endpoint-github-com",
         "endpoint-localhost",
+        "endpoint-public-example-invalid",
         "endpoint-xrogaaicom-vercel-app"
       ]
     },
@@ -9667,6 +9699,7 @@
         "endpoint-127-0-0-1",
         "endpoint-example-invalid",
         "endpoint-localhost",
+        "endpoint-public-example-invalid",
         "endpoint-xrogaaicom-vercel-app"
       ]
     },
@@ -9940,7 +9973,8 @@
     {
       "name": "VERCEL_GIT_COMMIT_SHA",
       "consuming_sources": [
-        "frontend/src/app/api/release/route.ts"
+        "frontend/src/app/api/release/route.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -9953,7 +9987,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "frontend"
+        "frontend",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -10256,7 +10291,8 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
-        "endpoint-example-invalid"
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -10276,7 +10312,8 @@
       ],
       "dependency_ids": [
         "endpoint-127-0-0-1",
-        "endpoint-example-invalid"
+        "endpoint-example-invalid",
+        "endpoint-public-example-invalid"
       ]
     },
     {
@@ -10317,6 +10354,25 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_DEPLOYMENT_ENVIRONMENT",
+      "consuming_sources": [
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -10594,7 +10650,8 @@
     {
       "name": "XROGA_RELEASE_SHA",
       "consuming_sources": [
-        "backend/src/lib/safeHealth.ts"
+        "backend/src/lib/safeHealth.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
       ],
       "environments": [
         "backend/operator or inherited system context"
@@ -10607,7 +10664,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "api"
+        "api",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -10863,6 +10921,25 @@
       ],
       "dependency_ids": [
         "runtime-controls-and-conditional-aliases"
+      ]
+    },
+    {
+      "name": "XROGA_STAGING_AUTH_BUILD",
+      "consuming_sources": [
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -11813,7 +11890,7 @@
     },
     {
       "path": "backend/src/index.ts",
-      "sha256": "c3778675f5b2ac54d3b649cd58ba1872e4aa380e251f050bbcf1b635cacda1c3"
+      "sha256": "0d1384a172ec05f1da40aca7cd3175d8129967efd4d6b8f315df643ff623cdea"
     },
     {
       "path": "backend/src/lib/adaptiveOrchestrator.ts",
@@ -11933,7 +12010,7 @@
     },
     {
       "path": "backend/src/lib/r2.ts",
-      "sha256": "9585a0d1d80415a17345b82c471735f48eaa3058d434d3015b2870a034e5cfea"
+      "sha256": "2c6074e934a251fecd9e0ae10bab4ff4d2a021a1607c60335850b2156cfe7913"
     },
     {
       "path": "backend/src/lib/recoveryPlanner.ts",
@@ -12261,7 +12338,7 @@
     },
     {
       "path": "backend/src/routes/projects.ts",
-      "sha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
       "path": "backend/src/routes/publish.ts",
@@ -12373,7 +12450,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "a513b971f8725f1f74bbc2af1d1f74d11882e4b59f73cd6ba388fe9fa0aa262a"
+      "sha256": "8bd2837d201198f8e18c60e412f2dea276449eed590d85c0125413bacb68bc4d"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12481,7 +12558,7 @@
     },
     {
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "sha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "path": "backend/src/services/notificationService.ts",
@@ -12572,12 +12649,20 @@
       "sha256": "1f71b43c4c6b454b321921aa7a1298fc6f471a9710a074f52d2bf38f00dfc51f"
     },
     {
+      "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
+      "sha256": "58525e52ceee99bc9cd74fea850daca59bef0ffbae7411a8e73316e8f5c56a15"
+    },
+    {
       "path": "backend/src/services/storage/localMediaCache.ts",
       "sha256": "324c87bda0aec5c17e772c59ae453b480bc5db337639c7d32377ed388ac04aba"
     },
     {
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "sha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
       "path": "backend/src/services/storage/projectFiles.ts",
-      "sha256": "224be92b0fcfc7db970fa41bc7ad36e22a02a10d1910ee73f9eadeb5ffe2107b"
+      "sha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
     },
     {
       "path": "backend/src/services/systemErrorLog.ts",
@@ -13154,6 +13239,10 @@
     {
       "path": "frontend/src/app/api/image-fetch/route.ts",
       "sha256": "50490203265cecbb3e03a0a42e914d6bad15dd9cd492fe5352fbe0c115ef9d81"
+    },
+    {
+      "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+      "sha256": "e43ed3522d46adff964157e92a459a93e6f543dc769ae8de31a3f25a93eb141c"
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
@@ -14749,7 +14838,7 @@
     },
     {
       "path": "frontend/src/components/projects/FilePreview.tsx",
-      "sha256": "bafdb065443ec9889328c1cfd6da68ef32f6049ca37ffae90faeee55e07a1db1"
+      "sha256": "3c4b3c210421faa420012769c53b6dc10f3572f336bc0da30631c28bc54f391e"
     },
     {
       "path": "frontend/src/components/projects/GitHubProjectCard.tsx",
@@ -14757,7 +14846,7 @@
     },
     {
       "path": "frontend/src/components/projects/ProjectDetailView.tsx",
-      "sha256": "9a7105511590589f33a6fc6009dfea6ec6b181440f4412a12380081966b8e1a0"
+      "sha256": "13891853a46d43e17370db253e284b4acdfd9ad8eed658c5954d5bf8d0e249ed"
     },
     {
       "path": "frontend/src/components/providers/AppProviders.tsx",
@@ -15880,6 +15969,10 @@
       "sha256": "a310c47892ab72097c38cd5892d2018a914b5008841971d360a67e67d9ca093e"
     },
     {
+      "path": "frontend/src/lib/privateFileUrl.ts",
+      "sha256": "e2e5233e9ed0bee1edbba324ebb4ccf7f99e49bb613649e20f83ce7f46a7c72a"
+    },
+    {
       "path": "frontend/src/lib/profileAvatars.ts",
       "sha256": "8f6507a834d3ed278b345ddcd8806651736b5d0ee70ddb7148ad347a81d21fa5"
     },
@@ -16069,7 +16162,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "4b37e87241b12248fb47539c2ce4ea71762535ead6e7f1e4faddd6b917bcb9bf"
+      "sha256": "002fc085825c866039ac9c3a76c4a818601fa7f7311717c71c81ddbfb14f4921"
     },
     {
       "path": "frontend/src/lib/supabase/authErrors.ts",
@@ -16085,11 +16178,11 @@
     },
     {
       "path": "frontend/src/lib/supabase/config.ts",
-      "sha256": "9a6f08925fd82bef7bceeb1c275be91473198332cefdac7f4544f3327cd619b7"
+      "sha256": "0dab1dd29661bfa9b6015dc83576975872dcd31b77e5b7ec079edb5f65982460"
     },
     {
       "path": "frontend/src/lib/supabase/middleware.ts",
-      "sha256": "6b64d6ec040671598d9247f891d6e130baa2f73bee712141ce36db4db14d67c8"
+      "sha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e"
     },
     {
       "path": "frontend/src/lib/supabase/routeAccess.ts",
@@ -16357,11 +16450,11 @@
     },
     {
       "path": "scripts/xroga/runtime-facts.mjs",
-      "sha256": "7b091ca23780b11c22464ac4559715f808de29885b0d2dc97d2ad182d496f2be"
+      "sha256": "1d84fb51bc2a055d74b2216727b528e80f858980fe64a01495d3dcee2f1b73ec"
     },
     {
       "path": "scripts/xroga/runtime-inventory.mjs",
-      "sha256": "8e37ec3d6cf8c284a21d8564261c5f65d9b2fed57d5a9a6472cb32ee716fb2eb"
+      "sha256": "0b8cb7cf2748bfbc51fbdb77af14e70a2b0d5396bc9959b009b7495d560a7070"
     },
     {
       "path": "scripts/xroga/runtime-schema.mjs",
@@ -16369,7 +16462,7 @@
     },
     {
       "path": "vercel.json",
-      "sha256": "0fbc3499da365c5f6af630f40f9d3ea28f5bcac69337018a7433d2f9c7621be4"
+      "sha256": "f60761f7c9b9a3579c8a09eb37fdf356f9ddc573a570ff65b9115d40d1ac7ff9"
     }
   ],
   "dynamic_bindings": [
@@ -17298,42 +17391,42 @@
       "hostname": "localhost",
       "protocol": "http:",
       "path": "backend/src/index.ts",
-      "line": 96,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
-      "line": 97,
-      "credentialsInUrl": false
-    },
-    {
-      "hostname": "www.xroga.com",
-      "protocol": "https:",
-      "path": "backend/src/index.ts",
       "line": 98,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xrogaaicom.vercel.app",
+      "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 99,
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "www.xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
       "line": 100,
       "credentialsInUrl": false
     },
     {
+      "hostname": "xrogaaicom.vercel.app",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 101,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "backend/src/index.ts",
+      "line": 102,
+      "credentialsInUrl": false
+    },
+    {
       "hostname": "xroga.com",
       "protocol": "https:",
       "path": "backend/src/index.ts",
-      "line": 188,
+      "line": 190,
       "credentialsInUrl": false
     },
     {
@@ -17470,10 +17563,10 @@
       "credentialsInUrl": false
     },
     {
-      "hostname": "xroga-api.fly.dev",
+      "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/lib/r2.ts",
-      "line": 64,
+      "line": 19,
       "credentialsInUrl": false
     },
     {
@@ -17732,21 +17825,35 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 26,
+      "line": 29,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 26,
+      "line": 29,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 95,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "public.example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 133,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 151,
+      "line": 214,
       "credentialsInUrl": false
     },
     {
@@ -18384,6 +18491,13 @@
       "protocol": "https:",
       "path": "backend/src/synthesis/projectRuntime/flyProvider.ts",
       "line": 34,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "xroga-api.fly.dev",
+      "protocol": "https:",
+      "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
+      "line": 17,
       "credentialsInUrl": false
     },
     {
@@ -21512,21 +21626,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "line": 3,
+      "line": 4,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "frontend/src/lib/supabase/config.ts",
-      "line": 3,
+      "line": 4,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "frontend/src/lib/supabase/config.ts",
-      "line": 27,
+      "line": 29,
       "credentialsInUrl": false
     },
     {
@@ -23829,7 +23943,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 422,
+      "line": 485,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24187,13 +24301,6 @@
     {
       "path": "backend/src/services/storage/localMediaCache.ts",
       "line": 15,
-      "scope": "FUNCTION_LOCAL",
-      "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 84,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "FILESYSTEM_WRITE_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -25509,7 +25616,7 @@
     },
     {
       "path": "frontend/src/components/projects/ProjectDetailView.tsx",
-      "line": 37,
+      "line": 38,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -26291,7 +26398,7 @@
         "backend/src/services/storage/projectFiles.ts",
         "backend/src/services/storage/localMediaCache.ts"
       ],
-      "summary": "R2 failures can fall back to local files or data URLs; durable-storage claims/quota/ownership need proof",
+      "summary": "Canonical file fallback removed; legacy cached/public objects not migrated and full private R2/staging durability/quota acceptance remains blocked",
       "disposition": "RECORDED_PRE_EXISTING_RISK_NOT_WAIVED",
       "owner_command": "007–010"
     },

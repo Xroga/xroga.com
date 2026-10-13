@@ -172,7 +172,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
   const row = {
     name: input.name.slice(0, 200),
     type: input.type ?? 'website',
-    status: 'completed',
+    status: 'in_progress',
     github_repo_url: input.githubRepoUrl ?? (repoName ? `https://github.com/${repoName}` : null),
     github_repo_name: repoName ?? null,
     updated_at: new Date().toISOString(),
@@ -222,8 +222,11 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
         file.path.endsWith('.json') ? 'application/json' : 'text/plain',
         'code'
       );
-    } catch (err) {
-      console.warn('[buildProjectStore] file', file.path, (err as Error).message);
+    } catch {
+      // A partial metadata row is not a completed/durable artifact receipt.
+      // Preserve any successful rows for owner recovery; do not claim all files saved.
+      console.warn('[buildProjectStore] private file persistence incomplete; no completed receipt');
+      return null;
     }
   }
 
@@ -252,5 +255,7 @@ export async function upsertBuildProject(input: UpsertBuildProjectInput): Promis
     /* optional */
   }
 
+  const completed=await supabase.from('projects').update({status:'completed'}).eq('id',projectId).eq('user_id',input.userId).select('id').maybeSingle();
+  if(completed.error || !completed.data)return null;
   return projectId;
 }

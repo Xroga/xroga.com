@@ -80,7 +80,7 @@ function service(fact, names) {
     idempotency_expectation: 'Required for consequential writes; verify canonical authority in Command 008',
     data_classification: fact.id === 'credential-store' ? 'SECRET_CREDENTIALS' : 'User data may be involved; tenant scope requires independent checks',
     failure_mode: 'Safe user-facing failure required; internal details restricted',
-    fallback_behaviour: fact.id === 'r2' ? 'Existing local-media/data-URL fallback; high-risk durability gap' : 'See source and recorded risks; no fallback newly enabled',
+    fallback_behaviour: fact.id === 'r2' ? 'No public/local/data-URL success fallback; explicit durable database text or verified private R2 only; actual R2 acceptance pending' : 'See source and recorded risks; no fallback newly enabled',
     observability_source: fact.sources, production_verification: fact.evidence.length ? 'Observed evidence explicitly scoped below; not full journey certification' : 'NOT_INDEPENDENTLY_VERIFIED', evidence_ids: fact.evidence };
 }
 
@@ -124,7 +124,7 @@ export function buildRuntimeInventory({ sourceSha } = {}) {
   });
   const risks = [
     ['TEST_REALM_PIN', 'P1', ['frontend/src/lib/supabase/config.ts', 'frontend/src/lib/supabase/authBuildRealm.mjs', '.github/workflows/command3-auth-browser.yml'], 'Production realm stays pinned; an explicit isolated CI build is now admitted, but real authenticated E2E configuration and verification remain blocked', '007'],
-    ['EPHEMERAL_ARTIFACT_FALLBACK', 'P1', ['backend/src/services/storage/projectFiles.ts', 'backend/src/services/storage/localMediaCache.ts'], 'R2 failures can fall back to local files or data URLs; durable-storage claims/quota/ownership need proof', '007–010'],
+    ['EPHEMERAL_ARTIFACT_FALLBACK', 'P1', ['backend/src/services/storage/projectFiles.ts', 'backend/src/services/storage/localMediaCache.ts'], 'Canonical file fallback removed; legacy cached/public objects not migrated and full private R2/staging durability/quota acceptance remains blocked', '007–010'],
     ['EPHEMERAL_BUDGET_FALLBACK', 'P1', ['backend/src/ai/providerBudget.ts', 'backend/src/ai/quota.ts', 'backend/src/ai/universal/costLedger.ts', 'backend/src/routes/guestChat.ts', 'backend/src/services/BillingService.ts'], 'Absent durable billing credentials activates process-only cycles/reservations; quota also falls back after DB/RPC errors. Guest rate/token/concurrency/claim limits fall back from Redis to maps. UniversalCostLedger is explicitly in-process; BillingService also defines process-only fulfilled-payment deduplication. Restart/cross-process accounting cannot rely on these stores', '008'],
     ['RUN_PERSISTENCE_GAP', 'P1', ['backend/src/ai/runStore.ts'], 'Run persistence returns without service-role configuration and scheduled writes swallow failures; hot run maps are not durable evidence of saved history', '007–008'],
     ['UNIVERSAL_MEMORY_ADMISSION', 'P1', ['backend/src/synthesis/universalPersistence.ts', 'backend/src/synthesis/projectRuntime/store.ts', 'backend/src/operations/productionOperations.ts'], 'universalStore defaults to owner-keyed memory without a client; runtime-store and operational evidence/idempotency map implementations also exist. Durable production admission/caller reachability must be proved, not inferred from class names', '007–008'],

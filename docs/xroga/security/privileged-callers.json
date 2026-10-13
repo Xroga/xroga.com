@@ -6,10 +6,10 @@
   "counts": {
     "observedTables": 118,
     "rlsEnabled": 118,
-    "privilegedFactorySites": 160,
-    "persistenceCandidates": 662,
-    "ownerPredicateCandidates": 161,
-    "reviewRequired": 662,
+    "privilegedFactorySites": 162,
+    "persistenceCandidates": 669,
+    "ownerPredicateCandidates": 163,
+    "reviewRequired": 669,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 8
   },
@@ -2061,26 +2061,26 @@
       "sourceSha256": "3b005e580f8f03bf3cd0022cdbdec1ce554b18e5f8905d132e54270e5bcdcea7"
     },
     {
-      "id": "03b565c78302d3bf4bf7",
+      "id": "a2f41136e6958ae20436",
       "path": "backend/src/lib/r2.ts",
-      "line": 39,
+      "line": 36,
       "enclosing": "uploadToR2",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9585a0d1d80415a17345b82c471735f48eaa3058d434d3015b2870a034e5cfea"
+      "sourceSha256": "2c6074e934a251fecd9e0ae10bab4ff4d2a021a1607c60335850b2156cfe7913"
     },
     {
-      "id": "7aedcad370d9be324d0c",
+      "id": "316c25a7b631042eb50e",
       "path": "backend/src/lib/r2.ts",
-      "line": 76,
+      "line": 52,
       "enclosing": "downloadFromR2",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9585a0d1d80415a17345b82c471735f48eaa3058d434d3015b2870a034e5cfea"
+      "sourceSha256": "2c6074e934a251fecd9e0ae10bab4ff4d2a021a1607c60335850b2156cfe7913"
     },
     {
       "id": "a9c95be576ccaabc6b70",
@@ -3447,235 +3447,235 @@
       "sourceSha256": "fee53587ad176cd91f70a3645a28171117400d0e12e48474b5d345296cf060f8"
     },
     {
-      "id": "621b3147c69910093fde",
+      "id": "784ceebba6d43046abb3",
       "path": "backend/src/routes/projects.ts",
-      "line": 15,
+      "line": 17,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "051d1d5daca34f41a730",
+      "id": "2f52f912e0de171798d3",
       "path": "backend/src/routes/projects.ts",
-      "line": 18,
+      "line": 20,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "81bb896e99c4744d37d9",
+      "id": "1c83cdf70c6c9fdd3ba9",
       "path": "backend/src/routes/projects.ts",
-      "line": 54,
+      "line": 79,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "4f000edf075d287a7010",
+      "id": "4cb8553d4ed38a49606f",
       "path": "backend/src/routes/projects.ts",
-      "line": 57,
+      "line": 82,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "82d053908ed4a23303ed",
+      "id": "f5e9b3ff38410d92ba3e",
       "path": "backend/src/routes/projects.ts",
-      "line": 65,
+      "line": 90,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "343c04cbce3e61dd6752",
+      "id": "3727c3e7ca9e52cb7151",
       "path": "backend/src/routes/projects.ts",
-      "line": 84,
+      "line": 109,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "5044016e0870cd8ed64d",
+      "id": "5ac36ecae19322f54678",
       "path": "backend/src/routes/projects.ts",
-      "line": 101,
+      "line": 126,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "1a3f1d9fcd4a58ef69d1",
+      "id": "809aaaefbae04a69269f",
       "path": "backend/src/routes/projects.ts",
-      "line": 120,
+      "line": 145,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "b5f0758e6d3ca54ad845",
+      "id": "b5569e3837dd909b758e",
       "path": "backend/src/routes/projects.ts",
-      "line": 133,
+      "line": 158,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "62cc1f7df4a91889d485",
+      "id": "b9513421a2d9acc6cc87",
       "path": "backend/src/routes/projects.ts",
-      "line": 144,
+      "line": 169,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "b1088e71a41379a7eef9",
+      "id": "4a114b9b97c305fdfc60",
       "path": "backend/src/routes/projects.ts",
-      "line": 147,
+      "line": 172,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "bc39e25ee754d60c6ada",
+      "id": "2475799e582b0cad2bcb",
       "path": "backend/src/routes/projects.ts",
-      "line": 159,
+      "line": 184,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "a81d21005528ff20179f",
+      "id": "8893e92d5fd180aa49f9",
       "path": "backend/src/routes/projects.ts",
-      "line": 166,
+      "line": 191,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "activity_logs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "8d413246800f4b22f693",
+      "id": "8dea6db4b75bf79421b6",
       "path": "backend/src/routes/projects.ts",
-      "line": 177,
+      "line": 202,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "db40b2e3a86b69e85357",
+      "id": "039afcb8bf2745b8c592",
       "path": "backend/src/routes/projects.ts",
-      "line": 180,
+      "line": 205,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "5a4d078e2d7a0776540d",
+      "id": "21153560020ab48f82d6",
       "path": "backend/src/routes/projects.ts",
-      "line": 192,
+      "line": 217,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "feaf5b373b96a59545c5",
+      "id": "c510a27967c4c29e1ea4",
       "path": "backend/src/routes/projects.ts",
-      "line": 207,
+      "line": 232,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "084fe9d602c81e729de3",
+      "id": "2a547c89a127f2c9d16a",
       "path": "backend/src/routes/projects.ts",
-      "line": 210,
+      "line": 235,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "2b5fdc94f287267fae4e",
+      "id": "95df4d3b94d2fbcb39fd",
       "path": "backend/src/routes/projects.ts",
-      "line": 222,
+      "line": 247,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "72e877d8f06c069efc62",
+      "id": "93cecab1c0d7b71176fc",
       "path": "backend/src/routes/projects.ts",
-      "line": 238,
+      "line": 263,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
-      "id": "e515226b86c2da093a2e",
+      "id": "53a5d5c7b8ec9217c123",
       "path": "backend/src/routes/projects.ts",
-      "line": 239,
+      "line": 264,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
+      "sourceSha256": "c7702dc525ca198f6a1acb01e19f2ec173a0cc0a85333d52a1a0782720bc2df6"
     },
     {
       "id": "9975148f8076b74b9f6e",
@@ -5479,7 +5479,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "f613b20d6c60546e5aac",
@@ -5490,7 +5490,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "fd08ca27416cfec53592",
@@ -5501,7 +5501,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "d33f817729f88859cab3",
@@ -5512,7 +5512,7 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "7b13228ebd5996887b74",
@@ -5523,7 +5523,7 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "0d4a6c20820ac3394e07",
@@ -5534,7 +5534,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "85d01e0f421fb69dbeeb",
@@ -5545,10 +5545,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
-      "id": "d08c31fd7199a3af4acf",
+      "id": "aaf72395b4a0a388da80",
       "path": "backend/src/services/memory/buildProjectStore.ts",
       "line": 182,
       "enclosing": "upsertBuildProject",
@@ -5556,10 +5556,10 @@
       "target": "projects",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
-      "id": "30de8591e63b36124ffa",
+      "id": "c6debe3ea9403491f9af",
       "path": "backend/src/services/memory/buildProjectStore.ts",
       "line": 188,
       "enclosing": "upsertBuildProject",
@@ -5567,29 +5567,40 @@
       "target": "projects",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
-      "id": "91276237c4f81c0a49fd",
+      "id": "b6690ffc54c64acca5ef",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 231,
+      "line": 234,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
-      "id": "89e0a84ebe1caa34985c",
+      "id": "5a094864d52679fc0b6e",
       "path": "backend/src/services/memory/buildProjectStore.ts",
-      "line": 244,
+      "line": 247,
       "enclosing": "upsertBuildProject",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_messages",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "901477a42829fb8238b065a353c3d3e4802bcad24f3b44a78f07dfc8f6f76744"
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
+    },
+    {
+      "id": "d0089d49466b5dbfb56a",
+      "path": "backend/src/services/memory/buildProjectStore.ts",
+      "line": 258,
+      "enclosing": "upsertBuildProject",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "projects",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "f4ea068ef163a22c381b071a11b3871b5e294cc7e9617e9a126652a697125368"
     },
     {
       "id": "22c0f451f5be08c1c3a1",
@@ -5900,48 +5911,114 @@
       "sourceSha256": "dfe469edc29361a90fa9dd67e7352740cc81df699621c08fba9316422fe22e49"
     },
     {
-      "id": "cc9ece96aded4391cf45",
+      "id": "c64a71dfe1e1ee155bbc",
+      "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
+      "line": 35,
+      "enclosing": "signingKey",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "58525e52ceee99bc9cd74fea850daca59bef0ffbae7411a8e73316e8f5c56a15"
+    },
+    {
+      "id": "1dd0f4d827d8aa6d7c13",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 12,
+      "enclosing": "ownedFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "project_files",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "5799562008eb227905ca",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 12,
+      "enclosing": "ownedFile",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "1c858461ffccbb3995af",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 25,
+      "enclosing": "readPrivateFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "9b758887815adcb8cdc2",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 31,
+      "enclosing": "readPrivateFile",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "b3697c7320d6e7572b2a",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 52,
+      "enclosing": "revokePrivateFileLinks",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getTenantSupabaseAdmin",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "29b3aab6793ed42b3f14",
+      "path": "backend/src/services/storage/privateFileDelivery.ts",
+      "line": 54,
+      "enclosing": "revokePrivateFileLinks",
+      "kind": "RPC_CANDIDATE",
+      "target": "revoke_project_file_links",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "0ea4d0edeceebfe080f0f537e0be0c77b57e64d911a9e5121361cb974d326399"
+    },
+    {
+      "id": "53565a1b995f42d80361",
       "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 33,
+      "line": 12,
       "enclosing": "storeProjectFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "224be92b0fcfc7db970fa41bc7ad36e22a02a10d1910ee73f9eadeb5ffe2107b"
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
     },
     {
-      "id": "322c244658f98079b38f",
+      "id": "04659a68ae549e9340ef",
       "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 41,
-      "enclosing": "storeProjectFile",
-      "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "224be92b0fcfc7db970fa41bc7ad36e22a02a10d1910ee73f9eadeb5ffe2107b"
-    },
-    {
-      "id": "1cf420890585c3a58357",
-      "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 42,
+      "line": 25,
       "enclosing": "storeProjectFile",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_files",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "224be92b0fcfc7db970fa41bc7ad36e22a02a10d1910ee73f9eadeb5ffe2107b"
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
     },
     {
-      "id": "800405f4a39adf8e21ff",
+      "id": "04659a68ae549e9340ef",
       "path": "backend/src/services/storage/projectFiles.ts",
-      "line": 76,
-      "enclosing": "storeUserFile",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
+      "line": 25,
+      "enclosing": "storeProjectFile",
+      "kind": "PRIVILEGED_FACTORY",
+      "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "224be92b0fcfc7db970fa41bc7ad36e22a02a10d1910ee73f9eadeb5ffe2107b"
+      "sourceSha256": "ec1344374e2b66b0150e2fd778802a84d0c4edd5c2c9fbb51a57275acf78a168"
     },
     {
       "id": "53c18a21efb192f2e02d",
@@ -6956,15 +7033,15 @@
       "sourceSha256": "679b6bf94407763cc5c8bcd592604059696b121e1f66760628a79f39078308c3"
     },
     {
-      "id": "d89eecb2603b79452c37",
+      "id": "bb00be20ca1b6c038cca",
       "path": "frontend/src/components/projects/ProjectDetailView.tsx",
-      "line": 37,
+      "line": 38,
       "enclosing": "ProjectDetailView",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "9a7105511590589f33a6fc6009dfea6ec6b181440f4412a12380081966b8e1a0"
+      "sourceSha256": "13891853a46d43e17370db253e284b4acdfd9ad8eed658c5954d5bf8d0e249ed"
     },
     {
       "id": "6999b23eac4333d80c6b",
@@ -7264,15 +7341,15 @@
       "sourceSha256": "e753abbfe0795b9e2362d5ac28e1d3974500091b4515e2f42cee80e5d22f951a"
     },
     {
-      "id": "eaeece344026385a744d",
+      "id": "2cc01eecb3f798b61911",
       "path": "frontend/src/lib/supabase/middleware.ts",
-      "line": 90,
+      "line": 95,
       "enclosing": "updateSession",
       "kind": "RPC_CANDIDATE",
       "target": "current_community_role",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "6b64d6ec040671598d9247f891d6e130baa2f73bee712141ce36db4db14d67c8"
+      "sourceSha256": "1e653e4dffce9ff49016519058f8679e9450e93e49c5a0f611176cb75d98af1e"
     },
     {
       "id": "535d0b09865d0b876600",

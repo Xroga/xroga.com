@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 
 export function assertDisposableConfiguration(env) {
   if (env.CI !== 'true' || env.XB01_DISPOSABLE_SUPABASE !== '1' || !env.RUNNER_TEMP || !env.GITHUB_ENV) throw new Error('Disposable Supabase requires the explicit GitHub CI fixture environment');
-  for (const name of ['SUPABASE_ACCESS_TOKEN','SUPABASE_DB_PASSWORD','SUPABASE_PROJECT_REF','DATABASE_URL','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','LAUNCH_BILLING_API_URL']) {
+  for (const name of ['SUPABASE_ACCESS_TOKEN','SUPABASE_DB_PASSWORD','SUPABASE_PROJECT_REF','DATABASE_URL','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','LAUNCH_BILLING_API_URL','FILE_DELIVERY_SIGNING_KEY']) {
     if (env[name]) throw new Error(`Forbidden inherited configuration: ${name}`);
   }
   return resolve(env.RUNNER_TEMP, 'xroga-disposable-supabase');
@@ -120,10 +120,12 @@ verify_enabled = true
     NEXT_PUBLIC_SUPABASE_URL:status.API_URL, SUPABASE_URL:status.API_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY:apiPublishable, SUPABASE_ANON_KEY:apiPublishable,
     SUPABASE_SERVICE_ROLE_KEY:apiSecret,
+    FILE_DELIVERY_SIGNING_KEY:randomBytes(32).toString('base64'),
     // Real user tokens are ES256 and verified using this stack's real JWKS.
     E2E_ISOLATED_PROJECT_REF:'local-disposable', XROGA_ISOLATED_AUTH_BUILD:'1',
   };
   for (const [name,value] of Object.entries(values)) {
+    if(name==='FILE_DELIVERY_SIGNING_KEY'){privateValues.push(value);mask(value);}
     if (/\r|\n/.test(value)) throw new Error('Invalid CI environment value');
     appendFileSync(process.env.GITHUB_ENV,`${name}=${value}\n`);
   }

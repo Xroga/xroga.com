@@ -6,7 +6,7 @@ flowchart LR
   supabase_legacy["Supabase — LEGACY"]
   redis["Redis / BullMQ — CONFIGURED_BUT_UNVERIFIED"]
   r2["Cloudflare R2 (S3-compatible) — CONFIGURED_BUT_UNVERIFIED"]
-  local_media["API filesystem / data URL fallback — CONFIGURED_BUT_UNVERIFIED"]
+  local_media["Retained legacy API filesystem cache — LEGACY"]
   fly_sandbox["Fly Machines / existing remote worker adapters — CONFIGURED_BUT_UNVERIFIED"]
   credential_store["Existing Supabase-backed vault / private storage mirror — CONFIGURED_BUT_UNVERIFIED"]
   browserbase["Browserbase — CONFIGURED_BUT_UNVERIFIED"]
@@ -23,7 +23,6 @@ flowchart LR
   endpoint_api_m_sandbox_paypal_com["Source-defined endpoint api-m.sandbox.paypal.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_apify_com["Source-defined endpoint api.apify.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_cartesia_ai["Source-defined endpoint api.cartesia.ai — CONFIGURED_BUT_UNVERIFIED"]
-  endpoint_api_cloudflare_com["Source-defined endpoint api.cloudflare.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_dev_runwayml_com["Source-defined endpoint api.dev.runwayml.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_dicebear_com["Source-defined endpoint api.dicebear.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_api_elevenlabs_io["Source-defined endpoint api.elevenlabs.io — CONFIGURED_BUT_UNVERIFIED"]
@@ -113,6 +112,7 @@ flowchart LR
   endpoint_pollinations_ai["Source-defined endpoint pollinations.ai — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_polygon_technology["Source-defined endpoint polygon.technology — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_posthog_com["Source-defined endpoint posthog.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_public_example_invalid["Source-defined endpoint public.example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_railway_app["Source-defined endpoint railway.app — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_react_dev["Source-defined endpoint react.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_schema_org["Source-defined endpoint schema.org — CONFIGURED_BUT_UNVERIFIED"]
@@ -186,7 +186,6 @@ flowchart LR
   api -. "source host/reference; unverified" .-> endpoint_api_m_sandbox_paypal_com
   api -. "source host/reference; unverified" .-> endpoint_api_apify_com
   api -. "source host/reference; unverified" .-> endpoint_api_cartesia_ai
-  api -. "source host/reference; unverified" .-> endpoint_api_cloudflare_com
   api -. "source host/reference; unverified" .-> endpoint_api_dev_runwayml_com
   frontend -. "source host/reference; unverified" .-> endpoint_api_dicebear_com
   api -. "source host/reference; unverified" .-> endpoint_api_elevenlabs_io
@@ -276,6 +275,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_pollinations_ai
   frontend -. "source host/reference; unverified" .-> endpoint_polygon_technology
   frontend -. "source host/reference; unverified" .-> endpoint_posthog_com
+  api -. "source host/reference; unverified" .-> endpoint_public_example_invalid
   frontend -. "source host/reference; unverified" .-> endpoint_railway_app
   frontend -. "source host/reference; unverified" .-> endpoint_react_dev
   frontend -. "source host/reference; unverified" .-> endpoint_schema_org

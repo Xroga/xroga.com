@@ -4,7 +4,7 @@
 
 Xroga is an npm-workspaces monorepo ("AI Swarm OS"):
 
-- `frontend/` — Next.js 15.5.21 / React 18 / Tailwind 3 (App Router), dev server on port **3000**.
+- `frontend/` — Next.js 15.5.27 / React 18 / Tailwind 3 (App Router), dev server on port **3000**.
 - `backend/` — Express API run via `tsx watch`, dev server on port **8080** (not 4000 as the README's endpoint table implies — `backend/src/index.ts` defaults to `PORT || 8080`).
 - `supabase/` — SQL migrations only (no local DB needed to boot the app).
 

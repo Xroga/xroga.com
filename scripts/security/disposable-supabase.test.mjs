@@ -15,6 +15,10 @@ test('generated per-run Auth signing key admits sign and verify operations',()=>
   assert.notEqual(first.kid,second.kid);assert.notEqual(first.d,second.d);assert.ok(first.d);
 });
 
+test('disposable file delivery keys cannot be inherited from another environment',()=>{
+  assert.throws(()=>assertDisposableConfiguration({...safe,FILE_DELIVERY_SIGNING_KEY:'forbidden-inherited-key'}));
+});
+
 test('API role tokens verify against the same configured ES256 key, not a legacy secret',()=>{
   const key=generateLocalSigningKey(),other=generateLocalSigningKey();
   for(const role of ['anon','service_role']) {

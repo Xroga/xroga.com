@@ -11,7 +11,8 @@ const url = new URL(process.env.XB01_LOCAL_DATABASE_URL ?? '');
 assert.equal(url.port,'54322'); assert.equal(url.pathname,'/postgres'); assert.ok(['localhost','127.0.0.1'].includes(url.hostname));
 const files = readdirSync(join(root,'supabase/migrations')).filter(f=>f.endsWith('.sql')).sort();
 const target = '20261013150357_xroga_tenant_security_baseline.sql';
-assert.equal(files.at(-1),target);
+const upgradeFiles=files.slice(files.indexOf(target));
+assert.ok(files.includes(target)&&upgradeFiles.includes('20261013221254_private_project_file_delivery.sql'));
 const inventory = files.map(file=>({file,sha256:createHash('sha256').update(readFileSync(join(root,'supabase/migrations',file))).digest('hex')}));
 const evidence = {status:'IN_PROGRESS',database:'disposable_supabase_pg17',cli:'2.120.0',migrations:inventory,upgrade:'NOT_RUN',fresh:'NOT_RUN',applied:[]};
 const out = join(root,'artifacts/batch-01-local-security'); mkdirSync(out,{recursive:true});
@@ -27,7 +28,7 @@ async function apply(db,names,phase) {
 let db = await connect();
 try {
   // No production dump/projection: recreate the actual pre-upgrade repository schema.
-  await apply(db,files.slice(0,-1),'pre-upgrade');
+  await apply(db,files.slice(0,files.indexOf(target)),'pre-upgrade');
   const bootstrapSource=readFileSync(join(root,'backend/src/db/ensureMessageSharesSchema.ts'),'utf8');
   const shareSql=bootstrapSource.match(/const ENSURE_MESSAGE_SHARES_SQL = `([\s\S]*?)`;/)?.[1];
   assert.ok(shareSql && !shareSql.includes('${'),'Complete canonical share bootstrap SQL required, not a projected table');
@@ -42,7 +43,12 @@ try {
   const shareBefore=(await db.query('select token,owner_id,visibility,response from public.message_shares')).rows;
   const before = await db.query("select id,user_id,name from public.projects order by id");
   const policies = await db.query("select schemaname,tablename,policyname from pg_policies where schemaname='public' order by tablename,policyname");
-  await apply(db,[target],'upgrade');
+  const filesBefore=(await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows;
+  await apply(db,upgradeFiles,'upgrade');
+  assert.deepEqual((await db.query('select id,project_id,file_name,content,file_url from public.project_files order by id')).rows,filesBefore);
+  const fileEpochs=(await db.query('select delivery_version,storage_metadata from public.project_files')).rows;
+  assert.ok(fileEpochs.every(row=>String(row.delivery_version)==='1'&&row.storage_metadata===null));
+  evidence.preUpgradePrivateFileRowsPreserved=true;
   assert.deepEqual((await db.query("select id,user_id,name from public.projects order by id")).rows,before.rows);
   assert.deepEqual((await db.query('select token,owner_id,visibility,response from public.message_shares')).rows,shareBefore);
   evidence.preUpgradeShareRowsPreserved=true;
@@ -56,7 +62,7 @@ try {
     assert.equal((await db.query('update public.projects set name=$1 where id=$2 returning id',['Forbidden',foreign])).rowCount,0);
     assert.equal((await db.query('select id from public.project_files')).rowCount,1);
   } finally { await db.query('rollback'); }
-  await apply(db,[target],'upgrade-reapply');
+  await apply(db,upgradeFiles,'upgrade-reapply');
   evidence.upgrade='PASS'; save();
 } finally { await db.end(); }
 // Explicit LOCAL reset only; isolated workdir has no linked project or seed files.
