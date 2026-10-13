@@ -33,6 +33,12 @@ Further audit corrects earlier discovery scope: inventory now includes browser s
 
 Command 005 final verification: code `48900380`, tested CI merge `de8069014a2cd98c35c0c754be837e79abab5c80`. Unit run 38410876836 passes twice all 19 stages: backend 2,729/front 991/guards 13/inventory-ledger-runtime-golden 41, zero failed/skipped, both builds/type/lint/SQL(67)/drift/dependencies/repeatability passing. Golden CI 38410876854 passes all three desktop/mobile/reduced-motion/reload/SSR-RSC guest browser tests plus boundary suites. Raw manifests retained. Full product journeys remain 12 BLOCKED_KNOWN_GAP / zero PASS; no real provider transaction or authenticated integration claimed. No production mutation. Proceed to 006 under the user's safe-work amendment.
 
+## Command 006 checkpoint
+
+Command 005 evidence commit `e9543986c10331ef2795920ebf60d3494ee7f1aa` is the actual base. AGENTS is preserved/extended with all twelve stable invariants, verified versions/frozen installs, actual current chat/guest/canonical runtime guidance and mandatory isolated/staging/release rules. Cursor/README/CONTRIBUTING install instructions now match npm ci; existing env files are not overwritten. Historical ship statements are explicitly not current independent evidence. New definition-of-done, change-safety, architecture, PR template and subsystem status documents retain every gap.
+
+Strict structured mission schema/checker and eleven positive/adversarial fixtures pass (plus 13 existing baseline guards: 24/24, no fail/skip). Rejections include missing tests/refs, high-risk rollback, missing RFC, contradictory migration impact, credential canary without echo, false Done/full-product/full-Batch claims, missing negative/security declarations and unsupported live/security release. Policy says release BLOCKED, golden full journeys 12 BLOCKED_KNOWN_GAP, allBatchCommandsVerified=false; it is not actual production authorization. Existing unit CI now has 20 stages and full-history checkout; dedicated policy CI is added. Final aggregate CI/evidence is pending before 007. No auth/runtime/provider/schema/payment change or new runtime package occurred.
+
 ## Command 001 checkpoint
 
 The full report (2,910 lines) has been read. Default branch fetched; no production changes made. Actual manifests declare Next.js 15.5.21, React 18, Tailwind 3, Express 4.22.2, npm workspaces, Supabase, and BullMQ. Installed TypeScript versions differ across root/backend; Command 003 must reconcile actual locked/runtime versions rather than rely on old AGENTS text.

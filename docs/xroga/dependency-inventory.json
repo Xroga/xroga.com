@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "c5eeeb22cedb1bbfa6542e7c892b5afebee6216d",
+  "source_sha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -10790,6 +10790,11 @@
       "path": ".github/workflows/xroga-golden-journeys.yml",
       "presence": "PRESENT",
       "role": "Existing runtime/build/verification configuration"
+    },
+    {
+      "path": ".github/workflows/xroga-mission-policy.yml",
+      "presence": "PRESENT",
+      "role": "Existing runtime/build/verification configuration"
     }
   ],
   "source_hashes": [
@@ -10843,7 +10848,7 @@
     },
     {
       "path": ".github/workflows/unit-tests.yml",
-      "sha256": "3089c5408a994e77ae1d94533f08a6150aa806c32b490bb85aa8185878dbbe6a"
+      "sha256": "0d751855323e3aea2500819e9a5e0b84d179ace12181ec8bc8df87554c016350"
     },
     {
       "path": ".github/workflows/vercel-build-check.yml",
@@ -10852,6 +10857,10 @@
     {
       "path": ".github/workflows/xroga-golden-journeys.yml",
       "sha256": "9004ef4d67476a930bf7a17909423cf808a7865b89fec14d5c17cc65e3c2f0f6"
+    },
+    {
+      "path": ".github/workflows/xroga-mission-policy.yml",
+      "sha256": "0af491898e0f529599b1950178ee52928866b76fa5338fbcf7eef94cb037675b"
     },
     {
       "path": "Dockerfile.api",

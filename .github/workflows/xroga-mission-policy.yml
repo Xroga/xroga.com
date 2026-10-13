@@ -1,0 +1,24 @@
+name: Xroga mission operating policy
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  structured-mission-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Actual structured mission policy and adversarial fixtures
+        run: |
+          node scripts/xroga/mission-check.mjs
+          node --test tests/mission-policy/mission-policy.test.mjs
+# This validates declarations/evidence consistency, not authority to release.
+# Actual authenticated/staged security and production proof remain independent.

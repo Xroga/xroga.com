@@ -1,0 +1,9 @@
+# Command 006 — engineering operating contract
+
+IN PROGRESS. AGENTS is preserved/extended with twelve stable invariants and current Next.js 15.5.21/Node 22.21.1/npm 10.9.4/TypeScript 5.9.3/frozen-install guidance. Cursor's installer retains existing env files but now uses npm ci. Obsolete `/chat` and signup-only guest descriptions are corrected; historical ship assertions are explicitly not independent current proof.
+
+Structured mission policy and positive/negative fixtures validate requirements, file/test/evidence references, security declarations/negative coverage, schema/migration impact, RFCs, high-risk rollback, placeholder/full-product/full-Batch claim consistency and release blockers. No brittle global prose policing, second execution engine, new runtime package, schema migration or production mutation is introduced.
+
+Definition of done separates code-complete, verified scope and live evidence. PR checklist and implementation status preserve known gaps; authenticated/staging/KMS/source-export prerequisites are not waived. Actual tests, invariant hash, policy CI and final result are pending.
+
+First execution: actual mission checker PASS_STRUCTURED_POLICY_NOT_RELEASE_AUTHORIZATION with release BLOCKED, all twelve golden journeys still blocked and allBatchCommandsVerified=false. Eleven positive/adversarial policy tests pass, zero fail/skip: valid scope; schema declaration; security declaration; missing tests/refs; high-risk rollback; RFC; contradictory schema impact; non-echoed credential canary; false all-Done/placeholder claims; unverified live/security release; absent impacts/negative tests/unsafe paths. Existing unit baseline now includes policy (20 stages) and these tests; full-history checkout supports actual base ancestry. No production privilege or release was granted by this check.

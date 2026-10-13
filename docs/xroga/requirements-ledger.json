@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "27f93ca19762a46a95c4f724235e1db59355aa43",
+  "source_sha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -289,8 +289,10 @@
       ],
       "feature_category": "batch-command-006",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-006/manifest.json"
+      ],
       "implementation_owner_command": "006",
       "priority": "P1",
       "dependencies": [
@@ -323,7 +325,7 @@
         "CI policy check passes."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -837,8 +839,10 @@
       ],
       "feature_category": "engineering rules",
       "classification": "infrastructure",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "scripts/xroga/mission-check.mjs"
+      ],
       "implementation_owner_command": "006",
       "priority": "P1",
       "dependencies": [
@@ -863,7 +867,7 @@
         "Relevant journey has independently verified outcome evidence and applicable negative tests"
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; matched paths are inspection candidates, not keyword-based proof of functional completion",
       "confidence": "MEDIUM",
       "unresolved_questions": [],

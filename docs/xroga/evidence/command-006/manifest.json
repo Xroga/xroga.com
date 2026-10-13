@@ -1,0 +1,16 @@
+{
+  "command": "006",
+  "status": "IMPLEMENTED_PENDING_AGGREGATE_CI",
+  "baseSha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
+  "architectureInvariantsSha256": "99f70a8316925b0fbef12cec2e7a3b2de3eddd8ace6c361924659f510d5c7ccd",
+  "policyFixtures": {"tests": 11, "pass": 11, "fail": 0, "skipped": 0},
+  "combinedPolicyBaselineFixtures": {"tests": 24, "pass": 24, "fail": 0, "skipped": 0},
+  "actualMissionPolicyResult": "PASS_MISSION_POLICY_NOT_RELEASE_AUTHORIZATION",
+  "releaseState": "BLOCKED",
+  "ciCheck": "Xroga mission operating policy / structured-mission-policy and Unit tests / unit",
+  "baselineStages": 20,
+  "productionDeployed": false,
+  "schemaChanged": false,
+  "newRuntimePackages": 0,
+  "ciVerified": false
+}

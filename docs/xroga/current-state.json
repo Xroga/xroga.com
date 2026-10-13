@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "27f93ca19762a46a95c4f724235e1db59355aa43",
-    "sourceTimestampUtc": "2026-10-13T18:59:26+05:00",
-    "auditStartedUtc": "2026-10-13T14:08:30.573Z",
+    "sha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
+    "sourceTimestampUtc": "2026-10-13T19:25:24+05:00",
+    "auditStartedUtc": "2026-10-13T14:43:08.070Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -31,6 +31,7 @@
       ".github/workflows/unit-tests.yml",
       ".github/workflows/vercel-build-check.yml",
       ".github/workflows/xroga-golden-journeys.yml",
+      ".github/workflows/xroga-mission-policy.yml",
       ".node-version",
       "Dockerfile.api",
       "backend/Dockerfile",
@@ -80103,7 +80104,7 @@
       "id": "surface:b52dca2df19c3c07d436",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/compare-baseline-runs.mjs",
-      "sha256": "d7f679fef64cfb228fe42a612798da86f965e3e22747a38235de1b32b48af9c2",
+      "sha256": "4931374dbfefd882cf3b5dc9d39f097ec288c047f660e22c8f020df165cbbc15",
       "symbols": [
         "compareBaselineRuns",
         "directory",
@@ -80198,7 +80199,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "49b2b8e4973c54aebc2732d27bed6ccb3101117e2dc5011b5938bc74580fba11",
+      "sha256": "8979213a670d4aac074b21a86cc4da38c3be0bff5a0ccc6dcd8ee1b589fa9d38",
       "symbols": [
         "after",
         "append",
@@ -80320,6 +80321,7 @@
       "entryPoints": [
         "scripts/ci/check-lockfile-integrity.mjs",
         "scripts/ci/validate-migrations.mjs",
+        "scripts/xroga/mission-check.mjs",
         "scripts/xroga/run-golden-browser.mjs",
         "scripts/xroga/validate-golden-journeys.mjs"
       ],
@@ -80336,6 +80338,8 @@
         "scripts/xroga/check-runtime-config.mjs:5",
         "scripts/xroga/golden-journeys.mjs:5",
         "scripts/xroga/inventory.mjs:8",
+        "scripts/xroga/mission-check.mjs:5",
+        "scripts/xroga/mission-schema.mjs:3",
         "scripts/xroga/run-golden-browser.mjs:7",
         "scripts/xroga/runtime-discovery.mjs:5",
         "scripts/xroga/runtime-inventory.mjs:7",
@@ -81771,6 +81775,154 @@
       "confidence": "HIGH",
       "reason": "Upcoming capability presentation; operational backend not demonstrated.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d32d7b26b1d63191d997",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/mission-check.mjs",
+      "sha256": "77e29406743db98031016e74d7fbd48c9c48280cf0c66b78370c08abcc9ca280",
+      "symbols": [
+        "agents",
+        "allBatchCommandsVerified",
+        "goldenStates",
+        "id",
+        "ids",
+        "index",
+        "invariants",
+        "journeys",
+        "main",
+        "mission",
+        "path",
+        "read",
+        "result",
+        "results"
+      ],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "./mission-policy.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/mission-policy.mjs"
+      ],
+      "entryPoints": [
+        "scripts/xroga/mission-check.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/xroga/mission-check.mjs#allBatchCommandsVerified"
+      ],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:db929b3f143af8a4eedf",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/mission-policy.mjs",
+      "sha256": "9a1dcd424986fefe0d013cc4f7dd21b884aa761f43572ebf3d0475e5b8a33f41",
+      "symbols": [
+        "id",
+        "impact",
+        "migrationFiles",
+        "mission",
+        "missionJsonSchema",
+        "missionSchema",
+        "refs",
+        "serialized",
+        "sha",
+        "text",
+        "texts",
+        "validateMission"
+      ],
+      "imports": [
+        "zod"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/xroga/mission-check.mjs"
+      ],
+      "callers": [
+        "scripts/xroga/mission-check.mjs:6",
+        "scripts/xroga/mission-schema.mjs:4",
+        "tests/mission-policy/mission-policy.test.mjs:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "zod"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "tests/mission-policy/mission-policy.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a337f1a3e65c339e8c23",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/xroga/mission-schema.mjs",
+      "sha256": "5f2410d4f5671bcddbc442f99e104d21fbd3cbfdd778bf1e2121d3bf12af75dc",
+      "symbols": [],
+      "imports": [
+        "../ci/toolchain.mjs",
+        "./mission-policy.mjs",
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
+        "scripts/xroga/mission-policy.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
@@ -90484,7 +90636,7 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "3089c5408a994e77ae1d94533f08a6150aa806c32b490bb85aa8185878dbbe6a",
+      "sha256": "0d751855323e3aea2500819e9a5e0b84d179ace12181ec8bc8df87554c016350",
       "sourceEntrypoints": [
         "scripts/ci/compare-baseline-runs.mjs"
       ],
@@ -90505,6 +90657,16 @@
         "scripts/xroga/golden-journeys.test.mjs",
         "scripts/xroga/run-golden-browser.mjs",
         "scripts/xroga/validate-golden-journeys.mjs"
+      ],
+      "hasSchedule": false
+    },
+    {
+      "id": "workflow:22870c3edf144b6cb424",
+      "sourcePath": ".github/workflows/xroga-mission-policy.yml",
+      "sha256": "0af491898e0f529599b1950178ee52928866b76fa5338fbcf7eef94cb037675b",
+      "sourceEntrypoints": [
+        "scripts/xroga/mission-check.mjs",
+        "tests/mission-policy/mission-policy.test.mjs"
       ],
       "hasSchedule": false
     }
@@ -99627,6 +99789,13 @@
       "id": "test-suite:767b35eed78a059d98d2",
       "sourcePath": "scripts/xroga/runtime-discovery.test.mjs",
       "declaredTests": 9,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:36bc2be79f9d624d2482",
+      "sourcePath": "tests/mission-policy/mission-policy.test.mjs",
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

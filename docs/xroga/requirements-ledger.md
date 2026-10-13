@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `27f93ca19762a46a95c4f724235e1db59355aa43`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
+Application source SHA: `e9543986c10331ef2795920ebf60d3494ee7f1aa`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
 
 264 requirements; 264 available source rows mapped; 43 mandatory capability families; 23 external candidates; zero newly adopted runtime dependencies.
 
@@ -11,7 +11,7 @@ Application source SHA: `27f93ca19762a46a95c4f724235e1db59355aa43`. This is **av
 | XB01-C003 | DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
 | XB01-C004 | DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH | IMPLEMENTED_BUT_UNVERIFIED | 004 | EXTEND |
 | XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | IMPLEMENTED_BUT_UNVERIFIED | 005 | EXTEND |
-| XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | PROPOSED_ONLY | 006 | NEW |
+| XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | IMPLEMENTED_BUT_UNVERIFIED | 006 | EXTEND |
 | XB01-C007 | TENANT ISOLATION, SERVER-SIDE OWNERSHIP AND RBAC BASELINE | PROPOSED_ONLY | 007 | NEW |
 | XB01-C008 | CANONICAL OUTCOME-SCOPED AUTHORITY, APPROVAL AND PREPARED-ACTION CONTRACT | PROPOSED_ONLY | 008 | NEW |
 | XB01-C009 | CREDENTIAL VAULT, ENVELOPE ENCRYPTION, ROTATION AND CONNECTED-ACCOUNT IDENTITY | PROPOSED_ONLY | 009 | NEW |
@@ -21,7 +21,7 @@ Application source SHA: `27f93ca19762a46a95c4f724235e1db59355aa43`. This is **av
 | XR-FAMILY-deterministic-ci | deterministic CI | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
 | XR-FAMILY-deployment-dependencies | deployment dependencies | IMPLEMENTED_BUT_UNVERIFIED | 004 | EXTEND |
 | XR-FAMILY-golden-journeys | golden journeys | PROPOSED_ONLY | 005 | NEW |
-| XR-FAMILY-engineering-rules | engineering rules | PROPOSED_ONLY | 006 | NEW |
+| XR-FAMILY-engineering-rules | engineering rules | IMPLEMENTED_BUT_UNVERIFIED | 006 | EXTEND |
 | XR-FAMILY-tenant-isolation | tenant isolation | IMPLEMENTED_BUT_UNVERIFIED | 007 | EXTEND |
 | XR-FAMILY-authority-approval | authority/approval | IMPLEMENTED_BUT_UNVERIFIED | 008 | EXTEND |
 | XR-FAMILY-credentials | credentials | IMPLEMENTED_BUT_UNVERIFIED | 009 | EXTEND |

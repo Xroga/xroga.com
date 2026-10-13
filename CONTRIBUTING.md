@@ -13,7 +13,7 @@ Thank you for helping improve Xroga. This repository contains the hosted product
 ## Local checks
 
 ```bash
-npm install
+npm ci
 npm run project:check -- .
 npm run test:growth
 npm run test:growth:technical
@@ -27,6 +27,8 @@ Run the focused tests for the surface you changed. Existing failing tests must n
 ## Pull requests
 
 Describe the problem, the smallest coherent change, tests executed, security/privacy impact, and any deployment or owner decision still required. A passing static project check is useful evidence, not proof that the application is production-safe.
+
+Follow `docs/xroga/PR_EVIDENCE_TEMPLATE.md`, declare structured mission impact, and run `node scripts/xroga/mission-check.mjs`. Use the actual pinned toolchain and clean baseline. Do not present BLOCKED_KNOWN_GAP fixtures as passing user journeys. Security-sensitive releases require isolated authenticated/migration/staging verification; missing configuration is not permission to use production fixtures.
 
 ## Licensing
 
