@@ -21,6 +21,7 @@ import { createEvidence } from '../synthesis/researchEvidence.js';
 import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
 import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
+import { reserveProviderBudget,settleProviderBudget } from '../ai/providerBudget.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -411,6 +412,25 @@ test('identical prompts cannot retrieve another tenant response through the priv
   await setCachedResponse(prompt,'OTHER_CACHE_CANARY','fixture',other.context);
   assert.equal(await getCachedResponse(prompt,owner.context),'OWNER_CACHE_CANARY');
   assert.equal(await getCachedResponse(prompt,other.context),'OTHER_CACHE_CANARY');
+});
+
+test('real reservation concurrency and foreign settlement cannot transfer budget between tenants',async()=>{
+  const [owner,other]=users,key=randomUUID();
+  const input={modelId:'deepseek_v4_flash' as const,estimatedInputTokens:100,maximumOutputTokens:100,idempotencyKey:key};
+  // Actual existing service RPCs against the complete isolated database, no provider request/payment.
+  const replay=await Promise.all(Array.from({length:4},()=>reserveProviderBudget({...input,userId:owner.id})));
+  assert.equal(new Set(replay.map(row=>row.id)).size,1);
+  const foreign=await reserveProviderBudget({...input,userId:other.id});assert.notEqual(foreign.id,replay[0].id);
+  const read=async()=>{
+    const r=await admin.from('xroga_provider_reservations').select('id,user_id,status,reserved_micro_usd,settled_micro_usd').in('id',[replay[0].id,foreign.id]).order('id');assert.equal(r.error,null);assert.equal(r.data?.length,2);return r.data;
+  };
+  const before=await read();
+  await assert.rejects(settleProviderBudget({userId:other.id,modelId:input.modelId,reservation:replay[0],result:{inputTokens:10,outputTokens:10}}),/Provider reservation settlement failed/);
+  const denied=await admin.rpc('release_xroga_provider_budget',{p_user_id:other.id,p_reservation_id:replay[0].id,p_error_category:'fixture',p_pending_reconciliation:false});assert.ok(denied.error);
+  assert.deepEqual(await read(),before,'failed foreign writes must leave both reservations unchanged');
+  await settleProviderBudget({userId:owner.id,modelId:input.modelId,reservation:replay[0],result:{inputTokens:10,outputTokens:10}});
+  const after=await read();assert.equal(after?.find(r=>r.id===replay[0].id)?.status,'settled');assert.equal(after?.find(r=>r.id===foreign.id)?.status,'reserved');
+  const count=await admin.from('xroga_provider_reservations').select('id',{count:'exact',head:true}).eq('user_id',owner.id).eq('idempotency_key',key);assert.equal(count.error,null);assert.equal(count.count,1);
 });
 
 test('real catalog and RPC denial prevent browser roles mutating own or foreign billing authority',async()=>{

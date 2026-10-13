@@ -9,6 +9,8 @@ import {
   reserveProviderBudget,
   resetProviderBudgetMemoryForTests,
   unlockedEntitlementMicroUsd,
+  settleProviderBudget,
+  finishFailedProviderReservation,
 } from './providerBudget.js';
 
 test('uses integer micro-USD and reserves more than the maximum estimated cost', () => {
@@ -94,4 +96,25 @@ test('free in-memory status is bounded to 100 percent and does not advertise fak
   assert.ok(status.capacityRemainingPercent != null && status.capacityRemainingPercent <= 100);
   assert.equal(status.availableNowPercent, 100);
   assert.equal(status.nextUnlockAt, null);
+});
+
+test('process-local reservation settlement and release cannot mutate another owner budget', async () => {
+  assert.equal(Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),false,'this fixture tests the process-local boundary, not durable database proof');
+  for(const action of ['settle','release','pending'] as const) {
+    resetProviderBudgetMemoryForTests();
+    const input={modelId:'kimi_k3' as const,estimatedInputTokens:20000,maximumOutputTokens:4000,idempotencyKey:'ffe067ee-68b2-4139-9b0b-0bfcebfed161'};
+    const owner=await reserveProviderBudget({...input,userId:'reservation-owner'});
+    const other=await reserveProviderBudget({...input,userId:'reservation-other'});
+    assert.notEqual(owner.id,other.id,'idempotency namespace must include owner');
+    const beforeOwner=await getProviderEntitlementStatus('reservation-owner'),beforeOther=await getProviderEntitlementStatus('reservation-other');
+    if(action==='settle') await settleProviderBudget({userId:'reservation-other',modelId:input.modelId,reservation:owner,result:{inputTokens:10000,outputTokens:1000}});
+    else await finishFailedProviderReservation({userId:'reservation-other',reservation:owner,error:new Error(action==='pending'?'timeout':'unauthorized')});
+    assert.equal((await getProviderEntitlementStatus('reservation-owner')).availableNowPercent,beforeOwner.availableNowPercent);
+    assert.equal((await getProviderEntitlementStatus('reservation-other')).availableNowPercent,beforeOther.availableNowPercent);
+    // Legitimate owner can still settle: a foreign attempt must not change reservation status.
+    await settleProviderBudget({userId:'reservation-owner',modelId:input.modelId,reservation:owner,result:{inputTokens:10000,outputTokens:1000}});
+    const after=await getProviderEntitlementStatus('reservation-owner');
+    assert.ok(after.availableNowPercent!>beforeOwner.availableNowPercent!,'owner reservation must remain available for legitimate settlement');
+    assert.equal((await getProviderEntitlementStatus('reservation-other')).availableNowPercent,beforeOther.availableNowPercent);
+  }
 });

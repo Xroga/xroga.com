@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
+  "source_sha": "c1db031e4843526e99a05f83d8842dc9fa415c6d",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2796,7 +2796,9 @@
         "scripts/security/audit-tenant-policies.mjs",
         "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
-        "scripts/security/full-supabase-history.mjs"
+        "scripts/security/full-supabase-history.mjs",
+        "scripts/security/r2-private-check.mjs",
+        "scripts/security/staging-preflight.mjs"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",

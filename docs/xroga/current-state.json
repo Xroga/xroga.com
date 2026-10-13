@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
-    "sourceTimestampUtc": "2026-10-14T02:05:56+05:00",
-    "auditStartedUtc": "2026-10-13T21:13:52.723Z",
+    "sha": "c1db031e4843526e99a05f83d8842dc9fa415c6d",
+    "sourceTimestampUtc": "2026-10-14T02:21:33+05:00",
+    "auditStartedUtc": "2026-10-13T21:34:16.029Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -5694,7 +5694,7 @@
       "id": "surface:faad5cf834fc5eb65afc",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/providerBudget.ts",
-      "sha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2",
+      "sha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811",
       "symbols": [
         "BudgetPurpose",
         "EntitlementStatus",
@@ -5791,6 +5791,7 @@
         "backend/src/routes/billing.ts:5",
         "backend/src/routes/dashboard.ts:4",
         "backend/src/routes/phase1.ts:27",
+        "backend/src/security/tenantIsolation.local.integration.ts:24",
         "backend/src/services/BillingService.ts:18",
         "backend/src/services/integrations/businessAction.ts:11",
         "backend/src/services/integrations/businessRead.ts:7"
@@ -5825,7 +5826,8 @@
       ],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/ai/providerBudget.test.ts"
+        "backend/src/ai/providerBudget.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -81523,7 +81525,7 @@
       "id": "surface:c4f135aa7dcb9cdc3800",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/run-baseline.mjs",
-      "sha256": "a45bc6bd4203e2ecaa5347a7a202173c7386c7a038d13a59dbc31f3b5a22ca54",
+      "sha256": "b5334bd0f4bdc82a7b8620761a673dc86155a4d8c4fe86fccf8194714aa466e4",
       "symbols": [
         "after",
         "append",
@@ -82707,6 +82709,132 @@
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
       "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:d2735f9330e4e810f114",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/r2-private-check.mjs",
+      "sha256": "b6e5a62161006e288fe221395ada1eae47302e4b9a517d19048c3c56208c700c",
+      "symbols": [
+        "actualSha",
+        "adapter",
+        "assertAnonymousDenial",
+        "base",
+        "body",
+        "bucket",
+        "client",
+        "created",
+        "custom",
+        "e",
+        "exercisePrivateCanary",
+        "inspectPrivateBucket",
+        "key",
+        "m",
+        "managed",
+        "manifest",
+        "metadata",
+        "payload",
+        "r",
+        "read",
+        "readJson",
+        "requireBackend",
+        "requireR2TestConfiguration",
+        "response",
+        "result",
+        "runR2Check",
+        "s3Adapter",
+        "text"
+      ],
+      "imports": [
+        "./staging-preflight.mjs",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/security/staging-preflight.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/staging-preflight.test.mjs:5"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/staging-preflight.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:90a83f7c4c49ea55cd16",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/staging-preflight.mjs",
+      "sha256": "d49eeed605b1d9850d50e1a16424551a853a6b044d1a849da6d7e9547f2f219b",
+      "symbols": [
+        "assertStagingEnvironment",
+        "deny",
+        "deploymentPlan",
+        "key",
+        "m",
+        "origin",
+        "production",
+        "url",
+        "validateStagingManifest",
+        "web"
+      ],
+      "imports": [
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [],
+      "callers": [
+        "scripts/security/r2-private-check.mjs:7",
+        "scripts/security/staging-preflight.test.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/staging-preflight.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -99129,7 +99257,7 @@
     {
       "id": "test-suite:0497d6afd3cbf29c9bfe",
       "sourcePath": "backend/src/ai/providerBudget.test.ts",
-      "declaredTests": 8,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99845,7 +99973,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 31,
+      "declaredTests": 32,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -101724,6 +101852,13 @@
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
       "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:9df7391e554003403e8d",
+      "sourcePath": "scripts/security/staging-preflight.test.mjs",
+      "declaredTests": 8,
       "skipLocations": [],
       "focusLocations": []
     },

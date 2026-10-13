@@ -387,7 +387,7 @@ export async function settleProviderBudget(input: {
   }
   const row = memoryReservations.get(input.reservation.id);
   const cycle = memoryCycles.get(input.userId);
-  if (!row || !cycle || row.status !== 'reserved') return;
+  if (!row || row.userId !== input.userId || !cycle || row.status !== 'reserved') return;
   cycle.reserved -= row.amount;
   cycle.settled += actual;
   row.status = 'settled';
@@ -412,7 +412,7 @@ export async function finishFailedProviderReservation(input: {
   }
   const row = memoryReservations.get(input.reservation.id);
   const cycle = memoryCycles.get(input.userId);
-  if (!row || !cycle || row.status !== 'reserved') return;
+  if (!row || row.userId !== input.userId || !cycle || row.status !== 'reserved') return;
   if (pending) {
     row.status = 'pending_reconciliation';
   } else {

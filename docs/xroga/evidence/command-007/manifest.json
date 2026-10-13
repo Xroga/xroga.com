@@ -1,6 +1,31 @@
 {
   "command": "007",
   "status": "IN_PROGRESS_RELEASE_BLOCKED",
+  "latestRetainedScopedProof": {
+    "codeSha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
+    "isolatedCi": "https://github.com/Xroga/xroga.com/actions/runs/38468016804",
+    "aggregateCi": "https://github.com/Xroga/xroga.com/actions/runs/38468021953",
+    "result": "PASS_SCOPED_REGRESSION_NOT_FULL_COMMAND007_ACCEPTANCE",
+    "realBrowserTests": 3,
+    "realTenantTests": 30,
+    "fullFreshAndRepresentativeUpgradeFiles": 68,
+    "bothBuildsAndExactApiWebRevision": "PASS",
+    "aggregateRepeats": 2,
+    "aggregateStages": 21,
+    "perRun": {"backend":2768,"frontend":1010,"guards":13,"combinedFixtures":62,"fail":0,"skipped":0},
+    "evidenceFiles": ["docs/xroga/evidence/command-007/local-supabase-38468016804-migrations.json","docs/xroga/evidence/command-007/local-supabase-38468016804-browser-journey.json","docs/xroga/evidence/command-007/local-supabase-38468016804-founder.json","docs/xroga/evidence/command-007/aggregate-38468021953-run-a.json","docs/xroga/evidence/command-007/aggregate-38468021953-run-b.json"],
+    "laterSourceRequiresRerun": true
+  },
+  "stagingResourceInspection": {
+    "readOnly": true,
+    "verifiedNonProductionDeployment": null,
+    "verifiedPrivateR2TestBucket": null,
+    "ownerCreationDeploymentApproval": "NOT_GRANTED",
+    "preparedConfigurationTests": {"pass":8,"fail":0,"skipped":0,"kind":"CREDENTIAL_FREE_UNIT_NOT_LIVE_R2"},
+    "realR2Canary": "NOT_EXECUTED_PENDING_RESOURCES_AND_EXPLICIT_APPROVAL",
+    "applicationPrivateDownload": "BLOCKED_CANONICAL_PRIVATE_DELIVERY_ADAPTER_REQUIRED",
+    "record": "docs/xroga/security/STAGING_READINESS.md"
+  },
   "baseSha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
   "migration": "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
   "schemaObservation": "docs/xroga/security/schema-observation.json",

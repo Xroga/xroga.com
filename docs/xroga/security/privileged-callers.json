@@ -331,7 +331,7 @@
       "target": "activate_xroga_paid_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "f2950f50b2992dc4dfd9",
@@ -342,7 +342,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "255ed9aaf17de9a6aeec",
@@ -353,7 +353,7 @@
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "255ed9aaf17de9a6aeec",
@@ -364,7 +364,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "a13974a029a30a99d5b6",
@@ -375,7 +375,7 @@
       "target": "xroga_billing_cycles",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "a13974a029a30a99d5b6",
@@ -386,7 +386,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "dda0d415df87b4f08bc7",
@@ -397,7 +397,7 @@
       "target": "set_xroga_usage_pacing",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "dda0d415df87b4f08bc7",
@@ -408,7 +408,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "9205378d0d6cbc2f0068",
@@ -419,7 +419,7 @@
       "target": "reserve_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "9205378d0d6cbc2f0068",
@@ -430,7 +430,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "05ba7665f5ebca25c89d",
@@ -441,7 +441,7 @@
       "target": "ensure_xroga_free_cycle",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "05ba7665f5ebca25c89d",
@@ -452,7 +452,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "18cd18d30a6a0a3113dc",
@@ -463,7 +463,7 @@
       "target": "settle_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "18cd18d30a6a0a3113dc",
@@ -474,10 +474,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
-      "id": "0fc921347769e43db4ac",
+      "id": "f54d9cbb09426b1a1b85",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 404,
       "enclosing": "finishFailedProviderReservation",
@@ -485,10 +485,10 @@
       "target": "release_xroga_provider_budget",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
-      "id": "0fc921347769e43db4ac",
+      "id": "f54d9cbb09426b1a1b85",
       "path": "backend/src/ai/providerBudget.ts",
       "line": 404,
       "enclosing": "finishFailedProviderReservation",
@@ -496,7 +496,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sourceSha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "id": "23ff96b17be3d43e4c97",

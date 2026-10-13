@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
+  "source_sha": "c1db031e4843526e99a05f83d8842dc9fa415c6d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11377,7 +11377,7 @@
     },
     {
       "path": "backend/src/ai/providerBudget.ts",
-      "sha256": "c5adeba010f1e5a7ab646c134f2692d0e7c853b88ab5fb197dd1edf10c8223a2"
+      "sha256": "d79fa3f452eb36c037245ce17620bf2ec6253d31b6bff2157833d919b13f2811"
     },
     {
       "path": "backend/src/ai/providerCostTiers.ts",
@@ -12373,7 +12373,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "d665e4ffd60470a80671768eab4f7e1f8cf4f5dd260a4470f0c6f4a7eef08a4a"
+      "sha256": "a513b971f8725f1f74bbc2af1d1f74d11882e4b59f73cd6ba388fe9fa0aa262a"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17732,21 +17732,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 25,
+      "line": 26,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 25,
+      "line": 26,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 150,
+      "line": 151,
       "credentialsInUrl": false
     },
     {
@@ -23824,6 +23824,13 @@
       "path": "backend/src/security/ownedTerminalPersistence.ts",
       "line": 4,
       "scope": "MODULE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 422,
+      "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
