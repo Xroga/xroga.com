@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createClient } from '@supabase/supabase-js';
-import { persistOwnedRun } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRuntimeSession } from './ownedRunPersistence.js';
 import { createTenantContext } from './tenantContext.js';
 import { TenantAccessError } from './tenantErrors.js';
 const owner='11111111-1111-4111-8111-111111111111';
@@ -21,4 +21,17 @@ test('durable writer never merges on conflict; mutation predicates include persi
   const before=requests.length;
   await assert.rejects(persistOwnedRun(db,context,{id:'run',user_id:'22222222-2222-4222-8222-222222222222'}),TenantAccessError);
   assert.equal(requests.length,before);
+});
+
+test('existing runtime-session writer uses the same collision-safe owner boundary',async()=>{
+  const requests:URL[]=[];
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(input,init)=>{
+    requests.push(new URL(String(input)));
+    if(init?.method==='POST') assert.match(new Headers(init.headers).get('Prefer')??'',/ignore-duplicates/);
+    return new Response(JSON.stringify([]),{headers:{'Content-Type':'application/json'}});
+  }}});
+  await assert.rejects(persistOwnedRuntimeSession(db,context,{session_id:'foreign-session',user_id:owner}),error=>error instanceof TenantAccessError&&error.status===404);
+  assert.equal(requests[1].pathname,'/rest/v1/project_runtime_sessions');
+  assert.equal(requests[1].searchParams.get('session_id'),'eq.foreign-session');
+  assert.equal(requests[1].searchParams.get('user_id'),`eq.${owner}`);
 });

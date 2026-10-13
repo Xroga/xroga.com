@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { createTenantContext, type TenantContext } from './tenantContext.js';
 import { requireOwnedResource, requireOwnedFile } from './ownership.js';
-import { persistOwnedRun } from './ownedRunPersistence.js';
+import { persistOwnedRun, persistOwnedRuntimeSession } from './ownedRunPersistence.js';
 import { listUserProviderKeys } from '../services/integrations/userProviderKeys.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
@@ -78,6 +78,12 @@ test('real terminal autosave collision denies foreign id and preserves transcrip
   const denied=await request(`/api/terminal-sessions/${id}`,other.token,'PUT',{...row,title:'Forbidden takeover',userId:owner.id});assert.equal(denied.status,404);
   assert.equal((await request(`/api/terminal-sessions/${id}`,other.token)).status,404);
   const stored=await admin.from('terminal_sessions').select('user_id,title,messages').eq('id',id).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.title,'Owner fixture');
+});
+test('existing runtime session persistence cannot take over a foreign durable session',async()=>{
+  const [owner,other]=users;
+  await assert.rejects(persistOwnedRuntimeSession(admin,owner.context,{session_id:other.session,user_id:owner.id,project_id:owner.project,provider_id:'fixture-no-execution',runtime_class:'interactive',status:'failed',state:{}}),{status:404});
+  const row=await admin.from('project_runtime_sessions').select('user_id,status').eq('session_id',other.session).single();
+  assert.equal(row.error,null);assert.equal(row.data?.user_id,other.id);assert.equal(row.data?.status,'stopped');
 });
 test('provider metadata uses real schema and owner filters without returning encrypted/raw credentials',async()=>{
   const owner=users[0];

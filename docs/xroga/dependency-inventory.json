@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a6b3cb8e7dfe7ff6f513f39d0a42d7889f916883",
+  "source_sha": "277d29004b326f0a261b765746610fe274a2c73b",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -10984,7 +10984,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "c4aa14d4fd6eefda10e2b842bf98d0d63dc44ddf126f5cdda97d54215d4db50e"
+      "sha256": "3750cd63ff008fac6e6cead5f90402d6a3fc32e6db0d949417bc3312f01b66e8"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -12280,7 +12280,7 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "1fb9cf0eb5a2ec64e7f24e324ade68b51e20c81c0115da0e9da32ebc59d9bbc0"
+      "sha256": "a0f1de05f2abdb63417a1201460b356921d8e0954f00c0de2db30b9d7935ab04"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
@@ -12304,7 +12304,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "b7ac628e5b9d5230a23bb6680daec3be464af5a9b171a3fa5bc58a41e79f5862"
+      "sha256": "dd0781f06cd6edd3c2f31785eb48920b31d06cc4c040473cb59daf3c020e0a19"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12732,7 +12732,7 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "3c0a4b0afb5c8088db1dd243c067ee9a6a34f334270798e6621c9f39129ea14c"
+      "sha256": "1a12e1838a2bcc1b750fd72f7ed13352646513a4c85ebf75dcb5b3c6671fce87"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/types.ts",
@@ -24555,21 +24555,21 @@
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 274,
+      "line": 276,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 280,
+      "line": 282,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/projectRuntime/store.ts",
-      "line": 290,
+      "line": 292,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a6b3cb8e7dfe7ff6f513f39d0a42d7889f916883",
-    "sourceTimestampUtc": "2026-10-13T22:20:01+05:00",
-    "auditStartedUtc": "2026-10-13T17:24:47.201Z",
+    "sha": "277d29004b326f0a261b765746610fe274a2c73b",
+    "sourceTimestampUtc": "2026-10-13T22:24:52+05:00",
+    "auditStartedUtc": "2026-10-13T17:30:31.143Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -20465,10 +20465,12 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "1fb9cf0eb5a2ec64e7f24e324ade68b51e20c81c0115da0e9da32ebc59d9bbc0",
+      "sha256": "a0f1de05f2abdb63417a1201460b356921d8e0954f00c0de2db30b9d7935ab04",
       "symbols": [
         "inserted",
         "persistOwnedRun",
+        "persistOwnedRuntimeSession",
+        "persistOwnerBoundRecord",
         "scope"
       ],
       "imports": [
@@ -20486,18 +20488,17 @@
       "callers": [
         "backend/src/ai/runStore.ts:11",
         "backend/src/security/ownedRunPersistence.test.ts:4",
-        "backend/src/security/tenantIsolation.local.integration.ts:8"
+        "backend/src/security/tenantIsolation.local.integration.ts:8",
+        "backend/src/synthesis/projectRuntime/store.ts:10"
       ],
       "reachable": true,
-      "persistenceDependencies": [
-        "swarm_runs"
-      ],
+      "persistenceDependencies": [],
       "externalProviderDependencies": [
         "@supabase/supabase-js"
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedRunPersistence.ts:11 (user_id)"
+        "backend/src/security/ownedRunPersistence.ts:20 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -20712,7 +20713,8 @@
         "backend/src/security/tenantContext.test.ts:3",
         "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/security/tenantIsolation.local.integration.ts:6",
-        "backend/src/services/storage/projectFiles.ts:4"
+        "backend/src/services/storage/projectFiles.ts:4",
+        "backend/src/synthesis/projectRuntime/store.ts:9"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -28988,7 +28990,7 @@
       "id": "surface:52eacb67555cd24b2de9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/projectRuntime/store.ts",
-      "sha256": "3c0a4b0afb5c8088db1dd243c067ee9a6a34f334270798e6621c9f39129ea14c",
+      "sha256": "1a12e1838a2bcc1b750fd72f7ed13352646513a4c85ebf75dcb5b3c6671fce87",
       "symbols": [
         "EncryptedProjectSecretRecord",
         "InMemoryProjectRuntimeStore",
@@ -29016,12 +29018,16 @@
       ],
       "imports": [
         "../../config/supabase.js",
+        "../../security/ownedRunPersistence.js",
+        "../../security/tenantContext.js",
         "../softwareProject.js",
         "./types.js",
         "node:crypto"
       ],
       "runtimeImports": [
-        "backend/src/config/supabase.ts"
+        "backend/src/config/supabase.ts",
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -29045,10 +29051,10 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/synthesis/projectRuntime/store.ts:704 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:846 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1034 (user_id)",
-        "backend/src/synthesis/projectRuntime/store.ts:1117 (user_id)"
+        "backend/src/synthesis/projectRuntime/store.ts:706 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:832 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1020 (user_id)",
+        "backend/src/synthesis/projectRuntime/store.ts:1103 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -91055,7 +91061,7 @@
       "sourcePath": "supabase/migrations/20260727_command3a_function_hardening.sql",
       "version": "20260727",
       "order": 44,
-      "sha256": "44c91d7492de4db33ae7771981c044d430c1137ad0f79378eb1a43f7a41bd5be"
+      "sha256": "7e6ac80ab64db0dfb3bda9c181214050de1d38bd08b94dcca9350767b3a1c1a8"
     },
     {
       "id": "migration:def2bd8f1465c87ca050",
@@ -91253,7 +91259,7 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "c4aa14d4fd6eefda10e2b842bf98d0d63dc44ddf126f5cdda97d54215d4db50e",
+      "sha256": "3750cd63ff008fac6e6cead5f90402d6a3fc32e6db0d949417bc3312f01b66e8",
       "sourceEntrypoints": [
         "backend/src/security/tenantIsolation.local.integration.ts",
         "scripts/security/disposable-supabase.mjs",
@@ -98644,7 +98650,7 @@
     {
       "id": "test-suite:9e4fbec6266f2a8ae08d",
       "sourcePath": "backend/src/security/ownedRunPersistence.test.ts",
-      "declaredTests": 1,
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -98679,7 +98685,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 6,
+      "declaredTests": 7,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -99275,6 +99281,13 @@
       "id": "test-suite:1e0727e5508d20e20b91",
       "sourcePath": "backend/src/synthesis/webVerificationWiring.test.ts",
       "declaredTests": 20,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:1898ec35e5057ca75221",
+      "sourcePath": "frontend/e2e/batch01-founder-local.spec.ts",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

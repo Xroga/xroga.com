@@ -6,6 +6,8 @@ import {
 import {
   getSupabaseAdmin,
 } from '../../config/supabase.js';
+import { createTenantContext } from '../../security/tenantContext.js';
+import { persistOwnedRuntimeSession } from '../../security/ownedRunPersistence.js';
 
 import type {
   SoftwareProject,
@@ -782,14 +784,9 @@ export class SupabaseProjectRuntimeStore
     session:
       ProjectRuntimeSession,
   ): Promise<void> {
-    const {
-      error,
-    } =
-      await getSupabaseAdmin()
-        .from(
-          'project_runtime_sessions',
-        )
-        .upsert(
+    await persistOwnedRuntimeSession(
+      getSupabaseAdmin(),
+      createTenantContext({userId:session.userId,via:'persisted_owner'}),
           {
             session_id:
               session.sessionId,
@@ -818,18 +815,7 @@ export class SupabaseProjectRuntimeStore
             updated_at:
               session.updatedAt,
           },
-
-          {
-            onConflict:
-              'session_id',
-          },
-        );
-
-    if (
-      error
-    ) {
-      throw error;
-    }
+    );
   }
 
   async loadSession(
