@@ -3865,26 +3865,26 @@
       "sourceSha256": "1fb9cf0eb5a2ec64e7f24e324ade68b51e20c81c0115da0e9da32ebc59d9bbc0"
     },
     {
-      "id": "2a41b92c9188fe2cb00e",
-      "path": "backend/src/security/ownedTerminalPersistence.ts",
-      "line": 9,
-      "enclosing": "persistOwnedTerminal",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd"
-    },
-    {
-      "id": "ada0384e27e557ef9acd",
+      "id": "ae62be5388e4249bfe53",
       "path": "backend/src/security/ownedTerminalPersistence.ts",
       "line": 11,
       "enclosing": "persistOwnedTerminal",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e"
+    },
+    {
+      "id": "f3f71cb4616bdde63fe9",
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "line": 13,
+      "enclosing": "persistOwnedTerminal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd"
+      "sourceSha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e"
     },
     {
       "id": "446699a96c40680025fb",

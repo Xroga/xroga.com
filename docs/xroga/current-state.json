@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "e0186bd7bf8b1d78b83e541f07dacae082185513",
-    "sourceTimestampUtc": "2026-10-13T20:25:29+05:00",
-    "auditStartedUtc": "2026-10-13T15:33:25.921Z",
+    "sha": "4d0c85b8b5f03d5c74de2f81931742d997c33d56",
+    "sourceTimestampUtc": "2026-10-13T20:33:31+05:00",
+    "auditStartedUtc": "2026-10-13T15:37:09.314Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -20515,8 +20515,9 @@
       "id": "surface:0dddf537042ea36631e9",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.ts",
-      "sha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd",
+      "sha256": "9a158daa246b8b2acb7f1db55acb3879d0fd96436cf44babfd0a1a09f70f371e",
       "symbols": [
+        "allowedMetadata",
         "insertion",
         "persistOwnedTerminal",
         "scope"
@@ -20546,7 +20547,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedTerminalPersistence.ts:11 (user_id)"
+        "backend/src/security/ownedTerminalPersistence.ts:13 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -98487,7 +98488,7 @@
     {
       "id": "test-suite:8724e58d19769f71c1bb",
       "sourcePath": "backend/src/security/ownedTerminalPersistence.test.ts",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

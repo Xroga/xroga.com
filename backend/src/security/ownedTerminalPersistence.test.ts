@@ -25,3 +25,13 @@ test('duplicate terminal-number error remains available only for bounded interna
   const result=await persistOwnedTerminal(db,createTenantContext({userId:owner,via:'local_jwt'}),{id:'terminal',user_id:owner},'id');
   assert.equal(result.error?.code,'23505');assert.equal(result.data,null);
 });
+test('terminal writer refuses transcripts, wildcard projections and malformed returned metadata',async()=>{
+  let requests=0;
+  const db=createClient('http://127.0.0.1:1','fixture-only',{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:async(_input,init)=>{
+    requests++;return new Response(JSON.stringify(init?.method==='PATCH'?'invalid-metadata':[]),{headers:{'Content-Type':'application/json'}});
+  }}});
+  const context=createTenantContext({userId:owner,via:'local_jwt'}),row={id:'terminal',user_id:owner};
+  for(const columns of ['*','messages','id,prompt',''])await assert.rejects(persistOwnedTerminal(db,context,row,columns),TenantAccessError);
+  assert.equal(requests,0);
+  await assert.rejects(persistOwnedTerminal(db,context,row,'id'),error=>error instanceof TenantAccessError&&error.status===503);
+});
