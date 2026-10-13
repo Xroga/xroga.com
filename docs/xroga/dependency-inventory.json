@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a59583adc645c284096db002d1fca5e0ee735a38",
+  "source_sha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12373,7 +12373,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "72e7999e1912a641b88f891cf2d3f2542b229f1a4775a2886870d7e9afac463a"
+      "sha256": "d665e4ffd60470a80671768eab4f7e1f8cf4f5dd260a4470f0c6f4a7eef08a4a"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -17732,21 +17732,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 24,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 24,
+      "line": 25,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 149,
+      "line": 150,
       "credentialsInUrl": false
     },
     {

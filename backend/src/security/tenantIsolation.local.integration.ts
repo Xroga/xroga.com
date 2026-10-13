@@ -20,6 +20,7 @@ import { buildOutcomeFromTerminalRun,SupabaseBuildOutcomeStore } from '../ai/bui
 import { createEvidence } from '../synthesis/researchEvidence.js';
 import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 import { BUILD_OUTCOME_RETENTION_MS } from '../ai/learningPolicy.js';
+import { saveGitHubTokenToStorage,getGitHubTokenFromStorage } from '../services/integrations/githubTokenStore.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -225,6 +226,24 @@ test('provider metadata uses real schema and owner filters without returning enc
   const rows=await listUserProviderKeys(owner.id);assert.equal(rows.length,1);assert.equal(rows[0].provider,'openai');
   const response=await request('/api/integrations/provider-keys',owner.token);assert.equal(response.status,200);
   const text=await response.text();assert.ok(!text.includes('SYNTHETIC_PRIVATE_CANARY'));assert.ok(!text.includes('access_token'));
+});
+
+test('real private OAuth storage cannot be downloaded or signed by browser roles or another tenant',async()=>{
+  const [owner,other]=users,bucket='xroga-github-tokens',path=`${owner.id}/github.json`;
+  const canary='SYNTHETIC_PRIVATE_STORAGE_CANARY_NOT_A_PROVIDER_CREDENTIAL';
+  try {
+    assert.equal(await saveGitHubTokenToStorage(owner.id,{access_token:canary,username:'fixture',provider_user_id:'fixture',repo_strategy:'auto',default_repo:null,updated_at:new Date().toISOString()}),true);
+    const config=await admin.storage.getBucket(bucket);assert.equal(config.error,null);assert.equal(config.data?.public,false);
+    assert.equal((await getGitHubTokenFromStorage(owner.id))?.access_token,canary);
+    assert.equal(await getGitHubTokenFromStorage(other.id),null);
+    for(const bearer of [undefined,owner.token,other.token]) {
+      const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{...(bearer?{global:{headers:{Authorization:`Bearer ${bearer}`}}}:{}),auth:{persistSession:false,autoRefreshToken:false}});
+      const read=await client.storage.from(bucket).download(path);assert.ok(read.error);assert.equal(read.data,null);
+      const signed=await client.storage.from(bucket).createSignedUrl(path,60);assert.ok(signed.error);assert.equal(signed.data,null);
+    }
+    const publicRead=await fetch(`${url}/storage/v1/object/public/${bucket}/${path}`,{headers:{apikey:process.env.SUPABASE_ANON_KEY!}});assert.equal(publicRead.ok,false);assert.ok(!(await publicRead.text()).includes(canary));
+    const status=await request('/api/github/status',other.token);assert.equal(status.status,200);assert.equal((await status.json() as {connected:boolean}).connected,false);
+  } finally {const removed=await admin.storage.from(bucket).remove([path]);assert.equal(removed.error,null,'temporary private object cleanup failed');}
 });
 
 test('notification list and mutations cannot read or alter another owner notification',async()=>{

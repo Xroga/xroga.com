@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a59583adc645c284096db002d1fca5e0ee735a38",
-    "sourceTimestampUtc": "2026-10-14T01:15:38+05:00",
-    "auditStartedUtc": "2026-10-13T21:04:46.051Z",
+    "sha": "2cfe28d667b4d7a0acc57850cb96c87a2881f35d",
+    "sourceTimestampUtc": "2026-10-14T02:05:56+05:00",
+    "auditStartedUtc": "2026-10-13T21:13:52.723Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -22614,6 +22614,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:23",
         "backend/src/services/integrations/githubAuth.ts:3",
         "backend/src/services/integrations/oauthPkceStore.ts:8",
         "backend/src/services/integrations/userProviderKeys.ts:10",
@@ -22629,7 +22630,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -99842,7 +99845,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 30,
+      "declaredTests": 31,
       "skipLocations": [],
       "focusLocations": []
     },
