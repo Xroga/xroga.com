@@ -56,6 +56,7 @@ function scopeOf(node) {
 function lineOf(source, node) { return source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1; }
 
 export function analyzeSource(sourcePath, content) {
+  content = content.replace(/\r\n/g, '\n');
   const source = ts.createSourceFile(sourcePath, content, ts.ScriptTarget.Latest, true, sourcePath.endsWith('x') ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
   const imports = [], symbols = [], registrations = [], queueDefinitions = [], calls = [], schedules = [], findings = [], frontCalls = [];
   const tables = [], ownership = [], providerHosts = [], routerNames = new Set(), variableInitializers = new Map();
@@ -283,7 +284,7 @@ export function buildCodeInventory(sourceEntries, entryRoots, knownPaths = []) {
 }
 
 function git(args) { return execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 20 * 1024 * 1024 }).trim(); }
-const read = path => readFileSync(resolve(root, path), 'utf8');
+const read = path => readFileSync(resolve(root, path), 'utf8').replace(/\r\n/g, '\n');
 const outputs = ['docs/xroga/current-state.json', 'docs/xroga/current-state-schema.json', 'docs/xroga/current-state.md', 'docs/xroga/blockers.md'];
 export function generateInventory({ refresh = false } = {}) {
   const sha = git(['rev-parse', 'HEAD']);

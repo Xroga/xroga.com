@@ -1,0 +1,36 @@
+{
+  "command": "002",
+  "title": "Research-to-Code Requirements Reconciliation",
+  "source_sha": "a06f8cb9a2b167f41fcb4dfe5ea53582f5734097",
+  "assessment": "PASS_AVAILABLE_SOURCE_GATE_WITH_DEFERRED_HISTORICAL_COVERAGE",
+  "original_unmodified_specification_complete": false,
+  "scope_amendment": "User explicitly authorized available-source implementation and autonomous continuation; historical source coverage remains deferred",
+  "counts_at_available_source_verification": {
+    "sources": 1534,
+    "available_sources": 1527,
+    "inaccessible_sources": 7,
+    "available_rows_mapped": 264,
+    "canonical_requirements": 264,
+    "full_command_specifications": 10,
+    "mandatory_capability_families": 43,
+    "historical_repository_records": 211,
+    "external_candidates": 23,
+    "primary_github_metadata_records": 23,
+    "adopted_runtime_dependencies": 0,
+    "empty_owner_fields": 0,
+    "deferred_owner_assignments": 243,
+    "contradictions": 3,
+    "historical_features_supplied": 0,
+    "historical_features_expected": 119,
+    "historical_missions_supplied": 0,
+    "historical_missions_expected": 72
+  },
+  "verification": [
+    { "command": "node scripts/xroga/validate-requirements-ledger.mjs", "exit_code": 0, "result": "PASS_AVAILABLE_SOURCE_GATE" },
+    { "command": "node --test scripts/xroga/requirements.test.mjs scripts/xroga/inventory.test.mjs", "exit_code": 0, "passed": 18, "failed": 0, "skipped": 0 },
+    { "command": "node scripts/xroga/inventory.mjs --check", "exit_code": 0, "result": "PASS" }
+  ],
+  "deferred_source_status": "INACCESSIBLE_PENDING_EXPORT",
+  "implementation_commit": "Recorded in docs/implementation/batch-01/STATUS.md after the verified commit",
+  "rollback": "Revert source-register/ledger/validator/CI changes; no runtime or schema mutation occurred"
+}

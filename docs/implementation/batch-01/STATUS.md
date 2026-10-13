@@ -14,8 +14,8 @@
 
 | Command | Scope and required proof | Dependencies | Status | Commit |
 | --- | --- | --- | --- | --- |
-| 001 | AST/import-aware repository truth; all routes/queues/migrations/named paths; classified placeholders; deterministic schema-valid regeneration; positive/negative inventory tests | Clean fetched default branch | VERIFIED (inventory; existing gaps recorded) | Recorded after commit |
-| 002 | Available-source hashes, canonical ledger, dependency register, row/mission mapping where actually supplied, integrity/coverage validation | 001; user-approved deferred historical coverage | NOT STARTED | — |
+| 001 | AST/import-aware repository truth; all routes/queues/migrations/named paths; classified placeholders; deterministic schema-valid regeneration; positive/negative inventory tests | Clean fetched default branch | VERIFIED (inventory; existing gaps recorded) | `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097` |
+| 002 | Available-source hashes, canonical ledger, dependency register, row/mission mapping where actually supplied, integrity/coverage validation | 001; user-approved deferred historical coverage | VERIFIED available-source implementation; original coverage DEFERRED | Recorded after commit |
 | 003 | Frozen installation, explicit toolchain, fail-propagating aggregate baseline, skip/lockfile/migration validation, clean-run evidence | 001–002 | NOT STARTED | — |
 | 004 | Actual/configured/legacy/proposed topology; all env readers by name; runtime/dependency schema and unsafe-default checks | 001 and 003 | NOT STARTED | — |
 | 005 | Twelve golden journey contracts and executable existing journeys; explicit known gaps; negative auth/approval/evidence/recovery tests | 001–004 | NOT STARTED | — |
@@ -40,6 +40,10 @@ Initial findings requiring evidence in the truth map:
 Tests, changed files, acceptance evidence, and commits will be recorded as each gate completes. Final release is not yet authorized by passing gates.
 
 Command 001 verification: inventory check passes with zero duplicate IDs and deterministic regeneration; nine inventory fixture tests pass. Source counts: 1,308 surfaces, 258 route registrations, 219 endpoint paths, four queues, 67 migrations, 14 workflows, 402 test files, and 351 classified markers (301 in reachable source). Changed files and full acceptance/rollback evidence: `docs/xroga/evidence/command-001/{summary.md,manifest.json}`. Static source reachability is not live behavior certification. No application source, database, production environment, credentials or architecture was changed.
+
+## Command 002 checkpoint
+
+Available-source ledger gate passes: 264 records (ten command specifications, 43 mandatory capability families, 211 historical repository-ledger records); 23 primary pinned repository metadata records; no new runtime dependencies. Eighteen combined validator/inventory tests pass. Source records were 1,534 at verification (1,527 available, seven inaccessible). Original coverage remains 0/119 and 0/72 supplied; 243 later owner assignments are explicitly deferred, not invented. Full evidence: `docs/xroga/evidence/command-002/{summary.md,manifest.json}`. Portable Git-canonical hashes and exact-byte attachment preservation were added. Proceed to Command 003 under the user's source-coverage amendment.
 
 ## External/deferred prerequisites
 

@@ -58,6 +58,11 @@ test('JSX and asset imports resolve without treating asset text as runtime code'
   assert.equal(inventory.surfaces.find(item => item.sourcePath.endsWith('/Card.jsx')).reachable, true);
   assert.deepEqual(inventory.unresolved, []);
 });
+test('Windows and Linux checkout line endings produce identical source and route IDs', () => {
+  const unix = sources.map(item => ({ ...item, content: `${item.content}\n` }));
+  const windows = unix.map(item => ({ ...item, content: item.content.replace(/\n/g, '\r\n') }));
+  assert.deepEqual(buildCodeInventory(unix, ['backend/src/index.ts']), buildCodeInventory(windows, ['backend/src/index.ts']));
+});
 test('actual inventory includes known route, integration action, UI primitives, queues and ordered migrations', () => {
   const inventory = generateInventory();
   assert.ok(inventory.routes.some(item => item.path === '/health' && item.reachable));

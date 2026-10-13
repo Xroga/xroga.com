@@ -28,6 +28,11 @@ jobs:
           node scripts/xroga/inventory.mjs --check
           node --test scripts/xroga/inventory.test.mjs
 
+      - name: Requirements source integrity and coverage
+        run: |
+          node scripts/xroga/validate-requirements-ledger.mjs
+          node --test scripts/xroga/requirements.test.mjs
+
       - name: Backend and frontend unit tests
         run: npm test
 
