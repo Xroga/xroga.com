@@ -20,6 +20,8 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { requireTenantContext,requireResourceOwner,type TenantContext } from '../security/tenantContext.js';
+import { persistOwnedUniversalRecord,type OwnedUniversalRecordKind } from '../security/ownedRunPersistence.js';
 import type { ArchitecturePlan } from './architecturePlan.js';
 import type { UniversalProductSpec } from './universalProductSpec.js';
 import type { PlanMutation } from './dynamicPlanning.js';
@@ -154,20 +156,31 @@ function rowToIndexedFile(row: Record<string, unknown>): IndexedFile {
  * stale one and act on it, which is worse than a visible error.
  */
 export class SupabaseUniversalStore implements UniversalStore {
-  constructor(private readonly client: SupabaseClient) {}
+  constructor(private readonly client: SupabaseClient,private readonly context?: TenantContext) {}
+
+  private scope(owner?:Owner):TenantContext {
+    const scope=requireTenantContext(this.context);
+    if(owner)requireResourceOwner(scope,owner.userId);
+    return scope;
+  }
+
+  private async write(kind:OwnedUniversalRecordKind,owner:Owner,row:{user_id:string;[key:string]:unknown}):Promise<{error:null}> {
+    await persistOwnedUniversalRecord(this.client,this.scope(owner),kind,row);
+    return {error:null};
+  }
 
   private async attempt(operation: () => Promise<{ error: { message: string } | null }>): Promise<WriteResult> {
     try {
       const { error } = await operation();
-      return error ? { saved: false, reason: error.message } : OK;
+      return error ? { saved: false, reason: 'Project data could not be saved. Retry shortly.' } : OK;
     } catch (error) {
-      return { saved: false, reason: error instanceof Error ? error.message : String(error) };
+      return { saved: false, reason: 'Project data could not be saved. Retry shortly.' };
     }
   }
 
   async saveSpec(owner: Owner, spec: UniversalProductSpec, runId: string | null = null): Promise<WriteResult> {
     return this.attempt(async () =>
-      this.client.from('project_specs').upsert({
+      this.write('spec',owner,{
         spec_id: `${owner.projectId}:${spec.createdAt}`,
         user_id: owner.userId,
         project_id: owner.projectId,
@@ -177,11 +190,12 @@ export class SupabaseUniversalStore implements UniversalStore {
         surfaces: spec.surfaces,
         spec,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'spec_id' }),
+      }),
     );
   }
 
   async loadLatestSpec(owner: Owner): Promise<UniversalProductSpec | null> {
+    this.scope(owner);
     const { data, error } = await this.client
       .from('project_specs')
       .select('spec')
@@ -195,8 +209,13 @@ export class SupabaseUniversalStore implements UniversalStore {
   }
 
   async savePlan(owner: Owner, plan: ArchitecturePlan, specId: string | null = null, runId: string | null = null): Promise<WriteResult> {
+    this.scope(owner);
+    if(specId) {
+      const {data,error}=await this.client.from('project_specs').select('spec_id').eq('spec_id',specId).eq('user_id',owner.userId).eq('project_id',owner.projectId).maybeSingle();
+      if(error||!data)return {saved:false,reason:'The referenced project specification is unavailable.'};
+    }
     return this.attempt(async () =>
-      this.client.from('architecture_plans').upsert({
+      this.write('plan',owner,{
         plan_id: `${owner.projectId}:${plan.createdAt}`,
         user_id: owner.userId,
         project_id: owner.projectId,
@@ -208,11 +227,12 @@ export class SupabaseUniversalStore implements UniversalStore {
         decisions: plan.decisions,
         blockers: plan.blockers,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'plan_id' }),
+      }),
     );
   }
 
   async loadLatestPlan(owner: Owner): Promise<ArchitecturePlan | null> {
+    this.scope(owner);
     const { data, error } = await this.client
       .from('architecture_plans')
       .select('schema_version, inherited_from_repository, components, decisions, blockers, created_at')
@@ -235,10 +255,11 @@ export class SupabaseUniversalStore implements UniversalStore {
   }
 
   async saveMutations(owner: Owner, runId: string, mutations: readonly PlanMutation[]): Promise<WriteResult> {
+    this.scope(owner);
+    if(mutations.some(item=>item.runId!==runId))return {saved:false,reason:'The planning record does not match this request.'};
     if (!mutations.length) return OK;
-    return this.attempt(async () =>
-      this.client.from('plan_mutations').upsert(
-        mutations.map((mutation) => ({
+    return this.attempt(async () => {
+      for(const mutation of mutations)await this.write('mutation',owner,{
           mutation_key: mutation.mutationKey,
           run_id: runId,
           user_id: owner.userId,
@@ -250,16 +271,13 @@ export class SupabaseUniversalStore implements UniversalStore {
           evidence: mutation.evidence,
           payload: mutation.payload,
           created_at: mutation.at,
-        })),
-        // The unique index on mutation_key is what makes a resumed run idempotent: the
-        // same replan decision produces the same key, so re-saving is a no-op rather than
-        // a duplicate migration task.
-        { onConflict: 'mutation_key', ignoreDuplicates: true },
-      ),
-    );
+        });
+      return {error:null};
+    });
   }
 
   async loadMutations(owner: Owner, runId: string): Promise<readonly PlanMutation[]> {
+    this.scope(owner);
     const { data, error } = await this.client
       .from('plan_mutations')
       .select('*')
@@ -281,21 +299,22 @@ export class SupabaseUniversalStore implements UniversalStore {
   }
 
   async saveResearchEvidence(owner: Owner, researchRunId: string, evidence: readonly ResearchEvidence[]): Promise<WriteResult> {
+    this.scope(owner);
+    if(evidence.some(item=>item.researchRunId!==researchRunId))return {saved:false,reason:'Research evidence does not match this request.'};
     if (!evidence.length) return OK;
     const run = await this.attempt(async () =>
-      this.client.from('research_runs').upsert({
+      this.write('research_run',owner,{
         research_run_id: researchRunId,
         user_id: owner.userId,
         project_id: owner.projectId,
         provider: evidence[0].provider,
         query_count: new Set(evidence.map((item) => item.query)).size,
-      }, { onConflict: 'research_run_id' }),
+      }),
     );
     if (!run.saved) return run;
 
-    return this.attempt(async () =>
-      this.client.from('research_evidence').upsert(
-        evidence.map((item) => ({
+    return this.attempt(async () => {
+      for(const item of evidence)await this.write('research_evidence',owner,{
           evidence_id: item.evidenceId,
           research_run_id: item.researchRunId,
           user_id: owner.userId,
@@ -316,17 +335,18 @@ export class SupabaseUniversalStore implements UniversalStore {
           retrieved_at: item.retrievedAt,
           published_at: item.publishedAt,
           expires_at: item.expiresAt,
-        })),
-        { onConflict: 'evidence_id' },
-      ),
-    );
+        });
+      return {error:null};
+    });
   }
 
   async load(identity: RepositoryIdentity): Promise<RepositoryIndex | null> {
+    const scope=this.scope();
     const { data: header, error } = await this.client
       .from('repository_indexes')
       .select('*')
       .eq('index_id', indexId(identity))
+      .eq('user_id',scope.userId)
       .maybeSingle();
     if (error || !header) return null;
 
@@ -334,6 +354,7 @@ export class SupabaseUniversalStore implements UniversalStore {
       .from('repository_index_files')
       .select('*')
       .eq('index_id', indexId(identity))
+      .eq('user_id',scope.userId)
       .order('file_path', { ascending: true });
 
     const row = header as Record<string, unknown>;
@@ -354,14 +375,14 @@ export class SupabaseUniversalStore implements UniversalStore {
   }
 
   async save(index: RepositoryIndex): Promise<void> {
+    const scope=this.scope();
     const id = indexId(index.identity);
-    // The header carries indexedCommitSha, so it is written last-ish but the files are
-    // replaced wholesale first: a partial file set under a new commit would be worse than
-    // an old complete one, and deleting then inserting keeps the pair consistent.
-    await this.client.from('repository_index_files').delete().eq('index_id', id);
-    await this.client.from('repository_indexes').upsert({
+    // Establish header ownership before touching child rows. This existing writer
+    // does not yet insert file snapshots; that pre-existing completeness gap is
+    // recorded separately, not represented as atomic/durable full-index storage.
+    await persistOwnedUniversalRecord(this.client,scope,'repository_index',{
       index_id: id,
-      user_id: (index as unknown as { userId?: string }).userId ?? undefined,
+      user_id: scope.userId,
       project_id: index.identity.projectId,
       repository_id: index.identity.repositoryId,
       repository_owner: index.identity.repositoryOwner,
@@ -372,11 +393,16 @@ export class SupabaseUniversalStore implements UniversalStore {
       schema_version: index.schemaVersion,
       file_count: index.files.length,
       updated_at: index.updatedAt,
-    }, { onConflict: 'index_id' });
+    });
+    // Only after the header is proven owned, and never delete a misbound child.
+    const {error}=await this.client.from('repository_index_files').delete().eq('index_id',id).eq('user_id',scope.userId);
+    if(error)throw new Error('Repository index could not be saved. Retry shortly.');
   }
 
   async delete(identity: RepositoryIdentity): Promise<void> {
-    await this.client.from('repository_indexes').delete().eq('index_id', indexId(identity));
+    const scope=this.scope();
+    const {error}=await this.client.from('repository_indexes').delete().eq('index_id', indexId(identity)).eq('user_id',scope.userId);
+    if(error)throw new Error('Repository index could not be removed. Retry shortly.');
   }
 }
 
@@ -389,9 +415,11 @@ let store: UniversalStore | null = null;
  * rather than a degraded one — the universal path works, and only cross-process memory is
  * lost — so it does not warrant a refusal.
  */
-export function universalStore(client?: SupabaseClient | null): UniversalStore {
+export function universalStore(client?: SupabaseClient | null,context?:TenantContext): UniversalStore {
+  // A privileged store's request identity must never be retained in the global cache.
+  if(client)return new SupabaseUniversalStore(client,requireTenantContext(context));
   if (store) return store;
-  store = client ? new SupabaseUniversalStore(client) : new InMemoryUniversalStore();
+  store = new InMemoryUniversalStore();
   return store;
 }
 

@@ -12,6 +12,13 @@ import { getCachedResponse,setCachedResponse } from '../services/responseCache.j
 import { notifyBuildFailed } from '../services/notificationService.js';
 import pg from 'pg';
 import { SupabaseProjectRuntimeStore } from '../synthesis/projectRuntime/store.js';
+import { createCanonicalExecutionState,SupabaseExecutionStateStore } from '../ai/executionRuntime.js';
+import { SupabaseUniversalStore } from '../synthesis/universalPersistence.js';
+import { synthesizeUniversalProductSpec } from '../synthesis/universalProductSpec.js';
+import { planArchitecture } from '../synthesis/architecturePlan.js';
+import { buildOutcomeFromTerminalRun,SupabaseBuildOutcomeStore } from '../ai/buildOutcomeMemory.js';
+import { createEvidence } from '../synthesis/researchEvidence.js';
+import type { PlanMutation } from '../synthesis/dynamicPlanning.js';
 
 if(process.env.CI !== 'true' || process.env.XB01_DISPOSABLE_SUPABASE !== '1' || process.env.SUPABASE_URL !== 'http://127.0.0.1:54321' || process.env.E2E_BACKEND_URL !== 'http://127.0.0.1:4000') throw new Error('Real disposable loopback services required; no hosted/prod fallback');
 const url=process.env.SUPABASE_URL, api=process.env.E2E_BACKEND_URL;
@@ -75,6 +82,90 @@ test('real run persistence concurrent collision never transfers the durable owne
   const loser=users.find(user=>user.id!==stored.data!.user_id)!;
   await assert.rejects(persistOwnedRun(admin,loser.context,{id,user_id:loser.id,prompt:'Forbidden overwrite',status:'failed'}),{status:404});
   const unchanged=await admin.from('swarm_runs').select('user_id,status').eq('id',id).single();assert.equal(unchanged.data?.user_id,stored.data!.user_id);assert.equal(unchanged.data?.status,'pending');
+});
+
+test('canonical execution store denies foreign overwrite and corrupt resume state against real database',async()=>{
+  const [owner,other]=users,foreignStore=new SupabaseExecutionStateStore(other.id),ownStore=new SupabaseExecutionStateStore(owner.id),runId=randomUUID();
+  const state=createCanonicalExecutionState({runId,projectId:other.project,files:[{path:'private.txt',content:'FOREIGN_EXECUTION_STATE_CANARY'}]});
+  await foreignStore.save(state);
+  await assert.rejects(ownStore.save(createCanonicalExecutionState({runId,projectId:owner.project})),{status:404});
+  assert.equal(await ownStore.load(runId),null);
+  const preserved=await foreignStore.load(runId);assert.ok(JSON.stringify(preserved).includes('FOREIGN_EXECUTION_STATE_CANARY'));
+  for(const mutation of [{runId:randomUUID()},{projectId:owner.project}]) {
+    assert.equal((await admin.from('execution_runs').update({state:{...state,...mutation}}).eq('run_id',runId)).error,null);
+    assert.equal(await foreignStore.load(runId),null);
+  }
+  assert.equal((await admin.from('execution_runs').update({state}).eq('run_id',runId)).error,null);
+  const collision=randomUUID();
+  const outcomes=await Promise.allSettled(users.map(user=>new SupabaseExecutionStateStore(user.id).save(createCanonicalExecutionState({runId:collision,projectId:user.project}))));
+  assert.equal(outcomes.filter(result=>result.status==='fulfilled').length,1);
+  const actual=await admin.from('execution_runs').select('user_id').eq('run_id',collision).single();assert.equal(actual.error,null);assert.ok(users.some(user=>user.id===actual.data?.user_id));
+});
+
+test('real universal spec and plan collision cannot transfer ownership or reference a foreign parent',async()=>{
+  const [owner,other]=users,a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context);
+  const actor={userId:owner.id,projectId:owner.project},attacker={userId:other.id,projectId:owner.project};
+  const spec=synthesizeUniversalProductSpec({prompt:'Build a fictional task API'}),plan=planArchitecture({spec});
+  assert.equal((await a.saveSpec(actor,spec)).saved,true);
+  assert.equal((await b.saveSpec(attacker,spec)).saved,false);
+  const specId=`${owner.project}:${spec.createdAt}`;
+  const row=await admin.from('project_specs').select('user_id').eq('spec_id',specId).single();assert.equal(row.error,null);assert.equal(row.data?.user_id,owner.id);
+  assert.equal(await b.loadLatestSpec(attacker),null);
+  assert.equal((await a.savePlan(actor,plan,specId)).saved,true);
+  assert.equal((await b.savePlan(attacker,plan,specId)).saved,false);
+  assert.equal((await b.savePlan(attacker,plan)).saved,false);
+  const persisted=await admin.from('architecture_plans').select('user_id,spec_id').eq('plan_id',`${owner.project}:${plan.createdAt}`).single();assert.equal(persisted.error,null);assert.equal(persisted.data?.user_id,owner.id);assert.equal(persisted.data?.spec_id,specId);
+});
+
+test('real repository index cannot be read deleted overwritten or have children removed by another tenant',async()=>{
+  const [owner,other]=users,a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context);
+  const identity={projectId:owner.project,repositoryId:'fixture/local',repositoryOwner:'fixture',repositoryName:'local',branch:'main'};
+  const index={identity,schemaVersion:'1.0.0',indexedCommitSha:'fixture-no-real-commit',treeSha:null,files:[],updatedAt:new Date().toISOString()};
+  await a.save(index);
+  const id=`${identity.projectId}:${identity.repositoryId}:${identity.branch}`;
+  const file=await insert('repository_index_files',{index_id:id,user_id:owner.id,file_path:'private.txt',blob_sha:'fixture-no-real-blob',summary:'PRIVATE_INDEX_CANARY'});
+  assert.equal(await b.load(identity),null);await b.delete(identity);
+  await assert.rejects(b.save({...index,indexedCommitSha:'Forbidden overwrite'}),{status:404});
+  const row=await admin.from('repository_indexes').select('user_id,indexed_commit_sha').eq('index_id',id).single();assert.equal(row.error,null);assert.equal(row.data?.user_id,owner.id);assert.equal(row.data?.indexed_commit_sha,'fixture-no-real-commit');
+  const child=await admin.from('repository_index_files').select('id,summary').eq('id',file).single();assert.equal(child.error,null);assert.equal(child.data?.summary,'PRIVATE_INDEX_CANARY');
+  assert.ok((await a.load(identity))?.files.some(entry=>entry.summary==='PRIVATE_INDEX_CANARY'));
+});
+
+test('real sanitized outcome learning record cannot transfer owner on a run-ID collision',async()=>{
+  const [owner,other]=users,store=new SupabaseBuildOutcomeStore(),runId=randomUUID();
+  const outcome=buildOutcomeFromTerminalRun({runId,userId:other.id,terminalStatus:'error',iterationCount:0,output:null,routingOutcomes:[]});
+  await store.upsert(outcome);
+  await assert.rejects(store.upsert({...outcome,userId:owner.id}),{status:404});
+  const existing=await admin.from('build_outcomes').select('user_id,terminal_status').eq('run_id',runId).single();assert.equal(existing.error,null);assert.equal(existing.data?.user_id,other.id);assert.equal(existing.data?.terminal_status,'error');
+  const collision=randomUUID();
+  const outcomes=await Promise.allSettled(users.map(user=>store.upsert(buildOutcomeFromTerminalRun({runId:collision,userId:user.id,terminalStatus:'error',iterationCount:0,output:null,routingOutcomes:[]}))));
+  assert.equal(outcomes.filter(result=>result.status==='fulfilled').length,1);
+  const persisted=await admin.from('build_outcomes').select('user_id').eq('run_id',collision).single();assert.equal(persisted.error,null);assert.ok(users.some(user=>user.id===persisted.data?.user_id));
+});
+
+test('real research parent and evidence collisions preserve source ownership and reject mismatched linkage',async()=>{
+  const [owner,other]=users,a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context),foreignRun=randomUUID();
+  const evidence=createEvidence({researchRunId:foreignRun,provider:'fixture',query:'Fictional only',sourceUrl:'https://example.invalid/fixture',content:'Fictional research canary',fact:'Fictional research canary',freshnessClass:'version_sensitive',conflictGroup:'fixture'});
+  assert.equal((await b.saveResearchEvidence({userId:other.id,projectId:other.project},foreignRun,[evidence])).saved,true);
+  assert.equal((await a.saveResearchEvidence({userId:owner.id,projectId:owner.project},foreignRun,[evidence])).saved,false);
+  const ownRun=randomUUID();
+  assert.equal((await a.saveResearchEvidence({userId:owner.id,projectId:owner.project},ownRun,[evidence])).saved,false);
+  // Matching own parent does not authorize an evidence ID belonging to someone else.
+  assert.equal((await a.saveResearchEvidence({userId:owner.id,projectId:owner.project},ownRun,[{...evidence,researchRunId:ownRun}])).saved,false);
+  const parent=await admin.from('research_runs').select('user_id').eq('research_run_id',foreignRun).single();assert.equal(parent.error,null);assert.equal(parent.data?.user_id,other.id);
+  const child=await admin.from('research_evidence').select('user_id,research_run_id,fact').eq('evidence_id',evidence.evidenceId).single();assert.equal(child.error,null);assert.equal(child.data?.user_id,other.id);assert.equal(child.data?.research_run_id,foreignRun);assert.equal(child.data?.fact,'Fictional research canary');
+});
+
+test('real planning mutation replay is append-only and a foreign collision is not reported as saved',async()=>{
+  const [owner,other]=users,a=new SupabaseUniversalStore(admin,owner.context),b=new SupabaseUniversalStore(admin,other.context),runId=randomUUID();
+  const mutation:PlanMutation={schemaVersion:'1.0.0',mutationKey:randomUUID(),kind:'add_task',runId,triggeredByTaskId:null,reason:'OWNER_MUTATION_CANARY',evidence:[],at:new Date().toISOString(),payload:{fixture:'no execution'}};
+  const actor={userId:owner.id,projectId:owner.project},attacker={userId:other.id,projectId:other.project};
+  assert.equal((await a.saveMutations(actor,runId,[mutation])).saved,true);
+  assert.equal((await a.saveMutations(actor,runId,[{...mutation,reason:'Forbidden replay change'}])).saved,true);
+  assert.equal((await b.saveMutations(attacker,runId,[mutation])).saved,false);
+  assert.equal((await a.saveMutations(actor,randomUUID(),[mutation])).saved,false);
+  assert.deepEqual(await b.loadMutations(attacker,runId),[]);
+  const stored=await admin.from('plan_mutations').select('user_id,reason').eq('mutation_key',mutation.mutationKey).single();assert.equal(stored.error,null);assert.equal(stored.data?.user_id,owner.id);assert.equal(stored.data?.reason,'OWNER_MUTATION_CANARY');
 });
 test('real terminal autosave collision denies foreign id and preserves transcript',async()=>{
   const [owner,other]=users,id=`fixture-${randomUUID()}`;

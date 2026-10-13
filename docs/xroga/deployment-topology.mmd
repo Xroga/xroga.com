@@ -81,6 +81,7 @@ flowchart LR
   endpoint_dorahacks_io["Source-defined endpoint dorahacks.io — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_duckduckgo_com["Source-defined endpoint duckduckgo.com — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_ethglobal_com["Source-defined endpoint ethglobal.com — CONFIGURED_BUT_UNVERIFIED"]
+  endpoint_example_invalid["Source-defined endpoint example.invalid — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_exp_host["Source-defined endpoint exp.host — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_expo_dev["Source-defined endpoint expo.dev — CONFIGURED_BUT_UNVERIFIED"]
   endpoint_fonts_gstatic_com["Source-defined endpoint fonts.gstatic.com — CONFIGURED_BUT_UNVERIFIED"]
@@ -243,6 +244,7 @@ flowchart LR
   frontend -. "source host/reference; unverified" .-> endpoint_dorahacks_io
   frontend -. "source host/reference; unverified" .-> endpoint_duckduckgo_com
   frontend -. "source host/reference; unverified" .-> endpoint_ethglobal_com
+  api -. "source host/reference; unverified" .-> endpoint_example_invalid
   api -. "source host/reference; unverified" .-> endpoint_exp_host
   api -. "source host/reference; unverified" .-> endpoint_expo_dev
   frontend -. "source host/reference; unverified" .-> endpoint_fonts_gstatic_com

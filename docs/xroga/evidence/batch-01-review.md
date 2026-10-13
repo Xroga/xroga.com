@@ -19,6 +19,8 @@ Latest account/security scope `f350f08a35f7792c4e6820b6a8001762b217c158` is PASS
 
 ## Mandatory unresolved release gates
 
+Newest green tested SHA `1a8a5b2c43c8f058b4b8461273e0400c969b89f4`: real isolated CI38457759392 (3 browser/23 tenant cases), aggregate CI38457764721 twice21 stages (backend2764/frontend1010/guards13/combined62), zero failed/skipped tests. Further canonical execution/universal artifact/index/learning/mutation owner fixes require a new full CI run (29 real cases). Complete caller review, staged compatibility and later authority/vault/egress remain mandatory. No ten-command completion or live release claim.
+
 1. Mandatory security tests must stay green at the final changed SHA, not just an ancestor. Hosted E2E credentials are no longer required: disposable real Auth/PG/RLS/browser proof passed. New code still requires rerun; no mocks/skips substitute for security assertions.
 2. Full tenant/caller and staged compatibility evidence, all media/provider/budget/job boundaries and deployed-schema drift/orphans remain incomplete. The full fresh/upgrade migration file gate passed and active message_shares is reconciled from full canonical bootstrap; legacy images/websites remain recorded catalog drift. Minimal PostgreSQL projected-table proof is supplemental only.
 3. Complete semantic privileged-caller scope/exception review. 118 observed tables all have RLS enabled; that is not service-role safety. The audit deliberately leaves unresolved caller candidates REVIEW REQUIRED rather than counting syntax as certification.

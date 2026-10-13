@@ -7,9 +7,9 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 160,
-    "persistenceCandidates": 668,
-    "ownerPredicateCandidates": 157,
-    "reviewRequired": 668,
+    "persistenceCandidates": 662,
+    "ownerPredicateCandidates": 161,
+    "reviewRequired": 662,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 8
   },
@@ -103,37 +103,26 @@
       "sourceSha256": "4b3eaeec6a4c8d44dac64bf99e0335fe9a7bd588e74365060fcd1ef405cf86ec"
     },
     {
-      "id": "ba6ac30d29d3e0194ed5",
+      "id": "98fb6c930de90a3b99f0",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
       "line": 1901,
       "enclosing": "upsert",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ffb2d4f7c6a8dcc29bd52c62eedef17d3fdaeb4e253ebc1975cdf16666e6f2e0"
+      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
     },
     {
-      "id": "a97b676642e7a5e58d41",
+      "id": "a6a91bf6adbf88923800",
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 1906,
-      "enclosing": "upsert",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "build_outcomes",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ffb2d4f7c6a8dcc29bd52c62eedef17d3fdaeb4e253ebc1975cdf16666e6f2e0"
-    },
-    {
-      "id": "0bfad4e04c1bd7255c74",
-      "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "line": 2070,
+      "line": 2049,
       "enclosing": "upsert",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "build_outcomes",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "ffb2d4f7c6a8dcc29bd52c62eedef17d3fdaeb4e253ebc1975cdf16666e6f2e0"
+      "sourceSha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
     },
     {
       "id": "1f02e3986e0ae7a2e045",
@@ -180,48 +169,37 @@
       "sourceSha256": "0ffbeb6fad6f53b8d7e956fce864d85c0453c1e28dd31c48a5968fa66b20ae56"
     },
     {
-      "id": "e218e351dc52faec83f7",
+      "id": "1a40d7a462457d4b6c7a",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 168,
+      "line": 171,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "execution_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1"
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
     },
     {
-      "id": "e218e351dc52faec83f7",
+      "id": "1a40d7a462457d4b6c7a",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 168,
+      "line": 171,
       "enclosing": "load",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1"
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
     },
     {
-      "id": "737926c939870b6c5e4b",
+      "id": "15a782b7430f24380b43",
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 179,
-      "enclosing": "save",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "execution_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1"
-    },
-    {
-      "id": "737926c939870b6c5e4b",
-      "path": "backend/src/ai/executionRuntime.ts",
-      "line": 179,
+      "line": 183,
       "enclosing": "save",
       "kind": "PRIVILEGED_FACTORY",
-      "target": "getSupabaseAdmin",
+      "target": "getTenantSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1"
+      "sourceSha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
     },
     {
       "id": "5425320d3200ee95761c",
@@ -3832,26 +3810,37 @@
       "sourceSha256": "3bdef3facc61c0c324b73d3fd06d93cac3b764e9b3dcd0309874ed4bc7e86ca6"
     },
     {
-      "id": "0c896bbd1287f7e4f9d3",
+      "id": "171ebacd0ae2c024e34b",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 23,
+      "line": 47,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd"
+      "sourceSha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f"
     },
     {
-      "id": "633ee0ec872b9fd31948",
+      "id": "aeaadcf8f6aefe279954",
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "line": 25,
+      "line": 49,
       "enclosing": "persistOwnerBoundRecord",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "<dynamic>",
-      "ownerPredicateCandidate": true,
+      "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd"
+      "sourceSha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f"
+    },
+    {
+      "id": "a9e1567261b8f61ff249",
+      "path": "backend/src/security/ownedRunPersistence.ts",
+      "line": 49,
+      "enclosing": "persistOwnerBoundRecord",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "<dynamic>",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f"
     },
     {
       "id": "ae62be5388e4249bfe53",
@@ -6450,158 +6439,103 @@
       "sourceSha256": "a379cdb7ce38477a9a3af886778fe8b2a8d214b424f77c6ced769040f714af00"
     },
     {
-      "id": "4f47f16955c41a6e291e",
+      "id": "a0f52b1de9747b4b73d7",
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 1067,
+      "line": 1068,
       "enclosing": "tryUniversalBuild",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "2d9d3d8014695e0f20ff6b7609f14c71e8ba64a4a0c186b1c7b750ed103fba8c"
+      "sourceSha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
     },
     {
-      "id": "4735e282fd86e1371a16",
+      "id": "6943b5a8c49e3c1f79f2",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 170,
-      "enclosing": "saveSpec",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "project_specs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
-    },
-    {
-      "id": "9856843cbf1b02f9b1c6",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 185,
+      "line": 199,
       "enclosing": "loadLatestSpec",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "project_specs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "16ce7be42242796ff4e8",
+      "id": "6ced204840a1c66d6659",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 199,
+      "line": 214,
       "enclosing": "savePlan",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "architecture_plans",
-      "ownerPredicateCandidate": false,
+      "target": "project_specs",
+      "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "4b491d19f36789e6ac6a",
+      "id": "f81ae48339c6537d8db7",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 216,
+      "line": 236,
       "enclosing": "loadLatestPlan",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "architecture_plans",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "bc7514b44065c2f62d1a",
+      "id": "6fa03fecb4af2616d354",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 240,
-      "enclosing": "saveMutations",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "plan_mutations",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
-    },
-    {
-      "id": "67eec02c7e48941d818c",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 263,
+      "line": 281,
       "enclosing": "loadMutations",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "plan_mutations",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "9c39f1d69c68e4c8063e",
+      "id": "11d7f0dec6268d3778e1",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 286,
-      "enclosing": "saveResearchEvidence",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "research_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
-    },
-    {
-      "id": "e036e29327e872b6ebf9",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 297,
-      "enclosing": "saveResearchEvidence",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "research_evidence",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
-    },
-    {
-      "id": "b3780f5503d4d8639a4f",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 326,
+      "line": 345,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "6d147a1956a7b0c1a5a0",
+      "id": "13f50fef9a310c599464",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 333,
+      "line": 353,
       "enclosing": "load",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_index_files",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "b9bb6f904ff1d1fa4978",
+      "id": "dccd54f62a6777e86c80",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 361,
+      "line": 398,
       "enclosing": "save",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_index_files",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
-      "id": "fcf12f98eeaf857093ad",
+      "id": "ddbaa319abdfe6db9956",
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 362,
-      "enclosing": "save",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "repository_indexes",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
-    },
-    {
-      "id": "46fb014dcb189ccd4d7d",
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 379,
+      "line": 404,
       "enclosing": "delete",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "repository_indexes",
-      "ownerPredicateCandidate": false,
+      "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sourceSha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
       "id": "114b25e9186e32e8f3ee",

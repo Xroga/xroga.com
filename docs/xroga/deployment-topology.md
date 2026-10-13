@@ -1,6 +1,6 @@
 # Deployment topology — read-only truth
 
-Source SHA: `f350f08a35f7792c4e6820b6a8001762b217c158`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
+Source SHA: `1a8a5b2c43c8f058b4b8461273e0400c969b89f4`; source/config hashes are recorded in the JSON. This is source discovery plus explicitly dated read-only observations, not a new deployment or certification of all integrations.
 
 | Dependency | Provider | State | Host/resource | Verification |
 | --- | --- | --- | --- | --- |
@@ -85,6 +85,7 @@ Source SHA: `f350f08a35f7792c4e6820b6a8001762b217c158`; source/config hashes are
 | endpoint-dorahacks-io | Source-defined endpoint dorahacks.io | CONFIGURED_BUT_UNVERIFIED | dorahacks.io | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-duckduckgo-com | Source-defined endpoint duckduckgo.com | CONFIGURED_BUT_UNVERIFIED | duckduckgo.com | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-ethglobal-com | Source-defined endpoint ethglobal.com | CONFIGURED_BUT_UNVERIFIED | ethglobal.com | NOT_INDEPENDENTLY_VERIFIED |
+| endpoint-example-invalid | Source-defined endpoint example.invalid | CONFIGURED_BUT_UNVERIFIED | example.invalid | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-exp-host | Source-defined endpoint exp.host | CONFIGURED_BUT_UNVERIFIED | exp.host | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-expo-dev | Source-defined endpoint expo.dev | CONFIGURED_BUT_UNVERIFIED | expo.dev | NOT_INDEPENDENTLY_VERIFIED |
 | endpoint-fonts-gstatic-com | Source-defined endpoint fonts.gstatic.com | CONFIGURED_BUT_UNVERIFIED | fonts.gstatic.com | NOT_INDEPENDENTLY_VERIFIED |

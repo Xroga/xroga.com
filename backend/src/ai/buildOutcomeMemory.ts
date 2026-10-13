@@ -1,6 +1,6 @@
-import {
-  getSupabaseAdmin,
-} from '../config/supabase.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { persistOwnedUniversalRecord } from '../security/ownedRunPersistence.js';
 
 import {
   recentRoutingOutcomes,
@@ -1897,17 +1897,9 @@ implements BuildOutcomeStore {
     outcome:
       BuildOutcomeRecord,
   ): Promise<void> {
-    const supabase =
-      getSupabaseAdmin();
-
-    const {
-      error,
-    } =
-      await supabase
-        .from(
-          'build_outcomes',
-        )
-        .upsert(
+    const context=createTenantContext({userId:outcome.userId,via:'persisted_owner'});
+    const supabase = getTenantSupabaseAdmin(context);
+    await persistOwnedUniversalRecord(supabase,context,'build_outcome',
           {
             run_id:
               outcome.runId,
@@ -2033,20 +2025,7 @@ implements BuildOutcomeStore {
               new Date()
                 .toISOString(),
           },
-
-          {
-            onConflict:
-              'run_id',
-          },
         );
-
-    if (
-      error
-    ) {
-      throw new Error(
-        'BuildOutcome persistence failed',
-      );
-    }
 
     /*
      * Keep evaluation memory finite. Selection uses much tighter row/time
@@ -2074,7 +2053,7 @@ implements BuildOutcomeStore {
         .delete()
         .eq(
           'user_id',
-          outcome.userId,
+          context.userId,
         )
         .lt(
           'updated_at',

@@ -3,7 +3,9 @@ import { redactSecrets } from '../lib/truthfulExecution.js';
 import type { ProjectFile, FilePatch } from './patches.js';
 import { applyDeletes, applyPatches, buildFileTrail } from './patches.js';
 import type { ModelId } from './models.js';
-import { getSupabaseAdmin } from '../config/supabase.js';
+import { createTenantContext } from '../security/tenantContext.js';
+import { getTenantSupabaseAdmin } from '../security/serviceRoleGuard.js';
+import { persistOwnedExecutionState } from '../security/ownedRunPersistence.js';
 import type { IntelligentRoutePlan } from './intelligentRouter.js';
 import { MODELS } from './models.js';
 
@@ -165,9 +167,10 @@ export class SupabaseExecutionStateStore implements ExecutionStateStore {
   constructor(private readonly userId: string) {}
 
   async load(runId: string): Promise<CanonicalExecutionState | null> {
-    const { data, error } = await getSupabaseAdmin().from('execution_runs').select('state').eq('run_id', runId).eq('user_id', this.userId).maybeSingle();
+    const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
+    const { data, error } = await getTenantSupabaseAdmin(context).from('execution_runs').select('state,user_id,run_id,project_id').eq('run_id', runId).eq('user_id', context.userId).maybeSingle();
     if (error) throw error;
-    return data?.state ? data.state as CanonicalExecutionState : null;
+    return restoreOwnerBoundExecutionState(data,this.userId,runId);
   }
 
   async save(state: CanonicalExecutionState): Promise<void> {
@@ -176,13 +179,23 @@ export class SupabaseExecutionStateStore implements ExecutionStateStore {
     const hasBlocked = state.tasks.some((task) => task.status === 'blocked');
     const hasComplete = state.tasks.some((task) => task.status === 'completed');
     const status = !terminal ? 'running' : hasFailure && !hasComplete ? 'failed' : hasBlocked ? (hasComplete ? 'partially_completed' : 'blocked') : 'completed';
-    const { error } = await getSupabaseAdmin().from('execution_runs').upsert({
+    const context=createTenantContext({userId:this.userId,via:'persisted_owner'});
+    await persistOwnedExecutionState(getTenantSupabaseAdmin(context),context,{
       run_id: state.runId, user_id: this.userId, project_id: state.projectId,
       repository_identity: state.repository, selected_branch: state.selectedBranch,
       starting_commit_sha: state.startingCommitSha, state, status, updated_at: state.updatedAt,
     });
-    if (error) throw error;
   }
+}
+
+/** Bind resumed work to durable identity; embedded state cannot change its run/project. */
+export function restoreOwnerBoundExecutionState(row:unknown,userId:string,runId:string):CanonicalExecutionState|null {
+  if(!row||typeof row!=='object'||Array.isArray(row))return null;
+  const record=row as Record<string,unknown>,state=record.state;
+  if(!state||typeof state!=='object'||Array.isArray(state))return null;
+  const snapshot=state as Record<string,unknown>;
+  if(record.user_id!==userId||record.run_id!==runId||typeof record.project_id!=='string'||!record.project_id||snapshot.runId!==runId||snapshot.projectId!==record.project_id)return null;
+  return structuredClone(state as CanonicalExecutionState);
 }
 
 export function createCanonicalExecutionState(input: {

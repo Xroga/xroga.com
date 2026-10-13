@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "f350f08a35f7792c4e6820b6a8001762b217c158",
+  "source_sha": "1a8a5b2c43c8f058b4b8461273e0400c969b89f4",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -3065,6 +3065,48 @@
       "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
       "observability_source": [
         "frontend/src/lib/hackathonResearch.ts"
+      ],
+      "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
+      "evidence_ids": []
+    },
+    {
+      "dependency_id": "endpoint-example-invalid",
+      "provider": "Source-defined endpoint example.invalid",
+      "purpose": "Source-defined external host: adapter endpoint, public asset, evidence/reference or optional capability. Not automatically an infrastructure service; lifecycle/caller requires independent verification",
+      "environment": "PRODUCTION",
+      "state": "CONFIGURED_BUT_UNVERIFIED",
+      "runtime_owner": "backend/API or explicitly proposed component",
+      "config_sources": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
+      ],
+      "hostnames": [
+        "example.invalid"
+      ],
+      "resource_id": null,
+      "region": "Not verified",
+      "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
+      "secret_names": [
+        "CI",
+        "E2E_BACKEND_URL",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "SUPABASE_URL",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XB01_LOCAL_DATABASE_URL"
+      ],
+      "inbound_callers": [
+        "api or named source callers; operational reachability not inferred"
+      ],
+      "outbound_dependencies": [],
+      "health_readiness": "Reference/asset hosts may need no service health check; adapter admission/liveness is unverified. No external action or paid health probe performed",
+      "timeout": "Adapter-specific; no fabricated central timeout",
+      "retry_policy": "Source-specific; no live retry test claimed",
+      "idempotency_expectation": "Required for consequential writes; verify canonical authority in Command 008",
+      "data_classification": "User data may be involved; tenant scope requires independent checks",
+      "failure_mode": "Safe user-facing failure required; internal details restricted",
+      "fallback_behaviour": "See source and recorded risks; no fallback newly enabled",
+      "observability_source": [
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6784,7 +6826,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid"
       ]
     },
     {
@@ -7205,7 +7248,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid"
       ]
     },
     {
@@ -9345,7 +9389,8 @@
       ],
       "dependency_ids": [
         "supabase",
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid"
       ]
     },
     {
@@ -9584,6 +9629,7 @@
         "supabase",
         "endpoint-127-0-0-1",
         "endpoint-api-whop-com",
+        "endpoint-example-invalid",
         "endpoint-github-com",
         "endpoint-localhost",
         "endpoint-xrogaaicom-vercel-app"
@@ -9619,6 +9665,7 @@
       "dependency_ids": [
         "supabase",
         "endpoint-127-0-0-1",
+        "endpoint-example-invalid",
         "endpoint-localhost",
         "endpoint-xrogaaicom-vercel-app"
       ]
@@ -10208,7 +10255,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid"
       ]
     },
     {
@@ -10227,7 +10275,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "endpoint-127-0-0-1"
+        "endpoint-127-0-0-1",
+        "endpoint-example-invalid"
       ]
     },
     {
@@ -11168,7 +11217,7 @@
     },
     {
       "path": "backend/src/ai/buildOutcomeMemory.ts",
-      "sha256": "ffb2d4f7c6a8dcc29bd52c62eedef17d3fdaeb4e253ebc1975cdf16666e6f2e0"
+      "sha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a"
     },
     {
       "path": "backend/src/ai/buildOutcomeRoutingMemory.ts",
@@ -11236,7 +11285,7 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "sha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1"
+      "sha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73"
     },
     {
       "path": "backend/src/ai/fileSelector.ts",
@@ -12300,7 +12349,7 @@
     },
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd"
+      "sha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f"
     },
     {
       "path": "backend/src/security/ownedTerminalPersistence.ts",
@@ -12324,7 +12373,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "02d84f321c6f2e0de91f88615d2d8c1176dcfdab278977fb14bf6e819dd99b03"
+      "sha256": "cab98666e533d7b80259253529c2c75f9800b084da65068c422da2c6f443e5e4"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12848,7 +12897,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "2d9d3d8014695e0f20ff6b7609f14c71e8ba64a4a0c186b1c7b750ed103fba8c"
+      "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4"
     },
     {
       "path": "backend/src/synthesis/universalExecution.ts",
@@ -12860,7 +12909,7 @@
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "sha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c"
+      "sha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670"
     },
     {
       "path": "backend/src/synthesis/universalProductSpec.ts",
@@ -17683,14 +17732,21 @@
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 16,
+      "line": 23,
       "credentialsInUrl": false
     },
     {
       "hostname": "127.0.0.1",
       "protocol": "http:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 16,
+      "line": 23,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "example.invalid",
+      "protocol": "https:",
+      "path": "backend/src/security/tenantIsolation.local.integration.ts",
+      "line": 148,
       "credentialsInUrl": false
     },
     {
@@ -21792,56 +21848,56 @@
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 152,
+      "line": 154,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 290,
+      "line": 303,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 349,
+      "line": 362,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 350,
+      "line": 363,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 351,
+      "line": 364,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 395,
+      "line": 408,
       "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 539,
+      "line": 552,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/ai/executionRuntime.ts",
-      "line": 540,
+      "line": 553,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24935,7 +24991,7 @@
     },
     {
       "path": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 706,
+      "line": 707,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
@@ -24951,20 +25007,6 @@
       "path": "backend/src/synthesis/universalFlow.ts",
       "line": 349,
       "scope": "FUNCTION_LOCAL",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 67,
-      "scope": "INSTANCE_LIFETIME",
-      "mechanism": "PROCESS_MEMORY_CANDIDATE",
-      "status": "REQUIRES_SEMANTIC_REVIEW"
-    },
-    {
-      "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 68,
-      "scope": "INSTANCE_LIFETIME",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
@@ -24991,14 +25033,28 @@
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 100,
+      "line": 72,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/universalPersistence.ts",
+      "line": 73,
+      "scope": "INSTANCE_LIFETIME",
+      "mechanism": "PROCESS_MEMORY_CANDIDATE",
+      "status": "REQUIRES_SEMANTIC_REVIEW"
+    },
+    {
+      "path": "backend/src/synthesis/universalPersistence.ts",
+      "line": 102,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"
     },
     {
       "path": "backend/src/synthesis/universalPersistence.ts",
-      "line": 291,
+      "line": 311,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

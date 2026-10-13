@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "f350f08a35f7792c4e6820b6a8001762b217c158",
-    "sourceTimestampUtc": "2026-10-14T00:36:04+05:00",
-    "auditStartedUtc": "2026-10-13T19:47:21.335Z",
+    "sha": "1a8a5b2c43c8f058b4b8461273e0400c969b89f4",
+    "sourceTimestampUtc": "2026-10-14T00:48:16+05:00",
+    "auditStartedUtc": "2026-10-13T20:15:06.282Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -2084,7 +2084,7 @@
         "backend/src/ai/buildImprovementMemory.test.ts:12",
         "backend/src/ai/pipeline.ts:230",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:34",
-        "backend/src/synthesis/universalEntrypoint.ts:87"
+        "backend/src/synthesis/universalEntrypoint.ts:88"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -2181,7 +2181,7 @@
       "id": "surface:10d43c92abd75c1fddae",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/buildOutcomeMemory.ts",
-      "sha256": "ffb2d4f7c6a8dcc29bd52c62eedef17d3fdaeb4e253ebc1975cdf16666e6f2e0",
+      "sha256": "a51c00b5bb253febf3853edff423634fdb54f2c1ec5a4f516abd84a5e0d1903a",
       "symbols": [
         "BUILD_OUTCOME_SCHEMA_VERSION",
         "BuildFailureCategory",
@@ -2254,22 +2254,27 @@
         "verified"
       ],
       "imports": [
-        "../config/supabase.js",
+        "../security/ownedRunPersistence.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "./learningPolicy.js",
         "./routingOutcomes.js"
       ],
       "runtimeImports": [
         "backend/src/ai/learningPolicy.ts",
         "backend/src/ai/routingOutcomes.ts",
-        "backend/src/config/supabase.ts"
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/ai/buildOutcomeMemory.test.ts:16",
+        "backend/src/ai/buildOutcomeMemory.test.ts:19",
         "backend/src/ai/runStore.ts:15",
         "backend/src/ai/step7LearningStrategy.test.ts:12",
+        "backend/src/security/tenantIsolation.local.integration.ts:19",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:41"
       ],
       "reachable": true,
@@ -2279,7 +2284,7 @@
       "externalProviderDependencies": [],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/buildOutcomeMemory.ts:2070 (user_id)"
+        "backend/src/ai/buildOutcomeMemory.ts:2049 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -2292,6 +2297,7 @@
       "testCoverage": [
         "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/ai/step7LearningStrategy.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/reliability/step7cReliability.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -2358,7 +2364,7 @@
         "backend/src/ai/buildOutcomeRoutingMemory.test.ts:8",
         "backend/src/ai/pipeline.ts:229",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:29",
-        "backend/src/synthesis/universalEntrypoint.ts:82"
+        "backend/src/synthesis/universalEntrypoint.ts:83"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -2746,7 +2752,7 @@
       ],
       "callers": [
         "backend/src/ai/capabilityRouting.test.ts:26",
-        "backend/src/synthesis/universalEntrypoint.ts:56"
+        "backend/src/synthesis/universalEntrypoint.ts:57"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -3319,7 +3325,7 @@
       "id": "surface:370916abf23ea75d609b",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/executionRuntime.ts",
-      "sha256": "046e1af80444483ed6121352ff717ef98104cb124d8f64ad6eaa37531477a8d1",
+      "sha256": "2e6a037be5df43ef9be03d97a49f57ea7282250650b9490be4b210746dd5fb73",
       "symbols": [
         "CanonicalExecutionState",
         "CanonicalMutationService",
@@ -3346,6 +3352,7 @@
         "cancelled",
         "code",
         "complete",
+        "context",
         "controller",
         "createCanonicalExecutionState",
         "current",
@@ -3379,13 +3386,16 @@
         "rawCode",
         "rawReasons",
         "ready",
+        "record",
         "release",
         "required",
+        "restoreOwnerBoundExecutionState",
         "result",
         "safe",
         "safePath",
         "safeReasons",
         "snapshot",
+        "state",
         "status",
         "task",
         "terminal",
@@ -3396,8 +3406,10 @@
         "value"
       ],
       "imports": [
-        "../config/supabase.js",
         "../lib/truthfulExecution.js",
+        "../security/ownedRunPersistence.js",
+        "../security/serviceRoleGuard.js",
+        "../security/tenantContext.js",
         "./intelligentRouter.js",
         "./models.js",
         "./patches.js",
@@ -3406,8 +3418,10 @@
       "runtimeImports": [
         "backend/src/ai/models.ts",
         "backend/src/ai/patches.ts",
-        "backend/src/config/supabase.ts",
-        "backend/src/lib/truthfulExecution.ts"
+        "backend/src/lib/truthfulExecution.ts",
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/serviceRoleGuard.ts",
+        "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
@@ -3416,9 +3430,11 @@
         "backend/src/ai/blackBoxExecution.test.ts:6",
         "backend/src/ai/engineeringRoles.test.ts:16",
         "backend/src/ai/engineeringTasks.test.ts:4",
+        "backend/src/ai/executionRuntime.owner.test.ts:3",
         "backend/src/ai/executionRuntime.test.ts:3",
         "backend/src/ai/pipeline.ts:234",
         "backend/src/hardening/launchHardening.test.ts:47",
+        "backend/src/security/tenantIsolation.local.integration.ts:15",
         "backend/src/synthesis/foundation.fixture.test.ts:3",
         "backend/src/synthesis/foundation.ts:3",
         "backend/src/synthesis/reliability/canonicalResume.test.ts:5",
@@ -3435,7 +3451,7 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/ai/executionRuntime.ts:168 (user_id)"
+        "backend/src/ai/executionRuntime.ts:171 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -3449,8 +3465,10 @@
         "backend/src/ai/blackBoxExecution.test.ts",
         "backend/src/ai/engineeringRoles.test.ts",
         "backend/src/ai/engineeringTasks.test.ts",
+        "backend/src/ai/executionRuntime.owner.test.ts",
         "backend/src/ai/executionRuntime.test.ts",
         "backend/src/hardening/launchHardening.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/dynamicPlanning.test.ts",
         "backend/src/synthesis/foundation.fixture.test.ts",
         "backend/src/synthesis/reliability/canonicalResume.test.ts",
@@ -4000,7 +4018,7 @@
       ],
       "callers": [
         "backend/src/ai/measuredEvidence.test.ts:4",
-        "backend/src/synthesis/universalEntrypoint.ts:77"
+        "backend/src/synthesis/universalEntrypoint.ts:78"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -4151,7 +4169,7 @@
       "callers": [
         "backend/src/ai/capabilityRouter.ts:26",
         "backend/src/ai/capabilityRouting.test.ts:12",
-        "backend/src/synthesis/universalEntrypoint.ts:61"
+        "backend/src/synthesis/universalEntrypoint.ts:62"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4227,7 +4245,7 @@
         "backend/src/ai/providerPolicy.test.ts:468",
         "backend/src/ai/providerPolicy.test.ts:481",
         "backend/src/routes/capabilities.ts:26",
-        "backend/src/synthesis/universalEntrypoint.ts:65"
+        "backend/src/synthesis/universalEntrypoint.ts:66"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -4318,7 +4336,7 @@
         "backend/src/ai/black-hole/registry.test.ts:4",
         "backend/src/ai/black-hole/registry.ts:45",
         "backend/src/ai/black-hole/registryDrift.test.ts:5",
-        "backend/src/ai/executionRuntime.ts:8",
+        "backend/src/ai/executionRuntime.ts:10",
         "backend/src/ai/modelCapabilityRegistry.ts:3",
         "backend/src/ai/openaiCompat.ts:3",
         "backend/src/ai/pipeline.ts:17",
@@ -4336,7 +4354,7 @@
         "backend/src/routes/guestChat.ts:10",
         "backend/src/routes/phase1.ts:23",
         "backend/src/synthesis/coherentImplementation.ts:8",
-        "backend/src/synthesis/universalEntrypoint.ts:96"
+        "backend/src/synthesis/universalEntrypoint.ts:97"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5868,7 +5886,7 @@
         "backend/src/ai/measuredEvidence.test.ts:11",
         "backend/src/ai/providerCostTiers.test.ts:4",
         "backend/src/hardening/launchHardening.test.ts:45",
-        "backend/src/synthesis/universalEntrypoint.ts:73"
+        "backend/src/synthesis/universalEntrypoint.ts:74"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -5997,7 +6015,7 @@
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts:9",
         "backend/src/synthesis/universalCanonicalTasks.test.ts:22",
         "backend/src/synthesis/universalCanonicalTasks.ts:45",
-        "backend/src/synthesis/universalEntrypoint.ts:69"
+        "backend/src/synthesis/universalEntrypoint.ts:70"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9601,7 +9619,7 @@
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:8",
         "backend/src/synthesis/semanticExecutionPrompt.test.ts:8",
         "backend/src/synthesis/step6Delivery.test.ts:8",
-        "backend/src/synthesis/universalEntrypoint.ts:110",
+        "backend/src/synthesis/universalEntrypoint.ts:111",
         "backend/src/synthesis/universalExecution.test.ts:15"
       ],
       "reachable": true,
@@ -9740,7 +9758,7 @@
       "callers": [
         "backend/src/ai/universal/semanticRequestPlanner.ts:46",
         "backend/src/ai/universal/universalContracts.test.ts:13",
-        "backend/src/synthesis/universalEntrypoint.ts:121"
+        "backend/src/synthesis/universalEntrypoint.ts:122"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -9831,7 +9849,7 @@
       "callers": [
         "backend/src/ai/pipeline.ts:149",
         "backend/src/ai/universal/universalContracts.test.ts:7",
-        "backend/src/synthesis/universalEntrypoint.ts:105"
+        "backend/src/synthesis/universalEntrypoint.ts:106"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -10458,7 +10476,7 @@
         "backend/src/ai/universal/productTruth.ts:1",
         "backend/src/ai/universal/semanticRequestPlanner.test.ts:3",
         "backend/src/ai/universal/semanticRequestPlanner.ts:29",
-        "backend/src/synthesis/universalEntrypoint.ts:117"
+        "backend/src/synthesis/universalEntrypoint.ts:118"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -11463,10 +11481,8 @@
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:1",
-        "backend/src/ai/buildOutcomeMemory.ts:1",
         "backend/src/ai/buildOutcomeRoutingMemory.ts:1",
         "backend/src/ai/buildStrategyMemory.ts:1",
-        "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/measuredEvidence.ts:33",
         "backend/src/ai/projectMemory.ts:6",
         "backend/src/ai/providerBudget.ts:2",
@@ -20487,14 +20503,20 @@
       "id": "surface:9f90d9fb1a702b164831",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownedRunPersistence.ts",
-      "sha256": "2d526a7f3df9fcabd4c325fd141ae61d54935b45d1c1752558ec18744d1a0afd",
+      "sha256": "db5ba61f08ac0859a9b2f60d3ce5f4d23f044be3d0fbdad409885cf2e528973f",
       "symbols": [
+        "OwnedUniversalRecordKind",
         "inserted",
+        "persistOwnedExecutionState",
         "persistOwnedRun",
         "persistOwnedRunTrace",
         "persistOwnedRuntimeSession",
+        "persistOwnedUniversalRecord",
         "persistOwnerBoundRecord",
-        "scope"
+        "policy",
+        "query",
+        "scope",
+        "universalRecords"
       ],
       "imports": [
         "./tenantContext.js",
@@ -20509,11 +20531,15 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/buildOutcomeMemory.test.ts:13",
+        "backend/src/ai/buildOutcomeMemory.ts:3",
+        "backend/src/ai/executionRuntime.ts:8",
         "backend/src/ai/runStore.ts:11",
         "backend/src/ai/runTrace.ts:8",
         "backend/src/security/ownedRunPersistence.test.ts:4",
         "backend/src/security/tenantIsolation.local.integration.ts:8",
-        "backend/src/synthesis/projectRuntime/store.ts:10"
+        "backend/src/synthesis/projectRuntime/store.ts:10",
+        "backend/src/synthesis/universalPersistence.ts:24"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20522,12 +20548,13 @@
       ],
       "authBoundary": [],
       "tenantBoundary": [
-        "backend/src/security/ownedRunPersistence.ts:25 (user_id)"
+        "backend/src/security/ownedRunPersistence.ts:50 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts"
       ],
@@ -20671,6 +20698,8 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/buildOutcomeMemory.ts:1",
+        "backend/src/ai/executionRuntime.ts:7",
         "backend/src/ai/providerHealthStore.ts:29",
         "backend/src/ai/runReconciler.ts:1",
         "backend/src/index.ts:60",
@@ -20734,6 +20763,9 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/ai/buildOutcomeMemory.test.ts:12",
+        "backend/src/ai/buildOutcomeMemory.ts:2",
+        "backend/src/ai/executionRuntime.ts:6",
         "backend/src/ai/runStore.ts:10",
         "backend/src/ai/runTrace.ts:7",
         "backend/src/middleware/admin.ts:3",
@@ -20758,7 +20790,10 @@
         "backend/src/services/responseCache.test.ts:3",
         "backend/src/services/responseCache.ts:3",
         "backend/src/services/storage/projectFiles.ts:4",
-        "backend/src/synthesis/projectRuntime/store.ts:9"
+        "backend/src/synthesis/projectRuntime/store.ts:9",
+        "backend/src/synthesis/universalEntrypoint.ts:55",
+        "backend/src/synthesis/universalPersistence.owner.test.ts:7",
+        "backend/src/synthesis/universalPersistence.ts:23"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20774,13 +20809,15 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/ai/buildOutcomeMemory.test.ts",
         "backend/src/security/ownedRunPersistence.test.ts",
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts",
         "backend/src/security/tenantIsolation.local.integration.ts",
-        "backend/src/services/responseCache.test.ts"
+        "backend/src/services/responseCache.test.ts",
+        "backend/src/synthesis/universalPersistence.owner.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -25387,6 +25424,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:18",
         "backend/src/synthesis/followUpAndRegression.test.ts:23",
         "backend/src/synthesis/securityControls.test.ts:14",
         "backend/src/synthesis/universalArchitecture.test.ts:21",
@@ -25402,6 +25440,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/securityControls.test.ts",
         "backend/src/synthesis/universalArchitecture.test.ts",
@@ -25702,7 +25741,7 @@
         "backend/src/synthesis/delivery/projectDelivery.test.ts:12",
         "backend/src/synthesis/projectRuntime/projectRuntime.test.ts:28",
         "backend/src/synthesis/step6Delivery.test.ts:12",
-        "backend/src/synthesis/universalEntrypoint.ts:125",
+        "backend/src/synthesis/universalEntrypoint.ts:126",
         "backend/src/synthesis/universalExecution.test.ts:19",
         "backend/src/synthesis/universalFlow.ts:29",
         "backend/src/synthesis/universalProductSpec.ts:33"
@@ -26481,6 +26520,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/dynamicPlanning.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts"
       ],
@@ -29592,6 +29632,7 @@
       "runtimeImports": [],
       "entryPoints": [],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:20",
         "backend/src/synthesis/researchEvidence.test.ts:15",
         "backend/src/synthesis/universalPersistence.test.ts:20"
       ],
@@ -29611,6 +29652,7 @@
         "backend/src/synthesis/researchEvidence.ts#createEvidence"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/researchEvidence.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts"
       ],
@@ -30564,7 +30606,7 @@
         "backend/src/index.ts"
       ],
       "callers": [
-        "backend/src/synthesis/universalEntrypoint.ts:131"
+        "backend/src/synthesis/universalEntrypoint.ts:132"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -30877,7 +30919,7 @@
       "id": "surface:ba88158d592a18f99ff9",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "sha256": "2d9d3d8014695e0f20ff6b7609f14c71e8ba64a4a0c186b1c7b750ed103fba8c",
+      "sha256": "650b0e6f4f9ce80436f97beb5810174b311c2fd7c2f356134fe82bfc5ca3cff4",
       "symbols": [
         "IMPLEMENT_SYSTEM",
         "UniversalBuildOutcome",
@@ -30932,6 +30974,7 @@
         "../capabilities/index.js",
         "../config/supabase.js",
         "../config/universalAgentFlags.js",
+        "../security/tenantContext.js",
         "./buildContract.js",
         "./productionAdapters.js",
         "./softwareAgentImplementationAdapter.js",
@@ -30955,6 +30998,7 @@
         "backend/src/capabilities/index.ts",
         "backend/src/config/supabase.ts",
         "backend/src/config/universalAgentFlags.ts",
+        "backend/src/security/tenantContext.ts",
         "backend/src/synthesis/buildContract.ts",
         "backend/src/synthesis/productionAdapters.ts",
         "backend/src/synthesis/softwareAgentImplementationAdapter.ts",
@@ -31260,7 +31304,7 @@
       "id": "surface:81efabca9d69b6c92592",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/synthesis/universalPersistence.ts",
-      "sha256": "d3b202eac775ab4d6287cc55905dda019cc0019043a6dcc1f9e6e0e741bc267c",
+      "sha256": "d7753821723c55f9d0a97b2d266c273a1d350cdc98e1cf3092dd533a97db5670",
       "symbols": [
         "InMemoryUniversalStore",
         "OK",
@@ -31272,16 +31316,21 @@
         "existing",
         "id",
         "indexId",
+        "item",
         "key",
         "known",
+        "mutation",
         "row",
         "rowToIndexedFile",
         "run",
+        "scope",
         "setUniversalStoreForTesting",
         "store",
         "universalStore"
       ],
       "imports": [
+        "../security/ownedRunPersistence.js",
+        "../security/tenantContext.js",
         "./architecturePlan.js",
         "./dynamicPlanning.js",
         "./repositoryIndex.js",
@@ -31289,15 +31338,20 @@
         "./universalProductSpec.js",
         "@supabase/supabase-js"
       ],
-      "runtimeImports": [],
+      "runtimeImports": [
+        "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/tenantContext.ts"
+      ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:16",
         "backend/src/synthesis/followUpAndRegression.test.ts:24",
         "backend/src/synthesis/universalEntrypoint.test.ts:20",
         "backend/src/synthesis/universalEntrypoint.ts:46",
         "backend/src/synthesis/universalExecution.test.ts:22",
+        "backend/src/synthesis/universalPersistence.owner.test.ts:5",
         "backend/src/synthesis/universalPersistence.test.ts:21"
       ],
       "reachable": true,
@@ -31306,9 +31360,7 @@
         "plan_mutations",
         "project_specs",
         "repository_index_files",
-        "repository_indexes",
-        "research_evidence",
-        "research_runs"
+        "repository_indexes"
       ],
       "externalProviderDependencies": [
         "@supabase/supabase-js"
@@ -31317,9 +31369,14 @@
         "backend/src/synthesis/universalPersistence.ts#RepositoryIdentity"
       ],
       "tenantBoundary": [
-        "backend/src/synthesis/universalPersistence.ts:185 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:216 (user_id)",
-        "backend/src/synthesis/universalPersistence.ts:263 (user_id)"
+        "backend/src/synthesis/universalPersistence.ts:199 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:214 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:236 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:281 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:345 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:353 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:398 (user_id)",
+        "backend/src/synthesis/universalPersistence.ts:404 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
@@ -31327,10 +31384,12 @@
         "backend/src/synthesis/universalPersistence.ts#ResearchEvidence"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/browserGateVerification.test.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/universalEntrypoint.test.ts",
         "backend/src/synthesis/universalExecution.test.ts",
+        "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -31410,11 +31469,13 @@
         "backend/src/index.ts"
       ],
       "callers": [
+        "backend/src/security/tenantIsolation.local.integration.ts:17",
         "backend/src/synthesis/followUpAndRegression.test.ts:22",
         "backend/src/synthesis/securityControls.test.ts:15",
         "backend/src/synthesis/universalArchitecture.test.ts:14",
         "backend/src/synthesis/universalFixtures.test.ts:22",
         "backend/src/synthesis/universalFlow.ts:34",
+        "backend/src/synthesis/universalPersistence.owner.test.ts:6",
         "backend/src/synthesis/universalPersistence.test.ts:16"
       ],
       "reachable": true,
@@ -31428,10 +31489,12 @@
         "backend/src/synthesis/universalProductSpec.ts#repositoryEvidence"
       ],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/synthesis/followUpAndRegression.test.ts",
         "backend/src/synthesis/securityControls.test.ts",
         "backend/src/synthesis/universalArchitecture.test.ts",
         "backend/src/synthesis/universalFixtures.test.ts",
+        "backend/src/synthesis/universalPersistence.owner.test.ts",
         "backend/src/synthesis/universalPersistence.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -92952,9 +93015,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:3bbff673e22f3c3e346b",
+      "id": "finding:705449df9718ab8d168d",
       "sourcePath": "backend/src/synthesis/universalEntrypoint.ts",
-      "line": 358,
+      "line": 359,
       "kind": "TODO",
       "reachable": true,
       "state": "PARTIAL",
@@ -98891,6 +98954,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:602a22dfaf676b38c4fa",
+      "sourcePath": "backend/src/ai/executionRuntime.owner.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:39e3d217919ea5cb9787",
       "sourcePath": "backend/src/ai/executionRuntime.test.ts",
       "declaredTests": 5,
@@ -99770,7 +99840,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 23,
+      "declaredTests": 29,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -100352,6 +100422,13 @@
       "id": "test-suite:269fd48c6e0d4dc0b26b",
       "sourcePath": "backend/src/synthesis/universalFixtures.test.ts",
       "declaredTests": 45,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a71a36552007294fc0ce",
+      "sourcePath": "backend/src/synthesis/universalPersistence.owner.test.ts",
+      "declaredTests": 2,
       "skipLocations": [],
       "focusLocations": []
     },

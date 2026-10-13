@@ -17,12 +17,37 @@ export async function persistOwnedRunTrace(client: SupabaseClient, context: Tena
   return persistOwnerBoundRecord(client,context,'swarm_run_traces','run_id',row);
 }
 
-async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantContext, table:'swarm_runs'|'project_runtime_sessions'|'swarm_run_traces', key:'id'|'session_id'|'run_id', row:{user_id:string;[column:string]:unknown}): Promise<void> {
+/** Canonical execution state uses the existing globally unique run_id key. */
+export async function persistOwnedExecutionState(client: SupabaseClient, context: TenantContext, row: {run_id:string;user_id:string;[column:string]:unknown}): Promise<void> {
+  return persistOwnerBoundRecord(client,context,'execution_runs','run_id',row);
+}
+
+const universalRecords = {
+  spec: {table:'project_specs',key:'spec_id'},
+  plan: {table:'architecture_plans',key:'plan_id'},
+  research_run: {table:'research_runs',key:'research_run_id'},
+  research_evidence: {table:'research_evidence',key:'evidence_id'},
+  repository_index: {table:'repository_indexes',key:'index_id'},
+  build_outcome: {table:'build_outcomes',key:'run_id'},
+  mutation: {table:'plan_mutations',key:'mutation_key'},
+} as const;
+export type OwnedUniversalRecordKind = keyof typeof universalRecords;
+
+/** Finite inspected tables/keys only; not a caller-selected table or new store. */
+export async function persistOwnedUniversalRecord(client: SupabaseClient, context: TenantContext, kind: OwnedUniversalRecordKind, row: {user_id:string;[column:string]:unknown}): Promise<void> {
+  if(!Object.hasOwn(universalRecords,kind))throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
+  const policy=universalRecords[kind];
+  return persistOwnerBoundRecord(client,context,policy.table,policy.key,row,kind==='mutation');
+}
+
+async function persistOwnerBoundRecord(client: SupabaseClient, context: TenantContext, table:'swarm_runs'|'project_runtime_sessions'|'swarm_run_traces'|'execution_runs'|typeof universalRecords[OwnedUniversalRecordKind]['table'], key:'id'|'session_id'|'run_id'|typeof universalRecords[OwnedUniversalRecordKind]['key'], row:{user_id:string;[column:string]:unknown},appendOnly=false): Promise<void> {
   const scope = requireTenantContext(context);
   if (row.user_id !== scope.userId) throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
+  if(typeof row[key]!=='string'||!row[key]||String(row[key]).length>2000)throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
   const inserted = await client.from(table).upsert(row,{onConflict:key,ignoreDuplicates:true});
   if (inserted.error) throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
-  const {data,error} = await client.from(table).update(row).eq(key,row[key]).eq('user_id',scope.userId).select(key);
+  const query=appendOnly?client.from(table).select(key):client.from(table).update(row).select(key);
+  const {data,error} = await query.eq(key,row[key]).eq('user_id',scope.userId);
   if (error) throw new TenantAccessError(503,'RESOURCE_ACCESS_UNAVAILABLE');
   if (data?.length !== 1) throw new TenantAccessError(404,'RESOURCE_NOT_FOUND');
 }
