@@ -18,7 +18,7 @@ export async function GET(request:Request,{params}:{params:Promise<{projectId:st
     if(base.username||base.password||base.search||base.hash||base.pathname!=='/'||!(base.protocol==='https:'||(base.protocol==='http:'&&['127.0.0.1','localhost'].includes(base.hostname))))throw new Error('invalid API origin');
     const target=new URL(`/api/projects/${projectId}/files/${fileId}/download`,base);
     const links=new URL(request.url).searchParams.getAll('link');
-    if(links.length>1)return NextResponse.json({error:'File link is unavailable.'},{status:404,headers:privateHeaders});
+    if(links.length>1 || links.some(link=>link.length>2048))return NextResponse.json({error:'File link is unavailable.'},{status:404,headers:privateHeaders});
     if(links.length)target.searchParams.set('link',links[0]);
     const range=request.headers.get('range');
     const response=await fetch(target,{cache:'no-store',redirect:'error',signal:AbortSignal.timeout(25000),headers:{Authorization:`Bearer ${session.access_token}`,...(range?{Range:range}:{})}});

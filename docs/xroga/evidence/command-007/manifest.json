@@ -1,6 +1,18 @@
 {
   "command": "007",
   "status": "IN_PROGRESS_RELEASE_BLOCKED",
+  "firstPrivateFileRun":{
+    "sha":"abbe1ec66beaa25bd1a038b21c3511ad5ebca017",
+    "ci":"https://github.com/Xroga/xroga.com/actions/runs/38480773161",
+    "result":"FAIL_NOT_WAIVED",
+    "migrationFreshUpgradeFiles":69,
+    "bothBuilds":"PASS",
+    "browser":{"pass":2,"fail":1},
+    "tenant":{"tests":35,"pass":34,"fail":1,"skipped":0},
+    "causes":["Real UI API path missing /api prefix","Fixture incorrectly assumed existing browser UPDATE permission"],
+    "nextSource":"FIXED_PENDING_FULL_RERUN_NO_RLS_WEAKENING",
+    "vercel":"CANCELED_BY_IGNORED_BUILD_STEP_NOT_DEPLOYED"
+  },
   "privateFileContinuation": {
     "status":"IMPLEMENTED_FINAL_SOURCE_CI_PENDING_NOT_LIVE",
     "migration":"supabase/migrations/20261013221254_private_project_file_delivery.sql",

@@ -103,18 +103,30 @@ test('real durable database file delivery is owner-only, bounded, expiring and a
   const revocations=await Promise.all(Array.from({length:4},()=>request(`${path}/links`,owner.token,'DELETE')));
   assert.ok(revocations.every(response=>response.status===200));
   const updated=await admin.from('project_files').select('delivery_version').eq('id',saved.id).single();assert.equal(updated.error,null);assert.equal(updated.data?.delivery_version,row.delivery_version+4);
+  assert.ok((await admin.from('project_files').update({delivery_version:row.delivery_version}).eq('id',saved.id)).error);
   assert.equal((await request(`${path}/download?link=${encodeURIComponent(token)}`,owner.token)).status,404);
   assert.equal((await request(`${path}/download`,owner.token)).status,200);
   const range=await fetch(`${api}${path}/download`,{headers:{Authorization:`Bearer ${owner.token}`,Range:'bytes=0-6'}});assert.equal(range.status,206);assert.equal(await range.text(),'PRIVATE');
   assert.equal((await fetch(`${api}${path}/download`,{headers:{Authorization:`Bearer ${owner.token}`,Range:'bytes=999-1000'}})).status,416);
 });
 
-test('real RLS and metadata trigger deny client delivery forgery while preserving legitimate content edits',async()=>{
+test('real RLS and metadata trigger deny client delivery forgery while preserving allowed owner inserts and server edits',async()=>{
   const [owner,other]=users;
   const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
-  const ownEdit=await client.from('project_files').update({content:'legitimate isolated edit'}).eq('id',owner.file).select('id');assert.equal(ownEdit.error,null);assert.equal(ownEdit.data?.length,1);
+  const ownRead=await client.from('project_files').select('id').eq('id',owner.file);assert.equal(ownRead.error,null);assert.equal(ownRead.data?.length,1);
+  const ownInsert=await client.from('project_files').insert({project_id:owner.project,file_name:'legitimate isolated insert',content:'owner fixture'}).select('id');assert.equal(ownInsert.error,null);assert.equal(ownInsert.data?.length,1);
+  // The complete historical chain permits browser SELECT/INSERT, NOT UPDATE.
+  // Preserve that denial; never add a permissive policy to satisfy a mistaken fixture.
+  const ownEdit=await client.from('project_files').update({content:'forbidden client edit'}).eq('id',owner.file).select('id');assert.equal(ownEdit.error,null);assert.equal(ownEdit.data?.length,0);
+  await ownedFile(owner.context,owner.project,owner.file,admin);
+  const serverEdit=await admin.from('project_files').update({content:'legitimate server edit'}).eq('id',owner.file).eq('project_id',owner.project).select('id');assert.equal(serverEdit.error,null);assert.equal(serverEdit.data?.length,1);
   const foreignEdit=await client.from('project_files').update({content:'forbidden edit'}).eq('id',other.file).select('id');assert.equal(foreignEdit.error,null);assert.equal(foreignEdit.data?.length,0);
-  for(const patch of [{delivery_version:9},{storage_metadata:{provider:'database',ownerId:owner.id}}])assert.ok((await client.from('project_files').update(patch).eq('id',owner.file)).error);
+  for(const patch of [{delivery_version:9},{storage_metadata:{provider:'database',ownerId:owner.id}}]) {
+    const denied=await client.from('project_files').update(patch).eq('id',owner.file).select('id');
+    assert.ok(denied.error || denied.data?.length===0);
+    const preserved=await admin.from('project_files').select('delivery_version,storage_metadata,content').eq('id',owner.file).single();assert.equal(preserved.error,null);
+    assert.equal(preserved.data?.delivery_version,1);assert.equal(preserved.data?.storage_metadata,null);assert.equal(preserved.data?.content,'legitimate server edit');
+  }
   assert.ok((await client.from('project_files').insert({project_id:owner.project,file_name:'forged',storage_metadata:{ownerId:owner.id}})).error);
   assert.ok((await client.from('project_files').insert({project_id:other.project,file_name:'foreign'})).error);
   assert.ok((await client.rpc('revoke_project_file_links',{p_project_id:owner.project,p_file_id:owner.file,p_owner_id:owner.id})).error);

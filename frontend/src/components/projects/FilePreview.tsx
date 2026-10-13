@@ -28,7 +28,7 @@ export function FilePreview({ file }: FilePreviewProps) {
     const identity=fileIdentity;
     setPending(true);setNotice('');
     try {
-      const path=`/projects/${file.project_id}/files/${file.id}`;
+      const path=`/api/projects/${file.project_id}/files/${file.id}`;
       if(revoke){await apiFetch(`${path}/links`,{method:'DELETE'});if(currentIdentity.current!==identity)return;setTemporaryLink('');setNotice('Timed links revoked. You still have owner access.');}
       else {
         const result=await apiFetch<{url:string}>(`${path}/link`,{method:'POST',body:JSON.stringify({expiresIn:60})});
@@ -74,5 +74,5 @@ export function FilePreview({ file }: FilePreviewProps) {
   return <div className="space-y-3">{preview}{url&&file.id&&file.project_id&&<div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending} onClick={()=>void linkAction(false)} className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2">Copy 60-second link</button>
     <button type="button" disabled={pending} onClick={()=>void linkAction(true)} className="rounded-lg border border-[var(--card-border)] px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2">Revoke timed links</button>
-  </div>}{notice&&<p role="status" className="text-sm text-[var(--muted)]">{notice}</p>}{temporaryLink&&<label className="block text-sm">Temporary owner-only link<input readOnly value={temporaryLink} className="mt-1 w-full rounded border border-[var(--card-border)] bg-transparent p-2" onFocus={event=>event.target.select()}/></label>}</div>;
+  </div>}{notice&&<p role="status" className="text-sm text-[var(--muted)]">{notice}</p>}{temporaryLink&&<label className="block text-sm">Temporary owner-only link<input type="password" autoComplete="off" data-clarity-mask="true" readOnly value={temporaryLink} className="mt-1 w-full rounded border border-[var(--card-border)] bg-transparent p-2" onFocus={event=>event.target.select()}/></label>}</div>;
 }

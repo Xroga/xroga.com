@@ -8,7 +8,7 @@ export const MAX_PRIVATE_FILE_BYTES = 20 * 1024 * 1024;
 export const MAX_FILE_LINK_SECONDS = 300;
 export class FileDeliveryError extends Error {
   constructor(readonly status: 400 | 404 | 409 | 416 | 503, readonly code: string) {
-    super(status === 404 ? 'File not found or link no longer available.' : status === 400 ? 'Check the file request and retry.' : status === 409 ? 'The file changed. Retry with its current version.' : status === 416 ? 'The requested file range is unavailable.' : 'Secure file delivery is unavailable. Nothing was saved by this request. Retry shortly.');
+    super(status === 404 ? 'File not found or link no longer available.' : status === 400 ? 'Check the file request and retry.' : status === 409 ? 'The file changed. Retry with its current version.' : status === 416 ? 'The requested file range is unavailable.' : 'Secure file delivery is unavailable. Your previously saved files were not removed. Retry shortly.');
   }
 }
 export const storageMetadataSchema = z.object({

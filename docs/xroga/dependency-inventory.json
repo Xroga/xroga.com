@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "5b6bf95a033cd3dbe4fa54432e1c427d87719186",
+  "source_sha": "abbe1ec66beaa25bd1a038b21c3511ad5ebca017",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12010,7 +12010,7 @@
     },
     {
       "path": "backend/src/lib/r2.ts",
-      "sha256": "2c6074e934a251fecd9e0ae10bab4ff4d2a021a1607c60335850b2156cfe7913"
+      "sha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce"
     },
     {
       "path": "backend/src/lib/recoveryPlanner.ts",
@@ -12450,7 +12450,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "8bd2837d201198f8e18c60e412f2dea276449eed590d85c0125413bacb68bc4d"
+      "sha256": "2d3825d4543bda58ac32abf819fc58cf6c6a0d4b4857543f24475dd35157cf2a"
     },
     {
       "path": "backend/src/services/ActionService.ts",
@@ -12650,7 +12650,7 @@
     },
     {
       "path": "backend/src/services/storage/fileDeliveryPolicy.ts",
-      "sha256": "58525e52ceee99bc9cd74fea850daca59bef0ffbae7411a8e73316e8f5c56a15"
+      "sha256": "e0e2de4b71ca8d0083a836fa290afa83a1e224ae419de3aa3268b69c29c36408"
     },
     {
       "path": "backend/src/services/storage/localMediaCache.ts",
@@ -13242,7 +13242,7 @@
     },
     {
       "path": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "e43ed3522d46adff964157e92a459a93e6f543dc769ae8de31a3f25a93eb141c"
+      "sha256": "764c589afab93e65b09b86e7c70d7be4188df75efc63250e7c552fc9125664b0"
     },
     {
       "path": "frontend/src/app/api/release/route.ts",
@@ -14838,7 +14838,7 @@
     },
     {
       "path": "frontend/src/components/projects/FilePreview.tsx",
-      "sha256": "3c4b3c210421faa420012769c53b6dc10f3572f336bc0da30631c28bc54f391e"
+      "sha256": "e72f14706a557f27e6fd0f31e53132c25728b9cb8f838fa4fda1cd8cc6231cef"
     },
     {
       "path": "frontend/src/components/projects/GitHubProjectCard.tsx",
@@ -17566,7 +17566,7 @@
       "hostname": "api.cloudflare.com",
       "protocol": "https:",
       "path": "backend/src/lib/r2.ts",
-      "line": 19,
+      "line": 21,
       "credentialsInUrl": false
     },
     {
@@ -17846,14 +17846,14 @@
       "hostname": "public.example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 133,
+      "line": 145,
       "credentialsInUrl": false
     },
     {
       "hostname": "example.invalid",
       "protocol": "https:",
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 214,
+      "line": 226,
       "credentialsInUrl": false
     },
     {
@@ -23943,7 +23943,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 485,
+      "line": 497,
       "scope": "FUNCTION_LOCAL",
       "mechanism": "PROCESS_MEMORY_CANDIDATE",
       "status": "REQUIRES_SEMANTIC_REVIEW"

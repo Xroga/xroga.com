@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "5b6bf95a033cd3dbe4fa54432e1c427d87719186",
-    "sourceTimestampUtc": "2026-10-14T02:52:06+05:00",
-    "auditStartedUtc": "2026-10-13T22:52:52.330Z",
+    "sha": "abbe1ec66beaa25bd1a038b21c3511ad5ebca017",
+    "sourceTimestampUtc": "2026-10-14T03:53:30+05:00",
+    "auditStartedUtc": "2026-10-13T23:04:42.044Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -13664,7 +13664,7 @@
       "id": "surface:0b0b30503c9f25e24a7d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/lib/r2.ts",
-      "sha256": "2c6074e934a251fecd9e0ae10bab4ff4d2a021a1607c60335850b2156cfe7913",
+      "sha256": "c65d535118345eeee50f209cbb25849134854d70356e3c066fe458f98c9415ce",
       "symbols": [
         "PrivateR2Configuration",
         "R2UploadResult",
@@ -13679,6 +13679,7 @@
         "client",
         "config",
         "data",
+        "deadline",
         "downloadFromR2",
         "key",
         "privateR2Configuration",
@@ -25063,7 +25064,7 @@
       "id": "surface:4bc301d1f92efd99a006",
       "subsystem": "file_storage",
       "sourcePath": "backend/src/services/storage/fileDeliveryPolicy.ts",
-      "sha256": "58525e52ceee99bc9cd74fea850daca59bef0ffbae7411a8e73316e8f5c56a15",
+      "sha256": "e0e2de4b71ca8d0083a836fa290afa83a1e224ae419de3aa3268b69c29c36408",
       "symbols": [
         "FileDeliveryError",
         "MAX_FILE_LINK_SECONDS",
@@ -34570,7 +34571,7 @@
       "id": "surface:6902470de33da099aaf3",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
-      "sha256": "e43ed3522d46adff964157e92a459a93e6f543dc769ae8de31a3f25a93eb141c",
+      "sha256": "764c589afab93e65b09b86e7c70d7be4188df75efc63250e7c552fc9125664b0",
       "symbols": [
         "GET",
         "base",
@@ -56629,7 +56630,7 @@
       "id": "surface:6c40bcd3e82e817e4ceb",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/projects/FilePreview.tsx",
-      "sha256": "3c4b3c210421faa420012769c53b6dc10f3572f336bc0da30631c28bc54f391e",
+      "sha256": "e72f14706a557f27e6fd0f31e53132c25728b9cb8f838fa4fda1cd8cc6231cef",
       "symbols": [
         "FilePreview",
         "FilePreviewProps",
@@ -96855,7 +96856,7 @@
       "reachable": true
     },
     {
-      "id": "frontend-call:b4b06ca5f10d1fb2ae1f",
+      "id": "frontend-call:3a0cc60304844f0aa99e",
       "sourcePath": "frontend/src/app/api/private-files/[projectId]/[fileId]/route.ts",
       "line": 24,
       "callee": "fetch",

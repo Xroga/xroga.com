@@ -55,6 +55,9 @@ test('private R2 configuration has no legacy/public bucket fallback and keys can
 });
 test('private bucket metadata rejects public/unknown state using GET-only fixed endpoints',async()=>{
   const config={accountId:'a'.repeat(32),bucket:'private-fixture',accessKey:'fixture',secretKey:'fixture',metadataReadToken:'fixture'};
+  let forbiddenCalls=0;
+  await assert.rejects(verifyPrivateR2Bucket({...config,accountId:'../other-account'},async()=>{forbiddenCalls++;throw new Error('must not fetch');}),{status:503});
+  assert.equal(forbiddenCalls,0);
   for(const enabled of [true,undefined])await assert.rejects(verifyPrivateR2Bucket(config,async input=>new Response(JSON.stringify({success:true,result:String(input).endsWith('/domains/managed')?{enabled}:{name:config.bucket,domains:[]}}))),{status:503});
   let calls=0;await verifyPrivateR2Bucket(config,async(input,options)=>{calls++;assert.equal(options?.method,'GET');assert.equal(options?.redirect,'error');assert.match(String(input),/^https:\/\/api.cloudflare.com\//);return new Response(JSON.stringify({success:true,result:String(input).endsWith('/domains/managed')?{enabled:false}:{name:config.bucket,domains:[]}}));});assert.equal(calls,3);
 });

@@ -16,11 +16,14 @@ export function buildR2Key(userId:string,filename:string): string {
   assertOwnedR2Key(key,userId); return key;
 }
 export async function verifyPrivateR2Bucket(config:PrivateR2Configuration, fetcher:typeof fetch=fetch): Promise<void> {
+  // Validate even injected/internal configuration before constructing the fixed API path.
+  privateR2Configuration({CLOUDFLARE_R2_ACCOUNT_ID:config.accountId,CLOUDFLARE_R2_PRIVATE_BUCKET:config.bucket,CLOUDFLARE_R2_ACCESS_KEY:config.accessKey,CLOUDFLARE_R2_SECRET_KEY:config.secretKey,CLOUDFLARE_R2_METADATA_READ_TOKEN:config.metadataReadToken});
   const base=`https://api.cloudflare.com/client/v4/accounts/${config.accountId}/r2/buckets/${config.bucket}`;
   try {
     const results=[];
+    const deadline=AbortSignal.timeout(10000);
     for(const suffix of ['', '/domains/managed','/domains/custom']) {
-      const response=await fetcher(base+suffix,{method:'GET',redirect:'error',signal:AbortSignal.timeout(10000),headers:{Authorization:`Bearer ${config.metadataReadToken}`}});
+      const response=await fetcher(base+suffix,{method:'GET',redirect:'error',signal:deadline,headers:{Authorization:`Bearer ${config.metadataReadToken}`}});
       if(!response.ok) throw new Error('metadata unavailable');
       const text=await response.text();if(text.length>65536)throw new Error('bounded metadata required');
       const data=JSON.parse(text);if(data.success!==true || data.errors?.length)throw new Error('metadata not verified');results.push(data.result);
@@ -37,7 +40,7 @@ export async function uploadToR2(key:string,body:Buffer|string,contentType:strin
   if(bytes.length>MAX_PRIVATE_FILE_BYTES)throw new FileDeliveryError(400,'FILE_TOO_LARGE');
   const config=privateR2Configuration();await verifyPrivateR2Bucket(config);const s3=client(config);
   try {
-    await s3.send(new PutObjectCommand({Bucket:config.bucket,Key:key,Body:bytes,ContentType:contentType,IfNoneMatch:'*'}));
+    await s3.send(new PutObjectCommand({Bucket:config.bucket,Key:key,Body:bytes,ContentType:contentType,IfNoneMatch:'*'}),{abortSignal:AbortSignal.timeout(15000)});
     return {key,bucket:config.bucket,sha256:digestBytes(bytes),size:bytes.length,contentType};
   } catch {throw new FileDeliveryError(503,'PRIVATE_STORAGE_WRITE_UNAVAILABLE');} finally {s3.destroy();}
 }
@@ -46,7 +49,7 @@ export async function downloadFromR2(key:string,userId:string,bucket:string): Pr
   if(bucket!==config.bucket)throw new FileDeliveryError(404,'FILE_NOT_FOUND');
   await verifyPrivateR2Bucket(config);const s3=client(config);
   try {
-    const response=await s3.send(new GetObjectCommand({Bucket:config.bucket,Key:key}));
+    const response=await s3.send(new GetObjectCommand({Bucket:config.bucket,Key:key}),{abortSignal:AbortSignal.timeout(15000)});
     if(!response.Body || (response.ContentLength??0)>MAX_PRIVATE_FILE_BYTES)throw new Error('invalid size');
     const chunks:Buffer[]=[];let size=0;
     for await(const chunk of response.Body as AsyncIterable<Uint8Array>) {size+=chunk.length;if(size>MAX_PRIVATE_FILE_BYTES)throw new Error('bounded file required');chunks.push(Buffer.from(chunk));}
@@ -55,5 +58,5 @@ export async function downloadFromR2(key:string,userId:string,bucket:string): Pr
 }
 export async function removeNewR2Object(key:string,userId:string,bucket:string): Promise<void> {
   assertOwnedR2Key(key,userId);const config=privateR2Configuration();if(bucket!==config.bucket)throw new FileDeliveryError(404,'FILE_NOT_FOUND');
-  const s3=client(config);try{await s3.send(new DeleteObjectCommand({Bucket:config.bucket,Key:key}));}catch{throw new FileDeliveryError(503,'PRIVATE_STORAGE_CLEANUP_UNAVAILABLE');}finally{s3.destroy();}
+  const s3=client(config);try{await s3.send(new DeleteObjectCommand({Bucket:config.bucket,Key:key}),{abortSignal:AbortSignal.timeout(15000)});}catch{throw new FileDeliveryError(503,'PRIVATE_STORAGE_CLEANUP_UNAVAILABLE');}finally{s3.destroy();}
 }
