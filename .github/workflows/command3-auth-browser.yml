@@ -114,6 +114,9 @@ jobs:
         run: node ../node_modules/@playwright/test/cli.js test e2e/command3-auth.spec.ts e2e/companion-public.spec.ts e2e/batch01-founder-local.spec.ts
       - name: Real tenant authorization and concurrency integration
         run: node --import tsx --test backend/src/security/tenantIsolation.local.integration.ts
+      - name: Collect bounded redacted local application logs
+        if: always()
+        run: node scripts/security/collect-local-security-logs.mjs
       - name: Upload redacted verification evidence
         if: always()
         uses: actions/upload-artifact@v5
@@ -125,6 +128,7 @@ jobs:
             frontend/test-results/**/test-failed-*.png
             artifacts/batch-01-local-security/migration-history.json
             artifacts/batch-01-local-security/supabase-start-redacted.log
+            artifacts/batch-01-local-security/*.redacted
           if-no-files-found: warn
           retention-days: 14
       - name: Cleanup processes

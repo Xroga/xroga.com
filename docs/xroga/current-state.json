@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4e30d032d2429a0712b7915e8ac0570b11d1dc36",
-    "sourceTimestampUtc": "2026-10-13T22:38:21+05:00",
-    "auditStartedUtc": "2026-10-13T17:40:15.554Z",
+    "sha": "1a8a695bd3bd24db20b9e032580b0b25df8a3712",
+    "sourceTimestampUtc": "2026-10-13T22:40:17+05:00",
+    "auditStartedUtc": "2026-10-13T17:46:44.167Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -82369,6 +82369,49 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:7ce56aaa7d4c67e10d25",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/collect-local-security-logs.mjs",
+      "sha256": "0f56f4115ac4c4ed3d1949afdb73a1b20ec9c0f2a102f1668825b537dffd60f7",
+      "symbols": [
+        "log",
+        "name",
+        "out",
+        "root",
+        "secrets"
+      ],
+      "imports": [
+        "./disposable-supabase.mjs",
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "scripts/security/disposable-supabase.mjs"
+      ],
+      "entryPoints": [
+        "scripts/security/collect-local-security-logs.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
@@ -82410,9 +82453,11 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
+        "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs"
       ],
       "callers": [
+        "scripts/security/collect-local-security-logs.mjs:3",
         "scripts/security/disposable-supabase.test.mjs:3"
       ],
       "reachable": true,
@@ -92002,9 +92047,10 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "3750cd63ff008fac6e6cead5f90402d6a3fc32e6db0d949417bc3312f01b66e8",
+      "sha256": "303258c96da5838c0d5015aad02b9653202872c2f31344fbe4099aba45fb07fd",
       "sourceEntrypoints": [
         "backend/src/security/tenantIsolation.local.integration.ts",
+        "scripts/security/collect-local-security-logs.mjs",
         "scripts/security/disposable-supabase.mjs",
         "scripts/security/disposable-supabase.test.mjs",
         "scripts/security/full-supabase-history.mjs"
