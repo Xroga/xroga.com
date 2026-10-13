@@ -327,7 +327,9 @@ test('S01 styles stay inside S01 and the homepage composes it between the hero a
   const page = read('../../homepage/HomepageClient.tsx');
   const hero = page.indexOf('<S00Hero />');
   const s01 = page.indexOf('<S01CapabilityDeck />');
-  const next = page.indexOf('<HomepageBrowserEmployeesExact />');
+  // Main's S02 replaces this section name; preserve the same strict ordering
+  // assertion against either actual composition, not an obsolete literal.
+  const next = page.indexOf('<S02Work ') >= 0 ? page.indexOf('<S02Work ') : page.indexOf('<HomepageBrowserEmployeesExact />');
   assert.ok(hero !== -1 && hero < s01 && s01 < next);
   assert.doesNotMatch(page, /<HomepageCapabilitiesMosaic \/>/);
 });

@@ -14,6 +14,10 @@ The repository's production runner sorts complete filenames, including legacy `0
 
 Actual replay at `277d2900`, CI 38438478795, started the real stack then failed SQLSTATE 42883 in `20260727_command3a_function_hardening.sql`. Two optional dashboard functions (`get_old_chats_grouped_by_user`, `rls_auto_enable`) have no defining repository migration. The historical file is explicitly repaired to harden/revoke them only when they exist. No dummy function, skipped migration or weakened core-function requirement is introduced. Production's already-applied migration is not rerun or mutated by CI; its existing restrictions are retained. Further replay verification is pending.
 
+Replay at `82ae34ec`, CI 38439247869, completed the pre-007 history but 007 stopped because legacy `chats`/`chat_metadata` were absent. Read-only production catalogs confirmed every column/default/FK/check/index (no customer rows, credentials or DDL). The pending 007 migration now reconciles their full observed definitions **only when absent**, retains actual existing tables/policies/grants, and denies API-role access on newly created retired tables. It neither activates legacy chat nor substitutes minimal test projections. Their current repository has no active caller. Original 007 remains unverified pending replay and all other tenant gates.
+
+Concurrent main commits replaced the homepage browser section with S02. The merged regression run 38438478866 passed backend 2749, builds/types/lint, but a pre-existing S01 ordering assertion still searched the old literal. Its test now checks the same strict order against the existing old or S02 section; homepage design/code is untouched. No assertion is removed or skipped.
+
 This is representative sanitized upgrade testing, not proof of every possible production drift/orphan state. The earlier projected-table PostgreSQL suite remains useful adversarial policy testing but is not a substitute for this full-history gate.
 
 ## Evidence and limitations

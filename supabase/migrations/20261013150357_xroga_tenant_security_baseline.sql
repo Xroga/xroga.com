@@ -5,6 +5,48 @@
 -- backend ownership checks. No rows/constraints/columns are deleted or tightened.
 BEGIN;
 
+-- Reconcile two legacy catalog tables that predate repository migration history.
+-- Full observed columns/defaults/constraints/indexes, not projected test tables.
+-- Provenance: schema-observation.json plus read-only catalog defaults/index audit
+-- on 2026-10-13. Existing production tables/policies/grants are NOT recreated.
+-- Fresh installations keep these retired resources inaccessible to API roles;
+-- this does not introduce a second chat runtime or activate legacy endpoints.
+DO $legacy_schema$
+BEGIN
+  IF to_regclass('public.chat_metadata') IS NULL THEN
+    CREATE TABLE public.chat_metadata (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id uuid NOT NULL REFERENCES auth.users(id),
+      title text NOT NULL,
+      created_at timestamptz DEFAULT now(),
+      updated_at timestamptz DEFAULT now()
+    );
+    ALTER TABLE public.chat_metadata ENABLE ROW LEVEL SECURITY;
+    REVOKE ALL ON public.chat_metadata FROM anon, authenticated, service_role;
+    CREATE POLICY "Users can read own chat_metadata" ON public.chat_metadata FOR SELECT USING(auth.uid()=user_id);
+    CREATE POLICY "Users can insert own chat_metadata" ON public.chat_metadata FOR INSERT WITH CHECK(auth.uid()=user_id);
+    CREATE POLICY "Users can update own chat_metadata" ON public.chat_metadata FOR UPDATE USING(auth.uid()=user_id);
+    CREATE POLICY "Users can delete own chat_metadata" ON public.chat_metadata FOR DELETE USING(auth.uid()=user_id);
+  END IF;
+  IF to_regclass('public.chats') IS NULL THEN
+    CREATE TABLE public.chats (
+      id bigserial PRIMARY KEY,
+      user_id uuid NOT NULL REFERENCES auth.users(id),
+      role text NOT NULL CHECK(role IN ('user','assistant')),
+      content text NOT NULL,
+      message_id text UNIQUE,
+      created_at timestamptz DEFAULT now(),
+      chat_id uuid REFERENCES public.chat_metadata(id) ON DELETE CASCADE
+    );
+    CREATE INDEX idx_chats_user_time ON public.chats(user_id,created_at);
+    ALTER TABLE public.chats ENABLE ROW LEVEL SECURITY;
+    REVOKE ALL ON public.chats FROM anon, authenticated, service_role;
+    REVOKE ALL ON SEQUENCE public.chats_id_seq FROM anon, authenticated, service_role;
+    CREATE POLICY "Users can read own chats" ON public.chats FOR SELECT USING(auth.uid()=user_id);
+    CREATE POLICY "Users can insert own chats" ON public.chats FOR INSERT WITH CHECK(auth.uid()=user_id);
+  END IF;
+END $legacy_schema$;
+
 DO $baseline$
 DECLARE target text;
 BEGIN

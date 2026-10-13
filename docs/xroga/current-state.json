@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "277d29004b326f0a261b765746610fe274a2c73b",
-    "sourceTimestampUtc": "2026-10-13T22:24:52+05:00",
-    "auditStartedUtc": "2026-10-13T17:30:31.143Z",
+    "sha": "82ae34ec9d23607475bcc4836bd6b5f72c234b1b",
+    "sourceTimestampUtc": "2026-10-13T22:30:34+05:00",
+    "auditStartedUtc": "2026-10-13T17:37:26.106Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -91229,7 +91229,7 @@
       "sourcePath": "supabase/migrations/20261013150357_xroga_tenant_security_baseline.sql",
       "version": "20261013150357",
       "order": 68,
-      "sha256": "dbc1b4253d89acb1d25837819244e1cf6a18a9526c409d85ad5141345e0db13f"
+      "sha256": "035535945ef49fdac3d52692383998cb03cfc6e4d102949ea55007dc4a9aeede"
     }
   ],
   "workflows": [
@@ -98685,7 +98685,7 @@
     {
       "id": "test-suite:cbf92151ae82e4823f24",
       "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "declaredTests": 7,
+      "declaredTests": 9,
       "skipLocations": [],
       "focusLocations": []
     },

@@ -94,3 +94,21 @@ test('provider metadata uses real schema and owner filters without returning enc
 test('actual member identity cannot fetch privileged operational endpoints',async()=>{
   for(const path of ['/api/admin/errors','/metrics']) assert.equal((await request(path,users[0].token)).status,403);
 });
+test('real profile column grants reject self-promotion and auth metadata cannot supply admin authority',async()=>{
+  const owner=users[0];
+  const client=createClient(url,process.env.SUPABASE_ANON_KEY!,{global:{headers:{Authorization:`Bearer ${owner.token}`}},auth:{persistSession:false,autoRefreshToken:false}});
+  const escalation=await client.from('profiles').update({role:'owner'}).eq('id',owner.id);
+  assert.equal(escalation.error?.code,'42501');
+  const metadata=await admin.auth.admin.updateUserById(owner.id,{user_metadata:{role:'owner',tenantId:users[1].id}});assert.equal(metadata.error,null);
+  assert.equal((await request('/api/admin/errors',owner.token)).status,403);
+  const actual=await admin.from('profiles').select('role').eq('id',owner.id).single();assert.equal(actual.data?.role,'member');
+});
+test('real operations membership allows its reviewed relation then denies immediately after revocation',async()=>{
+  const [owner,member]=users;
+  const id=await insert('operations_memberships',{user_id:owner.id,project_id:owner.project,member_user_id:member.id,role:'viewer',created_by:owner.id});
+  try {
+    assert.equal((await request(`/api/operations/products/${owner.project}`,member.token)).status,200);
+    assert.equal((await admin.from('operations_memberships').delete().eq('id',id)).error,null);
+    assert.equal((await request(`/api/operations/products/${owner.project}`,member.token)).status,403);
+  } finally {assert.equal((await admin.from('operations_memberships').delete().eq('id',id)).error,null);}
+});
