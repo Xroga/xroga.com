@@ -5,6 +5,7 @@ import { dirname, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { jsonSchema, validateInventory } from './inventory-schema.mjs';
+import { npmCli } from '../ci/toolchain.mjs';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -313,7 +314,7 @@ export function generateInventory({ refresh = false } = {}) {
     sourceTimestampUtc: git(['show', '-s', '--format=%cI', baseline]), auditStartedUtc: new Date().toISOString(),
     initialWorkingTreeState: 'Clean default-branch checkout recorded before Command 001 implementation.',
     sourceTreeState: 'Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.',
-    node: process.version, npm: execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['--version'], { encoding: 'utf8', shell: process.platform === 'win32' }).trim(),
+    node: process.version, npm: execFileSync(process.execPath, [npmCli(), '--version'], { encoding: 'utf8' }).trim(),
     lockfiles: paths.filter(path => /(?:package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?)$/.test(path)),
     runtimeDeclarations: paths.filter(path => /(?:\.node-version|\.nvmrc|package\.json|Dockerfile[^/]*|workflows\/.+\.ya?ml)$/.test(path)),
   };

@@ -1,6 +1,6 @@
 # Source reconciliation
 
-1527 local sources ingested and hashed; 7 unavailable/unparsed sources. Code ingestion means AST/source metadata, not a claim of manual functional review of every module.
+1535 local sources ingested and hashed; 7 unavailable/unparsed sources. Code ingestion means AST/source metadata, not a claim of manual functional review of every module.
 
 Original feature coverage: **0/119 supplied and 0/119 mapped**. Original missions: **0/72 supplied and 0/72 mapped**. They remain deferred under the user's amendment. The generated feature CSV contains available canonical requirements; it is not the missing 119-item input.
 

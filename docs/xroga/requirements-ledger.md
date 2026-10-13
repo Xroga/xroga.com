@@ -1,6 +1,6 @@
 # Canonical Xroga requirements ledger
 
-Application source SHA: `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
+Application source SHA: `c7230c815870ad3942f5f74ddf70c9ddff2ec988`. This is **available-source reconciliation**, not completion of the original 119-feature/72-mission source coverage. All missing inputs remain `INACCESSIBLE_PENDING_EXPORT`. Historical source assertions are preserved without treating them as current proof.
 
 264 requirements; 264 available source rows mapped; 43 mandatory capability families; 23 external candidates; zero newly adopted runtime dependencies.
 
@@ -8,7 +8,7 @@ Application source SHA: `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097`. This is **av
 | --- | --- | --- | --- | --- |
 | XB01-C001 | XROGA REPOSITORY TRUTH MAP AND ARCHITECTURE INVENTORY | IMPLEMENTED_AND_REACHABLE | 001 | KEEP |
 | XB01-C002 | XROGA RESEARCH-TO-CODE REQUIREMENTS RECONCILIATION | IMPLEMENTED_BUT_UNVERIFIED | 002 | EXTEND |
-| XB01-C003 | DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE | PROPOSED_ONLY | 003 | NEW |
+| XB01-C003 | DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
 | XB01-C004 | DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH | PROPOSED_ONLY | 004 | NEW |
 | XB01-C005 | END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS | PROPOSED_ONLY | 005 | NEW |
 | XB01-C006 | XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE | PROPOSED_ONLY | 006 | NEW |
@@ -18,7 +18,7 @@ Application source SHA: `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097`. This is **av
 | XB01-C010 | TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY | PROPOSED_ONLY | 010 | NEW |
 | XR-FAMILY-repository-truth | repository truth | IMPLEMENTED_BUT_UNVERIFIED | 001 | EXTEND |
 | XR-FAMILY-research-traceability | research traceability | IMPLEMENTED_BUT_UNVERIFIED | 002 | EXTEND |
-| XR-FAMILY-deterministic-ci | deterministic CI | PROPOSED_ONLY | 003 | NEW |
+| XR-FAMILY-deterministic-ci | deterministic CI | IMPLEMENTED_BUT_UNVERIFIED | 003 | EXTEND |
 | XR-FAMILY-deployment-dependencies | deployment dependencies | IMPLEMENTED_BUT_UNVERIFIED | 004 | EXTEND |
 | XR-FAMILY-golden-journeys | golden journeys | PROPOSED_ONLY | 005 | NEW |
 | XR-FAMILY-engineering-rules | engineering rules | PROPOSED_ONLY | 006 | NEW |

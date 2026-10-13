@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: xroga-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -19,31 +23,21 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version-file: '.node-version'
           cache: npm
       - run: npm ci
 
-      - name: Repository truth inventory and adversarial fixtures
-        run: |
-          node scripts/xroga/inventory.mjs --check
-          node --test scripts/xroga/inventory.test.mjs
+      - name: Install pinned browser for existing local browser integration tests
+        run: npx playwright install --with-deps chromium
 
-      - name: Requirements source integrity and coverage
-        run: |
-          node scripts/xroga/validate-requirements-ledger.mjs
-          node --test scripts/xroga/requirements.test.mjs
+      - name: Canonical build, test and security baseline
+        run: npm run verify:baseline
 
-      - name: Backend and frontend unit tests
-        run: npm test
-
-      # An unquoted `src/**/*.test.ts` silently collects only the files two levels
-      # deep in POSIX sh, which once hid 15 backend files and 6 frontend files
-      # while still reporting success. These floors make that collapse fail loudly.
-      - name: Assert both suites actually collected their tests
-        run: |
-          set -euo pipefail
-          backend=$(npm run test --workspace=backend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
-          frontend=$(npm run test:frontend 2>&1 | sed -n 's/^[^0-9]*tests \([0-9][0-9]*\)[[:space:]]*$/\1/p' | tail -1)
-          echo "backend=$backend frontend=$frontend"
-          test "${backend:-0}" -ge 350 || { echo "Backend collected only ${backend:-0} tests"; exit 1; }
-          test "${frontend:-0}" -ge 40 || { echo "Frontend collected only ${frontend:-0} tests"; exit 1; }
+      - name: Preserve redacted build and test summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-01-baseline-${{ github.sha }}
+          path: artifacts/batch-01-baseline/
+          if-no-files-found: error
+          retention-days: 14

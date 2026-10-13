@@ -1,0 +1,15 @@
+{
+  "command": "003",
+  "status": "IN_PROGRESS",
+  "result": "NOT_YET_VERIFIED",
+  "toolchain": { "node": "22.21.1", "npm": "10.9.4", "lockedTypeScript": "5.9.3" },
+  "preliminaryChecks": [
+    { "name": "baseline-negative-fixtures", "exitCode": 0, "tests": 10, "pass": 10, "fail": 0, "skipped": 0 },
+    { "name": "migration-syntax-and-identifiers", "exitCode": 0, "migrations": 67, "databaseExecuted": false },
+    { "name": "agent-dependency-resolution", "exitCode": 0 }
+  ],
+  "cleanRunManifests": [],
+  "ciVerified": false,
+  "productionDeployed": false,
+  "pending": ["Two clean baseline runs at the same SHA", "CI backend/frontend builds", "Existing dependency advisory classification"]
+}

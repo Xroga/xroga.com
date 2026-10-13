@@ -15,8 +15,8 @@
 | Command | Scope and required proof | Dependencies | Status | Commit |
 | --- | --- | --- | --- | --- |
 | 001 | AST/import-aware repository truth; all routes/queues/migrations/named paths; classified placeholders; deterministic schema-valid regeneration; positive/negative inventory tests | Clean fetched default branch | VERIFIED (inventory; existing gaps recorded) | `a06f8cb9a2b167f41fcb4dfe5ea53582f5734097` |
-| 002 | Available-source hashes, canonical ledger, dependency register, row/mission mapping where actually supplied, integrity/coverage validation | 001; user-approved deferred historical coverage | VERIFIED available-source implementation; original coverage DEFERRED | Recorded after commit |
-| 003 | Frozen installation, explicit toolchain, fail-propagating aggregate baseline, skip/lockfile/migration validation, clean-run evidence | 001–002 | NOT STARTED | — |
+| 002 | Available-source hashes, canonical ledger, dependency register, row/mission mapping where actually supplied, integrity/coverage validation | 001; user-approved deferred historical coverage | VERIFIED available-source implementation; original coverage DEFERRED | `c7230c815870ad3942f5f74ddf70c9ddff2ec988` |
+| 003 | Frozen installation, explicit toolchain, fail-propagating aggregate baseline, skip/lockfile/migration validation, clean-run evidence | 001–002 | IN PROGRESS | — |
 | 004 | Actual/configured/legacy/proposed topology; all env readers by name; runtime/dependency schema and unsafe-default checks | 001 and 003 | NOT STARTED | — |
 | 005 | Twelve golden journey contracts and executable existing journeys; explicit known gaps; negative auth/approval/evidence/recovery tests | 001–004 | NOT STARTED | — |
 | 006 | Preserve and strengthen AGENTS; twelve invariants; structured mission policy, evidence/rollback/security gates and fixtures | 001–005 | NOT STARTED | — |
@@ -44,6 +44,14 @@ Command 001 verification: inventory check passes with zero duplicate IDs and det
 ## Command 002 checkpoint
 
 Available-source ledger gate passes: 264 records (ten command specifications, 43 mandatory capability families, 211 historical repository-ledger records); 23 primary pinned repository metadata records; no new runtime dependencies. Eighteen combined validator/inventory tests pass. Source records were 1,534 at verification (1,527 available, seven inaccessible). Original coverage remains 0/119 and 0/72 supplied; 243 later owner assignments are explicitly deferred, not invented. Full evidence: `docs/xroga/evidence/command-002/{summary.md,manifest.json}`. Portable Git-canonical hashes and exact-byte attachment preservation were added. Proceed to Command 003 under the user's source-coverage amendment.
+
+## Command 003 checkpoint
+
+Toolchain selected from the existing API Docker pin: Node 22.21.1, npm 10.9.4; existing locked TypeScript 5.9.3. A shell-free npm CLI resolver, one fail-propagating baseline, lock integrity, AST skip/focus governance, and PostgreSQL WASM syntax/identifier checks are implemented. Fourteen existing platform/browser skip sites are individually registered; no runtime test was newly skipped. Existing unit CI is becoming the aggregate baseline; the Agent V2 lock workflow retains its dependency checks while automatic lock rewriting/main pushes are removed. PR migration verification is made secret-free; protected production migration steps are preserved. All Node setup workflows use the same runtime file.
+
+Only new package so far: root dev-only `libpg-query@18.1.5` (MIT), with locked `@pgsql/types@18.0.0`; no runtime dependency versions upgraded. npm 10 rewrote some optional-package metadata in the standalone frontend lock; clean installs must verify that behavior. Installation audit reports existing advisories (root: 62, including six critical; frontend: 21, including one critical). These need runtime/admission classification and final security review; no automatic or force audit fix is authorized by this checkpoint.
+
+Next: install frozen dependencies, run negative baseline fixtures and all 67 migration syntax checks, create a clearly labeled verification checkpoint commit, then execute the complete baseline twice from the same clean isolated SHA with no local production environment files. The tracked frontend public configuration is allowed only when all its keys are overridden by explicit fixture values. Fresh/upgrade DB execution and staging security validation remain separate mandatory gates for Commands 007–010.
 
 ## External/deferred prerequisites
 

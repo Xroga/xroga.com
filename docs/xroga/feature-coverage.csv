@@ -1,7 +1,7 @@
 requirement_id,title,current_state,owner_command,source_refs
 "XB01-C001","XROGA REPOSITORY TRUTH MAP AND ARCHITECTURE INVENTORY","IMPLEMENTED_AND_REACHABLE","001","SRC-8b81d94ecc7b92e7#COMMAND 001, full specification and acceptance criteria"
 "XB01-C002","XROGA RESEARCH-TO-CODE REQUIREMENTS RECONCILIATION","IMPLEMENTED_BUT_UNVERIFIED","002","SRC-8b81d94ecc7b92e7#COMMAND 002, full specification and acceptance criteria"
-"XB01-C003","DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE","PROPOSED_ONLY","003","SRC-8b81d94ecc7b92e7#COMMAND 003, full specification and acceptance criteria"
+"XB01-C003","DETERMINISTIC BUILD, TEST, MIGRATION AND CI BASELINE","IMPLEMENTED_BUT_UNVERIFIED","003","SRC-8b81d94ecc7b92e7#COMMAND 003, full specification and acceptance criteria"
 "XB01-C004","DEPLOYMENT, RUNTIME AND EXTERNAL DEPENDENCY TRUTH","PROPOSED_ONLY","004","SRC-8b81d94ecc7b92e7#COMMAND 004, full specification and acceptance criteria"
 "XB01-C005","END-TO-END GOLDEN USER JOURNEY AND ACCEPTANCE HARNESS","PROPOSED_ONLY","005","SRC-8b81d94ecc7b92e7#COMMAND 005, full specification and acceptance criteria"
 "XB01-C006","XROGA ENGINEERING OPERATING CONTRACT AND DEFINITION OF DONE","PROPOSED_ONLY","006","SRC-8b81d94ecc7b92e7#COMMAND 006, full specification and acceptance criteria"
@@ -11,7 +11,7 @@ requirement_id,title,current_state,owner_command,source_refs
 "XB01-C010","TOOL TRUST, DATA EGRESS, SSRF AND UNTRUSTED-INPUT SECURITY GATEWAY","PROPOSED_ONLY","010","SRC-8b81d94ecc7b92e7#COMMAND 010, full specification and acceptance criteria"
 "XR-FAMILY-repository-truth","repository truth","IMPLEMENTED_BUT_UNVERIFIED","001","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: repository truth;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
 "XR-FAMILY-research-traceability","research traceability","IMPLEMENTED_BUT_UNVERIFIED","002","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: research traceability;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
-"XR-FAMILY-deterministic-ci","deterministic CI","PROPOSED_ONLY","003","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: deterministic CI;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
+"XR-FAMILY-deterministic-ci","deterministic CI","IMPLEMENTED_BUT_UNVERIFIED","003","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: deterministic CI;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
 "XR-FAMILY-deployment-dependencies","deployment dependencies","IMPLEMENTED_BUT_UNVERIFIED","004","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: deployment dependencies;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
 "XR-FAMILY-golden-journeys","golden journeys","PROPOSED_ONLY","005","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: golden journeys;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"
 "XR-FAMILY-engineering-rules","engineering rules","PROPOSED_ONLY","006","SRC-8b81d94ecc7b92e7#Command 002 mandatory capability family: engineering rules;SRC-3d3190a1571aa705#Candidate source surfaces and current-state evidence"

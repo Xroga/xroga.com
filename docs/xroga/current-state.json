@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "a06f8cb9a2b167f41fcb4dfe5ea53582f5734097",
-    "sourceTimestampUtc": "2026-10-13T14:35:23+05:00",
-    "auditStartedUtc": "2026-10-13T09:50:55.421Z",
+    "sha": "c7230c815870ad3942f5f74ddf70c9ddff2ec988",
+    "sourceTimestampUtc": "2026-10-13T14:56:13+05:00",
+    "auditStartedUtc": "2026-10-13T10:48:55.622Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v24.18.0",
-    "npm": "11.16.0",
+    "node": "v22.21.1",
+    "npm": "10.9.4",
     "lockfiles": [
       "backend/package-lock.json",
       "frontend/package-lock.json",
@@ -30,6 +30,7 @@
       ".github/workflows/supabase-migrate.yml",
       ".github/workflows/unit-tests.yml",
       ".github/workflows/vercel-build-check.yml",
+      ".node-version",
       "Dockerfile.api",
       "backend/Dockerfile",
       "backend/package.json",
@@ -79816,6 +79817,477 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:ec34a4d89889d84c0efb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/check-agent-dependencies.mjs",
+      "sha256": "486310e8fdcab92e346eebe6aa28e1d3c8e0968bf20a4068dce75d8617a0822d",
+      "symbols": [
+        "backendRequire",
+        "backendZod",
+        "cline",
+        "clineManifest",
+        "directory",
+        "manifest",
+        "packageVersion",
+        "parent",
+        "promptEntry",
+        "promptRequire",
+        "promptZod",
+        "rootRequire"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:4c164d227a417b9bc539",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/check-lockfile-integrity.mjs",
+      "sha256": "3986b1ff52d0e5e88d268f5b05b0a66435375b107f083d107b4c292638d9dc9e",
+      "symbols": [
+        "canonical",
+        "checkLocks",
+        "field",
+        "frontendLock",
+        "read",
+        "record",
+        "validateManifestLock",
+        "workspace",
+        "workspaceLock"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [
+        "scripts/ci/check-lockfile-integrity.mjs"
+      ],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:31efa78657642cb55b6d",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/check-test-skips.mjs",
+      "sha256": "83a31e22c085265deae6078367233007d50065078ba6239c96fb456615c605a1",
+      "symbols": [
+        "analyzeTestSkips",
+        "callee",
+        "condition",
+        "current",
+        "discoverSkips",
+        "entry",
+        "files",
+        "finding",
+        "findings",
+        "first",
+        "id",
+        "ids",
+        "kind",
+        "main",
+        "options",
+        "record",
+        "registryPath",
+        "result",
+        "skip",
+        "source",
+        "title",
+        "titleFor",
+        "ts",
+        "validateSkips",
+        "visit"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:9",
+        "scripts/ci/register-existing-skips.mjs:4"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:27c317c410ffae0628eb",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/register-existing-skips.mjs",
+      "sha256": "e42086a9714bc8b15ab52a367d0658e1f0fe16084ed7f16bf28437d2c0f2c66c",
+      "symbols": [
+        "current",
+        "finding",
+        "findings",
+        "inspectedBase",
+        "original",
+        "output",
+        "reasons"
+      ],
+      "imports": [
+        "./check-test-skips.mjs",
+        "./toolchain.mjs",
+        "node:child_process",
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [
+        "scripts/ci/check-test-skips.mjs",
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c4f135aa7dcb9cdc3800",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/run-baseline.mjs",
+      "sha256": "e9048ff23e89b16219074424a51a1c52a1634581385659ff5d3cee2ee10ad474",
+      "symbols": [
+        "after",
+        "append",
+        "artifactDirectory",
+        "backendRequire",
+        "before",
+        "child",
+        "count",
+        "directory",
+        "expected",
+        "field",
+        "filename",
+        "frontendRequire",
+        "keys",
+        "main",
+        "manifest",
+        "npm",
+        "output",
+        "path",
+        "publicConfigOverridden",
+        "redactLog",
+        "result",
+        "results",
+        "runSteps",
+        "safe",
+        "safeTestEnvironment",
+        "settled",
+        "sourceState",
+        "started",
+        "step",
+        "steps",
+        "testCount",
+        "testEnvironment",
+        "timer",
+        "toolchain",
+        "tracked",
+        "tsc"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:11"
+      ],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1",
+        "declared-host:batch-one-test.invalid",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:module",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/ci/run-baseline.mjs#verifyToolchain"
+      ],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e569009321ab836d5a20",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/toolchain.mjs",
+      "sha256": "ba3606e423a40a2bb9ff6d3cc775b832a2b4deac95697d4952dcee81523b8749",
+      "symbols": [
+        "bundled",
+        "candidate",
+        "candidates",
+        "canonicalToolchain",
+        "directory",
+        "executable",
+        "expected",
+        "manifest",
+        "match",
+        "node",
+        "nodePath",
+        "npmCli",
+        "observedNpm",
+        "root",
+        "verifyToolchain"
+      ],
+      "imports": [
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/ci/check-lockfile-integrity.mjs",
+        "scripts/ci/validate-migrations.mjs"
+      ],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:7",
+        "scripts/ci/check-agent-dependencies.mjs:5",
+        "scripts/ci/check-lockfile-integrity.mjs:5",
+        "scripts/ci/check-test-skips.mjs:7",
+        "scripts/ci/register-existing-skips.mjs:5",
+        "scripts/ci/run-baseline.mjs:7",
+        "scripts/ci/validate-migrations.mjs:5",
+        "scripts/ci/verify-toolchain.mjs:1",
+        "scripts/xroga/inventory.mjs:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:child_process",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/ci/toolchain.mjs#verifyToolchain"
+      ],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e543625494ba6c395568",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/validate-migrations.mjs",
+      "sha256": "af5c329428fb2edb8897f81f7f5d18ad04d85e829c8f426f629881c5464bba1a",
+      "symbols": [
+        "directory",
+        "entries",
+        "entry",
+        "main",
+        "match",
+        "ordered",
+        "validateMigrations",
+        "versions"
+      ],
+      "imports": [
+        "./toolchain.mjs",
+        "libpg-query",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [
+        "scripts/ci/validate-migrations.mjs"
+      ],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:10"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "libpg-query",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:16295f02f449c0f14133",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/verify-toolchain.mjs",
+      "sha256": "3b4c74b54526645c63327f5b15b900ac5911d10d80f65a672f5beedcc09a4d92",
+      "symbols": [],
+      "imports": [
+        "./toolchain.mjs"
+      ],
+      "runtimeImports": [
+        "scripts/ci/toolchain.mjs"
+      ],
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/ci/verify-toolchain.mjs#verifyToolchain"
+      ],
+      "testCoverage": [],
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:8df4117362a3bd1c5723",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/enforce-next-postcss.mjs",
@@ -80739,16 +81211,13 @@
         "zod"
       ],
       "runtimeImports": [],
-      "entryPoints": [
-        "scripts/xroga/inventory.mjs",
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/inventory.mjs:7",
         "scripts/xroga/inventory.test.mjs:4",
         "scripts/xroga/requirements-schema.mjs:2"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "zod"
@@ -80761,18 +81230,18 @@
       "testCoverage": [
         "scripts/xroga/inventory.test.mjs"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
       "id": "surface:21fe5fadd2668f300c7a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "sha256": "c875693b73b2113887e6afcdcf3594ea858fc846ee7619b44d9b088140eeff54",
+      "sha256": "6c378c4abd5c77ef499e5b4bf10d250ab58aabe80f3057357eb8af4bddf4b876",
       "symbols": [
         "allRegistrations",
         "analyzeSource",
@@ -80905,6 +81374,7 @@
         "workflows"
       ],
       "imports": [
+        "../ci/toolchain.mjs",
         "./inventory-schema.mjs",
         "node:child_process",
         "node:crypto",
@@ -80914,15 +81384,14 @@
         "node:url"
       ],
       "runtimeImports": [
+        "scripts/ci/toolchain.mjs",
         "scripts/xroga/inventory-schema.mjs"
       ],
-      "entryPoints": [
-        "scripts/xroga/inventory.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/inventory.test.mjs:3"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
@@ -80949,7 +81418,7 @@
       "confidence": "HIGH",
       "reason": "Upcoming capability presentation; operational backend not demonstrated.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -81038,14 +81507,12 @@
         "scripts/xroga/requirements-schema.mjs",
         "scripts/xroga/research-candidates.mjs"
       ],
-      "entryPoints": [
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/requirements.test.mjs:5",
         "scripts/xroga/validate-requirements-ledger.mjs:4"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "declared-host:chatgpt.com",
@@ -81067,11 +81534,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -81109,15 +81576,13 @@
       "runtimeImports": [
         "scripts/xroga/inventory-schema.mjs"
       ],
-      "entryPoints": [
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/reconcile-requirements.mjs:7",
         "scripts/xroga/requirements.test.mjs:6",
         "scripts/xroga/validate-requirements-ledger.mjs:5"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "zod"
@@ -81130,11 +81595,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -81162,13 +81627,11 @@
         "node:url"
       ],
       "runtimeImports": [],
-      "entryPoints": [
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/reconcile-requirements.mjs:6"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:child_process",
@@ -81183,11 +81646,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -81220,13 +81683,11 @@
         "scripts/xroga/reconcile-requirements.mjs",
         "scripts/xroga/requirements-schema.mjs"
       ],
-      "entryPoints": [
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "entryPoints": [],
       "callers": [
         "scripts/xroga/requirements.test.mjs:7"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "node:fs",
@@ -81241,11 +81702,11 @@
       "testCoverage": [
         "scripts/xroga/requirements.test.mjs"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -89187,8 +89648,10 @@
     {
       "id": "workflow:ca8597762ef09a8667e8",
       "sourcePath": ".github/workflows/agent-v2-dependency-lock.yml",
-      "sha256": "e7bc4e00fbe21947aec65273286179eb5185940ad8f83de9583f19c460ceaa01",
-      "sourceEntrypoints": [],
+      "sha256": "014ca25b2e20149be51286b4eb6dbf021e36928d937f01609a2fd81c139724a0",
+      "sourceEntrypoints": [
+        "scripts/ci/check-lockfile-integrity.mjs"
+      ],
       "hasSchedule": false
     },
     {
@@ -89208,21 +89671,21 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "fb3a2780d409f6807c4dfcdbcdc86021733f4673a0ce71142fe890cf2ebf2dbe",
+      "sha256": "e40ad257118600dc8e8d4878c59be12e7df77b53aebbb3c5b6187f96799c0e7b",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:fc2d0537905265057eb7",
       "sourcePath": ".github/workflows/command4-authority.yml",
-      "sha256": "68aac27600aad2bcb2e2abda5003843144594b0071a4337250662d42ea3e832d",
+      "sha256": "1f36ecadd61f1ad534c9c0781df1e217d5a6bbe39883b4c2cac28a13f6bbe8f1",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:ae571f7c87f13ea94a74",
       "sourcePath": ".github/workflows/community-security.yml",
-      "sha256": "1e48a6bdfc21a9b3bc0f35e91b39c23b9ffe0ae36cf0e34ffc2104ccca7cd589",
+      "sha256": "0e07c0c0297bab03cbc8adf646ff1111ed04a8ec854b337237168d4d5f8e5f79",
       "sourceEntrypoints": [
         "backend/scripts/verify-community-rls.mjs"
       ],
@@ -89238,7 +89701,7 @@
     {
       "id": "workflow:5c7b527e67952c0c1c13",
       "sourcePath": ".github/workflows/fly-sandbox-browser-verification.yml",
-      "sha256": "e79ed7a4e91385962ea86280d5761205b21c85925dc0067cedc0d4f5aa14a28e",
+      "sha256": "da0de446d7584110a6449d93ded105fe28d4250329f5e1175bb02f9a47a9e950",
       "sourceEntrypoints": [
         "backend/src/scripts/verifyFlySandboxBrowser.ts"
       ],
@@ -89247,21 +89710,21 @@
     {
       "id": "workflow:c06789c143ae705f478b",
       "sourcePath": ".github/workflows/growth-technical-publishing.yml",
-      "sha256": "8cd168c78cac7b2685dbac74910dc2143dc1fd56c631da25bd3e67d5aabcb42b",
+      "sha256": "d6dd1782cce712ed21704a07b4082f810d1f290d1909422801ea26709e297b6b",
       "sourceEntrypoints": [],
       "hasSchedule": true
     },
     {
       "id": "workflow:76cb9481af951139a7a3",
       "sourcePath": ".github/workflows/launch-production-verification.yml",
-      "sha256": "744bda8d38f916b7241848ea1e773d729730e64754c001a5314b2debbd2d5b95",
+      "sha256": "b1499b49d9d560bb79e26ccf5425f51b7a073aed1ab02c5715f571d2b7bddf5d",
       "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:5fced632532866b577b3",
       "sourcePath": ".github/workflows/seo-audit.yml",
-      "sha256": "afc4c84c4a804cf850858efb5235e588d48bd8ba88ac7dee4d594515b9bb375e",
+      "sha256": "6da0bdb5a8947b6ab42445db2fd8ffb6b0f871e46d8dc3e6f12d9355c246a000",
       "sourceEntrypoints": [
         "scripts/seo-audit.mjs"
       ],
@@ -89270,29 +89733,25 @@
     {
       "id": "workflow:8379e2840b619013e763",
       "sourcePath": ".github/workflows/supabase-migrate.yml",
-      "sha256": "fa34c0d87e97fb5db5f68b0a9b172491fce4055143c8af6832bb26bed41cbe51",
+      "sha256": "15abdc17e49624409e9daf1c77b70054ccf211779134d232b043d5c7c53f41e0",
       "sourceEntrypoints": [
         "backend/scripts/verify-community-rls.mjs",
-        "scripts/apply-supabase-migrations.mjs"
+        "scripts/apply-supabase-migrations.mjs",
+        "scripts/ci/validate-migrations.mjs"
       ],
       "hasSchedule": false
     },
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "64603205bccae5f8599b58e6d8c1c295a355e8ea334a61e81f10f3078737a722",
-      "sourceEntrypoints": [
-        "scripts/xroga/inventory.mjs",
-        "scripts/xroga/inventory.test.mjs",
-        "scripts/xroga/requirements.test.mjs",
-        "scripts/xroga/validate-requirements-ledger.mjs"
-      ],
+      "sha256": "4f4206e4a5b8849f51637a5541161c4fd2441b5c8ad94d9b8b588ea834c5d2d4",
+      "sourceEntrypoints": [],
       "hasSchedule": false
     },
     {
       "id": "workflow:35f7d63a2c5b6c3706b8",
       "sourcePath": ".github/workflows/vercel-build-check.yml",
-      "sha256": "69e5e139701b211ef816e9992175751f19e5b03cc0747d7459730f11a304ece3",
+      "sha256": "8858f908b862b7fbbdb216848eb5e24c6261ea74d782b661db2a3227c615213a",
       "sourceEntrypoints": [],
       "hasSchedule": false
     }
@@ -92619,6 +93078,16 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:0de83c82aad6624dd3c4",
+      "sourcePath": "scripts/ci/check-test-skips.mjs",
+      "line": 25,
+      "kind": "TODO",
+      "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:f9045fa718ba10b6245b",
       "sourcePath": "scripts/test-resilience.js",
       "line": 20,
@@ -92643,167 +93112,167 @@
       "sourcePath": "scripts/xroga/inventory-schema.mjs",
       "line": 3,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2fbc3517f356731f88bd",
+      "id": "finding:75208a87fdd7b5406ea5",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 119,
+      "line": 120,
       "kind": "TODO",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:5ba21770655c367fd187",
+      "id": "finding:288afc7f32ba85f75580",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 119,
+      "line": 120,
       "kind": "FIXME",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:fa48fa6f136d033187d3",
+      "id": "finding:c8406b8740165f19c7b9",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 119,
+      "line": 120,
       "kind": "STUB",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:06eb1dc153df1a9e5f85",
+      "id": "finding:4dd538d728e710a79d33",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 119,
+      "line": 120,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6f4dcc138c1cc8cf3ffb",
+      "id": "finding:1025cba96cbcb193f95a",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 119,
+      "line": 120,
       "kind": "MOCK",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:174987f0029f5d2e1f95",
+      "id": "finding:77f389d86842723415ee",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 239,
+      "line": 240,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1d684267d376644160de",
+      "id": "finding:86214b1bca37f84263ac",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 239,
+      "line": 240,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b496492ff3d91f180f1b",
+      "id": "finding:a4eeba75104398174282",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 251,
+      "line": 252,
       "kind": "MOCK",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:ce2d6e2220303c07fc10",
+      "id": "finding:38305352e54f3b04f1d6",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 251,
+      "line": 252,
       "kind": "TODO",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:96ae6789e933c07eac32",
+      "id": "finding:2351f927a2ce6482f544",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 251,
+      "line": 252,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a134d188bb6ff27a9537",
+      "id": "finding:6dc52417d7639145557e",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 251,
+      "line": 252,
       "kind": "SIMULATION",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1b11ccbf0e71c9a18b8e",
+      "id": "finding:a08154b3a0df31fb34d4",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 271,
+      "line": 272,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:e8bf4c3248f2da5edf18",
-      "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 275,
-      "kind": "TODO",
-      "reachable": true,
-      "state": "PARTIAL",
-      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
-      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
-    },
-    {
-      "id": "finding:304518a6e91c96a082ec",
+      "id": "finding:b63ae3a086ae4153bed6",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 276,
       "kind": "TODO",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:097f262a9623b2d87991",
+      "id": "finding:6ebadea0420e836e5013",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 351,
+      "line": 277,
+      "kind": "TODO",
+      "reachable": false,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:24c77dc15c068135c9b2",
+      "sourcePath": "scripts/xroga/inventory.mjs",
+      "line": 352,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:25cf1a87b8e34b650072",
+      "id": "finding:c66be6aeb6188e08dba2",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 351,
+      "line": 352,
       "kind": "SIMULATED",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -92813,7 +93282,7 @@
       "sourcePath": "scripts/xroga/reconcile-requirements.mjs",
       "line": 169,
       "kind": "PLACEHOLDER",
-      "reachable": true,
+      "reachable": false,
       "state": "PARTIAL",
       "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
@@ -98099,6 +98568,13 @@
       "id": "test-suite:969647cf4587acdb9e6c",
       "sourcePath": "frontend/src/store/projectWorkspaceSnapshot.test.ts",
       "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:5a20cade29e90a03909b",
+      "sourcePath": "scripts/ci/baseline.test.mjs",
+      "declaredTests": 10,
       "skipLocations": [],
       "focusLocations": []
     },

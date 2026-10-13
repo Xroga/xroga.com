@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "a06f8cb9a2b167f41fcb4dfe5ea53582f5734097",
+  "source_sha": "c7230c815870ad3942f5f74ddf70c9ddff2ec988",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -124,8 +124,10 @@
       ],
       "feature_category": "batch-command-003",
       "classification": "backend",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "docs/xroga/evidence/command-003/manifest.json"
+      ],
       "implementation_owner_command": "003",
       "priority": "P1",
       "dependencies": [
@@ -158,7 +160,7 @@
         "The same clean checkout can execute the baseline twice without source-tree mutation."
       ],
       "external_repo_candidates": [],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
@@ -660,8 +662,17 @@
       ],
       "feature_category": "deterministic CI",
       "classification": "infrastructure",
-      "current_state": "PROPOSED_ONLY",
-      "current_paths": [],
+      "current_state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "current_paths": [
+        "scripts/ci/check-agent-dependencies.mjs",
+        "scripts/ci/check-lockfile-integrity.mjs",
+        "scripts/ci/check-test-skips.mjs",
+        "scripts/ci/register-existing-skips.mjs",
+        "scripts/ci/run-baseline.mjs",
+        "scripts/ci/toolchain.mjs",
+        "scripts/ci/validate-migrations.mjs",
+        "scripts/ci/verify-toolchain.mjs"
+      ],
       "implementation_owner_command": "003",
       "priority": "P0",
       "dependencies": [
@@ -691,7 +702,7 @@
         "Testcontainers",
         "Toxiproxy"
       ],
-      "disposition": "NEW",
+      "disposition": "EXTEND",
       "rationale": "Preserve current implementation candidates and verify their behavior before selecting replacement; no researched dependency is automatically adopted; matched paths are inspection candidates, not keyword-based proof of functional completion",
       "confidence": "MEDIUM",
       "unresolved_questions": [],
