@@ -10,6 +10,7 @@ import { analyzeTestSkips, validateSkips } from './check-test-skips.mjs';
 import { validateMigrations } from './validate-migrations.mjs';
 import { publicConfigOverridden, redactLog, runSteps, safeTestEnvironment } from './run-baseline.mjs';
 import { validateInstalledVersion } from './check-installed-dependencies.mjs';
+import { compareBaselineRuns } from './compare-baseline-runs.mjs';
 
 const fixture = () => mkdtempSync(join(tmpdir(), 'xroga-ci-fixture-'));
 function cleanup(path) {
@@ -30,6 +31,15 @@ test('an installed out-of-range compiler fails; only an explicit approved packag
   validateInstalledVersion('typescript', '5.9.3', '^5.8.2');
   validateInstalledVersion('postcss', '8.5.24', '8.4.31', { postcss: '8.5.24' });
   assert.throws(() => validateInstalledVersion('postcss', '8.6.0', '8.4.31', { postcss: '8.5.24' }), /violates declared range/);
+});
+test('repeatability requires passing full runs at identical SHA, locks and installed graph without mutation', () => {
+  const run = { result: 'PASS', sourceTreeMutated: false, sourceSha: 'fixture-sha', toolchain: { node: '22.21.1', npm: '10.9.4' },
+    installedDependencies: { sha256: 'fixture-graph' }, lockfiles: [{ path: 'fixture-lock', sha256: 'fixture-hash' }],
+    results: Array.from({ length: 17 }, (_, index) => ({ name: `fixture-stage-${index}`, exitCode: 0 })) };
+  assert.equal(compareBaselineRuns(run, structuredClone(run)).result, 'PASS_REPEATED_CLEAN_BASELINE');
+  for (const patch of [{ result: 'FAIL' }, { sourceTreeMutated: true }, { sourceSha: 'different' }, { installedDependencies: { sha256: 'changed' } }, { results: [] }]) {
+    assert.throws(() => compareBaselineRuns(run, { ...run, ...patch }));
+  }
 });
 test('focused tests fail even when someone attempts to register them; unexplained skips also fail', () => {
   const focused = analyzeTestSkips('fixture.test.ts', "test.only('forced', () => {});");

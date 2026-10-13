@@ -36,7 +36,12 @@ jobs:
         env:
           # Share the cache between the probe and existing local sandbox executor.
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/batch-01-playwright
-        run: npm run verify:baseline
+        run: |
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-a-manifest.json
+          npm run verify:baseline
+          cp artifacts/batch-01-baseline/manifest.json artifacts/batch-01-baseline/run-b-manifest.json
+          node scripts/ci/compare-baseline-runs.mjs
 
       - name: Preserve redacted build and test summaries
         if: always()

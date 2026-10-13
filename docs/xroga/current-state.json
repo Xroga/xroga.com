@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "e9d6ba183ea56cbeb24ea9dae2fc1c872a4f05a0",
-    "sourceTimestampUtc": "2026-10-13T15:59:41+05:00",
-    "auditStartedUtc": "2026-10-13T11:23:19.316Z",
+    "sha": "7ce07a3d22eaaef5242b786089c2d3bd59e293d5",
+    "sourceTimestampUtc": "2026-10-13T16:23:23+05:00",
+    "auditStartedUtc": "2026-10-13T11:23:54.675Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -80063,6 +80063,54 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:b52dca2df19c3c07d436",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/ci/compare-baseline-runs.mjs",
+      "sha256": "e38f207723a2107830b4ac146bbcf709b64877aa9411ccd48384ba7ba75c1514",
+      "symbols": [
+        "compareBaselineRuns",
+        "directory",
+        "read",
+        "run",
+        "suites"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/ci/compare-baseline-runs.mjs"
+      ],
+      "callers": [
+        "scripts/ci/baseline.test.mjs:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "node:url"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/ci/baseline.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:27c317c410ffae0628eb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/register-existing-skips.mjs",
@@ -89813,8 +89861,10 @@
     {
       "id": "workflow:cd0effce06f425599e96",
       "sourcePath": ".github/workflows/unit-tests.yml",
-      "sha256": "c5673c53061bba26c46e23e51b765eb12da213ef8fd8b8fbd4bed714e040fbf9",
-      "sourceEntrypoints": [],
+      "sha256": "3089c5408a994e77ae1d94533f08a6150aa806c32b490bb85aa8185878dbbe6a",
+      "sourceEntrypoints": [
+        "scripts/ci/compare-baseline-runs.mjs"
+      ],
       "hasSchedule": false
     },
     {
@@ -98643,7 +98693,7 @@
     {
       "id": "test-suite:5a20cade29e90a03909b",
       "sourcePath": "scripts/ci/baseline.test.mjs",
-      "declaredTests": 11,
+      "declaredTests": 12,
       "skipLocations": [],
       "focusLocations": []
     },

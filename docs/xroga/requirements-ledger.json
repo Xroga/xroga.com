@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "e9d6ba183ea56cbeb24ea9dae2fc1c872a4f05a0",
+  "source_sha": "7ce07a3d22eaaef5242b786089c2d3bd59e293d5",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -668,6 +668,7 @@
         "scripts/ci/check-installed-dependencies.mjs",
         "scripts/ci/check-lockfile-integrity.mjs",
         "scripts/ci/check-test-skips.mjs",
+        "scripts/ci/compare-baseline-runs.mjs",
         "scripts/ci/register-existing-skips.mjs",
         "scripts/ci/run-baseline.mjs",
         "scripts/ci/toolchain.mjs",
