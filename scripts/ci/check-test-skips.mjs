@@ -66,8 +66,11 @@ export function validateSkips(findings, registry, today = new Date().toISOString
 }
 export function discoverSkips(repositoryRoot = root) {
   const files = execFileSync('git', ['ls-files'], { cwd: repositoryRoot, encoding: 'utf8' }).trim().split(/\r?\n/)
-    .filter(path => /(?:\.test\.|\.spec\.)[cm]?[jt]sx?$/.test(path));
+    .filter(isGovernedTestSource);
   return files.flatMap(path => analyzeTestSkips(path, readFileSync(join(repositoryRoot, path), 'utf8')));
+}
+export function isGovernedTestSource(path) {
+  return /(?:\.test\.|\.spec\.)[cm]?[jt]sx?$/.test(path) || /(?:^|\/)(?:e2e|tests)\/.*\.[cm]?[jt]sx?$/.test(path);
 }
 export function main() {
   const registryPath = join(root, 'tests/ci/known-skips.json');

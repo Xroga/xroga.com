@@ -191,6 +191,16 @@
       "reason": "Existing real-browser test is conditional on installed Chromium. Baseline CI installs pinned Playwright Chromium; missing browser is a reported gap, not passing browser coverage.",
       "issue_or_command": "XB01-C003 platform/browser baseline",
       "review_date": "2026-11-13"
+    },
+    {
+      "id": "aad429207d8a73e925011bc88e2cbbe8435c02781aa960fdd61e3b96ef34a8ab",
+      "path": "frontend/e2e/os-preview-founder-fixture.ts",
+      "title": "!state",
+      "condition": "!state",
+      "owner": "Xroga engineering",
+      "reason": "Pre-existing helper requires an isolated TEST founder AAL2 session. Missing configuration is BLOCKED, not passing authenticated coverage. No new skip is introduced; the independent authenticated-browser CI remains failing until TEST configuration and auth-realm isolation pass.",
+      "issue_or_command": "XB01-C003 platform/browser baseline",
+      "review_date": "2026-11-13"
     }
   ]
 }

@@ -71,6 +71,8 @@ test('actual inventory includes known route, integration action, UI primitives, 
   assert.ok(inventory.surfaces.some(item => item.sourcePath.endsWith('/xrogaBlocks.ts')));
   assert.ok(inventory.queues.some(item => item.name === 'notifications'));
   assert.ok(inventory.migrations.length > 0);
+  assert.ok(inventory.testSuites.some(item => item.sourcePath === 'frontend/e2e/os-preview-private.spec.ts'));
+  assert.ok(inventory.testSuites.some(item => item.sourcePath === 'frontend/e2e/os-preview-founder-fixture.ts'));
   assert.deepEqual(inventory.migrations.map(item => item.sourcePath), inventory.migrations.map(item => item.sourcePath).sort());
   assert.deepEqual(inventory.migrations.map(item => item.order), inventory.migrations.map((_, index) => index + 1));
   assert.equal(inventory.requiredPaths.length, requiredPaths.length);

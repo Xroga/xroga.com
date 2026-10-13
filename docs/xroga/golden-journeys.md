@@ -1,6 +1,6 @@
 # Golden journey acceptance contracts
 
-Source SHA: `c5eeeb22cedb1bbfa6542e7c892b5afebee6216d`. Twelve stable contracts; **zero live journeys certified**. A passing stub/component test is not a passing authenticated, provider-backed user journey.
+Source SHA: `f5eb888177690758ad83112755bcedc6c7d894ad`. Twelve stable contracts; **zero live journeys certified**. A passing stub/component test is not a passing authenticated, provider-backed user journey.
 
 | Journey | State | Missing evidence/capability |
 | --- | --- | --- |

@@ -290,7 +290,8 @@ const outputs = ['docs/xroga/current-state.json', 'docs/xroga/current-state-sche
 export function generateInventory({ refresh = false } = {}) {
   const sha = git(['rev-parse', 'HEAD']);
   const paths = git(['ls-files']).split(/\r?\n/).filter(Boolean).sort();
-  const codePaths = paths.filter(inspected);
+  // Include browser suites/test helpers outside src, not only application modules.
+  const codePaths = paths.filter(path => inspected(path) || (codePattern.test(path) && isTest(path)));
   const sourceEntries = codePaths.map(sourcePath => ({ sourcePath, content: read(sourcePath) }));
   const workflows = paths.filter(path => /^\.github\/workflows\/.+\.ya?ml$/.test(path)).map(sourcePath => {
     const content = read(sourcePath);

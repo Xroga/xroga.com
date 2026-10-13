@@ -12,6 +12,9 @@ test.beforeEach(async ({page,baseURL})=>{
       if(route.request().method()==='OPTIONS'){await route.fulfill({status:204,headers});return;}
       const body=route.request().postDataJSON() as {message:string;guestSessionId:string};
       expect(body.message).toContain('fixture');
+      if(body.message.includes('unavailable')){
+        await route.fulfill({status:503,headers,json:{error:'Guest chat is temporarily unavailable. Please try again shortly.',code:'GUEST_CHAT_UNAVAILABLE'}});return;
+      }
       await route.fulfill({headers,json:{response:'DEMO fixture reply. No external work was performed.',guestSessionId:body.guestSessionId,guest:{limit:5,remaining:4,resetAt:'2099-01-01T00:00:00Z'}}});return;
     }
     if(!['127.0.0.1','localhost'].includes(url.hostname)){await route.abort('blockedbyclient');return;}
@@ -38,4 +41,11 @@ test('GJ private preview and RSC deny a guest without leaking founder fixture co
     else expect(response.url()).toMatch(/\/auth\/login/);
     expect(await response.text()).not.toContain('Scenario & Error Lab');
   }
+});
+test('GJ narrow guest UI shows a truthful actionable failure rather than Coming soon',async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto('/workspace',{waitUntil:'domcontentloaded'});
+  const input=page.getByRole('textbox',{name:'Message Xroga'});await input.fill('Make the fixture temporarily unavailable');await input.press('Enter');
+  await expect(page.getByText('Guest chat is temporarily unavailable. Please try again shortly.',{exact:true}).first()).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(391);
 });

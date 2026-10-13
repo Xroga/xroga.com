@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "c5eeeb22cedb1bbfa6542e7c892b5afebee6216d",
-    "sourceTimestampUtc": "2026-10-13T18:35:33+05:00",
-    "auditStartedUtc": "2026-10-13T13:52:34.480Z",
+    "sha": "f5eb888177690758ad83112755bcedc6c7d894ad",
+    "sourceTimestampUtc": "2026-10-13T18:53:11+05:00",
+    "auditStartedUtc": "2026-10-13T13:59:01.036Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -68165,6 +68165,7 @@
         "frontend/src/app/software/page.tsx"
       ],
       "callers": [
+        "frontend/e2e/crypto-builder-page.spec.ts:3",
         "frontend/src/app/crypto/CryptoPromptBar.tsx:13",
         "frontend/src/components/homepage-next/phase1/CommandBar.tsx:13",
         "frontend/src/components/homepage-next/s01/CapabilityFocus.tsx:19",
@@ -68179,7 +68180,9 @@
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
-      "testCoverage": [],
+      "testCoverage": [
+        "frontend/e2e/crypto-builder-page.spec.ts"
+      ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -80023,7 +80026,7 @@
       "id": "surface:31efa78657642cb55b6d",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/check-test-skips.mjs",
-      "sha256": "9dd4c4aa7eb0215ca5cfaae62c08feea878830be32c4608eb3b07883bf8a7996",
+      "sha256": "a76068889defc1a0eb01fa3e4df1ecdd8f653b67aeef1456a3647012f986bb7f",
       "symbols": [
         "analyzeTestSkips",
         "callee",
@@ -80037,6 +80040,7 @@
         "first",
         "id",
         "ids",
+        "isGovernedTestSource",
         "key",
         "kind",
         "main",
@@ -80147,7 +80151,7 @@
       "id": "surface:27c317c410ffae0628eb",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/ci/register-existing-skips.mjs",
-      "sha256": "256dbdf6f31bef9fe8f5292e14f5be29f57b12eb21a9deb279b8539410ab870e",
+      "sha256": "8dc278ddbc6d3ceb7361b17026673391b75eb822b84ab32dc24b648897416d99",
       "symbols": [
         "current",
         "finding",
@@ -81590,7 +81594,7 @@
       "id": "surface:21fe5fadd2668f300c7a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "sha256": "6c378c4abd5c77ef499e5b4bf10d250ab58aabe80f3057357eb8af4bddf4b876",
+      "sha256": "e04acdb859473f1bac6e216493d61020199ea1410cb8fa5344ec0db32a9805b6",
       "symbols": [
         "allRegistrations",
         "analyzeSource",
@@ -94017,9 +94021,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:24c77dc15c068135c9b2",
+      "id": "finding:eb1b70644ccca83a98dc",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 352,
+      "line": 353,
       "kind": "PLACEHOLDER",
       "reachable": false,
       "state": "PARTIAL",
@@ -94027,9 +94031,9 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c66be6aeb6188e08dba2",
+      "id": "finding:0e7e22049bfaa18048bf",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "line": 352,
+      "line": 353,
       "kind": "SIMULATED",
       "reachable": false,
       "state": "PARTIAL",
@@ -94048,6 +94052,69 @@
     }
   ],
   "frontendCallers": [
+    {
+      "id": "frontend-call:020b24d0702a2728da38",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 33,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:612af4bf4d02e2e3830c",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 96,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:8c84c0d6a6d9b133ff48",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 99,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:f9c1042307e14e4e4962",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 790,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:e4c5e7b0ad8cc96c3a39",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 791,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:e0bb00a3924e063c080e",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 793,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:19e61b57db6f170d3ea3",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 794,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:509e61daa458dba04100",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 801,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:b34ae4cdfcbf1d78863a",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 815,
+      "callee": "fetch",
+      "reachable": false
+    },
     {
       "id": "frontend-call:b266f9723f56c16899de",
       "sourcePath": "frontend/src/app/(shell)/admin/AdminPageClient.tsx",
@@ -98302,6 +98369,169 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:967afee80eba90847db7",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:edd884b7a268f960b634",
+      "sourcePath": "frontend/e2e/community-seo.spec.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:96219e8134190542dcc6",
+      "sourcePath": "frontend/e2e/companion-public.spec.ts",
+      "declaredTests": 1,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:fcddf5c27a4b6219aee3",
+      "sourcePath": "frontend/e2e/companion-skins.spec.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:e68781cde96d0efb68a3",
+      "sourcePath": "frontend/e2e/crypto-builder-page.spec.ts",
+      "declaredTests": 12,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:78e2707afa9342355a16",
+      "sourcePath": "frontend/e2e/crypto-builder-route.spec.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:daaa26a4690b5a14be00",
+      "sourcePath": "frontend/e2e/homepage-theme.spec.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:514d2efc4824888a9ac1",
+      "sourcePath": "frontend/e2e/launch-public.spec.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a703cbf4936ef8d1cdea",
+      "sourcePath": "frontend/e2e/os-command2.spec.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7ec176bf0f32aaf526f9",
+      "sourcePath": "frontend/e2e/os-command3-a11y.spec.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:93456edce2d17ed792b1",
+      "sourcePath": "frontend/e2e/os-command3-visual.spec.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7d1510018dbb22f69a63",
+      "sourcePath": "frontend/e2e/os-command3.spec.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:4468c82e2cdca8702a6e",
+      "sourcePath": "frontend/e2e/os-preview-founder-fixture.ts",
+      "declaredTests": 1,
+      "skipLocations": [
+        "frontend/e2e/os-preview-founder-fixture.ts:8"
+      ],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:a20d00bbdea7a281cfc3",
+      "sourcePath": "frontend/e2e/os-preview-private.spec.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:ba7305c0d9abc2b19aa8",
+      "sourcePath": "frontend/e2e/os-preview.spec.ts",
+      "declaredTests": 4,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:86ab650f1348beffbd23",
+      "sourcePath": "frontend/e2e/rich-results.spec.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:14c1dff44e74ad3d4428",
+      "sourcePath": "frontend/e2e/settings-shell.spec.ts",
+      "declaredTests": 7,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:88cf962cddd46da568d8",
+      "sourcePath": "frontend/e2e/showcase-browse.spec.ts",
+      "declaredTests": 10,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:82570800f7cae24aa6ac",
+      "sourcePath": "frontend/e2e/showcase-products.spec.ts",
+      "declaredTests": 14,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:b915491faee26779e8d9",
+      "sourcePath": "frontend/e2e/showcase-public.spec.ts",
+      "declaredTests": 16,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:6515480b640298a9f74c",
+      "sourcePath": "frontend/e2e/showcase-spec.spec.ts",
+      "declaredTests": 11,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3aa951b3e9a5723d2944",
+      "sourcePath": "frontend/e2e/theme-coverage.spec.ts",
+      "declaredTests": 5,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:3b1b0f6843b9d9bfab10",
+      "sourcePath": "frontend/e2e/xroga-golden/public-fixtures.spec.ts",
+      "declaredTests": 3,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:7c089472efc03ca2d01d",
       "sourcePath": "frontend/src/components/homepage-next/phase1/orchestration.test.ts",
       "declaredTests": 50,
@@ -99347,7 +99577,7 @@
     {
       "id": "test-suite:5a20cade29e90a03909b",
       "sourcePath": "scripts/ci/baseline.test.mjs",
-      "declaredTests": 12,
+      "declaredTests": 13,
       "skipLocations": [],
       "focusLocations": []
     },

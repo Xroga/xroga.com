@@ -6,13 +6,20 @@ import { createRequire } from 'node:module';
 import { test } from 'node:test';
 import { canonicalToolchain, root, verifyToolchain } from './toolchain.mjs';
 import { validateManifestLock } from './check-lockfile-integrity.mjs';
-import { analyzeTestSkips, validateSkips } from './check-test-skips.mjs';
+import { analyzeTestSkips, isGovernedTestSource, validateSkips } from './check-test-skips.mjs';
 import { validateMigrations } from './validate-migrations.mjs';
 import { publicConfigOverridden, redactLog, runSteps, safeTestEnvironment } from './run-baseline.mjs';
 import { validateInstalledVersion } from './check-installed-dependencies.mjs';
 import { compareBaselineRuns } from './compare-baseline-runs.mjs';
 
 const fixture = () => mkdtempSync(join(tmpdir(), 'xroga-ci-fixture-'));
+test('browser/test helpers cannot hide conditional skips outside .spec/.test filenames',()=>{
+  assert.equal(isGovernedTestSource('frontend/e2e/founder-fixture.ts'),true);
+  assert.equal(isGovernedTestSource('tests/golden/fixture.mjs'),true);
+  assert.equal(isGovernedTestSource('frontend/src/components/RealComponent.tsx'),false);
+  const findings=analyzeTestSkips('frontend/e2e/fixture.ts',"test.beforeEach(()=>{test.skip(!isolatedSession,'requires isolated owner session');});");
+  assert.equal(findings.length,1);assert.throws(()=>validateSkips(findings,{entries:[]}),/Unregistered/);
+});
 function cleanup(path) {
   const target = resolve(path), parent = resolve(tmpdir());
   assert.ok(target.startsWith(`${parent}\\xroga-ci-fixture-`) || target.startsWith(`${parent}/xroga-ci-fixture-`));

@@ -25,6 +25,12 @@
 | 009 | Tenant-bound authenticated encryption/vault, PKCE TTL/one-use, rotation/revocation, safe legacy migration; actual production KMS and staged cutover | Verified 007–008; KMS and migration environments | NOT STARTED | — |
 | 010 | Central consequential egress and URL guard; SSRF/redirect/DNS/injection/tenant/secret tests; no unexplained bypass; final GO/NO-GO | Verified 007–009 and topology | NOT STARTED | — |
 
+## Command 005 checkpoint
+
+Implementation checkpoint `f5eb888177690758ad83112755bcedc6c7d894ad` extends existing Node/tsx/Playwright, with twelve stable typed journey contracts and seven policy, twelve backend and four frontend boundary tests passing. Both type checks pass after fixing malformed fixture typing and the hoisted compiler invocation. Actual clean Windows built-app guest/reload + denied-founder SSR/RSC browser tests pass (2/2); a third narrow/reduced-motion safe-failure case is added. Aggregate 19-stage and dedicated golden CI are running, not yet final evidence. All twelve FULL journeys remain BLOCKED_KNOWN_GAP, zero PASS; component/stub/browser passes do not certify provider/backend product features.
+
+Further audit corrects earlier discovery scope: inventory now includes browser suites/helpers outside src, and skip governance covers helpers under e2e/tests. The existing unchanged founder-session helper is manually registered against `c7230c8`; registered source sites are now 20, with zero new runtime skips and mandatory authenticated-browser CI still blocked/failing. No test assertion was removed or relaxed. Final Command 005 evidence and verification are pending before Command 006.
+
 ## Command 001 checkpoint
 
 The full report (2,910 lines) has been read. Default branch fetched; no production changes made. Actual manifests declare Next.js 15.5.21, React 18, Tailwind 3, Express 4.22.2, npm workspaces, Supabase, and BullMQ. Installed TypeScript versions differ across root/backend; Command 003 must reconcile actual locked/runtime versions rather than rely on old AGENTS text.

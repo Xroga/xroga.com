@@ -7,6 +7,7 @@ import { root } from './toolchain.mjs';
 // One-time, manually reviewed registration. Never called by CI or run-baseline.
 const inspectedBase = 'c7230c815870ad3942f5f74ddf70c9ddff2ec988';
 const reasons = {
+  'frontend/e2e/os-preview-founder-fixture.ts': 'Pre-existing helper requires an isolated TEST founder AAL2 session. Missing configuration is BLOCKED, not passing authenticated coverage. No new skip is introduced; the independent authenticated-browser CI remains failing until TEST configuration and auth-realm isolation pass.',
   'backend/src/ai/compileCommand.test.ts': 'Existing test executes the production Linux /bin/sh sandbox command; Windows cannot execute /bin/sh. Linux baseline CI must run it.',
   'backend/src/synthesis/inSandboxBrowser.test.ts': 'Existing shell syntax assertion requires /bin/sh; Windows limitation only. Linux baseline CI must run it.',
   'backend/src/synthesis/inSandboxBrowser.integration.test.ts': 'Existing local sandbox/browser integration requires Linux /bin/sh and installed Chromium. CI must execute it using one matching browser cache; Windows cannot exercise this boundary.',
