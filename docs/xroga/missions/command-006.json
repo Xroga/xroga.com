@@ -3,7 +3,7 @@
   "missionId": "XB01-C006",
   "baseSha": "e9543986c10331ef2795920ebf60d3494ee7f1aa",
   "requirementIds": ["XB01-C006", "XR-FAMILY-engineering-rules"],
-  "state": "IN_PROGRESS",
+  "state": "VERIFIED_SCOPE",
   "risk": "low",
   "scope": "Engineering operating contract and executable structured policy; no product engines, schema or live release",
   "changedFiles": ["AGENTS.md", "README.md", "CONTRIBUTING.md", "SHIP_COMPLETENESS.md", ".cursor/install.sh", ".github/pull_request_template.md", ".github/workflows/unit-tests.yml", ".github/workflows/xroga-mission-policy.yml", "docs/xroga/ARCHITECTURE_INVARIANTS.md", "docs/xroga/DEFINITION_OF_DONE.md", "docs/xroga/CHANGE_SAFETY.md", "docs/xroga/PR_EVIDENCE_TEMPLATE.md", "docs/xroga/IMPLEMENTATION_STATUS.md", "docs/xroga/mission-manifest.schema.json", "docs/xroga/missions/command-006.json", "scripts/xroga/mission-policy.mjs", "scripts/xroga/mission-check.mjs", "scripts/xroga/mission-schema.mjs", "scripts/ci/run-baseline.mjs", "scripts/ci/baseline.test.mjs", "scripts/ci/compare-baseline-runs.mjs", "tests/mission-policy/fixtures.mjs", "tests/mission-policy/mission-policy.test.mjs"],
