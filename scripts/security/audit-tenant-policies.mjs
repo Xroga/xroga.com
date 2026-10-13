@@ -43,7 +43,7 @@ export function discoverPersistenceCalls(path,content) {
 export function buildTenantAudit() {
   const observation=JSON.parse(read(metadataPath));
   if(observation.scope!=='READ_ONLY_SCHEMA_METADATA_NO_CUSTOMER_ROWS'||observation.securityCertification!=='NOT_CERTIFIED'||!observation.tables.length)throw new Error('Unapproved schema observation');
-  const paths=execFileSync('git',['ls-files'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(path=>/^(?:backend|frontend)\/src\/.*\.[jt]sx?$/.test(path)&&!/(?:\.test\.|\.spec\.|\/e2e\/|\/tests?\/)/.test(path));
+  const paths=execFileSync('git',['ls-files'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/).filter(path=>/^(?:backend|frontend)\/src\/.*\.[jt]sx?$/.test(path)&&!/(?:\.test\.|\.spec\.|\.local\.integration\.|\/e2e\/|\/tests?\/)/.test(path));
   const callers=paths.flatMap(path=>discoverPersistenceCalls(path,read(path)));
   const tableNames=new Set(observation.tables.map(row=>`${row.schema}.${row.table_name}`));
   if(tableNames.size!==observation.tables.length)throw new Error('Duplicate schema table');

@@ -12,6 +12,10 @@ export function assertDisposableConfiguration(env) {
   return resolve(env.RUNNER_TEMP, 'xroga-disposable-supabase');
 }
 
+export function generateLocalSigningKey() {
+  return {...generateKeyPairSync('ec',{namedCurve:'P-256'}).privateKey.export({format:'jwk'}),kid:randomUUID(),use:'sig',alg:'ES256',key_ops:['sign','verify']};
+}
+
 const privateValues = [];
 export function redactLocalLog(value, secrets = privateValues) {
   let text = String(value ?? '');
@@ -42,7 +46,7 @@ function bootstrap() {
   const jwtSecret = randomBytes(48).toString('base64url');
   const apiPublishable = `sb_publishable_${randomBytes(24).toString('base64url')}`;
   const apiSecret = `sb_secret_${randomBytes(32).toString('base64url')}`;
-  const signingKey = {...generateKeyPairSync('ec',{namedCurve:'P-256'}).privateKey.export({format:'jwk'}),kid:randomUUID(),use:'sig',alg:'ES256'};
+  const signingKey = generateLocalSigningKey();
   const token = role => {
     const encode = value => Buffer.from(JSON.stringify(value)).toString('base64url');
     const data = `${encode({alg:'HS256',typ:'JWT'})}.${encode({role,iss:'supabase',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+7200})}`;

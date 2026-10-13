@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "9fe102e1d4768a2ae76319ac409f81cd4f9a9c81",
+  "source_sha": "a6b3cb8e7dfe7ff6f513f39d0a42d7889f916883",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -12304,7 +12304,7 @@
     },
     {
       "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
+      "sha256": "b7ac628e5b9d5230a23bb6680daec3be464af5a9b171a3fa5bc58a41e79f5862"
     },
     {
       "path": "backend/src/services/ActionService.ts",

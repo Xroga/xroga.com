@@ -14,7 +14,7 @@ const hash = value => createHash('sha256').update(value).digest('hex');
 const stableId = (kind, value) => `${kind}:${hash(value).slice(0, 20)}`;
 const sorted = values => [...new Set(values)].sort();
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
-const isTest = path => /(?:\.test\.|\.spec\.|\/tests?\/|\/e2e\/)/.test(path);
+const isTest = path => /(?:\.test\.|\.spec\.|\.local\.integration\.|\/tests?\/|\/e2e\/)/.test(path);
 const codePattern = /\.(?:[cm]?[jt]sx?)$/;
 const inspected = path => (/^(?:backend\/src\/|frontend\/src\/|scripts\/|tools\/)/.test(path) || /^frontend\/(?:redirects|next\.config)\.mjs$/.test(path)) && codePattern.test(path);
 

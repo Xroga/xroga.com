@@ -7,9 +7,9 @@
     "observedTables": 118,
     "rlsEnabled": 118,
     "privilegedFactorySites": 159,
-    "persistenceCandidates": 672,
+    "persistenceCandidates": 668,
     "ownerPredicateCandidates": 157,
-    "reviewRequired": 672,
+    "reviewRequired": 668,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 1
   },
@@ -3962,50 +3962,6 @@
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "3decc6b2f938d80f9a612b4e2c45605f871a4160609e680b4332bfce15ab15ee"
-    },
-    {
-      "id": "457b9f64ae05d681d7b6",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 19,
-      "enclosing": "insert",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "<dynamic>",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
-    },
-    {
-      "id": "58d2a6ff289bf8df0774",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 65,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "swarm_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
-    },
-    {
-      "id": "ba7111041a6cf2b14f50",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 69,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "swarm_runs",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
-    },
-    {
-      "id": "4945da7b8e9f117b8ced",
-      "path": "backend/src/security/tenantIsolation.local.integration.ts",
-      "line": 77,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09"
     },
     {
       "id": "a2b7e564b0e180499973",

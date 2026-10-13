@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "9fe102e1d4768a2ae76319ac409f81cd4f9a9c81",
-    "sourceTimestampUtc": "2026-10-13T22:15:29+05:00",
-    "auditStartedUtc": "2026-10-13T17:19:59.063Z",
+    "sha": "a6b3cb8e7dfe7ff6f513f39d0a42d7889f916883",
+    "sourceTimestampUtc": "2026-10-13T22:20:01+05:00",
+    "auditStartedUtc": "2026-10-13T17:24:47.201Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -11455,8 +11455,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/buildImprovementMemory.ts:1",
@@ -11661,8 +11660,7 @@
         "backend/src/lib/postgresConnect.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/index.ts:45",
@@ -13452,8 +13450,7 @@
       ],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/db/ensureDashboardSchema.ts:5",
@@ -20484,8 +20481,7 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:11",
@@ -20507,7 +20503,8 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/security/ownedRunPersistence.test.ts"
+        "backend/src/security/ownedRunPersistence.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20593,16 +20590,14 @@
         "backend/src/security/tenantContext.ts",
         "backend/src/security/tenantErrors.ts"
       ],
-      "entryPoints": [
-        "backend/src/security/tenantIsolation.local.integration.ts"
-      ],
+      "entryPoints": [],
       "callers": [
         "backend/src/security/ownership.test.ts:5",
         "backend/src/security/tenantIsolation.integration.test.ts:16",
         "backend/src/security/tenantIsolation.local.integration.ts:7",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
-      "reachable": true,
+      "reachable": false,
       "persistenceDependencies": [
         "project_files"
       ],
@@ -20618,13 +20613,14 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/ownership.test.ts",
-        "backend/src/security/tenantIsolation.integration.test.ts"
+        "backend/src/security/tenantIsolation.integration.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -20646,8 +20642,7 @@
         "backend/src/security/tenantContext.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/index.ts:60",
@@ -20699,8 +20694,7 @@
         "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/runStore.ts:10",
@@ -20738,7 +20732,8 @@
         "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
-        "backend/src/security/tenantIsolation.integration.test.ts"
+        "backend/src/security/tenantIsolation.integration.test.ts",
+        "backend/src/security/tenantIsolation.local.integration.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20759,8 +20754,7 @@
       "imports": [],
       "runtimeImports": [],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/routes/swarm.ts:5",
@@ -20790,89 +20784,6 @@
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
       ],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
-      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
-      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
-    },
-    {
-      "id": "surface:cbf92151ae82e4823f24",
-      "subsystem": "backend_infrastructure",
-      "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
-      "sha256": "4e4ef9d0c899ce656c9a83bafc66cead8477800e6becf359c9a10a6b419d1e09",
-      "symbols": [
-        "admin",
-        "api",
-        "client",
-        "created",
-        "deleted",
-        "denied",
-        "email",
-        "fixture",
-        "id",
-        "index",
-        "insert",
-        "login",
-        "loser",
-        "outcomes",
-        "owner",
-        "password",
-        "path",
-        "request",
-        "response",
-        "result",
-        "row",
-        "rows",
-        "stored",
-        "text",
-        "unchanged",
-        "url",
-        "user",
-        "users",
-        "verified"
-      ],
-      "imports": [
-        "../services/integrations/userProviderKeys.js",
-        "./ownedRunPersistence.js",
-        "./ownership.js",
-        "./tenantContext.js",
-        "@supabase/supabase-js",
-        "node:assert/strict",
-        "node:crypto",
-        "node:test"
-      ],
-      "runtimeImports": [
-        "backend/src/security/ownedRunPersistence.ts",
-        "backend/src/security/ownership.ts",
-        "backend/src/security/tenantContext.ts",
-        "backend/src/services/integrations/userProviderKeys.ts"
-      ],
-      "entryPoints": [
-        "backend/src/security/tenantIsolation.local.integration.ts"
-      ],
-      "callers": [],
-      "reachable": true,
-      "persistenceDependencies": [
-        "swarm_runs",
-        "terminal_sessions"
-      ],
-      "externalProviderDependencies": [
-        "@supabase/supabase-js",
-        "declared-host:127.0.0.1",
-        "node:assert/strict",
-        "node:crypto",
-        "node:test"
-      ],
-      "authBoundary": [],
-      "tenantBoundary": [],
-      "approvalBoundary": [],
-      "costBoundary": [],
-      "evidenceBoundary": [
-        "backend/src/security/tenantIsolation.local.integration.ts#verified"
-      ],
-      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -22610,8 +22521,7 @@
         "backend/src/config/supabase.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/services/integrations/githubAuth.ts:3",
@@ -22733,8 +22643,7 @@
         "backend/src/services/integrations/githubTokenStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/services/integrations/pluginPermissionPolicy.ts:1",
@@ -22886,8 +22795,7 @@
         "backend/src/services/integrations/oauthPkceStore.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/lib/platformReady.ts:8",
@@ -23011,8 +22919,7 @@
         "backend/src/services/integrations/userProviderKeys.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:3765",
@@ -23173,8 +23080,7 @@
         "backend/src/services/integrations/supabaseProvision.ts"
       ],
       "entryPoints": [
-        "backend/src/index.ts",
-        "backend/src/security/tenantIsolation.local.integration.ts"
+        "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/ai/pipeline.ts:113",
@@ -23216,6 +23122,7 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
+        "backend/src/security/tenantIsolation.local.integration.ts",
         "backend/src/services/integrations/userProviderKeys.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
@@ -81629,7 +81536,7 @@
       "id": "surface:df5a69bd66236469cf20",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/audit-tenant-policies.mjs",
-      "sha256": "f2f20ed429f8dfcc7fdfa489a0a66a11bcc6e0b29636338810e56de26ebaec8e",
+      "sha256": "0c4f15def7a558e4f9ba5dd156424698da75ce19154b7d2dbfb7a83a67ab998f",
       "symbols": [
         "adminNames",
         "binding",
@@ -81716,7 +81623,7 @@
       "id": "surface:6d41f9a6f61b7c1b2c87",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/security/disposable-supabase.mjs",
-      "sha256": "9ee126ca10f5352051f6f78a262f54c66b9c0661eb72478724121c3593d0ff92",
+      "sha256": "c43adbb70c4ee3cb7cbb3c63b020448a400c1e3f744dcfb9dfca0e4fe5b91ef6",
       "symbols": [
         "anonKey",
         "apiPublishable",
@@ -81727,6 +81634,7 @@
         "data",
         "db",
         "encode",
+        "generateLocalSigningKey",
         "jwtSecret",
         "log",
         "mask",
@@ -82349,7 +82257,7 @@
       "id": "surface:21fe5fadd2668f300c7a",
       "subsystem": "backend_infrastructure",
       "sourcePath": "scripts/xroga/inventory.mjs",
-      "sha256": "e04acdb859473f1bac6e216493d61020199ea1410cb8fa5344ec0db32a9805b6",
+      "sha256": "97e1a62beed5b86683426a99fa7142bdc4dcbca6dc964ac4c955e977c7e6aa3c",
       "symbols": [
         "allRegistrations",
         "analyzeSource",
@@ -94841,7 +94749,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:75208a87fdd7b5406ea5",
+      "id": "finding:9beabd248d4c4e783089",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "TODO",
@@ -94851,7 +94759,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:288afc7f32ba85f75580",
+      "id": "finding:816999ad403f2229513f",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "FIXME",
@@ -94861,7 +94769,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:c8406b8740165f19c7b9",
+      "id": "finding:8825a67563e3b5619238",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "STUB",
@@ -94871,7 +94779,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:4dd538d728e710a79d33",
+      "id": "finding:f61c45be9cebbfaa5ec5",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "PLACEHOLDER",
@@ -94881,7 +94789,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:1025cba96cbcb193f95a",
+      "id": "finding:509b1bf546c160fa27f0",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 120,
       "kind": "MOCK",
@@ -94891,7 +94799,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:77f389d86842723415ee",
+      "id": "finding:2301110c4b2e408134c7",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 240,
       "kind": "PLACEHOLDER",
@@ -94901,7 +94809,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:86214b1bca37f84263ac",
+      "id": "finding:deb6f9cc2f69cf02d3f2",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 240,
       "kind": "PLACEHOLDER",
@@ -94911,7 +94819,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a4eeba75104398174282",
+      "id": "finding:f129b0efcf159494313e",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "MOCK",
@@ -94921,7 +94829,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:38305352e54f3b04f1d6",
+      "id": "finding:d1d8c6aebeb738e23149",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "TODO",
@@ -94931,7 +94839,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:2351f927a2ce6482f544",
+      "id": "finding:7528f935e8f23f95df9b",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "PLACEHOLDER",
@@ -94941,7 +94849,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6dc52417d7639145557e",
+      "id": "finding:c9a6d42fa6eeac3c1c47",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 252,
       "kind": "SIMULATION",
@@ -94951,7 +94859,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:a08154b3a0df31fb34d4",
+      "id": "finding:3ed5c9c9babcff2e300e",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 272,
       "kind": "PLACEHOLDER",
@@ -94961,7 +94869,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:b63ae3a086ae4153bed6",
+      "id": "finding:f38541ba10967dc973ba",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 276,
       "kind": "TODO",
@@ -94971,7 +94879,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:6ebadea0420e836e5013",
+      "id": "finding:cf6a3543ff32e4f29aac",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 277,
       "kind": "TODO",
@@ -94981,7 +94889,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:eb1b70644ccca83a98dc",
+      "id": "finding:3ffcc08a3b43b054e687",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "PLACEHOLDER",
@@ -94991,7 +94899,7 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
-      "id": "finding:0e7e22049bfaa18048bf",
+      "id": "finding:b71113155db03aa33901",
       "sourcePath": "scripts/xroga/inventory.mjs",
       "line": 353,
       "kind": "SIMULATED",
@@ -98769,6 +98677,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:cbf92151ae82e4823f24",
+      "sourcePath": "backend/src/security/tenantIsolation.local.integration.ts",
+      "declaredTests": 6,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:91e85398e5908426ad0b",
       "sourcePath": "backend/src/services/BillingService.test.ts",
       "declaredTests": 12,
@@ -100607,7 +100522,7 @@
     {
       "id": "test-suite:7ad4485dc12ff4206f8f",
       "sourcePath": "scripts/security/disposable-supabase.test.mjs",
-      "declaredTests": 2,
+      "declaredTests": 3,
       "skipLocations": [],
       "focusLocations": []
     },

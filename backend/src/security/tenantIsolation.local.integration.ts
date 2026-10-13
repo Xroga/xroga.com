@@ -56,7 +56,10 @@ test('actual API ignores client owner and rejects foreign project/file access an
   assert.equal((await request(`/api/projects/${owner.project}/files`,owner.token)).status,200);
   assert.equal((await request('/api/projects')).status,401);
   const created=await request('/api/projects',owner.token,'POST',{name:'Ignored client owner',type:'app',user_id:other.id,userId:other.id});
-  assert.equal(created.status,201);assert.equal((await created.json()).user_id,owner.id);
+  assert.equal(created.status,201);
+  const payload: unknown = await created.json();
+  assert.ok(payload && typeof payload === 'object' && 'user_id' in payload);
+  assert.equal(payload.user_id,owner.id);
 });
 test('real run persistence concurrent collision never transfers the durable owner',async()=>{
   const [owner,other]=users,id=randomUUID();
