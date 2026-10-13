@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "82ae34ec9d23607475bcc4836bd6b5f72c234b1b",
-    "sourceTimestampUtc": "2026-10-13T22:30:34+05:00",
-    "auditStartedUtc": "2026-10-13T17:37:26.106Z",
+    "sha": "4e30d032d2429a0712b7915e8ac0570b11d1dc36",
+    "sourceTimestampUtc": "2026-10-13T22:38:21+05:00",
+    "auditStartedUtc": "2026-10-13T17:40:15.554Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v24.18.0",
@@ -44644,6 +44644,753 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:5e1f3fc484ac4949f8b0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Companion.tsx",
+      "sha256": "8f787f15ab2b3c09319cd2280e44ce5cbe925516e5c37fcfc268800ab108a71c",
+      "symbols": [
+        "Companion"
+      ],
+      "imports": [
+        "./Companion.module.css",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Companion.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Workforce.tsx:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a09d7caa6e5e0faa73e0",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Missions.tsx",
+      "sha256": "a6d325c54c0e0fb31f38377eb2c4f6da159470b9bd1f892a7fe5724cdd86ad45",
+      "symbols": [
+        "AdsApp",
+        "ArticleApp",
+        "BugApp",
+        "ExtensionApp",
+        "MISSION_APPS",
+        "MissionApp",
+        "applied",
+        "checked",
+        "devtools",
+        "fixed",
+        "goal",
+        "image",
+        "inspected",
+        "listing",
+        "looped",
+        "manifest",
+        "on",
+        "paying",
+        "perm",
+        "phone",
+        "picked",
+        "pub",
+        "radius",
+        "site",
+        "slug",
+        "smoke",
+        "stage",
+        "submitted"
+      ],
+      "imports": [
+        "./Missions.module.css",
+        "./ctx",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Missions.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Theater.tsx:15"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e91efcfd09bfe6cbb4b9",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/S02Work.tsx",
+      "sha256": "60d2a6c35a89e2c4ca8d4090943378ce92295c7dcb03455d5e681903b68f1bfa",
+      "symbols": [
+        "Hold",
+        "MODES",
+        "S02Work",
+        "Theater",
+        "el",
+        "gen",
+        "id",
+        "io",
+        "last",
+        "live",
+        "mission",
+        "next",
+        "onTabKey",
+        "phase",
+        "pick",
+        "prefersReduced",
+        "root",
+        "steps",
+        "tabs",
+        "wfLive"
+      ],
+      "imports": [
+        "./S02.module.css",
+        "./Theater",
+        "./engine",
+        "./script",
+        "./useDemoClock",
+        "./workforce",
+        "motion/react",
+        "next/dynamic",
+        "next/link",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/S02.module.css",
+        "frontend/src/components/homepage-next/s02/Theater.tsx",
+        "frontend/src/components/homepage-next/s02/engine.ts",
+        "frontend/src/components/homepage-next/s02/script.ts",
+        "frontend/src/components/homepage-next/s02/useDemoClock.ts",
+        "frontend/src/components/homepage-next/s02/workforce.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage/HomepageClient.tsx:24"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "motion/react",
+        "next/dynamic",
+        "next/link",
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c99f71f1a449010d1d98",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Theater.tsx",
+      "sha256": "f74ea9182868e67b2cff980a5e748ff44f0162e39f2a6f113bfa1fbeaddeabd3",
+      "symbols": [
+        "BrowserScene",
+        "Dock",
+        "MissionGlyph",
+        "OutcomeCard",
+        "Theater",
+        "XBLUE",
+        "app",
+        "cam",
+        "ctx",
+        "cur",
+        "mission",
+        "push",
+        "steps"
+      ],
+      "imports": [
+        "./Missions",
+        "./Theater.module.css",
+        "./Workforce",
+        "./ctx",
+        "./inert",
+        "./motion",
+        "./script",
+        "./workforce",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Missions.tsx",
+        "frontend/src/components/homepage-next/s02/Theater.module.css",
+        "frontend/src/components/homepage-next/s02/Workforce.tsx",
+        "frontend/src/components/homepage-next/s02/ctx.tsx",
+        "frontend/src/components/homepage-next/s02/inert.ts",
+        "frontend/src/components/homepage-next/s02/motion.tsx",
+        "frontend/src/components/homepage-next/s02/script.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:26"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:a52619c562c6c06a62dd",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "sha256": "8365a29f97a7a5d264fe0dfb9840b7ad04813684c0b1b90317dabd4de82938f2",
+      "symbols": [
+        "AssignmentSheet",
+        "Atrium",
+        "Away",
+        "D",
+        "Desk",
+        "SPOTS",
+        "Surface",
+        "SurfaceProps",
+        "TICKS",
+        "Workforce",
+        "WorkforceMenu",
+        "a",
+        "active",
+        "c",
+        "clock",
+        "d",
+        "decision",
+        "done",
+        "e",
+        "growth",
+        "handed",
+        "latest",
+        "mine",
+        "now",
+        "p",
+        "playing",
+        "research",
+        "saved",
+        "t",
+        "task",
+        "vis",
+        "waiting"
+      ],
+      "imports": [
+        "./Companion",
+        "./Workforce.module.css",
+        "./Workspaces",
+        "./script",
+        "./workforce",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Companion.tsx",
+        "frontend/src/components/homepage-next/s02/Workforce.module.css",
+        "frontend/src/components/homepage-next/s02/Workspaces.tsx",
+        "frontend/src/components/homepage-next/s02/script.ts",
+        "frontend/src/components/homepage-next/s02/workforce.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Theater.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:111b0452e418dff5c8f5",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Workspaces.tsx",
+      "sha256": "5a7a29d21499a6af2d2e952ecaf4657cd873402337d5be7dfc247b6f4d1eebb1",
+      "symbols": [
+        "Asset",
+        "Builder",
+        "Creative",
+        "Data",
+        "EMPLOYEE_SURFACES",
+        "Gate",
+        "Growth",
+        "Issue",
+        "Ops",
+        "Research",
+        "d",
+        "days"
+      ],
+      "imports": [
+        "./Workforce",
+        "./Workspaces.module.css",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Workspaces.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Workforce.tsx:16"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:8ae7ddcbc53aeb95a5af",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "sha256": "04e7e7fb129e00c0619b1c3e60f33b3a8ad98150893099a64765f490d3a36b9b",
+      "symbols": [
+        "Ctx",
+        "at",
+        "i",
+        "index",
+        "makeCtx",
+        "now",
+        "st"
+      ],
+      "imports": [
+        "./motion",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/motion.tsx"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Theater.tsx:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Production source contains annotated mock/TODO/placeholder/simulation markers; individual findings classified separately.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e801a247a5d6b71b9436",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/engine.ts",
+      "sha256": "ed25e34eb13a7751037e3c563e2a24ad66b069b92452d7b17939d43cd6f46f4c",
+      "symbols": [
+        "DemoAction",
+        "DemoState",
+        "browserPhase",
+        "demoReducer",
+        "initialState",
+        "last",
+        "start"
+      ],
+      "imports": [
+        "./script"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/script.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:17",
+        "frontend/src/components/homepage-next/s02/s02.test.ts:4",
+        "frontend/src/components/homepage-next/s02/useDemoClock.ts:4"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s02/s02.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b9f85aa2a31345b2118a",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/inert.ts",
+      "sha256": "ab85e12a75ad7333325c269837f996318652174dab88386c3522f228854638a4",
+      "symbols": [
+        "inertIf"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Theater.tsx:19"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:c685900755092798f4d8",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/motion.tsx",
+      "sha256": "7f0fabdd3f5cf1d19adbcdaa2eba1e81a63889b0d775666240b51a24ef130d25",
+      "symbols": [
+        "Pins",
+        "Pointer",
+        "Typed",
+        "XCursor",
+        "complete",
+        "delay",
+        "dist",
+        "el",
+        "find",
+        "from",
+        "interval",
+        "last",
+        "measure",
+        "ms",
+        "n",
+        "o",
+        "offsetIn",
+        "out",
+        "per",
+        "ref",
+        "ro",
+        "scope",
+        "shown",
+        "t",
+        "tx",
+        "ty",
+        "until",
+        "usePush",
+        "visible",
+        "x",
+        "y"
+      ],
+      "imports": [
+        "./Motion.module.css",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/Motion.module.css"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/Theater.tsx:14",
+        "frontend/src/components/homepage-next/s02/ctx.tsx:8"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:2ea7d69e957166ca400d",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/script.ts",
+      "sha256": "b33a5c114fb245f2053eadd803ec5ace145c0372d3bbac93daa96e0c94a1f0c8",
+      "symbols": [
+        "AWAY_BEATS",
+        "AWAY_BEAT_MS",
+        "Action",
+        "Assignment",
+        "Block",
+        "COPY",
+        "EMPLOYEES",
+        "Employee",
+        "EmployeeId",
+        "FIRST",
+        "HOLD",
+        "INTRO_MS",
+        "MISSIONS",
+        "Mission",
+        "MissionId",
+        "Mode",
+        "Outcome",
+        "Pin",
+        "REFERENCE",
+        "Return",
+        "Step",
+        "TrackId",
+        "employeeOf",
+        "missionOf",
+        "s",
+        "stepDurations",
+        "stepsOf",
+        "tools"
+      ],
+      "imports": [],
+      "runtimeImports": [],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:16",
+        "frontend/src/components/homepage-next/s02/Theater.tsx:17",
+        "frontend/src/components/homepage-next/s02/Workforce.tsx:17",
+        "frontend/src/components/homepage-next/s02/engine.ts:6",
+        "frontend/src/components/homepage-next/s02/s02.test.ts:5",
+        "frontend/src/components/homepage-next/s02/useDemoClock.ts:5",
+        "frontend/src/components/homepage-next/s02/workforce.ts:13"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s02/s02.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6767c93b83bcea5d4303",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/useDemoClock.ts",
+      "sha256": "ead93ddeab3505f9d0735e613a36834c547c33b53b91ef6bf96cd01f855b1a2a",
+      "symbols": [
+        "el",
+        "id",
+        "io",
+        "running",
+        "spent",
+        "startedAt",
+        "total",
+        "useDemoClock",
+        "vis"
+      ],
+      "imports": [
+        "./engine",
+        "./script",
+        "react"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/engine.ts",
+        "frontend/src/components/homepage-next/s02/script.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:18"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "react"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:e4eafc34e3ca35afb8a6",
+      "subsystem": "frontend",
+      "sourcePath": "frontend/src/components/homepage-next/s02/workforce.ts",
+      "sha256": "2e08516a6ddc92d6a0fec7b287e579b4d81fefa75eb4e8e704d73a6139b6e34b",
+      "symbols": [
+        "Config",
+        "SimTask",
+        "View",
+        "WfAction",
+        "WfState",
+        "afterAway",
+        "back",
+        "byId",
+        "e",
+        "emp",
+        "h",
+        "hh",
+        "ids",
+        "initialWorkforce",
+        "lastBlock",
+        "standing",
+        "t",
+        "task",
+        "toggle",
+        "visibleUntil",
+        "workforceReducer"
+      ],
+      "imports": [
+        "./script"
+      ],
+      "runtimeImports": [
+        "frontend/src/components/homepage-next/s02/script.ts"
+      ],
+      "entryPoints": [
+        "frontend/src/app/page.tsx"
+      ],
+      "callers": [
+        "frontend/src/components/homepage-next/s02/S02Work.tsx:19",
+        "frontend/src/components/homepage-next/s02/Workforce.tsx:18",
+        "frontend/src/components/homepage-next/s02/s02.test.ts:6"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "frontend/src/components/homepage-next/s02/s02.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:f3fc0b05d562c6346f7c",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage/HomepageAllInOne.tsx",
@@ -44753,13 +45500,9 @@
         "react"
       ],
       "runtimeImports": [],
-      "entryPoints": [
-        "frontend/src/app/page.tsx"
-      ],
-      "callers": [
-        "frontend/src/components/homepage/HomepageClient.tsx:24"
-      ],
-      "reachable": true,
+      "entryPoints": [],
+      "callers": [],
+      "reachable": false,
       "persistenceDependencies": [],
       "externalProviderDependencies": [
         "react"
@@ -44770,11 +45513,11 @@
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [],
-      "state": "IMPLEMENTED_BUT_UNVERIFIED",
-      "confidence": "MEDIUM",
-      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "state": "DEAD_OR_UNREACHABLE",
+      "confidence": "LOW",
+      "reason": "No static runtime path from discovered entry roots; dynamic or external registration still requires review.",
       "knownRisk": "Live provider state and full security behavior not established by static inventory.",
-      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "recommendedDisposition": "KEEP; CANDIDATE_FOR_DEPRECATION only after dynamic-caller review",
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
@@ -44834,7 +45577,7 @@
       "id": "surface:5400c5a86d8ffd5dc540",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "6cd8f131ab59b75d12cc959c7fd54144ceb588cd5d622b864d16f53ad06fb578",
+      "sha256": "00af680b512276cba640c0ac98ea00da4474b43e7c5319b24f6d5820900744c1",
       "symbols": [
         "HomepageClient",
         "active",
@@ -44857,9 +45600,9 @@
         "@/components/feedback/FeedbackModal",
         "@/components/homepage-next/phase1/S00Hero",
         "@/components/homepage-next/s01/S01CapabilityDeck",
+        "@/components/homepage-next/s02/S02Work",
         "@/components/homepage-next/tokens.css",
         "@/components/homepage/HomepageAllInOne",
-        "@/components/homepage/HomepageBrowserEmployeesExact",
         "@/components/homepage/HomepageEnterpriseProof",
         "@/components/homepage/HomepageFaqSection",
         "@/components/homepage/HomepageOwnershipProof",
@@ -44883,9 +45626,9 @@
         "frontend/src/components/feedback/FeedbackModal.tsx",
         "frontend/src/components/homepage-next/phase1/S00Hero.tsx",
         "frontend/src/components/homepage-next/s01/S01CapabilityDeck.tsx",
+        "frontend/src/components/homepage-next/s02/S02Work.tsx",
         "frontend/src/components/homepage-next/tokens.css",
         "frontend/src/components/homepage/HomepageAllInOne.tsx",
-        "frontend/src/components/homepage/HomepageBrowserEmployeesExact.tsx",
         "frontend/src/components/homepage/HomepageEnterpriseProof.tsx",
         "frontend/src/components/homepage/HomepageFaqSection.tsx",
         "frontend/src/components/homepage/HomepageOwnershipProof.tsx",
@@ -92535,6 +93278,76 @@
       "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
     },
     {
+      "id": "finding:3bf7523263e3fa26981c",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "line": 37,
+      "kind": "SIMULATED",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:0042552ae0a4dd48ba8c",
+      "sourcePath": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "line": 220,
+      "kind": "SIMULATION",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:41da21e6e0d41850588e",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "line": 23,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:45a7d37678c6cc12cba7",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "line": 24,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:671c1a9c5443cbc24a1f",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "line": 43,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:8a9c2784723337c9e0d4",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "line": 45,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
+      "id": "finding:c61667b2f5f44b4f3f27",
+      "sourcePath": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "line": 46,
+      "kind": "PLACEHOLDER",
+      "reachable": true,
+      "state": "PARTIAL",
+      "reason": "Static annotation/token occurrence; not automatically evidence of fake success. The enclosing behavior requires inspection.",
+      "nextEvidenceNeeded": "Inspect the enclosing function/caller and execute its acceptance journey; keep intentional illustrative content labeled."
+    },
+    {
       "id": "finding:188c40ae07016c2aa048",
       "sourcePath": "frontend/src/components/image/ImageLandingPage.tsx",
       "line": 204,
@@ -99465,6 +100278,13 @@
       "id": "test-suite:95323db00c76b46b9c44",
       "sourcePath": "frontend/src/components/homepage-next/s01/s01.test.ts",
       "declaredTests": 33,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:56c4145ca5797ced77a3",
+      "sourcePath": "frontend/src/components/homepage-next/s02/s02.test.ts",
+      "declaredTests": 14,
       "skipLocations": [],
       "focusLocations": []
     },

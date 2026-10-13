@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "82ae34ec9d23607475bcc4836bd6b5f72c234b1b",
+  "source_sha": "4e30d032d2429a0712b7915e8ac0570b11d1dc36",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -13911,6 +13911,58 @@
       "sha256": "9be73477e369165a5e224c297772bb7465d91cee940c37f7231f46eae1f6629c"
     },
     {
+      "path": "frontend/src/components/homepage-next/s02/Companion.tsx",
+      "sha256": "8f787f15ab2b3c09319cd2280e44ce5cbe925516e5c37fcfc268800ab108a71c"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Missions.tsx",
+      "sha256": "a6d325c54c0e0fb31f38377eb2c4f6da159470b9bd1f892a7fe5724cdd86ad45"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/S02Work.tsx",
+      "sha256": "60d2a6c35a89e2c4ca8d4090943378ce92295c7dcb03455d5e681903b68f1bfa"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Theater.tsx",
+      "sha256": "f74ea9182868e67b2cff980a5e748ff44f0162e39f2a6f113bfa1fbeaddeabd3"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Workforce.tsx",
+      "sha256": "8365a29f97a7a5d264fe0dfb9840b7ad04813684c0b1b90317dabd4de82938f2"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/Workspaces.tsx",
+      "sha256": "5a7a29d21499a6af2d2e952ecaf4657cd873402337d5be7dfc247b6f4d1eebb1"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/ctx.tsx",
+      "sha256": "04e7e7fb129e00c0619b1c3e60f33b3a8ad98150893099a64765f490d3a36b9b"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/engine.ts",
+      "sha256": "ed25e34eb13a7751037e3c563e2a24ad66b069b92452d7b17939d43cd6f46f4c"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/inert.ts",
+      "sha256": "ab85e12a75ad7333325c269837f996318652174dab88386c3522f228854638a4"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/motion.tsx",
+      "sha256": "7f0fabdd3f5cf1d19adbcdaa2eba1e81a63889b0d775666240b51a24ef130d25"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/script.ts",
+      "sha256": "b33a5c114fb245f2053eadd803ec5ace145c0372d3bbac93daa96e0c94a1f0c8"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/useDemoClock.ts",
+      "sha256": "ead93ddeab3505f9d0735e613a36834c547c33b53b91ef6bf96cd01f855b1a2a"
+    },
+    {
+      "path": "frontend/src/components/homepage-next/s02/workforce.ts",
+      "sha256": "2e08516a6ddc92d6a0fec7b287e579b4d81fefa75eb4e8e704d73a6139b6e34b"
+    },
+    {
       "path": "frontend/src/components/homepage/HomepageAllInOne.tsx",
       "sha256": "367214e4f6b173781f35cda0133f9820d5bc4b6fb11bca608ed10730e51cbf72"
     },
@@ -13928,7 +13980,7 @@
     },
     {
       "path": "frontend/src/components/homepage/HomepageClient.tsx",
-      "sha256": "6cd8f131ab59b75d12cc959c7fd54144ceb588cd5d622b864d16f53ad06fb578"
+      "sha256": "00af680b512276cba640c0ac98ea00da4474b43e7c5319b24f6d5820900744c1"
     },
     {
       "path": "frontend/src/components/homepage/HomepageEnterpriseProof.tsx",

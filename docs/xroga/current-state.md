@@ -1,22 +1,22 @@
 # Xroga repository truth map
 
-Source SHA: `82ae34ec9d23607475bcc4836bd6b5f72c234b1b`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-13T17:37:26.106Z.
+Source SHA: `4e30d032d2429a0712b7915e8ac0570b11d1dc36`. Branch observed: `codex/xroga-batch-01`. Audit started: 2026-10-13T17:40:15.554Z.
 
 This inventory records static source and call-path evidence. A mounted endpoint is reachable in source; that does not certify live success, tenant safety, approval enforcement, or completion. All implementation surfaces retain an unverified/partial/placeholder state until their own acceptance tests establish behavior. No architecture was replaced and no production operations were performed.
 
 ## Counts
 
-- surfaces: 1344
+- surfaces: 1357
 - routeRegistrations: 260
 - routes: 219
 - reachableRoutes: 219
 - queues: 4
 - migrations: 68
 - workflows: 17
-- testSuites: 444
-- declaredTests: 4285
-- classifiedMarkers: 354
-- reachableMarkers: 285
+- testSuites: 445
+- declaredTests: 4299
+- classifiedMarkers: 361
+- reachableMarkers: 292
 - absentRequiredPaths: 5
 - duplicateIds: 0
 
