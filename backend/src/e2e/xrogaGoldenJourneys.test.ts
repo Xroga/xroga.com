@@ -65,6 +65,7 @@ test('GJ contracts use the real typed GoalContract boundary and conversational p
   for(const fixture of fixtures){const goal=goalContractSchema.parse(fixture.goal);assert.ok(goal.goal);assert.ok(goal.constraints.includes('Fixture only; no external side effects'));}
   const chat=goalContractSchema.parse(fixtures.find(row=>row.id==='GJ-CHAT')!.goal);
   assert.equal(dispatchForGoal(chat,chat.requiredCapabilities),'chat');
+  assert.equal(goalContractSchema.parse(fixtures.find(row=>row.id==='GJ-WEB-RESEARCH')!.goal).freshnessRequirement,'CURRENT_REQUIRED');
 });
 test('GJ business preparation finds only the relevant disconnected provider and never executes',async t=>{
   const paths=providerStub(t);

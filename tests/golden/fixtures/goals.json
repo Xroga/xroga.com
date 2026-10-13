@@ -15,7 +15,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-chat:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Explain idempotency in plain language.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "conversation.respond"
       ],
@@ -42,7 +52,25 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "freshnessRequirement": "CURRENT_REQUIRED",
+      "sourcePolicy": {
+        "mode": "official_only",
+        "scope": "public_web",
+        "officialDomains": [
+          "www.w3.org"
+        ]
+      },
+      "deliverables": [
+        {
+          "id": "fixture-web-research:outcome",
+          "mediaType": "text/markdown",
+          "description": "Fixture receipt/evidence for Research current accessibility guidance and cite primary sources.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "research.public-web",
         "conversation.respond"
@@ -70,7 +98,18 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "previewRequirement": "REQUIRED",
+      "deliverables": [
+        {
+          "id": "fixture-existing-repo-coding:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Repair the authorized fixture repository and show diff and test evidence.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "repository.read",
         "software.implement",
@@ -101,7 +140,18 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "previewRequirement": "REQUIRED",
+      "deliverables": [
+        {
+          "id": "fixture-new-saas:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Build a clinic appointment application with reproducible source artifacts.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "software.implement"
       ],
@@ -130,7 +180,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-business-read:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Read the fixture account contact list without changing it.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "business.read"
       ],
@@ -159,7 +219,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-business-write:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Prepare deletion of the selected fixture message and ask for confirmation.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "business.action"
       ],
@@ -189,7 +259,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-mixed-multi-outcome:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Research a topic, update a fixture CRM, create a document and prepare a message.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "research.public-web",
         "business.action",
@@ -221,7 +301,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-documents:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Create a document, spreadsheet and slide summary with readable evidence.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "artifact.generate"
       ],
@@ -250,7 +340,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-work-pack:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Start a bounded clinic work pack with reviewed permissions.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "work-pack.start"
       ],
@@ -280,7 +380,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-ai-employee:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for Assign a bounded recurring customer-operations goal.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "employee.assign"
       ],
@@ -310,7 +420,17 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "deliverables": [
+        {
+          "id": "fixture-paid-android-publish:outcome",
+          "mediaType": "text/plain",
+          "description": "Fixture receipt/evidence for In an isolated sandbox, review a quote and publish the fixture Android build.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "software.implement",
         "publish.android"
@@ -342,7 +462,25 @@
       ],
       "historyContext": [],
       "projectContext": null,
-      "deliverables": [],
+      "freshnessRequirement": "CURRENT_REQUIRED",
+      "sourcePolicy": {
+        "mode": "official_only",
+        "scope": "public_web",
+        "officialDomains": [
+          "www.w3.org"
+        ]
+      },
+      "deliverables": [
+        {
+          "id": "fixture-seo-drive:outcome",
+          "mediaType": "text/markdown",
+          "description": "Fixture receipt/evidence for Research an SEO brief and save an authorized report artifact.",
+          "required": true,
+          "acceptance": [
+            "Independent postcondition evidence; not model text"
+          ]
+        }
+      ],
       "requiredCapabilities": [
         "research.public-web",
         "artifact.generate"

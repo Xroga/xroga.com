@@ -49,6 +49,10 @@ export const fixtureContracts = rows.map(([suffix, intent, semanticIntent, capab
     implementationPaths: implementation ? [implementation] : [],
     state: 'BLOCKED_KNOWN_GAP',
     blockers: [{requirementIds: families.map(family => `XR-FAMILY-${family}`), ownerCommands: suffix === 'BUSINESS-WRITE' ? ['007', '008'] : ['LATER_PENDING_HISTORICAL_EXPORT'], missingCapability: gap}],
-    goal: {version: '1.0', goal: intent, desiredOutcome: intent, semanticIntent, constraints: ['Fixture only; no external side effects'], acceptance: ['Required independent evidence is present'], historyContext: [], projectContext: null, deliverables: [], requiredCapabilities: capabilities, requiredAuthorities: authorities, risks: [], confidence: 1, blockers: [], contextComplexity: 'low'},
+    goal: {version: '1.0', goal: intent, desiredOutcome: intent, semanticIntent, constraints: ['Fixture only; no external side effects'], acceptance: ['Required independent evidence is present'], historyContext: [], projectContext: null,
+      ...(suffix === 'WEB-RESEARCH' || suffix === 'SEO-DRIVE' ? {freshnessRequirement:'CURRENT_REQUIRED',sourcePolicy:{mode:'official_only',scope:'public_web',officialDomains:['www.w3.org']}} : {}),
+      ...(suffix === 'NEW-SAAS' || suffix === 'EXISTING-REPO-CODING' ? {previewRequirement:'REQUIRED'} : {}),
+      deliverables: [{id:`${fixtureId}:outcome`,mediaType:suffix === 'WEB-RESEARCH' || suffix === 'SEO-DRIVE'?'text/markdown':'text/plain',description:`Fixture receipt/evidence for ${intent}`,required:true,acceptance:['Independent postcondition evidence; not model text']}],
+      requiredCapabilities: capabilities, requiredAuthorities: authorities, risks: [], confidence: 1, blockers: [], contextComplexity: 'low'},
   };
 });

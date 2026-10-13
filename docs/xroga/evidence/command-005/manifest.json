@@ -4,6 +4,8 @@
   "scope": "HARNESS_IMPLEMENTATION_NOT_FUTURE_PRODUCT_COMPLETION",
   "journeyStates": {"PASS": 0, "FAIL": 0, "BLOCKED_KNOWN_GAP": 12, "NOT_APPLICABLE": 0},
   "initialBoundaryTests": {"backend": 12, "frontend": 4, "policy": 7, "fail": 0, "skipped": 0},
+  "postRefinementTests": {"guardsAndSchema": 20, "backend": 12, "fail": 0, "skipped": 0},
+  "priorBrowserEvidence": {"sourceSha": "27f93ca19762a46a95c4f724235e1db59355aa43", "tests": 3, "pass": 3, "fail": 0, "skipped": 0, "ciUrl": "https://github.com/Xroga/xroga.com/actions/runs/38409547594"},
   "browserVerified": false,
   "ciCheck": "Xroga golden acceptance harness / deterministic-golden",
   "ciVerified": false,
