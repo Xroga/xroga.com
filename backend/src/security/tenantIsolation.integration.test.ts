@@ -9,6 +9,7 @@ import { SignJWT } from 'jose';
 import { authMiddleware } from '../middleware/auth.js';
 import projectsRouter from '../routes/projects.js';
 import swarmRouter from '../routes/swarm.js';
+import terminalRouter from '../routes/terminalSessions.js';
 import { createRun, getRun, getRunAsync } from '../ai/runStore.js';
 import { storeProjectFile } from '../services/storage/projectFiles.js';
 import { createTenantContext } from './tenantContext.js';
@@ -24,9 +25,11 @@ const runId = randomUUID();
 const previous = new Map<string,string|undefined>();
 let database: Server, api: Server, databaseUrl = '', apiUrl = '', token = '';
 const calls: {path:string;method:string;query:URLSearchParams;body:Record<string,unknown>}[] = [];
+const foreignTerminal={id:'foreign-terminal-fixture',user_id:OTHER,messages:[{content:'Other owner fixture'}]};
 
 before(async () => {
-  for (const key of ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET','REQUIRE_REMOTE_AUTH_CHECK']) previous.set(key,process.env[key]);
+  for (const key of ['SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_JWT_SECRET','REQUIRE_REMOTE_AUTH_CHECK','DATABASE_URL','SUPABASE_DB_PASSWORD','SUPABASE_PROJECT_REF','SUPABASE_ACCESS_TOKEN']) previous.set(key,process.env[key]);
+  for(const key of ['DATABASE_URL','SUPABASE_DB_PASSWORD','SUPABASE_PROJECT_REF','SUPABASE_ACCESS_TOKEN'])delete process.env[key];
   delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   createRun(OTHER, 'Other owner fixture', runId);
   database = createServer((req,res) => {
@@ -40,6 +43,15 @@ before(async () => {
       const single = String(req.headers.accept).includes('pgrst.object');
       if (url.pathname.endsWith('/profiles')) {res.end(JSON.stringify(single ? {id:OWNER} : [{id:OWNER}]));return;}
       if (url.pathname.endsWith('/user_token_usage')) {res.end(JSON.stringify(single ? {user_id:OWNER} : [{user_id:OWNER}]));return;}
+      if (url.pathname.endsWith('/terminal_sessions')) {
+        if(req.method==='POST') {
+          assert.match(String(req.headers.prefer),/ignore-duplicates/,'Foreign terminal identity must never be merged over');
+          res.end('[]');return;
+        }
+        if(url.searchParams.get('id')===`eq.${foreignTerminal.id}`) {res.end(JSON.stringify(single?null:[]));return;}
+        if(req.method==='PATCH') {res.end(JSON.stringify({id:'own-terminal-fixture',user_id:OWNER,title:'Own',terminal_number:1,message_count:1}));return;}
+        res.end(JSON.stringify(single?null:[]));return;
+      }
       if (url.pathname.endsWith('/projects')) {
         if (req.method==='POST') {res.end(JSON.stringify({id:OWN_PROJECT,...body}));return;}
         const id = url.searchParams.get('id');
@@ -59,7 +71,7 @@ before(async () => {
   databaseUrl = `http://127.0.0.1:${(database.address() as AddressInfo).port}`;
   process.env.SUPABASE_URL=databaseUrl;process.env.SUPABASE_SERVICE_ROLE_KEY='fixture-only-service-key';process.env.SUPABASE_JWT_SECRET=JWT_SECRET;delete process.env.REQUIRE_REMOTE_AUTH_CHECK;
   token = await new SignJWT({email:'fixture@example.test'}).setSubject(OWNER).setProtectedHeader({alg:'HS256'}).setIssuer(`${databaseUrl}/auth/v1`).setAudience('authenticated').setExpirationTime('1h').sign(new TextEncoder().encode(JWT_SECRET));
-  const app = express();app.use(express.json());app.use('/api/projects',authMiddleware,projectsRouter);app.use('/api/swarm',authMiddleware,swarmRouter);
+  const app = express();app.use(express.json());app.use('/api/projects',authMiddleware,projectsRouter);app.use('/api/swarm',authMiddleware,swarmRouter);app.use('/api/terminal-sessions',authMiddleware,terminalRouter);
   api = createServer(app);await new Promise<void>(resolve => api.listen(0,'127.0.0.1',resolve));
   apiUrl=`http://127.0.0.1:${(api.address() as AddressInfo).port}`;
 });
@@ -99,6 +111,13 @@ test('hot run ID collision cannot replace another owner record', () => {
   const before=JSON.stringify(getRun(runId));
   assert.throws(()=>createRun(OWNER,'Attempted collision',runId),/Run not found/);
   assert.equal(JSON.stringify(getRun(runId)),before);
+});
+test('terminal autosave cannot steal another user ID; own save remains metadata-only',async()=>{
+  const body={githubRepoName:'fixture/site',messages:[{role:'user',content:'Own new message'}],user_id:OTHER};
+  const denied=await fetch(`${apiUrl}/api/terminal-sessions/${foreignTerminal.id}`,{method:'PUT',headers:headers(),body:JSON.stringify(body)});
+  assert.equal(denied.status,404);assert.equal(foreignTerminal.user_id,OTHER);assert.deepEqual(foreignTerminal.messages,[{content:'Other owner fixture'}]);
+  const own=await fetch(`${apiUrl}/api/terminal-sessions/own-terminal-fixture`,{method:'PUT',headers:headers(),body:JSON.stringify(body)});
+  assert.equal(own.status,200);const text=await own.text();assert.doesNotMatch(text,/messages|prompt|Own new message/);assert.match(text,/own-terminal-fixture/);
 });
 test('foreign project file write is blocked before any storage side effect', async () => {
   await assert.rejects(storeProjectFile(OWNER,OTHER_PROJECT,'denied.txt','Never uploaded','text/plain','other'),(error:unknown)=>error instanceof TenantAccessError&&error.status===404);

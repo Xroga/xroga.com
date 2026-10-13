@@ -1,6 +1,7 @@
 export const productionAuthProject = 'nzenxdfumxrnsmybazmo';
 
 /** Build-only, server-side admission. This chooses a test issuer, never user privilege. */
+/** @param {Record<string, string | undefined>} environment */
 export function resolveAuthBuildRealm(environment = process.env) {
   if (environment.XROGA_ISOLATED_AUTH_BUILD !== '1') return productionAuthProject;
   const reference = environment.E2E_ISOLATED_PROJECT_REF?.trim();

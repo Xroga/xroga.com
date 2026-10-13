@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
+  "source_sha": "e0186bd7bf8b1d78b83e541f07dacae082185513",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2694,6 +2694,7 @@
       "current_paths": [
         "backend/src/middleware/auth.ts",
         "backend/src/security/ownedRunPersistence.ts",
+        "backend/src/security/ownedTerminalPersistence.ts",
         "backend/src/security/ownership.ts",
         "backend/src/security/serviceRoleGuard.ts",
         "backend/src/security/tenantContext.ts",

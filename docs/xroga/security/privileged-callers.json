@@ -8,7 +8,7 @@
     "rlsEnabled": 118,
     "privilegedFactorySites": 159,
     "persistenceCandidates": 668,
-    "ownerPredicateCandidates": 156,
+    "ownerPredicateCandidates": 157,
     "reviewRequired": 668,
     "certifiedScopedPrivilegedCallers": 0,
     "registeredNarrowGlobalExceptions": 1
@@ -782,7 +782,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "7866e154dff1e14b3b57",
@@ -793,7 +793,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "692fe9dc22aa0e22a29c",
@@ -804,7 +804,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "b9a14396c0e3b713d62d",
@@ -815,7 +815,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "6964344021e194fab69a",
@@ -826,7 +826,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "caaabe452c8f983fa945",
@@ -837,7 +837,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "28dd14d5a026c6c0ab81",
@@ -848,7 +848,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "5303d003e057db9f9d39",
@@ -859,7 +859,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "cc1611471de14b5e0167",
@@ -870,7 +870,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "294ffa9818929cdac922",
@@ -881,7 +881,7 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "6ed0880c2e017823d48c",
@@ -892,7 +892,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "b52ac5e66ed448183a82",
@@ -903,10 +903,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
-      "id": "9c43562ecc2bf950f87a",
+      "id": "546859863f028684e72b",
       "path": "backend/src/ai/runStore.ts",
       "line": 1270,
       "enclosing": "listRunsForUserAsync",
@@ -914,10 +914,10 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
-      "id": "408d56e65336aa5b9b9f",
+      "id": "498278d15c7a27f228c4",
       "path": "backend/src/ai/runStore.ts",
       "line": 1276,
       "enclosing": "listRunsForUserAsync",
@@ -925,10 +925,10 @@
       "target": "swarm_runs",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
-      "id": "74f3d1050ec78418731a",
+      "id": "7aee6eb42fd959f4ea9b",
       "path": "backend/src/ai/runStore.ts",
       "line": 1460,
       "enclosing": "persistToSupabase",
@@ -936,7 +936,7 @@
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sourceSha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "id": "35f9985a9755966faccf",
@@ -3711,136 +3711,114 @@
       "sourceSha256": "f75c3e5a128b20fac6c6b2b450e1512d7d6bfb95748d0158befff5cfe8bb5153"
     },
     {
-      "id": "1c102f8a14cf2995d79f",
+      "id": "9975148f8076b74b9f6e",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 104,
+      "line": 111,
       "enclosing": "nextTerminalNumber",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "edcaeed50e598ebc4a5c",
+      "id": "be6c5851597479f5e5dd",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 105,
+      "line": 112,
       "enclosing": "nextTerminalNumber",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "3ddc89f374de58a6bc32",
+      "id": "683b88762864afe7cae3",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 130,
+      "line": 137,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "940a5c2060d020326e27",
+      "id": "ec0b016a0f2cd8cb1811",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 131,
+      "line": 138,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "b61a62a208a856c9b272",
+      "id": "a7791efb49f81902c4b3",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 181,
+      "line": 188,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "b5bd27ee37b27a049d74",
+      "id": "c9e76ac847a6a4d291fb",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 182,
+      "line": 189,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "323a4adb2096c5ac1eef",
+      "id": "89d042b660f432a7c447",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 229,
+      "line": 236,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "b4d08a5b83b84cbc647b",
+      "id": "eb2270d758c068b15663",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 230,
+      "line": 237,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "02f34dd37b52ef0012a6",
+      "id": "b11d28ec045a5cc5cf54",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 263,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
-    },
-    {
-      "id": "d257bdf1929ee4cde3d8",
-      "path": "backend/src/routes/terminalSessions.ts",
-      "line": 280,
-      "enclosing": "<module>",
-      "kind": "TABLE_OR_BUCKET_CANDIDATE",
-      "target": "terminal_sessions",
-      "ownerPredicateCandidate": false,
-      "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
-    },
-    {
-      "id": "790720d954e887c66847",
-      "path": "backend/src/routes/terminalSessions.ts",
-      "line": 311,
+      "line": 309,
       "enclosing": "<module>",
       "kind": "PRIVILEGED_FACTORY",
       "target": "getSupabaseAdmin",
       "ownerPredicateCandidate": false,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
-      "id": "c7f6074ef0a655f9ac30",
+      "id": "e91bcd1ac60e495f1fc5",
       "path": "backend/src/routes/terminalSessions.ts",
-      "line": 312,
+      "line": 310,
       "enclosing": "<module>",
       "kind": "TABLE_OR_BUCKET_CANDIDATE",
       "target": "terminal_sessions",
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
-      "sourceSha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sourceSha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
       "id": "edbf106a5dcc857d8b65",
@@ -3885,6 +3863,28 @@
       "ownerPredicateCandidate": true,
       "review": "REVIEW_REQUIRED",
       "sourceSha256": "1fb9cf0eb5a2ec64e7f24e324ade68b51e20c81c0115da0e9da32ebc59d9bbc0"
+    },
+    {
+      "id": "2a41b92c9188fe2cb00e",
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "line": 9,
+      "enclosing": "persistOwnedTerminal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": false,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd"
+    },
+    {
+      "id": "ada0384e27e557ef9acd",
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "line": 11,
+      "enclosing": "persistOwnedTerminal",
+      "kind": "TABLE_OR_BUCKET_CANDIDATE",
+      "target": "terminal_sessions",
+      "ownerPredicateCandidate": true,
+      "review": "REVIEW_REQUIRED",
+      "sourceSha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd"
     },
     {
       "id": "446699a96c40680025fb",

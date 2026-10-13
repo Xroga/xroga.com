@@ -1196,7 +1196,7 @@ export function listRunsForUser(
       (
         r,
       ): r is SwarmRunRecord =>
-        Boolean(r),
+        Boolean(r && r.userId === userId),
     )
     .slice(
       0,

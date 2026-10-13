@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
+  "source_sha": "e0186bd7bf8b1d78b83e541f07dacae082185513",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -11301,7 +11301,7 @@
     },
     {
       "path": "backend/src/ai/runStore.ts",
-      "sha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3"
+      "sha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3"
     },
     {
       "path": "backend/src/ai/runTrace.ts",
@@ -12165,7 +12165,7 @@
     },
     {
       "path": "backend/src/routes/terminalSessions.ts",
-      "sha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986"
+      "sha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f"
     },
     {
       "path": "backend/src/routes/tokenDistribution.ts",
@@ -12218,6 +12218,10 @@
     {
       "path": "backend/src/security/ownedRunPersistence.ts",
       "sha256": "1fb9cf0eb5a2ec64e7f24e324ade68b51e20c81c0115da0e9da32ebc59d9bbc0"
+    },
+    {
+      "path": "backend/src/security/ownedTerminalPersistence.ts",
+      "sha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd"
     },
     {
       "path": "backend/src/security/ownership.ts",
@@ -15877,7 +15881,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "18ff9ca798abd5f14102d483ed83879c538a8899089c18cb88542a0f79265bb4"
+      "sha256": "909355bd4b7e14a6182eac51e3cc5089451f15de0b1a9b6b0c28c22cf2c88f5b"
     },
     {
       "path": "frontend/src/lib/supabase/authErrors.ts",

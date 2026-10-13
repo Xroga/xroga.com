@@ -3,9 +3,9 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "3f06da0b269bb06f7fe1d3b62593bdfe0c9874b0",
-    "sourceTimestampUtc": "2026-10-13T19:56:17+05:00",
-    "auditStartedUtc": "2026-10-13T15:24:01.923Z",
+    "sha": "e0186bd7bf8b1d78b83e541f07dacae082185513",
+    "sourceTimestampUtc": "2026-10-13T20:25:29+05:00",
+    "auditStartedUtc": "2026-10-13T15:33:25.921Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
     "node": "v22.21.1",
@@ -6845,7 +6845,7 @@
       "id": "surface:ec198557da445d2b1385",
       "subsystem": "ai_execution",
       "sourcePath": "backend/src/ai/runStore.ts",
-      "sha256": "55f433d5147b4b55d303c2b82f1d3ed81253403af8f193b461542188a16e78a3",
+      "sha256": "b5fbaf96f87083d1ef1a5369711f10652a48f364f778d3408c63ce91c4ad83b3",
       "symbols": [
         "MAX_EVENTS_PER_RUN",
         "MAX_PER_USER",
@@ -6950,7 +6950,7 @@
         "backend/src/index.ts:49",
         "backend/src/routes/dashboard.ts:6",
         "backend/src/routes/swarm.ts:14",
-        "backend/src/security/tenantIsolation.integration.test.ts:12",
+        "backend/src/security/tenantIsolation.integration.test.ts:13",
         "backend/src/synthesis/reliability/step7cReliability.test.ts:16"
       ],
       "reachable": true,
@@ -19616,7 +19616,7 @@
       "id": "surface:caedaa02c39cf1a79ec7",
       "subsystem": "backend_routes",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "sha256": "a53326b26e3a0da16cef35da267943b56b9801ad73957c8c9316fa85f840a986",
+      "sha256": "033cb1b1eb84ff78b3665b09a82f6368a71912991aba14390150d3ebec69e28f",
       "symbols": [
         "DEFAULT_PAGE_SIZE",
         "MAX_PAGE_SIZE",
@@ -19660,20 +19660,27 @@
         "../db/ensureTerminalSessionsSchema.js",
         "../lib/supabaseCallCounters.js",
         "../middleware/auth.js",
+        "../security/ownedTerminalPersistence.js",
+        "../security/tenantContext.js",
+        "../security/tenantErrors.js",
         "express",
         "zod"
       ],
       "runtimeImports": [
         "backend/src/config/supabase.ts",
         "backend/src/db/ensureTerminalSessionsSchema.ts",
-        "backend/src/lib/supabaseCallCounters.ts"
+        "backend/src/lib/supabaseCallCounters.ts",
+        "backend/src/security/ownedTerminalPersistence.ts",
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
       ],
       "entryPoints": [
         "backend/src/index.ts"
       ],
       "callers": [
         "backend/src/index.ts:11",
-        "backend/src/routes/terminalSessions.payload.test.ts:12"
+        "backend/src/routes/terminalSessions.payload.test.ts:12",
+        "backend/src/security/tenantIsolation.integration.test.ts:12"
       ],
       "reachable": true,
       "persistenceDependencies": [
@@ -19687,17 +19694,18 @@
         "backend/src/routes/terminalSessions.ts#AuthRequest"
       ],
       "tenantBoundary": [
-        "backend/src/routes/terminalSessions.ts:105 (user_id)",
-        "backend/src/routes/terminalSessions.ts:131 (user_id)",
-        "backend/src/routes/terminalSessions.ts:182 (user_id)",
-        "backend/src/routes/terminalSessions.ts:230 (user_id)",
-        "backend/src/routes/terminalSessions.ts:312 (user_id)"
+        "backend/src/routes/terminalSessions.ts:112 (user_id)",
+        "backend/src/routes/terminalSessions.ts:138 (user_id)",
+        "backend/src/routes/terminalSessions.ts:189 (user_id)",
+        "backend/src/routes/terminalSessions.ts:237 (user_id)",
+        "backend/src/routes/terminalSessions.ts:310 (user_id)"
       ],
       "approvalBoundary": [],
       "costBoundary": [],
       "evidenceBoundary": [],
       "testCoverage": [
-        "backend/src/routes/terminalSessions.payload.test.ts"
+        "backend/src/routes/terminalSessions.payload.test.ts",
+        "backend/src/security/tenantIsolation.integration.test.ts"
       ],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
@@ -20504,6 +20512,56 @@
       "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
     },
     {
+      "id": "surface:0dddf537042ea36631e9",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "backend/src/security/ownedTerminalPersistence.ts",
+      "sha256": "17a04ce1ceb306cba512e8726ad674e03df009e074b3c36e2c78b6ae3c49a5dd",
+      "symbols": [
+        "insertion",
+        "persistOwnedTerminal",
+        "scope"
+      ],
+      "imports": [
+        "./tenantContext.js",
+        "./tenantErrors.js",
+        "@supabase/supabase-js"
+      ],
+      "runtimeImports": [
+        "backend/src/security/tenantContext.ts",
+        "backend/src/security/tenantErrors.ts"
+      ],
+      "entryPoints": [
+        "backend/src/index.ts"
+      ],
+      "callers": [
+        "backend/src/routes/terminalSessions.ts:18",
+        "backend/src/security/ownedTerminalPersistence.test.ts:5"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [
+        "terminal_sessions"
+      ],
+      "externalProviderDependencies": [
+        "@supabase/supabase-js"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [
+        "backend/src/security/ownedTerminalPersistence.ts:11 (user_id)"
+      ],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "backend/src/security/ownedTerminalPersistence.test.ts"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
       "id": "surface:4928f851a2c75540edf8",
       "subsystem": "backend_infrastructure",
       "sourcePath": "backend/src/security/ownership.ts",
@@ -20532,7 +20590,7 @@
       "entryPoints": [],
       "callers": [
         "backend/src/security/ownership.test.ts:5",
-        "backend/src/security/tenantIsolation.integration.test.ts:15",
+        "backend/src/security/tenantIsolation.integration.test.ts:16",
         "backend/src/services/storage/projectFiles.ts:5"
       ],
       "reachable": false,
@@ -20638,13 +20696,16 @@
         "backend/src/middleware/auth.ts:4",
         "backend/src/routes/projects.ts:4",
         "backend/src/routes/swarm.ts:4",
+        "backend/src/routes/terminalSessions.ts:17",
         "backend/src/security/ownedRunPersistence.test.ts:5",
         "backend/src/security/ownedRunPersistence.ts:2",
+        "backend/src/security/ownedTerminalPersistence.test.ts:4",
+        "backend/src/security/ownedTerminalPersistence.ts:2",
         "backend/src/security/ownership.test.ts:4",
         "backend/src/security/ownership.ts:3",
         "backend/src/security/serviceRoleGuard.ts:2",
         "backend/src/security/tenantContext.test.ts:3",
-        "backend/src/security/tenantIsolation.integration.test.ts:14",
+        "backend/src/security/tenantIsolation.integration.test.ts:15",
         "backend/src/services/storage/projectFiles.ts:4"
       ],
       "reachable": true,
@@ -20662,6 +20723,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/ownedRunPersistence.test.ts",
+        "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
@@ -20689,13 +20751,16 @@
       ],
       "callers": [
         "backend/src/routes/swarm.ts:5",
+        "backend/src/routes/terminalSessions.ts:19",
         "backend/src/security/ownedRunPersistence.test.ts:6",
         "backend/src/security/ownedRunPersistence.ts:3",
+        "backend/src/security/ownedTerminalPersistence.test.ts:6",
+        "backend/src/security/ownedTerminalPersistence.ts:3",
         "backend/src/security/ownership.test.ts:6",
         "backend/src/security/ownership.ts:4",
         "backend/src/security/tenantContext.test.ts:5",
         "backend/src/security/tenantContext.ts:3",
-        "backend/src/security/tenantIsolation.integration.test.ts:16"
+        "backend/src/security/tenantIsolation.integration.test.ts:17"
       ],
       "reachable": true,
       "persistenceDependencies": [],
@@ -20707,6 +20772,7 @@
       "evidenceBoundary": [],
       "testCoverage": [
         "backend/src/security/ownedRunPersistence.test.ts",
+        "backend/src/security/ownedTerminalPersistence.test.ts",
         "backend/src/security/ownership.test.ts",
         "backend/src/security/tenantContext.test.ts",
         "backend/src/security/tenantIsolation.integration.test.ts"
@@ -24925,7 +24991,7 @@
       ],
       "entryPoints": [],
       "callers": [
-        "backend/src/security/tenantIsolation.integration.test.ts:13",
+        "backend/src/security/tenantIsolation.integration.test.ts:14",
         "backend/src/services/memory/buildProjectStore.ts:8"
       ],
       "reachable": false,
@@ -75360,7 +75426,7 @@
       "id": "surface:2cd2cfb40faa6f59e1b6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "18ff9ca798abd5f14102d483ed83879c538a8899089c18cb88542a0f79265bb4",
+      "sha256": "909355bd4b7e14a6182eac51e3cc5089451f15de0b1a9b6b0c28c22cf2c88f5b",
       "symbols": [
         "productionAuthProject",
         "reference",
@@ -86340,9 +86406,21 @@
       "inlineResponse": false
     },
     {
-      "id": "registration:cdb596a3b6d774c67c5d",
+      "id": "registration:40b91269fadd21e8c651",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 117,
+      "line": 22,
+      "receiver": "router",
+      "method": "use",
+      "path": null,
+      "handlers": [],
+      "scope": "module",
+      "functionName": "<module>",
+      "inlineResponse": true
+    },
+    {
+      "id": "registration:9309329b2f0b5f25cde0",
+      "sourcePath": "backend/src/routes/terminalSessions.ts",
+      "line": 124,
       "receiver": "router",
       "method": "get",
       "path": "/",
@@ -86352,9 +86430,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:618150e9b8f6ad59b79c",
+      "id": "registration:e776ec81114ccfa4e28b",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 172,
+      "line": 179,
       "receiver": "router",
       "method": "get",
       "path": "/:id",
@@ -86364,9 +86442,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:098e39df0cec081194f3",
+      "id": "registration:c0ccfe8b3ad0446c7130",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 204,
+      "line": 211,
       "receiver": "router",
       "method": "put",
       "path": "/:id",
@@ -86376,9 +86454,9 @@
       "inlineResponse": true
     },
     {
-      "id": "registration:09c58a1b7e892fe83eb1",
+      "id": "registration:5c25cfd168f3fc8b9f73",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 307,
+      "line": 305,
       "receiver": "router",
       "method": "delete",
       "path": "/:id",
@@ -88444,10 +88522,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:2c0db90ae1351f7455a7",
-      "registrationId": "registration:cdb596a3b6d774c67c5d",
+      "id": "route:749cd9bd76a8a91ca5f0",
+      "registrationId": "registration:9309329b2f0b5f25cde0",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 117,
+      "line": 124,
       "method": "GET",
       "path": "/api/terminal-sessions",
       "mountChain": [
@@ -88461,10 +88539,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:cf26e44de07d0e1f5b58",
-      "registrationId": "registration:618150e9b8f6ad59b79c",
+      "id": "route:f8db5b3263fde643149e",
+      "registrationId": "registration:e776ec81114ccfa4e28b",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 172,
+      "line": 179,
       "method": "GET",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -88478,10 +88556,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:f88c339f6bce5f68fd25",
-      "registrationId": "registration:098e39df0cec081194f3",
+      "id": "route:3527d29ce49dd89cf557",
+      "registrationId": "registration:c0ccfe8b3ad0446c7130",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 204,
+      "line": 211,
       "method": "PUT",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -88495,10 +88573,10 @@
       "reason": "Literal Express registration traced through mounts; behavior/security not proven by registration."
     },
     {
-      "id": "route:b9792ca9e7754e1b6f82",
-      "registrationId": "registration:09c58a1b7e892fe83eb1",
+      "id": "route:f23276cfca4fc54c54a6",
+      "registrationId": "registration:5c25cfd168f3fc8b9f73",
       "sourcePath": "backend/src/routes/terminalSessions.ts",
-      "line": 307,
+      "line": 305,
       "method": "DELETE",
       "path": "/api/terminal-sessions/:id",
       "mountChain": [
@@ -98407,6 +98485,13 @@
       "focusLocations": []
     },
     {
+      "id": "test-suite:8724e58d19769f71c1bb",
+      "sourcePath": "backend/src/security/ownedTerminalPersistence.test.ts",
+      "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
       "id": "test-suite:202b022e2f1c32eef410",
       "sourcePath": "backend/src/security/ownership.test.ts",
       "declaredTests": 2,
@@ -98423,7 +98508,7 @@
     {
       "id": "test-suite:5202c26b2019c416efe8",
       "sourcePath": "backend/src/security/tenantIsolation.integration.test.ts",
-      "declaredTests": 10,
+      "declaredTests": 11,
       "skipLocations": [],
       "focusLocations": []
     },

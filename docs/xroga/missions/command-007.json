@@ -49,6 +49,9 @@
     "frontend/src/lib/supabase/authBuildRealm.mjs",
     "backend/src/security/ownedRunPersistence.ts",
     "backend/src/security/ownedRunPersistence.test.ts"
+    ,"backend/src/security/ownedTerminalPersistence.ts"
+    ,"backend/src/security/ownedTerminalPersistence.test.ts"
+    ,"backend/src/routes/terminalSessions.ts"
   ],
   "decisions": {
     "keep": [
