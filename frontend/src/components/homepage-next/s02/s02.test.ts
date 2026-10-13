@@ -2,161 +2,157 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { demoReducer, initialState, type DemoState } from './engine';
-import { COPY, EMPLOYEES, FORBIDDEN_CLAIMS, MISSIONS, TEAM_STEPS, stepDurations, stepsOf } from './script';
+import { COPY, EMPLOYEES, FEATURED, MISSIONS, TEAM_STEPS, THEN, stepDurations, stepsOf } from './script';
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8');
-const APPS = read('./Apps.tsx');
+const MISSION_SRC = read('./Missions.tsx');
+const WORK_SRC = read('./Workspaces.tsx');
 const THEATER = read('./Theater.tsx');
-const TEAM = read('./Team.tsx');
+const COMPANION = read('./Companion.tsx');
 const SHELL = read('./S02Work.tsx');
 const MOTION = read('./motion.tsx');
-const XMARK = read('./XMark.tsx');
 const CLOCK = read('./useDemoClock.ts');
-const CSS_FILES = ['./S02.module.css', './Theater.module.css', './Apps.module.css', './Team.module.css', './Motion.module.css', './XMark.module.css'];
+const CSS_FILES = ['./S02.module.css', './Theater.module.css', './Missions.module.css', './Workspaces.module.css', './Companion.module.css', './Motion.module.css'];
 const CSS = CSS_FILES.map(read);
 const PAGE = read('../../homepage/HomepageClient.tsx');
-const rendered = (target: string) => APPS.includes(`data-t="${target}"`) || APPS.includes(`'data-t': '${target}'`);
+const has = (src: string, target: string) => src.includes(`t="${target}"`) || src.includes(`'${target}'`);
+const ALL_COPY = JSON.stringify({ MISSIONS, EMPLOYEES, COPY }) + MISSION_SRC + WORK_SRC + THEATER;
 
-test('four browser missions: every action lands on a rendered element and each ends on a result', () => {
-  assert.deepEqual(MISSIONS.map((m) => m.label), ['Find a website bug', 'Prepare a Google Ad', 'Publish an article', 'Publish a Chrome extension']);
+test('four browser missions: every action and finding lands on an element its app renders', () => {
+  assert.deepEqual(
+    MISSIONS.map((m) => m.label),
+    ['Find a website bug', 'Prepare a Google Ad', 'Publish a Chrome extension', 'Prepare an article'],
+  );
   for (const m of MISSIONS) {
-    m.steps.forEach((st) => {
-      const at = `${m.id}/${st.stepId}`;
-      if (st.action !== 'none') assert.ok(st.target && rendered(st.target), `${at} acts on a rendered target`);
-      if (st.action === 'type') assert.ok(st.typed, at);
-      if (st.note) assert.ok(rendered(st.note.at), `${at} the finding is pinned to a rendered element`);
-      assert.ok(st.ms >= 600 && st.ms <= 4200, `${at} ${st.ms}ms`);
-    });
+    for (const st of m.steps) {
+      const at = `${m.id}/${st.id}`;
+      if (st.act !== 'none') assert.ok(st.t && has(MISSION_SRC, st.t), `${at} acts on a rendered target`);
+      if (st.act === 'type') assert.ok(st.typed, `${at} types something`);
+      if (st.pin) assert.ok(has(MISSION_SRC, st.pin.at), `${at} the finding is pinned to a rendered element`);
+      if (st.pin?.until) assert.ok(m.steps.some((x) => x.id === st.pin!.until), `${at} resolves on a real step`);
+      assert.ok(st.ms >= 800 && st.ms <= 5200, `${at} ${st.ms}ms`);
+    }
     const end = m.steps.at(-1)!;
-    assert.equal(end.action, 'none', `${m.id} settles`);
+    assert.equal(end.act, 'none', `${m.id} settles`);
     assert.ok(end.ms >= 4000, `${m.id} the result is held`);
-    assert.ok(m.result.lines.length >= 3 && m.result.gate, `${m.id} result`);
+    assert.ok(m.outcome.lines.length >= 3 && m.outcome.gate, `${m.id} has an inspectable result`);
     const total = stepDurations(`browser:${m.id}`).slice(0, -1).reduce((a, b) => a + b, 0);
-    assert.ok(total <= 11000, `${m.id} plays in ${total}ms: a short demonstration, not a video`);
+    assert.ok(total <= 9000, `${m.id} plays in ${total}ms: a short demonstration, not a video`);
   }
-  // human gates: spend, publish and store submission wait for the visitor; the bug hunt changes nothing
-  assert.equal(MISSIONS.find((m) => m.id === 'ads')!.result.state, 'approval');
-  assert.match(MISSIONS.find((m) => m.id === 'ads')!.result.gate, /no money spent/);
-  assert.match(MISSIONS.find((m) => m.id === 'article')!.result.gate, /not published/);
-  assert.match(MISSIONS.find((m) => m.id === 'extension')!.result.lines.map((l) => l.text).join(' '), /it is not publication/);
-  assert.match(MISSIONS.find((m) => m.id === 'bug')!.result.gate, /Nothing was changed/);
-  // the four missions are four different applications
-  for (const fn of ['BugApp', 'AdsApp', 'ArticleApp', 'ExtensionApp']) assert.match(APPS, new RegExp(`function ${fn}\\(`));
-  assert.match(APPS, /POST<\/b>\/api\/invites<em>403/);
+  // four different tools, not one dashboard reskinned
+  for (const fn of ['BugApp', 'AdsApp', 'ExtensionApp', 'ArticleApp']) assert.match(MISSION_SRC, new RegExp(`function ${fn}`));
 });
 
-test('six AI Employees: distinct professions, apps and deliverables, each with the authentic X', () => {
-  assert.deepEqual(EMPLOYEES.map((e) => e.name), ['Product Engineer', 'Research Analyst', 'Client Acquisition', 'Creative Producer', 'Data & Finance', 'Operations Manager']);
-  assert.equal(new Set(EMPLOYEES.map((e) => e.app)).size, 6, 'six different apps');
-  assert.equal(new Set(EMPLOYEES.map((e) => e.deliverable.title)).size, 6);
+test('approvals: spend, publish and store submission stop at the visitor; the bug hunt changes nothing', () => {
+  const m = (id: string) => MISSIONS.find((x) => x.id === id)!;
+  assert.match(m('ads').outcome.gate, /no money spent/i);
+  assert.match(m('ads').outcome.gate, /not published/i);
+  assert.match(m('extension').outcome.gate, /waits for you/i);
+  assert.match(m('article').outcome.gate, /waits for you/i);
+  assert.match(m('bug').outcome.gate, /nothing .* changed/i);
+  for (const id of ['ads', 'extension', 'article']) assert.equal(m(id).outcome.state, 'approval');
+  // the final buttons ask for approval; none presents publish, pay or launch as done
+  assert.doesNotMatch(MISSION_SRC, />\s*(Publish now|Go live|Launch campaign|Pay now)\s*</);
+  assert.match(MISSION_SRC, /Waiting for your approval/);
+});
+
+test('six AI Employees: distinct colour, tie, idle signature, workspace and deliverable', () => {
+  assert.deepEqual(
+    EMPLOYEES.map((e) => e.name),
+    ['Software Builder', 'Growth Strategist', 'Research Analyst', 'Creative Producer', 'Data Specialist', 'Operations Manager'],
+  );
+  for (const key of ['accent', 'tie', 'idle', 'app', 'short'] as const) {
+    assert.equal(new Set(EMPLOYEES.map((e) => e[key])).size, 6, `every employee has its own ${key}`);
+  }
   for (const e of EMPLOYEES) {
-    assert.ok(existsSync(new URL(`../../../../public/homepage/s02/x-${e.id}.webp`, import.meta.url)), `${e.id} X asset`);
-    assert.equal(e.steps[0].stepId, 'assign');
-    for (const st of e.steps) if (st.action !== 'none') assert.ok(st.target && rendered(st.target), `${e.id}/${st.stepId} target rendered`);
-    for (const st of e.steps) if (st.note) assert.ok(rendered(st.note.at), `${e.id}/${st.stepId} note anchored`);
+    for (const st of e.steps) {
+      if (st.t) assert.ok(has(WORK_SRC, st.t), `${e.id}/${st.id} acts on a rendered target`);
+      if (st.pin) assert.ok(has(WORK_SRC, st.pin.at), `${e.id}/${st.id} pin target is rendered`);
+    }
+    assert.ok(e.outcome.gate, `${e.id} states what waits for the visitor`);
   }
-  assert.match(XMARK, /\/homepage\/s02\/x-\$\{id\}\.webp/);
-  for (const fn of ['EngineerApp', 'ResearchApp', 'AcquisitionApp', 'CreativeApp', 'DataApp', 'OpsApp']) assert.match(APPS, new RegExp(`function ${fn}\\(`));
-  for (const st of ['assigned', 'working', 'handoff', 'approval', 'done']) assert.ok(CSS[5].includes(`'${st}'`), `X state ${st} is styled`);
+  for (const fn of ['BuilderApp', 'GrowthApp', 'ResearchApp', 'CreativeApp', 'DataApp', 'OpsApp']) assert.match(WORK_SRC, new RegExp(`function ${fn}`));
+  // the authentic orb artwork, never redrawn; ties in six cuts
+  assert.match(COMPANION, /companion-orb-512\.webp/);
+  assert.ok(existsSync(new URL('../../../../public/homepage/s02/companion-orb-512.webp', import.meta.url)));
+  assert.ok(existsSync(new URL('../../../../public/homepage/s02/companion-orb-256.webp', import.meta.url)));
+  for (const tie of ['slim', 'striped', 'dotted', 'knit', 'clip']) assert.match(COMPANION, new RegExp(`${tie}:`));
+  assert.match(COMPANION, /tie === 'bow'/);
 });
 
-test('one handoff: the Research Analyst sends the brief and Client Acquisition starts from it', () => {
+test('one real handoff: the Research Analyst sends its brief and it arrives on the Growth board', () => {
   const research = EMPLOYEES.find((e) => e.id === 'research')!;
-  const acq = EMPLOYEES.find((e) => e.id === 'acquisition')!;
-  assert.deepEqual(research.sends, { title: 'Opportunity brief', to: 'acquisition' });
-  assert.equal(acq.receives, 'Opportunity brief');
-  assert.match(acq.deliverable.lines[0].text, /Harbor district brief/, 'the recipient visibly uses the brief');
-  assert.match(THEATER, /data-in=""/);
-  assert.match(THEATER, /data-out=""/);
-  assert.match(SHELL, /setBriefReady\(true\)/);
+  assert.ok(research.steps.some((s) => s.id === 'handoff' && s.t === 'r.send'));
+  assert.match(research.outcome.gate, /Growth Strategist/);
+  assert.match(SHELL, /'handoff'\) setBriefSent\(true\)/);
+  assert.match(WORK_SRC, /briefSent \? 'From Research Analyst'/);
+  assert.match(THEATER, /e\.id === 'growth' && briefSent/);
 });
 
-test('the team enters once, staggered, then waits for the visitor', () => {
-  assert.equal(initialState().lastByMode.employees, 'emp:team');
-  assert.equal(TEAM_STEPS.length, 1);
-  assert.ok(TEAM_STEPS[0].ms >= 1500 && TEAM_STEPS[0].ms <= 2500);
-  assert.match(CSS[3], /calc\(480ms \+ var\(--i\) \* 100ms\)/, '100ms staggered starts');
-  assert.match(TEAM, /aria-label=\{`Open \$\{e\.name\}/);
-  assert.match(TEAM, /aria-pressed=\{active === e\.id\}/);
+test('the team enters in under two seconds, then the featured employee takes the computer', () => {
+  const total = TEAM_STEPS.reduce((a, s) => a + s.ms, 0);
+  assert.ok(total < 2100, `entrance ${total}ms`);
+  assert.equal(THEN['emp:team'], `emp:${FEATURED}`);
+  let s: DemoState = { ...initialState(false), track: 'emp:team', step: TEAM_STEPS.length - 1 };
+  s = demoReducer(s, { type: 'advance', gen: s.gen });
+  assert.equal(s.track, `emp:${FEATURED}`, 'hands over after the entrance');
+  // a visitor who chooses Team keeps the lineup
+  let v = demoReducer(initialState(false), { type: 'select', track: 'emp:team' });
+  v = { ...v, step: TEAM_STEPS.length - 1 };
+  v = demoReducer(v, { type: 'advance', gen: v.gen });
+  assert.equal(v.track, 'emp:team');
+  assert.equal(v.ended, true);
 });
-
-const run = (s: DemoState, n: number) => {
-  for (let i = 0; i < n; i++) s = demoReducer(s, { type: 'advance', gen: s.gen });
-  return s;
-};
 
 test('one timeline: a choice plays once and holds its result; stale timers are ignored', () => {
-  let s = run(initialState(), 2);
+  let s = initialState(false);
+  assert.equal(s.track, 'browser:bug');
   const stale = s.gen;
   s = demoReducer(s, { type: 'select', track: 'browser:ads' });
-  assert.equal(demoReducer(s, { type: 'advance', gen: stale }), s);
-  s = run(s, stepsOf('browser:ads').length + 3);
-  assert.equal(s.track, 'browser:ads', 'nothing chains to another scene');
-  assert.equal(s.step, stepsOf('browser:ads').length - 1);
-  assert.equal(s.ended, true);
-  const m = demoReducer(s, { type: 'mode', mode: 'employees' });
-  assert.equal(m.track, 'emp:team');
-  const back = demoReducer(demoReducer(m, { type: 'select', track: 'emp:data' }), { type: 'mode', mode: 'browser' });
-  assert.equal(back.track, 'browser:ads', 'each mode returns to its last choice');
-  assert.equal(demoReducer(back, { type: 'mode', mode: 'employees' }).track, 'emp:data');
-  const again = demoReducer(s, { type: 'replay' });
-  assert.equal(again.step, 0);
-  assert.equal(again.ended, false);
+  assert.equal(demoReducer(s, { type: 'advance', gen: stale }), s, 'stale timer ignored');
+  for (let i = 0; i < stepsOf('browser:ads').length; i++) s = demoReducer(s, { type: 'advance', gen: s.gen });
+  assert.equal(s.track, 'browser:ads');
+  assert.equal(s.ended, true, 'holds its result; nothing chains');
+  s = demoReducer(s, { type: 'replay' });
+  assert.equal(s.step, 0);
+  assert.equal(s.ended, false);
+  // switching modes returns to the last scene of that mode
+  s = demoReducer(s, { type: 'mode', mode: 'employees' });
+  assert.equal(s.track, 'emp:team');
+  s = demoReducer(s, { type: 'mode', mode: 'browser' });
+  assert.equal(s.track, 'browser:ads');
 });
 
-test('no pause, replay or progress chrome; contextual controls only after the work settles', () => {
-  assert.doesNotMatch(SHELL, /Pause demonstration|Replay from|s\.progress|Previous step/);
-  assert.doesNotMatch(SHELL + THEATER, /\bPlan\b|\bVerify\b|\bDeliver\b/);
-  assert.match(THEATER, /\{last && \(\s*<div className=\{t\.after\}>/);
-  assert.match(THEATER, /Show the work/);
-  assert.match(THEATER, /Watch again/);
-  assert.match(CLOCK, /const running = !reduced && onScreen && !hidden && !state\.paused && !state\.ended;/);
+test('the clock runs only on screen and visible; motion never moves the page', () => {
+  assert.match(CLOCK, /IntersectionObserver/);
+  assert.match(CLOCK, /visibilitychange|document\.hidden/);
+  assert.doesNotMatch(SHELL + THEATER + MOTION, /scrollIntoView|scrollTo\(/);
+  assert.match(SHELL, /preventScroll: true/);
+  for (const [i, css] of CSS.entries()) if (/animation|transition/.test(css)) assert.match(css, /prefers-reduced-motion: reduce/, CSS_FILES[i]);
 });
 
-test('the layout is compact: one stage of about 440 to 540px on desktop and fixed bands', () => {
-  assert.match(CSS[0], /height: clamp\(440px, calc\(100svh - 360px\), 520px\)/);
-  assert.match(CSS[0], /\.selector \{[^}]*min-height: 56px/);
-  assert.match(CSS[0], /transition: transform 220ms/, 'mode pill 180 to 260ms');
-  assert.match(CSS[0], /animation: swap 450ms/, 'stage swap 350 to 550ms');
-  assert.match(CSS[1], /scale\(1\.08\)/, 'camera push 1.05 to 1.12');
-  assert.match(CSS[4], /animation: press 1\d\dms/, 'click impulse');
+test('one compact section: one disclosure, one CTA, no video or player chrome', () => {
+  assert.equal(COPY.disclosure, 'Illustrative experience · sample data');
+  assert.equal((SHELL.match(/COPY\.disclosure/g) ?? []).length, 1);
+  assert.equal((SHELL.match(/<Link /g) ?? []).length, 1);
+  assert.match(SHELL, /'\/workspace' : '\/auth\/signup'/);
+  assert.doesNotMatch(ALL_COPY, /<video|autoPlay|>Pause<|scrubber/);
+  assert.match(PAGE, /<S02Work loggedIn=\{loggedIn\} \/>/);
 });
 
-test('nothing moves the page or steals focus; motion stays on the compositor', () => {
-  for (const src of [APPS, THEATER, TEAM, SHELL, MOTION, CLOCK]) {
-    assert.doesNotMatch(src, /scrollIntoView|window\.scroll|scrollTo\(|document\.documentElement\.scroll/);
-    for (const m of src.matchAll(/\.focus\(([^)]*)\)/g)) assert.match(m[1], /preventScroll: true/);
-  }
-  CSS.forEach((css, i) => {
-    for (const kf of css.matchAll(/@keyframes [\w-]+ \{([\s\S]*?)\}\s*\}?/g)) assert.doesNotMatch(kf[1], /\b(top|left|right|bottom|width|height|margin)\s*:/, `${CSS_FILES[i]} ${kf[0].slice(0, 50)}`);
-    for (const m of css.matchAll(/animation:[^;]*infinite[^;]*;([^}]*)\}/g)) assert.match(m[1], /animation-play-state: paused/, m[0].slice(0, 60));
-    assert.doesNotMatch(css, /backdrop-filter:\s*blur/);
-  });
+test('truthful copy: sample data, fictional domains, no claims of live autonomy or guaranteed results', () => {
+  assert.doesNotMatch(ALL_COPY, /fully autonomous|guarantee|100% accurate|replaces your team|no human needed/i);
+  const domains = ALL_COPY.match(/\b[a-z0-9-]+\.(com|io|net|org|co)\b/gi) ?? [];
+  assert.deepEqual(domains, [], `only .example domains appear: ${domains.join(', ')}`);
+  assert.match(MISSIONS.find((m) => m.id === 'extension')!.outcome.lines.map((l) => l.text).join(' '), /decided by Google/);
 });
 
-test('one section, scoped styles, truthful copy, real CTA routes', () => {
-  assert.equal((PAGE.match(/<S02Work /g) ?? []).length, 1);
-  const s01 = PAGE.indexOf('<S01CapabilityDeck />');
-  const s02 = PAGE.indexOf('<S02Work loggedIn={loggedIn} />');
-  assert.ok(s01 < s02 && s02 < PAGE.indexOf('<HomepagePowerStories />'));
-  for (const css of CSS) assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ''), /^(html|body|h[1-6]|header|nav|main|\.xv-)/m);
-  assert.equal(COPY.eyebrow, 'XROGA IN ACTION');
-  assert.equal(COPY.title, 'Give the work to Xroga. Watch it happen.');
-  assert.deepEqual(COPY.modes, { browser: 'Browser Automation', employees: 'AI Employees' });
-  assert.match(COPY.availability, /in development/);
-  assert.match(COPY.illustrative, /Illustrative/);
-  assert.doesNotMatch(JSON.stringify({ MISSIONS, EMPLOYEES }), FORBIDDEN_CLAIMS);
-  assert.doesNotMatch(APPS + THEATER + TEAM, FORBIDDEN_CLAIMS);
-  for (const src of [JSON.stringify({ MISSIONS, EMPLOYEES, COPY }), APPS, THEATER, TEAM, SHELL]) assert.doesNotMatch(src, /[–—]/);
-  assert.match(SHELL, /href=\{loggedIn \? '\/workspace' : '\/auth\/signup'\}/);
-  assert.ok(existsSync(new URL('../../../app/auth/signup', import.meta.url)));
-});
-
-test('accessibility: tabs, labelled controls, mock apps out of the tab order, reduced motion', () => {
+test('accessibility: tabs, labelled dock, companions decorative, hidden UI inert', () => {
   assert.match(SHELL, /role="tablist"/);
-  assert.match(SHELL, /aria-pressed=\{state\.track === `browser:\$\{x\.id\}`\}/);
-  assert.match(SHELL, /aria-live="polite"/);
-  assert.match(THEATER, /aria-hidden="true" \{\.\.\.inertIf\(true\)\}/);
-  assert.doesNotMatch(APPS, /<button|<a /);
-  for (const css of CSS) if (/animation/.test(css)) assert.match(css, /prefers-reduced-motion: reduce/);
+  assert.match(SHELL, /aria-selected=/);
+  assert.match(THEATER, /'Choose a browser mission' : 'Choose an AI Employee'/);
+  assert.match(THEATER, /aria-pressed=/);
+  assert.match(COMPANION, /aria-hidden="true"/);
+  assert.match(THEATER, /inertIf\(!show\)/);
+  for (const css of CSS) assert.doesNotMatch(css, /outline:\s*none/);
 });

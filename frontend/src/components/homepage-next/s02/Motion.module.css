@@ -1,73 +1,114 @@
-/* The Xroga pointer and typing caret. */
+/* The Xroga pointer, typing caret and pinned findings. */
 .pointer {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 20;
-  margin: -2px 0 0 -2px;
-  opacity: 0;
+  z-index: 30;
   pointer-events: none;
+  opacity: 0;
   transition-property: transform, opacity;
-  transition-timing-function: cubic-bezier(0.32, 0.02, 0.16, 1), linear;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1), linear;
   will-change: transform;
 }
-.pointer[data-visible] { opacity: 1; }
-.body { position: relative; display: block; }
-/* a soft glow in the pointer's own colour: Xroga is operating */
-.body::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  top: -4px;
-  width: 30px;
-  height: 34px;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(84, 140, 255, 0.55), transparent);
+.pointer[data-visible] {
+  opacity: 1;
 }
-.pointer[data-tint='data'] .body::before { background: radial-gradient(closest-side, rgba(154, 107, 255, 0.55), transparent); }
-.pointer[data-tint='creative'] .body::before { background: radial-gradient(closest-side, rgba(238, 90, 163, 0.5), transparent); }
-.pointer[data-tint='acquisition'] .body::before { background: radial-gradient(closest-side, rgba(56, 196, 240, 0.55), transparent); }
-.pointer[data-tint='ops'] .body::before { background: radial-gradient(closest-side, rgba(255, 170, 61, 0.5), transparent); }
-.pointer[data-tint='engineer'] .body::before { background: radial-gradient(closest-side, rgba(143, 214, 227, 0.5), transparent); }
-.arrow { position: relative; display: block; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.55)); }
-.body[data-press] { animation: press 190ms cubic-bezier(0.4, 0, 0.2, 1) 1; transform-origin: 3px 3px; }
-.tag {
-  position: absolute;
-  left: 22px;
-  top: 26px;
-  padding: 3px 8px;
-  border-radius: 7px;
-  background: linear-gradient(180deg, #4d86ff, #2c58e0);
-  color: #fff;
-  font: 650 11px/1.2 var(--font-inter), system-ui, sans-serif;
-  white-space: nowrap;
-  box-shadow: 0 6px 14px -6px rgba(30, 70, 220, 0.8);
+.body {
+  display: block;
+  transform-origin: 3px 2px;
 }
-.pointer[data-tint='data'] .tag { background: linear-gradient(180deg, #a07bff, #6a3fe0); }
-.pointer[data-tint='creative'] .tag { background: linear-gradient(180deg, #f070b0, #b8327a); }
-.pointer[data-tint='acquisition'] .tag { background: linear-gradient(180deg, #2bc0ef, #1683c0); }
-.pointer[data-tint='ops'] .tag { background: linear-gradient(180deg, #ffb24f, #d9781a); color: #1a1006; }
-.pointer[data-tint='engineer'] .tag { background: linear-gradient(180deg, #a6e2ec, #5a9fb0); color: #04151a; }
+.body[data-press] {
+  animation: press 260ms cubic-bezier(0.3, 0, 0.3, 1) 1;
+}
+@keyframes press {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(0.86); }
+}
+.arrow {
+  display: block;
+  margin: -2px 0 0 -3px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 10px color-mix(in oklab, var(--c) 45%, transparent));
+}
 .ring {
   position: absolute;
   left: -14px;
   top: -14px;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 2px solid rgba(110, 160, 255, 0.95);
+  border: 2px solid var(--c, #4589ff);
   opacity: 0;
-  animation: ring 520ms cubic-bezier(0.2, 0.7, 0.3, 1) 1;
+  animation: ring 520ms cubic-bezier(0.22, 1, 0.36, 1) 140ms 1 both;
 }
-.typed { display: inline; white-space: pre-wrap; }
-.caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 1px; vertical-align: -0.15em; background: #6ea2ff; animation: blink 1s steps(1) infinite; animation-play-state: paused; }
-:global([data-running]) .caret { animation-play-state: running; }
+@keyframes ring {
+  0% { opacity: 0.9; transform: scale(0.3); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+.tag {
+  position: absolute;
+  left: 24px;
+  top: 30px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font: 600 11.5px/1.3 var(--font-inter), system-ui, sans-serif;
+  color: #fff;
+  background: color-mix(in oklab, var(--c, #4589ff) 82%, #0b0e15);
+  box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.7);
+}
+.typed {
+  white-space: pre;
+}
+.caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: blink 900ms steps(2) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
 
-@keyframes press { 45% { transform: scale(0.82); } }
-@keyframes ring { 0% { opacity: 1; transform: scale(0.35); } 100% { opacity: 0; transform: scale(1.7); } }
-@keyframes blink { 50% { opacity: 0; } }
+/* a finding pinned under the element where it was found */
+.pin {
+  position: absolute;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 300px;
+  padding: 6px 10px 6px 8px;
+  border-radius: 9px;
+  font: 560 12.5px/1.3 var(--font-inter), system-ui, sans-serif;
+  color: #f4f6fa;
+  background: rgba(15, 18, 27, 0.96);
+  box-shadow: inset 0 0 0 1px var(--pin, rgba(226, 232, 245, 0.2)), 0 12px 26px -12px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.pin[data-fresh] {
+  animation: pinIn 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes pinIn {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+.pin i {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+}
+.pin[data-kind='fail'] { --pin: rgba(255, 110, 102, 0.6); }
+.pin[data-kind='fail'] i { background: #ff6e66; box-shadow: 0 0 8px rgba(255, 110, 102, 0.8); }
+.pin[data-kind='info'] { --pin: rgba(110, 168, 255, 0.55); }
+.pin[data-kind='info'] i { background: #6ea8ff; box-shadow: 0 0 8px rgba(110, 168, 255, 0.8); }
+.pin[data-kind='pass'] { --pin: rgba(96, 214, 160, 0.55); }
+.pin[data-kind='pass'] i { background: #60d6a0; }
 
 @media (prefers-reduced-motion: reduce) {
   .pointer { display: none; }
-  .caret { animation: none; }
+  .body[data-press], .ring, .pin[data-fresh], .caret { animation: none; }
 }

@@ -1,26 +1,25 @@
 'use client';
 
 /**
- * S02: Xroga in action (V7). One compact section: a short heading, one mode switch with its selector (four browser
- * missions, or the six AI Employees), and one large work theater. A choice plays once and settles on a result the
- * visitor can inspect; nothing chains, nothing scrolls the page, and the clock runs only while the section is on
- * screen (useDemoClock over script.ts).
+ * S02: Xroga in action (V9). One compact section: an eyebrow, one headline, one line and the two-mode switch on
+ * the heading row, then one physical computer. The computer's dock is the selector (four browser missions, or
+ * the six AI Employees), so a choice and its result are always on screen together. A choice plays once and
+ * settles on a result; nothing chains on its own, nothing scrolls the page, and the clock runs only while the
+ * section is on screen (useDemoClock over script.ts).
  */
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { COPY, MISSIONS, employeeOf, modeOf, stepsOf, type EmployeeId, type Mode, type TrackId } from './script';
+import { COPY, employeeOf, missionOf, modeOf, stepsOf, type Mode, type TrackId } from './script';
 import { useDemoClock } from './useDemoClock';
-import { Lineup } from './Team';
 import s from './S02.module.css';
 
 const MODES: Mode[] = ['browser', 'employees'];
 
-// The stage content loads as its own chunk shortly before the section is reached, behind a stage-sized hold.
+// The computer loads as its own chunk shortly before the section is reached, behind a computer-sized hold.
 const Hold = () => <div className={s.hold} aria-hidden="true" />;
 const Theater = dynamic(() => import('./Theater').then((m) => m.Theater), { ssr: false, loading: Hold });
-const TeamIntro = dynamic(() => import('./Team').then((m) => m.TeamIntro), { ssr: false, loading: Hold });
 
 export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const root = useRef<HTMLElement>(null);
@@ -30,11 +29,10 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
   const { state, dispatch, running } = useDemoClock(root, reduced);
   const mode = modeOf(state.track);
   const steps = stepsOf(state.track);
-  const cur = steps[Math.min(state.step, steps.length - 1)];
-  const employee = employeeOf(state.track) ?? null;
+  const last = state.step >= steps.length - 1;
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // mount the stage content once the section is within about a screen and a half
+  // mount the computer once the section is within about a screen and a half
   const [near, setNear] = useState(false);
   useEffect(() => {
     const el = root.current;
@@ -44,13 +42,12 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
     return () => io.disconnect();
   }, [near]);
 
-  // the one handoff: once the Research Analyst delivers, the brief waits on Client Acquisition
-  const [briefReady, setBriefReady] = useState(false);
+  // the one handoff: once the Research Analyst sends its brief, it is waiting on the Growth Strategist's board
+  const [briefSent, setBriefSent] = useState(false);
   useEffect(() => {
-    if (state.track === 'emp:research' && state.step === steps.length - 1) setBriefReady(true);
-  }, [state.track, state.step, steps.length]);
+    if (state.track === 'emp:research' && stepsOf(state.track)[state.step]?.id === 'handoff') setBriefSent(true);
+  }, [state.track, state.step]);
 
-  const pick = (track: TrackId) => dispatch({ type: 'select', track });
   const onTabKey = (ev: React.KeyboardEvent, i: number) => {
     if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(ev.key)) return;
     ev.preventDefault();
@@ -58,30 +55,41 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
     dispatch({ type: 'mode', mode: MODES[next] });
     tabs.current[next]?.focus({ preventScroll: true });
   };
-  const last = state.step >= steps.length - 1;
-  const caption = state.track === 'emp:team' ? 'Six AI Employees. Choose one to open their workspace.' : `${employee ? employee.name : MISSIONS.find((x) => `browser:${x.id}` === state.track)!.label}: ${cur.label}.`;
+
+  // one short line for screen readers when a scene settles (no live narration of every step)
+  const mission = missionOf(state.track);
+  const employee = employeeOf(state.track);
+  const settledLine = mission
+    ? `${mission.label}: ${mission.outcome.title}. ${mission.outcome.gate}.`
+    : employee
+      ? `${employee.name}: ${employee.outcome.title}. ${employee.outcome.gate}.`
+      : '';
 
   return (
     <section
       ref={root}
+      id="s02"
       className={s.section}
       aria-labelledby="s02-title"
       data-mode={mode}
       data-track={state.track}
-      data-step={cur.stepId}
+      data-step={steps[Math.min(state.step, steps.length - 1)].id}
       data-settled={(last && (state.ended || reduced)) || undefined}
       data-running={running || undefined}
       data-reduced={reduced || undefined}
     >
+      <div className={s.ambient} aria-hidden="true" />
       <div className={s.inner}>
         <header className={s.head}>
-          <p className={s.eyebrow}>{COPY.eyebrow}</p>
-          <h2 id="s02-title" className={s.title}>{COPY.title}</h2>
-          <p className={s.support}>{COPY.support}</p>
-        </header>
-
-        <div className={s.controls}>
-          <div className={s.switch} role="tablist" aria-label="Choose what to watch">
+          <div className={s.copy}>
+            <p className={s.eyebrow}>{COPY.eyebrow}</p>
+            <h2 id="s02-title" className={s.title}>
+              {COPY.title}
+            </h2>
+            <p className={s.lede}>{COPY.lede}</p>
+          </div>
+          <div className={s.switch} role="tablist" aria-label="Choose what to watch" data-mode={mode}>
+            <span className={s.thumb} aria-hidden="true" />
             {MODES.map((m, i) => (
               <button
                 key={m}
@@ -98,53 +106,42 @@ export function S02Work({ loggedIn = false }: { loggedIn?: boolean }) {
                 onClick={() => dispatch({ type: 'mode', mode: m })}
                 onKeyDown={(ev) => onTabKey(ev, i)}
               >
-                <span className={s.tabIcon} data-k={m} aria-hidden="true"><i /></span>
+                <span className={s.tabIcon} data-k={m} aria-hidden="true" />
                 {COPY.modes[m]}
               </button>
             ))}
-            <span className={s.thumb} aria-hidden="true" />
           </div>
-          <div className={s.selector}>
-            {mode === 'browser' ? (
-              <div className={s.picks} role="group" aria-label="Choose a browser mission">
-                {MISSIONS.map((x, i) => (
-                  <button key={x.id} type="button" className={s.pick} data-id={x.id} aria-pressed={state.track === `browser:${x.id}`} onClick={() => pick(`browser:${x.id}`)}>
-                    <span className={s.pickNum}>0{i + 1}</span>
-                    {x.label}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <Lineup active={employee?.id ?? null} briefReady={briefReady} onPick={(id: EmployeeId) => pick(`emp:${id}`)} onTeam={() => pick('emp:team')} />
-            )}
-          </div>
-        </div>
+        </header>
 
-        <div id="s02-stage" role="tabpanel" aria-labelledby={`s02-tab-${mode}`} className={s.stage} data-mode={mode}>
-          <div className={s.env} aria-hidden="true">
-            <span className={s.key} />
-            <span className={s.rim} />
-            <span className={s.floor} />
-          </div>
-          <div key={mode} className={s.layer}>
-            {!near ? (
-              <Hold />
-            ) : state.track === 'emp:team' ? (
-              <TeamIntro reduced={reduced} onPick={(id: EmployeeId) => pick(`emp:${id}`)} />
-            ) : (
-              <Theater track={state.track} step={state.step} running={running} reduced={reduced} onReplay={() => dispatch({ type: 'replay' })} />
-            )}
-          </div>
-          <span className={s.illus}>{COPY.illustrative}</span>
-          <p className={s.sr} aria-live="polite">{reduced || last ? caption : ''}</p>
+        <div id="s02-stage" role="tabpanel" aria-labelledby={`s02-tab-${mode}`} className={s.stage}>
+          {near ? (
+            <Theater
+              track={state.track}
+              step={state.step}
+              ended={state.ended}
+              running={running}
+              reduced={reduced}
+              briefSent={briefSent}
+              hold={state.stay}
+              onPick={(t: TrackId) => dispatch({ type: 'select', track: t })}
+              onReplay={() => dispatch({ type: 'replay' })}
+            />
+          ) : (
+            <Hold />
+          )}
+          <p className={s.sr} aria-live="polite">
+            {last ? settledLine : ''}
+          </p>
         </div>
 
         <footer className={s.foot}>
+          <span className={s.disclosure}>{COPY.disclosure}</span>
           <Link href={loggedIn ? '/workspace' : '/auth/signup'} className={s.cta}>
             {COPY.cta}
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" /></svg>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" />
+            </svg>
           </Link>
-          <p className={s.note}>{COPY.availability}</p>
         </footer>
       </div>
     </section>

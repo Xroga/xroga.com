@@ -1,0 +1,42 @@
+PASS no horizontal overflow @320 {"docW":320,"vw":320,"sectionH":1170,"over":0,"compBottom":1095,"headTop":92}
+PASS no S02 errors @320 
+PASS no horizontal overflow @360 {"docW":360,"vw":360,"sectionH":1157,"over":0,"compBottom":1100,"headTop":94}
+PASS no S02 errors @360 
+PASS no horizontal overflow @390 {"docW":390,"vw":390,"sectionH":1157,"over":0,"compBottom":1094,"headTop":98}
+PASS no S02 errors @390 
+PASS no horizontal overflow @430 {"docW":430,"vw":430,"sectionH":1167,"over":0,"compBottom":1100,"headTop":101}
+PASS no S02 errors @430 
+PASS no horizontal overflow @768 {"docW":768,"vw":768,"sectionH":1032,"over":0,"compBottom":989,"headTop":105}
+PASS no S02 errors @768 
+PASS no horizontal overflow @1024 {"docW":1024,"vw":1024,"sectionH":852,"over":0,"compBottom":844,"headTop":118}
+PASS no S02 errors @1024 
+PASS no horizontal overflow @1280 {"docW":1280,"vw":1280,"sectionH":803,"over":0,"compBottom":794,"headTop":120}
+PASS heading + computer in one viewport @1280x800 computer bottom 794
+PASS no S02 errors @1280 
+PASS no horizontal overflow @1440 {"docW":1440,"vw":1440,"sectionH":898,"over":0,"compBottom":885,"headTop":124}
+PASS heading + computer in one viewport @1440x900 computer bottom 885
+PASS no S02 errors @1440 
+PASS no horizontal overflow @1920 {"docW":1920,"vw":1920,"sectionH":995,"over":0,"compBottom":974,"headTop":131}
+PASS heading + computer in one viewport @1920x1080 computer bottom 974
+PASS no S02 errors @1920 
+PASS first scene is the bug mission and runs on screen {"track":"browser:bug","step":"apply","running":true}
+PASS baseline: frame pacing at the approved hero on this machine {"frames":8,"avgFps":2,"p95ms":567,"over50ms":7}
+PASS S02 animating paces at least as well as the hero (software GPU) {"frames":122,"avgFps":40,"p95ms":33,"over50ms":1}
+PASS scrolling through S02 paces at least as well as the hero (software GPU) {"frames":65,"avgFps":26,"p95ms":67,"over50ms":10}
+PASS bug mission holds its result (nothing chains) {"track":"browser:bug","step":"result","running":false}
+PASS outcome card visible 
+PASS quick switching lands on the last choice {"track":"browser:article","step":"open","running":true}
+PASS arrow keys switch mode and move focus 
+PASS team entrance hands the computer to the Builder 1891 ms after the switch
+PASS six employees in the dock 
+PASS Research hands its brief to Growth (badge in dock) 
+PASS Growth board shows the brief from Research 
+PASS choosing Team keeps the lineup 
+PASS a lineup companion opens its workspace 
+PASS clock pauses offscreen assign → assign
+PASS S02 layout shift (CLS from S02 elements) < 0.1 {"cls":0.007,"longTasks":43,"maxLong":625}
+PASS no S02 runtime errors 
+PASS mock apps add nothing to the tab order 0
+PASS reduced motion shows the settled result at once {"track":"browser:bug","step":"result","running":false}
+PASS reduced motion hides the pointer 
+{"pass":41,"fail":0}

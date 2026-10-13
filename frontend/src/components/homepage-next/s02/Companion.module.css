@@ -1,0 +1,159 @@
+/* An Xroga AI Employee. The orb is the founder's artwork; the role colour only lights its rim, the pedestal and
+   the tie stitch, so all six still read as one family. Transform and opacity only. */
+.companion {
+  --tie-hi: color-mix(in oklab, var(--accent) 52%, #1a2030);
+  --tie-mid: color-mix(in oklab, var(--accent) 30%, #0e121b);
+  --tie-lo: color-mix(in oklab, var(--accent) 14%, #07090e);
+  position: relative;
+  display: inline-block;
+  width: var(--size);
+  height: calc(var(--size) * 1.5);
+  pointer-events: none;
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms linear, filter 400ms linear;
+}
+.body {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 33%;
+}
+.orb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 calc(var(--size) * 0.06) calc(var(--size) * 0.09) rgba(0, 0, 0, 0.55));
+}
+/* the role light: a thin ring of colour on the glass rim, lit from the lower right */
+.rim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle at 70% 78%, color-mix(in oklab, var(--accent) 85%, white 15%) 0%, transparent 46%);
+  -webkit-mask: radial-gradient(circle, transparent 0 63%, #000 72% 96%, transparent 99%);
+  mask: radial-gradient(circle, transparent 0 63%, #000 72% 96%, transparent 99%);
+  mix-blend-mode: screen;
+  opacity: 0.78;
+}
+/* the role colour carried by the glass ring itself, so the six read apart at a glance while the X stays untouched */
+.tint {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--accent);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 0 78%, #000 84% 95%, transparent 99%);
+  mask: radial-gradient(circle closest-side, transparent 0 78%, #000 84% 95%, transparent 99%);
+  mix-blend-mode: color;
+  opacity: 0.85;
+}
+/* a slow glint that crosses the glass now and then */
+.glint {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-mask: radial-gradient(circle, #000 66%, transparent 70%);
+  mask: radial-gradient(circle, #000 66%, transparent 70%);
+}
+.glint::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.34) 49%, transparent 58%);
+  transform: translateX(-70%);
+  animation: glint 7.5s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  animation-delay: var(--glint-delay, 1.2s);
+}
+@keyframes glint {
+  0%, 82% { transform: translateX(-70%); }
+  96%, 100% { transform: translateX(70%); }
+}
+/* the outfit lies over the lower glass: collar on the rim, tie hanging past the orb */
+.outfit {
+  position: absolute;
+  left: 0;
+  top: calc(var(--size) * 0.7);
+  width: var(--size);
+  height: calc(var(--size) * 0.8);
+  overflow: visible;
+  filter: drop-shadow(0 calc(var(--size) * 0.012) calc(var(--size) * 0.02) rgba(0, 0, 0, 0.55));
+}
+.tie {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+.clip {
+  filter: drop-shadow(0 0.4px 0.4px rgba(0, 0, 0, 0.6));
+}
+/* role light behind the glass */
+.halo {
+  position: absolute;
+  left: -18%;
+  top: -18%;
+  width: 136%;
+  height: calc(var(--size) * 1.36);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 40%, transparent), transparent 72%);
+  opacity: 0.55;
+  transition: opacity 400ms linear;
+}
+.pedestal {
+  position: absolute;
+  left: 4%;
+  width: 92%;
+  top: calc(var(--size) * 1.42);
+  height: calc(var(--size) * 0.16);
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, color-mix(in oklab, var(--accent) 55%, transparent), transparent 70%),
+    radial-gradient(closest-side, rgba(0, 0, 0, 0.6), transparent 90%);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 40%, transparent);
+  opacity: 0.8;
+}
+
+/* idle signatures, 2-3 px (V8 §H) */
+.companion[data-state='idle'] .body,
+.companion[data-state='active'] .body,
+.companion[data-state='working'] .body {
+  animation: var(--idle-anim, bob) var(--idle-ms, 4.8s) ease-in-out infinite;
+  animation-delay: var(--idle-delay, 0s);
+}
+.companion[data-idle='nod'] { --idle-anim: nod; --idle-ms: 4.4s; }
+.companion[data-idle='bob'] { --idle-anim: bob; --idle-ms: 3.6s; }
+.companion[data-idle='tilt'] { --idle-anim: tilt; --idle-ms: 5.6s; }
+.companion[data-idle='sway'] { --idle-anim: sway; --idle-ms: 5s; }
+.companion[data-idle='settle'] { --idle-anim: settle; --idle-ms: 4.2s; }
+.companion[data-idle='breathe'] { --idle-anim: breathe; --idle-ms: 5.2s; }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+@keyframes nod { 0%, 100% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-2px) rotate(-2deg); } 60% { transform: translateY(1px) rotate(1deg); } }
+@keyframes tilt { 0%, 100% { transform: rotate(-2.5deg) translateY(0); } 50% { transform: rotate(2.5deg) translateY(-2px); } }
+@keyframes sway { 0%, 100% { transform: translateX(-2px) rotate(1.5deg); } 50% { transform: translateX(2px) rotate(-1.5deg) translateY(-2px); } }
+@keyframes settle { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-3px); } 45% { transform: translateY(-1px); } }
+@keyframes breathe { 50% { transform: translateY(-2px) scale(1.012); } }
+
+.companion[data-state='active'] { transform: translateY(-8px); }
+.companion[data-state='active'] .halo { opacity: 0.95; }
+.companion[data-state='quiet'] { opacity: 0.62; filter: saturate(0.7); }
+.companion[data-state='quiet'] .halo { opacity: 0.2; }
+/* at work, the tie swings a little as the companion moves */
+.companion[data-state='working'] .tie { animation: swing 2.6s ease-in-out infinite; }
+@keyframes swing { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .companion .body,
+  .companion .tie,
+  .glint::before {
+    animation: none !important;
+  }
+}

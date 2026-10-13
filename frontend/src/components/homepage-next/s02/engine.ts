@@ -1,9 +1,9 @@
 /**
- * S02 demo engine: a pure reducer over (track, step). Timers live in the hook; every timer carries the
+ * S02 demo engine (kept from V7): a pure reducer over (track, step). Timers live in the hook; every timer carries the
  * generation it was scheduled for, and a stale generation is ignored, so a timer from an old scene can never
  * move a newer one. Manual choices win over autoplay.
  */
-import { AUTO_ORDER, modeOf, stepDurations, type Mode, type TrackId } from './script';
+import { AUTO_ORDER, THEN, modeOf, stepDurations, type Mode, type TrackId } from './script';
 
 export interface DemoState {
   track: TrackId;
@@ -18,6 +18,8 @@ export interface DemoState {
   ended: boolean;
   /** The last track used in each mode, so switching modes returns to it. */
   lastByMode: Record<Mode, TrackId>;
+  /** The visitor asked for the team lineup: hold it instead of handing over to the featured employee. */
+  stay: boolean;
 }
 
 export type DemoAction =
@@ -39,6 +41,7 @@ export const initialState = (reduced = false): DemoState => ({
   auto: false,
   ended: false,
   lastByMode: { browser: 'browser:bug', employees: 'emp:team' },
+  stay: false,
 });
 
 const start = (s: DemoState, track: TrackId, extra: Partial<DemoState> = {}): DemoState => ({
@@ -47,6 +50,7 @@ const start = (s: DemoState, track: TrackId, extra: Partial<DemoState> = {}): De
   step: 0,
   gen: s.gen + 1,
   ended: false,
+  stay: false,
   lastByMode: { ...s.lastByMode, [modeOf(track)]: track },
   ...extra,
 });
@@ -57,13 +61,16 @@ export function demoReducer(s: DemoState, a: DemoAction): DemoState {
       if (a.gen !== s.gen || s.paused || s.ended) return s; // stale or held timer
       const last = stepDurations(s.track).length - 1;
       if (s.step < last) return { ...s, step: s.step + 1, gen: s.gen + 1 };
+      // the team entrance hands the screen to the featured employee
+      const then = THEN[s.track];
+      if (then && !s.stay) return start(s, then);
       if (!s.auto) return { ...s, ended: true };
       const next = AUTO_ORDER[(AUTO_ORDER.indexOf(s.track) + 1) % AUTO_ORDER.length];
       return start(s, next);
     }
     case 'select':
       // a manual choice: play it from its first frame, then hold its result
-      return start(s, a.track, { auto: false, paused: false });
+      return start(s, a.track, { auto: false, paused: false, stay: a.track === 'emp:team' });
     case 'mode':
       if (modeOf(s.track) === a.mode) return { ...s, auto: false };
       return start(s, s.lastByMode[a.mode], { auto: false, paused: false });
