@@ -3,13 +3,13 @@
   "identity": {
     "repository": "https://github.com/Xroga/xroga.com.git",
     "branch": "codex/xroga-batch-01",
-    "sha": "4d0c85b8b5f03d5c74de2f81931742d997c33d56",
-    "sourceTimestampUtc": "2026-10-13T20:33:31+05:00",
-    "auditStartedUtc": "2026-10-13T15:37:09.314Z",
+    "sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
+    "sourceTimestampUtc": "2026-10-13T21:01:40+05:00",
+    "auditStartedUtc": "2026-10-13T17:15:01.483Z",
     "initialWorkingTreeState": "Clean default-branch checkout recorded before Command 001 implementation.",
     "sourceTreeState": "Tracked source read from working tree; source hashes recorded; CI rejects stale inventory.",
-    "node": "v22.21.1",
-    "npm": "10.9.4",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
     "lockfiles": [
       "backend/package-lock.json",
       "frontend/package-lock.json",
@@ -31690,13 +31690,14 @@
       "id": "surface:00069db1d185a39243c5",
       "subsystem": "frontend",
       "sourcePath": "frontend/next.config.mjs",
-      "sha256": "92299b122c1f2ead47b850192e2e96fdeb92350addbe7a27fa63461a0d6283f4",
+      "sha256": "9079df337409bdcfdccf275d0beefd25ae1685330bad5c6ac3af127ff6d5cf28",
       "symbols": [
         "BROWSER_EMPLOYEES_DEMO_SOURCE",
         "CLARITY_DEMO_SOURCE",
         "CRYPTO_SHOWCASE_SOURCE",
         "NON_PREVIEW_SOURCE",
         "PREVIEW_SOURCE",
+        "authBuildRealm",
         "baseSecurityHeaders",
         "configuredApiOrigin",
         "connectSources",
@@ -31726,6 +31727,7 @@
         "declared-host:*.clarity.ms",
         "declared-host:*.google-analytics.com",
         "declared-host:*.supabase.co",
+        "declared-host:127.0.0.1",
         "declared-host:analytics.ahrefs.com",
         "declared-host:api.github.com",
         "declared-host:api.vercel.com",
@@ -31735,6 +31737,7 @@
         "declared-host:xroga-api.fly.dev"
       ],
       "authBoundary": [
+        "frontend/next.config.mjs#authBuildRealm",
         "frontend/next.config.mjs#resolveAuthBuildRealm"
       ],
       "tenantBoundary": [],
@@ -75427,8 +75430,10 @@
       "id": "surface:2cd2cfb40faa6f59e1b6",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "909355bd4b7e14a6182eac51e3cc5089451f15de0b1a9b6b0c28c22cf2c88f5b",
+      "sha256": "4b37e87241b12248fb47539c2ce4ea71762535ead6e7f1e4faddd6b917bcb9bf",
       "symbols": [
+        "localAuthProject",
+        "localAuthUrl",
         "productionAuthProject",
         "reference",
         "resolveAuthBuildRealm"
@@ -75442,8 +75447,12 @@
       ],
       "reachable": false,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1"
+      ],
       "authBoundary": [
+        "frontend/src/lib/supabase/authBuildRealm.mjs#localAuthProject",
+        "frontend/src/lib/supabase/authBuildRealm.mjs#localAuthUrl",
         "frontend/src/lib/supabase/authBuildRealm.mjs#productionAuthProject",
         "frontend/src/lib/supabase/authBuildRealm.mjs#resolveAuthBuildRealm"
       ],
@@ -75682,10 +75691,11 @@
       "id": "surface:f2d5ae8b59647e15a070",
       "subsystem": "frontend",
       "sourcePath": "frontend/src/lib/supabase/config.ts",
-      "sha256": "8aaadf82351f635fa8a762a5fb27d3c7e6be47c2b7522ada50d25a0aecfebc40",
+      "sha256": "9a6f08925fd82bef7bceeb1c275be91473198332cefdac7f4544f3327cd619b7",
       "symbols": [
         "APPROVED_PROJECT_REF",
         "APPROVED_PUBLIC_URL",
+        "LOCAL_BUILD",
         "getSupabasePublicConfig",
         "json",
         "legacyRole",
@@ -75768,7 +75778,9 @@
       ],
       "reachable": true,
       "persistenceDependencies": [],
-      "externalProviderDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1"
+      ],
       "authBoundary": [],
       "tenantBoundary": [],
       "approvalBoundary": [],
@@ -81592,6 +81604,137 @@
       "testCoverage": [
         "scripts/security/audit-tenant-policies.test.mjs"
       ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:6d41f9a6f61b7c1b2c87",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/disposable-supabase.mjs",
+      "sha256": "bb500d305e59f9a5489b68304fe9077be24751b9c7a016e4459427c3686a58c9",
+      "symbols": [
+        "anonKey",
+        "apiPublishable",
+        "apiSecret",
+        "assertDisposableConfiguration",
+        "bootstrap",
+        "cli",
+        "data",
+        "db",
+        "encode",
+        "jwtSecret",
+        "mask",
+        "name",
+        "result",
+        "serviceKey",
+        "signingKey",
+        "status",
+        "token",
+        "value",
+        "values",
+        "workdir"
+      ],
+      "imports": [
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/disposable-supabase.mjs"
+      ],
+      "callers": [
+        "scripts/security/disposable-supabase.test.mjs:3"
+      ],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "declared-host:127.0.0.1",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [],
+      "testCoverage": [
+        "scripts/security/disposable-supabase.test.mjs"
+      ],
+      "state": "IMPLEMENTED_BUT_UNVERIFIED",
+      "confidence": "MEDIUM",
+      "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
+      "knownRisk": "Live provider state and full security behavior not established by static inventory.",
+      "recommendedDisposition": "KEEP; EXTEND evidence and security where acceptance review finds gaps",
+      "nextEvidenceNeeded": "Relevant unit/integration journeys and deployment/runtime evidence; review indirect/dynamic dispatch before declaring unused."
+    },
+    {
+      "id": "surface:b5fb9b6d0970672ddebe",
+      "subsystem": "backend_infrastructure",
+      "sourcePath": "scripts/security/full-supabase-history.mjs",
+      "sha256": "e51b232045d1fbc5a8bf7ab3434874d76a496e741e4cbce96ac742d72f529f04",
+      "symbols": [
+        "afterPolicies",
+        "apply",
+        "before",
+        "connect",
+        "db",
+        "error",
+        "evidence",
+        "file",
+        "files",
+        "foreign",
+        "inventory",
+        "other",
+        "out",
+        "owner",
+        "policies",
+        "policy",
+        "project",
+        "reset",
+        "root",
+        "save",
+        "target",
+        "url"
+      ],
+      "imports": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "pg"
+      ],
+      "runtimeImports": [],
+      "entryPoints": [
+        "scripts/security/full-supabase-history.mjs"
+      ],
+      "callers": [],
+      "reachable": true,
+      "persistenceDependencies": [],
+      "externalProviderDependencies": [
+        "node:assert/strict",
+        "node:child_process",
+        "node:crypto",
+        "node:fs",
+        "node:path",
+        "pg"
+      ],
+      "authBoundary": [],
+      "tenantBoundary": [],
+      "approvalBoundary": [],
+      "costBoundary": [],
+      "evidenceBoundary": [
+        "scripts/security/full-supabase-history.mjs#evidence"
+      ],
+      "testCoverage": [],
       "state": "IMPLEMENTED_BUT_UNVERIFIED",
       "confidence": "MEDIUM",
       "reason": "Runtime import path traced from a registered entry point; source presence does not prove operational acceptance.",
@@ -91095,8 +91238,12 @@
     {
       "id": "workflow:a7962a7c78b10b796636",
       "sourcePath": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "30db1cf3b07b4af71b2145928e0906330b9a652d1d7990662452dbe6fe0ed81f",
-      "sourceEntrypoints": [],
+      "sha256": "540939a4563fc8f4ec12736d6803acf9847f983d809bdbaf181dd164922397da",
+      "sourceEntrypoints": [
+        "scripts/security/disposable-supabase.mjs",
+        "scripts/security/disposable-supabase.test.mjs",
+        "scripts/security/full-supabase-history.mjs"
+      ],
       "hasSchedule": false
     },
     {
@@ -94765,58 +94912,58 @@
       "reachable": false
     },
     {
-      "id": "frontend-call:612af4bf4d02e2e3830c",
+      "id": "frontend-call:9f2d6e199a3335d8cbf8",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 96,
+      "line": 97,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:8c84c0d6a6d9b133ff48",
+      "id": "frontend-call:edac02b3f981b29e6926",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 99,
+      "line": 100,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:f9c1042307e14e4e4962",
-      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 790,
-      "callee": "fetch",
-      "reachable": false
-    },
-    {
-      "id": "frontend-call:e4c5e7b0ad8cc96c3a39",
+      "id": "frontend-call:ce23649908f1d86e5fd5",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 791,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:e0bb00a3924e063c080e",
+      "id": "frontend-call:73ce139f2c328e55cc86",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 793,
+      "line": 792,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:19e61b57db6f170d3ea3",
+      "id": "frontend-call:7994869964a148798979",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
       "line": 794,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:509e61daa458dba04100",
+      "id": "frontend-call:7730770f6925a6fe39bf",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 801,
+      "line": 795,
       "callee": "fetch",
       "reachable": false
     },
     {
-      "id": "frontend-call:b34ae4cdfcbf1d78863a",
+      "id": "frontend-call:ff424a5165321e93a9b1",
       "sourcePath": "frontend/e2e/command3-auth.spec.ts",
-      "line": 815,
+      "line": 802,
+      "callee": "fetch",
+      "reachable": false
+    },
+    {
+      "id": "frontend-call:a65e6c158a8b9a1fe24d",
+      "sourcePath": "frontend/e2e/command3-auth.spec.ts",
+      "line": 816,
       "callee": "fetch",
       "reachable": false
     },
@@ -99974,7 +100121,7 @@
     {
       "id": "test-suite:3b7710268583bb163ebd",
       "sourcePath": "frontend/src/lib/supabase/authBuildRealm.test.ts",
-      "declaredTests": 3,
+      "declaredTests": 4,
       "skipLocations": [],
       "focusLocations": []
     },
@@ -100346,6 +100493,13 @@
       "id": "test-suite:391d343edda2653fa467",
       "sourcePath": "scripts/security/audit-tenant-policies.test.mjs",
       "declaredTests": 2,
+      "skipLocations": [],
+      "focusLocations": []
+    },
+    {
+      "id": "test-suite:7ad4485dc12ff4206f8f",
+      "sourcePath": "scripts/security/disposable-supabase.test.mjs",
+      "declaredTests": 1,
       "skipLocations": [],
       "focusLocations": []
     },

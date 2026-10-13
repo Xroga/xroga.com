@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4d0c85b8b5f03d5c74de2f81931742d997c33d56",
+  "source_sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
   "assessment": "READ_ONLY_RUNTIME_AUDIT",
   "dependencies": [
     {
@@ -531,7 +531,9 @@
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
-        "backend/src/synthesis/browserVerificationAdapter.ts"
+        "backend/src/synthesis/browserVerificationAdapter.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs",
+        "frontend/src/lib/supabase/config.ts"
       ],
       "hostnames": [
         "127.0.0.1"
@@ -540,20 +542,29 @@
       "region": "Not verified",
       "auth_mechanism": "Existing adapter-owned credentials/authorization; see names and source",
       "secret_names": [
+        "CI",
+        "E2E_ISOLATED_PROJECT_REF",
         "FRONTEND_URL",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GITHUB_OAUTH_CALLBACK_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_XROGA_AUTH_PROJECT_REF",
         "NODE_ENV",
         "SUPABASE_OAUTH_CALLBACK_URL",
         "SUPABASE_OAUTH_CLIENT_ID",
         "SUPABASE_OAUTH_CLIENT_SECRET",
+        "SUPABASE_URL",
         "VERCEL_CLIENT_ID",
         "VERCEL_CLIENT_SECRET",
+        "VERCEL_ENV",
         "VERCEL_OAUTH_CALLBACK_URL",
         "VERCEL_OAUTH_CLIENT_ID",
         "VERCEL_OAUTH_CLIENT_SECRET",
         "VERCEL_OAUTH_SCOPES",
+        "XB01_DISPOSABLE_SUPABASE",
+        "XROGA_ISOLATED_AUTH_BUILD",
         "XROGA_SANDBOX_BROWSER_IMAGE"
       ],
       "inbound_callers": [
@@ -571,7 +582,9 @@
         "backend/src/routes/github.ts",
         "backend/src/services/integrations/supabaseAuth.ts",
         "backend/src/services/integrations/vercelAuth.ts",
-        "backend/src/synthesis/browserVerificationAdapter.ts"
+        "backend/src/synthesis/browserVerificationAdapter.ts",
+        "frontend/src/lib/supabase/authBuildRealm.mjs",
+        "frontend/src/lib/supabase/config.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6313,8 +6326,7 @@
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/organicIntelligence/intelligence.ts",
-        "backend/src/synthesis/livePreview/signing.ts",
-        "frontend/src/lib/supabase/authBuildRealm.mjs"
+        "backend/src/synthesis/livePreview/signing.ts"
       ],
       "hostnames": [],
       "resource_id": null,
@@ -6329,7 +6341,6 @@
         "BLACK_HOLE_CUTOVER_STAGE",
         "BLACK_HOLE_ROLLOUT_PERCENT",
         "BREVO_API_KEY",
-        "CI",
         "COMFYUI_URL",
         "DEEPDUB_API_KEY",
         "DEEPGRAM_API_KEY",
@@ -6342,7 +6353,6 @@
         "DEEPSEEK_FLASH_OUTPUT_USD_PER_1M",
         "DESCRIPT_API_TOKEN",
         "DID_API_KEY",
-        "E2E_ISOLATED_PROJECT_REF",
         "FAL_API_KEY",
         "FAL_KEY",
         "GEMINI_CODE_API_KEY",
@@ -6415,7 +6425,6 @@
         "XROGA_CIRCUIT_FAILURE_THRESHOLD",
         "XROGA_DISABLED_PROVIDERS",
         "XROGA_FORCE_RESEARCH_TASK_CLASSES",
-        "XROGA_ISOLATED_AUTH_BUILD",
         "XROGA_LEARNING_ENABLED",
         "XROGA_MAX_REPAIR_ATTEMPTS",
         "XROGA_MODEL_FALLBACK_ORDER",
@@ -6461,8 +6470,7 @@
         "backend/src/lib/resilience/circuitBreaker.ts",
         "backend/src/lib/resolveIdentity.ts",
         "backend/src/organicIntelligence/intelligence.ts",
-        "backend/src/synthesis/livePreview/signing.ts",
-        "frontend/src/lib/supabase/authBuildRealm.mjs"
+        "backend/src/synthesis/livePreview/signing.ts"
       ],
       "production_verification": "NOT_INDEPENDENTLY_VERIFIED",
       "evidence_ids": []
@@ -6769,7 +6777,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -7190,7 +7198,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -8642,7 +8650,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "frontend"
+        "frontend",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -8661,7 +8670,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "frontend"
+        "frontend",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -8699,7 +8709,8 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "frontend"
+        "frontend",
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -9576,6 +9587,7 @@
       ],
       "dependency_ids": [
         "supabase",
+        "endpoint-127-0-0-1",
         "endpoint-localhost",
         "endpoint-xrogaaicom-vercel-app"
       ]
@@ -9843,6 +9855,7 @@
       ],
       "dependency_ids": [
         "frontend",
+        "endpoint-127-0-0-1",
         "endpoint-schema-org"
       ]
     },
@@ -10148,6 +10161,25 @@
       ]
     },
     {
+      "name": "XB01_DISPOSABLE_SUPABASE",
+      "consuming_sources": [
+        "frontend/src/lib/supabase/authBuildRealm.mjs"
+      ],
+      "environments": [
+        "backend/operator or inherited system context"
+      ],
+      "secret_class": "RUNTIME_CONFIGURATION",
+      "rotation_owner": "Xroga operations; user-owned integrations require account owner approval",
+      "requiredness": "OPTIONAL_OR_DEFAULTED",
+      "startup_validation": "Source-specific lazy/configuration checks; no secret-value presence or universal startup enforcement claimed",
+      "mechanisms": [
+        "STATIC_ENV_READER"
+      ],
+      "dependency_ids": [
+        "endpoint-127-0-0-1"
+      ]
+    },
+    {
       "name": "XROGA_ALLOWED_MODELS",
       "consuming_sources": [
         "backend/src/ai/routerConfig.ts"
@@ -10285,7 +10317,7 @@
         "STATIC_ENV_READER"
       ],
       "dependency_ids": [
-        "runtime-controls-and-conditional-aliases"
+        "endpoint-127-0-0-1"
       ]
     },
     {
@@ -10921,7 +10953,7 @@
     },
     {
       "path": ".github/workflows/command3-auth-browser.yml",
-      "sha256": "30db1cf3b07b4af71b2145928e0906330b9a652d1d7990662452dbe6fe0ed81f"
+      "sha256": "540939a4563fc8f4ec12736d6803acf9847f983d809bdbaf181dd164922397da"
     },
     {
       "path": ".github/workflows/command4-authority.yml",
@@ -15881,7 +15913,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
-      "sha256": "909355bd4b7e14a6182eac51e3cc5089451f15de0b1a9b6b0c28c22cf2c88f5b"
+      "sha256": "4b37e87241b12248fb47539c2ce4ea71762535ead6e7f1e4faddd6b917bcb9bf"
     },
     {
       "path": "frontend/src/lib/supabase/authErrors.ts",
@@ -15897,7 +15929,7 @@
     },
     {
       "path": "frontend/src/lib/supabase/config.ts",
-      "sha256": "8aaadf82351f635fa8a762a5fb27d3c7e6be47c2b7522ada50d25a0aecfebc40"
+      "sha256": "9a6f08925fd82bef7bceeb1c275be91473198332cefdac7f4544f3327cd619b7"
     },
     {
       "path": "frontend/src/lib/supabase/middleware.ts",
@@ -21297,6 +21329,27 @@
       "protocol": "https:",
       "path": "frontend/src/lib/socialSharePack.ts",
       "line": 234,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "frontend/src/lib/supabase/authBuildRealm.mjs",
+      "line": 3,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "frontend/src/lib/supabase/config.ts",
+      "line": 3,
+      "credentialsInUrl": false
+    },
+    {
+      "hostname": "127.0.0.1",
+      "protocol": "http:",
+      "path": "frontend/src/lib/supabase/config.ts",
+      "line": 27,
       "credentialsInUrl": false
     },
     {

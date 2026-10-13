@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "source_sha": "4d0c85b8b5f03d5c74de2f81931742d997c33d56",
+  "source_sha": "1c911fa43d9d24dbd5327d848fccb94a43e82d69",
   "assessment": "AVAILABLE_SOURCE_RECONCILIATION",
   "requirements": [
     {
@@ -2703,7 +2703,9 @@
         "frontend/src/app/cybersecurity/CybersecurityLanding.tsx",
         "frontend/src/app/cybersecurity/page.tsx",
         "frontend/src/app/security/page.tsx",
-        "scripts/security/audit-tenant-policies.mjs"
+        "scripts/security/audit-tenant-policies.mjs",
+        "scripts/security/disposable-supabase.mjs",
+        "scripts/security/full-supabase-history.mjs"
       ],
       "implementation_owner_command": "010",
       "priority": "P0",

@@ -39,7 +39,8 @@ async function browserSession(page: import('@playwright/test').Page): Promise<{ 
 test.beforeAll(async () => {
   const isolatedRef = process.env.E2E_ISOLATED_PROJECT_REF?.trim();
   const actualHost = new URL(supabaseUrl).hostname;
-  if (!isolatedRef || isolatedRef === 'nzenxdfumxrnsmybazmo' || actualHost !== `${isolatedRef}.supabase.co`) {
+  const disposableLocal = process.env.CI === 'true' && process.env.XB01_DISPOSABLE_SUPABASE === '1' && isolatedRef === 'local-disposable' && supabaseUrl === 'http://127.0.0.1:54321' && process.env.SUPABASE_URL === supabaseUrl && backendUrl === 'http://127.0.0.1:4000' && !launchBillingApiUrl;
+  if (!disposableLocal && (!isolatedRef || ['nzenxdfumxrnsmybazmo', 'lztqfktsahpzitybthld', 'local-disposable'].includes(isolatedRef) || actualHost !== `${isolatedRef}.supabase.co`)) {
     throw new Error('Authenticated fixture tests require a dedicated isolated TEST Supabase project; production is forbidden.');
   }
   const owner = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true, user_metadata: { fixture: 'command3_isolated_demo' } });

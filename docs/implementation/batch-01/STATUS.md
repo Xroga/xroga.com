@@ -1,5 +1,11 @@
 # Xroga OS Batch 01 implementation tracker
 
+## Continuation: disposable Supabase gate
+
+Replacing the hosted TEST requirement with real temporary Supabase CLI 2.120.0/Docker in the existing authenticated-browser workflow. Production credentials/data are excluded. Full unchanged-file history and representative sanitized upgrade replay are implemented, with fail-closed evidence; CI execution remains pending. Existing browser assertions are retained. Local bootstrap admission 1/1 and frontend realm/config 6/6 pass with zero skips. Command 007 remains IN PROGRESS, not VERIFIED; 008–010 are not started until its prerequisite passes. PR #803 remains draft; no production merge/deploy/migration is permitted by this checkpoint. See `docs/xroga/security/disposable-supabase-ci.md`.
+
+The newest attachment folder was empty and the referenced original research bundle was not located in searched attachments/Downloads. Reconciliation remains INACCESSIBLE_PENDING_EXPORT, not reviewed or complete.
+
 ## Governing sources and scope
 
 - Authoritative report: `Xroga OS Batch One — Backend Foundation, Security, and Execution Truth`, supplied as `Pasted text.txt` on 2026-10-13.
