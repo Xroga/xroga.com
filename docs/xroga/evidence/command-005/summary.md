@@ -1,6 +1,6 @@
 # Command 005 — golden acceptance harness
 
-Status: IN PROGRESS; not a production completion claim. Base after verified Command 004: `c5eeeb22` (full SHA to be attested by test manifest).
+Status: VERIFIED harness with BLOCKED product journeys; not a production completion claim. Base after verified Command 004: `c5eeeb22cedb1bbfa6542e7c892b5afebee6216d`.
 
 All required IDs are present: GJ-CHAT, GJ-WEB-RESEARCH, GJ-EXISTING-REPO-CODING, GJ-NEW-SAAS, GJ-BUSINESS-READ, GJ-BUSINESS-WRITE, GJ-MIXED-MULTI-OUTCOME, GJ-DOCUMENTS, GJ-WORK-PACK, GJ-AI-EMPLOYEE, GJ-PAID-ANDROID-PUBLISH, GJ-SEO-DRIVE. Matrix counts: PASS 0, FAIL 0, BLOCKED_KNOWN_GAP 12, NOT_APPLICABLE 0. Passing component tests never inflate these counts.
 
@@ -19,3 +19,9 @@ Clean Windows browser execution at `f5eb888177690758ad83112755bcedc6c7d894ad`: b
 At `27f93ca19762a46a95c4f724235e1db59355aa43`, all three desktop/390px/reduced-motion/guest-reload/SSR-RSC denial tests pass in the clean Windows built-app runner (12.2s), and dedicated golden CI passes: https://github.com/Xroga/xroga.com/actions/runs/38409547594. Final fixture refinement explicitly requires CURRENT_REQUIRED primary-source research, software preview and an acceptance deliverable; 20 guard/schema and 12 backend tests pass after refinement, zero skips/failures. Final full aggregate/source SHA attestation remains pending.
 
 Further source audit found that original truth discovery excluded `frontend/e2e` from inspected source and skip governance excluded its non-`.spec` founder helper. Extend both to browser suites/helpers; register only the unchanged helper from inspected `c7230c8`, with explicit missing-session BLOCKED semantics. This corrects earlier discovery scope, does not add/disable a runtime skip, and cannot turn authenticated CI green. New/helper skips remain forbidden unless individually reviewed. Historical evidence counts are not rewritten as though those earlier runs covered this newly audited scope.
+
+## Final gate and evidence
+
+Branch code `48900380305fe23924f2610f888cb9478d35e033`, tested merge `de8069014a2cd98c35c0c754be837e79abab5c80`: aggregate https://github.com/Xroga/xroga.com/actions/runs/38410876836 passes twice all 19 stages (backend 2,729, frontend 991, guards 13, inventory/ledger/runtime/golden 41; zero failures/skips). Both builds/type/lint, 67 SQL parses, drift, installed dependencies and repeatability pass without tracked mutation. Dedicated https://github.com/Xroga/xroga.com/actions/runs/38410876854 passes schema/backend/frontend boundaries plus all three production-built guest browser tests. Browser manifest/raw baseline manifests are retained here. Traces/screenshots are configured only on failure; no successful trace is fabricated. Clean Windows browser run also passes at the same branch code.
+
+Original full product journey counts stay PASS 0 / FAIL 0 / BLOCKED_KNOWN_GAP 12 / NOT_APPLICABLE 0. All eleven negative categories are declared; durable webhook replay/full multi-outcome scheduling are not certified by component tests. Actual Supabase authenticated E2E remains independently blocked, not skipped as a passing gate. No provider-sandbox execution or production smoke/deployment occurred. No runtime package added, engine replaced, account/charge/store publication/credential mutation performed. Proceed to Command 006.
